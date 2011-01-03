@@ -64,7 +64,7 @@ if Y(1,1)>Y(end,1)
     end
 end
 
-if xi(1)>xi(2)
+if xor(xi(1)>xi(2),yi(1)>yi(2))
     xi      = xi([2 1]);
     yi      = yi([2 1]);
     reverse = true;

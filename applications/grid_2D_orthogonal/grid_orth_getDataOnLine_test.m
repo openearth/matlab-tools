@@ -63,6 +63,7 @@ MTestCategory.DataAccess;
 tr(1) = test3;
 tr(2) = test4;
 tr(3) = test5;
+tr(4) = test6;
 
 testresult = all(tr);
 
@@ -213,7 +214,7 @@ function testresult = test5()
 %% $RunCode
 % make test data
 x =  -10:.5:10;
-y = -2:.5:32;
+y =   -2:.5:32;
 
 [X,Y] = meshgrid(x,y);
 Z = sin(sqrt(X.^2+Y.^2));
@@ -226,6 +227,38 @@ yi = [0 0];
     
 testresult = max(abs(sin(crossing_d) - crossing_z))<eps(100);
 
+
+%% $PublishResult
+
+end
+
+function testresult = test6()
+%% $Description 
+    % test if the outcome is identical for all sign combinations of x and y;
+
+%% $RunCode
+% make test data
+x =  -10:.5:10;
+y =   -2:.5:32;
+
+[X,Y] = meshgrid(x,y);
+Z = sin(sqrt(X.^2+Y.^2));
+
+% define line
+xi = [0 10; 0.1 9.9; 2  2; 2     2; 0 10;0.1 9.3];
+yi = [2 2 ; 2     2; 0 10; 0.1 9.9; 2  2;0.6 9.8];
+
+testresult = nan(1,5);
+
+for ii = 1:5
+    [crossing_x1,crossing_y1,crossing_z1,crossing_d1] = grid_orth_getDataOnLine( X, Y,Z, xi(ii,:), yi(ii,:));
+    [crossing_x2,crossing_y2,crossing_z2,crossing_d2] = grid_orth_getDataOnLine( X,-Y,Z, xi(ii,:),-yi(ii,:));
+    [crossing_x3,crossing_y3,crossing_z3,crossing_d3] = grid_orth_getDataOnLine(-X, Y,Z,-xi(ii,:), yi(ii,:));
+    [crossing_x4,crossing_y4,crossing_z4,crossing_d4] = grid_orth_getDataOnLine(-X,-Y,Z,-xi(ii,:),-yi(ii,:));
+    testresult(ii) = isequalwithequalnans(crossing_z1, crossing_z2, crossing_z3, crossing_z4);
+end
+
+testresult = all(testresult);
 
 %% $PublishResult
 
