@@ -84,6 +84,8 @@ if isdir(fname) || strcmpi(fname(end-3:end), '.dat')
   variables = xb_read_dat(fname, varargin{:});
 elseif strcmpi(fname(end-2:end), '.nc')
   variables = xb_read_netcdf(fname, varargin{:});
+elseif isdir(fileparts(fname))
+  variables = xb_read_dat(fileparts(fname), varargin{:});
 else
     error(['Output type not recognised [' fname ']']);
 end
