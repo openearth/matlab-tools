@@ -76,14 +76,14 @@ if ~xb_check(xb); error('Invalid XBeach structure'); end;
 % determine variables to be showed, show xb_show for specifically requested
 % XBeach sub-structures
 if nargin > 1
-    vars = {}; c = 1;
+    vars = {};
     for i = 1:length(varargin)
         val = xb_get(xb, varargin{i});
         if xb_check(val)
+            val.path = [inputname(1) '.' varargin{i}];
             xb_show(val);
         else
-            vars{c} = varargin{i};
-            c = c+1;
+            vars = [vars{:} varargin(i)];
         end
     end
 else
@@ -107,6 +107,20 @@ if ~isempty(vars)
     end
 
     fprintf('\n');
+    
+    % add return to parent link
+    if isfield(xb, 'path')
+        path = regexp(xb.path, '\.', 'split');
+        if length(path) > 2
+            v = sprintf('.%s', path{2:end-1}); v = v(2:end);
+            cmd = sprintf('matlab:xb_show(%s, ''%s'');', path{1}, v);
+        else
+            cmd = sprintf('matlab:xb_show(%s);', path{1});
+        end
+        
+        fprintf(['<a href="' cmd '">show parent</a>\n']);
+        fprintf('\n');
+    end
 
     % show data
     format = '%-15s %-10s %-10s %-10s %-10s %-30s\n';
@@ -142,9 +156,20 @@ if ~isempty(vars)
 
         % link xbeach substructs
         if xb_check(var)
-            cmd = lastcommand;
-            re = regexp(cmd, 'xb_show\(\s*(?<var>.+?)\s*(,.+?)?\s*\)', 'names');
-            class = ['<a href="matlab:xb_show(' re.var ', ''' xb.data(i).name ''');">' info.class '</a>'];
+            if isfield(xb, 'path')
+                child = regexp(xb.path, '\.', 'split', 'once');
+                if length(child) > 1
+                    child{2} = [child{2} '.' xb.data(i).name];
+                else
+                    child{2} = xb.data(i).name;
+                end
+            else
+                child = {inputname(1) xb.data(i).name};
+            end
+            
+            cmd = sprintf('matlab:xb_show(%s, ''%s'');', child{:});
+
+            class = ['<a href="' cmd '">' info.class '</a>'];
         else
             class = info.class;
         end
