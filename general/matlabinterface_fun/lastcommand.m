@@ -1,22 +1,22 @@
-function apps = get_app_list(varargin)
-%GET_APP_LIST  Returns a list with installed applications from the Windows registry
+function last = lastcommand()
+%LASTCOMMAND  Returns the last command executed in the Command Window
 %
-%   Returns a cell array with applications names installed on the current
-%   PC according to the Windows registry.
+%   Returns the last command executed in the Command Window based on the
+%   history.m file.
 %
 %   Syntax:
-%   apps = get_app_list(varargin)
+%   last = lastcommand()
 %
 %   Input:
-%   varargin  = none
+%   none
 %
 %   Output:
-%   apps      = Cell array with application names
+%   last    = last command
 %
 %   Example
-%   apps = get_app_list
+%   last = lastcommand
 %
-%   See also readreg
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -49,7 +49,7 @@ function apps = get_app_list(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 03 Jan 2011
+% Created: 04 Jan 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -59,38 +59,10 @@ function apps = get_app_list(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+%% open history file to obtain last command
 
-OPT = struct( ...
-);
-
-OPT = setproperty(OPT, varargin{:});
-
-%% get application list
-
-apps = {};
-
-if ispc()
-    
-    % export registry to file
-    fname = tempname;
-    regpath = 'HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\';
-    system(['regedit /e ' fname ' "' regpath '"']);
-
-    % read entire file
-    fid = fopen(fname, 'r');
-    fcontents = fread(fid, Inf, 'uint16=>char');
-    fclose(fid);
-    delete(fname);
-    
-    fcontents = fcontents';
-    fcontents = regexprep(fcontents, '\s*\\\r\n\s*', '');
-    
-    % search for app names
-    re = regexp(fcontents, '\s*"DisplayName"\s*=\s*"(.*?)"\s*\r\n', 'tokens');
-    apps = [re{:}];
-elseif isunix()
-    error('Unix systems are not supported'); % TODO
-else
-    error('Unsupported operating system');
+fid = fopen([prefdir, '\history.m'], 'rt');
+while ~feof(fid)
+   last = fgetl(fid);
 end
+fclose(fid);

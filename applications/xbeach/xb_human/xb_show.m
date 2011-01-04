@@ -140,6 +140,15 @@ if ~isempty(vars)
             value = [value(1:(maxl/2-2)) ' .. ' value(end-(maxl/2-3):end)];
         end
 
+        % link xbeach substructs
+        if xb_check(var)
+            cmd = lastcommand;
+            re = regexp(cmd, 'xb_show\(\s*(?<var>.+?)\s*(,.+?)?\s*\)', 'names');
+            class = ['<a href="matlab:xb_show(' re.var ', ''' xb.data(i).name ''');">' info.class '</a>'];
+        else
+            class = info.class;
+        end
+        
         % determine units
         units = '';
         if isfield(xb.data(i), 'units')
@@ -149,7 +158,7 @@ if ~isempty(vars)
         fprintf(format, xb.data(i).name, ...
             regexprep(num2str(info.size),'\s+','x'), ...
             num2str(info.bytes), ...
-            info.class, ...
+            class, ...
             units, ...
             value);
     end
