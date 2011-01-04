@@ -86,17 +86,17 @@ try
         %% Publish documentation
         TeamCity.postmessage('progressMessage','Generate documentation html files');
         htmlDir = publish_OET_documentation;
-                        
+
         TeamCity.postmessage('progressMessage','remove copy of documentation to server');
         docDir = 'Z:\OpenEarthHtmlDocs\3frames';
         if isdir(docDir)
             rmdir(docDir,'s');
         end
-        
+
         TeamCity.postmessage('progressMessage','Copy documentation to server');
         mkdir(docDir);
         copyfile(htmlDir,docDir);
-        
+
         TeamCity.postmessage('progressMessage','Remove local copy of documentation');
         rmdir(htmlDir,'s');
     catch me
@@ -110,9 +110,9 @@ try
     end
     TeamCity.postmessage('progressFinish','Generate OET documentation');
 
+    %{
     TeamCity.postmessage('progressStart','Create tutorials');
-    
-    %{ 
+
     % NetCDF tutorials throw errors..... So don't publish at this moment
     try
         %% start documenting
@@ -145,7 +145,7 @@ try
             'status','FAILURE',...
             'text', 'FAILURE: Matlab was unable to publish the tutorials.');
     end
-    
+
     TeamCity.postmessage('progressFinish','Create tutorials');
 
     %% remove targetdir
