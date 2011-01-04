@@ -90,6 +90,21 @@ else
     vars = {xb.data.name};
 end
 
+% parse path in substructure
+path = struct('root', inputname(1), 'self', '', 'parent', '', 'obj', inputname(1));
+if isfield(xb, 'path')
+    p = regexp(xb.path, '\.', 'split');
+    path.root = p{1};
+    path.self = sprintf('.%s', p{2:end});
+    path.self = path.self(2:end);
+    path.obj = sprintf('xb_get(%s, ''%s'')', path.root, path.self);
+    
+    if length(p) > 2
+        path.parent = sprintf('.%s', p{2:end-1});
+        path.parent = path.parent(2:end);
+    end
+end
+
 if ~isempty(vars)
     
     % identify data
@@ -107,20 +122,6 @@ if ~isempty(vars)
     end
 
     fprintf('\n');
-    
-    % add return to parent link
-    if isfield(xb, 'path')
-        path = regexp(xb.path, '\.', 'split');
-        if length(path) > 2
-            v = sprintf('.%s', path{2:end-1}); v = v(2:end);
-            cmd = sprintf('matlab:xb_show(%s, ''%s'');', path{1}, v);
-        else
-            cmd = sprintf('matlab:xb_show(%s);', path{1});
-        end
-        
-        fprintf(['<a href="' cmd '">show parent</a>\n']);
-        fprintf('\n');
-    end
 
     % show data
     format = '%-15s %-10s %-10s %-10s %-10s %-30s\n';
@@ -156,20 +157,15 @@ if ~isempty(vars)
 
         % link xbeach substructs
         if xb_check(var)
-            if isfield(xb, 'path')
-                child = regexp(xb.path, '\.', 'split', 'once');
-                if length(child) > 1
-                    child{2} = [child{2} '.' xb.data(i).name];
-                else
-                    child{2} = xb.data(i).name;
-                end
+            if isempty(path.self)
+                child = {path.root xb.data(i).name};
             else
-                child = {inputname(1) xb.data(i).name};
+                child = {path.root [path.self '.' xb.data(i).name]};
             end
             
             cmd = sprintf('matlab:xb_show(%s, ''%s'');', child{:});
 
-            class = ['<a href="' cmd '">' info.class '</a>'];
+            class = ['<a href="' cmd '">nested</a>'];
         else
             class = info.class;
         end
@@ -189,4 +185,32 @@ if ~isempty(vars)
     end
     
     fprintf('\n');
+    
+    % add action menu
+    menu = {};
+    
+    if ~isempty(path.self)
+        if isempty(path.parent)
+            cmd = sprintf('matlab:xb_show(%s);', path.root);
+        else
+            cmd = sprintf('matlab:xb_show(%s, ''%s'');', path.root, path.parent);
+        end
+        
+        menu = [menu{:} {['<a href="' cmd '">parent</a>']}];
+    end
+    
+    cmd = sprintf('matlab:xb_plot(%s);', path.obj);
+    menu = [menu{:} {['<a href="' cmd '">plot</a>']}];
+    
+    if strcmpi(xb.type, 'input')
+        cmd = sprintf('matlab:xb_write_input(''params.txt'', %s);', path.obj);
+        menu = [menu{:} {['<a href="' cmd '">write</a>']}];
+        
+        cmd = sprintf('matlab:xb_run(%s);', path.obj);
+        menu = [menu{:} {['<a href="' cmd '">run</a>']}];
+    end
+    
+    if ~isempty(menu)
+        fprintf('%-14s: %s\n\n', 'options', sprintf('%s ', menu{:}));
+    end
 end
