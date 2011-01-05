@@ -92,7 +92,7 @@ OPT = struct( ...
 );
 
 if length(varargin) <= 2
-    varargin = [varargin{:} xb_getpref('grid_finalise')];
+    varargin = [varargin xb_getpref('grid_finalise')];
 end
 
 OPT = setproperty(OPT, varargin{:});
