@@ -73,6 +73,8 @@ function xb_show(xb, varargin)
 
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
+is_interactive = xb_getpref('interactive');
+
 % determine variables to be showed, show xb_show for specifically requested
 % XBeach sub-structures
 if nargin > 1
@@ -170,8 +172,12 @@ if ~isempty(vars)
 
         % link xbeach substructs
         if xb_check(var)
-            cmd = sprintf('matlab:xb_show(%s, ''%s'');', path.root, child);
-            class = ['<a href="' cmd '">nested</a>    '];
+            if is_interactive
+                cmd = sprintf('matlab:xb_show(%s, ''%s'');', path.root, child);
+                class = ['<a href="' cmd '">nested</a>    '];
+            else
+                class = 'nested    ';
+            end
         else
             class = info.class;
         end
@@ -184,7 +190,7 @@ if ~isempty(vars)
         
         % add commands
         menu = {};
-        if ~isempty(path.root)
+        if ~isempty(path.root) && is_interactive
             cmd = sprintf('matlab:xb_get(%s, ''%s'')', path.root, child);
             menu = [menu{:} {['<a href="' cmd '">get</a>']}];
             
@@ -210,7 +216,7 @@ if ~isempty(vars)
     fprintf('\n');
     
     % add action menu
-    if ~isempty(path.root)
+    if ~isempty(path.root) && is_interactive
         menu = {};
 
         if ~isempty(path.fullparent)

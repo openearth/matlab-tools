@@ -1,25 +1,27 @@
-function varargout = xb_generate_nelayer(varargin)
-%XB_GENERATE_NELAYER  One line description goes here.
+function varargout = xb_getpref(varargin)
+%XB_GETPREF  Gets values for XBeach Toolbox preferences
 %
-%   More detailed description goes here.
+%   Gets values for XBeach Toolbox preferences and initlises default
+%   preferences if not done yet.
 %
 %   Syntax:
-%   varargout = xb_generate_nelayer(varargin)
+%   varargout = xb_getpref(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = list of preference names
 %
 %   Output:
-%   varargout =
+%   varargout = list of corresponding preference values
 %
 %   Example
-%   xb_generate_nelayer
+%   version = xb_getpref('version');
+%   [user pass] = xb_getpref('ssh_user', 'ssh_pass');
 %
-%   See also 
+%   See also xb_defpref, xb_setpref
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 Deltares
+%   Copyright (C) 2011 Deltares
 %       Bas Hoonhout
 %
 %       bas.hoonhout@deltares.nl	
@@ -48,7 +50,7 @@ function varargout = xb_generate_nelayer(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 01 Dec 2010
+% Created: 05 Jan 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -58,4 +60,15 @@ function varargout = xb_generate_nelayer(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% get xbeach preferences
+
+if ~ispref('xbeach'); set_defaults; end
+
+varargout = {};
+for i = 1:length(varargin)
+    if ispref('xbeach', varargin{i})
+        varargout{i} = getpref('xbeach', varargin{i});
+    else
+        varargout{i} = [];
+    end
+end

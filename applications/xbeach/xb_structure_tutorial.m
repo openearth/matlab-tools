@@ -61,8 +61,8 @@ xbo.data(2)
 xbo.data(1).value
 
 %%
+%  We can check if this really is a XBeach structure as follows:
 
-% check if this really is a XBeach structure
 xb_check(xbo.data(1).value)
 
 %%
@@ -191,3 +191,8 @@ xb = xb_consolidate(xb);
 
 % show it again
 xb_show(xb);
+
+%%
+% The links in the _xb_show_ result enable you to interactively modify and
+% query the displayed XBeach structure. Access to plotting and run routines
+% are also available.

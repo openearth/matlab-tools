@@ -171,6 +171,8 @@ fclose(fid);
 
 if OPT.ssh_prompt
     [OPT.ssh_user OPT.ssh_pass] = uilogin;
+elseif isempty(OPT.ssh_user) && isempty(OPT.ssh_pass)
+    [OPT.ssh_user OPT.ssh_pass] = xb_getpref('ssh_user', 'ssh_pass');
 end
 
 %% run model
