@@ -335,7 +335,7 @@ end
 
 % find elements that listen to changes of current element
 for i=1:length(params_array)
-    params_array(i).activates={};
+    params_array(i).affects={};
     for ii=1:length(params_array)
         tests='';
         for j=1:length(params_array(ii).condition)
@@ -349,7 +349,7 @@ for i=1:length(params_array)
             end
         end
         if regexp(tests,[ '(^|\W)' params_array(i).name '(\W|$)'])
-            params_array(i).activates{end+1}=params_array(ii).name;
+            params_array(i).affects{end+1}=params_array(ii).name;
         end
     end
 end
