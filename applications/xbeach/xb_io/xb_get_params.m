@@ -273,6 +273,8 @@ while ~feof(fid)
                     temprequired=true;
                 elseif strcmpi(strtrim(temprequired),'.false.');
                     temprequired=false;
+                else
+                    temprequired = convertfort2mat(temprequired);
                 end
             else
                 temprequired = false;
@@ -315,27 +317,11 @@ while ~feof(fid)
         elseif ~isempty(tif) && ~isempty(tthen)
             iflevel=iflevel+1;
             nowifcondition{iflevel} = ['(' line(4:end-5) ')'];  % we already know if and then are in correct positions
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'trim','');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.and\.',' AND ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.not\.',' NOT ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.or\.',' OR ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.gt\.',' > ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.ge\.',' >= ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.lt\.',' < ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.le\.',' <= ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'par%','par.');
+            nowifcondition{iflevel} = convertfort2mat(nowifcondition{iflevel});
             storeifcondition{iflevel} = nowifcondition{iflevel};
         elseif ~isempty(telseif) && ~isempty(tthen)
             nowifcondition{iflevel} = line(8:end-5);
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'trim','');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.and\.',' AND ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.not\.',' NOT ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.or\.',' OR ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.gt\.',' > ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.ge\.',' >= ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.lt\.',' < ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'\.le\.',' <= ');
-            nowifcondition{iflevel} = regexprep(nowifcondition{iflevel},'par%','par.');
+            nowifcondition{iflevel} = convertfort2mat(nowifcondition{iflevel});
             storeifcondition{iflevel}=[storeifcondition{iflevel} ' AND ' nowifcondition{iflevel}];
         elseif ~isempty(telse)
             nowifcondition{iflevel} = ['NOT[' storeifcondition{iflevel} ']'];
@@ -343,6 +329,27 @@ while ~feof(fid)
             nowifcondition(iflevel)=[];
             storeifcondition(iflevel)=[];
             iflevel=iflevel-1;
+        end
+    end
+end
+
+% find elements that listen to changes of current element
+for i=1:length(params_array)
+    params_array(i).activates={};
+    for ii=1:length(params_array)
+        tests='';
+        for j=1:length(params_array(ii).condition)
+            if isstr(params_array(ii).condition{j})
+                tests=[tests ' ' params_array(ii).condition{j}];
+            end
+        end
+        for j=1:length(params_array(ii).required)
+            if isstr(params_array(ii).required{j})
+                tests=[tests ' ' params_array(ii).required{j}];
+            end
+        end
+        if regexp(tests,[ '(^|\W)' params_array(i).name '(\W|$)'])
+            params_array(i).activates{end+1}=params_array(ii).name;
         end
     end
 end
@@ -359,3 +366,19 @@ for i=1:length(params_array)
 end
 
 fclose(fid);
+
+    function lineout = convertfort2mat(linein)
+        lineout = linein;
+        lineout = regexprep(lineout,'trim','');
+        lineout = regexprep(lineout,'\.and\.',' AND ');
+        lineout = regexprep(lineout,'\.not\.',' NOT ');
+        lineout = regexprep(lineout,'\.or\.',' OR ');
+        lineout = regexprep(lineout,'\.gt\.',' > ');
+        lineout = regexprep(lineout,'\.ge\.',' >= ');
+        lineout = regexprep(lineout,'\.lt\.',' < ');
+        lineout = regexprep(lineout,'\.le\.',' <= ');
+        lineout = regexprep(lineout,'par%','par.');
+    end
+        
+
+end
