@@ -62,7 +62,7 @@ function varargout = xb_getpref(varargin)
 
 %% get xbeach preferences
 
-if ~ispref('xbeach'); set_defaults; end
+if ~ispref('xbeach'); xb_defpref; end
 
 varargout = {};
 for i = 1:length(varargin)

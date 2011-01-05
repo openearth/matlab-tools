@@ -63,7 +63,7 @@ function xb_setpref(varargin)
 %% set xbeach preferences
 
 if ~ispref('xbeach') || isempty(varargin)
-    set_defaults;
+    xb_defpref;
 end
 
 for i = 2:2:length(varargin)
