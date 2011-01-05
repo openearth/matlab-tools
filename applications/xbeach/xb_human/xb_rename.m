@@ -66,8 +66,13 @@ function xb = xb_rename(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 if ~isempty([varargin{:}])
-    old = varargin(1:2:end);
-    new = varargin(2:2:end);
+    if length(varargin) == 1
+        old = varargin;
+        new = {input([varargin{1} ': '], 's')};
+    else
+        old = varargin(1:2:end);
+        new = varargin(2:2:end);
+    end
     
     for i = 1:length(new)
         idx = strcmpi(old{i}, {xb.data.name});

@@ -81,6 +81,9 @@ end
 if isempty(varargin)
     names = {};
     values = {};
+elseif length(varargin) == 1
+    names = varargin;
+    values = {input([names{1} ': '])};
 else
     l = length(varargin)-mod(length(varargin),2);
     names = varargin(1:2:l-1);

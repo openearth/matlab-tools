@@ -64,7 +64,7 @@ valid = true;
 
 if ~isstruct(xb)
     valid = false;
-elseif ~all(ismember({'data'}, fieldnames(xb)))
+elseif ~all(ismember({'date' 'type' 'function' 'data'}, fieldnames(xb)))
     valid = false;
 elseif ~all(ismember({'name', 'value'}, fieldnames(xb.data)))
     valid = false;
