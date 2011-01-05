@@ -377,7 +377,7 @@ fclose(fid);
         lineout = regexprep(lineout,'\.ge\.',' >= ');
         lineout = regexprep(lineout,'\.lt\.',' < ');
         lineout = regexprep(lineout,'\.le\.',' <= ');
-        lineout = regexprep(lineout,'par%','');
+        lineout = regexprep(lineout,'par%','par.'); 
     end
         
 
