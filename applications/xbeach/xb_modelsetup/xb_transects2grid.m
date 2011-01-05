@@ -65,7 +65,8 @@ function [xJ,yJ,zJ] = xb_transects2grid(transects)
 % $Keywords: $
 
 %%
-angle_m = 270-mean(transects.angle);
+angle_m = mean_angle(transects.angle);
+angle_m = 270-angle_m;
 xori = min(min(transects.x));
 yori = min(min(transects.y));
 [xr yr] = xb_grid_world2xb(transects.x, transects.y, xori, yori, -angle_m);
