@@ -4,8 +4,8 @@ function [h Hs Tp] = bc_normstorm(varargin)
 %   Returns normative storm conditions for the Dutch coast (WL|Delft
 %   Hydraulics, 2007, project H4357, product 3) given a certain frequency
 %   of occurrence and a location. Locations can be provided by an RD
-%   coordinate or WGS84 coordinate. Strings are interpreted as location
-%   names and translated to coordinates using Google Maps. Data is
+%   coordinate or WGS84 coordinate or JARKUS id. Strings are interpreted as
+%   location names and translated to coordinates using Google Maps. Data is
 %   interpolated over the lines connecting the points with known data. The
 %   point on the line nearest to the requested point is used. If no
 %   location is provided, results for all known point is given.
@@ -16,7 +16,7 @@ function [h Hs Tp] = bc_normstorm(varargin)
 %   Input:
 %   varargin  = freq:       Normative frequency of occurrence
 %               loc:        Location along Dutch coast (RD/WGS84
-%                           coordinates or location name)
+%                           coordinates, jarkus id or location name)
 %               loc_type:   Type of coordinates to use (RD/WGS84)
 %               threshold:  Threshold interpolation distance to show
 %                           warning
@@ -131,11 +131,19 @@ Tp = alpha+beta.*Hs([1 3]);
 %% interpolate to specific location
 
 if ischar(OPT.loc)
+    % translate with Google Maps
     name = [OPT.loc ', Nederland'];
     OPT.loc = str2coord([name ', Nederland']);
+    OPT.loc_type = 'RD';
     if isempty(OPT.loc)
         warning(['Location not found [' name ']']);
     end
+elseif length(OPT.loc) == 1
+    % translate with jarkus data
+    j = jarkus_transects('id', OPT.loc, 'output', {'x' 'y' 'cross_shore'});
+    [m i] = min(abs(j.cross_shore));
+    OPT.loc = [j.x(i) j.y(i)];
+    OPT.loc_type = 'RD';
 end
 
 % convert coordinates
