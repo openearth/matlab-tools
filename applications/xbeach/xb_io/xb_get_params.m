@@ -208,10 +208,11 @@ while ~feof(fid)
         tendif=findstr('endif',line(1:min(5,end)));
         if (~isempty(t21) && ~isempty(t22) && ~isempty(t23))
             % Okay, it's readkey, but what type?
-            t22r=findstr('readkey_dbl',line);
-            t22i=findstr('readkey_int',line);
-            t22s=findstr('readkey_str',line);
-            t22n=findstr('readkey_name',line);
+            t22r=findstr('readkey_dbl(',line);
+            t22i=findstr('readkey_int(',line);
+            t22s=findstr('readkey_str(',line);
+            t22n=findstr('readkey_name(',line);
+            t22rv=findstr('readkey_dblvec(',line);
             t22req=findstr('required=',line);
             % Reset values
             tempdef=[];
@@ -231,37 +232,37 @@ while ~feof(fid)
             t24=findstr('par%',line);
             t25=findstr(',',line);
             t26=findstr(')',line);
-            tempname = strtrim(line(t24+4:t21-1));
-            if isempty(t22n)  % not for readkey_name
+            
+                      
+            if (~isempty(t22r) || ~isempty(t22i))  % readkey_dbl & readkey_int
+                tempname = strtrim(line(t24+4:t21-1));
                 tempdef  = line(t25(2)+1:t25(3)-1);
-            else
-                tempdef = [];
-            end
-                       
-            if (~isempty(t22r) || ~isempty(t22i))
-                if ~isempty(findstr(tempdef,'par%'))
-                    tempdef=strtrim(tempdef);
-                    tempdef = regexprep(tempdef,'par%','par.');
-                else
-                    tempdef=str2num(tempdef);
-                end
-                tempmin  = str2num(line(t25(3)+1:t25(4)-1));
+                tempdef = parsestringtonumber(tempdef);
+                tempmin  = parsestringtonumber(line(t25(3)+1:t25(4)-1));
                 if length(t25)>4
-                    tempmax  = str2num(line(t25(4)+1:min(t25(5),t26(1))-1));
+                    tempmax  = parsestringtonumber(line(t25(4)+1:min(t25(5),t26(end))-1));
                 else
-                    tempmax  = str2num(line(t25(4)+1:t26(1)-1));
+                    tempmax  = parsestringtonumber(line(t25(4)+1:t26(end)-1));
                 end
-                
-            elseif ~isempty(t22s)
+            elseif ~isempty(t22s)  % readkey_str
                 tempname = strtrim(line(t24+4:t21-1));
                 tempdef  = line(t25(2)+1:t25(3)-1);
                 tempdef(tempdef=='''')=[];
                 tempdef = regexprep(tempdef,'par%','par.');
                 tempallowed = allowed;
-                
-                % do something with strings
-            elseif ~isempty(t22n)
+            elseif ~isempty(t22n)   % readkey_name
+                tempname = strtrim(line(t24+4:t21-1));
+                tempdef = [];
                 % do something with names
+            elseif ~isempty(t22rv)
+                tempname = strtrim(line(t24+4:t21-1));
+                tempdef  = parsestringtonumber(line(t25(4)+1:t25(5)-1));
+                tempmin  = parsestringtonumber(line(t25(5)+1:t25(6)-1));
+                if length(t25)>6
+                    tempmax  = parsestringtonumber(line(t25(6)+1:min(t25(7),t26(end))-1));
+                else
+                    tempmax  = parsestringtonumber(line(t25(6)+1:t26(end)-1));
+                end
             end
             if ~isempty(t22req)
                 if strcmp(line(t22req+9),'(') 
@@ -332,23 +333,42 @@ while ~feof(fid)
         end
     end
 end
+% make list of elements that affect current element
+affectedby=cell(length(params_array),1);
+for ii=1:length(params_array)
+    affectedby{ii}='';
+    for j=1:length(params_array(ii).condition)
+        if isstr(params_array(ii).condition{j})
+            affectedby{ii}=[affectedby{ii} ' ' params_array(ii).condition{j}];
+        end
+    end
+    for j=1:length(params_array(ii).required)
+        if isstr(params_array(ii).required{j})
+            affectedby{ii}=[affectedby{ii} ' ' params_array(ii).required{j}];
+        end
+    end
+    for j=1:length(params_array(ii).default)
+        if isstr(params_array(ii).default{j})
+            affectedby{ii}=[affectedby{ii} ' ' params_array(ii).default{j}];
+        end
+    end
+    for j=1:length(params_array(ii).minval)
+        if isstr(params_array(ii).minval{j})
+            affectedby{ii}=[affectedby{ii} ' ' params_array(ii).minval{j}];
+        end
+    end
+    for j=1:length(params_array(ii).maxval)
+        if isstr(params_array(ii).maxval{j})
+            affectedby{ii}=[affectedby{ii} ' ' params_array(ii).maxval{j}];
+        end
+    end
+end
 
 % find elements that listen to changes of current element
 for i=1:length(params_array)
     params_array(i).affects={};
     for ii=1:length(params_array)
-        tests='';
-        for j=1:length(params_array(ii).condition)
-            if isstr(params_array(ii).condition{j})
-                tests=[tests ' ' params_array(ii).condition{j}];
-            end
-        end
-        for j=1:length(params_array(ii).required)
-            if isstr(params_array(ii).required{j})
-                tests=[tests ' ' params_array(ii).required{j}];
-            end
-        end
-        if regexp(tests,[ '(^|\W)' params_array(i).name '(\W|$)'])
+        if regexp(affectedby{ii},[ '(^|\W)' params_array(i).name '(\W|$)'])
             params_array(i).affects{end+1}=params_array(ii).name;
         end
     end
@@ -378,6 +398,16 @@ fclose(fid);
         lineout = regexprep(lineout,'\.lt\.',' < ');
         lineout = regexprep(lineout,'\.le\.',' <= ');
         lineout = regexprep(lineout,'par%','par.'); 
+    end
+
+    function lineout = parsestringtonumber(linein)
+        lineout=linein;
+        if ~isempty(findstr(lineout,'par%'))
+            lineout=strtrim(lineout);
+            lineout = regexprep(lineout,'par%','par.');
+        else
+            lineout=str2num(lineout);
+        end
     end
         
 
