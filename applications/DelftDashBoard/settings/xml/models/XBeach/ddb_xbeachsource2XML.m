@@ -62,6 +62,12 @@ function ddb_xbeachsource2XML
 %% Options
 XMLmat='off';
 
+%% XML directory
+xmlp=[fileparts(mfilename('fullpath')) filesep];
+
+%% Remove old xmls
+delete([xmlp '*.xml']);
+
 %% Read XBeach source code
 % normal input
 [par params_array] = xb_get_params;
@@ -163,7 +169,7 @@ HS.menu.menusavefile(4).menuitem.callback='ddb_editXBeachDescription';
 HS.menu.menusavefile(4).menuitem.option='save';
 
 % save to file
-xml_save('XBeach.xml',HS,XMLmat);
+xml_save([xmlp 'XBeach.xml'],HS,XMLmat);
 
 %% Write XML Toolbox file
 
@@ -248,7 +254,7 @@ for i=1:length(index)
                 end
                 if ~strcmpi(Sub(1).element.tag,'bogus')
                     % save xml subtab
-                    xml_save(['XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);
+                    xml_save([xmlp 'XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);
                     % Make tabs in supertab
                     count=count+1;
                     S.element.tabs(count).tab.tag=Par.(index{i}).(index2{ii}).longname;
@@ -305,7 +311,7 @@ for i=1:length(index)
                 makeElementType;
             end
             % save advanced tab
-            xml_save(['XBeach.' index{i} '.Advanced_' num2str(itabs) '.xml'],Sub,XMLmat);
+            xml_save([xmlp 'XBeach.' index{i} '.Advanced_' num2str(itabs) '.xml'],Sub,XMLmat);
             % Make tabs in supertab
             count=count+1;
             S.element.tabs(count).tab.tag=[index{i} '_advanced_options' num2str(itabs)];
@@ -321,7 +327,7 @@ for i=1:length(index)
             pstart=pstart+length(POS);
         end
         % save process tab
-        xml_save(['XBeach.' index{i} '.xml'],S,XMLmat);
+        xml_save([xmlp 'XBeach.' index{i} '.xml'],S,XMLmat);
     end
 end
 
@@ -362,7 +368,7 @@ for i=1:length(index)
                 end
                 if ~strcmpi(Sub(1).element.tag,'bogus')
                     % save xml subtab
-                    xml_save(['XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);
+                    xml_save([xmlp 'XBeach.' index{i} '.' index2{ii} '.xml'],Sub,XMLmat);
                     % Make tabs in supertab
                     count=count+1;
                     S.element.tabs(count).tab.tag=Par.(index{i}).(index2{ii}).longname;
@@ -379,7 +385,7 @@ for i=1:length(index)
             end
         end
         % save process tab
-        xml_save(['XBeach.' index{i} '.xml'],S,XMLmat);
+        xml_save([xmlp 'XBeach.' index{i} '.xml'],S,XMLmat);
     end
 end
 
