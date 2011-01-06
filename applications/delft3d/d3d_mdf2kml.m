@@ -126,7 +126,7 @@ kmlFiles{end+1} = [filename(MDF.keywords.filcco),'_3D.kml'];
 if OPT.dry
     try
         D = delft3d_io_dry('read' ,MDF.keywords.fildry);
-        nr = length(D.m);
+        nr = length(D.m1);
     catch
         error('No dry points found...')
     end
@@ -148,8 +148,9 @@ if OPT.dry
         yDry{i} = y1';
     end
     
-    [m,n]=size([xDry{:}]);
-    z = mat2cell(repmat(OPT.ddep+1, size([xDry{:}])),m,repmat(1,n,1));
+%     [m,n]=size([xDry{:}]);
+%     z = mat2cell(repmat(OPT.ddep+1, size([xDry{:}])),m,repmat(1,n,1));
+    z = cellfun(@(x) ones(size(x))+OPT.ddep,xDry,'UniformOutput',false);
     
     kmlFiles{end+1} = 'drypoints.kml';
     KMLpatch3(yDry,xDry,z,'fileName',kmlFiles{end},'fillColor',OPT.dryColor,'fillAlpha',0.8,'kmlName','drypoints');
