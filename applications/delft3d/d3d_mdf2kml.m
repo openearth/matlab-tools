@@ -15,10 +15,10 @@ function OPT = d3d_mdf2kml(mdf,varargin)
 %   dry       = switch for dry points output (true/false)
 %   thd       = switch for thin dams output (true/false)
 %   kmz       = switch for saving to kmz (true/false)
-%
-%
+% 
 %   Example
-%   d3d_mdf2kml()
+%   OPT = d3d_mdf2kml;
+%   The output structure OPT will give you all possible keyword-value pairs
 %
 %   See also DELTF3D_GRD2KML
 
@@ -66,16 +66,6 @@ function OPT = d3d_mdf2kml(mdf,varargin)
 
 %% Handle input arguments
 
-if ~exist(mdf,'file')
-    error('mdf file does not exist')
-    return
-end
-
-[pathstr,name,ext,versn] = fileparts(mdf);
-if isempty(pathstr)
-    pathstr = pwd;
-end
-
 OPT.epsg        = 4326;             % epsg-code: 28992; % 7415; % 28992; ['Amersfoort / RD New']
 OPT.ddep        = 10;               % height offset
 OPT.grdColor    = [0.7 0.7 0.7];    % color of grid lines
@@ -87,8 +77,23 @@ OPT.thd         = false;            % switch for thin dams
 OPT.thdColor    = [0 1 0];          % color for thin dams
 OPT.thdWidth    = 2;                % width of thin dams
 OPT.kmz         = false;            % switch for output to kmz
+OPT.dep3D       = false;            % for 3D view of bathymetry. NB: by using this option, drypoints and thindams can get invisible because they are below the bathymetry.
 
 OPT = setproperty(OPT,varargin{:});
+
+if nargin==0
+    return
+end
+
+if ~exist(mdf,'file')
+    error('mdf file does not exist')
+    return
+end
+
+[pathstr,name,ext,versn] = fileparts(mdf);
+if isempty(pathstr)
+    pathstr = pwd;
+end
 
 %% Read mdf-file
 MDF = delft3d_io_mdf('read',mdf);
@@ -118,9 +123,14 @@ else
     OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf);
 end
 
-kmlFiles{end+1} = [filename(MDF.keywords.filcco),'_3D.kml'];
-% delete([filename(MDF.keywords.filcco),'_3D.kml']);
-% delete([filename(MDF.keywords.filcco),'_3D_ver_lft.png']);
+if OPT.dep3D
+    kmlFiles{end+1} = [filename(MDF.keywords.filcco),'_3D.kml'];
+    delete([filename(MDF.keywords.filcco),'_2D.kml']);
+else
+    kmlFiles{end+1} = [filename(MDF.keywords.filcco),'_2D.kml'];
+    delete([filename(MDF.keywords.filcco),'_3D.kml']);
+    delete([filename(MDF.keywords.filcco),'_3D_ver_lft.png']);
+end
 
 %% Process dry points
 if OPT.dry
