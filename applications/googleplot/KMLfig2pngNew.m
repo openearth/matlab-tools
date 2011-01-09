@@ -60,7 +60,7 @@ OPT.ha                 =     []; % handle to axes
 OPT.hf                 =     []; % handle to figure
 OPT.dim                =    256; % tile size in pixels
 OPT.dimExt             =     16; % render tiles expanded by n pixels, to remove edge effects
-OPT.bgcolor            = [100 155 100];  % background color to be made transparent
+OPT.bgcolor            = [100 155 100];  % faux background color to be made transparent
 OPT.alpha              =      1;
 OPT.fileName           =     []; % relative filename, incl relative subpath
 OPT.basePath           =     ''; % absolute path where to write kml files (will not appear inside kml, those remain relative)
@@ -81,16 +81,16 @@ OPT.drawOrder          =      1;
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
 OPT.description        =     ''; 
 OPT.colorbar           =   true;
-OPT.CBcolorbarlocation = {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
-OPT.CBcolorbartitle    = '';
+OPT.CBcolorbarlocation =  {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
+OPT.CBcolorbartitle    =     '';
 OPT.mergeExistingTiles =   true; % does not work when changing dim
 OPT.printTiles         =   true;
 OPT.joinTiles          =   true;
 OPT.makeKML            =   true;
-OPT.basecode           = '';
-OPT.highestLevel       = [];
-OPT.lowestLevel        = [];
-OPT.debug              = 0;  % display some progress info
+OPT.basecode           =     '';
+OPT.highestLevel       =     [];
+OPT.lowestLevel        =     [];
+OPT.debug              =      0;  % display some progress info
 OPT.open               = 0; % KML_header 
 OPT.visible            = 1; % KML_header
 
@@ -129,7 +129,7 @@ if OPT.makeKML
     multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML'    ,'color',[0.9 0.4 0.1])
 end
 
-%% make sure you always see somehting in GE, even at really low lowestLevel
+%% make sure you always see something in GE, even at really low lowestLevel
 if OPT.lowestLevel <= OPT.highestLevel 
    disp(['OPT.lowestLevel (',num2str(OPT.lowestLevel),') set to OPT.highestLevel (',num2str(OPT.highestLevel ),') + 1 = ',num2str(OPT.highestLevel+1)])
    OPT.lowestLevel = OPT.highestLevel + 1;
@@ -137,15 +137,17 @@ end
 
 OPT.highestLevel  = max(OPT.highestLevel,1);
 
-%% set maxLod and minLod defaults
+%% set tile margins
+% determines how much extra data to pass on to tiles to avoid holes in the
+% plotted mesh at tile boundaries. Defaults to 20% on all sides
 if  isempty(OPT.dWE)
-    OPT.dWE           = 0.2*360/(2^OPT.lowestLevel); % determines how much extra data to tiles to be able 
-end
+    OPT.dWE           = 0.2*360/(2^OPT.lowestLevel);  
+end                                                  
 if isempty(OPT.dNS)
-    OPT.dNS           = 0.2*360/(2^OPT.lowestLevel); % to generate them as fraction of size of smalles tile
+    OPT.dNS           = 0.2*360/(2^OPT.lowestLevel); 
 end
     
-    
+%% set maxLod and minLod defaults   
 if isempty(OPT.minLod),                 OPT.minLod = round(  OPT.dim/1.5); end
 if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = round(2*OPT.dim/1.5); end % you see 1 layers always
 if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = round(4*OPT.dim/1.5); end % you see 2 layers, except when fully zoomed in
@@ -209,15 +211,15 @@ else
 end
 
 %% figure settings
-
+% Some settings for the figure to make sure it is printed correctly
 OPT.ha  = get(OPT.h ,'Parent');
 OPT.hf  = get(OPT.ha,'Parent');
 daspect(OPT.ha,'auto') % repair effect of for instance axislat()
 
-          set(OPT.ha,'Position',[0 0 1 1])
-          set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
-          [0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
-          'color',OPT.bgcolor/255,'InvertHardcopy','off');
+set(OPT.ha,'Position',[0 0 1 1])
+set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
+[0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
+'color',OPT.bgcolor/255,'InvertHardcopy','off');
 
 %% run scripts (These are the core functions)
 %  some more background info: http://www.realityprima.comn/articles/how-google-earth-really-works
