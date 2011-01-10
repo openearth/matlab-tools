@@ -172,7 +172,7 @@ if ~isempty(vars)
 
         % link xbeach substructs
         if xb_check(var)
-            if is_interactive
+            if ~isempty(path.root) && is_interactive
                 cmd = sprintf('matlab:xb_show(%s, ''%s'');', path.root, child);
                 class = ['<a href="' cmd '">nested</a>    '];
             else
