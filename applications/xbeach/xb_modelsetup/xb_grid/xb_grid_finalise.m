@@ -169,7 +169,7 @@ zt = NaN*zeros(size(x,1), size(x,2)+OPT.n);
 zt(:,1:OPT.n) = OPT.zmin;
 zt(:,OPT.n+1:end) = z; 
 % extended xbeach grid
-xn = [ x(1,1)-[-1:-1:-dn]*dxoff x(1,:)+dn*dxoff ]; 
+xn = [ x(1,1)+[-dn:1:-1]*dxoff x(1,:)]; 
 [xn,yn] = meshgrid(xn,y(:,1));
 % temporary xbeach grid
 xt = [xn(1,1:OPT.n) x(1,:)+dn*dxoff]; 
