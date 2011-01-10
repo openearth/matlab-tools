@@ -230,23 +230,25 @@ else
 end
 
 % interpolate nan's
-for i = 1:size(zgrid, 1)
-    notnan = ~isnan(zgrid(i,:));
-    if any(~notnan) && sum(notnan) > 1
-        zgrid(i,~notnan) = interp1(xgrid(i,notnan), zgrid(i,notnan), xgrid(i,~notnan));
-        negrid(i,~notnan) = OPT.zdepth+zgrid(i,~notnan);
-    end
-    
-    j = find(~isnan(zgrid(i,:)), 1, 'first');
-    if ~isempty(j) && j > 1
-        zgrid(i,1:j-1) = zgrid(i,j);
-        negrid(i,1:j-1) = OPT.zdepth+zgrid(i,j);
-    end
-    
-    j = find(~isnan(zgrid(i,:)), 1, 'last');
-    if ~isempty(j) && j < size(zgrid, 2)
-        zgrid(i,j+1:end) = zgrid(i,j);
-        negrid(i,j+1:end) = OPT.zdepth+zgrid(i,j);
+if (~islogical(OPT.crop) && isvector(OPT.crop)) || (islogical(OPT.crop) && OPT.crop)
+    for i = 1:size(zgrid, 1)
+        notnan = ~isnan(zgrid(i,:));
+        if any(~notnan) && sum(notnan) > 1
+            zgrid(i,~notnan) = interp1(xgrid(i,notnan), zgrid(i,notnan), xgrid(i,~notnan));
+            negrid(i,~notnan) = OPT.zdepth+zgrid(i,~notnan);
+        end
+
+        j = find(~isnan(zgrid(i,:)), 1, 'first');
+        if ~isempty(j) && j > 1
+            zgrid(i,1:j-1) = zgrid(i,j);
+            negrid(i,1:j-1) = OPT.zdepth+zgrid(i,j);
+        end
+
+        j = find(~isnan(zgrid(i,:)), 1, 'last');
+        if ~isempty(j) && j < size(zgrid, 2)
+            zgrid(i,j+1:end) = zgrid(i,j);
+            negrid(i,j+1:end) = OPT.zdepth+zgrid(i,j);
+        end
     end
 end
 
@@ -258,20 +260,22 @@ elseif OPT.finalise
 end
 
 % adapt nelayer to finalised grid
-if ~isempty(OPT.ne)
-    d1 = size(zgrid, 1) - size(negrid, 1); d11 = floor(d1/2); d12 = ceil(d1/2);
-    d2 = size(zgrid, 2) - size(negrid, 2); d21 = floor(d2/2); d22 = ceil(d2/2);
-    
-    if d1 < 0
-        negrid = negrid(d11+1:end-d12,:);
-    elseif d1 > 0
-        negrid = [repmat(negrid(1,:), d11, 1) ; negrid ; repmat(negrid(end,:), d12, 1)];
-    end
-    
-    if d2 < 0
-        negrid = negrid(:,d21+1:end-d22);
-    elseif d2 > 0
-        negrid = [repmat(negrid(:,1), 1, d21) negrid repmat(negrid(:,end), 1, d12)];
+if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise) && OPT.finalise)
+    if ~isempty(OPT.ne)
+        d1 = size(zgrid, 1) - size(negrid, 1); d11 = floor(d1/2); d12 = ceil(d1/2);
+        d2 = size(zgrid, 2) - size(negrid, 2); d21 = floor(d2/2); d22 = ceil(d2/2);
+
+        if d1 < 0
+            negrid = negrid(d11+1:end-d12,:);
+        elseif d1 > 0
+            negrid = [repmat(negrid(1,:), d11, 1) ; negrid ; repmat(negrid(end,:), d12, 1)];
+        end
+
+        if d2 < 0
+            negrid = negrid(:,d21+1:end-d22);
+        elseif d2 > 0
+            negrid = [repmat(negrid(:,1), 1, d21) negrid repmat(negrid(:,end), 1, d12)];
+        end
     end
 end
 

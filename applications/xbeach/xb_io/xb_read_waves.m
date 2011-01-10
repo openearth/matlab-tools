@@ -172,6 +172,7 @@ while ~feof(fid)
 
     tlength = tlength + 1;
 end
+fclose(fid);
 
 names = [names {'duration' 'timestep'}];
 values = [values {duration timestep}];

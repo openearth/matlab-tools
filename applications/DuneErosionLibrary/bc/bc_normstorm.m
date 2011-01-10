@@ -130,22 +130,6 @@ Tp = alpha+beta.*Hs([1 3]);
 
 %% interpolate to specific location
 
-if ischar(OPT.loc)
-    % translate with Google Maps
-    name = [OPT.loc ', Nederland'];
-    OPT.loc = str2coord([name ', Nederland']);
-    OPT.loc_type = 'RD';
-    if isempty(OPT.loc)
-        warning(['Location not found [' name ']']);
-    end
-elseif length(OPT.loc) == 1
-    % translate with jarkus data
-    j = jarkus_transects('id', OPT.loc, 'output', {'x' 'y' 'cross_shore'});
-    [m i] = min(abs(j.cross_shore));
-    OPT.loc = [j.x(i) j.y(i)];
-    OPT.loc_type = 'RD';
-end
-
 % convert coordinates
 switch OPT.loc_type
     case 'RD'
@@ -154,6 +138,27 @@ switch OPT.loc_type
         % do nothing
     otherwise
         warning(['Coordinate type unknown, using WGS84 [' OPT.loc_type ']']);
+end
+
+% determine location
+if ischar(OPT.loc)
+    
+    % translate with Google Maps
+    name = [OPT.loc ', Nederland'];
+    OPT.loc = str2coord([name ', Nederland']);
+    OPT.loc_type = 'RD';
+    if isempty(OPT.loc)
+        warning(['Location not found [' name ']']);
+    end
+    
+elseif length(OPT.loc) == 1 && all(OPT.loc > 1e6)
+    
+    % translate with jarkus data
+    j = jarkus_transects('id', OPT.loc, 'output', {'x' 'y' 'cross_shore'});
+    [m i] = min(abs(j.cross_shore));
+    OPT.loc = [j.x(i) j.y(i)];
+    OPT.loc_type = 'RD';
+    
 end
 
 if OPT.plot
