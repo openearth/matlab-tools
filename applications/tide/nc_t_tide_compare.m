@@ -5,7 +5,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
 %
 % plots the results from a tidal analysis performed by
 % NC_T_TIDE. ncmodel and ncdata are pairwise linked lists 
-% of netCDF files (obtained with e.g. OPENDAP_CATALOG).
+% of netCDF files (obtained with e.g. OPENDAP_CATALOG and sorted).
 %
 % See also: T_TIDE, NC_T_TIDE, OPENDAP_CATALOG
 
@@ -155,7 +155,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
       %% SCATTER lay-out
 
-         subplot(1,2,1)
+        subplot(1,2,1)
          xlims = [5e-3 1];
          ylims = [5e-3 1];
          plot(xlims,     ylims,'-k')
@@ -174,7 +174,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
          title([char(D.station_name),' (',char(D.station_id),') [',num2str(D.longitude),'\circ E, ',num2str(D.latitude),'\circ N]'])
          
-         subplot(1,2,2)
+        subplot(1,2,2)
          xlims = [0 360];
          ylims = [0 360];
          for ddeg = [0 -360 360]
@@ -196,14 +196,14 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          title([{datestr(udunits2datenum(M.period(  1),Ma.period.units),0),...
                  datestr(udunits2datenum(M.period(end),Ma.period.units),0)}])
          
-         if OPT.export
+        if OPT.export
          text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
          basename = [OPT.directory,filesep,'scatter',filesep,filename(ncmodel{ifile})];
          print2screensizeoverwrite([basename,'_scatter.png'])
         %print2screensizeeps      ([basename,'_scatter.eps'])
-         end
+        end
          
-         disp(['processed station file ',num2str(ifile,'%0.4d'),' of ',num2str(nfiles,'%0.4d')])
+        disp(['processed station file ',num2str(ifile,'%0.4d'),' of ',num2str(nfiles,'%0.4d')])
 
       end % OPT.plot.scatter
 

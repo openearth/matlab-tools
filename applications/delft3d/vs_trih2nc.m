@@ -75,7 +75,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
          ncfile   = varargin{1};
          varargin = {varargin{2:end}};
       else
-         ncfile   = fullfile(fileparts(vsfile),[filename(vsfile) '.nc']);
+         runid  = filename(vsfile); runid = runid(6:end); % remove 'trih-'
+         ncfile = fullfile(fileparts(vsfile),[runid,'_his.nc']); % '_his' is same same as Delft3D-FM
       end
 
       OPT      = setproperty(OPT,varargin{:});

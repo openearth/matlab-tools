@@ -16,16 +16,15 @@ function PRINT2SCREENSIZEOVERWRITE(fname,varargin)
 % THE SAME IMAGE WITH BETTER RESOLUTION REQUIRES 
 % THEREFORE AN EQUAL INCREASE OF BOTH width AND resolution !!
 %
-% dw and dh can be specified as integers to 
-% mend small rounding errors that make the image
-% a few pixles of the required size.
+% dw and dh can be specified as integers to mend small rounding 
+% errors that make the image a few pixles off the required 
+% size (e.g. to have exact 640x480 or 1024x768 movies).
 %       
-% make sure the SAME resolution is present in
-% the papersize and in the print resolution
+% Make sure the SAME resolution is present in
+% the papersize and in the print resolution.
 %
-% Noteh that with very low resolution (1) 
-% linewidth cannot be displayed 
-% and all lines have the same width.
+% Note that with very low resolution (1) linewidth cannot 
+% be displayed and all lines have the same width.
 %
 % Creates directory of if filename it doesn't exist yet.
 %
@@ -65,19 +64,18 @@ function PRINT2SCREENSIZEOVERWRITE(fname,varargin)
 
 
    %% where overwrite_append can be 
-   %% 'o' = overwrite
-   %% 'c' = cancel
-   %% 'p' = prompt (default, after which o/a/c can be chosen)
-   %% 'a' = append (no recommended as HDF is VERY inefficient 
-   %%               due to disk space fragmentation when appending data.)
-   %% -------------------------
+   %  'o' = overwrite
+   %  'c' = cancel
+   %  'p' = prompt (default, after which o/a/c can be chosen)
+   %  'a' = append (no recommended as HDF is VERY inefficient 
+   %                due to disk space fragmentation when appending data.)
 
    overwrite_append  = 'p'; % prompt
    resolution        = 120;
    imageformat       = '-dpng'; % '-depsc
 
-% adjust size a little bit to
-% overcome rounding errors by matlab
+  % adjust size a little bit to
+  % overcome rounding errors by matlab
 
 %% Input
 
@@ -125,7 +123,6 @@ Shortside   = (( height) + dh)./resolution;
 % end
 
    %% Paper settings
-   %% --------------
 
    set(gcf,...
        'PaperUnits'      ,'inches',...

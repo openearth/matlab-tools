@@ -80,14 +80,19 @@ function varargout = analyseHis(varargin)
 % $HeadURL$
 % $Keywords: $
 
-   OPT.nc      = '';
-   OPT.datelim = [];
-   OPT.datestr = 'mmm'; % for timeaxis
-   OPT.datefmt = 'yyyy-mm-dd'; %  make empty if you do not want date in filename
-   OPT.t_tide  = 1;
+   OPT.nc          = '';
+   OPT.datelim     = [];
+   OPT.datestr     = 'mmm'; % for timeaxis
+   OPT.datefmt     = 'yyyy-mm-dd'; %  make empty if you do not want date in filename
+   OPT.t_tide      = 1;
+   OPT.label       = '';
+   OPT.names       = {}; % id names of stations to include
 
-   OPT.pause   = 0;
+   OPT.pause       = 0;
+   OPT.standard_name = 'sea_surface_height';
    
+switch OPT.standard_name
+case 'sea_surface_height'
    OPT.ncbase      = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_surface_height';
    OPT.ylim        = [-2 2.5];
    OPT.varname     = 'sea_surface_height';
@@ -96,6 +101,7 @@ function varargout = analyseHis(varargin)
    OPT.hislatname  = nan;
    OPT.hislonname  = nan;
 
+case 'water_volume_transport_into_sea_water_from_rivers'
    OPT.ncbase      = '';
    OPT.ylim        = [-2 2].*1e5;
    OPT.varname     = 'Q';
@@ -103,6 +109,7 @@ function varargout = analyseHis(varargin)
    OPT.hisnamename = 'cross_section_name';
    OPT.hislatname  = nan;
    OPT.hislonname  = nan;
+end
 
    % for nc_t_tide_compare
    
@@ -131,9 +138,9 @@ function varargout = analyseHis(varargin)
 %% load model data
 % TO DO: [M,meta]   = nc_cf_stationTimeSeries(OPT.nc,OPT.hisname,'period',OPT.datelim([1 end]))
 
-   M.datenum       =         nc_cf_time(OPT.nc,'time');
+   M.datenum       =         nc_cf_time(OPT.nc,'time'); % USE nc_cf_time_range()
    M.(OPT.varname) =         nc_varget (OPT.nc,OPT.hisname);
-   M.name          = cellstr(nc_varget (OPT.nc,OPT.hisnamename))
+   M.name          = cellstr(nc_varget (OPT.nc,OPT.hisnamename)); % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
    M.lon           = nan;
    M.lat           = nan;
    meta.(OPT.varname).units = nc_attget(OPT.nc,OPT.hisname,'units'); % in case there is no data
@@ -145,64 +152,70 @@ function varargout = analyseHis(varargin)
    FIG(1) = figure('name','time series','position',[100   300   560   420]);
    FIG(2) = figure('name','scatter'    ,'position',[668   300   560   420]);
    
-   nc_t_tide_data  = {};
-   nc_t_tide_model = {};
+   nc_t_tide_datas  = {};
+   nc_t_tide_models = {};
 
-for ist=1:length(M.name)
+for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names)
     
-  disp(['Processing ',M.name{ist}])
+  disp(['>> Processing ',M.name{ist}])
   
   if ~isempty(OPT.ncbase)
     
 %%  find and load associated observational data
-    
- % TODO replace (i) by more intelligent query based on location, or 
- %             (ii) full netCDF url as name of observation point for direct retrieval
- [bool,ind] = strfindb(dataurls,upper(M.name{ist}));
-  dataurl   = dataurls{bool};
- [D,meta]   = nc_cf_stationTimeSeries(dataurl,OPT.varname,'period',OPT.datelim([1 end]));
+   % TODO replace (i) by more intelligent query based on location, or 
+   %             (ii) full netCDF url as name of observation point for direct retrieval
+     [bool,ind] = strfindb(dataurls,upper(M.name{ist}));
+      dataurl   = dataurls{bool};
+     [D,meta]   = nc_cf_stationTimeSeries(dataurl,OPT.varname,'period',OPT.datelim([1 end])); % returns lon and lat
+     % copy meta-data that is not in model output (yet ...)
+     M.lon          = D.lon;
+     M.lat          = D.lat;
+     M.station_id   = D.station_id;
+     M.station_name = D.station_name;
   else
-     D.datenum      = [];
-     D.station_id   = char(M.name{ist});
-     D.station_name = char(M.name{ist});
-     D.lat          = M.lat;
-     D.lon          = M.lon;
+     D.datenum       = [];
+     D.(OPT.varname) = [];
+    %D.station_id    = char(M.name{ist});
+    %D.station_name  = char(M.name{ist});
+    %D.lat           = M.lat;
+    %D.lon           = M.lon;
   end
    
-%%  process only if observational data present
   OPT.ext = [datestr(OPT.datelim(1),OPT.datefmt),'_',datestr(OPT.datelim(end),OPT.datefmt)];
-  if length(OPT.ext)>1
-     OPT.ext = [OPT.ext,'_']
-  else
+  if length(OPT.ext)==1
      OPT.ext = '';
   end
+  
+  OPT.txt = mktex({['Created with OpenEarthTools <www.OpenEarth.eu> ',OPT.ext],...
+                   ['model: ',filename(OPT.nc),' & data:',OPT.ncbase]}); % ,' @ ',datestr(now,'yyyy-mmm-dd')
    
-  if ~isempty(D.datenum)
+%%  process only if observational data is present
+
+ if ~isempty(D.datenum)
    
     %% interpolate model to data times
-
-    DM.(OPT.varname) = interp1(M.datenum,M.(OPT.varname)(:,ist),D.datenum)';
+    DM.(OPT.varname) = interp1(M.datenum,M.(OPT.varname)(:,ist),D.datenum)';  % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
     
 %% plot timeseries difference
 
-    figure(FIG(1));clf
+    figure(FIG(1));subplot_meshgrid(1,1,.05,.05);clf
     
     plot    (D.datenum,DM.(OPT.varname) - D.(OPT.varname),'g','DisplayName','model - data')
     legend  ('Location','NorthEast')
-    title   (M.name{ist})
+    title   ([OPT.label,char(D.station_name),' (',char(D.station_id),') [',num2str(D.lon),'\circ E, ',num2str(D.lat),'\circ N]'])
     grid on
     ylim    (OPT.ylim)
     ylabel  (['\eta [',meta.(OPT.varname).units,']']);
     timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
-    text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
+    text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
-    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,mkvar(M.name{ist}),'_diff']) % ,'v','t'
+    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,'_',mkvar(M.name{ist}),'_diff']) % ,'v','t'
 
 %% plot time series scatter
-% TO DO: calculate R2 or GoF or Taylor diagram ??
-% TO DO: show density of points
+%  TO DO: calculate R2 or GoF or Taylor diagram ??
+%  TO DO: show density of points
 
-    figure(FIG(2));clf
+    figure(FIG(2));subplot_meshgrid(1,1,.05,.05);clf
     
     maxe =      max(DM.(OPT.varname) - D.(OPT.varname));
     mine =      min(DM.(OPT.varname) - D.(OPT.varname));
@@ -217,7 +230,7 @@ for ist=1:length(M.name)
 
     plot    (D.(OPT.varname),DM.(OPT.varname),'k.','DisplayName','model vs. data') % model on y-axis: 'model to high' visible as higher results
     hold on
-    title   ([M.name{ist}])
+    title   ([OPT.label,char(D.station_name),' (',char(D.station_id),') [',num2str(D.lon),'\circ E, ',num2str(D.lat),'\circ N]'])
     text    (0,1,txte,'units','normalized','verticalalignment','top','FontName','fixedwidth')
     grid on
     axis equal
@@ -230,15 +243,15 @@ for ist=1:length(M.name)
     plot  (xlim+deta,ylim-deta,'k:')
     plot  (xlim-deta,ylim+deta,'k:')
     end
-    text    (1,0,['Created with OpenEarthTools <www.OpenEarth.eu>, ',OPT.ext],'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
+    text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
-    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,mkvar(M.name{ist}),'_scatter']) % ,'v','t'
+    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,'_',mkvar(M.name{ist}),'_scatter'],[1024],[120],[-257 0]) % ,'v','t'
 
-  end
+ end % if ~isempty(D.datenum)
 
-%% plot time series
+%% plot time series (also if data is absent)
 
-    figure(FIG(1));clf
+    figure(FIG(1));subplot_meshgrid(1,1,.05,.05);clf
     
     plot    (M.datenum,M.(OPT.varname)(:,ist),'b','DisplayName','model')
     hold on
@@ -246,45 +259,50 @@ for ist=1:length(M.name)
     plot    (D.datenum,D.(OPT.varname),'r','DisplayName','data')
     end
     legend  ('Location','NorthEast')
-    title   (M.name{ist})
+    title   ([OPT.label,char(D.station_name),' (',char(D.station_id),') [',num2str(D.lon),'\circ E, ',num2str(D.lat),'\circ N]'])
     grid on
     ylim    (OPT.ylim)
     ylabel  (['\eta [',meta.(OPT.varname).units,']']);
     timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
-    text    (1,0,'Created with OpenEarthTools <www.OpenEarth.eu>','rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
+    text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
-    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,mkvar(M.name{ist})]) % ,'v','t'
-    
+    print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,'_',mkvar(M.name{ist})]) % ,'v','t'
     
 %%  perform tidal analysis
 
-   if OPT.t_tide
+    if OPT.t_tide
     
-    nc_t_tide_data {end+1} = [fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist}),'_t_tide.nc']
-    nc_t_tide_model{end+1} = [fileparts(OPT.nc),filesep,'t_tide',filesep,filename(OPT.nc),'_',mkvar(M.name{ist}),'_t_tide.nc'];
-    
-    if ~isempty(OPT.ncbase)    
+    nc_t_tide_data  = [fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist})                     ,'_t_tide.nc'];
+    nc_t_tide_model = [fileparts(OPT.nc),filesep,'t_tide'     ,filesep,filename(OPT.nc),'_',mkvar(M.name{ist}),'_t_tide.nc'];
+
+ if ~isempty(D.datenum)
+        
+    % remember stations for which model and data are present for tidal comparison
+    nc_t_tide_datas {end+1} = nc_t_tide_data ;
+    nc_t_tide_models{end+1} = nc_t_tide_model;
+
     nc_t_tide(D.datenum,D.(OPT.varname),... % add period and midpoint
       'station_id',D.station_id,...
     'station_name',D.station_name,...
-          'period',D.datenum([1 end]),... % use OPT.datelim
+          'period',OPT.datelim, ... % D.datenum([1 end]),... % use OPT.datelim
              'lat',D.lat,...
              'lon',D.lon,...
            'units',meta.(OPT.varname).units,...
          'ascfile',[fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist}),'_t_tide.t_tide'],...
-          'ncfile',nc_t_tide_data{end});
-    end          
-M
-D
+          'ncfile',nc_t_tide_data);
+    clear D
+
+ end %   if ~isempty(D.datenum)
+ 
     nc_t_tide(M.datenum,M.(OPT.varname)(:,ist),...% add period and midpoint
-      'station_id',D.station_id,...
-    'station_name',D.station_name,...
-          'period',M.datenum([1 end]),... % use OPT.datelim
-             'lat',D.lat,...
-             'lon',D.lon,...
+      'station_id',M.station_id,...
+    'station_name',M.station_name,...
+          'period',OPT.datelim, ... % M.datenum([1 end]),... % use OPT.datelim
+             'lat',M.lat,...
+             'lon',M.lon,...
            'units',meta.(OPT.varname).units,...
          'ascfile',[fileparts(OPT.nc),filesep,'t_tide',filesep,filename(OPT.nc),'_',mkvar(M.name{ist}),'_t_tide.t_tide'],...
-          'ncfile',nc_t_tide_model{end});
+          'ncfile',nc_t_tide_model);
      
     if OPT.pause;pausedisp;end
     
@@ -292,7 +310,7 @@ D
     
   %end % if ~isempty(D.datenum)
     
-end % station loop
+end;end % station loop
 
 %%  plot tidal analysis
 
@@ -303,8 +321,8 @@ end % station loop
    %-% nc_t_tide_data               = sort(opendap_catalog(fileparts(OPT.nc),filesep,'t_tide_data');
 
    if ~isempty(OPT.ncbase)
-   nc_t_tide_compare(nc_t_tide_model,...
-                     nc_t_tide_data,'export',1,...
+   nc_t_tide_compare(nc_t_tide_models,...
+                     nc_t_tide_datas ,'export',1,...
                                         'vc',OPT.vc,...
                                       'axis',OPT.axis,...
                                  'directory',[fileparts(OPT.nc),filesep,'t_tide']);

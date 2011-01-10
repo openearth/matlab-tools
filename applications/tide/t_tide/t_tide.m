@@ -878,9 +878,12 @@ nx=length(xres);
 
 % Spectral estimate (takes real time series only).
 
+warningstate = warning;
+warning off
 [Pxr,fx]=psd(real(xres),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme. If you have an error here you are probably missing this toolbox
 [Pxi,fx]=psd(imag(xres),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme.
 [Pxc,fx]=csd(real(xres),imag(xres),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme.
+warning(warningstate)
 
 
 df=fx(3)-fx(2);
