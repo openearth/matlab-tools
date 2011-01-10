@@ -6,105 +6,103 @@ function values = nc_varget_mexnc(ncfile,varname,start,count,stride)
 [ncid,status]=mexnc('open',ncfile,'NOWRITE');
 if status ~= 0
     ncerr = mexnc('strerror', status);
-    error ( 'SNCTOOLS:NC_VARGET:MEXNC:OPEN', ncerr );
+    error ( 'SNCTOOLS:nc_varget:mexnc:open', ncerr );
 end
 
 
-[varid, status]=mexnc('inq_varid',ncid,varname);
-if status ~= 0
-    ncerr = mexnc('strerror', status);
-    mexnc('close',ncid);
-    error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID', ncerr );
-end
-
-[dud,var_type,nvdims,dimids,dud,status]=mexnc('inq_var',ncid,varid); %#ok<ASGLU>
-if status ~= 0
-    mexnc('close',ncid);
-    error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VAR', mexnc('strerror',status) );
-end
-
-
-% mexnc does not preserve the fastest varying dimension.  If we want this,
-% then we flip the indices.
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
-if preserve_fvd
-    start = fliplr(start);
-    count = fliplr(count);
-    stride = fliplr(stride);
-end
-
-
-% Check that the start, count, stride parameters have appropriate lengths.
-% Otherwise we get confusing error messages later on.
-validate_index_vectors(start,count,stride,nvdims);
-
-% What mexnc operation will we use?
-[funcstr_family, funcstr] = determine_funcstr(var_type,nvdims,start,count,stride);
-
-
-the_var_size = determine_varsize_mex(ncid,dimids,nvdims);
-
-if isempty(stride)
-    stride = ones(1,numel(start));
-end
-
-% If the user had set non-positive numbers in "count", then we replace them
-% with what we need to get the rest of the variable.
-negs = find(count<0);
-count(negs) = (the_var_size(negs) - start(negs)) ./ stride(negs);
-
-
-
-%
-% At long last, retrieve the data.
-switch funcstr_family
-    case 'get_var'
-        [values, status] = mexnc(funcstr,ncid,varid);
-
-    case 'get_var1'
-        [values, status] = mexnc(funcstr,ncid,varid,0);
-
-    case 'get_vara'
-        [values, status] = mexnc(funcstr,ncid,varid,start,count);
-
-
-    case 'get_vars'
-        [values, status] = mexnc(funcstr,ncid,varid,start,count,stride);
-
-    otherwise
-        error ( 'SNCTOOLS:NC_VARGET:unhandledType', ...
-                'Unhandled function string type ''%s''\n', funcstr_family);
-end
-
-if ( status ~= 0 )
-    mexnc('close',ncid);
-    ncerr = mexnc('strerror',status);
-    eid = sprintf ( 'SNCTOOLS:nc_varget:%s', funcstr );
-    error(eid,ncerr);
-end
-
-
-% If it's a 1D vector, make it a column vector.  
-% Otherwise permute the data
-% to make up for the row-major-order-vs-column-major-order issue.
-if length(the_var_size) == 1
-    values = values(:);
-else
-    % Ok it's not a 1D vector.  If we are not preserving the fastest
-    % varying dimension, we should permute the data.
-    if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
-        pv = fliplr ( 1:length(the_var_size) );
-        values = permute(values,pv);
+try
+    [varid, status]=mexnc('inq_varid',ncid,varname);
+    if status ~= 0
+        ncerr = mexnc('strerror', status);
+        error ( 'SNCTOOLS:nc_varget:mexnc:inq_varid', ncerr );
     end
-end                                                                                   
+    
+    [dud,var_type,nvdims,dimids,dud,status]=mexnc('inq_var',ncid,varid); %#ok<ASGLU>
+    if status ~= 0
+        error ( 'SNCTOOLS:nc_varget:mexnc:inq_var', mexnc('strerror',status) );
+    end
+    
+    
+    % mexnc does not preserve the fastest varying dimension.  If we want this,
+    % then we flip the indices.
+    preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+    if preserve_fvd
+        start = fliplr(start);
+        count = fliplr(count);
+        stride = fliplr(stride);
+    end
+    
+    
+    % Check that the start, count, stride parameters have appropriate lengths.
+    % Otherwise we get confusing error messages later on.
+    validate_index_vectors(start,count,stride,nvdims);
+    
+    % What mexnc operation will we use?
+    [funcstr_family, funcstr] = determine_funcstr(var_type,nvdims,start,count,stride);
+    
+    the_var_size = determine_varsize_mex(ncid,dimids,nvdims);
+    
+    if isempty(stride)
+        stride = ones(1,numel(start));
+    end
+    
+    % If the user had set non-positive numbers in "count", then we replace them
+    % with what we need to get the rest of the variable.
+    negs = find((count<0) | isinf(count));
+    count(negs) = (the_var_size(negs) - start(negs)) ./ stride(negs);
+    
+    % At long last, retrieve the data.
+    switch funcstr_family
+        case 'get_var'
+            [values, status] = mexnc(funcstr,ncid,varid);
+    
+        case 'get_var1'
+            [values, status] = mexnc(funcstr,ncid,varid,0);
+    
+        case 'get_vara'
+            [values, status] = mexnc(funcstr,ncid,varid,start,count);
+    
+    
+        case 'get_vars'
+            [values, status] = mexnc(funcstr,ncid,varid,start,count,stride);
+    
+        otherwise
+            error ( 'SNCTOOLS:nc_varget:mexnc:unhandledType', ...
+                    'Unhandled function string type ''%s''\n', funcstr_family);
+    end
+    
+    if ( status ~= 0 )
+        error('SNCTOOLS:nc_varget:mexnc:getVarFuncstrFailure', ...
+            mexnc('strerror',status) );
+    end
+    
+    
+    % If it's a 1D vector, make it a column vector.  
+    % Otherwise permute the data
+    % to make up for the row-major-order-vs-column-major-order issue.
+    if length(the_var_size) == 1
+        values = values(:);
+    else
+        % Ok it's not a 1D vector.  If we are not preserving the fastest
+        % varying dimension, we should permute the data.
+        if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
+            pv = fliplr ( 1:length(the_var_size) );
+            values = permute(values,pv);
+        end
+    end                                                                                   
+    
+    
+    values = handle_fill_value_mex(ncid,varid,var_type,values);
+    values = handle_mex_missing_value(ncid,varid,var_type,values);
+    values = handle_scaling_mex(ncid,varid,values);
+    
+    % remove any singleton dimensions.
+    values = squeeze(values);
 
-
-values = handle_fill_value_mex(ncid,varid,var_type,values);
-values = handle_mex_missing_value(ncid,varid,var_type,values);
-values = handle_scaling_mex(ncid,varid,values);
-
-% remove any singleton dimensions.
-values = squeeze(values);
+catch %#ok<CTCH>
+    mexnc('close',ncid);
+    rethrow(lasterror);
+end
 
 mexnc('close',ncid);
 
@@ -157,7 +155,7 @@ elseif ~isempty(start) && ~isempty(count) && ~isempty(stride)
     prefix = 'get_vars';
 
 else
-    error ( 'SNCTOOLS:NC_VARGET:FUNCSTR', ...
+    error ( 'SNCTOOLS:nc_varget:mexnc:undeterminedFuncStr', ...
         'Could not determine funcstr prefix.');
 end
 
@@ -171,7 +169,7 @@ switch ( var_type )
         funcstr = [prefix '_double'];
 
     otherwise
-        error ( 'SNCTOOLS:NC_VARGET:badDatatype', ...
+        error ( 'SNCTOOLS:nc_varget:mexnc:badDatatype', ...
                 'Unhandled datatype %d.', var_type );
 
 end
@@ -187,25 +185,23 @@ function values = handle_fill_value_mex ( ncid, varid, var_type, values )
 
 [varname,status] = mexnc('inq_varname',ncid,varid);
 if ( status ~= 0 )
-    mexnc('close',ncid);
     ncerr = mexnc ( 'strerror', status );
-    error ( 'SNCTOOLS:nc_varget:mexnc:inqVarnameFailed', ncerr );
+    error ( 'SNCTOOLS:nc_varget:mexnc:inq_varname', ncerr );
 end
 
 
 [att_type, dud, status] = mexnc('INQ_ATT',ncid,varid,'_FillValue'); %#ok<ASGLU>
 if ( status == 0 )
 
-	if att_type ~= var_type
+    if att_type ~= var_type
         warning('SNCTOOLS:nc_varget:mexnc:fillValueMismatch', ...
                 'The _FillValue datatype for %s is wrong and will not be honored.', ...
                 varname);
-		return
-	end
+        return
+    end
 
     switch ( var_type )
         case nc_char
-            
             % For now, do nothing.  Does a fill value even make sense with 
             % char data?  If it does, please tell me so.
             
@@ -214,15 +210,13 @@ if ( status == 0 )
             values(values==fill_value) = NaN;
             
         otherwise
-            mexnc('close',ncid);
             error ( 'SNCTOOLS:nc_varget:mexnc:unhandledFillValueDatatype', ...
                 'Unhandled datatype %d.', var_type );
     end
 
     if ( status ~= 0 )
-        mexnc('close',ncid);
         ncerr = mexnc ( 'strerror', status );
-        error ( 'SNCTOOLS:NC_VARGET:MEXNC:GET_ATT', ncerr );
+        error ( 'SNCTOOLS:nc_varget:mexnc:get_att', ncerr );
     end
 
 
@@ -240,9 +234,8 @@ function values = handle_mex_missing_value ( ncid, varid, var_type, values )
 
 [varname,status] = mexnc('inq_varname',ncid,varid);
 if ( status ~= 0 )
-    mexnc('close',ncid);
     ncerr = mexnc ( 'strerror', status );
-    error ( 'SNCTOOLS:nc_varget:mexnc:inqVarnameFailed', ncerr );
+    error ( 'SNCTOOLS:nc_varget:mexnc:inq_varname', ncerr );
 end
 
 % If there is a fill value attribute, then that has precedence.  
@@ -256,16 +249,15 @@ end
 [att_type, dud, status] = mexnc('INQ_ATT',ncid,varid,'missing_value'); %#ok<ASGLU>
 if ( status == 0 )
 
-	if att_type ~= var_type
+    if att_type ~= var_type
         warning('SNCTOOLS:nc_varget:mexnc:missingValueMismatch', ...
                 'The missing_value datatype for %s is wrong and will not be honored.', ...
                 varname);
-		return
-	end
+        return
+    end
 
     switch ( var_type )
-        case nc_char
-            
+        case nc_char           
             % For now, do nothing.  Does a missing value even make sense 
             % with char data?  If it does, please tell me so.
             
@@ -274,16 +266,14 @@ if ( status == 0 )
             values(values==fill_value) = NaN;
             
         otherwise
-            mexnc('close',ncid);
             error ( 'SNCTOOLS:nc_varget:mexnc:unhandledDatatype', ...
                 'Unhandled datatype %d.', var_type );
             
     end
 
     if ( status ~= 0 )
-        mexnc('close',ncid);
         ncerr = mexnc ( 'strerror', status );
-        error ( 'SNCTOOLS:NC_VARGET:MEXNC:GET_ATT', ncerr );
+        error ( 'SNCTOOLS:nc_varget:mexnc:get_att_double', ncerr );
     end
 
 
@@ -324,18 +314,16 @@ add_offset = 0.0;
 if have_scale
     [scale_factor, status] = mexnc('get_att_double',ncid,varid,'scale_factor');
     if ( status ~= 0 )
-        mexnc('close',ncid);
         ncerr = mexnc('strerror', status);
-        error ( 'SNCTOOLS:NC_VARGET:MEXNC:GET_ATT_DOUBLE', ncerr );
+        error ( 'SNCTOOLS:nc_varget:mexnc:get_att_double', ncerr );
     end
 end
 
 if have_addoffset
     [add_offset, status] = mexnc('get_att_double',ncid,varid,'add_offset');
     if ( status ~= 0 )
-        mexnc('close',ncid);
         ncerr = mexnc('strerror', status);
-        error ( 'SNCTOOLS:NC_VARGET:MEXNC:GET_ATT_DOUBLE', ncerr );
+        error ( 'SNCTOOLS:nc_varget:mexnc:get_att_double', ncerr );
     end
 end
 
@@ -367,8 +355,7 @@ else
         [dim_size,status]=mexnc('inq_dimlen', ncid, dimid);
         if ( status ~= 0 )
             ncerr = mexnc ( 'strerror', status );
-            mexnc('close',ncid);
-            error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_DIM_LEN', ncerr );
+            error ( 'SNCTOOLS:nc_varget:mexnc:inq_dimlen', ncerr );
         end
         the_var_size(j)=dim_size;
     end

@@ -205,7 +205,7 @@ function test_javaNcid ()
 import ucar.nc2.dods.*     
 import ucar.nc2.*          
 
-url = 'http://coast-enviro.er.usgs.gov/models/share/balop.nc';
+url = 'http://rocky.umeoce.maine.edu/GoMPOM/cdfs/gomoos.20070723.cdf';
 jncid = NetcdfFile.open(url);
 nc_info ( jncid );
 close(jncid);

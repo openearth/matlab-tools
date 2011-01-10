@@ -67,6 +67,8 @@ switch(mode)
 		% This doesn't work for nc4 or hdf4
 		test_bad_fill_value;
 
+		test_nc_varput_neg;
+
 	case 'hdf4'
 		run_hdf4_tests;
 
@@ -77,7 +79,6 @@ switch(mode)
 
 end
 
-test_nc_varput_neg;
 
 fprintf('OK\n');
 return

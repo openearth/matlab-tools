@@ -6,6 +6,7 @@ switch(v)
             '2009a', '2009b', '2010a' }
         
     otherwise
+		% 2010b is definitely netcdf4-capable.
         tf = true;
         return
 end

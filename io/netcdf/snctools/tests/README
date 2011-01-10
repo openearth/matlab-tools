@@ -8,22 +8,14 @@ both of these preferences.
     >> setpref('SNCTOOLS','USE_JAVA',true);
     >> setpref('SNCTOOLS','TEST_REMOTE',true);
 
-In order to test OPeNDAP with mexnc, you should set
-both of these preferences (this assumes you have an opendap-enabled
-version of mexnc.
+If you wish to test reading netCDF files via HTTP (not the same as 
+OPeNDAP), then in addition to USE_JAVA and TEST_REMOTE, you must set
+another preference.
 
-    >> setpref('SNCTOOLS','USE_JAVA',false);
-    >> setpref('SNCTOOLS','TEST_REMOTE',true);
+    >> setpref('SNCTOOLS','TEST_HTTP',true);
 
-GRIB2 support is still a bit experimental, so tests for grib support
+HDF4 and GRIB2 support is still a bit experimental, so these tests
 are not enabled by default.  To run them, set the following preference
 
+    >> setpref('SNCTOOLS','TEST_HDF4',true);
     >> setpref('SNCTOOLS','TEST_GRIB2',true);
-
-In order to test local read-only support if your platform is PCWIN64
-and you are stuck with R2008a or earlier, you must set the following
-preferences:
-
-    >> setpref('SNCTOOLS','USE_JAVA',true);
-    >> setpref('SNCTOOLS','TEST_JAVA_READ_ONLY',true);
-

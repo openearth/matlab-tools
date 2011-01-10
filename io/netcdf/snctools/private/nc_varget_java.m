@@ -3,14 +3,11 @@ function [values, the_var_size] = nc_varget_java (ncfile,varname,start,count,str
 %
 % See the help section for nc_varget.
 
-
 import ucar.nc2.dods.*     
 import ucar.nc2.*          
                            
-
 close_it = true;
 
-%
 % Try it as a local file.  If not a local file, try as
 % via HTTP, then as dods
 if isa(ncfile,'ucar.nc2.NetcdfFile')
@@ -35,11 +32,6 @@ else
 	end
 end
 
-
-
-
-
-%
 % Get the variable object
 jvarid = jncid.findVariable(varname);
 if isempty ( jvarid )
@@ -49,19 +41,15 @@ if isempty ( jvarid )
 end
 
 
-
 theDataType = jvarid.getDataType();
 theDataTypeString = char ( theDataType.toString() ) ;
 theDimensions = jvarid.getDimensions();
 num_var_dims = theDimensions.size();
 
 
-%
 % Check that the start, count, stride parameters have appropriate lengths.
 % Otherwise we risk confusing the mex-file.
 validate_index_vectors ( start, count, stride, num_var_dims );
-
-
 
 varinfo = nc_getvarinfo ( ncfile, varname );
 %varinfo = nc_getvarinfo ( jncid, jvarid );
@@ -78,20 +66,15 @@ end
 [read_method,start,count] ...
     = determine_read_method_java(start,count,stride,varinfo);
 
-
-
-%
-% If the user had set non-positive numbers in "count", then
+% If the user had set non-positive numbers (or inf) in "count", then
 % we replace them with what we need to get the
 % rest of the variable.
-negs = find(count<0);
-if ~isempty(stride)
-    count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
-else
+negs = find((count<0) | isinf(count));
+if isempty(stride)
     count(negs) =        the_var_size(negs) - start(negs);
+else
+    count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
 end
-
-
 
 % Java expects in C-style order.
 preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
@@ -102,9 +85,6 @@ if preserve_fvd
 end
 
 
-
-
-%
 % Finally!  Read the freakin' data.
 try
     switch ( read_method )
@@ -138,24 +118,18 @@ catch %#ok<CTCH>
 	end
     rethrow ( lasterror ); %#ok<LERR>
 end
-    
-    
 
 values = handle_fill_value_java ( jvarid, theDataType, values );
 values = handle_missing_value_java ( jvarid, theDataType, values );
 values = handle_scaling_java ( jvarid, values );
 
-
-%
 % remove any singleton dimensions.
 values = squeeze ( values );
-
 
 % If we were passed a java file id, don't close it upon exit.
 if close_it
 	close ( jncid );
 end
-
 
 if length(the_var_size) == 1
     values = values(:);
@@ -346,18 +320,16 @@ function values = handle_fill_value_java ( jvarid, var_type, values )
 fillvalue_att = jvarid.findAttribute ( '_FillValue' );
 if ~isempty(fillvalue_att)
 	att_dtype = fillvalue_att.getDataType();
-	if ~strcmp(char(att_dtype.toString()), char(var_type.toString()))
-		warning('SNCTOOLS:nc_varget:java:fillValueMismatch', ...
-		    'The _FillValue attribute datatype is incorrect.  The _FillValue attribute will not be honored.');
+    if ~strcmp(char(att_dtype.toString()), char(var_type.toString()))
+        warning('SNCTOOLS:nc_varget:java:fillValueMismatch', ...
+            'The _FillValue attribute datatype is incorrect.  The _FillValue attribute will not be honored.');
         return
     end
     
     switch ( char ( var_type.toString() ) )
     case 'char'
-        %
         % For now, do nothing.  Does a fill value even make sense with char 
         % data?  If it does, please tell me so.
-        %
 
     case { 'double', 'float', 'long', 'short', 'byte' }
         fill_value = fillvalue_att.getNumericValue().doubleValue();
@@ -390,17 +362,15 @@ end
 missing_value_att = jvarid.findAttribute ( 'missing_value' );
 if ~isempty(missing_value_att)
 	att_dtype = missing_value_att.getDataType();
-	if ~strcmp(char(att_dtype.toString()), char(theDataType.toString()))
-		warning('SNCTOOLS:nc_varget:java:missingValueMismatch', ...
-		    'The missing_value attribute datatype is incorrect.  The missing_value attribute will not be honored.');
+    if ~strcmp(char(att_dtype.toString()), char(theDataType.toString()))
+        warning('SNCTOOLS:nc_varget:java:missingValueMismatch', ...
+            'The missing_value attribute datatype is incorrect.  The missing_value attribute will not be honored.');
         return
     end
     
     values = double(values);
     switch ( char ( theDataType.toString() ) )
     case 'char'
-
-        %
         % For now, do nothing.  Does a fill value even make sense with 
         % char data?  Matlab doesn't allow for NaNs in character arrays.
 
@@ -434,12 +404,10 @@ function values = handle_scaling_java ( jvarid, values )
 scale_factor_att = jvarid.findAttribute ( 'scale_factor' );
 add_offset_att = jvarid.findAttribute ( 'add_offset' );
 
-%
 % Return early if we don't have either one.
 if isempty(scale_factor_att) && isempty(add_offset_att)
     return
 end
-
 
 if ~isempty(scale_factor_att)
     scale_factor = scale_factor_att.getNumericValue().doubleValue();
@@ -452,7 +420,6 @@ if ~isempty(add_offset_att)
 else
     add_offset = 0.0;
 end
-
 
 values = double(values) * scale_factor + add_offset;
 

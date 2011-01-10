@@ -6,7 +6,7 @@ function data = nc_varget(ncfile, varname, varargin )
 %   DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT) retrieves the contiguous
 %   portion of the variable specified by the index vectors START and 
 %   COUNT.  Remember that SNCTOOLS indexing is zero-based, not 
-%   one-based.  Specifying a -1 in COUNT means to retrieve everything 
+%   one-based.  Specifying Inf in COUNT means to retrieve everything 
 %   along that dimension from the START coordinate.
 %
 %   DATA = NC_VARGET(NCFILE,VARNAME,START,COUNT,STRIDE) retrieves 

@@ -156,6 +156,37 @@ return
 
 
 
+%--------------------------------------------------------------------------
+function test_inf_count ( ncfile )
+% If the count has Inf anywhere, treat that as meaning to "retrieve unto
+% the end of the file.
+
+expData = [0.1 1.3; 0.3 1.5; 0.5 1.7];
+
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
+    expData = expData';
+end
+actData = nc_varget(ncfile,'test_2D',[0 0],[Inf Inf],[2 2] );
+
+if ndims(actData) ~= 2
+    error ( 'rank of output data was not correct' );
+end
+if numel(actData) ~= 6
+    error ( 'count of output data was not correct' );
+end
+ddiff = abs(expData(:) - actData(:));
+if any( find(ddiff > eps) )
+    error ( 'input data ~= output data ' );
+end
+
+return
+
+
+
+
+
+
+
 %--------------------------------------------------------------------
 function test_readFullSingletonVariable ( ncfile )
 
@@ -377,6 +408,7 @@ test_readSingleValueFrom1dVariable ( ncfile );
 test_readSingleValueFrom2dVariable ( ncfile );
 test_read2x2hyperslabFrom2dVariable ( ncfile );
 test_stride_with_negative_count ( ncfile );
+test_inf_count ( ncfile );
 
 test_readFullSingletonVariable ( ncfile );
 test_readFullDoublePrecisionVariable ( ncfile );

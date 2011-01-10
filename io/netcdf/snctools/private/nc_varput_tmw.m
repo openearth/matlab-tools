@@ -41,15 +41,13 @@ try
         netcdf.putVar(ncid,varid,start,count,data);
     else
         netcdf.putVar(ncid,varid,start,count,stride,data);
-    end
-    
+    end  
 
 catch myException
-    if exist('ncid','var')
-        netcdf.close(ncid);
-        rethrow(myException);
-    end
+    netcdf.close(ncid);
+    rethrow(myException);
 end
+
 netcdf.close(ncid);
 return
 
@@ -58,7 +56,6 @@ return
 function data = handle_scaling_tmw(ncid,varid,data)
 % If there is a scale factor and/or  add_offset attribute, convert the data
 % to double precision and apply the scaling.
-
 
 have_scale_factor = 0;
 have_add_offset = 0;
@@ -73,8 +70,7 @@ try
     else
         have_scale_factor = 1;
     end
-catch %#ok<CTCH>
-    
+catch %#ok<CTCH>  
 end
 
 try
@@ -86,8 +82,7 @@ try
     else   
         have_add_offset = 1;
     end
-catch %#ok<CTCH>
-    
+catch %#ok<CTCH> 
 end
 
 %
@@ -100,7 +95,7 @@ scale_factor = 1.0;
 add_offset = 0.0;
 
 try
-
+    
     if have_scale_factor
         scale_factor = netcdf.getAtt(ncid, varid, 'scale_factor','double');
     end
@@ -135,23 +130,8 @@ return
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 %--------------------------------------------------------------------------
 function data = handle_fill_value_tmw(ncid,varid,data)
-
-
 % Handle the fill value.  We do this by changing any NaNs into
 % the _FillValue.  That way the netcdf library will recognize it.
 try
@@ -194,17 +174,3 @@ try
 catch myException %#ok<NASGU>
     return
 end
-
-
-    
-
-
-
-
-
-
-
-
-
-
-

@@ -30,4 +30,4 @@
 %                         accessed directly with the snctools (only THREDDS + HYRAX, not GrADS).
 %   opendap_get_cache   - get a local cache of an opendap folder (catalogRef)
 %
-%See also: snctools
+%See also: snctools, nctools

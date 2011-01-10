@@ -236,10 +236,10 @@ function test_javaNcidHttp ( )
 import ucar.nc2.dods.*     
 import ucar.nc2.*          
                            
-url = 'http://coast-enviro.er.usgs.gov/models/share/balop.nc';
+url = 'http://rocky.umeoce.maine.edu/GoMPOM/cdfs/gomoos.20070723.cdf';
 jncid = NetcdfFile.open(url);
 
-b = nc_isvar ( jncid, 'zeta' );
+b = nc_isvar ( jncid, 'time' );
 if ( b ~= 1 )
 	error('incorrect result.');
 end

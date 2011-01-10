@@ -15,20 +15,11 @@ function attribute = nc_get_attribute_struct_tmw ( cdfid, varid, attnum )
 % Output:
 %     attstruct:  structure with "Name", "Nctype", "Attnum", and "Value" 
 %                 fields
-%
-% In case of an error, an exception is thrown.
-%
-% USED BY:  nc_getinfo.m, nc_getvarinfo.m
-%
-%
 
 
-
-%
 % Fill the attribute struct with default values
 attribute.Name = '';
 attribute.Nctype = NaN;
-attribute.Attnum = attnum;   % we know this at this point
 attribute.Value = NaN;       % In case the routine fails?
 
 
@@ -67,23 +58,20 @@ switch(att_datatype)
 end
 
 switch att_datatype
-case 0
-	attval = NaN;
-case { nc_char, nc_int64, nc_uint64 }
-	attval=netcdf.getAtt(cdfid,varid,attname);
-case { nc_double, nc_float, nc_int, nc_short, nc_byte, nc_ubyte, nc_ushort, nc_uint }
-	attval=netcdf.getAtt(cdfid,varid,attname,'double');
-otherwise
-	warning ( 'SNCTOOLS:nc_getatt:tmw:unhandledDatatype', ...
-        'The datatype for attribute ''%s'' (%d) is not currently handled by SNCTOOLS.', ...
-        attname, att_datatype );
-    attval = [];
+    case 0
+        attval = NaN;
+    case { nc_char, nc_int64, nc_uint64 }
+        attval=netcdf.getAtt(cdfid,varid,attname);
+    case { nc_double, nc_float, nc_int, nc_short, nc_byte, nc_ubyte, nc_ushort, nc_uint }
+        attval=netcdf.getAtt(cdfid,varid,attname,'double');
+    otherwise
+        warning ( 'SNCTOOLS:nc_get_attribute_struct:tmw:unhandledDatatype', ...
+            'The datatype for attribute ''%s'' (%d) is not currently handled by SNCTOOLS.', ...
+            attname, att_datatype );
+        attval = [];
 end
 
-%
-% this puts the attribute into the variable structure
 attribute.Value = attval;
-
 
 return
 

@@ -95,6 +95,7 @@ function run_nc4_tests()
 
 test_nc4file();
 test_nc4_compressed;
+run_common_files('nc_netcdf4_classic');
 
 
 %--------------------------------------------------------------------------
@@ -178,6 +179,7 @@ end
 %--------------------------------------------------------------------------
 function run_hdf4_tests()
 dump_hdf4_tp;
+run_common_files('hdf4');
 
 
 
@@ -271,6 +273,43 @@ return
 
 
 %--------------------------------------------------------------------------
+function run_common_files(mode) 
+% Just make sure that we don't error out.
+
+owd = pwd;
+
+testroot = fileparts(mfilename('fullpath'));
+cd([testroot '/testdata']);
+
+load('nc_dump.mat');
+
+switch(mode)
+	case 'hdf4'
+		ncfile = 'empty.hdf'; 
+		cmd = sprintf('nc_dump(''%s'')',ncfile);
+		evalc(cmd);
+
+	case nc_clobber_mode
+		ncfile = 'empty.nc'; 
+		cmd = sprintf('nc_dump(''%s'')',ncfile);
+		evalc(cmd);
+
+	case 'nc_netcdf4_classic'
+		ncfile = 'empty-4.nc'; 
+		cmd = sprintf('nc_dump(''%s'')',ncfile);
+		evalc(cmd);
+
+end
+
+cd(owd);
+
+
+return
+
+
+
+
+%--------------------------------------------------------------------------
 function run_nc3_tests() 
 test_nc3_file_with_one_dimension;
 test_nc3_empty;
@@ -278,6 +317,8 @@ test_nc3_singleton;
 test_nc3_unlimited_variable;
 test_nc3_variable_attributes;
 test_nc3_one_fixed_size_variable;
+
+run_common_files(nc_clobber_mode);
 
 
 

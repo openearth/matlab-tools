@@ -7,7 +7,6 @@ function fileinfo = nc_info_java ( ncfile )
 import ucar.nc2.dods.*    
 import ucar.nc2.*         
 
-
 close_it = true;
 
 % Try it as a local file.  If not a local file, try as
@@ -36,9 +35,7 @@ else
 	end
 end
 
-
 fileinfo.Filename = ncfile; %[name ext];
-
 
 root_group = jncid.getRootGroup();
 fileinfo.Dimension = get_dimensions_j ( root_group );
@@ -48,7 +45,6 @@ fileinfo.Name = '/';
 % Get the global attributes and variable attributes
 j_att_list = root_group.getAttributes();
 fileinfo.Attribute = snc_java_bundle_atts ( j_att_list );
-
 
 if close_it
 	close ( jncid );
@@ -63,12 +59,10 @@ return
 %--------------------------------------------------------------------------
 function Dimension = get_dimensions_j ( root_group )
 % GET_DIMENSIONS_J:  Get the dimensions using the java backend.
-%
 
 dim_count = 0;
 dims = root_group.getDimensions();
 
-%
 % Set up an empty list first, in order to pre-allocate.
 Dimension.Name = '';
 Dimension.Length = 0;
@@ -80,14 +74,9 @@ dims_iterator = dims.listIterator();
 while 1
 
     try
-
-        %
         % This throws an exception when we've reached the end of the list.
         jDim = dims_iterator.next();
-
     catch %#ok<CTCH>
-
-        %
         % Break out of the while loop, there are no more dimensions to 
         % process.
         break;
@@ -105,7 +94,6 @@ end
 
 if dim_count == 0
 
-    % 
     % Singleton variable case.
     Dimension = [];
 

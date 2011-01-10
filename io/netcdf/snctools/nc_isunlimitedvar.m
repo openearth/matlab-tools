@@ -34,7 +34,7 @@ catch %#ok<CTCH>
     switch ( e.identifier )
         case { 'SNCTOOLS:NC_GETVARINFO:badVariableName', ...
                 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID', ...
-                'MATLAB:netcdf:inqVarID:variableNotFound' }
+                'SNCTOOLS:nc_info:hdf4:nametoindexFailed' }
             tf = false;
             return
         otherwise

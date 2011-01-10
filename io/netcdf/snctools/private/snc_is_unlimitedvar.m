@@ -1,5 +1,4 @@
 function tf = snc_is_unlimitedvar(ncfile,varname)     
-
 % Make use of the error structure when using 2007b and higher.
 try
     DataSet = nc_getvarinfo ( ncfile, varname );

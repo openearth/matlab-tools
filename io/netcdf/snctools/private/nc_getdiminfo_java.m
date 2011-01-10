@@ -1,4 +1,5 @@
 function dinfo = nc_getdiminfo_java ( arg1, arg2 )
+% java backend for NC_GETDIMINFO
 
 import ucar.nc2.dods.*  ;
 import ucar.nc2.*       ;

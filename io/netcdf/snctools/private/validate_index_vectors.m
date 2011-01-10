@@ -5,8 +5,6 @@ function validate_index_vectors(start,count,stride,nvdims)
 %    not the mex-file's responsibility to do this.  We can't do this when 
 %    parsing the input arguments since we need the number of dimensions 
 %    corresponding to the input variable.
-%
-
 
 if ~isempty(start) && (numel(start) ~= nvdims)
     error ( 'SNCTOOLS:validate_index_vectors:badStartIndex', ...

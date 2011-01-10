@@ -78,126 +78,14 @@ function run_negative_tests(ncfile)
 % test 11:  given 2D variable is an unlimited variable
 
 
-test_no_inputs;
-test_only_one_input (ncfile);
-test_too_many_inputs (ncfile);
-test_2nd_input_not_char (ncfile);
-test_not_netcdf;
-test_no_such_var (ncfile);
+test_no_inputs; 
+test_only_one_input (ncfile); 
+test_too_many_inputs (ncfile); 
+test_2nd_input_not_char (ncfile); 
+test_not_netcdf; 
+test_no_such_var (ncfile); 
 
 
-%--------------------------------------------------------------------------
-function test_java_backend()
-
-fprintf('\tTesting java backend ...\n');
-
-if ~getpref('SNCTOOLS','USE_JAVA',false)
-
-    fprintf('\t\tjava backend testing filtered out on ');
-    fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
-    fprintf('prefererence is false.\n');
-    return
-end
-
-
-v = version('-release');
-switch(v)
-    case '14'
-        run_nc3_tests;
-        
-    case { '2006a','2006b','2007a','2007b','2008a'}
-        run_nc3_tests;
-        run_nc4_tests;
-        
-    case { '2008b', '2009a', '2009b', '2010a' }
-        run_nc4_tests;
-        
-end
-
-
-%--------------------------------------------------------------------------
-function test_mexnc_backend()
-
-fprintf('\tTesting mexnc backend ...\n');
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-		if ~getpref('SNCTOOLS','USE_MEXNC',false)
-		    fprintf('\t\tmexnc testing filtered out where preference USE_MEXNC set to false.\n');
-		        return
-		end
-        run_nc3_tests;
-        
-    otherwise
-        fprintf('\t\tmexnc testing filtered out on release %s.\n', v);
-        return
-end
-
-
-return
-%--------------------------------------------------------------------------
-function test_tmw_backend()
-
-fprintf('\tTesting tmw backend ...\n');
-
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a','2007b','2008a'}
-        fprintf('\t\ttmw testing filtered out on release %s...\n', v);
-        return;
-        
-    case { '2008b','2009a','2009b','2010a'}
-        run_nc3_tests;
-        
-    otherwise
-        run_nc3_tests;
-        run_nc4_tests;
-end
-
-
-
-return
-
-
-
-
-%--------------------------------------------------------------------------
-function run_nc4_tests()
-
-fprintf('\t\tRunning netcdf-4 tests...  ');
-testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot, 'testdata/full-4.nc');
-
-test_not_unlimited (ncfile);
-test_1D_unlimited (ncfile);
-test_2D_unlimited (ncfile);
-
-fprintf('OK\n');
-
-return
-
-
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function run_nc3_tests()
-
-fprintf('\t\tRunning netcdf-3 tests...  ');
-testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot, 'testdata/full.nc');
-
-test_not_unlimited (ncfile);
-test_1D_unlimited (ncfile);
-test_2D_unlimited (ncfile);
-
-fprintf('OK\n');
-
-return
 
 
 

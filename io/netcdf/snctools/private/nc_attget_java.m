@@ -1,7 +1,6 @@
 function values = nc_attget_java(ncfile, varname, attribute_name )
 % NC_ATTGET_JAVA:  This function retrieves an attribute using the java API
 
-
 import ucar.nc2.dods.*    
 import ucar.nc2.*         
 
@@ -31,13 +30,7 @@ else
 	end
 end
 
-
-
-
-
 jatt = get_attribute_from_variable ( jncid, varname, attribute_name );
-
-
 
 % Retrieve the values.  Convert it to the appropriate matlab datatype.
 if ( jatt.isString() ) 
@@ -49,14 +42,11 @@ if ( jatt.isString() )
 	return
 end
 
-
-%
 % Ok, so it's numeric data.
 % convert it to a numeric array.
 j_array = jatt.getValues();
 values = j_array.copyTo1DJavaArray();
 values = values';
-
 
 theDataTypeString = char ( jatt.getDataType.toString() ) ;
 switch ( theDataTypeString )
@@ -94,7 +84,6 @@ function jatt = get_attribute_from_variable ( jncid, varname, attribute_name )
 
 if ischar ( varname ) && (isempty(varname))
 
-	%
 	% The user passed in ''.  That means NC_GLOBAL.
 	warning ( 'SNCTOOLS:nc_attget:java:doNotUseGlobalString', ...
 	          'Please consider using the m-file NC_GLOBAL.M instead of the empty string.' );
@@ -102,7 +91,6 @@ if ischar ( varname ) && (isempty(varname))
 
 elseif ischar ( varname ) && (strcmpi(varname,'global'))
 
-	%
 	% The user passed in 'global'.   Is there a variable named 'global'?
     jvarid = jncid.findVariable(varname);
 	if isempty(jvarid)
@@ -116,20 +104,16 @@ elseif ischar ( varname ) && (strcmpi(varname,'global'))
 
 elseif ischar ( varname )
 
-    %
     % Ok, it was just a regular variable.
     jvarid = jncid.findVariable(varname);
     jatt = jvarid.findAttribute ( attribute_name );
 
-
 else
 
-    %
     % The user passed a numeric identifier for the variable.  
     % Assume that this means a global attribute.
     jatt = jncid.findGlobalAttribute ( attribute_name );
 end
-
 
 if isempty(jatt)
     error ( 'SNCTOOLS:attget:java:attributeNotFound', ...

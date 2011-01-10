@@ -9,5 +9,4 @@ catch myException
     netcdf.close(ncid);
     rethrow(myException);
 end
-
 netcdf.close(ncid);

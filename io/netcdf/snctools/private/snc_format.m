@@ -65,7 +65,4 @@ end
 % We couldn't figure out what it was.
 fmt = 'unknown';
 
-
 return
-
-

@@ -15,17 +15,6 @@ function Attribute = snc_java_bundle_atts ( j_att_list )
 %         Name
 %         Nctype
 %         Value
-%
-% This function is private to SNCTOOLS.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 j_att_iterator = j_att_list.listIterator();
 j = 0;
@@ -53,7 +42,7 @@ while 1
             
             j_array = jatt.getValues();
             values = j_array.copyTo1DJavaArray();
-            Attribute(j).Value = double(values);
+            Attribute(j).Value = double(values)';
             
         case 'float'
             Attribute(j).Nctype = 5;
@@ -61,7 +50,7 @@ while 1
             
             j_array = jatt.getValues();
             values = j_array.copyTo1DJavaArray();
-            Attribute(j).Value = double(values);
+            Attribute(j).Value = double(values)';
             
         case { 'String', 'char' }
             Attribute(j).Nctype = 2;
@@ -75,7 +64,7 @@ while 1
             
             j_array = jatt.getValues();
             values = j_array.copyTo1DJavaArray();
-            Attribute(j).Value = double(values);
+            Attribute(j).Value = double(values)';
             
         case 'short'
             Attribute(j).Nctype = 3;
@@ -83,7 +72,7 @@ while 1
             
             j_array = jatt.getValues();
             values = j_array.copyTo1DJavaArray();
-            Attribute(j).Value = double(values);
+            Attribute(j).Value = double(values)';
             
         case 'int'
             Attribute(j).Nctype = 4;
@@ -91,7 +80,7 @@ while 1
             
             j_array = jatt.getValues();
             values = j_array.copyTo1DJavaArray();
-            Attribute(j).Value = double(values);
+            Attribute(j).Value = double(values)';
             
         case 'long'
             Attribute(j).Nctype = 4;
@@ -99,14 +88,12 @@ while 1
             
             j_array = jatt.getValues();
             values = j_array.copyTo1DJavaArray();
-            Attribute(j).Value = int64(values);
+            Attribute(j).Value = int64(values)';
             
         otherwise
             error ( 'SNCTOOLS:snc_java_bundle_atts:unhandledDatatype', ...
                 'unhandled attribute datatype ''%s''\n', datatype );
     end
-    
-    
     
 end
 

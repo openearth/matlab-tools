@@ -14,10 +14,11 @@ fprintf('know that several preferences have been set.\n');
 getpref('SNCTOOLS')
 
 fprintf('Only the ''USE_JAVA'' and ''PRESERVE_FVD'' preferences are important\n');
-fprintf('for daily use of SNCTOOLS.  ''USE_STD_HDF4_SCALING'' need only be\n');
-fprintf('used when dealing with HDF4 data (and even then almost never).\n');
-fprintf('Check the top-level README for details.  The other preferences are \n');
-fprintf('useful only for testing purposes.  Bye-bye.\n');
+fprintf('for daily use of SNCTOOLS.  Check the top-level README for details.  \n');
+fprintf('Bye-bye.\n');
+
+clear mex;
+
 return
 
 
@@ -91,7 +92,7 @@ switch(v)
             fprintf('configurations where SNCTOOLS ''USE_MEXNC'' ');
             fprintf('prefererence is true.\n');    
         else
-            run_nc3_tests;
+            run_nc3_read_tests;
         end
                 
     otherwise
@@ -105,7 +106,7 @@ switch(v)
             fprintf('configurations where SNCTOOLS ''USE_MEXNC'' ');
             fprintf('prefererence is true.\n');    
         else
-            run_nc4_tests;
+            run_nc4_read_tests;
         end
                 
     otherwise
@@ -132,10 +133,10 @@ switch(v)
 		    fprintf('\tmexnc testing filtered out where preference USE_MEXNC set to false.\n');
 		        return
 		end
-        run_nc3_tests;
+        run_nc3_read_tests;
         run_nc3_write_tests;
         if netcdf4_capable
-            run_nc4_tests;
+            run_nc4_read_tests;
         	run_nc4_write_tests;
         end
         
@@ -144,9 +145,9 @@ switch(v)
 		    fprintf('\tmexnc testing filtered out where preference USE_MEXNC set to false.\n');
 		        return
 		end
-        run_nc3_tests;
+        run_nc3_read_tests;
         if netcdf4_capable
-            run_nc4_tests;
+            run_nc4_read_tests;
         end
         
     otherwise
@@ -163,7 +164,9 @@ function test_tmw_backend()
 
 fprintf('Testing tmw backend ...\n');
 
-run_hdf4_tests;
+if getpref('SNCTOOLS','TEST_HDF4',false)
+    run_hdf4_tests;
+end
 
 v = version('-release');
 switch(v)
@@ -176,13 +179,13 @@ switch(v)
             fprintf('\ttmw netcdf testing filtered out where preference USE_MEXNC set to true.\n');
             return
         end
-        run_nc3_tests;
+        run_nc3_read_tests;
         run_nc3_write_tests;
         
     otherwise
-        run_nc3_tests;
+        run_nc3_read_tests;
         run_nc3_write_tests;
-        run_nc4_tests;
+        run_nc4_read_tests;
         run_nc4_write_tests;
 end
 
@@ -218,7 +221,7 @@ test_nc_addrecs(mode);
 test_nc_cat(mode);
 
 %--------------------------------------------------------------------------
-function run_nc3_tests()
+function run_nc3_read_tests()
 
 fprintf('\tTesting netcdf-3...\n');
 
@@ -241,7 +244,7 @@ test_nc_getall;
 test_nc_dump;
 
 %--------------------------------------------------------------------------
-function run_nc4_tests()
+function run_nc4_read_tests()
 
 fprintf('\tTesting netcdf-4...\n');
 
@@ -275,9 +278,11 @@ end
 %--------------------------------------------------------------------------
 function run_hdf4_tests()
 
-if ~getpref ( 'SNCTOOLS', 'TEST_HDF', false )
-    fprintf('\thdf testing filtered out when SNCTOOLS ');
-    fprintf('''TEST_HDF'' preference is false.\n');
+
+v = version('-release');
+if strcmp(v,'14')
+    fprintf('\thdf testing filtered out when the version is 14.');
+    fprintf('There''s a known issue with no workaround yet.');
     return
 end
 
@@ -300,18 +305,19 @@ return
 function run_http_tests()
 fprintf('\tTesting java/http...\n');
 
-if ~getpref ( 'SNCTOOLS', 'TEST_REMOTE', false )
-    fprintf('\t\tjava http testing filtered out when SNCTOOLS ');
-    fprintf('''TEST_REMOTE'' preference is false.\n');
+if getpref('SNCTOOLS','TEST_REMOTE',false) && getpref('SNCTOOLS','TEST_HTTP',false)
+    test_nc_attget('http');
+    test_nc_iscoordvar('http');
+    test_nc_isvar('http');
+    test_nc_info('http');
+    test_nc_varget('http');
+    test_nc_getvarinfo('http');
     return
 end
 
-test_nc_attget('http');
-test_nc_iscoordvar('http');
-test_nc_isvar('http');
-test_nc_info('http');
-test_nc_varget('http');
-test_nc_getvarinfo('http');
+
+fprintf('\t\tjava http testing filtered out when either of SNCTOOLS ');
+fprintf('\n\t\tpreferences''TEST_REMOTE'' or ''TEST_HTTP'' is false.\n');
 
 return
 
@@ -343,6 +349,17 @@ end
 test_nc_dump('opendap');
 test_nc_varget('opendap');
 
+% If we are using mexnc or if the release is 8b or higher, run this
+% system-level test.
+v = version('-release');
+switch(v)
+	case { '14','2006a','2006b','2007a','2007b','2008a'}
+        if getpref('SNCTOOLS','USE_MEXNC',false)
+        	test_opendap_local_system;
+        end
+	otherwise
+        test_opendap_local_system;
+end
 
 
 

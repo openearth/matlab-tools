@@ -6,7 +6,6 @@ function [start, count] = nc_varput_validate_indexing(ncid,nvdims,data,start,cou
 % thing.  mexnc can't be trusted to handle try/catch, so we'll close the
 % file ID here.
 
-
 % Singletons are a special case.  We need to set the start and count 
 % carefully.
 if nvdims == 0
@@ -22,8 +21,7 @@ if nvdims == 0
         
         return
 
-    else
-        
+    else     
         if isMexnc
             mexnc ( 'close', ncid );
         end
@@ -46,8 +44,6 @@ if isempty(start) && isempty(count) && ( nvdims > 0 )
     end
 end
 
-
-%
 % Check that the start, count, and stride arguments have the same length.
 if ( numel(start) ~= numel(count) )
     if isMexnc
@@ -57,6 +53,7 @@ if ( numel(start) ~= numel(count) )
     err_msg = 'START and COUNT arguments must have the same length.';
     error ( err_id, err_msg );
 end
+
 if ( ~isempty(stride) && (length(start) ~= length(stride)) )
     if isMexnc
         mexnc ( 'close', ncid );
@@ -65,9 +62,3 @@ if ( ~isempty(stride) && (length(start) ~= length(stride)) )
     err_msg = 'START, COUNT, and STRIDE arguments must have the same length.';
     error ( err_id, err_msg );
 end
-
-
-
-
-
-

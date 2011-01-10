@@ -46,19 +46,6 @@ else
     diminfo.Unlimited = 0;
     diminfo.Length = count;
 end
-    
-
-
-% % Is it unlimited?
-% x = hdfsd('getdimscale',dimid);
-% if status < 0
-%     error('SNCTOOLS:getdiminfo:hdf4:getscaleFailed', ...
-%         'GETDIMSCALE failed.' );
-% end
-% if isinf(x)
-%     diminfo.Unlimited = 1;
-% end
-
 
 
 if nargin > 1

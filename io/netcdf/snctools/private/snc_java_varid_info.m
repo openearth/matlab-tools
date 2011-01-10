@@ -19,60 +19,41 @@ function Dataset = snc_java_varid_info ( jvarid )
 %         Unlimited
 %         Dimension
 %         Attribute
-%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Dataset.Name = char ( jvarid.getName() );
 
-%
 % Get the datatype, store as an integer
 datatype = char(jvarid.getDataType().toString());
 switch ( datatype )
-case 'double'
-	Dataset.Nctype = nc_double;
-    Dataset.Datatype = datatype;
-case 'float'
-	Dataset.Nctype = nc_float;
-    Dataset.Datatype = 'single';
-case 'int'
-	Dataset.Nctype = nc_int;
-    Dataset.Datatype = 'int32';
-case 'short'
-	Dataset.Nctype = nc_short;
-    Dataset.Datatype = 'int16';
-    
-
-%
-% So apparently, DODSNetcdfFile returns 'String', while
-% NetcdfFile returns 'char'???
-case { 'String', 'char' }
-	Dataset.Nctype = nc_char;
-    Dataset.Datatype = 'char';
-case 'byte'
-	Dataset.Nctype = nc_byte;
-    Dataset.Datatype = 'int8';
-otherwise 
-	error ( 'SNCTOOLS:varinfo:unhandledDatatype', ...
-        '%s:  unhandled datatype ''%s''\n', datatype );
+    case 'double'
+        Dataset.Nctype = nc_double;
+        Dataset.Datatype = datatype;
+    case 'float'
+        Dataset.Nctype = nc_float;
+        Dataset.Datatype = 'single';
+    case 'int'
+        Dataset.Nctype = nc_int;
+        Dataset.Datatype = 'int32';
+    case 'short'
+        Dataset.Nctype = nc_short;
+        Dataset.Datatype = 'int16';
+        
+        % So apparently, DODSNetcdfFile returns 'String', while
+        % NetcdfFile returns 'char'???
+    case { 'String', 'char' }
+        Dataset.Nctype = nc_char;
+        Dataset.Datatype = 'char';
+    case 'byte'
+        Dataset.Nctype = nc_byte;
+        Dataset.Datatype = 'int8';
+    otherwise
+        error ( 'SNCTOOLS:varinfo:unhandledDatatype', ...
+            '%s:  unhandled datatype ''%s''\n', datatype );
 end
 
-
-
-
-%
 % determine if it is unlimited or not
 Dataset.Unlimited = double ( jvarid.isUnlimited() );
 
-
-%
 % Retrieve the dimensions
 dims = jvarid.getDimensions();
 nvdims = dims.size();
@@ -83,9 +64,6 @@ for j = 1:nvdims
 end
 Dataset.Dimension = Dimension;
 
-
-
-%
 % Get the size of the variable
 if nvdims == 0
 	Dataset.Size = 1;
@@ -99,12 +77,9 @@ if getpref('SNCTOOLS','PRESERVE_FVD',false)
 	Dataset.Size = fliplr(Dataset.Size);
 end
 
-
-%
 % Get the list of attributes.
 j_att_list = jvarid.getAttributes();
 Dataset.Attribute = snc_java_bundle_atts ( j_att_list );
-
 
 return
 

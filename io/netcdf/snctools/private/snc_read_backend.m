@@ -1,4 +1,5 @@
 function [retrieval_method,fmt] = snc_read_backend(ncfile)
+% which backend do we employ?  Many, many possibilities to consider here.
 
 retrieval_method = '';
 
@@ -33,10 +34,10 @@ end
 
 mv = version('-release');
 switch ( mv )
-    case { '11', '12' };
+    case { '11', '12', '13' };
 		error('Not supported on releases below R14.');
 
-    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a'} %, '2008b', '2009a', '2009b', '2010a'}
+    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a' }
 		% No native matlab support here.  We will favor java over
 		% mexnc for now.
         if use_java && (strcmp(fmt,'NetCDF') || strcmp(fmt,'NetCDF-4'))
@@ -92,6 +93,3 @@ if isempty(retrieval_method)
        ncfile );
 end
 return
-
-
-

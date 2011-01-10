@@ -180,7 +180,7 @@ function test_var_has_2_dims ( ncfile )
 % name.
 
 b = nc_iscoordvar ( ncfile, 's' );
-if ( b )
+if ( ~b )
 	error ( 'incorrect result.\n' );
 end
 return
@@ -213,7 +213,7 @@ function test_coordvar ( ncfile )
 % Positive test.
 
 b = nc_iscoordvar ( ncfile, 's' );
-if b % singletons are not coordinates
+if ~b
 	error ( 'incorrect result.\n'  );
 end
 

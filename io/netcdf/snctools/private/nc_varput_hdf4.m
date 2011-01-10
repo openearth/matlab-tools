@@ -51,11 +51,13 @@ if ( ~isempty(nan_inds) )
         % Is missing value defined?
         attr_idx = hdfsd('findattr',sds_id,'missing_value');
         if ( attr_idx < 0 )
+            % No it is not.  Something is wrong.  Abort!  Abort!
             hdfsd ( 'endaccess', sds_id );
             hdfsd ( 'end', sd_id );
     	    error('SNCTOOLS:varput:hdf4:getfillvalueFailed', ...  
 		    	'The data has NaN values, but neither _FillValue nor missing_value is defined.');
         else
+            % Yes it is defined.  Go ahead and retrieve it.
             [fill_value,status] = hdfsd('readattr',sds_id,attr_idx);
             if (status < 0)
                 hdfsd ( 'endaccess', sds_id );
@@ -70,7 +72,6 @@ if ( ~isempty(nan_inds) )
 end
 
 
-%
 % convert to the proper data type
 switch ( dtype_wr )
     case 'uint8',
@@ -115,6 +116,8 @@ switch ( dtype_wr )
 end
 
 
+% If we have an empty START argument, then we need to construct both
+% EDGES and STRIDE.
 if isempty(start)
     start = zeros(1,sds_rank);
     edges = ones(1,sds_rank);
@@ -124,7 +127,7 @@ if isempty(start)
     stride = ones(1,sds_rank);
 end
 
-% attempt to write the data set.  
+% Do we transpose the data?
 if getpref('SNCTOOLS','PRESERVE_FVD',false)
     start = fliplr(start);
     edges = fliplr(edges);
@@ -134,6 +137,7 @@ else
     data_wr = permute ( data_wr, fliplr( 1:length(size(data_wr)) ) );
 end
 
+% attempt to write the data set.  
 try
 	status = hdfsd('writedata',sds_id,start,stride,edges,data_wr);
 	if status < 0

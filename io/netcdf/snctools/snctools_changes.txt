@@ -1,5 +1,0 @@
-from 2803:
-* nc_attput.m: small bug when writing empty attributes (did not happen with jar/mex API).
-* nc_isunlimitedvar.m: small error in error call.
-* test_*: made test callable from any directory to be able to test a read-only version of snctools.
-* test_nc_varget.m + test_nc_dump.m: replaced outdated ucar opendap link with a link to today's data.

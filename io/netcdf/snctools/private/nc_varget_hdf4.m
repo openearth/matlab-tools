@@ -45,11 +45,11 @@ elseif isempty(stride)
     stride = ones(1,numel(v.Size));
 end
 
-negs = find(edge<0);
-if ~isempty(stride)
-    edge(negs) = floor((v.Size(negs) - start(negs))./stride(negs));
-else
+negs = find((edge<0) | isinf(edge));
+if isempty(stride)
     edge(negs) =        v.Size(negs) - start(negs);
+else
+    edge(negs) = floor((v.Size(negs) - start(negs))./stride(negs));
 end
 
 if preserve_fvd
@@ -70,7 +70,7 @@ end
 
 
 % fill value, scale factor, add_offset, missing value, etc
-[cal,cal_err,offset,offset_err,data_type,status] = hdfsd('getcal',sds_id);
+[cal,cal_err,offset,offset_err,data_type,status] = hdfsd('getcal',sds_id); %#ok<ASGLU>
 if status == 0
     if getpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
         data = cal*(double(data) - offset);  
@@ -94,7 +94,7 @@ if ( attr_index > -1 )
     if status == 0
         fv = double(missing_value);
         data = double(data);
-        data(data==missing_value) = NaN;
+        data(data==fv) = NaN;
     end
 end
 
@@ -121,77 +121,3 @@ if numel(start) == 1
 end
 
 return
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function values = handle_fill_value_tmw ( ncid, varid, var_type, values )
-% HANDLE_TMW_FILL_VALUE
-%     If there is a fill value, then replace such values with NaN.
-
-
-switch ( var_type )
-    case nc_char
-        % For now, do nothing.  Does a fill value even make sense with 
-        % char data?  If it does, please tell me so.
-
-    case { nc_double, nc_float, nc_int, nc_short, nc_byte }
-        fill_value = netcdf.getAtt(ncid,varid,'_FillValue','double');
-        values(values==fill_value) = NaN;
-
-    otherwise
-        error ( 'SNCTOOLS:nc_varget:unhandledFillValueType', ...
-            'Unhandled fill value datatype %d', var_type );
-
-end
-
-
-
-return
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function values = handle_missing_value_tmw(ncid,varid,var_type,values)
-% HANDLE_TMW_MISSING_VALUE
-%     If there is a missing value, then replace such values with NaN.
-%
-
-
-switch ( var_type )
-    case nc_char
-        % For now, do nothing.  Does a missing value even make 
-        % sense with char data?  If it does, please tell me so.
-
-    case { nc_double, nc_float, nc_int, nc_short, nc_byte }
-        fill_value = netcdf.getAtt(ncid,varid,'missing_value','double');
-        values(values==fill_value) = NaN;
-
-    otherwise
-        error('SNCTOOLS:nc_varget:tmw:unhandledMissingValueDatatype', ...
-              'Unhandled datatype %d.', var_type );
-end
-
-
-
-return
-
-
-
-
-
-
-
-
-
-
-
-
-

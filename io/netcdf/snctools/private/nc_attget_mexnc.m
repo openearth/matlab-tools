@@ -14,14 +14,11 @@ switch class(varname)
         varid = figure_out_varid ( ncid, varname );
         
     otherwise
-        error ( 'SNCTOOLS:NC_ATTGET:badType', 'Must specify either a variable name or NC_GLOBAL' );
-        
+        error ( 'SNCTOOLS:NC_ATTGET:badType', 'Must specify either a variable name or NC_GLOBAL' );    
 end
-
 
 funcstr = determine_funcstr(ncid,varid,attribute_name);
 
-%
 % And finally, retrieve the attribute.
 [values, status]=mexnc(funcstr,ncid,varid,attribute_name);
 if ( status ~= 0 )
@@ -38,9 +35,6 @@ end
 
 
 return;
-
-
-
 
 
 
@@ -97,7 +91,6 @@ end
 if ( strcmpi(varname,'global') )
     [varid, status] = mexnc ( 'inq_varid', ncid, varname ); %#ok<ASGLU>
     if status
-        %
         % Ok, the user meant NC_GLOBAL
         warning ( 'SNCTOOLS:nc_attget:doNotUseGlobalString', ...
             'Please consider using the m-file NC_GLOBAL.M instead of the string ''%s''.', varname );

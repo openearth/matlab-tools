@@ -21,7 +21,7 @@ end
 ncfile = 'foo.nc';
 create_ncfile(ncfile,mode);
 test_2_inputs_2_vars(ncfile);
-test_2_successive_writes(ncfile);
+test_2_successive_writes(ncfile,mode);
 run_negative_tests(mode);
 fprintf('OK\n');
 
@@ -56,10 +56,10 @@ return
 
 
 %--------------------------------------------------------------------------
-function test_2_successive_writes ( ncfile )
+function test_2_successive_writes(ncfile,mode)
 % Run it twice.
 
-nc_create_empty(ncfile,nc_clobber_mode);
+nc_create_empty(ncfile,mode);
 nc_adddim(ncfile,'x',4);
 nc_adddim(ncfile,'time',0);
 
@@ -172,7 +172,7 @@ test_2nd_input_not_structure ( ncfile );
 test_2nd_input_is_empty_structure ( ncfile );
 test_2nd_input_has_bad_fieldnames ( ncfile );
 test_one_field_not_unlimited ( ncfile );
-test_no_unlimited_dimension ( ncfile );
+test_no_unlimited_dimension(ncfile,mode);
 
 return
 
@@ -301,10 +301,10 @@ error ( 'nc_addrecs succeeded on writing to a fixed size variable, should have f
 
 
 %--------------------------------------------------------------------------
-function test_no_unlimited_dimension ( ncfile )
+function test_no_unlimited_dimension(ncfile,mode)
 
 
-nc_create_empty(ncfile,nc_clobber_mode);
+nc_create_empty(ncfile,mode);
 nc_adddim(ncfile,'x',4);
 
 clear varstruct;

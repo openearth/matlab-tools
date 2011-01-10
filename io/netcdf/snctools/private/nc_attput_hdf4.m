@@ -206,12 +206,8 @@ end
 status = hdfsd('end',sd_id);
 if status < 0
     error('SNCTOOLS:attput:hdf4:endFailed', ...
-        'END failed on %s, "%s".\n', hfile, hdf4_error_msg);
+        'END failed on %s".\n', hfile);
 end
 return
 
-%--------------------------------------------------------------------------
-function msg = hdf4_error_msg()
-ecode = hdfhe('value',1);
-msg = hdfhe('string',ecode);
-return
+

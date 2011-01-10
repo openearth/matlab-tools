@@ -1,31 +1,16 @@
-function Dataset = nc_getvarinfo_tmw ( arg1, arg2 )
+function Dataset = nc_getvarinfo_tmw(arg1,arg2)
 % TMW backend for NC_GETVARINFO
-%
-%   Dataset = nc_getvarinfo_tmw (ncfile,varname)
-%   Dataset = nc_getvarinfo_tmw (ncid  ,varid  )
-%
-%     Dataset:
-%         array of metadata structures.  The fields are
-%         
-%         Name
-%         Nctype
-%         Unlimited
-%         Dimension
-%         Attribute
-%         Size
-%
-%See also: nc_info, netcdf
 
 if ischar(arg1) && ischar(arg2)
     % We were given a char filename and a char varname.
 
-    ncfile  = arg1;
+    ncfile = arg1;
     varname = arg2;
 
     ncid=netcdf.open(ncfile,'NOWRITE');
     try
         varid = netcdf.inqVarID(ncid, varname);
-        Dataset = nc_getvarinfo_tmw ( ncid,  varid );
+        Dataset = get_varinfo_tmw ( ncid,  varid );
     catch me
         netcdf.close(ncid);
         rethrow(me);
@@ -34,68 +19,123 @@ if ischar(arg1) && ischar(arg2)
     netcdf.close(ncid);
 
 elseif isnumeric ( arg1 ) && isnumeric ( arg2 )
+
     % We were given a numeric file handle and a numeric id.
+	Dataset = get_varinfo_tmw(arg1,arg2);
 
-    ncid  = arg1;
-    varid = arg2;
-
-    %% Variable
-
-    [varname,xtype,dimids,natts] = netcdf.inqVar( ncid,  varid );
-    [ndims,nvars,ngatts,unlimdimid] = netcdf.inq(ncid);
-
-    Dataset.Name      = varname;
-    Dataset.Nctype    = xtype;
-    Dataset.Datatype  = xtype2Datatype(xtype);
-    Dataset.Unlimited = 0; % set to 1 if one found
-    Dataset.Dimension = {};
-    Dataset.Size      = [];
-    for dimid=dimids(:)'
-       [dimname,length] = netcdf.inqDim(ncid,dimid);
-       Dataset.Dimension{end+1} = dimname;
-       Dataset.Size(end+1)      = length;
-       if any(dimid==unlimdimid)
-          Dataset.Unlimited = 1;
-       end
-     end
-
-    %% Attribute
-
-    for iatt=1:natts
-        
-       attname = netcdf.inqAttName(ncid,varid,iatt-1); % zero based !
-       Dataset.Attribute(iatt).Name     = attname;
-       [xtype,attlen]                   = netcdf.inqAtt(ncid,varid,attname);
-       Dataset.Attribute(iatt).Nctype   = xtype;
-       Dataset.Attribute(iatt).Datatype = xtype2Datatype(xtype);
-       value                            = netcdf.getAtt(ncid,varid,attname);
-       if isnumeric(value);value = value(:); end % make same size as java version
-       Dataset.Attribute(iatt).Value    = value;
-    end
-    
 else
     error ( 'SNCTOOLS:NC_GETVARINFO:tmw:badTypes', ...
             'Must have either both character inputs, or both numeric.' );
 end
 
+
 return
 
-%% subsidiary (used for both variables and attributes)
 
-function Datatype = xtype2Datatype(xtype)
 
-    switch ( xtype )
-    case nc_double;Datatype = 'double';
-    case nc_float; Datatype = 'single';
-    case nc_int;   Datatype = 'int32';
-    case nc_short; Datatype = 'int16';
-    case nc_char;  Datatype = 'char';
-    case nc_byte;  Datatype = 'int8';
-   %case nc_??;    Datatype = 'uint8'; % help netcdf.getAtt
-    otherwise 
-        error ( 'SNCTOOLS:NC_GETVARINFO:tmw:unhandledDatatype', ...
-            '%s:  unhandled datatype ''%s''\n', datatype );
+%-------------------------------------------------------------------------
+function Dataset = get_varinfo_tmw ( ncid, varid )
+
+[ndims,nvars,ngatts,record_dimension] = netcdf.inq(ncid); %#ok<ASGLU>
+[varname,datatype,dims,natts] = netcdf.inqVar(ncid, varid);
+ndims = numel(dims);
+
+Dataset.Name = varname;
+Dataset.Nctype = datatype;
+switch(datatype)
+    case nc_nat
+        Dataset.Datatype = '';
+    case nc_byte
+        Dataset.Datatype = 'int8';
+    case nc_char
+        Dataset.Datatype = 'char';
+    case nc_short
+        Dataset.Datatype = 'int16';
+    case nc_int
+        Dataset.Datatype = 'int32';
+    case nc_float
+        Dataset.Datatype = 'single';
+    case nc_double
+        Dataset.Datatype = 'double';
+    case nc_ubyte
+        Dataset.Datatype = 'uint8';
+    case nc_ushort
+        Dataset.Datatype = 'uint16';
+    case nc_uint
+        Dataset.Datatype = 'uint32';
+    case nc_uint64
+        Dataset.Datatype = 'uint64';
+    case nc_int64
+        Dataset.Datatype = 'int64';
+    otherwise
+        warning('SNCTOOLS:sncGetVarInfoTmw:unhandledDataType', ...
+            'The datatype for variable ''%s'' (%d) is not one that is handled by SNCTOOLS.', ...
+            varname, datatype);
+        Dataset.Datatype = '';
+end
+
+%
+% Assume the current variable does not have an unlimited dimension until
+% we know that it does.
+Dataset.Unlimited = false;
+
+if ndims == 0
+	Dataset.Dimension = {};
+	Dataset.Size = 1;
+else
+
+    for j = 1:ndims
+        [dimname, dimlength] = netcdf.inqDim(ncid, dims(j));
+        
+        Dataset.Dimension{j} = dimname;
+        Dataset.Size(j) = dimlength;
+        
+        if dims(j) == record_dimension
+            Dataset.Unlimited = true;
+        end
     end
+    
+end
+
+% get all the attributes
+if natts == 0
+	Dataset.Attribute = struct([]);
+else
+	for attnum = 0:natts-1
+		Dataset.Attribute(attnum+1) = nc_get_attribute_struct_tmw(ncid,varid,attnum);
+	end
+end
+
+v = netcdf.inqLibVers;
+if v(1) == '4' 
+	fmt = netcdf.inqFormat(ncid);
+	if (strcmp(fmt,'FORMAT_NETCDF4') || strcmp(fmt,'FORMAT_NETCDF4_CLASSIC'))
+		% Get the chunksize
+		[storage,chunking] = netcdf.inqVarChunking(ncid,varid); %#ok<ASGLU>
+		Dataset.Chunking = chunking;
+		
+		% Get the compression parameters
+		[shuffle,deflate,deflate_level] = netcdf.inqVarDeflate(ncid,varid);  %#ok<ASGLU>
+		Dataset.Shuffle = shuffle;
+		Dataset.Deflate = deflate_level;
+	end
+end
+
+if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
+	Dataset.Dimension = fliplr(Dataset.Dimension);
+	Dataset.Size = fliplr(Dataset.Size);
+	if isfield(Dataset,'Chunking')
+		Dataset.Chunking = fliplr(Dataset.Chunking);
+	end
+end
+
+return
+
+
+
+
+
+
 
 
 

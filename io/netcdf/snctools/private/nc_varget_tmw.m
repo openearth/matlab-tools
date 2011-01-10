@@ -64,11 +64,11 @@ validate_index_vectors(start,count,stride,nvdims);
 
 % If the user had set non-positive numbers in "count", then we replace
 % them with what we need to get the rest of the variable.
-negs = find(count<0);
-if ~isempty(stride)
-    count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
+negs = find((count<0) | isinf(count));
+if isempty(stride)
+    count(negs) = the_var_size(negs) - start(negs);
 else
-    count(negs) =        the_var_size(negs) - start(negs);
+    count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
 end
 
 
@@ -142,10 +142,8 @@ if retrieve_as_double
 end
 
 
-
 % At long last, retrieve the data.
 values = netcdf.getVar(ncargs{:});
-
 
 
 % If it's a 1D vector, make it a column vector.  Otherwise permute the
@@ -170,22 +168,10 @@ if has_scaling
     values = handle_scaling_tmw(ncid,varid,values);
 end
 
-
 % remove any singleton dimensions.
 values = squeeze ( values );
 
-
-
-
 return
-
-
-
-
-
-
-
-
 
 
 
@@ -215,8 +201,6 @@ switch ( var_type )
 
 end
 
-
-
 return
 
 
@@ -228,8 +212,6 @@ return
 function values = handle_missing_value_tmw(ncid,varid,var_type,values)
 % HANDLE_TMW_MISSING_VALUE
 %     If there is a missing value, then replace such values with NaN.
-%
-
 
 switch ( var_type )
     case nc_char
@@ -307,7 +289,6 @@ function the_var_size = determine_varsize_tmw ( ncid, dimids, nvdims )
 %
 % VAR_SIZE = DETERMINE_VARSIZE_TMW(NCID,DIMIDS,NVDIMS);
 
-%
 % If not a singleton, we need to figure out how big the variable is.
 if nvdims == 0
     the_var_size = 1;

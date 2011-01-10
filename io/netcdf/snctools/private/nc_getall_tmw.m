@@ -10,6 +10,8 @@ catch me
     rethrow(me);
 end
 
+netcdf.close(cdfid);
+
 %--------------------------------------------------------------------------
 function data = getall(ncfile,cdfid)
 
@@ -24,8 +26,6 @@ for varid=0:nvars-1
     [varname,datatype,dims,natts] = netcdf.inqVar(cdfid,varid); %#ok<ASGLU>
     ndims = numel(dims);
 
-
-    %
     % If ndims is zero, then it must be a singleton variable.  Don't bother 
     % trying to retrieve the data, there is none.
     if ( ndims == 0 )
@@ -35,9 +35,6 @@ for varid=0:nvars-1
         varstruct.data = values;
     end
 
-
-
-    %
     % get all the attributes
     for attnum = 0:natts-1
 
@@ -49,32 +46,24 @@ for varid=0:nvars-1
                 'nc_attget failed, ''%s''.', ME.message );
         end
         
-        %
         % Matlab structures don't like the leading '_'
         if strcmp(attname,'_FillValue' )
             attname = 'FillValue';
         end
 
+        sanitized_attname = genvarname(attname);
 
-        sanitized_attname = matlab_sanitize_attname ( attname );
-
-
-        %
         % this puts the attribute into the variable structure
         varstruct.(sanitized_attname) = attval;
 
-
     end
 
-
-    %
     % Add this variable to the entire file structure
     data.(varname) = varstruct;
 
 end
 
 
-%
 % Do the same for the global attributes
 %
 % get all the attributes
@@ -90,14 +79,10 @@ for attnum = 0:ngatts-1
             attnum, ME.message);
     end
     
-    sanitized_attname = matlab_sanitize_attname ( attname );
+    sanitized_attname = genvarname(attname);
 
-
-    %
     % this puts the attribute into the variable structure
     global_atts.(sanitized_attname) = attval;
-
-
 
 end
 
@@ -111,6 +96,3 @@ if isempty(data)
 end
 
 return
-
-
-

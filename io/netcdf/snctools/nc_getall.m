@@ -86,13 +86,10 @@ for varid=0:nvars-1
             attname = 'FillValue';
         end
 
-
-        sanitized_attname = matlab_sanitize_attname ( attname );
-
+        sanitized_attname = genvarname(attname);
 
         % this puts the attribute into the variable structure
         varstruct.(sanitized_attname) = attval;
-
 
     end
 
@@ -122,7 +119,7 @@ for attnum = 0:ngatts-1
             attnum, lasterr); %#ok<LERR>
     end
     
-    sanitized_attname = matlab_sanitize_attname ( attname );
+    sanitized_attname = genvarname(attname);
 
     % this puts the attribute into the variable structure
     global_atts.(sanitized_attname) = attval;

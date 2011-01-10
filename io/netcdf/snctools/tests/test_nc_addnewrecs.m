@@ -53,9 +53,9 @@ test_008 ( ncfile );
 
 % test_009 makes a new file
 
-test_009 ( ncfile, mode );
-test_010 ( ncfile, mode );
-test_011 ( ncfile );
+test_009(ncfile,mode);
+test_010(ncfile,mode);
+test_011(ncfile,mode);
 
 test_012(ncfile,mode);
 test_013(ncfile,mode)
@@ -330,7 +330,7 @@ error('nc_addnewrecs succeeded on writing to a fixed size variable, should have 
 function test_009(ncfile,mode)
 
 
-nc_create_empty(ncfile,'hdf4');
+nc_create_empty(ncfile,mode);
 nc_adddim(ncfile,'x',4);
 
 clear varstruct;
@@ -364,11 +364,20 @@ error('nc_addnewrecs passed when writing to a file with no unlimited dimension')
 %---------------------------------------------------------------------------
 function test_010(ncfile,mode)
 
-nc_create_empty(ncfile,'hdf4');
+nc_create_empty(ncfile,mode);
 nc_adddim(ncfile,'x',4);
 nc_adddim(ncfile,'time',0);
-
-
+switch(mode)
+    case 'hdf4'
+        %
+    otherwise
+        
+        clear varstruct;
+        varstruct.Name = 'time';
+        varstruct.Datatype = 'double';
+        varstruct.Dimension = { 'time' };
+        nc_addvar(ncfile,varstruct);
+end
 
 
 
@@ -397,9 +406,9 @@ return
 
 
 %---------------------------------------------------------------------------
-function test_011 ( ncfile )
+function test_011(ncfile,mode)
 
-nc_create_empty(ncfile,nc_clobber_mode);
+nc_create_empty(ncfile,mode);
 nc_adddim(ncfile,'x',4);
 nc_adddim(ncfile,'time',0);
 
