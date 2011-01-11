@@ -1,10 +1,10 @@
-function xb_gui_tab_modelsetup_bathy(obj)
-%XB_GUI_TAB_MODELSETUP_BATHY  One line description goes here.
+function xb_gui_tab_model(obj)
+%XB_GUI_TAB_MODEL  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_gui_tab_modelsetup_bathy(varargin)
+%   varargout = xb_gui_tab_model(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function xb_gui_tab_modelsetup_bathy(obj)
 %   varargout =
 %
 %   Example
-%   xb_gui_tab_modelsetup_bathy
+%   xb_gui_tab_model
 %
 %   See also 
 
@@ -48,7 +48,7 @@ function xb_gui_tab_modelsetup_bathy(obj)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 06 Jan 2011
+% Created: 11 Jan 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -58,8 +58,8 @@ function xb_gui_tab_modelsetup_bathy(obj)
 % $HeadURL$
 % $Keywords: $
 
-%% build tab modelsetup -> bathymetry
-    
+%% build tab model
+
     build(obj, []);
 
 end
@@ -68,30 +68,7 @@ end
 
 function build(obj, event)
 
-    % build axes
-    ax = axes('tag', 'ax_1'); hold on; box on;
-    xb_gui_dragselect(ax, 'select', false, 'cursor', false);
+    ax1 = axes('tag', 'preview_bathy'); hold on; box on;
     
-    % build data buttons
-    databuttons = [];
-    databuttons(1) = uicontrol(obj, 'tag', 'databutton_1', 'string', 'Get bathymetry data', ...
-        'callback', @xb_gui_modelsetup_bathy_merge);
-    databuttons(2) = uicontrol(obj, 'tag', 'databutton_2', 'string', 'Add non-erodable data', ...
-        'callback', @xb_gui_modelsetup_bathy_ne, 'enable', 'off');
-    databuttons(3) = uicontrol(obj, 'tag', 'databutton_3', 'string', 'Crop', ...
-        'callback', @xb_gui_modelsetup_bathy_crop, 'enable', 'off');
-    
-    set(databuttons, 'style', 'pushbutton');
-    set(databuttons(3), 'style', 'toggle');
-    
-    % build finalise options
-    options = [];
-    funcs = get_subfunc('xb_grid_finalise');
-    for i = 2:length(funcs)
-        options(i-1) = uicontrol(obj, 'tag', ['gridfinalise_' num2str(i-1)], 'string', funcs(i).name);
-    end
-    
-    set(options, 'style', 'checkbox');
-    
-    set([ax(:) ; databuttons(:) ; options(:)], 'parent', findobj(obj, 'tag', 'panel_1_1'));
+    set(ax1, 'parent', findobj(obj, 'tag', 'panel_2'));
 end

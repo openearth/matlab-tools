@@ -82,10 +82,75 @@ function build(obj, event)
     panels(2) = uipanel(obj, 'tag', 'panel_1_2', 'title', get(tabs(2), 'string'), 'visible', 'off');
     panels(3) = uipanel(obj, 'tag', 'panel_1_3', 'title', get(tabs(3), 'string'), 'visible', 'off');
     
+    gen = uicontrol(obj, 'style', 'pushbutton', 'units', 'pixels', 'tag', 'generate', ...
+        'string', 'Generate model', 'backgroundcolor', 'r', 'fontweight', 'bold', 'callback', @generate);
+    
     % add content
     xb_gui_tab_modelsetup_bathy(obj);
     xb_gui_tab_modelsetup_hydro(obj);
     xb_gui_tab_modelsetup_settings(obj);
     
-    set([tabs(:) ; panels(:)], 'parent', findobj(obj, 'tag', 'panel_1'));
+    set([tabs(:) ; panels(:) ; gen], 'parent', findobj(obj, 'tag', 'panel_1'));
+end
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function generate(obj, event)
+    pobj = findobj('tag', 'xb_gui');
+    S = get(pobj, 'userdata');
+    
+    % bathy
+    bathy = { ...
+        'x', S.modelsetup.bathy.x, ...
+        'y', S.modelsetup.bathy.y, ...
+        'z', S.modelsetup.bathy.z, ...
+        'ne', S.modelsetup.bathy.ne, ...
+        'crop', S.modelsetup.bathy.crop, ...
+        'finalise', S.modelsetup.bathy.finalise ...
+    };
+
+    % waves
+    names = fieldnames(S.modelsetup.hydro.waves);
+    values = struct2cell(S.modelsetup.hydro.waves);
+    
+    waves = cell(1,2*length(names));
+    waves(1:2:end) = names;
+    waves(2:2:end) = values;
+    
+    % surge
+    time = S.modelsetup.hydro.surge.time;
+    tide = S.modelsetup.hydro.surge.tide;
+    zs0 = S.modelsetup.hydro.surge.zs0;
+    
+    switch size(tide, 1)
+        case 0
+            surge = {'time', 0, 'front', zs0, 'back', zs0};
+        case 1
+            surge = {'time', time, 'front', tide(1,:), 'back', zs0};
+        case 2
+            surge = {'time', time, 'front', tide(1,:), 'back', tide(2,:)};
+        case 4
+            surge = {'time', time, 'front', tide(1:2,:), 'back', tide(3:4,:)};
+    end
+    
+    % settings
+    names = fieldnames(S.modelsetup.settings);
+    values = struct2cell(S.modelsetup.settings);
+    
+    settings = cell(1,2*length(names));
+    settings(1:2:end) = names;
+    settings(2:2:end) = values;
+    
+    S.model = xb_generate_model( ...
+        'bathy', bathy, ...
+        'tide', surge, ...
+        'waves', waves, ...
+        'settings', settings ...
+    );
+    
+    set(pobj, 'userdata', S);
+    
+    xb_gui_loaddata;
+    
+    xb_gui_toggletab(findobj(pobj, 'tag', 'tab_2'), []);
 end

@@ -76,7 +76,7 @@ function xb_gui_modelsetup_hydro_norm(obj, event)
     
     uicontrol(pobj, 'units', 'normalized', 'style', 'edit', 'tag', 'name', ...
         'position', [.05 .93 .75 .04], 'fontsize', 14, 'backgroundcolor', 'w', 'callback', @setloc);
-    uicontrol(pobj, 'units', 'normalized', 'style', 'edit', 'tag', 'freq', ...
+    fe = uicontrol(pobj, 'units', 'normalized', 'style', 'edit', 'tag', 'freq', ...
         'position', [.85 .93 .10 .04], 'string', '10000', 'backgroundcolor', 'w');
     uicontrol(pobj, 'units', 'normalized', 'style', 'pushbutton', 'tag', 'pick', ...
         'position', [.88 .02 .1 .04], 'string', 'Pick', 'callback', @pickloc);
@@ -86,10 +86,18 @@ function xb_gui_modelsetup_hydro_norm(obj, event)
     hl = nc_plot_coastline; axis equal;
     set(hl, 'Color', [.8 .8 .8]);
     
-    ax2 = axes('position', [.05 .14 .90 .75], 'tag', 'map', 'color', 'none', 'buttondownfcn', @setloc); hold on;
+    ax2 = axes('position', [.05 .14 .90 .75], 'tag', 'map', 'color', 'none'); hold on;
     linkaxes([ax1 ax2], 'xy');
     
-    xb_gui_dragselect(ax2, 'select', false)
+    S = get(findobj('tag', 'xb_gui'), 'userdata');
+    data = S.modelsetup.hydro.data;
+    if ~isempty(data)
+        set(fe, 'string', num2str(1/data.freq));
+        plot(ax2, data.x, data.y, 'or', 'tag', 'loc');
+    end
+    
+    xb_gui_dragselect(ax2, 'select', false);
+    set(ax2, 'buttondownfcn', @setloc);
 end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,20 +133,34 @@ function pickloc(obj, event)
     lobj = findobj(mobj, 'tag', 'loc');
     fobj = findobj(pobj, 'tag', 'freq');
     
-    x = get(lobj, 'xdata');
-    y = get(lobj, 'ydata');
-    
-    [h Hs Tp] = bc_normstorm('loc', [x y], 'freq', 1/str2double(get(fobj, 'string')));
-    tide = xb_generate_tide('front', h, 'back', h);
-    waves = xb_generate_waves('Hm0', Hs, 'Tp', Tp);
-    
-    gobj = findobj('tag', 'xb_gui');
-    S = get(gobj, 'userdata');
-    S.model = xb_del(S.model, 'bcfile', 'zs0file', 'zs0');
-    S.model = xb_join(S.model, tide, waves);
-    set(gobj, 'userdata', S);
-    
-    xb_gui_loaddata;
+    if ~isempty(lobj)
+        x = get(lobj, 'xdata');
+        y = get(lobj, 'ydata');
+        freq = 1/str2double(get(fobj, 'string'));
+
+        [h Hs Tp] = bc_normstorm('loc', [x y], 'freq', freq);
+
+        gobj = findobj('tag', 'xb_gui');
+        S = get(gobj, 'userdata');
+        hydro = S.modelsetup.hydro;
+
+        hydro.surge.time = 0;
+        hydro.surge.tide = [];
+        hydro.surge.zs0 = h;
+
+        hydro.waves.Hm0 = Hs;
+        hydro.waves.Tp = Tp;
+        hydro.waves.duration = 1200;
+
+        hydro.data.x = x;
+        hydro.data.y = y;
+        hydro.data.freq = freq;
+
+        S.modelsetup.hydro = hydro;
+        set(gobj, 'userdata', S);
+
+        xb_gui_loaddata;
+    end
     
     close(pobj);
 end

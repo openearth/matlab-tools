@@ -93,18 +93,28 @@ function makesurge(obj, event)
     pobj = findobj('tag', 'xb_gui');
 
     S = get(pobj, 'userdata');
+    hydro = S.modelsetup.hydro;
     
-    [h Hs Tp] = xb_get(S.model, 'zs0', 'bcfile.Hm0', 'bcfile.Tp');
+    if ~isempty(hydro.surge.tide) && ~all(all(isnan(hydro.surge.tide)))
+        h = hydro.surge.tide(1,:);
+    else
+        h = hydro.surge.zs0;
+    end
+    
+    [Hs Tp] = deal(hydro.waves.Hm0, hydro.waves.Tp);
     
     [t h duration Hs Tp] = bc_stormsurge('h_max', max(h), 'Hm0_max', max(Hs), ...
         'Tp_max', max(Tp), 'nwaves', 32);
     
-    tide = xb_generate_tide('time', t, 'front', h, 'back', h);
-    waves = xb_generate_waves('Hm0', Hs, 'Tp', Tp, 'duration', duration);
+    hydro.surge.time = t;
+    hydro.surge.tide = [h ; h];
+    hydro.surge.zs0 = [];
     
-    S.model = xb_del(S.model, 'bcfile', 'zs0file', 'zs0');
-    S.model = xb_join(S.model, tide, waves);
+    hydro.waves.Hm0 = Hs;
+    hydro.waves.Tp = Tp;
+    hydro.waves.duration = duration;
     
+    S.modelsetup.hydro = hydro;
     set(pobj, 'userdata', S);
     
     xb_gui_loaddata;

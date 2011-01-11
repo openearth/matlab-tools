@@ -62,49 +62,38 @@ function xb_gui_loaddata(obj, event)
 
 pobj = findobj('tag', 'xb_gui');
 
+S = xb_gui_struct;
+
 if exist('obj', 'var')
     switch get(obj, 'tag')
         case 'button_new'
 
             % create new model
-            S = struct( ...
-                'model', xb_generate_model, ...
-                'runs', {{}}, ...
-                'externals', struct( ...
-                    'bathy', {{}}, ...
-                    'hydro', {{}} ...
-                ) ...
-            );
-
+            S.model = xb_generate_model;
             set(pobj, 'userdata', S);
+            
+            xb_gui_loadmodel;
 
         case 'button_open'
             [fname fpath] = uigetfile({'*.mat' 'Saved model setup (*.mat)'}, 'Open Model Setup');
 
             if fname
-                set(pobj, 'userdata', load(fullfile(fpath, fname)));
+                S = load(fullfile(fpath, fname));
+                set(pobj, 'userdata', S);
             end
             
         case 'button_load'
             [fname fpath] = uigetfile({'*.txt' 'XBeach parameter file (*.txt)'}, 'Load Model');
 
             if fname
-                S = struct();
                 S.model = xb_read_input(fullfile(fpath, fname));
                 set(pobj, 'userdata', S);
+                xb_gui_loadmodel;
             end
     end
 end
 
 S = get(pobj, 'userdata');
-
-%% check data
-
-if ~isfield(S, 'model'); S.model = {}; end;
-if ~isfield(S, 'runs'); S.runs = {}; end;
-if ~isfield(S, 'externals'); S.externals = struct('bathy', {{}}, 'hydro', {{}}); end;
-
-set(pobj, 'userdata', S);
 
 %% enable gui
 
@@ -126,8 +115,8 @@ set(findobj(pobj, 'tag', 'settings'), 'data', {});
 
 % bathy
 cobj = findobj(pobj, 'tag', 'ax_1');
-bathy = xb_input2bathy(S.model);
-[x y z] = xb_get(bathy, 'xfile', 'yfile', 'depfile');
+bathy = S.modelsetup.bathy;
+[x y z] = deal(bathy.x, bathy.y, bathy.z);
 if min(size(z)) <= 3
     plot(cobj, mean(x, 1), mean(z, 1), '-k');
     
@@ -135,27 +124,63 @@ if min(size(z)) <= 3
     
     set(findobj(pobj, 'tag', 'databutton_3'), 'value', false, 'enable', 'off');
 else
-    pcolor(cobj, x, y, z);
+    if ~isfield(bathy, 'rotated') || isempty(bathy.rotated)
+        xori = min(min(x));
+        yori = min(min(y));
+
+        alpha = xb_grid_rotation(x-xori, y-yori, z);
+    
+        if alpha ~= 0
+            [xr yr] = xb_grid_rotate(x, y, -alpha, 'origin', [xori yori]);
+        end
+        
+        bathy.xori = xori;
+        bathy.yori = yori;
+        bathy.alpha = alpha;
+        bathy.rotated = struct('x', xr, 'y', yr);
+        S.modelsetup.bathy = bathy;
+        set(pobj, 'userdata', S);
+    else
+        [xr yr] = deal(bathy.rotated.x, bathy.rotated.y);
+    end
+    
+    pcolor(cobj, xr, yr, z);
     shading(cobj, 'flat');
     colorbar('peer', cobj);
     
-    set(cobj, 'xlim', [min(min(x)) max(max(x))], 'ylim', [min(min(y)) max(max(y))]);
+    if ~isempty(bathy.crop)
+        pos = bathy.crop;
+        
+        if bathy.alpha ~= 0
+            [pos(1) pos(2)] = xb_grid_rotate(pos(1), pos(2), -bathy.alpha, 'origin', [bathy.xori bathy.yori]);
+        end
+        
+        crop = findobj(cobj, 'tag', 'crop');
+        if isempty(crop);
+            rectangle('position', pos, 'tag', 'crop', 'parent', cobj);
+        else
+            set(crop, 'position', pos);
+        end
+    end
+    
+    set(cobj, 'xlim', [min(min(xr)) max(max(xr))], 'ylim', [min(min(yr)) max(max(yr))]);
     
     set(findobj(pobj, 'tag', 'databutton_3'), 'enable', 'on');
 end
 
-% bcfile
+% waves
 cobj = findobj(pobj, 'tag', 'wavesettings');
-bc = xb_get(S.model, 'bcfile');
+waves = S.modelsetup.hydro.waves;
 
-if xb_check(bc)
-    [f fi] = setdiff({bc.data.name}, {'type'});
+if ~isempty(waves)
+    waves = rmfield(waves,'type');
+    f = fieldnames(waves);
     set(cobj, 'rowname', f);
-    nt = max(cellfun('length', {bc.data(fi).value}));
+    nt = max(cellfun('length', struct2cell(waves)));
 
     data = cell(1, nt);
     for j = 1:length(f)
-        v = bc.data(fi(j)).value;
+        v = waves.(f{j});
 
         if isscalar(v)
             v = repmat(v, 1, nt);
@@ -163,31 +188,31 @@ if xb_check(bc)
 
         data(j,:) = num2cell(v);
 
-        bc.data(fi(j)).value = v;
+        waves.(f{j}) = v;
     end
 
     set(cobj, 'data', data, 'columneditable', [false true(1,nt)]);
 
     % plot
-    t = cumsum(xb_get(bc, 'duration')); t = t - t(1);
+    t = cumsum(waves.duration); t = t - t(1);
     ax = findobj(pobj, 'tag', 'ax_2'); hold on;
-    plot(ax, t, xb_get(bc, 'Hm0'), '-og');
-    plot(ax, t, xb_get(bc, 'Tp'), '-ob');
+    plot(ax, t, waves.Hm0, '-og');
+    plot(ax, t, waves.Tp, '-ob');
 end
 
-% zs0file
+% surge
 time = 0;
 cobj = findobj(pobj, 'tag', 'surgesettings');
-zs0 = xb_get(S.model, 'zs0file');
+surge = S.modelsetup.hydro.surge;
 
-if xb_check(zs0)
-    nt = max(cellfun('length', {zs0.data.value}));
+if ~isempty(surge) && ~isempty(surge.tide) && ~all(all(isnan(surge.tide)))
+    nt = max(cellfun('length', struct2cell(surge)));
 
-    time = xb_get(zs0, 'time');
-    tide = xb_get(zs0, 'tide');
+    time = surge.time;
+    tide = surge.tide;
     
-    data = num2cell(time');
-    data(2:size(tide,2)+1,:) = num2cell(tide');
+    data = num2cell(time);
+    data(2:size(tide,1)+1,:) = num2cell(tide);
     
     set(cobj, 'data', data, 'columneditable', true(1,nt));
 
@@ -197,9 +222,9 @@ if xb_check(zs0)
 end
 
 % zs0
-zs0 = xb_get(S.model, 'zs0');
+zs0 = surge.zs0;
 
-if ~isempty(zs0) && ~isnan(zs0)
+if ~isempty(zs0)
     data = get(cobj, 'data');
 
     nt = max(1,size(data,2));
@@ -208,7 +233,7 @@ if ~isempty(zs0) && ~isnan(zs0)
     if size(data,1) > 1
         data(3,:) = zs0;
     else
-        data(2,:) = zs0;
+        data(2:3,:) = zs0;
     end
     
     set(cobj, 'data', data, 'columneditable', true(1,nt));
@@ -219,7 +244,8 @@ if ~isempty(zs0) && ~isnan(zs0)
 end
 
 % fill settings tab
-fields = {S.model.data.name};
+settings = S.modelsetup.settings;
+fields = fieldnames(settings);
 for i = 1:length(fields)
     if ~ismember(fields{i}, {'xfile', 'yfile', 'depfile', 'nx', 'ny', 'vardx', ...
             'posdwn', 'alpha', 'xori', 'yori', 'instat', 'swtable', 'dtbc', ...
@@ -227,9 +253,27 @@ for i = 1:length(fields)
         cobj = findobj(pobj, 'tag', 'settings');
 
         data = get(cobj, 'data');
-        data(size(data,1)+1,:) = {fields{i} S.model.data(i).value};
+        data(size(data,1)+1,:) = {fields{i} settings.(fields{i})};
         set(cobj, 'data', data);
     end
+end
+
+%% fill model tab
+
+if xb_check(S.model)
+    bathy = xb_input2bathy(S.model);
+    [x y z] = xb_get(bathy, 'xfile', 'yfile', 'depfile');
+    
+    cobj = findobj(pobj, 'tag', 'preview_bathy'); cla(cobj);
+    if min(size(z)) <= 3
+        plot(cobj, mean(x, 1), mean(z, 1), '-k');
+    else
+        pcolor(cobj, x, y, z);
+        shading(cobj, 'flat');
+        colorbar('peer', cobj);
+    end
+    
+    set(cobj, 'xlim', [min(min(x)) max(max(x))], 'ylim', [min(min(y)) max(max(y))]);
 end
 
 %% fill run tab

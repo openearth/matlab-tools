@@ -88,9 +88,9 @@ function xb_gui_modelsetup_bathy_merge(obj, event)
     
     % load existing data
     S = get(findobj('tag', 'xb_gui'), 'userdata');
-    tdata = S.externals.bathy;
-    if ~isempty(tdata)
-        set(findobj(pobj, 'tag', 'table'), 'data', tdata);
+    data = S.modelsetup.bathy.data;
+    if ~isempty(data)
+        set(findobj(pobj, 'tag', 'table'), 'data', data);
     end
 
     ax1 = axes('position', [.05 .14 .60 .75]); hold on; box on;
@@ -259,7 +259,7 @@ function mergedata(obj, event)
     tdata = get(tobj, 'data');
     
     S = get(findobj('tag', 'xb_gui'), 'userdata');
-    S.externals.bathy = tdata;
+    S.modelsetup.bathy.data = tdata;
     set(findobj('tag', 'xb_gui'), 'userdata', S);
     
     x = {}; y = {}; z = {};
@@ -291,12 +291,12 @@ function mergedata(obj, event)
     
     [x y z] = xb_grid_merge('x', x, 'y', y, 'z', z);
     
-    grid = xb_generate_grid('x', x, 'y', y, 'z', z, 'crop', false, 'finalise', false);
-    
     gobj = findobj('tag', 'xb_gui');
     S = get(gobj, 'userdata');
-    S.model = xb_del(S.model, 'xfile', 'yfile', 'depfile');
-    S.model = xb_join(S.model, grid);
+    S.modelsetup.bathy.x = x;
+    S.modelsetup.bathy.y = y;
+    S.modelsetup.bathy.z = z;
+    S.modelsetup.bathy.rotated = [];
     set(gobj, 'userdata', S);
     
     close(wb);

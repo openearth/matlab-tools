@@ -66,41 +66,22 @@ function xb_gui_modelsetup_bathy_crop(obj, event)
     if get(obj, 'value')
         xb_gui_dragselect(mobj, 'select', true, 'fcn', @cropdata);
     else
-        xb_gui_dragselect(mobj, 'select', false);
-        
-        cobj = findobj(mobj, 'tag', 'crop');
-        if ~isempty(cobj)
-            S = get(pobj, 'userdata');
-            bathy = xb_input2bathy(S.model);
-
-            [x y z] = xb_get(bathy, 'xfile', 'yfile', 'depfile');
-
-            pos = get(cobj, 'position');
-            ix = any(x>=pos(1)&x<=pos(1)+pos(3), 1);
-            iy = any(y>=pos(2)&y<=pos(2)+pos(4), 2);
-            x = x(iy,ix); y = y(iy,ix); z = z(iy,ix);
-
-            bathy = xb_set(bathy, 'xfile', x, 'yfile', y, 'depfile', z);
-            bathy = xb_bathy2input(bathy);
-            bathy = xb_set(bathy, 'nx', size(z,2), 'ny', size(z,1));
-
-            S.model = xb_join(S.model, bathy);
-            set(pobj, 'userdata', S);
-
-            xb_gui_loaddata;
-        end
+        xb_gui_dragselect(mobj, 'select', false, 'cursor', false);
     end
-    
-    set(get(mobj, 'children'), 'hittest', 'off');
 end
 
 function cropdata(obj, event, aobj, xpol, ypol)
+    set(findobj(obj, 'tag', 'databutton_3'), 'value', 0);
+
     pos = [min(xpol) min(ypol) max(abs(diff(xpol))) max(abs(diff(ypol)))];
     
-    cobj = findobj(aobj, 'tag', 'crop');
-    if isempty(cobj);
-        rectangle('position', pos, 'tag', 'crop', 'parent', aobj);
-    else
-        set(cobj, 'position', pos);
+    S = get(obj, 'userdata');
+    bathy = S.modelsetup.bathy;
+    if bathy.alpha ~= 0
+        [pos(1) pos(2)] = xb_grid_rotate(pos(1), pos(2), bathy.alpha, 'origin', [bathy.xori bathy.yori]);
     end
+    S.modelsetup.bathy.crop = pos;
+    set(obj, 'userdata', S);
+    
+    xb_gui_loaddata;
 end

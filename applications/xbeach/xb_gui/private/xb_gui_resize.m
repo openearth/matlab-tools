@@ -85,6 +85,9 @@ for i = 1:length(objs)
     set(objs(i), 'position', [.02+.12*(i-1) .88 .1 .04].*p);
 end
 
+objs = findobj(obj, 'tag', 'generate');
+set(objs, 'position', [.71 .88 .1 .04].*p);
+
 objs = findobj(obj, '-regexp', 'tag', '^panel_1_\d+$');
 set(objs, 'position', [.02 .02 .96 .88]);
 
@@ -117,6 +120,10 @@ set(findobj(obj, 'tag', 'surgesettings'), 'position', [.36 .02 .31 .25].*p);
 %% model setup -> settings
 
 set(findobj(obj, 'tag', 'settings'), 'position', [.02 .02 .76 .76].*p);
+
+%% model
+
+set(findobj(obj, 'tag', 'preview_bathy'), 'position', [.05 .05 .78 .90]);
 
 %% run
     

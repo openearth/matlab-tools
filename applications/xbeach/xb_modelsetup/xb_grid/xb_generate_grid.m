@@ -174,7 +174,8 @@ else
     [x_d_w y_d_w] = xb_grid_xb2world(x_d, y_d, xori, yori, alpha);
 
     % interpolate elevation data to dummy grid
-    z_d = interp2(x_w, y_w, z_w, x_d_w, y_d_w);
+    z_d = z_w; z_d(isnan(z_d)) = 0;
+    z_d = interp2(x_w, y_w, z_d, x_d_w, y_d_w);
 
     % determine representative cross-section
     z_d_cs = max(z_d, [], 1);
@@ -230,24 +231,24 @@ else
 end
 
 % interpolate nan's
-if (~islogical(OPT.crop) && isvector(OPT.crop)) || (islogical(OPT.crop) && OPT.crop)
+if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise) && OPT.finalise)
     for i = 1:size(zgrid, 1)
         notnan = ~isnan(zgrid(i,:));
         if any(~notnan) && sum(notnan) > 1
             zgrid(i,~notnan) = interp1(xgrid(i,notnan), zgrid(i,notnan), xgrid(i,~notnan));
-            negrid(i,~notnan) = OPT.zdepth+zgrid(i,~notnan);
+            if ~isempty(OPT.ne); negrid(i,~notnan) = OPT.zdepth+zgrid(i,~notnan); end;
         end
 
         j = find(~isnan(zgrid(i,:)), 1, 'first');
         if ~isempty(j) && j > 1
             zgrid(i,1:j-1) = zgrid(i,j);
-            negrid(i,1:j-1) = OPT.zdepth+zgrid(i,j);
+            if ~isempty(OPT.ne); negrid(i,1:j-1) = OPT.zdepth+zgrid(i,j); end;
         end
 
         j = find(~isnan(zgrid(i,:)), 1, 'last');
         if ~isempty(j) && j < size(zgrid, 2)
             zgrid(i,j+1:end) = zgrid(i,j);
-            negrid(i,j+1:end) = OPT.zdepth+zgrid(i,j);
+            if ~isempty(OPT.ne); negrid(i,j+1:end) = OPT.zdepth+zgrid(i,j); end;
         end
     end
 end

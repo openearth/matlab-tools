@@ -62,6 +62,7 @@ function xb_gui_dragselect(obj, varargin)
 
     % read options
     OPT = struct( ...
+        'cursor', true, ...
         'select', true, ...
         'fcn', '' ...
     );
@@ -77,13 +78,24 @@ function xb_gui_dragselect(obj, varargin)
         set(obj, 'buttondownfcn', @startdrag);
     else
         set(gcf, ...
-            'windowbuttonmotionfcn', {@setpointer, obj}, ...
+            'windowbuttonmotionfcn', '', ...
             'windowbuttonupfcn', '' ...
         );
+    
+        if OPT.cursor
+            set(gcf, 'windowbuttonmotionfcn', {@setpointer, obj});
+        end
 
         set(obj, 'buttondownfcn', '');
+        
+        robj = findobj(obj, 'tag', 'selection');
+    
+        if ~isempty(robj)
+            delete(robj);
+        end
     end
     
+    set(get(obj, 'children'), 'hittest', 'off');
 end
 
 function setpointer(obj, event, aobj)
@@ -113,6 +125,8 @@ function stopdrag(obj, event, aobj, fcn)
     robj = findobj(aobj, 'tag', 'selection');
     
     if ~isempty(robj)
+        delete(robj);
+        
         p1 = get(aobj, 'userdata');
         if ~isempty(p1)
             p2 = get(aobj, 'currentpoint');
@@ -127,8 +141,6 @@ function stopdrag(obj, event, aobj, fcn)
                 feval(fcn, obj, event, aobj, polx, poly);
             end
         end
-        
-        delete(robj);
     end
     
     set(aobj, 'userdata', []);

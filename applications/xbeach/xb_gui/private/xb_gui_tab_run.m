@@ -88,7 +88,7 @@ function build(obj, event)
         'columnname', {'id', 'date', 'name', 'location', 'nodes', 'binary', 'ssh'}, ...
         'columnwidth', {50 100 200 200 50 200 50});
     
-    set([rundir(:) ; runbuttons(:) ; runtable], 'parent', findobj(obj, 'tag', 'panel_2'));
+    set([rundir(:) ; runbuttons(:) ; runtable], 'parent', findobj(obj, 'tag', 'panel_3'));
 end
 
 function getdir(obj, event)

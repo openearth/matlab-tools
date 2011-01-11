@@ -1,10 +1,10 @@
-function xb_gui_tab_modelsetup_bathy(obj)
-%XB_GUI_TAB_MODELSETUP_BATHY  One line description goes here.
+function xb_gui_loadmodel(obj, event)
+%XB_GUI_LOADMODEL  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = xb_gui_tab_modelsetup_bathy(varargin)
+%   varargout = xb_gui_loadmodel(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function xb_gui_tab_modelsetup_bathy(obj)
 %   varargout =
 %
 %   Example
-%   xb_gui_tab_modelsetup_bathy
+%   xb_gui_loadmodel
 %
 %   See also 
 
@@ -48,7 +48,7 @@ function xb_gui_tab_modelsetup_bathy(obj)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 06 Jan 2011
+% Created: 10 Jan 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -58,40 +58,32 @@ function xb_gui_tab_modelsetup_bathy(obj)
 % $HeadURL$
 % $Keywords: $
 
-%% build tab modelsetup -> bathymetry
-    
-    build(obj, []);
+%% load model in gui struct
 
-end
+pobj = findobj('tag', 'xb_gui');
+S = get(pobj, 'userdata');
 
-%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if xb_check(S.model)
+    bathy = xb_input2bathy(S.model);
+    [x y z] = xb_get(bathy, 'xfile', 'yfile', 'depfile');
+    S.modelsetup.bathy.x = x;
+    S.modelsetup.bathy.y = y;
+    S.modelsetup.bathy.z = z;
 
-function build(obj, event)
+    waves = xb_get(S.model, 'bcfile');
+    S.modelsetup.hydro.waves = cell2struct({waves.data.value}, {waves.data.name}, 2);
 
-    % build axes
-    ax = axes('tag', 'ax_1'); hold on; box on;
-    xb_gui_dragselect(ax, 'select', false, 'cursor', false);
-    
-    % build data buttons
-    databuttons = [];
-    databuttons(1) = uicontrol(obj, 'tag', 'databutton_1', 'string', 'Get bathymetry data', ...
-        'callback', @xb_gui_modelsetup_bathy_merge);
-    databuttons(2) = uicontrol(obj, 'tag', 'databutton_2', 'string', 'Add non-erodable data', ...
-        'callback', @xb_gui_modelsetup_bathy_ne, 'enable', 'off');
-    databuttons(3) = uicontrol(obj, 'tag', 'databutton_3', 'string', 'Crop', ...
-        'callback', @xb_gui_modelsetup_bathy_crop, 'enable', 'off');
-    
-    set(databuttons, 'style', 'pushbutton');
-    set(databuttons(3), 'style', 'toggle');
-    
-    % build finalise options
-    options = [];
-    funcs = get_subfunc('xb_grid_finalise');
-    for i = 2:length(funcs)
-        options(i-1) = uicontrol(obj, 'tag', ['gridfinalise_' num2str(i-1)], 'string', funcs(i).name);
+    [time tide zs0] = xb_get(S.model, 'zs0file.time', 'zs0file.tide', 'zs0');
+    S.modelsetup.hydro.surge = cell2struct({time' tide' zs0}, {'time' 'tide' 'zs0'}, 2);
+
+    fields = {S.model.data.name};
+    for i = 1:length(fields)
+        if ~ismember(fields{i}, {'xfile', 'yfile', 'depfile', 'nx', 'ny', 'vardx', ...
+                'posdwn', 'alpha', 'xori', 'yori', 'instat', 'swtable', 'dtbc', ...
+                'rt', 'bcfile', 'zs0', 'zs0file'})
+            S.modelsetup.settings.(fields{i}) = S.model.data(i).value;
+        end
     end
     
-    set(options, 'style', 'checkbox');
-    
-    set([ax(:) ; databuttons(:) ; options(:)], 'parent', findobj(obj, 'tag', 'panel_1_1'));
+    set(pobj, 'userdata', S);
 end
