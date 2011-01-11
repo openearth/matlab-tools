@@ -22,8 +22,9 @@ function [x y z] = xb_grid_finalise(x, y, z, varargin)
 %                                                   sandwalls
 %                               seaward_flatten:    flatten offshore
 %                                                   boundary
-%                               landward_polder:    add polder at -5 at
-%                                                   landward side of model
+%                               landward_extend:    extend lanward border
+%                                                   with specified
+%                                                   elevation 
 %                               seaward_extend:     extend seaward border
 %                                                   to a certain depth
 %
@@ -151,15 +152,18 @@ function [x y z] = seaward_flatten(x, y, z, OPT)
         z(i,2:n) = interp1(x(i,[1 n+1]),[z0 z(i,n+1)],x(i,2:n));
     end
 
-function [x y z] = landward_polder(x, y, z, OPT)
+function [x y z] = landward_extend(x, y, z, OPT)
     n = OPT.n;
-    z0 = -OPT.z0;
+    dx = x(1,end)-x(1,end-1);
     
-    for i = 1:size(z,1)
-        z(i,end-n:end) = interp1(x(i,[end-n end]),[z0 z(i,end)],x(i,end-n:end));
-        z(i,end-2*n-1:end-n-1) = interp1(x(i,[end-2*n-1 end-n-1]),[z(i,end-2*n-1) z0],x(i,end-2*n-1:end-n-1));
-    end
-
+    zn = [z ones(size(y,1),OPT.n)*OPT.z0];
+    xn = [x x(1,end)+repmat([1:1:OPT.n],size(y,1),1)*dx];
+    yn = [y repmat(y(:,1),1,OPT.n)];
+    
+    x = xn;
+    y = yn;
+    z = zn;
+    
 function [xn yn zn] = seaward_extend(x, y, z, OPT)
 
 z0 = max(z(:,1));
@@ -172,7 +176,7 @@ zt(:,OPT.n+1:end) = z;
 xn = [ x(1,1)+[-dn:1:-1]*dxoff x(1,:)]; 
 [xn,yn] = meshgrid(xn,y(:,1));
 % temporary xbeach grid
-xt = [xn(1,1:OPT.n) x(1,:)+dn*dxoff]; 
+xt = [xn(1,1:OPT.n) x(1,:)]; 
 [xt,yt] = meshgrid(xt,y(:,1));
 % interpolate
 zn = interp2(xt,yt,zt,xn,yn);
