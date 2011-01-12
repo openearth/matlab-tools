@@ -71,6 +71,7 @@ OPT.description = '';
 OPT.fileName    = '';
 OPT.kmlName     = '';
 OPT.logo        = '';
+OPT.basePath    = '';
 
 if nargin==0
    varargout = {OPT};
@@ -84,6 +85,7 @@ OPT = setproperty(OPT,varargin{:});
 trimfile   = vs_use(OPT.filename);
  G          = vs_meshgrid2dcorcen(trimfile);
  T          = vs_time(trimfile);
+
 [G.cen.lon,...
  G.cen.lat] = convertCoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
 
@@ -95,7 +97,7 @@ first = 1;
 
 for it=1:T.nt_storage
 
-   D.cen.dep = -vs_let_scalar(trimfile,OPT.group,{it},OPT.element)
+   D.cen.dep = -vs_let_scalar(trimfile,OPT.group,{it},OPT.element);
    
 %% plot one timestep
 
@@ -126,7 +128,8 @@ for it=1:T.nt_storage
               'lowestLevel',12,...
                   'bgcolor',[255 0 255],...
           'CBcolorbartitle','depth [m]',...
-                 'fileName',kmlname{it})
+                 'fileName',kmlname{it},...
+                 'basePath',OPT.basePath);
    else
    KMLfig2pngNew(h,G.cen.lat,G.cen.lon,D.cen.dep,...
                   'kmlName',['timestep ',num2str(it,'%0.3d')],... 
@@ -136,7 +139,8 @@ for it=1:T.nt_storage
               'lowestLevel',12,...
                   'bgcolor',[255 0 255],...
                  'colorbar',0,...
-                 'fileName',kmlname{it})
+                 'fileName',kmlname{it},...
+                 'basePath',OPT.basePath);
    end
    
    try;close(FIG);end
@@ -147,6 +151,6 @@ end
 
 %% merge all timesteps
 KMLmerge_files('sourceFiles',kmlname,...
-   'fileName',OPT.fileName,...
+   'fileName',[OPT.basePath,OPT.fileName],...
 'description',OPT.description,...
     'kmlName',OPT.kmlName)
