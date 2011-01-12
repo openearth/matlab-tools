@@ -13,11 +13,11 @@ dimSizeY = (OPT.mapsizey/OPT.gridsizex)+1;
 %% Open NC file
 NCid = netcdf.open(ncfile, 'NC_WRITE');
 
-%% add time
+%% get current timesteps in nc file
 varid = netcdf.inqVarID(NCid,'time');
 time0 = netcdf.getVar(NCid,varid);
 
-%% add time
+%% add time if it is not already in nc file
 if any(time0 == time)
     jj = find(time0 == time,1)-1;
 else
@@ -31,17 +31,22 @@ varid = netcdf.inqVarID(NCid,'z');
 if jj ~= length(time0) % then existing nc file already has data
     % read Z data
     Z0 = netcdf.getVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1]);
-    Z0(Z0>1e35) = nan;
-    
+    % Z0(Z0>1e35) = nan; Should not be necessary to manually set high values to nan
+    Znotnan  = ~isnan(Z);
+    Z0notnan = ~isnan(Z0);
+    notnan   = Znotnan&~Z0notnan);
     % check if data will be overwritten
-    if ~all(isnan(Z0(~isnan(Z))))
-        if max(Z0(~isnan(Z0)&~isnan(Z)) - Z(~isnan(Z0)&~isnan(Z)))>0
-            warning('data will be overwritten') %#ok<*WNTAG>
-        else
-            disp('in an nc, data will be overwritten by identical values from a different source')
+    if any(notnan) % values are not nan in both existing and new data
+        [~,filename] = fileparts(ncfile);
+         if isequal(Z0(notnan) - Z(notnan))
+            % this is ok
+            fprintf(1,'in %s, data is overwritten by identical values from a different source \n',filename)
+        else 
+            % this is (most likely) not ok   
+            fprintf(2,'in %s, data is overwritten by different values from a different source \n',filename)
         end
     end
-    Z0(~isnan(Z)) = Z(~isnan(Z));
+    Z0(Znotnan) = Z(Znotnan);
     Z = Z0;
 end
 

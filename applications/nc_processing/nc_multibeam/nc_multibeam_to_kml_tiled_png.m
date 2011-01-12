@@ -1,7 +1,15 @@
 function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 %NC_MULTIBEAM_TO_KML_TILED_PNG  Generate a tiled png from data in nc files
 %
-%   More detailed description goes here.
+%   This function is intended to provide a fully automated routine to
+%   generate an animated kml file for viewing in google earth from a dataset
+%   provided in a (set of) nc file(s) the data in an nc file of set of
+%   tiled nc files. 
+%
+%   The NC file must contain z and time data and either x,y or lat,lon
+%   data. If the NC File contains x,y data, Latitude and
+%   Longitude data are calculated from the x and y data with
+%   convertCoordinates using OPT.EPSGcode and OPT.calculate_latlon_local.
 %
 %   Syntax:
 %   varargout = nc_multibeam_to_kml_tiled_png(varargin)
@@ -65,29 +73,33 @@ OPT.copy2server             = false;
 OPT.ncpath                  = [];
 OPT.ncfile                  = '*.nc';
 OPT.relativepath            = [];
-OPT.referencepath           = [];
+
+OPT.referencepath           = [];       % is provided, nc files with are expected here that define a reference plane which is to be subtracted from the data before plotting
+
 OPT.basepath_local          = [];
 OPT.basepath_network        = [];
 OPT.basepath_www            = [];
+OPT.serverURL               = [];       % if a KML file is intended to be placed on the server, the path must be hardcoded in the KML file
 
-OPT.make_kmz                = false;
-OPT.lowestLevel             = 15;
-OPT.tiledim                 = 256;
+OPT.make_kmz                = false;    % this packs the entire file tree to a sing kmz file, convenient for portability
+OPT.lowestLevel             = 15;       % integer; Detail level of the highest resultion png tiles to generate. Advised range 12 to 18; 
+                                        % dimension of individual pixels in Lat and Lon can be calculated as follows:
+                                        % 360/(2^OPT.lowestLevel) / OPT.tiledim
+OPT.tiledim                 = 256;      % dimension of tiles in pixels.
 
-OPT.clim                    = [-50 25];
-OPT.colorMap                = @(m) colormap_cpt('bathymetry_vaklodingen',m);
+OPT.clim                    = [-50 25]; % limits of color scale
+OPT.colorMap                = @(m) colormap_cpt('bathymetry_vaklodingen',m); 
 OPT.colorSteps              = 500;
 OPT.templateHor             = 'KML_colorbar_template_horizontal.png';
 OPT.templateVer             = 'KML_colorbar_template_vertical.png';
 OPT.colorbar                = true;
-OPT.datatype                = 'multibeam';
 OPT.description             = [];
 OPT.descriptivename         = [];
-OPT.lightAdjust             = [];
-OPT.serverURL               = [];
-OPT.quiet                   = true;
-OPT.calculate_latlon_local  = false;
-OPT.EPSGcode                = 28992;
+OPT.lightAdjust             = [];      % if set to true, the shading/lighting of the figure is scaled to be independant of OPT.lowestLevel. 
+
+OPT.quiet                   = true;    % suppress some progress information
+OPT.calculate_latlon_local  = false;   % use if x and y data are provided to be converted to lat and lon
+OPT.EPSGcode                = [];      % code of coordinate system to convert x and y projection to Lat and Lon 
 %OPT.dateFcn                 = @(time) (time); % use nc_cf_time so it works with any units
 
 % add colorbar defualt options
@@ -104,11 +116,11 @@ if OPT.make
     %% find nc files, and remove catalog.nc from the files if found
     OPT.opendap = strcmpi(OPT.ncpath(1:4),'http')||strcmpi(OPT.ncpath(1:3),'www');
     if OPT.opendap
-        if ~(strcmp(OPT.ncpath(end-10:end),'catalog.xml') | ...
+        if ~(strcmp(OPT.ncpath(end-10:end),'catalog.xml') || ...
              strcmp(OPT.ncpath(end-11:end),'catalog.html'))
         temp = opendap_catalog([OPT.ncpath '/catalog.xml']);
         else
-        temp = opendap_catalog([OPT.ncpath])
+        temp = opendap_catalog([OPT.ncpath]);
         end
         for ii=1:length(temp)
             fns(ii).name  = temp{ii};
@@ -215,6 +227,8 @@ if OPT.make
         
         multiWaitbar('kml_print_all_tiles'  ,WB.bytesDone/WB.bytesToDo,...
             'label',sprintf('Printing tiles: %s Timestep: %d/%d',fns(ii).name,1,size(date,1)))
+        
+        % read lat,lon data or calculate lat,lon from x,y
         if  OPT.calculate_latlon_local
             x  = nc_varget(url, 'x');
             y  = nc_varget(url, 'y');
@@ -239,11 +253,17 @@ if OPT.make
         z_dim_info = nc_getvarinfo(url,'z') ;
         time_dim = strcmp(z_dim_info.Dimension,'time');
         
+		% for some reason this has to be set since the new nc toolbox was added;
+        setpref('SNCTOOLS','PRESERVE_FVD',true)
+        
         for jj = size(date4GE,1)-1:-1:1
             % load z data
             z = nc_varget(url,'z',...
                 [ 0, 0, 0] + (jj-1)*time_dim,...
                 [-1,-1,-1] + 2*time_dim);
+            
+            % subtract reference plane form data (reference plane is zeros
+            % if not set otherwise
             z = z-z_reference;
             
             if sum(~isnan(z(:)))>=3
@@ -275,7 +295,9 @@ if OPT.make
                 z = z(2:end-1,2:end-1);
                 
                 %% MAKE TILES
-                KMLfig2pngNew(h,lat,lon,z*OPT.lightAdjust,'highestLevel',10,'lowestLevel',OPT.lowestLevel,...
+                KMLfig2pngNew(h,lat,lon,z*OPT.lightAdjust,...
+                          'highestLevel',10,...
+                           'lowestLevel',OPT.lowestLevel,...
                                 'timeIn',date4GE(jj),...
                                'timeOut',date4GE(jj+1),...
                               'fileName',[datestr(date(jj),29) '.kml'],...
@@ -333,10 +355,6 @@ if OPT.make
     multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML - Getting unique png file names...','color',[0.9 0.4 0.1])
     OPT2.highestLevel  = inf;
     OPT2.lowestLevel   = OPT.lowestLevel;
-    % folderName = OPT.datatype;
-    % try %#ok<*TRYNC>
-    %     rmdir([folderName filesep 'KML'], 's')
-    % end
     
     dates     = findAllFiles('basepath',fullfile(OPT.basepath_local,OPT.relativepath),'recursive',false);
     datenums  = datenum(dates,'yyyy-mm-dd');
