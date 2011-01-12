@@ -1,6 +1,6 @@
 function testresult = KMLlogo_test()
 % KMLlogo_TEST  unit test for KMLlogo
-%  
+%
 % See also: KMLlogo, line, plot
 
 %% Copyright notice
@@ -30,9 +30,9 @@ function testresult = KMLlogo_test()
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -54,10 +54,12 @@ disp(['... running test:',mfilename])
 %% $RunCode
 % Write test code here
 try
-
-    copyfile([matlabroot '\sys\perl\win32\lib\Tk\demos\images\mickey.gif'],[KML_testdir 'matlab.ico'])
-    KMLlogo ([KML_testdir 'matlab.ico'],'fileName',KML_testdir('KMLlogo_test.kml'),'invertblackwhite',1,'kmlName','mickey');
-
+    srcfile = [matlabroot '\sys\perl\win32\lib\Tk\demos\images\mickey.gif'];
+    destfile = [KML_testdir,filesep, 'matlab.ico'];
+    copyfile(srcfile,destfile,'f')
+    kmlfilename = [KML_testdir,filesep,'KMLlogo_test.kml'];
+    KMLlogo (destfile,'fileName',kmlfilename,'invertblackwhite',1,'kmlName','mickey');
+    
     testresult = true;
 catch
     testresult = false;

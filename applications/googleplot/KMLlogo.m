@@ -72,7 +72,7 @@ function varargout = KMLlogo(varargin)
       return
    end
    
-   if nargin==1
+   if nargin>1
        imname             = varargin{1};
       [OPT, Set, Default] = setproperty(OPT, varargin{2:end});
    else
