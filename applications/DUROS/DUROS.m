@@ -32,10 +32,10 @@ function [result, messages] = DUROS(varargin)
 %                               Volumes: Cumulative volumes, erosion volume
 %                                           and accretion volume
 %                               xActive: x-coordinates of the area that was
-%                                           changes during the calculation 
+%                                           changed during the calculation 
 %                                           step
 %                               zActive: z-coordinates of the points that
-%                                           was changes prior to the change
+%                                           were changed prior to the change
 %                               z2Active:z-coordinates of the changed
 %                                           points
 %                               xLand:   x-points landward of the coordinates
