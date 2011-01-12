@@ -105,7 +105,7 @@ first = 1;
 
 %% time loop
 
-for it=1:2%T.nt_storage
+for it=1:T.nt_storage
 
     if findstr(OPT.element,'DPS')
         D.cen.dep = -vs_let_scalar(trimfile,OPT.group,{it},OPT.element);
