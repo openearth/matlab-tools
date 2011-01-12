@@ -61,19 +61,23 @@ function varargout = vs_trim2kml(varargin)
 % f:/../oetsettings.m
 % addpath('C:\Delft3D\w32\matlab\')
 
-OPT.filename     = '';
-OPT.epsg         = 28992;
-OPT.group        = 'map-sed-series';
-OPT.element      = 'DPS';
-OPT.colormap     = colormap_cpt('bathymetry_vaklodingen',500);
-OPT.clim         = [-25 -5];
-OPT.description  = '';
-OPT.fileName     = '';
-OPT.kmlName      = '';
-OPT.logo         = '';
-OPT.basePath     = '';
-OPT.highestLevel = [];
-OPT.lowestLevel  = [];
+OPT.filename          = '';
+OPT.epsg              = 28992;
+OPT.group             = 'map-sed-series';
+OPT.element           = 'DPS';
+OPT.colormap          = colormap_cpt('bathymetry_vaklodingen',500);
+OPT.clim              = [-25 -5];
+OPT.description       = '';
+OPT.mergedkmlfilename = '';                                                 % was OPT.fileName in previous version
+OPT.kmlName           = '';
+OPT.logo              = '';
+OPT.basePath          = '';
+OPT.highestLevel      = [];
+OPT.lowestLevel       = [];
+OPT.mask              = false;                                              % masks on active velocity points
+OPT.CBcolorbartitle   = OPT.element;
+OPT.CBtemplateHor     = 'KML_colorbar_template_horizontal.png';
+OPT.CBtemplateVer     = 'KML_colorbar_template_vertical.png';
 
 if nargin==0
    varargout = {OPT};
@@ -82,12 +86,16 @@ end
 
 OPT = setproperty(OPT,varargin{:});
 
+if isempty(OPT.mergedkmlfilename)
+    OPT.mergedkmlfilename = [filename(OPT.filename),'_',OPT.element,'.kmz'];
+end
+
 %% load time and grid
 
 trimfile   = vs_use(OPT.filename);
  G          = vs_meshgrid2dcorcen(trimfile);
  T          = vs_time(trimfile);
-
+ 
 [G.cen.lon,...
  G.cen.lat] = convertCoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
 
@@ -97,9 +105,19 @@ first = 1;
 
 %% time loop
 
-for it=1:1%T.nt_storage
+for it=1:2%T.nt_storage
 
-   D.cen.dep = -vs_let_scalar(trimfile,OPT.group,{it},OPT.element);
+    if findstr(OPT.element,'DPS')
+        D.cen.dep = -vs_let_scalar(trimfile,OPT.group,{it},OPT.element);
+    else
+        D.cen.dep = vs_let_scalar(trimfile,OPT.group,{it},OPT.element);
+    end
+
+    if OPT.mask
+        mymask = vs_let_scalar(trimfile,'map-series',{it},'KFU');
+        mymask(mymask==0) = NaN;
+        D.cen.dep = D.cen.dep.*mymask;
+    end
    
 %% plot one timestep
 
@@ -131,7 +149,9 @@ for it=1:1%T.nt_storage
                   'bgcolor',[255 0 255],...
           'CBcolorbartitle','depth [m]',...
                  'fileName',kmlname{it},...
-                 'basePath',OPT.basePath);
+                 'basePath',OPT.basePath,...
+                 'CBtemplateVer',OPT.CBtemplateVer,...
+                 'CBtemplateHor',OPT.CBtemplateHor);
    else
    KMLfig2pngNew(h,G.cen.lat,G.cen.lon,D.cen.dep,...
                   'kmlName',['timestep ',num2str(it,'%0.3d')],... 
@@ -152,7 +172,13 @@ for it=1:1%T.nt_storage
 end
 
 %% merge all timesteps
-KMLmerge_files('sourceFiles',kmlname,...
-   'fileName',[OPT.basePath,OPT.fileName],...
-'description',OPT.description,...
-    'kmlName',OPT.kmlName)
+% KMLmerge_files('sourceFiles',kmlname,...
+%    'fileName',[OPT.basePath,OPT.fileName],...
+% 'description',OPT.description,...
+%     'kmlName',OPT.kmlName)
+
+files = dir([OPT.basePath,'*.kml']);
+for ii = 1:length(files)
+    sourceFiles{ii} = [OPT.basePath,files(ii).name];
+end
+KMLmerge_files('fileName',[OPT.basePath,OPT.mergedkmlfilename],'sourceFiles',sourceFiles)
