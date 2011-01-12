@@ -93,6 +93,8 @@ OPT.lowestLevel        =     [];
 OPT.debug              =      0;  % display some progress info
 OPT.open               = 0; % KML_header 
 OPT.visible            = 1; % KML_header
+OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
+OPT.CBtemplateVer        = 'KML_colorbar_template_vertical.png';
 
 if nargin==0
   return
@@ -319,7 +321,9 @@ if OPT.makeKML
                               'CBcolorMap',colormap(OPT.ha),...
                             'CBcolorTitle',OPT.CBcolorbartitle,...
                       'CBcolorbarlocation',OPT.CBcolorbarlocation,...
-                               'CBvisible',OPT.visible);
+                               'CBvisible',OPT.visible,...
+                           'CBtemplateVer',OPT.CBtemplateVer,...
+                           'CBtemplateHor',OPT.CBtemplateHor);
                       
         
         % refer to one level deeper,  KMLcolorbar chops directory in <href>
