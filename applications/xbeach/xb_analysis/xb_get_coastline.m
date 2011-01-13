@@ -1,4 +1,4 @@
-function [xc yc idx] = xb_get_coastline(x, y, z, varargin)
+function [xc yc dir idx] = xb_get_coastline(x, y, z, varargin)
 %XB_GET_COASTLINE  Determines coastline from 2D grid
 %
 %   Determines coastline based on 2D grid by first determining the
@@ -23,6 +23,7 @@ function [xc yc idx] = xb_get_coastline(x, y, z, varargin)
 %   Output:
 %   xc          = x-coordinates of coastline
 %   yc          = y-coordinates of coastline
+%   dir         = landward direction (negative or positive)
 %   idx         = logical matrix of the size of z indicating whether a cell
 %                 is on the coastline or not (xc = x(idx) and yc = y(idx)
 %                 if x and y are matrices of size of z)

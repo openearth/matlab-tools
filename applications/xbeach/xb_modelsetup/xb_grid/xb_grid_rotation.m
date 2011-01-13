@@ -78,7 +78,7 @@ if isempty(y); y = 0; end;
 
 %% determine coastline
 
-[xc yc] = xb_get_coastline(x, y, z);
+[xc yc dir] = xb_get_coastline(x, y, z);
 
 % get linear regression line from coastline
 [a b] = linreg(xc, yc);
@@ -91,7 +91,7 @@ if ~isnan(b)
     alpha = pi/2-atan(b);
     
     % check and correct rotation
-    if ~isnan(a) && sign(a) == 1
+    if dir == 1
         alpha = alpha + pi;
     end
 
