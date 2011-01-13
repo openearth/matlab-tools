@@ -160,5 +160,9 @@ str = sprintf('%s%s = ', varname, blanks(nrBlanks));
 if ischar(value)
     str = sprintf('%s', str, value);
 else
-    str = sprintf('%s%f', str, value);
+    if value == round(value)
+        str = sprintf('%s%d', str, value);
+    else
+        str = sprintf('%s%g', str, value);
+    end
 end
