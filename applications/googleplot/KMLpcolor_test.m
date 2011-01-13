@@ -50,6 +50,24 @@ disp(['... running test:',mfilename])
 
 %% $RunCode
 try
+
+% test lon/lat sticks/grid AND color data at corners of at centres
+% the 4 resulting files should identical (and they are if you leave out the colorbar) !!
+
+   lon1     = [-1 0 1]; 
+   lat1     = [-2 -1 0 1 2];
+  [lat,lon] = meshgrid(lat1,lon1);
+  
+   c = lat + lon;
+
+
+   KMLpcolor(lat1,lon1,c               ,'fileName',KML_testdir('KMLpcolor_stick_corner.kml'),'kmlName','KMLpcolor test','colorbar',0);
+   KMLpcolor(lat1,lon1,corner2center(c),'fileName',KML_testdir('KMLpcolor_stick_center.kml'),'kmlName','KMLpcolor test','colorbar',0);
+   KMLpcolor(lat ,lon ,c               ,'fileName',KML_testdir('KMLpcolor_grid_corner.kml' ),'kmlName','KMLpcolor test','colorbar',0);
+   KMLpcolor(lat ,lon ,corner2center(c),'fileName',KML_testdir('KMLpcolor_grid_center.kml' ),'kmlName','KMLpcolor test','colorbar',0);
+
+% test colorscaling
+
   [lat,lon] = meshgrid(54:.1:57,2:.1:5);
    c        = peaks(31);
    KMLpcolor(lat   ,lon-15, c,'fileName',KML_testdir('KMLpcolor_1.kml' ));
@@ -60,6 +78,7 @@ try
 
    KMLpcolor(lat+10,lon-15, c,'fileName',KML_testdir('KMLpcolor_3.kml'),'fillAlpha',1,'lineWidth',3,'colorMap',@(m) colormap_cpt('temperature',m),'polyOutline',true);
    KMLpcolor(lat+5 ,lon*-10,c,'fileName',KML_testdir('KMLpcolor_4.kml'),'polyOutline',true,'polyFill',false,'lineColor','fillColor');
+   
    testresult = true;
 catch
    testresult = false;

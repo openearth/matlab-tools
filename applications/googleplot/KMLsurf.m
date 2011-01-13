@@ -6,8 +6,17 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 %
 % where z needs to be specified at the corners (same size as lon,lat
 % wheras c can be specified  either at the corners or at the centers.
-% If c and lat have the same dimensions (c at corners), c is calculated 
-% ath the centers as the mean value of the surrounding gridpoints. 
+% If c and lat/lon have the same dimensions, c is interpolated to be 
+% the mean value of the surrounding gridpoints with corner2center().Therefore
+% the resulting kml file always has 'shading flat' look since Google Earth
+% does not support 'shading interp' look.
+% Note: lat, and lon can be either vectors or full curvi-linear matrices.
+% Note: when z is empty, z=0 is assumed.
+%
+% Note: for large grids, KMLpcolor objects migth be slow in Google 
+% Earth, use KMLfig2pngNew instead, that uses the native Google Earth
+% technology to speed up visualisation of enormous grids. KMLfig2pngNew
+% does not support z data though, so behaves as KMLpcolor (a wrapper for KMLsurf).
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -82,6 +91,10 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 %% 
    if isvector(lat) & isvector(lon)
       [lat,lon] = meshgrid(lat,lon);
+   end
+   
+   if isempty(z)
+      z = 0.*lat; % TO DO: implement 'clampToGround'
    end
 
 %% assign c if it is given

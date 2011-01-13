@@ -22,6 +22,8 @@ function [OPT, Set, Default] = KMLfig2png(h,varargin)
 %
 % See also: GOOGLEPLOT, PCOLOR, KMLFIG2PNG_ALPHA
 
+warning('deprecated, use KMLfig2pngNew instead')
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
