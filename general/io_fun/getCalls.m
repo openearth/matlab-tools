@@ -74,7 +74,7 @@ end
 fullfunname = which(fun, '-all');
 [FileDir FunName] = fileparts(fullfunname{1});
 if ~isscalar(fullfunname)
-    fprintf(2, 'Duplicate(s) of "%s" are ommitted\n', fun)
+    fprintf(1, 'Duplicate(s) of "%s" are ommitted\n', fun)
 end
 
 if ~isempty(FileDir)
