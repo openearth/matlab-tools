@@ -163,6 +163,6 @@ else
     if value == round(value)
         str = sprintf('%s%d', str, value);
     else
-        str = sprintf('%s%g', str, value);
+        str = sprintf('%s%f', str, value);
     end
 end
