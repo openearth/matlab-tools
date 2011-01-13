@@ -64,8 +64,7 @@ function fpath = abspath(fpath)
 %% convert to absolute path
 
 % make sure fileseperators are right
-fpath = fullfile(fpath,'');
-
+fpath = fullfile(fpath, '');
 
 % check if path is relative
 if isempty(fpath) ...
@@ -90,7 +89,7 @@ while i <= length(p)
 end
 
 % glue path together
-fpath = fullfile(p{:});
+fpath = fullfile(p{:}, '');
 
 % help unix users
 if isunix && ...
