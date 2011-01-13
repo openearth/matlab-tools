@@ -160,5 +160,5 @@ str = sprintf('%s%s = ', varname, blanks(nrBlanks));
 if ischar(value)
     str = sprintf('%s', str, value);
 else
-    str = sprintf('%s%g', str, value);
+    str = sprintf('%s%f', str, value);
 end
