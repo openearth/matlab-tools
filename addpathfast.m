@@ -46,6 +46,10 @@ function addpathfast(basepath,varargin)
                   'delimiter', pathsep);  % read path as cell
    end
    
+   if isempty(s)
+       return
+   end
+   
 %% Exclude the .svn directories from the path
 %---------------------------------------------
 
