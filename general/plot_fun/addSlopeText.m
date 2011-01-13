@@ -61,7 +61,7 @@ function varargout = addSlopeText(varargin)
 
 %% check input
 Resize = false;
-if ~ishandle(varargin{1})
+if ~all(ishandle(varargin{1}))
     % x and y are specified as the first 2 input arguments
     [x y] = deal(varargin{1}, varargin{2});
     varargin(1:2) = [];
