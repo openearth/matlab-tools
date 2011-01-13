@@ -15,7 +15,7 @@ function OPT = d3d_mdf2kml(mdf,varargin)
 %   dry       = switch for dry points output (true/false)
 %   thd       = switch for thin dams output (true/false)
 %   kmz       = switch for saving to kmz (true/false)
-% 
+%
 %   Example
 %   OPT = d3d_mdf2kml;
 %   The output structure OPT will give you all possible keyword-value pairs
@@ -134,74 +134,83 @@ end
 
 %% Process dry points
 if OPT.dry
+    nr=0;
+    
     try
         D = delft3d_io_dry('read' ,MDF.keywords.fildry);
         nr = length(D.m1);
     catch
-        error('No dry points found...')
+        disp('No dry points found...')
     end
     
-    for i = 1:nr
-        m1=min(D.m0(i),D.m1(i));
-        n1=min(D.n0(i),D.n1(i));
-        m2=max(D.m0(i),D.m1(i));
-        n2=max(D.n0(i),D.n1(i));
-        x1=xg(m1-1:m2,n1-1)';
-        y1=yg(m1-1:m2,n1-1)';
-        x1=[x1 xg(m2,n1-1:n2)];
-        y1=[y1 yg(m2,n1-1:n2)];
-        x1=[x1 xg(m2:-1:m1-1,n2)'];
-        y1=[y1 yg(m2:-1:m1-1,n2)'];
-        x1=[x1 xg(m1-1,n2:-1:n1-1)];
-        y1=[y1 yg(m1-1,n2:-1:n1-1)];
-        xDry{i} = x1';
-        yDry{i} = y1';
+    if nr>0
+        for i = 1:nr
+            m1=min(D.m0(i),D.m1(i));
+            n1=min(D.n0(i),D.n1(i));
+            m2=max(D.m0(i),D.m1(i));
+            n2=max(D.n0(i),D.n1(i));
+            x1=xg(m1-1:m2,n1-1)';
+            y1=yg(m1-1:m2,n1-1)';
+            x1=[x1 xg(m2,n1-1:n2)];
+            y1=[y1 yg(m2,n1-1:n2)];
+            x1=[x1 xg(m2:-1:m1-1,n2)'];
+            y1=[y1 yg(m2:-1:m1-1,n2)'];
+            x1=[x1 xg(m1-1,n2:-1:n1-1)];
+            y1=[y1 yg(m1-1,n2:-1:n1-1)];
+            xDry{i} = x1';
+            yDry{i} = y1';
+        end
+        
+        %     [m,n]=size([xDry{:}]);
+        %     z = mat2cell(repmat(OPT.ddep+1, size([xDry{:}])),m,repmat(1,n,1));
+        z = cellfun(@(x) ones(size(x))+OPT.ddep,xDry,'UniformOutput',false);
+        
+        kmlFiles{end+1} = 'drypoints.kml';
+        KMLpatch3(yDry,xDry,z,'fileName',kmlFiles{end},'fillColor',OPT.dryColor,'fillAlpha',0.8,'kmlName','drypoints');
     end
-    
-%     [m,n]=size([xDry{:}]);
-%     z = mat2cell(repmat(OPT.ddep+1, size([xDry{:}])),m,repmat(1,n,1));
-    z = cellfun(@(x) ones(size(x))+OPT.ddep,xDry,'UniformOutput',false);
-    
-    kmlFiles{end+1} = 'drypoints.kml';
-    KMLpatch3(yDry,xDry,z,'fileName',kmlFiles{end},'fillColor',OPT.dryColor,'fillAlpha',0.8,'kmlName','drypoints');
 end
 %% Process thin dams
 if OPT.thd
+    nr = 0;
+    
     try
         T = delft3d_io_thd('read' ,MDF.keywords.filtd);
         nr = length(T.m);
     catch
-        error('No thin dams found');
+        disp('No thin dams found');
     end
-    xThd = [];
-    yThd = [];
     
-    for i = 1:nr
-        m1=min(T.m(:,i));
-        n1=min(T.n(:,i));
-        m2=max(T.m(:,i));
-        n2=max(T.n(:,i));
-        k=0;
-        for jj=m1:m2
-            for kk=n1:n2
-                k=k+1;
-                m=jj;
-                n=kk;
-                if strcmpi(T.DATA(i).direction,'u')
-                    xThd = [xThd nan xg(m,n-1) xg(m,n)];
-                    yThd = [yThd nan yg(m,n-1) yg(m,n)];
-                else
-                    xThd =[xThd nan xg(m-1,n) xg(m,n)];
-                    yThd =[yThd nan yg(m-1,n) yg(m,n)];
+    if nr>0
+        xThd = [];
+        yThd = [];
+        
+        for i = 1:nr
+            m1=min(T.m(:,i));
+            n1=min(T.n(:,i));
+            m2=max(T.m(:,i));
+            n2=max(T.n(:,i));
+            k=0;
+            for jj=m1:m2
+                for kk=n1:n2
+                    k=k+1;
+                    m=jj;
+                    n=kk;
+                    if strcmpi(T.DATA(i).direction,'u')
+                        xThd = [xThd nan xg(m,n-1) xg(m,n)];
+                        yThd = [yThd nan yg(m,n-1) yg(m,n)];
+                    else
+                        xThd =[xThd nan xg(m-1,n) xg(m,n)];
+                        yThd =[yThd nan yg(m-1,n) yg(m,n)];
+                    end
                 end
             end
         end
+        
+        z = repmat(OPT.ddep+2, size(xThd));
+        
+        kmlFiles{end+1} = 'thindams.kml';
+        KMLline(yThd',xThd',z','lineWidth',OPT.thdWidth,'lineColor',OPT.thdColor,'fileName',kmlFiles{end},'kmlName','thindams');
     end
-    
-    z = repmat(OPT.ddep+2, size(xThd));
-    
-    kmlFiles{end+1} = 'thindams.kml';
-    KMLline(yThd',xThd',z','lineWidth',OPT.thdWidth,'lineColor',OPT.thdColor,'fileName',kmlFiles{end},'kmlName','thindams');
 end
 %% Merge kml-files to one
 KMLmerge_files('sourceFiles',kmlFiles,'fileName',[name,'.kml']);
