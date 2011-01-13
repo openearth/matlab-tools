@@ -64,7 +64,7 @@ function fpath = abspath(fpath)
 %% convert to absolute path
 
 % make sure fileseperators are right
-fpath = fullfile(fpath);
+fpath = fullfile(fpath,'');
 
 
 % check if path is relative
