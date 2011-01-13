@@ -93,7 +93,7 @@ end
 if isempty(fdir); fdir = '.'; end;
 
 d = xb_read_dims(fdir);
-f = dir(fullfile(filename));
+f = dir(fullfile(filename, ''));
 
 if ~isfield(d, 'globalx') || ~isfield(d, 'globaly') || ~isfield(d, 'globaltime')
     error('Primary dimensions x, y and/or t unknown');

@@ -134,7 +134,7 @@ end
 
 %% read dat
 
-fname = fullfile(fname);
+fname = fullfile(fname, '');
 
 if exist(fname, 'file')
     f = dir(fname);
@@ -150,7 +150,8 @@ if exist(fname, 'file')
         case 8
             ftype = 'double';
         otherwise
-            error(['Dimensions incorrect [' num2str(dims) ']']);
+            ftype = 'double';
+            warning('Your filesize is weird, I assume it contains doubles.');
     end
 
     fid = fopen(fname, 'r');

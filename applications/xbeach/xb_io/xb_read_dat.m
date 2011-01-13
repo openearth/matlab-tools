@@ -108,7 +108,7 @@ else
     fdir = fname;
 end
 
-if isempty(fdir); fdir = fullfile('.'); end;
+if isempty(fdir); fdir = fullfile('.', ''); end;
 
 dims = xb_read_dims(fdir);
 

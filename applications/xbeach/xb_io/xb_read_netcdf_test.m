@@ -50,7 +50,7 @@ MTest.category('UnCategorized');
 
 % Create a sample structure
 
-outputdir = fullfile('temp_calculation')
+outputdir = fullfile('temp_calculation', '')
 outputfile = fullfile(outputdir, 'xboutput.nc')
 
 % Does the function still run

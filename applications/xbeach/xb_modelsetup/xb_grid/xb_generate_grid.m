@@ -130,21 +130,12 @@ alpha = 0;
 x_r = x_w - xori;
 y_r = y_w - yori;
 
-% if ~islogical(OPT.crop) && isvector(OPT.crop)
-%     OPT.crop(1) = OPT.crop(1)-xori;
-%     OPT.crop(2) = OPT.crop(2)-yori;
-% end
-
 % rotate grid and determine alpha
 if OPT.rotate && ~isvector(z_w)
     alpha = xb_grid_rotation(x_r, y_r, z_w);
     
     if alpha ~= 0
         [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha);
-        
-%         if ~islogical(OPT.crop) && isvector(OPT.crop)
-%             [OPT.crop(1) OPT.crop(2)] = xb_grid_rotate(OPT.crop(1), OPT.crop(2), -alpha);
-%         end
     end
 end
 
@@ -161,9 +152,13 @@ else
     
     % crop grid
     if ischar(OPT.crop) && strcmpi(OPT.crop, 'select')
-        fh = figure; pcolor(x_r, y_r, z_w); shading flat; colorbar;
+        fh = figure;
+        pcolor(x_r, y_r, z_w);
+        shading flat; colorbar;
+        
         [xin yin] = ginput(2);
         OPT.crop = [min(xin) min(yin) abs(diff(xin)) abs(diff(yin))];
+        
         close(fh);
     end
     
@@ -304,7 +299,7 @@ bathy = xb_meta(bathy, mfilename, 'bathymetry');
 
 xb = xb_empty();
 xb = xb_set(xb, 'nx', nx, 'ny', ny, 'xori', xori, 'yori', yori, ...
-    'alpha', alpha, 'vardx', 1, 'posdwn', OPT.posdwn);
+    'alfa', alpha, 'vardx', 1, 'posdwn', OPT.posdwn);
 
 xb = xb_join(xb, xb_bathy2input(bathy));
 xb = xb_meta(xb, mfilename, 'input');
