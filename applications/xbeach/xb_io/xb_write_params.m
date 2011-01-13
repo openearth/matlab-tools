@@ -157,12 +157,20 @@ nrBlanks = maxStringLength - length(varname);
 % create first part of line
 str = sprintf('%s%s = ', varname, blanks(nrBlanks));
 % create last part of line, taking the type into account
-if ischar(value)
-    str = sprintf('%s', str, value);
-else
-    if value == round(value)
+s=whos('value');
+switch s.class
+    case 'char'
+        str = sprintf('%s', str, value);
+    case 'logical'
         str = sprintf('%s%d', str, value);
-    else
-        str = sprintf('%s%f', str, value);
-    end
+    case 'int'
+        str = sprintf('%s%d', str, value);
+    case 'double'
+        if value == round(value)
+            str = sprintf('%s%d', str, value);
+        else
+            str = sprintf('%s%f', str, value);
+        end
+    otherwise
+        str = sprintf('%s%s', str, value);
 end
