@@ -56,12 +56,15 @@ function [result, messages] = DUROS(varargin)
 %   See also DuneErosionSettings optimiseDUROS getDuneErosion_DUROS getDuneErosion_additional
 
 %   --------------------------------------------------------------------
-%   Copyright (C) $date(yyyy) $Company
-%       $author
+%   Copyright (C) 2011 Delft University of Technology
+%       Kees den Heijer
 %
-%       $email	
+%       C.denHeijer@TUDelft.nl	
 %
-%       $address
+%       Faculty of Civil Engineering and Geosciences
+%       P.O. Box 5048
+%       2600 GA Delft
+%       The Netherlands
 %
 %   This library is free software; you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public

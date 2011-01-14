@@ -27,10 +27,29 @@ function result = MC(varargin)
 %       'NrSamples', 1000);
 %
 %   Input:
-%   varargin  =
+%   varargin  = series of propertyName-propertyValue pairs
 %
 %   Output:
-%   varargout =
+%   result = structure with 'settings', 'Input' and 'Output'. 'Input'
+%            contains all stochastic variable information. Other defaults
+%            and input is stored in the 'settings' field. The 'Output'
+%            field contains the following information:
+%               P_f : probability of failure
+%               Pexc : probability of exceedance for each individual
+%               realisation
+%               Pcor : correction factor (only plays a role in importance
+%               sampling applications)
+%               Calc : number of calculations (equal to 'NrSamples' in
+%               settings-field)
+%               idFail : boolean indicating which calculations failed
+%               u : values in the normally distributed spaces (for each
+%               sample and each variable)
+%               P : probabilities of non-exceedance for each of the
+%               individual variable-sample combinations
+%               x : actual variable values (each row corresponds to one
+%               realisation)
+%               z : result of z-function for each realisation (negative
+%               z-values are considered as failure, corresponding to idFail)
 %
 %   Example
 %   MC
@@ -73,26 +92,6 @@ function result = MC(varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
-
-%%
-%{
-% example of MC
-result = MC(exampleStochastVar,...
- 'Resistance', 25:5:100);
-
-% example of MC with simple importance sampling
-result = MC(exampleStochastVar,...
- 'Resistance', 25:5:100,...
- 'ISvariable', 'WL_t',...
- 'W', 100);
-
-% example of MC with advanced importance sampling
-result = MC(exampleStochastVar,...
- 'Resistance', 25:5:100,...
- 'ISvariable', 'WL_t',...
- 'f1', 1,...
- 'f2', 1e-6);
-%}
 
 %% settings
 
@@ -224,8 +223,12 @@ else
     x = feval(OPT.P2xFunction, stochast, P);
     
     % derive the probability of exceedance for each realisation
-    %TODO: check how to do this for importance sampling
-    Pexc = prod(1-P(:,active),2);
+    if p_correctie == 1
+        Pexc = prod(1-P(:,active),2);
+    else
+        Pexc = nan(size(x,1),1);
+        %TODO: check how to do this for importance sampling
+    end
 end
 
 % derive z based on x
