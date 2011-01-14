@@ -88,6 +88,8 @@ OPT.colorTitle      =   '';
 OPT.colorTick       =   [];
 OPT.colorTickLabel  =   '';
 OPT.cropping        =   true; % crops data off of the figure when zooming in, to make it render faster
+OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
+OPT.CBtemplateVer        = 'KML_colorbar_template_vertical.png';
 
 if nargin==0
   return
@@ -228,7 +230,8 @@ if succes
    
    if OPT.colorbar
       clrbarstring = KMLcolorbar('CBcLim',clim,'CBfileName',OPT.fileName,'CBcolorMap',colormap,...
-          'CBcolorTitle',OPT.colorTitle,'CBcolorTick',OPT.colorTick,'CBcolorTickLabel',OPT.colorTickLabel);
+          'CBcolorTitle',OPT.colorTitle,'CBcolorTick',OPT.colorTick,'CBcolorTickLabel',OPT.colorTickLabel,...
+          'CBtemplateVer',OPT.CBtemplateVer,'CBtemplateHor',OPT.CBtemplateHor);
       output = [output clrbarstring];
    end   
 
