@@ -83,6 +83,8 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    OPT.timeOut            = [];
    OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
    OPT.disp               = 1;
+   OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
+   OPT.CBtemplateVer        = 'KML_colorbar_template_vertical.png';
    
    if nargin==0
       varargout = {OPT};
