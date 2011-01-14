@@ -1,4 +1,4 @@
-function [alpha a b] = xb_grid_rotation(x, y, z, varargin)
+function [alpha a b dim dir] = xb_grid_rotation(x, y, z, varargin)
 %XB_GRID_ROTATION  Determines rotation of a 2D grid based on the coastline
 %
 %   Determines the location of a 2D grid based on the coastline by
@@ -78,7 +78,7 @@ if isempty(y); y = 0; end;
 
 %% determine coastline
 
-[xc yc dir] = xb_get_coastline(x, y, z);
+[xc yc dim dir] = xb_get_coastline(x, y, z);
 
 % get linear regression line from coastline
 [a b] = linreg(xc, yc);
