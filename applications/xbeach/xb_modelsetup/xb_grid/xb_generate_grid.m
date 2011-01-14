@@ -126,16 +126,17 @@ end
 xori = min(min(x_w));
 yori = min(min(y_w));
 
-alpha = 0;
 x_r = x_w - xori;
 y_r = y_w - yori;
+
+alpha = 0;
 
 % rotate grid and determine alpha
 if OPT.rotate && ~isvector(z_w)
     alpha = xb_grid_rotation(x_r, y_r, z_w);
     
     if alpha ~= 0
-        [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha);
+        [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha); %, 'origin', [xori yori]);
     end
 end
 
@@ -182,6 +183,13 @@ else
     % determine representative cross-section
     z_d_cs = max(z_d, [], 1);
 end
+
+% determine origin
+% xori = min(min(x_r));
+% yori = min(min(y_r));
+% 
+% x_r = x_r - xori;
+% y_r = y_r - yori;
 
 % remove nan's
 notnan = ~isnan(z_d_cs);
@@ -299,7 +307,7 @@ bathy = xb_meta(bathy, mfilename, 'bathymetry');
 
 xb = xb_empty();
 xb = xb_set(xb, 'nx', nx, 'ny', ny, 'xori', xori, 'yori', yori, ...
-    'alfa', alpha, 'vardx', 1, 'posdwn', OPT.posdwn);
+    'alfa', 360-alpha, 'vardx', 1, 'posdwn', OPT.posdwn);
 
 xb = xb_join(xb, xb_bathy2input(bathy));
 xb = xb_meta(xb, mfilename, 'input');

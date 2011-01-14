@@ -89,14 +89,14 @@ alpha = 0;
 if ~isnan(b)
     
     alpha = pi/2-atan(b);
-    
-    % check and correct rotation
-    if (~isnan(a) && sign(a) == 1)
-        alpha = alpha + pi;
-    end
-    
-    if b == 0 && dir == 1
-        alpha = alpha + pi/2;
+
+    % correct
+    if dim == 1
+        alpha = alpha - sign(dir*b)*pi/2;
+    else
+        if sign(dir*b) == -1
+            alpha = alpha + pi;
+        end
     end
 
     % convert units

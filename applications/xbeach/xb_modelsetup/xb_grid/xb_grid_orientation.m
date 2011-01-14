@@ -78,19 +78,34 @@ OPT = setproperty(OPT, varargin{:});
 
 if isempty(y); y = 0; end;
 
-%% determine orientation
+%% create dummy grid
 
 % convert from fector to matrix
 if isvector(x) && isvector(y)
     [x y] = meshgrid(x, y);
 end
 
+[cellsize xmin xmax ymin ymax] = xb_grid_resolution(x, y);
+
+xd = [xmin:cellsize:xmax];
+yd = [ymin:cellsize:ymax];
+
+[xd yd] = meshgrid(xd, yd);
+
+zd = xb_grid_interpolate(x, y, z, xd, yd);
+
+[x y z] = deal(xd, yd, zd);
+
+%% determine orientation
+
 dz = zeros(1,2);
-for i = 1:size(z, 1)
+for i = 1:size(zd, 1)
     i1 = find(~isnan(z(i, :)), 1, 'first');
     i2 = find(~isnan(z(i, :)), 1, 'last');
     
-    if isempty(i1) || isempty(i2) || i1==i2; continue; end;
+    if isempty(i1) || isempty(i2) || i1==i2
+        continue;
+    end
     
     dx = abs(diff(x(i,[i1 i2])));
     if dx == 0
@@ -103,7 +118,9 @@ for i = 1:size(z, 2)
     i1 = find(~isnan(z(:, i)), 1, 'first');
     i2 = find(~isnan(z(:, i)), 1, 'last');
     
-    if isempty(i1) || isempty(i2) || i1==i2; continue; end;
+    if isempty(i1) || isempty(i2) || i1==i2
+        continue;
+    end
     
     dy = abs(diff(y([i1 i2],i)));
     if dy == 0
