@@ -233,7 +233,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.x(:)) max(G.cor.x(:))]);
       nc(ifld) = struct('Name', 'x_cor', ...
-          'Nctype'   , OPT.type, ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
       
@@ -323,7 +323,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
       nc(ifld) = struct('Name', 'time', ...
-          'Nctype'   , OPT.type, ...
+          'Nctype'   , 'double', ...
           'Dimension', {{'time'}}, ...
           'Attribute', attr);
 
@@ -492,10 +492,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
           end
           
          [D.u,D.v] = vs_let_vector_cen(F, 'map-series',{it},{'U1','V1'}, {0,0,0},'quiet');
-          D.w      = vs_let_scalar    (F, 'map-series',{it},'WPHY'     , {0,0,0});
+%           D.w      = vs_let_scalar    (F, 'map-series',{it},'WPHY'     , {0,0,0});
           D.u      = permute(D.u,[4 2 3 1]); % z y x
           D.v      = permute(D.v,[4 2 3 1]); % z y x
-          D.w      = permute(D.w,[3 1 2]);   % z y x
+%           D.w      = permute(D.w,[3 1 2]);   % z y x
           
           %% apply masks
           
@@ -503,7 +503,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
           for k=1:size(D.u,1)
           D.u(k,:,:) = D.u(k,:,:).*permute(G.cen.mask,[3 1 2]);
           D.v(k,:,:) = D.v(k,:,:).*permute(G.cen.mask,[3 1 2]);
-          D.w(k,:,:) = D.w(k,:,:).*permute(G.cen.mask,[3 1 2]);
+%           D.w(k,:,:) = D.w(k,:,:).*permute(G.cen.mask,[3 1 2]);
           end
           
           %% write matrices
@@ -511,18 +511,18 @@ function varargout = vs_trim2nc(vsfile,varargin)
           nc_varput(ncfile,'eta'     , G.cen.zwl,[i-1, 0, 0   ],[1, size(G.cen.zwl   )]);
           nc_varput(ncfile,'u'       , D.u      ,[i-1, 0, 0, 0],[1, size(D.u         )]);
           nc_varput(ncfile,'v'       , D.v      ,[i-1, 0, 0, 0],[1, size(D.v         )]);
-          nc_varput(ncfile,'w'       , D.w      ,[i-1, 0, 0, 0],[1, size(D.w         )]);
+%           nc_varput(ncfile,'w'       , D.w      ,[i-1, 0, 0, 0],[1, size(D.w         )]);
           
           R.eta = [min(R.eta(1),min(G.cen.zwl(:))) max(R.eta(2),max(G.cen.zwl(:)))];
           R.u   = [min(R.u  (1),min(D.u      (:))) max(R.u  (2),max(D.u      (:)))];  
           R.v   = [min(R.v  (1),min(D.v      (:))) max(R.v  (2),max(D.v      (:)))];  
-          R.w   = [min(R.w  (1),min(D.w      (:))) max(R.w  (2),max(D.w      (:)))];  
+%           R.w   = [min(R.w  (1),min(D.w      (:))) max(R.w  (2),max(D.w      (:)))];  
           
       end
       
       nc_attput(ncfile,'eta','actual_range',R.eta)
       nc_attput(ncfile,'u'  ,'actual_range',R.u  );
       nc_attput(ncfile,'v'  ,'actual_range',R.v  );
-      nc_attput(ncfile,'w'  ,'actual_range',R.w  );
+%       nc_attput(ncfile,'w'  ,'actual_range',R.w  );
       
 %% EOF      
