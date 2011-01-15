@@ -9,7 +9,8 @@ function varargout = rws_waterbase_read(fnames,varargin)
 %
 % Implemented optional <keyword,value> pairs are:
 %  * 'locationcode':            obtain locationcode from waterbase filename 
-%                               N.B. works only for ONE location per file! (default 1)
+%                               N.B. works only for ONE location per file AND
+%                               with automatic filename from RWS_WATERBASE_GET_URL! (default 1)
 %  * 'fieldname':               fieldname for parameter to be read (default 'waarde' as in DONAR file).
 %  * 'fieldnamescale':          real value, field is DIVIDED by fieldnamescale (default 1).
 %  * 'start_last_header_line':  "locatie;waarnemingssoort;datum;tijd"
@@ -630,10 +631,12 @@ for ifile=1:length(fnames)
          %% Copy location code (as obtained from file name)
          if OPT.locationcode
          
-            try % works only of filename is 
-                % id22-IJMDMNTSPS-190001010000-201003062359
-            index            = strfind(fname,'-');
-            locationcode     = lower(fname([index(1)+1]:[index(2)-1]));
+            try % should work when filename is 
+                % id22-IJMDMNTSPS-190001010000-201003062359.txt
+                % id22-IJMDMNTSPS.txt
+            ind = strfind (fname,'-'); if length(ind)==1;ind=[ind length(fname) - length(fileext(fname)) + 1];end
+            locationcode     = lower(fname([ind(1)+1]:[ind(2)-1]))
+            
             catch
             locationcode     = '';
             end

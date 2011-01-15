@@ -154,7 +154,7 @@ function varargout = rws_waterbase_get_url(varargin);
    disp(['message: rws_waterbase_get_url: loading startdate        ',startdate]);
    disp(['message: rws_waterbase_get_url: loading enddate          ',enddate]);
 
-%% Select Times
+%% TO DO on filename: make sure user can only select directory and not file name, as locationcode is only in automatic filename !!
 
    if nargin>3
       indName  = varargin{4};
@@ -211,7 +211,7 @@ function varargout = rws_waterbase_get_url(varargin);
       else
       
         fidurl = fopen(OutputNameUrl, 'w+');
-        fprintf(fidurl,'[InternetShortcut]\n');
+        fprintf(fidurl,'[InternetShortcut]\r\n'); % window eol (as *.url is IE thing)
         fprintf(fidurl,'URL=%s',urlName);
         fclose(fidurl);
         % TO DO add time of last update

@@ -1,4 +1,4 @@
-function rws_waterbase_all
+%function rws_waterbase_all
 %RWS_WATERBASE_ALL    download waterbase.nl parameters from web, transform to netCDF, make kml,  make catalog.
 %
 %See also: KNMI_ALL,                   , RWS_WATERBASE_*
@@ -6,7 +6,8 @@ function rws_waterbase_all
 
 %% Initialize
 
-   OPT.make_nc        = 0;
+   OPT.download       = 1; % get fresh downloads from rws and remove exisitng to sub dir old
+   OPT.make_nc        = 1;
    OPT.overwrite      = 1;  % xls, png
    OPT.baseurl        = 'http://live.waterbase.nl';
 
@@ -30,6 +31,8 @@ function rws_waterbase_all
                        364  380  491  492  493  ... % 
                        541  560 1083    1      ];   % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
 
+   OPT.donar_wnsnum = [22 23 23]; % wave stuff: H, T, dir
+
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
 
    if  OPT.donar_wnsnum==0
@@ -40,9 +43,9 @@ function rws_waterbase_all
 
    for ivar=[OPT.donar_wnsnum]
 
-   disp(['Processing donar_wnsnum: ',num2str(ivar)])
+      disp(['Processing donar_wnsnum: ',num2str(ivar)])
       
-   index = find(DONAR.donar_wnsnum==ivar);
+      index = find(DONAR.donar_wnsnum==ivar);
 
       OPT.code              = DONAR.donar_wnsnum(index);
       OPT.donar_wnsnum      = DONAR.donar_wnsnum(index);
@@ -59,12 +62,15 @@ function rws_waterbase_all
       
    %% Download from waterbase.nl
    
+   if OPT.download
       rws_waterbase_get_url_loop('donar_wnsnum' ,OPT.code,...
                     'directory_raw',OPT.directory_raw,...
                 'directory_raw_old',[OPT.directory_raw filesep 'old'],...
                           'cleanup',1); % remove date from file name> version control on cached download too ?
                                  
-   %% Make netCDF
+   end
+   
+   %% Read raw, cache as *.mat and make netCDF
    
    if OPT.make_nc
    
@@ -80,17 +86,17 @@ function rws_waterbase_all
                               'method',OPT.method,... % 'fgetl' for water levels or discharges
                             'att_name',{'aquo_lex_code'           ,'donar_wnsnum'           ,'sdn_standard_name'},...
                              'att_val',{DONAR.aquo_lex_code(index),DONAR.donar_wnsnum(index),DONAR.sdn_standard_name(index) },...
-                                'load',1,...% skip mat file, always load zipped txt file
-                               'debug',0,...% check unit conversion
+                                'load',1,...% skip cached mat file, always load zipped txt file
+                               'debug',0,...% check unit conversion and more
                                 'mask',['id' num2str(OPT.code) '*.zip']);  % as more ids are in same dir
    end
 
    %% Make overview png and xls of one parameter
    
      
-nc_cf_stationtimeseries2meta('directory_nc'  ,[OPT.directory_nc],...
-                                  'parameters'    ,{OPT.name},...
-                                  'overwrite'     ,OPT.overwrite);
+      nc_cf_stationtimeseries2meta('directory_nc',[OPT.directory_nc],...
+                                   'parameters'  ,{OPT.name},...
+                                   'overwrite'   ,OPT.overwrite);
 
 % TO DO: option to overwrite xls and png, just as catalog.nc
 % TO DO: merge nc_cf_stationtimeseries2meta and nc_cf_directory2catalog                             
@@ -130,7 +136,18 @@ nc_cf_stationtimeseries2meta('directory_nc'  ,[OPT.directory_nc],...
       OPT2.lat         = 54;
       OPT2.z           = 100e4;
 
-      nc_cf_stationtimeseries2kmloverview([OPT.directory_nc,'.xls'],OPT2);
+warning('kml overview currently not operational ...')
+
+% ??? Error using ==> xls2struct at 166
+% Error finding file: F:\opendap\thredds\\rijkswaterstaat\waterbase\\sea_surface_wave_significant_height\.xls
+% 
+% Error in ==> nc_cf_stationtimeseries2kmloverview at 52
+%      [D,units] = xls2struct(metadatadatabase);
+% 
+% Error in ==> rws_waterbase_all at 139
+%       nc_cf_stationtimeseries2kmloverview([OPT.directory_nc,'.xls'],OPT2);
+% 
+%       nc_cf_stationtimeseries2kmloverview([OPT.directory_nc,'.xls'],OPT2);
       
       close all
       

@@ -74,6 +74,8 @@ function rws_waterbase2nc(varargin)
    OPT.unzip              = 1; % process only zipped files: unzip them, and delete if afterwards
    OPT.load               = 1; % 0=auto, 1=load slow *.txt file
    OPT.method             = 'fgetl';
+   OPT.uniquecoordinate   = 1; % whether to replace an x vector by mode(x)
+   
 %% Keyword,value
 
    OPT = setproperty(OPT,varargin{:});
@@ -185,15 +187,21 @@ for ivar=[OPT.donar_wnsnum]
         D.version     = '';
 
         %% 0 Create file
+        %  should work when filename is 
+        %  * id22-IJMDMNTSPS-190001010000-201003062359.txt(.zip)
+        %  * id22-IJMDMNTSPS.txt(.zip)
 
-        ind           = strfind (OPT.files(ifile).name,'-');
-        outputfile    = fullfile(OPT.directory_nc,[ OPT.files(ifile).name(1:ind(2)-1),OPT.ext,'.nc']); % id1-AMRGBVN*
+        fname = OPT.files(ifile).name; % can include .zip
+        ind = strfind (fname,'-'); if length(ind)==1;ind=[ind strfind(fname,'.txt')];end
+        outputfile    = fullfile(OPT.directory_nc,[fname(1:ind(2)-1),OPT.ext,'.nc']); % id1-AMRGBVN*
+        
+        if OPT.debug;disp(outputfile);end
 
         nc_create_empty (outputfile)
 
         %% 1 Add global meta-info to file
-        % Add overall meta info:
-        % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
+        %  Add overall meta info:
+        %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
 
         nc_attput(outputfile, nc_global, 'title'           , '');
         nc_attput(outputfile, nc_global, 'institution'     , 'Rijkswaterstaat');
@@ -274,8 +282,8 @@ end
 
         nc_add_dimension(outputfile, 'time'        , length(D.data.datenum))
         nc_add_dimension(outputfile, 'locations'   , 1);
-        nc_add_dimension(outputfile, 'name_strlen1', length(D.data.locationcode)); % for multiple stations get max length
-        nc_add_dimension(outputfile, 'name_strlen2', length(D.data.location    )); % for multiple stations get max length
+        nc_add_dimension(outputfile, 'name_strlen1', max(length(D.data.locationcode),1)); % for multiple stations get max length
+        nc_add_dimension(outputfile, 'name_strlen2', max(length(D.data.location    ),1)); % for multiple stations get max length
 
         %% 3 Create variables
 
@@ -311,12 +319,19 @@ end
         ifld = ifld + 1;
         nc(ifld).Name             = 'lon';
         nc(ifld).Nctype           = 'float'; % no double needed
-        if length(D.data.lon)==1
         nc(ifld).Dimension        = {'locations'};
-        else
-        nc(ifld).Dimension        = {'locations','time'}; % location can drift in time in some occasions
+        if length(D.data.lon(:))>1
+         if OPT.uniquecoordinate
+          D.data.lon = mode(D.data.lon);
+          nc(ifld).Dimension        = {'locations'};
+          nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.lon(:)) max(D.data.lon(:))]);
+          nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'lon vector replaced by mode(lon), see attribute actual_range');
+         else
+          nc(ifld).Dimension        = {'locations','time'};
+          nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
+         end
         end
-        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
+        nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
         nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
         nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
@@ -327,12 +342,19 @@ end
         ifld = ifld + 1;
         nc(ifld).Name             = 'lat';
         nc(ifld).Nctype           = 'float'; % no double needed
-        if length(D.data.lat)==1
         nc(ifld).Dimension        = {'locations'};
-        else
-        nc(ifld).Dimension        = {'locations','time'};
+        if length(D.data.lat(:))>1
+         if OPT.uniquecoordinate
+          D.data.lat = mode(D.data.lat);
+          nc(ifld).Dimension        = {'locations'};
+          nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.lat(:)) max(D.data.lat(:))]);
+          nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'lat vector replaced by mode(lat), see attribute actual_range');
+         else
+          nc(ifld).Dimension        = {'locations','time'};
+          nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
+         end
         end
-        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
+        nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
         nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
         nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
@@ -342,12 +364,19 @@ end
         ifld = ifld + 1;
         nc(ifld).Name             = 'x';
         nc(ifld).Nctype           = 'float'; % no double needed
-        if length(D.data.x)==1
         nc(ifld).Dimension        = {'locations'};
-        else
-        nc(ifld).Dimension        = {'locations','time'};
+        if length(D.data.x(:))>1
+         if OPT.uniquecoordinate
+          D.data.x = mode(D.data.x);
+          nc(ifld).Dimension        = {'locations'};
+          nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.x(:)) max(D.data.x(:))]);
+          nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'x vector replaced by mode(x), see attribute actual_range');
+         else
+          nc(ifld).Dimension        = {'locations','time'};
+          nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
+         end
         end
-        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station x');
+        nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station x');
         nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
         nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
@@ -357,12 +386,19 @@ end
         ifld = ifld + 1;
         nc(ifld).Name             = 'y';
         nc(ifld).Nctype           = 'float'; % no double needed
-        if length(D.data.y)==1
         nc(ifld).Dimension        = {'locations'};
-        else
-        nc(ifld).Dimension        = {'locations','time'};
+        if length(D.data.y(:))>1
+         if OPT.uniquecoordinate
+          D.data.y = mode(D.data.y);
+          nc(ifld).Dimension        = {'locations'};
+          nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.y(:)) max(D.data.y(:))]);
+          nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'y vector replaced by mode(y), see attribute actual_range');
+         else
+          nc(ifld).Dimension        = {'locations','time'};
+          nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
+         end
         end
-        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station y');
+        nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station y');
         nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate');
         nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
@@ -481,6 +517,7 @@ end
         nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
         nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', single(OPT.fillvalue)); % needs to be same type as data itself (i.e. single)
         nc(ifld).Attribute(end+1) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');
+        nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.(OPT.name)) max(D.data.(OPT.name))]);
         if OPT.stationTimeSeries
         nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
         end
