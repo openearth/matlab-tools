@@ -66,13 +66,11 @@ basePath=strrep(which('ldbTool.m'),'ldbTool.m','');
 
 if ~isdeployed
     addpath(basePath);
-    addpath([basePath 'gui']);
-    addpath([basePath 'engines']);
+    addpath([basePath 'LT_gui']);
+    addpath([basePath 'LT_engines']);
 end
 
 fig=openfig('ldbTool.fig','reuse');
-name = get(fig,'name');
-icon(101, name, [basePath 'ldbTool.ico']);
 set(findobj(fig,'tag','LT_openLdbBut'),'enable','on');
 set(findobj(fig,'tag','LT_saveMenu'),'enable','off');
 set(findobj(fig,'tag','LT_save2Menu'),'enable','off');
