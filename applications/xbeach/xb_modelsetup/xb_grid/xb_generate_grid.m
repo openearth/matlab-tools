@@ -122,12 +122,11 @@ end
 
 %% convert from world to xbeach coordinates
 
+[x_r y_r] = deal(x_w, y_w);
+
 % determine origin
 xori = min(min(x_w));
 yori = min(min(y_w));
-
-x_r = x_w - xori;
-y_r = y_w - yori;
 
 alpha = 0;
 
@@ -136,7 +135,7 @@ if OPT.rotate && ~isvector(z_w)
     alpha = xb_grid_rotation(x_r, y_r, z_w);
     
     if alpha ~= 0
-        [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha); %, 'origin', [xori yori]);
+        [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha, 'origin', [xori yori]);
     end
 end
 
@@ -174,22 +173,14 @@ else
     y_d = ymin:cellsize:ymax;
 
     % rotate dummy grid to world coordinates
-    [x_d_w y_d_w] = xb_grid_xb2world(x_d, y_d, xori, yori, alpha);
+    [x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, alpha, 'origin', [xori yori]);
 
     % interpolate elevation data to dummy grid
-    z_d = z_w; z_d(isnan(z_d)) = 0;
-    z_d = interp2(x_w, y_w, z_d, x_d_w, y_d_w);
+    z_d = interp2(x_w, y_w, z_w, x_d_w, y_d_w);
 
     % determine representative cross-section
     z_d_cs = max(z_d, [], 1);
 end
-
-% determine origin
-% xori = min(min(x_r));
-% yori = min(min(y_r));
-% 
-% x_r = x_r - xori;
-% y_r = y_r - yori;
 
 % remove nan's
 notnan = ~isnan(z_d_cs);
@@ -223,7 +214,7 @@ else
     % 2D grid
     
     % rotate xbeach grid to world coordinates
-    [x_xb_w y_xb_w] = xb_grid_xb2world(x_xb, y_xb, xori, yori, alpha);
+    [x_xb_w y_xb_w] = xb_grid_rotate(x_xb, y_xb, alpha, 'origin', [xori yori]);
     
     % interpolate elevation data to xbeach grid
     zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
@@ -297,6 +288,13 @@ ny = size(zgrid, 1)-1;
 if OPT.posdwn
     zgrid = -zgrid;
 end
+
+% determine origin
+xori = min(min(xgrid));
+yori = min(min(ygrid));
+
+xgrid = xgrid - xori;
+ygrid = ygrid - yori;
 
 %% create xbeach structures
 

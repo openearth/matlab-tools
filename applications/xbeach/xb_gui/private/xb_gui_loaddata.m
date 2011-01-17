@@ -151,9 +151,9 @@ else
     if ~isempty(bathy.crop)
         pos = bathy.crop;
         
-        if bathy.alpha ~= 0
-            [pos(1) pos(2)] = xb_grid_rotate(pos(1), pos(2), -bathy.alpha, 'origin', [bathy.xori bathy.yori]);
-        end
+%         if bathy.alpha ~= 0
+%             [pos(1) pos(2)] = xb_grid_rotate(pos(1), pos(2), -bathy.alpha, 'origin', [bathy.xori bathy.yori]);
+%         end
         
         crop = findobj(cobj, 'tag', 'crop');
         if isempty(crop);
@@ -248,7 +248,7 @@ settings = S.modelsetup.settings;
 fields = fieldnames(settings);
 for i = 1:length(fields)
     if ~ismember(fields{i}, {'xfile', 'yfile', 'depfile', 'nx', 'ny', 'vardx', ...
-            'posdwn', 'alpha', 'xori', 'yori', 'instat', 'swtable', 'dtbc', ...
+            'posdwn', 'alfa', 'xori', 'yori', 'instat', 'swtable', 'dtbc', ...
             'rt', 'bcfile', 'zs0', 'zs0file'})
         cobj = findobj(pobj, 'tag', 'settings');
 

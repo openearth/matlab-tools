@@ -77,9 +77,9 @@ function cropdata(obj, event, aobj, xpol, ypol)
     
     S = get(obj, 'userdata');
     bathy = S.modelsetup.bathy;
-    if bathy.alpha ~= 0
-        [pos(1) pos(2)] = xb_grid_rotate(pos(1), pos(2), bathy.alpha, 'origin', [bathy.xori bathy.yori]);
-    end
+%     if bathy.alpha ~= 0
+%         [pos(1) pos(2)] = xb_grid_rotate(pos(1), pos(2), bathy.alpha, 'origin', [bathy.xori bathy.yori]);
+%     end
     S.modelsetup.bathy.crop = pos;
     set(obj, 'userdata', S);
     

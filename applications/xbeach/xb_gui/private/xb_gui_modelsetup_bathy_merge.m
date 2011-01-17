@@ -80,7 +80,7 @@ function xb_gui_modelsetup_bathy_merge(obj, event)
         'position', [.88 .02 .10 .04], 'string', 'Merge', 'callback', @mergedata);
     
     uicontrol(pobj, 'units', 'normalized', 'style', 'popupmenu', 'tag', 'type', ...
-        'position', [.68 .93 .23 .04], 'string', 'ARCGIS file', 'backgroundcolor', 'w');
+        'position', [.68 .93 .23 .04], 'string', 'ARCGIS file|XBeach grid files', 'backgroundcolor', 'w');
     uicontrol(pobj, 'units', 'normalized', 'style', 'pushbutton', 'tag', 'add', ...
         'position', [.93 .93 .05 .04], 'string', 'Add', 'callback', @addfile);
     uitable(pobj, 'units', 'normalized', 'tag', 'table', 'position', [.68 .14 .30 .75], ...
@@ -135,25 +135,41 @@ function type = gettype()
 end
 
 function file = getfile()
-    [fname fpath] = uigetfile({'*.asc', 'ArcGIS ASCII file (*.asc)'}, 'Select bathymetry file');
-    file = fullfile(fpath, fname);
+    
 end
 
 function addfile(obj, event)
     pobj = get(obj, 'parent');
     
-    file = getfile();
+    type = gettype;
+    switch type
+        case 'ARCGIS file'
+            [fname fpath] = uigetfile({'*.asc', 'ArcGIS ASCII file (*.asc)'}, 'Select bathymetry file');
+            file = fullfile(fpath, fname);
+        case 'XBeach grid files'
+            [fname fpath] = uigetfile({'*.grd', 'X coordinate file (*.grd)'}, 'Select bathymetry file');
+            xfile = fullfile(fpath, fname);
+            
+            [fname fpath] = uigetfile({'*.grd', 'Y coordinate file (*.grd)'}, 'Select bathymetry file', fpath);
+            yfile = fullfile(fpath, fname);
+            
+            [fname fpath] = uigetfile({'*.dep', 'Z coordinate file (*.dep)'}, 'Select bathymetry file', fpath);
+            zfile = fullfile(fpath, fname);
+            
+            file = [xfile '|' yfile '|' zfile];
+    end
+    
     if ~isempty(file)
         cobj = findobj(pobj, 'tag', 'table');
         data = get(cobj, 'data');
-        
+
         if ~isempty(data)
             i = size(data, 1)+1;
-            data(i,:) = {gettype file};
+            data(i,:) = {type file};
         else
-            data = {gettype file};
+            data = {type file};
         end
-        
+
         set(cobj, 'data', data);
     end
 end
@@ -283,6 +299,10 @@ function mergedata(obj, event)
                 z{i} = nc_varget(urls{idx}, 'z', [nt 0 0], [1 -1 -1]);
             case 'ARCGIS file'
                 [x{i} y{i} z{i}] = arc_asc_read(tdata{i,2}, 'zscale', 1);
+            case 'XBeach grid files'
+                files = regexp(tdata{i,2}, '\|', 'split');
+                xb = xb_read_bathy('xfile', files{1}, 'yfile', files{2}, 'depfile', files{3});
+                [x{i} y{i} z{i}] = xb_get(xb, 'xfile', 'yfile', 'depfile');
         end
         
         waitbar(i/size(tdata, 1), wb);
