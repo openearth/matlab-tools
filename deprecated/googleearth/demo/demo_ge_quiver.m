@@ -1,4 +1,5 @@
 function demo_ge_quiver()
+ error('%s has been deprecated',mfilename)
 % Demo ge_quiver
 
 res = 0.3;

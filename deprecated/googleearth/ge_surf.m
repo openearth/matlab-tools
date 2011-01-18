@@ -1,4 +1,5 @@
 function kmlStr = ge_surf(x,y,z,varargin)
+ error('%s has been deprecated',mfilename)
 %
 % ge_surf(x,y,z,varargin)
 % Reference page in help browser: 

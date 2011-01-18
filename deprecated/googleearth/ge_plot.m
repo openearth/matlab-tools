@@ -1,4 +1,5 @@
 function output = ge_plot(X,Y,varargin)
+ error('%s has been deprecated',mfilename)
 % Reference page in help browser: 
 % 
 % <a href="matlab:web(fullfile(ge_root,'html','ge_plot.html'),'-helpbrowser')">link</a> to html documentation

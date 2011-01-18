@@ -1,4 +1,5 @@
 function demo_ge_point()%% Demo ge_point
+ error('%s has been deprecated',mfilename)
 % Example usage of the ge_point function.
 %   X, Y should be decimal coordinates (WGS84)
 %   Z is altitude in meters

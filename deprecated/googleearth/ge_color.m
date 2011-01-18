@@ -1,4 +1,5 @@
 function clrstr=ge_color(c,varargin)
+ error('%s has been deprecated',mfilename)
 %GE_COLOR  Convert Matlab color/opacity to Google Earth hexadecimal string
 %
 %SYNTAX: ColorStr = ge_color(ColorSpec)

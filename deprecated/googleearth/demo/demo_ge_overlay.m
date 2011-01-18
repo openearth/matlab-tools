@@ -1,4 +1,5 @@
 function demo_ge_overlay()
+ error('%s has been deprecated',mfilename)
 
     filename = 'data/test';
     frames = 20;

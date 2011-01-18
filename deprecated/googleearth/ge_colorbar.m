@@ -1,4 +1,5 @@
 function [output] = ge_colorbar(x,y,data,varargin)
+ error('%s has been deprecated',mfilename)
 % Reference page in help browser: 
 % 
 % <a href="matlab:web(fullfile(ge_root,'html','ge_colorbar.html'),'-helpbrowser')">link</a> to html documentation

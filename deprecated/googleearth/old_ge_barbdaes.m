@@ -1,4 +1,5 @@
 function old_ge_barbdaes(varargin)
+ error('%s has been deprecated',mfilename)
 
 
 AuthorizedOptions = authoptions( mfilename );

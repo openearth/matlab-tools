@@ -1,4 +1,5 @@
 function demo_ge_box()
+ error('%s has been deprecated',mfilename)
 %% Demo ge_box
 % Example usage of the ge_box function.
 % 'help ge_box' for more info.

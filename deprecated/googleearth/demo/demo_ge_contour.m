@@ -1,4 +1,5 @@
 function demo_ge_contour()
+ error('%s has been deprecated',mfilename)
 
 figure
 [X,Y] = meshgrid(1:20,1:20);

@@ -1,4 +1,5 @@
 function [r,g,b]=indexed2hexcolor(indColor)
+ error('%s has been deprecated',mfilename)
 
 d=strread(indColor,'C-%d',1)-256^3;
 

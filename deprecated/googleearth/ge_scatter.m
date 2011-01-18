@@ -1,4 +1,5 @@
 function kmlStr=ge_scatter(X,Y,varargin)
+ error('%s has been deprecated',mfilename)
 
 X = X(:);
 Y = Y(:);

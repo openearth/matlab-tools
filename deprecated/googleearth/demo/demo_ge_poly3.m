@@ -1,4 +1,5 @@
 function demo_ge_poly3()
+ error('%s has been deprecated',mfilename)
 
 x = linspace(0,20,100); %longitude
 e1 = 1e6;   %elevation 1

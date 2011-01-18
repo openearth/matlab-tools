@@ -1,4 +1,5 @@
 function demo_ge_imagesc()%% Demo ge_imagesc
+ error('%s has been deprecated',mfilename)
 
 load('flujet.mat')
 

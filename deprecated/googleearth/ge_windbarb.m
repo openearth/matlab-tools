@@ -1,4 +1,5 @@
 function kmlStr = ge_windbarb(X,Y,Z,U,V,varargin)
+ error('%s has been deprecated',mfilename)
 % % Reference page in help browser: 
 % <a href="matlab:web(fullfile(ge_root,'html','ge_windbarb.html'),'-helpbrowser')">link</a> to html documentation
 % <a href="matlab:web(fullfile(ge_root,'html','license.html'),'-helpbrowser')">show license statement</a> 

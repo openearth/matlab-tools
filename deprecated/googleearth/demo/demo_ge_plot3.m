@@ -1,4 +1,5 @@
 function demo_ge_plot3()
+ error('%s has been deprecated',mfilename)
 
 t = 0:pi/50:10*pi;
 alt = 1e6;

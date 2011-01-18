@@ -1,4 +1,5 @@
 function demo_ge_makekmz()
+ error('%s has been deprecated',mfilename)
 
 rLinkStr = ['barbs',filesep];
 

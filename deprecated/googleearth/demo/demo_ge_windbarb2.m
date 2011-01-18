@@ -1,4 +1,5 @@
 function demo_ge_windbarb2()
+ error('%s has been deprecated',mfilename)
 
 X = 4.778582;    % longitude
 Y = 52.921329;   % latitude

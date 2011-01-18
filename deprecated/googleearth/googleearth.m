@@ -1,4 +1,5 @@
 function googleearth(varargin)
+ error('%s has been deprecated',mfilename)
 
 switch varargin{1}
     case '-docinstall'

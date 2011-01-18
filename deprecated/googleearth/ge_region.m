@@ -1,4 +1,5 @@
 function kmlStr = ge_region(north,south,east,west,varargin)
+ error('%s has been deprecated',mfilename)
 % 
 % % Please use the link below to view the documentation.
 % <a href="matlab:web(fullfile(ge_root,'html','ge_region.html'),'-helpbrowser')">link</a> to html documentation

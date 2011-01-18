@@ -1,4 +1,5 @@
 function demo_ge_surf_mesh()%% Demo ge_imagesc
+ error('%s has been deprecated',mfilename)
 
 
 z = peaks(30);

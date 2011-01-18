@@ -1,4 +1,5 @@
 function tag_str = ge_quiver3(XM,YM,ZM,UM,VM,WM,varargin)
+ error('%s has been deprecated',mfilename)
 % Reference page in help browser: 
 %
 % <a href="matlab:web(fullfile(ge_root,'html','ge_quiver3.html'),'-helpbrowser')">link</a> to html documentation

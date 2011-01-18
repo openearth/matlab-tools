@@ -1,4 +1,5 @@
 function demo_ge_quiver3_1()%% Demo ge_quiver3
+ error('%s has been deprecated',mfilename)
 
 
 kmzTargetDir = [''];%..',filesep,'kml',filesep];

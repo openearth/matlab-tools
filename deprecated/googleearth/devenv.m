@@ -1,4 +1,5 @@
 function devEnvStr = devenv
+ error('%s has been deprecated',mfilename)
 % returns the development environment, i.e. 'matlab' or 'octave'.
 
 try

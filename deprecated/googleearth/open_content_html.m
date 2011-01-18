@@ -1,4 +1,5 @@
 function open_content_html()
+ error('%s has been deprecated',mfilename)
 %This file is used to open up a 'html/contents.html' from 'Contents.m'.
 p=mfilename('fullpath');
 [ppath,name,ext,vrsn]=fileparts(p);

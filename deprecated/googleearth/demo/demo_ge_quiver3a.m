@@ -1,4 +1,5 @@
 function demo_ge_quiver3a()
+ error('%s has been deprecated',mfilename)
 
 %Define the location of the Collada model origin:
 X = 0;    %latitude  [degrees]

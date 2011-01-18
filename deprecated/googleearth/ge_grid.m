@@ -1,4 +1,5 @@
 function [output] = ge_grid(x_min,x_max,y_min,y_max, varargin )
+ error('%s has been deprecated',mfilename)
 % Reference page in help browser: 
 % 
 % <a href="matlab:web(fullfile(ge_root,'html','ge_grid.html'),'-helpbrowser')">link</a> to html documentation

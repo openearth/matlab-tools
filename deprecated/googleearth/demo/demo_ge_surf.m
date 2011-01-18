@@ -1,4 +1,5 @@
 function demo_ge_surf()
+ error('%s has been deprecated',mfilename)
 
 figure
 z = peaks(30);

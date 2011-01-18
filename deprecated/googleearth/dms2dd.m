@@ -1,4 +1,5 @@
 function dd = dms2dd(d,m,s)
+ error('%s has been deprecated',mfilename)
 %converts degrees-minutes-seconds notation to decimal degrees
 
 IO=d>0;

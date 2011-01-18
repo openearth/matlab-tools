@@ -1,4 +1,5 @@
 function ge_writecollada(varargin)
+ error('%s has been deprecated',mfilename)
 
 % Reference page in help browser: 
 % 

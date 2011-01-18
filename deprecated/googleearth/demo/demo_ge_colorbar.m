@@ -1,4 +1,5 @@
 function demo_ge_colorbar()
+ error('%s has been deprecated',mfilename)
 
 PosLong = [5 6 7 8];
 PosLat = [53 52 51 50];

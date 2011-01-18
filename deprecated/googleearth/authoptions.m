@@ -1,5 +1,6 @@
 
 function [AuthorizedOptions] = authoptions( filename )
+ error('%s has been deprecated',mfilename)
 
 
 %% all available options to each function

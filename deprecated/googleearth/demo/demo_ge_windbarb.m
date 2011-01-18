@@ -1,4 +1,5 @@
 function demo_ge_windbarb()
+ error('%s has been deprecated',mfilename)
                
 kmlFName = 'demo_ge_windbarb.kml';
 daeDirStr = ['data',filesep,'barbdaes',filesep];

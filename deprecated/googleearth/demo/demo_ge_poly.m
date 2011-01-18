@@ -1,4 +1,5 @@
 function demo_ge_poly()%% Demo ge_poly 
+ error('%s has been deprecated',mfilename)
 
 load([pwd,filesep,'data',filesep,'conus.mat']);
 

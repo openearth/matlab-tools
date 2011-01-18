@@ -1,4 +1,5 @@
 function demo_ge_grid()
+ error('%s has been deprecated',mfilename)
 %% Demo ge_grid
 % Example usage of the ge_grid function.
 % 'help ge_grid' for more info.

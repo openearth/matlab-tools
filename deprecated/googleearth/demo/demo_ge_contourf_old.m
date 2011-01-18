@@ -1,4 +1,5 @@
 function demo_ge_contourf_old()
+ error('%s has been deprecated',mfilename)
 
 
 

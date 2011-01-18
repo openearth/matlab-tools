@@ -1,4 +1,5 @@
 function URL=url_from_folder(F,S)
+ error('%s has been deprecated',mfilename)
 
 p=mfilename('fullpath');
 [ppath,name,ext,vrsn]=fileparts(p);

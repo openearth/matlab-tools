@@ -1,4 +1,5 @@
 function [kmlStr] = ge_imagesc_old(x,y,data,varargin)
+ error('%s has been deprecated',mfilename)
 % Reference page in help browser: 
 % 
 % <a href="matlab:web(fullfile(ge_root,'html','ge_imagesc_old.html'),'-helpbrowser')">link</a> to html documentation

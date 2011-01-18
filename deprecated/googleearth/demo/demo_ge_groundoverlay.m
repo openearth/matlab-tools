@@ -1,4 +1,5 @@
 function demo_ge_groundoverlay()
+ error('%s has been deprecated',mfilename)
 
 N = 66;
 E = 38;

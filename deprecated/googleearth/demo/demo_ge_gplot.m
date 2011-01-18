@@ -1,4 +1,5 @@
 function demo_ge_gplot()
+ error('%s has been deprecated',mfilename)
 
 
 angleRad = linspace(0,(4/5)*2*pi,5)';

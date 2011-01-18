@@ -1,4 +1,5 @@
 function demo_ge_cylinder()
+ error('%s has been deprecated',mfilename)
 
 
 x1 = -10;

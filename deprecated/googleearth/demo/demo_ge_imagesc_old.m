@@ -1,4 +1,5 @@
 function demo_ge_imagesc_old()
+ error('%s has been deprecated',mfilename)
 % Demo ge_imagesc_old
 
 data = rand(20,10);

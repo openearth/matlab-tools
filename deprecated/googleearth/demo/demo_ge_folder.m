@@ -1,4 +1,5 @@
 function demo_ge_folder()
+ error('%s has been deprecated',mfilename)
 
 N = 250;
 

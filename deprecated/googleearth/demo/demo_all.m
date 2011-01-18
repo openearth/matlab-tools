@@ -1,4 +1,5 @@
 %% Demonstrate All functions
+ error('%s has been deprecated',mfilename)
 % runs all demonstrations
 
 % clear

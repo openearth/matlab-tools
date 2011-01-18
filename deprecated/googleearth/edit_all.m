@@ -1,4 +1,5 @@
 function edit_all(dirStr)
+ error('%s has been deprecated',mfilename)
 %Opens up all .m files present in directory dirStr 
 %with filenames starting with 'ge_'.
 % <a href="matlab:web(fullfile(ge_root,'html','license.html'),'-helpbrowser')">show license statement</a> 

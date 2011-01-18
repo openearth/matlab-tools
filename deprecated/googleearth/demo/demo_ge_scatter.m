@@ -1,4 +1,5 @@
 function demo_ge_scatter()
+ error('%s has been deprecated',mfilename)
 
 rads = linspace(0,2*pi,6);
 x = [1*sin(rads);0.6*sin(rads+0.2*pi)];

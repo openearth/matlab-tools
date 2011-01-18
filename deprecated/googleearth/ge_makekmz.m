@@ -1,4 +1,5 @@
 function ge_makekmz(kmzFileName,varargin)
+ error('%s has been deprecated',mfilename)
 
 AuthorizedOptions = {'sources','destinations'};
 parsepairs %script that parses Parameter/value pairs.

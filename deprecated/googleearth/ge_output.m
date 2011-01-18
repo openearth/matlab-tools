@@ -1,4 +1,5 @@
 function ge_output(filename,output,varargin)
+ error('%s has been deprecated',mfilename)
 % Reference page in help browser: 
 % 
 % <a href="matlab:web(fullfile(ge_root,'html','ge_output.html'),'-helpbrowser')">link</a> to html documentation

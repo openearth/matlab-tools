@@ -1,4 +1,5 @@
 function demo_ge_plot()%% Demo ge_plot
+ error('%s has been deprecated',mfilename)
 
 a = 180*pi;
 
