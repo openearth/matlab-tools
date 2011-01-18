@@ -1,34 +1,63 @@
-function [xRD,yRD,x_shift,y_shift] = rd_interp(xRD,yRD)
+function [x_shift y_shift] = rd_correction_shift(xRD, yRD)
+%RD_CORRECTION_SHIFT Computes the shift of psuedo RD to RD
 
+% Rijksdriehoek coordinates are defined wrt the ETRS coordinates by
+% transformation formula's. Next to this mathematical definition, one needs
+% to correct for the (max 25 cm) error that has arisen after re-measuring
+% RD with better equipement than when it was defined. This function
+% interpolates the correction grid as provided by RDNAP 
 
-[c.x,c.y,c.x_shift    ] = surfer_read('x2c.grd');
-[c.x,c.y,c.y_shift,OPT] = surfer_read('y2c.grd');
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Van Oord Dredging and Marine Contractors BV
+%       Thijs Damsma
+%
+%       tda@vanoord.com
+%
+%       Watermanweg 64
+%       3067 GG
+%       Rotterdam
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Jan 2011
+% Created with Matlab version: 7.12.0.62 (R2011a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
+[c.x,c.y,c.x_shift    ] = surfer_read('private\x2c.grd');
+[c.x,c.y,c.y_shift,OPT] = surfer_read('private\y2c.grd');
 
 x_shift = nan(size(xRD));
 y_shift = nan(size(yRD));
 
-% %%
-% c.x =  (1: 4)*1000;
-% c.y = (11:14)*1000;
-% % c.x_shift = zeros(4,4);
-% c.y_shift = zeros(4,4);
-% 
-% [x,y] = meshgrid(c.x,c.y)
-% 
-% c.x_shift = [
-%     0     0     0     0
-%     11     1     11   0
-%     0     1     1     0
-%     0     0     0     0
-%     ];
-% 
-% xRD = 2100;
-% yRD =12000;
-% 
-% x_shift = nan;
-% y_shift = nan;
-% ii=1;
-for ii = 1:length(xRD)
+for ii = 1:numel(xRD)
     % find nearest x,y point
     if xRD(ii)>OPT.min_x && xRD(ii)<OPT.max_x &&...
             yRD(ii)>OPT.min_y && yRD(ii)<OPT.max_y
@@ -60,17 +89,3 @@ for ii = 1:length(xRD)
         end
     end
 end
-
-
-% x_shift
-% 
-% y_shift
-%%
-% end
-% x_shift = griddata(c.x,c.y,c.x_shift,xRD(ii),yRD(ii));
-% % y_shift = griddata(c.x,c.y,c.y_shift,xRD(ii),yRD(ii));
-% nans    = griddata(c.x,c.y,c.y_shift,xRD,yRD,'nearest');
-x_shift(isnan(x_shift)) = 0;
-y_shift(isnan(y_shift)) = 0;
-xRD = xRD-x_shift;
-yRD = yRD-y_shift;
