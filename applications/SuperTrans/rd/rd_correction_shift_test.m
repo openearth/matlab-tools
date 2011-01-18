@@ -67,9 +67,7 @@ iy = find(c.y<min(min(RDy)),1,'last'):find(c.y>max(max(RDy)),1,'first');
 yshift2 = griddata(c.X(iy,ix),c.Y(iy,ix),c.y_shift(iy,ix),RDx,RDy);
 
 d = y_shift - yshift2;
-[max(d(:)) mean(d(:)) mean(abs(d(:)))]
 
-d = y_shift - yshift2;
 testresult =  max(d(:)) < 0.0005;
 % 
 % surf(RDx,RDy,yshift2,y_shift - yshift2);

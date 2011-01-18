@@ -1,4 +1,4 @@
-function convertRdCoordinates_test
+function testresult = convertRdCoordinates_test
 %convertCoordinates_test_RDNAPTRANS   test convertCoordinates with RDNAPTRANS data points
 %  * does not provide output yet, but function is not up to official
 %  standards yet.
@@ -103,11 +103,13 @@ ETRS89toRDNAP = [
 
 %% from ETRS 89 to RD
 
-    [RDx,RDy,OPT] = convertRdCoordinates(ETRS89toRDNAP(:,2),ETRS89toRDNAP(:,1),EPSG,'mode','etrs2rd');
+    [RDx,RDy] = convertRdCoordinates(ETRS89toRDNAP(:,2),ETRS89toRDNAP(:,1),EPSG,'mode','etrs2rd');
      
     dx = RDx - ETRS89toRDNAP(:,4); % should be lower than 0.001
     dy = RDy - ETRS89toRDNAP(:,5); % should be lower than 0.001
     
+    testresult(1) = all(abs(dx(1:7))<0.001); 
+    testresult(2) = all(abs(dy(1:7))<0.001);
   %% From RD/NAP to ETRS89
 % 
 % No.    Name    RD/NAP            ETRS89
@@ -145,11 +147,15 @@ RDNAPtoETRS89 = [
 	 50000.4500  335999.6700    8.0000  51.003976532   3.891247830   52.7427
 	 ];
 
-     [lon,lat,OPT] = convertRdCoordinates(RDNAPtoETRS89(:,1),RDNAPtoETRS89(:,2),EPSG,'mode','rd2etrs');
+     [lon,lat] = convertRdCoordinates(RDNAPtoETRS89(:,1),RDNAPtoETRS89(:,2),EPSG,'mode','rd2etrs');
  
     dlat = lat - RDNAPtoETRS89(:,4); % should be lower than 0.00000001
     dlon = lon - RDNAPtoETRS89(:,5); % should be lower than 0.00000001
     
-   
+       
+    testresult(3) = all(abs(dlat(1:7))<0.00000001); 
+    testresult(4) = all(abs(dlon(1:7))<0.00000001);
+    
+    testresult = all(testresult);
     
     

@@ -20,7 +20,7 @@ end
 
 switch OPT.mode
     case {'etrs2rd','etrs892rd'}
-        [RDx,RDy,OPT2] = convertcoordinates(x1,y1,EPSG,...
+        [RDx,RDy,OPT2] = convertCoordinates(x1,y1,EPSG,...
             'CS1.name', 'ETRS89','CS1.type','geographic 2D','CS2.code',28992);
         [x_shift,y_shift] = rd_correction_shift(RDx,RDy);
         varargout{1} = RDx-x_shift;
@@ -30,7 +30,7 @@ switch OPT.mode
         RDx = x1+x_shift;
         RDy = y1+y_shift;
         
-        [varargout{1},varargout{2},OPT2] = convertcoordinates(RDx,RDy,EPSG,...
+        [varargout{1},varargout{2},OPT2] = convertCoordinates(RDx,RDy,EPSG,...
             'CS2.name', 'ETRS89','CS2.type','geographic 2D','CS1.code',28992);
         
 end
