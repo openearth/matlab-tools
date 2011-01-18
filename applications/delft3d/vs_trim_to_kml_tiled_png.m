@@ -26,7 +26,7 @@ function varargout = vs_trim_to_kml_tiled_png(varargin)
 %    OPT.relativepath = 'myrelativepath';
 %    vs_trim_to_kml_tiled_png('trimfile',OPT.trimfile,'basepath_local',OPT.basepath_local,'relativepath',OPT.relativepath);%
 %
-%   See also vs_trim2nc, KMLfig2pngNew, nc_multibeam_to_kml_tiled_png
+%   See also vs_trim2nc, KMLfigure_tiler, nc_multibeam_to_kml_tiled_png
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -317,7 +317,7 @@ if OPT.make
                 %% MAKE TILES
                 myfileName = [datestr(date(jj),30) '.kml'];
                 mydrawOrder = round(date(jj));
-                KMLfig2pngNew(h,lat,lon,z*OPT.lightAdjust,...
+                KMLfigure_tiler(h,lat,lon,z*OPT.lightAdjust,...
                     'highestLevel',10,...
                     'lowestLevel',OPT.lowestLevel,...
                     'timeIn',date4GE(jj),...
@@ -357,7 +357,7 @@ if OPT.make
         mytimeOut = datenum(fns(ii+1).name,'yyyymmddTHHMMSS');
         mydrawOrder = round(datenum(fns(ii).name,'yyyymmddTHHMMSS'));
         if fns(ii).isdir
-            OPT2 = KMLfig2pngNew(h,lat,lon,z,...
+            OPT2 = KMLfigure_tiler(h,lat,lon,z,...
                 'highestLevel',6,...
                 'lowestLevel',OPT.lowestLevel,...
                 'timeIn',mytimeIn,...
@@ -453,7 +453,7 @@ if OPT.make
                 for ii = 1:2
                     for jj = 1:2
                         code = [tilesOnLevel(nn,:) addCode(ii,jj)];
-                        B = KML_fig2pngNew_code2boundary(code);
+                        B = KML_figure_tiler_code2boundary(code);
                         if  any(ismember(tilesOnNextLevel,num2str(code),'rows'))
                             output = [output sprintf([...
                                 '<NetworkLink>\n'...
@@ -473,7 +473,7 @@ if OPT.make
                 end
             end
             %% add png icon links to kml
-            B = KML_fig2pngNew_code2boundary(tilesOnLevel(nn,:));
+            B = KML_figure_tiler_code2boundary(tilesOnLevel(nn,:));
             for iDate = 1: length(dates)
                 pngFile = [dates{iDate} filesep dates{iDate} '_' tilesOnLevel(nn,:) '.png'];
                 temp = fullfile(OPT.basepath_local,OPT.relativepath, pngFile);
