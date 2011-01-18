@@ -20,7 +20,7 @@ function OK = KMLtest
 %j=j+1;OK(j) = KMLtricontourf_test % worked in by Thijs
 %j=j+1;OK(j) = KMLtricontourf3_test % worked in by Thijs
  j=j+1;OK(j) = KMLtrisurf_test
-%j=j+1;OK(j) = KMLfig2pngNew_test % very slow
+%j=j+1;OK(j) = KMLfigure_tiler_test % very slow
 
  %% merge
  j=j+1;OK(j) = KMLmerge_files_test

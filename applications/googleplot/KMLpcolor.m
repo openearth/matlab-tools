@@ -10,14 +10,14 @@ function varargout = KMLpcolor(lat,lon,c,varargin)
 % Note: lat, and lon can be either vectors or full curvi-linear matrices.
 %
 % Note: for large grids, KMLpcolor objects migth be slow in Google 
-% Earth, use KMLfig2pngNew instead, that use the native Google Earth
+% Earth, use KMLfigure_tiler instead, that use the native Google Earth
 % technology to speed up visualisation of enormous grids.
 %
 % For the <keyword,value> pairs and their defaults call
 %
 %    OPT = KMLpcolor()
 %
-% See also: googlePlot, KMLfig2pngNew, KMlsurf, pcolor, pcolorcorcen
+% See also: googlePlot, KMLfigure_tiler, KMlsurf, pcolor, pcolorcorcen
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

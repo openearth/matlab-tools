@@ -14,8 +14,8 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 % Note: when z is empty, z=0 is assumed.
 %
 % Note: for large grids, KMLpcolor objects migth be slow in Google 
-% Earth, use KMLfig2pngNew instead, that uses the native Google Earth
-% technology to speed up visualisation of enormous grids. KMLfig2pngNew
+% Earth, use KMLfigure_tiler instead, that uses the native Google Earth
+% technology to speed up visualisation of enormous grids. KMLfigure_tiler
 % does not support z data though, so behaves as KMLpcolor (a wrapper for KMLsurf).
 %
 % For the <keyword,value> pairs and their defaults call

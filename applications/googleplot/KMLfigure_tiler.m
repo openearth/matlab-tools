@@ -1,4 +1,4 @@
-function varargout = KMLfig2pngNew (h,lat,lon,z,varargin)
+function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 % KMLFIG2PNGnew   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
@@ -103,14 +103,14 @@ else
    D.lon = lon;
    D.z   = z;
    %if ~isequal(size(D.lon) - size(D.z),[0 0])
-   %  D.z = addrowcol(D.z,1,1,Inf); % no, lat KML_fig2pngNew_printTile handle that
+   %  D.z = addrowcol(D.z,1,1,Inf); % no, lat KML_figure_tiler_printTile handle that
    %end
    D.N   = max(D.lat(:));
    D.S   = min(D.lat(:));
    D.W   = min(D.lon(:));
    D.E   = max(D.lon(:));
 
-   OPT.basecode           = KML_fig2pngNew_SmallestTileThatContainsAllData(D);
+   OPT.basecode           = KML_figure_tiler_SmallestTileThatContainsAllData(D);
    OPT.highestLevel       = length(OPT.basecode);
    OPT.lowestLevel        = OPT.highestLevel+4;
 end
@@ -229,19 +229,19 @@ set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
 %   --------------------------------------------------------------------
 % Generates tiles at most detailed level
 if OPT.printTiles
-    KML_fig2pngNew_printTile(OPT.basecode,D,OPT)
+    KML_figure_tiler_printTile(OPT.basecode,D,OPT)
 end
 
 %   --------------------------------------------------------------------
 % Generates tiles other levels based on already created tiles (merging & resizing)
 if OPT.joinTiles
-   KML_fig2pngNew_joinTiles(OPT)
+   KML_figure_tiler_joinTiles(OPT)
 end
 
 %   --------------------------------------------------------------------
 % Generates KML based on png file names
 if OPT.makeKML
-    KML_fig2pngNew_makeKML(OPT)
+    KML_figure_tiler_makeKML(OPT)
 end
 %   --------------------------------------------------------------------
 
