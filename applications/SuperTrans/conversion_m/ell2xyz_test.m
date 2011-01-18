@@ -52,8 +52,6 @@ MTestCategory.Unit;
 
 OK = 0;
 
-% we use just some random numbers to test if the routine runs and generates
-% output:
-[x,y,z]=ell2xyz(42,5,10,1,1);
+% is tested by xyz2ell_test
 
-OK = (isnumeric(x)&isnumeric(y)&isnumeric(z));
+OK = xyz2ell_test;

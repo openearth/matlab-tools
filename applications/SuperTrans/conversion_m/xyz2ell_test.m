@@ -52,8 +52,26 @@ MTestCategory.Unit;
 
 OK = 0;
 
-% we use just some random numbers to test if the routine runs and generates
-% output:
-[lat,lon,h]=xyz2ell(100000,100000,10,1,1);
+a  = 6378137;
+e2 = 0.006694381;
+x0 = 5000000;
+y0 = 3000000;
+z0 = 2000000;
 
-OK = (isnumeric(lat)&isnumeric(lon)&isnumeric(h));
+x  = x0;
+y  = y0;
+z  = z0;
+numIters = 1000;
+d = nan(1,numIters);
+
+% convert back and forth several times
+for ii = 1:numIters
+    [lat,lon,h] = xyz2ell(x,y,z,    a,e2);
+    [x,y,z]     = ell2xyz(lat,lon,h,a,e2);
+    d(ii)       = (x-x0).^2+(y-y0).^2+(z-z0).^2;
+end
+
+% plot d to see error developement trhoughout iterations
+% plot(d)
+
+OK = d(numIters)<1e-5;
