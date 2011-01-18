@@ -105,7 +105,7 @@ error = 0;
 
 % check if transition distance is given
 if isempty(distance); return; end;
-if diff(cell1, cell2) == 0; return; end;
+if diff([cell1 cell2]) == 0; return; end;
 
 % calculate range of number of cells
 cells = [cell1 cell2];
