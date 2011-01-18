@@ -1,7 +1,7 @@
-function KML_fig2pngNew_makeKML(OPT)
-%KML_FIG2PNGNEW_MAKEKML   subsidiary of KMLfig2pngNew
+function KML_figure_tiler_makeKML(OPT)
+%KML_FIG2PNGNEW_MAKEKML   subsidiary of KMLfigure_tiler
 %
-%See also:KMLfig2pngNew
+%See also:KMLfigure_tiler
 
 OPT.timeSpan = '';
 
@@ -39,7 +39,7 @@ for level = OPT.highestLevel:OPT.lowestLevel
             for ii = 1:2
                 for jj = 1:2
                     code = [tiles(nn,:) addCode(ii,jj)];
-                    B = KML_fig2pngNew_code2boundary(code);
+                    B = KML_figure_tiler_code2boundary(code);
                     PNGfileName = fullfile(OPT.Path,OPT.Name,[OPT.Name '_' code '.png']);
                     if exist(PNGfileName,'file') & ~isempty(B)
                         output = [output sprintf([...
@@ -63,7 +63,7 @@ for level = OPT.highestLevel:OPT.lowestLevel
         end
         
         %% add png to kml
-        B = KML_fig2pngNew_code2boundary(tiles(nn,:));
+        B = KML_figure_tiler_code2boundary(tiles(nn,:));
         output = [output sprintf([...
             '<Region>\n'...
             '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'... % minLod,maxLod

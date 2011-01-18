@@ -1,7 +1,7 @@
-function KML_fig2pngNew_printTile(baseCode,D,OPT)
-%KML_FIG2PNGNEW_PRINTTILE subsidiary of KMLfig2pngNew
+function KML_figure_tiler_printTile(baseCode,D,OPT)
+%KML_FIG2PNGNEW_PRINTTILE subsidiary of KMLfigure_tiler
 %
-%See also:KMLfig2pngNew
+%See also:KMLfigure_tiler
 
 OPT.debug = 0;
 
@@ -11,7 +11,7 @@ if ~isfield(OPT,'WBtodo') %then it is the first call to this function
 end
 for addCode = ['0','1','2','3']
     code = [baseCode addCode];
-    B    = KML_fig2pngNew_code2boundary(code);
+    B    = KML_figure_tiler_code2boundary(code);
     
     % stop if tile is out of bounds
     if ~((D.E>B.W&&D.W<B.E)&&(D.N>B.S&&D.S<B.N))
@@ -81,7 +81,7 @@ for addCode = ['0','1','2','3']
                 
                 if length(code) < OPT.lowestLevel
                     if OPT.debug;fprintf('%-20s %-20s\n',code,'CONTINUING');end
-                    KML_fig2pngNew_printTile(code,D2,OPT)
+                    KML_figure_tiler_printTile(code,D2,OPT)
                 else
                     if OPT.debug;fprintf('%-20s %-20s',code,'PRINTING TILE');end
                     
