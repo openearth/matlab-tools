@@ -1,7 +1,7 @@
-function KML_fig2pngNew_joinTiles(OPT)
-%KML_FIG2PNGNEW_JOINTILES   subsidiary of KMLfig2pngNew
+function KML_figure_tiler_joinTiles(OPT)
+%KML_FIG2PNGNEW_JOINTILES   subsidiary of KMLfigure_tiler
 %
-%See also:KMLfig2pngNew
+%See also:KMLfigure_tiler
 
 multiWaitbar('fig2png_merge_tiles' ,0,'label',['Merging tiles in ' OPT.Name])
 for level = OPT.lowestLevel:-1:OPT.highestLevel+1

@@ -1,9 +1,9 @@
-function bnd =  KML_fig2pngNew_code2boundary(code)
-%KML_FIG2PNGNEW_CODE2BOUNDARY   subsidiary of KMLfig2pngNew
+function bnd =  KML_figure_tiler_code2boundary(code)
+%KML_FIG2PNGNEW_CODE2BOUNDARY   subsidiary of KMLfigure_tiler
 %
-%  bnd =  KML_fig2pngNew_code2boundary(code)
+%  bnd =  KML_figure_tiler_code2boundary(code)
 %
-%See also: KMLfig2pngNew, KML_fig2pngNew_SmallestTileThatContainsAllData
+%See also: KMLfigure_tiler, KML_figure_tiler_SmallestTileThatContainsAllData
 
 bnd.N     =  180;
 bnd.S     = -180;
