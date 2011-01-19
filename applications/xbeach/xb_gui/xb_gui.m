@@ -85,6 +85,8 @@ function xb_gui(varargin)
 
         build(fig, []);
         
+        warndlg('This functionality is under construction. Only a few basic tools from the XBeach toolbox are available via the GUI at this moment. Please use the command-line functions for full access to the toolbox','Under construction')
+        
         % load model from varargin
         if ~isempty(varargin) && xb_check(varargin{1})
             S = xb_gui_struct;  S.model = varargin{1};
@@ -106,7 +108,7 @@ function build(obj, event)
     tabs(1) = uicontrol(obj, 'tag', 'tab_1', 'string', 'Model setup');
     tabs(2) = uicontrol(obj, 'tag', 'tab_2', 'string', 'Model');
     tabs(3) = uicontrol(obj, 'tag', 'tab_3', 'string', 'Run');
-    tabs(4) = uicontrol(obj, 'tag', 'tab_4', 'string', 'Result');
+    %tabs(4) = uicontrol(obj, 'tag', 'tab_4', 'string', 'Result');
     
     set(tabs(:), {'style', 'units', 'enable', 'value', 'callback'}, ...
         {'toggle', 'pixels', 'off', false, @xb_gui_toggletab});
@@ -116,7 +118,7 @@ function build(obj, event)
     panels(1) = uipanel(obj, 'tag', 'panel_1', 'title', get(tabs(1), 'string'), 'visible', 'off');
     panels(2) = uipanel(obj, 'tag', 'panel_2', 'title', get(tabs(2), 'string'), 'visible', 'off');
     panels(3) = uipanel(obj, 'tag', 'panel_3', 'title', get(tabs(3), 'string'), 'visible', 'off');
-    panels(4) = uipanel(obj, 'tag', 'panel_4', 'title', get(tabs(4), 'string'), 'visible', 'off');
+    %panels(4) = uipanel(obj, 'tag', 'panel_4', 'title', get(tabs(4), 'string'), 'visible', 'off');
     
     % add content
     xb_gui_tab_modelsetup(obj);

@@ -136,6 +136,8 @@ for i = 1:length(objs)
     set(objs(i), 'position', [.09+.12*(i-1) .82 .1 .04].*p);
 end
 
-set(findobj(obj, 'tag', 'run_history'), 'position', [.09 .02 .74 .78].*p);
+set(findobj(obj, 'tag', 'run_history'), 'position', [.09 .08 .74 .72].*p);
+
+set(findobj(obj, 'tag', 'showresult'), 'position', [.73 .02 .1 .04].*p);
 
 %% result

@@ -99,17 +99,19 @@ end
 
 xb = xb_empty();
 
-% get filelist
+% get dir
 if length(fname) > 3 && strcmpi(fname(end-3:end), '.dat')
-    names = dir(fname);
     fdir = fileparts(fname);
 else
-    names = dir([fname filesep '*.dat']);
     fdir = fname;
 end
 
 if isempty(fdir); fdir = fullfile('.', ''); end;
 
+% get variable names
+names = xb_get_vars(fname, 'vars', OPT.vars);
+
+% get dimensions
 dims = xb_read_dims(fdir);
 
 % store dims in xbeach struct
@@ -123,13 +125,7 @@ xb = xb_set(xb, 'DIMS', d);
 
 % read dat files one-by-one
 for i = 1:length(names)
-    varname = names(i).name(1:length(names(i).name)-4);
-    
-    % skip, if not requested
-    if ~isempty(OPT.vars) && ~any(strfilter(varname, OPT.vars)); continue; end;
-    if any(strcmpi(varname, {'xy', 'dims'})); continue; end;
-    
-    filename = [varname '.dat'];
+    filename = [names{i} '.dat'];
     fpath = fullfile(fdir, filename);
     
     % determine dimensions
@@ -143,7 +139,7 @@ for i = 1:length(names)
     dat = xb_dat_read(fpath, d, ...
         'start', OPT.start, 'length', OPT.length, 'stride', OPT.stride);
 
-    xb = xb_set(xb, varname, dat);
+    xb = xb_set(xb, names{i}, dat);
 end
 
 % set meta data

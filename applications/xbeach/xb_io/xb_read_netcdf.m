@@ -106,9 +106,11 @@ xb = xb_meta(xb, mfilename, 'dimensions', fname);
 variables = xb_set(variables, 'DIMS', xb);
 
 % read all variables that match filters
+names = xb_get_vars(fname, 'vars', OPT.vars);
+
 c = 2;
 for i = 1:length({info.Dataset.Name})
-    if ~isempty(OPT.vars) && ~any(strfilter(info.Dataset(i).Name, OPT.vars)); continue; end;
+    if ~any(strcmpi(info.Dataset(i).Name, names)); continue; end;
     
     [start len stride] = xb_index(info.Dataset(i).Size, OPT.start, OPT.length, OPT.stride);
     

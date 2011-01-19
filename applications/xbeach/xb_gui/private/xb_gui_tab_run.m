@@ -86,9 +86,28 @@ function build(obj, event)
     % build run history
     runtable = uitable(obj, 'tag', 'run_history', ...
         'columnname', {'id', 'date', 'name', 'location', 'nodes', 'binary', 'ssh'}, ...
-        'columnwidth', {50 100 200 200 50 200 50});
+        'columnwidth', {50 100 200 200 50 200 50}, 'CellSelectionCallback', @getresult);
     
-    set([rundir(:) ; runbuttons(:) ; runtable], 'parent', findobj(obj, 'tag', 'panel_3'));
+    resultbutton = uicontrol(obj, 'tag', 'showresult', 'string', 'Show result', ...
+        'style', 'pushbutton', 'callback', {@getresult});
+    
+    set([rundir(:) ; runbuttons(:) ; runtable ; resultbutton], 'parent', findobj(obj, 'tag', 'panel_3'));
+end
+
+function getresult(obj, event)
+    if strcmpi(get(obj, 'tag'), 'run_history')
+        idx = event.Indices;
+        set(obj, 'userdata', idx);
+    else
+        pobj = findobj('tag', 'xb_gui');
+        cobj = findobj(pobj, 'tag', 'run_history');
+        if ~isempty(cobj)
+            idx = get(cobj, 'userdata');
+            data = get(cobj, 'data');
+            fdir = fileparts(data{idx(1),4});
+            xb_view(fdir, 'modal', true);
+        end
+    end
 end
 
 function getdir(obj, event)

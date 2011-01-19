@@ -124,6 +124,8 @@ function setloc(obj, event)
         else
             set(lobj, 'xdata', x, 'ydata', y);
         end
+    else
+        errordlg(['The location "' get(obj, 'string') '" could not be found in the Netherlands. Please check the name.'],'Location not found')
     end
 end
 

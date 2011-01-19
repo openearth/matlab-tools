@@ -133,8 +133,10 @@ else
             error('No supported MPI application installed');
         end
     else
+        drive = regexp(OPT.path, '^\s*([A-Z]:)', 'match'); drive = drive{1};
+        
         % start xbeach
-        [r messages] = system(['cd ' OPT.path ' && start ' OPT.binary]);
+        [r messages] = system([drive ' && cd ' OPT.path ' && start ' OPT.binary]);
         
         % get current running xbeach instances
         [r tasklist] = system('tasklist /FI "IMAGENAME eq xbeach.exe"');

@@ -110,7 +110,7 @@ function xb_gui_modelsetup_bathy_merge(obj, event)
     % get vaklodingen areas
 %     urls = vaklodingen_url;
 %     url = urls{strfilter(urls, '/vaklodingen.nc$')};
-    url = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingen.nc';
+    url = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/vaklodingen/vaklodingen.nc';
     ids = nc_varget(url, 'id');
     rectangles = nc_varget(url, 'rectangle');
     for i = 1:size(rectangles, 1)
@@ -242,6 +242,8 @@ function addselect(obj, event, aobj, polx, poly)
 
         tdata = reshape(tdata, 2, numel(tdata)/2)';
         set(tobj, 'data', tdata);
+    else
+        errordlg('The selection did not contain any data. Please select an area containing either an end point of a JARKUS transect or a point within a Vaklodingen map.','No data selected')
     end
 end
 
@@ -266,6 +268,8 @@ function setloc(obj, event)
         ylim = get(mobj, 'ylim');
         set(mobj, 'xlim', x+[-1 1]*diff(xlim)/2);
         set(mobj, 'ylim', y+[-1 1]*diff(ylim)/2);
+    else
+        errordlg(['The location "' get(obj, 'string') '" could not be found in the Netherlands. Please check the name.'],'Location not found')
     end
 end
 
