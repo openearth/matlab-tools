@@ -7,11 +7,11 @@
 %     <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/tutorial_automatedtesting.html'], '-helpbrowser');">3. Automated testing</a>
 %     <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/tutorial_how_to_write_tutorials.html'], '-helpbrowser');">4. How to make a tutorial</a>
 %
-%     1 automated Testing:
-%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/testsInGeneral_tutorial.html'], '-helpbrowser');">1. General information on testing</a>
-%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/testdefinitions_tutorial.html'], '-helpbrowser');">2. Creating a test</a>
-%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/runningatest_tutorial.html'], '-helpbrowser');">3. Running individual tests</a>
-%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/runtestswithmtestengine_tutorial.html'], '-helpbrowser');">4. Automated tesing with the MTest toolbox</a>
+%     1 MTest:
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/mtest_tutorial_1_tests_in_general.html'], '-helpbrowser');">1. General information on testing</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/mtest_tutorial_2_creating_tests.html'], '-helpbrowser');">2. Creating a test</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/mtest_tutorial_3_running_tests.html'], '-helpbrowser');">3. Running individual tests</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/mtest_tutorial_4_running_tests_automated.html'], '-helpbrowser');">4. Automated tesing with the MTest toolbox</a>
 %
 %     2 tutorial Generation:
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/tutorials_cell_formatting_tutorial.html'], '-helpbrowser');">1. Basics of writing a tutorial</a>
@@ -25,6 +25,8 @@
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_x_y_curvilinear_tutorial.html'], '-helpbrowser');">Create netCDF-CF of curvilinear x-y grid</a>
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_lat_lon_orthogonal_tutorial.html'], '-helpbrowser');">Create netCDF-CF of orthogonal lat-lon grid</a>
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_write_x_y_orthogonal_tutorial.html'], '-helpbrowser');">Create netCDF-CF of orthogonal x-y grid</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_grid_tutorial.html'], '-helpbrowser');">NC_CF_GRID_TUTORIAL  how to read and subset a netCDF grid file</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/nc_cf_stationTimeSeries_tutorial.html'], '-helpbrowser');">NC_CF_STATIONTIMESERIES_TUTORIAL  how to read and subset a netCDF time series file</a>
 %
 %     netcdf:
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/tutorial_netCDF_create.html'], '-helpbrowser');">Creating a netCDF file (basic)</a>
@@ -53,9 +55,6 @@
 %     SuperTrans:
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/convertCoordinates_tutorial.html'], '-helpbrowser');">Coordinate conversion</a>
 %
-%     detran:
-%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/detran_tutorial.html'], '-helpbrowser');">detran_tutorial tutorial for Detran</a>
-%
 %     googleplot:
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/KMLcurvedArrows_tutorial.html'], '-helpbrowser');">Animated arrows</a>
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/kml_included_in_tutorial.html'], '-helpbrowser');">Include KML in tutorial</a>
@@ -64,4 +63,11 @@
 %
 %     probabilistic:
 %       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/prob_calculation_tutorial.html'], '-helpbrowser');">setting up a probabilistic calculation</a>
+%
+%     xbeach:
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/xb_modelsetup_tutorial.html'], '-helpbrowser');">1. Setting up your model</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/xb_run_tutorial.html'], '-helpbrowser');">2. Running your model</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/xb_readresults_tutorial.html'], '-helpbrowser');">3. Reading your model results</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/xb_visualise_tutorial.html'], '-helpbrowser');">4. Visualising your model results</a>
+%       <a href="matlab:web(['jar:file:///' strrep(oetroot,filesep,'/') 'docs/OpenEarthDocs/oethelpdocs/help.jar!/html/xb_structure_tutorial.html'], '-helpbrowser');">The XBeach structure</a>
 %

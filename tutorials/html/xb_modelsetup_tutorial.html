@@ -1,0 +1,508 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN">
+<html xmlns:mwsh="http://www.mathworks.com/namespace/mcode/v1/syntaxhighlight.dtd">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <!--
+This HTML is auto-generated from an M-file.
+To make changes, update the M-file and republish this document.
+      -->
+      <title>1. Setting up your model</title>
+      <meta name="generator" content="MATLAB 7.9">
+      <meta name="date" content="2010-12-30">
+      <meta name="m-file" content="xb_modelsetup_tutorial">
+      <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
+      <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
+    $(document).ready(function ()
+      {
+        // Copy content
+	copycontent();
+
+	// validate href of links to matlab tutorials
+	matlabpreparehelprefs();
+
+  	// Accordion
+  	collapsible($(".collapsible"));
+	
+	// googleearth($(".geapi"));
+	currentGeApiDiv = $(".geapi");	
+      });
+    </script><link type="text/css" href="script/css/matlabcode.css" rel="stylesheet">
+   </head>
+   <body LINK="#48339F" VLINK="#48339F" ALINK="#48339F">
+      <div class="content">
+         <div class="introduction ui-widget ui-widget-content ui-corner-all">
+            <h1>1. Setting up your model</h1>
+            <div>
+               <p>This tutorial shows how to setup an XBeach model with the XBeach Toolbox. The tutorial starts with an extremely simple 1D
+                  model and ends with a full 2DH model setup using a variety of functionalities available in the OpenEarth Toolbox.
+               </p>
+            </div>
+            <h2>Contents</h2>
+            <div>
+               <ul>
+                  <li><a href="#1">The default model</a></li>
+                  <li><a href="#3">Customizing your model</a></li>
+                  <li><a href="#6">Going 2D with your model</a></li>
+                  <li><a href="#10">Using multiple datasources</a></li>
+                  <li><a href="#11">Reading an existing model</a></li>
+               </ul>
+            </div>
+         </div>
+         <div class="collapsible">
+            <div>
+               <h2><a name="1">The default model</a></h2>
+               <div>
+                  <p>Setting up an XBeach model with the XBeach Toolbox mainly concerns calling the <i>xb_generate_model</i> function:
+                  </p><pre class="codeinput">xbm = xb_generate_model;
+</pre></div>
+            </div>
+            <div>
+               <div>
+                  <p>The variable <i>xbm</i> now contains an XBeach model setup. Such model setup is basically a representation of the params.txt file that is ultimately
+                     generated to be able to run the model (see the <a href="http://www.xbeach.org">XBeach website</a> for more information on how the XBeach model works). Moreover, all files referred to in the params.txt file, like bathymetries
+                     and surge files, are included in the model setup.
+                  </p>
+                  <p>Since no parameters are supplied to the <i>xb_generate_model</i> function, the model setup consists of default settings only: bathymetry, calculation grid, hydraulic boundary conditions,
+                     model settings, etcetera.
+                  </p>
+                  <p>The varabile <i>xbm</i> is an XBeach structure. See the <a href="xb_structure_tutorial.html">XBeach structure tutorial</a> for more information
+                  </p>
+               </div>
+            </div>
+            <div>
+               <h2><a name="3">Customizing your model</a></h2>
+               <div>
+                  <p>Since the default model is hardly ever sufficient, the <i>xb_generate_model</i> function offers possibilities to directly customize your model. Customization of a model is structured to the four main components
+                     of an XBeach model:
+                  </p>
+                  <ul>
+                     <li>Bathymetry and grid</li>
+                     <li>Water levels and storm surge</li>
+                     <li>Wave spectra and grid</li>
+                     <li>Model settings</li>
+                  </ul>
+                  <p>For example, a JARKUS transect can be used instead of the default cross-section:</p><pre class="codeinput"><span class="comment">% obtain JARKUS transect from OpenDAP server</span>
+j = jarkus_transects(<span class="string">'id'</span>, 7001483, <span class="string">'year'</span>, 2008);
+
+<span class="comment">% remove nan's from transect</span>
+j = jarkus_interpolatenans(j);
+x = squeeze(j.cross_shore(~isnan(j.altitude)));
+z = squeeze(j.altitude(~isnan(j.altitude)));
+
+<span class="comment">% plot bathymetry obtained from JARKUS datasource</span>
+plot(x, z);
+
+<span class="comment">% generate model setup using JARKUS bathymetry</span>
+xbm = xb_generate_model(<span class="string">'bathy'</span>, {<span class="string">'x'</span>, x, <span class="string">'z'</span>, z});
+</pre><img vspace="5" hspace="5" src="xb_modelsetup_tutorial_01.png" relsrc="xb_modelsetup_tutorial_01.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>The code above uses the bathymetry to generate an optimal calculation grid based on the Courant number. This implies that
+                     the water level and waves imposed on the model are used in this routine as well. Both parameters are still set to the defaults.
+                     Modifying the surge and waves can be done in a similar manner:
+                  </p><pre class="codeinput"><span class="comment">% obtain the normative strom surge and wave conditions for the obtained</span>
+<span class="comment">% JARKUS transect</span>
+[h Hs Tp] = bc_normstorm(<span class="string">'loc'</span>, [j.x(end), j.y(end)], <span class="string">'freq'</span>, 1e-4);
+
+<span class="comment">% generate a surge hydrograph conform Vellinga (1986) from the normative</span>
+<span class="comment">% conditions</span>
+[t h duration Hs Tp] = bc_stormsurge(<span class="string">'h_max'</span>, h, <span class="string">'Hm0_max'</span>, Hs, <span class="string">'Tp_max'</span>, Tp, <span class="string">'nwaves'</span>,32);
+
+<span class="comment">% plot hydraulic conditions</span>
+plot(t, h, <span class="string">'-r'</span>, cumsum(duration), Hs, <span class="string">'-g'</span>, cumsum(duration), Tp, <span class="string">'-b'</span>);
+
+<span class="comment">% generate model setup using JARKUS bathymetry and obtained surge and wave</span>
+<span class="comment">% confitions</span>
+xbm = xb_generate_model( <span class="keyword">...</span>
+    <span class="string">'bathy'</span>,    {<span class="string">'x'</span>, x, <span class="string">'z'</span>, z}, <span class="keyword">...</span>
+    <span class="string">'tide'</span>,     {<span class="string">'time'</span> t, <span class="string">'front'</span>, h, <span class="string">'back'</span>, 0}, <span class="keyword">...</span>
+    <span class="string">'waves'</span>,    {<span class="string">'Hm0'</span>, Hs, <span class="string">'Tp'</span>, Tp, <span class="string">'duration'</span>, duration}, <span class="keyword">...</span>
+    <span class="string">'settings'</span>, {<span class="string">'tstop'</span>, 1800, <span class="string">'tint'</span>, 600} <span class="keyword">...</span>
+);
+</pre><img vspace="5" hspace="5" src="xb_modelsetup_tutorial_02.png" relsrc="xb_modelsetup_tutorial_02.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>In the latter <i>xb_generate_model</i> call also some additional model settings are modified from the defaults (tstop and tint). These parameters are set directly
+                     in the params.txt file ultimately generated.
+                  </p>
+               </div>
+            </div>
+            <div>
+               <h2><a name="6">Going 2D with your model</a></h2>
+               <div>
+                  <p>Until now, model generation has been 1D, having a bathymetry specifying only the x and z coordinates. Going 2D with your model
+                     can be done by just specifying y coordinates as well:
+                  </p><pre class="codeinput"><span class="comment">% obtain Vaklodingen data from OpenDAP server</span>
+url = <span class="string">'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB121_2524.nc'</span>;
+x = nc_varget(url, <span class="string">'x'</span>);
+y = nc_varget(url, <span class="string">'y'</span>);
+z = nc_varget(url, <span class="string">'z'</span>);
+z = squeeze(z(end,:,:));
+
+<span class="comment">% plot bathymetry obtained from Vaklodingen datasource</span>
+pcolor(x, y, z); shading <span class="string">flat</span>; axis <span class="string">equal</span>; colorbar;
+
+<span class="comment">% generate model setup using Vaklodingen bathymetry</span>
+xbm = xb_generate_model( <span class="keyword">...</span>
+    <span class="string">'bathy'</span>, {<span class="string">'x'</span>, x, <span class="string">'y'</span>, y, <span class="string">'z'</span>, z <span class="keyword">...</span>
+        <span class="string">'crop'</span>, [100110 530440 7333 5817], <span class="keyword">...</span>
+        <span class="string">'finalise'</span>, {<span class="string">'lateral_sandwalls'</span> <span class="string">'lateral_extend'</span> <span class="string">'seaward_flatten'</span>} <span class="keyword">...</span>
+    } <span class="keyword">...</span>
+);
+</pre><img vspace="5" hspace="5" src="xb_modelsetup_tutorial_03.png" relsrc="xb_modelsetup_tutorial_03.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>The call to the <i>xb_generate_model</i> function contains next to the y coordinates two other settings that influence the calculation grid used: crop and finalise.
+                     By default, the original bathymetry is rotated such that the coastline is oriented in y direction to minimze the calculation
+                     grid. This means that the gird used looks as follows:
+                  </p><pre class="codeinput"><span class="comment">% determine grid origin</span>
+xori = min(min(x));
+yori = min(min(y));
+
+<span class="comment">% determine rotation of grid and correct</span>
+alpha = xb_grid_rotation(x, y, z);
+[xr yr] = xb_grid_rotate(x, y, -alpha, <span class="string">'origin'</span>, [xori yori]);
+
+<span class="comment">% plot rotated grid</span>
+pcolor(xr, yr, z); shading <span class="string">flat</span>; axis <span class="string">equal</span>; colorbar;
+</pre><img vspace="5" hspace="5" src="xb_modelsetup_tutorial_04.png" relsrc="xb_modelsetup_tutorial_04.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>In order to obtain a rectangular grid again, the rotated grid is cropped. An automated cropping routine is used by default,
+                     which might not result in the desired grid. Therefore, a cropping vector can be supplied containing the x and y coordinates
+                     of the lower left corner and the width and height of the desired grid. Using the cropping vector defined above, the final
+                     grid looks as follows:
+                  </p><pre class="codeinput"><span class="comment">% extract the bathymetry from the XBeach model structure</span>
+xbb = xb_input2bathy(xbm);
+[xf yf zf] = xb_get(xbb, <span class="string">'xfile'</span>, <span class="string">'yfile'</span>, <span class="string">'depfile'</span>);
+
+<span class="comment">% plot final grid</span>
+pcolor(xf, yf, zf); shading <span class="string">flat</span>; axis <span class="string">equal</span>; colorbar;
+</pre><img vspace="5" hspace="5" src="xb_modelsetup_tutorial_05.png" relsrc="xb_modelsetup_tutorial_05.png"> </div>
+            </div>
+            <div>
+               <div>
+                  <p>The final grid contains some other improvements which are introduced by the finalise option. The finalise option is a cell
+                     array with strings specifying grid finalisation actions. In the latter figure you can see the sandwalls created by the <i>lateral_sandwalls</i> option along the lower border of the grid at land. At the seaward border you can see a horizontal strip running in y direction
+                     generated by the <i>seaward_flatten</i> function. Finally, the grid is made uniform at both lateral borders using the <i>lateral_extend</i> option.
+                  </p>
+               </div>
+            </div>
+            <div>
+               <h2><a name="10">Using multiple datasources</a></h2>
+               <div>
+                  <p>We already used different datasources for the bathymetry (JARKUS and Vaklodingen), but not in a single model. This example
+                     shows how different bathymetries can de combined in a single bathymetry for your model.
+                  </p>
+                  <p>Furthermore, this example shows how to include non-erosable layers and a convenient way to obtain normative storm conditions
+                     when exact coordinates are unknown or less important.
+                  </p><pre class="codeinput"><span class="comment">% obtain ArcGIS data from AHN25</span>
+[x1 y1 z1 info] = arc_asc_read(<span class="string">'P:\1002266-xbeach\XBeachToolbox\data\petten\ahn25_petten.asc'</span>, <span class="string">'zscale'</span>, 1);
+
+<span class="comment">% obtain ArcGIS data from AHN5 (higher resolution, smaller area)</span>
+[x2 y2 z2 info] = arc_asc_read(<span class="string">'P:\1002266-xbeach\XBeachToolbox\data\petten\ahn5_petten.asc'</span>, <span class="string">'zscale'</span>, 100);
+
+<span class="comment">% obtain preprocessed Vaklodingen data</span>
+S = load(<span class="string">'P:\1002266-xbeach\XBeachToolbox\data\petten\vaklodingen_petten.mat'</span>);
+x3 = S.x; y3 = S.y; z3 = S.z;
+
+<span class="comment">% merge the three bathymetries in order</span>
+[x y z] = xb_grid_merge(<span class="string">'x'</span>, {x1 x2 x3}, <span class="string">'y'</span>, {y1 y2 y3}, <span class="string">'z'</span>, {z1 z2 z3});
+
+<span class="comment">% obtain ArcGIS data from AHN25 containing the non-erodable layers</span>
+<span class="comment">% (seawall) and interpolate on merged grid</span>
+[x4 y4 z4 info] = arc_asc_read(<span class="string">'P:\1002266-xbeach\XBeachToolbox\data\petten\ahn25_seawall.asc'</span>, <span class="string">'zscale'</span>, 1);
+ne = ~isnan(xb_grid_interpolate(x4, y4, z4, x, y));
+
+<span class="comment">% plot the merged bathymetry</span>
+pcolor(x, y, z); shading <span class="string">flat</span>; axis <span class="string">equal</span>; colorbar; snapnow;
+
+<span class="comment">% obtain the normative strom surge and wave conditions by just calling the</span>
+<span class="comment">% name of the location modeled. The name is translated to coordinates using</span>
+<span class="comment">% Google Maps.</span>
+[h Hs Tp] = bc_normstorm(<span class="string">'loc'</span>, <span class="string">'Petten'</span>, <span class="string">'freq'</span>, 1e-5);
+
+<span class="comment">% generate a surge hydrograph conform Vellinga (1986) from the normative</span>
+<span class="comment">% conditions</span>
+[t h duration Hs Tp] = bc_stormsurge(<span class="string">'h_max'</span>, h, <span class="string">'Hm0_max'</span>, Hs, <span class="string">'Tp_max'</span>, Tp, <span class="string">'nwaves'</span>, 32);
+
+<span class="comment">% plot hydraulic conditions</span>
+plot(t, h, <span class="string">'-r'</span>, cumsum(duration), Hs, <span class="string">'-g'</span>, cumsum(duration), Tp, <span class="string">'-b'</span>); snapnow;
+
+<span class="comment">% generate the model for Petten</span>
+xbm = xb_generate_model( <span class="keyword">...</span>
+    <span class="string">'bathy'</span>,    {<span class="string">'x'</span>, x, <span class="string">'y'</span>, y, <span class="string">'z'</span>, z, <span class="string">'ne'</span>, ne, <span class="keyword">...</span>
+        <span class="string">'crop'</span>, [99000 532000 7500 6000], <span class="keyword">...</span>
+        <span class="string">'finalise'</span>, {<span class="string">'landward_polder'</span> <span class="string">'lateral_sandwalls'</span> <span class="string">'lateral_extend'</span> <span class="string">'seaward_flatten'</span>}}, <span class="keyword">...</span>
+    <span class="string">'tide'</span>,     {<span class="string">'time'</span> t, <span class="string">'front'</span>, h, <span class="string">'back'</span>, 0}, <span class="keyword">...</span>
+    <span class="string">'waves'</span>,    {<span class="string">'Hm0'</span>, Hs, <span class="string">'Tp'</span>, Tp, <span class="string">'duration'</span>, duration}, <span class="keyword">...</span>
+    <span class="string">'settings'</span>, {<span class="string">'tstop'</span>, 1800, <span class="string">'tint'</span>, 600} <span class="keyword">...</span>
+);
+
+<span class="comment">% plot the final rotated, cropped and finalised bathymetry</span>
+xbb = xb_input2bathy(xbm);
+[xf yf zf nef] = xb_get(xbb, <span class="string">'xfile'</span>, <span class="string">'yfile'</span>, <span class="string">'depfile'</span>, <span class="string">'ne_layer'</span>);
+pcolor(xf, yf, zf); shading <span class="string">flat</span>; axis <span class="string">equal</span>; colorbar; snapnow;
+pcolor(xf, yf, nef); shading <span class="string">flat</span>; axis <span class="string">equal</span>; colorbar;
+</pre><img vspace="5" hspace="5" src="xb_modelsetup_tutorial_06.png" relsrc="xb_modelsetup_tutorial_06.png"> <img vspace="5" hspace="5" src="xb_modelsetup_tutorial_07.png" relsrc="xb_modelsetup_tutorial_07.png"> <img vspace="5" hspace="5" src="xb_modelsetup_tutorial_08.png" relsrc="xb_modelsetup_tutorial_08.png"> <img vspace="5" hspace="5" src="xb_modelsetup_tutorial_09.png" relsrc="xb_modelsetup_tutorial_09.png"> </div>
+            </div>
+            <div>
+               <h2><a name="11">Reading an existing model</a></h2>
+               <div>
+                  <p>We showed how to setup a model from scratch with the XBeach Toolbox. However, existing models stored on disk can also be used
+                     in the Toolbox. The collection of files, including params.txt and all files referred to from there, can be converted to an
+                     XBeach model structure as follows:
+                  </p><pre class="codeinput"><span class="comment">% write a dummy model to disk</span>
+xb_write_input(<span class="string">'params.txt'</span>, xb_generate_model);
+
+<span class="comment">% read it from disk into an XBeach structure</span>
+xbm = xb_read_input(<span class="string">'params.txt'</span>);
+</pre></div>
+            </div>
+         </div>
+         <p class="footer"><br>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('xb_modelsetup_tutorial');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=3766/OpenEarthTools/trunk/matlab/applications/xbeach/xb_modelsetup_tutorial.m">xb_modelsetup_tutorial.m (revision: 3766)</a><br>
+Published with MATLAB&reg; 7.9<br></p>
+      </div>
+      <!--
+##### SOURCE BEGIN #####
+%% 1. Setting up your model
+%
+% This tutorial shows how to setup an XBeach model with the XBeach Toolbox.
+% The tutorial starts with an extremely simple 1D model and ends with a
+% full 2DH model setup using a variety of functionalities available in the
+% OpenEarth Toolbox.
+
+%% The default model
+%
+% Setting up an XBeach model with the XBeach Toolbox mainly concerns
+% calling the _xb_generate_model_ function:
+
+xbm = xb_generate_model;
+
+%%
+% The variable _xbm_ now contains an XBeach model setup. Such model setup
+% is basically a representation of the params.txt file that is ultimately
+% generated to be able to run the model (see the 
+% <http://www.xbeach.org XBeach website> for more information on how the
+% XBeach model works). Moreover, all files referred to in the params.txt
+% file, like bathymetries and surge files, are included in the model setup.
+%
+% Since no parameters are supplied to the _xb_generate_model_ function, the
+% model setup consists of default settings only: bathymetry, calculation
+% grid, hydraulic boundary conditions, model settings, etcetera.
+%
+% The varabile _xbm_ is an XBeach structure. See the
+% <xb_structure_tutorial.html XBeach structure tutorial> for more
+% information
+
+%% Customizing your model
+%
+% Since the default model is hardly ever sufficient, the
+% _xb_generate_model_ function offers possibilities to directly customize
+% your model. Customization of a model is structured to the four main
+% components of an XBeach model:
+%
+% * Bathymetry and grid
+% * Water levels and storm surge
+% * Wave spectra and grid
+% * Model settings
+%
+% For example, a JARKUS transect can be used instead of the default
+% cross-section:
+
+% obtain JARKUS transect from OpenDAP server
+j = jarkus_transects('id', 7001483, 'year', 2008);
+
+% remove nan's from transect
+j = jarkus_interpolatenans(j);
+x = squeeze(j.cross_shore(~isnan(j.altitude)));
+z = squeeze(j.altitude(~isnan(j.altitude)));
+
+% plot bathymetry obtained from JARKUS datasource
+plot(x, z);
+
+% generate model setup using JARKUS bathymetry
+xbm = xb_generate_model('bathy', {'x', x, 'z', z});
+
+%%
+% The code above uses the bathymetry to generate an optimal calculation
+% grid based on the Courant number. This implies that the water level and
+% waves imposed on the model are used in this routine as well. Both
+% parameters are still set to the defaults. Modifying the surge and waves
+% can be done in a similar manner:
+
+% obtain the normative strom surge and wave conditions for the obtained
+% JARKUS transect
+[h Hs Tp] = bc_normstorm('loc', [j.x(end), j.y(end)], 'freq', 1e-4);
+
+% generate a surge hydrograph conform Vellinga (1986) from the normative
+% conditions
+[t h duration Hs Tp] = bc_stormsurge('h_max', h, 'Hm0_max', Hs, 'Tp_max', Tp, 'nwaves',32);
+
+% plot hydraulic conditions
+plot(t, h, '-r', cumsum(duration), Hs, '-g', cumsum(duration), Tp, '-b');
+
+% generate model setup using JARKUS bathymetry and obtained surge and wave
+% confitions
+xbm = xb_generate_model( ...
+    'bathy',    {'x', x, 'z', z}, ...
+    'tide',     {'time' t, 'front', h, 'back', 0}, ...
+    'waves',    {'Hm0', Hs, 'Tp', Tp, 'duration', duration}, ...
+    'settings', {'tstop', 1800, 'tint', 600} ...
+);
+
+%%
+% In the latter _xb_generate_model_ call also some additional model
+% settings are modified from the defaults (tstop and tint). These
+% parameters are set directly in the params.txt file ultimately generated.
+
+%% Going 2D with your model
+%
+% Until now, model generation has been 1D, having a bathymetry specifying
+% only the x and z coordinates. Going 2D with your model can be done by
+% just specifying y coordinates as well:
+
+% obtain Vaklodingen data from OpenDAP server
+url = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB121_2524.nc';
+x = nc_varget(url, 'x');
+y = nc_varget(url, 'y');
+z = nc_varget(url, 'z');
+z = squeeze(z(end,:,:));
+
+% plot bathymetry obtained from Vaklodingen datasource
+pcolor(x, y, z); shading flat; axis equal; colorbar;
+
+% generate model setup using Vaklodingen bathymetry
+xbm = xb_generate_model( ...
+    'bathy', {'x', x, 'y', y, 'z', z ...
+        'crop', [100110 530440 7333 5817], ...
+        'finalise', {'lateral_sandwalls' 'lateral_extend' 'seaward_flatten'} ...
+    } ...
+);
+
+%%
+% The call to the _xb_generate_model_ function contains next to the y
+% coordinates two other settings that influence the calculation grid used:
+% crop and finalise. By default, the original bathymetry is rotated such
+% that the coastline is oriented in y direction to minimze the calculation
+% grid. This means that the gird used looks as follows:
+
+% determine grid origin
+xori = min(min(x));
+yori = min(min(y));
+
+% determine rotation of grid and correct
+alpha = xb_grid_rotation(x, y, z);
+[xr yr] = xb_grid_rotate(x, y, -alpha, 'origin', [xori yori]);
+
+% plot rotated grid
+pcolor(xr, yr, z); shading flat; axis equal; colorbar;
+
+%%
+% In order to obtain a rectangular grid again, the rotated grid is cropped.
+% An automated cropping routine is used by default, which might not result
+% in the desired grid. Therefore, a cropping vector can be supplied
+% containing the x and y coordinates of the lower left corner and the width
+% and height of the desired grid. Using the cropping vector defined above,
+% the final grid looks as follows:
+
+% extract the bathymetry from the XBeach model structure
+xbb = xb_input2bathy(xbm);
+[xf yf zf] = xb_get(xbb, 'xfile', 'yfile', 'depfile');
+
+% plot final grid
+pcolor(xf, yf, zf); shading flat; axis equal; colorbar;
+
+%%
+% The final grid contains some other improvements which are introduced by
+% the finalise option. The finalise option is a cell array with strings
+% specifying grid finalisation actions. In the latter figure you can see
+% the sandwalls created by the _lateral_sandwalls_ option along the lower
+% border of the grid at land. At the seaward border you can see a
+% horizontal strip running in y direction generated by the
+% _seaward_flatten_ function. Finally, the grid is made uniform at both
+% lateral borders using the _lateral_extend_ option.
+
+%% Using multiple datasources
+%
+% We already used different datasources for the bathymetry (JARKUS and
+% Vaklodingen), but not in a single model. This example shows how different
+% bathymetries can de combined in a single bathymetry for your model.
+%
+% Furthermore, this example shows how to include non-erosable layers and a
+% convenient way to obtain normative storm conditions when exact
+% coordinates are unknown or less important.
+
+% obtain ArcGIS data from AHN25
+[x1 y1 z1 info] = arc_asc_read('P:\1002266-xbeach\XBeachToolbox\data\petten\ahn25_petten.asc', 'zscale', 1);
+ 
+% obtain ArcGIS data from AHN5 (higher resolution, smaller area)
+[x2 y2 z2 info] = arc_asc_read('P:\1002266-xbeach\XBeachToolbox\data\petten\ahn5_petten.asc', 'zscale', 100);
+ 
+% obtain preprocessed Vaklodingen data
+S = load('P:\1002266-xbeach\XBeachToolbox\data\petten\vaklodingen_petten.mat');
+x3 = S.x; y3 = S.y; z3 = S.z;
+
+% merge the three bathymetries in order
+[x y z] = xb_grid_merge('x', {x1 x2 x3}, 'y', {y1 y2 y3}, 'z', {z1 z2 z3});
+
+% obtain ArcGIS data from AHN25 containing the non-erodable layers
+% (seawall) and interpolate on merged grid
+[x4 y4 z4 info] = arc_asc_read('P:\1002266-xbeach\XBeachToolbox\data\petten\ahn25_seawall.asc', 'zscale', 1);
+ne = ~isnan(xb_grid_interpolate(x4, y4, z4, x, y));
+
+% plot the merged bathymetry
+pcolor(x, y, z); shading flat; axis equal; colorbar; snapnow;
+
+% obtain the normative strom surge and wave conditions by just calling the
+% name of the location modeled. The name is translated to coordinates using
+% Google Maps.
+[h Hs Tp] = bc_normstorm('loc', 'Petten', 'freq', 1e-5);
+
+% generate a surge hydrograph conform Vellinga (1986) from the normative
+% conditions
+[t h duration Hs Tp] = bc_stormsurge('h_max', h, 'Hm0_max', Hs, 'Tp_max', Tp, 'nwaves', 32);
+
+% plot hydraulic conditions
+plot(t, h, '-r', cumsum(duration), Hs, '-g', cumsum(duration), Tp, '-b'); snapnow;
+
+% generate the model for Petten
+xbm = xb_generate_model( ...
+    'bathy',    {'x', x, 'y', y, 'z', z, 'ne', ne, ...
+        'crop', [99000 532000 7500 6000], ...
+        'finalise', {'landward_polder' 'lateral_sandwalls' 'lateral_extend' 'seaward_flatten'}}, ...
+    'tide',     {'time' t, 'front', h, 'back', 0}, ...
+    'waves',    {'Hm0', Hs, 'Tp', Tp, 'duration', duration}, ...
+    'settings', {'tstop', 1800, 'tint', 600} ...
+);
+
+% plot the final rotated, cropped and finalised bathymetry
+xbb = xb_input2bathy(xbm);
+[xf yf zf nef] = xb_get(xbb, 'xfile', 'yfile', 'depfile', 'ne_layer');
+pcolor(xf, yf, zf); shading flat; axis equal; colorbar; snapnow;
+pcolor(xf, yf, nef); shading flat; axis equal; colorbar;
+
+%% Reading an existing model
+%
+% We showed how to setup a model from scratch with the XBeach Toolbox.
+% However, existing models stored on disk can also be used in the Toolbox.
+% The collection of files, including params.txt and all files referred to
+% from there, can be converted to an XBeach model structure as follows:
+
+% write a dummy model to disk
+xb_write_input('params.txt', xb_generate_model);
+
+% read it from disk into an XBeach structure
+xbm = xb_read_input('params.txt');
+##### SOURCE END #####
+-->
+   </body>
+</html>
