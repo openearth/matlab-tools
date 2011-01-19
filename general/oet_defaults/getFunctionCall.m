@@ -90,13 +90,16 @@ if fl
         
         % find function call
         [matches names] = regexp(str, ['\s*function\s*(?<call>.*?' funinfo.function '.*?$)'], 'match', 'names', 'lineanchors', 'dotexceptnewline');
-
-        str = strtrim(names.call);
         
-        % remove possible occuring multiple spaces
-        matches = regexp(str, '\s*', 'match');
-        for imatch = 1:length(matches)
-            str = strrep(str, matches{imatch}, ' ');
+        if ~isempty(matches)
+            str = strtrim(names.call);
+            % remove possible occuring multiple spaces
+            matches = regexp(str, '\s*', 'match');
+            for imatch = 1:length(matches)
+                str = strrep(str, matches{imatch}, ' ');
+            end
+        else
+            str = '';
         end
     end
     % write call string to output struct
