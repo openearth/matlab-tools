@@ -16,11 +16,11 @@
 	<script src="html/script/js/jquery.treeview.js" type="text/javascript"></script>
 	<script src="html/script/js/jquery.collapsible.js" type="text/javascript"></script>
     	<script type="text/javascript" src="html/script/js/matlabhelp.js"></script>
-    
+
     	<!-- include google earth stuff. Always the key first as the js file already needs it when initializing -->
         <script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"> </script>
     	<script type="text/javascript" src="html/script/js/googleEarthApi.js"></script>
-    
+
 	<script type="text/javascript">
 	$(document).ready(function(){
 		$(".maintree").treeview({});
@@ -54,16 +54,16 @@
 
 				// link images otherwise IE will mess up all images.
 				linkimages();
-				
+
 				// Copy content
 				copycontent();
 
 				// validate href of links to matlab tutorials
 				matlabpreparehelprefs();
-				
+
 				// Accordion
 				collapsible($(".collapsible"));
-				
+
 				// google thing
 				currentGeApiDiv = $(".geapi");
 		}
@@ -259,6 +259,22 @@
 						<ul>
 							<!-- ##BEGINFILEITEM -->
 							<li><a><span class="file" ref="html/convertCoordinates_tutorial.html">Coordinate conversion</span></a></li>
+							<!-- ##ENDFILEITEM -->
+						</ul>
+					</li>
+
+					<li><span class="folder">xbeach</span>
+						<ul>
+							<!-- ##BEGINFILEITEM -->
+							<li><a><span class="file" ref="html/xb_modelsetup_tutorial.html">1. Setting up your model</span></a></li>
+
+							<li><a><span class="file" ref="html/xb_run_tutorial.html">2. Running your model</span></a></li>
+
+							<li><a><span class="file" ref="html/xb_readresults_tutorial.html">3. Reading your model results</span></a></li>
+
+							<li><a><span class="file" ref="html/xb_visualise_tutorial.html">4. Visualising your model results</span></a></li>
+
+							<li><a><span class="file" ref="html/xb_structure_tutorial.html">The XBeach structure</span></a></li>
 							<!-- ##ENDFILEITEM -->
 						</ul>
 					</li>
