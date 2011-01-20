@@ -1,4 +1,4 @@
-function xb_view(fpath, varargin)
+function xb_view(data, varargin)
 %XB_VIEW  One line description goes here.
 %
 %   More detailed description goes here.
@@ -80,7 +80,7 @@ if isempty(findobj('tag', 'xb_view'))
         'Tag', 'xb_view', ...
         'Toolbar','figure',...
         'InvertHardcopy', 'off', ...
-        'UserData', struct('fpath', fpath), ...
+        'UserData', struct('input', data), ...
         'ResizeFcn', @ui_resize);
     
     if OPT.modal; set(fig, 'WindowStyle', 'modal'); end;
@@ -143,8 +143,15 @@ function ui_build()
     set(findobj(pobj, 'Type', 'uicontrol'), 'BackgroundColor', [.8 .8 .8]);
     set(findobj(pobj, 'Type', 'uipanel'), 'BackgroundColor', [.8 .8 .8]);
     
-    if strcmpi(info.type, '2D')
+    % set exceptions
+    if info.ndims == 2
         set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'on');
+    end
+    
+    if strcmpi(info.type, 'input')
+        set(findobj(pobj, 'Tag', 'ToggleDiff'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'Slider2'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'ToggleAnimate'), 'Enable', 'off');
     end
     
     ui_resize(pobj, []);
@@ -201,34 +208,106 @@ function ui_read()
     pobj = findobj('Tag', 'xb_view');
     info = get(pobj, 'userdata');
 
-    if isfield(info, 'fpath') && exist(info.fpath, 'dir')
+    if isfield(info, 'input')
+        if xb_check(info.input)
+            switch info.input.type
+                case 'input'
+                    info.type = 'input';
+                    
+                    % read variables
+                    info.vars = {'depfile.depfile'};
+                    
+                    info.t = [0 1];
+                    
+                    bathy = xb_input2bathy(info.input);
+                    [info.x info.y] = xb_get(bathy, 'xfile', 'yfile');
+                case 'output'
+                    info.type = 'output_xb';
+                    
+                    % read dimensions
+                    info.dims = xb_get(info.input, 'DIMS');
+                    info.dims = cell2struct({info.dims.data.value}, {info.dims.data.name}, 2);
+                    
+                    % read variables
+                    info.vars = {info.input.data.name};
+                    info.vars = info.vars(~strcmpi(info.vars, 'DIMS'));
+                    
+                    % determine grid and time
+                    info.t = info.dims.globaltime_DATA;
+
+                    [info.x info.y] = meshgrid(info.dims.globalx_DATA, info.dims.globaly_DATA);
+                otherwise
+                    error('Unsupported XBeach strucure supplied');
+            end
+        elseif ischar(info.input) && exist(info.input, 'dir')
         
-        % read dimensions
-        info.dims = xb_read_dims(info.fpath);
+            info.type = 'output_dir';
+            info.fpath = info.input;
+
+            % read dimensions
+            info.dims = xb_read_dims(info.fpath);
+
+            % read variables
+            info.vars = xb_get_vars(info.fpath);
+
+            % determine grid and time
+            info.t = info.dims.globaltime_DATA;
+
+            [info.x info.y] = meshgrid(info.dims.globalx_DATA, info.dims.globaly_DATA);
+        else
+            error('No valid data supplied');
+        end
         
-        % read variables
-        info.vars = xb_get_vars(info.fpath);
+        % generate var list
         info.varlist = sprintf('|%s', info.vars{:});
         info.varlist = info.varlist(2:end);
-
-        % determine grid and time
-        info.t = info.dims.globaltime_DATA;
-
-        [info.x info.y] = meshgrid(info.dims.globalx_DATA, info.dims.globaly_DATA);
-
+        
         % determine plot type
-        if info.dims.globaly <= 3
-            info.type = '1D';
+        if min(size(info.x)) <= 3
+            info.ndims = 1;
         else
-            info.type = '2D';
+            info.ndims = 2;
         end
         
         info.diff = false;
         info.surf = false;
-
+        
         set(pobj, 'userdata', info);
     else
-        error(['Path not found [' info.fpath ']']);
+        error('No data supplied');
+    end
+end
+
+function data = ui_getddata(info, vars, varargin)
+    pobj = findobj('Tag', 'xb_view');
+    
+    data = cell(size(vars));
+    
+    if ~isempty(varargin) && varargin{1}
+        t = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'))-1;
+    else
+        t = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'))-1;
+    end
+    
+    switch info.type
+        case 'input'
+            for i = 1:length(vars)
+                data{i}(1,:,:) = xb_get(info.input, vars{:});
+            end
+        case 'output_xb'
+            for i = 1:length(vars)
+                d = xb_get(info.input, vars{i});
+                data{i}(1,:,:) = d(t,:,:);
+            end
+        case 'output_dir'
+            [data{1:length(vars)}] = xb_get( ...
+                xb_read_output(info.fpath, 'vars', vars, 'start', [t 0 0], ...
+                'length', [1 -1 -1]), vars{:});
+    end
+    
+    if info.diff
+        data0 = ui_getddata(info, vars, true);
+        data = cellfun(@minus, data, data0, 'UniformOutput', false);
     end
 end
 
@@ -241,28 +320,12 @@ function ui_plot(obj, event)
     end
     
     vars = selected_vars;
+    data = ui_getddata(info, vars);
     
-    t1 = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'))-1;
-    t2 = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'))-1;
-    
-    data = {};
-    [data{1:length(vars)}] = xb_get( ...
-        xb_read_output(info.fpath, 'vars', vars, 'start', [t2 0 0], 'length', [1 -1 -1]), ...
-        vars{:});
-    
-    if info.diff
-        data0 = {};
-        [data0{1:length(vars)}] = xb_get( ...
-            xb_read_output(info.fpath, 'vars', vars, 'start', [t1 0 0], 'length', [1 -1 -1]), ...
-            vars{:});
-        
-        data = cellfun(@minus, data, data0, 'UniformOutput', false);
-    end
-    
-    switch info.type
-        case '1D'
+    switch info.ndims
+        case 1
             plot_1d(info, data, vars);
-        case '2D'
+        case 2
             plot_2d(info, data, vars);
     end
 end
@@ -335,19 +398,22 @@ function plot_2d(info, data, vars)
     for i = 1:length(vars)
         sp(i) = subplot(sy, sx, i, 'Parent', findobj(pobj, 'Tag', 'PlotPanel'));
         
-        if update
-            d = squeeze(data{i});
-            set(surface(i), 'XData', info.x, 'YData', info.y, ...
-                'ZData', d, 'CData', d);
-        else
-            if info.surf
-                surf(sp(i), info.x, info.y, squeeze(data{i}));
-            else
-                pcolor(sp(i), info.x, info.y, squeeze(data{i}));
-            end
-        end
+        data{i} = squeeze(data{i});
         
-        shading flat;
+        if all(size(info.x) == size(data{i})) && all(size(info.y) == size(data{i}))
+            if update
+                set(surface(i), 'XData', info.x, 'YData', info.y, ...
+                    'ZData', data{i}, 'CData', data{i});
+            else
+                if info.surf
+                    surf(sp(i), info.x, info.y, data{i});
+                else
+                    pcolor(sp(i), info.x, info.y, data{i});
+                end
+            end
+        
+            shading flat;
+        end
         
         title(vars{i});
     end

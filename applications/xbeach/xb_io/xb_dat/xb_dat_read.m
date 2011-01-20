@@ -98,10 +98,14 @@ OPT = setproperty(OPT, varargin{:});
 dat = [];
 
 % convert dat dimensions to output dimensions
-if length(dims) == 3
-    dims_out = dims([end 2 1]);
-else
-    dims_out = dims([end 2 1 3:end-1]);
+switch length(dims)
+    case 2
+        dims = [1 dims([2 1])];
+        dims_out = dims([end 2 1]);
+    case 3
+        dims_out = dims([end 2 1]);
+    otherwise
+        dims_out = dims([end 2 1 3:end-1]);
 end
 
 [OPT.start OPT.length OPT.stride] = xb_index(dims_out, OPT.start, OPT.length, OPT.stride);
@@ -119,7 +123,9 @@ nreads = nitems/prod(sz);
 if isempty(OPT.force)
     force = xb_getpref('dat_method');
     if isempty(force)
-        if (OPT.stride(3) == 1 && OPT.stride(2) == 1 && ~all(OPT.stride == 1)) || ...
+        if regexp(fname, '(point|rugau)\d+.dat$')
+            method = 'read';
+        elseif (OPT.stride(3) == 1 && OPT.stride(2) == 1 && ~all(OPT.stride == 1)) || ...
             (nreads/nitems < prod(dims([1 4:end]))/prod(dims))
             method = 'memory';
         else

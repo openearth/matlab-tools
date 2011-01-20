@@ -100,16 +100,26 @@ if ~isfield(d, 'globalx') || ~isfield(d, 'globaly') || ~isfield(d, 'globaltime')
 end
 
 % modify data type, if output info is available
+guess = false;
 if ~isempty(xbout)
-    ftype = xbout(strcmpi(fname, {xbout.name})).type;
-    if ~isfield(bytes, ftype)
-        switch ftype
-            case 'real*8'
-                ftype = 'double';
+    idx = strcmpi(fname, {xbout.name});
+    if any(idx)
+        ftype = xbout().type;
+        if ~isfield(bytes, ftype)
+            switch ftype
+                case 'real*8'
+                    ftype = 'double';
+            end
         end
+        byt = bytes.(ftype);
+    else
+        guess = true;
     end
-    byt = bytes.(ftype);
 else
+    guess = true;
+end
+
+if guess
     if any(strcmpi(fname, {'wetu', 'wetv', 'wetz'}))
         OPT.ftype = 'integer';
     end

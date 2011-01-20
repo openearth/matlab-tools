@@ -65,4 +65,21 @@ function n = xb_exist(xb, varargin)
 
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
-n = sum(ismember(varargin, {xb.data.name}));
+n = 0;
+for i = 1:length(varargin)
+    idx = strcmpi(varargin{i}, {xb.data.name});
+    if any(idx)
+        n = n+1;
+    else
+        re = regexp(varargin{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
+        if ~isempty(re)
+            sub = xb_get(xb, re.sub);
+            if xb_check(sub)
+                idx = strcmpi(re.field, {sub.data.name});
+                if any(idx)
+                    n = n+1;
+                end
+            end
+        end
+    end
+end
