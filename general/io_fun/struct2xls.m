@@ -101,7 +101,7 @@ function varargout = struct2xls(fname,S,varargin)
    OPT.addunits    = 1; % empty line
    OPT.units       = [];
    OPT.header{1}   = ['This file has been created with struct2xls.m and xlswrite.m @ ',datestr(now)];
-   OPT.oned        = 1; %reshape 1D matlab rows and columns into excel columns
+   OPT.oned        = 1; % reshape 1D matlab rows and columns into excel columns (numeric, logical and cellstr)
    OPT.commentchar = '#';
    OPT.overwrite   = 'p'; % prompt
  
@@ -156,10 +156,19 @@ function varargout = struct2xls(fname,S,varargin)
       for ifld=1:nfld
          fldname   = char(fldnames(ifld));
          if isnumeric(S.(fldname)) | ...
-            islogical(S.(fldname))
+            islogical(S.(fldname)) 
             if length(size(S.(fldname)))==2
                if (size(S.(fldname),2)==1)
                   S.(fldname) = S.(fldname)';
+                  warning(['Field ''',fldname,''' has been transposed to fit into an Excel column.'])
+               end
+            end
+         % for some reason cellstr needs to be [n x 1] instead of [1 x n]
+         elseif iscellstr(S.(fldname))
+            if length(size(S.(fldname)))==2
+               if (size(S.(fldname),1)==1)
+                  S.(fldname) = S.(fldname)';
+                  warning(['Field ''',fldname,''' has been transposed to fit into an Excel column.'])
                end
             end
          end

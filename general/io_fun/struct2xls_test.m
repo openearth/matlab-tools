@@ -10,14 +10,24 @@ if TeamCity.running
     return;
 end
 
-D.a = [1 2 3]';
-D.b = {'a','b','c'};  % not OK
-D.b = {'a','b','c'}'; % OK
+D.a  = [1 2 3];
+D.aT = D.a';
+D.b  = {'a','b','c'};  % not OK
+D.bT = D.b'; % OK
 
     struct2xls([mfilename('fullpath'),'.xls'],D,'overwrite',1);
 E = xls2struct([mfilename('fullpath'),'.xls']);
 
-OK = isequal(D,E);
+% here some dimensions differ ...
+
+OK = ~isequal(D,E);
+
+% ... but values are the same
+
+D.a = D.aT;
+D.b = D.bT; % OK
+
+OK = OK & isequal(D,E);
 
 %D.a
 %D.b
