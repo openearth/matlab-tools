@@ -43,31 +43,59 @@ function odvplot_overview(D,varargin)
 % $Revision$
 % $HeadURL
 
-   OPT.variable = ''; %'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
-   OPT.index    = 0;
-   OPT.lon      = [];
-   OPT.lat      = [];
-   OPT.clim     = [];
+   OPT.variable  = ''; %'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.index     = [];
+   OPT.lon       = [];
+   OPT.lat       = [];
+   OPT.vc        = 'gshhs_c.nc'; % http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc
+   OPT.lon       = [];
+   OPT.lat       = [];
+   OPT.clim      = [];
    
    if nargin==0
        varargout = {OPT};
        return
    end
    
+%% get landboundary
+
    [OPT, Set, Default] = setproperty(OPT, varargin);
    
-   for i=1:length(D.sdn_standard_name)
-      if any(strfind(D.sdn_standard_name{i},OPT.variable))
-         OPT.index = i;
-         break
+   if isempty(OPT.lon) & isempty(OPT.lat)
+   %try
+      OPT.lon       = nc_varget(OPT.vc,'lon');
+      OPT.lat       = nc_varget(OPT.vc,'lat');
+   %end
+   end
+
+%% find column to plot based on sdn_standard_name
+
+   if isempty(OPT.variable)
+      [OPT.index.var, ok] = listdlg('ListString', {D.sdn_long_name{10:2:end}} ,...
+                           'InitialValue', [1],... % first is likely pressure so suggest 2 others
+                           'PromptString', 'Select single variables to plot as colored dots', ....
+                                   'Name', 'Selection of c/z-variable');
+      OPT.index.var = OPT.index.var*2-1 + 9; % 10th is first on-meta data item
+   else
+      for i=1:length(D.sdn_standard_name)
+         if any(strfind(D.sdn_standard_name{i},OPT.variable))
+            OPT.index.var = i;
+            break
+         end
+      end
+      if OPT.index.var==0
+         error([OPT.variable,' not found.'])
+         return
       end
    end
    
+%% plot
+
    AX = subplot_meshgrid(1,1,[.04],[.1]);
    
     axes(AX(1)); cla %subplot(1,4,4)
     
-       if OPT.index==0
+       if OPT.index.var==0
           plot (D.data.longitude,D.data.latitude,'ro')
           hold on
           plot (D.data.longitude,D.data.latitude,'r.')
@@ -75,9 +103,9 @@ function odvplot_overview(D,varargin)
           if ~isempty(OPT.clim)
           clim(OPT.clim)
           end
-          plotc(D.data.longitude,D.data.latitude,str2num(char(D.rawdata{OPT.index,:})))
+          plotc(D.data.longitude,D.data.latitude,str2num(char(D.rawdata{OPT.index.var,:})))
           hold on
-          colorbarwithtitle('')
+          colorbarwithvtext({mktex(D.local_name{OPT.index.var})}),... % D.sdn_long_name{OPT.index.var}})
        end
        
        axis      tight

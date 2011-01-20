@@ -1,9 +1,14 @@
 function varargout = P011(varargin);
 %P011   read/search BODC P011 parameter vocabulary
 %
+%    L = P011()
 %    L = P011('read',1)
 %
 % returns struct with field per database entry.
+%
+% If only P011.xml exists locally, reading is slow. Therefore
+% P011 will save a cache as *.mat (+ dead-end *.nc and *.xls), 
+% which makes reading any 2nd time much faster.
 %
 %    <indices> = P011(<L>,'find','pattern')
 %
@@ -18,13 +23,12 @@ function varargout = P011(varargin);
 %
 % returns description (long_name, entryTerm) of standard_name (entryKey).
 %
-% The P011 parameter vocabulary needs to be downloaded (xml) 
-% first from
+% The P011 parameter vocabulary needs to be downloaded (xml) first from
 % http://www.bodc.ac.uk/products/web_services/
-% into the directory >> fileparts(which('p011')).
+% into the directory >> fileparts(which('p011')), use the P011.url.
 %
-% After one call, the P011 + P011 vocabs are saved as persistent
-% variables to boost performance, use munlock p011 to free ~ 10 MB memory.
+% After one call, the P011 + P061 vocabs are saved as persistent
+% variables to boost performance, use munlock P011 to free ~ 10 MB memory.
 %
 % Examples:
 %
@@ -78,43 +82,58 @@ persistent P061
 L                 = [];
 OPT.listReference = 'P011';
 OPT.disp          = 1;
-OPT.standard_name = 'entryKey';  % fieldname of L (xml)
-OPT.long_name     = 'entryTerm'; % fieldname of L (xml)
+OPT.list_method   = '';%'getList'        
 
-OPT.read          = '';
+OPT.read          = 1;
 OPT.find          = ''; % description to standard_name
 OPT.verify        = ''; % check existence of standard_name
 OPT.description   = ''; % standard_name to description 
 
+if nargin > 0
 if isstruct(varargin{1})
    L        =  varargin{1};
    varargin = {varargin{2:end}};
 end
+end
 
 OPT = setproperty(OPT,varargin{:});
+
+
+if strcmpi(OPT.list_method,'getList')
+% Pxxx_getList.url
+% http://vocab.ndg.nerc.ac.uk/axis2/services/vocab/getList?recordKey=http://vocab.ndg.nerc.ac.uk/list/P061/current&earliestRecord=1900-01-01T00:00:00Z
+OPT.standard_name = 'entryKey';   % fieldname of L (xml)
+OPT.long_name     = 'entryTerm';  % fieldname of L (xml)
+elseif isempty(OPT.list_method)
+% Pxxx.url
+% http://vocab.ndg.nerc.ac.uk/list/P061/current
+OPT.standard_name = 'externalID'; % fieldname of L (xml)
+OPT.long_name     = 'prefLabel';  % fieldname of L (xml)
+end
 
 %% load and cache vocab
 
 if ~isempty(OPT.read) | isempty(L)
 
     ncfile = [fileparts(mfilename('fullpath')) filesep OPT.listReference '.nc'];
+   xlsfile = [fileparts(mfilename('fullpath')) filesep OPT.listReference '.xls'];
    matfile = [fileparts(mfilename('fullpath')) filesep OPT.listReference '.mat'];
    
-   if exist(ncfile,'file')==2
+   if exist(matfile,'file')==2
    
       if strcmpi(OPT.listReference,'P011')
       
           if isempty(P011)
-          P011 = nc2struct(ncfile);
-          disp([OPT.listReference ': loaded cached ' OPT.listReference '.xml for persistent use.'])
+          disp(['Loading cached ',OPT.listReference '.mat for persistent use (30MB) to interpret SDN/ODV codes (>> clear P011 to free memory) ...'])
+          P011 = load(matfile); %P011 = nc2struct(ncfile);
           end
           L = P011;
           
       elseif strcmpi(OPT.listReference,'P061') 
       
           if isempty(P061)
-          P061 = nc2struct(ncfile);
-          disp([OPT.listReference ': loaded cached ' OPT.listReference '.xml for persistent use.'])
+          P061 = load(matfile); %P061 = nc2struct(ncfile);
+          disp(['Loading cached ',OPT.listReference '.mat for persistent use (.4 Mb) to interpret SDN/ODV codes (>> clear P061 to free memory) ...'])
           end
           L = P061;
       
@@ -122,7 +141,7 @@ if ~isempty(OPT.read) | isempty(L)
       L = nc2struct(ncfile);
      %L = load     (matfile);
    
-      disp([OPT.listReference ': loaded cached ' OPT.listReference '.xml'])
+      disp([OPT.listReference ': loaded cached ' OPT.listReference '.mat'])
       end
    
    else
@@ -130,28 +149,94 @@ if ~isempty(OPT.read) | isempty(L)
       PREF.KeepNS = 0;
       
      % TODO
-     % disp([OPT.listReference ': downloading looong xml file, please wait several minutes ...'])
+     % disp([OPT.listReference ': downloading looong xml file, please wait about 10 minutes (any next times only 9 sec)'])
      % urlwrite('')
       
-      disp([OPT.listReference ': parsing looong xml file, please wait several minutes ...'])
+%% parse xml file, to allow indentical behavior for nc_cf_standard_name_table and P011
+
+      disp([OPT.listReference ': parsing looong xml file, please wait about 10 minutes (any next times only 9 sec) ...'])
    
+      tic
       L2  = xml_read([OPT.listReference '.xml'],PREF);
+      toc
       
      %save([fileparts(mfilename('fullpath')) OPT.listReference '.xml.mat'],'-struct','L2');
-      
-      % parse xml file, to allow indentical behavior for nc_cf_standard_name_table and P011
 
-      fldnames = fieldnames(L2.codeTableRecord);
+%% get rid of nested fields (turn all xml attributes into elements)
       
-      for ifld=1:length(fldnames)
-      
-         fldname = fldnames{ifld};
-      
-         L.(fldname) = {L2.codeTableRecord(:).(fldname)};
+      if strcmpi(OPT.list_method,'getList')
+
+   %% http://vocab.ndg.nerc.ac.uk/axis2/services/vocab/getList?recordKey=http://vocab.ndg.nerc.ac.uk/list/P061/current&earliestRecord=1900-01-01T00:00:00Z
+
+      % <ns1:getListResponse xmlns:ns1="urn:vocab/types">
+      % <ns1:codeTableRecord>
+      % <ns1:listKey>http://vocab.ndg.nerc.ac.uk/list/P011/185</ns1:listKey>
+      % <ns1:entryKey>http://vocab.ndg.nerc.ac.uk/term/P011/185/PAGEPAMS</ns1:entryKey>
+      % <ns1:entryTerm>14C Age of peat by accelerator mass spectrometry</ns1:entryTerm>
+      % <ns1:entryTermAbbr>AMSPeatAge</ns1:entryTermAbbr>
+      % <ns1:entryTermDef>Unavailable</ns1:entryTermDef>
+      % <ns1:entryTermLastMod>2008-07-02T10:59:58.000+00:00</ns1:entryTermLastMod>
+      % </ns1:codeTableRecord>
+      % </ns1:getListResponse>
+
+         fldnames = fieldnames(L2.codeTableRecord);
+         for ifld=1:length(fldnames)
+            fldname = fldnames{ifld};
+            L.(fldname) = {L2.codeTableRecord(:).(fldname)};
+         end
          
-      end
+      elseif isempty(OPT.list_method)
+
+   %% http://vocab.ndg.nerc.ac.uk/list/P061/current
+
+      % <?xml version="1.0" ?>
+      % <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+      %
+      % xmlns:skos="http://www.w3.org/2004/02/skos/core#" 
+      % xmlns:dc="http://purl.org/dc/elements/1.1/"> 
+      %
+      % <skos:Concept rdf:about='http://vocab.ndg.nerc.ac.uk/term/P011/251/SAGEMSFM'>
+      % <skos:externalID>SDN:P011:251:SAGEMSFM</skos:externalID>
+      % <skos:prefLabel>14C age of Foraminiferida (ITIS: 44030: WoRMS 22528) [Subcomponent: tests] in sediment by picking and accelerator mass spectrometry</skos:prefLabel>
+      % <skos:altLabel>AMSSedAge</skos:altLabel>
+      % <skos:definition>Unavailable</skos:definition>
+      % <dc:date>2011-01-19T10:09:47.500+0000</dc:date>
+      % <skos:broadMatch rdf:resource="http://vocab.ndg.nerc.ac.uk/term/P021/61/SAGE" /> 
+      %
+      % </skos:Concept>
+      % </rdf:RDF> 
       
-      struct2nc(ncfile,L); % issue with cellstr
+      
+         for i=1:length(L2.Concept)
+          L2.Concept(i).about       = L2.Concept(i).ATTRIBUTE.about;
+
+          L2.Concept(i).narrowMatch = ATTRIBUTE_resource2char(L2.Concept(i).narrowMatch);
+          if strcmpi(OPT.listReference,'P011')
+          L2.Concept(i).exactMatch  = ATTRIBUTE_resource2char(L2.Concept(i).exactMatch);
+          L2.Concept(i).broadMatch  = ATTRIBUTE_resource2char(L2.Concept(i).broadMatch);
+          elseif strcmpi(OPT.listReference,'P061')
+          L2.Concept(i).minorMatch  = ATTRIBUTE_resource2char(L2.Concept(i).minorMatch);
+          end
+          
+         end
+         L2.Concept=rmfield(L2.Concept,'ATTRIBUTE')
+
+      end
+
+%% make struct of fields into field of structs
+
+      L = array_of_structs2struct_of_arrays(L2.Concept);
+
+      %fldnames = fieldnames(L2.Concept);
+      %for ifld=1:length(fldnames)
+      %   fldname = fldnames{ifld}
+      %   L.(fldname) = {char(L2.Concept(:).(fldname))};
+      %end
+      
+      % xml                                14   Mb, loads in 653   sec ( ~ 10 minutes)
+      struct2nc (ncfile ,L);             % 34   Mb, loads in   2.3 sec
+      struct2xls(xlsfile,L);             % 19   Mb, loads in   8.9 sec
+      save      (matfile,'-struct','L'); %  1.6 Mb, loads in   2.8 sec
    
    end
 
@@ -240,5 +325,17 @@ if ~isempty(OPT.description)
    end
 
 end
+
+%% subsidiary function to turn xml attributes into elements
+
+      function txt = ATTRIBUTE_resource2char(S)
+      if isempty(S)
+       txt = '';
+      else
+       txt = S(1).ATTRIBUTE.resource;
+        for j=2:length(S)
+         txt = strcat(txt,[' ' S(j).ATTRIBUTE.resource]);
+        end
+      end
 
 %% EOF

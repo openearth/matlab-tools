@@ -232,11 +232,11 @@ function varargout = odv_read(fullfilename)
                      
                      %% using nerc webservice
                      try 
-                        [q,u]=sdn_verify(D.sdn_standard_name{iSDN});
-                        D.sdn_long_name     {iSDN-1} =  q;
-                        D.sdn_long_name     {iSDN  } =  q;
-                        D.sdn_units         {iSDN-1} =  u;
-                        D.sdn_units         {iSDN  } =  u;
+                       [q,u]=sdn_verify(D.sdn_standard_name{iSDN});
+                       D.sdn_long_name     {iSDN-1} =  q;
+                       D.sdn_long_name     {iSDN  } =  q;
+                       D.sdn_units         {iSDN-1} =  u;
+                       D.sdn_units         {iSDN  } =  u;
                      catch
                         if sdn_code_warning
                            fprintf(2,'failed to verify sdn codes with nerc vocab webserver\n')
@@ -252,8 +252,7 @@ function varargout = odv_read(fullfilename)
                
             end
             
-            %% II) Column labels (variables)
-            %--------------------------------
+         %% II) Column labels (variables)
 
             D.lines.column_labels = rec;
             
@@ -267,8 +266,7 @@ function varargout = odv_read(fullfilename)
             
             nvar = length( D.local_name);
             
-            %% II) Units
-            %--------------------------------
+         %% II) Units
             
             for ivar=1:length(D.local_name)
                brack1            = strfind(D.local_name{ivar},'[');
@@ -284,8 +282,7 @@ function varargout = odv_read(fullfilename)
                %-% disp([D.local_name{ivar},' ',num2str([ivar brack1 brack2])])
             end
 
-            %% Find column index of mandarory variables
-            %--------------------------------
+         %% Find column index of mandarory variables
 
             D.index.cruise                 = find(strcmpi(D.local_name,'cruise'));
             D.index.station                = find(strcmpi(D.local_name,'Station'));
@@ -313,8 +310,7 @@ function varargout = odv_read(fullfilename)
             
             D.institution = 'EDMO_code2long_name(EDMO_code) # TO DO';
             
-            %% III) Data lines
-            %--------------------------------
+         %% III) Data lines
             
                 idat   = 0;
                 D.rawdata = cell(nvar,1);
