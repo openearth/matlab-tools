@@ -1,8 +1,11 @@
 %ALLCLEAR  Clear workspace and close files (inclusing netcdf files)
 %
-%   Alternative to clcm clear all, fclose all, etc. Breakpoints for
-%   debugging are not cleared (meant as feature!). Clear all breakpints
-%   with 'clear all'
+%   Alternative to wellknown combination of clc, clear all, fclose all,
+%   etc. Breakpoints for debugging are not cleared (meant as feature!).
+%   Clear all breakpints with 'clear all'.
+%
+%   The matlab native netcdf function is also modified to keep track
+%   of open nc files. These are closed by allclear
 %
 %   Syntax:
 %   allclear
@@ -17,7 +20,7 @@
 %   Copyright (C) 2010 <COMPANY>
 %       tda
 %
-%       <EMAIL>	
+%       <EMAIL>     
 %
 %       <ADDRESS>
 %
@@ -56,8 +59,11 @@
 clc
 
 %% close netcdf files
-% because close all dloes not exist, try to close a range of files
-for ncid = -10:100; try netcdf.close(ncid); end; end
+nc_file_list = netcdf.list_of_open_nc_files;
+for ncid = nc_file_list'; 
+    netcdf.close(ncid); 
+end
+netcdf.list_of_open_nc_files('clear');
 
 %% close all open files
 fclose all;
@@ -67,6 +73,10 @@ fclose all;
 set(0,'ShowHiddenHandles','on')
 delete(get(0,'Children'))
 
+%% close serial com ports
+priorPorts = instrfindall;  % finds any existing Serial Ports in MATLAB
+delete(priorPorts)          % and deletes them
+
 %% clear variables 
-% but not breakpoints (that's what clear all does)
+% but not breakpoints (that's what 'clear all' does)
 clear
