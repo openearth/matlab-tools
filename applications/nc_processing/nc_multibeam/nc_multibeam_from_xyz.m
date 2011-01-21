@@ -236,14 +236,14 @@ if OPT.make
                             z   =  D{OPT.zid}(ids)*OPT.zfactor;
                             
                             % generate X,Y,Z
-                            x_vector = x0:OPT.gridsizex:x0+OPT.mapsizex;
-                            y_vector = y0:OPT.gridsizey:y0+OPT.mapsizey;
+                            x_vector = x0 + (0:OPT.mapsizex-1) * OPT.gridsizex;
+                            y_vector = y0 + (0:OPT.mapsizey-1) * OPT.gridsizey;
                             [X,Y]    = meshgrid(x_vector,y_vector);
                             
                             % place xyz data on XY matrices
                             Z = OPT.gridFcn(x,y,z,X,Y);
                             
-                            if sum(~isnan(Z(:)))>=3
+                            if sum(~isnan(Z(:)))>=1
                                 Z = flipud(Z);
                                 Y = flipud(Y);
                                 % if a non trivial Z matrix is returned write the data

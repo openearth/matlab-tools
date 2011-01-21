@@ -60,8 +60,9 @@ clc
 
 %% close netcdf files
 nc_file_list = netcdf.list_of_open_nc_files;
-for ncid = nc_file_list'; 
-    netcdf.close(ncid); 
+
+for ii = 1:length(nc_file_list); 
+    netcdf.close(nc_file_list(ii)); 
 end
 netcdf.list_of_open_nc_files('clear');
 
