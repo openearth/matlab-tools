@@ -86,7 +86,7 @@ OPT.basepath_www            = [];
 OPT.serverURL               = [];       % if a KML file is intended to be placed on the server, the path must be hardcoded in the KML file
 
 OPT.make_kmz                = false;    % this packs the entire file tree to a sing kmz file, convenient for portability
-OPT.lowestLevel             = 15;       % integer; Detail level of the highest resultion png tiles to generate. Advised range 12 to 18;
+OPT.lowestLevel             = 14;       % integer; Detail level of the highest resultion png tiles to generate. Advised range 12 to 18;
 % dimension of individual pixels in Lat and Lon can be calculated as follows:
 % 360/(2^OPT.lowestLevel) / OPT.tiledim
 OPT.tiledim                 = 256;      % dimension of tiles in pixels.
@@ -94,8 +94,8 @@ OPT.tiledim                 = 256;      % dimension of tiles in pixels.
 OPT.clim                    = [-50 25]; % limits of color scale
 OPT.colorMap                = @(m) colormap_cpt('bathymetry_vaklodingen',m);
 OPT.colorSteps              = 500;
-OPT.templateHor             = 'KML_colorbar_template_horizontal.png';
-OPT.templateVer             = 'KML_colorbar_template_vertical.png';
+OPT.CBtemplateHor           = 'KML_colorbar_template_horizontal.png';
+OPT.CBtemplateVer           = 'KML_colorbar_template_vertical.png';
 OPT.colorbar                = true;
 OPT.description             = [];
 OPT.descriptivename         = [];
@@ -117,7 +117,7 @@ end
 OPT = setproperty(OPT,varargin{:});
 
 if ~exist([filepathstr(OPT.trimfile),filesep,filename(OPT.trimfile),'.nc'],'file')
-    vs_trim2nc(OPT.trimfile);
+    vs_trim2nc(OPT.trimfile,'epsg',28992);
 else
     disp([filename(OPT.trimfile),'.nc',' already exists, therefore conversion to nc skipped'])
 end
@@ -269,12 +269,16 @@ if OPT.make
         % for some reason this has to be set since the new nc toolbox was added;
         setpref('SNCTOOLS','PRESERVE_FVD',true)
         
-        for jj = size(date4GE,1)-1:-1:140
+        for jj = size(date4GE,1)-1:-1:1
             % load z data
             z = nc_varget(url,'eta',...
                 [ 0, 0, 0] + (jj-1)*time_dim,...
                 [-1,-1,-1] + 2*time_dim);
             
+            KFU = nc_varget(url,'KFU',...
+                [ 0, 0, 0] + (jj-1)*time_dim,...
+                [-1,-1,-1] + 2*time_dim);
+
             % subtract reference plane form data (reference plane is zeros
             % if not set otherwise
             z = z-z_reference;
@@ -284,6 +288,8 @@ if OPT.make
                     disp(['data coverage is ' num2str(sum(~isnan(z(:)))/numel(z)*100) '%'])
                 end
                 z = z([1 1 1:end end end],:); z = z(:,[1 1 1:end end end]); % expand z
+                KFU = KFU([1 1 1:end end end],:); KFU = KFU(:,[1 1 1:end end end]); % expand KFU
+                
                 mask = ~isnan(z);
                 mask = ...
                     mask(1:end-2,1:end-2)+...
@@ -306,6 +312,8 @@ if OPT.make
                     end
                 end
                 z = z(2:end-1,2:end-1);
+                KFU = KFU(2:end-1,2:end-1);
+                z(KFU==0) = NaN;
                 
                 %                 figure;
                 %                 pcolor(lon,lat,z);
@@ -317,7 +325,8 @@ if OPT.make
                 %% MAKE TILES
                 myfileName = [datestr(date(jj),30) '.kml'];
                 mydrawOrder = round(date(jj));
-                KMLfigure_tiler(h,lat,lon,z*OPT.lightAdjust,...
+%                 KMLfigure_tiler(h,lat,lon,z*OPT.lightAdjust,...
+                KMLfigure_tiler(h,lat,lon,z,...    
                     'highestLevel',10,...
                     'lowestLevel',OPT.lowestLevel,...
                     'timeIn',date4GE(jj),...
@@ -580,7 +589,7 @@ if OPT.make
             'CBfileName', fullfile(OPT.basepath_local,OPT.relativepath,'KML','colorbar') ,...
             'CBcolorMap',OPT.colorMap,'CBcolorSteps',OPT.colorSteps,'CBcolorbarlocation',OPT.CBcolorbarlocation,...
             'CBcolorTick',OPT.CBcolorTick,'CBfontrgb',OPT.CBfontrgb,'CBbgcolor',OPT.CBbgcolor,'CBcolorTitle',OPT.CBcolorTitle,...
-            'CBframergb',OPT.CBframergb,'CBalpha',OPT.CBalpha,'CBtemplateHor',OPT.templateHor,'CBtemplateVer',OPT.templateVer);
+            'CBframergb',OPT.CBframergb,'CBalpha',OPT.CBalpha,'CBtemplateHor',OPT.CBtemplateHor,'CBtemplateVer',OPT.CBtemplateVer);
         clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [fname filesep 'KML' filesep 'colorbar'] '_']);
         output = [output clrbarstring];
     end
