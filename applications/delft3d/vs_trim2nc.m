@@ -346,6 +346,23 @@ function varargout = vs_trim2nc(vsfile,varargin)
           'Nctype'   , OPT.type, ...
           'Dimension', {{'time', 'n', 'm'}}, ...
           'Attribute', attr);
+
+      ifld     = ifld + 1;clear attr
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'KFU');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Non-active/active in U-point');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
+      if isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      else
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      end
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'KFU');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      nc(ifld) = struct('Name', 'KFU', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'time', 'n', 'm'}}, ...
+          'Attribute', attr);
       
       if isfield(I,'salinity')
       ifld     = ifld + 1;clear attr
@@ -471,6 +488,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       R.u   = [Inf -Inf];
       R.v   = [Inf -Inf];
       R.w   = [Inf -Inf];
+      R.KFU   = [Inf -Inf];
 
       for it = OPT.time
       
@@ -493,6 +511,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
           
          [D.u,D.v] = vs_let_vector_cen(F, 'map-series',{it},{'U1','V1'}, {0,0,0},'quiet');
 %           D.w      = vs_let_scalar    (F, 'map-series',{it},'WPHY'     , {0,0,0});
+          D.KFU = vs_let_scalar    (F,'map-series' ,{it},'KFU');
           D.u      = permute(D.u,[4 2 3 1]); % z y x
           D.v      = permute(D.v,[4 2 3 1]); % z y x
 %           D.w      = permute(D.w,[3 1 2]);   % z y x
@@ -501,9 +520,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
           
           G.cen.zwl = G.cen.zwl.*G.cen.mask;
           for k=1:size(D.u,1)
-          D.u(k,:,:) = D.u(k,:,:).*permute(G.cen.mask,[3 1 2]);
-          D.v(k,:,:) = D.v(k,:,:).*permute(G.cen.mask,[3 1 2]);
-%           D.w(k,:,:) = D.w(k,:,:).*permute(G.cen.mask,[3 1 2]);
+              D.u(k,:,:) = D.u(k,:,:).*permute(G.cen.mask,[3 1 2]);
+              D.v(k,:,:) = D.v(k,:,:).*permute(G.cen.mask,[3 1 2]);
+              %           D.w(k,:,:) = D.w(k,:,:).*permute(G.cen.mask,[3 1 2]);
           end
           
           %% write matrices
@@ -512,11 +531,15 @@ function varargout = vs_trim2nc(vsfile,varargin)
           nc_varput(ncfile,'u'       , D.u      ,[i-1, 0, 0, 0],[1, size(D.u         )]);
           nc_varput(ncfile,'v'       , D.v      ,[i-1, 0, 0, 0],[1, size(D.v         )]);
 %           nc_varput(ncfile,'w'       , D.w      ,[i-1, 0, 0, 0],[1, size(D.w         )]);
+          nc_varput(ncfile,'KFU'     , D.KFU    ,[i-1, 0, 0   ],[1, size(D.KFU       )]);
+ 
           
           R.eta = [min(R.eta(1),min(G.cen.zwl(:))) max(R.eta(2),max(G.cen.zwl(:)))];
           R.u   = [min(R.u  (1),min(D.u      (:))) max(R.u  (2),max(D.u      (:)))];  
           R.v   = [min(R.v  (1),min(D.v      (:))) max(R.v  (2),max(D.v      (:)))];  
-%           R.w   = [min(R.w  (1),min(D.w      (:))) max(R.w  (2),max(D.w      (:)))];  
+%           R.w   = [min(R.w  (1),min(D.w      (:))) max(R.w  (2),max(D.w      (:)))];
+          R.KFU = [min(R.KFU(1),min(D.KFU    (:))) max(R.KFU(2),max(D.KFU    (:)))];
+
           
       end
       
@@ -524,5 +547,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
       nc_attput(ncfile,'u'  ,'actual_range',R.u  );
       nc_attput(ncfile,'v'  ,'actual_range',R.v  );
 %       nc_attput(ncfile,'w'  ,'actual_range',R.w  );
-      
+      nc_attput(ncfile,'KFU','actual_range',R.KFU)
+       
 %% EOF      
