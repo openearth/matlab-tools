@@ -15,14 +15,19 @@ NCid = netcdf.open(ncfile, 'NC_WRITE');
 
 %% get current timesteps in nc file
 varid = netcdf.inqVarID(NCid,'time');
-time0 = netcdf.getVar(NCid,varid);
+[~,dimlen] = netcdf.inqDim(NCid,netcdf.inqDimID(NCid,'time'));
+if dimlen == 0 
+    time0 = [];
+else
+    time0 = netcdf.getVar(NCid,varid);
+end
 
 %% add time if it is not already in nc file
 if any(time0 == time)
     jj = find(time0 == time,1)-1;
 else
     jj = length(time0);
-    netcdf.putVar(NCid,varid,jj,1,time); %#ok<*FNDSB>
+    netcdf.putVar(NCid,varid,jj,1,time); 
 end
 
 varid = netcdf.inqVarID(NCid,'z');
@@ -34,7 +39,7 @@ if jj ~= length(time0) % then existing nc file already has data
     % Z0(Z0>1e35) = nan; Should not be necessary to manually set high values to nan
     Znotnan  = ~isnan(Z);
     Z0notnan = ~isnan(Z0);
-    notnan   = Znotnan&~Z0notnan);
+    notnan   = Znotnan&Z0notnan;
     % check if data will be overwritten
     if any(notnan) % values are not nan in both existing and new data
         [~,filename] = fileparts(ncfile);

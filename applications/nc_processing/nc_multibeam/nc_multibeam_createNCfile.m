@@ -4,7 +4,10 @@ function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
 if ~exist(OPT.netcdf_path,'dir')
     mkdir(OPT.netcdf_path)
 end
-NCid     = netcdf.create(ncfile,'NC_CLOBBER');
+
+mode     = netcdf.getConstant('NETCDF4');
+mode     = bitor(mode,netcdf.getConstant('NOCLOBBER'));
+NCid     = netcdf.create(ncfile,mode);
 globalID = netcdf.getConstant('NC_GLOBAL');
 dimSizeX = (OPT.mapsizex/OPT.gridsizex)+1;
 dimSizeY = (OPT.mapsizey/OPT.gridsizey)+1;
@@ -36,6 +39,25 @@ try
 catch
     epsg_wkt_str = 'epsg_wkt could not be retreived';
 end
+x = unique(X);
+dx = abs(unique(diff(x)));
+if length(dx) == 1
+    actual_range_x = {'actual_range';[min(x)-.5*dx max(x)+.5*dx]};
+else
+    actual_range_x = {[]};
+end
+
+y = unique(Y);
+dy = abs(unique(diff(y)));
+if length(dy) == 1
+    actual_range_y = {'actual_range';[min(y)-.5*dy max(y)+.5*dy]};
+else
+    actual_range_y = {[]};
+end
+
+
+
+
 % add variable: coordinate system reference (this variable contains all projection information, e.g. for use in ArcGIS)
 crsVariable = struct(...
     'Name', 'crs', ...
@@ -53,9 +75,11 @@ netcdf_addvar(NCid, crsVariable);
 nc_oe_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'time'}, 'oe_standard_name', {'time'},                    'dimension', {'time'},      'timezone', '+01:00');
 nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lon'},  'cf_standard_name', {'longitude'},               'dimension', {'x','y'});
 nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lat'},  'cf_standard_name', {'latitude'},                'dimension', {'x','y'});
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'x'},    'cf_standard_name', {'projection_x_coordinate'}, 'dimension', {'x'});
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'y'},    'cf_standard_name', {'projection_y_coordinate'}, 'dimension', {'y'});
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'z'},    'cf_standard_name', {'altitude'},                'dimension', {'x','y','time'});
+nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'x'},    'cf_standard_name', {'projection_x_coordinate'}, 'dimension', {'x'},'additionalAtts',actual_range_x);
+nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'y'},    'cf_standard_name', {'projection_y_coordinate'}, 'dimension', {'y'},'additionalAtts',actual_range_y);
+nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'z'},    'cf_standard_name', {'altitude'},                'dimension', {'x','y','time'}, 'deflate',1);%
+
+
 
 %% Expand NC file
 

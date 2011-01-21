@@ -1,7 +1,8 @@
 function [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi)
-%GRID_ORTH_GETDATAONLINE  ...
+%GRID_ORTH_GETDATAONLINE Linearly interpolates Z values for all crossings of a grid and a line 
 %
-% X and Y are expected to be created with meshgrid or similar
+% X and Y are expected to be created with meshgrid or similar. Orthogonal
+% and Curvi-linear grids are supported
 % 
 % xi and yi are vectors that contain the end and start point of a
 % linesegment. polygons are not supported (must be given piece by piece)

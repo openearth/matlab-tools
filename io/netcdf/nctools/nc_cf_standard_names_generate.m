@@ -87,7 +87,7 @@ for i = 1:size(raw,1)
     fprintf(fid,'%s\n',['            Variable = struct(...']); %#ok<*NBRAK>
     fprintf(fid,'%s\n',['               ''Name'',       OPT.varname{i} , ...']);
     fprintf(fid,'%s\n',['               ''Nctype'',    ''' raw{i,6} ''', ... ']);
-    fprintf(fid,'%s\n',['               ''Dimension'', {{OPT.dimension{i,:}}}, ... ']);
+    fprintf(fid,'%s\n',['               ''Dimension'', {OPT.dimension(i,:)}, ... ']);
     fprintf(fid,'%s\n',['               ''Attribute'', struct( ... ']);
     fprintf(fid,'%s\n',['                   ''Name'', ... ']);
     fprintf(fid,'%s\n',['                   {''standard_name'', ''long_name'', ''units'', ''fill_value''}, ...']);

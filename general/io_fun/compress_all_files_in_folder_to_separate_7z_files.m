@@ -11,6 +11,10 @@ function compress_all_files_in_folder_to_separate_7z_files(pathname)
 %
 %    compress_all_files_in_folder_to_separate_7z_files('D:\')
 
+if ~exist('pathname','var')
+    pathname = uigetdir;
+end
+
 multiWaitbar('compressing files',0,'color',[0 .5 .2])
 
 fns         = dir(pathname);
@@ -30,7 +34,7 @@ for ii = find(fileSizes>0)
     compress(...
         fullfile(basepath,[fns(ii).name '.7z']),...
         {fullfile(basepath,fns(ii).name)},...
-         'args', '-mx9','type','-t7z');
+         'args', '-mx5','type','-t7z');
     
     bytes_done = bytes_done+fns(ii).bytes;
     multiWaitbar('compressing files',bytes_done/total_bytes);

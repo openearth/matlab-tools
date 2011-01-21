@@ -1,5 +1,5 @@
 function actual_range = nc_actual_range(ncfile,varname)
-%NC_ACTUAL_RANGE   reads or retrives actula range from netCDF variable
+%NC_ACTUAL_RANGE   reads or retrives actual range from netCDF variable
 %
 %  [range] = nc_actual_range(ncfile,varname);
 %
@@ -88,7 +88,7 @@ function actual_range = nc_actual_range(ncfile,varname)
    info = nc_getvarinfo(ncfile, varname);
    ind  = ismember({info.Attribute.Name}, 'actual_range');
 
-   %% read attribut eif present
+   %% read attribute if present
    if sum(ind)==1
 
       actual_range = (info.Attribute(ind).Value);

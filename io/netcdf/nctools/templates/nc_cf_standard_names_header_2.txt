@@ -51,13 +51,15 @@ OPT = struct(...
     'ncid',             '', ...                              % nectdf id (only for matlab library)
     'outputfile',       {[]}, ...                            % name of the nc file. 
     'varname',          {{{'test1'};{'test2'}}}, ...         % variable name
-    'cf_standard_name', {{{'test1'};{'test2'}}}, ...         % open earth standard name
+    'cf_standard_name', {{{'test1'};{'test2'}}}, ...         % cf (climate forecasting) standard name
     'dimension',        {{{'test1'};{'test2'}}}, ...	     % dimension names					
     'dimid',            [], ...                              % dimension id's for use with matlab nc library only
     ...                                                      %   It is (a little) faster to indicate dimid's than dimension names
-    'timezone',         '+01:00' ...                         % timezone
-    );
-
+    'timezone',         '+01:00' , ...                       % timezone
+    'deflate',          false , ...                          % only for netcdf4 files, internally deflates (compresses) variables in NC file
+    'additionalAtts',   {[]} ...                             % append these attributes to the default attributes. Must be in form
+    );                                                       %    {'name1','name2','name3';'value1','value2','value3'}
+    
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 

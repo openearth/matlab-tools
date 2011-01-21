@@ -55,8 +55,10 @@ OPT = struct(...
     'dimension',        {{{'test1'};{'test2'}}}, ...	     % dimension names					
     'dimid',            [], ...                              % dimension id's for use with matlab nc library only
     ...                                                      %   It is (a little) faster to indicate dimid's than dimension names
-    'timezone',         '+01:00' ...                         % timezone
-    );
+    'timezone',         '+01:00' , ...                       % timezone
+    'deflate',          false , ...                          % only for netcdf4 files, internally deflates (compresses) variables in NC file
+    'additionalAtts',   {[]} ...                             % append these attributes to the default attributes. Must be in form
+    );                                                       %    {'name1','name2','name3';'value1','value2','value3'} 
 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
