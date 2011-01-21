@@ -227,8 +227,8 @@ if OPT.make
                     for y0  = miny : OPT.mapsizey : maxy
                         
                         ids =  inpolygon(D{OPT.xid},D{OPT.yid},...
-                            [x0 x0+OPT.mapsizex x0+OPT.mapsizex x0 x0],...
-                            [y0 y0 y0+OPT.mapsizey y0+OPT.mapsizey y0]);
+                            [x0 x0+((OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex x0+((OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex x0 x0],...
+                            [y0 y0 y0+((OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey y0+((OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey y0]);
                         
                         if sum(ids)>0
                             x   =  D{OPT.xid}(ids);
@@ -236,8 +236,8 @@ if OPT.make
                             z   =  D{OPT.zid}(ids)*OPT.zfactor;
                             
                             % generate X,Y,Z
-                            x_vector = x0 + (0:OPT.mapsizex-1) * OPT.gridsizex;
-                            y_vector = y0 + (0:OPT.mapsizey-1) * OPT.gridsizey;
+                            x_vector = x0 + (0:(OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex;
+                            y_vector = y0 + (0:(OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey;
                             [X,Y]    = meshgrid(x_vector,y_vector);
                             
                             % place xyz data on XY matrices
@@ -248,7 +248,8 @@ if OPT.make
                                 Y = flipud(Y);
                                 % if a non trivial Z matrix is returned write the data
                                 % to a nc file
-                                ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype));
+                                ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
+                                    sprintf('%8.2f_%8.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
                                 if ~exist(ncfile, 'file')
                                     nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
                                 end

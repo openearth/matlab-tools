@@ -9,8 +9,8 @@ mode     = netcdf.getConstant('NETCDF4');
 mode     = bitor(mode,netcdf.getConstant('NOCLOBBER'));
 NCid     = netcdf.create(ncfile,mode);
 globalID = netcdf.getConstant('NC_GLOBAL');
-dimSizeX = (OPT.mapsizex/OPT.gridsizex)+1;
-dimSizeY = (OPT.mapsizey/OPT.gridsizey)+1;
+dimSizeX = (OPT.mapsizex/OPT.gridsizex);
+dimSizeY = (OPT.mapsizey/OPT.gridsizey);
 
 
 %% add attributes global to the dataset

@@ -7,8 +7,8 @@ function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
 %
 %See also: nc_multibeam
 
-dimSizeX = (OPT.mapsizex/OPT.gridsizex)+1;
-dimSizeY = (OPT.mapsizey/OPT.gridsizex)+1;
+dimSizeX = (OPT.mapsizex/OPT.gridsizex);
+dimSizeY = (OPT.mapsizey/OPT.gridsizex);
 
 %% Open NC file
 NCid = netcdf.open(ncfile, 'NC_WRITE');

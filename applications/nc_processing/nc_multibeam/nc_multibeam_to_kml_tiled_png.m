@@ -201,7 +201,7 @@ if OPT.make
         if ~isempty(OPT.referencepath)
             url_reference = fullfile(OPT.referencepath,fns(ii).name); %#ok<*ASGLU>
             if exist(url_reference,'file')
-                z_reference = nc_varget(url_reference,'z',[ 0, 0, 0],[-1,-1,-1]);
+                z_reference = double(nc_varget(url_reference,'z',[ 0, 0, 0],[-1,-1,-1]));
                 
                 % check if lat and lon are identical in the source and the
                 % reference plane
@@ -230,13 +230,13 @@ if OPT.make
         
         % read lat,lon data or calculate lat,lon from x,y
         if  OPT.calculate_latlon_local
-            x  = nc_varget(url, 'x');
-            y  = nc_varget(url, 'y');
+            x  = double(nc_varget(url, 'x'));
+            y  = double(nc_varget(url, 'y'));
             [x,y] = meshgrid(x,y);
             [lon,lat] = convertCoordinates(x,y,'CS1.code',OPT.EPSGcode,'CS2.code',4326);
         else
-            lon  = nc_varget(url, 'lon');
-            lat  = nc_varget(url, 'lat');
+            lon  = double(nc_varget(url, 'lon'));
+            lat  = double(nc_varget(url, 'lat'));
         end
         
         % expand lat and lon in each direction to create some overlap
@@ -258,9 +258,9 @@ if OPT.make
         
         for jj = size(date4GE,1)-1:-1:1
             % load z data
-            z = nc_varget(url,'z',...
+            z = double(nc_varget(url,'z',...
                 [ 0, 0, 0] + (jj-1)*time_dim,...
-                [-1,-1,-1] + 2*time_dim);
+                [-1,-1,-1] + 2*time_dim));
             
             % subtract reference plane form data (reference plane is zeros
             % if not set otherwise
