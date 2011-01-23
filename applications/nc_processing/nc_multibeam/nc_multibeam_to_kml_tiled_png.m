@@ -87,6 +87,8 @@ OPT.lowestLevel             = 15;       % integer; Detail level of the highest r
                                         % 360/(2^OPT.lowestLevel) / OPT.tiledim
 OPT.tiledim                 = 256;      % dimension of tiles in pixels.
 
+OPT.filledInTime            = false;    % this makes tiles appear in GE for every date until there is a newer tile. If set to off, tiles are only shown on the date they have
+
 OPT.clim                    = [-50 25]; % limits of color scale
 OPT.colorMap                = @(m) colormap_cpt('bathymetry_vaklodingen',m); 
 OPT.colorSteps              = 500;
@@ -449,16 +451,36 @@ if OPT.make
             end
             %% add png icon links to kml
             B = KML_figure_tiler_code2boundary(tilesOnLevel(nn,:));
+            
             for iDate = 1: length(dates)
                 pngFile = [dates{iDate} filesep dates{iDate} '_' tilesOnLevel(nn,:) '.png'];
                 temp = fullfile(OPT.basepath_local,OPT.relativepath, pngFile);
                 if any(strcmp(temp(end-40:end),tilefull2))
-                    OPT2.timeIn    = datenums(iDate);
-                    OPT2.timeOut   = OPT2.timeIn+1;
+                    if OPT.filledInTime
+                        OPT2.timeIn    = datenums(iDate);
+                        if iDate<length(dates)
+                            nextiDate = iDate+1;
+                            temp = fullfile(OPT.basepath_local,OPT.relativepath, [dates{nextiDate} filesep dates{nextiDate} '_' tilesOnLevel(nn,:) '.png']);
+                            while nextiDate<length(dates) && ~any(strcmp(temp(end-40:end),tilefull2))
+                                temp = fullfile(OPT.basepath_local,OPT.relativepath, [dates{nextiDate} filesep dates{nextiDate} '_' tilesOnLevel(nn,:) '.png']);
+                                nextiDate = nextiDate+1;
+                            end
+                        else
+                            nextiDate = iDate;
+                        end
+                        OPT2.timeOut   = datenums(nextiDate);
+                        OPT2.timeSpan  = sprintf(...
+                            '<TimeSpan><begin>%s</begin><end>%s</end></TimeSpan>\n',...OPT2.timeIn,OPT2.timeOut
+                            datestr(OPT2.timeIn,OPT2.timeFormat),datestr(OPT2.timeOut,OPT2.timeFormat));
+                    else
+                        OPT2.timeIn    = datenums(iDate);
+                        OPT2.timeSpan  = sprintf(...
+                            '<TimeSpan><when>%s</when></TimeSpan>\n',...OPT2.timeIn
+                            datestr(OPT2.timeIn,OPT2.timeFormat));
+                    end
                     OPT2.drawOrder = datenums(iDate);
-                    OPT2.timeSpan  = sprintf(...
-                        '<TimeSpan><begin>%s</begin><end>%s</end></TimeSpan>\n',...OPT2.timeIn,OPT2.timeOut
-                        datestr(OPT2.timeIn,OPT2.timeFormat),datestr(OPT2.timeOut,OPT2.timeFormat));
+                    
+
                     output = [output sprintf([...
                         '<Region>\n'...
                         '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...minLod,maxLod
