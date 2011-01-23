@@ -243,7 +243,7 @@ if OPT.make
                             % place xyz data on XY matrices
                             Z = OPT.gridFcn(x,y,z,X,Y);
                             
-                            if sum(~isnan(Z(:)))>=1
+                            if any(~isnan(Z(:)))
                                 Z = flipud(Z);
                                 Y = flipud(Y);
                                 % if a non trivial Z matrix is returned write the data

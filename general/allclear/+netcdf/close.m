@@ -24,4 +24,4 @@ netcdflib('close', ncid);
 
 %% added code
 
-netcdf.list_of_open_nc_files('close',ncid);
+% netcdf.list_of_open_nc_files('close',ncid);

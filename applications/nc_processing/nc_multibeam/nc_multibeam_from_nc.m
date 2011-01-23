@@ -71,6 +71,8 @@ OPT.cache_path          = fullfile(tempdir,'nc_nc');
 OPT.zip                 = false;         % are the files zipped?
 OPT.zip_extension       = '*.zip';       % zip file extension
 
+OPT.fill_data           = false;
+
 OPT.datatype            = 'multibeam';
 OPT.EPSGcode            = 28992;
 
@@ -80,7 +82,7 @@ OPT.gridsizex           = 5;             % x grid resolution
 OPT.gridsizey           = 5;             % y grid resolution
 OPT.xoffset             = 0;             % zero point of x grid
 OPT.yoffset             = 0;             % zero point of y grid
-OPT.zfactor             = 1;             % scale z by this factor 
+OPT.zfactor             = 1;             % scale z by this factor
 OPT.gridFcn             = @(X,Y,Z,XI,YI) griddata_remap(X,Y,Z,XI,YI,'errorCheck',true);
 
 OPT.Conventions         = 'CF-1.4';
@@ -101,7 +103,7 @@ if nargin==0
     return
 end
 
-[OPT, Set, Default] = setproperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 if OPT.make
     multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
@@ -183,6 +185,7 @@ if OPT.make
         end
         fns_unzipped(kk) = [];
         
+           
         for ii = 1:length(fns_unzipped)
             %% set waitbars to 0 and update label
             multiWaitbar('nc_writing',0,'label','Writing: *.nc')
@@ -199,62 +202,88 @@ if OPT.make
             time    = nc_varget(url,'time');
             x       = nc_varget(url,'x');
             y       = nc_varget(url,'y');
-            z       = nc_varget(url,'z');
+            [x,y]   = meshgrid(x,y);
+            % for some reason this has to be set since the new nc toolbox was added;
+            setpref('SNCTOOLS','PRESERVE_FVD',true)
+            % get dimension info of z
+            z_dim_info = nc_getvarinfo(url,'z') ;
+            time_dim = strcmp(z_dim_info.Dimension,'time');
             
-            multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+fns_unzipped(ii).bytes)/WB.bytesToDo)
-            multiWaitbar('nc_reading'        ,fns_unzipped(ii).bytes/fns_unzipped(ii).bytes,...
-                'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
+            [~,sorted_times] = sort(time);
             
-            %------------------------------------------------------------------------------------------------------------------------------------------
-            
-            %% write data to nc files
-            multiWaitbar('nc_writing',0,'label',sprintf('Writing: %s...', (fns_unzipped(ii).name)))
-            % set the extent of the fixed maps (decide according to desired nc filesize)
-            
-            minx    = minmin(x);
-            miny    = minmin(y);
-            maxx    = maxmax(x);
-            maxy    = maxmax(y);
-            minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex - OPT.xoffset;
-            miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey - OPT.yoffset;
-            
-            % loop through data
-            for x0      = minx : OPT.mapsizex : maxx
-                for y0  = miny : OPT.mapsizey : maxy
-                    
-                    % generate X,Y,Z
-                    x_vector = x0:OPT.gridsizex:x0+OPT.mapsizex;
-                    y_vector = y0:OPT.gridsizey:y0+OPT.mapsizey;
-                    [XI,YI]    = meshgrid(x_vector,y_vector);
-                    
-                    % place xyz data on XY matrices
-                    ZI = OPT.gridFcn(x,y,z,XI,YI);
-                    
-                    ZI = flipud(ZI);
-                    YI = flipud(YI);
-                    
-                    if any(~isnan(ZI(:)))
-                        ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype));
-                        if ~exist(ncfile, 'file')
-                            nc_multibeam_createNCfile(OPT,EPSG,ncfile,XI,YI)
-                        end
-                        nc_multibeam_putDataInNCfile(OPT,ncfile,time,ZI')
-                    end
-                    
-                    WB.writtenDone =  (find(x0==minx : OPT.mapsizex : maxx,1,'first')-1)/...
-                        length(minx : OPT.mapsizex : maxx)+ find(y0==miny : OPT.mapsizey : maxy,1,'first')/...
-                        length(miny : OPT.mapsizey : maxy)/...
-                        length(minx : OPT.mapsizex : maxx);
-                    multiWaitbar('nc_writing',WB.writtenDone,'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
-                    multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+(1+WB.writtenDone)*fns_unzipped(ii).bytes)/WB.bytesToDo)
-                end
+            if OPT.fill_data
+                Z_old = nan(size(x));
             end
-            WB.writtenDone = 1;
-            multiWaitbar('nc_writing',WB.writtenDone,'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
-            WB.bytesDoneClosedFiles = WB.bytesDoneClosedFiles+fns_unzipped(ii).bytes;
+            
+            
+            for iTime = sorted_times'
+                z = squeeze(double(nc_varget(url,'z',...
+                    [ 0, 0, 0] + (iTime-1)*time_dim,...
+                    [-1,-1,-1] + 2*time_dim)));
+
+                multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+fns_unzipped(ii).bytes)/WB.bytesToDo)
+                multiWaitbar('nc_reading'        ,fns_unzipped(ii).bytes/fns_unzipped(ii).bytes,...
+                    'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
+                
+                %------------------------------------------------------------------------------------------------------------------------------------------
+                
+                %% write data to nc files
+                multiWaitbar('nc_writing',0,'label',sprintf('Writing: %s...', (fns_unzipped(ii).name)))
+                % set the extent of the fixed maps (decide according to desired nc filesize)
+                
+                minx    = minmin(x);
+                miny    = minmin(y);
+                maxx    = maxmax(x);
+                maxy    = maxmax(y);
+                minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex + OPT.xoffset;
+                miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey + OPT.yoffset;
+                
+                % loop through data
+                for x0      = minx : OPT.mapsizex : maxx
+                    for y0  = miny : OPT.mapsizey : maxy
+                        
+                        % generate X,Y,Z
+                        x_vector = x0 + (0:(OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex;
+                        y_vector = y0 + (0:(OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey;
+                        [X,Y]    = meshgrid(x_vector,y_vector);
+                        
+                        % place xyz data on XY matrices
+                        Z = OPT.gridFcn(x,y,z,X,Y);
+                        
+                        % fill nan data with previous data
+                        if OPT.fill_data
+                            Z(isnan(Z)) = Z_old(isnan(Z));
+                            Z_old       = Z;
+                        end
+                        
+                        if any(~isnan(Z(:)))
+                            Z = flipud(Z);
+                            Y = flipud(Y);
+                            % if a non trivial Z matrix is returned write the data
+                            % to a nc file
+                            ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
+                                sprintf('%8.2f_%8.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
+                            if ~exist(ncfile, 'file')
+                                nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
+                            end
+                            nc_multibeam_putDataInNCfile(OPT,ncfile,time(iTime),Z')
+                        end
+                        
+                        WB.writtenDone =  (find(x0==minx : OPT.mapsizex : maxx,1,'first')-1)/...
+                            length(minx : OPT.mapsizex : maxx)+ find(y0==miny : OPT.mapsizey : maxy,1,'first')/...
+                            length(miny : OPT.mapsizey : maxy)/...
+                            length(minx : OPT.mapsizex : maxx);
+                        multiWaitbar('nc_writing',WB.writtenDone,'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
+                        multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+(1+WB.writtenDone)*fns_unzipped(ii).bytes)/WB.bytesToDo)
+                    end
+                end
+                WB.writtenDone = 1;
+                multiWaitbar('nc_writing',WB.writtenDone,'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
+                WB.bytesDoneClosedFiles = WB.bytesDoneClosedFiles+fns_unzipped(ii).bytes;
+            end
+            
         end
     end
-    
     
     if OPT.zip
         try %#ok<TRYNC>

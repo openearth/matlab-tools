@@ -240,8 +240,8 @@ if OPT.make
             miny    = yllcorner;
             maxx    = xllcorner + cellsize.*(ncols-1);
             maxy    = yllcorner + cellsize.*(nrows-1);
-            minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex - OPT.xoffset;
-            miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey - OPT.yoffset;
+            minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex + OPT.xoffset;
+            miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey + OPT.yoffset;
             
             x      =         xllcorner:cellsize:xllcorner + cellsize*(ncols-1);
             y      = flipud((yllcorner:cellsize:yllcorner + cellsize*(nrows-1))');
@@ -261,9 +261,10 @@ if OPT.make
                         end
                     end
                     
-                    % generate X,Y,Z
-                    x_vector =        x0:OPT.gridsizex:x0+OPT.mapsizex;
-                    y_vector = fliplr(y0:OPT.gridsizey:y0+OPT.mapsizey);
+                            % generate X,Y,Z
+                            x_vector = x0 + (0:(OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex;
+                            y_vector = y0 + (0:(OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey;
+                    
                     [X,Y]    = meshgrid(x_vector,y_vector);
                     Z = nan(size(X));
                     Z(...
@@ -271,7 +272,12 @@ if OPT.make
                         find(x_vector  >=x(ix(1)),1,'first'):find(x_vector  <=x(ix(end)),1,'last')) = flipud(z);
                     
                     if any(~isnan(Z(:)))
-                        ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype));
+                        Z = flipud(Z);
+                        Y = flipud(Y);
+                        % if a non trivial Z matrix is returned write the data
+                        % to a nc file
+                        ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
+                            sprintf('%8.2f_%8.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
                         if ~exist(ncfile, 'file')
                             nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
                         end
