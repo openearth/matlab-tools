@@ -143,8 +143,8 @@ if ~isempty(fns)
                 batchvar(i,:)               = {1, OPT.datathinning, fns(i,1).name(1:end-4) , 'g', 1, yearsofgoodcov, find(yearsofgoodcov{:}==bestyear,1,'first')}; %#ok<AGROW>
                 
             else
-                disp([fns(i,1).name(1:end-4), ' - No years founding matching coverage criteria']);
-                batchvar = [];
+                disp([fns(i,1).name(1:end-4), ' - No years found matching coverage criteria']);
+%                 batchvar = [];
             end
             clear results;
         end

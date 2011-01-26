@@ -220,7 +220,10 @@ if OPT.make
                 z = squeeze(double(nc_varget(url,'z',...
                     [ 0, 0, 0] + (iTime-1)*time_dim,...
                     [-1,-1,-1] + 2*time_dim)));
-
+                if find(strcmp(z_dim_info.Dimension,'x'))<find(strcmp(z_dim_info.Dimension,'y'))
+                    z = permute(z,[2 1]);
+                end
+               
                 multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+fns_unzipped(ii).bytes)/WB.bytesToDo)
                 multiWaitbar('nc_reading'        ,fns_unzipped(ii).bytes/fns_unzipped(ii).bytes,...
                     'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
