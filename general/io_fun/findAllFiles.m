@@ -91,9 +91,9 @@ function varargout = findAllFiles(varargin)
 
    OPT = setproperty(OPT, varargin{nextarg:end});
    
-   if nargin==0;filenames = OPT;return;end
+   if nargin==0;varargout = {OPT};return;end
    
-   if ~exist(OPT.basepath)
+   if ~exist(OPT.basepath,'dir')
       error(['directory ''',OPT.basepath,''' does not exist'])
    end
 

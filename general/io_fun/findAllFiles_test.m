@@ -8,7 +8,7 @@ MTestCategory.Unit;
 directory = fileparts(mfilename('fullpath'));
 [files, directories] = findallfiles(directory);
 
-% check whehter this m file is found
+% check whether this m file is found
 % as well as the directory this mfile resides in
 OK = sum(strcmp(files,[directory,filesep,'findAllFiles.m'])) & ...
      sum(strcmp(directories,[directory]));

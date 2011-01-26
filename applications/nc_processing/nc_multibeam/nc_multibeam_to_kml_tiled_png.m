@@ -526,45 +526,35 @@ if OPT.make
     % end
     
     OPT2.description = ['generated: ' datestr(now())];
-    [path,fname] = fileparts(OPT.relativepath);
+    [path,fname,ext] = fileparts(OPT.relativepath);
     output = sprintf([...
         '<NetworkLink>'...
         '<name>files</name>'...                                                                                             % name
         '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'...                                     % link
         '</NetworkLink>'],...
-        fullfile(fname, 'KML', [fileID '.kml'])); % TO DO: issue when OPT.lowestLevel too small
+        fullfile([fname ext], 'KML', [fileID '.kml'])); % TO DO: issue when OPT.lowestLevel too small
     
     OPT2.fid=fopen(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),'w');
     
-    if length(datenums) == 1
-        OPT_header = struct(...
-            'name',         OPT.descriptivename,...
-            'open',         0,...
-            'description',  OPT.description,...
-            'lon',          mean([maxlon minlon]),...
-            'lat',          mean([maxlat minlat]),...
-            'z',            1e4,...
-            'timeIn',       min(datenums));
+    
+    OPT_header = struct(...
+        'name',         OPT.descriptivename,...
+        'open',         0,...
+        'description',  OPT.description,...
+        'lon',          mean([maxlon minlon]),...
+        'lat',          mean([maxlat minlat]),...
+        'z',            1e4);
+    
+    if length(datenums) == 1;
+        OPT_header.timeIn  = min(datenums);
+    elseif OPT.filledInTime 
+        OPT_header.timeIn  = max(datenums);
     elseif length(datenums) < 5
-        OPT_header = struct(...
-            'name',         OPT.descriptivename,...
-            'open',         0,...
-            'description',  OPT.description,...
-            'lon',          mean([maxlon minlon]),...
-            'lat',          mean([maxlat minlat]),...
-            'z',            1e4,...
-            'timeIn',       min(datenums),...
-            'timeOut',      max(datenums));
+        OPT_header.timeIn  = min(datenums);
+        OPT_header.timeOut = max(datenums);
     else
-        OPT_header = struct(...
-            'name',         OPT.descriptivename,...
-            'open',         0,...
-            'description',  OPT.description,...
-            'lon',          mean([maxlon minlon]),...
-            'lat',          mean([maxlat minlat]),...
-            'z',            1e4,...
-            'timeIn',       min(datenums(end-4:end)),...
-            'timeOut',      max(datenums(end-4:end)));
+        OPT_header.timeIn  =  min(datenums(end-4:end));
+        OPT_header.timeOut =  max(datenums(end-4:end));
     end
     
     output = [KML_header(OPT_header) output];
@@ -585,7 +575,7 @@ if OPT.make
             'CBalpha',              OPT.CBalpha,...
             'CBtemplateHor',        OPT.CBtemplateHor,...
             'CBtemplateVer',        OPT.CBtemplateVer);
-        clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [fname filesep 'KML' filesep 'colorbar'] '_']);
+        clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [fname ext filesep 'KML' filesep 'colorbar'] '_']);
         output = [output clrbarstring];
     end
     
@@ -598,15 +588,15 @@ if OPT.make
     fclose(OPT2.fid);
     
     %% generate different versions of the KML
-    copyfile(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),fullfile(OPT.basepath_local,path, [fname '_localmachine.kml']))
-    copyfile(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),fullfile(OPT.basepath_local,path, [fname '_server.kml']))
-    strrep_in_files(fullfile(OPT.basepath_local,path, [fname '_server.kml']),...
-        ['<href>' fname filesep 'KML' filesep],...
+    copyfile(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),fullfile(OPT.basepath_local,path, [fname ext '_localmachine.kml']))
+    copyfile(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),fullfile(OPT.basepath_local,path, [fname ext '_server.kml']))
+    strrep_in_files(fullfile(OPT.basepath_local,path, [fname ext '_server.kml']),...
+        ['<href>' fname ext filesep 'KML' filesep],...
         ['<href>' OPT.basepath_www  path2os(fullfile(filesep,OPT.relativepath,'KML',filesep),'/')],...
         'quiet',true);
     if OPT.make_kmz
-        zip     (fullfile(OPT.basepath_local,path,[fname '.zip']),fullfile(OPT.basepath_local,OPT.relativepath))
-        movefile(fullfile(OPT.basepath_local,path,[fname,'.zip']),fullfile(OPT.basepath_local,path,[fname '_portable.kmz']))
+        zip     (fullfile(OPT.basepath_local,path,[fname ext '.zip']),fullfile(OPT.basepath_local,OPT.relativepath))
+        movefile(fullfile(OPT.basepath_local,path,[fname ext '.zip']),fullfile(OPT.basepath_local,path,[fname ext '_portable.kmz']))
     end
     delete(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'))
   
@@ -614,7 +604,12 @@ if OPT.make
     multiWaitbar('merge_all_tiles'    ,'close')
     multiWaitbar('kml_print_all_tiles',1,'label','Writing of KML files')
     
-    disp('generation of kml files completed')
+    sprintf('\ngeneration of kml files completed\n');
+    
+    %% merge kml files in time
+    if OPT.filledInTime 
+        KML_figure_tiler_MergeTilesInTime(fullfile(OPT.basepath_local,OPT.relativepath));
+    end
 else
     disp('generation of kml files skipped')
 end
@@ -623,16 +618,16 @@ end
 if OPT.copy2server
     multiWaitbar('kml_copy',0,...
             'label','Copying of KML files','color',[0 0.4 0.2]);
-    [path,fname] = fileparts(OPT.relativepath);
+    [path,fname,ext] = fileparts(OPT.relativepath);
     % delete current kml files
     if exist (fullfile(OPT.basepath_network,OPT.relativepath),'dir')
         rmdir(fullfile(OPT.basepath_network,OPT.relativepath), 's')
     end
-    if exist  (fullfile(OPT.basepath_network,path,[fname '.kml']),'file')
-        delete(fullfile(OPT.basepath_network,path,[fname '.kml']))
+    if exist  (fullfile(OPT.basepath_network,path,[fname ext '.kml']),'file')
+        delete(fullfile(OPT.basepath_network,path,[fname ext '.kml']))
     end
-    if exist  (fullfile(OPT.basepath_network,path,[fname '_portable.kmz']),'file')
-        delete(fullfile(OPT.basepath_network,path,[fname '_portable.kmz']))
+    if exist  (fullfile(OPT.basepath_network,path,[fname ext '_portable.kmz']),'file')
+        delete(fullfile(OPT.basepath_network,path,[fname ext '_portable.kmz']))
     end
     
     mkpath(fullfile(OPT.basepath_network,OPT.relativepath));
@@ -640,15 +635,15 @@ if OPT.copy2server
     fns = findAllFiles('pattern_incl', 'basepath', fullfile(OPT.basepath_local,OPT.relativepath), 'recursive', false) ;
     for ii = 1:length(fns)
         multiWaitbar('kml_copy',ii/length(fns),...
-            'label',['copying files in ' fullfile(fname, fns{ii}) ' to the server']);
+            'label',['copying files in ' fullfile([fname ext], fns{ii}) ' to the server']);
         copyfile(...
             fullfile(OPT.basepath_local  ,OPT.relativepath,fns{ii}),...
             fullfile(OPT.basepath_network,OPT.relativepath,fns{ii}))
     end
     
-    copyfile(fullfile(OPT.basepath_local,path,[fname '_server.kml']),fullfile(OPT.basepath_network,path,[fname '.kml']))
+    copyfile(fullfile(OPT.basepath_local,path,[fname ext '_server.kml']),fullfile(OPT.basepath_network,path,[fname ext '.kml']))
     if OPT.make_kmz
-        copyfile(fullfile(OPT.basepath_local,path,[fname '_portable.kmz']),fullfile(OPT.basepath_network,path,[fname '_portable.kmz']))
+        copyfile(fullfile(OPT.basepath_local,path,[fname ext '_portable.kmz']),fullfile(OPT.basepath_network,path,[fname ext '_portable.kmz']))
     end
     multiWaitbar('kml_copy',1,'label','Copying of KML files');
 end
