@@ -128,7 +128,7 @@ end
 
 %% convert input to doubles
 if ~strcmp(class(x1),'double')||~strcmp(class(y1),'double')
-    disp('warning: x1 and y1 are converted to double''s')
+%     disp('warning: x1 and y1 are converted to double''s')
     x1 = double(x1);
     y1 = double(y1);
 end
