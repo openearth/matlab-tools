@@ -34,9 +34,9 @@ n = 20;
 
 %% current implementation
    M1.units.datenum         = 'time';
-   M1.units.eta             = 'sea_surface_height';
+   M1.units.eta             = 'meter';
    M1.standard_name.datenum = 'days since 0000-0-0 00:00:00 +00:00';
-   M1.standard_name.eta     = 'meter';
+   M1.standard_name.eta     = 'sea_surface_height';
    
 %% preferred implementation (swap level of attributes and variables in struct)
 
