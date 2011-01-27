@@ -6,6 +6,8 @@
 %
 % Note functions in C:\Delft3D\w32\matlab\private\ only work when you copy them one level up.
 %
+% Delft3D-FLOW is open source since jan 1st 2011, see http://oss.deltares.nl for details.
+%
 % Files
 %   d3d_sigma           - Calculates the relative vertical sigma positions in %
 %   d3d_z               - Calculates the absolute z-layer positions in m
@@ -37,19 +39,27 @@
 %   vs_trih_station            - Read [x,y,m,n,name] information of history stations (obs point)
 %   vs_trih_station_index      - Read index of history station (obs point)
 %   vs_trim_station            - Read timeseries from one location from map file
-%   vs_trim2kml                - make a Google Earth movie of a scaler variable
+%
+% Turn NEFIS file into netCDf file. Note that the Rijkswaterstaat 'getData' tool 
+% to convert their SIMONA SDS files to netCDF can also handle NEFIS files.
 %   vs_trim2nc                 - Convert part of a Delft3D trim file to netCDF (BETA)
 %
-%   delft3d_grd2kml                      - Save grid (and depth) file as kml feed for Google Earth
+% Visualise Delft3D 3D in Matlab
 %   delft3d_3d_visualisation_example     - Example to make 3D graphics image
 %   delft3d_3d2kml_visualisation_example - Example to make 3D graphics for Google Earth
+%
+% Visualise delft3d input/outyput in Google Earth:
+%   vs_trim2kml                          - output: make a Google Earth movie of a scaler variable (vector)
+%   vs_trim_to_kml_tiled_png             - output: make a Google Earth movie of a scaler variable (tiles)
+%   delft3d_mdf2kml                      - input:  Save flow input to Google Earth
+%   delft3d_grd2kml                      - input:  Save grid (and depth) file as kml feed for Google Earth
 %
 % Toolboxes
 %   part      - tools related to Delft3D-PART
 %   tide      - tools related to Delft3D-TIDE
 %   waq       - tools related to Delft3D-WAQ
 %   flow      - tools related to Delft3D-FLOW
-%   delft3dfm - tools related to Delft3D-FM (Flexible Mesh); flow for unstructured grid
+%   delft3dfm - tools related to Delft3D-FM (Flexible Mesh); Flow for unstructured grid
 %
 %See also: 
 

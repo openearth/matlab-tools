@@ -1,10 +1,10 @@
-function OPT = d3d_mdf2kml(mdf,varargin)
-%D3D_MDF2KML  One line description goes here.
+function OPT = delft3d_mdf2kml(mdf,varargin)
+%DELFT3D_MDF2KML  One line description goes here.
 %
 %   Create a kml-file (or kmz-file) of a Delft3D model setup
 %
 %   Syntax:
-%   d3d_mdf2kml(mdf,<keyword,value>)
+%   delft3d_mdf2kml(mdf,<keyword,value>)
 %
 %   Input:
 %   mdf  = filename of the mdf file
@@ -17,10 +17,17 @@ function OPT = d3d_mdf2kml(mdf,varargin)
 %   kmz       = switch for saving to kmz (true/false)
 %
 %   Example
-%   OPT = d3d_mdf2kml;
+%   OPT = delft3d_mdf2kml();
 %   The output structure OPT will give you all possible keyword-value pairs
 %
-%   See also DELTF3D_GRD2KML
+%   DELFT3D_MDF2KML('F:\checkouts\OpenEarthModels\deltares\brazil_patos_lagoon_52S_32E\3d1.mdf',...
+%    'epsg',4326,...
+%     'dep',1,... 
+%     'dry',1,... 
+%     'thd',1,... 
+%     'kmz',1) 
+%
+%   See also DELTF3D_GRD2KML, googleplot, VS_TRIM_TO_KML_TILED_PNG
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -96,44 +103,47 @@ if isempty(pathstr)
 end
 
 %% Read mdf-file
-MDF = delft3d_io_mdf('read',mdf);
-G = wlgrid('read',MDF.keywords.filcco);
-xg = G.X;
-yg = G.Y;
+
+   MDF = delft3d_io_mdf('read',mdf);
+   G = wlgrid('read',MDF.keywords.filcco);
+   xg = G.X;
+   yg = G.Y;
 
 %% Convert grid
-z = repmat(10,size(xg));
-if OPT.epsg ~= 4326
-    [xg,yg]=convertCoordinates(xg,yg,'CS1.code',OPT.epsg,'CS2.code',4326);
-end
 
-kmlFiles{1} = 'grid.kml';
-
-KMLmesh(yg,xg,z,...
-    'fileName',kmlFiles{1},...
-    'kmlName','grid',...
-    'lineColor',OPT.grdColor,...
-    'lineAlpha',.6,...
-    'lineWidth',1);
-
-%% Convert bathymetry
-if isfield(MDF.keywords,'fildep')
-    OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf,'dep',MDF.keywords.fildep,'clim',OPT.clim,'ddep',OPT.ddep);
-else
-    OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf);
-end
-
-if OPT.dep3D
-    kmlFiles{end+1} = [filename(MDF.keywords.filcco),'_3D.kml'];
-    delete([filename(MDF.keywords.filcco),'_2D.kml']);
-else
-    kmlFiles{end+1} = [filename(MDF.keywords.filcco),'_2D.kml'];
-    delete([filename(MDF.keywords.filcco),'_3D.kml']);
-    delete([filename(MDF.keywords.filcco),'_3D_ver_lft.png']);
-end
+   z = repmat(10,size(xg));
+   if OPT.epsg ~= 4326
+       [xg,yg]=convertCoordinates(xg,yg,'CS1.code',OPT.epsg,'CS2.code',4326);
+   end
+   
+   kmlFiles{1} = 'grid.kml';
+   
+   KMLmesh(yg,xg,z,...
+       'fileName',kmlFiles{1},...
+       'kmlName','grid',...
+       'lineColor',OPT.grdColor,...
+       'lineAlpha',.6,...
+       'lineWidth',1);
+   
+   %% Convert bathymetry
+   if isfield(MDF.keywords,'fildep')
+       OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf,'dep',MDF.keywords.fildep,'clim',OPT.clim,'ddep',OPT.ddep);
+   else
+       OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf);
+   end
+   
+   if OPT.dep3D
+       kmlFiles{end+1} = [filename(MDF.keywords.filcco),'_3D.kml'];
+       delete([filename(MDF.keywords.filcco),'_2D.kml']);
+   else
+       kmlFiles{end+1} = [filename(MDF.keywords.filcco),'_2D.kml'];
+       delete([filename(MDF.keywords.filcco),'_3D.kml']);
+       delete([filename(MDF.keywords.filcco),'_3D_ver_lft.png']);
+   end
 
 %% Process dry points
-if OPT.dry
+
+   if OPT.dry
     nr=0;
     
     try
@@ -168,9 +178,11 @@ if OPT.dry
         kmlFiles{end+1} = 'drypoints.kml';
         KMLpatch3(yDry,xDry,z,'fileName',kmlFiles{end},'fillColor',OPT.dryColor,'fillAlpha',0.8,'kmlName','drypoints');
     end
-end
+   end
+
 %% Process thin dams
-if OPT.thd
+
+   if OPT.thd
     nr = 0;
     
     try
@@ -211,16 +223,20 @@ if OPT.thd
         kmlFiles{end+1} = 'thindams.kml';
         KMLline(yThd',xThd',z','lineWidth',OPT.thdWidth,'lineColor',OPT.thdColor,'fileName',kmlFiles{end},'kmlName','thindams');
     end
-end
+   end
+
 %% Merge kml-files to one
-KMLmerge_files('sourceFiles',kmlFiles,'fileName',[name,'.kml']);
 
-try
-    delete(kmlFiles{:});
-end
+   KMLmerge_files('sourceFiles',kmlFiles,'fileName',[name,'.kml']);
 
-if OPT.kmz
-    ge_makekmz([name,'.kmz'],'sources',{[name,'.kml'],[filename(MDF.keywords.filcco),'_2D_ver_lft.png']})
-    delete([name,'.kml']);
-    delete([filename(MDF.keywords.filcco),'_2D_ver_lft.png']);
-end
+   try
+      delete(kmlFiles{:});
+   end
+
+   if OPT.kmz
+       zip     ([name,'.kmz'],{[name,'.kml'],[filename(MDF.keywords.filcco),'_2D_ver_lft.png']})
+       copyfile([name,'.kmz.zip'],[name,'.kmz'])
+       delete  ([name,'.kmz.zip']);
+       delete  ([name,'.kml']);
+       delete  ([filename(MDF.keywords.filcco),'_2D_ver_lft.png']);
+   end

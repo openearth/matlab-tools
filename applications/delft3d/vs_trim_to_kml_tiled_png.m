@@ -1,7 +1,8 @@
 function varargout = vs_trim_to_kml_tiled_png(varargin)
-%TRIM_TO_KML_TILED_PNG  generates a tiled png from data in a Delft3D trim
-% file. It firstly converts the trim file to nc using vs_trim2nc if the nc
-% file does not exist yet
+%TRIM_TO_KML_TILED_PNG  generates a tiled png from data in a Delft3D trim file.
+
+% It firstly converts the trim file to nc using vs_trim2nc if the nc
+% file does not exist yet.
 %  **********BETA: only works with surface elevation**********
 %
 %   This function is intended to provide a fully automated routine to
@@ -21,12 +22,13 @@ function varargout = vs_trim_to_kml_tiled_png(varargin)
 %   varargout =
 %
 %   Example;
-%    OPT.trimfile = 'c:\Data\A2512_SAMARES_Oosterschelde\Delft3D\computations\RG20\trim-RG20.dat';
+%    OPT.trimfile       = 'c:\Data\A2512_SAMARES_Oosterschelde\Delft3D\computations\RG20\trim-RG20.dat';
 %    OPT.basepath_local = 'c:\Data\A2512_SAMARES_Oosterschelde\googleearth\fromnc\';
-%    OPT.relativepath = 'myrelativepath';
-%    vs_trim_to_kml_tiled_png('trimfile',OPT.trimfile,'basepath_local',OPT.basepath_local,'relativepath',OPT.relativepath);%
+%    OPT.relativepath   = 'myrelativepath';
 %
-%   See also vs_trim2nc, KMLfigure_tiler, nc_multibeam_to_kml_tiled_png
+%    vs_trim_to_kml_tiled_png('trimfile',OPT.trimfile,'basepath_local',OPT.basepath_local,'relativepath',OPT.relativepath);
+%
+%   See also vs_trim2nc, KMLfigure_tiler, nc_multibeam_to_kml_tiled_png, delft3d_mdf2kml
 
 %% Copyright notice
 %   --------------------------------------------------------------------
