@@ -25,9 +25,9 @@ function varargout = struct2nc(outputfile,D,varargin)
 %  M.terms_for_use         = 'These data can be used freely for research purposes provided that the following source is acknowledged: OET.';
 %  M.disclaimer            = 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
 %  M.units.datenum         = 'time';
-%  M.units.eta             = 'sea_surface_height';
+%  M.units.eta             = 'meter';
 %  M.standard_name.datenum = 'days since 0000-0-0 00:00:00 +00:00';
-%  M.standard_name.eta     = 'meter';
+%  M.standard_name.eta     = 'sea_surface_height';
 %  struct2nc('file.nc',D,M);
 %
 % Example 2:
