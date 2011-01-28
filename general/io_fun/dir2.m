@@ -1,37 +1,165 @@
-function varargout = findAllFiles2(varargin)
-%FINDALLFILES   get list of all files in a directory tree.
+function D = dir2(varargin)
+%dir2  A more powerfull version of DIR
 %
-%    files          = findAllFiles(basepath,<keyword,value>)
-%   [files,folders] = findAllFiles(basepath,<keyword,value>)
+% dir2 returns a structure containing all files and folders in a
+% directory tree. Users can define filters to in or exclude certain cases.
+% The function is similar to findAllFiles and dir, and tries to combine
+% best of both. The main advantages are:
 %
-% returns cellstr with a list of all files in a directory tree,
-% and optionally also of all unique folder names.
-% The following <keyword,value> pairs have been implemented.
+% Compared to dir()
+%   * Operates recursively on subfolders to specified depth
+%   * Returns folder sizes
+%   * Allows advanced filtering with regular expressions
+%   * Filters out directories named '.' and '..'
 %
-% * pattern_excl (default '.svn')
-% * pattern_incl (default '*')
-% * basepath     (default '')
-% * recursive    (default 1):
-%   return relative filenames inside basepath only if 0,
-%   returns absulote filenames if 1
+% Compared to findAllFiles()
+%   * Much faster
+%   * Returns filename, pathname, filesize etc
+%    
+% The one drawback is that the use of regular expressions is not allways
+% that easy, for some tips see below.
 %
-% Notice that the pattern_excl paths are filtered with regexp. The syntax
-% is slightly different. Example: '*.svn' versus '.\.svn' see help regexp
-% for more
+%   Syntax:
+%     There are three ways to call this function: 
 %
-% For the <keyword,value> pairs and their defaults call
+%     D = dir2 
+%     D = dir2(<keyword,value>)
+%     D = dir2(basepath,<keyword,value>)
 %
-%    OPT = findAllFiles()
+%   Input:
+%     The following <keyword,value> pairs have been implemented.
+% 
+%     * basepath     directory to operate on
+%                    defaults to pwd, current working directory
+% 
+%     * dir_excl     cell array containing regular expressions. Any folder
+%                    (including that folders children) that matches any of the
+%                    expression is excluded from the results.  
+%                    defaults to {'.svn$'}, exclude svn directories
+% 
+%     * file_incl    cell array containing regular expressions. Any filename
+%                    that does not match any of the expressions is excluded
+%                    from the results. 
+%                    defaults to '.*', include all files
+% 
+%     * depth        maximum directory depth to search on. Set to 0 for a non 
+%                    recursive query, and to infinitie to search all subfolders
+%                    in subfolders etc.
+%                    defaults to inf
 %
-%See also: DIR, OPENDAP_CATALOG, ADDPATHFAST, REGEXP, DIRLISTING
+%   Output:
+%   D        = a struct array with the following fields: 
+%                     name
+%                     date
+%                     bytes
+%                     isdir
+%                     datenum
+%                     pathname
+%
+%   Examples
+%
+%     % concatenating pathname and filename to fullfilenames
+%     D               = dir2;
+%     files           = find(~[D.isdir]);
+%     fullfilenames   = strcat({D(files).pathname}, {D(files).name})';
+%     disp(fullfilenames);
+% 
+%     % find the largest m file in OpenEarthTools
+%     D               = dir2(oetroot,'file_incl',{'\.m$'});
+%     files           = find(~[D.isdir]);
+%     [value,index]   = max([D(files).bytes]);
+%     fprintf(1,'largest file:  %s\nsize in bytes: %d\n',...
+%         fullfile(D(files(index)).pathname,...
+%         D(files(index)).name),...
+%         D(files(index)).bytes);
+% 
+%     % find the newest file in OpenEarthTools
+%     D               = dir2(oetroot);
+%     files           = find(~[D.isdir]);
+%     [value,index]   = max([D(files).datenum]);
+%     fprintf(1,'newest file:    %s\nage in seconds: %0.0f\n',...
+%         fullfile(D(files(index)).pathname,...
+%         D(files(index)).name),...
+%         (now - D(files(index)).datenum)*24*3600);
+%     
+%     % find m files in OpenEarthTools that appear to have something to do with
+%     % netcdf
+%     D               = dir2(oetroot,'file_incl','(nc[^a-zA-Z]|[^a-zA-Z]nc|netcdf).*\.m$');
+%     files           = find(~[D.isdir]);
+%     fullfilenames   = strcat({D(files).pathname}, {D(files).name})';
+%     disp(fullfilenames);
+%    
+% Some notes on regexp
+%    * '^' and '$' function as anchors to the left of the first charachter and to
+%      the right of the last charachter repectively. 
+%    * multiple conditions can be specified with '|'
+%    * some characters, such as '.' are modifiers. To match that charachter,
+%     add a '\'.
+% 
+%   Example values for file_incl: 
+%   '\.m$'         finds files that end with '.m'
+%   '\.(png|jpg)$' finds files that end with '.jpg' or '.png'
+%   '\.[^\.]{5}$'  finds files with 5 charachter extensions
+%   'time.*\.m$'   finds .m files time in the name
+% 
+%   These expressions can be very powerfull and complicated, like:
+%   '(nc[^a-zA-Z]|[^a-zA-Z]nc|netcdf).*\.m$'
+%   This finds .m files that have something to do with netcdf
+%   For more information, see 'help regexp'.     
+%
+%   See also: DIR, FINDALLFILES, DIR, DIRLISTING
+
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Van Oord Dredging and Marine Contractors BV
+%       Thijs Damsma
+%
+%       tda@vanoord.com
+%
+%       Watermanweg 64
+%       3067 GG
+%       Rotterdam
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 28 Jan 2011
+% Created with Matlab version: 7.12.0.62 (R2011a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% settings
 %  defaults
 
-OPT.pattern_excl = {'.svn'}; % pattern to exclude
-OPT.pattern_incl = '*';       % pattern to include
-OPT.basepath     = '';        % indicate basedpath to start looking
-OPT.recursive    = 1;         % indicate whether or not the request is recursive
+OPT.basepath         = pwd;      % indicate basedpath to start looking
+OPT.dir_excl         = '.svn$';  % pattern to exclude
+OPT.file_incl        = '.*';     % pattern to include
+OPT.depth            = inf;      % indicate recursion depth (0 is only this folder)
 
 if odd(nargin)
     OPT.basepath = varargin{1};
@@ -44,8 +172,6 @@ end
 
 OPT = setproperty(OPT, varargin{nextarg:end});
 
-if nargin==0;varargout = {OPT};return;end
-
 if ~exist(OPT.basepath,'dir')
     error(['directory ''',OPT.basepath,''' does not exist'])
 end
@@ -57,45 +183,58 @@ if strcmp(OPT.basepath(end),filesep)
 end
 
 % find filenames
-filenames = files_in_dir(OPT.basepath,'',[OPT.pattern_excl {'..','.'}]);
+% pattern_excl is appended with two criteria that exclude '..' and '.' from
+% the dir inquiry. See 'help regexp' for explanation.
+D = dir_in_subdir(OPT.basepath,[OPT.dir_excl '|^\.{1,2}$'],OPT.file_incl,OPT.depth);
 
-% prepend basepath
-filenames = cellstr([repmat([OPT.basepath filesep] ,length(filenames),1),char(filenames)]);
+%EOF
 
-% check for pattern_incl 
-filenames = filenames(~cellfun('isempty', regexp(filenames, [OPT.pattern_incl],'once')));
-%% return cell with resulting files (including pathnames)
+function D = dir_in_subdir(basepath,dir_excl,file_incl,depth)
 
-if nargout==1
-    varargout = {filenames};
-else
-    
-    foldernames = filenames; % preallocate
-    
-    for i=1:length(foldernames)
-        if ~isdir(foldernames{i})
-            foldernames{i} = fileparts(foldernames{i});
+% do a regular dir query
+D          = dir([basepath filesep]);
+
+% fill empty fields of D with NaN, space or false
+[D(cellfun('isempty',{D.name    })).name    ] = deal(' ');
+[D(cellfun('isempty',{D.date    })).date    ] = deal(nan);
+[D(cellfun('isempty',{D.bytes   })).bytes   ] = deal(nan);
+[D(cellfun('isempty',{D.isdir   })).isdir   ] = deal(false(1));
+[D(cellfun('isempty',{D.datenum })).datenum ] = deal(nan);
+
+% exclude directories that match 'dir_excl' from D
+dirs            = find([D.isdir]);
+dirs_to_exclude = false(size(dirs));
+dirs_to_exclude(~cellfun('isempty',regexp({D(dirs).name},dir_excl,'once'))) = true;
+D(dirs(dirs_to_exclude)) = [];
+
+% include only files that match 'file_inc' from D
+files            = find(~[D.isdir]);
+files_to_include = false(size(files));
+files_to_include(~cellfun('isempty',regexp({D(files).name},file_incl,'once'))) = true;
+D(files(~files_to_include)) = [];
+
+% return if D is empty
+if isempty(D)
+    return
+end
+
+% add field pathname
+dirs         = [D.isdir];
+[D.pathname] = deal([basepath filesep]);
+
+if depth>0
+    % loop all directories, and add their contents
+    for ii = find(dirs)
+        newD = dir_in_subdir(...
+            [basepath filesep D(ii).name], ...   % basepath:  construct form basepath and directory name
+            dir_excl,...                         % dir_excl:  keep as is
+            file_incl,...                        % file_incl: keep as is
+            depth-1);                            % depth:     subtract 1
+        if ~isempty(newD)
+            D(ii).bytes = sum([newD.bytes]);
+            D = [D; newD];
+        else
+            D(ii).bytes = 0;
         end
     end
-    foldernames = unique(foldernames);
-    
-    varargout = {filenames,foldernames};
 end
-
-
-function filenames = files_in_dir(basepath,subdirpath,pattern_excl)
-basepath = [basepath filesep subdirpath];
-fns = dir(basepath);
-ignore = false(size(fns));
-for ii = 1:length(fns)
-    if any(strcmp(fns(ii).name,pattern_excl))
-        ignore(ii) = true;
-    end
-end
-fns(ignore) = [];
-dirs = cell2mat({fns.isdir});
-filenames = {fns(~dirs).name}';
-for ii = find(dirs)
-    filenames = [filenames; files_in_dir(basepath(1:end-1),[fns(ii).name filesep],pattern_excl)];
-end
-filenames = cellstr([repmat(subdirpath,length(filenames),1),char(filenames)]);
