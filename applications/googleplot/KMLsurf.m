@@ -75,7 +75,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    OPT.polyFill           = true;
    OPT.openInGE           = false;
    OPT.reversePoly        = false;
-   OPT.extrude            = false;
+   OPT.extrude            = false;                                          % when true: tethered to the ground by a tail
    OPT.cLim               = [];
    OPT.zScaleFun          = @(z) (z+20).*5;
    OPT.colorbar           = 1;
@@ -83,8 +83,9 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    OPT.timeOut            = [];
    OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
    OPT.disp               = 1;
-   OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
-   OPT.CBtemplateVer        = 'KML_colorbar_template_vertical.png';
+   OPT.CBtemplateHor      = 'KML_colorbar_template_horizontal.png';
+   OPT.CBtemplateVer      = 'KML_colorbar_template_vertical.png';
+   OPT.CBcolorTitle       = '';
    
    if nargin==0
       varargout = {OPT};
