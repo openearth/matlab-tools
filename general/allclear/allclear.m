@@ -58,14 +58,6 @@
 %% clear the command prompt
 clc
 
-%% close netcdf files
-nc_file_list = netcdf.list_of_open_nc_files;
-
-for ii = 1:length(nc_file_list); 
-    try netcdf.close(nc_file_list(ii)); catch; end
-end
-netcdf.list_of_open_nc_files('clear');
-
 %% close all open files
 fclose all;
 
