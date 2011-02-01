@@ -98,10 +98,13 @@ function varargout = swan_io_input(varargin)
    if iostat==1 %  0 when uigetfile was cancelled
                 % -1 when uigetfile failed
 
-%% check for file existence (1)                
-
-   DAT.fullfilename = which(DAT.fullfilename); % make absolute path, and find files in matlab path
-   tmp = dir(which(DAT.fullfilename));
+%% check for file existence (1)
+%  try to make absolute path, and find files in matlab path
+   txt = which(DAT.fullfilename); 
+   if ~isempty(txt)
+      DAT.fullfilename = txt;
+   end
+   tmp = dir(DAT.fullfilename);
    
    if length(tmp)==0
       
@@ -302,7 +305,7 @@ end
                DAT.mode.dim        = 2;
               [keyword,rec] = strtok(rec);
               [keyword,rec] = strtok(rec);
-               if     strcmp(keyword(1:4),'STAT')
+               if     strcmp(keyword(1:3),'STA')
                DAT.mode.stationary = 1;
                elseif strcmp(keyword(1:5),'NONST')
                DAT.mode.stationary = 0;
