@@ -208,7 +208,7 @@
    nc(ifld).Name         = 'wgs84'; % preferred
    nc(ifld).Nctype       = nc_int;
    nc(ifld).Dimension    = {};
-   nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code);
+   nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code); % includes ADAGUC attributes
    var2evalstr(nc(ifld).Attribute)
 
 %% 4   Create dependent variable

@@ -191,6 +191,12 @@
       OPT.wgs84.inv_flattening,  ...
      'value is equal to EPSG code'});
 
+   % add ADAGUC projection parameters optionally
+   
+      nc(ifld).Attribute(end+1) = struct('Name', 'proj4_params'   ,'Value', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs');
+      nc(ifld).Attribute(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude';
+      nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(OPT.wgs84.code)];
+
 %% 4   Create dependent variable
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
 %      Parameters with standard names:
