@@ -45,10 +45,6 @@ function testresult = KMLpatch3_test()
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLcontour)
-% Publishable code that describes the test.
-
-%% $RunCode
 try
 
 lat = {[50   50   50.9 50.9 50  ]'-4,...
@@ -102,6 +98,3 @@ f   = {[1 0 0],[0 1 0],[0 0 1],[1 1 1]};
 catch
     testresult = false;
 end
-
-%% $PublishResult
-% Publishable code that describes the test.

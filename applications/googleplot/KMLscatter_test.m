@@ -48,11 +48,7 @@ function testresult = KMLscatter_test()
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLscatter)
-% Publishable code that describes the test.
-
-%% $RunCode
-%try
+try
 
 %% name and html empty
 
@@ -120,9 +116,6 @@ disp(['... running test:',mfilename])
 
     testresult = true;
 
-%catch
-%    testresult = false;
-%end
-
-%% $PublishResult
-% Publishable code that describes the test.
+catch
+    testresult = false;
+end

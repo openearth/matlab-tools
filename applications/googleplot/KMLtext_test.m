@@ -1,7 +1,7 @@
-function testresult = KMLlogo_test()
-% KMLlogo_TEST  unit test for KMLlogo
-%
-% See also: KMLlogo, line, plot
+function testresult = KMLtext_test()
+% KMLtext_test  unit test for KMLtext
+%  
+% See also: KMLtext
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -29,16 +29,6 @@ function testresult = KMLlogo_test()
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and
-% programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute
-% your own tools.
-
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 22 Sep 2009
-% Created with Matlab version: 7.8.0.347 (R2009a)
-
 % $Id$
 % $Date$
 % $Author$
@@ -49,13 +39,15 @@ function testresult = KMLlogo_test()
 disp(['... running test:',mfilename])
 
 try
-    srcfile = [matlabroot '\sys\perl\win32\lib\Tk\demos\images\mickey.gif'];
-    destfile = [KML_testdir,filesep, 'matlab.ico'];
-    copyfile(srcfile,destfile,'f')
-    kmlfilename = [KML_testdir,filesep,'KMLlogo_test.kml'];
-    KMLlogo (destfile,'fileName',kmlfilename,'invertblackwhite',1,'kmlName','mickey');
-    
-    testresult = true;
+
+   lat = [52 52; 53 53];
+   lon = [ 2  4;  4  2];
+   z   = [1 10 ;100 1e3];
+   
+   
+   KMLtext(lat ,lon ,num2str(z(:))  ,'fileName',KML_testdir('KMLtext_text1.kml'));
+   KMLtext(lat ,lon ,z              ,'fileName',KML_testdir('KMLtext_text2.kml'));
+   testresult = true;
 catch
-    testresult = false;
+   testresult = false;
 end

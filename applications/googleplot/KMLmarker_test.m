@@ -38,14 +38,7 @@ function testresult = KMLmarker_test()
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLmesh)
-% Publishable code that describes the test.
-
-%% $RunCode
-% Write test code here
-%try
-
-
+try
 
    D.x    = linspace(53.10 ,53.75,21);
    D.y    = linspace( 4.75 , 8   ,21);
@@ -102,11 +95,6 @@ disp(['... running test:',mfilename])
 
     testresult = true;
 
-%catch
-%   testresult = false;
-%end
-
-%% $PublishResult
-% Publishable code that describes the test.
-
-
+catch
+   testresult = false;
+end

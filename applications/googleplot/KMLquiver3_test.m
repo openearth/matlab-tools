@@ -1,7 +1,7 @@
-function testresult = KMLsurf_test()
-% KMLSURF_TEST  unit tets for KMLsurf
+function testresult = KMLquiver_test()
+% KMLQUIVER3_TEST  unit test for KMLquiver3
 %  
-% See also: googleplot
+% See also : googleplot, quiver3, KMLquiver_test, KMLcurvedArrows_test
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -46,16 +46,36 @@ function testresult = KMLsurf_test()
 disp(['... running test:',mfilename])
 
 try
+
+%% case 1
+
+    scale = 5e3;
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
     z = peaks(31);
     z = abs(z);
+    
+   [u,v] = gradient(z);
 
-    KMLsurf(lat   ,lon-5,z,'fileName',KML_testdir('KMLsurf_1.kml'),'zScaleFun',@(z) (z+1).*2000,'extrude',true,'polyOutline',true,'polyFill',false,'disp',0);
-    KMLsurf(lat+5 ,lon-5,z,'fileName',KML_testdir('KMLsurf_2.kml'),'colorMap' ,@(m) gray(m),'zScaleFun',@(z) (z.^2)*1000,'disp',0);
-    KMLsurf(lat+10,lon-5,z,'fileName',KML_testdir('KMLsurf_3.kml'),'zScaleFun',@(z) -log(z/100)*1000,'fillAlpha',1,'lineWidth',3,'colorMap',@(m) colormap_cpt('temperature',m),'extrude',true,'polyOutline',true,'disp',0);
-    for ii =4:9;
-         KMLsurf(lat+5,lon*10,z*(1+sin(ii)),'fileName',KML_testdir(['KMLsurf_' num2str(ii) '.kml']),'zScaleFun',@(z) (z.^2)*1000,'cLim',[-3+sin(ii) 15+10*sin(ii)],'timeIn',ii,'timeOut',ii+1,'disp',0);
-    end
+    KMLquiver3(lat,lon,1e4*z,-scale.*v,scale.*u,'fileName',KML_testdir('KMLquiver3_test_arrows.kml'));
+    KMLsurf   (lat,lon,1e4*z,                 z,'fileName',KML_testdir('KMLquiver3_test_streamfunction.kml'),'disp',0);
+    
+%% case 2: time does not get through yet
+
+   dt = 30; % a litle slow so it looks clocklike
+   t  = 0:dt:360;
+
+   KMLquiver3(repmat(52,size(t)),...
+              repmat( 4,size(t)),...
+              10*t,...
+              sind(t).*10000,... % v
+              cosd(t).*10000,... % u
+            'fileName',KML_testdir('KMLquiver3_test_unit_circle.kml'),...
+             'kmlName','unit_circle',...
+          'arrowStyle', 'blackTip',...
+            'openInGE',0,...
+              'timeIn',+ t,...
+             'timeOut',+ t + dt);
+    
     testresult = true;
 catch
     testresult = false;

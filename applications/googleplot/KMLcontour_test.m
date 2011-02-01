@@ -45,10 +45,6 @@ function testresult = KMLcontour_test()
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLcontour)
-% Publishable code that describes the test.
-
-%% $RunCode
 try
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
     z = peaks(31);
@@ -66,6 +62,3 @@ try
 catch
     testresult = false;
 end
-
-%% $PublishResult
-% Publishable code that describes the test.

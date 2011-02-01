@@ -1,7 +1,7 @@
-function testresult = KMLsurf_test()
-% KMLSURF_TEST  unit tets for KMLsurf
+function testresult = KMLcurvedArrows()
+% KMLcurvedArrows_TEST  unit test for KMLcurvedArrows
 %  
-% See also: googleplot
+% See also : googleplot, KMLcurvedArrows, KMLquiver_test
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -46,16 +46,27 @@ function testresult = KMLsurf_test()
 disp(['... running test:',mfilename])
 
 try
+
+    scale = 1;
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
     z = peaks(31);
     z = abs(z);
+    
+   [u,v] = gradient(z);
 
-    KMLsurf(lat   ,lon-5,z,'fileName',KML_testdir('KMLsurf_1.kml'),'zScaleFun',@(z) (z+1).*2000,'extrude',true,'polyOutline',true,'polyFill',false,'disp',0);
-    KMLsurf(lat+5 ,lon-5,z,'fileName',KML_testdir('KMLsurf_2.kml'),'colorMap' ,@(m) gray(m),'zScaleFun',@(z) (z.^2)*1000,'disp',0);
-    KMLsurf(lat+10,lon-5,z,'fileName',KML_testdir('KMLsurf_3.kml'),'zScaleFun',@(z) -log(z/100)*1000,'fillAlpha',1,'lineWidth',3,'colorMap',@(m) colormap_cpt('temperature',m),'extrude',true,'polyOutline',true,'disp',0);
-    for ii =4:9;
-         KMLsurf(lat+5,lon*10,z*(1+sin(ii)),'fileName',KML_testdir(['KMLsurf_' num2str(ii) '.kml']),'zScaleFun',@(z) (z.^2)*1000,'cLim',[-3+sin(ii) 15+10*sin(ii)],'timeIn',ii,'timeOut',ii+1,'disp',0);
-    end
+    KMLpcolor      (lat,lon,                 z,'fileName',KML_testdir('KMLcurvedArrows_test_streamfunction.kml'),'disp',0);
+   [x,y] = convertCoordinates(lon,lat,'CS1.code',4326,'CS2.code',28992);
+
+    KMLcurvedArrows(x,y,-scale.*u,scale.*v,... % transform u,v too ?
+                      'time',[],...
+              'interp_steps',0,...
+                   'kmlName','velocity surface (black)',...
+                  'n_arrows',250,...
+                  'fileName',KML_testdir('KMLcurvedArrows_test.kml'),...
+                        'dt',1200,...
+                  'colorMap',@(m) [0 0 0],...
+                'colorSteps',1);
+    
     testresult = true;
 catch
     testresult = false;

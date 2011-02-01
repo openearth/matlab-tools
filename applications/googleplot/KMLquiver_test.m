@@ -1,7 +1,7 @@
 function testresult = KMLquiver_test()
 % KMLQUIVER_TEST  unit test for KMLquiver
 %  
-% See also : googleplot, quiver
+% See also : googleplot, quiver, KMLcurvedArrows_test
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -45,13 +45,10 @@ function testresult = KMLquiver_test()
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLcontour)
-% Publishable code that describes the test.
-
-%% $RunCode
 try
 
 %% case 1
+
     scale = 5e3;
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
     z = peaks(31);
@@ -60,7 +57,7 @@ try
    [u,v] = gradient(z);
 
     KMLquiver(lat,lon,-scale.*v,scale.*u,'fileName',KML_testdir('KMLquiver_test_arrows.kml'));
-    KMLpcolor(lat,lon,                 z,'fileName',KML_testdir('KMLquiver_test_streamfunction.kml'));
+    KMLpcolor(lat,lon,                 z,'fileName',KML_testdir('KMLquiver_test_streamfunction.kml'),'disp',0);
     
 %% case 2
 
@@ -75,13 +72,10 @@ try
              'kmlName','unit_circle',...
           'arrowStyle', 'blackTip',...
             'openInGE',0,...
-              'timeIn',now + t,...
-             'timeOut',now + t + dt);
+              'timeIn',+ t,...
+             'timeOut',+ t + dt);
     
     testresult = true;
 catch
     testresult = false;
 end
-
-%% $PublishResult
-% Publishable code that describes the test.

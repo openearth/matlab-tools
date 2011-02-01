@@ -45,11 +45,7 @@ function testresult = KMLcontour3_test()
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLcontour3)
-% Publishable code that describes the test.
-
-%% $RunCode
-%try
+try
     [lat,lon] = meshgrid(54:.1:57,2:.1:5);
     z = peaks(31);
     z = abs(z);
@@ -58,9 +54,6 @@ disp(['... running test:',mfilename])
     KMLcontour3(lat+10,lon,   z,'fileName',KML_testdir('KMLcontour3_3.kml'),'writeLabels',false,'cLim',[-10 10],'lineWidth',3,'colorMap',@(m) colormap_cpt('temperature',m));
     KMLcontour3(lat+10,lon*10,z,'fileName',KML_testdir('KMLcontour3_4.kml'),'zScaleFun',@(z) (z.^2)*10000,'writeLabels',true,'cLim',[200 300],'labelDecimals',4);
     testresult = true;
-%catch
-%    testresult = false;
-%end
-
-%% $PublishResult
-% Publishable code that describes the test.
+catch
+    testresult = false;
+end

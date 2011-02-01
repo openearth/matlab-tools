@@ -51,10 +51,6 @@ end
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLpcolor)
-% Publishable code that describes the test.
-
-%% $RunCode
 try
     [lat,lon] = meshgrid(40:.03:42,-10:.03:-8);
     

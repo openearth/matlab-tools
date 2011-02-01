@@ -5,23 +5,33 @@ function OK = KMLtest
 
  %% OK
  j=0;clear OK
+% TO DO        KMLanimatedIcon_test
  j=j+1;OK(j) = KMLcolorbar_test
  j=j+1;OK(j) = KMLcontour3_test
  j=j+1;OK(j) = KMLcontour_test
-%j=j+1;OK(j) = KMLcontourf_test % worked in by Thijs
- j=j+1;OK(j) = KMLline_test
+ j=j+1;OK(j) = KMLcontourf_test  % 1 subcase OK, other subcase worked in by Thijs
+%j=j+1;OK(j) = KMLcontourf3_test % requires internet
+ j=j+1;OK(j) = KMLcurvedarrows_test
+ j=j+1;OK(j) = KMLline_test 
+ j=j+1;OK(j) = KMLlogo_test 
  j=j+1;OK(j) = KMLmarker_test
  j=j+1;OK(j) = KMLmesh_test
  j=j+1;OK(j) = KMLpatch_test
+ j=j+1;OK(j) = KMLpatch3_test
  j=j+1;OK(j) = KMLpcolor_test
  j=j+1;OK(j) = KMLquiver_test
+ j=j+1;OK(j) = KMLquiver3_test
  j=j+1;OK(j) = KMLscatter_test
  j=j+1;OK(j) = KMLsurf_test
-%j=j+1;OK(j) = KMLtricontourf_test % worked in by Thijs
-%j=j+1;OK(j) = KMLtricontourf3_test % worked in by Thijs
+% TO DO        KMLsurf_tiled_test   % exsperimental
+ j=j+1;OK(j) = KMLtext_test
+% TO DO        KMLtricontour_test
+%j=j+1;OK(j) = KMLtricontourf_test  % still worked on by Thijs
+%j=j+1;OK(j) = KMLtricontourf3_test % still worked on by Thijs
  j=j+1;OK(j) = KMLtrisurf_test
-%j=j+1;OK(j) = KMLfigure_tiler_test % very slow
+ j=j+1;OK(j) = KMLfigure_tiler_test % very slow
 
  %% merge
  j=j+1;OK(j) = KMLmerge_files_test
+ 
  

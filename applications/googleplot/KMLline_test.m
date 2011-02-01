@@ -48,11 +48,6 @@ function testresult = KMLline_test()
 
 disp(['... running test:',mfilename])
 
-%% $Description (Name = KMLline)
-% Publishable code that describes the test.
-
-%% $RunCode
-% Write test code here
 try
     [lat,lon] = meshgrid([51:54],[3:7]);
  
@@ -67,7 +62,3 @@ try
 catch
     testresult = false;
 end
-
-%% $PublishResult
-% Publishable code that describes the test.
-
