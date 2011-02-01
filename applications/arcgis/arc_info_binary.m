@@ -68,7 +68,7 @@ function varargout = arc_info_binary(varargin)
 % Interpret output like this example:
 %
 % Example Collect Output
-%     [x,y,Z,D] = arc_info_binary('base','testfile','collectoutput',false);
+%     [x,y,Z,D] = arc_info_binary('base','testfile','collectoutput',false,'output_mode','nansparse');
 %     for t = 1:D.nTiles
 %         if numel(Z{t})>1
 %             % calculate x y coordinates of points
@@ -172,8 +172,8 @@ OPT.epsg        = 32631; % TO DO: get this from *.prj file, if any
 OPT.clim        = [];
 OPT.data        = 1; % 0 means to get only meta-data and pointers
 OPT.nodatavalue = -realmax('single'); %-3.4028234663852885e+038; % value in arc gis file
-OPT.output_mode = 'auto'; % can be 'normal, 'nansparse' or 'struct'. if set to false, this greatly reduces the memory requirements of this routine.
-OPT.waitbar       = true; % adds a waitbar
+OPT.output_mode = 'normal'; % can be 'normal, 'nansparse' or 'struct'. if set to false, this greatly reduces the memory requirements of this routine.
+OPT.waitbar     = true; % adds a waitbar
 
 %  realmax('single'); = 3.402823e+038
 %  realmin('single'); = 1.175494e-038
