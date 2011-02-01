@@ -49,9 +49,9 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
 
    % deal with colorbar options first
    OPT                    = KMLcolorbar();
+   OPT                    = mergestructs(OPT,KML_header());
    % rest of the options
    OPT.fileName           = '';
-   OPT.kmlName            = '';
    OPT.lineWidth          = 1;
    OPT.lineColor          = [0 0 0];
    OPT.lineAlpha          = 1;
@@ -67,9 +67,6 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
 
    OPT.cLim               = [];
    OPT.zScaleFun          = @(z) (z+20).*5;
-   OPT.timeIn             = [];
-   OPT.timeOut            = [];
-   OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
    OPT.colorbar           = 1;
 
    OPT.precision          = 8;
@@ -143,10 +140,7 @@ end
 
    OPT.fid=fopen(OPT.fileName,'w');
    
-   OPT_header = struct(...
-       'name',OPT.kmlName,...
-       'open',0);
-   output = KML_header(OPT_header);
+   output = KML_header(OPT);
    
    if OPT.colorbar
       clrbarstring = KMLcolorbar(OPT);

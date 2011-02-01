@@ -97,10 +97,9 @@ function varargout = KMLline(lat,lon,varargin)
 
 %% process <keyword,value>
 
+   OPT               = KML_header();
+
    OPT.fileName      = ''; % header/footer are skipped when is a fid = fopen(OPT.fileName,'w')
-   OPT.description   = '';
-   OPT.open          = 0;
-   OPT.kmlName       = [];
    OPT.lineWidth     = 1;
    OPT.lineColor     = [0 0 0];
    OPT.lineAlpha     = 1;
@@ -108,11 +107,7 @@ function varargout = KMLline(lat,lon,varargin)
    OPT.fillColor     = [0 .5 0];
    OPT.fillAlpha     = .4;
    OPT.openInGE      = false;
-   OPT.timeIn        = [];
-   OPT.timeOut       = [];
-   OPT.dateStrStyle  = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
    OPT.is3D          = false;
-   OPT.visible       = true;
    OPT.extrude       = true;
    OPT.tessellate    = ~OPT.is3D;
    OPT.zScaleFun     = @(z) (z+0)*1;

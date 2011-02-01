@@ -68,6 +68,7 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
 
    % deal with colorbar options first
    OPT                    = KMLcolorbar();
+   OPT                    = mergestructs(OPT,KML_header());
    % rest of the options
    OPT.fileName           = '';
    OPT.kmlName            = '';

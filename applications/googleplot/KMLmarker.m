@@ -72,14 +72,11 @@ function varargout = KMLmarker(varargin)
 
 %% process <keyword,value>
 
+OPT                     = KML_header();
+
 OPT.fileName            =  '';
-OPT.kmlName             =  '';
 OPT.openInGE            = false;
 OPT.markerAlpha         =  1;
-OPT.description         =  '';
-OPT.timeIn              = [];
-OPT.timeOut             = [];
-OPT.dateStrStyle        = 'yyyy-mm-ddTHH:MM:SS';
 OPT.html                = [];
 OPT.name                = [];
 OPT.iconnormalState     =  '';
@@ -88,8 +85,6 @@ OPT.scalenormalState    =  0.8;
 OPT.scalehighlightState =  1.0;
 OPT.colornormalState    =  []; % [1 1 0] = yellow
 OPT.colorhighlightState =  [];
-
-OPT.dateStrStyle        = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
 
 if nargin==0
     varargout = {OPT};

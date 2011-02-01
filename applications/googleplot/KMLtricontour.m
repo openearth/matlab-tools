@@ -42,17 +42,16 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
 %% process varargin
    % get colorbar options first
    OPT               = KMLcolorbar();
+   OPT               = mergestructs(OPT,KML_header());
+
    % rest of the options
    OPT.levels        = 10;
    OPT.fileName      = [];
-   OPT.kmlName       = [];
    OPT.lineWidth     = 1;
    OPT.lineAlpha     = 1;
    OPT.openInGE      = false;
    OPT.colorMap      = @(m) jet(m);
    OPT.colorSteps    = [];   
-   OPT.timeIn        = [];
-   OPT.timeOut       = [];
    OPT.is3D          = false;
    OPT.cLim          = [];
    OPT.writeLabels   = true;
@@ -161,12 +160,12 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
        labels     =   zText;
        latText    = latText(~isnan(latText));
        lonText    = lonText(~isnan(lonText));
+       OPT.kmlName  = 'labels';
+       OPT.fileName = [OPT.fileName(1:end-4) 'labels.kml'];
        if OPT.is3D
-           KMLtext(latText,lonText,labels,OPT.zScaleFun(zText),'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
-               'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'labelDecimals',OPT.labelDecimals);
+           KMLtext(latText,lonText,labels,OPT.zScaleFun(zText),'fileName',OPT);
        else
-           KMLtext(latText,lonText,labels,'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
-               'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'labelDecimals',OPT.labelDecimals);
+           KMLtext(latText,lonText,labels,                     'fileName',OPT);
        end
    end
    
@@ -181,11 +180,9 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
    lineColors = colors(level,:);
    
    if OPT.is3D
-       KMLline(lat,lon,OPT.zScaleFun(z),'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,...
-           'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'fillColor',lineColors);
+       KMLline(lat,lon,OPT);
    else
-       KMLline(lat,lon,'fileName',OPT.fileName,'lineColor',lineColors,'lineWidth',OPT.lineWidth,...
-           'timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
+       KMLline(lat,lon,OPT);
    end
 
 %% colorbar

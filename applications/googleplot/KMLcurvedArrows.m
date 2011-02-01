@@ -1,15 +1,19 @@
 function [OPT, Set, Default] = KMLcurvedArrows(x,y,u0,v0,varargin)
 % KMLCURVEDARROWS makes nice curved arrows that 'go with the flow'
 %
-% see the keyword/vaule pair defaults for additional options
+%   KMLcurvedArrows(x,y,u0,v0,varargin)
+%
+% x, y, u0, v0: must be a cell array, each cell with demsions of x and y
+%
+% NOTE: unlike all other GooglePlot functions, this one needs
+% an x and y, and not lat, lon (not order). This is because the particle 
+% tracking is perfomed in(x,y) space, the keryword coordConvFun 
+% determines how to transform the particle tracking results to (lat,lon).
+% also note the order u,v
+%
+% see the keyword/value pair defaults for additional options
 %
 % See also: googlePlot
-%
-% x
-% y
-% u0 must be a cell array, each cell with demsions of x and y
-% v0
-%
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -43,32 +47,32 @@ function [OPT, Set, Default] = KMLcurvedArrows(x,y,u0,v0,varargin)
 % $HeadURL$
 % $Keywords: $
 
-OPT.coordConvFun = @(x,y,EPSG) convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.code',4326);
-OPT.colorSteps   = 9;
-OPT.colorMap     = @(m) colormap_cpt('YlOrRd 09',(m));
-OPT.fileName     = [];
-OPT.kmlName      = [];
-OPT.time         = [1 1000]; %datenum containing begin and end times of animation
-OPT.dateStrStyle = 'yyyy-mm-ddTHH:MM:SS';
+OPT                  = KML_header();
+
+OPT.coordConvFun     = @(x,y,EPSG) convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.code',4326);
+OPT.colorSteps       = 9;
+OPT.colorMap         = @(m) colormap_cpt('YlOrRd 09',(m));
+OPT.fileName         = [];
+OPT.time             = [1 1000]; %datenum containing begin and end times of animation
 
 %% arrow properties
 OPT.hdthck	     = 1.7;              % head thickness
 OPT.arthck	     = OPT.hdthck/4;     % arrow thickness
-OPT.relwdt	     = ones(numel(x),1); % relative width, leave at one
 OPT.dt 		     = 90;               % time (determines length of arrows)
-OPT.nt 		     = numel(x);         % number of gridpoints
-OPT.lifespan  	 = 50;               % number of timesteps an arrow is alive
-OPT.n_arrows 	 = 300;              % number of arrows
-OPT.flow_steps 	 = 4;                % (max is 21)
-OPT.colorScale 	 = .015;
-OPT.lineScale  	 = .02;
-OPT.interp_steps = 1;                % interpolate in time between consecutive arrows
-OPT.open               = 0; % KML_header 
-OPT.visible            = 1; % KML_header
+OPT.lifespan  	     = 50;               % number of timesteps an arrow is alive
+OPT.n_arrows 	     = 300;              % number of arrows
+OPT.flow_steps 	     = 4;                % (max is 21)
+OPT.colorScale 	     = .015;
+OPT.lineScale  	     = .02;
+OPT.interp_steps     = 1;                % interpolate in time between consecutive arrows
 
-if nargin==0
-  return
-end
+OPT.relwdt	     = @(x) ones(numel(x),1);               % relative width, leave at one
+OPT.nt 		     = @(x)numel(x);               % number of gridpoints
+
+if nargin==0;return;end
+
+OPT.relwdt	     = ones(numel(x),1); % relative width, leave at one
+OPT.nt 		     = numel(x);         % number of gridpoints
 
 %% set properties
 [OPT, Set, Default] = setproperty(OPT, varargin{:});

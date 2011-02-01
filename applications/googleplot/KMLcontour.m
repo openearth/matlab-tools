@@ -60,28 +60,25 @@ function varargout = KMLcontour(lat,lon,z,varargin)
 
 % TO DO: implement angle/rotation of Matlab clabels in KML_text()
 
-%% process <keyword,value>
-% get colorbar options first
-OPT               = KMLcolorbar();
-% rest of the options
-OPT.levels        = 10;
-OPT.fileName      = '';
-OPT.kmlName       = '';
-OPT.lineWidth     = 1;
-OPT.lineAlpha     = 1;
-OPT.openInGE      = false;
-OPT.colorMap      = @(m) jet(m); % function(OPT.colorSteps) or an rgb array
-OPT.colorSteps    = 32;
-OPT.timeIn        = [];
-OPT.timeOut       = [];
-OPT.is3D          = false;
-OPT.cLim          = [];
-OPT.writeLabels   = true;
-OPT.colorbar      = 1;
-OPT.labelDecimals = 1;
-OPT.labelInterval = nan; % NaN means clabel is used
-OPT.zScaleFun     = @(z) (z+0)*0;
-OPT.colorbartitle = '';
+   %% process <keyword,value>
+   %  get colorbar and header options first
+   OPT               = KMLcolorbar();
+   OPT               = mergestructs(OPT,KML_header());
+   % rest of the options
+   OPT.levels        = 10;
+   OPT.fileName      = '';
+   OPT.lineWidth     = 1;
+   OPT.lineAlpha     = 1;
+   OPT.openInGE      = false;
+   OPT.colorMap      = @(m) jet(m); % function(OPT.colorSteps) or an rgb array
+   OPT.colorSteps    = 32;
+   OPT.is3D          = false;
+   OPT.cLim          = [];
+   OPT.writeLabels   = true;
+   OPT.colorbar      = 1;
+   OPT.labelDecimals = 1;
+   OPT.labelInterval = nan; % NaN means clabel is used
+   OPT.zScaleFun     = @(z) (z+0)*0;
 
 if nargin==0
     varargout = {OPT};

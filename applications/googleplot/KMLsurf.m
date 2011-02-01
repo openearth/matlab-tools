@@ -62,9 +62,9 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 %% process <keyword,value>
    % get colorbar options first
    OPT                    = KMLcolorbar();
+   OPT                    = mergestructs(OPT,KML_header());
    % rest of the options
    OPT.fileName           = '';
-   OPT.kmlName            = '';
    OPT.lineWidth          = 1;
    OPT.lineColor          = [0 0 0];
    OPT.lineAlpha          = 1;
@@ -79,9 +79,6 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    OPT.cLim               = [];
    OPT.zScaleFun          = @(z) (z+20).*5;
    OPT.colorbar           = 1;
-   OPT.timeIn             = [];
-   OPT.timeOut            = [];
-   OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
    OPT.disp               = 1;
    OPT.CBtemplateHor      = 'KML_colorbar_template_horizontal.png';
    OPT.CBtemplateVer      = 'KML_colorbar_template_vertical.png';
@@ -183,10 +180,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 
    OPT.fid=fopen(OPT.fileName,'w');
    
-   OPT_header = struct(...
-       'name',OPT.kmlName,...
-       'open',0);
-   output = KML_header(OPT_header);
+   output = KML_header(OPT); % only subset of fields
 
    if OPT.colorbar
      [clrbarstring,pngNames] = KMLcolorbar(OPT);

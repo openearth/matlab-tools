@@ -1,10 +1,10 @@
 function varargout = KMLtext(lat,lon,label,varargin)
 % KMLTEXT Just like text 
 %
-%    KMLtext(lat,lon,'fileName',fname,<keyword,value>)
+%    KMLtext(lat,lon,text,'fileName',fname,<keyword,value>)
 %
 % The following see <keyword,value> pairs have been implemented:
-% The first arguemnt can be a z value
+% The first argument can be a z value
 %  'fileName'   = [];          % name of output file. Can be either a *.kml 
 %                              % or *.kmz (zipped *.kml) file. if not  
 %                              % defined a gui pops up
@@ -55,15 +55,11 @@ function varargout = KMLtext(lat,lon,label,varargin)
 
 %% process <keyword,value>
 
+   OPT                     = KML_header();
+
    OPT.fileName            = '';
-   OPT.kmlName             = '';
    OPT.openInGE            = false;
    OPT.markerAlpha         =  0.6;
-   OPT.description         =  '';
-   OPT.open                = 0;
-   OPT.visible             =  1;
-   OPT.timeIn              = [];
-   OPT.timeOut             = [];
   %OPT.textColor           = [];% TO DO
   %OPT.textSize            = [];% TO DO
   %OPT.textAlpha           = [];% TO DO

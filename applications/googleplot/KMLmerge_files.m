@@ -12,15 +12,11 @@ function varargout = KMLmerge_files(varargin)
 
 %% set properties
 
+   OPT                   = KML_header();
    OPT.fileName          = '';
    OPT.sourceFiles       = {};
    OPT.foldernames       = {}; % TO DO check for existing folder names
    OPT.deleteSourceFiles = false;
-
-   OPT.kmlName           = '';
-   OPT.open              = '';
-   OPT.description       = '';
-   OPT.visible           = 1;
 
    [OPT, Set, Default] = setproperty(OPT, varargin{:});
    

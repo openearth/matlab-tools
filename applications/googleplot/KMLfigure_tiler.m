@@ -56,6 +56,8 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 % TO DO: ignore colorbar, if present
 % TO DO: also correct kml if hightest levels < default highestLevel
 
+OPT                    = KML_header();
+
 OPT.ha                 =     []; % handle to axes
 OPT.hf                 =     []; % handle to figure
 OPT.dim                =    256; % tile size in pixels
@@ -65,7 +67,6 @@ OPT.alpha              =      1;
 OPT.fileName           =     []; % relative filename, incl relative subpath
 OPT.basePath           =     ''; % absolute path where to write kml files (will not appear inside kml, those remain relative)
 OPT.baseUrl            =     ''; % absolute url where kml will appear. (A webkml needs absolute url, albeit only needed in the mother KML, local files can have relative paths.)
-OPT.kmlName            =     []; % name in Google Earth Place list
 OPT.logo               =     [];
 OPT.alpha              =      1;
 OPT.minLod             =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
@@ -74,12 +75,8 @@ OPT.maxLod             =     [];
 OPT.maxLod0            =     -1;
 OPT.dWE                =     []; % determines how much extra data to tiles to be able 
 OPT.dNS                =     []; % to generate them as fraction of size of smallest tile
-OPT.timeIn             =     []; % time properties
-OPT.timeOut            =     [];
-OPT.timeFormat        = 'yyyy-mm-ddTHH:MM:SS';
 OPT.drawOrder          =      1; 
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
-OPT.description        =     ''; 
 OPT.colorbar           =   true;
 OPT.CBcolorbarlocation =  {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
 OPT.CBcolorbartitle    =     '';
@@ -91,10 +88,8 @@ OPT.basecode           =     '';
 OPT.highestLevel       =     [];
 OPT.lowestLevel        =     [];
 OPT.debug              =      0;  % display some progress info
-OPT.open               = 0; % KML_header 
-OPT.visible            = 1; % KML_header
-OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
-OPT.CBtemplateVer        = 'KML_colorbar_template_vertical.png';
+OPT.CBtemplateHor      = 'KML_colorbar_template_horizontal.png';
+OPT.CBtemplateVer      = 'KML_colorbar_template_vertical.png';
 
 if nargin==0
   return

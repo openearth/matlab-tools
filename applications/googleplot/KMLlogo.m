@@ -52,11 +52,11 @@ function varargout = KMLlogo(varargin)
 
 %% import
  
+   OPT                  = KML_header();
+
    OPT.fileName         = ''; % header/footer are skipped when is a fid = 0 or fopen(OPT.fileName,'w')
    OPT.logoName         = '';
    OPT.imName           = '';
-   OPT.kmlName          = '';
-   OPT.description      = '';
    OPT.invertblackwhite = 0; % invert black/white
    
    OPT.overlayXY        = [0 0];       % mapping a point in the image specified by <overlayXY> ...

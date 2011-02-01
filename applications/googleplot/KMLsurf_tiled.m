@@ -14,9 +14,9 @@ function KMLsurf_tiled(lat,lon,z,varargin)
 %% process <keyword,value>
    % get colorbar options first
    OPT                    = KMLcolorbar();
+   OPT                     = mergestructs(OPT,KML_header());
    % rest of the options
    OPT.fileName           = '';
-   OPT.kmlName            = '';
    OPT.lineWidth          = 1;
    OPT.lineColor          = [0 0 0];
    OPT.lineAlpha          = 1;

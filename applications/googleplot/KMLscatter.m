@@ -66,15 +66,11 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 
    % get colorbar options first
    OPT                     = KMLcolorbar();
+   OPT                     = mergestructs(OPT,KML_header());
    % rest of the options
    OPT.fileName            =  '';
-   OPT.kmlName             =  '';
    OPT.openInGE            =  0;
    OPT.markerAlpha         =  0.6;
-   OPT.description         =  '';
-   OPT.timeIn              = [];
-   OPT.timeOut             = [];
-   OPT.dateStrStyle        = 'yyyy-mm-ddTHH:MM:SS';
    OPT.html                = [];
    OPT.name                = [];
 
@@ -87,8 +83,6 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    OPT.colorSteps          =  20;
    OPT.cLim                =  [];
    OPT.colorbar            = 1;
-
-   OPT.dateStrStyle        = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times 
 
    if nargin==0
        varargout = {OPT};

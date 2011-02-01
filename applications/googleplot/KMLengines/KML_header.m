@@ -5,17 +5,18 @@ function varargout = KML_header(varargin)
 %
 % where the following <keyword,value> pairs have been implemented:
 %
-%   * name        name that appears in Google Earth Places list (default 'ans.kml')
-%   * description that appears in Google Earth Places list
-%   * open        whether to open kml file in GoogleEarth in call of KMLline(default 0)
-%   * visible     whther by default visible outside GE list item menu
+%   * name         name that appears in Google Earth Places list (default 'ans.kml')
+%   * description  that appears in Google Earth Places list
+%   * open         whether to open kml file in GoogleEarth in call of KMLline(default 0)
+%   * visible      whther by default visible outside GE list item menu
+% 
+%   * cameralon    specify camera viewpoint
+%   * cameralat    specify camera viewpoint
+%   * cameraz      specify camera viewpoint
 %
-%   * lon         specify camera viewpoint
-%   * lat         specify camera viewpoint
-%   * z           specify camera viewpoint
-%
-%   * timeIn      specify timespan of timeslider (datenum or yyyy-mm-ddTHH:MM:SS)
-%   * timeOut     specify timespan of timeslider (datenum or yyyy-mm-ddTHH:MM:SS)
+%   * timeIn       specify timespan of timeslider (datenum or yyyy-mm-ddTHH:MM:SS)
+%   * timeOut      specify timespan of timeslider (datenum or yyyy-mm-ddTHH:MM:SS)
+%   * dateStrStyle how to write time string into kml: dtermines accuracy (default 29)
 %
 % See also: KML_footer, KML_line, KML_poly, KML_style, KML_stylePoly,
 % KML_text, KML_upload
@@ -55,21 +56,25 @@ function varargout = KML_header(varargin)
 %% Properties
 
    OPT.open         = [];
-   OPT.name         = '';
+   OPT.kmlName      = '';
    OPT.description  = '';
    OPT.visible      = 1;
 
-   OPT.lon          = [];
-   OPT.lat          = [];
-   OPT.z            = [];
+   OPT.cameralon    = [];
+   OPT.cameralat    = [];
+   OPT.cameraz      = [];
    
    OPT.timeIn       = [];
    OPT.timeOut      = [];
-   OPT.dateStrStyle = 29;
+   OPT.dateStrStyle = 'yyyy-mm-ddTHH:MM:SSZ';
    
    if nargin==0; varargout = {OPT}; return; end
 
-   OPT = setproperty(OPT,varargin{:});
+   if isstruct(varargin{1})
+      OPT = mergestructs(OPT,varargin{1}); % varargin struct can have field that are not in OPT
+   else
+      OPT = setproperty(OPT,varargin{:}); % varargin struct can NOT have any field that is not in OPT
+   end
 
 %% preproces timespan
 
@@ -77,14 +82,14 @@ function varargout = KML_header(varargin)
    
 %% camera
 
-   if ~(isempty(OPT.lon) | isempty(OPT.lat) | isempty(OPT.z))
+   if ~(isempty(OPT.cameralon) | isempty(OPT.cameralat) | isempty(OPT.cameraz))
       camera = sprintf([...
       '<Camera>\n'...
       '	<longitude>%g</longitude>\n'...
       '	<latitude>%g</latitude>\n'...
       '	<altitude>%g</altitude>\n'...
       '%s'...
-      '</Camera>\n'],OPT.lon,OPT.lat,OPT.z,timeSpan); % timespan only works when also coordinates are supplied
+      '</Camera>\n'],OPT.cameralon,OPT.cameralat,OPT.cameraz,timeSpan); % timespan only works when also coordinates are supplied
    else
       camera = '';
    end
@@ -94,13 +99,13 @@ function varargout = KML_header(varargin)
    output = sprintf([...
     '<?xml version="1.0" encoding="UTF-8"?>\n'...
     '<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">\n'...
-    '<!-- Created with Matlab (R) googlePlot toolbox from OpenEarthTools http://www.OpenEarth.eu-->\n',...
+    '<!-- Created with Matlab (R) googlePlot toolbox $Version$ $Date$ from OpenEarthTools http://www.OpenEarth.eu-->\n',...
     '<Document>\n'...
     '%s'...
     '<name>%s</name>\n'...
     '<description>%s</description>\n'...
     '<visibility>%s</visibility>\n'...
     '<open>%d</open>\n' ],...
-    camera,OPT.name, OPT.description, num2str(OPT.visible), OPT.open);
+    camera,OPT.kmlName , OPT.description, num2str(OPT.visible), OPT.open);
 
    varargout = {output};
