@@ -96,7 +96,7 @@ for i = 1:n
     
     notnan = ~isnan(property);
     
-    if any(notnan)
+    if sum(notnan) > 1
         transects.(OPT.prop)(coords{:}) = interp1(interpolate(notnan), ...
             property(notnan), interpolate);
     end
