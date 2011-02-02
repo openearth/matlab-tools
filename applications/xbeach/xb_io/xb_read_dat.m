@@ -102,14 +102,49 @@ xb = xb_empty();
 % get dir
 if length(fname) > 3 && strcmpi(fname(end-3:end), '.dat')
     fdir = fileparts(fname);
+    % get variable names
+    names = xb_get_vars(fname, 'vars', OPT.vars);
 else
     fdir = fname;
+    % get variable names
+    names = xb_get_vars(fname, 'vars', OPT.vars);
+    % remove files that were not asked for in params.txt
+    inputpars = xb_read_params([fname filesep 'params.txt']);
+    validnames={};
+    % global vars
+    gv = inputpars.data(strcmpi('globalvars',{inputpars.data.name})).value;
+    for i=1:length(gv)
+        validnames{end+1}=gv{i};
+    end
+    % mean vars
+    mv = inputpars.data(strcmpi('meanvars',{inputpars.data.name})).value;
+    for i=1:length(mv)
+        validnames{end+1}=mv{i};
+        validnames{end+1}=mv{i};
+        validnames{end+1}=mv{i};
+        validnames{end+1}=mv{i};
+    end
+    % points
+    pv = inputpars.data(strcmpi('npoints',{inputpars.data.name})).value;
+    for i=1:pv
+        validnames{end+1}=['point' num2str(i,'%03.0f')];
+    end
+    % runup gauges
+    rv = inputpars.data(strcmpi('nrugauge',{inputpars.data.name})).value;
+    for i=1:rv
+        validnames{end+1}=['rugau' num2str(i,'%03.0f')];
+    end
+    % remove things from names
+    rmv=[];
+    for i=1:length(names)
+        if ~ismember(names{i},validnames)
+           rmv(end+1)=i;
+        end
+    end
+    names(rmv)=[];
 end
 
 if isempty(fdir); fdir = fullfile('.', ''); end;
-
-% get variable names
-names = xb_get_vars(fname, 'vars', OPT.vars);
 
 % get dimensions
 dims = xb_read_dims(fdir);
