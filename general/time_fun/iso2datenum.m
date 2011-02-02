@@ -1,7 +1,7 @@
 function varargout = iso2datenum(isounits)
 %ISO2DATENUM   converts date in ISO 8601 units to datenum and zone (beta)
 %
-%    [datenumbers,zone] = iso2datenum(time,isounits)
+%    [datenumbers,zone] = iso2datenum(time)
 %
 % Example:
 %
@@ -10,6 +10,8 @@ function varargout = iso2datenum(isounits)
 %    iso2datenum('1999-1-14 13:12:11Z')
 %    iso2datenum('1999-1-14T13:12:11Z')
 %    iso2datenum('1999-1-14')
+%    iso2datenum('1999-1')    % !!! = datenum(1999, 1, 0), and not datenum(1999, 1, 1)
+%    iso2datenum('1999')      % !!! = datenum(1999, 0, 0), and not datenum(1999, 1, 1)
 %
 %See also: DATENUM, DATESTR, TIMEZONE_CODE2ISO, UDUNITS2DATENUM
 
@@ -50,23 +52,25 @@ function varargout = iso2datenum(isounits)
 % TO DO: implement week option
 % TO DO: implement ordinal date
 
-%% Date
-%--------------------
+%% Date + Time
 
    rest = isounits;
-   [OPT.yyyy ,rest] = strtok(rest,'-:T ');
-   [OPT.mm   ,rest] = strtok(rest,'-:T ');
-   [OPT.dd   ,rest] = strtok(rest,'-:T ');
 
-%% Time
-%--------------------
+   OPT.yyyy   = 0;
+   OPT.mm     = 0;
+   OPT.dd     = 0;
+   OPT.HH     = 0;
+   OPT.MM     = 0;
+   OPT.SS     = 0;
 
-   [OPT.HH   ,rest] = strtok(rest,'-:T ');
-   [OPT.MM   ,rest] = strtok(rest,'-:T ');
-   [OPT.SS   ,rest] = strtok(rest,'-:T ');
+                     [OPT.yyyy ,rest] = strtok(rest,'-:T Z');OPT.yyyy   = str2num(OPT.yyyy);
+   if ~isempty(rest);[OPT.mm   ,rest] = strtok(rest,'-:T Z');OPT.mm     = str2num(OPT.mm  );end
+   if ~isempty(rest);[OPT.dd   ,rest] = strtok(rest,'-:T Z');OPT.dd     = str2num(OPT.dd  );end
+   if ~isempty(rest);[OPT.HH   ,rest] = strtok(rest,'-:T Z');OPT.HH     = str2num(OPT.HH  );end
+   if ~isempty(rest);[OPT.MM   ,rest] = strtok(rest,'-:T Z');OPT.MM     = str2num(OPT.MM  );end
+   if ~isempty(rest);[OPT.SS   ,rest] = strtok(rest,'-:T Z');OPT.SS     = str2num(OPT.SS  );end
    
 %% Zone
-%--------------------
 
    if isempty(OPT.SS)
          zone          = '00:00';
@@ -80,23 +84,11 @@ function varargout = iso2datenum(isounits)
    end
 
 %% Datenum
-%--------------------
-
-   OPT.yyyy   = str2num(OPT.yyyy);
-   OPT.mm     = str2num(OPT.mm  );
-   OPT.dd     = str2num(OPT.dd  );
-   if ~isempty(OPT.HH)
-   OPT.HH     = str2num(OPT.HH  );
-   OPT.MM     = str2num(OPT.MM  );
-   OPT.SS     = str2num(OPT.SS  );
-   else
-   OPT.HH     = 0;
-   OPT.MM     = 0;
-   OPT.SS     = 0;
-   end
    
    datenumber = datenum(OPT.yyyy,OPT.mm,OPT.dd,OPT.HH,OPT.MM,OPT.SS);
    
+%% out
+
    if     nargout<2
         varargout = {datenumber}; 
    elseif nargout==2

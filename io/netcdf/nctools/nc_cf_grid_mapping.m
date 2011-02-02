@@ -88,11 +88,12 @@ OPT.debug = 0;
       try
          switch num2str(epsg)
          case '28992' % here webservice is off !!
-            OPT.proj4_params    = '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.999908 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4174,50.3319,465.5542,-0.398957388243134,0.343987817378283,-1.87740163998045,4.0725 +no_defs'; % note that epsg tables are wrong for 28992, need to specify ellipsoid explicity manually !
+         OPT.proj4_params = '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.999908 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4174,50.3319,465.5542,-0.398957388243134,0.343987817378283,-1.87740163998045,4.0725 +no_defs'; % note that epsg tables are wrong for 28992, need to specify ellipsoid explicity manually !
          otherwise
-            OPT.proj4_params = urlread(['http://spatialreference.org/ref/epsg/',num2str(epsg),'/proj4/']);
+         OPT.proj4_params = urlread(['http://spatialreference.org/ref/epsg/',num2str(epsg),'/proj4/']);
          end
       catch
+         OPT.proj4_params = '';
          warning('cannot get proj4_params, please work online to be able to access http://spatialreference.org')
       end
 
@@ -101,6 +102,7 @@ OPT.debug = 0;
       try
          OPT.wkt = urlread(['http://spatialreference.org/ref/epsg/',num2str(epsg),'/prettywkt/']);
       catch
+         OPT.wkt = '';
          warning('cannot get pretty wkt, please work online to be able to access http://spatialreference.org')
       end
 

@@ -54,7 +54,6 @@ function varargout = udunits2datenum(varargin)
 % 2009 jul 09: added option to pass only 1 string argument [GJdB]
 
 %% Handle input
-% --------------------
 
    if     nargin==1
       if     iscell(varargin{1});celltime =         varargin{1};
@@ -74,7 +73,6 @@ function varargout = udunits2datenum(varargin)
    end   
    
 %% Interpret unit and reference date string
-% --------------------
 
       refdatenum = repmat(nan,[1 length(isounits)]);
    for irow=1:length(isounits)
@@ -97,7 +95,6 @@ function varargout = udunits2datenum(varargin)
    end
    
 %% Output
-% --------------------
 
    if     nargout<2
       varargout = {datenumbers};

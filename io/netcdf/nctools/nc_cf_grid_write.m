@@ -18,13 +18,13 @@ function varargout = nc_cf_grid_write(varargin)
 %
 % The following keywords are optional:
 %
-% * ncols       length of x vector (calculated from x)
-% * nrows       length of y vector (calculated from y)
+% * nrows       length of y vector (size(OPT.val,1))
+% * ncols       length of x vector (size(OPT.val,2))
 % * epsg        when supplied, the full latitude and longitude
 %               matrixes are written to the netCDF file too, calculated
 %               from the x and y, unless you specified them already:
-% * lat
-% * lon
+% * lat         (optionally)
+% * lon         (optionally)
 %
 %See also: ARCGISREAD, ARC_INFO_BINARY, ARCGRIDREAD (in $ mapping toolbox)
 %          SNCTOOLS, NC_CF_GRID
@@ -82,8 +82,9 @@ function varargout = nc_cf_grid_write(varargin)
 
    OPT.dump           = 1;
    OPT.disp           = 10; % stride in progres display
-   OPT.convertperline = 25;  % when memory limitations are present, number of line to convert at once
-   
+   OPT.convertperline = 25; % when memory limitations are present, number of line to convert at once
+   OPT.debug          = 0;  % screendumps when parameters are written
+
 %% User defined meta-info
 
    %% global
@@ -265,37 +266,37 @@ function varargout = nc_cf_grid_write(varargin)
 
 %% 1a Create file
 
-      outputfile = varargin{1};
+      ncfile = varargin{1};
       
-      if ~exist(fileparts(outputfile),'dir')
-         mkdir(fileparts(outputfile))
+      if ~exist(fileparts(ncfile),'dir')
+         mkdir(fileparts(ncfile))
       end
    
-      nc_create_empty (outputfile)
+      nc_create_empty (ncfile)
    
    %% Add overall meta info
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    
-      nc_attput(outputfile, nc_global, 'title'         , OPT.title);
-      nc_attput(outputfile, nc_global, 'institution'   , OPT.institution);
-      nc_attput(outputfile, nc_global, 'source'        , OPT.source);
-      nc_attput(outputfile, nc_global, 'history'       , OPT.history);
-      nc_attput(outputfile, nc_global, 'references'    , OPT.references);
-      nc_attput(outputfile, nc_global, 'email'         , OPT.email);
+      nc_attput(ncfile, nc_global, 'title'         , OPT.title);
+      nc_attput(ncfile, nc_global, 'institution'   , OPT.institution);
+      nc_attput(ncfile, nc_global, 'source'        , OPT.source);
+      nc_attput(ncfile, nc_global, 'history'       , OPT.history);
+      nc_attput(ncfile, nc_global, 'references'    , OPT.references);
+      nc_attput(ncfile, nc_global, 'email'         , OPT.email);
    
-      nc_attput(outputfile, nc_global, 'comment'       , OPT.comment);
-      nc_attput(outputfile, nc_global, 'version'       , OPT.version);
+      nc_attput(ncfile, nc_global, 'comment'       , OPT.comment);
+      nc_attput(ncfile, nc_global, 'version'       , OPT.version);
    						   
-      nc_attput(outputfile, nc_global, 'Conventions'   , 'CF-1.4');
-      nc_attput(outputfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+      nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.4');
+      nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    
-      nc_attput(outputfile, nc_global, 'terms_for_use' , OPT.acknowledge);
-      nc_attput(outputfile, nc_global, 'disclaimer'    , OPT.disclaimer);
+      nc_attput(ncfile, nc_global, 'terms_for_use' , OPT.acknowledge);
+      nc_attput(ncfile, nc_global, 'disclaimer'    , OPT.disclaimer);
       
 %% 2 Create x and y dimensions
    
-      nc_add_dimension(outputfile, OPT.dim.val{1}, OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
-      nc_add_dimension(outputfile, OPT.dim.val{2}, OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
+      nc_add_dimension(ncfile, OPT.dim.val{1}, OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
+      nc_add_dimension(ncfile, OPT.dim.val{2}, OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
 
 %% 3a Create coordinate variables
    
@@ -414,35 +415,35 @@ function varargout = nc_cf_grid_write(varargin)
 %% 4 Create all variables with attibutes
    
       for ifld=1:length(nc)
-         var2evalstr(nc(ifld))
-         nc_addvar(outputfile, nc(ifld));   
+         if OPT.debug;var2evalstr(nc(ifld));end
+         nc_addvar(ncfile, nc(ifld));   
       end
       
 %% 5 Fill all variables
 
       if ~isempty(OPT.x) & ~isempty(OPT.y)
-      nc_varput(outputfile, 'x'         , OPT.x');
-      nc_varput(outputfile, 'y'         , OPT.y');
+      nc_varput(ncfile, 'x'         , OPT.x');
+      nc_varput(ncfile, 'y'         , OPT.y');
       end
       if ~isempty(OPT.lon) & ~isempty(OPT.lat)
-         nc_dump(outputfile)
+         nc_dump(ncfile)
          OPT
       OPT.dim
-      nc_varput(outputfile, 'longitude' , OPT.lon');
-      nc_varput(outputfile, 'latitude'  , OPT.lat');
+      nc_varput(ncfile, 'longitude' , OPT.lon');
+      nc_varput(ncfile, 'latitude'  , OPT.lat');
       end
       if ~isempty(OPT.epsg)
-      nc_varput(outputfile, 'wgs84'     , OPT.wgs84);
-      nc_varput(outputfile, 'epsg'      , OPT.epsg);
+      nc_varput(ncfile, 'wgs84'     , OPT.wgs84);
+      nc_varput(ncfile, 'epsg'      , OPT.epsg);
       end
 
-      nc_varput(outputfile, OPT.varname , OPT.val'); % save x/lon/col as first dimension so ensure correct plotting in ncBrowse
+      nc_varput(ncfile, OPT.varname , OPT.val'); % save x/lon/col as first dimension so ensure correct plotting in ncBrowse
       
       
 %% 6 Check
    
       if OPT.dump
-      nc_dump(outputfile);
+      nc_dump(ncfile);
       end
 
       if nargout==1
