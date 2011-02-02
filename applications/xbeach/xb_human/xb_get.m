@@ -12,6 +12,10 @@ function varargout = xb_get(xb, varargin)
 %   xb          = XBeach structure array
 %   varargin    = Names of variables to be retrieved. If omitted, all
 %                 variables are returned
+%                 propertyname-propertyvalue pairs:
+%                 'type' : type of data requested (by default {'value'}),
+%                 alternatively 'units' or 'dimensions' can be chosen, or
+%                 combinations of those. Note: specify as cell array.
 %
 %   Output:
 %   varargout   = Values of requested variables.
@@ -19,6 +23,7 @@ function varargout = xb_get(xb, varargin)
 %   Example
 %   [zb zs] = xb_get(xb, 'zb', 'zs')
 %   Tp = xb_get(xb, 'bcfile.Tp')
+%   [zb zs] = xb_get(xb, 'zb', 'zs', 'type', {'value' 'units'})
 %
 %   See also xb_set, xb_show
 
@@ -67,6 +72,14 @@ function varargout = xb_get(xb, varargin)
 
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
+OPT = struct(...
+    'type', {{'value'}});
+[OPT varargin] = setproperty_filter(OPT, varargin{:});
+% make sure that type is cell array
+if ischar(OPT.type)
+    OPT.type = {OPT.type};
+end
+
 if isempty(varargin)
     vars = {xb.data.name};
 else
@@ -80,13 +93,22 @@ varargout = num2cell(nan(size(vars)));
 for i = 1:length(vars)
     idx = strcmpi(vars{i}, {xb.data.name});
     if any(idx)
-        varargout{i} = xb.data(idx).value;
+        out = struct;
+        for itype = 1:length(OPT.type)
+            out.(OPT.type{itype}) = xb.data(idx).(OPT.type{itype});
+        end
+        if isscalar(OPT.type) % if only one type is requested
+            % return field contents directly for backward compatibility
+            out = out.(OPT.type{itype});
+        end
+        varargout{i} = out;
     else
         re = regexp(vars{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
         if ~isempty(re)
             sub = xb_get(xb, re.sub);
             if xb_check(sub)
-                varargout{i} = xb_get(sub, re.field);
+                varargout{i} = xb_get(sub, re.field,...
+                    'type', OPT.type);
             end
         end
     end
