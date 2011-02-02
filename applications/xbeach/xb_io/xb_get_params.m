@@ -225,7 +225,7 @@ while ~feof(fid)
                 if icond==1
                     tempcondition=[nowifcondition{icond}];
                 else
-                    tempcondition=[tempcondition ' AND ' nowifcondition{icond}];
+                    tempcondition=[tempcondition ' & ' nowifcondition{icond}];
                 end
             end
             % find other keys
@@ -323,9 +323,9 @@ while ~feof(fid)
         elseif ~isempty(telseif) && ~isempty(tthen)
             nowifcondition{iflevel} = line(8:end-5);
             nowifcondition{iflevel} = convertfort2mat(nowifcondition{iflevel});
-            storeifcondition{iflevel}=[storeifcondition{iflevel} ' AND ' nowifcondition{iflevel}];
+            storeifcondition{iflevel}=[storeifcondition{iflevel} ' & ' nowifcondition{iflevel}];
         elseif ~isempty(telse)
-            nowifcondition{iflevel} = ['NOT[' storeifcondition{iflevel} ']'];
+            nowifcondition{iflevel} = ['~(' storeifcondition{iflevel} ')'];
         elseif ~isempty(tendif)
             nowifcondition(iflevel)=[];
             storeifcondition(iflevel)=[];
@@ -390,9 +390,9 @@ fclose(fid);
     function lineout = convertfort2mat(linein)
         lineout = linein;
         lineout = regexprep(lineout,'trim','');
-        lineout = regexprep(lineout,'\.and\.',' AND ');
-        lineout = regexprep(lineout,'\.not\.',' NOT ');
-        lineout = regexprep(lineout,'\.or\.',' OR ');
+        lineout = regexprep(lineout,'\.and\.',' & ');
+        lineout = regexprep(lineout,'\.not\.',' ~ ');
+        lineout = regexprep(lineout,'\.or\.',' | ');
         lineout = regexprep(lineout,'\.gt\.',' > ');
         lineout = regexprep(lineout,'\.ge\.',' >= ');
         lineout = regexprep(lineout,'\.lt\.',' < ');
