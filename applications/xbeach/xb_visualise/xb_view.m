@@ -284,9 +284,9 @@ function data = ui_getddata(info, vars, varargin)
     data = cell(size(vars));
     
     if ~isempty(varargin) && varargin{1}
-        t = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'))-1;
+        t = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'));
     else
-        t = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'))-1;
+        t = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'));
     end
     
     switch info.type
@@ -377,6 +377,10 @@ function plot_1d(info, data, vars)
                 'DisplayName', vars{i});
         end
     end
+    
+    % include legend at the 'Best' location
+    legend('show',...
+        'Location', 'Best')
 end
 
 function plot_2d(info, data, vars)
