@@ -114,9 +114,18 @@ for i = 1:length({info.Dataset.Name})
     
     [start len stride] = xb_index(info.Dataset(i).Size, OPT.start, OPT.length, OPT.stride);
     
+    % read data
     variables.data(c).name = info.Dataset(i).Name;
     variables.data(c).value = nc_varget(fname, info.Dataset(i).Name, ...
         start, len, stride);
+    
+    % read units, if available
+    unitsid = strcmp('units', {info.Dataset(i).Attribute.Name});
+    if any(unitsid)
+        variables.data(c).units = info.Dataset(i).Attribute(unitsid).Value;
+    end
+    
+    variables.data(c).dimensions = info.Dataset(i).Dimension;
     
     c = c+1;
 end
