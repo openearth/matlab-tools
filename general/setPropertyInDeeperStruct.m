@@ -115,10 +115,10 @@ for iargin = i0:2:iend
         % indicate that this field is set
         Set.(PropertyName) = true;
     elseif any(strcmp(PropertyNames, strtok(PropertyName,'.')))
-        % option is in structure, use eval for everything
-        if ~isequalwithequalnans(eval(['OPT.' PropertyName]), varargin{iargin+1})
+        % option is in structure
+        if ~isequalwithequalnans(OPT.(PropertyName), varargin{iargin+1})
             % only renew property value if it really changes
-            eval(['OPT.'     PropertyName ' = varargin{iargin+1};']);
+            OPT.(PropertyName) = varargin{iargin+1};
             % indicate that this field is non-default now
 %             eval(['Default.' PropertyName ' = false;']);
         end
