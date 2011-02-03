@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = setpropertyInDeeperStruct(OPT, varargin)
+function [OPT, Set, Default] = setPropertyInDeeperStruct(OPT, varargin)
 % SETPROPERTY generic routine to set values in PropertyName-PropertyValue pairs
 %
 % Routine to set properties based on PropertyName-PropertyValue
@@ -95,54 +95,118 @@ if length(varargin) == 1
     end
 end
 
-% Set is similar to OPT, initially all fields are false
-Set = cell2struct(repmat({false}, size(PropertyNames)), PropertyNames);
-% Default is similar to OPT, initially all fields are true
-Default = cell2struct(repmat({true}, size(PropertyNames)), PropertyNames);
-
 %% keyword,value loop
 [i0 iend] = deal(1, length(varargin)); % specify index of first and last element of varargin to search for keyword/value pairs
 for iargin = i0:2:iend
-    PropertyName = varargin{iargin};
-    if any(strcmp(PropertyNames, PropertyName))
-        % set option
-        if ~isequalwithequalnans(OPT.(PropertyName), varargin{iargin+1})
-            % only renew property value if it really changes
-            OPT.(PropertyName) = varargin{iargin+1};
-            % indicate that this field is non-default now
-            Default.(PropertyName) = false;
-        end
-        % indicate that this field is set
-        Set.(PropertyName) = true;
-    elseif any(strcmp(PropertyNames, strtok(PropertyName,'.')))
-        % option is in structure
-        if ~isequalwithequalnans(OPT.(PropertyName), varargin{iargin+1})
-            % only renew property value if it really changes
-            OPT.(PropertyName) = varargin{iargin+1};
-            % indicate that this field is non-default now
-%             eval(['Default.' PropertyName ' = false;']);
-        end
-        % indicate that this field is set
-%         eval(['Set.'         PropertyName ' = true;']);
-    elseif any(strcmpi(PropertyNames, PropertyName))
-        % set option, but give warning that PropertyName is not totally correct
-        realPropertyName = PropertyNames(strcmpi(PropertyNames, PropertyName));
-        if ~isequalwithequalnans(OPT.(realPropertyName{1}), varargin{iargin+1})
-            % only renew property value if it really changes
-            OPT.(realPropertyName{1}) = varargin{iargin+1};
-            % indicate that this field is non-default now
-            Default.(PropertyName) = false;
-        end
-        % indicate that this field is set
-        Set.(realPropertyName{1}) = true;
-        warning([upper(mfilename) ':PropertyName'], ['Could not find an exact (case-sensitive) match for ''' PropertyName '''. ''' realPropertyName{1} ''' has been used instead.'])
-    elseif ischar(PropertyName)
-        % PropertyName unknown
-        error([upper(mfilename) ':UnknownPropertyName'], ['PropertyName "' PropertyName '" is not valid'])
-    else
+    if ~ischar(varargin{iargin})
         % no char found where PropertyName expected
         error([upper(mfilename) ':UnknownPropertyName'], 'PropertyName should be char')
     end
+    PropertyName = regexp(varargin{iargin},'[^\.]*','match');
+    % check if propertyname exists
+    
+    if isfield(OPT,PropertyName{1})
+        fieldExists = true;
+        if length(PropertyName)>1
+            if isfield(OPT.(PropertyName{1}),PropertyName{2})
+                fieldExists = true;
+                if length(PropertyName)>2
+                    if isfield(OPT.(PropertyName{1}).(PropertyName{2}),PropertyName{3})
+                        fieldExists = true;
+                        if length(PropertyName)>3
+                            if isfield(OPT.(PropertyName{1}).(PropertyName{2}).(PropertyName{3}),PropertyName{4})
+                                fieldExists = true;
+                                if length(PropertyName)>4
+                                    error([upper(mfilename) ':InvalidPropertyName'], ['PropertyName "' varargin{iargin} '" is too deep in the structure'])
+                                end
+                            else
+                                fieldExists = false;
+                            end
+                        end
+                    else
+                        fieldExists = false;
+                    end
+                end
+            else
+                fieldExists = false;
+            end
+        end
+    else
+        fieldExists = false;
+    end
+        
+    if fieldExists
+            % option is in structure
+        switch length(PropertyName)
+            case 1
+                if nargout>2
+                    if ~isequalwithequalnans(OPT.(PropertyName{1}), varargin{iargin+1})
+                        % indicate that this field is non-default now
+                        Default.(PropertyName{1}) = false;
+                    end
+                end
+                if nargout>1
+                    % indicate that this field is set
+                    Set.(PropertyName{1}) = true;
+                end
+                OPT.(PropertyName{1}) = varargin{iargin+1};
+            case 2
+                % set option
+                if ~isequalwithequalnans(OPT.(PropertyName{1}).(PropertyName{2}), varargin{iargin+1})
+                    % only renew property value if it really changes
+                    OPT.(PropertyName{1}).(PropertyName{2}) = varargin{iargin+1};
+                    % indicate that this field is non-default now
+                    Default.(PropertyName{1}).(PropertyName{2}) = false;
+                end
+                % indicate that this field is set
+                Set.(PropertyName{1}).(PropertyName{2}) = true;
+            case 3
+                % set option
+                if ~isequalwithequalnans(OPT.(PropertyName{1}).(PropertyName{2}).(PropertyName{3}), varargin{iargin+1})
+                    % only renew property value if it really changes
+                    OPT.(PropertyName{1}).(PropertyName{2}).(PropertyName{3}) = varargin{iargin+1};
+                    % indicate that this field is non-default now
+                    Default.(PropertyName{1}).(PropertyName{2}).(PropertyName{3}) = false;
+                end
+                % indicate that this field is set
+                Set.(PropertyName{1}).(PropertyName{2}).(PropertyName{3}) = true;
+            case 4
+                % set option
+                if ~isequalwithequalnans(OPT.(PropertyName{1}).(PropertyName{2}).(PropertyName{3}).(PropertyName{4}), varargin{iargin+1})
+                    % only renew property value if it really changes
+                    OPT.(PropertyName{1}).(PropertyName{2}).(PropertyName{3}).(PropertyName{4}) = varargin{iargin+1};
+                    % indicate that this field is non-default now
+                    Default.(PropertyName{1}).(PropertyName{2}).(PropertyName{3}).(PropertyName{4}) = false;
+                end
+                % indicate that this field is set
+                Set.(PropertyName{1}).(PropertyName{2}).(PropertyName{3}).(PropertyName{4}) = true;
+            otherwise
+                error([upper(mfilename) ':InvalidPropertyName'], ['PropertyName "' varargin{iargin} '" is too deep in the structure'])
+        end
+    else
+        % PropertyName unknown
+        error([upper(mfilename) ':UnknownPropertyName'], ['PropertyName "' varargin{iargin} '" is not valid'])
+    end
+end
+
+% Set all fields in OPT but not yet in Set to false
+if nargout>1
+    for ii = 1:length(PropertyNames)
+        if ~isfield(Set,PropertyNames{ii})
+            Set.(PropertyNames{ii}) = false;
+        end
+    end
+    Set = orderfields(Set, OPT)
+end
+
+% Set all fields in OPT but not yet in Default to true
+if nargout>2
+    for ii = 1:length(PropertyNames)
+        if ~isfield(Default,PropertyNames{ii})
+            Default.(PropertyNames{ii}) = true;
+        end
+    end
+    Default = orderfields(Default, OPT);
 end
 
 %% EOF
