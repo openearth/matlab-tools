@@ -93,8 +93,9 @@ Set = cell2struct(repmat({false}, size(PropertyNames)), PropertyNames);
 Default = cell2struct(repmat({true}, size(PropertyNames)), PropertyNames);
 
 %%
-% if ~isscalar(varargin)
-charid = find(cellfun(@ischar, varargin));
+% identify strings in varargin (omit last element because this can never be
+% a keyword since there is no room for the corresponding value)
+charid = find(cellfun(@ischar, varargin(1:end-1)));
 % find elements in varargin matching to field names in OPT
 filter_id = strcmpi(fieldnames(OPT), varargin(charid));
 if any(filter_id)
