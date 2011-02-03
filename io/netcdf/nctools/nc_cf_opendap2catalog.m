@@ -43,6 +43,9 @@ function ATT = nc_cf_opendap2catalog(varargin)
 %              'projectionCoverage_y'
 %              'projectionEPSGcode' % from x,y
 %              'dataTypes'
+% 
+%          (iii) Specified 1D variables 
+%                For grids, it is advised to only use the 1D dimension variables x, y,and time
 %
 % from all specified netCDF files and stores them into a
 % struct for storage in netCDF file or mat file.
@@ -111,6 +114,9 @@ OPT.catalog_name   = 'catalog.nc'; % exclude from indexing
 OPT.maxlevel       = 1;
 OPT.separator      = ';'; % for long names
 
+%% List of variables to include
+OPT.varname        = {}; % could be {'x','y','time'}
+
 %% what information (global attributes) to extract
 
 OPT.attname = ...
@@ -175,8 +181,10 @@ if nargin==0;varargout = {OPT};OPT;return;end
 varargout = {OPT};
 nextarg = 1;
 if odd(nargin)
-    OPT.base = varargin{1};
-    nextarg  = 2;
+    if ischar(varargin{1})
+        OPT.base = varargin{1};
+        nextarg  = 2;
+    end
 end
 
 OPT = setproperty(OPT,varargin{nextarg:end});
@@ -215,6 +223,12 @@ for ifld=1:length(OPT.attname)
     end
     
 end
+
+% pre allocate
+for ivar = 1:length(OPT.varname)
+    VAR.(OPT.varname{ivar}) = cell(length(OPT.files),1);
+end
+
 
 %% File loop to get meta-data
 
@@ -393,6 +407,10 @@ for ifile=1:length(OPT.files)
         
     end % idat
     
+%% include variables   
+    for ivar = 1:length(OPT.varname)
+        VAR.(OPT.varname{ivar}){entry} = nc_varget(OPT.filename, OPT.varname{ivar});
+    end
 %% get y actual_range and epsg
     
     [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate');
@@ -444,6 +462,19 @@ for ifld=1:length(OPT.attname)
         if isempty(ATT.(fldname))
             ATT.(fldname) = repmat(' ',[entry 1]);
         end
+    end
+end
+
+%% merge VAR structure in the ATT structure
+for ivar = 1:length(OPT.varname)
+    maxelements = 0;
+    for entry=1:length(OPT.files)
+        maxelements = max(maxelements,numel(VAR.(OPT.varname{ivar}){entry}));
+    end
+    ATT.(OPT.varname{ivar}) = nan(length(OPT.files),maxelements);
+    for entry=1:length(OPT.files)
+        data = VAR.(OPT.varname{ivar}){entry}(:);
+        ATT.(OPT.varname{ivar})(entry,1:length(data)) = data;
     end
 end
 
