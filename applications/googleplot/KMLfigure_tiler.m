@@ -195,13 +195,13 @@ if  ~isempty(OPT.timeIn)
             '<begin>%s</begin>\n'...% OPT.timeIn
             '<end>%s</end>\n'...    % OPT.timeOut
             '</TimeSpan>\n'],...
-            datestr(OPT.timeIn,OPT.timeFormat),datestr(OPT.timeOut,OPT.timeFormat));
+            datestr(OPT.timeIn,OPT.dateStrStyle),datestr(OPT.timeOut,OPT.dateStrStyle));
     else
         OPT.timeSpan = sprintf([...
             '<TimeStamp>\n'...
             '<when>%s</when>\n'...  % OPT.timeIn
             '</TimeStamp>\n'],...
-            datestr(OPT.timeIn,OPT.timeFormat));
+            datestr(OPT.timeIn,OPT.dateStrStyle));
     end
 else
     OPT.timeSpan ='';

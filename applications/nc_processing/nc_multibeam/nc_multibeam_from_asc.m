@@ -242,6 +242,7 @@ if OPT.make
             maxy    = yllcorner + cellsize.*(nrows-1);
             minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex + OPT.xoffset;
             miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey + OPT.yoffset;
+
             
             x      =         xllcorner:cellsize:xllcorner + cellsize*(ncols-1);
             y      = flipud((yllcorner:cellsize:yllcorner + cellsize*(nrows-1))');
@@ -261,14 +262,14 @@ if OPT.make
                         end
                     end
                     
-                            % generate X,Y,Z
-                            x_vector = x0 + (0:(OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex;
-                            y_vector = y0 + (0:(OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey;
+                    % generate X,Y,Z
+                    x_vector = x0 + (0:(OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex;
+                    y_vector = y0 + (0:(OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey;
                     
                     [X,Y]    = meshgrid(x_vector,y_vector);
                     Z = nan(size(X));
                     Z(...
-                        find(y_vector  >=y(iy(end)),1,'last'):-1:find(y_vector  <=y(iy(1)),1,'first'),...
+                        find(y_vector  <=y(iy(1)),1,'last'):-1:find(y_vector  >=y(iy(end)),1,'first'),...
                         find(x_vector  >=x(ix(1)),1,'first'):find(x_vector  <=x(ix(end)),1,'last')) = flipud(z);
                     
                     if any(~isnan(Z(:)))
