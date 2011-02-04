@@ -186,7 +186,7 @@ H.units          = {};
          
       %try
       
-         RAW = bct_io('read',fname);
+         RAW = d3dbct_io('read',fname);
          D   = disunpack(RAW);
          
          D.ReferenceTime = D.data(1).ReferenceTime; % datestr(D.refdatenum,'yyyymmdd');
@@ -277,7 +277,7 @@ function iostat=Local_write(fname,DIS,varargin),
    %% ----------------------
 
    RAW = dispack(DIS,OPT);
-   bct_io('write',fname,RAW);
+   d3dbct_io('write',fname,RAW);
    iostat = 1;
    
 end % function iostat=Local_write(fname,DAT,varargin),
