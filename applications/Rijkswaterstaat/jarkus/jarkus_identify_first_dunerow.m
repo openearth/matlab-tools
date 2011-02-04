@@ -73,6 +73,7 @@ function varargout = jarkus_identify_first_dunerow(x, z, varargin)
 %%
 OPT = struct(...
     'min_crest_level', 5,...
+    'lowerboundary', 0,...
     'min_volume', 60);
 
 OPT = setproperty(OPT, varargin{:});
@@ -82,7 +83,7 @@ OPT = setproperty(OPT, varargin{:});
 [x z] = nanremove(x, z);
 
 % loop over z levels in steps of 20cm
-z_levels = 0:.2:max(z);
+z_levels = OPT.lowerboundary:.2:max(z);
 
 % pre-allocate the landward and seaward boundaries for each z-level
 landwardboundary = ones(size(z_levels)) * min(x);
