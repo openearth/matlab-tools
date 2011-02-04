@@ -7,7 +7,8 @@ if OPT.copy2server
     end
     nc_cf_opendap2catalog('urlPathFcn',@(s) strrep (strrep (s,OPT.basepath_local,OPT.basepath_opendap),filesep,'/'),...
         'base',fullfile(OPT.basepath_local,OPT.netcdf_path),...
-        'save',true);
+        'save',true,...
+        'varname',{'x','y','time'});
 else
     if OPT.make
         if exist(fullfile(OPT.basepath_local,OPT.netcdf_path,'catalog.nc'),'file')
@@ -15,7 +16,8 @@ else
         end
         nc_cf_opendap2catalog(...
             'base',fullfile(OPT.basepath_local,OPT.netcdf_path),...
-            'save',true);
+            'save',true,...
+            'varname',{'x','y','time'});
         multiWaitbar('Raw data to NetCDF',1,'label','Generating NC files')
     end
 end
