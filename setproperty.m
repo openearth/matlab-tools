@@ -81,24 +81,25 @@ function [OPT, Set, Default] = setproperty(OPT, varargin)
 % Created: 26 Feb 2009
 % Created with Matlab version: 7.4.0.287 (R2007a)
 
-% $Id: setproperty.m 2616 2010-05-26 09:06:00Z geer $
-% $Date: 2010-05-26 11:06:00 +0200 (wo, 26 mei 2010) $
-% $Author: geer $
-% $Revision: 2616 $
-% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/setproperty.m $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %% input
 PropertyNames = fieldnames(OPT); % read PropertyNames from structure fieldnames
 
-if length(varargin) == 1
-    % to prevent errors when this function is called as 
-    % "OPT = setproperty(OPT, varargin);" instead of 
-    % "OPT = setproperty(OPT, varargin{:})"
+if isscalar(varargin)
     if isstruct(varargin{1})
-       OPT2     = varargin{1};
-       varargin = reshape([fieldnames(OPT2)'; struct2cell(OPT2)'], 1, 2*length(fieldnames(OPT2)));
-    else
+        % apply properties of second OPT structure to the original one
+        OPT2     = varargin{1};
+        varargin = reshape([fieldnames(OPT2)'; struct2cell(OPT2)'], 1, 2*length(fieldnames(OPT2)));
+    elseif iscell(varargin{1})
+        % to prevent errors when this function is called as
+        % "OPT = setproperty(OPT, varargin);" instead of
+        % "OPT = setproperty(OPT, varargin{:})"
        varargin = varargin{1};
     end
 end

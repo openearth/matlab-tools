@@ -98,6 +98,10 @@ precision = 0;
 [xcr zcr xn zn] = findCrossings(x(:), z(:) - OPT.lowerboundary,...
     [min(x) max(x)], zeros(1,2), 'synchronizegrids');
 
+if isempty(xcr)
+    xerosionpoint = NaN;
+    return
+end
 
 % derive the grid size
 diffX = diff(xn);
