@@ -203,7 +203,7 @@ function PushDrawTrack_CallBack(hObject,eventdata)
 handles=getHandles;
 
 ddb_zoomOff;
-h=findall(gcf,'Tag','HurricaneTrack');
+h=findobj(gcf,'Tag','HurricaneTrack');
 set(h,'HitTest','off');
 
 hnd.t0=floor(now);
@@ -222,6 +222,8 @@ hnd.hol=handles.Toolbox(tb).Input.Holland;
 hnd=ddb_getInitialHurricaneTrackParameters(hnd);
 
 if hnd.ok
+
+    [x,y,h]=UIPolyline(gca,'draw','Tag','HurricaneTrack','Marker','o','Callback',@changeHurricanePolygon,'closed',0);
 
     [x,y]=DrawPolyline('g',1.5,'o','r');
     if ~isempty(h)
