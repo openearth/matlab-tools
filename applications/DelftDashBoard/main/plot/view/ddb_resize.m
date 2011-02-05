@@ -37,7 +37,7 @@ set(handles.GUIHandles.mapAxis,'Position',[1 1 pos(3)-5 pos(4)-5]);
 % Now change size of colorbar
 pos=[posp(3)-35 20 20 posp(4)-50];
 set(handles.GUIHandles.colorBarPanel,'Position',pos);
-pos=[1 1 16 posp(4)-54];
+pos=[2 2 15 posp(4)-55];
 set(handles.GUIHandles.colorBar,'Position',pos);
 
 % Now change size of coordinate system text
