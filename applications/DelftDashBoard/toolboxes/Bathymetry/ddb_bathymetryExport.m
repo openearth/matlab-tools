@@ -119,23 +119,13 @@ function PushDrawPolygon_Callback(hObject,eventdata)
 
 handles=getHandles;
 ddb_zoomOff;
-h=findall(gcf,'Tag','BathymetryPolygon');
-set(h,'HitTest','off');
-
-[x,y]=DrawPolyline('g',1.5,'o','r');
+h=findobj(gcf,'Tag','BathymetryPolygon');
 
 if ~isempty(h)
     delete(h);
 end
 
-if ~isempty(x)
-    handles.Toolbox(tb).PolygonX=x;
-    handles.Toolbox(tb).PolygonY=y;
-    handles.Toolbox(tb).PolygonX(end+1)=x(1);
-    handles.Toolbox(tb).PolygonY(end+1)=y(1);
-end
-
-DrawBathymetryPolygon(handles);
+UIPolyline(gca,'draw','Tag','BathymetryPolygon','Marker','o','Callback',@changePolygon,'closed',1);
 
 setHandles(handles);
 
@@ -147,67 +137,19 @@ handles=getHandles;
 handles.Toolbox(tb).PolygonX=[];
 handles.Toolbox(tb).PolygonY=[];
 
-DrawBathymetryPolygon(handles);
-
-setHandles(handles);
-
-
-%%
-function DrawBathymetryPolygon(handles)
-
-h=findall(gcf,'Tag','BathymetryPolygon');
+h=findobj(gcf,'Tag','BathymetryPolygon');
 if ~isempty(h)
     delete(h);
 end
-z=zeros(size(handles.Toolbox(tb).PolygonX))+100;
-if ~isempty(handles.Toolbox(tb).PolygonX)
-    h=plot3(handles.Toolbox(tb).PolygonX,handles.Toolbox(tb).PolygonY,z,'g');
-    set(h,'LineWidth',1.5);
-    set(h,'Tag','BathymetryPolygon');
-    set(h,'HitTest','off');
-    for i=1:length(handles.Toolbox(tb).PolygonX)
-        h=plot3(handles.Toolbox(tb).PolygonX(i),handles.Toolbox(tb).PolygonY(i),200,'ro');
-        set(h,'MarkerEdgeColor','r','MarkerFaceColor','r','MarkerSize',4);
-        set(h,'ButtonDownFcn',{@MoveVertex});
-        set(h,'Tag','BathymetryPolygon');
-        set(h,'UserData',i);
-    end
-end
 
-%%
-function MoveVertex(imagefig, varargins)
-set(gcf, 'windowbuttonmotionfcn', {@FollowTrack});
-set(gcf, 'windowbuttonupfcn',     {@StopTrack});
-h=get(gcf,'CurrentObject');
-ii=get(h,'UserData');
-set(0,'UserData',ii);
-
-%%
-function FollowTrack(imagefig, varargins)
-handles=getHandles;
-pos = get(gca, 'CurrentPoint');
-xi=pos(1,1);
-yi=pos(1,2);
-ii=get(0,'UserData');
-handles.Toolbox(tb).PolygonX(ii)=xi;
-handles.Toolbox(tb).PolygonY(ii)=yi;
-if ii==1
-    handles.Toolbox(tb).PolygonX(end)=xi;
-    handles.Toolbox(tb).PolygonY(end)=yi;
-end
-if ii==length(handles.Toolbox(tb).PolygonX)
-    handles.Toolbox(tb).PolygonX(1)=xi;
-    handles.Toolbox(tb).PolygonY(1)=yi;
-end
-DrawBathymetryPolygon(handles);
 setHandles(handles);
-ddb_updateCoordinateText('arrow');
 
 %%
-function StopTrack(imagefig, varargins)
-ddb_setWindowButtonUpDownFcn;
-ddb_setWindowButtonMotionFcn;
-set(0,'UserData',[]);
+function changePolygon(x,y)
+handles=getHandles;
+handles.Toolbox(tb).PolygonX=x;
+handles.Toolbox(tb).PolygonY=y;
+setHandles(handles);
 
 %%
 function RefreshAll(handles)
@@ -226,12 +168,15 @@ set(handles.SelectZoomLevel,'String',zstr);
 
 if isempty(handles.Bathymetry.Dataset(ii).RefinementFactor)
 
-    dg=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).GridCellSize(1);
-    mn=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).GridCellSize(2);
-    sc=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).GridCellSize(3);
+%     dg=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).GridCellSize(1);
+%     mn=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).GridCellSize(2);
+%     sc=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).GridCellSize(3);
     
-    cellSize=dms2degrees([dg mn sc]);
-    cellSize=cellSize*100000;
+    cellSize=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).dx;
+%     cellSize=dms2degrees([dg mn sc]);
+    if strcmpi(handles.Bathymetry.Dataset(ii).HorizontalCoordinateSystem.Type,'Geographic')
+        cellSize=cellSize*100000;
+    end
 
     str=['Cell Size : ~ ' num2str(cellSize,'%10.0f') ' m'];
 %    str=['Cell Size : ' num2str(dg) 'd ' num2str(mn) 'm ' num2str(sc) 's'];
@@ -249,11 +194,16 @@ else
 %     end
 %     cellSizes=tileSizes/nCell;
 %     cellSize=cellSizes(jj);
+
     
-    cellSize=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).dx;
+    cellSizeX=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).dx;
+    cellSizeY=handles.Bathymetry.Dataset(ii).ZoomLevel(jj).dy;
+    
 %     ym=mean(handles.Toolbox(tb).PolygonY);
     if strcmpi(handles.Bathymetry.Dataset(ii).HorizontalCoordinateSystem.Type,'geographic')
-        cellSize=cellSize*100000;
+        cellSize=0.5*(cellSizeX+cellSizeY)*100000;
+    else
+        cellSize=0.5*(cellSizeX+cellSizeY);
     end
 
     str=['Cell Size : ~ ' num2str(cellSize,'%10.0f') ' m'];
