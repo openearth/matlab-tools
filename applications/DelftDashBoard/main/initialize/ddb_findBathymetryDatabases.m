@@ -117,6 +117,9 @@ for i=1:handles.Bathymetry.NrDatasets
                     handles.Bathymetry.Dataset(i).ZoomLevel(k).iAvailable=double(iav{k});
                     handles.Bathymetry.Dataset(i).ZoomLevel(k).jAvailable=double(jav{k});
                 end
+                
+                handles.Bathymetry.Dataset(i).RefinementFactor=round(double(dx(2))/double(dx(1)));
+
             end     
     end
 end
