@@ -264,7 +264,7 @@ switch lower(tp)
         end
         callbacks={@ChangeICTable};
         coltp={'editreal'};
-        table(gcf,'ictable','create','position',[440 30],'nrrows',5,'columntypes',coltp,'width',70,'data',data,'callbacks',callbacks,'includenumbers');
+        table2(gcf,'ictable','create','position',[440 30],'nrrows',5,'columntypes',coltp,'width',70,'data',data,'callbacks',callbacks,'includenumbers');
         set(handles.GUIHandles.TextValue,'Visible','on');
     otherwise
 end
