@@ -1,6 +1,8 @@
-function ddb_DelftD3FLOW_dryPoints(opt)
+function ddb_DelftD3FLOW_dryPoints(varargin)
 
-if isempty(opt)
+handles=getHandles;
+
+if isempty(varargin)
     % Dry points tab selected
     ddb_refreshScreen2;
     if handles.Model(md).Input(ad).nrDryPoints>0
@@ -8,134 +10,67 @@ if isempty(opt)
     end
 else
     switch(lower(opt))
+
         case{'add'}
-            pushAddDryPoint;
+            ddb_zoomOff;
+            handles=getHandles;
+            handles.Mode='a';
+            setHandles(handles);
+            set(gcf, 'windowbuttondownfcn',{@DragLine,@addDryPoint,'free'});
+
         case{'plot'}
+            n=handles.Model(md).Input(ad).activeDryPoint;
             ddb_Delft3DFLOW_plotAttributes(handles,'DryPoints','plot',ad,n,n);
+
         case{'delete'}
+            ddb_zoomOff;
+            handles=getHandles;
+            handles.Mode='d';
+            setHandles(handles);
+            if handles.GUIData.DeleteSelectedDryPoint==1 && handles.Model(md).Input(ad).nrDryPoints>0
+                handles=deleteDryPoint(handles);
+                setHandles(handles);
+            end
+            ddb_deleteDelft3DFLOWObject(ad,'DryPoint',@DeleteObject);
+
+        case{'edit'}
+            n=handles.Model(md).Input(ad).activeDryPoint;
+            handles.Model(md).Input(ad).dryPointNames{n}=['(' num2str(handles.Model(md).Input(ad).DryPoints(n).M1) ...
+                ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N1) ')...('          ...
+                num2str(handles.Model(md).Input(ad).DryPoints(n).M2) ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N2) ')'];
+            setHandles(handles);
+            setUIElement('delft3dflow.domain.drypoints.listdrypoints');
+            ddb_Delft3DFLOW_plotAttributes('DryPoints','plot',ad,n,n);
+
+        case{'select'}
+            ddb_zoomOff;
+            handles.Mode='s';
+            setHandles(handles);
+            set(gcf, 'windowbuttondownfcn',   {@selectDryPoint});
+            set(gcf, 'windowbuttonmotionfcn', []);
+
+        case{'change'}
+            pushChangeDryPoint;
     end
 end
 
-%%
-function ListDryPoints_CallBack(hObject,eventdata)
-handles=getHandles;
-handles.GUIData.ActiveDryPoint=get(hObject,'Value');
-RefreshDryPoints(handles);
-handles.GUIData.DeleteSelectedDryPoint=1;
 setHandles(handles);
-set(gcf, 'windowbuttondownfcn',[]);
-set(gcf, 'windowbuttonmotionfcn',[]);
-ddb_plotFlowAttributes(handles,'DryPoints','activate',ad,0,handles.GUIData.ActiveDryPoint);
-
-%%
-function EditDryM1_CallBack(hObject,eventdata)
-handles=getHandles;
-n=get(handles.GUIHandles.ListDryPoints,'Value');
-handles.Model(md).Input(ad).DryPoints(n).M1=str2double(get(hObject,'String'));
-handles.Model(md).Input(ad).DryPoints(n).Name=['(' num2str(handles.Model(md).Input(ad).DryPoints(n).M1) ...
-    ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N1) ')...('          ...
-    num2str(handles.Model(md).Input(ad).DryPoints(n).M2) ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N2) ')'];
-set(handles.ListDryPoints,'String',handles.Model(md).Input(ad).DryPoints.Name);
-guidata(hObject, handles);
-handles.GUIData.DeleteSelectedDryPoint=0;
-setHandles(handles);
-set(gcf, 'windowbuttondownfcn',[]);
-set(gcf, 'windowbuttonmotionfcn',[]);
-ddb_plotFlowAttributes(handles,'DryPoints','plot',ad,n,n);
-
-%%
-function EditDryM2_CallBack(hObject,eventdata)
-handles=getHandles;
-n=get(handles.GUIHandles.ListDryPoints,'Value');
-handles.Model(md).Input(ad).DryPoints(n).M2=str2double(get(hObject,'String'));
-handles.Model(md).Input(ad).DryPoints(n).Name=['(' num2str(handles.Model(md).Input(ad).DryPoints(n).M1) ...
-    ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N1) ')...('          ...
-    num2str(handles.Model(md).Input(ad).DryPoints(n).M2) ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N2) ')'];
-set(handles.ListDryPoints,'String',handles.Model(md).Input(ad).DryPoints.Name);
-guidata(hObject, handles);
-handles.GUIData.DeleteSelectedDryPoint=0;
-setHandles(handles);
-set(gcf, 'windowbuttondownfcn',[]);
-set(gcf, 'windowbuttonmotionfcn',[]);
-ddb_plotFlowAttributes(handles,'DryPoints','plot',ad,n,n);
-
-%%
-function EditDryN1_CallBack(hObject,eventdata)
-handles=getHandles;
-n=get(handles.GUIHandles.ListDryPoints,'Value');
-handles.Model(md).Input(ad).DryPoints(n).N1=str2double(get(hObject,'String'));
-handles.Model(md).Input(ad).DryPoints(n).Name=['(' num2str(handles.Model(md).Input(ad).DryPoints(n).M1) ...
-    ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N1) ')...('          ...
-    num2str(handles.Model(md).Input(ad).DryPoints(n).M2) ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N2) ')'];
-set(handles.ListDryPoints,'String',handles.Model(md).Input(ad).DryPoints.Name);
-guidata(hObject, handles);
-handles.GUIData.DeleteSelectedDryPoint=0;
-setHandles(handles);
-set(gcf, 'windowbuttondownfcn',[]);
-set(gcf, 'windowbuttonmotionfcn',[]);
-ddb_plotFlowAttributes(handles,'DryPoints','plot',ad,n,n);
-
-%%
-function EditDryN2_CallBack(hObject,eventdata)
-handles=getHandles;
-n=get(handles.GUIHandles.ListDryPoints,'Value');
-handles.Model(md).Input(ad).DryPoints(n).N2=str2double(get(hObject,'String'));
-handles.Model(md).Input(ad).DryPoints(n).Name=['(' num2str(handles.Model(md).Input(ad).DryPoints(n).M1) ...
-    ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N1) ')...('          ...
-    num2str(handles.Model(md).Input(ad).DryPoints(n).M2) ',' num2str(handles.Model(md).Input(ad).DryPoints(n).N2) ')'];
-set(handles.ListDryPoints,'String',handles.Model(md).Input(ad).DryPoints.Name);
-guidata(hObject, handles);
-handles.GUIData.DeleteSelectedDryPoint=0;
-setHandles(handles);
-set(gcf, 'windowbuttondownfcn',[]);
-set(gcf, 'windowbuttonmotionfcn',[]);
-ddb_plotFlowAttributes(handles,'DryPoints','plot',ad,n,n);
-
-%%
-function pushAddDryPoint
-ddb_zoomOff;
-handles=getHandles;
-handles.Mode='a';
-setHandles(handles);
-set(gcf, 'windowbuttondownfcn',{@DragLine,@addDryPoint,'free'});
-
-%%
-function PushDeleteDryPoint_CallBack(hObject,eventdata)
-ddb_zoomOff;
-handles=getHandles;
-handles.Mode='d';
-setHandles(handles);
-if handles.GUIData.DeleteSelectedDryPoint==1 && handles.Model(md).Input(ad).NrDryPoints>0
-    handles=DeleteDryPoint(handles);
-    setHandles(handles);
-end
-ddb_deleteDelft3DFLOWObject(ad,'DryPoint',@DeleteObject);
 
 %%
 function DeleteObject(ii)
 handles=getHandles;
 handles.GUIData.ActiveDryPoint=ii;
 set(handles.GUIHandles.ListDryPoints,'Value',ii);
-handles=DeleteDryPoint(handles);
+handles=deleteDryPoint(handles);
 setHandles(handles);
 
 %%
-function PushChangeDryPoint_CallBack(hObject,eventdata)
+function pushChangeDryPoint
 ddb_zoomOff;
 handles=getHandles;
 handles.Mode='c';
 setHandles(handles);
 set(gcf, 'windowbuttondownfcn',   {@SelectDryPoint});
-
-%%
-function PushSelectDryPoint_CallBack(hObject,eventdata)
-ddb_zoomOff;
-handles=getHandles;
-handles.Mode='s';
-setHandles(handles);
-set(gcf, 'windowbuttondownfcn',   {@SelectDryPoint});
-%set(gcf, 'windowbuttonmotionfcn', {@movemouse});
-set(gcf, 'windowbuttonmotionfcn', []);
 
 %%
 function PushOpenDryPoints_CallBack(hObject,eventdata)
@@ -169,7 +104,7 @@ handles.GUIData.DeleteSelectedDryPoint=0;
 setHandles(handles);
 
 %%
-function SelectDryPoint(hObject,eventdata)
+function selectDryPoint
 
 handles=getHandles;
 pos = get(gca, 'CurrentPoint');
@@ -215,35 +150,37 @@ x1=x(1);x2=x(2);
 y1=y(1);y2=y(2);
 
 handles=getHandles;
+% Find grid indices of start and end point of line
 [m1,n1]=FindGridCell(x1,y1,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
 [m2,n2]=FindGridCell(x2,y2,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
+% Check if start and end are in one grid line
 if m1>0 && (m1==m2 || n1==n2)
     if handles.Mode=='a'
-        nrdry=handles.Model(md).Input(ad).NrDryPoints+1;
-        handles.Model(md).Input(ad).NrDryPoints=nrdry;
+        % Add mode
+        nrdry=handles.Model(md).Input(ad).nrDryPoints+1;
+        handles.Model(md).Input(ad).nrDryPoints=nrdry;
     elseif handles.Mode=='c'
-        nrdry=handles.GUIData.ActiveDryPoint;
+        % Change mode
+        nrdry=handles.Model(md).Input(ad).activeDryPoint;
     end
     handles.Model(md).Input(ad).DryPoints(nrdry).M1=m1;
     handles.Model(md).Input(ad).DryPoints(nrdry).N1=n1;
     handles.Model(md).Input(ad).DryPoints(nrdry).M2=m2;
     handles.Model(md).Input(ad).DryPoints(nrdry).N2=n2;
     handles.Model(md).Input(ad).DryPoints(nrdry).Name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
-    handles.GUIData.ActiveDryPoint=nrdry;
-    RefreshDryPoints(handles);
+    handles.Model(md).Input(ad).dryPointNames{nrdry}=handles.Model(md).Input(ad).DryPoints(nrdry).Name;
+    handles.Model(md).Input(ad).activeDryPoint=nrdry;
     handles.GUIData.DeleteSelectedDryPoint=0;
     setHandles(handles);
-    if handles.Mode=='a'
-        ddb_plotFlowAttributes(handles,'DryPoints','plot',ad,nrdry,nrdry);
-    elseif handles.Mode=='c'
-        ddb_plotFlowAttributes(handles,'DryPoints','plot',ad,nrdry,nrdry);
-        set(gcf, 'windowbuttondownfcn',   {@SelectDryPoint});
+    ddb_Delft3DFLOW_plotAttributes('DryPoints','plot',ad,nrdry,nrdry);
+    if handles.Mode=='c'
+        set(gcf, 'windowbuttondownfcn',   {@selectDryPoint});
     end
 end
 setHandles(handles);
 
 %%
-function handles=DeleteDryPoint(handles)
+function handles=deleteDryPoint(handles)
 
 id=ad;
 nrdry=handles.Model(md).Input(id).NrDryPoints;
@@ -268,50 +205,7 @@ end
 handles.Model(md).Input(id).NrDryPoints=handles.Model(md).Input(id).NrDryPoints-1;
 if handles.Model(md).Input(id).NrDryPoints>0
     if handles.GUIData.ActiveDryPoint==handles.Model(md).Input(id).NrDryPoints+1
-        handles.GUIData.ActiveDryPoint-1;
+        handles.GUIData.ActiveDryPoint=handles.GUIData.ActiveDryPoint-1;
     end
 end
 RefreshDryPoints(handles);
-
-%%
-function RefreshDryPoints(handles)
-
-id=ad;
-nr=handles.Model(md).Input(id).NrDryPoints;
-n=handles.GUIData.ActiveDryPoint;
-if nr>0
-    for k=1:nr
-        str{k}=handles.Model(md).Input(id).DryPoints(k).Name;
-    end
-    set(handles.GUIHandles.ListDryPoints,'Value',n);
-    set(handles.GUIHandles.ListDryPoints,'String',str);
-    set(handles.GUIHandles.EditDryM1,'String',handles.Model(md).Input(id).DryPoints(n).M1);
-    set(handles.GUIHandles.EditDryN1,'String',handles.Model(md).Input(id).DryPoints(n).N1);
-    set(handles.GUIHandles.EditDryM2,'String',handles.Model(md).Input(id).DryPoints(n).M2);
-    set(handles.GUIHandles.EditDryN2,'String',handles.Model(md).Input(id).DryPoints(n).N2);
-    set(handles.GUIHandles.EditDryM1,'Enable','on','BackgroundColor',[1 1 1]);
-    set(handles.GUIHandles.EditDryN1,'Enable','on','BackgroundColor',[1 1 1]);
-    set(handles.GUIHandles.EditDryM2,'Enable','on','BackgroundColor',[1 1 1]);
-    set(handles.GUIHandles.EditDryN2,'Enable','on','BackgroundColor',[1 1 1]);
-    set(handles.GUIHandles.TextM1,   'Enable','on');
-    set(handles.GUIHandles.TextN1,   'Enable','on');
-    set(handles.GUIHandles.TextM2,   'Enable','on');
-    set(handles.GUIHandles.TextN2,   'Enable','on');
-else
-    set(handles.GUIHandles.EditDryM1,'Enable','off','BackgroundColor',[0.8 0.8 0.8]);
-    set(handles.GUIHandles.EditDryN1,'Enable','off','BackgroundColor',[0.8 0.8 0.8]);
-    set(handles.GUIHandles.EditDryM2,'Enable','off','BackgroundColor',[0.8 0.8 0.8]);
-    set(handles.GUIHandles.EditDryN2,'Enable','off','BackgroundColor',[0.8 0.8 0.8]);
-    set(handles.GUIHandles.TextM1,   'Enable','off');
-    set(handles.GUIHandles.TextN1,   'Enable','off');
-    set(handles.GUIHandles.TextM2,   'Enable','off');
-    set(handles.GUIHandles.TextN2,   'Enable','off');
-    set(handles.GUIHandles.ListDryPoints,'String','');
-    set(handles.GUIHandles.ListDryPoints,'Value',1);
-    set(handles.GUIHandles.EditDryM1,'String',[]);
-    set(handles.GUIHandles.EditDryN1,'String',[]);
-    set(handles.GUIHandles.EditDryM2,'String',[]);
-    set(handles.GUIHandles.EditDryN2,'String',[]);
-end
-
-
