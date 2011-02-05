@@ -17,4 +17,4 @@ runid='tst';
 
 handles=ddb_initializeUnibestCLInput(handles,runid);
 
-set(handles.GUIHandles.Menu.Model.UnibestCL,'Enable','off');
+set(handles.GUIHandles.Menu.Model.UnibestCL,'Enable','on');
