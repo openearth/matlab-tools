@@ -66,39 +66,24 @@ if length(earthx)>1
     r(isnan(zz))=1;
     g(isnan(zz))=1;
     b(isnan(zz))=1;
-
+    
     cdata=[];
     cdata(:,:,1)=r;
     cdata(:,:,2)=g;
     cdata(:,:,3)=b;
+    
+    
+
+%     % Get tile data
+%     zmlev=3;
+%     [xx,yy,cdata]=ddb_getimagetile(xmin,xmax,ymin,ymax,zmlev);
 
     cdata=min(cdata,0.999);
     cdata=max(cdata,0.001);
-
-    tic
-%     if ~isempty(h)
-        set(h,'XData',xx,'YData',yy,'CData',cdata);
-%     else
-%         h=image(xx,yy,cdata);hold on;
-%         set(h,'Tag','BackgroundBathymetry');
-%     end
+        
+    set(h,'XData',xx,'YData',yy,'CData',cdata);
     set(gca,'YDir','normal');
     
-    % if length(h)>0
-    %     delete(h);
-    % end
-    % [img, lon, lat] = url2image('tile2img',[xmin xmax],[ymin ymax], 4,'lonlat', 'yes');
-    %
-    % sz=size(img);
-    % dlon=(lon(2)-lon(1))/sz(1);
-    % dlat=(lat(2)-lat(1))/sz(2);
-    % x=lon(1):dlon:lon(2)-dlon;
-    % y=lat(1):dlat:lat(2)-dlat;
-    %
-    % h=image(x,y,img);
-    % set(h,'Tag','BackgroundBathymetry');
-    % yd=get(h,'YData')
-
     if strcmp(get(handles.GUIHandles.Menu.View.BackgroundBathymetry,'Checked'),'on')
         set(h,'Visible','on');
     else
