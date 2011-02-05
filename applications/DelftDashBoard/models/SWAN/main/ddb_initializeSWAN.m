@@ -16,4 +16,4 @@ runid='tst';
 
 handles=ddb_initializeDelft3DWAVEInput(handles,1,runid); % make internal stuff same as for Delft3DWAVE
 
-set(handles.GUIHandles.Menu.Model.SWAN,'Enable','off');
+% set(handles.GUIHandles.Menu.Model.SWAN,'Enable','off');
