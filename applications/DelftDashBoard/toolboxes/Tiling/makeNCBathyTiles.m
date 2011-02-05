@@ -1,7 +1,16 @@
 function makeNCBathyTiles(fname1,dr,dataname,nrzoom,nx,ny,OPT)
 
 [ncols,nrows,x00,y00,dx0]=readArcInfo(fname1,'info');
-[x,y,z]=readArcInfo(fname1);
+
+pbyp=0;
+
+if ncols*nrows>25000000
+    % Too large, read piece by piece...
+    pbyp=1;
+else
+    % Read in one go!
+    [x,y,z]=readArcInfo(fname1);
+end
 
 imaketiles=1;
 imakemeta=1;
@@ -67,7 +76,17 @@ if imaketiles
                     j2=min(j2,nrows);
                     
                     zz=nan(ny,nx);
-                    zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));
+                    
+                    if pbyp
+                        % Read data piece by piece
+%                        [x,y,z]=readArcInfo(fname1,'columns',[j1 j2],'rows',[i1 i2],'x',xx,'y',yy);
+                        [x,y,zz]=readArcInfo(fname1,'x',xx,'y',yy);
+%                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z);
+                    else
+                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));
+                    end
+                    
+%                    zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));
                     zz=single(zz);
                     zz=zz';
                     fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
