@@ -474,7 +474,7 @@ if OPT.make
                     else
                         OPT2.timeIn    = datenums(iDate);
                         OPT2.timeSpan  = sprintf(...
-                            '<TimeSpan><when>%s</when></TimeSpan>\n',...OPT2.timeIn
+                            '<TimeStamp><when>%s</when></TimeStamp>\n',...OPT2.timeIn
                             datestr(OPT2.timeIn,OPT2.dateStrStyle));
                     end
                     OPT2.drawOrder = datenums(iDate);
