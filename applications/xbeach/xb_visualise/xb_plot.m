@@ -368,6 +368,11 @@ for i = 1:size(vars,1)
 end
 
 ax = findobj(pObj, 'Type', 'Axes');
+cax = findobj(pObj, 'Type', 'Axes','Tag','Colorbar');
+% we don't want the colorbar
+if ~isempty(cax)
+    ax(ax==cax)=[];
+end
 
 % set time in title
 if strcmpi(get(findobj(pObj, 'Tag', 'Slider2'), 'Enable'), 'on')
