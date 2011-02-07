@@ -48,7 +48,7 @@ function varargout = nc_multibeam_from_asc(varargin)
 % $Keywords: $
 
 %%
-OPT.block_size          = 3e6;
+OPT.block_size          = 1e7;
 OPT.make                = true;
 OPT.copy2server         = false;
 
