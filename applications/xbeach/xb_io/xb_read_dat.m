@@ -112,27 +112,35 @@ else
     inputpars = xb_read_params([fname filesep 'params.txt']);
     validnames={};
     % global vars
-    gv = inputpars.data(strcmpi('globalvars',{inputpars.data.name})).value;
-    for i=1:length(gv)
-        validnames{end+1}=gv{i};
+    if ~isempty(inputpars.data(strcmpi('globalvars',{inputpars.data.name})))
+        gv = inputpars.data(strcmpi('globalvars',{inputpars.data.name})).value;
+        for i=1:length(gv)
+            validnames{end+1}=gv{i};
+        end
     end
     % mean vars
-    mv = inputpars.data(strcmpi('meanvars',{inputpars.data.name})).value;
-    for i=1:length(mv)
-        validnames{end+1}=mv{i};
-        validnames{end+1}=mv{i};
-        validnames{end+1}=mv{i};
-        validnames{end+1}=mv{i};
+    if ~isempty(inputpars.data(strcmpi('meanvars',{inputpars.data.name})))
+        mv = inputpars.data(strcmpi('meanvars',{inputpars.data.name})).value;
+        for i=1:length(mv)
+            validnames{end+1}=mv{i};
+            validnames{end+1}=mv{i};
+            validnames{end+1}=mv{i};
+            validnames{end+1}=mv{i};
+        end
     end
     % points
-    pv = inputpars.data(strcmpi('npoints',{inputpars.data.name})).value;
-    for i=1:pv
-        validnames{end+1}=['point' num2str(i,'%03.0f')];
+    if ~isempty(inputpars.data(strcmpi('npoints',{inputpars.data.name})))
+        pv = inputpars.data(strcmpi('npoints',{inputpars.data.name})).value;
+        for i=1:pv
+            validnames{end+1}=['point' num2str(i,'%03.0f')];
+        end
     end
     % runup gauges
-    rv = inputpars.data(strcmpi('nrugauge',{inputpars.data.name})).value;
-    for i=1:rv
-        validnames{end+1}=['rugau' num2str(i,'%03.0f')];
+    if ~isempty(inputpars.data(strcmpi('nrugauge',{inputpars.data.name})))
+        rv = inputpars.data(strcmpi('nrugauge',{inputpars.data.name})).value;
+        for i=1:rv
+            validnames{end+1}=['rugau' num2str(i,'%03.0f')];
+        end
     end
     % remove things from names
     rmv=[];
