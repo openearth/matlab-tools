@@ -117,9 +117,11 @@ if length(OPT.factor)<length(OPT.vars)
 end
 
 XBdims=xb_read_dims(OPT.dir);
-nt=XBdims.nt;
-x=XBdims.x;
-y=XBdims.y;
+nt=XBdims.globaltime;
+x=XBdims.globalx_DATA;
+y=XBdims.globaly_DATA;
+[x,y]=meshgrid(x,y);
+x=x';y=y';
 
 OPT.stoptime=min(OPT.stoptime,nt);
 
@@ -135,7 +137,7 @@ try
     fclose(fidzb0);
 catch
     warning ('No zb output file found to plot')
-    zb0=NaN(size(x));
+    zb0=NaN(size(x'));
 end
 
 if strcmpi(OPT.output,'avi');
