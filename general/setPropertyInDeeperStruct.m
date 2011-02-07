@@ -196,7 +196,7 @@ if nargout>1
             Set.(PropertyNames{ii}) = false;
         end
     end
-    Set = orderfields(Set, OPT)
+    Set = orderfields(Set, OPT);
 end
 
 % Set all fields in OPT but not yet in Default to true
