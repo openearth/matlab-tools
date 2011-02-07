@@ -21,6 +21,7 @@ handles.Model(md).Input(id).NrCrossSections=0;
 handles.Model(md).Input(id).NrDischarges=0;
 handles.Model(md).Input(id).NrObservationPoints=0;
 handles.Model(md).Input(id).NrDrogues=0;
+handles.Model(md).Input(id).nrDryPoints=0;
 
 handles.Model(md).Input(id).dryPointNames={''};
 handles.Model(md).Input(id).activeDryPoint=1;

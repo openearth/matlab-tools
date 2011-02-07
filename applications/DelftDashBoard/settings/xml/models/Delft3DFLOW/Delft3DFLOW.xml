@@ -18,12 +18,12 @@
         <tab>
           <tag>description</tag>
           <tabstring>Description</tabstring>
-          <callback>ddb_editD3DFlowDescription</callback>
+          <elements>Delft3DFLOW.description.xml</elements>
         </tab>
         <tab>
           <tag>domain</tag>
           <tabstring>Domain</tabstring>
-          <callback>ddb_editD3DFlowDomain</callback>
+          <elements>Delft3DFLOW.domain.xml</elements>
         </tab>
         <tab>
           <tag>timeframe</tag>

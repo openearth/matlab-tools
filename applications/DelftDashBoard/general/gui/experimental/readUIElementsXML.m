@@ -22,6 +22,8 @@ if isfield(xml,'elements')
         s.elements(k).tag              = getnodeval(elxml(k).element,'tag',[],'string');
         s.elements(k).name             = getnodeval(elxml(k).element,'name',[],'string');
         s.elements(k).customCallback   = getnodeval(elxml(k).element,'callback',[],'function');
+        s.elements(k).option1          = getnodeval(elxml(k).element,'option1',[],'string');
+        s.elements(k).option2          = getnodeval(elxml(k).element,'option2',[],'string');
         s.elements(k).onChangeCallback = getnodeval(elxml(k).element,'onchange',[],'function');
         s.elements(k).dependees        = [];
         s.elements(k).dependencies     = [];

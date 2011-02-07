@@ -1,7 +1,5 @@
 function elements=addUIElements(figh,elements,varargin)
 
-subFields=[];
-subIndices=[];
 getFcn=[];
 setFcn=[];
 parent=figh;
@@ -265,27 +263,27 @@ for i=1:length(elements)
             
             case{'edit'}
                 if ~isempty(elements(i).customCallback)
-                    set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback});
+                    set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
                 else
                     set(elements(i).handle,'Callback',{@edit_Callback,getFcn,setFcn,elements,i});
                 end
                 
             case{'checkbox'}
                 if ~isempty(elements(i).customCallback)
-                    set(elements(i).handle,'Callback',elements(i).customCallback);
+                    set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
                 else
                     set(elements(i).handle,'Callback',{@checkbox_Callback,getFcn,setFcn,elements,i});
                 end
                 
             case{'radiobutton'}
                 if ~isempty(elements(i).customCallback)
-                    set(elements(i).handle,'Callback',elements(i).customCallback);
+                    set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
                 else
                     set(elements(i).handle,'Callback',{@radiobutton_Callback,getFcn,setFcn,elements,i});
                 end
                 
             case{'pushbutton'}
-                set(elements(i).handle,'Callback',elements(i).customCallback);
+                set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
                 
             case{'table'}
                 % Get handles from table
@@ -304,7 +302,7 @@ for i=1:length(elements)
                 
             case{'listbox'}
                 if ~isempty(elements(i).customCallback)
-                    set(elements(i).handle,'Callback',elements(i).customCallback);
+                    set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
                 else
                     set(elements(i).handle,'Callback',{@listbox_Callback,getFcn,setFcn,elements,i});
                 end
@@ -357,7 +355,7 @@ updateUIDependees(elements,i,getFcn)
 
 if ~isempty(el.onChangeCallback)
     % Execute on-change callback
-    feval(el.onChangeCallback);
+    feval(el.onChangeCallback,el.option1,el.option2);
 end
 
 %%
@@ -376,7 +374,7 @@ updateUIDependees(elements,i,getFcn)
 
 if ~isempty(el.onChangeCallback)
     % Execute on-change callback
-    feval(el.onChangeCallback);
+    feval(el.onChangeCallback,el.option1,el.option2);
 end
 
 %%
@@ -407,7 +405,7 @@ else
     
     if ~isempty(el.onChangeCallback)
         % Execute on-change callback
-        feval(el.onChangeCallback);
+        feval(el.onChangeCallback,el.option1,el.option2);
     end
     
 end
@@ -439,7 +437,7 @@ if ~isempty(str{1})
     
     if ~isempty(el.onChangeCallback)
         % Execute on-change callback
-        feval(el.onChangeCallback);
+        feval(el.onChangeCallback,el.option1,el.option2);
     end
 end
 
@@ -472,7 +470,7 @@ if pathname~=0
     
     if ~isempty(el.onChangeCallback)
         % Execute on-change callback
-        feval(el.onChangeCallback);
+        feval(el.onChangeCallback,el.option1,el.option2);
     end
     
 end
@@ -511,12 +509,12 @@ updateUIDependees(elements,i,getFcn)
 
 if ~isempty(el.onChangeCallback)
     % Execute on-change callback
-    feval(el.onChangeCallback);
+    feval(el.onChangeCallback,el.option1,el.option2);
 end
 
 %%
-function custom_Callback(hObject,eventdata,callback)
-feval(callback);
+function custom_Callback(hObject,eventdata,callback,option1,option2)
+feval(callback,option1,option2);
 
 %%
 function setTextPosition(tx,pos,textpos)

@@ -18,4 +18,8 @@ for i=1:length(v.subFields)
     end
 end
 varname=v.name;
+try
 val=hh.(varname);
+catch
+    shite=5;
+end

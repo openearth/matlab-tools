@@ -30,8 +30,9 @@ for id=n1:n2
         ddb_plotFlowAttributes(handles,'CrossSections',opt,id,0,1);
     end
 
-    if handles.Model(imd).Input(id).NrDryPoints>0
-        ddb_plotFlowAttributes(handles,'DryPoints',opt,id,0,1);
+    if handles.Model(imd).Input(id).nrDryPoints>0
+        handles=ddb_Delft3DFLOW_plotDryPoints(handles,opt,'active',1,'domain',id);
+%        ddb_plotFlowAttributes(handles,'DryPoints',opt,id,0,1);
     end
 
     if handles.Model(imd).Input(id).NrOpenBoundaries>0

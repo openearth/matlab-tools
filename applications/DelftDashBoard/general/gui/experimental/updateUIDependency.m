@@ -54,7 +54,10 @@ for iac=ii1:ii2
             case{'all'}
                 ok=1;
                 for k=1:length(dependency.checks)
+                    try
                     val=getSubFieldValue(s,dependency.checks(k).variable);
+                    catch
+                    end
                     if ischar(val)
                         if ~strcmpi(val,dependency.checks(k).value)
                             ok=0;
@@ -136,7 +139,7 @@ for iac=ii1:ii2
                 turnOff(element);
             end
         case{'update'}
-            setUIElement(element.handle);
+            setUIElement(element.handle,'dependencyupdate',0);
     end
         
 end

@@ -1,4 +1,15 @@
-function setUIElement(th)
+function setUIElement(th,varargin)
+
+dependencyUpdate=1;
+
+for i=1:length(varargin)
+    if ischar(lower(varargin{i}))
+        switch lower(varargin{i})
+            case{'dependencyupdate'}
+                dependencyUpdate=varargin{i+1};
+        end
+    end
+end
 
 % Check whether input is handle or tag
 if ischar(th)
@@ -12,6 +23,7 @@ getFcn=getappdata(h,'getFcn');
 el=getappdata(h,'element');
 
 s=feval(getFcn);
+
 
 switch lower(el.style)
     
@@ -136,3 +148,6 @@ switch lower(el.style)
         table(el.handle,'setdata',data);
 end
 
+if dependencyUpdate
+    updateUIDependency(el,0,getFcn);
+end
