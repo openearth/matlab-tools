@@ -75,7 +75,7 @@ function mask = meris_mask(l2_flags,bits,varargin),
    
    for ibit=1:length(bits)
    
-      bit = bits(ibit);
+      bit = bits(ibit); % for MERIS the codes are identical to the the 0-based bit!
       
       if OPT.disp
          disp(['meris_mask: removed bit ',num2str(bit),' : ',flags.name{find(bit==flags.bit)}])
