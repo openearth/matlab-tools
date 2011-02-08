@@ -1,7 +1,7 @@
-function mask = seawifs_mask(l2_flags,bits,varargin),
-%SEAWIFS_MASK  makes one mask from multiple SeaWiFS flags.
+function mask = modis_mask(l2_flags,bits,varargin),
+%MODIS_MASK  makes one mask from multiple SeaWiFS flags.
 %
-% mask = seawifs_mask(l2_flags,bits,<keyword,value>)
+% mask = modis_mask(l2_flags,bits,<keyword,value>)
 %
 % where l2_flags  is an integer array as read by SEAWIFS_L2_READ, 
 %       bits      are the bit numbers to be REMOVED from the image 
@@ -12,7 +12,7 @@ function mask = seawifs_mask(l2_flags,bits,varargin),
 %
 % Example to remove land, clouds and ice:
 %
-% SAT.mask     = seawifs_mask(SAT.l2_flags,[2 10]);
+% SAT.mask     = modis_mask(SAT.l2_flags,[2 10]);
 %
 %See also: BITAND, SEAWIFS_FLAGS, SEAWIFS_L2_READ, DEC2BIN, BIN2DEC, MERIS_MASK
  
