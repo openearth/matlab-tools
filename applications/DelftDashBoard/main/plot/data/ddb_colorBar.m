@@ -30,7 +30,8 @@ switch lower(opt)
         handles.GUIHandles.colorBar=clrbar;
         setHandles(handles);
     case{'update'}
-        axes(handles.GUIHandles.colorBar);
+        set(handles.GUIHandles.MainWindow,'CurrentAxes',handles.GUIHandles.colorBar);
+%        axes(handles.GUIHandles.colorBar);
         cla;
         colormap=varargin{1};
         clim=get(handles.GUIHandles.mapAxis,'CLim');
@@ -60,5 +61,5 @@ switch lower(opt)
         pos(4)=ppos(4)-50;
         set(handles.GUIHandles.colorBar,'Position',pos);
 end
+set(handles.GUIHandles.MainWindow,'CurrentAxes',handles.GUIHandles.mapAxis);
 
-axes(handles.GUIHandles.mapAxis);

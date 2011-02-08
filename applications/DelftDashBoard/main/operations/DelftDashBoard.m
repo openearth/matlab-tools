@@ -89,13 +89,19 @@ ddb_initialize('startup');
 
 handles=getHandles;
 
+% Make Figure Visible
+set(handles.GUIHandles.MainWindow,'Visible','on');
+
 % Maximize Figure
 maximize(handles.GUIHandles.MainWindow);
 
 % set(gcf,'Renderer','Painters');
 
-% Make Figure Visible
-set(handles.GUIHandles.MainWindow,'Visible','on');
+% drawnow;
+% pause(1);
+
+
+%drawnow;
 
 % Close Splash Screen
 frame.hide;

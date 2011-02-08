@@ -128,9 +128,19 @@ for iac=ii1:ii2
     switch lower(dependency.action)
         case{'enable'}
             if ok
-                enableElement(element);
+                switch element.style
+                    case{'table'}
+                        table(element.handle,'refresh','enable',zeros(element.nrRows,length(element.columns))+1);
+                    otherwise
+                        enableElement(element);
+                end
             else
-                disableElement(element);
+                switch element.style
+                    case{'table'}
+                        table(element.handle,'refresh','enable',zeros(element.nrRows,length(element.columns)));
+                    otherwise
+                        disableElement(element);
+                end
             end
         case{'on'}
             if ok

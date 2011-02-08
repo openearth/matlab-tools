@@ -86,6 +86,10 @@ switch lower(action)
         tb=varargin{1};
         data=varargin{3};
         changeTable(tb,data);
+    case{'refresh'}
+        % set data
+        tb=varargin{1};
+        refreshTable(tb,varargin);
 end
 
 %%
@@ -385,8 +389,8 @@ a=varargin;
 if ~isempty(a)
     b=varargin{1};
     varg=b{1};
+    varg=a{1};
 end
-
 enab=[];
 
 for i=1:length(varg)

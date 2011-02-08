@@ -227,15 +227,14 @@ end
                             case{'pushbutton'}
                                 data{k,j}=[];
                             case{'text'}
-                                data{k,j}=' ';
-                                
+                                data{k,j}=' ';                                
                                 
                         end
                     end
                 end
                 
                 elements(i).handle=table(gcf,'create','tag',tag,'parent',parent,'data',data,'position',position,'nrrows',nrrows,'columntypes',cltp,'width',width,'callbacks',callbacks, ...
-                    'includebuttons',inclb,'includenumbers',incln);
+                    'includebuttons',inclb,'includenumbers',incln,'format',format);
 
         end
     catch

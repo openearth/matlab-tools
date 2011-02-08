@@ -31,6 +31,8 @@ handles.GUIHandles.mapAxis=ax;
 % Adding colorbar
 setHandles(handles);
 ddb_colorBar('make');
+set(gcf,'Visible','off');
+
 handles=getHandles;
 
 % Coordinate text

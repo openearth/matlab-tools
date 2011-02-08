@@ -22,7 +22,7 @@ if nargin>1
                                 disp(['Loading navigation charts ' lst(i).name ' ...']);
                                 s=load([handles.ToolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat']);
                                 handles.Toolbox(ii).Databases{k}=lst(i).name;
-                                handles.Toolbox(ii).Charts(k)=s;
+                                handles.Toolbox(ii).Charts(k).Box=s.Box;
                         end
                     end
                 end

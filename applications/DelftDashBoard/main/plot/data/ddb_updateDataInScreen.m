@@ -30,3 +30,4 @@ setHandles(handles);
 setptr(gcf,pnt);
 
 set(gcf,'windowbuttonmotionfcn',motfcn);
+

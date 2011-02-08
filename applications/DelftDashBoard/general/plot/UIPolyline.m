@@ -15,6 +15,7 @@ maxPoints=10000;
 txt=[];
 callback=[];
 closed=0;
+userdata=[];
 
 % Not generic yet! DDB specific.
 windowbuttonupdownfcn=@ddb_setWindowButtonUpDownFcn;
@@ -43,6 +44,8 @@ for i=1:length(varargin)
                 tag=varargin{i+1};
             case{'callback'}
                 callback=varargin{i+1};
+            case{'userdata'}
+                userdata=varargin{i+1};
             case{'x'}
                 x=varargin{i+1};
             case{'y'}
@@ -100,8 +103,12 @@ switch lower(opt)
         set(gcf, 'windowbuttonmotionfcn', {@moveMouse,h});
         
     case{'plot'}
+        h=plot3(0,0,9000);
         setappdata(h,'callback',callback);
+        set(h,'userdata',userdata);
         setappdata(h,'tag',tag);        
+        setappdata(h,'x',x);
+        setappdata(h,'y',y);
         setappdata(h,'color',lineColor);
         setappdata(h,'width',lineWidth);
         setappdata(h,'marker',marker);
@@ -113,7 +120,7 @@ switch lower(opt)
         setappdata(h,'closed',closed);
         setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);        
-        drawPolyline(h);
+        drawPolyline(h,'nocallback');
 
     case{'delete'}
         ch=getappdata(h,'children');
@@ -123,7 +130,12 @@ switch lower(opt)
 end
 
 %%
-function drawPolyline(h)
+function drawPolyline(h,varargin)
+
+opt='withcallback';
+if ~isempty(varargin)
+    opt=varargin{1};
+end
 
 x=getappdata(h,'x');
 y=getappdata(h,'y');
@@ -140,6 +152,7 @@ txt=getappdata(h,'text');
 callback=getappdata(h,'callback');
 ax=getappdata(h,'axes');
 closed=getappdata(h,'closed');
+userdata=get(h,'userdata');
 windowbuttonupdownfcn=getappdata(h,'windowbuttonupdownfcn');
 windowbuttonmotionfcn=getappdata(h,'windowbuttonmotionfcn');
 
@@ -162,6 +175,7 @@ if ~isempty(x)
     setappdata(h,'markersize',markerSize);
     setappdata(h,'maxpoints',maxPoints);
     setappdata(h,'text',txt);
+    set(h,'userdata',userdata);
     setappdata(h,'callback',callback);
     setappdata(h,'x',x);
     setappdata(h,'y',y);
@@ -181,8 +195,8 @@ if ~isempty(x)
     end
     setappdata(h,'children',mh);
     
-    if ~isempty(callback)
-        feval(callback,x,y);
+    if ~isempty(callback) && strcmpi(opt,'withcallback')
+        feval(callback,x,y,h);
     end
 end
         
@@ -328,6 +342,8 @@ h=get(gcf,'CurrentObject');
 p=getappdata(h,'parent');
 buttonUpDownFcn=getappdata(p,'windowbuttonupdownfcn');
 buttonMotionFcn=getappdata(p,'windowbuttonmotionfcn');
+feval(buttonUpDownFcn);
+feval(buttonMotionFcn);
 x=getappdata(p,'x');
 y=getappdata(p,'y');
 ch=getappdata(p,'children');
@@ -345,10 +361,9 @@ setappdata(p,'y',y);
 set(p,'XData',x,'YData',y);
 set(ch(nr),'XData',x(nr),'YData',y(nr));
 
+
 callback=getappdata(p,'callback');
 if ~isempty(callback)
-    feval(callback,x,y);
+    feval(callback,x,y,h);
 end
-feval(buttonUpDownFcn);
-feval(buttonMotionFcn);
 

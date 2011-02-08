@@ -34,11 +34,14 @@ else
     else
         error(['Local data directory ''' ddbdir ''' not found, check reference in ini-file!']);
     end
+    
+    additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
 end
 
 handles.BathyDir=[ddbdir 'bathymetry' filesep];
 handles.TideDir=[ddbdir 'tidemodels' filesep];
 handles.ToolBoxDir=[ddbdir 'toolbox' filesep];
+handles.additionalToolboxDir=additionalToolboxDir;
 handles.ShorelineDir=[ddbdir 'shorelines' filesep];
 
 if isdeployed
