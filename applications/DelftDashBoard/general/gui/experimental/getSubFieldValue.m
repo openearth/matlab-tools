@@ -1,6 +1,10 @@
 function val=getSubFieldValue(s,v)
-
-hh=s;
+val=[];
+try
+    hh=s;
+catch
+    shite=8
+end
 
 for i=1:length(v.subFields)
     name=v.subFields(i).subField.name;
@@ -23,3 +27,7 @@ val=hh.(varname);
 catch
     shite=5;
 end
+% if ~exist(val)
+%     shite=9;
+% end
+

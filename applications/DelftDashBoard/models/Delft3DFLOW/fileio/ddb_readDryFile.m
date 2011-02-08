@@ -19,4 +19,4 @@ for i=1:length(m1);
     handles.Model(md).Input(ad).DryPoints(i).N2=n2(i);
     handles.Model(md).Input(ad).DryPoints(i).Name=['(' num2str(m1(i)) ',' num2str(n1(i)) ')...(' num2str(m2(i)) ',' num2str(n2(i)) ')'];
 end
-handles.Model(md).Input(ad).NrDryPoints=length(m1);
+handles.Model(md).Input(ad).nrDryPoints=length(m1);

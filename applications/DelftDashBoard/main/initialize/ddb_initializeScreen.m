@@ -31,6 +31,8 @@ set(ax,'NextPlot','replace');
 set(ax,'Position',[70 200 870 440]);
 handles.GUIHandles.Axis=ax;
 
+handles.GUIHandles.textAnn=annotation('textbox',[0.02 0.02 0.4 0.2]);
+
 handles.ScreenParameters.CMin=-10000;
 handles.ScreenParameters.CMax=10000;
 handles.ScreenParameters.AutomaticColorLimits=1;

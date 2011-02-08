@@ -21,14 +21,32 @@ handles.Model(md).Input(id).NrCrossSections=0;
 handles.Model(md).Input(id).NrDischarges=0;
 handles.Model(md).Input(id).NrObservationPoints=0;
 handles.Model(md).Input(id).NrDrogues=0;
-handles.Model(md).Input(id).nrDryPoints=0;
 
+%% Dry points
+handles.Model(md).Input(id).nrDryPoints=0;
 handles.Model(md).Input(id).dryPointNames={''};
 handles.Model(md).Input(id).activeDryPoint=1;
 handles.Model(md).Input(id).DryPoints(1).M1=[];
 handles.Model(md).Input(id).DryPoints(1).M2=[];
 handles.Model(md).Input(id).DryPoints(1).N1=[];
 handles.Model(md).Input(id).DryPoints(1).N2=[];
+handles.Model(md).Input(id).addDryPoint=0;
+handles.Model(md).Input(id).selectDryPoint=0;
+handles.Model(md).Input(id).deleteDryPoint=0;
+handles.Model(md).Input(id).changeDryPoint=0;
+
+%% Thin dams
+handles.Model(md).Input(id).nrThinDams=0;
+handles.Model(md).Input(id).thinDamNames={''};
+handles.Model(md).Input(id).activeThinDam=1;
+handles.Model(md).Input(id).ThinDams(1).M1=[];
+handles.Model(md).Input(id).ThinDams(1).M2=[];
+handles.Model(md).Input(id).ThinDams(1).N1=[];
+handles.Model(md).Input(id).ThinDams(1).N2=[];
+handles.Model(md).Input(id).addThinDam=0;
+handles.Model(md).Input(id).selectThinDam=0;
+handles.Model(md).Input(id).deleteThinDam=0;
+handles.Model(md).Input(id).changeThinDam=0;
 
 handles.Model(md).Input(id).NrAstro=0;
 handles.Model(md).Input(id).NrHarmo=0;

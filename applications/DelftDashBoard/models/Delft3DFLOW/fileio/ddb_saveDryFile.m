@@ -1,7 +1,7 @@
 function ddb_saveDryFile(handles,id)
 
 fid=fopen(handles.Model(md).Input(id).DryFile,'w');
-for i=1:handles.Model(md).Input(id).NrDryPoints
+for i=1:handles.Model(md).Input(id).nrDryPoints
     m1=handles.Model(md).Input(id).DryPoints(i).M1;
     n1=handles.Model(md).Input(id).DryPoints(i).N1;
     m2=handles.Model(md).Input(id).DryPoints(i).M2;

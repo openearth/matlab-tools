@@ -2,46 +2,46 @@
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
-    <tag>listdrypoints</tag>
+    <tag>listthindams</tag>
     <style>listbox</style>
     <position>10 10 150 105</position>
-    <tooltipstring>Select dry point</tooltipstring>
-    <text>Dry Points</text>
+    <tooltipstring>Select thin dam</tooltipstring>
+    <text>Thin Dams</text>
     <textposition>above-center</textposition>
     <variable>
-      <name>activeDryPoint</name>
+      <name>activeThinDam</name>
       <type>integer</type>
     </variable>
     <list>
       <variable>
-        <name>dryPointNames</name>
+        <name>thinDamNames</name>
       </variable>
     </list>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>selectfromlist</option1>
   </element>
   <element>
-    <tag>paneldrypoints</tag>
+    <tag>panelthindams</tag>
     <style>panel</style>
     <position>170 10 170 70</position>
   </element>
   <element>
-    <tag>editdrym1</tag>
+    <tag>editthinm1</tag>
     <style>edit</style>
     <position>200 50 50 20</position>
     <text>M1</text>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
-    <tooltipstring>Edit dry point index M1</tooltipstring>
+    <tooltipstring>Edit thin dam index M1</tooltipstring>
     <variable>
       <name>M1</name>
       <type>integer</type>
       <subfield3>
         <variable>
-          <name>DryPoints</name>
+          <name>ThinDams</name>
           <index>
             <variable>
-              <name>activeDryPoint</name>
+              <name>activeThinDam</name>
               <type>integer</type>
             </variable>
           </index>
@@ -52,15 +52,15 @@
       <dependency>
         <action>enable</action>
         <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
+          <tag>pushdeletethindam</tag>
+          <tag>pushaddthindam</tag>
+          <tag>pushopenthindamsfile</tag>
         </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
             <variable>
-              <name>nrDryPoints</name>
+              <name>nrThinDams</name>
               <type>integer</type>
             </variable>
             <value>0</value>
@@ -71,27 +71,27 @@
       <dependency>
         <action>update</action>
         <tags>
-          <tag>listdrypoints</tag>
+          <tag>listthindams</tag>
         </tags>
       </dependency>
     </dependencies>
   </element>
   <element>
-    <tag>editdryn1</tag>
+    <tag>editthinn1</tag>
     <style>edit</style>
     <position>280 50 50 20</position>
     <text>N1</text>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
     <variable>
       <name>N1</name>
       <type>integer</type>
       <subfield3>
         <variable>
-          <name>DryPoints</name>
+          <name>ThinDams</name>
           <index>
             <variable>
-              <name>activeDryPoint</name>
+              <name>activeThinDam</name>
               <type>integer</type>
             </variable>
           </index>
@@ -102,15 +102,15 @@
       <dependency>
         <action>enable</action>
         <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
+          <tag>pushdeletethindam</tag>
+          <tag>pushaddthindam</tag>
+          <tag>pushopenthindamsfile</tag>
         </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
             <variable>
-              <name>nrDryPoints</name>
+              <name>nrThinDams</name>
               <type>integer</type>
             </variable>
             <value>0</value>
@@ -121,28 +121,28 @@
       <dependency>
         <action>update</action>
         <tags>
-          <tag>listdrypoints</tag>
+          <tag>listthindams</tag>
         </tags>
       </dependency>
     </dependencies>
-    <tooltipstring>Edit dry point index N1</tooltipstring>
+    <tooltipstring>Edit thin dam index N1</tooltipstring>
   </element>
   <element>
-    <tag>editdrym2</tag>
+    <tag>editthinm2</tag>
     <style>edit</style>
     <position>200 20 50 20</position>
     <text>M2</text>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
     <variable>
       <name>M2</name>
       <type>integer</type>
       <subfield3>
         <variable>
-          <name>DryPoints</name>
+          <name>ThinDams</name>
           <index>
             <variable>
-              <name>activeDryPoint</name>
+              <name>activeThinDam</name>
               <type>integer</type>
             </variable>
           </index>
@@ -153,15 +153,15 @@
       <dependency>
         <action>enable</action>
         <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
+          <tag>pushdeletethindam</tag>
+          <tag>pushaddthindam</tag>
+          <tag>pushopenthindamsfile</tag>
         </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
             <variable>
-              <name>nrDryPoints</name>
+              <name>nrThinDams</name>
               <type>integer</type>
             </variable>
             <value>0</value>
@@ -172,28 +172,28 @@
       <dependency>
         <action>update</action>
         <tags>
-          <tag>listdrypoints</tag>
+          <tag>listthindams</tag>
         </tags>
       </dependency>
     </dependencies>
-    <tooltipstring>Edit dry point index M2</tooltipstring>
+    <tooltipstring>Edit thin dam index M2</tooltipstring>
   </element>
   <element>
-    <tag>editdryn2</tag>
+    <tag>editthinn2</tag>
     <style>edit</style>
     <position>280 20 50 20</position>
     <text>N2</text>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
     <variable>
       <name>N2</name>
       <type>integer</type>
       <subfield3>
         <variable>
-          <name>DryPoints</name>
+          <name>ThinDams</name>
           <index>
             <variable>
-              <name>activeDryPoint</name>
+              <name>activeThinDam</name>
               <type>integer</type>
             </variable>
           </index>
@@ -204,15 +204,15 @@
       <dependency>
         <action>enable</action>
         <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
+          <tag>pushdeletethindam</tag>
+          <tag>pushaddthindam</tag>
+          <tag>pushopenthindamsfile</tag>
         </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
             <variable>
-              <name>nrDryPoints</name>
+              <name>nrThinDams</name>
               <type>integer</type>
             </variable>
             <value>0</value>
@@ -223,86 +223,86 @@
       <dependency>
         <action>update</action>
         <tags>
-          <tag>listdrypoints</tag>
+          <tag>listthindams</tag>
         </tags>
       </dependency>
     </dependencies>
-    <tooltipstring>Edit dry point index N2</tooltipstring>
+    <tooltipstring>Edit thin dam index N2</tooltipstring>
   </element>
   <element>
-    <tag>toggleadddrypoint</tag>
+    <tag>toggleaddthindam</tag>
     <style>togglebutton</style>
     <position>360 85 70 20</position>
     <text>Add</text>
-    <tooltipstring>Add dry point</tooltipstring>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <tooltipstring>Add thin dam</tooltipstring>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>add</option1>
     <variable>
-      <name>addDryPoint</name>
+      <name>addThinDam</name>
       <type>integer</type>
     </variable>
   </element>
   <element>
-    <tag>pushdeletedrypoint</tag>
+    <tag>pushdeletethindam</tag>
     <style>pushbutton</style>
     <position>360 60 70 20</position>
     <text>Delete</text>
-    <tooltipstring>Delete dry point</tooltipstring>
-    <callback>ddb_Delft3DFLOW_dryPoints</callback>
+    <tooltipstring>Delete thin dam</tooltipstring>
+    <callback>ddb_Delft3DFLOW_thinDams</callback>
     <option1>delete</option1>
   </element>
   <element>
-    <tag>toggleselectdrypoint</tag>
+    <tag>toggleselectthindam</tag>
     <style>togglebutton</style>
     <position>360 35 70 20</position>
     <text>Select</text>
-    <tooltipstring>Select dry point</tooltipstring>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <tooltipstring>Select thin dam</tooltipstring>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>select</option1>
     <variable>
-      <name>selectDryPoint</name>
+      <name>selectThinDam</name>
       <type>integer</type>
     </variable>
   </element>
   <element>
-    <tag>togglechangedrypoint</tag>
+    <tag>togglechangethindam</tag>
     <style>togglebutton</style>
     <position>360 10 70 20</position>
     <text>Change</text>
-    <tooltipstring>Change dry point</tooltipstring>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <tooltipstring>Change thin dam</tooltipstring>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>change</option1>
     <variable>
-      <name>changeDryPoint</name>
+      <name>changeThinDam</name>
       <type>integer</type>
     </variable>
   </element>
   <element>
-    <tag>pushopendrypoints</tag>
+    <tag>pushopenthindams</tag>
     <style>pushselectfile</style>
     <position>450 60 70 20</position>
-    <tooltipstring>Open dry points file</tooltipstring>
+    <tooltipstring>Open thin dams file</tooltipstring>
     <text>Open</text>
     <variable>
       <name>DryFile</name>
       <type>string</type>
     </variable>
-    <extension>*.dry</extension>
-    <selectiontext>Select dry points File</selectiontext>
-    <onchange>ddb_Delft3DFLOW_openDryPointsFile</onchange>
+    <extension>*.thd</extension>
+    <selectiontext>Select thin dams File</selectiontext>
+    <onchange>ddb_Delft3DFLOW_openThinDamsFile</onchange>
   </element>
   <element>
-    <tag>pushsavedrypoints</tag>
+    <tag>pushsavethindams</tag>
     <style>pushselectfile</style>
     <position>450 35 70 20</position>
-    <tooltipstring>Save dry points file</tooltipstring>
+    <tooltipstring>Save thin dams file</tooltipstring>
     <text>Save</text>
     <variable>
       <name>DryFile</name>
       <type>string</type>
     </variable>
-    <extension>*.dry</extension>
-    <selectiontext>Select dry points File</selectiontext>
-    <onchange>ddb_Delft3DFLOW_saveDryPointsFile</onchange>
+    <extension>*.thd</extension>
+    <selectiontext>Select thin dams File</selectiontext>
+    <onchange>ddb_Delft3DFLOW_saveThinDamsFile</onchange>
   </element>
 </root>

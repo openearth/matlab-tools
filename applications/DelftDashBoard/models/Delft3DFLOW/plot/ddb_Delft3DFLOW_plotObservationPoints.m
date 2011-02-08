@@ -1,4 +1,4 @@
-function handles=ddb_Delft3DFLOW_plotDryPoints(handles,opt,varargin)
+function handles=ddb_Delft3DFLOW_plotObsPoints(handles,opt,varargin)
 
 % options:
 % plot
@@ -27,13 +27,13 @@ end
 % model number imd
 imd=strmatch('Delft3DFLOW',{handles.Model(:).Name},'exact');
 
-tag='drypoint';
-colpas=[0.85 0.85 0.50];
+tag='Obspoint';
+colpas='c';
 colact=[1 0 0];
 
 % Put all plot handles in one vector
-if isfield(handles.Model(imd).Input(iad).DryPoints,'plotHandles')
-    allHandles=struc2mat(handles.Model(imd).Input(iad).DryPoints,'plotHandles');
+if isfield(handles.Model(imd).Input(iad).obsPoints,'plotHandles')
+    allHandles=struc2mat(handles.Model(imd).Input(iad).obsPoints,'plotHandles');
 else
     allHandles=[];
 end
@@ -43,56 +43,61 @@ switch lower(opt)
         % First delete existing objects
         if ~isempty(allHandles)
             delete(allHandles);
-            for i=1:handles.Model(imd).Input(iad).nrDryPoints
-                handles.Model(imd).Input(iad).DryPoints(i).plotHandles=[];
+            for i=1:handles.Model(imd).Input(iad).nrObsPoints
+                handles.Model(imd).Input(iad).obsPoints(i).plotHandles=[];
             end
         end
-        if handles.Model(imd).Input(iad).nrDryPoints>0
-            % Now plot new objects
-            xg=handles.Model(imd).Input(iad).GridX;
-            yg=handles.Model(imd).Input(iad).GridY;
-            for i=1:handles.Model(imd).Input(iad).nrDryPoints
-                m1=min(handles.Model(imd).Input(iad).DryPoints(i).M1,handles.Model(imd).Input(iad).DryPoints(i).M2);
-                n1=min(handles.Model(imd).Input(iad).DryPoints(i).N1,handles.Model(imd).Input(iad).DryPoints(i).N2);
-                m2=max(handles.Model(imd).Input(iad).DryPoints(i).M1,handles.Model(imd).Input(iad).DryPoints(i).M2);
-                n2=max(handles.Model(imd).Input(iad).DryPoints(i).N1,handles.Model(imd).Input(iad).DryPoints(i).N2);
-                x1=xg(m1-1:m2,n1-1)';
-                y1=yg(m1-1:m2,n1-1)';
-                x1=[x1 xg(m2,n1-1:n2)];
-                y1=[y1 yg(m2,n1-1:n2)];
-                x1=[x1 xg(m2:-1:m1-1,n2)'];
-                y1=[y1 yg(m2:-1:m1-1,n2)'];
-                x1=[x1 xg(m1-1,n2:-1:n1-1)];
-                y1=[y1 yg(m1-1,n2:-1:n1-1)];
+        % Now plot new objects
+        for i=1:handles.Model(imd).Input(iad).nrObsPoints
+            txt=handles.Model(imd).Input(id).obsPoints(i).Name;
+            m=handles.Model(imd).Input(id).obsPoints(i).M;
+            n=handles.Model(imd).Input(id).obsPoints(i).N;
+            x{1}=[xg(m-1,n-1) xg(m,n)];
+            y{1}=[yg(m-1,n-1) yg(m,n)];
+            x{2}=[xg(m,n-1) xg(m-1,n)];
+            y{2}=[yg(m,n-1) yg(m-1,n)];
+            z=zeros(size(x1))+6000;
+            for j=1:length(x)
+                x1=x{j};
+                y1=y{j};
                 z=zeros(size(x1))+6000;
-                plt=patch(x1,y1,z);
-                set(plt,'FaceColor',colpas);
-                set(plt,'EdgeColor','none');
-                set(plt,'Tag',tag);
-                set(plt,'UserData',i);
-                handles.Model(imd).Input(iad).DryPoints(i).plotHandles=plt;
+                plt(j)=plot3(x1,y1,z);hold on;
+                set(plt(j),'Color',c);
+                set(plt(j),'LineWidth',2);
+                set(plt(j),'Tag',tag);
+                set(plt(j),'UserData',i);
             end
-            allHandles=struc2mat(handles.Model(imd).Input(iad).DryPoints,'plotHandles');
-            iac=handles.Model(imd).Input(iad).activeDryPoint;
-            if act
-                set(allHandles,'HitTest','on');
-                set(handles.Model(imd).Input(iad).DryPoints(iac).plotHandles,'FaceColor',colact);
+            if ~isempty(txt)
+                plt(3)=text(xtxt,ytxt,6500,txt);
+                set(plt(3),'Tag',[tag 'Text'],'Clipping','on','HitTest','off');
+                set(plt(3),'UserData',i);
             end
+            handles.Model(imd).Input(iad).obsPoints(i).plotHandles=plt;
+        end
+        iac=handles.Model(imd).Input(iad).activeObsPoint;
+        if act
+            set(allHandles,'HitTest','on');
+            set(handles.Model(imd).Input(iad).obsPoints(iac).plotHandles(1:2),'Color',colact);
         end
     case{'delete'}
         if ~isempty(allHandles)
             delete(allHandles);
         end
-        for i=1:handles.Model(imd).Input(iad).nrDryPoints
-            handles.Model(imd).Input(iad).DryPoints(i).plotHandles=[];
+        for i=1:handles.Model(imd).Input(iad).nrObsPoints
+            handles.Model(imd).Input(iad).obsPoints(i).plotHandles=[];
         end
     case{'update'}
-        set(allHandles,'FaceColor',colpas);
+        for i=1:handles.Model(imd).Input(iad).nrObsPoints
+            set(handles.Model(imd).Input(iad).obsPoints(i).plotHandles(1:2),'Color',colpas);
+            if act
+                set(handles.Model(imd).Input(iad).obsPoints(i).plotHandles(3),'Visible',1);
+            else
+                set(handles.Model(imd).Input(iad).obsPoints(i).plotHandles(3),'Visible',0);
+            end
+        end
         if act
-            iac=handles.Model(imd).Input(iad).activeDryPoint;
-            set(handles.Model(imd).Input(iad).DryPoints(iac).plotHandles,'FaceColor',colact);
-        else
-            % Only for texts
+            iac=handles.Model(imd).Input(iad).activeObsPoint;
+            set(handles.Model(imd).Input(iad).obsPoints(iac).plotHandles(1:2),'Color',colact);
         end
         if vis
             set(allHandles,'Visible','on');
@@ -109,20 +114,20 @@ xg=handles.Model(imd).Input(id).GridX;
 yg=handles.Model(imd).Input(id).GridY;
 
 switch lower(att)
-    case{'observationpoints'}
-        txt=handles.Model(imd).Input(id).ObservationPoints(i).Name;
-        m=handles.Model(imd).Input(id).ObservationPoints(i).M;
-        n=handles.Model(imd).Input(id).ObservationPoints(i).N;
+    case{'obsPoints'}
+        txt=handles.Model(imd).Input(id).obsPoints(i).Name;
+        m=handles.Model(imd).Input(id).obsPoints(i).M;
+        n=handles.Model(imd).Input(id).obsPoints(i).N;
         x{1}=[xg(m-1,n-1) xg(m,n)];
         y{1}=[yg(m-1,n-1) yg(m,n)];
         x{2}=[xg(m,n-1) xg(m-1,n)];
         y{2}=[yg(m,n-1) yg(m-1,n)];
-    case{'drypoints'}
+    case{'obsPoints'}
         txt='';
-        m1=min(handles.Model(imd).Input(id).DryPoints(i).M1,handles.Model(imd).Input(id).DryPoints(i).M2);
-        n1=min(handles.Model(imd).Input(id).DryPoints(i).N1,handles.Model(imd).Input(id).DryPoints(i).N2);
-        m2=max(handles.Model(imd).Input(id).DryPoints(i).M1,handles.Model(imd).Input(id).DryPoints(i).M2);
-        n2=max(handles.Model(imd).Input(id).DryPoints(i).N1,handles.Model(imd).Input(id).DryPoints(i).N2);
+        m1=min(handles.Model(imd).Input(id).obsPoints(i).M1,handles.Model(imd).Input(id).obsPoints(i).M2);
+        n1=min(handles.Model(imd).Input(id).obsPoints(i).N1,handles.Model(imd).Input(id).obsPoints(i).N2);
+        m2=max(handles.Model(imd).Input(id).obsPoints(i).M1,handles.Model(imd).Input(id).obsPoints(i).M2);
+        n2=max(handles.Model(imd).Input(id).obsPoints(i).N1,handles.Model(imd).Input(id).obsPoints(i).N2);
         x1=xg(m1-1:m2,n1-1)';
         y1=yg(m1-1:m2,n1-1)';
         x1=[x1 xg(m2,n1-1:n2)];

@@ -266,11 +266,24 @@ panel=get(h,'UserData');
 for i=1:length(panel.largeTabHandles)
     if i~=iac
         set(panel.largeTabHandles(i),'Visible','off');
+%        pause(0.01);
+%        drawnow;
     end
 end
+% % drawnow;
+
+% set(panel.largeTabHandles(panel.activeTab),'Visible','off');
+% % hhh=get(panel.largeTabHandles(panel.activeTab),'Children');
+% % set(hhh,'Visible','off');
+% drawnow;
+% pause(0.05);
 
 % Set new tab visible
 set(panel.largeTabHandles(iac),'Visible','on');
+% hhh=get(panel.largeTabHandles(iac),'Children');
+% set(hhh,'Visible','on');
+drawnow;
+%pause(0.5);
 
 panel.activeTab=iac;
 set(h,'UserData',panel);

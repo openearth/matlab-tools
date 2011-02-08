@@ -41,6 +41,23 @@ handles.GUIHandles.TextYCoordinate = uicontrol(gcf,'Units','pixels','Parent',han
 handles.GUIHandles.TextCoordinateSystem = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
     'String','WGS 84 - Geographic','Position',[100 655 200 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 
+% Text box
+handles.GUIHandles.textAnn1=annotation('textbox',[0.02 0.3 0.4 0.2]);
+set(handles.GUIHandles.textAnn1,'Units','pixels');
+set(handles.GUIHandles.textAnn1,'Position',[50 235 600 20]);
+set(handles.GUIHandles.textAnn1,'VerticalAlignment','bottom');
+set(handles.GUIHandles.textAnn1,'FontSize',12,'FontWeight','bold','LineStyle','none');
+handles.GUIHandles.textAnn2=annotation('textbox',[0.02 0.3 0.4 0.2]);
+set(handles.GUIHandles.textAnn2,'Units','pixels');
+set(handles.GUIHandles.textAnn2,'Position',[50 215 600 20]);
+set(handles.GUIHandles.textAnn2,'VerticalAlignment','bottom');
+set(handles.GUIHandles.textAnn2,'FontSize',12,'FontWeight','bold','LineStyle','none');
+handles.GUIHandles.textAnn3=annotation('textbox',[0.02 0.3 0.4 0.2]);
+set(handles.GUIHandles.textAnn3,'Units','pixels');
+set(handles.GUIHandles.textAnn3,'Position',[50 195 600 20]);
+set(handles.GUIHandles.textAnn3,'VerticalAlignment','bottom');
+set(handles.GUIHandles.textAnn3,'FontSize',12,'FontWeight','bold','LineStyle','none');
+
 % Now initialize the dummy data
 % Bathymetry
 xx=[0 1];

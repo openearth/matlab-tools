@@ -42,6 +42,10 @@ switch lower(el.style)
         val=getSubFieldValue(s,el.variable);
         set(el.handle,'Value',val);
 
+    case{'togglebutton'}
+        val=getSubFieldValue(s,el.variable);
+        set(el.handle,'Value',val);
+
     case{'radiobutton'}
         val=getSubFieldValue(s,el.variable);
         switch lower(el.variable.type)
@@ -62,6 +66,8 @@ switch lower(el.style)
     case{'listbox'}
         stringList=getSubFieldValue(s,el.stringList.variable);
         if isempty(stringList)
+            ii=1;
+        elseif isempty(stringList{1})
             ii=1;
         else
             switch el.variable.type

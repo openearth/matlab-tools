@@ -109,7 +109,7 @@ if handles.Model(md).Input(id).NrCrossSections>0
     ddb_saveCrsFile(handles,id);
 end
 
-if handles.Model(md).Input(id).NrDryPoints>0
+if handles.Model(md).Input(id).nrDryPoints>0
     if isempty(handles.Model(md).Input(id).DryFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.dry', 'Select Dry Points File','');
         curdir=[lower(cd) '\'];

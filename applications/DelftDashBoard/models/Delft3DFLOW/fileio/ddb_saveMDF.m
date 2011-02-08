@@ -29,7 +29,7 @@ if ~isempty(Flow.DepFile)
 else
     MDF.DepUni=Flow.UniformDepth;
 end
-if Flow.NrDryPoints>0
+if Flow.nrDryPoints>0
     MDF.Fildry=Flow.DryFile;
     MDF.Fmtdry='FR';
 end

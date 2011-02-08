@@ -80,6 +80,7 @@ for i=1:length(elements)
                 if ~isempty(parent)
                     set(elements(i).handle,'Parent',parent);
                 end
+                
             case{'checkbox'}
                 
                 % Check box
@@ -101,7 +102,11 @@ for i=1:length(elements)
             case{'pushbutton'}
                 elements(i).handle=uicontrol(figh,'Style','pushbutton','String',elements(i).text,'Position',position);
                 set(elements(i).handle,'Parent',parent);
-                
+
+            case{'togglebutton'}
+                elements(i).handle=uicontrol(figh,'Style','togglebutton','String',elements(i).text,'Position',position);
+                set(elements(i).handle,'Parent',parent);
+
             case{'listbox'}
 
                 % Edit box
@@ -164,12 +169,18 @@ for i=1:length(elements)
                     strings{j}=elements(i).tabs(j).tabstring;
                     tabnames{j}=elements(i).tabs(j).tabname;
                     callbacks{j}=[];
-                    if ~isempty(elements(i).tabs(j).callback)
+try
+    if ~isempty(elements(i).tabs(j).callback)
+
+%                    if ~isempty(elements(i).tabs(j).customCallback)
                         callbacks{j}=elements(i).tabs(j).callback;
                     else
                         % This is not generic! Needed for DDB for the moment.
                         callbacks{j}=@deleteUIControls;
                     end
+catch
+    shite=10
+end
                 end
                 
                 if ~isfield(elements(i),'activeTabNr')
@@ -284,6 +295,13 @@ for i=1:length(elements)
                 
             case{'pushbutton'}
                 set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
+
+            case{'togglebutton'}
+                if ~isempty(elements(i).customCallback)
+                    set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
+                else
+                    set(elements(i).handle,'Callback',{@togglebutton_Callback,getFcn,setFcn,elements,i});
+                end
                 
             case{'table'}
                 % Get handles from table
@@ -408,6 +426,26 @@ else
         feval(el.onChangeCallback,el.option1,el.option2);
     end
     
+end
+
+%%
+function togglebutton_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+
+s=feval(getFcn);
+
+el=elements(i);
+
+ion=get(hObject,'Value');
+
+s=setSubFieldValue(s,el.variable,ion);
+feval(setFcn,s);
+
+% Update dependees
+updateUIDependees(elements,i,getFcn)
+    
+if ~isempty(el.onChangeCallback)
+    % Execute on-change callback
+    feval(el.onChangeCallback,el.option1,el.option2);
 end
 
 %%

@@ -9,6 +9,7 @@
       <tab>
         <tag>grid</tag>
         <tabstring>Grid</tabstring>
+        <callback>ddb_Delft3DFLOW_grid</callback>
         <elements>Delft3DFLOW.domain.grid.xml</elements>
       </tab>
       <tab>
@@ -19,11 +20,14 @@
       <tab>
         <tag>drypoints</tag>
         <tabstring>Dry Points</tabstring>
+        <callback>ddb_Delft3DFLOW_dryPoints</callback>
         <elements>Delft3DFLOW.domain.drypoints.xml</elements>
       </tab>
       <tab>
         <tag>thindams</tag>
         <tabstring>Thin Dams</tabstring>
+        <callback>ddb_Delft3DFLOW_thinDams</callback>
+        <elements>Delft3DFLOW.domain.thindams.xml</elements>
       </tab>
       <tab>
         <tag>structures</tag>

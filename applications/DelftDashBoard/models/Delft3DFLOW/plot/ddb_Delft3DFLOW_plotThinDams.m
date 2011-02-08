@@ -1,4 +1,4 @@
-function handles=ddb_Delft3DFLOW_plotDryPoints(handles,opt,varargin)
+function handles=ddb_Delft3DFLOW_plotThinDams(handles,opt,varargin)
 
 % options:
 % plot
@@ -27,13 +27,13 @@ end
 % model number imd
 imd=strmatch('Delft3DFLOW',{handles.Model(:).Name},'exact');
 
-tag='drypoint';
+tag='thindam';
 colpas=[0.85 0.85 0.50];
 colact=[1 0 0];
 
 % Put all plot handles in one vector
-if isfield(handles.Model(imd).Input(iad).DryPoints,'plotHandles')
-    allHandles=struc2mat(handles.Model(imd).Input(iad).DryPoints,'plotHandles');
+if isfield(handles.Model(imd).Input(iad).ThinDams,'plotHandles')
+    allHandles=struc2mat(handles.Model(imd).Input(iad).ThinDams,'plotHandles');
 else
     allHandles=[];
 end
@@ -43,54 +43,66 @@ switch lower(opt)
         % First delete existing objects
         if ~isempty(allHandles)
             delete(allHandles);
-            for i=1:handles.Model(imd).Input(iad).nrDryPoints
-                handles.Model(imd).Input(iad).DryPoints(i).plotHandles=[];
+            for i=1:handles.Model(imd).Input(iad).nrThinDams
+                handles.Model(imd).Input(iad).ThinDams(i).plotHandles=[];
             end
         end
         if handles.Model(imd).Input(iad).nrDryPoints>0
             % Now plot new objects
             xg=handles.Model(imd).Input(iad).GridX;
             yg=handles.Model(imd).Input(iad).GridY;
-            for i=1:handles.Model(imd).Input(iad).nrDryPoints
-                m1=min(handles.Model(imd).Input(iad).DryPoints(i).M1,handles.Model(imd).Input(iad).DryPoints(i).M2);
-                n1=min(handles.Model(imd).Input(iad).DryPoints(i).N1,handles.Model(imd).Input(iad).DryPoints(i).N2);
-                m2=max(handles.Model(imd).Input(iad).DryPoints(i).M1,handles.Model(imd).Input(iad).DryPoints(i).M2);
-                n2=max(handles.Model(imd).Input(iad).DryPoints(i).N1,handles.Model(imd).Input(iad).DryPoints(i).N2);
-                x1=xg(m1-1:m2,n1-1)';
-                y1=yg(m1-1:m2,n1-1)';
-                x1=[x1 xg(m2,n1-1:n2)];
-                y1=[y1 yg(m2,n1-1:n2)];
-                x1=[x1 xg(m2:-1:m1-1,n2)'];
-                y1=[y1 yg(m2:-1:m1-1,n2)'];
-                x1=[x1 xg(m1-1,n2:-1:n1-1)];
-                y1=[y1 yg(m1-1,n2:-1:n1-1)];
-                z=zeros(size(x1))+6000;
-                plt=patch(x1,y1,z);
-                set(plt,'FaceColor',colpas);
-                set(plt,'EdgeColor','none');
-                set(plt,'Tag',tag);
-                set(plt,'UserData',i);
-                handles.Model(imd).Input(iad).DryPoints(i).plotHandles=plt;
+            for i=1:handles.Model(imd).Input(iad).nrThinDams
+                txt='';
+                m1=min(handles.Model(imd).Input(iad).ThinDams(i).M1,handles.Model(imd).Input(iad).ThinDams(i).M2);
+                n1=min(handles.Model(imd).Input(iad).ThinDams(i).N1,handles.Model(imd).Input(iad).ThinDams(i).N2);
+                m2=max(handles.Model(imd).Input(iad).ThinDams(i).M1,handles.Model(imd).Input(iad).ThinDams(i).M2);
+                n2=max(handles.Model(imd).Input(iad).ThinDams(i).N1,handles.Model(imd).Input(iad).ThinDams(i).N2);
+                k=0;
+                for jj=m1:m2
+                    for kk=n1:n2
+                        k=k+1;
+                        m=jj;
+                        n=kk;
+                        if strcmpi(handles.Model(imd).Input(id).ThinDams(i).UV,'u')
+                            x{k}=[xg(m,n-1) xg(m,n)];
+                            y{k}=[yg(m,n-1) yg(m,n)];
+                        else
+                            x{k}=[xg(m-1,n) xg(m,n)];
+                            y{k}=[yg(m-1,n) yg(m,n)];
+                        end
+                    end
+                end
+                for j=1:length(x)
+                    x1=x{j};
+                    y1=y{j};
+                    z=zeros(size(x1))+6000;
+                    plt(j)=plot3(x1,y1,z);hold on;
+                    set(plt(j),'Color',colpas);
+                    set(plt(j),'LineWidth',2);
+                    set(plt(j),'Tag',tag);
+                    set(plt(j),'UserData',i);
+                end
+                handles.Model(imd).Input(iad).ThinDams(i).plotHandles=plt;
             end
-            allHandles=struc2mat(handles.Model(imd).Input(iad).DryPoints,'plotHandles');
-            iac=handles.Model(imd).Input(iad).activeDryPoint;
+            allHandles=struc2mat(handles.Model(imd).Input(iad).ThinDams,'plotHandles');
+            iac=handles.Model(imd).Input(iad).activeThinDam;
             if act
                 set(allHandles,'HitTest','on');
-                set(handles.Model(imd).Input(iad).DryPoints(iac).plotHandles,'FaceColor',colact);
+                set(handles.Model(imd).Input(iad).ThinDams(iac).plotHandles,'FaceColor',colact);
             end
         end
     case{'delete'}
         if ~isempty(allHandles)
             delete(allHandles);
         end
-        for i=1:handles.Model(imd).Input(iad).nrDryPoints
-            handles.Model(imd).Input(iad).DryPoints(i).plotHandles=[];
+        for i=1:handles.Model(imd).Input(iad).nrThinDams
+            handles.Model(imd).Input(iad).ThinDams(i).plotHandles=[];
         end
     case{'update'}
-        set(allHandles,'FaceColor',colpas);
+        set(allHandles,'Color',colpas);
         if act
-            iac=handles.Model(imd).Input(iad).activeDryPoint;
-            set(handles.Model(imd).Input(iad).DryPoints(iac).plotHandles,'FaceColor',colact);
+            iac=handles.Model(imd).Input(iad).activeThinDam;
+            set(handles.Model(imd).Input(iad).ThinDams(iac).plotHandles,'Color',colact);
         else
             % Only for texts
         end
