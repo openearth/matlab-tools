@@ -102,6 +102,9 @@ xb = xb_empty();
 % get dir
 if length(fname) > 3 && strcmpi(fname(end-3:end), '.dat')
     fdir = fileparts(fname);
+    if isempty(fdir)
+        fdir=pwd;
+    end
     % get variable names
     names = xb_get_vars(fname, 'vars', OPT.vars);
 else
@@ -122,10 +125,10 @@ else
     if ~isempty(inputpars.data(strcmpi('meanvars',{inputpars.data.name})))
         mv = inputpars.data(strcmpi('meanvars',{inputpars.data.name})).value;
         for i=1:length(mv)
-            validnames{end+1}=mv{i};
-            validnames{end+1}=mv{i};
-            validnames{end+1}=mv{i};
-            validnames{end+1}=mv{i};
+            validnames{end+1}=[mv{i} '_mean'];
+            validnames{end+1}=[mv{i} '_max'];
+            validnames{end+1}=[mv{i} '_min'];
+            validnames{end+1}=[mv{i} '_var'];
         end
     end
     % points
