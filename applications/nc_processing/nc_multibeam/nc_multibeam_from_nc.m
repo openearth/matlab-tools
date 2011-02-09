@@ -74,7 +74,7 @@ OPT.zip_extension       = '*.zip';       % zip file extension
 OPT.fill_data           = false;
 
 OPT.datatype            = 'multibeam';
-OPT.EPSGcode            = 28992;
+OPT.EPSGcode            = [];
 
 OPT.mapsizex            = 5000;          % size of fixed map in x-direction
 OPT.mapsizey            = 5000;          % size of fixed map in y-direction
@@ -276,7 +276,7 @@ if OPT.make
                             length(minx : OPT.mapsizex : maxx)+ find(y0==miny : OPT.mapsizey : maxy,1,'first')/...
                             length(miny : OPT.mapsizey : maxy)/...
                             length(minx : OPT.mapsizex : maxx);
-                        multiWaitbar('nc_writing',WB.writtenDone,'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
+                        multiWaitbar('nc_writing',WB.writtenDone,'label',sprintf('%.2f_%.2f_%s_data.nc',x0,y0,OPT.datatype))
                         multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+(1+WB.writtenDone)*fns_unzipped(ii).bytes)/WB.bytesToDo)
                     end
                 end

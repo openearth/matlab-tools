@@ -63,7 +63,7 @@ OPT.zip                 = true;          % are the files zipped?
 OPT.zip_extension       = '*.zip';       % zip file extension
 
 OPT.datatype            = 'multibeam';
-OPT.EPSGcode            = 28992;
+OPT.EPSGcode            = [];
 OPT.dateFcn             = @(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy mmm'); % how to extract the date from the filename
 
 OPT.mapsizex            = 5000;          % size of fixed map in x-direction
@@ -252,8 +252,8 @@ if OPT.make
             % loop through data
             for x0      = minx : OPT.mapsizex : maxx
                 for y0  = miny : OPT.mapsizey : maxy
-                    ix = find(x     >=x0      ,1,'first'):find(x     <x0+OPT.mapsizex,1,'last');
-                    iy = find(y(:,1)<=y0+OPT.mapsizey,1,'first'):find(y(:,1)>y0      ,1,'last');
+                    ix = find(x     >=x0             ,1,'first'):find(x     <x0+OPT.mapsizex,1,'last');
+                    iy = find(y(:,1)<y0+OPT.mapsizey,1,'first'):find(y(:,1)>=y0             ,1,'last');
                     
                     z = nan(length(iy),length(ix));
                     for iD = unique(y(iy,2))'
@@ -269,8 +269,8 @@ if OPT.make
                     [X,Y]    = meshgrid(x_vector,y_vector);
                     Z = nan(size(X));
                     Z(...
-                        find(y_vector  <=y(iy(1)),1,'last'):-1:find(y_vector  >=y(iy(end)),1,'first'),...
-                        find(x_vector  >=x(ix(1)),1,'first'):find(x_vector  <=x(ix(end)),1,'last')) = flipud(z);
+                        find(y_vector  <=y(iy(1),1),1,'last'):-1:find(y_vector  >=y(iy(end),1),1,'first'),...
+                        find(x_vector  >=x(ix(1)),1,'first'):find(x_vector  <=x(ix(end)),1,'last')) = z;
                     
                     if any(~isnan(Z(:)))
                         Z = flipud(Z);
@@ -278,7 +278,7 @@ if OPT.make
                         % if a non trivial Z matrix is returned write the data
                         % to a nc file
                         ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
-                            sprintf('%8.2f_%8.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
+                            sprintf('%.2f_%.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
                         if ~exist(ncfile, 'file')
                             nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
                         end

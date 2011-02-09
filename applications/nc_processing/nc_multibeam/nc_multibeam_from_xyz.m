@@ -249,7 +249,7 @@ if OPT.make
                                 % if a non trivial Z matrix is returned write the data
                                 % to a nc file
                                 ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
-                                    sprintf('%8.2f_%8.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
+                                    sprintf('%.2f_%.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
                                 if ~exist(ncfile, 'file')
                                     nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
                                 end
