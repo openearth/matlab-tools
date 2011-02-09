@@ -111,7 +111,7 @@ OPT.outpath     = [];       % output path
 OPT.quiet       = false;    % do not surpress output
 OPT.gui         = false;    % do not show 7zip gui
 OPT.type        = '-t7z';
-OPT.args        = '-mx9'; 
+OPT.args        = '-mx5'; 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 
