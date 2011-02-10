@@ -1,4 +1,4 @@
-function KMLsurf_tiled(lat,lon,z,varargin)
+function varargout = KMLsurf_tiled(lat,lon,z,varargin)
 %KMLSURF_TILED  BETA!!!!
 %
 % Experimental function to tile patches of a KMLsurf plot. 

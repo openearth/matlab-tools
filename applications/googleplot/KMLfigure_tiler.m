@@ -92,7 +92,8 @@ OPT.CBtemplateHor      = 'KML_colorbar_template_horizontal.png';
 OPT.CBtemplateVer      = 'KML_colorbar_template_vertical.png';
 
 if nargin==0
-  return
+   varargout = {OPT};
+   return
 else
    D.lat = lat;
    D.lon = lon;
