@@ -132,7 +132,7 @@ function ui_build(hObj, event, xb)
 
 info = get_info(xb);
 
-ax = findobj(hObj, 'Type','Axes');
+ax = findobj(hObj, 'Type','Axes','-not','Tag','Colorbar','-not','Tag','legend','-not','Tag','legenddynamic');
 title(ax,['t = ' num2str(info.t(1)) ' (s)']);
 
 % sliders
@@ -212,7 +212,7 @@ function ui_togglesurf(hObj, event, xb)
 pObj = get(hObj, 'Parent');
 
 % clear plot axes
-cla(findobj(pObj, 'Type', 'Axes'));
+cla(findobj(pObj, 'Type', 'Axes','-not','Tag','Colorbar','-not','Tag','legend','-not','Tag','legenddynamic'));
 
 % reload data
 ui_loaddata(hObj, event, xb)
@@ -291,7 +291,17 @@ for i = 1:size(vars,1)
             has_grid = false;
         end
         
+        % lengend
+        if ~isempty(findobj(pObj,'Tag','legend'))
+            try % dynamic legend not available pre Matlab 7.1
+                delete(findobj(pObj,'Tag','legend'));
+                legend('-DynamicLegend');
+                set(findobj(pObj,'Tag','legend'),'Tag','legenddynamic');
+            end
+        end
+        
         % plot data
+        aObj = findobj(pObj, 'Type','Axes','-not','Tag','Colorbar','-not','Tag','legend','-not','Tag','legenddynamic');
         if min(size(data)) <= 3
             set(findobj(pObj, 'Tag', 'ToggleSurf'), 'Enable', 'off')
             
@@ -301,8 +311,7 @@ for i = 1:size(vars,1)
             data = data(idx{:});
             
             % 1D data
-            sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'line');
-            
+            sObj = findobj(aObj, 'Type', 'line');
             if length(sObj) >= i
                 if has_grid
                     xdata = x(idx{:});
@@ -331,7 +340,7 @@ for i = 1:size(vars,1)
             
             % 2D data
             if get(findobj(pObj, 'Tag', 'ToggleSurf'), 'Value')
-                sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
+                sObj = findobj(aObj, 'Type', 'surface');
                 
                 if length(sObj) >= i
                     set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', data, ...
@@ -345,7 +354,7 @@ for i = 1:size(vars,1)
                     set(h, 'DisplayName', var);
                 end
             else
-                sObj = findobj(findobj(pObj, 'Type', 'Axes'), 'Type', 'surface');
+                sObj = findobj(aObj, 'Type', 'surface');
                 
                 if length(sObj) >= i
                     set(sObj(i), 'XData', xdata, 'YData', ydata, 'ZData', 0*data, ...
@@ -367,20 +376,18 @@ for i = 1:size(vars,1)
     hold on;
 end
 
-ax = findobj(pObj, 'Type', 'Axes', '-not','Tag','Colorbar');
-
 % set time in title
 if strcmpi(get(findobj(pObj, 'Tag', 'Slider2'), 'Enable'), 'on')
     info = get_info(xb);
     if  t2 <= length(info.t)
-        title(ax, ['t = ' num2str(info.t(t2)) ' (s)']);
+        title(aObj, ['t = ' num2str(info.t(t2)) ' (s)']);
     end
 else
     title('');
 end
 
 % clear items without use
-sObj = get(ax, 'Children');
+sObj = get(aObj, 'Children');
 for i = size(vars,1)+1:length(sObj)
     delete(sObj(i));
 end
