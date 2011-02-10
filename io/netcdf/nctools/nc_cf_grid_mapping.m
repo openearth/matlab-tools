@@ -94,7 +94,7 @@ OPT.debug = 0;
          end
       catch
          OPT.proj4_params = '';
-         warning('cannot get proj4_params, please work online to be able to access http://spatialreference.org')
+         fprintf(2,'nc_cf_grid_mapping: annot get proj4_params, please work online to be able to access http://spatialreference.org \n')
       end
 
 %% get WKT string via web service
@@ -103,7 +103,7 @@ OPT.debug = 0;
          OPT.wkt = urlread(['http://spatialreference.org/ref/epsg/',num2str(epsg),'/prettywkt/']);
       catch
          OPT.wkt = '';
-         warning('cannot get pretty wkt, please work online to be able to access http://spatialreference.org')
+         fprintf(2,'nc_cf_grid_mapping: cannot get pretty wkt, please work online to be able to access http://spatialreference.org \n')
       end
 
 %% get human readable string

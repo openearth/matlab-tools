@@ -1,5 +1,5 @@
 function varargout = nc_cf_grid_write(varargin)
-%nc_cf_grid_write  save curvilinear lat-lon grid as netCDF-CF file x-y optional
+%nc_cf_grid_write  save orthogonal/curvilinear lat-lon or x-y grid as netCDF-CF file
 %
 %   nc_cf_grid_write(ncfilename,<keyword,value>)
 %   nc_cf_grid_write(ncfilename,<keyword,value>)
@@ -10,9 +10,11 @@ function varargout = nc_cf_grid_write(varargin)
 %
 % The following keywords are required:
 %
-% * x           x vector of length ncols,       required
-% * y           y vector of lenght nrows,       required
-% * val         matrix   of size [nrows,ncols], required
+% * x           x vector of length ncols (required)
+% * y           y vector of lenght nrows (required)
+% * val         matrix   of size [y,x] or [nrows,ncols] (required)
+%               dimension order [y,x] is default in , 
+%               e.g. pcolor(x(x),y(y),val(y,x))
 % * units       units of val
 % * long_name   description of val as to appear in plots
 %
@@ -26,8 +28,12 @@ function varargout = nc_cf_grid_write(varargin)
 % * lat         (optionally)
 % * lon         (optionally)
 %
+% Note: in the netCDF file the order (y,x) will be used, to stay compatible 
+% with the COARDS standard order, despite the fact that the CF convention 
+% places no rigid restrictions on the order of dimensions.
+%
 %See also: ARCGISREAD, ARC_INFO_BINARY, ARCGRIDREAD (in $ mapping toolbox)
-%          SNCTOOLS, NC_CF_GRID
+%          SNCTOOLS, NC_CF_GRID, NC_CF_GRID_MAPPING
 
 % TO DO: add corner matrices too ?
 % TO DO: allow lat and lon to be the dimension vectors
@@ -35,6 +41,7 @@ function varargout = nc_cf_grid_write(varargin)
 % - add curvi-linear x,y  (dims:m,n)
 % - add orthogonal lat,lon(dims:lat,lon)
 % - add curvi-linear lat,lon: dims(m,n)
+% - add time as 3rd dimension
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -147,8 +154,13 @@ function varargout = nc_cf_grid_write(varargin)
          error('For a netCDF file is required: standard_name and/or long_name');end
 
       if ~isempty(OPT.val)
-         OPT.ncols =   size(OPT.val,2);
-         OPT.nrows =   size(OPT.val,1);
+         OPT.nrows =   size(OPT.val,1); % ~ y
+         OPT.ncols =   size(OPT.val,2); % ~ x
+         % Because this dimension order is natural in matlab, e.g. pcolor with x/y sticks:
+         %         x: [1x1121 double]
+         %         y: [1x1301 double]
+         %     depth: [1301x1121 double]
+         % pcolorcorcen(D.x,D.y,D.depth)
       end
       
       if isvector(OPT.lon) & isvector(OPT.lat)
@@ -161,36 +173,36 @@ function varargout = nc_cf_grid_write(varargin)
          OPT.dim.val   = {'lon','lat'};
       end
       
-      %% 4 configurations, see
-      % a1.lon vector          : (lon,lat) nc_cf_grid_write_lat_lon_orthogonal_tutorial
-      % a2.lon vector, x matrix: (lon,lat) ,,
-      % b .lon matrix          : (col,row) nc_cf_grid_write_lat_lon_curvilinear_tutorial
-      % c1.lon matrix, x vector: (x  ,y  ) nc_cf_grid_write_x_y_orthogonal_tutorial
+      %% 4 configurations, all with CF COARDS dimension order (y,x) see
+      % a1.lon vector          : (lat,lon) nc_cf_grid_write_lat_lon_orthogonal_tutorial
+      % a2.lon vector, x matrix: (lat,lon) ,,
+      % b .lon matrix          : (row,col) nc_cf_grid_write_lat_lon_curvilinear_tutorial
+      % c1.lon matrix, x vector: (y  ,x  ) nc_cf_grid_write_x_y_orthogonal_tutorial
       % c2.            x vector: warning
-      % d1.lon matrix, x matrix: (col,row) nc_cf_grid_write_x_y_curvilinear_tutorial
+      % d1.lon matrix, x matrix: (row,col) nc_cf_grid_write_x_y_curvilinear_tutorial
       % d2.            x matrix: warning
 
       if     isempty (OPT.x) & isempty (OPT.y)
         if isvector(OPT.lon) & isvector(OPT.lat)
 % a1
-         OPT.dim.val   = {'lon','lat'};
+         OPT.dim.val   = {'lat','lon'};
          OPT.dim.x     = {};
          OPT.dim.y     = {};
          OPT.dim.lon   = {'lon'};
          OPT.dim.lat   = {'lat'};
          else
 % b
-         OPT.dim.val   = {'col','row'};
+         OPT.dim.val   = {'row','col'};
          OPT.dim.x     = {};
          OPT.dim.y     = {};
-         OPT.dim.lon   = {'col','row'};
-         OPT.dim.lat   = {'col','row'};
+         OPT.dim.lon   = {'row','col'};
+         OPT.dim.lat   = {'row','col'};
          end
       elseif isvector(OPT.x) & isvector(OPT.y)
 % c1
-         OPT.dim.val   = {'x','y'};
-         OPT.dim.lon   = {'x','y'};
-         OPT.dim.lat   = {'x','y'};
+         OPT.dim.val   = {'y','x'};
+         OPT.dim.lon   = {'y','x'};
+         OPT.dim.lat   = {'y','x'};
          OPT.dim.x     = {'x'};
          OPT.dim.y     = {'y'};
          if ~(length(OPT.x)==OPT.ncols)
@@ -206,18 +218,18 @@ function varargout = nc_cf_grid_write(varargin)
       else
          if isvector(OPT.lon) & isvector(OPT.lat)
 % a2
-         OPT.dim.val   = {'lon','lat'}; % repeat
-         OPT.dim.x     = {'lon','lat'};
-         OPT.dim.y     = {'lon','lat'};
+         OPT.dim.val   = {'lat','lon'}; % repeat
+         OPT.dim.x     = {'lat','lon'};
+         OPT.dim.y     = {'lat','lon'};
          OPT.dim.lon   = {'lon'};
          OPT.dim.lat   = {'lat'};
          else
 % d1
-         OPT.dim.val   = {'col','row'};
-         OPT.dim.x     = {'col','row'};
-         OPT.dim.y     = {'col','row'};
-         OPT.dim.lon   = {'col','row'};
-         OPT.dim.lat   = {'col','row'};
+         OPT.dim.val   = {'row','col'};
+         OPT.dim.x     = {'row','col'};
+         OPT.dim.y     = {'row','col'};
+         OPT.dim.lon   = {'row','col'};
+         OPT.dim.lat   = {'row','col'};
          end
 % d2
          if ~isvector(OPT.lon) & ~isvector(OPT.lat)
@@ -273,6 +285,7 @@ function varargout = nc_cf_grid_write(varargin)
       end
    
       nc_create_empty (ncfile)
+      nc_padheader    (ncfile,20000);
    
    %% Add overall meta info
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
@@ -295,8 +308,8 @@ function varargout = nc_cf_grid_write(varargin)
       
 %% 2 Create x and y dimensions
    
-      nc_add_dimension(ncfile, OPT.dim.val{1}, OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
-      nc_add_dimension(ncfile, OPT.dim.val{2}, OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
+      nc_add_dimension(ncfile, OPT.dim.val{2}, OPT.ncols); % use 'x'/'ncols' as 2nd array dimension to adhere to CF convenctions (y,x), snctools swaps for us
+      nc_add_dimension(ncfile, OPT.dim.val{1}, OPT.nrows); % use 'y'/'nrows' as 1st array dimension to adhere to CF convenctions (y,x), snctools swaps for us
 
 %% 3a Create coordinate variables
    
@@ -422,23 +435,23 @@ function varargout = nc_cf_grid_write(varargin)
 %% 5 Fill all variables
 
       if ~isempty(OPT.x) & ~isempty(OPT.y)
-      nc_varput(ncfile, 'x'         , OPT.x');
-      nc_varput(ncfile, 'y'         , OPT.y');
+      nc_varput(ncfile, 'x'         , OPT.x);
+      nc_varput(ncfile, 'y'         , OPT.y);
       end
       if ~isempty(OPT.lon) & ~isempty(OPT.lat)
-         nc_dump(ncfile)
-         OPT
-      OPT.dim
-      nc_varput(ncfile, 'longitude' , OPT.lon');
-      nc_varput(ncfile, 'latitude'  , OPT.lat');
+      nc_varput(ncfile, 'longitude' , OPT.lon);
+      nc_varput(ncfile, 'latitude'  , OPT.lat);
       end
       if ~isempty(OPT.epsg)
       nc_varput(ncfile, 'wgs84'     , OPT.wgs84);
       nc_varput(ncfile, 'epsg'      , OPT.epsg);
       end
 
-      nc_varput(ncfile, OPT.varname , OPT.val'); % save x/lon/col as first dimension so ensure correct plotting in ncBrowse
-      
+      nc_varput(ncfile, OPT.varname , OPT.val); 
+      % saving x/lon/col as first dimension so ensure correct default 
+      % plotting in ncBrowse (you can swap x,y manually in ncBrowse)
+      % but saving y/lat/row as first dimension is in line 
+      % with CF convetions and ADAGUC
       
 %% 6 Check
    
