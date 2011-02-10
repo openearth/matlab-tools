@@ -84,6 +84,9 @@ OPT = setproperty(OPT, varargin{:});
 [OPT.fileDir, OPT.fileName, OPT.fileExt] = fileparts(fileName);
 if isempty(OPT.outpath)
     OPT.outpath = OPT.fileDir;
+    if isempty(OPT.outpath)
+       OPT.outpath = '.'; % unpacking to '' does not work in arglist <dosstring> below, so choose pwd '.'
+    end
 end
 
 if ~OPT.quiet
