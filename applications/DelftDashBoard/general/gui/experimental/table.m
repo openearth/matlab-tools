@@ -161,9 +161,9 @@ for i=1:nrrows
         setappdata(h,'row',i);
         setappdata(h,'column',j);
 
-        if enab(i,j)==0
-            set(h,'Enable','off');
-        end
+%         if enab(i,j)==0
+%             set(h,'Enable','off');
+%         end
         posx=posx+width(j);
         usd.handles(i,j)=h;
     end
@@ -189,9 +189,10 @@ usd.activeColumn=1;
 usd.firstRow=1;
 usd.firstColumn=1;
 usd.format=fmt;
+usd.enable=enab;
 set(tableHandle,'UserData',usd);
 refreshVerticalSlider(tableHandle);
-refreshTable(tableHandle);
+refreshTable(tableHandle,{'enable',enab});
 
 %%
 function changeTable(tb,data)
@@ -432,6 +433,9 @@ nrcolumns=usd.nrColumns;
 if isempty(enab)
     enab=zeros(nrrows,nrcolumns)+1;
 end
+
+enabperm=usd.enable;
+enab=min(enab,enabperm);
 
 vslider=usd.verticalSlider;
 columntypes=usd.columnTypes;

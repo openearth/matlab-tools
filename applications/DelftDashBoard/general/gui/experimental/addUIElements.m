@@ -43,6 +43,8 @@ for i=1:length(elements)
                         horal='right';
                     case{'real'}
                         horal='right';
+                    case{'datetime','time','date'}
+                        horal='right';
                 end
                 set(elements(i).handle,'HorizontalAlignment',horal);
                 if elements(i).nrLines>1
@@ -169,28 +171,48 @@ for i=1:length(elements)
                     strings{j}=elements(i).tabs(j).tabstring;
                     tabnames{j}=elements(i).tabs(j).tabname;
                     callbacks{j}=[];
-try
-    if ~isempty(elements(i).tabs(j).callback)
+
+                    if ~isempty(elements(i).tabs(j).callback)
 
 %                    if ~isempty(elements(i).tabs(j).customCallback)
                         callbacks{j}=elements(i).tabs(j).callback;
+                        inputArguments{j}=[];
+                        
                     else
                         % This is not generic! Needed for DDB for the moment.
-                        callbacks{j}=@deleteUIControls;
+%                        callbacks{j}=@deleteUIControls;
+                        
+%                         % Find which tab panels are inside present tab.
+%                         ncb=0;
+%                         for k=1:length(elements(i).tabs(j).elements)
+%                             if strcmpi(elements(i).tabs(j).elements(k).style,'tabpanel')
+%                                 if ~isempty(elements(i).tabs(j).elements(k).callback)
+%                                     ncb=ncb+1;
+
+%                        callbacks{j}=@deleteUIControls;
+                        callbacks{j}=@defaultTabCallback;
+                        inputArguments{j}={'tag',panelname,'tabnr',j};
+%                                 end
+%                             end
+%                         end
+                        
                     end
-catch
-    shite=10
-end
                 end
                 
                 if ~isfield(elements(i),'activeTabNr')
                     % Tab panel is drawn for the first time
                     elements(i).activeTabNr=1;
                 end
-                [elements(i).handle tabhandles]=tabpanel('create','figure',figh,'tag',panelname,'position',position,'strings',strings,'callbacks',callbacks,'tabnames',tabnames, ...
-                    'Parent',parent,'activetabnr',elements(i).activeTabNr);
+                
+                % Create tab panel
+                [elements(i).handle tabhandles]=tabpanel('create','figure',figh,'tag',panelname,'position',position,'strings',strings, ...
+                    'callbacks',callbacks,'tabnames',tabnames,'Parent',parent,'activetabnr',elements(i).activeTabNr, ...
+                    'inputarguments',inputArguments);
+
+                % Add UI elements to different tabs
                 for j=1:length(elements(i).tabs)
-                    elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'getFcn',getFcn,'setFcn',setFcn,'Parent',tabhandles(j));
+                    elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'getFcn',getFcn,'setFcn',setFcn, ...
+                    'Parent',tabhandles(j));
                     set(tabhandles(j),'Tag',elements(i).tabs(j).tag);
                 end
                 
@@ -201,18 +223,27 @@ end
                 inclb=elements(i).includeButtons;
                 incln=elements(i).includeNumbers;
                 
+                cltp=[];
+                width=[];
+                enable=[];
+                format=[];
+                txt=[];
+                callbacks=[];
+                
                 % Properties
                 for j=1:length(elements(i).columns)
                     cltp{j}=elements(i).columns(j).style;
                     width(j)=elements(i).columns(j).width;
-                    cltp{j}=elements(i).columns(j).style;
-                    enable(j)=elements(i).columns(j).enable;
+                    for k=1:nrrows
+                        enable(k,j)=elements(i).columns(j).enable;
+                    end
                     format{j}=elements(i).columns(j).format;
                     txt{j}=elements(i).columns(j).text;
                     callbacks{j}=[];
                 end
 
                 % Data?
+                data=[];
                 for j=1:length(elements(i).columns)
                     for k=1:elements(i).nrRows
                         switch lower(cltp{j})
@@ -234,7 +265,7 @@ end
                 end
                 
                 elements(i).handle=table(gcf,'create','tag',tag,'parent',parent,'data',data,'position',position,'nrrows',nrrows,'columntypes',cltp,'width',width,'callbacks',callbacks, ...
-                    'includebuttons',inclb,'includenumbers',incln,'format',format);
+                    'includebuttons',inclb,'includenumbers',incln,'format',format,'enable',enable);
 
         end
     catch
@@ -245,6 +276,8 @@ end
             disp(a.stack(ia));
         end
     end
+    
+    %drawnow;
     
     set(elements(i).handle,'Tag',elements(i).tag);
 
@@ -340,7 +373,7 @@ for i=1:length(elements)
         
     catch
         disp(['Something went wrong with setting callbacks element ' num2str(i)]);
-                a=lasterror;
+        a=lasterror;
         disp(a.message);
         for ia=1:length(a.stack)
             disp(a.stack(ia));
@@ -360,6 +393,12 @@ el=elements(i);
 v=get(hObject,'String');
 switch el.variable.type
     case{'string'}
+    case{'datetime'}
+        v=datenum(v,'yyyymmdd HHMMSS');
+    case{'date'}
+        v=datenum(v,'yyyymmdd');
+    case{'time'}
+        v=datenum(v,'HHMMSS');
     otherwise
         v=str2double(v);
 end

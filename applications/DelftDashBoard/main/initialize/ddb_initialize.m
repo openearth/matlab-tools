@@ -49,8 +49,8 @@ switch lower(varargin{1}),
         disp('Updating data in screen ...');
         ddb_updateDataInScreen;
                 
-        ddb_selectModel('Delft3DFLOW','toolbox');
         % Toolbox is selected in ddb_selectModel        
+        ddb_selectModel('Delft3DFLOW','toolbox');
 
         handles=getHandles;
         

@@ -15,8 +15,15 @@ for id=n1:n2
     if strcmpi(opt0,'deactivate') && strcmpi(handles.ActiveModel.Name,'Delft3DFLOW') && id==handles.ActiveDomain
         % Simply Changing Tab
         opt='deactivatebutkeepvisible';
+        optnew='update';
+        vis=1;
+        act=0;        
     else
         opt=opt0;
+
+        optnew='update';
+        vis=0;
+        act=0;        
     end
 
     ddb_plotFlowBathymetry(handles,opt,id);
@@ -31,8 +38,7 @@ for id=n1:n2
     end
 
     if handles.Model(imd).Input(id).nrDryPoints>0
-        handles=ddb_Delft3DFLOW_plotDryPoints(handles,opt,'active',1,'domain',id);
-%        ddb_plotFlowAttributes(handles,'DryPoints',opt,id,0,1);
+        ddb_Delft3DFLOW_plotAttributes(handles,optnew,'drypoints','visible',vis,'active',act);
     end
 
     if handles.Model(imd).Input(id).NrOpenBoundaries>0

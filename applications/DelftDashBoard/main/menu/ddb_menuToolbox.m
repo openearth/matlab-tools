@@ -1,5 +1,7 @@
 function ddb_menuToolbox(hObject, eventdata)
 
+%profile on
+
 handles=getHandles;
 
 tg=get(hObject,'Tag');
@@ -11,10 +13,20 @@ ch=get(h,'Children');
 set(ch,'Checked','off');
 set(hObject,'Checked','on');
 
-handles.activeToolbox.Name=tbname;
-handles.activeToolbox.Nr=strmatch(tbname,{handles.Toolbox(:).Name},'exact');
-
-setHandles(handles);
-
-% Select toolbox
-tabpanel('select','tag',handles.Model(md).Name,'tabname','toolbox');
+% Check if toolbox is already selected
+if ~strcmpi(handles.activeToolbox.Name,tbname)
+    handles.activeToolbox.Name=tbname;
+    handles.activeToolbox.Nr=strmatch(tbname,{handles.Toolbox(:).Name},'exact');
+    setHandles(handles);
+    % Now add the new GUI elements to toolbox tab
+    handles=ddb_addToolboxElements(handles);
+    setHandles(handles);
+    % Select toolbox by 'clicking' the toolbox tab. This will call
+    % selectToolbox.
+%    ddb_selectToolbox;
+    tabpanel('select','tag',handles.Model(md).Name,'tabname','toolbox','runcallback',0);
+    ddb_selectToolbox;
+    
+end
+%drawnow
+%profile viewer

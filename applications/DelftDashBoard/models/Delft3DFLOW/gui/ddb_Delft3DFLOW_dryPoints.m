@@ -5,7 +5,9 @@ handles=getHandles;
 ddb_zoomOff;
 
 if isempty(varargin)
+    ddb_refreshScreen;
 %    deleteUIControls;
+    clearInstructions;
     set(handles.GUIHandles.textAnn1,'String',{''});
     set(handles.GUIHandles.textAnn2,'String',{''});
     set(handles.GUIHandles.textAnn3,'String',{''});
@@ -13,8 +15,7 @@ if isempty(varargin)
     handles.Model(md).Input(ad).selectDryPoint=0;
     handles.Model(md).Input(ad).changeDryPoint=0;
     handles.Model(md).Input(ad).deleteDryPoint=0;
-%     ddb_refreshScreen2;
-    handles=ddb_Delft3DFLOW_plotDryPoints(handles,'plot');
+    handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
 else
     opt=varargin{1};
     switch(lower(opt))
@@ -26,14 +27,10 @@ else
             if handles.Model(md).Input(ad).addDryPoint
                 handles.editMode='add';
                 ddb_dragLine(@addDryPoint,'free');
-                set(handles.GUIHandles.textAnn1,'String',{''});
-                set(handles.GUIHandles.textAnn2,'String',{''});
-                set(handles.GUIHandles.textAnn3,'String',{'Click point or drag line on map for new dry point(s)'});
+                setInstructions({'','','Click point or drag line on map for new dry point(s)'});
             else
                 set(gcf, 'windowbuttondownfcn',[]);
-                set(handles.GUIHandles.textAnn1,'String',{''});
-                set(handles.GUIHandles.textAnn2,'String',{''});
-                set(handles.GUIHandles.textAnn3,'String',{''});
+                clearInstructions;
             end
 
         case{'delete'}
@@ -41,10 +38,9 @@ else
             handles.Model(md).Input(ad).selectDryPoint=0;
             handles.Model(md).Input(ad).changeDryPoint=0;
             ddb_clickObject('tag','drypoint','callback',@deleteDryPointFromMap);
-            set(handles.GUIHandles.textAnn1,'String',{''});
-            set(handles.GUIHandles.textAnn2,'String',{''});
-            set(handles.GUIHandles.textAnn3,'String',{'Select dry point from map to delete'});
+            setInstructions({'','','Select dry point from map to delete'});
             if handles.Model(md).Input(ad).deleteDryPoint
+                % Delete dry point selected from list
                 handles=deleteDryPoint(handles);
             end
 
@@ -52,20 +48,24 @@ else
             handles.Model(md).Input(ad).addDryPoint=0;
             handles.Model(md).Input(ad).deleteDryPoint=0;
             handles.Model(md).Input(ad).changeDryPoint=0;
-            ddb_clickObject('tag','drypoint','callback',@selectDryPointFromMap);
-            set(handles.GUIHandles.textAnn1,'String',{''});
-            set(handles.GUIHandles.textAnn2,'String',{''});
-            set(handles.GUIHandles.textAnn3,'String',{'Select dry point from map'});
-
+            if handles.Model(md).Input(ad).selectDryPoint
+                ddb_clickObject('tag','drypoint','callback',@selectDryPointFromMap);
+                setInstructions({'','','Select dry point from map'});
+            else
+                set(gcf, 'windowbuttondownfcn',[]);
+                clearInstructions;
+            end
+                        
         case{'change'}
             handles.Model(md).Input(ad).addDryPoint=0;
             handles.Model(md).Input(ad).selectDryPoint=0;
             handles.Model(md).Input(ad).deleteDryPoint=0;
             if handles.Model(md).Input(ad).changeDryPoint
                 ddb_clickObject('tag','drypoint','callback',@changeDryPointFromMap);
-                set(handles.GUIHandles.textAnn1,'String',{''});
-                set(handles.GUIHandles.textAnn2,'String',{''});
-                set(handles.GUIHandles.textAnn3,'String',{'Select dry point to change from map'});
+                setInstructions({'','','Select dry point to change from map'});
+            else
+                set(gcf, 'windowbuttondownfcn',[]);
+                clearInstructions;
             end
 
         case{'edit'}
@@ -80,7 +80,7 @@ else
             n1str=num2str(handles.Model(md).Input(ad).DryPoints(n).N1);
             n2str=num2str(handles.Model(md).Input(ad).DryPoints(n).N2);
             handles.Model(md).Input(ad).dryPointNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
-            handles=ddb_Delft3DFLOW_plotDryPoints(handles,'plot','active',1);
+            handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
             set(handles.GUIHandles.textAnn1,'String',{''});
             set(handles.GUIHandles.textAnn2,'String',{''});
             set(handles.GUIHandles.textAnn3,'String',{''});
@@ -91,10 +91,8 @@ else
             handles.Model(md).Input(ad).changeDryPoint=0;
             % Delete selected dry point next time delete is clicked
             handles.Model(md).Input(ad).deleteDryPoint=1;
-            ddb_Delft3DFLOW_plotDryPoints(handles,'update','active',1);
-            set(handles.GUIHandles.textAnn1,'String',{''});
-            set(handles.GUIHandles.textAnn2,'String',{''});
-            set(handles.GUIHandles.textAnn3,'String',{''});
+            handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
+            clearInstructions;
 
     end
 end
@@ -159,8 +157,8 @@ if m1>0 && (m1==m2 || n1==n2)
     handles.Model(md).Input(ad).DryPoints(iac).Name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
     handles.Model(md).Input(ad).dryPointNames{iac}=handles.Model(md).Input(ad).DryPoints(iac).Name;
     handles.Model(md).Input(ad).activeDryPoint=iac;
+    handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
     setHandles(handles);
-    handles=ddb_Delft3DFLOW_plotDryPoints(handles,'plot');
     
     if handles.Model(md).Input(ad).changeDryPoint
         ddb_clickObject('tag','drypoint','callback',@changeDryPointFromMap);
@@ -174,7 +172,6 @@ if m1>0 && (m1==m2 || n1==n2)
         set(handles.GUIHandles.textAnn3,'String',{'Click position of new dry point'});
     end
 end
-setHandles(handles);
 refreshDryPoints;
 
 %%
@@ -184,7 +181,7 @@ nrdry=handles.Model(md).Input(ad).nrDryPoints;
 
 if nrdry>0
     iac=handles.Model(md).Input(ad).activeDryPoint;    
-    handles=ddb_Delft3DFLOW_plotDryPoints(handles,'delete');
+    handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','drypoints');
     if nrdry>1
         handles.Model(md).Input(ad).DryPoints=removeFromStruc(handles.Model(md).Input(ad).DryPoints,iac);
         handles.Model(md).Input(ad).dryPointNames=removeFromCellArray(handles.Model(md).Input(ad).dryPointNames,iac);
@@ -201,7 +198,7 @@ if nrdry>0
     end
     handles.Model(md).Input(ad).nrDryPoints=nrdry-1;
     handles.Model(md).Input(ad).activeDryPoint=iac;
-    handles=ddb_Delft3DFLOW_plotDryPoints(handles,'plot');
+    handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
     setHandles(handles);
     refreshDryPoints;
 end
@@ -221,7 +218,7 @@ function selectDryPointFromMap(h)
 handles=getHandles;
 iac=get(h,'UserData');
 handles.Model(md).Input(ad).activeDryPoint=iac;
-ddb_Delft3DFLOW_plotDryPoints(handles,'update');
+ddb_Delft3DFLOW_plotAttributes(handles,'update','drypoints');
 setHandles(handles);
 refreshDryPoints;
 
@@ -231,13 +228,11 @@ function changeDryPointFromMap(h)
 handles=getHandles;
 iac=get(h,'UserData');
 handles.Model(md).Input(ad).activeDryPoint=iac;
-ddb_Delft3DFLOW_plotDryPoints(handles,'update');
+ddb_Delft3DFLOW_plotAttributes(handles,'update','drypoints');
 setHandles(handles);
 refreshDryPoints;
 ddb_dragLine(@addDryPoint,'free');
-set(handles.GUIHandles.textAnn1,'String',{''});
-set(handles.GUIHandles.textAnn2,'String',{''});
-set(handles.GUIHandles.textAnn3,'String',{'Click new position of dry point'});
+setInstructions({'','','Click new position of dry point'});
 
 %%
 function refreshDryPoints
@@ -249,26 +244,4 @@ setUIElement('delft3dflow.domain.domainpanel.drypoints.editdryn2');
 setUIElement('delft3dflow.domain.domainpanel.drypoints.toggleadddrypoint');
 setUIElement('delft3dflow.domain.domainpanel.drypoints.toggleselectdrypoint');
 setUIElement('delft3dflow.domain.domainpanel.drypoints.togglechangedrypoint');
-
-
-%%
-function str1=removeFromStruc(str0,iac)
-k=0;
-for i=1:length(str0)
-    if i~=iac
-        k=k+1;
-        str1(k)=str0(i);
-    end
-end
-
-%%
-function str1=removeFromCellArray(str0,iac)
-str{1}=[];
-k=0;
-for i=1:length(str0)
-    if i~=iac
-        k=k+1;
-        str1{k}=str0{i};
-    end
-end
 

@@ -33,6 +33,12 @@ switch lower(el.style)
         val=getSubFieldValue(s,el.variable);
         switch el.variable.type
             case{'string'}
+            case{'datetime'}
+                val=datestr(val,'yyyymmdd HHMMSS');
+            case{'date'}
+                val=datestr(val,'HHMMSS');
+            case{'time'}
+                val=datestr(val,'yyyymmdd');
             otherwise
                 val=num2str(val);
         end

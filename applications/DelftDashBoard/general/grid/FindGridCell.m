@@ -1,4 +1,4 @@
-function [m,n]=FindGridCell(posx0,posy0,x,y)
+function [m,n]=findGridCell(posx0,posy0,x,y)
 
 m=zeros(size(posx0));
 n=zeros(size(posx0));
@@ -22,6 +22,7 @@ ymin(isnan(y1))=NaN;
 ymin(isnan(y2))=NaN;
 ymin(isnan(y3))=NaN;
 ymin(isnan(y4))=NaN;
+
 for j=1:length(posx0)
     posx=posx0(j);
     posy=posy0(j);

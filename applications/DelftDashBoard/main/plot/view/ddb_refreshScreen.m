@@ -2,6 +2,8 @@ function ddb_refreshScreen(varargin)
 
 handles=getHandles;
 
+clearInstructions;
+
 if nargin==1
 %     tabpanel(gcf,'tabpanel2','delete');
     tabpanel('delete','tag','tabpanel2');
@@ -13,11 +15,11 @@ elseif nargin==2
 end
 setHandles(handles);
 
-
 h=findobj(gcf,'Tag','UIControl');
 if ~isempty(h)
     delete(h);
 end
+%drawnow;
 
 ddb_setWindowButtonUpDownFcn;
 ddb_setWindowButtonMotionFcn;

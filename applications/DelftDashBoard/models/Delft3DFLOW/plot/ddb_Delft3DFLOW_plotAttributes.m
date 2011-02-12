@@ -1,226 +1,286 @@
-function ddb_Delft3DFLOW_plotAttributes(att,opt,id,varargin)
+function handles=ddb_Delft3DFLOW_plotAttributes(handles,opt,att,varargin)
+% Plots, deletes, activates and deactivates Delft3D-FLOW dry points.
+% Options are:
+% plot
+% delete
+% update
+%
+% Optional input arguments:
+% 'domain'  - domain nr 
+% 'visible' - 1 or 0
+% 'active' - 1 or 0
 
-handles=getHandles;
+% Default values
+iad=ad;
+vis=1;
+act=1;
 
+% model number imd
 imd=strmatch('Delft3DFLOW',{handles.Model(:).Name},'exact');
 
-if ~isempty(varargin)
-    ia=varargin{1};
-    iac=varargin{2};
-else
-    ia=0;
-    iac=0;
+% Read input arguments
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch(lower(varargin{i}))
+            case{'visible'}
+                vis=varargin{i+1};
+            case{'active'}
+                act=varargin{i+1};
+            case{'domain'}
+                iad=varargin{i+1};
+        end
+    end
 end
 
 switch lower(att)
     case{'observationpoints'}
-        tag='ObservationPoint';
-        nr=handles.Model(imd).Input(id).NrObservationPoints;
-        col='c';
+        tag='observationpoint';
+        attStruc=handles.Model(imd).Input(iad).ObservationPoints;
+        nr=handles.Model(imd).Input(iad).NrObservationPoints;
+        iac=handles.Model(imd).Input(iad).activeObservationPoint;
+        colpas='c';
         colact='r';
         tp='line';
     case{'crosssections'}
-        tag='CrossSection';
-        nr=handles.Model(imd).Input(id).NrCrossSections;
-        col='c';
+        tag='crosssection';
+        attStruc=handles.Model(imd).Input(iad).CrossSections;
+        nr=handles.Model(imd).Input(iad).NrCrossSections;
+        iac=handles.Model(imd).Input(iad).activeCrossSections;
+        colpas='c';
         colact='r';
         tp='line';
     case{'drypoints'}
-        tag='DryPoint';
-        nr=handles.Model(imd).Input(id).NrDryPoints;
-        col=[0.85 0.85 0.50];
+        tag='drypoint';
+        attStruc=handles.Model(imd).Input(iad).DryPoints;
+        nr=handles.Model(imd).Input(iad).nrDryPoints;
+        iac=handles.Model(imd).Input(iad).activeDryPoint;
+        colpas=[0.85 0.85 0.50];
         colact='r';
         tp='patch';
     case{'openboundaries'}
-        tag='OpenBoundary';
-        nr=handles.Model(imd).Input(id).NrOpenBoundaries;
-        col='b';
+        tag='openboundary';
+        attStruc=handles.Model(imd).Input(iad).OpenBoundaries;
+        nr=handles.Model(imd).Input(iad).NrOpenBoundaries;
+        iac=handles.Model(imd).Input(iad).activeOpenBoundary;
+        colpas='b';
         colact='r';
         tp='line';
     case{'thindams'}
-        tag='ThinDam';
-        nr=handles.Model(imd).Input(id).NrThinDams;
-        col=[0.85 0.85 0.50];
+        tag='thindam';
+        attStruc=handles.Model(imd).Input(iad).ThinDams;
+        nr=handles.Model(imd).Input(iad).NrThinDams;
+        iac=handles.Model(imd).Input(iad).activeThinDams;
+        colpas=[0.85 0.85 0.50];
         colact='r';
         tp='line';
     case{'discharges'}
-        tag='Discharge';
-        nr=handles.Model(imd).Input(id).NrDischarges;
-        col=[1 0 1];
+        tag='discharge';
+        attStruc=handles.Model(imd).Input(iad).Discharges;
+        nr=handles.Model(imd).Input(iad).NrDischarges;
+        iac=handles.Model(imd).Input(iad).activeDischarges;
+        colpas=[1 0 1];
         colact='r';
         tp='line';
     case{'drogues'}
-        tag='Drogue';
-        nr=handles.Model(imd).Input(id).NrDrogues;
-        col='g';
+        tag='drogue';
+        attStruc=handles.Model(imd).Input(iad).Drogues;
+        nr=handles.Model(imd).Input(iad).NrDrogues;
+        iac=handles.Model(imd).Input(iad).activeDrogues;
+        colpas='g';
         colact='r';
         tp='line';
 end
 
-if strcmpi(tp,'line')
-    coltp='Color';
+% Put all plot and text handles in one vector
+if isfield(attStruc,'plotHandles')
+    allPlotHandles=struc2mat(attStruc,'plotHandles');
 else
-    coltp='FaceColor';
+    allPlotHandles=[];
 end
-
-hp=findobj(gca,'Tag',tag);
-ht=findobj(gca,'Tag',[tag 'Text']);
-if ~isempty(hp)
-     set(hp,coltp,col);
+if isfield(attStruc,'textHandles')
+    allTextHandles=struc2mat(attStruc,'textHandles');
+else
+    allTextHandles=[];
 end
 
 switch lower(opt)
     case{'plot'}
-        if ia==0
-            % Plot all
-            n1=1;
-            n2=nr;
-            % First Delete Objects
-            for j=1:length(hp)
-                usd=get(hp(j),'UserData');
-                if usd(1)==id
-                    delete(hp(j));
-                end
+
+        % First delete existing objects
+        if ~isempty(allPlotHandles)
+            delete(allPlotHandles);
+            drawnow;
+            for i=1:nr
+                attStruc(i).plotHandles=[];
             end
-            for j=1:length(ht)
-                usd=get(ht(j),'UserData');
-                if usd(1)==id
-                    delete(ht(j));
-                end
-            end            
-        else
-            % Just one
-            n1=ia;
-            n2=ia;
-            % First Delete Objects
-            ha=findobj(gca,'Tag',tag,'UserData',[id ia]);
-            delete(ha);
-            ha=findobj(gca,'Tag',[tag 'Text'],'UserData',[id ia]);
-            delete(ha);
         end
-        for i=n1:n2
-            [x,y,txt,xtxt,ytxt]=GetXY(handles,att,imd,id,i);
-            if i==iac
-                c=colact;
-            else
-                c=col;
+        if ~isempty(allTextHandles)
+            delete(allTextHandles);
+            drawnow;
+            for i=1:nr
+                attStruc(i).plotHandles=[];
             end
-            if strcmpi(tp,'line')
-                % Line
-                for j=1:length(x)
-                    x1=x{j};
-                    y1=y{j};
+        end
+        
+        if nr>0
+            % Now plot new objects
+            for i=1:nr
+                [x,y,txt,xtxt,ytxt]=getXY(handles,att,imd,iad,i);
+                c=colpas;
+                if strcmpi(tp,'line')
+
+                    % Line
+                    for j=1:length(x)
+                        x1=x{j};
+                        y1=y{j};
+                        z=zeros(size(x1))+6000;
+                        plt=plot3(x1,y1,z);hold on;
+                        set(plt,'Color',c);
+                        set(plt,'LineWidth',2);
+                        set(plt,'Tag',tag);
+                        set(plt,'UserData',i);
+                        attStruc(i).plotHandles(j)=plt;
+                    end
+                    if ~isempty(txt)
+                        tx=text(xtxt,ytxt,6500,txt);
+                        set(tx,'Tag',tag,'Clipping','on','HitTest','off');
+                        set(tx,'UserData',i);
+                        attStruc(i).textHandles(j)=tx;
+                        set(tx,'HitTest','off');
+                    else
+                        attStruc(i).textHandles(j)=[];
+                    end
+                    
+                    % Set active color
+                    if i==iac && act
+                        set(attStruc(i).plotHandles,'Color',colact);
+                    end
+                    
+                else
+                    
+                    % Patch
+                    x1=x{1};
+                    y1=y{1};
                     z=zeros(size(x1))+6000;
-                    plt=plot3(x1,y1,z);hold on;
-                    set(plt,'Color',c);
-                    set(plt,'LineWidth',2);
+                    plt=patch(x1,y1,z);hold on;
+                    set(plt,'FaceColor',c);
+                    set(plt,'EdgeColor','none');
                     set(plt,'Tag',tag);
-                    set(plt,'UserData',[id i]);
+                    set(plt,'UserData',i);
+                    attStruc(i).plotHandles=plt;
+                    attStruc(i).textHandles=[];
+
+                    % Set active color
+                    if i==iac && act
+                        set(attStruc(i).plotHandles,'FaceColor',colact);
+                    end
+                    
                 end
-                if ~isempty(txt) && iac>0
-                    tx=text(xtxt,ytxt,6500,txt);
-                    set(tx,'Tag',[tag 'Text'],'Clipping','on','HitTest','off');
-                    set(tx,'UserData',[id i]);
+                
+                % Set hittest on or off
+                if act
+                    set(attStruc(i).plotHandles,'HitTest','on');
+                else
+                    set(attStruc(i).plotHandles,'HitTest','off');
+                end
+    
+                % Set visibility
+                if vis
+                    set(attStruc(i).plotHandles,'Visible','on');
+                    if act
+                        set(attStruc(i).textHandles,'Visible','on');
+                    else
+                        set(attStruc(i).textHandles,'Visible','off');
+                    end
+                else
+                    set(attStruc(i).plotHandles,'Visible','off');
+                    set(attStruc(i).plotHandles,'Visible','off');
+                end
+                
+%                drawnow;
+
+            end
+
+        end
+        
+    case{'delete'}
+
+        if ~isempty(allPlotHandles)
+            delete(allPlotHandles);
+%            drawnow;
+        end
+
+        if ~isempty(allTextHandles)
+            delete(allTextHandles);
+%            drawnow;
+        end
+        for i=1:nr
+            attStruc(i).plotHandles=[];
+            attStruc(i).textHandles=[];
+        end
+        
+    case{'update'}
+        
+        % Set colors
+        if ~isempty(allPlotHandles)
+            set(allPlotHandles,'FaceColor',colpas);
+            if act
+                set(attStruc(iac).plotHandles,'FaceColor',colact);
+            end
+        end
+        
+        if ~isempty(allPlotHandles)
+            % Set hittest
+            if act
+                set(allPlotHandles,'HitTest','on');
+            else
+                set(allPlotHandles,'HitTest','off');
+            end
+            % Set visibility plot handles
+            if vis
+                set(allPlotHandles,'Visible','on');
+            else
+                set(allPlotHandles,'Visible','off');
+            end
+        end
+
+        if ~isempty(allTextHandles)
+            % Set visibility text handles
+            if vis
+                if act
+                    set(allTextHandles,'Visible','on');
+                else
+                    set(allTextHandles,'Visible','off');
                 end
             else
-                % Patch
-                x1=x{1};
-                y1=y{1};
-                z=zeros(size(x1))+6000;
-                plt=patch(x1,y1,z);hold on;
-                set(plt,'FaceColor',c);
-                set(plt,'EdgeColor','none');
-                set(plt,'Tag',tag);
-                set(plt,'UserData',[id i]);
+                set(allTextHandles,'Visible','off');
             end
         end
-    case{'delete'}
-        if ia==0
-            % Delete all
-            for j=1:length(hp)
-                usd=get(hp(j),'UserData');
-                if usd(1)==id
-                    delete(hp(j));
-                end
-            end
-            for j=1:length(ht)
-                usd=get(ht(j),'UserData');
-                if usd(1)==id
-                    delete(ht(j));
-                end
-            end            
-        else
-            % Delete ia
-            hp1=findobj(gca,'Tag',tag,'UserData',[id ia]);
-            ht1=findobj(gca,'Tag',[tag 'Text'],'UserData',[id ia]);
-            delete(hp1);
-            delete(ht1);
-            % Re-order objects
-            for i=ia+1:nr
-                h1=findobj(gca,'Tag',tag,'UserData',[id i]);
-                h2=findobj(gca,'Tag',[tag 'Text'],'UserData',[id i]);
-                if ~isempty(h1)
-                    set(h1,'UserData',[id i-1]);
-                end
-                if ~isempty(h2)
-                    set(h2,'UserData',[id i-1]);
-                end
-            end
-            % Set new active object
-            h1=findobj(gca,'Tag',tag,'UserData',[id iac]);
-            if ~isempty(h1)
-                set(h1,coltp,colact);
-            end
-        end
-    case{'activate'}
-        for j=1:length(hp)
-            usd=get(hp(j),'UserData');
-            if usd(1)==id
-                set(hp(j),'Visible','on','HitTest','on');
-            end
-        end
-        if iac>0
-            ha=findobj(hp,'UserData',[id iac]);
-            if ~isempty(ha)
-                set(ha,coltp,colact);
-            end
-            for j=1:length(ht)
-                usd=get(ht(j),'UserData');
-                if usd(1)==id
-                    set(ht(j),'Visible','on');
-                end
-            end
-        end
-    case{'deactivate'}
-        for j=1:length(hp)
-            usd=get(hp(j),'UserData');
-            if usd(1)==id
-                set(hp(j),'Visible','off');
-            end
-        end
-        for j=1:length(ht)
-            usd=get(ht(j),'UserData');
-            if usd(1)==id
-                set(ht(j),'Visible','off');
-            end
-        end
-    case{'deactivatebutkeepvisible'}
-        for j=1:length(hp)
-            usd=get(hp(j),'UserData');
-            if usd(1)==id
-                set(hp(j),'Visible','on','HitTest','off');
-            end
-        end
-        for j=1:length(ht)
-            usd=get(ht(j),'UserData');
-            if usd(1)==id
-                set(ht(j),'Visible','off');
-            end
-        end
+%        drawnow;
+       
 end
 
+switch lower(att)
+    case{'observationpoints'}
+        handles.Model(imd).Input(iad).ObservationPoints=attStruc;
+    case{'crosssections'}
+        handles.Model(imd).Input(iad).CrossSections=attStruc;
+    case{'drypoints'}
+        handles.Model(imd).Input(iad).DryPoints=attStruc;
+    case{'openboundaries'}
+        handles.Model(imd).Input(iad).OpenBoundaries=attStruc;
+    case{'thindams'}
+        handles.Model(imd).Input(iad).ThinDams=attStruc;
+    case{'discharges'}
+        handles.Model(imd).Input(iad).Discharges=attStruc;
+    case{'drogues'}
+        handles.Model(imd).Input(iad).Drogues=attStruc;
+end
+
+
+
 %%
-function [x,y,txt,xtxt,ytxt]=GetXY(handles,att,imd,id,i)
+function [x,y,txt,xtxt,ytxt]=getXY(handles,att,imd,id,i)
 
 xg=handles.Model(imd).Input(id).GridX;
 yg=handles.Model(imd).Input(id).GridY;

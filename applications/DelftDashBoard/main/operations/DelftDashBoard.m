@@ -97,12 +97,6 @@ maximize(handles.GUIHandles.MainWindow);
 
 % set(gcf,'Renderer','Painters');
 
-% drawnow;
-% pause(1);
-
-
-%drawnow;
-
 % Close Splash Screen
 frame.hide;
 

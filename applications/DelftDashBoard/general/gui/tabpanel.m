@@ -61,7 +61,8 @@ end
 
 switch lower(fcn)
     case{'create'}
-        [handle,tabhandles]=createTabPanel(fig,tag,clr,pos,parent);
+        ntabs=length(tabnames);
+        [handle,tabhandles]=createTabPanel(fig,tag,clr,pos,parent,ntabs);
         changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
         select(handle,activetabnr,'nocallback');
     case{'change'}
@@ -79,7 +80,7 @@ switch lower(fcn)
 end
 
 %%
-function [panelHandle,largeTabs]=createTabPanel(fig,panelname,clr,panelPosition,parent)
+function [panelHandle,largeTabs]=createTabPanel(fig,panelname,clr,panelPosition,parent,ntabs)
 
 foregroundColor=clr;
 backgroundColor=clr*0.9;
@@ -89,7 +90,7 @@ vertpos=panelPosition(4)-1;
 
 tabHeight=20;
 
-ntabs=20;
+%ntabs=20;
 tabs=zeros(ntabs,1);
 tabText=tabs;
 blankText=tabs;
@@ -177,9 +178,9 @@ largeTabs=panel.largeTabHandles;
 set(tabs(1:ntabs),'Visible','on');
 set(tabText(1:ntabs),'Visible','on');
 set(blankText(1:ntabs),'Visible','on');
-set(tabs(ntabs+1:20),'Visible','off');
-set(tabText(ntabs+1:20),'Visible','off');
-set(blankText(ntabs+1:20),'Visible','off');
+% set(tabs(ntabs+1:20),'Visible','off');
+% set(tabText(ntabs+1:20),'Visible','off');
+% set(blankText(ntabs+1:20),'Visible','off');
 
 foregroundColor=panel.foregroundColor;
 backgroundColor=panel.backgroundColor;
@@ -246,6 +247,11 @@ panel.inputArguments=inputarguments;
 
 set(panelHandle,'UserData',panel);
 
+for i=1:length(panel.largeTabHandles)
+    set(panel.largeTabHandles(i),'Visible','off');
+end
+%drawnow;
+
 %%
 function clickTab(hObject,eventdata)
 
@@ -263,30 +269,30 @@ function select(h,iac,opt)
 
 panel=get(h,'UserData');
 
-for i=1:length(panel.largeTabHandles)
-    if i~=iac
-        set(panel.largeTabHandles(i),'Visible','off');
-%        pause(0.01);
-%        drawnow;
-    end
-end
-% % drawnow;
+%drawnow
+% for i=1:length(panel.largeTabHandles)
+%     if i~=iac
+%         set(panel.largeTabHandles(i),'Visible','off');
+%         drawnow;
+%     end
+% end
 
-% set(panel.largeTabHandles(panel.activeTab),'Visible','off');
-% % hhh=get(panel.largeTabHandles(panel.activeTab),'Children');
-% % set(hhh,'Visible','off');
-% drawnow;
-% pause(0.05);
+set(panel.largeTabHandles(panel.activeTab),'Visible','off');
+%drawnow('expose');
 
 % Set new tab visible
 set(panel.largeTabHandles(iac),'Visible','on');
-% hhh=get(panel.largeTabHandles(iac),'Children');
-% set(hhh,'Visible','on');
-drawnow;
-%pause(0.5);
+%drawnow('expose');
 
 panel.activeTab=iac;
 set(h,'UserData',panel);
+
+% Set active tab number in appdata
+try
+    el=getappdata(h,'element');
+end
+el.activeTabNr=iac;
+setappdata(h,'element',el);
 
 % All tabs
 set(panel.tabHandles,'BackgroundColor',panel.backgroundColor);

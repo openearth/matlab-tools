@@ -18,6 +18,7 @@
         <tab>
           <tag>description</tag>
           <tabstring>Description</tabstring>
+          <callback>ddb_Delft3DFLOW_description</callback>
           <elements>Delft3DFLOW.description.xml</elements>
         </tab>
         <tab>

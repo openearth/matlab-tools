@@ -127,7 +127,8 @@ set(handles.GUIHandles.EditTracerName,'String',str{ii});
 
 %%
 function PushOK_Callback(hObject,eventdata)
-h2=guidata(findobj('Tag','MainWindow'));
+%h2=guidata(findobj('Tag','MainWindow'));
+h2=getHandles;
 handles=guidata(gcf);
 
 
@@ -147,7 +148,8 @@ else
     set(h2.GUIHandles.TogglePollutants,'Value',1);
     set(h2.GUIHandles.PushEditPollutants,'Enable','on');
 end
-guidata(findobj('Tag','MainWindow'),h2);
+setHandles(h2);
+%guidata(findobj('Tag','MainWindow'),h2);
 closereq;
 
 %%

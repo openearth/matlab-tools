@@ -130,7 +130,13 @@ for iac=ii1:ii2
             if ok
                 switch element.style
                     case{'table'}
-                        table(element.handle,'refresh','enable',zeros(element.nrRows,length(element.columns))+1);
+%                        ones=zeros(element.nrRows,length(element.columns))+1;
+                        for i=1:element.nrRows
+                            for j=1:length(element.columns)
+                                enab(i,j)=element.columns(j).enable;
+                            end
+                        end
+                        table(element.handle,'refresh','enable',enab);
                     otherwise
                         enableElement(element);
                 end

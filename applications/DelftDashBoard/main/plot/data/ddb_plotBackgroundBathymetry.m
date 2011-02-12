@@ -26,6 +26,7 @@ yy=yy(jlim);
 h=handles.mapHandles.bathymetry;
 
 zz=handles.GUIData.z(jlim,ilim);
+%zz=single(zz);
 
 if handles.ScreenParameters.AutomaticColorLimits
     zmin=abs(min(min(zz)));
@@ -59,6 +60,7 @@ if length(earthx)>1
 
     tic
     disp('Interpolating color map ...');
+%    earthy=single(earthy);
     r=interp1(earthx,earthy(:,1),zz);
     g=interp1(earthx,earthy(:,2),zz);
     b=interp1(earthx,earthy(:,3),zz);
@@ -80,7 +82,8 @@ if length(earthx)>1
 
     cdata=min(cdata,0.999);
     cdata=max(cdata,0.001);
-        
+    cdata=single(cdata);
+
     set(h,'XData',xx,'YData',yy,'CData',cdata);
     set(gca,'YDir','normal');
     
