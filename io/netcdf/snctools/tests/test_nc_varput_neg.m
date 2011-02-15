@@ -185,7 +185,7 @@ catch me
         return
     end
     switch(me.identifier)
-        case { 'SNCTOOLS:NC_VARPUT:badIndexing' }
+        case { 'SNCTOOLS:nc_varput:badIndexing' }
             return
         otherwise
             rethrow(me);
@@ -210,7 +210,7 @@ catch me
         return
     end
     switch(me.identifier)
-        case { 'SNCTOOLS:NC_VARPUT:badIndexing' }
+        case { 'SNCTOOLS:nc_varput:badIndexing' }
             return
         otherwise
             rethrow(me);

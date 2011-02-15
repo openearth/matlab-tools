@@ -26,12 +26,14 @@ else
     
     idx = hdfsd('nametoindex',sd_id,varname);
     if idx < 0
+        hdfsd('end',sd_id);
         error('SNCTOOLS:attget:hdf4:nametoindex', ...
             'NAMETOINDEX failed on %s, %s.', varname, hfile);
     end
     
     sds_id = hdfsd('select',sd_id,idx);
     if sds_id < 0
+        hdfsd('end',sd_id);
         error('SNCTOOLS:attget:hdf4:select', ...
             'SELECT failed on %s, %s.', varname, hfile);
     end

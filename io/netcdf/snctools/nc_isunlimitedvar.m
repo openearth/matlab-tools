@@ -11,35 +11,18 @@ function tf = nc_isunlimitedvar ( ncfile, varname )
 %
 %   See also NC_ISCOORDVAR, NC_DUMP.
 
-
-v = version('-release');
-switch(v)
-    case { '14', '2006a', '2006b', '2007a' }
-        tf = snc_is_unlimitedvar_lt_2007b(ncfile,varname);
-     
-    otherwise
-        tf = snc_is_unlimitedvar(ncfile,varname);
-        
+backend = snc_read_backend(ncfile);
+switch(backend)
+	case 'tmw'
+		tf = nc_isunlimitedvar_tmw(ncfile,varname);
+    case 'tmw_hdf4'
+        tf = nc_isunlimitedvar_hdf4(ncfile,varname);
+	case 'java'
+		tf = nc_isunlimitedvar_java(ncfile,varname);
+	case 'mexnc'
+		tf = nc_isunlimitedvar_mexnc(ncfile,varname);
+	otherwise
+		error('SNCTOOLS:unlimitedVar:unhandledBackend', ...
+		      '%s is not a recognized backend.', backend );
 end
 
-
-
-
-%--------------------------------------------------------------------------
-function tf = snc_is_unlimitedvar_lt_2007b(ncfile,varname)
-try
-    DataSet = nc_getvarinfo ( ncfile, varname );
-catch %#ok<CTCH>
-    e = lasterror; %#ok<LERR>
-    switch ( e.identifier )
-        case { 'SNCTOOLS:NC_GETVARINFO:badVariableName', ...
-                'SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID', ...
-                'SNCTOOLS:nc_info:hdf4:nametoindexFailed' }
-            tf = false;
-            return
-        otherwise
-            error('SNCTOOLS:NC_ISUNLIMITEDVAR:unhandledCondition', e.message );
-    end
-end
-
-tf = DataSet.Unlimited;

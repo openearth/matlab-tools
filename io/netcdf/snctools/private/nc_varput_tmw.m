@@ -1,4 +1,4 @@
-function nc_varput_tmw( ncfile, varname, data, start,count,stride )
+function nc_varput_tmw(ncfile,varname,data,start,count,stride)
 ncid = netcdf.open(ncfile,'WRITE');
 try
     varid = netcdf.inqVarID(ncid, varname );
@@ -8,7 +8,7 @@ try
     v = nc_getvarinfo(ncfile,varname);
     nc_count = v.Size;
     
-    [start, count] = nc_varput_validate_indexing(ncid,nvdims,data,start,count,stride,false);
+    [start, count] = nc_varput_validate_indexing(nvdims,data,start,count,stride);
     
     % check that the length of the start argument matches the rank of the 
     % variable.

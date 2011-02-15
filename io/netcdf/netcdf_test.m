@@ -3,8 +3,34 @@ function OK =  netcdf_test
 %
 %See also: netcdf_settings, netcdf
 
-disp('please be patient: testing 1000 times')
+%%
+disp([mfilename,' test 1'])
+%test_opendap_local_system
 
+%% java heap space
+disp([mfilename,' test 2'])
+f = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+
+try
+   z  = nc_varget(f,'altitude',[0 0 0],[1 -1 -1]);
+   OK = 1;
+catch   
+   OK = 0;
+   disp('		UNEXPECTED: java.lang.OutOfMemoryError: Java heap space')
+end
+
+try
+   z  = nc_varget(f,'altitude',[0 0 0],[2 -1 -1]);
+   disp('		EXPECTED: java.lang.OutOfMemoryError: Java heap space')
+   OK = 1;
+catch   
+   OK = 1;
+end
+   disp(['		java.lang.Runtime.getRuntime.maxMemory = ',num2str(java.lang.Runtime.getRuntime.maxMemory/2^20),' Mb'])
+   disp('		For increasing java heap space see:')
+   disp('		http://www.mathworks.com/support/solutions/en/data/1-18I2C/')
+
+%% SLOW !!
+disp([mfilename,' test 3'])
+disp('		please be patient: testing 1000 times')
 test_local_system % load opendap vars, save as local netcdf3, load it again & compare
-
-test_opendap_local_system

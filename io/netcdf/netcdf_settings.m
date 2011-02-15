@@ -13,6 +13,9 @@ function netcdf_settings(varargin)
 % * 2010a OK
 % * 2010b OK
 %
+% For reading large netCDF files with Java memory issues can arise, see:
+% http://www.mathworks.com/support/solutions/en/data/1-18I2C/
+%
 %See also: OETSETTINGS, NC_CF_GRID_TEST, NETCDF_TEST
 
 %% Retrieve verbose state from input
@@ -32,7 +35,6 @@ function netcdf_settings(varargin)
    OPT = setproperty(OPT,varargin{nextarg:end});
 
 %% remove any netcdf paths already added by oetsettings
-
 
    S      = [fileparts(which('oetsettings'))  filesep];
    ncroot = [fileparts(mfilename('fullpath')) filesep];
@@ -84,19 +86,35 @@ function netcdf_settings(varargin)
    vs = datenum(version('-date'));
    if (vs > datenum(2003,1,1)) 
    
-      java2add         = path2os([ncroot,'toolsUI-4.1.jar']); % 'netcdfAll-4.1.jar'; % same functionality
+      
+      if     strcmpi(version('-release'),'2010b')
+      java2add         = path2os([ncroot,'netcdfAll-4.2.jar']); % 'toolsUI-4.2.jar' % same functionality but bigger
+      elseif strcmpi(version('-release'),'R14')
+      java2add         = path2os([ncroot,'netcdf-2.2.20.jar']); %
+      else
+      java2add         = path2os([ncroot,'netcdfAll-4.1.jar']); % 'toolsUI-4.1.jar' % same functionality but bigger
+      end
+
       dynjavaclasspath = path2os(javaclasspath);
       indices          = strfind(javaclasspath,java2add);
        
        if isempty(cell2mat(indices))
            javaaddpath (java2add)
+         if ~(OPT.quiet)
+           disp(' Adding <a href="http://www.unidata.ucar.edu/software/netcdf-java/">netCDF-JAVA</a>, please wait ...')
+           disp(['  netCDF-JAVA library for OPeNDAP support added: ',filename(java2add)]);
+           disp(['  Note: maximal size of java memory is = ',num2str(java.lang.Runtime.getRuntime.maxMemory/2^20),' Mb'])
+           disp( '  Loading large matrices gives java heap errors, for expansion see:')
+           disp( '  http://www.mathworks.com/support/solutions/en/data/1-18I2C/')
+         end
+   
        elseif ~(OPT.quiet)
            disp(['  netCDF: Java path not added, already there: ',java2add]);
        end
    
-       setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
+       setpref ( 'SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
        % keep snctools default
-       setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
+       setpref ( 'SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
                                               % 1: We do not want to transpose matrices because:
                                               %    (i)  we have some LARGE datasets and need a performance boost
                                               %    (ii) some use the netCDF API directly which does not do this. 
@@ -105,10 +123,6 @@ function netcdf_settings(varargin)
        %% add basic authentication class
        
        javaaddpath(fullfile(fileparts(mfilename('fullpath')), 'snctools', 'classes'))
-   
-       if ~(OPT.quiet)
-           disp(['  netCDF: JAVA library for OPeNDAP support added: ',filename(java2add)]);
-       end
    
    else
        
@@ -228,8 +242,7 @@ function netcdf_settings(varargin)
    end
    
    if ~OPT.quiet
-       fprintf('\n*** netcdf settings enabled! ***\n');
-       fprintf('\n');
+      disp('  netCDF: settings enabled! ');
    end
 
 %% EOF   

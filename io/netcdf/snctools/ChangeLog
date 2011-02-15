@@ -1,3 +1,15 @@
+* Sun Jan 16 2011 John Evans <john.g.evans.ne@gmail.com> -r3484
+- Simplified some private HDF4 backend functions.
+- Printing message if HDF4 testing not enabled.
+- Renamed private function NC_INFO_TMW_HDF4 to NC_INFO_HDF4.
+
+* Sat Jan 15 2011 John Evans <john.g.evans.ne@gmail.com> -r3481
+- Changed NC_ISUNLIMITEDVAR to pivot on backend rather than matlab version.
+
+* Thu Jan 13 2011 John Evans <john.g.evans.ne@gmail.com> -r3480
+- Simplified index argument validation for NC_VARPUT.
+- Abstracted NC_ADDDIM mexnc and hdf4 backends to private directory.
+
 * Thu Jan 06 2011 John Evans <john.g.evans.ne@gmail.com> -r3478
 - java/http testing is now an opt-in.
 

@@ -52,7 +52,7 @@ switch(backend)
 	case 'tmw'
 		fileinfo = nc_info_tmw(ncfile);
     case 'tmw_hdf4'
-        fileinfo = nc_info_tmw_hdf4(ncfile);
+        fileinfo = nc_info_hdf4(ncfile);
 	case 'java'
 		fileinfo = nc_info_java(ncfile);
 	case 'mexnc'

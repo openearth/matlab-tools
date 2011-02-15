@@ -1,10 +1,6 @@
-function [start, count] = nc_varput_validate_indexing(ncid,nvdims,data,start,count,stride,isMexnc)
+function [start, count] = nc_varput_validate_indexing(nvdims,data,start,count,stride)
 % Check that any given start, count, and stride arguments actually make sense
 % for this variable.  
-%
-% isMexnc is a boolean that tells us if we came in from the mexnc side of 
-% thing.  mexnc can't be trusted to handle try/catch, so we'll close the
-% file ID here.
 
 % Singletons are a special case.  We need to set the start and count 
 % carefully.
@@ -12,8 +8,7 @@ if nvdims == 0
 
     if (isempty(start) && isempty(count) && isempty(stride))
 
-        %
-        % This is the case of "nc_varput ( file, var, single_datum );"
+        % This is the case of "nc_varput(file,var,single_datum);"
         start = 0;
         count = 1;
         
@@ -22,12 +17,8 @@ if nvdims == 0
         return
 
     else     
-        if isMexnc
-            mexnc ( 'close', ncid );
-        end
-        err_id = 'SNCTOOLS:NC_VARPUT:badIndexing';
-        err_msg = 'Indexing make no sense for a singleton variable.';
-        error ( err_id, err_msg );
+        error('SNCTOOLS:nc_varput:badIndexing',...
+            'Do not use indexing for singleton variables.');
     end
 
     return;
@@ -45,20 +36,7 @@ if isempty(start) && isempty(count) && ( nvdims > 0 )
 end
 
 % Check that the start, count, and stride arguments have the same length.
-if ( numel(start) ~= numel(count) )
-    if isMexnc
-        mexnc ( 'close', ncid );
-    end
-    err_id = 'SNCTOOLS:NC_VARPUT_VALIDATE_INDEXING:badStartCount';
-    err_msg = 'START and COUNT arguments must have the same length.';
-    error ( err_id, err_msg );
-end
-
-if ( ~isempty(stride) && (length(start) ~= length(stride)) )
-    if isMexnc
-        mexnc ( 'close', ncid );
-    end
-    err_id = 'SNCTOOLS:NC_VARPUT_VALIDATE_INDEXING:badStartStride';
-    err_msg = 'START, COUNT, and STRIDE arguments must have the same length.';
-    error ( err_id, err_msg );
+if (numel(start) ~= numel(count)) || (~isempty(stride) && numel(start) ~= numel(stride))
+    error('SNCTOOLS:nc_varput:badIndexLength', ...
+          'The START, COUNT, and STRIDE arguments must have the same length.');
 end

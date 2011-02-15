@@ -9,8 +9,7 @@ function oetsettings(varargin)
 %
 % By default oetsettings generates a tutorial search database (only if there is no current database 
 % or the current database is outdated). Generation of the tutorial search database can be suppressed 
-% as follows:
-%   "oetsettings(...,'searchdb',false);"
+% as follows: "oetsettings(...,'searchdb',false);"
 % 
 % For more information on OpenEarthTools refer to the following sources:
 %
@@ -21,7 +20,6 @@ function oetsettings(varargin)
 % * tools, model code: <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
 % * help blocks:       Scroll through the OpenEarthTools directories by clicking 
 %                      to "See also" links, or typing:
-%
 %    help oetsettings
 %    help general
 %    help applications
@@ -71,7 +69,7 @@ function oetsettings(varargin)
 % $Keywords: $
 
 %% Retrieve verbose state from input 
-% -----------------------
+
    OPT = struct(...
        'quiet',false,...
        'searchdb',true);
@@ -89,25 +87,24 @@ function oetsettings(varargin)
    OPT = setproperty(OPT,varargin{nextarg:end});
    
 %% Acknowledge user we started adding the toolbox
-% -----------------------
    if ~(OPT.quiet)
        disp('Adding <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>, please wait ...')
        disp(' ')
    end
       
 %% Collect warning and directory state
-% -----------------------
+
    state.warning = warning;
    state.pwd     = cd;
 
 %% Add paths
-% -----------------------
+
    basepath = fileparts(mfilename('fullpath'));
    warning off
    addpathfast(basepath,'append',false); % excludes *.svn directories!
 
 %% Create tutorial search database
-% ------------------------
+
     if OPT.searchdb
         createSearchDb = true;
         
@@ -138,27 +135,27 @@ function oetsettings(varargin)
         end
     end
 %% Restore warning and directory state
-% -----------------------
+
    warning(state.warning)
         cd(state.pwd)
 
    clear state
 
 %% set svn:keywords automatically to any new m-file
-% -----------------------
+
    autosetSVNkeywords
    
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
-% -----------------------
+
 
    netcdf_settings('quiet',OPT.quiet) % in /io/netcdf/
 
 %% Report
-% -----------------------
+
    if ~(OPT.quiet)
+       disp(' ')
        help oetsettings
-       fprintf('\n*** OpenEarthTools settings enabled! ***\n');
    end
    
 %% EOF

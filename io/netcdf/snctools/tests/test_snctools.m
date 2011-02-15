@@ -166,6 +166,8 @@ fprintf('Testing tmw backend ...\n');
 
 if getpref('SNCTOOLS','TEST_HDF4',false)
     run_hdf4_tests;
+else
+    fprintf('\tHDF4 testing filtered out where TEST_HDF4 preference set to false.\n');
 end
 
 v = version('-release');
@@ -294,6 +296,7 @@ test_nc_attget(mode);
 test_nc_dump('hdf');
 test_nc_iscoordvar('hdf');
 test_nc_isunlimitedvar(mode);
+test_nc_adddim(mode);
 test_nc_addvar(mode);
 test_nc_addrecs(mode);
 test_nc_varget(mode);

@@ -19,8 +19,7 @@ try
 	nvdims = numel(v.Dimension);
     nc_count = v.Size;
     
-    [start, count] = nc_varput_validate_indexing(ncid,nvdims,data,start,count,stride,true);
-    
+    [start, count] = nc_varput_validate_indexing(nvdims,data,start,count,stride);
     
     % check that the length of the start argument matches the rank of the variable.
     if length(start) ~= length(nc_count)
