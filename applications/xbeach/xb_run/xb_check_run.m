@@ -13,6 +13,12 @@ function runs = xb_check_run(xb, varargin)
 %   varargin  = repeat:     boolean flag to determine if the check is
 %                           repeated
 %               interval:   seconds between checks, if repeated
+%               display:    boolean to determine whether a message is
+%                           displayed after process has finished
+%               sound:      boolean to determine whether a sound is made
+%                           after process has finished
+%               callback:   callback function fired after process has
+%                           finished
 %
 %   Output:
 %   runs      = boolean that indicates whether the job is still running
@@ -68,6 +74,8 @@ function runs = xb_check_run(xb, varargin)
 OPT = struct( ...
     'repeat', false, ...
     'interval', 60, ...
+    'display', true, ...
+    'sound', true, ...
     'callback', {{0}} ...
 );
 
@@ -109,7 +117,7 @@ end
 
 if OPT.repeat && runs
      t = timer( ...
-         'TimerFcn', {@repeatCheck,xb,OPT.callback}, ...
+         'TimerFcn', {@repeatCheck,xb,OPT}, ...
          'ExecutionMode', 'fixedDelay', ...
          'Period', OPT.interval ...
      );
@@ -119,21 +127,26 @@ end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function repeatCheck(obj, event, xb, callback)
+function repeatCheck(obj, event, xb, OPT)
 
 if ~xb_check_run(xb)
     stop(obj); delete(obj);
-    disp([upper(mfilename) ': Job ' xb_get(xb, 'name') ' (' num2str(xb_get(xb, 'id')) ') finished']);
+    
+    if OPT.display
+        disp([upper(mfilename) ': Job ' xb_get(xb, 'name') ' (' num2str(xb_get(xb, 'id')) ') finished']);
+    end
     
     % halleluja
-    try
-        load handel;
-        sound(y,Fs);
+    if OPT.sound
+        try
+            load handel;
+            sound(y,Fs);
+        end
     end
     
     % fire callback function
-    if isa(callback{1}, 'function_handle')
-        callback = {callback{1} xb callback{2:end}};
-        feval(callback{:});
+    if isa(OPT.callback{1}, 'function_handle')
+        OPT.callback = {OPT.callback{1} xb OPT.callback{2:end}};
+        feval(OPT.callback{:});
     end
 end
