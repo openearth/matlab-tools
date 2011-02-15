@@ -36,6 +36,6 @@ else
 end
 
 % Select toolbox
-tabpanel('select','tag',lower(handles.Model(md).Name),'tabname',tabname,'runcallback',icb);
+tabpanel('select','tag',lower(handles.Model(md).Name),'tabname',tabname,'runcallback',1);
 
 set(handles.GUIHandles.mapPanel,'Parent',handles.Model(md).GUI.elements(1).handle);

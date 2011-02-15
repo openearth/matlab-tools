@@ -38,6 +38,7 @@ handles=getHandles;
 i=get(hObject,'Value');
 id=ad;
 ini0=handles.Model(md).Input(id).InitialConditions;
+handles.Model(md).Input(id).initialConditionsType=i;
 switch i,
     case 1
         handles.Model(md).Input(id).InitialConditions='unif';

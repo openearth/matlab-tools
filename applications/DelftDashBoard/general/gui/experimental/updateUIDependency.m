@@ -156,6 +156,13 @@ for iac=ii1:ii2
             end
         case{'update'}
             setUIElement(element.handle,'dependencyupdate',0);
+        case{'visible'}
+            if ok
+                setVisible(element);
+            else
+                setInvisible(element);
+            end
+
     end
         
 end
@@ -172,6 +179,20 @@ function disableElement(element)
 set(element.handle,'Enable','off');
 if ~isempty(element.textHandle)
     set(element.textHandle,'Enable','off');
+end
+
+%%
+function setVisible(element)
+set(element.handle,'Visible','on');
+if ~isempty(element.textHandle)
+    set(element.textHandle,'Visible','on');
+end
+
+%%
+function setInvisible(element)
+set(element.handle,'Visible','off');
+if ~isempty(element.textHandle)
+    set(element.textHandle,'Visible','off');
 end
 
 %%

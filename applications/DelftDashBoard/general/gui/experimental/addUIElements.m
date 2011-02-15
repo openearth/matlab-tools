@@ -56,13 +56,20 @@ for i=1:length(elements)
                 
                 % Set text
                 if ~isempty(elements(i).text)
+                    if ~isfield(elements(i).text,'variable')
+                        str=elements(i).text;
+                    else
+                        str=' ';
+                    end
                     % Text
-                    elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
+                    elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',str,'Position',position,'BackgroundColor',bgc);
                     setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
                 end
                 
             case{'panel'}
                 elements(i).handle=uipanel('Title',elements(i).title,'Units','pixels','Position',position,'BackgroundColor',bgc);
+%                elements(i).handle=uicontrol(figh,'Style','frame','String',elements(i).title,'Units','pixels','Position',position,'BackgroundColor',bgc);
+                set(elements(i).handle,'Title',elements(i).text);
                 set(elements(i).handle,'Parent',parent);
                 
             case{'radiobutton'}
@@ -90,7 +97,7 @@ for i=1:length(elements)
                 elements(i).handle=uicontrol(figh,'Style','check','String',elements(i).text,'Position',[pos 20 20],'BackgroundColor',bgc);
                 
                 ext=get(elements(i).handle,'Extent');
-                pos(3)=ext(3)+15;
+                pos(3)=ext(3)+20;
                 pos(4)=20;
                 set(elements(i).handle,'Position',pos);
                 if ~isempty(elements(i).toolTipString)
@@ -111,7 +118,7 @@ for i=1:length(elements)
 
             case{'listbox'}
 
-                % Edit box
+                % List box
                 elements(i).handle=uicontrol(figh,'Parent',parent,'Style','listbox','String','','Position',position,'BackgroundColor',[1 1 1]);
                 
                 if ~isempty(elements(i).toolTipString)
@@ -124,12 +131,38 @@ for i=1:length(elements)
                     elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
                     setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
                 end
+
+            case{'popupmenu'}
+
+                % Pop-up menu
+                elements(i).handle=uicontrol(figh,'Parent',parent,'Style','popupmenu','String','','Position',position,'BackgroundColor',[1 1 1]);
                 
+                if ~isempty(elements(i).toolTipString)
+                    set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
+                end
+                
+                % Set text
+                if ~isempty(elements(i).text)
+                    % Text
+                    elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
+                    setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
+                end
+
             case{'text'}
                 
                 % Text
                 pos=position;
-                elements(i).handle=uicontrol(figh,'Style','text','String',elements(i).text,'Position',[pos 20 20],'BackgroundColor',bgc);
+%                 try
+                    if ~isfield(elements(i).text,'variable')
+                        str=elements(i).text;
+                    else
+                        str=' ';
+                    end
+                        
+                elements(i).handle=uicontrol(figh,'Style','text','String',str,'Position',[pos 20 20],'BackgroundColor',bgc);
+%                 catch
+%                 shite=600;
+%                 end
                 
                 ext=get(elements(i).handle,'Extent');
                 pos(3)=ext(3);
@@ -142,7 +175,7 @@ for i=1:length(elements)
                 
                 %% Custom elements
                 
-            case{'pushselectfile'}
+            case{'pushselectfile','pushsavefile'}
                 
                 % Push select file
                 elements(i).handle=uicontrol(figh,'Style','pushbutton','String',elements(i).text,'Position',position);
@@ -155,14 +188,16 @@ for i=1:length(elements)
                     set(elements(i).handle,'Parent',parent);
                 end
                 
-                % Text
-                str='File : ';
-                elements(i).textHandle=uicontrol(figh,'Style','text','String',str,'Position',position,'BackgroundColor',bgc);
-                
-                setTextPosition(elements(i).textHandle,position,'right');
-                if ~isempty(parent)
-                    set(elements(i).textHandle,'Parent',parent);
+                if elements(i).showFileName
+                    % Text
+                    str='File : ';
+                    elements(i).textHandle=uicontrol(figh,'Style','text','String',str,'Position',position,'BackgroundColor',bgc);
+                    setTextPosition(elements(i).textHandle,position,'right');
+                    if ~isempty(parent)
+                        set(elements(i).textHandle,'Parent',parent);
+                    end
                 end
+                
                 
             case{'tabpanel'}
                 
@@ -280,11 +315,13 @@ for i=1:length(elements)
     %drawnow;
     
     set(elements(i).handle,'Tag',elements(i).tag);
-
+try
     setappdata(elements(i).handle,'getFcn',getFcn);
     setappdata(elements(i).handle,'setFcn',setFcn);
     setappdata(elements(i).handle,'element',elements(i));
-
+catch
+    shite=100
+end
 end
 
 setappdata(parent,'elements',elements);
@@ -357,6 +394,13 @@ for i=1:length(elements)
                     set(elements(i).handle,'Callback',{@listbox_Callback,getFcn,setFcn,elements,i});
                 end
 
+            case{'popupmenu'}
+                if ~isempty(elements(i).customCallback)
+                    set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
+                else
+                    set(elements(i).handle,'Callback',{@popupmenu_Callback,getFcn,setFcn,elements,i});
+                end
+
             case{'text'}
                 
                 
@@ -368,7 +412,14 @@ for i=1:length(elements)
                 else
                     set(elements(i).handle,'Callback',{@pushSelectFile_Callback,getFcn,setFcn,elements,i});
                 end
-                
+
+            case{'pushsavefile'}
+                if ~isempty(elements(i).customCallback)
+                    set(elements(i).handle,'Callback',elements(i).customCallback);
+                else
+                    set(elements(i).handle,'Callback',{@pushSaveFile_Callback,getFcn,setFcn,elements,i});
+                end
+
         end
         
     catch
@@ -394,11 +445,11 @@ v=get(hObject,'String');
 switch el.variable.type
     case{'string'}
     case{'datetime'}
-        v=datenum(v,'yyyymmdd HHMMSS');
+        v=datenum(v,'yyyy mm dd HH MM SS');
     case{'date'}
-        v=datenum(v,'yyyymmdd');
+        v=datenum(v,'yyyy mm dd');
     case{'time'}
-        v=datenum(v,'HHMMSS');
+        v=datenum(v,'HH MM SS');
     otherwise
         v=str2double(v);
 end
@@ -518,6 +569,37 @@ if ~isempty(str{1})
 end
 
 %%
+function popupmenu_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+
+str=get(hObject,'String');
+% Check if menu is not empty
+if ~isempty(str{1})
+    
+    s=feval(getFcn);
+    
+    el=elements(i);
+    
+    ii=get(hObject,'Value');
+    switch el.variable.type
+        case{'string'}
+            v=str{ii};
+        otherwise
+            v=ii;
+    end
+    s=setSubFieldValue(s,el.variable,v);
+    
+    feval(setFcn,s);
+    
+    % Update dependees
+    updateUIDependees(elements,i,getFcn)
+    
+    if ~isempty(el.onChangeCallback)
+        % Execute on-change callback
+        feval(el.onChangeCallback,el.option1,el.option2);
+    end
+end
+
+%%
 function pushSelectFile_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
 
 s=feval(getFcn);
@@ -534,13 +616,54 @@ if pathname~=0
     end
     v=filename;
     s=setSubFieldValue(s,el.variable,v);
-    set(el.textHandle,'enable','on','String',['File : ' v]);
     
-    pos=get(el.textHandle,'Position');
-    ext=get(el.textHandle,'Extent');
-    pos(3)=ext(3);
-    pos(4)=15;
-    set(el.textHandle,'Position',pos);
+    if el.showFileName
+        set(el.textHandle,'enable','on','String',['File : ' v]);
+        pos=get(el.textHandle,'Position');
+        ext=get(el.textHandle,'Extent');
+        pos(3)=ext(3);
+        pos(4)=15;
+        set(el.textHandle,'Position',pos);
+    end
+        
+    feval(setFcn,s);
+    
+    if ~isempty(el.onChangeCallback)
+        % Execute on-change callback
+        feval(el.onChangeCallback,el.option1,el.option2);
+    end
+    
+    % Update dependees
+    updateUIDependees(elements,i,getFcn)
+
+end
+
+%%
+function pushSaveFile_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+
+s=feval(getFcn);
+
+el=elements(i);
+
+[filename, pathname, filterindex] = uiputfile(el.fileExtension,el.selectionText);
+
+if pathname~=0
+    
+    curdir=[pwd filesep];
+    if ~strcmpi(curdir,pathname)
+        filename=[pathname filename];
+    end
+    v=filename;
+    s=setSubFieldValue(s,el.variable,v);
+    
+    if el.showFileName
+        set(el.textHandle,'enable','on','String',['File : ' v]);
+        pos=get(el.textHandle,'Position');
+        ext=get(el.textHandle,'Extent');
+        pos(3)=ext(3);
+        pos(4)=15;
+        set(el.textHandle,'Position',pos);
+    end
     
     feval(setFcn,s);
     
@@ -549,6 +672,9 @@ if pathname~=0
         feval(el.onChangeCallback,el.option1,el.option2);
     end
     
+    % Update dependees
+    updateUIDependees(elements,i,getFcn)
+
 end
 
 %%
@@ -592,26 +718,3 @@ end
 function custom_Callback(hObject,eventdata,callback,option1,option2)
 feval(callback,option1,option2);
 
-%%
-function setTextPosition(tx,pos,textpos)
-
-ext=get(tx,'Extent');
-hgt=15;
-switch lower(textpos)
-    case{'left'}
-        txtpos=[pos(1)-ext(3)-5 pos(2)+1 ext(3) hgt];
-        horal='right';
-    case{'right'}
-        txtpos=[pos(1)+pos(3)+5 pos(2)+1 ext(3) hgt];
-        horal='left';
-    case{'above-left'}
-        txtpos=[pos(1) pos(2)+pos(4)+1 ext(3) hgt];
-        horal='left';
-    case{'above-right'}
-        txtpos=[pos(1)+pos(3)-ext(3) pos(2)+pos(4)+1 ext(3) hgt];
-        horal='right';
-    case{'above-center'}
-        txtpos=[pos(1)+0.5*pos(3)-0.5*ext(3) pos(2)+pos(4)+1 ext(3) hgt];
-        horal='center';
-end
-set(tx,'Position',txtpos,'HorizontalAlignment',horal);

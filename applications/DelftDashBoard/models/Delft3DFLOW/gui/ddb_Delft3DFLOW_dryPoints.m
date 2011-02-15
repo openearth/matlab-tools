@@ -6,18 +6,15 @@ ddb_zoomOff;
 
 if isempty(varargin)
     ddb_refreshScreen;
-%    deleteUIControls;
-    clearInstructions;
-    set(handles.GUIHandles.textAnn1,'String',{''});
-    set(handles.GUIHandles.textAnn2,'String',{''});
-    set(handles.GUIHandles.textAnn3,'String',{''});
     handles.Model(md).Input(ad).addDryPoint=0;
     handles.Model(md).Input(ad).selectDryPoint=0;
     handles.Model(md).Input(ad).changeDryPoint=0;
     handles.Model(md).Input(ad).deleteDryPoint=0;
-    handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
+    handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drypoints');
 else
+    
     opt=varargin{1};
+    
     switch(lower(opt))
 
         case{'add'}
@@ -81,9 +78,7 @@ else
             n2str=num2str(handles.Model(md).Input(ad).DryPoints(n).N2);
             handles.Model(md).Input(ad).dryPointNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
-            set(handles.GUIHandles.textAnn1,'String',{''});
-            set(handles.GUIHandles.textAnn2,'String',{''});
-            set(handles.GUIHandles.textAnn3,'String',{''});
+            clearInstructions;
 
         case{'selectfromlist'}
             handles.Model(md).Input(ad).addDryPoint=0;
@@ -91,8 +86,15 @@ else
             handles.Model(md).Input(ad).changeDryPoint=0;
             % Delete selected dry point next time delete is clicked
             handles.Model(md).Input(ad).deleteDryPoint=1;
-            handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
+            handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drypoints');
             clearInstructions;
+
+        case{'openfile'}
+            handles=ddb_readDryFile(handles);
+            handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
+
+        case{'savefile'}
+            ddb_saveDryFile(handles,ad);
 
     end
 end
@@ -100,36 +102,6 @@ end
 setHandles(handles);
 
 refreshDryPoints;
-
-% %%
-% function PushOpenDryPoints_CallBack(hObject,eventdata)
-% handles=getHandles;
-% [filename, pathname, filterindex] = uigetfile('*.dry', 'Select Dry Points File');
-% curdir=[lower(cd) '\'];
-% if ~strcmpi(curdir,pathname)
-%     filename=[pathname filename];
-% end
-% handles.Model(md).Input(ad).DryFile=filename;
-% handles=ddb_readDryFile(handles);
-% refreshDryPoints(handles);
-% set(handles.GUIHandles.TextDryFile,'String',['File : ' filename]);
-% handles.GUIData.DeleteSelectedDryPoint=0;
-% setHandles(handles);
-% ddb_plotFlowAttributes(handles,'DryPoints','plot',ad,0,1);
-% 
-% %%
-% function PushSaveDryPoints_CallBack(hObject,eventdata)
-% handles=getHandles;
-% [filename, pathname, filterindex] = uiputfile('*.dry', 'Select Dry Points File',handles.Model(md).Input(ad).DryFile);
-% curdir=[lower(cd) '\'];
-% if ~strcmpi(curdir,pathname)
-%     filename=[pathname filename];
-% end
-% handles.Model(md).Input(ad).DryFile=filename;
-% ddb_saveDryFile(handles,ad);
-% set(handles.GUIHandles.TextDryFile,'String',['File : ' filename]);
-% handles.GUIData.DeleteSelectedDryPoint=0;
-% setHandles(handles);
 
 %%
 function addDryPoint(x,y)
@@ -139,8 +111,8 @@ y1=y(1);y2=y(2);
 
 handles=getHandles;
 % Find grid indices of start and end point of line
-[m1,n1]=FindGridCell(x1,y1,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
-[m2,n2]=FindGridCell(x2,y2,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
+[m1,n1]=findGridCell(x1,y1,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
+[m2,n2]=findGridCell(x2,y2,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
 % Check if start and end are in one grid line
 if m1>0 && (m1==m2 || n1==n2)
     if handles.Model(md).Input(ad).changeDryPoint
@@ -162,14 +134,10 @@ if m1>0 && (m1==m2 || n1==n2)
     
     if handles.Model(md).Input(ad).changeDryPoint
         ddb_clickObject('tag','drypoint','callback',@changeDryPointFromMap);
-        set(handles.GUIHandles.textAnn1,'String',{''});
-        set(handles.GUIHandles.textAnn2,'String',{''});
-        set(handles.GUIHandles.textAnn3,'String',{'Select dry point'});
+        setInstructions({'','','Select dry point'});
     else
         ddb_dragLine(@addDryPoint,'free');
-        set(handles.GUIHandles.textAnn1,'String',{''});
-        set(handles.GUIHandles.textAnn2,'String',{''});
-        set(handles.GUIHandles.textAnn3,'String',{'Click position of new dry point'});
+        setInstructions({'','','Click position of new dry point'});
     end
 end
 refreshDryPoints;

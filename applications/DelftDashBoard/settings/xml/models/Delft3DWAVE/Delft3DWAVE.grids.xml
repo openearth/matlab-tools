@@ -20,21 +20,23 @@
             <style>text</style>
             <prefix>3a</prefix>
             <position>10 110</position>
-            <variable>
-              <name>GrdFile</name>
-              <type>string</type>
-              <subfield3>
-                <variable>
-                  <name>Domain</name>
-                  <index>
-                    <variable>
-                      <name>ActiveDomain</name>
-                      <type>integer</type>
-                    </variable>
-                  </index>
-                </variable>
-              </subfield3>
-            </variable>
+            <text>
+              <variable>
+                <name>GrdFile</name>
+                <type>string</type>
+                <subfield3>
+                  <variable>
+                    <name>Domain</name>
+                    <index>
+                      <variable>
+                        <name>ActiveDomain</name>
+                        <type>integer</type>
+                      </variable>
+                    </index>
+                  </variable>
+                </subfield3>
+              </variable>
+            </text>
             <tooltipstring></tooltipstring>
           </element>
           <element>
@@ -42,6 +44,7 @@
             <style>text</style>
             <prefix>3b</prefix>
             <position>10 90</position>
+            <text>
             <variable>
               <name>GrdFile</name>
               <type>string</type>
@@ -57,6 +60,7 @@
                 </variable>
               </subfield3>
             </variable>
+            </text>
             <tooltipstring></tooltipstring>
           </element>
           <element>
@@ -64,6 +68,7 @@
             <style>text</style>
             <prefix>3c</prefix>
             <position>10 70</position>
+            <text>
             <variable>
               <name>GrdFile</name>
               <type>string</type>
@@ -79,6 +84,7 @@
                 </variable>
               </subfield3>
             </variable>
+            </text>
             <tooltipstring></tooltipstring>
           </element>
           <element>
@@ -86,6 +92,7 @@
             <style>text</style>
             <prefix>3d</prefix>
             <position>200 110</position>
+            <text>
             <variable>
               <name>GrdFile</name>
               <type>string</type>
@@ -101,6 +108,7 @@
                 </variable>
               </subfield3>
             </variable>
+            </text>
             <tooltipstring></tooltipstring>
           </element>
           <element>
@@ -108,6 +116,7 @@
             <style>text</style>
             <prefix>3e</prefix>
             <position>200 90</position>
+            <text>
             <variable>
               <name>MMax</name>
               <type>integer</type>
@@ -123,6 +132,7 @@
                 </variable>
               </subfield3>
             </variable>
+            </text>
             <tooltipstring></tooltipstring>
           </element>
           <element>
@@ -130,6 +140,7 @@
             <style>text</style>
             <prefix>3f</prefix>
             <position>200 70</position>
+            <text>
             <variable>
               <name>NMax</name>
               <type>integer</type>
@@ -145,6 +156,7 @@
                 </variable>
               </subfield3>
             </variable>
+            </text>
             <tooltipstring></tooltipstring>
           </element>
         </elements>
@@ -158,6 +170,7 @@
             <style>text</style>
             <prefix>4a</prefix>
             <position>10 110</position>
+            <text>
             <variable>
               <name>GrdFile</name>
               <type>string</type>
@@ -173,6 +186,7 @@
                 </variable>
               </subfield3>
             </variable>
+            </text>
             <tooltipstring></tooltipstring>
           </element>
         </elements>

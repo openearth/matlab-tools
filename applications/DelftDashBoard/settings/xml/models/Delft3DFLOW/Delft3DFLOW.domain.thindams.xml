@@ -23,12 +23,12 @@
   <element>
     <tag>panelthindams</tag>
     <style>panel</style>
-    <position>170 10 170 70</position>
+    <position>170 10 170 100</position>
   </element>
   <element>
     <tag>editthinm1</tag>
     <style>edit</style>
-    <position>200 50 50 20</position>
+    <position>200 80 50 20</position>
     <text>M1</text>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
@@ -79,7 +79,7 @@
   <element>
     <tag>editthinn1</tag>
     <style>edit</style>
-    <position>280 50 50 20</position>
+    <position>280 80 50 20</position>
     <text>N1</text>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
@@ -130,7 +130,7 @@
   <element>
     <tag>editthinm2</tag>
     <style>edit</style>
-    <position>200 20 50 20</position>
+    <position>200 50 50 20</position>
     <text>M2</text>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
@@ -181,7 +181,7 @@
   <element>
     <tag>editthinn2</tag>
     <style>edit</style>
-    <position>280 20 50 20</position>
+    <position>280 50 50 20</position>
     <text>N2</text>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
@@ -228,6 +228,137 @@
       </dependency>
     </dependencies>
     <tooltipstring>Edit thin dam index N2</tooltipstring>
+  </element>
+  <element>
+    <tag>radiou</tag>
+    <style>radiobutton</style>
+    <position>270 20</position>
+    <text>U</text>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
+    <option1>plot</option1>
+    <value>U</value>
+    <variable>
+      <name>UV</name>
+      <type>string</type>
+      <subfield3>
+        <variable>
+          <name>ThinDams</name>
+          <index>
+            <variable>
+              <name>activeThinDam</name>
+              <type>integer</type>
+            </variable>
+          </index>
+        </variable>
+      </subfield3>
+    </variable>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletethindam</tag>
+          <tag>pushaddthindam</tag>
+          <tag>pushopenthindamsfile</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>
+              <name>nrThinDams</name>
+              <type>integer</type>
+            </variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listthindams</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+    <tooltipstring>Edit thin dam index N2</tooltipstring>
+  </element>
+  <element>
+    <tag>radiov</tag>
+    <style>radiobutton</style>
+    <position>300 20</position>
+    <text>V</text>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
+    <option1>plot</option1>
+    <value>V</value>
+    <variable>
+      <name>UV</name>
+      <type>string</type>
+      <subfield3>
+        <variable>
+          <name>ThinDams</name>
+          <index>
+            <variable>
+              <name>activeThinDam</name>
+              <type>integer</type>
+            </variable>
+          </index>
+        </variable>
+      </subfield3>
+    </variable>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletethindam</tag>
+          <tag>pushaddthindam</tag>
+          <tag>pushopenthindamsfile</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>
+              <name>nrThinDams</name>
+              <type>integer</type>
+            </variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listthindams</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+    <tooltipstring>Edit thin dam index N2</tooltipstring>
+  </element>
+  <element>
+    <tag>textdirection</tag>
+    <style>text</style>
+    <position>220 22</position>
+    <text>Direction</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletethindam</tag>
+          <tag>pushaddthindam</tag>
+          <tag>pushopenthindamsfile</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>
+              <name>nrThinDams</name>
+              <type>integer</type>
+            </variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
   </element>
   <element>
     <tag>toggleaddthindam</tag>
@@ -284,25 +415,36 @@
     <tooltipstring>Open thin dams file</tooltipstring>
     <text>Open</text>
     <variable>
-      <name>DryFile</name>
+      <name>ThdFile</name>
       <type>string</type>
     </variable>
     <extension>*.thd</extension>
-    <selectiontext>Select thin dams File</selectiontext>
-    <onchange>ddb_Delft3DFLOW_openThinDamsFile</onchange>
+    <selectiontext>Select thin dams file</selectiontext>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
+    <option1>openfile</option1>    
+    <dependencies>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>pushsavethindams</tag>
+        </tags>
+      </dependency>
+    </dependencies>
   </element>
   <element>
     <tag>pushsavethindams</tag>
-    <style>pushselectfile</style>
+    <style>pushsavefile</style>
     <position>450 35 70 20</position>
     <tooltipstring>Save thin dams file</tooltipstring>
     <text>Save</text>
     <variable>
-      <name>DryFile</name>
+      <name>ThdFile</name>
       <type>string</type>
     </variable>
+    <showfilename>0</showfilename>
     <extension>*.thd</extension>
-    <selectiontext>Select thin dams File</selectiontext>
-    <onchange>ddb_Delft3DFLOW_saveThinDamsFile</onchange>
+    <selectiontext>Select thin dams file</selectiontext>
+    <onchange>ddb_Delft3DFLOW_thindams</onchange>
+    <option1>savefile</option1>
   </element>
 </root>

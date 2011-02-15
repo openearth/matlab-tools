@@ -34,20 +34,24 @@
     <style>text</style>
     <position>10 30</position>
     <prefix>Grid points in M direction : </text>
-    <variable>
-      <name>MMax</name>
-      <type>integer</type>
-    </variable>
+    <text>
+      <variable>
+        <name>MMax</name>
+        <type>integer</type>
+      </variable>
+    </text>
   </element>
   <element>
     <tag>textgridn</tag>
     <style>text</style>
     <position>10 10</position>
     <prefix>Grid points in N direction : </text>
-    <variable>
-      <name>NMax</name>
-      <type>integer</type>
-    </variable>
+    <text>
+      <variable>
+        <name>NMax</name>
+        <type>integer</type>
+      </variable>
+    </text>
   </element>
   <element>
     <tag>editlatitude</tag>
@@ -125,10 +129,12 @@
     <position>690 5</position>
     <prefix>Sum : </text>
     <suffix>%</suffix>
-    <variable>
-      <name>SumLayers</name>
-      <type>real</type>
-    </variable>
+    <text>
+      <variable>
+        <name>SumLayers</name>
+        <type>real</type>
+      </variable>
+    </text>
   </element>
   <element>
     <tag>radiosigma</tag>

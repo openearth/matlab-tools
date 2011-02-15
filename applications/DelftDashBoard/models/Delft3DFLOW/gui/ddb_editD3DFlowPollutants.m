@@ -1,13 +1,8 @@
-function handles=ddb_editD3DFlowPollutants(handles)
+function ddb_editD3DFlowPollutants
+
+handles=getHandles;
 
 MakeNewWindow('Processes :  Pollutants and Tracers',[360 290],'modal',[handles.SettingsDir '\icons\deltares.gif']);
-
-% h2=guidata(findobj('Tag','MainWindow'));
-% 
-% 
-% handles.Tracers=h2.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(ad).Tracers;
-% handles.Tracer=h2.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(ad).Tracer;
-% handles.NrTracers=h2.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(ad).NrTracers;
 
 if handles.Model(md).Input(ad).NrTracers>0
     for i=1:handles.Model(md).Input(ad).NrTracers
@@ -18,8 +13,8 @@ else
     str{1}='';
 end
 
-handles.GUIHandles.ListTracers    = uicontrol(gcf,'Style','listbox','String',str,    'Position',[30 30 150 200]);
-handles.GUIHandles.EditTracerName = uicontrol(gcf,'Style','edit',   'String',str{1},'HorizontalAlignment','left','Position',[30 240 150 20]);
+handles.GUIHandles.ListTracers    = uicontrol(gcf,'Style','listbox','String',str,    'Position',[30 30 150 200],'BackgroundColor',[1 1 1]);
+handles.GUIHandles.EditTracerName = uicontrol(gcf,'Style','edit',   'String',str{1},'HorizontalAlignment','left','Position',[30 240 150 20],'BackgroundColor',[1 1 1]);
 
 handles.GUIHandles.PushRename     = uicontrol(gcf,'Style','pushbutton','String','Rename','Position',[200 240 60 20]);
 handles.GUIHandles.PushAdd        = uicontrol(gcf,'Style','pushbutton','String','Add',   'Position',[200 215 60 20]);
@@ -36,9 +31,9 @@ set(handles.GUIHandles.PushDelete,  'CallBack',{@PushDelete_Callback});
 set(handles.GUIHandles.PushOK,      'CallBack',{@PushOK_Callback});
 set(handles.GUIHandles.PushCancel,  'CallBack',{@PushCancel_Callback});
 
-SetUIBackgroundColors;
-
 guidata(gcf,handles);
+
+uiwait(gcf);
 
 %%
 function PushAdd_Callback(hObject,eventdata)
@@ -127,29 +122,25 @@ set(handles.GUIHandles.EditTracerName,'String',str{ii});
 
 %%
 function PushOK_Callback(hObject,eventdata)
-%h2=guidata(findobj('Tag','MainWindow'));
+
 h2=getHandles;
 handles=guidata(gcf);
 
 
-h2.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(ad).Tracer=handles.Model(md).Input(ad).Tracer;
-h2.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(ad).NrTracers=handles.Model(md).Input(ad).NrTracers;
+h2.Model(md).Input(ad).Tracer=handles.Model(md).Input(ad).Tracer;
+h2.Model(md).Input(ad).NrTracers=handles.Model(md).Input(ad).NrTracers;
 for ii=1:handles.Model(md).Input(ad).NrTracers
     if handles.Model(md).Input(ad).Tracer(ii).New
         h2=ddb_initializeTracer(h2,ii);
     end
 end
 if handles.Model(md).Input(ad).NrTracers==0
-    h2.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(ad).Tracers=0;
-    set(h2.GUIHandles.TogglePollutants,'Value',0);
-    set(h2.GUIHandles.PushEditPollutants,'Enable','off');
+    h2.Model(md).Input(ad).Tracers=0;
 else
-    h2.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(ad).Tracers=1;
-    set(h2.GUIHandles.TogglePollutants,'Value',1);
-    set(h2.GUIHandles.PushEditPollutants,'Enable','on');
+    h2.Model(md).Input(ad).Tracers=1;
 end
 setHandles(h2);
-%guidata(findobj('Tag','MainWindow'),h2);
+
 closereq;
 
 %%

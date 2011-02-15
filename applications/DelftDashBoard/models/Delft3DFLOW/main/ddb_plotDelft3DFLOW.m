@@ -45,8 +45,8 @@ for id=n1:n2
         ddb_plotFlowAttributes(handles,'OpenBoundaries',opt,id,0,1);
     end
 
-    if handles.Model(imd).Input(id).NrThinDams>0
-        ddb_plotFlowAttributes(handles,'ThinDams',opt,id,0,1);
+    if handles.Model(imd).Input(id).nrThinDams>0
+        ddb_Delft3DFLOW_plotAttributes(handles,optnew,'thindams','visible',vis,'active',act);
     end
 
     if handles.Model(imd).Input(id).NrDischarges>0

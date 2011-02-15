@@ -80,7 +80,7 @@ if isfield(xml,'elements')
                
             otherwise
                 % Nodes from xml file
-                s.elements(k).text             = getnodeval(elxml(k).element,'text',[],'string');
+%                s.elements(k).text             = getnodeval(elxml(k).element,'text',[],'string');
                 s.elements(k).prefix           = getnodeval(elxml(k).element,'prefix',[],'string');
                 s.elements(k).suffix           = getnodeval(elxml(k).element,'suffix',[],'string');
                 s.elements(k).title            = getnodeval(elxml(k).element,'title',[],'string');
@@ -90,14 +90,26 @@ if isfield(xml,'elements')
                 s.elements(k).fileExtension    = getnodeval(elxml(k).element,'extension',[],'string');
                 s.elements(k).selectionText    = getnodeval(elxml(k).element,'selectiontext',[],'string');
                 s.elements(k).value            = getnodeval(elxml(k).element,'value',[],'string');
+                s.elements(k).showFileName     = getnodeval(elxml(k).element,'showfilename',1,'int');
                 if isfield(elxml(k).element,'list')
-                    if isstruct(elxml(k).element.list)
+                    if isfield(elxml(k).element.list,'variable')
                         s.elements(k).stringList.variable=readVariableXML(elxml(k).element.list.variable,subFields,subIndices);
                     else
-                        % TODO custom list
-%                        s.elements(k).stringList       = getnodeval(elxml(k).element,'list',[],'string');
+                        for jj=1:length(elxml(k).element.list)
+                            s.elements(k).stringList.text{jj}=elxml(k).element.list(jj).text;
+                        end
                     end
                 end
+                
+                if isfield(elxml(k).element,'text')
+                    if isfield(elxml(k).element.text,'variable')
+                        s.elements(k).text.variable=readVariableXML(elxml(k).element.text.variable,subFields,subIndices);
+                    else
+                        s.elements(k).text=getnodeval(elxml(k).element,'text',[],'string');
+                    end
+                end
+                
+                
         end
     end
 
@@ -108,7 +120,8 @@ if isfield(xml,'elements')
             for id=1:length(elxml(k).element.dependencies)
                 
                 s.elements(k).dependencies(id).action=elxml(k).element.dependencies(id).dependency.action;
-                
+                s.elements(k).dependencies(id).checkFor=[];
+
                 ntgs=length(elxml(k).element.dependencies(id).dependency.tags);
                 for ii=1:ntgs
                     s.elements(k).dependencies(id).tags{ii}=elxml(k).element.dependencies(id).dependency.tags(ii).tag;
@@ -130,7 +143,7 @@ if isfield(xml,'elements')
                 end
                 
                 dep=elxml(k).element.dependencies(id).dependency;
-                
+           
                 if isfield(elxml(k).element.dependencies(id).dependency,'checkfor')
                     s.elements(k).dependencies(id).checkFor=elxml(k).element.dependencies(id).dependency.checkfor;
                     

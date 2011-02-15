@@ -4,10 +4,10 @@ handles=getHandles;
 
 ddb_refreshScreen('Toolbox');
 
-% If debug mode, reload the the active toolbox xml file
-if handles.debugMode
-    handles=ddb_readToolboxXML(handles,tb);
-end
+% % If debug mode, reload the the active toolbox xml file
+% if handles.debugMode
+%     handles=ddb_readToolboxXML(handles,tb);
+% end
 
 % Find parent (the toolbox tab of the active model)
 parent=findobj(gcf,'Tag',[lower(handles.Model(md).Name) '.toolbox']);

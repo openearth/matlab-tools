@@ -1,5 +1,8 @@
 function handles=ddb_initializeSediment(handles,ii)
 
+% 
+handles.Model(md).Input(ad).Sediment(ii).type='cohesive';
+
 handles.Model(md).Input(ad).Sediment(ii).ICOpt='Constant';
 handles.Model(md).Input(ad).Sediment(ii).ICConst=0;
 handles.Model(md).Input(ad).Sediment(ii).ICPar=[0 0];

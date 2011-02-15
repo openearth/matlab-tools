@@ -29,22 +29,25 @@
         <tab>
           <tag>timeframe</tag>
           <tabstring>Time Frame</tabstring>
-          <callback>ddb_editD3DFlowTimeFrame</callback>
+          <callback>ddb_Delft3DFLOW_timeFrame</callback>
+          <elements>Delft3DFLOW.timeframe.xml</elements>
         </tab>
         <tab>
           <tag>processes</tag>
           <tabstring>Processes</tabstring>
-          <callback>ddb_editD3DFlowProcesses</callback>
+          <elements>Delft3DFLOW.processes.xml</elements>
         </tab>
         <tab>
           <tag>initialconditions</tag>
           <tabstring>Initial conditions</tabstring>
-          <callback>ddb_editD3DFlowInitialConditions</callback>
+          <callback>ddb_Delft3DFLOW_initialConditions</callback>
+          <elements>Delft3DFLOW.initialconditions.xml</elements>
         </tab>
         <tab>
           <tag>boundaries</tag>
           <tabstring>Boundaries</tabstring>
-          <callback>ddb_editD3DFlowOpenBoundaries</callback>
+          <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+          <elements>Delft3DFLOW.openboundaries.xml</elements>
         </tab>
         <tab>
           <tag>physicalparameters</tag>

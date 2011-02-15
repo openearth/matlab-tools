@@ -1,4 +1,4 @@
-function ddb_Delft3DFLOW_grid(varargin)
+function ddb_Delft3DFLOW_bathymetry(varargin)
 
 ddb_zoomOff;
 

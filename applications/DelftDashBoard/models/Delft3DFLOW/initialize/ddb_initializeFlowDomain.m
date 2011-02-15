@@ -43,6 +43,9 @@ handles.Model(md).Input(id).ThinDams(1).M1=[];
 handles.Model(md).Input(id).ThinDams(1).M2=[];
 handles.Model(md).Input(id).ThinDams(1).N1=[];
 handles.Model(md).Input(id).ThinDams(1).N2=[];
+handles.Model(md).Input(id).ThinDams(1).UV='U';
+handles.Model(md).Input(id).ThinDams(1).U=1;
+handles.Model(md).Input(id).ThinDams(1).V=0;
 handles.Model(md).Input(id).addThinDam=0;
 handles.Model(md).Input(id).selectThinDam=0;
 handles.Model(md).Input(id).deleteThinDam=0;
@@ -85,6 +88,7 @@ handles.Model(md).Input(id).Depth=[];
 handles.Model(md).Input(id).GridX=[];
 handles.Model(md).Input(id).GridY=[];
 handles.Model(md).Input(id).GridY=[];
+handles.Model(md).Input(id).coordinateSystemType=handles.ScreenParameters.CoordinateSystem.Type;
 
 handles.Model(md).Input(id).LayerType='sigma';
 handles.Model(md).Input(id).ZBot=0;
@@ -112,7 +116,7 @@ handles.Model(md).Input(id).SedFile='';
 handles.Model(md).Input(id).MorFile='';
 handles.Model(md).Input(id).WndFile='';
 handles.Model(md).Input(id).SpwFile='';
-handles.Model(md).Input(id).NrSediments=0;
+handles.Model(md).Input(id).nrSediments=0;
 handles.Model(md).Input(id).NrTracers=0;
 handles.Model(md).Input(id).NrConstituents=0;
 
@@ -121,6 +125,7 @@ handles.Model(md).Input(id).Orientation=0.0;
 handles.Model(md).Input(id).Thick=100;
 handles.Model(md).Input(id).SumLayers=100;
 handles.Model(md).Input(id).InitialConditions='unif';
+handles.Model(md).Input(id).initialConditionsType=1;
 handles.Model(md).Input(id).UniformRoughness=1;
 handles.Model(md).Input(id).UniformViscosity=1;
 
@@ -241,7 +246,7 @@ for i=1:handles.Model(md).Input(id).NrTracers
     handles=ddb_initializeTracer(handles,i);
 end
 handles.Model(md).Input(id).Sediment=[];
-for i=1:handles.Model(md).Input(id).NrSediments
+for i=1:handles.Model(md).Input(id).nrSediments
     handles=ddb_initializeSediment(handles,i);
 end
 

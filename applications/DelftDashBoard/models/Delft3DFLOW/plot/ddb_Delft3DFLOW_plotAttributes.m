@@ -45,7 +45,7 @@ switch lower(att)
         tag='crosssection';
         attStruc=handles.Model(imd).Input(iad).CrossSections;
         nr=handles.Model(imd).Input(iad).NrCrossSections;
-        iac=handles.Model(imd).Input(iad).activeCrossSections;
+        iac=handles.Model(imd).Input(iad).activeCrossSection;
         colpas='c';
         colact='r';
         tp='line';
@@ -68,8 +68,8 @@ switch lower(att)
     case{'thindams'}
         tag='thindam';
         attStruc=handles.Model(imd).Input(iad).ThinDams;
-        nr=handles.Model(imd).Input(iad).NrThinDams;
-        iac=handles.Model(imd).Input(iad).activeThinDams;
+        nr=handles.Model(imd).Input(iad).nrThinDams;
+        iac=handles.Model(imd).Input(iad).activeThinDam;
         colpas=[0.85 0.85 0.50];
         colact='r';
         tp='line';
@@ -77,7 +77,7 @@ switch lower(att)
         tag='discharge';
         attStruc=handles.Model(imd).Input(iad).Discharges;
         nr=handles.Model(imd).Input(iad).NrDischarges;
-        iac=handles.Model(imd).Input(iad).activeDischarges;
+        iac=handles.Model(imd).Input(iad).activeDischarge;
         colpas=[1 0 1];
         colact='r';
         tp='line';
@@ -85,7 +85,7 @@ switch lower(att)
         tag='drogue';
         attStruc=handles.Model(imd).Input(iad).Drogues;
         nr=handles.Model(imd).Input(iad).NrDrogues;
-        iac=handles.Model(imd).Input(iad).activeDrogues;
+        iac=handles.Model(imd).Input(iad).activeDrogue;
         colpas='g';
         colact='r';
         tp='line';
@@ -145,10 +145,10 @@ switch lower(opt)
                         tx=text(xtxt,ytxt,6500,txt);
                         set(tx,'Tag',tag,'Clipping','on','HitTest','off');
                         set(tx,'UserData',i);
-                        attStruc(i).textHandles(j)=tx;
+                        attStruc(i).textHandles=tx;
                         set(tx,'HitTest','off');
                     else
-                        attStruc(i).textHandles(j)=[];
+                        attStruc(i).textHandles=[];
                     end
                     
                     % Set active color
@@ -223,9 +223,16 @@ switch lower(opt)
         
         % Set colors
         if ~isempty(allPlotHandles)
-            set(allPlotHandles,'FaceColor',colpas);
-            if act
-                set(attStruc(iac).plotHandles,'FaceColor',colact);
+            if strcmpi(tp,'line')
+                set(allPlotHandles,'Color',colpas);
+                if act
+                    set(attStruc(iac).plotHandles,'Color',colact);
+                end
+            else
+                set(allPlotHandles,'FaceColor',colpas);
+                if act
+                    set(attStruc(iac).plotHandles,'FaceColor',colact);
+                end
             end
         end
         

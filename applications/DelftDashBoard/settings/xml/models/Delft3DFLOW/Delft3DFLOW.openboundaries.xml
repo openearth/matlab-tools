@@ -2,28 +2,28 @@
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
-    <tag>listdrypoints</tag>
+    <tag>listopenboundaries</tag>
     <style>listbox</style>
-    <position>10 10 150 105</position>
-    <tooltipstring>Select dry point</tooltipstring>
-    <text>Dry Points</text>
+    <position>10 10 150 140</position>
+    <tooltipstring>Select open boundary</tooltipstring>
+    <text>Open Boundaries</text>
     <textposition>above-center</textposition>
     <variable>
-      <name>activeDryPoint</name>
+      <name>activeOpenBoundary</name>
       <type>integer</type>
     </variable>
     <list>
       <variable>
-        <name>dryPointNames</name>
+        <name>openBoundaryNames</name>
       </variable>
     </list>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
     <option1>selectfromlist</option1>
   </element>
   <element>
-    <tag>paneldrypoints</tag>
+    <tag>panelopenboundaries</tag>
     <style>panel</style>
-    <position>170 10 170 70</position>
+    <position>170 10 250 150</position>
   </element>
   <element>
     <tag>editdrym1</tag>

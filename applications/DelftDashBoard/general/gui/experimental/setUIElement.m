@@ -34,16 +34,28 @@ switch lower(el.style)
         switch el.variable.type
             case{'string'}
             case{'datetime'}
-                val=datestr(val,'yyyymmdd HHMMSS');
+                val=datestr(val,'yyyy mm dd HH MM SS');
             case{'date'}
-                val=datestr(val,'HHMMSS');
+                val=datestr(val,'yyyy mm dd');
             case{'time'}
-                val=datestr(val,'yyyymmdd');
+                val=datestr(val,'HH MM SS');
             otherwise
                 val=num2str(val);
         end
         set(el.handle,'String',val);
 
+        % Set text
+        if ~isempty(el.text)
+            if isfield(el.text,'variable')
+                val=getSubFieldValue(s,el.text.variable);
+                % Text
+                set(el.textHandle,'String',val);
+                setTextPosition(el.textHandle,el.position,el.textPosition);
+            end
+        end
+
+        
+        
     case{'checkbox'}
         val=getSubFieldValue(s,el.variable);
         set(el.handle,'Value',val);
@@ -86,15 +98,33 @@ switch lower(el.style)
         end
         set(el.handle,'String',stringList);
         set(el.handle,'Value',ii);
+
+    case{'popupmenu'}
+        if isfield(el.stringList,'variable')
+            stringList=getSubFieldValue(s,el.stringList.variable);
+        else
+            stringList=el.stringList.text;
+        end
+        if isempty(stringList)
+            ii=1;
+        elseif isempty(stringList{1})
+            ii=1;
+        else
+            switch el.variable.type
+                case{'string'}
+                    str=getSubFieldValue(s,el.variable);
+                    ii=strmatch(str,stringList,'exact');
+                otherwise
+                    ii=getSubFieldValue(s,el.variable);
+            end
+        end
+        set(el.handle,'String',stringList);
+        set(el.handle,'Value',ii);
         
     case{'text'}
         if isfield(el,'variable')
             if ~isempty(el.variable)
-                try
-                    val=getSubFieldValue(s,el.variable);
-                catch
-                    shite=15
-                end
+                val=getSubFieldValue(s,el.variable);
                 switch el.variable.type
                     case{'string'}
                     otherwise
@@ -114,14 +144,27 @@ switch lower(el.style)
         %% Custom elements
         
     case{'pushselectfile'}
-        val=getSubFieldValue(s,el.variable);
-        set(el.textHandle,'enable','on','String',['File : ' val]);
-        pos=get(el.textHandle,'position');
-        ext=get(el.textHandle,'Extent');
-        pos(3)=ext(3);
-        pos(4)=15;
-        set(el.textHandle,'Position',pos);
+        if el.showFileName
+            val=getSubFieldValue(s,el.variable);
+            set(el.textHandle,'enable','on','String',['File : ' val]);
+            pos=get(el.textHandle,'position');
+            ext=get(el.textHandle,'Extent');
+            pos(3)=ext(3);
+            pos(4)=15;
+            set(el.textHandle,'Position',pos);
+        end
         
+    case{'pushsavefile'}
+        if el.showFileName
+            val=getSubFieldValue(s,el.variable);
+            set(el.textHandle,'enable','on','String',['File : ' val]);
+            pos=get(el.textHandle,'position');
+            ext=get(el.textHandle,'Extent');
+            pos(3)=ext(3);
+            pos(4)=15;
+            set(el.textHandle,'Position',pos);
+        end
+
     case{'table'}
         % Determine number of rows in table
         for j=1:length(el.columns)

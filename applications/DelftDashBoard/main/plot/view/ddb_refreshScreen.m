@@ -5,7 +5,6 @@ handles=getHandles;
 clearInstructions;
 
 if nargin==1
-%     tabpanel(gcf,'tabpanel2','delete');
     tabpanel('delete','tag','tabpanel2');
     handles.ScreenParameters.ActiveTab=varargin{1};
     handles.ScreenParameters.ActiveSecondTab='';

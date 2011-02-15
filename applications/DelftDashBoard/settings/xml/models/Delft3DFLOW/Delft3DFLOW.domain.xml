@@ -15,6 +15,7 @@
       <tab>
         <tag>bathymetry</tag>
         <tabstring>Bathymetry</tabstring>
+        <callback>ddb_Delft3DFLOW_bathymetry</callback>
         <elements>Delft3DFLOW.domain.bathymetry.xml</elements>
       </tab>
       <tab>
@@ -32,6 +33,8 @@
       <tab>
         <tag>structures</tag>
         <tabstring>Structures</tabstring>
+        <elements>Delft3DFLOW.domain.structures.xml</elements>
+        <callback>ddb_Delft3DFLOW_structures</callback>
       </tab>
     </tabs>
   </element>
