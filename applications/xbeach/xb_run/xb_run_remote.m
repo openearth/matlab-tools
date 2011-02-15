@@ -11,6 +11,7 @@ function xb = xb_run_remote(xb, varargin)
 %   xb_run_remote(xb)
 %
 %   Input:
+%   xb        = XBeach structure array
 %   varargin  = name:       Name of the model run
 %               binary:     XBeach binary to use
 %               nodes:      Number of nodes to use in MPI mode (1 = no mpi)
@@ -122,90 +123,18 @@ end
 if exist(OPT.binary, 'dir') == 7
     copyfile(fullfile(OPT.binary, '*'), fullfile(fpath, 'bin'));
 else
-    copyfile(OPT.binary, fullfile(fpath, 'bin'));
+    copyfile(OPT.binary, fullfile(fpath, 'bin', 'xbeach'));
 end
 
 %% write run scripts
 
-% write start script
-fid = fopen(fullfile(fpath, 'xbeach.sh'), 'wt');
+fname = xb_write_sh_scripts(fpath, rpath, 'name', OPT.name, ...
+    'binary', 'bin/xbeach', 'nodes', OPT.nodes);
 
-fprintf(fid,'#!/bin/sh\n');
-fprintf(fid,'cd %s\n', rpath);
-fprintf(fid,'. /opt/sge/InitSGE\n');
-fprintf(fid,'. /opt/intel/fc/10/bin/ifortvars.sh\n');
-fprintf(fid,'dos2unix mpi.sh\n');
-fprintf(fid,'qsub -V -N %s mpi.sh\n', OPT.name);
+%% run run scripts
 
-fprintf(fid,'exit\n');
-
-fclose(fid);
-
-% write mpi script
-fid = fopen(fullfile(fpath, 'mpi.sh'), 'wt');
-
-fprintf(fid,'#!/bin/bash\n');
-fprintf(fid,'#$ -cwd\n');
-fprintf(fid,'#$ -N %s\n', OPT.name);
-fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
-
-fprintf(fid,'. /opt/sge/InitSGE\n');
-fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib\n');
-
-if OPT.nodes > 1
-    fprintf(fid,'export LD_LIBRARY_PATH="/opt/openmpi-1.4.3-gcc/lib/:${LD_LIBRARY_PATH}"\n');
-    fprintf(fid,'export PATH="/opt/mpich2/bin/:${PATH}"\n');
-    fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 2`\n');
-    fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-    fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE >> $(pwd)/machinefile\n');
-    fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
-    fprintf(fid,'mpirun -np $NSLOTS $(pwd)/bin/xbeach >> xbeach.log 2>&1\n');
-    fprintf(fid,'mpdallexit\n');
-else
-    fprintf(fid,'$(pwd)/bin/xbeach >> xbeach.log 2>&1\n');
-end
-
-fclose(fid);
-
-%% prompt for password
-
-if OPT.ssh_prompt
-    [OPT.ssh_user OPT.ssh_pass] = uilogin;
-elseif isempty(OPT.ssh_user) && isempty(OPT.ssh_pass)
-    [OPT.ssh_user OPT.ssh_pass] = xb_getpref('ssh_user', 'ssh_pass');
-end
-
-%% run model
-
-if isunix()
-    % use expect to work around ssh password prompt
-    cmd = sprintf('expect -c ''spawn ssh %s@%s "dos2unix %s/xbeach.sh"; expect assword; send "%s\\n"; interact''', ...
-        OPT.ssh_user, OPT.ssh_host, rpath, OPT.ssh_pass); system(cmd);
-    cmd = sprintf('expect -c ''spawn ssh %s@%s "%s/xbeach.sh"; expect assword; send "%s\\n"; interact''', ...
-        OPT.ssh_user, OPT.ssh_host, rpath, OPT.ssh_pass);
-else
-    % use plink for remote command execution
-    exe_path = fullfile(fileparts(which(mfilename)), 'plink.exe');
-    
-    cmd = sprintf('%s %s@%s -pw %s "dos2unix %s/xbeach.sh && %s/xbeach.sh"', ...
-        exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, rpath);
-end
-
-[retcode messages] = system(cmd);
-
-% extract job number and name
-if retcode == 0
-    s = regexp(messages, 'Your job (?<id>\d+) \("(?<name>.+)"\) has been submitted', 'names');
-
-    if ~isempty(s)
-        job_id = str2num(s.id);
-        job_name = s.name;
-    else
-        error(['Submitting remote job failed [' cmd ']']);
-    end
-else
-    error(['Submitting remote job failed [' cmd ']']);
-end
+[job_id job_name messages] = xb_run_sh_scripts(rpath, fname, 'ssh_host', OPT.ssh_host, ...
+	'ssh_user', OPT.ssh_user, 'ssh_pass', OPT.ssh_pass, 'ssh_prompt', OPT.ssh_prompt);
 
 %% create xbeach structure
 

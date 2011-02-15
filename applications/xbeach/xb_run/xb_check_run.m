@@ -67,10 +67,13 @@ function runs = xb_check_run(xb, varargin)
 
 OPT = struct( ...
     'repeat', false, ...
-    'interval', 60 ...
+    'interval', 60, ...
+    'callback', {{0}} ...
 );
 
 OPT = setproperty(OPT, varargin{:});
+
+if ~iscell(OPT.callback); OPT.callback = {OPT.callback}; end;
 
 %% check run
 
@@ -106,7 +109,7 @@ end
 
 if OPT.repeat && runs
      t = timer( ...
-         'TimerFcn', {@repeatCheck,xb}, ...
+         'TimerFcn', {@repeatCheck,xb,OPT.callback}, ...
          'ExecutionMode', 'fixedDelay', ...
          'Period', OPT.interval ...
      );
@@ -116,7 +119,7 @@ end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function repeatCheck(obj, event, xb)
+function repeatCheck(obj, event, xb, callback)
 
 if ~xb_check_run(xb)
     stop(obj); delete(obj);
@@ -126,5 +129,11 @@ if ~xb_check_run(xb)
     try
         load handel;
         sound(y,Fs);
+    end
+    
+    % fire callback function
+    if isa(callback{1}, 'function_handle')
+        callback = {callback{1} xb callback{2:end}};
+        feval(callback{:});
     end
 end
