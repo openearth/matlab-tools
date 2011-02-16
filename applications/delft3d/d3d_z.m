@@ -1,9 +1,9 @@
-function varargout = d3d_sigma(thick,ztop,zbot,varargin);
+function varargout = d3d_z(thick,ztop,zbot,varargin);
 %D3D_Z   calculates the absolute z-layer positions in m
 %
-% [centres]                            = D3D_SIGMA(thick,ztop,zbot);
-% [centres,interfaces]                 = D3D_SIGMA(thick,ztop,zbot);
-% [centres,interfaces,centres_bounded] = D3D_SIGMA(thick,ztop,zbot);
+% [centres]                            = D3D_Z(thick,ztop,zbot);
+% [centres,interfaces]                 = D3D_Z(thick,ztop,zbot);
+% [centres,interfaces,centres_bounded] = D3D_Z(thick,ztop,zbot);
 %
 % where thick are the relative layer thicknesses from top to bottom in percents
 % (reverse with respect to D3D_SIGMA)
