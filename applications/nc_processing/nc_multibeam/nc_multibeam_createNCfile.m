@@ -1,4 +1,8 @@
 function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
+%nc_multibeam_createNCfile
+%
+%See also: nc_multibeam, snctools
+
 %% *** create empty outputfile
 % indicate NetCDF outputfile name and create empty structure
 if ~exist(OPT.netcdf_path,'dir')
@@ -39,7 +43,7 @@ try
 catch
     epsg_wkt_str = 'epsg_wkt could not be retreived';
 end
-x = unique(X);
+x  = unique(X);
 dx = abs(unique(diff(x)));
 if length(dx) == 1
     actual_range_x = {'actual_range';[min(x)-.5*dx max(x)+.5*dx]};
@@ -47,7 +51,7 @@ else
     actual_range_x = {[]};
 end
 
-y = unique(Y);
+y  = unique(Y);
 dy = abs(unique(diff(y)));
 if length(dy) == 1
     actual_range_y = {'actual_range';[min(y)-.5*dy max(y)+.5*dy]};
@@ -87,16 +91,12 @@ netcdf.endDef(NCid)
 
 %% add data
 
-varid = netcdf.inqVarID(NCid,'y');
-netcdf.putVar(NCid,varid,Y(:,1));
-varid = netcdf.inqVarID(NCid,'x');
-netcdf.putVar(NCid,varid,X(1,:));
-
 [lon,lat] = convertCoordinates(X,Y,EPSG,'CS1.code',OPT.EPSGcode,'CS2.code',4326);
-varid = netcdf.inqVarID(NCid,'lat');
-netcdf.putVar(NCid,varid,lat');
-varid = netcdf.inqVarID(NCid,'lon');
-netcdf.putVar(NCid,varid,lon');
+
+varid = netcdf.inqVarID(NCid,'y'  );netcdf.putVar(NCid,varid,Y(:,1));
+varid = netcdf.inqVarID(NCid,'x'  );netcdf.putVar(NCid,varid,X(1,:));
+varid = netcdf.inqVarID(NCid,'lat');netcdf.putVar(NCid,varid,lat');
+varid = netcdf.inqVarID(NCid,'lon');netcdf.putVar(NCid,varid,lon');
 
 %% close NC file
 

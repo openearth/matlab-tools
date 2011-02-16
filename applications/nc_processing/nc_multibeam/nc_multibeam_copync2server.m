@@ -1,4 +1,7 @@
 function OPT = nc_multibeam_copync2server(OPT)
+%NC_MULTIBEAM_COPYNC2SERVER
+%
+%See also: nc_multibeam, snctools
 
 %% generate a catalog
 if OPT.copy2server

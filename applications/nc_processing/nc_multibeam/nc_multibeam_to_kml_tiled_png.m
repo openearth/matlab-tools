@@ -23,7 +23,7 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 %   Example
 %   nc_multibeam_to_kml_tiled_png
 %
-%   See also
+%See also: nc_multibeam, snctools
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -72,6 +72,7 @@ OPT.copy2server             = false;
 
 OPT.ncpath                  = [];
 OPT.ncfile                  = '*.nc';
+OPT.var_name                = 'z';
 OPT.relativepath            = [];
 
 OPT.referencepath           = [];       % is provided, nc files with are expected here that define a reference plane which is to be subtracted from the data before plotting
@@ -101,6 +102,7 @@ OPT.quiet                   = true;    % suppress some progress information
 OPT.calculate_latlon_local  = false;   % use if x and y data are provided to be converted to lat and lon
 OPT.EPSGcode                = [];      % code of coordinate system to convert x and y projection to Lat and Lon 
 %OPT.dateFcn                 = @(time) (time); % use nc_cf_time so it works with any units
+OPT.stride                  = 1;
 
 % add colorbar defualt options
 OPT                         = mergestructs(OPT,KMLcolorbar);
@@ -113,7 +115,6 @@ end
 OPT = setproperty(OPT,varargin{:});
 
 if OPT.make
-    setpref('SNCTOOLS','PRESERVE_FVD',true);
     %% find nc files, and remove catalog.nc from the files if found
     OPT.opendap = strcmpi(OPT.ncpath(1:4),'http')||strcmpi(OPT.ncpath(1:3),'www');
     if OPT.opendap
@@ -204,7 +205,7 @@ if OPT.make
         if ~isempty(OPT.referencepath)
             url_reference = fullfile(OPT.referencepath,fns(ii).name); %#ok<*ASGLU>
             if exist(url_reference,'file')
-                z_reference = double(nc_varget(url_reference,'z',[ 0, 0, 0],[-1,-1,-1]));
+                z_reference = double(nc_varget(url_reference,OPT.var_name,[ 0, 0, 0],[-1,-1,-1])); % [OPT.stride ???]
                 
                 % check if lat and lon are identical in the source and the
                 % reference plane
@@ -232,16 +233,31 @@ if OPT.make
             'label',sprintf('Printing tiles: %s Timestep: %d/%d',fns(ii).name,1,size(date,1)))
         
         % read lat,lon data or calculate lat,lon from x,y
-        if  OPT.calculate_latlon_local
-            x  = double(nc_varget(url, 'x'));
-            y  = double(nc_varget(url, 'y'));
-            [x,y] = meshgrid(x,y);
+        % OPT.calculate_latlon_local==0: do not convert but reuse lat/lon from file
+        % OPT.calculate_latlon_local==1: conversion do for whole matrix
+        % OPT.calculate_latlon_local>1:  convert calculate_latlon_local lines at a time
+        if  OPT.calculate_latlon_local > 0
+            x         = double(nc_varget(url, 'x',0,-1,OPT.stride));
+            y         = double(nc_varget(url, 'y',0,-1,OPT.stride));
+            [x,y]     = meshgrid(x,y);
+            
+         if (OPT.calculate_latlon_local > 1) & ~isinf(OPT.calculate_latlon_local)
+           dline = OPT.calculate_latlon_local;
+           for itmp=1:dline:size(x,1)
+             iitmp = itmp+(1:dline)-1;
+             iitmp = iitmp(iitmp <= size(x,1));
+             disp(['converting coordinates to (lat,lon): ',num2str(min(iitmp)),'-',num2str(max(iitmp)),'/',num2str(size(x,1))])
+             [lon(iitmp,:),lat(iitmp,:)] = convertCoordinates(x(iitmp,:),y(iitmp,:),'CS1.code',OPT.EPSGcode,'CS2.code',4326);
+           end
+         else % 0 or Inf
             [lon,lat] = convertCoordinates(x,y,'CS1.code',OPT.EPSGcode,'CS2.code',4326);
-        else
-            lon  = double(nc_varget(url, 'lon'));
-            lat  = double(nc_varget(url, 'lat'));
-        end
+         end
         
+        else
+            lon       = double(nc_varget(url, 'lon',0,-1,OPT.stride));
+            lat       = double(nc_varget(url, 'lat',0,-1,OPT.stride));
+        end
+
         % expand lat and lon in each direction to create some overlap
         lon = [lon(:,1) + (lon(:,1)-lon(:,2))*.55  lon  lon(:,end) + (lon(:,end)-lon(:,end-1))*.55];
         lat = [lat(:,1) + (lat(:,1)-lat(:,2))*.55  lat  lat(:,end) + (lat(:,end)-lat(:,end-1))*.55];
@@ -253,18 +269,21 @@ if OPT.make
         date4GE(end+1,1) = date(end)+1;
         
         % get dimension info of z
-        z_dim_info = nc_getvarinfo(url,'z') ;
-        time_dim = strcmp(z_dim_info.Dimension,'time');
+        z_dim_info = nc_getvarinfo(url,OPT.var_name) ;
+        time_dim   = strcmp(z_dim_info.Dimension,'time');
+        x_dim      = strcmp(z_dim_info.Dimension,'x');
+        y_dim      = strcmp(z_dim_info.Dimension,'y');
         
-		% for some reason this has to be set since the new nc toolbox was added;
-        setpref('SNCTOOLS','PRESERVE_FVD',true)
+        stride = [OPT.stride OPT.stride OPT.stride];stride(find(time_dim))=1;
         
         for jj = size(date4GE,1)-1:-1:1
             % load z data
-            z = double(nc_varget(url,'z',...
+            z = double(nc_varget(url,OPT.var_name,...
                 [ 0, 0, 0] + (jj-1)*time_dim,...
-                [-1,-1,-1] + 2*time_dim));
-            
+                [-1,-1,-1] + 2*time_dim,stride));
+            % rearrange array into order [y * x * t(1)]
+            z = permute(z,[find(time_dim) find(y_dim) find(x_dim)]);
+
             % subtract reference plane form data (reference plane is zeros
             % if not set otherwise
             z = z-z_reference;

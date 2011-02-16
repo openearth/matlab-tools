@@ -5,7 +5,7 @@ function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
 %
 % adds variable to a netcdf file (incl time) using matlabs native (2008b+) netcdf
 %
-%See also: nc_multibeam
+%See also: nc_multibeam, snctools
 
 dimSizeX = (OPT.mapsizex/OPT.gridsizex);
 dimSizeY = (OPT.mapsizey/OPT.gridsizex);
@@ -56,7 +56,7 @@ if jj ~= length(time0) % then existing nc file already has data
 end
 
 %% Write z data
-netcdf.putVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1],Z);
+netcdf.putVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1],Z); % matlab uses reverse order, so here [x y t] to get [t y x] in ncbrowse and snctools
 
 %% Close NC file
 netcdf.close(NCid)
