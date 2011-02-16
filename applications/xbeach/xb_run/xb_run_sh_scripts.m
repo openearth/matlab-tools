@@ -14,6 +14,8 @@ function [job_id job_name messages] = xb_run_sh_scripts(rpath, script, varargin)
 %               ssh_pass:   Password for remote computer
 %               ssh_prompt: Boolean indicating if password prompt should be
 %                           used
+%               cd:         Boolean flag to determine if directory should
+%                           be changed to rpath
 %
 %   Output:
 %   job_id    = Job number of process started
@@ -72,7 +74,8 @@ OPT = struct( ...
     'ssh_host', 'h4', ...
     'ssh_user', '', ...
     'ssh_pass', '', ...
-    'ssh_prompt', false ...
+    'ssh_prompt', false, ...
+    'cd', false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -101,8 +104,13 @@ else
     % use plink for remote command execution
     exe_path = fullfile(fileparts(which(mfilename)), 'plink.exe');
     
-    cmd = sprintf('%s %s@%s -pw %s "dos2unix %s/%s && %s/%s"', ...
-        exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, script, rpath, script);
+    if OPT.cd
+        cmd = sprintf('%s %s@%s -pw %s "cd %s && dos2unix %s && %s"', ...
+            exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, script, script);
+    else
+        cmd = sprintf('%s %s@%s -pw %s "dos2unix %s/%s && %s/%s"', ...
+            exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, script, rpath, script);
+    end
 end
 
 [retcode messages] = system(cmd);
