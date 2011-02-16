@@ -91,10 +91,19 @@ values = {exprNames.value};
 % distinguish between output variable definitions, doubles, strings and
 % filenames
 for i = 1:length(values)
-    if regexp(names{i}, '^n.*var$')
+    if any(~cellfun('isempty', regexp(names{i}, {'^n.*var$' '^npoints$' '^nrugauge$'})))
         % output variable definition
-        names{i} = [names{i}(2:end) 's'];
-        values{i} = strread(txt(endIndex(i):end), '%s', str2double(values{i}));
+        
+        switch names{i}
+            case 'npoints'
+                names{i} = 'pointvars';
+            case 'nrugauge'
+                names{i} = 'rugaugevars';
+            otherwise
+                names{i} = [names{i}(2:end) 's'];
+        end
+        
+        values{i} = strread(txt(endIndex(i)+1:end), '%s', str2double(values{i}), 'delimiter', '\n');
     elseif ~isnan(str2double(values{i}))
         % numeric value
         values{i} = str2double(values{i});

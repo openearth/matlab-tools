@@ -122,6 +122,8 @@ for i = 1:length(upartype)
         if any(ivar)
             if regexp(pars{j}, '^.*vars$')
 
+                outputvars = [outputvars sprintf('\n')];
+                
                 % create line indicating the number items in the cell
                 outputvars = [outputvars sprintf('%s\n', var2params(['n' xb.data(ivar).name(1:end-1)], length(xb.data(ivar).value), maxStringLength))];
 
