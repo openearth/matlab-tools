@@ -168,6 +168,7 @@ if OPT.make
         end
         
         for ii = 1:length(fns_unzipped)
+            disp(fns_unzipped(ii).name);
             %% set waitbars to 0 and update label
             multiWaitbar('nc_writing',0,'label','Writing: *.nc')
             multiWaitbar('nc_reading',0,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name)))
@@ -190,34 +191,23 @@ if OPT.make
             xllcorner    = s{2}(strcmpi(s{1},'xllcorner'    ));
             yllcorner    = s{2}(strcmpi(s{1},'yllcorner'    ));
             cellsize     = s{2}(strcmpi(s{1},'cellsize'     ));
-            if isempty(ncols)||isempty(nrows)||isempty(xllcorner)||isempty(yllcorner)||isempty(cellsize)
+            nodata_value = s{2}(strcmpi(s{1},'nodata_value' ));               
+            if isempty(ncols)||isempty(nrows)||isempty(xllcorner)||isempty(yllcorner)||isempty(cellsize)||isempty(nodata_value)
                 error('reading asc file')
             end
             
-            nodata_value = s{2}(strcmpi(s{1},'nodata_value' ));            
-            if isempty(nodata_value)
-                % apparently nodatavalue is not defined.
-                % set it to defaul value
-                nodata_value = OPT.default_nodata_val;
-                % then rewind the file 
-                fseek(fid,0,-1);
-                % and skip the first five lines
-                s = textscan(fid,'%s %f',5);
-            end
-                
-            if OPT.shiftHalfCell
-                xllcorner = xllcorner+cellsize/2;
-                yllcorner = yllcorner+cellsize/2;
-            end
+            % shift corners half a cell
+            xllcorner = xllcorner+cellsize/2;
+            yllcorner = yllcorner+cellsize/2;
 
-            
             kk = 0;
             while ~feof(fid)
                 % read the file
                 multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
                 multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
-                kk = kk+1;
-                D{kk}     = textscan(fid,repmat('%f32',1,ncols),floor(OPT.block_size/ncols),'CollectOutput',true); %#ok<AGROW>
+                kk       = kk+1;
+                D{kk}    = textscan(fid,'%f32',floor(OPT.block_size/ncols)*ncols,'CollectOutput',true); %#ok<AGROW>
+                D{kk}{1} = reshape(D{kk}{1},ncols,[])'; %#ok<AGROW>
                 if all(D{kk}{1}(:)==nodata_value)
                     D{kk}{1} = nan; %#ok<AGROW>
                 else
@@ -228,8 +218,7 @@ if OPT.make
             multiWaitbar('nc_reading'        ,ftell(fid)/fns_unzipped(ii).bytes,...
                 'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
             fclose(fid);
-            
-            
+
             %------------------------------------------------------------------------------------------------------------------------------------------
             
             %% write data to nc files
@@ -243,11 +232,10 @@ if OPT.make
             minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex + OPT.xoffset;
             miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey + OPT.yoffset;
 
-            
             x      =         xllcorner:cellsize:xllcorner + cellsize*(ncols-1);
             y      = flipud((yllcorner:cellsize:yllcorner + cellsize*(nrows-1))');
-            y(:,2) = ceil((1:length(y))'./floor(OPT.block_size/ncols));
-            y(:,3) = mod((0:length(y)-1)',floor(OPT.block_size/ncols))+1;
+            y(:,2) = ceil((1:size(y,1))'./ floor(OPT.block_size/ncols));
+            y(:,3) = mod ((0:size(y,1)-1)',floor(OPT.block_size/ncols))+1;
             
             % loop through data
             for x0      = minx : OPT.mapsizex : maxx
@@ -271,7 +259,6 @@ if OPT.make
                     Z(...
                         find(y_vector  <=y(iy(1),1),1,'last'):-1:find(y_vector  >=y(iy(end),1),1,'first'),...
                         find(x_vector  >=x(ix(1)),1,'first'):find(x_vector  <=x(ix(end)),1,'last')) = z;
-                    
                     if any(~isnan(Z(:)))
                         Z = flipud(Z);
                         Y = flipud(Y);

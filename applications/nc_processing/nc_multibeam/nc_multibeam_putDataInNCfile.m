@@ -43,7 +43,7 @@ if jj ~= length(time0) % then existing nc file already has data
     % check if data will be overwritten
     if any(notnan) % values are not nan in both existing and new data
         [~,filename] = fileparts(ncfile);
-         if isequal(Z0(notnan) - Z(notnan))
+         if isequal(Z0(notnan),Z(notnan))
             % this is ok
             fprintf(1,'in %s, data is overwritten by identical values from a different source \n',filename)
         else 

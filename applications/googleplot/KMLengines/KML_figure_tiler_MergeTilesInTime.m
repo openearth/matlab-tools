@@ -13,34 +13,32 @@ lastpct = 0;
 for i1=2:size(allfiles,1)
     i2 = find(strcmp(allfilescropped(i1),allfilescropped(1:i1-1)),1,'last');
     if any(i2)
+        [previous.X, ~, previous.alpha] = imread(allfiles{i2},'png');
         [current.X, ~, current.alpha] = imread(allfiles{i1},'png');
-        if any(current.alpha(:) < 255)
-            [previous.X, ~, previous.alpha] = imread(allfiles{i2},'png');
-            nn = (current.alpha<255 & previous.alpha>0);
-            if any(nn(:))
-                weightprevious =  repmat(double(previous.alpha(nn)) ./ (double(current.alpha(nn))+double(previous.alpha(nn))),1,3);
-                weightcurrent  =  1-weightprevious;
-                
-                current.alpha = max(previous.alpha,current.alpha);
-                nn             = find(nn);
-                ind = repmat(nn,1,3)+repmat([0 1 2] * numel(previous.alpha),length(nn),1);
-%                 h(1) =subplot(1,3,1);
-%                 image(current.X);
-%                 h(2) =subplot(1,3,2);
-%                 image(previous.X);
-                current.X(ind) = uint8(double(current.X(ind)) .* weightcurrent + double(previous.X(ind)) .* weightprevious);
-                
-                nn = find(all(current.X==0,3) & ~all(previous.X==0,3));
-                ind = repmat(nn,1,3)+repmat([0 1 2] * numel(previous.alpha),length(nn),1);
-                current.X(ind) = previous.X(ind);
-                
-                
-                imwrite(current.X,allfiles{i1},'png','Alpha',current.alpha);
-%                 h(3) = subplot(1,3,3);
-%                 image(current.X);
-%                 linkaxes(h)
-%                 a=1;
-            end
+        nn = (current.alpha<255 & previous.alpha>0);
+        if any(nn(:))
+            weightprevious =  repmat(double(previous.alpha(nn)) ./ (double(current.alpha(nn))+double(previous.alpha(nn))),1,3);
+            weightcurrent  =  1-weightprevious;
+            
+            current.alpha = max(previous.alpha,current.alpha);
+            nn             = find(nn);
+            ind = repmat(nn,1,3)+repmat([0 1 2] * numel(previous.alpha),length(nn),1);
+            %                 h(1) =subplot(1,3,1);
+            %                 image(current.X);
+            %                 h(2) =subplot(1,3,2);
+            %                 image(previous.X);
+            current.X(ind) = uint8(double(current.X(ind)) .* weightcurrent + double(previous.X(ind)) .* weightprevious);
+            
+            nn = find(all(current.X==0,3) & ~all(previous.X==0,3));
+            ind = repmat(nn,1,3)+repmat([0 1 2] * numel(previous.alpha),length(nn),1);
+            current.X(ind) = previous.X(ind);
+            
+            
+            imwrite(current.X,allfiles{i1},'png','Alpha',current.alpha);
+            %                 h(3) = subplot(1,3,3);
+            %                 image(current.X);
+            %                 linkaxes(h)
+            %                 a=1;
         end
     end
     if i1 / size(allfiles,1) * 100 > lastpct

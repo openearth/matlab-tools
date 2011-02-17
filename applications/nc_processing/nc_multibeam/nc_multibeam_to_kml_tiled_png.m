@@ -4,7 +4,7 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 %   This function is intended to provide a fully automated routine to
 %   generate an animated kml file for viewing in google earth from a dataset
 %   provided in a (set of) nc file(s) the data in an nc file of set of
-%   tiled nc files. 
+%   tiled nc files.
 %
 %   The NC file must contain z and time data and either x,y or lat,lon
 %   data. If the NC File contains x,y data, Latitude and
@@ -83,24 +83,24 @@ OPT.basepath_www            = [];
 OPT.serverURL               = [];       % if a KML file is intended to be placed on the server, the path must be hardcoded in the KML file
 
 OPT.make_kmz                = false;    % this packs the entire file tree to a sing kmz file, convenient for portability
-OPT.lowestLevel             = 15;       % integer; Detail level of the highest resultion png tiles to generate. Advised range 12 to 18; 
-                                        % dimension of individual pixels in Lat and Lon can be calculated as follows:
-                                        % 360/(2^OPT.lowestLevel) / OPT.tiledim
+OPT.lowestLevel             = 15;       % integer; Detail level of the highest resultion png tiles to generate. Advised range 12 to 18;
+% dimension of individual pixels in Lat and Lon can be calculated as follows:
+% 360/(2^OPT.lowestLevel) / OPT.tiledim
 OPT.tiledim                 = 256;      % dimension of tiles in pixels.
 
 OPT.filledInTime            = false;    % this makes tiles appear in GE for every date until there is a newer tile. If set to off, tiles are only shown on the date they have
 
 OPT.clim                    = [-50 25]; % limits of color scale
-OPT.colorMap                = @(m) colormap_cpt('bathymetry_vaklodingen',m); 
+OPT.colorMap                = @(m) colormap_cpt('bathymetry_vaklodingen',m);
 OPT.colorSteps              = 500;
 OPT.colorbar                = true;
 OPT.description             = [];
 OPT.descriptivename         = [];
-OPT.lightAdjust             = [];      % if set to true, the shading/lighting of the figure is scaled to be independant of OPT.lowestLevel. 
+OPT.lightAdjust             = [];      % if set to true, the shading/lighting of the figure is scaled to be independant of OPT.lowestLevel.
 
 OPT.quiet                   = true;    % suppress some progress information
 OPT.calculate_latlon_local  = false;   % use if x and y data are provided to be converted to lat and lon
-OPT.EPSGcode                = [];      % code of coordinate system to convert x and y projection to Lat and Lon 
+OPT.EPSGcode                = [];      % code of coordinate system to convert x and y projection to Lat and Lon
 %OPT.dateFcn                 = @(time) (time); % use nc_cf_time so it works with any units
 OPT.stride                  = 1;
 
@@ -119,10 +119,10 @@ if OPT.make
     OPT.opendap = strcmpi(OPT.ncpath(1:4),'http')||strcmpi(OPT.ncpath(1:3),'www');
     if OPT.opendap
         if ~(strcmp(OPT.ncpath(end-10:end),'catalog.xml') || ...
-             strcmp(OPT.ncpath(end-11:end),'catalog.html'))
-        temp = opendap_catalog([OPT.ncpath '/catalog.xml']);
+                strcmp(OPT.ncpath(end-11:end),'catalog.html'))
+            temp = opendap_catalog([OPT.ncpath '/catalog.xml']);
         else
-        temp = opendap_catalog([OPT.ncpath]);
+            temp = opendap_catalog([OPT.ncpath]);
         end
         for ii=1:length(temp)
             fns(ii).name  = temp{ii};
@@ -226,7 +226,7 @@ if OPT.make
         else
             z_reference = 0;
         end
-             
+        
         date = nc_cf_time(url,'time');
         
         multiWaitbar('kml_print_all_tiles'  ,WB.bytesDone/WB.bytesToDo,...
@@ -241,23 +241,23 @@ if OPT.make
             y         = double(nc_varget(url, 'y',0,-1,OPT.stride));
             [x,y]     = meshgrid(x,y);
             
-         if (OPT.calculate_latlon_local > 1) & ~isinf(OPT.calculate_latlon_local)
-           dline = OPT.calculate_latlon_local;
-           for itmp=1:dline:size(x,1)
-             iitmp = itmp+(1:dline)-1;
-             iitmp = iitmp(iitmp <= size(x,1));
-             disp(['converting coordinates to (lat,lon): ',num2str(min(iitmp)),'-',num2str(max(iitmp)),'/',num2str(size(x,1))])
-             [lon(iitmp,:),lat(iitmp,:)] = convertCoordinates(x(iitmp,:),y(iitmp,:),'CS1.code',OPT.EPSGcode,'CS2.code',4326);
-           end
-         else % 0 or Inf
-            [lon,lat] = convertCoordinates(x,y,'CS1.code',OPT.EPSGcode,'CS2.code',4326);
-         end
-        
+            if (OPT.calculate_latlon_local > 1) & ~isinf(OPT.calculate_latlon_local)
+                dline = OPT.calculate_latlon_local;
+                for itmp=1:dline:size(x,1)
+                    iitmp = itmp+(1:dline)-1;
+                    iitmp = iitmp(iitmp <= size(x,1));
+                    disp(['converting coordinates to (lat,lon): ',num2str(min(iitmp)),'-',num2str(max(iitmp)),'/',num2str(size(x,1))])
+                    [lon(iitmp,:),lat(iitmp,:)] = convertCoordinates(x(iitmp,:),y(iitmp,:),'CS1.code',OPT.EPSGcode,'CS2.code',4326);
+                end
+            else % 0 or Inf
+                [lon,lat] = convertCoordinates(x,y,'CS1.code',OPT.EPSGcode,'CS2.code',4326);
+            end
+            
         else
-            lon       = double(nc_varget(url, 'lon',0,-1,OPT.stride));
-            lat       = double(nc_varget(url, 'lat',0,-1,OPT.stride));
+            lon       = double(nc_varget(url, 'lon',[0 0],[-1 -1],[OPT.stride OPT.stride]));
+            lat       = double(nc_varget(url, 'lat',[0 0],[-1 -1],[OPT.stride OPT.stride]));
         end
-
+        
         % expand lat and lon in each direction to create some overlap
         lon = [lon(:,1) + (lon(:,1)-lon(:,2))*.55  lon  lon(:,end) + (lon(:,end)-lon(:,end-1))*.55];
         lat = [lat(:,1) + (lat(:,1)-lat(:,2))*.55  lat  lat(:,end) + (lat(:,end)-lat(:,end-1))*.55];
@@ -282,16 +282,16 @@ if OPT.make
                 [ 0, 0, 0] + (jj-1)*time_dim,...
                 [-1,-1,-1] + 2*time_dim,stride));
             % rearrange array into order [y * x * t(1)]
-            z = permute(z,[find(time_dim) find(y_dim) find(x_dim)]);
-
+            z = squeeze(permute(z,[find(time_dim) find(y_dim) find(x_dim)]));
+            
             % subtract reference plane form data (reference plane is zeros
             % if not set otherwise
             z = z-z_reference;
             
             if sum(~isnan(z(:)))>=3
-            if ~OPT.quiet
-                disp(['data coverage is ' num2str(sum(~isnan(z(:)))/numel(z)*100) '%'])
-            end
+                if ~OPT.quiet
+                    disp(['data coverage is ' num2str(sum(~isnan(z(:)))/numel(z)*100) '%'])
+                end
                 z = z([1 1 1:end end end],:); z = z(:,[1 1 1:end end end]); % expand z
                 mask = ~isnan(z);
                 mask = ...
@@ -318,18 +318,18 @@ if OPT.make
                 
                 %% MAKE TILES
                 KMLfigure_tiler(h,lat,lon,z*OPT.lightAdjust,...
-                          'highestLevel',10,...
-                           'lowestLevel',OPT.lowestLevel,...
-                                'timeIn',date4GE(jj),...
-                               'timeOut',date4GE(jj+1),...
-                              'fileName',[datestr(date(jj),29) '.kml'],...
-                          'dateStrStyle','yyyy-mm-dd',...
-                             'drawOrder',round(date(jj)),...
-                             'joinTiles',false,...
-                               'makeKML',false,...
+                    'highestLevel'      ,10,...
+                    'lowestLevel'       ,OPT.lowestLevel,...
+                    'timeIn'            ,date4GE(jj),...
+                    'timeOut'           ,date4GE(jj+1),...
+                    'fileName'          ,[datestr(date(jj),29) '.kml'],...
+                    'dateStrStyle'      ,'yyyy-mm-dd',...
+                    'drawOrder'         ,round(date(jj)),...
+                    'joinTiles'         ,false,...
+                    'makeKML'           ,false,...
                     'mergeExistingTiles',true,...
-                                   'dim',OPT.tiledim,...
-                              'basePath',fullfile(OPT.basepath_local,OPT.relativepath));
+                    'dim'               ,OPT.tiledim,...
+                    'basePath'          ,fullfile(OPT.basepath_local,OPT.relativepath));
                 
                 minlat = min(minlat,min(lat(:)));
                 minlon = min(minlon,min(lon(:)));
@@ -355,18 +355,18 @@ if OPT.make
         multiWaitbar('merge_all_tiles' ,(ii-3)/(length(fns)-2),'label',sprintf('Merging tiles: %d/%d',ii-3,length(fns)-2))
         if fns(ii).isdir
             OPT2 = KMLfigure_tiler(h,lat,lon,z,...
-              'highestLevel',6,...
-               'lowestLevel',OPT.lowestLevel,...
-                    'timeIn',datenum(fns(ii).name),...
-                   'timeOut',datenum(fns(ii).name)+1,...
-                  'basePath',fullfile(OPT.basepath_local,OPT.relativepath),...
-                  'fileName',fullfile([fns(ii).name '.kml']),...
-              'dateStrStyle','yyyy-mm-dd',...
-                 'drawOrder',round(datenum(fns(ii).name)),...
-                'printTiles',false,...
-                 'joinTiles',true,...
-                   'makeKML',false,...
-                       'dim',OPT.tiledim);
+                'highestLevel'  ,6,...
+                'lowestLevel'   ,OPT.lowestLevel,...
+                'timeIn'        ,datenum(fns(ii).name),...
+                'timeOut'       ,datenum(fns(ii).name)+1,...
+                'basePath'      ,fullfile(OPT.basepath_local,OPT.relativepath),...
+                'fileName'      ,fullfile([fns(ii).name '.kml']),...
+                'dateStrStyle'  ,'yyyy-mm-dd',...
+                'drawOrder'     ,round(datenum(fns(ii).name)),...
+                'printTiles'    ,false,...
+                'joinTiles'     ,true,...
+                'makeKML'       ,false,...
+                'dim'           ,OPT.tiledim);
         end
         multiWaitbar('merge_all_tiles' ,(ii-2)/(length(fns)-2),'label',sprintf('Merging tiles: %d/%d',ii-2,length(fns)-2))
     end
@@ -375,28 +375,24 @@ if OPT.make
     
     %% make kml files
     multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML - Getting unique png file names...','color',[0.9 0.4 0.1])
-    OPT2.highestLevel  = inf;
-    OPT2.lowestLevel   = OPT.lowestLevel;
-    
-    dates     = findAllFiles('basepath',fullfile(OPT.basepath_local,OPT.relativepath),'recursive',false);
-    datenums  = datenum(dates,'yyyy-mm-dd');
-    
-    tilefull  = findAllFiles('basepath',fullfile(OPT.basepath_local,OPT.relativepath),'pattern_incl','*.png');
-    tilefull2 = tilefull;
-    for ii = 1:length(tilefull)
-        tilefull2{ii} = tilefull2{ii}(end-40:end);
-    end
-    tiles = cell(size(tilefull));
-    [path, fname] = fileparts(tilefull{1}); %#ok<NASGU>
-    id = strfind(tilefull{1},'_'); id = id(end)-length(path);
-    
-    for ii = 1:length(tilefull)
-        [path, fname] = fileparts(tilefull{ii});
-        tiles{ii} = fname(id:end);
-        OPT2.highestLevel = min(length(tiles{ii}),OPT2.highestLevel);
-        OPT2.lowestLevel  = max(length(tiles{ii}),OPT.lowestLevel);
-    end
     mkdir(fullfile(OPT.basepath_local,OPT.relativepath,'KML'));
+    dates               = dir2(fullfile(OPT.basepath_local,OPT.relativepath),'depth',0,'dir_excl','^KML$');
+    dates               = strcat({dates([dates.isdir]).name}');
+    datenums            = datenum(dates,'yyyy-mm-dd');
+    tiles               = dir2(fullfile(OPT.basepath_local,OPT.relativepath),'file_incl','\.png$');
+    tiles               = tiles(~[tiles.isdir]);
+    underscorePos       = strfind(tiles(1).name,'_');
+    
+    allTileCodes   = nan(length(tiles),50);
+    allTileNumbers = nan(length(tiles), 1);
+    for ii = 1:length(tiles)
+        tileCode = tiles(ii).name(underscorePos+1:end-4);
+        allTileCodes(ii,1:length(tileCode)) = tileCode;
+        allTileNumbers(ii) = sscanf(tileCode,'%f');
+    end
+    
+    OPT2.lowestLevel    = max(sum(~isnan(allTileCodes),2));
+    OPT2.highestLevel   = min(sum(~isnan(allTileCodes),2));
     
     %% MAKE KML
     multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML...','color',[0.9 0.4 0.1])
@@ -405,29 +401,19 @@ if OPT.make
         WB.a = 0.25.^(OPT.lowestLevel - level)*.25;
         WB.b = 0.25.^(OPT.lowestLevel - level)*.75;
         
-        tileCodes = nan(length(tiles),level);
-        for ii = 1:length(tiles)
-            if length(tiles{ii}) == level
-                tileCodes(ii,:) = tiles{ii};
-            end
-        end
         
-        tileCodes(any(isnan(tileCodes),2),:) = [];
-        tileCodes = char(tileCodes);
+        tileCodes    = char(allTileCodes(sum(~isnan(allTileCodes),2)==level,1:level));
         tilesOnLevel = unique(tileCodes(:,1:end),'rows');
         if level == OPT2.highestLevel
             fileID = tilesOnLevel;
         end
         
-        tileCodesNextLevel = nan(length(tiles),level+1);
-        for ii = 1:length(tiles)
-            if length(tiles{ii}) == level+1
-                tileCodesNextLevel(ii,:) = tiles{ii};
-            end
+        if level == OPT2.lowestLevel
+            tilesOnNextLevel = [];
+        else
+            tileCodesNextLevel    = char(allTileCodes(sum(~isnan(allTileCodes),2)==level+1,1:level+1));
+            tilesOnNextLevel = unique(tileCodesNextLevel(:,1:end),'rows');
         end
-        tileCodesNextLevel(any(isnan(tileCodesNextLevel),2),:) = [];
-        tileCodesNextLevel = char(tileCodesNextLevel);
-        tilesOnNextLevel = unique(tileCodesNextLevel(:,1:end),'rows');
         
         addCode = ['01';'23'];
         
@@ -471,54 +457,44 @@ if OPT.make
             end
             %% add png icon links to kml
             B = KML_figure_tiler_code2boundary(tilesOnLevel(nn,:));
-            
-            for iDate = 1: length(dates)
-                pngFile = [dates{iDate} filesep dates{iDate} '_' tilesOnLevel(nn,:) '.png'];
-                temp = fullfile(OPT.basepath_local,OPT.relativepath, pngFile);
-                if any(strcmp(temp(end-40:end),tilefull2))
-                    if OPT.filledInTime
-                        OPT2.timeIn    = datenums(iDate);
-                        if iDate<length(dates)
-                            nextiDate = iDate+1;
-                            temp = fullfile(OPT.basepath_local,OPT.relativepath, [dates{nextiDate} filesep dates{nextiDate} '_' tilesOnLevel(nn,:) '.png']);
-                            while nextiDate<length(dates) && ~any(strcmp(temp(end-40:end),tilefull2))
-                                temp = fullfile(OPT.basepath_local,OPT.relativepath, [dates{nextiDate} filesep dates{nextiDate} '_' tilesOnLevel(nn,:) '.png']);
-                                nextiDate = nextiDate+1;
-                            end
-                        else
-                            nextiDate = iDate;
-                        end
-                        OPT2.timeOut   = datenums(nextiDate);
-                        OPT2.timeSpan  = sprintf(...
-                            '<TimeSpan><begin>%s</begin><end>%s</end></TimeSpan>\n',...OPT2.timeIn,OPT2.timeOut
-                            datestr(OPT2.timeIn,OPT2.dateStrStyle),datestr(OPT2.timeOut,OPT2.dateStrStyle));
+            iTiles = find(allTileNumbers ==  sscanf(tilesOnLevel(nn,:),'%f'));
+            for iTile = 1:length(iTiles)
+                pngFile = tiles(iTiles(iTile)).name;
+                if OPT.filledInTime
+                    OPT2.timeIn    = tiles(iTiles(iTile)).name(1:underscorePos-1);
+                    if iTile == length(iTiles)
+                        OPT2.timeOut   = tiles(end)            .name(1:underscorePos-1);
                     else
-                        OPT2.timeIn    = datenums(iDate);
-                        OPT2.timeSpan  = sprintf(...
-                            '<TimeStamp><when>%s</when></TimeStamp>\n',...OPT2.timeIn
-                            datestr(OPT2.timeIn,OPT2.dateStrStyle));
+                        OPT2.timeOut   = tiles(iTiles(iTile+1)).name(1:underscorePos-1);
                     end
-                    OPT2.drawOrder = datenums(iDate);
-                    
-
-                    output = [output sprintf([...
-                        '<Region>\n'...
-                        '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...minLod,maxLod
-                        '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E
-                        '</Region>\n'...
-                        '<GroundOverlay>\n'...
-                        '<name>%s</name>\n'...kml_id
-                        '<drawOrder>%0.0f</drawOrder>\n'...drawOrder
-                        '%s'...timeSpan
-                        '<Icon><href>..\\%s</href></Icon>\n'...%file_link
-                        '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E
-                        '</GroundOverlay>\n'],...
-                        minLod,maxLod,B.N,B.S,B.W,B.E,...
-                        tilesOnLevel(nn,:),...
-                        OPT2.drawOrder+level,OPT2.timeSpan,...
-                        pngFile,...
-                        B.N,B.S,B.W,B.E)];
+                    OPT2.timeSpan  = sprintf(...
+                        '<TimeSpan><begin>%s</begin><end>%s</end></TimeSpan>\n',...
+                        OPT2.timeIn,OPT2.timeOut);
+                else
+                    OPT2.timeSpan  = sprintf(...
+                        '<TimeStamp><when>%s</when></TimeStamp>\n',...
+                        pngFile(1:underscorePos-1));
                 end
+                OPT2.drawOrder = datenum(pngFile(1:underscorePos-1));
+                
+                output = [output sprintf([...
+                    '<Region>\n'...
+                    '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...minLod,maxLod
+                    '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E
+                    '</Region>\n'...
+                    '<GroundOverlay>\n'...
+                    '<name>%s</name>\n'...kml_id
+                    '<drawOrder>%0.0f</drawOrder>\n'...drawOrder
+                    '%s'...timeSpan
+                    '<Icon><href>..\\%s/%s</href></Icon>\n'...%file_link
+                    '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E
+                    '</GroundOverlay>\n'],...
+                    minLod,maxLod,B.N,B.S,B.W,B.E,...
+                    tilesOnLevel(nn,:),...
+                    OPT2.drawOrder+level,OPT2.timeSpan,...
+                    pngFile(1:underscorePos-1),pngFile,...
+                    B.N,B.S,B.W,B.E)];
+                
             end
             fid=fopen(fullfile(OPT.basepath_local,OPT.relativepath,'KML',[tilesOnLevel(nn,:) '.kml']),'w');
             OPT_header = struct(...
@@ -562,13 +538,13 @@ if OPT.make
         'kmlName',       OPT.descriptivename,...
         'open',          0,...
         'description',   OPT.description,...
-        'cameralon',  mean([maxlon minlon]),...
-        'cameralat',  mean([maxlat minlat]),...
-        'cameraz',    1e4);
+        'cameralon',    mean([maxlon minlon]),...
+        'cameralat',    mean([maxlat minlat]),...
+        'cameraz',      1e4);
     
     if length(datenums) == 1;
         OPT_header.timeIn  = min(datenums);
-    elseif OPT.filledInTime 
+    elseif OPT.filledInTime
         OPT_header.timeIn  = max(datenums);
     elseif length(datenums) < 5
         OPT_header.timeIn  = min(datenums);
@@ -620,7 +596,7 @@ if OPT.make
         movefile(fullfile(OPT.basepath_local,path,[fname ext '.zip']),fullfile(OPT.basepath_local,path,[fname ext '_portable.kmz']))
     end
     delete(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'))
-  
+    
     multiWaitbar('fig2png_write_kml'  ,'close')
     multiWaitbar('merge_all_tiles'    ,'close')
     multiWaitbar('kml_print_all_tiles',1,'label','Writing of KML files')
@@ -628,7 +604,7 @@ if OPT.make
     sprintf('\ngeneration of kml files completed\n');
     
     %% merge kml files in time
-    if OPT.filledInTime 
+    if OPT.filledInTime
         KML_figure_tiler_MergeTilesInTime(fullfile(OPT.basepath_local,OPT.relativepath));
     end
 else
@@ -638,7 +614,7 @@ end
 %% copy files to server
 if OPT.copy2server
     multiWaitbar('kml_copy',0,...
-            'label','Copying of KML files','color',[0 0.4 0.2]);
+        'label','Copying of KML files','color',[0 0.4 0.2]);
     [path,fname,ext] = fileparts(OPT.relativepath);
     % delete current kml files
     if exist (fullfile(OPT.basepath_network,OPT.relativepath),'dir')

@@ -261,7 +261,7 @@ if OPT.make
                             WB.bytesWritten            = WB.bytesWritten + WB.numelDone/WB.numel*(WB.bytesRead-WB.bytesDoneOfCurrentFile);
                             multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
                             multiWaitbar('nc_writing',WB.bytesWritten/fns_unzipped(ii).bytes,...
-                                'label',sprintf('%8.2f_%8.2f_%s_data.nc',x0,y0,OPT.datatype))
+                                'label',sprintf('%.2f_%.2f_%s_data.nc',x0,y0,OPT.datatype))
                         end
                     end
                 end
