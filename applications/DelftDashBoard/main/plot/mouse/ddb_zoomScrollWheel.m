@@ -28,9 +28,9 @@ else
     offset(2)=((yl(2)-yl(1))/zm);
 end
 
-[xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+[xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
 
 set(gca,'xlim',xl,'ylim',yl);
-handles.ScreenParameters.XLim=xl;
-handles.ScreenParameters.YLim=yl;
+handles.screenParameters.xLim=xl;
+handles.screenParameters.yLim=yl;
 setHandles(handles);

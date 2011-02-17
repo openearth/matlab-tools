@@ -7,8 +7,8 @@ switch lower(opt)
         h=findall(gca,'Tag','FlowGrid','UserData',id);
         delete(h);
 
-        x=handles.Model(md).Input(id).GridX;
-        y=handles.Model(md).Input(id).GridY;
+        x=handles.Model(md).Input(id).gridX;
+        y=handles.Model(md).Input(id).gridY;
 
         grd=plot(x,y,'k');
         set(grd,'Color',[0 0 0]);

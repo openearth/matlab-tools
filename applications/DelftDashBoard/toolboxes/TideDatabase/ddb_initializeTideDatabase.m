@@ -1,24 +1,24 @@
 function handles=ddb_initializeTideDatabase(handles,varargin)
 
-ii=strmatch('TideDatabase',{handles.Toolbox(:).Name},'exact');
+ii=strmatch('TideDatabase',{handles.Toolbox(:).name},'exact');
 
 if nargin>1
     switch varargin{1}
         case{'test'}
             return
         case{'veryfirst'}
-            handles.Toolbox(ii).LongName='Tide Database';
+            handles.Toolbox(ii).longName='Tide Database';
 
-            lst=dir([handles.ToolBoxDir '\tidedatabase\*.mat']);
+            lst=dir([handles.toolBoxDir '\tidedatabase\*.mat']);
             for i=1:length(lst)
                 disp(['Loading tide database ' lst(i).name(1:end-4) ' ...']);
-                load([handles.ToolBoxDir 'tidedatabase\' lst(i).name(1:end-4) '.mat']);
-                handles.Toolbox(ii).Databases{i}=s.DatabaseName;
-                handles.Toolbox(ii).Database{i}=s;
-                handles.Toolbox(ii).Database{i}.ShortName=lst(i).name(1:end-4);
-                if size(handles.Toolbox(ii).Database{i}.x,1)==1
-                    handles.Toolbox(ii).Database{i}.x=handles.Toolbox(ii).Database{i}.x';
-                    handles.Toolbox(ii).Database{i}.y=handles.Toolbox(ii).Database{i}.y';
+                load([handles.toolBoxDir 'tidedatabase\' lst(i).name(1:end-4) '.mat']);
+                handles.Toolbox(ii).databases{i}=s.DatabaseName;
+                handles.Toolbox(ii).database{i}=s;
+                handles.Toolbox(ii).database{i}.shortName=lst(i).name(1:end-4);
+                if size(handles.Toolbox(ii).database{i}.x,1)==1
+                    handles.Toolbox(ii).database{i}.x=handles.Toolbox(ii).database{i}.x';
+                    handles.Toolbox(ii).database{i}.y=handles.Toolbox(ii).database{i}.y';
                 end
             end
 
@@ -26,8 +26,8 @@ if nargin>1
     end
 end
 
-handles.Toolbox(ii).StartTime=floor(now);
-handles.Toolbox(ii).StopTime=floor(now)+30;
-handles.Toolbox(ii).TimeStep=10.0;
+handles.Toolbox(ii).startTime=floor(now);
+handles.Toolbox(ii).stopTime=floor(now)+30;
+handles.Toolbox(ii).timeStep=10.0;
 
-handles.Toolbox(ii).ActiveDatabase=1;
+handles.Toolbox(ii).activeDatabase=1;

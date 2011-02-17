@@ -11,20 +11,20 @@ wb = waitbox('Generating Initial Conditions ...');%pause(0.1);
 
 %% Water Level
 
-xz=handles.Model(md).Input(id).GridXZ;
-yz=handles.Model(md).Input(id).GridYZ;
+xz=handles.Model(md).Input(id).gridXZ;
+yz=handles.Model(md).Input(id).gridYZ;
 
 mmax=size(xz,1);
 nmax=size(xz,2);
 kmax=handles.Model(md).Input(id).KMax;
 
-if ~strcmpi(handles.Model(md).Input(id).WaterLevel.ICOpt,'constant')
+if ~strcmpi(handles.Model(md).Input(id).waterLevel.ICOpt,'constant')
 
     % Tide Model
 
-    cs.Name='WGS 84';
-    cs.Type='Geographic';
-    [xz,yz]=ddb_coordConvert(xz,yz,handles.ScreenParameters.CoordinateSystem,cs);
+    cs.name='WGS 84';
+    cs.type='Geographic';
+    [xz,yz]=ddb_coordConvert(xz,yz,handles.screenParameters.coordinateSystem,cs);
 
 %     for i=1:mmax
 %         for j=1:nmax
@@ -50,13 +50,15 @@ if ~strcmpi(handles.Model(md).Input(id).WaterLevel.ICOpt,'constant')
 %     x00(x00<0.250 & x00>0.125)=0.25;
 %     x00(x00>360)=360;
 
-    t0=handles.Model(md).Input(id).StartTime;
-    
-    ii=strmatch(handles.TideModels.ActiveTideModelIC,handles.TideModels.Name,'exact');
-    if strcmpi(handles.TideModels.Model(ii).URL(1:4),'http')
-        tidefile=[handles.TideModels.Model(ii).URL '/' handles.TideModels.ActiveTideModelIC '.nc'];
+    t0=handles.Model(md).Input(id).startTime;
+
+    ii=handles.Toolbox(tb).Input.activeTideModelBC;
+    name=handles.tideModels.model(ii).name;
+
+    if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+        tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
     else
-        tidefile=[handles.TideModels.Model(ii).URL filesep handles.TideModels.ActiveTideModelIC '.nc'];
+        tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
 %    [ampz,phasez,depth,conList]=ddb_extractTidalConstituents(tidefile,x00,y00,'z');
     [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',x00,'y',y00,'constituent','all');
@@ -75,7 +77,7 @@ if ~strcmpi(handles.Model(md).Input(id).WaterLevel.ICOpt,'constant')
 
 else
     % Constant
-    h=zeros(mmax+1,nmax+1)+handles.Model(md).Input(id).WaterLevel.ICConst;
+    h=zeros(mmax+1,nmax+1)+handles.Model(md).Input(id).waterLevel.ICConst;
 end
 
 if exist(fname,'file')
@@ -98,23 +100,23 @@ nmax=nmax+1;
 
 dp=zeros(mmax,nmax);
 dp(dp==0)=NaN;
-dp(1:end-1,1:end-1)=-handles.Model(md).Input(id).DepthZ;
-thick=handles.Model(md).Input(id).Thick;
+dp(1:end-1,1:end-1)=-handles.Model(md).Input(id).depthZ;
+thick=handles.Model(md).Input(id).thick;
 
 %% Salinity
-if handles.Model(md).Input(id).Salinity.Include
-    switch lower(handles.Model(md).Input(id).Salinity.ICOpt)
+if handles.Model(md).Input(id).salinity.include
+    switch lower(handles.Model(md).Input(id).salinity.ICOpt)
         case{'constant'}
-            s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).Salinity.ICConst;
+            s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).salinity.ICConst;
         case{'linear'}
-            pars=handles.Model(md).Input(id).Salinity.ICPar;
+            pars=handles.Model(md).Input(id).salinity.ICPar;
             s=ddb_interpolateInitialConditions(dp,thick,pars,'linear');
         case{'block'}
-            pars=handles.Model(md).Input(id).Salinity.ICPar;
+            pars=handles.Model(md).Input(id).salinity.ICPar;
             s=ddb_interpolateInitialConditions(dp,thick,pars,'block');
         case{'per layer'}
             for k=1:kmax
-                s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).Salinity.ICPar(k,1);
+                s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).salinity.ICPar(k,1);
             end
     end
     for k=1:kmax
@@ -123,19 +125,19 @@ if handles.Model(md).Input(id).Salinity.Include
 end
 
 %% Temperature
-if handles.Model(md).Input(id).Temperature.Include
-    switch lower(handles.Model(md).Input(id).Temperature.ICOpt)
+if handles.Model(md).Input(id).temperature.include
+    switch lower(handles.Model(md).Input(id).temperature.ICOpt)
         case{'constant'}
-            s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).Temperature.ICConst;
+            s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).temperature.ICConst;
         case{'linear'}
-            pars=handles.Model(md).Input(id).Temperature.ICPar;
+            pars=handles.Model(md).Input(id).temperature.ICPar;
             s=ddb_interpolateInitialConditions(dp,thick,pars,'linear');
         case{'block'}
-            pars=handles.Model(md).Input(id).Temperature.ICPar;
+            pars=handles.Model(md).Input(id).temperature.ICPar;
             s=ddb_interpolateInitialConditions(dp,thick,pars,'block');
         case{'per layer'}
             for k=1:kmax
-                s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).Temperature.ICPar(k,1);
+                s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).temperature.ICPar(k,1);
             end
     end
     for k=1:kmax
@@ -144,20 +146,20 @@ if handles.Model(md).Input(id).Temperature.Include
 end
 
 %% Sediments
-if handles.Model(md).Input(id).Sediments
-    for i=1:handles.Model(md).Input(id).NrSediments
-        switch lower(handles.Model(md).Input(id).Sediment(i).ICOpt)
+if handles.Model(md).Input(id).sediments
+    for i=1:handles.Model(md).Input(id).nrSediments
+        switch lower(handles.Model(md).Input(id).sediment(i).ICOpt)
             case{'constant'}
-                s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).Sediment(i).ICConst;
+                s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).sediment(i).ICConst;
             case{'linear'}
-                pars=handles.Model(md).Input(id).Sediment(i).ICPar;
+                pars=handles.Model(md).Input(id).sediment(i).ICPar;
                 s=ddb_interpolateInitialConditions(dp,thick,pars,'linear');
             case{'block'}
-                pars=handles.Model(md).Input(id).Sediment(i).ICPar;
+                pars=handles.Model(md).Input(id).sediment(i).ICPar;
                 s=ddb_interpolateInitialConditions(dp,thick,pars,'block');
             case{'per layer'}
                 for k=1:kmax
-                    s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).Sediment(i).ICPar(k,1);
+                    s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).sediment(i).ICPar(k,1);
                 end
         end
         for k=1:kmax
@@ -167,20 +169,20 @@ if handles.Model(md).Input(id).Sediments
 end
 
 %% Tracers
-if handles.Model(md).Input(id).Tracers
-    for i=1:handles.Model(md).Input(id).NrTracers
-        switch lower(handles.Model(md).Input(id).Tracer(i).ICOpt)
+if handles.Model(md).Input(id).tracers
+    for i=1:handles.Model(md).Input(id).nrTracers
+        switch lower(handles.Model(md).Input(id).tracer(i).ICOpt)
             case{'constant'}
-                s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).Tracer(i).ICConst;
+                s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).tracer(i).ICConst;
             case{'linear'}
-                pars=handles.Model(md).Input(id).Tracer(i).ICPar;
+                pars=handles.Model(md).Input(id).tracer(i).ICPar;
                 s=ddb_interpolateInitialConditions(dp,thick,pars,'linear');
             case{'block'}
-                pars=handles.Model(md).Input(id).Tracer(i).ICPar;
+                pars=handles.Model(md).Input(id).tracer(i).ICPar;
                 s=ddb_interpolateInitialConditions(dp,thick,pars,'block');
             case{'per layer'}
                 for k=1:kmax
-                    s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).Tracer(i).ICPar(k,1);
+                    s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).tracer(i).ICPar(k,1);
                 end
         end
         for k=1:kmax

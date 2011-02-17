@@ -55,11 +55,11 @@ switch lower(varargin{1}),
         handles=getHandles;
         
         try
-            set(handles.GUIHandles.MainWindow,'WindowScrollWheelFcn',@ddb_zoomScrollWheel);
+            set(handles.GUIHandles.mainWindow,'WindowScrollWheelFcn',@ddb_zoomScrollWheel);
         end
 
-        set(handles.GUIHandles.MainWindow,'KeyPressFcn',@ddb_shiftPan);
-        set(handles.GUIHandles.MainWindow,'ResizeFcn',@ddb_resize);
+        set(handles.GUIHandles.mainWindow,'KeyPressFcn',@ddb_shiftPan);
+        set(handles.GUIHandles.mainWindow,'ResizeFcn',@ddb_resize);
 
         ddb_setWindowButtonUpDownFcn;
         ddb_setWindowButtonMotionFcn;

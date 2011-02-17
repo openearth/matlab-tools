@@ -4,96 +4,95 @@ handles=ddb_countOpenBoundaries(handles,id);
 
 Flow=handles.Model(md).Input(id);
 
-runid=handles.Model(md).Input(id).Runid;
+runid=handles.Model(md).Input(id).runid;
 
-incconst=Flow.Salinity.Include || Flow.Temperature.Include || Flow.Sediments || Flow.Tracers;
+incconst=Flow.salinity.include || Flow.temperature.include || Flow.sediments || Flow.tracers;
 
 MDF.Ident='Delft3D-FLOW  .03.02 3.39.26';
-MDF.Runtxt=Flow.Description;
-MDF.Filcco=Flow.GrdFile;
+MDF.Runtxt=Flow.description;
+MDF.Filcco=Flow.grdFile;
 MDF.Fmtcco='FR'; 
-MDF.Runtxt=Flow.Description;
-if strcmp(handles.ScreenParameters.CoordinateSystem.Type,'Cartesian')
-    MDF.Anglat=Flow.Latitude;
+if strcmp(handles.screenParameters.coordinateSystem.type,'Cartesian')
+    MDF.Anglat=Flow.latitude;
 end
-MDF.Grdang=Flow.Orientation;
-MDF.Filgrd=Flow.EncFile;
+MDF.Grdang=Flow.orientation;
+MDF.Filgrd=Flow.encFile;
 MDF.Fmtgrd='FR'; 
 MDF.MNKmax(1)=Flow.MMax;
 MDF.MNKmax(2)=Flow.NMax;
 MDF.MNKmax(3)=Flow.KMax;
-MDF.Thick=Flow.Thick;
-if ~isempty(Flow.DepFile)
-    MDF.Fildep=Flow.DepFile;
+MDF.Thick=Flow.thick;
+if ~isempty(Flow.depFile)
+    MDF.Fildep=Flow.depFile;
     MDF.Fmtdep= 'FR'; 
 else
-    MDF.DepUni=Flow.UniformDepth;
+    MDF.DepUni=Flow.uniformDepth;
 end
 if Flow.nrDryPoints>0
-    MDF.Fildry=Flow.DryFile;
+    MDF.Fildry=Flow.dryFile;
     MDF.Fmtdry='FR';
 end
-if Flow.NrThinDams>0
-    MDF.Filtd=Flow.ThdFile;
+if Flow.nrThinDams>0
+    MDF.Filtd=Flow.thdFile;
     MDF.Fmttd='FR';
 end
-MDF.Itdate=D3DTimeString(Flow.ItDate,'ItDateMDF');
+MDF.Itdate=D3DTimeString(Flow.itDate,'ItDateMDF');
 MDF.Tunit='M';
-tstart=(Flow.StartTime-Flow.ItDate)*1440.0;
-tstop=(Flow.StopTime-Flow.ItDate)*1440.0;
+tstart=(Flow.startTime-Flow.itDate)*1440.0;
+tstop=(Flow.stopTime-Flow.itDate)*1440.0;
 MDF.Tstart=tstart;
 MDF.Tstop=tstop;
-MDF.Dt=Flow.TimeStep;
+MDF.Dt=Flow.timeStep;
 MDF.Tzone=0;
 MDF.Sub1='    ';
-if Flow.Salinity.Include
+if Flow.salinity.include
     MDF.Sub1(1)='S';
 end
-if Flow.Temperature.Include
+if Flow.temperature.include
     MDF.Sub1(2)='T';
 end
-if Flow.Wind
+if Flow.wind
     MDF.Sub1(3)='W';
 end
-if Flow.SecondaryFlow
+if Flow.secondaryFlow
     MDF.Sub1(4)='I';
 end
 MDF.Sub2='   ';
-if Flow.NrDrogues>0
+if Flow.nrDrogues>0
     MDF.Sub2(1)='P';
 end
-if Flow.Sediments || Flow.Tracers
+if Flow.sediments || Flow.tracers
     MDF.Sub2(2)='C';
 end
-if Flow.Waves
+if Flow.waves
     MDF.Sub2(3)='W';
 end
 k=0;
-if Flow.Sediments
-    for i=1:Flow.NrSediments
+if Flow.sediments
+    for i=1:Flow.nrSediments
         k=k+1;
-        MDF.(['Namc' num2str(k)])=[Flow.Sediment(i).Name repmat(' ',1,20-length(Flow.Sediment(i).Name))];
+        MDF.(['Namc' num2str(k)])=[Flow.sediment(i).name repmat(' ',1,20-length(Flow.sediment(i).name))];
     end
 end
-if Flow.Tracers
-    for i=1:Flow.NrTracers
+if Flow.tracers
+    for i=1:Flow.nrTracers
         k=k+1;
-        MDF.(['Namc' num2str(k)])=[Flow.Tracer(i).Name repmat(' ',1,20-length(Flow.Tracer(i).Name))];
+        MDF.(['Namc' num2str(k)])=[Flow.Tracer(i).name repmat(' ',1,20-length(Flow.tracer(i).name))];
     end
 end
-switch Flow.WindType
+switch Flow.windType
     case 'Uniform'
-        MDF.Wnsvwp='N';
+        MDF.wnsvwp='N';
     case 'SpaceVarying'
-        MDF.Wnsvwp='Y';
+        MDF.wnsvwp='Y';
 end
-MDF.Wndint=Flow.WndInt;
-if Flow.Wind
-    if ~isempty(Flow.WndFile)
-        MDF.Filwnd=Flow.WndFile;
+MDF.Wndint=Flow.wndInt;
+if Flow.wind
+    if ~isempty(Flow.wndFile)
+        MDF.Filwnd=Flow.wndFile;
     end
-    if ~isempty(Flow.SpwFile)
-        MDF.Filweb=Flow.SpwFile;
+    if ~isempty(Flow.spwFile)
+        MDF.Filweb=Flow.spwFile;
     end        
 %     switch lower(Flow.WindType)
 %         case{'uniform'}
@@ -101,109 +100,109 @@ if Flow.Wind
 %             MDF.Filweb=Flow.SpwFile;
 %     end
 end
-switch Flow.InitialConditions,
+switch Flow.initialConditions,
     case{'unif'}
-        MDF.Zeta0=Flow.Zeta0;
-        MDF.U0=Flow.U0;
-        MDF.V0=Flow.V0;
-        if Flow.Salinity.Include
-            val=zeros(Flow.KMax,1)+Flow.Salinity.ICConst;
+        MDF.Zeta0=Flow.zeta0;
+        MDF.U0=Flow.u0;
+        MDF.V0=Flow.v0;
+        if Flow.salinity.include
+            val=zeros(Flow.KMax,1)+Flow.salinity.ICConst;
             MDF.S0=val;
         end
-        if Flow.Temperature.Include
-            val=zeros(Flow.KMax,1)+Flow.Temperature.ICConst;
+        if Flow.temperature.include
+            val=zeros(Flow.KMax,1)+Flow.temperature.ICConst;
             MDF.T0=val;
         end
         k=0;
-        if Flow.Sediments
-            for i=1:Flow.NrSediments
+        if Flow.sediments
+            for i=1:Flow.nrSediments
                 k=k+1;
-                val=zeros(Flow.KMax,1)+Flow.Sediment(i).ICConst;
+                val=zeros(Flow.KMax,1)+Flow.sediment(i).ICConst;
                 MDF.(['C0' num2str(k)])=val;
             end
         end
-        if Flow.Tracers
-            for i=1:Flow.NrTracers
+        if Flow.tracers
+            for i=1:Flow.nrTracers
                 k=k+1;
-                val=zeros(Flow.KMax,1)+Flow.Tracer(i).ICConst;
+                val=zeros(Flow.KMax,1)+Flow.tracer(i).ICConst;
                 MDF.(['C0' num2str(k)])=val;
             end
         end
     case{'ini'}
-        MDF.Filic=Flow.IniFile;
+        MDF.Filic=Flow.iniFile;
         MDF.Fmtic='FR';
     case{'rst'}
-        MDF.Restid=Flow.RstId;
+        MDF.Restid=Flow.rstId;
     case{'trim'}
-        MDF.Restid=Flow.TrimId;        
+        MDF.Restid=Flow.trimId;        
 end
-if Flow.NrOpenBoundaries>0
-    MDF.Filbnd=Flow.BndFile;
+if Flow.nrOpenBoundaries>0
+    MDF.Filbnd=Flow.bndFile;
     MDF.Fmtbnd='FR';
 end
-if Flow.NrHarmo>0
-    MDF.FilbcH=Flow.BchFile;
+if Flow.nrHarmo>0
+    MDF.FilbcH=Flow.bchFile;
     MDF.FmtbcH='FR';
 end
-if incconst && Flow.NrOpenBoundaries>0
-    MDF.FilbcC=Flow.BccFile;
+if incconst && Flow.nrOpenBoundaries>0
+    MDF.FilbcC=Flow.bccFile;
     MDF.FmtbcC='FR';
 end
-if Flow.NrTime>0
-    MDF.FilbcT=Flow.BctFile;
+if Flow.nrTime>0
+    MDF.FilbcT=Flow.bctFile;
     MDF.FmtbcT='FR';
 end
-if Flow.NrAstro>0
-    MDF.Filana=Flow.BcaFile;
+if Flow.nrAstro>0
+    MDF.Filana=Flow.bcaFile;
     MDF.Fmtana='FR';
 end
-if Flow.NrCor>0
-    MDF.Filcor=Flow.CorFile;
+if Flow.nrCor>0
+    MDF.Filcor=Flow.corFile;
     MDF.Fmtcor='FR';
 end
 if incconst
-    for i=1:Flow.NrOpenBoundaries
-        MDF.Rettis(i)=Flow.OpenBoundaries(i).THLag(1);
-        MDF.Rettib(i)=Flow.OpenBoundaries(i).THLag(2);
+    for i=1:Flow.nrOpenBoundaries
+        MDF.Rettis(i)=Flow.openBoundaries(i).THLag(1);
+        MDF.Rettib(i)=Flow.openBoundaries(i).THLag(2);
     end
 end
-MDF.Ag=Flow.G;
-MDF.Rhow=Flow.RhoW;
+MDF.Ag=Flow.g;
+MDF.Rhow=Flow.rhoW;
 MDF.Alph0=[];
-MDF.Tempw=Flow.TempW;
-MDF.Salw=Flow.SalW;
-if Flow.Waves
-    MDF.Rouwav=Flow.RouWav;
+MDF.Tempw=Flow.tempW;
+MDF.Salw=Flow.salW;
+if Flow.waves
+    MDF.Rouwav=Flow.rouWav;
 else
     MDF.Rouwav='    ';    
 end
-MDF.Wstres=Flow.WindStress;
-MDF.Rhoa=Flow.RhoAir;
-MDF.Betac=Flow.BetaC;
-if Flow.Equili==1
+MDF.Wstres=Flow.windStress;
+MDF.Rhoa=Flow.rhoAir;
+MDF.Betac=Flow.betaC;
+if Flow.equili==1
     MDF.Equili='N';
 else
     MDF.Equili='Y';
 end
 if Flow.KMax>1
-    MDF.Tkemod=[Flow.VerticalTurbulenceModel repmat(' ',1,12-length(Flow.VerticalTurbulenceModel))];
+    MDF.Tkemod=[Flow.verticalTurbulenceModel repmat(' ',1,12-length(Flow.verticalTurbulenceModel))];
 else
     MDF.Tkemod='            ';
 end
-MDF.Ktemp=Flow.KTemp;
-MDF.Fclou=Flow.FClou;
-MDF.Sarea=Flow.SArea;
-if Flow.Temint==1
+MDF.Ktemp=Flow.kTemp;
+MDF.Fclou=Flow.fClou;
+MDF.Sarea=Flow.sArea;
+if Flow.temint==1
     MDF.Temint='N';
 else
     MDF.Temint='Y';
 end
-MDF.Roumet=Flow.RoughnessType;
-MDF.Ccofu=Flow.URoughness;
-MDF.Ccofv=Flow.VRoughness;
-MDF.Xlo=Flow.Xlo;
-MDF.Vicouv=Flow.VicoUV;
-MDF.Dicouv=Flow.DicoUV;
+MDF.Roumet=Flow.roughnessType;
+MDF.Ccofu=Flow.uRoughness;
+MDF.Ccofv=Flow.vRoughness;
+MDF.Xlo=Flow.xlo;
+MDF.Vicouv=Flow.vicoUV;
+MDF.Dicouv=Flow.dicoUV;
 if Flow.HLES==1
     MDF.Htur2d='Y';
     MDF.Htural=Flow.Htural;
@@ -217,64 +216,64 @@ else
     MDF.Htur2d='N';
 end
 if Flow.KMax>1
-    MDF.Vicoww=Flow.VicoWW;
-    MDF.Dicoww=Flow.DicoWW;
+    MDF.Vicoww=Flow.vicoWW;
+    MDF.Dicoww=Flow.dicoWW;
 end
-MDF.Irov=Flow.Irov;
-if Flow.Irov==1
-    MDF.Z0v=Flow.Z0v;
+MDF.Irov=Flow.irov;
+if Flow.irov==1
+    MDF.Z0v=Flow.z0v;
 end
-if Flow.NrSediments>0
-    MDF.Filsed=Flow.SedFile;
-    MDF.Filmor=Flow.MorFile;
+if Flow.nrSediments>0
+    MDF.Filsed=Flow.sedFile;
+    MDF.Filmor=Flow.morFile;
 end
-MDF.Iter=Flow.Iter;
-if Flow.DryFlp
-    MDF.Dryflp='YES';
+MDF.Iter=Flow.iter;
+if Flow.dryFlp
+    MDF.dryflp='YES';
 else
-    MDF.Dryflp='NO';
+    MDF.dryflp='NO';
 end
-MDF.Dpsopt=Flow.DpsOpt;
-MDF.Dpuopt=Flow.DpuOpt;
-MDF.Dryflc=Flow.DryFlc;
-MDF.Dco=Flow.Dco;
-MDF.Tlfsmo=Flow.SmoothingTime;
-MDF.ThetQH=Flow.ThetQH;
-if Flow.ForresterHor==1
+MDF.Dpsopt=Flow.dpsOpt;
+MDF.Dpuopt=Flow.dpuOpt;
+MDF.Dryflc=Flow.dryFlc;
+MDF.Dco=Flow.dco;
+MDF.Tlfsmo=Flow.smoothingTime;
+MDF.ThetQH=Flow.thetQH;
+if Flow.forresterHor==1
     MDF.Forfuv='Y';
 else
     MDF.Forfuv='N';
 end
-if Flow.ForresterVer==1
+if Flow.forresterVer==1
     MDF.Forfww='Y';
 else
     MDF.Forfww='N';
 end
-if Flow.SigmaCorrection
+if Flow.sigmaCorrection
     MDF.Sigcor='Y';
 else
     MDF.Sigcor='N';
 end
-MDF.Trasol=Flow.TraSol;
-MDF.Momsol=Flow.MomSol;
+MDF.Trasol=Flow.traSol;
+MDF.Momsol=Flow.momSol;
 
-if Flow.NrDischarges>0
-    MDF.Filsrc=Flow.SrcFile;
+if Flow.nrDischarges>0
+    MDF.Filsrc=Flow.srcFile;
     MDF.Fmtsrc='FR';
-    MDF.Fildis=Flow.DisFile;
+    MDF.Fildis=Flow.disFile;
     MDF.Fmtdis='FR';
 end
 
-if Flow.NrObservationPoints>0
-    MDF.Filsta=Flow.ObsFile;
+if Flow.nrObservationPoints>0
+    MDF.Filsta=Flow.obsFile;
     MDF.Fmtsta='FR';
 end
-if Flow.NrCrossSections>0
-    MDF.Filcrs=Flow.CrsFile;
+if Flow.nrCrossSections>0
+    MDF.Filcrs=Flow.crsFile;
     MDF.Fmtcrs='FR';
 end
-if Flow.NrDrogues>0
-    MDF.Filpar=Flow.DroFile;
+if Flow.nrDrogues>0
+    MDF.Filpar=Flow.droFile;
     MDF.Fmtpar='FR';
 end
 
@@ -292,67 +291,67 @@ MDF.PHhydr= 'YYYYYY';
 MDF.PHderv= 'YYY';
 MDF.PHproc= 'YYYYYYYYYY';
 MDF.PHflux= 'YYYY';
-if Flow.OnlineVisualisation
+if Flow.onlineVisualisation
     MDF.Online='Y';
 else
     MDF.Online='N';
 end
-if Flow.OnlineCoupling
+if Flow.onlineCoupling
     MDF.Waqmod='Y';
 else
     MDF.Waqmod='N';
 end
-if Flow.OnlineWave
+if Flow.onlineWave
     MDF.WaveOL='Y';
 else
     MDF.WaveOL='N';
 end
 MDF.Prhis=[0 0 0];
-tstart=(Flow.MapStartTime-Flow.ItDate)*1440.0;
-tstop=(Flow.MapStopTime-Flow.ItDate)*1440.0;
-tint=Flow.MapInterval;
+tstart=(Flow.mapStartTime-Flow.itDate)*1440.0;
+tstop=(Flow.mapStopTime-Flow.itDate)*1440.0;
+tint=Flow.mapInterval;
 MDF.Flmap=[tstart tint tstop];
-tstart=(Flow.StartTime-Flow.ItDate)*1440.0;
-tstop=(Flow.StopTime-Flow.ItDate)*1440.0;
-if Flow.NrObservationPoints>0
-    MDF.Flhis=[tstart Flow.HisInterval tstop];
+tstart=(Flow.startTime-Flow.itDate)*1440.0;
+tstop=(Flow.stopTime-Flow.itDate)*1440.0;
+if Flow.nrObservationPoints>0
+    MDF.Flhis=[tstart Flow.hisInterval tstop];
 else
     MDF.Flhis=[tstart 0.0 tstop];
 end
-tstart=(Flow.ComStartTime-Flow.ItDate)*1440.0;
-tstop=(Flow.ComStopTime-Flow.ItDate)*1440.0;
-tint=Flow.ComInterval;
+tstart=(Flow.comStartTime-Flow.itDate)*1440.0;
+tstop=(Flow.comStopTime-Flow.itDate)*1440.0;
+tint=Flow.comInterval;
 MDF.Flpp =[tstart tint tstop];
-MDF.Flrst=Flow.RstInterval;
+MDF.Flrst=Flow.rstInterval;
 
 met=0;
-if ~isempty(Flow.Filwp)
-    MDF.Filwp=Flow.Filwp;
+if ~isempty(Flow.filwp)
+    MDF.Filwp=Flow.filwp;
     met=1;
 end
-if ~isempty(Flow.Filwu)
-    MDF.Filwu=Flow.Filwu;
+if ~isempty(Flow.filwu)
+    MDF.Filwu=Flow.filwu;
     met=1;
 end
-if ~isempty(Flow.Filwv)
-    MDF.Filwv=Flow.Filwv;
+if ~isempty(Flow.filwv)
+    MDF.Filwv=Flow.filwv;
     met=1;
 end
 if met
-    MDF.Wndgrd=Flow.Wndgrd;
+    MDF.Wndgrd=Flow.wndgrd;
     MDF.MNmaxw=Flow.MNmaxw;
 end
 
 if Flow.KMax>1
-    if strcmpi(Flow.LayerType,'z')
+    if strcmpi(Flow.layerType,'z')
         MDF.Zmodel='Y';
-        MDF.Zbot=Flow.ZBot;
-        MDF.Ztop=Flow.ZTop;
+        MDF.Zbot=Flow.zBot;
+        MDF.Ztop=Flow.zTop;
     end
 end
 
 %%
-fname=[handles.Model(md).Input(id).Runid '.mdf'];
+fname=[handles.Model(md).Input(id).runid '.mdf'];
 
 fid=fopen(fname,'w');
 

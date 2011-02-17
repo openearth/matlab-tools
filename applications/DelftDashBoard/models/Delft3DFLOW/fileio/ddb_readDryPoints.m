@@ -1,4 +1,4 @@
-function [m1,n1,m2,n2]=ddb_readDryPoints(fname);
+function [m1,n1,m2,n2]=ddb_readDryPoints(fname)
 
 m1=[];
 m2=[];

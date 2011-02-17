@@ -1,6 +1,6 @@
 function handles=ddb_initializeDelft3DWAVEInput(handles,id,runid,varargin)
 
-ii=strmatch('Delft3DWAVE',{handles.Model.Name},'exact');
+ii=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
 
 handles.Model(ii).Input.ActiveDomain       = 1;
 handles.Model(ii).Input.Runid              =  runid;

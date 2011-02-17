@@ -22,13 +22,24 @@ for iac=ii1:ii2
                     
                     val=getSubFieldValue(s,dependency.checks(k).variable);
                     if ischar(val)
-                        if strcmpi(val,dependency.checks(k).value)
-                            ok=1;
+                        switch dependency.checks(k).operator
+                            case{'eq'}
+                                if strcmpi(val,dependency.checks(k).value)
+                                    ok=1;
+                                end
+                            case{'ne'}
+                                if ~strcmpi(val,dependency.checks(k).value)
+                                    ok=1;
+                                end
                         end
-                    else
+                    else                                
                         switch dependency.checks(k).operator
                             case{'eq'}
                                 if val==dependency.checks(k).value
+                                    ok=1;
+                                end
+                            case{'ne'}
+                                if val~=dependency.checks(k).value
                                     ok=1;
                                 end
                             case{'lt'}
@@ -54,18 +65,26 @@ for iac=ii1:ii2
             case{'all'}
                 ok=1;
                 for k=1:length(dependency.checks)
-                    try
                     val=getSubFieldValue(s,dependency.checks(k).variable);
-                    catch
-                    end
                     if ischar(val)
-                        if ~strcmpi(val,dependency.checks(k).value)
-                            ok=0;
+                        switch dependency.checks(k).operator
+                            case{'eq'}
+                                if ~strcmpi(val,dependency.checks(k).value)
+                                    ok=0;
+                                end
+                            case{'ne'}
+                                if strcmpi(val,dependency.checks(k).value)
+                                    ok=0;
+                                end
                         end
                     else
                         switch dependency.checks(k).operator
                             case{'eq'}
                                 if val~=dependency.checks(k).value
+                                    ok=0;
+                                end
+                            case{'ne'}
+                                if val==dependency.checks(k).value
                                     ok=0;
                                 end
                             case{'lt'}
@@ -94,13 +113,24 @@ for iac=ii1:ii2
                     
                     val=getSubFieldValue(s,dependency.checks(k).variable);
                     if ischar(val)
-                        if strcmpi(val,dependency.checks(k).value)
-                            ok=0;
+                        switch dependency.checks(k).operator
+                            case{'eq'}
+                                if strcmpi(val,dependency.checks(k).value)
+                                    ok=0;
+                                end
+                            case{'ne'}
+                                if ~strcmpi(val,dependency.checks(k).value)
+                                    ok=0;
+                                end
                         end
                     else
                         switch dependency.checks(k).operator
                             case{'eq'}
                                 if val==dependency.checks(k).value
+                                    ok=0;
+                                end
+                            case{'ne'}
+                                if val~=dependency.checks(k).value
                                     ok=0;
                                 end
                             case{'lt'}

@@ -2,12 +2,12 @@ function ddb_Delft3DFLOW_editSediments
 
 handles=getHandles;
 
-MakeNewWindow('Processes :  Sediments',[360 290],'modal',[handles.SettingsDir '\icons\deltares.gif']);
+MakeNewWindow('Processes :  Sediments',[360 290],'modal',[handles.settingsDir '\icons\deltares.gif']);
 
 if handles.Model(md).Input(ad).nrSediments>0
     for i=1:handles.Model(md).Input(ad).nrSediments
-        str{i}=handles.Model(md).Input(ad).Sediment(i).Name;
-        handles.Model(md).Input(ad).Sediment(i).New=0;
+        str{i}=handles.Model(md).Input(ad).sediment(i).name;
+        handles.Model(md).Input(ad).sediment(i).new=0;
     end
 else
     str{1}='';
@@ -51,26 +51,26 @@ if length(name)>8
         if ~isempty(name)
             iex=0;
             for i=1:handles.Model(md).Input(ad).nrSediments
-                if strcmpi(handles.Model(md).Input(ad).Sediment(i).Name,name)
+                if strcmpi(handles.Model(md).Input(ad).sediment(i).name,name)
                     iex=1;
                 end
             end
             if ~iex
                 handles.Model(md).Input(ad).nrSediments=handles.Model(md).Input(ad).nrSediments+1;
                 ii=handles.Model(md).Input(ad).nrSediments;
-                handles.Model(md).Input(ad).Sediment(ii).Name=name;
+                handles.Model(md).Input(ad).sediment(ii).name=name;
                 
                 it=get(handles.GUIHandles.selectSedimentType,'Value');
                 if it==1
-                    handles.Model(md).Input(ad).Sediment(ii).type='non-cohesive';
+                    handles.Model(md).Input(ad).sediment(ii).type='non-cohesive';
                 else
-                    handles.Model(md).Input(ad).Sediment(ii).type='cohesive';
+                    handles.Model(md).Input(ad).sediment(ii).type='cohesive';
                 end
                 
-                handles.Model(md).Input(ad).Sediment(ii).New=1;
+                handles.Model(md).Input(ad).sediment(ii).new=1;
                 str=[];
                 for i=1:handles.Model(md).Input(ad).nrSediments
-                    str{i}=handles.Model(md).Input(ad).Sediment(i).Name;
+                    str{i}=handles.Model(md).Input(ad).sediment(i).name;
                 end
                 set(handles.GUIHandles.ListSediments,'String',str);
                 set(handles.GUIHandles.ListSediments,'Value',ii);
@@ -94,10 +94,10 @@ name=deblank(get(handles.GUIHandles.EditSedimentName,'String'));
 if length(name)>8
     if strcmpi(name(1:8),'sediment')
         if ~isempty(name)
-            handles.Model(md).Input(ad).Sediment(ii).Name=name;
+            handles.Model(md).Input(ad).sediment(ii).name=name;
             str=[];
             for i=1:handles.Model(md).Input(ad).nrSediments
-                str{i}=handles.Model(md).Input(ad).Sediment(i).Name;
+                str{i}=handles.Model(md).Input(ad).sediment(i).name;
             end
             set(handles.GUIHandles.ListSediments,'String',str);
             guidata(gcf,handles);
@@ -116,13 +116,13 @@ ii=get(handles.GUIHandles.ListSediments,'Value');
 nr=handles.Model(md).Input(ad).nrSediments;
 if nr>0
     if nr==1
-        handles.Model(md).Input(ad).Sediment=[];
+        handles.Model(md).Input(ad).sediment=[];
         iac=1;
     else
         for i=ii:nr-1
-            handles.Model(md).Input(ad).Sediment(i)=handles.Model(md).Input(ad).Sediment(i+1);
+            handles.Model(md).Input(ad).sediment(i)=handles.Model(md).Input(ad).sediment(i+1);
         end
-        handles.Sediment=handles.Model(md).Input(ad).Sediment(1:end-1);
+        handles.sediment=handles.Model(md).Input(ad).sediment(1:end-1);
         iac=ii;
     end
     if iac>nr-1
@@ -132,7 +132,7 @@ if nr>0
     handles.Model(md).Input(ad).nrSediments=nr-1;
     str{1}=' ';
     for i=1:handles.Model(md).Input(ad).nrSediments
-        str{i}=handles.Model(md).Input(ad).Sediment(i).Name;
+        str{i}=handles.Model(md).Input(ad).sediment(i).name;
     end
     set(handles.GUIHandles.ListSediments,'Value',iac);
     set(handles.GUIHandles.ListSediments,'String',str);
@@ -157,9 +157,9 @@ handles=guidata(gcf);
 ii=get(hObject,'Value');
 iac=get(handles.GUIHandles.ListSediments,'Value');
 if ii==1
-    handles.Model(md).Input(ad).Sediment(iac).type='non-cohesive';
+    handles.Model(md).Input(ad).sediment(iac).type='non-cohesive';
 else
-    handles.Model(md).Input(ad).Sediment(iac).type='cohesive';
+    handles.Model(md).Input(ad).sediment(iac).type='cohesive';
 end
 guidata(gcf,handles);
 
@@ -170,17 +170,17 @@ h2=getHandles;
 handles=guidata(gcf);
 
 
-h2.Model(md).Input(ad).Sediment=handles.Model(md).Input(ad).Sediment;
+h2.Model(md).Input(ad).sediment=handles.Model(md).Input(ad).sediment;
 h2.Model(md).Input(ad).nrSediments=handles.Model(md).Input(ad).nrSediments;
 for ii=1:handles.Model(md).Input(ad).nrSediments
-    if handles.Model(md).Input(ad).Sediment(ii).New
+    if handles.Model(md).Input(ad).sediment(ii).new
         h2=ddb_initializeSediment(h2,ii);
     end
 end
 if handles.Model(md).Input(ad).nrSediments==0
-    h2.Model(md).Input(ad).Sediments=0;
+    h2.Model(md).Input(ad).sediments=0;
 else
-    h2.Model(md).Input(ad).Sediments=1;
+    h2.Model(md).Input(ad).sediments=1;
 end
 setHandles(h2);
 
@@ -194,7 +194,7 @@ closereq;
 function refreshSedimentType(handles)
 if handles.Model(md).Input(ad).nrSediments>0
     ii=get(handles.GUIHandles.ListSediments,'Value');
-    switch handles.Model(md).Input(ad).Sediment(ii).type
+    switch handles.Model(md).Input(ad).sediment(ii).type
         case{'non-cohesive'}
             set(handles.GUIHandles.selectSedimentType,'Value',1);
         case{'cohesive'}
@@ -206,7 +206,7 @@ end
 function refreshSedimentName(handles)
 if handles.Model(md).Input(ad).nrSediments>0
     ii=get(handles.GUIHandles.ListSediments,'Value');
-    set(handles.GUIHandles.EditSedimentName,'String',handles.Model(md).Input(ad).Sediment(ii).Name);
+    set(handles.GUIHandles.EditSedimentName,'String',handles.Model(md).Input(ad).sediment(ii).name);
 else
     set(handles.GUIHandles.EditSedimentName,'String','Sediment');
 end

@@ -23,7 +23,6 @@ if ~strcmpi(handles.activeToolbox.Name,tbname)
     setHandles(handles);
     % Select toolbox by 'clicking' the toolbox tab. This will call
     % selectToolbox.
-%    ddb_selectToolbox;
     tabpanel('select','tag',handles.Model(md).Name,'tabname','toolbox','runcallback',0);
     ddb_selectToolbox;
     

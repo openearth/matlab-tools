@@ -2,13 +2,13 @@ function handles=ddb_readToolboxXML(handles,j)
 
 s.elements=[];
 
-fname=[handles.Toolbox(j).Name '.xml'];
+fname=[handles.Toolbox(j).name '.xml'];
 
-xmldir=[handles.Toolbox(j).Dir filesep 'xml' filesep];
+xmldir=[handles.Toolbox(j).dir filesep 'xml' filesep];
 
 handles.Toolbox(j).useXML=0;
 
-if exist(fname,'file')
+if exist([xmldir fname],'file')>0
 
     handles.Toolbox(j).useXML=1;
     xml=xml_load([xmldir fname]);
@@ -23,25 +23,3 @@ if exist(fname,'file')
 end
 
 handles.Toolbox(j).GUI.elements=s.elements;
-
-% %% Menu File
-% if isfield(xml.menu,'menuopenfile')
-%     for i=1:length(xml.menu.menuopenfile)
-%         handles.Toolbox(j).GUI.menu.openFile(i).string=xml.menu.menuopenfile(i).menuitem.string;
-%         handles.Toolbox(j).GUI.menu.openFile(i).callback=str2func(xml.menu.menuopenfile(i).menuitem.callback);
-%         handles.Toolbox(j).GUI.menu.openFile(i).option=xml.menu.menuopenfile(i).menuitem.option;
-%     end
-% else
-%     handles.Toolbox(j).GUI.menu.openFile=[];
-% end
-% 
-% if isfield(xml.menu,'menusavefile')
-%     for i=1:length(xml.menu.menusavefile)
-%         handles.Toolbox(j).GUI.menu.saveFile(i).string=xml.menu.menusavefile(i).menuitem.string;
-%         handles.Toolbox(j).GUI.menu.saveFile(i).callback=str2func(xml.menu.menusavefile(i).menuitem.callback);
-%         handles.Toolbox(j).GUI.menu.saveFile(i).option=xml.menu.menusavefile(i).menuitem.option;
-%     end
-% else
-%     handles.Toolbox(j).GUI.menu.saveFile=[];
-% end
-

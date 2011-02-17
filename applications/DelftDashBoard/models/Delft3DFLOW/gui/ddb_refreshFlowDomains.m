@@ -7,8 +7,8 @@ h=findobj(gcf,'Tag','menuDomain');
 hc=get(h,'Children');
 delete(hc);
 
-for i=1:handles.GUIData.NrFlowDomains
-    str{i}=handles.Model(md).Input(i).Runid;
+for i=1:handles.GUIData.nrFlowDomains
+    str{i}=handles.Model(md).Input(i).runid;
     ui=uimenu(h,'Label',str{i},'Callback',{@SelectDomain,i},'Checked','off','UserData',i);
     if i==ad
         set(ui,'Checked','on');
@@ -21,7 +21,7 @@ function SelectDomain(hObject, eventdata, nr)
 
 handles=getHandles;
 if nr>0
-    handles.ActiveDomain=nr;
+    handles.activeDomain=nr;
     setHandles(handles);
     h=findall(gcf,'Tag','menuDomain');
     hc=get(h,'Children');
@@ -34,11 +34,11 @@ if nr>0
 else
     str=GetUIString('Enter Runid New Domain');
     if ~isempty(str)
-        id=handles.GUIData.NrFlowDomains+1;
-        handles.GUIData.NrFlowDomains=id;
-        handles.ActiveDomain=id;
-        handles.Model(md).Input(id).Runid=str;
-        handles=ddb_initializeFlowDomain(handles,'all',id,handles.Model(md).Input(id).Runid);
+        id=handles.GUIData.nrFlowDomains+1;
+        handles.GUIData.nrFlowDomains=id;
+        handles.activeDomain=id;
+        handles.Model(md).Input(id).runid=str;
+        handles=ddb_initializeFlowDomain(handles,'all',id,handles.Model(md).Input(id).runid);
         setHandles(handles);
         ddb_refreshFlowDomains;
         ddb_changeDomain;

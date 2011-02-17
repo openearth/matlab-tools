@@ -24,38 +24,36 @@
     <style>checkbox</style>
     <text>Salinity</text>
     <position>50 130</position>
-    <variable>
-      <name>Include</name>
-      <subfield3>Salinity</subfield3>
-    </variable>
+    <onchange>ddb_Delft3DFLOW_processes</onchange>
+    <option1>checkconstituents</option1>
+    <variable>handles.Model(md).Input(ad).salinity.include</variable>
   </element>
   <element>
     <tag>checktemperature</tag>
     <style>checkbox</style>
     <text>Temperature</text>
     <position>50 105</position>
-    <variable>
-      <name>Include</name>
-      <subfield3>Temperature</subfield3>
-    </variable>
+    <onchange>ddb_Delft3DFLOW_processes</onchange>
+    <option1>checkconstituents</option1>
+    <variable>handles.Model(md).Input(ad).temperature.include</variable>
   </element>
   <element>
     <tag>checktracers</tag>
     <style>checkbox</style>
     <text>Pollutants and Tracers</text>
     <position>50 80</position>
-    <variable>
-      <name>Tracers</name>
-    </variable>
+    <onchange>ddb_Delft3DFLOW_processes</onchange>
+    <option1>checkconstituents</option1>
+    <variable>handles.Model(md).Input(ad).tracers</variable>
   </element>
   <element>
     <tag>checksediments</tag>
     <style>checkbox</style>
     <text>Sediment</text>
     <position>50 55</position>
-    <variable>
-      <name>Sediments</name>
-    </variable>
+    <onchange>ddb_Delft3DFLOW_processes</onchange>
+    <option1>checkconstituents</option1>
+    <variable>handles.Model(md).Input(ad).sediments</variable>
   </element>
   <element>
     <tag>pushedittracers</tag>
@@ -74,10 +72,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>Tracers</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).tracers</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -102,10 +97,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>Sediments</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).sediments</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -118,27 +110,21 @@
     <style>checkbox</style>
     <text>Wind</text>
     <position>270 130</position>
-    <variable>
-      <name>Wind</name>
-    </variable>
+    <variable>handles.Model(md).Input(ad).wind</variable>
   </element>
   <element>
     <tag>checkwaves</tag>
     <style>checkbox</style>
     <text>Waves</text>
     <position>270 105</position>
-    <variable>
-      <name>Waves</name>
-    </variable>
+    <variable>handles.Model(md).Input(ad).waves</variable>
   </element>
   <element>
     <tag>checkonlinewave</tag>
     <style>checkbox</style>
     <text>Online Wave</text>
     <position>270 80</position>
-    <variable>
-      <name>OnlineWave</name>
-    </variable>
+    <variable>handles.Model(md).Input(ad).onlineWave</variable>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -148,10 +134,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>Waves</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).waves</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -164,10 +147,7 @@
     <style>checkbox</style>
     <text>Roller Model</text>
     <position>270 55</position>
-    <variable>
-      <name>Include</name>
-      <subfield3>Roller</subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).roller.include</variable>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -177,10 +157,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>Waves</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).waves</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -193,18 +170,14 @@
     <style>checkbox</style>
     <text>Secondary Flow</text>
     <position>400 130</position>
-    <variable>
-      <name>SecondaryFlow</name>
-    </variable>
+    <variable>handles.Model(md).Input(ad).secondaryFlow</variable>
   </element>
   <element>
     <tag>checktidalforces</tag>
     <style>checkbox</style>
     <text>Tidal Forces</text>
     <position>400 105</position>
-    <variable>
-      <name>TidalForces</name>
-    </variable>
+    <variable>handles.Model(md).Input(ad).tidalForces</variable>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -214,10 +187,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>coordinateSystemType</name>
-              <type>string</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).coordinateSystemType</variable>
             <value>geographic</value>
             <operator>eq</operator>
           </check>
@@ -230,8 +200,6 @@
     <style>checkbox</style>
     <text>Dredging and Dumping</text>
     <position>580 130</position>
-    <variable>
-      <name>Dredging</name>
-    </variable>
+    <variable>handles.Model(md).Input(ad).dredging</variable>
   </element>
 </root>

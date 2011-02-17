@@ -36,7 +36,13 @@ for i=1:length(elements)
                 % Edit box
                 elements(i).handle=uicontrol(figh,'Parent',parent,'Style','edit','String','','Position',position,'BackgroundColor',[1 1 1]);
                 
-                switch elements(i).variable.type
+                if ~isempty(elements(i).type)
+                    tp=elements(i).type;
+                else
+                    tp=elements(i).variable.type;
+                end
+                
+                switch tp
                     case{'char','string'}
                         horal='left';
                     case{'int','integer'}
@@ -46,6 +52,7 @@ for i=1:length(elements)
                     case{'datetime','time','date'}
                         horal='right';
                 end
+                
                 set(elements(i).handle,'HorizontalAlignment',horal);
                 if elements(i).nrLines>1
                     set(elements(i).handle,'Max',elements(i).nrLines);
@@ -111,15 +118,25 @@ for i=1:length(elements)
             case{'pushbutton'}
                 elements(i).handle=uicontrol(figh,'Style','pushbutton','String',elements(i).text,'Position',position);
                 set(elements(i).handle,'Parent',parent);
+                if ~isempty(elements(i).toolTipString)
+                    set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
+                end
 
             case{'togglebutton'}
                 elements(i).handle=uicontrol(figh,'Style','togglebutton','String',elements(i).text,'Position',position);
                 set(elements(i).handle,'Parent',parent);
+                if ~isempty(elements(i).toolTipString)
+                    set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
+                end
 
             case{'listbox'}
 
                 % List box
                 elements(i).handle=uicontrol(figh,'Parent',parent,'Style','listbox','String','','Position',position,'BackgroundColor',[1 1 1]);
+                
+                if ~isempty(elements(i).max)
+                    set(elements(i).handle,'Max',elements(i).max);
+                end
                 
                 if ~isempty(elements(i).toolTipString)
                     set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
@@ -152,21 +169,23 @@ for i=1:length(elements)
                 
                 % Text
                 pos=position;
-%                 try
-                    if ~isfield(elements(i).text,'variable')
-                        str=elements(i).text;
-                    else
-                        str=' ';
-                    end
+
+                if ~isfield(elements(i).text,'variable')
+                    str=elements(i).text;
+                else
+                    str=' ';
+                end
                         
                 elements(i).handle=uicontrol(figh,'Style','text','String',str,'Position',[pos 20 20],'BackgroundColor',bgc);
-%                 catch
-%                 shite=600;
-%                 end
-                
+
                 ext=get(elements(i).handle,'Extent');
                 pos(3)=ext(3);
                 pos(4)=15;
+                
+                if strcmpi(elements(i).horal,'right')
+                    pos(1)=pos(1)-pos(3);
+                end
+
                 set(elements(i).handle,'Position',pos);
                 
                 if ~isempty(parent)
@@ -206,31 +225,12 @@ for i=1:length(elements)
                     strings{j}=elements(i).tabs(j).tabstring;
                     tabnames{j}=elements(i).tabs(j).tabname;
                     callbacks{j}=[];
-
                     if ~isempty(elements(i).tabs(j).callback)
-
-%                    if ~isempty(elements(i).tabs(j).customCallback)
                         callbacks{j}=elements(i).tabs(j).callback;
                         inputArguments{j}=[];
-                        
                     else
-                        % This is not generic! Needed for DDB for the moment.
-%                        callbacks{j}=@deleteUIControls;
-                        
-%                         % Find which tab panels are inside present tab.
-%                         ncb=0;
-%                         for k=1:length(elements(i).tabs(j).elements)
-%                             if strcmpi(elements(i).tabs(j).elements(k).style,'tabpanel')
-%                                 if ~isempty(elements(i).tabs(j).elements(k).callback)
-%                                     ncb=ncb+1;
-
-%                        callbacks{j}=@deleteUIControls;
                         callbacks{j}=@defaultTabCallback;
                         inputArguments{j}={'tag',panelname,'tabnr',j};
-%                                 end
-%                             end
-%                         end
-                        
                     end
                 end
                 
@@ -304,7 +304,7 @@ for i=1:length(elements)
 
         end
     catch
-        disp(['Something went wrong with generating element ' num2str(i)]);
+        disp(['Something went wrong with generating element ' elements(i).tag]);
         a=lasterror;
         disp(a.message);
         for ia=1:length(a.stack)
@@ -315,13 +315,9 @@ for i=1:length(elements)
     %drawnow;
     
     set(elements(i).handle,'Tag',elements(i).tag);
-try
     setappdata(elements(i).handle,'getFcn',getFcn);
     setappdata(elements(i).handle,'setFcn',setFcn);
     setappdata(elements(i).handle,'element',elements(i));
-catch
-    shite=100
-end
 end
 
 setappdata(parent,'elements',elements);
@@ -442,7 +438,14 @@ s=feval(getFcn);
 el=elements(i);
 
 v=get(hObject,'String');
-switch el.variable.type
+
+if ~isempty(el.type)
+    tp=el.type;
+else
+    tp=el.variable.type;
+end
+
+switch tp
     case{'string'}
     case{'datetime'}
         v=datenum(v,'yyyy mm dd HH MM SS');
@@ -499,7 +502,12 @@ if ~ion
 else
     
     v=el.value;
-    switch lower(el.variable.type)
+    if ~isempty(el.type)
+        tp=lower(el.type);
+    else
+        tp=lower(el.variable.type);
+    end
+    switch lower(tp)
         case{'real','integer'}
             v=str2double(v);
     end
@@ -549,13 +557,47 @@ if ~isempty(str{1})
     el=elements(i);
     
     ii=get(hObject,'Value');
-    switch el.variable.type
-        case{'string'}
-            v=str{ii};
-        otherwise
-            v=ii;
+    
+    if ~isempty(el.type)
+        tp=lower(el.type);
+    else
+        tp=lower(el.variable.type);
     end
-    s=setSubFieldValue(s,el.variable,v);
+
+    switch tp
+        case{'string'}
+            if isfield(el.list.value)
+                str=el.list.value;
+            end
+            if length(ii)>1
+                % multi
+                s=setSubFieldValue(s,el.variable,str{ii(1)});
+                if ~isempty(el.multivariable)
+                    for j=1:length(ii)
+                        v{j}=str{ii(j)};
+                    end
+                    s=setSubFieldValue(s,el.multivariable,v);
+                end
+            else
+                s=setSubFieldValue(s,el.variable,str{ii});
+                if ~isempty(el.multivariable)
+                    s=setSubFieldValue(s,el.multivariable,str{ii});
+                end
+            end
+        otherwise
+            if length(ii)>1
+                % multi
+                s=setSubFieldValue(s,el.variable,ii(1));
+                if ~isempty(el.multivariable)
+                    s=setSubFieldValue(s,el.multivariable,ii);
+                end
+            else
+                s=setSubFieldValue(s,el.variable,ii);
+                if ~isempty(el.multivariable)
+                    s=setSubFieldValue(s,el.multivariable,ii);
+                end
+            end
+    end
     
     feval(setFcn,s);
     
@@ -580,9 +622,25 @@ if ~isempty(str{1})
     el=elements(i);
     
     ii=get(hObject,'Value');
-    switch el.variable.type
+    
+    if ~isempty(el.type)
+        tp=lower(el.type);
+    else
+        tp=lower(el.variable.type);
+    end
+
+    switch tp
         case{'string'}
-            v=str{ii};
+            if isfield(el.list,'value')
+                if isfield(el.list.value,'variable')
+                    values=getSubFieldValue(s,el.list.value.variable);
+                else
+                    values=el.list.value;
+                end
+                v=values{ii};
+            else
+                v=str{ii};
+            end
         otherwise
             v=ii;
     end

@@ -19,7 +19,7 @@ else
     setptr(gcf,pnt);
 end
 
-set(handles.GUIHandles.TextXCoordinate,'String',strx);
-set(handles.GUIHandles.TextYCoordinate,'String',stry);
+set(handles.GUIHandles.textXCoordinate,'String',strx);
+set(handles.GUIHandles.textYCoordinate,'String',stry);
 % set(gca,'FontSize',8);
 % grid on;

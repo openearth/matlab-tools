@@ -538,7 +538,7 @@ if pathname~=0
 end
 
 %%
-function AddOpenBoundary(x,y)
+function addOpenBoundary(x,y)
 
 x1=x(1);x2=x(2);
 y1=y(1);y2=y(2);
@@ -547,33 +547,39 @@ id=ad;
 [m1,n1]=FindCornerPoint(x1,y1,handles.Model(md).Input(id).GridX,handles.Model(md).Input(id).GridY);
 [m2,n2]=FindCornerPoint(x2,y2,handles.Model(md).Input(id).GridX,handles.Model(md).Input(id).GridY);
 [m1,n1,m2,n2,ok]=CheckBoundaryPoints(m1,n1,m2,n2,1);
+
 if ok==1
-    if handles.Mode=='a'
-        nrbnd=handles.Model(md).Input(id).NrOpenBoundaries+1;
-        handles.Model(md).Input(id).NrOpenBoundaries=nrbnd;
-    elseif handles.Mode=='c'
-        nrbnd=handles.GUIData.ActiveOpenBoundary;
+    
+    if handles.Model(md).Input(ad).changeOpenBoundary
+        iac=handles.Model(md).Input(ad).activeOpenBoundary;
+    else
+        % Add mode
+        handles.Model(md).Input(ad).nrOpenBoundaries=handles.Model(md).Input(ad).nrOpenBoundaries+1;
+        iac=handles.Model(md).Input(ad).nrOpenBoundaries;
     end
-    handles.Model(md).Input(id).NrOpenBoundaries=nrbnd;
-    handles.Model(md).Input(id).OpenBoundaries(nrbnd).M1=m1;
-    handles.Model(md).Input(id).OpenBoundaries(nrbnd).N1=n1;
-    handles.Model(md).Input(id).OpenBoundaries(nrbnd).M2=m2;
-    handles.Model(md).Input(id).OpenBoundaries(nrbnd).N2=n2;
-    handles=ddb_initializeBoundary(handles,nrbnd);
-    handles.Model(md).Input(id).OpenBoundaries(nrbnd).Name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
-    set(handles.GUIHandles.ListOpenBoundaries,'Value',1);
-    handles.GUIData.ActiveOpenBoundary=nrbnd;
-    RefreshOpenBoundaries(handles);
-    handles.DeleteSelectedOpenBoundary=0;
-    setHandles(handles);
-    if handles.Mode=='a'
-        ddb_plotFlowAttributes(handles,'OpenBoundaries','plot',id,nrbnd,nrbnd);
-    elseif handles.Mode=='c'
-        ddb_plotFlowAttributes(handles,'OpenBoundaries','plot',id,nrbnd,nrbnd);
-        set(gcf, 'windowbuttondownfcn',   {@SelectOpenBoundary});
+    
+    handles.Model(md).Input(ad).openBoundaries(iac).M1=m1;
+    handles.Model(md).Input(ad).openBoundaries(iac).N1=n1;
+    handles.Model(md).Input(ad).openBoundaries(iac).M2=m2;
+    handles.Model(md).Input(ad).openBoundaries(iac).N2=n2;
+
+    handles=ddb_initializeBoundary(handles,iac);
+  
+    handles.Model(md).Input(ad).openBoundaries(iac).Name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
+    handles.Model(md).Input(ad).openBoundaryNames{iac}=handles.Model(md).Input(ad).openBoundaries(iac).Name;
+    handles.Model(md).Input(ad).activeOpenBoundary=iac;
+    handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
+    
+    if handles.Model(md).Input(ad).changeOpenBoundary
+        ddb_clickObject('tag','openboundary','callback',@changeOpenBoundaryFromMap);
+        setInstructions({'','','Select open boundary'});
+    else
+        ddb_dragLine(@addThinDam,'free');
+        setInstructions({'','','Drag new open boundary'});
     end
 end
 setHandles(handles);
+refreshOpenBoundaries;
 
 %%
 function handles=DeleteOpenBoundary(handles)

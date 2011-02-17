@@ -7,9 +7,9 @@ if ~isempty(varargin)
     end
 end
 
-if ~isempty(handles.Model(md).Input(id).GrdFile)
+if ~isempty(handles.Model(md).Input(id).grdFile)
 
-    dpori=handles.Model(md).Input(id).Depth;
+    dpori=handles.Model(md).Input(id).depth;
     dmax=max(max(dpori));
 
     if isnan(dmax)
@@ -30,7 +30,7 @@ if ~isempty(handles.Model(md).Input(id).GrdFile)
     
     wb = waitbox('Generating bathymetry ...');
 
-    AttName=get(handles.GUIHandles.EditAttributeName,'String');
+    attName=handles.Model(md).Input(id).attName;
 
     % Generate bathymetry
 
@@ -38,15 +38,15 @@ if ~isempty(handles.Model(md).Input(id).GrdFile)
     yy=handles.GUIData.y;
     zz=handles.GUIData.z;
     
-    dpsopt=handles.Model(md).Input(id).DpsOpt;
+    dpsopt=handles.Model(md).Input(id).dpsOpt;
 
     switch lower(dpsopt)
         case{'dp'}
-            x=handles.Model(md).Input(id).GridXZ;
-            y=handles.Model(md).Input(id).GridYZ;
+            x=handles.Model(md).Input(id).gridXZ;
+            y=handles.Model(md).Input(id).gridYZ;
         otherwise
-            x=handles.Model(md).Input(id).GridX;
-            y=handles.Model(md).Input(id).GridY;
+            x=handles.Model(md).Input(id).gridX;
+            y=handles.Model(md).Input(id).gridY;
     end
 
     x(isnan(x))=0;
@@ -56,18 +56,18 @@ if ~isempty(handles.Model(md).Input(id).GrdFile)
     
     switch opt
         case{'overwrite'}
-            handles.Model(md).Input(id).Depth=z;
+            handles.Model(md).Input(id).depth=z;
         case{'combine'}
-            handles.Model(md).Input(id).Depth(isnan(handles.Model(md).Input(id).Depth))=z(isnan(handles.Model(md).Input(id).Depth));
+            handles.Model(md).Input(id).depth(isnan(handles.Model(md).Input(id).depth))=z(isnan(handles.Model(md).Input(id).depth));
     end
 
-    z=handles.Model(md).Input(id).Depth;
+    z=handles.Model(md).Input(id).depth;
     
-    handles.Model(md).Input(id).DepthZ=GetDepthZ(z,dpsopt);
+    handles.Model(md).Input(id).depthZ=GetDepthZ(z,dpsopt);
 
-    ddb_wldep('write',[AttName '.dep'],z);
+    ddb_wldep('write',[attName '.dep'],z);
 
-    handles.Model(md).Input(id).DepFile=[AttName '.dep'];
+    handles.Model(md).Input(id).depFile=[attName '.dep'];
 
     setHandles(handles);
     

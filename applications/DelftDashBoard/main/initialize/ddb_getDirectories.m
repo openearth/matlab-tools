@@ -2,11 +2,11 @@ function [handles,ok]=ddb_getDirectories(handles)
 
 ok=1;
 
-handles.WorkingDirectory=pwd;
+handles.workingDirectory=pwd;
 
 if isdeployed
 
-    handles.SettingsDir=[ctfroot filesep 'settings' filesep];
+    handles.settingsDir=[ctfroot filesep 'settings' filesep];
 
     [status, result] = system('path');
     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
@@ -25,7 +25,7 @@ else
         return;
     end
     
-    handles.SettingsDir=[inipath 'settings' filesep];
+    handles.settingsDir=[inipath 'settings' filesep];
     ddbdir=getINIValue(inifile,'DataDir');
     if exist(ddbdir)==7 % absolute path
         ddbdir = [cd(cd(ddbdir)) filesep];
@@ -38,15 +38,15 @@ else
     additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
 end
 
-handles.BathyDir=[ddbdir 'bathymetry' filesep];
-handles.TideDir=[ddbdir 'tidemodels' filesep];
-handles.ToolBoxDir=[ddbdir 'toolbox' filesep];
+handles.bathyDir=[ddbdir 'bathymetry' filesep];
+handles.tideDir=[ddbdir 'tidemodels' filesep];
+handles.toolBoxDir=[ddbdir 'toolbox' filesep];
 handles.additionalToolboxDir=additionalToolboxDir;
-handles.ShorelineDir=[ddbdir 'shorelines' filesep];
+handles.shorelineDir=[ddbdir 'shorelines' filesep];
 
 if isdeployed
-    handles.SuperTransDir=[ddbdir 'supertrans' filesep];
+    handles.superTransDir=[ddbdir 'supertrans' filesep];
 else
     dr=fileparts(which('EPSG.mat'));
-    handles.SuperTransDir=[dr filesep];
+    handles.superTransDir=[dr filesep];
 end

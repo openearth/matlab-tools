@@ -5,10 +5,10 @@ function ddb_plotBackgroundBathymetry(handles)
 xx=handles.GUIData.x(1,:);
 yy=handles.GUIData.y(:,1);
 
-xmin=handles.ScreenParameters.XLim(1);
-xmax=handles.ScreenParameters.XLim(2);
-ymin=handles.ScreenParameters.YLim(1);
-ymax=handles.ScreenParameters.YLim(2);
+xmin=handles.screenParameters.xLim(1);
+xmax=handles.screenParameters.xLim(2);
+ymin=handles.screenParameters.yLim(1);
+ymax=handles.screenParameters.yLim(2);
 dx=(xmax-xmin)/20;
 dy=(ymax-ymin)/20;
 xmin=xmin-dx;
@@ -28,13 +28,13 @@ h=handles.mapHandles.bathymetry;
 zz=handles.GUIData.z(jlim,ilim);
 %zz=single(zz);
 
-if handles.ScreenParameters.AutomaticColorLimits
+if handles.screenParameters.automaticColorLimits
     zmin=abs(min(min(zz)));
     mxz=zmin;
     mnz=-zmin;
 else
-    mxz=handles.ScreenParameters.CMax;
-    mnz=handles.ScreenParameters.CMin;
+    mxz=handles.screenParameters.cMax;
+    mnz=handles.screenParameters.cMin;
 end
 
 zz0=zz;
@@ -42,7 +42,7 @@ zz=min(zz,mxz);
 zz=max(zz,mnz);
 zz(isnan(zz0))=NaN;
 
-if strcmpi(handles.ScreenParameters.ColorMap,'earth')
+if strcmpi(handles.screenParameters.colorMap,'earth')
     earth=handles.mapData.colorMaps.earth;
 else
     earth=jet;

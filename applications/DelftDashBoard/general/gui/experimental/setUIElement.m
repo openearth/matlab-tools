@@ -30,8 +30,14 @@ switch lower(el.style)
     %% Standard elements
     
     case{'edit'}
+
         val=getSubFieldValue(s,el.variable);
-        switch el.variable.type
+        if ~isempty(el.type)
+            tp=lower(el.type);
+        else
+            tp=lower(el.variable.type);
+        end
+        switch tp
             case{'string'}
             case{'datetime'}
                 val=datestr(val,'yyyy mm dd HH MM SS');
@@ -42,6 +48,7 @@ switch lower(el.style)
             otherwise
                 val=num2str(val);
         end
+        
         set(el.handle,'String',val);
 
         % Set text
@@ -53,8 +60,6 @@ switch lower(el.style)
                 setTextPosition(el.textHandle,el.position,el.textPosition);
             end
         end
-
-        
         
     case{'checkbox'}
         val=getSubFieldValue(s,el.variable);
@@ -66,7 +71,14 @@ switch lower(el.style)
 
     case{'radiobutton'}
         val=getSubFieldValue(s,el.variable);
-        switch lower(el.variable.type)
+        
+        if ~isempty(el.type)
+            tp=lower(el.type);
+        else
+            tp=lower(el.variable.type);
+        end
+
+        switch lower(tp)
             case{'string'}
                 if strcmpi(el.value,val)
                     set(el.handle,'Value',1);
@@ -81,51 +93,63 @@ switch lower(el.style)
                 end
         end
 
-    case{'listbox'}
-        stringList=getSubFieldValue(s,el.stringList.variable);
-        if isempty(stringList)
-            ii=1;
-        elseif isempty(stringList{1})
-            ii=1;
-        else
-            switch el.variable.type
-                case{'string'}
-                    str=getSubFieldValue(s,el.variable);
-                    ii=strmatch(str,stringList,'exact');
-                otherwise
-                    ii=getSubFieldValue(s,el.variable);
-            end
-        end
-        set(el.handle,'String',stringList);
-        set(el.handle,'Value',ii);
-
-    case{'popupmenu'}
-        if isfield(el.stringList,'variable')
-            stringList=getSubFieldValue(s,el.stringList.variable);
-        else
-            stringList=el.stringList.text;
-        end
-        if isempty(stringList)
-            ii=1;
-        elseif isempty(stringList{1})
-            ii=1;
-        else
-            switch el.variable.type
-                case{'string'}
-                    str=getSubFieldValue(s,el.variable);
-                    ii=strmatch(str,stringList,'exact');
-                otherwise
-                    ii=getSubFieldValue(s,el.variable);
-            end
-        end
-        set(el.handle,'String',stringList);
-        set(el.handle,'Value',ii);
+    case{'listbox','popupmenu'}
         
+        if isfield(el.list.text,'variable')
+            stringList=getSubFieldValue(s,el.list.text.variable);
+        else
+            stringList=el.list.text;
+        end
+        
+        if isempty(stringList)
+            ii=1;
+        elseif isempty(stringList{1})
+            ii=1;
+        else           
+            if ~isempty(el.type)
+                tp=lower(el.type);
+            else
+                tp=lower(el.variable.type);
+            end
+            
+            switch tp
+                case{'string'}
+                    str=getSubFieldValue(s,el.variable);
+                    %                    if isfield(el.list.value,'variable')
+                    if isfield(el.list,'value')
+                        if isfield(el.list.value,'variable')
+                            values=getSubFieldValue(s,el.list.value.variable);
+                        else
+                            values=el.list.value;
+                        end
+                        ii=strmatch(lower(str),lower(values),'exact');
+                    else
+                        ii=strmatch(lower(str),lower(stringList),'exact');
+                    end
+                otherwise
+%                    ii=getSubFieldValue(s,el.variable);
+                    if ~isempty(el.multivariable)
+                        ii=getSubFieldValue(s,el.multivariable);
+                    else
+                        ii=getSubFieldValue(s,el.variable);
+                    end
+            end
+        end
+        set(el.handle,'String',stringList);
+        set(el.handle,'Value',ii);
+                
     case{'text'}
         if isfield(el,'variable')
             if ~isempty(el.variable)
                 val=getSubFieldValue(s,el.variable);
-                switch el.variable.type
+
+                if ~isempty(el.type)
+                    tp=lower(el.type);
+                else
+                    tp=lower(el.variable.type);
+                end
+
+                switch tp
                     case{'string'}
                     otherwise
                         val=num2str(val);

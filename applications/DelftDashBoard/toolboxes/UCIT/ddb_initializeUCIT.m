@@ -1,6 +1,6 @@
 function handles=ddb_initializeUCIT(handles,varargin)
 
-ii=strmatch('UCIT',{handles.Toolbox(:).Name},'exact');
+ii=strmatch('UCIT',{handles.Toolbox(:).name},'exact');
 
 if nargin>1
     switch varargin{1}
@@ -13,4 +13,4 @@ end
 
 set(handles.GUIHandles.Menu.Toolbox.UCIT,'Enable','off');
 
-handles.Toolbox(ii).Input.FirstTime=1;
+handles.Toolbox(ii).Input.firstTime=1;

@@ -1,10 +1,10 @@
 function ddb_plotXBeach(handles,opt0,id,varargin)
 
-ii=strmatch('XBeach',{handles.Model.Name},'exact');
+ii=strmatch('XBeach',{handles.Model.name},'exact');
 
 if isempty(varargin)
     n1=1;
-    n2=handles.GUIData.NrXBeachDomains;
+    n2=handles.GUIData.nrXBeachDomains;
 else
     n1=varargin{1};
     n2=n1;
@@ -12,15 +12,15 @@ end
 
 for id=n1:n2
 
-    if strcmpi(opt0,'deactivate') && strcmpi(handles.ActiveModel.Name,'XBeach') && id==handles.ActiveDomain
+    if strcmpi(opt0,'deactivate') && strcmpi(handles.activeModel.name,'XBeach') && id==handles.activeDomain
         % Simply Changing Tab
         opt='deactivatebutkeepvisible';
     else
         opt=opt0;
     end
 
-    ddb_plotXBeachBathymetry(handles,opt,id);
-    ddb_plotXBeachGrid(handles,opt,id);
+%    ddb_plotXBeachBathymetry(handles,opt,id);
+%    ddb_plotXBeachGrid(handles,opt,id);
     
 %     if handles.Model(md).Input(id).NrObservationPoints>0
 %         ddb_plotFlowAttributes(handles,'ObservationPoints',opt,id,0,1);

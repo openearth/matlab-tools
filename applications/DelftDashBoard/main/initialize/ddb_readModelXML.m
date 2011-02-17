@@ -1,11 +1,11 @@
 function handles=ddb_readModelXML(handles,j)
 
 %fname=[handles.SettingsDir 'xml' filesep 'models' filesep handles.Model(j).Name filesep handles.Model(j).Name '.xml'];
-fname=[handles.Model(j).Name '.xml'];
+fname=[handles.Model(j).name '.xml'];
 
 %s.elements=[];
 
-xmldir=[handles.SettingsDir filesep 'xml' filesep 'models' filesep handles.Model(j).Name filesep];
+xmldir=[handles.settingsDir filesep 'xml' filesep 'models' filesep handles.Model(j).name filesep];
 
 if exist(fname,'file')
 

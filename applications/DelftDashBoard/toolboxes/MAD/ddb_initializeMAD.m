@@ -1,13 +1,13 @@
 function handles=ddb_initializeMAD(handles,varargin)
 
-ii=strmatch('MAD',{handles.Toolbox(:).Name},'exact');
+ii=strmatch('MAD',{handles.Toolbox(:).name},'exact');
 
 if nargin>1
     switch varargin{1}
         case{'test'}
             return
         case{'veryfirst'}
-            handles.Toolbox(ii).LongName='Model Application Database';
+            handles.Toolbox(ii).longName='Model Application Database';
             return
     end
 end
@@ -15,5 +15,5 @@ end
 % set(handles.GUIHandles.Menu.Toolbox.MAD,'Enable','off');
 
 handles.Toolbox(ii).KMLColor='red';
-handles.Toolbox(ii).ActiveMADModel=1;
-handles.Toolbox(tb).Models=[];
+handles.Toolbox(ii).activeMADModel=1;
+handles.Toolbox(tb).models=[];

@@ -4,19 +4,19 @@ handles=getHandles;
 
 handles=ddb_readShorelines(handles);
 
-for i=1:handles.Shorelines.nrShorelines
+for i=1:handles.shorelines.nrShorelines
 
-    handles.Shorelines.Shoreline(i).isAvailable=1;
+    handles.shorelines.shoreline(i).isAvailable=1;
     
-    switch lower(handles.Shorelines.Shoreline(i).Type)
+    switch lower(handles.shorelines.shoreline(i).type)
         case{'netcdftiles'}
             
-            if strcmpi(handles.Shorelines.Shoreline(i).URL(1:4),'http')
+            if strcmpi(handles.shorelines.shoreline(i).URL(1:4),'http')
                 % OpenDAP
-                fname=[handles.Shorelines.Shoreline(i).URL '/' handles.Shorelines.Shoreline(i).Name '.nc'];
-                if handles.Shorelines.Shoreline(i).useCache
+                fname=[handles.shorelines.shoreline(i).URL '/' handles.shorelines.shoreline(i).name '.nc'];
+                if handles.shorelines.shoreline(i).useCache
                     % First copy meta data file to local cache
-                    localdir = [handles.ShorelineDir handles.Shorelines.Shoreline(i).Name filesep];
+                    localdir = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep];
                     try
                         if ~exist(localdir,'dir')
                             mkdir(localdir);
@@ -24,22 +24,22 @@ for i=1:handles.Shorelines.nrShorelines
                         % Try to copy nc meta file
                         urlwrite(fname,[localdir 'temp.nc']);
                         if exist([localdir 'temp.nc'],'file')
-                            movefile([localdir 'temp.nc'],[localdir handles.Shorelines.Shoreline(i).Name '.nc']);
+                            movefile([localdir 'temp.nc'],[localdir handles.shorelines.shoreline(i).name '.nc']);
                         end
-                        fname = [handles.ShorelineDir handles.Shorelines.Shoreline(i).Name filesep handles.Shorelines.Shoreline(i).Name '.nc'];
+                        fname = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep handles.shorelines.shoreline(i).name '.nc'];
                     catch
                         % If no access to openDAP server possible, check
                         % whether meta data file is already available in
                         % cache
-                        disp(['Connection to OpenDAP server could not be made for shoreline ' handles.Shorelines.Shoreline(i).longName ' - try using cached data instead']);
-                        fname = [handles.ShorelineDir handles.Shorelines.Shoreline(i).Name filesep handles.Shorelines.Shoreline(i).Name '.nc'];
+                        disp(['Connection to OpenDAP server could not be made for shoreline ' handles.shorelines.shoreline(i).longName ' - try using cached data instead']);
+                        fname = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep handles.shorelines.shoreline(i).name '.nc'];
                         if exist(fname,'file')
                             % File already exists, continue
                         else
                             % File does not exist, this should produce a
                             % warning
-                            disp(['Shoreline ' handles.Shorelines.Shoreline(i).longName ' not available!']);
-                            handles.Shorelines.Shoreline(i).isAvailable=0;
+                            disp(['Shoreline ' handles.shorelines.shoreline(i).longName ' not available!']);
+                            handles.shorelines.shoreline(i).isAvailable=0;
                         end
                     end
                 else
@@ -47,18 +47,18 @@ for i=1:handles.Shorelines.nrShorelines
                 end
             else
                 % Local
-                fname=[handles.Shorelines.Shoreline(i).URL filesep handles.Shorelines.Shoreline(i).Name '.nc'];
+                fname=[handles.shorelines.shoreline(i).URL filesep handles.shorelines.shoreline(i).name '.nc'];
                 if exist(fname,'file')
                     % File already exists, continue
                 else
                     % File does not exist, this should produce a
                     % warning
-                    disp(['Bathymetry dataset ' handles.Shorelines.Shoreline(i).longName ' not available!']);
-                    handles.Shorelines.Shoreline(i).isAvailable=0;
+                    disp(['Bathymetry dataset ' handles.shorelines.shoreline(i).longName ' not available!']);
+                    handles.shorelines.shoreline(i).isAvailable=0;
                 end
             end
             
-            if handles.Shorelines.Shoreline(i).isAvailable
+            if handles.shorelines.shoreline(i).isAvailable
                 
                 x0=nc_varget(fname,'origin_x');
                 y0=nc_varget(fname,'origin_y');
@@ -75,32 +75,32 @@ for i=1:handles.Shorelines.nrShorelines
                     zoomstr{k}=deblank(zoomstrings(k,:));
                 end
                 
-                handles.Shorelines.Shoreline(i).HorizontalCoordinateSystem.Name=nc_attget(fname,'crs','coord_ref_sys_name');
+                handles.shorelines.shoreline(i).horizontalCoordinateSystem.name=nc_attget(fname,'crs','coord_ref_sys_name');
                 tp=nc_attget(fname,'crs','coord_ref_sys_kind');
                 switch lower(tp)
                     case{'projected','proj','projection','xy','cartesian','cart'}
-                        handles.Shorelines.Shoreline(i).HorizontalCoordinateSystem.Type='Cartesian';
+                        handles.shorelines.shoreline(i).horizontalCoordinateSystem.type='Cartesian';
                     case{'geographic','geographic 2d','geographic 3d','latlon','spherical'}
-                        handles.Shorelines.Shoreline(i).HorizontalCoordinateSystem.Type='Geographic';
+                        handles.shorelines.shoreline(i).horizontalCoordinateSystem.type='Geographic';
                 end
                 
-                handles.Shorelines.Shoreline(i).nrZoomLevels=length(x0);
-                for k=1:handles.Shorelines.Shoreline(i).nrZoomLevels
-                    handles.Shorelines.Shoreline(i).ZoomLevel(k).x0=double(x0(k));
-                    handles.Shorelines.Shoreline(i).ZoomLevel(k).y0=double(y0(k));
-                    handles.Shorelines.Shoreline(i).ZoomLevel(k).ntilesx=double(ntilesx(k));
-                    handles.Shorelines.Shoreline(i).ZoomLevel(k).ntilesy=double(ntilesy(k));
-                    handles.Shorelines.Shoreline(i).ZoomLevel(k).dx=double(dx(k));
-                    handles.Shorelines.Shoreline(i).ZoomLevel(k).dy=double(dy(k));
-                    handles.Shorelines.Shoreline(i).ZoomLevel(k).iAvailable=double(iav{k});
-                    handles.Shorelines.Shoreline(i).ZoomLevel(k).jAvailable=double(jav{k});
-                    handles.Shorelines.Shoreline(i).ZoomLevel(k).zoomString=zoomstr{k};
-                    handles.Shorelines.Shoreline(i).Scale(k)=double(scale(k));
+                handles.shorelines.shoreline(i).nrZoomLevels=length(x0);
+                for k=1:handles.shorelines.shoreline(i).nrZoomLevels
+                    handles.shorelines.shoreline(i).zoomLevel(k).x0=double(x0(k));
+                    handles.shorelines.shoreline(i).zoomLevel(k).y0=double(y0(k));
+                    handles.shorelines.shoreline(i).zoomLevel(k).ntilesx=double(ntilesx(k));
+                    handles.shorelines.shoreline(i).zoomLevel(k).ntilesy=double(ntilesy(k));
+                    handles.shorelines.shoreline(i).zoomLevel(k).dx=double(dx(k));
+                    handles.shorelines.shoreline(i).zoomLevel(k).dy=double(dy(k));
+                    handles.shorelines.shoreline(i).zoomLevel(k).iAvailable=double(iav{k});
+                    handles.shorelines.shoreline(i).zoomLevel(k).jAvailable=double(jav{k});
+                    handles.shorelines.shoreline(i).zoomLevel(k).zoomString=zoomstr{k};
+                    handles.shorelines.shoreline(i).scale(k)=double(scale(k));
                 end
             end
     end    
 end
 
-disp([num2str(handles.Shorelines.nrShorelines) ' shoreline found!']);
+disp([num2str(handles.shorelines.nrShorelines) ' shoreline found!']);
 
 setHandles(handles);

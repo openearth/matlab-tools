@@ -9,8 +9,8 @@ ch=get(h,'Children');
 set(ch,'Checked','off');
 set(hObject,'Checked','on');
 
-if ~strcmpi(handles.ScreenParameters.BackgroundBathymetry,lbl)
-    handles.ScreenParameters.BackgroundBathymetry=lbl;
+if ~strcmpi(handles.screenParameters.backgroundBathymetry,lbl)
+    handles.screenParameters.backgroundBathymetry=lbl;
     setHandles(handles);
     ddb_updateDataInScreen;
 end

@@ -1,6 +1,6 @@
 function ddb_plotFlowAttributes(handles,att,opt,id,varargin)
 
-imd=strmatch('Delft3DFLOW',{handles.Model(:).Name},'exact');
+imd=strmatch('Delft3DFLOW',{handles.Model(:).name},'exact');
 
 if ~isempty(varargin)
     ia=varargin{1};
@@ -31,7 +31,7 @@ switch lower(att)
         tp='patch';
     case{'openboundaries'}
         tag='OpenBoundary';
-        nr=handles.Model(imd).Input(id).NrOpenBoundaries;
+        nr=handles.Model(imd).Input(id).nrOpenBoundaries;
         col='b';
         colact='r';
         tp='line';

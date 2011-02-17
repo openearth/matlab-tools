@@ -72,10 +72,10 @@ else
             handles.Model(md).Input(ad).deleteDryPoint=0;
             handles.editMode='edit';
             n=handles.Model(md).Input(ad).activeDryPoint;
-            m1str=num2str(handles.Model(md).Input(ad).DryPoints(n).M1);
-            m2str=num2str(handles.Model(md).Input(ad).DryPoints(n).M2);
-            n1str=num2str(handles.Model(md).Input(ad).DryPoints(n).N1);
-            n2str=num2str(handles.Model(md).Input(ad).DryPoints(n).N2);
+            m1str=num2str(handles.Model(md).Input(ad).dryPoints(n).M1);
+            m2str=num2str(handles.Model(md).Input(ad).dryPoints(n).M2);
+            n1str=num2str(handles.Model(md).Input(ad).dryPoints(n).N1);
+            n2str=num2str(handles.Model(md).Input(ad).dryPoints(n).N2);
             handles.Model(md).Input(ad).dryPointNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
             clearInstructions;
@@ -111,8 +111,8 @@ y1=y(1);y2=y(2);
 
 handles=getHandles;
 % Find grid indices of start and end point of line
-[m1,n1]=findGridCell(x1,y1,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
-[m2,n2]=findGridCell(x2,y2,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
+[m1,n1]=findGridCell(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+[m2,n2]=findGridCell(x2,y2,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
 % Check if start and end are in one grid line
 if m1>0 && (m1==m2 || n1==n2)
     if handles.Model(md).Input(ad).changeDryPoint
@@ -122,12 +122,12 @@ if m1>0 && (m1==m2 || n1==n2)
         handles.Model(md).Input(ad).nrDryPoints=handles.Model(md).Input(ad).nrDryPoints+1;
         iac=handles.Model(md).Input(ad).nrDryPoints;
     end
-    handles.Model(md).Input(ad).DryPoints(iac).M1=m1;
-    handles.Model(md).Input(ad).DryPoints(iac).N1=n1;
-    handles.Model(md).Input(ad).DryPoints(iac).M2=m2;
-    handles.Model(md).Input(ad).DryPoints(iac).N2=n2;
-    handles.Model(md).Input(ad).DryPoints(iac).Name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
-    handles.Model(md).Input(ad).dryPointNames{iac}=handles.Model(md).Input(ad).DryPoints(iac).Name;
+    handles.Model(md).Input(ad).dryPoints(iac).M1=m1;
+    handles.Model(md).Input(ad).dryPoints(iac).N1=n1;
+    handles.Model(md).Input(ad).dryPoints(iac).M2=m2;
+    handles.Model(md).Input(ad).dryPoints(iac).N2=n2;
+    handles.Model(md).Input(ad).dryPoints(iac).Name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
+    handles.Model(md).Input(ad).dryPointNames{iac}=handles.Model(md).Input(ad).dryPoints(iac).Name;
     handles.Model(md).Input(ad).activeDryPoint=iac;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
     setHandles(handles);
@@ -151,15 +151,15 @@ if nrdry>0
     iac=handles.Model(md).Input(ad).activeDryPoint;    
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','drypoints');
     if nrdry>1
-        handles.Model(md).Input(ad).DryPoints=removeFromStruc(handles.Model(md).Input(ad).DryPoints,iac);
+        handles.Model(md).Input(ad).dryPoints=removeFromStruc(handles.Model(md).Input(ad).dryPoints,iac);
         handles.Model(md).Input(ad).dryPointNames=removeFromCellArray(handles.Model(md).Input(ad).dryPointNames,iac);
     else   
         handles.Model(md).Input(ad).dryPointNames={''};
         handles.Model(md).Input(ad).activeDryPoint=1;
-        handles.Model(md).Input(ad).DryPoints(1).M1=[];
-        handles.Model(md).Input(ad).DryPoints(1).M2=[];
-        handles.Model(md).Input(ad).DryPoints(1).N1=[];
-        handles.Model(md).Input(ad).DryPoints(1).N2=[];
+        handles.Model(md).Input(ad).dryPoints(1).M1=[];
+        handles.Model(md).Input(ad).dryPoints(1).M2=[];
+        handles.Model(md).Input(ad).dryPoints(1).N1=[];
+        handles.Model(md).Input(ad).dryPoints(1).N2=[];
     end
     if iac==nrdry
         iac=nrdry-1;

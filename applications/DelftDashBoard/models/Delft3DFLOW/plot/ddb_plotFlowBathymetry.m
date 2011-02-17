@@ -7,7 +7,7 @@ switch lower(opt)
         h=findobj(gca,'Tag','FlowBathymetry','UserData',id);
         delete(h);
 
-        if size(handles.Model(md).Input(ad).Depth,1)>0
+        if size(handles.Model(md).Input(ad).depth,1)>0
 
             clims=get(gca,'CLim');
             zmin=clims(1);
@@ -17,9 +17,9 @@ switch lower(opt)
             
             caxis([zmin zmax]);
             
-            x=handles.Model(md).Input(id).GridX;
-            y=handles.Model(md).Input(id).GridY;
-            z=handles.Model(md).Input(id).Depth;
+            x=handles.Model(md).Input(id).gridX;
+            y=handles.Model(md).Input(id).gridY;
+            z=handles.Model(md).Input(id).depth;
 
             z0=zeros(size(z));
             bathy=surface(x,y,z);

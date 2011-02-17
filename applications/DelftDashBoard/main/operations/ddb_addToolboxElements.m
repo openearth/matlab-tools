@@ -3,7 +3,7 @@ function handles=ddb_addToolboxElements(handles)
 
 % Find parent (the toolbox tab of the active model), and delete all
 % children
-parent=findobj(gcf,'Tag',[lower(handles.Model(md).Name) '.toolbox']);
+parent=findobj(gcf,'Tag',[lower(handles.Model(md).name) '.toolbox']);
 ch=get(parent,'Children');
 delete(ch);
 %drawnow;

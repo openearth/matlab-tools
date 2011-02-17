@@ -1,37 +1,37 @@
 function handles=ddb_readBndFile(handles)
 
-fid=fopen(handles.Model(md).Input(ad).BndFile);
+fid=fopen(handles.Model(md).Input(ad).bndFile);
 
-handles.Model(md).Input(ad).NrOpenBoundaries=0;
-handles.Model(md).Input(ad).OpenBoundaries=[];
+handles.Model(md).Input(ad).nrOpenBoundaries=0;
+handles.Model(md).Input(ad).openBoundaries=[];
 
 for i=1:1000
     tx0=fgets(fid);
     if and(ischar(tx0), size(tx0>0))
-        handles.Model(md).Input(ad).NrOpenBoundaries=handles.Model(md).Input(ad).NrOpenBoundaries+1;
-        n=handles.Model(md).Input(ad).NrOpenBoundaries;
+        handles.Model(md).Input(ad).nrOpenBoundaries=handles.Model(md).Input(ad).nrOpenBoundaries+1;
+        n=handles.Model(md).Input(ad).nrOpenBoundaries;
         v=strread(tx0(22:end),'%q');
-        handles.Model(md).Input(ad).OpenBoundaries(n).M1=str2double(v{3});
-        handles.Model(md).Input(ad).OpenBoundaries(n).N1=str2double(v{4});
-        handles.Model(md).Input(ad).OpenBoundaries(n).M2=str2double(v{5});
-        handles.Model(md).Input(ad).OpenBoundaries(n).N2=str2double(v{6});
+        handles.Model(md).Input(ad).openBoundaries(n).M1=str2double(v{3});
+        handles.Model(md).Input(ad).openBoundaries(n).N1=str2double(v{4});
+        handles.Model(md).Input(ad).openBoundaries(n).M2=str2double(v{5});
+        handles.Model(md).Input(ad).openBoundaries(n).N2=str2double(v{6});
         handles=ddb_initializeBoundary(handles,n);
-        handles.Model(md).Input(ad).OpenBoundaries(n).Name=deblank(tx0(1:21));
-        handles.Model(md).Input(ad).OpenBoundaries(n).Type=v{1};
-        handles.Model(md).Input(ad).OpenBoundaries(n).Forcing=v{2};
-        handles.Model(md).Input(ad).OpenBoundaries(n).Alpha=str2double(v{7});
+        handles.Model(md).Input(ad).openBoundaries(n).name=deblank(tx0(1:21));
+        handles.Model(md).Input(ad).openBoundaries(n).type=v{1};
+        handles.Model(md).Input(ad).openBoundaries(n).forcing=v{2};
+        handles.Model(md).Input(ad).openBoundaries(n).alpha=str2double(v{7});
         ii=8;
-        switch handles.Model(md).Input(ad).OpenBoundaries(n).Type,
+        switch handles.Model(md).Input(ad).openBoundaries(n).type
             case{'C','Q','T','R'}
-                handles.Model(md).Input(ad).OpenBoundaries(n).Profile=v{8};
+                handles.Model(md).Input(ad).openBoundaries(n).profile=v{8};
                 ii=9;
             otherwise
-                handles.Model(md).Input(ad).OpenBoundaries(n).Profile='Uniform';
+                handles.Model(md).Input(ad).openBoundaries(n).profile='Uniform';
         end
-        switch handles.Model(md).Input(ad).OpenBoundaries(n).Forcing,
+        switch handles.Model(md).Input(ad).openBoundaries(n).forcing
             case{'A'}
-                handles.Model(md).Input(ad).OpenBoundaries(n).CompA=v{ii};
-                handles.Model(md).Input(ad).OpenBoundaries(n).CompB=v{ii+1};
+                handles.Model(md).Input(ad).openBoundaries(n).compA=v{ii};
+                handles.Model(md).Input(ad).openBoundaries(n).compB=v{ii+1};
         end
     end
 end

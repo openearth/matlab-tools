@@ -1,11 +1,11 @@
 function handles=ddb_initializeSWAN(handles,varargin)
 
-ii=strmatch('SWAN',{handles.Model.Name},'exact');
+ii=strmatch('SWAN',{handles.Model.name},'exact');
 
 if nargin>1
     switch varargin{1}
         case{'veryfirst'}
-            handles.Model(ii).LongName='SWAN';
+            handles.Model(ii).longName='SWAN';
             return
     end
 end

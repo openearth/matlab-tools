@@ -1,11 +1,11 @@
 function handles=ddb_initializeDelft3DWAVE(handles,varargin)
 
-ii=strmatch('Delft3DWAVE',{handles.Model.Name},'exact');
+ii=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
 
 if nargin>1
     switch varargin{1}
         case{'veryfirst'}
-            handles.Model(ii).LongName='Delft3D-WAVE';
+            handles.Model(ii).longName='Delft3D-WAVE';
             return
     end
 end

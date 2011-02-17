@@ -17,7 +17,7 @@ end
 
 % First change size of model tab panels
 for i=1:length(handles.Model)
-    tabpanel('resize','tag',lower(handles.Model(i).Name),'resize','position',[9 6 sz(3)-10 sz(4)-30]);
+    tabpanel('resize','tag',lower(handles.Model(i).name),'resize','position',[9 6 sz(3)-10 sz(4)-30]);
 end
 
 % Now change size of map panel
@@ -41,18 +41,18 @@ pos=[2 2 15 posp(4)-55];
 set(handles.GUIHandles.colorBar,'Position',pos);
 
 % Now change size of coordinate system text
-set(handles.GUIHandles.TextXCoordinate,'Position',[350 posp(4)-25 80 15]);
-set(handles.GUIHandles.TextYCoordinate,'Position',[440 posp(4)-25 80 15]);
-set(handles.GUIHandles.TextCoordinateSystem,'Position',[90 posp(4)-25 200 15]);
+set(handles.GUIHandles.textXCoordinate,'Position',[350 posp(4)-25 80 15]);
+set(handles.GUIHandles.textYCoordinate,'Position',[440 posp(4)-25 80 15]);
+set(handles.GUIHandles.textCoordinateSystem,'Position',[90 posp(4)-25 200 15]);
 
 xl=get(handles.GUIHandles.mapAxis,'XLim');
 yl=get(handles.GUIHandles.mapAxis,'YLim');
 
-[xl,yl]=CompXYLim(xl,yl,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+[xl,yl]=CompXYLim(xl,yl,handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
 
 set(handles.GUIHandles.mapAxis,'XLim',xl,'YLim',yl);
-handles.ScreenParameters.XLim=xl;
-handles.ScreenParameters.YLim=yl;
+handles.screenParameters.xLim=xl;
+handles.screenParameters.yLim=yl;
 
 setHandles(handles);
 

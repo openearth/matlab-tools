@@ -2,7 +2,7 @@ function ddb_plotMDA(handles,opt,id)
 
 handles=getHandles;
 tag = 'mda';
-imd=strmatch('UnibestCL',{handles.Model(:).Name},'exact');
+imd=strmatch('UnibestCL',{handles.Model(:).name},'exact');
 
 switch lower(opt)
     case{'plot'}

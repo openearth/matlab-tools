@@ -27,11 +27,14 @@ if isfield(xml,'elements')
         s.elements(k).onChangeCallback = getnodeval(elxml(k).element,'onchange',[],'function');
         s.elements(k).dependees        = [];
         s.elements(k).dependencies     = [];
-
+        s.elements(k).multivariable    = [];
+        
         % Variable
         if isfield(elxml(k).element,'variable')
-%            s.elements(k).variable=readvariable(elxml(k).element,subFields,subIndices);
             s.elements(k).variable=readVariableXML(elxml(k).element.variable,subFields,subIndices);
+        end
+        if isfield(elxml(k).element,'multivariable')
+            s.elements(k).multivariable=readVariableXML(elxml(k).element.multivariable,subFields,subIndices);
         end
 
         tmptag{k}=s.elements(k).tag;
@@ -80,7 +83,7 @@ if isfield(xml,'elements')
                
             otherwise
                 % Nodes from xml file
-%                s.elements(k).text             = getnodeval(elxml(k).element,'text',[],'string');
+                s.elements(k).horal            = getnodeval(elxml(k).element,'horal','left','string');
                 s.elements(k).prefix           = getnodeval(elxml(k).element,'prefix',[],'string');
                 s.elements(k).suffix           = getnodeval(elxml(k).element,'suffix',[],'string');
                 s.elements(k).title            = getnodeval(elxml(k).element,'title',[],'string');
@@ -91,14 +94,31 @@ if isfield(xml,'elements')
                 s.elements(k).selectionText    = getnodeval(elxml(k).element,'selectiontext',[],'string');
                 s.elements(k).value            = getnodeval(elxml(k).element,'value',[],'string');
                 s.elements(k).showFileName     = getnodeval(elxml(k).element,'showfilename',1,'int');
+                s.elements(k).type             = getnodeval(elxml(k).element,'type',[],'string');
+                s.elements(k).max              = getnodeval(elxml(k).element,'mx',[],'integer');
+                
                 if isfield(elxml(k).element,'list')
-                    if isfield(elxml(k).element.list,'variable')
-                        s.elements(k).stringList.variable=readVariableXML(elxml(k).element.list.variable,subFields,subIndices);
+
+                    % Text
+                    if isfield(elxml(k).element.list.texts,'variable')
+                        s.elements(k).list.text.variable=readVariableXML(elxml(k).element.list.texts.variable,subFields,subIndices);
                     else
-                        for jj=1:length(elxml(k).element.list)
-                            s.elements(k).stringList.text{jj}=elxml(k).element.list(jj).text;
+                        for jj=1:length(elxml(k).element.list.texts)
+                            s.elements(k).list.text{jj}=elxml(k).element.list.texts(jj).text;
                         end
                     end
+                    
+                    % Values
+                    if isfield(elxml(k).element.list,'values')
+                        if isfield(elxml(k).element.list.values,'variable')
+                            s.elements(k).list.value.variable=readVariableXML(elxml(k).element.list.values.variable,subFields,subIndices);
+                        else
+                            for jj=1:length(elxml(k).element.list.values)
+                                s.elements(k).list.value{jj}=elxml(k).element.list.values(jj).value;
+                            end
+                        end
+                    end
+                    
                 end
                 
                 if isfield(elxml(k).element,'text')
@@ -150,14 +170,21 @@ if isfield(xml,'elements')
                     for ic=1:length(dep.checks)
                         
                         s.elements(k).dependencies(id).checks(ic).variable=readVariableXML(dep.checks(ic).check.variable,subFields,subIndices);
-                        s.elements(k).dependencies(id).checks(ic).value=dep.checks(ic).check.value;
                         s.elements(k).dependencies(id).checks(ic).operator=dep.checks(ic).check.operator;
                         
-                        switch lower(dep.checks(ic).check.variable.type)
-                            case{'string'}
-                            otherwise
-                                v=s.elements(k).dependencies(id).checks(ic).value;
-                                s.elements(k).dependencies(id).checks(ic).value=str2double(v);
+                        if ~isfield(dep.checks(ic).check.variable,'type')
+                            if ~isnan(str2double(dep.checks(ic).check.value))
+                                s.elements(k).dependencies(id).checks(ic).value=str2double(dep.checks(ic).check.value);
+                            else
+                                s.elements(k).dependencies(id).checks(ic).value=dep.checks(ic).check.value;
+                            end
+                        else
+                            switch lower(dep.checks(ic).check.variable.type)
+                                case{'string'}
+                                    s.elements(k).dependencies(id).checks(ic).value=dep.checks(ic).check.value;
+                                otherwise
+                                    s.elements(k).dependencies(id).checks(ic).value=str2double(dep.checks(ic).check.value);
+                            end
                         end
                     end
                 end

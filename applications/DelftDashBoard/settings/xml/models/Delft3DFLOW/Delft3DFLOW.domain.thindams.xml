@@ -8,14 +8,12 @@
     <tooltipstring>Select thin dam</tooltipstring>
     <text>Thin Dams</text>
     <textposition>above-center</textposition>
-    <variable>
-      <name>activeThinDam</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).activeThinDam</variable>
+    <type>integer</type>
     <list>
-      <variable>
-        <name>thinDamNames</name>
-      </variable>
+      <texts>
+        <variable>handles.Model(md).Input(ad).thinDamNames</variable>
+      </texts>
     </list>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>selectfromlist</option1>
@@ -33,21 +31,8 @@
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
     <tooltipstring>Edit thin dam index M1</tooltipstring>
-    <variable>
-      <name>M1</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>ThinDams</name>
-          <index>
-            <variable>
-              <name>activeThinDam</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).M1</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -59,10 +44,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrThinDams</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -83,21 +65,8 @@
     <text>N1</text>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
-    <variable>
-      <name>N1</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>ThinDams</name>
-          <index>
-            <variable>
-              <name>activeThinDam</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).N1</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -109,10 +78,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrThinDams</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -134,21 +100,8 @@
     <text>M2</text>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
-    <variable>
-      <name>M2</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>ThinDams</name>
-          <index>
-            <variable>
-              <name>activeThinDam</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).M2</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -160,10 +113,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrThinDams</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -185,21 +135,8 @@
     <text>N2</text>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>edit</option1>
-    <variable>
-      <name>N2</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>ThinDams</name>
-          <index>
-            <variable>
-              <name>activeThinDam</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).N2</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -211,10 +148,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrThinDams</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -237,21 +171,8 @@
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>plot</option1>
     <value>U</value>
-    <variable>
-      <name>UV</name>
-      <type>string</type>
-      <subfield3>
-        <variable>
-          <name>ThinDams</name>
-          <index>
-            <variable>
-              <name>activeThinDam</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).UV</variable>
+    <type>string</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -263,10 +184,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrThinDams</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -289,21 +207,8 @@
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>plot</option1>
     <value>V</value>
-    <variable>
-      <name>UV</name>
-      <type>string</type>
-      <subfield3>
-        <variable>
-          <name>ThinDams</name>
-          <index>
-            <variable>
-              <name>activeThinDam</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).UV</variable>
+    <type>string</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -315,10 +220,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrThinDams</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -349,10 +251,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrThinDams</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -368,10 +267,7 @@
     <tooltipstring>Add thin dam</tooltipstring>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>add</option1>
-    <variable>
-      <name>addThinDam</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).addThinDam</variable>
   </element>
   <element>
     <tag>pushdeletethindam</tag>
@@ -390,10 +286,7 @@
     <tooltipstring>Select thin dam</tooltipstring>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>select</option1>
-    <variable>
-      <name>selectThinDam</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).selectThinDam</variable>
   </element>
   <element>
     <tag>togglechangethindam</tag>
@@ -403,10 +296,7 @@
     <tooltipstring>Change thin dam</tooltipstring>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>change</option1>
-    <variable>
-      <name>changeThinDam</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).changeThinDam</variable>
   </element>
   <element>
     <tag>pushopenthindams</tag>
@@ -414,10 +304,7 @@
     <position>450 60 70 20</position>
     <tooltipstring>Open thin dams file</tooltipstring>
     <text>Open</text>
-    <variable>
-      <name>ThdFile</name>
-      <type>string</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).thdFile</variable>
     <extension>*.thd</extension>
     <selectiontext>Select thin dams file</selectiontext>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
@@ -437,10 +324,7 @@
     <position>450 35 70 20</position>
     <tooltipstring>Save thin dams file</tooltipstring>
     <text>Save</text>
-    <variable>
-      <name>ThdFile</name>
-      <type>string</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).thdFile</variable>
     <showfilename>0</showfilename>
     <extension>*.thd</extension>
     <selectiontext>Select thin dams file</selectiontext>

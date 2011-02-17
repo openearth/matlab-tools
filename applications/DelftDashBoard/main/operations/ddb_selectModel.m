@@ -17,9 +17,9 @@ handles=getHandles;
 set(handles.Model(md).GUI.elements(1).handle,'Visible','off');
 
 % Setting new active model
-ii=strmatch(mdl,{handles.Model.Name},'exact');
-handles.ActiveModel.Name=mdl;
-handles.ActiveModel.Nr=ii;
+ii=strmatch(mdl,{handles.Model.name},'exact');
+handles.activeModel.name=mdl;
+handles.activeModel.nr=ii;
 
 setHandles(handles);
 
@@ -36,6 +36,6 @@ else
 end
 
 % Select toolbox
-tabpanel('select','tag',lower(handles.Model(md).Name),'tabname',tabname,'runcallback',1);
+tabpanel('select','tag',lower(handles.Model(md).name),'tabname',tabname,'runcallback',1);
 
 set(handles.GUIHandles.mapPanel,'Parent',handles.Model(md).GUI.elements(1).handle);

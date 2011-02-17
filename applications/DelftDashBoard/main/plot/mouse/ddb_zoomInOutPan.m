@@ -2,9 +2,9 @@ function ddb_zoomInOutPan(src,eventdata,zoommode,callback1, varargin1, callback2
 
 handles=getHandles;
 
-h1=handles.GUIHandles.ToolBar.ZoomIn;
-h2=handles.GUIHandles.ToolBar.ZoomOut;
-h3=handles.GUIHandles.ToolBar.Pan;
+h1=handles.GUIHandles.toolBar.zoomIn;
+h2=handles.GUIHandles.toolBar.zoomOut;
+h3=handles.GUIHandles.toolBar.pan;
 
 if zoommode==1 || zoommode==2
     set(h3,'State','off');
@@ -47,11 +47,11 @@ switch(zoommode),
             ddb_setWindowButtonMotionFcn;
         end
     case 4
-        [xl,yl]=CompXYLim(handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+        [xl,yl]=CompXYLim(handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange,handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
         set(gca,'xlim',xl);
         set(gca,'ylim',yl);
-        handles.ScreenParameters.XLim=xl;
-        handles.ScreenParameters.YLim=yl;
+        handles.screenParameters.xLim=xl;
+        handles.screenParameters.yLim=yl;
         setHandles(handles);
         if ~isempty(varargin2)
             feval(callback2, varargin2);
@@ -85,7 +85,7 @@ if point1(1)>=xl(1) && point1(1)<=xl(2) && point1(2)>=yl(1) && point1(2)<=yl(2)
     leftmouse=strcmp(get(gcf,'SelectionType'),'normal');
     rightmouse=strcmp(get(gcf,'SelectionType'),'alt');
     
-    hzoomin=handles.GUIHandles.ToolBar.ZoomIn;
+    hzoomin=handles.GUIHandles.toolBar.zoomIn;
     
     if strcmp(get(hzoomin,'State'),'on')
         zmin=1;
@@ -118,7 +118,7 @@ if point1(1)>=xl(1) && point1(1)<=xl(2) && point1(2)>=yl(1) && point1(2)<=yl(2)
             xl(2)=p1(1)+offset(1);
             yl(2)=p1(2)+offset(2);
         else
-            [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+            [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
         end
     elseif (leftmouse==1 && zmin==0) || (rightmouse==1 && zmin==1)
         % Zoom Out
@@ -136,12 +136,12 @@ if point1(1)>=xl(1) && point1(1)<=xl(2) && point1(2)>=yl(1) && point1(2)<=yl(2)
             xl(2)=p1(1)+offset(1);
             yl(2)=p1(2)+offset(2);
         else
-            [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+            [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
         end
     end
     set(gca,'xlim',xl,'ylim',yl);
-    handles.ScreenParameters.XLim=xl;
-    handles.ScreenParameters.YLim=yl;
+    handles.screenParameters.xLim=xl;
+    handles.screenParameters.yLim=yl;
     
     setHandles(handles);
     
@@ -176,9 +176,9 @@ function MoveMouse(imagefig, varargins, callback, varargin)
 
 handles=getHandles;
 
-hzoomin  = handles.GUIHandles.ToolBar.ZoomIn;
-hzoomout = handles.GUIHandles.ToolBar.ZoomOut;
-hpan     = handles.GUIHandles.ToolBar.Pan;
+hzoomin  = handles.GUIHandles.toolBar.zoomIn;
+hzoomout = handles.GUIHandles.toolBar.zoomOut;
+hpan     = handles.GUIHandles.toolBar.pan;
 
 if strcmp(get(hzoomin,'State'),'on')
     pntr='glassplus';
@@ -207,7 +207,7 @@ point = get(ax,'CurrentPoint');
 point = point(1,1:2);
 % Check if mouse is in current axis
 if point(1)>=xl(1) && point(1)<=xl(2) && point(2)>=yl(1) && point(2)<=yl(2)   
-    set(gcf, 'windowbuttonmotionfcn', {@PanMove,xl,yl,point,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange});
+    set(gcf, 'windowbuttonmotionfcn', {@PanMove,xl,yl,point,handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange});
     varargin = varargin{:};
     set(gcf, 'windowbuttonupfcn', {@StopPan, callback, varargin});
     setptr(gcf,'closedhand');
@@ -237,12 +237,12 @@ setptr(gcf,'hand');
 
 handles=getHandles;
 
-handles.ScreenParameters.XLim=get(gca,'XLim');
-handles.ScreenParameters.YLim=get(gca,'YLim');
+handles.screenParameters.xLim=get(gca,'XLim');
+handles.screenParameters.yLim=get(gca,'YLim');
 
 setHandles(handles);
 
-h=handles.GUIHandles.ToolBar.AutoRefreshBathymetry;
+h=handles.GUIHandles.toolBar.autoRefreshBathymetry;
 
 if ~isempty(h)
     if strcmp(get(h,'State'),'on')

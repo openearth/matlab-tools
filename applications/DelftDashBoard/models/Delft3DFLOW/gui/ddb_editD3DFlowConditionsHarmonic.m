@@ -3,28 +3,26 @@ function ddb_editD3DFlowConditionsHarmonic
 h=getHandles;
 
 handles=h.Model(md).Input(ad);
-handles.GUIData.ActiveOpenBoundary=h.GUIData.ActiveOpenBoundary;
 
-MakeNewWindow('Harmonic Boundary Conditions',[750 600],[h.SettingsDir '\icons\deltares.gif']);
+MakeNewWindow('Harmonic Boundary Conditions',[750 600],[h.settingsDir '\icons\deltares.gif']);
 
 uipanel('Title','Harmonics', 'Units','pixels','Position',[40 100 540 245],'Tag','UIControl');
 
 cltp={'text','editreal','editreal','editreal','editreal','editreal'};
 wdt=[70 60 60 60 60 60];
-for i=1:handles.NrHarmonicComponents
+for i=1:handles.nrHarmonicComponents
     data{i,1}='';
-    data{i,2}=handles.HarmonicComponents(i);
-    data{i,3}=handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).HarmonicAmpA(i);
-    data{i,4}=handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).HarmonicPhaseA(i);
-    data{i,5}=handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).HarmonicAmpB(i);
-    data{i,6}=handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).HarmonicPhaseB(i);
+    data{i,2}=handles.harmonicComponents(i);
+    data{i,3}=handles.openBoundaries(handles.activeOpenBoundary).harmonicAmpA(i);
+    data{i,4}=handles.openBoundaries(handles.activeOpenBoundary).harmonicPhaseA(i);
+    data{i,5}=handles.openBoundaries(handles.activeOpenBoundary).harmonicAmpB(i);
+    data{i,6}=handles.openBoundaries(handles.activeOpenBoundary).harmonicPhaseB(i);
 end
 data{1,1}='Mean';
-callbacks={'',@RefreshPeriod,'','','',''};
-table2(gcf,'table','create','position',[50 120],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
-RefreshPeriod;
+callbacks={'',@refreshPeriod,'','','',''};
+handles.GUIHandles.table=table(gcf,'create','tag','table','position',[50 120],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
 
-switch handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).Type,
+switch handles.openBoundaries(handles.activeOpenBoundary).type,
     case{'Z'}
         quant='Water Level';
         unit='m';
@@ -63,7 +61,7 @@ handles.GUIHandles.TextPhaEndB           = uicontrol(gcf,'Style','text','String'
 
 uipanel('Title','Boundary Section','Units','pixels','Position',[470 480 250 100]);
 handles.GUIHandles.TextBoundary = uicontrol(gcf,'Style','text','String','Boundary :' ,'Position',[490 530 200 20],'HorizontalAlignment','left');
-handles.GUIHandles.TextBoundaryName = uicontrol(gcf,'Style','text','String',handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).Name,'Position',[565 530 150 20],'HorizontalAlignment','left');
+handles.GUIHandles.TextBoundaryName = uicontrol(gcf,'Style','text','String',handles.openBoundaries(handles.activeOpenBoundary).name,'Position',[565 530 150 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextQuantity   = uicontrol(gcf,'Style','text','String','Quantity :','Position',[490 510 200 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextQuantity   = uicontrol(gcf,'Style','text','String',quant,'Position',[565 510 150 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextForcingType = uicontrol(gcf,'Style','text','String','Forcing Type :','Position',[490 490 150 20],'HorizontalAlignment','left');
@@ -79,46 +77,49 @@ SetUIBackgroundColors;
 
 guidata(gcf,handles);
 
+refreshPeriod;
+
 %%
 function PushOK_CallBack(hObject,eventdata)
 
+h=guidata(gcf);
 handles=getHandles;
-data=table2(gcf,'table','getdata');
-handles.Model(md).Input(ad).HarmonicComponents=[];
-% handles.GUIData.ActiveOpenBoundary.HarmonicAmpA=[];
-% handles.GUIData.ActiveOpenBoundary.HarmonicPhaseA=[];
-% handles.GUIData.ActiveOpenBoundary.HarmonicAmpB=[];
-% handles.GUIData.ActiveOpenBoundary.HarmonicPhaseB=[];
-j=handles.GUIData.ActiveOpenBoundary;
+data=table(h.GUIHandles.table,'getdata');
+handles.Model(md).Input(ad).harmonicComponents=[];
+% handles.activeOpenBoundary.harmonicAmpA=[];
+% handles.activeOpenBoundary.harmonicPhaseA=[];
+% handles.activeOpenBoundary.harmonicAmpB=[];
+% handles.activeOpenBoundary.harmonicPhaseB=[];
+j=handles.Model(md).Input(ad).activeOpenBoundary;
 for i=1:size(data,1)
-    handles.Model(md).Input(ad).HarmonicComponents(i)=data{i,2};
-    handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicAmpA(i)=data{i,3};
-    handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicPhaseA(i)=data{i,4};
-    handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicAmpB(i)=data{i,5};
-    handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicPhaseB(i)=data{i,6};
+    handles.Model(md).Input(ad).harmonicComponents(i)=data{i,2};
+    handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpA(i)=data{i,3};
+    handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseA(i)=data{i,4};
+    handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpB(i)=data{i,5};
+    handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseB(i)=data{i,6};
 end
-if size(data,1)<handles.Model(md).Input(ad).NrHarmonicComponents
-    for j=1:handles.Model(md).Input(ad).NrOpenBoundaries
-        if j~=handles.GUIData.ActiveOpenBoundary
-            handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicAmpA=handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicAmpA(1:size(data,1));
-            handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicPhaseA=handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicPhaseA(1:size(data,1));
-            handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicAmpB=handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicAmpB(1:size(data,1));
-            handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicPhaseB=handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicPhaseB(1:size(data,1));
+if size(data,1)<handles.Model(md).Input(ad).nrHarmonicComponents
+    for j=1:handles.Model(md).Input(ad).nrOpenBoundaries
+        if j~=handles.activeOpenBoundary
+            handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpA=handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpA(1:size(data,1));
+            handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseA=handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseA(1:size(data,1));
+            handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpB=handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpB(1:size(data,1));
+            handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseB=handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseB(1:size(data,1));
         end
     end
-elseif size(data,1)>handles.Model(md).Input(ad).NrHarmonicComponents
-    for j=1:handles.Model(md).Input(ad).NrOpenBoundaries
-        if j~=handles.GUIData.ActiveOpenBoundary
-            for i=handles.Model(md).Input(ad).NrHarmonicComponents:size(data,1)
-            handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicAmpA(i)=0;
-            handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicPhaseA(i)=0;
-            handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicAmpB(i)=0;
-            handles.Model(md).Input(ad).OpenBoundaries(j).HarmonicPhaseB(i)=0;
+elseif size(data,1)>handles.Model(md).Input(ad).nrHarmonicComponents
+    for j=1:handles.Model(md).Input(ad).nrOpenBoundaries
+        if j~=handles.Model(md).Input(ad).activeOpenBoundary
+            for i=handles.Model(md).Input(ad).nrHarmonicComponents:size(data,1)
+            handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpA(i)=0;
+            handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseA(i)=0;
+            handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpB(i)=0;
+            handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseB(i)=0;
             end
         end
     end
 end
-handles.Model(md).Input(ad).NrHarmonicComponents=size(data,1);
+handles.Model(md).Input(ad).nrHarmonicComponents=size(data,1);
 setHandles(handles);
 closereq;
 
@@ -127,10 +128,14 @@ function PushCancel_CallBack(hObject,eventdata)
 closereq;
 
 %%
-function RefreshPeriod
+function refreshPeriod
 
-data=table2(gcf,'table','getdata');
+handles=guidata(gcf);
+
+data=table(handles.GUIHandles.table,'getdata');
+
 nr=size(data,1);
+
 for i=2:min(nr,8)
     frq=data{i,2};
     if frq>0
@@ -144,4 +149,4 @@ for i=2:min(nr,8)
         data{i,1}='';
     end
 end
-table2(gcf,'table','change','data',data);
+table(handles.GUIHandles.table,'setdata',data);

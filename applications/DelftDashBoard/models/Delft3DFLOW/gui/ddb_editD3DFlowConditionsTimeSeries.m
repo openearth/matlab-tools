@@ -5,27 +5,27 @@ h=getHandles;
 kmax=h.Model(md).Input(ad).KMax;
 handles.KMax=kmax;
 
-ibnd=h.GUIData.ActiveOpenBoundary;
+ibnd=h.Model(md).Input(ad).activeOpenBoundary;
 
-handles.Bnd=h.Model(md).Input(ad).OpenBoundaries(ibnd);
+handles.Bnd=h.Model(md).Input(ad).openBoundaries(ibnd);
 
-prf=handles.Bnd.Profile;
+prf=handles.Bnd.profile;
 
-MakeNewWindow('Time Series Boundary Conditions',[470 470],'modal',[h.SettingsDir '\icons\deltares.gif']);
+MakeNewWindow('Time Series Boundary Conditions',[470 470],'modal',[h.settingsDir '\icons\deltares.gif']);
 
 uipanel('Title','Time Series', 'Units','pixels','Position',[40 80 390 230],'Tag','UIControl');
 
 cltp={'edittime','editreal','editreal'};
 callbacks={@EditTable,@EditTable,@EditTable};
 wdt=[120 60 60];
-for i=1:handles.Bnd.NrTimeSeries
-    data{i,1}=handles.Bnd.TimeSeriesT(i);
-    data{i,2}=handles.Bnd.TimeSeriesA(i,1);
-    data{i,3}=handles.Bnd.TimeSeriesB(i,1);
+for i=1:handles.Bnd.nrTimeSeries
+    data{i,1}=handles.Bnd.timeSeriesT(i);
+    data{i,2}=handles.Bnd.timeSeriesA(i,1);
+    data{i,3}=handles.Bnd.timeSeriesB(i,1);
 end
-table2(gcf,'table','create','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
+handles.GUIHandles.table=table(gcf,'create','tag','timeseriestable','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
 
-switch handles.Bnd.Type,
+switch handles.Bnd.type,
     case{'Z'}
         quant='Water Level';
         unit='m';
@@ -55,7 +55,7 @@ handles.GUIHandles.TextUnitB               = uicontrol(gcf,'Style','text','Strin
 
 uipanel('Title','Boundary Section','Units','pixels','Position',[40 320 390 120]);
 handles.GUIHandles.TextBoundary = uicontrol(gcf,'Style','text','String','Boundary :' ,'Position',[50 400 200 20],'HorizontalAlignment','left');
-handles.GUIHandles.TextBoundaryName = uicontrol(gcf,'Style','text','String',handles.Bnd.Name,'Position',[125 400 150 20],'HorizontalAlignment','left');
+handles.GUIHandles.TextBoundaryName = uicontrol(gcf,'Style','text','String',handles.Bnd.name,'Position',[125 400 150 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextQuantity   = uicontrol(gcf,'Style','text','String','Quantity :','Position',[50 380 200 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextQuantity   = uicontrol(gcf,'Style','text','String',quant,'Position',[125 380 150 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextForcingType = uicontrol(gcf,'Style','text','String','Forcing Type :','Position',[50 360 150 20],'HorizontalAlignment','left');
@@ -79,12 +79,6 @@ set(handles.GUIHandles.PushOK,              'CallBack',{@PushOK_CallBack});
 set(handles.GUIHandles.PushCancel,          'CallBack',{@PushCancel_CallBack});
 set(handles.GUIHandles.SelectLayer,         'CallBack',{@SelectLayer_CallBack});
 
-% handles.GUIHandles.PushImport = uicontrol(gcf,'Style','pushbutton','String','Import','Position',[670 100 60 30]);
-% set(handles.GUIHandles.GUIHhandles.PushImport,'CallBack',{@PushImport_CallBack});
-
-% handles.GUIHandles.PasteFromExcel = uicontrol(gcf,'Style','pushbutton','String','Paste','Position',[670 130 60 30]);
-% set(handles.GUIHandles.GUIHhandles.PasteFromExcel ,'CallBack',{@PasteFromExcel_CallBack});
-
 SetUIBackgroundColors;
 
 guidata(gcf,handles);
@@ -94,9 +88,9 @@ function PushOK_CallBack(hObject,eventdata)
 h=guidata(gcf);
 handles=getHandles;
 
-ibnd=handles.GUIData.ActiveOpenBoundary;
+ibnd=handles.Model(md).Input(ad).activeOpenBoundary;
 
-handles.Model(md).Input(ad).OpenBoundaries(ibnd)=h.Bnd;
+handles.Model(md).Input(ad).openBoundaries(ibnd)=h.Bnd;
 
 setHandles(handles);
 closereq;
@@ -108,15 +102,20 @@ closereq;
 %%
 function PushImport_CallBack(hObject,eventdata)
 
+handles=guidata(gcf);
+
 [data,ok]=ImportFromXLS;
 if ok
-    table2(gcf,'table','change','data',data);
+    table(handles.GUIHandles.table,'setdata',data);
 else
     GiveWarning('Warning','Error importing xls file');
 end
 
 %%
 function PasteFromExcel_CallBack(hObject,eventdata)
+
+handles=guidata(gcf);
+
 str=clipboard('paste');
 try
     a=textscan(str,'%s%s%s','delimiter', '\t');
@@ -125,7 +124,7 @@ try
         data{i,2}=str2double(char(a{2}(i)));
         data{i,3}=str2double(char(a{3}(i)));
     end
-    table2(gcf,'table','change','data',data);
+    table(handles.GUIHandles.table,'setdata',data);
 catch
     GiveWarning('Warning','Could not copy selection');
 end
@@ -134,24 +133,24 @@ end
 function SelectLayer_CallBack(hObject,eventdata)
 handles=guidata(gcf);
 k=get(hObject,'Value');
-for i=1:handles.Bnd.NrTimeSeries
-    data{i,1}=handles.Bnd.TimeSeriesT(i);
-    data{i,2}=handles.Bnd.TimeSeriesA(i,k);
-    data{i,3}=handles.Bnd.TimeSeriesB(i,k);
+for i=1:handles.Bnd.nrTimeSeries
+    data{i,1}=handles.Bnd.timeSeriesT(i);
+    data{i,2}=handles.Bnd.timeSeriesA(i,k);
+    data{i,3}=handles.Bnd.timeSeriesB(i,k);
 end
-table2(gcf,'table','change','data',data);
+table(handles.GUIHandles.table,'setdata',data);
 
 %%
 function EditTable
 handles=guidata(gcf);
 k=get(handles.GUIHandles.SelectLayer,'Value');
-data=table2(gcf,'table','getdata');
+data=table(handles.GUIHandles.table,'getdata');
 nr=size(data,1);
 for i=1:nr
-    handles.Bnd.TimeSeriesT(i)=data{i,1};
-    handles.Bnd.TimeSeriesA(i,k)=data{i,2};
-    handles.Bnd.TimeSeriesB(i,k)=data{i,3};
+    handles.Bnd.timeSeriesT(i)=data{i,1};
+    handles.Bnd.timeSeriesA(i,k)=data{i,2};
+    handles.Bnd.timeSeriesB(i,k)=data{i,3};
 end
-handles.Bnd.NrTimeSeries=nr;
+handles.Bnd.nrTimeSeries=nr;
 guidata(gcf,handles);
 

@@ -13,8 +13,8 @@ switch lower(opt)
                 filename=[pathname filename];
             end
             ii=findstr(filename,'.mdf');
-            handles.Model(md).Input(ad).Runid=filename(1:ii-1);
-            handles.Model(md).Input(ad).MdfFile=filename;
+            handles.Model(md).Input(ad).runid=filename(1:ii-1);
+            handles.Model(md).Input(ad).mdfFile=filename;
             handles=ddb_saveMDF(handles,ad);
         end
     case{'saveall'}
@@ -29,12 +29,12 @@ switch lower(opt)
                 filename=[pathname filename];
             end
             ii=findstr(filename,'.mdf');
-            handles.Model(md).Input(ad).Runid=filename(1:ii-1);
-            handles.Model(md).Input(ad).MdfFile=filename;
+            handles.Model(md).Input(ad).runid=filename(1:ii-1);
+            handles.Model(md).Input(ad).mdfFile=filename;
             handles=ddb_saveMDF(handles,ad);
         end
     case{'savealldomains'}
-        for i=1:handles.GUIData.NrFlowDomains
+        for i=1:handles.GUIData.nrFlowDomains
             handles=ddb_saveAttributeFiles(handles,i,'saveall');
             handles=ddb_saveMDF(handles,i);
         end        

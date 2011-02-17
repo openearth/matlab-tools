@@ -1,8 +1,8 @@
 function ddb_plotUnibestCL(handles,opt0)
 
-imd=strmatch('UnibestCL',{handles.Model(:).Name},'exact');
+imd=strmatch('UnibestCL',{handles.Model(:).name},'exact');
 
-if strcmpi(opt0,'deactivate') && strcmpi(handles.ActiveModel.Name,'UnibestCL') && id==handles.ActiveDomain
+if strcmpi(opt0,'deactivate') && strcmpi(handles.activeModel.name,'UnibestCL') && id==handles.activeDomain
     % Simply Changing Tab
     opt='deactivatebutkeepvisible';
 else

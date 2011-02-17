@@ -5,153 +5,153 @@ if strcmpi(opt,'saveallas')
     sall=1;
 end
 
-if handles.Model(md).Input(id).NrOpenBoundaries>0
+if handles.Model(md).Input(id).nrOpenBoundaries>0
 
     handles=ddb_sortBoundaries(handles,id);
 
-    if isempty(handles.Model(md).Input(id).BndFile) || sall
+    if isempty(handles.Model(md).Input(id).bndFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.bnd', 'Select Boundary Definitions File','');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).BndFile=filename;
+        handles.Model(md).Input(id).bndFile=filename;
     end
     ddb_saveBndFile(handles,id);
     
     handles=ddb_countOpenBoundaries(handles,id);
 
-    if handles.Model(md).Input(id).NrAstro>0
-        if isempty(handles.Model(md).Input(id).BcaFile) || sall
+    if handles.Model(md).Input(id).nrAstro>0
+        if isempty(handles.Model(md).Input(id).bcaFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bca', 'Select Astronomic Conditions File','');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).BcaFile=filename;
+            handles.Model(md).Input(id).bcaFile=filename;
         end
         ddb_saveBcaFile(handles,id);
     end
 
-    if handles.Model(md).Input(id).NrCor>0
-        if isempty(handles.Model(md).Input(id).CorFile) || sall
+    if handles.Model(md).Input(id).nrCor>0
+        if isempty(handles.Model(md).Input(id).corFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.cor', 'Select Astronomic Corrections File','');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).CorFile=filename;
+            handles.Model(md).Input(id).corFile=filename;
         end
         ddb_saveCorFile(handles,id);
     end
 
-    if handles.Model(md).Input(id).NrHarmo>0
-        if isempty(handles.Model(md).Input(id).BchFile) || sall
+    if handles.Model(md).Input(id).nrHarmo>0
+        if isempty(handles.Model(md).Input(id).bchFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bch', 'Select Harmonic Conditions File','');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).BchFile=filename;
+            handles.Model(md).Input(id).bchFile=filename;
         end
         ddb_saveBchFile(handles,id);
     end
 
-    if handles.Model(md).Input(id).NrTime>0
-        if isempty(handles.Model(md).Input(id).BctFile) || sall
+    if handles.Model(md).Input(id).nrTime>0
+        if isempty(handles.Model(md).Input(id).bctFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bct', 'Select Time Series Conditions File','');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).BctFile=filename;
+            handles.Model(md).Input(id).bctFile=filename;
         end
         ddb_saveBctFile(handles,id);
     end
 
-    incconst=handles.Model(md).Input(id).Salinity.Include || handles.Model(md).Input(id).Temperature.Include || handles.Model(md).Input(id).Sediments || handles.Model(md).Input(id).Tracers;
+    incconst=handles.Model(md).Input(id).salinity.include || handles.Model(md).Input(id).temperature.include || ...
+        handles.Model(md).Input(id).sediments || handles.Model(md).Input(id).tracers;
     if incconst
-        if isempty(handles.Model(md).Input(id).BccFile) || sall
+        if isempty(handles.Model(md).Input(id).bccFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bcc', 'Select Transport Conditions File','');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).BccFile=filename;
+            handles.Model(md).Input(id).bccFile=filename;
         end
         ddb_saveBccFile(handles,id);
     end
 
 end
 
-
-if handles.Model(md).Input(id).NrObservationPoints>0
-    if isempty(handles.Model(md).Input(id).ObsFile) || sall
+if handles.Model(md).Input(id).nrObservationPoints>0
+    if isempty(handles.Model(md).Input(id).obsFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.obs', 'Select Observation Points File','');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).ObsFile=filename;
+        handles.Model(md).Input(id).obsFile=filename;
     end
     ddb_saveObsFile(handles,id);
 end
 
-if handles.Model(md).Input(id).NrCrossSections>0
-    if isempty(handles.Model(md).Input(id).CrsFile) || sall
+if handles.Model(md).Input(id).nrCrossSections>0
+    if isempty(handles.Model(md).Input(id).crsFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.crs', 'Select Cross Sections File','');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).CrsFile=filename;
+        handles.Model(md).Input(id).crsFile=filename;
     end
     ddb_saveCrsFile(handles,id);
 end
 
 if handles.Model(md).Input(id).nrDryPoints>0
-    if isempty(handles.Model(md).Input(id).DryFile) || sall
+    if isempty(handles.Model(md).Input(id).dryFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.dry', 'Select Dry Points File','');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).DryFile=filename;
+        handles.Model(md).Input(id).dryFile=filename;
     end
     ddb_saveDryFile(handles,id);
 end
 
-if handles.Model(md).Input(id).NrThinDams>0
-    if isempty(handles.Model(md).Input(id).ThdFile) || sall
+if handles.Model(md).Input(id).nrThinDams>0
+    if isempty(handles.Model(md).Input(id).thdFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.thd', 'Select Thin Dams File','');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).ThdFile=filename;
+        handles.Model(md).Input(id).thdFile=filename;
     end
     ddb_saveThdFile(handles,id);
 end
 
-if handles.Model(md).Input(id).NrDischarges>0
+if handles.Model(md).Input(id).nrDischarges>0
 
-    if isempty(handles.Model(md).Input(id).SrcFile) || sall
+    if isempty(handles.Model(md).Input(id).srcFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.src', 'Select Discharge Locations File','');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).SrcFile=filename;
+        handles.Model(md).Input(id).srcFile=filename;
     end
     ddb_saveSrcFile(handles,id);
 
-    if isempty(handles.Model(md).Input(id).DisFile) || sall
+    if isempty(handles.Model(md).Input(id).disFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.dis', 'Select Discharge File','');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).DisFile=filename;
+        handles.Model(md).Input(id).disFile=filename;
     end
     ddb_saveDisFile(handles,id);
 end

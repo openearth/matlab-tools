@@ -1,5 +1,5 @@
 function handles=ddb_initializeSWANInput(handles,id,runid,varargin)
 
-ii=strmatch('SWAN',{handles.Model.Name},'exact');
+ii=strmatch('SWAN',{handles.Model.name},'exact');
 
 error('WIP')

@@ -1,21 +1,21 @@
 function [x,y]=ddb_getShoreline(handles,xl,yl,ires)
 
-iac=strmatch(lower(handles.ScreenParameters.Shoreline),lower(handles.Shorelines.longName),'exact');
-ldb=handles.Shorelines.Shoreline(iac);
+iac=strmatch(lower(handles.screenParameters.shoreline),lower(handles.shorelines.longName),'exact');
+ldb=handles.shorelines.shoreline(iac);
 
-name=ldb.Name;
+name=ldb.name;
 
-switch lower(ldb.Type)
+switch lower(ldb.type)
     case{'netcdftiles'}
 
-        zoomstr=ldb.ZoomLevel(ires).zoomString;
+        zoomstr=ldb.zoomLevel(ires).zoomString;
         
-        x0=ldb.ZoomLevel(ires).x0;
-        y0=ldb.ZoomLevel(ires).y0;
-        ntilesx=ldb.ZoomLevel(ires).ntilesx;
-        ntilesy=ldb.ZoomLevel(ires).ntilesy;
-        dx=ldb.ZoomLevel(ires).dx;
-        dy=ldb.ZoomLevel(ires).dy;
+        x0=ldb.zoomLevel(ires).x0;
+        y0=ldb.zoomLevel(ires).y0;
+        ntilesx=ldb.zoomLevel(ires).ntilesx;
+        ntilesy=ldb.zoomLevel(ires).ntilesy;
+        dx=ldb.zoomLevel(ires).dx;
+        dy=ldb.zoomLevel(ires).dy;
 
         xx=x0:dx:x0+(ntilesx-1)*dx;
         yy=y0:dy:y0+(ntilesy-1)*dy;
@@ -46,7 +46,7 @@ switch lower(ldb.Type)
             % OpenDAP
             iopendap=1;
             remotedir=[ldb.URL '/' zoomstr '/'];
-            localdir=[handles.ShorelineDir name '\' zoomstr '\'];
+            localdir=[handles.shorelineDir name '\' zoomstr '\'];
         else
             % Local
             localdir=[ldb.URL '\' zoomstr '\'];
@@ -58,7 +58,7 @@ switch lower(ldb.Type)
         for i=ix1:ix2
             for j=iy1:iy2
 
-                iav=find(ldb.ZoomLevel(ires).iAvailable==i & ldb.ZoomLevel(ires).jAvailable==j, 1);
+                iav=find(ldb.zoomLevel(ires).iAvailable==i & ldb.zoomLevel(ires).jAvailable==j, 1);
                     
                 if ~isempty(iav)
                     

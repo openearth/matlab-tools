@@ -4,18 +4,19 @@
   <element>
     <tag>listopenboundaries</tag>
     <style>listbox</style>
+    <mx>1000</mx>
     <position>10 10 150 140</position>
     <tooltipstring>Select open boundary</tooltipstring>
     <text>Open Boundaries</text>
     <textposition>above-center</textposition>
-    <variable>
-      <name>activeOpenBoundary</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).activeOpenBoundary</variable>
+    <multivariable>handles.Model(md).Input(ad).activeOpenBoundaries</multivariable>
+    <max>1000</max>
+    <type>integer</type>
     <list>
-      <variable>
-        <name>openBoundaryNames</name>
-      </variable>
+      <texts>
+        <variable>handles.Model(md).Input(ad).openBoundaryNames</variable>
+      </texts>
     </list>
     <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
     <option1>selectfromlist</option1>
@@ -23,46 +24,61 @@
   <element>
     <tag>panelopenboundaries</tag>
     <style>panel</style>
-    <position>170 10 250 150</position>
+    <position>170 10 310 155</position>
   </element>
   <element>
-    <tag>editdrym1</tag>
+    <tag>editbndname</tag>
     <style>edit</style>
-    <position>200 50 50 20</position>
+    <position>210 130 95 20</position>
+    <text>Name</text>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>editname</option1>
+    <tooltipstring>Edit name boundary section index M1</tooltipstring>
+    <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).name</variable>
+    <type>string</type>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editbndm1</tag>
+    <style>edit</style>
+    <position>210 105 35 20</position>
     <text>M1</text>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
-    <option1>edit</option1>
-    <tooltipstring>Edit dry point index M1</tooltipstring>
-    <variable>
-      <name>M1</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>DryPoints</name>
-          <index>
-            <variable>
-              <name>activeDryPoint</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>editindices</option1>
+    <tooltipstring>Edit open boundary index M1</tooltipstring>
+    <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).M1</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
         <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
+          <tag>listopenboundaries</tag>
         </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrDryPoints</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -71,48 +87,30 @@
       <dependency>
         <action>update</action>
         <tags>
-          <tag>listdrypoints</tag>
+          <tag>listopenboundaries</tag>
         </tags>
       </dependency>
     </dependencies>
   </element>
   <element>
-    <tag>editdryn1</tag>
+    <tag>editbndn1</tag>
     <style>edit</style>
-    <position>280 50 50 20</position>
+    <position>270 105 35 20</position>
     <text>N1</text>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
-    <option1>edit</option1>
-    <variable>
-      <name>N1</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>DryPoints</name>
-          <index>
-            <variable>
-              <name>activeDryPoint</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>editindices</option1>
+    <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).N1</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
         <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
+          <tag>listopenboundaries</tag>
         </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrDryPoints</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -121,49 +119,31 @@
       <dependency>
         <action>update</action>
         <tags>
-          <tag>listdrypoints</tag>
+          <tag>listopenboundaries</tag>
         </tags>
       </dependency>
     </dependencies>
-    <tooltipstring>Edit dry point index N1</tooltipstring>
+    <tooltipstring>Edit open boundary index N1</tooltipstring>
   </element>
   <element>
-    <tag>editdrym2</tag>
+    <tag>editbndm2</tag>
     <style>edit</style>
-    <position>200 20 50 20</position>
+    <position>210 80 35 20</position>
     <text>M2</text>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
-    <option1>edit</option1>
-    <variable>
-      <name>M2</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>DryPoints</name>
-          <index>
-            <variable>
-              <name>activeDryPoint</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>editindices</option1>
+    <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).M2</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
         <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
+          <tag>listopenboundaries</tag>
         </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrDryPoints</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -172,49 +152,31 @@
       <dependency>
         <action>update</action>
         <tags>
-          <tag>listdrypoints</tag>
+          <tag>listopenboundaries</tag>
         </tags>
       </dependency>
     </dependencies>
-    <tooltipstring>Edit dry point index M2</tooltipstring>
+    <tooltipstring>Edit open boundary index M2</tooltipstring>
   </element>
   <element>
-    <tag>editdryn2</tag>
+    <tag>editbndn2</tag>
     <style>edit</style>
-    <position>280 20 50 20</position>
+    <position>270 80 35 20</position>
     <text>N2</text>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
-    <option1>edit</option1>
-    <variable>
-      <name>N2</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>DryPoints</name>
-          <index>
-            <variable>
-              <name>activeDryPoint</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>editindices</option1>
+    <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).N2</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
         <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
+          <tag>listopenboundaries</tag>
         </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrDryPoints</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -223,97 +185,678 @@
       <dependency>
         <action>update</action>
         <tags>
-          <tag>listdrypoints</tag>
+          <tag>listopenboundaries</tag>
         </tags>
       </dependency>
     </dependencies>
-    <tooltipstring>Edit dry point index N2</tooltipstring>
+    <tooltipstring>Edit open boundary index N2</tooltipstring>
   </element>
   <element>
-    <tag>toggleadddrypoint</tag>
-    <style>togglebutton</style>
-    <position>360 85 70 20</position>
-    <text>Add</text>
-    <tooltipstring>Add dry point</tooltipstring>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
-    <option1>add</option1>
-    <variable>
-      <name>addDryPoint</name>
-      <type>integer</type>
-    </variable>
+    <tag>selecttype</tag>
+    <style>popupmenu</style>
+    <text>Type</text>
+    <position>350 130 120 20</position>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>selecttype</option1>
+    <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type</variable>
+    <type>string</type>
+    <list>
+      <texts>
+        <text>Water Level</text>
+        <text>Current</text>
+        <text>Neumann</text>
+        <text>Total Discharge</text>
+        <text>Discharge per Cell</text>
+        <text>Riemann</text>
+      </texts>
+      <values>
+        <value>Z</value>
+        <value>C</value>
+        <value>N</value>
+        <value>T</value>
+        <value>Q</value>
+        <value>R</text>
+      </values>
+    </list> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+      </dependency>
+    </dependencies>
   </element>
   <element>
-    <tag>pushdeletedrypoint</tag>
+    <tag>editalpha</tag>
+    <style>edit</style>
+    <position>350 105 120 20</position>
+    <text>Alpha</text>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>editalpha</option1>
+    <tooltipstring>Edit reflection coefficient alpha</tooltipstring>
+    <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).alpha</variable>
+    <type>real</type>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type</variable>
+            <value>N</value>
+            <operator>ne</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type</variable>
+            <value>R</value>
+            <operator>ne</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>selectforcing</tag>
+    <style>popupmenu</style>
+    <text>Forcing</text>
+    <position>350 80 120 20</position>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>selectforcing</option1>
+    <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).forcing</variable>
+    <type>string</type>
+    <list>
+      <texts>
+        <text>Astronomic</text>
+        <text>Harmonic</text>
+        <text>Time Series</text>
+        <text>QH Relation</text>
+      </texts>
+      <values>
+        <value>A</value>
+        <value>H</value>
+        <value>T</value>
+        <value>Q</value>
+      </values>
+    </list> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>selectprofile</tag>
+    <style>popupmenu</style>
+    <text>Profile</text>
+    <position>350 55 120 20</position>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>selectprofile</option1>
+    <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).profile</variable>
+    <type>string</type>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).profileTexts</variable>
+      </texts>
+      <values>
+        <variable>handles.Model(md).Input(ad).profileOptions</variable>
+      </values>
+    </list> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>pushflowconditions</tag>
     <style>pushbutton</style>
-    <position>360 60 70 20</position>
+    <position>200 20 120 20</position>
+    <text>Flow Conditions</text>
+    <tooltipstring>Edit hydrodynamic boundary conditions</tooltipstring>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>flowconditions</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>pushtransportconditions</tag>
+    <style>pushbutton</style>
+    <position>330 20 120 20</position>
+    <text>Transport Conditions</text>
+    <tooltipstring>Edit transport boundary conditions</tooltipstring>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>transportconditions</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>
+              <name>constituents</name>
+              <type>integer</type>
+            </variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>toggleaddopenboundary</tag>
+    <style>togglebutton</style>
+    <position>490 130 70 20</position>
+    <text>Add</text>
+    <tooltipstring>Add open boundary</tooltipstring>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
+    <option1>add</option1>
+    <variable>handles.Model(md).Input(ad).addOpenBoundary</variable>
+    <type>integer</type>
+  </element>
+  <element>
+    <tag>pushdeleteopenboundary</tag>
+    <style>pushbutton</style>
+    <position>490 105 70 20</position>
     <text>Delete</text>
-    <tooltipstring>Delete dry point</tooltipstring>
-    <callback>ddb_Delft3DFLOW_dryPoints</callback>
+    <tooltipstring>Delete open boundary</tooltipstring>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>delete</option1>
   </element>
   <element>
-    <tag>toggleselectdrypoint</tag>
+    <tag>toggleselectopenboundary</tag>
     <style>togglebutton</style>
-    <position>360 35 70 20</position>
+    <position>490 80 70 20</position>
     <text>Select</text>
-    <tooltipstring>Select dry point</tooltipstring>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <tooltipstring>Select open boundary</tooltipstring>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
     <option1>select</option1>
-    <variable>
-      <name>selectDryPoint</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).selectOpenBoundary</variable>
+    <type>integer</type>
   </element>
   <element>
-    <tag>togglechangedrypoint</tag>
+    <tag>togglechangeopenboundary</tag>
     <style>togglebutton</style>
-    <position>360 10 70 20</position>
+    <position>490 55 70 20</position>
     <text>Change</text>
-    <tooltipstring>Change dry point</tooltipstring>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
+    <tooltipstring>Change open boundary</tooltipstring>
+    <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
     <option1>change</option1>
-    <variable>
-      <name>changeDryPoint</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).changeOpenBoundary</variable>
+    <type>integer</type>
   </element>
   <element>
-    <tag>pushopendrypoints</tag>
-    <style>pushselectfile</style>
-    <position>450 60 70 20</position>
-    <tooltipstring>Open dry points file</tooltipstring>
+    <tag>panelfiles</tag>
+    <style>panel</style>
+    <position>570 10 450 155</position>
+  </element>
+  <element>
+    <tag>txtbnd</tag>
+    <style>text</style>
+    <position>695 140</position>
+    <horal>right</horal>
+    <text>Boundary Definitions</text>
+  </element>
+  <element>
+    <tag>txtbca</tag>
+    <style>text</style>
+    <position>695 115</position>
+    <horal>right</horal>
+    <text>Astronomic Conditions</text>
+  </element>
+  <element>
+    <tag>txtcor</tag>
+    <style>text</style>
+    <position>695 90</position>
+    <horal>right</horal>
+    <text>Astronomic Corrections</text>
+  </element>
+  <element>
+    <tag>txtbch</tag>
+    <style>text</style>
+    <position>695 65</position>
+    <horal>right</horal>
+    <text>Harmonic Conditions</text>
+  </element>
+  <element>
+    <tag>txtbct</tag>
+    <style>text</style>
+    <position>695 40</position>
+    <horal>right</horal>
+    <text>Time Series Conditions</text>
+  </element>
+  <element>
+    <tag>txtbcc</tag>
+    <style>text</style>
+    <position>695 15</position>
+    <horal>right</horal>
+    <text>Transport Conditions</text>
+  </element>
+  <element>
+    <tag>openbnd</tag>
+    <style>pushbutton</style>
+    <position>700 138 40 20</position>
     <text>Open</text>
-    <variable>
-      <name>DryFile</name>
-      <type>string</type>
-    </variable>
-    <extension>*.dry</extension>
-    <selectiontext>Select dry points File</selectiontext>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
-    <option1>openfile</option1>    
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>open</option1>
+    <option2>bnd</option2>
+  </element>
+  <element>
+    <tag>openbca</tag>
+    <style>pushbutton</style>
+    <position>700 113 40 20</position>
+    <text>Open</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>open</option1>
+    <option2>bca</option2>
     <dependencies>
       <dependency>
-        <action>update</action>
+        <action>enable</action>
         <tags>
-          <tag>pushsavedrypoints</tag>
+          <tag>listopenboundaries</tag>
         </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrAstro</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
       </dependency>
     </dependencies>
   </element>
   <element>
-    <tag>pushsavedrypoints</tag>
-    <style>pushsavefile</style>
-    <position>450 35 70 20</position>
-    <tooltipstring>Save dry points file</tooltipstring>
+    <tag>opencor</tag>
+    <style>pushbutton</style>
+    <position>700 88 40 20</position>
+    <text>Open</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>open</option1>
+    <option2>cor</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrCor</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>openbch</tag>
+    <style>pushbutton</style>
+    <position>700 63 40 20</position>
+    <text>Open</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>open</option1>
+    <option2>bch</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrHarmo</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>openbct</tag>
+    <style>pushbutton</style>
+    <position>700 38 40 20</position>
+    <text>Open</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>open</option1>
+    <option2>bct</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrTime</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>openbcc</tag>
+    <style>pushbutton</style>
+    <position>700 13 40 20</position>
+    <text>Open</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>open</option1>
+    <option2>bcc</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).constituents</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>savebnd</tag>
+    <style>pushbutton</style>
+    <position>745 138 40 20</position>
     <text>Save</text>
-    <variable>
-      <name>DryFile</name>
-      <type>string</type>
-    </variable>
-    <showfilename>0</showfilename>
-    <extension>*.dry</extension>
-    <selectiontext>Select dry points File</selectiontext>
-    <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
-    <option1>savefile</option1>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>save</option1>
+    <option2>bnd</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>savebca</tag>
+    <style>pushbutton</style>
+    <position>745 113 40 20</position>
+    <text>Save</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>save</option1>
+    <option2>bca</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrAstro</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>savecor</tag>
+    <style>pushbutton</style>
+    <position>745 88 40 20</position>
+    <text>Save</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>save</option1>
+    <option2>cor</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrCor</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>savebch</tag>
+    <style>pushbutton</style>
+    <position>745 63 40 20</position>
+    <text>Save</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>save</option1>
+    <option2>bch</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrHarmo</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>savebct</tag>
+    <style>pushbutton</style>
+    <position>745 38 40 20</position>
+    <text>Save</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>save</option1>
+    <option2>bct</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrTime</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>savebcc</tag>
+    <style>pushbutton</style>
+    <position>745 13 40 20</position>
+    <text>Save</text>
+    <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+    <option1>save</option1>
+    <option2>bcc</option2>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listopenboundaries</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).constituents</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>txtbndfile</tag>
+    <style>text</style>
+    <position>790 140</position>
+    <prefix>File : </prefix>
+    <variable>handles.Model(md).Input(ad).bndFile</variable>
+    <type>string</type>
+  </element>
+  <element>
+    <tag>txtbcafile</tag>
+    <style>text</style>
+    <position>790 115</position>
+    <prefix>File : </prefix>
+    <variable>handles.Model(md).Input(ad).bcaFile</variable>
+    <type>string</type>
+  </element>
+  <element>
+    <tag>txtcorfile</tag>
+    <style>text</style>
+    <position>790 90</position>
+    <prefix>File : </prefix>
+    <variable>handles.Model(md).Input(ad).corFile</variable>
+    <type>string</type>
+  </element>
+  <element>
+    <tag>txtbchfile</tag>
+    <style>text</style>
+    <position>790 65</position>
+    <prefix>File : </prefix>
+    <variable>handles.Model(md).Input(ad).bchFile</variable>
+    <type>string</type>
+  </element>
+  <element>
+    <tag>txtbctfile</tag>
+    <style>text</style>
+    <position>790 40</position>
+    <prefix>File : </prefix>
+    <variable>handles.Model(md).Input(ad).bctFile</variable>
+    <type>string</type>
+  </element>
+  <element>
+    <tag>txtbccfile</tag>
+    <style>text</style>
+    <position>790 15</position>
+    <prefix>File : </prefix>
+    <variable>handles.Model(md).Input(ad).bccFile</variable>
+    <type>string</type>
   </element>
 </root>

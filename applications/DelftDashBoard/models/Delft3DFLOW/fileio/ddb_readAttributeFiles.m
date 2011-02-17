@@ -1,80 +1,79 @@
 function handles=ddb_readAttributeFiles(handles)
 
-if ~isempty(handles.Model(md).Input(ad).GrdFile)
-    [x,y,enc]=ddb_wlgrid('read',[handles.Model(md).Input(ad).GrdFile]);
-    handles.Model(md).Input(ad).GridX=x;
-    handles.Model(md).Input(ad).GridY=y;
-    [handles.Model(md).Input(ad).GridXZ,handles.Model(md).Input(ad).GridYZ]=GetXZYZ(x,y);
+if ~isempty(handles.Model(md).Input(ad).grdFile)
+    [x,y,enc]=ddb_wlgrid('read',[handles.Model(md).Input(ad).grdFile]);
+    handles.Model(md).Input(ad).gridX=x;
+    handles.Model(md).Input(ad).gridY=y;
+    [handles.Model(md).Input(ad).gridXZ,handles.Model(md).Input(ad).gridYZ]=GetXZYZ(x,y);
     handles=ddb_determineKCS(handles);
-    if ~isempty(handles.Model(md).Input(ad).EncFile)
-        mn=ddb_enclosure('read',[handles.Model(md).Input(ad).EncFile]);
-        [handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY]=ddb_enclosure('apply',mn,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
+    if ~isempty(handles.Model(md).Input(ad).encFile)
+        mn=ddb_enclosure('read',[handles.Model(md).Input(ad).encFile]);
+        [handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY]=ddb_enclosure('apply',mn,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
     end
-    nans=zeros(size(handles.Model(md).Input(ad).GridX));
+    nans=zeros(size(handles.Model(md).Input(ad).gridX));
     nans(nans==0)=NaN;
-    handles.Model(md).Input(ad).Depth=nans;
-    handles.Model(md).Input(ad).DepthZ=nans;
+    handles.Model(md).Input(ad).depth=nans;
+    handles.Model(md).Input(ad).depthZ=nans;
 end
-if ~isempty(handles.Model(md).Input(ad).DepFile)
+if ~isempty(handles.Model(md).Input(ad).depFile)
     mmax=handles.Model(md).Input(ad).MMax;
     nmax=handles.Model(md).Input(ad).NMax;
-    dp=ddb_wldep('read',handles.Model(md).Input(ad).DepFile,[mmax nmax]);
-    handles.Model(md).Input(ad).Depth=-dp(1:end-1,1:end-1);
-    handles.Model(md).Input(ad).DepthZ=GetDepthZ(handles.Model(md).Input(ad).Depth,handles.Model(md).Input(ad).DpsOpt);
+    dp=ddb_wldep('read',handles.Model(md).Input(ad).depFile,[mmax nmax]);
+    handles.Model(md).Input(ad).depth=-dp(1:end-1,1:end-1);
+    handles.Model(md).Input(ad).depthZ=GetDepthZ(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).dpsOpt);
 end
-if ~isempty(handles.Model(md).Input(ad).BndFile)
+if ~isempty(handles.Model(md).Input(ad).bndFile)
     handles=ddb_readBndFile(handles);
     handles=ddb_sortBoundaries(handles,ad);
 end
 
 % ddb_initialize Tracers and Sediment
-for i=1:handles.Model(md).Input(ad).NrTracers
+for i=1:handles.Model(md).Input(ad).nrTracers
     handles=ddb_initializeTracer(handles,i);
 end
-for i=1:handles.Model(md).Input(ad).NrSediments
+for i=1:handles.Model(md).Input(ad).nrSediments
     handles=ddb_initializeSediment(handles,i);
 end
 
-if ~isempty(handles.Model(md).Input(ad).BcaFile)
+if ~isempty(handles.Model(md).Input(ad).bcaFile)
     handles=ddb_readBcaFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).CorFile)
+if ~isempty(handles.Model(md).Input(ad).corFile)
     handles=ddb_readCorFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).BctFile)
+if ~isempty(handles.Model(md).Input(ad).bctFile)
     handles=ddb_readBctFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).BchFile)
+if ~isempty(handles.Model(md).Input(ad).bchFile)
     handles=ddb_readBchFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).BcqFile)
+if ~isempty(handles.Model(md).Input(ad).bcqFile)
     handles=ReadBcqFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).BccFile)
+if ~isempty(handles.Model(md).Input(ad).bccFile)
     handles=ddb_readBccFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).ObsFile)
+if ~isempty(handles.Model(md).Input(ad).obsFile)
     handles=ddb_readObsFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).CrsFile)
+if ~isempty(handles.Model(md).Input(ad).crsFile)
     handles=ddb_readCrsFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).DroFile)
+if ~isempty(handles.Model(md).Input(ad).droFile)
     handles=ddb_readDroFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).DryFile)
+if ~isempty(handles.Model(md).Input(ad).dryFile)
     handles=ddb_readDryFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).ThdFile)
+if ~isempty(handles.Model(md).Input(ad).thdFile)
     handles=ddb_readThdFile(handles);
 end
-if ~isempty(handles.Model(md).Input(ad).WndFile)
+if ~isempty(handles.Model(md).Input(ad).wndFile)
     handles=ddb_readWndFile(handles,ad);
 end
-if ~isempty(handles.Model(md).Input(ad).SrcFile)
+if ~isempty(handles.Model(md).Input(ad).srcFile)
     handles=ddb_readSrcFile(handles,ad);
-    if ~isempty(handles.Model(md).Input(ad).DisFile)
+    if ~isempty(handles.Model(md).Input(ad).disFile)
         handles=ddb_readDisFile(handles,ad);
     end
 end
-

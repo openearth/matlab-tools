@@ -2,39 +2,39 @@ function ddb_initializeScreenParameters
 
 handles=getHandles;
 
-handles.ScreenParameters.XMaxRange=[-180 180];
-handles.ScreenParameters.YMaxRange=[-90 90];
+handles.screenParameters.xMaxRange=[-180 180];
+handles.screenParameters.yMaxRange=[-90 90];
 
-for i=1:handles.Bathymetry.NrDatasets
-    if handles.Bathymetry.Dataset(i).isAvailable
-        handles.ScreenParameters.BackgroundBathymetry=handles.Bathymetry.Dataset(i).longName;
+for i=1:handles.bathymetry.nrDatasets
+    if handles.bathymetry.dataset(i).isAvailable
+        handles.screenParameters.backgroundBathymetry=handles.bathymetry.dataset(i).longName;
         break
     end
 end
 
-for i=1:handles.Shorelines.nrShorelines
-    if handles.Shorelines.Shoreline(i).isAvailable
-        handles.ScreenParameters.Shoreline=handles.Shorelines.Shoreline(i).longName;
+for i=1:handles.shorelines.nrShorelines
+    if handles.shorelines.shoreline(i).isAvailable
+        handles.screenParameters.shoreline=handles.shorelines.shoreline(i).longName;
         break
     end
 end
 
-handles.ScreenParameters.CoordinateSystem.Name='WGS 84';
-handles.ScreenParameters.CoordinateSystem.Type='Geographic';
-handles.ScreenParameters.OldCoordinateSystem.Name='WGS 84';
-handles.ScreenParameters.OldCoordinateSystem.Type='Geographic';
-handles.ScreenParameters.UTMZone={31,'U'};
+handles.screenParameters.coordinateSystem.name='WGS 84';
+handles.screenParameters.coordinateSystem.type='Geographic';
+handles.screenParameters.oldCoordinateSystem.name='WGS 84';
+handles.screenParameters.oldCoordinateSystem.type='Geographic';
+handles.screenParameters.UTMZone={31,'U'};
 
-handles.ScreenParameters.CMin=-10000;
-handles.ScreenParameters.CMax=10000;
-handles.ScreenParameters.AutomaticColorLimits=1;
-handles.ScreenParameters.ColorMap='Earth';
+handles.screenParameters.cMin=-10000;
+handles.screenParameters.cMax=10000;
+handles.screenParameters.automaticColorLimits=1;
+handles.screenParameters.colorMap='Earth';
 
-handles.ScreenParameters.XLim=[-180 180];
-handles.ScreenParameters.YLim=[-90 90];
+handles.screenParameters.xLim=[-180 180];
+handles.screenParameters.yLim=[-90 90];
 
-handles.ScreenParameters.ActiveTab='Toolbox';
-handles.activeToolbox.Name='ModelMaker';
-handles.activeToolbox.Nr=1;
+handles.screenParameters.activeTab='Toolbox';
+handles.activeToolbox.name='ModelMaker';
+handles.activeToolbox.nr=1;
 
 setHandles(handles);

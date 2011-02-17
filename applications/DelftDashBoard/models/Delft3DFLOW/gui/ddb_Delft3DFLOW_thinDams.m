@@ -20,7 +20,7 @@ else
             handles.Model(md).Input(ad).changeThinDam=0;
             handles.Model(md).Input(ad).deleteThinDam=0;
             if handles.Model(md).Input(ad).addThinDam
-                ddb_dragLine(@addThinDam,'method','alonggridline','x',handles.Model(md).Input(ad).GridX,'y',handles.Model(md).Input(ad).GridY);
+                ddb_dragLine(@addThinDam,'method','alonggridline','x',handles.Model(md).Input(ad).gridX,'y',handles.Model(md).Input(ad).gridY);
                 setInstructions({'','','Drag line on map for new thin dam'});
             else
                 set(gcf, 'windowbuttondownfcn',[]);
@@ -103,12 +103,12 @@ y1=y(1);y2=y(2);
 handles=getHandles;
 
 if x1==x2 && y1==y2
-    [m1,n1,uv]=FindGridLine(x1,y1,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
+    [m1,n1,uv]=FindGridLine(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
     m2=m1;
     n2=n1;
 else
-    [m1,n1]=FindCornerPoint(x1,y1,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
-    [m2,n2]=FindCornerPoint(x2,y2,handles.Model(md).Input(ad).GridX,handles.Model(md).Input(ad).GridY);
+    [m1,n1]=FindCornerPoint(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+    [m2,n2]=FindCornerPoint(x2,y2,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
 end
 if m1>0 && (m1==m2 || n1==n2)
     
@@ -150,19 +150,16 @@ if m1>0 && (m1==m2 || n1==n2)
     handles.Model(md).Input(ad).ThinDams(iac).N1=n1;
     handles.Model(md).Input(ad).ThinDams(iac).M2=m2;
     handles.Model(md).Input(ad).ThinDams(iac).N2=n2;
-    handles.Model(md).Input(ad).ThinDams(iac).U=n2;
-    handles.Model(md).Input(ad).ThinDams(iac).N2=n2;
     handles.Model(md).Input(ad).ThinDams(iac).Name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
     handles.Model(md).Input(ad).thinDamNames{iac}=handles.Model(md).Input(ad).ThinDams(iac).Name;
     handles.Model(md).Input(ad).activeThinDam=iac;
-%     setHandles(handles);
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','thindams');
     
     if handles.Model(md).Input(ad).changeThinDam
         ddb_clickObject('tag','thindam','callback',@changeThinDamFromMap);
         setInstructions({'','','Select thin dam'});
     else
-        ddb_dragLine(@addThinDam,'free');
+        ddb_dragLine(@addThinDam,'method','alonggridline','x',handles.Model(md).Input(ad).gridX,'y',handles.Model(md).Input(ad).gridY);
         setInstructions({'','','Drag new thin dam'});
     end
 end

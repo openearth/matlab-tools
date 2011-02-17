@@ -1,28 +1,27 @@
 function handles=ddb_initializeSediment(handles,ii)
 
-% 
-handles.Model(md).Input(ad).Sediment(ii).type='cohesive';
+handles.Model(md).Input(ad).sediment(ii).type='cohesive';
 
-handles.Model(md).Input(ad).Sediment(ii).ICOpt='Constant';
-handles.Model(md).Input(ad).Sediment(ii).ICConst=0;
-handles.Model(md).Input(ad).Sediment(ii).ICPar=[0 0];
-handles.Model(md).Input(ad).Sediment(ii).BCOpt='Constant';
-handles.Model(md).Input(ad).Sediment(ii).BCConst=0;
-handles.Model(md).Input(ad).Sediment(ii).BCPar=[0 0];
+handles.Model(md).Input(ad).sediment(ii).ICOpt='Constant';
+handles.Model(md).Input(ad).sediment(ii).ICConst=0;
+handles.Model(md).Input(ad).sediment(ii).ICPar=[0 0];
+handles.Model(md).Input(ad).sediment(ii).BCOpt='Constant';
+handles.Model(md).Input(ad).sediment(ii).BCConst=0;
+handles.Model(md).Input(ad).sediment(ii).BCPar=[0 0];
 
-t0=handles.Model(md).Input(ad).StartTime;
-t1=handles.Model(md).Input(ad).StopTime;
+t0=handles.Model(md).Input(ad).startTime;
+t1=handles.Model(md).Input(ad).stopTime;
 
-for j=1:handles.Model(md).Input(ad).NrOpenBoundaries
-    handles.Model(md).Input(ad).OpenBoundaries(j).Sediment(ii).NrTimeSeries=2;
-    handles.Model(md).Input(ad).OpenBoundaries(j).Sediment(ii).TimeSeriesT=[t0;t1];
-    handles.Model(md).Input(ad).OpenBoundaries(j).Sediment(ii).TimeSeriesA=[0.0;0.0];
-    handles.Model(md).Input(ad).OpenBoundaries(j).Sediment(ii).TimeSeriesB=[0.0;0.0];
-    handles.Model(md).Input(ad).OpenBoundaries(j).Sediment(ii).Profile='Uniform';
-    handles.Model(md).Input(ad).OpenBoundaries(j).Sediment(ii).Interpolation='Linear';
-    handles.Model(md).Input(ad).OpenBoundaries(j).Sediment(ii).Discontinuity=1;
+for j=1:handles.Model(md).Input(ad).nrOpenBoundaries
+    handles.Model(md).Input(ad).openBoundaries(j).sediment(ii).nrTimeSeries=2;
+    handles.Model(md).Input(ad).openBoundaries(j).sediment(ii).timeSeriesT=[t0;t1];
+    handles.Model(md).Input(ad).openBoundaries(j).sediment(ii).timeSeriesA=[0.0;0.0];
+    handles.Model(md).Input(ad).openBoundaries(j).sediment(ii).timeSeriesB=[0.0;0.0];
+    handles.Model(md).Input(ad).openBoundaries(j).sediment(ii).profile='Uniform';
+    handles.Model(md).Input(ad).openBoundaries(j).sediment(ii).interpolation='Linear';
+    handles.Model(md).Input(ad).openBoundaries(j).sediment(ii).discontinuity=1;
 end
 
-for j=1:handles.Model(md).Input(ad).NrDischarges
-    handles.Model(md).Input(ad).Discharges(j).Sediment(ii).TimeSeries=[0.0;0.0];
+for j=1:handles.Model(md).Input(ad).nrDischarges
+    handles.Model(md).Input(ad).Discharges(j).sediment(ii).timeSeries=[0.0;0.0];
 end

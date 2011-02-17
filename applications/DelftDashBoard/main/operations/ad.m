@@ -2,4 +2,4 @@ function i=ad
 
 global handles
 
-i=handles.ActiveDomain;
+i=handles.activeDomain;

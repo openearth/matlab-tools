@@ -2,12 +2,12 @@ function ddb_editD3DFlowPollutants
 
 handles=getHandles;
 
-MakeNewWindow('Processes :  Pollutants and Tracers',[360 290],'modal',[handles.SettingsDir '\icons\deltares.gif']);
+MakeNewWindow('Processes :  Pollutants and Tracers',[360 290],'modal',[handles.settingsDir '\icons\deltares.gif']);
 
-if handles.Model(md).Input(ad).NrTracers>0
-    for i=1:handles.Model(md).Input(ad).NrTracers
-        str{i}=handles.Model(md).Input(ad).Tracer(i).Name;
-        handles.Model(md).Input(ad).Tracer(i).New=0;
+if handles.Model(md).Input(ad).nrTracers>0
+    for i=1:handles.Model(md).Input(ad).nrTracers
+        str{i}=handles.Model(md).Input(ad).tracer(i).name;
+        handles.Model(md).Input(ad).tracer(i).new=0;
     end
 else
     str{1}='';
@@ -42,19 +42,19 @@ handles=guidata(gcf);
 name=deblank(get(handles.GUIHandles.EditTracerName,'String'));
 if ~isempty(name)
     iex=0;
-    for i=1:handles.Model(md).Input(ad).NrTracers
-        if strcmpi(handles.Model(md).Input(ad).Tracer(i).Name,name)
+    for i=1:handles.Model(md).Input(ad).nrTracers
+        if strcmpi(handles.Model(md).Input(ad).tracer(i).name,name)
             iex=1;
         end
     end
     if ~iex
-        handles.Model(md).Input(ad).NrTracers=handles.Model(md).Input(ad).NrTracers+1;
-        ii=handles.Model(md).Input(ad).NrTracers;
-        handles.Model(md).Input(ad).Tracer(ii).Name=name;
-        handles.Model(md).Input(ad).Tracer(ii).New=1;
+        handles.Model(md).Input(ad).nrTracers=handles.Model(md).Input(ad).nrTracers+1;
+        ii=handles.Model(md).Input(ad).nrTracers;
+        handles.Model(md).Input(ad).tracer(ii).name=name;
+        handles.Model(md).Input(ad).tracer(ii).new=1;
         str=[];
-        for i=1:handles.Model(md).Input(ad).NrTracers
-            str{i}=handles.Model(md).Input(ad).Tracer(i).Name;
+        for i=1:handles.Model(md).Input(ad).nrTracers
+            str{i}=handles.Model(md).Input(ad).tracer(i).name;
         end
         set(handles.GUIHandles.ListTracers,'String',str);
         set(handles.GUIHandles.ListTracers,'Value',ii);
@@ -70,10 +70,10 @@ handles=guidata(gcf);
 ii=get(handles.GUIHandles.ListTracers,'Value');
 name=deblank(get(handles.GUIHandles.EditTracerName,'String'));
 if ~isempty(name)
-    handles.Model(md).Input(ad).Tracer(ii).Name=name;
+    handles.Model(md).Input(ad).tracer(ii).name=name;
     str=[];
-    for i=1:handles.Model(md).Input(ad).NrTracers
-        str{i}=handles.Model(md).Input(ad).Tracer(i).Name;
+    for i=1:handles.Model(md).Input(ad).nrTracers
+        str{i}=handles.Model(md).Input(ad).tracer(i).name;
     end
     set(handles.GUIHandles.ListTracers,'String',str);
     guidata(gcf,handles);
@@ -85,26 +85,26 @@ handles=guidata(gcf);
 
 
 ii=get(handles.GUIHandles.ListTracers,'Value');
-nr=handles.Model(md).Input(ad).NrTracers;
+nr=handles.Model(md).Input(ad).nrTracers;
 if nr>0
     if nr==1
-        handles.Model(md).Input(ad).Tracer=[];
+        handles.Model(md).Input(ad).tracer=[];
         iac=1;
     else
         for i=ii:nr-1
-            handles.Model(md).Input(ad).Tracer(i)=handles.Model(md).Input(ad).Tracer(i+1);
+            handles.Model(md).Input(ad).tracer(i)=handles.Model(md).Input(ad).tracer(i+1);
         end
-        handles.Tracer=handles.Model(md).Input(ad).Tracer(1:end-1);
+        handles.tracer=handles.Model(md).Input(ad).tracer(1:end-1);
         iac=ii;
     end
     if iac>nr-1
         iac=nr-1;
     end
     iac=max(iac,1);
-    handles.Model(md).Input(ad).NrTracers=nr-1;
+    handles.Model(md).Input(ad).nrTracers=nr-1;
     str{1}=' ';
-    for i=1:handles.Model(md).Input(ad).NrTracers
-        str{i}=handles.Model(md).Input(ad).Tracer(i).Name;
+    for i=1:handles.Model(md).Input(ad).nrTracers
+        str{i}=handles.Model(md).Input(ad).tracer(i).name;
     end
     set(handles.GUIHandles.ListTracers,'Value',iac);
     set(handles.GUIHandles.ListTracers,'String',str);
@@ -127,18 +127,19 @@ h2=getHandles;
 handles=guidata(gcf);
 
 
-h2.Model(md).Input(ad).Tracer=handles.Model(md).Input(ad).Tracer;
-h2.Model(md).Input(ad).NrTracers=handles.Model(md).Input(ad).NrTracers;
-for ii=1:handles.Model(md).Input(ad).NrTracers
-    if handles.Model(md).Input(ad).Tracer(ii).New
+h2.Model(md).Input(ad).tracer=handles.Model(md).Input(ad).tracer;
+h2.Model(md).Input(ad).nrTracers=handles.Model(md).Input(ad).nrTracers;
+for ii=1:handles.Model(md).Input(ad).nrTracers
+    if handles.Model(md).Input(ad).tracer(ii).new
         h2=ddb_initializeTracer(h2,ii);
     end
 end
-if handles.Model(md).Input(ad).NrTracers==0
-    h2.Model(md).Input(ad).Tracers=0;
+if handles.Model(md).Input(ad).nrTracers==0
+    h2.Model(md).Input(ad).tracers=0;
 else
-    h2.Model(md).Input(ad).Tracers=1;
+    h2.Model(md).Input(ad).tracers=1;
 end
+
 setHandles(h2);
 
 closereq;

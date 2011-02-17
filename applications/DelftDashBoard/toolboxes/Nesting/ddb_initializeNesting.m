@@ -1,6 +1,6 @@
 function handles=ddb_initializeNesting(handles,varargin)
 
-ii=strmatch('Nesting',{handles.Toolbox(:).Name},'exact');
+ii=strmatch('Nesting',{handles.Toolbox(:).name},'exact');
 
 if nargin>1
     switch varargin{1}
@@ -11,8 +11,8 @@ if nargin>1
     end
 end
 
-handles.Toolbox(ii).Input.OverallModel   = 'Delft3D-FLOW';
-handles.Toolbox(ii).Input.DetailedModel  = 'Delft3D-FLOW';
-handles.Toolbox(ii).Input.OverallDomain  = 'abc';
-handles.Toolbox(ii).Input.DetailedDomain = 'def';
-handles.Toolbox(ii).Input.AdminFile      = 'nesting.adm';
+handles.Toolbox(ii).Input.overallModel   = 'Delft3D-FLOW';
+handles.Toolbox(ii).Input.detailedModel  = 'Delft3D-FLOW';
+handles.Toolbox(ii).Input.overallDomain  = 'abc';
+handles.Toolbox(ii).Input.detailedDomain = 'def';
+handles.Toolbox(ii).Input.adminFile      = 'nesting.adm';

@@ -1,7 +1,7 @@
 function ddb_menuCoordinateSystem(hObject, eventdata, handles)
 
 handles=getHandles;
-handles.ConvertModelData=0;
+handles.convertModelData=0;
 setHandles(handles);
 
 tg=get(hObject,'Tag');
@@ -31,13 +31,13 @@ if ok
     ch=get(get(hObject,'Parent'),'Children');
     set(ch,'Checked','off');
     set(hObject,'Checked','on');
-    handles.OldCoordinateSystem=handles.ScreenParameters.CoordinateSystem;
+    handles.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
     lab=get(hObject,'Label');
-    if ~strcmp(handles.ScreenParameters.CoordinateSystem.Name,lab)
-        handles.ConvertModelData=iconv;
-        handles.OldCoordinateSystem=handles.ScreenParameters.CoordinateSystem;
-        handles.ScreenParameters.CoordinateSystem.Name=lab;
-        handles.ScreenParameters.CoordinateSystem.Type='Geographic';
+    if ~strcmp(handles.screenParameters.coordinateSystem.name,lab)
+        handles.convertModelData=iconv;
+        handles.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
+        handles.screenParameters.coordinateSystem.name=lab;
+        handles.screenParameters.coordinateSystem.type='Geographic';
         setHandles(handles);
         ddb_changeCoordinateSystem;
     end
@@ -52,11 +52,11 @@ if ok
     set(ch,'Checked','off');
     set(hObject,'Checked','on');
     lab=get(hObject,'Label');
-    if ~strcmp(handles.ScreenParameters.CoordinateSystem.Name,lab)
-        handles.ConvertModelData=iconv;
-        handles.OldCoordinateSystem=handles.ScreenParameters.CoordinateSystem;
-        handles.ScreenParameters.CoordinateSystem.Name=lab;
-        handles.ScreenParameters.CoordinateSystem.Type='Cartesian';
+    if ~strcmp(handles.screenParameters.coordinateSystem.name,lab)
+        handles.convertModelData=iconv;
+        handles.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
+        handles.screenParameters.coordinateSystem.name=lab;
+        handles.screenParameters.coordinateSystem.type='Cartesian';
         setHandles(handles);
         ddb_changeCoordinateSystem;
     end
@@ -79,23 +79,23 @@ if ok
 
     if ~isempty(UTMZone)
 
-        handles.ScreenParameters.UTMZone=UTMZone;
+        handles.screenParameters.UTMZone=UTMZone;
 
         zn={'C','D','E','F','G','H','J','K','L','M'};
-        ii=strmatch(handles.ScreenParameters.UTMZone{2},zn,'exact');
+        ii=strmatch(handles.screenParameters.UTMZone{2},zn,'exact');
         if ~isempty(ii)
             str='S';
         else
             str='N';
         end
 
-        lab=['WGS 84 / UTM zone ' num2str(handles.ScreenParameters.UTMZone{1}) str];
+        lab=['WGS 84 / UTM zone ' num2str(handles.screenParameters.UTMZone{1}) str];
         set(handles.GUIHandles.Menu.CoordinateSystem.UTM,'Label',lab);
-        if ~strcmp(handles.ScreenParameters.CoordinateSystem.Name,lab)
-            handles.ConvertModelData=iconv;
-            handles.OldCoordinateSystem=handles.ScreenParameters.CoordinateSystem;
-            handles.ScreenParameters.CoordinateSystem.Name=lab;
-            handles.ScreenParameters.CoordinateSystem.Type='Cartesian';
+        if ~strcmp(handles.screenParameters.coordinateSystem.name,lab)
+            handles.convertModelData=iconv;
+            handles.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
+            handles.screenParameters.coordinateSystem.name=lab;
+            handles.screenParameters.coordinateSystem.type='Cartesian';
             setHandles(handles);
             ddb_changeCoordinateSystem;
         end
@@ -112,11 +112,11 @@ if ok
 
     set(hObject,'Checked','on');
     lab=get(hObject,'Label');
-    if ~strcmp(handles.ScreenParameters.CoordinateSystem.Name,lab)
-        handles.ConvertModelData=iconv;
-        handles.OldCoordinateSystem=handles.ScreenParameters.CoordinateSystem;
-        handles.ScreenParameters.CoordinateSystem.Name=lab;
-        handles.ScreenParameters.CoordinateSystem.Type='Cartesian';
+    if ~strcmp(handles.screenParameters.coordinateSystem.name,lab)
+        handles.convertModelData=iconv;
+        handles.oldCoordinateSystem=handles.screenParameters.coordinateSystem;
+        handles.screenParameters.coordinateSystem.name=lab;
+        handles.screenParameters.coordinateSystem.type='Cartesian';
         setHandles(handles);
         ddb_changeCoordinateSystem;
     end
@@ -127,16 +127,16 @@ function menuCoordinateSystemOtherGeographic_Callback(hObject, eventdata, handle
 
 [ok,iconv]=checkOK;
 if ok
-    cs0=get(handles.GUIHandles.Menu.CoordinateSystem.Geographic,'Label');
-%    [cs,ok]=ddb_selectCoordinateSystem(handles.CoordinateData.CoordSysGeo,cs0);
-    [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.CoordinateData,handles.EPSG,'default',cs0,'type','geographic');
+    cs0=get(handles.GUIHandles.Menu.coordinateSystem.Geographic,'Label');
+%    [cs,ok]=ddb_selectCoordinateSystem(handles.coordinateData.coordSysGeo,cs0);
+    [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',cs0,'type','geographic');
     if ok
-        handles.ConvertModelData=iconv;
+        handles.convertModelData=iconv;
         ch=get(get(hObject,'Parent'),'Children');
         set(ch,'Checked','off');
         set(handles.GUIHandles.Menu.CoordinateSystem.Geographic,'Label',cs,'Checked','on');
-        handles.ScreenParameters.CoordinateSystem.Name=cs;
-        handles.ScreenParameters.CoordinateSystem.Type='Geographic';
+        handles.screenParameters.coordinateSystem.name=cs;
+        handles.screenParameters.coordinateSystem.type='Geographic';
         setHandles(handles);
         ddb_changeCoordinateSystem;
     end
@@ -148,15 +148,15 @@ function menuCoordinateSystemOtherCartesian_Callback(hObject, eventdata, handles
 [ok,iconv]=checkOK;
 if ok
     cs0=get(handles.GUIHandles.Menu.CoordinateSystem.Cartesian,'Label');
-%    [cs,ok]=ddb_selectCoordinateSystem(handles.CoordinateData.CoordSysCart,cs0);
-    [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.CoordinateData,handles.EPSG,'default',cs0,'type','projected');
+%    [cs,ok]=ddb_selectCoordinateSystem(handles.coordinateData.coordSysCart,cs0);
+    [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',cs0,'type','projected');
     if ok
-        handles.ConvertModelData=iconv;
+        handles.convertModelData=iconv;
         ch=get(get(hObject,'Parent'),'Children');
         set(ch,'Checked','off');
         set(handles.GUIHandles.Menu.CoordinateSystem.Cartesian,'Label',cs,'Checked','on');
-        handles.ScreenParameters.CoordinateSystem.Name=cs;
-        handles.ScreenParameters.CoordinateSystem.Type='Cartesian';
+        handles.screenParameters.coordinateSystem.name=cs;
+        handles.screenParameters.coordinateSystem.type='Cartesian';
         setHandles(handles);
         ddb_changeCoordinateSystem;
     end

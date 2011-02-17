@@ -1,9 +1,9 @@
 function handles=ddb_readCorFile(handles)
 
-fid=fopen(handles.Model(md).Input(ad).CorFile);
+fid=fopen(handles.Model(md).Input(ad).corFile);
 
-for i=1:handles.Model(md).Input(ad).NrAstronomicComponentSets
-    ComponentSets{i}=handles.Model(md).Input(ad).AstronomicComponentSets(i).Name;
+for i=1:handles.Model(md).Input(ad).nrAstronomicComponentSets
+    componentSets{i}=handles.Model(md).Input(ad).astronomicComponentSets(i).name;
 end
 
 k=0;
@@ -14,18 +14,18 @@ for i=1:10000
     else
         v0='';
     end
-    if length(v0)>0
+    if ~isempty(v0)
         if length(v0)==1
-            ii=strmatch(v0{1},ComponentSets,'exact');
+            ii=strmatch(v0{1},componentSets,'exact');
         else
-            for j=1:handles.Model(md).Input(ad).AstronomicComponentSets(ii).Nr
-                Components{j}=handles.Model(md).Input(ad).AstronomicComponentSets(ii).Component{j};
+            for j=1:handles.Model(md).Input(ad).astronomicComponentSets(ii).nr
+                components{j}=handles.Model(md).Input(ad).astronomicComponentSets(ii).component{j};
             end
-            jj=strmatch(v0{1},Components,'exact');
-            if length(jj)>0
-                handles.Model(md).Input(ad).AstronomicComponentSets(ii).Correction(jj)=1;
-                handles.Model(md).Input(ad).AstronomicComponentSets(ii).AmplitudeCorrection(jj)=str2num(v0{2});
-                handles.Model(md).Input(ad).AstronomicComponentSets(ii).PhaseCorrection(jj)=str2num(v0{3});
+            jj=strmatch(v0{1},components,'exact');
+            if ~isempty(jj)
+                handles.Model(md).Input(ad).astronomicComponentSets(ii).correction(jj)=1;
+                handles.Model(md).Input(ad).astronomicComponentSets(ii).amplitudeCorrection(jj)=str2double(v0{2});
+                handles.Model(md).Input(ad).astronomicComponentSets(ii).phaseCorrection(jj)=str2double(v0{3});
             end
         end
     else

@@ -1,25 +1,25 @@
 function handles=ddb_initializeTemperature(handles,id)
 
-handles.Model(md).Input(id).Temperature.ICOpt='Constant';
-handles.Model(md).Input(id).Temperature.ICConst=20;
-handles.Model(md).Input(id).Temperature.ICPar=[0 0];
-handles.Model(md).Input(id).Temperature.BCOpt='Constant';
-handles.Model(md).Input(id).Temperature.BCConst=20;
-handles.Model(md).Input(id).Temperature.BCPar=[0 0];
+handles.Model(md).Input(id).temperature.ICOpt='Constant';
+handles.Model(md).Input(id).temperature.ICConst=20;
+handles.Model(md).Input(id).temperature.ICPar=[0 0];
+handles.Model(md).Input(id).temperature.BCOpt='Constant';
+handles.Model(md).Input(id).temperature.BCConst=20;
+handles.Model(md).Input(id).temperature.BCPar=[0 0];
 
-t0=handles.Model(md).Input(id).StartTime;
-t1=handles.Model(md).Input(id).StopTime;
+t0=handles.Model(md).Input(id).startTime;
+t1=handles.Model(md).Input(id).stopTime;
 
-for j=1:handles.Model(md).Input(id).NrOpenBoundaries
-    handles.Model(md).Input(id).OpenBoundaries(j).Temperature.NrTimeSeries=2;
-    handles.Model(md).Input(id).OpenBoundaries(j).Temperature.TimeSeriesT=[t0;t1];
-    handles.Model(md).Input(id).OpenBoundaries(j).Temperature.TimeSeriesA=[20.0;20.0];
-    handles.Model(md).Input(id).OpenBoundaries(j).Temperature.TimeSeriesB=[20.0;20.0];
-    handles.Model(md).Input(id).OpenBoundaries(j).Temperature.Profile='Uniform';
-    handles.Model(md).Input(id).OpenBoundaries(j).Temperature.Interpolation='Linear';
-    handles.Model(md).Input(id).OpenBoundaries(j).Temperature.Discontinuity=1;
+for j=1:handles.Model(md).Input(id).nrOpenBoundaries
+    handles.Model(md).Input(id).openBoundaries(j).temperature.nrTimeSeries=2;
+    handles.Model(md).Input(id).openBoundaries(j).temperature.timeSeriesT=[t0;t1];
+    handles.Model(md).Input(id).openBoundaries(j).temperature.timeSeriesA=[20.0;20.0];
+    handles.Model(md).Input(id).openBoundaries(j).temperature.timeSeriesB=[20.0;20.0];
+    handles.Model(md).Input(id).openBoundaries(j).temperature.profile='Uniform';
+    handles.Model(md).Input(id).openBoundaries(j).temperature.interpolation='Linear';
+    handles.Model(md).Input(id).openBoundaries(j).temperature.discontinuity=1;
 end
 
-for j=1:handles.Model(md).Input(id).NrDischarges
-    handles.Model(md).Input(id).Discharges(j).Temperature.TimeSeries=[20.0;20.0];
+for j=1:handles.Model(md).Input(id).nrDischarges
+    handles.Model(md).Input(id).Discharges(j).temperature.timeSeries=[20.0;20.0];
 end

@@ -8,7 +8,7 @@ strings={'Constants','Roughness','Viscosity'};
 callbacks={@ddb_editD3DFlowConstants,@ddb_editD3DFlowRoughness,@ddb_editD3DFlowViscosity};
 k=3;
 
-if handles.Model(md).Input(ad).Temperature.Include
+if handles.Model(md).Input(ad).temperature.include
     k=k+1;
     strings{k}='Heat Flux';
     callbacks{k}=@ddb_editD3DFlowHeatFluxModel;

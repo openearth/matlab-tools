@@ -2,18 +2,7 @@ function ddb_editViewSettings
 
 h=getHandles;
 
-f=MakeNewWindow('View Settings',[210 230],'modal',[h.SettingsDir '\icons\deltares.gif']);
-
-% MakeNewWindow
-% f=figure;
-% clf;
-% %pause(0.2);
-% set(f,'Name','View Settings','Position',[300 200 210 230]);
-% set(f,'NumberTitle','off','Units','pixels','WindowStyle','modal');
-% PutInCentre(f);
-% clf;
-% pause(0.1);
-% clf;
+f=MakeNewWindow('View Settings',[210 230],'modal',[h.settingsDir '\icons\deltares.gif']);
 
 str={'Earth','Jet'};
 ii=strmatch(h.ScreenParameters.ColorMap,str,'exact');
@@ -29,7 +18,7 @@ handles.TextCMin = uicontrol(gcf,'Style','text','String','CMin','Position',[85 1
 handles.TextCMax = uicontrol(gcf,'Style','text','String','CMax','Position',[85 136  50 20],'HorizontalAlignment','left','Tag','UIControl');
 
 handles.ToggleAutomatic = uicontrol(gcf,'Style','checkbox','String','Automatic Color Limits','Position',[30 90  150 20],'Tag','UIControl');
-set(handles.ToggleAutomatic,'Value',h.ScreenParameters.AutomaticColorLimits);
+set(handles.ToggleAutomatic,'Value',h.screenParameters.automaticColorLimits);
 
 handles.PushOK     = uicontrol(gcf,'Style','pushbutton','String','OK',    'Position',[110 30 60 30]);
 handles.PushCancel = uicontrol(gcf,'Style','pushbutton','String','Cancel','Position',[40 30 60 30]);
@@ -78,16 +67,16 @@ str=get(handles.SelectColorMap,'String');
 ii=get(handles.SelectColorMap,'Value');
 clmap=str{ii};
 
-if cmin~=h.ScreenParameters.CMin || cmax~=h.ScreenParameters.CMax || autocol~=h.ScreenParameters.AutomaticColorLimits || ~strcmpi(h.ScreenParameters.ColorMap,clmap)
+if cmin~=h.screenParameters.cMin || cmax~=h.screenParameters.cMax || autocol~=h.screenParameters.automaticColorLimits || ~strcmpi(h.screenParameters.colorMap,clmap)
     plotnew=1;
 else
     plotnew=0;
 end
 
-h.ScreenParameters.CMin=cmin;
-h.ScreenParameters.CMax=cmax;
-h.ScreenParameters.ColorMap=clmap;
-h.ScreenParameters.AutomaticColorLimits=autocol;
+h.screenParameters.cMin=cmin;
+h.screenParameters.cMax=cmax;
+h.screenParameters.colorMap=clmap;
+h.screenParameters.automaticColorLimits=autocol;
 
 setHandles(h);
 

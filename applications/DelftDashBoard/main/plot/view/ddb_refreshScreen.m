@@ -6,11 +6,11 @@ clearInstructions;
 
 if nargin==1
     tabpanel('delete','tag','tabpanel2');
-    handles.ScreenParameters.ActiveTab=varargin{1};
-    handles.ScreenParameters.ActiveSecondTab='';
+    handles.screenParameters.activeTab=varargin{1};
+    handles.screenParameters.activeSecondTab='';
 elseif nargin==2
-    handles.ScreenParameters.ActiveTab=varargin{1};
-    handles.ScreenParameters.ActiveSecondTab=varargin{2};
+    handles.screenParameters.activeTab=varargin{1};
+    handles.screenParameters.activeSecondTab=varargin{2};
 end
 setHandles(handles);
 
@@ -27,11 +27,11 @@ set(gcf, 'Pointer', 'arrow');
 ddb_zoomOff;
 
 for j=1:length(handles.Model)
-    f=handles.Model(j).PlotFcn;
-    feval(f,handles,'deactivate');
+    f=handles.Model(j).plotFcn;
+    feval(f,handles,'update',2,ad);
 end
 
 for j=1:length(handles.Toolbox)
-    f=handles.Toolbox(j).PlotFcn;
+    f=handles.Toolbox(j).plotFcn;
     feval(f,handles,'deactivate');
 end

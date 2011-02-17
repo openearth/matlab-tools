@@ -1,6 +1,6 @@
 function handles=ddb_initializeXBeachInput(handles,id,runid,varargin)
 
-ii=strmatch('XBeach',{handles.Model.Name},'exact');
+ii=strmatch('XBeach',{handles.Model.name},'exact');
 
 handles.Model(ii).Input(id).Description={''};
 handles.Model(ii).Input(id).Runid=runid;

@@ -5,40 +5,41 @@ h=getHandles;
 kmax=h.Model(md).Input(ad).KMax;
 handles.KMax=kmax;
 
-ii=h.GUIData.ActiveOpenBoundary;
-handles.Bnd=h.Model(md).Input(ad).OpenBoundaries(ii);
+ii=h.Model(md).Input(ad).activeOpenBoundary;
+handles.Bnd=h.Model(md).Input(ad).openBoundaries(ii);
 
-handles.ActiveConstituent=1;
+handles.activeConstituent=1;
 
 k=0;
-if h.Model(md).Input(ad).Salinity.Include
+if h.Model(md).Input(ad).salinity.include
     k=k+1;
     handles.Constituents{k}='Salinity';
-    handles.Constituent(k)=handles.Bnd.Salinity;
+    handles.Constituent(k)=handles.Bnd.salinity;
 end
-if h.Model(md).Input(ad).Temperature.Include
+if h.Model(md).Input(ad).temperature.include
     k=k+1;
     handles.Constituents{k}='Temperature';
-    handles.Constituent(k)=handles.Bnd.Temperature;
+    handles.Constituent(k)=handles.Bnd.temperature;
 end
-if h.Model(md).Input(ad).Sediments
-    for j=1:h.Model(md).Input(ad).NrSediments
+if h.Model(md).Input(ad).sediments
+    for j=1:h.Model(md).Input(ad).nrSediments
         k=k+1;
-        handles.Constituents{k}=h.Model(md).Input(ad).Sediment(j).Name;
-        handles.Constituent(k)=handles.Bnd.Sediment(j);
+        handles.Constituents{k}=h.Model(md).Input(ad).sediment(j).name;
+        handles.Constituent(k)=handles.Bnd.sediment(j);
     end
 end
-if h.Model(md).Input(ad).Tracers
-    for j=1:h.Model(md).Input(ad).NrTracers
+if h.Model(md).Input(ad).tracers
+    for j=1:h.Model(md).Input(ad).nrTracers
         k=k+1;
-        handles.Constituents{k}=h.Model(md).Input(ad).Tracer(j).Name;
-        handles.Constituent(k)=handles.Bnd.Tracer(j);
+        handles.Constituents{k}=h.Model(md).Input(ad).tracer(j).name;
+        handles.Constituent(k)=handles.Bnd.tracer(j);
     end
 end
 
-% prf=handles.Bnd.Profile;
+% prf=handles.Bnd.profile;
 
-MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],'modal',[h.SettingsDir '\icons\deltares.gif']);
+%MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],'modal',[h.settingsDir '\icons\deltares.gif']);
+MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],[h.settingsDir '\icons\deltares.gif']);
 
 uipanel('Title','Time Series', 'Units','pixels','Position',[40 80 510 230],'Tag','UIControl');
 
@@ -52,7 +53,7 @@ for i=1:2
     data{i,4}=0;
     data{i,5}=0;
 end
-table2(gcf,'table','create','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
+handles.GUIHandles.table=table(gcf,'create','tag','table','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
 
 handles.GUIHandles.TextTime                = uicontrol(gcf,'Style','text','String','Time','Position',[50 265 120 15],'HorizontalAlignment','center');
 handles.GUIHandles.Textyyyy                = uicontrol(gcf,'Style','text','String','yyyy mm dd HH MM SS','Position',[50 250 120 15],'HorizontalAlignment','center');
@@ -69,12 +70,12 @@ handles.GUIHandles.TextBottomB             = uicontrol(gcf,'Style','text','Strin
 
 uipanel('Title','Boundary Section','Units','pixels','Position',[40 320 390 150]);
 handles.GUIHandles.TextBoundary      = uicontrol(gcf,'Style','text','String','Boundary :' ,'Position',[50 430 200 20],'HorizontalAlignment','left');
-handles.GUIHandles.TextBoundaryName  = uicontrol(gcf,'Style','text','String',handles.Bnd.Name,'Position',[125 430 150 20],'HorizontalAlignment','left');
+handles.GUIHandles.TextBoundaryName  = uicontrol(gcf,'Style','text','String',handles.Bnd.name,'Position',[125 430 150 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextConstituent   = uicontrol(gcf,'Style','text','String','Quantity :','Position',[50 406 200 20],'HorizontalAlignment','left');
 handles.GUIHandles.SelectConstituent = uicontrol(gcf,'Style','popupmenu','String',handles.Constituents,'Position',[125 410 100 20],'BackgroundColor',[1 1 1]);
 handles.GUIHandles.TextProfile     = uicontrol(gcf,'Style','text','String','Profile :','Position',[50 381 200 20],'HorizontalAlignment','left');
-handles.Profiles={'Uniform','Linear','Step','Per Layer'};
-handles.GUIHandles.SelectProfile   = uicontrol(gcf,'Style','popupmenu','String',handles.Profiles,'Position',[125 385 100 20],'BackgroundColor',[1 1 1]);
+handles.profiles={'Uniform','Linear','Step','Per Layer'};
+handles.GUIHandles.SelectProfile   = uicontrol(gcf,'Style','popupmenu','String',handles.profiles,'Position',[125 385 100 20],'BackgroundColor',[1 1 1]);
 handles.GUIHandles.TextProfileJump = uicontrol(gcf,'Style','text','String','Step (m) :','Position',[50 356 200 20],'HorizontalAlignment','left');
 handles.GUIHandles.EditProfileJump = uicontrol(gcf,'Style','edit','String',' ','Position',[125 360 100 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1]);
 for k=1:kmax
@@ -104,26 +105,26 @@ function PushOK_Callback(hObject,eventdata)
 
 handles=guidata(gcf);
 h=getHandles;
-ib=h.GUIData.ActiveOpenBoundary;
+ib=h.Model(md).Input(ad).activeOpenBoundary;
 ic=0;
-if h.Model(md).Input(ad).Salinity.Include
+if h.Model(md).Input(ad).salinity.include
     ic=ic+1;
-    h.Model(md).Input(ad).OpenBoundaries(ib).Salinity=handles.Constituent(ic);
+    h.Model(md).Input(ad).openBoundaries(ib).salinity=handles.Constituent(ic);
 end
-if h.Model(md).Input(ad).Temperature.Include
+if h.Model(md).Input(ad).temperature.include
     ic=ic+1;
-    h.Model(md).Input(ad).OpenBoundaries(ib).Temperature=handles.Constituent(ic);
+    h.Model(md).Input(ad).openBoundaries(ib).temperature=handles.Constituent(ic);
 end
-if h.Model(md).Input(ad).Sediments
-    for j=1:h.Model(md).Input(ad).NrSediments
+if h.Model(md).Input(ad).sediments
+    for j=1:h.Model(md).Input(ad).nrSediments
         ic=ic+1;
-        h.Model(md).Input(ad).OpenBoundaries(ib).Sediment(j)=handles.Constituent(ic);
+        h.Model(md).Input(ad).openBoundaries(ib).sediment(j)=handles.Constituent(ic);
     end
 end
-if h.Model(md).Input(ad).Tracers
-    for j=1:h.Model(md).Input(ad).NrTracers
+if h.Model(md).Input(ad).tracers
+    for j=1:h.Model(md).Input(ad).nrTracers
         ic=ic+1;
-        h.Model(md).Input(ad).OpenBoundaries(ib).Tracer(j)=handles.Constituent(ic);
+        h.Model(md).Input(ad).openBoundaries(ib).tracer(j)=handles.Constituent(ic);
     end
 end
 setHandles(h);
@@ -137,7 +138,7 @@ closereq;
 function SelectConstituent_Callback(hObject,eventdata)
 handles=guidata(gcf);
 k=get(hObject,'Value');
-handles.ActiveConstituent=k;
+handles.activeConstituent=k;
 RefreshAll(handles);
 guidata(gcf,handles);
 
@@ -151,29 +152,33 @@ guidata(gcf,handles);
 function SelectProfile_Callback(hObject,eventdata)
 handles=guidata(gcf);
 k=get(hObject,'Value');
-ic=handles.ActiveConstituent;
+ic=handles.activeConstituent;
 switch k
     case 1
-        handles.Constituent(ic).Profile='Uniform';
+        handles.Constituent(ic).profile='Uniform';
     case 2
-        handles.Constituent(ic).Profile='Linear';
+        handles.Constituent(ic).profile='Linear';
     case 3
-        handles.Constituent(ic).Profile='Step';
+        handles.Constituent(ic).profile='Step';
     case 4
-        handles.Constituent(ic).Profile='3D-Profile';
+        handles.Constituent(ic).profile='3D-Profile';
 end
-nr=handles.Constituent(ic).NrTimeSeries;
-switch handles.Constituent(ic).Profile
+nr=handles.Constituent(ic).nrTimeSeries;
+switch handles.Constituent(ic).profile
     case{'Linear','Step'}
-        if size(handles.Constituent(ic).TimeSeriesA,2)<2
-            handles.Constituent(ic).TimeSeriesA=zeros(nr,2);
-            handles.Constituent(ic).TimeSeriesB=zeros(nr,2);
+        if size(handles.Constituent(ic).timeSeriesA,2)<2
+            handles.Constituent(ic).timeSeriesA(:,2)=handles.Constituent(ic).timeSeriesA(:,1);
+            handles.Constituent(ic).timeSeriesB(:,2)=handles.Constituent(ic).timeSeriesB(:,1);
         end
     case{'3D-Profile'}
         kmax=handles.KMax;
-        if size(handles.Constituent(ic).TimeSeriesA,2)<kmax
-            handles.Constituent(ic).TimeSeriesA=zeros(nr,kmax);
-            handles.Constituent(ic).TimeSeriesB=zeros(nr,kmax);
+        if size(handles.Constituent(ic).timeSeriesA,2)<kmax
+            if kmax>1
+                for i=2:kmax
+                    handles.Constituent(ic).timeSeriesA(:,i)=handles.Constituent(ic).timeSeriesA(:,1);
+                    handles.Constituent(ic).timeSeriesB(:,i)=handles.Constituent(ic).timeSeriesB(:,1);
+                end
+            end
         end
 end
 guidata(gcf,handles);
@@ -182,44 +187,44 @@ RefreshAll(handles);
 %%
 function EditProfileJump_Callback(hObject,eventdata)
 handles=guidata(gcf);
-ic=handles.ActiveConstituent;
+ic=handles.activeConstituent;
 str=get(hObject,'String');
-handles.Constituent(ic).Discontinuity=str2double(str);
+handles.Constituent(ic).discontinuity=str2double(str);
 guidata(gcf,handles);
 
 %%
 function EditTable
 handles=guidata(gcf);
 k=get(handles.GUIHandles.SelectLayer,'Value');
-ic=handles.ActiveConstituent;
-data=table2(gcf,'table','getdata');
+ic=handles.activeConstituent;
+data=table(handles.GUIHandles.table,'getdata');
 nr=size(data,1);
 for i=1:nr
-    switch lower(handles.Constituent(ic).Profile)
+    switch lower(handles.Constituent(ic).profile)
         case{'linear','step'}
-            handles.Constituent(ic).TimeSeriesT(i)=data{i,1};
-            handles.Constituent(ic).TimeSeriesA(i,1)=data{i,2};
-            handles.Constituent(ic).TimeSeriesB(i,1)=data{i,3};
-            handles.Constituent(ic).TimeSeriesA(i,2)=data{i,4};
-            handles.Constituent(ic).TimeSeriesB(i,2)=data{i,5};
+            handles.Constituent(ic).timeSeriesT(i)=data{i,1};
+            handles.Constituent(ic).timeSeriesA(i,1)=data{i,2};
+            handles.Constituent(ic).timeSeriesB(i,1)=data{i,3};
+            handles.Constituent(ic).timeSeriesA(i,2)=data{i,4};
+            handles.Constituent(ic).timeSeriesB(i,2)=data{i,5};
         otherwise
-            handles.Constituent(ic).TimeSeriesT(i)=data{i,1};
-            handles.Constituent(ic).TimeSeriesA(i,k)=data{i,2};
-            handles.Constituent(ic).TimeSeriesB(i,k)=data{i,3};
+            handles.Constituent(ic).timeSeriesT(i)=data{i,1};
+            handles.Constituent(ic).timeSeriesA(i,k)=data{i,2};
+            handles.Constituent(ic).timeSeriesB(i,k)=data{i,3};
     end
 end
-handles.Constituent(ic).NrTimeSeries=nr;
+handles.Constituent(ic).nrTimeSeries=nr;
 guidata(gcf,handles);
 
 %%
 function RefreshAll(handles)
 
-ic=handles.ActiveConstituent;
+ic=handles.activeConstituent;
 if handles.KMax>1
     set(handles.GUIHandles.TextProfile,'Enable','on');
     set(handles.GUIHandles.SelectProfile,'Enable','on');
-    set(handles.GUIHandles.SelectProfile,'String',handles.Profiles);
-    prf=handles.Constituent(ic).Profile;
+    set(handles.GUIHandles.SelectProfile,'String',handles.profiles);
+    prf=handles.Constituent(ic).profile;
     switch lower(prf)
         case{'uniform'}
             set(handles.GUIHandles.SelectProfile,'Value',1);
@@ -258,7 +263,7 @@ if handles.KMax>1
     if strcmpi(prf,'step')
         set(handles.GUIHandles.TextProfileJump,'Enable','on');
         set(handles.GUIHandles.EditProfileJump,'Enable','on');
-        set(handles.GUIHandles.EditProfileJump,'String',num2str(handles.Constituent(ic).Discontinuity));
+        set(handles.GUIHandles.EditProfileJump,'String',num2str(handles.Constituent(ic).discontinuity));
     else
         set(handles.GUIHandles.TextProfileJump,'Enable','off');
         set(handles.GUIHandles.EditProfileJump,'Enable','off');
@@ -277,25 +282,29 @@ RefreshTable(handles);
 %%
 function RefreshTable(handles)
 k=get(handles.GUIHandles.SelectLayer,'Value');
-ic=handles.ActiveConstituent;
-enab=zeros(handles.Constituent(ic).NrTimeSeries,5)+1;
-switch lower(handles.Constituent(ic).Profile)
+ic=handles.activeConstituent;
+enab=zeros(8,5)+1;
+switch lower(handles.Constituent(ic).profile)
     case{'linear','step'}
-        for i=1:handles.Constituent(ic).NrTimeSeries
-            data{i,1}=handles.Constituent(ic).TimeSeriesT(i);
-            data{i,2}=handles.Constituent(ic).TimeSeriesA(i,1);
-            data{i,3}=handles.Constituent(ic).TimeSeriesB(i,1);
-            data{i,4}=handles.Constituent(ic).TimeSeriesA(i,2);
-            data{i,5}=handles.Constituent(ic).TimeSeriesB(i,2);
+        for i=1:handles.Constituent(ic).nrTimeSeries
+            data{i,1}=handles.Constituent(ic).timeSeriesT(i);
+            data{i,2}=handles.Constituent(ic).timeSeriesA(i,1);
+            data{i,3}=handles.Constituent(ic).timeSeriesB(i,1);
+            data{i,4}=handles.Constituent(ic).timeSeriesA(i,2);
+            data{i,5}=handles.Constituent(ic).timeSeriesB(i,2);
         end
     otherwise
-        for i=1:handles.Constituent(ic).NrTimeSeries
-            data{i,1}=handles.Constituent(ic).TimeSeriesT(i);
-            data{i,2}=handles.Constituent(ic).TimeSeriesA(i,k);
-            data{i,3}=handles.Constituent(ic).TimeSeriesB(i,k);
+        for i=1:handles.Constituent(ic).nrTimeSeries
+            data{i,1}=handles.Constituent(ic).timeSeriesT(i);
+            data{i,2}=handles.Constituent(ic).timeSeriesA(i,k);
+            data{i,3}=handles.Constituent(ic).timeSeriesB(i,k);
             data{i,4}=[];
             data{i,5}=[];
         end
         enab(:,end-1:end)=0;
 end
-table2(gcf,'table','change','data',data,'enable',enab);
+
+%enable=[1 1 1 0 0];
+
+table(handles.GUIHandles.table,'setdata',data);
+table(handles.GUIHandles.table,'refresh','enable',enab);

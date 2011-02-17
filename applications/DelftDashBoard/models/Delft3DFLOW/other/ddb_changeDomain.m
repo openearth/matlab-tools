@@ -2,13 +2,13 @@ function ddb_changeDomain
 
 handles=getHandles;
 
-handles.GUIData.ActiveDryPoint=1;
-handles.GUIData.ActiveThinDam=1;
-handles.GUIData.ActiveObservationPoint=1;
-handles.GUIData.ActiveOpenBoundary=1;
+handles.GUIData.activeDryPoint=1;
+handles.GUIData.activeThinDam=1;
+handles.GUIData.activeObservationPoint=1;
+handles.GUIData.activeOpenBoundary=1;
 setHandles(handles);
 
-for i=1:handles.GUIData.NrFlowDomains
+for i=1:handles.GUIData.nrFlowDomains
     if i==ad
         ddb_plotDelft3DFLOW(handles,'activate',i);
     else
@@ -16,8 +16,8 @@ for i=1:handles.GUIData.NrFlowDomains
     end        
 end
 
-if isempty(handles.ScreenParameters.ActiveSecondTab)
-    tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','tabname',handles.ScreenParameters.ActiveTab);
+if isempty(handles.screenParameters.activeSecondTab)
+    tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','tabname',handles.screenParameters.activeTab);
 else
-    tabpanel(handles.GUIHandles.MainWindow,'tabpanel2','select','tabname',handles.ScreenParameters.ActiveSecondTab);
+    tabpanel(handles.GUIHandles.MainWindow,'tabpanel2','select','tabname',handles.screenParameters.activeSecondTab);
 end

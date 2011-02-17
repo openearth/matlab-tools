@@ -4,7 +4,7 @@ h=getHandles;
 
 % fig0=gcf;
 
-fig=MakeNewWindow('Select UTM Zone',[950 550],[h.SettingsDir '\icons\deltares.gif'],'modal');
+fig=MakeNewWindow('Select UTM Zone',[950 550],[h.settingsDir '\icons\deltares.gif'],'modal');
 
 set(fig,'Renderer','opengl');
 
@@ -46,22 +46,22 @@ for i=1:length(laty)-1
     set(tx,'FontSize',6);
 end
 
-str=[num2str(h.ScreenParameters.UTMZone{1}) h.ScreenParameters.UTMZone{2}];
+str=[num2str(h.screenParameters.UTMZone{1}) h.screenParameters.UTMZone{2}];
 handles.TextZone = uicontrol(gcf,'Style','text','String',['UTM Zone : ',str],'Position',[50  505  300 20],'HorizontalAlignment','left');
 
-PlotUTMZone(h.ScreenParameters.UTMZone);
+PlotUTMZone(h.screenParameters.UTMZone);
 
 %pause(0.2);
 
 set(gcf,'WindowButtonDownFcn',{@SelectZone});
-handles.ScreenParameters.UTMZone=h.ScreenParameters.UTMZone;
+handles.screenParameters.UTMZone=h.screenParameters.UTMZone;
 
 guidata(gcf,handles);
 
 uiwait;
 
 handles=guidata(gcf);
-UTMZone=handles.ScreenParameters.UTMZone;
+UTMZone=handles.screenParameters.UTMZone;
 
 close(gcf);
 
@@ -102,10 +102,10 @@ if x0>-180 && x0<180 && y0>-80 && y0<84
     zn={'C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X'};
     ilat=ceil((y0+80)/8);
     ilon=ceil((x0+180)/6);
-    handles.ScreenParameters.UTMZone{1}=ilon;
-    handles.ScreenParameters.UTMZone{2}=zn{ilat};
-    PlotUTMZone(handles.ScreenParameters.UTMZone);
-    str=[num2str(handles.ScreenParameters.UTMZone{1}) handles.ScreenParameters.UTMZone{2}];
+    handles.screenParameters.UTMZone{1}=ilon;
+    handles.screenParameters.UTMZone{2}=zn{ilat};
+    PlotUTMZone(handles.screenParameters.UTMZone);
+    str=[num2str(handles.screenParameters.UTMZone{1}) handles.screenParameters.UTMZone{2}];
     set(handles.TextZone,'String',['UTM Zone : ',str]);
 end
 
@@ -118,7 +118,7 @@ uiresume;
 %%
 function PushCancel_CallBack(hObject,eventdata)
 handles=guidata(gcf);
-handles.ScreenParameters.UTMZone=[];
+handles.screenParameters.UTMZone=[];
 guidata(gcf,handles);
 uiresume;
 

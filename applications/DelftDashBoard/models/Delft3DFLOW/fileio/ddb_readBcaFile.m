@@ -1,6 +1,6 @@
 function handles=ddb_readBcaFile(handles)
 
-fid=fopen(handles.Model(md).Input(ad).BcaFile);
+fid=fopen(handles.Model(md).Input(ad).bcaFile);
 
 k=0;
 for i=1:10000
@@ -10,29 +10,29 @@ for i=1:10000
     else
         v0='';
     end
-    if length(v0)>0
+    if ~isempty(v0)
         if length(v0)==1
             k=k+1;
             j=1;
-            handles.Model(md).Input(ad).NrAstronomicComponentSets=k;
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Name=v0{1};
+            handles.Model(md).Input(ad).nrAstronomicComponentSets=k;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).name=v0{1};
         elseif length(v0)==2 % A0!
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Nr=j;
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Component{j}=v0{1};
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Amplitude(j)=str2num(v0{2});
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Phase(j)=nan;
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Correction(j)=0;
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).AmplitudeCorrection(j)=0;
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).PhaseCorrection(j)=0;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).nr=j;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).component{j}=v0{1};
+            handles.Model(md).Input(ad).astronomicComponentSets(k).amplitude(j)=str2double(v0{2});
+            handles.Model(md).Input(ad).astronomicComponentSets(k).phase(j)=nan;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).correction(j)=0;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).amplitudeCorrection(j)=0;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).phaseCorrection(j)=0;
             j=j+1;
         else
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Nr=j;
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Component{j}=v0{1};
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Amplitude(j)=str2num(v0{2});
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Phase(j)=str2num(v0{3});
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).Correction(j)=0;
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).AmplitudeCorrection(j)=0;
-            handles.Model(md).Input(ad).AstronomicComponentSets(k).PhaseCorrection(j)=0;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).nr=j;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).component{j}=v0{1};
+            handles.Model(md).Input(ad).astronomicComponentSets(k).amplitude(j)=str2double(v0{2});
+            handles.Model(md).Input(ad).astronomicComponentSets(k).phase(j)=str2double(v0{3});
+            handles.Model(md).Input(ad).astronomicComponentSets(k).correction(j)=0;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).amplitudeCorrection(j)=0;
+            handles.Model(md).Input(ad).astronomicComponentSets(k).phaseCorrection(j)=0;
             j=j+1;
         end
     else

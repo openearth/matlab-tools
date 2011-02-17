@@ -1,6 +1,6 @@
 function handles=ddb_countOpenBoundaries(handles,id)
 
-nb=handles.Model(md).Input(id).NrOpenBoundaries;
+nb=handles.Model(md).Input(id).nrOpenBoundaries;
 
 ncor=0;
 nastro=0;
@@ -9,12 +9,12 @@ ntime=0;
 nqh=0;
 
 for i=1:nb
-    switch handles.Model(md).Input(id).OpenBoundaries(i).Forcing,
+    switch handles.Model(md).Input(id).openBoundaries(i).forcing,
         case{'A'}
             nastro=nastro+1;
-            for j=1:handles.Model(md).Input(id).NrAstronomicComponentSets
-                for k=1:handles.Model(md).Input(id).AstronomicComponentSets(j).Nr
-                    if handles.Model(md).Input(id).AstronomicComponentSets(j).Correction(k)
+            for j=1:handles.Model(md).Input(id).nrAstronomicComponentSets
+                for k=1:handles.Model(md).Input(id).astronomicComponentSets(j).nr
+                    if handles.Model(md).Input(id).astronomicComponentSets(j).correction(k)
                         ncor=ncor+1;
                     end
                 end
@@ -28,8 +28,8 @@ for i=1:nb
     end
 end
 
-handles.Model(md).Input(id).NrAstro=nastro;
-handles.Model(md).Input(id).NrCor=ncor;
-handles.Model(md).Input(id).NrHarmo=nharmo;
-handles.Model(md).Input(id).NrTime=ntime;
-handles.Model(md).Input(id).NrQH=nqh;
+handles.Model(md).Input(id).nrAstro=nastro;
+handles.Model(md).Input(id).nrCor=ncor;
+handles.Model(md).Input(id).nrHarmo=nharmo;
+handles.Model(md).Input(id).nrTime=ntime;
+handles.Model(md).Input(id).nrQH=nqh;

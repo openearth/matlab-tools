@@ -1,7 +1,7 @@
 function handles=ddb_determineKCS(handles)
 
-x=handles.Model(md).Input(ad).GridX;
-y=handles.Model(md).Input(ad).GridY;
+x=handles.Model(md).Input(ad).gridX;
+y=handles.Model(md).Input(ad).gridY;
 
 mmax=size(x,1);
 nmax=size(x,2);

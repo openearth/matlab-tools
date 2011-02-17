@@ -175,9 +175,10 @@ set(h,'Parent',tableHandle);
 set(h,'Callback',{@verticalSlider_Callback});
 usd.verticalSlider=h;
 if includebuttons
-    h = uicontrol(fig,'Style','pushbutton','String','Copy Row',  'Position',[posx+30 position(2)+nrrows*20-20 80 20]);
+%    h = uicontrol(fig,'Style','pushbutton','String','Copy Row',  'Position',[posx+30 position(2)+nrrows*20-20 80 20]);
+    h = uicontrol(fig,'Style','pushbutton','String','Copy Row',  'Position',[posx+30 nrrows*20-20 80 20]);
     set(h,'Callback',{@pushCopyRow_Callback},'Parent',tableHandle);
-    h = uicontrol(fig,'Style','pushbutton','String','Delete Row','Position',[posx+30 position(2)+nrrows*20-45 80 20]);
+    h = uicontrol(fig,'Style','pushbutton','String','Delete Row','Position',[posx+30 nrrows*20-45 80 20]);
     set(h,'Callback',{@pushDeleteRow_Callback},'Parent',tableHandle);
 end
 usd.data=data;

@@ -86,7 +86,7 @@ end
 set(f,'HandleVisibility','callback','visible','on');
 
 fh = get(f,'JavaFrame'); % Get Java Frame 
-fh.setFigureIcon(javax.swing.ImageIcon([handles.SettingsDir '\icons\deltares.gif']));
+fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsDir '\icons\deltares.gif']));
 
 set(0, 'Units', oldRootUnits);
 drawnow;

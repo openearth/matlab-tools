@@ -1,21 +1,21 @@
 function ddb_saveSrcFile(handles,id)
 
-fid=fopen(handles.Model(md).Input(id).SrcFile,'w');
+fid=fopen(handles.Model(md).Input(id).srcFile,'w');
 
-nr=handles.Model(md).Input(id).NrDischarges;
+nr=handles.Model(md).Input(id).nrDischarges;
 
 for i=1:nr
 
-    name=deblank(handles.Model(md).Input(id).Discharges(i).Name);
-    if strcmpi(handles.Model(md).Input(id).Discharges(i).Interpolation,'linear')
+    name=deblank(handles.Model(md).Input(id).discharges(i).name);
+    if strcmpi(handles.Model(md).Input(id).discharges(i).interpolation,'linear')
         cinterp='Y';
     else
         cinterp='N';
     end
 
-    m=num2str(handles.Model(md).Input(id).Discharges(i).M);
-    n=num2str(handles.Model(md).Input(id).Discharges(i).N);
-    k=num2str(handles.Model(md).Input(id).Discharges(i).K);
+    m=num2str(handles.Model(md).Input(id).discharges(i).M);
+    n=num2str(handles.Model(md).Input(id).discharges(i).N);
+    k=num2str(handles.Model(md).Input(id).discharges(i).K);
 
     m=[repmat(' ',1,4-length(m)) m];
     n=[repmat(' ',1,4-length(n)) n];
@@ -26,14 +26,14 @@ for i=1:nr
     cnout='';
     ckout='';
 
-    switch lower(handles.Model(md).Input(id).Discharges(i).Type)
+    switch lower(handles.Model(md).Input(id).discharges(i).type)
         case{'walking'}
             ctype=' W';
         case{'in-out'}
             ctype=' P';
-            cmout=num2str(handles.Model(md).Input(id).Discharges(i).Mout);
-            cnout=num2str(handles.Model(md).Input(id).Discharges(i).Nout);
-            ckout=num2str(handles.Model(md).Input(id).Discharges(i).Kout);
+            cmout=num2str(handles.Model(md).Input(id).discharges(i).mOut);
+            cnout=num2str(handles.Model(md).Input(id).discharges(i).nOut);
+            ckout=num2str(handles.Model(md).Input(id).discharges(i).kOut);
             cmout=[repmat(' ',1,4-length(cmout)) cmout];
             cnout=[repmat(' ',1,4-length(cnout)) cnout];
             ckout=[repmat(' ',1,4-length(ckout)) ckout];

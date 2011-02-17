@@ -1,6 +1,6 @@
 function ddb_plotXBeachBathymetry(handles,opt,id)
 
-ii=strmatch('XBeach',{handles.Model.Name},'exact');
+ii=strmatch('XBeach',{handles.Model.name},'exact');
 
 switch lower(opt)
 

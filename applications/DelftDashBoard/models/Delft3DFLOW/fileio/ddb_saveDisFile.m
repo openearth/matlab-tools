@@ -2,9 +2,9 @@ function ddb_saveDisFile(handles,id)
 
 Flw=handles.Model(md).Input(id);
 
-fname=Flw.DisFile;
+fname=Flw.disFile;
 
-nr=Flw.NrDischarges;
+nr=Flw.nrDischarges;
 
 Info.Check='OK';
 Info.FileName=fname;
@@ -13,7 +13,7 @@ Info.NTables=nr;
 
 for n=1:nr
     
-    switch lower(Flw.Discharges(n).Type)
+    switch lower(Flw.discharges(n).type)
         case{'normal'}
             tp='regular';
         case{'walking'}
@@ -25,60 +25,60 @@ for n=1:nr
     end
     Info.Table(n).Name=['Discharge : ' num2str(n)];
     Info.Table(n).Contents=tp;
-    Info.Table(n).Location=Flw.Discharges(n).Name;
+    Info.Table(n).Location=Flw.discharges(n).name;
     Info.Table(n).TimeFunction='non-equidistant';
-    itd=str2double(datestr(Flw.ItDate,'yyyymmdd'));
+    itd=str2double(datestr(Flw.itDate,'yyyymmdd'));
     Info.Table(n).ReferenceTime=itd;
     Info.Table(n).TimeUnit='minutes';
-    Info.Table(n).Interpolation=Flw.Discharges(n).Interpolation;
+    Info.Table(n).Interpolation=Flw.discharges(n).interpolation;
     Info.Table(n).Parameter(1).Name='time';
     Info.Table(n).Parameter(1).Unit='[min]';
-    t=Flw.Discharges(n).TimeSeriesT;
-    t=(t-Flw.ItDate)*1440;
+    t=Flw.discharges(n).timeSeriesT;
+    t=(t-Flw.itDate)*1440;
     Info.Table(n).Data(:,1)=t;
     Info.Table(n).Parameter(2).Name='flux/discharge rate';
     Info.Table(n).Parameter(2).Unit='[m3/s]';
-    Info.Table(n).Data(:,2)=Flw.Discharges(n).TimeSeriesQ;
+    Info.Table(n).Data(:,2)=Flw.discharges(n).timeSeriesQ;
 
     k=2;
 
-    if Flw.Salinity.Include
+    if Flw.salinity.include
         k=k+1;
         Info.Table(n).Parameter(k).Name='Salinity';
         Info.Table(n).Parameter(k).Unit='[ppt]';
-        Info.Table(n).Data(:,k)=Flw.Discharges(n).Salinity.TimeSeries;
+        Info.Table(n).Data(:,k)=Flw.discharges(n).salinity.timeSeries;
     end
-    if Flw.Temperature.Include
+    if Flw.temperature.include
         k=k+1;
         Info.Table(n).Parameter(k).Name='Temperature';
         Info.Table(n).Parameter(k).Unit='[C]';
-        Info.Table(n).Data(:,k)=Flw.Discharges(n).Temperature.TimeSeries;
+        Info.Table(n).Data(:,k)=Flw.discharges(n).temperature.timeSeries;
     end
-    if Flw.Sediments
-        for i=1:Flw.NrSediments
+    if Flw.sediments
+        for i=1:Flw.nrSediments
             k=k+1;
-            Info.Table(n).Parameter(k).Name=Flw.Sediment(i).Name;
+            Info.Table(n).Parameter(k).Name=Flw.sediment(i).name;
             Info.Table(n).Parameter(k).Unit='[kg/m3]';
-            Info.Table(n).Data(:,k)=Flw.Discharges(n).Sediment(i).TimeSeries;
+            Info.Table(n).Data(:,k)=Flw.discharges(n).sediment(i).timeSeries;
         end
     end
-    if Flw.Tracers
-        for i=1:Flw.NrTracers
+    if Flw.tracers
+        for i=1:Flw.nrTracers
             k=k+1;
-            Info.Table(n).Parameter(k).Name=Flw.Tracer(i).Name;
+            Info.Table(n).Parameter(k).Name=Flw.tracer(i).name;
             Info.Table(n).Parameter(k).Unit='[kg/m3]';
-            Info.Table(n).Data(:,k)=Flw.Discharges(n).Tracer(i).TimeSeries;
+            Info.Table(n).Data(:,k)=Flw.discharges(n).tracer(i).timeSeries;
         end
     end
-    if strcmpi(Flw.Discharges(n).Type,'momentum')
+    if strcmpi(Flw.discharges(n).Type,'momentum')
         k=k+1;
         Info.Table(n).Parameter(k).Name='flow magnitude';
         Info.Table(n).Parameter(k).Unit='[m/s]';
-        Info.Table(n).Data(:,k)=Flw.Discharges(n).TimeSeriesM;
+        Info.Table(n).Data(:,k)=Flw.discharges(n).timeSeriesM;
         k=k+1;
         Info.Table(n).Parameter(k).Name='flow direction';
         Info.Table(n).Parameter(k).Unit='[deg]';
-        Info.Table(n).Data(:,k)=Flw.Discharges(n).TimeSeriesM;
+        Info.Table(n).Data(:,k)=Flw.discharges(n).timeSeriesM;
     end
     
     npar=length(Info.Table(n).Parameter);

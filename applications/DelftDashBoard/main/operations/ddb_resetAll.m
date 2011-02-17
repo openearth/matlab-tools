@@ -40,25 +40,27 @@ if handles.debugMode
             handles.Model(i).GUI.elements=elements;
         end
     end
+
+    handles=ddb_addToolboxElements(handles);
         
     setHandles(handles);
     
     ddb_resize;
     
-    ddb_selectModel(handles.Model(md).Name,tbname,'runcallback',0);
+    ddb_selectModel(handles.Model(md).name,tbname,'runcallback',0);
     
 end
 
 
 for i=1:length(handles.Model)
     try
-        feval(handles.Model(i).PlotFcn,handles,'delete');
+        feval(handles.Model(i).plotFcn,handles,'delete');
     end
 end
 
 for i=1:length(handles.Toolbox)
     try
-        feval(handles.Toolbox(i).PlotFcn,handles,'delete');
+        feval(handles.Toolbox(i).plotFcn,handles,'delete');
     end
 end
 
@@ -66,8 +68,8 @@ ddb_initialize('all');
 
 handles=getHandles;
 
-handles.activeToolbox.Name='ModelMaker';
-handles.activeToolbox.Nr=1;
+handles.activeToolbox.name='ModelMaker';
+handles.activeToolbox.nr=1;
 
 c=handles.GUIHandles.Menu.Toolbox.ModelMaker;
 p=get(c,'Parent');
@@ -85,4 +87,4 @@ end
 
 setHandles(handles);
 
-tabpanel(handles.GUIHandles.MainWindow,'tabpanel','select','tabname','Toolbox');
+tabpanel(handles.GUIHandles.mainWindow,'tabpanel','select','tabname','Toolbox');

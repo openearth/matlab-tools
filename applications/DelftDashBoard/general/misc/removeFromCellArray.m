@@ -1,6 +1,6 @@
 function str1=removeFromCellArray(str0,iac)
 
-str{1}=[];
+str1{1}=[];
 k=0;
 for i=1:length(str0)
     if i~=iac

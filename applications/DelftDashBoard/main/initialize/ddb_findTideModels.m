@@ -4,17 +4,15 @@ handles=getHandles;
 
 handles=ddb_readTideModels(handles);
 
-k=handles.TideModels.nrModels+1;
+% k=handles.tideModels.nrModels+1;
+% handles.tideModels.nrModels=k;
+% handles.tideModels.longName{k}='Constant';
+% handles.tideModels.name{k}='constant';
+% handles.tideModels.model(k).Name='constant';
 
-handles.TideModels.nrModels=k;
+% handles.tideModels.activeTideModelBC=1;
+% handles.tideModels.activeTideModelIC=1;
 
-handles.TideModels.longName{k}='Constant';
-handles.TideModels.Name{k}='constant';
-handles.TideModels.Model(k).Name='constant';
-
-handles.TideModels.ActiveTideModelBC=handles.TideModels.Name{1};
-handles.TideModels.ActiveTideModelIC=handles.TideModels.Name{1};
-
-disp([num2str(handles.TideModels.nrModels) ' tide models found!']);
+disp([num2str(handles.tideModels.nrModels) ' tide models found!']);
 
 setHandles(handles);

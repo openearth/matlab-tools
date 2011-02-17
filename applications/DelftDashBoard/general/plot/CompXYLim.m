@@ -10,8 +10,8 @@ end
 pos=get(gca,'Position');
 asprat=pos(4)/pos(3);
 
-if isfield(handles.ScreenParameters,'CoordinateSystem')
-    if strcmpi(handles.ScreenParameters.CoordinateSystem.Type,'geographic')
+if isfield(handles.screenParameters,'coordinateSystem')
+    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         if abs(ylim0(2)-ylim0(1))<45
             fac=cos(pi*0.5*(ylim0(2)+ylim0(1))/180.0);
             asprat=asprat*fac;

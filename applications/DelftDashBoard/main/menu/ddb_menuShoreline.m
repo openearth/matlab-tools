@@ -9,8 +9,8 @@ ch=get(h,'Children');
 set(ch,'Checked','off');
 set(hObject,'Checked','on');
 
-if ~strcmpi(handles.ScreenParameters.Shoreline,lbl)
-    handles.ScreenParameters.Shoreline=lbl;
+if ~strcmpi(handles.screenParameters.shoreline,lbl)
+    handles.screenParameters.shoreline=lbl;
     setHandles(handles);
     ddb_updateDataInScreen;
 end

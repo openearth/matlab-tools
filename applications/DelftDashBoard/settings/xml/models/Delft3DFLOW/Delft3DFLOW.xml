@@ -35,6 +35,7 @@
         <tab>
           <tag>processes</tag>
           <tabstring>Processes</tabstring>
+          <callback>ddb_Delft3DFLOW_processes</callback>
           <elements>Delft3DFLOW.processes.xml</elements>
         </tab>
         <tab>
@@ -44,7 +45,7 @@
           <elements>Delft3DFLOW.initialconditions.xml</elements>
         </tab>
         <tab>
-          <tag>boundaries</tag>
+          <tag>openboundaries</tag>
           <tabstring>Boundaries</tabstring>
           <callback>ddb_Delft3DFLOW_openBoundaries</callback>
           <elements>Delft3DFLOW.openboundaries.xml</elements>

@@ -1,6 +1,6 @@
 function handles=ddb_initializeUnibestCLInput(handles,runid,varargin)
 
-md=strmatch('UnibestCL',{handles.Model.Name},'exact');
+md=strmatch('UnibestCL',{handles.Model.name},'exact');
 
 handles.Model(md).Input.Runid = runid;
 handles.Model(md).Input.NumberofClimates=0;

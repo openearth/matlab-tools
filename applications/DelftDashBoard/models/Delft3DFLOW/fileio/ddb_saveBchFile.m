@@ -1,38 +1,38 @@
 function handles=ddb_saveBchFile(handles,id)
 
-fid=fopen(handles.Model(md).Input(id).BchFile,'w');
+fid=fopen(handles.Model(md).Input(id).bchFile,'w');
 
-nr=handles.Model(md).Input(id).NrHarmonicComponents;
-nrb=handles.Model(md).Input(id).NrOpenBoundaries;
+nr=handles.Model(md).Input(id).nrHarmonicComponents;
+nrb=handles.Model(md).Input(id).nrOpenBoundaries;
 
 fmt=[repmat('%16.7e',1,nr) '\n'];
-fprintf(fid,fmt,handles.Model(md).Input(id).HarmonicComponents);
+fprintf(fid,fmt,handles.Model(md).Input(id).harmonicComponents);
 
 fprintf(fid,'%s\n','');
 
 for i=1:nrb
-    if handles.Model(md).Input(id).OpenBoundaries(i).Forcing=='H'
+    if handles.Model(md).Input(id).openBoundaries(i).forcing=='H'
         fmt=[repmat('%16.7e',1,nr) '\n'];
-        fprintf(fid,fmt,handles.Model(md).Input(id).OpenBoundaries(i).HarmonicAmpA);
+        fprintf(fid,fmt,handles.Model(md).Input(id).openBoundaries(i).harmonicAmpA);
     end
 end
 for i=1:nrb
-    if handles.Model(md).Input(id).OpenBoundaries(i).Forcing=='H'
+    if handles.Model(md).Input(id).openBoundaries(i).forcing=='H'
         fmt=[repmat('%16.7e',1,nr) '\n'];
-        fprintf(fid,fmt,handles.Model(md).Input(id).OpenBoundaries(i).HarmonicAmpB);
+        fprintf(fid,fmt,handles.Model(md).Input(id).openBoundaries(i).harmonicAmpB);
     end
 end
 fprintf(fid,'%s\n','');
 for i=1:nrb
-    if handles.Model(md).Input(id).OpenBoundaries(i).Forcing=='H'
+    if handles.Model(md).Input(id).openBoundaries(i).forcing=='H'
         fmt=['                ' repmat('%16.7e',1,nr-1) '\n'];
-        fprintf(fid,fmt,handles.Model(md).Input(id).OpenBoundaries(i).HarmonicPhaseA(2:end));
+        fprintf(fid,fmt,handles.Model(md).Input(id).openBoundaries(i).harmonicPhaseA(2:end));
     end
 end
 for i=1:nrb
-    if handles.Model(md).Input(id).OpenBoundaries(i).Forcing=='H'
+    if handles.Model(md).Input(id).openBoundaries(i).forcing=='H'
         fmt=['                ' repmat('%16.7e',1,nr-1) '\n'];
-        fprintf(fid,fmt,handles.Model(md).Input(id).OpenBoundaries(i).HarmonicPhaseB(2:end));
+        fprintf(fid,fmt,handles.Model(md).Input(id).openBoundaries(i).harmonicPhaseB(2:end));
     end
 end
 

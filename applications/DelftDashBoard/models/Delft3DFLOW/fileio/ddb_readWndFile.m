@@ -1,4 +1,4 @@
 function handles=ddb_readWndFile(handles,id)
 
-fname=handles.Model(md).Input(id).WndFile;
-handles.Model(md).Input(id).WindData=load(fname);
+fname=handles.Model(md).Input(id).wndFile;
+handles.Model(md).Input(id).windData=load(fname);

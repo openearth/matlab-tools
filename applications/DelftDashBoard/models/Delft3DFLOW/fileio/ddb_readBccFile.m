@@ -4,140 +4,136 @@ Flow=handles.Model(md).Input(ad);
 
 kmax=Flow.KMax;
 
-fname=Flow.BccFile;
+fname=Flow.bccFile;
 
 Info=ddb_bct_io('read',fname);
 
-for nb=1:Flow.NrOpenBoundaries
-    if Flow.Salinity.Include
-        nt=FindTable(Info,Flow.OpenBoundaries(nb).Name,'Salinity');
+for nb=1:Flow.nrOpenBoundaries
+    if Flow.salinity.Include
+        nt=FindTable(Info,Flow.openBoundaries(nb).Name,'salinity');
         if nt>0
             tab=Info.Table(nt);
             itd=tab.ReferenceTime;
             itd=datenum(num2str(itd),'yyyymmdd');
             t=itd+tab.Data(:,1)/1440;
-            Flow.OpenBoundaries(nb).Salinity.TimeSeriesT=t;
+            Flow.openBoundaries(nb).salinity.timeSeriesT=t;
             switch lower(deblank(tab.Contents))
                 case{'uniform'}
-                    Flow.OpenBoundaries(nb).Salinity.TimeSeriesA=tab.Data(:,2);
-                    Flow.OpenBoundaries(nb).Salinity.TimeSeriesB=tab.Data(:,3);
-                    Flow.OpenBoundaries(nb).Salinity.Profile='Uniform';
+                    Flow.openBoundaries(nb).salinity.timeSeriesA=tab.Data(:,2);
+                    Flow.openBoundaries(nb).salinity.timeSeriesB=tab.Data(:,3);
+                    Flow.openBoundaries(nb).salinity.profile='Uniform';
                 case{'step'}
-                    Flow.OpenBoundaries(nb).Salinity.TimeSeriesA=tab.Data(:,2);
-                    Flow.OpenBoundaries(nb).Salinity.TimeSeriesB=tab.Data(:,3);
-                    Flow.OpenBoundaries(nb).Salinity.Discontinuity=tab.Data(:,4);
-                    Flow.OpenBoundaries(nb).Salinity.Profile='Step';
+                    Flow.openBoundaries(nb).salinity.timeSeriesA=tab.Data(:,2);
+                    Flow.openBoundaries(nb).salinity.timeSeriesB=tab.Data(:,3);
+                    Flow.openBoundaries(nb).salinity.discontinuity=tab.Data(:,4);
+                    Flow.openBoundaries(nb).salinity.profile='Step';
                 case{'3d-profile'}
-                    Flow.OpenBoundaries(nb).Salinity.TimeSeriesA=tab.Data(:,2:kmax+1);
-                    Flow.OpenBoundaries(nb).Salinity.TimeSeriesB=tab.Data(:,kmax+2:2*kmax+1);
-                    Flow.OpenBoundaries(nb).Salinity.Profile='3d-profile';
+                    Flow.openBoundaries(nb).salinity.timeSeriesA=tab.Data(:,2:kmax+1);
+                    Flow.openBoundaries(nb).salinity.timeSeriesB=tab.Data(:,kmax+2:2*kmax+1);
+                    Flow.openBoundaries(nb).salinity.profile='3d-profile';
             end
         else
-%             GiveWarning('text',['No data found in bcc file for boundary ' Flow.OpenBoundaries(nb).Name ' parameter: Salinity']);
             t=[Flow.StartTime;Flow.StopTime];
-            Flow.OpenBoundaries(nb).Salinity.TimeSeriesT=t;
-            Flow.OpenBoundaries(nb).Salinity.TimeSeriesA=[0;0];
-            Flow.OpenBoundaries(nb).Salinity.TimeSeriesB=[0;0];
-            Flow.OpenBoundaries(nb).Salinity.Profile='Uniform';
+            Flow.openBoundaries(nb).salinity.timeSeriesT=t;
+            Flow.openBoundaries(nb).salinity.timeSeriesA=[0;0];
+            Flow.openBoundaries(nb).salinity.timeSeriesB=[0;0];
+            Flow.openBoundaries(nb).salinity.profile='Uniform';
         end
     end
-    if Flow.Temperature.Include
-        nt=FindTable(Info,Flow.OpenBoundaries(nb).Name,'Temperature');
+    if Flow.temperature.include
+        nt=FindTable(Info,Flow.openBoundaries(nb).name,'temperature');
         if nt>0
             tab=Info.Table(nt);
             itd=tab.ReferenceTime;
             itd=datenum(num2str(itd),'yyyymmdd');
             t=itd+tab.Data(:,1)/1440;
-            Flow.OpenBoundaries(nb).Temperature.TimeSeriesT=t;
+            Flow.openBoundaries(nb).temperature.timeSeriesT=t;
             switch lower(deblank(tab.Contents))
                 case{'uniform'}
-                    Flow.OpenBoundaries(nb).Temperature.TimeSeriesA=tab.Data(:,2);
-                    Flow.OpenBoundaries(nb).Temperature.TimeSeriesB=tab.Data(:,3);
-                    Flow.OpenBoundaries(nb).Temperature.Profile='Uniform';
+                    Flow.openBoundaries(nb).temperature.timeSeriesA=tab.Data(:,2);
+                    Flow.openBoundaries(nb).temperature.timeSeriesB=tab.Data(:,3);
+                    Flow.openBoundaries(nb).temperature.profile='Uniform';
                 case{'step'}
-                    Flow.OpenBoundaries(nb).Temperature.TimeSeriesA=tab.Data(:,2);
-                    Flow.OpenBoundaries(nb).Temperature.TimeSeriesB=tab.Data(:,3);
-                    Flow.OpenBoundaries(nb).Temperature.Discontinuity=tab.Data(:,4);
-                    Flow.OpenBoundaries(nb).Temperature.Profile='Step';
+                    Flow.openBoundaries(nb).temperature.timeSeriesA=tab.Data(:,2);
+                    Flow.openBoundaries(nb).temperature.timeSeriesB=tab.Data(:,3);
+                    Flow.openBoundaries(nb).temperature.discontinuity=tab.Data(:,4);
+                    Flow.openBoundaries(nb).temperature.profile='Step';
                 case{'3d-profile'}
-                    Flow.OpenBoundaries(nb).Temperature.TimeSeriesA=tab.Data(:,2:kmax+1);
-                    Flow.OpenBoundaries(nb).Temperature.TimeSeriesB=tab.Data(:,kmax+2:2*kmax+1);
-                    Flow.OpenBoundaries(nb).Temperature.Profile='3d-profile';
+                    Flow.openBoundaries(nb).temperature.timeSeriesA=tab.Data(:,2:kmax+1);
+                    Flow.openBoundaries(nb).temperature.timeSeriesB=tab.Data(:,kmax+2:2*kmax+1);
+                    Flow.openBoundaries(nb).temperature.profile='3d-profile';
             end
         else
-%             GiveWarning('text',['No data found in bcc file for boundary ' Flow.OpenBoundaries(nb).Name ' parameter: Temperature']);
             t=[Flow.StartTime;Flow.StopTime];
-            Flow.OpenBoundaries(nb).Temperature.TimeSeriesT=t;
-            Flow.OpenBoundaries(nb).Temperature.TimeSeriesA=[0;0];
-            Flow.OpenBoundaries(nb).Temperature.TimeSeriesB=[0;0];
-            Flow.OpenBoundaries(nb).Temperature.Profile='Uniform';
+            Flow.openBoundaries(nb).temperature.timeSeriesT=t;
+            Flow.openBoundaries(nb).temperature.timeSeriesA=[0;0];
+            Flow.openBoundaries(nb).temperature.timeSeriesB=[0;0];
+            Flow.openBoundaries(nb).temperature.profile='Uniform';
         end
     end
-    if Flow.Sediments
-        for j=1:Flow.NrSediments
-            nt=FindTable(Info,Flow.OpenBoundaries(nb).Name,Flow.Sediment(j).Name);
+    if Flow.sediments
+        for j=1:Flow.nrSediments
+            nt=FindTable(Info,Flow.openBoundaries(nb).name,Flow.sediment(j).name);
             if nt>0
                 tab=Info.Table(nt);
                 itd=tab.ReferenceTime;
                 itd=datenum(num2str(itd),'yyyymmdd');
                 t=itd+tab.Data(:,1)/1440;
-                Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesT=t;
+                Flow.openBoundaries(nb).sediment(j).timeSeriesT=t;
                 switch lower(deblank(tab.Contents))
                     case{'uniform'}
-                        Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesA=tab.Data(:,2);
-                        Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesB=tab.Data(:,3);
-                        Flow.OpenBoundaries(nb).Sediment(j).Profile='Uniform';
+                        Flow.openBoundaries(nb).sediment(j).timeSeriesA=tab.Data(:,2);
+                        Flow.openBoundaries(nb).sediment(j).timeSeriesB=tab.Data(:,3);
+                        Flow.openBoundaries(nb).sediment(j).profile='Uniform';
                     case{'step'}
-                        Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesA=tab.Data(:,2);
-                        Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesB=tab.Data(:,3);
-                        Flow.OpenBoundaries(nb).Sediment(j).Discontinuity=tab.Data(:,4);
-                        Flow.OpenBoundaries(nb).Sediment(j).Profile='Step';
+                        Flow.openBoundaries(nb).sediment(j).timeSeriesA=tab.Data(:,2);
+                        Flow.openBoundaries(nb).sediment(j).timeSeriesB=tab.Data(:,3);
+                        Flow.openBoundaries(nb).sediment(j).discontinuity=tab.Data(:,4);
+                        Flow.openBoundaries(nb).sediment(j).profile='Step';
                     case{'3d-profile'}
-                        Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesA=tab.Data(:,2:kmax+1);
-                        Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesB=tab.Data(:,kmax+2:2*kmax+1);
-                        Flow.OpenBoundaries(nb).Sediment(j).Profile='3d-profile';
+                        Flow.openBoundaries(nb).sediment(j).timeSeriesA=tab.Data(:,2:kmax+1);
+                        Flow.openBoundaries(nb).sediment(j).timeSeriesB=tab.Data(:,kmax+2:2*kmax+1);
+                        Flow.openBoundaries(nb).sediment(j).profile='3d-profile';
                 end
             else
-%                 GiveWarning('text',['No data found in bcc file for boundary ' Flow.OpenBoundaries(nb).Name ' parameter: ' Flow.Sediment(j).Name]);
                 t=[Flow.StartTime;Flow.StopTime];
-                Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesT=t;
-                Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesA=[0;0];
-                Flow.OpenBoundaries(nb).Sediment(j).TimeSeriesB=[0;0];
-                Flow.OpenBoundaries(nb).Sediment(j).Profile='Uniform';
+                Flow.openBoundaries(nb).sediment(j).timeSeriesT=t;
+                Flow.openBoundaries(nb).sediment(j).timeSeriesA=[0;0];
+                Flow.openBoundaries(nb).sediment(j).timeSeriesB=[0;0];
+                Flow.openBoundaries(nb).sediment(j).Profile='Uniform';
             end
         end
     end
-    if Flow.Tracers
-        for j=1:Flow.NrTracers
-            nt=FindTable(Info,Flow.OpenBoundaries(nb).Name,Flow.Tracer(j).Name);
+    if Flow.tracers
+        for j=1:Flow.nrTracers
+            nt=FindTable(Info,Flow.openBoundaries(nb).Name,Flow.tracer(j).Name);
             if nt>0
                 tab=Info.Table(nt);
                 itd=tab.ReferenceTime;
                 itd=datenum(num2str(itd),'yyyymmdd');
                 t=itd+tab.Data(:,1)/1440;
-                Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesT=t;
+                Flow.openBoundaries(nb).tracer(j).timeSeriesT=t;
                 switch lower(deblank(tab.Contents))
                     case{'uniform'}
-                        Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesA=tab.Data(:,2);
-                        Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesB=tab.Data(:,3);
-                        Flow.OpenBoundaries(nb).Tracer(j).Profile='Uniform';
+                        Flow.openBoundaries(nb).tracer(j).timeSeriesA=tab.Data(:,2);
+                        Flow.openBoundaries(nb).tracer(j).timeSeriesB=tab.Data(:,3);
+                        Flow.openBoundaries(nb).tracer(j).profile='Uniform';
                     case{'step'}
-                        Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesA=tab.Data(:,2);
-                        Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesB=tab.Data(:,3);
-                        Flow.OpenBoundaries(nb).Tracer(j).Discontinuity=tab.Data(:,4);
-                        Flow.OpenBoundaries(nb).Tracer(j).Profile='Step';
+                        Flow.openBoundaries(nb).tracer(j).timeSeriesA=tab.Data(:,2);
+                        Flow.openBoundaries(nb).tracer(j).timeSeriesB=tab.Data(:,3);
+                        Flow.openBoundaries(nb).tracer(j).discontinuity=tab.Data(:,4);
+                        Flow.openBoundaries(nb).tracer(j).profile='Step';
                     case{'3d-profile'}
-                        Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesA=tab.Data(:,2:kmax+1);
-                        Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesB=tab.Data(:,kmax+2:2*kmax+1);
-                        Flow.OpenBoundaries(nb).Tracer(j).Profile='3d-profile';
+                        Flow.openBoundaries(nb).tracer(j).timeSeriesA=tab.Data(:,2:kmax+1);
+                        Flow.openBoundaries(nb).tracer(j).timeSeriesB=tab.Data(:,kmax+2:2*kmax+1);
+                        Flow.openBoundaries(nb).tracer(j).profile='3d-profile';
                 end
             else
-%                 GiveWarning('text',['No data found in bcc file for boundary ' Flow.OpenBoundaries(nb).Name ' parameter: ' Flow.Tracer(j).Name]);
                 t=[Flow.StartTime;Flow.StopTime];
-                Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesT=t;
-                Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesA=[0;0];
-                Flow.OpenBoundaries(nb).Tracer(j).TimeSeriesB=[0;0];
-                Flow.OpenBoundaries(nb).Tracer(j).Profile='Uniform';
+                Flow.openBoundaries(nb).tracer(j).timeSeriesT=t;
+                Flow.openBoundaries(nb).tracer(j).timeSeriesA=[0;0];
+                Flow.openBoundaries(nb).tracer(j).timeSeriesB=[0;0];
+                Flow.openBoundaries(nb).tracer(j).profile='Uniform';
             end
 
         end

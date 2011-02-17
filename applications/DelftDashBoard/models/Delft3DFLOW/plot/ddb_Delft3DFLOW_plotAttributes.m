@@ -16,7 +16,7 @@ vis=1;
 act=1;
 
 % model number imd
-imd=strmatch('Delft3DFLOW',{handles.Model(:).Name},'exact');
+imd=strmatch('Delft3DFLOW',{handles.Model(:).name},'exact');
 
 % Read input arguments
 for i=1:length(varargin)
@@ -35,57 +35,57 @@ end
 switch lower(att)
     case{'observationpoints'}
         tag='observationpoint';
-        attStruc=handles.Model(imd).Input(iad).ObservationPoints;
-        nr=handles.Model(imd).Input(iad).NrObservationPoints;
-        iac=handles.Model(imd).Input(iad).activeObservationPoint;
+        attStruc=handles.Model(imd).Input(iad).observationPoints;
+        nr=handles.Model(imd).Input(iad).nrObservationPoints;
+        iac=handles.Model(imd).Input(iad).activeObservationPoint(1);
         colpas='c';
         colact='r';
         tp='line';
     case{'crosssections'}
         tag='crosssection';
-        attStruc=handles.Model(imd).Input(iad).CrossSections;
-        nr=handles.Model(imd).Input(iad).NrCrossSections;
-        iac=handles.Model(imd).Input(iad).activeCrossSection;
+        attStruc=handles.Model(imd).Input(iad).crossSections;
+        nr=handles.Model(imd).Input(iad).nrCrossSections;
+        iac=handles.Model(imd).Input(iad).activeCrossSection(1);
         colpas='c';
         colact='r';
         tp='line';
     case{'drypoints'}
         tag='drypoint';
-        attStruc=handles.Model(imd).Input(iad).DryPoints;
+        attStruc=handles.Model(imd).Input(iad).dryPoints;
         nr=handles.Model(imd).Input(iad).nrDryPoints;
-        iac=handles.Model(imd).Input(iad).activeDryPoint;
+        iac=handles.Model(imd).Input(iad).activeDryPoint(1);
         colpas=[0.85 0.85 0.50];
         colact='r';
         tp='patch';
     case{'openboundaries'}
         tag='openboundary';
-        attStruc=handles.Model(imd).Input(iad).OpenBoundaries;
-        nr=handles.Model(imd).Input(iad).NrOpenBoundaries;
-        iac=handles.Model(imd).Input(iad).activeOpenBoundary;
+        attStruc=handles.Model(imd).Input(iad).openBoundaries;
+        nr=handles.Model(imd).Input(iad).nrOpenBoundaries;
+        iac=handles.Model(imd).Input(iad).activeOpenBoundary(1);
         colpas='b';
         colact='r';
         tp='line';
     case{'thindams'}
         tag='thindam';
-        attStruc=handles.Model(imd).Input(iad).ThinDams;
+        attStruc=handles.Model(imd).Input(iad).thinDams;
         nr=handles.Model(imd).Input(iad).nrThinDams;
-        iac=handles.Model(imd).Input(iad).activeThinDam;
+        iac=handles.Model(imd).Input(iad).activeThinDam(1);
         colpas=[0.85 0.85 0.50];
         colact='r';
         tp='line';
     case{'discharges'}
         tag='discharge';
-        attStruc=handles.Model(imd).Input(iad).Discharges;
-        nr=handles.Model(imd).Input(iad).NrDischarges;
-        iac=handles.Model(imd).Input(iad).activeDischarge;
+        attStruc=handles.Model(imd).Input(iad).discharges;
+        nr=handles.Model(imd).Input(iad).nrDischarges;
+        iac=handles.Model(imd).Input(iad).activeDischarge(1);
         colpas=[1 0 1];
         colact='r';
         tp='line';
     case{'drogues'}
         tag='drogue';
-        attStruc=handles.Model(imd).Input(iad).Drogues;
-        nr=handles.Model(imd).Input(iad).NrDrogues;
-        iac=handles.Model(imd).Input(iad).activeDrogue;
+        attStruc=handles.Model(imd).Input(iad).drogues;
+        nr=handles.Model(imd).Input(iad).nrDrogues;
+        iac=handles.Model(imd).Input(iad).activeDrogue(1);
         colpas='g';
         colact='r';
         tp='line';
@@ -269,19 +269,19 @@ end
 
 switch lower(att)
     case{'observationpoints'}
-        handles.Model(imd).Input(iad).ObservationPoints=attStruc;
+        handles.Model(imd).Input(iad).observationPoints=attStruc;
     case{'crosssections'}
-        handles.Model(imd).Input(iad).CrossSections=attStruc;
+        handles.Model(imd).Input(iad).crossSections=attStruc;
     case{'drypoints'}
-        handles.Model(imd).Input(iad).DryPoints=attStruc;
+        handles.Model(imd).Input(iad).dryPoints=attStruc;
     case{'openboundaries'}
-        handles.Model(imd).Input(iad).OpenBoundaries=attStruc;
+        handles.Model(imd).Input(iad).openBoundaries=attStruc;
     case{'thindams'}
-        handles.Model(imd).Input(iad).ThinDams=attStruc;
+        handles.Model(imd).Input(iad).thinDams=attStruc;
     case{'discharges'}
-        handles.Model(imd).Input(iad).Discharges=attStruc;
+        handles.Model(imd).Input(iad).discharges=attStruc;
     case{'drogues'}
-        handles.Model(imd).Input(iad).Drogues=attStruc;
+        handles.Model(imd).Input(iad).drogues=attStruc;
 end
 
 
@@ -289,24 +289,24 @@ end
 %%
 function [x,y,txt,xtxt,ytxt]=getXY(handles,att,imd,id,i)
 
-xg=handles.Model(imd).Input(id).GridX;
-yg=handles.Model(imd).Input(id).GridY;
+xg=handles.Model(imd).Input(id).gridX;
+yg=handles.Model(imd).Input(id).gridY;
 
 switch lower(att)
     case{'observationpoints'}
-        txt=handles.Model(imd).Input(id).ObservationPoints(i).Name;
-        m=handles.Model(imd).Input(id).ObservationPoints(i).M;
-        n=handles.Model(imd).Input(id).ObservationPoints(i).N;
+        txt=handles.Model(imd).Input(id).observationPoints(i).name;
+        m=handles.Model(imd).Input(id).observationPoints(i).M;
+        n=handles.Model(imd).Input(id).observationPoints(i).N;
         x{1}=[xg(m-1,n-1) xg(m,n)];
         y{1}=[yg(m-1,n-1) yg(m,n)];
         x{2}=[xg(m,n-1) xg(m-1,n)];
         y{2}=[yg(m,n-1) yg(m-1,n)];
     case{'drypoints'}
         txt='';
-        m1=min(handles.Model(imd).Input(id).DryPoints(i).M1,handles.Model(imd).Input(id).DryPoints(i).M2);
-        n1=min(handles.Model(imd).Input(id).DryPoints(i).N1,handles.Model(imd).Input(id).DryPoints(i).N2);
-        m2=max(handles.Model(imd).Input(id).DryPoints(i).M1,handles.Model(imd).Input(id).DryPoints(i).M2);
-        n2=max(handles.Model(imd).Input(id).DryPoints(i).N1,handles.Model(imd).Input(id).DryPoints(i).N2);
+        m1=min(handles.Model(imd).Input(id).dryPoints(i).M1,handles.Model(imd).Input(id).dryPoints(i).M2);
+        n1=min(handles.Model(imd).Input(id).dryPoints(i).N1,handles.Model(imd).Input(id).dryPoints(i).N2);
+        m2=max(handles.Model(imd).Input(id).dryPoints(i).M1,handles.Model(imd).Input(id).dryPoints(i).M2);
+        n2=max(handles.Model(imd).Input(id).dryPoints(i).N1,handles.Model(imd).Input(id).dryPoints(i).N2);
         x1=xg(m1-1:m2,n1-1)';
         y1=yg(m1-1:m2,n1-1)';
         x1=[x1 xg(m2,n1-1:n2)];
@@ -318,22 +318,22 @@ switch lower(att)
         x{1}=x1;
         y{1}=y1;
     case{'openboundaries'}
-        txt=handles.Model(imd).Input(id).OpenBoundaries(i).Name;
-        x{1}=handles.Model(imd).Input(id).OpenBoundaries(i).X;
-        y{1}=handles.Model(imd).Input(id).OpenBoundaries(i).Y;
+        txt=handles.Model(imd).Input(id).openBoundaries(i).name;
+        x{1}=handles.Model(imd).Input(id).openBoundaries(i).x;
+        y{1}=handles.Model(imd).Input(id).openBoundaries(i).y;
     case{'thindams'}
         txt='';
-        m1=min(handles.Model(imd).Input(id).ThinDams(i).M1,handles.Model(imd).Input(id).ThinDams(i).M2);
-        n1=min(handles.Model(imd).Input(id).ThinDams(i).N1,handles.Model(imd).Input(id).ThinDams(i).N2);
-        m2=max(handles.Model(imd).Input(id).ThinDams(i).M1,handles.Model(imd).Input(id).ThinDams(i).M2);
-        n2=max(handles.Model(imd).Input(id).ThinDams(i).N1,handles.Model(imd).Input(id).ThinDams(i).N2);
+        m1=min(handles.Model(imd).Input(id).thinDams(i).M1,handles.Model(imd).Input(id).thinDams(i).M2);
+        n1=min(handles.Model(imd).Input(id).thinDams(i).N1,handles.Model(imd).Input(id).thinDams(i).N2);
+        m2=max(handles.Model(imd).Input(id).thinDams(i).M1,handles.Model(imd).Input(id).thinDams(i).M2);
+        n2=max(handles.Model(imd).Input(id).thinDams(i).N1,handles.Model(imd).Input(id).thinDams(i).N2);
         k=0;
         for jj=m1:m2
             for kk=n1:n2
                 k=k+1;
                 m=jj;
                 n=kk;
-                if strcmpi(handles.Model(imd).Input(id).ThinDams(i).UV,'u')
+                if strcmpi(handles.Model(imd).Input(id).thinDams(i).UV,'u')
                     x{k}=[xg(m,n-1) xg(m,n)];
                     y{k}=[yg(m,n-1) yg(m,n)];
                 else
@@ -343,11 +343,11 @@ switch lower(att)
             end
         end
     case{'crosssections'}
-        txt=handles.Model(imd).Input(id).CrossSections(i).Name;
-        m1=min(handles.Model(imd).Input(id).CrossSections(i).M1,handles.Model(imd).Input(id).CrossSections(i).M2);
-        n1=min(handles.Model(imd).Input(id).CrossSections(i).N1,handles.Model(imd).Input(id).CrossSections(i).N2);
-        m2=max(handles.Model(imd).Input(id).CrossSections(i).M1,handles.Model(imd).Input(id).CrossSections(i).M2);
-        n2=max(handles.Model(imd).Input(id).CrossSections(i).N1,handles.Model(imd).Input(id).CrossSections(i).N2);
+        txt=handles.Model(imd).Input(id).crossSections(i).name;
+        m1=min(handles.Model(imd).Input(id).crossSections(i).M1,handles.Model(imd).Input(id).crossSections(i).M2);
+        n1=min(handles.Model(imd).Input(id).crossSections(i).N1,handles.Model(imd).Input(id).crossSections(i).N2);
+        m2=max(handles.Model(imd).Input(id).crossSections(i).M1,handles.Model(imd).Input(id).crossSections(i).M2);
+        n2=max(handles.Model(imd).Input(id).crossSections(i).N1,handles.Model(imd).Input(id).crossSections(i).N2);
         k=0;
         for jj=m1:m2
             for kk=n1:n2
@@ -364,9 +364,9 @@ switch lower(att)
             end
         end
     case{'discharges'}
-        txt=handles.Model(imd).Input(id).Discharges(i).Name;
-        m=handles.Model(imd).Input(id).Discharges(i).M;
-        n=handles.Model(imd).Input(id).Discharges(i).N;
+        txt=handles.Model(imd).Input(id).discharges(i).name;
+        m=handles.Model(imd).Input(id).discharges(i).M;
+        n=handles.Model(imd).Input(id).discharges(i).N;
         x{1}(1)=0.5*(xg(m-1,n-1)+xg(m  ,n-1));
         y{1}(1)=0.5*(yg(m-1,n-1)+yg(m  ,n-1));
         x{1}(2)=0.5*(xg(m  ,n-1)+xg(m  ,n  ));
@@ -378,9 +378,9 @@ switch lower(att)
         x{1}(5)=x{1}(1);
         y{1}(5)=y{1}(1);
     case{'drogues'}
-        txt=handles.Model(imd).Input(id).Drogues(i).Name;
-        m=ceil(handles.Model(imd).Input(id).Drogues(i).M);
-        n=ceil(handles.Model(imd).Input(id).Drogues(i).N);
+        txt=handles.Model(imd).Input(id).drogues(i).name;
+        m=ceil(handles.Model(imd).Input(id).drogues(i).M);
+        n=ceil(handles.Model(imd).Input(id).drogues(i).N);
         x{1}(1)=0.5*(xg(m-1,n-1)+xg(m  ,n-1));
         y{1}(1)=0.5*(yg(m-1,n-1)+yg(m  ,n-1));
         x{1}(2)=0.5*(xg(m  ,n  )+xg(m-1,n  ));

@@ -4,11 +4,10 @@ function ddb_exportTideSignalAllStations(handles)
 
 posx=[];
 
-id=handles.ActiveDomain;
-Stations=handles.Toolbox(tb).TideStations;
+stations=handles.Toolbox(tb).tideStations;
 
-xg=handles.Model(handles.ActiveModel.Nr).Input(id).GridX;
-yg=handles.Model(handles.ActiveModel.Nr).Input(id).GridY;
+xg=handles.Model(md).Input(id).gridX;
+yg=handles.Model(md).Input(id).gridY;
 
 xmin=min(min(xg));
 xmax=max(max(xg));
@@ -24,7 +23,7 @@ y=Stations.y;
 % y=cell2mat(y);
 cs.Name='WGS 84';
 cs.Type='Geographic';
-[x,y]=ddb_coordConvert(x,y,cs,handles.ScreenParameters.CoordinateSystem);
+[x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
 
 for i=1:ns
     if x(i)>xmin && x(i)<xmax && ...
@@ -32,14 +31,14 @@ for i=1:ns
        n=n+1;
        posx(n)=x(i);
        posy(n)=y(i);
-       name{n}=deblank(Stations.Name{i});
+       name{n}=deblank(stations.Name{i});
        istat(n)=i;
     end
 end
 wb = waitbox('Finding Stations ...');
 if ~isempty(posx)
-    [m,n]=FindGridCell(posx,posy,xg,yg);
-    nobs=handles.Model(handles.ActiveModel.Nr).Input(id).NrObservationPoints;
+    [m,n]=findGridCell(posx,posy,xg,yg);
+    nobs=handles.Model(md).Input(ad).nrObservationPoints;
     for i=1:length(m)
         if m(i)>0
 
@@ -50,14 +49,14 @@ if ~isempty(posx)
                 A(ii,1)=cmp.Amplitude(ii);
                 G(ii,1)=cmp.Phase(ii);
             end
-            t0=handles.Toolbox(tb).StartTime;
-            t1=handles.Toolbox(tb).StopTime;
-            dt=handles.Toolbox(tb).TimeStep/60;
+            t0=handles.Toolbox(tb).startTime;
+            t1=handles.Toolbox(tb).stopTime;
+            dt=handles.Toolbox(tb).timeStep/60;
             t1=t1+dt/24;
 
             [prediction,times]=delftPredict2007(comp,A,G,t0,t1,dt);
 
-            blname=deblank(Stations.Name{k});
+            blname=deblank(stations.Name{k});
             fname=blname;
             fname=strrep(fname,' ','');
             fname=[fname '.tek'];

@@ -9,7 +9,7 @@ else
     dr=[ddb_root filesep 'toolboxes'];
 end
 
-handles.Toolbox(1).Name='dummy';
+handles.Toolbox(1).name='dummy';
 
 
 % Find standard toolboxes
@@ -48,26 +48,26 @@ end
 % Set names and functions
 nt=k;
 for i=1:nt
-    handles.Toolbox(i).Name=name{i};
-    handles.Toolbox(i).LongName=name{i};
-    handles.Toolbox(i).CallFcn=str2func(['ddb_' name{i} 'Toolbox']);
-    handles.Toolbox(i).IniFcn=str2func(['ddb_initialize' name{i}]);
-    handles.Toolbox(i).PlotFcn=str2func(['ddb_plot' name{i}]);
-    handles.Toolbox(i).CoordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
+    handles.Toolbox(i).name=name{i};
+    handles.Toolbox(i).longName=name{i};
+    handles.Toolbox(i).callFcn=str2func(['ddb_' name{i} 'Toolbox']);
+    handles.Toolbox(i).iniFcn=str2func(['ddb_initialize' name{i}]);
+    handles.Toolbox(i).plotFcn=str2func(['ddb_plot' name{i}]);
+    handles.Toolbox(i).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
     if strcmpi(tp{i},'standard')
-        handles.Toolbox(i).Dir=[dr filesep name{i}];
+        handles.Toolbox(i).dir=[dr filesep name{i}];
     else
-        handles.Toolbox(i).Dir=[dr2 filesep name{i}];
+        handles.Toolbox(i).dir=[dr2 filesep name{i}];
     end
 end
 
 % Set ModelMaker to be the first toolbox
-ii=strmatch('ModelMaker',{handles.Toolbox(:).Name},'exact');
+ii=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
 tt=handles.Toolbox;
 handles.Toolbox(1)=tt(ii);
 k=1;
 for i=1:length(handles.Toolbox)
-    if ~strcmpi(tt(i).Name,'ModelMaker')
+    if ~strcmpi(tt(i).name,'ModelMaker')
         k=k+1;
         handles.Toolbox(k)=tt(i);
     end
@@ -75,7 +75,7 @@ end
 
 % Run very first initialize function
 for i=1:nt
-    f=handles.Toolbox(i).IniFcn;
+    f=handles.Toolbox(i).iniFcn;
     handles=f(handles,'veryfirst');
 end
 
@@ -84,7 +84,7 @@ for i=1:nt
     handles=ddb_readToolboxXML(handles,i);
 end
 
-handles.activeToolbox.Name='ModelMaker';
-handles.activeToolbox.Nr=1;
+handles.activeToolbox.name='ModelMaker';
+handles.activeToolbox.nr=1;
 
 setHandles(handles);

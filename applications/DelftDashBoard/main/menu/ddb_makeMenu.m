@@ -8,16 +8,16 @@ handles.GUIHandles.Menu.File.Main=uimenu('Label','File','Tag','menuFile');
 uimenu('Label','Toolbox','Tag','menuToolbox');
 for k=1:length(handles.Toolbox)
     if k==2
-        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).Name,'Callback',{@ddb_menuToolbox},'longname',handles.Toolbox(k).LongName,'Separator','on');
+        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox},'longname',handles.Toolbox(k).longName,'Separator','on');
     else
-        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).Name,'Callback',{@ddb_menuToolbox,},'longname',handles.Toolbox(k).LongName);
+        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox,},'longname',handles.Toolbox(k).longName);
     end
 end
 
 %% Models
 uimenu('Label','Model','Tag','menuModel');
 for k=1:length(handles.Model)
-    handles=ddb_addMenuItem(handles,'Model',handles.Model(k).Name,     'Callback',{@ddb_menuModel},'longname',handles.Model(k).LongName,'Checked','off');
+    handles=ddb_addMenuItem(handles,'Model',handles.Model(k).name,     'Callback',{@ddb_menuModel},'longname',handles.Model(k).longName,'Checked','off');
 end
 
 %% Domain
@@ -27,36 +27,36 @@ handles=ddb_addMenuItem(handles,'Domain','tst',                 'Callback',{@ddb
 
 %% Bathymetry
 uimenu('Label','Bathymetry','Tag','menuBathymetry');
-for i=1:handles.Bathymetry.NrDatasets
-    if strcmpi(handles.Bathymetry.Datasets{i},handles.ScreenParameters.BackgroundBathymetry)
-        if handles.Bathymetry.Dataset(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.Bathymetry.Datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','on');
+for i=1:handles.bathymetry.nrDatasets
+    if strcmpi(handles.bathymetry.datasets{i},handles.screenParameters.backgroundBathymetry)
+        if handles.bathymetry.dataset(i).isAvailable
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','on');
         else
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.Bathymetry.Datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','off');
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','off');
         end
     else
-        if handles.Bathymetry.Dataset(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.Bathymetry.Datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','on');
+        if handles.bathymetry.dataset(i).isAvailable
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','on');
         else
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.Bathymetry.Datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','off');
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','off');
         end
     end
 end
 
 %% Shoreline
 uimenu('Label','Shoreline','Tag','menuShoreline');
-for i=1:handles.Shorelines.nrShorelines
-    if strcmpi(handles.Shorelines.longName{i},handles.ScreenParameters.Shoreline)
-        if handles.Shorelines.Shoreline(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Shoreline',handles.Shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','on');
+for i=1:handles.shorelines.nrShorelines
+    if strcmpi(handles.shorelines.longName{i},handles.screenParameters.shoreline)
+        if handles.shorelines.shoreline(i).isAvailable
+            handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','on');
         else
-            handles=ddb_addMenuItem(handles,'Shoreline',handles.Shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','off');
+            handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','on','Enable','off');
         end
     else
-        if handles.Shorelines.Shoreline(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Shoreline',handles.Shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','on');
+        if handles.shorelines.shoreline(i).isAvailable
+            handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','on');
         else
-            handles=ddb_addMenuItem(handles,'Shoreline',handles.Shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','off');
+            handles=ddb_addMenuItem(handles,'Shoreline',handles.shorelines.longName{i},'Callback',{@ddb_menuShoreline},'Checked','off','Enable','off');
         end
     end
 end

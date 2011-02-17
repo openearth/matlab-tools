@@ -33,20 +33,20 @@ handles.GUIHandles.Axis=ax;
 
 handles.GUIHandles.textAnn=annotation('textbox',[0.02 0.02 0.4 0.2]);
 
-handles.ScreenParameters.CMin=-10000;
-handles.ScreenParameters.CMax=10000;
-handles.ScreenParameters.AutomaticColorLimits=1;
-handles.ScreenParameters.ColorMap='Earth';
+handles.screenParameters.cMin=-10000;
+handles.screenParameters.cMax=10000;
+handles.screenParameters.automaticColorLimits=1;
+handles.screenParameters.colorMap='Earth';
 
-handles.ScreenParameters.XLim=[-180 180];
-handles.ScreenParameters.YLim=[-90 90];
+handles.screenParameters.xLim=[-180 180];
+handles.screenParameters.yLim=[-90 90];
 
 view(2);
 set(handles.GUIHandles.Axis,'xlim',[-180 180],'ylim',[-90 90],'zlim',[-12000 10000]);
 hold on;
 zoom v6 on;
 
-load([handles.SettingsDir 'colormaps\earth.mat']);
+load([handles.settingsDir 'colormaps\earth.mat']);
 handles.GUIData.ColorMaps.Earth=earth;
 
 setHandles(handles);
@@ -63,13 +63,13 @@ ddb_updateDataInScreen;
 
 handles=getHandles;
 
-load([handles.SettingsDir 'geo\worldcoastline.mat']);
+load([handles.settingsDir 'geo\worldcoastline.mat']);
 handles.GUIData.WorldCoastLine5000000(:,1)=wclx;
 handles.GUIData.WorldCoastLine5000000(:,2)=wcly;
 
 setHandles(handles);
 
-c=load([handles.SettingsDir 'geo\cities.mat']);
+c=load([handles.settingsDir 'geo\cities.mat']);
 for i=1:length(c.cities)
     handles.GUIData.cities.Lon(i)=c.cities(i).Lon;
     handles.GUIData.cities.Lat(i)=c.cities(i).Lat;

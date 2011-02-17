@@ -8,23 +8,18 @@ yl=get(handles.GUIHandles.mapAxis,'ylim');
 % BathyCoord.Name='WGS 84';
 % BathyCoord.Type='Geographic';
 
-iac=strmatch(lower(handles.ScreenParameters.BackgroundBathymetry),lower(handles.Bathymetry.Datasets),'exact');
-BathyCoord.Name=handles.Bathymetry.Dataset(iac).HorizontalCoordinateSystem.Name;
-BathyCoord.Type=handles.Bathymetry.Dataset(iac).HorizontalCoordinateSystem.Type;
+iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+bathyCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
+bathyCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
 
-% if strcmpi(handles.ScreenParameters.BackgroundBathymetry,'vaklodingen')
-%     BathyCoord.Name='Amersfoort / RD New';
-%     BathyCoord.Type='Cartesian';
-% end
-
-Coord=handles.ScreenParameters.CoordinateSystem;
+coord=handles.screenParameters.coordinateSystem;
 
 dx=(xl(2)-xl(1))/20;
 dy=(yl(2)-yl(1))/20;
 
-if ~strcmpi(Coord.Name,BathyCoord.Name) || ~strcmpi(Coord.Type,BathyCoord.Type)
+if ~strcmpi(coord.name,bathyCoord.name) || ~strcmpi(coord.type,bathyCoord.type)
     [xtmp,ytmp]=meshgrid(xl(1)-dx:dx:xl(2)+dx,yl(1)-dy:dy:yl(2)+dy);
-    [xtmp2,ytmp2]=ddb_coordConvert(xtmp,ytmp,Coord,BathyCoord);
+    [xtmp2,ytmp2]=ddb_coordConvert(xtmp,ytmp,coord,bathyCoord);
     xl0(1)=min(min(xtmp2));
     xl0(2)=max(max(xtmp2));
     yl0(1)=min(min(ytmp2));
@@ -32,7 +27,7 @@ if ~strcmpi(Coord.Name,BathyCoord.Name) || ~strcmpi(Coord.Type,BathyCoord.Type)
 else
     xl0=[xl(1)-dx xl(2)+dx];
     yl0=[yl(1)-dy yl(2)+dy];
-%    [xl0,yl0]=ddb_coordConvert(xl,yl,Coord,BathyCoord);
+%    [xl0,yl0]=ddb_coordConvert(xl,yl,coord,bathyCoord);
 end
 
 clear xtmp ytmp xtmp2 ytmp2
@@ -47,12 +42,12 @@ if ok
 
     res=(xl(2)-xl(1))/(1*pos(3));
 
-    if ~strcmpi(Coord.Name,BathyCoord.Name) || ~strcmpi(Coord.Type,BathyCoord.Type)
+    if ~strcmpi(coord.name,bathyCoord.name) || ~strcmpi(coord.type,bathyCoord.type)
         % Interpolate on rectangular grid
         [x11,y11]=meshgrid(xl(1)-dx:res:xl(2)+dx,yl(1)-dy:res:yl(2)+dy);
         tic
         disp('Converting coordinates ...');
-        [x2,y2]=ddb_coordConvert(x11,y11,Coord,BathyCoord);
+        [x2,y2]=ddb_coordConvert(x11,y11,coord,bathyCoord);
         toc
         tic
         disp('Interpolating data ...');

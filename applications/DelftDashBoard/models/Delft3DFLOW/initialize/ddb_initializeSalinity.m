@@ -1,26 +1,26 @@
 function handles=ddb_initializeSalinity(handles,id)
 
-handles.Model(md).Input(id).Salinity.ICOpt='Constant';
-handles.Model(md).Input(id).Salinity.ICConst=31;
-handles.Model(md).Input(id).Salinity.ICPar=[0 0];
-handles.Model(md).Input(id).Salinity.BCOpt='Constant';
-handles.Model(md).Input(id).Salinity.BCConst=31;
-handles.Model(md).Input(id).Salinity.BCPar=[0 0];
+handles.Model(md).Input(id).salinity.ICOpt='Constant';
+handles.Model(md).Input(id).salinity.ICConst=31;
+handles.Model(md).Input(id).salinity.ICPar=[0 0];
+handles.Model(md).Input(id).salinity.BCOpt='Constant';
+handles.Model(md).Input(id).salinity.BCConst=31;
+handles.Model(md).Input(id).salinity.BCPar=[0 0];
 
-t0=handles.Model(md).Input(id).StartTime;
-t1=handles.Model(md).Input(id).StopTime;
+t0=handles.Model(md).Input(id).startTime;
+t1=handles.Model(md).Input(id).stopTime;
 
-for j=1:handles.Model(md).Input(id).NrOpenBoundaries
-    handles.Model(md).Input(id).OpenBoundaries(j).Salinity.NrTimeSeries=2;
-    handles.Model(md).Input(id).OpenBoundaries(j).Salinity.TimeSeriesT=[t0;t1];
-    handles.Model(md).Input(id).OpenBoundaries(j).Salinity.TimeSeriesA=[0.0;0.0];
-    handles.Model(md).Input(id).OpenBoundaries(j).Salinity.TimeSeriesB=[0.0;0.0];
-    handles.Model(md).Input(id).OpenBoundaries(j).Salinity.Profile='Uniform';
-    handles.Model(md).Input(id).OpenBoundaries(j).Salinity.Interpolation='Linear';
-    handles.Model(md).Input(id).OpenBoundaries(j).Salinity.Discontinuity=1;
+for j=1:handles.Model(md).Input(id).nrOpenBoundaries
+    handles.Model(md).Input(id).openBoundaries(j).salinity.nrTimeSeries=2;
+    handles.Model(md).Input(id).openBoundaries(j).salinity.timeSeriesT=[t0;t1];
+    handles.Model(md).Input(id).openBoundaries(j).salinity.timeSeriesA=[0.0;0.0];
+    handles.Model(md).Input(id).openBoundaries(j).salinity.timeSeriesB=[0.0;0.0];
+    handles.Model(md).Input(id).openBoundaries(j).salinity.profile='Uniform';
+    handles.Model(md).Input(id).openBoundaries(j).salinity.interpolation='Linear';
+    handles.Model(md).Input(id).openBoundaries(j).salinity.discontinuity=1;
 end
 
-for j=1:handles.Model(md).Input(id).NrDischarges
-    handles.Model(md).Input(id).Discharges(j).Salinity.TimeSeries=[0.0;0.0];
+for j=1:handles.Model(md).Input(id).nrDischarges
+    handles.Model(md).Input(id).discharges(j).salinity.timeSeries=[0.0;0.0];
 end
 

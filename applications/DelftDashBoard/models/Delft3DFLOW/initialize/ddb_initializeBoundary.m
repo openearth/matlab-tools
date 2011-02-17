@@ -1,76 +1,76 @@
 function handles=ddb_initializeBoundary(handles,nb)
 
-handles.Model(md).Input(ad).OpenBoundaries(nb).Name='unknown';
-handles.Model(md).Input(ad).OpenBoundaries(nb).Alpha=0.0;
-handles.Model(md).Input(ad).OpenBoundaries(nb).CompA='unnamed';
-handles.Model(md).Input(ad).OpenBoundaries(nb).CompB='unnamed';
-handles.Model(md).Input(ad).OpenBoundaries(nb).Type='Z';
-handles.Model(md).Input(ad).OpenBoundaries(nb).Forcing='A';
-handles.Model(md).Input(ad).OpenBoundaries(nb).Profile='Uniform';
-handles.Model(md).Input(ad).OpenBoundaries(nb).THLag=[0 0];
+handles.Model(md).Input(ad).openBoundaries(nb).name='unknown';
+handles.Model(md).Input(ad).openBoundaries(nb).alpha=0.0;
+handles.Model(md).Input(ad).openBoundaries(nb).compA='unnamed';
+handles.Model(md).Input(ad).openBoundaries(nb).compB='unnamed';
+handles.Model(md).Input(ad).openBoundaries(nb).type='Z';
+handles.Model(md).Input(ad).openBoundaries(nb).forcing='A';
+handles.Model(md).Input(ad).openBoundaries(nb).profile='Uniform';
+handles.Model(md).Input(ad).openBoundaries(nb).THLag=[0 0];
 
 [xb,yb,zb,side,orientation]=ddb_getBoundaryCoordinates(handles,ad,nb);
-handles.Model(md).Input(ad).OpenBoundaries(nb).X=xb;
-handles.Model(md).Input(ad).OpenBoundaries(nb).Y=yb;
-handles.Model(md).Input(ad).OpenBoundaries(nb).Depth=zb;
-handles.Model(md).Input(ad).OpenBoundaries(nb).Side=side;
-handles.Model(md).Input(ad).OpenBoundaries(nb).Orientation=orientation;
+handles.Model(md).Input(ad).openBoundaries(nb).x=xb;
+handles.Model(md).Input(ad).openBoundaries(nb).y=yb;
+handles.Model(md).Input(ad).openBoundaries(nb).depth=zb;
+handles.Model(md).Input(ad).openBoundaries(nb).side=side;
+handles.Model(md).Input(ad).openBoundaries(nb).orientation=orientation;
 
 % Timeseries
-t0=handles.Model(md).Input(ad).StartTime;
-t1=handles.Model(md).Input(ad).StopTime;
-handles.Model(md).Input(ad).OpenBoundaries(nb).TimeSeriesT=[t0;t1];
-handles.Model(md).Input(ad).OpenBoundaries(nb).TimeSeriesA=[0.0;0.0];
-handles.Model(md).Input(ad).OpenBoundaries(nb).TimeSeriesB=[0.0;0.0];
-handles.Model(md).Input(ad).OpenBoundaries(nb).NrTimeSeries=2;
+t0=handles.Model(md).Input(ad).startTime;
+t1=handles.Model(md).Input(ad).stopTime;
+handles.Model(md).Input(ad).openBoundaries(nb).timeSeriesT=[t0;t1];
+handles.Model(md).Input(ad).openBoundaries(nb).timeSeriesA=[0.0;0.0];
+handles.Model(md).Input(ad).openBoundaries(nb).timeSeriesB=[0.0;0.0];
+handles.Model(md).Input(ad).openBoundaries(nb).nrTimeSeries=2;
 
 % Harmonic
-handles.Model(md).Input(ad).OpenBoundaries(nb).HarmonicAmpA=zeros(1,handles.Model(md).Input(ad).NrHarmonicComponents);
-handles.Model(md).Input(ad).OpenBoundaries(nb).HarmonicAmpB=zeros(1,handles.Model(md).Input(ad).NrHarmonicComponents);
-handles.Model(md).Input(ad).OpenBoundaries(nb).HarmonicPhaseA=zeros(1,handles.Model(md).Input(ad).NrHarmonicComponents);
-handles.Model(md).Input(ad).OpenBoundaries(nb).HarmonicPhaseB=zeros(1,handles.Model(md).Input(ad).NrHarmonicComponents);
+handles.Model(md).Input(ad).openBoundaries(nb).harmonicAmpA=zeros(1,handles.Model(md).Input(ad).nrHarmonicComponents);
+handles.Model(md).Input(ad).openBoundaries(nb).harmonicAmpB=zeros(1,handles.Model(md).Input(ad).nrHarmonicComponents);
+handles.Model(md).Input(ad).openBoundaries(nb).harmonicPhaseA=zeros(1,handles.Model(md).Input(ad).nrHarmonicComponents);
+handles.Model(md).Input(ad).openBoundaries(nb).harmonicPhaseB=zeros(1,handles.Model(md).Input(ad).nrHarmonicComponents);
 
 % QH
-handles.Model(md).Input(ad).OpenBoundaries(nb).QHDischarge =[0.0 100.0];
-handles.Model(md).Input(ad).OpenBoundaries(nb).QHWaterLevel=[0.0 0.0];
+handles.Model(md).Input(ad).openBoundaries(nb).QHDischarge =[0.0 100.0];
+handles.Model(md).Input(ad).openBoundaries(nb).QHWaterLevel=[0.0 0.0];
 
 % Salinity
-handles.Model(md).Input(ad).OpenBoundaries(nb).Salinity.NrTimeSeries=2;
-handles.Model(md).Input(ad).OpenBoundaries(nb).Salinity.TimeSeriesT=[t0;t1];
-handles.Model(md).Input(ad).OpenBoundaries(nb).Salinity.TimeSeriesA=[31.0;31.0];
-handles.Model(md).Input(ad).OpenBoundaries(nb).Salinity.TimeSeriesB=[31.0;31.0];
-handles.Model(md).Input(ad).OpenBoundaries(nb).Salinity.Profile='Uniform';
-handles.Model(md).Input(ad).OpenBoundaries(nb).Salinity.Interpolation='Linear';
-handles.Model(md).Input(ad).OpenBoundaries(nb).Salinity.Discontinuity=1;
+handles.Model(md).Input(ad).openBoundaries(nb).salinity.nrTimeSeries=2;
+handles.Model(md).Input(ad).openBoundaries(nb).salinity.timeSeriesT=[t0;t1];
+handles.Model(md).Input(ad).openBoundaries(nb).salinity.timeSeriesA=[31.0;31.0];
+handles.Model(md).Input(ad).openBoundaries(nb).salinity.timeSeriesB=[31.0;31.0];
+handles.Model(md).Input(ad).openBoundaries(nb).salinity.profile='Uniform';
+handles.Model(md).Input(ad).openBoundaries(nb).salinity.interpolation='Linear';
+handles.Model(md).Input(ad).openBoundaries(nb).salinity.discontinuity=1;
 
 % Temperature
-handles.Model(md).Input(ad).OpenBoundaries(nb).Temperature.NrTimeSeries=2;
-handles.Model(md).Input(ad).OpenBoundaries(nb).Temperature.TimeSeriesT=[t0;t1];
-handles.Model(md).Input(ad).OpenBoundaries(nb).Temperature.TimeSeriesA=[20.0;20.0];
-handles.Model(md).Input(ad).OpenBoundaries(nb).Temperature.TimeSeriesB=[20.0;20.0];
-handles.Model(md).Input(ad).OpenBoundaries(nb).Temperature.Profile='Uniform';
-handles.Model(md).Input(ad).OpenBoundaries(nb).Temperature.Interpolation='Linear';
-handles.Model(md).Input(ad).OpenBoundaries(nb).Temperature.Discontinuity=1;
+handles.Model(md).Input(ad).openBoundaries(nb).temperature.nrTimeSeries=2;
+handles.Model(md).Input(ad).openBoundaries(nb).temperature.timeSeriesT=[t0;t1];
+handles.Model(md).Input(ad).openBoundaries(nb).temperature.timeSeriesA=[20.0;20.0];
+handles.Model(md).Input(ad).openBoundaries(nb).temperature.timeSeriesB=[20.0;20.0];
+handles.Model(md).Input(ad).openBoundaries(nb).temperature.profile='Uniform';
+handles.Model(md).Input(ad).openBoundaries(nb).temperature.interpolation='Linear';
+handles.Model(md).Input(ad).openBoundaries(nb).temperature.discontinuity=1;
 
 % Sediments
-for i=1:handles.Model(md).Input(ad).NrSediments
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Sediment(i).NrTimeSeries=2;
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Sediment(i).TimeSeriesT=[t0;t1];
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Sediment(i).TimeSeriesA=[0.0;0.0];
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Sediment(i).TimeSeriesB=[0.0;0.0];
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Sediment(i).Profile='Uniform';
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Sediment(i).Interpolation='Linear';
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Sediment(i).Discontinuity=1;
+for i=1:handles.Model(md).Input(ad).nrSediments
+    handles.Model(md).Input(ad).openBoundaries(nb).sediment(i).nrTimeSeries=2;
+    handles.Model(md).Input(ad).openBoundaries(nb).sediment(i).timeSeriesT=[t0;t1];
+    handles.Model(md).Input(ad).openBoundaries(nb).sediment(i).timeSeriesA=[0.0;0.0];
+    handles.Model(md).Input(ad).openBoundaries(nb).sediment(i).timeSeriesB=[0.0;0.0];
+    handles.Model(md).Input(ad).openBoundaries(nb).sediment(i).profile='Uniform';
+    handles.Model(md).Input(ad).openBoundaries(nb).sediment(i).interpolation='Linear';
+    handles.Model(md).Input(ad).openBoundaries(nb).sediment(i).discontinuity=1;
 end
 
 % Tracers
-for i=1:handles.Model(md).Input(ad).NrTracers
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Tracer(i).NrTimeSeries=2;
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Tracer(i).TimeSeriesT=[t0;t1];
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Tracer(i).TimeSeriesA=[0.0;0.0];
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Tracer(i).TimeSeriesB=[0.0;0.0];
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Tracer(i).Profile='Uniform';
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Tracer(i).Interpolation='Linear';
-    handles.Model(md).Input(ad).OpenBoundaries(nb).Tracer(i).Discontinuity=1;
+for i=1:handles.Model(md).Input(ad).nrTracers
+    handles.Model(md).Input(ad).openBoundaries(nb).tracer(i).nrTimeSeries=2;
+    handles.Model(md).Input(ad).openBoundaries(nb).tracer(i).timeSeriesT=[t0;t1];
+    handles.Model(md).Input(ad).openBoundaries(nb).tracer(i).timeSeriesA=[0.0;0.0];
+    handles.Model(md).Input(ad).openBoundaries(nb).tracer(i).timeSeriesB=[0.0;0.0];
+    handles.Model(md).Input(ad).openBoundaries(nb).tracer(i).profile='Uniform';
+    handles.Model(md).Input(ad).openBoundaries(nb).tracer(i).interpolation='Linear';
+    handles.Model(md).Input(ad).openBoundaries(nb).tracer(i).discontinuity=1;
 end
 

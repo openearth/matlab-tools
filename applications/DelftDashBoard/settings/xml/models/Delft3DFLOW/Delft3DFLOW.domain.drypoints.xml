@@ -8,14 +8,12 @@
     <tooltipstring>Select dry point</tooltipstring>
     <text>Dry Points</text>
     <textposition>above-center</textposition>
-    <variable>
-      <name>activeDryPoint</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).activeDryPoint</variable>
+    <type>integer</type>
     <list>
-      <variable>
-        <name>dryPointNames</name>
-      </variable>
+      <texts>
+        <variable>handles.Model(md).Input(ad).dryPointNames</variable>
+      </texts>
     </list>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
     <option1>selectfromlist</option1>
@@ -33,21 +31,8 @@
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
     <option1>edit</option1>
     <tooltipstring>Edit dry point index M1</tooltipstring>
-    <variable>
-      <name>M1</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>DryPoints</name>
-          <index>
-            <variable>
-              <name>activeDryPoint</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).dryPoints(handles.Model(md).Input(ad).activeDryPoint).M1</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -59,10 +44,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrDryPoints</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -83,21 +65,8 @@
     <text>N1</text>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
     <option1>edit</option1>
-    <variable>
-      <name>N1</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>DryPoints</name>
-          <index>
-            <variable>
-              <name>activeDryPoint</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).dryPoints(handles.Model(md).Input(ad).activeDryPoint).N1</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -109,10 +78,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrDryPoints</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -134,21 +100,8 @@
     <text>M2</text>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
     <option1>edit</option1>
-    <variable>
-      <name>M2</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>DryPoints</name>
-          <index>
-            <variable>
-              <name>activeDryPoint</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).dryPoints(handles.Model(md).Input(ad).activeDryPoint).M2</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -160,10 +113,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrDryPoints</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -185,21 +135,8 @@
     <text>N2</text>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
     <option1>edit</option1>
-    <variable>
-      <name>N2</name>
-      <type>integer</type>
-      <subfield3>
-        <variable>
-          <name>DryPoints</name>
-          <index>
-            <variable>
-              <name>activeDryPoint</name>
-              <type>integer</type>
-            </variable>
-          </index>
-        </variable>
-      </subfield3>
-    </variable>
+    <variable>handles.Model(md).Input(ad).dryPoints(handles.Model(md).Input(ad).activeDryPoint).N2</variable>
+    <type>integer</type>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -211,10 +148,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>nrDryPoints</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -237,10 +171,7 @@
     <tooltipstring>Add dry point</tooltipstring>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
     <option1>add</option1>
-    <variable>
-      <name>addDryPoint</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).addDryPoint</variable>
   </element>
   <element>
     <tag>pushdeletedrypoint</tag>
@@ -259,10 +190,7 @@
     <tooltipstring>Select dry point</tooltipstring>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
     <option1>select</option1>
-    <variable>
-      <name>selectDryPoint</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).selectDryPoint</variable>
   </element>
   <element>
     <tag>togglechangedrypoint</tag>
@@ -272,10 +200,7 @@
     <tooltipstring>Change dry point</tooltipstring>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
     <option1>change</option1>
-    <variable>
-      <name>changeDryPoint</name>
-      <type>integer</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).changeDryPoint</variable>
   </element>
   <element>
     <tag>pushopendrypoints</tag>
@@ -283,10 +208,7 @@
     <position>450 60 70 20</position>
     <tooltipstring>Open dry points file</tooltipstring>
     <text>Open</text>
-    <variable>
-      <name>DryFile</name>
-      <type>string</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).dryFile</variable>
     <extension>*.dry</extension>
     <selectiontext>Select dry points File</selectiontext>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
@@ -306,10 +228,7 @@
     <position>450 35 70 20</position>
     <tooltipstring>Save dry points file</tooltipstring>
     <text>Save</text>
-    <variable>
-      <name>DryFile</name>
-      <type>string</type>
-    </variable>
+    <variable>handles.Model(md).Input(ad).dryFile</variable>
     <showfilename>0</showfilename>
     <extension>*.dry</extension>
     <selectiontext>Select dry points File</selectiontext>

@@ -3,22 +3,22 @@ function handles=ddb_initializeDelft3DFLOW(handles,varargin)
 if nargin>1
     switch varargin{1}
         case{'veryfirst'}
-            ii=strmatch('Delft3DFLOW',{handles.Model.Name},'exact');
-            handles.Model(ii).LongName='Delft3D-FLOW';
+            ii=strmatch('Delft3DFLOW',{handles.Model.name},'exact');
+            handles.Model(ii).longName='Delft3D-FLOW';
             return
     end
 end
 
-handles.GUIData.ActiveDryPoint=1;
-handles.GUIData.ActiveThinDam=1;
-handles.GUIData.ActiveCrossSection=1;
-handles.GUIData.ActiveDischarge=1;
-handles.GUIData.ActiveDrogue=1;
-handles.GUIData.ActiveObservationPoint=1;
-handles.GUIData.ActiveOpenBoundary=1;
+handles.GUIData.activeDryPoint=1;
+handles.GUIData.activeThinDam=1;
+handles.GUIData.activeCrossSection=1;
+handles.GUIData.activeDischarge=1;
+handles.GUIData.activeDrogue=1;
+handles.GUIData.activeObservationPoint=1;
+handles.GUIData.activeOpenBoundary=1;
 
-handles.ActiveDomain=1;
-handles.GUIData.NrFlowDomains=1;
+handles.activeDomain=1;
+handles.GUIData.nrFlowDomains=1;
 
 handles.Model(md).Input=[];
 

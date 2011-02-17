@@ -2,32 +2,32 @@ function ddb_changeCoordinateSystem
 
 handles=getHandles;
 
-NewSystem=handles.ScreenParameters.CoordinateSystem;
-OldSystem=handles.ScreenParameters.OldCoordinateSystem;
+NewSystem=handles.screenParameters.coordinateSystem;
+OldSystem=handles.screenParameters.oldCoordinateSystem;
 
 xl=get(gca,'XLim');
 yl=get(gca,'YLim');
 
 [xl1,yl1]=ddb_coordConvert(xl,yl,OldSystem,NewSystem);
 
-lngth=length(NewSystem.Name);
-nsys=lower(NewSystem.Name(1:min(lngth,12)));
+lngth=length(NewSystem.name);
+nsys=lower(NewSystem.name(1:min(lngth,12)));
 
-if strcmpi(NewSystem.Type,'Cartesian')
-    set(handles.GUIHandles.TextCoordinateSystem,'String',[NewSystem.Name ' - Projected']);
+if strcmpi(NewSystem.type,'Cartesian')
+    set(handles.GUIHandles.textCoordinateSystem,'String',[NewSystem.name ' - Projected']);
 else
-    set(handles.GUIHandles.TextCoordinateSystem,'String',[NewSystem.Name ' - Geographic']);
+    set(handles.GUIHandles.textCoordinateSystem,'String',[NewSystem.name ' - Geographic']);
 end
 
 switch nsys,
     case{'wgs 84'}
-        handles.ScreenParameters.XMaxRange=[-180 180];
-        handles.ScreenParameters.YMaxRange=[-90 90];
+        handles.screenParameters.xMaxRange=[-180 180];
+        handles.screenParameters.yMaxRange=[-90 90];
     case{'wgs 84 / utm'}
 %         utmzone1=str2num(NewSystem(4:5));
 %         utmzone2=NewSystem(6);
-        utmzone1=handles.ScreenParameters.UTMZone{1};
-        utmzone2=handles.ScreenParameters.UTMZone{2};
+        utmzone1=handles.screenParameters.UTMZone{1};
+        utmzone2=handles.screenParameters.UTMZone{2};
         zn={'C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X'};
         ii=strmatch(utmzone2,zn,'exact');
         dy=10000000*8/90;
@@ -42,8 +42,8 @@ switch nsys,
         end
         xutm1=0;
         xutm2=1000000;
-        handles.ScreenParameters.XMaxRange=[-2000000 3000000];
-        handles.ScreenParameters.YMaxRange=[-2000000 10000000];
+        handles.screenParameters.xMaxRange=[-2000000 3000000];
+        handles.screenParameters.yMaxRange=[-2000000 10000000];
         if yl1(1)<yutm1 || yl1(1)>yutm2 || yl1(2)<yutm1 || yl1(2)>yutm2
             yl1(1)=yutm1;
             yl1(2)=yutm2;
@@ -53,14 +53,14 @@ switch nsys,
             xl1(2)=xutm2;
         end
     otherwise
-        handles.ScreenParameters.XMaxRange=[-5000000 5000000];
-        handles.ScreenParameters.YMaxRange=[0 5000000];
+        handles.screenParameters.xMaxRange=[-5000000 5000000];
+        handles.screenParameters.yMaxRange=[0 5000000];
 end
 
-[xl,yl]=CompXYLim(xl1,yl1,handles.ScreenParameters.XMaxRange,handles.ScreenParameters.YMaxRange);
+[xl,yl]=CompXYLim(xl1,yl1,handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
 
-handles.ScreenParameters.XLim=xl;
-handles.ScreenParameters.YLim=yl;
+handles.screenParameters.xLim=xl;
+handles.screenParameters.yLim=yl;
 
 set(gca,'XLim',xl,'YLim',yl);
 
@@ -73,8 +73,8 @@ ddb_updateDataInScreen;
 handles=getHandles;
 
 % Cities
-geoSystem.Type='geographic';
-geoSystem.Name='WGS 84';
+geoSystem.type='geographic';
+geoSystem.name='WGS 84';
 [xc,yc]=ddb_coordConvert(handles.mapData.cities.lon,handles.mapData.cities.lat,geoSystem,NewSystem);
 for i=1:length(handles.mapData.cities.lon)
     set(handles.mapHandles.textCities(i),'Position',[xc(i) yc(i) 500]);
@@ -83,7 +83,7 @@ set(handles.mapHandles.cities,'XData',xc,'YData',yc);
 
 % Models
 for i=1:length(handles.Model)
-    f=handles.Model(i).CoordConvertFcn;
+    f=handles.Model(i).coordConvertFcn;
     try
         handles=f(handles);
     end
@@ -91,7 +91,7 @@ end
 
 % Toolboxes
 for i=1:length(handles.Toolbox)
-    f=handles.Toolbox(i).CoordConvertFcn;
+    f=handles.Toolbox(i).coordConvertFcn;
     try
         handles=f(handles);
     end

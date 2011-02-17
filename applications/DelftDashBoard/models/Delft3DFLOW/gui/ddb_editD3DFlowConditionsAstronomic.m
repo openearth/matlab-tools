@@ -3,62 +3,62 @@ function ddb_editD3DFlowConditionsAstronomic
 h=getHandles;
 
 handles=h.Model(md).Input(ad);
-handles.GUIData.ActiveOpenBoundary=h.GUIData.ActiveOpenBoundary;
+iac=handles.activeOpenBoundary;
 
-a=load([h.SettingsDir 'tidalconstituents\t_constituents.mat']);
-handles.ComponentNames=cellstr(a.const.name);
+a=load([h.settingsDir 'tidalconstituents\t_constituents.mat']);
+handles.componentNames=cellstr(a.const.name);
 
-if handles.NrAstronomicComponentSets==0
-    handles.NrAstronomicComponentSets=1;
-    handles.AstronomicComponentSets.Name='unnamed';
-    handles.AstronomicComponentSets.Nr=2;
-    handles.AstronomicComponentSets.Component{1}='M2';
-    handles.AstronomicComponentSets.Component{2}='S2';
-    handles.AstronomicComponentSets.Amplitude(1)=1.0;
-    handles.AstronomicComponentSets.Amplitude(2)=1.0;
-    handles.AstronomicComponentSets.Phase(1)=0.0;
-    handles.AstronomicComponentSets.Phase(2)=0.0;
-    handles.AstronomicComponentSets.Correction(1)=0;
-    handles.AstronomicComponentSets.Correction(2)=0;
-    handles.AstronomicComponentSets.AmplitudeCorrection(1)=0;
-    handles.AstronomicComponentSets.AmplitudeCorrection(2)=0;
-    handles.AstronomicComponentSets.PhaseCorrection(1)=0;
-    handles.AstronomicComponentSets.PhaseCorrection(2)=0;
+if handles.nrAstronomicComponentSets==0
+    handles.nrAstronomicComponentSets=1;
+    handles.astronomicComponentSets.name='unnamed';
+    handles.astronomicComponentSets.nr=2;
+    handles.astronomicComponentSets.component{1}='M2';
+    handles.astronomicComponentSets.component{2}='S2';
+    handles.astronomicComponentSets.amplitude(1)=1.0;
+    handles.astronomicComponentSets.amplitude(2)=1.0;
+    handles.astronomicComponentSets.phase(1)=0.0;
+    handles.astronomicComponentSets.phase(2)=0.0;
+    handles.astronomicComponentSets.correction(1)=0;
+    handles.astronomicComponentSets.correction(2)=0;
+    handles.astronomicComponentSets.amplitudeCorrection(1)=0;
+    handles.astronomicComponentSets.amplitudeCorrection(2)=0;
+    handles.astronomicComponentSets.phaseCorrection(1)=0;
+    handles.astronomicComponentSets.phaseCorrection(2)=0;
 else
-    for i=1:handles.NrAstronomicComponentSets
-        str{i}=handles.AstronomicComponentSets(i).Name;
+    for i=1:handles.nrAstronomicComponentSets
+        str{i}=handles.astronomicComponentSets(i).name;
     end
     k1=strmatch('unnamed',str,'exact');
-    if isempty(k1) && (strcmp(handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompA,'unnamed') || strcmp(handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompB,'unnamed'))
-        n=handles.NrAstronomicComponentSets+1;
-        handles.NrAstronomicComponentSets=n;
-        handles.AstronomicComponentSets(n).Name='unnamed';
-        handles.AstronomicComponentSets(n).Nr=2;
-        handles.AstronomicComponentSets(n).Component{1}='M2';
-        handles.AstronomicComponentSets(n).Component{2}='S2';
-        handles.AstronomicComponentSets(n).Amplitude(1)=1.0;
-        handles.AstronomicComponentSets(n).Amplitude(2)=1.0;
-        handles.AstronomicComponentSets(n).Phase(1)=0.0;
-        handles.AstronomicComponentSets(n).Phase(2)=0.0;
-        handles.AstronomicComponentSets(n).Correction(1)=0;
-        handles.AstronomicComponentSets(n).Correction(2)=0;
-        handles.AstronomicComponentSets(n).AmplitudeCorrection(1)=0;
-        handles.AstronomicComponentSets(n).AmplitudeCorrection(2)=0;
-        handles.AstronomicComponentSets(n).PhaseCorrection(1)=0;
-        handles.AstronomicComponentSets(n).PhaseCorrection(2)=0;
+    if isempty(k1) && (strcmp(handles.openBoundaries(iac).compA,'unnamed') || strcmp(handles.openBoundaries(iac).compB,'unnamed'))
+        n=handles.nrAstronomicComponentSets+1;
+        handles.nrAstronomicComponentSets=n;
+        handles.astronomicComponentSets(n).name='unnamed';
+        handles.astronomicComponentSets(n).nr=2;
+        handles.astronomicComponentSets(n).component{1}='M2';
+        handles.astronomicComponentSets(n).component{2}='S2';
+        handles.astronomicComponentSets(n).amplitude(1)=1.0;
+        handles.astronomicComponentSets(n).amplitude(2)=1.0;
+        handles.astronomicComponentSets(n).phase(1)=0.0;
+        handles.astronomicComponentSets(n).phase(2)=0.0;
+        handles.astronomicComponentSets(n).correction(1)=0;
+        handles.astronomicComponentSets(n).correction(2)=0;
+        handles.astronomicComponentSets(n).amplitudeCorrection(1)=0;
+        handles.astronomicComponentSets(n).amplitudeCorrection(2)=0;
+        handles.astronomicComponentSets(n).phaseCorrection(1)=0;
+        handles.astronomicComponentSets(n).phaseCorrection(2)=0;
     end
 end
 
-MakeNewWindow('Astronomic Boundary Conditions',[750 600],'modal',[h.SettingsDir '\icons\deltares.gif']);
+wnd=MakeNewWindow('Astronomic Boundary Conditions',[750 600],'modal',[h.settingsDir '\icons\deltares.gif']);
 
 uipanel('Title','Component Sets','Units','pixels','Position',[20 370 360 210],'Tag','UIControl');
-for i=1:handles.NrAstronomicComponentSets
-    handles.ComponentSets{i}=handles.AstronomicComponentSets(i).Name;
+for i=1:handles.nrAstronomicComponentSets
+    handles.componentSets{i}=handles.astronomicComponentSets(i).name;
 end
-ii=strmatch(handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompA,handles.ComponentSets,'exact');
-handles.ActiveComponentSet=handles.ComponentSets{ii};
+ii=strmatch(handles.openBoundaries(iac).compA,handles.componentSets,'exact');
+handles.ActiveComponentSet=handles.componentSets{ii};
 handles.GUIHandles.TextSelectedComponentSets=uicontrol(gcf,'Style','text','String','Selected Component Sets','Position',[510 450 130 20],'HorizontalAlignment','center');
-handles.GUIHandles.ListComponentSets      = uicontrol(gcf,'Style','listbox','String',handles.ComponentSets,'Value',ii,'Position',[40 390 150 150],'HorizontalAlignment','left',  'BackgroundColor',[1 1 1]);
+handles.GUIHandles.ListComponentSets      = uicontrol(gcf,'Style','listbox','String',handles.componentSets,'Value',ii,'Position',[40 390 150 150],'HorizontalAlignment','left',  'BackgroundColor',[1 1 1]);
 handles.GUIHandles.TextComponentSets      = uicontrol(gcf,'Style','text','String','Available Sets','Position',[40 540 150 20], 'HorizontalAlignment','center');
 handles.GUIHandles.PushAddComponentSet    = uicontrol(gcf,'Style','pushbutton','String','Add',   'Position',[210 520 60 20]);
 handles.GUIHandles.PushDeleteComponentSet = uicontrol(gcf,'Style','pushbutton','String','Delete','Position',[210 490 60 20]);
@@ -75,9 +75,26 @@ set(handles.GUIHandles.EditComponentSetName,'CallBack',{@EditComponentSetName_Ca
 handles.GUIHandles.PushViewTimeSeries    = uicontrol(gcf,'Style','pushbutton','String','View',   'Position',[210 460 60 20]);
 set(handles.GUIHandles.PushViewTimeSeries,   'CallBack',{@PushViewTimeSeries_CallBack});
 
-%
+cltp={'popupmenu','editreal','editreal','checkbox'};
+wdt=[80 80 80 20];
+callbacks={'','','',@RefreshCorrections};
+for i=1:length(handles.componentNames)
+    ppm{i,1}=handles.componentNames{i};
+    ppm{i,2}='';
+    ppm{i,3}='';
+end
+handles.GUIHandles.componentSetTable=table(wnd,'create','tag','componentSetTable','position',[50 110],'nrrows',8,'columntypes',cltp,'width',wdt,'popuptext',ppm,'callbacks',callbacks,'includebuttons',1);
 
-switch handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).Type,
+%
+cltp={'pushbutton','editreal','editreal'};
+enab=zeros(8,3)+1;
+enab(:,1)=0;
+wdt=[80 60 60];
+pushtext={'a','b','c'};
+handles.GUIHandles.correctionTable=table(wnd,'create','tag','correctiontable','position',[460 110],'nrrows',8,'columntypes',cltp,'width',wdt,'enable',enab,'pushtext',pushtext);
+
+
+switch handles.openBoundaries(iac).type,
     case{'Z'}
         quant='Water Level';
         unit='m';
@@ -100,29 +117,29 @@ end
 
 uipanel('Title','Boundary Section','Units','pixels','Position',[450 370 250 210]);
 handles.GUIHandles.TextBoundary = uicontrol(gcf,'Style','text','String','Boundary :' ,'Position',[470 530 200 20],'HorizontalAlignment','left');
-handles.GUIHandles.TextBoundaryName = uicontrol(gcf,'Style','text','String',handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).Name,'Position',[545 530 150 20],'HorizontalAlignment','left');
+handles.GUIHandles.TextBoundaryName = uicontrol(gcf,'Style','text','String',handles.openBoundaries(iac).name,'Position',[545 530 150 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextQuantity   = uicontrol(gcf,'Style','text','String','Quantity :','Position',[470 510 200 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextQuantity   = uicontrol(gcf,'Style','text','String',quant,'Position',[545 510 150 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextForcingType = uicontrol(gcf,'Style','text','String','Forcing Type :','Position',[470 490 150 20],'HorizontalAlignment','left');
 handles.GUIHandles.TextForcingType = uicontrol(gcf,'Style','text','String','Astronomic','Position',[545 490 150 20],'HorizontalAlignment','left');
 
 handles.GUIHandles.TextBoundarySectionA=uicontrol(gcf,'Style','text','String','End A','Position',[470 427 100 20],'HorizontalAlignment','left');
-handles.GUIHandles.SelectBoundarySectionA =uicontrol(gcf,'Style','popupmenu','String',handles.ComponentSets,'Position',[510 430 130 20],'BackgroundColor',[1 1 1]);
-ii=strmatch(handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompA,handles.ComponentSets,'exact');
+handles.GUIHandles.SelectBoundarySectionA =uicontrol(gcf,'Style','popupmenu','String',handles.componentSets,'Position',[510 430 130 20],'BackgroundColor',[1 1 1]);
+ii=strmatch(handles.openBoundaries(iac).compA,handles.componentSets,'exact');
 if ~isempty(ii)
     set(handles.GUIHandles.SelectBoundarySectionA,'Value',ii);
 else
-    GiveWarning('Warning',[handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompA ' does not exist!']);
+    GiveWarning('Warning',[handles.openBoundaries(iac).compA ' does not exist!']);
     return
 end
 
 handles.GUIHandles.TextBoundarySectionB=uicontrol(gcf,'Style','text','String','End B','Position',[470 397 100 20],'HorizontalAlignment','left');
-handles.GUIHandles.SelectBoundarySectionB =uicontrol(gcf,'Style','popupmenu','String',handles.ComponentSets,'Position',[510 400 130 20],'BackgroundColor',[1 1 1]);
-ii=strmatch(handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompB,handles.ComponentSets,'exact');
+handles.GUIHandles.SelectBoundarySectionB =uicontrol(gcf,'Style','popupmenu','String',handles.componentSets,'Position',[510 400 130 20],'BackgroundColor',[1 1 1]);
+ii=strmatch(handles.openBoundaries(iac).compB,handles.componentSets,'exact');
 if ~isempty(ii)
     set(handles.GUIHandles.SelectBoundarySectionB,'Value',ii);
 else
-    GiveWarning('Warning',[handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompA ' does not exist!']);
+    GiveWarning('Warning',[handles.openBoundaries(iac).compA ' does not exist!']);
     return
 end
 
@@ -161,7 +178,7 @@ guidata(findobj('Name','Astronomic Boundary Conditions'),handles);
 %%
 function ListComponentSets_CallBack(hObject,eventdata)
 handles=guidata(findobj('Name','Astronomic Boundary Conditions'));
-str=handles.ComponentSets;
+str=handles.componentSets;
 str=str{get(hObject,'Value')};
 %if ~strcmp(str,handles.ActiveComponentSet)
     [handles,ok]=ChangeData(handles);
@@ -173,7 +190,7 @@ str=str{get(hObject,'Value')};
         guidata(findobj('Name','Astronomic Boundary Conditions'),handles);
         RefreshCorrections;
     else
-        ii=strmatch(handles.ActiveComponentSet,handles.ComponentSets,'exact');
+        ii=strmatch(handles.ActiveComponentSet,handles.componentSets,'exact');
         set(hObject,'Value',ii);
     end
 %end
@@ -183,24 +200,24 @@ function EditComponentSetName_CallBack(hObject,eventdata)
 handles=guidata(findobj('Name','Astronomic Boundary Conditions'));
 ii=get(handles.GUIHandles.ListComponentSets,'Value');
 name=get(hObject,'String');
-handles.AstronomicComponentSets(ii).Name=name;
-handles.ComponentSets{ii}=name;
-set(handles.GUIHandles.ListComponentSets,'String',handles.ComponentSets);
-set(handles.GUIHandles.SelectBoundarySectionA,'String',handles.ComponentSets);
-set(handles.GUIHandles.SelectBoundarySectionB,'String',handles.ComponentSets);
+handles.astronomicComponentSets(ii).name=name;
+handles.componentSets{ii}=name;
+set(handles.GUIHandles.ListComponentSets,'String',handles.componentSets);
+set(handles.GUIHandles.SelectBoundarySectionA,'String',handles.componentSets);
+set(handles.GUIHandles.SelectBoundarySectionB,'String',handles.componentSets);
 k=get(handles.GUIHandles.SelectBoundarySectionA,'Value');
 str=get(handles.GUIHandles.SelectBoundarySectionA,'String');
 if strcmp(str{k},handles.ActiveComponentSet)
-    handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompA=name;
+    handles.openBoundaries(iac).compA=name;
 end
-set(handles.GUIHandles.SelectBoundarySectionA,'String',handles.ComponentSets);
+set(handles.GUIHandles.SelectBoundarySectionA,'String',handles.componentSets);
 k=get(handles.GUIHandles.SelectBoundarySectionB,'Value');
 str=get(handles.GUIHandles.SelectBoundarySectionB,'String');
 if strcmp(str{k},handles.ActiveComponentSet)
-    handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompB=name;
+    handles.openBoundaries(iac).compB=name;
 end
-set(handles.GUIHandles.SelectBoundarySectionB,'String',handles.ComponentSets);
-handles.ActiveComponentSet=handles.ComponentSets{ii};
+set(handles.GUIHandles.SelectBoundarySectionB,'String',handles.componentSets);
+handles.ActiveComponentSet=handles.componentSets{ii};
 set(handles.GUIHandles.panel2,'Title',['Astronomical Data for Set ' handles.ActiveComponentSet]);
 guidata(findobj('Name','Astronomic Boundary Conditions'),handles);
 
@@ -209,7 +226,7 @@ function SelectBoundarySectionA_CallBack(hObject,eventdata,icomp)
 handles=guidata(findobj('Name','Astronomic Boundary Conditions'));
 ii=get(hObject,'Value');
 str=get(hObject,'String');
-handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompA=str{ii};
+handles.openBoundaries(handles.activeOpenBoundary).compA=str{ii};
 guidata(findobj('Name','Astronomic Boundary Conditions'),handles);
 
 %%
@@ -217,7 +234,7 @@ function SelectBoundarySectionB_CallBack(hObject,eventdata,icomp)
 handles=guidata(findobj('Name','Astronomic Boundary Conditions'));
 ii=get(hObject,'Value');
 str=get(hObject,'String');
-handles.OpenBoundaries(handles.GUIData.ActiveOpenBoundary).CompB=str{ii};
+handles.openBoundaries(handles.activeOpenBoundary).compB=str{ii};
 guidata(findobj('Name','Astronomic Boundary Conditions'),handles);
 
 %%
@@ -229,32 +246,32 @@ handles=getHandles;
 
 [h2,ok]=ChangeData(h2);
 if ok==1
-    for i=1:h2.NrOpenBoundaries
-        if strcmp(h2.OpenBoundaries(i).Forcing,'A')
-            stra{i}=h2.OpenBoundaries(i).CompA;
-            strb{i}=h2.OpenBoundaries(i).CompB;
+    for i=1:h2.nrOpenBoundaries
+        if strcmp(h2.openBoundaries(i).forcing,'A')
+            stra{i}=h2.openBoundaries(i).compA;
+            strb{i}=h2.openBoundaries(i).compB;
         else
             stra{i}=' ';
             strb{i}=' ';
         end
     end
-    for i=1:h2.NrAstronomicComponentSets
-        str{i}=h2.AstronomicComponentSets(i).Name;
+    for i=1:h2.nrAstronomicComponentSets
+        str{i}=h2.astronomicComponentSets(i).name;
     end
     k1=strmatch('unnamed',stra,'exact');
     k2=strmatch('unnamed',strb,'exact');
     k3=strmatch('unnamed',str,'exact');
     if isempty(k1) && isempty(k2) && ~isempty(k3>0)
         % component set unname has become unnecessary
-        for j=k3:h2.NrAstronomicComponentSets-1
-            h2.AstronomicComponentSets(j)=h2.AstronomicComponentSets(j+1);
+        for j=k3:h2.nrAstronomicComponentSets-1
+            h2.astronomicComponentSets(j)=h2.astronomicComponentSets(j+1);
         end
-        h2.AstronomicComponentSets=h2.AstronomicComponentSets(1:end-1);
-        h2.NrAstronomicComponentSets=h2.NrAstronomicComponentSets-1;
+        h2.astronomicComponentSets=h2.astronomicComponentSets(1:end-1);
+        h2.nrAstronomicComponentSets=h2.nrAstronomicComponentSets-1;
     end
-    handles.Model(md).Input(ad).AstronomicComponentSets=h2.AstronomicComponentSets;
-    handles.Model(md).Input(ad).NrAstronomicComponentSets=h2.NrAstronomicComponentSets;
-    handles.Model(md).Input(ad).OpenBoundaries=h2.OpenBoundaries;
+    handles.Model(md).Input(ad).astronomicComponentSets=h2.astronomicComponentSets;
+    handles.Model(md).Input(ad).nrAstronomicComponentSets=h2.nrAstronomicComponentSets;
+    handles.Model(md).Input(ad).openBoundaries=h2.openBoundaries;
     setHandles(handles);
     closereq;
 end
@@ -273,24 +290,19 @@ wdt=[80 80 80 20];
 callbacks={'','','',@RefreshCorrections};
 
 ii=get(handles.GUIHandles.ListComponentSets,'Value');
-for i=1:handles.AstronomicComponentSets(ii).Nr
-    data{i,1}=handles.AstronomicComponentSets(ii).Component{i};
-    data{i,2}=handles.AstronomicComponentSets(ii).Amplitude(i);
-    data{i,3}=handles.AstronomicComponentSets(ii).Phase(i);
-    data{i,4}=handles.AstronomicComponentSets(ii).Correction(i);
+for i=1:handles.astronomicComponentSets(ii).nr
+    data{i,1}=handles.astronomicComponentSets(ii).component{i};
+    data{i,2}=handles.astronomicComponentSets(ii).amplitude(i);
+    data{i,3}=handles.astronomicComponentSets(ii).phase(i);
+    data{i,4}=handles.astronomicComponentSets(ii).correction(i);
 end
-for i=1:length(handles.ComponentNames)
-    ppm{i,1}=handles.ComponentNames{i};
+for i=1:length(handles.componentNames)
+    ppm{i,1}=handles.componentNames{i};
     ppm{i,2}='';
     ppm{i,3}='';
 end
 
-tb=table2(gcf,'table','find');
-if ~isempty(tb)
-    table2(gcf,'table','change','data',data);
-else
-    table2(gcf,'table','create','position',[50 110],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'popuptext',ppm,'callbacks',callbacks,'includebuttons');
-end
+table(handles.GUIHandles.componentSetTable,'setdata',data);
 
 %%
 
@@ -306,29 +318,25 @@ enab(:,1)=0;
 wdt=[80 60 60];
 ii=get(handles.GUIHandles.ListComponentSets,'Value');
 k=0;
-for i=1:handles.AstronomicComponentSets(ii).Nr
-    if handles.AstronomicComponentSets(ii).Correction(i)
+for i=1:handles.astronomicComponentSets(ii).nr
+    if handles.astronomicComponentSets(ii).correction(i)
         k=k+1;
-        data{k,1}=handles.AstronomicComponentSets(ii).Component{i};
-        data{k,2}=handles.AstronomicComponentSets(ii).AmplitudeCorrection(i);
-        data{k,3}=handles.AstronomicComponentSets(ii).PhaseCorrection(i);
+        data{k,1}=handles.astronomicComponentSets(ii).component{i};
+        data{k,2}=handles.astronomicComponentSets(ii).amplitudeCorrection(i);
+        data{k,3}=handles.astronomicComponentSets(ii).phaseCorrection(i);
     end
 end
 if k>0
-    tb=table2(gcf,'correctiontable','find');
-    if ~isempty(tb)
-        table2(gcf,'correctiontable','change','data',data);
-    else
-        table2(gcf,'correctiontable','create','position',[460 110],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'enable',enab);
-    end
+    table(handles.GUIHandles.correctionTable,'setdata',data);
+    set(handles.GUIHandles.correctionTable,'Visible','on');
 else
-    table2(gcf,'correctiontable','delete');
+    set(handles.GUIHandles.correctionTable,'Visible','off');
 end
 
 %%
 function [handles,ok]=ChangeData(handles)
 ok=1;
-data=table2(gcf,'table','getdata');
+data=table(handles.GUIHandles.componentSetTable,'getdata');
 for i=1:size(data,1)
     for j=i:size(data,1)
         if strcmp(data{i,1},data{j,1}) && i~=j
@@ -338,23 +346,23 @@ for i=1:size(data,1)
         end
     end
 end
-ii=strmatch(handles.ActiveComponentSet,handles.ComponentSets,'exact');
-handles.AstronomicComponentSets(ii).Nr=size(data,1);
-handles.AstronomicComponentSets(ii).Component=[];
-handles.AstronomicComponentSets(ii).Amplitude=[];
-handles.AstronomicComponentSets(ii).Phase=[];
-handles.AstronomicComponentSets(ii).Correction=[];
-for i=1:handles.AstronomicComponentSets(ii).Nr
-    handles.AstronomicComponentSets(ii).Component{i}=data{i,1};
-    handles.AstronomicComponentSets(ii).Amplitude(i)=data{i,2};
-    handles.AstronomicComponentSets(ii).Phase(i)=data{i,3};
-    handles.AstronomicComponentSets(ii).Correction(i)=data{i,4};
-    if handles.AstronomicComponentSets(ii).Correction(i)
-        data2=table2(gcf,'correctiontable','getdata');
+ii=strmatch(handles.ActiveComponentSet,handles.componentSets,'exact');
+handles.astronomicComponentSets(ii).nr=size(data,1);
+handles.astronomicComponentSets(ii).component=[];
+handles.astronomicComponentSets(ii).amplitude=[];
+handles.astronomicComponentSets(ii).phase=[];
+handles.astronomicComponentSets(ii).correction=[];
+for i=1:handles.astronomicComponentSets(ii).nr
+    handles.astronomicComponentSets(ii).component{i}=data{i,1};
+    handles.astronomicComponentSets(ii).amplitude(i)=data{i,2};
+    handles.astronomicComponentSets(ii).phase(i)=data{i,3};
+    handles.astronomicComponentSets(ii).correction(i)=data{i,4};
+    if handles.astronomicComponentSets(ii).correction(i)
+        data2=table(handles.GUIHandles.correctionTable,'getdata');
         for j=1:size(data2,1)
-            if strcmp(data2{j,1},handles.AstronomicComponentSets(ii).Component{i})
-                handles.AstronomicComponentSets(ii).AmplitudeCorrection(i)=data2{j,2};
-                handles.AstronomicComponentSets(ii).PhaseCorrection(i)=data2{j,3};
+            if strcmp(data2{j,1},handles.astronomicComponentSets(ii).component{i})
+                handles.astronomicComponentSets(ii).amplitudeCorrection(i)=data2{j,2};
+                handles.astronomicComponentSets(ii).phaseCorrection(i)=data2{j,3};
             end
         end
     end
@@ -365,15 +373,15 @@ function PushViewTimeSeries_CallBack(hObject,eventdata)
 handles=guidata(findobj('Name','Astronomic Boundary Conditions'));
 h=guidata(findobj('Tag','MainWindow'));
 ii=get(handles.GUIHandles.ListComponentSets,'Value');
-for i=1:handles.AstronomicComponentSets(ii).Nr
-    cmp{i}=handles.AstronomicComponentSets(ii).Component{i};
-    A(i,1)=handles.AstronomicComponentSets(ii).Amplitude(i);
-    G(i,1)=handles.AstronomicComponentSets(ii).Phase(i);
-    data{i,4}=handles.AstronomicComponentSets(ii).Correction(i);
+for i=1:handles.astronomicComponentSets(ii).nr
+    cmp{i}=handles.astronomicComponentSets(ii).component{i};
+    A(i,1)=handles.astronomicComponentSets(ii).amplitude(i);
+    G(i,1)=handles.astronomicComponentSets(ii).phase(i);
+    data{i,4}=handles.astronomicComponentSets(ii).correction(i);
 end
-t0=h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).StartTime;
-t1=h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).StopTime;
-dt=h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).TimeStep/60;
+t0=h.Model(strcmp('Delft3DFLOW',{h.Model.name})).Input(h.ActiveDomain).StartTime;
+t1=h.Model(strcmp('Delft3DFLOW',{h.Model.name})).Input(h.ActiveDomain).StopTime;
+dt=h.Model(strcmp('Delft3DFLOW',{h.Model.name})).Input(h.ActiveDomain).TimeStep/60;
 
 [prediction,times]=delftPredict2007(cmp,A,G,t0,t1,dt);
 ddb_plotTimeSeries(times,prediction,'');

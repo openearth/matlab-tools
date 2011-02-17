@@ -1,5 +1,12 @@
 function val=getSubFieldValue(s,v)
 val=[];
+if ischar(v)
+    try
+        v=strrep(v,'handles','s');
+        val=eval(v);
+    end
+else
+
 try
     hh=s;
 catch
@@ -18,16 +25,17 @@ for i=1:length(v.subFields)
     try
     hh=hh.(name)(indx);
     catch
-        shite=1;
+%        shite=1;
     end
 end
 varname=v.name;
 try
 val=hh.(varname);
 catch
-    shite=5;
+%    shite=5;
 end
 % if ~exist(val)
 %     shite=9;
 % end
 
+end

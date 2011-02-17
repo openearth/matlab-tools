@@ -4,16 +4,13 @@ handles=getHandles;
 
 ddb_refreshScreen('Toolbox');
 
-% % If debug mode, reload the the active toolbox xml file
-% if handles.debugMode
-%     handles=ddb_readToolboxXML(handles,tb);
-% end
-
 % Find parent (the toolbox tab of the active model)
-parent=findobj(gcf,'Tag',[lower(handles.Model(md).Name) '.toolbox']);
+parent=findobj(gcf,'Tag',[lower(handles.Model(md).name) '.toolbox']);
 
 if handles.Toolbox(tb).useXML
-        
+    
+    % At this point, the elements are already in the GUI.
+    
     elements=getappdata(parent,'elements');
     % Now look for tab panels within this tab, and execute callback associated
     % with active tabs
@@ -33,10 +30,10 @@ if handles.Toolbox(tb).useXML
     end
     % No tab panels found, execute call function
     if ~itab
-        feval(handles.Toolbox(tb).CallFcn);
+        feval(handles.Toolbox(tb).callFcn);
     end
 
 else
     % Otherwise use old approach
-    feval(handles.Toolbox(tb).CallFcn);
+    feval(handles.Toolbox(tb).callFcn);
 end

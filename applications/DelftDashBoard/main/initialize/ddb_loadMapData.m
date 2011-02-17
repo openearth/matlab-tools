@@ -4,16 +4,16 @@ function ddb_loadMapData
 handles=getHandles;
 
 % Earth colormap
-load([handles.SettingsDir 'colormaps\earth.mat']);
+load([handles.settingsDir 'colormaps\earth.mat']);
 handles.mapData.colorMaps.earth=earth;
 
 % World coastline
-load([handles.SettingsDir 'geo\worldcoastline.mat']);
+load([handles.settingsDir 'geo\worldcoastline.mat']);
 handles.mapData.worldCoastLine5000000(:,1)=wclx;
 handles.mapData.worldCoastLine5000000(:,2)=wcly;
 
 % Cities
-c=load([handles.SettingsDir 'geo\cities.mat']);
+c=load([handles.settingsDir 'geo\cities.mat']);
 for i=1:length(c.cities)
     handles.mapData.cities.lon(i)=c.cities(i).Lon;
     handles.mapData.cities.lat(i)=c.cities(i).Lat;

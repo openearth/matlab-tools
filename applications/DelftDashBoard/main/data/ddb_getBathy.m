@@ -15,16 +15,16 @@ z=[];
 tic
 disp('Getting bathymetry data ...');
 
-iac=strmatch(lower(handles.ScreenParameters.BackgroundBathymetry),lower(handles.Bathymetry.Datasets),'exact');
+iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
 xsz=xl(2)-xl(1);
 
-tp=handles.Bathymetry.Dataset(iac).Type;
+tp=handles.bathymetry.dataset(iac).type;
 
 switch lower(tp)
 
 %     case{'netcdf'}
 %         
-%         url=handles.Bathymetry.Dataset(iac).URL;
+%         url=handles.bathymetry.dataset(iac).URL;
 %         
 % %         gridsize=nc_varget(url,'grid_size');
 %         gridsize=loaddap([url '?grid_size']);
@@ -97,11 +97,11 @@ switch lower(tp)
         % New tile type
         ok=1;
 
-        nLevels=handles.Bathymetry.Dataset(iac).NrZoomLevels;
+        nLevels=handles.bathymetry.dataset(iac).nrZoomLevels;
 
         for i=1:nLevels
-            cellsizex(i)=handles.Bathymetry.Dataset(iac).ZoomLevel(i).dx;
-            cellsizey(i)=handles.Bathymetry.Dataset(iac).ZoomLevel(i).dy;
+            cellsizex(i)=handles.bathymetry.dataset(iac).zoomLevel(i).dx;
+            cellsizey(i)=handles.bathymetry.dataset(iac).zoomLevel(i).dy;
         end
         
         if zoomlev==0
@@ -114,14 +114,14 @@ switch lower(tp)
             ilev=zoomlev;
         end
 
-        x0=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).x0;
-        y0=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).y0;
-        dx=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).dx;
-        dy=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).dy;
-        nx=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).nx;
-        ny=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).ny;
-        nnx=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).ntilesx;
-        nny=handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).ntilesy;
+        x0=handles.bathymetry.dataset(iac).zoomLevel(ilev).x0;
+        y0=handles.bathymetry.dataset(iac).zoomLevel(ilev).y0;
+        dx=handles.bathymetry.dataset(iac).zoomLevel(ilev).dx;
+        dy=handles.bathymetry.dataset(iac).zoomLevel(ilev).dy;
+        nx=handles.bathymetry.dataset(iac).zoomLevel(ilev).nx;
+        ny=handles.bathymetry.dataset(iac).zoomLevel(ilev).ny;
+        nnx=handles.bathymetry.dataset(iac).zoomLevel(ilev).ntilesx;
+        nny=handles.bathymetry.dataset(iac).zoomLevel(ilev).ntilesy;
         tilesizex=dx*nx;
         tilesizey=dy*ny;
         
@@ -149,18 +149,18 @@ switch lower(tp)
             iy2=length(yy);
         end
 
-        name=handles.Bathymetry.Dataset(iac).Name;
+        name=handles.bathymetry.dataset(iac).name;
         levdir=['zl' num2str(ilev,'%0.2i')];
 
         iopendap=0;
-        if strcmpi(handles.Bathymetry.Dataset(iac).URL(1:4),'http')
+        if strcmpi(handles.bathymetry.dataset(iac).URL(1:4),'http')
             % OpenDAP
             iopendap=1;
-            remotedir=[handles.Bathymetry.Dataset(iac).URL '/' levdir '/'];
-            localdir=[handles.BathyDir name '\' levdir '\'];
+            remotedir=[handles.bathymetry.dataset(iac).URL '/' levdir '/'];
+            localdir=[handles.bathyDir name '\' levdir '\'];
         else
             % Local
-            localdir=[handles.Bathymetry.Dataset(iac).URL '\' levdir '\'];
+            localdir=[handles.bathymetry.dataset(iac).URL '\' levdir '\'];
             remotedir=localdir;
         end
 
@@ -176,14 +176,14 @@ switch lower(tp)
                 
                 % First check whether file exists at at all
                 
-                iav=find(handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).iAvailable==i & handles.Bathymetry.Dataset(iac).ZoomLevel(ilev).jAvailable==j, 1);
+                iav=find(handles.bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==i & handles.bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
                 
                 if ~isempty(iav)
                     
                     filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
                     
                     if iopendap
-                        if handles.Bathymetry.Dataset(iac).useCache
+                        if handles.bathymetry.dataset(iac).useCache
                             % First check if file is available locally
                             if ~exist([localdir filename],'file')
                                 if ~exist(localdir,'dir')
@@ -201,7 +201,7 @@ switch lower(tp)
                         ncfile=[localdir filename];
                     end
                     
-                    if iopendap && ~handles.Bathymetry.Dataset(iac).useCache
+                    if iopendap && ~handles.bathymetry.dataset(iac).useCache
                         try
                             zzz=nc_varget(ncfile, 'depth');
                             zzz=double(zzz);
@@ -252,13 +252,13 @@ switch lower(tp)
         
     case{'tiles'}
 
-        if isempty(handles.Bathymetry.Dataset(iac).RefinementFactor)
+        if isempty(handles.bathymetry.dataset(iac).refinementFactor)
 
             if zoomlev==0
                 ok=0;
-                for i=1:handles.Bathymetry.Dataset(iac).NrZoomLevels
-                    zmmin=handles.Bathymetry.Dataset(iac).ZoomLevel(i).ZoomLimits(1);
-                    zmmax=handles.Bathymetry.Dataset(iac).ZoomLevel(i).ZoomLimits(2);
+                for i=1:handles.bathymetry.dataset(iac).nrZoomLevels
+                    zmmin=handles.bathymetry.dataset(iac).zoomLevel(i).zoomLimits(1);
+                    zmmax=handles.bathymetry.dataset(iac).zoomLevel(i).zoomLimits(2);
                     if xsz>=zmmin && xsz<=zmmax
                         iacz=i;
                         ok=1;
@@ -273,10 +273,10 @@ switch lower(tp)
                 iacz=zoomlev;
             end
 
-            tilesize=handles.Bathymetry.Dataset(iac).ZoomLevel(iacz).TileSize;
-            gridsize=handles.Bathymetry.Dataset(iac).ZoomLevel(iacz).GridCellSize;
+            tilesize=handles.bathymetry.dataset(iac).zoomLevel(iacz).tileSize;
+            gridsize=handles.bathymetry.dataset(iac).zoomLevel(iacz).gridCellSize;
 
-            if strcmpi(handles.Bathymetry.Dataset(iac).HorizontalCoordinateSystem.Type,'geographic')
+            if strcmpi(handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic')
                 tilesize=dms2degrees(tilesize);
                 gridsize=dms2degrees(gridsize);
             end
@@ -288,11 +288,11 @@ switch lower(tp)
             nx=round((x1-x0)/tilesize);
             ny=round((y1-y0)/tilesize);
 
-            dirname1=handles.Bathymetry.Dataset(iac).DirectoryName;
-            dirname2=handles.Bathymetry.Dataset(iac).ZoomLevel(iacz).DirectoryName;
-            fname=handles.Bathymetry.Dataset(iac).ZoomLevel(iacz).FileName;
+            dirname1=handles.bathymetry.dataset(iac).directoryName;
+            dirname2=handles.bathymetry.dataset(iac).zoomLevel(iacz).directoryName;
+            fname=handles.bathymetry.dataset(iac).zoomLevel(iacz).fileName;
 
-            dirstr=[handles.BathyDir '\' dirname1 '\' dirname2 '\'];
+            dirstr=[handles.bathyDir '\' dirname1 '\' dirname2 '\'];
 
             z=[];
             for i=1:nx
@@ -362,10 +362,10 @@ switch lower(tp)
             % New tile type
             ok=1;
 
-            tileMax=handles.Bathymetry.Dataset(iac).MaxTileSize;
-            nLevels=handles.Bathymetry.Dataset(iac).NrZoomLevels;
-            nRef=handles.Bathymetry.Dataset(iac).RefinementFactor;
-            nCell=handles.Bathymetry.Dataset(iac).NrCells;
+            tileMax=handles.bathymetry.dataset(iac).maxTileSize;
+            nLevels=handles.bathymetry.dataset(iac).nrZoomLevels;
+            nRef=handles.bathymetry.dataset(iac).refinementFactor;
+            nCell=handles.bathymetry.dataset(iac).nrCells;
 
             tileSizes(1)=tileMax;
             for i=2:nLevels
@@ -378,7 +378,7 @@ switch lower(tp)
             if zoomlev==0
                 ilev=find(tileSizes/dx<0.5,1,'first');
                 if isempty(ilev)
-                    ilev=handles.Bathymetry.Dataset(iac).NrZoomLevels;
+                    ilev=handles.bathymetry.dataset(iac).nrZoomLevels;
                 end
             else
                 ilev=zoomlev;
@@ -394,18 +394,18 @@ switch lower(tp)
             nx=round((x1-x0)/tilesize);
             ny=round((y1-y0)/tilesize);
 
-            dirname1=handles.Bathymetry.Dataset(iac).DirectoryName;
+            dirname1=handles.bathymetry.dataset(iac).directoryName;
             dirname2=['zoomlevel' num2str(ilev,'%0.2i')];
-            fname=[handles.Bathymetry.Dataset(iac).DirectoryName '.z' num2str(ilev,'%0.2i')];
+            fname=[handles.bathymetry.dataset(iac).directoryName '.z' num2str(ilev,'%0.2i')];
 
-            dirstr=[handles.BathyDir '\' dirname1 '\' dirname2 '\'];
+            dirstr=[handles.bathyDir '\' dirname1 '\' dirname2 '\'];
 
             z=[];
             for i=1:nx
                 zz=[];
                 for j=1:ny
-                    iindex=i+floor((xl(1)-handles.Bathymetry.Dataset(iac).XOrigin)/tilesize);
-                    jindex=j+floor((yl(1)-handles.Bathymetry.Dataset(iac).YOrigin)/tilesize);
+                    iindex=i+floor((xl(1)-handles.bathymetry.dataset(iac).xOrigin)/tilesize);
+                    jindex=j+floor((yl(1)-handles.bathymetry.dataset(iac).yOrigin)/tilesize);
                     fnametile=[dirstr fname '.' num2str(iindex,'%0.6i') '.' num2str(jindex,'%0.6i') '.mat'];
                     if exist(fnametile,'file')
                         a=load(fnametile);
@@ -432,8 +432,8 @@ switch lower(tp)
 
     case{'gridded'}
         try
-            [x,y]=meshgrid(handles.Bathymetry.Dataset(iac).x, handles.Bathymetry.Dataset(iac).y);
-            z=handles.Bathymetry.Dataset(iac).z;
+            [x,y]=meshgrid(handles.bathymetry.dataset(iac).x, handles.bathymetry.dataset(iac).y);
+            z=handles.bathymetry.dataset(iac).z;
             ok=1;
         catch
             ok=0;

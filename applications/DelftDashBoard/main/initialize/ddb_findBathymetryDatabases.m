@@ -4,17 +4,17 @@ handles=getHandles;
 
 handles=ddb_readTiledBathymetries(handles);
 
-for i=1:handles.Bathymetry.NrDatasets
-    handles.Bathymetry.Dataset(i).isAvailable=1;
-    switch lower(handles.Bathymetry.Dataset(i).Type)
+for i=1:handles.bathymetry.nrDatasets
+    handles.bathymetry.dataset(i).isAvailable=1;
+    switch lower(handles.bathymetry.dataset(i).type)
         case{'netcdftiles'}
             
-            if strcmpi(handles.Bathymetry.Dataset(i).URL(1:4),'http')
+            if strcmpi(handles.bathymetry.dataset(i).URL(1:4),'http')
                 % OpenDAP
-                fname=[handles.Bathymetry.Dataset(i).URL '/' handles.Bathymetry.Dataset(i).Name '.nc'];
-                if handles.Bathymetry.Dataset(i).useCache
+                fname=[handles.bathymetry.dataset(i).URL '/' handles.bathymetry.dataset(i).name '.nc'];
+                if handles.bathymetry.dataset(i).useCache
                     % First copy meta data file to local cache
-                    localdir = [handles.BathyDir handles.Bathymetry.Dataset(i).Name filesep];
+                    localdir = [handles.bathyDir handles.bathymetry.dataset(i).name filesep];
                     try
                         if ~exist(localdir,'dir')
                             mkdir(localdir);
@@ -22,9 +22,9 @@ for i=1:handles.Bathymetry.NrDatasets
                         % Try to copy nc meta file
                         urlwrite(fname,[localdir 'temp.nc']);
                         if exist([localdir 'temp.nc'],'file')
-                            movefile([localdir 'temp.nc'],[localdir handles.Bathymetry.Dataset(i).Name '.nc']);
+                            movefile([localdir 'temp.nc'],[localdir handles.bathymetry.dataset(i).name '.nc']);
                         end
-                        fname = [handles.BathyDir handles.Bathymetry.Dataset(i).Name filesep handles.Bathymetry.Dataset(i).Name '.nc'];
+                        fname = [handles.bathyDir handles.bathymetry.dataset(i).name filesep handles.bathymetry.dataset(i).name '.nc'];
                     catch
                         % If no access to openDAP server possible, check
                         % whether meta data file is already available in
@@ -39,15 +39,15 @@ for i=1:handles.Bathymetry.NrDatasets
                             disp(['line : ' num2str(err.stack(ie).line)]);
                         end
                         
-                        disp(['Connection to OpenDAP server could not be made for bathymetry dataset ' handles.Bathymetry.Dataset(i).longName ' - try using cached data instead']);
-                        fname = [handles.BathyDir handles.Bathymetry.Dataset(i).Name filesep handles.Bathymetry.Dataset(i).Name '.nc'];
+                        disp(['Connection to OpenDAP server could not be made for bathymetry dataset ' handles.bathymetry.dataset(i).longName ' - try using cached data instead']);
+                        fname = [handles.bathyDir handles.bathymetry.dataset(i).name filesep handles.bathymetry.dataset(i).name '.nc'];
                         if exist(fname,'file')
                             % File already exists, continue
                         else
                             % File does not exist, this should produce a
                             % warning
-                            disp(['Bathymetry dataset ' handles.Bathymetry.Dataset(i).longName ' not available!']);
-                            handles.Bathymetry.Dataset(i).isAvailable=0;
+                            disp(['Bathymetry dataset ' handles.bathymetry.dataset(i).longName ' not available!']);
+                            handles.bathymetry.dataset(i).isAvailable=0;
                         end
                     end
                 else
@@ -55,18 +55,18 @@ for i=1:handles.Bathymetry.NrDatasets
                 end
             else
                 % Local
-                fname=[handles.Bathymetry.Dataset(i).URL filesep handles.Bathymetry.Dataset(i).Name '.nc'];
+                fname=[handles.bathymetry.dataset(i).URL filesep handles.bathymetry.dataset(i).name '.nc'];
                 if exist(fname,'file')
                     % File already exists, continue
                 else
                     % File does not exist, this should produce a
                     % warning
-                    disp(['Bathymetry dataset ' handles.Bathymetry.Dataset(i).longName ' not available!']);
-                    handles.Bathymetry.Dataset(i).isAvailable=0;
+                    disp(['Bathymetry dataset ' handles.bathymetry.dataset(i).longName ' not available!']);
+                    handles.bathymetry.dataset(i).isAvailable=0;
                 end
             end
 
-            if handles.Bathymetry.Dataset(i).isAvailable
+            if handles.bathymetry.dataset(i).isAvailable
                 
                 x0=nc_varget(fname,'x0');
                 y0=nc_varget(fname,'y0');
@@ -81,49 +81,49 @@ for i=1:handles.Bathymetry.NrDatasets
                     jav{k}=nc_varget(fname,['javailable' num2str(k)]);
                 end
                 
-                handles.Bathymetry.Dataset(i).HorizontalCoordinateSystem.Name=nc_attget(fname,'crs','coord_ref_sys_name');
+                handles.bathymetry.dataset(i).horizontalCoordinateSystem.name=nc_attget(fname,'crs','coord_ref_sys_name');
                 tp=nc_attget(fname,'crs','coord_ref_sys_kind');
                 switch lower(tp)
                     case{'projected','proj','projection','xy','cartesian','cart'}
-                        handles.Bathymetry.Dataset(i).HorizontalCoordinateSystem.Type='Cartesian';
+                        handles.bathymetry.dataset(i).horizontalCoordinateSystem.type='Cartesian';
                     case{'geographic','geographic 2d','geographic 3d','latlon','spherical'}
-                        handles.Bathymetry.Dataset(i).HorizontalCoordinateSystem.Type='Geographic';
+                        handles.bathymetry.dataset(i).horizontalCoordinateSystem.type='Geographic';
                 end
                 
                 try
-                    handles.Bathymetry.Dataset(i).VerticalCoordinateSystem.Name=nc_attget(fname,'crs','vertical_reference_level');
+                    handles.bathymetry.dataset(i).verticalCoordinateSystem.name=nc_attget(fname,'crs','vertical_reference_level');
                 catch
-                    handles.Bathymetry.Dataset(i).VerticalCoordinateSystem.Name='unknown';
+                    handles.bathymetry.dataset(i).verticalCoordinateSystem.name='unknown';
                 end
                 
                 try
-                    handles.Bathymetry.Dataset(i).VerticalCoordinateSystem.Level=nc_attget(fname,'crs','difference_with_msl');
+                    handles.bathymetry.dataset(i).verticalCoordinateSystem.level=nc_attget(fname,'crs','difference_with_msl');
                 catch
-                    handles.Bathymetry.Dataset(i).VerticalCoordinateSystem.Level=0;
+                    handles.bathymetry.dataset(i).verticalCoordinateSystem.level=0;
                 end
 
-                handles.Bathymetry.Dataset(i).RefinementFactor=round(dx(2)/dx(1));
+                handles.bathymetry.dataset(i).refinementFactor=round(dx(2)/dx(1));
 
-                handles.Bathymetry.Dataset(i).NrZoomLevels=length(x0);
-                for k=1:handles.Bathymetry.Dataset(i).NrZoomLevels
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).x0=double(x0(k));
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).y0=double(y0(k));
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).nx=double(nx(k));
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).ny=double(ny(k));
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).ntilesx=double(ntilesx(k));
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).ntilesy=double(ntilesy(k));
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).dx=double(dx(k));
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).dy=double(dy(k));
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).iAvailable=double(iav{k});
-                    handles.Bathymetry.Dataset(i).ZoomLevel(k).jAvailable=double(jav{k});
+                handles.bathymetry.dataset(i).nrZoomLevels=length(x0);
+                for k=1:handles.bathymetry.dataset(i).nrZoomLevels
+                    handles.bathymetry.dataset(i).zoomLevel(k).x0=double(x0(k));
+                    handles.bathymetry.dataset(i).zoomLevel(k).y0=double(y0(k));
+                    handles.bathymetry.dataset(i).zoomLevel(k).nx=double(nx(k));
+                    handles.bathymetry.dataset(i).zoomLevel(k).ny=double(ny(k));
+                    handles.bathymetry.dataset(i).zoomLevel(k).ntilesx=double(ntilesx(k));
+                    handles.bathymetry.dataset(i).zoomLevel(k).ntilesy=double(ntilesy(k));
+                    handles.bathymetry.dataset(i).zoomLevel(k).dx=double(dx(k));
+                    handles.bathymetry.dataset(i).zoomLevel(k).dy=double(dy(k));
+                    handles.bathymetry.dataset(i).zoomLevel(k).iAvailable=double(iav{k});
+                    handles.bathymetry.dataset(i).zoomLevel(k).jAvailable=double(jav{k});
                 end
                 
-                handles.Bathymetry.Dataset(i).RefinementFactor=round(double(dx(2))/double(dx(1)));
+                handles.bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
 
             end     
     end
 end
 
-disp([num2str(handles.Bathymetry.NrDatasets) ' bathymetry datasets found!']);
+disp([num2str(handles.bathymetry.nrDatasets) ' bathymetry datasets found!']);
 
 setHandles(handles);
