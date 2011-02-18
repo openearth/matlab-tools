@@ -32,14 +32,14 @@ function D = dir2(varargin)
 %     * basepath     directory to operate on
 %                    defaults to pwd, current working directory
 % 
-%     * dir_excl     cell array containing regular expressions. Any folder
-%                    (including that folders children) that matches any of the
-%                    expression is excluded from the results.  
-%                    defaults to {'.svn$'}, exclude svn directories
+%     * dir_excl     string containing regular expression. Any folder
+%                    (including that folders children) that matches the 
+%                    espression is excluded from the results. 
+%                    defaults to '.svn$', exclude svn directories
 % 
-%     * file_incl    cell array containing regular expressions. Any filename
-%                    that does not match any of the expressions is excluded
-%                    from the results. 
+%     * file_incl    string containing regular expression. Only filenames
+%                    that match the expression are included in the
+%                    results. 
 %                    defaults to '.*', include all files
 % 
 %     * depth        maximum directory depth to search on. Set to 0 for a non 
@@ -65,7 +65,7 @@ function D = dir2(varargin)
 %     disp(fullfilenames);
 % 
 %     % find the largest m file in OpenEarthTools
-%     D               = dir2(oetroot,'file_incl',{'\.m$'});
+%     D               = dir2(oetroot,'file_incl','\.m$');
 %     files           = find(~[D.isdir]);
 %     [value,index]   = max([D(files).bytes]);
 %     fprintf(1,'largest file:  %s\nsize in bytes: %d\n',...
@@ -161,7 +161,7 @@ OPT.dir_excl         = '.svn$';  % pattern to exclude
 OPT.file_incl        = '.*';     % pattern to include
 OPT.depth            = inf;      % indicate recursion depth (0 is only this folder)
 
-if odd(nargin)
+if mod(nargin,2)==1
     OPT.basepath = varargin{1};
     nextarg = 2;
 else
