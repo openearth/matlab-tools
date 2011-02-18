@@ -1,4 +1,4 @@
-function [ax,hl1,hl2] = plotxx(x1,y1,x2,y2,xlabels,ylabels);
+function [ax,hl1,hl2] = plotxx(x1,y1,x2,y2,xlabels,ylabels,varargin);
 %PLOTXX - Create graphs with x axes on both top and bottom 
 %
 %Similar to PLOTYY, but ...
@@ -74,6 +74,10 @@ function [ax,hl1,hl2] = plotxx(x1,y1,x2,y2,xlabels,ylabels);
 % $HeadURL$
 % $Keywords: $
 
+OPT = struct('fontsize', 7);
+
+OPT = setproperty(OPT, varargin{:});
+
 
 if nargin < 4
    error('Not enough input arguments')
@@ -83,7 +87,7 @@ elseif nargin==4
 elseif nargin==5
    %Use empty strings for the ylabel
    ylabels{1}=' '; ylabels{2}=' ';
-elseif nargin > 6
+elseif nargin > 8
    error('Too many input arguments')
 end
 
@@ -99,21 +103,22 @@ end
 
 hl1=line(x1,y1,'Color','k');
 ax(1)=gca;
-set(ax(1),'Position',[0.12 0.12 0.75 0.70])
+set(ax(1),'Position',[0.12 0.12 0.75 0.70],'fontsize',OPT.fontsize)
 set(ax(1),'XColor','k','YColor','k');
 
 ax(2)=axes('Position',get(ax(1),'Position'),...
    'XAxisLocation','top',...
    'YAxisLocation','right',...
    'Color','none',...
-   'XColor','r','YColor','k');
+   'XColor','r','YColor','k',...
+   'fontsize',OPT.fontsize);
 
 set(ax,'box','off')
 
 hl2=line(x2,y2,'Color','r','Parent',ax(2));
 
 %label the two x-axes
-set(get(ax(1),'xlabel'),'string',xlabels{1})
-set(get(ax(2),'xlabel'),'string',xlabels{2})
-set(get(ax(1),'ylabel'),'string',ylabels{1})
-set(get(ax(2),'ylabel'),'string',ylabels{2})
+set(get(ax(1),'xlabel'),'string',xlabels{1},'fontsize',OPT.fontsize);
+set(get(ax(2),'xlabel'),'string',xlabels{2},'fontsize',OPT.fontsize);
+set(get(ax(1),'ylabel'),'string',ylabels{1},'fontsize',OPT.fontsize);
+set(get(ax(2),'ylabel'),'string',ylabels{2},'fontsize',OPT.fontsize);
