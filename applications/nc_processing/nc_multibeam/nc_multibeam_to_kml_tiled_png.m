@@ -281,8 +281,9 @@ if OPT.make
             z = double(nc_varget(url,OPT.var_name,...
                 [ 0, 0, 0] + (jj-1)*time_dim,...
                 [-1,-1,-1] + 2*time_dim,stride));
-            % rearrange array into order [y * x * t(1)]
-            z = squeeze(permute(z,[find(time_dim) find(y_dim) find(x_dim)]));
+            
+            % rearrange array into order [x,y]
+            z = squeeze(permute(z,[find(time_dim) find(x_dim) find(y_dim)]));
             
             % subtract reference plane form data (reference plane is zeros
             % if not set otherwise
