@@ -1,9 +1,10 @@
 function ddb_Delft3DFLOW_processes(varargin)
 
-ddb_zoomOff;
 
 if isempty(varargin)
+    ddb_zoomOff;
     ddb_refreshScreen;
+    setUIElements('delft3dflow.processes');
 else
     
     opt=varargin{1};
@@ -28,7 +29,7 @@ else
     handles=getHandles;
 
     if handles.Model(md).Input(ad).salinity.include || handles.Model(md).Input(ad).temperature.include || ...
-            handles.Model(md).Input(ad).sediments || handles.Model(md).Input(ad).tracers
+            handles.Model(md).Input(ad).sediments.include || handles.Model(md).Input(ad).tracers
         handles.Model(md).Input(ad).constituents=1;
     else
         handles.Model(md).Input(ad).constituents=0;

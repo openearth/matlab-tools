@@ -679,7 +679,7 @@ if nb>0
     set(handles.GUIHandles.PushSelectOpenBoundary, 'Enable','on');
 
     set(handles.GUIHandles.PushFlowConditions,     'Enable','on');
-    if handles.Model(md).Input(id).Salinity.Include || handles.Model(md).Input(id).Temperature.Include || handles.Model(md).Input(id).Sediments || ...
+    if handles.Model(md).Input(id).Salinity.Include || handles.Model(md).Input(id).Temperature.Include || handles.Model(md).Input(id).sediments.include || ...
             handles.Model(md).Input(id).Tracers
         set(handles.GUIHandles.PushTransportConditions,'Enable','on');
     else
@@ -778,7 +778,7 @@ if nb>0
         set(handles.GUIHandles.PushSaveTimeSeriesConditions, 'Enable','off');
         set(handles.GUIHandles.TextTimeSeriesConditionsFile, 'String','File : ');
     end
-    if handles.Model(md).Input(id).Salinity.Include || handles.Model(md).Input(id).Temperature.Include || handles.Model(md).Input(id).Tracers || handles.Model(md).Input(id).Sediments
+    if handles.Model(md).Input(id).Salinity.Include || handles.Model(md).Input(id).Temperature.Include || handles.Model(md).Input(id).Tracers || handles.Model(md).Input(id).sediments.include
         set(handles.GUIHandles.PushOpenTransportConditions, 'Enable','on');
         set(handles.GUIHandles.PushSaveTransportConditions, 'Enable','on');
     else

@@ -25,6 +25,7 @@ if isfield(xml,'elements')
         s.elements(k).option1          = getnodeval(elxml(k).element,'option1',[],'string');
         s.elements(k).option2          = getnodeval(elxml(k).element,'option2',[],'string');
         s.elements(k).onChangeCallback = getnodeval(elxml(k).element,'onchange',[],'function');
+        s.elements(k).parent           = getnodeval(elxml(k).element,'parent',[],'string');
         s.elements(k).dependees        = [];
         s.elements(k).dependencies     = [];
         s.elements(k).multivariable    = [];
@@ -61,6 +62,22 @@ if isfield(xml,'elements')
                     s2=readUIElementsXML(elxml(k).element.tabs(j).tab,dr,s.elements(k).tabs(j).tag,subFields,subIndices);
                     s.elements(k).tabs(j).elements    = s2.elements;
                 end
+
+%             case{'panel'}
+%                 for j=1:length(elxml(k).element.tabs)
+%                     tg = lower(getnodeval(elxml(k).element.tabs(j).tab,'tag',[],'string'));
+%                     s.elements(k).tabs(j).tag = [s.elements(k).tag '.' tg];
+%                     s.elements(k).tabs(j).tabname = tg;
+%                     s.elements(k).tabs(j).tabstring   = elxml(k).element.tabs(j).tab.tabstring;
+%                     if isfield(elxml(k).element.tabs(j).tab,'callback')
+%                         s.elements(k).tabs(j).callback = str2func(elxml(k).element.tabs(j).tab.callback);
+%                     else
+%                         s.elements(k).tabs(j).callback = [];
+%                     end
+%                     s2=readUIElementsXML(elxml(k).element.tabs(j).tab,dr,s.elements(k).tabs(j).tag,subFields,subIndices);
+%                     s.elements(k).tabs(j).elements    = s2.elements;
+%                 end
+                
                 
             case{'table'}
                 s.elements(k).includeNumbers = getnodeval(elxml(k).element,'includenumbers',0,'boolean');
@@ -93,9 +110,10 @@ if isfield(xml,'elements')
                 s.elements(k).fileExtension    = getnodeval(elxml(k).element,'extension',[],'string');
                 s.elements(k).selectionText    = getnodeval(elxml(k).element,'selectiontext',[],'string');
                 s.elements(k).value            = getnodeval(elxml(k).element,'value',[],'string');
-                s.elements(k).showFileName     = getnodeval(elxml(k).element,'showfilename',1,'int');
+                s.elements(k).showFileName     = getnodeval(elxml(k).element,'showfilename',1,'boolean');
                 s.elements(k).type             = getnodeval(elxml(k).element,'type',[],'string');
                 s.elements(k).max              = getnodeval(elxml(k).element,'mx',[],'integer');
+                s.elements(k).borderType       = getnodeval(elxml(k).element,'bordertype','etchedin','string');
                 
                 if isfield(elxml(k).element,'list')
 
@@ -142,7 +160,13 @@ if isfield(xml,'elements')
                 s.elements(k).dependencies(id).action=elxml(k).element.dependencies(id).dependency.action;
                 s.elements(k).dependencies(id).checkFor=[];
 
-                ntgs=length(elxml(k).element.dependencies(id).dependency.tags);
+                if isfield(elxml(k).element.dependencies(id).dependency,'tags')
+                    ntgs=length(elxml(k).element.dependencies(id).dependency.tags);
+                else
+                    ntgs=0;
+                    s.elements(k).dependencies(id).tags=[];
+                end
+                
                 for ii=1:ntgs
                     s.elements(k).dependencies(id).tags{ii}=elxml(k).element.dependencies(id).dependency.tags(ii).tag;
                     

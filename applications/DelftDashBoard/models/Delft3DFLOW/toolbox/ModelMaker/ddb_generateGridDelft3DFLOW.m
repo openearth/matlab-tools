@@ -7,7 +7,7 @@ if ~isempty(varargin)
     end
 end
 
-ddb_plotDelft3DFLOW(handles,'delete',id);
+ddb_plotDelft3DFLOW('delete','domain',id);
 handles=ddb_initializeFlowDomain(handles,'griddependentinput',id,handles.Model(md).Input(id).runid);
 
 set(gcf,'Pointer','arrow');
@@ -44,6 +44,6 @@ handles.Model(md).Input(id).KMax=1;
 
 handles=ddb_determineKCS(handles);
 
-ddb_plotGrid(x,y,id,'FlowGrid','plot');
+handles=ddb_Delft3DFLOW_plotGrid(handles,'plot','domain',id);
 
 

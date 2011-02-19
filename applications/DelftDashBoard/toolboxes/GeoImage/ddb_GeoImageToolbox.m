@@ -1,4 +1,4 @@
-function ddb_geoImageToolbox
+function ddb_GeoImageToolbox
 
 handles=getHandles;
 
@@ -6,11 +6,11 @@ ddb_plotGeoImage(handles,'activate');
 
 uipanel('Title','Geo Image','Units','pixels','Position',[20 20 990 160],'Tag','UIControl');
 
-handles.GUIHandles.EditX1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.XLim(1)),'Position',[ 80 130 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditX2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.XLim(2)),'Position',[ 80 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditY1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.YLim(1)),'Position',[ 80  80 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditY2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.YLim(2)),'Position',[ 80  55 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditNPix   = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.NPix),   'Position',[260 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditX1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.xLim(1)),'Position',[ 80 130 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditX2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.xLim(2)),'Position',[ 80 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditY1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.yLim(1)),'Position',[ 80  80 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditY2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.yLim(2)),'Position',[ 80  55 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditNPix   = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.nPix),   'Position',[260 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 
 handles.GUIHandles.TextXMin     = uicontrol(gcf,'Style','text','String','X Min',     'Position',[ 35 127 40 20],'HorizontalAlignment','right','Tag','UIControl');
 handles.GUIHandles.TextXMax     = uicontrol(gcf,'Style','text','String','X Max',     'Position',[ 35 102 40 20],'HorizontalAlignment','right','Tag','UIControl');
@@ -45,7 +45,7 @@ setHandles(handles);
 %%
 function EditX1_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.XLim(1)=str2double(get(hObject,'String'));
+handles.Toolbox(tb).Input.xLim(1)=str2double(get(hObject,'String'));
 setHandles(handles);
 ddb_deleteImageOutline;
 ddb_plotImageOutline('g');
@@ -54,7 +54,7 @@ ddb_refreshZoomLevels(handles);
 %%
 function EditX2_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.XLim(2)=str2double(get(hObject,'String'));
+handles.Toolbox(tb).Input.xLim(2)=str2double(get(hObject,'String'));
 setHandles(handles);
 ddb_deleteImageOutline;
 ddb_plotImageOutline('g');
@@ -63,7 +63,7 @@ ddb_refreshZoomLevels(handles);
 %%
 function EditY1_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.YLim(1)=str2double(get(hObject,'String'));
+handles.Toolbox(tb).Input.yLim(1)=str2double(get(hObject,'String'));
 setHandles(handles);
 ddb_deleteImageOutline;
 ddb_plotImageOutline('g');
@@ -72,7 +72,7 @@ ddb_refreshZoomLevels(handles);
 %%
 function EditY2_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.YLim(2)=str2double(get(hObject,'String'));
+handles.Toolbox(tb).Input.yLim(2)=str2double(get(hObject,'String'));
 setHandles(handles);
 ddb_deleteImageOutline;
 ddb_plotImageOutline('g');
@@ -83,12 +83,12 @@ function PushGenerateImage(src,eventdata)
 
 handles=getHandles;
 
-xl(1)=handles.Toolbox(tb).Input.XLim(1);
-xl(2)=handles.Toolbox(tb).Input.XLim(2);
-yl(1)=handles.Toolbox(tb).Input.YLim(1);
-yl(2)=handles.Toolbox(tb).Input.YLim(2);
+xl(1)=handles.Toolbox(tb).Input.xLim(1);
+xl(2)=handles.Toolbox(tb).Input.xLim(2);
+yl(1)=handles.Toolbox(tb).Input.yLim(1);
+yl(2)=handles.Toolbox(tb).Input.yLim(2);
 
-cs=handles.ScreenParameters.CoordinateSystem;
+cs=handles.screenParameters.coordinateSystem;
 
 i=get(handles.GUIHandles.SelectZoomLevel,'Value');
 str=get(handles.GUIHandles.SelectZoomLevel,'String');
@@ -101,7 +101,7 @@ source=get(handles.GUIHandles.SourceSelection,'Value');
 
 npix=str2double(get(handles.GUIHandles.EditNPix,'String'));
 
-if strcmpi(cs.Name,'wgs 84')
+if strcmpi(cs.name,'wgs 84')
     cs=[];
 end
 

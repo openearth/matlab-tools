@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
-  <toolbox>DredgePlume</toolbox>
-  <longname>Dredge Plume</longname>
+  <toolbox>ModelMaker</toolbox>
+  <longname>Model Maker</longname>
   <elements>
     <element>
       <position>10 10 1000 140</position>

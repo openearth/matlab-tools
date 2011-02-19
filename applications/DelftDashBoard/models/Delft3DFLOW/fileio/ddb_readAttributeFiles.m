@@ -31,8 +31,10 @@ end
 for i=1:handles.Model(md).Input(ad).nrTracers
     handles=ddb_initializeTracer(handles,i);
 end
+
+%Read sed file first
 for i=1:handles.Model(md).Input(ad).nrSediments
-    handles=ddb_initializeSediment(handles,i);
+    handles=ddb_initializeSediment(handles,ad,i);
 end
 
 if ~isempty(handles.Model(md).Input(ad).bcaFile)

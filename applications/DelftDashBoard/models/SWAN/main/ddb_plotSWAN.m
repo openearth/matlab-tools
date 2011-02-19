@@ -1,2 +1,2 @@
-function ddb_plotSWAN(handles,opt,id)
+function ddb_plotSWAN(option,varargin)
 

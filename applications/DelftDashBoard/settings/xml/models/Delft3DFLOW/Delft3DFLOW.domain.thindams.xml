@@ -325,7 +325,7 @@
     <tooltipstring>Save thin dams file</tooltipstring>
     <text>Save</text>
     <variable>handles.Model(md).Input(ad).thdFile</variable>
-    <showfilename>0</showfilename>
+    <showfilename>no</showfilename>
     <extension>*.thd</extension>
     <selectiontext>Select thin dams file</selectiontext>
     <onchange>ddb_Delft3DFLOW_thindams</onchange>

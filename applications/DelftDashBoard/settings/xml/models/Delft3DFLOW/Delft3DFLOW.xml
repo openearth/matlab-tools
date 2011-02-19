@@ -53,7 +53,7 @@
         <tab>
           <tag>physicalparameters</tag>
           <tabstring>Physical Parameters</tabstring>
-          <callback>ddb_editD3DFlowPhysicalParameters</callback>
+          <elements>Delft3DFLOW.physicalparameters.xml</elements>
         </tab>
         <tab>
           <tag>numericalparamters</tag>

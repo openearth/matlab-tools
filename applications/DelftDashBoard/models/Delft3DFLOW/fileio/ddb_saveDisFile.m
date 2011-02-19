@@ -54,7 +54,7 @@ for n=1:nr
         Info.Table(n).Parameter(k).Unit='[C]';
         Info.Table(n).Data(:,k)=Flw.discharges(n).temperature.timeSeries;
     end
-    if Flw.sediments
+    if Flw.sediments.include
         for i=1:Flw.nrSediments
             k=k+1;
             Info.Table(n).Parameter(k).Name=Flw.sediment(i).name;

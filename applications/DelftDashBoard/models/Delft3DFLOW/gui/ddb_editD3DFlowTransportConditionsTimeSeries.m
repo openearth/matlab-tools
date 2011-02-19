@@ -21,7 +21,7 @@ if h.Model(md).Input(ad).temperature.include
     handles.Constituents{k}='Temperature';
     handles.Constituent(k)=handles.Bnd.temperature;
 end
-if h.Model(md).Input(ad).sediments
+if h.Model(md).Input(ad).sediments.include
     for j=1:h.Model(md).Input(ad).nrSediments
         k=k+1;
         handles.Constituents{k}=h.Model(md).Input(ad).sediment(j).name;
@@ -115,7 +115,7 @@ if h.Model(md).Input(ad).temperature.include
     ic=ic+1;
     h.Model(md).Input(ad).openBoundaries(ib).temperature=handles.Constituent(ic);
 end
-if h.Model(md).Input(ad).sediments
+if h.Model(md).Input(ad).sediments.include
     for j=1:h.Model(md).Input(ad).nrSediments
         ic=ic+1;
         h.Model(md).Input(ad).openBoundaries(ib).sediment(j)=handles.Constituent(ic);

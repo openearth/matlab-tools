@@ -6,7 +6,7 @@ Flow=handles.Model(md).Input(ad);
 
 runid=handles.Toolbox(tb).Runid;
 
-incconst=Flow.Salinity.Include || Flow.Temperature.Include || Flow.Sediments || Flow.Tracers;
+incconst=Flow.Salinity.Include || Flow.Temperature.Include || Flow.sediments.include || Flow.Tracers;
 
 MDF.Ident='Delft3D-FLOW  .03.02 3.39.26';
 MDF.Runtxt=Flow.Description;
@@ -59,14 +59,14 @@ if Flow.SecondaryFlow
     MDF.Sub1(4)='I';
 end
 MDF.Sub2='   ';
-if Flow.Sediments || Flow.Tracers
+if Flow.sediments.include || Flow.Tracers
     MDF.Sub2(2)='C';
 end
 if Flow.Waves
     MDF.Sub2(3)='W';
 end
 k=0;
-if Flow.Sediments
+if Flow.sediments.include
     for i=1:Flow.NrSediments
         k=k+1;
         MDF.(['Namc' num2str(k)])=[Flow.Sediment(i).Name repmat(' ',1,20-length(Flow.Sediment(i).Name))];
@@ -108,7 +108,7 @@ switch Flow.InitialConditions,
             MDF.T0=val;
         end
         k=0;
-        if Flow.Sediments
+        if Flow.sediments.include
             for i=1:Flow.NrSediments
                 k=k+1;
                 val=zeros(Flow.KMax,1)+Flow.Sediment(i).ICConst;

@@ -9,6 +9,7 @@ enab=[];
 popuptext='';
 pushtext='';
 callbacks=[];
+columntext=[];
 fmt=[];
 includebuttons=0;
 includenumbers=0;
@@ -34,7 +35,11 @@ for i=1:length(varargin)
             case{'pushtext'}
                 pushtext=varargin{i+1};
             case{'enable'}
-                enab=varargin{i+1};
+                if length(varargin)==2
+                    % Enable entire table
+                else
+                    enab=varargin{i+1};
+                end
             case{'format'}
                 fmt=varargin{i+1};
             case{'callbacks'}
@@ -45,6 +50,8 @@ for i=1:length(varargin)
                 includenumbers=varargin{i+1};
             case{'parent'}
                 parent=varargin{i+1};
+            case{'columntext'}
+                columntext=varargin{i+1};
         end
     end
 end            
@@ -73,7 +80,7 @@ switch lower(action)
         if isempty(parent)
             parent=fig;
         end
-        tb=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers);
+        tb=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers,columntext);
         varargout{1}=tb;
     case{'getdata'}
         % get data
@@ -90,10 +97,16 @@ switch lower(action)
         % set data
         tb=varargin{1};
         refreshTable(tb,varargin);
+    case{'enable'}
+        tb=varargin{1};
+        enableTable(tb);
+    case{'disable'}
+        tb=varargin{1};
+        disableTable(tb);
 end
 
 %%
-function tableHandle=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers)
+function tableHandle=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers,columntext)
 
 tableHandle=uipanel(fig,'Units','pixels','Parent',parent,'Tag',tag,'Position',[position(1) position(2) 10 10],'BorderType','none','BackgroundColor','none');
 
@@ -111,15 +124,31 @@ end
 posx0=1;
 posy0=1;
 
+cl=get(fig,'Color');
+
+usd.numberHandles=[];
 if includenumbers
     posy=posy0+nrrows*20-20;
     for i=1:nrrows
         h=uicontrol(gcf,'Style','text','Parent',tableHandle,'String',num2str(i),'Position',[posx0-18 posy-3 15 20],'HorizontalAlignment','right');
-        cl=get(fig,'Color');
         set(h,'BackgroundColor',cl);
         posy=posy-20;
         usd.numberHandles(i)=h;
         set(h,'Parent',tableHandle);
+    end
+end
+
+usd.columnTextHandles=[];
+if ~isempty(columntext)
+    posx=posx0;
+    posy=posy0+nrrows*20+1;
+    for j=1:nrcolumns
+        if ~isempty(columntext{j})
+            h=uicontrol(gcf,'Style','text','Parent',tableHandle,'String',columntext{j},'Position',[posx posy width(j) 15],'HorizontalAlignment','center','BackgroundColor',cl);
+            usd.columnTextHandles(j)=h;
+            set(h,'Parent',tableHandle);
+            posx=posx+width(j);
+        end
     end
 end
 
@@ -174,12 +203,16 @@ h = uicontrol(fig,'Parent',tableHandle,'Style','slider','Position',[posx+3 posy0
 set(h,'Parent',tableHandle);
 set(h,'Callback',{@verticalSlider_Callback});
 usd.verticalSlider=h;
+
+h1=[];
+h2=[];
+
 if includebuttons
 %    h = uicontrol(fig,'Style','pushbutton','String','Copy Row',  'Position',[posx+30 position(2)+nrrows*20-20 80 20]);
-    h = uicontrol(fig,'Style','pushbutton','String','Copy Row',  'Position',[posx+30 nrrows*20-20 80 20]);
-    set(h,'Callback',{@pushCopyRow_Callback},'Parent',tableHandle);
-    h = uicontrol(fig,'Style','pushbutton','String','Delete Row','Position',[posx+30 nrrows*20-45 80 20]);
-    set(h,'Callback',{@pushDeleteRow_Callback},'Parent',tableHandle);
+    h1 = uicontrol(fig,'Style','pushbutton','String','Copy Row',  'Position',[posx+30 nrrows*20-20 80 20]);
+    set(h1,'Callback',{@pushCopyRow_Callback},'Parent',tableHandle);
+    h2 = uicontrol(fig,'Style','pushbutton','String','Delete Row','Position',[posx+30 nrrows*20-45 80 20]);
+    set(h2,'Callback',{@pushDeleteRow_Callback},'Parent',tableHandle);
 end
 usd.data=data;
 usd.nrRows=nrrows;
@@ -191,6 +224,7 @@ usd.firstRow=1;
 usd.firstColumn=1;
 usd.format=fmt;
 usd.enable=enab;
+usd.buttonHandles=[h1 h2];
 set(tableHandle,'UserData',usd);
 refreshVerticalSlider(tableHandle);
 refreshTable(tableHandle,{'enable',enab});
@@ -449,7 +483,7 @@ else
     set(vslider,'Visible','on');
 end
 ip=usd.firstRow-1;
-if isfield(usd,'numberHandles')
+if ~isempty(usd.numberHandles)
     numberhandles=usd.numberHandles;
     for i=1:min(nr,nrrows)
         set(numberhandles(i),'String',num2str(i+ip));
@@ -474,7 +508,7 @@ for j=1:nrcolumns
                 case{'editstring'}
                     set(handles(i,j),'String',data{k,j},'Visible','on');
                 case{'edittime'}
-                    set(handles(i,j),'String',D3DTimeString(data{k,j}),'Visible','on');
+                    set(handles(i,j),'String',datestr(data{k,j},'yyyy mm dd HH MM SS'),'Visible','on');
                 case{'popupmenu'}
                     txt=get(handles(i,j),'String');
                     ii=strmatch(data{k,j},txt,'exact');
@@ -555,6 +589,38 @@ if strcmp(get(hobj,'Tag'),'UIControl') && strcmp(get(gcf,'SelectionType'),'norma
     usd.activeColumn=j;
     set(tb,'UserData',usd);
 end
+
+
+
+%%
+function enableTable(tb)
+
+usd=get(tb,'UserData');
+nrrows=usd.nrRows;
+nrcolumns=usd.nrColumns;
+handles=usd.handles;
+
+for i=1:nrrows
+    for j=1:nrcolumns
+        if usd.enable(i,j)
+            set(handles(i,j),'Enable','on');
+        end
+    end
+end
+set(usd.numberHandles,'Enable','on');
+set(usd.verticalSlider,'Enable','on');
+set(usd.columnTextHandles,'Enable','on');
+set(usd.buttonHandles,'Enable','on');
+
+%%
+function disableTable(tb)
+
+usd=get(tb,'UserData');
+set(usd.handles,'Enable','off');
+set(usd.numberHandles,'Enable','off');
+set(usd.verticalSlider,'Enable','off');
+set(usd.columnTextHandles,'Enable','off');
+set(usd.buttonHandles,'Enable','off');
 
 %%
 function fevalTable(callback)

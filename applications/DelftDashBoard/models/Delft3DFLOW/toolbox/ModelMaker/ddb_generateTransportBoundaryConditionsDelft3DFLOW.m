@@ -101,7 +101,7 @@ if Flow.Temperature.Include && (strcmpi(par,'Temperature') || strcmpi(par,'all')
 end
 
 %% Sediments
-if Flow.Sediments
+if Flow.sediments.include
     for i=1:Flow.NrSediments
         if strcmpi(par,Flow.Sediment(i).Name) || strcmpi(par,'all')
             switch lower(Flow.Sediment(i).BCOpt)

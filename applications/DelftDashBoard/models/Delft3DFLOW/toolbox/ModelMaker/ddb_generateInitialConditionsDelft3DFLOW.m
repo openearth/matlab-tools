@@ -146,7 +146,7 @@ if handles.Model(md).Input(id).temperature.include
 end
 
 %% Sediments
-if handles.Model(md).Input(id).sediments
+if handles.Model(md).Input(id).sediments.include
     for i=1:handles.Model(md).Input(id).nrSediments
         switch lower(handles.Model(md).Input(id).sediment(i).ICOpt)
             case{'constant'}

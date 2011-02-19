@@ -80,8 +80,12 @@ for iac=ii1:ii2
                     else
                         switch dependency.checks(k).operator
                             case{'eq'}
+                                try
                                 if val~=dependency.checks(k).value
                                     ok=0;
+                                end
+                                catch
+                                    shite=1
                                 end
                             case{'ne'}
                                 if val==dependency.checks(k).value
@@ -160,20 +164,21 @@ for iac=ii1:ii2
             if ok
                 switch element.style
                     case{'table'}
-%                        ones=zeros(element.nrRows,length(element.columns))+1;
-                        for i=1:element.nrRows
-                            for j=1:length(element.columns)
-                                enab(i,j)=element.columns(j).enable;
-                            end
-                        end
-                        table(element.handle,'refresh','enable',enab);
+%                         for i=1:element.nrRows
+%                             for j=1:length(element.columns)
+%                                 enab(i,j)=element.columns(j).enable;
+%                             end
+%                         end
+%                         table(element.handle,'refresh','enable',enab);
+                        table(element.handle,'enable');
                     otherwise
                         enableElement(element);
                 end
             else
                 switch element.style
                     case{'table'}
-                        table(element.handle,'refresh','enable',zeros(element.nrRows,length(element.columns)));
+%                         table(element.handle,'refresh','enable',zeros(element.nrRows,length(element.columns)));
+                        table(element.handle,'disable');
                     otherwise
                         disableElement(element);
                 end

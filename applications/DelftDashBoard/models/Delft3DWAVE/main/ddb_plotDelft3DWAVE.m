@@ -1,2 +1,2 @@
-function ddb_plotDelft3DWAVE(handles,opt,id)
+function ddb_plotDelft3DWAVE(option,varargin)
 

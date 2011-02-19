@@ -63,7 +63,11 @@ switch lower(el.style)
         
     case{'checkbox'}
         val=getSubFieldValue(s,el.variable);
+        try
         set(el.handle,'Value',val);
+        catch
+            godver=1
+        end
 
     case{'togglebutton'}
         val=getSubFieldValue(s,el.variable);
@@ -131,7 +135,20 @@ switch lower(el.style)
                     if ~isempty(el.multivariable)
                         ii=getSubFieldValue(s,el.multivariable);
                     else
-                        ii=getSubFieldValue(s,el.variable);
+                        if isfield(el.list,'value')
+                            if isfield(el.list.value,'variable')
+                                values=getSubFieldValue(s,el.list.value.variable);
+                            else
+                                values=el.list.value;
+                            end
+                            for jj=1:length(values)
+                                vnum(jj)=str2double(values{jj});
+                            end
+                            val=getSubFieldValue(s,el.variable);
+                            ii=find(vnum==val);
+                        else
+                            ii=getSubFieldValue(s,el.variable);
+                        end
                     end
             end
         end
@@ -194,7 +211,7 @@ switch lower(el.style)
         for j=1:length(el.columns)
             val=getSubFieldValue(s,el.columns(j).variable);
             switch lower(el.columns(j).style)
-                case{'editreal','checkbox'}
+                case{'editreal','checkbox','edittime'}
                     % Reals must be a vector
                     sz=size(val);
                     nrrows=max(sz);
@@ -210,6 +227,8 @@ switch lower(el.style)
             for k=1:nrrows
                 switch lower(el.columns(j).style)
                     case{'editreal'}
+                        data{k,j}=val(k);
+                    case{'edittime'}
                         data{k,j}=val(k);
                     case{'editstring'}
                         data{k,j}=val{k};

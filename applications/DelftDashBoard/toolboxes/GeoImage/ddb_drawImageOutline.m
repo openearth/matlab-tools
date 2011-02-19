@@ -25,10 +25,10 @@ pos = get(gca, 'CurrentPoint');
 usd.x0=pos(1,1);
 usd.y0=pos(1,2);
 
-handles.Toolbox(tb).Input.XLim(1)=usd.x0;
-handles.Toolbox(tb).Input.YLim(1)=usd.y0;
-handles.Toolbox(tb).Input.XLim(2)=usd.x0;
-handles.Toolbox(tb).Input.YLim(2)=usd.y0;
+handles.Toolbox(tb).Input.xLim(1)=usd.x0;
+handles.Toolbox(tb).Input.yLim(1)=usd.y0;
+handles.Toolbox(tb).Input.xLim(2)=usd.x0;
+handles.Toolbox(tb).Input.yLim(2)=usd.y0;
 
 set(handles.GUIHandles.EditX1,'String',num2str(usd.x0));
 set(handles.GUIHandles.EditY1,'String',num2str(usd.y0));
@@ -56,15 +56,15 @@ posy=pos(1,2);
 
 ddb_deleteImageOutline;
 
-handles.Toolbox(tb).Input.XLim(1)=min(posx,usd.x0);
-handles.Toolbox(tb).Input.YLim(1)=min(posy,usd.y0);
-handles.Toolbox(tb).Input.XLim(2)=max(posx,usd.x0);
-handles.Toolbox(tb).Input.YLim(2)=max(posy,usd.y0);
+handles.Toolbox(tb).Input.xLim(1)=min(posx,usd.x0);
+handles.Toolbox(tb).Input.yLim(1)=min(posy,usd.y0);
+handles.Toolbox(tb).Input.xLim(2)=max(posx,usd.x0);
+handles.Toolbox(tb).Input.yLim(2)=max(posy,usd.y0);
 
-set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.XLim(1)));
-set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.YLim(1)));
-set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.XLim(2)));
-set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.YLim(2)));
+set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.xLim(1)));
+set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.yLim(1)));
+set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.xLim(2)));
+set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.yLim(2)));
 
 setHandles(handles);
 

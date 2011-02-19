@@ -14,7 +14,7 @@ end
 if Flw.Temperature.Include
     k=k+1;
 end
-if Flw.Sediments
+if Flw.sediments.include
     for j=1:Flw.NrSediments
         k=k+1;
     end
@@ -58,7 +58,7 @@ if Flw.Temperature.Include
         data{i,k}=Dis.Temperature.TimeSeries(i);
     end
 end
-if Flw.Sediments
+if Flw.sediments.include
     for j=1:Flw.NrSediments
         k=k+1;
         uicontrol(gcf,'Style','text','String',Flw.Sediment(j).Name,'Position',[140+(k-2)*wd ht wd 15],'HorizontalAlignment','center','Tag','UIControl');
@@ -139,7 +139,7 @@ if handles.Model(md).Input(id).Temperature.Include
         handles.Model(md).Input(id).Discharges(ii).Temperature.TimeSeries(i)=data{i,k};
     end
 end
-if handles.Model(md).Input(id).Sediments
+if handles.Model(md).Input(id).sediments.include
     for j=1:handles.Model(md).Input(id).NrSediments
         k=k+1;
         for i=1:nr

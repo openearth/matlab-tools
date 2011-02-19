@@ -17,39 +17,40 @@ for i=1:1000
             case{'comment','commnt'}
             otherwise
                 if ~isnan(str2double(v0{1})) && length(v0)==1
+                    % Vertical layers
                     n=n+1;
-                    val=MDF.(ActiveField);
+                    val=MDF.(activeField);
                     val(n)=str2double(v0{1});
-                    MDF.(ActiveField)=val;
+                    MDF.(activeField)=val;
                 elseif isnan(str2double(v0{1})) && length(v0)==1
-                    % Description
+                    % Description, tidal forces
                     n=n+1;
                     if n==2
-                        vl=MDF.(ActiveField);
+                        vl=MDF.(activeField);
                         val=[];
                         val{1}=vl;
-                        MDF.(ActiveField)=val;
+                        MDF.(activeField)=val;
                         val=[];
                     end
-                    val=MDF.(ActiveField);
+                    val=MDF.(activeField);
                     strtmp=strread(v0{1},'%s','delimiter','#','whitespace','');
                     val{n}=strtmp{2};
-                    MDF.(ActiveField)=val;
+                    MDF.(activeField)=val;
                 else
                     n=1;
                     if length(v0)==2
-                        ActiveField=deblank(v0{1});
+                        activeField=lower(deblank(v0{1}));
                         if ~isnan(str2double(v0{2}))
-                            MDF.(ActiveField)=str2double(v0{2});
+                            MDF.(activeField)=str2double(v0{2});
                         elseif ~isnan(str2num(v0{2}))
-                            MDF.(ActiveField)=str2num(v0{2});
+                            MDF.(activeField)=str2num(v0{2});
                         else
                             strtmp=strread(v0{2},'%s','delimiter','#','whitespace','');
                             if length(strtmp)>1
-                                MDF.(ActiveField)=strtmp{2};
+                                MDF.(activeField)=strtmp{2};
                             end
                         end
-%                        ActiveField=deblank(v0{1});
+%                        activeField=deblank(v0{1});
                     end
                 end
         end

@@ -69,13 +69,16 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
 
     handles.Model(md).Input(id).depFile=[attName '.dep'];
 
-    setHandles(handles);
+
+%    setHandles(handles);
     
     try
         close(wb);
     end
+    
+    handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',id);
 
-    ddb_plotFlowBathymetry(handles,'plot',id);
+%    ddb_plotFlowBathymetry(handles,'plot',id);
 
 else
     GiveWarning('Warning','First generate or load a grid');

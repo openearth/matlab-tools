@@ -9,7 +9,11 @@ for i=1:length(elements)
     
     if isfield(elements(i),'handle')
         if ~isempty(elements(i).handle)
-            setUIElement(elements(i).handle);
+            try
+                setUIElement(elements(i).handle);
+            catch
+                disp(['Something went wrong when setting UI element ' elements(i).tag]);
+            end
             if strcmpi(elements(i).style,'tabpanel')
                 for j=1:length(elements(i).tabs)
                     elements2=elements(i).tabs(j).elements;

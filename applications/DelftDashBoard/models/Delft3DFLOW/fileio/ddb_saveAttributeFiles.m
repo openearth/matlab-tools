@@ -70,7 +70,7 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
     end
 
     incconst=handles.Model(md).Input(id).salinity.include || handles.Model(md).Input(id).temperature.include || ...
-        handles.Model(md).Input(id).sediments || handles.Model(md).Input(id).tracers;
+        handles.Model(md).Input(id).sediments.include || handles.Model(md).Input(id).tracers;
     if incconst
         if isempty(handles.Model(md).Input(id).bccFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bcc', 'Select Transport Conditions File','');

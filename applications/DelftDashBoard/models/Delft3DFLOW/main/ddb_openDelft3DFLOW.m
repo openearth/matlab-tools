@@ -45,7 +45,7 @@ switch opt
         [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF file');
         if pathname~=0
 %            handles.WorkingDirectory=pathname;
-            ddb_plotDelft3DFLOW(handles,'delete');
+            ddb_plotDelft3DFLOW('delete');
             handles.Model(md).Input=[];
             handles.GUIData.nrFlowDomains=1;
             handles.activeDomain=1;
@@ -54,9 +54,10 @@ switch opt
             handles.Toolbox(tbnr).Input.DDBoundaries=[];
             handles=ddb_initializeFlowDomain(handles,'all',1,runid);
             filename=[runid '.mdf'];
-            handles=ddb_readMDF(handles,[filename],1);
+            handles=ddb_readMDF(handles,filename,1);
             handles=ddb_readAttributeFiles(handles);
-            ddb_plotDelft3DFLOW(handles,'plot','activate',1,'visible',1);
+            setHandles(handles);
+            ddb_plotDelft3DFLOW('plot','active',1,'visible',1,'domain',1);
             ddb_refreshFlowDomains;
         end        
     case {'adddomain'}

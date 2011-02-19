@@ -27,6 +27,8 @@ for i=1:length(elements)
         elements(i).textHandle=[];
         position=elements(i).position;
         
+        
+        
         switch lower(elements(i).style)
             
             %% Standard elements
@@ -35,7 +37,12 @@ for i=1:length(elements)
                 
                 % Edit box
                 elements(i).handle=uicontrol(figh,'Parent',parent,'Style','edit','String','','Position',position,'BackgroundColor',[1 1 1]);
-                
+
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end
+
                 if ~isempty(elements(i).type)
                     tp=elements(i).type;
                 else
@@ -71,13 +78,24 @@ for i=1:length(elements)
                     % Text
                     elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',str,'Position',position,'BackgroundColor',bgc);
                     setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
+                    
+                    if ~isempty(elements(i).parent)
+                        hh=findobj(gcf,'Tag',elements(i).parent);
+                        set(elements(i).textHandle,'Parent',hh);
+                    end
+
                 end
+                
                 
             case{'panel'}
                 elements(i).handle=uipanel('Title',elements(i).title,'Units','pixels','Position',position,'BackgroundColor',bgc);
 %                elements(i).handle=uicontrol(figh,'Style','frame','String',elements(i).title,'Units','pixels','Position',position,'BackgroundColor',bgc);
-                set(elements(i).handle,'Title',elements(i).text);
+                set(elements(i).handle,'Title',elements(i).text,'BorderType',elements(i).borderType);
                 set(elements(i).handle,'Parent',parent);
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end
                 
             case{'radiobutton'}
                 
@@ -95,6 +113,10 @@ for i=1:length(elements)
                 
                 if ~isempty(parent)
                     set(elements(i).handle,'Parent',parent);
+                end
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
                 end
                 
             case{'checkbox'}
@@ -114,6 +136,10 @@ for i=1:length(elements)
                 if ~isempty(parent)
                     set(elements(i).handle,'Parent',parent);
                 end
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end
                 
             case{'pushbutton'}
                 elements(i).handle=uicontrol(figh,'Style','pushbutton','String',elements(i).text,'Position',position);
@@ -121,12 +147,20 @@ for i=1:length(elements)
                 if ~isempty(elements(i).toolTipString)
                     set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
                 end
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end
 
             case{'togglebutton'}
                 elements(i).handle=uicontrol(figh,'Style','togglebutton','String',elements(i).text,'Position',position);
                 set(elements(i).handle,'Parent',parent);
                 if ~isempty(elements(i).toolTipString)
                     set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
+                end
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
                 end
 
             case{'listbox'}
@@ -147,6 +181,15 @@ for i=1:length(elements)
                     % Text
                     elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
                     setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).textHandle,'Parent',hh);
+                end
+                end
+
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
                 end
 
             case{'popupmenu'}
@@ -157,12 +200,21 @@ for i=1:length(elements)
                 if ~isempty(elements(i).toolTipString)
                     set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
                 end
-                
+
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end
+
                 % Set text
                 if ~isempty(elements(i).text)
                     % Text
                     elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
                     setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
+                    if ~isempty(elements(i).parent)
+                        hh=findobj(gcf,'Tag',elements(i).parent);
+                        set(elements(i).textHandle,'Parent',hh);
+                    end
                 end
 
             case{'text'}
@@ -191,6 +243,11 @@ for i=1:length(elements)
                 if ~isempty(parent)
                     set(elements(i).handle,'Parent',parent);
                 end
+
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end
                 
                 %% Custom elements
                 
@@ -206,7 +263,12 @@ for i=1:length(elements)
                 if ~isempty(parent)
                     set(elements(i).handle,'Parent',parent);
                 end
-                
+
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end
+
                 if elements(i).showFileName
                     % Text
                     str='File : ';
@@ -215,6 +277,12 @@ for i=1:length(elements)
                     if ~isempty(parent)
                         set(elements(i).textHandle,'Parent',parent);
                     end
+                    
+                    if ~isempty(elements(i).parent)
+                        hh=findobj(gcf,'Tag',elements(i).parent);
+                        set(elements(i).textHandle,'Parent',hh);
+                    end
+
                 end
                 
                 
@@ -300,7 +368,7 @@ for i=1:length(elements)
                 end
                 
                 elements(i).handle=table(gcf,'create','tag',tag,'parent',parent,'data',data,'position',position,'nrrows',nrrows,'columntypes',cltp,'width',width,'callbacks',callbacks, ...
-                    'includebuttons',inclb,'includenumbers',incln,'format',format,'enable',enable);
+                    'includebuttons',inclb,'includenumbers',incln,'format',format,'enable',enable,'columntext',txt);
 
         end
     catch
@@ -315,7 +383,11 @@ for i=1:length(elements)
     %drawnow;
     
     set(elements(i).handle,'Tag',elements(i).tag);
+    try
     setappdata(elements(i).handle,'getFcn',getFcn);
+    catch
+        shite=999
+    end
     setappdata(elements(i).handle,'setFcn',setFcn);
     setappdata(elements(i).handle,'element',elements(i));
 end
@@ -642,7 +714,19 @@ if ~isempty(str{1})
                 v=str{ii};
             end
         otherwise
-            v=ii;
+            if isfield(el.list,'value')
+                if isfield(el.list.value,'variable')
+                    values=getSubFieldValue(s,el.list.value.variable);
+                else
+                    values=el.list.value;
+                end
+                for jj=1:length(values)
+                    vnum(jj)=str2double(values{jj});
+                end
+                v=vnum(ii);
+            else
+                v=ii;
+            end
     end
     s=setSubFieldValue(s,el.variable,v);
     

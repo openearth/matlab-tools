@@ -21,7 +21,7 @@ for n=1:nr
         k=k+1;
         Info=SetInfo(Info,Flw.itDate,Flw.openBoundaries(n),Flw.openBoundaries(n).temperature,'Temperature','[C]',k,n,kmax);
     end
-    if Flw.sediments
+    if Flw.sediments.include
         for i=1:Flw.nrSediments
             k=k+1;
             Info=SetInfo(Info,Flw.itDate,Flw.openBoundaries(n),Flw.openBoundaries(n).sediment(i),Flw.sediment(i).name,'[kg/m3]',k,n,kmax);

@@ -38,7 +38,7 @@ if handles.Model(md).Input(ad).Tracers
 else
     set(handles.GUIHandles.PushEditPollutants,'Enable','off');
 end
-if handles.Model(md).Input(ad).Sediments
+if handles.Model(md).Input(ad).sediments.include
     set(handles.GUIHandles.ToggleSediments,'Value',1);
     set(handles.GUIHandles.PushEditSediments,'Enable','on');
 else
@@ -119,14 +119,14 @@ setHandles(handles);
 %%
 function ToggleSediments_Callback(hObject,eventdata)
 handles=getHandles;
-handles.Model(md).Input(ad).Sediments=get(hObject,'Value');
-if handles.Model(md).Input(ad).Sediments
+handles.Model(md).Input(ad).sediments.include=get(hObject,'Value');
+if handles.Model(md).Input(ad).sediments.include
     set(handles.GUIHandles.PushEditSediments,'Enable','on');
     if handles.Model(md).Input(ad).NrSediments==0
         handles=ddb_editD3DFlowSediments(handles);
         if handles.Model(md).Input(ad).NrSediments==0
             set(handles.GUIHandles.PushEditSediments,'Enable','off');
-            handles.Model(md).Input(ad).Sediments=0;
+            handles.Model(md).Input(ad).sediments.include=0;
             set(hObject,'Value',0);
         end
     end
@@ -195,10 +195,6 @@ handles=ddb_editD3DFlowSediments(handles);
 if handles.Model(md).Input(ad).NrSediments==0
     set(hObject,'Enable','off');
     set(handles.GUIHandles.ToggleSediments,'Value',0);
-    handles.Model(md).Input(ad).Sediments=0;
+    handles.Model(md).Input(ad).sediments.include=0;
 end
 setHandles(handles);
-
-
-
-

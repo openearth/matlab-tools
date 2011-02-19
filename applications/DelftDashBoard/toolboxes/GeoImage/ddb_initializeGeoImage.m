@@ -13,6 +13,6 @@ if nargin>1
 end
 
 handles.Toolbox(ii).Input.xLim      = [0 0];
-handles.Toolbox(ii).Input.xLim      = [0 0];
+handles.Toolbox(ii).Input.yLim      = [0 0];
 handles.Toolbox(ii).Input.zoomLevel = 0;
 handles.Toolbox(ii).Input.nPix      = 1024;

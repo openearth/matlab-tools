@@ -69,7 +69,7 @@ if handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).NrO
         ddb_saveBctFile(handles,id);
     end
 
-    incconst=handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).Salinity.Include || handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).Temperature.Include || handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).Sediments || handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).Tracers;
+    incconst=handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).Salinity.Include || handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).Temperature.Include || handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).sediments.include || handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).Tracers;
     if incconst
         if isempty(handles.Model(find(strcmp('Delft3DFLOW',{handles.Model.Name}))).Input(id).BccFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bcc', 'Select Transport Conditions File','');

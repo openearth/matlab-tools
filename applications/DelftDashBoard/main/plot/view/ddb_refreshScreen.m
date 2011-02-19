@@ -28,7 +28,7 @@ ddb_zoomOff;
 
 for j=1:length(handles.Model)
     f=handles.Model(j).plotFcn;
-    feval(f,handles,'update',2,ad);
+    feval(f,'update','active',0,'domain',ad,'visible',1);
 end
 
 for j=1:length(handles.Toolbox)

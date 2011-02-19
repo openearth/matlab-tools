@@ -108,15 +108,11 @@ switch lower(opt)
 
         % First delete existing objects
         if ~isempty(allPlotHandles)
-            delete(allPlotHandles);
-            drawnow;
             for i=1:nr
                 attStruc(i).plotHandles=[];
             end
         end
         if ~isempty(allTextHandles)
-            delete(allTextHandles);
-            drawnow;
             for i=1:nr
                 attStruc(i).plotHandles=[];
             end
@@ -196,13 +192,20 @@ switch lower(opt)
                     set(attStruc(i).plotHandles,'Visible','off');
                     set(attStruc(i).plotHandles,'Visible','off');
                 end
-                
-%                drawnow;
 
             end
 
         end
-        
+
+        % Now delete old objects
+        if ~isempty(allPlotHandles)
+            delete(allPlotHandles);
+        end
+        if ~isempty(allTextHandles)
+            delete(allTextHandles);
+        end
+
+                
     case{'delete'}
 
         if ~isempty(allPlotHandles)
@@ -263,7 +266,6 @@ switch lower(opt)
                 set(allTextHandles,'Visible','off');
             end
         end
-%        drawnow;
        
 end
 

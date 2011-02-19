@@ -53,7 +53,7 @@
     <position>50 55</position>
     <onchange>ddb_Delft3DFLOW_processes</onchange>
     <option1>checkconstituents</option1>
-    <variable>handles.Model(md).Input(ad).sediments</variable>
+    <variable>handles.Model(md).Input(ad).sediments.include</variable>
   </element>
   <element>
     <tag>pushedittracers</tag>
@@ -97,9 +97,9 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).sediments</variable>
-            <value>0</value>
-            <operator>gt</operator>
+            <variable>handles.Model(md).Input(ad).sediments.include</variable>
+            <value>1</value>
+            <operator>eq</operator>
           </check>
         </checks>
       </dependency>

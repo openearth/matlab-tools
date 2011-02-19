@@ -229,7 +229,7 @@
     <tooltipstring>Save dry points file</tooltipstring>
     <text>Save</text>
     <variable>handles.Model(md).Input(ad).dryFile</variable>
-    <showfilename>0</showfilename>
+    <showfilename>no</showfilename>
     <extension>*.dry</extension>
     <selectiontext>Select dry points File</selectiontext>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>

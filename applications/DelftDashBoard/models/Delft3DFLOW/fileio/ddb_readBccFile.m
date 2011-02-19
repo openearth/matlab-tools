@@ -71,7 +71,7 @@ for nb=1:Flow.nrOpenBoundaries
             Flow.openBoundaries(nb).temperature.profile='Uniform';
         end
     end
-    if Flow.sediments
+    if Flow.sediments.include
         for j=1:Flow.nrSediments
             nt=FindTable(Info,Flow.openBoundaries(nb).name,Flow.sediment(j).name);
             if nt>0

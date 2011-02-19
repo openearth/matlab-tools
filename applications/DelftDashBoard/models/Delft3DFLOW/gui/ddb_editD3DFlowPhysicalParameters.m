@@ -14,7 +14,7 @@ if handles.Model(md).Input(ad).temperature.include
     callbacks{k}=@ddb_editD3DFlowHeatFluxModel;
 end
 
-if handles.Model(md).Input(ad).Sediments
+if handles.Model(md).Input(ad).sediments.include
     k=k+1;
     strings{k}='Sediment';
     callbacks{k}=@ddb_editD3DFlowSediment;

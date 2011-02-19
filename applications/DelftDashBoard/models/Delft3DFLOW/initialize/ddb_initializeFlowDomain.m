@@ -13,6 +13,9 @@ end
 %%
 function handles=ddb_initializeGridDependentInput(handles,id)
 
+handles.Model(md).Input.grid=[];
+handles.Model(md).Input.bathy=[];
+
 handles.Model(md).Input(id).nrObservationPoints=0;
 handles.Model(md).Input(id).nrCrossSections=0;
 handles.Model(md).Input(id).nrDischarges=0;
@@ -71,8 +74,6 @@ handles.Model(md).Input(id).nrAstro=0;
 handles.Model(md).Input(id).nrHarmo=0;
 handles.Model(md).Input(id).nrTime=0;
 handles.Model(md).Input(id).nrCor=0;
-handles.Model(md).Input(ad).activeBndType=1;
-handles.Model(md).Input(ad).activeForcingType=1;
 
 %% Files
 handles.Model(md).Input(id).grdFile='';
@@ -135,6 +136,12 @@ handles.Model(md).Input(id).sedFile='';
 handles.Model(md).Input(id).morFile='';
 handles.Model(md).Input(id).wndFile='';
 handles.Model(md).Input(id).spwFile='';
+handles.Model(md).Input(id).amuFile='';
+handles.Model(md).Input(id).amvFile='';
+handles.Model(md).Input(id).ampFile='';
+handles.Model(md).Input(id).wndgrd='';
+handles.Model(md).Input(id).MNmaxw=[];
+
 handles.Model(md).Input(id).nrSediments=0;
 handles.Model(md).Input(id).nrTracers=0;
 handles.Model(md).Input(id).nrConstituents=0;
@@ -171,7 +178,6 @@ handles.Model(md).Input(id).fourierAnalysis=0;
 handles.Model(md).Input(id).salinity.include=0;
 handles.Model(md).Input(id).temperature.include=0;
 handles.Model(md).Input(id).tracers=0;
-handles.Model(md).Input(id).sediments=0;
 handles.Model(md).Input(id).wind=0;
 handles.Model(md).Input(id).waves=0;
 handles.Model(md).Input(id).onlineWave=0;
@@ -182,6 +188,19 @@ handles.Model(md).Input(id).tidalForces=0;
 handles.Model(md).Input(id).dredging=0;
 handles.Model(md).Input(id).constituents=0;
 
+%% Tidal forces
+handles.Model(md).Input(id).tidalForce.M2=0;
+handles.Model(md).Input(id).tidalForce.S2=0;
+handles.Model(md).Input(id).tidalForce.N2=0;
+handles.Model(md).Input(id).tidalForce.K2=0;
+handles.Model(md).Input(id).tidalForce.K1=0;
+handles.Model(md).Input(id).tidalForce.O1=0;
+handles.Model(md).Input(id).tidalForce.P1=0;
+handles.Model(md).Input(id).tidalForce.Q1=0;
+handles.Model(md).Input(id).tidalForce.MF=0;
+handles.Model(md).Input(id).tidalForce.MM=0;
+handles.Model(md).Input(id).tidalForce.SSA=0;
+
 handles.Model(md).Input(id).latitude=0.0;
 handles.Model(md).Input(id).orientation=0.0;
 handles.Model(md).Input(id).g=9.81;
@@ -190,13 +209,16 @@ handles.Model(md).Input(id).rhoW=1000.0;
 handles.Model(md).Input(id).tempW=15;
 handles.Model(md).Input(id).salW=31;
 handles.Model(md).Input(id).rouWav='FR84';
-handles.Model(md).Input(id).windStress=[6.3000000e-004  0.0000000e+000  7.2300000e-003  3.0000000e+001];
-handles.Model(md).Input(id).windType='Uniform';
+handles.Model(md).Input(id).windStress=[6.3000000e-004  0.0000000e+000  7.2300000e-003  3.0000000e+001  5.0000000e-003  4.0000000e+001];
+handles.Model(md).Input(id).windStressCoefficients=[6.3000000e-004;7.2300000e-003];
+handles.Model(md).Input(id).windStressSpeeds=[0.0000000e+000;3.0000000e+001];
+handles.Model(md).Input(id).nrWindStressBreakpoints=2;
+handles.Model(md).Input(id).windType='uniform';
 handles.Model(md).Input(id).wndInt='Y';
 handles.Model(md).Input(id).rhoAir=1.0;
 handles.Model(md).Input(id).betaC=0.5;
 handles.Model(md).Input(id).equili=0;
-handles.Model(md).Input(id).verticalTurbulenceModel='K-epsilon   ';
+handles.Model(md).Input(id).verticalTurbulenceModel='K-epsilon';
 handles.Model(md).Input(id).kTemp=0;
 handles.Model(md).Input(id).fClou=0;
 handles.Model(md).Input(id).sArea=0;
@@ -231,11 +253,6 @@ handles.Model(md).Input(id).momSol='Cyclic';
 handles.Model(md).Input(id).onlineVisualisation=0;
 handles.Model(md).Input(id).waveOnline=0;
 
-handles.Model(md).Input(id).filwp='';
-handles.Model(md).Input(id).filwu='';
-handles.Model(md).Input(id).filwv='';
-handles.Model(md).Input(id).wndgrd='';
-handles.Model(md).Input(id).MNmaxw=[];
 
 % HLES stuff
 handles.Model(md).Input(id).Htural=1.6666660e+000;
@@ -247,7 +264,7 @@ handles.Model(md).Input(id).Hturdm=0.0000000e+000;
 handles.Model(md).Input(id).Hturel=1;
 
 % Initial Condition Options
-handles.Model(md).Input(id).waterLevel.ICOpt=handles.tideModels.activeTideModelIC;
+handles.Model(md).Input(id).waterLevel.ICOpt='unif';
 handles.Model(md).Input(id).waterLevel.ICConst=0;
 handles.Model(md).Input(id).waterLevel.ICPar=0;
 handles.Model(md).Input(id).velocity.ICOpt='Constant';
@@ -265,22 +282,26 @@ handles.Model(md).Input(id).tracer=[];
 for i=1:handles.Model(md).Input(id).nrTracers
     handles=ddb_initializeTracer(handles,i);
 end
-handles.Model(md).Input(id).sediment=[];
-for i=1:handles.Model(md).Input(id).nrSediments
-    handles=ddb_initializeSediment(handles,i);
-end
-
-handles.Model(md).Input(id).snellius=0;
 handles.Model(md).Input(id).cstBnd=0;
 
-% Roller Model
-handles.Model(md).Input(id).snellius=0;
+%% Sediments
+handles.Model(md).Input(id).sediment=[];
+handles.Model(md).Input(id).sediments=[];
+handles.Model(md).Input(id).sediments.include=0;
+handles.Model(md).Input(id).sediments.cRef=1600;
+handles.Model(md).Input(id).sediments.iOpSus=0;
+handles.Model(md).Input(id).sediments.sedimentNames={''};
+handles.Model(md).Input(id).sediments.activeSediment=1;
+handles=ddb_initializeSediment(handles,id,1);
+
+%% Roller Model
+handles.Model(md).Input(id).roller.snellius=0;
 handles.Model(md).Input(id).roller.gamDis=0.7;
 handles.Model(md).Input(id).roller.betaRo=0.05;
 handles.Model(md).Input(id).roller.fLam=-2;
 handles.Model(md).Input(id).roller.thr=0.01;
 
-% Trachytopes
+%% Trachytopes
 handles.Model(md).Input(id).trachy.traFrm='';
 handles.Model(md).Input(id).trachy.trtrou=0;
 handles.Model(md).Input(id).trachy.trtdef='';

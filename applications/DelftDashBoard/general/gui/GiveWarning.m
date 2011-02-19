@@ -64,7 +64,7 @@ handles.Text=varargin{2};
 
 PutInCentre(hObject);
 
-StatName=[h.SettingsDir '\icons\god2.jpg'];
+StatName=[h.settingsDir '\icons\god2.jpg'];
 c = imread(StatName,'jpeg');
 image(c);
 tick(gca,'x','none');tick(gca,'y','none');

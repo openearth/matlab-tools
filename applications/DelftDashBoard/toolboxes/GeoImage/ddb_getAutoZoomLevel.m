@@ -1,9 +1,9 @@
 function zoomLevel=ddb_getAutoZoomLevel(handles,xl,yl,npix)
 
-if ~strcmpi(handles.ScreenParameters.CoordinateSystem.Name,'wgs 84')
-    cs0=handles.ScreenParameters.CoordinateSystem;
-    cs1.Name='WGS 84';
-    cs1.Type='geo';
+if ~strcmpi(handles.screenParameters.coordinateSystem.name,'wgs 84')
+    cs0=handles.screenParameters.coordinateSystem;
+    cs1.name='WGS 84';
+    cs1.type='geo';
     [xl(1),yl(1)]=ddb_coordConvert(xl(1),yl(1),cs0,cs1);
     [xl(2),yl(2)]=ddb_coordConvert(xl(2),yl(2),cs0,cs1);
 end

@@ -27,7 +27,7 @@ if handles.Model(md).Input(ad).Temperature.Include
     handles.GUIData.ConstType{k}='Temperature';
 end
 
-if handles.Model(md).Input(ad).Sediments
+if handles.Model(md).Input(ad).sediments.include
     for j=1:handles.Model(md).Input(ad).NrSediment
         k=k+1;
         str{k}=handles.Model(md).Input(ad).Sediment(j).Name;

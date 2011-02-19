@@ -1,4 +1,4 @@
-function MDF=ddb_initializeMDF
+function mdflower=ddb_initializeMDF
 
 MDF.Ident = 'Delft3D-FLOW  .03.02 3.39.09';
 MDF.Runtxt= '';
@@ -79,6 +79,7 @@ MDF.Sarea =  0.0000000e+000;
 MDF.Filtmp= '';
 MDF.Fmttmp= 'FR';
 MDF.Temint= 'Y';
+MDF.Tidfor= '';
 %MDF.Tstmp = [.] [.];
 MDF.Roumet= 'C';
 MDF.Filrgh= '';
@@ -145,6 +146,13 @@ MDF.Filwu = '';
 MDF.Filwv = '';
 MDF.Wndgrd= 'A';
 MDF.MNmaxw= [0 0];
+
+%% lower case
+fnames=fieldnames(MDF);
+for i=1:length(fnames)
+    mdflower.(lower(fnames{i}))=MDF.(fnames{i});
+end
+
 
 % MDF.Ident = 'Delft3D-FLOW  .03.02 3.39.26';
 % MDF.Anglat= 0.0;

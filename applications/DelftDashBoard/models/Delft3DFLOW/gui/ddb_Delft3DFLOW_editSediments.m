@@ -80,9 +80,11 @@ if length(name)>8
             end
         end
     else
+        set(handles.GUIHandles.EditSedimentName,'String','Sediment');
         GiveWarning('text','Name must start with "Sediment"!')
     end
 else
+    set(handles.GUIHandles.EditSedimentName,'String','Sediment');
     GiveWarning('text','Name must start with "Sediment"!')    
 end
 
@@ -103,9 +105,11 @@ if length(name)>8
             guidata(gcf,handles);
         end
     else
+        set(handles.GUIHandles.EditSedimentName,'String',handles.Model(md).Input(ad).sediment(ii).name);
         GiveWarning('text','Name must start with "Sediment"!')
     end
 else
+    set(handles.GUIHandles.EditSedimentName,'String',handles.Model(md).Input(ad).sediment(ii).name);
     GiveWarning('text','Name must start with "Sediment"!')
 end
 
@@ -169,18 +173,19 @@ function PushOK_Callback(hObject,eventdata)
 h2=getHandles;
 handles=guidata(gcf);
 
-
 h2.Model(md).Input(ad).sediment=handles.Model(md).Input(ad).sediment;
 h2.Model(md).Input(ad).nrSediments=handles.Model(md).Input(ad).nrSediments;
+h2.Model(md).Input(ad).sedimentNames=[];
 for ii=1:handles.Model(md).Input(ad).nrSediments
     if handles.Model(md).Input(ad).sediment(ii).new
-        h2=ddb_initializeSediment(h2,ii);
+        h2=ddb_initializeSediment(h2,ad,ii);
     end
+    h2.Model(md).Input(ad).sedimentNames{ii}=handles.Model(md).Input(ad).sediment.name;
 end
 if handles.Model(md).Input(ad).nrSediments==0
-    h2.Model(md).Input(ad).sediments=0;
+    h2.Model(md).Input(ad).sediments.include=0;
 else
-    h2.Model(md).Input(ad).sediments=1;
+    h2.Model(md).Input(ad).sediments.include=1;
 end
 setHandles(h2);
 

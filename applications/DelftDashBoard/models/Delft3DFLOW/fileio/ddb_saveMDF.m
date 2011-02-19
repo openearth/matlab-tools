@@ -6,7 +6,7 @@ Flow=handles.Model(md).Input(id);
 
 runid=handles.Model(md).Input(id).runid;
 
-incconst=Flow.salinity.include || Flow.temperature.include || Flow.sediments || Flow.tracers;
+incconst=Flow.salinity.include || Flow.temperature.include || Flow.sediments.include || Flow.tracers;
 
 MDF.Ident='Delft3D-FLOW  .03.02 3.39.26';
 MDF.Runtxt=Flow.description;
@@ -61,14 +61,14 @@ MDF.Sub2='   ';
 if Flow.nrDrogues>0
     MDF.Sub2(1)='P';
 end
-if Flow.sediments || Flow.tracers
+if Flow.sediments.include || Flow.tracers
     MDF.Sub2(2)='C';
 end
 if Flow.waves
     MDF.Sub2(3)='W';
 end
 k=0;
-if Flow.sediments
+if Flow.sediments.include
     for i=1:Flow.nrSediments
         k=k+1;
         MDF.(['Namc' num2str(k)])=[Flow.sediment(i).name repmat(' ',1,20-length(Flow.sediment(i).name))];
@@ -81,25 +81,44 @@ if Flow.tracers
     end
 end
 switch Flow.windType
-    case 'Uniform'
+    case{'uniform','equidistant','spiderweb'}
         MDF.wnsvwp='N';
-    case 'SpaceVarying'
+    case{'curvilinear'}
         MDF.wnsvwp='Y';
 end
 MDF.Wndint=Flow.wndInt;
 if Flow.wind
-    if ~isempty(Flow.wndFile)
-        MDF.Filwnd=Flow.wndFile;
+    switch Flow.windType
+        case{'uniform'}
+            if ~isempty(Flow.wndFile)
+                MDF.Filwnd=Flow.wndFile;
+            end
+        case{'equidistant'}
+            if ~isempty(Flow.amuFile)
+                MDF.Filamu=Flow.amuFile;
+            end
+            if ~isempty(Flow.amvFile)
+                MDF.Filamv=Flow.amvFile;
+            end
+            if ~isempty(Flow.ampFile)
+                MDF.Filamp=Flow.ampFile;
+            end
+% if met
+%     MDF.Wndgrd=Flow.wndgrd;
+%     MDF.MNmaxw=Flow.MNmaxw;
+% end
+
+        case{'curvilinear'}
+            if ~isempty(Flow.wndFile)
+                MDF.Filwnd=Flow.wndFile;
+            end
+        case{'spiderweb'}
+            if ~isempty(Flow.spwFile)
+                MDF.Filweb=Flow.spwFile;
+            end
     end
-    if ~isempty(Flow.spwFile)
-        MDF.Filweb=Flow.spwFile;
-    end        
-%     switch lower(Flow.WindType)
-%         case{'uniform'}
-%         case{'spiderweb'}
-%             MDF.Filweb=Flow.SpwFile;
-%     end
 end
+
 switch Flow.initialConditions,
     case{'unif'}
         MDF.Zeta0=Flow.zeta0;
@@ -114,7 +133,7 @@ switch Flow.initialConditions,
             MDF.T0=val;
         end
         k=0;
-        if Flow.sediments
+        if Flow.sediments.include
             for i=1:Flow.nrSediments
                 k=k+1;
                 val=zeros(Flow.KMax,1)+Flow.sediment(i).ICConst;
@@ -197,6 +216,49 @@ if Flow.temint==1
 else
     MDF.Temint='Y';
 end
+
+% Tidal forces
+if handles.Model(md).Input(id).tidalForces
+    MDF.Tidfor{1}='------------';
+    MDF.Tidfor{2}='------------';
+    MDF.Tidfor{3}='------------';
+    if handles.Model(md).Input(id).tidalForce.M2
+        MDF.Tidfor{1}(1:3)='M2 ';
+    end
+    if handles.Model(md).Input(id).tidalForce.S2
+        MDF.Tidfor{1}(4:6)='S2 ';
+    end
+    if handles.Model(md).Input(id).tidalForce.N2
+        MDF.Tidfor{1}(7:9)='N2 ';
+    end
+    if handles.Model(md).Input(id).tidalForce.K2
+        MDF.Tidfor{1}(10:12)='K2 ';
+    end
+    if handles.Model(md).Input(id).tidalForce.K1
+        MDF.Tidfor{2}(1:3)='K1 ';
+    end
+    if handles.Model(md).Input(id).tidalForce.O1
+        MDF.Tidfor{2}(4:6)='O1 ';
+    end
+    if handles.Model(md).Input(id).tidalForce.P1
+        MDF.Tidfor{2}(7:9)='P1 ';
+    end
+    if handles.Model(md).Input(id).tidalForce.Q1
+        MDF.Tidfor{2}(10:12)='Q1 ';
+    end
+    if handles.Model(md).Input(id).tidalForce.MF
+        MDF.Tidfor{3}(1:3)='MF ';
+    end
+    if handles.Model(md).Input(id).tidalForce.MM
+        MDF.Tidfor{3}(4:6)='MM ';
+    end
+    if handles.Model(md).Input(id).tidalForce.SSA
+        MDF.Tidfor{3}(7:9)='SSA';
+    end
+else
+    MDF.Tidfor='';
+end
+
 MDF.Roumet=Flow.roughnessType;
 MDF.Ccofu=Flow.uRoughness;
 MDF.Ccofv=Flow.vRoughness;
@@ -324,24 +386,7 @@ tint=Flow.comInterval;
 MDF.Flpp =[tstart tint tstop];
 MDF.Flrst=Flow.rstInterval;
 
-met=0;
-if ~isempty(Flow.filwp)
-    MDF.Filwp=Flow.filwp;
-    met=1;
-end
-if ~isempty(Flow.filwu)
-    MDF.Filwu=Flow.filwu;
-    met=1;
-end
-if ~isempty(Flow.filwv)
-    MDF.Filwv=Flow.filwv;
-    met=1;
-end
-if met
-    MDF.Wndgrd=Flow.wndgrd;
-    MDF.MNmaxw=Flow.MNmaxw;
-end
-
+%% Z layers
 if Flow.KMax>1
     if strcmpi(Flow.layerType,'z')
         MDF.Zmodel='Y';
@@ -350,7 +395,25 @@ if Flow.KMax>1
     end
 end
 
-%%
+%% Roller model
+if Flow.roller.include && Flow.waves
+    MDF.Roller='Y';
+    if Flow.roller.snellius
+        MDF.Snelli='Y';
+    else
+        MDF.Snelli='N';
+    end
+    MDF.Gamdis=Flow.roller.gamDis;
+    MDF.Betaro=Flow.roller.betaRo;
+    MDF.F_lam=Flow.roller.fLam;
+    MDF.Thr=Flow.roller.thr;
+end
+
+if Flow.cstBnd
+    MDF.CstBnd='Y';
+end
+
+%% Now save everything to mdf file
 fname=[handles.Model(md).Input(id).runid '.mdf'];
 
 fid=fopen(fname,'w');
@@ -393,12 +456,12 @@ for i=1:length(Names)
                 end
             end
         case{'tidfor'}
-            if size(getfield(MDF,Names{i}))>0
-                str='Tidfor= #M2 S2 N2 K2 #';    
+            if ~isempty(MDF.Tidfor)
+                str=['Tidfor= #' MDF.Tidfor{1} '#'];    
                 fprintf(fid,'%s\n',str);
-                str='        #K1 O1 P1 Q1 #';    
+                str=['        #' MDF.Tidfor{2} '#'];    
                 fprintf(fid,'%s\n',str);
-                str='        #MF MM SSA---#';    
+                str=['        #' MDF.Tidfor{3} '#'];    
                 fprintf(fid,'%s\n',str);
             end
         otherwise

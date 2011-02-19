@@ -60,10 +60,10 @@ else
             handles.Model(md).Input(ad).deleteThinDam=0;
             handles.editMode='edit';
             n=handles.Model(md).Input(ad).activeThinDam;
-            m1str=num2str(handles.Model(md).Input(ad).ThinDams(n).M1);
-            m2str=num2str(handles.Model(md).Input(ad).ThinDams(n).M2);
-            n1str=num2str(handles.Model(md).Input(ad).ThinDams(n).N1);
-            n2str=num2str(handles.Model(md).Input(ad).ThinDams(n).N2);
+            m1str=num2str(handles.Model(md).Input(ad).thinDams(n).M1);
+            m2str=num2str(handles.Model(md).Input(ad).thinDams(n).M2);
+            n1str=num2str(handles.Model(md).Input(ad).thinDams(n).N1);
+            n2str=num2str(handles.Model(md).Input(ad).thinDams(n).N2);
             handles.Model(md).Input(ad).thinDamNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','thindams');
             clearInstructions;
@@ -74,7 +74,7 @@ else
             handles.Model(md).Input(ad).changeThinDam=0;
             % Delete selected dry point next time delete is clicked
             handles.Model(md).Input(ad).deleteThinDam=1;
-            ddb_Delft3DFLOW_plotThinDams(handles,'update','active',1);
+            handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','thindams');
             clearInstructions;
 
         case{'openfile'}
@@ -122,15 +122,15 @@ if m1>0 && (m1==m2 || n1==n2)
 
     if x1==x2 && y1==y2
         if uv==1
-            handles.Model(md).Input(ad).ThinDams(iac).UV='V';
+            handles.Model(md).Input(ad).thinDams(iac).UV='V';
         else
-            handles.Model(md).Input(ad).ThinDams(iac).UV='U';
+            handles.Model(md).Input(ad).thinDams(iac).UV='U';
         end            
     else
         if m2~=m1
-            handles.Model(md).Input(ad).ThinDams(iac).UV='V';
+            handles.Model(md).Input(ad).thinDams(iac).UV='V';
         else
-            handles.Model(md).Input(ad).ThinDams(iac).UV='U';
+            handles.Model(md).Input(ad).thinDams(iac).UV='U';
         end
     end
     if m2>m1
@@ -146,12 +146,12 @@ if m1>0 && (m1==m2 || n1==n2)
         n2=n2+1;
     end
     
-    handles.Model(md).Input(ad).ThinDams(iac).M1=m1;
-    handles.Model(md).Input(ad).ThinDams(iac).N1=n1;
-    handles.Model(md).Input(ad).ThinDams(iac).M2=m2;
-    handles.Model(md).Input(ad).ThinDams(iac).N2=n2;
-    handles.Model(md).Input(ad).ThinDams(iac).Name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
-    handles.Model(md).Input(ad).thinDamNames{iac}=handles.Model(md).Input(ad).ThinDams(iac).Name;
+    handles.Model(md).Input(ad).thinDams(iac).M1=m1;
+    handles.Model(md).Input(ad).thinDams(iac).N1=n1;
+    handles.Model(md).Input(ad).thinDams(iac).M2=m2;
+    handles.Model(md).Input(ad).thinDams(iac).N2=n2;
+    handles.Model(md).Input(ad).thinDams(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
+    handles.Model(md).Input(ad).thinDamNames{iac}=handles.Model(md).Input(ad).thinDams(iac).name;
     handles.Model(md).Input(ad).activeThinDam=iac;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','thindams');
     
@@ -174,16 +174,16 @@ nrdry=handles.Model(md).Input(ad).nrThinDams;
 if nrdry>0
     iac=handles.Model(md).Input(ad).activeThinDam;    
     if nrdry>1
-        handles.Model(md).Input(ad).ThinDams=removeFromStruc(handles.Model(md).Input(ad).ThinDams,iac);
+        handles.Model(md).Input(ad).thinDams=removeFromStruc(handles.Model(md).Input(ad).thinDams,iac);
         handles.Model(md).Input(ad).thinDamNames=removeFromCellArray(handles.Model(md).Input(ad).thinDamNames,iac);
     else   
         handles.Model(md).Input(ad).thinDamNames={''};
         handles.Model(md).Input(ad).activeThinDam=1;
-        handles.Model(md).Input(ad).ThinDams(1).M1=[];
-        handles.Model(md).Input(ad).ThinDams(1).M2=[];
-        handles.Model(md).Input(ad).ThinDams(1).N1=[];
-        handles.Model(md).Input(ad).ThinDams(1).N2=[];
-        handles.Model(md).Input(ad).ThinDams(1).UV=[];
+        handles.Model(md).Input(ad).thinDams(1).M1=[];
+        handles.Model(md).Input(ad).thinDams(1).M2=[];
+        handles.Model(md).Input(ad).thinDams(1).N1=[];
+        handles.Model(md).Input(ad).thinDams(1).N2=[];
+        handles.Model(md).Input(ad).thinDams(1).UV=[];
     end
     if iac==nrdry
         iac=nrdry-1;

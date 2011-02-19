@@ -51,16 +51,17 @@ if handles.debugMode
     
 end
 
+handles=getHandles;
 
 for i=1:length(handles.Model)
     try
-        feval(handles.Model(i).plotFcn,handles,'delete');
+        feval(handles.Model(i).plotFcn,'delete');
     end
 end
 
 for i=1:length(handles.Toolbox)
     try
-        feval(handles.Toolbox(i).plotFcn,handles,'delete');
+        feval(handles.Toolbox(i).plotFcn,'delete');
     end
 end
 
