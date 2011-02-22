@@ -103,7 +103,6 @@ xb = xb_empty();
 if length(fname) > 3 && strcmpi(fname(end-3:end), '.dat')
     names = dir(fname);
     fdir = fileparts(fname);
-    if isempty(fdir); fdir = pwd; end;
 else
     names = dir([fname filesep '*.dat']);
     fdir = fname;

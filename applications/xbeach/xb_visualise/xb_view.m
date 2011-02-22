@@ -319,11 +319,11 @@ function data = ui_getddata(info, vars, varargin)
         case 'output_xb'
             for i = 1:length(vars)
                 d = xb_get(info.input, vars{i});
-                data{i}(1,:,:) = d(t+1,:,:);
+                data{i}(1,:,:) = d(t,:,:);
             end
         case 'output_dir'
             [data{1:length(vars)}] = xb_get( ...
-                xb_read_output(info.fpath, 'vars', vars, 'start', [t 0 0], ...
+                xb_read_output(info.fpath, 'vars', vars, 'start', [t-1 0 0], ...
                 'length', [1 -1 -1]), vars{:});
     end
     
