@@ -135,6 +135,11 @@ function ui_build()
         'Enable', 'off', ...
         'Callback', @ui_togglesurf);
 
+    % reload button
+    uicontrol(pobj, 'Style', 'pushbutton', 'Tag', 'ButtonReload', ...
+        'String', 'Reload', ...
+        'Callback', @ui_reload);
+    
     % animate button
     uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleAnimate', ...
         'String', 'Animate', ...
@@ -159,6 +164,22 @@ function ui_build()
     ui_plot(pobj, []);
 end
 
+function ui_reload(obj, event)
+    ui_read();
+    
+    % get info
+    pobj = findobj('Tag', 'xb_view');
+    info = get(pobj, 'userdata');
+    
+    % sliders
+    set(findobj(pobj, 'Tag', 'Slider1'), 'Max', length(info.t))
+    set(findobj(pobj, 'Tag', 'Slider2'), 'Max', length(info.t), 'Value', length(info.t))
+    set(findobj(pobj, 'Tag', 'TextSlider1'), 'String', num2str(info.t(1)))
+    set(findobj(pobj, 'Tag', 'TextSlider2'), 'String', num2str(info.t(end)))
+    
+    ui_plot(pobj, []);
+end
+
 function ui_resize(obj, event)
 
     pos = get(obj, 'Position');
@@ -172,6 +193,7 @@ function ui_resize(obj, event)
     set(findobj(obj, 'Tag', 'SelectVar'), 'Position', [[.85 .65].*winsize [.1 .25].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleDiff'), 'Position', [[.85 .6].*winsize [.1 .05].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleSurf'), 'Position', [[.85 .55].*winsize [.1 .05].*winsize]);
+    set(findobj(obj, 'Tag', 'ButtonReload'), 'Position', [[.85 .125].*winsize [.1 .035].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleAnimate'), 'Position', [[.85 .07].*winsize [.1 .035].*winsize]);
 end
 
@@ -297,7 +319,7 @@ function data = ui_getddata(info, vars, varargin)
         case 'output_xb'
             for i = 1:length(vars)
                 d = xb_get(info.input, vars{i});
-                data{i}(1,:,:) = d(t,:,:);
+                data{i}(1,:,:) = d(t+1,:,:);
             end
         case 'output_dir'
             [data{1:length(vars)}] = xb_get( ...
@@ -348,6 +370,7 @@ function ui_animate(obj, event)
     % start new loop if maximum is not reached
     if t < tmax
         if get(findobj(pobj, 'Tag', 'ToggleAnimate'), 'Value')
+            pause(.1)
             ui_animate(obj, event)
         end
     else

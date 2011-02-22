@@ -99,60 +99,14 @@ end
 
 xb = xb_empty();
 
-% get dir
+% get filelist
 if length(fname) > 3 && strcmpi(fname(end-3:end), '.dat')
+    names = dir(fname);
     fdir = fileparts(fname);
-    if isempty(fdir)
-        fdir=pwd;
-    end
-    % get variable names
-    names = xb_get_vars(fname, 'vars', OPT.vars);
+    if isempty(fdir); fdir = pwd; end;
 else
+    names = dir([fname filesep '*.dat']);
     fdir = fname;
-    % get variable names
-    names = xb_get_vars(fname, 'vars', OPT.vars);
-    % remove files that were not asked for in params.txt
-    inputpars = xb_read_params([fname filesep 'params.txt']);
-    validnames={};
-    % global vars
-    if ~isempty(inputpars.data(strcmpi('globalvars',{inputpars.data.name})))
-        gv = inputpars.data(strcmpi('globalvars',{inputpars.data.name})).value;
-        for i=1:length(gv)
-            validnames{end+1}=gv{i};
-        end
-    end
-    % mean vars
-    if ~isempty(inputpars.data(strcmpi('meanvars',{inputpars.data.name})))
-        mv = inputpars.data(strcmpi('meanvars',{inputpars.data.name})).value;
-        for i=1:length(mv)
-            validnames{end+1}=[mv{i} '_mean'];
-            validnames{end+1}=[mv{i} '_max'];
-            validnames{end+1}=[mv{i} '_min'];
-            validnames{end+1}=[mv{i} '_var'];
-        end
-    end
-    % points
-    if ~isempty(inputpars.data(strcmpi('npoints',{inputpars.data.name})))
-        pv = inputpars.data(strcmpi('npoints',{inputpars.data.name})).value;
-        for i=1:pv
-            validnames{end+1}=['point' num2str(i,'%03.0f')];
-        end
-    end
-    % runup gauges
-    if ~isempty(inputpars.data(strcmpi('nrugauge',{inputpars.data.name})))
-        rv = inputpars.data(strcmpi('nrugauge',{inputpars.data.name})).value;
-        for i=1:rv
-            validnames{end+1}=['rugau' num2str(i,'%03.0f')];
-        end
-    end
-    % remove things from names
-    rmv=[];
-    for i=1:length(names)
-        if ~ismember(names{i},validnames)
-           rmv(end+1)=i;
-        end
-    end
-    names(rmv)=[];
 end
 
 if isempty(fdir); fdir = fullfile('.', ''); end;
@@ -171,7 +125,13 @@ xb = xb_set(xb, 'DIMS', d);
 
 % read dat files one-by-one
 for i = 1:length(names)
-    filename = [names{i} '.dat'];
+    varname = names(i).name(1:length(names(i).name)-4);
+    
+    % skip, if not requested
+    if ~isempty(OPT.vars) && ~any(strfilter(varname, OPT.vars)); continue; end;
+    if any(strcmpi(varname, {'xy', 'dims'})); continue; end;
+    
+    filename = [varname '.dat'];
     fpath = fullfile(fdir, filename);
     
     % determine dimensions
@@ -185,7 +145,7 @@ for i = 1:length(names)
     dat = xb_dat_read(fpath, d, ...
         'start', OPT.start, 'length', OPT.length, 'stride', OPT.stride);
 
-    xb = xb_set(xb, names{i}, dat);
+    xb = xb_set(xb, varname, dat);
 end
 
 % set meta data
