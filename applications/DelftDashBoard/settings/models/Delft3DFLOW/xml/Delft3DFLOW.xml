@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <model>Delft3DFLOW</model>
+  <longname>Delft3D-FLOW</longname>
+  <multipledomains>yes</multipledomains>
+  <elements>
+    <element>
+      <style>tabpanel</style>
+      <tag>Delft3DFLOW</tab>
+      <position>10 10 900 700</position> 
+      <tabs>
+        <tab>
+          <tag>toolbox</tag>
+          <tabstring>Toolbox</tabstring>
+          <callback>ddb_selectToolbox</callback>
+        </tab>
+        <tab>
+          <tag>description</tag>
+          <tabstring>Description</tabstring>
+          <callback>ddb_Delft3DFLOW_description</callback>
+          <elements>Delft3DFLOW.description.xml</elements>
+        </tab>
+        <tab>
+          <tag>domain</tag>
+          <tabstring>Domain</tabstring>
+          <elements>Delft3DFLOW.domain.xml</elements>
+        </tab>
+        <tab>
+          <tag>timeframe</tag>
+          <tabstring>Time Frame</tabstring>
+          <callback>ddb_Delft3DFLOW_timeFrame</callback>
+          <elements>Delft3DFLOW.timeframe.xml</elements>
+        </tab>
+        <tab>
+          <tag>processes</tag>
+          <tabstring>Processes</tabstring>
+          <callback>ddb_Delft3DFLOW_processes</callback>
+          <elements>Delft3DFLOW.processes.xml</elements>
+        </tab>
+        <tab>
+          <tag>initialconditions</tag>
+          <tabstring>Initial conditions</tabstring>
+          <callback>ddb_Delft3DFLOW_initialConditions</callback>
+          <elements>Delft3DFLOW.initialconditions.xml</elements>
+        </tab>
+        <tab>
+          <tag>openboundaries</tag>
+          <tabstring>Boundaries</tabstring>
+          <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+          <elements>Delft3DFLOW.openboundaries.xml</elements>
+        </tab>
+        <tab>
+          <tag>physicalparameters</tag>
+          <tabstring>Physical Parameters</tabstring>
+          <callback>ddb_Delft3DFLOW_physicalparameters</callback>
+          <elements>Delft3DFLOW.physicalparameters.xml</elements>
+        </tab>
+        <tab>
+          <tag>numericalparameters</tag>
+          <tabstring>Numerical Parameters</tabstring>
+          <callback>ddb_Delft3DFLOW_numericalParameters</callback>
+          <elements>Delft3DFLOW.numericalparameters.xml</elements>
+        </tab>
+        <tab>
+          <tag>discharges</tag>
+          <tabstring>Discharges</tabstring>
+          <callback>ddb_editD3DFlowDischarges</callback>
+          <enable>0</enable>
+        </tab>
+        <tab>
+          <tag>monitoring</tag>
+          <tabstring>Monitoring</tabstring>
+          <elements>Delft3DFLOW.monitoring.xml</elements>
+        </tab>
+        <tab>
+          <tag>additional</tag>
+          <tabstring>Additional</tabstring>
+          <callback>ddb_editD3DFlowAdditional</callback>
+          <enable>0</enable>
+        </tab>
+        <tab>
+          <tag>output</tag>
+          <tabstring>Output</tabstring>
+          <elements>Delft3DFLOW.output.xml</elements>
+        </tab>
+      </tabs>
+    </element>
+  </elements>
+  <menu>
+      <menuopenfile>
+        <menuitem>
+          <string>Open MDF File</string>
+          <callback>ddb_openDelft3DFLOW</callback>
+          <option>open</option>
+        </menuitem>
+        <menuitem>
+          <string>Add Domain</string>
+          <callback>ddb_openDelft3DFLOW</callback>
+          <option>adddomain</option>
+        </menuitem>
+        <menuitem>
+          <string>Open DD File</string>
+          <callback>ddb_openDelft3DFLOW</callback>
+          <option>opendomains</option>
+        </menuitem>
+      </menuopenfile>
+      <menusavefile>
+        <menuitem>
+          <string>Save MDF File</string>
+          <callback>ddb_saveDelft3DFLOW</callback>
+          <option>save</option>
+        </menuitem>
+        <menuitem>
+          <string>Save MDF File As ...</string>
+          <callback>ddb_saveDelft3DFLOW</callback>
+          <option>saveas</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All</string>
+          <callback>ddb_saveDelft3DFLOW</callback>
+          <option>saveall</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All As ...</string>
+          <callback>ddb_saveDelft3DFLOW</callback>
+          <option>saveallas</option>
+        </menuitem>
+      </menusavefile>
+      <menuview>
+      </menuview>
+  </menu>
+</root>

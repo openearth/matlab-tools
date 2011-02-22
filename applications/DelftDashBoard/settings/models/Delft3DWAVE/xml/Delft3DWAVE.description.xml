@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+    <element>
+      <style>panel</style>
+      <position>20 20 990 160</position>
+      <title>Description</title>
+    </element>
+    <element>
+      <tag>editprojectname</tag>
+      <style>edit</style>
+      <position>30 140 200 20</position>
+      <variable>
+        <name>ProjectName</name>
+        <type>string</type>
+      </variable>
+      <tooltipstring>Project name (optional)</tooltipstring>
+      <text>Project Name</text>
+      <textposition>right</textposition>
+    </element>
+    <element>
+      <tag>editprojectnumber</tag>
+      <style>edit</style>
+      <position>30 110 100 20</position>
+      <variable>
+        <name>ProjectNumber</name>
+        <type>string</type>
+      </variable>
+      <tooltipstring>Project number (optional)</tooltipstring>
+      <text>Project Number</text>
+      <textposition>right</textposition>
+    </element>
+    <element>
+      <tag>editdescription</tag>
+      <style>edit</style>
+      <position>30 30 500 50</position>
+      <variable>
+        <name>Description</name>
+        <type>string</type>
+      </variable>
+      <tooltipstring>Project description (optional)</tooltipstring>
+      <nrlines>3</nrlines>
+      <text>Description (max. 3 lines)</text>
+      <textposition>above-left</textposition>
+    </element>
+</root>
