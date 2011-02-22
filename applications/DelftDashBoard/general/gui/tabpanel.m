@@ -258,9 +258,13 @@ function clickTab(hObject,eventdata)
 usd=get(hObject,'UserData');
 h=usd.panelHandle;
 nr=usd.nr;
-
+enable=get(hObject,'Enable');
 %profile on
-select(h,nr,'withcallback');
+switch lower(enable)
+    case{'off'}
+    otherwise            
+        select(h,nr,'withcallback');
+end
 % profile off
 % profile viewer
 

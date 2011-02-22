@@ -63,11 +63,7 @@ switch lower(el.style)
         
     case{'checkbox'}
         val=getSubFieldValue(s,el.variable);
-        try
         set(el.handle,'Value',val);
-        catch
-            godver=1
-        end
 
     case{'togglebutton'}
         val=getSubFieldValue(s,el.variable);
@@ -247,5 +243,12 @@ switch lower(el.style)
 end
 
 if dependencyUpdate
-    updateUIDependency(el,0,getFcn);
+    switch lower(el.style)
+        case{'tabpanel'}
+            for j=1:length(el.tabs)
+                updateUIDependency(el.tabs(j),0,getFcn);
+            end
+        otherwise
+            updateUIDependency(el,0,getFcn);
+    end
 end

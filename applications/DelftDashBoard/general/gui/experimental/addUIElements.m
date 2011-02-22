@@ -319,6 +319,12 @@ for i=1:length(elements)
                     set(tabhandles(j),'Tag',elements(i).tabs(j).tag);
                 end
                 
+                for j=1:length(elements(i).tabs)
+                    if elements(i).tabs(j).enable==0
+                        disableTab(gcf,elements(i).tabs(j).tag);
+                    end                    
+                end
+                
             case{'table'}
                 
                 tag=elements(i).tag;

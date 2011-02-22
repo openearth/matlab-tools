@@ -38,7 +38,7 @@ if isfield(xml,'elements')
             s.elements(k).multivariable=readVariableXML(elxml(k).element.multivariable,subFields,subIndices);
         end
 
-        tmptag{k}=s.elements(k).tag;
+        tags{k}=s.elements(k).tag;
         
         tg = lower(getnodeval(elxml(k).element,'tag',[],'string'));
         if ~isempty(tag)
@@ -50,10 +50,16 @@ if isfield(xml,'elements')
         switch s.elements(k).style
             case{'tabpanel'}
                 for j=1:length(elxml(k).element.tabs)
+                    s.elements(k).tabs(j).style='tab';
                     tg = lower(getnodeval(elxml(k).element.tabs(j).tab,'tag',[],'string'));
                     s.elements(k).tabs(j).tag = [s.elements(k).tag '.' tg];
                     s.elements(k).tabs(j).tabname = tg;
                     s.elements(k).tabs(j).tabstring   = elxml(k).element.tabs(j).tab.tabstring;
+                    if isfield(elxml(k).element.tabs(j).tab,'enable')
+                        s.elements(k).tabs(j).enable      = str2double(elxml(k).element.tabs(j).tab.enable);
+                    else
+                        s.elements(k).tabs(j).enable=1;
+                    end
                     if isfield(elxml(k).element.tabs(j).tab,'callback')
                         s.elements(k).tabs(j).callback = str2func(elxml(k).element.tabs(j).tab.callback);
                     else
@@ -61,23 +67,10 @@ if isfield(xml,'elements')
                     end
                     s2=readUIElementsXML(elxml(k).element.tabs(j).tab,dr,s.elements(k).tabs(j).tag,subFields,subIndices);
                     s.elements(k).tabs(j).elements    = s2.elements;
+                    % Dependencies
+                    s.elements(k).tabs(j).dependencies=[];
+                    s.elements(k).tabs(j).dependencies=setDependencies(s.elements(k).tabs(j).dependencies,elxml(k).element.tabs(j).tab,tags);
                 end
-
-%             case{'panel'}
-%                 for j=1:length(elxml(k).element.tabs)
-%                     tg = lower(getnodeval(elxml(k).element.tabs(j).tab,'tag',[],'string'));
-%                     s.elements(k).tabs(j).tag = [s.elements(k).tag '.' tg];
-%                     s.elements(k).tabs(j).tabname = tg;
-%                     s.elements(k).tabs(j).tabstring   = elxml(k).element.tabs(j).tab.tabstring;
-%                     if isfield(elxml(k).element.tabs(j).tab,'callback')
-%                         s.elements(k).tabs(j).callback = str2func(elxml(k).element.tabs(j).tab.callback);
-%                     else
-%                         s.elements(k).tabs(j).callback = [];
-%                     end
-%                     s2=readUIElementsXML(elxml(k).element.tabs(j).tab,dr,s.elements(k).tabs(j).tag,subFields,subIndices);
-%                     s.elements(k).tabs(j).elements    = s2.elements;
-%                 end
-                
                 
             case{'table'}
                 s.elements(k).includeNumbers = getnodeval(elxml(k).element,'includenumbers',0,'boolean');
@@ -175,7 +168,7 @@ if isfield(xml,'elements')
                     % and set dependees for this variable
                     for jj=1:nrElements
                         if ~isempty(s.elements(jj).variable)
-                            if strcmpi(s.elements(k).dependencies(id).tags{ii},tmptag{jj})
+                            if strcmpi(s.elements(k).dependencies(id).tags{ii},tags{jj})
                                 ndep=length(s.elements(jj).dependees);
                                 ndep=ndep+1;
                                 s.elements(jj).dependees(ndep).tag=s.elements(k).tag;
@@ -218,6 +211,73 @@ if isfield(xml,'elements')
     
 else
     s.elements=[];
+end
+
+%% 
+function dependencies=setDependencies(dependencies,elxml,tags)
+
+if isfield(elxml,'dependencies')
+    % There are dependencies
+    for id=1:length(elxml.dependencies)
+        
+        dependencies(id).action=elxml.dependencies(id).dependency.action;
+        dependencies(id).checkFor=[];
+        
+        if isfield(elxml.dependencies(id).dependency,'tags')
+            ntgs=length(elxml.dependencies(id).dependency.tags);
+        else
+            ntgs=0;
+            dependencies(id).tags=[];
+        end
+        
+        if isfield(elxml.dependencies(id).dependency,'tags')
+            for ii=1:ntgs
+                dependencies(id).tags{ii}=elxml.dependencies(id).dependency.tags(ii).tag;
+                
+                % Loop through all elements to find
+                % elements that control this variable
+                % and set dependees for this variable
+                for jj=1:nrElements
+                    if ~isempty(s.elements(jj).variable)
+                        if strcmpi(dependencies(id).tags{ii},tags{jj})
+                            ndep=length(s.elements(jj).dependees);
+                            ndep=ndep+1;
+                            s.elements(jj).dependees(ndep).tag=el.tag;
+                            s.elements(jj).dependees(ndep).dependeeNr=k;
+                            s.elements(jj).dependees(ndep).dependencyNr=id;
+                        end
+                    end
+                end
+            end
+        end
+        
+        dep=elxml.dependencies(id).dependency;
+        
+        if isfield(elxml.dependencies(id).dependency,'checkfor')
+            dependencies(id).checkFor=elxml.dependencies(id).dependency.checkfor;
+            
+            for ic=1:length(dep.checks)
+                
+                dependencies(id).checks(ic).variable=readVariableXML(dep.checks(ic).check.variable);
+                dependencies(id).checks(ic).operator=dep.checks(ic).check.operator;
+                
+                if ~isfield(dep.checks(ic).check.variable,'type')
+                    if ~isnan(str2double(dep.checks(ic).check.value))
+                        dependencies(id).checks(ic).value=str2double(dep.checks(ic).check.value);
+                    else
+                        dependencies(id).checks(ic).value=dep.checks(ic).check.value;
+                    end
+                else
+                    switch lower(dep.checks(ic).check.variable.type)
+                        case{'string'}
+                            dependencies(id).checks(ic).value=dep.checks(ic).check.value;
+                        otherwise
+                            dependencies(id).checks(ic).value=str2double(dep.checks(ic).check.value);
+                    end
+                end
+            end
+        end
+    end
 end
 
 %%

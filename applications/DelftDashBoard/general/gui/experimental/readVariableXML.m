@@ -1,4 +1,12 @@
-function v=readVariableXML(sxml,subFields,subIndices)
+function v=readVariableXML(sxml,varargin)
+
+subFields=[];
+subIndices=[];
+
+if ~isempty(varargin)
+    subFields=varargin{1};
+    subIndices=varargin{2};
+end 
 
 if ischar(sxml)
     % New approach, uses eval function

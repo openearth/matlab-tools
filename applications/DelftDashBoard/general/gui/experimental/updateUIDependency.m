@@ -164,21 +164,18 @@ for iac=ii1:ii2
             if ok
                 switch element.style
                     case{'table'}
-%                         for i=1:element.nrRows
-%                             for j=1:length(element.columns)
-%                                 enab(i,j)=element.columns(j).enable;
-%                             end
-%                         end
-%                         table(element.handle,'refresh','enable',enab);
                         table(element.handle,'enable');
+                    case{'tab'}
+                        enableTab(gcf,element.tag);
                     otherwise
                         enableElement(element);
                 end
             else
                 switch element.style
                     case{'table'}
-%                         table(element.handle,'refresh','enable',zeros(element.nrRows,length(element.columns)));
                         table(element.handle,'disable');
+                    case{'tab'}
+                        disableTab(gcf,element.tag);
                     otherwise
                         disableElement(element);
                 end
