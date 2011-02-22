@@ -116,20 +116,26 @@ function DISout = dispack(DISin,varargin)
                           'QB',...                         %       *.bct
                           'Q',...                          % *.dis
                           'salinity',...                   % *.dis
-                          'temperature'};                  % *.dis
+                          'temperature',...
+                          'flow_magnitude',...
+                          'flow_direction'};                  % *.dis
    
       H.parameterunits = {'[m3/s]',...                     %       *.bct
                           '[m3/s]',...                     %       *.bct
                           '[m3/s]',...                     % *.dis
                           '[ppt]',...                      % *.dis
-                          '[°C]'};                         % *.dis
+                          '[°C]',...                       % *.dis
+                          '[m/s]',...                        % *.dis
+                          '[deg]'};                          % *.dis
    
       H.tablenames     = {'total discharge (t)  end A',... %       *.bct
                           'total discharge (t)  end B',... %       *.bct
                           'flux/discharge rate',...        % *.dis
                           'Salinity',...                   % *.dis
                           'Temperature',...                % *.dis
-                          };
+                          'Flow magnitude',...
+                          'Flow direction'};                  % *.dis
+
                           
       %% Check number of substances
       %-----------------------------------------
