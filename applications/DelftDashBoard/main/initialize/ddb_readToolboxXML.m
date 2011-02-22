@@ -4,7 +4,7 @@ s.elements=[];
 
 fname=[handles.Toolbox(j).name '.xml'];
 
-xmldir=[handles.Toolbox(j).dir filesep 'xml' filesep];
+xmldir=[handles.settingsDir filesep 'toolboxes' filesep handles.Toolbox(j).name filesep 'xml' filesep ];
 
 handles.Toolbox(j).useXML=0;
 

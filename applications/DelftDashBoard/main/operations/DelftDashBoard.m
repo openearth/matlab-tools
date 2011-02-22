@@ -56,8 +56,8 @@ function DelftDashBoard
 Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
-handles.DelftDashBoardVersion=['1.01.' num2str(Revision)];
-handles.MatlabVersion=version;
+handles.delftDashBoardVersion=['1.01.' num2str(Revision)];
+handles.matlabVersion=version;
 handles.debugMode=0;
 
 % Add java paths for snc tools
@@ -67,9 +67,10 @@ if isdeployed
 %     javaaddpath(pth);
     setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
     setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
+    setenv('MCR_CACHE_SIZE','64M');
 end
 
-disp(['Delft DashBoard v' handles.DelftDashBoardVersion]);
+disp(['Delft DashBoard v' handles.delftDashBoardVersion]);
 disp(['Matlab v' version]);
 
 disp('Finding directories ...');

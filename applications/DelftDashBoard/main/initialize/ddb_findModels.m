@@ -25,9 +25,9 @@ end
 nt=k;
 
 for i=1:nt
+    handles.Model(i).dir=[dr filesep name{i} filesep];
     handles.Model(i).name=name{i};
     handles.Model(i).longName=name{i};
-%    handles.Model(i).CallFcn=str2func(['ddb_select' name{i}]);
     handles.Model(i).iniFcn=str2func(['ddb_initialize' name{i}]);
     handles.Model(i).plotFcn=str2func(['ddb_plot' name{i}]);
     handles.Model(i).saveFcn=str2func(['ddb_save' name{i}]);

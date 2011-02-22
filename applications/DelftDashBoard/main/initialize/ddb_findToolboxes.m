@@ -31,16 +31,16 @@ end
 dr2=handles.additionalToolboxDir;
 if ~isempty(dr2)
     addpath(genpath(dr2));
-end
-flist=dir(dr2);
-for i=1:length(flist)
-    if flist(i).isdir
-        switch lower(flist(i).name)
-            case{'.','..','.svn'}
-            otherwise
-                k=k+1;
-                name{k}=flist(i).name;
-                tp{k}='additional';
+    flist=dir(dr2);
+    for i=1:length(flist)
+        if flist(i).isdir
+            switch lower(flist(i).name)
+                case{'.','..','.svn'}
+                otherwise
+                    k=k+1;
+                    name{k}=flist(i).name;
+                    tp{k}='additional';
+            end
         end
     end
 end

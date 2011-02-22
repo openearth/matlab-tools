@@ -11,7 +11,8 @@ if isdeployed
     [status, result] = system('path');
     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
     ddbdir=[fileparts(exeDir) filesep 'data' filesep];
-   
+    additionalToolboxDir=[];
+
 else
     
     inipath=[fileparts(fileparts(fileparts(which('DelftDashBoard')))) filesep];
@@ -35,7 +36,12 @@ else
         error(['Local data directory ''' ddbdir ''' not found, check reference in ini-file!']);
     end
     
-    additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
+    try
+        additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
+    catch
+        additionalToolboxDir=[];
+    end
+    
 end
 
 handles.bathyDir=[ddbdir 'bathymetry' filesep];

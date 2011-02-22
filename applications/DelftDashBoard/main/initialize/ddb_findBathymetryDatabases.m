@@ -8,13 +8,20 @@ for i=1:handles.bathymetry.nrDatasets
     handles.bathymetry.dataset(i).isAvailable=1;
     switch lower(handles.bathymetry.dataset(i).type)
         case{'netcdftiles'}
-            
+
+
             if strcmpi(handles.bathymetry.dataset(i).URL(1:4),'http')
                 % OpenDAP
                 fname=[handles.bathymetry.dataset(i).URL '/' handles.bathymetry.dataset(i).name '.nc'];
                 if handles.bathymetry.dataset(i).useCache
                     % First copy meta data file to local cache
                     localdir = [handles.bathyDir handles.bathymetry.dataset(i).name filesep];
+                    % Try to delete old crap
+                    if exist([localdir 'temp.nc'],'file')
+                        try
+                            delete([localdir 'temp.nc']);
+                        end
+                    end
                     try
                         if ~exist(localdir,'dir')
                             mkdir(localdir);
@@ -22,6 +29,10 @@ for i=1:handles.bathymetry.nrDatasets
                         % Try to copy nc meta file
                         urlwrite(fname,[localdir 'temp.nc']);
                         if exist([localdir 'temp.nc'],'file')
+                            % Try reading the local file. Sometimes it gets
+                            % messed up when you're connected to a network
+                            % without internet connection!
+                            x0=nc_varget([localdir 'temp.nc'],'x0');
                             movefile([localdir 'temp.nc'],[localdir handles.bathymetry.dataset(i).name '.nc']);
                         end
                         fname = [handles.bathyDir handles.bathymetry.dataset(i).name filesep handles.bathymetry.dataset(i).name '.nc'];
@@ -29,6 +40,11 @@ for i=1:handles.bathymetry.nrDatasets
                         % If no access to openDAP server possible, check
                         % whether meta data file is already available in
                         % cache
+                        if exist([localdir 'temp.nc'],'file')
+                            try
+                                delete([localdir 'temp.nc']);
+                            end
+                        end
                         err=lasterror;
                         disp(err.message);
                         disp(err.identifier);
@@ -119,7 +135,7 @@ for i=1:handles.bathymetry.nrDatasets
                 end
                 
                 handles.bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
-
+                
             end     
     end
 end

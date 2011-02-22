@@ -1,12 +1,12 @@
 function ddb_aboutDelftDashBoard(handles)
 
-MakeNewWindow('About Delft Dashboard',[400 400],'modal',[handles.SettingsDir '\icons\deltares.gif']);
+MakeNewWindow('About Delft Dashboard',[400 400],'modal',[handles.settingsDir '\icons\deltares.gif']);
 set(gcf,'Resize','off');
 ax=axes;
 set(ax,'Units','pixels');
 set(ax,'Position',[0 0 400 400]);
 
-StatName=[handles.SettingsDir '\icons\delftdashboard.jpg'];
+StatName=[handles.settingsDir '\icons\delftdashboard.jpg'];
 c = imread(StatName,'jpeg');
 image(c);
 tick(gca,'x','none');tick(gca,'y','none');%axis equal;
@@ -14,7 +14,7 @@ tick(gca,'x','none');tick(gca,'y','none');%axis equal;
 font='Arial';
 col=[143 188 143]/255;
 
-tx=text(235,377,['Version ' handles.DelftDashBoardVersion]);
+tx=text(235,377,['Version ' handles.delftDashBoardVersion]);
 try
     set(tx,'FontSize',12,'Color',[0 0 0],'HorizontalAlignment','left','FontName',font);
 catch

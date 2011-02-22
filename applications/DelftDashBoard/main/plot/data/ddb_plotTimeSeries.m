@@ -2,9 +2,9 @@ function ddb_plotTimeSeries(times,prediction,name)
 
 handles=getHandles;
 
-fig=MakeNewWindow('Time Series',[600 400],[handles.SettingsDir '\icons\deltares.gif']);
+fig=MakeNewWindow('Time Series',[600 400],[handles.settingsDir '\icons\deltares.gif']);
 
-c=load([handles.SettingsDir '\icons\icons_muppet.mat']);
+c=load([handles.settingsDir '\icons\icons_muppet.mat']);
 
 figure(fig);
 
@@ -25,8 +25,8 @@ set(h,'cdata',c.ico.zoomout16);
 % set(h,'Tag','UIToggleToolPan');
 % set(h,'cdata',cpan.icons.pan);
 
-handles.ScreenParameters.XMaxRange=[0 1000000];
-handles.ScreenParameters.YMaxRange=[-1000 1000];
+handles.screenParameters.xMaxRange=[0 1000000];
+handles.screenParameters.yMaxRange=[-1000 1000];
 guidata(gcf,handles);
 
 plot(times,prediction);

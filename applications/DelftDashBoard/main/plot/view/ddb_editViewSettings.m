@@ -5,15 +5,15 @@ h=getHandles;
 f=MakeNewWindow('View Settings',[210 230],'modal',[h.settingsDir '\icons\deltares.gif']);
 
 str={'Earth','Jet'};
-ii=strmatch(h.ScreenParameters.ColorMap,str,'exact');
+ii=strmatch(h.screenParameters.colorMap,str,'exact');
 handles.SelectColorMap = uicontrol(gcf,'Style','popupmenu','Position',[30 165 80 20],'String',str,'BackgroundColor',[1 1 1],'Tag','UIControl');
 handles.TextColorMap = uicontrol(gcf,'Style','text','String','Color Map','Position',[30 185  80 20],'Tag','UIControl');
 set(handles.SelectColorMap,'Value',ii);
 
 handles.EditCMin = uicontrol(gcf,'Style','edit','Position',[30 115  50 20],'HorizontalAlignment','right', 'BackgroundColor',[1 1 1],'Tag','UIControl');
 handles.EditCMax = uicontrol(gcf,'Style','edit','Position',[30 140  50 20],'HorizontalAlignment','right', 'BackgroundColor',[1 1 1],'Tag','UIControl');
-set(handles.EditCMin,'String',h.ScreenParameters.CMin);
-set(handles.EditCMax,'String',h.ScreenParameters.CMax);
+set(handles.EditCMin,'String',h.screenParameters.cMin);
+set(handles.EditCMax,'String',h.screenParameters.cMax);
 handles.TextCMin = uicontrol(gcf,'Style','text','String','CMin','Position',[85 111  50 20],'HorizontalAlignment','left','Tag','UIControl');
 handles.TextCMax = uicontrol(gcf,'Style','text','String','CMax','Position',[85 136  50 20],'HorizontalAlignment','left','Tag','UIControl');
 
@@ -23,7 +23,7 @@ set(handles.ToggleAutomatic,'Value',h.screenParameters.automaticColorLimits);
 handles.PushOK     = uicontrol(gcf,'Style','pushbutton','String','OK',    'Position',[110 30 60 30]);
 handles.PushCancel = uicontrol(gcf,'Style','pushbutton','String','Cancel','Position',[40 30 60 30]);
 
-if h.ScreenParameters.AutomaticColorLimits
+if h.screenParameters.automaticColorLimits
     set(handles.EditCMin,'Enable','off');
     set(handles.EditCMax,'Enable','off');
     set(handles.TextCMin,'Enable','off');
