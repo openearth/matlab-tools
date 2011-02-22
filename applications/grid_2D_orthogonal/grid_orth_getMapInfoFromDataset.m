@@ -14,7 +14,7 @@ disp('Retrieving map info from dataset ...')
 % check for catalog.nc link
 if strcmpi(OPT.dataset(end-9:end),'catalog.nc')
     OPT.catalognc = OPT.dataset;
-    OPT.urls = cellstr(nc_varget(OPT.dataset,'urlPath'));
+    OPT.urls = cellstr([nc_varget(OPT.dataset,'urlPath')]');
 else
     OPT.urls     = opendap_catalog(OPT.dataset,'ignoreCatalogNc',0);
     isCatalogNc = false(length(OPT.urls),1);
@@ -37,8 +37,8 @@ if isfield(OPT,'catalognc')
 end
 
 if isfield(OPT,'catalognc')
-    OPT.x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x');
-    OPT.y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y');
+    OPT.x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x')';
+    OPT.y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y')';
 else
     %% slow method for if there is no catalog nc
     OPT.x_ranges = nan(length(OPT.urls),2);
