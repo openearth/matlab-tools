@@ -8,7 +8,7 @@ handles=getHandles;
 
 imd=strmatch('Delft3DFLOW',{handles.Model(:).name},'exact');
 
-vis=0;
+vis=1;
 act=0;
 idomain=0;
 

@@ -14,7 +14,7 @@ for i=1:handles.GUIData.nrFlowDomains
         set(ui,'Checked','on');
     end
 end
-uimenu(h,'Label','Add Domain ...','Callback',{@SelectDomain,0},'Checked','off','UserData',0);
+%uimenu(h,'Label','Add Domain ...','Callback',{@SelectDomain,0},'Checked','off','UserData',0);
 
 %%
 function SelectDomain(hObject, eventdata, nr)

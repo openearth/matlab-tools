@@ -1,5 +1,7 @@
 function handles=ddb_initializeSediment(handles,id,ii)
 
+% Sediment name and type must be defined before this
+
 handles.Model(md).Input(id).sediment(ii).ICOpt='Constant';
 handles.Model(md).Input(id).sediment(ii).ICConst=0;
 handles.Model(md).Input(id).sediment(ii).ICPar=[0 0];
@@ -45,10 +47,6 @@ handles.Model(md).Input(id).sediment(ii).sdbFile='';
 handles.Model(md).Input(id).sediment(ii).tceFile='';
 handles.Model(md).Input(id).sediment(ii).tcdFile='';
 handles.Model(md).Input(id).sediment(ii).eroFile='';
-
-if ~isfield(handles.Model(md).Input(id).sediment(ii),'type')
-    handles.Model(md).Input(id).sediment(ii).type='non-cohesive';
-end
 
 switch lower(handles.Model(md).Input(id).sediment(ii).type)
     case{'cohesive'}

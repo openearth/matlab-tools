@@ -158,13 +158,13 @@ end
 %%
 function selectSedimentType_Callback(hObject,eventdata)
 handles=guidata(gcf);
-ii=get(hObject,'Value');
-iac=get(handles.GUIHandles.ListSediments,'Value');
-if ii==1
-    handles.Model(md).Input(ad).sediment(iac).type='non-cohesive';
-else
-    handles.Model(md).Input(ad).sediment(iac).type='cohesive';
-end
+% ii=get(hObject,'Value');
+% iac=get(handles.GUIHandles.ListSediments,'Value');
+% if ii==1
+%     handles.Model(md).Input(ad).sediment(iac).type='non-cohesive';
+% else
+%     handles.Model(md).Input(ad).sediment(iac).type='cohesive';
+% end
 guidata(gcf,handles);
 
 %%

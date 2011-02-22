@@ -1,4 +1,4 @@
-function ddb_Delft3DFLOW_constants(varargin)
+function ddb_Delft3DFLOW_roughness(varargin)
 
 ddb_zoomOff;
 

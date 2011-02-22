@@ -1,6 +1,6 @@
 function handles=ddb_initializeFlowDomain(handles,opt,id,runid)
 
-handles.Model(md).Input(id).Runid=runid;
+handles.Model(md).Input(id).runid=runid;
 
 switch lower(opt)
     case{'griddependentinput'}
@@ -13,13 +13,25 @@ end
 %%
 function handles=ddb_initializeGridDependentInput(handles,id)
 
-handles.Model(md).Input.grid=[];
-handles.Model(md).Input.bathy=[];
+handles.Model(md).Input(id).grid=[];
+handles.Model(md).Input(id).bathy=[];
 
-handles.Model(md).Input(id).nrObservationPoints=0;
+
 handles.Model(md).Input(id).nrCrossSections=0;
 handles.Model(md).Input(id).nrDischarges=0;
 handles.Model(md).Input(id).nrDrogues=0;
+
+%% Observation points
+handles.Model(md).Input(id).nrObservationPoints=0;
+handles.Model(md).Input(id).activeObservationPoint=1;
+handles.Model(md).Input(id).observationPointNames={''};
+handles.Model(md).Input(id).activeObservationPoint=1;
+handles.Model(md).Input(id).observationPoints(1).M=[];
+handles.Model(md).Input(id).observationPoints(1).N=[];
+handles.Model(md).Input(id).addObservationPoint=0;
+handles.Model(md).Input(id).selectObservationPoint=0;
+handles.Model(md).Input(id).deleteObservationPoint=0;
+handles.Model(md).Input(id).changeObservationPoint=0;
 
 %% Dry points
 handles.Model(md).Input(id).nrDryPoints=0;
@@ -142,7 +154,6 @@ handles.Model(md).Input(id).ampFile='';
 handles.Model(md).Input(id).wndgrd='';
 handles.Model(md).Input(id).MNmaxw=[];
 
-handles.Model(md).Input(id).nrSediments=0;
 handles.Model(md).Input(id).nrTracers=0;
 handles.Model(md).Input(id).nrConstituents=0;
 
@@ -240,6 +251,7 @@ handles.Model(md).Input(id).iter=2;
 handles.Model(md).Input(id).dryFlp=1;
 handles.Model(md).Input(id).dpsOpt='MAX';
 handles.Model(md).Input(id).dpuOpt='MEAN';
+handles.Model(md).Input(id).dpuOptions={'MEAN','MIN','UPW','MOR'};
 handles.Model(md).Input(id).dryFlc=0.1;
 handles.Model(md).Input(id).dco=-999.0;
 handles.Model(md).Input(id).dgcuni=1000.0;
@@ -285,7 +297,10 @@ end
 handles.Model(md).Input(id).cstBnd=0;
 
 %% Sediments
+handles.Model(md).Input(id).nrSediments=0;
 handles.Model(md).Input(id).sediment=[];
+handles.Model(md).Input(id).sediment(1).name='Sediment sand';
+handles.Model(md).Input(id).sediment(1).type='non-cohesive';
 handles.Model(md).Input(id).sediments=[];
 handles.Model(md).Input(id).sediments.include=0;
 handles.Model(md).Input(id).sediments.cRef=1600;
