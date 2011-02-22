@@ -2,7 +2,7 @@ function z=ddb_matchDDDepths(handles,z,id1,runid1,runid2)
 
 % Change first two to depth rows in finer domains
 
-dpsopt=handles.Model(md).Input(id1).DpsOpt;
+dpsopt=handles.Model(md).Input(id1).dpsOpt;
 if strcmpi(dpsopt,'dp')
     madd=0;
 else
@@ -11,7 +11,7 @@ end
 
 ndb=length(handles.Toolbox(tb).Input.DDBoundaries);
 for k=1:ndb
-    if strcmpi(handles.Toolbox(tb).Input.DDBoundaries(k).Runid1,runid1) && strcmpi(handles.Toolbox(tb).Input.DDBoundaries(k).Runid2,runid2)
+    if strcmpi(handles.Toolbox(tb).Input.DDBoundaries(k).runid1,runid1) && strcmpi(handles.Toolbox(tb).Input.DDBoundaries(k).runid2,runid2)
         % Coarse domain to the left/bottom of fine domain
         m1a=handles.Toolbox(tb).Input.DDBoundaries(k).m1a;
         m1b=handles.Toolbox(tb).Input.DDBoundaries(k).m1b;
@@ -31,7 +31,7 @@ for k=1:ndb
                 mb=m2a+1;
                 na=n2a+(j-1)*nref+1;
                 nb=n2a+j*nref;
-                z(ma:mb,na:nb)=handles.Model(md).Input(id1).DepthZ(m1a,n);
+                z(ma:mb,na:nb)=handles.Model(md).Input(id1).depthZ(m1a,n);
             end
         else
             % Coarse domain at bottom
@@ -43,10 +43,10 @@ for k=1:ndb
                 nb=n2a+1;
                 ma=m2a+(j-1)*mref+1;
                 mb=m2a+j*mref;
-                z(ma:mb,na:nb)=handles.Model(md).Input(id1).DepthZ(m,n1a);
+                z(ma:mb,na:nb)=handles.Model(md).Input(id1).depthZ(m,n1a);
             end
         end
-    elseif strcmpi(handles.Toolbox(tb).Input.DDBoundaries(k).Runid2,runid1) && strcmpi(handles.Toolbox(tb).Input.DDBoundaries(k).Runid1,runid2)
+    elseif strcmpi(handles.Toolbox(tb).Input.DDBoundaries(k).runid2,runid1) && strcmpi(handles.Toolbox(tb).Input.DDBoundaries(k).runid1,runid2)
         % Coarse domain to the right/top of fine domain
         m1a=handles.Toolbox(tb).Input.DDBoundaries(k).m2a;
         m1b=handles.Toolbox(tb).Input.DDBoundaries(k).m2b;
@@ -66,7 +66,7 @@ for k=1:ndb
                 mb=m2a-madd;
                 na=n2a+(j-1)*nref+1;
                 nb=n2a+j*nref;
-                z(ma:mb,na:nb)=handles.Model(md).Input(id1).DepthZ(m1a+1,n);
+                z(ma:mb,na:nb)=handles.Model(md).Input(id1).depthZ(m1a+1,n);
             end
         else
             % Coarse domain at top
@@ -78,7 +78,7 @@ for k=1:ndb
                 nb=n2a-madd;
                 ma=m2a+(j-1)*mref+1;
                 mb=m2a+j*mref;
-                z(ma:mb,na:nb)=handles.Model(md).Input(id1).DepthZ(m,n1a+1);
+                z(ma:mb,na:nb)=handles.Model(md).Input(id1).depthZ(m,n1a+1);
             end
         end
     else

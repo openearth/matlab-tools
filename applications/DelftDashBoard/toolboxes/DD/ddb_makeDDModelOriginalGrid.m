@@ -5,8 +5,8 @@ nmin=ndd(1);
 mmax=mdd(2);
 nmax=ndd(2);
 
-x1=handles.Model(md).Input(id1).GridX;
-y1=handles.Model(md).Input(id1).GridY;
+x1=handles.Model(md).Input(id1).gridX;
+y1=handles.Model(md).Input(id1).gridY;
 
 x1(mmin+1:mmax-1,nmin+1:nmax-1)=NaN;
 y1(mmin+1:mmax-1,nmin+1:nmax-1)=NaN;
@@ -74,27 +74,27 @@ end
 enc1=ddb_enclosure('extract',x1,y1);
 
 cancel=0;
-[filename, pathname, filterindex] = uiputfile('*.grd', 'New Overall Grid File',handles.Model(md).Input(id1).GrdFile);
+[filename, pathname, filterindex] = uiputfile('*.grd', 'New Overall Grid File',handles.Model(md).Input(id1).grdFile);
 if pathname~=0
     curdir=[lower(cd) '\'];
     if ~strcmpi(curdir,pathname)
         filename=[pathname filename];
     end
-    handles.Model(md).Input(handles.ActiveDomain).GrdFile=filename;
+    handles.Model(md).Input(handles.activeDomain).grdFile=filename;
     ii=findstr(filename,'.grd');
     str=filename(1:ii-1);
-    handles.Model(md).Input(id1).EncFile=[str '.enc'];
-%    ddb_wlgrid('write',[handles.Model(md).Input(id1).GrdFile],x1,y1,enc1,handles.ScreenParameters.CoordinateSystem.Type);
+    handles.Model(md).Input(id1).encFile=[str '.enc'];
+%    ddb_wlgrid('write',[handles.Model(md).Input(id1).grdFile],x1,y1,enc1,handles.screenParameters.coordinateSystem.type);
 
-    if strcmpi(handles.ScreenParameters.CoordinateSystem.Type,'geographic')
+    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         coord='Spherical';
     else
         coord='Cartesian';
     end
-    ddb_wlgrid('write','FileName',handles.Model(md).Input(id1).GrdFile,'X',x1,'Y',y1,'Enclosure',enc1,'CoordinateSystem',coord);
+    ddb_wlgrid('write','FileName',handles.Model(md).Input(id1).grdFile,'X',x1,'Y',y1,'Enclosure',enc1,'CoordinateSystem',coord);
 
-    handles.Model(md).Input(id1).GridX=x1;
-    handles.Model(md).Input(id1).GridY=y1;
+    handles.Model(md).Input(id1).gridX=x1;
+    handles.Model(md).Input(id1).gridY=y1;
 else
     cancel=1;
 end

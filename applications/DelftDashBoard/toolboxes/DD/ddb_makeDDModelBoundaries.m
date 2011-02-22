@@ -140,8 +140,8 @@ end
 for k=1:nddb1
     switch opt
         case{'bottom'}
-            bndind(nddb+k).Runid1=runid1;
-            bndind(nddb+k).Runid2=runid2;
+            bndind(nddb+k).runid1=runid1;
+            bndind(nddb+k).runid2=runid2;
             bndind(nddb+k).m1a=m1anew(k);
             bndind(nddb+k).m1b=m1bnew(k);
             bndind(nddb+k).n1a=n1anew(k);
@@ -151,8 +151,8 @@ for k=1:nddb1
             bndind(nddb+k).n2a=n2anew(k);
             bndind(nddb+k).n2b=n2bnew(k);
         case{'left'}
-            bndind(nddb+k).Runid1=runid1;
-            bndind(nddb+k).Runid2=runid2;
+            bndind(nddb+k).runid1=runid1;
+            bndind(nddb+k).runid2=runid2;
             bndind(nddb+k).m1a=m1anew(k);
             bndind(nddb+k).m1b=m1bnew(k);
             bndind(nddb+k).n1a=n1anew(k);
@@ -162,8 +162,8 @@ for k=1:nddb1
             bndind(nddb+k).n2a=m2anew(k);
             bndind(nddb+k).n2b=m2bnew(k);
         case{'top'}
-            bndind(nddb+k).Runid1=runid2;
-            bndind(nddb+k).Runid2=runid1;
+            bndind(nddb+k).runid1=runid2;
+            bndind(nddb+k).runid2=runid1;
             bndind(nddb+k).m1a=m2anew(k);
             bndind(nddb+k).m1b=m2bnew(k);
             bndind(nddb+k).n1a=n2anew(k);
@@ -173,8 +173,8 @@ for k=1:nddb1
             bndind(nddb+k).n2a=n1anew(k);
             bndind(nddb+k).n2b=n1bnew(k);
         case{'right'}
-            bndind(nddb+k).Runid1=runid2;
-            bndind(nddb+k).Runid2=runid1;
+            bndind(nddb+k).runid1=runid2;
+            bndind(nddb+k).runid2=runid1;
             bndind(nddb+k).m1a=n2anew(k);
             bndind(nddb+k).m1b=n2bnew(k);
             bndind(nddb+k).n1a=m2anew(k);

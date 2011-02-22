@@ -12,31 +12,31 @@ if size(usr,1)>0
     usrstring=[' - File created by ' usr];
 end
 
-txt=['# ddb_hurricaneToolbox - DelftDashBoard v' handles.DelftDashBoardVersion usrstring ' - ' datestring];
+txt=['# ddb_hurricaneToolbox - DelftDashBoard v' handles.delftDashBoardVersion usrstring ' - ' datestring];
 fprintf(fid,'%s \n',txt);
 
 txt='';
 fprintf(fid,'%s \n',txt);
 
-txt=['Name              "' handles.Toolbox(tb).Input.Name '"'];
+txt=['Name              "' handles.Toolbox(tb).Input.name '"'];
 fprintf(fid,'%s \n',txt);
 
-txt=['InputOption       ' num2str(handles.Toolbox(tb).Input.Holland)];
+txt=['InputOption       ' num2str(handles.Toolbox(tb).Input.holland)];
 fprintf(fid,'%s \n',txt);
 
-txt=['InitialEyeSpeed   ' num2str(handles.Toolbox(tb).Input.InitSpeed)];
+txt=['InitialEyeSpeed   ' num2str(handles.Toolbox(tb).Input.initSpeed)];
 fprintf(fid,'%s \n',txt);
 
-txt=['InitialEyeDir     ' num2str(handles.Toolbox(tb).Input.InitDir)];
+txt=['InitialEyeDir     ' num2str(handles.Toolbox(tb).Input.initDir)];
 fprintf(fid,'%s \n',txt);
 
-txt=['NrPoint           ' num2str(handles.Toolbox(tb).Input.NrPoint)];
+txt=['NrPoint           ' num2str(handles.Toolbox(tb).Input.nrPoint)];
 fprintf(fid,'%s \n',txt);
 
-for i=1:handles.Toolbox(tb).Input.NrPoint
-   txt=['TrackData         ' datestr(handles.Toolbox(tb).Input.Date(i),'yyyymmdd HHMMSS') ' ' ...
-                     num2str(handles.Toolbox(tb).Input.TrY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.TrX(i),'%6.2f') ' ' ...
-                     num2str(handles.Toolbox(tb).Input.Par1(i),'%5.1f') ' ' num2str(handles.Toolbox(tb).Input.Par2(i),'%5.1f')];
+for i=1:handles.Toolbox(tb).Input.nrPoint
+   txt=['TrackData         ' datestr(handles.Toolbox(tb).Input.date(i),'yyyymmdd HHMMSS') ' ' ...
+                     num2str(handles.Toolbox(tb).Input.trY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.trX(i),'%6.2f') ' ' ...
+                     num2str(handles.Toolbox(tb).Input.par1(i),'%5.1f') ' ' num2str(handles.Toolbox(tb).Input.par2(i),'%5.1f')];
 
    fprintf(fid,'%s \n',txt);
 end
@@ -61,7 +61,7 @@ fclose(fid);
 %     usrstring=[' - File created by ' usr];
 % end
 % 
-% txt=['* ddb_hurricaneToolbox - DelftDashBoard v' handles.DelftDashBoardVersion usrstring ' - ' datestring];
+% txt=['* ddb_hurricaneToolbox - DelftDashBoard v' handles.delftDashBoardVersion usrstring ' - ' datestring];
 % fprintf(fid,'%s \n',txt);
 % 
 % txt = '*year MM DD HH  LAT  LON      Dm     Vm      MaxW   R100  R50    R35    B      A     Pdrop';

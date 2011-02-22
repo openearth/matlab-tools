@@ -42,4 +42,4 @@ handles.Toolbox(ii).newDataset.ymin=0;
 handles.Toolbox(ii).newDataset.ymax=0;
 handles.Toolbox(ii).newDataset.dy=0;
 
-handles.Bathymetry.NewDataset.autoLimits=1;
+handles.bathymetry.newDataset.autoLimits=1;

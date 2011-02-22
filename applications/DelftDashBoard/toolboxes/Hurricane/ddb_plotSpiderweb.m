@@ -2,7 +2,7 @@ function ddb_plotSpiderweb(fname,x,y,z,xldb,yldb,handles)
 
 c=load([handles.SettingsDir '\icons\icons_muppet.mat']);
 
-fig=MakeNewWindow('Spiderweb',[600 400],[handles.SettingsDir '\icons\deltares.gif']);
+fig=MakeNewWindow('Spiderweb',[600 400],[handles.settingsDir '\icons\deltares.gif']);
 
 figure(fig);
 

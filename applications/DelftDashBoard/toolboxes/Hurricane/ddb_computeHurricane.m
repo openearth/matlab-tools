@@ -13,7 +13,8 @@ SaveDefaultGrid(handles);
 
 wb = waitbox('Generating spider web ...');
 
-evaltxt=['"' handles.ToolBoxDir '\hurricane\wes\wes.exe" wes.inp'];
+handles.settingsDir
+evaltxt=['"' handles.toolBoxDir '\hurricane\wes\wes.exe" wes.inp'];
 ok=system(evaltxt);
 
 try
@@ -26,10 +27,10 @@ if ok==0
     [filename, pathname, filterindex] = uiputfile('*.spw', 'Select Spiderweb File','');
     if ~isempty(pathname)
         system(['copy wes.spw.tmp "' pathname filename '"']);
-        for i=1:handles.GUIData.NrFlowDomains
-            handles.Model(md).Input(i).SpwFile=filename;
-            handles.Model(md).Input(i).WindType='spiderweb';
-            handles.Model(md).Input(i).Wind=1;
+        for i=1:handles.GUIData.nrFlowDomains
+            handles.Model(md).Input(i).spwFile=filename;
+            handles.Model(md).Input(i).windType='spiderweb';
+            handles.Model(md).Input(i).wind=1;
         end
 %        ddb_plotSpiderweb(filename,handles.GUIData.x,handles.GUIData.y,handles.GUIData.z,handles.GUIData.WorldCoastLine5000000(:,1),handles.GUIData.WorldCoastLine5000000(:,2),handles);
     end
@@ -57,13 +58,13 @@ function ok=SaveWesOldTrackFile(handles,filename2)
 
 ok=1;
 
-if handles.Toolbox(tb).Input.Date(1)<handles.Model(md).Input(ad).ItDate
+if handles.Toolbox(tb).Input.date(1)<handles.Model(md).Input(ad).itDate
     GiveWarning('Warning','First time hurricane data is smaller than Delft3D reference time!');
     ok=0;
     return
 end
 
-if handles.Toolbox(tb).Input.Date(end)<handles.Model(md).Input(ad).StopTime
+if handles.Toolbox(tb).Input.date(end)<handles.Model(md).Input(ad).stopTime
     GiveWarning('Warning','Last time hurricane data is smaller than Delft3D stop time!');
     ok=0;
     return
@@ -78,7 +79,7 @@ if size(usr,1)>0
     usrstring=[' - File created by ' usr];
 end
 
-txt=['* ddb_hurricaneToolbox - DelftDashBoard v' handles.DelftDashBoardVersion usrstring ' - ' datestr(datenum(clock),31)];
+txt=['* ddb_hurricaneToolbox - DelftDashBoard v' handles.delftDashBoardVersion usrstring ' - ' datestr(datenum(clock),31)];
 fprintf(fid,'%s \n',txt);
 
 txt = '*year MM DD HH  LAT  LON      Dm     Vm      MaxW   R100  R50    R35    B      A     Pdrop';
@@ -86,60 +87,60 @@ fprintf(fid,'%s \n',txt);
 txt = '*    (UTC)                    deg.  (kts)    (kts) (nm)  (nm)   (nm)                    (Pa)';
 fprintf(fid,'%s \n',txt);
 
-if handles.Toolbox(tb).Input.Date(1)>handles.Model(md).Input(ad).ItDate
-    n=handles.Toolbox(tb).Input.NrPoint;
-    handles.Toolbox(tb).Input.Date(2:n+1)=handles.Toolbox(tb).Input.Date(1:end);
-    handles.Toolbox(tb).Input.TrX(2:n+1)=handles.Toolbox(tb).Input.TrX(1:end);
-    handles.Toolbox(tb).Input.TrY(2:n+1)=handles.Toolbox(tb).Input.TrY(1:end);
-    handles.Toolbox(tb).Input.Par1(2:n+1)=handles.Toolbox(tb).Input.Par1(1:end);
-    handles.Toolbox(tb).Input.Par2(2:n+1)=handles.Toolbox(tb).Input.Par2(1:end);
-    handles.Toolbox(tb).Input.Date(1)=handles.Model(md).Input(ad).ItDate;
-    handles.Toolbox(tb).Input.TrX(1)=handles.Toolbox(tb).Input.TrX(2);
-    handles.Toolbox(tb).Input.TrY(1)=handles.Toolbox(tb).Input.TrY(2);
-    handles.Toolbox(tb).Input.Par1(1)=handles.Toolbox(tb).Input.Par1(2);
-    handles.Toolbox(tb).Input.Par2(1)=handles.Toolbox(tb).Input.Par2(2);
-    handles.Toolbox(tb).Input.NrPoint=n+1;
+if handles.Toolbox(tb).Input.date(1)>handles.Model(md).Input(ad).itDate
+    n=handles.Toolbox(tb).Input.nrPoint;
+    handles.Toolbox(tb).Input.date(2:n+1)=handles.Toolbox(tb).Input.date(1:end);
+    handles.Toolbox(tb).Input.trX(2:n+1)=handles.Toolbox(tb).Input.trX(1:end);
+    handles.Toolbox(tb).Input.trY(2:n+1)=handles.Toolbox(tb).Input.trY(1:end);
+    handles.Toolbox(tb).Input.par1(2:n+1)=handles.Toolbox(tb).Input.par1(1:end);
+    handles.Toolbox(tb).Input.par2(2:n+1)=handles.Toolbox(tb).Input.par2(1:end);
+    handles.Toolbox(tb).Input.date(1)=handles.Model(md).Input(ad).itDate;
+    handles.Toolbox(tb).Input.trX(1)=handles.Toolbox(tb).Input.trX(2);
+    handles.Toolbox(tb).Input.trY(1)=handles.Toolbox(tb).Input.trY(2);
+    handles.Toolbox(tb).Input.par1(1)=handles.Toolbox(tb).Input.par1(2);
+    handles.Toolbox(tb).Input.par2(1)=handles.Toolbox(tb).Input.par2(2);
+    handles.Toolbox(tb).Input.nrPoint=n+1;
 end
 
-if handles.Toolbox(tb).Input.Holland > 0
-   for i=1:handles.Toolbox(tb).Input.NrPoint
-     dattim=D3DTimeString(handles.Toolbox(tb).Input.Date(i),'yyyy mm dd HH');
+if handles.Toolbox(tb).Input.holland > 0
+   for i=1:handles.Toolbox(tb).Input.nrPoint
+     dattim=D3DTimeString(handles.Toolbox(tb).Input.date(i),'yyyy mm dd HH');
      if i==1
        txt=[ dattim ' ' ...
-             num2str(handles.Toolbox(tb).Input.TrY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.TrX(i),'%6.2f') '  ' ...
-             num2str(handles.Toolbox(tb).Input.InitDir,'%5.1f')   '     ' ...
-             num2str(handles.Toolbox(tb).Input.InitSpeed,'%5.1f') '    '  ...
+             num2str(handles.Toolbox(tb).Input.trY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.trX(i),'%6.2f') '  ' ...
+             num2str(handles.Toolbox(tb).Input.initDir,'%5.1f')   '     ' ...
+             num2str(handles.Toolbox(tb).Input.initSpeed,'%5.1f') '    '  ...
              '  1e30  1e30  1e30  1e30 ' ...
-             num2str(handles.Toolbox(tb).Input.Par1(i),'%5.1f') ' ' num2str(handles.Toolbox(tb).Input.Par2(i),'%5.1f') ...
+             num2str(handles.Toolbox(tb).Input.par1(i),'%5.1f') ' ' num2str(handles.Toolbox(tb).Input.par2(i),'%5.1f') ...
              ' 1e30 '];
      else
        txt=[ dattim ' ' ...
-             num2str(handles.Toolbox(tb).Input.TrY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.TrX(i),'%6.2f') ...
+             num2str(handles.Toolbox(tb).Input.trY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.trX(i),'%6.2f') ...
              '                       1e30  1e30  1e30  1e30 ' ...
-             num2str(handles.Toolbox(tb).Input.Par1(i),'%5.1f') ' ' num2str(handles.Toolbox(tb).Input.Par2(i),'%5.1f') ...
+             num2str(handles.Toolbox(tb).Input.par1(i),'%5.1f') ' ' num2str(handles.Toolbox(tb).Input.par2(i),'%5.1f') ...
              ' 1e30 '];
      end
      fprintf(fid,'%s \n',txt);
    end  
 else
-   for i=1:handles.Toolbox(tb).Input.NrPoint
-%      [YY MM DD] = datevec(handles.Toolbox(tb).Input.Date{i});
+   for i=1:handles.Toolbox(tb).Input.nrPoint
+%      [YY MM DD] = datevec(handles.Toolbox(tb).Input.date{i});
 %      dattim     = [ num2str(YY,'%04d') ' ' num2str(MM,'%02d') ' ' ...
 %                     num2str(DD,'%02d') ' ' num2str(handles.Toolbox(tb).Input.Time{i},'%02d')];
-     dattim=datestr(handles.Toolbox(tb).Input.Date(i),'yyyy mm dd HH');
+     dattim=datestr(handles.Toolbox(tb).Input.date(i),'yyyy mm dd HH');
      if i==1
        txt=[ dattim ' ' ...
-             num2str(handles.Toolbox(tb).Input.TrY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.TrX(i),'%6.2f') '  ' ...
-             num2str(handles.Toolbox(tb).Input.InitDir,'%5.1f')   '     ' ...
-             num2str(handles.Toolbox(tb).Input.InitSpeed,'%5.1f') '    '  ...
-             num2str(handles.Toolbox(tb).Input.Par1(i),'%5.1f') '  1e30  1e30  1e30  1e30   1e30  ' ...             
-             num2str(handles.Toolbox(tb).Input.Par2(i),'%5.1f')];
+             num2str(handles.Toolbox(tb).Input.trY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.trX(i),'%6.2f') '  ' ...
+             num2str(handles.Toolbox(tb).Input.initDir,'%5.1f')   '     ' ...
+             num2str(handles.Toolbox(tb).Input.initSpeed,'%5.1f') '    '  ...
+             num2str(handles.Toolbox(tb).Input.par1(i),'%5.1f') '  1e30  1e30  1e30  1e30   1e30  ' ...             
+             num2str(handles.Toolbox(tb).Input.par2(i),'%5.1f')];
      else
        txt=[ dattim ' ' ...
-             num2str(handles.Toolbox(tb).Input.TrY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.TrX(i),'%6.2f') ...
+             num2str(handles.Toolbox(tb).Input.trY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.trX(i),'%6.2f') ...
              '                     ' ...
-             num2str(handles.Toolbox(tb).Input.Par1(i),'%5.1f') '  1e30  1e30  1e30  1e30   1e30  '... 
-             num2str(handles.Toolbox(tb).Input.Par2(i),'%5.1f')];
+             num2str(handles.Toolbox(tb).Input.par1(i),'%5.1f') '  1e30  1e30  1e30  1e30   1e30  '... 
+             num2str(handles.Toolbox(tb).Input.par2(i),'%5.1f')];
      end
      fprintf(fid,'%s \n',txt);
    end  
@@ -167,13 +168,13 @@ fprintf(fout,'%s\n','SPIDERS_WEB_DIMENS. = 100  36');
 fprintf(fout,'%s\n','RADIUS_OF_CYCLONE   = 400000.000');
 fprintf(fout,'%s\n','WIND CONVERSION FAC = 1.00');
 fprintf(fout,'%s\n','WIND CONV. FAC (TRK)= 1.00');
-itdat=datestr(handles.Model(md).Input(ad).ItDate,'yyyymmdd HHMM');
-%stdat=D3DTimeString(handles.Model(md).Input(ad).ItDate,'yyyymmdd HHMM');
+itdat=datestr(handles.Model(md).Input(ad).itDate,'yyyymmdd HHMM');
+%stdat=D3DTimeString(handles.Model(md).Input(ad).itDate,'yyyymmdd HHMM');
 fprintf(fout,'%s%s%s\n','D3D_START_DATE      = ',itdat,'  UTC');
 %tim=(handles.Model(md).Input(ad).StopTime-handles.Model(md).Input(ad).StartTime)*1440;
-%tim=max(tim,handles.Toolbox(tb).Input.Date(end)-handles.Toolbox(tb).Input.Date(1));
-%tim=(handles.Toolbox(tb).Input.Date(end)-handles.Toolbox(tb).Input.Date(1))*1440;
-tim=(handles.Toolbox(tb).Input.Date(end)-handles.Model(md).Input(ad).ItDate)*1440;
+%tim=max(tim,handles.Toolbox(tb).Input.date(end)-handles.Toolbox(tb).Input.date(1));
+%tim=(handles.Toolbox(tb).Input.date(end)-handles.Toolbox(tb).Input.date(1))*1440;
+tim=(handles.Toolbox(tb).Input.date(end)-handles.Model(md).Input(ad).itDate)*1440;
 fprintf(fout,'%s%10.1f%s\n','D3D_SIM._PERIOD     = ',tim,'  MINUTES');
 fprintf(fout,'%s\n','D3D_GRID_FILE_TYPE  = GRD');
 fprintf(fout,'%s\n','D3D_GRID_FILE_NAME  = default.grd ');
@@ -215,8 +216,8 @@ fclose(fout);
 function SaveDefaultGrid(handles)
 
 
-xmin = single( int16(handles.Toolbox(tb).Input.TrX(1)-20) );
-ymin = single( int16(handles.Toolbox(tb).Input.TrY(1)-20) );
+xmin = single( int16(handles.Toolbox(tb).Input.trX(1)-20) );
+ymin = single( int16(handles.Toolbox(tb).Input.trY(1)-20) );
 if xmin < -180
    xmin = -180;
 end

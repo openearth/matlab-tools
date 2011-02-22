@@ -12,7 +12,7 @@ nd=0;
 
 k=1;
 for i=1:nbnd
-    handles.Toolbox(tb).Input.DDBoundaries(i).Runid1=txt{k};
+    handles.Toolbox(tb).Input.DDBoundaries(i).runid1=txt{k};
     ii=strmatch(txt{k},rids,'exact');
     if isempty(ii)
         nd=nd+1;
@@ -36,7 +36,7 @@ for i=1:nbnd
 end
 
 for i=1:nd
-    handles.Toolbox(tb).Input.Domains{i}=rids{i}(1:end-4);
+    handles.Toolbox(tb).Input.domains{i}=rids{i}(1:end-4);
 end
 
-handles.GUIData.NrFlowDomains=nd;
+handles.GUIData.nrFlowDomains=nd;

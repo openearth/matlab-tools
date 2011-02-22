@@ -9,14 +9,14 @@ disp('Getting Tide Stations ...');
 x=get(h,'XData');
 y=get(h,'YData');
 
-TideCoord.Name='WGS 84';
-TideCoord.Type='Geographic';
+tideCoord.name='WGS 84';
+tideCoord.type='Geographic';
 
-Coord=handles.ScreenParameters.CoordinateSystem;
+Coord=handles.screenParameters.coordinateSystem;
 
-if ~strcmpi(Coord.Name,TideCoord.Name)
+if ~strcmpi(coord.name,tideCoord.name)
     if ~isempty(h)
-        [x,y]=ddb_coordConvert(x,y,TideCoord,Coord);
+        [x,y]=ddb_coordConvert(x,y,tideCoord,coord);
         set(h,'XData',x,'YData',y);
     end
 end

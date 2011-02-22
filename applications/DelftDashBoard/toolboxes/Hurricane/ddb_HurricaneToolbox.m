@@ -55,12 +55,21 @@ set(handles.PushDrawTrack,    'CallBack',{@PushDrawTrack_CallBack});
 set(handles.PushAddPoint,     'CallBack',{@PushAddPoint_CallBack});
 set(handles.PushSave,'CallBack',{@PushSaveFile_CallBack});
 set(handles.PushOpen,'CallBack',{@PushOpenFile_CallBack});
-set(handles.Pushddb_computeHurricane,'CallBack',{@Pushddb_computeHurricane_CallBack});
+set(handles.Pushddb_computeHurricane,'CallBack',{@Push_computeHurricane_CallBack});
 set(handles.PushViewHurricane,   'CallBack',{@PushViewHurricane_CallBack});
 set(handles.PushUnisysWebsite,   'CallBack',{@PushUnisysWebsite_CallBack});
 set(handles.PushImport,'CallBack',{@PushImport_CallBack});
 
+cltp={'editstring','editreal','editreal','editreal','editreal','editreal'};
+wdt=[85 30 50 50 55 60];
+callbacks={@UpdateTrack,@UpdateTrack,@UpdateTrack,@UpdateTrack,@UpdateTrack,@UpdateTrack,};
+fmt={'%s','%2.0f','%4.2f','%4.2f','%5.1f','%10.1f'};
+enab=zeros(4,6)+1;
+
+handles.GUIHandles.hurricaneTable=table(gcf,'create','tag','table','position',[200 40],'nrrows',4,'columntypes',cltp,'width',wdt,'callbacks',callbacks,'format',fmt,'enable',enab,'includenumbers',1);
+
 handles=RefreshAllHurricane(handles);
+
 
 SetUIBackgroundColors;
 
@@ -75,7 +84,7 @@ ispeed = str2double(get(hObject,'String'));
 if ispeed > 25
    GiveWarning('text','Usually the storm centre moves slower than 25 kts. Are you sure?');
 end   
-handles.Toolbox(tb).Input.InitSpeed=ispeed;
+handles.Toolbox(tb).Input.initSpeed=ispeed;
 handles=RefreshAllHurricane(handles);
 setHandles(handles);
 
@@ -92,7 +101,7 @@ elseif idir > 360.
    idir = rem(idir,360.);
    GiveWarning('text','Adjusting the value between 0 and 360 degrees');
 end   
-handles.Toolbox(tb).Input.InitDir=idir;
+handles.Toolbox(tb).Input.initDir=idir;
 handles=RefreshAllHurricane(handles);
 setHandles(handles); 
 
@@ -103,9 +112,9 @@ handles=getHandles;
 
 ii=get(hObject,'Value');
 if ii==2
-    handles.Toolbox(tb).Input.Holland=1;
+    handles.Toolbox(tb).Input.holland=1;
 else
-    handles.Toolbox(tb).Input.Holland=0;
+    handles.Toolbox(tb).Input.holland=0;
 end
 handles=RefreshAllHurricane(handles);
 setHandles(handles);
@@ -117,9 +126,9 @@ handles=getHandles;
 
 ii=get(hObject,'Value');
 if ii==1
-    handles.Toolbox(tb).Input.ShowDetails=1;
+    handles.Toolbox(tb).Input.showDetails=1;
 else
-    handles.Toolbox(tb).Input.ShowDetails=0;
+    handles.Toolbox(tb).Input.showDetails=0;
 end
 DrawHurricaneTrack(handles);
 setHandles(handles);
@@ -140,7 +149,7 @@ ddb_saveHurricaneFile(handles,filename1,filename2);
 setHandles(handles);
 
 %%
-function Pushddb_computeHurricane_CallBack(hObject,eventdata)
+function Push_computeHurricane_CallBack(hObject,eventdata)
 
 handles=getHandles;
 handles=ddb_computeHurricane(handles);
@@ -150,9 +159,9 @@ setHandles(handles);
 %%
 function PushViewHurricane_CallBack(hObject,eventdata)
 handles=getHandles;
-if ~isempty(handles.Model(md).Input(ad).SpwFile)
-    if exist(handles.Model(md).Input(ad).SpwFile,'file')
-        ddb_plotSpiderweb(handles.Model(md).Input(ad).SpwFile,handles.GUIData.x,handles.GUIData.y,handles.GUIData.z,handles.GUIData.WorldCoastLine5000000(:,1),handles.GUIData.WorldCoastLine5000000(:,2),handles);
+if ~isempty(handles.Model(md).Input(ad).spwFile)
+    if exist(handles.Model(md).Input(ad).spwFile,'file')
+        ddb_plotSpiderweb(handles.Model(md).Input(ad).spwFile,handles.GUIData.x,handles.GUIData.y,handles.GUIData.z,handles.GUIData.WorldCoastLine5000000(:,1),handles.GUIData.WorldCoastLine5000000(:,2),handles);
     end
 end
 
@@ -211,13 +220,13 @@ hnd.dt=6;
 hnd.vmax=20;
 hnd.pdrop=1000;
 
-hnd.t0=handles.Toolbox(tb).Input.StartTime;
-hnd.dt=handles.Toolbox(tb).Input.TimeStep;
-hnd.vmax=handles.Toolbox(tb).Input.VMax;
-hnd.pdrop=handles.Toolbox(tb).Input.PDrop;
-hnd.para=handles.Toolbox(tb).Input.ParA;
-hnd.parb=handles.Toolbox(tb).Input.ParB;
-hnd.hol=handles.Toolbox(tb).Input.Holland;
+hnd.t0=handles.Toolbox(tb).Input.startTime;
+hnd.dt=handles.Toolbox(tb).Input.timeStep;
+hnd.vmax=handles.Toolbox(tb).Input.vMax;
+hnd.pdrop=handles.Toolbox(tb).Input.pDrop;
+hnd.para=handles.Toolbox(tb).Input.parA;
+hnd.parb=handles.Toolbox(tb).Input.parB;
+hnd.hol=handles.Toolbox(tb).Input.holland;
 
 hnd=ddb_getInitialHurricaneTrackParameters(hnd);
 
@@ -236,37 +245,37 @@ if hnd.ok
         %     hnd.vmax=20;
         %     hnd.pdrop=1000;
         %
-        %     hnd.t0=handles.Toolbox(tb).Input.StartTime;
-        %     hnd.dt=handles.Toolbox(tb).Input.TimeStep;
-        %     hnd.vmax=handles.Toolbox(tb).Input.VMax;
-        %     hnd.pdrop=handles.Toolbox(tb).Input.PDrop;
-        %     hnd.para=handles.Toolbox(tb).Input.ParA;
-        %     hnd.parb=handles.Toolbox(tb).Input.ParB;
-        %     hnd.hol=handles.Toolbox(tb).Input.Holland;
+        %     hnd.t0=handles.Toolbox(tb).Input.startTime;
+        %     hnd.dt=handles.Toolbox(tb).Input.timeStep;
+        %     hnd.vmax=handles.Toolbox(tb).Input.vMax;
+        %     hnd.pdrop=handles.Toolbox(tb).Input.pDrop;
+        %     hnd.para=handles.Toolbox(tb).Input.parA;
+        %     hnd.parb=handles.Toolbox(tb).Input.parB;
+        %     hnd.hol=handles.Toolbox(tb).Input.holland;
         %
         %     hnd=ddb_getInitialHurricaneTrackParameters(hnd);
 
         %     if hnd.ok
 
-        handles.Toolbox(tb).Input.StartTime=hnd.t0;
-        handles.Toolbox(tb).Input.TimeStep=hnd.dt;
-        handles.Toolbox(tb).Input.VMax=hnd.vmax;
-        handles.Toolbox(tb).Input.PDrop=hnd.pdrop;
-        handles.Toolbox(tb).Input.ParA=hnd.para;
-        handles.Toolbox(tb).Input.ParB=hnd.parb;
+        handles.Toolbox(tb).Input.startTime=hnd.t0;
+        handles.Toolbox(tb).Input.timeStep=hnd.dt;
+        handles.Toolbox(tb).Input.vMax=hnd.vmax;
+        handles.Toolbox(tb).Input.pDrop=hnd.pdrop;
+        handles.Toolbox(tb).Input.parA=hnd.para;
+        handles.Toolbox(tb).Input.parB=hnd.parb;
 
-        handles.Toolbox(tb).Input.NrPoint=length(x);
-        handles.Toolbox(tb).Input.TrX=x;
-        handles.Toolbox(tb).Input.TrY=y;
+        handles.Toolbox(tb).Input.nrPoint=length(x);
+        handles.Toolbox(tb).Input.trX=x;
+        handles.Toolbox(tb).Input.trY=y;
 
-        for i=1:handles.Toolbox(tb).Input.NrPoint
-            handles.Toolbox(tb).Input.Date(i)=hnd.t0+(i-1)*hnd.dt/24;
+        for i=1:handles.Toolbox(tb).Input.nrPoint
+            handles.Toolbox(tb).Input.date(i)=hnd.t0+(i-1)*hnd.dt/24;
             if hnd.hol
-                handles.Toolbox(tb).Input.Par1(i)=vmax;
-                handles.Toolbox(tb).Input.Par2(i)=pdrop;
+                handles.Toolbox(tb).Input.par1(i)=vmax;
+                handles.Toolbox(tb).Input.par2(i)=pdrop;
             else
-                handles.Toolbox(tb).Input.Par1(i)=hnd.para;
-                handles.Toolbox(tb).Input.Par2(i)=hnd.parb;
+                handles.Toolbox(tb).Input.par1(i)=hnd.para;
+                handles.Toolbox(tb).Input.par2(i)=hnd.parb;
             end
         end
 
@@ -295,14 +304,14 @@ if ~isempty(x)
     handles=getHandles;
     
 
-    handles.Toolbox(tb).Input.NrPoint=handles.Toolbox(tb).Input.NrPoint+1;
-    np=handles.Toolbox(tb).Input.NrPoint;
+    handles.Toolbox(tb).Input.nrPoint=handles.Toolbox(tb).Input.nrPoint+1;
+    np=handles.Toolbox(tb).Input.nrPoint;
 
-    handles.Toolbox(tb).Input.Date(np)=handles.Toolbox(tb).Input.Date(np-1)+(handles.Toolbox(tb).Input.Date(np-1)-handles.Toolbox(tb).Input.Date(np-2));
-    handles.Toolbox(tb).Input.TrX(np)=x;
-    handles.Toolbox(tb).Input.TrY(np)=y;
-    handles.Toolbox(tb).Input.Par1(np)=handles.Toolbox(tb).Input.Par1(np-1);
-    handles.Toolbox(tb).Input.Par2(np)=handles.Toolbox(tb).Input.Par2(np-1);
+    handles.Toolbox(tb).Input.date(np)=handles.Toolbox(tb).Input.date(np-1)+(handles.Toolbox(tb).Input.date(np-1)-handles.Toolbox(tb).Input.date(np-2));
+    handles.Toolbox(tb).Input.trX(np)=x;
+    handles.Toolbox(tb).Input.trY(np)=y;
+    handles.Toolbox(tb).Input.par1(np)=handles.Toolbox(tb).Input.par1(np-1);
+    handles.Toolbox(tb).Input.par2(np)=handles.Toolbox(tb).Input.par2(np-1);
 
     handles=RefreshAllHurricane(handles);
 
@@ -313,32 +322,21 @@ end
 %%
 function RefreshDetailTrack(handles)
 
-npoi=handles.Toolbox(tb).Input.NrPoint;
-
-cltp={'editstring','editreal','editreal','editreal','editreal','editreal'};
-wdt=[85 30 50 50 55 60];
-callbacks={@UpdateTrack,@UpdateTrack,@UpdateTrack,@UpdateTrack,@UpdateTrack,@UpdateTrack,};
-fmt={'%s','%2.0f','%4.2f','%4.2f','%5.1f','%10.1f'};
-enab=zeros(4,6)+1;
-data=[];
-
+npoi=handles.Toolbox(tb).Input.nrPoint;
+data=[]
 for i=1:npoi
-    dat=datestr(handles.Toolbox(tb).Input.Date(i),'dd mm yyyy');
-    tim=str2double(datestr(handles.Toolbox(tb).Input.Date(i),'HH'));
+    dat=datestr(handles.Toolbox(tb).Input.date(i),'dd mm yyyy');
+    tim=str2double(datestr(handles.Toolbox(tb).Input.date(i),'HH'));
     data{i,1}=dat;
     data{i,2}=tim;
-    data{i,3}=handles.Toolbox(tb).Input.TrX(i);
-    data{i,4}=handles.Toolbox(tb).Input.TrY(i);
-    data{i,5}=handles.Toolbox(tb).Input.Par1(i);
-    data{i,6}=handles.Toolbox(tb).Input.Par2(i);
+    data{i,3}=handles.Toolbox(tb).Input.trX(i);
+    data{i,4}=handles.Toolbox(tb).Input.trY(i);
+    data{i,5}=handles.Toolbox(tb).Input.par1(i);
+    data{i,6}=handles.Toolbox(tb).Input.par2(i);
 end
 
-tbl=table2(gcf,'table','find');
-if ~isempty(tbl)
-    table2(gcf,'table','change','data',data);
-else
-    table2(gcf,'table','create','position',[200 40],'nrrows',4,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'format',fmt,'enable',enab,'includenumbers');
-end
+table(handles.GUIHandles.hurricaneTable,'setdata',data);
+
 DrawHurricaneTrack(handles);
 
 %%
@@ -346,23 +344,23 @@ function UpdateTrack
 
 handles=getHandles;
 
-data=table2(gcf,'table','getdata');
+data=table(handles.GUIHandles.hurricaneTable,'getdata');
 
-handles.Toolbox(tb).Input.Date=[];
-handles.Toolbox(tb).Input.Time=[];
-handles.Toolbox(tb).Input.Lat=[];
-handles.Toolbox(tb).Input.Lon=[];
-handles.Toolbox(tb).Input.Par1=[];
-handles.Toolbox(tb).Input.Par2=[];
+handles.Toolbox(tb).Input.date=[];
+handles.Toolbox(tb).Input.time=[];
+handles.Toolbox(tb).Input.lat=[];
+handles.Toolbox(tb).Input.lon=[];
+handles.Toolbox(tb).Input.par1=[];
+handles.Toolbox(tb).Input.par2=[];
 for i=1:size(data,1)
     str1=data{i,1};
     str2=data{i,2};
-%    handles.Toolbox(tb).Input.Date(i)=datenum(str1,'dd mm yyyy')+str2double(str2)/24;
-    handles.Toolbox(tb).Input.Date(i)=datenum(str1,'dd mm yyyy')+str2/24;
-    handles.Toolbox(tb).Input.TrX(i) =data{i,3};
-    handles.Toolbox(tb).Input.TrY(i) =data{i,4};
-    handles.Toolbox(tb).Input.Par1(i)=data{i,5};
-    handles.Toolbox(tb).Input.Par2(i)=data{i,6};
+%    handles.Toolbox(tb).Input.date(i)=datenum(str1,'dd mm yyyy')+str2double(str2)/24;
+    handles.Toolbox(tb).Input.date(i)=datenum(str1,'dd mm yyyy')+str2/24;
+    handles.Toolbox(tb).Input.trX(i) =data{i,3};
+    handles.Toolbox(tb).Input.trY(i) =data{i,4};
+    handles.Toolbox(tb).Input.par1(i)=data{i,5};
+    handles.Toolbox(tb).Input.par2(i)=data{i,6};
 end
 
 %set(handles.Pushddb_computeHurricane,'enable','off');
@@ -372,8 +370,8 @@ setHandles(handles);
 %%
 function handles=RefreshAllHurricane(handles)
 
-set(handles.SelectInputOption,'Value',handles.Toolbox(tb).Input.Holland+1);
-if handles.Toolbox(tb).Input.Holland == 0
+set(handles.SelectInputOption,'Value',handles.Toolbox(tb).Input.holland+1);
+if handles.Toolbox(tb).Input.holland == 0
     set(handles.TextVmax,'String','max.speed (kts)');
     set(handles.TextPdrop,'String','Pr.drop  (Pa)');
 else
@@ -381,7 +379,7 @@ else
     set(handles.TextPdrop,'String','B parameter');
 end
 
-npoi = handles.Toolbox(tb).Input.NrPoint;
+npoi = handles.Toolbox(tb).Input.nrPoint;
 if npoi > 0
    set(handles.PushSave  ,'Enable','on');
 else
@@ -391,11 +389,11 @@ end
 RefreshDetailTrack(handles);
 
 % if npoi > 0
-%    handles.Toolbox(tb).Input.D3d_start = datestr(handles.Toolbox(tb).Input.Date{1},'yyyymmdd');
-%    handles.Toolbox(tb).Input.D3d_sttime= handles.Toolbox(tb).Input.Time{1}*60.;
-%    ndate_start = datenum(handles.Toolbox(tb).Input.Date{1});
-%    ndate_stop  = datenum(handles.Toolbox(tb).Input.Date{npoi});
-%    handles.Toolbox(tb).Input.D3d_simper= ((ndate_stop - ndate_start)*24. + handles.Toolbox(tb).Input.Time{npoi}) * 60. ;
+%    handles.Toolbox(tb).Input.D3d_start = datestr(handles.Toolbox(tb).Input.date{1},'yyyymmdd');
+%    handles.Toolbox(tb).Input.D3d_sttime= handles.Toolbox(tb).Input.time{1}*60.;
+%    ndate_start = datenum(handles.Toolbox(tb).Input.date{1});
+%    ndate_stop  = datenum(handles.Toolbox(tb).Input.date{npoi});
+%    handles.Toolbox(tb).Input.D3d_simper= ((ndate_stop - ndate_start)*24. + handles.Toolbox(tb).Input.time{npoi}) * 60. ;
 %    
 % else
 %    handles.Toolbox(tb).Input.D3d_start = ' ';
@@ -403,10 +401,10 @@ RefreshDetailTrack(handles);
 %    handles.Toolbox(tb).Input.D3d_simper= 0. ;
 % end
 
-set(handles.EditInitSpeed,'String',num2str(handles.Toolbox(tb).Input.InitSpeed));
-set(handles.EditInitDir  ,'String',num2str(handles.Toolbox(tb).Input.InitDir));
+set(handles.EditInitSpeed,'String',num2str(handles.Toolbox(tb).Input.initSpeed));
+set(handles.EditInitDir  ,'String',num2str(handles.Toolbox(tb).Input.initDir));
 
-set(handles.ToggleShowDetails  ,'Value',handles.Toolbox(tb).Input.ShowDetails);
+set(handles.ToggleShowDetails  ,'Value',handles.Toolbox(tb).Input.showDetails);
 
 %%
 function DrawHurricaneTrack(handles)
@@ -416,26 +414,26 @@ if ~isempty(h)
     delete(h);
 end
 
-if handles.Toolbox(tb).Input.NrPoint>0
-    z = zeros(handles.Toolbox(tb).Input.NrPoint,1);
-    h=plot3(handles.Toolbox(tb).Input.TrX,handles.Toolbox(tb).Input.TrY,z,'g');
+if handles.Toolbox(tb).Input.nrPoint>0
+    z = zeros(handles.Toolbox(tb).Input.nrPoint,1);
+    h=plot3(handles.Toolbox(tb).Input.trX,handles.Toolbox(tb).Input.trY,z,'g');
     set(h,'LineWidth',1.5);
     set(h,'Tag','HurricaneTrack');
     set(h,'HitTest','off');
-    for i=1:handles.Toolbox(tb).Input.NrPoint
-        h=plot3(handles.Toolbox(tb).Input.TrX(i),handles.Toolbox(tb).Input.TrY(i),200,'ro');
+    for i=1:handles.Toolbox(tb).Input.nrPoint
+        h=plot3(handles.Toolbox(tb).Input.trX(i),handles.Toolbox(tb).Input.trY(i),200,'ro');
         set(h,'MarkerEdgeColor','r','MarkerFaceColor','r','MarkerSize',4);
         set(h,'Tag','HurricaneTrack');
         set(h,'ButtonDownFcn',{@MoveVertex});
         set(h,'UserData',i);
-        if handles.Toolbox(tb).Input.ShowDetails
-            tx1=datestr(handles.Toolbox(tb).Input.Date(i),'ddmmm');
-            tx2=datestr(handles.Toolbox(tb).Input.Date(i),'HH');
+        if handles.Toolbox(tb).Input.showDetails
+            tx1=datestr(handles.Toolbox(tb).Input.date(i),'ddmmm');
+            tx2=datestr(handles.Toolbox(tb).Input.date(i),'HH');
             tx=[' ' tx1 tx2 '00'];
-            tx3=['Vmax ' num2str(handles.Toolbox(tb).Input.Par1(i)) 'kt'];
-            tx4=['Pdrop ' num2str(handles.Toolbox(tb).Input.Par2(i)) 'Pa'];
+            tx3=['Vmax ' num2str(handles.Toolbox(tb).Input.par1(i)) 'kt'];
+            tx4=['Pdrop ' num2str(handles.Toolbox(tb).Input.par2(i)) 'Pa'];
             tx=strvcat(tx,tx3,tx4);
-            txt=text(handles.Toolbox(tb).Input.TrX(i),handles.Toolbox(tb).Input.TrY(i),tx);
+            txt=text(handles.Toolbox(tb).Input.trX(i),handles.Toolbox(tb).Input.trY(i),tx);
             set(txt,'FontSize',8);
             set(txt,'UserData',i);
             set(txt,'Tag','HurricaneTrack');
@@ -461,8 +459,8 @@ pos = get(gca, 'CurrentPoint');
 xi=pos(1,1);
 yi=pos(1,2);
 ii=get(0,'UserData');
-handles.Toolbox(tb).Input.TrX(ii)=xi;
-handles.Toolbox(tb).Input.TrY(ii)=yi;
+handles.Toolbox(tb).Input.trX(ii)=xi;
+handles.Toolbox(tb).Input.trY(ii)=yi;
 DrawHurricaneTrack(handles);
 setHandles(handles);
 ddb_updateCoordinateText('arrow');

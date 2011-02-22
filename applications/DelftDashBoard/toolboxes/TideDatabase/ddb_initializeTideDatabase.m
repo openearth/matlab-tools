@@ -13,7 +13,22 @@ if nargin>1
             for i=1:length(lst)
                 disp(['Loading tide database ' lst(i).name(1:end-4) ' ...']);
                 load([handles.toolBoxDir 'tidedatabase\' lst(i).name(1:end-4) '.mat']);
-                handles.Toolbox(ii).databases{i}=s.DatabaseName;
+                
+                s.databaseName=s.DatabaseName;
+                s.institution=s.Institution;
+                s.coordinateSystem=s.CoordinateSystem;
+                s.coordinateSystemType=s.CoordinateSystemType;
+                s.name=s.Name;
+                s.componentSet=s.ComponentSet;
+
+                s=rmfield(s,'DatabaseName');
+                s=rmfield(s,'Institution');
+                s=rmfield(s,'CoordinateSystem');
+                s=rmfield(s,'CoordinateSystemType');
+                s=rmfield(s,'Name');
+                s=rmfield(s,'ComponentSet');
+                
+                handles.Toolbox(ii).databases{i}=s.databaseName;
                 handles.Toolbox(ii).database{i}=s;
                 handles.Toolbox(ii).database{i}.shortName=lst(i).name(1:end-4);
                 if size(handles.Toolbox(ii).database{i}.x,1)==1

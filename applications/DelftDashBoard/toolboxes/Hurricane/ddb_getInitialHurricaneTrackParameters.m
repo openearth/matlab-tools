@@ -4,7 +4,7 @@ handles=getHandles;
 
 h.ok=0;
 
-fig=MakeNewWindow('Track Parameters',[260 210],'modal',[handles.SettingsDir '\icons\deltares.gif']);
+fig=MakeNewWindow('Track Parameters',[260 210],'modal',[handles.settingsDir '\icons\deltares.gif']);
 
 h.TextStartDate = uicontrol(gcf,'Style','text','String','Time First Point','Position',[10 166 95 20],'HorizontalAlignment','right','Tag','UIControl');
 h.TextTimeStep  = uicontrol(gcf,'Style','text','String','Time Increment (h)',      'Position',[10 136 95 20],'HorizontalAlignment','right','Tag','UIControl');

@@ -68,7 +68,7 @@ end
 ndb=length(ddbound);
 
 for k=1:ndb
-    if strcmpi(ddbound(k).Runid1,runid1) && strcmpi(ddbound(k).Runid2,runid2)
+    if strcmpi(ddbound(k).runid1,runid1) && strcmpi(ddbound(k).runid2,runid2)
         % Coarse domain to the left/bottom of fine domain
         m1a=ddbound(k).m1a;
         m1b=ddbound(k).m1b;
@@ -103,7 +103,7 @@ for k=1:ndb
                 z2(ma:mb,na:nb)=z1(m,n1a);
             end
         end
-    elseif strcmpi(ddbound(k).Runid2,runid1) && strcmpi(ddbound(k).Runid1,runid2)
+    elseif strcmpi(ddbound(k).runid2,runid1) && strcmpi(ddbound(k).runid1,runid2)
         % Coarse domain to the right/top of fine domain
         m1a=ddbound(k).m2a;
         m1b=ddbound(k).m2b;
@@ -166,7 +166,7 @@ nd=0;
 
 k=1;
 for i=1:nbnd
-    ddbound(i).Runid1=txt{k};
+    ddbound(i).runid1=txt{k};
     ii=strmatch(txt{k},rids,'exact');
     if isempty(ii)
         nd=nd+1;
@@ -176,7 +176,7 @@ for i=1:nbnd
     ddbound(i).n1a=str2double(txt{k+2});
     ddbound(i).m1b=str2double(txt{k+3});
     ddbound(i).n1b=str2double(txt{k+4});
-    ddbound(i).Runid2=txt{k+5};
+    ddbound(i).runid2=txt{k+5};
     ii=strmatch(txt{k+5},rids,'exact');
     if isempty(ii)
         nd=nd+1;

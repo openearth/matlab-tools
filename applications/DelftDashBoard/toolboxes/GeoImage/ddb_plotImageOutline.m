@@ -2,10 +2,10 @@ function ddb_plotImageOutline(c)
 
 handles=getHandles;
 
-x1=handles.Toolbox(tb).Input.XLim(1);
-y1=handles.Toolbox(tb).Input.YLim(1);
-x2=handles.Toolbox(tb).Input.XLim(2);
-y2=handles.Toolbox(tb).Input.YLim(2);
+x1=handles.Toolbox(tb).Input.xLim(1);
+y1=handles.Toolbox(tb).Input.yLim(1);
+x2=handles.Toolbox(tb).Input.xLim(2);
+y2=handles.Toolbox(tb).Input.yLim(2);
 
 x(1)=x1;
 x(2)=x2;
@@ -97,12 +97,12 @@ switch usd.nr,
             disty=det([x2-x1 ; x1-x0])/pt;
 
             if distx>0 && disty>0
-                handles.Toolbox(tb).Input.XLim(1)=posx;
-                handles.Toolbox(tb).Input.YLim(1)=posy;
-                set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.XLim(1)));
-                set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.YLim(1)));
-                set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.XLim(2)));
-                set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.YLim(2)));
+                handles.Toolbox(tb).Input.xLim(1)=posx;
+                handles.Toolbox(tb).Input.yLim(1)=posy;
+                set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.xLim(1)));
+                set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.yLim(1)));
+                set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.xLim(2)));
+                set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.yLim(2)));
             end
             
      case 2
@@ -120,12 +120,12 @@ switch usd.nr,
          disty=det([x2-x1 ; x1-x0])/pt;
 
          if distx>0 && disty>0
-             handles.Toolbox(tb).Input.XLim(2)=posx;
-             handles.Toolbox(tb).Input.YLim(1)=posy;
-             set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.XLim(1)));
-             set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.YLim(1)));
-             set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.XLim(2)));
-             set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.YLim(2)));
+             handles.Toolbox(tb).Input.xLim(2)=posx;
+             handles.Toolbox(tb).Input.yLim(1)=posy;
+             set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.xLim(1)));
+             set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.yLim(1)));
+             set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.xLim(2)));
+             set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.yLim(2)));
          end
 
     case 3
@@ -142,12 +142,12 @@ switch usd.nr,
         disty=det([x2-x1 ; x1-x0])/pt;
         
         if distx>0 && disty>0
-             handles.Toolbox(tb).Input.XLim(2)=posx;
-             handles.Toolbox(tb).Input.YLim(2)=posy;
-             set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.XLim(1)));
-             set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.YLim(1)));
-             set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.XLim(2)));
-             set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.YLim(2)));
+             handles.Toolbox(tb).Input.xLim(2)=posx;
+             handles.Toolbox(tb).Input.yLim(2)=posy;
+             set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.xLim(1)));
+             set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.yLim(1)));
+             set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.xLim(2)));
+             set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.yLim(2)));
         end
 
     case 4
@@ -164,12 +164,12 @@ switch usd.nr,
         disty=det([x2-x1 ; x1-x0])/pt;
 
         if distx>0 && disty>0
-             handles.Toolbox(tb).Input.XLim(1)=posx;
-             handles.Toolbox(tb).Input.YLim(2)=posy;
-             set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.XLim(1)));
-             set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.YLim(1)));
-             set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.XLim(2)));
-             set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.YLim(2)));
+             handles.Toolbox(tb).Input.xLim(1)=posx;
+             handles.Toolbox(tb).Input.yLim(2)=posy;
+             set(handles.GUIHandles.EditX1,'String',num2str(handles.Toolbox(tb).Input.xLim(1)));
+             set(handles.GUIHandles.EditY1,'String',num2str(handles.Toolbox(tb).Input.yLim(1)));
+             set(handles.GUIHandles.EditX2,'String',num2str(handles.Toolbox(tb).Input.xLim(2)));
+             set(handles.GUIHandles.EditY2,'String',num2str(handles.Toolbox(tb).Input.yLim(2)));
         end
 end
 ddb_refreshZoomLevels(handles);
@@ -186,8 +186,8 @@ posy=pos(1,2);
 
 handles=getHandles;
 
-handles.Toolbox(tb).Input.XLim(1)=posx;
-handles.Toolbox(tb).Input.YLim(1)=posy;
+handles.Toolbox(tb).Input.xLim(1)=posx;
+handles.Toolbox(tb).Input.yLim(1)=posy;
 set(handles.GUIHandles.EditX1,'String',num2str(posx));
 set(handles.GUIHandles.EditY1,'String',num2str(posy));
 
