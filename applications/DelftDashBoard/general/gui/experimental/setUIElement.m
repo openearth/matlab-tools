@@ -182,15 +182,30 @@ switch lower(el.style)
         
     case{'pushselectfile'}
         if el.showFileName
-            val=getSubFieldValue(s,el.variable);
-            set(el.textHandle,'enable','on','String',['File : ' val]);
-            pos=get(el.textHandle,'position');
-            ext=get(el.textHandle,'Extent');
-            pos(3)=ext(3);
-            pos(4)=15;
-            set(el.textHandle,'Position',pos);
+           val=getSubFieldValue(s,el.variable);
+           set(el.textHandle,'enable','on','String',['File : ' val]);
+           pos=get(el.textHandle,'position');
+           ext=get(el.textHandle,'Extent');
+           pos(3)=ext(3);
+           pos(4)=15;
+           set(el.textHandle,'Position',pos);
         end
-        
+               
+    case{'popupmenu'}
+        val=getSubFieldValue(s,el.variable);
+        for ilist=1:length(el.stringList)
+            if strcmpi(val,el.stringList{ilist})
+                ival=ilist;
+            end
+        end
+        set(el.textHandle,'enable','on','String',el.variable.name);
+        set(el.handle,'Value',ival);
+        pos=get(el.textHandle,'position');
+        ext=get(el.textHandle,'Extent');
+        pos(3)=ext(3);
+        pos(4)=15;
+        set(el.textHandle,'Position',pos);
+       
     case{'pushsavefile'}
         if el.showFileName
             val=getSubFieldValue(s,el.variable);

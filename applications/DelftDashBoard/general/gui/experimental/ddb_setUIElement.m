@@ -66,6 +66,10 @@ switch lower(elements(i).style)
         val=getSubFieldValue(s,subFields,subIndices,el.varName);
         set(el.textHandle,'enable','on','String',['File : ' val]);
         
+    case{'popupmenu'}
+        val=getSubFieldValue(s,subFields,subIndices,el.varName);
+        set(el.handle,'Value',val);
+        
     case{'table'}
         % Determine number of rows in table
         for j=1:length(el.columns)

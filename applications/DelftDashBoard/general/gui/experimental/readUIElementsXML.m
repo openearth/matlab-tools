@@ -113,6 +113,8 @@ if isfield(xml,'elements')
                     % Text
                     if isfield(elxml(k).element.list.texts,'variable')
                         s.elements(k).list.text.variable=readVariableXML(elxml(k).element.list.texts.variable,subFields,subIndices);
+                    elseif iscell(elxml(k).element.list)
+                        s.elements(k).stringList = elxml(k).element.list;
                     else
                         for jj=1:length(elxml(k).element.list.texts)
                             s.elements(k).list.text{jj}=elxml(k).element.list.texts(jj).text;

@@ -248,9 +248,26 @@ for i=1:length(elements)
                     hh=findobj(gcf,'Tag',elements(i).parent);
                     set(elements(i).handle,'Parent',hh);
                 end
+
                 
                 %% Custom elements
+            case{'popupmenu'}    
+                elements(i).handle=uicontrol(figh,'Style','popupmenu','String',elements(i).stringList,'Position',position);
                 
+                if ~isempty(elements(i).toolTipString)
+                    set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
+                end
+                
+                if ~isempty(parent)
+                    set(elements(i).handle,'Parent',parent);
+                end
+                
+                if ~isempty(elements(i).text)
+                    % Text
+                    elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
+                    setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
+                end
+            
             case{'pushselectfile','pushsavefile'}
                 
                 % Push select file
