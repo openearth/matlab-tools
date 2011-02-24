@@ -33,6 +33,7 @@ for i=1:1000
                 handles.Model(md).Input(ad).openBoundaries(n).compA=v{ii};
                 handles.Model(md).Input(ad).openBoundaries(n).compB=v{ii+1};
         end
+        handles.Model(md).Input(ad).openBoundaryNames{n}=handles.Model(md).Input(ad).openBoundaries(n).name;
     end
 end
 

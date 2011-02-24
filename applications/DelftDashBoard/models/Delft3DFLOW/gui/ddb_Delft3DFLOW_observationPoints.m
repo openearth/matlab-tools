@@ -116,27 +116,29 @@ handles=getHandles;
 [m1,n1]=findGridCell(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
 % Check if start and end are in one grid line
 if ~isempty(m1)
-    if handles.Model(md).Input(ad).changeObservationPoint
-        iac=handles.Model(md).Input(ad).activeObservationPoint;
-    else
-        % Add mode
-        handles.Model(md).Input(ad).nrObservationPoints=handles.Model(md).Input(ad).nrObservationPoints+1;
-        iac=handles.Model(md).Input(ad).nrObservationPoints;
-    end
-    handles.Model(md).Input(ad).observationPoints(iac).M=m1;
-    handles.Model(md).Input(ad).observationPoints(iac).N=n1;
-    handles.Model(md).Input(ad).observationPoints(iac).name=['(' num2str(m1) ',' num2str(n1) ')'];
-    handles.Model(md).Input(ad).observationPointNames{iac}=handles.Model(md).Input(ad).observationPoints(iac).name;
-    handles.Model(md).Input(ad).activeObservationPoint=iac;
-    handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints');
-    setHandles(handles);
-    
-    if handles.Model(md).Input(ad).changeObservationPoint
-        ddb_clickObject('tag','observationpoint','callback',@changeObservationPointFromMap);
-        setInstructions({'','','Select observation point'});
-    else
-        ddb_dragLine(@addObservationPoint,'free');
-        setInstructions({'','','Click position of new observation point'});
+    if m1>0
+        if handles.Model(md).Input(ad).changeObservationPoint
+            iac=handles.Model(md).Input(ad).activeObservationPoint;
+        else
+            % Add mode
+            handles.Model(md).Input(ad).nrObservationPoints=handles.Model(md).Input(ad).nrObservationPoints+1;
+            iac=handles.Model(md).Input(ad).nrObservationPoints;
+        end
+        handles.Model(md).Input(ad).observationPoints(iac).M=m1;
+        handles.Model(md).Input(ad).observationPoints(iac).N=n1;
+        handles.Model(md).Input(ad).observationPoints(iac).name=['(' num2str(m1) ',' num2str(n1) ')'];
+        handles.Model(md).Input(ad).observationPointNames{iac}=handles.Model(md).Input(ad).observationPoints(iac).name;
+        handles.Model(md).Input(ad).activeObservationPoint=iac;
+        handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints');
+        setHandles(handles);
+        
+        if handles.Model(md).Input(ad).changeObservationPoint
+            ddb_clickObject('tag','observationpoint','callback',@changeObservationPointFromMap);
+            setInstructions({'','','Select observation point'});
+        else
+            ddb_dragLine(@addObservationPoint,'free');
+            setInstructions({'','','Click position of new observation point'});
+        end
     end
 end
 refreshObservationPoints;
@@ -193,7 +195,7 @@ function changeObservationPointFromMap(h)
 handles=getHandles;
 iac=get(h,'UserData');
 handles.Model(md).Input(ad).activeObservationPoint=iac;
-ddb_Delft3DFLOW_plotAttributes(handles,'update','ObservationPoints');
+ddb_Delft3DFLOW_plotAttributes(handles,'update','observationPoints');
 setHandles(handles);
 refreshObservationPoints;
 ddb_dragLine(@addObservationPoint,'free');

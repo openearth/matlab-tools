@@ -134,7 +134,9 @@ handles.Model(md).Input(id).rhoW=MDF.rhow;
 %Alph0 = [.]
 handles.Model(md).Input(id).tempW=MDF.tempw;
 handles.Model(md).Input(id).salW=MDF.salw;
-handles.Model(md).Input(id).rouWav=MDF.rouwav;
+if ~isempty(deblank(MDF.rouwav))
+    handles.Model(md).Input(id).rouWav=MDF.rouwav;
+end
 handles.Model(md).Input(id).windStress=MDF.wstres;
 
 %% Heat model

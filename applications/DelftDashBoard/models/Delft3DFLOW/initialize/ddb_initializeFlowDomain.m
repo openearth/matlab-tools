@@ -17,7 +17,6 @@ handles.Model(md).Input(id).grid=[];
 handles.Model(md).Input(id).bathy=[];
 
 
-handles.Model(md).Input(id).nrCrossSections=0;
 handles.Model(md).Input(id).nrDischarges=0;
 handles.Model(md).Input(id).nrDrogues=0;
 
@@ -32,6 +31,19 @@ handles.Model(md).Input(id).addObservationPoint=0;
 handles.Model(md).Input(id).selectObservationPoint=0;
 handles.Model(md).Input(id).deleteObservationPoint=0;
 handles.Model(md).Input(id).changeObservationPoint=0;
+
+%% Cross sections
+handles.Model(md).Input(id).nrCrossSections=0;
+handles.Model(md).Input(id).crossSectionNames={''};
+handles.Model(md).Input(id).activeCrossSection=1;
+handles.Model(md).Input(id).crossSections(1).M1=[];
+handles.Model(md).Input(id).crossSections(1).M2=[];
+handles.Model(md).Input(id).crossSections(1).N1=[];
+handles.Model(md).Input(id).crossSections(1).N2=[];
+handles.Model(md).Input(id).addCrossSection=0;
+handles.Model(md).Input(id).selectCrossSection=0;
+handles.Model(md).Input(id).deleteCrossSection=0;
+handles.Model(md).Input(id).changeCrossSection=0;
 
 %% Dry points
 handles.Model(md).Input(id).nrDryPoints=0;

@@ -14,6 +14,7 @@ for i=1:length(m1)
     handles.Model(md).Input(ad).crossSections(i).N1=n1(i);
     handles.Model(md).Input(ad).crossSections(i).M2=m2(i);
     handles.Model(md).Input(ad).crossSections(i).N2=n2(i);
+    handles.Model(md).Input(ad).crossSectionNames{i}=handles.Model(md).Input(ad).crossSections(i).name;
 end
 
 handles.Model(md).Input(ad).nrCrossSections=length(m1);

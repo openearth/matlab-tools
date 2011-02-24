@@ -193,7 +193,10 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
             % Side A
             k=k+1;
             if igetvel
+%                disp(handles.Model(md).Input(id).openBoundaries(n).name);
                 dpcorfac=handles.Model(md).Input(id).openBoundaries(n).depth(1)/deptha(n);
+%                disp(handles.Model(md).Input(id).openBoundaries(n).depth(1));
+%                disp(deptha(n));
 %                 dpcorfac=max(min(dpcorfac,1.5),0.75);
 %                 dpcorfac=1;
             end

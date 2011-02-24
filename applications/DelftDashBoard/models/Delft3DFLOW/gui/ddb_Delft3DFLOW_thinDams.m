@@ -173,6 +173,7 @@ nrdry=handles.Model(md).Input(ad).nrThinDams;
 
 if nrdry>0
     iac=handles.Model(md).Input(ad).activeThinDam;    
+    handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','thindams');
     if nrdry>1
         handles.Model(md).Input(ad).thinDams=removeFromStruc(handles.Model(md).Input(ad).thinDams,iac);
         handles.Model(md).Input(ad).thinDamNames=removeFromCellArray(handles.Model(md).Input(ad).thinDamNames,iac);

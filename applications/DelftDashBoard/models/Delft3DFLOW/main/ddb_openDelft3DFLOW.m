@@ -57,7 +57,7 @@ switch opt
             handles=ddb_readMDF(handles,filename,1);
             handles=ddb_readAttributeFiles(handles);
             setHandles(handles);
-            ddb_plotDelft3DFLOW('plot','active',1,'visible',1,'domain',1);
+            ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',1);
             ddb_refreshFlowDomains;
         end        
     case {'adddomain'}
@@ -73,6 +73,7 @@ switch opt
             filename=[pathname filesep runid '.mdf'];
             handles=ddb_readMDF(handles,[filename],id);
             handles=ddb_readAttributeFiles(handles);
+            setHandles(handles);
             for i=1:handles.GUIData.nrFlowDomains-1
                 ddb_plotDelft3DFLOW(handles,'deactivate',i);
             end
@@ -81,4 +82,3 @@ switch opt
         end        
 end
 
-setHandles(handles);

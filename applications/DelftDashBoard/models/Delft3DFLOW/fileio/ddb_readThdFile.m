@@ -19,4 +19,5 @@ end
 handles.Model(md).Input(ad).nrThinDams=length(m1);
 for i=1:length(m1)
     handles.Model(md).Input(ad).thinDams(i).name=['(' num2str(m1(i)) ',' num2str(n1(i)) ')...(' num2str(m2(i)) ',' num2str(n2(i)) ')'];
+    handles.Model(md).Input(ad).thinDamNames{i}=handles.Model(md).Input(ad).thinDams(i).name;
 end
