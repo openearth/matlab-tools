@@ -9,15 +9,15 @@
       <tab>
         <tag>observationpoints</tag>
         <tabstring>Stations</tabstring>
-        <callback>ddb_Delft3DFLOW_observationpoints</callback>
+        <callback>ddb_Delft3DFLOW_observationPoints</callback>
         <elements>Delft3DFLOW.monitoring.observationpoints.xml</elements>
       </tab>
       <tab>
         <tag>crosssections</tag>
         <tabstring>Cross Sections</tabstring>
-        <callback>ddb_Delft3DFLOW_crosssections</callback>
+        <callback>ddb_Delft3DFLOW_crossSections</callback>
         <elements>Delft3DFLOW.monitoring.crosssections.xml</elements>
-        <enable>0</enable>
+        <enable>1</enable>
       </tab>
       <tab>
         <tag>drogues</tag>
