@@ -103,7 +103,7 @@ function varargout = rws_waterbase_read(fnames,varargin)
    OPT.preallocate            = Inf; %11*366*24*6; % 11 years every 10 minute for method = 'fgetl'
    OPT.headerlines            = 'auto'; %changed from 4 to 5 after inclusion of EPSG names of coordinates and is 7 on 2007 june 27th
    OPT.start_last_header_line = 'locatie;waarnemingssoort;datum;tijd';
-   OPT.display                = 1;
+   OPT.display                = 'multiWaitbar'; %1; % empty is multiWaitbar, 1=command line
    OPT.displayskip            = 10000;
    OPT.ntmax                  = -1;
    OPT.locationcode           = 1;
@@ -209,6 +209,13 @@ for ifile=1:length(fnames)
    
    if strcmp(OPT.method,'textread')
    
+       if     strcmpi(OPT.display,'multiWaitbar')
+          multiWaitbar([mfilename,'raw'    ],0,'label',[mfilename,': reading raw data.']     ,'color',[0.2 0.5 0.2])
+          multiWaitbar([mfilename,'2struct'],0,'label',[mfilename,': transforming raw data to struct.'],'color',[0.2 0.5 0.2])
+       elseif OPT.display;
+          disp([mfilename,' Reading raw data of: ',fname]);
+       end
+
       if OPT.headerlines==4
       %% Old file type, no extra headerline, AND extra column with EPSG number
       %% File type after relaunch of waterbase dec 2009
@@ -262,7 +269,11 @@ for ifile=1:length(fnames)
        datenumbers = time2datenum(datestring,timestring);
        end
        
-       if OPT.display;disp(['rws_waterbase_read: read raw data: ',fname]);end
+       if     strcmpi(OPT.display,'multiWaitbar')
+          multiWaitbar([mfilename,'raw'    ],1,'label',[mfilename,': reading raw data.']     ,'color',[0.2 0.5 0.2])
+       elseif OPT.display;
+          disp(['rws_waterbase_read: read raw data: ',fname]);
+       end
        
        % Method below (%n) cannot deal with Not Available data as in:
        % Maassluis;Temperatuur in oC in oppervlaktewater;1994-08-03;07:14;;25;graden Celsius;NVT;Onbekend;Nationaal;;-100;T.o.v. Waterspiegel;7415;77500;436100;NVT;NVT,NVT,Niet van toepassing
@@ -305,7 +316,11 @@ for ifile=1:length(fnames)
        
        for istat=1:length(D.locations)
        
-          if OPT.display;disp(['rws_waterbase_read: transforming to struct: ',num2str(istat),'/',num2str(length(D.locations))]);;end
+          if     strcmpi(OPT.display,'multiWaitbar')
+              multiWaitbar([mfilename,'2struct'],istat/length(D.locations),'label',[mfilename,': transforming raw data to struct.'],'color',[0.2 0.5 0.2])
+          elseif OPT.display;
+             disp(['rws_waterbase_read: transforming to struct: ',num2str(istat),'/',num2str(length(D.locations))]);
+          end
        
           mask = strmatch(D.locations{istat},location);
    
@@ -368,17 +383,31 @@ for ifile=1:length(fnames)
       if isinf(OPT.preallocate) %%%-%%% & 0
          fid = fopen(fname,'r');
          nt  = 0;
-         if OPT.display;disp('Fast scanning file to check number of lines');end
+         if     strcmpi(OPT.display,'multiWaitbar')
+            multiWaitbar([mfilename,'station'],0,'label','count lines')
+            multiWaitbar([mfilename,'lines'  ],0,'label','loading raw data')
+         elseif OPT.display;
+            disp('Fast scanning file to check number of lines');
+         end
+
          while 1
             tline = fgetl(fid);
             nt    = nt+1;
             if ~ischar(tline), break, end
-            if mod(nt,OPT.displayskip)==0
-               disp([num2str(nt)])
+            if strcmpi(OPT.display,'multiWaitbar')
+            elseif OPT.display==1
+              if mod(nt,OPT.displayskip)==0
+                disp([num2str(nt)])
+              end
             end
          end
-         fclose(fid);      
-         if OPT.display;disp(['Slow scanning file to read data on # ',num2str(nt),' lines (incl.header).']);end
+         fclose(fid);   
+         
+         if     strcmpi(OPT.display,'multiWaitbar')
+            multiWaitbar([mfilename,'station'],1,'label',['count lines: ',num2str(nt)])
+         elseif OPT.display;
+            disp(['Slow scanning file to read data on # ',num2str(nt),' lines (incl.header).']);
+         end
       else
          nt = OPT.preallocate;
       end
@@ -397,7 +426,7 @@ for ifile=1:length(fnames)
       D.data.z               = repmat(nan,[1 nt]); % 7
       D.data.location        = ''; % needed in case file is empty
 
-      nt              = 0; % number of time per location
+      it              = 0; % number of time per location
       nloc            = 1;
       first           = 1;
       currentlocation = '';
@@ -413,7 +442,7 @@ for ifile=1:length(fnames)
       while 1
       
           rec = fgetl(fid); % read one record
-          if ~ischar(rec) | isempty(rec) %%%-%%% | nt==10
+          if ~ischar(rec) | isempty(rec) %%%-%%% | it==10
              break
           else
           
@@ -426,19 +455,27 @@ for ifile=1:length(fnames)
              % Hagestein boven;Debiet in m3/s in oppervlaktewater;1989-01-02;00:00;                  ;530   ;m3/s   ;NVT         ;Debiet uit afvoerkromme (Q/H- of Q/HH-relatie);Nationaal;NVT;NVT   ;NVT   ;7415;137740;444640;NVT   ;NVT,NVT,Niet van toepassing       
              % ...
              
-             nt  = nt + 1;
+             it  = it + 1;
              
-             if nt > OPT.ntmax
+             if it > OPT.ntmax
                 break
              else
-                if OPT.display && (mod(nt,OPT.displayskip)==0)
-                   disp(num2str(nt,'%0.10d'));
-                end
+
+                if strcmpi(OPT.display,'multiWaitbar') 
+                   if (mod(it,OPT.displayskip)==0)
+                      multiWaitbar([mfilename,'lines'],it/nt,'label','loading raw data')
+                   end
+                elseif OPT.display
+                   if (mod(it,OPT.displayskip)==0)
+                      disp(num2str(it,'%0.10d'));
+                   end
+                end             
+
              end
              
              dlm = strfind(rec,';');
              
-             if nt==1
+             if it==1
              
                 D(nloc).data.location               =         rec(1        :dlm( 1)-1);
                 if isempty(D(nloc).data.location)
@@ -508,24 +545,24 @@ for ifile=1:length(fnames)
                 HH                           = str2double(timestring( 1: 2));
                 MI                           = str2double(timestring( 4: 5));
                 
-                D(nloc).data.datenum        (nt) = datenum(yyyy,mm,dd,HH,MI,0);          % 1
-                D(nloc).data.(OPT.fieldname)(nt) = str2double(rec(dlm( 5)+1:dlm( 6)-1)); % 2
-                D(nloc).data.epsg           (nt) = str2num   (rec(dlm(13)+1:dlm(14)-1)); % 7
-                D(nloc).data.x              (nt) = str2num   (rec(dlm(14)+1:dlm(15)-1)); % 3
-                D(nloc).data.y              (nt) = str2num   (rec(dlm(15)+1:dlm(16)-1)); % 4
+                D(nloc).data.datenum        (it) = datenum(yyyy,mm,dd,HH,MI,0);          % 1
+                D(nloc).data.(OPT.fieldname)(it) = str2double(rec(dlm( 5)+1:dlm( 6)-1)); % 2
+                D(nloc).data.epsg           (it) = str2num   (rec(dlm(13)+1:dlm(14)-1)); % 7
+                D(nloc).data.x              (it) = str2num   (rec(dlm(14)+1:dlm(15)-1)); % 3
+                D(nloc).data.y              (it) = str2num   (rec(dlm(15)+1:dlm(16)-1)); % 4
                              z                   =            rec(dlm(11)+1:dlm(12)-1);
                 if ~strcmpi('nvt',z)
-                D(nloc).data.z              (nt) = str2num(z)./100; % 5
+                D(nloc).data.z              (it) = str2num(z)./100; % 5
                 end
    	        
              else
 
-                D(nloc).data.datenum        (nt) = nan;
-                D(nloc).data.(OPT.fieldname)(nt) = nan;
-                D(nloc).data.epsg           (nt) = nan;
-                D(nloc).data.x              (nt) = nan;
-                D(nloc).data.y              (nt) = nan;
-                D(nloc).data.z              (nt) = nan;
+                D(nloc).data.datenum        (it) = nan;
+                D(nloc).data.(OPT.fieldname)(it) = nan;
+                D(nloc).data.epsg           (it) = nan;
+                D(nloc).data.x              (it) = nan;
+                D(nloc).data.y              (it) = nan;
+                D(nloc).data.z              (it) = nan;
              
              end
              
@@ -558,14 +595,14 @@ for ifile=1:length(fnames)
       %  This need to be done even if OPT.preallocate is specified, because
       %  the fast scanning also counted the number of header lines.
       
-      D.data.datenum         = D.data.datenum        (1:nt); % 1
-      D.data.(OPT.fieldname) = D.data.(OPT.fieldname)(1:nt); % 2
-      D.data.x               = D.data.x              (1:nt); % 3
-      D.data.y               = D.data.y              (1:nt); % 4
-      D.data.epsg            = D.data.epsg           (1:nt); % 5
-      D.data.lon             = D.data.lon            (1:nt); % 6
-      D.data.lat             = D.data.lat            (1:nt); % 7
-      D.data.z               = D.data.z              (1:nt); % 8
+      D.data.datenum         = D.data.datenum        (1:it); % 1
+      D.data.(OPT.fieldname) = D.data.(OPT.fieldname)(1:it); % 2
+      D.data.x               = D.data.x              (1:it); % 3
+      D.data.y               = D.data.y              (1:it); % 4
+      D.data.epsg            = D.data.epsg           (1:it); % 5
+      D.data.lon             = D.data.lon            (1:it); % 6
+      D.data.lat             = D.data.lat            (1:it); % 7
+      D.data.z               = D.data.z              (1:it); % 8
       
       D.locations{1} = D(nloc).data.location;
    
@@ -635,7 +672,7 @@ for ifile=1:length(fnames)
                 % id22-IJMDMNTSPS-190001010000-201003062359.txt
                 % id22-IJMDMNTSPS.txt
             ind = strfind (fname,'-'); if length(ind)==1;ind=[ind length(fname) - length(fileext(fname)) + 1];end
-            locationcode     = lower(fname([ind(1)+1]:[ind(2)-1]))
+            locationcode     = lower(fname([ind(1)+1]:[ind(2)-1]));
             
             catch
             locationcode     = '';
@@ -653,7 +690,11 @@ for ifile=1:length(fnames)
          %% Copy data
          DS.data(ifile) = D.data;
          
-      if OPT.display;disp(['rws_waterbase_read: read file ',num2str(ifile),' of ',num2str(length(fnames))]);end
+         if     strcmpi(OPT.display,'multiWaitbar')
+            multiWaitbar([mfilename,'lines'],it/nt,'label','loading raw data')
+         elseif OPT.display;
+            disp(['rws_waterbase_read: read file ',num2str(ifile),' of ',num2str(length(fnames))]);
+         end
    
    end % D.locations==1
    

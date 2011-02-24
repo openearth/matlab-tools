@@ -8,7 +8,7 @@
 
    OPT.download       = 1; % get fresh downloads from rws and remove exisitng to sub dir old
    OPT.make_nc        = 1;
-   OPT.overwrite      = 1;  % xls, png
+   OPT.make_kml       = 1;
    OPT.baseurl        = 'http://live.waterbase.nl';
 
   %urlbase = 'p:\mcdata\opendap\';              % @ deltares internally
@@ -21,6 +21,7 @@
     ncbase = 'F:\opendap\thredds\';             % @ local
 
 %% Parameter choice
+
    OPT.donar_wnsnum = [541];                 % empty location name/epsg id541-AALDK-164810240000-201006130000.txt epsg code missing
    OPT.donar_wnsnum = [410];                 % id410-BRESKBSD-179805240000-200907100000.txt issue to netCDF: vat: '' to 'emmer'
    OPT.donar_wnsnum = [1];                   % takes VEERY LONG
@@ -31,7 +32,8 @@
                        364  380  491  492  493  ... % 
                        541  560 1083    1      ];   % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
 
-   OPT.donar_wnsnum = [22 23 23]; % wave stuff: H, T, dir
+   OPT.donar_wnsnum = [22 23 24]; % wave stuff: H, T, dir (SCHOUWBK,SANDTE,HARVMD disappeared with data from 1980's)
+   OPT.donar_wnsnum = [24]; % wave stuff: H, T, dir (SCHOUWBK,SANDTE,HARVMD disappeared with data from 1980's)
 
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
 
@@ -91,65 +93,53 @@
                                 'mask',['id' num2str(OPT.code) '*.zip']);  % as more ids are in same dir
    end
 
-   %% Make overview png and xls of one parameter
-   
-     
-      nc_cf_stationtimeseries2meta('directory_nc',[OPT.directory_nc],...
-                                   'parameters'  ,{OPT.name},...
-                                   'overwrite'   ,OPT.overwrite);
+   %% Make catalog.nc (and write human readable subset to catalog.xls)
 
-% TO DO: option to overwrite xls and png, just as catalog.nc
-% TO DO: merge nc_cf_stationtimeseries2meta and nc_cf_directory2catalog                             
-   
-   %% Make catalog.nc
-
-      nc_cf_opendap2catalog([OPT.directory_nc],...
+      CATALOG = nc_cf_opendap2catalog('base',[OPT.directory_nc],... % dir where to READ netcdf
+                     'catalog_dir',[OPT.directory_nc],... % dir where to SAVE catalog
                             'save',1,...
-                      'urlPathFcn',@(s) path2os(strrep(s,ncbase,['http://opendap.deltares.nl/thredds/dodsC/opendap/']),'h'))
+                      ... % 'urlPathFcn',@(s) path2os(strrep(s,ncbase,['http://opendap.deltares.nl/thredds/dodsC/opendap/']),'h'),... % dir where to LINK to for netCDF
+                         'varname','');
 
    %% Make KML overview with links to netCDF on opendap.deltares.nl
       
-      OPT2.fileName           = [OPT.directory_nc,'.kml'];
+   if OPT.make_kml
+
+      OPT2.fileName           = [OPT.directory_nc,filesep,subdir,'.kml'];
       OPT2.kmlName            = [                                    'rijkswaterstaat/waterbase/' subdir];
       OPT2.HYRAXbase          = [urlbase,                   '/opendap/rijkswaterstaat/waterbase/',subdir,'/'];
       OPT2.THREDDSbase        = [urlbase,     '/thredds/dodsC/opendap/rijkswaterstaat/waterbase/',subdir,'/'];
       OPT2.ftpbase            = [urlbase,'/thredds/fileServer/opendap/rijkswaterstaat/waterbase/',subdir,'/'];
-      OPT2.text               = {['parameter: '             ,       (OPT.name             ),...
-                                  '<br> DONAR number: '     ,num2str(OPT.donar_wnsnum     ),...
-                                  '<br> DONAR code: '       ,       (OPT.donar_parcode    ),... % '%O2 does not work
-                                  '<br> DONAR description: ',num2str(OPT.donar_wns_oms    ),...
-                                  '<br> CF standard name: ' ,       (OPT.standard_name    ) ,...
-                                  '<br> BODC/SeaDataNet: '  ,       (OPT.sdn_standard_name),...
-                                  '<br> Aquolex: '          ,       (OPT.aquo_lex_code    ),...
-                                  '<br> source: <a href="',OPT.baseurl,'">Rijkswaterstaat</a>']};
+      OPT2.text               = {['<B>',OPT.name,'</B>',...
+                                  ' / DONAR number: '     ,num2str(OPT.donar_wnsnum     ),...
+                                  ' / DONAR code: '       ,       (OPT.donar_parcode    ),... % '%O2 does not work
+                                  ' / DONAR description: ',num2str(OPT.donar_wns_oms    ),...
+                                  ' / CF standard name: ' ,       (OPT.standard_name    ) ,...
+                                  ' / BODC/SeaDataNet: '  ,       (OPT.sdn_standard_name),...
+                                  ' / Aquolex: '          ,       (OPT.aquo_lex_code    )]};
+
      %OPT2.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
      %OPT2.iconhighlightState = 'http://www.rijkswaterstaat.nl/images/favicon.ico';
-     % add RWS logo
-      OPT2.description        = {['source: Rijkswaterstaat (',OPT.baseurl,')']};
+
+      OPT2.description        = {['data: Rijkswaterstaat (',OPT.baseurl,'), presentation: www.OpenEarth.eu']};
       OPT2.name               = OPT.name;
       
-% TO DO: add units      
+      OPT2.lon                = 1;
+      OPT2.lat                = 54;
+      OPT2.z                  = 100e4;
+      OPT2.varname            = subdir;
       
-      % camera
-
-      OPT2.lon         = 1;
-      OPT2.lat         = 54;
-      OPT2.z           = 100e4;
-
-warning('kml overview currently not operational ...')
-
-% ??? Error using ==> xls2struct at 166
-% Error finding file: F:\opendap\thredds\\rijkswaterstaat\waterbase\\sea_surface_wave_significant_height\.xls
-% 
-% Error in ==> nc_cf_stationtimeseries2kmloverview at 52
-%      [D,units] = xls2struct(metadatadatabase);
-% 
-% Error in ==> rws_waterbase_all at 139
-%       nc_cf_stationtimeseries2kmloverview([OPT.directory_nc,'.xls'],OPT2);
-% 
-%       nc_cf_stationtimeseries2kmloverview([OPT.directory_nc,'.xls'],OPT2);
+      OPT2.logokmlName        = 'Rijkswaterstaat logo';
+      OPT2.overlayXY          = [.5 1];
+      OPT2.screenXY           = [.5 1];
+      OPT2.imName             = 'overheid.png';
+      OPT2.logoName           = 'overheid4GE.png';
+      
+      nc_cf_stationtimeseries2kmloverview(CATALOG,OPT2); % inside urlPath is used to read netCDF data
       
       close all
+      
+   end  
       
 end
    

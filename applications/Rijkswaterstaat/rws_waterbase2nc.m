@@ -56,6 +56,7 @@ function rws_waterbase2nc(varargin)
    OPT.refdatenum         = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum         = datenum(1970,1,1); % lunix  datenumber convention
    OPT.fillvalue          = nan; % NaNs do work in netcdf API
+   OPT.wgs84              = 4326;
    
    OPT.att_name           = {''};
    OPT.att_val            = {''};
@@ -193,41 +194,41 @@ for ivar=[OPT.donar_wnsnum]
 
         fname = OPT.files(ifile).name; % can include .zip
         ind = strfind (fname,'-'); if length(ind)==1;ind=[ind strfind(fname,'.txt')];end
-        outputfile    = fullfile(OPT.directory_nc,[fname(1:ind(2)-1),OPT.ext,'.nc']); % id1-AMRGBVN*
+        ncfile    = fullfile(OPT.directory_nc,[fname(1:ind(2)-1),OPT.ext,'.nc']); % id1-AMRGBVN*
         
-        if OPT.debug;disp(outputfile);end
+        if OPT.debug;disp(ncfile);end
 
-        nc_create_empty (outputfile)
+        nc_create_empty (ncfile)
 
         %% 1 Add global meta-info to file
         %  Add overall meta info:
         %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
 
-        nc_attput(outputfile, nc_global, 'title'           , '');
-        nc_attput(outputfile, nc_global, 'institution'     , 'Rijkswaterstaat');
-        nc_attput(outputfile, nc_global, 'source'          , 'surface observation');
-        nc_attput(outputfile, nc_global, 'history'         , ['Original filename: ',filename(OPT.filename),...
+        nc_attput(ncfile, nc_global, 'title'           , '');
+        nc_attput(ncfile, nc_global, 'institution'     , 'Rijkswaterstaat');
+        nc_attput(ncfile, nc_global, 'source'          , 'surface observation');
+        nc_attput(ncfile, nc_global, 'history'         , ['Original filename: ',filename(OPT.filename),...
             ', version:' ,D.version,...
             ', filedate:',D.date,...
             ', tranformation to netCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
-        nc_attput(outputfile, nc_global, 'references'      , '<http://www.waterbase.nl>,<http://openearth.deltares.nl>');
-        nc_attput(outputfile, nc_global, 'email'           , '<servicedesk-data@rws.nl>');
+        nc_attput(ncfile, nc_global, 'references'      , '<http://www.waterbase.nl>,<http://openearth.deltares.nl>');
+        nc_attput(ncfile, nc_global, 'email'           , '<servicedesk-data@rws.nl>');
 
-        nc_attput(outputfile, nc_global, 'comment'         , '');
+        nc_attput(ncfile, nc_global, 'comment'         , '');
         
         
-        nc_attput(outputfile, nc_global, 'version'         , D.version);
+        nc_attput(ncfile, nc_global, 'version'         , D.version);
 
-        nc_attput(outputfile, nc_global, 'Conventions'     , 'CF-1.4');
-        nc_attput(outputfile, nc_global, 'CF:featureType'  , 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+        nc_attput(ncfile, nc_global, 'Conventions'     , 'CF-1.4');
+        nc_attput(ncfile, nc_global, 'CF:featureType'  , 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
 
-        nc_attput(outputfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
-        nc_attput(outputfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+        nc_attput(ncfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
+        nc_attput(ncfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
 
-        nc_attput(outputfile, nc_global, 'stationname'     , D.data.location);
-        nc_attput(outputfile, nc_global, 'location'        , D.data.location);
-        nc_attput(outputfile, nc_global, 'donar_code'      , D.data.locationcode);
-        nc_attput(outputfile, nc_global, 'locationcode'    , D.data.locationcode);
+        nc_attput(ncfile, nc_global, 'stationname'     , D.data.location);
+        nc_attput(ncfile, nc_global, 'location'        , D.data.location);
+        nc_attput(ncfile, nc_global, 'donar_code'      , D.data.locationcode);
+        nc_attput(ncfile, nc_global, 'locationcode'    , D.data.locationcode);
 
 % MAKE A VARIABLE WITH ATTS flag_values (1:length(unique(val))) AND flag_meanings (unique(val))
 % ATTS TO VAR                                                                  -1----------------                -2---------- -3------------------------------------ -4------- -5---                                              -8---- -9-------------------------------------------------------------------
@@ -237,293 +238,254 @@ for ivar=[OPT.donar_wnsnum]
 % Breskens badstrand;Zwevende stof in mg/l in oppervlaktewater;1988-06-14;07:21;                  ;70    ;mg/l   ;NVT         ;Bepaling van hoeveelheid zwevende stof;Nationaal;Pomp ;  -100;T.o.v. Waterspiegel;7415;28370;380620;NVT   ;NVT,NVT,Niet van toepassing
 % Breskens badstrand;Zwevende stof in mg/l in oppervlaktewater;1995-10-23;08:20;                  ;95    ;mg/l   ;NVT         ;Bepaling van hoeveelheid zwevende stof;Nationaal;Emmer;  -100;T.o.v. Waterspiegel;7415;28370;380620;NVT   ;NVT,NVT,Niet van toepassing
 
-nc_attput(outputfile, nc_global, 'waarnemingssoort', D.data.waarnemingssoort);
+nc_attput(ncfile, nc_global, 'waarnemingssoort', D.data.waarnemingssoort);
 
 if ischar(D.data.refvlk)
-nc_attput(outputfile, nc_global, 'reference_level' , D.data.refvlk);
+nc_attput(ncfile, nc_global, 'reference_level' , D.data.refvlk);
 else
-nc_attput(outputfile, nc_global, 'reference_level' , str2line({D.data.refvlk},'s',';')');
+nc_attput(ncfile, nc_global, 'reference_level' , str2line({D.data.refvlk},'s',';')');
 end
         
 if isfield(D.data,'hoedanigheid')
-if  length(D.data.hoedanigheid)==1;nc_attput(outputfile, nc_global, 'hoedanigheid' , D.data.hoedanigheid);end
+if  length(D.data.hoedanigheid)==1;nc_attput(ncfile, nc_global, 'hoedanigheid' , D.data.hoedanigheid);end
 end
 
 if isfield(D.data,'anamet')
-if  length(D.data.anamet      )==1;nc_attput(outputfile, nc_global, 'anamet'       , D.data.anamet      );end
+if  length(D.data.anamet      )==1;nc_attput(ncfile, nc_global, 'anamet'       , D.data.anamet      );end
 end
 
 if isfield(D.data,'ogi')
-if  length(D.data.ogi         )==1;nc_attput(outputfile, nc_global, 'ogi'          , D.data.ogi         );end
+if  length(D.data.ogi         )==1;nc_attput(ncfile, nc_global, 'ogi'          , D.data.ogi         );end
 end
 
 if isfield(D.data,'vat') % cel if varying over stations
-if  ischar(D.data.vat         )   ;nc_attput(outputfile, nc_global, 'vat'          , D.data.vat         );
+if  ischar(D.data.vat         )   ;nc_attput(ncfile, nc_global, 'vat'          , D.data.vat         );
 else
-                                   nc_attput(outputfile, nc_global, 'vat'          , 'varying'          );
+                                   nc_attput(ncfile, nc_global, 'vat'          , 'varying'          );
 end
 end
 
 
 %% Add discovery information (test):
 
-        %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
+   %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
 
-        nc_attput(outputfile, nc_global, 'geospatial_lat_min'         , min(D.data.lat));
-        nc_attput(outputfile, nc_global, 'geospatial_lat_max'         , max(D.data.lat));
-        nc_attput(outputfile, nc_global, 'geospatial_lon_min'         , min(D.data.lon));
-        nc_attput(outputfile, nc_global, 'geospatial_lon_max'         , max(D.data.lon));
-        nc_attput(outputfile, nc_global, 'time_coverage_start'        , datestr(D.data.datenum(  1),'yyyy-mm-ddPHH:MM:SS'));
-        nc_attput(outputfile, nc_global, 'time_coverage_end'          , datestr(D.data.datenum(end),'yyyy-mm-ddPHH:MM:SS'));
-        nc_attput(outputfile, nc_global, 'geospatial_lat_units'       , 'degrees_north');
-        nc_attput(outputfile, nc_global, 'geospatial_lon_units'       , 'degrees_east' );
+      nc_attput(ncfile, nc_global, 'geospatial_lat_min'         , min(D.data.lat));
+      nc_attput(ncfile, nc_global, 'geospatial_lat_max'         , max(D.data.lat));
+      nc_attput(ncfile, nc_global, 'geospatial_lon_min'         , min(D.data.lon));
+      nc_attput(ncfile, nc_global, 'geospatial_lon_max'         , max(D.data.lon));
+      nc_attput(ncfile, nc_global, 'time_coverage_start'        , datestr(D.data.datenum(  1),'yyyy-mm-ddPHH:MM:SS'));
+      nc_attput(ncfile, nc_global, 'time_coverage_end'          , datestr(D.data.datenum(end),'yyyy-mm-ddPHH:MM:SS'));
+      nc_attput(ncfile, nc_global, 'geospatial_lat_units'       , 'degrees_north');
+      nc_attput(ncfile, nc_global, 'geospatial_lon_units'       , 'degrees_east' );
 
-        %% 2 Create dimensions
+   %% 2 Create dimensions
 
-        nc_add_dimension(outputfile, 'time'        , length(D.data.datenum))
-        nc_add_dimension(outputfile, 'locations'   , 1);
-        nc_add_dimension(outputfile, 'name_strlen1', max(length(D.data.locationcode),1)); % for multiple stations get max length
-        nc_add_dimension(outputfile, 'name_strlen2', max(length(D.data.location    ),1)); % for multiple stations get max length
+      nc_add_dimension(ncfile, 'time'        , length(D.data.datenum))
+      nc_add_dimension(ncfile, 'locations'   , 1);
+      nc_add_dimension(ncfile, 'name_strlen1', max(length(D.data.locationcode),1)); % for multiple stations get max length
+      nc_add_dimension(ncfile, 'name_strlen2', max(length(D.data.location    ),1)); % for multiple stations get max length
 
-        %% 3 Create variables
+   %% 3 Create variables
 
-        clear nc
-        ifld = 0;
+      clear nc
+      ifld = 0;
 
-        % Station number: allows for exactly same variables when multiple
-        % timeseries in one netCDF file (future extension)
+      % Station number: allows for exactly same variables when multiple
+      % timeseries in one netCDF file (future extension)
 
-        ifld = ifld + 1;
-        nc(ifld).Name         = 'station_id';
-        nc(ifld).Nctype       = 'char';
-        nc(ifld).Dimension    = {'locations','name_strlen1'};
-        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification code');
-        nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id'); % standard name
+      ifld = ifld + 1;
+      nc(ifld).Name         = 'station_id';
+      nc(ifld).Nctype       = 'char';
+      nc(ifld).Dimension    = {'locations','name_strlen1'};
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station ID');
+      nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id'); % standard name
 
-        % Station long name
+   % Station long name
 
-        ifld = ifld + 1;
-        nc(ifld).Name             = 'station_name';
-        nc(ifld).Nctype           = 'char';
-        nc(ifld).Dimension        = {'locations','name_strlen2'};
-        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station name');
+      ifld = ifld + 1;
+      nc(ifld).Name         = 'station_name';
+      nc(ifld).Nctype       = 'char';
+      nc(ifld).Dimension    = {'locations','name_strlen2'};
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station name');
+      nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_name'); % standard name
 
-        % Define dimensions in this order:
-        % [time,z,y,x]
-        %
-        % For standard names see:
-        % http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table
-        % Longitude:
-        % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
+   % Define dimensions in this order:
+   % [time,z,y,x]
+   %
+   % For standard names see:
+   % http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table
+      
+   % Longitude:
+   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
 
-        ifld = ifld + 1;
-        nc(ifld).Name             = 'lon';
-        nc(ifld).Nctype           = 'float'; % no double needed
+      ifld = ifld + 1;
+      nc(ifld).Name             = 'lon';
+      nc(ifld).Nctype           = 'float'; % no double needed
+      nc(ifld).Dimension        = {'locations'};
+      if length(D.data.lon(:))>1
+       if OPT.uniquecoordinate
+        D.data.lon = mode(D.data.lon);
         nc(ifld).Dimension        = {'locations'};
-        if length(D.data.lon(:))>1
-         if OPT.uniquecoordinate
-          D.data.lon = mode(D.data.lon);
-          nc(ifld).Dimension        = {'locations'};
-          nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.lon(:)) max(D.data.lon(:))]);
-          nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'lon vector replaced by mode(lon), see attribute actual_range');
-         else
-          nc(ifld).Dimension        = {'locations','time'};
-          nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
-         end
-        end
-        nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
-        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
-        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
-        nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
+        nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.lon(:)) max(D.data.lon(:))]);
+        nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'lon vector replaced by mode(lon), see attribute actual_range');
+       else
+        nc(ifld).Dimension        = {'locations','time'};
+        nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
+       end
+      end
+      nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
+      nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-        % Latitude:
-        % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+   % Latitude:
+   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
 
-        ifld = ifld + 1;
-        nc(ifld).Name             = 'lat';
-        nc(ifld).Nctype           = 'float'; % no double needed
+      ifld = ifld + 1;
+      nc(ifld).Name             = 'lat';
+      nc(ifld).Nctype           = 'float'; % no double needed
+      nc(ifld).Dimension        = {'locations'};
+      if length(D.data.lat(:))>1
+       if OPT.uniquecoordinate
+        D.data.lat = mode(D.data.lat);
         nc(ifld).Dimension        = {'locations'};
-        if length(D.data.lat(:))>1
-         if OPT.uniquecoordinate
-          D.data.lat = mode(D.data.lat);
-          nc(ifld).Dimension        = {'locations'};
-          nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.lat(:)) max(D.data.lat(:))]);
-          nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'lat vector replaced by mode(lat), see attribute actual_range');
-         else
-          nc(ifld).Dimension        = {'locations','time'};
-          nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
-         end
-        end
-        nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
-        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
-        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
-        nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
+        nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.lat(:)) max(D.data.lat(:))]);
+        nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'lat vector replaced by mode(lat), see attribute actual_range');
+       else
+        nc(ifld).Dimension        = {'locations','time'};
+        nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
+       end
+      end
+      nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
+      nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
-        % x:
-
-        ifld = ifld + 1;
-        nc(ifld).Name             = 'x';
-        nc(ifld).Nctype           = 'float'; % no double needed
-        nc(ifld).Dimension        = {'locations'};
-        if length(D.data.x(:))>1
-         if OPT.uniquecoordinate
-          D.data.x = mode(D.data.x);
-          nc(ifld).Dimension        = {'locations'};
-          nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.x(:)) max(D.data.x(:))]);
-          nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'x vector replaced by mode(x), see attribute actual_range');
-         else
-          nc(ifld).Dimension        = {'locations','time'};
-          nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
-         end
-        end
-        nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station x');
-        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
-        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
-        nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
-
-        % y:
-
-        ifld = ifld + 1;
-        nc(ifld).Name             = 'y';
-        nc(ifld).Nctype           = 'float'; % no double needed
-        nc(ifld).Dimension        = {'locations'};
-        if length(D.data.y(:))>1
-         if OPT.uniquecoordinate
-          D.data.y = mode(D.data.y);
-          nc(ifld).Dimension        = {'locations'};
-          nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.y(:)) max(D.data.y(:))]);
-          nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'y vector replaced by mode(y), see attribute actual_range');
-         else
-          nc(ifld).Dimension        = {'locations','time'};
-          nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
-         end
-        end
-        nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station y');
-        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
-        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate');
-        nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
-        
-   [dummy,dummy,log]=convertCoordinates(nan,nan,'CS1.code',D.data.epsg,'CS2.code',4326);
-
-   %% Coordinate system
+   %% lat/lon coordinate system
+   %  and x/y coordinate system
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
-   if length(D.data.epsg)==1
-   if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 epsg 4230
 
-        ifld = ifld + 1;
-      nc(ifld).Name         = 'epsg';
-      nc(ifld).Nctype       = nc_int;
-      nc(ifld).Dimension    = {};
-      nc(ifld).Attribute = struct('Name', ...
-       {'name',...
-        'grid_mapping_name', ...
-        'semi_major_axis', ...
-        'semi_minor_axis', ...
-        'inverse_flattening', ...
-        'latitude_of_projection_origin', ...
-        'longitude_of_projection_origin', ...
-        'false_easting', ...
-        'false_northing', ...
-        'scale_factor_at_projection_origin', ...
-        'comment'}, ...
-        'Value', ...
-        {log.CS1.name,...
-         log.proj_conv1.method.name,     ...
-         log.CS1.ellips.semi_major_axis, ...
-         log.CS1.ellips.semi_minor_axis, ...
-         log.CS1.ellips.inv_flattening,  ...
-         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Latitude of natural origin'    )),...
-         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Longitude of natural origin'   )),...
-         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'False easting'                 )),...
-         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'False northing'                )),...
-         log.proj_conv1.param.value(strcmp(log.proj_conv1.param.name,'Scale factor at natural origin')),...
-        'value is equal to EPSG code'});
-   end
-   end
-
-      %% Coordinate system
-      %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
-
-        ifld = ifld + 1;
+      ifld = ifld + 1;
       nc(ifld).Name         = 'wgs84';
       nc(ifld).Nctype       = nc_int;
       nc(ifld).Dimension    = {};
-      nc(ifld).Attribute = struct('Name', ...
-       {'name',...
-        'grid_mapping_name',...
-        'semi_major_axis', ...
-        'semi_minor_axis', ...
-        'inverse_flattening', ...
-        'comment'}, ...
-        'Value', ...
-        {log.CS2.name,...
-        'latitude_longitude',...
-         log.CS2.ellips.semi_major_axis, ...
-         log.CS2.ellips.semi_minor_axis, ...
-         log.CS2.ellips.inv_flattening,  ...
-        'value is equal to EPSG code'});
+      nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84);
+      
+   if ~(D.data.epsg==OPT.wgs84) % sometimes x/y are already wgs84, then no need for x/y
 
-        % z:
-        % 
+       ifld = ifld + 1;
+       nc(ifld).Name         = 'epsg';
+       nc(ifld).Nctype       = nc_int;
+       nc(ifld).Dimension    = {};
+       nc(ifld).Attribute    = nc_cf_grid_mapping(D.data.epsg);
 
-        ifld = ifld + 1;
-        nc(ifld).Name             = 'z';
-        nc(ifld).Nctype           = 'float'; % no double needed
-        if length(D.data.z)==1
+   % x:
+
+      ifld = ifld + 1;
+      nc(ifld).Name             = 'x';
+      nc(ifld).Nctype           = 'float'; % no double needed
+      nc(ifld).Dimension        = {'locations'};
+      if length(D.data.x(:))>1
+       if OPT.uniquecoordinate
+        D.data.x = mode(D.data.x);
         nc(ifld).Dimension        = {'locations'};
-        else
+        nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.x(:)) max(D.data.x(:))]);
+        nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'x vector replaced by mode(x), see attribute actual_range');
+       else
         nc(ifld).Dimension        = {'locations','time'};
-        end
-        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station depth');
-        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'meters');
-        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'height_above_reference_ellipsoid');
-        nc(ifld).Attribute(end+1) = struct('Name', 'positive'       ,'Value', 'up');
-        nc(ifld).Attribute(end+1) = struct('Name', 'axis'           ,'Value', 'Z');
+        nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
+       end
+      end
+      nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station x');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
+      nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
 
-        % Time:
-        % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
-        % time is a dimension, so there are two options:
-        % * the variable name needs the same as the dimension:
-        %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551
-        % * there needs to be an indirect mapping through the coordinates attribute:
-        %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
+   % y:
 
-        OPT.timezone = timezone_code2iso('MET');
-
-        ifld = ifld + 1;
-        nc(ifld).Name             = 'time';
-        nc(ifld).Nctype           = 'double'; % float not sufficient as datenums are big: doubble
-        if OPT.stationTimeSeries
-        nc(ifld).Dimension        = {'locations','time'}; % QuickPlot error: plots dimensions instead of datestr
-        else
-        nc(ifld).Dimension        = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
-        end
-        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'time');
-        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
-        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'time');
-        nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+      ifld = ifld + 1;
+      nc(ifld).Name             = 'y';
+      nc(ifld).Nctype           = 'float'; % no double needed
+      nc(ifld).Dimension        = {'locations'};
+      if length(D.data.y(:))>1
+       if OPT.uniquecoordinate
+        D.data.y = mode(D.data.y);
+        nc(ifld).Dimension        = {'locations'};
+        nc(ifld).Attribute(    1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.y(:)) max(D.data.y(:))]);
+        nc(ifld).Attribute(end+1) = struct('Name', 'comment'        ,'Value', 'y vector replaced by mode(y), see attribute actual_range');
+       else
+        nc(ifld).Dimension        = {'locations','time'};
+        nc(ifld).Attribute(    1) = struct('Name', 'comment'        ,'Value', '');
+       end
+      end
+      nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'station y');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate');
+      nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
         
-        %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
+   end
 
-        % Parameters with standard names:
-        % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
+   % z:
 
-        ifld = ifld + 1;
-        nc(ifld).Name             = OPT.name; % thre isn't always a standard name, and it can be over 63 chars long
-        nc(ifld).Nctype           = 'float'; % no double needed
-        nc(ifld).Dimension        = {'locations','time'};
-        nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
-        nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', D.data.units);
-        nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
-        nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', single(OPT.fillvalue)); % needs to be same type as data itself (i.e. single)
-        nc(ifld).Attribute(end+1) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');
-        nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.(OPT.name)) max(D.data.(OPT.name))]);
-        if OPT.stationTimeSeries
-        nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
-        end
-        for jj=1:length(OPT.att_name)
-        nc(ifld).Attribute(end+1) = struct('Name', OPT.att_name{jj} ,'Value', OPT.att_val{jj});
-        end
+      ifld = ifld + 1;
+      nc(ifld).Name             = 'z';
+      nc(ifld).Nctype           = 'float'; % no double needed
+      if length(D.data.z)==1
+      nc(ifld).Dimension        = {'locations'};
+      else
+      nc(ifld).Dimension        = {'locations','time'};
+      end
+      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'station depth');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'meters');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'height_above_reference_ellipsoid');
+      nc(ifld).Attribute(end+1) = struct('Name', 'positive'       ,'Value', 'up');
+      nc(ifld).Attribute(end+1) = struct('Name', 'axis'           ,'Value', 'Z');
+
+   % Time:
+   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
+   % time is a dimension, so there are two options:
+   % * the variable name needs the same as the dimension:
+   %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551
+   % * there needs to be an indirect mapping through the coordinates attribute:
+   %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
+
+      OPT.timezone = timezone_code2iso('MET');
+
+      ifld = ifld + 1;
+      nc(ifld).Name             = 'time';
+      nc(ifld).Nctype           = 'double'; % float not sufficient as datenums are big: doubble
+      if OPT.stationTimeSeries
+      nc(ifld).Dimension        = {'locations','time'}; % QuickPlot error: plots dimensions instead of datestr
+      else
+      nc(ifld).Dimension        = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
+      end
+      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'time');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'time');
+      nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+      
+      %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
+
+   % Parameters with standard names:
+   % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
+
+      ifld = ifld + 1;
+      nc(ifld).Name             = OPT.name; % thre isn't always a standard name, and it can be over 63 chars long
+      nc(ifld).Nctype           = 'float'; % no double needed
+      nc(ifld).Dimension        = {'locations','time'};
+      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', D.data.units);
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
+      nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', single(OPT.fillvalue)); % needs to be same type as data itself (i.e. single)
+      nc(ifld).Attribute(end+1) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.(OPT.name)) max(D.data.(OPT.name))]);
+      if OPT.stationTimeSeries
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
+      end
+      for jj=1:length(OPT.att_name)
+      nc(ifld).Attribute(end+1) = struct('Name', OPT.att_name{jj} ,'Value', OPT.att_val{jj});
+      end
         
       %  'donar_wnsnum
       %  'aquo_lex_code'
@@ -531,42 +493,43 @@ end
       %  'sdn_long_name'
       %  'sdn_units'
 
-        %% 4 Create variables with attibutes
-        % When variable definitons are created before actually writing the
-        % data in the next cell, netCDF can nicely fit all data into the
-        % file without the need to relocate any info.
+   %% 4 Create variables with attibutes
+   % When variable definitons are created before actually writing the
+   % data in the next cell, netCDF can nicely fit all data into the
+   % file without the need to relocate any info.
 
-        for ifld=1:length(nc)
-            if OPT.debug;disp([num2str(ifld),' ',nc(ifld).Name]);end
-            nc_addvar(outputfile, nc(ifld));
-        end
+      for ifld=1:length(nc)
+          if OPT.debug;disp([num2str(ifld),' ',nc(ifld).Name]);end
+          nc_addvar(ncfile, nc(ifld));
+      end
 
-        %% 5 Fill variables
+   %% 5 Fill variables
 
-        nc_varput(outputfile, 'station_id'  , D.data.locationcode);
-        nc_varput(outputfile, 'station_name', D.data.location);
-        nc_varput(outputfile, 'lon'         , D.data.lon);
-        nc_varput(outputfile, 'lat'         , D.data.lat);
-        nc_varput(outputfile, 'x'           , D.data.x);
-        nc_varput(outputfile, 'y'           , D.data.y);
-        nc_varput(outputfile, 'z'           , D.data.z);
-        nc_varput(outputfile, 'time'        , D.data.datenum' - OPT.refdatenum);
-        nc_varput(outputfile, OPT.name      , D.data.(OPT.name));
-        nc_varput(outputfile, 'wgs84'       , log.CS2.code);
-        if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 epsg 4230
-        nc_varput(outputfile, 'epsg'        , log.CS1.code);        
-        end
-        %% 6 Check
+      nc_varput(ncfile, 'station_id'  , D.data.locationcode);
+      nc_varput(ncfile, 'station_name', D.data.location);
+      nc_varput(ncfile, 'lon'         , D.data.lon);
+      nc_varput(ncfile, 'lat'         , D.data.lat);
+      nc_varput(ncfile, 'x'           , D.data.x);
+      nc_varput(ncfile, 'y'           , D.data.y);
+      nc_varput(ncfile, 'z'           , D.data.z);
+      nc_varput(ncfile, 'time'        , D.data.datenum' - OPT.refdatenum);
+      nc_varput(ncfile, OPT.name      , D.data.(OPT.name));
+      nc_varput(ncfile, 'wgs84'       , OPT.wgs84);
+      if nc_isvar(ncfile,'epsg')
+      nc_varput(ncfile, 'epsg'        , D.data.epsg); % always keep as, because when x/y are wgs84 they refer to epsg       
+      end
+      
+   %% 6 Check
 
-        if OPT.dump
-            nc_dump(outputfile);
-        end
+      if OPT.dump
+          nc_dump(ncfile);
+      end
 
-        %% Pause
+   %% Pause
 
-        if OPT.pause
-            pausedisp
-        end
+      if OPT.pause
+          pausedisp
+      end
         
     end
 
