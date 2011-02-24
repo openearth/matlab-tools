@@ -68,6 +68,10 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+if ~exist('data', 'var')
+    data = '.';
+end
+
 %% make gui
 
 if isempty(findobj('tag', 'xb_view'))
