@@ -260,7 +260,7 @@ function varargout = nc_cf_grid_write(varargin)
       dline = OPT.convertperline;
       for ii=1:dline:size(OPT.lat,1)
       iii = ii+(1:dline)-1;
-      iii = iii(iii < size(OPT.lat,1));
+      iii = iii(iii <= size(OPT.lat,1));
       disp(['converting coordinates to (lat,lon): ',num2str(min(iii)),'-',num2str(max(iii)),'/',num2str(size(OPT.lat,1))])
      [OPT.lon(iii,:),OPT.lat(iii,:),log] = convertcoordinates(x(iii,:),y(iii,:),'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
       end

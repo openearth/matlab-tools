@@ -1,10 +1,11 @@
 function actual_range = nc_actual_range(ncfile,varname)
-%NC_ACTUAL_RANGE   reads or retrives actual range from netCDF variable
+%NC_ACTUAL_RANGE   reads or retrives actual range from contiguous netCDF variable
 %
 %  [range] = nc_actual_range(ncfile,varname);
 %
-% gets the value of attribute 'actual_range' or
-% gets min and max of the 'hull' of the variable in matrix space:
+% gets the min and max value of a contiguous/coordinate variable by
+% * first try to get value of attribute 'actual_range'
+% * second get min and max of the 'hull' of the variable in matrix space:
 %  for 1D variables: of all endpoints 
 %  for 2D variables: of all ribs
 %  for 3D variables: of all faces
@@ -12,7 +13,7 @@ function actual_range = nc_actual_range(ncfile,varname)
 %
 % Make sure that the netCDF variable is contiguous, as no check is
 % performed on this, only a warning if varname is not a 
-% coordinate variable.
+% coordinate variable (lon,lat,x,y,time,z).
 %
 %See also: snctools
 
@@ -56,45 +57,31 @@ function actual_range = nc_actual_range(ncfile,varname)
 % $HeadURL$
 % $Keywords: $
 
-%% get info from ncfile
-
-   if isstruct(ncfile)
-      fileinfo = ncfile;
-   else
-      fileinfo = nc_info(ncfile);
-   end
-   
-%% deal with name change in scntools: DataSet > Dataset
-
-   if     isfield(fileinfo,'Dataset'); % new
-     fileinfo.DataSet = fileinfo.Dataset;
-   elseif isfield(fileinfo,'DataSet'); % old
-     fileinfo.Dataset = fileinfo.DataSet;
-     disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
-   else
-      error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
-   end
-   
 %% get actual_range
 
    info = nc_getvarinfo(ncfile, varname);
    ind  = ismember({info.Attribute.Name}, 'standard_name');
    
-   if ~strcmpi({'latitude','longitude','projection_x_coordinate','projection_y_coordinate','time'},info.Attribute(ind).Value)
-      warning('variable is not a coordinate variable and might not be contiguous')
+   if ~strcmpi({'latitude',...
+                'longitude',...
+                'projection_x_coordinate',...
+                'projection_y_coordinate',...
+                'time',...
+                'z'},info.Attribute(ind).Value)
+      warning('variable is not a CF coordinate variable and might not be contiguous')
    end
 
-
-   info = nc_getvarinfo(ncfile, varname);
+%% read attribute if present
+   
    ind  = ismember({info.Attribute.Name}, 'actual_range');
 
-   %% read attribute if present
    if sum(ind)==1
 
       actual_range = (info.Attribute(ind).Value);
       actual_range = actual_range(:)';
    
-   %% read data
+%% read data
+   
    else
        
       sz     = info.Size;
@@ -108,7 +95,7 @@ function actual_range = nc_actual_range(ncfile,varname)
       for idim=1:length(sz)
          start        =   0.*sz;
          count        =      sz;
-         count(idim)  =      min(2,sz(idim)); % mind vectors with dimensions (1 x n)
+         count(idim)  =      min(2,sz(idim));   % mind vectors with dimensions (1 x n)
          stride       = 1+0.*sz; 
          stride(idim) =      max(1,sz(idim)-1); % mind vectors with dimensions (1 x n)
          varval       = nc_varget(ncfile,varname,start,count,stride);
