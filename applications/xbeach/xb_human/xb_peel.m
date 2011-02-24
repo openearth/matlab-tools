@@ -1,4 +1,4 @@
-function xb_peel(xb, varargin)
+function varargout = xb_peel(xb, varargin)
 %XB_PEEL  Peels the XBeach structure from the data
 %
 %   Defines a variable in the Matlab base workspace for each variable in an
@@ -64,18 +64,33 @@ function xb_peel(xb, varargin)
 
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
-%% peel dimensions, if exists
+OPT = struct( ...
+    'nested', false ...
+);
 
-if xb_exist(xb, 'DIMS')
-    dims = xb_get(xb, 'DIMS');
-    if xb_check(dims)
-        xb_peel(dims);
-    end
+OPT = setproperty(OPT, varargin{:});
+
+if nargout > 0
+    varargout = {struct()};
+else
+    varargout = {};
 end
 
 %% decalare variables in base workspace
 
 names = {xb.data.name};
 for i = 1:length(names)
-    assignin('base', names{i}, xb.data(i).value);
+    if ~OPT.nested || ~xb_check(xb.data(i).value)
+        if nargout > 0
+            varargout{1}.(names{i}) = xb.data(i).value;
+        else
+            assignin('base', names{i}, xb.data(i).value);
+        end
+    else
+        if nargout > 0
+            varargout{1}.(names{i}) = xb_peel(xb.data(i).value, varargin{:});
+        else
+            xb_peel(xb.data(i).value, varargin{:});
+        end
+    end
 end
