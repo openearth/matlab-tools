@@ -29,20 +29,19 @@ function ATT = nc_cf_opendap2catalog(varargin)
 %               'disclaimer'
 %
 %          (ii) THREDDS meta-data keywords
-%              'urlPath'
-%              'standard_names'      % white space separated
-%              'long_names'          % OPT.separator=';' space separated as they may contain spaces
-%              'timecoverage_start'
-%              'timecoverage_end'
-%              'datenum_start'
-%              'datenum_end'
-%              'timecoverage_duration'
-%              'geospatialCoverage_northsouth'
-%              'geospatialCoverage_eastwest'
-%              'projectionCoverage_x'
-%              'projectionCoverage_y'
-%              'projectionEPSGcode' % from x,y
-%              'dataTypes'
+%               'urlPath'
+%               'standard_names'      % white space separated
+%               'long_names'          % OPT.separator=';' space separated as they may contain spaces
+%               'timecoverage_start'
+%               'timecoverage_end'
+%               'datenum_start'
+%               'datenum_end'
+%               'timecoverage_duration'
+%               'geospatialCoverage_northsouth'
+%               'geospatialCoverage_eastwest'
+%               'projectionCoverage_x'
+%               'projectionCoverage_y'
+%               'projectionEPSGcode' % from x,y
 % 
 %          (iii) Specified 1D variables 
 %                For grids, it is advised to only use the 1D dimension variables x, y,and time
@@ -60,6 +59,8 @@ function ATT = nc_cf_opendap2catalog(varargin)
 %
 %   catalog = nc2struct('catalog.nc')
 %   Element = structfun(@(x) (x(1)),catalog,'UniformOutput',0)
+%
+% For the stationtimeseries extra information is loaded.
 %
 %See also: STRUCT2NC, NC2STRUCT, opendap_catalog, snctools, nc_cf_opendap2catalog_loop
 
@@ -91,12 +92,6 @@ function ATT = nc_cf_opendap2catalog(varargin)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-%% netCDF JAVA issues
-
-% OPT.USE_JAVA = getpref ('SNCTOOLS', 'USE_JAVA');
-% setpref                ('SNCTOOLS', 'USE_JAVA', 0)
-%
-
 %% which directories to scan
 
 OPT.base           = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml'; % base url where to inquire, NB: needs to end with catalog.xml
@@ -111,89 +106,69 @@ OPT.save           = 0; % save catalog in directory
 OPT.recursive      = 0;
 OPT.catalog_dir    = [];
 OPT.catalog_name   = 'catalog.nc'; % exclude from indexing
+OPT.xls_name       = 'catalog.xls'; % exclude from indexing
 OPT.maxlevel       = 1;
 OPT.separator      = ';'; % for long names
+OPT.datatype       = 'stationtimeseries'; % CF data types (grid, stationtimeseries https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions)
+OPT.debug          = 0;
 
 %% List of variables to include
 OPT.varname        = {}; % could be {'x','y','time'}
 
 %% what information (global attributes) to extract
 
-OPT.attname = ...
+   OPT.catalog_entry = ...
     {'title',...
     'institution',...
     'source',...
     'history',...
-    'references',...
+    'references',... % 5
     'email',...
     'comment',...
     'version',...
     'Conventions',...
-    'CF:featureType',...
+    'CF:featureType',... % 10
     'terms_for_use',...
     'disclaimer',...
     'urlPath',... %
     'standard_names',...
-    'long_names',...
+    'long_names',... % 15
     'timecoverage_start',...
     'timecoverage_end',...
     'datenum_start',...
     'datenum_end',...
-    'geospatialCoverage_northsouth',...
+    'geospatialCoverage_northsouth',... % 20
     'geospatialCoverage_eastwest',...
     'projectionCoverage_x',...
     'projectionCoverage_y',...
     'projectionEPSGcode'};
 
-%% atttype: 0=char, 1= numeric
-
-OPT.atttype = [...
-    0   % 'title',...
-    0   % 'institution',...
-    0   % 'source',...
-    0   % 'history',...
-    0   % 'references',...
-    0   % 'email',...
-    0   % 'comment',...
-    0   % 'version',...
-    0   % 'Conventions',...
-    0   % 'CF:featureType',...
-    0   % 'terms_for_use',...
-    0   % 'disclaimer',...
-    0   % 'urlPath',...
-    0   % 'standard_names',...
-    0   % 'long_names',...
-    0   % 'timecoverage_start',...
-    0   % 'timecoverage_end',...
-    1   % 'datenum_start',...
-    1   % 'datenum_end',...
-    1   % 'geospatialCoverage_northsouth',...
-    1   % 'geospatialCoverage_eastwest',...
-    1   % 'projectionCoverage_x',...
-    1   % 'projectionCoverage_y',...
-    1 ];% 'projectionEPSGcode'
-
+   if strcmpi(OPT.datatype,'stationtimeseries')
+      OPT.catalog_entry{end+1} = 'station_id'            ; % 25
+      OPT.catalog_entry{end+1} = 'station_name'          ;
+      OPT.catalog_entry{end+1} = 'number_of_observations';
+   end
 
 %% File keywords
 
-if nargin==0;varargout = {OPT};OPT;return;end
-
-varargout = {OPT};
-nextarg = 1;
-if odd(nargin)
-    if ischar(varargin{1})
-        OPT.base = varargin{1};
-        nextarg  = 2;
-    end
-end
-
-OPT = setproperty(OPT,varargin{nextarg:end});
-
-if isempty(OPT.catalog_dir)
-   if ~strcmpi(OPT.base(1:7),'http://')
-      OPT.catalog_dir = OPT.base;
+   if nargin==0;varargout = {OPT};OPT;return;end
+   
+   varargout = {OPT};
+   nextarg = 1;
+   if odd(nargin)
+       if ischar(varargin{1})
+           OPT.base = varargin{1};
+           nextarg  = 2;
+       end
    end
-end
+   
+   OPT = setproperty(OPT,varargin{nextarg:end});
+   
+   if isempty(OPT.catalog_dir)
+      if ~strcmpi(OPT.base(1:7),'http://')
+         OPT.catalog_dir = OPT.base;
+      end
+   end
 
 %% initialize waitbar
 
@@ -212,293 +187,277 @@ end
 
 %% pre-allocate catalog (Note: expanding char array lead to 0 as fillvalues)
 
-for ifld=1:length(OPT.attname)
+   for ifld=1:length(OPT.catalog_entry)
     
-    fldname = mkvar(OPT.attname{ifld});
+      fldname = mkvar(OPT.catalog_entry{ifld});
+      ATT.(fldname) = cell(length(OPT.files),1);
     
-    if OPT.atttype(ifld)==1
-        ATT.(fldname) = nan(        length(OPT.files),1);
-    else
-        ATT.(fldname) = repmat(' ',[length(OPT.files),length(OPT.files) + OPT.char_length]);
-    end
-    
-end
+   end
 
 % pre allocate
-for ivar = 1:length(OPT.varname)
-    VAR.(OPT.varname{ivar}) = cell(length(OPT.files),1);
-end
 
+   for ivar = 1:length(OPT.varname)
+      VAR.(OPT.varname{ivar}) = cell(length(OPT.files),1);
+   end
 
 %% File loop to get meta-data
 
-entry = 0;
-
-for ifile=1:length(OPT.files)
-    
-    OPT.filename = OPT.files{ifile};
-    multiWaitbar('nc_cf_opendap2catalog',entry/length(OPT.files),'label',...
-        ['Adding ',filename(OPT.filename) ' to catalog'])
-    entry = entry + 1;
+   entry = 0;
+   n     = length(OPT.files);
 
 %% Get global attributes (PRE-ALLOCATE)
     
-    ATT.projectionEPSGcode           (entry)     = nan;
-    ATT.geospatialCoverage_northsouth(entry,1:2) = nan;
-    ATT.geospatialCoverage_eastwest  (entry,1:2) = nan;
-    ATT.projectionCoverage_x         (entry,1:2) = nan;
-    ATT.projectionCoverage_y         (entry,1:2) = nan;
-    ATT.timecoverage_start           (entry,:)   = ' ';
-    ATT.timecoverage_end             (entry,:)   = ' ';
-    ATT.datenum_start                (entry)     = nan;
-    ATT.datenum_end                  (entry)     = nan;
-    
-%% get relevant attributes
-    
-    for iatt = 1:length(OPT.attname)
-        attname = OPT.attname{iatt};
-        fldname = mkvar(attname);
-        try
-            att = nc_attget(OPT.filename, nc_global, attname);
-            if isnumeric(ATT.(fldname))
-                ATT.(fldname)(entry)               = att;
-            else
-                ATT.(fldname)(entry,1:length(att)) = att;
-            end
-        catch
-            if isnumeric(ATT.(fldname))
-                ATT.(fldname)(entry)               = nan;
-            else
-                ATT.(fldname)(entry,:)             = ' ';
-            end
-        end
+    [ATT.projectionEPSGcode{:}]            = deal(nan);
+    [ATT.geospatialCoverage_northsouth{:}] = deal([nan nan]);
+    [ATT.geospatialCoverage_eastwest{:}]   = deal([nan nan]);
+    [ATT.projectionCoverage_x{:}]          = deal([nan nan]);
+    [ATT.projectionCoverage_y{:}]          = deal([nan nan]);
+    [ATT.timecoverage_start{:}]            = deal(' ');
+    [ATT.timecoverage_end{:}]              = deal(' ');
+    [ATT.datenum_start{:}]                 = deal(nan);
+    [ATT.datenum_end{:}]                   = deal(nan);
+
+    if strcmpi(OPT.datatype,'stationtimeseries')
+    [ATT.station_id{:}]                    = deal(' ');
+    [ATT.station_name{:}]                  = deal(' ');
+    [ATT.number_of_observations{:}]        = deal(nan);
     end
 
-    urlPath = OPT.urlPathFcn(OPT.filename);
-    ATT.urlPath(entry,1:length(urlPath)) = urlPath;
+for entry=1:length(OPT.files)
+
+   OPT.filename = OPT.files{entry};
+   multiWaitbar('nc_cf_opendap2catalog',entry/length(OPT.files),'label',...
+       ['Adding ',filename(OPT.filename) ' to catalog'])
+
+   fileinfo       = nc_info(OPT.filename);
+
+%% get relevant global attributes
+%  using above read fileinfo
+    
+   for iatt  = 1:length(OPT.catalog_entry)
+     catalog_entry = OPT.catalog_entry{iatt};
+     fldname = mkvar(catalog_entry);
+       for iglob = 1:length(fileinfo.Attribute)
+        if strcmpi(catalog_entry,fileinfo.Attribute(iglob).Name)
+           ATT.(fldname){entry} = fileinfo.Attribute(iglob).Value;
+        end
+     end
+   end
+
+   urlPath = OPT.urlPathFcn(OPT.filename);
+   ATT.urlPath{entry} = urlPath;
     
 %% get all standard_names (and prevent doubles)
-    %  get actual_range attribute instead if present for lat, lon, time
+%  get actual_range attribute instead if present for lat, lon, time
 
-    fileinfo       = nc_info(OPT.filename);
-    standard_names = [];
-    long_names     = [];
-    
-    % cycle all datasets
-    
-    ndat = length(fileinfo.Dataset);
-    for idat=1:ndat
-        % cycle all attributes
-        natt = length(fileinfo.Dataset(idat).Attribute);
-        for iatt=1:natt
-            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
-            % get standard_names only ...
-            if strcmpi(Name,'standard_name')
-                Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
-                
-                % ... once
-                if ~any(strfind(standard_names,[' ',Value]))  % remove redudant standard_names (can occur with statistics)
-                    standard_names = [standard_names ' ' Value];  % needs to be char
-                end
-                
-                % get spatial
-                if strcmpi(Value,'latitude')
-                    latitude  = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
-                    ATT.geospatialCoverage_northsouth(entry,1) = min(ATT.geospatialCoverage_northsouth(entry,1),latitude(1));
-                    ATT.geospatialCoverage_northsouth(entry,2) = max(ATT.geospatialCoverage_northsouth(entry,2),latitude(2));
-                end
-                
-                if strcmpi(Value,'longitude')
-                    longitude = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
-                    ATT.geospatialCoverage_eastwest(entry,1)   = min(ATT.geospatialCoverage_eastwest  (entry,1),longitude(1));
-                    ATT.geospatialCoverage_eastwest(entry,2)   = max(ATT.geospatialCoverage_eastwest  (entry,2),longitude(2));
-                end
-                
-                % get temporal
-                if strcmpi(Value,'time')
-                    time      = nc_cf_time(OPT.filename, fileinfo.Dataset(idat).Name);
-                    ATT.datenum_start(entry)   = min(ATT.datenum_start(entry),min(time(:)));
-                    ATT.datenum_end  (entry)   = max(ATT.datenum_end  (entry),max(time(:)));
-                end
-            end % standard_names
+   standard_names = [];
+   long_names     = [];
+   
+   % cycle all datasets
+   
+   ndat = length(fileinfo.Dataset);
+   for idat=1:ndat
+   
+       % cycle all attributes
+       natt = length(fileinfo.Dataset(idat).Attribute);
+       for iatt=1:natt
+           Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
+           % get standard_names only ...
+           if strcmpi(Name,'standard_name')
+
+               Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
+               
+            % get standard names ... once
             
-            %% get long_names only ...
-            if strcmpi(Name,'long_name')
-                
-                Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
-                
-                % ... once
-                if ~any(strfind(long_names,[' ',Value]))   % remove redudant long_names (can occur with statistics)
-                  if isempty(long_names)
-                    long_names = Value;
-                  else
-                    long_names = [long_names OPT.separator Value];  % needs to be char, ; separatred
+               if ~any(strfind(standard_names,[' ',Value]))  % remove redudant standard_names (can occur with statistics)
+                   standard_names = [standard_names ' ' Value];  % needs to be char
+               end
+               
+            % get spatial extent
+            
+               if strcmpi(Value,'latitude')
+                   latitude  = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
+                   ATT.geospatialCoverage_northsouth{entry}(1) = min(ATT.geospatialCoverage_northsouth{entry}(1),latitude(1));
+                   ATT.geospatialCoverage_northsouth{entry}(2) = max(ATT.geospatialCoverage_northsouth{entry}(2),latitude(2));
+               end
+               
+               if strcmpi(Value,'longitude')
+                   longitude = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
+                   ATT.geospatialCoverage_eastwest{entry}(1)   = min(ATT.geospatialCoverage_eastwest{entry}(1),longitude(1));
+                   ATT.geospatialCoverage_eastwest{entry}(2)   = max(ATT.geospatialCoverage_eastwest{entry}(2),longitude(2));
+               end
+               
+               if strcmpi(Value,'projection_x_coordinate')
+                   x = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
+                   ATT.projectionCoverage_x{entry}(1) = min(ATT.projectionCoverage_x{entry}(1),min(x(1)));
+                   ATT.projectionCoverage_x{entry}(2) = max(ATT.projectionCoverage_x{entry}(2),max(x(2)));
+                   grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping'); % TO DO: get from fileinfo
+                   if nc_isvar(OPT.filename,grid_mapping)
+                     ATT.projectionEPSGcode{entry} = double(nc_varget(OPT.filename,grid_mapping)); % pre allocated nan and int do not work with cell2mat
+                   end
+               end
+               
+               if strcmpi(Value,'projection_y_coordinate')
+                   y = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
+                   ATT.projectionCoverage_y{entry}(1) = min(ATT.projectionCoverage_y{entry}(1),min(y(1)));
+                   ATT.projectionCoverage_y{entry}(2) = max(ATT.projectionCoverage_y{entry}(2),max(y(2)));
+                   grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping'); % TO DO: get from fileinfo
+                   if nc_isvar(OPT.filename,grid_mapping)
+                     if ~ (ATT.projectionEPSGcode{entry} == double(nc_varget(OPT.filename,grid_mapping)))
+                        error('x and y have different epsg code')
+                     end
+                   end
+               end
+               
+            % get temporal extent
+            
+               if strcmpi(Value,'time')
+                   time      = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
+                   timeunits = nc_attget      (OPT.filename, fileinfo.Dataset(idat).Name,'units'); % TO DO: get from fileinfo
+                   time      = udunits2datenum(time,timeunits);
+                   ATT.datenum_start{entry}   = min(ATT.datenum_start{entry},time(1));
+                   ATT.datenum_end  {entry}   = max(ATT.datenum_end  {entry},time(2));
+
+                  if strcmpi(OPT.datatype,'stationtimeseries')
+                     ATT.number_of_observations{entry} = fileinfo.Dataset(idat).Size;
                   end
-                end
 
-            end % long_names
+               end
+
+            % get stationtimeseries specifics
             
+               if strcmpi(OPT.datatype,'stationtimeseries')
             
-        end % iatt
-    end % idat
-    
-    if isempty(standard_names)
-        standard_names = ' ';
-    end
-    if isempty(long_names)
-        long_names = ' ';
-    end
-    
-    ATT.standard_names(entry,1:length(standard_names)) = standard_names;
-    ATT.long_names    (entry,1:length(long_names))     = long_names;
-    
-%% get latitude actual_range
-    
-    [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'latitude');
-    names = cellstr(names);
-    
-    % cycle all latitudes
-    
-    for idat=indices
+                 if strcmpi(Value,'station_id')
+                   ATT.station_id{entry}  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
+                 end
+            
+                 if strcmpi(Value,'station_name')
+                   ATT.station_name{entry} = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
+                 end
+            
+               end
 
-        latitude  = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
-        
-        ATT.geospatialCoverage_northsouth(entry,1) = min(ATT.geospatialCoverage_northsouth(entry,1),latitude(1));
-        ATT.geospatialCoverage_northsouth(entry,2) = max(ATT.geospatialCoverage_northsouth(entry,2),latitude(2));
-        
-    end % idat
-    
-%% get longitude actual_range
-    
-    [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'longitude' );
-    names = cellstr(names);
-    
-    % cycle all longitudes
-    
-    for idat=indices
-
-        longitude = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
-        
-        ATT.geospatialCoverage_eastwest(entry,1) = min(ATT.geospatialCoverage_eastwest(entry,1),longitude(1));
-        ATT.geospatialCoverage_eastwest(entry,2) = max(ATT.geospatialCoverage_eastwest(entry,2),longitude(2));
-        
-    end % idat
-    
-%% get x actual_range and epsg
-    
-    [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate');
-    names = cellstr(names);
-    
-    % cycle all x's
-    
-    for idat=indices
-
-        x = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
-        
-        ATT.projectionCoverage_x(entry,1) = min(ATT.projectionCoverage_x(entry,1),min(x(1)));
-        ATT.projectionCoverage_x(entry,2) = max(ATT.projectionCoverage_x(entry,2),max(x(2)));
-        
-        if nc_isatt(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping')
-           grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping');
-           if nc_isvar(OPT.filename,grid_mapping)
-             ATT.projectionEPSGcode(entry) = nc_varget(OPT.filename,grid_mapping);
-           end
-        end
-        
-    end % idat
-    
-%% include variables   
-    for ivar = 1:length(OPT.varname)
-        VAR.(OPT.varname{ivar}){entry} = nc_varget(OPT.filename, OPT.varname{ivar});
-    end
-%% get y actual_range and epsg
-    
-    [names,indices] = nc_varfind(fileinfo,'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate');
-    names = cellstr(names);
-    
-    % cycle all y's
-    
-    for idat=indices
-
-        y  = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
-        
-        ATT.projectionCoverage_y(entry,1) = min(ATT.projectionCoverage_y(entry,1),min(y(1)));
-        ATT.projectionCoverage_y(entry,2) = max(ATT.projectionCoverage_y(entry,2),max(y(2)));
-        
-        if nc_isatt(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping')
-           grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping');
-           if nc_isvar(OPT.filename,grid_mapping)
-             ATT.projectionEPSGcode(entry) = nc_varget(OPT.filename,grid_mapping);
-           end
+           end % loop standard_names
            
-           %EPSGcodeStr = regexp(nc_attget(OPT.filename,'crs','spatial_ref'),'PROJECTION.*EPSG","(\d*)','tokens');
-           %ATT.projectionEPSGcode(entry) = str2double(EPSGcodeStr{:}{:});
+           %% get long_names only ...
            
-        end
+           if strcmpi(Name,'long_name')
+               
+               Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
+               
+               % ... once
+               if ~any(strfind(long_names,[' ',Value]))   % remove redudant long_names (can occur with statistics)
+                 if isempty(long_names)
+                   long_names = Value;
+                 else
+                   long_names = [long_names OPT.separator Value];  % needs to be char, ; separatred
+                 end
+               end
 
-    end % idat
-    if OPT.pause
-        pausedisp
-    end
+           end % loop long_names
+           
+       end % iatt
+   end % idat
+   
+   if isempty(standard_names)
+       standard_names = ' ';
+   end
+   if isempty(long_names)
+       long_names = ' ';
+   end
+   
+   ATT.standard_names{entry} = standard_names;
+   ATT.long_names    {entry}     = long_names;
     
-end % ifile
+%% include variables
 
-%% remove amount to much pre-allocated in catalog dimension
+   for ivar = 1:length(OPT.varname)
+       VAR.(OPT.varname{ivar}){entry} = nc_varget(OPT.filename, OPT.varname{ivar});
+   end
+    
+%% pause
 
-for ifld=1:length(OPT.attname)
-    fldname = mkvar(OPT.attname{ifld});
-    ATT.(fldname) = ATT.(fldname)(1:entry,:);
-end
+   if OPT.pause
+       pausedisp
+   end
+    
+end % entry
 
-ATT.timecoverage_start   = datestr(ATT.datenum_start,'yyyy-mm-ddTHH:MM:SS');
-ATT.timecoverage_end     = datestr(ATT.datenum_end  ,'yyyy-mm-ddTHH:MM:SS');
+%% remove amount to much pre-allocated in catalog dimension and make numeric or char matrix
 
-%% remove amount to much pre-allocated in char dimension
-
-for ifld=1:length(OPT.attname)
-    fldname = mkvar(OPT.attname{ifld});
-    if ischar(ATT.(fldname))
-        ATT.(fldname) = strtrim(ATT.(fldname));
-        if isempty(ATT.(fldname))
-            ATT.(fldname) = repmat(' ',[entry 1]);
-        end
-    end
-end
+   for ifld=1:length(OPT.catalog_entry)
+       fldname = mkvar(OPT.catalog_entry{ifld});
+       try
+       ATT.(fldname) = cell2mat({ATT.(fldname){1:entry}}');
+       catch
+          try
+             ATT.(fldname) = char({ATT.(fldname){1:entry}});
+          catch
+             ATT.(fldname) =     ({ATT.(fldname){1:entry}});
+          end
+       end
+   end
+   
+   ATT.timecoverage_start   = datestr(ATT.datenum_start,'yyyy-mm-ddTHH:MM:SS');
+   ATT.timecoverage_end     = datestr(ATT.datenum_end  ,'yyyy-mm-ddTHH:MM:SS');
 
 %% merge VAR structure in the ATT structure
-for ivar = 1:length(OPT.varname)
-    maxelements = 0;
-    for entry=1:length(OPT.files)
-        maxelements = max(maxelements,numel(VAR.(OPT.varname{ivar}){entry}));
-    end
-    ATT.(OPT.varname{ivar}) = nan(length(OPT.files),maxelements);
-    for entry=1:length(OPT.files)
-        data = VAR.(OPT.varname{ivar}){entry}(:);
-        ATT.(OPT.varname{ivar})(entry,1:length(data)) = data;
-    end
-end
+
+   for ivar = 1:length(OPT.varname)
+       maxelements = 0;
+       for entry=1:length(OPT.files)
+           maxelements = max(maxelements,numel(VAR.(OPT.varname{ivar}){entry}));
+       end
+       ATT.(OPT.varname{ivar}) = nan(length(OPT.files),maxelements);
+       for entry=1:length(OPT.files)
+           data = VAR.(OPT.varname{ivar}){entry}(:);
+           ATT.(OPT.varname{ivar})(entry,1:length(data)) = data;
+       end
+   end
 
 %% store database (mat file, netCDF file, xls file, ..... and perhaps some day as xml file)
 
-if OPT.save
-    struct2nc (fullfile(OPT.catalog_dir, OPT.catalog_name),ATT)
-    %     struct2nc ([OPT.base,filesep,OPT.directory,filesep,OPT.catalog_name,'.nc' ],ATT);
-    %     save      ([OPT.base,filesep,OPT.directory,filesep,OPT.catalog_name,'.mat'],'-struct','ATT');
-end
+   if OPT.save
 
-multiWaitbar('nc_cf_opendap2catalog',1,'label','Generating catalog.nc')
+      struct2nc (fullfile(OPT.catalog_dir, OPT.catalog_name),ATT);
+       
+      %for ifld=1:length(OPT.xls_entry)
+      %   fldname = mkvar(OPT.xls_entry{ifld});
+      %   XLS.(fldname) = ATT.(fldname);
+      %end
+
+      if strcmpi(OPT.datatype,'stationtimeseries')
+      XLS.station_id             = ATT.station_id;            
+      XLS.station_name           = ATT.station_name;          
+      XLS.number_of_observations = ATT.number_of_observations';
+      end
+      XLS.timecoverage_start     = ATT.timecoverage_start;
+      XLS.timecoverage_end       = ATT.timecoverage_end;
+      XLS.longitude_start        = ATT.geospatialCoverage_eastwest(:,1)';
+      XLS.longitude_end          = ATT.geospatialCoverage_eastwest(:,2)';
+      XLS.latitude_start         = ATT.geospatialCoverage_northsouth(:,1)';
+      XLS.latitude_end           = ATT.geospatialCoverage_northsouth(:,2)';
+      XLS.urlPath                = ATT.urlPath;        
+      XLS.title                  = ATT.title;        
+      XLS.standard_names         = ATT.standard_names;        
+      XLS.long_names             = ATT.long_names;        
+      
+      struct2xls(fullfile(OPT.catalog_dir, OPT.xls_name    ),XLS);
+
+   end
+
+   multiWaitbar('nc_cf_opendap2catalog',1,'label','Generating catalog.nc')
 
 % load database as check
 
-% if OPT.test
-%     ATT1 = nc2struct ([          'catalog.nc' ]); % WRONG, because nc chars in nc are wrong.
-%     ATT2 = load      ([          'catalog.mat']);
-% end
-%
-% %% Java issue
-%
-% setpref ('SNCTOOLS', 'USE_JAVA', OPT.USE_JAVA)
-%
-% varargout = {ATT};
-%
-% %% EOF
+   if OPT.debug
+      DEBUG = nc2struct (fullfile(OPT.catalog_dir, OPT.catalog_name)); % WRONG, because nc chars in nc are wrong.
+      var2evalstr(DEBUG)
+   end
+   
+% output
+
+   varargout = {ATT};
+
+%% EOF
