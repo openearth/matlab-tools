@@ -82,7 +82,7 @@ end
 warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 
 % Open Splash Screen
-frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],30);
+frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],120);
 
 setHandles(handles);
 
@@ -90,15 +90,16 @@ ddb_initialize('startup');
 
 handles=getHandles;
 
-% Make Figure Visible
-set(handles.GUIHandles.mainWindow,'Visible','on');
-drawnow;
+screenSize=get(0,'ScreenSize');
+pos=[1 29 screenSize(3) screenSize(4)-95];
+set(handles.GUIHandles.mainWindow,'Position',pos,'Visible','off');
 
-% screenSize=get(0,'ScreenSize');
-% pos=[1 29 screenSize(3) screenSize(4)-95];
-% set(handles.GUIHandles.MainWindow,'Position',pos);
+% Make Figure Visible
+%drawnow;
 
 maximizeWindow('Delft Dashboard');
+
+set(handles.GUIHandles.mainWindow,'Visible','on');
 
 % Maximize Figure
 %maximize(handles.GUIHandles.MainWindow);
