@@ -47,12 +47,13 @@ OPT.polygon         = [];
 
 datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
+%% Select in either grid plot or grid overview plot
 mapW = findobj('tag','gridPlot');
 if isempty(mapW)
-    if isempty(findobj('tag','gridOverview')) % || ~any(ismember(get(axes, 'tag'), {datatype}))
+    if isempty(findobj('tag','gridOverview')) %|| ~any(ismember(get(axes, 'tag'), {datatype}))
         fh = UCIT_plotGridOverview(datatype,'refreshonly',0);
     else
-        fh = figure(findobj('tag','gridOverview'));figure(fh);
+        fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
     end
 else
     fh = figure(findobj('tag','gridPlot')); figure(fh);
@@ -123,6 +124,11 @@ end
 year1 = years(v(1));
 year2 = years(v(2));
 
+% show waitbar
+cbh = waitbar(0,'Please wait ...');
+set(cbh, 'tag', 'wb')
+
+
 %% get data of first year
 [d.X, d.Y, d1.Z, d1.Ztime] = grid_orth_getDataInPolygon(...
     'dataset'       , d.catalog, ...
@@ -136,6 +142,9 @@ year2 = years(v(2));
     'cellsize'      , d.cellsize,...
     'plotresult'    , 0,...
     'polygon'       , OPT.polygon);  % this functionality is also inside grid_orth_getDataInPolygon
+
+
+waitbar(0.4, findobj('tag','wb'), 'Extracting data from nc files ...')
 
 %% get data of second year
 [d.X, d.Y, d2.Z, d1.Ztime] = grid_orth_getDataInPolygon(...
@@ -151,13 +160,16 @@ year2 = years(v(2));
     'plotresult'    , 0,...
     'polygon'       , OPT.polygon);  % this functionality is also inside grid_orth_getDataInPolygon
 
+waitbar(0.8, findobj('tag','wb'), 'Extracting data from nc files ...')
+
 %% Subtract years
 dd.Z = (d1.Z - d2.Z);
 
+close(cbh)
 %% Plot results
-fh = figure('tag','diffplot');clf;
+fh = figure('tag','gridPlot');clf;
 ah = axes;
-[fh,ah] = UCIT_prepareFigureN(0, fh, 'UR', ah);
+[fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
 UCIT_plotlandBoundary(d.ldb,'none'); % plot land boundary
 
 surf(d.X,d.Y,dd.Z);shading interp;view(2);hold on;

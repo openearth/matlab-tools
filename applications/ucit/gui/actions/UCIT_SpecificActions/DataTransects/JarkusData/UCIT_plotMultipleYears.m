@@ -60,7 +60,6 @@ if nargin<2
 
 end
 
-colors={'b',[0.2 0.6 0],'k',[0.5 1 1],'m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.5 0.5], [1 0.5 0.5]};
 
 % Create empty base figure
 

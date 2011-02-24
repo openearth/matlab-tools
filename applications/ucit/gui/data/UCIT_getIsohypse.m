@@ -1,5 +1,5 @@
-function UCIT_getSandBalance(OPT)
-% UCIT_INPUTSANDBALANCE This script computes a sediment budget for all polygons
+function UCIT_getIsoHypse(OPT)
+% UCIT_GETISOHYPSE   This script computes a sediment budget for all polygons
 %                       that are listed in the polygon directory. They are subdivided
 %                       per UCIT datatype folder (see example). The year with best coverage
 %                       is used as reference year.
@@ -11,8 +11,8 @@ function UCIT_getSandBalance(OPT)
 %               monthsmargin =   number of months to look back for additional data
 %
 %   Output:     RAW: Output is stored in files. The coverage of each polygon is
-%               stored in the 'polygon' directory. The depth data is stored
-%               in 'datafiles' and the temporal sediment budget is stored in
+%               stored in the 'coverage' directory. The depth data is stored
+%               in 'datafiles' and the isohypse curves are stored in
 %               'results'.
 %               POSTPROCESSING: Separate scripts visualize the results. See
 %               different types of plots at postprocessing.
@@ -20,8 +20,7 @@ function UCIT_getSandBalance(OPT)
 %   See also getSandbalance, UCIT_findCoverage, batchViewResults
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares
-%   Mark van Koningsveld
+%   Copyright (C) 2011 Deltares
 %   Ben de Sonneville
 %
 %       M.vankoningsveld@tudelft.nl
@@ -99,9 +98,6 @@ for n = 1:size(OPT.min_coverage,2)
                 
                 if ~isempty(OPT.inputyears)
                     
-                    %% determine reference year
-                    OPT.reference_year = OPT.inputyears(find(OPT.coverages == max(OPT.coverages),1,'first'));
-                    
                     %% find ids that are present in all years (for method 2 JdR)
                     for j = 1:length(OPT.inputyears)
                         load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep OPT.polyname{i}(1:end-4) '_' num2str(OPT.inputyears(j),'%04i') '_1231.mat']);
@@ -110,29 +106,28 @@ for n = 1:size(OPT.min_coverage,2)
                             OPT.id = OPT.id & id_of_year;,end
                     end
                     
+                    
                     %% compute volume
                     for k = 1 : 2 % use 2 methods
                         OPT.type = k;
                         for j = 1:size(OPT.inputyears,1)
-                            results = UCIT_computeGridVolume(OPT.reference_year, OPT.inputyears(j), OPT.polyname{i}(1:end-4), OPT);
-                            VolumeOverview(j,1) = results.year;
-                            VolumeOverview(j,2) = results.volume;
-                            VolumeOverview(j,3) = OPT.coverages(j);
-                            VolumeOverview(j,4) = results.area;
-                            VolumeOverview(j,5) = results.volume/results.area;
+                        results = UCIT_computeIsohypse(OPT.inputyears(j), OPT.polyname{i}(1:end-4), OPT);
+                                          
+                        %% write text file
+                        fid = fopen([ 'results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage(n)) filesep OPT.polyname{i}(1:end-4) '_isohypse_year_' num2str(OPT.inputyears(j)) '_method' num2str(OPT.type) '.dat'],'w');
+                        fprintf(fid,'%s\n',['   Area      Height']);
+                        fprintf(fid,'%9.0f %8.2f\n',[ results.area' results.height']');
+                        fclose(fid);
+                        
+                        %% add to structure
+                        IsoOverview(k,j) = results; 
                         end
                         
-                        Volumes{k} = VolumeOverview;
-                        
-                        %% write text file
-                        fid = fopen([ 'results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage(n)) filesep  OPT.polyname{i}(1:end-4) '_volume_development_method' num2str(OPT.type) '.dat'],'w');
-                        fprintf(fid,'%s\n',[' Year      Volume     Coverage     Area     Vol/Area']);
-                        fprintf(fid,'%5.0f %12.0f %9.2f   %9.0f %9.2f \n',[VolumeOverview]');
-                        fclose(fid);
                     end
-                    %% Make volume plot
+                    
+                    %% Make isohypse plot
                     if postProcessing && whattodo(1)
-                        UCIT_plotSandbalance(OPT, results, Volumes);
+                        UCIT_plotIsohypse(OPT, IsoOverview, OPT.polyname{i}(1:end-4));
                     end
                     
                     if strcmp(curdir,getenv('TEMP'))

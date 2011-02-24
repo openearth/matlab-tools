@@ -1,7 +1,7 @@
-function UCIT_plotSandBalance(OPT, results, Volumes)
-%UCIT_PLOTSANDBALANCE  plots results of sand balance computation
+function UCIT_plotIsohypse(OPT, IsoOverview, polyname)
+%UCIT_PLOTISOHYPSE  plots results of sand balance computation
 %
-%       UCIT_plotSandBalance(OPT, results, Volumes)
+%       UCIT_plotSandBalance(OPT, results)
 %
 %
 %
@@ -16,7 +16,7 @@ function UCIT_plotSandBalance(OPT, results, Volumes)
 % See also: UCIT_getSandBalance
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares
+%   Copyright (C) 2011 Deltares
 %       Ben de Sonneville
 %
 %       Ben.deSonneville@Deltares.nl
@@ -52,7 +52,7 @@ UCIT_plotLandboundary(OPT.ldb,'none')
 hold on;
 
 % get meta(data)
-load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep results.polyname '_' num2str(OPT.inputyears(1),'%04i') '_1231.mat']);
+load(['datafiles' filesep 'timewindow = ' num2str(OPT.timewindow) filesep polyname '_' num2str(OPT.inputyears(1),'%04i') '_1231.mat']);
 d.id = OPT.id*2;
 d.id((OPT.id==0)) = nan;
 
@@ -63,7 +63,7 @@ pcolorcorcen(d.X,d.Y,d.id*2);view(2);shading interp;
 ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'color','k','tag','polygon','linewidth',1);
 
 % text
-title(['Used data points for method 2 ' strrep(results.polyname,'_',' ') ' (' OPT.datatypeinfo ')'],'fontsize',8);
+title(['Used data points for method 2 ' strrep(polyname,'_',' ') ' (' OPT.datatypeinfo ')'],'fontsize',8);
 
 % set axis
 box    on
@@ -76,34 +76,41 @@ set   (gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
 tickmap('xy');
 
 % save figure
-print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep results.polyname '_used_data_points_method_2']);
+print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep polyname '_used_data_points_method_2']);
 
 
-%% Volume development plot
+%% Isohypse plot
 
 % set up figure
-nameInfo=['UCIT - Volume development plot'];
-fh = figure('tag','VolPlot'); clf; ah=axes;
+nameInfo=['UCIT - Isohypse plot'];
+fh = figure('tag','IsoPlot'); clf; ah=axes;
 set(fh,'Name', nameInfo,'NumberTitle','Off','Units','normalized');
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UR', ah);
 hold on
 
-% plot results method 1 (as line)
-ph = plot(datenum(Volumes{1}(:,1),1,1), Volumes{1}(:,2) - Volumes{1}(1,2),'color','b','linewidth',2,'marker','o','MarkerFaceColor','w');
+%% use color codes of Claire
+col     = jet(length(OPT.inputyears)); 
+counter = 1;
+years     = sort(OPT.inputyears); % old years are blue, recent years are red
 
-% plot results method 2 (as  stippelline)
-ph = plot(datenum(Volumes{2}(:,1),1,1), Volumes{2}(:,2) - Volumes{2}(1,2),'color','b','linewidth',2,'marker','x','MarkerFaceColor','w','linestyle','--');
+for i = 1 : length(OPT.inputyears)
+    % plot results method 2 (as line)
+    ph = plot(IsoOverview(2,i).area,IsoOverview(2,i).height,'color','b','linewidth',2'); 
+    set(ph,'color',col(i,:));
+    legendtext{counter}=([num2str(OPT.inputyears(i))]); 
+    counter = counter + 1;
+end
 
-% set text
-title(['Volume development for ' strrep(results.polyname,'_',' ') ' (' OPT.datatypeinfo ')'],'fontsize',8);
-legend(['Method 1: based on data points covered by target year and reference year (' num2str(OPT.reference_year) ')'],['Method 2: based on data points covered in all years'],'location','SouthOutside');
-
-% set axis
-xlabel('Time [years]','fontsize',8);ylabel('Volume [m^3]','fontsize',8);
-set(gca,'fontsize',8);datetick;grid;
+legend(legendtext);
+ 
+grid;
+title (['Isohypse for ' strrep(polyname,'_',' ') ' (' OPT.datatypeinfo ') (Method 2: based on data points covered by all years)'],'fontsize',8)
+xlabel('Area (m^2)','fontsize',8);
+ylabel('Height (m)','fontsize',8);
+set(gca,'fontsize',8);
 
 % save figure
-print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep results.polyname '_volume_development' ]);
+print(fh,'-dpng',['results' filesep 'timewindow = ' num2str(OPT.timewindow) filesep 'ref=' num2str(OPT.min_coverage) filesep polyname '_isohypse' ]);
 
 warning(warningstate)
 

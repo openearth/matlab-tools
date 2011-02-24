@@ -43,17 +43,17 @@ warning off
 datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
 %% Select in either grid plot or grid overview plot
-
-   mapW = findobj('tag','gridPlot');
-   if isempty(mapW)
-      if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
-         fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
-      else
-         fh = figure(findobj('tag','gridOverview'));figure(fh);
-      end
-   else
-      fh = figure(findobj('tag','gridPlot')); figure(fh);
-   end
+mapW = findobj('tag','gridPlot');
+if isempty(mapW)
+    if isempty(findobj('tag','gridOverview')) %|| ~any(ismember(get(axes, 'tag'), {datatype}))
+        fh = UCIT_plotGridOverview(datatype,'refreshonly',0);
+    else
+        fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
+    end
+else
+    fhs = findobj('tag','gridPlot');
+    fh = figure(fhs(1)); figure(fh);
+end
    
    curdir=pwd;
    colors={'b',[0.2 0.6 0],'k','c','m','r', [0.6 0.4 0],[0.2 0.4 0 ], [0.5 0.5 0.5], [1 0.5 0.5],'y',  [0.25 0.5 0.5],[0.5 0 0.5] ,[1 0.5 0.25],[0.5 1 0.5],[0.2 0 1],[1 0.5 1],[0.5 0.5 0.75],rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]),rand([1,3]) };
@@ -92,20 +92,21 @@ datatype = UCIT_getInfoFromPopup('GridsDatatype');
 %% Find data for selected polygon for selected years
 
 d    = UCIT_getMetaData(2);
-OPT2 = grid_orth_getMapInfoFromDataset(d.catalog);
 
 teller = 0; teller2 = 0;emptyyears = [];
 
-
+% show waitbar
+cbh = waitbar(0,'Please wait ...');
+set(cbh, 'tag', 'wb')
 
 for xx = 1:length(years)
 
     figure(fh);
     [X, Y, Z] = grid_orth_getDataInPolygon(...
     'dataset'       , d.catalog, ...
-    'urls'          , OPT2.urls, ...
-    'x_ranges'      , OPT2.x_ranges, ...
-    'y_ranges'      , OPT2.y_ranges, ...
+    'urls'          , d.urls, ...
+    'x_ranges'      , d.x_ranges, ...
+    'y_ranges'      , d.y_ranges, ...
     'tag'           , datatype, ...
     'starttime'     , datenum(years(xx),12,31), ...
     'searchinterval', -365.25, ... % this call is inside a year-loop
@@ -128,7 +129,10 @@ for xx = 1:length(years)
     else
         id(xx) = 1;
     end
+     waitbar(xx/length(years), findobj('tag','wb'), 'Extracting data from nc files ...')
 end
+
+close(cbh)
 
 years_with_data = years(id==1);
 years_with_data = sort(years_with_data); % old years are blue, recent years are red
@@ -155,10 +159,10 @@ end
 
 if exist('legendtext')
     figure(fn);
-    legend(legendtext);grid;
-    title ('Bed level of requested crossection')
-    xlabel('Local x direction');
-    ylabel('Bed level (m)');
+    legend(legendtext,'fontsize',8);grid;
+    title ('Bed level of requested crossection','fontsize',8)
+    xlabel('Local x direction','fontsize',8);
+    ylabel('Bed level (m)','fontsize',8);
     set   (gca,'fontsize',8);
 
     disp  ([]);

@@ -58,7 +58,7 @@ else
 end
 
 d    = UCIT_getMetaData(2);
-% OPT2 = grid_orth_getMapInfoFromDataset(d.catalog);
+
 
 %% get data from right netcdf files
 
@@ -116,9 +116,6 @@ if ~all(all(isnan(Z)))
         tickmap('xy');
     end
 
-else
-    % warndlg('No data found for these search criteria');
-    % grid_orth_getDataInPolygon already throws wanring
 end
 
 warning(warningstate)

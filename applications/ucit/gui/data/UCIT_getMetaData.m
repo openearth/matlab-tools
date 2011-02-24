@@ -82,7 +82,7 @@ else
 end
 
 if exist('OPT','var') 
-    props = {'datatype','thinning','timewindow','inputyears','min_coverage','type'};
+    props = {'datatype','thinning','timewindow','inputyears','min_coverage','type','polygon', 'polyname','polydir'};
     for iprop = 1:length(props)
         try
             d.(props{iprop}) = OPT.(props{iprop});

@@ -125,6 +125,12 @@ elseif type==1&&PopupNR==2
     objTag='TrActions';
     set(findobj('tag',objTag), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
     
+    % make overview plot
+    fh = findobj('tag','mapWindow');
+    if isempty(fh)
+        ucit_plottransectoverview
+    end
+    
 elseif type==1&&PopupNR==3
     
     % *** set TransectsTransectID
@@ -189,6 +195,7 @@ elseif type==1&&PopupNR==4
     
     % fill the proper popup menu and reset others if required
     set(findobj('tag','TransectsSoundingID'), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
+    
     
 elseif type==2&&PopupNR==1
     %% GRIDS
@@ -280,12 +287,12 @@ elseif type==2&&PopupNR==4
     end
     
     % fill the proper popup menu and reset others if required
-    if length(string)==2
-        set(findobj('tag','GridsSoundingID'), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
-    else
-        set(findobj('tag','GridsSoundingID'), 'string', string, 'value', 2, 'enable', 'on', 'backgroundcolor', 'w');
-    end
-    
+    set(findobj('tag','GridsSoundingID'), 'string', string, 'value', 1, 'enable', 'on', 'backgroundcolor', 'w');
 
+   % make overview plot
+   mapW = findobj('tag','gridOverview');
+   if isempty(mapW)
+       ucit_plotgridoverview
+   end
     
 end

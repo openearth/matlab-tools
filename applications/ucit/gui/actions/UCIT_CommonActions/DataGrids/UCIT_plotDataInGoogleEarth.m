@@ -47,27 +47,27 @@ datatype = UCIT_getInfoFromPopup('GridsDatatype');
 
 %% Select in grid overview plot
 
-   mapW = findobj('tag','gridPlot');
-   if isempty(mapW)
-      if isempty(findobj('tag','gridOverview')) || ~any(ismember(get(axes, 'tag'), {datatype}))
-         fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
-      else
-         fh = figure(findobj('tag','gridOverview'));figure(fh);
-      end
-   else
-      fh = figure(findobj('tag','gridPlot')); figure(fh);
-   end
+mapW = findobj('tag','gridPlot');
+if isempty(mapW)
+    if isempty(findobj('tag','gridOverview')) %|| ~any(ismember(get(axes, 'tag'), {datatype}))
+        fh = UCIT_plotGridOverview(datatype,'refreshonly',0);
+    else
+        fh = UCIT_plotGridOverview(datatype,'refreshonly',1);
+    end
+else
+    fhs = findobj('tag','gridPlot');
+    fh = figure(fhs(1)); figure(fh);
+end
 
 d    = UCIT_getMetaData(2);
-OPT2 = grid_orth_getMapInfoFromDataset(d.catalog);
 
 %% get data from right netcdf files
 
 [X, Y, Z, Ztime] = grid_orth_getDataInPolygon(...
     'dataset'       , d.catalog, ...
-    'urls'          , OPT2.urls, ...
-    'x_ranges'      , OPT2.x_ranges, ...
-    'y_ranges'      , OPT2.y_ranges, ...
+    'urls'          , d.urls, ...
+    'x_ranges'      , d.x_ranges, ...
+    'y_ranges'      , d.y_ranges, ...
     'tag'           , datatype, ...
     'starttime'     ,        datenum(UCIT_getInfoFromPopup('GridsName'), 'yyyy-mm-dd'), ...
     'searchinterval', -30*str2double(UCIT_getInfoFromPopup('GridsInterval')), ...
@@ -75,10 +75,6 @@ OPT2 = grid_orth_getMapInfoFromDataset(d.catalog);
     'cellsize'      , d.cellsize,...
     'plotresult'    ,0);
 
-% do not do this; we use this panel TO select an area for Google Earth
-% if ~isempty(findobj('tag','gridPlot'))
-%       close(findobj('tag','gridPlot'))
-% end
 
 %% workaround
 Ztime(Z>1e10) = nan;
@@ -117,9 +113,6 @@ if ~all(all(isnan(Z)))
 
    disp(['Saved Google Earth file as ',filename])
 
-else
-    % warndlg('No data found for these search criteria');
-    % grid_orth_getDataInPolygon already throws wanring
 end
 
 warning(warningstate)
