@@ -1,7 +1,7 @@
 function varargout = KMLlogo(varargin)
 %KMLlogo   make a white logo *.png with transparent background of an image
 %
-%    <kmlcode> = KMLlogo(imagename,<keyword,value>)
+%    <kmlcode> = KMLlogo(<imName>,<keyword,value>)
 % 
 % For the <keyword,value> pairs and their defaults call
 %
@@ -54,9 +54,9 @@ function varargout = KMLlogo(varargin)
  
    OPT                  = KML_header();
 
-   OPT.fileName         = ''; % header/footer are skipped when is a fid = 0 or fopen(OPT.fileName,'w')
-   OPT.logoName         = '';
-   OPT.imName           = '';
+   OPT.fileName         = 0;  % header/footer are skipped when is a fid = 0 or fopen(OPT.fileName,'w')
+   OPT.logoName         = ''; % png file as in kml
+   OPT.imName           = ''; % png file used as basis
    OPT.invertblackwhite = 0; % invert black/white
    
    OPT.overlayXY        = [0 0];       % mapping a point in the image specified by <overlayXY> ...
@@ -72,12 +72,12 @@ function varargout = KMLlogo(varargin)
       return
    end
    
-   if nargin>1
-       imname             = varargin{1};
+   if odd(nargin)
+       imName             = varargin{1};
       [OPT, Set, Default] = setproperty(OPT, varargin{2:end});
    else
       [OPT, Set, Default] = setproperty(OPT, varargin{:});
-       imname             = OPT.imName;
+       imName             = OPT.imName;
    end
 
 
@@ -96,7 +96,7 @@ function varargout = KMLlogo(varargin)
 
 %% do image stuff: white image with transparancy ~ lack of white
 
-  [im,map] = imread([imname]);
+  [im,map] = imread([imName]);
   
    if ~isempty(map)
    im = ind2rgb(im,map).*255;
@@ -111,7 +111,7 @@ function varargout = KMLlogo(varargin)
    im4alpha = im4alpha./max(im4alpha(:));% scale so lightest pixel is fully white
    
    if isempty(OPT.logoName)
-   OPT.logoName = fullfile(fileparts(imname),[filename(imname),'4GE.png']);
+   OPT.logoName = fullfile(fileparts(imName),[filename(imName),'4GE.png']);
    end
 
    imwrite(ones(size(im)),OPT.logoName,'Alpha',im4alpha);
@@ -141,17 +141,19 @@ function varargout = KMLlogo(varargin)
 
    output = '';
    
-   output = [output ...
-       '<name>logo</name>' ...
-       '<Folder><ScreenOverlay>' ...
-       '	<Icon><href>' filenameext(OPT.logoName) '</href></Icon>\n' ... % only relative path
-       '	<overlayXY  x="',num2str(OPT.overlayXY(1)),'" y="',num2str(OPT.overlayXY(2)),'" xunits="',OPT.overlayXYunits,'" yunits="fraction"/>\n' ...
-       '	<screenXY   x="',num2str(OPT.screenXY (1)),'" y="',num2str(OPT.screenXY(2) ),'" xunits="',OPT.screenXYunits ,'" yunits="fraction"/>\n' ...
-       '	<size       x="',num2str(OPT.size (1)    ),'" y="',num2str(OPT.size (2)    ),'" xunits="',OPT.sizeunits     ,'" yunits="fraction"/>\n' ...
-       '</ScreenOverlay></Folder>' ];
+   output = [output '\n' ...
+       '<Folder>\n'...
+       ' <name>',OPT.kmlName,'</name>\n' ...
+       ' <ScreenOverlay>\n' ...
+       '  <Icon><href>' filenameext(OPT.logoName) '</href></Icon>\n' ... % only relative path
+       '  <overlayXY  x="',num2str(OPT.overlayXY(1)),'" y="',num2str(OPT.overlayXY(2)),'" xunits="',OPT.overlayXYunits,'" yunits="fraction"/>\n' ...
+       '  <screenXY   x="',num2str(OPT.screenXY (1)),'" y="',num2str(OPT.screenXY(2) ),'" xunits="',OPT.screenXYunits ,'" yunits="fraction"/>\n' ...
+       '  <size       x="',num2str(OPT.size (1)    ),'" y="',num2str(OPT.size (2)    ),'" xunits="',OPT.sizeunits     ,'" yunits="fraction"/>\n' ...
+       ' </ScreenOverlay>\n'...
+       '</Folder>' ];
 
    if OPT.fid > 0
-   fprintf(OPT.fid,output,'%s');
+      fprintf(OPT.fid,output,'%s');
    end
    if nargout==1;kmlcode = output;end % collect all kml for function output
 

@@ -220,7 +220,7 @@ set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
 'color',OPT.bgcolor/255,'InvertHardcopy','off');
 
 %% run scripts (These are the core functions)
-%  some more background info: http://www.realityprima.comn/articles/how-google-earth-really-works
+%  some more background info: http://www.realityprime.com/articles/how-google-earth-really-works
 
 %   --------------------------------------------------------------------
 % Generates tiles at most detailed level
