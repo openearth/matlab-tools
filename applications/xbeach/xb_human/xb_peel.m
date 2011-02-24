@@ -64,6 +64,15 @@ function xb_peel(xb, varargin)
 
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
+%% peel dimensions, if exists
+
+if xb_exist(xb, 'DIMS')
+    dims = xb_get(xb, 'DIMS');
+    if xb_check(dims)
+        xb_peel(dims);
+    end
+end
+
 %% decalare variables in base workspace
 
 names = {xb.data.name};
