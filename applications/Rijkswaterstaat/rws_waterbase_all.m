@@ -6,19 +6,16 @@
 
 %% Initialize
 
-   OPT.download       = 1; % get fresh downloads from rws and remove exisitng to sub dir old
+   OPT.download       = 0; % get fresh downloads from rws and remove exisitng to sub dir old
    OPT.make_nc        = 1;
    OPT.make_kml       = 1;
    OPT.baseurl        = 'http://live.waterbase.nl';
 
-  %urlbase = 'p:\mcdata\opendap\';              % @ deltares internally
   %urlbase = 'http://dtvirt5.deltares.nl:8080'; % test server
    urlbase = 'http://opendap.deltares.nl:8080'; % production server
 
-  %rawbase = 'P:\mcdata';                       % @ deltares internally
-  % ncbase = 'P:\mcdata';                       % @ deltares internally
-   rawbase = 'F:\checkouts\OpenEarthRawData';   % @ local
-    ncbase = 'F:\opendap\thredds\';             % @ local
+   rawbase = 'D:\checkouts\OpenEarthRawData';   % @ local
+    ncbase = 'D:\opendap\thredds\';             % @ local
 
 %% Parameter choice
 
@@ -33,7 +30,7 @@
                        541  560 1083    1      ];   % 0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
 
    OPT.donar_wnsnum = [22 23 24]; % wave stuff: H, T, dir (SCHOUWBK,SANDTE,HARVMD disappeared with data from 1980's)
-   OPT.donar_wnsnum = [24]; % wave stuff: H, T, dir (SCHOUWBK,SANDTE,HARVMD disappeared with data from 1980's)
+   OPT.donar_wnsnum = [410]; % wave stuff: H, T, dir (SCHOUWBK,SANDTE,HARVMD disappeared with data from 1980's)
 
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
 
@@ -98,7 +95,7 @@
       CATALOG = nc_cf_opendap2catalog('base',[OPT.directory_nc],... % dir where to READ netcdf
                      'catalog_dir',[OPT.directory_nc],... % dir where to SAVE catalog
                             'save',1,...
-                      ... % 'urlPathFcn',@(s) path2os(strrep(s,ncbase,['http://opendap.deltares.nl/thredds/dodsC/opendap/']),'h'),... % dir where to LINK to for netCDF
+                      'urlPathFcn',@(s) path2os(strrep(s,ncbase,['http://opendap.deltares.nl/thredds/dodsC/opendap/']),'h'),... % dir where to LINK to for netCDF
                          'varname','');
 
    %% Make KML overview with links to netCDF on opendap.deltares.nl
@@ -134,6 +131,7 @@
       OPT2.screenXY           = [.5 1];
       OPT2.imName             = 'overheid.png';
       OPT2.logoName           = 'overheid4GE.png';
+      OPT2.varPathFcn         = @(s) path2os(strrep(s,['http://opendap.deltares.nl/thredds/dodsC/opendap/'],ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
       
       nc_cf_stationtimeseries2kmloverview(CATALOG,OPT2); % inside urlPath is used to read netCDF data
       

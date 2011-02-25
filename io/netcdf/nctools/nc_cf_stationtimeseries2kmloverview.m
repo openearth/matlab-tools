@@ -48,6 +48,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    
    OPT.varname            = []; % statistics
    OPT.preview            = 1;  % add 2 previews of - and hence requires - varname
+   OPT.varPathFcn         = @(s)(s); % function to run on urlPath, when using it, not when linking it: for reading local netCDF files, when CATALOG links to server already
 
    if nargin==0
       return
@@ -182,8 +183,10 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
     if ~isempty(varname)
 
     %% get statistics and make images
+    
+       ncfile = OPT.varPathFcn(D.urlPath{ii});
 
-       [DATA,META] = nc_cf_stationTimeSeries(D.urlPath{ii},varname,'plot',OPT.preview);
+       [DATA,META] = nc_cf_stationTimeSeries(ncfile,varname,'plot',OPT.preview);
        units.(varname) = META.(varname).units;
        
        if OPT.preview

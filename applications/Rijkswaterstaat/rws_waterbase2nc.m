@@ -509,11 +509,13 @@ end
       nc_varput(ncfile, 'station_name', D.data.location);
       nc_varput(ncfile, 'lon'         , D.data.lon);
       nc_varput(ncfile, 'lat'         , D.data.lat);
+      if ~(D.data.epsg==OPT.wgs84) % sometimes x/y are already wgs84, then no need for x/y
       nc_varput(ncfile, 'x'           , D.data.x);
       nc_varput(ncfile, 'y'           , D.data.y);
-      nc_varput(ncfile, 'z'           , D.data.z);
-      nc_varput(ncfile, 'time'        , D.data.datenum' - OPT.refdatenum);
-      nc_varput(ncfile, OPT.name      , D.data.(OPT.name));
+      end
+      nc_varput(ncfile, 'z'           , D.data.z(:)');  % orientation matters because netCDF variable is 2D: [location x time]
+      nc_varput(ncfile, 'time'        , D.data.datenum(:)' - OPT.refdatenum);
+      nc_varput(ncfile, OPT.name      , D.data.(OPT.name)(:)');  % orientation matters because netCDF variable is 2D: [location x time]
       nc_varput(ncfile, 'wgs84'       , OPT.wgs84);
       if nc_isvar(ncfile,'epsg')
       nc_varput(ncfile, 'epsg'        , D.data.epsg); % always keep as, because when x/y are wgs84 they refer to epsg       

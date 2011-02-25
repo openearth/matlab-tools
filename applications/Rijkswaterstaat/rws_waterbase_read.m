@@ -210,8 +210,9 @@ for ifile=1:length(fnames)
    if strcmp(OPT.method,'textread')
    
        if     strcmpi(OPT.display,'multiWaitbar')
-          multiWaitbar([mfilename,'raw'    ],0,'label',[mfilename,': reading raw data.']     ,'color',[0.2 0.5 0.2])
-          multiWaitbar([mfilename,'2struct'],0,'label',[mfilename,': transforming raw data to struct.'],'color',[0.2 0.5 0.2])
+          % these files are small: no waitbar needed
+          %multiWaitbar([mfilename,'raw'    ],0,'label',[mfilename,': reading raw data.']     ,'color',[0.2 0.5 0.2])
+          %multiWaitbar([mfilename,'2struct'],0,'label',[mfilename,': transforming raw data to struct.'],'color',[0.2 0.5 0.2])
        elseif OPT.display;
           disp([mfilename,' Reading raw data of: ',fname]);
        end
@@ -270,7 +271,7 @@ for ifile=1:length(fnames)
        end
        
        if     strcmpi(OPT.display,'multiWaitbar')
-          multiWaitbar([mfilename,'raw'    ],1,'label',[mfilename,': reading raw data.']     ,'color',[0.2 0.5 0.2])
+         %multiWaitbar([mfilename,'raw'    ],1,'label',[mfilename,': reading raw data.']     ,'color',[0.2 0.5 0.2])
        elseif OPT.display;
           disp(['rws_waterbase_read: read raw data: ',fname]);
        end
@@ -317,7 +318,7 @@ for ifile=1:length(fnames)
        for istat=1:length(D.locations)
        
           if     strcmpi(OPT.display,'multiWaitbar')
-              multiWaitbar([mfilename,'2struct'],istat/length(D.locations),'label',[mfilename,': transforming raw data to struct.'],'color',[0.2 0.5 0.2])
+             %multiWaitbar([mfilename,'2struct'],istat/length(D.locations),'label',[mfilename,': transforming raw data to struct.'],'color',[0.2 0.5 0.2])
           elseif OPT.display;
              disp(['rws_waterbase_read: transforming to struct: ',num2str(istat),'/',num2str(length(D.locations))]);
           end
@@ -691,7 +692,7 @@ for ifile=1:length(fnames)
          DS.data(ifile) = D.data;
          
          if     strcmpi(OPT.display,'multiWaitbar')
-            multiWaitbar([mfilename,'lines'],it/nt,'label','loading raw data')
+            multiWaitbar([mfilename,'lines'],ifile/num2str(length(fnames)),'label','loading raw data')
          elseif OPT.display;
             disp(['rws_waterbase_read: read file ',num2str(ifile),' of ',num2str(length(fnames))]);
          end
