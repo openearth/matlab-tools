@@ -260,8 +260,8 @@ function ui_read()
                     
                     % determine grid and time
                     info.t = info.dims.globaltime_DATA;
-
-                    [info.x info.y] = meshgrid(info.dims.globalx_DATA, info.dims.globaly_DATA);
+                    info.x = info.dims.globalx_DATA;
+                    info.y = info.dims.globaly_DATA;
                 otherwise
                     error('Unsupported XBeach strucure supplied');
             end
@@ -278,8 +278,8 @@ function ui_read()
 
             % determine grid and time
             info.t = info.dims.globaltime_DATA;
-
-            [info.x info.y] = meshgrid(info.dims.globalx_DATA, info.dims.globaly_DATA);
+            info.x = info.dims.globalx_DATA;
+            info.y = info.dims.globaly_DATA;
         else
             error('No valid data supplied');
         end
@@ -429,7 +429,7 @@ function plot_2d(info, data, vars)
     for i = 1:length(vars)
         sp(i) = subplot(sy, sx, i, 'Parent', findobj(pobj, 'Tag', 'PlotPanel'));
         
-        data{i} = squeeze(data{i});
+        data{i} = squeeze(data{i})';
         
         if all(size(info.x) == size(data{i})) && all(size(info.y) == size(data{i}))
             if update
@@ -446,7 +446,7 @@ function plot_2d(info, data, vars)
             shading flat;
         end
         
-        title(vars{i});
+        title(vars{i}, 'Interpreter', 'none');
     end
     
     h = linkprop(sp, {'xlim' 'ylim' 'CameraPosition','CameraUpVector'});
