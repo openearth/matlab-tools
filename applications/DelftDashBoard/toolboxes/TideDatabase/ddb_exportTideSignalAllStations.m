@@ -1,28 +1,26 @@
 function ddb_exportTideSignalAllStations(handles)
 
-
-
 posx=[];
 
 stations=handles.Toolbox(tb).tideStations;
 
-xg=handles.Model(md).Input(id).gridX;
-yg=handles.Model(md).Input(id).gridY;
+xg=handles.Model(md).Input(ad).gridX;
+yg=handles.Model(md).Input(ad).gridY;
 
 xmin=min(min(xg));
 xmax=max(max(xg));
 ymin=min(min(yg));
 ymax=max(max(yg));
 
-ns=length(Stations.x);
+ns=length(stations.x);
 n=0;
 
-x=Stations.x;
-y=Stations.y;
+x=stations.x;
+y=stations.y;
 % x=cell2mat(x);
 % y=cell2mat(y);
-cs.Name='WGS 84';
-cs.Type='Geographic';
+cs.name='WGS 84';
+cs.type='Geographic';
 [x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
 
 for i=1:ns
@@ -31,7 +29,7 @@ for i=1:ns
        n=n+1;
        posx(n)=x(i);
        posy(n)=y(i);
-       name{n}=deblank(stations.Name{i});
+       name{n}=deblank(stations.name{i});
        istat(n)=i;
     end
 end
@@ -43,7 +41,9 @@ if ~isempty(posx)
         if m(i)>0
 
             k=istat(i);
-            cmp=Stations.ComponentSet(k);
+            cmp=stations.componentSet(k);
+            A=[];
+            G=[];
             for ii=1:length(cmp.Component)
                 comp{ii}=cmp.Component{ii};
                 A(ii,1)=cmp.Amplitude(ii);
@@ -56,7 +56,7 @@ if ~isempty(posx)
 
             [prediction,times]=delftPredict2007(comp,A,G,t0,t1,dt);
 
-            blname=deblank(stations.Name{k});
+            blname=deblank(stations.name{k});
             fname=blname;
             fname=strrep(fname,' ','');
             fname=[fname '.tek'];

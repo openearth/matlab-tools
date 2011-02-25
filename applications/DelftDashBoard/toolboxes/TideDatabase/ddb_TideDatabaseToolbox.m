@@ -111,9 +111,9 @@ exportTEK(prediction(1:end-1)',times(1:end-1)',fname,blname);
 %%
 function ExportAllTimeSeries_Callback(hObject,eventdata)
 handles=getHandles;
-if handles.Model(md).Input(ad).nrObservationPoints>0
+%if handles.Model(md).Input(ad).nrObservationPoints>0
     ddb_exportTideSignalAllStations(handles);
-end
+%end
 
 %%
 function SelectTideStation(imagefig, varargins)
