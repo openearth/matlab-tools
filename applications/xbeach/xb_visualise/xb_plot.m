@@ -63,6 +63,8 @@ function xb_plot(xb, varargin)
 
 %% read options
 
+warning('The features of the xb_plot function are also part of the xb_view function. However, xb_view is actively maintained, while this function is not. Please consider switching to xb_view.')
+
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 if ~xb_exist(xb, 'DIMS')

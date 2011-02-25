@@ -75,13 +75,13 @@ if ~exist(filename, 'file')
     error(['File does not exist [' filename ']'])
 end
 
-tlength = 1;
-
 fdir = fileparts(filename);
 
 [bcendtime rt dt trep mainang data] = deal([]);
 filenames = {};
 
+data = [];
+tlength = 1;
 fid = fopen(filename);
 while ~feof(fid)
     fline = fgetl(fid);
@@ -93,7 +93,7 @@ while ~feof(fid)
     fname = fullfile(fdir, [fname{:}]);
     filenames = [filenames {fname}];
     
-    data(:,:,:,tlength) = read_bcf(fname);
+    data = cat(3, data, read_bcf(fname));
     
     tlength = tlength+1;
 end
@@ -117,12 +117,16 @@ fdir = fileparts(filename);
 % determine dimensions
 dims = xb_read_dims(fdir);
 
+% determine time dimension based on filesize
+info = dir(filename);
+nt = info.bytes/8/(dims.globaly+1)/dims.wave_angle;
+
 % read file
 fid = fopen(filename, 'r');
 
-data = nan([dims.globaly+1 dims.wave_angle dims.globaltime+4]);
+data = nan([dims.globaly+1 dims.wave_angle nt]);
 
-for i = 1:dims.globaltime+4
+for i = 1:nt
     data(:,:,i) = fread(fid, [dims.globaly+1 dims.wave_angle], 'double');
 end
 

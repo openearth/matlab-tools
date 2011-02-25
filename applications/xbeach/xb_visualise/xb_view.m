@@ -120,6 +120,9 @@ function ui_build()
         'Min', 1, 'Max', length(info.t), 'Value', length(info.t), 'SliderStep', sliderstep, ...
         'Callback', @ui_plot);
 
+    uicontrol(pobj, 'Style', 'text', 'Tag', 'TextSlider', ...
+        'String', num2str(info.t(end)), 'HorizontalAlignment', 'center');
+    
     uicontrol(pobj, 'Style', 'text', 'Tag', 'TextSlider1', ...
         'String', num2str(info.t(1)), 'HorizontalAlignment', 'left');
 
@@ -140,6 +143,11 @@ function ui_build()
         'String', 'surf', ...
         'Enable', 'off', ...
         'Callback', @ui_togglesurf);
+    
+    uicontrol(pobj, 'Style', 'checkbox', 'Tag', 'ToggleCAxisFix', ...
+        'String', 'fix caxis', ...
+        'Enable', 'off', ...
+        'Callback', @ui_togglecaxis);
 
     % reload button
     uicontrol(pobj, 'Style', 'pushbutton', 'Tag', 'ButtonReload', ...
@@ -157,6 +165,7 @@ function ui_build()
     % set exceptions
     if info.ndims == 2
         set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'on');
+        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'on');
     end
     
     if strcmpi(info.type, 'input')
@@ -201,11 +210,13 @@ function ui_resize(obj, event)
     set(findobj(obj, 'Tag', 'PlotPanel'), 'Position', [[.075 .2].*winsize [.75 .75].*winsize]);
     set(findobj(obj, 'Tag', 'Slider1'), 'Position', [[.1 .125].*winsize [.7 .025].*winsize]);
     set(findobj(obj, 'Tag', 'Slider2'), 'Position', [[.1 .075].*winsize [.7 .025].*winsize]);
-    set(findobj(obj, 'Tag', 'TextSlider1'), 'Position', [[.1 .025].*winsize [.3 .025].*winsize]);
-    set(findobj(obj, 'Tag', 'TextSlider2'), 'Position', [[.5 .025].*winsize [.3 .025].*winsize]);
+    set(findobj(obj, 'Tag', 'TextSlider'), 'Position', [[.35 .025].*winsize [.2 .025].*winsize]);
+    set(findobj(obj, 'Tag', 'TextSlider1'), 'Position', [[.1 .025].*winsize [.2 .025].*winsize]);
+    set(findobj(obj, 'Tag', 'TextSlider2'), 'Position', [[.6 .025].*winsize [.2 .025].*winsize]);
     set(findobj(obj, 'Tag', 'SelectVar'), 'Position', [[.85 .65].*winsize [.1 .25].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleDiff'), 'Position', [[.85 .6].*winsize [.1 .05].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleSurf'), 'Position', [[.85 .55].*winsize [.1 .05].*winsize]);
+    set(findobj(obj, 'Tag', 'ToggleCAxisFix'), 'Position', [[.85 .5].*winsize [.1 .05].*winsize]);
     set(findobj(obj, 'Tag', 'ButtonReload'), 'Position', [[.85 .125].*winsize [.1 .035].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleAnimate'), 'Position', [[.85 .07].*winsize [.1 .035].*winsize]);
     set(findobj(obj, 'Tag', 'ReadIndicator'), 'Position', [[.85 .25].*winsize [.1 .025].*winsize]);
@@ -235,8 +246,22 @@ function ui_togglesurf(obj, event)
     info.surf = get(obj, 'Value');
     set(pobj, 'userdata', info);
 
-    cla(findobj(pobj, 'Type', 'Axes'));
+    cla(get_axis);
 
+    ui_plot(obj, []);
+end
+
+function ui_togglecaxis(obj, event)
+    pobj = findobj('Tag', 'xb_view');
+    
+    info = get(pobj, 'userdata');
+    if get(obj, 'Value')
+        info.caxis = get(get_axis, 'CLim');
+    else
+        info.caxis = [];
+    end
+    set(pobj, 'userdata', info);
+    
     ui_plot(obj, []);
 end
 
@@ -307,6 +332,7 @@ function ui_read()
         
         info.diff = false;
         info.surf = false;
+        info.caxis = [];
         
         set(pobj, 'userdata', info);
     else
@@ -322,12 +348,15 @@ function data = ui_getdata(info, vars, slider)
     
     data = cell(size(vars));
     
+    t1 = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'));
+    t2 = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'));
+    
     if exist('slider', 'var') && slider == 1
         slider = 1;
-        t = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'));
+        t = t1;
     else
         slider = 2;
-        t = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'));
+        t = t2;
     end
     
     switch info.type
@@ -351,6 +380,13 @@ function data = ui_getdata(info, vars, slider)
         data = cellfun(@minus, data, data0, 'UniformOutput', false);
     end
     
+    tobj = findobj(pobj, 'Tag', 'TextSlider');
+    if info.diff
+        set(tobj, 'String', [num2str(info.t(t2)) ' - ' num2str(info.t(t1))]);
+    else
+        set(tobj, 'String', num2str(info.t(t2)));
+    end
+    
     set(iobj, 'Visible', 'off');
 end
 
@@ -359,7 +395,7 @@ function ui_plot(obj, event)
     info = get(pobj, 'userdata');
     
     if ismember(get(obj, 'Tag'), {'SelectVar' 'ToggleSurf'})
-        delete(findobj(pobj, 'Type', 'Axes', '-not', 'Tag', 'legend'));
+        delete(get_axis);
     end
     
     vars = selected_vars;
@@ -403,7 +439,7 @@ function plot_1d(info, data, vars)
     pobj = findobj('Tag', 'xb_view');
     
     update = true;
-    ax = findobj(pobj, 'Type', 'Axes', '-not', 'Tag', 'legend');
+    ax = get_axis;
     if isempty(ax)
         update = false;
         ax = axes('Parent', findobj(pobj, 'Tag', 'PlotPanel')); hold on;
@@ -414,9 +450,9 @@ function plot_1d(info, data, vars)
     color = 'rgbcymk';
     for i = 1:length(vars)
         if update
-            set(lines(i), 'XData', info.x(1,:), 'YData', squeeze(data{i}(:,1,:)));
+            set(lines(i), 'XData', info.x(:,1), 'YData', squeeze(data{i}(:,1,:)));
         else
-            plot(ax, info.x(1,:), squeeze(data{i}(:,1,:)), ...
+            plot(ax, info.x(:,1), squeeze(data{i}(:,1,:)), ...
                 ['-' color(mod(i-1,length(color))+1)], ...
                 'DisplayName', vars{i});
         end
@@ -430,7 +466,7 @@ end
 function plot_2d(info, data, vars)
     pobj = findobj('Tag', 'xb_view');
     
-    ax = findobj(pobj, 'Type', 'Axes', '-not', 'Tag', 'legend');
+    ax = get_axis;
     if isempty(ax)
         update = false;
     else
@@ -460,7 +496,18 @@ function plot_2d(info, data, vars)
                 end
             end
         
-            shading flat;
+            shading flat; colorbar;
+        end
+        
+        % FIXME
+        if iscell(info.caxis)
+            info.caxis = info.caxis{1};
+        end
+        
+        if ~isempty(info.caxis)
+            set(sp(i), 'CLim', info.caxis);
+        else
+            set(sp(i), 'CLimMode', 'auto');
         end
         
         title(vars{i}, 'Interpreter', 'none');
@@ -475,4 +522,9 @@ function vars = selected_vars()
     vars = get(findobj(pobj, 'Tag', 'SelectVar'), 'String');
     vars = vars(get(findobj(pobj, 'Tag', 'SelectVar'), 'Value'),:);
     vars = strtrim(num2cell(vars, 2));
+end
+
+function ax = get_axis()
+    pobj = findobj('Tag', 'xb_view');
+    ax = findobj(pobj, 'Type', 'Axes', 'Tag', '');
 end
