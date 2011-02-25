@@ -17,7 +17,8 @@ while ~isempty(tx0)
     if and(ischar(tx0), size(tx0>0))
         nr=nr+1;
         handles.Model(md).Input(id).discharges(nr).name=deblank(tx0(1:20));
-        handles.Model(md).Input(id).discharges(nr).type='Normal';
+        handles.Model(md).Input(id).dischargeNames{nr}=deblank(tx0(1:20));
+        handles.Model(md).Input(id).discharges(nr).type='normal';
         handles.Model(md).Input(id).discharges(nr).mOut=0;
         handles.Model(md).Input(id).discharges(nr).nOut=0;
         handles.Model(md).Input(id).discharges(nr).kOut=0;
@@ -33,12 +34,12 @@ while ~isempty(tx0)
         if length(v0)>4
             switch lower(v0{5})
                 case{'p'}
-                    handles.Model(md).Input(id).discharges(nr).type='In-out';
+                    handles.Model(md).Input(id).discharges(nr).type='inout';
                     handles.Model(md).Input(id).discharges(nr).mOut=str2double(v0{6});
                     handles.Model(md).Input(id).discharges(nr).nOut=str2double(v0{7});
                     handles.Model(md).Input(id).discharges(nr).kOut=str2double(v0{8});
                 case{'w'}
-                    handles.Model(md).Input(id).discharges(nr).type='Walking';
+                    handles.Model(md).Input(id).discharges(nr).type='walking';
             end
         end
     else

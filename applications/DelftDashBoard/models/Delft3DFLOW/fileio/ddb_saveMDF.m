@@ -77,7 +77,7 @@ end
 if Flow.tracers
     for i=1:Flow.nrTracers
         k=k+1;
-        MDF.(['Namc' num2str(k)])=[Flow.Tracer(i).name repmat(' ',1,20-length(Flow.tracer(i).name))];
+        MDF.(['Namc' num2str(k)])=[Flow.tracer(i).name repmat(' ',1,20-length(Flow.tracer(i).name))];
     end
 end
 switch Flow.windType

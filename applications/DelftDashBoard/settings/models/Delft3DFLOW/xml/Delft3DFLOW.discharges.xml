@@ -4,9 +4,9 @@
   <element>
     <tag>listdischarges</tag>
     <style>listbox</style>
-    <position>45 10 150 140</position>
+    <position>45 10 150 145</position>
     <tooltipstring>Select discharge</tooltipstring>
-    <text>Observation Points</text>
+    <text>Discharge Points</text>
     <textposition>above-center</textposition>
     <variable>handles.Model(md).Input(ad).activeDischarge</variable>
     <type>integer</type>
@@ -21,12 +21,12 @@
   <element>
     <tag>paneldischarges</tag>
     <style>panel</style>
-    <position>205 10 170 140</position>
+    <position>205 10 210 145</position>
   </element>
   <element>
-    <tag>editobsname</tag>
+    <tag>editdisname</tag>
     <style>edit</style>
-    <position>245 120 120 20</position>
+    <position>245 125 160 20</position>
     <text>Name</text>
     <onchange>ddb_Delft3DFLOW_discharges</onchange>
     <option1>edit</option1>
@@ -59,9 +59,9 @@
     </dependencies>
   </element>
   <element>
-    <tag>editobsm</tag>
+    <tag>editdism</tag>
     <style>edit</style>
-    <position>245 95 50 20</position>
+    <position>245 100 40 20</position>
     <text>M</text>
     <onchange>ddb_Delft3DFLOW_discharges</onchange>
     <option1>edit</option1>
@@ -94,9 +94,9 @@
     </dependencies>
   </element>
   <element>
-    <tag>editobsn</tag>
+    <tag>editdisn</tag>
     <style>edit</style>
-    <position>315 95 50 20</position>
+    <position>305 100 40 20</position>
     <text>N</text>
     <onchange>ddb_Delft3DFLOW_discharges</onchange>
     <option1>edit</option1>
@@ -129,9 +129,314 @@
     <tooltipstring>Edit discharge index N</tooltipstring>
   </element>
   <element>
+    <tag>editdisk</tag>
+    <style>edit</style>
+    <position>365 100 40 20</position>
+    <text>K</text>
+    <onchange>ddb_Delft3DFLOW_discharges</onchange>
+    <option1>edit</option1>
+    <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).K</variable>
+    <type>integer</type>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletedischarge</tag>
+          <tag>pushadddischarge</tag>
+          <tag>pushopendischargesfile</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrDischarges</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listdischarges</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+    <tooltipstring>Edit discharge layer (enter 0 for uniform distribution over water column)</tooltipstring>
+  </element>
+
+
+
+
+  <element>
+    <tag>radiolinear</tag>
+    <style>radiobutton</style>
+    <position>280 75</position>
+    <text>Linear</text>
+    <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).interpolation</variable>
+    <value>linear</value>
+    <type>string</type>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletedischarge</tag>
+          <tag>pushadddischarge</tag>
+          <tag>pushopensrcfile</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrDischarges</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listdischarges</tag>
+          <tag>radioblock</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+    <tooltipstring>Edit discharge index N2</tooltipstring>
+  </element>
+
+  <element>
+    <tag>radioblock</tag>
+    <style>radiobutton</style>
+    <position>340 75</position>
+    <text>Linear</text>
+    <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).interpolation</variable>
+    <value>block</value>
+    <type>string</type>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletedischarge</tag>
+          <tag>pushadddischarge</tag>
+          <tag>pushopensrcfile</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrDischarges</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>listdischarges</tag>
+          <tag>radiolinear</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+    <tooltipstring>Edit discharge index N2</tooltipstring>
+  </element>
+
+  <element>
+    <tag>textinterpolation</tag>
+    <style>text</style>
+    <position>210 77</position>
+    <text>Interpolation</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletethindam</tag>
+          <tag>pushaddthindam</tag>
+          <tag>pushopenthindamsfile</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrDischarges</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+
+
+  <element>
+    <tag>selecttype</tag>
+    <style>popupmenu</style>
+    <text>Type</text>
+    <position>245 50 120 20</position>
+    <type>string</type>
+    <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).type</variable>
+    <list>
+      <texts>
+        <text>Normal</text>
+        <text>Momentum</text>
+        <text>Walking</text>
+        <text>Intake / Outfall</text>
+      </texts>
+      <values>
+        <value>normal</value>
+        <value>momentum</value>
+        <value>walking</value>
+        <value>inout</value>
+      </values>
+    </list> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletethindam</tag>
+          <tag>pushaddthindam</tag>
+          <tag>pushopenthindamsfile</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrDischarges</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+
+
+  <element>
+    <tag>editoutfallm</tag>
+    <style>edit</style>
+    <position>245 20 40 20</position>
+    <text>M</text>
+    <onchange>ddb_Delft3DFLOW_discharges</onchange>
+    <option1>edit</option1>
+    <tooltipstring>Edit outfall index M</tooltipstring>
+    <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).outM</variable>
+    <type>integer</type>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletedischarge</tag>
+          <tag>pushadddischarge</tag>
+          <tag>pushopendischargesfile</tag>
+          <tag>selecttype</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrDischarges</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).type</variable>
+            <value>inout</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selecttype</tag>
+          <tag>listdischarges</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editoutfalln</tag>
+    <style>edit</style>
+    <position>305 20 40 20</position>
+    <text>N</text>
+    <onchange>ddb_Delft3DFLOW_discharges</onchange>
+    <option1>edit</option1>
+    <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).outN</variable>
+    <type>integer</type>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletedischarge</tag>
+          <tag>pushadddischarge</tag>
+          <tag>pushopendischargesfile</tag>
+          <tag>selecttype</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrDischarges</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).type</variable>
+            <value>inout</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selecttype</tag>
+          <tag>listdischarges</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+    <tooltipstring>Edit outfall index N</tooltipstring>
+  </element>
+  <element>
+    <tag>editoutfallk</tag>
+    <style>edit</style>
+    <position>365 20 40 20</position>
+    <text>K</text>
+    <onchange>ddb_Delft3DFLOW_discharges</onchange>
+    <option1>edit</option1>
+    <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).outK</variable>
+    <type>integer</type>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushdeletedischarge</tag>
+          <tag>pushadddischarge</tag>
+          <tag>pushopendischargesfile</tag>
+          <tag>selecttype</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).nrDischarges</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).type</variable>
+            <value>inout</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selecttype</tag>
+          <tag>listdischarges</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+    <tooltipstring>Edit outfall layer (enter 0 for uniform distribution over water column)</tooltipstring>
+  </element>
+  <element>
     <tag>toggleadddischarge</tag>
     <style>togglebutton</style>
-    <position>395 85 70 20</position>
+    <position>425 135 70 20</position>
     <text>Add</text>
     <tooltipstring>Add discharge</tooltipstring>
     <onchange>ddb_Delft3DFLOW_discharges</onchange>
@@ -141,7 +446,7 @@
   <element>
     <tag>pushdeletedischarge</tag>
     <style>pushbutton</style>
-    <position>395 60 70 20</position>
+    <position>425 110 70 20</position>
     <text>Delete</text>
     <tooltipstring>Delete discharge</tooltipstring>
     <callback>ddb_Delft3DFLOW_discharges</callback>
@@ -150,7 +455,7 @@
   <element>
     <tag>toggleselectdischarge</tag>
     <style>togglebutton</style>
-    <position>395 35 70 20</position>
+    <position>425 85 70 20</position>
     <text>Select</text>
     <tooltipstring>Select discharge</tooltipstring>
     <onchange>ddb_Delft3DFLOW_discharges</onchange>
@@ -160,7 +465,7 @@
   <element>
     <tag>togglechangedischarge</tag>
     <style>togglebutton</style>
-    <position>395 10 70 20</position>
+    <position>425 60 70 20</position>
     <text>Change</text>
     <tooltipstring>Change discharge</tooltipstring>
     <onchange>ddb_Delft3DFLOW_discharges</onchange>
@@ -168,16 +473,40 @@
     <variable>handles.Model(md).Input(ad).changeDischarge</variable>
   </element>
   <element>
-    <tag>pushopendischarges</tag>
+    <tag>pusheditdischarge</tag>
+    <style>pushbutton</style>
+    <position>425 10 70 20</position>
+    <text>Edit Data</text>
+    <tooltipstring>Edit discharge data</tooltipstring>
+    <callback>ddb_Delft3DFLOW_discharges</callback>
+    <option1>editdischargedata</option1>
+  </element>
+  <element>
+    <tag>textsrcfile</tag>
+    <style>text</style>
+    <position>570 137</position>
+    <text>Sources</text>
+    <horal>right</horal>
+  </element>
+  <element>
+    <tag>textsrcfile</tag>
+    <style>text</style>
+    <position>570 112</position>
+    <text>Discharges</text>
+    <horal>right</horal>
+  </element>
+  <element>
+    <tag>pushopensrcfile</tag>
     <style>pushselectfile</style>
-    <position>485 60 70 20</position>
+    <position>575 135 70 20</position>
     <tooltipstring>Open discharges file</tooltipstring>
     <text>Open</text>
     <variable>handles.Model(md).Input(ad).srcFile</variable>
+    <showfilename>no</showfilename>
     <extension>*.src</extension>
     <selectiontext>Select discharges File</selectiontext>
     <onchange>ddb_Delft3DFLOW_discharges</onchange>
-    <option1>openfile</option1>    
+    <option1>opensrcfile</option1>    
     <dependencies>
       <dependency>
         <action>update</action>
@@ -188,16 +517,48 @@
     </dependencies>
   </element>
   <element>
-    <tag>pushsavedischarges</tag>
+    <tag>pushsavesrcfile</tag>
     <style>pushsavefile</style>
-    <position>485 35 70 20</position>
+    <position>655 135 70 20</position>
     <tooltipstring>Save discharges file</tooltipstring>
     <text>Save</text>
     <variable>handles.Model(md).Input(ad).srcFile</variable>
-    <showfilename>no</showfilename>
     <extension>*.src</extension>
     <selectiontext>Select discharges File</selectiontext>
     <onchange>ddb_Delft3DFLOW_discharges</onchange>
-    <option1>savefile</option1>
+    <option1>savesrcfile</option1>
+  </element>
+  <element>
+    <tag>pushopendisfile</tag>
+    <style>pushselectfile</style>
+    <position>575 110 70 20</position>
+    <tooltipstring>Open discharges file</tooltipstring>
+    <text>Open</text>
+    <variable>handles.Model(md).Input(ad).disFile</variable>
+    <showfilename>no</showfilename>
+    <extension>*.dis</extension>
+    <selectiontext>Select discharges File</selectiontext>
+    <onchange>ddb_Delft3DFLOW_discharges</onchange>
+    <option1>opendisfile</option1>    
+    <dependencies>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>pushsavedischarges</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>pushsavedisfile</tag>
+    <style>pushsavefile</style>
+    <position>655 110 70 20</position>
+    <tooltipstring>Save discharges file</tooltipstring>
+    <text>Save</text>
+    <variable>handles.Model(md).Input(ad).disFile</variable>
+    <extension>*.dis</extension>
+    <selectiontext>Select discharges File</selectiontext>
+    <onchange>ddb_Delft3DFLOW_discharges</onchange>
+    <option1>savedisfile</option1>
   </element>
 </root>

@@ -29,7 +29,7 @@ for i=1:nr
     switch lower(handles.Model(md).Input(id).discharges(i).type)
         case{'walking'}
             ctype=' W';
-        case{'in-out'}
+        case{'inout'}
             ctype=' P';
             cmout=num2str(handles.Model(md).Input(id).discharges(i).mOut);
             cnout=num2str(handles.Model(md).Input(id).discharges(i).nOut);

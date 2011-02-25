@@ -11,6 +11,8 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeDischarge=0;
     handles.Model(md).Input(ad).deleteDischarge=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','discharges');
+    setUIElements('delft3dflow.discharges');
+    setHandles(handles);
 else
     
     opt=varargin{1};
@@ -29,6 +31,8 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
+            refreshDischarges;
 
         case{'delete'}
             handles.Model(md).Input(ad).addDischarge=0;
@@ -40,6 +44,8 @@ else
                 % Delete discharge selected from list
                 handles=deleteDischarge(handles);
             end
+            setHandles(handles);
+            refreshDischarges;
 
         case{'select'}
             handles.Model(md).Input(ad).addDischarge=0;
@@ -52,6 +58,8 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
+            refreshDischarges;
                         
         case{'change'}
             handles.Model(md).Input(ad).addDischarge=0;
@@ -64,6 +72,8 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
+            refreshDischarges;
 
         case{'edit'}
             handles.Model(md).Input(ad).addDischarge=0;
@@ -81,6 +91,16 @@ else
             handles.Model(md).Input(ad).dischargeNames{n}=name;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','discharges');
             clearInstructions;
+            setHandles(handles);
+            refreshDischarges;
+
+        case{'editdischargedata'}
+            handles.Model(md).Input(ad).selectDischarge=0;
+            handles.Model(md).Input(ad).changeDischarge=0;
+            handles.Model(md).Input(ad).deleteDischarge=0;
+            setHandles(handles);
+            clearInstructions;
+            ddb_editD3DDischargeData(handles.Model(md).Input(ad).activeDischarge)
 
         case{'selectfromlist'}
             handles.Model(md).Input(ad).addDischarge=0;
@@ -90,20 +110,27 @@ else
             handles.Model(md).Input(ad).deleteDischarge=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','discharges');
             clearInstructions;
+            setHandles(handles);
+            refreshDischarges;
 
-        case{'openfile'}
-            handles=ddb_readObsFile(handles);
+        case{'opensrcfile'}
+            handles=ddb_readSrcFile(handles);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','discharges');
+            setHandles(handles);
+            refreshDischarges;
 
-        case{'savefile'}
-            ddb_saveObsFile(handles,ad);
+        case{'savesrcfile'}
+            ddb_saveSrcFile(handles,ad);
+
+        case{'opendisfile'}
+            handles=ddb_readDisFile(handles);
+            setHandles(handles);
+
+        case{'savedisfile'}
+            ddb_saveDisFile(handles,ad);
 
     end
 end
-
-setHandles(handles);
-
-refreshDischarges;
 
 %%
 function addDischarge(x,y)
@@ -123,6 +150,7 @@ if ~isempty(m1)
             % Add mode
             handles.Model(md).Input(ad).nrDischarges=handles.Model(md).Input(ad).nrDischarges+1;
             iac=handles.Model(md).Input(ad).nrDischarges;
+            handles=ddb_initializeDischarge(handles,ad,iac);
         end
         handles.Model(md).Input(ad).discharges(iac).M=m1;
         handles.Model(md).Input(ad).discharges(iac).N=n1;
@@ -204,10 +232,17 @@ setInstructions({'','','Click new position of discharge'});
 %%
 function refreshDischarges
 setUIElement('delft3dflow.discharges.listdischarges');
-setUIElement('delft3dflow.discharges.editobsm');
-setUIElement('delft3dflow.discharges.editobsn');
-setUIElement('delft3dflow.discharges.editobsname');
+setUIElement('delft3dflow.discharges.editdism');
+setUIElement('delft3dflow.discharges.editdisn');
+setUIElement('delft3dflow.discharges.editdisname');
+setUIElement('delft3dflow.discharges.radiolinear');
+setUIElement('delft3dflow.discharges.radioblock');
+setUIElement('delft3dflow.discharges.selecttype');
+setUIElement('delft3dflow.discharges.textinterpolation');
 setUIElement('delft3dflow.discharges.toggleadddischarge');
 setUIElement('delft3dflow.discharges.toggleselectdischarge');
 setUIElement('delft3dflow.discharges.togglechangedischarge');
+setUIElement('delft3dflow.discharges.editoutfallm');
+setUIElement('delft3dflow.discharges.editoutfalln');
+setUIElement('delft3dflow.discharges.editoutfallk');
 

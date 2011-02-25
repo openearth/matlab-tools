@@ -49,14 +49,14 @@ for n=1:Flow.nrDischarges
             Flow.discharges(n).Sediment(k).timeSeries=tab.Data(:,np);
         end
     end
-    for k=1:Flow.NrTracers
+    for k=1:Flow.nrTracers
         Flow.discharges(n).tracer(k).timeSeries=zeros(size(t));
-        np=findParameter(Info,nt,Flow.Tracer(k).Name);
+        np=findParameter(Info,nt,Flow.tracer(k).name);
         if np>0
             Flow.discharges(n).tracer(k).timeSeries=tab.Data(:,np);
         end
     end
-    if strcmpi(Flow.discharges(n).Type,'momentum')
+    if strcmpi(Flow.discharges(n).type,'momentum')
         np=findParameter(Info,nt,'flow magnitude');
         if np>0
             Flow.discharges(n).timeSeriesM=tab.Data(:,np);

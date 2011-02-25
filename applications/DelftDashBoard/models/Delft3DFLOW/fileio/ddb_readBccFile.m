@@ -9,8 +9,8 @@ fname=Flow.bccFile;
 Info=ddb_bct_io('read',fname);
 
 for nb=1:Flow.nrOpenBoundaries
-    if Flow.salinity.Include
-        nt=FindTable(Info,Flow.openBoundaries(nb).Name,'salinity');
+    if Flow.salinity.include
+        nt=FindTable(Info,Flow.openBoundaries(nb).name,'salinity');
         if nt>0
             tab=Info.Table(nt);
             itd=tab.ReferenceTime;
@@ -33,7 +33,7 @@ for nb=1:Flow.nrOpenBoundaries
                     Flow.openBoundaries(nb).salinity.profile='3d-profile';
             end
         else
-            t=[Flow.StartTime;Flow.StopTime];
+            t=[Flow.startTime;Flow.stopTime];
             Flow.openBoundaries(nb).salinity.timeSeriesT=t;
             Flow.openBoundaries(nb).salinity.timeSeriesA=[0;0];
             Flow.openBoundaries(nb).salinity.timeSeriesB=[0;0];
@@ -64,7 +64,7 @@ for nb=1:Flow.nrOpenBoundaries
                     Flow.openBoundaries(nb).temperature.profile='3d-profile';
             end
         else
-            t=[Flow.StartTime;Flow.StopTime];
+            t=[Flow.startTime;Flow.stopTime];
             Flow.openBoundaries(nb).temperature.timeSeriesT=t;
             Flow.openBoundaries(nb).temperature.timeSeriesA=[0;0];
             Flow.openBoundaries(nb).temperature.timeSeriesB=[0;0];
@@ -96,7 +96,7 @@ for nb=1:Flow.nrOpenBoundaries
                         Flow.openBoundaries(nb).sediment(j).profile='3d-profile';
                 end
             else
-                t=[Flow.StartTime;Flow.StopTime];
+                t=[Flow.startTime;Flow.stopTime];
                 Flow.openBoundaries(nb).sediment(j).timeSeriesT=t;
                 Flow.openBoundaries(nb).sediment(j).timeSeriesA=[0;0];
                 Flow.openBoundaries(nb).sediment(j).timeSeriesB=[0;0];
@@ -106,7 +106,7 @@ for nb=1:Flow.nrOpenBoundaries
     end
     if Flow.tracers
         for j=1:Flow.nrTracers
-            nt=FindTable(Info,Flow.openBoundaries(nb).Name,Flow.tracer(j).Name);
+            nt=FindTable(Info,Flow.openBoundaries(nb).name,Flow.tracer(j).name);
             if nt>0
                 tab=Info.Table(nt);
                 itd=tab.ReferenceTime;
@@ -129,7 +129,7 @@ for nb=1:Flow.nrOpenBoundaries
                         Flow.openBoundaries(nb).tracer(j).profile='3d-profile';
                 end
             else
-                t=[Flow.StartTime;Flow.StopTime];
+                t=[Flow.startTime;Flow.stopTime];
                 Flow.openBoundaries(nb).tracer(j).timeSeriesT=t;
                 Flow.openBoundaries(nb).tracer(j).timeSeriesA=[0;0];
                 Flow.openBoundaries(nb).tracer(j).timeSeriesB=[0;0];

@@ -70,7 +70,7 @@ for n=1:nr
             Info.Table(n).Data(:,k)=Flw.discharges(n).tracer(i).timeSeries;
         end
     end
-    if strcmpi(Flw.discharges(n).Type,'momentum')
+    if strcmpi(Flw.discharges(n).type,'momentum')
         k=k+1;
         Info.Table(n).Parameter(k).Name='flow magnitude';
         Info.Table(n).Parameter(k).Unit='[m/s]';
