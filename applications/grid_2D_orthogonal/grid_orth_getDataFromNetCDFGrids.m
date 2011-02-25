@@ -119,7 +119,7 @@ clear x y minx maxx miny maxy
 for i = 1:length(mapurls)
     % report on progress
     disp(' ')
-    [pathstr, name, ext, versn] = fileparts(mapurls{i,1}); %#ok<*NASGU>
+    [pathstr, name, ext] = fileparts(mapurls{i,1}); %#ok<*NASGU>
     disp(['Processing (' num2str(i) '/' num2str(length(mapurls)) ') : ' name ext])
     
     % get data and plot
