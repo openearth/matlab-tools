@@ -65,9 +65,6 @@ else
     str=fgets(fid);
     noval=str2double(str(13:end));
     
-    
-
-    
     if ~isempty(irows) || ~isempty(icols)
         frewind(fid);
         nr=irows(2)-irows(1)+1;
@@ -139,7 +136,6 @@ else
     varargout{3}=z;
     
     fclose(fid);
-    
     
 end
 

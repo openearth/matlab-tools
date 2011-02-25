@@ -280,6 +280,7 @@ panel=get(h,'UserData');
 %         drawnow;
 %     end
 % end
+drawnow;
 
 set(panel.largeTabHandles(panel.activeTab),'Visible','off');
 %drawnow('expose');

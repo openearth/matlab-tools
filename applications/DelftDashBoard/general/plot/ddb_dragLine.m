@@ -61,7 +61,12 @@ if ~isempty(h)
     x=usd.x;
     y=usd.y;
     delete(h);
-    fcn(x,y);
+    xax=get(gca,'XLim');
+    yax=get(gca,'YLim');
+    % Make sure line is inside axis
+    if x(1)>xax(1) && x(1)<xax(2) && x(2)>xax(1) && x(2)<xax(2) && y(1)>yax(1) && y(1)<yax(2) && y(2)>yax(1) && y(2)<yax(2)
+        fcn(x,y);
+    end
 end
 
 %%
