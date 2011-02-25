@@ -184,7 +184,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).nrCrossSection</variable>
+            <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>

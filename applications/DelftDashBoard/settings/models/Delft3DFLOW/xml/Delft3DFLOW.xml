@@ -65,8 +65,9 @@
         <tab>
           <tag>discharges</tag>
           <tabstring>Discharges</tabstring>
-          <callback>ddb_editD3DFlowDischarges</callback>
-          <enable>0</enable>
+          <callback>ddb_Delft3DFLOW_discharges</callback>
+          <elements>Delft3DFLOW.discharges.xml</elements>
+          <enable>1</enable>
         </tab>
         <tab>
           <tag>monitoring</tag>

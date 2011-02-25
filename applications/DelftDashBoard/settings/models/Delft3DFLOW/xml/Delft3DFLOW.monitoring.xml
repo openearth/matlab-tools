@@ -24,7 +24,7 @@
         <tabstring>Drogues</tabstring>
         <callback>ddb_Delft3DFLOW_drogues</callback>
         <elements>Delft3DFLOW.monitoring.drogues.xml</elements>
-        <enable>0</enable>
+        <enable>1</enable>
       </tab>
     </tabs>
   </element>
