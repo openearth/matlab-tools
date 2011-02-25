@@ -13,8 +13,16 @@ disp('Retrieving map info from dataset ...')
 
 % check for catalog.nc link
 if strcmpi(OPT.dataset(end-9:end),'catalog.nc')
+    
     OPT.catalognc = OPT.dataset;
     OPT.urls = cellstr([nc_varget(OPT.dataset,'urlPath')]');
+    
+    % temporary fix!!! because of wrong catalog.nc - fix catalog.nc then remove this fix
+    if ~isempty(strfind(OPT.urls{1},'puma_nc'))
+        OPT.urls = cellfun(@strrep, OPT.urls, repmat({'\'},size(OPT.urls)),repmat({'/'},size(OPT.urls)),'uniformoutput', false);
+        OPT.urls = cellfun(@strrep, OPT.urls, repmat({'../puma_nc'},size(OPT.urls)),repmat({'http://192.168.158.80:8080/thredds/dodsC/opendap'},size(OPT.urls)),'uniformoutput', false);
+    end    
+%     http://192.168.158.80:8080/thredds/dodsC/opendap/elevation_data/gebiedsmodel_2.5x2.5_filled/catalog.nc
 else
     OPT.urls     = opendap_catalog(OPT.dataset,'ignoreCatalogNc',0);
     isCatalogNc = false(length(OPT.urls),1);
