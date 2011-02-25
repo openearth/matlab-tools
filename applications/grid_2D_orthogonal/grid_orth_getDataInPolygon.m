@@ -204,7 +204,7 @@ try axes(ah); end; hold on
 if ~all(OPT.polygon(1,:)==OPT.polygon(end,:))
     OPT.polygon = [OPT.polygon;OPT.polygon(1,:)];
 end
-ph = plot(ah, OPT.polygon(:,1),OPT.polygon(:,2),'g');drawnow
+ph = plot(OPT.polygon(:,1),OPT.polygon(:,2),'g');drawnow
 set(ph,'linewidth',2,'tag','selectionpoly'); 
 
 %axis([min(x) max(x) min(y) max(y)]) % does not work
@@ -241,6 +241,7 @@ else
     miny = min(OPT.polygon(:,2));
     maxy = max(OPT.polygon(:,2));
     
+    % included the min and max statements to fix a bug that allowed return of empty minx, maxx, miny, maxy
     minx  = X1(find(X1>minx, 1, 'first'));
     maxx  = X1(find(X1<maxx, 1, 'last'));
     miny  = Y1(find(Y1>miny, 1, 'first'));
