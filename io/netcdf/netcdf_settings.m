@@ -88,11 +88,11 @@ function netcdf_settings(varargin)
    
       
       if     strcmpi(version('-release'),'2010b')
-      java2add         = path2os([ncroot,'netcdfAll-4.2.jar']); % 'toolsUI-4.2.jar' % same functionality but bigger
+      java2add         = path2os([ncroot,'netcdfAll-4.2.jar']); % 'toolsUI-4.2.jar' has same functionality but is bigger
       elseif strcmpi(version('-release'),'R14')
       java2add         = path2os([ncroot,'netcdf-2.2.20.jar']); %
       else
-      java2add         = path2os([ncroot,'netcdfAll-4.1.jar']); % 'toolsUI-4.1.jar' % same functionality but bigger
+      java2add         = path2os([ncroot,'netcdfAll-4.1.jar']); % 'toolsUI-4.1.jar' has same functionality but is bigger
       end
 
       dynjavaclasspath = path2os(javaclasspath);
@@ -103,7 +103,7 @@ function netcdf_settings(varargin)
          if ~(OPT.quiet)
            disp(' Adding <a href="http://www.unidata.ucar.edu/software/netcdf-java/">netCDF-JAVA</a>, please wait ...')
            disp(['  netCDF-JAVA library for OPeNDAP support added: ',filename(java2add)]);
-           disp(['  Note: maximal size of java memory is = ',num2str(java.lang.Runtime.getRuntime.maxMemory/2^20),' Mb'])
+           disp(['  Note: maximal size of java memory is = ',num2str(java.lang.Runtime.getRuntime.maxMemory/2^20),' Mb']); % 2^20 = 1 Mbyte
            disp( '  Loading large matrices gives java heap errors, for expansion see:')
            disp( '  http://www.mathworks.com/support/solutions/en/data/1-18I2C/')
          end

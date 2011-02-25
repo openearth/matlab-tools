@@ -7,7 +7,7 @@ function OK =  netcdf_test
 disp([mfilename,' test 1'])
 %test_opendap_local_system
 
-%% java heap space
+%% java heap space has by default  130,875,392 bytes
 disp([mfilename,' test 2'])
 f = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
 

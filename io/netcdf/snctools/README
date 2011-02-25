@@ -12,7 +12,10 @@ If you have R13 or earlier and just need mexnc, then you should look at
 compiling mexnc yourself.  
 
 +-----------------------------------------------------------------------
-BASIC USAGE
+BASIC INSTALLATION AND USAGE
+
+In order to download SNCTOOLS, please refer to the website, 
+http://mexcdf.sourceforge.net/
 
 R2010b
     With R2010b, you have native read/write support for netCDF-3 files
@@ -25,6 +28,22 @@ R2010b
     allow you to read OPeNDAP URLs and GRIB files.  See the USE_JAVA
     section below.
 
+    After downloading and unpacking the software, issue the following
+    instructions from MATLAB (assuming that your current working
+    directory in MATLAB is where you downloaded and unpacked the
+    software):
+
+        addpath ([pwd '/mexcdf/mexnc']);
+        addpath ([pwd '/mexcdf/snctools']);
+        javaaddpath([pwd '/netcdfAll-4.2.jar']);
+        setpref('SNCTOOLS','USE_JAVA',true);
+        setpref('SNCTOOLS','USE_MEXNC',false);
+
+    You can test out your installation with
+
+        cd mexcdf/snctools/tests 
+        test_snctools
+
 R2008b, R2009a, R2009b, R2010a
     With these releases, you have native read/write support
     for netCDF-3 files.  If you wish to have netCDF-4 read
@@ -34,28 +53,78 @@ R2008b, R2009a, R2009b, R2010a
     support for OPeNDAP URLs and GRIB files.  See the USE_JAVA section
     below.
 
+    After downloading and unpacking the software, issue the following
+    instructions from MATLAB (assuming that your current working
+    directory in MATLAB is where you downloaded and unpacked the
+    software):
+
+        addpath ([pwd '/mexcdf/mexnc']);
+        addpath ([pwd '/mexcdf/snctools']);
+        javaaddpath([pwd '/netcdfAll-4.1.jar']);
+        setpref('SNCTOOLS','USE_JAVA',true);
+        setpref('SNCTOOLS','USE_MEXNC',false);
+
+    You can test out your installation with
+
+        cd mexcdf/snctools/tests 
+        test_snctools
+
 R2006a, R2006b, R2007a, R2007b, R2008a
     MATLAB has no native netCDF support for these releases.  If you only
     need to read netCDF files, you may do so by retrieving netcdf-java
     from Unidata and enabling the java backend as described below.
-    If you require write support, you will instead need to download the
-    attending mexnc mex-file for your particular release.  You should
-    then enable the mexnc backend with
     
-        >> setpref('SNCTOOLS','USE_MEXNC',true);
+    After downloading and unpacking the software, issue the following
+    instructions from MATLAB (assuming that your current working
+    directory in MATLAB is where you downloaded and unpacked the
+    software):
+
+        addpath ([pwd '/mexcdf/mexnc']);
+        addpath ([pwd '/mexcdf/snctools']);
+        javaaddpath([pwd '/netcdfAll-4.1.jar']);
+        setpref('SNCTOOLS','USE_JAVA',true);
+        setpref('SNCTOOLS','USE_MEXNC',false);
+
+    You can test out your installation with
+
+        cd mexcdf/snctools/tests 
+        test_snctools
+
+    If you need to write netcdf files, then you need to go back to
+    the sourceforge website and get the mex-file for your release.
+    Then set the USE_MEXNC preference to true:
+
+        setpref('SNCTOOLS','USE_MEXNC',true);
 
 R14
-    MATLAB has no native netCDF support for these releases.  If you only
-    need to read netCDF files, you may do so by retrieving netcdf-java
+    MATLAB has no native netCDF support for R14.  If you only need
+    to read netCDF files, you may do so by retrieving netcdf-java
     from Unidata at http://www.unidata.ucar.edu/software/netcdf-java/,
-    but you will be restricted to the 2.2.20 release, which is rather old.
-    It will not allow you to read netCDF-4 files.
+    but you will be restricted to the 2.2.20 release, which is
+    rather old (well, so is R14...)  It will not allow you to read
+    netCDF-4 files.
 
-    If you require write support, you will instead need to download the
-    attending R14 mexnc mex-file for your particular release.  You 
-    should then enable the mexnc backend with
-    
-        >> setpref('SNCTOOLS','USE_MEXNC',true);
+    After downloading and unpacking the software, issue the following
+    instructions from MATLAB (assuming that your current working
+    directory in MATLAB is where you downloaded and unpacked the
+    software):
+
+        addpath ([pwd '/mexcdf/mexnc']);
+        addpath ([pwd '/mexcdf/snctools']);
+        javaaddpath([pwd '/toolsUI-2.2.20.jar']);
+        setpref('SNCTOOLS','USE_JAVA',true);
+        setpref('SNCTOOLS','USE_MEXNC',false);
+
+    You can test out your installation with
+
+        cd mexcdf/snctools/tests 
+        test_snctools
+
+    If you need to write netcdf files, then you need to go back to
+    the sourceforge website and get the mex-file for your release.
+    Then set the USE_MEXNC preference to true:
+
+        setpref('SNCTOOLS','USE_MEXNC',true);
 
 +-----------------------------------------------------------------------
 SNCTOOLS PREFERENCES
