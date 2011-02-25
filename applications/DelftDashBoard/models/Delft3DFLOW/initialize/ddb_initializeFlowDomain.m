@@ -16,9 +16,7 @@ function handles=ddb_initializeGridDependentInput(handles,id)
 handles.Model(md).Input(id).grid=[];
 handles.Model(md).Input(id).bathy=[];
 
-
 handles.Model(md).Input(id).nrDischarges=0;
-handles.Model(md).Input(id).nrDrogues=0;
 
 %% Observation points
 handles.Model(md).Input(id).nrObservationPoints=0;
@@ -31,6 +29,18 @@ handles.Model(md).Input(id).addObservationPoint=0;
 handles.Model(md).Input(id).selectObservationPoint=0;
 handles.Model(md).Input(id).deleteObservationPoint=0;
 handles.Model(md).Input(id).changeObservationPoint=0;
+
+%% Discharges
+handles.Model(md).Input(id).nrDischarges=0;
+handles.Model(md).Input(id).activeDischarge=1;
+handles.Model(md).Input(id).dischargeNames={''};
+handles.Model(md).Input(id).activeDischarge=1;
+handles.Model(md).Input(id).discharges(1).M=[];
+handles.Model(md).Input(id).discharges(1).N=[];
+handles.Model(md).Input(id).addDischarge=0;
+handles.Model(md).Input(id).selectDischarge=0;
+handles.Model(md).Input(id).deleteDischarge=0;
+handles.Model(md).Input(id).changeDischarge=0;
 
 %% Cross sections
 handles.Model(md).Input(id).nrCrossSections=0;
@@ -98,6 +108,21 @@ handles.Model(md).Input(id).nrAstro=0;
 handles.Model(md).Input(id).nrHarmo=0;
 handles.Model(md).Input(id).nrTime=0;
 handles.Model(md).Input(id).nrCor=0;
+
+%% Drogues
+handles.Model(md).Input(id).nrDrogues=0;
+handles.Model(md).Input(id).activeDrogue=1;
+handles.Model(md).Input(id).drogueNames={''};
+handles.Model(md).Input(id).activeDrogue=1;
+handles.Model(md).Input(id).drogues(1).M=[];
+handles.Model(md).Input(id).drogues(1).N=[];
+handles.Model(md).Input(id).drogues(1).releaseTime=floor(now);
+handles.Model(md).Input(id).drogues(1).recoveryTime=floor(now)+2;
+handles.Model(md).Input(id).addDrogue=0;
+handles.Model(md).Input(id).selectDrogue=0;
+handles.Model(md).Input(id).deleteDrogue=0;
+handles.Model(md).Input(id).changeDrogue=0;
+
 
 %% Files
 handles.Model(md).Input(id).grdFile='';
