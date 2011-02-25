@@ -105,17 +105,19 @@ function ui_build()
     pobj = findobj('Tag', 'xb_view');
     info = get(pobj, 'userdata');
     
+    sliderstep = [1 5]/(length(info.t)-1);
+    
     % plot area
     uipanel(pobj, 'Tag', 'PlotPanel', 'Title', 'plot', 'Unit', 'pixels');
 
     % sliders
     uicontrol(pobj, 'Style', 'slider', 'Tag', 'Slider1', ...
-        'Min', 1, 'Max', length(info.t), 'Value', 1, 'SliderStep', [.01 .1], ...
+        'Min', 1, 'Max', length(info.t), 'Value', 1, 'SliderStep', sliderstep, ...
         'Enable', 'off', ...
         'Callback', @ui_plot);
 
     uicontrol(pobj, 'Style', 'slider', 'Tag', 'Slider2', ...
-        'Min', 1, 'Max', length(info.t), 'Value', length(info.t), 'SliderStep', [.01 .1], ...
+        'Min', 1, 'Max', length(info.t), 'Value', length(info.t), 'SliderStep', sliderstep, ...
         'Callback', @ui_plot);
 
     uicontrol(pobj, 'Style', 'text', 'Tag', 'TextSlider1', ...
@@ -163,6 +165,11 @@ function ui_build()
         set(findobj(pobj, 'Tag', 'ToggleAnimate'), 'Enable', 'off');
     end
     
+    % reading indicator
+    uicontrol(pobj, 'Style', 'text', 'Tag', 'ReadIndicator', ...
+        'String', 'READING', 'HorizontalAlignment', 'center', ...
+        'BackgroundColor', 'red', 'FontWeight', 'bold', 'Visible', 'off');
+    
     ui_resize(pobj, []);
     
     ui_plot(pobj, []);
@@ -175,9 +182,11 @@ function ui_reload(obj, event)
     pobj = findobj('Tag', 'xb_view');
     info = get(pobj, 'userdata');
     
+    sliderstep = [1 5]/(length(info.t)-1);
+    
     % sliders
-    set(findobj(pobj, 'Tag', 'Slider1'), 'Max', length(info.t))
-    set(findobj(pobj, 'Tag', 'Slider2'), 'Max', length(info.t), 'Value', length(info.t))
+    set(findobj(pobj, 'Tag', 'Slider1'), 'Max', length(info.t), 'SliderStep', sliderstep)
+    set(findobj(pobj, 'Tag', 'Slider2'), 'Max', length(info.t), 'SliderStep', sliderstep, 'Value', length(info.t))
     set(findobj(pobj, 'Tag', 'TextSlider1'), 'String', num2str(info.t(1)))
     set(findobj(pobj, 'Tag', 'TextSlider2'), 'String', num2str(info.t(end)))
     
@@ -199,6 +208,7 @@ function ui_resize(obj, event)
     set(findobj(obj, 'Tag', 'ToggleSurf'), 'Position', [[.85 .55].*winsize [.1 .05].*winsize]);
     set(findobj(obj, 'Tag', 'ButtonReload'), 'Position', [[.85 .125].*winsize [.1 .035].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleAnimate'), 'Position', [[.85 .07].*winsize [.1 .035].*winsize]);
+    set(findobj(obj, 'Tag', 'ReadIndicator'), 'Position', [[.85 .25].*winsize [.1 .025].*winsize]);
 end
 
 function ui_togglediff(obj, event)
@@ -304,14 +314,19 @@ function ui_read()
     end
 end
 
-function data = ui_getddata(info, vars, varargin)
+function data = ui_getdata(info, vars, slider)
     pobj = findobj('Tag', 'xb_view');
+    
+    iobj = findobj(pobj, 'Tag', 'ReadIndicator');
+    set(iobj, 'Visible', 'on'); drawnow;
     
     data = cell(size(vars));
     
-    if ~isempty(varargin) && varargin{1}
+    if exist('slider', 'var') && slider == 1
+        slider = 1;
         t = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'));
     else
+        slider = 2;
         t = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'));
     end
     
@@ -331,10 +346,12 @@ function data = ui_getddata(info, vars, varargin)
                 'length', [1 -1 -1]), vars{:});
     end
     
-    if info.diff
-        data0 = ui_getddata(info, vars, true);
+    if info.diff && slider == 2
+        data0 = ui_getdata(info, vars, 1);
         data = cellfun(@minus, data, data0, 'UniformOutput', false);
     end
+    
+    set(iobj, 'Visible', 'off');
 end
 
 function ui_plot(obj, event)
@@ -346,7 +363,7 @@ function ui_plot(obj, event)
     end
     
     vars = selected_vars;
-    data = ui_getddata(info, vars);
+    data = ui_getdata(info, vars, 2);
     
     switch info.ndims
         case 1

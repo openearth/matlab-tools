@@ -164,3 +164,13 @@ elseif strcmpi(extension, '.dat')
 else
     error(['directory or file "' filename '" does not exist'])
 end
+
+%% jaap's convenience attributes
+
+XBdims.nx = XBdims.globalx;
+XBdims.ny = XBdims.globaly;
+XBdims.nt = XBdims.globaltime;
+
+XBdims.x = XBdims.globalx_DATA;
+XBdims.y = XBdims.globaly_DATA;
+XBdims.t = XBdims.globaltime_DATA;

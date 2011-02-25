@@ -84,6 +84,14 @@ for i = 1:length(names)
         if nargout > 0
             varargout{1}.(names{i}) = xb.data(i).value;
         else
+            
+            % make sure variable name is valid
+            if ~isvarname(names{i})
+                validname = get_validname(names{i});
+                warning(['Renamed variable "' names{i} '" to "' validname '"']);
+                names{i} = validname;
+            end
+            
             assignin('base', names{i}, xb.data(i).value);
         end
     else
@@ -93,4 +101,15 @@ for i = 1:length(names)
             xb_peel(xb.data(i).value, varargin{:});
         end
     end
+end
+
+end
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function validname = get_validname(name)
+    prefix = 'xb_';
+    l = min(length(name), namelengthmax-length(prefix));
+    
+    validname = [prefix name(1:l)];
 end
