@@ -22,12 +22,12 @@ end
 for i=1:handles.Model(md).Input(id).nrSediments
 
     handles.Model(md).Input(id).sediment(i).type=s.sediment(i).sedtyp;
+    
     handles.Model(md).Input(id).sediment(i).name=s.sediment(i).name;
 
     handles.Model(md).Input(id).sediments.sedimentNames{i}=handles.Model(md).Input(id).sediment(i).name;
     
     handles=ddb_initializeSediment(handles,id,i);
-    
     
     if isfield(s.sediment(i),'rhosol')
         handles.Model(md).Input(id).sediment(i).rhoSol=s.sediment(i).rhosol;
@@ -62,7 +62,7 @@ for i=1:handles.Model(md).Input(id).nrSediments
                 handles.Model(md).Input(id).sediment(i).sedD90=s.sediment(i).sedd90;
             end
         case{'mud'}
-            handles.Model(md).Input(id).sediment(i).type='non-cohesive';
+            handles.Model(md).Input(id).sediment(i).type='cohesive';
             if isfield(s.sediment(i),'salmax')
                 handles.Model(md).Input(id).sediment(i).salMax=s.sediment(i).salmax;
             end
@@ -105,3 +105,4 @@ for i=1:handles.Model(md).Input(id).nrSediments
             
     end
 end
+shite=1

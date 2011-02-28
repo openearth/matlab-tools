@@ -180,7 +180,7 @@ for ii=1:handles.Model(md).Input(ad).nrSediments
     if handles.Model(md).Input(ad).sediment(ii).new
         h2=ddb_initializeSediment(h2,ad,ii);
     end
-    h2.Model(md).Input(ad).sedimentNames{ii}=handles.Model(md).Input(ad).sediment.name;
+    h2.Model(md).Input(ad).sediments.sedimentNames{ii}=handles.Model(md).Input(ad).sediment(ii).name;
 end
 if handles.Model(md).Input(ad).nrSediments==0
     h2.Model(md).Input(ad).sediments.include=0;

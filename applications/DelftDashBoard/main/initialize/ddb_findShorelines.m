@@ -29,7 +29,7 @@ for i=1:handles.shorelines.nrShorelines
                         % Try to copy nc meta file
                         urlwrite(fname,[localdir 'temp.nc']);
                         if exist([localdir 'temp.nc'],'file')
-                            x0=nc_varget([localdir 'temp.nc'],'x0');
+                            x0=nc_varget([localdir 'temp.nc'],'origin_x');
                             movefile([localdir 'temp.nc'],[localdir handles.shorelines.shoreline(i).name '.nc']);
                         end
                         fname = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep handles.shorelines.shoreline(i).name '.nc'];

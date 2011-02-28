@@ -12,5 +12,9 @@ else
             handles=ddb_readSedFile(handles,ad);
             setHandles(handles);
             setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.sediments');
+        case{'savesedfile'}
+            handles=getHandles;
+            ddb_saveSedFile(handles,ad);
+            setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.sediments');
     end
 end

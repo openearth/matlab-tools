@@ -1,4 +1,6 @@
 function s=ddb_readDelft3D_keyWordFile(fname)
+% Reads Delft3D keyword file into structure
+
 s=[];
 fid=fopen(fname,'r');
 while 1
@@ -22,14 +24,18 @@ while 1
         keyword=strrep(keyword,' ','');
         keyword=lower(keyword);
         v=str(isf+1:end);
+        v=deblank2(v);
         val = strread(v,'%s','delimiter',' ');
-        val=val{1};
-        val=strrep(val,'#','');
+        if strcmpi(val{1}(1),'#')
+            val = strread(v,'%s','delimiter','#');
+            val=val{2};
+        else
+            val=val{1};
+        end
         if ~isnan(str2double(val))
             val=str2double(val);
         end
         s.(fld)(ifld).(keyword)=val;
-        
-%    [a,b] = strread(str,'%s%s','delimiter','=')
     end
 end
+fclose(fid);
