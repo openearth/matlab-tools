@@ -23,4 +23,3 @@ end
 for j=1:handles.Model(md).Input(id).nrDischarges
     handles.Model(md).Input(id).discharges(j).salinity.timeSeries=[0.0;0.0];
 end
-

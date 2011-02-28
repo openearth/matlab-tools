@@ -167,3 +167,26 @@ if handles.Model(md).Input(id).nrDischarges>0
     end
     ddb_saveDisFile(handles,id);
 end
+
+if handles.Model(md).Input(id).nrSediments>0 && handles.Model(md).Input(id).sediments.include
+
+    if isempty(handles.Model(md).Input(id).sedFile) || sall
+        [filename, pathname, filterindex] = uiputfile('*.sed', 'Select Sediments File','');
+        curdir=[lower(cd) '\'];
+        if ~strcmpi(curdir,pathname)
+            filename=[pathname filename];
+        end
+        handles.Model(md).Input(id).sedFile=filename;
+    end
+    ddb_saveSedFile(handles,id);
+
+    if isempty(handles.Model(md).Input(id).morFile) || sall
+        [filename, pathname, filterindex] = uiputfile('*.mor', 'Select Morphology File','');
+        curdir=[lower(cd) '\'];
+        if ~strcmpi(curdir,pathname)
+            filename=[pathname filename];
+        end
+        handles.Model(md).Input(id).morFile=filename;
+    end
+    ddb_saveMorFile(handles,id);
+end

@@ -1,8 +1,8 @@
 function handles=ddb_saveSedFile(handles,id)
 
 %%
-s.SedimentFileInformation.FileCreatedBy.value      = 'Delft3D FLOW-GUI, Version: 3.41.06.10981';
-s.SedimentFileInformation.FileCreationDate.value   = 'Mon Feb 28 2011, 16:28:54';
+s.SedimentFileInformation.FileCreatedBy.value      = ['Delft DashBoard v' handles.delftDashBoardVersion];
+s.SedimentFileInformation.FileCreationDate.value   = datestr(now);
 s.SedimentFileInformation.FileVersion.value        = '02.00';
 
 %%

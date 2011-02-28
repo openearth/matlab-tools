@@ -5,6 +5,7 @@ s=ddb_readDelft3D_keyWordFile(handles.Model(md).Input(id).sedFile);
 handles.Model(md).Input(id).nrSediments=length(s.sediment);
 
 handles.Model(md).Input(id).sediment=[];
+handles.Model(md).Input(id).sediments=[];
 
 handles.Model(md).Input(id).sediments.include=1;
 handles.Model(md).Input(id).sediments.cRef=1600;
@@ -53,13 +54,13 @@ for i=1:handles.Model(md).Input(id).nrSediments
         case{'sand'}
             handles.Model(md).Input(id).sediment(i).type='non-cohesive';
             if isfield(s.sediment(i),'seddia')
-                handles.Model(md).Input(id).sediment(i).sedDia=s.sediment(i).seddia;
+                handles.Model(md).Input(id).sediment(i).sedDia=s.sediment(i).seddia*1000;
             end
             if isfield(s.sediment(i),'sedd10')
-                handles.Model(md).Input(id).sediment(i).sedD10=s.sediment(i).sedd10;
+                handles.Model(md).Input(id).sediment(i).sedD10=s.sediment(i).sedd10*1000;
             end
             if isfield(s.sediment(i),'sedd90')
-                handles.Model(md).Input(id).sediment(i).sedD90=s.sediment(i).sedd90;
+                handles.Model(md).Input(id).sediment(i).sedD90=s.sediment(i).sedd90*1000;
             end
         case{'mud'}
             handles.Model(md).Input(id).sediment(i).type='cohesive';
@@ -105,4 +106,4 @@ for i=1:handles.Model(md).Input(id).nrSediments
             
     end
 end
-shite=1
+

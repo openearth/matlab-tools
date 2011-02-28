@@ -339,6 +339,9 @@ for i=1:handles.Model(md).Input(id).nrTracers
 end
 handles.Model(md).Input(id).cstBnd=0;
 
+%% Morphology
+handles=ddb_Delft3DFLOW_initializeMorphology(handles,id);
+
 %% Sediments
 handles.Model(md).Input(id).nrSediments=0;
 handles.Model(md).Input(id).sediment=[];

@@ -32,7 +32,7 @@ for i=1:handles.Model(md).Input(ad).nrTracers
     handles=ddb_initializeTracer(handles,i);
 end
 
-%Read sed file first
+% Initialize sediment
 for i=1:handles.Model(md).Input(ad).nrSediments
     handles=ddb_initializeSediment(handles,ad,i);
 end
@@ -78,4 +78,8 @@ if ~isempty(handles.Model(md).Input(ad).srcFile)
     if ~isempty(handles.Model(md).Input(ad).disFile)
         handles=ddb_readDisFile(handles,ad);
     end
+end
+if handles.Model(md).Input(ad).sediments.include
+    handles=ddb_readSedFile(handles,ad);
+    handles=ddb_readMorFile(handles,ad);
 end

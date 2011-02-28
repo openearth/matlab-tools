@@ -33,7 +33,17 @@ while 1
             val=val{1};
         end
         if ~isnan(str2double(val))
+            % It's a number
             val=str2double(val);
+        else
+            % It's a string
+            % Check if it's a boolean
+            switch lower(val)
+                case{'true'}
+                    val=1;
+                case{'false'}
+                    val=0;
+            end                    
         end
         s.(fld)(ifld).(keyword)=val;
     end

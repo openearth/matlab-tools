@@ -1,4 +1,5 @@
 function ddb_saveDelft3D_keyWordFile(fname,s)
+% Write structure to Delft3D keyword file
 
 fid=fopen(fname,'wt');
 fldnames=fieldnames(s);
@@ -17,7 +18,6 @@ for i=1:length(fldnames)
                 keywstr=[keyw repmat(' ',1,17-length(keyw))];
 
                 % Value
-                
                 if isfield(s.(fldname)(j).(keyw),'type')
                     tp=s.(fldname)(j).(keyw).type;
                 else
@@ -31,9 +31,17 @@ for i=1:length(fldnames)
                             valstr=num2str(s.(fldname)(j).(keyw).value);
                         case{'string'}
                             valstr=s.(fldname)(j).(keyw).value;
-                            if ~isempty(findstr(valstr,' '))
+                            % Only put # around string in case of keyword
+                            % has unit OR comment
+                            if ~isempty(findstr(valstr,' ')) && (isfield(s.(fldname)(j).(keyw),'unit') || isfield(s.(fldname)(j).(keyw),'comment'))
                                 valstr=['#' valstr '#'];
                             end
+                       case{'boolean'}
+                           if s.(fldname)(j).(keyw).value
+                               valstr='true';
+                           else
+                               valstr='false';
+                           end
                     end
                     valstr=[valstr repmat(' ',1,17-length(valstr))];
                 end

@@ -44,9 +44,9 @@ for n=1:Flow.nrDischarges
     end
     for k=1:Flow.nrSediments
         Flow.discharges(n).sediment(k).timeSeries=zeros(size(t));
-        np=findParameter(Info,nt,Flow.Sediment(k).Name);        
+        np=findParameter(Info,nt,Flow.sediment(k).name);        
         if np>0
-            Flow.discharges(n).Sediment(k).timeSeries=tab.Data(:,np);
+            Flow.discharges(n).sediment(k).timeSeries=tab.Data(:,np);
         end
     end
     for k=1:Flow.nrTracers

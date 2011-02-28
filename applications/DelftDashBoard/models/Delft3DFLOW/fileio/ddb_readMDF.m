@@ -19,9 +19,11 @@ handles.Model(md).Input(id).thdFile=MDF.filtd;
 if isfield(MDF,'fildep')
     handles.Model(md).Input(id).depFile=MDF.fildep;
     handles.Model(md).Input(id).uniformDepth=10.0;
+    handles.Model(md).Input(ad).depthSource='file';
 else
     handles.Model(md).Input(id).depFile='';
     handles.Model(md).Input(id).uniformDepth=10.0;
+    handles.Model(md).Input(ad).depthSource='uniform';
 end;
 
 %% Time frame

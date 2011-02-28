@@ -56,11 +56,11 @@
     <style>pushselectfile</style>
     <position>90 100 130 20</position>
     <text>Open Depth File</text>
-    <variable>handles.Model(md).Input(ad).depthFile</variable>
+    <variable>handles.Model(md).Input(ad).depFile</variable>
     <type>string</type>
     <extension>*.dep</extension>
     <selectiontext>Select depth File</selectiontext>
-    <onchange>ddb_Delft3DFLOW_selectDepthFile</onchange>
+    <onchange>ddb_Delft3DFLOW_selectDepFile</onchange>
     <tooltipstring>Select Delft3D depth file</tooltipstring>
     <dependencies>
       <dependency>
