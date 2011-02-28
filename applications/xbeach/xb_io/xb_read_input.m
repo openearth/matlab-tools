@@ -74,8 +74,18 @@ OPT = setproperty(OPT, varargin{:});
 
 %% read params.txt
 
+% user current directory, if no input is given
+if ~exist('filename', 'var')
+    filename = pwd;
+end
+
 if ~exist(filename, 'file')
     error(['File does not exist [' filename ']'])
+end
+
+if isdir(filename)
+    % file is actually a directory, add params.txt
+    filename = fullfile(filename, 'params.txt');
 end
 
 xb = xb_read_params(filename);

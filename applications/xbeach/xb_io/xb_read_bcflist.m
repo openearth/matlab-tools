@@ -11,7 +11,8 @@ function xb = xb_read_bcflist(filename, varargin)
 %
 %   Input:
 %   filename    = filename of the ebcflist or qbcflist file to be read
-%   varargin    = none
+%   varargin    = range:    unity-based numerical range of files to be read
+%                           (e.g. [4 5], 4 or [1 10])
 %
 %   Output:
 %   xb          = XBeach structure array
@@ -65,9 +66,14 @@ function xb = xb_read_bcflist(filename, varargin)
 %% read options
 
 OPT = struct( ...
+    'range', [] ...
 );
 
 OPT = setproperty(OPT, varargin{:});
+
+if length(OPT.range) == 1
+    OPT.range = OPT.range*[1 1];
+end
 
 %% read bcf list
 
@@ -93,7 +99,9 @@ while ~feof(fid)
     fname = fullfile(fdir, [fname{:}]);
     filenames = [filenames {fname}];
     
-    data = cat(3, data, read_bcf(fname));
+    if isempty(OPT.range) || (tlength >= OPT.range(1) && tlength <= OPT.range(2))
+        data = cat(3, data, read_bcf(fname));
+    end
     
     tlength = tlength+1;
 end

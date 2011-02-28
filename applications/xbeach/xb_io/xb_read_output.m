@@ -70,6 +70,11 @@ function variables = xb_read_output(fname, varargin)
 
 %% read output
 
+% user current directory, if no input is given
+if ~exist('fname', 'var')
+    fname = pwd;
+end
+
 % extract path, if xbeach structure is supplied
 if xb_check(fname)
     fname = xb_get(fname, 'path');

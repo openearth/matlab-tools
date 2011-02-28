@@ -67,9 +67,9 @@ function XBdims = xb_read_dims(filename)
 % $Keywords: $
 
 %%
-if nargin == 0
+if nargin == 0 || isempty(filename)
     % the current working directory is taken by default
-    filename = cd;
+    filename = pwd;
 end
 
 if isdir(filename)
