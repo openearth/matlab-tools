@@ -11,6 +11,9 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeThinDam=0;
     handles.Model(md).Input(ad).deleteThinDam=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','thindams');
+    setHandles(handles);
+    setUIElements('delft3dflow.domain.domainpanel.thindams');
+
 else
     opt=varargin{1};
     switch(lower(opt))
@@ -26,6 +29,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
 
         case{'delete'}
             handles.Model(md).Input(ad).addThinDam=0;
@@ -36,12 +40,14 @@ else
             if handles.Model(md).Input(ad).deleteThinDam
                 handles=deleteThinDam(handles);
             end
+            setHandles(handles);
 
         case{'select'}
             handles.Model(md).Input(ad).addThinDam=0;
             handles.Model(md).Input(ad).deleteThinDam=0;
             handles.Model(md).Input(ad).changeThinDam=0;
             ddb_clickObject('tag','drypoint','callback',@selectThinDamFromMap);
+            setHandles(handles);
             setInstructions({'','','Select thin dam from map'});
 
         case{'change'}
@@ -52,6 +58,7 @@ else
                 ddb_clickObject('tag','drypoint','callback',@changeThinDamFromMap);
                 setInstructions({'','','Select thin dam to change from map'});
             end
+            setHandles(handles);
 
         case{'edit'}
             handles.Model(md).Input(ad).addThinDam=0;
@@ -66,6 +73,7 @@ else
             n2str=num2str(handles.Model(md).Input(ad).thinDams(n).N2);
             handles.Model(md).Input(ad).thinDamNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','thindams');
+            setHandles(handles);
             clearInstructions;
 
         case{'selectfromlist'}
@@ -75,22 +83,24 @@ else
             % Delete selected dry point next time delete is clicked
             handles.Model(md).Input(ad).deleteThinDam=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','thindams');
+            setHandles(handles);
             clearInstructions;
 
         case{'openfile'}
             handles=ddb_readThdFile(handles);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','thindams');
+            setHandles(handles);
             
         case{'savefile'}
             ddb_saveThdFile(handles,ad);
             
         case{'plot'}
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','thindams');
+            setHandles(handles);
             
     end
 end
 
-setHandles(handles);
 
 refreshThinDams;
 

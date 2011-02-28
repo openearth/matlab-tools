@@ -8,9 +8,9 @@ ddb_setWindowButtonMotionFcn;
 
 if isempty(varargin)
     ddb_refreshScreen;
-    setUIElements('delft3dflow.openboundaries');
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','openboundaries');
     setHandles(handles);
+    setUIElements('delft3dflow.openboundaries');
 else
     opt=varargin{1};
     if length(varargin)>1

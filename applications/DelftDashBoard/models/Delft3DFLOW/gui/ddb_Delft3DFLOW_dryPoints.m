@@ -11,6 +11,9 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeDryPoint=0;
     handles.Model(md).Input(ad).deleteDryPoint=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drypoints');
+    setHandles(handles);
+    setUIElements('delft3dflow.domain.domainpanel.drypoints');
+
 else
     
     opt=varargin{1};
@@ -29,6 +32,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
 
         case{'delete'}
             handles.Model(md).Input(ad).addDryPoint=0;
@@ -40,6 +44,7 @@ else
                 % Delete dry point selected from list
                 handles=deleteDryPoint(handles);
             end
+            setHandles(handles);
 
         case{'select'}
             handles.Model(md).Input(ad).addDryPoint=0;
@@ -52,6 +57,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
                         
         case{'change'}
             handles.Model(md).Input(ad).addDryPoint=0;
@@ -64,6 +70,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
 
         case{'edit'}
             handles.Model(md).Input(ad).addDryPoint=0;
@@ -78,6 +85,7 @@ else
             n2str=num2str(handles.Model(md).Input(ad).dryPoints(n).N2);
             handles.Model(md).Input(ad).dryPointNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
+            setHandles(handles);
             clearInstructions;
 
         case{'selectfromlist'}
@@ -87,19 +95,19 @@ else
             % Delete selected dry point next time delete is clicked
             handles.Model(md).Input(ad).deleteDryPoint=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drypoints');
+            setHandles(handles);
             clearInstructions;
 
         case{'openfile'}
             handles=ddb_readDryFile(handles);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
+            setHandles(handles);
 
         case{'savefile'}
             ddb_saveDryFile(handles,ad);
 
     end
 end
-
-setHandles(handles);
 
 refreshDryPoints;
 

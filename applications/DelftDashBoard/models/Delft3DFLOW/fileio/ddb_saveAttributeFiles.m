@@ -133,6 +133,18 @@ if handles.Model(md).Input(id).nrThinDams>0
     ddb_saveThdFile(handles,id);
 end
 
+if handles.Model(md).Input(id).nrDrogues>0
+    if isempty(handles.Model(md).Input(id).droFile) || sall
+        [filename, pathname, filterindex] = uiputfile('*.dro', 'Select Drogues File','');
+        curdir=[lower(cd) '\'];
+        if ~strcmpi(curdir,pathname)
+            filename=[pathname filename];
+        end
+        handles.Model(md).Input(id).droFile=filename;
+    end
+    ddb_saveDroFile(handles,id);
+end
+
 if handles.Model(md).Input(id).nrDischarges>0
 
     if isempty(handles.Model(md).Input(id).srcFile) || sall

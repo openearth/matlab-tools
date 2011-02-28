@@ -11,6 +11,9 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeCrossSection=0;
     handles.Model(md).Input(ad).deleteCrossSection=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','crosssections');
+    setUIElements('delft3dflow.monitoring.monitoringpanel.crosssections');
+    setHandles(handles);
+
 else
     opt=varargin{1};
     switch(lower(opt))
@@ -26,6 +29,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
 
         case{'delete'}
             handles.Model(md).Input(ad).addCrossSection=0;
@@ -36,6 +40,7 @@ else
             if handles.Model(md).Input(ad).deleteCrossSection
                 handles=deleteCrossSection(handles);
             end
+            setHandles(handles);
 
         case{'select'}
             handles.Model(md).Input(ad).addCrossSection=0;
@@ -43,6 +48,7 @@ else
             handles.Model(md).Input(ad).changeCrossSection=0;
             ddb_clickObject('tag','crosssection','callback',@selectCrossSectionFromMap);
             setInstructions({'','','Select cross section from map'});
+            setHandles(handles);
 
         case{'change'}
             handles.Model(md).Input(ad).addCrossSection=0;
@@ -52,6 +58,7 @@ else
                 ddb_clickObject('tag','crosssection','callback',@changeCrossSectionFromMap);
                 setInstructions({'','','Select cross section to change from map'});
             end
+            setHandles(handles);
 
         case{'edit'}
             handles.Model(md).Input(ad).addCrossSection=0;
@@ -70,6 +77,7 @@ else
             end
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','crosssections');
             clearInstructions;
+            setHandles(handles);
 
         case{'selectfromlist'}
             handles.Model(md).Input(ad).addCrossSection=0;
@@ -79,21 +87,22 @@ else
             handles.Model(md).Input(ad).deleteCrossSection=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','crosssections');
             clearInstructions;
+            setHandles(handles);
 
         case{'openfile'}
             handles=ddb_readCrsFile(handles);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','crosssections');
-            
+            setHandles(handles);
+
         case{'savefile'}
             ddb_saveCrsFile(handles,ad);
             
         case{'plot'}
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','crosssections');
-            
+            setHandles(handles);
+
     end
 end
-
-setHandles(handles);
 
 refreshCrossSections;
 

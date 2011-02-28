@@ -11,6 +11,9 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeObservationPoint=0;
     handles.Model(md).Input(ad).deleteObservationPoint=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','observationpoints');
+    setUIElements('delft3dflow.monitoring.monitoringpanel.observationpoints');
+    setHandles(handles);
+
 else
     
     opt=varargin{1};
@@ -29,6 +32,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
 
         case{'delete'}
             handles.Model(md).Input(ad).addObservationPoint=0;
@@ -40,6 +44,7 @@ else
                 % Delete observation point selected from list
                 handles=deleteObservationPoint(handles);
             end
+            setHandles(handles);
 
         case{'select'}
             handles.Model(md).Input(ad).addObservationPoint=0;
@@ -52,6 +57,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
                         
         case{'change'}
             handles.Model(md).Input(ad).addObservationPoint=0;
@@ -64,6 +70,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
 
         case{'edit'}
             handles.Model(md).Input(ad).addObservationPoint=0;
@@ -80,6 +87,7 @@ else
             end
             handles.Model(md).Input(ad).observationPointNames{n}=name;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints');
+            setHandles(handles);
             clearInstructions;
 
         case{'selectfromlist'}
@@ -89,11 +97,13 @@ else
             % Delete selected observation point next time delete is clicked
             handles.Model(md).Input(ad).deleteObservationPoint=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','observationpoints');
+            setHandles(handles);
             clearInstructions;
 
         case{'openfile'}
             handles=ddb_readObsFile(handles);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints');
+            setHandles(handles);
 
         case{'savefile'}
             ddb_saveObsFile(handles,ad);
@@ -101,7 +111,6 @@ else
     end
 end
 
-setHandles(handles);
 
 refreshObservationPoints;
 

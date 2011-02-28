@@ -11,6 +11,9 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeDrogue=0;
     handles.Model(md).Input(ad).deleteDrogue=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drogues');
+    setHandles(handles);
+    setUIElements('delft3dflow.monitoring.monitoringpanel.drogues');
+
 else
     
     opt=varargin{1};
@@ -29,6 +32,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
 
         case{'delete'}
             handles.Model(md).Input(ad).addDrogue=0;
@@ -40,6 +44,7 @@ else
                 % Delete drogue selected from list
                 handles=deleteDrogue(handles);
             end
+            setHandles(handles);
 
         case{'select'}
             handles.Model(md).Input(ad).addDrogue=0;
@@ -52,6 +57,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
                         
         case{'change'}
             handles.Model(md).Input(ad).addDrogue=0;
@@ -64,6 +70,7 @@ else
                 set(gcf, 'windowbuttondownfcn',[]);
                 clearInstructions;
             end
+            setHandles(handles);
 
         case{'edit'}
             handles.Model(md).Input(ad).addDrogue=0;
@@ -80,6 +87,7 @@ else
             end
             handles.Model(md).Input(ad).drogueNames{n}=name;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drogues');
+            setHandles(handles);
             clearInstructions;
 
         case{'selectfromlist'}
@@ -89,11 +97,13 @@ else
             % Delete selected drogue next time delete is clicked
             handles.Model(md).Input(ad).deleteDrogue=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drogues');
+            setHandles(handles);
             clearInstructions;
 
         case{'openfile'}
             handles=ddb_readDroFile(handles);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drogues');
+            setHandles(handles);
 
         case{'savefile'}
             ddb_saveDroFile(handles,ad);
@@ -101,7 +111,6 @@ else
     end
 end
 
-setHandles(handles);
 
 refreshDrogues;
 
