@@ -129,5 +129,7 @@ if retcode == 0
         error(['Submitting remote job failed [' cmd ']']);
     end
 else
+    disp(messages);
+    
     error(['Submitting remote job failed [' cmd ']']);
 end
