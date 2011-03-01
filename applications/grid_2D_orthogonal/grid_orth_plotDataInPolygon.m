@@ -46,8 +46,10 @@ OPT.ldburl       = []; % x of coastline
 OPT = setproperty(OPT,varargin{:});
 
 if ~isempty(OPT.ldburl)
-    OPT.x = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
-    OPT.y = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
+    try % included to enable off line working
+        OPT.x = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
+        OPT.y = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
+    end
 end
 
 %% find unqiue date values
@@ -84,7 +86,9 @@ figure(2);clf;
    
    title   ('z-values available in polygon')
    tickmap ('xy','texttype','text','format','%0.1f','dellast',1)
+   try % included to enable offline working
    plot    (OPT.x,OPT.y,'k', 'linewidth', 2)
+   end
 
 %% Step 2: plot X, Y and Ztime
 %-----------------
@@ -119,4 +123,6 @@ figure(3); clf;
    
    title   ('timestamps of z-values available in polygon')
    tickmap ('xy','texttype','text','format','%0.1f','dellast',1)
-   plot    (OPT.x,OPT.y,'k', 'linewidth', 2)
+   try % included to enable offline working
+       plot    (OPT.x,OPT.y,'k', 'linewidth', 2)
+   end
