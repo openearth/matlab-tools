@@ -44,6 +44,8 @@ if nargin == 3
     maps = [get(objs, 'XData') get(objs, 'YData')];
 else
     objs = OPT.urls;
+    OPT.x_ranges = OPT.x_ranges';
+    OPT.y_ranges = OPT.y_ranges';
     for i = 1:length(OPT.urls)
         maps{i,1} = [OPT.x_ranges(i,1); OPT.x_ranges(i,2); OPT.x_ranges(i,2); OPT.x_ranges(i,1); OPT.x_ranges(i,1)];
         maps{i,2} = [OPT.y_ranges(i,1); OPT.y_ranges(i,1); OPT.y_ranges(i,2); OPT.y_ranges(i,2); OPT.y_ranges(i,1)];
