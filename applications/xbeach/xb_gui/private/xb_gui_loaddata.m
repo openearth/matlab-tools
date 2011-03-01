@@ -261,8 +261,7 @@ end
 %% fill model tab
 
 if xb_check(S.model)
-    bathy = xb_input2bathy(S.model);
-    [x y z] = xb_get(bathy, 'xfile', 'yfile', 'depfile');
+    [x y z] = xb_input2bathy(S.model);
     
     cobj = findobj(pobj, 'tag', 'preview_bathy'); cla(cobj);
     if min(size(z)) <= 3

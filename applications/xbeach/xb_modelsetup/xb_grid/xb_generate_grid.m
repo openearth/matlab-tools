@@ -298,14 +298,14 @@ ygrid = ygrid - yori;
 
 %% create xbeach structures
 
-bathy = xb_empty();
-bathy = xb_set(bathy, 'xfile', xgrid, 'yfile', ygrid, 'depfile', zgrid);
-if ~isempty(OPT.ne); bathy = xb_set(bathy, 'ne_layer', negrid); end;
-bathy = xb_meta(bathy, mfilename, 'bathymetry');
-
 xb = xb_empty();
 xb = xb_set(xb, 'nx', nx, 'ny', ny, 'xori', xori, 'yori', yori, ...
     'alfa', 360-alpha, 'vardx', 1, 'posdwn', OPT.posdwn);
 
-xb = xb_join(xb, xb_bathy2input(bathy));
+if ~isempty(OPT.ne)
+    xb = xb_bathy2input(xb, xgrid, ygrid, zgrid, negrid);
+else
+    xb = xb_bathy2input(xb, xgrid, ygrid, zgrid);
+end
+
 xb = xb_meta(xb, mfilename, 'input');

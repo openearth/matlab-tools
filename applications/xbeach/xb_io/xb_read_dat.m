@@ -133,18 +133,23 @@ for i = 1:length(names)
     filename = [varname '.dat'];
     fpath = fullfile(fdir, filename);
     
-    % determine dimensions
-    if ~isempty(OPT.dims)
-        d = OPT.dims;
-    else
-        d = xb_dat_dims(fpath);
-    end
-    
-    % read dat file
-    dat = xb_dat_read(fpath, d, ...
-        'start', OPT.start, 'length', OPT.length, 'stride', OPT.stride);
+    % check if file is binary
+    if isbinary(fpath)
+        
+        % determine dimensions
+        if ~isempty(OPT.dims)
+            d = OPT.dims;
+        else
+            d = xb_dat_dims(fpath);
+        end
 
-    xb = xb_set(xb, varname, dat);
+        % read dat file
+        dat = xb_dat_read(fpath, d, ...
+            'start', OPT.start, 'length', OPT.length, 'stride', OPT.stride);
+
+        xb = xb_set(xb, varname, dat);
+        
+    end
 end
 
 % set meta data

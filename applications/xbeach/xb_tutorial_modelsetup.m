@@ -140,8 +140,7 @@ pcolor(xr, yr, z); shading flat; axis equal; colorbar;
 % the final grid looks as follows:
 
 % extract the bathymetry from the XBeach model structure
-xbb = xb_input2bathy(xbm);
-[xf yf zf] = xb_get(xbb, 'xfile', 'yfile', 'depfile');
+[xf yf zf] = xb_input2bathy(xbm);
 
 % plot final grid
 pcolor(xf, yf, zf); shading flat; axis equal; colorbar;

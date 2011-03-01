@@ -280,8 +280,7 @@ function ui_read()
                     
                     info.t = [0 1];
                     
-                    bathy = xb_input2bathy(info.input);
-                    [info.x info.y] = xb_get(bathy, 'xfile', 'yfile');
+                    [info.x info.y] = xb_input2bathy(info.input);
                 case 'output'
                     info.type = 'output_xb';
                     

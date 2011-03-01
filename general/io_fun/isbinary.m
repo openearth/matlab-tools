@@ -1,29 +1,30 @@
-function xb = xb_bathy2input(xb, varargin)
-%XB_BATHY2INPUT  Adds bathymetry to XBeach input structure
+function binary = isbinary(filename, varargin)
+%ISBINARY  Determines whether a file is a binary file or ASCII formatted
 %
-%   Adds bathymetry to XBeach input structure. Also supports non-erodible
-%   layers.
+%   Determines whether a file is a binary file or ASCII formatted by
+%   reading the first 32kB of the file (GNU grep standard) and looking for
+%   characters with an ASCII number smaller than 32 and not 9, 10 or 13
+%   (tab, newline, return)
 %
 %   Syntax:
-%   xb = xb_bathy2input(xb, x, y, z, ne)
+%   binary = isbinary(filename, varargin)
 %
 %   Input:
-%   x   = x-coordinates of bathymetry
-%   y   = y-coordinates of bathymetry
-%   z   = z-coordinates of bathymetry
-%   ne  = non-erodible layers in bathymetry
+%   filename  = Path to file to be checked
+%   varargin  = none
 %
 %   Output:
-%   xb  = XBeach input structure array
+%   binary    = Boolean that is true in case of a binary file and false
+%               otherwise
 %
 %   Example
-%   xb = xb_bathy2input(xb, x, y, z)
+%   if isbinary('data.dat'); disp('This is a binary file!'); end;
 %
-%   See also xb_input2bathy, xb_read_bathy, xb_read_input
+%   See also is*
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 Deltares
+%   Copyright (C) 2011 Deltares
 %       Bas Hoonhout
 %
 %       bas.hoonhout@deltares.nl	
@@ -52,7 +53,7 @@ function xb = xb_bathy2input(xb, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 02 Dec 2010
+% Created: 01 Mar 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -62,24 +63,22 @@ function xb = xb_bathy2input(xb, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% convert bathy to input
+%% check input
 
-if ~xb_check(xb)
-    xb = xb_empty();
+if ~exist(filename, 'file')
+    error(['File "' filename '" not found']);
 end
 
-if length(varargin) > 0 && ~isempty(varargin{1})
-    xb = xb_set(xb, 'xfile', xb_set([], 'xfile', varargin{1}));
-end
+%% read file
 
-if length(varargin) > 1 && ~isempty(varargin{2})
-    xb = xb_set(xb, 'yfile', xb_set([], 'yfile', varargin{2}));
-end
+fid = fopen(filename, 'r');
+data = fread(fid, 32*1024);
+fclose(fid);
 
-if length(varargin) > 2 && ~isempty(varargin{3})
-    xb = xb_set(xb, 'depfile', xb_set([], 'depfile', varargin{3}));
-end
+%% search for non-ascii characters
 
-if length(varargin) > 3 && ~isempty(varargin{4})
-    xb = xb_set(xb, 'ne_layer', xb_set([], 'ne_layer', varargin{4}));
+if ~any(data < 32 & ~ismember(data, [9 10 13]))
+    binary = false;
+else
+    binary = true;
 end

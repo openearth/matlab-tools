@@ -1,24 +1,23 @@
-function xb = xb_input2bathy(xb, varargin)
-%XB_INPUT2BATHY  Converts XBeach input structure to XBeach bathymetry structure
+function [x y z ne] = xb_input2bathy(xb, varargin)
+%XB_INPUT2BATHY  Reads bathymetry from XBeach input structure
 %
-%   Converts XBeach input structure to XBeach bathymetry structure. Both
-%   structures are XBeach structures containing fields like xfile, yfile
-%   and depfile. The fields in the bathymetry structure are filled with
-%   bathymetry matrices. The fields in the input structure are filled with
-%   bathymetry structures. If an input structure is given, the result is
-%   empty.
+%   Converts XBeach input structure to a bathymetry with x, y and z values.
+%   Also supports reading of non-erodible layers.
 %
 %   Syntax:
-%   xb = xb_input2bathy(xb)
+%   [x y z ne] = xb_input2bathy(xb)
 %
 %   Input:
 %   xb  = XBeach input structure array
 %
 %   Output:
-%   xb  = XBeach bathymetry structure array
+%   x   = x-coordinates of bathymetry
+%   y   = y-coordinates of bathymetry
+%   z   = z-coordinates of bathymetry
+%   ne  = non-erodible layers in bathymetry
 %
 %   Example
-%   xb = xb_input2bathy(xb)
+%   [x y z] = xb_input2bathy(xb)
 %
 %   See also xb_bathy2input, xb_read_bathy, xb_read_input
 
@@ -67,9 +66,4 @@ function xb = xb_input2bathy(xb, varargin)
 
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
-xb = xb_join( ...
-    xb_get(xb, 'xfile'), ...
-    xb_get(xb, 'yfile'), ...
-    xb_get(xb, 'depfile'), ...
-    xb_get(xb, 'ne_layer') ...
-);
+[x y z ne] = xb_get(xb, 'xfile.xfile', 'yfile.yfile', 'depfile.depfile', 'ne_layer.data');

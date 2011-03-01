@@ -64,8 +64,7 @@ pobj = findobj('tag', 'xb_gui');
 S = get(pobj, 'userdata');
 
 if xb_check(S.model)
-    bathy = xb_input2bathy(S.model);
-    [x y z] = xb_get(bathy, 'xfile', 'yfile', 'depfile');
+    [x y z] = xb_input2bathy(S.model);
     S.modelsetup.bathy.x = x;
     S.modelsetup.bathy.y = y;
     S.modelsetup.bathy.z = z;
