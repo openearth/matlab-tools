@@ -14,6 +14,7 @@ fmt=[];
 includebuttons=0;
 includenumbers=0;
 parent=[];
+callback=[];
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -52,6 +53,9 @@ for i=1:length(varargin)
                 parent=varargin{i+1};
             case{'columntext'}
                 columntext=varargin{i+1};
+            case{'callback'}
+                callback=varargin{i+1};
+
         end
     end
 end            
@@ -80,7 +84,7 @@ switch lower(action)
         if isempty(parent)
             parent=fig;
         end
-        tb=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers,columntext);
+        tb=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers,columntext,callback);
         varargout{1}=tb;
     case{'getdata'}
         % get data
@@ -106,7 +110,7 @@ switch lower(action)
 end
 
 %%
-function tableHandle=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers,columntext)
+function tableHandle=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers,columntext,callback)
 
 tableHandle=uipanel(fig,'Units','pixels','Parent',parent,'Tag',tag,'Position',[position(1) position(2) 10 10],'BorderType','none','BackgroundColor','none');
 
@@ -167,9 +171,10 @@ for i=1:nrrows
                 h=uicontrol(gcf,'Style','edit','String','','Position',[posx posy width(j) 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1]);
                 set(h,'Callback',@editTime_Callback,'Enable','on');
             case{'popupmenu'}
-                for ii=1:size(popuptext,1)
-                    str{ii}=popuptext{ii,j};
-                end
+                str=popuptext{j};
+%                 for ii=1:size(popuptext,1)
+%                     str{ii}=popuptext{ii,j};
+%                 end
                 h=uicontrol(gcf,'Style','popupmenu','Position',[posx posy width(j) 20],'BackgroundColor',[1 1 1]);
                 set(h,'Value',1);
                 set(h,'String',str);
@@ -225,6 +230,7 @@ usd.firstColumn=1;
 usd.format=fmt;
 usd.enable=enab;
 usd.buttonHandles=[h1 h2];
+usd.callback=callback;
 set(tableHandle,'UserData',usd);
 refreshVerticalSlider(tableHandle);
 refreshTable(tableHandle,{'enable',enab});
@@ -265,10 +271,12 @@ function editTime_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-callback=getappdata(hObject,'callback');
+%callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
+callback=usd.callback;
+
 ip=usd.firstRow-1;
 usd.data{i+ip,j}=D3DTimeString(get(hObject,'String'));
 usd.activeRow=i;
@@ -276,7 +284,7 @@ usd.activeColumn=j;
 set(tb,'UserData',usd);
 
 if ~isempty(callback)
-    feval(callback);
+    fevalTable(callback);
 end
 
 %%
@@ -284,10 +292,11 @@ function editReal_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-callback=getappdata(hObject,'callback');
+%callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
+callback=usd.callback;
 ip=usd.firstRow-1;
 usd.data{i+ip,j}=str2double(get(hObject,'String'));
 usd.activeRow=i;
@@ -303,16 +312,17 @@ function editString_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-callback=getappdata(hObject,'callback');
+%callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
+callback=usd.callback;
 ip=usd.firstRow-1;
 usd.data{i+ip,j}=get(hObject,'String');
 set(tb,'UserData',usd);
 
 if ~isempty(callback)
-    feval(callback);
+    fevalTable(callback);
 end
 
 %%
@@ -320,7 +330,7 @@ function popupMenu_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-callback=getappdata(hObject,'callback');
+%callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
@@ -329,11 +339,17 @@ ii=get(hObject,'Value');
 txt=get(hObject,'String');
 usd.activeRow=i;
 usd.activeColumn=j;
-usd.data{i+ip,j}=txt{ii}; 
+callback=usd.callback;
+
+if isnumeric(usd.data{i+ip,j})
+    usd.data{i+ip,j}=ii;
+else
+    usd.data{i+ip,j}=txt{ii}; 
+end
 set(tb,'UserData',usd);
 
 if ~isempty(callback)
-    feval(callback);
+    fevalTable(callback);
 end
 
 %%
@@ -341,7 +357,7 @@ function checkBox_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-callback=getappdata(hObject,'callback');
+%callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
@@ -350,10 +366,12 @@ ii=get(hObject,'Value');
 usd.data{i+ip,j}=ii; 
 usd.activeRow=i;
 usd.activeColumn=j;
+callback=usd.callback;
+
 set(tb,'UserData',usd);
 
 if ~isempty(callback)
-    feval(callback);
+    fevalTable(callback);
 end
 
 %%
@@ -361,16 +379,19 @@ function pushButton_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
+%tb=get(hObject,'Parent');
+%usd=get(tb,'UserData');
 callback=getappdata(hObject,'callback');
 
 if ~isempty(callback)
-    feval(callback,i,j);
+    fevalTable(callback);
 end
 
 %%
 function pushCopyRow_Callback(hObject,eventdata)
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
+callback=usd.callback;
 data=usd.data;
 nrcolumns=usd.nrColumns;
 iac=usd.activeRow;
@@ -389,11 +410,15 @@ usd.data=data;
 set(tb,'UserData',usd);
 refreshVerticalSlider(tb);
 refreshTable(tb);
+if ~isempty(callback)
+    fevalTable(callback);
+end
 
 %%
 function pushDeleteRow_Callback(hObject,eventdata)
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
+callback=usd.callback;
 data=usd.data;
 nrcolumns=usd.nrColumns;
 iac=usd.activeRow;
@@ -416,6 +441,9 @@ if nr>2
     refreshVerticalSlider(tb);
     refreshTable(tb);
 end
+if ~isempty(callback)
+    fevalTable(callback);
+end
 
 %%
 function refreshTable(tb,varargin)
@@ -428,6 +456,8 @@ if ~isempty(a)
     varg=a{1};
 end
 enab=[];
+
+ipopup=0;
 
 for i=1:length(varg)
     if ischar(varg{i})
@@ -442,8 +472,10 @@ for i=1:length(varg)
 %                 width=varargin{i+1};
 %             case{'data'}
 %                 data=varargin{i+1};
-%             case{'popuptext'}
-%                 popuptext=varargin{i+1};
+            case{'popuptext'}
+                popuptext=varg{i+1};
+                ipopup=1;
+                
 %             case{'pushtext'}
 %                 pushtext=varargin{i+1};
             case{'enable'}
@@ -464,6 +496,7 @@ usd=get(tb,'UserData');
 data=usd.data;
 nrrows=usd.nrRows;
 nrcolumns=usd.nrColumns;
+
 
 if isempty(enab)
     enab=zeros(nrrows,nrcolumns)+1;
@@ -494,6 +527,15 @@ if ~isempty(usd.numberHandles)
     end
 end
 
+% Update popup texts
+if ipopup
+    for j=1:nrcolumns
+        for i=1:min(nr,nrrows)
+            set(handles(i,j),'String',popuptext{j});
+        end
+    end
+end
+
 for j=1:nrcolumns
     for i=1:min(nr,nrrows)
         if iscell(data)
@@ -510,8 +552,12 @@ for j=1:nrcolumns
                 case{'edittime'}
                     set(handles(i,j),'String',datestr(data{k,j},'yyyy mm dd HH MM SS'),'Visible','on');
                 case{'popupmenu'}
-                    txt=get(handles(i,j),'String');
-                    ii=strmatch(data{k,j},txt,'exact');
+                    if isnumeric(data{k,j})
+                        ii=data{k,j};
+                    else
+                        txt=get(handles(i,j),'String');
+                        ii=strmatch(data{k,j},txt,'exact');
+                    end
                     set(handles(i,j),'Value',ii,'Visible','on');
                 case{'checkbox'}
                     set(handles(i,j),'Value',data{k,j},'Visible','on');
@@ -625,13 +671,14 @@ set(usd.buttonHandles,'Enable','off');
 %%
 function fevalTable(callback)
 % This must be the WORST workaround ever
-n=length(callback);
+n=length(callback)+1;
+%n=length(callback)-2;
 % Last input argument is onchange callback
-if n>1
-    occb=callback{n};
-else
-    occb=[];
-end
+% if n>1
+%     occb=callback{n};
+% else
+%     occb=[];
+% end
 
 switch n
     case 1,2
@@ -652,6 +699,8 @@ switch n
         feval(callback{1},callback{2},callback{3},callback{4},callback{5},callback{6},callback{7},callback{7});
 end
 
-if ~isempty(occb)
-    feval(occb);
-end
+% n=length(callback);
+% if ~isempty(occb)
+% %    feval(occb,callback{n-1},callback{n});
+%     feval(occb);
+% end

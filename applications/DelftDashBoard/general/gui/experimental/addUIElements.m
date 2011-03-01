@@ -250,23 +250,23 @@ for i=1:length(elements)
                 end
 
                 
-                %% Custom elements
-            case{'popupmenu'}    
-                elements(i).handle=uicontrol(figh,'Style','popupmenu','String',elements(i).stringList,'Position',position);
-                
-                if ~isempty(elements(i).toolTipString)
-                    set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
-                end
-                
-                if ~isempty(parent)
-                    set(elements(i).handle,'Parent',parent);
-                end
-                
-                if ~isempty(elements(i).text)
-                    % Text
-                    elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
-                    setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
-                end
+%                 %% Custom elements
+%             case{'popupmenu'}    
+%                 elements(i).handle=uicontrol(figh,'Style','popupmenu','String',elements(i).stringList,'Position',position);
+%                 
+%                 if ~isempty(elements(i).toolTipString)
+%                     set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
+%                 end
+%                 
+%                 if ~isempty(parent)
+%                     set(elements(i).handle,'Parent',parent);
+%                 end
+%                 
+%                 if ~isempty(elements(i).text)
+%                     % Text
+%                     elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
+%                     setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
+%                 end
             
             case{'pushselectfile','pushsavefile'}
                 
@@ -366,8 +366,9 @@ for i=1:length(elements)
                     format{j}=elements(i).columns(j).format;
                     txt{j}=elements(i).columns(j).text;
                     callbacks{j}=[];
+                    popuptext{j}={' '};
                 end
-
+                
                 % Data?
                 data=[];
                 for j=1:length(elements(i).columns)
@@ -391,7 +392,13 @@ for i=1:length(elements)
                 end
                 
                 elements(i).handle=table(gcf,'create','tag',tag,'parent',parent,'data',data,'position',position,'nrrows',nrrows,'columntypes',cltp,'width',width,'callbacks',callbacks, ...
-                    'includebuttons',inclb,'includenumbers',incln,'format',format,'enable',enable,'columntext',txt);
+                    'includebuttons',inclb,'includenumbers',incln,'format',format,'enable',enable,'columntext',txt,'popuptext',popuptext);
+
+                
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end
 
         end
     catch
@@ -466,13 +473,15 @@ for i=1:length(elements)
             case{'table'}
                 % Get handles from table
                 usd=get(elements(i).handle,'UserData');
+                usd.callback={@table_Callback,getFcn,setFcn,elements,i};
+                set(elements(i).handle,'UserData',usd);
                 tbh=usd.handles;
                 for j=1:length(elements(i).columns)
                     for k=1:elements(i).nrRows
                         if ~isempty(elements(i).columns(j).callback)
                             callback=elements(i).column(j).callback;
                         else
-                            callback={@table_Callback,getFcn,setFcn,elements,i,elements(i).onChangeCallback};
+                            callback={@table_Callback,getFcn,setFcn,elements,i,elements(i).onChangeCallback,elements(i).option1,elements(i).option2};
                         end
                         setappdata(tbh(k,j),'callback',callback);
                     end
@@ -858,10 +867,16 @@ for j=1:length(el.columns)
         switch lower(el.columns(j).style)
             case{'editreal'}
                 v(k)=data{k,j};
+            case{'edittime'}
+                v(k)=data{k,j};
             case{'editstring'}
                 v{k}=data{k,j};
             case{'popupmenu'}
-                v{k}=data{k,j};
+                if isnumeric(data{k,j})
+                    v(k)=data{k,j};
+                else
+                    v{k}=data{k,j};
+                end
             case{'checkbox'}
                 v(k)=data{k,j};
         end

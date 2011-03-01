@@ -370,3 +370,25 @@ handles.Model(md).Input(id).trachy.trtu='';
 handles.Model(md).Input(id).trachy.trtv='';
 handles.Model(md).Input(id).trachy.trtDt=0;
 
+%% Fourier analysis
+handles.Model(md).Input(id).fourier.parameterList={'wl','uv','qf'};
+handles.Model(md).Input(id).fourier.parameterNumber=1;
+handles.Model(md).Input(id).fourier.startTime=floor(now);
+handles.Model(md).Input(id).fourier.stopTime=floor(now)+1;
+handles.Model(md).Input(id).fourier.nrCycles=1;
+handles.Model(md).Input(id).fourier.nodalAmplificationFactor=1;
+handles.Model(md).Input(id).fourier.astronomicalArgument=0;
+handles.Model(md).Input(id).fourier.layer=0;
+handles.Model(md).Input(id).fourier.max=1;
+handles.Model(md).Input(id).fourier.min=1;
+handles.Model(md).Input(id).fourier.ellipse=0;
+handles.Model(md).Input(id).fourier.tableOption='edit';
+
+handles.Model(md).Input(id).fourier.astronomicalComponents='M2';
+handles.Model(md).Input(id).fourier.parameterNumber2=1;
+handles.Model(md).Input(id).fourier.componentNumber=1;
+handles.Model(md).Input(id).fourier.layer2=0;
+handles.Model(md).Input(id).fourier.max2=1;
+handles.Model(md).Input(id).fourier.min2=1;
+handles.Model(md).Input(id).fourier.ellipse2=0;
+

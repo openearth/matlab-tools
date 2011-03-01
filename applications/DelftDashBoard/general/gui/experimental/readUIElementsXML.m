@@ -78,6 +78,7 @@ if isfield(xml,'elements')
                 s.elements(k).nrRows         = getnodeval(elxml(k).element,'nrrows',1,'integer');
                 s.elements(k).callback       = getnodeval(elxml(k).element,'callback',[],'function');
                 for j=1:length(elxml(k).element.columns)
+
                     s.elements(k).columns(j).style     = getnodeval(elxml(k).element.columns(j).column,'style',[],'string');
                     s.elements(k).columns(j).width     = getnodeval(elxml(k).element.columns(j).column,'width',[],'integer');
                     s.elements(k).columns(j).callback  = getnodeval(elxml(k).element.columns(j).column,'callback',[],'function');
@@ -85,10 +86,37 @@ if isfield(xml,'elements')
                     s.elements(k).columns(j).popupText = getnodeval(elxml(k).element.columns(j).column,'popuptext',[],'string');
                     s.elements(k).columns(j).enable    = getnodeval(elxml(k).element.columns(j).column,'enable',1,'boolean');
                     s.elements(k).columns(j).format    = getnodeval(elxml(k).element.columns(j).column,'format',[],'string');
+                    s.elements(k).columns(j).type      = getnodeval(elxml(k).element.columns(j).column,'type',[],'string');
+                    
                     % Variable
                     if isfield(elxml(k).element.columns(j).column,'variable')
                         s.elements(k).columns(j).variable=readVariableXML(elxml(k).element.columns(j).column.variable,subFields,subIndices);
                     end
+                    
+                    % Popup menu
+                    if isfield(elxml(k).element.columns(j).column,'list')                        
+                        % Text
+                        if isfield(elxml(k).element.columns(j).column.list.texts,'variable')
+                            s.elements(k).columns(j).list.text.variable=readVariableXML(elxml(k).element.columns(j).column.list.texts.variable,subFields,subIndices);
+                        elseif iscell(elxml(k).element.columns(j).column.list)
+                            s.elements(k).columns(j).stringList = elxml(k).element.columns(j).column.list;
+                        else
+                            for jj=1:length(elxml(k).element.columns(j).column.list.texts)
+                                s.elements(k).columns(j).list.text{jj}=elxml(k).element.columns(j).column.list.texts(jj).text;
+                            end
+                        end
+                        % Values
+                        if isfield(elxml(k).element.columns(j).column.list,'values')
+                            if isfield(elxml(k).element.columns(j).column.list.values,'variable')
+                                s.elements(k).columns(j).list.value.variable=readVariableXML(elxml(k).element.columns(j).column.list.values.variable,subFields,subIndices);
+                            else
+                                for jj=1:length(elxml(k).element.columns(j).column.list.values)
+                                    s.elements(k).columns(j).list.value{jj}=elxml(k).element.columns(j).column.list.values(jj).value;
+                                end
+                            end
+                        end
+                    end
+                    
                 end
                
             otherwise

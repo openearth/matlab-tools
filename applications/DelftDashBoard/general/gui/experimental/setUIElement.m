@@ -190,22 +190,7 @@ switch lower(el.style)
            pos(4)=15;
            set(el.textHandle,'Position',pos);
         end
-               
-    case{'popupmenu'}
-        val=getSubFieldValue(s,el.variable);
-        for ilist=1:length(el.stringList)
-            if strcmpi(val,el.stringList{ilist})
-                ival=ilist;
-            end
-        end
-        set(el.textHandle,'enable','on','String',el.variable.name);
-        set(el.handle,'Value',ival);
-        pos=get(el.textHandle,'position');
-        ext=get(el.textHandle,'Extent');
-        pos(3)=ext(3);
-        pos(4)=15;
-        set(el.textHandle,'Position',pos);
-       
+                      
     case{'pushsavefile'}
         if el.showFileName
             val=getSubFieldValue(s,el.variable);
@@ -232,6 +217,23 @@ switch lower(el.style)
             end
         end
         
+        % Determine string list in case of popup menu
+        ipopup=0;
+        for j=1:length(el.columns)
+            popupText{j}={' '};
+            switch lower(el.columns(j).style)
+                case{'popupmenu'}
+                    ipopup=1;
+                    str=getSubFieldValue(s,el.columns(j).list.text.variable);
+                    for k=1:length(str)
+                        popupText{j}=str;
+                    end
+            end
+        end
+%         if ipopup
+%             table(el.handle,'refresh','popuptext',popupText);
+%         end
+        
         % Now set the data
         for j=1:length(el.columns)
             val=getSubFieldValue(s,el.columns(j).variable);
@@ -244,7 +246,8 @@ switch lower(el.style)
                     case{'editstring'}
                         data{k,j}=val{k};
                     case{'popupmenu'}
-                        data{k,j}=val{k};
+                        data{k,j}=val(k);
+%                        data{k,j}=val{k};
                     case{'checkbox'}
                         data{k,j}=val(k);
                     case{'pushbutton'}
@@ -254,7 +257,7 @@ switch lower(el.style)
                 end
             end
         end
-        table(el.handle,'setdata',data);
+        table(el.handle,'setdata',data,'popuptext',popupText);
 end
 
 if dependencyUpdate

@@ -26,6 +26,12 @@
         <elements>Delft3DFLOW.output.details.xml</elements>
         <enable>0</enable>
       </tab>
+      <tab>
+        <tag>fourier</tag>
+        <tabstring>Fourier Analysis</tabstring>
+        <callback>ddb_Delft3DFLOW_fourier</callback>
+        <elements>Delft3DFLOW.output.fourier.xml</elements>
+      </tab>
     </tabs>
   </element>
 </root>
