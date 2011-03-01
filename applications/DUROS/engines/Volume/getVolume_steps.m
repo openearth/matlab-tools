@@ -197,5 +197,5 @@ if length(unique(x))~=length(x)
         end
         [x, z] = deal(x(~isnan(z)), z(~isnan(z)));
     end
-    disp('Warning: Duplicate point(s) skipped');
+    %disp('Warning: Duplicate point(s) skipped');
 end
