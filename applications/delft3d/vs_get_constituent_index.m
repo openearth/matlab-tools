@@ -224,7 +224,6 @@ IND = [];
 
    end
    
-   IND = struct(); % in case no constituents
 
    if strcmp(NFSstruct.SubType,'Delft3D-trim') | ...
       strcmp(NFSstruct.SubType,'Delft3D-trih')
