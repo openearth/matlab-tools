@@ -42,7 +42,9 @@ handles.Model(md).Input(ad).depthZ=nans;
 setHandles(handles);
 setUIElement('delft3dflow.domain.domainpanel.grid.textgridm');
 setUIElement('delft3dflow.domain.domainpanel.grid.textgridn');
-ddb_plotGrid(x,y,ad,'FlowGrid','plot');
+handles=getHandles;
+handles=ddb_Delft3DFLOW_plotGrid(handles,'plot');
+setHandles(handles);
 
 %%
 function selectEnclosure

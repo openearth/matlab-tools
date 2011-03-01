@@ -413,6 +413,12 @@ if Flow.cstBnd
     MDF.CstBnd='Y';
 end
 
+if Flow.fourier.include
+    if ~isempty(Flow.fourier.fouFile)
+        MDF.Filfou=Flow.fourier.fouFile;
+    end
+end
+
 %% Now save everything to mdf file
 fname=[handles.Model(md).Input(id).runid '.mdf'];
 

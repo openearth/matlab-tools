@@ -224,15 +224,9 @@ switch lower(el.style)
             switch lower(el.columns(j).style)
                 case{'popupmenu'}
                     ipopup=1;
-                    str=getSubFieldValue(s,el.columns(j).list.text.variable);
-                    for k=1:length(str)
-                        popupText{j}=str;
-                    end
+                    popupText{j}=getSubFieldValue(s,el.columns(j).list.text.variable);
             end
         end
-%         if ipopup
-%             table(el.handle,'refresh','popuptext',popupText);
-%         end
         
         % Now set the data
         for j=1:length(el.columns)
@@ -257,7 +251,10 @@ switch lower(el.style)
                 end
             end
         end
-        table(el.handle,'setdata',data,'popuptext',popupText);
+        if ipopup
+            table(el.handle,'refresh','popuptext',popupText);
+        end
+        table(el.handle,'setdata',data);
 end
 
 if dependencyUpdate

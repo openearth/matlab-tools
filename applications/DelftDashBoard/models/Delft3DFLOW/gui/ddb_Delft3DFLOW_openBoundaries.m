@@ -247,23 +247,23 @@ else
                 end
                 switch lower(opt2)
                     case{'bnd'}
-                        handles.Model(md).Input(ad).BndFile=filename;
+                        handles.Model(md).Input(ad).bndFile=filename;
                         handles=ddb_readBndFile(handles,ad);
                         handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
                     case{'bca'}
-                        handles.Model(md).Input(ad).BcaFile=filename;
+                        handles.Model(md).Input(ad).bcaFile=filename;
                         handles=ddb_readBcaFile(handles,ad);
                     case{'cor'}
-                        handles.Model(md).Input(ad).CorFile=filename;
+                        handles.Model(md).Input(ad).corFile=filename;
                         handles=ddb_readCorFile(handles,ad);
                     case{'bch'}
-                        handles.Model(md).Input(ad).BchFile=filename;
+                        handles.Model(md).Input(ad).bchFile=filename;
                         handles=ddb_readBchFile(handles,ad);
                     case{'bct'}
-                        handles.Model(md).Input(ad).BctFile=filename;
+                        handles.Model(md).Input(ad).bctFile=filename;
                         handles=ddb_readBctFile(handles,ad);
                     case{'bcc'}
-                        handles.Model(md).Input(ad).BccFile=filename;
+                        handles.Model(md).Input(ad).bccFile=filename;
                         handles=ddb_readBccFile(handles,ad);
                 end              
                 clearInstructions;

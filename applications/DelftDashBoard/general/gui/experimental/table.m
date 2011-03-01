@@ -425,7 +425,7 @@ iac=usd.activeRow;
 nr=size(usd.data,1);
 ip=usd.firstRow-1;
 iac=iac+ip;
-if nr>2
+if nr>1
     for j=1:nrcolumns
         if iac<nr
             for i=iac:nr-1
@@ -497,13 +497,18 @@ data=usd.data;
 nrrows=usd.nrRows;
 nrcolumns=usd.nrColumns;
 
-
 if isempty(enab)
     enab=zeros(nrrows,nrcolumns)+1;
+else
+    if usd.firstRow>1
+        enab=enab(usd.firstRow-1:usd.firstRow-2+nrrows,:);
+    end
 end
 
 enabperm=usd.enable;
+if size(enab,1)>=size(enabperm)
 enab=min(enab,enabperm);
+end
 
 vslider=usd.verticalSlider;
 columntypes=usd.columnTypes;

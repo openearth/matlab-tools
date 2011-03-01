@@ -56,8 +56,10 @@ for i=1:nt
     handles.Toolbox(i).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
     if strcmpi(tp{i},'standard')
         handles.Toolbox(i).dir=[dr filesep name{i}];
+        handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
     else
         handles.Toolbox(i).dir=[dr2 filesep name{i}];
+        handles.Toolbox(i).xmlDir=[dr2 filesep name{i} filesep 'xml' filesep];
     end
 end
 

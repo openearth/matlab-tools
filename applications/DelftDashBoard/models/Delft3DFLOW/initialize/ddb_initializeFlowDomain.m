@@ -372,23 +372,35 @@ handles.Model(md).Input(id).trachy.trtDt=0;
 
 %% Fourier analysis
 handles.Model(md).Input(id).fourier.parameterList={'wl','uv','qf'};
-handles.Model(md).Input(id).fourier.parameterNumber=1;
-handles.Model(md).Input(id).fourier.startTime=floor(now);
-handles.Model(md).Input(id).fourier.stopTime=floor(now)+1;
-handles.Model(md).Input(id).fourier.nrCycles=1;
-handles.Model(md).Input(id).fourier.nodalAmplificationFactor=1;
-handles.Model(md).Input(id).fourier.astronomicalArgument=0;
-handles.Model(md).Input(id).fourier.layer=0;
-handles.Model(md).Input(id).fourier.max=1;
-handles.Model(md).Input(id).fourier.min=1;
-handles.Model(md).Input(id).fourier.ellipse=0;
 handles.Model(md).Input(id).fourier.tableOption='edit';
+handles.Model(md).Input(id).fourier.include=0;
+handles.Model(md).Input(id).fourier.fouFile='';
 
-handles.Model(md).Input(id).fourier.astronomicalComponents='M2';
-handles.Model(md).Input(id).fourier.parameterNumber2=1;
-handles.Model(md).Input(id).fourier.componentNumber=1;
-handles.Model(md).Input(id).fourier.layer2=0;
-handles.Model(md).Input(id).fourier.max2=1;
-handles.Model(md).Input(id).fourier.min2=1;
-handles.Model(md).Input(id).fourier.ellipse2=0;
+% Edit table
+handles.Model(md).Input(id).fourier.editTable.parameterNumber=1;
+handles.Model(md).Input(id).fourier.editTable.startTime=floor(now);
+handles.Model(md).Input(id).fourier.editTable.stopTime=floor(now)+1;
+handles.Model(md).Input(id).fourier.editTable.nrCycles=1;
+handles.Model(md).Input(id).fourier.editTable.nodalAmplificationFactor=1;
+handles.Model(md).Input(id).fourier.editTable.astronomicalArgument=0;
+handles.Model(md).Input(id).fourier.editTable.layer=1;
+handles.Model(md).Input(id).fourier.editTable.max=0;
+handles.Model(md).Input(id).fourier.editTable.min=0;
+handles.Model(md).Input(id).fourier.editTable.ellipse=0;
 
+handles.Model(md).Input(id).fourier.generateTable.parameterNumber=1;
+handles.Model(md).Input(id).fourier.generateTable.astronomicalComponents='M2';
+handles.Model(md).Input(id).fourier.generateTable.componentNumber=1;
+handles.Model(md).Input(id).fourier.generateTable.layer=1;
+handles.Model(md).Input(id).fourier.generateTable.max=0;
+handles.Model(md).Input(id).fourier.generateTable.min=0;
+handles.Model(md).Input(id).fourier.generateTable.ellipse=0;
+
+handles.Model(md).Input(id).fourier.layerList{1}='1';
+handles.Model(md).Input(id).fourier.spinUpTime=1440;
+
+tt=t_getconsts;
+handles.Model(md).Input(id).fourier.astronomicalComponents=[];
+for i=1:size(tt.name,1)
+    handles.Model(md).Input(id).fourier.astronomicalComponents{i}=deblank(tt.name(i,:));
+end
