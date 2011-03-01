@@ -70,6 +70,7 @@ n = varargin{3};
 
 OPT.turb = 1;
 OPT.w = 1;
+OPT.visc = 1;
 
 if nargin > 3
     OPT = setProperty(OPT,varargin{4:end});
@@ -121,4 +122,6 @@ H.v   = permute(H.v,[1 4 2 3]);
 
 %% viscosity
 
-H.Ez = permute(     vs_let(S,'map-series',{0},'VICWW',{n,m,0}),[1 4 2 3]);
+if OPT.visc
+    H.Ez = permute(     vs_let(S,'map-series',{0},'VICWW',{n,m,0}),[1 4 2 3]);
+end
