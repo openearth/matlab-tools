@@ -104,7 +104,7 @@ if nargin>5 %make figure to visually see the calculated surface
     hold on
     A=axis;
     axis equal
-    plotLandboundary('Kaartblad Vaklodingen',1,0)
+%     plotLandboundary('Kaartblad Vaklodingen',1,0)
     patch(xRD,yRD,'r','linewidth',2)
     axis(A)
     xlabel('x-coordinate')

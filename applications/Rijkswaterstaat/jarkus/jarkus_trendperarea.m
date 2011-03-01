@@ -67,5 +67,5 @@ if length(i)>3 %calculate trends only for more than 3 points
 
     TREND=[p(1:2) SE R(1,2) P(1,2)];
 else
-    TREND=repmat(NaN,1,4);
+    TREND=repmat(NaN,1,5);
 end

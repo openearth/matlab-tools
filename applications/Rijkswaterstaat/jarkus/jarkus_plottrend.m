@@ -54,8 +54,8 @@ function TRENDS = jarkus_plottrend(b,e,d1,d2,j,J,period)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 %% calculating surface and bed level change
-S             = jarkus_surface      (b,e,d1,d2,j,1);
-[ndZ,dZM,dZS] = jarkus_volumeperarea(b,e,d1,d2,j,J);
+S             = jarkus_surface      (b,e,d1,d2,j,1)
+[ndZ,dZM,dZS] = jarkus_volumeperarea(b,e,d1,d2,j,J)
 for i=1:length(period)-1
     TRENDS(i,:) = jarkus_trendperarea(dZM,S,J,[period(i) period(i+1)]);
 end

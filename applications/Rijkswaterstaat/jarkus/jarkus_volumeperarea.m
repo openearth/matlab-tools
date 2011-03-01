@@ -87,9 +87,9 @@ for i=1:length(zref(:,1))
 end
 
 % calculate delta-z for each year
-dZM = repmat(NaN,1,28);
-dZS = repmat(NaN,1,28);
-ndZ = repmat(NaN,1,28);
+dZM = repmat(NaN,1,length(J));
+dZS = repmat(NaN,1,length(J));
+ndZ = repmat(NaN,1,length(J));
 c=1;
 for t=J
     n    = find(y==t);
