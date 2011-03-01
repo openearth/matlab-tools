@@ -175,6 +175,10 @@ if DuneErosionSettings('get', 'DUROS')
         [result(1).xLand; result(1).xActive; result(1).xSea],...
         [result(1).zLand; result(1).zActive; result(1).zSea]);
     
+    xz=deal(sortrows([xInitial zInitial]));
+    Q=diff(xz(:,1))~=0;Q=[true;Q];              % = get unique/distinct x-values
+    xInitial=xz(Q,1);zInitial=xz(Q,2);   
+    
     if isempty(Volume)
         NoDUROSResult = true;
     end
