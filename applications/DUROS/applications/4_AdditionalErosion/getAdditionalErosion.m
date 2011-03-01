@@ -254,10 +254,11 @@ while NextIteration
         x0(Iter) = OPT.x0except(x0InValley,x0exceptID(x0InValley));
         % by lowering the x0exceptID by 1, next time, the landward
         % boundary will be chosen
-        x0exceptID(x0InValley) = x0exceptID(x0InValley)-1;
+        x0exceptID(x0InValley) = max(1,x0exceptID(x0InValley)-1);
     end
     
     xcross = findCrossings(x, z, x0(Iter)+x2, z2, 'keeporiginalgrid');
+    if ~isempty(xcross)
     [xmin(Iter) xmax(Iter)] = deal(min(xcross), max(xcross));
     [Volume(Iter) iterresult(Iter)] = getVolume(x, z,...
         'LowerBoundary', OPT.zmin,...
@@ -265,6 +266,10 @@ while NextIteration
         'SeawardBoundary', xmax(Iter),...
         'x2', x0(Iter)+x2,...
         'z2', z2);
+    else
+        Volume(Iter)=NaN;
+        iterresult(Iter)=createEmptyDUROSResult;
+    end
     
     % create conditions for if statement to adjust profile shift x0
     FirstTwoItersCompleted = Iter==numel(x0); % after the second iteration, x0 is extended for each next iteration
