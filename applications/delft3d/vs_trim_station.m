@@ -25,10 +25,10 @@ function H = vs_trim_station(varargin)
 %See also: DELFT3D
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 Technische Universiteit Delft, 
+%   Copyright (C) 2010 Technische Universiteit Delft,
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       g.j.deboer@tudelft.nl
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -60,50 +60,65 @@ function H = vs_trim_station(varargin)
 % $HeadURL$
 
 if       ischar(varargin{1})
-  S =    vs_use(varargin{1});
+    S =    vs_use(varargin{1});
 elseif isstruct(varargin{1})
-  S =           varargin{1};
+    S =           varargin{1};
 end
 
-   m = varargin{2};
-   n = varargin{3};
+m = varargin{2};
+n = varargin{3};
 
-   G     = vs_meshgrid2dcorcen(S);
-   
+OPT.turb = 1;
+OPT.w = 1;
+
+if nargin > 3
+    OPT = setProperty(OPT,varargin{4:end});
+end
+
+G     = vs_meshgrid2dcorcen(S);
+
 %% coordinates
 
-   H.m        = m;
-   H.n        = n;
-   H.x        = G.cen.x  (n-1,m-1);
-   H.y        = G.cen.y  (n-1,m-1);
-   H.dep      = G.cen.dep(n-1,m-1);
-   H.sigma_dz = G.sigma_dz;
-   H.datenum  = vs_time(S,0,1);
+H.m        = m;
+H.n        = n;
+H.x        = G.cen.x  (n-1,m-1);
+H.y        = G.cen.y  (n-1,m-1);
+H.dep      = G.cen.dep(n-1,m-1);
+H.sigma_dz = G.sigma_dz;
+H.datenum  = vs_time(S,0,1);
 
 %% 'scalars'
 
-   H.eta = permute(     vs_let(S,'map-series',{0},'S1'  ,{n,m  }),[1 4 2 3]);
-   H.w   = permute(     vs_let(S,'map-series',{0},'WPHY',{n,m,0}),[1 4 2 3]);
+H.eta = permute(     vs_let(S,'map-series',{0},'S1'  ,{n,m  }),[1 4 2 3]);
+if OPT.w
+    H.w   = permute(     vs_let(S,'map-series',{0},'WPHY',{n,m,0}),[1 4 2 3]);
+end
 
 %% constituents
 
-   I = vs_get_constituent_index(S);
-   fldnames = fieldnames(I);
-   
-   for ifld=1:length(fldnames)
-      fldname = fldnames{ifld};
-      
-      H.(fldname) = permute(   vs_let(S,I.(fldname).groupname,{0},...
-                                        I.(fldname).elementname,...
-                                 {n,m,0,I.(fldname).index})   ,[1 4 2 3]);
-   end
+I = vs_get_constituent_index(S);
+fldnames = fieldnames(I);
+
+for ifld=1:length(fldnames)
+    fldname = fldnames{ifld};
+    if strcmp(fldname,'turbulent_energy') | strcmp(fldname,'energy_dissipation') & OPT.turb
+        H.(fldname) = permute(   vs_let(S,I.(fldname).groupname,{0},...
+            I.(fldname).elementname,...
+            {n,m,0,I.(fldname).index})   ,[1 4 2 3]);
+    else if ~strcmp(fldname,'turbulent_energy') & ~strcmp(fldname,'energy_dissipation')
+            H.(fldname) = permute(   vs_let(S,I.(fldname).groupname,{0},...
+                I.(fldname).elementname,...
+                {n,m,0,I.(fldname).index})   ,[1 4 2 3]);
+        end
+    end
+end
 
 %% velocities
 
-   [H.u,H.v]=vs_let_vector_cen(S,'map-series',{0},{'U1','V1'},{n,m});
-   H.u   = permute(H.u,[1 4 2 3]);
-   H.v   = permute(H.v,[1 4 2 3]);
+[H.u,H.v]=vs_let_vector_cen(S,'map-series',{0},{'U1','V1'},{n,m});
+H.u   = permute(H.u,[1 4 2 3]);
+H.v   = permute(H.v,[1 4 2 3]);
 
 %% viscosity
 
-   H.Ez = permute(     vs_let(S,'map-series',{0},'VICWW',{n,m,0}),[1 4 2 3]);
+H.Ez = permute(     vs_let(S,'map-series',{0},'VICWW',{n,m,0}),[1 4 2 3]);
