@@ -291,9 +291,11 @@ for entry=1:length(OPT.files)
                    x = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
                    ATT.projectionCoverage_x{entry}(1) = min(ATT.projectionCoverage_x{entry}(1),min(x(1)));
                    ATT.projectionCoverage_x{entry}(2) = max(ATT.projectionCoverage_x{entry}(2),max(x(2)));
-                   grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping'); % TO DO: get from fileinfo
-                   if nc_isvar(OPT.filename,grid_mapping)
-                     ATT.projectionEPSGcode{entry} = double(nc_varget(OPT.filename,grid_mapping)); % pre allocated nan and int do not work with cell2mat
+                   if nc_isatt(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping')
+                       grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping'); % TO DO: get from fileinfo
+                       if nc_isvar(OPT.filename,grid_mapping)
+                           ATT.projectionEPSGcode{entry} = double(nc_varget(OPT.filename,grid_mapping)); % pre allocated nan and int do not work with cell2mat
+                       end
                    end
                end
                
@@ -301,11 +303,13 @@ for entry=1:length(OPT.files)
                    y = nc_actual_range(OPT.filename, fileinfo.Dataset(idat).Name);
                    ATT.projectionCoverage_y{entry}(1) = min(ATT.projectionCoverage_y{entry}(1),min(y(1)));
                    ATT.projectionCoverage_y{entry}(2) = max(ATT.projectionCoverage_y{entry}(2),max(y(2)));
-                   grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping'); % TO DO: get from fileinfo
-                   if nc_isvar(OPT.filename,grid_mapping)
-                     if ~ (ATT.projectionEPSGcode{entry} == double(nc_varget(OPT.filename,grid_mapping)))
-                        error('x and y have different epsg code')
-                     end
+                   if nc_isatt(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping')
+                       grid_mapping = nc_attget(OPT.filename, fileinfo.Dataset(idat).Name,'grid_mapping'); % TO DO: get from fileinfo
+                       if nc_isvar(OPT.filename,grid_mapping)
+                           if ~ (ATT.projectionEPSGcode{entry} == double(nc_varget(OPT.filename,grid_mapping)))
+                               error('x and y have different epsg code')
+                           end
+                       end
                    end
                end
                
