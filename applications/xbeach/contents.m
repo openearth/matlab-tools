@@ -7,5 +7,6 @@
 %   xb_io              - read and write xbeach files
 %   xb_human           - make xbeach result structure accessible
 %   xb_modelsetup      - facilitate model set-up
+%   xb_nesting         - routines to nest an xbeach model in another model (delft3d or ww3)
 %   xb_visualise       - facilitate model visualisation
 %   xb_lib             - general functions
