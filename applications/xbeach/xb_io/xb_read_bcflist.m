@@ -100,7 +100,8 @@ while ~feof(fid)
     filenames = [filenames {fname}];
     
     if isempty(OPT.range) || (tlength >= OPT.range(1) && tlength <= OPT.range(2))
-        data = cat(3, data, read_bcf(fname));
+        datai = xb_read_bcffile(fname);
+        data = cat(ndims(datai), data, datai);
     end
     
     tlength = tlength+1;
@@ -115,27 +116,3 @@ xb = xb_set(xb, '-units', 'time', {bcendtime 's'}, 'duration', {rt 's'}, ...
     'data', {data 'J/m^2'});
 xb = xb_consolidate(xb);
 xb = xb_meta(xb, mfilename, 'boundaryconditions', [{filename} filenames]);
-
-%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function data = read_bcf(filename)
-
-fdir = fileparts(filename);
-
-% determine dimensions
-dims = xb_read_dims(fdir);
-
-% determine time dimension based on filesize
-info = dir(filename);
-nt = info.bytes/8/(dims.globaly+1)/dims.wave_angle;
-
-% read file
-fid = fopen(filename, 'r');
-
-data = nan([dims.globaly+1 dims.wave_angle nt]);
-
-for i = 1:nt
-    data(:,:,i) = fread(fid, [dims.globaly+1 dims.wave_angle], 'double');
-end
-
-fclose(fid);

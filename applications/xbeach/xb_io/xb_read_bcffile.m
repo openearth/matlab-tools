@@ -1,29 +1,25 @@
-function [x y z ne] = xb_input2bathy(xb, varargin)
-%XB_INPUT2BATHY  Reads bathymetry from XBeach input structure
+function data = xb_read_bcffile(filename, varargin)
+%XB_READ_BCFFILE  One line description goes here.
 %
-%   Converts XBeach input structure to a bathymetry with x, y and z values.
-%   Also supports reading of non-erodible layers.
+%   More detailed description goes here.
 %
 %   Syntax:
-%   [x y z ne] = xb_input2bathy(xb)
+%   varargout = xb_read_bcffile(varargin)
 %
 %   Input:
-%   xb  = XBeach input structure array
+%   varargin  =
 %
 %   Output:
-%   x   = x-coordinates of bathymetry
-%   y   = y-coordinates of bathymetry
-%   z   = z-coordinates of bathymetry
-%   ne  = non-erodible layers in bathymetry
+%   varargout =
 %
 %   Example
-%   [x y z] = xb_input2bathy(xb)
+%   xb_read_bcffile
 %
-%   See also xb_bathy2input, xb_read_bathy, xb_read_input
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 Deltares
+%   Copyright (C) 2011 Deltares
 %       Bas Hoonhout
 %
 %       bas.hoonhout@deltares.nl	
@@ -52,7 +48,7 @@ function [x y z ne] = xb_input2bathy(xb, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 02 Dec 2010
+% Created: 02 Mar 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -62,8 +58,32 @@ function [x y z ne] = xb_input2bathy(xb, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% convert input to bathy
+%%
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+[fdir fname] = fileparts(filename);
 
-[x y z ne] = xb_get(xb, 'xfile.xfile', 'yfile.yfile', 'depfile.depfile', 'ne_layer.ne_layer');
+% determine dimensions
+dims = xb_read_dims(fdir);
+
+switch upper(fname(1))
+    case 'E'
+        fdims = [dims.globaly+1 dims.wave_angle];
+    case 'Q'
+        fdims = [dims.globaly+1];
+end
+
+% determine time dimension based on filesize
+info = dir(filename);
+nt = info.bytes/8/prod(fdims);
+
+% read file
+fid = fopen(filename, 'r');
+
+data = nan([fdims nt]);
+
+for i = 1:nt
+    idx = [num2cell(repmat(':',1,length(fdims))) {i}];
+    data(idx{:}) = fread(fid, fdims, 'double');
+end
+
+fclose(fid);
