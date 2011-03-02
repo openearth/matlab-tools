@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <toolbox>Bathymetry</toolbox>
+  <longname>Bathymetry</longname>
+  <enable>1</enable>
+  <elements>
+    <element>
+      <position>10 10 1000 140</position>
+      <style>tabpanel</style>
+      <tag>bathymetrypanel</tag>
+      <tabs>
+        <tab>
+          <tag>export</tag>
+          <tabstring>Export</tabstring>
+          <callback>ddb_BathymetryToolbox_export</callback>
+          <elements>Bathymetry.export.xml</elements>
+        </tab>
+      </tabs>
+    </element>
+  </elements>
+</root>

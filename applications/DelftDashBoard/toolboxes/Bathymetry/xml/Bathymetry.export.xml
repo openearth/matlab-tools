@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>selectbathymetry</tag>
+    <style>listbox</style>
+    <text>Available Databases</text>
+    <textposition>above-center</textposition>
+    <variable>handles.Toolbox(tb).Input.activeDataset</variable>
+    <type>integer</type>
+    <position>10 10 150 105</position>
+    <tooltipstring>Select bathymetry database</tooltipstring>
+    <onchange>ddb_BathymetryToolbox_export</onchange>
+    <option1>selectdataset</option1>
+    <list>
+      <texts>
+        <variable>handles.bathymetry.datasets</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>drawpolygon</tag>
+    <style>pushbutton</style>
+    <position>170 95 80 20</position>
+    <text>Draw Polygon</text>
+    <callback>ddb_BathymetryToolbox_export</callback>
+    <option1>drawpolygon</option1>
+  </element> 
+  <element>
+    <tag>deletepolygon</tag>
+    <style>pushbutton</style>
+    <position>170 70 80 20</position>
+    <text>Delete Polygon</text>
+    <callback>ddb_BathymetryToolbox_export</callback>
+    <option1>deletepolygon</option1>
+  </element> 
+  <element>
+    <tag>loadpolygon</tag>
+    <style>pushselectfile</style>
+    <position>170 40 80 20</position>
+    <text>Load Polygon</text>
+    <variable>handles.Toolbox(tb).Input.polygonFile</variable>
+    <onchange>ddb_BathymetryToolbox_export</onchange>
+    <option1>loadpolygon</option1>
+    <showfilename>no</showfilename> 
+    <extension>*.pol</extension>
+    <selectiontext>Select polygon file</selectiontext>
+    <tooltipstring>Select polygon file</tooltipstring> 
+  </element>
+  <element>
+    <tag>savepolygon</tag>
+    <style>pushsavefile</style>
+    <position>170 15 80 20</position>
+    <text>Save Polygon</text>
+    <variable>handles.Toolbox(tb).Input.polygonFile</variable>
+    <onchange>ddb_BathymetryToolbox_export</onchange>
+    <option1>savepolygon</option1>
+    <showfilename>no</showfilename> 
+    <extension>*.pol</extension>
+    <selectiontext>Save polygon file</selectiontext>
+    <tooltipstring>Save polygon file</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>deletepolygon</tag>
+          <tag>drawpolygon</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.polyLength</variable>
+            <type>integer</type>	              
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>selectzoomlevel</tag>
+    <style>popupmenu</style>
+    <text>Zoom Level</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.activeZoomLevel</variable>
+    <type>integer</type>
+    <position>350 95 60 20</position>
+    <tooltipstring>Select zoom level</tooltipstring>
+    <onchange>ddb_BathymetryToolbox_export</onchange>
+    <option1>selectzoomlevel</option1>
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.zoomLevelText</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>textresolution</tag>
+    <style>text</style>
+    <variable>handles.Toolbox(tb).Input.resolutionText</variable>
+    <type>string</type>
+    <position>420 96</position>
+  </element>
+  <element>
+    <tag>selectexporttype</tag>
+    <style>popupmenu</style>
+    <text>Export Type</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.activeExportType</variable>
+    <position>350 70 60 20</position>
+    <tooltipstring>Select zoom level</tooltipstring>
+    <type>string</type>
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.exportTypes</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>selectpositivedirection</tag>
+    <style>popupmenu</style>
+    <text>Positive</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.activeDirection</variable>
+    <position>350 45 60 20</position>
+    <tooltipstring>Select positive up or down</tooltipstring>
+    <type>string</type>
+    <list>
+      <texts>
+        <text>up</text>
+        <text>down</text>
+      </texts>
+      <values>
+        <value>up</value>
+        <value>down</value>
+      </values>
+    </list>
+  </element>
+  <element>
+    <tag>exportbathy</tag>
+    <style>pushsavefile</style>
+    <position>290 15 120 20</position>
+    <text>Export</text>
+    <variable>handles.Toolbox(tb).Input.bathyFile</variable>
+    <onchange>ddb_BathymetryToolbox_export</onchange>
+    <option1>export</option1>
+    <showfilename>no</showfilename> 
+    <extension>*.xyz</extension>
+    <selectiontext>Save bathy file</selectiontext>
+    <tooltipstring>Export bathymetry</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>deletepolygon</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.polyLength</variable>
+            <type>integer</type>	              
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+</root>

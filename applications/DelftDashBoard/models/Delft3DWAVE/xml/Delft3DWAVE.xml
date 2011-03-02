@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <model>Delft3DWAVE</model>
+  <longname>Delft3D-WAVE</longname>
+  <elements>
+    <element>
+      <style>tabpanel</style>
+      <tag>Delft3DWAVE</tab>
+      <position>10 10 900 700</position> 
+      <tabs>
+        <tab>
+          <tag>toolbox</tag>
+          <tabstring>Toolbox</tabstring>
+          <callback>ddb_selectToolbox</callback>
+        </tab>
+        <tab>
+          <tag>description</tag>
+          <tabstring>Description</tabstring>
+          <elements>Delft3DWAVE.description.xml</elements>
+        </tab>
+        <tab>
+          <tag>hydrodynamics</tag>
+          <tabstring>Hydrodynamics</tabstring>
+          <elements>Delft3DWAVE.hydrodynamics.xml</elements>
+        </tab>
+        <tab>
+          <tag>grids</tag>
+          <tabstring>Grids</tabstring>
+          <elements>Delft3DWAVE.grids.xml</elements>
+        </tab>
+        <tab>
+          <tag>timeframe</tag>
+          <tabstring>Time Frame</tabstring>
+          <callback>ddb_editDelft3DWAVETimeFrame</callback>
+        </tab>
+        <tab>
+          <tag>boundaries</tag>
+          <tabstring>Boundaries</tabstring>
+          <callback>ddb_editDelft3DWAVEBoundaries</callback>
+        </tab>
+        <tab>
+          <tag>obstacles</tag>
+          <tabstring>Obstacles</tabstring>
+          <callback>ddb_editDelft3DWAVEObstacles</callback>
+        </tab>
+        <tab>
+          <tag>physicalparameters</tag>
+          <tabstring>Physical Parameters</tabstring>
+          <callback>ddb_editDelft3DWAVEPhysicalParameters</callback>
+        </tab>
+        <tab>
+          <tag>numericalparameters</tag>
+          <tabstring>Numerical Parameters</tabstring>
+          <callback>ddb_editDelft3DWAVENumericalParameters</callback>
+        </tab>
+        <tab>
+          <tag>outputcurves</tag>
+          <tabstring>Output Curves</tabstring>
+          <callback>ddb_editDelft3DWAVEOutputCurves</callback>
+        </tab>
+        <tab>
+          <tag>outputparameters</tag>
+          <tabstring>Output Parameters</tabstring>
+          <callback>ddb_editDelft3DWAVEOutputParameters</callback>
+        </tab>
+      </tabs>
+    </element>
+  </elements>
+  <menu>
+      <menuopenfile>
+        <menuitem>
+          <string>Open MDW File</string>
+          <callback>ddb_openDelft3DWAVE</callback>
+          <option>open</option>
+        </menuitem>
+      </menuopenfile>
+      <menusavefile>
+        <menuitem>
+          <string>Save MDW File</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>save</option>
+        </menuitem>
+        <menuitem>
+          <string>Save MDW File As ...</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveas</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveall</option>
+        </menuitem>
+        <menuitem>
+          <string>Save All As ...</string>
+          <callback>ddb_saveDelft3DWAVE</callback>
+          <option>saveallas</option>
+        </menuitem>
+      </menusavefile>
+      <menuview>
+      </menuview>
+  </menu>
+</root>
