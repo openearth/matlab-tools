@@ -4,6 +4,10 @@ function wkt = epsg_wkt(epsg_code)
 %   Uses webservice. If you recieve a proxy error, adjust the settings in
 %   File > Preferences > Web
 %
+%   Succesfully retrieved data is stored locally in the folder
+%   epsg_code_to_in_well_known_text located in the matlab temporary
+%   directory. 
+%
 %   Syntax:
 %   varargout = epsg_wkt(varargin)
 %
@@ -11,7 +15,7 @@ function wkt = epsg_wkt(epsg_code)
 %   epsg_code  = EPSG code
 %
 %   Output:
-%   wkt = wellk known text representation of epsg code
+%   wkt = well known text representation of epsg code
 %
 %   Example
 %   wkt = epsg_wkt(4326)
@@ -20,12 +24,15 @@ function wkt = epsg_wkt(epsg_code)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 <COMPANY>
-%       tda
+%   Copyright (C) 2011 Van Oord Dredging and Marine Contractors BV
+%       Thijs Damsma
 %
-%       <EMAIL>	
+%       tda@vanoord.com
 %
-%       <ADDRESS>
+%       Watermanweg 64
+%       3067 GG
+%       Rotterdam
+%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -42,9 +49,9 @@ function wkt = epsg_wkt(epsg_code)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -59,5 +66,27 @@ function wkt = epsg_wkt(epsg_code)
 % $Keywords: $
 
 %%
+epsg_tempdir = fullfile(tempdir,'epsg_code_to_in_well_known_text');
+if ~exist(epsg_tempdir,'dir')
+    mkpath(epsg_tempdir);
+end
 
-wkt = urlread(sprintf('http://spatialreference.org/ref/epsg/%d/prettywkt/',epsg_code));
+epsg_wkt_filename = sprintf('%d.txt',epsg_code);
+if exist(fullfile(epsg_tempdir,epsg_wkt_filename),'file')
+    fid = fopen(fullfile(epsg_tempdir,epsg_wkt_filename),'r');
+    wkt = fread(fid,inf,'*char')';
+    fclose(fid);
+else
+    try
+        wkt = urlread(sprintf('http://spatialreference.org/ref/epsg/%d/prettywkt/',epsg_code));
+        try
+            fid = fopen(fullfile(epsg_tempdir,epsg_wkt_filename),'w');
+            fwrite(fid,wkt,'char');
+            fclose(fid);
+        catch
+            disp('no wkt file could be written');
+        end
+    catch
+        wkt = sprintf('failed to retreive well known text of EPSG code %d',epsg_code);
+    end
+end
