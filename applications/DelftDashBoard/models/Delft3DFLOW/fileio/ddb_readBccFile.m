@@ -1,6 +1,6 @@
-function handles=ddb_readBccFile(handles)
+function handles=ddb_readBccFile(handles,id)
 
-Flow=handles.Model(md).Input(ad);
+Flow=handles.Model(md).Input(id);
 
 kmax=Flow.KMax;
 
@@ -139,7 +139,7 @@ for nb=1:Flow.nrOpenBoundaries
         end
     end
 end
-handles.Model(md).Input(ad)=Flow;
+handles.Model(md).Input(id)=Flow;
 
 
 function nt=FindTable(Info,bndname,par)

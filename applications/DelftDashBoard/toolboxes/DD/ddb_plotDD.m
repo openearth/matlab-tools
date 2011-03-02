@@ -1,6 +1,6 @@
-function ddb_plotDD(handles,opt)
+function ddb_plotDD(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
         h=findobj(gca,'Tag','DDCornerPoint');
         if ~isempty(h)

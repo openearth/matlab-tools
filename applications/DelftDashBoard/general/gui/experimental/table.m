@@ -506,7 +506,7 @@ else
 end
 
 enabperm=usd.enable;
-if size(enab,1)>=size(enabperm)
+if size(enab,1)>=size(enabperm,1)
 enab=min(enab,enabperm);
 end
 

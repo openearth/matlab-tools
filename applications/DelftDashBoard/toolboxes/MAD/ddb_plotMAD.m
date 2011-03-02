@@ -1,6 +1,6 @@
-function ddb_plotMAD(handles,opt)
+function ddb_plotMAD(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
         h=findall(gca,'Tag','MADModels');
         if ~isempty(h)

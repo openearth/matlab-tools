@@ -3,6 +3,7 @@
 <root>
   <toolbox>ModelMaker</toolbox>
   <longname>Model Maker</longname>
+  <enable>1</enable>
   <elements>
     <element>
       <position>10 10 1000 140</position>

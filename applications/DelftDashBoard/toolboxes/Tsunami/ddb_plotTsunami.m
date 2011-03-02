@@ -1,20 +1,20 @@
-function ddb_plotTsunami(handles,opt)
+function ddb_plotTsunami(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
-        h=findall(gca,'Tag','Plates');
+        h=findobj(gca,'Tag','Plates');
         if ~isempty(h)
             delete(h);
         end
-        h=findall(gca,'Tag','TsunamiSegments');
+        h=findobj(gca,'Tag','TsunamiSegments');
         if ~isempty(h)
             delete(h);
         end
-        h=findall(gca,'Tag','FaultArea');
+        h=findobj(gca,'Tag','FaultArea');
         if ~isempty(h)
             delete(h);
         end
-        h=findall(gca,'Tag','Epicentre');
+        h=findobj(gca,'Tag','Epicentre');
         if ~isempty(h)
             delete(h);
         end

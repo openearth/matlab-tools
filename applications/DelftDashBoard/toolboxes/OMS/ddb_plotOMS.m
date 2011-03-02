@@ -1,13 +1,13 @@
-function ddb_plotOMS(handles,opt)
+function ddb_plotOMS(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
-        h=findall(gca,'Tag','OMSStations');
+        h=findobj(gca,'Tag','OMSStations');
         delete(h);
-        h=findall(gca,'Tag','ActiveOMSStation');
+        h=findobj(gca,'Tag','ActiveOMSStation');
         delete(h);
         
-        h=findall(gca,'Tag','OMSModelLimits');
+        h=findobj(gca,'Tag','OMSModelLimits');
         if ~isempty(h)
             usd=get(h,'userdata');
             try
@@ -18,18 +18,18 @@ switch lower(opt)
         end
 
     case{'activate'}
-        h=findall(gca,'Tag','OMSStations');
+        h=findobj(gca,'Tag','OMSStations');
         if ~isempty(h)
             set(h,'Visible','on');
             set(h,'HandleVisibility','on');
         end
-        h=findall(gca,'Tag','ActiveOMSStation');
+        h=findobj(gca,'Tag','ActiveOMSStation');
         if ~isempty(h)
             set(h,'Visible','on');
             set(h,'HandleVisibility','on');
         end
 
-        h=findall(gca,'Tag','OMSModelLimits');
+        h=findobj(gca,'Tag','OMSModelLimits');
         if ~isempty(h)
             usd=get(h,'userdata');
             try
@@ -53,7 +53,7 @@ switch lower(opt)
             set(h,'HandleVisibility','off');
         end
 
-        h=findall(gca,'Tag','OMSModelLimits');
+        h=findobj(gca,'Tag','OMSModelLimits');
         if ~isempty(h)
             usd=get(h,'userdata');
             try

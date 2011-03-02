@@ -33,5 +33,5 @@ end
 
 for j=1:length(handles.Toolbox)
     f=handles.Toolbox(j).plotFcn;
-    feval(f,handles,'deactivate');
+    feval(f,'deactivate');
 end

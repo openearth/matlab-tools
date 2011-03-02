@@ -1,6 +1,6 @@
-function ddb_plotBathymetry(handles,opt)
+function ddb_plotBathymetry(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
         h=findobj(gca,'Tag','BathymetryPolygon');
         delete(h);

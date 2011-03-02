@@ -1,6 +1,6 @@
-function ddb_plotHurricane(handles,opt)
+function ddb_plotHurricane(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
         h=findobj(gca,'Tag','HurricaneTrack');
         delete(h);

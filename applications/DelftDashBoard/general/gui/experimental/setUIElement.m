@@ -148,8 +148,8 @@ switch lower(el.style)
                     end
             end
         end
-        set(el.handle,'String',stringList);
         set(el.handle,'Value',ii);
+        set(el.handle,'String',stringList);
                 
     case{'text'}
         if isfield(el,'variable')

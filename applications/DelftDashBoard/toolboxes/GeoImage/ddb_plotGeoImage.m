@@ -1,6 +1,6 @@
-function ddb_plotGeoImage(handles,opt)
+function ddb_plotGeoImage(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
         h=findobj(gca,'Tag','ImageOutline');
         delete(h);

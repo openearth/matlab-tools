@@ -41,34 +41,34 @@ if ~isempty(handles.Model(md).Input(ad).bcaFile)
     handles=ddb_readBcaFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).corFile)
-    handles=ddb_readCorFile(handles);
+    handles=ddb_readCorFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).bctFile)
-    handles=ddb_readBctFile(handles);
+    handles=ddb_readBctFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).bchFile)
-    handles=ddb_readBchFile(handles);
+    handles=ddb_readBchFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).bcqFile)
-    handles=ReadBcqFile(handles);
+    handles=ReadBcqFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).bccFile)
-    handles=ddb_readBccFile(handles);
+    handles=ddb_readBccFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).obsFile)
-    handles=ddb_readObsFile(handles);
+    handles=ddb_readObsFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).crsFile)
-    handles=ddb_readCrsFile(handles);
+    handles=ddb_readCrsFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).droFile)
     handles=ddb_readDroFile(handles);
 end
 if ~isempty(handles.Model(md).Input(ad).dryFile)
-    handles=ddb_readDryFile(handles);
+    handles=ddb_readDryFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).thdFile)
-    handles=ddb_readThdFile(handles);
+    handles=ddb_readThdFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).wndFile)
     handles=ddb_readWndFile(handles,ad);

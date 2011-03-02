@@ -1,6 +1,6 @@
-function ddb_plotTiling(handles,opt)
+function ddb_plotTiling(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
 
     case{'activate'}

@@ -1,18 +1,18 @@
-function ddb_plotObservationsDatabase(handles,opt)
+function ddb_plotObservationsDatabase(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
-        h=findall(gca,'Tag','ObservationStations');
+        h=findobj(gca,'Tag','ObservationStations');
         delete(h);
-        h=findall(gca,'Tag','ActiveObservationStation');
+        h=findobj(gca,'Tag','ActiveObservationStation');
         delete(h);
     case{'activate'}
-        h=findall(gca,'Tag','ObservationStations');
+        h=findobj(gca,'Tag','ObservationStations');
         if ~isempty(h)
             set(h,'Visible','on');
             set(h,'HandleVisibility','on');
         end
-        h=findall(gca,'Tag','ActiveObservationStation');
+        h=findobj(gca,'Tag','ActiveObservationStation');
         if ~isempty(h)
             set(h,'Visible','on');
             set(h,'HandleVisibility','on');

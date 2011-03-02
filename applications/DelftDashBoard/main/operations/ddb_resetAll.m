@@ -69,8 +69,12 @@ ddb_initialize('all');
 
 handles=getHandles;
 
+% Make ModelMaker toolbox active
 handles.activeToolbox.name='ModelMaker';
 handles.activeToolbox.nr=1;
+
+% Make sure that tb is updated
+setHandles(handles);
 
 c=handles.GUIHandles.Menu.Toolbox.ModelMaker;
 p=get(c,'Parent');
@@ -78,7 +82,7 @@ ch=get(p,'Children');
 set(ch,'Checked','off');
 set(c,'Checked','on');
 
-
+% Update elements in model guis
 for i=1:length(handles.Model)
     elements=handles.Model(i).GUI.elements;
     if ~isempty(elements)
@@ -86,6 +90,13 @@ for i=1:length(handles.Model)
     end
 end
 
+% Add elements ModelMaker
+handles=ddb_addToolboxElements(handles);
+
 setHandles(handles);
 
-tabpanel(handles.GUIHandles.mainWindow,'tabpanel','select','tabname','Toolbox');
+% Select ModelMaker tab
+tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox','runcallback',0);
+
+% Now select ModelMaker toolbox
+ddb_selectToolbox;

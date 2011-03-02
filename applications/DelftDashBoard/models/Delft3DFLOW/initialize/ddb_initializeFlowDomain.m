@@ -34,7 +34,6 @@ handles.Model(md).Input(id).changeObservationPoint=0;
 handles.Model(md).Input(id).nrDischarges=0;
 handles.Model(md).Input(id).activeDischarge=1;
 handles.Model(md).Input(id).dischargeNames={''};
-handles.Model(md).Input(id).activeDischarge=1;
 handles.Model(md).Input(id).discharges(1).M=[];
 handles.Model(md).Input(id).discharges(1).N=[];
 handles.Model(md).Input(id).discharges(1).K=[];

@@ -199,10 +199,14 @@ switch lower(opt)
 
         % Now delete old objects
         if ~isempty(allPlotHandles)
-            delete(allPlotHandles);
+            try
+                delete(allPlotHandles);
+            end
         end
         if ~isempty(allTextHandles)
-            delete(allTextHandles);
+            try
+                delete(allTextHandles);
+            end
         end
 
                 

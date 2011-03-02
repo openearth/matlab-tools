@@ -1,6 +1,6 @@
-function ddb_plotModelMaker(handles,opt)
+function ddb_plotModelMaker(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
         h=findall(gca,'Tag','GridOutline');
         if ~isempty(h)

@@ -1,23 +1,27 @@
-function ddb_plotNavigationCharts(handles,opt)
+function ddb_plotNavigationCharts(option,varargin)
 
-switch lower(opt)
+
+switch lower(option)
     case{'delete'}
-        h=findall(gca,'Tag','BBoxENC');
+        h=findobj(gca,'Tag','BBoxENC');
         if ~isempty(h)
             delete(h);
         end
-        h=findall(gca,'Tag','NavigationChartLayer');
+        h=findobj(gca,'Tag','NavigationChartLayer');
         if ~isempty(h)
             delete(h);
         end
     case{'activate'}
-        h=findall(gca,'Tag','BBoxENC');
+
+        handles=getHandles;
+
+        h=findobj(gca,'Tag','BBoxENC');
         if ~isempty(h)
             set(h,'Visible','on');
             set(h,'HandleVisibility','on');
         end
         ii=strmatch('NavigationCharts',{handles.Toolbox(:).Name},'exact');
-        h=findall(gca,'Tag','NavigationChartLayer','UserData','LNDARE');
+        h=findobj(gca,'Tag','NavigationChartLayer','UserData','LNDARE');
         if ~isempty(h)
             set(h,'HandleVisibility','on');
             if handles.Toolbox(ii).ShowShoreline
@@ -26,7 +30,7 @@ switch lower(opt)
                 set(h,'Visible','off');
             end
         end
-        h=findall(gca,'Tag','NavigationChartLayer','UserData','SOUNDG');
+        h=findobj(gca,'Tag','NavigationChartLayer','UserData','SOUNDG');
         set(h,'HandleVisibility','on');
         if ~isempty(h)
             if handles.Toolbox(ii).ShowSoundings
@@ -35,7 +39,7 @@ switch lower(opt)
                 set(h,'Visible','off');
             end
         end
-        h=findall(gca,'Tag','NavigationChartLayer','UserData','DEPCNT');
+        h=findobj(gca,'Tag','NavigationChartLayer','UserData','DEPCNT');
         set(h,'HandleVisibility','on');
         if ~isempty(h)
             if handles.Toolbox(ii).ShowContours
@@ -44,18 +48,18 @@ switch lower(opt)
                 set(h,'Visible','off');
             end
         end       
-%         h=findall(gca,'Tag','NavigationChartLayer');
+%         h=findobj(gca,'Tag','NavigationChartLayer');
 %         if ~isempty(h)
 %             set(h,'Visible','on');
 %             set(h,'HandleVisibility','on');
 %         end
     case{'deactivate'}
-        h=findall(gca,'Tag','BBoxENC');
+        h=findobj(gca,'Tag','BBoxENC');
         if ~isempty(h)
             set(h,'Visible','off');
             set(h,'HandleVisibility','off');
         end
-        h=findall(gca,'Tag','NavigationChartLayer');
+        h=findobj(gca,'Tag','NavigationChartLayer');
         if ~isempty(h)
             set(h,'Visible','off');
             set(h,'HandleVisibility','off');

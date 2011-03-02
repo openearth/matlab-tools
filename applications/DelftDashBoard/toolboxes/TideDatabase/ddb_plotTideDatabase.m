@@ -1,29 +1,29 @@
-function ddb_plotTideDatabase(handles,opt)
+function ddb_plotTideDatabase(option,varargin)
 
-switch lower(opt)
+switch lower(option)
     case{'delete'}
-        h=findall(gca,'Tag','TideStations');
+        h=findobj(gca,'Tag','TideStations');
         delete(h);
-        h=findall(gca,'Tag','ActiveTideStation');
+        h=findobj(gca,'Tag','ActiveTideStation');
         delete(h);
     case{'activate'}
-        h=findall(gca,'Tag','TideStations');
+        h=findobj(gca,'Tag','TideStations');
         if ~isempty(h)
             set(h,'Visible','on');
             set(h,'HandleVisibility','on');
         end
-        h=findall(gca,'Tag','ActiveTideStation');
+        h=findobj(gca,'Tag','ActiveTideStation');
         if ~isempty(h)
             set(h,'Visible','on');
             set(h,'HandleVisibility','on');
         end
     case{'deactivate'}
-        h=findall(gca,'Tag','TideStations');
+        h=findobj(gca,'Tag','TideStations');
         if ~isempty(h)
             set(h,'Visible','off');
             set(h,'HandleVisibility','off');
         end
-        h=findall(gca,'Tag','ActiveTideStation');
+        h=findobj(gca,'Tag','ActiveTideStation');
         if ~isempty(h)
             set(h,'Visible','off');
             set(h,'HandleVisibility','off');

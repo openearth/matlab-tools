@@ -7,10 +7,16 @@ handles.GUIHandles.Menu.File.Main=uimenu('Label','File','Tag','menuFile');
 %% Toolbox
 uimenu('Label','Toolbox','Tag','menuToolbox');
 for k=1:length(handles.Toolbox)
-    if k==2
-        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox},'longname',handles.Toolbox(k).longName,'Separator','on');
+    enab=handles.Toolbox(k).enable;
+    if enab==1
+        enab='on';
     else
-        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox,},'longname',handles.Toolbox(k).longName);
+        enab='off';
+    end
+    if k==2
+        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox},'longname',handles.Toolbox(k).longName,'Separator','on','enable',enab);
+    else
+        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox,},'longname',handles.Toolbox(k).longName,'enable',enab);
     end
 end
 
