@@ -16,8 +16,20 @@ end
 % handles.Bathymetry.Dataset=[];
 % handles.Bathymetry.Datasets={'GEBCO','Etopo2','SRTM'};
 % handles.Bathymetry.NrDatasets=3;
-handles.Toolbox(ii).activeDataset=1;
-handles.Bathymetry.activeDataset=1;
+handles.Toolbox(ii).Input.activeDataset=1;
+handles.Toolbox(ii).Input.polyLength=0;
+handles.Toolbox(ii).Input.polygonFile='';
+
+handles.Toolbox(ii).Input.activeZoomLevel=1;
+handles.Toolbox(ii).Input.zoomLevelText={'1'};
+handles.Toolbox(ii).Input.resolutionText='1';
+
+handles.Toolbox(ii).Input.exportTypes={'xyz'};
+handles.Toolbox(ii).Input.activeExportType='xyz';
+
+handles.Toolbox(ii).Input.activeDirection='up';
+
+%handles.Bathymetry.activeDataset=1;
 
 % for i=1:3
 %     handles.Bathymetry.Dataset(i).Name=handles.Bathymetry.Datasets{i};
@@ -30,16 +42,17 @@ handles.Bathymetry.activeDataset=1;
 %     handles.Bathymetry.Dataset(i).FileName='';
 % end
 
-handles.Toolbox(ii).usedDataset=[];
-handles.Toolbox(ii).usedDatasets={''};
-handles.Toolbox(ii).nrUsedDatasets=0;
-handles.Toolbox(ii).activeUsedDataset=1;
+handles.Toolbox(ii).Input.usedDataset=[];
+handles.Toolbox(ii).Input.usedDatasets={''};
+handles.Toolbox(ii).Input.nrUsedDatasets=0;
+handles.Toolbox(ii).Input.activeUsedDataset=1;
 
-handles.Toolbox(ii).newDataset.xmin=0;
-handles.Toolbox(ii).newDataset.xmax=0;
-handles.Toolbox(ii).newDataset.dx=0;
-handles.Toolbox(ii).newDataset.ymin=0;
-handles.Toolbox(ii).newDataset.ymax=0;
-handles.Toolbox(ii).newDataset.dy=0;
+handles.Toolbox(ii).Input.newDataset.xmin=0;
+handles.Toolbox(ii).Input.newDataset.xmax=0;
+handles.Toolbox(ii).Input.newDataset.dx=0;
+handles.Toolbox(ii).Input.newDataset.ymin=0;
+handles.Toolbox(ii).Input.newDataset.ymax=0;
+handles.Toolbox(ii).Input.newDataset.dy=0;
 
-handles.bathymetry.newDataset.autoLimits=1;
+%handles.bathymetry.newDataset.autoLimits=1;
+

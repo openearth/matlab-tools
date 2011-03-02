@@ -1,4 +1,4 @@
-function ddcompile(varargin)
+function ddcompile2(varargin)
 
 % To exclude models or toolboxes in the compiled program, use:
 % ddcompile('model1','model2','toolbox1') with model1, model2 and toolbox the models/toolboxes to exclude.
@@ -121,6 +121,44 @@ end
 
 fclose(fid);
 
+% Make directory for compiled settings
+mkdir('ddbsettings');
+flist=dir('settings');
+for i=1:length(flist)
+    switch flist(i).name
+        case{'.','..','.svn'}
+        otherwise
+            mkdir(['ddbsettings' filesep flist(i).name]);
+%            copyfile(['settings' filesep flist(i).name filesep '*'],['ddbsettings' filesep flist(i).name]);
+    end
+end
+mkdir(['ddbsettings' filesep 'models' filesep 'xml']);
+mkdir(['ddbsettings' filesep 'toolboxes' filesep 'xml']);
+
+% Copy xml files
+flist=dir('models');
+for i=1:length(flist)
+    switch flist(i).name
+        case{'.','..','.svn'}
+        otherwise
+            mkdir(['ddbsettings' filesep 'models' filesep flist(i).name filesep 'xml']);
+            mkdir(['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
+            copyfile(['models' filesep flist(i).name filesep 'xml' filesep '*.xml'],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'xml']);
+            copyfile(['models' filesep flist(i).name filesep 'misc' filesep '*'],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
+    end
+end
+flist=dir('toolboxes');
+for i=1:length(flist)
+    switch flist(i).name
+        case{'.','..','.svn'}
+        otherwise
+            mkdir(['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
+            mkdir(['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
+            copyfile(['toolboxes' filesep flist(i).name filesep 'xml' filesep '*.xml'],['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
+            copyfile(['toolboxes' filesep flist(i).name filesep 'misc' filesep '*'],['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
+    end
+end
+
 try
     fid=fopen('earthicon.rc','wt');
     fprintf(fid,'%s\n','ConApp ICON settings\icons\Earth-icon32x32.ico');
@@ -128,7 +166,7 @@ try
     system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
 end
 
-mcc -m -v -C -d exe DelftDashBoard.m -B complist -a settings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
+% mcc -m -v -d exe DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
 
 % make about.txt file
 Revision = '$Revision$';
@@ -136,7 +174,6 @@ eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
 dos(['copy ' fileparts(which('ddsettings')) '\main\menu\ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
 strfrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.txt'),'$revision',num2str(Revision));
-
 
 delete('complist');
 delete('earthicon.rc');
