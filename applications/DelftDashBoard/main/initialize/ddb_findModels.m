@@ -35,6 +35,11 @@ for i=1:nt
     handles.Model(i).clrFcn=str2func(['ddb_clear' name{i}]);
     handles.Model(i).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
     handles.Model(i).GUI=[];
+    if isdeployed
+        handles.Model(i).xmlDir=[handles.settingsDir filesep 'models' filesep name{i} filesep 'xml' filesep];
+    else
+        handles.Model(i).xmlDir=[dr filesep name{i} filesep 'xml' filesep];
+    end
 end
 
 % Set Delft3D-FLOW

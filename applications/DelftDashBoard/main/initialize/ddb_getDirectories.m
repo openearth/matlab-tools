@@ -6,7 +6,6 @@ handles.workingDirectory=pwd;
 
 if isdeployed
 
-%    handles.settingsDir=[ctfroot filesep 'settings' filesep];
     handles.settingsDir=[ctfroot filesep 'ddbsettings' filesep];
 
     [status, result] = system('path');

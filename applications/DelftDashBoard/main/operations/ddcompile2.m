@@ -134,7 +134,11 @@ for i=1:length(flist)
                 switch flist2(j).name
                     case{'.','..','.svn'}
                     otherwise
+                        try
                         copyfile(['settings' filesep flist(i).name filesep flist2(j).name],['ddbsettings' filesep flist(i).name]);
+                        catch
+                            shite=1
+                        end
                 end
             end
     end
@@ -149,10 +153,24 @@ for i=1:length(flist)
     switch flist(i).name
         case{'.','..','.svn'}
         otherwise
-            mkdir(['ddbsettings' filesep 'models' filesep flist(i).name filesep 'xml']);
-            mkdir(['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
-            copyfile(['models' filesep flist(i).name filesep 'xml' filesep '*.xml'],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'xml']);
-            copyfile(['models' filesep flist(i).name filesep 'misc' filesep '*'],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
+            try
+                mkdir(['ddbsettings' filesep 'models' filesep flist(i).name filesep 'xml']);
+                copyfile(['models' filesep flist(i).name filesep 'xml' filesep '*.xml'],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'xml']);
+            end
+            try
+                if isdir(['models' filesep flist(i).name filesep 'misc'])
+                    mkdir(['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
+                    flist2=dir(['models' filesep flist(i).name filesep 'misc' filesep '*']);
+                    for j=1:length(flist2)
+                        switch flist2(j).name
+                            case{'.','..','.svn'}
+                            otherwise
+                                copyfile(['models' filesep flist(i).name filesep 'misc' filesep flist2(j).name],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
+                        end
+                    end
+                end
+                copyfile(['models' filesep flist(i).name filesep 'misc' filesep '*'],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);                
+            end
     end
 end
 flist=dir('toolboxes');
@@ -160,10 +178,23 @@ for i=1:length(flist)
     switch flist(i).name
         case{'.','..','.svn'}
         otherwise
-            mkdir(['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
-            mkdir(['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
-            copyfile(['toolboxes' filesep flist(i).name filesep 'xml' filesep '*.xml'],['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
-            copyfile(['toolboxes' filesep flist(i).name filesep 'misc' filesep '*'],['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
+            try
+                mkdir(['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
+                copyfile(['toolboxes' filesep flist(i).name filesep 'xml' filesep '*.xml'],['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
+            end
+            try
+                if isdir(['toolboxes' filesep flist(i).name filesep 'misc'])
+                    mkdir(['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
+                    flist2=dir(['toolboxes' filesep flist(i).name filesep 'misc' filesep '*']);
+                    for j=1:length(flist2)
+                        switch flist2(j).name
+                            case{'.','..','.svn'}
+                            otherwise
+                                copyfile(['toolboxes' filesep flist(i).name filesep 'misc' filesep flist2(j).name],['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
+                        end
+                    end
+                end
+            end
     end
 end
 
@@ -174,7 +205,7 @@ try
     system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
 end
 
-% mcc -m -v -d exe DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
+mcc -m -v -d exe DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
 
 % make about.txt file
 Revision = '$Revision$';
@@ -186,3 +217,5 @@ strfrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.t
 delete('complist');
 delete('earthicon.rc');
 delete('earthicon.res');
+
+rmdir('ddbsettings','s');

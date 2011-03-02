@@ -11,7 +11,6 @@ end
 
 handles.Toolbox(1).name='dummy';
 
-
 % Find standard toolboxes
 flist=dir(dr);
 k=0;
@@ -54,12 +53,22 @@ for i=1:nt
     handles.Toolbox(i).iniFcn=str2func(['ddb_initialize' name{i}]);
     handles.Toolbox(i).plotFcn=str2func(['ddb_plot' name{i}]);
     handles.Toolbox(i).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
-    if strcmpi(tp{i},'standard')
-        handles.Toolbox(i).dir=[dr filesep name{i}];
-        handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
+    if isdeployed
+        if strcmpi(tp{i},'standard')
+            handles.Toolbox(i).dir=[dr filesep name{i}];
+            handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
+        else
+            handles.Toolbox(i).dir=[dr2 filesep name{i}];
+            handles.Toolbox(i).xmlDir=[dr2 filesep name{i} filesep 'xml' filesep];
+        end
     else
-        handles.Toolbox(i).dir=[dr2 filesep name{i}];
-        handles.Toolbox(i).xmlDir=[dr2 filesep name{i} filesep 'xml' filesep];
+        if strcmpi(tp{i},'standard')
+            handles.Toolbox(i).dir=[dr filesep name{i}];
+            handles.Toolbox(i).xmlDir=['toolboxes' filesep name{i} filesep 'xml' filesep];
+        else
+            handles.Toolbox(i).dir=[dr2 filesep name{i}];
+            handles.Toolbox(i).xmlDir=[dr2 filesep name{i} filesep 'xml' filesep];
+        end
     end
 end
 
