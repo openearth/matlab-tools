@@ -129,9 +129,17 @@ for i=1:length(flist)
         case{'.','..','.svn'}
         otherwise
             mkdir(['ddbsettings' filesep flist(i).name]);
-%            copyfile(['settings' filesep flist(i).name filesep '*'],['ddbsettings' filesep flist(i).name]);
+            flist2=dir(['settings' filesep flist(i).name filesep '*']);
+            for j=1:length(flist2)
+                switch flist2(j).name
+                    case{'.','..','.svn'}
+                    otherwise
+                        copyfile(['settings' filesep flist(i).name filesep flist2(j).name],['ddbsettings' filesep flist(i).name]);
+                end
+            end
     end
 end
+
 mkdir(['ddbsettings' filesep 'models' filesep 'xml']);
 mkdir(['ddbsettings' filesep 'toolboxes' filesep 'xml']);
 
