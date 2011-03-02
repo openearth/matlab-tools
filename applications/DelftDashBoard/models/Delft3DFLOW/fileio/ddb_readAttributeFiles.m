@@ -23,7 +23,7 @@ if ~isempty(handles.Model(md).Input(ad).depFile)
     handles.Model(md).Input(ad).depthZ=GetDepthZ(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).dpsOpt);
 end
 if ~isempty(handles.Model(md).Input(ad).bndFile)
-    handles=ddb_readBndFile(handles);
+    handles=ddb_readBndFile(handles,ad);
     handles=ddb_sortBoundaries(handles,ad);
 end
 
@@ -38,7 +38,7 @@ for i=1:handles.Model(md).Input(ad).nrSediments
 end
 
 if ~isempty(handles.Model(md).Input(ad).bcaFile)
-    handles=ddb_readBcaFile(handles);
+    handles=ddb_readBcaFile(handles,ad);
 end
 if ~isempty(handles.Model(md).Input(ad).corFile)
     handles=ddb_readCorFile(handles);
