@@ -1,47 +1,70 @@
-function ddb_GeoImageToolbox
+function ddb_GeoImageToolbox(varargin)
 
-handles=getHandles;
-
-ddb_plotGeoImage(handles,'activate');
-
-uipanel('Title','Geo Image','Units','pixels','Position',[20 20 990 160],'Tag','UIControl');
-
-handles.GUIHandles.EditX1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.xLim(1)),'Position',[ 80 130 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditX2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.xLim(2)),'Position',[ 80 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditY1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.yLim(1)),'Position',[ 80  80 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditY2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.yLim(2)),'Position',[ 80  55 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditNPix   = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.nPix),   'Position',[260 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-
-handles.GUIHandles.TextXMin     = uicontrol(gcf,'Style','text','String','X Min',     'Position',[ 35 127 40 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.TextXMax     = uicontrol(gcf,'Style','text','String','X Max',     'Position',[ 35 102 40 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.TextYMin     = uicontrol(gcf,'Style','text','String','Y Min',     'Position',[ 35  77 40 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.TextYMax     = uicontrol(gcf,'Style','text','String','Y Max',     'Position',[ 35  52 40 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.TextZLevel   = uicontrol(gcf,'Style','text','String','Zoom Level','Position',[170 127 80 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.TextNPix     = uicontrol(gcf,'Style','text','String','Nr Horiz. Pixels', 'Position',[170 102 80 20],'HorizontalAlignment','right','Tag','UIControl');
-
-str{1}='auto';
-for i=1:16
-    str{i+1}=num2str(i+3);
+if isempty(varargin)
+    % New tab selected
+    ddb_zoomOff;
+    ddb_refreshScreen;
+    setUIElements('geoimage');
+else
+    %Options selected
+    opt=lower(varargin{1});    
+    switch opt
+        case{'drawrectangle'}
+            UIRectangle(gca,'draw','Marker','o','MarkerEdgeColor','k','MarkerSize',5);
+        case{'selectzoomlevel'}
+            selectZoomLevel;
+        case{'drawpolygon'}
+            drawPolygon;
+        case{'deletepolygon'}
+            deletePolygon;
+        case{'export'}
+            exportData;
+    end    
 end
-handles.GUIHandles.SelectZoomLevel = uicontrol(gcf,'Style','popupmenu','String',str,   'Position',[260 130 80 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
 
-handles.GUIHandles.SourceSelection                 = uicontrol(gcf,'Style','popupmenu','String',{'Microsoft Virtual Earth','Google Earth'},'Position',[360 130 150 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.Pushddb_drawImageOutline            = uicontrol(gcf,'Style','pushbutton','String','Draw Image Outline',           'Position',[360 105 150 20],'Tag','UIControl');
-handles.GUIHandles.PushGenerateImage               = uicontrol(gcf,'Style','pushbutton','String','Generate Image',               'Position',[360  80 150 20],'Tag','UIControl');
 
-set(handles.GUIHandles.Pushddb_drawImageOutline, 'CallBack',{@ddb_drawImageOutline});
-set(handles.GUIHandles.PushGenerateImage,    'CallBack',{@PushGenerateImage});
-set(handles.GUIHandles.EditX1,               'CallBack',{@EditX1_CallBack});
-set(handles.GUIHandles.EditX2,               'CallBack',{@EditX2_CallBack});
-set(handles.GUIHandles.EditY1,               'CallBack',{@EditY1_CallBack});
-set(handles.GUIHandles.EditY2,               'CallBack',{@EditY2_CallBack});
-
-SetUIBackgroundColors;
-
-ddb_refreshZoomLevels(handles);
-
-setHandles(handles);
-
+% handles=getHandles;
+% 
+% ddb_plotGeoImage(handles,'activate');
+% 
+% uipanel('Title','Geo Image','Units','pixels','Position',[20 20 990 160],'Tag','UIControl');
+% 
+% handles.GUIHandles.EditX1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.xLim(1)),'Position',[ 80 130 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+% handles.GUIHandles.EditX2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.xLim(2)),'Position',[ 80 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+% handles.GUIHandles.EditY1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.yLim(1)),'Position',[ 80  80 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+% handles.GUIHandles.EditY2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.yLim(2)),'Position',[ 80  55 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+% handles.GUIHandles.EditNPix   = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.nPix),   'Position',[260 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+% 
+% handles.GUIHandles.TextXMin     = uicontrol(gcf,'Style','text','String','X Min',     'Position',[ 35 127 40 20],'HorizontalAlignment','right','Tag','UIControl');
+% handles.GUIHandles.TextXMax     = uicontrol(gcf,'Style','text','String','X Max',     'Position',[ 35 102 40 20],'HorizontalAlignment','right','Tag','UIControl');
+% handles.GUIHandles.TextYMin     = uicontrol(gcf,'Style','text','String','Y Min',     'Position',[ 35  77 40 20],'HorizontalAlignment','right','Tag','UIControl');
+% handles.GUIHandles.TextYMax     = uicontrol(gcf,'Style','text','String','Y Max',     'Position',[ 35  52 40 20],'HorizontalAlignment','right','Tag','UIControl');
+% handles.GUIHandles.TextZLevel   = uicontrol(gcf,'Style','text','String','Zoom Level','Position',[170 127 80 20],'HorizontalAlignment','right','Tag','UIControl');
+% handles.GUIHandles.TextNPix     = uicontrol(gcf,'Style','text','String','Nr Horiz. Pixels', 'Position',[170 102 80 20],'HorizontalAlignment','right','Tag','UIControl');
+% 
+% str{1}='auto';
+% for i=1:16
+%     str{i+1}=num2str(i+3);
+% end
+% handles.GUIHandles.SelectZoomLevel = uicontrol(gcf,'Style','popupmenu','String',str,   'Position',[260 130 80 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
+% 
+% handles.GUIHandles.SourceSelection                 = uicontrol(gcf,'Style','popupmenu','String',{'Microsoft Virtual Earth','Google Earth'},'Position',[360 130 150 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
+% handles.GUIHandles.Pushddb_drawImageOutline            = uicontrol(gcf,'Style','pushbutton','String','Draw Image Outline',           'Position',[360 105 150 20],'Tag','UIControl');
+% handles.GUIHandles.PushGenerateImage               = uicontrol(gcf,'Style','pushbutton','String','Generate Image',               'Position',[360  80 150 20],'Tag','UIControl');
+% 
+% set(handles.GUIHandles.Pushddb_drawImageOutline, 'CallBack',{@ddb_drawImageOutline});
+% set(handles.GUIHandles.PushGenerateImage,    'CallBack',{@PushGenerateImage});
+% set(handles.GUIHandles.EditX1,               'CallBack',{@EditX1_CallBack});
+% set(handles.GUIHandles.EditX2,               'CallBack',{@EditX2_CallBack});
+% set(handles.GUIHandles.EditY1,               'CallBack',{@EditY1_CallBack});
+% set(handles.GUIHandles.EditY2,               'CallBack',{@EditY2_CallBack});
+% 
+% SetUIBackgroundColors;
+% 
+% ddb_refreshZoomLevels(handles);
+% 
+% setHandles(handles);
+% 
 %%
 function EditX1_CallBack(hObject,eventdata)
 handles=getHandles;

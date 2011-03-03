@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <toolbox>GeoImage</toolbox>
+  <longname>Geo Image</longname>
+  <enable>1</enable>
+  <elements>
+    <element>
+      <tag>drawrectangle</tag>
+      <style>pushbutton</style>
+      <position>170 95 80 20</position>
+      <text>Draw Rectangle</text>
+      <callback>ddb_GeoImageToolbox</callback>
+      <option1>drawrectangle</option1>
+    </element> 
+  </elements> 
+</root>

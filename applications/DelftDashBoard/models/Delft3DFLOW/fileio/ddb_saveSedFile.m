@@ -72,12 +72,12 @@ for i=1:handles.Model(md).Input(id).nrSediments
             s.Sediment(i).SalMax.type     = 'real';
             s.Sediment(i).SalMax.comment  = 'Salinity for saline settling velocity';
 
-            s.Sediment(i).WS0.value    =  handles.Model(md).Input(id).sediment(i).wS0;
+            s.Sediment(i).WS0.value    =  handles.Model(md).Input(id).sediment(i).wS0/1000;
             s.Sediment(i).WS0.unit     = 'm/s';
             s.Sediment(i).WS0.type     = 'real';
             s.Sediment(i).WS0.comment  = 'Settling velocity fresh water';
 
-            s.Sediment(i).WSM.value    =  handles.Model(md).Input(id).sediment(i).wSM;
+            s.Sediment(i).WSM.value    =  handles.Model(md).Input(id).sediment(i).wSM/1000;
             s.Sediment(i).WSM.unit     = 'm/s';
             s.Sediment(i).WSM.type     = 'real';
             s.Sediment(i).WSM.comment  = 'Settling velocity saline water';

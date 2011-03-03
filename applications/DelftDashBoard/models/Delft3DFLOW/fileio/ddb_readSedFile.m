@@ -68,10 +68,10 @@ for i=1:handles.Model(md).Input(id).nrSediments
                 handles.Model(md).Input(id).sediment(i).salMax=s.sediment(i).salmax;
             end
             if isfield(s.sediment(i),'ws0')
-                handles.Model(md).Input(id).sediment(i).wS0=s.sediment(i).ws0;
+                handles.Model(md).Input(id).sediment(i).wS0=s.sediment(i).ws0*1000;
             end
             if isfield(s.sediment(i),'wsm')
-                handles.Model(md).Input(id).sediment(i).wSM=s.sediment(i).wsm;
+                handles.Model(md).Input(id).sediment(i).wSM=s.sediment(i).wsm*1000;
             end
             
             if isfield(s.sediment(i),'eropar')

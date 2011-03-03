@@ -2,16 +2,11 @@ function ddb_selectToolbox
 
 handles=getHandles;
 
-ddb_refreshScreen('Toolbox');
-
-% Find parent (the toolbox tab of the active model)
-% parent=findobj(gcf,'Tag',[lower(handles.Model(md).name) '.toolbox']);
+% ddb_refreshScreen('Toolbox');
 
 if handles.Toolbox(tb).useXML
     
     % At this point, the elements are already in the GUI.
-    
-%    elements=getappdata(parent,'elements');
     elements=handles.Toolbox(tb).GUI.elements;
     % Now look for tab panels within this tab, and execute callback associated
     % with active tabs

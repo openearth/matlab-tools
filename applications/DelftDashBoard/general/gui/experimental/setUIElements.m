@@ -2,6 +2,9 @@ function setUIElements(elements)
 
 if ischar(elements)
     h=findobj(gcf,'Tag',elements);
+    if isempty(h)
+        return
+    end
     elements=getappdata(h,'elements');
 end
 
