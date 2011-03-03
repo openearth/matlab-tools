@@ -21,18 +21,21 @@
           <tabstring>Bathymetry</tabstring>
           <callback>ddb_ModelMakerToolbox</callback>
           <elements>ModelMaker.bathymetry.xml</elements>
+          <enable>0</enable>
         </tab>
         <tab>
           <tag>initialconditions</tag>
           <tabstring>Initial Conditions</tabstring>
           <callback>ddb_ModelMakerToolbox</callback>
           <elements>ModelMaker.initialconditions.xml</elements>
+          <enable>0</enable>
         </tab>
         <tab>
           <tag>boundaryconditions</tag>
           <tabstring>Boundary Conditions</tabstring>
           <callback>ddb_ModelMakerToolbox</callback>
           <elements>ModelMaker.boundaryconditions.xml</elements>
+          <enable>0</enable>
         </tab>
       </tabs>
     </element>
