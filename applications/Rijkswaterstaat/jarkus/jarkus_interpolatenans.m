@@ -70,7 +70,9 @@ function transects = jarkus_interpolatenans(transects, varargin)
 OPT = struct( ...
     'prop', 'altitude', ...
     'interp', 'cross_shore', ...
-    'dim', 3 ...
+    'dim', 3, ...
+    'method', 'linear', ...
+    'extrap', false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -86,6 +88,12 @@ end
 dims = size(transects.(OPT.prop));
 dims(OPT.dim) = 1;
 
+% define method and whether or not extrap should be applied
+options = {OPT.method};
+if OPT.extrap
+    options = [options {'extrap'}];
+end
+
 n = prod(dims);
 for i = 1:n
     coords = num2cell(numel2coord(dims, i));
@@ -98,6 +106,6 @@ for i = 1:n
     
     if sum(notnan) > 1
         transects.(OPT.prop)(coords{:}) = interp1(interpolate(notnan), ...
-            property(notnan), interpolate);
+            property(notnan), interpolate, options{:});
     end
 end
