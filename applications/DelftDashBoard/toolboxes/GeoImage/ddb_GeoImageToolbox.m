@@ -10,7 +10,7 @@ else
     opt=lower(varargin{1});    
     switch opt
         case{'drawrectangle'}
-            UIRectangle(gca,'draw','Marker','o','MarkerEdgeColor','k','MarkerSize',5);
+            UIRectangle(gca,'draw','Tag','rectangle','Marker','o','MarkerEdgeColor','k','MarkerSize',6);
         case{'selectzoomlevel'}
             selectZoomLevel;
         case{'drawpolygon'}
