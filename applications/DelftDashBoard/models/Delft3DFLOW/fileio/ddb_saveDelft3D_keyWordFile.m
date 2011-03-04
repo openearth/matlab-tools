@@ -33,7 +33,8 @@ for i=1:length(fldnames)
                             valstr=s.(fldname)(j).(keyw).value;
                             % Only put # around string in case of keyword
                             % has unit OR comment
-                            if ~isempty(findstr(valstr,' ')) && (isfield(s.(fldname)(j).(keyw),'unit') || isfield(s.(fldname)(j).(keyw),'comment'))
+%                            if ~isempty(findstr(valstr,' ')) && (isfield(s.(fldname)(j).(keyw),'unit') || isfield(s.(fldname)(j).(keyw),'comment'))
+                            if (isfield(s.(fldname)(j).(keyw),'unit') || isfield(s.(fldname)(j).(keyw),'comment'))
                                 valstr=['#' valstr '#'];
                             end
                        case{'boolean'}

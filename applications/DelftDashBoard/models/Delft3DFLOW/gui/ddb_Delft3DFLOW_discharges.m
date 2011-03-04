@@ -174,12 +174,12 @@ refreshDischarges;
 %%
 function handles=deleteDischarge(handles)
 
-nrobs=handles.Model(md).Input(ad).nrDischarges;
+nrdis=handles.Model(md).Input(ad).nrDischarges;
 
-if nrobs>0
+if nrdis>0
     iac=handles.Model(md).Input(ad).activeDischarge;    
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','discharges');
-    if nrobs>1
+    if nrdis>1
         handles.Model(md).Input(ad).discharges=removeFromStruc(handles.Model(md).Input(ad).discharges,iac);
         handles.Model(md).Input(ad).dischargeNames=removeFromCellArray(handles.Model(md).Input(ad).dischargeNames,iac);
     else   
@@ -187,12 +187,13 @@ if nrobs>0
         handles.Model(md).Input(ad).activeDischarge=1;
         handles.Model(md).Input(ad).discharges(1).M=[];
         handles.Model(md).Input(ad).discharges(1).N=[];
+        handles.Model(md).Input(ad).discharges(1).type='normal';
     end
-    if iac==nrobs
-        iac=nrobs-1;
+    if iac==nrdis
+        iac=nrdis-1;
     end
-    handles.Model(md).Input(ad).nrDischarges=nrobs-1;
-    handles.Model(md).Input(ad).activeDischarge=iac;
+    handles.Model(md).Input(ad).nrDischarges=nrdis-1;
+    handles.Model(md).Input(ad).activeDischarge=max(iac,1);
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','discharges');
     setHandles(handles);
     refreshDischarges;
