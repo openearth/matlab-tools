@@ -105,7 +105,7 @@ switch lower(tp)
         end
         
         if zoomlev==0
-            gsmin=(xl(2)-xl(1))/800;
+            gsmin=(xl(2)-xl(1))/600;
             ilev=find(cellsizex<gsmin,1,'last');
             if isempty(ilev)
                 ilev=1;

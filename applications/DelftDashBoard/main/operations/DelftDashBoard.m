@@ -94,12 +94,15 @@ screenSize=get(0,'ScreenSize');
 pos=[1 29 screenSize(3) screenSize(4)-95];
 set(handles.GUIHandles.mainWindow,'Position',pos,'Visible','off');
 
+set(gcf,'Renderer','zbuffer');
+
 % Make Figure Visible
-%drawnow;
+drawnow;
+
+set(handles.GUIHandles.mainWindow,'Visible','on');
 
 maximizeWindow('Delft Dashboard');
 
-set(handles.GUIHandles.mainWindow,'Visible','on');
 
 % Maximize Figure
 %maximize(handles.GUIHandles.MainWindow);

@@ -73,7 +73,7 @@ if length(earthx)>1
     cdata(:,:,1)=r;
     cdata(:,:,2)=g;
     cdata(:,:,3)=b;
-    
+
     
 
 %     % Get tile data
@@ -82,8 +82,10 @@ if length(earthx)>1
 
     cdata=min(cdata,0.999);
     cdata=max(cdata,0.001);
-    cdata=single(cdata);
+%    cdata=single(cdata);
+    cdata=uint8(cdata*255);
 
+    
     set(h,'XData',xx,'YData',yy,'CData',cdata);
     set(gca,'YDir','normal');
     

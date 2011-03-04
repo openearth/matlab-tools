@@ -38,9 +38,11 @@ pos=get(handles.GUIHandles.mapAxis,'Position');
 % Get bathymetry
 [x0,y0,z,ok]=ddb_getBathy(handles,xl0,yl0);
 
+imageQuality=2;
+
 if ok
 
-    res=(xl(2)-xl(1))/(1*pos(3));
+    res=(xl(2)-xl(1))/(pos(3)/imageQuality);
 
     if ~strcmpi(coord.name,bathyCoord.name) || ~strcmpi(coord.type,bathyCoord.type)
         % Interpolate on rectangular grid
