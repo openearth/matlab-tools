@@ -25,6 +25,10 @@ function varargout = xb_get(xb, varargin)
 %   [zb zs] = xb_get(xb, 'zb', 'zs')
 %   Tp = xb_get(xb, 'bcfile.Tp')
 %   [zb zs] = xb_get(xb, 'zb', 'zs', 'type', {'value' 'units'})
+%   [d1 d2 d3] = xb_get(xb, 'drifters*')
+%   d = cell(1,100); [d{:}] = xb_get(xb, 'drifters*')
+%   [nx ny nt d1 d2 d3] = xb_get(xb, 'DIMS.n*', 'drifters*')
+%   [H_mean u_mean v_mean] = xb_get(xb, '/_mean$')
 %
 %   See also xb_set, xb_show
 
