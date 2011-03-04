@@ -20,6 +20,8 @@ else
             drawGridOutline;
         case{'editgridoutline'}
             editGridOutline;
+        case{'editresolution'}
+            editResolution;
         case{'generategrid'}
             generateGrid;
         case{'generatebathymetry'}
@@ -52,6 +54,8 @@ handles.Toolbox(tb).Input.yOri=y0;
 handles.Toolbox(tb).Input.rotation=rotation;
 handles.Toolbox(tb).Input.nX=round(lenx/handles.Toolbox(tb).Input.dX);
 handles.Toolbox(tb).Input.nY=round(leny/handles.Toolbox(tb).Input.dY);
+handles.Toolbox(tb).Input.lengthX=lenx;
+handles.Toolbox(tb).Input.lengthY=leny;
 
 setHandles(handles);
 
@@ -68,6 +72,10 @@ setUIElement('modelmakerpanel.quickmode.editrotation');
 function editGridOutline
 
 handles=getHandles;
+handles.Toolbox(tb).Input.lengthX=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
+handles.Toolbox(tb).Input.lengthY=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
+setHandles(handles);
+
 h=findobj(gca,'Tag','GridOutline');
 if ~isempty(h)
     lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
@@ -75,6 +83,39 @@ if ~isempty(h)
     PlotRectangle('GridOutline',handles.Toolbox(tb).Input.xOri,handles.Toolbox(tb).Input.yOri,lenx,leny,handles.Toolbox(tb).Input.rotation);
 end
 
+%%
+function editResolution
+
+handles=getHandles;
+
+lenx=handles.Toolbox(tb).Input.lengthX;
+leny=handles.Toolbox(tb).Input.lengthY;
+
+dx=handles.Toolbox(tb).Input.dX;
+dy=handles.Toolbox(tb).Input.dY;
+
+nx=round(lenx/max(dx,1e-9));
+ny=round(leny/max(dy,1e-9));
+
+handles.Toolbox(tb).Input.nX=nx;
+handles.Toolbox(tb).Input.nY=ny;
+
+handles.Toolbox(tb).Input.lengthX=nx*dx;
+handles.Toolbox(tb).Input.lengthY=ny*dy;
+
+lenx=handles.Toolbox(tb).Input.lengthX;
+leny=handles.Toolbox(tb).Input.lengthY;
+
+setHandles(handles);
+
+h=findobj(gca,'Tag','GridOutline');
+
+if ~isempty(h)
+    PlotRectangle('GridOutline',handles.Toolbox(tb).Input.xOri,handles.Toolbox(tb).Input.yOri,lenx,leny,handles.Toolbox(tb).Input.rotation);
+end
+
+setUIElement('modelmakerpanel.quickmode.editmmax');
+setUIElement('modelmakerpanel.quickmode.editnmax');
 
 %%
 function generateGrid

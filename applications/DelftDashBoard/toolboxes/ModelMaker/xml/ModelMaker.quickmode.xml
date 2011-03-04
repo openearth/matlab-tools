@@ -33,7 +33,7 @@
     <text>Delta X</text>
     <textposition>left</textposition>
     <onchange>ddb_ModelMaker_quickMode</onchange>
-    <option1>editgridoutline</option1>
+    <option1>editresolution</option1>
     <type>real</type>
     <variable>handles.Toolbox(tb).Input.dX</variable>
   </element>
@@ -81,7 +81,7 @@
     <text>Delta Y</text>
     <textposition>left</textposition>
     <onchange>ddb_ModelMaker_quickMode</onchange>
-    <option1>editgridoutline</option1>
+    <option1>editresolution</option1>
     <type>real</type>
     <variable>handles.Toolbox(tb).Input.dY</variable>
   </element>
