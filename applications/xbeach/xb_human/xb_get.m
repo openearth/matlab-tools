@@ -95,7 +95,7 @@ end
 
 %% read variables
 
-varargout = {};
+varargout = cell(1,nargout);
 
 n = 1;
 for i = 1:length(vars)
@@ -124,4 +124,6 @@ for i = 1:length(vars)
             end
         end
     end
+    
+    if n >= nargout; break; end;
 end
