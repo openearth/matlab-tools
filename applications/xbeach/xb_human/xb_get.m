@@ -3,7 +3,8 @@ function varargout = xb_get(xb, varargin)
 %
 %   Retrieves one or more variables from XBeach structure. Data from
 %   substructures can be requested by preceding the field name with the
-%   structure name and a dot, for example: bcfile.Tp
+%   structure name and a dot, for example: bcfile.Tp. You can also use
+%   Funky Filter Forces (see strfilter)
 %
 %   Syntax:
 %   varargout   = xb_get(xb, varargin)
@@ -74,7 +75,9 @@ if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct(...
     'type', {{'value'}});
+
 [OPT varargin] = setproperty_filter(OPT, varargin{:});
+
 % make sure that type is cell array
 if ischar(OPT.type)
     OPT.type = {OPT.type};
@@ -88,27 +91,32 @@ end
 
 %% read variables
 
-varargout = num2cell(nan(size(vars)));
+varargout = {};
 
+n = 1;
 for i = 1:length(vars)
-    idx = strcmpi(vars{i}, {xb.data.name});
+    idx = strfilter({xb.data.name}, vars{i});
     if any(idx)
-        out = struct;
-        for itype = 1:length(OPT.type)
-            out.(OPT.type{itype}) = xb.data(idx).(OPT.type{itype});
+        for j = find(idx)
+            out = struct;
+            for itype = 1:length(OPT.type)
+                out.(OPT.type{itype}) = xb.data(j).(OPT.type{itype});
+            end
+            if isscalar(OPT.type)
+                out = out.(OPT.type{itype});
+            end
+            varargout{n} = out;
+            n = n + 1;
         end
-        if isscalar(OPT.type) % if only one type is requested
-            % return field contents directly for backward compatibility
-            out = out.(OPT.type{itype});
-        end
-        varargout{i} = out;
     else
         re = regexp(vars{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
         if ~isempty(re)
             sub = xb_get(xb, re.sub);
             if xb_check(sub)
-                varargout{i} = xb_get(sub, re.field,...
-                    'type', OPT.type);
+                out = cell(1,sum(strfilter({sub.data.name}, re.field)));
+                [out{:}] = xb_get(sub, re.field, 'type', OPT.type);
+                varargout = {varargout{:} out{:}};
+                n = n + length(out);
             end
         end
     end
