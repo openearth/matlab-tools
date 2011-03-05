@@ -379,8 +379,8 @@ switch get(gcf,'SelectionType')
     case{'alt'}
         if i==1
             % Move rectangle
-            set(gcf, 'windowbuttonmotionfcn', {@moveRectangle,h,i,'move'});
-            set(gcf, 'windowbuttonupfcn', {@moveRectangle,h,i,'finish'});
+            set(gcf, 'windowbuttonmotionfcn', {@moveRectangle,h,'move'});
+            set(gcf, 'windowbuttonupfcn', {@moveRectangle,h,'finish'});
         else
             rotate=getappdata(h,'rotate');
             if rotate
@@ -441,14 +441,53 @@ switch opt
 end
 
 %%
-function moveRectangle(imagefig, varargins,h,i)
+function moveRectangle(imagefig, varargins,h,opt)
+
+ax=getappdata(h,'axes');
+
+pos = get(ax, 'CurrentPoint');
+posx=pos(1,1);
+posy=pos(1,2);
+
+dx=getappdata(h,'dx');
+dy=getappdata(h,'dy');
+rotation=getappdata(h,'rotation');
+
+x0=posx;
+y0=posy;
+
+[x,y]=computeCoordinates(x0,y0,dx,dy,rotation);
+
+setappdata(h,'x0',x0);
+setappdata(h,'y0',y0);
+setappdata(h,'dx',dx);
+setappdata(h,'dy',dy);
+setappdata(h,'x',x);
+setappdata(h,'y',y);
+
+set(h,'XData',x,'YData',y);
+
+ch=getappdata(h,'children');
+for i=1:4
+    set(ch(i),'XData',x(i),'YData',y(i));
+end
+
+ddb_updateCoordinateText('arrow');
+
+switch opt
+    case{'finish'}
+        buttonUpDownFcn=getappdata(h,'windowbuttonupdownfcn');
+        buttonMotionFcn=getappdata(h,'windowbuttonmotionfcn');
+        feval(buttonUpDownFcn);
+        feval(buttonMotionFcn);
+        callback=getappdata(h,'callback');
+        if ~isempty(callback)
+            feval(callback,x,y,h);
+        end
+end
 
 %%
 function rotateRectangle(imagefig, varargins,h,i)
-
-%%
-function finishChangingRectangle(imagefig, varargins,h)
-
 
 
 
