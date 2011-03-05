@@ -76,7 +76,7 @@ if length(earthx)>1
 
     
 
-%     % Get tile data
+    %  Get tile data
 %     zmlev=3;
 %     [xx,yy,cdata]=ddb_getimagetile(xmin,xmax,ymin,ymax,zmlev);
 
