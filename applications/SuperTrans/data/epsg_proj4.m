@@ -1,26 +1,26 @@
-function str = epsg_wkt(epsg_code)
-%EPSG_WKT  gets the well known text representation of an epsg code
+function str = epsg_proj4(epsg_code)
+%EPSG_PROJ4  gets the proj4 projection string for an epsg code
 %
 %   Uses spatialreference.org webservice. If you recieve a proxy error, 
 %   adjust the settings in File > Preferences > Web
 %
 %   Succesfully retrieved data is stored locally in the folder
-%   epsg_code_to_in_well_known_text located in the matlab temporary
+%   epsg_code_to_proj4params located in the matlab temporary
 %   directory. 
 %
 %   Syntax:
-%   varargout = epsg_wkt(varargin)
+%   varargout = epsg_proj4(varargin)
 %
 %   Input:
 %   epsg_code  = EPSG code
 %
 %   Output:
-%   wkt = well known text representation of epsg code
+%   proj4 = proj4 projection string for an epsg code
 %
 %   Example
-%   wkt = epsg_wkt(4326)
+%   proj4 = epsg_proj4(4326)
 %
-%   See also: convertCoordinates, nc_cf_grid_mapping, epsg_proj4
+%   See also: convertCoordinates, nc_cf_grid_mapping, epsg_wkt
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -66,29 +66,34 @@ function str = epsg_wkt(epsg_code)
 % $Keywords: $
 
 %%
-epsg_tempdir = fullfile(tempdir,'epsg_code_to_in_well_known_text');
+
+epsg_tempdir = fullfile(tempdir,'epsg_code_to_proj4params');
 
 if ~exist(epsg_tempdir,'dir')
     mkpath(epsg_tempdir);
 end
 
-epsg_wkt_filename = sprintf('%d.txt',epsg_code);
-if exist(fullfile(epsg_tempdir,epsg_wkt_filename),'file')
-    fid = fopen(fullfile(epsg_tempdir,epsg_wkt_filename),'r');
+epsg_proj4_filename = sprintf('%d.txt',epsg_code);
+if exist(fullfile(epsg_tempdir,epsg_proj4_filename),'file')
+    fid = fopen(fullfile(epsg_tempdir,epsg_proj4_filename),'r');
     str = fread(fid,inf,'*char')';
     fclose(fid);
 else
     try
-        str = urlread(sprintf('http://spatialreference.org/ref/epsg/%d/prettywkt/',epsg_code));
+        if epsg_code==28992 % here EPSG database is wrong !
+        str = '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.999908 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4174,50.3319,465.5542,-0.398957388243134,0.343987817378283,-1.87740163998045,4.0725 +no_defs'; % note that epsg tables are wrong for 28992, need to specify ellipsoid explicity manually !
+        else
+        str = urlread(sprintf('http://spatialreference.org/ref/epsg/%d/proj4/',epsg_code));
+        end
         try
-            fid = fopen(fullfile(epsg_tempdir,epsg_wkt_filename),'w');
+            fid = fopen(fullfile(epsg_tempdir,epsg_proj4_filename),'w');
             fwrite(fid,str,'char');
             fclose(fid);
         catch
-            disp('no wkt file could be written');
+            disp('no proj4 file could be written');
         end
     catch
         str = sprintf('failed to retreive well known text of EPSG code %d',epsg_code);
-        fprintf(2,[mfilename,': cannot get wkt, please work online to be able to access http://spatialreference.org \n'])
+        fprintf(2,[mfilename,': cannot get proj4, please work online to be able to access http://spatialreference.org \n'])
     end
 end

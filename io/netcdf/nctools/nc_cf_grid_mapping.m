@@ -85,26 +85,11 @@ OPT.debug = 0;
 %  needed to make netCDf file ADAGUC compliant
 %  for now a lookup table, needs to be a proper function (web service or osgeo warapper)
 
-      try
-         switch num2str(epsg)
-         case '28992' % here webservice is off !!
-         OPT.proj4_params = '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.999908 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4174,50.3319,465.5542,-0.398957388243134,0.343987817378283,-1.87740163998045,4.0725 +no_defs'; % note that epsg tables are wrong for 28992, need to specify ellipsoid explicity manually !
-         otherwise
-         OPT.proj4_params = urlread(['http://spatialreference.org/ref/epsg/',num2str(epsg),'/proj4/']);
-         end
-      catch
-         OPT.proj4_params = '';
-         fprintf(2,'nc_cf_grid_mapping: cannot get proj4_params, please work online to be able to access http://spatialreference.org \n')
-      end
+      OPT.proj4_params = epsg_proj4(epsg);
 
 %% get WKT string via web service
 
-      try
-         OPT.wkt = urlread(['http://spatialreference.org/ref/epsg/',num2str(epsg),'/prettywkt/']);
-      catch
-         OPT.wkt = '';
-         fprintf(2,'nc_cf_grid_mapping: cannot get pretty wkt,   please work online to be able to access http://spatialreference.org \n')
-      end
+      OPT.wkt = epsg_wkt(epsg);
 
 %% get human readable string
 
