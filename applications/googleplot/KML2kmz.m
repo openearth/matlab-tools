@@ -13,6 +13,8 @@ function KML2kmz(varargin)
 %
 % The original kml_file is left inact.
 %
+% For more info: http://code.google.com/intl/nl/apis/kml/documentation/kmzarchives.html
+%
 %See also: Googleplot
 
 %% Copyright notice
@@ -74,8 +76,9 @@ function KML2kmz(varargin)
 
 %% check
 
-   if length(strmatch('.kml',cellfun(@(x)fileext(x),all_files,'UniformOutput',0))) > 1
-      error('Each *.kmz may contain only one *.kml with arbitrary name, unless one there is one called document.kml??')
+   n = length(strmatch('.kml',cellfun(@(x)fileext(x),all_files,'UniformOutput',0)));
+   if n > 1
+      error(['Each *.kmz may contain only one *.kml (with can have arbitrary name), whereas yours has ',num2str(n),' *.kml files.'])
    end
 
 %% go

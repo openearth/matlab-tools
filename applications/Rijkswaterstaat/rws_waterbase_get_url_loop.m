@@ -47,15 +47,15 @@ function varargout = rws_waterbase_get_url_loop(varargin)
 
 %% Initialize
 
-   OPT.directory_raw      = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
-   OPT.directory_raw_old  = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\old\';
+   OPT.directory_raw      = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
+   OPT.directory_raw_old  = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\cache\old\';
 
    OPT.period             = [datenum(1798, 5,24) floor(now)]; % 24 mei 1798: Oprichting voorloper Rijkswaterstaat in Bataafse Republiek
    OPT.period             = [datenum(1648,10,24) floor(now)]; % 24 okt 1648: Oprichting Staat der Nederlanden, Vrede van Munster
    
    %Note: first water level in waterbase 1737 @ Katwijk
    
-   OPT.zip                = 1; % zip txt file and delete it
+   OPT.zip                = 1; % zip txt file and delete txt it file (e.g. 40 x reduction: 389 MB > 9.1 Mb for id1-DELFZL.txt)
    OPT.nc                 = 0; % not implemented yet
    OPT.opendap            = 0; % not implemented yet
    OPT.cleanup            = 0;
@@ -95,7 +95,7 @@ index = find(DONAR.donar_wnsnum==ivar);
           disp    (['Created: ',OPT.directory_raw_old]);
           mkpath  ([OPT.directory_raw_old]);
           try
-          movefile([OPT.directory_raw     filesep '*' num2str(OPT.code) '*'],... % so metimes more codes end up in the same directory (1+54, 346+347, 363+364)
+          movefile([OPT.directory_raw     filesep '*' num2str(OPT.code) '*'],... % sometimes more codes end up in the same directory (1+54, 346+347, 363+364), so remove only files with indentical codes
                    [OPT.directory_raw_old filesep]);
           end
       end
@@ -115,6 +115,8 @@ index = find(DONAR.donar_wnsnum==ivar);
    
       LOC = rws_waterbase_get_locations(SUB.Code(OPT.indSub),SUB.CodeName{OPT.indSub});
       
+      multiWaitbar(mfilename,0,'label','Downloading from waterbase.','color',[0.2 0.6 0.])
+
       for indLoc=1:length(LOC.ID)
       
          disp(['----------------------------------------'])
@@ -122,6 +124,8 @@ index = find(DONAR.donar_wnsnum==ivar);
          disp(['FullName :',        LOC.FullName{indLoc} ])
          disp(['ID       :',        LOC.ID{indLoc} ])
          
+         multiWaitbar(mfilename,indLoc/length(LOC.ID),'label',['Downloading: ',LOC.FullName{indLoc}])
+
         [OPT.filename,url] = ...
          rws_waterbase_get_url(SUB.Code(OPT.indSub),...
                                LOC.ID{indLoc},...
@@ -138,7 +142,9 @@ index = find(DONAR.donar_wnsnum==ivar);
          % save as *.url file ?
          
       end % for indLoc=1:length(LOC.ID)
-      
+     
+      multiWaitbar(mfilename,1,'label','Downloading from waterbase.')
+ 
 %-%end % for ialt
 end % for ivar=1:length(OPT.codes)
 

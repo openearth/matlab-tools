@@ -20,7 +20,7 @@ function rws_waterbase2nc(varargin)
 %
 %  Timeseries data definition:
 %   * <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a> (full definition)
-%   * <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788">http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788</a> (simple)
+%   * <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventions.html#id2867470">http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788</a> (simple)
 %
 % In this example time is both a dimension and a variables.
 % The actual datenum values do not show up as a parameter in ncBrowse.
@@ -49,7 +49,7 @@ function rws_waterbase2nc(varargin)
 %% Initialize
 
    OPT.dump               = 0;
-   OPT.disp               = 0;
+   OPT.display            = 'multiWaitbar'; %1; % empty is multiWaitbar, 1=command line
    OPT.pause              = 0;
    OPT.debug              = 0;
    
@@ -73,7 +73,7 @@ function rws_waterbase2nc(varargin)
    OPT.mask               = 'id*.txt';
    OPT.mask               = 'id*.zip';
    OPT.unzip              = 1; % process only zipped files: unzip them, and delete if afterwards
-   OPT.load               = 1; % 0=auto, 1=load slow *.txt file
+   OPT.load               = 1; % 0=auto read mat file, 1=load slow *.txt file
    OPT.method             = 'fgetl';
    OPT.uniquecoordinate   = 1; % whether to replace an x vector by mode(x)
    
@@ -108,6 +108,8 @@ for ivar=[OPT.donar_wnsnum]
     
     OPT.files          = dir([OPT.directory_raw,filesep,OPT.mask]);
     
+    multiWaitbar(mfilename,0,'label','Creating netCDF from waterbase ASCII.','color',[0.2 0.6 0.])
+
     for ifile=1:length(OPT.files)
 
         clear D
@@ -116,6 +118,8 @@ for ivar=[OPT.donar_wnsnum]
         OPT.fileext = fileext(fullfile(OPT.directory_raw, OPT.files(ifile).name));
 
         disp(['  Processing ',num2str(ifile,'%0.4d'),'/',num2str(length(OPT.files),'%0.4d'),': ',filename(OPT.filename),' to netCDF.'])
+
+        multiWaitbar(mfilename,ifile/length(OPT.files),'label',['Processing to netCDF: ',filename(OPT.filename)])
 
         %% 0 Read raw data
 
@@ -129,18 +133,25 @@ for ivar=[OPT.donar_wnsnum]
                 OPT.unzippedfilename = char(unzip(OPT.zipname,filepathstr(OPT.filename)));
             end
             if OPT.fileext=='.txt'
-                [D] = rws_waterbase_read([OPT.filename,'.txt'],...
-                      'locationcode',1,...
-                         'fieldname',OPT.name,...
-                    'fieldnamescale',1,...
-                            'method',OPT.method);
+                fname = [OPT.filename,'.txt'];
             else
-                [D] = rws_waterbase_read([OPT.unzippedfilename],...
-                      'locationcode',1,...
-                         'fieldname',OPT.name,...
-                    'fieldnamescale',1,...
-                            'method',OPT.method);
+                fname = [OPT.unzippedfilename];
             end
+            [D] = rws_waterbase_read(fname,...
+                  'locationcode',1,...
+                     'fieldname',OPT.name,...
+                'fieldnamescale',1,...
+                        'method',OPT.method,...
+                           'url',1);
+            %% extract url to add it to netCDF nc_global.history
+            if ~isfield(D,'url')
+               fidurl = fopen(strrep(fname,'.txt','.url'),'r');
+               rec    = fgetl(fidurl); % [InternetShortcut]
+               rec    = fgetl(fidurl); % URL=%s
+               fclose(fidurl);
+               D.url  = rec(5:end);
+            end
+            
             if OPT.unzip
                 delete([OPT.unzippedfilename]);%,'.txt'
             end
@@ -152,6 +163,8 @@ for ivar=[OPT.donar_wnsnum]
     if ~(all(isnan(D.data.datenum)))
 
         %% Unit conversion
+        % deal with RWS specific, non-general units here,
+        % the general ones are done by convert_units
         if ~(isempty(OPT.units) | isnan(OPT.units))
           if OPT.debug
             ['data > goal units = ' D.data.units, ' > ' OPT.units]
@@ -165,6 +178,14 @@ for ivar=[OPT.donar_wnsnum]
           elseif strcmpi(D.data.units,'graden Celsius')
              if strcmpi(    OPT.units,'degree_Celsius')
              D.data.units           = 'degree_Celsius';
+             else
+             error(['no conversion defined for data units:',D.data.units])
+             end
+          elseif strcmpi(D.data.units,'DIMSLS')  % introduced by rws between june 2010 and mar 2011
+             if strcmpi(OPT.units,'psu')
+             D.data.units       = 'psu';
+             elseif strcmpi(OPT.units,'ppt')
+             D.data.units       = 'ppt';
              else
              error(['no conversion defined for data units:',D.data.units])
              end
@@ -207,20 +228,16 @@ for ivar=[OPT.donar_wnsnum]
         nc_attput(ncfile, nc_global, 'title'           , '');
         nc_attput(ncfile, nc_global, 'institution'     , 'Rijkswaterstaat');
         nc_attput(ncfile, nc_global, 'source'          , 'surface observation');
-        nc_attput(ncfile, nc_global, 'history'         , ['Original filename: ',filename(OPT.filename),...
-            ', version:' ,D.version,...
-            ', filedate:',D.date,...
+        nc_attput(ncfile, nc_global, 'history'         , ['Source: ',D.url,...
             ', tranformation to netCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
         nc_attput(ncfile, nc_global, 'references'      , '<http://www.waterbase.nl>,<http://openearth.deltares.nl>');
         nc_attput(ncfile, nc_global, 'email'           , '<servicedesk-data@rws.nl>');
 
-        nc_attput(ncfile, nc_global, 'comment'         , '');
-        
-        
+        nc_attput(ncfile, nc_global, 'comment'         , 'The structure of this netCDF file is described in: https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions, http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventions.html#id2867470');
         nc_attput(ncfile, nc_global, 'version'         , D.version);
 
-        nc_attput(ncfile, nc_global, 'Conventions'     , 'CF-1.4');
-        nc_attput(ncfile, nc_global, 'CF:featureType'  , 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+        nc_attput(ncfile, nc_global, 'Conventions'     , 'CF-1.5');
+        nc_attput(ncfile, nc_global, 'CF:featureType'  , 'timeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
 
         nc_attput(ncfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
         nc_attput(ncfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -536,6 +553,8 @@ end
     end
 
     end %file loop % for ifile=1:length(OPT.files)
+
+    multiWaitbar(mfilename,1,'label','Created netCDF from waterbase ASCII.')
 
 end %variable loop % for ivar=1:length(OPT.codes)
 

@@ -93,7 +93,7 @@ function varargout = rws_waterbase_get_url(varargin);
       if (ok == 0);OutputName = [];return;end
    end
 
-   disp(['message: rws_waterbase_get_url: loading Substance # ',num2str(indSub           ,'%0.3d'),': ',...
+   disp(['message: rws_waterbase_get_url: Substance # ',num2str(indSub           ,'%0.3d'),': ',...
                                                            num2str(Substance.Code(indSub),'%0.3d'),' "',...
                                                                    Substance.FullName{indSub},'"'])
 
@@ -118,9 +118,9 @@ function varargout = rws_waterbase_get_url(varargin);
    end
 
    if length(indLoc)>1
-   disp(['message: rws_waterbase_get_url: loading Location    ',num2str(length(indLoc),'%0.3d'),'x: #',num2str(indLoc(:)','%0.3d,')])
+   disp(['message: rws_waterbase_get_url: Location    ',num2str(length(indLoc),'%0.3d'),'x: #',num2str(indLoc(:)','%0.3d,')])
    else
-   disp(['message: rws_waterbase_get_url: loading Location  # ',num2str(indLoc,'%0.3d'),': ',Station.ID{indLoc},' "',Station.FullName{indLoc},'"'])
+   disp(['message: rws_waterbase_get_url: Location  # ',num2str(indLoc,'%0.3d'),': ',Station.ID{indLoc},' "',Station.FullName{indLoc},'"'])
    end
 
 %% Times
@@ -151,8 +151,8 @@ function varargout = rws_waterbase_get_url(varargin);
       enddate   = [ListYear{max(indDate)} '12312359'];
    end
 
-   disp(['message: rws_waterbase_get_url: loading startdate        ',startdate]);
-   disp(['message: rws_waterbase_get_url: loading enddate          ',enddate]);
+   disp(['message: rws_waterbase_get_url: startdate        ',startdate]);
+   disp(['message: rws_waterbase_get_url: enddate          ',enddate]);
 
 %% TO DO on filename: make sure user can only select directory and not file name, as locationcode is only in automatic filename !!
 
@@ -170,7 +170,7 @@ function varargout = rws_waterbase_get_url(varargin);
       if (isequal(FileName, 0));return;OutputName = [];end
    end
 
-   disp(['message: rws_waterbase_get_url: loading file             ',fullfile(FilePath,FileName)]);
+   disp(['message: rws_waterbase_get_url: file             ',fullfile(FilePath,FileName)]);
    
 %% get data = f(Substance.Code, Station.ID, startdate, enddate
 
