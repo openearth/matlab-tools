@@ -168,7 +168,7 @@ else
     nextarg = 1;
 end
 
-% overrule default settings by property pairs, given in varargin
+%% overrule default settings by property pairs, given in varargin
 
 OPT = setproperty(OPT, varargin{nextarg:end});
 
@@ -176,49 +176,66 @@ if ~exist(OPT.basepath,'dir')
     error(['directory ''',OPT.basepath,''' does not exist'])
 end
 
-
-% crop last fileseparator from the basepath
+%% crop last fileseparator from the basepath
 if strcmp(OPT.basepath(end),filesep)
     OPT.basepath(end) = [];
 end
 
-% find filenames
-% pattern_excl is appended with two criteria that exclude '..' and '.' from
-% the dir inquiry. See 'help regexp' for explanation.
+%% find filenames
+%  pattern_excl is appended with two criteria that exclude '..' and '.' from
+%  the dir inquiry. See 'help regexp' for explanation.
 D = dir_in_subdir(OPT.basepath,[OPT.dir_excl '|^\.{1,2}$'],OPT.file_incl,OPT.depth);
+
+%% adding basepath itself too ?
+
+if 0
+
+   tmp = dir(OPT.basepath);
+   D(end+1).name     = '';
+   D(end  ).date     = tmp.date;
+   D(end  ).bytes    = tmp.bytes;
+   D(end  ).isdir    = tmp.isdir;
+   D(end  ).pathname = OPT.basepath;
+   try % old matlab versions don't have this field
+   D(end  ).datenum  = tmp.datenum;
+   end
+
+end
 
 %EOF
 
 function D = dir_in_subdir(basepath,dir_excl,file_incl,depth)
 
-% do a regular dir query
+%% do a regular dir query
 D          = dir([basepath filesep]);
 
-% fill empty fields of D with NaN, space or false
+%% fill empty fields of D with NaN, space or false
 [D(cellfun('isempty',{D.name    })).name    ] = deal(' ');
 [D(cellfun('isempty',{D.date    })).date    ] = deal(nan);
 [D(cellfun('isempty',{D.bytes   })).bytes   ] = deal(nan);
 [D(cellfun('isempty',{D.isdir   })).isdir   ] = deal(false(1));
+try % old matlab versions don't have this field
 [D(cellfun('isempty',{D.datenum })).datenum ] = deal(nan);
+end
 
-% exclude directories that match 'dir_excl' from D
+%% exclude directories that match 'dir_excl' from D
 dirs            = find([D.isdir]);
 dirs_to_exclude = false(size(dirs));
 dirs_to_exclude(~cellfun('isempty',regexp({D(dirs).name},dir_excl,'once'))) = true;
 D(dirs(dirs_to_exclude)) = [];
 
-% include only files that match 'file_inc' from D
+%% include only files that match 'file_inc' from D
 files            = find(~[D.isdir]);
 files_to_include = false(size(files));
 files_to_include(~cellfun('isempty',regexp({D(files).name},file_incl,'once'))) = true;
 D(files(~files_to_include)) = [];
 
-% return if D is empty
+%% return if D is empty
 if isempty(D)
     return
 end
 
-% add field pathname
+%% add field pathname
 dirs         = [D.isdir];
 [D.pathname] = deal([basepath filesep]);
 
