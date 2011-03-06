@@ -16,11 +16,19 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 % log   : contains all conversion parameters that were used.
 %         To check this output, use 'var2evalstr(log)'.
 %
-% Optionally the data structure with EPSG codes van be pre-loaded, this
-% greatly speeds up the routine if many calls are made. The call is either
+% Optionally the data structure with EPSG codes van be pre-loaded 
+% * in the active memory, 
+% * CONVERTCOORDINATES can be told to keep it as persistent dataset 
+%   To remove it from memory, see PERSISTENT, or issue clear all
+% Both methods greatly speeds up the routine if many calls are made,
+% so the call is either
 %
 %    EPSG        = load('EPSG');
 %    [x2,y2,log] = convertCoordinates(x1,y1,EPSG,'keyword','value')
+%
+%    or:
+%
+%    [x2,y2,log] = convertCoordinates(x1,y1,'persistent','keyword','value')
 %
 %    or:
 %
@@ -76,6 +84,8 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 %
 % See also: SuperTrans, EPSG.mat
 
+% TO DO: add calling conversion dll's per chunk for LAAAAAAAAAArge matrices to avoid mex memory issues
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %   Based on SuperTrans by Maarten van Ormondt (Maarten.vanOrmondt@deltares.nl).
@@ -120,10 +130,17 @@ end
 %% check if EPSG codes are given
 
 if odd(length(varargin))
-    STD = varargin{1};
-    varargin(1)=[];
+    if strcmpi(varargin{1},'persistent')
+       persistent EPSG
+       if isempty(EPSG)
+          EPSG = load('EPSG');
+       end
+    elseif isstruct(varargin{1})
+       EPSG = varargin{1};
+    end
+    varargin(1) = [];
 else
-    STD = load('EPSG');
+    EPSG = load('EPSG');
 end
 
 %% convert input to doubles
@@ -135,18 +152,18 @@ end
 %% get and set keyword value parameters
 
 OPT = [];
-OPT = FindCSOptions(OPT,STD,varargin);
+OPT = FindCSOptions(OPT,EPSG,varargin);
 
 %% Transform input coordinates to geographic 2D radians
 
 switch OPT.CS1.type
     case 'projected' % convert projection to geographic radians
-         x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',STD);
-         y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',STD);
-        [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',STD);
+         x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG);
+         y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
+        [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',EPSG);
     case 'geographic 2D' % do nothing, except for a unit conversion
-        lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',STD);
-        lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',STD);
+        lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG);
+        lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',EPSG);
 end
 
 %% find datum transformation options
@@ -158,7 +175,7 @@ end
 % * if multiple options found, use the newest unless user has defined something else
 % * if no direct transformation exists, convert via WGS 84
 
-OPT = ConvertCoordinatesFindDatumTransOpt(OPT,STD);
+OPT = ConvertCoordinatesFindDatumTransOpt(OPT,EPSG);
 
 %% do datum transformation
 
@@ -170,23 +187,23 @@ if ischar(OPT.datum_trans)
         lat2 = lat1;
         lon2 = lon1;
     elseif strcmpi(OPT.datum_trans,'no direct transformation available');
-        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans_to_WGS84'  ,STD);
-        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84',STD);        
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans_to_WGS84'  ,EPSG);
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84',EPSG);        
     end
 else
-    [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans'          ,STD);
+    [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans'          ,EPSG);
 end
 
 %% Transform geographic 2D radians to output coordinates
 
 switch OPT.CS2.type
     case 'projected' % convert projection to geographic radians
-        [y2,x2] = ConvertCoordinatesProjectionConvert(lon2,lat2,OPT.CS2,OPT.proj_conv2,'geo2xy',STD);
-        x2 = convertUnits(x2,'metre',OPT.CS2.UoM.name,STD);
-        y2 = convertUnits(y2,'metre',OPT.CS2.UoM.name,STD);
+        [y2,x2] = ConvertCoordinatesProjectionConvert(lon2,lat2,OPT.CS2,OPT.proj_conv2,'geo2xy',EPSG);
+        x2 = convertUnits(x2,'metre',OPT.CS2.UoM.name,EPSG);
+        y2 = convertUnits(y2,'metre',OPT.CS2.UoM.name,EPSG);
     case 'geographic 2D'
-        x2 = convertUnits(lon2,'radian',OPT.CS2.UoM.name,STD);
-        y2 = convertUnits(lat2,'radian',OPT.CS2.UoM.name,STD);
+        x2 = convertUnits(lon2,'radian',OPT.CS2.UoM.name,EPSG);
+        y2 = convertUnits(lat2,'radian',OPT.CS2.UoM.name,EPSG);
 end
 
 end
