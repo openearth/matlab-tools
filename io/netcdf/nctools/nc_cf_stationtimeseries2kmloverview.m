@@ -21,10 +21,6 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    OPT.fileName           = [];
    OPT.description        = '';
    OPT.kmlName            = 'tst.kml';
-   OPT.THREDDSbase        = 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/';
-   OPT.HYRAXbase          = 'http://opendap.deltares.nl:8080/opendap/';
-   OPT.ftpbase            = [];
-   
    OPT.lineWidth          = 1;
    OPT.lineColor          = [0 0 0];
    OPT.lineAlpha          = 1;
@@ -49,6 +45,14 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    OPT.varname            = []; % statistics
    OPT.preview            = 1;  % add 2 previews of - and hence requires - varname
    OPT.varPathFcn         = @(s)(s); % function to run on urlPath, when using it, not when linking it: for reading local netCDF files, when CATALOG links to server already
+
+% EXAMPLE:
+%  THREDDS http://opendap.deltares.nl   /thredds/dodsC/opendap/     rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc.html
+%  ftp     http://opendap.deltares.nl   /thredds/fileServer/opendap/rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc
+%  HYRAX * http://opendap.deltares.nl   /opendap/                   rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc.html
+%  * = has issues with snctools
+   OPT.THREDDSFcn         = @(s) (s); % assuming the supplied url's are THREDDS (HYRAX has issues anyway)
+   OPT.ftpFcn             = @(s) strrep(s,'/thredds/dodsC/opendap/','/thredds/fileServer/opendap/');
 
    if nargin==0
       return
@@ -114,10 +118,6 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
      %end
    end
 
-%% start KML
-
-   OPT.fid=fopen(OPT.fileName,'w');
-
 %% HEADER
 
    if isempty(OPT.lon);OPT.lon = mean(D.geospatialCoverage_northsouth(:,1),1);end
@@ -173,18 +173,31 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    output = [output, '<name>Stations</name>'];
 
 %% generate markers
+%  TO DO: pre-allocate output (printing images takes longer, so speed-up will be marginal)?
+
+   pngname1      = {};
+   pngname2      = {};
+
+   if OPT.preview % prevent interaction with multiWaitbar figure
+      FIG = figure('name',mfilename);
+   end
+   multiWaitbar(mfilename,0,'label','Generating catalog.nc','color',[0.3 0.6 0.3])
 
    for ii=1:size(D.geospatialCoverage_eastwest,1)
     disp(sprintf('writing coordinates: % 2d / %d',ii,size(D.geospatialCoverage_eastwest,1)));
+    multiWaitbar(mfilename,ii/size(D.geospatialCoverage_eastwest,1))
 
     % generate table with data info
     tableContents = [];
+    preview       = '';
     
     if ~isempty(varname)
 
     %% get statistics and make images
     
        ncfile = OPT.varPathFcn(D.urlPath{ii});
+       
+       figure(FIG);clf
 
        [DATA,META] = nc_cf_stationTimeSeries(ncfile,varname,'plot',OPT.preview);
        units.(varname) = META.(varname).units;
@@ -201,16 +214,15 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
           grid on
           text(1,0,{' data: www.rws.nl plot: www.OpenEarth.eu'},'rotation',90,'units','normalized','ve','top')
           set(findfont,'fontsize',7);print2screensizeoverwrite(pngname2{ii},400);clf
-          
-          preview  = ['<hr><img src="',pngname1{ii},'" alt="Preview">'...
-                      '<img src="',pngname2{ii},'" alt="Preview">'];
+          preview  = ['<hr><img src="',filenameext(pngname1{ii}),'" alt="Preview">'...
+                          '<img src="',filenameext(pngname2{ii}),'" alt="Preview">'];
 
        end
        
-       D.([varname,'_min'])(ii)  = min(DATA.(varname));
-       D.([varname,'_max'])(ii)  = max(DATA.(varname));
-       D.([varname,'_mean'])(ii) = mean(DATA.(varname));
-       D.([varname,'_std'])(ii)  = std(DATA.(varname));
+       D.([varname,'_min'])(ii)  =  nanmin(DATA.(varname));
+       D.([varname,'_max'])(ii)  =  nanmax(DATA.(varname));
+       D.([varname,'_mean'])(ii) = nanmean(DATA.(varname));
+       D.([varname,'_std'])(ii)  =  nanstd(DATA.(varname));
        
     %% make table
     
@@ -225,8 +237,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
         '<tr><td>mean:        </td><td>%s</td></tr>',...
         '<tr><td>max:         </td><td>%s</td></tr>'...
         '<tr><td>std:         </td><td>%s</td></tr><hr>',...
-        '<tr><td>meta-data:   </td><td><a href="%s">THREDDS</a>'...
-                                 '&nbsp<a href="%s">(HYRAX)</a></td></tr>'...%link to timeseries
+        '<tr><td>meta-data:   </td><td><a href="%s">OPeNDAP (THREDDS)</a>'...
         '<tr><td>data:        </td><td><a href="%s">ftp server    </a></td></tr>'...%link to timeseries
         ],...
         strtrim(D.station_name{ii}),...
@@ -240,9 +251,8 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
        [num2str(D.([OPT.varname,'_mean'])(ii),'%g'),' ',units.([varname])],...
        [num2str(D.([OPT.varname,'_max' ])(ii),'%g'),' ',units.([varname])],...
        [num2str(D.([OPT.varname,'_std' ])(ii),'%g'),' ',units.([varname])],...
-       [OPT.THREDDSbase,'/',strtrim(D.urlPath{ii}),'.html'],...
-       [OPT.HYRAXbase  ,'/',strtrim(D.urlPath{ii}),'.html'],...
-       [OPT.ftpbase    ,'/',strtrim(D.urlPath{ii})])];
+        OPT.THREDDSFcn([D.urlPath{ii},'.html']),...
+            OPT.ftpFcn([D.urlPath{ii}]))];
        
     else
     
@@ -254,8 +264,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
         '<tr><td># times:     </td><td>%g</td></tr>'...
         '<tr><td>1st time:    </td><td>%s</td></tr>'...
         '<tr><td>last time:   </td><td>%s</td></tr>',...
-        '<tr><td>meta-data:   </td><td><a href="%s">THREDDS</a>'...
-                                 '&nbsp<a href="%s">(HYRAX)</a></td></tr>'...%link to timeseries
+        '<tr><td>meta-data:   </td><td><a href="%s">OPeNDAP (THREDDS)</a>'...
         '<tr><td>data:        </td><td><a href="%s">ftp server    </a></td></tr>'...%link to timeseries
         ],...
         strtrim(D.station_name{ii}),...
@@ -265,12 +274,9 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
         D.number_of_observations(ii),...
         datestr(udunits2datenum(D.datenum_start(ii),units.datenum_start),31),...
         datestr(udunits2datenum(D.datenum_end  (ii),units.datenum_end  ),31),...
-       [OPT.THREDDSbase,'/',strtrim(D.urlPath{ii}),'.html'],...
-       [OPT.HYRAXbase  ,'/',strtrim(D.urlPath{ii}),'.html'],...
-       [OPT.ftpbase    ,'/',strtrim(D.urlPath{ii})])];
+        OPT.THREDDSFcn([D.urlPath{ii},'.html']),...
+            OPT.ftpFcn([D.urlPath{ii},'.html']))];
        
-       preview = '';
-
     end
     
     table = [...
@@ -312,30 +318,43 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
          [str2line(OPT.text,'s','<br>')],...
          table,...
          [D.geospatialCoverage_eastwest(ii,1) D.geospatialCoverage_northsouth(ii,1)])];
-   end
+   end % ii
    
+   %multiWaitbar(mfilename,1)
+
 %% FOOTER
 
-   output = [output '</Folder>'];
-   fprintf(OPT.fid,'%c',output); % handle any % in output, cannot handle \n any more
-   output = [];
+%% open and fill KML
+
+   fid     = fopen(OPT.fileName,'w');
+   output  = [output '</Folder>'];
+   fprintf(fid,'%c',output); % handle any % in output, cannot handle \n any more
+   output  = [];
 
 %% LOGO
-% add url of logo kml @ OpenEarth wiki
+%  add url of logo kml @ OpenEarth wiki
 
    output = KMLlogo('kmlName'  ,OPT.logokmlName,...
                     'overlayXY',OPT.overlayXY,...
                     'screenXY' ,OPT.screenXY,...
                     'imName'   ,OPT.imName,...
-                    'logoname' ,OPT.logoName);
+                    'logoName' ,OPT.logoName);
 
-   fprintf(OPT.fid,output,'%s');
-   fprintf(OPT.fid,KML_footer,'%s');
+   fprintf(fid,output    ,'%s');
+   fprintf(fid,KML_footer,'%s');
 
 %% close KML
 
-   fclose(OPT.fid);
+   fclose(fid);
 
-%% Zip and make all images also offline locally available
+%% Zip and make all images also offline locally available by added them to kmz
 
    KML2kmz(OPT.fileName,oetlogo,OPT.logoName,{pngname1{:},pngname2{:}}) % oet logo, OPT.iconnormalState,OPT.iconhighlightState, are cahced because they're googles
+   
+   deletefile(pngname1)
+   deletefile(pngname2)
+
+   if OPT.preview
+      close(FIG)
+   end
+   

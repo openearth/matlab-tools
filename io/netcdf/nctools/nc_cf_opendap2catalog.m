@@ -172,7 +172,7 @@ OPT.varname        = {}; % could be {'x','y','time'}
 
 %% initialize waitbar
 
-    multiWaitbar('nc_cf_opendap2catalog',0,'label','Generating catalog.nc','color',[0.2 0.5 0.2])
+    multiWaitbar(mfilename,0,'label','Generating catalog.nc','color',[0.3 0.6 0.3])
     
 %% File loop to get meta-data from subdirectories (recursively)
     
@@ -226,7 +226,7 @@ OPT.varname        = {}; % could be {'x','y','time'}
 for entry=1:length(OPT.files)
 
    OPT.filename = OPT.files{entry};
-   multiWaitbar('nc_cf_opendap2catalog',entry/length(OPT.files),'label',...
+   multiWaitbar(mfilename,entry/length(OPT.files),'label',...
        ['Adding ',filename(OPT.filename) ' to catalog'])
 
    fileinfo       = nc_info(OPT.filename);
@@ -447,11 +447,15 @@ end % entry
       XLS.standard_names         = ATT.standard_names;        
       XLS.long_names             = ATT.long_names;        
       
-      struct2xls(fullfile(OPT.catalog_dir, OPT.xls_name    ),XLS);
+      xlsname = fullfile(OPT.catalog_dir, OPT.xls_name);
+      if exist(xlsname)
+         delete(xlsname);
+      end
+      struct2xls(xlsname,XLS);
 
    end
 
-   multiWaitbar('nc_cf_opendap2catalog',1,'label','Generating catalog.nc')
+   multiWaitbar(mfilename,1,'label','Generating catalog.nc')
 
 % load database as check
 
