@@ -256,8 +256,6 @@ yl=get(ax,'YLim');
 
 if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
     
-    set(hg,'Tag',tag);
-    
     x0=posx;
     y0=posy;
     
@@ -266,6 +264,8 @@ if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
     
     h=plot(x0,y0);
     set(h,'Parent',hg);
+
+    set(hg,'Visible','on');
     
     marker=getappdata(hg,'marker');
     markerEdgeColor=getappdata(hg,'markeredgecolor');
@@ -314,18 +314,21 @@ posy=pos(1,2);
 xl=get(ax,'XLim');
 yl=get(ax,'YLim');
 
-ch=get(hg,'Children');
-h=ch(1);
-ch=ch(2:5);
 
 if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
-    
+
+
+
     x0=getappdata(hg,'x0');
     y0=getappdata(hg,'y0');
     ddx=getappdata(hg,'ddx');
     ddy=getappdata(hg,'ddy');
     
     if ~isempty(x0)
+        
+        ch=get(hg,'Children');
+        h=ch(1);
+        ch=ch(2:5);
 
         dx=posx-x0;
         dy=posy-y0;
@@ -374,8 +377,8 @@ ddb_updateCoordinateText('crosshair');
 %%
 function finishRectangle(imagefig, varargins,hg)
 
-buttonUpDownFcn=getappdata(h,'windowbuttonupdownfcn');
-buttonMotionFcn=getappdata(h,'windowbuttonmotionfcn');
+buttonUpDownFcn=getappdata(hg,'windowbuttonupdownfcn');
+buttonMotionFcn=getappdata(hg,'windowbuttonmotionfcn');
 feval(buttonUpDownFcn);
 feval(buttonMotionFcn);
 x0=getappdata(hg,'x0');
