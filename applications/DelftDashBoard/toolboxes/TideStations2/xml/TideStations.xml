@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <toolbox>TideStations</toolbox>
+  <longname>Tide Stations</longname>
+  <enable>1</enable>
+  <elements>
+    <element>
+      <tag>tidestationspanel</tag>
+      <style>panel</style>
+      <position>40 10 900 160</position>
+      <text>Tide Stations</text>
+    </element>
+    <element>
+      <position>50 20 250 130</position>
+      <style>listbox</style>
+      <tag>selecttidestation</tag>
+      <type>integer</type>
+      <variable>handles.Toolbox(tb).Input.activeTideStation</variable>
+      <onchange>ddb_TideStationsToolbox</onchange>
+      <option1>selecttidestation</option1>
+      <list>
+        <texts>
+          <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList</variable>
+        </texts>
+      </list>
+    </element>
+    <element>
+      <tag>makeobservationpoints</tag>
+      <style>pushbutton</style>
+      <position>320 130 130 20</position>
+      <text>Make Observation Points</text>
+      <callback>ddb_TideStationsToolbox</callback>
+      <option1>makeobservationpoints</option1>
+    </element> 
+    <element>
+      <tag>viewtidesignal</tag>
+      <style>pushbutton</style>
+      <position>320 105 130 20</position>
+      <text>View Tide Signal</text>
+      <callback>ddb_TideStationsToolbox</callback>
+      <option1>viewtidesignal</option1>
+    </element> 
+    <element>
+      <tag>exporttidesignal</tag>
+      <style>pushbutton</style>
+      <position>320 80 130 20</position>
+      <text>Export Tide Signal</text>
+      <callback>ddb_TideStationsToolbox</callback>
+      <option1>exporttidesignal</option1>
+    </element> 
+    <element>
+      <tag>exportalltidesignals</tag>
+      <style>pushbutton</style>
+      <position>320 55 130 20</position>
+      <text>Export All Tide Signals</text>
+      <callback>ddb_TideStationsToolbox</callback>
+      <option1>exportalltidesignals</option1>
+    </element> 
+    <element>
+      <position>320 30 130 20</position>
+      <style>popupmenu</style>
+      <tag>selecttidedatabase</tag>
+      <type>integer</type>
+      <variable>handles.Toolbox(tb).Input.activeDatabase</variable>
+      <onchange>ddb_TideStationsToolbox</onchange>
+      <option1>selecttidedatabase</option1>
+      <list>
+        <texts>
+          <variable>handles.Toolbox(tb).Input.databases</variable>
+        </texts>
+      </list>
+    </element>
+  </elements>
+</root>
