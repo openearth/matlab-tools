@@ -629,10 +629,13 @@ function [img, cmap] = getImgTile(quadkey, quad, url, cache, cache_supp, ext, de
 		elseif ( ndims(img) == 2 && ext(1) == 'p')
 			if ( ~isempty(cmap) )
 				img = ind2rgb(img, cmap);
+                % Added by MvO
+                img=uint8(img*255);
+
 			else
 				disp('url2image:getImgTile', 'Unknown error in retrieving image')
 				img = repmat(uint8(200), [256 256 3]);
-			end
+            end
 		elseif ( ndims(img) == 2 && ext(1) == 'j')		% VE returns a 256x256 when the tile has no image
 			img = repmat(uint8(200), [256 256 3]);
 		end

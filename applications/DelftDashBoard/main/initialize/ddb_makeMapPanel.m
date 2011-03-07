@@ -65,8 +65,8 @@ set(handles.GUIHandles.textAnn3,'FontSize',12,'FontWeight','bold','LineStyle','n
 xx=[0 1];
 yy=[0 1];
 cdata=zeros(2,2,3);
-handles.mapHandles.bathymetry=image(xx,yy,cdata);hold on;
-set(handles.mapHandles.bathymetry,'Tag','bathymetry','HitTest','off');
+handles.mapHandles.backgroundImage=image(xx,yy,cdata);hold on;
+set(handles.mapHandles.backgroundImage,'Tag','backgroundimage','HitTest','off');
 
 % Shoreline
 handles.mapHandles.shoreline=plot3(0,0,500,'k');hold on;

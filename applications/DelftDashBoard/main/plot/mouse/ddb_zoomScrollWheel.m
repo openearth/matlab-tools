@@ -2,10 +2,10 @@ function ddb_zoomScrollWheel(src,evnt)
 
 handles=getHandles;
 
-xl=get(gca,'xlim');
-yl=get(gca,'ylim');
+xl=get(handles.GUIHandles.mapAxis,'xlim');
+yl=get(handles.GUIHandles.mapAxis,'ylim');
 
-posax=get(gca,'Position');
+posax=get(handles.GUIHandles.mapAxis,'Position');
 
 zm=0.8;
 
@@ -30,7 +30,7 @@ end
 
 [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
 
-set(gca,'xlim',xl,'ylim',yl);
+set(handles.GUIHandles.mapAxis,'xlim',xl,'ylim',yl);
 handles.screenParameters.xLim=xl;
 handles.screenParameters.yLim=yl;
 setHandles(handles);

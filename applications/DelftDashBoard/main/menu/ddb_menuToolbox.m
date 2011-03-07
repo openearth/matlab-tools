@@ -17,8 +17,8 @@ set(hObject,'Checked','on');
 if ~strcmpi(handles.activeToolbox.name,tbname)
     handles.activeToolbox.name=tbname;
     handles.activeToolbox.nr=strmatch(tbname,{handles.Toolbox(:).name},'exact');
-    setHandles(handles);
     % Now add the new GUI elements to toolbox tab
+    setHandles(handles);
     handles=ddb_addToolboxElements(handles);
     setHandles(handles);
     % Select toolbox by 'clicking' the toolbox tab. This will call

@@ -5,6 +5,8 @@ handles=getHandles;
 handles.screenParameters.xMaxRange=[-180 180];
 handles.screenParameters.yMaxRange=[-90 90];
 
+handles.GUIData.backgroundImageType='bathymetry';
+
 for i=1:handles.bathymetry.nrDatasets
     if handles.bathymetry.dataset(i).isAvailable
         handles.screenParameters.backgroundBathymetry=handles.bathymetry.dataset(i).longName;
@@ -18,6 +20,8 @@ for i=1:handles.shorelines.nrShorelines
         break
     end
 end
+
+handles.screenParameters.satelliteImageType='aerial';
 
 handles.screenParameters.coordinateSystem.name='WGS 84';
 handles.screenParameters.coordinateSystem.type='Geographic';

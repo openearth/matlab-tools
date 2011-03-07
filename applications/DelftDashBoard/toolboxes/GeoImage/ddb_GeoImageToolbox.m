@@ -4,105 +4,89 @@ if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('geoimage');
+    ddb_plotGeoImage('activate');
+%     setUIElements('geoimage');
+    handles=getHandles;
+    setUIElements(handles.Toolbox(tb).GUI.elements);
 else
     %Options selected
+    handles=getHandles;
     opt=lower(varargin{1});    
     switch opt
         case{'drawrectangle'}
-            UIRectangle(gca,'draw','Tag','rectangle','Marker','o','MarkerEdgeColor','k','MarkerSize',6);
-        case{'selectzoomlevel'}
-            selectZoomLevel;
-        case{'drawpolygon'}
-            drawPolygon;
-        case{'deletepolygon'}
-            deletePolygon;
-        case{'export'}
-            exportData;
+            UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','ImageOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeGeoImageOnMap,'onstart',@deleteImageOutline);
+        case{'generateimage'}
+            generateImage;
+        case{'editoutline'}
+            editOutline;
     end    
 end
 
-
-% handles=getHandles;
-% 
-% ddb_plotGeoImage(handles,'activate');
-% 
-% uipanel('Title','Geo Image','Units','pixels','Position',[20 20 990 160],'Tag','UIControl');
-% 
-% handles.GUIHandles.EditX1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.xLim(1)),'Position',[ 80 130 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-% handles.GUIHandles.EditX2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.xLim(2)),'Position',[ 80 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-% handles.GUIHandles.EditY1     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.yLim(1)),'Position',[ 80  80 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-% handles.GUIHandles.EditY2     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.yLim(2)),'Position',[ 80  55 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-% handles.GUIHandles.EditNPix   = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.nPix),   'Position',[260 105 80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-% 
-% handles.GUIHandles.TextXMin     = uicontrol(gcf,'Style','text','String','X Min',     'Position',[ 35 127 40 20],'HorizontalAlignment','right','Tag','UIControl');
-% handles.GUIHandles.TextXMax     = uicontrol(gcf,'Style','text','String','X Max',     'Position',[ 35 102 40 20],'HorizontalAlignment','right','Tag','UIControl');
-% handles.GUIHandles.TextYMin     = uicontrol(gcf,'Style','text','String','Y Min',     'Position',[ 35  77 40 20],'HorizontalAlignment','right','Tag','UIControl');
-% handles.GUIHandles.TextYMax     = uicontrol(gcf,'Style','text','String','Y Max',     'Position',[ 35  52 40 20],'HorizontalAlignment','right','Tag','UIControl');
-% handles.GUIHandles.TextZLevel   = uicontrol(gcf,'Style','text','String','Zoom Level','Position',[170 127 80 20],'HorizontalAlignment','right','Tag','UIControl');
-% handles.GUIHandles.TextNPix     = uicontrol(gcf,'Style','text','String','Nr Horiz. Pixels', 'Position',[170 102 80 20],'HorizontalAlignment','right','Tag','UIControl');
-% 
-% str{1}='auto';
-% for i=1:16
-%     str{i+1}=num2str(i+3);
-% end
-% handles.GUIHandles.SelectZoomLevel = uicontrol(gcf,'Style','popupmenu','String',str,   'Position',[260 130 80 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
-% 
-% handles.GUIHandles.SourceSelection                 = uicontrol(gcf,'Style','popupmenu','String',{'Microsoft Virtual Earth','Google Earth'},'Position',[360 130 150 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
-% handles.GUIHandles.Pushddb_drawImageOutline            = uicontrol(gcf,'Style','pushbutton','String','Draw Image Outline',           'Position',[360 105 150 20],'Tag','UIControl');
-% handles.GUIHandles.PushGenerateImage               = uicontrol(gcf,'Style','pushbutton','String','Generate Image',               'Position',[360  80 150 20],'Tag','UIControl');
-% 
-% set(handles.GUIHandles.Pushddb_drawImageOutline, 'CallBack',{@ddb_drawImageOutline});
-% set(handles.GUIHandles.PushGenerateImage,    'CallBack',{@PushGenerateImage});
-% set(handles.GUIHandles.EditX1,               'CallBack',{@EditX1_CallBack});
-% set(handles.GUIHandles.EditX2,               'CallBack',{@EditX2_CallBack});
-% set(handles.GUIHandles.EditY1,               'CallBack',{@EditY1_CallBack});
-% set(handles.GUIHandles.EditY2,               'CallBack',{@EditY2_CallBack});
-% 
-% SetUIBackgroundColors;
-% 
-% ddb_refreshZoomLevels(handles);
-% 
-% setHandles(handles);
-% 
 %%
-function EditX1_CallBack(hObject,eventdata)
+function changeGeoImageOnMap(x0,y0,dx,dy,rotation,h)
+
 handles=getHandles;
-handles.Toolbox(tb).Input.xLim(1)=str2double(get(hObject,'String'));
+handles.Toolbox(tb).Input.imageOutlineHandle=h;
+handles.Toolbox(tb).Input.xLim(1)=x0;
+handles.Toolbox(tb).Input.yLim(1)=y0;
+handles.Toolbox(tb).Input.xLim(2)=x0+dx;
+handles.Toolbox(tb).Input.yLim(2)=y0+dy;
+
+cs=handles.screenParameters.coordinateSystem;
+dataCoord.name='WGS 84';
+dataCoord.type='geographic';
+
+% Find bounding box for data
+if ~strcmpi(cs.name,'wgs 84') || ~strcmpi(cs.type,'geographic')
+    ddx=dx/10;
+    ddy=dy/10;
+    [xtmp,ytmp]=meshgrid(x0-ddx:ddx:x0+dx+ddx,y0-ddy:ddy:y0+dy+ddy);
+    [xtmp2,ytmp2]=ddb_coordConvert(xtmp,ytmp,cs,dataCoord);
+    dx=max(max(xtmp2))-min(min(xtmp2));
+end
+
+npix=handles.Toolbox(tb).Input.nPix;
+zmlev=round(log2(npix*3/(dx)));
+zmlev=max(zmlev,4);
+zmlev=min(zmlev,23);
+
+handles.Toolbox(tb).Input.zoomLevelStrings{1}=['auto (' num2str(zmlev) ')'];
+
 setHandles(handles);
-ddb_deleteImageOutline;
-ddb_plotImageOutline('g');
-ddb_refreshZoomLevels(handles);
+setUIElement('editxmin');
+setUIElement('editxmax');
+setUIElement('editymin');
+setUIElement('editymax');
+setUIElement('selectzoomlevel');
 
 %%
-function EditX2_CallBack(hObject,eventdata)
+function editOutline
 handles=getHandles;
-handles.Toolbox(tb).Input.xLim(2)=str2double(get(hObject,'String'));
+if ~isempty(handles.Toolbox(tb).Input.imageOutlineHandle)
+    try
+        delete(handles.Toolbox(tb).Input.imageOutlineHandle);
+    end
+end
+x0=handles.Toolbox(tb).Input.xLim(1);
+y0=handles.Toolbox(tb).Input.yLim(1);
+dx=handles.Toolbox(tb).Input.xLim(2)-x0;
+dy=handles.Toolbox(tb).Input.yLim(2)-y0;
+
+h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','ImageOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeGeoImageOnMap,'onstart',@deleteImageOutline,'x0',x0,'y0',y0,'dx',dx,'dy',dy);
+handles.Toolbox(tb).Input.imageOutlineHandle=h;
 setHandles(handles);
-ddb_deleteImageOutline;
-ddb_plotImageOutline('g');
-ddb_refreshZoomLevels(handles);
 
 %%
-function EditY1_CallBack(hObject,eventdata)
+function deleteImageOutline
 handles=getHandles;
-handles.Toolbox(tb).Input.yLim(1)=str2double(get(hObject,'String'));
-setHandles(handles);
-ddb_deleteImageOutline;
-ddb_plotImageOutline('g');
-ddb_refreshZoomLevels(handles);
+if ~isempty(handles.Toolbox(tb).Input.imageOutlineHandle)
+    try
+        delete(handles.Toolbox(tb).Input.imageOutlineHandle);
+    end
+end
 
 %%
-function EditY2_CallBack(hObject,eventdata)
-handles=getHandles;
-handles.Toolbox(tb).Input.yLim(2)=str2double(get(hObject,'String'));
-setHandles(handles);
-ddb_deleteImageOutline;
-ddb_plotImageOutline('g');
-ddb_refreshZoomLevels(handles);
-
-%%
-function PushGenerateImage(src,eventdata)
+function generateImage
 
 handles=getHandles;
 
@@ -111,33 +95,53 @@ xl(2)=handles.Toolbox(tb).Input.xLim(2);
 yl(1)=handles.Toolbox(tb).Input.yLim(1);
 yl(2)=handles.Toolbox(tb).Input.yLim(2);
 
+npix=handles.Toolbox(tb).Input.nPix;
+
 cs=handles.screenParameters.coordinateSystem;
 
-i=get(handles.GUIHandles.SelectZoomLevel,'Value');
-str=get(handles.GUIHandles.SelectZoomLevel,'String');
-if i>1
-    zlev=str2double(str{i});
+dataCoord.name='WGS 84';
+dataCoord.type='geographic';
+
+% Find bounding box for data
+if ~strcmpi(cs.name,'wgs 84') || ~strcmpi(cs.type,'geographic')
+    dx=(xl(2)-xl(1))/10;
+    dy=(yl(2)-yl(1))/10;
+    [xtmp,ytmp]=meshgrid(xl(1)-dx:dx:xl(2)+dx,yl(1)-dy:dy:yl(2)+dy);
+    [xtmp2,ytmp2]=ddb_coordConvert(xtmp,ytmp,cs,dataCoord);
+    xl0(1)=min(min(xtmp2));
+    xl0(2)=max(max(xtmp2));
+    yl0(1)=min(min(ytmp2));
+    yl0(2)=max(max(ytmp2));
 else
-    zlev=0;
-end
-source=get(handles.GUIHandles.SourceSelection,'Value');
-
-npix=str2double(get(handles.GUIHandles.EditNPix,'String'));
-
-if strcmpi(cs.name,'wgs 84')
-    cs=[];
+    xl0=[xl(1) xl(2)];
+    yl0=[yl(1) yl(2)];
 end
 
-if source==1 % visual earth
-    [xgl,ygl,c2]=ddb_makeGeoImage(xl,yl,'coordinatesystem',cs,'zoomlevel',zlev,'nrpix',npix);
-elseif source==2 % google earth
-    [xgl,ygl,c2]=ddb_makeGeoImageGE(xl,yl,'coordinatesystem',cs,'zoomlevel',zlev,'nrpix',npix);
+[xx,yy,c2]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',handles.Toolbox(tb).Input.zoomLevel,'npix',handles.Toolbox(tb).Input.nPix,'whatKind',handles.Toolbox(tb).Input.whatKind,'cache',handles.satelliteDir);
+
+% Now convert to current coordinate system
+if ~strcmpi(cs.name,dataCoord.name) || ~strcmpi(cs.type,dataCoord.type)
+    % Interpolate on rectangular grid
+    res=(xl(2)-xl(1))/npix;
+    [x11,y11]=meshgrid(xl(1):res:xl(2),yl(1):res:yl(2));
+    [x2,y2]=ddb_coordConvert(x11,y11,cs,dataCoord);
+    c2=double(c2);
+    r1=interp2(xx,yy,c2(:,:,1),x2,y2);
+    g1=interp2(xx,yy,c2(:,:,2),x2,y2);
+    b1=interp2(xx,yy,c2(:,:,3),x2,y2);
+    c2=[];
+    c2(:,:,1)=r1;
+    c2(:,:,2)=g1;
+    c2(:,:,3)=b1;
+    c2=uint8(c2);
+    xx=xl(1):res:xl(2);
+    yy=yl(1):res:yl(2);
 end
 
-if ~isempty(c2)
+if ~isempty(c2) && max(max(max(c2)))~=200
 
     figure(99)
-    image(xgl,ygl,c2);
+    image(xx,yy,c2);
     set(gca,'YDir','normal');
     grid;
     set(99,'menubar','none');

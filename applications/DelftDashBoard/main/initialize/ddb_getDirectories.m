@@ -49,6 +49,7 @@ handles.tideDir=[ddbdir 'tidemodels' filesep];
 handles.toolBoxDir=[ddbdir 'toolbox' filesep];
 handles.additionalToolboxDir=additionalToolboxDir;
 handles.shorelineDir=[ddbdir 'shorelines' filesep];
+handles.satelliteDir=[ddbdir 'imagery' filesep];
 
 if isdeployed
     handles.superTransDir=[ddbdir 'supertrans' filesep];

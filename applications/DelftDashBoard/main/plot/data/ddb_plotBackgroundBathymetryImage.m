@@ -1,4 +1,4 @@
-function handles=ddb_plotBackgroundBathymetry(handles,x,y,z)
+function handles=ddb_plotBackgroundBathymetryImage(handles,x,y,z)
 
 xx=x;
 yy=y;

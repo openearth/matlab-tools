@@ -19,7 +19,8 @@ set(gcf,'windowbuttonmotionfcn',[]);
 set(gcf,'Pointer','watch');
 pause(0.01);
 
-handles=ddb_updateBathymetry(handles);
+% Update background image
+handles=ddb_updateBackgroundImage(handles);
 
 if strcmp(get(handles.GUIHandles.Menu.View.Shoreline,'Checked'),'on')
     ddb_updateShoreline(handles);
@@ -30,4 +31,3 @@ setHandles(handles);
 setptr(gcf,pnt);
 
 set(gcf,'windowbuttonmotionfcn',motfcn);
-

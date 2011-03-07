@@ -70,7 +70,10 @@ end
 %% View -> from now model specific items to be filled in by a model select function (for example: ddb_selectDelft3DFLOW.m)
 uimenu('Label','View','Tag','menuView');
 handles=ddb_addMenuItem(handles,'View','Background Bathymetry','Callback',{@ddb_menuView},'Checked','on','longname','Bathymetry');
-handles=ddb_addMenuItem(handles,'View','Shoreline',            'Callback',{@ddb_menuView},'Checked','on','longname','Shoreline');
+handles=ddb_addMenuItem(handles,'View','Aerial',               'Callback',{@ddb_menuView},'Checked','off','Enable','on','longname','Aerial','Separator','on');
+handles=ddb_addMenuItem(handles,'View','Hybrid',               'Callback',{@ddb_menuView},'Checked','off','Enable','on','longname','Hybrid');
+handles=ddb_addMenuItem(handles,'View','Roads',                'Callback',{@ddb_menuView},'Checked','off','Enable','on','longname','Map');
+handles=ddb_addMenuItem(handles,'View','Shoreline',            'Callback',{@ddb_menuView},'Checked','on','longname','Shoreline','Separator','on');
 handles=ddb_addMenuItem(handles,'View','Cities',               'Callback',{@ddb_menuView});
 handles=ddb_addMenuItem(handles,'View','Model',                'longname','Model specific items','Separator','on');
 handles=ddb_addMenuItem(handles,'View','Settings',             'Callback',{@ddb_menuView},'Separator','on');

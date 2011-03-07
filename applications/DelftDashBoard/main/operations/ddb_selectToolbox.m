@@ -2,8 +2,6 @@ function ddb_selectToolbox
 
 handles=getHandles;
 
-% ddb_refreshScreen('Toolbox');
-
 if handles.Toolbox(tb).useXML
     
     % At this point, the elements are already in the GUI.

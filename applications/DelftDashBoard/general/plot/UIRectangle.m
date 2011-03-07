@@ -1,7 +1,7 @@
-function [x,y,h]=UIRectangle(h,opt,varargin)
+function hg=UIRectangle(hg,opt,varargin)
 
-if strcmpi(get(h,'Type'),'axes')
-    ax=h;
+if strcmpi(get(hg,'Type'),'axes')
+    ax=hg;
 end
 
 % Default values
@@ -14,12 +14,19 @@ markerSize=4;
 maxPoints=10000;
 txt=[];
 callback=[];
+onStartCallback=[];
 closed=0;
-userdata=[];
 
-rotation=0;
 rotate=0;
 movable=1;
+
+x0=[];
+y0=[];
+dx=[];
+dy=[];
+rotation=0;
+ddx=[];
+ddy=[];
 
 tag='';
 
@@ -48,8 +55,8 @@ for i=1:length(varargin)
                 tag=varargin{i+1};
             case{'callback'}
                 callback=varargin{i+1};
-            case{'userdata'}
-                userdata=varargin{i+1};
+            case{'onstart'}
+                onStartCallback=varargin{i+1};
             case{'x0'}
                 x0=varargin{i+1};
             case{'y0'}
@@ -68,6 +75,11 @@ for i=1:length(varargin)
                 windowbuttonupdownfcn=varargin{i+1};
             case{'windowbuttonmotionfcn'}
                 windowbuttonmotionfcn=varargin{i+1};
+            case{'ddx'}
+                ddx=varargin{i+1};
+            case{'ddy'}
+                ddy=varargin{i+1};
+
         end
     end
 end
@@ -77,100 +89,97 @@ switch lower(opt)
        
         % Plot first (invisible) point
         
-        x=0;
-        y=0;       
-        h=plot(x,y);
-        set(h,'Visible','off');
+        hg = hggroup;
 
-        set(h,'Tag',tag);
-        set(h,'Color',lineColor);
-        set(h,'LineWidth',lineWidth);
+        set(hg,'Visible','off');
+
+        set(hg,'Tag',tag);
                 
-        setappdata(h,'x0',[]);
-        setappdata(h,'y0',[]);
-        setappdata(h,'dx',[]);
-        setappdata(h,'dy',[]);
-        setappdata(h,'rotation',[]);
-        setappdata(h,'axes',ax);
-        setappdata(h,'closed',closed);
-        setappdata(h,'callback',callback);
-        setappdata(h,'tag',tag);        
-        setappdata(h,'color',lineColor);
-        setappdata(h,'width',lineWidth);
-        setappdata(h,'marker',marker);
-        setappdata(h,'markeredgecolor',markerEdgeColor);
-        setappdata(h,'markerfacecolor',markerFaceColor);
-        setappdata(h,'markersize',markerSize);
-        setappdata(h,'text',txt);
-        setappdata(h,'rotate',rotate);
-        setappdata(h,'movable',movable);
-        setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
-        setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);
+        setappdata(hg,'x0',x0);
+        setappdata(hg,'y0',y0);
+        setappdata(hg,'dx',dx);
+        setappdata(hg,'dy',dy);
+        setappdata(hg,'rotation',rotation);
+        setappdata(hg,'ddx',ddx);
+        setappdata(hg,'ddy',ddy);
+        setappdata(hg,'axes',ax);
+        setappdata(hg,'closed',closed);
+        setappdata(hg,'callback',callback);
+        setappdata(hg,'onstartcallback',onStartCallback);
+        setappdata(hg,'tag',tag);        
+        setappdata(hg,'color',lineColor);
+        setappdata(hg,'width',lineWidth);
+        setappdata(hg,'marker',marker);
+        setappdata(hg,'markeredgecolor',markerEdgeColor);
+        setappdata(hg,'markerfacecolor',markerFaceColor);
+        setappdata(hg,'markersize',markerSize);
+        setappdata(hg,'text',txt);
+        setappdata(hg,'rotate',rotate);
+        setappdata(hg,'movable',movable);
+        setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
+        setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);
 
-        set(gcf, 'windowbuttondownfcn',   {@startRectangle,h});
-        set(gcf, 'windowbuttonmotionfcn', {@dragRectangle,h});
+        set(gcf, 'windowbuttondownfcn',   {@startRectangle,hg});
+        set(gcf, 'windowbuttonmotionfcn', {@dragRectangle,hg});
         
     case{'plot'}
-        h=plot(0,0);
-        setappdata(h,'callback',callback);
-        set(h,'userdata',userdata);
-        setappdata(h,'tag',tag);        
-        setappdata(h,'x0',x0);
-        setappdata(h,'y0',y0);
-        setappdata(h,'dx',dx);
-        setappdata(h,'dy',dy);
-        setappdata(h,'rotation',rotation);
-        setappdata(h,'color',lineColor);
-        setappdata(h,'width',lineWidth);
-        setappdata(h,'marker',marker);
-        setappdata(h,'markeredgecolor',markerEdgeColor);
-        setappdata(h,'markerfacecolor',markerFaceColor);
-        setappdata(h,'markersize',markerSize);
-        setappdata(h,'maxpoints',maxPoints);
-        setappdata(h,'text',txt);
-        setappdata(h,'closed',closed);
-        setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
-        setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);        
-        drawRectangle(h,'nocallback');
+        hg = hggroup;
+        setappdata(hg,'callback',callback);
+        setappdata(hg,'tag',tag);        
+        setappdata(hg,'x0',x0);
+        setappdata(hg,'y0',y0);
+        setappdata(hg,'dx',dx);
+        setappdata(hg,'dy',dy);
+        setappdata(hg,'ddx',ddx);
+        setappdata(hg,'ddy',ddy);
+        setappdata(hg,'rotation',rotation);
+        setappdata(hg,'color',lineColor);
+        setappdata(hg,'width',lineWidth);
+        setappdata(hg,'marker',marker);
+        setappdata(hg,'markeredgecolor',markerEdgeColor);
+        setappdata(hg,'markerfacecolor',markerFaceColor);
+        setappdata(hg,'markersize',markerSize);
+        setappdata(hg,'maxpoints',maxPoints);
+        setappdata(hg,'text',txt);
+        setappdata(hg,'closed',closed);
+        setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
+        setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);        
+        hg=drawRectangle(hg,'nocallback');
 
     case{'delete'}
-        ch=getappdata(h,'children');
-        delete(h);
-        delete(ch);
+        delete(hg);
 
 end
 
 %%
-function drawRectangle(h,varargin)
+function hg=drawRectangle(hg,varargin)
 
 opt='withcallback';
 if ~isempty(varargin)
     opt=varargin{1};
 end
 
-x0=getappdata(h,'x0');
-y0=getappdata(h,'y0');
-dx=getappdata(h,'dx');
-dy=getappdata(h,'dy');
-rotation=getappdata(h,'rotation');
+x0=getappdata(hg,'x0');
+y0=getappdata(hg,'y0');
+dx=getappdata(hg,'dx');
+dy=getappdata(hg,'dy');
+rotation=getappdata(hg,'rotation');
+rotate=getappdata(hg,'rotate');
 
-tag=getappdata(h,'tag');
-lineColor=getappdata(h,'color');
-lineWidth=getappdata(h,'width');
-marker=getappdata(h,'marker');
-markerEdgeColor=getappdata(h,'markeredgecolor');
-markerFaceColor=getappdata(h,'markerfacecolor');
-markerSize=getappdata(h,'markersize');
-txt=getappdata(h,'text');
-callback=getappdata(h,'callback');
-ax=getappdata(h,'axes');
-userdata=get(h,'userdata');
-windowbuttonupdownfcn=getappdata(h,'windowbuttonupdownfcn');
-windowbuttonmotionfcn=getappdata(h,'windowbuttonmotionfcn');
+tag=getappdata(hg,'tag');
+lineColor=getappdata(hg,'color');
+lineWidth=getappdata(hg,'width');
+marker=getappdata(hg,'marker');
+markerEdgeColor=getappdata(hg,'markeredgecolor');
+markerFaceColor=getappdata(hg,'markerfacecolor');
+markerSize=getappdata(hg,'markersize');
+txt=getappdata(hg,'text');
+callback=getappdata(hg,'callback');
+ax=getappdata(hg,'axes');
+windowbuttonupdownfcn=getappdata(hg,'windowbuttonupdownfcn');
+windowbuttonmotionfcn=getappdata(hg,'windowbuttonmotionfcn');
 
-ch=getappdata(h,'children');
-delete(h);
-delete(ch);
+delete(hg);
 
 if ~isempty(x0)
     
@@ -179,56 +188,64 @@ if ~isempty(x0)
     [x,y]=computeCoordinates(x0,y0,dx,dy,rotation);
     
     h=plot(x,y,'g');
-    set(h,'Tag',tag);
+
     set(h,'Color',lineColor);
     set(h,'LineWidth',lineWidth);
     set(h,'HitTest','off');
+    set(h,'Tag','line');
     
-    setappdata(h,'color',lineColor);
-    setappdata(h,'width',lineWidth);
-    setappdata(h,'marker',marker);
-    setappdata(h,'markeredgecolor',markerEdgeColor);
-    setappdata(h,'markerfacecolor',markerFaceColor);
-    setappdata(h,'markersize',markerSize);
-    setappdata(h,'rotate',rotate);
-    setappdata(h,'text',txt);
-    set(h,'userdata',userdata);
-    setappdata(h,'callback',callback);
-    setappdata(h,'x0',x0);
-    setappdata(h,'y0',y0);
-    setappdata(h,'dx',dx);
-    setappdata(h,'dy',dy);
-    setappdata(h,'rotation',rotation);
-    setappdata(h,'tag',tag);
-    setappdata(h,'axes',ax);
-    setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
-    setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);
+    hg = hggroup;
+    set(h,'Parent',hg);
+    set(hg,'Tag',tag);
+    
+    setappdata(hg,'color',lineColor);
+    setappdata(hg,'width',lineWidth);
+    setappdata(hg,'marker',marker);
+    setappdata(hg,'markeredgecolor',markerEdgeColor);
+    setappdata(hg,'markerfacecolor',markerFaceColor);
+    setappdata(hg,'markersize',markerSize);
+    setappdata(hg,'rotate',rotate);
+    setappdata(hg,'text',txt);
+    setappdata(hg,'callback',callback);
+    setappdata(hg,'x0',x0);
+    setappdata(hg,'y0',y0);
+    setappdata(hg,'dx',dx);
+    setappdata(hg,'dy',dy);
+    setappdata(hg,'rotation',rotation);
+    setappdata(hg,'tag',tag);
+    setappdata(hg,'axes',ax);
+    setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
+    setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);
     
     for i=1:length(x)-1
         if i==1
             % Origin
             mh(i)=plot3(x(i),y(i),200,['r' marker]);
-            set(mh(i),'MarkerEdgeColor',markerEdgeColor,'MarkerFaceColor',markerFaceColor,'MarkerSize',markerSize);
+            set(mh(i),'MarkerEdgeColor',markerEdgeColor,'MarkerFaceColor','y','MarkerSize',markerSize+2);
         else
             mh(i)=plot3(x(i),y(i),200,['r' marker]);
             set(mh(i),'MarkerEdgeColor',markerEdgeColor,'MarkerFaceColor',markerFaceColor,'MarkerSize',markerSize);
         end
         set(mh(i),'ButtonDownFcn',{@moveCornerPoint});
-        set(mh(i),'Tag',tag);
-        setappdata(mh(i),'parent',h);
+        set(mh(i),'Tag','marker');
         setappdata(mh(i),'number',i);
+        set(mh(i),'Parent',hg);
     end
-    setappdata(h,'children',mh);
     
     if ~isempty(callback) && strcmpi(opt,'withcallback')
-        feval(callback,x,y,h);
+        feval(callback,x,y,hg);
     end
 end
 
 %%
-function startRectangle(imagefig, varargins,h)
+function startRectangle(imagefig, varargins,hg)
 
-ax=getappdata(h,'axes');
+onstart=getappdata(hg,'onstartcallback');
+if ~isempty(onstart)
+    feval(onstart);
+end
+
+ax=getappdata(hg,'axes');
 
 pos=get(ax, 'CurrentPoint');
 posx=pos(1,1);
@@ -239,18 +256,22 @@ yl=get(ax,'YLim');
 
 if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
     
+    set(hg,'Tag',tag);
+    
     x0=posx;
     y0=posy;
     
-    setappdata(h,'x0',posx);
-    setappdata(h,'y0',posy);
+    setappdata(hg,'x0',posx);
+    setappdata(hg,'y0',posy);
     
-    marker=getappdata(h,'marker');
-    markerEdgeColor=getappdata(h,'markeredgecolor');
-    markerFaceColor=getappdata(h,'markerfacecolor');
-    markerSize=getappdata(h,'markersize');
-    tag=get(h,'Tag');
-    movable=getappdata(h,'movable');
+    h=plot(x0,y0);
+    set(h,'Parent',hg);
+    
+    marker=getappdata(hg,'marker');
+    markerEdgeColor=getappdata(hg,'markeredgecolor');
+    markerFaceColor=getappdata(hg,'markerfacecolor');
+    markerSize=getappdata(hg,'markersize');
+    movable=getappdata(hg,'movable');
     
     x=[x0 x0 x0 x0 x0];
     y=[y0 y0 y0 y0 y0];
@@ -272,21 +293,19 @@ if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
         else
             set(mh(i),'HitTest','off');
         end
-        set(mh(i),'Tag',tag);
-        setappdata(mh(i),'parent',h);
         setappdata(mh(i),'number',i);
+        set(mh(i),'Parent',hg);
     end
-    setappdata(h,'children',mh);
     
-    set(gcf, 'windowbuttonupfcn',     {@finishRectangle,h});
-    set(gcf, 'windowbuttonmotionfcn', {@dragRectangle,h});
+    set(gcf, 'windowbuttonupfcn',     {@finishRectangle,hg});
+    set(gcf, 'windowbuttonmotionfcn', {@dragRectangle,hg});
 
 end
 
 %%
-function dragRectangle(imagefig, varargins, h)
+function dragRectangle(imagefig, varargins, hg)
 
-ax=getappdata(h,'axes');
+ax=getappdata(hg,'axes');
 
 pos=get(ax, 'CurrentPoint');
 posx=pos(1,1);
@@ -295,24 +314,50 @@ posy=pos(1,2);
 xl=get(ax,'XLim');
 yl=get(ax,'YLim');
 
+ch=get(hg,'Children');
+h=ch(1);
+ch=ch(2:5);
+
 if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
     
-    x0=getappdata(h,'x0');
-    y0=getappdata(h,'y0');
+    x0=getappdata(hg,'x0');
+    y0=getappdata(hg,'y0');
+    ddx=getappdata(hg,'ddx');
+    ddy=getappdata(hg,'ddy');
     
     if ~isempty(x0)
 
         dx=posx-x0;
         dy=posy-y0;
-        setappdata(h,'dx',dx);
-        setappdata(h,'dy',dy);
+        
+        if dx<0
+            x0=posx;
+            dx=-dx;
+        end
+
+        if dy<0
+            y0=posy;
+            dy=-dy;
+        end
+
+        % Round to cell size
+        if ~isempty(ddx)
+            nx=max(1,round(dx/ddx));
+            dx=nx*ddx;
+        end
+        if ~isempty(ddy)
+            ny=max(1,round(dy/ddy));
+            dy=ny*ddy;
+        end
+
+        setappdata(hg,'dx',dx);
+        setappdata(hg,'dy',dy);
         rotation=0;
-        ch=getappdata(h,'children');
         
         [x,y]=computeCoordinates(x0,y0,dx,dy,rotation);
         
-        setappdata(h,'x',x);
-        setappdata(h,'y',y);
+        setappdata(hg,'x',x);
+        setappdata(hg,'y',y);
         
         set(h,'XData',x,'YData',y);
         
@@ -327,15 +372,14 @@ end
 ddb_updateCoordinateText('crosshair');
 
 %%
-function finishRectangle(imagefig, varargins,h)
+function finishRectangle(imagefig, varargins,hg)
 
 buttonUpDownFcn=getappdata(h,'windowbuttonupdownfcn');
 buttonMotionFcn=getappdata(h,'windowbuttonmotionfcn');
 feval(buttonUpDownFcn);
 feval(buttonMotionFcn);
-x0=getappdata(h,'x0');
-y0=getappdata(h,'y0');
-ch=getappdata(h,'children');
+x0=getappdata(hg,'x0');
+y0=getappdata(hg,'y0');
 pos = get(gca, 'CurrentPoint');
 
 x=pos(1,1);
@@ -344,84 +388,103 @@ y=pos(1,2);
 dx=x-x0;
 dy=y-y0;
 
-setappdata(h,'dx',dx);
-setappdata(h,'dy',dy);
+if dx<0
+    x0=x;
+    dx=-dx;
+end
+
+if dy<0
+    y0=y;
+    dy=-dy;
+end
+
+ch=get(hg,'Children');
+h=ch(1);
+ch=ch(2:5);
+
+setappdata(hg,'x0',x0);
+setappdata(hg,'y0',y0);
+setappdata(hg,'dx',dx);
+setappdata(hg,'dy',dy);
 rotation=0;
 
 [x,y]=computeCoordinates(x0,y0,dx,dy,rotation);
 
-setappdata(h,'x',x);
-setappdata(h,'y',y);
-setappdata(h,'rotation',rotation);
+setappdata(hg,'x',x);
+setappdata(hg,'y',y);
+setappdata(hg,'rotation',rotation);
 
 set(h,'XData',x,'YData',y);
 for i=1:4
     set(ch(i),'XData',x(i),'YData',y(i));
 end
 
-callback=getappdata(h,'callback');
+callback=getappdata(hg,'callback');
 if ~isempty(callback)
-    feval(callback,x,y,h);
+    feval(callback,x0,y0,dx,dy,rotation,hg);
 end
 
-
-
-
-
 %%
-function changeRectangle(imagefig, varargins,h,i)
+function changeRectangle(imagefig, varargins,hg,i)
+
+ax=getappdata(hg,'axes');
+pos = get(ax, 'CurrentPoint');
+setappdata(hg,'posx0',pos(1,1));
+setappdata(hg,'posy0',pos(1,2));
 
 switch get(gcf,'SelectionType')
     case{'normal'}
         % Move corner point
-        set(gcf, 'windowbuttonmotionfcn', {@moveCornerPoint,h,i,'move'});
-        set(gcf, 'windowbuttonupfcn',     {@moveCornerPoint,h,i,'finish'});
+        set(gcf, 'windowbuttonmotionfcn', {@moveCornerPoint,hg,i,'movecornerpoint','busy'});
+        set(gcf, 'windowbuttonupfcn',     {@moveCornerPoint,hg,i,'movecornerpoint','finish'});
     case{'alt'}
         if i==1
             % Move rectangle
-            set(gcf, 'windowbuttonmotionfcn', {@moveRectangle,h,'move'});
-            set(gcf, 'windowbuttonupfcn', {@moveRectangle,h,'finish'});
+            set(gcf, 'windowbuttonmotionfcn', {@moveCornerPoint,hg,i,'moverectangle','busy'});
+            set(gcf, 'windowbuttonupfcn', {@moveCornerPoint,hg,i,'moverectangle','finish'});
         else
             rotate=getappdata(h,'rotate');
             if rotate
                 % Rotate rectangle
-                set(gcf, 'windowbuttonmotionfcn', {@rotateRectangle,h,i,'move'});
-                set(gcf, 'windowbuttonupfcn', {@rotateRectangle,h,i,'finish'});
+                set(gcf, 'windowbuttonmotionfcn', {@moveCornerPoint,hg,i,'rotaterectangle','busy'});
+                set(gcf, 'windowbuttonupfcn', {@moveCornerPoint,hg,i,'rotaterectangle','finish'});
             end
         end
 end
 
 %%
-function moveCornerPoint(imagefig, varargins,h,i,opt)
+function moveCornerPoint(imagefig, varargins,hg,i,action,opt)
 
-ax=getappdata(h,'axes');
-
+ax=getappdata(hg,'axes');
 pos = get(ax, 'CurrentPoint');
 posx=pos(1,1);
 posy=pos(1,2);
 
-x0=getappdata(h,'x0');
-y0=getappdata(h,'y0');
-dx=getappdata(h,'dx');
-dy=getappdata(h,'dy');
-rotation=getappdata(h,'rotation');
-x=getappdata(h,'x');
-y=getappdata(h,'y');
+x0=getappdata(hg,'x0');
+y0=getappdata(hg,'y0');
+dx=getappdata(hg,'dx');
+dy=getappdata(hg,'dy');
+ddx=getappdata(hg,'ddx');
+ddy=getappdata(hg,'ddy');
+rotation=getappdata(hg,'rotation');
 
-[x0,y0,dx,dy,rotation]=computeDxDy(x0,y0,dx,dy,rotation,posx,posy,x,y,i,'move');
+x=getappdata(hg,'x');
+y=getappdata(hg,'y');
+
+posx0=getappdata(hg,'posx0');
+posy0=getappdata(hg,'posy0');
+
+[x0,y0,dx,dy,rotation]=computeDxDy(x0,y0,dx,dy,rotation,ddx,ddy,posx,posy,posx0,posy0,x,y,i,action);
 
 [x,y]=computeCoordinates(x0,y0,dx,dy,rotation);
 
-setappdata(h,'x0',x0);
-setappdata(h,'y0',y0);
-setappdata(h,'dx',dx);
-setappdata(h,'dy',dy);
-setappdata(h,'x',x);
-setappdata(h,'y',y);
+ch=get(hg,'Children');
+h=ch(1);
+ch=ch(2:5);
 
 set(h,'XData',x,'YData',y);
 
-ch=getappdata(h,'children');
+ch=get(hg,'Children');
 for i=1:4
     set(ch(i),'XData',x(i),'YData',y(i));
 end
@@ -430,91 +493,39 @@ ddb_updateCoordinateText('arrow');
 
 switch opt
     case{'finish'}
-        buttonUpDownFcn=getappdata(h,'windowbuttonupdownfcn');
-        buttonMotionFcn=getappdata(h,'windowbuttonmotionfcn');
+
+        setappdata(hg,'x0',x0);
+        setappdata(hg,'y0',y0);
+        setappdata(hg,'dx',dx);
+        setappdata(hg,'dy',dy);
+        setappdata(hg,'rotation',rotation);
+        setappdata(hg,'x',x);
+        setappdata(hg,'y',y);
+
+        buttonUpDownFcn=getappdata(hg,'windowbuttonupdownfcn');
+        buttonMotionFcn=getappdata(hg,'windowbuttonmotionfcn');
         feval(buttonUpDownFcn);
         feval(buttonMotionFcn);
-        callback=getappdata(h,'callback');
+        callback=getappdata(hg,'callback');
         if ~isempty(callback)
-            feval(callback,x,y,h);
+            feval(callback,x0,y0,dx,dy,rotation,hg);
         end
 end
 
+
 %%
-function moveRectangle(imagefig, varargins,h,opt)
-
-ax=getappdata(h,'axes');
-
-pos = get(ax, 'CurrentPoint');
-posx=pos(1,1);
-posy=pos(1,2);
-
-dx=getappdata(h,'dx');
-dy=getappdata(h,'dy');
-rotation=getappdata(h,'rotation');
-
-x0=posx;
-y0=posy;
-
-[x,y]=computeCoordinates(x0,y0,dx,dy,rotation);
-
-setappdata(h,'x0',x0);
-setappdata(h,'y0',y0);
-setappdata(h,'dx',dx);
-setappdata(h,'dy',dy);
-setappdata(h,'x',x);
-setappdata(h,'y',y);
-
-set(h,'XData',x,'YData',y);
-
-ch=getappdata(h,'children');
-for i=1:4
-    set(ch(i),'XData',x(i),'YData',y(i));
-end
-
-ddb_updateCoordinateText('arrow');
+function [x0,y0,dx,dy,rotation]=computeDxDy(x0,y0,dx,dy,rotation,ddx,ddy,posx,posy,posx0,posy0,x,y,i,opt)
 
 switch opt
-    case{'finish'}
-        buttonUpDownFcn=getappdata(h,'windowbuttonupdownfcn');
-        buttonMotionFcn=getappdata(h,'windowbuttonmotionfcn');
-        feval(buttonUpDownFcn);
-        feval(buttonMotionFcn);
-        callback=getappdata(h,'callback');
-        if ~isempty(callback)
-            feval(callback,x,y,h);
-        end
-end
+    case{'movecornerpoint'}
 
-%%
-function rotateRectangle(imagefig, varargins,h,i)
+        dposx=posx0-x(i);
+        dposy=posy0-y(i);
+        posx=posx-dposx;
+        posy=posy-dposy;
 
-
-
-
-%%
-function [x,y]=computeCoordinates(x0,y0,dx,dy,rotation)
-x(1)=x0;
-y(1)=y0;
-x(2)=x(1)+dx*cos(pi*rotation/180);
-y(2)=y(1)+dx*sin(pi*rotation/180);
-x(3)=x(2)+dy*cos(pi*(rotation+90)/180);
-y(3)=y(2)+dy*sin(pi*(rotation+90)/180);
-x(4)=x(3)+dx*cos(pi*(rotation+180)/180);
-y(4)=y(3)+dx*sin(pi*(rotation+180)/180);
-x(5)=x0;
-y(5)=y0;
-
-
-
-
-%%
-function [x0,y0,dx,dy,rotation]=computeDxDy(x0,y0,dx,dy,rotation,posx,posy,x,y,i,opt)
-
-switch opt
-    case{'move'}
         switch i
-            case 1
+            case 1               
                 
                 x00=[posx posy];
                 
@@ -549,9 +560,45 @@ switch opt
                 dy=det([x2-x1 ; x1-x00])/pt;
                 
             case 4
-                dy=sqrt((posx-x0)^2 + (posx-x0)^2);
+                dy=sqrt((posx-x0)^2 + (posy-y0)^2);
                 
         end
-    case{'rotate'}
+        
+        dx=max(dx,0);
+        dy=max(dy,0);
+
+        if ~isempty(ddx)
+            nx=max(1,round(dx/ddx));
+            dx=nx*ddx;
+        end
+        if ~isempty(ddy)
+            ny=max(1,round(dy/ddy));
+            dy=ny*ddy;
+        end
+        
+    case{'moverectangle'}
+        dposx=posx-posx0;
+        dposy=posy-posy0;
+        x0=x0+dposx;
+        y0=y0+dposy;
+    case{'rotaterectangle'}
+        rot0=180*atan2(posy0-y0,posx0-x0)/pi;
+        rot=180*atan2(posy-y0,posx-x0)/pi;
+        drot=rot-rot0;
+        rotation=rotation+drot;
+
 end
+
+%%
+function [x,y]=computeCoordinates(x0,y0,dx,dy,rotation)
+x(1)=x0;
+y(1)=y0;
+x(2)=x(1)+dx*cos(pi*rotation/180);
+y(2)=y(1)+dx*sin(pi*rotation/180);
+x(3)=x(2)+dy*cos(pi*(rotation+90)/180);
+y(3)=y(2)+dy*sin(pi*(rotation+90)/180);
+x(4)=x(3)+dx*cos(pi*(rotation+180)/180);
+y(4)=y(3)+dx*sin(pi*(rotation+180)/180);
+x(5)=x0;
+y(5)=y0;
 

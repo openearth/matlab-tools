@@ -48,8 +48,8 @@ switch(zoommode),
         end
     case 4
         [xl,yl]=CompXYLim(handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange,handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
-        set(gca,'xlim',xl);
-        set(gca,'ylim',yl);
+        set(handles.GUIHandles.mapAxis,'xlim',xl);
+        set(handles.GUIHandles.mapAxis,'ylim',yl);
         handles.screenParameters.xLim=xl;
         handles.screenParameters.yLim=yl;
         setHandles(handles);
@@ -122,9 +122,9 @@ if point1(1)>=xl(1) && point1(1)<=xl(2) && point1(2)>=yl(1) && point1(2)<=yl(2)
         end
     elseif (leftmouse==1 && zmin==0) || (rightmouse==1 && zmin==1)
         % Zoom Out
-        point1 = get(gca,'CurrentPoint');
-        xl=get(gca,'xlim');
-        yl=get(gca,'ylim');
+        point1 = get(handles.GUIHandles.mapAxis,'CurrentPoint');
+        xl=get(handles.GUIHandles.mapAxis,'xlim');
+        yl=get(handles.GUIHandles.mapAxis,'ylim');
         point1=point1(1,1:2);
         p1(1)=point1(1)-((xl(2)-xl(1)));
         p1(2)=point1(2)-((yl(2)-yl(1)));
@@ -139,7 +139,7 @@ if point1(1)>=xl(1) && point1(1)<=xl(2) && point1(2)>=yl(1) && point1(2)<=yl(2)
             [xl,yl]=CompXYLim([p1(1) p1(1)+offset(1) ],[p1(2) p1(2)+offset(2)],handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
         end
     end
-    set(gca,'xlim',xl,'ylim',yl);
+    set(handles.GUIHandles.mapAxis,'xlim',xl,'ylim',yl);
     handles.screenParameters.xLim=xl;
     handles.screenParameters.yLim=yl;
     
@@ -215,9 +215,10 @@ end
 
 %%
 function PanMove(imagefig, varargins,xl0,yl0,pos0,xrange,yrange)
-xl1=get(gca,'XLim');
-yl1=get(gca,'YLim');
-pos1=get(gca,'CurrentPoint');
+handles=getHandles;
+xl1=get(handles.GUIHandles.mapAxis,'XLim');
+yl1=get(handles.GUIHandles.mapAxis,'YLim');
+pos1=get(handles.GUIHandles.mapAxis,'CurrentPoint');
 pos1=pos1(1,1:2);
 pos1(1)=xl0(1)+(xl0(2)-xl0(1))*(pos1(1)-xl1(1))/(xl1(2)-xl1(1));
 pos1(2)=yl0(1)+(yl0(2)-yl0(1))*(pos1(2)-yl1(1))/(yl1(2)-yl1(1));
@@ -225,7 +226,7 @@ dpos=pos1-pos0;
 xl=xl0-dpos(1);
 yl=yl0-dpos(2);
 [xl,yl]=CompXYLim(xl,yl,xrange,yrange);
-set(gca,'XLim',xl,'YLim',yl);
+set(handles.GUIHandles.mapAxis,'XLim',xl,'YLim',yl);
 ddb_updateCoordinateText('closedhand');
 
 %%
@@ -237,8 +238,8 @@ setptr(gcf,'hand');
 
 handles=getHandles;
 
-handles.screenParameters.xLim=get(gca,'XLim');
-handles.screenParameters.yLim=get(gca,'YLim');
+handles.screenParameters.xLim=get(handles.GUIHandles.mapAxis,'XLim');
+handles.screenParameters.yLim=get(handles.GUIHandles.mapAxis,'YLim');
 
 setHandles(handles);
 

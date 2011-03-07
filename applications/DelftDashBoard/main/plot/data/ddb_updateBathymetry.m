@@ -36,35 +36,45 @@ pos=get(handles.GUIHandles.mapAxis,'Position');
 % res=(xl0(2)-xl0(1))/(pos(3));
 
 % Get bathymetry
-[x0,y0,z,ok]=ddb_getBathy(handles,xl0,yl0);
 
 imageQuality=2;
 
-if ok
 
-    res=(xl(2)-xl(1))/(pos(3)/imageQuality);
+switch backgroundImageType
+    case{'bathy'}
+        [x0,y0,z,ok]=ddb_getBathy(handles,xl0,yl0);
+        if ok
 
-    if ~strcmpi(coord.name,bathyCoord.name) || ~strcmpi(coord.type,bathyCoord.type)
-        % Interpolate on rectangular grid
-        [x11,y11]=meshgrid(xl(1)-dx:res:xl(2)+dx,yl(1)-dy:res:yl(2)+dy);
-        tic
-        disp('Converting coordinates ...');
-        [x2,y2]=ddb_coordConvert(x11,y11,coord,bathyCoord);
-        toc
-        tic
-        disp('Interpolating data ...');
-        z11=interp2(x0,y0,z,x2,y2);
-        toc
-    else
-        x11=x0;
-        y11=y0;
-        z11=z;
-    end
+            res=(xl(2)-xl(1))/(pos(3)/imageQuality);
+            
+            if ~strcmpi(coord.name,bathyCoord.name) || ~strcmpi(coord.type,bathyCoord.type)
+                % Interpolate on rectangular grid
+                [x11,y11]=meshgrid(xl(1)-dx:res:xl(2)+dx,yl(1)-dy:res:yl(2)+dy);
+                tic
+                disp('Converting coordinates ...');
+                [x2,y2]=ddb_coordConvert(x11,y11,coord,bathyCoord);
+                toc
+                tic
+                disp('Interpolating data ...');
+                z11=interp2(x0,y0,z,x2,y2);
+                toc
+            else
+                x11=x0;
+                y11=y0;
+                z11=z;
+            end
+            
+            handles.GUIData.x=x11;
+            handles.GUIData.y=y11;
+            handles.GUIData.z=z11;
+            
+            ddb_plotBackgroundBathymetry(handles);
+            
+        end
 
-    handles.GUIData.x=x11;
-    handles.GUIData.y=y11;
-    handles.GUIData.z=z11;
 
-    ddb_plotBackgroundBathymetry(handles);
-
+    
+    case{'satellite'}
 end
+
+
