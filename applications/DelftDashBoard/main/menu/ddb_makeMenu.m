@@ -23,7 +23,13 @@ end
 %% Models
 uimenu('Label','Model','Tag','menuModel');
 for k=1:length(handles.Model)
-    handles=ddb_addMenuItem(handles,'Model',handles.Model(k).name,     'Callback',{@ddb_menuModel},'longname',handles.Model(k).longName,'Checked','off');
+    enab=handles.Model(k).enable;
+    if enab
+        enab='on';
+    else
+        enab='off';
+    end
+    handles=ddb_addMenuItem(handles,'Model',handles.Model(k).name,     'Callback',{@ddb_menuModel},'longname',handles.Model(k).longName,'Checked','off','enable',enab);
 end
 
 %% Domain
@@ -105,6 +111,8 @@ handles=ddb_addMenuItem(handles,'Help','Delft Dashboard Online', 'Callback',{@dd
 handles=ddb_addMenuItem(handles,'Help','About Delft Dashboard',  'Callback',{@ddb_menuHelp});
 
 %% Debug
-uimenu('Label','Debug','Tag','menuDebug');
-handles=ddb_addMenuItem(handles,'Debug','Debug Mode','Callback',{@ddb_menuDebug},'Checked','off');
+if ~isdeployed
+    uimenu('Label','Debug','Tag','menuDebug');
+    handles=ddb_addMenuItem(handles,'Debug','Debug Mode','Callback',{@ddb_menuDebug},'Checked','off');
+end
 

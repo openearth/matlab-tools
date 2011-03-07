@@ -54,10 +54,11 @@ for i=1:length(handles.Model)
     end
 end
 
-for i=1:nt
-    f=handles.Model(i).iniFcn;
-    handles=f(handles,'veryfirst');
-end
+% No longer necessary with XML files
+% for i=1:nt
+%     f=handles.Model(i).iniFcn;
+%     handles=f(handles,'veryfirst');
+% end
 
 % Read xml files
 for i=1:nt

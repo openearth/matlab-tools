@@ -24,8 +24,6 @@ switch nsys,
         handles.screenParameters.xMaxRange=[-180 180];
         handles.screenParameters.yMaxRange=[-90 90];
     case{'wgs 84 / utm'}
-%         utmzone1=str2num(NewSystem(4:5));
-%         utmzone2=NewSystem(6);
         utmzone1=handles.screenParameters.UTMZone{1};
         utmzone2=handles.screenParameters.UTMZone{2};
         zn={'C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X'};

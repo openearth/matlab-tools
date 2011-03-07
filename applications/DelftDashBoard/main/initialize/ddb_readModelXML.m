@@ -22,7 +22,12 @@ if exist(fname,'file')
             handles.Model(j).supportsMultipleDomains=1;
         end
     end
-    
+
+    handles.Model(j).enable=1;
+    if isfield(xml,'enable')
+        handles.Model(j).enable=str2double(xml.enable);
+    end
+
     tag = '';
     subFields={'Model','Input'};
 %    subIndices={j,'ad'};

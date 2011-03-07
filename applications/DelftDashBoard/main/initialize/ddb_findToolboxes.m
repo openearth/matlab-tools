@@ -84,11 +84,11 @@ for i=1:length(handles.Toolbox)
     end
 end
 
-% Run very first initialize function
-for i=1:nt
-    f=handles.Toolbox(i).iniFcn;
-    handles=f(handles,'veryfirst');
-end
+% % Run very first initialize function
+% for i=1:nt
+%     f=handles.Toolbox(i).iniFcn;
+%     handles=f(handles,'veryfirst');
+% end
 
 % Read xml files
 for i=1:nt

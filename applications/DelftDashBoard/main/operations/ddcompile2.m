@@ -82,42 +82,8 @@ for i=1:length(flist)
                 fname=flist2(j).name;
                 fprintf(fid,'%s\n',fname);
             end
-            %             if isdir(['toolboxes' filesep flist(i).name filesep 'xml']);
-            %                 flist2=dir(['toolboxes' filesep flist(i).name filesep 'xml' filesep '*.xml']);
-            %                 for j=1:length(flist2)
-            %                     fname=flist2(j).name;
-            %                     fprintf(fid,'%s\n',fname);
-            %                 end
-            %             end
     end
 end
-
-% % Add model specific toolbox functions
-% flist=dir('models');
-% for i=1:length(flist)
-%     switch flist(i).name
-%         case{'.','..','.svn'}
-%         case exclude
-%         otherwise
-%             flist2=dir(['models\' flist(i).name '\toolbox\']);
-%             for ij=1:length(flist2)
-%                 switch flist2(ij).name
-%                     case{'.','..','.svn'}
-%                     case exclude
-%                     otherwise
-%                         f=dir(['models\' flist(i).name '\toolbox\' flist2(ij).name '\*.m']);
-%                         for j=1:length(f)
-%                             fname=f(j).name;
-%                             switch fname
-%                                 case{'.','..','.svn'}
-%                                 otherwise
-%                                     fprintf(fid,'%s\n',fname);
-%                             end
-%                         end
-%                 end
-%             end
-%     end
-% end
 
 fclose(fid);
 
@@ -134,11 +100,7 @@ for i=1:length(flist)
                 switch flist2(j).name
                     case{'.','..','.svn'}
                     otherwise
-                        try
                         copyfile(['settings' filesep flist(i).name filesep flist2(j).name],['ddbsettings' filesep flist(i).name]);
-                        catch
-                            shite=1
-                        end
                 end
             end
     end
