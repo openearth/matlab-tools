@@ -5,8 +5,8 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     ddb_plotGeoImage('activate');
-%     setUIElements('geoimage');
     handles=getHandles;
+    clearInstructions;
     setUIElements(handles.Toolbox(tb).GUI.elements);
 else
     %Options selected
@@ -14,6 +14,7 @@ else
     opt=lower(varargin{1});    
     switch opt
         case{'drawrectangle'}
+            setInstructions({'','','Use mouse to draw image outline on map'});
             UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','ImageOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeGeoImageOnMap,'onstart',@deleteImageOutline);
         case{'generateimage'}
             generateImage;
@@ -24,6 +25,8 @@ end
 
 %%
 function changeGeoImageOnMap(x0,y0,dx,dy,rotation,h)
+
+setInstructions({'','Left-click and drag markers to change corner points','Right-click and drag yellow marker to move entire box'});
 
 handles=getHandles;
 handles.Toolbox(tb).Input.imageOutlineHandle=h;
@@ -72,7 +75,8 @@ y0=handles.Toolbox(tb).Input.yLim(1);
 dx=handles.Toolbox(tb).Input.xLim(2)-x0;
 dy=handles.Toolbox(tb).Input.yLim(2)-y0;
 
-h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','ImageOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeGeoImageOnMap,'onstart',@deleteImageOutline,'x0',x0,'y0',y0,'dx',dx,'dy',dy);
+h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','ImageOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeGeoImageOnMap, ...
+    'onstart',@deleteImageOutline,'x0',x0,'y0',y0,'dx',dx,'dy',dy);
 handles.Toolbox(tb).Input.imageOutlineHandle=h;
 setHandles(handles);
 
@@ -89,6 +93,8 @@ end
 function generateImage
 
 handles=getHandles;
+
+wb = waitbox('Generating image ...');pause(0.1);
 
 xl(1)=handles.Toolbox(tb).Input.xLim(1);
 xl(2)=handles.Toolbox(tb).Input.xLim(2);
@@ -117,7 +123,13 @@ else
     yl0=[yl(1) yl(2)];
 end
 
-[xx,yy,c2]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',handles.Toolbox(tb).Input.zoomLevel,'npix',handles.Toolbox(tb).Input.nPix,'whatKind',handles.Toolbox(tb).Input.whatKind,'cache',handles.satelliteDir);
+try
+    [xx,yy,c2]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',handles.Toolbox(tb).Input.zoomLevel,'npix',handles.Toolbox(tb).Input.nPix,'whatKind',handles.Toolbox(tb).Input.whatKind,'cache',handles.satelliteDir);
+catch
+    close(wb);
+    GiveWarning('Warning','Something went wrong while generating image. Try reducing zoom level or resolution.');
+    return
+end
 
 % Now convert to current coordinate system
 if ~strcmpi(cs.name,dataCoord.name) || ~strcmpi(cs.type,dataCoord.type)
@@ -137,6 +149,8 @@ if ~strcmpi(cs.name,dataCoord.name) || ~strcmpi(cs.type,dataCoord.type)
     xx=xl(1):res:xl(2);
     yy=yl(1):res:yl(2);
 end
+
+close(wb);
 
 if ~isempty(c2) && max(max(max(c2)))~=200
 
@@ -195,6 +209,6 @@ if ~isempty(c2) && max(max(max(c2)))~=200
     end
 
 else
-    GiveWarning('Warning','Reduce Zoom Level or resolution');
+    GiveWarning('Warning','Reduce zoom level or resolution');
 end
 

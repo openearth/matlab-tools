@@ -6,6 +6,7 @@ if isempty(varargin)
     ddb_refreshScreen;
     selectDataset;
     setUIElements('bathymetrypanel.export');
+    ddb_plotBathymetry('activate');
 else
     %Options selected
     opt=lower(varargin{1});    
@@ -18,6 +19,10 @@ else
             drawPolygon;
         case{'deletepolygon'}
             deletePolygon;
+        case{'loadpolygon'}
+            loadPolygon;
+        case{'savepolygon'}
+            savePolygon;
         case{'export'}
             exportData;
     end    
@@ -134,6 +139,7 @@ if ~isempty(h)
 end
 UIPolyline(gca,'draw','Tag','BathymetryPolygon','Marker','o','Callback',@changePolygon,'closed',1);
 setHandles(handles);
+setUIElement('bathymetrypanel.export.savepolygon');
 
 %%
 function deletePolygon
@@ -147,6 +153,7 @@ if ~isempty(h)
 end
 setHandles(handles);
 setUIElement('bathymetrypanel.export.exportbathy');
+setUIElement('bathymetrypanel.export.savepolygon');
 
 %%
 function changePolygon(x,y,varargin)
@@ -156,3 +163,25 @@ handles.Toolbox(tb).Input.polygonY=y;
 handles.Toolbox(tb).Input.polyLength=length(x);
 setHandles(handles);
 setUIElement('bathymetrypanel.export.exportbathy');
+setUIElement('bathymetrypanel.export.savepolygon');
+
+%%
+function loadPolygon
+handles=getHandles;
+[x,y]=landboundary('read',handles.Toolbox(tb).Input.polygonFile);
+handles.Toolbox(tb).Input.polygonX=x;
+handles.Toolbox(tb).Input.polygonY=y;
+handles.Toolbox(tb).Input.polyLength=length(x);
+h=findobj(gca,'Tag','BathymetryPolygon');
+delete(h);
+UIPolyline(gca,'plot','Tag','BathymetryPolygon','Marker','o','Callback',@changePolygon,'closed',1,'x',x,'y',y);
+setHandles(handles);
+setUIElement('bathymetrypanel.export.exportbathy');
+setUIElement('bathymetrypanel.export.savepolygon');
+
+%%
+function savePolygon
+handles=getHandles;
+x=handles.Toolbox(tb).Input.polygonX;
+y=handles.Toolbox(tb).Input.polygonY;
+landboundary('write',handles.Toolbox(tb).Input.polygonFile,x,y);

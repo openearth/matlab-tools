@@ -2,16 +2,6 @@ function handles=ddb_initializeBathymetry(handles,varargin)
 
 ii=strmatch('Bathymetry',{handles.Toolbox(:).name},'exact');
 
-if nargin>1
-    switch varargin{1}
-        case{'test'}
-            return
-        case{'veryfirst'}
-            handles.Toolbox(ii).longName='Bathymetry';
-            return
-    end
-end
-
 % handles=ddb_readTiledBathymetries(handles);
 % handles.Bathymetry.Dataset=[];
 % handles.Bathymetry.Datasets={'GEBCO','Etopo2','SRTM'};

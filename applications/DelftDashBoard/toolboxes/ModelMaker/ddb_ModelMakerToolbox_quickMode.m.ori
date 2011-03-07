@@ -1,0 +1,58 @@
+function ddb_ModelMakerToolbox_quickMode(varargin)
+
+handles=getHandles;
+ddb_zoomOff;
+
+if isempty(varargin)
+    % New tab selected
+    ddb_refreshScreen;
+    setUIElements('modelmakerpanel.quickmode');
+    setHandles(handles);
+    ddb_plotModelMaker('activate');
+else
+    
+    %Options selected
+
+    opt=lower(varargin{1});
+    
+    switch opt
+        case{'drawgridoutline'}
+            drawGridOutline;
+        case{'addtrack'}
+        case{'deletetrack'}
+    end
+    
+end
+
+%%
+function drawGridOutline
+handles=getHandles;
+setInstructions({'','','Use mouse to draw grid outline on map'});
+UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline,'onstart',@deleteGridOutline, ...
+    'ddx',handles.Toolbox(tb).Input.dX,'ddy',handles.Toolbox(tb).Input.dY);
+
+%%
+function updateGridOutline(x0,y0,dx,dy,rotation,h)
+
+setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box','Right-click and drag RED markers to rotate box'});
+
+handles=getHandles;
+
+handles.Toolbox(tb).Input.gridOutlineHandle=h;
+
+handles.Toolbox(tb).Input.xOri=x0;
+handles.Toolbox(tb).Input.yOri=y0;
+handles.Toolbox(tb).Input.rotation=rotation;
+handles.Toolbox(tb).Input.nX=round(lenx/handles.Toolbox(tb).Input.dX);
+handles.Toolbox(tb).Input.nY=round(leny/handles.Toolbox(tb).Input.dY);
+
+setHandles(handles);
+
+setUIElement('modelmakerpanel.editx0');
+% set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
+% set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
+% set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
+% set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
+% set(handles.GUIHandles.EditRotation,'String',num2str(handles.Toolbox(tb).Input.Rotation));
+
+

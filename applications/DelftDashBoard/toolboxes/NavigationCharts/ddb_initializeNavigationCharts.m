@@ -2,11 +2,11 @@ function handles=ddb_initializeNavigationCharts(handles,varargin)
 
 ii=strmatch('NavigationCharts',{handles.Toolbox(:).name},'exact');
 
-if nargin>1
-    switch varargin{1}
-        case{'test'}
-            return
-        case{'veryfirst'}
+% if nargin>1
+%     switch varargin{1}
+%         case{'test'}
+%             return
+%         case{'veryfirst'}
             handles.Toolbox(ii).longName='Navigation Charts';
             handles.Toolbox(ii).databases=[];
             handles.Toolbox(ii).charts=[];
@@ -32,9 +32,9 @@ if nargin>1
             handles.Toolbox(ii).showShoreline=1;
             handles.Toolbox(ii).showSoundings=1;
             handles.Toolbox(ii).showContours=1;
-            return
-    end
-end
+%             return
+%     end
+% end
 
 if isempty(handles.Toolbox(ii).databases)
     set(handles.GUIHandles.Menu.Toolbox.NavigationCharts,'Enable','off');

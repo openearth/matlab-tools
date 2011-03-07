@@ -21,6 +21,7 @@
       <option1>editoutline</option1>
       <variable>handles.Toolbox(tb).Input.xLim(1)</variable>
       <type>real</type>
+      <tooltipstring>Edit minimum x coordinate</tooltipstring>
     </element> 
     <element>
       <tag>editxmax</tag>
@@ -32,6 +33,7 @@
       <option1>editoutline</option1>
       <variable>handles.Toolbox(tb).Input.xLim(2)</variable>
       <type>real</type>
+      <tooltipstring>Edit maximum x coordinate</tooltipstring>
     </element> 
     <element>
       <tag>editymin</tag>
@@ -43,6 +45,7 @@
       <option1>editoutline</option1>
       <variable>handles.Toolbox(tb).Input.yLim(1)</variable>
       <type>real</type>
+      <tooltipstring>Edit minimum y coordinate</tooltipstring>
     </element> 
     <element>
       <tag>editymax</tag>
@@ -54,6 +57,7 @@
       <option1>editoutline</option1>
       <variable>handles.Toolbox(tb).Input.yLim(2)</variable>
       <type>real</type>
+      <tooltipstring>Edit maximum y coordinate</tooltipstring>
     </element> 
 
     <element>
@@ -64,6 +68,7 @@
       <textposition>left</textposition>
       <variable>handles.Toolbox(tb).Input.zoomLevel</variable>
       <type>integer</type>
+      <tooltipstring>Select the zoom level. The higher the level, the higher the detail.</tooltipstring>
       <list>
         <texts>
           <variable>handles.Toolbox(tb).Input.zoomLevelStrings</variable>
@@ -113,6 +118,7 @@
       <textposition>left</textposition>
       <variable>handles.Toolbox(tb).Input.nPix</variable>
       <type>integer</type>
+      <tooltipstring>Edit number of pixels in horizontal direction.</tooltipstring>
     </element> 
 
     <element>
@@ -135,6 +141,7 @@
       <value>road</value>
       </value>
       </list>
+      <tooltipstring>Select image type</tooltipstring>
     </element> 
 
     <element>
@@ -144,6 +151,7 @@
       <text>Draw Outline</text>
       <callback>ddb_GeoImageToolbox</callback>
       <option1>drawrectangle</option1>
+      <tooltipstring>Draw image rectangle</tooltipstring>
     </element> 
     <element>
       <tag>generateimage</tag>
@@ -152,6 +160,7 @@
       <text>Generate Image</text>
       <callback>ddb_GeoImageToolbox</callback>
       <option1>generateimage</option1>
+      <tooltipstring>Download and process image</tooltipstring>
     </element> 
   </elements> 
 </root>

@@ -37,3 +37,5 @@ handles.Toolbox(ii).Input.depthRelCoast=5;
 
 handles.Toolbox(ii).Input.activeTideModelBC=1;
 handles.Toolbox(ii).Input.activeTideModelIC=1;
+
+handles.Toolbox(ii).Input.gridOutlineHandle=[];

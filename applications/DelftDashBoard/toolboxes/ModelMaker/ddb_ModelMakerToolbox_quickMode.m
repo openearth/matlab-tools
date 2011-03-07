@@ -8,7 +8,11 @@ if isempty(varargin)
     ddb_refreshScreen;
     setUIElements('modelmakerpanel.quickmode');
     setHandles(handles);
-%    ddb_plotDredgePlume(handles,'activate');
+    ddb_plotModelMaker('activate');
+    if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+        setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
+            'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
+    end
 else
     
     %Options selected
@@ -18,8 +22,20 @@ else
     switch opt
         case{'drawgridoutline'}
             drawGridOutline;
-        case{'addtrack'}
-        case{'deletetrack'}
+        case{'editgridoutline'}
+            editGridOutline;
+        case{'editresolution'}
+            editResolution;
+        case{'generategrid'}
+            generateGrid;
+        case{'generatebathymetry'}
+            generateBathymetry;
+        case{'generateopenboundaries'}
+            generateOpenBoundaries;
+        case{'generateboundaryconditions'}
+            generateBoundaryConditions;
+        case{'generateinitialconditions'}
+            generateInitialConditions;
     end
     
 end
@@ -27,29 +43,204 @@ end
 %%
 function drawGridOutline
 handles=getHandles;
-f1=@ddb_deleteGridOutline;
-f2=@UpdateGridOutline;
-f3=@UpdateGridOutline;
-DrawRectangle('GridOutline',f1,f2,f3,'dx',handles.Toolbox(tb).Input.dX,'dy',handles.Toolbox(tb).Input.dY,'Color','g','Marker','o','MarkerColor','r','LineWidth',1.5,'Rotation','off');
+setInstructions({'','','Use mouse to draw grid outline on map'});
+UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline,'onstart',@deleteGridOutline, ...
+    'ddx',handles.Toolbox(tb).Input.dX,'ddy',handles.Toolbox(tb).Input.dY);
 
 %%
-function UpdateGridOutline(x0,y0,lenx,leny,rotation)
+function updateGridOutline(x0,y0,dx,dy,rotation,h)
+
+setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
+    'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
 
 handles=getHandles;
 
-handles.Toolbox(tb).Input.XOri=x0;
-handles.Toolbox(tb).Input.YOri=y0;
-handles.Toolbox(tb).Input.Rotation=rotation;
-handles.Toolbox(tb).Input.nX=round(lenx/handles.Toolbox(tb).Input.dX);
-handles.Toolbox(tb).Input.nY=round(leny/handles.Toolbox(tb).Input.dY);
+handles.Toolbox(tb).Input.gridOutlineHandle=h;
+
+handles.Toolbox(tb).Input.xOri=x0;
+handles.Toolbox(tb).Input.yOri=y0;
+handles.Toolbox(tb).Input.rotation=rotation;
+handles.Toolbox(tb).Input.nX=round(dx/handles.Toolbox(tb).Input.dX);
+handles.Toolbox(tb).Input.nY=round(dy/handles.Toolbox(tb).Input.dY);
+handles.Toolbox(tb).Input.lengthX=dx;
+handles.Toolbox(tb).Input.lengthY=dy;
 
 setHandles(handles);
 
-setUIElement('modelmakerpanel.editx0');
-% set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
-% set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
-% set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-% set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
-% set(handles.GUIHandles.EditRotation,'String',num2str(handles.Toolbox(tb).Input.Rotation));
+setUIElement('modelmakerpanel.quickmode.editx0');
+setUIElement('modelmakerpanel.quickmode.edity0');
+setUIElement('modelmakerpanel.quickmode.editmmax');
+setUIElement('modelmakerpanel.quickmode.editnmax');
+setUIElement('modelmakerpanel.quickmode.editdx');
+setUIElement('modelmakerpanel.quickmode.editdy');
+setUIElement('modelmakerpanel.quickmode.editrotation');
 
+%%
+function deleteGridOutline
+handles=getHandles;
+if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+    try
+        delete(handles.Toolbox(tb).Input.gridOutlineHandle);
+    end
+end
 
+%%
+function editGridOutline
+
+handles=getHandles;
+
+if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+    try
+        delete(handles.Toolbox(tb).Input.gridOutlineHandle);
+    end
+end
+
+handles.Toolbox(tb).Input.lengthX=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
+handles.Toolbox(tb).Input.lengthY=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
+
+lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
+leny=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
+h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
+    'x0',handles.Toolbox(tb).Input.xOri,'y0',handles.Toolbox(tb).Input.yOri,'dx',lenx,'dy',leny,'rotation',handles.Toolbox(tb).Input.rotation, ...
+    'ddx',handles.Toolbox(tb).Input.dX,'ddy',handles.Toolbox(tb).Input.dY);
+handles.Toolbox(tb).Input.gridOutlineHandle=h;
+
+setHandles(handles);
+
+%%
+function editResolution
+
+handles=getHandles;
+
+lenx=handles.Toolbox(tb).Input.lengthX;
+leny=handles.Toolbox(tb).Input.lengthY;
+
+dx=handles.Toolbox(tb).Input.dX;
+dy=handles.Toolbox(tb).Input.dY;
+
+nx=round(lenx/max(dx,1e-9));
+ny=round(leny/max(dy,1e-9));
+
+handles.Toolbox(tb).Input.nX=nx;
+handles.Toolbox(tb).Input.nY=ny;
+
+handles.Toolbox(tb).Input.lengthX=nx*dx;
+handles.Toolbox(tb).Input.lengthY=ny*dy;
+
+lenx=handles.Toolbox(tb).Input.lengthX;
+leny=handles.Toolbox(tb).Input.lengthY;
+
+if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+    try
+        delete(handles.Toolbox(tb).Input.gridOutlineHandle);
+    end
+end
+
+h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
+    'x0',handles.Toolbox(tb).Input.xOri,'y0',handles.Toolbox(tb).Input.yOri,'dx',handles.Toolbox(tb).Input.lengthX,'dy',handles.Toolbox(tb).Input.lengthY, ...
+    'rotation',handles.Toolbox(tb).Input.rotation, ...
+    'ddx',handles.Toolbox(tb).Input.dX,'ddy',handles.Toolbox(tb).Input.dY);
+handles.Toolbox(tb).Input.gridOutlineHandle=h;
+
+setHandles(handles);
+
+setUIElement('modelmakerpanel.quickmode.editmmax');
+setUIElement('modelmakerpanel.quickmode.editnmax');
+
+%%
+function generateGrid
+
+handles=getHandles;
+
+if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=2000000
+    f=str2func(['ddb_generateGrid' handles.Model(md).name]);
+    try
+        handles=feval(f,handles,ad,0,0,'ddb_test');
+    catch
+        GiveWarning('text',['Grid generation not supported for ' handles.Model(md).longName]);
+        return
+    end
+    
+    wb = waitbox('Generating grid ...');pause(0.1);
+    
+    xori=handles.Toolbox(tb).Input.xOri;
+    nx=handles.Toolbox(tb).Input.nX;
+    dx=handles.Toolbox(tb).Input.dX;
+    yori=handles.Toolbox(tb).Input.yOri;
+    ny=handles.Toolbox(tb).Input.nY;
+    dy=handles.Toolbox(tb).Input.dY;
+    rot=pi*handles.Toolbox(tb).Input.rotation/180;
+    zmax=handles.Toolbox(tb).Input.zMax;
+    [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,handles.GUIData.x,handles.GUIData.y,handles.GUIData.z);
+    
+    close(wb);
+    
+    handles=feval(f,handles,ad,x,y);
+    
+    setHandles(handles);
+    
+else
+    GiveWarning('Warning','Maximum number of grid points (2,000,000) exceeded ! Please reduce grid resolution.');
+end
+
+%%
+function generateBathymetry
+handles=getHandles;
+f=str2func(['ddb_generateBathymetry' handles.Model(md).name]);
+try
+    handles=feval(f,handles,ad,'ddb_test');
+catch
+    GiveWarning('text',['Bathymetry generation not supported for ' handles.Model(md).longName]);
+    return
+end
+handles=feval(f,handles,ad);
+setHandles(handles);
+
+%%
+function generateOpenBoundaries
+handles=getHandles;
+f=str2func(['ddb_generateBoundaryLocations' handles.Model(md).name]);
+try
+    handles=feval(f,handles,ad,'ddb_test');
+catch
+    GiveWarning('text',['Boundary generation not supported for ' handles.Model(md).longName]);
+    return
+end
+x=handles.Model(md).Input(ad).gridX;
+y=handles.Model(md).Input(ad).gridX;
+handles=feval(f,handles,ad,x,y);
+setHandles(handles);
+
+%%
+function generateBoundaryConditions
+handles=getHandles;
+f=str2func(['ddb_generateBoundaryConditions' handles.Model(md).name]);
+try
+    handles=feval(f,handles,ad,'ddb_test');
+catch
+    GiveWarning('text',['Boundary condition generation not supported for ' handles.Model(md).longName]);
+    return
+end
+handles=feval(f,handles,ad);
+setHandles(handles);
+
+%%
+function generateInitialConditions
+handles=getHandles;
+f=str2func(['ddb_generateInitialConditions' handles.Model(md).name]);
+try
+    handles=feval(f,handles,ad,'ddb_test','ddb_test');
+catch
+    GiveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).longName]);
+    return
+end
+if ~isempty(handles.Model(md).Input(ad).grdFile)
+    attName=handles.Model(md).Input(ad).attName;
+    handles.Model(md).Input(ad).iniFile=[attName '.ini'];
+    handles.Model(md).Input(ad).initialConditions='ini';
+    handles.Model(md).Input(ad).smoothingTime=0.0;
+    handles=feval(f,handles,ad,handles.Model(md).Input(ad).iniFile);
+else
+    GiveWarning('Warning','First generate or load a grid');
+end
+setHandles(handles);
