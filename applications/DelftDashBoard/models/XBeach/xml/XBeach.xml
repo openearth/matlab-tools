@@ -3,6 +3,7 @@
 <root>
   <model>XBeach</model>
   <longname>X-Beach</longname>
+  <enable>0</enable>
   <elements>
     <element>
       <style>tabpanel</style>

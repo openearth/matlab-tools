@@ -2,7 +2,7 @@ function handles=ddb_Delft3DFLOW_plotGrid(handles,opt,varargin)
 
 imd=strmatch('Delft3DFLOW',{handles.Model(:).name},'exact');
 
-col=[0 0 0];
+col=[0.35 0.35 0.35];
 vis=1;
 id=ad;
 

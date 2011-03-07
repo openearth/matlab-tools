@@ -3,6 +3,7 @@
 <root>
   <model>SWAN</model>
   <longname>SWAN</longname>
+  <enable>0</enable>
   <elements>
     <element>
       <style>tabpanel</style>

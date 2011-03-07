@@ -3,6 +3,7 @@
 <root>
   <model>Delft3DWAVE</model>
   <longname>Delft3D-WAVE</longname>
+  <enable>0</enable>
   <elements>
     <element>
       <style>tabpanel</style>

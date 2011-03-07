@@ -3,7 +3,8 @@
 <root>
   <model>Delft3DFLOW</model>
   <longname>Delft3D-FLOW</longname>
-  <multipledomains>yes</multipledomains>
+  <multipledomains>0</multipledomains>
+  <enable>1</enable>
   <elements>
     <element>
       <style>tabpanel</style>

@@ -47,7 +47,7 @@ for id=n1:n2
     if id~=ad
         col=[0.7 0.7 0.7];
     else
-        col=[0 0 0];
+        col=[0.35 0.35 0.35];
     end
     handles=ddb_Delft3DFLOW_plotGrid(handles,option,'domain',id,'color',col,'visible',vis);
     

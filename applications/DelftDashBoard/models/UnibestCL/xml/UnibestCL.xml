@@ -3,6 +3,7 @@
 <root>
   <model>UnibestCL</model>
   <longname>UnibestCL</longname>
+  <enable>0</enable>
   <elements>
     <element>
       <style>tabpanel</style>
