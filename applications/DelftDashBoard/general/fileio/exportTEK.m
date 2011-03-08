@@ -15,12 +15,10 @@ end
 fprintf(fid,'%s\n',blname);
 n=size(data,1);
 fprintf(fid,'%i %i\n',n,2+size(data,2));
-for i=1:n
-    datstr=datestr(times(i),'yyyymmdd HHMMSS');
-%     fprintf(fid,['%s ' repmat('%0.8g',1,size(data,2))
-%     '\n'],datstr,data(i,:));
-    fprintf(fid,['%s ' repmat('%12.4g',1,size(data,2)) '\n'],datstr,data(i,:));
-end
 fclose(fid);
 
-     
+datstr=datestr(times,'yyyymmdd HHMMSS');
+wl=num2str(data,'%10.3f');
+spc=repmat(' ',length(times),1);
+str=[datstr spc wl];
+dlmwrite(fname,str,'delimiter','','-append');
