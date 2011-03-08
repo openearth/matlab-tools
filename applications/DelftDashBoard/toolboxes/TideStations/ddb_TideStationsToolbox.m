@@ -235,25 +235,25 @@ setUIElement('tidetable');
 function wl=makeTidePrediction(tim,components,amplitudes,phases)
 
 const=t_getconsts;
-names=repmat(' ',length(amplitudes),4);
+k=0;
 for i=1:length(amplitudes)
     cmp=components{i};
+    cmp = delft3d_name2t_tide(cmp);
     if length(cmp)>4
         cmp=cmp(1:4);
     end
     name=[cmp repmat(' ',1,4-length(cmp))];
     ju=strmatch(name,const.name);
     if isempty(ju)
-        disp(name)
-        name=const.name(2,:);
-        ju=2;
+        disp(['Could not find ' name ' - Component skipped.']);
+    else
+        k=k+1;
+        names(k,:)=name;
+        freq(k,1)=const.freq(ju);
+        tidecon(k,1)=amplitudes(i);
+        tidecon(k,2)=0;
+        tidecon(k,3)=phases(i);
+        tidecon(k,4)=0;
     end
-    names(i,:)=name;
-    freq(i,1)=const.freq(ju);
-    tidecon(i,1)=amplitudes(i);
-    tidecon(i,2)=0;
-    tidecon(i,3)=phases(i);
-    tidecon(i,4)=0;
 end
-
 wl=t_predic(tim,names,freq,tidecon);

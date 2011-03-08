@@ -71,7 +71,6 @@
         </texts>
       </list>
     </element>
-
     <element>
       <tag>editstarttime</tag>
       <style>edit</style>
@@ -102,8 +101,6 @@
       <text>Time Step (min)</text>
       <textposition>left</textposition>
     </element>
-
-
     <element>
       <tag>tidetable</tag>
       <style>table</style>
