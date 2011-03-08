@@ -257,10 +257,15 @@ for entry=1:length(OPT.files)
    
    ndat = length(fileinfo.Dataset);
    for idat=1:ndat
-   
+       multiWaitbar('nc_cf_opendap2catalog_2',idat/ndat,'label',...
+           'Cycling datasets ...')
+
        % cycle all attributes
        natt = length(fileinfo.Dataset(idat).Attribute);
        for iatt=1:natt
+           multiWaitbar('nc_cf_opendap2catalog_3',iatt/natt,'label',...
+               'Cycling attributes ...')
+
            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
            % get standard_names only ...
            if strcmpi(Name,'standard_name')
