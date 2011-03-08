@@ -39,8 +39,8 @@ function ah = grid_orth_createFixedMapsOnAxes(ah, OPT, varargin)
 % $Revision$
 
 %% make the axes to use the current one
-OPT.x_ranges = OPT.x_ranges';
-OPT.y_ranges = OPT.y_ranges';
+% OPT.x_ranges = OPT.x_ranges';
+% OPT.y_ranges = OPT.y_ranges';
 
 for ii = 1:length(OPT.urls)
     patch(...
