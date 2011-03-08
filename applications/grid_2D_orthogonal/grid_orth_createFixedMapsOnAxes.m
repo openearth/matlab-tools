@@ -39,13 +39,16 @@ function ah = grid_orth_createFixedMapsOnAxes(ah, OPT, varargin)
 % $Revision$
 
 %% make the axes to use the current one
-% OPT.x_ranges = OPT.x_ranges';
-% OPT.y_ranges = OPT.y_ranges';
+
+if size(OPT.x_ranges,1) == 2 && OPT.x_ranges(1,1)<OPT.x_ranges(2,1)
+    OPT.x_ranges = OPT.x_ranges';
+    OPT.y_ranges = OPT.y_ranges';
+end
 
 for ii = 1:length(OPT.urls)
     patch(...
-       'xdata',[OPT.x_ranges(ii,1) OPT.x_ranges(ii,2) OPT.x_ranges(ii,2) OPT.x_ranges(ii,1) OPT.x_ranges(ii,1)], ...
-       'ydata',[OPT.y_ranges(ii,1) OPT.y_ranges(ii,1) OPT.y_ranges(ii,2) OPT.y_ranges(ii,2) OPT.y_ranges(ii,1)], ...
-       'EdgeColor','r','tag',OPT.urls{ii},'FaceColor','none','parent',ah);
+        'xdata',[OPT.x_ranges(ii,1) OPT.x_ranges(ii,2) OPT.x_ranges(ii,2) OPT.x_ranges(ii,1) OPT.x_ranges(ii,1)], ...
+        'ydata',[OPT.y_ranges(ii,1) OPT.y_ranges(ii,1) OPT.y_ranges(ii,2) OPT.y_ranges(ii,2) OPT.y_ranges(ii,1)], ...
+        'EdgeColor','r','tag',OPT.urls{ii},'FaceColor','none','parent',ah);
 end
 
