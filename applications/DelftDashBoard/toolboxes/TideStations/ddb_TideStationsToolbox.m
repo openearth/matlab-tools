@@ -8,71 +8,25 @@ if isempty(varargin)
     setUIElements(handles.Toolbox(tb).GUI.elements);
     h=handles.Toolbox(tb).Input.tideStationHandle;
     if isempty(h)
-        handles=plotTideStations(handles);
-        setHandles(handles);
+        plotTideStations;
+        selectTideStation
     else
         ddb_plotTideStations('activate');
     end
 else
     %Options selected
-    handles=getHandles;
     opt=lower(varargin{1});    
     switch opt
         case{'drawrectangle'}
         case{'generateimage'}
-        case{'selectTideDatabase'}
+        case{'selecttidedatabase'}
             selectTideDatabase;
         case{'selecttidestation'}
-            selectTideStationFromList;
+            selectTideStation;
+        case{'viewtidesignal'}
+            viewTideSignal;
     end    
 end
-
-% h=findobj(gca,'Tag','TideStations');
-% if isempty(h)
-%     handles=ChangeTideDatabase(handles);
-%     PlotTideStations(handles);
-% end
-% 
-% uipanel('Title','Tide Database','Units','pixels','Position',[50 20 960 160],'Tag','UIControl');
-% 
-% handles.GUIHandles.Pushddb_addObservationPoints = uicontrol(gcf,'Style','pushbutton','String','Make Observation Points','Position',   [290 140 140  20],'Tag','UIControl');
-% handles.GUIHandles.ViewTimeSeries           = uicontrol(gcf,'Style','pushbutton','String','View Tide Signal',       'Position',   [290 115 140  20],'Tag','UIControl');
-% handles.GUIHandles.ExportTimeSeries         = uicontrol(gcf,'Style','pushbutton','String','Export Tide Signal',     'Position',   [290  90 140  20],'Tag','UIControl');
-% handles.GUIHandles.ExportAllTimeSeries      = uicontrol(gcf,'Style','pushbutton','String','Export All Tide Signals','Position',   [290  65 140  20],'Tag','UIControl');
-% 
-% str=handles.Toolbox(tb).databases;
-% handles.GUIHandles.SelectTideDatabase       = uicontrol(gcf,'Style','popupmenu', 'String',str,'Position',   [290  40 140  20],'BackgroundColor',[1 1 1],'Tag','UIControl');
-% ii=handles.Toolbox(tb).activeDatabase;
-% set(handles.GUIHandles.SelectTideDatabase,'Value',ii);
-% 
-% handles.GUIHandles.ListTideStations         = uicontrol(gcf,'Style','listbox','String',handles.Toolbox(tb).tideStations.name,   'Position',   [ 70  30 200 130],'BackgroundColor',[1 1 1],'Tag','UIControl');
-% set(handles.GUIHandles.ListTideStations,'Value',handles.Toolbox(tb).activeTideStation);
-% 
-% handles.GUIHandles.TextAmplitude = uicontrol(gcf,'Style','text','String','Amplitude','Position',[720 145  80 20],'HorizontalAlignment','center','Tag','UIControl');
-% handles.GUIHandles.TextPhase     = uicontrol(gcf,'Style','text','String','Phase',    'Position',[800 145  80 20],'HorizontalAlignment','center','Tag','UIControl');
-% 
-% handles.GUIHandles.TextStartTime     = uicontrol(gcf,'Style','text','String','Start Time',         'Position',    [440 136  80 20],'HorizontalAlignment','right','Tag','UIControl');
-% handles.GUIHandles.TextStopTime      = uicontrol(gcf,'Style','text','String','Stop Time',          'Position',    [440 111  80 20],'HorizontalAlignment','right','Tag','UIControl');
-% handles.GUIHandles.TextTimeStep      = uicontrol(gcf,'Style','text','String','Time Step (min)',    'Position',    [440  86  80 20],'HorizontalAlignment','right','Tag','UIControl');
-% handles.GUIHandles.EditStartTime     = uicontrol(gcf,'Style','edit','String',D3DTimeString(handles.Toolbox(tb).startTime),'Position',[525 140 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-% handles.GUIHandles.EditStopTime      = uicontrol(gcf,'Style','edit','String',D3DTimeString(handles.Toolbox(tb).stopTime), 'Position',[525 115 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-% handles.GUIHandles.EditTimeStep      = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).timeStep),       'Position',[525  90 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-% 
-% set(handles.GUIHandles.Pushddb_addObservationPoints,  'Callback',{@Push_addObservationPoints_Callback});
-% set(handles.GUIHandles.ViewTimeSeries,            'Callback',{@ViewTimeSeries_Callback});
-% set(handles.GUIHandles.ExportTimeSeries,          'Callback',{@ExportTimeSeries_Callback});
-% set(handles.GUIHandles.ExportAllTimeSeries,       'Callback',{@ExportAllTimeSeries_Callback});
-% set(handles.GUIHandles.ListTideStations,          'Callback',{@ListTideStations_Callback});
-% set(handles.GUIHandles.SelectTideDatabase,        'Callback',{@SelectTideDatabase_Callback});
-% set(handles.GUIHandles.EditStartTime,    'Callback',{@EditStartTime_Callback});
-% set(handles.GUIHandles.EditStopTime,     'Callback',{@EditStopTime_Callback});
-% set(handles.GUIHandles.EditTimeStep,     'Callback',{@EditTimeStep_Callback});
-% 
-% handles=RefreshComponentSet(handles);
-% 
-% SetUIBackgroundColors;
-
-setHandles(handles);
 
 %%
 function Push_addObservationPoints_Callback(hObject,eventdata)
@@ -93,21 +47,18 @@ end
 setHandles(handles);
 
 %%
-function ViewTimeSeries_Callback(hObject,eventdata)
+function viewTideSignal
+
 handles=getHandles;
-ii=get(handles.GUIHandles.ListTideStations,'Value');
-cmp=handles.Toolbox(tb).tideStations.componentSet(handles.Toolbox(tb).activeTideStation);
-for i=1:length(cmp.Component)
-    comp{i}=cmp.Component{i};
-    A(i,1)=cmp.Amplitude(i);
-    G(i,1)=cmp.Phase(i);
-end
-t0=handles.Toolbox(tb).startTime;
-t1=handles.Toolbox(tb).stopTime;
-dt=handles.Toolbox(tb).timeStep/60;
-t1=t1+dt/24;
-[prediction,times]=delftPredict2007(comp,A,G,t0,t1,dt);
-ddb_plotTimeSeries(times(1:end-1),prediction(1:end-1),handles.Toolbox(tb).tideStations.name{handles.Toolbox(tb).activeTideStation});
+t0=handles.Toolbox(tb).Input.startTime;
+t1=handles.Toolbox(tb).Input.stopTime;
+dt=handles.Toolbox(tb).Input.timeStep/1440;
+tim=t0:dt:t1;
+
+wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases);
+
+stationName=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList{handles.Toolbox(tb).Input.activeTideStation};
+ddb_plotTimeSeries(tim,wl,stationName);
 
 %%
 function ExportTimeSeries_Callback(hObject,eventdata)
@@ -139,12 +90,6 @@ handles=getHandles;
 %end
 
 %%
-function selectTideStationFromList
-handles=getHandles;
-handles=selectTideStation(handles);
-setHandles(handles);
-
-%%
 function selectTideStationFromMap(imagefig, varargins)
 
 h=gco;
@@ -162,51 +107,68 @@ if strcmp(get(h,'Tag'),'TideStations')
     dysq=(handles.Toolbox(tb).Input.database(iac).y-posy).^2;
     dist=(dxsq+dysq).^0.5;
     [y,n]=min(dist);
-    
     handles.Toolbox(tb).Input.activeTideStation=n;
-    setUIElement('selecttidestation');
-    
-    handles=selectTideStation(handles);
-    
+
     setHandles(handles);
+
+    selectTideStation;
+
+    setUIElement('selecttidestation');
 
 end
 
 %%
-function handles=selectTideStation(handles)
+function selectTideStation
+
+handles=getHandles;
+
 % Delete active station marker
-delete(handles.Toolbox(tb).Input.activeTideStationHandle);
-        
+try
+    delete(handles.Toolbox(tb).Input.activeTideStationHandle);
+end
+handles.Toolbox(tb).Input.activeTideStationHandle=[];
+
 % Plot new active station
-plt=plot3(handles.Toolbox(tb).tideStations.xy(n,1),handles.Toolbox(tb).tideStations.xy(n,2),1000,'o');
+n=handles.Toolbox(tb).Input.activeTideStation;
+iac=handles.Toolbox(tb).Input.activeDatabase;
+plt=plot3(handles.Toolbox(tb).Input.database(iac).x(n),handles.Toolbox(tb).Input.database(iac).y(n),1000,'o');
 set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveTideStation');
 handles.Toolbox(tb).Input.activeTideStationHandle=plt;
-        
-%    handles=RefreshComponentSet(handles);
-        
+
+setHandles(handles);
+
+refreshComponentSet;
+
 %%
 function selectTideDatabase
 
 handles=getHandles;
-handles.Toolbox(tb).Input.activeTideStation;
-handles=selectTideStation(handles);
-% First delete existing stations
-handles=plotTideStations(handles);
 
-s=handles.Toolbox(tb).database{handles.Toolbox(tb).activeDatabase};
-handles.Toolbox(tb).tideStations=s;
-x=handles.Toolbox(tb).tideStations.x;
-y=handles.Toolbox(tb).tideStations.y;
-cs.name=s.coordinateSystem;
-cs.type=s.coordinateSystemType;
-[x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
-handles.Toolbox(tb).tideStations.xy=[x y];
-handles.Toolbox(tb).activeTideStation=1;
+handles.Toolbox(tb).Input.activeTideStation=1;
+
+% First delete existing stations
+try
+    delete(handles.Toolbox(tb).Input.activeTideStationHandle);
+end
+try
+    delete(handles.Toolbox(tb).Input.tideStationHandle);
+end
+handles.Toolbox(tb).Input.tideStationHandle=[];
+handles.Toolbox(tb).Input.activeTideStationHandle=[];
+
 setHandles(handles);
+
 setUIElement('selecttidestation');
 
+plotTideStations;
+
+selectTideStation;
+
+
 %%
-function handles=plotTideStations(handles)
+function plotTideStations
+
+handles=getHandles;
 
 iac=handles.Toolbox(tb).Input.activeDatabase;
 x=handles.Toolbox(tb).Input.database(iac).x;
@@ -223,22 +185,75 @@ plt=plot3(x(n),y(n),1000,'o');
 set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveTideStation','HitTest','off');
 handles.Toolbox(tb).Input.activeTideStationHandle=plt;
 
+setHandles(handles);
+
 %%
-function handles=RefreshComponentSet(handles)
+function refreshComponentSet
 
-cltp={'text','editreal','editreal'};
-wdt=[50 80 80];
-Callbacks={'','',''};
+handles=getHandles;
 
-ii=handles.Toolbox(tb).activeTideStation;
-nr=length(handles.Toolbox(tb).tideStations.componentSet(ii).Component);
+iac=handles.Toolbox(tb).Input.activeDatabase;
 
-for i=1:nr
-    data{i,1}=handles.Toolbox(tb).tideStations.componentSet(ii).Component{i};
-    data{i,2}=handles.Toolbox(tb).tideStations.componentSet(ii).Amplitude(i);
-    data{i,3}=handles.Toolbox(tb).tideStations.componentSet(ii).Phase(i);
+% Read data from nc file
+fname=[handles.toolBoxDir 'tidestations\' handles.Toolbox(tb).Input.database(iac).shortName '.nc'];
+ii=handles.Toolbox(tb).Input.activeTideStation;
+ncomp=length(handles.Toolbox(tb).Input.database(iac).components);
+amp00=nc_varget(fname,'amplitude',[0 ii],[ncomp 1]);
+phi00=nc_varget(fname,'phase',[0 ii],[ncomp 1]);
+
+% Find non-zero amplitudes
+ii=find(amp00~=0);
+for j=1:length(ii)
+    k=ii(j);
+    cmp0{j}=handles.Toolbox(tb).Input.database(iac).components{k};
+    amp0(j)=amp00(k);
+    phi0(j)=phi00(k);
 end
 
-handles.GUIHandles.tideTable=table(gcf,'create','tag','table','position',[670 30],'nrrows',6,'columntypes',cltp,'width',wdt,'data',data,'Callbacks',Callbacks);
-table(handles.GUIHandles.tideTable,'setdata',data);
+% Sort by amplitude
+[amp,isort] = sort(amp0,2,'descend');
+for j=1:length(isort)
+    k=isort(j);
+    cmp{j}=handles.Toolbox(tb).Input.database(iac).components{k};
+    phi(j)=phi0(k);
+end
 
+handles.Toolbox(tb).Input.components=[];
+handles.Toolbox(tb).Input.amplitudes=[];
+handles.Toolbox(tb).Input.phases=[];
+for i=1:length(isort)
+    handles.Toolbox(tb).Input.components{i}=cmp{i};
+    handles.Toolbox(tb).Input.amplitudes(i)=amp(i);
+    handles.Toolbox(tb).Input.phases(i)=phi(i);
+end
+
+setHandles(handles);
+
+setUIElement('tidetable');
+
+%%
+function wl=makeTidePrediction(tim,components,amplitudes,phases)
+
+const=t_getconsts;
+names=repmat(' ',length(amplitudes),4);
+for i=1:length(amplitudes)
+    cmp=components{i};
+    if length(cmp)>4
+        cmp=cmp(1:4);
+    end
+    name=[cmp repmat(' ',1,4-length(cmp))];
+    ju=strmatch(name,const.name);
+    if isempty(ju)
+        disp(name)
+        name=const.name(2,:);
+        ju=2;
+    end
+    names(i,:)=name;
+    freq(i,1)=const.freq(ju);
+    tidecon(i,1)=amplitudes(i);
+    tidecon(i,2)=0;
+    tidecon(i,3)=phases(i);
+    tidecon(i,4)=0;
+end
+
+wl=t_predic(tim,names,freq,tidecon);

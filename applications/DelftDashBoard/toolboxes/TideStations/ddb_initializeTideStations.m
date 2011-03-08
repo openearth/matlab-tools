@@ -14,7 +14,13 @@ for i=1:length(lst)
     handles.Toolbox(ii).Input.database(i).shortName=lst(i).name(1:end-3);
     handles.Toolbox(ii).Input.database(i).x=nc_varget(fname,'lon');
     handles.Toolbox(ii).Input.database(i).y=nc_varget(fname,'lat');
-        
+    
+    str=nc_varget(fname,'components');
+    str=str';
+    for j=1:size(str,1)
+        handles.Toolbox(ii).Input.database(i).components{j}=deblank(str(j,:));
+    end
+
     str=nc_varget(fname,'stations');
     str=str';
     for j=1:size(str,1)
@@ -30,3 +36,7 @@ handles.Toolbox(ii).Input.activeDatabase=1;
 handles.Toolbox(ii).Input.activeTideStation=1;
 handles.Toolbox(ii).Input.tideStationHandle=[];
 handles.Toolbox(ii).Input.activeTideStationHandle=[];
+
+handles.Toolbox(ii).Input.components={''};
+handles.Toolbox(ii).Input.amplitudes=0;
+handles.Toolbox(ii).Input.phases=0;

@@ -71,5 +71,68 @@
         </texts>
       </list>
     </element>
+
+    <element>
+      <tag>editstarttime</tag>
+      <style>edit</style>
+      <position>550 130 110 20</position>
+      <variable>handles.Toolbox(tb).Input.startTime</variable>
+      <type>datetime</type>
+      <tooltipstring>Edit start time</tooltipstring>
+      <text>Start Time</text>
+      <textposition>left</textposition>
+    </element>
+    <element>
+      <tag>editstoptime</tag>
+      <style>edit</style>
+      <position>550 105 110 20</position>
+      <variable>handles.Toolbox(tb).Input.stopTime</variable>
+      <type>datetime</type>
+      <tooltipstring>Edit model stop time</tooltipstring>
+      <text>Stop Time</text>
+      <textposition>left</textposition>
+    </element>
+    <element>
+      <tag>edittimestep</tag>
+      <style>edit</style>
+      <position>550 80 110 20</position>
+      <variable>handles.Toolbox(tb).Input.timeStep</variable>
+      <type>real</type>
+      <tooltipstring>Edit time step</tooltipstring>
+      <text>Time Step (min)</text>
+      <textposition>left</textposition>
+    </element>
+
+
+    <element>
+      <tag>tidetable</tag>
+      <style>table</style>
+      <position>660 20</position>
+      <nrrows>6</nrrows>
+      <includenumbers>no</includenumbers>
+      <includebuttons>no</includebuttons>
+      <columns>
+        <column>
+          <style>text</style>
+          <width>60</width>
+          <variable>handles.Toolbox(tb).Input.components</variable>
+          <text> </text>
+        </column>
+        <column>
+          <style>editreal</style>
+          <width>80</width>
+          <text>Amplitude (m)</text>
+          <enable>0</enable>
+          <variable>handles.Toolbox(tb).Input.amplitudes</variable>
+        </column>
+        <column>
+          <style>editreal</style>
+          <width>80</width>
+          <text>Phase (deg)</text>
+          <enable>0</enable>
+          <variable>handles.Toolbox(tb).Input.phases</variable>
+        </column>
+      </columns>
+    </element>
   </elements>
 </root>

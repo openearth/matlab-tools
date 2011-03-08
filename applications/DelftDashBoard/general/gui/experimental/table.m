@@ -112,7 +112,7 @@ end
 %%
 function tableHandle=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers,columntext,callback)
 
-tableHandle=uipanel(fig,'Units','pixels','Parent',parent,'Tag',tag,'Position',[position(1) position(2) 10 10],'BorderType','none','BackgroundColor','none');
+tableHandle=uipanel(parent,'Units','pixels','Parent',parent,'Tag',tag,'Position',[position(1) position(2) 10 10],'BorderType','none','BackgroundColor','none');
 
 if isempty(width)
     for j=1:nrcolumns
@@ -134,7 +134,7 @@ usd.numberHandles=[];
 if includenumbers
     posy=posy0+nrrows*20-20;
     for i=1:nrrows
-        h=uicontrol(gcf,'Style','text','Parent',tableHandle,'String',num2str(i),'Position',[posx0-18 posy-3 15 20],'HorizontalAlignment','right');
+        h=uicontrol(parent,'Style','text','Parent',tableHandle,'String',num2str(i),'Position',[posx0-18 posy-3 15 20],'HorizontalAlignment','right');
         set(h,'BackgroundColor',cl);
         posy=posy-20;
         usd.numberHandles(i)=h;
@@ -148,7 +148,7 @@ if ~isempty(columntext)
     posy=posy0+nrrows*20+1;
     for j=1:nrcolumns
         if ~isempty(columntext{j})
-            h=uicontrol(gcf,'Style','text','Parent',tableHandle,'String',columntext{j},'Position',[posx posy width(j) 15],'HorizontalAlignment','center','BackgroundColor',cl);
+            h=uicontrol(parent,'Style','text','Parent',tableHandle,'String',columntext{j},'Position',[posx posy width(j) 15],'HorizontalAlignment','center','BackgroundColor',cl);
             usd.columnTextHandles(j)=h;
             set(h,'Parent',tableHandle);
             posx=posx+width(j);
@@ -162,31 +162,31 @@ for i=1:nrrows
     for j=1:nrcolumns
         switch(columntypes{j}),
             case{'editreal'}
-                h=uicontrol(gcf,'Style','edit','String','','Position',[posx posy width(j) 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1]);
+                h=uicontrol(parent,'Style','edit','String','','Position',[posx posy width(j) 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1]);
                 set(h,'Callback',@editReal_Callback,'Enable','on');
             case{'editstring'}
-                h=uicontrol(gcf,'Style','edit','String','','Position',[posx posy width(j) 20],'HorizontalAlignment','left','BackgroundColor',[1 1 1]);
+                h=uicontrol(parent,'Style','edit','String','','Position',[posx posy width(j) 20],'HorizontalAlignment','left','BackgroundColor',[1 1 1]);
                 set(h,'Callback',@editString_Callback,'Enable','on');
             case{'edittime'}
-                h=uicontrol(gcf,'Style','edit','String','','Position',[posx posy width(j) 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1]);
+                h=uicontrol(parent,'Style','edit','String','','Position',[posx posy width(j) 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1]);
                 set(h,'Callback',@editTime_Callback,'Enable','on');
             case{'popupmenu'}
                 str=popuptext{j};
 %                 for ii=1:size(popuptext,1)
 %                     str{ii}=popuptext{ii,j};
 %                 end
-                h=uicontrol(gcf,'Style','popupmenu','Position',[posx posy width(j) 20],'BackgroundColor',[1 1 1]);
+                h=uicontrol(parent,'Style','popupmenu','Position',[posx posy width(j) 20],'BackgroundColor',[1 1 1]);
                 set(h,'Value',1);
                 set(h,'String',str);
                 set(h,'Callback',@popupMenu_Callback,'Enable','on');
             case{'pushbutton'}
-                h=uicontrol(gcf,'Style','pushbutton','Position',[posx posy width(j) 20],'String',pushtext{j});
+                h=uicontrol(parent,'Style','pushbutton','Position',[posx posy width(j) 20],'String',pushtext{j});
                 set(h,'Callback',@pushButton_Callback,'Enable','on');
             case{'checkbox'}
-                h=uicontrol(gcf,'Style','checkbox','String','','Position',[posx+3 posy width(j) 20]);
+                h=uicontrol(parent,'Style','checkbox','String','','Position',[posx+3 posy width(j) 20]);
                 set(h,'Callback',@checkBox_Callback,'Enable','on');
             case{'text'}
-                h=uicontrol(gcf,'Style','text','String','','Position',[posx+3 posy-4 width(j) 20]);
+                h=uicontrol(parent,'Style','text','String','','Position',[posx+3 posy-4 width(j) 20],'BackgroundColor',cl);
         end
         
         set(h,'Parent',tableHandle);
@@ -204,7 +204,7 @@ for i=1:nrrows
     posy=posy-20;
 end
 
-h = uicontrol(fig,'Parent',tableHandle,'Style','slider','Position',[posx+3 posy0 20 nrrows*20]);
+h = uicontrol(parent,'Parent',tableHandle,'Style','slider','Position',[posx+3 posy0 20 nrrows*20]);
 set(h,'Parent',tableHandle);
 set(h,'Callback',{@verticalSlider_Callback});
 usd.verticalSlider=h;
@@ -214,9 +214,9 @@ h2=[];
 
 if includebuttons
 %    h = uicontrol(fig,'Style','pushbutton','String','Copy Row',  'Position',[posx+30 position(2)+nrrows*20-20 80 20]);
-    h1 = uicontrol(fig,'Style','pushbutton','String','Copy Row',  'Position',[posx+30 nrrows*20-20 80 20]);
+    h1 = uicontrol(parent,'Style','pushbutton','String','Copy Row',  'Position',[posx+30 nrrows*20-20 80 20]);
     set(h1,'Callback',{@pushCopyRow_Callback},'Parent',tableHandle);
-    h2 = uicontrol(fig,'Style','pushbutton','String','Delete Row','Position',[posx+30 nrrows*20-45 80 20]);
+    h2 = uicontrol(parent,'Style','pushbutton','String','Delete Row','Position',[posx+30 nrrows*20-45 80 20]);
     set(h2,'Callback',{@pushDeleteRow_Callback},'Parent',tableHandle);
 end
 usd.data=data;
