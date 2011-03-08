@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <toolbox>ObservationStations</toolbox>
+  <longname>Observation Stations</longname>
+  <enable>1</enable>
+  <elements>
+    <element>
+      <tag>observationstationspanel</tag>
+      <style>panel</style>
+      <position>40 10 900 160</position>
+      <text>Observation Stations</text>
+    </element>
+    <element>
+      <tag>selectobservationstation</tag>
+      <position>50 20 250 130</position>
+      <style>listbox</style>
+      <type>integer</type>
+      <variable>handles.Toolbox(tb).Input.activeObservationStation</variable>
+      <onchange>ddb_ObservationStationsToolbox</onchange>
+      <option1>selectobservationstation</option1>
+      <tooltipstring>Select observation station</tooltipstring> 
+      <list>
+        <texts>
+          <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationNames</variable>
+        </texts>
+      </list>
+    </element>
+    <element>
+      <tag>makeobservationpoints</tag>
+      <style>pushbutton</style>
+      <position>320 130 130 20</position>
+      <text>Make Observation Points</text>
+      <callback>ddb_TideStationsToolbox</callback>
+      <option1>makeobservationpoints</option1>
+      <tooltipstring>Make observation points in model</tooltipstring> 
+    </element> 
+    <element>
+      <tag>viewsignal</tag>
+      <style>pushbutton</style>
+      <position>320 105 130 20</position>
+      <text>View Signal</text>
+      <callback>ddb_ObservationStationsToolbox</callback>
+      <option1>viewsignal</option1>
+      <tooltipstring>View observations for active station</tooltipstring> 
+    </element> 
+    <element>
+      <tag>exportsignal</tag>
+      <style>pushbutton</style>
+      <position>320 80 130 20</position>
+      <text>Export Signal</text>
+      <callback>ddb_ObservationStationsToolbox</callback>
+      <option1>exportsignal</option1>
+      <tooltipstring>Export signal for active station</tooltipstring> 
+    </element> 
+    <element>
+      <tag>selectobservationdatabase</tag>
+      <position>320 30 130 20</position>
+      <style>popupmenu</style>
+      <type>integer</type>
+      <variable>handles.Toolbox(tb).Input.activeDatabase</variable>
+      <onchange>ddb_ObservationStationsToolbox</onchange>
+      <option1>selectobservationdatabase</option1>
+      <tooltipstring>Select an observation stations database</tooltipstring> 
+      <list>
+        <texts>
+          <variable>handles.Toolbox(tb).Input.databases</variable>
+        </texts>
+      </list>
+    </element>
+    <element>
+      <tag>editstarttime</tag>
+      <style>edit</style>
+      <position>550 130 110 20</position>
+      <variable>handles.Toolbox(tb).Input.startTime</variable>
+      <type>datetime</type>
+      <text>Start Time</text>
+      <textposition>left</textposition>
+      <tooltipstring>Edit start time for signal to be viewed or exported</tooltipstring> 
+    </element>
+    <element>
+      <tag>editstoptime</tag>
+      <style>edit</style>
+      <position>550 105 110 20</position>
+      <variable>handles.Toolbox(tb).Input.stopTime</variable>
+      <type>datetime</type>
+      <text>Stop Time</text>
+      <textposition>left</textposition>
+      <tooltipstring>Edit stop time for signal to be viewed or exported</tooltipstring> 
+    </element>
+    <element>
+      <tag>edittimestep</tag>
+      <style>edit</style>
+      <position>550 80 110 20</position>
+      <variable>handles.Toolbox(tb).Input.timeStep</variable>
+      <type>real</type>
+      <text>Time Step (min)</text>
+      <textposition>left</textposition>
+      <tooltipstring>Edit time step for signal to be viewed or exported</tooltipstring> 
+    </element>
+  </elements>
+</root>

@@ -85,7 +85,7 @@
       <type>datetime</type>
       <text>Start Time</text>
       <textposition>left</textposition>
-      <tooltipstring>Edit start time for time signal to be viewed or exported</tooltipstring> 
+      <tooltipstring>Edit start time for tide signal to be viewed or exported</tooltipstring> 
     </element>
     <element>
       <tag>editstoptime</tag>
@@ -95,7 +95,7 @@
       <type>datetime</type>
       <text>Stop Time</text>
       <textposition>left</textposition>
-      <tooltipstring>Edit stop time for time signal to be viewed or exported</tooltipstring> 
+      <tooltipstring>Edit stop time for tide signal to be viewed or exported</tooltipstring> 
     </element>
     <element>
       <tag>edittimestep</tag>
@@ -105,7 +105,7 @@
       <type>real</type>
       <text>Time Step (min)</text>
       <textposition>left</textposition>
-      <tooltipstring>Edit time step for time signal to be viewed or exported</tooltipstring> 
+      <tooltipstring>Edit time step for tide signal to be viewed or exported</tooltipstring> 
     </element>
     <element>
       <tag>tidetable</tag>
