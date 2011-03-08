@@ -35,7 +35,6 @@ xmin1=max(-179,xmin);
 xmax1=min(179,xmax);
 
 [img, lon, lat] = url2image('tile2img',[xmin1 xmax1],[ymin1 ymax1],zmlev,'cache',cachedir,'what',what);
-%[img, lon, lat] = url2image('tile2img',[xmin1 xmax1],[ymin1 ymax1],zmlev,'cache',cachedir,'what','roads');
 
 r=double(squeeze(img(:,:,1)));
 g=double(squeeze(img(:,:,2)));
@@ -54,7 +53,6 @@ yp=yy;
 ymin2=min(yy);
 ymax2=max(yy);
 
-
 % Adjust for mercator projection
 
 % Above the equator
@@ -68,11 +66,9 @@ aa=(ymin2-ymin3)/(merc(ymin2)-merc(ymin3));
 bb=ymin3-aa*merc(ymin3);
 yp(ym<0)=aa*merc(ym(ym<0))+bb;
 
-for j=1:size(r,2)
-    r(:,j)=interp1(yy,r(:,j),yp);
-    g(:,j)=interp1(yy,g(:,j),yp);
-    b(:,j)=interp1(yy,b(:,j),yp);
-end
+r=interp1(yy,r,yp);
+g=interp1(yy,g,yp);
+b=interp1(yy,b,yp);
 
 cdata=[];
 cdata(:,:,1)=r;
