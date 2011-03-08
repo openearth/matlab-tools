@@ -38,3 +38,19 @@ handles.Toolbox(ii).Input.activeObservationStation=1;
 
 handles.Toolbox(ii).Input.observationStationHandle=[];
 handles.Toolbox(ii).Input.activeObservationStationHandle=[];
+
+handles.Toolbox(ii).Input.radio01=-1;
+handles.Toolbox(ii).Input.radio02=0;
+handles.Toolbox(ii).Input.radio03=0;
+handles.Toolbox(ii).Input.radio04=0;
+handles.Toolbox(ii).Input.radio05=0;
+handles.Toolbox(ii).Input.radio06=0;
+handles.Toolbox(ii).Input.radio07=0;
+handles.Toolbox(ii).Input.radio08=0;
+handles.Toolbox(ii).Input.radio09=0;
+handles.Toolbox(ii).Input.radio10=0;
+handles.Toolbox(ii).Input.radio11=0;
+handles.Toolbox(ii).Input.radio12=0;
+handles.Toolbox(ii).Input.radio13=0;
+handles.Toolbox(ii).Input.radio14=0;
+handles.Toolbox(ii).Input.radio15=0;

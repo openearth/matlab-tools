@@ -8,7 +8,7 @@
     <element>
       <tag>observationstationspanel</tag>
       <style>panel</style>
-      <position>40 10 900 160</position>
+      <position>40 10 950 160</position>
       <text>Observation Stations</text>
     </element>
     <element>
@@ -29,7 +29,7 @@
     <element>
       <tag>makeobservationpoints</tag>
       <style>pushbutton</style>
-      <position>320 130 130 20</position>
+      <position>310 130 130 20</position>
       <text>Make Observation Points</text>
       <callback>ddb_TideStationsToolbox</callback>
       <option1>makeobservationpoints</option1>
@@ -38,7 +38,7 @@
     <element>
       <tag>viewsignal</tag>
       <style>pushbutton</style>
-      <position>320 105 130 20</position>
+      <position>310 105 130 20</position>
       <text>View Signal</text>
       <callback>ddb_ObservationStationsToolbox</callback>
       <option1>viewsignal</option1>
@@ -47,7 +47,7 @@
     <element>
       <tag>exportsignal</tag>
       <style>pushbutton</style>
-      <position>320 80 130 20</position>
+      <position>310 80 130 20</position>
       <text>Export Signal</text>
       <callback>ddb_ObservationStationsToolbox</callback>
       <option1>exportsignal</option1>
@@ -55,7 +55,7 @@
     </element> 
     <element>
       <tag>selectobservationdatabase</tag>
-      <position>320 30 130 20</position>
+      <position>310 25 130 20</position>
       <style>popupmenu</style>
       <type>integer</type>
       <variable>handles.Toolbox(tb).Input.activeDatabase</variable>
@@ -71,7 +71,7 @@
     <element>
       <tag>editstarttime</tag>
       <style>edit</style>
-      <position>550 130 110 20</position>
+      <position>510 130 110 20</position>
       <variable>handles.Toolbox(tb).Input.startTime</variable>
       <type>datetime</type>
       <text>Start Time</text>
@@ -81,7 +81,7 @@
     <element>
       <tag>editstoptime</tag>
       <style>edit</style>
-      <position>550 105 110 20</position>
+      <position>510 105 110 20</position>
       <variable>handles.Toolbox(tb).Input.stopTime</variable>
       <type>datetime</type>
       <text>Stop Time</text>
@@ -89,14 +89,130 @@
       <tooltipstring>Edit stop time for signal to be viewed or exported</tooltipstring> 
     </element>
     <element>
-      <tag>edittimestep</tag>
-      <style>edit</style>
-      <position>550 80 110 20</position>
-      <variable>handles.Toolbox(tb).Input.timeStep</variable>
-      <type>real</type>
-      <text>Time Step (min)</text>
-      <textposition>left</textposition>
-      <tooltipstring>Edit time step for signal to be viewed or exported</tooltipstring> 
+      <tag>radio01</tag>
+      <style>radiobutton</style>
+      <position>630 135</position>
+      <variable>handles.Toolbox(tb).Input.radio01</variable>
+      <text>Radio 1</text>
+      <type>integer</type>
+      <dependencies>
+        <dependency>
+          <action>visible</action>
+          <checkfor>all</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Toolbox(tb).Input.radio01</variable>
+              <type>integer</type>	              
+              <value>-1</value>
+              <operator>gt</operator>
+            </check>
+          </checks>
+        </dependency>
+      </dependencies>
+    </element>
+    <element>
+      <tag>radio02</tag>
+      <style>radiobutton</style>
+      <position>630 115</position>
+      <variable>handles.Toolbox(tb).Input.radio02</variable>
+      <text>Radio 2</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio03</tag>
+      <style>radiobutton</style>
+      <position>630 95</position>
+      <variable>handles.Toolbox(tb).Input.radio03</variable>
+      <text>Radio 3</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio04</tag>
+      <style>radiobutton</style>
+      <position>630 75</position>
+      <variable>handles.Toolbox(tb).Input.radio04</variable>
+      <text>Radio 4</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio05</tag>
+      <style>radiobutton</style>
+      <position>630 55</position>
+      <variable>handles.Toolbox(tb).Input.radio05</variable>
+      <text>Radio 5</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio06</tag>
+      <style>radiobutton</style>
+      <position>630 35</position>
+      <variable>handles.Toolbox(tb).Input.radio06</variable>
+      <text>Radio 6</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio07</tag>
+      <style>radiobutton</style>
+      <position>630 15</position>
+      <variable>handles.Toolbox(tb).Input.radio07</variable>
+      <text>Radio 7</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio08</tag>
+      <style>radiobutton</style>
+      <position>710 135</position>
+      <variable>handles.Toolbox(tb).Input.radio08</variable>
+      <text>Radio 8</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio09</tag>
+      <style>radiobutton</style>
+      <position>710 115</position>
+      <variable>handles.Toolbox(tb).Input.radio09</variable>
+      <text>Radio 9</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio10</tag>
+      <style>radiobutton</style>
+      <position>710 95</position>
+      <variable>handles.Toolbox(tb).Input.radio10</variable>
+      <text>Radio 10</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio11</tag>
+      <style>radiobutton</style>
+      <position>710 75</position>
+      <variable>handles.Toolbox(tb).Input.radio11</variable>
+      <text>Radio 11</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio12</tag>
+      <style>radiobutton</style>
+      <position>710 55</position>
+      <variable>handles.Toolbox(tb).Input.radio12</variable>
+      <text>Radio 12</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio13</tag>
+      <style>radiobutton</style>
+      <position>710 35</position>
+      <variable>handles.Toolbox(tb).Input.radio13</variable>
+      <text>Radio 13</text>
+      <type>integer</type>
+    </element>
+    <element>
+      <tag>radio14</tag>
+      <style>radiobutton</style>
+      <position>710 15</position>
+      <variable>handles.Toolbox(tb).Input.radio14</variable>
+      <text>Radio 14</text>
+      <type>integer</type>
     </element>
   </elements>
 </root>

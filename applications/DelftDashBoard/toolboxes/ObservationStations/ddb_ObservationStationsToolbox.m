@@ -1,4 +1,4 @@
-function ddb_ObservationStationsToolbox
+function ddb_ObservationStationsToolbox(varargin)
 
 if isempty(varargin)
     % New tab selected
