@@ -12,13 +12,14 @@
       <text>Tide Stations</text>
     </element>
     <element>
+      <tag>selecttidestation</tag>
       <position>50 20 250 130</position>
       <style>listbox</style>
-      <tag>selecttidestation</tag>
       <type>integer</type>
       <variable>handles.Toolbox(tb).Input.activeTideStation</variable>
       <onchange>ddb_TideStationsToolbox</onchange>
       <option1>selecttidestation</option1>
+      <tooltipstring>Select tide station</tooltipstring> 
       <list>
         <texts>
           <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList</variable>
@@ -32,6 +33,7 @@
       <text>Make Observation Points</text>
       <callback>ddb_TideStationsToolbox</callback>
       <option1>makeobservationpoints</option1>
+      <tooltipstring>Make observation points in model</tooltipstring> 
     </element> 
     <element>
       <tag>viewtidesignal</tag>
@@ -40,6 +42,7 @@
       <text>View Tide Signal</text>
       <callback>ddb_TideStationsToolbox</callback>
       <option1>viewtidesignal</option1>
+      <tooltipstring>View tide signal for active tide station</tooltipstring> 
     </element> 
     <element>
       <tag>exporttidesignal</tag>
@@ -48,6 +51,7 @@
       <text>Export Tide Signal</text>
       <callback>ddb_TideStationsToolbox</callback>
       <option1>exporttidesignal</option1>
+      <tooltipstring>Export tide signal for active tide station</tooltipstring> 
     </element> 
     <element>
       <tag>exportalltidesignals</tag>
@@ -56,15 +60,17 @@
       <text>Export All Tide Signals</text>
       <callback>ddb_TideStationsToolbox</callback>
       <option1>exportalltidesignals</option1>
+      <tooltipstring>Export tide signal for all stations within model grid</tooltipstring> 
     </element> 
     <element>
+      <tag>selecttidedatabase</tag>
       <position>320 30 130 20</position>
       <style>popupmenu</style>
-      <tag>selecttidedatabase</tag>
       <type>integer</type>
       <variable>handles.Toolbox(tb).Input.activeDatabase</variable>
       <onchange>ddb_TideStationsToolbox</onchange>
       <option1>selecttidedatabase</option1>
+      <tooltipstring>Select a tide station database</tooltipstring> 
       <list>
         <texts>
           <variable>handles.Toolbox(tb).Input.databases</variable>
@@ -77,9 +83,9 @@
       <position>550 130 110 20</position>
       <variable>handles.Toolbox(tb).Input.startTime</variable>
       <type>datetime</type>
-      <tooltipstring>Edit start time</tooltipstring>
       <text>Start Time</text>
       <textposition>left</textposition>
+      <tooltipstring>Edit start time for time signal to be viewed or exported</tooltipstring> 
     </element>
     <element>
       <tag>editstoptime</tag>
@@ -87,9 +93,9 @@
       <position>550 105 110 20</position>
       <variable>handles.Toolbox(tb).Input.stopTime</variable>
       <type>datetime</type>
-      <tooltipstring>Edit model stop time</tooltipstring>
       <text>Stop Time</text>
       <textposition>left</textposition>
+      <tooltipstring>Edit stop time for time signal to be viewed or exported</tooltipstring> 
     </element>
     <element>
       <tag>edittimestep</tag>
@@ -97,9 +103,9 @@
       <position>550 80 110 20</position>
       <variable>handles.Toolbox(tb).Input.timeStep</variable>
       <type>real</type>
-      <tooltipstring>Edit time step</tooltipstring>
       <text>Time Step (min)</text>
       <textposition>left</textposition>
+      <tooltipstring>Edit time step for time signal to be viewed or exported</tooltipstring> 
     </element>
     <element>
       <tag>tidetable</tag>

@@ -17,34 +17,44 @@ else
     %Options selected
     opt=lower(varargin{1});    
     switch opt
-        case{'drawrectangle'}
-        case{'generateimage'}
+        case{'makeobservationpoints'}
+            addObservationPoints;
         case{'selecttidedatabase'}
             selectTideDatabase;
         case{'selecttidestation'}
             selectTideStation;
         case{'viewtidesignal'}
             viewTideSignal;
+        case{'exporttidesignal'}
+            exportTideSignal;
+        case{'exportalltidesignals'}
+            exportAllTideSignals;
     end    
 end
 
 %%
-function Push_addObservationPoints_Callback(hObject,eventdata)
+function addObservationPoints
+
 handles=getHandles;
-handles=ddb_addObservationPoints(handles);
-if handles.Model(md).Input(ad).nrObservationPoints>0
-    handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','active',0,'visible',1);
+fstr=['ddb_' handles.Model(md).name '_addTideStations.m'];
+if exist(fstr)
+    feval(str2func(fstr(1:end-2)));
+else
+    GiveWarning('text',['Adding tide stations as observation points not supported for ' handles.Model(md).longName]);
+    return
 end
-% [filename, pathname, filterindex] = uiputfile('*.obs', 'Select Observation Points File',handles.Model(md).Input(ad).ObsFile);
-% if pathname~=0
-%     curdir=[lower(cd) '\'];
-%    if ~strcmpi(curdir,pathname)
-%         filename=[pathname filename];
-%     end
-%     handles.Model(md).Input(ad).ObsFile=filename;
-%     ddb_saveObsFile(handles,ad);
-% end
-setHandles(handles);
+
+%%
+function exportAllTideSignals
+
+handles=getHandles;
+fstr=['ddb_' handles.Model(md).name '_exportTideSignals.m'];
+if exist(fstr)
+    feval(str2func(fstr(1:end-2)));
+else
+    GiveWarning('text',['Exporting tide data within grid not supported for ' handles.Model(md).longName]);
+    return
+end
 
 %%
 function viewTideSignal
@@ -54,40 +64,32 @@ t0=handles.Toolbox(tb).Input.startTime;
 t1=handles.Toolbox(tb).Input.stopTime;
 dt=handles.Toolbox(tb).Input.timeStep/1440;
 tim=t0:dt:t1;
+iac=handles.Toolbox(tb).Input.activeDatabase;
+ii=handles.Toolbox(tb).Input.activeTideStation;
 
-wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases);
+latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
+wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude);
 
-stationName=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList{handles.Toolbox(tb).Input.activeTideStation};
+stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
 ddb_plotTimeSeries(tim,wl,stationName);
 
 %%
-function ExportTimeSeries_Callback(hObject,eventdata)
+function exportTideSignal
 handles=getHandles;
-cmp=handles.Toolbox(tb).tideStations.componentSet(handles.Toolbox(tb).activeTideStation);
-for i=1:length(cmp.component)
-    comp{i}=cmp.component{i};
-    A(i,1)=cmp.Amplitude(i);
-    G(i,1)=cmp.Phase(i);
-end
-t0=handles.Toolbox(tb).startTime;
-t1=handles.Toolbox(tb).stopTime;
-dt=handles.Toolbox(tb).timeStep/60;
-t1=t1+dt/24;
-[prediction,times]=delftPredict2007(comp,A,G,t0,t1,dt);
-blname=deblank(handles.Toolbox(tb).tideStations.Name{handles.Toolbox(tb).activeTideStation});
-fname=blname;
-fname=strrep(fname,' ','');
-fname=strrep(fname,',','');
-fname=[fname(1,:) '.tek'];
+t0=handles.Toolbox(tb).Input.startTime;
+t1=handles.Toolbox(tb).Input.stopTime;
+dt=handles.Toolbox(tb).Input.timeStep/1440;
+tim=t0:dt:t1;
+iac=handles.Toolbox(tb).Input.activeDatabase;
+ii=handles.Toolbox(tb).Input.activeTideStation;
 
-exportTEK(prediction(1:end-1)',times(1:end-1)',fname,blname);
+latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
+wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude);
 
-%%
-function ExportAllTimeSeries_Callback(hObject,eventdata)
-handles=getHandles;
-%if handles.Model(md).Input(ad).nrObservationPoints>0
-    ddb_exportTideSignalAllStations(handles);
-%end
+stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
+shortName=handles.Toolbox(tb).Input.database(iac).stationShortNames{ii};
+fname=[shortName '.tek'];
+exportTEK(wl',tim',fname,stationName);
 
 %%
 function selectTideStationFromMap(imagefig, varargins)
@@ -103,8 +105,8 @@ if strcmp(get(h,'Tag'),'TideStations')
     posx=pos(1,1);
     posy=pos(1,2);
     iac=handles.Toolbox(tb).Input.activeDatabase;
-    dxsq=(handles.Toolbox(tb).Input.database(iac).x-posx).^2;
-    dysq=(handles.Toolbox(tb).Input.database(iac).y-posy).^2;
+    dxsq=(handles.Toolbox(tb).Input.database(iac).xLoc-posx).^2;
+    dysq=(handles.Toolbox(tb).Input.database(iac).yLoc-posy).^2;
     dist=(dxsq+dysq).^0.5;
     [y,n]=min(dist);
     handles.Toolbox(tb).Input.activeTideStation=n;
@@ -131,7 +133,7 @@ handles.Toolbox(tb).Input.activeTideStationHandle=[];
 % Plot new active station
 n=handles.Toolbox(tb).Input.activeTideStation;
 iac=handles.Toolbox(tb).Input.activeDatabase;
-plt=plot3(handles.Toolbox(tb).Input.database(iac).x(n),handles.Toolbox(tb).Input.database(iac).y(n),1000,'o');
+plt=plot3(handles.Toolbox(tb).Input.database(iac).xLoc(n),handles.Toolbox(tb).Input.database(iac).yLoc(n),1000,'o');
 set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveTideStation');
 handles.Toolbox(tb).Input.activeTideStationHandle=plt;
 
@@ -171,9 +173,11 @@ function plotTideStations
 handles=getHandles;
 
 iac=handles.Toolbox(tb).Input.activeDatabase;
-x=handles.Toolbox(tb).Input.database(iac).x;
-y=handles.Toolbox(tb).Input.database(iac).y;
+
+x=handles.Toolbox(tb).Input.database(iac).xLoc;
+y=handles.Toolbox(tb).Input.database(iac).yLoc;
 z=zeros(size(x))+500;
+
 plt=plot3(x,y,z,'o');hold on;
 set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','y');
 set(plt,'Tag','TideStations');
@@ -231,29 +235,3 @@ setHandles(handles);
 
 setUIElement('tidetable');
 
-%%
-function wl=makeTidePrediction(tim,components,amplitudes,phases)
-
-const=t_getconsts;
-k=0;
-for i=1:length(amplitudes)
-    cmp=components{i};
-    cmp = delft3d_name2t_tide(cmp);
-    if length(cmp)>4
-        cmp=cmp(1:4);
-    end
-    name=[cmp repmat(' ',1,4-length(cmp))];
-    ju=strmatch(name,const.name);
-    if isempty(ju)
-        disp(['Could not find ' name ' - Component skipped.']);
-    else
-        k=k+1;
-        names(k,:)=name;
-        freq(k,1)=const.freq(ju);
-        tidecon(k,1)=amplitudes(i);
-        tidecon(k,2)=0;
-        tidecon(k,3)=phases(i);
-        tidecon(k,4)=0;
-    end
-end
-wl=t_predic(tim,names,freq,tidecon);

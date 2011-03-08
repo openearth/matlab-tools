@@ -14,7 +14,12 @@ for i=1:length(lst)
     handles.Toolbox(ii).Input.database(i).shortName=lst(i).name(1:end-3);
     handles.Toolbox(ii).Input.database(i).x=nc_varget(fname,'lon');
     handles.Toolbox(ii).Input.database(i).y=nc_varget(fname,'lat');
+    handles.Toolbox(ii).Input.database(i).xLoc=handles.Toolbox(ii).Input.database(i).x;
+    handles.Toolbox(ii).Input.database(i).yLoc=handles.Toolbox(ii).Input.database(i).y;
     
+    handles.Toolbox(ii).Input.database(i).coordinateSystem='WGS 84';
+    handles.Toolbox(ii).Input.database(i).coordinateSystemType='geographic';
+
     str=nc_varget(fname,'components');
     str=str';
     for j=1:size(str,1)
@@ -25,13 +30,29 @@ for i=1:length(lst)
     str=str';
     for j=1:size(str,1)
         handles.Toolbox(ii).Input.database(i).stationList{j}=deblank(str(j,:));
+        % Short names
+        name=deblank(str(j,:));
+        name=strrep(name,' ','');
+        name=strrep(name,'#','');
+        name=strrep(name,'\','');
+        name=strrep(name,'/','');
+        name=strrep(name,'.','');
+        name=strrep(name,',','');
+        handles.Toolbox(ii).Input.database(i).stationShortNames{j}=name;
+    end
+
+    str=nc_varget(fname,'idcodes');
+    str=str';
+    for j=1:size(str,1)
+        handles.Toolbox(ii).Input.database(i).idCodes{j}=deblank(str(j,:));
     end
     
+
 end
 
 handles.Toolbox(ii).Input.startTime=floor(now);
 handles.Toolbox(ii).Input.stopTime=floor(now)+30;
-handles.Toolbox(ii).Input.timeStep=10.0;
+handles.Toolbox(ii).Input.timeStep=30.0;
 handles.Toolbox(ii).Input.activeDatabase=1;
 handles.Toolbox(ii).Input.activeTideStation=1;
 handles.Toolbox(ii).Input.tideStationHandle=[];
