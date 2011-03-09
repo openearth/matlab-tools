@@ -99,14 +99,21 @@ for i=1:length(elements)
                 
             case{'radiobutton'}
                 
-                % Check box
+                % Radio button
                 pos=position;
-                elements(i).handle=uicontrol(figh,'Style','radio','String',elements(i).text,'Position',[pos 20 20],'BackgroundColor',bgc);
+
+                if ~isfield(elements(i).text,'variable')
+                    str=elements(i).text;
+                    elements(i).handle=uicontrol(figh,'Style','radio','String',str,'Position',[pos 20 20],'BackgroundColor',bgc);
+                    % Length of string is known
+                    ext=get(elements(i).handle,'Extent');
+                    pos(3)=ext(3)+20;
+                    pos(4)=20;                
+                    set(elements(i).handle,'Position',pos);
+                else
+                    elements(i).handle=uicontrol(figh,'Style','radio','String',' ','Position',[pos 20],'BackgroundColor',bgc);
+                end
                 
-                ext=get(elements(i).handle,'Extent');
-                pos(3)=ext(3)+15;
-                pos(4)=20;
-                set(elements(i).handle,'Position',pos);
                 if ~isempty(elements(i).toolTipString)
                     set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
                 end
@@ -123,12 +130,19 @@ for i=1:length(elements)
                 
                 % Check box
                 pos=position;
-                elements(i).handle=uicontrol(figh,'Style','check','String',elements(i).text,'Position',[pos 20 20],'BackgroundColor',bgc);
                 
-                ext=get(elements(i).handle,'Extent');
-                pos(3)=ext(3)+20;
-                pos(4)=20;
-                set(elements(i).handle,'Position',pos);
+                if ~isfield(elements(i).text,'variable')
+                    str=elements(i).text;
+                    elements(i).handle=uicontrol(figh,'Style','check','String',str,'Position',[pos 20 20],'BackgroundColor',bgc);
+                    % Length of string is known
+                    ext=get(elements(i).handle,'Extent');
+                    pos(3)=ext(3)+20;
+                    pos(4)=20;                
+                    set(elements(i).handle,'Position',pos);
+                else
+                    elements(i).handle=uicontrol(figh,'Style','check','String',' ','Position',[pos 20],'BackgroundColor',bgc);
+                end
+                
                 if ~isempty(elements(i).toolTipString)
                     set(elements(i).handle,'ToolTipString',elements(i).toolTipString);
                 end

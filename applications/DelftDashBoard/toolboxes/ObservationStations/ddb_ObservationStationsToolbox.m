@@ -23,6 +23,9 @@ else
             selectObservationDatabase;
         case{'selectobservationstation'}
             selectObservationStation;
+        case{'selectparameter'}
+            opt2=lower(varargin{2});
+            selectParameter(opt2);
         case{'viewobservationsignal'}
 %            viewObservationSignal;
         case{'exportobservationsignal'}
@@ -123,6 +126,15 @@ plt=plot3(handles.Toolbox(tb).Input.database(iac).xLoc(n),handles.Toolbox(tb).In
 set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveObservationStation');
 handles.Toolbox(tb).Input.activeObservationStationHandle=plt;
 
+handles.Toolbox(tb).Input.activeParameter=1;
+parameters=handles.Toolbox(tb).Input.database(iac).parameters(n);
+for j=1:length(parameters.Name)
+    if parameters.Status(j)
+        handles.Toolbox(tb).Input.activeParameter=j;
+        break
+    end
+end
+
 setHandles(handles);
 
 refreshObservations;
@@ -181,8 +193,65 @@ setHandles(handles);
 function refreshObservations
 
 handles=getHandles;
-
 iac=handles.Toolbox(tb).Input.activeDatabase;
+ii=handles.Toolbox(tb).Input.activeObservationStation;
+parameters=handles.Toolbox(tb).Input.database(iac).parameters(ii);
+for j=1:length(parameters.Name)
+    iradio=num2str(j,'%0.2i');
+    handles.Toolbox(tb).Input.(['radio' iradio]).value=0;
+    handles.Toolbox(tb).Input.(['radio' iradio]).text=parameters.Name{j};
+    if parameters.Status(j)
+        handles.Toolbox(tb).Input.(['radio' iradio]).enable=1;
+    else
+        handles.Toolbox(tb).Input.(['radio' iradio]).enable=0;
+    end
+end
+for j=length(parameters.Name)+1:14
+    iradio=num2str(j,'%0.2i');
+    handles.Toolbox(tb).Input.(['radio' iradio]).value=-1;
+    handles.Toolbox(tb).Input.(['radio' iradio]).text=['radio' iradio];    
+    handles.Toolbox(tb).Input.(['radio' iradio]).enable=0;
+end
+
+iradio=num2str(handles.Toolbox(tb).Input.activeParameter,'%0.2i');
+handles.Toolbox(tb).Input.(['radio' iradio]).value=1;
+
+setHandles(handles);
+
+for j=1:14
+    iradio=num2str(j,'%0.2i');
+    tg=['radio' iradio];
+    setUIElement(tg);
+end
+
+
+%%
+function selectParameter(opt)
+
+handles=getHandles;
+
+iopt=str2double(opt);
+handles.Toolbox(tb).Input.activeParameter=iopt;
+
+for j=1:14
+    iradio=num2str(j,'%0.2i');
+    if handles.Toolbox(tb).Input.(['radio' iradio]).value==1
+        handles.Toolbox(tb).Input.(['radio' iradio]).value=0;
+    end
+end
+iradio=num2str(iopt,'%0.2i');
+handles.Toolbox(tb).Input.(['radio' iradio]).value=1;
+
+setHandles(handles);
+
+for j=1:14
+    iradio=num2str(j,'%0.2i');
+    tg=['radio' iradio];
+    setUIElement(tg);
+end
+
+
+%handles.Toolbox(tb).Input.database(iac)
 
 % 
 % handles=getHandles;

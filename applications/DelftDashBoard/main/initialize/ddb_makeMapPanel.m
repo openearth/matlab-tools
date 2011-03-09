@@ -20,6 +20,7 @@ set(ax,'NextPlot','replace');
 set(ax,'Position',[1 1 10 10]);
 set(ax,'Box','off');
 set(ax,'TickLength',[0 0]);
+set(ax,'Tag','map');
 
 view(2);
 set(ax,'xlim',[-180 180],'ylim',[-90 90],'zlim',[-12000 10000]);

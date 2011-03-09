@@ -86,11 +86,17 @@ switch lower(el.style)
                     set(el.handle,'Value',0);
                 end
             otherwise
-                if el.value==val
+                if str2double(el.value)==val
                     set(el.handle,'Value',1);
                 else
                     set(el.handle,'Value',0);
                 end
+        end
+        
+        if isfield(el.text,'variable')
+            val=getSubFieldValue(s,el.text.variable);
+            % Text
+            set(el.handle,'String',val);
         end
 
     case{'listbox','popupmenu'}

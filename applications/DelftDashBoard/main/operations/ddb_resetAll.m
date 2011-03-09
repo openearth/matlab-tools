@@ -2,6 +2,15 @@ function ddb_resetAll
 
 handles=getHandles;
 
+% Delete new axes that is sometimes created for no apparent reason. Another
+% fix for this should be found!!!
+h=findobj(gcf,'Type','axes');
+for i=1:length(h)
+    if isempty(get(h(i),'Tag'));
+        delete(h(i));
+    end
+end
+
 if handles.debugMode
 
     h=findobj(gcf,'Tag','UIControl');

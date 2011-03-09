@@ -29,8 +29,8 @@ for i=1:length(lst)
 
 end
 
-handles.Toolbox(ii).Input.startTime=floor(now);
-handles.Toolbox(ii).Input.stopTime=floor(now)+30;
+handles.Toolbox(ii).Input.startTime=floor(now)-10;
+handles.Toolbox(ii).Input.stopTime=floor(now)-1;
 handles.Toolbox(ii).Input.timeStep=10.0;
 
 handles.Toolbox(ii).Input.activeDatabase=1;
@@ -39,18 +39,36 @@ handles.Toolbox(ii).Input.activeObservationStation=1;
 handles.Toolbox(ii).Input.observationStationHandle=[];
 handles.Toolbox(ii).Input.activeObservationStationHandle=[];
 
-handles.Toolbox(ii).Input.radio01=-1;
-handles.Toolbox(ii).Input.radio02=0;
-handles.Toolbox(ii).Input.radio03=0;
-handles.Toolbox(ii).Input.radio04=0;
-handles.Toolbox(ii).Input.radio05=0;
-handles.Toolbox(ii).Input.radio06=0;
-handles.Toolbox(ii).Input.radio07=0;
-handles.Toolbox(ii).Input.radio08=0;
-handles.Toolbox(ii).Input.radio09=0;
-handles.Toolbox(ii).Input.radio10=0;
-handles.Toolbox(ii).Input.radio11=0;
-handles.Toolbox(ii).Input.radio12=0;
-handles.Toolbox(ii).Input.radio13=0;
-handles.Toolbox(ii).Input.radio14=0;
-handles.Toolbox(ii).Input.radio15=0;
+handles.Toolbox(tb).Input.activeParameter=1;
+
+handles.Toolbox(ii).Input.radio01.value=0;
+handles.Toolbox(ii).Input.radio02.value=0;
+handles.Toolbox(ii).Input.radio03.value=0;
+handles.Toolbox(ii).Input.radio04.value=0;
+handles.Toolbox(ii).Input.radio05.value=0;
+handles.Toolbox(ii).Input.radio06.value=0;
+handles.Toolbox(ii).Input.radio07.value=0;
+handles.Toolbox(ii).Input.radio08.value=0;
+handles.Toolbox(ii).Input.radio09.value=0;
+handles.Toolbox(ii).Input.radio10.value=0;
+handles.Toolbox(ii).Input.radio11.value=0;
+handles.Toolbox(ii).Input.radio12.value=0;
+handles.Toolbox(ii).Input.radio13.value=0;
+handles.Toolbox(ii).Input.radio14.value=0;
+handles.Toolbox(ii).Input.radio15.value=0;
+
+handles.Toolbox(ii).Input.radio01.text='';
+handles.Toolbox(ii).Input.radio02.text='';
+handles.Toolbox(ii).Input.radio03.text='';
+handles.Toolbox(ii).Input.radio04.text='';
+handles.Toolbox(ii).Input.radio05.text='';
+handles.Toolbox(ii).Input.radio06.text='';
+handles.Toolbox(ii).Input.radio07.text='';
+handles.Toolbox(ii).Input.radio08.text='';
+handles.Toolbox(ii).Input.radio09.text='';
+handles.Toolbox(ii).Input.radio10.text='';
+handles.Toolbox(ii).Input.radio11.text='';
+handles.Toolbox(ii).Input.radio12.text='';
+handles.Toolbox(ii).Input.radio13.text='';
+handles.Toolbox(ii).Input.radio14.text='';
+handles.Toolbox(ii).Input.radio15.text='';
