@@ -63,9 +63,10 @@ OPT.polygon                 = [];
 OPT.cellsize                = [];                               % cellsize is assumed to be regular in x and y direction and is determined automatically
 OPT.datathinning            = 1;                                % stride with which to skip through the data
 OPT.inputtimes              = [];                               % starting points (in Matlab epoch time)
-OPT.starttime               = [];
+OPT.starttime               = [];                               % indicate datenum to start sediment budget calculation
+OPT.stoptime                = [];                               % indicate datenum to stop sediment budget calculation
 OPT.searchinterval          = -730;                             % acceptable interval to include data from (in days)
-OPT.min_coverage            = .25;                               % coverage percentage (can be several, e.g. [50 75 90]
+OPT.min_coverage            = .25;                              % coverage percentage (can be several, e.g. [50 75 90]
 OPT.plotresult              = 1;                                % 0 = off; 1 = on;
 OPT.warning                 = 1;                                % 0 = off; 1 = on;
 OPT.postProcessing          = 1;                                % 0 = off; 1 = on;

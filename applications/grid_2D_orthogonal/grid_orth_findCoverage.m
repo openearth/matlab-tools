@@ -78,7 +78,12 @@ if ~isempty(fns)
                     OPT.polygon = polygon; %#ok<NODEF>
                     OPT = grid_orth_getTimeInfoInPolygon(OPT);
                 end
-    
+                if ~isempty(OPT.starttime)
+                    OPT.inputtimes = OPT.inputtimes (OPT.inputtimes>= OPT.starttime);
+                end
+                if ~isempty(OPT.stoptime)
+                    OPT.inputtimes = OPT.inputtimes (OPT.inputtimes<= OPT.stoptime);
+                end
                 for j = 1:length(OPT.inputtimes)
                     
                     if exist(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [fns(i,1).name(1:end-4) '_' datestr(OPT.inputtimes(j)) '.mat']),'file')
