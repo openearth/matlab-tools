@@ -62,7 +62,7 @@ end
 if filN==0
     return
 end
-fullName=fillExtension([patN filN],ext)
+fullName=[patN filN];
 switch ext
     case 'ldb'
         landboundary('write',fullName,ldb);
