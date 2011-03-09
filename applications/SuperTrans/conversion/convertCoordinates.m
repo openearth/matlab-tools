@@ -5,10 +5,10 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 %
 % Note 1: Beware of the Lon-Lat order of in- and output arguments!
 % Note 2: (x1,y1) can be vectors or matrices.
-% Note 3: Does not work for MatLab 7.0 and older (gives invalid MEX file
-%         warnings)
-% Note 4: Rijksdriehoek(RD) to WGS 84 conversions are NOT exact. Accuracy
-%         is better than 0.5m, but multiple conversions can mess things up.
+% Note 3: Does not work for MatLab 7.0 and older (invalid MEX file warnings)
+% Note 4: Dutch Rijksdriehoek(RD) to WGS 84 conversions are NOT exact. 
+%         Accuracy is better than 0.5m (plate tectonics), but multiple 
+%         conversions can mess things up.
 %         For accurate conversions, see  <a href="http://www.rdnap.nl/">www.rdnap.nl/</a>
 %
 % x1,y1 : values of the coordinates to be transformed   , either X-Y or Lon-Lat.
@@ -26,11 +26,11 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 %    EPSG        = load('EPSG');
 %    [x2,y2,log] = convertCoordinates(x1,y1,EPSG,'keyword','value')
 %
-%    or:
+%       or:
 %
 %    [x2,y2,log] = convertCoordinates(x1,y1,'persistent','keyword','value')
 %
-%    or:
+%       or:
 %
 %    [x2,y2,log] = convertCoordinates(x1,y1,     'keyword','value')
 %
@@ -52,8 +52,8 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 % Projection types supported     : projected and geographic 2D
 % Projection not (yet) supported : engineering, geographic 3D, vertical, geocentric,  compound
 %
-% Supported synonyms for 'projected'    : 'xy','proj','cartesian','cart'
-% Supported synonyms for 'geographic 2D': 'geo','latlon','lat lon','geographic','geographic2d'
+% Supported synonyms for 'projected'    : 'xy' ,'proj'  ,'cartesian','cart'
+% Supported synonyms for 'geographic 2D': 'geo','latlon','lat lon'  ,'geographic','geographic2d'
 %
 % Example 1: 4 different notations of 1 single transformation case:
 %
@@ -73,14 +73,16 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 %
 %   [lon,lat,log]=convertCoordinates(52,5.5,'CS1.code',4326,'CS2.code',4326,'CS2.UoM.name','sexagesimal DMS')
 %
-% +-------+-------------------------+------------------+
-% | code  |  name                   |  type            |
-% +-------+-------------------------+------------------+
-% |  4326 | 'WGS 84'                | 'geographic 2D'  |  To find specifications of
-% | 28992 | 'Amersfoort / RD New'   | 'projected'      |  more coordinate systems
-% | 32631 | 'WGS 84 / UTM zone 31N' | 'projected'      |  (name <=> code):
-% | 23031 | 'ED50 / UTM zone 31N'   | 'projected'      |  <a href="http://www.epsg-registry.org">www.epsg-registry.org</a>
-% +-------+-------------------------+------------------+
+% +-------+-----------------------------+------------------+
+% | code  |  name                       |  type            |
+% +-------+-----------------------------+------------------+
+% |  4326 | 'WGS 84'                    | 'geographic 2D'  |  To find 
+% |  4230 | 'ED50'                      | 'geographic 2D'  |  specifications of
+% | 28992 | 'Amersfoort / RD New'       | 'projected'      |  more coordinate 
+% |  7415 | 'Amersfoort / RD New + NAP' | 'projected'      |  systems:
+% | 32631 | 'WGS 84 / UTM zone 31N'     | 'projected'      |  (name <=> code):
+% | 23031 | 'ED50 / UTM zone 31N'       | 'projected'      |  <a href="http://www.epsg-registry.org">www.epsg-registry.org</a>
+% +-------+-----------------------------+------------------+
 %
 % See also: SuperTrans, EPSG.mat
 

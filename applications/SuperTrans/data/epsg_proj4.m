@@ -1,4 +1,4 @@
-function str = epsg_proj4(epsg_code)
+function str = epsg_proj4(epsg_code,varargin)
 %EPSG_PROJ4  gets the proj4 projection string for an epsg code
 %
 %   Uses spatialreference.org webservice. If you recieve a proxy error, 
@@ -9,10 +9,12 @@ function str = epsg_proj4(epsg_code)
 %   directory. 
 %
 %   Syntax:
-%   varargout = epsg_proj4(varargin)
+%   proj4 = epsg_proj4(epsg_code,<store>)
 %
 %   Input:
 %   epsg_code  = EPSG code
+%   <store>    = optionally directory where to store downloaded data
+%                when 1, data is stored OpenEarthTools checkout
 %
 %   Output:
 %   proj4 = proj4 projection string for an epsg code
@@ -67,7 +69,15 @@ function str = epsg_proj4(epsg_code)
 
 %%
 
-epsg_tempdir = fullfile(tempdir,'epsg_code_to_proj4params');
+if nargin==2
+   if isnumeric(varargin{1})
+      epsg_tempdir = mfilename('fullpath');
+      else
+      epsg_tempdir = varargin{1};
+   end
+else
+   epsg_tempdir = fullfile(tempdir,'spatialreference.org/ref/epsg',num2str(epsg_code),'proj4'); % same as url
+end   
 
 if ~exist(epsg_tempdir,'dir')
     mkpath(epsg_tempdir);
@@ -80,7 +90,7 @@ if exist(fullfile(epsg_tempdir,epsg_proj4_filename),'file')
     fclose(fid);
 else
     try
-        if epsg_code==28992 % here EPSG database is wrong !
+        if epsg_code==28992 | epsg_code==7415 % here EPSG database is wrong or empty 7415=29882 + NAP!
         str = '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.999908 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4174,50.3319,465.5542,-0.398957388243134,0.343987817378283,-1.87740163998045,4.0725 +no_defs'; % note that epsg tables are wrong for 28992, need to specify ellipsoid explicity manually !
         else
         str = urlread(sprintf('http://spatialreference.org/ref/epsg/%d/proj4/',epsg_code));

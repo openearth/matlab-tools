@@ -1,4 +1,4 @@
-function str = epsg_wkt(epsg_code)
+function str = epsg_wkt(epsg_code,varargin)
 %EPSG_WKT  gets the well known text representation of an epsg code
 %
 %   Uses spatialreference.org webservice. If you recieve a proxy error, 
@@ -9,10 +9,12 @@ function str = epsg_wkt(epsg_code)
 %   directory. 
 %
 %   Syntax:
-%   varargout = epsg_wkt(varargin)
+%   wkt = epsg_wkt(epsg_code,<store>)
 %
 %   Input:
 %   epsg_code  = EPSG code
+%   <store>    = optionally directory where to store downloaded data
+%                when 1, data is stored OpenEarthTools checkout
 %
 %   Output:
 %   wkt = well known text representation of epsg code
@@ -66,7 +68,15 @@ function str = epsg_wkt(epsg_code)
 % $Keywords: $
 
 %%
-epsg_tempdir = fullfile(tempdir,'epsg_code_to_in_well_known_text');
+if nargin==2
+   if isnumeric(varargin{1})
+      epsg_tempdir = mfilename('fullpath');
+      else
+      epsg_tempdir = varargin{1};
+   end
+else
+   epsg_tempdir = fullfile(tempdir,'spatialreference.org/ref/epsg',num2str(epsg_code),'prettywkt'); % same as url
+end
 
 if ~exist(epsg_tempdir,'dir')
     mkpath(epsg_tempdir);
