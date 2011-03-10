@@ -123,7 +123,7 @@ nreads = nitems/prod(sz);
 if isempty(OPT.force)
     force = xb_getpref('dat_method');
     if isempty(force)
-        if regexp(fname, '(point|rugau)\d+.dat$')
+        if regexp(fname, '(point|rugau|drifter)\d+.dat$')
             method = 'read';
         elseif (OPT.stride(3) == 1 && OPT.stride(2) == 1 && ~all(OPT.stride == 1)) || ...
             (nreads/nitems < prod(dims([1 4:end]))/prod(dims))

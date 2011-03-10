@@ -16,7 +16,7 @@ function [dims names type] = xb_dat_dims(filename, varargin)
 %   dims        = Array with lengths of dimensions
 %   names       = Cell array with names of dimensions (x/y/t/d/gd/theta)
 %   type        = String identifying the type of DAT file
-%                 (wave/sediment/graindist/bedlayers/point/2d)
+%                 (wave/sediment/graindist/bedlayers/point/drifter/2d)
 %
 %   Example
 %   dims = xb_dat_dims(filename)
@@ -136,6 +136,15 @@ if regexp(fname, '^(point|rugau)\d+$')
     dims = [d.pointtime nvars+1];
     names = {'t' 'variables'};
     type = 'point';
+    
+elseif regexp(fname, '^(drifter)\d+$')
+    
+    % drifter data
+    time = floor(f.bytes/byt/3);
+    dims = [time 3];
+    names = {'t' 'xyt'};
+    type = 'drifter';
+    
 else
 
     % determine space dimensions
