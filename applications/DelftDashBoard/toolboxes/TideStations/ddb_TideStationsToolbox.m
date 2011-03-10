@@ -199,7 +199,7 @@ handles=getHandles;
 iac=handles.Toolbox(tb).Input.activeDatabase;
 
 % Read data from nc file
-fname=[handles.toolBoxDir 'tidestations\' handles.Toolbox(tb).Input.database(iac).shortName '.nc'];
+fname=[handles.Toolbox(tb).miscDir handles.Toolbox(tb).Input.database(iac).shortName '.nc'];
 ii=handles.Toolbox(tb).Input.activeTideStation;
 ncomp=length(handles.Toolbox(tb).Input.database(iac).components);
 amp00=nc_varget(fname,'amplitude',[0 ii],[ncomp 1]);

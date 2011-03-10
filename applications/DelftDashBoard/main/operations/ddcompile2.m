@@ -16,6 +16,8 @@ function ddcompile2(varargin)
 %     end
 % end
 
+mkdir('exe');
+
 statspath='Y:\app\MATLAB2009b\toolbox\stats';
 rmpath(statspath);
 

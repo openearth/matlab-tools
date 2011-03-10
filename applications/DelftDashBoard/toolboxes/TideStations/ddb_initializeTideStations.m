@@ -2,13 +2,14 @@ function handles=ddb_initializeTideStations(handles,varargin)
 
 ii=strmatch('TideStations',{handles.Toolbox(:).name},'exact');
 
-lst=dir([handles.toolBoxDir '\tidestations\*.nc']);
+dr=handles.Toolbox(ii).miscDir;
+lst=dir([dr '*.nc']);
 
 handles.Toolbox(ii).Input.databases={''};
 
 for i=1:length(lst)
     disp(['Loading tide database ' lst(i).name(1:end-3) ' ...']);
-    fname=[handles.toolBoxDir 'tidestations\' lst(i).name(1:end-3) '.nc'];
+    fname=[dr lst(i).name(1:end-3) '.nc'];
     handles.Toolbox(ii).Input.database(i).longName=nc_attget(fname,nc_global,'title');
     handles.Toolbox(ii).Input.databases{i}=handles.Toolbox(ii).Input.database(i).longName;
     handles.Toolbox(ii).Input.database(i).shortName=lst(i).name(1:end-3);

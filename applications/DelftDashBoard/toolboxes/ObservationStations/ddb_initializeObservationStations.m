@@ -2,13 +2,14 @@ function handles=ddb_initializeObservationStations(handles,varargin)
 
 ii=strmatch('ObservationStations',{handles.Toolbox(:).name},'exact');
 
-lst=dir([handles.toolBoxDir 'observationsdatabase\*.mat']);
+dr=handles.Toolbox(ii).miscDir;
+lst=dir([dr '*.mat']);
 
 for i=1:length(lst)
 
     disp(['Loading observations database ' lst(i).name(1:end-4) ' ...']);
 
-    load([handles.toolBoxDir 'observationsdatabase\' lst(i).name(1:end-4) '.mat']);
+    load([dr lst(i).name(1:end-4) '.mat']);
 
     handles.Toolbox(ii).Input.databases{i}=s.DatabaseName;
     handles.Toolbox(ii).Input.database(i).shortName=lst(i).name(1:end-4);

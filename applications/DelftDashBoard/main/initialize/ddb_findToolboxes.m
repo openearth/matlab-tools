@@ -54,20 +54,26 @@ for i=1:nt
     handles.Toolbox(i).plotFcn=str2func(['ddb_plot' name{i}]);
     handles.Toolbox(i).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
     if isdeployed
+        % Executable
         if strcmpi(tp{i},'standard')
-            handles.Toolbox(i).dir=[dr filesep name{i}];
+            handles.Toolbox(i).dir=[dr filesep name{i} filesep];
             handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
+            handles.Toolbox(i).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
         else
-            handles.Toolbox(i).dir=[dr2 filesep name{i}];
-            handles.Toolbox(i).xmlDir=[dr2 filesep name{i} filesep 'xml' filesep];
+            handles.Toolbox(i).dir=[dr2 filesep name{i} filesep];
+            handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
+            handles.Toolbox(i).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
         end
     else
+        % From Matlab
         if strcmpi(tp{i},'standard')
-            handles.Toolbox(i).dir=[dr filesep name{i}];
-            handles.Toolbox(i).xmlDir=['toolboxes' filesep name{i} filesep 'xml' filesep];
+            handles.Toolbox(i).dir=[dr filesep name{i} filesep];
+            handles.Toolbox(i).xmlDir=[handles.Toolbox(i).dir 'xml' filesep];
+            handles.Toolbox(i).miscDir=[handles.Toolbox(i).dir 'misc' filesep];
         else
-            handles.Toolbox(i).dir=[dr2 filesep name{i}];
-            handles.Toolbox(i).xmlDir=[dr2 filesep name{i} filesep 'xml' filesep];
+            handles.Toolbox(i).dir=[dr2 filesep name{i} filesep];
+            handles.Toolbox(i).xmlDir=[handles.Toolbox(i).dir 'xml' filesep];
+            handles.Toolbox(i).miscDir=[handles.Toolbox(i).dir 'misc' filesep];
         end
     end
 end
