@@ -16,7 +16,8 @@ handles.GUIHandles.mapAxisPanel=uipanel('Units','pixels','Position',[70 200 870 
 ax=axes;
 set(ax,'Parent',handles.GUIHandles.mapAxisPanel);
 set(ax,'Units','pixels');
-set(ax,'NextPlot','replace');
+%set(ax,'NextPlot','replace');
+set(ax,'NextPlot','add');
 set(ax,'Position',[1 1 10 10]);
 set(ax,'Box','off');
 set(ax,'TickLength',[0 0]);
@@ -46,17 +47,17 @@ handles.GUIHandles.textCoordinateSystem = uicontrol(gcf,'Units','pixels','Parent
 
 % Text box
 handles.GUIHandles.textAnn1=annotation('textbox',[0.02 0.3 0.7 0.2]);
-set(handles.GUIHandles.textAnn1,'Units','pixels');
+set(handles.GUIHandles.textAnn1,'Units','pixels','HitTest','off');
 set(handles.GUIHandles.textAnn1,'Position',[50 235 1000 20]);
 set(handles.GUIHandles.textAnn1,'VerticalAlignment','bottom');
 set(handles.GUIHandles.textAnn1,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[0.35 0.35 0.35]);
 handles.GUIHandles.textAnn2=annotation('textbox',[0.02 0.3 0.7 0.2]);
-set(handles.GUIHandles.textAnn2,'Units','pixels');
+set(handles.GUIHandles.textAnn2,'Units','pixels','HitTest','off');
 set(handles.GUIHandles.textAnn2,'Position',[50 215 1000 20]);
 set(handles.GUIHandles.textAnn2,'VerticalAlignment','bottom');
 set(handles.GUIHandles.textAnn2,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[0.35 0.35 0.35]);
 handles.GUIHandles.textAnn3=annotation('textbox',[0.02 0.3 0.7 0.2]);
-set(handles.GUIHandles.textAnn3,'Units','pixels');
+set(handles.GUIHandles.textAnn3,'Units','pixels','HitTest','off');
 set(handles.GUIHandles.textAnn3,'Position',[50 195 1000 20]);
 set(handles.GUIHandles.textAnn3,'VerticalAlignment','bottom');
 set(handles.GUIHandles.textAnn3,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[0.35 0.35 0.35]);

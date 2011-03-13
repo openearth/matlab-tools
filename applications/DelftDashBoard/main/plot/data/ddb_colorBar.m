@@ -27,6 +27,7 @@ switch lower(opt)
         set(clrbar,'Tag','colorbar');
         set(clrbar,'Box','off');
         set(clrbar,'TickLength',[0 0]);
+        set(clrbar,'NextPlot','add');
         handles.GUIHandles.colorBar=clrbar;
         setHandles(handles);
     case{'update'}
@@ -48,7 +49,6 @@ switch lower(opt)
             fl=fill(x,y,'b');hold on;
             set(fl,'FaceColor',col,'LineStyle','none');
         end
-        set(handles.GUIHandles.colorBar,'Tag','colorbar');
         set(handles.GUIHandles.colorBar,'XTick',[]);
         set(handles.GUIHandles.colorBar,'xlim',[0 1],'ylim',[clim(1) clim(2)]);
         set(handles.GUIHandles.colorBar,'Box','off');
