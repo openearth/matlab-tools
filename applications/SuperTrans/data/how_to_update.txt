@@ -11,3 +11,6 @@ for option 2, a short how to
 3 save as *.csv
 4 repeat 2&3 for everey *.csv you whish to update
 5 done
+
+run supertrans_csv2mat.m
+

@@ -16,7 +16,7 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 % log   : contains all conversion parameters that were used.
 %         To check this output, use 'var2evalstr(log)'.
 %
-% Optionally the data structure with EPSG codes van be pre-loaded 
+% Optionally the data structure with EPSG codes can be pre-loaded 
 % * in the active memory, 
 % * CONVERTCOORDINATES can be told to keep it as persistent dataset 
 %   To remove it from memory, see PERSISTENT, or issue clear all

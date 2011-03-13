@@ -48,14 +48,14 @@ function varargout = supertrans_csv2mat
 clear all
 
 %% get all csv files in csv dir
-csvFiles = dir(fullfile(filepathstr(mfilename('fullpath')),'csv_files/*.csv'));
-
+csvFiles = dir2(fullfile(filepathstr(mfilename('fullpath'))),'dir_excl','[^(csv_files)|(custom_additions_to_epsg_db)]','file_incl','\.csv$'); 
+csvFiles([csvFiles.isdir]) = [];
 %% add them all to superTransData.m
 for iCsvFile = 1:length(csvFiles)
     fclose all;
     
     disp(['processing ',num2str(iCsvFile,'%0.3d'),' of ',num2str(length(csvFiles),'%0.3d'),': ',csvFiles(iCsvFile).name])
-    fid=fopen(fullfile('csv_files',csvFiles(iCsvFile).name));
+    fid = fopen([csvFiles(iCsvFile).pathname,csvFiles(iCsvFile).name]);
 
     %% get header names
     tLine0=fgetl(fid);
@@ -67,6 +67,17 @@ for iCsvFile = 1:length(csvFiles)
     fileName = csvFiles(iCsvFile).name;
     fileName = fileName(1:end-4);
     
+    if exist('EPSG','var')
+        if isfield(EPSG,fileName)
+            fields = fieldnames(EPSG.(fileName));
+            nn = length(EPSG.(fileName).(fields{1}));
+        else
+            nn = 0;
+        end
+    else
+        nn = 0;
+    end
+        
     %% find headers that refer to data that should be interpreted as numbers
     %in stead of strings
     for jj=1:length(rowNames) 
@@ -89,7 +100,7 @@ for iCsvFile = 1:length(csvFiles)
     for ii=1:2147483647 %max size of for loop
         tLine = fgetl(fid);
         if ~ischar(tLine),   break,   end
-        % check for text qualifiers '"'; if they are found, 
+        % check for text qualifiers '"'; if they are found,
         % add new lines till another text qualifier is found
         if any(strfind(tLine,'"'))
             while odd(sum(tLine=='"'))
@@ -99,21 +110,21 @@ for iCsvFile = 1:length(csvFiles)
             textQualifiers = strfind(tLine,'"');
             delimiters = strfind(tLine,',');
             for kk=1:2:length(textQualifiers)
-            tLine(delimiters(delimiters>textQualifiers(kk)&delimiters<textQualifiers(kk+1)))=';';
+                tLine(delimiters(delimiters>textQualifiers(kk)&delimiters<textQualifiers(kk+1)))=';';
             end
         end
         content=strread(tLine,'%q','delimiter',',');
-         for jj=1:length(content)
+        for jj=1:length(content)
             if isNum(jj)
-            EPSG.(fileName).(rowNames{jj})(ii)=str2double(content(jj)); 
+                EPSG.(fileName).(rowNames{jj})(ii+nn)=str2double(content(jj));
             else
-            EPSG.(fileName).(rowNames{jj})(ii)=content(jj); 
+                EPSG.(fileName).(rowNames{jj})(ii+nn)=content(jj);
             end
-         end
+        end
     end
     fclose(fid);
 end
-   
+
 save(fullfile(filepathstr(mfilename('fullpath')),'EPSG'),'-struct','EPSG','-V6'); 
 
 if nargout==1
