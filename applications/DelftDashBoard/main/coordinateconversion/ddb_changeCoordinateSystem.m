@@ -21,7 +21,7 @@ end
 
 switch nsys,
     case{'wgs 84'}
-        handles.screenParameters.xMaxRange=[-180 180];
+        handles.screenParameters.xMaxRange=[-360 360];
         handles.screenParameters.yMaxRange=[-90 90];
     case{'wgs 84 / utm'}
         utmzone1=handles.screenParameters.UTMZone{1};

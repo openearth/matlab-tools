@@ -125,9 +125,33 @@ switch lower(tp)
         tilesizex=dx*nx;
         tilesizey=dy*ny;
         
+        %% Directories and names
+        name=handles.bathymetry.dataset(iac).name;
+        levdir=['zl' num2str(ilev,'%0.2i')];
+
+        iopendap=0;
+        if strcmpi(handles.bathymetry.dataset(iac).URL(1:4),'http')
+            % OpenDAP
+            iopendap=1;
+            remotedir=[handles.bathymetry.dataset(iac).URL '/' levdir '/'];
+            localdir=[handles.bathyDir name '\' levdir '\'];
+        else
+            % Local
+            localdir=[handles.bathymetry.dataset(iac).URL '\' levdir '\'];
+            remotedir=localdir;
+        end
+        
+        %% Tiles
+
         xx=x0:tilesizex:x0+(nnx-1)*tilesizex;
         yy=y0:tilesizey:y0+(nny-1)*tilesizey;
         
+        % Make sure that tiles are read east +180 deg lon.
+        xx=[xx-360 xx xx+360];       
+        iTileNrs=1:nnx;
+        iTileNrs=[iTileNrs iTileNrs iTileNrs];
+       
+        % Required tile indices
         ix1=find(xx<xl(1),1,'last');
         if isempty(ix1)
             ix1=1;
@@ -148,27 +172,31 @@ switch lower(tp)
         else
             iy2=length(yy);
         end
-
-        name=handles.bathymetry.dataset(iac).name;
-        levdir=['zl' num2str(ilev,'%0.2i')];
-
-        iopendap=0;
-        if strcmpi(handles.bathymetry.dataset(iac).URL(1:4),'http')
-            % OpenDAP
-            iopendap=1;
-            remotedir=[handles.bathymetry.dataset(iac).URL '/' levdir '/'];
-            localdir=[handles.bathyDir name '\' levdir '\'];
-        else
-            % Local
-            localdir=[handles.bathymetry.dataset(iac).URL '\' levdir '\'];
-            remotedir=localdir;
-        end
-
+                
         nnnx=ix2-ix1+1;
         nnny=iy2-iy1+1;
         z=nan(nnny*ny,nnnx*nx);
+        
+        iTilesX=iTileNrs(ix1:ix2);
+        x0Tiles=xx(ix1:ix2);
 
-        for i=ix1:ix2
+        % Mesh of horizontal coordinates
+%        xx=x0+(iTilesX(1)-1)*tilesizex:dx:x0+nnnx*tilesizex-dx;
+        xx=x0Tiles(1):dx:x0Tiles(end)+tilesizex-dx;
+        yy=y0+(iy1-1)*tilesizey:dy:y0+iy2*tilesizey-dy;
+        [x,y]=meshgrid(xx,yy);
+
+        % Start indices for each tile in larger matrix
+        for i=1:nnnx
+            iStartX(i)=find(abs(xx-x0Tiles(i))<1e-6);
+        end
+        
+        %% Get tiles
+%        for i=ix1:ix2
+        for i=1:nnnx
+
+            itile=iTilesX(i);
+            
             for j=iy1:iy2
 
                 zzz=zeros(ny,nx);
@@ -176,11 +204,11 @@ switch lower(tp)
                 
                 % First check whether file exists at at all
                 
-                iav=find(handles.bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==i & handles.bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
+                iav=find(handles.bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==itile & handles.bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
                 
                 if ~isempty(iav)
                     
-                    filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                    filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(itile,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
                     
                     if iopendap
                         if handles.bathymetry.dataset(iac).useCache
@@ -216,17 +244,22 @@ switch lower(tp)
                     end
                 end
                 
-                z((j-iy1)*ny+1:(j-iy1+1)*ny,(i-ix1)*nx+1:(i-ix1+1)*nx)=zzz;
-
+%                z((j-iy1)*ny+1:(j-iy1+1)*ny,(i-ix1)*nx+1:(i-ix1+1)*nx)=zzz;
+                z((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=zzz;
+                
+%                 figure(2)
+%                 pcolor(z);shading flat;
+% %                pause(1)
+%                 drawnow;
+% 
             end
         end
         
         z(z<-15000)=NaN;
         
-        xx=x0+(ix1-1)*tilesizex:dx:x0+ix2*tilesizex-dx;
-        yy=y0+(iy1-1)*tilesizey:dy:y0+iy2*tilesizey-dy;
-        [x,y]=meshgrid(xx,yy);
-        
+
+        %% Crop to requested limits
+
         ix1=find(xx<xl(1),1,'last');
         if isempty(ix1)
             ix1=1;
@@ -245,7 +278,6 @@ switch lower(tp)
             iy2=length(yy);
         end
 
-        % Crop to limits
         x=x(iy1:iy2,ix1:ix2);
         y=y(iy1:iy2,ix1:ix2);
         z=z(iy1:iy2,ix1:ix2);

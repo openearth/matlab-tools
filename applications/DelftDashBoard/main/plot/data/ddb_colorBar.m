@@ -16,7 +16,6 @@ switch lower(opt)
         clrbar=axes;
         set(clrbar,'Units','pixels');
         set(clrbar,'Parent',handles.GUIHandles.colorBarPanel);
-        set(clrbar,'Tag','map');
         pos(1)=1;
         pos(2)=1;
         pos(3)=pos(3);
@@ -49,6 +48,7 @@ switch lower(opt)
             fl=fill(x,y,'b');hold on;
             set(fl,'FaceColor',col,'LineStyle','none');
         end
+        set(handles.GUIHandles.colorBar,'Tag','colorbar');
         set(handles.GUIHandles.colorBar,'XTick',[]);
         set(handles.GUIHandles.colorBar,'xlim',[0 1],'ylim',[clim(1) clim(2)]);
         set(handles.GUIHandles.colorBar,'Box','off');

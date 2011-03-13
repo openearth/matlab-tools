@@ -2,7 +2,7 @@ function ddb_initializeScreenParameters
 
 handles=getHandles;
 
-handles.screenParameters.xMaxRange=[-180 180];
+handles.screenParameters.xMaxRange=[-360 360];
 handles.screenParameters.yMaxRange=[-90 90];
 
 handles.GUIData.backgroundImageType='bathymetry';

@@ -258,6 +258,8 @@ end
 
 ax=getappdata(hg,'axes');
 
+set(gcf,'CurrentAxes',ax);
+
 pos=get(ax, 'CurrentPoint');
 posx=pos(1,1);
 posy=pos(1,2);
