@@ -34,25 +34,44 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
 
     % Generate bathymetry
 
-    xx=handles.GUIData.x;
-    yy=handles.GUIData.y;
-    zz=handles.GUIData.z;
+%     xx=handles.GUIData.x;
+%     yy=handles.GUIData.y;
+%     zz=handles.GUIData.z;
     
-    dpsopt=handles.Model(md).Input(id).dpsOpt;
-
-    switch lower(dpsopt)
+    switch lower(handles.Model(md).Input(id).dpsOpt)
         case{'dp'}
-            x=handles.Model(md).Input(id).gridXZ;
-            y=handles.Model(md).Input(id).gridYZ;
+            xg=handles.Model(md).Input(id).gridXZ;
+            yg=handles.Model(md).Input(id).gridYZ;
         otherwise
-            x=handles.Model(md).Input(id).gridX;
-            y=handles.Model(md).Input(id).gridY;
+            xg=handles.Model(md).Input(id).gridX;
+            yg=handles.Model(md).Input(id).gridY;
     end
-
-    x(isnan(x))=0;
-    y(isnan(y))=0;
     
-    z=interp2(xx,yy,zz,x,y);
+    % Convert grid to cs of background image
+    coord=handles.screenParameters.coordinateSystem;
+    iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+    dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
+    dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
+    [xg,yg]=ddb_coordConvert(xg,yg,coord,dataCoord);
+
+    % Find minimum grid resolution
+    [dmin,dmax]=findMinMaxGridSize(xg,yg,'cstype',handles.screenParameters.coordinateSystem.type);
+    xl(1)=min(min(xg));
+    xl(2)=max(max(xg));
+    yl(1)=min(min(yg));
+    yl(2)=max(max(yg));
+    dbuf=(xl(2)-xl(1))/10;
+    xl(1)=xl(1)-dbuf;
+    xl(2)=xl(2)+dbuf;
+    yl(1)=yl(1)-dbuf;
+    yl(2)=yl(2)+dbuf;
+%    dmin=15000;
+    [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+    
+    xg(isnan(xg))=0;
+    yg(isnan(yg))=0;
+    
+    z=interp2(xx,yy,zz,xg,yg);
     
     switch opt
         case{'overwrite'}
@@ -63,7 +82,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
 
     z=handles.Model(md).Input(id).depth;
     
-    handles.Model(md).Input(id).depthZ=GetDepthZ(z,dpsopt);
+    handles.Model(md).Input(id).depthZ=GetDepthZ(z,handles.Model(md).Input(id).dpsOpt);
 
     ddb_wldep('write',[attName '.dep'],z);
 

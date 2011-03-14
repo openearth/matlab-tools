@@ -4,8 +4,19 @@ ok=0;
 
 zoomlev=0;
 
-if nargin>3
-    zoomlev=varargin{1};
+bathy=handles.screenParameters.backgroundBathymetry;
+
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'zoomlevel'}
+                zoomlev=varargin{i+1};
+            case{'bathymetry'}
+                bathy=varargin{i+1};
+            case{'maxcellsize'}
+                maxcellsize=varargin{i+1}; % in metres!
+        end
+    end
 end
 
 x=[];
@@ -15,7 +26,7 @@ z=[];
 tic
 disp('Getting bathymetry data ...');
 
-iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+iac=strmatch(lower(bathy),lower(handles.bathymetry.datasets),'exact');
 xsz=xl(2)-xl(1);
 
 tp=handles.bathymetry.dataset(iac).type;
@@ -105,8 +116,11 @@ switch lower(tp)
         end
         
         if zoomlev==0
-            gsmin=(xl(2)-xl(1))/600;
-            ilev=find(cellsizex<gsmin,1,'last');
+            % Find zoom level based on resolution
+            if strcmpi(handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic')
+                cellsizex=cellsizex*111111;
+            end
+            ilev=find(cellsizex<=maxcellsize,1,'last');
             if isempty(ilev)
                 ilev=1;
             end
@@ -147,9 +161,12 @@ switch lower(tp)
         yy=y0:tilesizey:y0+(nny-1)*tilesizey;
         
         % Make sure that tiles are read east +180 deg lon.
-        xx=[xx-360 xx xx+360];       
         iTileNrs=1:nnx;
-        iTileNrs=[iTileNrs iTileNrs iTileNrs];
+        
+        if strcmpi(handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic') && x0<-179
+            xx=[xx-360 xx xx+360];       
+            iTileNrs=[iTileNrs iTileNrs iTileNrs];
+        end
        
         % Required tile indices
         ix1=find(xx<xl(1),1,'last');
@@ -172,7 +189,8 @@ switch lower(tp)
         else
             iy2=length(yy);
         end
-                
+        
+        % Total number of tiles in x and y direction
         nnnx=ix2-ix1+1;
         nnny=iy2-iy1+1;
         z=nan(nnny*ny,nnnx*nx);
@@ -181,7 +199,6 @@ switch lower(tp)
         x0Tiles=xx(ix1:ix2);
 
         % Mesh of horizontal coordinates
-%        xx=x0+(iTilesX(1)-1)*tilesizex:dx:x0+nnnx*tilesizex-dx;
         xx=x0Tiles(1):dx:x0Tiles(end)+tilesizex-dx;
         yy=y0+(iy1-1)*tilesizey:dy:y0+iy2*tilesizey-dy;
         [x,y]=meshgrid(xx,yy);

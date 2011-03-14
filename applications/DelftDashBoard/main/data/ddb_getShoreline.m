@@ -17,8 +17,32 @@ switch lower(ldb.type)
         dx=ldb.zoomLevel(ires).dx;
         dy=ldb.zoomLevel(ires).dy;
 
+        iopendap=0;
+        if strcmpi(ldb.URL(1:4),'http')
+            % OpenDAP
+            iopendap=1;
+            remotedir=[ldb.URL '/' zoomstr '/'];
+            localdir=[handles.shorelineDir name '\' zoomstr '\'];
+        else
+            % Local
+            localdir=[ldb.URL '\' zoomstr '\'];
+            remotedir=localdir;
+        end
+
         xx=x0:dx:x0+(ntilesx-1)*dx;
         yy=y0:dy:y0+(ntilesy-1)*dy;
+        
+                
+        % Make sure that tiles are read east +180 deg lon.
+        iTileNrs=1:ntilesx;
+
+        xAddTiles=zeros(1,ntilesx);
+        
+        if strcmpi(ldb.horizontalCoordinateSystem.type,'geographic') && x0==-180
+            xx=[xx-360 xx xx+360];
+            xAddTiles=[xAddTiles-360 xAddTiles xAddTiles+360];
+            iTileNrs=[iTileNrs iTileNrs iTileNrs];
+        end
         
         ix1=find(xx<xl(1),1,'last');
         if isempty(ix1)
@@ -41,28 +65,32 @@ switch lower(ldb.type)
             iy2=length(yy);
         end
 
-        iopendap=0;
-        if strcmpi(ldb.URL(1:4),'http')
-            % OpenDAP
-            iopendap=1;
-            remotedir=[ldb.URL '/' zoomstr '/'];
-            localdir=[handles.shorelineDir name '\' zoomstr '\'];
-        else
-            % Local
-            localdir=[ldb.URL '\' zoomstr '\'];
-            remotedir=localdir;
-        end
+        nnnx=ix2-ix1+1;
+        nnny=iy2-iy1+1;
+
+        iTilesX=iTileNrs(ix1:ix2);
+        xAddTiles=xAddTiles(ix1:ix2);
+%         x0Tiles=xx(ix1:ix2);
+
+%         % Start indices for each tile in larger matrix
+%         for i=1:nnnx
+%             iStartX(i)=find(abs(xx-x0Tiles(i))<1e-6);
+%         end
 
         x=[];
         y=[];
-        for i=ix1:ix2
+        for i=1:nnnx
+            
+            itile=iTilesX(i);
+            xAdd=xAddTiles(i);
+
             for j=iy1:iy2
 
-                iav=find(ldb.zoomLevel(ires).iAvailable==i & ldb.zoomLevel(ires).jAvailable==j, 1);
+                iav=find(ldb.zoomLevel(ires).iAvailable==itile & ldb.zoomLevel(ires).jAvailable==j, 1);
                     
                 if ~isempty(iav)
                     
-                    filename=[name '.' zoomstr '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                    filename=[name '.' zoomstr '.' num2str(itile,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
                     
                     if iopendap
                         if ldb.useCache
@@ -86,13 +114,13 @@ switch lower(ldb.type)
                     if iopendap && ~ldb.useCache
                         try
                             xy=nc_varget(ncfile,'xy');
-                            x=[x xy(1,:) NaN];
+                            x=[x xy(1,:)+xAdd NaN];
                             y=[y xy(2,:) NaN];
                         end
                     else
                         if exist(ncfile,'file')
                             xy=nc_varget(ncfile,'xy');
-                            x=[x xy(1,:) NaN];
+                            x=[x xy(1,:)+xAdd NaN];
                             y=[y xy(2,:) NaN];
                         end
                     end

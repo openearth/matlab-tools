@@ -171,12 +171,40 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=6000000
     dy=handles.Toolbox(tb).Input.dY;
     rot=pi*handles.Toolbox(tb).Input.rotation/180;
     zmax=handles.Toolbox(tb).Input.zMax;
-    [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,handles.GUIData.x,handles.GUIData.y,handles.GUIData.z);
     
+    % Find minimum grid resolution
+    dmin=min(dx,dy);
+    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+        dmin=dmin*111111;
+    end
+
+    % Find coordinates of corner points
+    x(1)=xori;
+    y(1)=yori;
+    x(2)=x(1)+nx*dx*cos(pi*handles.Toolbox(tb).Input.rotation/180);
+    y(2)=y(1)+nx*dx*sin(pi*handles.Toolbox(tb).Input.rotation/180);
+    x(3)=x(2)+ny*dy*cos(pi*(handles.Toolbox(tb).Input.rotation+90)/180);
+    y(3)=y(2)+ny*dy*sin(pi*(handles.Toolbox(tb).Input.rotation+90)/180);
+    x(4)=x(3)+nx*dx*cos(pi*(handles.Toolbox(tb).Input.rotation+180)/180);
+    y(4)=y(3)+nx*dx*sin(pi*(handles.Toolbox(tb).Input.rotation+180)/180);
+
+    xl(1)=min(x);
+    xl(2)=max(x);
+    yl(1)=min(y);
+    yl(2)=max(y);
+    dbuf=(xl(2)-xl(1))/20;
+    xl(1)=xl(1)-dbuf;
+    xl(2)=xl(2)+dbuf;
+    yl(1)=yl(1)-dbuf;
+    yl(2)=yl(2)+dbuf;
+    [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+    
+    [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xx,yy,zz);
+
     close(wb);
-    
+
     handles=feval(f,handles,ad,x,y);
-    
+
     setHandles(handles);
     
 else

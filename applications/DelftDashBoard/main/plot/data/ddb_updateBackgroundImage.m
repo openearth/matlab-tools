@@ -47,7 +47,11 @@ clear xtmp ytmp xtmp2 ytmp2
 switch handles.GUIData.backgroundImageType
     case{'bathymetry'}
         % First get z data
-        [x0,y0,z,ok]=ddb_getBathy(handles,xl0,yl0);
+        maxcellsize=(xl0(2)-xl0(1))/600;
+        if strcmpi(dataCoord.type,'geographic')
+            maxcellsize=maxcellsize*111111;
+        end
+        [x0,y0,z,ok]=ddb_getBathy(handles,xl0,yl0,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',maxcellsize);
         if ok
             % Now convert to current coordinate system
             res=(xl(2)-xl(1))/(pos(3)/imageQuality);
