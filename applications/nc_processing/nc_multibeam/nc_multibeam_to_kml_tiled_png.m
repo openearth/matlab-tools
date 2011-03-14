@@ -395,6 +395,7 @@ if OPT.make
     multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML - Getting unique png file names...','color',[0.9 0.4 0.1])
     mkdir(fullfile(OPT.basepath_local,OPT.relativepath,'KML'));
     dates               = dir2(fullfile(OPT.basepath_local,OPT.relativepath),'depth',0,'dir_excl','^KML$');
+    dates               = dates(2:end);
     dates               = strcat({dates([dates.isdir]).name}');
     datenums            = datenum(dates,'yyyy-mm-dd');
     tiles               = dir2(fullfile(OPT.basepath_local,OPT.relativepath),'file_incl','\.png$');
