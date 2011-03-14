@@ -244,14 +244,8 @@ switch lower(tp)
                     end
                 end
                 
-%                z((j-iy1)*ny+1:(j-iy1+1)*ny,(i-ix1)*nx+1:(i-ix1+1)*nx)=zzz;
                 z((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=zzz;
                 
-%                 figure(2)
-%                 pcolor(z);shading flat;
-% %                pause(1)
-%                 drawnow;
-% 
             end
         end
         

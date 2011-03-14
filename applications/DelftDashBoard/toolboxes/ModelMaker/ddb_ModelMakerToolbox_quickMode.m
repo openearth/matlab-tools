@@ -152,7 +152,7 @@ function generateGrid
 
 handles=getHandles;
 
-if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=2000000
+if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=6000000
     f=str2func(['ddb_generateGrid' handles.Model(md).name]);
     try
         handles=feval(f,handles,ad,0,0,'ddb_test');

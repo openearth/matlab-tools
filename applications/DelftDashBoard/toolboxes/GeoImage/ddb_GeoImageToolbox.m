@@ -125,11 +125,20 @@ end
 
 try
     [xx,yy,c2]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',handles.Toolbox(tb).Input.zoomLevel,'npix',handles.Toolbox(tb).Input.nPix,'whatKind',handles.Toolbox(tb).Input.whatKind,'cache',handles.satelliteDir);
+    % Now crop the image
+    ii1=find(xx>=xl0(1),1,'first');
+    ii2=find(xx<xl0(2),1,'last');
+    jj1=find(yy>=yl0(1),1,'first');
+    jj2=find(yy<yl0(2),1,'last');
+    xx=xx(ii1:ii2);
+    yy=yy(jj1:jj2);
+    c2=c2(jj1:jj2,ii1:ii2,:);
 catch
     close(wb);
     GiveWarning('Warning','Something went wrong while generating image. Try reducing zoom level or resolution.');
     return
 end
+
 
 % Now convert to current coordinate system
 if ~strcmpi(cs.name,dataCoord.name) || ~strcmpi(cs.type,dataCoord.type)
@@ -149,6 +158,11 @@ if ~strcmpi(cs.name,dataCoord.name) || ~strcmpi(cs.type,dataCoord.type)
     xx=xl(1):res:xl(2);
     yy=yl(1):res:yl(2);
 end
+
+xl(1)=xx(1);
+xl(2)=xx(end);
+yl(1)=yy(1);
+yl(2)=yy(end);
 
 close(wb);
 
