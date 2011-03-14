@@ -14,12 +14,12 @@ function knowledgegraphs(session) %#ok<INUSD>
 % See also: kngr_getOntology, kngr_getDefaultSession, kngr_getPosition, kngr_plotGraph
  
 %--------------------------------------------------------------------------------
-% Copyright(c) Deltares 2004 - 2007  FOR INTERNAL USE ONLY
+% Copyright(c) Delft University of Technology 2004 - 2011  FOR INTERNAL USE ONLY
 % Version:  Version 1.0, December 2007 (Version 1.0, December 2007)
 % By:      <Mark van Koningsveld (email:mark.vankoningsveld@deltares.nl)>
 %--------------------------------------------------------------------------------
 
-clear all; close all; clc
+clc
 % try warning off; delete('lastsession.mat'); warning on; end
 
 global ontology; 
@@ -71,22 +71,22 @@ delete(findall(tbh,'TooltipString','Pan'));
 
 %% add customised toolbar buttons
 adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','addRelation');
-set(adj,'ClickedCallback','addRelation');
+set(adj,'ClickedCallback','kngr_addRelation');
 set(adj,'Tag','addRelation');
 set(adj,'cdata',kngr_makeIcon('gui\icons\up-32x322.bmp',20));
 
 adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','deleteRelation');
-set(adj,'ClickedCallback','deleteRelation');
+set(adj,'ClickedCallback','kngr_deleteRelation');
 set(adj,'Tag','deleteRelation');
 set(adj,'cdata',kngr_makeIcon('gui\icons\down-32x322.bmp',20));
 
 adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','deleteVertex');
-set(adj,'ClickedCallback','deleteVertex');
+set(adj,'ClickedCallback','kngr_deleteVertex');
 set(adj,'Tag','deleteVertex');
 set(adj,'cdata',kngr_makeIcon('gui\icons\down-32x322.bmp',20));
 
-adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','getDictionaryInfoForWord');
-set(adj,'ClickedCallback','getDictionaryInfoForWord;');
+adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Get dictionary info for word');
+set(adj,'ClickedCallback','kngr_getdictionaryInfoForWord;');
 set(adj,'Tag','getDictionaryInfoForWord');
 set(adj,'cdata',kngr_makeIcon('gui\icons\add-32x322.bmp',20));
 

@@ -42,14 +42,14 @@ if isempty(idfrom)
         idfrom = size(session.vertices,1)+1;
     end
     session.vertices{idfrom,1} = from;
-    session.vertices{idfrom,2} = [random('Normal',0,10), random('Normal',0,10)];
+    session.vertices{idfrom,2} = [rand(1,10)*10, rand(1,10)*10];
 end
 
 if isempty(idto)
     newedge = 1;
     idto = size(session.vertices,1)+1;
     session.vertices{idto,1} = to;
-    session.vertices{idto,2} = [random('Normal',0,10), random('Normal',0,10)];
+    session.vertices{idto,2} = [rand(1,10)*10, rand(1,10)*10];
 end
 
 if ~isfield(session,'edges')
@@ -78,4 +78,4 @@ session = rmfield(session,'edgeHandles');
 session = rmfield(session,'edgeLabels');
 cla
 
-plotGraph(gcf)  
+kngr_plotGraph(gcf)  
