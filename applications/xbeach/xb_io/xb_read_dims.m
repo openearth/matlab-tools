@@ -151,8 +151,8 @@ elseif strcmpi(extension, '.dat')
     XBdims.tidecorners = nan;
     XBdims.windtime = nan;
     
-    XBdims.globalx_DATA = dims.x;
-    XBdims.globaly_DATA = dims.y;
+    XBdims.globalx_DATA = dims.x';
+    XBdims.globaly_DATA = dims.y';
     XBdims.globaltime_DATA = dims.tsglobal;
     XBdims.meantime_DATA = dims.tsmean;
     XBdims.pointtime_DATA = dims.tspoints;

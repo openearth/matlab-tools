@@ -158,6 +158,14 @@ if xb_exist(xb, 'fp') && ~xb_exist(xb, 'Tp')
     xb = xb_set(xb, 'Tp', 1./xb_get(xb, 'fp'));
 end
 
+if xb_exist(xb, 'mainang') && ~xb_exist(xb, 'dir')
+    xb = xb_set(xb, 'dir', xb_get(xb, 'mainang'));
+end
+
+if xb_exist(xb, 'dir') && ~xb_exist(xb, 'mainang')
+    xb = xb_set(xb, 'mainang', xb_get(xb, 'dir'));
+end
+
 % extend constant parameters to length of time series
 for i = 1:length(vars)
     if strcmpi(vars{i}, 'contents'); continue; end;

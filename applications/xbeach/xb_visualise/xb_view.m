@@ -305,7 +305,7 @@ function ui_read(obj)
                 otherwise
                     error('Unsupported XBeach strucure supplied');
             end
-        elseif ischar(info.input) && exist(info.input, 'dir')
+        elseif ischar(info.input) && (exist(info.input, 'dir') || exist(info.input, 'file'))
         
             info.type = 'output_dir';
             info.fpath = info.input;
@@ -502,7 +502,7 @@ function plot_2d(obj, info, data, vars)
     for i = 1:length(vars)
         sp(i) = subplot(sy, sx, i, 'Parent', findobj(pobj, 'Tag', 'PlotPanel'));
         
-        data{i} = squeeze(data{i})';
+        data{i} = squeeze(data{i});
         
         if all(size(info.x) == size(data{i})) && all(size(info.y) == size(data{i}))
             if update
