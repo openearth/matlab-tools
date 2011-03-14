@@ -49,12 +49,14 @@ function D = dir2(varargin)
 %
 %   Output:
 %   D        = a struct array with the following fields: 
-%                     name
-%                     date
-%                     bytes
-%                     isdir
-%                     datenum
-%                     pathname
+%       name     -- Filename
+%       date     -- Modification date
+%       bytes    -- Number of bytes allocated to the file
+%       isdir    -- 1 if name is a directory and 0 if not
+%       datenum  -- Modification date as a MATLAB serial date number.
+%                   This value is locale-dependent.
+%       pathname -- path to the file, including trailing fileseperator, so
+%                   that [D.pathname D.name] is always the full file path
 %
 %   Examples
 %
@@ -168,6 +170,8 @@ else
     nextarg = 1;
 end
 
+OPT.basepath = relativeToabsolutePath(OPT.basepath);
+
 %% overrule default settings by property pairs, given in varargin
 
 OPT = setproperty(OPT, varargin{nextarg:end});
@@ -184,39 +188,54 @@ end
 %% find filenames
 %  pattern_excl is appended with two criteria that exclude '..' and '.' from
 %  the dir inquiry. See 'help regexp' for explanation.
-D = dir_in_subdir(OPT.basepath,[OPT.dir_excl '|^\.{1,2}$'],OPT.file_incl,OPT.depth);
+newD = dir_in_subdir(OPT.basepath,[OPT.dir_excl '|^\.{1,2}$'],OPT.file_incl,OPT.depth);
 
-%% adding basepath itself too ?
+%% add basepath
+% split basepath in path and folder name
+[a,b] = fileparts(OPT.basepath);
 
-if 0
+% query the folder
+D     = dir(a);
 
-   tmp = dir(OPT.basepath);
-   D(end+1).name     = '';
-   D(end  ).date     = tmp.date;
-   D(end  ).bytes    = tmp.bytes;
-   D(end  ).isdir    = tmp.isdir;
-   D(end  ).pathname = OPT.basepath;
-   try % old matlab versions don't have this field
-   D(end  ).datenum  = tmp.datenum;
-   end
+% find the folder from the basepath
+D     = D([D.isdir]);
+D     = D(ismember({D.name},b));
 
+% add field datenum for old matlab versions
+if ~isfield(D,'datenum')
+    D.datenum = deal(nan);
 end
 
+D(1).pathname = [a filesep];
+
+D(1).bytes    = sum([newD(~[newD.isdir]).bytes]);
+
+% concatenate D
+D = [D; newD];
+
+if isempty(D)
+    % add the field pathname to the empty struct
+    D(1).pathname = '';
+    D(1) = [];
+end
 %EOF
 
 function D = dir_in_subdir(basepath,dir_excl,file_incl,depth)
 
 %% do a regular dir query
-D          = dir([basepath filesep]);
+D = dir([basepath filesep]);
+
+% add field datenum for old matlab versions
+if ~isfield(D,'datenum')
+    [D.datenum] = deal(nan);
+end
 
 %% fill empty fields of D with NaN, space or false
 [D(cellfun('isempty',{D.name    })).name    ] = deal(' ');
 [D(cellfun('isempty',{D.date    })).date    ] = deal(nan);
 [D(cellfun('isempty',{D.bytes   })).bytes   ] = deal(nan);
 [D(cellfun('isempty',{D.isdir   })).isdir   ] = deal(false(1));
-try % old matlab versions don't have this field
 [D(cellfun('isempty',{D.datenum })).datenum ] = deal(nan);
-end
 
 %% exclude directories that match 'dir_excl' from D
 dirs            = find([D.isdir]);
@@ -243,15 +262,66 @@ if depth>0
     % loop all directories, and add their contents
     for ii = find(dirs)
         newD = dir_in_subdir(...
-            [basepath filesep D(ii).name], ...   % basepath:  construct form basepath and directory name
+            [basepath filesep D(ii).name], ...   % basepath:  construct from basepath and directory name
             dir_excl,...                         % dir_excl:  keep as is
             file_incl,...                        % file_incl: keep as is
             depth-1);                            % depth:     subtract 1
         if ~isempty(newD)
-            D(ii).bytes = sum([newD.bytes]);
+            D(ii).bytes = sum([newD(~[newD.isdir]).bytes]);
             D = [D; newD];
         else
             D(ii).bytes = 0;
         end
     end
 end
+
+function s = relativeToabsolutePath(s)
+% this subfunction converts relative file paths to absolute file paths. The
+% function is esigned to make dir2 mimic the output of dir as much as
+% possible
+
+s = fullfile(s);
+
+if isempty(s)
+    s = pwd;
+elseif s(1) == filesep
+    % then basepath is realtive to  do nothing
+    tmp = pwd;
+    s   = [tmp(1:2) s];
+elseif strcmp(s,'.')
+    s   = pwd;
+elseif strcmp(s,'..')
+    s   = [pwd filesep s];
+else
+    if length(s) >= 2
+        if strcmp(s(2),':')
+            % it is already an absolute path
+        else
+            s   = [pwd filesep s];
+        end
+    else
+        s   = [pwd filesep s];
+    end
+end
+
+% append filesep
+if ~strcmp(s(end),filesep)
+    s = [s filesep];
+end
+
+% remove 'up one folder' statements ('../')
+while 1
+    a = strfind(s,filesep);
+    b = strfind(s,[filesep '..' filesep]);
+    
+    if isempty(b)
+        return
+    end
+    c = find(ismember(a,b));
+    if c(1)==1;
+        s = s([1:a(c(1)) a(c(1)+1)+1 : end]);
+    else
+        s = s([1:a(c(1)-1) a(c(1)+1)+1 : end]);
+    end
+end
+
