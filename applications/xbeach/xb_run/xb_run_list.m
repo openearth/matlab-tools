@@ -1,21 +1,22 @@
-function varargout = xb_run_list(varargin)
-%XB_RUN_LIST  One line description goes here.
+function xb_run_list(varargin)
+%XB_RUN_LIST  Lists registered runs
 %
-%   More detailed description goes here.
+%   Lists runs registered by the xb_run_register function.
 %
 %   Syntax:
-%   varargout = xb_run_list(varargin)
+%   xb_run_list(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = n:      Number of log lines to show
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
 %   xb_run_list
+%   xb_run_list('n', 10)
 %
-%   See also 
+%   See also xb_run, xb_run_remote, xb_run_register
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -73,7 +74,7 @@ runs = xb_getpref('runs');
 formatstr = '%8s %-15s %-6s %-25s %-7s %-50s';
 
 if ~isempty(runs) && iscell(runs)
-    hdr = sprintf(formatstr, 'ID', 'Name', 'Nodes', 'Binary', 'Remote', 'Log');
+    hdr = sprintf(['  ' formatstr], 'ID', 'Name', 'Nodes', 'Binary', 'Remote', 'Log');
     
     disp(hdr);
     fprintf([repmat('-',1,length(hdr)) '\n']);
@@ -89,7 +90,8 @@ if ~isempty(runs) && iscell(runs)
             
             for j = 1:max([size(line,1) 1])
                 if j == 1
-                    fprintf([formatstr '\n'], ...
+                    fprintf(['<a href="matlab:xb_run_unregister(''%s''); xb_run_list;">x</a> ' formatstr '\n'], ...
+                        num2str(xb.id), ...
                         num2str(xb.id), ...
                         xb.name, ...
                         num2str(xb.nodes), ...
@@ -97,7 +99,7 @@ if ~isempty(runs) && iscell(runs)
                         num2str(isfield(xb, 'ssh')), ...
                         line(j,:) );
                 else
-                    fprintf([formatstr '\n'], ...
+                    fprintf(['  ' formatstr '\n'], ...
                         '', ...
                         '', ...
                         '', ...
@@ -109,9 +111,12 @@ if ~isempty(runs) && iscell(runs)
             
             disp(' ');
         else
+            % unregister
             runs(i) = [];
         end
     end
+else
+    disp('No runs');
 end
 
 xb_setpref('runs', runs);

@@ -1,23 +1,21 @@
-function xb_run_register(xb, varargin)
-%XB_RUN_REGISTER  Registers XBeach run in preferences database
+function xb_run_unregister(id)
+%XB_RUN_UNREGISTER  Unregister registered run
 %
-%   Registers an XBeach run started from xb_run or xb_run_remote in a
-%   preference database for future use.
+%   Unregister run registered by xb_run_register
 %
 %   Syntax:
-%   xb_run_register(xb, varargin)
+%   xb_run_unregister(id)
 %
 %   Input:
-%   xb        = XBeach struct resulting from xb_run or xb_run_remote
-%   varargin  = none
+%   id        = Run index to be unregistered
 %
 %   Output:
 %   none
 %
 %   Example
-%   xb_run_register(xb)
+%   xb_run_unregister(1234)
 %
-%   See also xb_run, xb_run_remote, xb_run_list
+%   See also xb_run_register
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -60,14 +58,18 @@ function xb_run_register(xb, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% register run
+%% unregister run
 
-if xb_check(xb)
-    runs = xb_getpref('runs');
+runs = xb_getpref('runs');
 
-    if isempty(runs) || ~iscell(runs); runs = {}; end;
+if ~isempty(runs) && iscell(runs)
+    for i = 1:length(runs)
+        if xb_check(runs{i})
+            if ismember(xb_get(runs{i}, 'id'), str2double(id))
+                runs(i) = [];
+            end
+        end
+    end
 
-    runs = [runs(:) xb];
-    
     xb_setpref('runs', runs);
 end
