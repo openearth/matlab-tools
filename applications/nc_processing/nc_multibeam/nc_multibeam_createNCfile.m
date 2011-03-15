@@ -1,16 +1,22 @@
 function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
 %nc_multibeam_createNCfile
 %
+%    nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
+%
 %See also: nc_multibeam, snctools
 
-%% *** create empty outputfile
-% indicate NetCDF outputfile name and create empty structure
+%% create empty outputfile
+%  indicate NetCDF outputfile name and create empty structure
 if ~exist(OPT.netcdf_path,'dir')
     mkdir(OPT.netcdf_path)
 end
 
-mode     = netcdf.getConstant('NETCDF4');
-mode     = bitor(mode,netcdf.getConstant('NOCLOBBER'));
+% avoid use of netCDF as it is incompatible with R and arcGIS, onyl use netCDF4 when you really need it, 
+% a.g. when you have lots of nodatavalues, fort which netCDF4 provides effective per-variable zipping
+
+%mode    = netcdf.getConstant('NETCDF4'); 
+%mode    = bitor(mode,netcdf.getConstant('NOCLOBBER'));
+mode     = netcdf.getConstant('NOCLOBBER');
 NCid     = netcdf.create(ncfile,mode);
 globalID = netcdf.getConstant('NC_GLOBAL');
 dimSizeX = (OPT.mapsizex/OPT.gridsizex);
@@ -32,7 +38,8 @@ netcdf.putAtt(NCid,globalID, 'version',         OPT.version);
 netcdf.putAtt(NCid,globalID, 'terms_for_use',   OPT.terms_for_use);
 netcdf.putAtt(NCid,globalID, 'disclaimer',      OPT.disclaimer);
 
-% specify dimensions (time dimension is set to unlimited)
+%% specify dimensions (time dimension is set to unlimited)
+
 netcdf.defDim(NCid,          'time',        netcdf.getConstant('NC_UNLIMITED'));
 netcdf.defDim(NCid,          'y',           dimSizeY);
 netcdf.defDim(NCid,          'x',           dimSizeX);
@@ -41,12 +48,12 @@ netcdf.defDim(NCid,          'x',           dimSizeX);
 try
     epsg_wkt_str = epsg_wkt(OPT.EPSGcode);
 catch
-    epsg_wkt_str = 'epsg_wkt could not be retreived';
+    epsg_wkt_str = 'epsg_wkt could not be retrieved';
 end
 x  = unique(X);
 dx = abs(unique(diff(x)));
 if length(dx) == 1
-    actual_range_x = {'actual_range';[min(x)-.5*dx max(x)+.5*dx]};
+    actual_range_x = {'actual_range';[min(x)-.5*dx max(x)+.5*dx]}; % outer coordinates of corners, x/y are at centers
 else
     actual_range_x = {[]};
 end
@@ -54,7 +61,7 @@ end
 y  = unique(Y);
 dy = abs(unique(diff(y)));
 if length(dy) == 1
-    actual_range_y = {'actual_range';[min(y)-.5*dy max(y)+.5*dy]};
+    actual_range_y = {'actual_range';[min(y)-.5*dy max(y)+.5*dy]}; % outer coordinates of corners, x/y are at centers
 else
     actual_range_y = {[]};
 end

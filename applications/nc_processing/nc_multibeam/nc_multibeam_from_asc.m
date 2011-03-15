@@ -1,8 +1,6 @@
 function varargout = nc_multibeam_from_asc(varargin)
 %NC_MULTIBEAM_FROM_ASC  One line description goes here.
 %
-%      NC_MULTIBEAM_FROM_ASC
-%
 %   <OPT> = nc_multibeam_from_asc(<keyword,value>)
 %
 %See also: nc_multibeam
@@ -47,98 +45,106 @@ function varargout = nc_multibeam_from_asc(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
-OPT.block_size          = 1e7;
-OPT.make                = true;
-OPT.copy2server         = false;
+%% options
 
-OPT.basepath_local      = '';
-OPT.basepath_network    = '';
-OPT.basepath_opendap    = '';
-OPT.raw_path            = '';
-OPT.raw_extension       = '*.asc';
-OPT.netcdf_path         = [];
-OPT.cache_path          = fullfile(tempdir,'nc_asc');
-OPT.zip                 = true;          % are the files zipped?
-OPT.zip_extension       = '*.zip';       % zip file extension
-
-OPT.datatype            = 'multibeam';
-OPT.EPSGcode            = [];
-OPT.dateFcn             = @(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy mmm'); % how to extract the date from the filename
-
-OPT.mapsizex            = 5000;          % size of fixed map in x-direction
-OPT.mapsizey            = 5000;          % size of fixed map in y-direction
-OPT.gridsizex           = 5;             % x grid resolution
-OPT.gridsizey           = 5;             % y grid resolution
-OPT.xoffset             = 0;             % zero point of x grid
-OPT.yoffset             = 0;             % zero point of y grid
-OPT.zfactor             = 1;             % scale z by this factor
-OPT.shiftHalfCell       = true;          % set to true is the ASC grid files defines values at cell centers, not cell corners. (should be true see to http://en.wikipedia.org/wiki/ESRI_grid)
-OPT.default_nodata_val  = 9999;
-
-OPT.Conventions         = 'CF-1.4';
-OPT.CF_featureType      = 'grid';
-OPT.title               = 'Multibeam';
-OPT.institution         = ' ';
-OPT.source              = 'Topography measured with multibeam on project survey vessel';
-OPT.history             = 'Created with: $Id$ $HeadURL$';
-OPT.references          = 'No reference material available';
-OPT.comment             = 'Data surveyed by survey department for ...';
-OPT.email               = 'e@mail.com';
-OPT.version             = 'Trial';
-OPT.terms_for_use       = 'These data is for internal use by ... staff only!';
-OPT.disclaimer          = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
-
-if nargin==0
-    varargout = {OPT};
-    return
-end
-
-OPT = setproperty(OPT, varargin{:});
+   OPT.block_size          = 1e7;
+   OPT.make                = true;
+   OPT.copy2server         = false;
+   
+   OPT.basepath_local      = '';
+   OPT.basepath_network    = '';
+   OPT.basepath_opendap    = '';
+   OPT.raw_path            = '';
+   OPT.raw_extension       = '*.asc';
+   OPT.netcdf_path         = [];
+   OPT.cache_path          = fullfile(tempdir,'nc_asc');
+   OPT.zip                 = true;          % are the files zipped?
+   OPT.zip_extension       = '*.zip';       % zip file extension
+   
+   OPT.datatype            = 'multibeam';
+   OPT.EPSGcode            = [];
+   OPT.dateFcn             = @(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy mmm'); % how to extract the date from the filename
+   
+   OPT.mapsizex            = 5000;          % size of fixed map in x-direction
+   OPT.mapsizey            = 5000;          % size of fixed map in y-direction
+   OPT.gridsizex           = 5;             % x grid resolution
+   OPT.gridsizey           = 5;             % y grid resolution
+   OPT.xoffset             = 0;             % zero point of x grid
+   OPT.yoffset             = 0;             % zero point of y grid
+   OPT.zfactor             = 1;             % scale z by this factor
+   OPT.shiftHalfCell       = true;          % set to true is the ASC grid files defines values at cell centers, not cell corners. (should be true see to http://en.wikipedia.org/wiki/ESRI_grid)
+   OPT.default_nodata_val  = 9999;
+   
+   OPT.Conventions         = 'CF-1.4';
+   OPT.CF_featureType      = 'grid';
+   OPT.title               = 'Multibeam';
+   OPT.institution         = ' ';
+   OPT.source              = 'Topography measured with multibeam on project survey vessel';
+   OPT.history             = 'Created with: $Id$ $HeadURL$';
+   OPT.references          = 'No reference material available';
+   OPT.comment             = 'Data surveyed by survey department for ...';
+   OPT.email               = 'e@mail.com';
+   OPT.version             = 'Trial';
+   OPT.terms_for_use       = 'These data is for internal use by ... staff only!';
+   OPT.disclaimer          = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+   
+   if nargin==0
+       varargout = {OPT};
+       return
+   end
+   
+   OPT = setproperty(OPT, varargin{:});
 
 if OPT.make
-    multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
-    disp('generating nc files... ')
-    %% limited input check
-    if isempty(OPT.raw_path)
-        error %#ok<LTARG>
-    end
-    if isempty(OPT.netcdf_path)
-        error  %#ok<LTARG>
-    end
 
-    %%
-    EPSG             = load('EPSG');
-    mkpath(fullfile(OPT.basepath_local,OPT.netcdf_path));
-    delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'*.nc'));
+   multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
+   disp('generating nc files... ')
+   %% limited input check
+   if isempty(OPT.raw_path)
+       error %#ok<LTARG>
+   end
+   if isempty(OPT.netcdf_path)
+       error  %#ok<LTARG>
+   end
+
+   %%
+   EPSG             = load('EPSG');
+   mkpath(fullfile(OPT.basepath_local,OPT.netcdf_path));
+   delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'*.nc'));
+   
+   if OPT.zip
+       mkpath(OPT.cache_path);
+       fns = dir(fullfile(OPT.raw_path,OPT.zip_extension));
+   else
+       fns = dir(fullfile(OPT.raw_path,OPT.raw_extension));
+   end
     
-    if OPT.zip
-        mkpath(OPT.cache_path);
-        fns = dir(fullfile(OPT.raw_path,OPT.zip_extension));
-    else
-        fns = dir(fullfile(OPT.raw_path,OPT.raw_extension));
-    end
+%% check if files are found
+
+   if isempty(fns)
+       error('no raw files')
+   end
     
-    %% check if files are found
-    if isempty(fns)
-        error('no raw files')
-    end
+%% initialize waitbar
+
+   WB.done       = 0;
+   WB.bytesToDo  = 0;
+   if OPT.zip
+       multiWaitbar('raw_unzipping'  ,0,'Color',[0.2 0.7 0.9])
+   end
+   multiWaitbar('nc_reading'         ,0,'Color',[0.1 0.5 0.8],'label','Reading')
+   multiWaitbar('nc_writing'         ,0,'Color',[0.1 0.3 0.6],'label','Writing')
+   for ii = 1:length(fns)
+       WB.bytesToDo = WB.bytesToDo + fns(ii).bytes;
+   end
+   WB.bytesToDo            =  WB.bytesToDo*2;
+   WB.bytesDoneClosedFiles = 0;
+   WB.zipratio             = 1;
+   
+   for jj = 1:length(fns)
     
-    %% initialize waitbar
-    WB.done       = 0;
-    WB.bytesToDo  = 0;
-    if OPT.zip
-        multiWaitbar('raw_unzipping'  ,0,'Color',[0.2 0.7 0.9])
-    end
-    multiWaitbar('nc_reading'         ,0,'Color',[0.1 0.5 0.8],'label','Reading')
-    multiWaitbar('nc_writing'         ,0,'Color',[0.1 0.3 0.6],'label','Writing')
-    for ii = 1:length(fns)
-        WB.bytesToDo = WB.bytesToDo + fns(ii).bytes;
-    end
-    WB.bytesToDo =  WB.bytesToDo*2;
-    WB.bytesDoneClosedFiles = 0;
-    WB.zipratio = 1;
-    for jj = 1:length(fns)
+   %% unzip
+
         if OPT.zip
             multiWaitbar('raw_unzipping', 0,'label',sprintf('Unzipping %s',fns(jj).name));
             %delete files in cache
@@ -167,6 +173,8 @@ if OPT.make
             fns_unzipped = fns(jj);
         end
         
+   %% read asc
+
         for ii = 1:length(fns_unzipped)
             disp(fns_unzipped(ii).name);
             %% set waitbars to 0 and update label
@@ -219,7 +227,7 @@ if OPT.make
                 'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
             fclose(fid);
 
-            %------------------------------------------------------------------------------------------------------------------------------------------
+   %% write nc
             
             %% write data to nc files
             multiWaitbar('nc_writing',0,'label',sprintf('Writing: %s...', (fns_unzipped(ii).name)))

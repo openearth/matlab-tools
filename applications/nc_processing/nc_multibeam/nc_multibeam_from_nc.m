@@ -1,17 +1,6 @@
 function varargout = nc_multibeam_from_nc(varargin)
 %NC_MULTIBEAM_FROM_ASC  One line description goes here.
 %
-%   More detailed description goes here.
-%
-%   Syntax:
-%   varargout = nc_multibeam_from_asc(varargin)
-%
-%   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
-%
 %   Example
 %   nc_multibeam_from_asc
 %

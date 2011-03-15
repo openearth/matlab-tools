@@ -14,13 +14,6 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 %   Syntax:
 %   varargout = nc_multibeam_to_kml_tiled_png(varargin)
 %
-%   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
-%
-%   Example
 %   nc_multibeam_to_kml_tiled_png
 %
 %See also: nc_multibeam, snctools

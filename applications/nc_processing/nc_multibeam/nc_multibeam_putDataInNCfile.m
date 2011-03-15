@@ -7,32 +7,36 @@ function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
 %
 %See also: nc_multibeam, snctools
 
-dimSizeX = (OPT.mapsizex/OPT.gridsizex);
-dimSizeY = (OPT.mapsizey/OPT.gridsizex);
+   dimSizeX = (OPT.mapsizex/OPT.gridsizex);
+   dimSizeY = (OPT.mapsizey/OPT.gridsizex);
 
 %% Open NC file
-NCid = netcdf.open(ncfile, 'NC_WRITE');
+
+   NCid = netcdf.open(ncfile, 'NC_WRITE');
 
 %% get current timesteps in nc file
-varid = netcdf.inqVarID(NCid,'time');
-[~,dimlen] = netcdf.inqDim(NCid,netcdf.inqDimID(NCid,'time'));
-if dimlen == 0 
-    time0 = [];
-else
-    time0 = netcdf.getVar(NCid,varid);
-end
+
+   varid = netcdf.inqVarID(NCid,'time');
+   [~,dimlen] = netcdf.inqDim(NCid,netcdf.inqDimID(NCid,'time'));
+   if dimlen == 0 
+       time0 = [];
+   else
+       time0 = netcdf.getVar(NCid,varid);
+   end
 
 %% add time if it is not already in nc file
-if any(time0 == time)
-    jj = find(time0 == time,1)-1;
-else
-    jj = length(time0);
-    netcdf.putVar(NCid,varid,jj,1,time); 
-end
 
-varid = netcdf.inqVarID(NCid,'z');
+   if any(time0 == time)
+       jj = find(time0 == time,1)-1;
+   else
+       jj = length(time0);
+       netcdf.putVar(NCid,varid,jj,1,time); 
+   end
+   
+   varid = netcdf.inqVarID(NCid,'z');
 
 %% Merge Z data with existing data if it exists
+
 if jj ~= length(time0) % then existing nc file already has data
     % read Z data
     Z0 = netcdf.getVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1]);
@@ -56,9 +60,12 @@ if jj ~= length(time0) % then existing nc file already has data
 end
 
 %% Write z data
-netcdf.putVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1],Z); % matlab uses reverse order, so here [x y t] to get [t y x] in ncbrowse and snctools
+
+   netcdf.putVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1],Z); % matlab uses reverse order, so here [x y t] to get [t y x] in ncbrowse and snctools
 
 %% Close NC file
-netcdf.close(NCid)
+
+   netcdf.close(NCid)
+   
 end
 
