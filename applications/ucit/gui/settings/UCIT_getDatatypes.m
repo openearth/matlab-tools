@@ -57,7 +57,7 @@ function [datatypes] = UCIT_getDatatypes;
    datatypes.transect.urls   {i}  =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
    datatypes.transect.areas  {i}  =  ''; % set by UCIT_loadRelevantInfo2Popup(1,2)
    datatypes.transect.catalog{i}  =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/profiles/catalog.xml';
-   datatypes.transect.ldbs{i}     =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+   datatypes.transect.ldbs{i}     =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.transect.axes{i}     =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.transect.datatype{i} =  'Jarkus Data'; % defines functionality
 
@@ -112,7 +112,7 @@ end
    datatypes.grid.names{i}        =  'Jarkus 20m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Jarkus';
@@ -134,7 +134,7 @@ end
    datatypes.grid.names{i}        =  'Vaklodingen 20m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
@@ -168,7 +168,7 @@ end
    datatypes.grid.names{i}        =  'AHN Kust 5m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/kustlidar/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  5;
    datatypes.grid.datatype{i}     =  'kustlidar'; % for rws_*
@@ -190,7 +190,7 @@ end
    datatypes.grid.names{i}        =  'Dienst zeeland 20m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Zeeland';
@@ -201,7 +201,7 @@ end
    datatypes.grid.names{i}        =  'Dienst zeeland 20m (test/next release)';
    datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/';
    datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Zeeland';
@@ -212,7 +212,7 @@ end
    datatypes.grid.names{i}        =  'AHN 100m (beta)';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/tno/ahn100m/mv100.nc';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  100;
    datatypes.grid.datatype{i}     =  'AHN'; % for rws_*
@@ -223,7 +223,7 @@ end
    datatypes.grid.names{i}        =  'AHN 250m (beta)'; % note 250 is in 100 directory on server
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/tno/ahn100m/mv250.nc';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  250;
    datatypes.grid.datatype{i}     =  'AHN'; % for rws_*
