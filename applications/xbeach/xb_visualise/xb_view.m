@@ -469,7 +469,7 @@ function plot_1d(obj, info, data, vars)
             ii = i+j*length(vars);
             
             if update
-                set(lines(ii), 'XData', info.x(:,1), 'YData', squeeze(data{ii}(:,1,:)));
+                set(lines(ii), 'XData', info.x(1,:), 'YData', squeeze(data{ii}(:,1,:)));
             else
                 plot(ax, info.x(1,:), squeeze(data{ii}(:,1,:)), ...
                     [type(1+j) color(mod(i-1,length(color))+1)], ...
