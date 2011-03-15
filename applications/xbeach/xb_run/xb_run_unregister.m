@@ -67,6 +67,7 @@ if ~isempty(runs) && iscell(runs)
         if xb_check(runs{i})
             if ismember(xb_get(runs{i}, 'id'), str2double(id))
                 runs(i) = [];
+                break;
             end
         end
     end

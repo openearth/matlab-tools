@@ -18,6 +18,10 @@ function xb_run_list(varargin)
 %
 %   See also xb_run, xb_run_remote, xb_run_register
 
+% TODO: neat interface with links to plot and show functions, extract
+% relevant data from log instead of displaying entire log, graphical
+% progress bar??
+
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
