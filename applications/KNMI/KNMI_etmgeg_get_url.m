@@ -5,45 +5,45 @@ function varargout = knmi_etmgeg_get_url(varargin)
 %
 % downloads all etmgeg data from KNMI website and stores relative to 'basepath' in:
 %
-%   .\OpenEarthRawData\KNMI\potwind\cache\
 %   .\OpenEarthRawData\KNMI\potwind\raw\
 %
-%   code long_name             starttime   endtime
-%   210  Valkenburg            1951 01 01  present
-%   235  De Kooy               1906 01 01  present
-%   240  Schiphol              1951 01 01  present
-%   242  Vlieland              1985 01 01  present
-%   249  Berkhout              1999 03 12  present
-%   251  Hoorn (Terschelling)  1994 05 26  present
-%   257  Wijk aan Zee          2001 04 30  present
-%   260  De Bilt               1901 01 01  present
-%   265  Soesterberg           1951 09 10  2008 11 18
-%   267  Stavoren              1990 06 18  present
-%   269  Lelystad              1990 01 17  present
-%   270  Leeuwarden            1951 01 01  present
-%   273  Marknesse             1989 01 01  present
-%   275  Deelen                1951 01 01  present
-%   277  Lauwersoog            1991 03 18  present
-%   278  Heino                 1991 01 01  present
-%   279  Hoogeveen             1989 09 26  present
-%   280  Eelde                 1906 01 01  present
-%   283  Hupsel                1989 10 16  present
-%   286  Nieuw Beerta          1990 01 17  present
-%   290  Twenthe               1951 01 01  present
-%   310  Vlissingen            1906 01 01  present
-%   319  Westdorpe             1991 06 25  present
-%   323  Wilhelminadorp        1989 11 05  present
-%   330  Hoek van Holland      1971 01 01  present
-%   340  Woensdrecht           1993 04 01  present
-%   344  Rotterdam             1956 10 01  present
-%   348  Cabauw                1986 03 01  present
-%   350  Gilze-Rijen           1951 01 03  present
-%   356  Herwijnen             1989 09 26  present
-%   370  Eindhoven             1951 01 01  present
-%   375  Volkel                1951 03 01  present
-%   377  Ell                   1999 05 01  present
-%   380  Maastricht            1906 01 01  present
-%   391  Arcen                 1990 06 18  present
+%   code long_name         starttime   endtime
+%   210   Valkenburg       19510101    present
+%   225   IJmuiden         19710101    present
+%   235   De Kooy          19060101    present
+%   240   Schiphol         19510101    present
+%   242   Vlieland         19850101    present
+%   249   Berkhout         19990312    present
+%   251   Hoorn (Tersch.)  19940526    present
+%   257   Wijk aan Zee     20010430    present
+%   260   De Bilt          19010101    present
+%   265   Soesterberg      19510910    20081118
+%   267   Stavoren         19900618    present
+%   269   Lelystad         19900117    present
+%   270   Leeuwarden       19510101    present
+%   273   Marknesse        19890101    present
+%   275   Deelen           19510101    present
+%   277   Lauwersoog       19910318    present
+%   278   Heino            19910101    present
+%   279   Hoogeveen        19890926    present
+%   280   Eelde            19060101    present
+%   283   Hupsel           19891016    present
+%   286   Nieuw Beerta     19900117    present
+%   290   Twenthe          19510101    present
+%   310   Vlissingen       19060101    present
+%   319   Westdorpe        19910625    present
+%   323   Wilhelminadorp   19891105    present
+%   330   Hoek van Holland 19710101    present
+%   340   Woensdrecht      19930401    present
+%   344   Rotterdam        19561001    present
+%   348   Cabauw           19860301    present
+%   350   Gilze-Rijen      19510103    present
+%   356   Herwijnen        19890926    present
+%   370   Eindhoven        19510101    present
+%   375   Volkel           19510301    present
+%   377   Ell              19990501    present
+%   380   Maastricht       19060101    present
+%   391   Arcen            19900618    present
 %
 % Implemented <keyword,value> pairs are:
 % * download : switch whether to download from url (default 1)
@@ -54,54 +54,6 @@ function varargout = knmi_etmgeg_get_url(varargin)
 %              http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/)
 %
 %See also: KNMI_POTWIND, KNMI_ETMGEG, KNMI_POTWIND_GET_URL
-
-% old
-%          Station 235 Den Helder (De Kooy)
-%          1906 - 1910  1911 - 1920  1921 - 1930  1931 - 1940
-%          1941 - 1950  1951 - 1960  1961 - 1970  1971 - 1980
-%          1981 - 1990  1991 - 2000  2001 - 2008   
-%          Station 240 Amsterdam (Schiphol)
-%          1951 - 1960  1961 - 1970  1971 - 1980  1981 - 1990
-%          1991 - 2000  2001 - 2008      
-%          Station 260 De Bilt
-%          1901 - 1910  1911 - 1920  1921 - 1930  1931 - 1940
-%          1941 - 1950  1951 - 1960  1961 - 1970  1971 - 1980
-%          1981 - 1990  1991 - 2000  2001 - 2008   
-%          Station 270 Leeuwarden
-%          1951 - 1960  1961 - 1970  1971 - 1980  1981 - 1990
-%          1991 - 2000  2001 - 2008      
-%          Station 280 Groningen (Eelde)
-%          1906 - 1910  1911 - 1920  1921 - 1930  1931 - 1940
-%          1941 - 1950  1951 - 1960  1961 - 1970  1971 - 1980
-%          1981 - 1990  1991 - 2000  2001 - 2008   
-%          Station 290 Twenthe
-%          1951 - 1960  1961 - 1970  1971 - 1980  1981 - 1990
-%          1991 - 2000  2001 - 2008      
-%          Station 310 Vlissingen
-%          1906 - 1910  1911 - 1920  1921 - 1930  1931 - 1940
-%          1941 - 1950  1951 - 1960  1961 - 1970  1971 - 1980
-%          1981 - 1990  1991 - 2000  2001 - 2008   
-%          Station 344 Rotterdam
-%          1956 - 1960  1961 - 1970  1971 - 1980  1981 - 1990
-%          1991 - 2000  2001 - 2008      
-%          Station 370 Eindhoven
-%          1951 - 1960  1961 - 1970  1971 - 1980  1981 - 1990
-%          1991 - 2000  2001 - 2008      
-%          Station 380 Maastricht (Beek)
-%          1906 - 1910  1911 - 1920  1921 - 1930  1931 - 1940
-%          1941 - 1950  1951 - 1960  1961 - 1970  1971 - 1980
-%          1981 - 1990  1991 - 2000  2001 - 2008
-%
-%          Station 235 Den Helder (De Kooy)
-%          Station 240 Amsterdam (Schiphol)
-%          Station 260 De Bilt
-%          Station 270 Leeuwarden
-%          Station 280 Groningen (Eelde)
-%          Station 290 Twenthe
-%          Station 310 Vlissingen
-%          Station 344 Rotterdam
-%          Station 370 Eindhoven
-%          Station 380 Maastricht (Beek)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -144,32 +96,22 @@ function varargout = knmi_etmgeg_get_url(varargin)
    end
 
 %% Set <keyword,value> pairs
-% ----------------------
 
-   OPT.debug           = 0; % load local download.html from DIR.cache
+   OPT.debug           = 0; % load local download.html from DIR.raw
    OPT.download        = 1;
-   OPT.unzip           = 1;
-   OPT.nc              = 0;
+   OPT.nc              = 1;
    OPT.opendap         = 1; 
-   OPT.directory_cache = [basepath,filesep,'cache'    ,filesep];
-   OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep];
+   OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep]; % zip files
    OPT.directory_nc    = [basepath,filesep,'processed',filesep];
    OPT.url             = '"./datafiles3/'; % unique string to recognize datafiles in html page
    OPT.preurl          = 'http://www.knmi.nl/klimatologie//daggegevens/'; % prefix to relative link in OPT.url
 
    OPT = setproperty(OPT,varargin{:});
 
-%% Settings
-% ----------------------
+   if OPT.download
 
-   if ~(exist(OPT.directory_cache)==7)
-      disp('The following target path ')
-      disp(OPT.directory_cache)
-      disp('does not exist, create? Press <CTRL> + <C> to quit, <enter> to continue.')
-      pause
-      mkpath(OPT.directory_cache)
-   end   
-   
+%% Settings
+
    if ~(exist(OPT.directory_raw)==7)
       disp('The following target path ')
       disp(OPT.directory_raw)
@@ -179,18 +121,16 @@ function varargout = knmi_etmgeg_get_url(varargin)
    end   
    
 %% Load website
-% ----------------------
 
    if ~(OPT.debug)
    website   = urlread ('http://www.knmi.nl/klimatologie/daggegevens/download.html');
                urlwrite('http://www.knmi.nl/klimatologie/daggegevens/download.html',...
-                        [OPT.directory_cache,'download.html']);
+                        [OPT.directory_raw,'download.html']);
    else
-   website = urlread(['file:///',OPT.directory_cache,filesep,'download.html']);
+   website = urlread(['file:///',OPT.directory_raw,filesep,'download.html']);
    end
 
 %% Extract names of files to be downloaded from webpage
-% ----------------------
 
    indices = strfind(website,OPT.url);
    
@@ -211,54 +151,29 @@ function varargout = knmi_etmgeg_get_url(varargin)
    nfile = length(OPT.files);
    
 %% Download *.zip files
-% ----------------------
 
-   if OPT.download
+      multiWaitbar(mfilename,0,'label','Looping files.','color',[0.3 0.8 0.3])
+
       for ifile=1:nfile
       
          disp(['Downloading: ',num2str(ifile),'/',num2str(nfile),': ',OPT.files{ifile}]);
+         multiWaitbar(mfilename,ifile/nfile,'label',['Processing station: ',OPT.files{ifile}])
          
          urlwrite([OPT.files{ifile}],... % *.zip
-                  [OPT.directory_cache,filesep,filenameext(OPT.files{ifile})]); 
+                  [OPT.directory_raw,filesep,filenameext(OPT.files{ifile})]); 
          
       end   
    end
 
-%% Extract *.zip files
-% ----------------------
-
-   if OPT.unzip
-      
-      for ifile=1:nfile
-      
-         if strcmpi(OPT.files{ifile}(end-2:end),'zip')
-         disp(['Unzipping: ',num2str(ifile),'/',num2str(nfile),': ',OPT.files{ifile}]);
-         
-         unzip   ([OPT.directory_cache,filesep,filenameext(OPT.files{ifile})],... % *.zip
-                  [OPT.directory_raw]);
-         end
-      end   
-   end
-   
-%% Transform to *.nc files
-% ----------------------
+%% Transform to *.nc files (directly from zipped files)
 
    if OPT.nc
-      knmi_etmgeg2nc('directory_raw',OPT.directory_raw,...
-                      'directory_nc',OPT.directory_nc)
+      
+         knmi_etmgeg2nc('directory_raw'  ,OPT.directory_raw,...
+                         'directory_nc'  ,OPT.directory_nc)
    end
    
-%% Copy to OPeNDAP server 
-% ----------------------
-
-   if OPT.opendap
-   end
-   
-%% Make various overviews
-% ----------------------
-
 %% Output 
-% ----------------------
 
    if nargout==1
       varargout = {OPT};

@@ -69,6 +69,10 @@ for ifile=1:length(OPT.files)
 
    outputfile    = [OPT.directory_nc filesep  filename(D.file.name),OPT.ext,'.nc'];
    
+   if ~exist(fileparts(outputfile))
+      mkpath(fileparts(outputfile))
+   end
+   
    nc_create_empty (outputfile)
 
    %% Add overall meta info

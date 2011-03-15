@@ -1,17 +1,19 @@
 function W = knmi_potwind_multi(fnames,varargin)
 %KNMI_POTWIND_MULTI   read multiple knmi_potwind files
 %
-% read multiple knmi_potwind files and make one timeseries 
-% over overlapping data.
+%    W = knmi_potwind(filename) 
+%
+% read multiple knmi_potwind files (can be zipped) and make one 
+% timeseries of continous data.
 %
 % syntax indentical to that of KNMI_POTWIND, except that the
 % filename is a cellstr with multiple file names.
 %
 % Example: make one time series of the following 3 K13 time series:
 %
-% W = knmi_potwind_multi({'s252.asc'        ,... % from http://www.knmi.nl/samenw/hydra/index.html
-%                         'potwind_252_1991',... % http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/
-%                         'potwind_252_2001'});  % http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/
+% W = knmi_potwind_multi({'s252.asc'        ,...     % from http://www.knmi.nl/samenw/hydra/index.html
+%                         'potwind_252_1991',...     % http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/
+%                         'potwind_252_2001.zip'});  % http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/
 %
 % KNMI_POTWIND_MULTI checks for non-compatible timeseries (e.g. different station names).
 %

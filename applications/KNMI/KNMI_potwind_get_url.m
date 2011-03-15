@@ -5,7 +5,6 @@ function varargout = KNMI_potwind_get_url(varargin)
 %
 % downloads all potwind data from KNMI website and stores relative to 'basepath' in:
 %
-%   .\cache\
 %   .\raw\
 %
 % Implemented <keyword,value> pairs are:
@@ -59,31 +58,21 @@ function varargout = KNMI_potwind_get_url(varargin)
    end
 
 %% Set <keyword,value> pairs
-% ----------------------
    
-   OPT.debug           = 0; % load local download.html from OPT.directory_cache
+   OPT.debug           = 0; % load local download.html from OPT.directory_raw
    OPT.download        = 1;
-   OPT.unzip           = 1;
    OPT.nc              = 1;
    OPT.opendap         = 1; 
-   OPT.directory_cache = [basepath,filesep,'cache'    ,filesep];
-   OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep];
+   OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep]; % zip files
    OPT.directory_nc    = [basepath,filesep,'processed',filesep];
    OPT.url             =  'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/'; %datafiles/
 
    OPT = setproperty(OPT,varargin{:});
 
-%% Settings
-% ----------------------
+   if OPT.download
 
-   
-   if ~(exist(OPT.directory_cache)==7)
-      disp('The following target path ')
-      disp(OPT.directory_cache)
-      disp('does not exist, create? Press <CTRL> + <C> to quit, <enter> to continue.')
-      pause
-      mkpath(OPT.directory_cache)
-   end   
+%% Settings
+
    
    if ~(exist(OPT.directory_raw)==7)
       disp('The following target path ')
@@ -94,20 +83,18 @@ function varargout = KNMI_potwind_get_url(varargin)
    end   
 
 %% Load website
-% ----------------------
 
    if ~(OPT.debug)
    website   = urlread ('http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/');
 
    
                urlwrite('http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/',...
-                        [OPT.directory_cache,'download.html']);
+                        [OPT.directory_raw,'download.html']);
    else
-   website = urlread(['file:///',OPT.directory_cache,filesep,'download.html'])
+   website = urlread(['file:///',OPT.directory_raw,filesep,'download.html'])
    end
 
 %% Extract names of files to be downloaded from webpage
-% ----------------------
 
    indices   = strfind(website,'"potwind_');
    
@@ -126,55 +113,32 @@ function varargout = KNMI_potwind_get_url(varargin)
    nfile = length(OPT.files);
    
 %% Download *.zip files
-% ----------------------
 
-   if OPT.download
+      multiWaitbar(mfilename,0,'label','Looping files.','color',[0.3 0.8 0.3])
+
       for ifile=1:nfile
       
          disp(['Downloading: ',num2str(ifile),'/',num2str(nfile),': ',OPT.files{ifile}]);
+         multiWaitbar(mfilename,ifile/nfile,'label',['Processing station: ',OPT.files{ifile}])
          
-         mkpath([OPT.directory_cache,'/',filepathstr(OPT.files{ifile})])
+         mkpath([OPT.directory_raw,'/',filepathstr(OPT.files{ifile})])
          
          urlwrite([OPT.url  ,'/',OPT.files{ifile}],... % *.zip
-                  [OPT.directory_cache,'/',OPT.files{ifile}]); 
+                  [OPT.directory_raw,'/',OPT.files{ifile}]); 
          
       end   
    end
 
-%% Extract *.zip files
-% ----------------------
-
-   if OPT.unzip
-      
-      for ifile=1:nfile
-      
-         disp(['Unzipping: ',num2str(ifile),'/',num2str(nfile),': ',OPT.files{ifile}]);
-         
-         unzip   ([OPT.directory_cache,'/',OPT.files{ifile}],... % *.zip
-                  [OPT.directory_raw]);
-         
-      end   
-   end
-   
-%% Transform to *.nc files
-% ----------------------
+%% Transform to *.nc files (directly from zipped files)
 
    if OPT.nc
-      knmi_potwind2nc('directory_raw',OPT.directory_raw,...
-                      'directory_nc' ,OPT.nc)
+      
+         knmi_potwind2nc('directory_raw'  ,OPT.directory_raw,...
+                         'directory_nc'   ,OPT.directory_nc)
+   
    end
    
-%% Copy to OPeNDAP server 
-% ----------------------
-
-   if OPT.opendap
-   end
-   
-%% Make various overviews
-% ----------------------
-
 %% Output 
-% ----------------------
 
    if nargout==1
       varargout = {OPT};

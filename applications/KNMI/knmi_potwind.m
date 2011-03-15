@@ -1,9 +1,9 @@
 function varargout = knmi_potwind(varargin)
 %KNMI_POTWIND   Reads ASCII wind file from KNMI website
 %
-% W = knmi_potwind(filename) 
+%    W = knmi_potwind(filename) 
 %
-% reads a wind file from
+% reads a wind file (can be zipped) from
 %     Old data: <http://www.knmi.nl/samenw/hydra>
 %     New data: <http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/>
 % into a struct W with the following fields:
@@ -28,8 +28,6 @@ function varargout = knmi_potwind(varargin)
 % * variables: value of direction when wind direction is higly variable (default NaN);
 %
 % * pol2cart:  adds also u and v wind components to speed UP and direction DD
-%
-% (C) G.J. de Boer, TU Delft, 2005-8
 %
 % See also: CART2POL, POL2CART, DEGN2DEGUC, DEGUC2DEGN, HMCZ_WIND_READ
 %           KNMI_ETMGEG, KNMI_POTWIND_MULTI
@@ -101,6 +99,7 @@ function varargout = knmi_potwind(varargin)
 
 %% No file name specified if even number of arguments
 %  i.e. 2 or 4 input parameters
+
    if mod(nargin,2)     == 0 
      [shortfilename, pathname, filterindex] = uigetfile( ...
         {'potwind*.*' ,'KNMI wind time-series file (potwind*.*)'; ...
@@ -108,24 +107,23 @@ function varargout = knmi_potwind(varargin)
          'KNMI wind time-series file (potwind*.*)');
       
       if ~ischar(shortfilename) % uigetfile cancelled
-         w.file.name    = [];
+         W.file.name    = [];
          iostat         = 0;
       else
-         w.file.name    = [pathname, shortfilename];
+         W.file.name    = [pathname, shortfilename];
          iostat         = 1;
       end
       
-      if isempty(w.file.name)
+      if isempty(W.file.name)
          iostat = 0;
          varargout= {[], iostat};
          return
       end
 
-   %% No file name specified if odd number of arguments
-   % -----------------------------
+%% No file name specified if odd number of arguments
    
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
-      w.file.name  = varargin{1};
+      W.file.name  = varargin{1};
       iostat       = 1;
    end
    
@@ -135,55 +133,47 @@ function varargout = knmi_potwind(varargin)
       H.variables = Inf;
       H.pol2cart  = 0;
 
-%       if nargin>2
-%          if isstruct(varargin{2})
-%             H = mergestructs(H,varargin{2});
-%          else
-%             iargin = 2;
-%             %% remaining number of arguments is always even now
-%             while iargin<=nargin-1,
-%                 switch lower ( varargin{iargin})
-%                 % all keywords lower case
-%                 case 'calms'    ;iargin=iargin+1;H.calms     = varargin{iargin};
-%                 case 'variables';iargin=iargin+1;H.variables = varargin{iargin};
-%                 case 'pol2cart' ;iargin=iargin+1;H.pol2cart  = varargin{iargin};
-%                 otherwise
-%                   error(sprintf('Invalid string argument (caps?): "%s".',varargin{iargin}));
-%                 end
-%                 iargin=iargin+1;
-%             end
-%          end  
-%       end
-      
       H = setproperty(H,varargin{2:end});
    
 %% I - Check if file exists (actually redundant after file GUI)
 
-   tmp = dir(w.file.name);
+   tmp = dir(W.file.name);
 
    if length(tmp)==0
       
       if nargout==1
-         error(['Error finding file: ',w.file.name])
+         error(['Error finding file: ',W.file.name])
       else
          iostat = -1;
       end      
       
    elseif length(tmp)>0
+   
+%% Unzip optionnally (and delete aftwewards)
 
-      w.file.date     = tmp.date;
-      w.file.bytes    = tmp.bytes;
+      deletezip = '';
+      if strcmpi(W.file.name(end-3:end),'.zip')
+         disp([mfilename,': unzipping to temp dir'])
+         fname       = fullfile(tempdir,filename(W.file.name(1:end-4)));
+         unzip(W.file.name,tempdir);
+         deletezip   = fname;
+      else
+         fname = W.file.name
+      end
+
+      W.file.date     = tmp.date;
+      W.file.bytes    = tmp.bytes;
 
 %% Read header
 
-         fid             = fopen(w.file.name);
-         w.comments{1}   = fgetl(fid);
-         if isempty(strfind(w.comments{1},'POTENTIAL WIND'))
-            error(['incorrect file type: 1st line does not start with ''POTENTIAL WIND'' but with ''',w.comments{1},''''])
+         fid             = fopen(fname);
+         W.comments{1}   = fgetl(fid);
+         if isempty(strfind(W.comments{1},'POTENTIAL WIND'))
+            error(['incorrect file type: 1st line does not start with ''POTENTIAL WIND'' but with ''',W.comments{1},''''])
          end
 
          for iline = 2:22
-            w.comments{iline} = fgetl(fid);
+            W.comments{iline} = fgetl(fid);
          end
          fclose(fid);
          
@@ -195,78 +185,78 @@ function varargout = knmi_potwind(varargin)
          % POTENTIAL WIND STATION  235    De Kooy           
          % MOST RECENT COORDINATES  X :     114254; Y :     549042
 
-         w.stationnumber = strtrim (w.comments{1}(24:28));
-         w.stationname   = strtrim (w.comments{1}(29:end));
+         W.stationnumber = strtrim (W.comments{1}(24:28));
+         W.stationname   = strtrim (W.comments{1}(29:end));
          
-         semicolon       = strfind (w.comments{2},':');
-         delimiter       = strfind (w.comments{2},';');
-         w.xpar          = str2num (w.comments{2}(semicolon(1)+1:delimiter-1));%str2num(strtrim(line2(30:40)));
-         w.ypar          = str2num (w.comments{2}(semicolon(2)+1:end        ));%str2num(strtrim(line2(48:end)));
-        [w.lon,w.lat]    = convertCoordinates(w.xpar,w.ypar,'CS1.code',28992,'CS2.code',4326); % RD to [lat,lon] WGS84
+         semicolon       = strfind (W.comments{2},':');
+         delimiter       = strfind (W.comments{2},';');
+         W.xpar          = str2num (W.comments{2}(semicolon(1)+1:delimiter-1));%str2num(strtrim(line2(30:40)));
+         W.ypar          = str2num (W.comments{2}(semicolon(2)+1:end        ));%str2num(strtrim(line2(48:end)));
+        [W.lon,W.lat]    = convertCoordinates(W.xpar,W.ypar,'CS1.code',28992,'CS2.code',4326); % RD to [lat,lon] WGS84
          
-         char1           = strfind (w.comments{ 3},'MEASURED AT')+11;
-         char2           = strfind (w.comments{ 3},'METER');
-         w.height        =         (w.comments{3}(char1+1:char2-2)); % char!: contains comment "Begroeing in 1999 in NW en N (310-010) te hoog geworden" for station 235.
+         char1           = strfind (W.comments{ 3},'MEASURED AT')+11;
+         char2           = strfind (W.comments{ 3},'METER');
+         W.height        =         (W.comments{3}(char1+1:char2-2)); % char!: contains comment "Begroeing in 1999 in NW en N (310-010) te hoog geworden" for station 235.
          
-         w.over          =          w.comments{ 6}(7:11);
-         char1           = strfind (w.comments{ 6},'LENGTH')+6;
-         char2           = strfind (w.comments{ 6},'METER');
-         w.roughness     = str2num (w.comments{ 6}(char1+1:char2-2));
+         W.over          =          W.comments{ 6}(7:11);
+         char1           = strfind (W.comments{ 6},'LENGTH')+6;
+         char2           = strfind (W.comments{ 6},'METER');
+         W.roughness     = str2num (W.comments{ 6}(char1+1:char2-2));
          
-         w.version       = strtrim (w.comments{14}(10:end));
+         W.version       = strtrim (W.comments{14}(10:end));
          
-         w.timezone      = strtrim (w.comments{16}(9:end));
+         W.timezone      = strtrim (W.comments{16}(9:end));
       
 %% Read legend
 
-         w.DD_longname      = 'WIND DIRECTION IN DEGREES NORTH';
-         w.QQD_longname     = 'QUALITY CODE DD';
-         w.UP_longname      = 'POTENTIAL WIND SPEED IN M/S'; % edited UP comment from 0.1 m/s to 1 m/s
-         w.QUP_longname     = 'QUALITY CODE UP';
-         w.datenum_longname = 'days since 00:00 Jan 0 0000';
+         W.DD_longname      = 'WIND DIRECTION IN DEGREES NORTH';
+         W.QQD_longname     = 'QUALITY CODE DD';
+         W.UP_longname      = 'POTENTIAL WIND SPEED IN M/S'; % edited UP comment from 0.1 m/s to 1 m/s
+         W.QUP_longname     = 'QUALITY CODE UP';
+         W.datenum_longname = 'days since 00:00 Jan 0 0000';
          if H.pol2cart
-            w.UX_longname   = 'POTENTIAL WIND SPEED IN M/S WIND IN X-DIRECTION';
-            w.UY_longname   = 'POTENTIAL WIND SPEED IN M/S WIND IN Y-DIRECTION';
+            W.UX_longname   = 'POTENTIAL WIND SPEED IN M/S WIND IN X-DIRECTION';
+            W.UY_longname   = 'POTENTIAL WIND SPEED IN M/S WIND IN Y-DIRECTION';
          end
          
 %% Read data
 
-         [itdate,hour,w.DD,w.QQD,w.UP,w.QUP] = textread(w.file.name,'%n%n%n%n%n%n',...
+         [itdate,hour,W.DD,W.QQD,W.UP,W.QUP] = textread(fname,'%n%n%n%n%n%n',...
            'delimiter'  ,',',...
            'emptyvalue' ,NaN,...
            'headerlines',22);
          
-         w.UP            = w.UP/10; % to [m/s]
-         w.datenum       = time2datenum(itdate) + hour./24; % make matlab days
+         W.UP            = W.UP/10; % to [m/s]
+         W.datenum       = time2datenum(itdate) + hour./24; % make matlab days
          
 %% Add u,v
 
          if H.pol2cart
-           [w.UX,...
-            w.UY] = pol2cart(deg2rad(degn2deguc(w.DD)),...
-                                                w.UP);
+           [W.UX,...
+            W.UY] = pol2cart(deg2rad(degn2deguc(W.DD)),...
+                                                W.UP);
          end
          
          
-         w.UP_units      = 'm/s';
-         w.QQD_units     = 'm/s';
-         w.DD_units      = '[-1,0,2,3,6,7,100,990]';
-         w.QUP_units     = '[-1,0,2,3,6,7,100,990]';      
-         w.datenum_units = 'day';
+         W.UP_units      = 'm/s';
+         W.QQD_units     = 'm/s';
+         W.DD_units      = '[-1,0,2,3,6,7,100,990]';
+         W.QUP_units     = '[-1,0,2,3,6,7,100,990]';      
+         W.datenum_units = 'day';
 
          if H.pol2cart
-            w.UX_units = 'm/s';
-            w.UY_units = 'm/s';
+            W.UX_units = 'm/s';
+            W.UY_units = 'm/s';
          end         
 
 %% Apply masks
       
-         w.UP(w.UP<0)=nan; % -0.1 occurs in station 277 year 1971
+         W.UP(W.UP<0)=nan; % -0.1 occurs in station 277 year 1971
       
-         w.DD(w.QQD>0)=nan;
-         w.DD(w.DD==0)=nan;
+         W.DD(W.QQD>0)=nan;
+         W.DD(W.DD==0)=nan;
          
-         % http://www.knmi.nl/samenw/hydra/meta_data/quality.htm
+         % http://wwW.knmi.nl/samenw/hydra/meta_data/quality.htm
          % Quality codes  	
          % 
          % 
@@ -278,10 +268,10 @@ function varargout = knmi_potwind(varargin)
          % 7		 missing data	
          % 100		 suspected data         
          
-         w.DD(w.DD==0  ) = H.calms    ; % stil, calm winds, windspeed ~ 0, see below
-         w.DD(w.DD==990) = H.variables; % veranderlijk, standard deviation direction > 30 deg, see below
+         W.DD(W.DD==0  ) = H.calms    ; % stil, calm winds, windspeed ~ 0, see below
+         W.DD(W.DD==990) = H.variables; % veranderlijk, standard deviation direction > 30 deg, see below
          
-         % http://www.knmi.nl/samenw/hydra/meta_data/dir_codes.htm
+         % http://wwW.knmi.nl/samenw/hydra/meta_data/dir_codes.htm
          % Wind direction codes  	
          %
          % Wind direction is reported in units of 10 degrees, starting from 10 to 360. The wind direction is always an average over the last 10-min preceding the full hour. There are two special codes: 0 and 990.
@@ -290,16 +280,22 @@ function varargout = knmi_potwind(varargin)
          
    end % if length(tmp)==0
    
-   w.read.with     = '$Id$'; % SVN keyword, will insert name of this function
-   w.read.at       = datestr(now);
-   w.read.iostatus = iostat;
+   W.read.with     = '$Id$'; % SVN keyword, will insert name of this function
+   W.read.at       = datestr(now);
+   W.read.iostatus = iostat;
+   
+%% Delete zipped file
+
+   if ~isempty(deletezip)
+      delete(deletezip)
+   end
    
 %% Function output
 
    if nargout    < 2
-      varargout= {w};
+      varargout= {W};
    elseif nargout==2
-      varargout= {w, iostat};
+      varargout= {W, iostat};
    end
 
 %% EOF

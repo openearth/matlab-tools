@@ -3,7 +3,7 @@ function varargout = knmi_etmgeg(varargin)
 %
 %    W = knmi_etmgeg(filename) 
 %
-% reads a wind file from
+% reads a wind file (can be zipped) from
 %    http://www.knmi.nl/klimatologie/daggegevens/download.html
 % into a struct W.
 %
@@ -60,6 +60,7 @@ function varargout = knmi_etmgeg(varargin)
 
 %% No file name specified if even number of arguments
 %  i.e. 2 or 4 input parameters
+
    if mod(nargin,2)     == 0 
      [shortfilename, pathname, filterindex] = uigetfile( ...
         {'etmgeg*.*' ,'KNMI climate time series (etmgeg*.*)'; ...
@@ -108,10 +109,22 @@ function varargout = knmi_etmgeg(varargin)
       end      
       
    elseif length(tmp)>0
+   
+%% Unzip optionally (and delete aftwewards)
+
+      deletezip = '';
+      if strcmpi(W.file.name(end-3:end),'.zip')
+         disp([mfilename,': unzipping to temp dir'])
+         fname       = fullfile(tempdir,[filename(W.file.name(1:end-4)),'.txt']);
+         unzip(W.file.name,tempdir);
+         deletezip   = fname;
+      else
+         fname = W.file.name
+      end
 
 %% Read header
 
-      fid             = fopen(W.file.name);
+      fid             = fopen(fname);
       for iline = 1:(OPT.nheader)
          W.comments{iline} = fgetl(fid);
       end
@@ -182,6 +195,12 @@ function varargout = knmi_etmgeg(varargin)
    W.read.at       = datestr(now);
    W.read.iostatus = iostat;
    
+%% Delete zipped file
+
+   if ~isempty(deletezip)
+      delete(deletezip)
+   end
+
 %% Function output
 
    if nargout    < 2
