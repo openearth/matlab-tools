@@ -181,7 +181,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    if OPT.preview % prevent interaction with multiWaitbar figure
       FIG = figure('name',mfilename);
    end
-   multiWaitbar(mfilename,0,'label','Generating catalog.nc','color',[0.3 0.6 0.3])
+   multiWaitbar(mfilename,0,'label','Making kml overview of timeSeries ','color',[0.3 0.6 0.3])
 
    for ii=1:size(D.geospatialCoverage_eastwest,1)
     disp(sprintf('writing coordinates: % 2d / %d',ii,size(D.geospatialCoverage_eastwest,1)));

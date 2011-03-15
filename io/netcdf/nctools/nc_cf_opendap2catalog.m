@@ -109,8 +109,9 @@ OPT.catalog_name   = 'catalog.nc'; % exclude from indexing
 OPT.xls_name       = 'catalog.xls'; % exclude from indexing
 OPT.maxlevel       = 1;
 OPT.separator      = ';'; % for long names
-OPT.datatype       = 'stationtimeseries'; % CF data types (grid, stationtimeseries https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions)
+OPT.datatype       = 'stationtimeseries'; % CF data types (grid, stationtimeseries upcoming CF standard https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions)
 OPT.debug          = 0;
+OPT.disp           = 'multiWaitbar';
 
 %% List of variables to include
 OPT.varname        = {}; % could be {'x','y','time'}
@@ -172,7 +173,9 @@ OPT.varname        = {}; % could be {'x','y','time'}
 
 %% initialize waitbar
 
+    if strcmpi(OPT.disp,'multiWaitbar')
     multiWaitbar(mfilename,0,'label','Generating catalog.nc','color',[0.3 0.6 0.3])
+    end
     
 %% File loop to get meta-data from subdirectories (recursively)
     
@@ -226,9 +229,10 @@ OPT.varname        = {}; % could be {'x','y','time'}
 for entry=1:length(OPT.files)
 
    OPT.filename = OPT.files{entry};
-   multiWaitbar(mfilename,entry/length(OPT.files),'label',...
-       ['Adding ',filename(OPT.filename) ' to catalog'])
-
+   if strcmpi(OPT.disp,'multiWaitbar')
+   multiWaitbar(mfilename,entry/length(OPT.files),'label',['Adding ',filename(OPT.filename) ' to catalog'])
+   end
+   
    fileinfo       = nc_info(OPT.filename);
 
 %% get relevant global attributes
@@ -257,14 +261,16 @@ for entry=1:length(OPT.files)
    
    ndat = length(fileinfo.Dataset);
    for idat=1:ndat
-       multiWaitbar('nc_cf_opendap2catalog_2',idat/ndat,'label',...
-           'Cycling datasets ...')
+       if strcmpi(OPT.disp,'multiWaitbar')
+       multiWaitbar('nc_cf_opendap2catalog_2',idat/ndat,'label','Cycling datasets ...')
+       end
 
        % cycle all attributes
        natt = length(fileinfo.Dataset(idat).Attribute);
        for iatt=1:natt
-           multiWaitbar('nc_cf_opendap2catalog_3',iatt/natt,'label',...
-               'Cycling attributes ...')
+           if strcmpi(OPT.disp,'multiWaitbar')
+           multiWaitbar('nc_cf_opendap2catalog_3',iatt/natt,'label','Cycling attributes ...')
+           end
 
            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
            % get standard_names only ...
@@ -460,7 +466,9 @@ end % entry
 
    end
 
+   if strcmpi(OPT.disp,'multiWaitbar')
    multiWaitbar(mfilename,1,'label','Generating catalog.nc')
+   end
 
 % load database as check
 
