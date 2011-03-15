@@ -69,11 +69,9 @@ morphAnInput.SignificantWaveHeight = significantWaveHeight;
 morphAnInput.PeakPeriod = peakPeriod;
 morphAnInput.MaximumStormSurgeLevel = waterLevel;
 morphAnInput.CoastalBend = coastalBend;
-morphAnInput.InputProfile = DeltaShell.Plugins.MorphAn.Domain.Transect;
-morphAnInput.InputProfile.CrossShoreGeometry.Clear;
-for i=1:length(xInitial)
-    morphAnInput.InputProfile.CrossShoreGeometry.Add(DeltaShell.Plugins.MorphAn.Domain.TransectCoordinate(xInitial(i),zInitial(i)));
-end
+morphAnInput.InputProfile = DeltaShell.Plugins.MorphAn.Domain.Transect(...
+    NET.convertArray(xInitial, 'System.Double'),...
+    NET.convertArray(zInitial, 'System.Double'));
 
 morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfileAccordingTo2006Rules(morphAnInput);
 

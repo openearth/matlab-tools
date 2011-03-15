@@ -108,17 +108,14 @@ OPT = struct(...
 
 %% Run MorphAn
 morphAnInput = DeltaShell.Plugins.MorphAn.TRDA.Calculators.TRDAInputParameters;
-
 morphAnInput.D50 = D50;
 morphAnInput.SignificantWaveHeight = Hsig_t;
 morphAnInput.PeakPeriod = Tp_t;
 morphAnInput.MaximumStormSurgeLevel = WL_t;
 morphAnInput.CoastalBend = DuneErosionSettings('get','Bend');
-morphAnInput.InputProfile = DeltaShell.Plugins.MorphAn.Domain.Transect;
-morphAnInput.InputProfile.CrossShoreGeometry.Clear;
-for i=1:length(xInitial)
-    morphAnInput.InputProfile.CrossShoreGeometry.Add(DeltaShell.Plugins.MorphAn.Domain.TransectCoordinate(xInitial(i),zInitial(i)));
-end
+morphAnInput.InputProfile = DeltaShell.Plugins.MorphAn.Domain.Transect(...
+    NET.convertArray(xInitial, 'System.Double'),...
+    NET.convertArray(zInitial, 'System.Double'));
 
 morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfileAccordingTo2006Rules(morphAnInput);
 
@@ -202,6 +199,8 @@ function result = fillresultwithprofile(result,morphAnPreProfile,morpAnProfile,x
 profile = crossshoreprofile2matlabprofile(morpAnProfile);
 preProfile = crossshoreprofile2matlabprofile(morphAnPreProfile);
 
+
+
 result.xActive = unique([profile(:,1);preProfile(:,1)]);
 result.z2Active = interp1(profile(:,1),profile(:,2),result.xActive );
 result.zActive = interp1(preProfile(:,1),preProfile(:,2),result.xActive );
@@ -213,17 +212,7 @@ result.zSea = zInitial(xInitial > max(result.xActive));
 end
 
 function profile = crossshoreprofile2matlabprofile(morphAnProfile)
-if strncmp(class(morphAnProfile.CrossShoreGeometry),'System',6)
-    profile = nan(morphAnProfile.CrossShoreGeometry.Count,2);
-    for i = 0:morphAnProfile.CrossShoreGeometry.Count-1
-        coordinate = morphAnProfile.CrossShoreGeometry.Item(i);
-        profile(i+1,:) = [coordinate.X,coordinate.Z];
-    end
-else
-    profile = nan(morphAnProfile.CrossShoreGeometry.Length,2);
-    for i = 0:morphAnProfile.CrossShoreGeometry.Length-1
-        coordinate = morphAnProfile.CrossShoreGeometry.GetValue(i);
-        profile(i+1,:) = [coordinate.X,coordinate.Z];
-    end
-end
+x = double(DeltaShell.Plugins.MorphAn.Domain.Utils.TransectExtensions.XValues(morphAnProfile))';
+z = double(DeltaShell.Plugins.MorphAn.Domain.Utils.TransectExtensions.ZValues(morphAnProfile))';
+profile = [x,z];
 end
