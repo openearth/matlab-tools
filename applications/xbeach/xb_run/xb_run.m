@@ -164,3 +164,7 @@ xb = xb_set(xb, ...
     'netcdf', OPT.netcdf, ...
     'messages', messages);
 xb = xb_meta(xb, mfilename, 'run', OPT.path);
+
+%% register job
+
+xb_run_register(xb);

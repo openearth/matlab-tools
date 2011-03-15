@@ -153,3 +153,7 @@ xb = xb_set(xb, ...
     'ssh', sub, ...
     'messages', messages);
 xb = xb_meta(xb, mfilename, 'run', fpath);
+
+%% register job
+
+xb_run_register(xb);
