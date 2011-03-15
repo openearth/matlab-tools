@@ -183,7 +183,7 @@ fid = fopen(filename);
 txt = fread(fid, '*char')';
 fclose(fid);
 
-matches = regexp(txt, '\s*(?<name>.*?)\s*=\s*(?<value>.*?)\s*\n', 'names', 'dotexceptnewline');
+matches = regexp(txt, '\s*(?<name>.*?)\s*=\s*(?<value>[^\s]*)\s*', 'names', 'dotexceptnewline');
 
 names = {matches.name};
 values = num2cell(str2double({matches.value}));

@@ -244,7 +244,9 @@ vars = {'Hm0' 'fp' 'mainang' 'gammajsp' 's' 'fnyq'};
 fid = fopen(fname, 'w');
 for i = 1:length(vars)
     var = xb_get(xb, vars{i});
-    fprintf(fid, '%-10s = %10.4f\n', vars{i}, var(idx));
+    if ~isnan(var(idx))
+        fprintf(fid, '%-10s = %10.4f\n', vars{i}, var(idx));
+    end
 end
 fclose(fid);
     
