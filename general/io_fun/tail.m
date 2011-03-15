@@ -1,21 +1,24 @@
 function lines = tail(fname, varargin)
-%TAIL  One line description goes here.
+%TAIL  Unix-like tail command
 %
-%   More detailed description goes here.
+%   Returns the last few files of a file. Suitable for large files because
+%   of the use of fseek.
 %
 %   Syntax:
-%   varargout = tail(varargin)
+%   lines = tail(fname, varargin)
 %
 %   Input:
-%   varargin  =
+%   fname     = Filename to read
+%   varargin  = n:      Number of lines to read
 %
 %   Output:
-%   varargout =
+%   lines     = String containing the last lines of the file
 %
 %   Example
-%   tail
+%   text = tail;
+%   text = tail('n', 10)
 %
-%   See also 
+%   See also fseek
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -105,5 +108,7 @@ while true
 end 
 
 lines = flipud(lines);
+
+if isempty(lines); lines = ''; end;
 
 fclose(fid); 

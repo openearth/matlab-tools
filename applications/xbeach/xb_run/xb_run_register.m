@@ -67,7 +67,7 @@ if xb_check(xb)
 
     if isempty(runs) || ~iscell(runs); runs = {}; end;
 
-    runs = [runs(:) xb];
+    runs = [runs xb];
     
     xb_setpref('runs', runs);
 end
