@@ -63,7 +63,7 @@ Tp_t= 12;
 Bend = 0;
 
 mpa_loadcsharp;
-n = 10;
+n = 100;
 
 a = tic;
 for i = 1:n
@@ -86,4 +86,4 @@ end
 morphAnTimeFast = toc(c);
 disp(['MorphAn duros fast : ' num2str(morphAnTimeFast) ' / *' num2str(matlabTime / morphAnTimeFast)]);
 
-assert(morphAnTimeFast < matlabTime \ 10,'Fast MorphAn should be at least 10 times faster than Matlab');
+assert(morphAnTimeFast < (matlabTime / 10),'Fast MorphAn should be at least 10 times faster than Matlab');

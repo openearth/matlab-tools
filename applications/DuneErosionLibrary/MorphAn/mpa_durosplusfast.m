@@ -5,18 +5,26 @@ function xRPoint = mpa_durosplusfast(xInitial, zInitial, D50, waterLevel, signif
 %   retreat distance
 %
 %   Syntax:
-%   varargout = mpa_durosplusfast(varargin)
+%   xRPoint = mpa_durosplusfast(xInitial, zInitial, D50, waterLevel, significantWaveHeight, peakPeriod, coastalBend)
 %
 %   Input:
-%   varargin  =
+%   xInitial    = x coordinates of the initial profile
+%   zInitial    = z coordinates of the initial profile
+%   D50         = Grain size (m)
+%   waterLevel  = Maximum storm surge level level (m + N.A.P.)
+%   significantWaveHeight = Significant wave height at the maximum of the
+%                 storm (m)
+%   peakPeriod  = Peak period at the maximum of the storm (s)
+%   coastalBend = Coastal bend in longshore direction (degrees / 1000
+%                 meter)
 %
 %   Output:
-%   varargout =
+%   xRPoint     = x value of the retreat point (also retreat distance)
 %
 %   Example
 %   mpa_durosplusfast
 %
-%   See also
+%   See also mpa_durosplus DUROS
 
 %% Copyright notice
 %   --------------------------------------------------------------------

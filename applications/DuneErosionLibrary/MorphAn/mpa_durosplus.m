@@ -212,7 +212,9 @@ result.zSea = zInitial(xInitial > max(result.xActive));
 end
 
 function profile = crossshoreprofile2matlabprofile(morphAnProfile)
-x = double(DeltaShell.Plugins.MorphAn.Domain.Utils.TransectExtensions.XValues(morphAnProfile))';
-z = double(DeltaShell.Plugins.MorphAn.Domain.Utils.TransectExtensions.ZValues(morphAnProfile))';
+xArray = DeltaShell.Plugins.MorphAn.Domain.Utils.TransectExtensions.XValues(morphAnProfile);
+zArray = DeltaShell.Plugins.MorphAn.Domain.Utils.TransectExtensions.ZValues(morphAnProfile);
+x = double(xArray)';
+z = double(zArray)';
 profile = [x,z];
 end
