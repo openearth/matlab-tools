@@ -5,7 +5,7 @@ handles=getHandles;
 posx=[];
 
 iac=handles.Toolbox(tb).Input.activeDatabase;
-stationNames=handles.Toolbox(tb).Input.database(iac).idCodes;
+%stationNames=handles.Toolbox(tb).Input.database(iac).idCodes;
 
 xg=handles.Model(md).Input(ad).gridX;
 yg=handles.Model(md).Input(ad).gridY;
@@ -15,11 +15,22 @@ xmax=max(max(xg));
 ymin=min(min(yg));
 ymax=max(max(yg));
 
-ns=length(handles.Toolbox(tb).Input.database(iac).xLoc);
 n=0;
 
 x=handles.Toolbox(tb).Input.database(iac).xLoc;
 y=handles.Toolbox(tb).Input.database(iac).yLoc;
+
+x=[x-360 x x+360];
+y=[y y y];
+k=0;
+for i=1:3
+    for j=1:length(handles.Toolbox(tb).Input.database(iac).idCodes)
+        k=k+1;
+        stationNames{k}=handles.Toolbox(tb).Input.database(iac).idCodes{j};
+    end
+end
+
+ns=length(x);
 
 % First find points within grid bounding box
 for i=1:ns

@@ -149,7 +149,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio02.value.value</variable>
+              <variable>handles.Toolbox(tb).Input.radio02.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>

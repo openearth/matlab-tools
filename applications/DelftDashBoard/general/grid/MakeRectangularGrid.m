@@ -4,15 +4,21 @@ function [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xb,yb,zb)
 
 [x0,y0]=meshgrid(0:dx:nx*dx,0:dy:ny*dy);
 
-r=[cos(rot) -sin(rot) ; sin(rot) cos(rot)];
-
-for i=1:size(x0,1)
-    for j=1:size(x0,2)
-        v0=[x0(i,j) y0(i,j)]';
-        v=r*v0;
-        x(i,j)=v(1);
-        y(i,j)=v(2);
+if rot~=0
+    
+    r=[cos(rot) -sin(rot) ; sin(rot) cos(rot)];
+    
+    for i=1:size(x0,1)
+        for j=1:size(x0,2)
+            v0=[x0(i,j) y0(i,j)]';
+            v=r*v0;
+            x(i,j)=v(1);
+            y(i,j)=v(2);
+        end
     end
+else
+    x=x0;
+    y=y0;
 end
 
 x=x+xori;
@@ -31,9 +37,13 @@ y(1:end-1,1:end-1)=y0;
 x=x0;
 y=y0;
 
+clear x0 y0
+
 % Generate initial bathymetry
 
 z=interp2(xb,yb,zb,x,y);
+
+clear xb yb zb
 
 nx=size(x,1);
 ny=size(x,2);
@@ -58,6 +68,8 @@ for i=1:nx
         end
     end
 end
+
+clear z
 
 m1=0;
 m2=nx+1;
@@ -97,13 +109,13 @@ end
 
 x=x(m1+1:m2-1,n1+1:n2-1);
 y=y(m1+1:m2-1,n1+1:n2-1);
-z=z(m1+1:m2-1,n1+1:n2-1);
+%z=z(m1+1:m2-1,n1+1:n2-1);
 
 mmax=size(x,1);
 nmax=size(x,2);
 
 iac=zeros(size(x));
-iac(find(~isnan(x)))=1;
+iac(~isnan(x))=1;
 
 for i=1:mmax
     for j=1:nmax
@@ -252,5 +264,7 @@ end
 
 x(iac2==0)=NaN;
 y(iac2==0)=NaN;
+
+clear iac iac2
 
 [x,y,mcut,ncut]=CutNanRows(x,y);

@@ -317,7 +317,7 @@ else
                         handles=ddb_saveBchFile(handles,ad);
                     case{'bct'}
                         handles.Model(md).Input(ad).bctFile=filename;
-                        handles=ddb_saveBctFile(handles,ad);
+                        ddb_saveBctFile(handles,ad);
                     case{'bcc'}
                         handles.Model(md).Input(ad).bccFile=filename;
                         ddb_saveBccFile(handles,ad);

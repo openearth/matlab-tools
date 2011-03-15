@@ -65,7 +65,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     xl(2)=xl(2)+dbuf;
     yl(1)=yl(1)-dbuf;
     yl(2)=yl(2)+dbuf;
-%    dmin=15000;
+    dmin=15000;
     [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
     
     xg(isnan(xg))=0;

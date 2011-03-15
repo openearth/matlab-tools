@@ -26,10 +26,10 @@ else
         case{'selectparameter'}
             opt2=lower(varargin{2});
             selectParameter(opt2);
-        case{'viewobservationsignal'}
-%            viewObservationSignal;
-        case{'exportobservationsignal'}
-%            exportObservationSignal;
+        case{'viewsignal'}
+            viewObservationSignal;
+        case{'exportsignal'}
+            exportObservationSignal;
     end    
 end
 
@@ -51,34 +51,73 @@ function viewObservationSignal
 handles=getHandles;
 t0=handles.Toolbox(tb).Input.startTime;
 t1=handles.Toolbox(tb).Input.stopTime;
-dt=handles.Toolbox(tb).Input.timeStep/1440;
-tim=t0:dt:t1;
 iac=handles.Toolbox(tb).Input.activeDatabase;
 ii=handles.Toolbox(tb).Input.activeObservationStation;
+idcode=handles.Toolbox(tb).Input.database(iac).idCodes{ii};
+url=[handles.Toolbox(tb).Input.database(iac).URL idcode '/' idcode 't9999.nc'];
+url=[handles.Toolbox(tb).Input.database(iac).URL idcode '/' idcode 'h9999.nc'];
+time=[];
+data=[];
 
-latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
-wl=makeObservationPrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude);
+% wb = waitbox('Downloading data ...');
+% 
+% try
+%     time = nc_varget(url,'time');
+%     time=double(time);
+%     time=datenum(1970,1,1)+time/86400;
+%     it1=find(time<=t0,1,'last');
+%     it2=find(time>=t1,1,'first');
+%     j=handles.Toolbox(tb).Input.activeParameter;
+%     data = nc_varget(url,handles.Toolbox(tb).Input.database(iac).parameters(ii).Name{j},[it1-1 0 0],[it2-it1+1 1 1]);
+%     time=time(it1:it2);
+%     close(wb);
+%     if ~isempty(time) && ~isempty(data)
+%         stationName=handles.Toolbox(tb).Input.database(iac).stationNames{ii};
+%         ddb_plotTimeSeries(time,data,stationName);
+%     end
+%     
+%     
+% catch
+%     
+%     close(wb);
+%     
+% end
 
-stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
-ddb_plotTimeSeries(tim,wl,stationName);
 
 %%
 function exportObservationSignal
+
 handles=getHandles;
 t0=handles.Toolbox(tb).Input.startTime;
 t1=handles.Toolbox(tb).Input.stopTime;
-dt=handles.Toolbox(tb).Input.timeStep/1440;
-tim=t0:dt:t1;
 iac=handles.Toolbox(tb).Input.activeDatabase;
 ii=handles.Toolbox(tb).Input.activeObservationStation;
+idcode=handles.Toolbox(tb).Input.database(iac).idCodes{ii};
+url=[handles.Toolbox(tb).Input.database(iac).URL idcode '/' idcode 't9999.nc'];
 
-latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
-wl=makeObservationPrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude);
+time=[];
+data=[];
 
-stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
-shortName=handles.Toolbox(tb).Input.database(iac).stationShortNames{ii};
-fname=[shortName '.tek'];
-exportTEK(wl',tim',fname,stationName);
+% wb = waitbox('Downloading data ...');
+% 
+% try
+%     time = nc_varget(url,'time');
+%     time=double(time);
+%     time=datenum(1970,1,1)+time/86400;
+%     it1=find(time<=t0,1,'last');
+%     it2=find(time>=t1,1,'first');
+%     data = nc_varget(url,handles.Toolbox(tb).Input.database(iac).parameters(ii).Name{1},[it1-1 0 0],[it2-it1+1 1 1]);
+%     time=time(it1:it2);
+% end
+% 
+% close(wb);
+% 
+% if ~isempty(time) && ~isempty(data)
+%     stationName=handles.Toolbox(tb).Input.database(iac).stationNames{ii};
+%     shortName=idcode;
+%     fname=[shortName '.tek'];
+%     exportTEK(data,time,fname,stationName);
+% end
 
 %%
 function selectObservationStationFromMap(imagefig, varargins)
