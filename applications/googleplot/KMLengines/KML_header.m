@@ -5,7 +5,7 @@ function varargout = KML_header(varargin)
 %
 % where the following <keyword,value> pairs have been implemented:
 %
-%   * name         name that appears in Google Earth Places list (default 'ans.kml')
+%   * kmlName      name that appears in Google Earth Places list (default 'ans.kml')
 %   * description  that appears in Google Earth Places list
 %   * open         whether to open kml file in GoogleEarth in call of KMLline(default 0)
 %   * visible      whther by default visible outside GE list item menu
