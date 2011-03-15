@@ -52,7 +52,9 @@ function varargout = delft3d_io_sed(fname)
 % $HeadURL$
 % $Keywords: $
 
-INI = inivalue(fname);
+OPT.commentchar = '*';
+
+INI = inivalue(fname,OPT);
 
 Chapters = fieldnames(INI);
 nChapter = length(Chapters);
