@@ -119,7 +119,7 @@ for i = 1:length(vars)
             if xb_check(sub)
                 out = cell(1,sum(strfilter({sub.data.name}, re.field)));
                 [out{:}] = xb_get(sub, re.field, 'type', OPT.type);
-                varargout = {varargout{:} out{:}};
+                varargout{n:n+length(out)-1} = out{:};
                 n = n + length(out);
             end
         end
