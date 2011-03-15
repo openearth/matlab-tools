@@ -204,9 +204,14 @@ try axes(ah); end; hold on
 if ~all(OPT.polygon(1,:)==OPT.polygon(end,:))
     OPT.polygon = [OPT.polygon;OPT.polygon(1,:)];
 end
-ph = plot(OPT.polygon(:,1),OPT.polygon(:,2),'g');drawnow
-set(ph,'linewidth',2,'tag','selectionpoly'); 
 
+if isempty(findobj('tag','gridOverview'))
+    ph = plot(OPT.polygon(:,1), OPT.polygon(:,2),'g');
+else
+    ph = plot(ah, OPT.polygon(:,1), OPT.polygon(:,2),'g');
+end
+
+drawnow;set(ph,'linewidth',2,'tag','selectionpoly');
 %axis([min(x) max(x) min(y) max(y)]) % does not work
 
 %% Step 2: identify which maps are in polygon
