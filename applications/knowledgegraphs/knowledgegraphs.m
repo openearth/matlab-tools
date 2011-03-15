@@ -73,22 +73,22 @@ delete(findall(tbh,'TooltipString','Pan'));
 adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','addRelation');
 set(adj,'ClickedCallback','kngr_addRelation');
 set(adj,'Tag','addRelation');
-set(adj,'cdata',kngr_makeIcon('gui\icons\up-32x322.bmp',20));
+set(adj,'cdata',kngr_makeIcon('gui\icons\up-32x322.bmp',60));
 
 adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','deleteRelation');
 set(adj,'ClickedCallback','kngr_deleteRelation');
 set(adj,'Tag','deleteRelation');
-set(adj,'cdata',kngr_makeIcon('gui\icons\down-32x322.bmp',20));
+set(adj,'cdata',kngr_makeIcon('gui\icons\down-32x322.bmp',60));
 
 adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','deleteVertex');
 set(adj,'ClickedCallback','kngr_deleteVertex');
 set(adj,'Tag','deleteVertex');
-set(adj,'cdata',kngr_makeIcon('gui\icons\down-32x322.bmp',20));
+set(adj,'cdata',kngr_makeIcon('gui\icons\down-32x322.bmp',60));
 
 adj = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Get dictionary info for word');
 set(adj,'ClickedCallback','kngr_getdictionaryInfoForWord;');
 set(adj,'Tag','getDictionaryInfoForWord');
-set(adj,'cdata',kngr_makeIcon('gui\icons\add-32x322.bmp',20));
+set(adj,'cdata',kngr_makeIcon('gui\icons\add-32x322.bmp',60));
 
 %% add GUI objects (lowerLeft,partofscreen_Hor,partofscreen_Vrt,scnsize,bdwidth,topbdwidth) 
 popuptxt = {'select relation ...', ontology.type};

@@ -1,4 +1,4 @@
-function addRelation(from, to, type)
+function kngr_addRelation(from, to, type)
 
 if nargin == 0 % if no input arguments are available ...
     try % ... try to get input from gui
