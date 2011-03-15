@@ -70,6 +70,7 @@ function delft3d_names = t_tide_name2delft3d(t_tide_names)
       elseif strmatch('LDA2',upper(t_tide_names{iname})); delft3d_names{iname} = 'LABDA2'   ;
       elseif strmatch('2MK5',upper(t_tide_names{iname})); delft3d_names{iname} = '3MO5'     ;            
       elseif strmatch('3MK7',upper(t_tide_names{iname})); delft3d_names{iname} = '2MSO7'    ;
+      elseif strmatch('NO1' ,upper(t_tide_names{iname})); delft3d_names{iname} = 'M1'       ;
       elseif strmatch('ALP1',upper(t_tide_names{iname})); delft3d_names{iname} = '';disp(['NO Delft3D match found for ',t_tide_names{iname},', skipped.'])
       elseif strmatch('2SK5',upper(t_tide_names{iname})); delft3d_names{iname} = '';disp(['NO Delft3D match found for ',t_tide_names{iname},', skipped.'])
       else
