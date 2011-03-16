@@ -92,7 +92,8 @@ OPT = struct(...
     'dtref', 4,...         % Ref value for dt in computing dx from CFL
     'maxfac', 1.15,...     % Maximum allowed grid size ratio
     'wl',0,...             % Water level elevation used to estimate water depth
-    'depthfac', 2 ...      % Maximum gridsize to depth ratio
+    'depthfac', 2, ...     % Maximum gridsize to depth ratio
+    'ppwl', 12 ...         % desired points per wavelength
     );
 
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
@@ -110,7 +111,7 @@ elseif OPT.vardx == 1
     
     % prepare
     k       = disper(2*pi/OPT.Tm, -zin(1), OPT.g);
-    Llong   = 7*2*pi/k;
+    Llong   = 4*2*pi/k;
     x       = xin;
     hin     = max(OPT.wl-zin,0.01);
     
@@ -127,7 +128,7 @@ elseif OPT.vardx == 1
     while xlast < xend
         
         % compute dx; minimum value dx (on dry land) = dxmin
-        dxmax = Llong/12;
+        dxmax = Llong/OPT.ppwl;
         % dxmax = sqrt(g*hgr(min(ii)))*Tlong_min/12;
         dx(ii) = sqrt(OPT.g*hgr(ii))*OPT.dtref/OPT.CFL;
         dx(ii) = min(dx(ii),OPT.depthfac*hgr(ii));
