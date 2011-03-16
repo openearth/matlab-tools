@@ -251,11 +251,11 @@ classdef MTestExplorer < handle
             this.HToolBar = uitoolbar(this.HMainFigure);
             this.HToolBarRun = uipushtool(this.HToolBar,...
                 'CData',loadicon('RunOne.gif'),...
-                'ToolTip','Run selected test',...
+                'ToolTip','Run selected test (Ctrl + F5)',...
                 'ClickedCallback',@this.run);
             this.HToolBarRun = uipushtool(this.HToolBar,...
                 'CData',loadicon('RunAll.gif'),...
-                'ToolTip','Run all tests',...
+                'ToolTip','Run all tests (F5)',...
                 'ClickedCallback',@this.runall);
             this.HToolBarViewSuccess = uitoggletool(this.HToolBar,...
                 'CData',loadicon('ViewPassedTests.gif'),...
@@ -291,7 +291,8 @@ classdef MTestExplorer < handle
             choices = {'<directory structure>','<category>','<status>'};
             this.JToolBar = get(get(this.HToolBar,'JavaContainer'),'ComponentPeer');
             this.JCombo = javax.swing.JComboBox(choices);
-            set(this.JCombo, 'ActionPerformedCallback', @this.buildtree);
+            set(this.JCombo, 'ActionPerformedCallback', @this.buildtree,...
+                'KeyPressedCallback',@this.keypressed_callback);
             this.JToolBar(1).addSeparator;
             this.JToolBar(1).add(textLabel,11);
             this.JToolBar(1).add(this.JCombo,12);
@@ -328,6 +329,7 @@ classdef MTestExplorer < handle
             this.JProgressBar.setString('Idle...');
 
             %% Create tree
+            javaclasspath(fullfile(mfilename('fullpath'),'java_tree_tools'));
             import javax.swing.tree.*
             import javax.swing.*
             import java.awt.*;
@@ -337,21 +339,21 @@ classdef MTestExplorer < handle
             set(this.JTree,...
                 'MouseClickedCallback',{@this.mouseclickedontree_callback,'mouse'},...
                 'TreeExpandedCallback',@this.treeexpanded_callback,...
-                'KeyPressedCallback',{@this.mouseclickedontree_callback,'keypress'},...
+                'KeyPressedCallback',@this.keypressed_callback,...
                 'TreeCollapsedCallback',@this.treecollapsed_callback);
-            this.JTreeRootNode = DefaultMutableTreeNode('RootNode');
+            this.JTreeRootNode = MTestMutableTreeNode('RootNode');
             this.JTreeModel = this.JTree.getModel();
             this.JTreeModel.setRoot(this.JTreeRootNode);
 
             % Configure tree
             this.JTree.setRootVisible(false);
             this.JTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-            renderer = this.JTree.getCellRenderer;
-            renderer.setLeafIcon(ImageIcon(which('testicon_16.gif')));
-            this.JTree.setCellRenderer(renderer);
+            this.JTree.setCellRenderer(MTestTreeNodesRenderer());
             this.JTree.repaint;
             set(this.JTree,'UserData',this);
 
+            %ToolTipManager.sharedInstance().registerComponent(tree);
+            
             % place tree in scrollpane
             this.JScrollPane = javax.swing.JScrollPane(this.JTree);
             % create JPanel to host the tree
@@ -367,7 +369,9 @@ classdef MTestExplorer < handle
             this.JTextPane.setEditable(false);
             this.JTextPane.setText('<h1>MTest</h1><p>Add a test and run</p>');
             hjTextpane = handle(this.JTextPane,'CallbackProperties');
-            set(hjTextpane,'HyperlinkUpdateCallback',@MTestExplorer.textpanelinkfunction);
+            set(hjTextpane,...
+                'HyperlinkUpdateCallback',@MTestExplorer.textpanelinkfunction,...
+                'KeyPressedCallback',@this.keypressed_callback);
 
             jScrollPane = javax.swing.JScrollPane(this.JTextPane);
 
@@ -403,6 +407,8 @@ classdef MTestExplorer < handle
             drawnow;
             this.JSplitPanel.setDividerLocation(0.5);
             this.JSplitPanelMain.setDividerLocation(0.8);
+            
+            
         end
     end
     methods
@@ -479,19 +485,25 @@ classdef MTestExplorer < handle
             existingfigs = findobj('Type','figure');
             for itests = 1:length(selectionId)
                 if selectionId(itests)
+                    currentTest = this.MTestRunner.Tests(itests);
+                    
                     % reset teamcity in case a test has altered the running prop
                     this.setteamcity_callback;
 
                     % prepare progressbar
+                    node = this.JTreeTestNodes{itests};
+                    node.setIconUrl(which('TestIconRunning_16.gif'));
+                    this.JTree.repaint;
+                    
                     this.JProgressBar.setString(['Running: ' this.MTestRunner.Tests(itests).Name ' (' num2str(round((sum(selectionId(1:itests-1))/sum(selectionId))*100))  '%)']);
 
                     % reset some test parameters (ignore for example should not remain true)
-                    this.MTestRunner.Tests(itests).AutoRefresh = true;  % Auto update to the latest definition
-                    this.MTestRunner.Tests(itests).Ignore = false;      % Should not remain true, whereas it isn't run a next time
+                    currentTest.AutoRefresh = true;  % Auto update to the latest definition
+                    currentTest.Ignore = false;      % Should not remain true, whereas it isn't run a next time
 
                     % Run the test
                     try
-                        this.MTestRunner.Tests(itests).run;
+                        currentTest.run;
                         path(mtestpath);
                     catch  %#ok<CTCH>
                         path(mtestpath);
@@ -506,6 +518,8 @@ classdef MTestExplorer < handle
                     set(this.JProgressBar, 'Value',sum(selectionId(1:itests)));
 
                     % Rebuild the treeview to show testresult in nodes
+                    setnodestatus(node, currentTest);
+                    this.JTree.repaint;
                     if strcmp(this.ViewType,'Status')
                         % This has no effect on the other viewtypes, so don't waste time on it...
                         this.buildtree;
@@ -569,7 +583,7 @@ classdef MTestExplorer < handle
             showFailed = strcmp(get(this.HToolBarViewFailed,'State'),'on');
 
             %% Make root for treeview
-            rootNode = DefaultMutableTreeNode('RootNode');
+            rootNode = MTestMutableTreeNode('RootNode');
 
             oldNodes = this.JTreeAllNodes;
             this.JTreeAllNodes = {};
@@ -601,30 +615,18 @@ classdef MTestExplorer < handle
                 end
 
                 %% make treenode for test
-                % TODO: renaming nodes messes up the test ability to find nodes based on their names
-                % (in this.treeexpanded_callback for example). Find a way to deal with this, than we
-                % can rename. For now we also have the viewtype Status, to distinguish tests with a
-                % different status.
-                newNode = DefaultMutableTreeNode(this.MTestRunner.Tests(itests).Name);
-                if testExecutedFlag
-                    if this.MTestRunner.Tests(itests).Ignore
-                        status = 'Ignored';
-                    elseif testResult
-                        status = 'Passed';
-                    else
-                        status = 'Failed';
-                    end
-                else
-                    status = 'Not Run';
-                end
+                currentTest = this.MTestRunner.Tests(itests);
+                newNode = MTestMutableTreeNode(currentTest.Name);
+                status = setnodestatus(newNode, currentTest);
+                newNode.setToolTipText(fullfile(currentTest.FilePath,currentTest.FileName));
                 set(newNode,'UserData',itests);
-
+                
                 %% Determine place in tree structure
                 baseNode = rootNode;
                 switch this.ViewType
                     case 'Directory'
                         %% place in dirstructure tree
-                        testPath = strread(this.MTestRunner.Tests(itests).FilePath,'%s',-1,'delimiter',[filesep filesep]);
+                        testPath = strread(currentTest.FilePath,'%s',-1,'delimiter',[filesep filesep]);
                         for ip = 2:length(testPath)
                             %% Check if the directory is already presented in the tree, otherwise add it
                             if baseNode.getChildCount > 0
@@ -632,7 +634,7 @@ classdef MTestExplorer < handle
                                 if tf
                                     baseNode = node;
                                 else
-                                    new = DefaultMutableTreeNode(testPath{ip});
+                                    new = MTestMutableTreeNode(testPath{ip});
                                     position = baseNode.getChildCount;
                                     this.JTreeModel.insertNodeInto(new,baseNode,position);
 
@@ -647,7 +649,7 @@ classdef MTestExplorer < handle
                                     continue;
                                 end
                             else
-                                new = DefaultMutableTreeNode(testPath{ip});
+                                new = MTestMutableTreeNode(testPath{ip});
                                 baseNode.add(new);
                                 this.JTreeAllNodes{end+1,1} = new;
                                 this.JTreeAllNodes{end,2} = fullfile(testPath{1:ip});
@@ -667,7 +669,7 @@ classdef MTestExplorer < handle
                         end
                         [tf baseNode] = getchild(rootNode,MTestCategory.toString(this.MTestRunner.Tests(itests).Category));
                         if ~tf
-                            baseNode = DefaultMutableTreeNode(MTestCategory.toString(this.MTestRunner.Tests(itests).Category));
+                            baseNode = MTestMutableTreeNode(MTestCategory.toString(this.MTestRunner.Tests(itests).Category));
                             position = baseNode.getChildCount;
                             this.JTreeModel.insertNodeInto(baseNode,rootNode,position);
                             this.JTreeAllNodes{end+1,1} = baseNode;
@@ -682,7 +684,7 @@ classdef MTestExplorer < handle
                     case 'Status'
                         [tf baseNode] = getchild(rootNode,status);
                         if ~tf
-                            baseNode = DefaultMutableTreeNode(status);
+                            baseNode = MTestMutableTreeNode(status);
                             position = baseNode.getChildCount;
                             this.JTreeModel.insertNodeInto(baseNode,rootNode,position);
                             this.JTreeAllNodes{end+1,1} = baseNode;
@@ -1127,7 +1129,6 @@ classdef MTestExplorer < handle
 
                     this.JideModel.expandAll();
                     this.JideModel.refresh;
-
                 otherwise
                     %% Set selection
                     rows = this.JTree.getClosestRowForLocation(varargin{2}.getX, varargin{2}.getY);
@@ -1157,6 +1158,65 @@ classdef MTestExplorer < handle
 
             if ~isempty(coverage)
                 profview(coverage);
+            end
+        end
+        function keypressed_callback(this,varargin)
+            keyEvent = varargin{end};
+            
+            if keyEvent.getKeyCode == 116
+                % F5
+                if keyEvent.isControlDown
+                    this.run;
+                else
+                    this.runall;
+                end
+                return;
+            end
+            
+            if keyEvent.isShiftDown && keyEvent.isControlDown &&...
+                    keyEvent.getKeyCode == 77
+                % Ctrl + Shift + M
+                set(this.HContextMenu,...
+                    'Position',[0 this.JSplitPanel.getHeight-varargin{2}.getSource.getY],...
+                    'Visible','on');
+                return;
+            end
+            
+            if keyEvent.isControlDown && keyEvent.getKeyCode == 70
+                % Ctrl + F
+                this.JSearchField.requestFocus;
+                return;
+            end
+
+            if keyEvent.getKeyCode == 38 || keyEvent.getKeyCode == 40
+                % up or down
+                this.JTree.requestFocus;
+                %this.JTree.handleEvent(keyEvent);
+            end
+            
+            disp('Keys: ');
+            if keyEvent.isControlDown
+                disp('Control');
+            end
+            if keyEvent.isShiftDown
+                disp('Shift');
+            end         
+            if keyEvent.isMetaDown
+                disp('Meta?');
+            end
+            if keyEvent.isAltDown
+                disp('Alt');
+            end
+            if keyEvent.isAltGraphDown
+                disp('AltGraph');
+            end
+            disp(['KeyCode: ' num2str(keyEvent.getKeyCode)]);
+            disp(['KeyLocation: ' num2str(keyEvent.getKeyLocation)]);
+            disp(' ');
+            
+            %% Forward to keypressed callback of treeview
+            if (this.JTree == keyEvent.getSource)
+                this.mouseclickedontree_callback(varargin{:},'keypress');
             end
         end
     end
@@ -1189,7 +1249,7 @@ node = [];
 childCount = baseNode.getChildCount;
 for i=1:childCount
     child = baseNode.getChildAt(i-1);
-    if strcmp(child.toString,name)
+    if strcmp(child.getText,name)
         tf = true;
         node = child;
         return;
@@ -1209,15 +1269,15 @@ end
 end
 function str = node2str(node)
 if node.isRoot
-    str = char(node.toString);
+    str = char(node.getText);
 else
     parentnodes = getparentsrecursive(node);
     str = [];
     for ipnodes = length(parentnodes):-1:1
-        str = cat(2,str,char(parentnodes{ipnodes}.toString),'_');
+        str = cat(2,str,char(parentnodes{ipnodes}.getText),'_');
     end
     num = num2str(get(node,'UserData'));
-    str = cat(2,str,char(node.toString),'_',num);
+    str = cat(2,str,char(node.getText),'_',num);
 end
 end
 function parentnodes = getparentsrecursive(node)
@@ -1238,4 +1298,22 @@ end
 %% Helper function to find exclusions in a filename
 function tf = findexclusion(name,exclusions)
 tf = any(~cellfun(@isempty,cellfun(@strfind,repmat({name},size(exclusions)),exclusions,'UniformOutput',false)));
+end
+
+function status = setnodestatus(node, test)
+if ~isnan(test.Date)
+    if test.Ignore
+        status = 'Ignored';
+        node.setIconUrl(which('TestIconIgnored_16.gif'));
+    elseif test.TestResult
+        status = 'Passed';
+        node.setIconUrl(which('TestIconPassed_16.gif'));
+    else
+        status = 'Failed';
+        node.setIconUrl(which('TestIconFailed_16.gif'));
+    end
+else
+    status = 'Not Run';
+    node.setIconUrl(which('TestIconNotRun_16.gif'));
+end
 end
