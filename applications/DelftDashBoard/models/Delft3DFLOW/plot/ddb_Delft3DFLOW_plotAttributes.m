@@ -212,6 +212,7 @@ switch lower(opt)
                 
     case{'delete'}
 
+        try
         if ~isempty(allPlotHandles)
             delete(allPlotHandles);
 %            drawnow;
@@ -225,9 +226,11 @@ switch lower(opt)
             attStruc(i).plotHandles=[];
             attStruc(i).textHandles=[];
         end
+        end
         
     case{'update'}
         
+        try
         % Set colors
         if ~isempty(allPlotHandles)
             if strcmpi(tp,'line')
@@ -270,7 +273,7 @@ switch lower(opt)
                 set(allTextHandles,'Visible','off');
             end
         end
-       
+        end
 end
 
 switch lower(att)
