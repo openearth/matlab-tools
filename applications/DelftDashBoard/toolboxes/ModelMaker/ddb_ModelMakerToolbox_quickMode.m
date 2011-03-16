@@ -178,7 +178,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=6000000
         dmin=dmin*111111;
     end
     
-    dmin=15000;
+%     dmin=15000;
 
     % Find coordinates of corner points
     x(1)=xori;
