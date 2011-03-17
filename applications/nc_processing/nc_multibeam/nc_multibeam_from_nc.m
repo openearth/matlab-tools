@@ -47,6 +47,7 @@ function varargout = nc_multibeam_from_nc(varargin)
 % $Keywords: $
 
 %%
+OPT.netcdfversion       = 3;
 OPT.make                = true;
 OPT.copy2server         = false;
 
@@ -248,6 +249,10 @@ if OPT.make
                             Z_old       = Z;
                         end
                         
+                        % set the name for the nc file
+                        ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
+                            sprintf('%.2f_%.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
+                        
                         if any(~isnan(Z(:)))
                             Z = flipud(Z);
                             Y = flipud(Y);
@@ -260,17 +265,22 @@ if OPT.make
                             end
                             nc_multibeam_putDataInNCfile(OPT,ncfile,time(iTime),Z')
                         end
+                                                
+                        % crop ncfile name for waitbars
+                        if length(ncfile)>70
+                            ncfile = ['...' ncfile(end-68:end)];
+                        end
                         
                         WB.writtenDone =  (find(x0==minx : OPT.mapsizex : maxx,1,'first')-1)/...
                             length(minx : OPT.mapsizex : maxx)+ find(y0==miny : OPT.mapsizey : maxy,1,'first')/...
                             length(miny : OPT.mapsizey : maxy)/...
                             length(minx : OPT.mapsizex : maxx);
-                        multiWaitbar('nc_writing',WB.writtenDone,'label',sprintf('%.2f_%.2f_%s_data.nc',x0,y0,OPT.datatype))
+                        multiWaitbar('nc_writing',WB.writtenDone,'label',ncfile)
                         multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+(1+WB.writtenDone)*fns_unzipped(ii).bytes)/WB.bytesToDo)
                     end
                 end
                 WB.writtenDone = 1;
-                multiWaitbar('nc_writing',WB.writtenDone,'label',sprintf('%.2f_%.2f_%s_data.nc',x0,y0,OPT.datatype))
+                multiWaitbar('nc_writing',WB.writtenDone,'label',ncfile)
                 WB.bytesDoneClosedFiles = WB.bytesDoneClosedFiles+fns_unzipped(ii).bytes;
             end
             

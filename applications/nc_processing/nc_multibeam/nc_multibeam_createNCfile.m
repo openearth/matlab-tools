@@ -11,12 +11,20 @@ if ~exist(OPT.netcdf_path,'dir')
     mkdir(OPT.netcdf_path)
 end
 
-% avoid use of netCDF as it is incompatible with R and arcGIS, onyl use netCDF4 when you really need it, 
+% avoid use of netCDF as it is incompatible with R and arcGIS, onyl use netCDF4 when you really need it,
 % a.g. when you have lots of nodatavalues, fort which netCDF4 provides effective per-variable zipping
 
-%mode    = netcdf.getConstant('NETCDF4'); 
-%mode    = bitor(mode,netcdf.getConstant('NOCLOBBER'));
-mode     = netcdf.getConstant('NOCLOBBER');
+switch  OPT.netcdfversion
+    case 3
+        deflatenc = false;
+        mode     = netcdf.getConstant('NOCLOBBER');
+    case 4
+        deflatenc = true;
+        mode    = netcdf.getConstant('NETCDF4');
+        mode    = bitor(mode,netcdf.getConstant('NOCLOBBER'));
+end
+
+
 NCid     = netcdf.create(ncfile,mode);
 globalID = netcdf.getConstant('NC_GLOBAL');
 dimSizeX = (OPT.mapsizex/OPT.gridsizex);
@@ -45,11 +53,8 @@ netcdf.defDim(NCid,          'y',           dimSizeY);
 netcdf.defDim(NCid,          'x',           dimSizeX);
 
 %% *** add variables ***
-try
-    epsg_wkt_str = epsg_wkt(OPT.EPSGcode);
-catch
-    epsg_wkt_str = 'epsg_wkt could not be retrieved';
-end
+epsg_wkt_str = epsg_wkt(OPT.EPSGcode);
+
 x  = unique(X);
 dx = abs(unique(diff(x)));
 if length(dx) == 1
@@ -84,11 +89,11 @@ crsVariable = struct(...
 netcdf_addvar(NCid, crsVariable);
 
 nc_oe_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'time'}, 'oe_standard_name', {'time'},                    'dimension', {'time'},      'timezone', '+01:00');
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lon'},  'cf_standard_name', {'longitude'},               'dimension', {'x','y'}, 'deflate',1);
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lat'},  'cf_standard_name', {'latitude'},                'dimension', {'x','y'}, 'deflate',1);
+nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lon'},  'cf_standard_name', {'longitude'},               'dimension', {'x','y'}, 'deflate',deflatenc);
+nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lat'},  'cf_standard_name', {'latitude'},                'dimension', {'x','y'}, 'deflate',deflatenc);
 nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'x'},    'cf_standard_name', {'projection_x_coordinate'}, 'dimension', {'x'},'additionalAtts',actual_range_x);
 nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'y'},    'cf_standard_name', {'projection_y_coordinate'}, 'dimension', {'y'},'additionalAtts',actual_range_y);
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'z'},    'cf_standard_name', {'altitude'},                'dimension', {'x','y','time'}, 'deflate',1);%
+nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'z'},    'cf_standard_name', {'altitude'},                'dimension', {'x','y','time'}, 'deflate',deflatenc);%
 
 
 

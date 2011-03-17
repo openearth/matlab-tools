@@ -48,6 +48,7 @@ function varargout = nc_multibeam_from_xyz(varargin)
 % $Keywords: $
 
 %%
+OPT.netcdfversion       = 3;
 OPT.block_size          = 3e6;
 OPT.make                = true;
 OPT.copy2server         = false;
@@ -243,17 +244,25 @@ if OPT.make
                             % place xyz data on XY matrices
                             Z = OPT.gridFcn(x,y,z,X,Y);
                             
+                            % set the name for the nc file
+                            ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
+                                    sprintf('%.2f_%.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
+                                
                             if any(~isnan(Z(:)))
                                 Z = flipud(Z);
                                 Y = flipud(Y);
                                 % if a non trivial Z matrix is returned write the data
                                 % to a nc file
-                                ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
-                                    sprintf('%.2f_%.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
+                                
                                 if ~exist(ncfile, 'file')
                                     nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
                                 end
                                 nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z')
+                            end
+                            
+                            % crop ncfile name for waitbars
+                            if length(ncfile)>70
+                                ncfile = ['...' ncfile(end-68:end)];
                             end
                             
                             %  waitbar stuff
@@ -261,7 +270,7 @@ if OPT.make
                             WB.bytesWritten            = WB.bytesWritten + WB.numelDone/WB.numel*(WB.bytesRead-WB.bytesDoneOfCurrentFile);
                             multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
                             multiWaitbar('nc_writing',WB.bytesWritten/fns_unzipped(ii).bytes,...
-                                'label',sprintf('%.2f_%.2f_%s_data.nc',x0,y0,OPT.datatype))
+                                'label',ncfile);
                         end
                     end
                 end
