@@ -329,7 +329,7 @@ classdef MTestExplorer < handle
             this.JProgressBar.setString('Idle...');
 
             %% Create tree
-            javaclasspath(fullfile(mfilename('fullpath'),'java_tree_tools'));
+            javaclasspath(fullfile(fileparts(mfilename('fullpath')),'java_tree_tools'));
             import javax.swing.tree.*
             import javax.swing.*
             import java.awt.*;
