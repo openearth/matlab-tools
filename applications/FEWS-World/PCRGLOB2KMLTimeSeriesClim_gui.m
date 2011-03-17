@@ -66,8 +66,6 @@
 % OPT.name          = '';
 % [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
-% source oetsettings
-run(['..' filesep '..' filesep 'oetsettings']);
 LocationFile = 'MainRivers.csv';
 ModelFile = 'ModelInfo.csv';
 fid = fopen(LocationFile,'r');

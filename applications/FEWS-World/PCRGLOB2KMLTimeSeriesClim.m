@@ -82,7 +82,7 @@ function PCRGLOB2KMLTimeSeriesClim(lats,lons,model,scenario,var,varargin)
 OPT.description   = '';
 [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
-nc_location = 'F:\python\FEWSWorld';
+nc_location = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/FEWS-IPCC/';
 baseline = '20CM3';
 if max(lats) > 90 | min(lats) < -90 | max(lons) > 180 | min(lons) < -180
     disp('Latitude or longitude out range. Permitted range for longitudes is -180....180, permitted range for latitudes -90....90. Exiting...');
@@ -93,8 +93,8 @@ if length(lats)~=length(lons)
     return
 end
 legendEntries = {'Current (1971-1990)';'Future (2081-2100)'};
-ncFile{1} = [nc_location filesep baseline '_' model '_1971-1990.nc'];
-ncFile{2} = [nc_location filesep scenario '_' model '_2081-2100.nc'];
+ncFile{1} = [nc_location baseline '_' model '_1971-1990.nc'];
+ncFile{2} = [nc_location scenario '_' model '_2081-2100.nc'];
 col = {'k','r'};
 
 KMLName = [model '_' scenario '_' var '.kml'];
