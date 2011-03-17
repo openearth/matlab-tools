@@ -207,7 +207,7 @@ if ~isfield(D,'datenum')
 end
 
 D(1).pathname = [a filesep];
-
+D(1).isdir    = true;
 D(1).bytes    = sum([newD(~[newD.isdir]).bytes]);
 
 % concatenate D
