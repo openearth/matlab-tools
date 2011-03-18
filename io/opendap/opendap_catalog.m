@@ -13,6 +13,7 @@ function varargout = opendap_catalog(varargin)
 % in the directory tree below it are returned.
 % Any trailing /catalog.html is replaced with /catalog.xml (THREDDS).
 % Any trailing /contents.html is replaced with /catalog.xml (HYRAX).
+% When starting with ''http', any trailing / is replaced with /catalog.xml.
 %
 %   nc_file_list = opendap_catalog(url,<keyword,value>)
 %
@@ -160,6 +161,8 @@ else
         OPT.url = [OPT.url(1:end-13)   'catalog.xml'];
    elseif  strcmpi(OPT.url(end-4:end),'.html')          % THREDDS
         OPT.url = [OPT.url(1:end-5)   '.xml'];
+   elseif  strcmpi(path2os(OPT.url(end),'h'),'/') % left out catalog.xml, is valid in broweser
+        OPT.url = [OPT.url 'catalog.xml'];
    elseif ~strcmpi(OPT.url(end-3:end),'.xml')
       fprintf(2,'warning: opendap_catalog: url does not have extension ".xml" or ".html"')
    end
