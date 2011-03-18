@@ -1,11 +1,10 @@
 function OUT = addrowcol(IN,varargin);
 %ADDROWCOL   expand matrix with rows/columns on either of 4 sides
 %
-%  addrowcol adds a row and column to an array
-% (by default filled with nans).
+%  addrowcol adds a row and column to a numeric or 
+%  char array (by default filled with nans or space).
 %
 %  WORKS FOR THE MOMENT ONLY FOR 2dimensional ARRAYS!
-%  --------------------------------------------------
 %
 %  out = addrowcol(in,marker) adds a row and column
 %  filled with the value of marker.
@@ -43,34 +42,18 @@ function OUT = addrowcol(IN,varargin);
 %   so when adding 'ab' with dm =2, then 'aabb' is added
 %   and not 'abab' as expected. Example:
 %
-%   >> addrowcol('a',0,2,'bc')
-%   
-%   ans =
-%   
-%   abbcc
+%   >> addrowcol('a',0,2,'bc') = abbcc
 %
 % * NOTE that the first element of boerder is added
 %   close to the original array. Example:
 %
-%   >> addrowcol('a',0, 1,'bc')
-%   
-%   ans =
-%   
-%   abc
+%   >> addrowcol('a',0, 1,'bc') = abc
 %
-%   >> addrowcol('a',0,-1,'bc')
-%   
-%   ans =
-%   
-%   cba
+%   >> addrowcol('a',0,-1,'bc') = cba
 %
 % * NOTE that addrowcol is ALSO vectorized for dm or dn!
 %
-%   >> addrowcol('a',0,[-1 1],'bc')
-%
-%   ans =
-%
-%   cbabc
+%   >> addrowcol('a',0,[-1 1],'bc') = cbabc
 %
 % see also : PAD
 
@@ -113,7 +96,18 @@ function OUT = addrowcol(IN,varargin);
 
    dm            = 1;
    dn            = 1;
+   
+   if isnumeric(IN)
    border        = NaN;
+   else
+   border        = ' ';
+   end
+
+      makecellstr = 0;
+   if iscellstr(IN)
+      IN = char(IN);
+      makecellstr = 1;
+   end
 
    if nargin==2
       border        = varargin{1};
@@ -127,7 +121,6 @@ function OUT = addrowcol(IN,varargin);
    end
    
 %% Recursive algorithm
-%% ---------------------
 
    if length(border) >1
       
@@ -167,4 +160,8 @@ function OUT = addrowcol(IN,varargin);
           IN = OUT;
   
       end
+   end
+
+   if makecellstr
+      OUT = cellstr(OUT);
    end
