@@ -75,54 +75,60 @@ OPT = setproperty(OPT, varargin{:});
 
 runs = xb_getpref('runs');
 
-formatstr = '%8s %-15s %-6s %-25s %-7s %-50s';
+formatstr = '%8s %-10s: %-30s %-20s: %-30s\n';
 
 if ~isempty(runs) && iscell(runs)
-    hdr = sprintf(['  ' formatstr], 'ID', 'Name', 'Nodes', 'Binary', 'Remote', 'Log');
     
-    disp(hdr);
-    fprintf([repmat('-',1,length(hdr)) '\n']);
+    % remove doubles, non-existing and outdated
+    fpaths = {};
+    for i = 1:length(runs)
+        fpath = fileparts(xb_get(runs{i}, 'path'));
+        if ~exist(fpath, 'dir') || now-datenum(runs{i}.date) > 3 || ismember(fpath, fpaths)
+            idx = strcmpi(fpath, fpaths);
+            fpaths{idx} = ' ';
+        end
+        fpaths = [fpaths{:} {fpath}];
+    end
+    runs(strcmpi(' ', fpaths)) = [];
     
     for i = 1:length(runs)
         xb = xb_peel(runs{i});
-        if exist(xb.path, 'dir')
-            line = '';
+        fpath = fileparts(xb.path);
             
-            % read log file
-            logfile = fullfile(xb.path, 'XBlog.txt');
-            if exist(logfile, 'file')
-                line = tail(logfile, 'n', OPT.n);
-            end
-            
-            for j = 1:max([size(line,1) 1])
-                if j == 1
-                    fprintf(['<a href="matlab:xb_run_unregister(''%s''); xb_run_list;">x</a> ' formatstr '\n'], ...
-                        num2str(xb.id), ...
-                        num2str(xb.id), ...
-                        xb.name, ...
-                        num2str(xb.nodes), ...
-                        xb.binary, ...
-                        num2str(isfield(xb, 'ssh')), ...
-                        line(j,:) );
-                else
-                    fprintf(['  ' formatstr '\n'], ...
-                        '', ...
-                        '', ...
-                        '', ...
-                        '', ...
-                        '', ...
-                        line(j,:) );
-                end
-            end
-            
-            disp(' ');
-        else
-            % unregister
-            runs(i) = [];
-        end
+        % read log file
+        log = xb_run_parselog(fpath);
+
+        fprintf(formatstr, num2str(xb.id), 'Name',   xb.name,                     'Time remaining',     datestr(xb_get(log, 'remtime'), 'HH:MM:SS'));
+        fprintf(formatstr, ' ',            'Path',   shortdisp(fpath,30),         'Total run duration', datestr(xb_get(log, 'duration'), 'HH:MM:SS'));
+        fprintf(formatstr, ' ',            'Binary', shortdisp(xb.binary,30),     'Average timestep',   datestr(xb_get(log, 'timestep'), 'SS.FFF'));
+        fprintf(formatstr, ' ',            'Nodes',  num2str(xb.nodes),           'Finished',           num2str(xb_get(log, 'finished')));
+        fprintf(formatstr, ' ',            'Remote', num2str(isfield(xb, 'ssh')), 'Error',              xb_get(log', 'error'));
+
+        disp(' ');
+
+        p = xb_get(log, 'progress');
+        fprintf(['         [' repmat('>',1,round(p)) repmat(' ',1,round(100-p)) '] %2.1f%%\n'], p);
+
+        disp(' ');
+
+        fprintf('         ');
+        fprintf('<a href="matlab:xb_run_unregister(''%s''); xb_run_list;">delete</a> | ', num2str(xb.id))
+        fprintf('<a href="matlab:xb_view(''%s'');">view</a> | ', fpath)
+        fprintf('<a href="matlab:cd(''%s'');">cd</a>', fpath)
+        fprintf('\n');
+
+        disp(' ');
     end
 else
     disp('No runs');
 end
 
 xb_setpref('runs', runs);
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function str = shortdisp(str, n)
+
+if length(str) > n
+    str = [str(1:floor((n-5)/2)) ' ... ' str(end-ceil((n-5)/2-1):end)];
+end

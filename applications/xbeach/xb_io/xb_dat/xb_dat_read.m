@@ -157,7 +157,7 @@ if exist(fname, 'file')
             ftype = 'double';
         otherwise
             ftype = 'double';
-            warning('Your filesize is weird, I assume it contains doubles [' fname ']');
+            warning(['Your filesize is weird, I assume it contains doubles [' fname ']']);
     end
 
     fid = fopen(fname, 'r');

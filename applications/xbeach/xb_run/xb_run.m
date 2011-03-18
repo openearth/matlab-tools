@@ -73,10 +73,12 @@ OPT = struct( ...
     'binary', '', ...
     'nodes', 1, ...
     'netcdf', false, ...
-    'path', '.' ...
+    'path', pwd ...
 );
 
 OPT = setproperty(OPT, varargin{:});
+
+OPT.path = abspath(OPT.path);
 
 %% write model
 
@@ -133,7 +135,7 @@ else
             error('No supported MPI application installed');
         end
     else
-        drive = regexp(OPT.path, '^\s*([A-Z]:)', 'match'); drive = drive{1};
+        drive = regexp(OPT.path, '^\s*([a-zA-Z]:)', 'match'); drive = drive{1};
         
         % start xbeach
         [r messages] = system([drive ' && cd ' OPT.path ' && start ' OPT.binary]);

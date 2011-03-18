@@ -84,7 +84,7 @@ if OPT.write_files
             sub = xb.data(i).value;
             
             switch xb.data(i).name
-                case {'bcfile'}
+                case {'bcfile' 'ezsfile'}
                     % write waves
                     xb.data(i).value = xb_write_waves(sub, 'path', fdir);
                 case {'zs0file'}
@@ -98,7 +98,16 @@ if OPT.write_files
                     try
                         xb.data(i).value = [xb.data(i).name '.txt'];
                         data = xb_get(sub, 'data');
-                        save(fullfile(fdir, xb.data(i).value), '-ascii', 'data');
+                        if isnumeric(data)
+                            save(fullfile(fdir, xb.data(i).value), '-ascii', 'data');
+                        elseif iscell(data)
+                            fid = fopen(fullfile(fdir, xb.data(i).value), 'w');
+                            for j = 1:length(data); fprintf(fid, '%s\n', data{j}); end;
+                            fclose(fid);
+                        else
+                            % unknown type, ignore
+                            xb = xb_del(xb, xb.data(i).name);
+                        end
                     catch
                         % cannot write file, ignore
                         xb = xb_del(xb, xb.data(i).name);

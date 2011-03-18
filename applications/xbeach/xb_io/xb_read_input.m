@@ -94,6 +94,15 @@ xb = xb_read_params(filename);
 
 if OPT.read_paths
     
+    % add non-referenced files
+    instat = xb_get(xb, 'instat');
+    if ((isnumeric(instat) && ismember(instat, [2, 3])) || ...
+            (ischar(instat) && ismember(xb_get(xb, 'instat'), {'ts_1', 'ts_2'}))) && ...
+            ~xb_exist(xb, 'ezsfile') && ...
+            exist('bc/gen.ezs', 'file')
+        xb = xb_set(xb, 'ezsfile', 'bc/gen.ezs');
+    end
+    
     fdir = fileparts(filename);
 
     for i = 1:length(xb.data)
@@ -102,7 +111,7 @@ if OPT.read_paths
 
             if exist(fpath, 'file')
                 switch xb.data(i).name
-                    case {'bcfile'}
+                    case {'bcfile' 'ezsfile'}
                         % read waves
                         value = xb_read_waves(fpath);
                     case {'zs0file'}
@@ -113,13 +122,19 @@ if OPT.read_paths
                         value = xb_read_bathy(xb.data(i).name, fpath);
                     otherwise
                         % assume file to be a grid and try reading it
+                        value = xb_empty();
+                        
                         try
-                            value = xb_empty();
                             value = xb_set(value, 'data', load(fpath));
-                            value = xb_meta(value, mfilename, 'grid');
+                            value = xb_meta(value, mfilename, 'grid', fpath);
                         catch
-                            % cannot read file, save filename only
-                            value = fpath;
+                            % cannot load file, read it as text
+                            fid = fopen(fpath, 'r');
+                            data = fread(fid, '*char')';
+                            fclose(fid);
+                            
+                            value = xb_set(value, 'data', data);
+                            value = xb_meta(value, mfilename, 'data', fpath);
                         end
                 end
                 

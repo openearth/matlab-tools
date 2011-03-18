@@ -1,4 +1,4 @@
-function type = xb_get_wavefiletype(filename)
+function [type types counts] = xb_get_wavefiletype(filename)
 %XB_GET_WAVEFILETYPE  Determines the type of wave definition file for XBeach input
 %
 %   Analyzes the contents of a wave definition file for XBeach input and
@@ -14,6 +14,8 @@ function type = xb_get_wavefiletype(filename)
 %
 %   Output:
 %   type      = string specifying the wave definition filetype
+%   types     = wave definition filetypes available
+%   counts    = matching scores of each filetype
 %
 %   Example
 %   type = xb_get_wavefiletype(filename)
@@ -63,7 +65,7 @@ function type = xb_get_wavefiletype(filename)
 
 %% set file types
 
-types = {'unknown' 'filelist' 'jonswap' 'jonswap_mtx' 'vardens' 'bcflist'};
+types = {'unknown' 'filelist' 'jonswap' 'jonswap_mtx' 'vardens' 'bcflist' 'ezs'};
 counts = zeros(1,length(types));
 
 %% determine filetype
@@ -78,7 +80,7 @@ lcount = 1;
     
 % read lines of file
 fid = fopen(filename, 'r');
-while ~feof(fid)
+while ~feof(fid) && lcount < 100
     fline = fgetl(fid);
     if isempty(fline); continue; end;
 
@@ -141,6 +143,19 @@ while ~feof(fid)
                 if lcount > sum(vardens_dim)+2
                     counts = increase_count(types, counts, 'jonswap_mtx');
                 end
+        end
+    end
+    
+    % test for ezs file
+    try
+        if ~isempty(regexp(fline, '^BL\d+$', 'once')) || ~isempty(regexp(fline, '^\*', 'once'))
+            counts = increase_count(types, counts, 'ezs');
+        end
+        
+        [a b c d e] = strread(fline, '%f %f %f %f %f\n');
+        if ~isempty(a) && ~isempty(b) && ~isempty(c) && ...
+                ~isempty(d) && ~isempty(e)
+            counts = increase_count(types, counts, 'ezs');
         end
     end
 

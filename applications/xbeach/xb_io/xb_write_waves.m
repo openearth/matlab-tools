@@ -138,7 +138,19 @@ switch type
                 error('Time dimension of variance density matrix does not match');
             end
         end
-    case 'unknown'
+    case {'ezs'}
+        vars = {'contents' 'duration' 'timestep'};
+        
+        fname = 'bc/gen.ezs';
+        
+        bcpath = abspath(fullfile(OPT.path, 'bc'));
+        if ~exist(bcpath, 'dir')
+            mkdir(bcpath);
+        end
+        
+        tlength = 1;
+        xb = xb_set(xb, 'duration', 0, 'timestep', 0);
+    case {'unknown'}
         vars = {'contents' 'duration' 'timestep'};
         
         fname = OPT.unknown_file;
@@ -204,7 +216,12 @@ else
     % loop through time series and write wave files
     for i = 1:length(duration)
         if length(duration) == 1
-            filename = [fname '.txt'];
+            if isempty(regexp(fname, '.\w+$', 'once'))
+                filename = [fname '.txt'];
+            else
+                filename = fname;
+            end
+            
             fname_i = filename;
         else
             fname_i = [fname '_' num2str(i) '.txt'];
@@ -217,6 +234,8 @@ else
                 write_jonswap_file(fname_i, i, xb)
             case 'vardens'
                 write_vardens_file(fname_i, i, xb)
+            case 'ezs'
+                write_unknown_file(fname_i, i, xb)
             case 'unknown'
                 write_unknown_file(fname_i, i, xb)
         end

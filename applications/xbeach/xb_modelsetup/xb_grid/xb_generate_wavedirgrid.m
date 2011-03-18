@@ -81,70 +81,78 @@ OPT = struct( ...
         
 OPT = setproperty(OPT, varargin{:});
 
-% find mean wave direction, minimum wave direction and maximum wave
-% direction in wave bc time series
-alpha = xb_get(xb,'alpha');             % get coastline / grid orientation alpha
-phi0t = xb_get(xb,'bcfile.mainang');    % get wave directions (nautical)
-phi0 = mean(phi0t);                     % compute mean wave direction
-theta_min = phi0;           
-theta_max = phi0;
-st = xb_get(xb,'bcfile.s');             % use max s to setup wavedir grid
+if ismember(xb_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
 
-% make directional distribution as proposed by Longuet_Higgins et al.
-% (1963)
-% figure(33);
-for i = 1:length(st)
-    m = 2*st(i);
-    phi = phi0t(i)-180:1:phi0t(i)+180;
-    p = cosd((phi-phi0t(i))/2).^m;
+    % find mean wave direction, minimum wave direction and maximum wave
+    % direction in wave bc time series
+    
+    % bas: this should be alfa instead of alpha, right?
+    %      this parameter is not available at this location
+    %      is it necessary anyway? thetabins should be defined in world coordinates
+    alpha = 0; %xb_get(xb,'alpha');             % get coastline / grid orientation alpha
+    
+    phi0t = xb_get(xb,'bcfile.mainang');    % get wave directions (nautical)
+    phi0 = mean(phi0t);                     % compute mean wave direction
+    theta_min = phi0;           
+    theta_max = phi0;
+    st = xb_get(xb,'bcfile.s');             % use max s to setup wavedir grid
 
-    % find range over which directional distribution is larger than OPT.varthr
-    indmin = min(find(p>=max(OPT.varthr)));
-    indmax = max(find(p>=max(OPT.varthr)));
-    
-    theta_min = min(theta_min,phi(indmin));
-    theta_max = max(theta_max,phi(indmax));
-    
-    % directional spreading as defined by Kuik et al, 1988
-    sig(i) = sqrt(2/(st(i)+1))/2/pi*360;
-     
-%     plot(phi,p,'b'); hold on;
-%     plot(phi(indmin),p(indmin),'r*');
-%     plot(phi(indmax),p(indmax),'r*');
-    
+    % make directional distribution as proposed by Longuet_Higgins et al.
+    % (1963)
+    % figure(33);
+    for i = 1:length(st)
+        m = 2*st(i);
+        phi = phi0t(i)-180:1:phi0t(i)+180;
+        p = cosd((phi-phi0t(i))/2).^m;
+
+        % find range over which directional distribution is larger than OPT.varthr
+        indmin = min(find(p>=max(OPT.varthr)));
+        indmax = max(find(p>=max(OPT.varthr)));
+
+        theta_min = min(theta_min,phi(indmin));
+        theta_max = max(theta_max,phi(indmax));
+
+        % directional spreading as defined by Kuik et al, 1988
+        sig(i) = sqrt(2/(st(i)+1))/2/pi*360;
+
+    %     plot(phi,p,'b'); hold on;
+    %     plot(phi(indmin),p(indmin),'r*');
+    %     plot(phi(indmax),p(indmax),'r*');
+
+    end
+
+    % only include bins that propagate wave action with a component
+    % towards the shore
+    theta_min = max(theta_min,270-alpha-90);
+    theta_max = min(theta_max,270-alpha+90);
+
+    % make shoe there is wavebin normal to the shore
+    safety = 15; % degrees
+    thata_min = min(theta_min, 270-alpha-safety);
+    thata_max = max(theta_max, 270-alpha+safety);
+
+    % plot([theta_min theta_min; theta_max theta_max]',[0 1; 0 1;]','r--o','LineWidth',1.5,'MarkerSize',8);
+    % plot([270-alpha 270-alpha],[0 1],'g--o','LineWidth',1.5,'MarkerSize',8); grid on;
+
+    % combine range p> OPT.varthr and directional range from wave bc time series
+    dthetasum = theta_max-theta_min;
+
+    % set dtheta, thetamin and thetamax and round off at 5 degrees
+    phim = theta_min+0.5*(theta_max-theta_min);
+    dtheta = ceil(0.5*dthetasum/(0.5*OPT.nbins)/5)*5;
+    theta_min = phim-dtheta*0.5*OPT.nbins;
+    theta_max = phim+dtheta*0.5*OPT.nbins;
+
+    % choose bin width based on directional spreading
+    thetagr = [theta_min:dtheta:theta_max];
+
+    % get what we need as output
+    xb = xb_set(xb,'thetamin',theta_min,'thetamax',theta_max','dtheta',dtheta,'thetanaut',1);
+
+    % plot(thetagr,zeros(1,length(thetagr)),'g-s'); grid on;
+
+
+    %
 end
-
-% only include bins that propagate wave action with a component
-% towards the shore
-theta_min = max(theta_min,270-alpha-90);
-theta_max = min(theta_max,270-alpha+90);
-
-% make shoe there is wavebin normal to the shore
-safety = 15; % degrees
-thata_min = min(theta_min, 270-alpha-safety);
-thata_max = max(theta_max, 270-alpha+safety);
-
-% plot([theta_min theta_min; theta_max theta_max]',[0 1; 0 1;]','r--o','LineWidth',1.5,'MarkerSize',8);
-% plot([270-alpha 270-alpha],[0 1],'g--o','LineWidth',1.5,'MarkerSize',8); grid on;
-
-% combine range p> OPT.varthr and directional range from wave bc time series
-dthetasum = theta_max-theta_min;
-
-% set dtheta, thetamin and thetamax and round off at 5 degrees
-phim = theta_min+0.5*(theta_max-theta_min);
-dtheta = ceil(0.5*dthetasum/(0.5*OPT.nbins)/5)*5;
-theta_min = phim-dtheta*0.5*OPT.nbins;
-theta_max = phim+dtheta*0.5*OPT.nbins;
-
-% choose bin width based on directional spreading
-thetagr = [theta_min:dtheta:theta_max];
-
-% get what we need as output
-xb = xb_set(xb,'thetamin',theta_min,'thetamax',theta_max','dtheta',dtheta,'thetanaut',1);
-
-% plot(thetagr,zeros(1,length(thetagr)),'g-s'); grid on;
-
-
-%
 
 
