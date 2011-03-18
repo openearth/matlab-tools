@@ -74,10 +74,15 @@ end
 
 if isdir(filename)
     % assume the filename to be the dims.dat file in the given directory
+    filename_nc = fullfile(filename, 'xboutput.nc');  % FIXME
     filename = fullfile(filename, 'dims.dat');
     
     if ~exist(filename, 'file')
-        error(['"' filename '" is not found.'])
+        if ~exist(filename_nc, 'file')
+            error(['"' filename '" is not found.'])
+        else
+            filename = filename_nc;
+        end
     end
 end
 
@@ -137,8 +142,8 @@ elseif strcmpi(extension, '.dat')
     XBdims = struct();
     
     % convert to netcdf-like dimension struct
-    XBdims.globalx = dims.nx;
-    XBdims.globaly = dims.ny;
+    XBdims.globalx = dims.nx+1;
+    XBdims.globaly = dims.ny+1;
     XBdims.globaltime = dims.nt;
     XBdims.sediment_classes = dims.nd;
     XBdims.wave_angle = dims.ntheta;
@@ -167,8 +172,8 @@ end
 
 %% jaap's convenience attributes
 
-XBdims.nx = XBdims.globalx;
-XBdims.ny = XBdims.globaly;
+XBdims.nx = XBdims.globalx-1;
+XBdims.ny = XBdims.globaly-1;
 XBdims.nt = XBdims.globaltime;
 
 XBdims.x = XBdims.globalx_DATA;

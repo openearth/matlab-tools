@@ -67,9 +67,9 @@ dims = xb_read_dims(fdir);
 
 switch upper(fname(1))
     case 'E'
-        fdims = [dims.globaly+1 dims.wave_angle];
+        fdims = [dims.globaly dims.wave_angle];
     case 'Q'
-        fdims = [dims.globaly+1];
+        fdims = [dims.globaly 3];
 end
 
 % determine time dimension based on filesize
