@@ -94,9 +94,9 @@ for i = 1:length(xb.data)
         s = size(v);
         
         % detremine current dimension order
-        if ~OPT.force && s(1) == nt && s(2) == ny+1 && s(3) == nx+1
+        if ~OPT.force && s(1) == nt && s(2) == ny && s(3) == nx
             perm = [3 2 4:ndims(v) 1];
-        elseif ~OPT.force && s(1) == nx+1 && s(2) == ny+1 && s(end) == nt
+        elseif ~OPT.force && s(1) == nx && s(2) == ny && s(end) == nt
             perm = [ndims(v) 2 1 3:ndims(v)-1];
         else
             switch OPT.order

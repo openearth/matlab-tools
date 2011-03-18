@@ -66,7 +66,7 @@ function xb_run_list(varargin)
 %% read options
 
 OPT = struct( ...
-    'n', 5 ...
+    'n', 10 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -87,6 +87,8 @@ if ~isempty(runs) && iscell(runs)
         xb = xb_peel(runs{i});
         if exist(xb.path, 'dir')
             line = '';
+            
+            % read log file
             logfile = fullfile(xb.path, 'XBlog.txt');
             if exist(logfile, 'file')
                 line = tail(logfile, 'n', OPT.n);

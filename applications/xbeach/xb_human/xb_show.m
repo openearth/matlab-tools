@@ -153,12 +153,17 @@ if ~isempty(vars)
         else
             value = '';
         end
+        
+        maxl = 30;
 
         % remove multiple spaces
-        value = regexprep(value, '\s+', ' ');
+        if length(value) > 2*maxl
+            value = regexprep(value(1:2*maxl), '\s+', ' ');
+        else
+            value = regexprep(value, '\s+', ' ');
+        end
 
         % maximize length
-        maxl = 30;
         if length(value) > maxl
             value = [value(1:(maxl/2-2)) ' .. ' value(end-(maxl/2-3):end)];
         end

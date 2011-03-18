@@ -71,6 +71,10 @@ OPT = setproperty(OPT, varargin{:});
 
 %% read params file
 
+if isdir(filename)
+    filename = fullfile(filename, 'params.txt');
+end
+
 if ~exist(filename, 'file')
     error(['File does not exist [' filename ']'])
 end
@@ -93,17 +97,26 @@ values = {exprNames.value};
 for i = 1:length(values)
     if any(~cellfun('isempty', regexp(names{i}, {'^n.*var$' '^npoints$' '^nrugauge$'})))
         % output variable definition
+        list = txt(endIndex(i)+1:end);
         
         switch names{i}
             case 'npoints'
-                names{i} = 'pointvars';
+                names{i} = 'npoints';
+                
+                % support old notation of pointvars
+                if ~ismember('pointvar', names) && any(list=='#')
+                    re = regexp(list, '(\w+)#', 'tokens');
+                    names = [names{:} {'pointvars'}];
+                    values{length(names)} = unique(cat(1,re{:}));
+                    list = regexprep(list,'\s+(\d+)\s+(\w+#)+','');
+                end
             case 'nrugauge'
-                names{i} = 'rugaugevars';
+                names{i} = 'nrugauge';
             otherwise
                 names{i} = [names{i}(2:end) 's'];
         end
         
-        values{i} = strread(txt(endIndex(i)+1:end), '%s', str2double(values{i}), 'delimiter', '\n');
+        values{i} = strread(list, '%s', str2double(values{i}), 'delimiter', '\n');
     elseif ~isnan(str2double(values{i}))
         % numeric value
         values{i} = str2double(values{i});

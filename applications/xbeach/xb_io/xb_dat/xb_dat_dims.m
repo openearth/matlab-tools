@@ -148,8 +148,8 @@ elseif regexp(fname, '^(drifter)\d+$')
 else
 
     % determine space dimensions
-    nx = d.globalx;
-    ny = d.globaly;
+    nx = d.globalx-1;
+    ny = d.globaly-1;
 
     % determine time dimension
     if regexp(fname, '_(mean|max|min|var)$')

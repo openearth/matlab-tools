@@ -66,22 +66,31 @@ function XBdims = xb_read_dims(filename)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% read dims
+
 if nargin == 0 || isempty(filename)
     % the current working directory is taken by default
     filename = pwd;
 end
 
 if isdir(filename)
-    % assume the filename to be the dims.dat file in the given directory
-    filename_nc = fullfile(filename, 'xboutput.nc');  % FIXME
-    filename = fullfile(filename, 'dims.dat');
+    % assume the filename to be the dims.dat or a netcdf file in the given directory
+    dimsfile = fullfile(filename, 'dims.dat');
     
-    if ~exist(filename, 'file')
-        if ~exist(filename_nc, 'file')
+    if exist(dimsfile, 'file')
+        filename = dimsfile;
+    else
+        ncfiles = dir(fullfile(filename, '*.nc'));
+        for i = 1:length(ncfiles)
+            ncfile = fullfile(filename, ncfiles(i).name);
+            if true % FIXME: check for read xbeach output file
+                filename = ncfile;
+                break;
+            end
+        end
+        
+        if isdir(filename)
             error(['"' filename '" is not found.'])
-        else
-            filename = filename_nc;
         end
     end
 end
@@ -170,7 +179,7 @@ else
     error(['directory or file "' filename '" does not exist'])
 end
 
-%% jaap's convenience attributes
+%% jaap's convenience attributes (not officially supported)
 
 XBdims.nx = XBdims.globalx-1;
 XBdims.ny = XBdims.globaly-1;

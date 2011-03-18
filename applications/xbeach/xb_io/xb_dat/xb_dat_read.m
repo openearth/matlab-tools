@@ -126,7 +126,7 @@ if isempty(OPT.force)
         if regexp(fname, '(point|rugau|drifter)\d+.dat$')
             method = 'read';
         elseif (OPT.stride(3) == 1 && OPT.stride(2) == 1 && ~all(OPT.stride == 1)) || ...
-            (nreads/nitems < prod(dims([1 4:end]))/prod(dims))
+            (nreads/nitems < prod(dims_out([1 4:end]))/prod(dims))
             method = 'memory';
         else
             method = 'read';
@@ -157,7 +157,7 @@ if exist(fname, 'file')
             ftype = 'double';
         otherwise
             ftype = 'double';
-            warning('Your filesize is weird, I assume it contains doubles.');
+            warning('Your filesize is weird, I assume it contains doubles [' fname ']');
     end
 
     fid = fopen(fname, 'r');

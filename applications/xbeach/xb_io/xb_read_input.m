@@ -94,6 +94,14 @@ xb = xb_read_params(filename);
 
 if OPT.read_paths
     
+    % add non-referenced files
+    if (ismember(xb_get(xb, 'instat'), [2, 3]) || ...
+            ismember(xb_get(xb, 'instat'), {'ts_1', 'ts_2'})) && ...
+            ~xb_exist(xb, 'ezsfile') && ...
+            exist('bc/gen.ezs', 'file')
+        xb = xb_set(xb, 'ezsfile', 'bc/gen.ezs');
+    end
+    
     fdir = fileparts(filename);
 
     for i = 1:length(xb.data)

@@ -120,12 +120,15 @@ for i = 1:length(upartype)
         ivar = strcmpi(pars{j}, {xb.data.name});
         
         if any(ivar)
-            if regexp(pars{j}, '^.*vars$')
-
+            if iscell(xb.data(ivar).value)
+                varname = ['n' xb.data(ivar).name];
+                varname = regexprep(varname, '^n+', 'n');
+                varname = regexprep(varname, 'vars$', 'var');
+                
                 outputvars = [outputvars sprintf('\n')];
                 
                 % create line indicating the number items in the cell
-                outputvars = [outputvars sprintf('%s\n', var2params(['n' xb.data(ivar).name(1:end-1)], length(xb.data(ivar).value), maxStringLength))];
+                outputvars = [outputvars sprintf('%s\n', var2params(varname, length(xb.data(ivar).value), maxStringLength))];
 
                 % write output variables on separate lines
                 for ioutvar = 1:length(xb.data(ivar).value)
