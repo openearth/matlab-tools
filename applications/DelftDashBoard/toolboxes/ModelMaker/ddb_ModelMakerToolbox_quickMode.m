@@ -177,7 +177,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=6000000
     if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         dmin=dmin*111111;
     end
-    
+
 %     dmin=15000;
 
     % Find coordinates of corner points
