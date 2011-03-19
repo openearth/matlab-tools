@@ -8,7 +8,7 @@ runid2=runid;
 handles.Model(md).Input(id2)=handles.Model(md).Input(id1);
 
 % create backup of original model with id0
-handles.Model(md).Input(20)=handles.Model(md).Input(id1);
+handles.Toolbox(tb).Input.originalDomain=handles.Model(md).Input(id1);
 
 handles=ddb_initializeFlowDomain(handles,'griddependentinput',id2,runid);
 
@@ -29,27 +29,9 @@ ndd(1)=min(n1,n2);ndd(2)=max(n1,n2);
 
 if ~cancel
 
-    handles=ddb_getDDBoundaries(handles,id1,id2,runid1,runid2);
-    
-
     % New Domain
     % Attributes
     handles=ddb_makeDDModelNewAttributes(handles,id1,id2,runid1,runid2);
-
-%     % Original Domain
-%     % Attributes
-%     handles=ddb_makeDDModelOriginalAttributes(handles,id1,mcut,ncut);
-    
-    % Write run batch file
-    fid = fopen('rundd.bat','wt');
-    for i=1:handles.GUIData.nrFlowDomains+1;
-        rid=handles.Model(md).Input(i).runid;
-        fprintf(fid,'%s\n',['echo ',rid,' > runid']);
-        fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\tdatom.exe');
-    end
-
-    fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\trisim.exe ddbound');
-    fclose(fid);
 
 end
 

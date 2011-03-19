@@ -18,14 +18,18 @@ if exist(fname,'file')
 
     handles.Model(j).supportsMultipleDomains=0;
     if isfield(xml,'multipledomains')
-        if strcmpi(xml.multipledomains(1),'y')
-            handles.Model(j).supportsMultipleDomains=1;
+        switch lower(xml.multipledomains(1))
+            case{'1','y'}
+                handles.Model(j).supportsMultipleDomains=1;
         end
     end
 
     handles.Model(j).enable=1;
     if isfield(xml,'enable')
-        handles.Model(j).enable=str2double(xml.enable);
+        switch lower(xml.enable(1))
+            case{'0','n'}
+                handles.Model(j).enable=0;
+        end
     end
 
     tag = '';

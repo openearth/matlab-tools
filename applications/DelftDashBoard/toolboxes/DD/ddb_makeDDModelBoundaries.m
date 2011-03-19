@@ -5,17 +5,17 @@ function bndind=ddb_makeDDModelBoundaries(x1,y1,x2,y2,runid1,runid2)
 bndind=[];
 
 % disp('bottom');
-bndind=FindBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,'bottom');
+bndind=findBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,'bottom');
 % disp('top');
-bndind=FindBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,'top');
+bndind=findBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,'top');
 % disp('left');
-bndind=FindBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,'left');
+bndind=findBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,'left');
 % disp('right');
-bndind=FindBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,'right');
+bndind=findBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,'right');
 
 
 %%
-function bndind=FindBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,opt)
+function bndind=findBoundaries(x1,y1,x2,y2,bndind,runid1,runid2,opt)
 
 nddb=length(bndind);
 nddb0=0;
@@ -100,7 +100,7 @@ while i2<=size(x2,1)
     end
 end
 
-% Paste different sections together
+%% Paste different sections together
 
 % Determine refinement factors
 for k=1:nddb0
@@ -137,6 +137,7 @@ if nddb0>0
     end
 end
 
+%% Make DD structure
 for k=1:nddb1
     switch opt
         case{'bottom'}

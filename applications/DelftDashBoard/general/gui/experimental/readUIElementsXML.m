@@ -218,15 +218,15 @@ if isfield(xml,'elements')
                         
                         s.elements(k).dependencies(id).checks(ic).variable=readVariableXML(dep.checks(ic).check.variable,subFields,subIndices);
                         s.elements(k).dependencies(id).checks(ic).operator=dep.checks(ic).check.operator;
-                        
-                        if ~isfield(dep.checks(ic).check.variable,'type')
+
+                        if ~isfield(dep.checks(ic).check,'type')
                             if ~isnan(str2double(dep.checks(ic).check.value))
                                 s.elements(k).dependencies(id).checks(ic).value=str2double(dep.checks(ic).check.value);
                             else
                                 s.elements(k).dependencies(id).checks(ic).value=dep.checks(ic).check.value;
                             end
                         else
-                            switch lower(dep.checks(ic).check.variable.type)
+                            switch lower(dep.checks(ic).check.type)
                                 case{'string'}
                                     s.elements(k).dependencies(id).checks(ic).value=dep.checks(ic).check.value;
                                 otherwise
@@ -282,7 +282,7 @@ if isfield(elxml,'dependencies')
         end
         
         dep=elxml.dependencies(id).dependency;
-        
+
         if isfield(elxml.dependencies(id).dependency,'checkfor')
             dependencies(id).checkFor=elxml.dependencies(id).dependency.checkfor;
             

@@ -400,6 +400,8 @@ feval(buttonUpDownFcn);
 feval(buttonMotionFcn);
 x0=getappdata(hg,'x0');
 y0=getappdata(hg,'y0');
+ddx=getappdata(hg,'ddx');
+ddy=getappdata(hg,'ddy');
 pos = get(gca, 'CurrentPoint');
 
 x=pos(1,1);
@@ -416,6 +418,16 @@ end
 if dy<0
     y0=y;
     dy=-dy;
+end
+
+% Round to cell size
+if ~isempty(ddx)
+    nx=max(1,round(dx/ddx));
+    dx=nx*ddx;
+end
+if ~isempty(ddy)
+    ny=max(1,round(dy/ddy));
+    dy=ny*ddy;
 end
 
 h=getappdata(hg,'line');

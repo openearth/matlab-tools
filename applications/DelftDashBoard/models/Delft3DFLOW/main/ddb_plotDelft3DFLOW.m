@@ -27,7 +27,7 @@ end
 
 if idomain==0
     n1=1;
-    n2=handles.GUIData.nrFlowDomains;
+    n2=handles.Model(imd).nrDomains;
 else
     n1=idomain;
     n2=n1;
@@ -35,13 +35,14 @@ end
 
 for id=n1:n2
     
-    % Exception for grid, make bathy invisible if it's not the active grid
-    if id~=ad
-        bvis=0;
-    else
-        bvis=vis;
-    end
-    handles=ddb_Delft3DFLOW_plotBathy(handles,option,'domain',id,'visible',bvis);
+%     % Exception for grid, make bathy invisible if it's not the active grid
+%     if id~=ad
+%         bvis=0;
+%     else
+%         bvis=vis;
+%     end
+%     handles=ddb_Delft3DFLOW_plotBathy(handles,option,'domain',id,'visible',bvis);
+    handles=ddb_Delft3DFLOW_plotBathy(handles,option,'domain',id,'visible',vis);
 
     % Exception for grid, make grid grey if it's not the active grid
     if id~=ad

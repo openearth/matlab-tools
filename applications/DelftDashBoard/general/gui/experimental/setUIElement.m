@@ -46,7 +46,11 @@ switch lower(el.style)
             case{'time'}
                 val=datestr(val,'HH MM SS');
             otherwise
-                val=num2str(val);
+                if isnan(val)
+                    val='';
+                else
+                    val=num2str(val);
+                end
         end
         
         set(el.handle,'String',val);

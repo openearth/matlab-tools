@@ -3,7 +3,7 @@
 <root>
   <model>Delft3DFLOW</model>
   <longname>Delft3D-FLOW</longname>
-  <multipledomains>0</multipledomains>
+  <multipledomains>yes</multipledomains>
   <enable>1</enable>
   <elements>
     <element>
@@ -95,11 +95,6 @@
           <string>Open MDF File</string>
           <callback>ddb_openDelft3DFLOW</callback>
           <option>open</option>
-        </menuitem>
-        <menuitem>
-          <string>Add Domain</string>
-          <callback>ddb_openDelft3DFLOW</callback>
-          <option>adddomain</option>
         </menuitem>
         <menuitem>
           <string>Open DD File</string>

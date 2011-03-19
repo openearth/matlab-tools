@@ -34,7 +34,7 @@ switch lower(opt)
             handles=ddb_saveMDF(handles,ad);
         end
     case{'savealldomains'}
-        for i=1:handles.GUIData.nrFlowDomains
+        for i=1:handles.Model(md).nrDomains
             handles=ddb_saveAttributeFiles(handles,i,'saveall');
             handles=ddb_saveMDF(handles,i);
         end        

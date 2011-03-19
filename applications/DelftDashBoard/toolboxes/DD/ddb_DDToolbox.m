@@ -1,240 +1,295 @@
-function ddb_DDToolbox
+function ddb_DDToolbox(varargin)
 
-handles=getHandles;
+if isempty(varargin)
+    % New tab selected
+    ddb_zoomOff;
+    ddb_refreshScreen;
+    ddb_plotDD('activate');
+    handles=getHandles;
+    
+    % Make 
+    handles.Toolbox(tb).Input.firstDomainNr=min(handles.Toolbox(tb).Input.firstDomainNr,length(handles.Model(md).Input));
+    handles.Toolbox(tb).Input.domains=[];
+    for i=1:length(handles.Model(md).Input)
+        handles.Toolbox(tb).Input.domains{i}=handles.Model(md).Input(i).runid;
+    end
 
-ddb_plotDD(handles,'activate');
+    % If m2 or n2 is nan, set m1 and n1 to NaN
+    m2=handles.Toolbox(tb).Input.secondCornerPointM;
+    n2=handles.Toolbox(tb).Input.secondCornerPointN;
+    if isnan(m2) || isnan(n2)
+        handles.Toolbox(tb).Input.firstCornerPointM=NaN;
+        handles.Toolbox(tb).Input.firstCornerPointN=NaN;
+    end
+    setHandles(handles);
 
-h=findall(gca,'Tag','TemporaryDDGrid');
-if ~isempty(h)
-    set(h,'Visible','on');
-end
-h=findall(gca,'Tag','DDCornerPoint');
-if ~isempty(h)
-    set(h,'Visible','on');
-end
-
-uipanel('Title','Domain Decomposition','Units','pixels','Position',[20 20 990 160],'Tag','UIControl');
-
-uipanel('Title','New Domain','Units','pixels','Position',[30 30 360 135],'Tag','UIControl');
-for i=1:handles.GUIData.nrFlowDomains
-    str{i}=handles.Model(md).Input(i).runid;
-end
-handles.GUIHandles.SelectFirstDomain=uicontrol(gcf,'Style','popupmenu','String',str,'Position',[140 125 80 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
-set(handles.GUIHandles.SelectFirstDomain,'Value',handles.activeDomain);
-handles.GUIHandles.TextFirstDomain=uicontrol(gcf,'Style','text','String','First Domain','Position',[35 121 100 20],'HorizontalAlignment','right','Tag','UIControl');
-
-handles.GUIHandles.EditSecondRunid=uicontrol(gcf,'Style','edit','String',handles.Toolbox(tb).Input.newRunid,'Position',[140 100  80 20],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.TextSecondRunid=uicontrol(gcf,'Style','text','String','Runid New Domain','Position',[35 96 100 20],'HorizontalAlignment','right','Tag','UIControl');
-
-handles.GUIHandles.EditMRefinement=uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.mRefinement),'Position',[140 65  80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.TextMRefinement=uicontrol(gcf,'Style','text','String','M Refinement','Position',[35 61 100 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.EditNRefinement=uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.nRefinement),'Position',[140 40  80 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.TextNRefinement=uicontrol(gcf,'Style','text','String','N Refinement','Position',[35 36 100 20],'HorizontalAlignment','right','Tag','UIControl');
-
-handles.GUIHandles.EditM1    = uicontrol(gcf,'Style','edit','Position',[250  65  50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditM2    = uicontrol(gcf,'Style','edit','Position',[330  65  50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditN1    = uicontrol(gcf,'Style','edit','Position',[250  40  50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditN2    = uicontrol(gcf,'Style','edit','Position',[330  40  50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-
-handles.GUIHandles.TextM1    = uicontrol(gcf,'Style','text','String','M1',      'Position',[225  61 20 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.TextM2    = uicontrol(gcf,'Style','text','String','M2',      'Position',[305  61 20 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.TextN1    = uicontrol(gcf,'Style','text','String','N1',      'Position',[225  36 20 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.TextN2    = uicontrol(gcf,'Style','text','String','N2',      'Position',[305  36 20 20],'HorizontalAlignment','right','Tag','UIControl');
-
-handles.GUIHandles.PushSelectCornerPoints=uicontrol(gcf,'Style','pushbutton','String','Select Corner Points','Position',[250 125 130 20],'Tag','UIControl');
-handles.GUIHandles.PushGenerateDomain    =uicontrol(gcf,'Style','pushbutton','String','Generate New Domain','Position', [250 100 130 20],'Tag','UIControl');
-
-
-uipanel('Title','Make DD Boundaries','Units','pixels','Position',[400 30 360 135],'Tag','UIControl');
-
-handles.GUIHandles.SelectFirstDomain2=uicontrol(gcf,'Style','popupmenu','String',str,'Position',[490 125 80 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
-set(handles.GUIHandles.SelectFirstDomain2,'Value',handles.activeDomain);
-handles.GUIHandles.TextFirstDomain2=uicontrol(gcf,'Style','text','String','First Domain','Position',[405 121 80 20],'HorizontalAlignment','right','Tag','UIControl');
-
-handles.GUIHandles.SelectSecondDomain=uicontrol(gcf,'Style','popupmenu','String',str,'Position',[490 100 80 20],'BackgroundColor',[1 1 1],'Tag','UIControl');
-set(handles.GUIHandles.SelectSecondDomain,'Value',handles.activeDomain);
-handles.GUIHandles.TextSecondDomain=uicontrol(gcf,'Style','text','String','Second Domain','Position',[405 96 80 20],'HorizontalAlignment','right','Tag','UIControl');
-
-handles.GUIHandles.PushGenerateDDBoundaries = uicontrol(gcf,'Style','pushbutton','String','Generate DD Boundaries','Position', [590 125 135 20],'Tag','UIControl');
-
-set(handles.GUIHandles.PushSelectCornerPoints,  'CallBack',{@PushSelectCornerPoints_CallBack});
-set(handles.GUIHandles.PushGenerateDomain,      'CallBack',{@PushGenerateDomain_CallBack});
-set(handles.GUIHandles.PushGenerateDDBoundaries,'CallBack',{@PushGenerateDDBoundaries_CallBack});
-set(handles.GUIHandles.EditMRefinement,         'CallBack',{@EditMRefinement_CallBack});
-set(handles.GUIHandles.EditNRefinement,         'CallBack',{@EditNRefinement_CallBack});
-set(handles.GUIHandles.EditM1,                  'CallBack',{@EditM1_CallBack});
-set(handles.GUIHandles.EditN1,                  'CallBack',{@EditN1_CallBack});
-set(handles.GUIHandles.EditM2,                  'CallBack',{@EditM2_CallBack});
-set(handles.GUIHandles.EditN2,                  'CallBack',{@EditN2_CallBack});
-set(handles.GUIHandles.EditSecondRunid,         'CallBack',{@EditSecondRunid_CallBack});
-
-RefreshDD(handles);
-
-SetUIBackgroundColors;
-
-setHandles(handles);
-
-%%
-function EditSecondRunid_CallBack(hObject,eventdata)
-
-handles=getHandles;
-
-handles.Toolbox(tb).Input.newRunid=get(hObject,'String');
-setHandles(handles);
-
-%%
-function EditMRefinement_CallBack(hObject,eventdata)
-
-handles=getHandles;
-
-handles.Toolbox(tb).Input.mRefinement=str2double(get(hObject,'String'));
-RefreshDD(handles)
-setHandles(handles);
-
-%%
-function EditNRefinement_CallBack(hObject,eventdata)
-
-handles=getHandles;
-
-handles.Toolbox(tb).Input.nRefinement=str2num(get(hObject,'String'));
-RefreshDD(handles)
-setHandles(handles);
-
-%%
-function EditM1_CallBack(hObject,eventdata)
-
-handles=getHandles;
-
-ii=str2num(get(hObject,'String'));
-ii=max(ii,1);
-sz=size(handles.Model(md).Input(handles.activeDomain).gridX);
-if ii<=sz(1)
-    handles.Toolbox(tb).Input.firstCornerPointM=ii;
+    % If m1 or n1 is nan, delete corner points
+    m1=handles.Toolbox(tb).Input.firstCornerPointM;
+    n1=handles.Toolbox(tb).Input.firstCornerPointN;
+    if isnan(m1) || isnan(n1)
+        plotCornerPoints('delete');
+    end
+    
+    clearInstructions;
+    setUIElements(handles.Toolbox(tb).GUI.elements);
+    
 else
+    %Options selected
+    opt=lower(varargin{1});    
+    switch opt
+        case{'editrefinement'}
+            editRefinement;
+        case{'editm1'}
+            editM1;
+        case{'editn1'}
+            editN1;
+        case{'editm2'}
+            editM2;
+        case{'editn2'}
+            editN2;
+        case{'selectcornerpoints'}
+            selectCornerPoints;
+        case{'generatenewdomain'}
+            generateDomain;
+    end    
+end
+
+%%
+function editRefinement
+plotTemporaryDDGrid('plot');
+handles=getHandles;
+if ~odd(handles.Toolbox(tb).Input.mRefinement) || ~odd(handles.Toolbox(tb).Input.nRefinement)
+    GiveWarning('text','Refinement by an even number is not recommended!');
+end
+
+%%
+function editM1
+
+handles=getHandles;
+ii=handles.Toolbox(tb).Input.firstCornerPointM;
+sz=size(handles.Model(md).Input(ad).gridX);
+if ii>sz(1)
     handles.Toolbox(tb).Input.firstCornerPointM=sz(1);
 end
-RefreshDD(handles)
-setHandles(handles);
-
-%%
-function EditM2_CallBack(hObject,eventdata)
-
-handles=getHandles;
-
-ii=str2num(get(hObject,'String'));
-ii=max(ii,1);
-sz=size(handles.Model(md).Input(handles.activeDomain).gridX);
-if ii<=sz(1)
-    handles.Toolbox(tb).Input.secondCornerPointM=ii;
-else
-    handles.Toolbox(tb).Input.secondCornerPointM=sz(1);
+if ii<1
+    handles.Toolbox(tb).Input.firstCornerPointM=1;
 end
-RefreshDD(handles)
+
 setHandles(handles);
+setUIElements(handles.Toolbox(tb).GUI.elements);
+
+plotCornerPoints('plot');
+plotTemporaryDDGrid('plot');
 
 %%
-function EditN1_CallBack(hObject,eventdata)
+function editN1
 
 handles=getHandles;
-
-ii=str2num(get(hObject,'String'));
-ii=max(ii,1);
-sz=size(handles.Model(md).Input(handles.activeDomain).gridX);
-if ii<=sz(2)
-    handles.Toolbox(tb).Input.firstCornerPointN=ii;
-else
+ii=handles.Toolbox(tb).Input.firstCornerPointN;
+sz=size(handles.Model(md).Input(ad).gridX);
+if ii>sz(2)
     handles.Toolbox(tb).Input.firstCornerPointN=sz(2);
 end
-RefreshDD(handles)
+if ii<1
+    handles.Toolbox(tb).Input.firstCornerPointN=1;
+end
+
 setHandles(handles);
+setUIElements(handles.Toolbox(tb).GUI.elements);
+
+plotCornerPoints('plot');
+plotTemporaryDDGrid('plot');
 
 %%
-function EditN2_CallBack(hObject,eventdata)
+function editM2
 
 handles=getHandles;
-
-ii=str2num(get(hObject,'String'));
-ii=max(ii,1);
-sz=size(handles.Model(md).Input(handles.activeDomain).gridX);
-if ii<=sz(2)
-    handles.Toolbox(tb).Input.secondCornerPointN=ii;
-else
-    handles.Toolbox(tb).Input.secondCornerPointN=sz(2);
+ii=handles.Toolbox(tb).Input.secondCornerPointM;
+sz=size(handles.Model(md).Input(ad).gridX);
+if ii>sz(1)
+    handles.Toolbox(tb).Input.secondCornerPointM=sz(1);
 end
-RefreshDD(handles)
+if ii<1
+    handles.Toolbox(tb).Input.secondCornerPointM=1;
+end
+
 setHandles(handles);
+setUIElements(handles.Toolbox(tb).GUI.elements);
+
+plotCornerPoints('plot');
+plotTemporaryDDGrid('plot');
 
 %%
-function PushSelectCornerPoints_CallBack(hObject,eventdata)
+function editN2
+
+handles=getHandles;
+ii=handles.Toolbox(tb).Input.secondCornerPointN;
+sz=size(handles.Model(md).Input(ad).gridX);
+if ii>sz(2)
+    handles.Toolbox(tb).Input.secondCornerPointN=sz(2);
+end
+if ii<1
+    handles.Toolbox(tb).Input.secondCornerPointN=1;
+end
+
+setHandles(handles);
+setUIElements(handles.Toolbox(tb).GUI.elements);
+
+plotCornerPoints('plot');
+plotTemporaryDDGrid('plot');
+
+%%
+function selectCornerPoints
 ddb_zoomOff;
+ddb_setWindowButtonUpDownFcn;
 handles=getHandles;
 xg=handles.Model(md).Input(handles.activeDomain).gridX;
 yg=handles.Model(md).Input(handles.activeDomain).gridY;
-ClickPoint('cornerpoint','Grid',xg,yg,'Callback',@FirstCornerPoint,'single');
-setHandles(handles);
+if ~isempty(xg)
+    ddb_clickPoint('cornerpoint','grid',xg,yg,'callback',@clickFirstCornerPoint,'single');
+    setHandles(handles);
+end
 
 %%
-function PushGenerateDomain_CallBack(hObject,eventdata)
-
-ddb_zoomOff;
+function generateDomain
 
 handles=getHandles;
 
-
+% Check indices
 m1=handles.Toolbox(tb).Input.firstCornerPointM;
 n1=handles.Toolbox(tb).Input.firstCornerPointN;
 m2=handles.Toolbox(tb).Input.secondCornerPointM;
 n2=handles.Toolbox(tb).Input.secondCornerPointN;
-mmin=min(m1,m2);mmax=max(m1,m2);
-nmin=min(n1,n2);nmax=max(n1,n2);
+mdd(1)=min(m1,m2);mdd(2)=max(m1,m2);
+ndd(1)=min(n1,n2);ndd(2)=max(n1,n2);
 
-for i=1:handles.GUIData.nrFlowDomains
-    str{i}=handles.Model(md).Input(i).runid;
-end
-ii=strmatch(lower(handles.Toolbox(tb).Input.newRunid),lower(str),'exact');
+% Check if domain with new runid already exists
+ii=strmatch(lower(handles.Toolbox(tb).Input.newRunid),handles.Toolbox(tb).Input.domains,'exact');
+
 if ~isempty(ii)
+    
     GiveWarning('Warning',['A domain with runid "' handles.Toolbox(tb).Input.newRunid '" already exists!']);
-elseif mmax>mmin && nmax>nmin
+    
+elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
+        
+    [filename, pathname, filterindex] = uiputfile('*.grd', 'New Overall Grid File',handles.Model(md).Input(ad).grdFile);
 
-    [handles,cancel]=ddb_makeDDModel(handles,handles.activeDomain,handles.GUIData.nrFlowDomains+1,handles.Toolbox(tb).Input.newRunid);
+    if pathname~=0
+        
+        % Delete existing domains
+        ddb_plotDelft3DFLOW('delete');
 
-    if ~cancel
-        handles.GUIData.nrFlowDomains=handles.GUIData.nrFlowDomains+1;
-        h=findall(gca,'Tag','DDCornerPoint');
-        if ~isempty(h)
-            delete(h);
+        % Set filenames new grid file
+        curdir=[lower(cd) '\'];
+        if ~strcmpi(curdir,pathname)
+            filename=[pathname filename];
         end
-        h=findall(gca,'Tag','TemporaryDDGrid');
-        if ~isempty(h)
-            delete(h);
+        handles.Model(md).Input(ad).grdFile=filename;
+        ii=findstr(filename,'.grd');
+        str=filename(1:ii-1);
+        handles.Model(md).Input(ad).encFile=[str '.enc'];
+        
+        % Generate new domain
+        runid1=handles.Model(md).Input(ad).runid;
+        runid2=handles.Toolbox(tb).Input.newRunid;
+        handles.Model(md).nrDomains=handles.Model(md).nrDomains+1;
+        id2=handles.Model(md).nrDomains;
+        handles.Toolbox(tb).Input.domains{handles.Model(md).nrDomains}=handles.Toolbox(tb).Input.newRunid;
+        % Copy active domain to new domain
+        handles.Model(md).Input(id2)=handles.Model(md).Input(ad);
+        handles.Model(md).Input(id2).runid=runid2;
+        % Create backup of original model with id0
+        handles.Toolbox(tb).Input.originalDomain=handles.Model(md).Input(ad);
+        
+        % Initialize grid dependent input new domain
+        handles=ddb_initializeFlowDomain(handles,'griddependentinput',id2,runid2);
+        
+        % New Domain
+        % Grid
+        [handles,mdd,ndd]=ddb_makeDDModelNewGrid(handles,ad,id2,mdd,ndd,runid2);
+        
+        % Original Domain
+        % Grid
+        [handles,mcut,ncut]=ddb_makeDDModelOriginalGrid(handles,ad,mdd,ndd);
+        
+        % New Domain
+        % Attributes
+        handles=ddb_makeDDModelNewAttributes(handles,ad,id2,runid1,runid2);
+        
+        ddbound=[];
+        for i=1:handles.Model(md).nrDomains-1
+            for j=i+1:handles.Model(md).nrDomains
+                xg1=handles.Model(md).Input(i).gridX;
+                yg1=handles.Model(md).Input(i).gridY;
+                xg2=handles.Model(md).Input(j).gridX;
+                yg2=handles.Model(md).Input(j).gridY;
+                rid1=handles.Model(md).Input(i).runid;
+                rid2=handles.Model(md).Input(j).runid;
+                ddbound=ddb_findDDBoundaries(ddbound,xg1,yg1,xg2,yg2,rid1,rid2);
+            end
         end
+        
+        hh=findobj(gca,'Tag','ddboundaries');
+        if ~isempty(hh)
+            delete(hh);
+        end
+        
+        for i=1:length(ddbound)
+            z=zeros(size(ddbound(i).x))+1000;
+            plt=plot(ddbound(i).x,ddbound(i).y);
+            set(plt,'LineWidth',3,'Color',[1 0.5 0],'Tag','ddboundaries');
+        end
+        
+        ddb_saveDDBoundFile(ddbound,'test.ddb');
+        
+%        ddb_writeDDBacthfile;
+        
+        %         % Write run batch file
+        %         fid = fopen('rundd.bat','wt');
+        %         for i=1:handles.Model(md).nrDomains+1;
+        %             rid=handles.Model(md).Input(i).runid;
+        %             fprintf(fid,'%s\n',['echo ',rid,' > runid']);
+        %             fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\tdatom.exe');
+        %         end
+        %         fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\trisim.exe ddbound');
+        %         fclose(fid);
+        
+        
+        % Delete corner points and temporary grid
+        plotCornerPoints('delete');
+        plotTemporaryDDGrid('delete');
+        
         handles.Toolbox(tb).Input.firstCornerPointM=NaN;
         handles.Toolbox(tb).Input.secondCornerPointM=NaN;
         handles.Toolbox(tb).Input.firstCornerPointN=NaN;
         handles.Toolbox(tb).Input.secondCornerPointN=NaN;
-
+        
         setHandles(handles);
-
-        for i=1:handles.GUIData.nrFlowDomains
-            if i==handles.activeDomain
-                ddb_plotDelft3DFLOW('plot','active',1);
+        
+        
+        % Now replot all domains
+        for i=1:handles.Model(md).nrDomains
+            if i==ad
+                ddb_plotDelft3DFLOW('plot','active',1,'visible',1,'domain',i);
             else
-                ddb_plotDelft3DFLOW('plot','active',0);
+                ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',i);
             end
         end
-
-        handles=getHandles;
-
-        ddb_refreshFlowDomains;
+        
+        ddb_refreshDomainMenu;
+                   
+        %     for i=1:handles.GUIData.nrFlowDomains
+        %         ddb_saveMDF(handles,i);
+        %     end
+        
+    else
+        GiveWarning('Warning','First select corner points!');
     end
-
-    for i=1:handles.GUIData.nrFlowDomains
-        ddb_saveMDF(handles,i);
-    end
-
-else
-    GiveWarning('Warning','First select corner points!');
+    
 end
+
+% Clear original domain
+handles.Toolbox(tb).Input.originalDomain=[];
 
 %%
 function PushGenerateDDBoundaries_CallBack(hObject,eventdata)
@@ -272,129 +327,126 @@ else
 end
 
 %%
-function FirstCornerPoint(m,n)
+function clickFirstCornerPoint(m,n)
 
+% First corner point was clicked
+
+% Set values of corner points
 handles=getHandles;
-
-id=handles.activeDomain;
 handles.Toolbox(tb).Input.firstCornerPointM=m;
 handles.Toolbox(tb).Input.firstCornerPointN=n;
 handles.Toolbox(tb).Input.secondCornerPointM=NaN;
 handles.Toolbox(tb).Input.secondCornerPointN=NaN;
-xg=handles.Model(md).Input(id).gridX;
-yg=handles.Model(md).Input(id).gridY;
-if ~isnan(m)
-    ClickPoint('cornerpoint','Grid',xg,yg,'Callback',@SecondCornerPoint,'single');
-end
-RefreshDD(handles);
 setHandles(handles);
 
+% Plot markers on corner points
+plotCornerPoints('plot');
+plotTemporaryDDGrid('delete');
+
+xg=handles.Model(md).Input(ad).gridX;
+yg=handles.Model(md).Input(ad).gridY;
+if ~isnan(m)
+    ddb_clickPoint('cornerpoint','grid',xg,yg,'callback',@clickSecondCornerPoint,'single');
+end
+
+setUIElements(handles.Toolbox(tb).GUI.elements);
+
 %%
-function SecondCornerPoint(m,n)
+function clickSecondCornerPoint(m,n)
 
 handles=getHandles;
-
-
 if ~isnan(m)
     handles.Toolbox(tb).Input.secondCornerPointM=m;
     handles.Toolbox(tb).Input.secondCornerPointN=n;
-    RefreshDD(handles);
     setHandles(handles);
-    set(gcf, 'windowbuttondownfcn',[]);
+    plotCornerPoints('plot');
+    plotTemporaryDDGrid('plot');
+    ddb_setWindowButtonMotionFcn;
+    setUIElements(handles.Toolbox(tb).GUI.elements);
 end
 
 %%
-function RefreshDD(handles)
+function plotTemporaryDDGrid(opt)
 
+switch lower(opt)
+    case{'plot'}
 
+        % Delete existing grid
+        h=findobj(gca,'Tag','TemporaryDDGrid');
+        if ~isempty(h)
+            delete(h);
+        end
+        
+        %Plot new grid
+        handles=getHandles;
+        xg=handles.Model(md).Input(ad).gridX;
+        yg=handles.Model(md).Input(ad).gridY;
+        m1=handles.Toolbox(tb).Input.firstCornerPointM;
+        n1=handles.Toolbox(tb).Input.firstCornerPointN;
+        m2=handles.Toolbox(tb).Input.secondCornerPointM;
+        n2=handles.Toolbox(tb).Input.secondCornerPointN;
+        mm1=min(m1,m2);mm2=max(m1,m2);
+        nn1=min(n1,n2);nn2=max(n1,n2);
+        xg=xg(mm1:mm2,nn1:nn2);
+        yg=yg(mm1:mm2,nn1:nn2);
+        mref=handles.Toolbox(tb).Input.mRefinement;
+        nref=handles.Toolbox(tb).Input.nRefinement;
+        [x2,y2]=ddb_refineD3DGrid(xg,yg,mref,nref);
+        z2=zeros(size(x2))+9000;
+        grd=mesh(x2,y2,z2);
+        set(grd,'FaceColor','none','EdgeColor','r','Tag','TemporaryDDGrid');
 
-id=handles.activeDomain;
-
-if isfield(handles.Model(md).Input(id),'gridX')
-
-    xg=handles.Model(md).Input(id).gridX;
-    yg=handles.Model(md).Input(id).gridY;
-
-    m1=handles.Toolbox(tb).Input.firstCornerPointM;
-    n1=handles.Toolbox(tb).Input.firstCornerPointN;
-    m2=handles.Toolbox(tb).Input.secondCornerPointM;
-    n2=handles.Toolbox(tb).Input.secondCornerPointN;
-    mm1=min(m1,m2);mm2=max(m1,m2);
-    nn1=min(n1,n2);nn2=max(n1,n2);
-
-    h=findall(gca,'Tag','DDCornerPoint');
-    if ~isempty(h)
-        delete(h);
-    end
-    h=findall(gca,'Tag','TemporaryDDGrid');
-    if ~isempty(h)
-        delete(h);
-    end
-
-    if ~isnan(m1) && ~isnan(n1)
-        set(handles.GUIHandles.EditM1,'String',num2str(m1));
-        set(handles.GUIHandles.EditN1,'String',num2str(n1));
-        plt=plot3(xg(m1,n1),yg(m1,n1),9000,'go');
-        set(plt,'MarkerEdgeColor','k','MarkerFaceColor','y');
-        set(plt,'Tag','DDCornerPoint');
-    else
-        set(handles.GUIHandles.EditM1,'String','');
-        set(handles.GUIHandles.EditN1,'String','');
-    end
-    if ~isnan(m2) && ~isnan(n2)
-        set(handles.GUIHandles.EditM2,'String',num2str(m2));
-        set(handles.GUIHandles.EditN2,'String',num2str(n2));
-        plt=plot3(xg(m2,n2),yg(m2,n2),9000,'go');
-        set(plt,'MarkerEdgeColor','k','MarkerFaceColor','y');
-        set(plt,'Tag','DDCornerPoint');
-    else
-        set(handles.GUIHandles.EditM2,'String','');
-        set(handles.GUIHandles.EditN2,'String','');
-    end
-    set(handles.GUIHandles.EditMRefinement,'String',num2str(handles.Toolbox(tb).Input.mRefinement));
-    set(handles.GUIHandles.EditNRefinement,'String',num2str(handles.Toolbox(tb).Input.nRefinement));
-
-    if mm2>mm1 && nn2>nn1
-        PlotTemporaryDDGrid(handles);
-    end
-
-end
-
-if handles.GUIData.nrFlowDomains>1
-    set(handles.GUIHandles.SelectFirstDomain2,'Enable','on');
-    set(handles.GUIHandles.TextFirstDomain2,'Enable','on');
-    set(handles.GUIHandles.SelectFirstDomain2,'Value',1);
-    set(handles.GUIHandles.SelectSecondDomain,'Enable','on');
-    set(handles.GUIHandles.SelectSecondDomain,'Value',2);
-    set(handles.GUIHandles.TextSecondDomain,'Enable','on');
-    set(handles.GUIHandles.PushGenerateDDBoundaries,'Enable','on');
-else
-    set(handles.GUIHandles.SelectFirstDomain2,'Enable','off');
-    set(handles.GUIHandles.TextFirstDomain2,'Enable','off');
-    set(handles.GUIHandles.SelectSecondDomain,'Enable','off');
-    set(handles.GUIHandles.TextSecondDomain,'Enable','off');
-    set(handles.GUIHandles.PushGenerateDDBoundaries,'Enable','off');
+    case{'delete'}
+        % Delete existing grid
+        h=findobj(gca,'Tag','TemporaryDDGrid');
+        if ~isempty(h)
+            delete(h);
+        end
 end
 
 %%
-function PlotTemporaryDDGrid(handles)
+function plotCornerPoints(opt)
 
-
-
-xg=handles.Model(md).Input(handles.activeDomain).gridX;
-yg=handles.Model(md).Input(handles.activeDomain).gridY;
-m1=handles.Toolbox(tb).Input.firstCornerPointM;
-n1=handles.Toolbox(tb).Input.firstCornerPointN;
-m2=handles.Toolbox(tb).Input.secondCornerPointM;
-n2=handles.Toolbox(tb).Input.secondCornerPointN;
-mm1=min(m1,m2);mm2=max(m1,m2);
-nn1=min(n1,n2);nn2=max(n1,n2);
-xg=xg(mm1:mm2,nn1:nn2);
-yg=yg(mm1:mm2,nn1:nn2);
-mref=handles.Toolbox(tb).Input.mRefinement;
-nref=handles.Toolbox(tb).Input.nRefinement;
-[x2,y2]=ddb_refineD3DGrid(xg,yg,mref,nref);
-z2=zeros(size(x2))+9000;
-grd=mesh(x2,y2,z2);
-set(grd,'FaceColor','none','EdgeColor','r','Tag','TemporaryDDGrid');
+switch lower(opt)
+    case{'plot'}
+        
+        handles=getHandles;
+        
+        % Delete old points
+        if isfield(handles.Toolbox(tb).Input,'cornerPointHandles')
+            hh=handles.Toolbox(tb).Input.cornerPointHandles;
+            if ~isempty(hh)
+                try
+                    delete(hh);
+                end
+            end
+        end
+        
+        % Now plot the corner points
+        m1=handles.Toolbox(tb).Input.firstCornerPointM;
+        m2=handles.Toolbox(tb).Input.secondCornerPointM;
+        n1=handles.Toolbox(tb).Input.firstCornerPointN;
+        n2=handles.Toolbox(tb).Input.secondCornerPointN;
+        
+        plt1=plot(handles.Model(md).Input(ad).gridX(m1,n1),handles.Model(md).Input(ad).gridY(m1,n1),'go');
+        set(plt1,'MarkerEdgeColor','k','MarkerFaceColor','y','HitTest','off');
+        set(plt1,'Tag','DDCornerPoint');
+        
+        plt2=[];
+        if ~isnan(m2) && ~isnan(n2)
+            plt2=plot(handles.Model(md).Input(ad).gridX(m2,n2),handles.Model(md).Input(ad).gridY(m2,n2),'go');
+            set(plt2,'MarkerEdgeColor','k','MarkerFaceColor','y','HitTest','off');
+            set(plt2,'Tag','DDCornerPoint');
+        end
+        
+        handles.Toolbox(tb).Input.cornerPointHandles=[plt1 plt2];
+        
+        setHandles(handles);
+        
+    case{'delete'}
+        h=findobj(gca,'Tag','DDCornerPoint');
+        if ~isempty(h)
+            delete(h);
+        end
+end
 

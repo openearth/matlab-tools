@@ -5,12 +5,14 @@ if strcmpi(opt,'saveallas')
     sall=1;
 end
 
+runid=handles.Model(md).Input(id).runid;
+
 if handles.Model(md).Input(id).nrOpenBoundaries>0
 
     handles=ddb_sortBoundaries(handles,id);
 
     if isempty(handles.Model(md).Input(id).bndFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.bnd', 'Select Boundary Definitions File','');
+        [filename, pathname, filterindex] = uiputfile('*.bnd', ['Select Boundary Definitions File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
@@ -23,7 +25,7 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
 
     if handles.Model(md).Input(id).nrAstro>0
         if isempty(handles.Model(md).Input(id).bcaFile) || sall
-            [filename, pathname, filterindex] = uiputfile('*.bca', 'Select Astronomic Conditions File','');
+            [filename, pathname, filterindex] = uiputfile('*.bca', ['Select Astronomic Conditions File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
@@ -35,7 +37,7 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
 
     if handles.Model(md).Input(id).nrCor>0
         if isempty(handles.Model(md).Input(id).corFile) || sall
-            [filename, pathname, filterindex] = uiputfile('*.cor', 'Select Astronomic Corrections File','');
+            [filename, pathname, filterindex] = uiputfile('*.cor', ['Select Astronomic Corrections File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
@@ -47,7 +49,7 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
 
     if handles.Model(md).Input(id).nrHarmo>0
         if isempty(handles.Model(md).Input(id).bchFile) || sall
-            [filename, pathname, filterindex] = uiputfile('*.bch', 'Select Harmonic Conditions File','');
+            [filename, pathname, filterindex] = uiputfile('*.bch', ['Select Harmonic Conditions File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
@@ -59,7 +61,7 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
 
     if handles.Model(md).Input(id).nrTime>0
         if isempty(handles.Model(md).Input(id).bctFile) || sall
-            [filename, pathname, filterindex] = uiputfile('*.bct', 'Select Time Series Conditions File','');
+            [filename, pathname, filterindex] = uiputfile('*.bct', ['Select Time Series Conditions File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
@@ -73,7 +75,7 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
         handles.Model(md).Input(id).sediments.include || handles.Model(md).Input(id).tracers;
     if incconst
         if isempty(handles.Model(md).Input(id).bccFile) || sall
-            [filename, pathname, filterindex] = uiputfile('*.bcc', 'Select Transport Conditions File','');
+            [filename, pathname, filterindex] = uiputfile('*.bcc', ['Select Transport Conditions File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
@@ -87,7 +89,7 @@ end
 
 if handles.Model(md).Input(id).nrObservationPoints>0
     if isempty(handles.Model(md).Input(id).obsFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.obs', 'Select Observation Points File','');
+        [filename, pathname, filterindex] = uiputfile('*.obs', ['Select Observation Points File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
@@ -99,7 +101,7 @@ end
 
 if handles.Model(md).Input(id).nrCrossSections>0
     if isempty(handles.Model(md).Input(id).crsFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.crs', 'Select Cross Sections File','');
+        [filename, pathname, filterindex] = uiputfile('*.crs', ['Select Cross Sections File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
@@ -111,7 +113,7 @@ end
 
 if handles.Model(md).Input(id).nrDryPoints>0
     if isempty(handles.Model(md).Input(id).dryFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.dry', 'Select Dry Points File','');
+        [filename, pathname, filterindex] = uiputfile('*.dry', ['Select Dry Points File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
@@ -123,7 +125,7 @@ end
 
 if handles.Model(md).Input(id).nrThinDams>0
     if isempty(handles.Model(md).Input(id).thdFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.thd', 'Select Thin Dams File','');
+        [filename, pathname, filterindex] = uiputfile('*.thd', ['Select Thin Dams File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
@@ -135,7 +137,7 @@ end
 
 if handles.Model(md).Input(id).nrDrogues>0
     if isempty(handles.Model(md).Input(id).droFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.dro', 'Select Drogues File','');
+        [filename, pathname, filterindex] = uiputfile('*.dro', ['Select Drogues File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
@@ -148,7 +150,7 @@ end
 if handles.Model(md).Input(id).nrDischarges>0
 
     if isempty(handles.Model(md).Input(id).srcFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.src', 'Select Discharge Locations File','');
+        [filename, pathname, filterindex] = uiputfile('*.src', ['Select Discharge Locations File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
@@ -158,7 +160,7 @@ if handles.Model(md).Input(id).nrDischarges>0
     ddb_saveSrcFile(handles,id);
 
     if isempty(handles.Model(md).Input(id).disFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.dis', 'Select Discharge File','');
+        [filename, pathname, filterindex] = uiputfile('*.dis', ['Select Discharge File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
@@ -171,7 +173,7 @@ end
 if handles.Model(md).Input(id).nrSediments>0 && handles.Model(md).Input(id).sediments.include
 
     if isempty(handles.Model(md).Input(id).sedFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.sed', 'Select Sediments File','');
+        [filename, pathname, filterindex] = uiputfile('*.sed', ['Select Sediments File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
@@ -181,7 +183,7 @@ if handles.Model(md).Input(id).nrSediments>0 && handles.Model(md).Input(id).sedi
     ddb_saveSedFile(handles,id);
 
     if isempty(handles.Model(md).Input(id).morFile) || sall
-        [filename, pathname, filterindex] = uiputfile('*.mor', 'Select Morphology File','');
+        [filename, pathname, filterindex] = uiputfile('*.mor', ['Select Morphology File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];

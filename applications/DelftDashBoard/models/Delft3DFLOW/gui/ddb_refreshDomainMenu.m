@@ -1,0 +1,60 @@
+function ddb_refreshDomainMenu
+
+handles=getHandles;
+
+h=findobj(gcf,'Tag','menuDomain');
+
+hc=get(h,'Children');
+delete(hc);
+
+for i=1:handles.Model(md).nrDomains
+    str{i}=handles.Model(md).Input(i).runid;
+    ui=uimenu(h,'Label',str{i},'Callback',{@selectDomain,i},'Checked','off','UserData',i);
+    if i==ad
+        set(ui,'Checked','on');
+    end
+end
+uimenu(h,'Label','Add Domain ...','Callback',{@selectDomain,0},'Checked','off','UserData',0,'separator','on');
+
+%%
+function selectDomain(hObject, eventdata, nr)
+
+handles=getHandles;
+if nr>0
+    changeDomain(nr);
+else
+    str=GetUIString('Enter Runid New Domain');
+    if ~isempty(str)
+        id=handles.Model(md).nrDomains+1;
+        handles.Model(md).nrDomains=id;
+        handles.activeDomain=id;
+        handles.Model(md).Input(id).runid=str;
+        handles=ddb_initializeFlowDomain(handles,'all',id,handles.Model(md).Input(id).runid);
+        setHandles(handles);
+        ddb_refreshDomainMenu;
+        changeDomain(id);
+    end
+end
+
+%%
+function changeDomain(nr)
+handles=getHandles;
+% Check and uncheck the proper domains in the menu
+handles.activeDomain=nr;
+setHandles(handles);
+h=findobj(gcf,'Tag','menuDomain');
+hc=get(h,'Children');
+for i=1:length(hc)
+    set(hc(i),'Checked','off');
+end
+h=findobj(hc,'UserData',nr);
+set(h,'Checked','on');
+% Update the figure
+for i=1:handles.Model(md).nrDomains
+    feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',i);
+%     if i==ad
+%         feval(handles.Model(md).plotFcn,'update','active',1,'visible',1,'domain',i);
+%     else
+%         feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',i);
+%     end
+end

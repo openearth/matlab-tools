@@ -9,18 +9,18 @@ if nargin>1
     end
 end
 
-handles.GUIData.activeDryPoint=1;
-handles.GUIData.activeThinDam=1;
-handles.GUIData.activeCrossSection=1;
-handles.GUIData.activeDischarge=1;
-handles.GUIData.activeDrogue=1;
-handles.GUIData.activeObservationPoint=1;
-handles.GUIData.activeOpenBoundary=1;
+% handles.GUIData.activeDryPoint=1;
+% handles.GUIData.activeThinDam=1;
+% handles.GUIData.activeCrossSection=1;
+% handles.GUIData.activeDischarge=1;
+% handles.GUIData.activeDrogue=1;
+% handles.GUIData.activeObservationPoint=1;
+% handles.GUIData.activeOpenBoundary=1;
 
-handles.activeDomain=1;
-handles.GUIData.nrFlowDomains=1;
+ii=strmatch('Delft3DFLOW',{handles.Model.name},'exact');
 
-handles.Model(md).Input=[];
+
+handles.Model(ii).Input=[];
 
 runid='tst';
 

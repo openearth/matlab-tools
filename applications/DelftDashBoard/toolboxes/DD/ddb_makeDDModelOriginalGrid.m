@@ -1,4 +1,4 @@
-function [handles,mcut,ncut,cancel]=ddb_makeDDModelOriginalGrid(handles,id1,mdd,ndd)
+function [handles,mcut,ncut]=ddb_makeDDModelOriginalGrid(handles,id1,mdd,ndd)
 
 mmin=mdd(1);
 nmin=ndd(1);
@@ -73,28 +73,13 @@ end
 
 enc1=ddb_enclosure('extract',x1,y1);
 
-cancel=0;
-[filename, pathname, filterindex] = uiputfile('*.grd', 'New Overall Grid File',handles.Model(md).Input(id1).grdFile);
-if pathname~=0
-    curdir=[lower(cd) '\'];
-    if ~strcmpi(curdir,pathname)
-        filename=[pathname filename];
-    end
-    handles.Model(md).Input(handles.activeDomain).grdFile=filename;
-    ii=findstr(filename,'.grd');
-    str=filename(1:ii-1);
-    handles.Model(md).Input(id1).encFile=[str '.enc'];
-%    ddb_wlgrid('write',[handles.Model(md).Input(id1).grdFile],x1,y1,enc1,handles.screenParameters.coordinateSystem.type);
-
-    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-        coord='Spherical';
-    else
-        coord='Cartesian';
-    end
-    ddb_wlgrid('write','FileName',handles.Model(md).Input(id1).grdFile,'X',x1,'Y',y1,'Enclosure',enc1,'CoordinateSystem',coord);
-
-    handles.Model(md).Input(id1).gridX=x1;
-    handles.Model(md).Input(id1).gridY=y1;
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    coord='Spherical';
 else
-    cancel=1;
+    coord='Cartesian';
 end
+ddb_wlgrid('write','FileName',handles.Model(md).Input(ad).grdFile,'X',x1,'Y',y1,'Enclosure',enc1,'CoordinateSystem',coord);
+
+handles.Model(md).Input(id1).gridX=x1;
+handles.Model(md).Input(id1).gridY=y1;
+

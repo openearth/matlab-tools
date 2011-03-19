@@ -35,12 +35,24 @@ for iac=ii1:ii2
                     else                                
                         switch dependency.checks(k).operator
                             case{'eq'}
-                                if val==dependency.checks(k).value
-                                    ok=1;
+                                if isnan(dependency.checks(k).value)
+                                    if isnan(val)
+                                        ok=1;
+                                    end
+                                else
+                                    if val==dependency.checks(k).value
+                                        ok=1;
+                                    end
                                 end
                             case{'ne'}
-                                if val~=dependency.checks(k).value
-                                    ok=1;
+                                if isnan(dependency.checks(k).value)
+                                    if ~isnan(val)
+                                        ok=1;
+                                    end
+                                else
+                                    if val~=dependency.checks(k).value
+                                        ok=1;
+                                    end
                                 end
                             case{'lt'}
                                 if val<dependency.checks(k).value
@@ -80,16 +92,24 @@ for iac=ii1:ii2
                     else
                         switch dependency.checks(k).operator
                             case{'eq'}
-                                try
-                                if val~=dependency.checks(k).value
-                                    ok=0;
-                                end
-                                catch
-                                    shite=1
+                                if isnan(dependency.checks(k).value)
+                                    if ~isnan(val)
+                                        ok=0;
+                                    end
+                                else
+                                    if val~=dependency.checks(k).value
+                                        ok=0;
+                                    end
                                 end
                             case{'ne'}
-                                if val==dependency.checks(k).value
-                                    ok=0;
+                                if isnan(dependency.checks(k).value)
+                                    if isnan(val)
+                                        ok=0;
+                                    end
+                                else
+                                    if val==dependency.checks(k).value
+                                        ok=0;
+                                    end
                                 end
                             case{'lt'}
                                 if val>=dependency.checks(k).value

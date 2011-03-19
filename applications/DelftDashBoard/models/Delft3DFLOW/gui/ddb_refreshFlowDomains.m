@@ -7,7 +7,7 @@ h=findobj(gcf,'Tag','menuDomain');
 hc=get(h,'Children');
 delete(hc);
 
-for i=1:handles.GUIData.nrFlowDomains
+for i=1:handles.Model(md).nrDomains
     str{i}=handles.Model(md).Input(i).runid;
     ui=uimenu(h,'Label',str{i},'Callback',{@SelectDomain,i},'Checked','off','UserData',i);
     if i==ad
