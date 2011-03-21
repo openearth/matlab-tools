@@ -118,6 +118,7 @@ for i = 1:length({info.Dataset.Name})
     variables.data(c).name = info.Dataset(i).Name;
     variables.data(c).value = nc_varget(fname, info.Dataset(i).Name, ...
         start, len, stride);
+    variables.data(c).value = reshape(variables.data(c).value, len);
     
     % read units, if available
     unitsid = strcmp('units', {info.Dataset(i).Attribute.Name});
