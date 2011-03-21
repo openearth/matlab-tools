@@ -17,7 +17,7 @@ function varargout = ArcGisRead(fname,varargin)
 %
 %See web: <a href="http://en.wikipedia.org/wiki/ESRI_grid">http://en.wikipedia.org/wiki/ESRI_grid</a>
 %         <a href="http://webhelp.esri.com/arcgisdesktop/9.2/index.cfm?id=1309&pid=1308&topicname=ASCII_to_Raster_%28Conversion%29">@ESRI</a>
-%See also: ARCGIS2NC, ARC_SHAPE_READ, ARCGRIDREAD (in $ mapping toolbox)
+%See also: ARCGIS2NC, ARC_SHAPE_READ, ARCGRIDREAD (in $ mapping toolbox), arc_asc_read (reads same file)
 
 %% User defined keywords
 
@@ -111,9 +111,9 @@ function varargout = ArcGisRead(fname,varargin)
    
 %% output
 
-   if nargin==1
+   if nargout==1
       varargout = {D};
-   elseif nargin==3
+   elseif nargout==3
       varargout = {D.x,D.y,D.(D.varname)};
    end
 
