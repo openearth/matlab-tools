@@ -121,7 +121,9 @@ function oetsettings(varargin)
     dirs       = strcat({dirs.pathname}, {dirs.name}, filesep, ';')';
 
     % also include the basepath
-    newpath  = [basepath filesep ';' strcat(dirs{:})];
+    %OM: no need to include basepath as dirs already have basepath
+    %newpath  = [basepath filesep ';' strcat(dirs{:})];
+    newpath = strcat(dirs{:});
 
     % add newpath to path
     path(newpath, currentPath);
