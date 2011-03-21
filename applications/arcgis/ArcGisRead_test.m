@@ -1,7 +1,9 @@
-% function ok = ArcGisRead_test
+function ok = ArcGisRead_test
 %ARCGISREAD_TEST   unit test for ArcGisRead
 %
 %see also: ARCGIS2NC, ARCGISREAD
+
+   OPT.nc = 0;
 
    ok = 1;
 
@@ -26,18 +28,34 @@
 
 %% read
 
-   D2  = arcGisRead('test.asc','plot',0);
-  [D3.x D3.y D3.val] = arc_asc_read('test.asc')
+   D2  = arcGisRead('test.asc','plot',0,'nc',OPT.nc,'units','m','long_name','depth');
+
+%% check upwardy
+
+  [D3.x D3.y D3.val] = arcGisRead('test.asc','upwardy',1); %arc_asc_read('test.asc');
   
+   ok = ok & isequal(D3.x  ,D2.x);
+   ok = ok & isequal(D3.y  ,fliplr(D2.y));
+   ok = ok & isequalwithequalnans(D3.val,flipud(D2.val));
+
 %% check
 
-   ok = ok & isequal(D2.x,[0:+1:4]+.5)
-   ok = ok & isequal(D2.y,[3:-1:0]+.5)
+   ok = ok & isequal(D2.x,[0:+1:4]+.5);
+   ok = ok & isequal(D2.y,[3:-1:0]+.5);
    
-   a= [16 17 18 19 20
-       11 12 13 14 15
-        6  0  8  9 10
-        1  2  3  4 5];
+   a= [16  17 18 19 20
+       11  12 13 14 15
+        6 nan  8  9 10
+        1   2  3  4 5];
 
-   D2.val(isnan(D2.val)) = 0;
-   ok = ok & isequal(D2.val,a);
+   ok = ok & isequalwithequalnans(D2.val,a);
+
+%% check nc
+
+   if OPT.nc
+   D4 = nc2struct('test.nc');
+   ok = ok & isequal(D4.x(:)  ,D2.x(:));
+   ok = ok & isequal(D4.y(:)  ,D2.y(:));
+   ok = ok & isequalwithequalnans(D4.val,D2.val);
+   end
+

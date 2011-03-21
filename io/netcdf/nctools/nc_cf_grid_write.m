@@ -324,7 +324,7 @@ function varargout = nc_cf_grid_write(varargin)
 
         ifld = ifld + 1;
       nc(ifld).Name             = 'x';
-      nc(ifld).Nctype           = 'int';
+      nc(ifld).Nctype           = nc_type(class(OPT.x));
       nc(ifld).Dimension        = OPT.dim.x;
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate in Cartesian system');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
@@ -336,7 +336,7 @@ function varargout = nc_cf_grid_write(varargin)
    
         ifld = ifld + 1;
       nc(ifld).Name             = 'y';
-      nc(ifld).Nctype           = 'int';
+      nc(ifld).Nctype           = nc_type(class(OPT.y));
       nc(ifld).Dimension        = OPT.dim.y;
       nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate in Cartesian system');
       nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');

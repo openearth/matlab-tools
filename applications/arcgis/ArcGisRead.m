@@ -23,10 +23,12 @@ function varargout = ArcGisRead(fname,varargin)
 
    OPT.plot          = 0;  % plot (default off, to prevent grinding of PC with big matrices)
    OPT.clim          = [-5 45]; % in OPT.units
+   OPT.upwardy       = 0;  % ersie files have y going down, set this to 1 if you want y going up
    OPT.export        = 1;  % export plot
    OPT.mat           = 1;  % save as mat
    OPT.nc            = 0;  % save as netCDF
    OPT.type          = 'single';% 'double','int'
+   OPT.epsg          = [];
    
    OPT.varname       = 'val'; % name of data block 
    OPT.long_name     = ''; % netCDF-CF convention
@@ -76,6 +78,13 @@ function varargout = ArcGisRead(fname,varargin)
       % (-(nrows -0.5)+(  nrows)) = ...
       %   -nrows +0.5+    nrows   = +0.5
    end
+   
+%% 
+
+if OPT.upwardy
+   D.y           = D.y(end:-1:1);
+   D.(D.varname) = flipud(D.(D.varname));
+end
 
 %% Write to *.mat file
 
@@ -87,8 +96,14 @@ function varargout = ArcGisRead(fname,varargin)
 
    if OPT.nc
 
-      arcgrid2nc([basename,'.nc'],D,'long_name',OPT.long_name,'units',OPT.units);
-   
+      nc_cf_grid_write([basename,'.nc'],'long_name',OPT.long_name,...
+                                          'varname',OPT.varname,...
+                                            'units',OPT.units,...
+                                                'x',D.x,...
+                                                'y',D.y,...
+                                              'val',D.(OPT.varname),...
+                                            'units',OPT.units,...
+                                             'epsg',OPT.epsg);
    end
 
 %% Plot data (do this last, as it can be really sloooow)
