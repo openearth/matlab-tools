@@ -126,7 +126,14 @@ for ivar=[OPT.donar_wnsnum]
         if exist([OPT.filename,'.mat'],'file')==2 & OPT.load==0
 
             D = load([OPT.filename,'.mat']);% speeds up considerably
-
+            %% extract url to add it to netCDF nc_global.history
+            if ~isfield(D,'url')
+               fidurl = fopen([fileparts(OPT.filename),filesep,filename(OPT.filename),'.url'],'r');
+               rec    = fgetl(fidurl); % [InternetShortcut]
+               rec    = fgetl(fidurl); % URL=%s
+               fclose(fidurl);
+               D.url  = rec(5:end);
+            end
         else
             if OPT.unzip
                 OPT.zipname  = [OPT.filename,'.zip'];
@@ -143,15 +150,6 @@ for ivar=[OPT.donar_wnsnum]
                 'fieldnamescale',1,...
                         'method',OPT.method,...
                            'url',1);
-            %% extract url to add it to netCDF nc_global.history
-            if ~isfield(D,'url')
-               fidurl = fopen(strrep(fname,'.txt','.url'),'r');
-               rec    = fgetl(fidurl); % [InternetShortcut]
-               rec    = fgetl(fidurl); % URL=%s
-               fclose(fidurl);
-               D.url  = rec(5:end);
-            end
-            
             if OPT.unzip
                 delete([OPT.unzippedfilename]);%,'.txt'
             end

@@ -4,10 +4,11 @@
 %See also: KNMI_ALL,                   , RWS_WATERBASE_*
 %          NC_CF_STATIONTIMESERIES2META, NC_CF_DIRECTORY2CATALOG, NC_CF_STATIONTIMESERIES2KMLOVERVIEW
 
+
    clear all
    close all
    
-% TO DO: make overall kml   
+% TO DO: merge kmls for al substances
 
 %% Initialize
 
@@ -29,6 +30,7 @@
                     332  346  347  360  363  ... %   N   N   N   O   P
                     364  380  491  492  493  ... %   P P04 NH4 N03 N02
                     541  560 1083    1      ];   % DSe  Si DOC zwl    (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
+% DO 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
 
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
 
@@ -62,7 +64,7 @@
       OPT.directory_kml     = [kmlbase,'\rijkswaterstaat\waterbase\'      ,filesep,subdir,filesep];
       OPT.directory_raw     = [rawbase,'\rijkswaterstaat\waterbase\cache\',filesep,subdir,filesep];
       
-      multiWaitbar(mfilename,n/length(donar_wnsnum),'label',['Processing substance: ',OPT.donar_parcode])
+      multiWaitbar(mfilename,n/length(donar_wnsnum),'label',['Processing substance: ',OPT.donar_parcode,'(',num2str(ivar),')'])
 
 %% Download from waterbase.nl
    
@@ -108,7 +110,8 @@
                   'catalog_dir',[OPT.directory_nc],... % dir where to SAVE catalog
                          'save',1,...
                    'urlPathFcn',@(s) path2os(strrep(s,ncbase,['http://opendap.deltares.nl/thredds/dodsC/opendap/']),'h'),... % dir where to LINK to for netCDF
-                      'varname','');
+                      'varname','',...
+                         'disp',[]);
    else
    CATALOG = nc2struct([OPT.directory_nc,'catalog.nc']);
    end
