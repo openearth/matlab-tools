@@ -57,7 +57,7 @@ function varargout = struct2xls(fname,S,varargin)
 % See also: XLS2STRUCT, XLSDATE2DATENUM, XLSREAD, XLSWRITE (2006b, otherwise mathsworks downloadcentral)
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2006-2008 Delft University of Technology
+%   Copyright (C) 2006-2011 Delft University of Technology
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl	
@@ -105,6 +105,11 @@ function varargout = struct2xls(fname,S,varargin)
    OPT.commentchar = '#';
    OPT.overwrite   = 'p'; % prompt
  
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
+
    OPT = setproperty(OPT,varargin{:});
    
    if ischar(OPT.header)

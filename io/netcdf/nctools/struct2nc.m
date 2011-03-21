@@ -35,7 +35,8 @@ function varargout = struct2nc(outputfile,D,varargin)
 %  [D,M.units] = xls2struct('file_created_with_struct2xls.xls');
 %  struct2nc('file.nc',D,M);
 %
-%See also: STRUCT2XLS, XLS2STRUCT, SDSAVE_CHAR, SDLOAD_CHAR, NC2STRUCT, NC_GETALL
+%See also: NC2STRUCT, XLS2STRUCT,  
+%          STRUCT2XLS, SDSAVE_CHAR, SDLOAD_CHAR, NC2STRUCT, NC_GETALL
 
 % TO DO: allow for meta/attribute info struct: atr.var_name.att_name
 % TO DO: pass global attributes as <keyword,value> or as part of M.
@@ -86,6 +87,11 @@ function varargout = struct2nc(outputfile,D,varargin)
 OPT.dump              = 0;
 OPT.disp              = 0;
 OPT.pause             = 0;
+
+if nargin==0
+   varargout = {OPT};
+   return
+end
 
 %% Units
 

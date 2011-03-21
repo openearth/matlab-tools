@@ -23,7 +23,8 @@ function varargout = nc2struct(ncfile,varargin)
 %
 % NOTE: do not use for VERY BIG! files, as your memory will be swamped.
 %
-%See also: STRUCT2XLS, XLS2STRUCT, SDSAVE_CHAR, SDLOAD_CHAR, STRUCT2NC, NC_GETALL
+%See also: XLS2STRUCT, CSV2STRUCT, LOAD & SAVE('-struct',...)
+%          STRUCT2NC, STRUCT2XLS, SDSAVE_CHAR, SDLOAD_CHAR, STRUCT2NC, NC_GETALL
 
 % TO DO: pass global attributes as <keyword,value> or as part of M.
 
@@ -72,6 +73,11 @@ function varargout = nc2struct(ncfile,varargin)
 % And what about global atts, part of D (NOOOOOOOOO!), or part of M(perhaps), or part of M.nc_global.?
 
 OPT.global2att = 2; % 0=not at all, 1=as fields, 2=as subfields of nc_global
+
+if nargin==0
+   varargout = {OPT};
+   return
+end
 
 %% Load file info
 

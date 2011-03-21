@@ -1,5 +1,5 @@
 function varargout = xls2struct(fname,varargin)
-%XLS2STRUCT    Reads 1D data + fieldnames from xls/csv file into matlab struct (BETA).
+%XLS2STRUCT    Read columns from xls file into matlab struct fields 
 %
 % DATA = xls2struct(fname)
 % DATA = xls2struct(fname,work_sheet_name)
@@ -60,12 +60,13 @@ function varargout = xls2struct(fname,varargin)
 %   are already loaded to a field called 'units', with a subield
 %   for every main field.
 %
-% See also: STRUCT2XLS, XLSDATE2DATENUM, XLSREAD, XLSWRITE (2006b+, otherwise mathsworks downloadcentral) 
+% See also: CSV2STRUCT, NC2STRUCT, LOAD & SAVE('-struct',...)
+%           STRUCT2XLS, XLSDATE2DATENUM, XLSREAD, XLSWRITE (2006b+, otherwise mathsworks downloadcentral) 
 
 % Tested for matlab releases 2009b, 2008a, 2007ab, 2006B and 6.5
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2006-2008 Delft University of Technology
+%   Copyright (C) 2006-2011 Delft University of Technology
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl	
@@ -122,12 +123,11 @@ function varargout = xls2struct(fname,varargin)
 % | number/string | number/string | number/string | number/string |
 % +---------------+---------------+---------------+---------------+
 
-if strcmp(version('-release'),'13')
-   disp('xlsread: Only properly tested for in R14 and higher.')
-end
+   if strcmp(version('-release'),'13')
+      disp('xlsread: Only properly tested for in R14 and higher.')
+   end
 
-   %% Input
-   %------------------------
+%% Input
 
    OPT.addunits    = false; % this option should be phased out   
    OPT.error       = true;   
@@ -139,6 +139,11 @@ end
    OPT.commentchar = '%*#';
    OPT.last2d      = 0;
    
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
+
    if ~odd(nargin)
       OPT.sheet = varargin{1};
       i     = 2;
@@ -153,8 +158,7 @@ end
       return
    end
    
-   %% Read
-   % ------------------------
+%% Read
 
    META.filename = fname;
    iostat        = 1;
@@ -177,8 +181,7 @@ end
    
       sptfilenameshort = filename(fname);
          
-      %% Load raw data
-      % ------------------------
+   %% Load raw data
    
       if ~isempty(OPT.sheet)
          if strfind(version('-release'),'13')==1
@@ -267,9 +270,8 @@ end
          end % release
       end
       
-      %% Take care of fact that excel skips certain rows/columns
-      %  depending on data type (numerical/string)
-      % ----------------------------------------
+   %% Take care of fact that excel skips certain rows/columns
+   %  depending on data type (numerical/string)
       
       if iscell(tsttxt) 
          commentlines       = zeros(1,size(tstraw,1));
@@ -289,9 +291,8 @@ end
      %row_skipped_in_numeric_data = size(tstraw,1) - size(tstdat,1);
      %col_skipped_in_numeric_data = size(tstraw,2) - size(tstdat,2);
       
-      %% Test entire columns for presence of non-numbers.
-      %  One single non-number is sufficient to treat entire column as text.
-      % ----------------------------------------
+   %% Test entire columns for presence of non-numbers.
+   %  One single non-number is sufficient to treat entire column as text.
 
       numeric_columns = repmat(true ,[1 size(tstraw,2)]);
       txt_columns     = repmat(false,[1 size(tstraw,2)]);
@@ -323,8 +324,7 @@ end
             
       end
       
-      %% Take care of nans
-      % ----------------------------------------
+   %% Take care of nans
       
       % for i=1:size(tsttxt,1)
       % for j=1:size(tsttxt,2)
@@ -337,8 +337,7 @@ end
       % end
       % end
       
-      %% Take care of commentlines and header
-      % ----------------------------------------
+   %% Take care of commentlines and header
    
       not_a_comment_line = find(~commentlines);
       
@@ -347,8 +346,7 @@ end
       units              = tsttxt(not_a_comment_line(2),:);
       end
       
-      %% Remove empty field names at end of row
-      % ----------------------------------------
+   %% Remove empty field names at end of row
       
       nfld         = length(fldnames);
       fldnamesmask = ones(1,nfld);
@@ -363,7 +361,6 @@ end
       nfld               = length(fldnames);
       
    %% Read data
-   % ------------------------
 
       for ifld   = 1:nfld
       
@@ -443,6 +440,8 @@ end
         end
       end
    
+%% out
+
    if nargout<2
       if OPT.units & OPT.addunits
          DAT.units = UNITS;
