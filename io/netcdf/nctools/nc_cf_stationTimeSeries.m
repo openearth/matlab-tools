@@ -1,4 +1,4 @@
-function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
+function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
 %NC_CF_STATIONTIMESERIES   load/plot one variable from stationTimeSeries netCDF file
 %
 %  [D,M] = nc_cf_stationTimeSeries(ncfile)
@@ -32,14 +32,14 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %
 % Examples:
 %
-%    directory = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/'; % either remote
-%    directory = 'P:\mcdata\opendap\'                                      % or local
+%    directory = 'F:\opendap\';                                       % either local
+%    directory = 'http://opendap.deltares.nl/thredds/dodsC/opendap/'; % or remote
 %
-%    fname = '/rijkswaterstaat/waterbase/sea_surface_height/id1-DENHDR-179805240000-200907100000.nc';
-%    [D,M] = nc_cf_stationTimeSeries([directory,fname],'sea_surface_height');
+%    fname   = '/rijkswaterstaat/waterbase/sea_water_salinity/id559-NOORDWK10.nc';
+%    [D1,M1] = nc_cf_stationTimeSeries([directory,fname],'sea_water_salinity','plot',1);
 %
-%    fname = 'knmi/etmgeg/etmgeg_269.nc';
-%    [D,M] = nc_cf_stationTimeSeries([directory,fname],'wind_speed_mean');
+%    fname   = 'knmi/etmgeg/etmgeg_269.nc';
+%    [D2,M2] = nc_cf_stationTimeSeries([directory,fname],'wind_speed_mean','plot',1);
 %
 %See also: SNCTOOLS, NC_CF_GRID
 
@@ -90,6 +90,12 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    OPT.plot    = 1;
    OPT.varname = [];
    OPT.period  = [];
+   OPT.pngname = []; % prints png and closes figure
+   
+   if nargin==0
+      varargout  ={OPT};
+      return
+   end
    
    if ~odd(nargin)
    OPT.varname = varargin{1};
@@ -264,7 +270,9 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
 %% Plot
    
    if OPT.plot
-   if ~isempty(OPT.varname)
+    if ~isempty(OPT.varname)
+    
+      FIG = figure;
 
       plot    (D.datenum,D.(OPT.varname),'displayname',[mktex(M.(OPT.varname).long_name),' [',...
                                                         mktex(M.(OPT.varname).units    ),']'])
@@ -290,8 +298,15 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
       end
               
       ylabel  ([mktex(long_name),' [',mktex(units),']']);
+      
+      text(1,0,'Created with: www.OpenEarth.eu','rotation',90,'fontsize',8,'units','normalized','verticalalignment','top')
+      
+      if ~isempty(OPT.pngname)
+         print2screensizeoverwrite(OPT.pngname)
+         delete(FIG)
+      end
    
-   end
+    end
    end
    
 %% Output
@@ -299,7 +314,7 @@ function [D,M] = nc_cf_stationTimeSeries(ncfile,varargin)
    if     nargout==1
       varargout = {D};
    elseif nargout==2
-      varargout = {D};
+      varargout = {D,M};
    end
    
 %% EOF   
