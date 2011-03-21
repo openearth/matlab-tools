@@ -14,12 +14,14 @@ function [x y z info] = arc_asc_read(fname, varargin)
 %                 zscale:   division factor for elevation values
 %
 %   Output:
-%   x           = Matrix with x-coordinates
-%   y           = Matrix with y-coordinates
+%   x           = Matrix with x-coordinates (pixel centres)
+%   y           = Matrix with y-coordinates (pixel centres)
 %   z           = Matrix with z-values
 %
 %   Example
 %   [x y z info] = arc_asc_read(fname)
+%
+%See also: ARCGISREAD (reads same file)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -64,11 +66,9 @@ function [x y z info] = arc_asc_read(fname, varargin)
 
 %% read options
 
-OPT = struct( ...
-    'header', 6, ...
-    'format', '%f', ...
-    'zscale', 100 ...
-);
+OPT.header = 6;
+OPT.format = '%f';
+OPT.zscale = 1;
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -94,8 +94,8 @@ if exist(fname, 'file')
 
         if i <= OPT.header
             % first lines are header lines, store in info struct
-            n = strtrim(fline(1:14));
-            v = str2num(fline(15:end));
+            [n,rest] = strtok(fline);
+            v = str2num(rest);
             info.(upper(n)) = v;
 
             i = i + 1;
@@ -119,8 +119,10 @@ if exist(fname, 'file')
     fclose(fid);
 
     % create output
-    x = info.XLLCORNER+[0:info.NCOLS-1]*info.CELLSIZE;
-    y = info.YLLCORNER+[0:info.NROWS-1]*info.CELLSIZE;
+   %x = info.XLLCORNER+[0  :1:info.NCOLS    ]*info.CELLSIZE; % these are the corners that span the pixels
+   %y = info.YLLCORNER+[0  :1:info.NROWS    ]*info.CELLSIZE; % these are the corners that span the pixels
+    x = info.XLLCORNER+[0.5:1:info.NCOLS-0.5]*info.CELLSIZE; % these are the CENTRES where the data reside
+    y = info.YLLCORNER+[0.5:1:info.NROWS-0.5]*info.CELLSIZE; % these are the CENTRES where the data reside
     z = reshape(z, info.NROWS, info.NCOLS)./OPT.zscale;
     
 else
