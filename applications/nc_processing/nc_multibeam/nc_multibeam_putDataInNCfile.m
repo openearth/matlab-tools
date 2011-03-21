@@ -14,7 +14,7 @@ function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
 
    NCid = netcdf.open(ncfile, 'NC_WRITE');
 
-%% get current timesteps in nc file
+%% get already availbale timesteps in nc file
 
    varid = netcdf.inqVarID(NCid,'time');
    [~,dimlen] = netcdf.inqDim(NCid,netcdf.inqDimID(NCid,'time'));

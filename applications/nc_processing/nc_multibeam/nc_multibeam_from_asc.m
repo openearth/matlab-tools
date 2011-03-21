@@ -3,7 +3,7 @@ function varargout = nc_multibeam_from_asc(varargin)
 %
 %   <OPT> = nc_multibeam_from_asc(<keyword,value>)
 %
-%See also: nc_multibeam
+%See also: nc_multibeam, arcgis
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -65,15 +65,14 @@ function varargout = nc_multibeam_from_asc(varargin)
    OPT.EPSGcode            = [];
    OPT.dateFcn             = @(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy mmm'); % how to extract the date from the filename
    
-   OPT.mapsizex            = 5000;          % size of fixed map in x-direction
-   OPT.mapsizey            = 5000;          % size of fixed map in y-direction
-   OPT.gridsizex           = 5;             % x grid resolution
-   OPT.gridsizey           = 5;             % y grid resolution
-   OPT.xoffset             = 0;             % zero point of x grid
-   OPT.yoffset             = 0;             % zero point of y grid
-   OPT.zfactor             = 1;             % scale z by this factor
-   OPT.shiftHalfCell       = true;          % set to true is the ASC grid files defines values at cell centers, not cell corners. (should be true see to http://en.wikipedia.org/wiki/ESRI_grid)
-   OPT.default_nodata_val  = 9999;
+   OPT.mapsizex            = 5000;            % size of fixed map in x-direction in m (between outer corners!))
+   OPT.mapsizey            = 5000;            % size of fixed map in y-direction in m (between outer corners!))
+   OPT.gridsizex           = 5;               % x grid resolution
+   OPT.gridsizey           = 5;               % y grid resolution
+%  OPT.celsize % we can't have unequal dx and dy because the asc source doesn't allow it
+   OPT.xoffset             = OPT.gridsizex/2; % zero point of x centres grid (i.e. x of data points, not x of pixels corners)
+   OPT.yoffset             = OPT.gridsizey/2; % zero point of y centres grid (i.e. y of data points, not y of pixels corners)
+   OPT.zfactor             = 1;               % scale z by this factor
    
    OPT.Conventions         = 'CF-1.4';
    OPT.CF_featureType      = 'grid';
@@ -94,6 +93,11 @@ function varargout = nc_multibeam_from_asc(varargin)
    end
    
    OPT = setproperty(OPT, varargin{:});
+
+   if ~(OPT.gridsizex==OPT.gridsizey)
+      error('gridsizex should match gridsizey: requested grid should align with grid in asc file that has same cellsize in x and y.')
+   end
+
 
 if OPT.make
 
@@ -191,7 +195,8 @@ if OPT.make
                 fid      = fopen(fullfile(OPT.raw_path  ,fns_unzipped(ii).name));
             end
             
-            % read the first six lines of the file
+         %% read header
+         
             s = textscan(fid,'%s %f',6);
             
             ncols        = s{2}(strcmpi(s{1},'ncols'        ));
@@ -204,9 +209,7 @@ if OPT.make
                 error('reading asc file')
             end
             
-            % shift corners half a cell
-            xllcorner = xllcorner+cellsize/2;
-            yllcorner = yllcorner+cellsize/2;
+         %% read file chunkwise
 
             kk = 0;
             while ~feof(fid)
@@ -227,21 +230,32 @@ if OPT.make
                 'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
             fclose(fid);
 
-   %% write nc
+% TO DO: merge this codecell that read asc file with arcgisread, arc_asc_read
+
+         if ~(cellsize == OPT.gridsizex & ...
+              cellsize == OPT.gridsizey ) % gridsizey==gridsizey already checked above
+
+         %% calculate x,y of cell CENTRES, by adding half a grid cell 
+         %  to the cell CORNERS. From now on we only use x and y where data reside
+         %  i.e. the centers [x0_cen +/- cellsize,y0_cen +/- cellsize]
             
-            %% write data to nc files
+            x0_cen = xllcorner+cellsize/2;
+            y0_cen = yllcorner+cellsize/2;
+
+         %% write data to nc files
+            
             multiWaitbar('nc_writing',0,'label',sprintf('Writing: %s...', (fns_unzipped(ii).name)))
             % set the extent of the fixed maps (decide according to desired nc filesize)
             
-            minx    = xllcorner;
-            miny    = yllcorner;
-            maxx    = xllcorner + cellsize.*(ncols-1);
-            maxy    = yllcorner + cellsize.*(nrows-1);
+            minx    = x0_cen;
+            miny    = y0_cen;
+            maxx    = x0_cen + cellsize.*(ncols-1);
+            maxy    = y0_cen + cellsize.*(nrows-1);
             minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex + OPT.xoffset;
             miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey + OPT.yoffset;
 
-            x      =         xllcorner:cellsize:xllcorner + cellsize*(ncols-1);
-            y      = flipud((yllcorner:cellsize:yllcorner + cellsize*(nrows-1))');
+            x      =         x0_cen:cellsize:x0_cen + cellsize*(ncols-1);
+            y      = flipud((y0_cen:cellsize:y0_cen + cellsize*(nrows-1))');
             y(:,2) = ceil((1:size(y,1))'./ floor(OPT.block_size/ncols));
             y(:,3) = mod ((0:size(y,1)-1)',floor(OPT.block_size/ncols))+1;
             
@@ -265,8 +279,8 @@ if OPT.make
                     [X,Y]    = meshgrid(x_vector,y_vector);
                     Z = nan(size(X));
                     Z(...
-                        find(y_vector  <=y(iy(1),1),1,'last'):-1:find(y_vector  >=y(iy(end),1),1,'first'),...
-                        find(x_vector  >=x(ix(1)),1,'first'):find(x_vector  <=x(ix(end)),1,'last')) = z;
+                        find(y_vector  <=y(iy(1),1),1,'last' ):-1:find(y_vector  >=y(iy(end),1),1,'first'),...
+                        find(x_vector  >=x(ix(1)  ),1,'first'):+1:find(x_vector  <=x(ix(end)  ),1,'last' )) = z;
                     
                     % set the name for the nc file
                     ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
@@ -277,6 +291,12 @@ if OPT.make
                         Y = flipud(Y);
                         % if a non trivial Z matrix is returned write the data
                         % to a nc file
+                        
+% TO DO implemented for free choice of file name (e.g. www.kadaster.nl names)
+
+                        ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
+                            sprintf('%.2f_%.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
+                        
                         if ~exist(ncfile, 'file')
                             nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
                         end
