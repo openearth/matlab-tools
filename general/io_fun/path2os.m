@@ -82,7 +82,7 @@ function string = path2os(string,input)
 %% Lock special combis
    prefix = '';
    if     length(string) > 6  
-      if strcmpi(string(1:7),'http://');prefix = 'http://';string = string(8:end);
+      if strcmpi(string(1:7),'http://') | strcmpi(string(1:7),'http:\\');prefix = 'http://';string = string(8:end);
        if nargin==1
         slash = '/';
        else
