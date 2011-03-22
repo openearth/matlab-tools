@@ -1,12 +1,12 @@
-function ATT = nc_cf_opendap2catalog(varargin)
+function varargout = nc_cf_opendap2catalog(varargin)
 %NC_CF_OPENDAP2CATALOG   creates catalog of CF compliant netCDF files on one OPeNDAP server (BETA)
 %
 %   ATT = nc_cf_opendap2catalog(<baseurl>,<keyword,value>)
 %
 % Extracts meta-data from all netCDF files in baseurl, which can either be an
-% opendap catalog or a local directory. When you query a local directory,
-% and you want the catalog to work on a server, use keyword 'urlPathFcn'
-% to replace the local root with the opendap root, e.g.:
+% opendap catalog or a local directory. Set 'maxlevel' to harvest deeper.
+% When you query a local directory, and you want the catalog to work on a server,
+% use keyword 'urlPathFcn' to replace the local root with the opendap root, e.g.:
 %
 % 'urlPathFcn'= @(s) strrep(s,OPT.root_nc,['http://opendap.deltares.nl/thredds/dodsC/opendap/',OPT.path]))
 %
@@ -97,13 +97,11 @@ function ATT = nc_cf_opendap2catalog(varargin)
 OPT.base           = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml'; % base url where to inquire, NB: needs to end with catalog.xml
 OPT.files          = [];
 OPT.directory      = '.'; % relative path that ends up in catalog
-OPT.char_length    = 256; % pre-allocate for speed-up in addition to length(OPT.directory)
 OPT.mask           = '*.nc';
 OPT.pause          = 0;
 OPT.test           = 0;
 OPT.urlPathFcn     = @(s)(s); % function to run on urlPath, as e.g. strrep
 OPT.save           = 0; % save catalog in directory
-OPT.recursive      = 0;
 OPT.catalog_dir    = [];
 OPT.catalog_name   = 'catalog.nc'; % exclude from indexing
 OPT.xls_name       = 'catalog.xls'; % exclude from indexing
@@ -112,6 +110,11 @@ OPT.separator      = ';'; % for long names
 OPT.datatype       = 'stationtimeseries'; % CF data types (grid, stationtimeseries upcoming CF standard https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions)
 OPT.debug          = 0;
 OPT.disp           = 'multiWaitbar';
+
+if nargin==0
+   varargout = {OPT};
+   return
+end
 
 %% List of variables to include
 OPT.varname        = {}; % could be {'x','y','time'}
@@ -176,11 +179,6 @@ OPT.varname        = {}; % could be {'x','y','time'}
     if strcmpi(OPT.disp,'multiWaitbar')
     multiWaitbar(mfilename,0,'label','Generating catalog.nc','color',[0.3 0.6 0.3])
     end
-    
-%% File loop to get meta-data from subdirectories (recursively)
-    
-   if OPT.recursive
-   end
     
 %% File inquiry
 
@@ -435,7 +433,8 @@ end % entry
 
    if OPT.save
 
-      struct2nc (fullfile(OPT.catalog_dir, OPT.catalog_name),ATT);
+      struct2nc(fullfile(OPT.catalog_dir, OPT.catalog_name),ATT);
+      nc_attput(fullfile(OPT.catalog_dir, OPT.catalog_name),nc_global,'comment','catalog.nc was created offline by $HeadURL$ from the associatec catalog.xml. Catalog.nc is a test development, please do not rely on it. Please join www.OpenEarth.eu and request a password to change $HeadURL$ until it harvests all meta-data you need.');
        
       %for ifld=1:length(OPT.xls_entry)
       %   fldname = mkvar(OPT.xls_entry{ifld});
