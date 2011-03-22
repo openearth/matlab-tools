@@ -42,7 +42,7 @@ handles.Model(md).Input(id).MMax=size(x,1)+1;
 handles.Model(md).Input(id).NMax=size(x,2)+1;
 handles.Model(md).Input(id).KMax=1;
 
-handles=ddb_determineKCS(handles);
+handles=ddb_determineKCS(handles,id);
 
 handles=ddb_Delft3DFLOW_plotGrid(handles,'plot','domain',id);
 

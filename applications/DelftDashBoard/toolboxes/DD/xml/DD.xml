@@ -18,24 +18,15 @@
       <text>New Domain</text>
     </element>
     <element>
-      <tag>selectfirstdomain</tag>
-      <style>popupmenu</style>
-      <position>160 115 70 20</position>
-      <text>First Domain</text>
-      <textposition>left</textposition>
-      <variable>handles.Toolbox(tb).Input.firstDomainNr</variable>
-      <type>integer</type>
-      <list>
-        <texts>
-          <variable>handles.Toolbox(tb).Input.domains</variable>
-        </texts>
-      </list>
-      <tooltipstring>Select first domain</tooltipstring>
-    </element> 
+      <tag>boundarypanel</tag>
+      <style>panel</style>
+      <position>390 20 170 135</position>
+      <text>DD Boundaries</text>
+    </element>
     <element>
       <tag>editnewdomain</tag>
       <style>edit</style>
-      <position>160 90 70 20</position>
+      <position>160 115 70 20</position>
       <text>Runid New Domain</text>
       <textposition>left</textposition>
       <onchange>ddb_DDToolbox</onchange>
@@ -43,6 +34,18 @@
       <variable>handles.Toolbox(tb).Input.newRunid</variable>
       <type>string</type>
       <tooltipstring>Edit runid for new domain</tooltipstring>
+    </element> 
+    <element>
+      <tag>editattributename</tag>
+      <style>edit</style>
+      <position>160 90 70 20</position>
+      <text>Attribute Names</text>
+      <textposition>left</textposition>
+      <onchange>ddb_DDToolbox</onchange>
+      <option1>editattributename</option1>
+      <variable>handles.Toolbox(tb).Input.attributeName</variable>
+      <type>string</type>
+      <tooltipstring>Edit filename of attribute files of new domain</tooltipstring>
     </element> 
     <element>
       <tag>selectcornerpoints</tag>
@@ -190,5 +193,40 @@
         </dependency>
       </dependencies>
     </element> 
+
+
+
+
+    <element>
+      <tag>editddboundfile</tag>
+      <style>edit</style>
+      <position>440 110 100 20</position>
+      <text>DD File</text>
+      <textposition>left</textposition>
+      <variable>handles.Model(md).ddFile</variable>
+      <type>string</type>
+      <tooltipstring>Edit name of DD file</tooltipstring>
+    </element> 
+
+
+    <element>
+      <tag>checkadjustbathy</tag>
+      <style>checkbox</style>
+      <text>Adjust Bathymetry</text>
+      <position>440 80</position>
+      <variable>handles.Toolbox(tb).Input.adjustBathymetry</variable>
+      <tooltipstring>Automatically adjust bathymetry along boundaries of high-res domains</tooltipstring>
+    </element>
+
+    <element>
+      <tag>makeddboundaries</tag>
+      <style>pushbutton</style>
+      <position>430 30 120 20</position>
+      <text>Make DD Boundaries</text>
+      <callback>ddb_DDToolbox</callback>
+      <option1>makeddboundaries</option1>
+      <tooltipstring>Finds DD boundaries for all available domains and saves ddbound file</tooltipstring>
+    </element> 
+
   </elements> 
 </root>

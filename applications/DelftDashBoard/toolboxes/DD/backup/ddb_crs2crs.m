@@ -37,7 +37,7 @@ for i=1:length(Mstart0)
     Nstart=Nstart0(i);
     Mend=Mend0(i);
     Nend=Nend0(i);
-    if Mend<Mstart | Nend<Nstart
+    if Mend<Mstart || Nend<Nstart
         mtmp=Mstart;
         ntmp=Nstart;
         Mstart=Mend;
@@ -80,13 +80,13 @@ for i=1:length(Mstart0)
         tn2=0;
     end
     
-    if tm1==tm2 & tm1>0 & tm2>0
+    if tm1==tm2 && tm1>0 && tm2>0
         nc=nc+1;
         crsM1(nc)=tm1;
         crsM2(nc)=tm2;
         crsN1(nc)=tn1+1;
         crsN2(nc)=tn2;
-    elseif tn1==tn2 & tm1>0 & tm2>0
+    elseif tn1==tn2 && tm1>0 && tm2>0
         nc=nc+1;
         crsM1(nc)=tm1+1;
         crsM2(nc)=tm2;
@@ -94,7 +94,7 @@ for i=1:length(Mstart0)
         crsN2(nc)=tn2;
     else
         nc=nc+1;
-        Warning=['Cross section ' crsNames{i} ' not found!']
+        Warning=['Cross section ' crsNames{i} ' not found!'];
         crsM1(max(nc,1))=0;
     end
 

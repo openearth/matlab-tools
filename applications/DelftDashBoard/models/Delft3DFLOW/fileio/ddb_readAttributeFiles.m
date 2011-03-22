@@ -5,7 +5,7 @@ if ~isempty(handles.Model(md).Input(ad).grdFile)
     handles.Model(md).Input(ad).gridX=x;
     handles.Model(md).Input(ad).gridY=y;
     [handles.Model(md).Input(ad).gridXZ,handles.Model(md).Input(ad).gridYZ]=GetXZYZ(x,y);
-    handles=ddb_determineKCS(handles);
+    handles=ddb_determineKCS(handles,ad);
     if ~isempty(handles.Model(md).Input(ad).encFile)
         mn=ddb_enclosure('read',[handles.Model(md).Input(ad).encFile]);
         [handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY]=ddb_enclosure('apply',mn,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);

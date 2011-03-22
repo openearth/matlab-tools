@@ -34,10 +34,7 @@ handles.Model(md).Input(id2).grdFile=[runid '.grd'];
 handles.Model(md).Input(id2).encFile=[runid '.enc'];
 handles.Model(md).Input(id2).gridX=x2;
 handles.Model(md).Input(id2).gridY=y2;
-[handles.Model(md).Input(id2).GridXZ,handles.Model(md).Input(id2).gridYZ]=GetXZYZ(x2,y2);
+[handles.Model(md).Input(id2).gridXZ,handles.Model(md).Input(id2).gridYZ]=GetXZYZ(x2,y2);
 handles.Model(md).Input(id2).MMax=size(x2,1)+1;
 handles.Model(md).Input(id2).NMax=size(x2,2)+1;
-handles.activeDomain=id2;
-handles=ddb_determineKCS(handles);
-
-handles.activeDomain=id1;
+handles=ddb_determineKCS(handles,id2);

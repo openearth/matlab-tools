@@ -11,7 +11,7 @@ if handles.Model(ii).Input(id).vardx==1
     handles.Model(ii).Input(id).GridY=Y;
     nx = size(X,2)-1;
     ny = size(X,1)-1;
-    handles=ddb_determineKCS(handles);
+    handles=ddb_determineKCS(handles,id);
     nans=zeros(size(handles.Model(ii).Input(id).GridX));
     nans(nans==0)=NaN;
     handles.Model(ii).Input(id).Depth=nans;

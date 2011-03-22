@@ -8,7 +8,6 @@ if isempty(varargin)
     handles=getHandles;
     
     % Make 
-    handles.Toolbox(tb).Input.firstDomainNr=min(handles.Toolbox(tb).Input.firstDomainNr,length(handles.Model(md).Input));
     handles.Toolbox(tb).Input.domains=[];
     for i=1:length(handles.Model(md).Input)
         handles.Toolbox(tb).Input.domains{i}=handles.Model(md).Input(i).runid;
@@ -50,7 +49,9 @@ else
         case{'selectcornerpoints'}
             selectCornerPoints;
         case{'generatenewdomain'}
-            generateDomain;
+            makeNewDomain;
+        case{'makeddboundaries'}
+            generateDD;
     end    
 end
 
@@ -142,6 +143,7 @@ plotTemporaryDDGrid('plot');
 function selectCornerPoints
 ddb_zoomOff;
 ddb_setWindowButtonUpDownFcn;
+setInstructions({'','','Click grid point on active grid for first corner point'});
 handles=getHandles;
 xg=handles.Model(md).Input(handles.activeDomain).gridX;
 yg=handles.Model(md).Input(handles.activeDomain).gridY;
@@ -151,7 +153,7 @@ if ~isempty(xg)
 end
 
 %%
-function generateDomain
+function makeNewDomain
 
 handles=getHandles;
 
@@ -214,46 +216,7 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         
         % New Domain
         % Attributes
-        handles=ddb_makeDDModelNewAttributes(handles,ad,id2,runid1,runid2);
-        
-        ddbound=[];
-        for i=1:handles.Model(md).nrDomains-1
-            for j=i+1:handles.Model(md).nrDomains
-                xg1=handles.Model(md).Input(i).gridX;
-                yg1=handles.Model(md).Input(i).gridY;
-                xg2=handles.Model(md).Input(j).gridX;
-                yg2=handles.Model(md).Input(j).gridY;
-                rid1=handles.Model(md).Input(i).runid;
-                rid2=handles.Model(md).Input(j).runid;
-                ddbound=ddb_findDDBoundaries(ddbound,xg1,yg1,xg2,yg2,rid1,rid2);
-            end
-        end
-        
-        hh=findobj(gca,'Tag','ddboundaries');
-        if ~isempty(hh)
-            delete(hh);
-        end
-        
-        for i=1:length(ddbound)
-            z=zeros(size(ddbound(i).x))+1000;
-            plt=plot(ddbound(i).x,ddbound(i).y);
-            set(plt,'LineWidth',3,'Color',[1 0.5 0],'Tag','ddboundaries');
-        end
-        
-        ddb_saveDDBoundFile(ddbound,'test.ddb');
-        
-%        ddb_writeDDBacthfile;
-        
-        %         % Write run batch file
-        %         fid = fopen('rundd.bat','wt');
-        %         for i=1:handles.Model(md).nrDomains+1;
-        %             rid=handles.Model(md).Input(i).runid;
-        %             fprintf(fid,'%s\n',['echo ',rid,' > runid']);
-        %             fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\tdatom.exe');
-        %         end
-        %         fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\trisim.exe ddbound');
-        %         fclose(fid);
-        
+        handles=ddb_makeDDModelNewAttributes(handles,ad,id2,runid1,runid2);       
         
         % Delete corner points and temporary grid
         plotCornerPoints('delete');
@@ -277,10 +240,9 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         end
         
         ddb_refreshDomainMenu;
-                   
-        %     for i=1:handles.GUIData.nrFlowDomains
-        %         ddb_saveMDF(handles,i);
-        %     end
+        
+        % Generate dd boundaries
+        generateDD;
         
     else
         GiveWarning('Warning','First select corner points!');
@@ -292,44 +254,10 @@ end
 handles.Toolbox(tb).Input.originalDomain=[];
 
 %%
-function PushGenerateDDBoundaries_CallBack(hObject,eventdata)
-
-handles=getHandles;
-
-id1=get(handles.GUIHandles.SelectFirstDomain2,'Value');
-id2=get(handles.GUIHandles.SelectSecondDomain,'Value');
-runid1=handles.Model(md).Input(id1).runid;
-runid2=handles.Model(md).Input(id2).runid;
-
-[handles,ok]=ddb_getDDBoundaries(handles,id1,id2,runid1,runid2);
-
-if ok
-
-    % Adjusting bathymetry
-
-    depfil=handles.Model(md).Input(id2).depFile;
-    handles=ddb_makeDDModelNewAttributes(handles,id1,id2,runid1,runid2,depfil);
-
-    % Write run batch file
-    fid = fopen('rundd.bat','wt');
-    for i=1:handles.GUIData.nrFlowDomains
-        rid=handles.Model(md).Input(i).runid;
-        fprintf(fid,'%s\n',['echo ',rid,' > runid']);
-        fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\tdatom.exe');
-    end
-
-    fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\trisim.exe ddbound');
-    fclose(fid);
-
-    setHandles(handles);
-else
-    GiveWarning('text','No DD Boundaries Found!');
-end
-
-%%
 function clickFirstCornerPoint(m,n)
 
 % First corner point was clicked
+setInstructions({'','','Click grid point on active grid for second corner point'});
 
 % Set values of corner points
 handles=getHandles;
@@ -353,6 +281,8 @@ setUIElements(handles.Toolbox(tb).GUI.elements);
 
 %%
 function clickSecondCornerPoint(m,n)
+
+clearInstructions;
 
 handles=getHandles;
 if ~isnan(m)
@@ -450,3 +380,74 @@ switch lower(opt)
         end
 end
 
+%%
+function generateDD
+
+handles=getHandles;
+
+% Find DD boundaries
+ddbound=[];
+for i=1:handles.Model(md).nrDomains-1
+    for j=i+1:handles.Model(md).nrDomains
+        xg1=handles.Model(md).Input(i).gridX;
+        yg1=handles.Model(md).Input(i).gridY;
+        xg2=handles.Model(md).Input(j).gridX;
+        yg2=handles.Model(md).Input(j).gridY;
+        runid1=handles.Model(md).Input(i).runid;
+        runid2=handles.Model(md).Input(j).runid;
+        ddbound=ddb_findDDBoundaries(ddbound,xg1,yg1,xg2,yg2,runid1,runid2);
+    end
+end
+
+if handles.Toolbox(tb).Input.adjustBathymetry
+    % Adjust bathymetries in all domains
+    % This ensures that depths along boundaries in both domains are the same
+    for i=1:handles.Model(md).nrDomains-1
+        for j=i+1:handles.Model(md).nrDomains
+            z1=handles.Model(md).Input(i).depth;
+            z2=handles.Model(md).Input(j).depth;
+            runid1=handles.Model(md).Input(i).runid;
+            runid2=handles.Model(md).Input(j).runid;
+            [z1,z2]=ddb_matchDDDepths(ddbound,z1,z2,runid1,runid2,handles.Model(md).Input(i).dpsOpt);
+            handles.Model(md).Input(i).depth=z1;
+            handles.Model(md).Input(j).depth=z2;
+        end
+    end
+    % And save all dep files
+    for i=1:handles.Model(md).nrDomains
+        handles.Model(md).Input(i).depthZ=GetDepthZ(handles.Model(md).Input(i).depth,handles.Model(md).Input(i).dpsOpt);
+        ddb_wldep('write',handles.Model(md).Input(i).depFile,handles.Model(md).Input(i).depth);
+    end
+end
+
+setHandles(handles);
+
+
+% Delete boundaries
+hh=findobj(gca,'Tag','ddboundaries');
+if ~isempty(hh)
+    delete(hh);
+end
+
+% Plot new boundaries
+for i=1:length(ddbound)
+    z=zeros(size(ddbound(i).x))+1000;
+    plt=plot(ddbound(i).x,ddbound(i).y);
+    set(plt,'LineWidth',3,'Color',[1 0.5 0],'Tag','ddboundaries');
+end
+
+% Save ddbound file
+ddb_saveDDBoundFile(ddbound,handles.Model(md).ddFile);
+
+
+%        ddb_writeDDBacthfile;
+
+%         % Write run batch file
+%         fid = fopen('rundd.bat','wt');
+%         for i=1:handles.Model(md).nrDomains+1;
+%             rid=handles.Model(md).Input(i).runid;
+%             fprintf(fid,'%s\n',['echo ',rid,' > runid']);
+%             fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\tdatom.exe');
+%         end
+%         fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\trisim.exe ddbound');
+%         fclose(fid);

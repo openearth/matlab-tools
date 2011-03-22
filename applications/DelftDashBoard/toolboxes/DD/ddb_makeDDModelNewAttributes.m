@@ -2,16 +2,16 @@ function handles=ddb_makeDDModelNewAttributes(handles,id1,id2,runid1,runid2,vara
 
 if ~isempty(varargin)
 
-    % Only adjust bathymetry
-    fname=varargin{1};
-
-    % Make sure depths along boundaries in both domains are the same
-    z=handles.Model(md).Input(id2).depth;
-    z=ddb_matchDDDepths(handles,z,id1,runid1,runid2);
-    handles.Model(md).Input(id2).depth=z;
-    handles.Model(md).Input(id2).depthZ=GetDepthZ(z,handles.Model(md).Input(id2).dpsOpt);
-    ddb_wldep('write',fname,z);
-    handles.Model(md).Input(id2).depFile=fname;
+%     % Only adjust bathymetry
+%     fname=varargin{1};
+% 
+%     % Make sure depths along boundaries in both domains are the same
+%     z=handles.Model(md).Input(id2).depth;
+%     z=ddb_matchDDDepths(handles,z,id1,runid1,runid2);
+%     handles.Model(md).Input(id2).depth=z;
+%     handles.Model(md).Input(id2).depthZ=GetDepthZ(z,handles.Model(md).Input(id2).dpsOpt);
+%     ddb_wldep('write',fname,z);
+%     handles.Model(md).Input(id2).depFile=fname;
 
 else
 
@@ -41,7 +41,7 @@ else
         dpsopt=handles.Model(md).Input(id2).dpsOpt;
 
         switch lower(dpsopt)
-            case{'DP'}
+            case{'dp'}
                 x2=handles.Model(md).Input(id2).gridXZ;
                 y2=handles.Model(md).Input(id2).gridYZ;
             otherwise
@@ -55,15 +55,15 @@ else
         z=interp2(xx,yy,zz,x2,y2);
         handles.Model(md).Input(id2).depth=z;
 
-        % Make sure depths along boundaries in both domains are the same
-
-        z=ddb_matchDDDepths(handles,z,id1,runid1,runid2);
-
-        handles.Model(md).Input(id2).depth=z;
-        handles.Model(md).Input(id2).depthZ=GetDepthZ(z,handles.Model(md).Input(id2).dpsOpt);
-
-        ddb_wldep('write',[runid2 '.dep'],z);
-        handles.Model(md).Input(id2).depFile=[runid2 '.dep'];
+%         % Make sure depths along boundaries in both domains are the same
+% 
+%         z=ddb_matchDDDepths(handles,z,id1,runid1,runid2);
+% 
+%         handles.Model(md).Input(id2).depth=z;
+         handles.Model(md).Input(id2).depthZ=GetDepthZ(z,handles.Model(md).Input(id2).dpsOpt);
+% 
+%         ddb_wldep('write',[runid2 '.dep'],z);
+         handles.Model(md).Input(id2).depFile=[runid2 '.dep'];
 
     end
 
@@ -83,7 +83,7 @@ else
         % dd-model
         nobs=ddb_obs2obs(handles.Toolbox(tb).Input.originalDomain.grdFile,handles.Model(md).Input(id1).obsFile,handles.Model(md).Input(id2).grdFile,[runid2 '.obs']);
         if nobs>0
-            handles.Model(md).Input(id2).obsFile = [runid2 '.obs']
+            handles.Model(md).Input(id2).obsFile = [runid2 '.obs'];
             handles.activeDomain=id2;
             handles=ddb_readObsFile(handles);
             handles.activeDomain=id1;

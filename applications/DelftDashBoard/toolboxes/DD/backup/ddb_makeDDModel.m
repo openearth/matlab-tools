@@ -88,7 +88,7 @@ handles.Model(handles.ActiveModel.Nr).Input(id2).MMax=size(x2,1)+1;
 handles.Model(handles.ActiveModel.Nr).Input(id2).NMax=size(x2,2)+1;
 handles.Model(handles.ActiveModel.Nr).Input(id2).KMax=kmax1;
 handles.ActiveDomain=id2;
-handles=ddb_determineKCS(handles);
+handles=ddb_determineKCS(handles,id2);
 handles.ActiveDomain=id1;
 
 % Bathymetry

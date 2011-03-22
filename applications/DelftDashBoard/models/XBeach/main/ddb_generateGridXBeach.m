@@ -48,7 +48,7 @@ handles.GUIHandles.XBeachInput(id).MMax=size(x,1)+1;
 handles.GUIHandles.XBeachInput(id).NMax=size(x,2)+1;
 handles.GUIHandles.XBeachInput(id).KMax=1;
 
-% handles=ddb_determineKCS(handles);
+% handles=ddb_determineKCS(handles,id);
 
 ddb_plotGrid(x,y,id,'XBeachGrid','plot');
 

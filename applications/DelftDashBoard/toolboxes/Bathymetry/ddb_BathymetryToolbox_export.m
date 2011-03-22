@@ -90,7 +90,7 @@ if handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).isAvailab
     
     zoomlevel=handles.Toolbox(tb).Input.activeZoomLevel;
     
-    [x,y,z,ok]=ddb_getBathy(handles,xlim,ylim,zoomlevel);
+    [x,y,z,ok]=ddb_getBathy(handles,xlim,ylim,'zoomlevel',zoomlevel);
     
     [x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
     

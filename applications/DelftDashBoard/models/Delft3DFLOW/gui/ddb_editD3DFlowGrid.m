@@ -89,7 +89,7 @@ handles.Model(md).Input(ad).GrdFile=filename;
 handles.Model(md).Input(ad).MMax=size(x,1)+1;
 handles.Model(md).Input(ad).NMax=size(x,2)+1;
 [handles.Model(md).Input(ad).GridXZ,handles.Model(md).Input(ad).GridYZ]=GetXZYZ(x,y);
-handles=ddb_determineKCS(handles);
+handles=ddb_determineKCS(handles,ad);
 nans=zeros(size(handles.Model(md).Input(ad).GridX));
 nans(nans==0)=NaN;
 handles.Model(md).Input(ad).Depth=nans;
