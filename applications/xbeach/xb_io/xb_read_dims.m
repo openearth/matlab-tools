@@ -111,10 +111,9 @@ if strcmpi(extension, '.nc')
     end
     
     % read dimension data from structure
-    for i = 1:length(info.Dataset)
-        if length(info.Dataset(i).Dimension) < 3
-            XBdims.([info.Dataset(i).Name '_DATA']) = nc_varget(filename, info.Dataset(i).Name);
-        end
+    datadimensionids = cellfun(@length, {info.Dataset.Dimension}) < 3;
+    for i = find(datadimensionids)
+        XBdims.([info.Dataset(i).Name '_DATA']) = nc_varget(filename, info.Dataset(i).Name);
     end
     
 elseif strcmpi(extension, '.dat')

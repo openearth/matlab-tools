@@ -468,24 +468,13 @@ function plot_1d(obj, info, data, vars)
         for i = 1:length(vars)
             ii = i+j*length(vars);
             
-            % figure out the right dimensions (differs between .dat and .nc
-            % output
-            y = squeeze(data{ii}(:,1,:));
-            dimx = find(size(info.x) == length(y));
-            if dimx == 1
-                x = info.x(:,1);
-            elseif dimx == 2
-                x = info.x(1,:);
-            else
-                error('dimensions do not correspond')
-            end
-            
             if update
                 set(lines(ii),...
-                    'XData', x,...
-                    'YData', y);
+                    'XData', info.x(:,1),...
+                    'YData', squeeze(data{ii}(:,1,:)));
             else
-                plot(ax, x, y, ...
+                plot(ax,...
+                    info.x(:,1), squeeze(data{ii}(:,1,:)), ...
                     [type(1+j) color(mod(i-1,length(color))+1)], ...
                     'DisplayName', vars{i});
             end
