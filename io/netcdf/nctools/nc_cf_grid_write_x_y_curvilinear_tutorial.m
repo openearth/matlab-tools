@@ -119,7 +119,7 @@
    nc_attput(ncfile, nc_global, 'comment'       , OPT.comment);
    nc_attput(ncfile, nc_global, 'version'       , OPT.version);
 
-   nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.4');
+   nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.5');
    nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
 
    nc_attput(ncfile, nc_global, 'terms_for_use' , OPT.acknowledge);
@@ -149,7 +149,7 @@
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'x Rijksdriehoek');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.x(:)) max(OPT.x(:))]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.x(:)) max(OPT.x(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
 
@@ -160,7 +160,7 @@
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'y Rijksdriehoek');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.y(:)) max(OPT.y(:))]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.y(:)) max(OPT.y(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
 
@@ -184,7 +184,7 @@
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'x y'); % 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
@@ -198,7 +198,7 @@
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'x y'); % 'lat lon');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
@@ -211,7 +211,8 @@
    nc(ifld).Name         = 'wgs84'; % preferred
    nc(ifld).Nctype       = nc_int;
    nc(ifld).Dimension    = {};
-   nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code); % includes ADAGUC attributes
+   nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code); % contains ADAGUC attributes, although ADAGUC cannot handle the curvilinear file generated here
+   
    var2evalstr(nc(ifld).Attribute)
 
 %% 4   Create dependent variable

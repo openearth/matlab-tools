@@ -115,7 +115,7 @@
    nc_attput(ncfile, nc_global, 'comment'       , OPT.comment);
    nc_attput(ncfile, nc_global, 'version'       , OPT.version);
    					   
-   nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.4');
+   nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.5');
    nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    
    nc_attput(ncfile, nc_global, 'terms_for_use' , OPT.acknowledge);
@@ -146,7 +146,7 @@
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon'); % !!! lon matrix can be plotted as a function of lat and itself
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
@@ -160,7 +160,7 @@
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon'); % !!! lat matrix can be plotted as a function of lon and itself
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
@@ -192,10 +192,11 @@
      'value is equal to EPSG code'});
 
    % add ADAGUC projection parameters optionally
+   % although ADAGUC cannot handle the curvilinear file generated here
    
       nc(ifld).Attribute(end+1) = struct('Name', 'proj4_params'   ,'Value', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs');
-      nc(ifld).Attribute(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude';
-      nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(OPT.wgs84.code)];
+      nc(ifld).Attribute(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude');
+      nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(OPT.wgs84.code)]);
 
 %% 4   Create dependent variable
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables

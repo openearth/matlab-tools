@@ -1,9 +1,13 @@
-netCDF F:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\nc_cf_grid_write_x_y_orthogonal_tutorial.nc { 
+NetCDF F:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\nc_cf_grid_write_x_y_orthogonal_tutorial.nc {
+
+// The netCDF CF conventions for grids are defined here:
+// http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/ch05s06.html
+// This grid file can be loaded into matlab with nc_cf_grid.m
+// To create this netCDF file with Matlab please see nc_cf_grid_write_x_y_orthogonal_tutorial.m
 
 dimensions:
 	x = 3 ;
 	y = 5 ;
-
 
 variables:
 	// Preference 'PRESERVE_FVD':  false,
@@ -33,6 +37,31 @@ variables:
 		epsg:false_easting = 500000 
 		epsg:false_northing = 0 
 		epsg:scale_factor_at_projection_origin = 0.9996 
+		epsg:proj4_params = "+proj=utm +zone=31 +ellps=WGS84 +datum=WGS84 +units=m +no_defs " 
+		epsg:EPSG_code = "EPSG:32631" 
+		epsg:projection_name = "WGS 84 / UTM zone 31N" 
+		epsg:wkt = "PROJCS["WGS 84 / UTM zone 31N",
+    GEOGCS["WGS 84",
+        DATUM["WGS_1984",
+            SPHEROID["WGS 84",6378137,298.257223563,
+                AUTHORITY["EPSG","7030"]],
+            AUTHORITY["EPSG","6326"]],
+        PRIMEM["Greenwich",0,
+            AUTHORITY["EPSG","8901"]],
+        UNIT["degree",0.01745329251994328,
+            AUTHORITY["EPSG","9122"]],
+        AUTHORITY["EPSG","4326"]],
+    UNIT["metre",1,
+        AUTHORITY["EPSG","9001"]],
+    PROJECTION["Transverse_Mercator"],
+    PARAMETER["latitude_of_origin",0],
+    PARAMETER["central_meridian",3],
+    PARAMETER["scale_factor",0.9996],
+    PARAMETER["false_easting",500000],
+    PARAMETER["false_northing",0],
+    AUTHORITY["EPSG","32631"],
+    AXIS["Easting",EAST],
+    AXIS["Northing",NORTH]]" 
 		epsg:comment = "value is equal to EPSG code" 
 	single lon(x,y), shape = [3 5]
 		lon:long_name = "longitude" 
@@ -55,28 +84,41 @@ variables:
 		wgs84:semi_major_axis = 6.37814e+006 
 		wgs84:semi_minor_axis = 6.35675e+006 
 		wgs84:inverse_flattening = 298.257 
+		wgs84:proj4_params = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs " 
+		wgs84:EPSG_code = "EPSG:4326" 
+		wgs84:projection_name = "Latitude Longitude" 
+		wgs84:wkt = "GEOGCS["WGS 84",
+    DATUM["WGS_1984",
+        SPHEROID["WGS 84",6378137,298.257223563,
+            AUTHORITY["EPSG","7030"]],
+        AUTHORITY["EPSG","6326"]],
+    PRIMEM["Greenwich",0,
+        AUTHORITY["EPSG","8901"]],
+    UNIT["degree",0.01745329251994328,
+        AUTHORITY["EPSG","9122"]],
+    AUTHORITY["EPSG","4326"]]" 
 		wgs84:comment = "value is equal to EPSG code" 
 	single depth(x,y), shape = [3 5]
 		depth:long_name = "bottom depth" 
 		depth:units = "m" 
-		depth:_FillValue = NaN 
+		depth:_FillValue = NaN f
 		depth:actual_range = 1 15 
 		depth:coordinates = "lat lon" 
 		depth:grid_mapping = "epsg" 
 		depth:standard_name = "sea_floor_depth_below_geoid" 
 
-
-//global attributes:
-		:title = "" 
-		:institution = "" 
-		:source = "" 
+//global Attributes:
+		:title = " " 
+		:institution = " " 
+		:source = " " 
 		:history = "tranformation to netCDF: $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_x_y_orthogonal_tutorial.m $" 
-		:references = "" 
-		:email = "" 
-		:comment = "" 
-		:version = "" 
-		:Conventions = "CF-1.4" 
+		:references = " " 
+		:email = " " 
+		:comment = " " 
+		:version = " " 
+		:Conventions = "CF-1.5" 
 		:CF:featureType = "Grid" 
 		:terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: " 
 		:disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
+
 }

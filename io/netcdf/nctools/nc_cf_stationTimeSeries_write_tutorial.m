@@ -200,18 +200,18 @@
    nc_dump(ncfile);
    fid = fopen(fullfile(fileparts(mfilename('fullpath')),[mfilename,'.cdl']),'w');
    nc_dump(ncfile,fid);
-   fclose(fid)
+   fclose(fid);
 
 %% 7.a Load the data: using the variable names from nc_dump
 
    Da.datenum = nc_varget(ncfile,'time') + datenum(1970,1,1);
-   Da.var     = nc_varget(ncfile,'windspeed')
+   Da.var     = nc_varget(ncfile,'windspeed');
 
 %% 7.b Load the data: using standard_names and coordinate attribute
 
    Db.datenum = nc_cf_time(ncfile);
 
-   varname    = nc_varfind(ncfile,'attributename', 'standard_name', 'attributevalue', 'wind_speed')
+   varname    = nc_varfind(ncfile,'attributename', 'standard_name', 'attributevalue', 'wind_speed');
    Db.var     = nc_varget(ncfile,OPT.varname);
 
 %% 7.c Load the data: using a dedicated function developed for time series
