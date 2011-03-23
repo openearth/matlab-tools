@@ -6,7 +6,7 @@ function savestr(fname,str)
 % saves 2D char or cellstr string to file filename.
 % Note: does not prompt if filename already exists.
 %
-%See also: FOPEN, FPRINTF, FCLOSE, SAVE (*,'-ASCII')
+%See also: LOADSTR, FOPEN, FPRINTF, FCLOSE, SAVE (*,'-ASCII')
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
