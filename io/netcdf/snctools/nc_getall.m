@@ -29,7 +29,7 @@ function data = nc_getall ( ncfile ,varargin)
              'NC_GETALL discards information on dimensions and hence poses a risk when interpreting data, use only for testing.');
 
    % Show usage if too few arguments.
-   maxSize = Inf % 2e6; % not too big a default, 
+   maxSize = Inf; % 2e6; % not too big a default, 
    % but big enough to load looong timeseries such as 
    % http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-DELFZL.nc.html (mar 2010)
    if nargin < 1

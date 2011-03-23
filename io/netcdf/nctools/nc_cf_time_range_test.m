@@ -30,7 +30,7 @@ OPT.plot      = 0;
    toc
 
 %% subset time series: order 0.5 seconds.
-
+   clear S
    tic
    [S.datenum,start,count] = nc_cf_time_range(ncfile,'time',OPT.datenum);
    if ~isempty(start)

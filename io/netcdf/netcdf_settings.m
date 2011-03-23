@@ -71,10 +71,10 @@ function netcdf_settings(varargin)
 %  Note that OET may contain some (temporary) modifications with respect to 
 %  the official mexcdf (email changes to the mexcdf moderator John Evans.)
 
-      addpath    ( ncroot                        ); % do not add 'switch' dirs
-      addpathfast([ncroot,filesep,'snctools'    ]);
-      addpathfast([ncroot,filesep,'nctools'     ]);
-      addpathfast([ncroot,filesep,'mexnc'       ]); % snctools needs some mexnc stuff
+      addpath( ncroot                        ); % do not add 'switch' dirs
+      addpath([ncroot,filesep,'snctools'    ]);
+      addpath([ncroot,filesep,'nctools'     ]);
+      addpath([ncroot,filesep,'mexnc'       ]); % snctools needs some mexnc stuff
       
 %% Use recent java API for OPeNDAP functionality
 %  (NB RESTOREDEFAULTPATH does not restore such a java path)
@@ -103,7 +103,7 @@ function netcdf_settings(varargin)
          if ~(OPT.quiet)
            disp(' Adding <a href="http://www.unidata.ucar.edu/software/netcdf-java/">netCDF-JAVA</a>, please wait ...')
            disp(['  netCDF-JAVA library for OPeNDAP support added: ',filename(java2add)]);
-           disp(['  Note: maximal size of java memory is = ',num2str(java.lang.Runtime.getRuntime.maxMemory/2^20),' Mb']); % 2^20 = 1 Mbyte
+           disp(['  Note: maximal size of java memory is = ',num2str(java.lang.Runtime.getRuntime.maxMemory/2^20),' Mb']); % 2^20 = 1 Mbyte, default 130875392=124Mb
            disp( '  Loading large matrices gives java heap errors, for expansion see:')
            disp( '  http://www.mathworks.com/support/solutions/en/data/1-18I2C/')
          end

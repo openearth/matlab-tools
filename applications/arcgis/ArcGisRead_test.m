@@ -1,11 +1,9 @@
 function ok = ArcGisRead_test
 %ARCGISREAD_TEST   unit test for ArcGisRead
 %
-%see also: ARCGIS2NC, ARCGISREAD
+%see also: ARCGIS2NC, ARCGISREAD, nc_multibeam_from_asc_test
 
    OPT.nc = 0;
-
-   ok = 1;
 
    OPT.basename = fullfile(fileparts(mfilename('fullpath')),'test');
 
@@ -31,6 +29,8 @@ function ok = ArcGisRead_test
    D2  = arcGisRead('test.asc','plot',0,'nc',OPT.nc,'units','m','long_name','depth');
 
 %% check upwardy
+
+   ok = 1;
 
   [D3.x D3.y D3.val] = arcGisRead('test.asc','upwardy',1); %arc_asc_read('test.asc');
   

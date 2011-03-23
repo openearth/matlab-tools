@@ -1,9 +1,28 @@
 function varargout = nc_multibeam_from_asc(varargin)
 %NC_MULTIBEAM_FROM_ASC  One line description goes here.
 %
-%   <OPT> = nc_multibeam_from_asc(<keyword,value>)
+%   nc_multibeam_from_asc(<keyword,value>)
 %
-%See also: nc_multibeam, arcgis
+% Creates a set of time-dependent netCDF grid tiles (z = f(x,y,t))
+% from a set of ESRI ASCII files. The netCDF files and the ESRI 
+% grids should have the same cellsize (=dx=dy) and offset modulo from 
+% (0,0) (=dx/2=dy.2), so no interpolation of ANY kind is performed 
+% (not even nearest neightbour): the data points from the ESRI data grids 
+% are simply redistributed (inserted) into the grids tiles defined 
+% in nc_multibeam_from_asc. 
+% However, the extent of the grids can be totally different though.
+% The bounding boxes of the ESRI grids can either be finer or
+% coarser then the nc_multibeam_from_asc tiles, and can also overlap.
+% 
+%   <ncfiles> = nc_multibeam_from_asc(<keyword,value>)
+%
+% returns the names of the ncfiles that have been created, or 
+% to which data have been added. To obtain a list of the 
+% availabel proerties call:
+%
+%   OPT = nc_multibeam_from_asc()
+%
+%See also: nc_multibeam, arcgis, nc_cf_gridset
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -46,6 +65,7 @@ function varargout = nc_multibeam_from_asc(varargin)
 % $Keywords: $
 
 %% options
+
    OPT.netcdfversion       = 3;
    OPT.block_size          = 1e7;
    OPT.make                = true;
@@ -69,12 +89,12 @@ function varargout = nc_multibeam_from_asc(varargin)
    OPT.mapsizey            = 5000;            % size of fixed map in y-direction in m (between outer corners!))
    OPT.gridsizex           = 5;               % x grid resolution
    OPT.gridsizey           = 5;               % y grid resolution
-%  OPT.celsize % we can't have unequal dx and dy because the asc source doesn't allow it
+%  OPT.cellsize % we can't have unequal dx and dy because the asc source doesn't allow it
    OPT.xoffset             = OPT.gridsizex/2; % zero point of x centres grid (i.e. x of data points, not x of pixels corners)
    OPT.yoffset             = OPT.gridsizey/2; % zero point of y centres grid (i.e. y of data points, not y of pixels corners)
    OPT.zfactor             = 1;               % scale z by this factor
    
-   OPT.Conventions         = 'CF-1.4';
+   OPT.Conventions         = 'CF-1.5';
    OPT.CF_featureType      = 'grid';
    OPT.title               = 'Multibeam';
    OPT.institution         = ' ';
@@ -97,7 +117,10 @@ function varargout = nc_multibeam_from_asc(varargin)
    if ~(OPT.gridsizex==OPT.gridsizey)
       error('gridsizex should match gridsizey: requested grid should align with grid in asc file that has same cellsize in x and y.')
    end
-
+   
+   if isempty(OPT.EPSGcode)
+       error('DATA WITHOUT COORDINATE INFO IS USELESS, PLEASE PROVIDE the EPSGcode, see epsg-registry.org')
+   end
 
 if OPT.make
 
@@ -108,11 +131,12 @@ if OPT.make
        error %#ok<LTARG>
    end
    if isempty(OPT.netcdf_path)
-       error  %#ok<LTARG>
+       warning(['OPT.netcdf_path isempty',])%#ok<LTARG>
    end
 
    %%
    EPSG             = load('EPSG');
+
    mkpath(fullfile(OPT.basepath_local,OPT.netcdf_path));
    delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'*.nc'));
    
@@ -122,6 +146,8 @@ if OPT.make
    else
        fns = dir(fullfile(OPT.raw_path,OPT.raw_extension));
    end
+   
+   ncfiles = {};
     
 %% check if files are found
 
@@ -178,6 +204,8 @@ if OPT.make
         end
         
    %% read asc
+   %  TO DO: merge this codecell that read asc file with arcgisread, arc_asc_read
+
 
         for ii = 1:length(fns_unzipped)
             disp(fns_unzipped(ii).name);
@@ -230,32 +258,32 @@ if OPT.make
                 'label',sprintf('Reading: %s', (fns_unzipped(ii).name))) ;
             fclose(fid);
 
-% TO DO: merge this codecell that read asc file with arcgisread, arc_asc_read
-
          if ~(cellsize == OPT.gridsizex & ...
               cellsize == OPT.gridsizey ) % gridsizey==gridsizey already checked above
+              error('cellsizex~=cellsizey')
+         end
 
          %% calculate x,y of cell CENTRES, by adding half a grid cell 
          %  to the cell CORNERS. From now on we only use x and y where data reside
-         %  i.e. the centers [x0_cen +/- cellsize,y0_cen +/- cellsize]
+         %  i.e. the centers [xllcenter +/- cellsize,yllcorner +/- cellsize]
             
-            x0_cen = xllcorner+cellsize/2;
-            y0_cen = yllcorner+cellsize/2;
+            xllcenter = xllcorner+cellsize/2;
+            yllcorner = yllcorner+cellsize/2;
 
          %% write data to nc files
             
             multiWaitbar('nc_writing',0,'label',sprintf('Writing: %s...', (fns_unzipped(ii).name)))
             % set the extent of the fixed maps (decide according to desired nc filesize)
             
-            minx    = x0_cen;
-            miny    = y0_cen;
-            maxx    = x0_cen + cellsize.*(ncols-1);
-            maxy    = y0_cen + cellsize.*(nrows-1);
+            minx    = xllcenter;
+            miny    = yllcorner;
+            maxx    = xllcenter + cellsize.*(ncols-1);
+            maxy    = yllcorner + cellsize.*(nrows-1);
             minx    = floor(minx/OPT.mapsizex)*OPT.mapsizex + OPT.xoffset;
             miny    = floor(miny/OPT.mapsizey)*OPT.mapsizey + OPT.yoffset;
 
-            x      =         x0_cen:cellsize:x0_cen + cellsize*(ncols-1);
-            y      = flipud((y0_cen:cellsize:y0_cen + cellsize*(nrows-1))');
+            x      =         xllcenter:cellsize:xllcenter + cellsize*(ncols-1);
+            y      = flipud((yllcorner:cellsize:yllcorner + cellsize*(nrows-1))');
             y(:,2) = ceil((1:size(y,1))'./ floor(OPT.block_size/ncols));
             y(:,3) = mod ((0:size(y,1)-1)',floor(OPT.block_size/ncols))+1;
             
@@ -297,6 +325,8 @@ if OPT.make
                         ncfile = fullfile(OPT.basepath_local,OPT.netcdf_path,...
                             sprintf('%.2f_%.2f_%s_data.nc',x0-.5*OPT.gridsizex,y0-.5*OPT.gridsizey,OPT.datatype));
                         
+                        ncfiles{end+1} = ncfile;
+                        
                         if ~exist(ncfile, 'file')
                             nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
                         end
@@ -305,16 +335,17 @@ if OPT.make
                     
                     % crop ncfile name for waitbars
                     if length(ncfile)>70
-                        ncfile = ['...' ncfile(end-68:end)];
+                        ncfiletxt = ['...' ncfile(end-68:end)];
                     end
                     
                     WB.writtenDone =  (find(x0==minx : OPT.mapsizex : maxx,1,'first')-1)/...
                         length(minx : OPT.mapsizex : maxx)+ find(y0==miny : OPT.mapsizey : maxy,1,'first')/...
                         length(miny : OPT.mapsizey : maxy)/...
                         length(minx : OPT.mapsizex : maxx);
-                    multiWaitbar('nc_writing',WB.writtenDone,'label',ncfile)
+                    multiWaitbar('nc_writing',WB.writtenDone,'label',ncfiletxt)
                     multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+(1+WB.writtenDone)*fns_unzipped(ii).bytes)/WB.bytesToDo)
                 end
+                
             end
             WB.writtenDone = 1;
             multiWaitbar('nc_writing',WB.writtenDone,'label',ncfile)
@@ -338,4 +369,4 @@ end
 
 OPT = nc_multibeam_copync2server(OPT);
 
-varargout = {OPT};
+varargout = {unique(ncfiles)};
