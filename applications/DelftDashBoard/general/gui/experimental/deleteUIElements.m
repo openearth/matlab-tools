@@ -1,0 +1,1 @@
+function deleteUIElements(figh,elements)

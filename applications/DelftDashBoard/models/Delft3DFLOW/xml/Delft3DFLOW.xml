@@ -90,41 +90,53 @@
     </element>
   </elements>
   <menu>
-      <menuopenfile>
-        <menuitem>
-          <string>Open MDF File</string>
-          <callback>ddb_openDelft3DFLOW</callback>
-          <option>open</option>
-        </menuitem>
-        <menuitem>
-          <string>Open DD File</string>
-          <callback>ddb_openDelft3DFLOW</callback>
-          <option>opendomains</option>
-        </menuitem>
-      </menuopenfile>
-      <menusavefile>
-        <menuitem>
-          <string>Save MDF File</string>
-          <callback>ddb_saveDelft3DFLOW</callback>
-          <option>save</option>
-        </menuitem>
-        <menuitem>
-          <string>Save MDF File As ...</string>
-          <callback>ddb_saveDelft3DFLOW</callback>
-          <option>saveas</option>
-        </menuitem>
-        <menuitem>
-          <string>Save All</string>
-          <callback>ddb_saveDelft3DFLOW</callback>
-          <option>saveall</option>
-        </menuitem>
-        <menuitem>
-          <string>Save All As ...</string>
-          <callback>ddb_saveDelft3DFLOW</callback>
-          <option>saveallas</option>
-        </menuitem>
-      </menusavefile>
-      <menuview>
-      </menuview>
+    <menuopenfile>
+      <menuitem>
+        <string>Open MDF File (present domain)</string>
+        <tag>openmdffilepresentdomain</tag>
+        <callback>ddb_openDelft3DFLOW</callback>
+        <option>openpresent</option>
+      </menuitem>
+      <menuitem>
+        <string>Open MDF File (new domain)</string>
+        <tag>openmdffilenewdomain</tag>
+        <callback>ddb_openDelft3DFLOW</callback>
+        <option>opennew</option>
+      </menuitem>
+      <menuitem>
+        <string>Open DD File</string>
+        <tag>openddfile</tag>
+        <callback>ddb_openDelft3DFLOW</callback>
+        <option>opendomains</option>
+      </menuitem>
+    </menuopenfile>
+    <menusavefile>
+      <menuitem>
+        <string>Save MDF File</string>
+        <tag>savemdf</tag>
+        <callback>ddb_saveDelft3DFLOW</callback>
+        <option>save</option>
+      </menuitem>
+      <menuitem>
+        <string>Save MDF File As ...</string>
+        <tag>savemdfas</tag>
+        <callback>ddb_saveDelft3DFLOW</callback>
+        <option>saveas</option>
+      </menuitem>
+      <menuitem>
+        <string>Save All</string>
+        <tag>saveall</tag>
+        <callback>ddb_saveDelft3DFLOW</callback>
+        <option>saveall</option>
+      </menuitem>
+      <menuitem>
+        <string>Save All As ...</string>
+        <tag>saveallas</tag>
+        <callback>ddb_saveDelft3DFLOW</callback>
+        <option>saveallas</option>
+      </menuitem>
+    </menusavefile>
+    <menuview>
+    </menuview>
   </menu>
 </root>

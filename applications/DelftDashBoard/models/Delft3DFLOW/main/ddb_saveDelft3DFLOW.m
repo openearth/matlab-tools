@@ -18,8 +18,10 @@ switch lower(opt)
             handles=ddb_saveMDF(handles,ad);
         end
     case{'saveall'}
-        handles=ddb_saveAttributeFiles(handles,ad,'saveall');
-        handles=ddb_saveMDF(handles,ad);
+        for i=1:handles.Model(md).nrDomains
+            handles=ddb_saveAttributeFiles(handles,i,'saveall');
+            handles=ddb_saveMDF(handles,i);
+        end
     case{'saveallas'}
         [filename, pathname, filterindex] = uiputfile('*.mdf', 'Select MDF File','');
         if pathname~=0

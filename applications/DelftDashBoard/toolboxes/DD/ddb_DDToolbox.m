@@ -399,42 +399,34 @@ for i=1:handles.Model(md).nrDomains-1
     end
 end
 
-if handles.Toolbox(tb).Input.adjustBathymetry
-    % Adjust bathymetries in all domains
-    % This ensures that depths along boundaries in both domains are the same
-    for i=1:handles.Model(md).nrDomains-1
-        for j=i+1:handles.Model(md).nrDomains
-            z1=handles.Model(md).Input(i).depth;
-            z2=handles.Model(md).Input(j).depth;
-            runid1=handles.Model(md).Input(i).runid;
-            runid2=handles.Model(md).Input(j).runid;
-            [z1,z2]=ddb_matchDDDepths(ddbound,z1,z2,runid1,runid2,handles.Model(md).Input(i).dpsOpt);
-            handles.Model(md).Input(i).depth=z1;
-            handles.Model(md).Input(j).depth=z2;
+if ~isempty(ddbound)
+    if handles.Toolbox(tb).Input.adjustBathymetry
+        % Adjust bathymetries in all domains
+        % This ensures that depths along boundaries in both domains are the same
+        for i=1:handles.Model(md).nrDomains-1
+            for j=i+1:handles.Model(md).nrDomains
+                z1=handles.Model(md).Input(i).depth;
+                z2=handles.Model(md).Input(j).depth;
+                runid1=handles.Model(md).Input(i).runid;
+                runid2=handles.Model(md).Input(j).runid;
+                [z1,z2]=ddb_matchDDDepths(ddbound,z1,z2,runid1,runid2,handles.Model(md).Input(i).dpsOpt);
+                handles.Model(md).Input(i).depth=z1;
+                handles.Model(md).Input(j).depth=z2;
+            end
+        end
+        % And save all dep files
+        for i=1:handles.Model(md).nrDomains
+            handles.Model(md).Input(i).depthZ=GetDepthZ(handles.Model(md).Input(i).depth,handles.Model(md).Input(i).dpsOpt);
+            ddb_wldep('write',handles.Model(md).Input(i).depFile,handles.Model(md).Input(i).depth);
         end
     end
-    % And save all dep files
-    for i=1:handles.Model(md).nrDomains
-        handles.Model(md).Input(i).depthZ=GetDepthZ(handles.Model(md).Input(i).depth,handles.Model(md).Input(i).dpsOpt);
-        ddb_wldep('write',handles.Model(md).Input(i).depFile,handles.Model(md).Input(i).depth);
-    end
 end
+
+handles.Model(md).DDBoundaries=ddbound;
+
+handles=ddb_Delft3DFLOW_plotDD(handles,'plot');
 
 setHandles(handles);
-
-
-% Delete boundaries
-hh=findobj(gca,'Tag','ddboundaries');
-if ~isempty(hh)
-    delete(hh);
-end
-
-% Plot new boundaries
-for i=1:length(ddbound)
-    z=zeros(size(ddbound(i).x))+1000;
-    plt=plot(ddbound(i).x,ddbound(i).y);
-    set(plt,'LineWidth',3,'Color',[1 0.5 0],'Tag','ddboundaries');
-end
 
 % Save ddbound file
 ddb_saveDDBoundFile(ddbound,handles.Model(md).ddFile);

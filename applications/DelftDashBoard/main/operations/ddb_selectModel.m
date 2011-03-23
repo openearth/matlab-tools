@@ -36,6 +36,8 @@ else
 end
 
 % Select toolbox
-tabpanel('select','tag',lower(handles.Model(md).name),'tabname',tabname,'runcallback',1);
+ddb_selectToolbox;
+
+%tabpanel('select','tag',lower(handles.Model(md).name),'tabname',tabname,'runcallback',1);
 
 set(handles.GUIHandles.mapPanel,'Parent',handles.Model(md).GUI.elements(1).handle);

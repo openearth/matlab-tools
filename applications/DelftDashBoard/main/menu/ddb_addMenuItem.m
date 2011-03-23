@@ -6,6 +6,8 @@ enab='on';
 longname=[];
 callback=[];
 argin=[];
+tag=[];
+
 
 HandleName=menu2;
 
@@ -27,6 +29,8 @@ for i=1:n
                 longname=varargin{i+1};
             case{'argin'}
                 argin=varargin{i+1};
+            case{'tag'}
+                tag=varargin{i+1};
         end
     end
 end
@@ -54,9 +58,12 @@ HandleName=strrep(HandleName,' ','');
 HandleName=strrep(HandleName,'.','');
 HandleName=strrep(HandleName,'-','');
 HandleName=strrep(HandleName,'/','');
+HandleName=strrep(HandleName,'(','');
+HandleName=strrep(HandleName,')','');
 
 handles.GUIHandles.Menu.(menu1).Main=h;
 handles.GUIHandles.Menu.(menu1).(HandleName)=g;
 
 tg=['menu' menu1 HandleName];
 set(g,'Tag',tg);
+

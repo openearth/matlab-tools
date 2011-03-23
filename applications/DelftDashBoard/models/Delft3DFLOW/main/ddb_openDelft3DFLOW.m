@@ -2,20 +2,10 @@ function ddb_openDelft3DFLOW(opt)
 
 handles=getHandles;
 
-tbnr=strmatch('DD',{handles.Toolbox(:).name},'exact');
-
-% opt='newdomain';
-% if id==0
-%     opt='ddbound';
-% end
-% if id>handles.GUIData.NrFlowDomains
-%     opt='adddomain';
-% end
-
 switch opt
     case {'opendomains'}
         % DD
-        [filename, pathname, filterindex] = uigetfile('ddbound', 'Select ddbound file');
+        [filename, pathname, filterindex] = uigetfile('*.ddb', 'Select ddbound file');
         if pathname~=0
 %            handles.WorkingDirectory=pathname;
             ddb_plotDelft3DFLOW('delete');
@@ -27,61 +17,50 @@ switch opt
                 handles=ddb_initializeFlowDomain(handles,'all',i,runid);
                 filename=[runid '.mdf'];
                 handles=ddb_readMDF(handles,filename,i);
-                handles=ddb_readAttributeFiles(handles);
+                handles=ddb_readAttributeFiles(handles,i);
             end
             handles.activeDomain=1;
-            for i=1:handles.Model(md).nrDomains
-                ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',i);
-            end
-%             for i=1:handles.GUIData.nrFlowDomains
-%                 if i~=handles.activeDomain
-%                     ddb_plotDelft3DFLOW(handles,'deactivate',i);
-%                 end
-%             end
-            ddb_refreshDomainMenu;
-%            ddb_refreshFlowDomains;
+            setHandles(handles);
+            ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',0);
         end
-    case {'open'}
+    case {'openpresent'}
         % One Domain
         [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF file');
         if pathname~=0
 %            handles.WorkingDirectory=pathname;
             ddb_plotDelft3DFLOW('delete');
-            handles.Model(md).Input=[];
-            handles.Model(md).nrDomains=1;
-            handles.activeDomain=1;
+            id=handles.activeDomain;
+            handles.Model(md).Input=clearStructure(handles.Model(md).Input,id);
             runid=filename(1:end-4);
-            handles.Toolbox(tbnr).Input.domains=[];
-            handles.Toolbox(tbnr).Input.DDBoundaries=[];
-            handles=ddb_initializeFlowDomain(handles,'all',1,runid);
+            handles.Model(md).domains{id}=runid;
+            handles.Model(md).DDBoundaries=[];
+            handles=ddb_initializeFlowDomain(handles,'all',id,runid);
             filename=[runid '.mdf'];
-            handles=ddb_readMDF(handles,filename,1);
-            handles=ddb_readAttributeFiles(handles);
+            handles=ddb_readMDF(handles,filename,id);
+            handles=ddb_readAttributeFiles(handles,id);
             setHandles(handles);
-            ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',1);
-%             ddb_refreshFlowDomains;
+            ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',0);
         end        
-    case {'adddomain'}
+    case {'opennew'}
         % One Domain
         [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF file');
         if pathname~=0
 %            handles.WorkingDirectory=pathname;
-            PlotAllFlowAttributes(handles,'deactivate');
-            handles.Model(md).nrFlowDomains=id;
-            handles.activeDomain=id;
+            ddb_plotDelft3DFLOW('delete');
+            handles.Model(md).nrDomains=handles.Model(md).nrDomains+1;
+            handles.activeDomain=handles.Model(md).nrDomains;
+            id=handles.activeDomain;
+            handles.Model(md).Input=appendStructure(handles.Model(md).Input);
             runid=filename(1:end-4);
+            handles.Model(md).domains{id}=runid;
+            handles.Model(md).DDBoundaries=[];
             handles=ddb_initializeFlowDomain(handles,'all',id,runid);
-            filename=[pathname filesep runid '.mdf'];
-            handles=ddb_readMDF(handles,[filename],id);
-            handles=ddb_readAttributeFiles(handles);
+            filename=[runid '.mdf'];
+            handles=ddb_readMDF(handles,filename,id);
+            handles=ddb_readAttributeFiles(handles,id);
             setHandles(handles);
-            for i=1:handles.Model(md).nrDomains-1
-                ddb_plotDelft3DFLOW(handles,'deactivate',i);
-            end
-            ddb_plotDelft3DFLOW(handles,'plot',id);
-%             ddb_refreshFlowDomains;
+            ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',0);
         end        
 end
 
 ddb_refreshDomainMenu;
-

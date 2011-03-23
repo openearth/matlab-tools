@@ -85,11 +85,17 @@ handles.activeToolbox.nr=1;
 % Make sure that tb is updated
 setHandles(handles);
 
+% Check Model Maker in menu
 c=handles.GUIHandles.Menu.Toolbox.ModelMaker;
 p=get(c,'Parent');
 ch=get(p,'Children');
 set(ch,'Checked','off');
 set(c,'Checked','on');
+
+ddb_selectToolbox;
+
+% % Add ModelMaker elements to model elements
+% handles=ddb_addToolboxElements(handles);
 
 % Update elements in model guis
 for i=1:length(handles.Model)
@@ -99,13 +105,11 @@ for i=1:length(handles.Model)
     end
 end
 
-% Add elements ModelMaker
-handles=ddb_addToolboxElements(handles);
-
 setHandles(handles);
 
-% Select ModelMaker tab
-tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox','runcallback',0);
+% % Select toolbox tab
+% tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox','runcallback',0);
+% 
+% % Now select ModelMaker toolbox (Quick Mode)
+% ddb_ModelMakerToolbox_quickMode;
 
-% Now select ModelMaker toolbox
-ddb_selectToolbox;

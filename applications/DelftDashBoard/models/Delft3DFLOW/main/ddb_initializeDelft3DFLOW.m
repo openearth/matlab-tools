@@ -27,3 +27,4 @@ runid='tst';
 handles=ddb_initializeFlowDomain(handles,'all',1,runid);
 
 handles.Model(ii).ddFile='test.ddb';
+handles.Model(ii).DDBoundaries=[];

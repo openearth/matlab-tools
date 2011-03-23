@@ -348,6 +348,8 @@ for i=1:length(elements)
                     elements(i).tabs(j).elements=addUIElements(figh,elements(i).tabs(j).elements,'getFcn',getFcn,'setFcn',setFcn, ...
                     'Parent',tabhandles(j));
                     set(tabhandles(j),'Tag',elements(i).tabs(j).tag);
+                    % 
+                    elements(i).tabs(j).handle=tabhandles(j);
                 end
                 
                 for j=1:length(elements(i).tabs)

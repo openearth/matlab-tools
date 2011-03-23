@@ -33,6 +33,8 @@ else
     n2=n1;
 end
 
+handles=ddb_Delft3DFLOW_plotDD(handles,option,'visible',vis);
+
 for id=n1:n2
     
 %     % Exception for grid, make bathy invisible if it's not the active grid
@@ -51,7 +53,8 @@ for id=n1:n2
         col=[0.35 0.35 0.35];
     end
     handles=ddb_Delft3DFLOW_plotGrid(handles,option,'domain',id,'color',col,'visible',vis);
-    
+
+
     if handles.Model(imd).Input(id).nrObservationPoints>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'observationpoints','domain',id,'visible',vis,'active',act);
     end

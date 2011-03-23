@@ -10,10 +10,8 @@ switch lower(option)
         if ~isempty(h)
             delete(h);
         end
-        h=findobj(gca,'Tag','ddboundaries');
-        if ~isempty(h)
-            delete(h);
-        end
+        handles=getHandles;
+        ddb_Delft3DFLOW_plotDD(handles,'delete');
     case{'activate'}
         h=findobj(gca,'Tag','TemporaryDDGrid');
         if ~isempty(h)
@@ -23,10 +21,8 @@ switch lower(option)
         if ~isempty(h)
             set(h,'Visible','on');
         end
-        h=findobj(gca,'Tag','ddboundaries');
-        if ~isempty(h)
-            set(h,'Visible','on');
-        end
+        handles=getHandles;
+        ddb_Delft3DFLOW_plotDD(handles,'update','active',1);
     case{'deactivate'}
         h=findobj(gca,'Tag','TemporaryDDGrid');
         if ~isempty(h)
@@ -36,8 +32,6 @@ switch lower(option)
         if ~isempty(h)
             set(h,'Visible','off');
         end
-        h=findobj(gca,'Tag','ddboundaries');
-        if ~isempty(h)
-            set(h,'Visible','off');
-        end
+        handles=getHandles;
+        ddb_Delft3DFLOW_plotDD(handles,'update','active',0);
 end

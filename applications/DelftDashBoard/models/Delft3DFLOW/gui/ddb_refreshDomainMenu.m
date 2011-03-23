@@ -14,7 +14,8 @@ for i=1:handles.Model(md).nrDomains
         set(ui,'Checked','on');
     end
 end
-uimenu(h,'Label','Add Domain ...','Callback',{@selectDomain,0},'Checked','off','UserData',0,'separator','on');
+uimenu(h,'Label','Add Domain','Callback',{@selectDomain,0},'Checked','off','UserData',0,'separator','on');
+uimenu(h,'Label','Delete Domain','Callback',@deleteDomain,'Checked','off','UserData',0);
 
 %%
 function selectDomain(hObject, eventdata, nr)
@@ -52,9 +53,24 @@ set(h,'Checked','on');
 % Update the figure
 for i=1:handles.Model(md).nrDomains
     feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',i);
-%     if i==ad
-%         feval(handles.Model(md).plotFcn,'update','active',1,'visible',1,'domain',i);
-%     else
-%         feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',i);
-%     end
+end
+
+%% And now set all elements and execute active tab!
+
+
+%%
+function deleteDomain(hObject, eventdata)
+handles=getHandles;
+if handles.Model(md).nrDomains>1   
+    feval(handles.Model(md).plotFcn,'delete');
+    handles.Model(md).Input=removeFromStruc(handles.Model(md).Input,ad);
+    handles.Model(md).nrDomains=handles.Model(md).nrDomains-1;
+    handles.activeDomain=1;
+    handles.Model(md).DDBoundaries=[];
+    setHandles(handles);
+    feval(handles.Model(md).plotFcn,'plot','active',0,'visible',1,'domain',0);
+    ddb_refreshDomainMenu;
+    
+    %% And now set all elements and execute active tab!
+
 end
