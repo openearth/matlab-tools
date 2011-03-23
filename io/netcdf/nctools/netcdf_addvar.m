@@ -1,5 +1,7 @@
 function varid = netcdf_addvar ( ncid, varstruct )
 % NETCDF_ADDVAR:  adds a variable to a NetCDF file using the matlab netcdf library
+%
+%    NOTE: almost same as private snctools function NC_ADDVAR_TMW
 % 
 % USAGE:  netcdf_addvar ( ncfile, varstruct );
 %
@@ -27,6 +29,8 @@ function varid = netcdf_addvar ( ncid, varstruct )
 %
 % Output: 
 %     None.  In case of an error, an exception is thrown.
+%
+%See also: nc_addvar, nctools, snctools
 
 
 %Checks on the input
@@ -44,9 +48,29 @@ varid = netcdf.defVar(ncid,varstruct.Name,varstruct.Nctype,varstruct.dimid);
 
 % Create an attribute associated with the variable.
 for j = 1:length(varstruct.Attribute)
-	attname = varstruct.Attribute(j).Name;
-	attval = varstruct.Attribute(j).Value;
-	netcdf.putAtt(ncid, varid, attname, attval );
+	attribute_name = varstruct.Attribute(j).Name;
+	attval         = varstruct.Attribute(j).Value;
+   
+    % code copied from SNCTOOLS nc_attput_tmw.m
+    try
+        netcdf.putAtt(ncid,varid,attribute_name,attval);
+    catch me
+        switch(me.identifier)
+            case 'MATLAB:netcdf_common:emptySetArgument'
+                % Bug #609383
+                % Please consult the README.
+                %
+                % If char, change attval to ' '
+        %        warning('SNCTOOLS:NCATTPUT:emptyAttributeBug', ...
+        %            'Changing attribute from empty to single space, please consult the README.');
+                netcdf.putAtt(ncid,varid,attribute_name,' ');
+            otherwise
+                rethrow(me);
+        end
+                
+    end    
+    
+    
 end
 
 function varstruct = validate_varstruct ( varstruct,ncid )
