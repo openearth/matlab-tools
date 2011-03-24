@@ -5,7 +5,7 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     handles=getHandles;
-    setUIElements(handles.Toolbox(tb).GUI.elements);
+    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     h=handles.Toolbox(tb).Input.tideStationHandle;
     if isempty(h)
         plotTideStations;
@@ -202,8 +202,8 @@ iac=handles.Toolbox(tb).Input.activeDatabase;
 fname=[handles.Toolbox(tb).miscDir handles.Toolbox(tb).Input.database(iac).shortName '.nc'];
 ii=handles.Toolbox(tb).Input.activeTideStation;
 ncomp=length(handles.Toolbox(tb).Input.database(iac).components);
-amp00=nc_varget(fname,'amplitude',[0 ii],[ncomp 1]);
-phi00=nc_varget(fname,'phase',[0 ii],[ncomp 1]);
+amp00=nc_varget(fname,'amplitude',[0 ii-1],[ncomp 1]);
+phi00=nc_varget(fname,'phase',[0 ii-1],[ncomp 1]);
 
 % Find non-zero amplitudes
 ii=find(amp00~=0);
@@ -218,7 +218,7 @@ end
 [amp,isort] = sort(amp0,2,'descend');
 for j=1:length(isort)
     k=isort(j);
-    cmp{j}=handles.Toolbox(tb).Input.database(iac).components{k};
+    cmp{j}=cmp0{k};
     phi(j)=phi0(k);
 end
 

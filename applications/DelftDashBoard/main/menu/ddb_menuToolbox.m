@@ -1,7 +1,5 @@
 function ddb_menuToolbox(hObject, eventdata)
 
-%profile on
-
 handles=getHandles;
 
 tg=get(hObject,'Tag');
@@ -13,6 +11,7 @@ ch=get(h,'Children');
 set(ch,'Checked','off');
 set(hObject,'Checked','on');
 
+% Set the new active toolbox
 if ~strcmpi(handles.activeToolbox.name,tbname)
     handles.activeToolbox.name=tbname;
     handles.activeToolbox.nr=strmatch(tbname,{handles.Toolbox(:).name},'exact');
@@ -21,5 +20,5 @@ if ~strcmpi(handles.activeToolbox.name,tbname)
 end
 
 % Select toolbox
-selectToolbox;
+ddb_selectToolbox;
 

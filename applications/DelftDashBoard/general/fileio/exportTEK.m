@@ -22,3 +22,4 @@ wl=num2str(data,'%10.3f');
 spc=repmat(' ',length(times),1);
 str=[datstr spc wl];
 dlmwrite(fname,str,'delimiter','','-append');
+

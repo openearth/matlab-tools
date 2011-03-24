@@ -98,6 +98,9 @@ ddb_selectToolbox;
 % handles=ddb_addToolboxElements(handles);
 
 % Update elements in model guis
+
+handles=getHandles;
+
 for i=1:length(handles.Model)
     elements=handles.Model(i).GUI.elements;
     if ~isempty(elements)

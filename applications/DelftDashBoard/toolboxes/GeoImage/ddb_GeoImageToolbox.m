@@ -7,7 +7,7 @@ if isempty(varargin)
     ddb_plotGeoImage('activate');
     handles=getHandles;
     clearInstructions;
-    setUIElements(handles.Toolbox(tb).GUI.elements);
+    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 else
     %Options selected
     handles=getHandles;

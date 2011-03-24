@@ -1,15 +1,4 @@
-function ddb_selectModel(mdl,tabname,varargin)
-
-icb=1;
-
-for i=1:length(varargin)
-    if ischar(varargin{i})
-        switch lower(varargin{i})
-            case{'runcallback'}
-                icb=varargin{i+1};
-        end
-    end
-end
+function ddb_selectModel(mdl)
 
 handles=getHandles;
 
@@ -29,15 +18,15 @@ set(handles.Model(md).GUI.elements(1).handle,'Visible','on');
 % Change menu items (file, domain and view)
 ddb_changeFileMenuItems;
 
+% Set the domain menu
 if handles.Model(md).supportsMultipleDomains
     set(handles.GUIHandles.Menu.Domain.Main,'Enable','on');
 else
     set(handles.GUIHandles.Menu.Domain.Main,'Enable','off');
 end
 
+% Make the map panel a child of the present model tab panel
+set(handles.GUIHandles.mapPanel,'Parent',handles.Model(md).GUI.elements(1).handle);
+
 % Select toolbox
 ddb_selectToolbox;
-
-%tabpanel('select','tag',lower(handles.Model(md).name),'tabname',tabname,'runcallback',1);
-
-set(handles.GUIHandles.mapPanel,'Parent',handles.Model(md).GUI.elements(1).handle);

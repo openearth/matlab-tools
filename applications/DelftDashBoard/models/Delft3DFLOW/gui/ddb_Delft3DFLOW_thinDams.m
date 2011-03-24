@@ -13,7 +13,6 @@ if isempty(varargin)
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','thindams');
     setHandles(handles);
     setUIElements('delft3dflow.domain.domainpanel.thindams');
-
 else
     opt=varargin{1};
     switch(lower(opt))

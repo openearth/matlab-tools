@@ -30,7 +30,8 @@ if isempty(varargin)
     end
     
     clearInstructions;
-    setUIElements(handles.Toolbox(tb).GUI.elements);
+%    setUIElements(handles.Toolbox(tb).GUI.elements);
+    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     
 else
     %Options selected
@@ -77,7 +78,7 @@ if ii<1
 end
 
 setHandles(handles);
-setUIElements(handles.Toolbox(tb).GUI.elements);
+setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -96,7 +97,7 @@ if ii<1
 end
 
 setHandles(handles);
-setUIElements(handles.Toolbox(tb).GUI.elements);
+setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -115,7 +116,7 @@ if ii<1
 end
 
 setHandles(handles);
-setUIElements(handles.Toolbox(tb).GUI.elements);
+setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -134,7 +135,7 @@ if ii<1
 end
 
 setHandles(handles);
-setUIElements(handles.Toolbox(tb).GUI.elements);
+setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -277,7 +278,7 @@ if ~isnan(m)
     ddb_clickPoint('cornerpoint','grid',xg,yg,'callback',@clickSecondCornerPoint,'single');
 end
 
-setUIElements(handles.Toolbox(tb).GUI.elements);
+setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 %%
 function clickSecondCornerPoint(m,n)
@@ -292,7 +293,7 @@ if ~isnan(m)
     plotCornerPoints('plot');
     plotTemporaryDDGrid('plot');
     ddb_setWindowButtonMotionFcn;
-    setUIElements(handles.Toolbox(tb).GUI.elements);
+    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 end
 
 %%
@@ -431,6 +432,11 @@ setHandles(handles);
 % Save ddbound file
 ddb_saveDDBoundFile(ddbound,handles.Model(md).ddFile);
 
+fid = fopen('batch_flw_dd.bat','wt');
+fprintf(fid,'%s\n','set argfile=delft3d-flow_args.txt');
+fprintf(fid,'%s\n',['echo -c ' handles.Model(md).ddFile ' >%argfile%']);
+fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\delftflow.exe %argfile% dummy delft3d');
+fclose(fid);
 
 %        ddb_writeDDBacthfile;
 

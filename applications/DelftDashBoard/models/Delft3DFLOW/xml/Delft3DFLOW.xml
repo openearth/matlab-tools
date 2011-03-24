@@ -14,7 +14,6 @@
         <tab>
           <tag>toolbox</tag>
           <tabstring>Toolbox</tabstring>
-          <callback>ddb_selectToolbox</callback>
         </tab>
         <tab>
           <tag>description</tag>

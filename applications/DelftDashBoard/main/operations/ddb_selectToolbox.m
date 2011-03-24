@@ -1,69 +1,58 @@
 function ddb_selectToolbox
+% This function is called to change the toolbox
 
 handles=getHandles;
 
-handles=ddb_addToolboxElements(handles);
+% Delete existing toolbox elements
+parent=handles.Model(md).GUI.elements.tabs(1).handle;
+ch=get(parent,'Children');
+if ~isempty(ch)
+    delete(ch);
+end
+
+% And now add the new elements
+toolboxElements=handles.Toolbox(tb).GUI.elements;
+handles.Model(md).GUI.elements.tabs(1).elements=toolboxElements;
+handles.Model(md).GUI.elements.tabs(1).elements=addUIElements(gcf,toolboxElements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);
 
 setHandles(handles);
 
-% Select toolbox by 'clicking' the toolbox tab. This will call
-% selectToolbox.
+% Find handle of tab panel and get tab info
+el=getappdata(handles.Model(md).GUI.elements.handle,'element');
+el.tabs(1).elements=handles.Model(md).GUI.elements.tabs(1).elements;
+setappdata(handles.Model(md).GUI.elements.handle,'element',el);
 
+% Select toolbox tab.
 tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox','runcallback',0);
 
-% Now execute the callback
-% At this point, the elements are already in the GUI.
+% Check to see if there is a tab panel under this tab
 elements=handles.Model(md).GUI.elements.tabs(1).elements;
-% Now look for tab panels within this tab, and execute callback associated
-% with active tabs
 itab=0;
 for k=1:length(elements)
     if strcmpi(elements(k).style,'tabpanel')
-        % Find active tab
-        hh=elements(k).handle;
-        el=getappdata(hh,'element');
-        iac=el.activeTabNr;
-        callback=el.tabs(iac).callback;
-        if ~isempty(callback)
-            itab=1;
-            feval(callback);
-        end
+        itab=1;
     end
 end
-% No tab panels found, execute the call function of the toolbox
-if ~itab
-    feval(handles.Toolbox(tb).callFcn);
+
+% Set callback for the next time the toolbox tab is clicked
+panel=get(handles.Model(md).GUI.elements.handle,'UserData');
+callbacks=panel.callbacks;
+inputArguments=panel.inputArguments;
+if itab
+    % Default callback
+    callbacks{1}=@defaultTabCallback;
+    inputArguments{1}={'tag',lower(handles.Model(md).name),'tabnr',1};
+else
+    callbacks{1}=handles.Toolbox(tb).callFcn;
+    inputArguments{1}=[];
 end
-    
-%
-% 
-% 
-% if handles.Toolbox(tb).useXML
-%     
-%     % At this point, the elements are already in the GUI.
-%     elements=handles.Toolbox(tb).GUI.elements;
-%     % Now look for tab panels within this tab, and execute callback associated
-%     % with active tabs
-%     itab=0;
-%     for k=1:length(elements)
-%         if strcmpi(elements(k).style,'tabpanel')
-%             % Find active tab
-%             hh=elements(k).handle;
-%             el=getappdata(hh,'element');
-%             iac=el.activeTabNr;
-%             callback=el.tabs(iac).callback;
-%             if ~isempty(callback)
-%                 itab=1;
-%                 feval(callback);
-%             end
-%         end
-%     end
-%     % No tab panels found, execute call function
-%     if ~itab
-%         feval(handles.Toolbox(tb).callFcn);
-%     end
-% 
-% else
-%     % Otherwise use old approach
-%     feval(handles.Toolbox(tb).callFcn);
-% end
+panel.callbacks=callbacks;
+panel.inputArguments=inputArguments;
+set(handles.Model(md).GUI.elements.handle,'UserData',panel);
+
+% And now execute the callback
+if isempty(inputArguments{1})
+    feval(callbacks{1});
+else
+    feval(callbacks{1},inputArguments{1});
+end

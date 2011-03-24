@@ -70,8 +70,8 @@ for i=1:nrp
     % Read data from nc file
     fname=[handles.Toolbox(tb).miscDir handles.Toolbox(tb).Input.database(iac).shortName '.nc'];
     ncomp=length(handles.Toolbox(tb).Input.database(iac).components);
-    amp00=nc_varget(fname,'amplitude',[0 k],[ncomp 1]);
-    phi00=nc_varget(fname,'phase',[0 k],[ncomp 1]);
+    amp00=nc_varget(fname,'amplitude',[0 k-1],[ncomp 1]);
+    phi00=nc_varget(fname,'phase',[0 k-1],[ncomp 1]);
     
     components=[];
     amplitudes=[];

@@ -5,7 +5,7 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     handles=getHandles;
-    setUIElements(handles.Toolbox(tb).GUI.elements);
+    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     h=handles.Toolbox(tb).Input.observationStationHandle;
     if isempty(h)
         plotObservationStations;

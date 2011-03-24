@@ -50,8 +50,9 @@ switch lower(varargin{1}),
         ddb_updateDataInScreen;
                 
         % Toolbox is selected in ddb_selectModel        
-        ddb_selectModel('Delft3DFLOW','toolbox');
+        ddb_selectModel('Delft3DFLOW');
 
+        % Refresh domains in menu
         ddb_refreshDomainMenu;
 
         handles=getHandles;

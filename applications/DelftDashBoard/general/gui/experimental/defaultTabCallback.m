@@ -13,9 +13,6 @@ for i=1:length(varargin)
     end    
 end
 
-% Delete existing UIControls
-deleteUIControls;
-
 % Find handle of tab panel and get tab info
 h=findobj(gcf,'Tag',tag,'Type','uipanel');
 el=getappdata(h,'element');
