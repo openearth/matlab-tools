@@ -78,7 +78,11 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-OPT.path = abspath(OPT.path);
+OPT.path = abspath(fullfile(OPT.path, OPT.name));
+
+if ~exist(OPT.path)
+    mkdir(OPT.path);
+end
 
 %% write model
 
