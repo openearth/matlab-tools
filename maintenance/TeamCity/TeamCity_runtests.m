@@ -87,10 +87,10 @@ try %#ok<TRYNC>
     if nargin > 0
         try
             OPT = setproperty(OPT,varargin);
-            if ~isempty(OPT.TestDataMainDir)
-                TeamCity.postmessage('message', 'text', ['Add tests directory:',char(10),OPT.TestDataMainDir]);
+            if ~isempty(OPT.TestsMainDir)
+                TeamCity.postmessage('message', 'text', ['Add tests directory:',char(10),OPT.TestsMainDir]);
                 tempcd = cd;
-                cd(OPT.TestDataMainDir);
+                cd(OPT.TestsMainDir);
                 oettestsettings;
                 cd(tempcd);
                 TeamCity.postmessage('message', 'text', 'Finished adding tests');
