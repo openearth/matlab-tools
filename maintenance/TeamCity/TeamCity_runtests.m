@@ -89,8 +89,11 @@ try %#ok<TRYNC>
             OPT = setproperty(OPT,varargin);
             if ~isempty(OPT.TestDataMainDir)
                 TeamCity.postmessage('message', 'text', ['Add test data directory:',char(10),OPT.TestDataMainDir]);
-                addpath(genpath(OPT.TestDataMainDir));
-                TeamCity.postmessage('message', 'text', 'Finished adding test data');
+                tempcd = cd;
+                cd(OPT.TestDataMainDir);
+                oettestsettins;
+                cd(tempcd);
+                TeamCity.postmessage('message', 'text', 'Finished adding tests');
             end
         catch me
             TeamCity.postmessage('message', 'text', 'Matlab was unable to set options or add the main dir of the test data.',...
@@ -104,28 +107,11 @@ try %#ok<TRYNC>
     try
         TeamCity.postmessage('progressStart','Prepare MTestRunner');
         %% initiate variables:
-        maindir = oetroot;
+        maindir = oettestroot;
         targetdir = fullfile(oetroot,'teamcitytesthtml');
         if isdir(targetdir)
             rmdir(targetdir,'s');
         end
-
-        exclusions = {...
-            '.svn',...
-            '_tutorial',...
-            '_exclude',...
-            'KML_testdir',...
-            'maintenance'...
-            ...
-            ... DelftDashboard stuff
-            'xml_toolbox',...
-            'GeoImage',...
-            ...
-            ... io stuff (one of the tests gives a java heap space error)
-            'h4tools',...
-            'netcdf',...
-            'sqltools'...
-            };
 
         %% Create testengine
         mtr = MTestRunner(...
@@ -174,13 +160,13 @@ try %#ok<TRYNC>
 
         if any(~[mtr.Tests.Ignore]) && OPT.PublishCoverage
             TeamCity.postmessage('progressStart','Publish coverage');
-            
+
             TeamCity.postmessage('progressMessage', 'Remove coverage target dir.');
             targetDir = fullfile(OPT.RunDir,'OetTestCoverage');
             if isdir(targetDir)
                 rmdir(targetDir,'s');
             end
-            
+
             TeamCity.postmessage('progressMessage', 'Calculate and publish coverage.');
             mtp = MTestPublisher(...
                 'Publish',true,...
@@ -188,7 +174,7 @@ try %#ok<TRYNC>
                 'TargetDir',targetDir,...
                 'OutputDir',targetDir);
             mtp.publishcoverage(mtr.ProfileInfo);
-                        
+
             TeamCity.postmessage('progressFinish','Publish coverage');
         end
 
