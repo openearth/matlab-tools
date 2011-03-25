@@ -64,7 +64,7 @@ if nargin == 0
 end
 
 %% Check version and open document
-if verLessThan('matlab', '7.11')
+if ~exist('verLessThan','file') || verLessThan('matlab', '7.11')
     com.mathworks.mlservices.MLEditorServices.newDocument(str)
 else
     document = com.mathworks.mlservices.MLEditorServices.getEditorApplication.newEditor(str);
