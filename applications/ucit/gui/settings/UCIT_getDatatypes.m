@@ -138,6 +138,17 @@ end
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
+  
+   %% Vaklodingen (remapped)
+
+   i = i + 1;
+   datatypes.grid.names{i}        =  'Vaklodingen 20m (remapped)';
+   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen_remapped/';
+   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen_remapped/catalog.xml';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
+   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+   datatypes.grid.cellsize{i}     =  20;
+   datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
    
    %% Vaklodingen (test)
 
