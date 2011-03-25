@@ -66,6 +66,8 @@ function varargout = ArcGisRead(fname,varargin)
    D.(D.varname) = fscanf(     fid,'%f',[D.ncols,D.nrows])';
    D.(D.varname)(D.(D.varname)==D.nodata_value)=nan;
 
+   fclose(fid);
+   
 %% Create rectangular grid
 
    for irow=1:D.ncols

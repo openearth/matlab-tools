@@ -172,7 +172,7 @@ classdef MTestFactory
                 try
                     obj.Category = eval(command(idbegin:idend));
                 catch me
-                    warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.';'The following exeption was thrown when evaluating the input:';me.getReport]);
+                    warning('MTestFactory:UnableToSetCategory',['MTestFactory was not able to set the category.',char(10),'The following exeption was thrown when evaluating the input:',char(10),me.getReport]);
                 end
             end
         end
