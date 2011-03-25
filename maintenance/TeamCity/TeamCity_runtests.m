@@ -91,7 +91,7 @@ try %#ok<TRYNC>
                 TeamCity.postmessage('message', 'text', ['Add test data directory:',char(10),OPT.TestDataMainDir]);
                 tempcd = cd;
                 cd(OPT.TestDataMainDir);
-                oettestsettins;
+                oettestsettings;
                 cd(tempcd);
                 TeamCity.postmessage('message', 'text', 'Finished adding tests');
             end
