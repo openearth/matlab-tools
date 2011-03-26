@@ -1,5 +1,5 @@
 function [X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid(varargin)
-%grid_orth_GETDATAFROMNETCDFGRID  This routine gets data from a NetCDF grid file.
+%GRID_ORTH_GETDATAFROMNETCDFGRID  This routine gets data from a NetCDF grid file.
 %
 %   This routine gets data from a NetCDF grid file
 %
@@ -30,6 +30,7 @@ function [X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid(varargin)
 %
 %   See also: nc_dump, nc_varfind, grid_2D_orthogonal
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
 %       Mark van Koningsveld
@@ -56,6 +57,12 @@ function [X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
 % Created: 24 Mar 2009
 % Created with Matlab version: 7.7.0.471 (R2008b)
 
@@ -64,7 +71,7 @@ function [X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid(varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords:
+% $Keywords: $
 
 %% settings
 % defaults

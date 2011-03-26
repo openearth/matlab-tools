@@ -1,10 +1,8 @@
 function OPT = grid_orth_getSandBalance(varargin)
-% GRID_ORTH_GETSANDBALANCE  This script computes a sediment budget for an
-%                           indicated dataset for all polygons that are
-%                           listed in a polygon directory. They are
-%                           subdivided per UCIT datatype folder (see
-%                           example). The year with best coverage is used
-%                           as reference year.
+%GRID_ORTH_GETSANDBALANCE  This script computes a sediment budget for an indicated dataset for all polygons that are listed in a polygon directory. 
+%
+%  They are subdivided per UCIT datatype folder (see example). The year
+%  with best coverage is used as reference year.
 %
 %   Syntax:     grid_orth_getSandBalance
 %
@@ -48,6 +46,19 @@ function OPT = grid_orth_getSandBalance(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 % TODO: make the search process more efficient by inventorying the available years.
 % TODO: a number of input variable in the OPT struct are obsolete (such as OPT.cellsize ... check and remove)
 
@@ -56,16 +67,17 @@ warning off %#ok<WNOFF>
 
 %% set defaults
 OPT.dataset                 = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
+OPT.tag                     = [];
 OPT.ldburl                  = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 OPT.workdir                 = pwd;
-OPT.polygondir              = [];
+OPT.polygondir              = [pwd filesep 'polygons'];
 OPT.polygon                 = [];
 OPT.cellsize                = [];                               % cellsize is assumed to be regular in x and y direction and is determined automatically
 OPT.datathinning            = 1;                                % stride with which to skip through the data
 OPT.inputtimes              = [];                               % starting points (in Matlab epoch time)
 OPT.starttime               = [];                               % indicate datenum to start sediment budget calculation
 OPT.stoptime                = [];                               % indicate datenum to stop sediment budget calculation
-OPT.searchinterval          = -730;                             % acceptable interval to include data from (in days)
+OPT.searchinterval          = -30;                              % acceptable interval to include data from (in days)
 OPT.min_coverage            = .25;                              % coverage percentage (can be several, e.g. [50 75 90]
 OPT.plotresult              = 1;                                % 0 = off; 1 = on;
 OPT.warning                 = 1;                                % 0 = off; 1 = on;
@@ -83,6 +95,7 @@ OPT.data                    = []; % entry needed for adding dredging and dumping
 
 OPT = setproperty(OPT, varargin{:});
 
+if isempty(OPT.tag); OPT.tag = OPT.dataset; end
 
 %% generate sediment budget information
 for n = 1:size(OPT.min_coverage,2)

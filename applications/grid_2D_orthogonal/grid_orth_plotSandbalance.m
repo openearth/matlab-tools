@@ -1,5 +1,5 @@
 function grid_orth_plotSandbalance(OPT, results, Volumes, n)
-%GRID_ORTH_PLOTSANDBALANCE  plots results of sandbalance computation
+%GRID_ORTH_PLOTSANDBALANCE  Plots results of sandbalance computation.
 %
 %       grid_orth_plotSandbalance(OPT, results, Volumes)
 %
@@ -9,10 +9,9 @@ function grid_orth_plotSandbalance(OPT, results, Volumes, n)
 %
 %   Example:
 %
-%
-%
 % See also: UCIT_getSandBalance
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
 %       Ben de Sonneville
@@ -37,6 +36,19 @@ function grid_orth_plotSandbalance(OPT, results, Volumes, n)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 warningstate = warning;
 warning off

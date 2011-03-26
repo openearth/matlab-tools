@@ -1,5 +1,5 @@
 function results = grid_orth_computeGridVolume(reference_year, targetyear, polyname, OPT)
-%GRID_ORTH_COMPUTEGRIDVOLUME   this routine computes volumes based on data that is stored in grid format
+%GRID_ORTH_COMPUTEGRIDVOLUME   Computes volumes based on data that is stored in grid format.
 %
 %   syntax:     results = getSandBalance(reference_year, targetyear, polyname,OPT)
 %
@@ -43,6 +43,19 @@ function results = grid_orth_computeGridVolume(reference_year, targetyear, polyn
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% load reference year
 load(fullfile(OPT.workdir, 'datafiles', ['timewindow = ' num2str(OPT.searchinterval)], [polyname '_' datestr(reference_year) '.mat']));

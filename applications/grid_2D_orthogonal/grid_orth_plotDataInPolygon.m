@@ -1,43 +1,49 @@
 function grid_orth_plotDataInPolygon(X, Y, Z, Ztime, varargin)
-%GRID_ORTH_PLOTDATAINPOLYGON plots data from netCDF grid collection in polygon
+%GRID_ORTH_PLOTDATAINPOLYGON Plots data from netCDF grid collection in polygon.
 %
 %   grid_orth_plotDataInPolygon(X, Y, Z, Ztime, <keyword,value>)
 %
 % See also: grid_2D_orthogonal
 
-% --------------------------------------------------------------------
-% Copyright (C) 2004-2009 Delft University of Technology
-% Version:      Version 1.0, February 2004
-%     Mark van Koningsveld
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Delft University of Technology
+%       Mark van Koningsveld
 %
-%     m.vankoningsveld@tudelft.nl	
+%       m.vankoningsveld@tudelft.nl
 %
-%     Hydraulic Engineering Section 
-%     Faculty of Civil Engineering and Geosciences
-%     Stevinweg 1
-%     2628CN Delft
-%     The Netherlands
+%       Hydraulic Engineering Section
+%       Faculty of Civil Engineering and Geosciences
+%       Stevinweg 1
+%       2628CN Delft
+%       The Netherlands
 %
-% This library is free software; you can redistribute it and/or
-% modify it under the terms of the GNU Lesser General Public
-% License as published by the Free Software Foundation; either
-% version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
 %
-% This library is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-% Lesser General Public License for more details.
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
 %
-% You should have received a copy of the GNU Lesser General Public
-% License along with this library; if not, write to the Free Software
-% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-% USA
-% --------------------------------------------------------------------
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
 
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords: $
 
 OPT.polygon      = [];
 OPT.datathinning = 1;

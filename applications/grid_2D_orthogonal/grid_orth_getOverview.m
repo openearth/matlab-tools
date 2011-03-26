@@ -1,7 +1,5 @@
-function ah = grid_orth_createFixedMapsOnFigure(ah, urls, varargin)
-%GRID_ORTH_CREATEFIXEDMAPSONFIGURE  Plots geographical extents of ncfiles on figure.
-%
-% See also: grid_2D_orthogonal
+function OPT = grid_orth_getOverview(OPT)
+%GRID_ORTH_GETOVERVIEW Plots geographical extents of netcdf tiles on overview.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -43,25 +41,25 @@ function ah = grid_orth_createFixedMapsOnFigure(ah, urls, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% make the axes to use the current one
-axes(ah);
-
-%% for each available url get the actual_range and creat a patch
-for i = 1:length(urls)
-    x_range = nc_getvarinfo(urls{i}, 'x');
-    y_range = nc_getvarinfo(urls{i}, 'y');
+axes = findobj('type','axes');
+if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview figure is already present don't run this function again
     
-    if any(ismember({y_range.Attribute.Name}, 'actual_range')) && any(ismember({x_range.Attribute.Name}, 'actual_range'))
-
-        x_range = str2num(x_range.Attribute(ismember({x_range.Attribute.Name}, 'actual_range')).Value); %#ok<*ST2NM>
-        y_range = str2num(y_range.Attribute(ismember({y_range.Attribute.Name}, 'actual_range')).Value);
-
-        ph = patch([x_range(1) x_range(2) x_range(2) x_range(1) x_range(1)], ...
-                   [y_range(1) y_range(1) y_range(2) y_range(2) y_range(1)], 'r');
-
-        drawnow
+    % Step 0.1: get fixed map urls from OPeNDAP server
+    if ~isempty(OPT.urls)
+        urls = OPT.urls; 
+    else
+        OPT = mergestructs(OPT,grid_orth_getMapInfoFromDataset(OPT.dataset));
+    end
+    % Step 0.2: create a figure with tagged patches
+    figure(10);clf;axis equal;box on;hold on
+    
+    % Step 0.3: plot landboundary
+    try % try loop to prevent crashing when no internet connection is available
+        OPT.x = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
+        OPT.y = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
+        plot(OPT.x, OPT.y, 'k', 'linewidth', 2);
     end
     
-    set(ph,'tag',urls{i});
+    % Step 0.4: plot fixed map patches on axes and return the axes handle
+    ah = grid_orth_createFixedMapsOnAxes(gca, OPT, 'tag', OPT.tag); %#ok<*NODEF,*NASGU>
 end
-box on

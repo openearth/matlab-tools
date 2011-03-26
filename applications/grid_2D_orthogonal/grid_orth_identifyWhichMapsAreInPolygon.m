@@ -1,41 +1,47 @@
 function [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(OPT, polygon, ah)
-%GRID_ORTH_IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
+%GRID_ORTH_IDENTIFYWHICHMAPSAREINPOLYGON  Identifies which netcdf tiles are located inside a polygon (partly or as a whole).
 %
 % See also: grid_2D_orthogonal
 
-% --------------------------------------------------------------------
-% Copyright (C) 2004-2009 Delft University of Technology
-% Version:      Version 1.0, February 2004
-%     Mark van Koningsveld
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2009 Delft University of Technology
+%       Mark van Koningsveld
 %
-%     m.vankoningsveld@tudelft.nl
+%       m.vankoningsveld@tudelft.nl
 %
-%     Hydraulic Engineering Section
-%     Faculty of Civil Engineering and Geosciences
-%     Stevinweg 1
-%     2628CN Delft
-%     The Netherlands
+%       Hydraulic Engineering Section
+%       Faculty of Civil Engineering and Geosciences
+%       Stevinweg 1
+%       2628CN Delft
+%       The Netherlands
 %
-% This library is free software; you can redistribute it and/or
-% modify it under the terms of the GNU Lesser General Public
-% License as published by the Free Software Foundation; either
-% version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
 %
-% This library is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-% Lesser General Public License for more details.
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
 %
-% You should have received a copy of the GNU Lesser General Public
-% License along with this library; if not, write to the Free Software
-% Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-% USA
-% --------------------------------------------------------------------
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
 
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% Step 1: find all patch objects from the mapwindow and store their xdata and ydata in the variable maps
 if nargin == 3

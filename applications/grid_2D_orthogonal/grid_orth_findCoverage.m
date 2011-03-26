@@ -1,5 +1,5 @@
 function [batchvar, OPT] = grid_orth_findCoverage(OPT, n)
-% GRID_ORTH_FINDCOVERAGE  This script computes grid data coverage
+%GRID_ORTH_FINDCOVERAGE  Finds data coverages in netcdf database for arbitrary number of polygons
 %
 %
 %   Syntax:     batchvar    =   findCoverage(datatype, ref_cov, timewindow)
@@ -40,6 +40,19 @@ function [batchvar, OPT] = grid_orth_findCoverage(OPT, n)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 warningstate = warning;
 warning off
 
@@ -49,7 +62,16 @@ if isempty(fns)
     warning on
     warning('grid_orth_findCoverage:noPolygonsAvailable', ...
         'No polygons available in polygon directory')
+    OPT = grid_orth_getOverview(OPT);
+    OPT = grid_orth_getPolygon(OPT);
+
+    fns = dir(fullfile(OPT.polygondir, '*.mat'));
+    if isempty(fns)
+    warning on
+    warning('grid_orth_findCoverage:noPolygonsAvailable', ...
+        'You need to make sure a saved polygon is available!')
     return
+    end
 end
 
 %% Set input for sandbalance

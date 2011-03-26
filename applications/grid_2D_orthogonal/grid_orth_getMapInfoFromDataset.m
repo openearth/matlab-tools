@@ -1,11 +1,24 @@
 function OPT = grid_orth_getMapInfoFromDataset(dataset)
-%GRID_ORTH_GETMAPINFOFROMDATASET
+%GRID_ORTH_GETMAPINFOFROMDATASET  Extracts meta info from an OPeNDAP catalog or a local directory.
 %
 %   OPT = grid_orth_getmapinfofromdataset(url)
 %
 % extract meta info from an OPeNDAP catalog or a local directory.
 %
 %See also: GRID_2D_ORTHOGONAL
+
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
   
 OPT.dataset = dataset;
 

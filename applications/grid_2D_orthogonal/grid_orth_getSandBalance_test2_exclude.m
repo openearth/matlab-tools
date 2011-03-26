@@ -1,5 +1,13 @@
-function grid_orth_getSandBalance_test2
-% GRID_ORTH_GETSANDBALANCE_TEST2  This script tests the sediment budget script
+function grid_orth_getSandBalance_test2_exclude
+%GRID_ORTH_GETSANDBALANCE_TEST2_EXCLUDE  This script tests the sediment budget script.
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 clc;
 fclose all;
 
