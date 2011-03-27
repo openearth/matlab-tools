@@ -73,7 +73,7 @@ else % ... otherwise randomly draw 10000 datapoints and show them
     scatter(X(rd_ids), Y(rd_ids), 5, Z(rd_ids), 'filled'); hold on
     
     % when the thinned out option is selected draw the convex hull as well to give an idea of the coverage of the randomly selected points
-    ids = convhull(X, Y);
+    ids = convhull(double(X), double(Y));
     lh = line(X(ids),Y(ids),Z(ids));
     set(lh,'color','r')
 end

@@ -41,6 +41,8 @@ function OPT = grid_orth_getOverview(OPT)
 % $HeadURL$
 % $Keywords: $
 
+if ~isfield(OPT, 'tag'); OPT.tag = OPT.dataset; end
+
 axes = findobj('type','axes');
 if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview figure is already present don't run this function again
     
