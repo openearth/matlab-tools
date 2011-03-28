@@ -10,9 +10,10 @@ function fname = xb_write_sh_scripts(lpath, rpath, varargin)
 %   Input:
 %   lpath     = Local path to store scripts
 %   rpath     = Path to store scripts seen from h$ cluster
-%   varargin  = name:   Name of the run
-%               binary: Binary to use
-%               nodes:  Number of nodes to use (1 = no MPI)
+%   varargin  = name:       Name of the run
+%               binary:     Binary to use
+%               nodes:      Number of nodes to use (1 = no MPI)
+%               mpitype:    Type of MPI application (MPICH2/OpenMPI)
 %
 %   Output:
 %   fname     = Name of start script
@@ -69,7 +70,8 @@ function fname = xb_write_sh_scripts(lpath, rpath, varargin)
 OPT = struct( ...
     'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
     'binary', '', ...
-    'nodes', 1 ...
+    'nodes', 1, ...
+    'mpitype', 'MPICH2' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -100,25 +102,48 @@ fclose(fid);
 
 fid = fopen(fullfile(lpath, 'mpi.sh'), 'wt');
 
-fprintf(fid,'#!/bin/bash\n');
-fprintf(fid,'#$ -cwd\n');
-fprintf(fid,'#$ -N %s\n', OPT.name);
-fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
+switch upper(OPT.mpitype)
+    case 'OPENMPI'
+        fprintf(fid,'#!/bin/bash\n');
+        fprintf(fid,'#$ -cwd\n');
+        fprintf(fid,'#$ -N %s\n', OPT.name);
+        fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
 
-fprintf(fid,'. /opt/sge/InitSGE\n');
-fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib\n');
+        fprintf(fid,'. /opt/sge/InitSGE\n');
+        fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib:$LD_LIBRARY_PATH\n');
 
-if OPT.nodes > 1
-    fprintf(fid,'export LD_LIBRARY_PATH="/opt/openmpi-1.4.3-gcc/lib/:${LD_LIBRARY_PATH}"\n');
-    fprintf(fid,'export PATH="/opt/mpich2/bin/:${PATH}"\n');
-    fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 2`\n');
-    fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-    fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE >> $(pwd)/machinefile\n');
-    fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
-    fprintf(fid,'mpirun -np $NSLOTS $(pwd)/%s >> %s.log 2>&1\n', OPT.binary, name);
-    fprintf(fid,'mpdallexit\n');
-else
-    fprintf(fid,'$(pwd)/%s >> %s.log 2>&1\n', OPT.binary, name);
+        if OPT.nodes > 1
+            fprintf(fid,'export LD_LIBRARY_PATH="/opt/openmpi-1.4.3-gcc/lib/:${LD_LIBRARY_PATH}"\n');
+            fprintf(fid,'export PATH="/opt/mpich2/bin/:${PATH}"\n');
+            %fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 2`\n');
+            fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
+            %fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE >> $(pwd)/machinefile\n');
+            fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
+            fprintf(fid,'mpirun -np $NSLOTS $(pwd)/%s >> %s.log 2>&1\n', OPT.binary, name);
+            fprintf(fid,'mpdallexit\n');
+        else
+            fprintf(fid,'$(pwd)/%s >> %s.log 2>&1\n', OPT.binary, name);
+        end
+    case 'MPICH2'
+        fprintf(fid,'#!/bin/sh\n');
+        fprintf(fid,'#$ -cwd\n');
+        fprintf(fid,'#$ -N %s\n', OPT.name);
+        fprintf(fid,'#$ -pe mpich2 %d\n', OPT.nodes);
+        
+        fprintf(fid,'. /opt/sge/InitSGE\n');
+        fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib:$LD_LIBRARY_PATH\n');
+
+        if OPT.nodes > 1
+            fprintf(fid,'export MPICH2_ROOT=/opt/mpich2\n');
+            fprintf(fid,'export PATH=$MPICH2_ROOT/bin:$PATH\n');
+            fprintf(fid,'export MPD_CON_EXT="sge_$JOB_ID.$SGE_TASK_ID"\n');
+
+            fprintf(fid,'mpirun -machinefile $TMPDIR/machines -n $NSLOTS $(pwd)/%s >> %s.log\n', OPT.binary, name);
+        else
+            fprintf(fid,'$(pwd)/%s >> %s.log 2>&1\n', OPT.binary, name);
+        end
+otherwise
+        error(['Unknown MPI type [' OPT.mpitype ']']);
 end
 
 fclose(fid);
