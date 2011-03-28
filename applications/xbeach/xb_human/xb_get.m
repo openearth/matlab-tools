@@ -125,5 +125,5 @@ for i = 1:length(vars)
         end
     end
     
-    if n >= nargout; break; end;
+    if n > nargout; break; end;
 end
