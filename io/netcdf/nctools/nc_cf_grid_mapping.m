@@ -74,7 +74,7 @@ OPT.debug = 0;
 
 %% EPSG: includes CF parameter
 
-   [dummy,dummy,log] = convertcoordinates(1,1,'CS1.code',epsg,'CS2.code',4326);
+   [dummy,dummy,log] = convertCoordinates(1,1,'CS1.code',epsg,'CS2.code',4326);
 
    if OPT.debug
       var2evalstr(log)
