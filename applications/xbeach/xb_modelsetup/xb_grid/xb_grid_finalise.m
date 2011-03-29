@@ -35,6 +35,13 @@ function [x y z] = xb_grid_finalise(x, y, z, varargin)
 %   y           = y-coordinates of finalised grid
 %   z           = elevations of finalised grid
 %
+%   Preferences:
+%   grid_finalise   = Cell array with finalisation options (see options)
+%
+%               Preferences overwrite default options (not explicitly
+%               defined options) and can be set and retrieved using the
+%               xb_setpref and xb_getpref functions.
+%
 %   Example
 %   [x y z] = xb_grid_finalise(x, y, z)
 %   [x y z] = xb_grid_finalise(x, y, z, 'actions', {'landward_polder' 'lateral_sandwalls' 'lateral_extend' 'seaward_flatten'})

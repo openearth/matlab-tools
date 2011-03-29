@@ -18,6 +18,13 @@ function fname = xb_write_sh_scripts(lpath, rpath, varargin)
 %   Output:
 %   fname     = Name of start script
 %
+%   Preferences:
+%   mpitype   = Type of MPI application (MPICH2/OpenMPI)
+%
+%               Preferences overwrite default options (not explicitly
+%               defined options) and can be set and retrieved using the
+%               xb_setpref and xb_getpref functions.
+%
 %   Example
 %   fname = xb_write_sh_scripts(lpath, rpath, 'binary', 'bin/xbeach')
 %   fname = xb_write_sh_scripts(lpath, rpath, 'binary', 'bin/xbeach', 'nodes', 4)
@@ -71,7 +78,7 @@ OPT = struct( ...
     'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
     'binary', '', ...
     'nodes', 1, ...
-    'mpitype', 'MPICH2' ...
+    'mpitype', '' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -80,6 +87,9 @@ OPT = setproperty(OPT, varargin{:});
 
 % make slashes unix compatible
 OPT.binary = strrep(OPT.binary, '\', '/');
+
+% set preferences
+if isempty(OPT.mpitype); xb_getprefdef('mpitype', 'MPICH2'); end;
 
 %% write start script
 

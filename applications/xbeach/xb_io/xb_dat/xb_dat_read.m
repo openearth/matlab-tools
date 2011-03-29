@@ -32,6 +32,13 @@ function dat = xb_dat_read(fname, dims, varargin)
 %   dat         = Matrix with dimensions defined in dims containing
 %                 requested data from DAT file
 %
+%   Preferences:
+%   dat_method  = Force read method (read/memory)
+%
+%               Preferences overwrite default options (not explicitly
+%               defined options) and can be set and retrieved using the
+%               xb_setpref and xb_getpref functions.
+%
 %   Example
 %   dat = xb_dat_read(fname, [100 3 20]);
 %   dat = xb_dat_read(fname, [100 3 20], 'start', 10, 'length', 90, 'stride', 2);

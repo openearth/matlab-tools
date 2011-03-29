@@ -27,6 +27,16 @@ function xb = xb_run_remote(xb, varargin)
 %   Output:
 %   xb        = XBeach structure array
 %
+%   Preferences:
+%   ssh_user        = Username for remote computer
+%   ssh_pass        = Password for remote computer
+%   path_local      = Local path to the XBeach model
+%   path_remote     = Path to XBeach model seen from remote computer
+%
+%               Preferences overwrite default options (not explicitly
+%               defined options) and can be set and retrieved using the
+%               xb_setpref and xb_getpref functions.
+%
 %   Example
 %   xb_run_remote(xb)
 %   xb_run_remote(xb, 'path_local', 'u:\', 'path_remote', '~/')
@@ -85,11 +95,15 @@ OPT = struct( ...
     'ssh_user', '', ...
     'ssh_pass', '', ...
     'ssh_prompt', false, ...
-    'path_local', 'u:\', ...
-    'path_remote', '~' ...
+    'path_local', '', ...
+    'path_remote', '' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
+
+% set preferences
+if isempty(OPT.path_local); xb_getprefdef('path_local', 'u:\'); end;
+if isempty(OPT.path_remote); xb_getprefdef('path_remote', '~'); end;
 
 %% write model
 

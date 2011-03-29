@@ -22,6 +22,14 @@ function [job_id job_name messages] = xb_run_sh_scripts(rpath, script, varargin)
 %   job_name  = Name of process started
 %   messages  = Messages returned by remote source
 %
+%   Preferences:
+%   ssh_user        = Username for remote computer
+%   ssh_pass        = Password for remote computer
+%
+%               Preferences overwrite default options (not explicitly
+%               defined options) and can be set and retrieved using the
+%               xb_setpref and xb_getpref functions.
+%
 %   Example
 %   job_id = xb_run_sh_scripts('~/', 'run.sh', 'ssh_prompt', true)
 %
