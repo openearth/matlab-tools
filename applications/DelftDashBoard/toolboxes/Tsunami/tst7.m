@@ -2,18 +2,18 @@ clear variables;close all;
 
 degrad=pi/180;
 
-xs=[100000 200000 200000];
-ys=[500000 700000 900000];
+xs=[100000 180000 200000];
+ys=[900000 700000 500000];
 
 
 depths=[24 24 24];
-dips=[7 7 7];
+dips=[14 14 14];
 wdts=[120 120 120];
 sliprakes=[88 88 88];
 slips=[7 14 7];
 
 pd=pathdistance(xs,ys);
-dx=pd(end)/50;
+dx=pd(end)/40;
 
 xp=pd(1):dx:pd(end);
 xc = spline(pd,xs,xp);
@@ -42,21 +42,26 @@ n2=round(1000*wdt(end)/dx);
 
 for i=1:n0+n1+n2
     
+    disp([num2str(i) ' of ' num2str(n0+n1+n2)]);
+    
     if i<=n0
         ii=1;
         ixin=i-n0-1;
         xin=ixin*dx/1000; % km
-        dy=xin*1000; % m
-    elseif i>=n0+n1
+        ddx=-ixin*sin(strike(1)*degrad)*dx; % m
+        ddy=ixin*cos(strike(1)*degrad)*dx; % m
+    elseif i>n0+n1
         ii=n1;
         ixin=i-(n0+n1);
         xin=-ixin*dx/1000; % km 
-        dy=-xin*1000; % m
+        ddx=-ixin*sin(strike(end)*degrad)*dx; % m
+        ddy=ixin*cos(strike(end)*degrad)*dx; % m
     else
         ii=i-n0;
-        ixin=i-n0+1;
-        xin=ixin*dx/1000; % km 
-        dy=0;
+        ixin=i-n0-1;
+        xin=min(ixin*dx/1000,(n0+n1-i)*dx/1000);
+        ddx=0;
+        ddy=0;
     end
     
     [x,z]=okaTrans(depth(ii),dip(ii),wdt(ii),sliprake(ii),slip(ii),xin);
@@ -77,8 +82,8 @@ for i=1:n0+n1+n2
     y=x*sin((strike(ii))*degrad);
     x=x*cos((strike(ii))*degrad);
 
-    x=x+xc(ii);
-    y=y+yc(ii)+dy;
+    x=x+xc(ii)+ddx;
+    y=y+yc(ii)+ddy;
 
     xx(i,:)=x;
     yy(i,:)=y;
@@ -86,7 +91,10 @@ for i=1:n0+n1+n2
 
 end
 
-plot(xc,yc);axis equal;
-figure(2);
+% plot(xc,yc);axis equal;
+% figure(2);
 
-pcolor(xx,yy,zz);axis equal;colorbar;
+pcolor(xx,yy,zz);axis equal;
+%caxis([-1 1]);
+colorbar;
+shading flat;
