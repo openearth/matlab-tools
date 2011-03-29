@@ -81,6 +81,8 @@ OPT.dredgingdumping        = '';                                     % recent fe
     dredgingdumping.polynames = [];
     dredgingdumping.data      = [];
 
+OPT = setproperty(OPT, varargin{:});
+    
 %% clear cached polygons
 if OPT.remove_cached_polygons
     try rmdir(fullfile(OPT.polygondir),  's');          end
