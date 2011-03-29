@@ -51,7 +51,7 @@ clc; warning off %#ok<WNOFF>
 
 %% settings
 % identify dataset and landboundary file to use
-OPT.dataset                = 'd:\checkouts\vo_nc\projects\151027_maasvlakte_2\elevation_data\gebiedsmodel_2.5x2.5_filled_daily\catalog.nc';
+OPT.dataset                = 'd:\checkouts\vo_nc\projects\151027_maasvlakte_2\elevation_data\gebiedsmodel_2.5x2.5_filled_weekly\catalog.nc';
 OPT.ldburl                 = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc'; % indicate landboundary file to use in plotting (default holland.nc)
 OPT.polygon                = [];
 
