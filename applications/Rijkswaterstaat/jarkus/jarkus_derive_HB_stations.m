@@ -1,16 +1,34 @@
-function varargout = jarkus_derive_HB_stations(varargin)
+function [stations lambda id angle_within_range] = jarkus_derive_HB_stations(id, x_station, y_station, varargin)
 %JARKUS_DERIVE_HB_STATIONS  Derive weight of hydraulic boundary condition stations
 %
-%   More detailed description goes here.
+%   Function to derive the relevant boundary condition stations along the
+%   coast to serve as boundary condition locations for one or more specific
+%   jarkus transects. In addition, a weight factor is derived to indicate
+%   the importance ratio of the two relevant stations.
 %
 %   Syntax:
-%   varargout = jarkus_derive_HB_stations(varargin)
+%   [stations lambda id angle_within_range] = jarkus_derive_HB_stations(varargin)
 %
 %   Input:
-%   varargin  =
-%
+%   id        = vector indicating the id's of the jarkus transects
+%   x_station = x-coordinates of the boundary condition stations
+%   y_station = y-coordinates of the boundary condition stations
+%   varargin  = propertyname-propertyvalue pairs
+%           'jarkus_url' : link to the netcdf file with the jarkus data
+%           'virtual'    : boolean vector with same length as x_station and
+%                          y_station indicating which station is virtual
+%           'angle_range': maximum allowed diversion from perpendicular
+%                          crossing between transect and station envelop
+%   
 %   Output:
-%   varargout =
+%   stations           = 2-column matrix, rows correspond to the transects,
+%                       columns to the two relevant stations (numbers correspond to coordinate
+%                       order)
+%   lambda             = factor for the weight of the first station 
+%   angle_within_range = boolean vector indicating whether the
+%                       transect-"station envelop" crossing is close enough
+%                       to perpendicular based on the predefined angle
+%                       range
 %
 %   Example
 %   jarkus_derive_HB_stations
@@ -62,10 +80,7 @@ function varargout = jarkus_derive_HB_stations(varargin)
 
 %%
 OPT = struct(...
-    'id', [],...
     'jarkus_url', jarkus_url,...
-    'x_station', [],...
-    'y_station', [],...
     'virtual', [],...
     'angle_range', 21 ...
     );
@@ -74,24 +89,33 @@ OPT = setproperty(OPT, varargin{:});
 
 %% input check
 if ~isempty(OPT.virtual)
-    equaldims = sum(diff(cellfun(@length, {OPT.x_station OPT.y_station OPT.virtual}))) == 0;
+    equaldims = sum(diff(cellfun(@length, {x_station y_station OPT.virtual}))) == 0;
     if ~equaldims
-        error
+        error('The station coordinate vectors should have the same length as the boolean indicating the virtual station.')
     end
     if sum(OPT.virtual) > 1
         error('more than one virtual station is not supported')
     end
     virtual = true;
 else
-    OPT.virtual = true(size(OPT.x_station));
+    OPT.virtual = true(size(x_station));
 end
 
 %%
 tr = jarkus_transects(...
-    'id', OPT.id,...
+    'id', id,...
     'output', {'id' 'angle' 'rsp_x' 'rsp_y'});
 
-xr = [min(OPT.x_station) max(OPT.y_station)]; % x range
+
+if isempty(id)
+    error('No transects found')
+elseif length(tr.id) ~= length(id)
+    warning('A part of the requested transects are not found.')
+    id = tr.id;
+end
+
+%%
+xr = [min(x_station) max(x_station)]; % x range
 [a b xcr ycr] = deal(nan(size(tr.rsp_x)));
 
 for i = 1:length(tr.rsp_x)
@@ -100,12 +124,12 @@ for i = 1:length(tr.rsp_x)
         if ismember(tr.angle(i), [0 180])
             % north or south directed transect, no y = ax+b approach possible
             xcr(i) = tr.rsp_x(i);
-            ycr(i) = interp1(OPT.x_station, OPT.y_station, xcr(i));
+            ycr(i) = interp1(x_station, y_station, xcr(i));
         else
             if any(isnan(polyval([a(i) b(i)], xr)))
                 dbstopcurrent
             end
-            [xcr(i) ycr(i)] = findCrossings(xr, polyval([a(i) b(i)], xr), OPT.x_station, OPT.y_station);
+            [xcr(i) ycr(i)] = findCrossings(xr, polyval([a(i) b(i)], xr), x_station, y_station);
         end
     catch
         [xcr(i) ycr(i)] = deal(NaN);
@@ -115,39 +139,40 @@ end
 %% select only transects that face seaward
 % derive angles of lines between stations
 % positive clockwise 0 north
-stationids = 1:length(OPT.x_station);
-station_angle.station = xy2degN(OPT.x_station(1:end-1), OPT.y_station(1:end-1), OPT.x_station(2:end), OPT.y_station(2:end));
+stationids = 1:length(x_station);
+station_angle.station = xy2degN(x_station(1:end-1), y_station(1:end-1), x_station(2:end), y_station(2:end));
 station1id = NaN(size(xcr));
 station_angle.transect = NaN(size(xcr));
 for i = 1:length(xcr)
     if ~isnan(xcr(i))
         try
-            station1id(i) = find(xcr(i) - OPT.x_station > 0, 1, 'last');
+            station1id(i) = find(xcr(i) - x_station > 0, 1, 'last');
             station_angle.transect(i) = station_angle.station(station1id(i));
-        catch
-            station1id(i) = NaN;
         end
     end
 end
 station2id = station1id + 1; % other station is the neighbouring one
 
-angleid = ...
-    tr.angle > 270-OPT.angle_range + station_angle.transect' & ...
-    tr.angle < 270+OPT.angle_range + station_angle.transect' | ...
-    tr.angle < -90+OPT.angle_range + station_angle.transect' & ...
-    tr.angle < -90-OPT.angle_range + station_angle.transect';
+%% indicate which transects are within the angle range from perpendicular
+%% crossing the stations envelop
+angle_within_range = ...
+    (tr.angle > 270-OPT.angle_range + station_angle.transect & ...
+    tr.angle < 270+OPT.angle_range + station_angle.transect | ...
+    tr.angle < -90+OPT.angle_range + station_angle.transect & ...
+    tr.angle < -90-OPT.angle_range + station_angle.transect)';
 
 %% derive lambda
-station_distance.station = sqrt((OPT.x_station(1:end-1) - OPT.x_station(2:end)).^2 + ((OPT.y_station(1:end-1) - OPT.y_station(2:end)).^2));
+station_distance.station = sqrt((x_station(1:end-1) - x_station(2:end)).^2 + ((y_station(1:end-1) - y_station(2:end)).^2));
 station_distance.transect = NaN(size(xcr));
-lambda = NaN(size(xcr));
+lambda = NaN(size(xcr(:)));
 distance1 = NaN(size(xcr));
 for i = 1:length(xcr)
     station_distance.transect(i) = station_distance.station(station1id(i));
-    distance1(i) = sqrt((OPT.x_station(station1id(i)) - xcr(i))^2 + (OPT.y_station(station1id(i)) - ycr(i))^2);
+    distance1(i) = sqrt((x_station(station1id(i)) - xcr(i))^2 + (y_station(station1id(i)) - ycr(i))^2);
     lambda(i) = 1 - distance1(i) / station_distance.transect(i);
 end
 
+%% correct lambda in case of a virtual station
 if virtual
     lambda_virtual1 = 1 - station_distance.station(OPT.virtual(2:end)) / (station_distance.station(OPT.virtual(1:end)) + station_distance.station(OPT.virtual(2:end)));
     % correct lambda for transects where the first station is virtual
@@ -164,4 +189,6 @@ if virtual
     end
 end
 
-varargout = {lambda};
+%% prepare output
+
+stations = [station1id(:) station2id(:)];
