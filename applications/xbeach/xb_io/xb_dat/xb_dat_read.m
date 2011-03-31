@@ -153,7 +153,7 @@ if exist(fname, 'file')
     f = dir(fname);
     
     % determine filetype
-    byt = f.bytes/prod(dims);
+    byt = round(f.bytes/prod(dims));
 
     switch byt
         case 1
