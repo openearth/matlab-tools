@@ -99,6 +99,7 @@ if ~isempty(OPT.virtual)
     virtual = true;
 else
     OPT.virtual = true(size(x_station));
+    virtual = false;
 end
 
 %%
