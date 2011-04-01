@@ -134,8 +134,10 @@ alpha = 0;
 if OPT.rotate && ~isvector(z_w)
     alpha = xb_grid_rotation(x_r, y_r, z_w);
     
-    if alpha ~= 0
+    if abs(alpha) > 5
         [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha, 'origin', [xori yori]);
+    else
+        alpha = 0;
     end
 end
 
