@@ -83,9 +83,11 @@ if ~isempty(runs) && iscell(runs)
     fpaths = {};
     for i = 1:length(runs)
         fpath = fileparts(xb_get(runs{i}, 'path'));
-        if ~exist(fpath, 'dir') || now-datenum(runs{i}.date) > 3 || ismember(fpath, fpaths)
+        if ~exist(fpath, 'dir') || now-datenum(runs{i}.date) > 3
+            fpath = ' ';
+        elseif ismember(fpath, fpaths)
             idx = strcmpi(fpath, fpaths);
-            fpaths{idx} = ' ';
+            if any(idx); fpaths{idx} = ' '; end;
         end
         fpaths = [fpaths{:} {fpath}];
     end
@@ -93,16 +95,22 @@ if ~isempty(runs) && iscell(runs)
     
     for i = 1:length(runs)
         xb = xb_peel(runs{i});
-        fpath = fileparts(xb.path);
+        
+        if isdir(xb.path)
+            fpath = xb.path;
+        else
+            fpath = fileparts(xb.path);
+        end
             
         % read log file
         log = xb_run_parselog(fpath);
 
-        fprintf(formatstr, num2str(xb.id), 'Name',   xb.name,                     'Time remaining',     datestr(xb_get(log, 'remtime'), 'HH:MM:SS'));
-        fprintf(formatstr, ' ',            'Path',   shortdisp(fpath,30),         'Total run duration', datestr(xb_get(log, 'duration'), 'HH:MM:SS'));
-        fprintf(formatstr, ' ',            'Binary', shortdisp(xb.binary,30),     'Average timestep',   datestr(xb_get(log, 'timestep'), 'SS.FFF'));
-        fprintf(formatstr, ' ',            'Nodes',  num2str(xb.nodes),           'Finished',           num2str(xb_get(log, 'finished')));
-        fprintf(formatstr, ' ',            'Remote', num2str(isfield(xb, 'ssh')), 'Error',              xb_get(log', 'error'));
+        fprintf(formatstr, num2str(xb.id), 'Name',   xb.name,                     'Date',               runs{i}.date);
+        fprintf(formatstr, ' ',            'Path',   shortdisp(fpath,30),         'Time remaining',     datestr(xb_get(log, 'remtime'), 'HH:MM:SS'));
+        fprintf(formatstr, ' ',            'Binary', shortdisp(xb.binary,30),     'Total run duration', datestr(xb_get(log, 'duration'), 'HH:MM:SS'));
+        fprintf(formatstr, ' ',            'Nodes',  num2str(xb.nodes),           'Average timestep',   datestr(xb_get(log, 'timestep'), 'SS.FFF'));
+        fprintf(formatstr, ' ',            'Remote', num2str(isfield(xb, 'ssh')), 'Finished',           num2str(xb_get(log, 'finished')));
+        fprintf(formatstr, ' ',            'Netcdf', num2str(xb.netcdf),          'Error',              xb_get(log', 'error'));
 
         disp(' ');
 

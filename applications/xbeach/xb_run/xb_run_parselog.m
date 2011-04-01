@@ -66,6 +66,9 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+logfile = '';
+errfile = '';
+
 % set file paths
 if exist(fpath, 'dir')
     logfile = fullfile(fpath, 'XBlog.txt');
@@ -74,8 +77,6 @@ elseif exist(fpath, 'file');
     logfile = fpath;
     fpath = fileparts(fpath);
     errfile = fullfile(fpath, 'XBerror.txt');
-else
-    error(['File not found [' fpath ']']);
 end
 
 xb = xb_empty;
