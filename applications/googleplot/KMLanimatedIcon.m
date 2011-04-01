@@ -57,17 +57,9 @@ function varargout = KMLanimatedIcon(lat,lon,varargin)
 
 %% process options
 
-if ~isempty(varargin)
-    if ~ischar(varargin{1})
-        c                  = varargin{1};
-        varargin           = varargin(2:end);
-        OPT.coloredIcon    = true;
-    else
-        OPT.coloredIcon    = false;
-    end
-else
-    OPT.coloredIcon    = false;
-end
+   % get colorbar options first
+   OPT                     = KMLcolorbar();
+   OPT                     = mergestructs(OPT,KML_header());
 
    OPT.fileName           = [];
    OPT.kmlName            = [];
@@ -86,6 +78,18 @@ end
    OPT.timeIn             = [];
    OPT.timeOut            = [];
    OPT.dateStrStyle       = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
+
+if ~isempty(varargin)
+    if ~ischar(varargin{1})
+        c                  = varargin{1};
+        varargin           = varargin(2:end);
+        OPT.coloredIcon    = true;
+    else
+        OPT.coloredIcon    = false;
+    end
+else
+    OPT.coloredIcon    = false;
+end
 
 if nargin==0
     varargout = {OPT};
@@ -154,11 +158,7 @@ OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
 
-OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0,...
-    'description',OPT.description);
-output = KML_header(OPT_header);
+output = KML_header(OPT);
 
 output = [output '<!--############################-->\n'];
 

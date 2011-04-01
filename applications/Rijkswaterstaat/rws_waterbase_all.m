@@ -1,4 +1,4 @@
-%function rws_waterbase_all
+function rws_waterbase_all
 %RWS_WATERBASE_ALL    download waterbase.nl parameters from web, transform to netCDF, make kml,  make catalog.
 %
 %See also: KNMI_ALL,                   , RWS_WATERBASE_*
@@ -121,7 +121,7 @@
    if OPT.make_kml
 
       OPT2.fileName           = [OPT.directory_kml,filesep,subdir,'.kml'];
-      OPT2.kmlName            = [                                    'rijkswaterstaat/waterbase/' subdir];
+      OPT2.kmlName            = ['rijkswaterstaat/waterbase/' subdir];
       OPT2.text               = {['<B>',OPT.name,'</B>',...
                                   ' / DONAR number: '     ,num2str(OPT.donar_wnsnum     ),...
                                   ' / DONAR code: '       ,       (OPT.donar_parcode    ),... % '%O2 does not work
@@ -133,7 +133,7 @@
      %OPT2.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
      %OPT2.iconhighlightState = 'http://www.rijkswaterstaat.nl/images/favicon.ico';
 
-      OPT2.description        = {['data: Rijkswaterstaat (',OPT.baseurl,'), presentation: www.OpenEarth.eu']};
+      OPT2.description        = {['data: Rijkswaterstaat (http://www.rws.nl) via (',OPT.baseurl,'), presentation: http://www.OpenEarth.eu']};
       OPT2.name               = OPT.name;
       
       OPT2.lon                = 1;

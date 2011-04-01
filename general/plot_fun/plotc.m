@@ -79,6 +79,16 @@ function varargout = plotc(x,y,c,marker,varargin)
    end
    
    if strcmpi(get(gca,'CLimMode'),'auto')
+      if miv==mav
+         if miv > 0
+            miv = 0;
+         elseif miv==0
+            miv = -1;
+            mav =  1;
+         else
+            mav = 0;
+         end
+      end
       caxis([miv mav])
    else
       miv = clim1(1);

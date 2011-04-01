@@ -1,4 +1,4 @@
-%function knmi_all
+function knmi_all
 %KNMI_ALL    download potwind + etmgeg from web, transform to netCDF, make kml,  make catalog.
 %
 %See also: KNMI_POTWIND_GET_URL,         KNMI_ETMGEG_GET_URL
@@ -12,7 +12,7 @@
 
 %% Initialize
 
-   OPT.download       = 0; % get fresh downloads from rws and remove exisitng to sub dir old
+   OPT.download       = 1; % get fresh downloads from rws and remove exisitng to sub dir old
    OPT.make_nc        = 1;
    OPT.make_catalog   = 1; % otherwise lod existing one
    OPT.make_kml       = 1;
@@ -23,7 +23,7 @@
    urlbase = 'http://opendap.deltares.nl:8080'; % production server (links)
    kmlbase = 'F:\_KML\';                        % @ local, no links to other kml or images any more
 
-   subdirs  = {'potwind','etmgeg'};
+   subdirs  = {'potwind','etmgeg'}; % take 9 and 14 mins respectively
    varnames = {'wind_speed','air_temperature_mean'};
    
    multiWaitbar(mfilename,0,'label','Looping substances.','color',[0.3 0.8 0.3])
@@ -31,7 +31,7 @@
 %% Parameter loop
 
 n = 0;
-for ii=2:length(subdirs)
+for ii=1:length(subdirs)
 n = n+1;
    
    subdir                = subdirs{ii};
@@ -83,7 +83,7 @@ n = n+1;
    if OPT.make_kml
 
       OPT2.fileName           = [OPT.directory_kml,filesep,subdir,'.kml'];
-      OPT2.kmlName            = [                                    'rijkswaterstaat/waterbase/' subdir];
+      OPT2.kmlName            = ['KNMI/' subdir];
       OPT2.text               = {['<B>',subdir,'</B>']};
 
      %OPT2.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';

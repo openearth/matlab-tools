@@ -40,12 +40,7 @@ function varargout = KML_marker(lat,lon,varargin)
 
 %% keyword,value
 
-   OPT.description  = [];
-   OPT.icon         = [];
-   OPT.name         = [];
-   OPT.timeIn       = [];
-   OPT.timeOut      = [];
-   OPT.dateStrStyle = 29;
+   OPT = KML_header;
 
    if nargin==0; varargout = {OPT}; return; end
    
@@ -67,7 +62,7 @@ output = sprintf([...
  '%s'...% icon
  '<Point><coordinates>%3.8f,%3.8f,0</coordinates></Point>'...
  '</Placemark>\n'],...
- timeSpan,OPT.name,['<![CDATA[',OPT.description,']]>'],OPT.icon,lon,lat);
+ timeSpan,OPT.kmlName,['<![CDATA[',OPT.description,']]>'],OPT.icon,lon,lat);
  
  varargout = {output};
 

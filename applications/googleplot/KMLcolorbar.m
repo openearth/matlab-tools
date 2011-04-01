@@ -113,7 +113,7 @@ colorbarFig = figure('Visible','Off');
 
 %% get filename, gui for filename, if not set yet
 
-if isempty(OPT.CBfileName)
+if isempty(OPT.CBfileName) & nargout==0 % if nargout==1, kml is a return argument, and not written to kml file
     [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
     OPT.CBfileName = fullfile(filePath,fileName);
 end
@@ -266,28 +266,35 @@ for ii = 1:length(OPT.CBcolorbarlocation)
         overlayXY,screenXY)];
 end
         
-colorbarstring = [colorbarstring sprintf([...
+   colorbarstring = [colorbarstring sprintf([...
     '</Folder>'],...
     OPT.CBkmlName)];
 
+%% save
+
+    if ~isempty(OPT.CBfileName)
+       fname = [OPT.CBfileName,'.kml'];
+       OPT.CBfid    = fopen(fname,'w');
+       OPT_header = struct(...
+                  'name',OPT.CBkmlName,...
+                  'open',OPT.CBopen,...
+               'visible',OPT.CBvisible,...
+           'description',OPT.CBdescription);
+       output = [KML_header(OPT_header) colorbarstring KML_footer];
+       fprintf(OPT.CBfid,'%s',output);
+       fclose (OPT.CBfid);
+       %pngNames{end+1} = fname;
+    end
+
 %% finish
 
-if nargout==1
-    varargout = {colorbarstring};
-elseif nargout==2
-    varargout = {colorbarstring,pngNames};
-else
-    OPT.CBfid    = fopen([OPT.CBfileName,'.kml'],'w');
-    OPT_header = struct(...
-               'name',OPT.CBkmlName,...
-               'open',OPT.CBopen,...
-            'visible',OPT.CBvisible,...
-        'description',OPT.CBdescription);
-    output = [KML_header(OPT_header) colorbarstring KML_footer];
-    fprintf(OPT.CBfid,'%s',output);
-    fclose(OPT.CBfid);
-end
+   if nargout==1
+       varargout = {colorbarstring};
+   elseif nargout==2
+       varargout = {colorbarstring,pngNames};
+   end
+   
+   close(colorbarFig)
 
-close(colorbarFig)
 %% EOF
 

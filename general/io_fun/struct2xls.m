@@ -104,6 +104,7 @@ function varargout = struct2xls(fname,S,varargin)
    OPT.oned        = 1; % reshape 1D matlab rows and columns into excel columns (numeric, logical and cellstr)
    OPT.commentchar = '#';
    OPT.overwrite   = 'p'; % prompt
+   OPT.warning     = 0;
  
    if nargin==0
       varargout = {OPT};
@@ -165,7 +166,9 @@ function varargout = struct2xls(fname,S,varargin)
             if length(size(S.(fldname)))==2
                if (size(S.(fldname),2)==1)
                   S.(fldname) = S.(fldname)';
+                  if OPT.warning
                   warning(['Field ''',fldname,''' has been transposed to fit into an Excel column.'])
+                  end
                end
             end
          % for some reason cellstr needs to be [n x 1] instead of [1 x n]
@@ -174,6 +177,7 @@ function varargout = struct2xls(fname,S,varargin)
                if (size(S.(fldname),1)==1)
                   S.(fldname) = S.(fldname)';
                   warning(['Field ''',fldname,''' has been transposed to fit into an Excel column.'])
+                  fprintf(2,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.'])
                end
             end
          end

@@ -63,7 +63,14 @@ OPT.description = 'One line description goes here.';
 OPT.input       = {'varargin'};
 OPT.output      = {'varargout'};
 OPT.feval       = [];
-OPT.code        = '';
+OPT.code        = {'OPT.keyword=value;',...
+                   'OPT = setproperty(OPT,varargin{:});',...
+                   '',...
+                   'if nargin==0;',...
+                   '   varargout = OPT;',...
+                   '   return;',...
+                   'end',...
+                   '%% code'};
 OPT.seeAlso     = '';
 
 FuntionName = 'Untitled';
@@ -179,7 +186,7 @@ end
 
 if ~isempty(OPT.code)
     % add predefined code
-    str = sprintf('%s', str, OPT.code);
+    str = sprintf('%s', str, str2line(OPT.code));
 end
 
 %% open new file in editor

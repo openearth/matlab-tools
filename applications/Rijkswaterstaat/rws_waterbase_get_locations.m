@@ -4,7 +4,7 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
 %    Station = rws_waterbase_get_locations(Code,CodeName)
 %
 % where Code = the Substance code as returned by getWaterbaseData_substances
-% e.g. 22 for the following Substance code as returned by getWaterbaseData_substances
+% e.g. 22 for the following Substance code as returned by GETWATERBASEDATA_SUBSTANCES
 % e.g. 22 for :
 %
 % * FullName, e.g. "Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater"

@@ -1,9 +1,13 @@
 function varargout = csv2struct(fname,varargin)
 %CSV2STRUCT    Read columns from xls file into matlab struct fields 
 %
-% DATA = csv2struct(fname)
+%    DATA = csv2struct(fname)
 %
-% [DATA,units         ] = csv2struct(fname,work_sheet_name,<keyword,value>)
+% reads columns from fname into struct fields. The first line
+% is used to make the field names, the second line is used
+% for the units (if 'units' set to 1, default 0) as in
+%
+%    [DATA,units] = csv2struct(fname,'units',1,,<keyword,value>)
 %
 % See also: XLS2STRUCT, NC2STRUCT, LOAD & SAVE('-struct',...)
 
@@ -52,7 +56,9 @@ function varargout = csv2struct(fname,varargin)
       varargout = {OPT};
       return
    end
-
+   
+   OPT = setproperty(OPT,varargin{:});
+   
 %% get meta-info
 
    META.name = fname;
@@ -78,7 +84,7 @@ function varargout = csv2struct(fname,varargin)
       rec      = fgetl_no_comment_line(fid,OPT.CommentStyle);
       col      = textscan(rec,'%s','Delimiter',OPT.delimiter);
       if OPT.quotes
-      colnames = cellfun(@(x) x([2:end-1]),col{1},'UniformOutput',0)
+      colnames = cellfun(@(x) x([2:end-1]),col{1},'UniformOutput',0);
       else
       colnames = col{1};
       end

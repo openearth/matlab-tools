@@ -1,37 +1,34 @@
 function oetsettings(varargin)
 %OETSETTINGS   enable the OpenEarthTools matlab tools by adding all relevant matlab paths.
 %
-% OpenEarthTools is a collection of open source tools 
-% intended to be licensed under the (<a href="http://www.gnu.org/licenses/licenses.html">GNU (Lesser) Public License</a>).
+% OpenEarthTools is a collection of open source tools intended to be licensed under the (<a href="http://www.gnu.org/licenses/licenses.html">GNU (Lesser) Public License</a>).
 %
 % In order to suppress this information, run the function with input argument quiet:
-%	"oetsettings('quiet');" or "oetsettings quiet"
+% "oetsettings('quiet');" or "oetsettings quiet"
 %
-% By default oetsettings generates a tutorial search database (only if there is no current database 
-% or the current database is outdated). Generation of the tutorial search database can be suppressed 
-% as follows: "oetsettings(...,'searchdb',false);"
+% By default oetsettings generates a tutorial search database (only if no current database 
+% or current database is outdated). Suppressed generation: "oetsettings(...,'searchdb',false);"
 % 
 % For more information on OpenEarthTools refer to the following sources:
+% * wiki:               <a href="http://OpenEarth.nl">OpenEarth.nl</a>, <a href="http://OpenEarth.nl">OpenEarth.eu</a>
+% * 1. Subversion, data <a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/matlab</a>
+% *    ,,        models <a href="https://repos.deltares.nl/repos/OpenEartModels/trunk/">https://repos.deltares.nl/repos/OpenEartModels/trunk/matlab</a>
+% *    ,,         tools <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
+% * 2. OPeNDAP/netCDF   <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
+% * 3. Google Earth     <a href="http://kml.deltares.nl">http://kml.deltares.nl</a>
+% * Matlab: + Scroll through the OpenEarthTools directories 
+%           + use help     : help netcdf, help general, help applications
+%           + use lookfor  : lookfor google, lookfor 
+%           + use doc      : doc xbeac, doc swan
+%           + use tutorials: doc tutorials, also on www.openearth.nl
 %
-% * wiki:              <a href="http://OpenEarth.nl">OpenEarth.nl</a>, <a href="http://OpenEarth.nl">OpenEarth.eu</a>
-% * data, raw:         <a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/matlab</a>
-% * data, netCDF:      <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
-% * model input:       <a href="https://repos.deltares.nl/repos/OpenEartModels/trunk/">https://repos.deltares.nl/repos/OpenEartModels/trunk/matlab</a>
-% * tools, model code: <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
-% * help blocks:       Scroll through the OpenEarthTools directories by clicking 
-%                      to "See also" links, or typing:
-%    help oetsettings
-%    help general
-%    help applications
-%    help io
-%
-%See also: path, restoredefaultpath, addpathfast,
+%See also:    oetsettings: path, restoredefaultpath, addpathfast,
 %          OpenEarthTools: general, applications, io, tutorials
 %              highlights: convertcoordinates, googleplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) <2004-2008> <Deltares>
+%   Copyright (C) <2004-2011> <Deltares>
 %
 %          <gerben.deboer@deltares.nl>
 %
@@ -87,6 +84,7 @@ function oetsettings(varargin)
    OPT = setproperty(OPT,varargin{nextarg:end});
    
 %% Acknowledge user we started adding the toolbox
+
    if ~(OPT.quiet)
        disp('Adding <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>, please wait ...')
        disp(' ')
@@ -134,6 +132,7 @@ function oetsettings(varargin)
             end
         end
     end
+    
 %% Restore warning and directory state
 
    warning(state.warning)
@@ -147,7 +146,6 @@ function oetsettings(varargin)
    
 %% NETCDF (if not present yet)
 %  (NB RESTOREDEFAULTPATH does not restore java paths)
-
 
    netcdf_settings('quiet',OPT.quiet) % in /io/netcdf/
 

@@ -28,7 +28,7 @@ function S = vaklodingen_definition(varargin)
 %
 %See also: vaklodingen, nc_multibeam, snctools, arcgis, nc_cf_gridset
 
- OPT.debug = 1;
+ OPT.debug = 0;
  OPT.epsg  = 28992;
  
 %% define all kaartbladen

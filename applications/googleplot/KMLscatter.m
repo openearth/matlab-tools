@@ -74,8 +74,10 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    OPT.html                = [];
    OPT.name                = [];
 
-   OPT.iconnormalState     =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
-   OPT.iconhighlightState  =  'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.iconnormalState     = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.iconhighlightState  = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
+   OPT.iconnormalState     = 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png';
+   OPT.iconhighlightState  = 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png';
    OPT.scalenormalState    =  0.25;
    OPT.scalehighlightState =  1.0;
 
@@ -160,10 +162,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 
 %% HEADER
 
-   OPT_header = struct(...
-              'name',OPT.kmlName,...
-              'open',0,...
-       'description',OPT.description);
+   OPT_header = struct(OPT);
    output = KML_header(OPT_header);
    
    if OPT.colorbar
