@@ -64,7 +64,7 @@ function varargout = KMLcolorbar(varargin)
 %% Options
 
 OPT.CBfileName           = '';
-OPT.CBkmlName            = '';
+OPT.CBkmlName            = 'colorbar';
 OPT.CBcolorMap           = [];             % can be entered as a name (eg: 'jet'), or as a funtion
 OPT.CBcolorSteps         = [];             % 
 OPT.CBcLim               = [];             %
