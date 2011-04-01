@@ -82,7 +82,8 @@ if ~isempty(runs) && iscell(runs)
     % remove doubles, non-existing and outdated
     fpaths = {};
     for i = 1:length(runs)
-        fpath = fileparts(xb_get(runs{i}, 'path'));
+        fpath = xb_get(runs{i}, 'path');
+        if ~isdir(fpath); fpath = fileparts(fpath); end;
         if ~exist(fpath, 'dir') || now-datenum(runs{i}.date) > 3
             fpath = ' ';
         elseif ismember(fpath, fpaths)

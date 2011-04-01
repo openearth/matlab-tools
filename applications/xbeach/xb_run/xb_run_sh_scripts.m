@@ -1,4 +1,4 @@
-function [job_id job_name messages] = xb_run_sh_scripts(rpath, script, varargin)
+function [job_id job_name user pass messages] = xb_run_sh_scripts(rpath, script, varargin)
 %XB_RUN_SH_SCRIPTS  Run SH scripts on H4 cluster
 %
 %   Run SH scripts on H4 cluster
@@ -141,3 +141,6 @@ else
     
     error(['Submitting remote job failed [' cmd ']']);
 end
+
+user = OPT.ssh_user;
+pass = OPT.ssh_pass;
