@@ -1,4 +1,4 @@
-%ODV2META   script to test ODVRREAD, ODVDISP, ODVPLOT_CAST, ODVPLOT_OVERVIEW
+%ODV_METADATA   crawl a local set of ODV files to get meta-data
 %
 % get meta-info from all CTDCAST files in a user-defined directory one by one.
 %
@@ -24,10 +24,10 @@ OPT.pause     = 0;
    clear A
    
    A.filename    = [];
-   A.lon         = repmat(nan,[1 length(OPT.files)]);
+   A.lon         = repmat(nan,[1 length(OPT.files)]); %Latitude 1","Latitude 2","Longitude 1","Longitude 2
    A.lat         = repmat(nan,[1 length(OPT.files)]);
    A.nt          = repmat(nan,[1 length(OPT.files)]);
-   A.datenum_min = repmat(nan,[1 length(OPT.files)]);
+   A.datenum_min = repmat(nan,[1 length(OPT.files)]);% "Start date","Start time","End date","End time"
    A.datenum_max = repmat(nan,[1 length(OPT.files)]);
 
 for ifile=1:length(OPT.files)

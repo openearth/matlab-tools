@@ -1,8 +1,8 @@
-function nerc_verify_test()
-% NERC_VERIFY_TEST  test for nerc_verify
+function sdn_parameter_mapping_resolve_test()
+%SDN_PARAMETER_MAPPING_RESOLVE_TEST  test for nerc_verify
 %  
 %
-%   See also nerc_verify
+%See also SDN_PARAMETER_MAPPING_RESOLVE
 
 %% Copyright notice
 %   --------------------------------------------------------------------

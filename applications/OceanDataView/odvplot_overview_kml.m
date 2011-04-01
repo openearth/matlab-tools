@@ -5,7 +5,7 @@ function odvplot_overview_kml(D,varargin)
 %
 %   odvplot_overview_kml(D,<keyword,value>)
 %
-% Show overview of ODV locations, ue when D.cast=0.
+% Show overview of ODV locations, works when D.cast=0.
 %
 % Works only for trajectory data, i.e. when D.cast = 0;
 %
@@ -43,12 +43,12 @@ function odvplot_overview_kml(D,varargin)
 % $Revision$
 % $HeadURL
 
-   OPT.variable = 'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
-   OPT.index    = 0;
-   OPT.colorbar = 1;
-   OPT.colormap = @(m) jet(m);
-   OPT.fileName = '';
+   OPT.sdn_standard_name = ''; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
    OPT.clim     = [];
+
+   OPT.colorbar = 1;
+   OPT.colorMap = @(m) jet(m);
+   OPT.fileName = '';
    
    if nargin==0
        varargout = {OPT};
@@ -56,22 +56,40 @@ function odvplot_overview_kml(D,varargin)
    end
    
    [OPT, Set, Default] = setproperty(OPT, varargin);
-   
-   for i=1:length(D.sdn_standard_name)
-      if any(strfind(D.sdn_standard_name{i},OPT.variable))
-         OPT.index = i;
-         break
+
+%% find column to plot based on sdn_standard_name
+
+   if isempty(OPT.sdn_standard_name)
+      [OPT.index.var, ok] = listdlg('ListString', {D.sdn_long_name{10:2:end}} ,...
+                           'InitialValue', [1],... % first is likely pressure so suggest 2 others
+                           'PromptString', 'Select single variables to plot as colored dots', ....
+                                   'Name', 'Selection of c/z-variable');
+      OPT.index.var = OPT.index.var*2-1 + 9; % 10th is first on-meta data item
+   else
+      for i=1:length(D.sdn_standard_name)
+      %disp(['SDN name: ',D.sdn_standard_name{i},'  <-?->  ',OPT.sdn_standard_name])
+         if any(strfind(D.sdn_standard_name{i},OPT.sdn_standard_name))
+            OPT.index.var = i;
+            break
+         end
+      end
+      if OPT.index.var==0
+         error([OPT.sdn_standard_name,' not found.'])
+         return
       end
    end
-   
-   KMLanimatedIcon(D.data.latitude,D.data.longitude,str2num(char(D.rawdata{OPT.index,:})),...
+
+%% plot
+
+   KMLscatter(D.data.latitude,D.data.longitude,str2num(char(D.rawdata{OPT.index.var,:})),...
+            'name',D.LOCAL_CDI_ID,...
         'fileName',OPT.fileName,...
           'timeIn',D.data.datenum-1,...
          'timeOut',D.data.datenum+1,...
          'kmlName',[D.LOCAL_CDI_ID],...
-     'description',['cruise: ',D.cruise,', EDMO_code:',num2str(D.EDMO_code)],...
+     'description',['LOCAL_CDI_ID = ',D.LOCAL_CDI_ID,', cruise = ',D.cruise,', EDMO_code = ',num2str(D.EDMO_code)],...
         'colorbar',OPT.colorbar,...
             'cLim',[5 25],...
-   'colorbartitle',[D.local_name{OPT.index},' (',D.local_units{OPT.index},')'])
+    'CBcolorTitle',[D.local_name{OPT.index.var},' (',D.local_units{OPT.index. var},')'])
 
 %% EOF

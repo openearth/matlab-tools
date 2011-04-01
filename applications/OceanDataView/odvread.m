@@ -130,6 +130,11 @@ function varargout = odv_read(fullfilename)
    OPT.variablesonly = 1; % remove units from variables
    sdn_code_warning  = 1;
 
+   D = struct('odv_name'     ,'',...
+              'standard_name','','units','',...
+              'local_name'   ,'','local_units','',...
+              'sdn_long_name','','sdn_standard_name','','sdn_units',''); % determine command line order
+
   [D.file.path D.file.name D.file.ext] = fileparts(fullfilename);
    D.file.fullfilename = fullfilename;
 
@@ -151,6 +156,7 @@ function varargout = odv_read(fullfilename)
    
       D.file.date  = tmp.date;
       D.file.bytes = tmp.bytes;
+                  
    
 %% check for file opening (2)
 
@@ -172,9 +178,8 @@ function varargout = odv_read(fullfilename)
 
          %try
 
-            %% I) Header lines (//)
-            %     Extract SDN vocab codes
-            %--------------------------------
+         %% I) Header lines (//)
+         %     Extract SDN vocab codes
             
             iSDN  = 0;
             SDN   = false;
@@ -189,15 +194,15 @@ function varargout = odv_read(fullfilename)
                   SDN  = true;
                   iSDN = 9; % first 9 parameters are meta-info
                   
-                  D.sdn_long_name{1} = '';D.sdn_units{1} = '';D.sdn_standard_name{1} = '<subject>SDN:LOCAL:Cruise</subject>';
-                  D.sdn_long_name{2} = '';D.sdn_units{2} = '';D.sdn_standard_name{2} = '<subject>SDN:LOCAL:Station</subject>';
-                  D.sdn_long_name{3} = '';D.sdn_units{3} = '';D.sdn_standard_name{3} = '<subject>SDN:LOCAL:Type</subject>';
-                  D.sdn_long_name{4} = '';D.sdn_units{4} = '';D.sdn_standard_name{4} = '<subject>SDN:LOCAL:yyyy-mm-ddThh:mm:ss.sss</subject>';
-                  D.sdn_long_name{5} = '';D.sdn_units{5} = '';D.sdn_standard_name{5} = '<subject>SDN:LOCAL:Longitude [degrees_east]</subject>';
-                  D.sdn_long_name{6} = '';D.sdn_units{6} = '';D.sdn_standard_name{6} = '<subject>SDN:LOCAL:Latitude [degrees_north]</subject>';
-                  D.sdn_long_name{7} = '';D.sdn_units{7} = '';D.sdn_standard_name{7} = '<subject>SDN:LOCAL:LOCAL_CDI_ID</subject>';
-                  D.sdn_long_name{8} = '';D.sdn_units{8} = '';D.sdn_standard_name{8} = '<subject>SDN:LOCAL:EDMO_code</subject>';
-                  D.sdn_long_name{9} = '';D.sdn_units{9} = '';D.sdn_standard_name{9} = '<subject>SDN:LOCAL:Bot. Depth [m]</subject>';
+                  D.sdn_long_name{1} = '';D.sdn_standard_name{1} ='';D.sdn_units{1} = '';D.odv_name{1} = '<subject>SDN:LOCAL:Cruise</subject>';
+                  D.sdn_long_name{2} = '';D.sdn_standard_name{2} ='';D.sdn_units{2} = '';D.odv_name{2} = '<subject>SDN:LOCAL:Station</subject>';
+                  D.sdn_long_name{3} = '';D.sdn_standard_name{3} ='';D.sdn_units{3} = '';D.odv_name{3} = '<subject>SDN:LOCAL:Type</subject>';
+                  D.sdn_long_name{4} = '';D.sdn_standard_name{4} ='';D.sdn_units{4} = '';D.odv_name{4} = '<subject>SDN:LOCAL:yyyy-mm-ddThh:mm:ss.sss</subject>';
+                  D.sdn_long_name{5} = '';D.sdn_standard_name{5} ='';D.sdn_units{5} = '';D.odv_name{5} = '<subject>SDN:LOCAL:Longitude [degrees_east]</subject>';
+                  D.sdn_long_name{6} = '';D.sdn_standard_name{6} ='';D.sdn_units{6} = '';D.odv_name{6} = '<subject>SDN:LOCAL:Latitude [degrees_north]</subject>';
+                  D.sdn_long_name{7} = '';D.sdn_standard_name{7} ='';D.sdn_units{7} = '';D.odv_name{7} = '<subject>SDN:LOCAL:LOCAL_CDI_ID</subject>';
+                  D.sdn_long_name{8} = '';D.sdn_standard_name{8} ='';D.sdn_units{8} = '';D.odv_name{8} = '<subject>SDN:LOCAL:EDMO_code</subject>';
+                  D.sdn_long_name{9} = '';D.sdn_standard_name{9} ='';D.sdn_units{9} = '';D.odv_name{9} = '<subject>SDN:LOCAL:Bot. Depth [m]</subject>';
                   
                   D.standard_name{1} = 'cruise_id'; D.units{1} = '';
                   D.standard_name{2} = 'station_id';D.units{2} = '';
@@ -216,8 +221,10 @@ function varargout = odv_read(fullfilename)
                   
                      iSDN = iSDN + 2;
                      
-                     D.sdn_standard_name{iSDN-1} =  D.lines.header{iline}(3:end);
-                     D.sdn_standard_name{iSDN  } =  D.lines.header{iline}(3:end);
+                     D.odv_name{iSDN-1} =  D.lines.header{iline}(3:end);
+                     D.odv_name{iSDN  } =  D.lines.header{iline}(3:end); % QV columns
+                    [~,D.sdn_standard_name{iSDN-1},~,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline});
+                    [~,D.sdn_standard_name{iSDN  },~,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline}); % QV columns
                      
                      %% get CF
                      
@@ -231,22 +238,21 @@ function varargout = odv_read(fullfilename)
                      D.units        {iSDN  } =  units;
                      
                      %% using nerc webservice
-                     try 
-                       [q,u]=sdn_verify(D.sdn_standard_name{iSDN});
+                     %try 
                        D.sdn_long_name     {iSDN-1} =  q;
                        D.sdn_long_name     {iSDN  } =  q;
                        D.sdn_units         {iSDN-1} =  u;
                        D.sdn_units         {iSDN  } =  u;
-                     catch
-                        if sdn_code_warning
-                           fprintf(2,'failed to verify sdn codes with nerc vocab webserver\n')
-                           sdn_code_warning = 0;
-                        end
-                        D.sdn_long_name     {iSDN-1} =  '';
-                        D.sdn_long_name     {iSDN  } =  '';
-                        D.sdn_units         {iSDN-1} =  '';
-                        D.sdn_units         {iSDN  } =  '';
-                     end
+                     %catch
+                     %   if sdn_code_warning
+                     %      fprintf(2,'failed to verify sdn codes with nerc vocab webserver\n')
+                     %      sdn_code_warning = 0;
+                     %   end
+                     %   D.sdn_long_name     {iSDN-1} =  '';
+                     %   D.sdn_long_name     {iSDN  } =  '';
+                     %   D.sdn_units         {iSDN-1} =  '';
+                     %   D.sdn_units         {iSDN  } =  '';
+                     %end
                   end
                end
                
@@ -275,9 +281,9 @@ function varargout = odv_read(fullfilename)
                D.local_units{ivar}     = D.local_name{ivar}([brack1+1:brack2-1]);
                % remove units AFTER extracting units
                if OPT.variablesonly
-               if ~isempty(brack1)
-               D.local_name{ivar} = strtrim(D.local_name{ivar}([1:brack1-1]));
-               end
+                if ~isempty(brack1)
+                 D.local_name{ivar} = strtrim(D.local_name{ivar}([1:brack1-1]));
+                end
                end
                %-% disp([D.local_name{ivar},' ',num2str([ivar brack1 brack2])])
             end
@@ -291,19 +297,19 @@ function varargout = odv_read(fullfilename)
             if OPT.variablesonly
             D.index.latitude               = find(strcmpi(D.local_name,'Latitude'));
             D.index.longitude              = find(strcmpi(D.local_name,'Longitude'));
-            D.index.bot_depth              = find(strcmpi(D.local_name,'Bot. Depth'));
-            D.index.sea_water_pressure     = find(strcmpi(D.local_name,'PRESSURE'));
-            D.index.sea_water_temperature  = find(strcmpi(D.local_name,'T90'));
-            D.index.sea_water_salinity     = find(strcmpi(D.local_name,'Salinity'));
-            D.index.sea_water_fluorescence = find(strcmpi(D.local_name,'fluorescence'));
+            D.index.bot_depth              = find(strcmpi(D.local_name,'Bot. Depth')); % often there as implicit z
+            D.index.sea_water_pressure     = find(strcmpi(D.local_name,'SDN:P011::PRESPS01'));
+           %D.index.sea_water_temperature  = find(strcmpi(D.local_name,'T90'));
+           %D.index.sea_water_salinity     = find(strcmpi(D.local_name,'Salinity'));
+           %D.index.sea_water_fluorescence = find(strcmpi(D.local_name,'fluorescence'));
             else
             D.index.latitude               = find(strcmpi(D.local_name,'Latitude [degrees_north]'));
             D.index.longitude              = find(strcmpi(D.local_name,'Longitude [degrees_east]'));
             D.index.bot_depth              = find(strcmpi(D.local_name,'Bot. Depth [m]'));
-            D.index.sea_water_pressure     = find(strcmpi(D.local_name,'PRESSURE [dbar]'));
-            D.index.sea_water_temperature  = find(strcmpi(D.local_name,'T90 [degC]'));
-            D.index.sea_water_salinity     = find(strcmpi(D.local_name,'Salinity [PSU]'));
-            D.index.sea_water_fluorescence = find(strcmpi(D.local_name,'fluorescence [ugr/l]'));
+            D.index.sea_water_pressure     = find(strcmpi(D.local_name,'SDN:P011::PRESPS01')); % often there as implicit z
+           %D.index.sea_water_temperature  = find(strcmpi(D.local_name,'T90 [degC]'));
+           %D.index.sea_water_salinity     = find(strcmpi(D.local_name,'Salinity [PSU]'));
+           %D.index.sea_water_fluorescence = find(strcmpi(D.local_name,'fluorescence [ugr/l]'));
             end
             D.index.LOCAL_CDI_ID           = find(strcmpi(D.local_name,'LOCAL_CDI_ID'));
             D.index.EDMO_code              = find(strcmpi(D.local_name,'EDMO_code'));
@@ -321,6 +327,9 @@ function varargout = odv_read(fullfilename)
                 sep = [0 strfind(rec,char(9)) (length(rec)+1)]; % tab-delimited with empty values possible
                 for ivar=1:nvar
                    D.rawdata{ivar,idat}       = rec(sep(ivar)+1:sep(ivar+1)-1);
+                   if isempty(D.rawdata{ivar,idat})
+                    D.rawdata{ivar,idat} = D.rawdata{ivar,1}; % TNO leaves out rest of column when identical to first column elements
+                   end
                 end
             end
             

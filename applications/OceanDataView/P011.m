@@ -15,13 +15,10 @@ function varargout = P011(varargin);
 % displays table AND returns indices into fields of L after
 % searching the description (long_name, entryTerm).
 %
-%    OK = P011(<L>,'verify','standard_name')
-%
-% checks whether standard_name (entryKey) is present in vocab.
-%
-%    description = P011(<L>,'find'  ,'standard_name')
+%    [description,<indices>] = P011(<L>,'resolve','standard_name')
 %
 % returns description (long_name, entryTerm) of standard_name (entryKey).
+% description isempty when nothing was found.
 %
 % The P011 parameter vocabulary needs to be downloaded (xml) first from
 % http://www.bodc.ac.uk/products/web_services/
@@ -34,11 +31,10 @@ function varargout = P011(varargin);
 %
 %    L         = P011(  'read'       ,1         )
 %    indices   = P011(L,'find'       ,'salinity');
-%    OK        = P011(L,'verify'     ,'ODSDM021')
-%    long_name = P011(L,'description','ODSDM021')
-%    long_name = P011(L,'description','ODSDM0')
+%    long_name = P011(L,'resolve'    ,'ODSDM021')
+%    long_name = P011(L,'resolve'    ,'ODSDM0')
 %
-%See also: NERC_VERIFY, NC_CF_STANDARD_NAME_TABLE
+%See also: SDN_PARAMETER_MAPPING_RESOLVE, SDN_PARAMETER_MAPPING_PARSE, NC_CF_STANDARD_NAME_TABLE
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -86,29 +82,28 @@ OPT.list_method   = '';%'getList'
 
 OPT.read          = 1;
 OPT.find          = ''; % description to standard_name
-OPT.verify        = ''; % check existence of standard_name
-OPT.description   = ''; % standard_name to description 
+OPT.resolve       = ''; % check existence of standard_name
 
 if nargin > 0
-if isstruct(varargin{1})
-   L        =  varargin{1};
-   varargin = {varargin{2:end}};
-end
+ if isstruct(varargin{1})
+    L        =  varargin{1};
+    varargin = {varargin{2:end}};
+ end
 end
 
 OPT = setproperty(OPT,varargin{:});
 
 
 if strcmpi(OPT.list_method,'getList')
-% Pxxx_getList.url
-% http://vocab.ndg.nerc.ac.uk/axis2/services/vocab/getList?recordKey=http://vocab.ndg.nerc.ac.uk/list/P061/current&earliestRecord=1900-01-01T00:00:00Z
-OPT.standard_name = 'entryKey';   % fieldname of L (xml)
-OPT.long_name     = 'entryTerm';  % fieldname of L (xml)
+ % Pxxx_getList.url
+ % http://vocab.ndg.nerc.ac.uk/axis2/services/vocab/getList?recordKey=http://vocab.ndg.nerc.ac.uk/list/P061/current&earliestRecord=1900-01-01T00:00:00Z
+ OPT.standard_name = 'entryKey';   % fieldname of L (xml)
+ OPT.long_name     = 'entryTerm';  % fieldname of L (xml)
 elseif isempty(OPT.list_method)
-% Pxxx.url
-% http://vocab.ndg.nerc.ac.uk/list/P061/current
-OPT.standard_name = 'externalID'; % fieldname of L (xml)
-OPT.long_name     = 'prefLabel';  % fieldname of L (xml)
+ % Pxxx.url
+ % http://vocab.ndg.nerc.ac.uk/list/P061/current
+ OPT.standard_name = 'externalID'; % fieldname of L (xml)
+ OPT.long_name     = 'prefLabel';  % fieldname of L (xml)
 end
 
 %% load and cache vocab
@@ -127,7 +122,7 @@ if ~isempty(OPT.read) | isempty(L)
           disp(['Loading cached ',OPT.listReference '.mat for persistent use (30MB) to interpret SDN/ODV codes (>> clear P011 to free memory) ...'])
           P011 = load(matfile); %P011 = nc2struct(ncfile);
           end
-          L = P011;
+          L = P011; % variable P011 required for memory caching
           
       elseif strcmpi(OPT.listReference,'P061') 
       
@@ -135,12 +130,10 @@ if ~isempty(OPT.read) | isempty(L)
           P061 = load(matfile); %P061 = nc2struct(ncfile);
           disp(['Loading cached ',OPT.listReference '.mat for persistent use (.4 Mb) to interpret SDN/ODV codes (>> clear P061 to free memory) ...'])
           end
-          L = P061;
+          L = P061; % variable P011 required for memory caching
       
       else
-      L = nc2struct(ncfile);
-     %L = load     (matfile);
-   
+
       disp([OPT.listReference ': loaded cached ' OPT.listReference '.mat'])
       end
    
@@ -210,7 +203,12 @@ if ~isempty(OPT.read) | isempty(L)
          for i=1:length(L2.Concept)
           L2.Concept(i).about       = L2.Concept(i).ATTRIBUTE.about;
 
+          try
+          % <skos:narrowMatch rdf:resource="http://vocab.ndg.nerc.ac.uk/term/P091/36/NIUW" /> 
+          % became (was wrong aparently)
+          % <skos:minorMatch rdf:resource="http://vocab.ndg.nerc.ac.uk/term/P091/37/NHUW" /> 
           L2.Concept(i).narrowMatch = ATTRIBUTE_resource2char(L2.Concept(i).narrowMatch);
+          end
           if strcmpi(OPT.listReference,'P011')
           L2.Concept(i).exactMatch  = ATTRIBUTE_resource2char(L2.Concept(i).exactMatch);
           L2.Concept(i).broadMatch  = ATTRIBUTE_resource2char(L2.Concept(i).broadMatch);
@@ -219,13 +217,20 @@ if ~isempty(OPT.read) | isempty(L)
           end
           
          end
-         L2.Concept=rmfield(L2.Concept,'ATTRIBUTE')
+         L2.Concept=rmfield(L2.Concept,'ATTRIBUTE');
 
       end
-
+      
 %% make struct of fields into field of structs
 
       L = array_of_structs2struct_of_arrays(L2.Concept);
+
+      ind = strfind(L.(OPT.standard_name){1},':') % whole xml file start with SDN:listReference:same_version_numer
+
+      L.listReference  = OPT.listReference;
+      L.listVersion    = L.(OPT.standard_name){1}(ind(end-1)+1:ind(end)-1)
+      L.entryReference = char(L.(OPT.standard_name));
+      L.entryReference = cellstr(L.entryReference(:,ind(end)+1:end)); % needed for quick search
 
       %fldnames = fieldnames(L2.Concept);
       %for ifld=1:length(fldnames)
@@ -284,44 +289,33 @@ if ~isempty(OPT.find)
 
 end
 
-%% find and display results of a search (standard_name presence)
+%% find and display results of a search (standard_name present)
 
-if ~isempty(OPT.verify)
+if ~isempty(OPT.resolve)
 
-   searchpattern = OPT.verify;
+   searchpattern = OPT.resolve;
 
    % cannot search for exact only due to presence of both list and list number in standard_name
-   ii = regexpi(L.(OPT.standard_name),searchpattern); % per cell item, empty or start index of searchpattern
-   ii = find(~cellfun(@isempty,ii));                  % indices of non-empty searchpattern matches
    
+  %ii = regexpi(L.(OPT.standard_name),searchpattern); % per cell item, empty or start index of searchpattern
+  %ii = find(~cellfun(@isempty,ii));                  % indices of non-empty searchpattern matches
+   ii = strmatch(searchpattern,L.entryReference); % faster than 2 lines above
+   
+   long_name = char({L.(OPT.long_name){ii}}); % can be more than one
+
    if length(ii)==1
-      OK = 1;
+      OK = long_name;
    elseif ii > 1
       disp(char({L.(OPT.long_name){ii}}))
       error('multiple occurences found, please specify unique id.')
    else
-      OK = 0;
+      OK = '';
    end
 
    if nargout==1
       varargout = {OK};
-   end
-
-end
-
-%% find and display results of a search (long_name to standard_name)
-
-if ~isempty(OPT.description)
-
-   searchpattern = OPT.description;
-
-   ii = regexpi(L.(OPT.standard_name),searchpattern); % per cell item, empty or start index of searchpattern
-   ii = find(~cellfun(@isempty,ii));                  % indices of non-empty searchpattern matches
-   
-   long_name = char({L.(OPT.long_name){ii}}); % can be more than one
-
-   if nargout==1
-      varargout = {long_name};
+   elseif nargout==2
+      varargout = {OK,ii};
    end
 
 end

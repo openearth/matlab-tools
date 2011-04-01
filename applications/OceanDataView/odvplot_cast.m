@@ -60,7 +60,8 @@ function odvplot_cast(D,varargin)
    OPT.lon       = [];
    OPT.lat       = [];
    OPT.clim      = [];
-   
+   OPT.overlay   = 0;
+
    if nargin==0
        varargout = {OPT};
        return
@@ -123,8 +124,8 @@ function odvplot_cast(D,varargin)
    
    if D.cast==1
    
-   for ivar=1:nvar
-    axes(AX(ivar)); cla %subplot(1,4,1)
+    for ivar=1:nvar
+     axes(AX(ivar)); cla %subplot(1,4,1)
        var.x = str2num(char(D.rawdata{OPT.index.var(ivar),:}));
        var.y = str2num(char(D.rawdata{OPT.index.z        ,:}));
        if ~isempty(var.x)
@@ -154,9 +155,9 @@ function odvplot_cast(D,varargin)
         noaxis(AX(ivar))
        end
    
-   end
+    end
 
-end       
+   end       
        
     axes(AX(nvar+1)); cla %subplot(1,4,4)
     
@@ -172,10 +173,15 @@ end
        box        on
        hold       off
        
-    AX(nvar+2) = axes('position',get(AX(1),'position'));
+%% add meta-data 
 
-    axes(AX(nvar+2)); cla %subplot(1,4,4)
-    noaxis(AX(nvar+2))
+   if OPT.overlay
+      AX(nvar+2) = axes('position',get(AX(1),'position'));
+      axes(AX(nvar+2)); cla %subplot(1,4,4)
+      noaxis(AX(nvar+2))
+   else
+     axes(AX(1))
+   end
        % text rather than titles per subplot, because subplots can be empty
        if D.cast
           txt = ['Cruise: ',D.data.cruise{1},...
@@ -187,7 +193,7 @@ end
        text (0,1,txt,...
                   'units','normalized',...
                   'horizontalalignment','left',...
-                  'verticalalignment','top')
+                  'verticalalignment','bottom')
     %axes(AX(1));
        
 %% EOF       

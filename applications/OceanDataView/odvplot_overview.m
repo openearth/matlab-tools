@@ -43,14 +43,12 @@ function odvplot_overview(D,varargin)
 % $Revision$
 % $HeadURL
 
-   OPT.variable  = ''; %'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
-   OPT.index     = [];
-   OPT.lon       = [];
-   OPT.lat       = [];
+   OPT.sdn_standard_name  = ''; %'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+
+   OPT.clim      = [];
    OPT.vc        = 'gshhs_c.nc'; % http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc
    OPT.lon       = [];
    OPT.lat       = [];
-   OPT.clim      = [];
    
    if nargin==0
        varargout = {OPT};
@@ -70,7 +68,7 @@ function odvplot_overview(D,varargin)
 
 %% find column to plot based on sdn_standard_name
 
-   if isempty(OPT.variable)
+   if isempty(OPT.sdn_standard_name)
       [OPT.index.var, ok] = listdlg('ListString', {D.sdn_long_name{10:2:end}} ,...
                            'InitialValue', [1],... % first is likely pressure so suggest 2 others
                            'PromptString', 'Select single variables to plot as colored dots', ....
@@ -78,13 +76,14 @@ function odvplot_overview(D,varargin)
       OPT.index.var = OPT.index.var*2-1 + 9; % 10th is first on-meta data item
    else
       for i=1:length(D.sdn_standard_name)
-         if any(strfind(D.sdn_standard_name{i},OPT.variable))
+      %disp(['SDN name: ',D.sdn_standard_name{i},'  <-?->  ',OPT.sdn_standard_name])
+         if any(strfind(D.sdn_standard_name{i},OPT.sdn_standard_name))
             OPT.index.var = i;
             break
          end
       end
       if OPT.index.var==0
-         error([OPT.variable,' not found.'])
+         error([OPT.sdn_standard_name,' not found.'])
          return
       end
    end
