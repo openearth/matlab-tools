@@ -134,6 +134,8 @@ if retcode == 0
         job_id = str2double(s.id);
         job_name = s.name;
     else
+        disp(messages);
+        
         error(['Submitting remote job failed [' cmd ']']);
     end
 else
