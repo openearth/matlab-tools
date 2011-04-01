@@ -89,7 +89,7 @@ OPT = setproperty(OPT, varargin{:});
 OPT.binary = strrep(OPT.binary, '\', '/');
 
 % set preferences
-if isempty(OPT.mpitype); xb_getprefdef('mpitype', 'MPICH2'); end;
+if isempty(OPT.mpitype); OPT.mpitype = xb_getprefdef('mpitype', 'MPICH2'); end;
 
 %% write start script
 
