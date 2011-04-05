@@ -224,7 +224,7 @@ IND = [];
 
    end
    
-
+   
    if strcmp(NFSstruct.SubType,'Delft3D-trim') | ...
       strcmp(NFSstruct.SubType,'Delft3D-trih')
       names                     = squeeze(names);
