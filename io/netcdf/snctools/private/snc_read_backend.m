@@ -64,15 +64,15 @@ switch ( mv )
     case { '14', '2006a', '2006b', '2007a', '2007b', '2008a' }
 		% No native matlab support here.  We will favor java over
 		% mexnc for now.
-        if use_java && (strcmp(fmt,fmts.NetCDF) || strcmp(fmt,fmts.NetCDF4))
-			% We will favor java over mexnc.
-            retrieval_method = retrieval_methods.java;
-        elseif use_mexnc && strcmp(fmt,fmts.NetCDF) 
-            retrieval_method = retrieval_methods.mexnc;
-        elseif use_mexnc && strcmp(fmt,fmts.NetCDF4) && use_mexnc
-			% Assume the user knows what they are doing here.
+        if (strcmp(fmt,fmts.NetCDF) || strcmp(fmt,fmts.NetCDF4))
+        	if use_java 
+	            retrieval_method = retrieval_methods.java;
+            else
+	            retrieval_method = retrieval_methods.mexnc;
+		    end
         elseif use_java
             % Last chance is if it is some format that netcdf-java can handle.
+            % Hope for the best.
             retrieval_method = retrieval_methods.java;
             fmt = fmts.netcdf_java;
         end
@@ -81,22 +81,24 @@ switch ( mv )
         % 2008b introduced native netcdf-3 support.
 		% netcdf-4 still requires either mexnc or java, and we will favor
 		% java again.
-        if strcmp(fmt,fmts.NetCDF) && use_mexnc
-            % Use mexnc only if the user is dead serious about it.
-            retrieval_method = retrieval_methods.mexnc;
-        elseif strcmp(fmt,fmts.NetCDF)
-            % otherwise use TMW for all local NC3 files 
+        if strcmp(fmt,fmts.NetCDF) 
+			% Use TMW for all local netcdf-3 files.
             retrieval_method = retrieval_methods.tmw;
-        elseif strcmp(fmt,fmts.NetCDF4) && use_java
-            % Use TMW for all local NC3 files 
-            retrieval_method = retrieval_methods.java;
         elseif strcmp(fmt,fmts.NetCDF4) 
-            % Assume the user knows what they are doing.
-            retrieval_method = retrieval_methods.mexnc;
-        elseif use_java
-            % Last chance is if it is some format that netcdf-java can handle.
-            retrieval_method = retrieval_methods.java;
-            fmt = fmts.netcdf_java;
+            if use_java
+            	retrieval_method = retrieval_methods.java;
+			elseif use_mexnc
+            	retrieval_method = retrieval_methods.mexnc;
+			else
+    			error('SNCTOOLS:unknown2008bNetcdf4BackendSituation', ...
+			          'The file format is netCDF-4, but the java backend is not enabled.');
+			end
+		else
+			% not netcdf-3 or netcdf-4 
+			if use_java
+            	% Last chance is if it is some format that netcdf-java can handle.
+	            retrieval_method = retrieval_methods.java;
+			end
         end
 
     otherwise
@@ -112,8 +114,8 @@ switch ( mv )
 end
 
 if isempty(retrieval_method)
-    error('SNCTOOLS:unknownBackendSituation', ...
-      'Could not determine which backend to use with %s.', ...
+    error('SNCTOOLS:unknownBackendSituation', ...  
+	      'Could not determine which backend to use with %s.  If the file format is not netCDF, the java backend must be enabled.', ...
        ncfile );
 end
 return

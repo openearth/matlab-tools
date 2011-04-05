@@ -1,5 +1,11 @@
 function test_nc_varrename_neg(mode)
 
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a'}
+        fprintf('No negative tests run on %s...\n',v);
+        return
+end
 test_backend_neutral;
 
 switch(mode)

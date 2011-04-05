@@ -2,10 +2,10 @@ function test_nc_attget_neg(ncfile)
 
 v = version('-release');
 switch(v)
-    case { '14','2006a','2006b'}
+    case { '14','2006a','2006b','2007a'}
         fprintf('No negative tests run on %s...  ',v);
         return
-    case {'2007a','2007b','2008a','2008b','2009a','2009b','2010a'}
+    case {'2007b','2008a','2008b','2009a','2009b','2010a'}
 		test_get_att_not_there_classic ( ncfile );
         return
     otherwise

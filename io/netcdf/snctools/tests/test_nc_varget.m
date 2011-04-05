@@ -22,6 +22,9 @@ switch(mode)
         ncfile = fullfile(testroot,'testdata/varget4.nc');
 		run_local_tests(ncfile);
 
+    case 'netcdf4-enhanced'
+        run_nc4_enhanced;
+        
 	case 'opendap'
 		run_opendap_tests;
 
@@ -29,6 +32,23 @@ end
 
 fprintf('OK\n');
 
+
+%--------------------------------------------------------------------------
+function run_nc4_enhanced()
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot,'testdata/enhanced.nc');
+
+test_enhanced_group_and_var_have_same_name(ncfile);
+
+%--------------------------------------------------------------------------
+function test_enhanced_group_and_var_have_same_name(ncfile)
+
+expData = (1:10)';
+actData = nc_varget(ncfile,'/grp1/grp1');
+ddiff = abs(expData - actData);
+if any( find(ddiff > eps) )
+    error ( 'input data ~= output data.' );
+end
 
 %--------------------------------------------------------------------------
 function test_bad_missing_value()

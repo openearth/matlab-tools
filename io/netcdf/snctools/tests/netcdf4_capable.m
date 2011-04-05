@@ -14,7 +14,7 @@ end
 
 try
 	v = mexnc('inq_libvers');
-catch me
+catch 
 	tf = false;
 	return
 end

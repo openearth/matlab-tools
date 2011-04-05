@@ -1,3 +1,18 @@
+* Sun Mar 27 2011 John Evans <john.g.evans.ne@gmail.com> -r3504
+- Adopted Gerben de Boer's suggestions for NC_GETALL.
+
+* Wed Mar 23 2011 John Evans <john.g.evans.ne@gmail.com> -r3503
+- Refactored private/snc_readbackend to make one error message clearer.
+- No longer allowing for mexnc on post-2008b netcdf-3 for any reason.
+- Removed 2007a from negative testing again.
+
+* Mon Feb 28 2011 John Evans <john.g.evans.ne@gmail.com> -r3499
+- Added enhanced model read support for java backend.
+
+* Sun Feb 27 2011 John Evans <john.g.evans.ne@gmail.com> -r3491
+- Added some introspection to private/snc_read_backend and 
+-     private/snc_format, suggested by Gerben de Boer.
+
 * Sun Jan 16 2011 John Evans <john.g.evans.ne@gmail.com> -r3484
 - Simplified some private HDF4 backend functions.
 - Printing message if HDF4 testing not enabled.

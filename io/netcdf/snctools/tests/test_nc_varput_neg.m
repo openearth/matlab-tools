@@ -1,11 +1,5 @@
 function test_nc_varput_neg (  )
 
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b'}
-        fprintf('No negative tests run on %s...\n',v);
-        return
-end
 run_nc3_tests()
 
 

@@ -13,19 +13,19 @@ switch(mode)
 		testroot = fileparts(mfilename('fullpath'));
 		ncfile = fullfile(testroot,'testdata/attget.nc');
 	    run_local_nc_tests(ncfile);
-	    test_nc_attget_neg(ncfile);
+	    run_negative_tests(ncfile);
 
 	case 'netcdf4-classic'
 		testroot = fileparts(mfilename('fullpath'));
 		ncfile = fullfile(testroot,'testdata/attget-4.nc');
 	    run_local_nc_tests(ncfile);
-	    test_nc_attget_neg(ncfile);
+	    run_negative_tests(ncfile);
 
 	case 'hdf'
 		testroot = fileparts(mfilename('fullpath'));
 		ncfile = fullfile(testroot,'testdata/attget.hdf');
 	    run_local_nc_tests(ncfile);
-	    test_nc_attget_neg(ncfile);
+	    run_negative_tests(ncfile);
 
 	case 'grib'
 		testroot = fileparts(mfilename('fullpath'));
@@ -384,3 +384,12 @@ return
 
 
 
+%--------------------------------------------------------------------------
+function run_negative_tests(ncfile)
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a'}
+        fprintf('No negative tests run on %s...  ',v);
+    otherwise
+		test_nc_attget_neg(ncfile);
+end

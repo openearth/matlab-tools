@@ -31,7 +31,7 @@ function restore_state()
 warning('on', 'SNCTOOLS:nc_archive_buffer:deprecated' );
 warning('on', 'SNCTOOLS:nc_datatype_string:deprecated' );
 warning('on', 'SNCTOOLS:nc_diff:deprecated' );
-warning('on', 'SNCTOOLS:nc_getall:deprecated' );
+warning('on', 'SNCTOOLS:nc_getall:dangerous' );
 warning('on', 'SNCTOOLS:snc2mat:deprecated' );
         
 
@@ -65,7 +65,7 @@ end
 warning('off', 'SNCTOOLS:nc_archive_buffer:deprecated' );
 warning('off', 'SNCTOOLS:nc_datatype_string:deprecated' );
 warning('off', 'SNCTOOLS:nc_diff:deprecated' );
-warning('off', 'SNCTOOLS:nc_getall:deprecated' );
+warning('off', 'SNCTOOLS:nc_getall:dangerous' );
 warning('off', 'SNCTOOLS:snc2mat:deprecated' );
 
 
@@ -107,6 +107,7 @@ switch(v)
             fprintf('prefererence is true.\n');    
         else
             run_nc4_read_tests;
+            run_nc4_enhanced_read_tests;
         end
                 
     otherwise
@@ -189,6 +190,7 @@ switch(v)
         run_nc3_write_tests;
         run_nc4_read_tests;
         run_nc4_write_tests;
+        run_nc4_enhanced_read_tests;
 end
 
 
@@ -227,8 +229,6 @@ function run_nc3_read_tests()
 
 fprintf('\tTesting netcdf-3...\n');
 
-testroot = fileparts(mfilename('fullpath'));
-
 test_nc_attget;
 test_nc_datatype_string;
 test_nc_iscoordvar;
@@ -248,10 +248,9 @@ test_nc_dump;
 %--------------------------------------------------------------------------
 function run_nc4_read_tests()
 
-fprintf('\tTesting netcdf-4...\n');
 
-testroot = fileparts(mfilename('fullpath'));
 mode = 'netcdf4-classic';
+fprintf('\tTesting %s..\n',mode);
 
 test_nc_attget(mode);
 test_nc_datatype_string;
@@ -275,6 +274,12 @@ else
     fprintf('\t\tNo netcdf-4 NC_DUMP testing on %s.\n', v);
 end
 
+%--------------------------------------------------------------------------
+function run_nc4_enhanced_read_tests()
+
+mode = 'netcdf4-enhanced';
+fprintf('\tTesting %s...\n',mode);
+test_nc_varget(mode);
 
 
 %--------------------------------------------------------------------------

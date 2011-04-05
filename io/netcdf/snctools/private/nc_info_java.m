@@ -35,20 +35,45 @@ else
 	end
 end
 
-fileinfo.Filename = ncfile; %[name ext];
 
 root_group = jncid.getRootGroup();
-fileinfo.Dimension = get_dimensions_j ( root_group );
-fileinfo.Dataset = get_variables_j ( root_group );
+fileinfo = get_group_info(root_group);
 fileinfo.Name = '/';
-
-% Get the global attributes and variable attributes
-j_att_list = root_group.getAttributes();
-fileinfo.Attribute = snc_java_bundle_atts ( j_att_list );
+fileinfo.Filename = ncfile; %[name ext];
 
 if close_it
 	close ( jncid );
 end
+
+
+%--------------------------------------------------------------------------
+function info = get_group_info( the_group)
+
+info_template = struct('Name','','Dimension',[],'Dataset',[],'Attribute',[],'Group',[]);
+
+info = info_template;
+info.Dimension = get_dimensions_j ( the_group );
+info.Dataset = get_variables_j ( the_group );
+info.Name = ['/' char(the_group.getName())];
+
+% Get the global attributes and variable attributes
+j_att_list = the_group.getAttributes();
+info.Attribute = snc_java_bundle_atts ( j_att_list );
+
+
+% Any sub groups?
+childGroups = the_group.getGroups();
+ngroups = childGroups.size();
+if ngroups == 0
+	return	
+end
+
+info.Group = repmat(info_template,ngroups,1);
+
+for j = 1:ngroups
+	info.Group(j) = get_group_info ( childGroups.get(j-1));
+end
+
 
 return
 
@@ -151,6 +176,10 @@ while 1
 
     %mDataset = nc_getvarinfo ( root_group, jvarid );
 	mDataset = snc_java_varid_info ( jvarid );
+    
+    % adjust the name, strip off the leading group name
+    [pp,nn] = fileparts(mDataset.Name);
+    mDataset.Name = nn;
 
     Dataset(var_count,1) = mDataset;
 

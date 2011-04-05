@@ -66,8 +66,8 @@ switch(mode)
 
 		% This doesn't work for nc4 or hdf4
 		test_bad_fill_value;
+		run_negative_tests;
 
-		test_nc_varput_neg;
 
 	case 'hdf4'
 		run_hdf4_tests;
@@ -713,3 +713,12 @@ return
 
 
 
+
+%--------------------------------------------------------------------------
+function run_negative_tests()
+v = version('-release');
+switch(v)
+    case { '14','2006a','2006b','2007a'}
+        fprintf('No negative tests run on %s...\n',v);
+        return
+end

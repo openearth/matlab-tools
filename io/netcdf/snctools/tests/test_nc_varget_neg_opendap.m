@@ -2,7 +2,7 @@ function test_nc_varget_neg_opendap()
 
 v = version('-release');
 switch(v)
-    case {'14','2006a','2006b'}
+    case {'14','2006a','2006b','2007a'}
         fprintf('negative tests filtered out on release %s.', v);
     otherwise
         run_opendap_tests;

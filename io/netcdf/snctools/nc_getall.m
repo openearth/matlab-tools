@@ -1,6 +1,7 @@
 function data = nc_getall ( ncfile ,varargin)
 %NC_GETALL Read entire contents of netCDF file.
-%   This function is intended only for test purposes, not for analysing data.
+%   This function is intended only for test purposes, not for analysing 
+%   data.
 %   
 %   NCDATA = NC_GETALL(NCFILE) reads the entire contents of 
 %   the netCDF file NCFILE into the structure NCDATA. NC_GETALL 
@@ -13,8 +14,8 @@ function data = nc_getall ( ncfile ,varargin)
 %
 %   NCDATA = NC_GETALL(NCFILE,<maxSize>) loads only variables 
 %   whose data size (NUMEL) does not exceed maxSize (default 
-%   set to Inf to the load the entire file, set to 0 to load
-%   only meta-data, or set to reasonable limit as 2e6). 
+%   2e6, set to Inf the load the entire file, and to 0 to load
+%   only meta-data). 
 % 
 %   Note: NC_INFO has similar functionality, but 
 %   - does not turn attribute names into field names and 
@@ -29,7 +30,7 @@ function data = nc_getall ( ncfile ,varargin)
              'NC_GETALL discards information on dimensions and hence poses a risk when interpreting data, use only for testing.');
 
    % Show usage if too few arguments.
-   maxSize = Inf; % 2e6; % not too big a default, 
+   maxSize = 2e6; % not too big a default, 
    % but big enough to load looong timeseries such as 
    % http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-DELFZL.nc.html (mar 2010)
    if nargin < 1
