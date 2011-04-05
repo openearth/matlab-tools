@@ -95,14 +95,14 @@ function odvplot_overview(D,varargin)
     axes(AX(1)); cla %subplot(1,4,4)
     
        if OPT.index.var==0
-          plot (D.data.longitude,D.data.latitude,'ro')
+          plot (D.metadata.longitude,D.metadata.latitude,'ro')
           hold on
-          plot (D.data.longitude,D.data.latitude,'r.')
+          plot (D.metadata.longitude,D.metadata.latitude,'r.')
        else
           if ~isempty(OPT.clim)
           clim(OPT.clim)
           end
-          plotc(D.data.longitude,D.data.latitude,str2num(char(D.rawdata{OPT.index.var,:})))
+          plotc(D.metadata.longitude,D.metadata.latitude,D.data{OPT.index.var})
           hold on
           colorbarwithvtext({mktex(D.local_name{OPT.index.var})}),... % D.sdn_long_name{OPT.index.var}})
        end
@@ -116,9 +116,9 @@ function odvplot_overview(D,varargin)
        box        on
        hold       off
 
-       txt = ['Cruise: ',D.data.cruise{1},...
-               '   -   ',datestr(min(D.data.datenum),31),...
-               '   -   ',datestr(max(D.data.datenum),31)];
+       txt = ['Cruise: ',D.metadata.cruise{1},...
+               '   -   ',datestr(min(D.metadata.datenum),31),...
+               '   -   ',datestr(max(D.metadata.datenum),31)];
 
        title     (txt)
 

@@ -52,15 +52,15 @@ function odvplot_cast(D,varargin)
 % $Keywords:
 
    % TO DO: allows automatic choice based on various SDN name parts
-   OPT.variable  = '';%'P011::PSALPR02'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
-   OPT.z         = 'PRESPS01';
-   OPT.index.var = 12;  % plot first non meta-data column if not specified
-   OPT.index.z   = [];  % plot last      meta-data column if not specified
-   OPT.vc        = 'gshhs_c.nc'; % http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc
-   OPT.lon       = [];
-   OPT.lat       = [];
-   OPT.clim      = [];
-   OPT.overlay   = 0;
+   OPT.sdn_standard_name  = '';
+   OPT.z                  = '';
+   OPT.index.var          = 12;  % plot first non meta-data column if not specified
+   OPT.index.z            = [];  % plot last      meta-data column if not specified
+   OPT.vc                 = 'gshhs_c.nc'; % http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc
+   OPT.lon                = [];
+   OPT.lat                = [];
+   OPT.clim               = [];
+   OPT.overlay            = 0;
 
    if nargin==0
        varargout = {OPT};
@@ -80,7 +80,7 @@ function odvplot_cast(D,varargin)
 
 %% find column to plot based on sdn_standard_name
 
-   if isempty(OPT.variable)
+   if isempty(OPT.sdn_standard_name)
       [OPT.index.var, ok] = listdlg('ListString', {D.sdn_long_name{10:2:end}} ,...
                           'SelectionMode', 'multiple', ...
                            'InitialValue', [2 3],... % first is likely pressure so suggest 2 others
@@ -89,20 +89,20 @@ function odvplot_cast(D,varargin)
       OPT.index.var = OPT.index.var*2-1 + 9; % 10th is first on-meta data item
    else
       for i=1:length(D.sdn_standard_name)
-         if any(strfind(D.sdn_standard_name{i},OPT.variable))
+         if any(strfind(D.sdn_standard_name{i},OPT.sdn_standard_name))
             OPT.index.var = i;
             break
          end
       end
       if OPT.index.var==0
-         error([OPT.variable,' not found.'])
+         error([OPT.sdn_standard_name,' not found.'])
          return
       end
    end
    
 %% find column to use as vertical axis
 
-   if isempty(OPT.index.z)
+   if isempty(OPT.z)
       [OPT.index.z, ok] = listdlg('ListString', {D.sdn_long_name{10:2:end}} ,...
                            'InitialValue', 1,... % first is likely pressure so suggest it
                            'PromptString', 'Select the single variable to ue as y/z-vertex (depth, pressure, ...)', ....
@@ -126,15 +126,15 @@ function odvplot_cast(D,varargin)
    
     for ivar=1:nvar
      axes(AX(ivar)); cla %subplot(1,4,1)
-       var.x = str2num(char(D.rawdata{OPT.index.var(ivar),:}));
-       var.y = str2num(char(D.rawdata{OPT.index.z        ,:}));
+       var.x = D.data{OPT.index.var(ivar)};
+       var.y = D.data{OPT.index.z        };
        if ~isempty(var.x)
         plot  (var.x,var.y,'.-')
         set   (gca,'ydir','reverse')
         xlabel([D.local_name{OPT.index.var(ivar)},' [',D.local_units{OPT.index.var(ivar)},']'])
         grid on
         hold on
-        plot(xlim,[D.data.bot_depth D.data.bot_depth],'r')
+        plot(xlim,[D.metadata.bot_depth D.metadata.bot_depth],'r')
         hold off
         box on
         %if nvar > 1
@@ -161,9 +161,9 @@ function odvplot_cast(D,varargin)
        
     axes(AX(nvar+1)); cla %subplot(1,4,4)
     
-       plot(D.data.longitude,D.data.latitude,'ro')
+       plot(D.metadata.longitude,D.metadata.latitude,'ro')
        hold on
-       plot(D.data.longitude,D.data.latitude,'r.')
+       plot(D.metadata.longitude,D.metadata.latitude,'r.')
        axis      tight
        
        plot(OPT.lon,OPT.lat,'k')
@@ -184,11 +184,11 @@ function odvplot_cast(D,varargin)
    end
        % text rather than titles per subplot, because subplots can be empty
        if D.cast
-          txt = ['Cruise: ',D.data.cruise{1},...
-                  '   -   Station: ',mktex(D.data.station{1}),' (',num2str(D.data.latitude(1)),'\circE, ',num2str(D.data.longitude(1)),'\circN)',...
-                  '   -   ',datestr(D.data.datenum(1),31)];
+          txt = ['Cruise: ',D.metadata.cruise{1},...
+                  '   -   Station: ',mktex(D.metadata.station{1}),' (',num2str(D.metadata.latitude(1)),'\circE, ',num2str(D.metadata.longitude(1)),'\circN)',...
+                  '   -   ',datestr(D.metadata.datenum(1),31)];
        else
-          txt = ['Cruise: ',D.data.cruise{1}];
+          txt = ['Cruise: ',D.metadata.cruise{1}];
        end
        text (0,1,txt,...
                   'units','normalized',...

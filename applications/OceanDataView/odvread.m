@@ -121,19 +121,15 @@ function varargout = odv_read(fullfilename)
 % There has to be exactly one line containing the labels of the columns. This column labels line must always be present, it must appear before any data line and it must be the first non-comment line in the file.
 % ODV generic spreadsheet files must provide columns for all mandatory metavariables (see Table 3-3), and the following labels must be used exactly as given as column labels: Cruise, Station, Type, one of the supported date/time formats, Longitude [degrees_east], Latitude [degrees_north], Bot. Depth [m]. The recommended date/time format is ISO 8601, which combines date and time as yyyy-mm-ddThh:mm:ss.sss in a single column. The labels Lon (°E) and Lat (°N) for longitude and latitude are still supported for back-ward compatibility.
 
-   % TO DO: scan first for # data lines, to preallocate  D.rawdata??
-   % TO DO: interpret SDN keyword in header
-
-   %disp('error: ODVREAD is still a test project!')
-   
    OPT.delimiter     = char(9);% columns are TAB sepa-rated [ODV manual section 15.6]
    OPT.variablesonly = 1; % remove units from variables
-   sdn_code_warning  = 1;
+   OPT.method        = 'textscan'; %'fgetl'; % 'textscan';
 
    D = struct('odv_name'     ,'',...
               'standard_name','','units','',...
               'local_name'   ,'','local_units','',...
-              'sdn_long_name','','sdn_standard_name','','sdn_units',''); % determine command line order
+              'sdn_long_name','','sdn_standard_name','','sdn_units','',...
+              'data',''); % determine command line order
 
   [D.file.path D.file.name D.file.ext] = fileparts(fullfilename);
    D.file.fullfilename = fullfilename;
@@ -221,38 +217,26 @@ function varargout = odv_read(fullfilename)
                   
                      iSDN = iSDN + 2;
                      
+                  %% get names accoridng to different vocabs (CF, SDN, local,...)
+
                      D.odv_name{iSDN-1} =  D.lines.header{iline}(3:end);
                      D.odv_name{iSDN  } =  D.lines.header{iline}(3:end); % QV columns
+
                     [~,D.sdn_standard_name{iSDN-1},~,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline});
                     [~,D.sdn_standard_name{iSDN  },~,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline}); % QV columns
-                     
-                     %% get CF
-                     
+                     D.sdn_long_name{iSDN-1} =  q;
+                     D.sdn_long_name{iSDN  } =  q;
+                     D.sdn_units    {iSDN-1} =  u;
+                     D.sdn_units    {iSDN  } =  u;
+
                    %[standard_name,units]=sdn2cf(D.sdn_standard_name{iSDN});
                      standard_name = 'sdn2cf(sdn_standard_name) # TO DO';
                      units         = 'sdn2cf(sdn_units) # TO DO';
-
                      D.standard_name{iSDN-1} =  standard_name;
                      D.standard_name{iSDN  } =  standard_name;
                      D.units        {iSDN-1} =  units;
                      D.units        {iSDN  } =  units;
                      
-                     %% using nerc webservice
-                     %try 
-                       D.sdn_long_name     {iSDN-1} =  q;
-                       D.sdn_long_name     {iSDN  } =  q;
-                       D.sdn_units         {iSDN-1} =  u;
-                       D.sdn_units         {iSDN  } =  u;
-                     %catch
-                     %   if sdn_code_warning
-                     %      fprintf(2,'failed to verify sdn codes with nerc vocab webserver\n')
-                     %      sdn_code_warning = 0;
-                     %   end
-                     %   D.sdn_long_name     {iSDN-1} =  '';
-                     %   D.sdn_long_name     {iSDN  } =  '';
-                     %   D.sdn_units         {iSDN-1} =  '';
-                     %   D.sdn_units         {iSDN  } =  '';
-                     %end
                   end
                end
                
@@ -277,7 +261,6 @@ function varargout = odv_read(fullfilename)
             for ivar=1:length(D.local_name)
                brack1            = strfind(D.local_name{ivar},'[');
                brack2            = strfind(D.local_name{ivar},']');
-               %-% disp([D.local_name{ivar},' ',num2str([ivar brack1 brack2])])
                D.local_units{ivar}     = D.local_name{ivar}([brack1+1:brack2-1]);
                % remove units AFTER extracting units
                if OPT.variablesonly
@@ -285,7 +268,6 @@ function varargout = odv_read(fullfilename)
                  D.local_name{ivar} = strtrim(D.local_name{ivar}([1:brack1-1]));
                 end
                end
-               %-% disp([D.local_name{ivar},' ',num2str([ivar brack1 brack2])])
             end
 
          %% Find column index of mandarory variables
@@ -298,18 +280,10 @@ function varargout = odv_read(fullfilename)
             D.index.latitude               = find(strcmpi(D.local_name,'Latitude'));
             D.index.longitude              = find(strcmpi(D.local_name,'Longitude'));
             D.index.bot_depth              = find(strcmpi(D.local_name,'Bot. Depth')); % often there as implicit z
-            D.index.sea_water_pressure     = find(strcmpi(D.local_name,'SDN:P011::PRESPS01'));
-           %D.index.sea_water_temperature  = find(strcmpi(D.local_name,'T90'));
-           %D.index.sea_water_salinity     = find(strcmpi(D.local_name,'Salinity'));
-           %D.index.sea_water_fluorescence = find(strcmpi(D.local_name,'fluorescence'));
             else
             D.index.latitude               = find(strcmpi(D.local_name,'Latitude [degrees_north]'));
             D.index.longitude              = find(strcmpi(D.local_name,'Longitude [degrees_east]'));
             D.index.bot_depth              = find(strcmpi(D.local_name,'Bot. Depth [m]'));
-            D.index.sea_water_pressure     = find(strcmpi(D.local_name,'SDN:P011::PRESPS01')); % often there as implicit z
-           %D.index.sea_water_temperature  = find(strcmpi(D.local_name,'T90 [degC]'));
-           %D.index.sea_water_salinity     = find(strcmpi(D.local_name,'Salinity [PSU]'));
-           %D.index.sea_water_fluorescence = find(strcmpi(D.local_name,'fluorescence [ugr/l]'));
             end
             D.index.LOCAL_CDI_ID           = find(strcmpi(D.local_name,'LOCAL_CDI_ID'));
             D.index.EDMO_code              = find(strcmpi(D.local_name,'EDMO_code'));
@@ -317,47 +291,76 @@ function varargout = odv_read(fullfilename)
             D.institution = 'EDMO_code2long_name(EDMO_code) # TO DO';
             
          %% III) Data lines
-            
                 idat   = 0;
-                D.rawdata = cell(nvar,1);
-            while 1
-                rec = fgetl(fid);
-                if ~ischar(rec), break, end
-                idat = idat + 1;
-                sep = [0 strfind(rec,char(9)) (length(rec)+1)]; % tab-delimited with empty values possible
-                for ivar=1:nvar
-                   D.rawdata{ivar,idat}       = rec(sep(ivar)+1:sep(ivar+1)-1);
-                   if isempty(D.rawdata{ivar,idat})
-                    D.rawdata{ivar,idat} = D.rawdata{ivar,1}; % TNO leaves out rest of column when identical to first column elements
-                   end
-                end
+            if strcmpi(OPT.method,'fgetl')
+               D.data = cell(1,nvar);
+               % TO DO: scan first for # data lines, to preallocate  D.data??
+               while 1
+                   rec = fgetl(fid);
+                   if ~ischar(rec), break, end
+                   idat = idat + 1;
+                   sep = [0 strfind(rec,char(9)) (length(rec)+1)]; % tab-delimited (char(9)) with empty values possible between tabs
+               end
+            elseif strcmpi(OPT.method,'textscan')
+               fmt    = repmat('%s',[1 nvar]);
+               D.data = textscan(fid,fmt,'Delimiter',char(9));
+               idat   = length(D.data{1});
             end
+            
+         %% some (like TNO) leave out rest of column when identical to first column elements
+         
+            for ivar=1:nvar
+               for idat=1:length(D.data{ivar})
+                  if isempty(D.data{ivar}{idat})
+                     D.data{ivar}{idat} = D.data{ivar}{1}; % TNO leaves out rest of column when identical to first column elements
+                  end
+               end
+            end
+            
+            
+            for idat=4:length(D.data); % skip first 4 columsn, they are chars anyway [Cruise	Station	Type	yyyy-mm-ddThh:mm:ss.sss]
+               
+               % make a double array, and make sure intermediate missing empry values are nan
+               % str2num makes '' empty, so cell2mat beccomes too short, whereas
+               % str2double makes '' a nan, so cell2mat has the correct shape.
+               array = cell2mat(cellfun(@str2double,(D.data{idat}),'UniformOutput',0));
+
+               % test whether raw data was 100% numeric or 100% empty: 
+               % both will be considered numeric, mixed columsn are considered char
+               if all(cellfun(@isempty,D.data{idat}))
+                  D.data{idat} = nan(length(D.data{idat}),1); % mind orientation same as array
+               elseif ~all(isnan(array))
+                  D.data{idat} = array;
+               end
+               
+            end
+            
+            % Turn rawdata into 1D cell
             
             if idat == 0
 
                disp(['Found empty file: ',D.file.name])
 
-               D.rawdata                     = {[]};
-               D.data.cruise                 = {['']}; % {} gives error with char
-               D.data.station                = {['']}; % {} gives error with char
-               D.data.type                   = {['']}; % {} gives error with char
-               D.data.datenum                =  nan;   % datestr gives error on NaN,Inf, while 0 not handy
-               D.data.latitude               =  nan;
-               D.data.longitude              =  nan;
-               D.data.bot_depth              =  nan;
+               D.data                     = {[]};
+               D.metadata.cruise                 = {['']}; % {} gives error with char
+               D.metadata.station                = {['']}; % {} gives error with char
+               D.metadata.type                   = {['']}; % {} gives error with char
+               D.metadata.datenum                =  nan;   % datestr gives error on NaN,Inf, while 0 not handy
+               D.metadata.latitude               =  nan;
+               D.metadata.longitude              =  nan;
+               D.metadata.bot_depth              =  nan;
 
             else
 
-               D.data.cruise                 =             {D.rawdata{D.index.cruise       ,:}};
-               D.data.station                =             {D.rawdata{D.index.station      ,:}};
-               D.data.type                   =             {D.rawdata{D.index.type         ,:}};
-               D.data.datenum                = datenum(char(D.rawdata{D.index.time         ,:}),'yyyy-mm-ddTHH:MM:SS');
-               D.data.latitude               = str2num(char(D.rawdata{D.index.latitude     ,:}));
-               D.data.longitude              = str2num(char(D.rawdata{D.index.longitude    ,:}));
-               D.data.bot_depth              = str2num(char(D.rawdata{D.index.bot_depth    ,:}));
-
-               D.LOCAL_CDI_ID                =              D.rawdata{D.index.LOCAL_CDI_ID ,1};  % unique for ODV file
-               D.EDMO_code                   = str2num(char(D.rawdata{D.index.EDMO_code    ,1})); % unique for ODV file
+               D.metadata.cruise                 =              D.data{D.index.cruise   };
+               D.metadata.station                =              D.data{D.index.station  };
+               D.metadata.type                   =              D.data{D.index.type     };
+               D.metadata.datenum                = datenum(char(D.data{D.index.time     }),'yyyy-mm-ddTHH:MM:SS');
+               D.metadata.latitude               =              D.data{D.index.latitude };
+               D.metadata.longitude              =              D.data{D.index.longitude};
+               D.metadata.bot_depth              =              D.data{D.index.bot_depth};
+               D.LOCAL_CDI_ID                    =              D.data{D.index.LOCAL_CDI_ID }{1};  % unique string for ODV file
+               D.EDMO_code                       =              D.data{D.index.EDMO_code    }(1);  % unique number for ODV file
 
             end
 
@@ -379,34 +382,39 @@ function varargout = odv_read(fullfilename)
    
 %% Get extraction info: 1 value per cast (and check for uniqueness: i.e. are there time-consuming, sidewards-drifting casts?)
 
-   [D.cruise      ]   = unique(D.data.cruise      );if length(D.cruise      ) > 1;error('no unique value: cruise      ');end
-   [D.type        ]   = unique(D.data.type        );if length(D.type        ) > 1;error('no unique value: type        ');end
+   [D.cruise      ]   = unique(D.metadata.cruise      );if length(D.cruise      ) > 1;error('no unique value: cruise      ');end
+   [D.type        ]   = unique(D.metadata.type        );if length(D.type        ) > 1;error('no unique value: type        ');end
     D.file.name       = char(D.file.name   );		      
     D.cruise          = char(D.cruise      );		      
     D.type            = char(D.type        );		      
 
-   [station  ,ind1] = unique(D.data.station     );if length(station  ) == 1;D.data.station   = station  ;end 
-   [ddatenum ,ind2] = unique(D.data.datenum     );if length(ddatenum ) == 1;D.data.datenum   = ddatenum ;end
-   [latitude ,ind3] = unique(D.data.latitude    );if length(latitude ) == 1;D.data.latitude  = latitude ;end
-   [longitude,ind4] = unique(D.data.longitude   );if length(longitude) == 1;D.data.longitude = longitude;end
-   [bot_depth,ind5] = unique(D.data.bot_depth   );if length(bot_depth) == 1;D.data.bot_depth = bot_depth;end
+   [station  ,ind1] = unique(D.metadata.station     );if length(station  ) == 1;D.metadata.station   = station  ;end 
+   [ddatenum ,ind2] = unique(D.metadata.datenum     );if length(ddatenum ) == 1;D.metadata.datenum   = ddatenum ;end
+   [latitude ,ind3] = unique(D.metadata.latitude    );if length(latitude ) == 1;D.metadata.latitude  = latitude ;end
+   [longitude,ind4] = unique(D.metadata.longitude   );if length(longitude) == 1;D.metadata.longitude = longitude;end
+   [bot_depth,ind5] = unique(D.metadata.bot_depth   );if length(bot_depth) == 1;D.metadata.bot_depth = bot_depth;end
 
    if length(ind1)==1 & ...
       length(ind2)==1 & ...
       length(ind3)==1 & ...
       length(ind4)==1 & ...
-      length(ind5)==1
+      length(ind5)==1 & ...
+    ~(length(D.data{1})==1)
       D.cast    = 1;
-      D.station = char(D.data.station);
       else
       D.cast    = 0;
    end
+   
+   if length(D.metadata.station)==1
+      D.station = char(D.metadata.station);
+   end
+
 
 %% Output
 
-   D.read.with   = '$Id$';
-   D.read.at     = datestr(now);
-   D.read.status = iostat;
+   %D.read.with   = '$Id$';
+   %D.read.at     = datestr(now);
+   %D.read.status = iostat;
 
    if nargout==1
       varargout  = {D};

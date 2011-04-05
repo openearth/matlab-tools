@@ -125,29 +125,32 @@ function R = odvplot_overview_kml(D,varargin)
    
    for i=1:length(D)
    
-      R.cruise{i}       = D(i).data.cruise;
-      R.station{i}      = D(i).data.station;
-      R.type{i}         = D(i).data.type;
-      R.datenum{i}      = D(i).data.datenum  ;
-      R.latitude{i}     = D(i).data.latitude ;
-      R.longitude{i}    = D(i).data.longitude;
+      R.cruise{i}       = D(i).metadata.cruise;
+      R.station{i}      = D(i).metadata.station;
+      R.type{i}         = D(i).metadata.type;
+      R.datenum{i,:}    = D(i).metadata.datenum  ;
+      R.latitude{i,:}   = D(i).metadata.latitude ;
+      R.longitude{i,:}  = D(i).metadata.longitude;
       R.LOCAL_CDI_ID{i} = D(i).LOCAL_CDI_ID;
       R.EDMO_code{i}    = D(i).EDMO_code;
       
-      value = str2num(char(D(i).rawdata{OPT.index.var,:}));
-      if ~isempty(value)
-         R.data{i}      = value; % error if empty, make nan
+      value = D(i).data{OPT.index.var}; % empties in here get lost
+      if isempty(value)
+         value = nan.*D(i).metadata.datenum;
       end
+      R.data{i}       = value; % error if empty, make nan
 
-      if D(1).cast
-         R.data{i}      = str2num(char(D(i).rawdata{OPT.index.z,:}));
-      end
+      %if D(1).cast
+      %   R.data{i}      = str2num(char(D(i).data{OPT.index.z}));
+      %end
    
    end
    
-   R.data         = cell2mat(R.data     );
-   R.datenum      = cell2mat(R.datenum  );
-   R.latitude     = cell2mat(R.latitude );
-   R.longitude    = cell2mat(R.longitude);
+   %% either expand per-file meta-info or do not cell2mat per-file data
+   
+  % R.data         = cell2mat(R.data     );
+  % R.datenum      = cell2mat(R.datenum  );
+  % R.latitude     = cell2mat(R.latitude );
+  % R.longitude    = cell2mat(R.longitude);
 
 %% EOF

@@ -14,42 +14,47 @@
 
 % TO DO  only one kml colorbar L
 
-OPT.pause        = 0;
-OPT.plot         = 0;
+OPT.pause        = 1;
+OPT.plot         = 1;
 OPT.kml          = 1;
 OPT.basedir      = 'F:\checkouts\OpenEarthRawData\SeaDataNet\';
 
-%% 
+%% cast: CTD NIOZ
 SET(1).vc                = 'F:\opendap\thredds\deltares\landboundaries\northsea.nc'; % 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
 SET(1).directory         = [OPT.basedir,filesep,'usergd30d98-data_centre630-270409_result\'];
 SET(1).sdn_standard_name = 'P011::PSALPR02';
 SET(1).clim              = [5 25];
+SET(1).z                 = [];
 
-%% VOS
+%% samples: VOS: surface samples only
 SET(2).vc                = 'F:\opendap\thredds\noaa\gshhs\gshhs_i.nc'; % 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc'
 SET(2).directory         = [OPT.basedir,filesep,'userkc30e50-data_centre632-090210_result\'];
-SET(2).sdn_standard_name = 'SDN:P011::PSSTTS01';
+SET(2).sdn_standard_name = 'SDN:P011::PSSTTS01'; % Temperature of the water body by in-situ thermometer
 SET(2).clim              = [5 25];
+SET(2).z                 = [];
 
-%% CTD NIOZ
+%% cast: CTD NIOZ
 SET(3).vc                = 'F:\opendap\thredds\noaa\gshhs\gshhs_i.nc'; % 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc'
 SET(3).directory         = [OPT.basedir,filesep,'usergd30d98-data_centre630-2011-02-23_result\'];
-SET(3).sdn_standard_name = 'SDN:P011::PSSTTS01';
+SET(3).sdn_standard_name = 'SDN:P011::PSSTTS01'; % Temperature of the water body by in-situ thermometer
 SET(3).clim              = [5 25];
+SET(3).z                 = 'SDN:P011::PRESPS01';
 
-%% CTD imares
+%% samples: imares: surface samples only
 SET(4).vc                = 'F:\opendap\thredds\noaa\gshhs\gshhs_i.nc'; % 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc'
 SET(4).directory         = [OPT.basedir,filesep,'usergd30d98-data_centre633-230211_result\'];
-SET(4).sdn_standard_name = 'SDN:P011::ODSDM021';%'P011::ODSDM021'; % if empty, throws pop-up
+SET(4).sdn_standard_name = 'SDN:P011::ODSDM021';% Salinity of the water body
 SET(4).clim              = [5 25];
+SET(4).z                 = [];
 
-%% TNO lithogaphy
+%% cast + samples (cast with 1 datapoint): TNO lithogaphy
 SET(5).vc                = 'F:\opendap\thredds\deltares\landboundaries\northsea.nc'; % 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
 SET(5).directory         = [OPT.basedir,filesep,'usergd30d98-data_centre635-210311_result\'];
-SET(5).sdn_standard_name = 'SDN:P011::PSSTTS01';
+SET(5).sdn_standard_name = 'SDN:P011::SEGMLENG';
 SET(5).clim              = [5 25];
+SET(5).z                 = 'SDN:P011::COREDIST';
 
-for i=4%1:length(SET)
+for i=1 %1:length(SET)
 
    L = odv_metadata(SET(i).directory);
 
@@ -63,6 +68,8 @@ for i=4%1:length(SET)
 % Cycle CDi
 
    for ifile=1:length(L.name);
+       
+      disp([num2str(ifile)])
    
       fname = L.name{ifile};
        
@@ -74,11 +81,11 @@ for i=4%1:length(SET)
        
       %odvdisp(D)
       
+      %%
       clf
-
       if OPT.plot
        if D(jfile).cast==1
-        odvplot_cast    (D(jfile),'lon',L.lon,'lat',L.lat,'sdn_standard_name',SET(i).sdn_standard_name);
+        odvplot_cast    (D(jfile),'lon',L.lon,'lat',L.lat,'sdn_standard_name',SET(i).sdn_standard_name,'z',SET(i).z);
        else
         odvplot_overview(D(jfile),'lon',L.lon,'lat',L.lat,'sdn_standard_name',SET(i).sdn_standard_name);
        end
@@ -96,7 +103,6 @@ for i=4%1:length(SET)
       %  end
       % end
       
-   
       if OPT.pause
          disp(['processed # ',num2str([ifile,length(L.name);],'%0.3d/%0.3d'),', press key to continue'])
          pausedisp
@@ -122,14 +128,16 @@ for i=4%1:length(SET)
    
 %%   
    
-   M = odv_merge(D,'sdn_standard_name',SET(i).sdn_standard_name);
+   M = odv_merge(D,'sdn_standard_name',SET(i).sdn_standard_name)
    
-   KMLscatter(M.latitude,M.longitude,M.data,...
-            'name',M.LOCAL_CDI_ID,... %      'description',['LOCAL_CDI_ID = ',M.LOCAL_CDI_ID,', cruise = ',M.cruise,', EDMO_code = ',num2str(M.EDMO_code)],...
-            'html',M.LOCAL_CDI_ID,... %      'description',['LOCAL_CDI_ID = ',M.LOCAL_CDI_ID,', cruise = ',M.cruise,', EDMO_code = ',num2str(M.EDMO_code)],...
+%% kml with all data from downloaded set, encopassing multiple odv files
+   
+   KMLscatter(cell2mat(M.latitude),cell2mat(M.longitude),cell2mat(M.data),...
+            ...% 'name',M.LOCAL_CDI_ID,... %      'description',['LOCAL_CDI_ID = ',M.LOCAL_CDI_ID,', cruise = ',M.cruise,', EDMO_code = ',num2str(M.EDMO_code)],...
+            ...% 'html',M.LOCAL_CDI_ID,... %      'description',['LOCAL_CDI_ID = ',M.LOCAL_CDI_ID,', cruise = ',M.cruise,', EDMO_code = ',num2str(M.EDMO_code)],...
         'fileName',[last_subdir(SET(i).directory),'.kml'],...
-          'timeIn',M.datenum-1,...
-         'timeOut',M.datenum+1,...
+          'timeIn',cell2mat(M.datenum)-1,...
+         'timeOut',cell2mat(M.datenum)+1,...
          'kmlName',[last_subdir(SET(i).directory),'.kml'],...
 'scalenormalState',2,'scalehighlightState',2,...
         'colorbar',1,...
