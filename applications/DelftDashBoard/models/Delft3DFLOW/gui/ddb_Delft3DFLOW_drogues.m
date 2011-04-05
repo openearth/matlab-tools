@@ -1,4 +1,4 @@
-        function ddb_Delft3DFLOW_drogues(varargin)
+function ddb_Delft3DFLOW_drogues(varargin)
 
 handles=getHandles;
 
