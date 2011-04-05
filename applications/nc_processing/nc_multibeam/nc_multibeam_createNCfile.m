@@ -5,6 +5,8 @@ function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
 %
 %See also: nc_multibeam, snctools
 
+OPT.num_bytes = 20000; % pad header
+
 %% create empty outputfile
 %  indicate NetCDF outputfile name and create empty structure
 if ~exist(OPT.netcdf_path,'dir')
@@ -104,7 +106,7 @@ dimSizeY = (OPT.mapsizey/OPT.gridsizey);
 
 %% Expand NC file
 
-   netcdf.endDef(NCid)
+   netcdf.endDef(NCid,OPT.num_bytes,4,0,4); 
 
 %% add coordinate data
 

@@ -155,6 +155,12 @@ if OPT.make
        error('no raw files')
    end
     
+%% sort so that the time vector ends up continuously increasing in the netCDF file  
+
+   dates = cellfun(OPT.dateFcn,{fns.name});
+   [dates,ind]= sort(dates);
+   fns = fns(ind);
+
 %% initialize waitbar
 
    WB.done       = 0;
