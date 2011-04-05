@@ -13,6 +13,7 @@
 % * NL: Delft: <a href="http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/">http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/</a> (THREDDS test)
 % * NL: Rijkswaterstaat: <a href="http://matroos.deltares.nl:8080/thredds/">http://matroos.deltares.nl:8080/thredds/</a> (THREDDS + password)
 % * NL: Rijkswaterstaat: <a href="http://matroos.deltares.nl/direct/opendap.html">http://matroos.deltares.nl/direct/opendap.html</a> (HYRAX + password)
+% * NL: KNMI (test): <a href="http://geoservices.knmi.nl/thredds/catalog.html">http://geoservices.knmi.nl/thredds/catalog.html</a> (THREDDS)
 % * FR: IFREMER: <a href="http://www.ifremer.fr/dodsG/">http://www.ifremer.fr/dodsG/</a> (GrADS)
 % * US: NOAA NCEP <a href="http://nomads.ncep.noaa.gov:9090/dods">http://nomads.ncep.noaa.gov:9090/dods</a> (GrADS)
 % * US: NASA GSFC: <a href="http://agdisc.gsfc.nasa.gov/dods">agdisc</a>, <a href="http://nsipp.gsfc.nasa.gov:9090/dods">nsipp</a>, <a href="http://voda.gsfc.nasa.gov:9090/dods">voda</a>, <a href="http://goldsmr1.sci.gsfc.nasa.gov/dods">goldsmr1</a>, ~<a href="http://goldsmr2.sci.gsfc.nasa.gov/dods">2</a>, ~<a href="http://goldsmr3.sci.gsfc.nasa.gov/dods">3</a> (GrADS)
@@ -26,9 +27,10 @@
 % * EU: EUMETSAT: <a href="http://gsics.eumetsat.int/thredds/catalog.html">http://gsics.eumetsat.int/thredds/catalog.html</a> (THREDDS)
 % * Godae <a href="http://www.usgodae.org/dods/GDS">http://www.usgodae.org/dods/GDS</a> (GrADS)
 %
-%   opendap_catalog     - get list of netCDF files (dataset) from opendap catalog
-%                         NB: these Dataset urls from an OPeNDAP server can be 
-%                         accessed directly with the snctools (only THREDDS + HYRAX, not GrADS).
-%   opendap_get_cache   - get a local cache of an opendap folder (catalogRef)
+%   opendap_catalog       - get list of netCDF files (dataset) from opendap catalog
+%                           NB: these Dataset urls from an OPeNDAP server can be 
+%                           accessed directly with the snctools (only THREDDS + HYRAX, not GrADS).
+%   opendap_get_cache     - get a local cache of an opendap folder (catalogRef)
+%   nc_cf_opendap2catalog - crawls server, extracts CF compliant meta-info from files, stores as catalog.nc
 %
 %See also: snctools, nctools

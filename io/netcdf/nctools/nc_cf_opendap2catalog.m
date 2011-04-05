@@ -2,11 +2,13 @@ function varargout = nc_cf_opendap2catalog(varargin)
 %NC_CF_OPENDAP2CATALOG   creates catalog of CF compliant netCDF files on one OPeNDAP server (BETA)
 %
 %   ATT = nc_cf_opendap2catalog(<baseurl>,<keyword,value>)
+%   ATT = nc_cf_opendap2catalog(<files>  ,<keyword,value>)
 %
-% Extracts meta-data from all netCDF files in baseurl, which can either be an
-% opendap catalog or a local directory. Set 'maxlevel' to harvest deeper.
-% When you query a local directory, and you want the catalog to work on a server,
-% use keyword 'urlPathFcn' to replace the local root with the opendap root, e.g.:
+% Extracts meta-data from all netCDF files in <baseurl>, which can 
+% either be an opendap catalog or a local directory. Set 'maxlevel' 
+% to harvest deeper. When you query a local directory, and you want 
+% the catalog to work on a server, use keyword 'urlPathFcn' to 
+% replace the local root with the opendap root, e.g.:
 %
 % 'urlPathFcn'= @(s) strrep(s,OPT.root_nc,['http://opendap.deltares.nl/thredds/dodsC/opendap/',OPT.path]))
 %
@@ -110,6 +112,7 @@ OPT.separator      = ';'; % for long names
 OPT.datatype       = 'stationtimeseries'; % CF data types (grid, stationtimeseries upcoming CF standard https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions)
 OPT.debug          = 0;
 OPT.disp           = 'multiWaitbar';
+OPT.datestr        = 'yyyy-mm-ddTHH:MM:SS'; % default for high-freq timeseries
 
 if nargin==0
    varargout = {OPT};
@@ -412,8 +415,8 @@ end % entry
        end
    end
    
-   ATT.timecoverage_start   = datestr(ATT.datenum_start,'yyyy-mm-ddTHH:MM:SS');
-   ATT.timecoverage_end     = datestr(ATT.datenum_end  ,'yyyy-mm-ddTHH:MM:SS');
+   ATT.timecoverage_start   = datestr(ATT.datenum_start,OPT.datestr);
+   ATT.timecoverage_end     = datestr(ATT.datenum_end  ,OPT.datestr);
 
 %% merge VAR structure in the ATT structure
 

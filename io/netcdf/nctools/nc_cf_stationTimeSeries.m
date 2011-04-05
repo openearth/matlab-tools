@@ -273,9 +273,20 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
     if ~isempty(OPT.varname)
     
       FIG = figure;
-
+      
+      count = length(D.datenum);
+      
+      if     count < 100 % use large marker
+      plot    (D.datenum,D.(OPT.varname),'displayname',[mktex(M.(OPT.varname).long_name),' [',...
+                                                        mktex(M.(OPT.varname).units    ),']'],'marker','o','markerfacecolor','b')
+      elseif count < 1000 % use small marker
+      plot    (D.datenum,D.(OPT.varname),'displayname',[mktex(M.(OPT.varname).long_name),' [',...
+                                                        mktex(M.(OPT.varname).units    ),']'],'marker','.')
+      else % continuous
       plot    (D.datenum,D.(OPT.varname),'displayname',[mktex(M.(OPT.varname).long_name),' [',...
                                                         mktex(M.(OPT.varname).units    ),']'])
+
+      end
       datetick('x')
       grid     on
       title   ({mktex(filenameext(fileinfo.Filename)),...
