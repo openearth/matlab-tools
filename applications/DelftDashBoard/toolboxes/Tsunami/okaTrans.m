@@ -4,7 +4,9 @@ dx=2;
 xl=round(3*wdt/2);
 [E,N] = meshgrid(-xl:dx:xl,-xl:dx:xl);
 lngth=wdt;
-[uE,uN,uZ] = okada85(E,N,depth,0,dip,lngth,wdt,sliprake,slip,0);
+% Focal depth
+focdpt = wdt*sin(dip*pi/180) + depth;
+[uE,uN,uZ] = okada85(E,N,focdpt,0,dip,lngth,wdt,sliprake,slip,0);
 
 
 ix0=size(E,1)/2-wdt/2/dx;

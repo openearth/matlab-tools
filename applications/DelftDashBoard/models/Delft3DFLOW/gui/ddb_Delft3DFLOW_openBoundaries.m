@@ -78,12 +78,18 @@ else
             handles.Model(md).Input(ad).deleteOpenBoundary=0;
             handles.editMode='edit';
             n=handles.Model(md).Input(ad).activeOpenBoundary;
-            [xb,yb,zb,side,orientation]=ddb_getBoundaryCoordinates(handles,ad,n);
-            handles.Model(md).Input(ad).openBoundaries(n).X=xb;
-            handles.Model(md).Input(ad).openBoundaries(n).Y=yb;
-            handles.Model(md).Input(ad).openBoundaries(n).Depth=zb;
-            handles.Model(md).Input(ad).openBoundaries(n).Side=side;
-            handles.Model(md).Input(ad).openBoundaries(n).Orientation=orientation;
+            xg=handles.Model(md).Input(ad).gridX;
+            yg=handles.Model(md).Input(ad).gridY;
+            zg=handles.Model(md).Input(ad).depthZ;
+            kcs=handles.Model(md).Input(ad).kcs;
+            [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(handles.Model(md).Input(ad).openBoundaries(n),xg,yg,zg,kcs);
+            handles.Model(md).Input(ad).openBoundaries(n).x=xb;
+            handles.Model(md).Input(ad).openBoundaries(n).y=yb;
+            handles.Model(md).Input(ad).openBoundaries(n).depth=zb;
+            handles.Model(md).Input(ad).openBoundaries(n).side=side;
+            handles.Model(md).Input(ad).openBoundaries(n).orientation=orientation;
+            handles.Model(md).Input(ad).openBoundaries(n).alphau=alphau;
+            handles.Model(md).Input(ad).openBoundaries(n).alphav=alphav;
             m1str=num2str(handles.Model(md).Input(ad).openBoundaries(n).M1);
             m2str=num2str(handles.Model(md).Input(ad).openBoundaries(n).M2);
             n1str=num2str(handles.Model(md).Input(ad).openBoundaries(n).N1);
@@ -294,7 +300,7 @@ else
                     txt='Select Time Series Conditions File';
                 case{'bcc'}
                     tp='*.bcc';
-                    txt='Select Harmonic Conditions File';
+                    txt='Select Transport Conditions File';
             end
             [filename, pathname, filterindex] = uiputfile(tp,txt);
             if pathname~=0
@@ -356,8 +362,26 @@ if ok==1
     handles.Model(md).Input(ad).openBoundaries(iac).N1=n1;
     handles.Model(md).Input(ad).openBoundaries(iac).M2=m2;
     handles.Model(md).Input(ad).openBoundaries(iac).N2=n2;
+    
+    handles.Model(md).Input(ad).openBoundaries(iac).alpha=0.0;
+    handles.Model(md).Input(ad).openBoundaries(iac).compA='unnamed';
+    handles.Model(md).Input(ad).openBoundaries(iac).compB='unnamed';
+    handles.Model(md).Input(ad).openBoundaries(iac).type='Z';
+    handles.Model(md).Input(ad).openBoundaries(iac).forcing='A';
+    handles.Model(md).Input(ad).openBoundaries(iac).profile='Uniform';
 
-    handles=ddb_initializeBoundary(handles,iac);
+    t0=handles.Model(md).Input(ad).startTime;
+    t1=handles.Model(md).Input(ad).stopTime;
+    nrsed=handles.Model(md).Input(ad).nrSediments;
+    nrtrac=handles.Model(md).Input(ad).nrTracers;
+    nrharmo=handles.Model(md).Input(ad).nrHarmonicComponents;
+    x=handles.Model(md).Input(ad).gridX;
+    y=handles.Model(md).Input(ad).gridY;
+    depthZ=handles.Model(md).Input(ad).depthZ;
+    kcs=handles.Model(md).Input(ad).kcs;
+    
+    handles.Model(md).Input(ad).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(ad).openBoundaries,iac, ...
+        t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs);
   
     handles.Model(md).Input(ad).openBoundaries(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
     handles.Model(md).Input(ad).openBoundaryNames{iac}=handles.Model(md).Input(ad).openBoundaries(iac).name;

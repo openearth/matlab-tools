@@ -71,12 +71,30 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                         handles.Model(md).Input(id).openBoundaries(nb).M2=mend;
                         handles.Model(md).Input(id).openBoundaries(nb).N1=n2(j);
                         handles.Model(md).Input(id).openBoundaries(nb).N2=n2(j);
-                        handles=ddb_initializeBoundary(handles,nb);
+                        
+                        handles.Model(md).Input(id).openBoundaries(nb).alpha=0.0;
+                        handles.Model(md).Input(id).openBoundaries(nb).compA='unnamed';
+                        handles.Model(md).Input(id).openBoundaries(nb).compB='unnamed';
+                        handles.Model(md).Input(id).openBoundaries(nb).type='Z';
+                        handles.Model(md).Input(id).openBoundaries(nb).forcing='A';
+                        handles.Model(md).Input(id).openBoundaries(nb).profile='Uniform';
+                        
+                        t0=handles.Model(md).Input(id).startTime;
+                        t1=handles.Model(md).Input(id).stopTime;
+                        nrsed=handles.Model(md).Input(id).nrSediments;
+                        nrtrac=handles.Model(md).Input(id).nrTracers;
+                        nrharmo=handles.Model(md).Input(id).nrHarmonicComponents;
+                        x=handles.Model(md).Input(id).gridX;
+                        y=handles.Model(md).Input(id).gridY;
+                        depthZ=handles.Model(md).Input(id).depthZ;
+                        kcs=handles.Model(md).Input(id).kcs;
+
+                        handles.Model(md).Input(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(id).openBoundaries,nb, ...
+                            t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs);
+                        
+%                        handles=ddb_initializeBoundary(handles,nb);
+
                         handles.Model(md).Input(id).openBoundaries(nb).name=[dir{j} num2str(nd)];
-%                         handles.Model(md).Input(id).OpenBoundaries(nb).X1=x(mstart-1,n(j));
-%                         handles.Model(md).Input(id).OpenBoundaries(nb).Y1=y(mstart-1,n(j));
-%                         handles.Model(md).Input(id).OpenBoundaries(nb).X2=x(mend,n(j));
-%                         handles.Model(md).Input(id).OpenBoundaries(nb).Y2=y(mend,n(j));
 %                    end
                 end
             end
@@ -126,7 +144,28 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                         handles.Model(md).Input(id).openBoundaries(nb).M2=m2(j);
                         handles.Model(md).Input(id).openBoundaries(nb).N1=nstart;
                         handles.Model(md).Input(id).openBoundaries(nb).N2=nend;
-                        handles=ddb_initializeBoundary(handles,nb);
+
+                        handles.Model(md).Input(id).openBoundaries(nb).alpha=0.0;
+                        handles.Model(md).Input(id).openBoundaries(nb).compA='unnamed';
+                        handles.Model(md).Input(id).openBoundaries(nb).compB='unnamed';
+                        handles.Model(md).Input(id).openBoundaries(nb).type='Z';
+                        handles.Model(md).Input(id).openBoundaries(nb).forcing='A';
+                        handles.Model(md).Input(id).openBoundaries(nb).profile='Uniform';
+                        
+                        t0=handles.Model(md).Input(id).startTime;
+                        t1=handles.Model(md).Input(id).stopTime;
+                        nrsed=handles.Model(md).Input(id).nrSediments;
+                        nrtrac=handles.Model(md).Input(id).nrTracers;
+                        nrharmo=handles.Model(md).Input(id).nrHarmonicComponents;
+                        x=handles.Model(md).Input(id).gridX;
+                        y=handles.Model(md).Input(id).gridY;
+                        depthZ=handles.Model(md).Input(id).depthZ;
+                        kcs=handles.Model(md).Input(id).kcs;
+
+                        handles.Model(md).Input(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(id).openBoundaries,nb, ...
+                            t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs);
+                        
+%                        handles=ddb_initializeBoundary(handles,nb);
                         handles.Model(md).Input(id).openBoundaries(nb).name=[dir{j} num2str(nd)];
 %                         handles.Model(md).Input(id).OpenBoundaries(nb).X1=x(m(j),nstart-1);
 %                         handles.Model(md).Input(id).OpenBoundaries(nb).Y1=y(m(j),nstart-1);

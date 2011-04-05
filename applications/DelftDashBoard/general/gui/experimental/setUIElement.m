@@ -49,7 +49,11 @@ switch lower(el.style)
                 if isnan(val)
                     val='';
                 else
-                    val=num2str(val);
+                    if ~isempty(el.format)
+                        val=num2str(val,el.format);
+                    else
+                        val=num2str(val);
+                    end
                 end
         end
         

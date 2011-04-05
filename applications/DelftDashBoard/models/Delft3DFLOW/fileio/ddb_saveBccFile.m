@@ -96,7 +96,7 @@ switch lower(Par.profile)
             Info.Table(k).Parameter(j).Name=[quant 'end B layer ' num2str(kk)];
             Info.Table(k).Parameter(j).Unit=unit;
         end
-        t=(Par.TimeSeriesT-itDate)*1440;
+        t=(Par.timeSeriesT-itDate)*1440;
         Info.Table(k).Data(:,1)=t;
         j=1;
         for kk=1:kmax

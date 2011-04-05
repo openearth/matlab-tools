@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <toolbox>Nesting</toolbox>
+  <longname>Nesting</longname>
+  <enable>1</enable>
+  <elements>
+    <element>
+      <position>40 10 1000 140</position>
+      <style>tabpanel</style>
+      <tag>nestpanel</tag>
+      <tabs>
+        <tab>
+          <tag>nesthd1</tag>
+          <tabstring>Nesting - 1</tabstring>
+          <callback>ddb_NestingToolbox_nestHD1</callback>
+          <elements>nesting.nesthd1.xml</elements>
+        </tab>
+        <tab>
+          <tag>nesthd2</tag>
+          <tabstring>Nesting - 2</tabstring>
+          <callback>ddb_NestingToolbox_nestHD2</callback>
+          <elements>nesting.nesthd2.xml</elements>
+        </tab>
+      </tabs>
+    </element>
+  </elements>
+</root>

@@ -135,6 +135,8 @@ if isfield(xml,'elements')
                 s.elements(k).type             = getnodeval(elxml(k).element,'type',[],'string');
                 s.elements(k).max              = getnodeval(elxml(k).element,'mx',[],'integer');
                 s.elements(k).borderType       = getnodeval(elxml(k).element,'bordertype','etchedin','string');
+                s.elements(k).format           = getnodeval(elxml(k).element,'format','','string');
+                s.elements(k).enable           = getnodeval(elxml(k).element,'enable',1,'boolean');
                 
                 if isfield(elxml(k).element,'list')
 
