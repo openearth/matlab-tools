@@ -302,6 +302,21 @@ function ui_read(obj)
                     info.t = info.dims.globaltime_DATA;
                     info.x = info.dims.globalx_DATA;
                     info.y = info.dims.globaly_DATA;
+                case 'run'
+                    
+                    info.type = 'output_dir';
+                    info.fpath = xb_get(info.input, 'path');
+
+                    % read dimensions
+                    info.dims = xb_read_dims(info.fpath);
+
+                    % read variables
+                    info.vars = xb_get_vars(info.fpath);
+
+                    % determine grid and time
+                    info.t = info.dims.globaltime_DATA;
+                    info.x = info.dims.globalx_DATA;
+                    info.y = info.dims.globaly_DATA;
                 otherwise
                     error('Unsupported XBeach strucure supplied');
             end

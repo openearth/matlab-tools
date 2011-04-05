@@ -93,7 +93,7 @@ if xb_exist(xb, 'ssh')
     
     [host user pass id messages] = xb_get(xb, 'ssh.host', 'ssh.user', 'ssh.pass', 'id', 'messages');
 
-    cmd = sprintf('%s %s@%s -pw %s ". /opt/sge/InitSGE && qstat -u %s"', ...
+    cmd = sprintf('%s %s@%s -pw %s -batch ". /opt/sge/InitSGE && qstat -u %s"', ...
             exe_path, user, host, pass, user);
 
     [retcode messages] = system(cmd);
