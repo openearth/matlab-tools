@@ -101,6 +101,11 @@ OPT = setproperty(OPT, varargin{:});
 
 %% make grid
 
+% set boundaries
+xend    = xin(end);
+xstart  = xin(1);
+xlast   = xstart;
+
 if OPT.vardx == 0
     
     % constant dx
@@ -114,11 +119,6 @@ elseif OPT.vardx == 1
     Llong   = 4*2*pi/k;
     x       = xin;
     hin     = max(OPT.wl-zin,0.01);
-    
-    % set boundaries
-    xend    = x(end);
-    xstart  = x(1);
-    xlast   = xstart;
     
     % grid settings
     ii = 1;
