@@ -73,3 +73,6 @@ setpref('xbeach', 'grid_finalise', {});
 %% xb_run
 setpref('xbeach', 'ssh_user', '');
 setpref('xbeach', 'ssh_pass', '');
+
+setpref('xbeach', 'runs', []);
+setpref('xbeach', 'queue', []);
