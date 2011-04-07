@@ -77,7 +77,7 @@ fclose(fid);
 
 %% search for non-ascii characters
 
-if ~any(data < 32 & ~ismember(data, [9 10 13]))
+if ~any(data < 32 & ~ismember(data, [9 10 13])) && ~all(data > 126 | data == 63)
     binary = false;
 else
     binary = true;

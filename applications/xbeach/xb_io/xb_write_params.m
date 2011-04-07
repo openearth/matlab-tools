@@ -71,7 +71,7 @@ if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct(...
     'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}}, ...
-    'xbdir', abspath(fullfile(fileparts(which(mfilename)), '..', '..', '..', '..', 'fortran', 'XBeach')));
+    'xbdir', '');
 
 if nargin > 2
     OPT = setproperty(OPT, varargin{:});
@@ -80,8 +80,16 @@ end
 if ~iscell(OPT.header); OPT.header = {OPT.header}; end;
 
 %% write parameter file
-if exist(OPT.xbdir, 'file')
-    [params params_array] = xb_get_params(OPT.xbdir);
+matfile = fullfile(fileparts(which('xb_get_params')), 'params.mat');
+
+[params params_array] = xb_get_params;
+
+if ~isempty(params_array)
+    parname = {params_array.name};
+    partype = {params_array.partype};
+    upartype = unique(partype);
+elseif exist(matfile, 'file')
+    load(matfile);
     parname = {params_array.name};
     partype = {params_array.partype};
     upartype = unique(partype);
