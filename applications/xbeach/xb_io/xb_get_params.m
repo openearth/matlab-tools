@@ -402,7 +402,8 @@ if exist(paramsfname, 'file')
     fclose(fid);
 
     % store data
-    save(fullfile(fileparts(which(mfilename)), 'params.mat'), '-mat', 'params', 'params_array');
+    matfile = fullfile(fileparts(which(mfilename)), 'params.mat');
+    if ~exist(matfile, 'file'); save(matfile, '-mat', 'params', 'params_array'); end;
 
 end
 
