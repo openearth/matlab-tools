@@ -106,6 +106,11 @@ for id = 1:length(ids)
     % run sprintf apply e.g. \n, \t, etc.
     equalsigns{id} = sprintf(equalsigns{id});
     delimiters{id} = sprintf(delimiters{id});
+    % solve multiple line char arrays
+    if size(variables{id},1) > 1
+        variables{id} = sprintf('char(%s)', var2evalstr(cellstr(variables{id}), 'basevarname', '', 'delimiter', ''));
+        quotes{id} = '';
+    end
 end
 
 %% create cell in which each column combined contains the evalstr of a variable
