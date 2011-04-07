@@ -51,7 +51,7 @@ clc; warning off %#ok<WNOFF>
 
 %% settings
 % identify dataset and landboundary file to use
-OPT.dataset                = 'd:\checkouts\vo_nc\projects\151027_maasvlakte_2\elevation_data\gebiedsmodel_2.5x2.5_filled_weekly\catalog.nc';
+OPT.dataset                = 'd:\checkouts\vo_nc\projects\151027_maasvlakte_2\elevation_data\gebiedsmodel_2.5x2.5_weekly_filled\catalog.nc';
 OPT.ldburl                 = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc'; % indicate landboundary file to use in plotting (default holland.nc)
 OPT.polygon                = [];
 
@@ -69,6 +69,9 @@ OPT.searchinterval         = -7;                                     % acceptabl
 % specify plotting details
 OPT.plot_difference_map    = 1;
 OPT.caxis                  = [-2 2];                                 % coloring limits to use in the difference plot
+
+OPT = setproperty(OPT, varargin{:});
+
 
 %% GETDATA --------------------------------------------------------------------------
 

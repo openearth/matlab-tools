@@ -18,13 +18,13 @@ function grid_orth_generateVolumeDevelopment(varargin)
 
 dataset = 'd:\checkouts\vo_nc\projects\151027_maasvlakte_2\elevation_data\gebiedsmodel_2.5x2.5_weekly_filled\catalog.nc'
 grid_orth_generateVolumeDevelopment( ...
-   'dataset',                dataset, ...         % select a dataset, must be a catalog.nc
-   'remove_cached_results',  1, ...               % 1 will trigger removal of cached results, default 1 is to never use cached results
-   'remove_cached_polygons', 1, ...               % 1 will delete previously used polygons, default 1 is to allways start with an empty polygon dir which allows the user to select a new polygon by mouseclick
-   'starttime',              datenum(2010,10,10); % indicate desired start time of volume development (otherwise routine will start from first time available in database)
-   'stoptime',               datenum(2010,11,10); % indicate desired stop time of volume development (otherwise routine will continue untill last time available in database)
-   'searchinterval',         0;                   % acceptable interval to include data from (in days - minus: looking back, plus: looking forward)
-   'mincoverage',            80;                  % coverage percentage (can be several, e.g. [50 75 90]), for the 'filled' datasets it suffices to select 1 coverage percentage (e.g. 90 %)
+   'dataset',                dataset, ...             % select a dataset, must be a catalog.nc
+   'remove_cached_results',  1, ...                   % 1 will trigger removal of cached results, default 1 is to never use cached results
+   'remove_cached_polygons', 1, ...                   % 1 will delete previously used polygons, default 1 is to allways start with an empty polygon dir which allows the user to select a new polygon by mouseclick
+   'starttime',              datenum(2010,10,10), ... % indicate desired start time of volume development (otherwise routine will start from first time available in database)
+   'stoptime',               datenum(2010,11,10), ... % indicate desired stop time of volume development (otherwise routine will continue untill last time available in database)
+   'searchinterval',         0, ...                   % acceptable interval to include data from (in days - minus: looking back, plus: looking forward)
+   'mincoverage',            80);                     % coverage percentage (can be several, e.g. [50 75 90]), for the 'filled' datasets it suffices to select 1 coverage percentage (e.g. 90 %)
 
 %}
 %

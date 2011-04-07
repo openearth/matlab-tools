@@ -74,6 +74,8 @@ OPT.thinning               = 1;                                      % stride to
 % specify plotting details
 OPT.plot_profile           = 1;
 
+OPT = setproperty(OPT, varargin{:});
+
 %% GETDATA --------------------------------------------------------------------------
 
 %% create a figure with tagged patches
