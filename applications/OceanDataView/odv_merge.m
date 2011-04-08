@@ -44,7 +44,12 @@ function R = odvplot_overview_kml(D,varargin)
 % $Revision$
 % $HeadURL
 
-   OPT.sdn_standard_name = ''; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+% TO DO: merge ALL  variables when none specified instead of throwing GUI
+
+   OPT.sdn_standard_name = ''; % char or numeric: (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.z                 = ''; % char or numeric: (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.metadataFcn       = @(z) z; %':'; % e.g. 1 extract only surface layer
+   OPT.dataFcn           = @(z) z; %':'; % e.g. 1 extract only surface layer
    
    if nargin==0
        varargout = {OPT};
@@ -78,23 +83,36 @@ function R = odvplot_overview_kml(D,varargin)
 %% find column to use as vertical axis
 
    if D(1).cast
-   if isempty(OPT.index.z)
-      [OPT.index.z, ok] = listdlg('ListString', {D.sdn_long_name{10:2:end}} ,...
-                           'InitialValue', 1,... % first is likely pressure so suggest it
-                           'PromptString', 'Select the single variable to ue as y/z-vertex (depth, pressure, ...)', ....
-                                   'Name', 'Selection of y/z-variable');
-      OPT.index.z = OPT.index.z*2-1 + 9; % 10th is first on-meta data item
+   if isempty(OPT.z)
+      [OPT.index.var, ok] = listdlg('ListString', {D(1).sdn_long_name{10:2:end}} ,...
+                           'InitialValue', [1],... % first is likely pressure so suggest 2 others
+                           'PromptString', 'Select single variables to plot as colored dots', ....
+                                   'Name', 'Selection of c/z-variable');
+      OPT.index.var = OPT.index.var*2-1 + 9; % 10th is first on-meta data item
    else
-      for i=1:length(D.sdn_standard_name)
-         if any(strfind(D.sdn_standard_name{i},OPT.z));
+      for i=1:length(D(1).sdn_standard_name)
+      %disp(['SDN name: ',D.sdn_standard_name{i},'  <-?->  ',OPT.sdn_standard_name])
+         if any(strfind(D(1).sdn_standard_name{i},OPT.z))
             OPT.index.z = i;
             break
          end
       end
+      if OPT.index.z==0
+         error([OPT.z,' not found.'])
+         return
+      end
    end
    end
 
-%%% merge parameter
+%% resolve parameter
+
+    if isempty(D(1).sdn_long_name)
+   [~,M.sdn_standard_name,~] =  sdn_parameter_mapping_resol(D(1).odv_name);
+    M.sdn_long_name =  '';
+    M.sdn_units     =  '';
+    end
+
+%% merge parameter
 
    fldnames = ...
    {'odv_name',...
@@ -125,20 +143,35 @@ function R = odvplot_overview_kml(D,varargin)
    
    for i=1:length(D)
    
-      R.cruise{i}       = D(i).metadata.cruise;
-      R.station{i}      = D(i).metadata.station;
-      R.type{i}         = D(i).metadata.type;
-      R.datenum{i,:}    = D(i).metadata.datenum  ;
-      R.latitude{i,:}   = D(i).metadata.latitude ;
-      R.longitude{i,:}  = D(i).metadata.longitude;
-      R.LOCAL_CDI_ID{i} = D(i).LOCAL_CDI_ID;
-      R.EDMO_code{i}    = D(i).EDMO_code;
+%% extract data
+
+      R.cruise{i}       =              D(i).data{D(i).index.cruise      }; % D(i).cruise;
+      R.station{i}      =              D(i).data{D(i).index.station     }; % D(i).station;
+      R.type{i}         =              D(i).data{D(i).index.type        }; % D(i).type;
+      R.LOCAL_CDI_ID{i} =              D(i).data{D(i).index.LOCAL_CDI_ID}; % D(i).LOCAL_CDI_ID;
+      R.EDMO_code{i}    =              D(i).data{D(i).index.EDMO_code   }; % D(i).EDMO_code;
+
+      R.datenum{i}      = datenum(char(D(i).data{D(i).index.time        }),'yyyy-mm-ddTHH:MM:SS');
+      R.latitude{i}     =     cell2mat(D(i).data(D(i).index.latitude    ));
+      R.longitude{i}    =     cell2mat(D(i).data(D(i).index.longitude   ));
       
-      value = D(i).data{OPT.index.var}; % empties in here get lost
-      if isempty(value)
-         value = nan.*D(i).metadata.datenum;
+      R.data{i} = D(i).data{OPT.index.var}; % empties in here get lost
+      if isempty(R.data{i})
+         R.data{i} = nan.*D(i).metadata.datenum;
       end
-      R.data{i}       = value; % error if empty, make nan
+      
+%% subset one data value per odv file or ...?
+
+      R.cruise{i}       = OPT.metadataFcn(R.cruise{i}      );
+      R.station{i}      = OPT.metadataFcn(R.station{i}     );
+      R.type{i}         = OPT.metadataFcn(R.type{i}        );
+      R.LOCAL_CDI_ID{i} = OPT.metadataFcn(R.LOCAL_CDI_ID{i});
+      R.EDMO_code{i}    = OPT.metadataFcn(R.EDMO_code{i}   );
+
+      R.datenum{i}      = OPT.metadataFcn(R.datenum{i}     );
+      R.latitude{i}     = OPT.metadataFcn(R.latitude{i}    );
+      R.longitude{i}    = OPT.metadataFcn(R.longitude{i}   );
+      R.data{i}         =     OPT.dataFcn(R.data{i}        );
 
       %if D(1).cast
       %   R.data{i}      = str2num(char(D(i).data{OPT.index.z}));
@@ -148,9 +181,9 @@ function R = odvplot_overview_kml(D,varargin)
    
    %% either expand per-file meta-info or do not cell2mat per-file data
    
-  % R.data         = cell2mat(R.data     );
-  % R.datenum      = cell2mat(R.datenum  );
-  % R.latitude     = cell2mat(R.latitude );
-  % R.longitude    = cell2mat(R.longitude);
+   % R.data         = cell2mat(R.data     );
+   % R.datenum      = cell2mat(R.datenum  );
+   % R.latitude     = cell2mat(R.latitude );
+   % R.longitude    = cell2mat(R.longitude);
 
 %% EOF

@@ -1,6 +1,7 @@
 %ODVTEST   script to test ODVRREAD, ODVDISP, ODVPLOT_CAST, ODVPLOT_OVERVIEW
 %
-% plots all CTDCAST files in a directory one by one, in Matlab and in Google Earth.
+%   plots all odv files files in a directory one by one in Matlab 
+%   and all together in Google Earth.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: OceanDataView
@@ -12,10 +13,8 @@
 % $HeadURL
 % $Keywords:
 
-% TO DO  only one kml colorbar L
-
-OPT.pause        = 1;
-OPT.plot         = 1;
+OPT.pause        = 0;
+OPT.plot         = 0;
 OPT.kml          = 1;
 OPT.basedir      = 'F:\checkouts\OpenEarthRawData\SeaDataNet\';
 
@@ -50,14 +49,15 @@ SET(4).z                 = [];
 %% cast + samples (cast with 1 datapoint): TNO lithogaphy
 SET(5).vc                = 'F:\opendap\thredds\deltares\landboundaries\northsea.nc'; % 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
 SET(5).directory         = [OPT.basedir,filesep,'usergd30d98-data_centre635-210311_result\'];
+SET(5).sdn_standard_name = 'SDN:P011::XXXXXXXX';
 SET(5).sdn_standard_name = 'SDN:P011::SEGMLENG';
-SET(5).clim              = [5 25];
+SET(5).clim              = [0 1];
 SET(5).z                 = 'SDN:P011::COREDIST';
 
-for i=1 %1:length(SET)
+for i=5 %1:length(SET)
 
    L = odv_metadata(SET(i).directory);
-
+   
 % Coastline of world
    
    L.lon = nc_varget(SET(i).vc,'lon');
@@ -69,15 +69,14 @@ for i=1 %1:length(SET)
 
    for ifile=1:length(L.name);
        
-      disp([num2str(ifile)])
+      disp([num2str(ifile),'/',num2str(length(L.name))])
    
       fname = L.name{ifile};
        
       set(gcf,'name',[num2str(ifile),': ',fname])
        
       jfile    = ifile;% = 1;
-      
-      D(jfile) = odvread([SET(i).directory,filesep,fname]);
+      D(jfile) = odvread([SET(i).directory,filesep,fname],'resolve',0);
        
       %odvdisp(D)
       
@@ -128,22 +127,32 @@ for i=1 %1:length(SET)
    
 %%   
    
-   M = odv_merge(D,'sdn_standard_name',SET(i).sdn_standard_name)
+   M = odv_merge(D,'sdn_standard_name',SET(i).sdn_standard_name,'z',SET(i).z,'metadataFcn',@(z) z(1),'dataFcn',@(z) sum(z));
    
 %% kml with all data from downloaded set, encopassing multiple odv files
+
+   text = cellfun(@(x,y,z)['station = ',y,' <br> LOCAL_CDI_ID = ',x,' <br> date = ',z,' <br> link = <a href="http://www.dinoloket.nl/dinoLks/minisite/Entry?datatype=bor&id=',x,'&queryProperty=NitgNumber">DINO</a>'],...
+               cells2cell(M.LOCAL_CDI_ID),...
+               cells2cell(M.station),...
+               cellstr(datestr(cell2mat(M.datenum),'yyyy-mmm-dd'))',...
+               'uniformoutput',0);
+%%           
    
    KMLscatter(cell2mat(M.latitude),cell2mat(M.longitude),cell2mat(M.data),...
-            ...% 'name',M.LOCAL_CDI_ID,... %      'description',['LOCAL_CDI_ID = ',M.LOCAL_CDI_ID,', cruise = ',M.cruise,', EDMO_code = ',num2str(M.EDMO_code)],...
-            ...% 'html',M.LOCAL_CDI_ID,... %      'description',['LOCAL_CDI_ID = ',M.LOCAL_CDI_ID,', cruise = ',M.cruise,', EDMO_code = ',num2str(M.EDMO_code)],...
+     'description',['EDMO_code',num2str(M.EDMO_code{1})],... 
+            'name',cells2cell(M.LOCAL_CDI_ID),... 
+            'html',text,...
         'fileName',[last_subdir(SET(i).directory),'.kml'],...
           'timeIn',cell2mat(M.datenum)-1,...
          'timeOut',cell2mat(M.datenum)+1,...
          'kmlName',[last_subdir(SET(i).directory),'.kml'],...
-'scalenormalState',2,'scalehighlightState',2,...
+'scalenormalState',1,'scalehighlightState',1,...
         'colorbar',1,...
-            'cLim',[5 25],...
+            'cLim',SET(i).clim,...
     'CBcolorTitle',[M.local_name,' (',M.local_units,')'])
-   
    
 end   
 
+% if EDMO_code =635 (TNO)
+%   http://www.dinoloket.nl/dinoLks/minisite/Entry?datatype=bor&id=BP060031&queryProperty=NitgNumber
+% ['http://www.dinoloket.nl/dinoLks/minisite/Entry?datatype=bor&id=',M.station,'&queryProperty=NitgNumber']

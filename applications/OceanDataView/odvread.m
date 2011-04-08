@@ -1,7 +1,7 @@
-function varargout = odv_read(fullfilename)
+function varargout = odv_read(fullfilename,varargin)
 %ODVREAD   read file in ODV format (still test project)
 %
-%   D = odvread(fname)
+%   D = odvread(fname,<keyword,value>)
 %
 % loads ASCII file in Ocean Data Viewer (ODV) format into struct D.
 % D.cast=1 for profile data (> ODVPLOT_CAST)
@@ -124,6 +124,14 @@ function varargout = odv_read(fullfilename)
    OPT.delimiter     = char(9);% columns are TAB sepa-rated [ODV manual section 15.6]
    OPT.variablesonly = 1; % remove units from variables
    OPT.method        = 'textscan'; %'fgetl'; % 'textscan';
+   OPT.resolve       = 1; % speed up by not resolving when loading multipel files, odv_merge wll resolve
+   
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
+   
+   OPT = setproperty(OPT,varargin{:});
 
    D = struct('odv_name'     ,'',...
               'standard_name','','units','',...
@@ -221,13 +229,22 @@ function varargout = odv_read(fullfilename)
 
                      D.odv_name{iSDN-1} =  D.lines.header{iline}(3:end);
                      D.odv_name{iSDN  } =  D.lines.header{iline}(3:end); % QV columns
-
+                     
+                     if ~OPT.resolve
+                    [~,D.sdn_standard_name{iSDN-1},~] =  sdn_parameter_mapping_parse(D.lines.header{iline});
+                    [~,D.sdn_standard_name{iSDN  },~] =  sdn_parameter_mapping_parse(D.lines.header{iline}); % QV columns
+                     D.sdn_long_name{iSDN-1} =  '';
+                     D.sdn_long_name{iSDN  } =  '';
+                     D.sdn_units    {iSDN-1} =  '';
+                     D.sdn_units    {iSDN  } =  '';
+                     else
                     [~,D.sdn_standard_name{iSDN-1},~,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline});
                     [~,D.sdn_standard_name{iSDN  },~,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline}); % QV columns
                      D.sdn_long_name{iSDN-1} =  q;
                      D.sdn_long_name{iSDN  } =  q;
                      D.sdn_units    {iSDN-1} =  u;
                      D.sdn_units    {iSDN  } =  u;
+                     end
 
                    %[standard_name,units]=sdn2cf(D.sdn_standard_name{iSDN});
                      standard_name = 'sdn2cf(sdn_standard_name) # TO DO';
@@ -318,7 +335,7 @@ function varargout = odv_read(fullfilename)
             end
             
             
-            for idat=4:length(D.data); % skip first 4 columsn, they are chars anyway [Cruise	Station	Type	yyyy-mm-ddThh:mm:ss.sss]
+            for idat=4:length(D.data); % skip first 4 columns, they are chars anyway [Cruise	Station	Type	yyyy-mm-ddThh:mm:ss.sss]
                
                % make a double array, and make sure intermediate missing empry values are nan
                % str2num makes '' empty, so cell2mat beccomes too short, whereas
