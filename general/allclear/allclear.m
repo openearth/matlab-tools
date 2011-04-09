@@ -73,3 +73,4 @@ delete(priorPorts)          % and deletes them
 %% clear variables 
 % but not breakpoints (that's what 'clear all' does)
 clear mex
+clear

@@ -197,6 +197,9 @@ end
 %% add basepath
 % split basepath in path and folder name
 [a,b] = fileparts(OPT.basepath);
+if ~strcmp(a(end),filesep)
+    a = [a filesep];
+end
 
 % query the folder
 D     = dir(a);
@@ -210,7 +213,7 @@ if ~isfield(D,'datenum')
     D.datenum = deal(nan);
 end
 
-D(1).pathname = [a filesep];
+D(1).pathname = a;
 D(1).isdir    = true;
 D(1).bytes    = sum([newD(~[newD.isdir]).bytes]);
 

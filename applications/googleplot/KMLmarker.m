@@ -109,10 +109,14 @@ elseif isnumeric(varargin{1})
     lon             = varargin{2};
     varargin(1:2)   = [];
     nn              = numel(lat);
-    if isnumeric(varargin{1})
-        z           = varargin{1};
-        varargin(1) = [];
-        OPT.mode    = 'latlonz';
+    if ~isempty(varargin)
+        if isnumeric(varargin{1})
+            z           = varargin{1};
+            varargin(1) = [];
+            OPT.mode    = 'latlonz';
+        else
+            OPT.mode    = 'latlon';
+        end
     else
         OPT.mode    = 'latlon';
     end

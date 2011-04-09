@@ -245,7 +245,7 @@ if OPT.make
             y         = double(nc_varget(url, 'y',0,-1,OPT.stride));
             [x,y]     = meshgrid(x,y);
             
-            if (OPT.calculate_latlon_local > 1) & ~isinf(OPT.calculate_latlon_local)
+            if (OPT.calculate_latlon_local > 1) && ~isinf(OPT.calculate_latlon_local)
                 dline = OPT.calculate_latlon_local;
                 for itmp=1:dline:size(x,1)
                     iitmp = itmp+(1:dline)-1;
@@ -280,7 +280,7 @@ if OPT.make
         x_dim      = strcmp(z_dim_info.Dimension,'x');
         y_dim      = strcmp(z_dim_info.Dimension,'y');
         
-        stride = [OPT.stride OPT.stride OPT.stride];stride(find(time_dim))=1;
+        stride = [OPT.stride OPT.stride OPT.stride];stride(time_dim)=1;
         
         for jj = size(date4GE,1)-1:-1:1
             % load z data
@@ -299,7 +299,14 @@ if OPT.make
                 if ~OPT.quiet
                     disp(['data coverage is ' num2str(sum(~isnan(z(:)))/numel(z)*100) '%'])
                 end
+                
+                % Expand Z in all sides by replicating edge values;
                 z = z([1 1 1:end end end],:); z = z(:,[1 1 1:end end end]); % expand z
+                
+                % This bit of code makes sure 'holes' in the surface drawn
+                % with the surf command only have the size of a cell,
+                % insteda of one missing data value 'erasing' all four
+                % surrounding cells.
                 mask = ~isnan(z);
                 mask = ...
                     mask(1:end-2,1:end-2)+...
