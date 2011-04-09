@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>nestingpanel</tag>
+    <style>panel</style>
+    <position>10 10 500 130</position>
+    <text>Nesting</text>
+  </element>  
+</root>

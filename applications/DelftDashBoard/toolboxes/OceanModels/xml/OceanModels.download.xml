@@ -1,0 +1,167 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>selectoceanmodel</tag>
+    <position>50 110 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <variable>handles.Toolbox(tb).Input.activeModel</variable>
+    <onchange>ddb_OceanModelsToolbox_download</onchange>
+    <option1>selectoceanmodel</option1>
+    <tooltipstring>Select an ocean model</tooltipstring> 
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.oceanModels</variable>
+      </texts>
+    </list>
+  </element> 
+  <element>
+    <tag>editname</tag>
+    <style>edit</style>
+    <position>50 80 100 20</position>
+    <variable>handles.Toolbox(tb).Input.name</variable>
+    <type>string</type>
+    <text>Name</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit file name for output</tooltipstring> 
+  </element>
+  <element>
+    <tag>editfolder</tag>
+    <style>edit</style>
+    <position>50 50 100 20</position>
+    <variable>handles.Toolbox(tb).Input.folder</variable>
+    <type>string</type>
+    <text>Folder</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit folder name for output</tooltipstring> 
+  </element>
+  <element>
+    <tag>editurl</tag>
+    <style>edit</style>
+    <position>50 10 400 20</position>
+    <variable>handles.Toolbox(tb).Input.URL</variable>
+    <type>string</type>
+    <text>URL</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit URL</tooltipstring> 
+  </element>
+  <element>
+    <tag>editstarttime</tag>
+    <style>edit</style>
+    <position>220 110 110 20</position>
+    <variable>handles.Toolbox(tb).Input.startTime</variable>
+    <type>datetime</type>
+    <text>Start Time</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit start time</tooltipstring> 
+  </element>
+  <element>
+    <tag>editstoptime</tag>
+    <style>edit</style>
+    <position>220 85 110 20</position>
+    <variable>handles.Toolbox(tb).Input.stopTime</variable>
+    <type>datetime</type>
+    <text>Stop Time</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit stop time</tooltipstring> 
+  </element> 
+  <element>
+    <tag>editxmin</tag>
+    <style>edit</style>
+    <position>380 110 50 20</position>
+    <text>X Min</text>
+    <textposition>left</textposition>
+    <onchange>ddb_OceanModelsToolbox_download</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.Toolbox(tb).Input.xLim(1)</variable>
+    <type>real</type>
+    <tooltipstring>Edit minimum x coordinate</tooltipstring>
+  </element> 
+  <element>
+    <tag>editxmax</tag>
+    <style>edit</style>
+    <position>380 85 50 20</position>
+    <text>X Max</text>
+    <textposition>left</textposition>
+    <onchange>ddb_OceanModelsToolbox_download</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.Toolbox(tb).Input.xLim(2)</variable>
+    <type>real</type>
+    <tooltipstring>Edit maximum x coordinate</tooltipstring>
+  </element> 
+  <element>
+    <tag>editymin</tag>
+    <style>edit</style>
+    <position>480 110 50 20</position>
+    <text>Y Min</text>
+    <textposition>left</textposition>
+    <onchange>ddb_OceanModelsToolbox_download</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.Toolbox(tb).Input.yLim(1)</variable>
+    <type>real</type>
+    <tooltipstring>Edit minimum y coordinate</tooltipstring>
+  </element> 
+  <element>
+    <tag>editymax</tag>
+    <style>edit</style>
+    <position>480 85 50 20</position>
+    <text>Y Max</text>
+    <textposition>left</textposition>
+    <onchange>ddb_OceanModelsToolbox_download</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.Toolbox(tb).Input.yLim(2)</variable>
+    <type>real</type>
+    <tooltipstring>Edit maximum y coordinate</tooltipstring>
+  </element> 
+  <element>
+    <tag>drawrectangle</tag>
+    <style>pushbutton</style>
+    <position>540 110 100 20</position>
+    <text>Draw Outline</text>
+    <callback>ddb_OceanModelsToolbox_download</callback>
+    <option1>drawrectangle</option1>
+    <tooltipstring>Draw image rectangle</tooltipstring>
+  </element> 
+  <element>
+    <tag>checkwl</tag>
+    <style>checkbox</style>
+    <position>660 110</position>
+    <text>SSH</text>
+    <variable>handles.Toolbox(tb).Input.getSSH</variable>
+    <tooltipstring>Download sea surface height</tooltipstring>
+  </element>  
+  <element>
+    <tag>checkcur</tag>
+    <style>checkbox</style>
+    <position>660 90</position>
+    <text>Currents</text>
+    <variable>handles.Toolbox(tb).Input.getCurrents</variable>
+    <tooltipstring>Download currents</tooltipstring>
+  </element>  
+  <element>
+    <tag>checksal</tag>
+    <style>checkbox</style>
+    <position>660 70</position>
+    <text>Salinity</text>
+    <variable>handles.Toolbox(tb).Input.getSalinity</variable>
+    <tooltipstring>Download salinity</tooltipstring>
+  </element>  
+  <element>
+    <tag>checktemp</tag>
+    <style>checkbox</style>
+    <position>660 50</position>
+    <text>Temperature</text>
+    <variable>handles.Toolbox(tb).Input.getTemperature</variable>
+    <tooltipstring>Download temperature</tooltipstring>
+  </element>  
+  <element>
+    <tag>download</tag>
+    <style>pushbutton</style>
+    <position>660 10 100 20</position>
+    <text>Download</text>
+    <callback>ddb_OceanModelsToolbox_download</callback>
+    <option1>download</option1>
+    <tooltipstring>Download data</tooltipstring>
+  </element> 
+</root>

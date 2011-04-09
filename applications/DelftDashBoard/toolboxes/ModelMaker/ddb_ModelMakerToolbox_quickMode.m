@@ -199,9 +199,31 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=6000000
     xl(2)=xl(2)+dbuf;
     yl(1)=yl(1)-dbuf;
     yl(2)=yl(2)+dbuf;
-    [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+
+    % Convert limits to cs of bathy data
+    coord=handles.screenParameters.coordinateSystem;
+    iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
+    dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
+    dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
     
-    [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xx,yy,zz);
+    [xlb,ylb]=ddb_coordConvert(xl,yl,coord,dataCoord);
+    
+    [xx,yy,zz,ok]=ddb_getBathy(handles,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+
+    % xx and yy are in coordinate system of bathymetry (usually WGS 84)
+    % convert bathy grid to active coordinate system
+
+    if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
+        [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
+        [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
+        zz=interp2(xx,yy,zz,xgb,ygb);
+    else
+        xg=xx;
+        yg=yy;
+    end
+    
+%    [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xx,yy,zz);
+    [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
 
     close(wb);
 
