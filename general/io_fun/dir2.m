@@ -189,7 +189,11 @@ end
 %  pattern_excl is appended with two criteria that exclude '..' and '.' from
 %  the dir inquiry. See 'help regexp' for explanation.
 newD = dir_in_subdir(OPT.basepath,[OPT.dir_excl '|^\.{1,2}$'],OPT.file_incl,OPT.depth);
-
+if isempty(newD)
+    % add the field pathname to the empty struct
+    newD(1).pathname = '';
+    newD(1) = [];
+end
 %% add basepath
 % split basepath in path and folder name
 [a,b] = fileparts(OPT.basepath);
@@ -213,11 +217,6 @@ D(1).bytes    = sum([newD(~[newD.isdir]).bytes]);
 % concatenate D
 D = [D; newD];
 
-if isempty(D)
-    % add the field pathname to the empty struct
-    D(1).pathname = '';
-    D(1) = [];
-end
 %EOF
 
 function D = dir_in_subdir(basepath,dir_excl,file_incl,depth)
@@ -285,9 +284,19 @@ s = fullfile(s);
 if isempty(s)
     s = pwd;
 elseif s(1) == filesep
-    % then basepath is realtive to  do nothing
-    tmp = pwd;
-    s   = [tmp(1:2) s];
+    % then basepath is relative unless second entry of s is also a filesep
+    % indicating a network path
+    if length(s)>1
+        if s(2) == filesep
+            % it is already an absolute networkpath
+        else
+            tmp = pwd;
+            s   = [tmp(1:2) s];
+        end
+    else
+        tmp = pwd;
+        s   = [tmp(1:2) s];
+    end
 elseif strcmp(s,'.')
     s   = pwd;
 elseif strcmp(s,'..')
