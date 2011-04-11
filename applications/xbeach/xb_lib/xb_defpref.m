@@ -76,3 +76,5 @@ setpref('xbeach', 'ssh_pass', '');
 
 setpref('xbeach', 'runs', []);
 setpref('xbeach', 'queue', []);
+
+setpref('xbeach', 'interval', []);

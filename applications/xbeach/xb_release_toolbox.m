@@ -60,23 +60,101 @@ function varargout = xb_release_toolbox(varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% read options
+
+OPT = struct( ...
+    'type', 'zip', ...
+    'name', ['xbeach_release_' datestr(now, 'ddmmmyyyy')] ...
+);
+ 
+OPT = setproperty(OPT, varargin);
+
 %% release
 
 % select xb_* diretories only
-fdir = fileparts(which(mfilename));
+fdir = [fileparts(which(mfilename)) filesep];
 fdirs = dir(fullfile(fdir, 'xb_*'));
-folders = {fdirs.name};
-folders = folders([fdirs.isdir]);
+ffolders = {fdirs.name};
+ffolders = ffolders([fdirs.isdir]);
+folders = ffolders;
+for i = 1:length(folders); folders{i} = abspath(ffolders{i}); end;
 
 % select all files and oetsettings
-ffiles = dir(fdir);
-files = {ffiles.name};
-files = [{'oetsettings'} files{~[ffiles.isdir]}];
+fffiles = dir(fdir);
+ffiles = {fffiles.name};
+ffiles = ffiles(~[fffiles.isdir]);
+files = [{'oetsettings'} ffiles];
 
 % release toolbox
-oetrelease(...
-    'targetdir'     , fullfile('F:', ['release_' datestr(now, 'ddmmmyyyy')]), ...
-    'zipfilename'   , tempname, ...
-    'folders'       , folders, ...
-    'files'         , files, ...
-    'omitdirs'      , {'svn' '_old' '_bak'});
+switch OPT.type
+    case 'zip'
+        oetrelease(...
+            'targetdir'     , fullfile('F:', OPT.name), ...
+            'zipfilename'   , tempname, ...
+            'folders'       , folders, ...
+            'files'         , files, ...
+            'omitdirs'      , {'svn' '_old' '_bak', 'rev3139'});
+    case 'tag'
+        
+        [r m] = system('svn ?');
+        
+        if r > 0; error('Command-line Subversion client not found [svn]'); end;
+        
+        files = oetrelease(...
+            'folders'       , folders, ...
+            'files'         , files, ...
+            'omitdirs'      , {'svn' '_old' '_bak', 'rev3139'}, ...
+            'copy'          , false );
+        
+        rootdir = abspath(fullfile(oetroot, '..', '..'));
+        tagsdir = abspath(fullfile(rootdir, 'tags'));
+        tagdir = abspath(fullfile(tagsdir, OPT.name));
+        
+        fid = fopen('maketag.bat','w');
+        
+        if ~exist(tagsdir, 'dir')
+            fprintf(fid, 'cd %s\n', rootdir);
+            fprintf(fid, 'svn checkout --depth=empty %s/tags\n', OPT.url);
+        end
+        
+        fprintf(fid, 'cd %s\n', tagsdir);
+        fprintf(fid, 'svn mkdir %s\n', OPT.name);
+        fprintf(fid, 'cd %s\n', tagdir);
+        fprintf(fid, 'svn mkdir _externals\n');
+        
+        for i = 1:length(files)
+            url = strrep(strrep(files{i}, abspath(oetroot), oeturl), '\', '/');
+            
+            if strfind(files{i}, fdir) == 1
+                fprintf(fid, 'svn copy --parents %s %s\n', ...
+                    url, ...
+                    strrep(files{i}, fdir, ''));
+            else
+                if strcmpi(fileparts(oetroot), fileparts(files{i}))
+                    fprintf(fid, 'svn copy --parents %s %s\n', ...
+                        url, ...
+                        strrep(files{i}, oetroot, ''));
+                else
+                    fprintf(fid, 'svn copy --parents %s %s\n', ...
+                        url, ...
+                        strrep(files{i}, oetroot, ['_externals' filesep]));
+                end
+            end
+        end
+        
+        fprintf(fid, 'cd ..\n');
+        fprintf(fid, 'svn commit -m "Added tag %s" .\n', OPT.name);
+        
+        fclose(fid);
+        
+        [r m] = system('maketag.bat');
+        
+        if r > 0
+            error(['Creating tag failed [' m ']']);
+        else
+            disp(['Created tag "' OPT.name '"']);
+        end
+        
+    otherwise
+        error(['Unknown release type [' OPT.type ']']);
+end

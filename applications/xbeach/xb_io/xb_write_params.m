@@ -71,7 +71,8 @@ if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct(...
     'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}}, ...
-    'xbdir', '');
+    'xbdir', '', ...
+    'skip_headers', False 	);
 
 if nargin > 2
     OPT = setproperty(OPT, varargin{:});
@@ -84,11 +85,11 @@ matfile = fullfile(fileparts(which('xb_get_params')), 'params.mat');
 
 [params params_array] = xb_get_params;
 
-if ~isempty(params_array)
+if ~isempty(params_array) && ~OPT.skip_headers
     parname = {params_array.name};
     partype = {params_array.partype};
     upartype = unique(partype);
-elseif exist(matfile, 'file')
+elseif exist(matfile, 'file') && ~OPT.skip_headers
     load(matfile);
     parname = {params_array.name};
     partype = {params_array.partype};

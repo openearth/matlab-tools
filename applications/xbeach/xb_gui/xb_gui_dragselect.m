@@ -1,21 +1,27 @@
 function xb_gui_dragselect(obj, varargin)
-%XB_GUI_DRAGSELECT  One line description goes here.
+%XB_GUI_DRAGSELECT  Creates an drag and select interface
 %
-%   More detailed description goes here.
+%   Creates an drag and select interface for maps. Can fire a function
+%   after selection is complete. The function should take 5 arguments:
+%   default object and event arguments, the drag-and-select object, the x
+%   and y position of the selection.
 %
 %   Syntax:
-%   varargout = xb_gui_dragselect(varargin)
+%   xb_gui_dragselect(obj, varargin)
 %
 %   Input:
-%   varargin  =
+%   obj       = Object handle which should be drag-and-select enabled
+%   varargin  = cursor:     Enables crosshair cursor
+%               select:     Enables area selection
+%               fcn:        Function handle to be fired after selection
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   xb_gui_dragselect
+%   xb_gui_dragselect(axes, 'select', true, 'cursor', false, 'fcn', @drawrectangle)
 %
-%   See also 
+%   See also xb_gui_normconditions, xb_gui_mergebathy
 
 %% Copyright notice
 %   --------------------------------------------------------------------

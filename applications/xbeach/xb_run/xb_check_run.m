@@ -83,6 +83,8 @@ OPT = setproperty(OPT, varargin{:});
 
 if ~iscell(OPT.callback); OPT.callback = {OPT.callback}; end;
 
+OPT.interval = xb_getprefdef('interval', OPT.interval);
+
 %% check run
 
 runs = false;
