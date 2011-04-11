@@ -251,7 +251,8 @@ kk = 1;
 %% Plot the points
 
 for ii=1:nn
-    
+    multiWaitbar('Writing kml files ...', ii/nn, 'Color', [1.0 0.4 0.0]) % orange
+
     %% preprocess timespan
     
     timeSpan = KML_timespan(ii,'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
