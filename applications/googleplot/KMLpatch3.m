@@ -182,10 +182,15 @@ OPT.colorbar           = 0;
       
        %  convert color values into colorRGB index values
       
-       c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
-    else
+       c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1)+eps)*(OPT.colorSteps-1))+1);
        
-       error('fillColor and colorMap cannot be used simultaneously')
+   elseif   isempty(OPT.fillColor) & isempty(OPT.colorMap) & OPT.colorSteps==1
+
+       error('either keyword fillColor or keyword colorMap needs to be specified')
+
+   else
+       
+       error('keywords fillColor and colorMap cannot be used simultaneously')
       
    end
 

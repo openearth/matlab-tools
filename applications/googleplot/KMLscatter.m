@@ -16,11 +16,11 @@ function varargout = KMLscatter(lat,lon,c,varargin)
 %  * html                   = cellstr with text per point (shown when highlighted)
 %                             by default equal to value of c
 %  * OPT.iconnormalState    = marker, default 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png'
-%  * OPT.iconhighlightState = see also, http://www.mymapsplus.com/Markers, 
-%                                       http://www.visual-case.it/cgi-bin/vc/GMapsIcons.pl
-%                                       http://www.benjaminkeen.com/?p=105
-%                                       http://code.google.com/p/google-maps-icons/
-%                                       http://www.scip.be/index.php?Page=ArticlesGE02&Lang=EN
+%  * OPT.iconhighlightState = http://www.mymapsplus.com/Markers
+%                             http://www.visual-case.it/cgi-bin/vc/GMapsIcons.pl
+%                             http://www.benjaminkeen.com/?p=105
+%                             http://code.google.com/p/google-maps-icons/
+%                             http://www.scip.be/index.php?Page=ArticlesGE02&Lang=EN
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -269,7 +269,7 @@ end
 %% Plot the points
 
    for ii=1:length(lon)
-
+      %disp(num2str([ii, length(lon)],'%g / %g'))
       %% preprocess timespan
 
       timeSpan = KML_timespan(ii,'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
@@ -322,6 +322,7 @@ end
           OPT_poly.styleName,...
           lon(ii),lat(ii));
       else
+          
       newOutput= sprintf([...
           '<Placemark>\n'...
           ' <name>%s</name>\n'...          % no names so we see just the scatter points

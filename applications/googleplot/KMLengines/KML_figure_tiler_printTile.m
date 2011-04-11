@@ -106,6 +106,7 @@ for addCode = ['0','1','2','3']
                             mergeExistingTiles = true;
                         end
                     end
+                    % TO DO error when gca has no data at moment of plotting
                     print(OPT.hf,'-dpng','-r1',PNGfileName);
                     
                     im   = imread(PNGfileName);

@@ -99,7 +99,7 @@ else
    D.lon = lon;
    D.z   = z;
    %if ~isequal(size(D.lon) - size(D.z),[0 0])
-   %  D.z = addrowcol(D.z,1,1,Inf); % no, lat KML_figure_tiler_printTile handle that
+   %  D.z = addrowcol(D.z,1,1,Inf); % no, lat KML_figure_tiler_printTile handles that
    %end
    D.N   = max(D.lat(:));
    D.S   = min(D.lat(:));
@@ -108,23 +108,27 @@ else
 
    OPT.basecode           = KML_figure_tiler_SmallestTileThatContainsAllData(D);
    OPT.highestLevel       = length(OPT.basecode);
-   OPT.lowestLevel        = OPT.highestLevel+4;
+   OPT.lowestLevel        = OPT.highestLevel+4; % a guess
 end
 
 OPT.h    = h;  % handle to input surf object
+
+if strcmpi(get(get(h,'parent'),'climMode'),'auto')
+   error([mfilename,' manual clim required for identical colormapping in tiles']);
+end
 
 OPT = setproperty(OPT, varargin);
 
 %% initialize waitbars
 
 if OPT.printTiles
-    multiWaitbar('fig2png_print_tile'  ,0,'label','Printing tiles' ,'color',[0.0 0.4 0.9])
+    multiWaitbar('fig2png_print_tile' ,0,'label','Printing tiles' ,'color',[0.0 0.4 0.9])
 end
 if OPT.joinTiles
    multiWaitbar('fig2png_merge_tiles' ,0,'label','Merging tiles'  ,'color',[0.6 0.2 0.2])
 end
 if OPT.makeKML
-    multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML'    ,'color',[0.9 0.4 0.1])
+    multiWaitbar('fig2png_write_kml'  ,0,'label','Writing KML'    ,'color',[0.9 0.4 0.1])
 end
 
 %% make sure you always see something in GE, even at really low lowestLevel
@@ -183,7 +187,7 @@ end
 
 % make a folder for the sub files
 if ~exist([OPT.basePath filesep OPT.Name],'dir')
-     mkdir(OPT.basePath,OPT.Name);
+     mkpath(OPT.basePath,OPT.Name);
 end
 
 %% preproces timespan
@@ -291,6 +295,9 @@ if OPT.makeKML
      else
         href.logo = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, filenameext(file.logo));
      end     
+
+     href.logo = path2os(href.logo,'h'); % always use HTTP slashes
+
      logo   = ['<Folder>' KMLlogo(OPT.logo,'fileName',0,'kmlName', 'logo',...
          'logoName',file.logo) '</Folder>'];
      logo = strrep(logo,['<Icon><href>' filenameext(file.logo)],...
@@ -313,6 +320,8 @@ if OPT.makeKML
           href.CB = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, [OPT.Name]);
        end
        
+       href.CB = path2os(href.CB,'h'); % always use HTTP slashes
+
        [clrbarstring,pngNames] = KMLcolorbar('CBcLim',clim(OPT.ha),...
                               'CBfileName',file.CB,...
                                'CBkmlName','colorbar',...

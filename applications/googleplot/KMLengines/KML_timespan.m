@@ -28,17 +28,21 @@ function varargout = KML_timespan(varargin)
        if tt > length(OPT.timeIn)
           error('tt to big')
        end
-   
+       
        if isnumeric(OPT.timeIn) ; 
            timeIn  = datestr(OPT.timeIn(tt) ,OPT.dateStrStyle);
-       else
+       elseif iscellstr(OPT.timeIn)
            timeIn  = OPT.timeIn{tt};
+       else
+           timeIn  = OPT.timeIn(tt,:);
        end
        
        if isnumeric(OPT.timeOut) ; 
            timeOut  = datestr(OPT.timeOut(tt) ,OPT.dateStrStyle);
-       else
+       elseif iscellstr(OPT.timeOut)
            timeOut  = OPT.timeOut{tt};
+       else
+           timeOut  = OPT.timeOut(tt,:);
        end
 
        if ~isempty(OPT.timeOut)

@@ -88,6 +88,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
       varargout = {OPT};
       return
    end
+   
 %% 
    if isvector(lat) & isvector(lon)
       [lat,lon] = meshgrid(lat,lon);
@@ -95,6 +96,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    
    if isempty(z)
       z = 0.*lat; % TO DO: implement 'clampToGround'
+   else
    end
 
 %% assign c if it is given
@@ -123,7 +125,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 
 %% set kmlName if it is not set yet
 
-   if isempty(OPT.kmlName)
+   if isempty(OPT.kmlName) & ~(OPT.fileName==-1)
       [ignore OPT.kmlName] = fileparts(OPT.fileName);
    end
 
@@ -174,12 +176,13 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 
    %  convert color values into colorRGB index values
 
-   c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1);
+   c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1)+eps)*(OPT.colorSteps-1))+1);
 
 %% start KML
 
+if ~(OPT.fileName==-1)
+
    OPT.fid=fopen(OPT.fileName,'w');
-   
    output = KML_header(OPT); % only subset of fields
 
    if OPT.colorbar
@@ -210,10 +213,12 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    % print and clear output
    
    output = [output '<!--############################-->' fprinteol];
-   fprintf(OPT.fid,'%s',output); output = [];
+   fprintf(OPT.fid,'%s',output); output = '';
    fprintf(OPT.fid,'<Folder>');
    fprintf(OPT.fid,'  <name>patches</name>');
    fprintf(OPT.fid,'  <open>0</open>');
+   
+end
 
 %% POLYGON
 
@@ -248,9 +253,9 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    disp(['creating surf with ' num2str(sum(sum(not_nan))) ' elements...'])
    
    for ii=1:length(lat(:,1))-1
-      if OPT.disp
-         disp(['progress ',num2str(ii),'/',num2str(length(lat(:,1))-1)])
-      end
+       if OPT.disp
+          disp(['progress ',num2str(ii),'/',num2str(length(lat(:,1))-1)])
+       end
        for jj=1:length(lon(1,:))-1
            if not_nan(ii,jj)
                LAT = [lat(ii+1,jj) lat(ii+1,jj+1) lat(ii,jj+1) lat(ii,jj) lat(ii+1,jj)];
@@ -265,15 +270,25 @@ function varargout = KMLsurf(lat,lon,z,varargin)
                newOutput = KML_poly(LAT(:),LON(:),OPT.zScaleFun(Z(:)),OPT_poly); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
                output(kk:kk+length(newOutput)-1) = newOutput;
                kk = kk+length(newOutput);
-               if kk>1e5
-                   %then print and reset
-                   fprintf(OPT.fid,output(1:kk-1));
-                   kk = 1;
-                   output = repmat(char(1),1,1e5);
+               if kk>length(output)
+                   if ~(OPT.fileName==-1)
+                      %then print and reset
+                      fprintf(OPT.fid,output(1:kk-1));
+                      kk = 1;
+                      output = repmat(char(1),1,1e5);
+                   else % each time make twice as big
+                      output0 = output;
+                      output = repmat(char(1),1,2*length(output));
+                      output(1:kk-1) = output0(1:kk-1);
+                      clear outpout0
+                   end
                end
            end
        end
    end
+   
+if ~(OPT.fileName==-1)
+   
    fprintf(OPT.fid,output(1:kk-1)); output = ''; % print and clear output
    
    fprintf(OPT.fid,'</Folder>');
@@ -300,10 +315,12 @@ function varargout = KMLsurf(lat,lon,z,varargin)
        system(OPT.fileName);
    end
    
+end
+
 if nargout==1
-   varargout = {OPT};
+   varargout = {output(1:kk-1)};
 elseif nargout==2
-   varargout = {OPT,pngNames};
+   varargout = {output(1:kk-1),pngNames};
 end
 
 %% EOF
