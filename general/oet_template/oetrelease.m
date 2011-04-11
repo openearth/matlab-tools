@@ -1,4 +1,4 @@
-function [zipfilename files targetdir] = oetrelease(varargin)
+function varargout = oetrelease(varargin)
 %OETRELEASE  create release in new folder and zipfile
 %
 %   Function to create a release of specific folders (including subfolders)
@@ -74,7 +74,8 @@ OPT = struct(...
     'folders'       , cd,...
     'files'         , 'oetsettings',...
     'omitextensions', {{'.asv' '.m~'}},...
-    'omitdirs'      , {{'svn'}});
+    'omitdirs'      , {{'svn'}},...
+    'copy'          , true);
  
 if odd(nargin)
    OPT = setproperty(OPT, varargin{2:end});
@@ -132,24 +133,33 @@ end
 
 %% copy all selected files to separate folder
 
-   for i = 1:length(files)
-       mkpath(fileparts(files{i}))
-       destinationfile = strrep(abspath(files{i}), oetroot, [OPT.targetdir filesep]);
-       mkpath(fileparts(destinationfile))
-       if ~exist(destinationfile, 'file')
-           try
-                copyfile(files{i}, destinationfile)
-           catch
-               fprintf(2, 'File "%s" cannot be copied\n', files{i})
+    if OPT.copy
+       for i = 1:length(files)
+           mkpath(fileparts(files{i}))
+           destinationfile = strrep(abspath(files{i}), oetroot, [OPT.targetdir filesep]);
+           mkpath(fileparts(destinationfile))
+           if ~exist(destinationfile, 'file')
+               try
+                    copyfile(files{i}, destinationfile)
+               catch
+                   fprintf(2, 'File "%s" cannot be copied\n', files{i})
+               end
            end
        end
-   end
+    end
 
 %% create zipfile of newly created folder
 
-   mkdir(OPT.targetdir)
-   zip(OPT.zipfilename, OPT.targetdir, oetroot)
+    if OPT.copy
+       mkdir(OPT.targetdir)
+       zip(OPT.zipfilename, OPT.targetdir, oetroot)
+    end
 
 %% prepare output
 
-   [zipfilename targetdir] = deal(OPT.zipfilename, OPT.targetdir);
+    varargout = {};
+    if OPT.copy
+        varargout = {OPT.zipfilename, OPT.targetdir};
+    else
+        varargout{1} = files;
+    end
