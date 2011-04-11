@@ -334,9 +334,9 @@ for entry=1:length(OPT.files)
                    ATT.datenum_start{entry}   = min(ATT.datenum_start{entry},time(1));
                    ATT.datenum_end  {entry}   = max(ATT.datenum_end  {entry},time(2));
 
-                  if strcmpi(OPT.datatype,'stationtimeseries')
-                     ATT.number_of_observations{entry} = fileinfo.Dataset(idat).Size;
-                  end
+                   if strcmpi(OPT.datatype,'stationtimeseries')
+                      ATT.number_of_observations{entry} = fileinfo.Dataset(idat).Size;
+                   end
 
                end
 
@@ -344,13 +344,13 @@ for entry=1:length(OPT.files)
             
                if strcmpi(OPT.datatype,'stationtimeseries')
             
-                 if strcmpi(Value,'station_id')
-                   ATT.station_id{entry}  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
-                 end
+                   if strcmpi(Value,'station_id')
+                       ATT.station_id{entry}  = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
+                   end
             
-                 if strcmpi(Value,'station_name')
-                   ATT.station_name{entry} = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
-                 end
+                   if strcmpi(Value,'station_name')
+                       ATT.station_name{entry} = nc_varget(OPT.filename, fileinfo.Dataset(idat).Name);
+                   end
             
                end
 
@@ -415,8 +415,16 @@ end % entry
        end
    end
    
+   if ~all(isnan(ATT.datenum_start))
    ATT.timecoverage_start   = datestr(ATT.datenum_start,OPT.datestr);
+   else
+   ATT.timecoverage_start   = [];
+   end
+   if ~all(isnan(ATT.datenum_end))
    ATT.timecoverage_end     = datestr(ATT.datenum_end  ,OPT.datestr);
+   else
+   ATT.timecoverage_end     = [];
+   end
 
 %% merge VAR structure in the ATT structure
 

@@ -92,7 +92,8 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    OPT.plot    = 1;
    OPT.oned    = 0;
    OPT.varname = []; % one if dimensions are (latitude,longitude), 0 if variables are (latitude,longitude)
-   
+   OPT.stride  = 1;
+
    if nargin > 1
    OPT.varname = varargin{1};
    end
@@ -121,35 +122,19 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %% Check whether is grid
 
    index = findstrinstruct(fileinfo.Attribute,'Name','Conventions');
-   fileinfo.Attribute(index).Value;
    if isempty(index)
       warning(['netCDF file might not be a grid: needs Attribute Conventions=CF-1.4'])
    end
 
-%% Get datenum
-
-   timename           = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
-   if ~isempty(timename)
-      M.datenum.units = nc_attget(ncfile,timename,'units');
-      D.datenum       = nc_varget(ncfile,timename);
-      D.datenum       = udunits2datenum(D.datenum,M.datenum.units); % convert units to datenum
-   end
-   
 %% Get coordinates
 
    lonname           = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
-   if ~isempty(lonname)
-      M.lon.units    = nc_attget(ncfile,lonname,'units');
-      D.lon          = nc_varget(ncfile,lonname);
-   else
+   if isempty(lonname)
       disp('no longitude present')
    end
 
    latname           = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
-   if ~isempty(latname)
-      M.lat.units    = nc_attget(ncfile,latname,'units');
-      D.lat          = nc_varget(ncfile,latname);
-   else
+   if isempty(latname)
       disp('no latitude present')      
    end
 
@@ -232,7 +217,6 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
                        'PromptString', 'Select one variable', ....
                                'Name', 'Selection of variable',...
                            'ListSize', [500, 300]); 
-                               
       
       varindex    = coordvar(ii);
       OPT.varname = coordvarlist{ii};
@@ -254,7 +238,24 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    
 %% get data
 
-      D.(OPT.varname) = nc_varget(ncfile,OPT.varname);
+   I = nc_getvarinfo(ncfile,OPT.varname);
+   
+   start  = I.Size.*0;
+   count  = I.Size.*0 -1;
+   stride = I.Size.*0 + OPT.stride;
+   
+   M.lon.units     = nc_attget(ncfile,lonname,'units');
+   M.lat.units     = nc_attget(ncfile,latname,'units');
+   D.lon           = nc_varget(ncfile,lonname    ,start,count,stride);
+   D.lat           = nc_varget(ncfile,latname    ,start,count,stride);
+   D.(OPT.varname) = nc_varget(ncfile,OPT.varname,start,count,stride);
+
+%% Get datenum
+
+   D.datenum = nc_cf_time(ncfile); % choose dimension name of variable in case there are more time vectors
+   if ~isempty(D.datenum)
+      disp('no time present')      
+   end
 
 %% get coordinates
 
