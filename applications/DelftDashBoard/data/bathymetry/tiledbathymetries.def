@@ -1,9 +1,54 @@
+BathymetryDataset "GEBCO 08"
+
+    Type "netCDFtiles"
+    Name "gebco08"
+    URL "http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco_08"
+    useCache yes
+         
+EndBathymetryDataset
+
 BathymetryDataset "GEBCO"
 
     Type "netCDFtiles"
     Name "gebco"
-    URL "http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco
+    URL "http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco"
+    useCache yes
+         
+EndBathymetryDataset
+
+BathymetryDataset "NGDC Coastal Relief Model"
+
+    Type "netCDFtiles"
+    Name "ngdc_crm"
+    URL  "http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ngdc_crm"
     useCache yes
 
-EndShoreline
+EndBathymetryDataset
+
+BathymetryDataset "USGS Southern California"
+
+    Type "netCDFtiles"
+    Name "usgs_socal"
+    URL  "http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/usgs_socal"
+    useCache yes
+
+EndBathymetryDataset
+
+BathymetryDataset "Hawaii"
+
+    Type "netCDFtiles"
+    Name "hawaii"
+    URL "http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/hawaii"
+    useCache yes
+
+EndBathymetryDataset
+
+BathymetryDataset "SRTM30plus Gulf of Mexico"
+
+    Type "netCDFtiles"
+    Name "srtm30plus_gom"
+    URL "http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/srtm30plus_gom"
+    useCache yes
+
+EndBathymetryDataset
 
