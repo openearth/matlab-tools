@@ -7,6 +7,9 @@ function vs_trim2netcdf2kml
 %
 % use vs_trim2nc first, as we should use the delft3d NEFIS file any more (trim*).
 %
+% The result of this script can be found here:
+%  http://kml.deltares.nl/kml/deltares/q4408-mkm/stationair2/
+%
 %See also: DELFT3D, GOOGLEPLOT, DELFT3D_3D2KML_VISUALISATION_EXAMPLE, DELFT3D_3D_VISUALISATION_EXAMPLE
 
    base_name = 'D:\PROJECTS\q4408-mkm\flow\stationair2\';
