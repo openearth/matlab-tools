@@ -268,8 +268,16 @@ if OPT.make
               cellsize == OPT.gridsizey ) % gridsizey==gridsizey already checked above
               error('cellsizex~=cellsizey')
          end
+         
+         if ~(mod(xllcorner,cellsize)==0)
+              error(['xllcorner has offset: ',num2str(mod(xllcorner,cellsize))])
+         end
 
-         %% calculate x,y of cell CENTRES, by adding half a grid cell 
+         if ~(mod(yllcorner,cellsize)==0)
+              error(['yllcorner has offset: ',num2str(mod(xllcorner,cellsize))])
+         end
+         
+         %% calculate x,y of cell CENTRES, by adding half a grid cell
          %  to the cell CORNERS. From now on we only use x and y where data reside
          %  i.e. the centers [xllcenter +/- cellsize,yllcorner +/- cellsize]
             
