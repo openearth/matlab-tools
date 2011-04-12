@@ -129,11 +129,11 @@ function varargout = opendap_catalog(varargin)
 
    OPT = setproperty(OPT,varargin{nextarg:end});
    
+   nc_file_list   = {};
+   nc_folder_list = {};
+
 %% remote vs. local url
-if length(OPT.url) < 11
-    nc_file_list   = {};
-    nc_folder_list = {};
-elseif ~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-10:end),'catalog.xml')
+if length(OPT.url) < 11 | (~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-10:end),'catalog.xml'))
 
    if OPT.maxlevel > 1
       fprintf(2,'opendap_catalog: maxlevel ignored because request concerns local file system.\n')
@@ -148,7 +148,7 @@ elseif ~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-10:end),'catalog.xm
        OPT.url(end+1) = filesep;
    end
    % make sure we always return the full path
-   if OPT.maxlevel<2
+   if ~(OPT.maxlevel>1) % paths has already been padded when OPT.maxlevel>1
       nc_file_list   = path2os(cellstr(addrowcol(char(nc_file_list),0,-1,fliplr([OPT.url,filesep])))); % left-padd path
       nc_folder_list = OPT.url;
    end

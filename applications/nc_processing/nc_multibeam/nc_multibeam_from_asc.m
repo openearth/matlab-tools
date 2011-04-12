@@ -296,8 +296,8 @@ if OPT.make
             % loop through data
             for x0      = minx : OPT.mapsizex : maxx
                 for y0  = miny : OPT.mapsizey : maxy
-                    ix = find(x     >=x0             ,1,'first'):find(x     <x0+OPT.mapsizex,1,'last');
-                    iy = find(y(:,1)<y0+OPT.mapsizey,1,'first'):find(y(:,1)>=y0             ,1,'last');
+                    ix = find(x     >=x0            ,1,'first'):find(x     <x0+OPT.mapsizex,1,'last');
+                    iy = find(y(:,1)<y0+OPT.mapsizey,1,'first'):find(y(:,1)>=y0            ,1,'last');
                     
                     z = nan(length(iy),length(ix));
                     for iD = unique(y(iy,2))'

@@ -101,9 +101,9 @@ function varargout = findAllFiles(varargin)
 
    if ispc
        if OPT.recursive
-           [a b] = system(['dir /b /a /s ' '"' OPT.basepath filesep OPT.pattern_incl '"']);
+           [a b] = system(['dir /b /a /s ' '"' path2os([OPT.basepath filesep OPT.pattern_incl]) '"']);
        else
-           [a b] = system(['dir /b /a ' '"'    OPT.basepath filesep OPT.pattern_incl '"']);
+           [a b] = system(['dir /b /a ' '"'    path2os([OPT.basepath filesep OPT.pattern_incl]) '"']);
        end
        
    else

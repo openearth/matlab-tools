@@ -79,11 +79,15 @@ function varargout = KMLcontour(lat,lon,z,varargin)
    OPT.labelDecimals = 1;
    OPT.labelInterval = nan; % NaN means clabel is used
    OPT.zScaleFun     = @(z) (z+0)*0;
-
-if nargin==0
+%% 
+   if nargin==0
     varargout = {OPT};
     return
-end
+   end
+   
+   if isvector(lat) & isvector(lon)
+      [lat,lon] = meshgrid(lat,lon);
+   end
 
 %% check if labels are defined
 %  see if height is defined
