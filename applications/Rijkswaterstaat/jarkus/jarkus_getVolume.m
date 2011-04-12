@@ -1,4 +1,4 @@
-function [Volume result Boundaries] = jarkus_getVolume(varargin)
+function [Volume result Boundaries Redefined] = jarkus_getVolume(varargin)
 % JARKUS_GETVOLUME   generic routine to determine volumes on transects
 %
 %   Routine determines volumes on transects. In case of no second profile (x2, z2),
@@ -15,7 +15,7 @@ function [Volume result Boundaries] = jarkus_getVolume(varargin)
 %   PropertyValue pairs (or combined, propertyName propertyValue pairs at the end).
 %
 %   syntax:
-%   [Volume result Boundaries] =
+%   [Volume result Boundaries Redefined] =
 %   getVolume(x, z, UpperBoundary, LowerBoundary, LandwardBoundary, SeawardBoundary, x2, z2)
 %
 %   input:
@@ -29,11 +29,14 @@ function [Volume result Boundaries] = jarkus_getVolume(varargin)
 %       z2                  = column array with z2 points
 %       propertyname propertyvalue pairs:
 %           suppressMessEqualBoundaries     boolean (true/false)
+%           suppressMessAdaptedBoundaries   boolean (true/false)
 %
 %   Output:
 %   Volume     = resulting volume
 %   result     = structure containing the results
 %   Boundaries = structure containing the boundary information
+%   Redefined  = structure containing booleans showing whether variables
+%                   are redefined within this function
 %
 %   Example
 %   getVolume
@@ -42,7 +45,7 @@ function [Volume result Boundaries] = jarkus_getVolume(varargin)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %
@@ -99,10 +102,11 @@ propertyName = {...
     'SeawardBoundary'...
     'x2'...
     'z2'...
-    'suppressMessEqualBoundaries'};
+    'suppressMessEqualBoundaries'...
+    'suppressMessAdaptedBoundaries'};
 propertyValue = [...
     varargin(1:id)...
-    repmat({[]}, 1, length(propertyName)-id-1) false];
+    repmat({[]}, 1, length(propertyName)-id-2) false true];
 
 % create property structure, including the directly specified input
 OPTstructArgs = reshape([propertyName; propertyValue], 1, 2*length(propertyName));
@@ -111,6 +115,8 @@ OPT = struct(OPTstructArgs{:});
 % update property structure with input specified as propertyName
 % propertyValue pairs
 OPT = setproperty(OPT, varargin{id+1:end});
+
+Redefined = cell2struct(repmat({[]}, size(fieldnames(OPT))), fieldnames(OPT));
 
 inputSize = structfun(@size, OPT,...
     'UniformOutput', false);
@@ -183,8 +189,24 @@ if inputSize.LowerBoundary(1)>1; x_min = max([x_min min(LowerBoundary(:,1))]); x
 if inputSize.LandwardBoundary(1)>1; LandwardBoundary = LandwardBoundary(1,1); end
 if inputSize.SeawardBoundary(1)>1; SeawardBoundary = SeawardBoundary(1,1); end
 if inputSize.x2(1)>1; x_min = max([x_min min(x2)]); x_max = min([x_max max(x2)]); end
-LandwardBoundary = max([LandwardBoundary x_min]); inputSize.LandwardBoundary(:) = size(LandwardBoundary);
-SeawardBoundary = min([SeawardBoundary x_max]); inputSize.SeawardBoundary(:) = size(SeawardBoundary);
+if x_min > LandwardBoundary
+    % one or both profiles do not reach the landward boundary
+    LandwardBoundary = x_min;
+    inputSize.LandwardBoundary(:) = size(LandwardBoundary);
+    if ~OPT.suppressMessAdaptedBoundaries
+        warning('JARKUS_GETVOLUME:newboundary', 'Landward boundary adapted')
+    end
+    Redefined.LandwardBoundary = true;
+end
+if x_max < SeawardBoundary
+    % one or both profiles do not reach the seaward boundary
+    SeawardBoundary = x_max;
+    inputSize.SeawardBoundary(:) = size(SeawardBoundary);
+    if ~OPT.suppressMessAdaptedBoundaries
+        warning('JARKUS_GETVOLUME:newboundary', 'Seaward boundary adapted')
+    end
+    Redefined.SeawardBoundary = true;
+end
 
 if LandwardBoundary == SeawardBoundary
     result.xActive = LandwardBoundary;
