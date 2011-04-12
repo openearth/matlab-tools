@@ -22,6 +22,7 @@ for i=1:10000
             astronomicComponentSets(k).correction(j)=0;
             astronomicComponentSets(k).amplitudeCorrection(j)=0;
             astronomicComponentSets(k).phaseCorrection(j)=0;
+            astronomicComponentSets(k).nr=j;
             j=j+1;
         end
     else

@@ -1,26 +1,26 @@
-function [times,wl]=GenerateWaterLevelsFromFile(Flow)
+function [times,wl]=generateWaterLevelsFromFile(flow,openBoundaries,opt)
 
-t0=Flow.StartTime;
-t1=Flow.StopTime;
-dt=Flow.BctTimeStep;
+t0=flow.startTime;
+t1=flow.stopTime;
+dt=opt.bctTimeStep;
 
 % First interpolate data onto boundaries
 
-nr=Flow.NrOpenBoundaries;
+nr=length(openBoundaries);
 
 for i=1:nr
 
     % End A
-    x(i,1)=0.5*(Flow.OpenBoundaries(i).X(1) + Flow.OpenBoundaries(i).X(2));
-    y(i,1)=0.5*(Flow.OpenBoundaries(i).Y(1) + Flow.OpenBoundaries(i).Y(2));
+    x(i,1)=0.5*(openBoundaries(i).X(1) + openBoundaries(i).X(2));
+    y(i,1)=0.5*(openBoundaries(i).Y(1) + openBoundaries(i).Y(2));
 
     % End B
-    x(i,2)=0.5*(Flow.OpenBoundaries(i).X(end-1) + Flow.OpenBoundaries(i).X(end));
-    y(i,2)=0.5*(Flow.OpenBoundaries(i).Y(end-1) + Flow.OpenBoundaries(i).Y(end));
+    x(i,2)=0.5*(openBoundaries(i).X(end-1) + openBoundaries(i).X(end));
+    y(i,2)=0.5*(openBoundaries(i).Y(end-1) + openBoundaries(i).Y(end));
 
 end
 
-fname=Flow.WaterLevel.BC.File;
+fname=opt.WaterLevel.BC.File;
 
 load(fname);
 
@@ -37,7 +37,7 @@ nt=0;
 
 for it=it0:it1
     nt=nt+1;
-    wl00=squeeze(s.data(:,:,it))+Flow.WaterLevel.BC.ZCor;
+    wl00=squeeze(s.data(:,:,it))+opt.WaterLevel.BC.ZCor;
     wl00=internaldiffusion(wl00); 
     wl00=interp2(s.lon,s.lat,wl00,x,y);
     wl0(:,:,nt)=wl00;

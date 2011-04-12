@@ -1,37 +1,37 @@
-function [times,u,v]=GenerateVelocitiesFromFile(Flow,dplayer)
+function [times,u,v]=generateVelocitiesFromFile(flow,openBoundaries,opt)
 
-t0=Flow.StartTime;
-t1=Flow.StopTime;
-dt=Flow.BctTimeStep;
+t0=flow.startTime;
+t1=flow.stopTime;
+dt=flow.bctTimeStep;
 
-nr=Flow.NrOpenBoundaries;
+nr=length(openBoundaries);
+
 for i=1:nr
-    dp(i,1)=-Flow.OpenBoundaries(i).Depth(1);
-    dp(i,2)=-Flow.OpenBoundaries(i).Depth(2);
+    dp(i,1)=-openBoundaries(i).depth(1);
+    dp(i,2)=-openBoundaries(i).depth(2);
 end
 
-if strcmpi(Flow.VertCoord,'z')
-    dplayer=GetLayerDepths(dp,Flow.Thick,Flow.ZBot,Flow.ZTop);
+if strcmpi(flow.vertCoord,'z')
+    dplayer=GetLayerDepths(dp,flow.thick,flow.zBot,flow.zTop);
 else
-    dplayer=GetLayerDepths(dp,Flow.Thick);
+    dplayer=GetLayerDepths(dp,flow.thick);
 end
 
 % First interpolate data onto boundaries
-nr=Flow.NrOpenBoundaries;
 for i=1:nr
 
     % End A
     
-    x(i,1)=0.5*(Flow.OpenBoundaries(i).X(1) + Flow.OpenBoundaries(i).X(2));
-    y(i,1)=0.5*(Flow.OpenBoundaries(i).Y(1) + Flow.OpenBoundaries(i).Y(2));
+    x(i,1)=0.5*(openBoundaries(i).X(1) + openBoundaries(i).X(2));
+    y(i,1)=0.5*(openBoundaries(i).Y(1) + openBoundaries(i).Y(2));
 
-    dx=Flow.OpenBoundaries(i).X(2)-Flow.OpenBoundaries(i).X(1);
-    dy=Flow.OpenBoundaries(i).Y(2)-Flow.OpenBoundaries(i).Y(1);
-    if strcmpi(Flow.OpenBoundaries(i).Orientation,'negative')
+    dx=openBoundaries(i).X(2)-openBoundaries(i).X(1);
+    dy=openBoundaries(i).Y(2)-openBoundaries(i).Y(1);
+    if strcmpi(openBoundaries(i).orientation,'negative')
         dx=dx*-1;
         dy=dy*-1;
     end
-    switch lower(Flow.OpenBoundaries(i).Side)
+    switch lower(openBoundaries(i).side)
         case{'left','right'}
             % u-point
             alphau(i,1)=atan2(dy,dx)-0.5*pi;
@@ -44,16 +44,16 @@ for i=1:nr
 
     % End B
 
-    x(i,2)=0.5*(Flow.OpenBoundaries(i).X(end-1) + Flow.OpenBoundaries(i).X(end));
-    y(i,2)=0.5*(Flow.OpenBoundaries(i).Y(end-1) + Flow.OpenBoundaries(i).Y(end));
+    x(i,2)=0.5*(openBoundaries(i).X(end-1) + openBoundaries(i).X(end));
+    y(i,2)=0.5*(openBoundaries(i).Y(end-1) + openBoundaries(i).Y(end));
 
-    dx=Flow.OpenBoundaries(i).X(end)-Flow.OpenBoundaries(i).X(end-1);
-    dy=Flow.OpenBoundaries(i).Y(end)-Flow.OpenBoundaries(i).Y(end-1);
-    if strcmpi(Flow.OpenBoundaries(i).Orientation,'negative')
+    dx=openBoundaries(i).X(end)-openBoundaries(i).X(end-1);
+    dy=openBoundaries(i).Y(end)-openBoundaries(i).Y(end-1);
+    if strcmpi(openBoundaries(i).orientation,'negative')
         dx=dx*-1;
         dy=dy*-1;
     end
-    switch lower(Flow.OpenBoundaries(i).Side)
+    switch lower(openBoundaries(i).side)
         case{'left','right'}
             % u-point
             alphau(i,2)=atan2(dy,dx)-0.5*pi;
@@ -75,7 +75,7 @@ end
 % sv=load(fname);
 
 
-fname=Flow.Current.BC.File;
+fname=opt.current.BC.file;
 load(fname);
 
 s.lon=mod(s.lon,360);
@@ -95,8 +95,8 @@ for it=it0:it1
 
 %     uu=Interpolate3D(Flow,x,y,dplayer,s,it,'data');
 %     vv=Interpolate3D(Flow,x,y,dplayer,sv.s,it,'data');
-    uu=Interpolate3D(Flow,x,y,dplayer,s,it,'u');
-    vv=Interpolate3D(Flow,x,y,dplayer,s,it,'v');
+    uu=interpolate3D(x,y,dplayer,s,it,'u');
+    vv=interpolate3D(x,y,dplayer,s,it,'v');
     nt=nt+1;
 
     for j=1:nr
@@ -121,7 +121,7 @@ end
 
 t=t0:dt/1440:t1;
 for j=1:nr
-    for k=1:Flow.KMax
+    for k=1:flow.KMax
         u(j,1,k,:) = spline(times,squeeze(u0(j,1,k,:)),t);
         u(j,2,k,:) = spline(times,squeeze(u0(j,2,k,:)),t);
         v(j,1,k,:) = spline(times,squeeze(v0(j,1,k,:)),t);

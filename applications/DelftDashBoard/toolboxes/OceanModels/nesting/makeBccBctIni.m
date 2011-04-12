@@ -71,115 +71,11 @@ end
 switch lower(fil)
     case{'bct'}
         disp('Generating hydrodynamic boundary conditions ...');
-        GenerateBctFile(Flow);        
+        openBoundaries=generateBctFile(flow,openboundaries,opt);
     case{'ini'}
         disp('Generating initial conditions ...');
-        GenerateIniFile(Flow);        
+        generateIniFile(Flow);        
     case{'bcc'}
         disp('Generating transport boundary conditions ...');
-        GenerateBccFile(Flow);
+        generateBccFile(Flow);
 end
-
-% 
-% 
-% 
-% 
-% 
-% 
-% 
-% 
-% 
-% % Water levels
-% 
-%     % Initial conditions
-%     Flow.WaterLevel.ICDataSource='uniform';
-%     Flow.WaterLevel.ICConst=0.3;
-% 
-% 
-% %     Flow.WaterLevel.BCDataSource='file';
-% %     Flow.WaterLevel.DataFile='data\ncom\wl_ncom_20080901.mat';
-% %     Flow.WaterLevel.ZCor=-0.6;
-% 
-% % Currents
-% 
-%     % Initial conditions
-%     Flow.Current.ICDataSource='uniform';
-%     Flow.Current.ICConst=0;
-%     Flow.Current.ICProfile=[];
-% 
-%     Flow.Current.ICDataSource='3d';
-%     Flow.Current.ICConst=0;
-%     Flow.Current.ICProfile=[];
-% 
-%     % Boundary conditions
-%     Flow.Current.BCDataSource='file';
-% %    Flow.Current.BCProfile=[];
-%     Flow.Current.BCConst=0;
-%     Flow.Current.DataFile='data\ncom\velocity_ncom_20080901.mat';
-% 
-% % Flow.Riemann.WLDataSource='astro';
-% % Flow.Riemann.WLDataFile='input\sd014\sd014.bca';
-% % Flow.Riemann.VelDataSource='file';
-% % Flow.Riemann.VelDataFile='ncom\velocity_ncom_20090715.mat';
-% % Flow.Riemann.VelDataBndPrefix{1}='Sou';
-% % Flow.Riemann.VelDataFile{2}='zeros.tek';
-% % Flow.Riemann.VelDataBndPrefix{2}='Wes';
-% % Flow.Riemann.VelDataFile{3}='zeros.tek';
-% % Flow.Riemann.VelDataBndPrefix{3}='Nor';
-% 
-% % Flow.Riemann.BCProfile=[];
-% % Flow.Riemann.ICProfile=[];
-% 
-% % Salinity
-% 
-%     % Initial conditions
-%     Flow.Salinity.ICDataSource='profile';
-%     Flow.Salinity.ICDataSource='3d';
-%     salprf=load([Flow.InputDir 'salinity.prf']);
-%     Flow.Salinity.ICProfile=salprf;
-% 
-%     % Boundary conditions
-%     Flow.Salinity.BCDataSource='3d';
-%     Flow.Salinity.DataFile='data\ncom\salinity_ncom_20080901.mat';
-%     %Flow.Salinity.BCProfile=salprf;
-% 
-% % Temperature
-% 
-%     % Initial conditions
-%     Flow.Temperature.ICDataSource='profile';
-%     Flow.Temperature.ICDataSource='3d';
-%     tmpprf=load([Flow.InputDir 'temperature.prf']);
-%     Flow.Temperature.ICProfile=tmpprf;
-% 
-%     % Boundary conditions
-% 
-%     Flow.Temperature.BCDataSource='3d';
-%     Flow.Temperature.DataFile='data\ncom\temperature_ncom_20080901.mat';
-%     % Flow.Temperature.BCProfile=tmpprf;
-% 
-% % Tracer    
-% 
-%     % Initial conditions
-%     Flow.Tracer(1).ICDataSource='uniform';
-%     Flow.Tracer(1).ICConst=0;
-% 
-%     % Boundary conditions
-%     Flow.Tracer(1).BCDataSource='uniform';
-%     Flow.Tracer(1).BCConst=0;
-% 
-%     % Initial conditions
-%     Flow.Tracer(2).ICDataSource='uniform';
-%     Flow.Tracer(2).ICConst=0;
-% 
-%     % Boundary conditions
-%     Flow.Tracer(2).BCDataSource='uniform';
-%     Flow.Tracer(2).BCConst=0;
-% 
-% switch lower(fil)
-%     case{'bct'}
-%         GenerateBctFile(Flow);        
-%     case{'ini'}
-%         GenerateIniFile(Flow);        
-%     case{'bcc'}
-%         GenerateBccFile(Flow);
-% end

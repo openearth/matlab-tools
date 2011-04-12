@@ -1,4 +1,4 @@
-function s=Interpolate3D(Flow,x,y,dplayer,d,it,varargin)
+function s=interpolate3D(x,y,dplayer,d,it,varargin)
 
 tp='data';
 
@@ -11,8 +11,7 @@ end
 nlevels=length(d.levels);
 levels=d.levels';
 
-kmax=Flow.KMax;
-
+kmax=length(dplayer);
 xd=d.lon;
 yd=d.lat;
 [xd,yd]=meshgrid(xd,yd);

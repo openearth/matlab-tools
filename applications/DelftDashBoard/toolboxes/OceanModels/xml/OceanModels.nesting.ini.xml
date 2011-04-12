@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>selectwlsource</tag>
+    <position>50 110 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <variable>handles.Toolbox(tb).Input.options.waterLevel.BC.source</variable>
+    <tooltipstring>Select an source for water level boundary conditions</tooltipstring> 
+    <list>
+      <texts>
+        <text>Astronomic</text>
+        <text>File</text>
+        <text>Constant</text>
+        <text>Time Series</text>
+      </texts>
+    </list>
+  </element> 
+  <element>
+    <tag>selectwlbndfile</tag>
+    <style>pushselectfile</style>
+    <position>160 110 60 20</position>
+    <tooltipstring>Open astronomic bnd file</tooltipstring>
+    <text>Bnd File</text>
+    <variable>handles.Toolbox(tb).Input.options.waterLevel.BC.bndAstroFile</variable>
+    <extension>*.bca</extension>
+    <selectiontext>Select bnd file</selectiontext>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <tags>
+          <tag>selectwlsource</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.waterLevel.BC.source</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element> 
+
+  <element>
+    <tag>selectwlbcafile</tag>
+    <style>pushselectfile</style>
+    <position>250 110 60 20</position>
+    <tooltipstring>Open astronomic bca file</tooltipstring>
+    <text>Bnd File</text>
+    <variable>handles.Toolbox(tb).Input.options.waterLevel.BC.astroFile</variable>
+    <extension>*.bca</extension>
+    <selectiontext>Select bnd file</selectiontext>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <tags>
+          <tag>selectwlsource</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.waterLevel.BC.source</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element> 
+
+</root>

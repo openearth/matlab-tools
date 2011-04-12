@@ -420,7 +420,11 @@ for i=1:length(openBoundaries)
             % A
             m=bnd.M1;
             n=bnd.N1;
+            try
             j= find(s.wl.m==m & s.wl.n==n,1);
+            catch
+                shite=1
+            end
             wl(:,1)=nest.wl(:,j);
             dps(1)=nest.dps(j);
             

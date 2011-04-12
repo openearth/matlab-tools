@@ -1,0 +1,216 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>selectsalinitysource</tag>
+    <position>110 80 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Salinity (ppt)</text>
+    <variable>handles.Toolbox(tb).Input.options.salinity.BC.source</variable>
+    <tooltipstring>Select source for salinity boundary conditions</tooltipstring> 
+    <list>
+      <texts>
+        <text>Constant</text>
+        <text>File</text>
+        <text>Profile</text>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>editsalinity</tag>
+    <position>330 80 50 20</position>
+    <style>edit</style>
+    <type>real</type>
+    <text>Salinity (ppt)</text>
+    <variable>handles.Toolbox(tb).Input.options.salinity.BC.constant</variable>
+    <tooltipstring>Edit constant salinity (ppt)</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <tags>
+          <tag>selectsalinitysource</tag>
+        </tags>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.salinity.BC.source</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element> 
+  <element>
+    <tag>selectsalinityprofile</tag>
+    <style>pushselectfile</style>
+    <position>230 80 100 20</position>
+    <tooltipstring>Select salinity profile file</tooltipstring>
+    <text>Profile File</text>
+    <variable>handles.Toolbox(tb).Input.options.salinity.BC.profileFile</variable>
+    <extension>*.prf</extension>
+    <selectiontext>Select *.prf file</selectiontext>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <tags>
+          <tag>selectsalinitysource</tag>
+        </tags>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.salinity.BC.source</variable>
+            <value>3</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element> 
+
+
+  <element>
+    <tag>selecttemperaturesource</tag>
+    <position>110 55 100 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Temperature (degC)</text>
+    <variable>handles.Toolbox(tb).Input.options.temperature.BC.source</variable>
+    <tooltipstring>Select source for temperature boundary conditions</tooltipstring> 
+    <list>
+      <texts>
+        <text>Constant</text>
+        <text>File</text>
+        <text>Profile</text>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>edittemperature</tag>
+    <position>330 55 50 20</position>
+    <style>edit</style>
+    <type>real</type>
+    <text>Temperature (degC)</text>
+    <variable>handles.Toolbox(tb).Input.options.temperature.BC.constant</variable>
+    <tooltipstring>Edit constant temperature (degC)</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <tags>
+          <tag>selecttemperaturesource</tag>
+        </tags>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.temperature.BC.source</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element> 
+  <element>
+    <tag>selecttemperatureprofile</tag>
+    <style>pushselectfile</style>
+    <position>230 55 100 20</position>
+    <tooltipstring>Select temperature profile file</tooltipstring>
+    <text>Profile File</text>
+    <variable>handles.Toolbox(tb).Input.options.temperature.BC.profileFile</variable>
+    <extension>*.prf</extension>
+    <selectiontext>Select *.prf file</selectiontext>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <tags>
+          <tag>selecttemperaturesource</tag>
+        </tags>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.temperature.BC.source</variable>
+            <value>3</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element> 
+
+  <element>
+    <tag>editname</tag>
+    <style>edit</style>
+    <position>110 30 100 20</position>
+    <variable>handles.Toolbox(tb).Input.name</variable>
+    <type>string</type>
+    <text>Data File</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit file name for data files</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>selectsalinitysource</tag>
+          <tag>selecttemperaturesource</tag>
+        </tags>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.salinity.BC.source</variable>
+            <value>2</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.temperature.BC.source</variable>
+            <value>2</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element>
+  <element>
+    <tag>editfolder</tag>
+    <style>edit</style>
+    <position>110 5 100 20</position>
+    <variable>handles.Toolbox(tb).Input.folder</variable>
+    <type>string</type>
+    <text>Data Folder</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit folder name for data files</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>selectsalinitysource</tag>
+          <tag>selecttemperaturesource</tag>
+        </tags>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.salinity.BC.source</variable>
+            <value>2</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Toolbox(tb).Input.options.temperature.BC.source</variable>
+            <value>2</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element>
+
+  <element>
+    <tag>generatebccfile</tag>
+    <style>pushbutton</style>
+    <position>850 10 100 20</position>
+    <text>Generate BCC</text>
+    <callback>ddb_OceanModelsToolbox_nestBcc</callback>
+    <option1>generatebcc</option1>
+    <tooltipstring>Generate *.bcc file</tooltipstring>
+  </element> 
+
+</root>

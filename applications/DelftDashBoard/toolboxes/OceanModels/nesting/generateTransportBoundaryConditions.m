@@ -1,17 +1,17 @@
-function Flow=GenerateTransportBoundaryConditions(Flow,par,ii,dplayer)
+function openBoundaries=generateTransportBoundaryConditions(flow,openBoundaries,opt,par,ii,dplayer)
 
-t0=Flow.StartTime;
-t1=Flow.StopTime;
-dt=Flow.BccTimeStep;
+t0=flow.startTime;
+t1=flow.stopTime;
+dt=opt.bccTimeStep;
 
-switch lower(Flow.(par)(ii).BC.Source)
+switch lower(opt.(par)(ii).BC.source)
     case{'constant'}
-        pars=[0 Flow.(par)(ii).BC.Constant]';
+        pars=[0 opt.(par)(ii).BC.constant]';
     case{'profile'}
-        pars=Flow.(par)(ii).BC.Profile';
+        pars=opt.(par)(ii).BC.profile';
 end
 
-switch lower(Flow.(par)(ii).BC.Source)
+switch lower(opt.(par)(ii).BC.source)
 
     case{'constant','profile'}
 
@@ -21,33 +21,36 @@ switch lower(Flow.(par)(ii).BC.Source)
         vals =[vals(1) vals vals(end)];
         val=interp1(depths,vals,dplayer);
 
-        for j=1:Flow.NrOpenBoundaries
-            Flow.OpenBoundaries(j).(par)(ii).NrTimeSeries=2;
-            Flow.OpenBoundaries(j).(par)(ii).TimeSeriesT=[t0;t1];
-            Flow.OpenBoundaries(j).(par)(ii).Profile='3d-profile';
+        for j=1:length(openBoundaries)
+            openBoundaries(j).(par)(ii).nrTimeSeries=2;
+            openBoundaries(j).(par)(ii).timeSeriesT=[t0;t1];
+            if flow.KMax>1
+                openBoundaries(j).(par)(ii).profile='3d-profile';
+            else
+                openBoundaries(j).(par)(ii).profile='uniform';
+            end
             ta=squeeze(val(j,1,:))';
             tb=squeeze(val(j,2,:))';
             ta=[ta;ta];
             tb=[tb;tb];
-            if strcmpi(Flow.VertCoord,'z')
+            if strcmpi(flow.vertCoord,'z')
                 ta=fliplr(ta);
                 tb=fliplr(tb);
             end
-            Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA=ta;
-            Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB=tb;
+            openBoundaries(j).(par)(ii).timeSeriesA=ta;
+            openBoundaries(j).(par)(ii).timeSeriesB=tb;
         end      
         
     case{'file'}
         
-        nr=Flow.NrOpenBoundaries;
-        for i=1:nr
-            x(i,1)=0.5*(Flow.OpenBoundaries(i).X(1) + Flow.OpenBoundaries(i).X(2));
-            y(i,1)=0.5*(Flow.OpenBoundaries(i).Y(1) + Flow.OpenBoundaries(i).Y(2));
-            x(i,2)=0.5*(Flow.OpenBoundaries(i).X(end-1) + Flow.OpenBoundaries(i).X(end));
-            y(i,2)=0.5*(Flow.OpenBoundaries(i).Y(end-1) + Flow.OpenBoundaries(i).Y(end));
+        for i=1:length(openBoundaries)
+            x(i,1)=0.5*(openBoundaries(i).X(1) + openBoundaries(i).X(2));
+            y(i,1)=0.5*(openBoundaries(i).Y(1) + openBoundaries(i).Y(2));
+            x(i,2)=0.5*(openBoundaries(i).X(end-1) + openBoundaries(i).X(end));
+            y(i,2)=0.5*(openBoundaries(i).Y(end-1) + openBoundaries(i).Y(end));
         end
         
-        fname=Flow.(par)(ii).BC.File;
+        fname=opt.(par)(ii).BC.file;
 
         load(fname);
 
@@ -61,11 +64,11 @@ switch lower(Flow.(par)(ii).BC.Source)
         nt=0;
 
         for j=1:nr
-            Flow.OpenBoundaries(j).(par)(ii).NrTimeSeries=0;
-            Flow.OpenBoundaries(j).(par)(ii).TimeSeriesT=[];
-            Flow.OpenBoundaries(j).(par)(ii).Profile='3d-profile';
-            Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA=[];
-            Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB=[];
+            openBoundaries(j).(par)(ii).nrTimeSeries=0;
+            openBoundaries(j).(par)(ii).timeSeriesT=[];
+            openBoundaries(j).(par)(ii).profile='3d-profile';
+            openBoundaries(j).(par)(ii).timeSeriesA=[];
+            openBoundaries(j).(par)(ii).timeSeriesB=[];
         end
 
         for it=it0:it1
@@ -73,15 +76,15 @@ switch lower(Flow.(par)(ii).BC.Source)
             disp(['      Time step ' num2str(it) ' of ' num2str(it1-it0+1)]);
 
             t=times(it);
-            data=Interpolate3D(Flow,x,y,dplayer,s,it);
+            data=interpolate3D(x,y,dplayer,s,it);
             nt=nt+1;
             for j=1:nr
                 ta=squeeze(data(j,1,:))';
                 tb=squeeze(data(j,2,:))';
-                Flow.OpenBoundaries(j).(par)(ii).NrTimeSeries=nt;
-                Flow.OpenBoundaries(j).(par)(ii).TimeSeriesT=[Flow.OpenBoundaries(j).(par)(ii).TimeSeriesT;t];
-                Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA=[Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA;ta];
-                Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB=[Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB;tb];
+                openBoundaries(j).(par)(ii).nrTimeSeries=nt;
+                openBoundaries(j).(par)(ii).timeSeriesT=[openBoundaries(j).(par)(ii).timeSeriesT;t];
+                openBoundaries(j).(par)(ii).timeSeriesA=[openBoundaries(j).(par)(ii).timeSeriesA;ta];
+                openBoundaries(j).(par)(ii).timeSeriesB=[openBoundaries(j).(par)(ii).timeSeriesB;tb];
             end
         end
 
@@ -89,29 +92,21 @@ switch lower(Flow.(par)(ii).BC.Source)
         for j=1:nr
             ta=[];
             tb=[];
-            for k=1:Flow.KMax
-                ta(:,k) = spline(Flow.OpenBoundaries(j).(par)(ii).TimeSeriesT,Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA(:,k),t);
-                tb(:,k) = spline(Flow.OpenBoundaries(j).(par)(ii).TimeSeriesT,Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB(:,k),t);
+            for k=1:flow.KMax
+                ta(:,k) = spline(openBoundaries(j).(par)(ii).timeSeriesT,openBoundaries(j).(par)(ii).timeSeriesA(:,k),t);
+                tb(:,k) = spline(openBoundaries(j).(par)(ii).timeSeriesT,openBoundaries(j).(par)(ii).timeSeriesB(:,k),t);
             end
-            Flow.OpenBoundaries(j).(par)(ii).TimeSeriesT = t;
-            Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA = ta;
-            Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB = tb;
-            Flow.OpenBoundaries(j).(par)(ii).NrTimeSeries=length(t);
+            openBoundaries(j).(par)(ii).timeSeriesT = t;
+            openBoundaries(j).(par)(ii).timeSeriesA = ta;
+            openBoundaries(j).(par)(ii).timeSeriesB = tb;
+            openBoundaries(j).(par)(ii).nrTimeSeries=length(t);
 
-            if strcmpi(Flow.VertCoord,'z')
-                Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA=flipdim(Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA,2);
-                Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB=flipdim(Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB,2);
+            if strcmpi(flow.vertCoord,'z')
+                openBoundaries(j).(par)(ii).timeSeriesA=flipdim(openBoundaries(j).(par)(ii).timeSeriesA,2);
+                openBoundaries(j).(par)(ii).timeSeriesB=flipdim(openBoundaries(j).(par)(ii).timeSeriesB,2);
             end
-
+        end
         
-        end
-        for j=1:nr
-
-% if strcmpi(par,'Temperature')
-%     Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA=zeros(size(Flow.OpenBoundaries(j).(par)(ii).TimeSeriesA))+50;
-%     Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB=zeros(size(Flow.OpenBoundaries(j).(par)(ii).TimeSeriesB))+50;
-% end
-        end
 end
 
 

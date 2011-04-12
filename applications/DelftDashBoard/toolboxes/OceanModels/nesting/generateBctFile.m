@@ -1,27 +1,15 @@
-function openBoundaries=generateBctFile(flow,openboundaries,opt)
+function openBoundaries=generateBctFile(flow,openBoundaries,opt)
 
-GenWLAstro=0;
-GenWLHarmo=0;
-GenWLConst=0;
-GenWL3D=0;
+genWLAstro=0;
+%genWLHarmo=0;
+genWLConst=0;
+genWL3D=0;
 
-GenVelHarmo=0;
-GenVel4D=0;
-GenVelConst=0;
-GenVelTS=0;
-GenVelAstro=0;
-
-if isfield(opt.Current.BC,'AstroVelFile')
-    GenVelAstro=1;
-end
-
-if isfield(opt.Current.BC,'AstroFile')
-    GenWLAstro=1;
-end
-
-% if isfield(Flow.Current.BC,'AstroTanVelFile')
-%     GenTanVelAstro=1;
-% end
+%genVelHarmo=0;
+genVel4D=0;
+genVelConst=0;
+genVelTS=0;
+genVelAstro=0;
 
 nr=length(openBoundaries);
 
@@ -30,300 +18,217 @@ for i=1:nr
     dp(i,2)=-openBoundaries(i).depth(2);
 end
 
-% Check which time series need to be generated
+%% Initialize time series
+
+% Times
+t0=flow.startTime;
+t1=flow.stopTime;
+dt=opt.bctTimeStep/1440;
+times=t0:dt:t1;
+nt=length(times);
+
+% Water Levels
+wlconst=0;
+wlastro=zeros(nr,2,nt);
+wl3d=zeros(nr,2,nt);
+
+% Currents
+velconst=0;
+velastro=zeros(nr,2,flow.KMax,nt);
+vel4d=zeros(nr,2,flow.KMax,nt);
+
+% Tangential currents
+tanvelconst=0;
+tanvelastro=zeros(nr,2,flow.KMax,nt);
+tanvel4d=zeros(nr,2,flow.KMax,nt);
+
+%% Check which time series need to be generated
+
 for i=1:nr
     switch lower(openBoundaries(i).type)
         case{'n'}
-
-        case{'c'}
-            switch lower(opt.Current.BC.Source)
-                case{'file'}
-                    GenVel4D=1;
-                case{'astro'}
-                    GenVelAstro=1;
-            end
+            % Neumann
         case{'z'}
-            switch lower(opt.WaterLevel.BC.Source)
-                case{'astro'}
-                    GenWLAstro=1;
-                case{'harmo'}
-                    GenWLHarmo=1;
-                case{'file'}
-                    GenWL3D=1;
+            % Water level
+            switch opt.waterLevel.BC.source
+                case 1
+                    genWLAstro=1;
+                case 2
+                    genWL3D=1;
+                case 3
+                    genWLAstro=1;
+                    genWL3D=1;
+                case 4
+                    genWLConst=1;
+            end
+        case{'c'}
+            % Current
+            switch opt.current.BC.source
+                case 1
+                    genVelAstro=1;
+                case 2
+                    genVel4D=1;
+                case 3
+                    genVelAstro=1;
+                    genVel4D=1;
+                case 4
+                    genVelConst=1;
             end
         case{'r','x','p'}
-            switch lower(opt.WaterLevel.BC.Source)
-                case{'astro'}
-                    GenWLAstro=1;
-                case{'harmo'}
-                    GenWLHarmo=1;
-                case{'constant'}
-                    GenWLConst=1;
-                case{'file'}
-                    GenWL3D=1;
+            % Riemann
+            % Water levels
+            switch opt.waterLevel.BC.source
+                case 1
+                    genWLAstro=1;
+                case 2
+                    genWL3D=1;
+                case 3
+                    genWLAstro=1;
+                    genWL3D=1;
+                case 4
+                    genWLConst=1;
             end
-            switch lower(opt.Current.BC.Source)
-                case{'file'}
-                    GenVel4D=1;
-                case{'harmo'}
-                    GenVelHarmo=1;
-                case{'constant'}
-                    GenVelConst=1;
-                case{'timeseries'}
-                    GenVelTS=1;
+            % Currents
+            switch opt.current.BC.source
+                case 1
+                    genVelAstro=1;
+                case 2
+                    genVel4D=1;
+                case 3
+                    genVelAstro=1;
+                    genVel4D=1;
+                case 4
+                    genVelConst=1;
             end
     end
 end
 
+%% Now generate the required time series
+
 % Water level time series
-if GenWLAstro
+if genWLAstro
     disp('   Water levels from astro ...');
-    [twlastro,wlastro]=generateWaterLevelsFromAstro(flow,openBoundaries,opt);
+    [twlastro,wlastro]=generateWaterLevelsFromAstro(flow,opt);
 end
-if GenWLHarmo
-    disp('   Water levels from harmo ...');
-    [twlharmo,wlharmo]=GenerateWaterLevelsFromHarmo(Flow);
-end
-if GenWLConst
+if genWLConst
     disp('   Water levels from constant ...');
-    [twlconst,wlconst]=GenerateWaterLevelsFromConstantValue(Flow);
+    wlconst=wlconst+opt.waterLevel.BC.constant;
 end
-if GenWL3D
+if genWL3D
     disp('   Water levels from file ...');
-    [twl3d,wl3d]=GenerateWaterLevelsFromFile(Flow);
+    [twl3d,wl3d]=generateWaterLevelsFromFile(flow,openBoundaries,opt);
 end
+% if genWLHarmo
+%     disp('   Water levels from harmo ...');
+%     [twlharmo,wlharmo]=GenerateWaterLevelsFromHarmo(Flow);
+% end
 
 % Current time series
-if GenVelHarmo
-    disp('   Velocities from harmo ...');
-    [tvelharmo,velharmo]=GenerateVelocitiesFromHarmo(Flow);
-end
-if GenVelAstro
+if genVelAstro
     disp('   Velocities from astro ...');
-    [tvelastro,velastro,tanvelastro]=GenerateVelocitiesFromAstro(Flow);
+    [tvelastro,velastro,tanvelastro]=generateVelocitiesFromAstro(flow,opt,0);
 end
-if GenVel4D
-    disp('   Velocities from file ...');
-    [tvel4d,vel4d,tanvel4d]=GenerateVelocitiesFromFile(Flow);
-end
-if GenVelConst
+if genVelConst
     disp('   Velocities from constant ...');
-    [tvelconst,velconst]=GenerateVelocitiesFromConstantValue(Flow);
+    velconst=velconst+opt.current.BC.constant;
 end
-if GenVelTS
-    disp('   Velocities from timeseries ...');
-    [tvelts,velts]=GenerateVelocitiesFromTimeSeries(Flow);
+if genVel4D
+    disp('   Velocities from file ...');
+    [tvel4d,vel4d,tanvel4d]=generateVelocitiesFromFile(flow,openBoundaries,opt);
 end
+% if genVelTS
+%     disp('   Velocities from timeseries ...');
+%     [tvelts,velts]=generateVelocitiesFromTimeSeries(flow,openBoundaries,opt);
+% end
+% if genVelHarmo
+%     disp('   Velocities from harmo ...');
+%     [tvelharmo,velharmo]=generateVelocitiesFromHarmo(flow,openBoundaries,opt);
+% end
 
+%% Add time series from different sources
+wl=wlconst+wlastro+wl3d;
+vel=velconst+velastro+vel4d;
+tanvel=tanvelconst+tanvelastro+tanvel4d;
+
+%% Generate time series for each boundary
 for n=1:nr
-    if Flow.OpenBoundaries(n).Forcing=='T'
-        switch lower(Flow.OpenBoundaries(n).Type)
+    % Check if it's a time series boundary
+    if openBoundaries(n).forcing=='T'
+        switch lower(openBoundaries(n).type)
+
             case{'n'}
-%                 Flow.OpenBoundaries(n).TimeSeriesT=[Flow.StartTime Flow.StopTime];
-%                 Flow.OpenBoundaries(n).TimeSeriesA=[gradient gradient];
-%                 Flow.OpenBoundaries(n).TimeSeriesB=[gradient gradient];
+
+                % Neumann not implemented yet ...
+%                 openBoundaries(n).TimeSeriesT=[Flow.StartTime Flow.StopTime];
+%                 openBoundaries(n).TimeSeriesA=[gradient gradient];
+%                 openBoundaries(n).TimeSeriesB=[gradient gradient];
+
             case{'z'}
-                switch lower(Flow.WaterLevel.BC.Source)
-                    case{'astro'}
-                        twl=twlastro;
-                        wl=wlastro;
-                    case{'harmo'}
-                        twl=twlharmo;
-                        wl=wlharmo;
-                    case{'file'}
-                        twl=twl3d;
-                        wl=wl3d;
-                end
-
-                % Water levels from astro
-                if isfield(Flow.Current.BC,'AstroFile') && ~strcmpi(Flow.WaterLevel.BC.Source,'astro')
-                    wla=squeeze(wlastro(n,1,:));
-                    wlb=squeeze(wlastro(n,2,:));
-                else
-                    wla=0;
-                    wlb=0;
-                end
-
-
-                Flow.OpenBoundaries(n).TimeSeriesT=twl;
-                Flow.OpenBoundaries(n).TimeSeriesA=squeeze(wl(n,1,:)) + wla;
-                Flow.OpenBoundaries(n).TimeSeriesB=squeeze(wl(n,2,:)) + wlb;
+                
+                % Water level
+                openBoundaries(n).nrTimeSeries=length(times);
+                openBoundaries(n).timeSeriesT=times;
+                openBoundaries(n).timeSeriesA=squeeze(wl);
+                openBoundaries(n).timeSeriesB=squeeze(wl);
 
             case{'r','x'}
-                switch lower(Flow.WaterLevel.BC.Source)
-                    case{'astro'}
-                        twl=twlastro;
-                        wl=wlastro;
-                    case{'harmo'}
-                        twl=twlharmo;
-                        wl=wlharmo;
-                    case{'constant'}
-                        twl=twlconst;
-                        wl=wlconst;
-                    case{'file'}
-                        twl=twl3d;
-                        wl=wl3d;
-                end
-                switch lower(Flow.Current.BC.Source)
-                    case{'file'}
-                        tvel=tvel4d;
-                        vel=vel4d;
-                        tanvel=tanvel4d;
-                    case{'harmo'}
-                        tvel=tvelharmo;
-                        vel=velharmo;
-                    case{'constant'}
-                        tvel=tvelconst;
-                        vel=velconst;
-                    case{'timeseries'}
-                        tvel=tvelts;
-                        vel=velts;
-                end
-
-                % Water levels from astro
-                if isfield(Flow.Current.BC,'AstroFile') && ~strcmpi(Flow.WaterLevel.BC.Source,'astro')
-                    wla=squeeze(wlastro(n,1,:));
-                    wlb=squeeze(wlastro(n,2,:));
-                else
-                    wla=0;
-                    wlb=0;
-                end
-
-                % Velocities from astro
-                if isfield(Flow.Current.BC,'AstroVelFile')
-                    va=squeeze(velastro(n,1,:));
-                    vb=squeeze(velastro(n,2,:));
-                else
-                    va=0;
-                    vb=0;
-                end
                 
-                for k=1:Flow.KMax
-                    switch lower(Flow.OpenBoundaries(n).Side)
+                % Riemann or Riemann + parallel velocities
+                
+                % Normal component
+                
+                for k=1:flow.KMax
+                    switch lower(openBoundaries(n).side)
                         case{'left','bottom'}
-                            r1(:,k)=squeeze(vel(n,1,k,:))+ va + (squeeze(wl(n,1,:))+wla)*sqrt(9.81/dp(n,1));
-                            r2(:,k)=squeeze(vel(n,2,k,:))+ vb + (squeeze(wl(n,2,:))+wlb)*sqrt(9.81/dp(n,2));
+                            r1(:,k)=squeeze(vel(n,1,k,:)) + squeeze(wl(n,1,:))*sqrt(9.81/dp(n,1));
+                            r2(:,k)=squeeze(vel(n,2,k,:)) + squeeze(wl(n,2,:))*sqrt(9.81/dp(n,2));
                         case{'top','right'}
-                            r1(:,k)=squeeze(vel(n,1,k,:))+ va - (squeeze(wl(n,1,:))+wla)*sqrt(9.81/dp(n,1));
-                            r2(:,k)=squeeze(vel(n,2,k,:))+ vb - (squeeze(wl(n,2,:))+wlb)*sqrt(9.81/dp(n,2));
+                            r1(:,k)=squeeze(vel(n,1,k,:)) - squeeze(wl(n,1,:))*sqrt(9.81/dp(n,1));
+                            r2(:,k)=squeeze(vel(n,2,k,:)) - squeeze(wl(n,2,:))*sqrt(9.81/dp(n,2));
                     end
                 end
 
-%                 for k=1:Flow.KMax
-%                     switch lower(Flow.OpenBoundaries(n).Side)
-%                         case{'left','bottom'}
-%                             r1(:,k)=va + squeeze(wl(n,1,:))*sqrt(9.81/dp(n,1));
-%                             r2(:,k)=vb + squeeze(wl(n,2,:))*sqrt(9.81/dp(n,2));
-%                         case{'top','right'}
-%                             r1(:,k)=va - squeeze(wl(n,1,:))*sqrt(9.81/dp(n,1));
-%                             r2(:,k)=vb - squeeze(wl(n,2,:))*sqrt(9.81/dp(n,2));
-%                     end
-%                 end
+                openBoundaries(n).nrTimeSeries=length(times);
+%                openBoundaries(n).profile='3d-profile';
+                openBoundaries(n).timeSeriesT=times;
+                openBoundaries(n).timeSeriesA=r1;
+                openBoundaries(n).timeSeriesB=r2;
 
-                Flow.OpenBoundaries(n).NrTimeSeries=length(twl);
-                Flow.OpenBoundaries(n).Profile='3d-profile';
-                Flow.OpenBoundaries(n).TimeSeriesT=twl;
-                Flow.OpenBoundaries(n).TimeSeriesA=r1;
-                Flow.OpenBoundaries(n).TimeSeriesB=r2;
+                % Tangential component
+                if strcmpi(openBoundaries(n).type,'x')
+                    for k=1:flow.KMax
+                        openBoundaries(n).timeSeriesAV(:,k)=squeeze(tanvel(n,1,k,:));
+                        openBoundaries(n).timeSeriesBV(:,k)=squeeze(tanvel(n,2,k,:));
+                    end
+                end
                 
-                if strcmpi(Flow.OpenBoundaries(n).Type,'x')
-                    for k=1:Flow.KMax
-                        Flow.OpenBoundaries(n).TimeSeriesAV(:,k)=squeeze(tanvel(n,1,k,:));
-                        Flow.OpenBoundaries(n).TimeSeriesBV(:,k)=squeeze(tanvel(n,2,k,:));
+            case{'c','p'}
+                
+                % Current or current + tangential
+
+                openBoundaries(n).nrTimeSeries=length(times);
+                openBoundaries(n).timeSeriesT=times;
+                openBoundaries(n).timeSeriesA=squeeze(vel(n,1,:,:))';
+                openBoundaries(n).timeSeriesB=squeeze(vel(n,2,:,:))';
+                
+                                % Tangential component
+                if strcmpi(openBoundaries(n).type,'x')
+                    for k=1:flow.KMax
+                        openBoundaries(n).timeSeriesAV(:,k)=squeeze(tanvel(n,1,k,:));
+                        openBoundaries(n).timeSeriesBV(:,k)=squeeze(tanvel(n,2,k,:));
                     end
                 end
 
-                
-            case{'c'}
-                switch lower(Flow.Current.BC.Source)
-                    case{'file'}
-                        Flow.OpenBoundaries(n).NrTimeSeries=length(tvel4d);
-                        Flow.OpenBoundaries(n).Profile='3d-profile';
-                        Flow.OpenBoundaries(n).TimeSeriesT=tvel4d;
-                        Flow.OpenBoundaries(n).TimeSeriesA=squeeze(vel4d(n,1,:,:))';
-                        Flow.OpenBoundaries(n).TimeSeriesB=squeeze(vel4d(n,2,:,:))';
-                    otherwise
-                end
-            case{'p'}
-                switch lower(Flow.WaterLevel.BC.Source)
-                    case{'astro'}
-                        twl=twlastro;
-                        wl=wlastro;
-                    case{'harmo'}
-                        twl=twlharmo;
-                        wl=wlharmo;
-                    case{'file'}
-                        twl=twl3d;
-                        wl=wl3d;
-                    case{'constant'}
-                        twl=twlconst;
-                        wl=wlconst;
-                end
-                switch lower(Flow.Current.BC.Source)
-                    case{'file'}
-                        tvel=tvel4d;
-                        vel=vel4d;
-                        tanvel=tanvel4d;
-                    case{'harmo'}
-                        tvel=tvelharmo;
-                        vel=velharmo;
-                    case{'constant'}
-                        tvel=tvelconst;
-                        vel=velconst;
-                    case{'timeseries'}
-                        tvel=tvelts;
-                        vel=velts;
-                end
-
-                % Velocities from astro
-                if isfield(Flow.Current.BC,'AstroVelFile')
-                    va=squeeze(velastro(n,1,:));
-                    vb=squeeze(velastro(n,2,:));
-                else
-                    va=0;
-                    vb=0;
-                end
-
-                % Tangential velocities from astro
-                if isfield(Flow.Current.BC,'AstroTanVelFile')
-                    tanva=squeeze(velastro(n,1,:));
-                    tanvb=squeeze(velastro(n,2,:));
-                else
-                    tanva=0;
-                    tanvb=0;
-                end
-
-                switch lower(Flow.Current.BC.Source)
-                    case{'file'}
-                        Flow.OpenBoundaries(n).NrTimeSeries=length(tvel4d);
-                        Flow.OpenBoundaries(n).Profile='3d-profile';
-                        Flow.OpenBoundaries(n).TimeSeriesT=tvel;
-                        Flow.OpenBoundaries(n).TimeSeriesA=[];
-                        Flow.OpenBoundaries(n).TimeSeriesB=[];
-                        for k=1:Flow.KMax
-                            Flow.OpenBoundaries(n).TimeSeriesA(:,k)=squeeze(vel(n,1,k,:))+va;
-                            Flow.OpenBoundaries(n).TimeSeriesB(:,k)=squeeze(vel(n,2,k,:))+vb;
-                        end
-                    otherwise
-                end
-
-                for k=1:Flow.KMax
-                    Flow.OpenBoundaries(n).TimeSeriesAV(:,k)=squeeze(tanvel(n,1,k,:))+tanva;
-                    Flow.OpenBoundaries(n).TimeSeriesBV(:,k)=squeeze(tanvel(n,2,k,:))+tanvb;
-                end
-                
-                % Flather conditions
-                Flow.OpenBoundaries(n).TimeSeriesAV(:,end)=squeeze(wl(n,1,:));
-                Flow.OpenBoundaries(n).TimeSeriesBV(:,end)=squeeze(wl(n,2,:));
         end
 
-        if strcmpi(Flow.VertCoord,'z')
-            if ndims(Flow.OpenBoundaries(n).TimeSeriesA)==2
-                Flow.OpenBoundaries(n).TimeSeriesA=flipdim(Flow.OpenBoundaries(n).TimeSeriesA,2);
-                Flow.OpenBoundaries(n).TimeSeriesB=flipdim(Flow.OpenBoundaries(n).TimeSeriesB,2);
-                if isfield(Flow.OpenBoundaries(n),'TimeSeriesAV')
-                    Flow.OpenBoundaries(n).TimeSeriesAV=flipdim(Flow.OpenBoundaries(n).TimeSeriesAV,2);
-                    Flow.OpenBoundaries(n).TimeSeriesBV=flipdim(Flow.OpenBoundaries(n).TimeSeriesBV,2);
+        if strcmpi(flow.vertCoord,'z')
+            if ndims(openBoundaries(n).timeSeriesA)==2
+                openBoundaries(n).timeSeriesA=flipdim(openBoundaries(n).timeSeriesA,2);
+                openBoundaries(n).timeSeriesB=flipdim(openBoundaries(n).timeSeriesB,2);
+                switch lower(openBoundaries(n).type)
+                    case{'p','x'}
+                        openBoundaries(n).timeSeriesAV=flipdim(openBoundaries(n).timeSeriesAV,2);
+                        openBoundaries(n).timeSeriesBV=flipdim(openBoundaries(n).timeSeriesBV,2);
                 end
             end
         end
@@ -332,4 +237,4 @@ for n=1:nr
 end
 
 disp('Saving bct file');
-SaveBctFile(Flow);
+%delft3dflow_saveBctFile(flow,openBoundaries,fname);

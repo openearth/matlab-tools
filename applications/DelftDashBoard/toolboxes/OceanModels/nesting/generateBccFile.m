@@ -1,45 +1,44 @@
-function GenerateBccFile(Flow)
+function openBoundaries=generateBccFile(flow,openBoundaries,opt)
 
 
-nr=Flow.NrOpenBoundaries;
-for i=1:nr
-    dp(i,1)=-Flow.OpenBoundaries(i).Depth(1);
-    dp(i,2)=-Flow.OpenBoundaries(i).Depth(2);
+for i=1:length(openBoundaries)
+    dp(i,1)=-openBoundaries(i).depth(1);
+    dp(i,2)=-openBoundaries(i).depth(2);
 end
 
-if strcmpi(Flow.VertCoord,'z')
-    dplayer=GetLayerDepths(dp,Flow.Thick,Flow.ZBot,Flow.ZTop);
+if strcmpi(flow.vertCoord,'z')
+    dplayer=getLayerDepths(dp,flow.thick,flow.zBot,flow.zTop);
 else
-    dplayer=GetLayerDepths(dp,Flow.Thick);
+    dplayer=getLayerDepths(dp,flow.thick);
 end
 
 %% Temperature
-if Flow.Temperature.Include
+if flow.temperature.include
     disp('   Temperature ...');
-    Flow=GenerateTransportBoundaryConditions(Flow,'Temperature',1,dplayer);
+    openBoundaries=generateTransportBoundaryConditions(flow,openBoundaries,opt,'temperature',1,dplayer);
 end
 
 %% Salinity
-if Flow.Salinity.Include
+if flow.salinity.include
    disp('   Salinity ...');
-   Flow=GenerateTransportBoundaryConditions(Flow,'Salinity',1,dplayer);
+   openBoundaries=generateTransportBoundaryConditions(flow,openBoundaries,opt,'salinity',1,dplayer);
 end
 
 %% Sediments
-if Flow.NrSediments>0
+if flow.nrSediments>0
     disp('   Sediments ...');
-    for i=1:Flow.NrSediments
-        Flow=GenerateTransportBoundaryConditions(Flow,'Sediment',i,dplayer);
+    for i=1:flow.nrSediments
+        openBoundaries=generateTransportBoundaryConditions(flow,openBoundaries,opt,'sediment',i,dplayer);
     end
 end
 
 %% Sediments
-if Flow.NrTracers>0
+if flow.nrTracers>0
     disp('   Tracers ...');
-    for i=1:Flow.NrTracers
-        Flow=GenerateTransportBoundaryConditions(Flow,'Tracer',i,dplayer);
+    for i=1:flow.nrTracers
+        openBoundaries=generateTransportBoundaryConditions(flow,openBoundaries,opt,'tracer',i,dplayer);
     end
 end
 
-disp('Saving bcc file');
-SaveBccFile(Flow);
+% disp('Saving bcc file');
+% SaveBccFile(Flow);
