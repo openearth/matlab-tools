@@ -17,6 +17,8 @@ function varargout = delft3d_opendap2obs(varargin)
 
 %% settings
 
+% TO DO: use catalog.nc
+
    OPT.ncbase  = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/sea_surface_height/catalog.html';
    OPT.epsg    = []; % Dutch RD
    OPT.file    = ['delft3d_opendap2obs_',num2str(OPT.epsg),'.obs'];

@@ -39,7 +39,7 @@ for it=1:length(OPT.it)-1; %1:T.nt_storage-1 % add one extra time to specify toe
       D.cen.u          = permute(D.cen.u,[2 3 4 1]);
       D.cen.v          = permute(D.cen.v,[2 3 4 1]);
      [~,D.cen.U]       = cart2pol(D.cen.u,D.cen.v);
-      D.cen.zwl         = G.cen.zwl; % copy data needed for surface plot
+      D.cen.zwl        = G.cen.zwl; % copy data needed for surface plot
      
    %% Google Earth need lat,lon
 
@@ -82,7 +82,7 @@ for it=1:length(OPT.it)-1; %1:T.nt_storage-1 % add one extra time to specify toe
    
       if OPT.u
       
-      dn         = OPT.dn; % chose overall stride
+      dn         = OPT.dn; % choose overall stride
       dm         = OPT.dm;
         
       for k = [1];

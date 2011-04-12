@@ -91,7 +91,7 @@ else
    parameter = [];
 end
 
-IND = [];
+IND = struct([]);
 
    if strcmp(NFSstruct.SubType,'Delft3D-trim')
 

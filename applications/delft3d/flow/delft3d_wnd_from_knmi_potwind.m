@@ -14,7 +14,7 @@ function delft3d_wnd_from_knmi_potwind
    W = knmi_potwind(OPT.filename,'calms',0,'variables',0,'pol2cart',1)
 
 %% Negative with respect to reference date not posible
-%% ----------------
+
    mask       = W.datenum > OPT.refdatenum;
    W.datenum  = W.datenum(mask);
    W.UP       = W.UP     (mask);
@@ -23,7 +23,6 @@ function delft3d_wnd_from_knmi_potwind
    W.UY       = W.UY     (mask);
 
 %% Mind that there are NaN's in the direction
-%% ----------------
   
   mask = (isnan(W.DD));
   
@@ -34,7 +33,6 @@ function delft3d_wnd_from_knmi_potwind
   
 %% Remove nans (of either directory or speed)
 %% no need to be equidistant
-%% ---------------------------
 
    mask      = find(~isnan(W.UP) & ~isnan(W.DD));
  % W.UX      = interp1(W.datenum(mask),W.UX(mask),W.datenum);
