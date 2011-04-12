@@ -187,7 +187,7 @@ end
 
 % make a folder for the sub files
 if ~exist([OPT.basePath filesep OPT.Name],'dir')
-     mkpath(OPT.basePath,OPT.Name);
+     mkpath(fullfile(OPT.basePath,OPT.Name));
 end
 
 %% preproces timespan
