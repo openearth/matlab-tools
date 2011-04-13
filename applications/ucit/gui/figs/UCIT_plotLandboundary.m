@@ -33,6 +33,7 @@ function UCIT_plotLandboundary(filename,color)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+try
 %% load landboundary from server
 X	=  nc_varget(filename,'x');
 Y	=  nc_varget(filename,'y');
@@ -47,4 +48,6 @@ elseif nargin == 2
     fillpolygon([X,Y],'k',color,100,-100); hold on;
     set(gca,'color',[0.4 0.6 1])
 end
-
+catch
+    disp(['dataset broken: ',filename])
+end
