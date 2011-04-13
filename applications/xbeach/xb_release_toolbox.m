@@ -123,23 +123,22 @@ switch OPT.type
         fprintf(fid, 'svn mkdir _externals\n');
         
         for i = 1:length(files)
-            url = strrep(strrep(files{i}, abspath(oetroot), oeturl), '\', '/');
+            url_src = strrep(files{i}, [abspath(oetroot) filesep], oeturl);
+            %url_dst = regexprep(oeturl, 'trunk\/.*$', ['tags/' OPT.name '/']);
+            url_dst = regexprep(oetroot, 'trunk[\\\/].*$', ['tags/' OPT.name '/']);
             
             if strfind(files{i}, fdir) == 1
-                fprintf(fid, 'svn copy --parents %s %s\n', ...
-                    url, ...
-                    strrep(files{i}, fdir, ''));
+                url_dst = [url_dst strrep(files{i}, fdir, '')];
+            elseif ~strcmpi(fileparts(oetroot), fileparts(files{i}))
+                url_dst = [url_dst strrep(files{i}, oetroot, ['_externals' filesep])];
             else
-                if strcmpi(fileparts(oetroot), fileparts(files{i}))
-                    fprintf(fid, 'svn copy --parents %s %s\n', ...
-                        url, ...
-                        strrep(files{i}, oetroot, ''));
-                else
-                    fprintf(fid, 'svn copy --parents %s %s\n', ...
-                        url, ...
-                        strrep(files{i}, oetroot, ['_externals' filesep]));
-                end
+                url_dst = strrep(url_src, oeturl, url_dst);
             end
+            
+            url_src = strrep(url_src, '\', '/');
+            url_dst = strrep(url_dst, '/', '\');
+            
+            fprintf(fid, 'svn copy --parents %s %s\n', url_src, url_dst);
         end
         
         fprintf(fid, 'cd ..\n');
@@ -147,13 +146,17 @@ switch OPT.type
         
         fclose(fid);
         
-        [r m] = system('maketag.bat');
+        fprintf('Creating tag "%s"...', OPT.name);
+        
+        r = system('maketag.bat');
         
         if r > 0
-            error(['Creating tag failed [' m ']']);
+            error(['Creating tag failed']);
         else
-            disp(['Created tag "' OPT.name '"']);
+            fprintf(' done');
         end
+        
+        delete('maketag.bat');
         
     otherwise
         error(['Unknown release type [' OPT.type ']']);
