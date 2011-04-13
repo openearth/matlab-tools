@@ -1,5 +1,5 @@
 function varargout = odv_read(fullfilename,varargin)
-%ODVREAD   read file in ODV format (still test project)
+%ODVREAD   read ascii file in ODV format into ODV struct
 %
 %   D = odvread(fname,<keyword,value>)
 %
@@ -125,6 +125,7 @@ function varargout = odv_read(fullfilename,varargin)
    OPT.variablesonly = 1; % remove units from variables
    OPT.method        = 'textscan'; %'fgetl'; % 'textscan';
    OPT.resolve       = 1; % speed up by not resolving when loading multipel files, odv_merge wll resolve
+   OPT.CDI_record_id = {nan};
    
    if nargin==0
       varargout = {OPT};
@@ -337,7 +338,7 @@ function varargout = odv_read(fullfilename,varargin)
             
             for idat=4:length(D.data); % skip first 4 columns, they are chars anyway [Cruise	Station	Type	yyyy-mm-ddThh:mm:ss.sss]
                
-               % make a double array, and make sure intermediate missing empry values are nan
+               % make a double array, and make sure intermediate missing empty values are nan
                % str2num makes '' empty, so cell2mat beccomes too short, whereas
                % str2double makes '' a nan, so cell2mat has the correct shape.
                array = cell2mat(cellfun(@str2double,(D.data{idat}),'UniformOutput',0));
@@ -425,7 +426,8 @@ function varargout = odv_read(fullfilename,varargin)
    if length(D.metadata.station)==1
       D.station = char(D.metadata.station);
    end
-
+   
+   D.CDI_record_id = {OPT.CDI_record_id};
 
 %% Output
 

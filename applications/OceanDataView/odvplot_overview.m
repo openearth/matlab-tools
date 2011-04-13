@@ -1,5 +1,5 @@
 function odvplot_overview(D,varargin)
-%ODVPLOT_OVERVIEW   plot map view (lon,lat) of ODV file read by ODVREAD (still test project)
+%ODVPLOT_OVERVIEW   plot map view (lon,lat) of ODV struct
 %
 %   D = odvread(fname)
 %

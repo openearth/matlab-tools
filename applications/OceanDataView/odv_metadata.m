@@ -54,12 +54,14 @@ if isempty(tmp)==1
 
    tmp  = dir([directory,OPT.mask]);
 
-   L.name        = {tmp.name};
-   L.name        = {tmp.name};
-   L.date        = {tmp.date};
-   L.bytes       = {tmp.bytes};
-   L.isdir       = {tmp.isdir};
-   L.datenum     = {tmp.datenum};
+   L.name          = {tmp.name};
+   L.name          = {tmp.name};
+   L.date          = {tmp.date};
+   L.bytes         = {tmp.bytes};
+   L.isdir         = {tmp.isdir};
+   L.datenum       = {tmp.datenum};
+   L.CDI_record_id = cell(1,length(L.name));
+  [L.CDI_record_id{:}] = deal({nan});
    
 else
 

@@ -1,5 +1,5 @@
 function odvplot_cast(D,varargin)
-%ODVPLOT_CAST   plot profile view (parameter,z) of ODV file read by ODVREAD (still test project)
+%ODVPLOT_CAST   plot profile view (value,z) of ODV struct
 %
 %   D = odvread(fname)
 %
@@ -56,7 +56,7 @@ function odvplot_cast(D,varargin)
    OPT.z                  = '';
    OPT.index.var          = 12;  % plot first non meta-data column if not specified
    OPT.index.z            = [];  % plot last      meta-data column if not specified
-   OPT.vc                 = 'gshhs_c.nc'; % http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc
+   OPT.vc                 = 'F:\opendap\thredds\noaa\gshhs\gshhs_i.nc'; % http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc
    OPT.lon                = [];
    OPT.lat                = [];
    OPT.clim               = [];
@@ -80,12 +80,15 @@ function odvplot_cast(D,varargin)
 
 %% find column to plot based on sdn_standard_name
 
+   ListString = strcat(char(cellfun(@(x) [x(11:end),':'],{D.sdn_standard_name{10:2:end}},'un',0)),char(D.sdn_long_name{10:2:end}));
+
    if isempty(OPT.sdn_standard_name)
-      [OPT.index.var, ok] = listdlg('ListString', {D.sdn_long_name{10:2:end}} ,...
-                          'SelectionMode', 'multiple', ...
-                           'InitialValue', [2 3],... % first is likely pressure so suggest 2 others
-                           'PromptString', 'Select a set of variables to plot as x-vertex', ....
-                                   'Name', 'Selection of x-variable');
+      [OPT.index.var, ok] = listdlg('ListString', ListString,...
+                                 'SelectionMode', 'multiple', ...
+                                      'ListSize', [512 256],...
+                                  'InitialValue', [2 3],... % first is likely pressure so suggest 2 others
+                                  'PromptString', 'Select a any SET of variables for x-vertex', ....
+                                          'Name', 'Selection of x-variable');
       OPT.index.var = OPT.index.var*2-1 + 9; % 10th is first on-meta data item
    else
       for i=1:length(D.sdn_standard_name)
@@ -103,10 +106,12 @@ function odvplot_cast(D,varargin)
 %% find column to use as vertical axis
 
    if isempty(OPT.z)
-      [OPT.index.z, ok] = listdlg('ListString', {D.sdn_long_name{10:2:end}} ,...
-                           'InitialValue', 1,... % first is likely pressure so suggest it
-                           'PromptString', 'Select the single variable to ue as y/z-vertex (depth, pressure, ...)', ....
-                                   'Name', 'Selection of y/z-variable');
+      [OPT.index.z, ok] = listdlg('ListString', ListString ,...
+                                    'ListSize', [512 256],...
+                               'SelectionMode', 'single', ...
+                                'InitialValue', 1,... % first is likely pressure so suggest it
+                                'PromptString', 'Select ONE variable y/z-vertex (depth, pressure, ...)', ....
+                                        'Name', 'Selection of y/z-variable');
       OPT.index.z = OPT.index.z*2-1 + 9; % 10th is first on-meta data item
    else
       for i=1:length(D.sdn_standard_name)
@@ -120,7 +125,7 @@ function odvplot_cast(D,varargin)
 %% plot
 
    nvar = length(OPT.index.var);
-   AX = subplot_meshgrid(nvar+1,1,[.04 repmat(0,[1 nvar-1]) .04 .04],[.1]);
+   AX = subplot_meshgrid(nvar+1,1,[.08 repmat(0,[1 nvar-1]) .03 .01],[.1]);
    
    if D.cast==1
    
@@ -142,8 +147,14 @@ function odvplot_cast(D,varargin)
         % XTickLabel{end} = '';
         % set(AX(ivar),'XTickLabel',XTickLabel);
         %end
-        if ~odd(ivar)
-         set(gca,'XAxisLocation','top')
+        set(AX(ivar),'xtick',get(AX(ivar),'xtick'));
+        ticks=cellstr(get(AX(ivar),'xtickLabel'));
+        if ivar > 1;   ticks{  1} = '';end
+        if ivar < nvar;ticks{end} = '';end
+        set(AX(ivar),'xtickLabel',ticks);
+        
+        if ~odd(ivar) & ivar > 3
+         set(AX(ivar),'XAxisLocation','top')
         end
         if ivar==1
          ylabel([D.local_name{OPT.index.z        },' [',D.local_units{OPT.index.z        },']'])
@@ -159,19 +170,21 @@ function odvplot_cast(D,varargin)
 
    end       
        
-    axes(AX(nvar+1)); cla %subplot(1,4,4)
-    
-       plot(D.metadata.longitude,D.metadata.latitude,'ro')
-       hold on
-       plot(D.metadata.longitude,D.metadata.latitude,'r.')
-       axis      tight
-       
-       plot(OPT.lon,OPT.lat,'k')
-       axislat   (52)
-       grid       on
-       tickmap   ('ll','texttype','text')
-       box        on
-       hold       off
+%% overview plot
+
+   axes(AX(nvar+1)); cla %subplot(1,4,4)
+   
+      plot(D.metadata.longitude,D.metadata.latitude,'ro')
+      hold on
+      plot(D.metadata.longitude,D.metadata.latitude,'r.')
+      axis      tight
+      
+      plot(OPT.lon,OPT.lat,'k')
+      axislat   (52)
+      grid       on
+      tickmap   ('ll','texttype','text','format','%.1f','dellast',1)
+      box        on
+      hold       off
        
 %% add meta-data 
 

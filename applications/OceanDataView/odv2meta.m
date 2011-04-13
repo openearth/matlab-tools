@@ -1,4 +1,5 @@
-%ODV_METADATA   crawl a local set of ODV files to get meta-data
+function A = odv2meta
+%odv2meta   crawl a local set of ODV files to get meta-data (TEST BETA)
 %
 % get meta-info from all CTDCAST files in a user-defined directory one by one.
 %

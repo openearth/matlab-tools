@@ -1,5 +1,5 @@
 function odvdisp(D)
-%ODVDISP    display contents of file in ODV format  (still test project)
+%ODVDISP    display contents of ODV struct
 %
 %   odvdisp(D)
 %

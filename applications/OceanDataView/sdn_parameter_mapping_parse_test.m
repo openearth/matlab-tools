@@ -1,5 +1,5 @@
 function sdn_verify_test()
-% SDN_VERIFY_TEST   test for sdn_verify
+% SDN_PARAMETER_MAPPING_PARSE_TEST test for sdn_verify
 %  
 % More detailed description of the test goes here.
 %

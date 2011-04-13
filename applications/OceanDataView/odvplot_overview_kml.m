@@ -1,5 +1,5 @@
 function odvplot_overview_kml(D,varargin)
-%ODVPLOT_OVERVIEW_KML   plots map view (lon,lat) of ODV file read by ODVREAD (still test project)
+%ODVPLOT_OVERVIEW_KML   plot colored dot of ODV struct in Google Earth
 %
 %   D = odvread(fname)
 %

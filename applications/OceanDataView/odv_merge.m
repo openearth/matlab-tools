@@ -59,7 +59,7 @@ function R = odvplot_overview_kml(D,varargin)
    [OPT, Set, Default] = setproperty(OPT, varargin);
 
 %% find column to plot based on sdn_standard_name
-
+   OPT.index.var = 0;
    if isempty(OPT.sdn_standard_name)
       [OPT.index.var, ok] = listdlg('ListString', {D(1).sdn_long_name{10:2:end}} ,...
                            'InitialValue', [1],... % first is likely pressure so suggest 2 others
@@ -81,14 +81,14 @@ function R = odvplot_overview_kml(D,varargin)
    end
    
 %% find column to use as vertical axis
-
+   OPT.index.z = 0;
    if D(1).cast
    if isempty(OPT.z)
-      [OPT.index.var, ok] = listdlg('ListString', {D(1).sdn_long_name{10:2:end}} ,...
+      [OPT.index.z, ok] = listdlg('ListString', {D(1).sdn_long_name{10:2:end}} ,...
                            'InitialValue', [1],... % first is likely pressure so suggest 2 others
                            'PromptString', 'Select single variables to plot as colored dots', ....
                                    'Name', 'Selection of c/z-variable');
-      OPT.index.var = OPT.index.var*2-1 + 9; % 10th is first on-meta data item
+      OPT.index.z = OPT.index.z*2-1 + 9; % 10th is first on-meta data item
    else
       for i=1:length(D(1).sdn_standard_name)
       %disp(['SDN name: ',D.sdn_standard_name{i},'  <-?->  ',OPT.sdn_standard_name])
@@ -131,47 +131,50 @@ function R = odvplot_overview_kml(D,varargin)
 
 %%% merge data
 
-   R.cruise       = cell([length(D),1]);
-   R.station      = cell([length(D),1]);
-   R.type         = cell([length(D),1]);
-   R.datenum      = cell([length(D),1]);
-   R.latitude     = cell([length(D),1]);
-   R.longitude    = cell([length(D),1]);
-   R.LOCAL_CDI_ID = cell([length(D),1]);
-   R.EDMO_code    = cell([length(D),1]);
-   R.data         = cell([length(D),1]);
+   R.cruise        = cell([length(D),1]);
+   R.station       = cell([length(D),1]);
+   R.type          = cell([length(D),1]);
+   R.datenum       = cell([length(D),1]);
+   R.latitude      = cell([length(D),1]);
+   R.longitude     = cell([length(D),1]);
+   R.LOCAL_CDI_ID  = cell([length(D),1]);
+   R.CDI_record_id = cell([length(D),1]);
+   R.EDMO_code     = cell([length(D),1]);
+   R.data          = cell([length(D),1]);
    
    for i=1:length(D)
    
 %% extract data
 
-      R.cruise{i}       =              D(i).data{D(i).index.cruise      }; % D(i).cruise;
-      R.station{i}      =              D(i).data{D(i).index.station     }; % D(i).station;
-      R.type{i}         =              D(i).data{D(i).index.type        }; % D(i).type;
-      R.LOCAL_CDI_ID{i} =              D(i).data{D(i).index.LOCAL_CDI_ID}; % D(i).LOCAL_CDI_ID;
-      R.EDMO_code{i}    =              D(i).data{D(i).index.EDMO_code   }; % D(i).EDMO_code;
+      R.cruise{i}        =              D(i).data{D(i).index.cruise      };  % D(i).cruise;
+      R.station{i}       =              D(i).data{D(i).index.station     };  % D(i).station;
+      R.type{i}          =              D(i).data{D(i).index.type        };  % D(i).type;
+      R.LOCAL_CDI_ID{i}  =              D(i).data{D(i).index.LOCAL_CDI_ID};  % D(i).LOCAL_CDI_ID;
+      R.CDI_record_id{i} =              D(i).CDI_record_id;
+      R.EDMO_code{i}     =              D(i).data{D(i).index.EDMO_code   };  % D(i).EDMO_code;
 
-      R.datenum{i}      = datenum(char(D(i).data{D(i).index.time        }),'yyyy-mm-ddTHH:MM:SS');
-      R.latitude{i}     =     cell2mat(D(i).data(D(i).index.latitude    ));
-      R.longitude{i}    =     cell2mat(D(i).data(D(i).index.longitude   ));
+      R.datenum{i}       = datenum(char(D(i).data{D(i).index.time        }),'yyyy-mm-ddTHH:MM:SS');
+      R.latitude{i}      =     cell2mat(D(i).data(D(i).index.latitude    ));
+      R.longitude{i}     =     cell2mat(D(i).data(D(i).index.longitude   ));
       
-      R.data{i} = D(i).data{OPT.index.var}; % empties in here get lost
+      R.data{i} = D(i).data{OPT.index.var}; % empties in here get lost, so ...
       if isempty(R.data{i})
          R.data{i} = nan.*D(i).metadata.datenum;
       end
       
 %% subset one data value per odv file or ...?
 
-      R.cruise{i}       = OPT.metadataFcn(R.cruise{i}      );
-      R.station{i}      = OPT.metadataFcn(R.station{i}     );
-      R.type{i}         = OPT.metadataFcn(R.type{i}        );
-      R.LOCAL_CDI_ID{i} = OPT.metadataFcn(R.LOCAL_CDI_ID{i});
-      R.EDMO_code{i}    = OPT.metadataFcn(R.EDMO_code{i}   );
+      R.cruise{i}        = OPT.metadataFcn(R.cruise{i}       );
+      R.station{i}       = OPT.metadataFcn(R.station{i}      );
+      R.type{i}          = OPT.metadataFcn(R.type{i}         );
+      R.LOCAL_CDI_ID{i}  = OPT.metadataFcn(R.LOCAL_CDI_ID{i} );
+      R.CDI_record_id{i} = OPT.metadataFcn(R.CDI_record_id{i});
+      R.EDMO_code{i}     = OPT.metadataFcn(R.EDMO_code{i}    );
 
-      R.datenum{i}      = OPT.metadataFcn(R.datenum{i}     );
-      R.latitude{i}     = OPT.metadataFcn(R.latitude{i}    );
-      R.longitude{i}    = OPT.metadataFcn(R.longitude{i}   );
-      R.data{i}         =     OPT.dataFcn(R.data{i}        );
+      R.datenum{i}       = OPT.metadataFcn(R.datenum{i}      );
+      R.latitude{i}      = OPT.metadataFcn(R.latitude{i}     );
+      R.longitude{i}     = OPT.metadataFcn(R.longitude{i}    );
+      R.data{i}          =     OPT.dataFcn(R.data{i}         );
 
       %if D(1).cast
       %   R.data{i}      = str2num(char(D(i).data{OPT.index.z}));
