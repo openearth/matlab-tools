@@ -96,8 +96,8 @@ d    = UCIT_getMetaData(2);
 teller = 0; teller2 = 0;emptyyears = [];
 
 % show waitbar
-cbh = waitbar(0,'Please wait ...');
-set(cbh, 'tag', 'wb')
+% cbh = waitbar(0,'Please wait ...');
+% set(cbh, 'tag', 'wb')
 
 for xx = 1:length(years)
 
@@ -129,10 +129,10 @@ for xx = 1:length(years)
     else
         id(xx) = 1;
     end
-     waitbar(xx/length(years), findobj('tag','wb'), 'Extracting data from nc files ...')
+%      waitbar(xx/length(years), findobj('tag','wb'), 'Extracting data from nc files ...')
 end
 
-close(cbh)
+% close(cbh)
 
 years_with_data = years(id==1);
 years_with_data = sort(years_with_data); % old years are blue, recent years are red

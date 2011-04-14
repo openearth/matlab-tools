@@ -125,8 +125,8 @@ year1 = years(v(1));
 year2 = years(v(2));
 
 % show waitbar
-cbh = waitbar(0,'Please wait ...');
-set(cbh, 'tag', 'wb')
+% cbh = waitbar(0,'Please wait ...');
+% set(cbh, 'tag', 'wb')
 
 
 %% get data of first year
@@ -144,7 +144,7 @@ set(cbh, 'tag', 'wb')
     'polygon'       , OPT.polygon);  % this functionality is also inside grid_orth_getDataInPolygon
 
 
-waitbar(0.4, findobj('tag','wb'), 'Extracting data from nc files ...')
+% waitbar(0.4, findobj('tag','wb'), 'Extracting data from nc files ...')
 
 %% get data of second year
 [d.X, d.Y, d2.Z, d1.Ztime] = grid_orth_getDataInPolygon(...
@@ -160,12 +160,12 @@ waitbar(0.4, findobj('tag','wb'), 'Extracting data from nc files ...')
     'plotresult'    , 0,...
     'polygon'       , OPT.polygon);  % this functionality is also inside grid_orth_getDataInPolygon
 
-waitbar(0.8, findobj('tag','wb'), 'Extracting data from nc files ...')
+% waitbar(0.8, findobj('tag','wb'), 'Extracting data from nc files ...')
 
 %% Subtract years
 dd.Z = (d1.Z - d2.Z);
 
-close(cbh)
+% close(cbh)
 %% Plot results
 fh = figure('tag','gridPlot');clf;
 ah = axes;

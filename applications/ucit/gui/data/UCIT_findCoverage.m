@@ -65,8 +65,8 @@ for i = 1:size(batchvar1,1)
         end
         
        % show wait bar
-        cbh = waitbar(0,'Please wait ...');
-        set(cbh, 'tag', 'wb')
+%         cbh = waitbar(0,'Please wait ...');
+%         set(cbh, 'tag', 'wb')
         
         for j = 1:length(OPT.inputyears)
             
@@ -106,10 +106,10 @@ for i = 1:size(batchvar1,1)
             cov(j).year  = sum(sum((~isnan(d.Z))))/total; % coverage per jaar voor polygoon j
             results(j,:)=([OPT.inputyears(j) cov(j).year]);
             
-            waitbar(j/length(OPT.inputyears), findobj('tag','wb'), 'Extracting data from nc files ...')
+%             waitbar(j/length(OPT.inputyears), findobj('tag','wb'), 'Extracting data from nc files ...')
         end
         
-        close(cbh)
+%         close(cbh)
         
         %% save to text file
         fid = fopen([ 'coverage' filesep 'timewindow = ' num2str(OPT.timewindow) filesep num2str(d.name) '_coverage.dat'],'w');
