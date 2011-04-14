@@ -72,7 +72,10 @@ OPT = struct(...
     'rowjustification', 'l',...
     'collabel', '',...
     'caption', '',...
-    'justification', 'center');
+    'justification', 'center', ...
+    'format', [], ...
+    'vlines', [], ...
+    'hlines', []);
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -90,9 +93,15 @@ if ~isempty(OPT.rowlabel)
     icol = 2;
 end
 
+if isempty(OPT.format)
+    OPT.format = repmat({'%6.4f'}, 1, ncol);
+end
+
+format = repmat(OPT.format, nrow, 1);
+
 xcell = cell(nrow,ncol);
 xcell(irow:end,icol:end) = num2cell(x);
-xcell = cellfun(@num2str, xcell,...
+xcell = cellfun(@num2str, xcell, format,...
     'UniformOutput', false);
 
 if ~isempty(OPT.collabel)
@@ -114,22 +123,44 @@ texcell = {};
 
 if OPT.standalone
     % document preamble
-    texcell{end+1} = sprintf('%s\n', '\documentclass{article}', '', '\begin{document}');
+%    texcell{end+1} = sprintf('%s\n', '\documentclass{article}', '', '\begin{document}');
 end
 
-texcell{end+1} = sprintf('%s', '\begin{table}[', OPT.where, ']');
-texcell{end+1} = sprintf('%s', ' \caption{', OPT.caption, '\label{', OPT.title, '}}'); 
-texcell{end+1} = sprintf('%s', ' \begin{', OPT.justification, '}');
-rowlabeljustification = '';
+%texcell{end+1} = sprintf('%s', '\begin{table}[', OPT.where, ']');
+%texcell{end+1} = sprintf('%s', ' \caption{', OPT.caption, '\label{', OPT.title, '}}'); 
+%texcell{end+1} = sprintf('%s', ' \begin{', OPT.justification, '}');
+texcell{end+1} = sprintf('%s', ' \caption{', OPT.caption, '}'); 
+
 if ~isempty(OPT.rowlabel)
-    rowlabeljustification = [OPT.rowjustification '|'];
+    OPT.vlines(end+1) = 1;
 end
-texcell{end+1} = sprintf('%s', ' \begin{tabular}{', rowlabeljustification, repmat(OPT.rowjustification, 1, size(x,2)), '}\hline\hline');
+
+if ~isempty(OPT.collabel)
+    OPT.hlines(end+1) = 1;
+end
+
+rowlabeljustification = '';
+for icol = 1:size(xcell,2)
+    iicol = icol;
+    if ~isempty(OPT.rowlabel); iicol = iicol-1; end;
+    
+    if any(OPT.vlines==iicol)
+        rowlabeljustification = [rowlabeljustification '|'];
+    end
+    
+    rowlabeljustification = [rowlabeljustification OPT.rowjustification];
+end
+
+texcell{end+1} = sprintf('%s', ' \begin{tabular}{', rowlabeljustification, '}\hline\hline');
 
 for irow = 1:size(xcell,1)
-    if ~isempty(OPT.collabel) && irow == 2
+    iirow = irow;
+    if ~isempty(OPT.collabel); iirow = iirow-1; end;
+    
+    if any(OPT.hlines==iirow)
         texcell{end+1} = '\hline';
     end
+    
     rowcell = [xcell(irow,:); delimiters];
     texcell{end+1} = sprintf('%s', rowcell{:});
 end
@@ -139,13 +170,13 @@ texcell{end+1} = sprintf('%s', '\hline');
 
 texcell{end+1} = sprintf('%s', '\end{tabular}');
 
-texcell{end+1} = sprintf('%s', '\end{', OPT.justification, '}');
+%texcell{end+1} = sprintf('%s', '\end{', OPT.justification, '}');
 
-texcell{end+1} = sprintf('%s', '\end{table}');
+%texcell{end+1} = sprintf('%s', '\end{table}');
 
 if OPT.standalone
     % document closure
-    texcell{end+1} = sprintf('%s\n', '', '\end{document}');
+%    texcell{end+1} = sprintf('%s\n', '', '\end{document}');
 end
 
 
