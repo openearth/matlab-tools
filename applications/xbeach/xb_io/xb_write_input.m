@@ -102,7 +102,13 @@ if OPT.write_files
                             save(fullfile(fdir, xb.data(i).value), '-ascii', 'data');
                         elseif iscell(data)
                             fid = fopen(fullfile(fdir, xb.data(i).value), 'w');
-                            for j = 1:length(data); fprintf(fid, '%s\n', data{j}); end;
+                            for j = 1:length(data)
+                                if isnumeric(data{j})
+                                    fprintf(fid, '%f\n', data{j});
+                                else
+                                    fprintf(fid, '%s\n', data{j});
+                                end
+                            end
                             fclose(fid);
                         else
                             % unknown type, ignore
