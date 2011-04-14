@@ -33,6 +33,7 @@ function xb = xb_generate_grid(varargin)
 %                           z-direction is down
 %               zdepth:     extent of model below mean sea level, which is
 %                           used if non-erodable layers are defined
+%               superfast:  boolean to enable superfast 1D mode
 %
 %   Output:
 %   xb        = XBeach structure array
@@ -96,7 +97,8 @@ OPT = struct( ...
     'crop', true, ...
     'finalise', true, ...
     'posdwn', false, ...
-    'zdepth', 100 ...
+    'zdepth', 100, ...
+    'superfast', false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -286,6 +288,13 @@ end
 % determine size
 nx = size(zgrid, 2)-1;
 ny = size(zgrid, 1)-1;
+
+if OPT.superfast && ny == 2
+    ny = 0;
+    xgrid = xgrid(2,:);
+    ygrid = ygrid(2,:);
+    zgrid = zgrid(2,:);
+end
 
 if OPT.posdwn
     zgrid = -zgrid;

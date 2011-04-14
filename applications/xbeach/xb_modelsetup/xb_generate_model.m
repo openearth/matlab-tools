@@ -103,7 +103,7 @@ tide = xb_generate_tide(OPT.tide{:});
 
 %% create grid
 
-% couble hydraulics and bathymetry
+% couple hydraulics and bathymetry
 tp = xb_bc_extracttp(waves);
 wl = xb_bc_extractwl(tide);
 
