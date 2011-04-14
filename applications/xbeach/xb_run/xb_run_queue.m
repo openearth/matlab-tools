@@ -72,12 +72,16 @@ function xb_run_queue(varargin)
 
 %% read options
 
-if ~isempty(varargin) && xb_check(varargin{1})
-    xb = varargin{1};
-    if length(varargin) > 1 && ~isempty(get_optval('action', varargin(2:end)))
-        varargin = varargin(2:end);
-    else
-        varargin = set_optval('action', 'add', varargin(2:end));
+if ~isempty(varargin)
+    if xb_check(varargin{1})
+        xb = varargin{1};
+        if length(varargin) > 1 && ~isempty(get_optval('action', varargin(2:end)))
+            varargin = varargin(2:end);
+        else
+            varargin = set_optval('action', 'add', varargin(2:end));
+        end
+    elseif ischar(varargin{1}) && strcmpi(varargin{1}, 'clear')
+        varargin = {'action', 'clear'};
     end
 end
 
