@@ -12,16 +12,16 @@ function rws_waterbase_all
 
 %% Initialize
 
-   OPT.download       = 1; % get fresh downloads from rws and remove exisitng to sub dir old
-   OPT.make_nc        = 1; % makes mat files
-   OPT.make_catalog   = 1; % otherwise lod existing one
+   OPT.download       = 0; % get fresh downloads from rws and remove exisitng to sub dir old
+   OPT.make_nc        = 0; % makes mat files
+   OPT.make_catalog   = 0; % otherwise lod existing one
    OPT.make_kml       = 1;
    OPT.baseurl        = 'http://live.waterbase.nl';
 
    rawbase = 'F:\checkouts\OpenEarthRawData';   % @ local
     ncbase = 'F:\opendap\thredds\';             % @ local
    urlbase = 'http://opendap.deltares.nl:8080'; % production server (links)
-   kmlbase = 'F:\_KML\';                        % @ local, no links to other kml or images any more
+   kmlbase = 'F:\kml\';                         % @ local, no links to other kml or images any more
 
 %% Parameter choice
 
@@ -30,6 +30,7 @@ function rws_waterbase_all
                     332  346  347  360  363  ... %   N   N   N   O   P
                     364  380  491  492  493  ... %   P P04 NH4 N03 N02
                     541  560 1083    1      ];   % DSe  Si DOC zwl    (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
+
 % DO 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
 
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
@@ -129,7 +130,6 @@ function rws_waterbase_all
                                   ' / CF standard name: ' ,       (OPT.standard_name    ) ,...
                                   ' / BODC/SeaDataNet: '  ,       (OPT.sdn_standard_name),...
                                   ' / Aquolex: '          ,       (OPT.aquo_lex_code    )]};
-
      %OPT2.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
      %OPT2.iconhighlightState = 'http://www.rijkswaterstaat.nl/images/favicon.ico';
 
@@ -147,6 +147,8 @@ function rws_waterbase_all
       OPT2.imName             = 'overheid.png';
       OPT2.logoName           = 'overheid4GE.png';
       OPT2.varPathFcn         = @(s) path2os(strrep(s,['http://opendap.deltares.nl/thredds/dodsC/opendap/'],ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
+      OPT2.resolveUrl         = cellfun(@(x) ['http://live.waterbase.nl/index.cfm?loc=',upper(x),'&page=start.locaties.databeschikbaarheid&taal=nl&loc=&wbwns=',num2str(OPT.donar_wnsnum),'|',strtrim(strrep(OPT.donar_wns_oms,' ','+')),'&whichform=2'],CATALOG.station_id,'un',0);
+      OPT2.resolveName        = 'www.rws.nl (waterbase)';
       
       nc_cf_stationtimeseries2kmloverview(CATALOG,OPT2); % inside urlPath is used to read netCDF data
       

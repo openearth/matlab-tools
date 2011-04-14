@@ -45,6 +45,8 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    OPT.varname            = []; % statistics
    OPT.preview            = 1;  % add 2 previews of - and hence requires - varname
    OPT.varPathFcn         = @(s)(s); % function to run on urlPath, when using it, not when linking it: for reading local netCDF files, when CATALOG links to server already
+   OPT.resolveUrl         = @(x) x;
+   OPT.resolveName        = '';
 
 % EXAMPLE:
 %  THREDDS http://opendap.deltares.nl   /thredds/dodsC/opendap/     rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc.html
@@ -178,9 +180,6 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    pngname1      = {};
    pngname2      = {};
 
-   if OPT.preview % prevent interaction with multiWaitbar figure
-      FIG = figure('name',mfilename);
-   end
    multiWaitbar(mfilename,0,'label','Making kml overview of timeSeries ','color',[0.3 0.6 0.3])
 
    for ii=1:size(D.geospatialCoverage_eastwest,1)
@@ -197,10 +196,14 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
     
        ncfile = OPT.varPathFcn(D.urlPath{ii});
        
-       figure(FIG);clf
-
-       [DATA,META] = nc_cf_stationTimeSeries(ncfile,varname,'plot',OPT.preview);
+           [DATA,META] = nc_cf_stationTimeSeries(ncfile,varname,'plot',OPT.preview);
        units.(varname) = META.(varname).units;
+       
+       if ~isempty(OPT.resolveName)
+       resolvestring = ['<tr><td>source:      </td><td><a href="',OPT.resolveUrl{ii},'">',OPT.resolveName,'</a>'];
+       else
+       resolvestring = '';
+       end
        
        if OPT.preview
           pngname1{ii} = [fileparts(OPT.fileName),D.station_id{ii},'.png'];
@@ -216,6 +219,8 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
           set(findfont,'fontsize',7);print2screensizeoverwrite(pngname2{ii},400);clf
           preview  = ['<hr><img src="',filenameext(pngname1{ii}),'" alt="Preview">'...
                           '<img src="',filenameext(pngname2{ii}),'" alt="Preview">'];
+
+       close
 
        end
        
@@ -237,6 +242,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
         '<tr><td>mean:        </td><td>%s</td></tr>',...
         '<tr><td>max:         </td><td>%s</td></tr>'...
         '<tr><td>std:         </td><td>%s</td></tr><hr>',...
+        '%s',...
         '<tr><td>meta-data:   </td><td><a href="%s">OPeNDAP (THREDDS)</a>'...
         '<tr><td>data:        </td><td><a href="%s">ftp server    </a></td></tr>'...%link to timeseries
         ],...
@@ -251,6 +257,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
        [num2str(D.([OPT.varname,'_mean'])(ii),'%g'),' ',units.([varname])],...
        [num2str(D.([OPT.varname,'_max' ])(ii),'%g'),' ',units.([varname])],...
        [num2str(D.([OPT.varname,'_std' ])(ii),'%g'),' ',units.([varname])],...
+        resolvestring,...
         OPT.THREDDSFcn([D.urlPath{ii},'.html']),...
             OPT.ftpFcn([D.urlPath{ii}]))];
        
@@ -264,6 +271,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
         '<tr><td># times:     </td><td>%g</td></tr>'...
         '<tr><td>1st time:    </td><td>%s</td></tr>'...
         '<tr><td>last time:   </td><td>%s</td></tr>',...
+        '%s',...
         '<tr><td>meta-data:   </td><td><a href="%s">OPeNDAP (THREDDS)</a>'...
         '<tr><td>data:        </td><td><a href="%s">ftp server    </a></td></tr>'...%link to timeseries
         ],...
@@ -274,6 +282,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
         D.number_of_observations(ii),...
         datestr(udunits2datenum(D.datenum_start(ii),units.datenum_start),31),...
         datestr(udunits2datenum(D.datenum_end  (ii),units.datenum_end  ),31),...
+        resolvestring,...
         OPT.THREDDSFcn([D.urlPath{ii},'.html']),...
             OPT.ftpFcn([D.urlPath{ii},'.html']))];
        
@@ -318,6 +327,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
          [str2line(OPT.text,'s','<br>')],...
          table,...
          [D.geospatialCoverage_eastwest(ii,1) D.geospatialCoverage_northsouth(ii,1)])];
+
    end % ii
    
    %multiWaitbar(mfilename,1)
@@ -353,7 +363,6 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    
    deletefile(pngname1)
    deletefile(pngname2)
-
    if OPT.preview
       close(FIG)
    end
