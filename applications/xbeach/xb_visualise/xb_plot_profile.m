@@ -168,12 +168,16 @@ grid on;
 function addplot(data, linetype, color, name)
     if ~isempty(data);
         for i = 2:size(data,2)
-            plot(data(:,1), data(:,i), ...
+            p = plot(data(:,1), data(:,i), ...
                 'Color', color, ...
                 'LineStyle', linetype, ...
                 'LineWidth', 2, ...
                 'DisplayName', name);
+            
+            hasbehavior(p,'legend',false);
         end
+        
+        hasbehavior(p,'legend',true);
     end
 end
 

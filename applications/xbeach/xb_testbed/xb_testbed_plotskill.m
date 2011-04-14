@@ -66,9 +66,18 @@ function xb_testbed_plotskill(var, varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% read options
+
+OPT = struct( ...
+    'binary',   '', ...
+    'type',     '' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
 %% plot skill history
 
-s = xb_testbed_loadskill(var);
+s = xb_testbed_loadskill(var, 'binary', OPT.binary, 'type', OPT.type);
 
 figure; hold on;
 

@@ -1,4 +1,4 @@
-function s = xb_testbed_loadskill(var)
+function s = xb_testbed_loadskill(var, varargin)
 %XB_TESTBED_LOADSKILL  Loads testbed skill history of specific variable
 %
 %   Loads testbed skill history of specific variable
@@ -58,6 +58,16 @@ function s = xb_testbed_loadskill(var)
 % $HeadURL$
 % $Keywords: $
 
+%% read options
+
+OPT = struct( ...
+    'average',  false, ...
+    'binary',   '', ...
+    'type',     '' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
 %% load testbed skill history
 
 s = struct( ...
@@ -72,9 +82,32 @@ if xb_testbed_check
     
     p = xb_testbed_getpref;
     
-    s.fname = fullfile(p.storage, p.binary, p.type, p.test, p.run, [var '.mat']);
+    if ~isempty(OPT.binary);    p.info.binary = OPT.binary; end;
+    if ~isempty(OPT.type);      p.info.type = OPT.type;     end;
     
-    if exist(s.fname, 'file')
-        s = load(s.fname);
+    if ~OPT.average
+        s.file = fullfile(p.dirs.network, 'SKILL', p.info.binary, p.info.type, var, [p.info.test '_' p.info.run '.mat']);
+
+        if exist(s.file, 'file')
+            s = load(s.file);
+        end
+    else
+        fdir    = fullfile(p.dirs.network, 'SKILL', p.info.binary, p.info.type, var);
+        fnames  = dir(fullfile(fdir, '*.mat'));
+        
+        si = s;
+        for i = 1:length(fnames)
+            si(i) = load(fullfile(fdir, fnames(i).name));
+        end
+        
+        s.file      = {si.file};
+        s.revision  = unique([si.revision]);
+        
+        for i = 1:length(si)
+            s.r2        = s.r2          + interp1(si(i).revision, si(i).r2,         s.revision)/length(si);
+            s.sci       = s.sci         + interp1(si(i).revision, si(i).sci,        s.revision)/length(si);
+            s.relbias   = s.relbias     + interp1(si(i).revision, si(i).relbias,    s.revision)/length(si);
+            s.bss       = s.bss         + interp1(si(i).revision, si(i).bss,        s.revision)/length(si);
+        end
     end
 end

@@ -155,94 +155,98 @@ if exist(fname, 'file')
     % determine filetype
     byt = round(f.bytes/prod(dims));
 
-    switch byt
-        case 1
-            ftype = 'int';
-        case 4
-            ftype = 'single';
-        case 8
-            ftype = 'double';
-        otherwise
-            ftype = 'double';
-            warning(['Your filesize is weird, I assume it contains doubles [' fname ']']);
-    end
+    if ~isnan(byt)
+        switch byt
+            case 1
+                ftype = 'int';
+            case 4
+                ftype = 'single';
+            case 8
+                ftype = 'double';
+            otherwise
+                ftype = 'double';
+                warning(['Your filesize is weird, I assume it contains doubles [' fname ']']);
+        end
 
-    fid = fopen(fname, 'r');
-    
-    switch method
-        case 'read'
-            % METHOD: minimal reads
-            
-            dat = nan(dims_out);
+        fid = fopen(fname, 'r');
 
-            % read entire file
-            for i = 1:dims_out(1)
-                for j = 1:prod(dims_out(4:end))
-                    dat(i,:,:,j) = fread(fid, dims(1:2), ftype)';
+        switch method
+            case 'read'
+                % METHOD: minimal reads
+
+                dat = nan(dims_out);
+
+                % read entire file
+                for i = 1:dims_out(1)
+                    for j = 1:prod(dims_out(4:end))
+                        dat(i,:,:,j) = fread(fid, dims(1:2), ftype)';
+                    end
                 end
-            end
 
-            % dispose data out of range
-            for i = 1:length(dims_out)
-                if OPT.start(i) > 0 || OPT.length(i) < dims_out(i) || OPT.stride(i) > 1
-                    idx = num2cell(repmat(':',1,length(dims_out)));
-                    idx{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
-                    dat = dat(idx{:});
+                % dispose data out of range
+                for i = 1:length(dims_out)
+                    if OPT.start(i) > 0 || OPT.length(i) < dims_out(i) || OPT.stride(i) > 1
+                        idx = num2cell(repmat(':',1,length(dims_out)));
+                        idx{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
+                        dat = dat(idx{:});
+                    end
                 end
-            end
-        case 'memory'
-            % METHOD: minimal memory
-            
-            dat = nan(OPT.length./OPT.stride);
-            
-            % build loop index
-            loops = num2cell(repmat(1,1,5));
-            for i = 1:length(dims)
-                loops{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
-            end
+            case 'memory'
+                % METHOD: minimal memory
 
-            % determine dimensions to remove from loop and read at once
-            % (maximum x and y)
-            if sz(1) > 1; loops{3} = 1+OPT.start(3); end;
-            if sz(2) > 1; loops{2} = 1+OPT.start(2); end;
+                dat = nan(OPT.length./OPT.stride);
 
-            % build output index
-            idx = [{1} num2cell(repmat(':',1,2)) {1}];
-            
-            % loop through data arrays
-            for i = 1:length(loops{1})
-                for j = 1:length(loops{4})
-                    for k = 1:length(loops{5})
-                
-                        % select starting point of current data array
-                        ii = (loops{1}(i)*loops{4}(j)*loops{5}(k)-1)*prod(dims(1:2));
+                % build loop index
+                loops = num2cell(repmat(1,1,5));
+                for i = 1:length(dims)
+                    loops{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
+                end
 
-                        idx{1} = i;
-                        idx{4} = j;
-                        idx{5} = k;
+                % determine dimensions to remove from loop and read at once
+                % (maximum x and y)
+                if sz(1) > 1; loops{3} = 1+OPT.start(3); end;
+                if sz(2) > 1; loops{2} = 1+OPT.start(2); end;
 
-                        % loop through current data array
-                        for n = 1:length(loops{3})
-                            for m = 1:length(loops{2})
+                % build output index
+                idx = [{1} num2cell(repmat(':',1,2)) {1}];
 
-                                if sz(1) == 1; idx{3} = n; end;
-                                if sz(2) == 1; idx{2} = m; end;
+                % loop through data arrays
+                for i = 1:length(loops{1})
+                    for j = 1:length(loops{4})
+                        for k = 1:length(loops{5})
 
-                                iii = ii + (loops{2}(m)-1)*dims(1) + (loops{3}(n)-1);
+                            % select starting point of current data array
+                            ii = (loops{1}(i)*loops{4}(j)*loops{5}(k)-1)*prod(dims(1:2));
 
-                                % set pointer to data point to be read and read
-                                fseek(fid, iii*byt, 'bof');
-                                dat(idx{:}) = fread(fid, sz, ftype)';
+                            idx{1} = i;
+                            idx{4} = j;
+                            idx{5} = k;
+
+                            % loop through current data array
+                            for n = 1:length(loops{3})
+                                for m = 1:length(loops{2})
+
+                                    if sz(1) == 1; idx{3} = n; end;
+                                    if sz(2) == 1; idx{2} = m; end;
+
+                                    iii = ii + (loops{2}(m)-1)*dims(1) + (loops{3}(n)-1);
+
+                                    % set pointer to data point to be read and read
+                                    fseek(fid, iii*byt, 'bof');
+                                    dat(idx{:}) = fread(fid, sz, ftype)';
+                                end
                             end
                         end
                     end
                 end
-            end
-        otherwise
-            error(['Unknown read method [' method ']']);
-    end
+            otherwise
+                error(['Unknown read method [' method ']']);
+        end
     
-    fclose(fid);
+        fclose(fid);
+    else
+        dat = [];
+    end
 else
     error(['File not found [' fname ']']);
 end

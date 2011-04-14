@@ -1,21 +1,21 @@
-function s = xb_testbed_loadskill(var)
-%XB_TESTBED_LOADSKILL  Loads skill history of specif
+function s = xb_testbed_loadskill(var, varargin)
+%XB_TESTBED_LOADSKILL  Loads testbed skill history of specific variable
 %
-%   More detailed description goes here.
+%   Loads testbed skill history of specific variable
 %
 %   Syntax:
-%   varargout = xb_testbed_loadskill(varargin)
+%   s = xb_testbed_loadskill(var)
 %
 %   Input:
-%   varargin  =
+%   var       = Variable name
 %
 %   Output:
-%   varargout =
+%   s         = Struct with skill history
 %
 %   Example
-%   xb_testbed_loadskill
+%   s = xb_testbed_loadskill('zb')
 %
-%   See also 
+%   See also xb_testbed_storeskill
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -51,30 +51,52 @@ function s = xb_testbed_loadskill(var)
 % Created: 13 Apr 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id: xb_testbed_loadskill.m 4455 2011-04-13 15:57:26Z hoonhout $
+% $Date: 2011-04-13 17:57:26 +0200 (wo, 13 apr 2011) $
+% $Author: hoonhout $
+% $Revision: 4455 $
+% $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/applications/xbeach/xb_testbed/xb_testbed_loadskill.m $
 % $Keywords: $
+
+%% read options
+
+OPT = struct( ...
+    'average',  false, ...
+    'binary',   '', ...
+    'type',     '' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
 
 %% load testbed skill history
 
+s = struct( ...
+    'file',     '', ...
+    'revision', [], ...
+    'r2',       [], ...
+    'sci',      [], ...
+    'relbias',  [], ...
+    'bss',      []      );
+    
 if xb_testbed_check
     
     p = xb_testbed_getpref;
     
-    fname = fullfile(p.storage, p.binary, p.type, p.test, p.run, [var '.mat']);
+    if ~isempty(OPT.binary);    p.info.binary = OPT.binary; end;
+    if ~isempty(OPT.type);      p.info.type = OPT.type;     end;
     
-    s = struct( ...
-        'file',     fname, ...
-        'revision', [], ...
-        'r2',       [], ...
-        'sci',      [], ...
-        'relbias',  [], ...
-        'bss',      []      );
-    
-    if exist(fname, 'file')
-        s = load(fname);
+    if ~OPT.average
+        s.file = fullfile(p.dirs.storage, p.info.binary, p.info.type, var, [p.info.test '_' p.info.run '.mat']);
+
+        if exist(s.file, 'file')
+            s = load(s.file);
+        end
+    else
+        files = dir(fullfile(p.dirs.storage, p.info.binary, p.info.type, var, '*.mat'));
+        
+        for i = 1:length(files)
+        if exist(s.file, 'file')
+            s = load(s.file);
+        end
     end
 end

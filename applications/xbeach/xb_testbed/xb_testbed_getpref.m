@@ -60,13 +60,9 @@ function pref = xb_testbed_getpref()
 
 %% read preferences
 
-pref = struct({});
+pref = struct();
 
 if xb_testbed_check
-	pref.revision   = getpref('xbeach_testbed', 'revision');
-    pref.binary     = getpref('xbeach_testbed', 'binary');
-    pref.type       = getpref('xbeach_testbed', 'type');
-    pref.test       = getpref('xbeach_testbed', 'test');
-    pref.run        = getpref('xbeach_testbed', 'run');
-    pref.storage    = getpref('xbeach_testbed', 'storage');
+	pref.info   = getpref('xbeach_testbed', 'info');
+    pref.dirs   = getpref('xbeach_testbed', 'dirs');
 end

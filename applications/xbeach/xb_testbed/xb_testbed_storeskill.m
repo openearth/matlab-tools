@@ -68,18 +68,18 @@ if xb_testbed_check
     
     p = xb_testbed_getpref;
     
-    s = xb_testbed_loadskills(var);
+    s = xb_testbed_loadskill(var);
     
     % make dirs
     if ~exist(s.file, 'file')
-        dirs = {p.storage, p.binary, p.type, p.test, p.run};
+        dirs = {p.dirs.network, 'SKILL', p.info.binary, p.info.type, var};
         for i = 1:length(dirs)
             if ~exist(fullfile(dirs{1:i}), 'dir'); mkdir(fullfile(dirs{1:i})); end;
         end
     end
         
-    if ~ismember(p.revision, skills.revision)
-        s.revision  = [s.revision revision];
+    if ~ismember(p.info.revision, s.revision)
+        s.revision  = [s.revision p.info.revision];
         s.r2        = [s.r2 r2];
         s.sci       = [s.sci sci];
         s.relbias   = [s.relbias relbias];
