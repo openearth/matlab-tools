@@ -402,14 +402,18 @@ BCA.DATA = [];
 
          %% Use only selected components
 
-            mask           = 0.*[1:length(length(tidestruc.name))];
-            for j=1:length(tidestruc.name)
-               for jj=1:length(OPT.components)
-                  if strcmpi(strtrim(char(tidestruc.name{ j})),...
-                             strtrim(char(OPT.components  (jj))));
-                     mask(j) = 1;
-                  end
-               end
+            mask           = 0.*[1:(length(tidestruc.name))];
+            if isempty(OPT.components)
+                mask=mask+1;
+            else
+                for j=1:length(tidestruc.name)
+                    for jj=1:length(OPT.components)
+                        if strcmpi(strtrim(char(tidestruc.name{ j})),...
+                                strtrim(char(OPT.components  (jj))));
+                            mask(j) = 1;
+                        end
+                    end
+                end
             end
 
             mask = logical(mask);
@@ -426,9 +430,9 @@ BCA.DATA = [];
          %% Put in *.bca struct
          
             BCA.DATA(end+1).names = tidestruc.name        ;% [n x 2 char]
-            BCA.DATA(end).Label = T.location;            % 'north_001A'
-            BCA.DATA(end).amp   = tidestruc.tidecon(:,1);% [0.0670 0.1085 0.0244 0.0292 0.0172 0.0252 0.0663 0.0723]
-            BCA.DATA(end).phi   = tidestruc.tidecon(:,3);% [168.2587 106.2307 162.9063 81.0589 143.1680 -86.1792 -84.3035 119.0369]
+            BCA.DATA(end).Label   = T.location;            % 'north_001A'
+            BCA.DATA(end).amp     = tidestruc.tidecon(:,1);% [0.0670 0.1085 0.0244 0.0292 0.0172 0.0252 0.0663 0.0723]
+            BCA.DATA(end).phi     = tidestruc.tidecon(:,3);% [168.2587 106.2307 162.9063 81.0589 143.1680 -86.1792 -84.3035 119.0369]
 
          end
 
@@ -442,7 +446,7 @@ BCA.DATA = [];
 
               % all |steps| > 180 are changed
               % BCOPT.phases(1:end,itable,ifreq) =  domain2angle(BCOPT.phases(1:end,itable,ifreq),0,360,180);
-              BCA.DATA(end).phi =  rad2deg(unwrap(deg2rad(BCA.DATA(itable,icol-1).phi)));
+              BCA.DATA(end).phi =  rad2deg(unwrap(deg2rad(BCA.DATA(end).phi)));
 
             end
 

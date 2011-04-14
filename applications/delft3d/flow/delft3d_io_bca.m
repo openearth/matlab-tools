@@ -254,19 +254,13 @@ fid = fopen(bcafile,'w');
 
 if fid > 0 
 
-   for ibnd = 1:BND.NTables
+   for ibnd = 1:length(BCA.DATA)
    
-      for iside = 1:2
-      
-             if iside==1
-            fprintf(fid,'%c'  ,strtrim(BND.DATA(ibnd).labelA)); % format '%12s' results in leading spaces
-         elseif iside==2
-            fprintf(fid,'%c'  ,strtrim(BND.DATA(ibnd).labelB)); % format '%12s' results in leading spaces
-         end
+         fprintf(fid,'%c'  ,strtrim(BCA.DATA(ibnd).Label)); % format '%12s' results in leading spaces
          
          fprintf(fid,'\n');
    
-         for icomp=1:length(BCA.DATA(ibnd,iside).amp)
+         for icomp=1:length(BCA.DATA(ibnd).amp)
          
             % if strmatch('RHO' ,component); component = 'RO1'     ; end
             % if strmatch('SIG' ,component); component = 'SIGMA1'  ; end
@@ -278,14 +272,14 @@ if fid > 0
             % if strmatch('2MK5',component); component = '3MO5'    ; end            
             % if strmatch('3MK7',component); component = '2MSO7'   ; end          
        
-            if iscell(BCA.DATA(ibnd,iside).names)
-            component = char(BCA.DATA(ibnd,iside).names{icomp});
-            elseif ischar(BCA.DATA(ibnd,iside).names)
-            component = char(BCA.DATA(ibnd,iside).names(icomp,:));
+            if        iscell(BCA.DATA(ibnd).names)
+            component = char(BCA.DATA(ibnd).names{icomp});
+            elseif    ischar(BCA.DATA(ibnd).names)
+            component = char(BCA.DATA(ibnd).names(icomp,:));
             end
             
-            amp       =      BCA.DATA(ibnd,iside).amp  (icomp);
-            phase     =      BCA.DATA(ibnd,iside).phi  (icomp);
+            amp       =      BCA.DATA(ibnd).amp  (icomp);
+            phase     =      BCA.DATA(ibnd).phi  (icomp);
    	 
            %fprintf(fid,'%8s %f7    %f7',pad(component,8,' '),amp,phase);
             fprintf(fid,'%8s %15.7e %f7',pad(component,8,' '),amp,phase); % more decimals to get sufficient decimals for Neumann boundary
@@ -293,8 +287,6 @@ if fid > 0
             
          end % for icmp=1:length(BCA.components)
    
-      end %  for iside = 1:2
-      
    end % for ibnd = 1:BND.NTables
    
    fid = fclose(fid);
