@@ -291,9 +291,9 @@ ny = size(zgrid, 1)-1;
 
 if OPT.superfast && ny == 2
     ny = 0;
-    xgrid = xgrid(2,:);
-    ygrid = ygrid(2,:);
-    zgrid = zgrid(2,:);
+    xgrid = xgrid(1,:);
+    ygrid = ygrid(1,:);
+    zgrid = zgrid(1,:);
 end
 
 if OPT.posdwn
@@ -311,7 +311,7 @@ ygrid = ygrid - yori;
 
 xb = xb_empty();
 xb = xb_set(xb, 'nx', nx, 'ny', ny, 'xori', xori, 'yori', yori, ...
-    'alfa', 360-alpha, 'vardx', 1, 'posdwn', OPT.posdwn);
+    'alfa', mod(360-alpha, 360), 'vardx', 1, 'posdwn', OPT.posdwn);
 
 if ~isempty(OPT.ne)
     xb = xb_bathy2input(xb, xgrid, ygrid, zgrid, negrid);
