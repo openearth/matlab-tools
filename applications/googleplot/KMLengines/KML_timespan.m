@@ -15,49 +15,36 @@ function varargout = KML_timespan(varargin)
    if nargin==0; varargout = {OPT}; return; end
 
    if odd(nargin)
-      tt = varargin{1};
+      ii = varargin{1};
       varargin = {varargin{2:end}};
-   else
-       tt = 1;
    end
 
    OPT = setproperty(OPT,varargin{:});
    
-   if  ~isempty(OPT.timeIn)
-
-       if tt > length(OPT.timeIn)
-          error('tt to big')
-       end
+   if isnumeric(OPT.timeIn) ; OPT.timeIn  = datestr(OPT.timeIn ,OPT.dateStrStyle);end
+   if isnumeric(OPT.timeOut); OPT.timeOut = datestr(OPT.timeOut,OPT.dateStrStyle);end
        
-       if isnumeric(OPT.timeIn) ; 
-           timeIn  = datestr(OPT.timeIn(tt) ,OPT.dateStrStyle);
+   if  ~isempty(OPT.timeIn)
+       if length(OPT.timeIn)>1 & odd(nargin)
+           tt = ii;
        elseif iscellstr(OPT.timeIn)
            timeIn  = OPT.timeIn{tt};
        else
-           timeIn  = OPT.timeIn(tt,:);
+           tt = 1;
        end
-       
-       if isnumeric(OPT.timeOut) ; 
-           timeOut  = datestr(OPT.timeOut(tt) ,OPT.dateStrStyle);
-       elseif iscellstr(OPT.timeOut)
-           timeOut  = OPT.timeOut{tt};
-       else
-           timeOut  = OPT.timeOut(tt,:);
-       end
-
        if ~isempty(OPT.timeOut)
            timeSpan = sprintf([...
                '<TimeSpan>'...
                '<begin>%s</begin>'...% OPT.timeIn
                '<end>%s</end>'...    % OPT.timeOut
                '</TimeSpan>'],...
-               timeIn,timeOut);
+               OPT.timeIn(tt,:),OPT.timeOut(tt,:));
        else
            timeSpan = sprintf([...
                '<TimeStamp>'...
                '<when>%s</when>'...  % OPT.timeIn
                '</TimeStamp>'],...
-               timeIn);
+               OPT.timeIn(tt,:));
        end
    else
        timeSpan ='';
