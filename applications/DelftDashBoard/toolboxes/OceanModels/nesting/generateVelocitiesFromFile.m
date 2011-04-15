@@ -2,7 +2,7 @@ function [times,u,v]=generateVelocitiesFromFile(flow,openBoundaries,opt)
 
 t0=flow.startTime;
 t1=flow.stopTime;
-dt=flow.bctTimeStep;
+dt=opt.bctTimeStep;
 
 nr=length(openBoundaries);
 
@@ -22,11 +22,11 @@ for i=1:nr
 
     % End A
     
-    x(i,1)=0.5*(openBoundaries(i).X(1) + openBoundaries(i).X(2));
-    y(i,1)=0.5*(openBoundaries(i).Y(1) + openBoundaries(i).Y(2));
+    x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
+    y(i,1)=0.5*(openBoundaries(i).y(1) + openBoundaries(i).y(2));
 
-    dx=openBoundaries(i).X(2)-openBoundaries(i).X(1);
-    dy=openBoundaries(i).Y(2)-openBoundaries(i).Y(1);
+    dx=openBoundaries(i).x(2)-openBoundaries(i).x(1);
+    dy=openBoundaries(i).y(2)-openBoundaries(i).y(1);
     if strcmpi(openBoundaries(i).orientation,'negative')
         dx=dx*-1;
         dy=dy*-1;
@@ -44,11 +44,11 @@ for i=1:nr
 
     % End B
 
-    x(i,2)=0.5*(openBoundaries(i).X(end-1) + openBoundaries(i).X(end));
-    y(i,2)=0.5*(openBoundaries(i).Y(end-1) + openBoundaries(i).Y(end));
+    x(i,2)=0.5*(openBoundaries(i).x(end-1) + openBoundaries(i).x(end));
+    y(i,2)=0.5*(openBoundaries(i).y(end-1) + openBoundaries(i).y(end));
 
-    dx=openBoundaries(i).X(end)-openBoundaries(i).X(end-1);
-    dy=openBoundaries(i).Y(end)-openBoundaries(i).Y(end-1);
+    dx=openBoundaries(i).x(end)-openBoundaries(i).x(end-1);
+    dy=openBoundaries(i).y(end)-openBoundaries(i).y(end-1);
     if strcmpi(openBoundaries(i).orientation,'negative')
         dx=dx*-1;
         dy=dy*-1;
@@ -75,10 +75,13 @@ end
 % sv=load(fname);
 
 
-fname=opt.current.BC.file;
-load(fname);
+%fname=opt.current.BC.file;
+s=load(opt.current.BC.file_u);
+sv=load(opt.current.BC.file_v);
 
 s.lon=mod(s.lon,360);
+sv.lon=mod(sv.lon,360);
+x=mod(x,360);
 
 times=s.time;
 
@@ -96,7 +99,7 @@ for it=it0:it1
 %     uu=Interpolate3D(Flow,x,y,dplayer,s,it,'data');
 %     vv=Interpolate3D(Flow,x,y,dplayer,sv.s,it,'data');
     uu=interpolate3D(x,y,dplayer,s,it,'u');
-    vv=interpolate3D(x,y,dplayer,s,it,'v');
+    vv=interpolate3D(x,y,dplayer,sv,it,'v');
     nt=nt+1;
 
     for j=1:nr

@@ -1,7 +1,6 @@
-function getHYCOM(url,outname,par,xl,yl,dx,dy,t,s)
+function getHYCOM2(url,outname,outdir,par,xl,yl,dx,dy,t,s)
+% Download Hycom data
 
-%fname='http://tds.hycom.org/thredds/dodsC/glb_analysis';
-%fname='http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_90.9/2011';
 fname=url;
 
 daynum=nc_varget(fname,'MT');
@@ -133,7 +132,7 @@ switch lower(par)
         toc
         s.data=single(s.data);
 
-    case{'velocity'}
+    case{'current_u'}
 
         disp('Downloading u ...');
         tic
@@ -156,13 +155,14 @@ switch lower(par)
             end
         end
         toc
-        s.u=single(s.data);
+        s.data=single(s.data);
+
+    case{'current_v'}
 
         disp('Downloading v ...');
         tic
         data=nc_varget(fname,'v',[it1-1 0 imin-1 jmin-1],[nt nd id jd]);
         toc
-        s.data=[];
         if ndims(data)==3
             data=permute(data,[2 3 1]);
             data(:,:,:,1)=data;
@@ -171,6 +171,7 @@ switch lower(par)
         end
         disp('Interpolating ...');      
         tic
+        s.data=[];
         for k=1:nd
             for it=1:nt
                 d=squeeze(data(:,:,k,it));
@@ -179,8 +180,23 @@ switch lower(par)
             end
         end
         toc
-        s.v=single(s.data);
-
+        s.data=single(s.data);
+        
 end
 
-save(outname,'s');
+for it=1:length(s.time)
+    fname=[outdir filesep outname '.' lower(par) '.' datestr(s.time(it),'yyyymmddHHMMSS') '.mat'];
+    s2=s;
+    s2.time=s2.time(it);
+    if ndims(s.data)==3
+        if length(s.time)==1
+            % One timestep, no need to squeeze
+        else
+            % One level
+            s2.data=squeeze(s2.data(:,:,it));
+        end
+    elseif ndims(s.data)==4
+        s2.data=squeeze(s2.data(:,:,:,it));
+    end    
+    save(fname,'-struct','s2');
+end

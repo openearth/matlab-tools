@@ -44,26 +44,34 @@ switch lower(opt.(par)(ii).BC.source)
     case{'file'}
         
         for i=1:length(openBoundaries)
-            x(i,1)=0.5*(openBoundaries(i).X(1) + openBoundaries(i).X(2));
-            y(i,1)=0.5*(openBoundaries(i).Y(1) + openBoundaries(i).Y(2));
-            x(i,2)=0.5*(openBoundaries(i).X(end-1) + openBoundaries(i).X(end));
-            y(i,2)=0.5*(openBoundaries(i).Y(end-1) + openBoundaries(i).Y(end));
+            x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
+            y(i,1)=0.5*(openBoundaries(i).y(1) + openBoundaries(i).y(2));
+            x(i,2)=0.5*(openBoundaries(i).x(end-1) + openBoundaries(i).x(end));
+            y(i,2)=0.5*(openBoundaries(i).y(end-1) + openBoundaries(i).y(end));
         end
         
         fname=opt.(par)(ii).BC.file;
 
-        load(fname);
+        s=load(fname);
 
         times=s.time;
         
         it0=find(times<=t0, 1, 'last' );
         it1=find(times>=t1, 1, 'first' );
 
+        if isempty(it0)
+            it0=1;
+        end
+        if isempty(it1)
+            it1=length(times);
+        end
+
         s.lon=mod(s.lon,360);
+        x=mod(x,360);
         
         nt=0;
 
-        for j=1:nr
+        for j=1:length(openBoundaries)
             openBoundaries(j).(par)(ii).nrTimeSeries=0;
             openBoundaries(j).(par)(ii).timeSeriesT=[];
             openBoundaries(j).(par)(ii).profile='3d-profile';
@@ -78,7 +86,7 @@ switch lower(opt.(par)(ii).BC.source)
             t=times(it);
             data=interpolate3D(x,y,dplayer,s,it);
             nt=nt+1;
-            for j=1:nr
+            for j=1:length(openBoundaries)
                 ta=squeeze(data(j,1,:))';
                 tb=squeeze(data(j,2,:))';
                 openBoundaries(j).(par)(ii).nrTimeSeries=nt;
@@ -89,7 +97,7 @@ switch lower(opt.(par)(ii).BC.source)
         end
 
         t=t0:dt/1440:t1;
-        for j=1:nr
+        for j=1:length(openBoundaries)
             ta=[];
             tb=[];
             for k=1:flow.KMax

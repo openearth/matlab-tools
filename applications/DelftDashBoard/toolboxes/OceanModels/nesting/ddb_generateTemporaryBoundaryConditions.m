@@ -144,7 +144,7 @@ for n=1:nb
         k=k+1;
         if igetvel
             %                disp(openBoundaries(n).name);
-            dpcorfac=openBoundaries(n).depth(1)/deptha(n)
+            dpcorfac=openBoundaries(n).depth(1)/deptha(n);
             %                disp(openBoundaries(n).depth(1));
             %                disp(deptha(n));
             %                 dpcorfac=max(min(dpcorfac,1.5),0.75);
@@ -195,7 +195,7 @@ for n=1:nb
         % Side B
         k=k+1;
         if igetvel
-            dpcorfac=openBoundaries(n).depth(2)/depthb(n)
+            dpcorfac=openBoundaries(n).depth(2)/depthb(n);
             %                 dpcorfac=max(min(dpcorfac,1.5),0.75);
             %                 dpcorfac=1;
         end

@@ -1,57 +1,48 @@
-function GenerateIniFile(Flow)
+function generateIniFile(flow,opt,fname)
 
-mmax=size(Flow.GridXZ,1)+1;
-nmax=size(Flow.GridYZ,2)+1;
+mmax=size(flow.gridXZ,1)+1;
+nmax=size(flow.gridYZ,2)+1;
 
 dp=zeros(mmax,nmax);
 dp(dp==0)=NaN;
-dp(1:end-1,1:end-1)=-Flow.DepthZ;
+dp(1:end-1,1:end-1)=-flow.depthZ;
 
-if strcmpi(Flow.VertCoord,'z')
-    dplayer=GetLayerDepths(dp,Flow.Thick,Flow.ZBot,Flow.ZTop);
+if strcmpi(flow.vertCoord,'z')
+    dplayer=GetLayerDepths(dp,flow.thick,flow.zBot,flow.zTop);
 else
-    dplayer=GetLayerDepths(dp,Flow.Thick);
+    dplayer=GetLayerDepths(dp,flow.thick);
 end
 
 %% Water Level
 disp('   Water levels ...');
 % Constant
-h=zeros(mmax,nmax)+Flow.WaterLevel.IC.Constant;
-if exist([Flow.OutputDir Flow.IniFile],'file')
-    delete([Flow.OutputDir Flow.IniFile]);
-end
-if isempty(Flow.IniFile)
-    error('No file name specified for initial conditions in mdf file');
-end
-wldep_mvo('write',[Flow.OutputDir Flow.IniFile],h,'negate','n','bndopt','n');
+h=zeros(mmax,nmax)+opt.waterLevel.IC.constant;
+ddb_wldep('write',fname,h,'negate','n','bndopt','n');
 
 %% Velocities
 disp('   Velocities ...');
-GenerateInitialConditions(Flow,'Current',1,dplayer);
-%GenerateInitialConditions(Flow,'CurrentU',1,dplayer);
-%GenerateInitialConditions(Flow,'CurrentV',1,dplayer);
+generateInitialConditions(flow,opt,'current',1,dplayer,fname);
 
 %% Salinity
-if Flow.Salinity.Include
+if flow.salinity.include
     disp('   Salinity ...');
-    GenerateInitialConditions(Flow,'Salinity',1,dplayer);
+    generateInitialConditions(flow,opt,'salinity',1,dplayer,fname);
 end
 
 %% Temperature
-if Flow.Temperature.Include
+if flow.temperature.include
     disp('   Temperature ...');
-    GenerateInitialConditions(Flow,'Temperature',1,dplayer);
+    generateInitialConditions(flow,opt,'temperature',1,dplayer,fname);
 end
 
 %% Sediments
-for i=1:Flow.NrSediments
+for i=1:flow.nrSediments
     disp('   Sediments ...');
-    GenerateInitialConditions(Flow,'Sediment',i,dplayer);
+    generateInitialConditions(flow,opt,'sediment',i,dplayer,fname);
 end
 
 %% Tracers
-for i=1:Flow.NrTracers
+for i=1:flow.nrTracers
     disp('   Tracers ...');
-    GenerateInitialConditions(Flow,'Tracer',i,dplayer);
+    generateInitialConditions(flow,opt,'tracer',i,dplayer,fname);
 end
-

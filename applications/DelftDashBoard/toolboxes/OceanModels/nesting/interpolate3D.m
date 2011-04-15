@@ -11,7 +11,12 @@ end
 nlevels=length(d.levels);
 levels=d.levels';
 
-kmax=length(dplayer);
+if ndims(dplayer)==3
+    kmax=size(dplayer,3);
+else
+    kmax=length(dplayer);
+end
+
 xd=d.lon;
 yd=d.lat;
 [xd,yd]=meshgrid(xd,yd);
@@ -20,7 +25,8 @@ x(isnan(x))=1e9;
 y(isnan(y))=1e9;
 
 for k=1:nlevels
-    vald=squeeze(d.(tp)(:,:,k,it));
+%    vald=squeeze(d.(tp)(:,:,k,it));
+    vald=squeeze(d.data(:,:,k,it));
 %     disp(['Level ' num2str(k)]);
     switch lower(tp(1))
         case{'u','v'}
@@ -34,6 +40,7 @@ for k=1:nlevels
     end
 %     disp('Horizontal interpolation ...');
 %     tic
+%    x=mod(x,360);
     vals(:,:,k)=interp2(xd,yd,vald,x,y);
 %     toc
     vals(isnan(vals))=-9999;

@@ -11,18 +11,20 @@ nr=length(openBoundaries);
 for i=1:nr
 
     % End A
-    x(i,1)=0.5*(openBoundaries(i).X(1) + openBoundaries(i).X(2));
-    y(i,1)=0.5*(openBoundaries(i).Y(1) + openBoundaries(i).Y(2));
+    x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
+    y(i,1)=0.5*(openBoundaries(i).y(1) + openBoundaries(i).y(2));
 
     % End B
-    x(i,2)=0.5*(openBoundaries(i).X(end-1) + openBoundaries(i).X(end));
-    y(i,2)=0.5*(openBoundaries(i).Y(end-1) + openBoundaries(i).Y(end));
+    x(i,2)=0.5*(openBoundaries(i).x(end-1) + openBoundaries(i).x(end));
+    y(i,2)=0.5*(openBoundaries(i).y(end-1) + openBoundaries(i).y(end));
 
 end
 
-fname=opt.WaterLevel.BC.File;
+x=mod(x,360);
 
-load(fname);
+fname=opt.waterLevel.BC.file;
+
+s=load(fname);
 
 s.lon=mod(s.lon,360);
 
@@ -37,7 +39,7 @@ nt=0;
 
 for it=it0:it1
     nt=nt+1;
-    wl00=squeeze(s.data(:,:,it))+opt.WaterLevel.BC.ZCor;
+    wl00=squeeze(s.data(:,:,it))+opt.waterLevel.BC.constant;
     wl00=internaldiffusion(wl00); 
     wl00=interp2(s.lon,s.lat,wl00,x,y);
     wl0(:,:,nt)=wl00;

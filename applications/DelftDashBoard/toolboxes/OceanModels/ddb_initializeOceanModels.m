@@ -11,18 +11,28 @@ if nargin>1
     end
 end
 
+%% Read ocean models xml file
+
+s=xml_load([handles.Toolbox(ii).dataDir 'OceanModels.xml']);
+for i=1:length(s.models)
+    handles.Toolbox(ii).Input.oceanModel(i).name = s.models(i).model.name;
+    handles.Toolbox(ii).Input.oceanModel(i).longName = s.models(i).model.longname;
+    handles.Toolbox(ii).Input.oceanModel(i).URL = s.models(i).model.url;
+    handles.Toolbox(ii).Input.oceanModel(i).type = s.models(i).model.type;
+    if isfield(s.models(i).model,'gridcoordinates')
+        handles.Toolbox(ii).Input.oceanModel(i).gridCoordinates = s.models(i).model.gridcoordinates;
+    else
+        handles.Toolbox(ii).Input.oceanModel(i).gridCoordinates=[];
+    end
+    if isfield(s.models(i).model,'region')
+        handles.Toolbox(ii).Input.oceanModel(i).region = s.models(i).model.region;
+    else
+        handles.Toolbox(ii).Input.oceanModel(i).region=[];
+    end
+    handles.Toolbox(ii).Input.oceanModels{i} = s.models(i).model.longname;
+end
 
 %% Download
-
-handles.Toolbox(ii).Input.oceanModels = {'HYCOM','NCOM'};
-
-handles.Toolbox(ii).Input.oceanModel(1).name = 'hycom';
-handles.Toolbox(ii).Input.oceanModel(1).folder = 'hycom';
-handles.Toolbox(ii).Input.oceanModel(1).URL = 'http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_90.9/2011';
-
-handles.Toolbox(ii).Input.oceanModel(2).name = 'ncom';
-handles.Toolbox(ii).Input.oceanModel(2).folder = 'ncom';
-handles.Toolbox(ii).Input.oceanModel(2).URL = 'http://edac-dap.northerngulfinstitute.org/thredds/dodsC/ncom';
 
 handles.Toolbox(ii).Input.activeModel = 1;
 handles.Toolbox(ii).Input.startTime= floor(now)-10;
@@ -35,7 +45,7 @@ handles.Toolbox(ii).Input.getSalinity=1;
 handles.Toolbox(ii).Input.getTemperature=1;
 
 handles.Toolbox(ii).Input.name=handles.Toolbox(ii).Input.oceanModel(1).name;
-handles.Toolbox(ii).Input.folder=handles.Toolbox(ii).Input.oceanModel(1).folder;
+handles.Toolbox(ii).Input.folder=handles.Toolbox(ii).Input.oceanModel(1).name;
 handles.Toolbox(ii).Input.URL=handles.Toolbox(ii).Input.oceanModel(1).URL;
 
 handles.Toolbox(ii).Input.outlineHandle=[];
@@ -70,3 +80,18 @@ handles.Toolbox(ii).Input.options.temperature.BC.profileFile='';
 handles.Toolbox(ii).Input.options.temperature.BC.constant=15;
 
 handles.Toolbox(ii).Input.options.bccTimeStep=10;
+
+% Initial conditions
+handles.Toolbox(ii).Input.options.waterLevel.IC.source=1;
+handles.Toolbox(ii).Input.options.waterLevel.IC.constant=0;
+
+handles.Toolbox(ii).Input.options.current.IC.source=2;
+handles.Toolbox(ii).Input.options.current.IC.constant=0;
+
+handles.Toolbox(ii).Input.options.salinity.IC.source=2;
+handles.Toolbox(ii).Input.options.salinity.IC.profileFile='';
+handles.Toolbox(ii).Input.options.salinity.IC.constant=31;
+
+handles.Toolbox(ii).Input.options.temperature.IC.source=2;
+handles.Toolbox(ii).Input.options.temperature.IC.profileFile='';
+handles.Toolbox(ii).Input.options.temperature.IC.constant=15;

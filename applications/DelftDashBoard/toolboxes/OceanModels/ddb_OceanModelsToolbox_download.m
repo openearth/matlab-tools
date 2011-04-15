@@ -30,12 +30,12 @@ function selectOceanModel
 handles=getHandles;
 ii=handles.Toolbox(tb).Input.activeModel;
 handles.Toolbox(tb).Input.name=handles.Toolbox(tb).Input.oceanModel(ii).name;
-handles.Toolbox(tb).Input.folder=handles.Toolbox(tb).Input.oceanModel(ii).folder;
+handles.Toolbox(tb).Input.folder=handles.Toolbox(tb).Input.oceanModel(ii).name;
 handles.Toolbox(tb).Input.URL=handles.Toolbox(tb).Input.oceanModel(ii).URL;
 setHandles(handles);
-setUIElement('oceanmodels.download.editname');
-setUIElement('oceanmodels.download.editfolder');
-setUIElement('oceanmodels.download.editurl');
+setUIElement('oceanmodelspanel.download.editname');
+setUIElement('oceanmodelspanel.download.editfolder');
+setUIElement('oceanmodelspanel.download.editurl');
 
 %%
 function changeOutlineOnMap(x0,y0,dx,dy,rotation,h)
@@ -63,10 +63,10 @@ if ~strcmpi(cs.name,'wgs 84') || ~strcmpi(cs.type,'geographic')
 end
 
 setHandles(handles);
-setUIElement('oceanmodels.download.editxmin');
-setUIElement('oceanmodels.download.editxmax');
-setUIElement('oceanmodels.download.editymin');
-setUIElement('oceanmodels.download.editymax');
+setUIElement('oceanmodelspanel.download.editxmin');
+setUIElement('oceanmodelspanel.download.editxmax');
+setUIElement('oceanmodelspanel.download.editymin');
+setUIElement('oceanmodelspanel.download.editymax');
 
 %%
 function editOutline
@@ -113,20 +113,81 @@ if ~isdir(outdir)
     mkdir(outdir);
 end
 
-switch handles.Toolbox(tb).Input.activeModel
-    case 1
-        load([handles.Toolbox(tb).miscDir 'hycom.mat']);
-        if handles.Toolbox(tb).Input.getSSH
-            getHYCOM2(url,outname,outdir,'waterlevel',xl,yl,0.1,0.1,[t0 t1],s);
-        end
-        if handles.Toolbox(tb).Input.getCurrents
-            getHYCOM2(url,outname,outdir,'current_u',xl,yl,0.1,0.1,[t0 t1],s);
-            getHYCOM2(url,outname,outdir,'current_v',xl,yl,0.1,0.1,[t0 t1],s);
-        end
-        if handles.Toolbox(tb).Input.getSalinity
-            getHYCOM2(url,outname,outdir,'salinity',xl,yl,0.1,0.1,[t0 t1],s);
-        end
-        if handles.Toolbox(tb).Input.getTemperature
-            getHYCOM2(url,outname,outdir,'temperature',xl,yl,0.1,0.1,[t0 t1],s);
-        end
+ii=handles.Toolbox(tb).Input.activeModel;
+
+np=0;
+if handles.Toolbox(tb).Input.getSSH
+    np=np+1;
+    pars{np}='waterlevel';
+end
+if handles.Toolbox(tb).Input.getCurrents
+    np=np+1;
+    pars{np}='current_u';
+    np=np+1;
+    pars{np}='current_v';
+end
+if handles.Toolbox(tb).Input.getSalinity
+    np=np+1;
+    pars{np}='salinity';
+end
+if handles.Toolbox(tb).Input.getTemperature
+    np=np+1;
+    pars{np}='temperature';
+end
+
+try
+    
+    switch lower(handles.Toolbox(tb).Input.oceanModel(ii).type)
+        case{'hycom'}
+            % First download HYCOM grid if it doesn't exist yet
+            localdir=handles.Toolbox(tb).dataDir;
+            filename='hycom.mat';
+            if ~exist([localdir filename],'file')
+                remotedir='http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/oceanmodels/hycom/';
+                try
+                    wb = waitbox('Downloading HYCOM grid info. This may take a few minutes...');
+                    urlwrite([remotedir filename],[localdir filename]); 
+                    close(wb);
+                catch
+                    close(wb);
+                    giveWarning('text','Could not download HYCOM grid info from OPeNDAP server!');
+                    return
+                end
+            end
+            load([localdir filename]);
+            wb = waitbox('Downloading data ...');
+            for ip=1:length(pars)
+                getHYCOM(url,outname,outdir,pars{ip},xl,yl,0.1,0.1,[t0 t1],s);
+            end
+            close(wb);
+        case{'ncom'}
+            % Get lon, lat, depth
+            wb = waitbox('Downloading data ...');
+            cycstr=datestr(floor(t0),'yyyymmddHH');
+            ireg=str2double(handles.Toolbox(tb).Input.oceanModel(ii).region);
+            ncname=['ncom_glb_regp' num2str(ireg,'%0.2i') '_' cycstr '.nc'];
+            url=[handles.Toolbox(tb).Input.oceanModel(ii).URL '/' ncname];
+            [lon,lat,levels]=getNCOM(url,'salinity',xl,yl,[t0 t1]);
+            % Now get the data
+            lastCycle=floor(now+10/24);
+            for t=floor(t0):min(floor(t1),lastCycle)
+                t00=t;
+                if t<lastCycle
+                    % Not yet in last available cycle
+                    t11=min(t00+21/24,t1);
+                else
+                    t11=t1;
+                end
+                cycstr=datestr(t,'yyyymmddHH');
+                ncname=['ncom_glb_regp' num2str(ireg,'%0.2i') '_' cycstr '.nc'];
+                url=[handles.Toolbox(tb).Input.oceanModel(ii).URL '/' ncname];
+                for ip=1:length(pars)
+                    getNCOM(url,pars{ip},xl,yl,[t00 t11],'outputfile',outname,'outputdir',outdir,'lon',lon,'lat',lat,'depth',levels);
+                end
+            end
+            close(wb);
+    end
+catch
+    close(wb);
+    giveWarning('text','An error occured while downloading data');
 end
