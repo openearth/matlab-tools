@@ -1,5 +1,7 @@
-function [wav_high , wav_low] = filterhjb(wav , f_cutoff , df , av_yes);
+function [wav_high , wav_low] = filterhjb(wav , f_cutoff , df , av_yes)
 % FILTERHJB  derives a wave signal in a high frequency and low frequency part
+%
+%   [wav_high , wav_low] = filterhjb(wav , f_cutoff , df , av_yes);
 %
 % This function divides a wave signal in a high frequency part and a low frequency part
 % separated by a cutoff frequency.
@@ -22,8 +24,6 @@ A_wav = fft(wav);
 A_high = zeros(size(wav));
 A_low  = zeros(size(wav));
 
-size(wav);
-length(wav);
 A_high(ii_cutoff+2:length(wav)/2,:) = A_wav(ii_cutoff+2:length(wav)/2,:);
 
 if av_yes
