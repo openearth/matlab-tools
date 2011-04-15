@@ -3,7 +3,7 @@
 <root>
   <element>
     <tag>selectwlsource</tag>
-    <position>80 80 100 20</position>
+    <position>80 105 100 20</position>
     <style>popupmenu</style>
     <type>integer</type>
     <text>Water Level</text>
@@ -22,7 +22,7 @@
   <element>
     <tag>checkautowl</tag>
     <style>checkbox</style>
-    <position>190 80</position>
+    <position>190 105</position>
     <text>Automatic</text>
     <variable>handles.Toolbox(tb).Input.autoWL</variable>
     <tooltipstring>Automatically generate water levels from tide database</tooltipstring> 
@@ -52,7 +52,7 @@
   <element>
     <tag>selectwldatabase</tag>
     <style>popupmenu</style>
-    <position>270 80 100 20</position>
+    <position>270 105 100 20</position>
     <tooltipstring>Select tide database for boundary conditions</tooltipstring>
     <variable>handles.Toolbox(tb).Input.activeTideModelWL</variable>
     <type>integer</type>
@@ -102,7 +102,7 @@
   <element>
     <tag>selectwlbndfile</tag>
     <style>pushselectfile</style>
-    <position>390 80 60 20</position>
+    <position>390 105 60 20</position>
     <tooltipstring>Open astronomic bnd file</tooltipstring>
     <text>Bnd File</text>
     <variable>handles.Toolbox(tb).Input.options.waterLevel.BC.bndAstroFile</variable>
@@ -147,7 +147,7 @@
   <element>
     <tag>selectwlbcafile</tag>
     <style>pushselectfile</style>
-    <position>600 80 60 20</position>
+    <position>600 105 60 20</position>
     <tooltipstring>Open astronomic bca file</tooltipstring>
     <text>Bca File</text>
     <variable>handles.Toolbox(tb).Input.options.waterLevel.BC.astroFile</variable>
@@ -192,7 +192,7 @@
 
   <element>
     <tag>editzcor</tag>
-    <position>850 80 50 20</position>
+    <position>850 105 50 20</position>
     <style>edit</style>
     <type>real</type>
     <text>Correction (m)</text>
@@ -202,7 +202,7 @@
 
   <element>
     <tag>selectcurrentsource</tag>
-    <position>80 55 100 20</position>
+    <position>80 80 100 20</position>
     <style>popupmenu</style>
     <type>integer</type>
     <text>Currents</text>
@@ -221,7 +221,7 @@
   <element>
     <tag>checkautocur</tag>
     <style>checkbox</style>
-    <position>190 55</position>
+    <position>190 80</position>
     <text>Automatic</text>
     <variable>handles.Toolbox(tb).Input.autoCur</variable>
     <tooltipstring>Automatically generate currents from tide database</tooltipstring> 
@@ -251,7 +251,7 @@
   <element>
     <tag>selectcurdatabase</tag>
     <style>popupmenu</style>
-    <position>270 55 100 20</position>
+    <position>270 80 100 20</position>
     <tooltipstring>Select tide database for boundary conditions</tooltipstring>
     <variable>handles.Toolbox(tb).Input.activeTideModelCur</variable>
     <type>integer</type>
@@ -300,7 +300,7 @@
   <element>
     <tag>selectcurrentbndfile</tag>
     <style>pushselectfile</style>
-    <position>390 55 60 20</position>
+    <position>390 80 60 20</position>
     <tooltipstring>Open astronomic bnd file</tooltipstring>
     <text>Bnd File</text>
     <variable>handles.Toolbox(tb).Input.options.current.BC.bndAstroFile</variable>
@@ -345,7 +345,7 @@
   <element>
     <tag>selectcurrentbcafile</tag>
     <style>pushselectfile</style>
-    <position>600 55 60 20</position>
+    <position>600 80 60 20</position>
     <tooltipstring>Open astronomic bca file</tooltipstring>
     <text>Bca File</text>
     <variable>handles.Toolbox(tb).Input.options.current.BC.astroFile</variable>
@@ -391,7 +391,7 @@
   <element>
     <tag>editname</tag>
     <style>edit</style>
-    <position>80 30 100 20</position>
+    <position>80 45 100 20</position>
     <variable>handles.Toolbox(tb).Input.name</variable>
     <type>string</type>
     <text>Data File</text>
@@ -433,7 +433,7 @@
   <element>
     <tag>editfolder</tag>
     <style>edit</style>
-    <position>80 5 100 20</position>
+    <position>80 20 100 20</position>
     <variable>handles.Toolbox(tb).Input.folder</variable>
     <type>string</type>
     <text>Data Folder</text>

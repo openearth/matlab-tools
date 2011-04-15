@@ -8,7 +8,7 @@
     <element>
       <position>40 10 1000 140</position>
       <style>tabpanel</style>
-      <tag>oceanmodels</tag>
+      <tag>oceanmodelspanel</tag>
       <tabs>
         <tab>
           <tag>download</tag>
@@ -17,10 +17,22 @@
           <elements>OceanModels.download.xml</elements>
         </tab>
         <tab>
-          <tag>nesting</tag>
-          <tabstring>Nesting</tabstring>
-          <callback>ddb_OceanModelsToolbox_nesting</callback>
-          <elements>OceanModels.nesting.xml</elements>
+          <tag>hydroconditions</tag>
+          <tabstring>Hydrodynamic Conditions</tabstring>
+          <callback>ddb_OceanModelsToolbox_nestBct</callback>
+          <elements>OceanModels.hydroconditions.xml</elements>
+        </tab>
+        <tab>
+          <tag>transportconditions</tag>
+          <tabstring>Transport Conditions</tabstring>
+          <callback>ddb_OceanModelsToolbox_nestBcc</callback>
+          <elements>OceanModels.transportconditions.xml</elements>
+        </tab>
+        <tab>
+          <tag>initialconditions</tag>
+          <tabstring>Initial Conditions</tabstring>
+          <callback>ddb_OceanModelsToolbox_nestIni</callback>
+          <elements>OceanModels.initialconditions.xml</elements>
         </tab>
       </tabs>
     </element>

@@ -3,7 +3,7 @@
 <root>
   <element>
     <tag>selectsalinitysource</tag>
-    <position>110 80 100 20</position>
+    <position>110 105 100 20</position>
     <style>popupmenu</style>
     <type>integer</type>
     <text>Salinity (ppt)</text>
@@ -19,7 +19,7 @@
   </element>
   <element>
     <tag>editsalinity</tag>
-    <position>330 80 50 20</position>
+    <position>330 105 50 20</position>
     <style>edit</style>
     <type>real</type>
     <text>Salinity (ppt)</text>
@@ -45,7 +45,7 @@
   <element>
     <tag>selectsalinityprofile</tag>
     <style>pushselectfile</style>
-    <position>230 80 100 20</position>
+    <position>230 105 100 20</position>
     <tooltipstring>Select salinity profile file</tooltipstring>
     <text>Profile File</text>
     <variable>handles.Toolbox(tb).Input.options.salinity.BC.profileFile</variable>
@@ -72,7 +72,7 @@
 
   <element>
     <tag>selecttemperaturesource</tag>
-    <position>110 55 100 20</position>
+    <position>110 80 100 20</position>
     <style>popupmenu</style>
     <type>integer</type>
     <text>Temperature (degC)</text>
@@ -88,7 +88,7 @@
   </element>
   <element>
     <tag>edittemperature</tag>
-    <position>330 55 50 20</position>
+    <position>330 80 50 20</position>
     <style>edit</style>
     <type>real</type>
     <text>Temperature (degC)</text>
@@ -114,7 +114,7 @@
   <element>
     <tag>selecttemperatureprofile</tag>
     <style>pushselectfile</style>
-    <position>230 55 100 20</position>
+    <position>230 80 100 20</position>
     <tooltipstring>Select temperature profile file</tooltipstring>
     <text>Profile File</text>
     <variable>handles.Toolbox(tb).Input.options.temperature.BC.profileFile</variable>
@@ -141,7 +141,7 @@
   <element>
     <tag>editname</tag>
     <style>edit</style>
-    <position>110 30 100 20</position>
+    <position>110 45 100 20</position>
     <variable>handles.Toolbox(tb).Input.name</variable>
     <type>string</type>
     <text>Data File</text>
@@ -173,7 +173,7 @@
   <element>
     <tag>editfolder</tag>
     <style>edit</style>
-    <position>110 5 100 20</position>
+    <position>110 20 100 20</position>
     <variable>handles.Toolbox(tb).Input.folder</variable>
     <type>string</type>
     <text>Data Folder</text>
