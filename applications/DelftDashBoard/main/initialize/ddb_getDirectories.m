@@ -46,7 +46,7 @@ end
 
 handles.bathyDir=[ddbdir 'bathymetry' filesep];
 handles.tideDir=[ddbdir 'tidemodels' filesep];
-handles.toolBoxDir=[ddbdir 'toolbox' filesep];
+handles.toolBoxDir=[ddbdir 'toolboxes' filesep];
 handles.additionalToolboxDir=additionalToolboxDir;
 handles.shorelineDir=[ddbdir 'shorelines' filesep];
 handles.satelliteDir=[ddbdir 'imagery' filesep];
