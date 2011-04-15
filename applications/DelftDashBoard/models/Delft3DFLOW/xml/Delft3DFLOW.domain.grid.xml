@@ -201,7 +201,7 @@
     <tag>editzbot</tag>
     <style>edit</style>
     <position>840 10 50 20</position>
-    <variable>handles.Model(md).Input(ad).zTop</variable>
+    <variable>handles.Model(md).Input(ad).zBot</variable>
     <type>real</type>
     <text>Z bottom (m)</text>
     <dependencies>

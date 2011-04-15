@@ -101,7 +101,7 @@ else
             clearInstructions;
 
         case{'openfile'}
-            handles=ddb_readObsFile(handles);
+            handles=ddb_readObsFile(handles,ad);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints');
             setHandles(handles);
 
