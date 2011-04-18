@@ -104,8 +104,8 @@ x = xb_get(xb, 'DIMS.globalx_DATA');
 z = xb_get(xb, 'zb');
 j = ceil(size(x,1)/2);
 
-zb0 = [squeeze(x(j,:))' squeeze(z(1,j,:))'];
-zb1 = [squeeze(x(j,:))' squeeze(z(end,j,:))'];
+zb0 = [squeeze(x(j,:))' squeeze(z(1,j,:))];
+zb1 = [squeeze(x(j,:))' squeeze(z(2:end,j,:))'];
 
 % plot profiles
 addplot(zb0,                '--',   'k',        'initial'           );
@@ -122,7 +122,7 @@ addplot(OPT.xbeach,         '--',   'r',        'XBeach'            );
 addplot(zb1,                '-',    'r',        'XBeach (testbed)'  );
 
 % add BSS
-if OPT.BSS && ~isempty(OPT.initial) && ~isempty(OPT.measured)
+if OPT.BSS && ~isempty(OPT.measured)
     xm = OPT.measured(:,1);
     zm = OPT.measured(:,2);
     
@@ -149,21 +149,14 @@ ylabel(['height [' OPT.units ']']);
 legend('show', 'Location', 'NorthWest')
 
 % flip figure if necessary
-if ~isempty(OPT.initial) && ~isempty(OPT.measured)
-    x   = unique([OPT.initial(:,1) ; OPT.measured(:,1)]);
-    
-    if OPT.flip
-        zi  = interp1(OPT.initial(:,1), OPT.initial(:,2), x);
-        zm  = interp1(OPT.measured(:,1), OPT.measured(:,2), x);
-        dz  = zm - zi;
-
-        if find(dz==max(dz)) > find(dz==min(dz))
-            set(gca, 'XDir', 'reverse');
-        end
+if OPT.flip
+    dz  = zb1(:,2) - zb0(:,2);
+    if find(dz==max(dz)) > find(dz==min(dz))
+        set(gca, 'XDir', 'reverse');
     end
-    
-    set(gca, 'XLim', [min(x) max(x)]);
 end
+
+set(gca, 'XLim', [min(x(j,:)) max(x(j,:))]);
 
 box on;
 grid on;
