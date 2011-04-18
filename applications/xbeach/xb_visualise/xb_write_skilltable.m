@@ -1,4 +1,4 @@
-function xb_write_skilltable(measured, computed, varargin)
+function xb_write_skilltable(xb, measured, varargin)
 %XB_WRITE_SKILLTABLE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -68,26 +68,30 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-if size(measured,2) ~= size(computed,2); error('Number of measurements not equal to number of computations'); end;
+if ~iscell(OPT.vars); OPT.vars = {OPT.vars}; end;
+if isempty(OPT.vars); OPT.vars = {xb.data(2:end).name}; end;
 
 %% create table
 
 skills = [];
 labels = {};
 
+j = ceil(xb_get(xb, 'DIMS.globaly')/2);
+
 n = 1;
 for i = 2:size(measured,2)
-    if ~isempty(OPT.vars) && length(OPT.vars) >= i-1
+    if length(OPT.vars) >= i-1
+        x = xb_get(xb, 'DIMS.globalx_DATA');
+        y = xb_get(xb, OPT.vars{i-1});
+        computed = [squeeze(x(j,:))' squeeze(y(end,j,:))];
+
         [r2 sci relbias bss]    = xb_skill(measured(:,[1 i]), computed(:,[1 i]), 'var', OPT.vars{i-1});
         labels{n}               = ['$' OPT.vars{i-1} '$'];
-    else
-        [r2 sci relbias bss]    = xb_skill(measured([1 i],:), computed([1 i],:));
-        labels{n}               = '';
+
+        skills(n,:) = [r2 sci relbias bss];
+
+        n = n + 1;
     end
-    
-    skills(n,:) = [r2 sci relbias bss];
-    
-    n = n + 1;
 end
 
 matrix2latex(skills, 'filename', OPT.file, ...
