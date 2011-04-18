@@ -1,4 +1,4 @@
-function xb_plot_profile(varargin)
+function xb_plot_profile(xb, varargin)
 %XB_PLOT_PROFILE  Create uniform profile plots
 %
 %   Create uniform profile plots using standardized coloring per source.
@@ -8,12 +8,11 @@ function xb_plot_profile(varargin)
 %   successive columns contain z-values.
 %
 %   Syntax:
-%   xb_plot_profile(varargin)
+%   xb_plot_profile(xb, varargin)
 %
 %   Input:
-%   varargin =  inital:         Initial profile
-%               measured:       Measured post storm profile
-%               testbed:        Profile computed by testbed
+%   xb       =  XBeach output structure
+%   varargin =  measured:       Measured post storm profile
 %               xbeach:         Profile computed by another version of
 %                               XBeach
 %               durosta:        Profile computed by DurosTA
@@ -32,7 +31,7 @@ function xb_plot_profile(varargin)
 %   none
 %
 %   Example
-%   xb_plot_profile('initial', profile0, 'measured', profile1, 'testbed', xb)
+%   xb_plot_profile(xb, 'initial', profile0, 'measured', profile1)
 %
 %   See also xb_view
 
@@ -80,9 +79,7 @@ function xb_plot_profile(varargin)
 %% read options
 
 OPT = struct( ...
-    'initial',          [], ...
     'measured',         [], ...
-    'testbed',          [], ...
     'xbeach',           [], ...
     'durosta',          [], ...
     'duros',            [], ...
@@ -102,8 +99,16 @@ OPT = setproperty(OPT, varargin{:});
 
 figure; hold on;
 
+% read data
+x = xb_get(xb, 'DIMS.globalx_DATA');
+z = xb_get(xb, 'zb');
+j = ceil(size(x,1)/2);
+
+zb0 = [squeeze(x(j,:))' squeeze(z(1,j,:))'];
+zb1 = [squeeze(x(j,:))' squeeze(z(end,j,:))'];
+
 % plot profiles
-addplot(OPT.initial,        '--',   'k',        'initial'           );
+addplot(zb0,                '--',   'k',        'initial'           );
 addplot(OPT.measured,       '-',    'k',        'measured'          );
 addplot(OPT.nonerodible,    '-',    [.5 .5 .5], 'non-erodible'      );
 
@@ -114,7 +119,7 @@ addplot(OPT.duros_p,        '--',   'g',        'DUROS+'            );
 addplot(OPT.duros_pp,       '-',    'g',        'D++'               );
 
 addplot(OPT.xbeach,         '--',   'r',        'XBeach'            );
-addplot(OPT.testbed,        '-',    'r',        'XBeach (testbed)'  );
+addplot(zb1,                '-',    'r',        'XBeach (testbed)'  );
 
 % add BSS
 if OPT.BSS && ~isempty(OPT.initial) && ~isempty(OPT.measured)

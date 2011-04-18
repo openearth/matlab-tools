@@ -11,7 +11,7 @@ function [start len stride] = xb_index(dims, start, len, stride)
 %   dims      = Array with dimension sizes of original data (result of
 %               size())
 %   start     = Starting indices per dimension
-%   len       = len per dimension
+%   len       = Length per dimension
 %   stride    = Strides per dimension
 %
 %   Output:
@@ -67,15 +67,14 @@ function [start len stride] = xb_index(dims, start, len, stride)
 
 %% fix index
 
-if isempty(start); start = zeros(size(dims)); end;
-if isempty(len); len = -ones(size(dims)); end;
-if isempty(stride); stride = ones(size(dims)); end;
+if isempty(start);  start   = zeros(size(dims));    end;
+if isempty(len);    len     = -ones(size(dims));    end;
+if isempty(stride); stride  = ones(size(dims));     end;
 
-start(length(start)+1:length(dims)) = 0;
-len(length(len)+1:length(dims)) = -1;
-stride(length(stride)+1:length(dims)) = 1;
+start(length(start)+1:length(dims))     = 0;
+len(length(len)+1:length(dims))         = -1;
+stride(length(stride)+1:length(dims))   = 1;
 
 start(start<0) = 0;
-len(len<0|len>dims) = ...
-    max(1, dims(len<0|len>dims)-start(len<0|len>dims));
+len(len<0|len>dims) = max(1, dims(len<0|len>dims)-start(len<0|len>dims));
 stride(stride<1) = 1;

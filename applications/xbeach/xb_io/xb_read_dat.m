@@ -17,6 +17,8 @@ function xb = xb_read_dat(fname, varargin)
 %                 length:   Number of data items to be read in each
 %                           dimension, negative is unlimited
 %                 stride:   Stride to be used in each dimension
+%                 index:    Cell array with indices to read in each
+%                           dimension (overwrites start/length/stride)
 %                 dims:     Force the use of certain dimensions in
 %                           xb_dat_read. These dimensions are used for all
 %                           requested variables!
@@ -84,6 +86,7 @@ OPT = struct( ...
     'start', [], ...
     'length', [], ...
     'stride', [], ...
+    'index', [], ...
     'dims', [] ...
 );
 
@@ -145,7 +148,7 @@ for i = 1:length(names)
 
         % read dat file
         dat = xb_dat_read(fpath, d, ...
-            'start', OPT.start, 'length', OPT.length, 'stride', OPT.stride);
+            'start', OPT.start, 'length', OPT.length, 'stride', OPT.stride, 'index', OPT.index);
 
         xb = xb_set(xb, varname, dat);
         

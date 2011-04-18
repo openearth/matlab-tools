@@ -26,6 +26,11 @@ function dat = xb_dat_read(fname, dims, varargin)
 %                 length:   Number of data items to be read in each
 %                           dimension, negative is unlimited
 %                 stride:   Stride to be used in each dimension
+%                 index:    Cell array with indices to read in each
+%                           dimension (overwrites start/length/stride)
+%                 threshold:Fraction of items to read in order to switch to
+%                           read method
+%                 maxreads: Maximum reads in memory method
 %                 force:    Force read method (read/memory)
 %
 %   Output:
@@ -95,6 +100,9 @@ OPT = struct( ...
     'start', [], ...
     'length', [], ...
     'stride', [], ...
+    'index', [], ...
+    'threshold', .5, ...
+    'maxreads', 100, ...
     'force', '' ...
 );
 
@@ -117,10 +125,21 @@ end
 
 [OPT.start OPT.length OPT.stride] = xb_index(dims_out, OPT.start, OPT.length, OPT.stride);
 
-% determine size of read matrix
-sz = [1 1];
-if OPT.stride(3) == 1; sz(1) = OPT.length(3); end;
-if OPT.stride(2) == 1; sz(2) = OPT.length(2); end;
+% append index cell
+if ~isempty(OPT.index)
+    if ~iscell(OPT.index); OPT.index = {OPT.index}; end;
+    for i = length(OPT.index)+1:length(dims_out)
+        OPT.index{i} = [1:dims_out(i)]-1;
+    end
+    
+    sz = [1 1];
+    if ~any(diff(OPT.index{3})>1); sz(1) = length(OPT.index{3}); end;
+    if ~any(diff(OPT.index{2})>1); sz(2) = length(OPT.index{2}); end;
+else
+    sz = [1 1];
+    if OPT.stride(3) == 1; sz(1) = OPT.length(3); end;
+    if OPT.stride(2) == 1; sz(2) = OPT.length(2); end;
+end
 
 %% determine read method
 
@@ -132,8 +151,9 @@ if isempty(OPT.force)
     if isempty(force)
         if regexp(fname, '(point|rugau|drifter)\d+.dat$')
             method = 'read';
-        elseif (OPT.stride(3) == 1 && OPT.stride(2) == 1 && ~all(OPT.stride == 1)) || ...
-            (nreads/nitems < prod(dims_out([1 4:end]))/prod(dims))
+        elseif ~isempty(OPT.index)
+            method = 'memory';
+        elseif nitems/prod(dims) < OPT.threshold && nreads < OPT.maxreads
             method = 'memory';
         else
             method = 'read';
@@ -194,18 +214,31 @@ if exist(fname, 'file')
             case 'memory'
                 % METHOD: minimal memory
 
-                dat = nan(OPT.length./OPT.stride);
-
-                % build loop index
                 loops = num2cell(repmat(1,1,5));
-                for i = 1:length(dims)
-                    loops{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
-                end
+                
+                if isempty(OPT.index)
+                    dat = nan(floor(OPT.length./OPT.stride));
 
-                % determine dimensions to remove from loop and read at once
-                % (maximum x and y)
-                if sz(1) > 1; loops{3} = 1+OPT.start(3); end;
-                if sz(2) > 1; loops{2} = 1+OPT.start(2); end;
+                    % build loop index
+                    for i = 1:length(dims)
+                        loops{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
+                    end
+                    
+                    % determine dimensions to remove from loop and read at
+                    % once (maximum x and y)
+                    if sz(1) > 1; loops{3} = 1+OPT.start(3); end;
+                    if sz(2) > 1; loops{2} = 1+OPT.start(2); end;
+                else
+                    dat = nan(cell2mat(cellfun(@length, OPT.index, 'UniformOutput', false)));
+                    
+                    % build loop index
+                    for i = 1:length(OPT.index)
+                        loops{i} = min(OPT.index{i}+1, dims_out(i));
+                    end
+                    
+                    if sz(1) > 1; loops{3} = 1+min(OPT.index{3}); end;
+                    if sz(2) > 1; loops{2} = 1+min(OPT.index{2}); end;
+                end
 
                 % build output index
                 idx = [{1} num2cell(repmat(':',1,2)) {1}];

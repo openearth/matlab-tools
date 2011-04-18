@@ -17,6 +17,8 @@ function variables = xb_read_netcdf(fname, varargin)
 %                 length:   Number of data items to be read in each
 %                           dimension, negative is unlimited
 %                 stride:   Stride to be used in each dimension
+%                 index:    Cell array with indices to read in each
+%                           dimension (overwrites start/length/stride)
 %
 %   Output:
 %   variables   = XBeach structure array
@@ -77,12 +79,15 @@ OPT = struct( ...
     'vars', {{}}, ...
     'start', [], ...
     'length', [], ...
-    'stride', [] ...
+    'stride', [], ...
+    'index', [] ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 if ~iscell(OPT.vars); OPT.vars = {OPT.vars}; end;
+
+if ~isempty(OPT.index); error('Index reading not yet available for netCDF'); end;
 
 %% read netcdf file
 
@@ -116,8 +121,7 @@ for i = 1:length({info.Dataset.Name})
     
     % read data
     variables.data(c).name = info.Dataset(i).Name;
-    variables.data(c).value = nc_varget(fname, info.Dataset(i).Name, ...
-        start, len, stride);
+    variables.data(c).value = nc_varget(fname, info.Dataset(i).Name, start, len, stride);
     variables.data(c).value = reshape(variables.data(c).value, len);
     
     % read units, if available
