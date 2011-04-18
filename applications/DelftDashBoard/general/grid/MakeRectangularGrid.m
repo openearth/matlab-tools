@@ -41,6 +41,18 @@ clear x0 y0
 
 % Generate initial bathymetry
 
+% Take de deepest point of sourrounding zb
+zb1(:,:,1)=zb(1:end-2,1:end-2);
+zb1(:,:,2)=zb(2:end-1,1:end-2);
+zb1(:,:,3)=zb(3:end  ,1:end-2);
+zb1(:,:,4)=zb(1:end-2,2:end-1);
+zb1(:,:,5)=zb(2:end-1,2:end-1);
+zb1(:,:,6)=zb(3:end  ,2:end-1);
+zb1(:,:,7)=zb(1:end-2,3:end);
+zb1(:,:,8)=zb(2:end-1,3:end);
+zb1(:,:,9)=zb(3:end  ,3:end);
+zb(2:end-1,2:end-1)=min(zb1,[],3);
+
 z=interp2(xb,yb,zb,x,y);
 
 clear xb yb zb
@@ -172,10 +184,10 @@ for i=1:mmax
                     deac=1;
                 elseif iac(i-1,j+1) && iac(i+1,j+1) && ~iac(i,j+1)
                     % This shouldn't be necessary!
-                    deac=1;
+%                    deac=1;
                 elseif iac(i+1,j+1) && iac(i+1,j-1) && ~iac(i+1,j)
                     % This shouldn't be necessary!
-                    deac=1;
+%                    deac=1;
                 end
             end
         end

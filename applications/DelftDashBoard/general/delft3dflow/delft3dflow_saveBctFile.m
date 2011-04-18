@@ -1,7 +1,5 @@
 function delft3dflow_saveBctFile(flow,openBoundaries,fname)
 
-%fname=Flow.BctFile;
-
 nr=length(openBoundaries);
 kmax=flow.KMax;
 

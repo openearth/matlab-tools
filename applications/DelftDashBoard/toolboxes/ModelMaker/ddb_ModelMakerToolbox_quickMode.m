@@ -177,7 +177,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=6000000
     if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         dmin=dmin*111111;
     end
-
+%    dmin=dmin/2;
 %     dmin=15000;
 
     % Find coordinates of corner points
@@ -222,7 +222,6 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=6000000
         yg=yy;
     end
     
-%    [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xx,yy,zz);
     [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
 
     close(wb);

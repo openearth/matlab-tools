@@ -1,4 +1,15 @@
-function [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(openBoundary,x,y,depthZ,kcs)
+function [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(openBoundary,x,y,depthZ,kcs,varargin)
+
+cs='projected';
+
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'coordinatesystem','cs','coordsys'}
+                cs=lower(varargin{i+1});
+        end
+    end
+end
 
 mmax=size(x,1);
 nmax=size(x,2);
@@ -95,6 +106,10 @@ yb=y(m1:dm:m2,n1:dn:n2);
 
 dx=xb(2)-xb(1);
 dy=yb(2)-yb(1);
+switch lower(cs)
+    case{'geographic'}
+        dx=dx*cos(0.5*pi*(yb(1)+yb(2))/180);
+end
 if strcmpi(orientation,'negative')
     dx=dx*-1;
     dy=dy*-1;
@@ -114,6 +129,10 @@ end
 
 dx=xb(end)-xb(end-1);
 dy=yb(end)-yb(end-1);
+switch lower(cs)
+    case{'geographic'}
+        dx=dx*cos(0.5*pi*(yb(1)+yb(2))/180);
+end
 if strcmpi(orientation,'negative')
     dx=dx*-1;
     dy=dy*-1;

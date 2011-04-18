@@ -19,7 +19,7 @@ uimenu(h,'Label','Delete Domain','Callback',@deleteDomain,'Checked','off','UserD
 
 %%
 function selectDomain(hObject, eventdata, nr)
-
+ddb_zoomOff;
 handles=getHandles;
 if nr>0
     changeDomain(nr);
@@ -39,6 +39,7 @@ end
 
 %%
 function changeDomain(nr)
+ddb_zoomOff;
 handles=getHandles;
 % Check and uncheck the proper domains in the menu
 handles.activeDomain=nr;

@@ -35,11 +35,15 @@ switch lower(option)
             end
         end
 
-        if size(handles.Model(md).Input(ad).depth,1)>0
+        if size(handles.Model(md).Input(ad).depthZ,1)>0
            
             x=handles.Model(md).Input(id).gridX;
             y=handles.Model(md).Input(id).gridY;
-            z=handles.Model(md).Input(id).depth;
+%            z=handles.Model(md).Input(id).depth;
+            z=zeros(size(x));
+            z(z==0)=NaN;
+            z(1:end-1,1:end-1)=handles.Model(md).Input(id).depthZ(2:end,2:end);
+%            z=handles.Model(md).Input(id).depthZ(2:end,2:end);
 
             handles.Model(imd).Input(id).bathy.plotHandles=ddb_plotBathy(x,y,z);
             
