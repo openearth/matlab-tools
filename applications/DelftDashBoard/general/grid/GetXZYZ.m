@@ -1,4 +1,5 @@
 function [xz,yz]=GetXZYZ(x,y)
+% Return matrix of cell centre coordinates
 
 xz=zeros(size(x));
 yz=zeros(size(y));

@@ -1,9 +1,10 @@
-function Flow=delft3dflow_readInput(inpdir,runid)
-% Returns Flow structure with required Delft3D-FLOW input
+function Flow=delft3dflow_readInput(inpdir,runid,varargin)
+
+% Returns Flow structure with required Delft3D-FLOW input for nesting
 
 %% Read MDF file
 
-MDF=ddb_readMDFText([inpdir runid '.mdf']);
+MDF=delft3dflow_readMDFText([inpdir runid '.mdf']);
 
 % Dimensions
 Flow.MMax=MDF.mnkmax(1);

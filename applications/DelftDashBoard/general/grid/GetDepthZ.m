@@ -1,4 +1,6 @@
-function zz=GetDepthZ(z,dpsopt)
+function zz=getDepthZ(z,dpsopt)
+% Return matrix of depths in cell centres
+% dpsopt can be dp, min, max or mean
 
 zz=zeros(size(z));
 zz(zz==0)=NaN;
