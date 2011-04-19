@@ -110,7 +110,7 @@ zb1 = [squeeze(x(j,:))' squeeze(z(2:end,j,:))'];
 % plot profiles
 addplot(zb0,                '-',    2,  'k',        'initial'           );
 addplot(OPT.measured,       '-',    1,  'k',        'measured'          );
-addplot(OPT.nonerodible,    '-',    1,  [.5 .5 .5], 'non-erodible'      );
+addpatch(OPT.nonerodible,'none',[.5 .5 .5],0.7,     'non-erodible'      );
 
 addplot(OPT.other,          '--',   1,  'c',        'other'             );
 addplot(OPT.durosta,        '-',    1,  'b',        'DurosTA'           );
@@ -160,21 +160,38 @@ set(gca, 'XLim', [min(x(j,:)) max(x(j,:))]);
 box on;
 grid on;
 
+end
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function addplot(data, type, sz, color, name)
-    if ~isempty(data);
-        for i = 2:size(data,2)
-            p = plot(data(:,1), data(:,i), type, ...
-                'Color', color, ...
-                'LineWidth', sz, ...
-                'DisplayName', name);
-            
-            hasbehavior(p,'legend',false);
-        end
+function addpatch(data, linetype, facecolor, facealpha, name)
+if ~isempty(data)
+    for i = 2:size(data,2)
+        xdata = [data(:,1); data(end,1); data(1,1)];
+        zdata = [data(:,i); min(data(:,i)); min(data(:,i))];
+        p = patch(xdata, zdata,'k',...
+            'LineStyle', linetype, ...
+            'FaceColor', facecolor, ...
+            'FaceAlpha',facealpha,...
+            'DisplayName', name);
         
-        hasbehavior(p,'legend',true);
+        hasbehavior(p,'legend',false);
     end
+    
+    hasbehavior(p,'legend',true);
+end
 end
 
+function addplot(data, type, sz, color, name)
+if ~isempty(data);
+    for i = 2:size(data,2)
+        p = plot(data(:,1), data(:,i), type, ...
+            'Color', color, ...
+            'LineWidth', sz, ...
+            'DisplayName', name);
+        
+        hasbehavior(p,'legend',false);
+    end
+    
+    hasbehavior(p,'legend',true);
+end
 end
