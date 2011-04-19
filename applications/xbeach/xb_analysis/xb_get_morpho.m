@@ -1,21 +1,26 @@
 function xbo = xb_get_morpho(xb, varargin)
-%XB_GET_MORPHO  One line description goes here.
+%XB_GET_MORPHO  Compute morphological parameters from XBeach output structure
 %
-%   More detailed description goes here.
+%   Compute morphological parameters like bed level change, erosion and
+%   sedimentation volumes and retreat distances from XBeach output
+%   structure. The results are stored in an XBeach morphology structure and
+%   can be plotted with xb_plot_morpho.
 %
 %   Syntax:
-%   varargout = xb_get_morpho(varargin)
+%   xbo = xb_get_morpho(xb, varargin)
 %
 %   Input:
-%   varargin  =
+%   xb        = XBeach output structure
+%   varargin  = level:  assumed storm surge level
 %
 %   Output:
-%   varargout =
+%   xbo       = XBeach morphology structure
 %
 %   Example
-%   xb_get_morpho
+%   xbo = xb_get_morpho(xb)
+%   xbo = xb_get_morpho(xb, 'level', 0)
 %
-%   See also 
+%   See also xb_plot_morpho, xb_get_hydro, xb_get_spectrum
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -63,7 +68,7 @@ function xbo = xb_get_morpho(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
-    'level',            0 ...
+    'level',            5 ...
 );
 
 OPT = setproperty(OPT, varargin{:});

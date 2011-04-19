@@ -1,21 +1,36 @@
 function fh = xb_plot_morpho(xb, varargin)
-%XB_PLOT_MORPHO  One line description goes here.
+%XB_PLOT_MORPHO  Create uniform morphology plots
 %
-%   More detailed description goes here.
+%   Create uniform morphology plots from an XBeach morphology
+%   structure. Depending on the amount of information provided, different
+%   plots over the x-axis and time are plotted. Measurements are provided
+%   in a nx2 matrix in which the first column is the x-axis and the second
+%   the data axis.
 %
 %   Syntax:
-%   varargout = xb_plot_morpho(varargin)
+%   fh = xb_plot_morpho(xb, varargin)
 %
 %   Input:
-%   varargin  =
+%   xb        = XBeach output structure
+%   varargin  = dz:         Measured bed level change
+%               sed:        Measured sedimentation volume in time
+%               ero:        Measured erosion volume in time
+%               R:          Measured retreat distance
+%               Q:          Measured separation point between erosion and
+%                           accretion
+%               P:          Measured delimitation of active zone
+%               units:      Units used for x- and z-axis
+%               units2:     Units used for secondary z-axis
+%               units3:     Units used for tertiary z-axis
 %
 %   Output:
-%   varargout =
+%   fh        = Figure handle
 %
 %   Example
-%   xb_plot_morpho
+%   xb_plot_morpho(xb)
+%   xb_plot_morpho(xb, 'dz', dz, 'sed', sed)
 %
-%   See also 
+%   See also xb_plot_profile, xb_plot_hydro, xb_get_morpho
 
 %% Copyright notice
 %   --------------------------------------------------------------------

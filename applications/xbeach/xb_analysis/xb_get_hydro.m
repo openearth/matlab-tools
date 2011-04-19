@@ -1,21 +1,27 @@
 function xbo = xb_get_hydro(xb, varargin)
-%XB_GET_HYDRO  One line description goes here.
+%XB_GET_HYDRO  Compute hydrodynamic parameters from XBeach output structure
 %
-%   More detailed description goes here.
+%   Compute hydrodynamic parameters like RMS wave heights over a
+%   cross-section split in low and high freqnecy waves. The same is done
+%   for orbital velocities and mean velocities. Also the water level setup
+%   is computed, if possible. The results are stored in an XBeach
+%   hydrodynamics structure and can be plotted with xb_plot_hydro.
 %
 %   Syntax:
-%   varargout = xb_get_hydro(varargin)
+%   xbo = xb_get_hydro(xb, varargin)
 %
 %   Input:
-%   varargin  =
+%   xb        = XBeach output structure
+%   varargin  = fcutoff:    cut-off frequency for high frequency waves
 %
 %   Output:
-%   varargout =
+%   xbo       = XBeach hydrodynamics structure
 %
 %   Example
-%   xb_get_hydro
+%   xbo = xb_get_hydro(xb)
+%   xbo = xb_get_hydro(xb, 'fcutoff', .05)
 %
-%   See also 
+%   See also xb_plot_hydro, xb_get_morpho, xb_get_spectrum
 
 %% Copyright notice
 %   --------------------------------------------------------------------

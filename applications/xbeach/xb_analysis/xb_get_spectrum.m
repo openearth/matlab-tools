@@ -1,29 +1,33 @@
-function varargout = xb_get_spectrum(varargin)
+function xbo = xb_get_spectrum(ts, varargin)
 %XB_GET_SPECTRUM  Computes a spectrum from a timeseries
 %
-%   Computes a spectrum from a timeseries
+%   Computes a spectrum from a timeseries. The result is stored in an
+%   XBeach spectrum structure and can be plotted using the xb_plot_spectrum
+%   function.
 %
-%   FUNCTION IS A COPY OF R.T. MCCALL'S MAKESPECTRUM FUNCTION
+%   FUNCTION IS AN ADAPTED VERSION OF R.T. MCCALL'S MAKESPECTRUM FUNCTION
 %
 %   Syntax:
-%   [Snn Snnf f hrms hrmshi hrmslo] = xb_get_spectrum(ts, varargin)
+%   xbo = xb_get_spectrum(ts, varargin)
 %
 %   Input:
-%   ts        = Timeseries
-%   varargin  =
+%   ts        = Timeseries in columns
+%   varargin  = sfreq:          sample frequency
+%               fsplit:         split frequency between high and low
+%                               frequency waves
+%               fcutoff:        cut-off frequency for high frequency waves
+%               detrend:        boolean to determine whether timeseries
+%                               should be linearly detrended before
+%                               computation
+%               filterlength:   smoothing window
 %
 %   Output:
-%   Snn       = Energy density per frequency
-%   Snnf      = Energy density per frequency (smoothed)
-%   f         = Frequencies
-%   hrms      = Total RMS wave height
-%   hrmshi    = RMS wave height of high-frequency waves
-%   hrmslo    = RMS wave height of low-frequency waves
+%   xbo       = XBeach spectrum structure
 %
 %   Example
-%   [Snn Snnf f hrms hrmshi hrmslo] = xb_get_spectrum(ts)
+%   xbo = xb_get_spectrum(ts)
 %
-%   See also xb_get_wavetrans, xb_get_sedero
+%   See also xb_plot_spectrum, xb_get_hydro, xb_get_morpho
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -72,26 +76,15 @@ OPT = struct( ...
     'sfreq',        1, ...
     'fsplit',       .05, ...
     'fcutoff',      1e8, ...
-    'detrend',      false, ...
-    'filterlength', 1, ...
-    'dim',          2 ...
+    'detrend',      true, ...
+    'filterlength', 1 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-%% initalize dimensions
-
-[d1 d2]=size(ts);
-
-if OPT.dim == 1
-    n   = length(ts(1,:));
-    m   = d1;
-else
-    n   = length(ts(:,1));
-    m   = d2;
-end
-
 %% compute spectrum
+
+[n m] = size(ts);
 
 Snn     = zeros(floor(n/2),m);
 Snnf    = zeros(floor(n/2),m);
@@ -105,11 +98,7 @@ ff      = df*[0:1:round(n/2) -1*floor(n/2)+1:1:-1];
 f       = ff(1:floor(n/2));
 
 for i = 1:m
-    if OPT.dim == 1
-        P   = ts(i,:); P=P(:);
-    else
-        P   = ts(:,i); P=P(:);
-    end
+    P   = squeeze(ts(:,i));
     
     if OPT.detrend
         P   = detrend(P);
@@ -130,3 +119,26 @@ for i = 1:m
         Snnf(ii,i)=mean(Snn(max(1,ii-round(OPT.filterlength/2)):min(length(Snnf(:,i)),ii+round(OPT.filterlength/2)),i));
     end
 end
+
+%% create xbeach structure
+
+%% create xbeach structure
+
+xbo = xb_empty();
+
+xbo = xb_set(xbo, 'SETTINGS', xb_set([],    ...
+    'sfreq',        OPT.sfreq,              ...
+    'fsplit',       OPT.fsplit,             ...
+    'fcutoff',      OPT.fcutoff,            ...
+    'detrend',      OPT.detrend,            ...
+    'filterlength', OPT.filterlength                ));
+
+xbo = xb_set(xbo, 'timeseries', ts      );
+xbo = xb_set(xbo, 'f',          f       );
+xbo = xb_set(xbo, 'Snn',        Snn     );
+xbo = xb_set(xbo, 'Snn_f',      Snnf    );
+xbo = xb_set(xbo, 'Hrms_hf',    hrmshi  );
+xbo = xb_set(xbo, 'Hrms_lf',    hrmslo  );
+xbo = xb_set(xbo, 'Hrms_t',     hrms    );
+
+xbo = xb_meta(xbo, mfilename, 'spectrum');

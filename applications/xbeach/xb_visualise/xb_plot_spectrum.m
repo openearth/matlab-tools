@@ -1,21 +1,25 @@
-function varargout = xb_plot_spectrum(varargin)
-%XB_PLOT_SPECTRUM  One line description goes here.
+function fh = xb_plot_spectrum(xb, varargin)
+%XB_PLOT_SPECTRUM  Create uniform spectrum plots
 %
-%   More detailed description goes here.
+%   Create uniform spectrum plots from XBeach spectrum structure. Creates a
+%   subplot per location.
 %
 %   Syntax:
-%   varargout = xb_plot_spectrum(varargin)
+%   fh = xb_plot_spectrum(xb, varargin)
 %
 %   Input:
-%   varargin  =
+%   xb        = XBeach spectrum structure
+%   varargin  = measured:   Measured spectra
+%               units:      Units used for x- and z-axis
+%               units2:     Units used for secondary z-axis
 %
 %   Output:
-%   varargout =
+%   fh        = Figure handle
 %
 %   Example
-%   xb_plot_spectrum
+%   fh = xb_plot_spectrum(xb)
 %
-%   See also 
+%   See also xb_plot_hydro, xb_plot_morpho, xb_get_spectrum
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -58,19 +62,49 @@ function varargout = xb_plot_spectrum(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% plot spectrum
+%% read options
 
-for i = 1:m
-    figure; hold on;
-    plot(f,Snn(:,i),'b');
-    plot(f,Snnf(:,i),'r');
+if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
-    yl=ylim;
+OPT = struct( ...
+    'measured',         [], ...
+    'units',            'Hz', ...
+    'units2',           'm^2/Hz' ...
+);
 
-    plot([OPT.fsplit OPT.fsplit],[min(yl) max(yl)],'k--');
+OPT = setproperty(OPT, varargin{:});
+
+if ~xb_exist(xb, 'Snn*') || ~xb_exist(xb, 'f')
+    error('No spectrum data found');
+end
+
+%% plot
+
+fh = figure; hold on;
+
+f   = xb_get(xb,'f');
+S   = xb_get(xb,'Snn');
+S_f = xb_get(xb,'Snn_f');
+
+l   = max([size(S,2) size(S_f,2)]);
+n   = ceil(sqrt(l));
+m   = ceil(l/n);
+
+for i = 1:l
+    subplot(m,n,i); hold on;
+    
+    if ~isempty(S);     plot(f,S  (:,i),'-b');  end;
+    if ~isempty(S);     plot(f,S_f(:,i),'-r');  end;
+
+    yl = ylim;
+
+    if xb_exist(xb, 'SETTINGS.fsplit')
+        fsplit = xb_get(xb, 'SETTINGS.fsplit');
+        plot([fsplit fsplit],[min(yl) max(yl)],'--k');
+    end
 
     title(num2str(i));
-    xlabel('f [Hz]'); ylabel('S_{\eta\eta} [m^2/s]');
-    legend('Non-filtered','Filtered');
-    hold off
+    xlabel(['f [' OPT.units ']']);
+    ylabel(['S_{\eta\eta} [' OPT.units2 ']']);
+    legend('raw', 'smooth', 'Location', 'NorthEast');
 end

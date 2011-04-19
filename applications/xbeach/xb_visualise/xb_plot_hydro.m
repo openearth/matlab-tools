@@ -1,13 +1,14 @@
 function fh = xb_plot_hydro(xb, varargin)
 %XB_PLOT_HYDRO  Create uniform wave transformation plots
 %
-%   Create uniform wave transformation plots. Depending on the amount of
-%   information provided, different plots over the x-axis are plotted.
-%   Measurements are provided in a nx2 matrix in which the first column is
-%   the x-axis and the second the data axis.
+%   Create uniform wave transformation plots from an XBeach hydrodynamics
+%   structure. Depending on the amount of information provided, different
+%   plots over the x-axis are plotted. Measurements are provided in a nx2
+%   matrix in which the first column is the x-axis and the second the data
+%   axis.
 %
 %   Syntax:
-%   xb_plot_hydro(xb, varargin)
+%   fh = xb_plot_hydro(xb, varargin)
 %
 %   Input:
 %   xb        = XBeach output structure
@@ -17,12 +18,11 @@ function fh = xb_plot_hydro(xb, varargin)
 %               Hrms_t:     Measured total wave height
 %               s:          Measured water level setup
 %               u:          Measured cross-shore flow velocity
-%               title:      Figure title
 %               units:      Units used for x- and z-axis
 %               units2:     Units used for secondary z-axis
 %
 %   Output:
-%   none
+%   fh        = Figure handle
 %
 %   Example
 %   xb_plot_hydro(xb)

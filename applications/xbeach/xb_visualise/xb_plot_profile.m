@@ -1,11 +1,12 @@
 function fh = xb_plot_profile(xb, varargin)
 %XB_PLOT_PROFILE  Create uniform profile plots
 %
-%   Create uniform profile plots using standardized coloring per source.
-%   Automatically computes Brier Skill Scores and makes sure the dune is
-%   located right on the figure. Profiles are supplied in the form of
-%   matrices from which the first column contains x-coordinates and
-%   successive columns contain z-values.
+%   Create uniform profile plots from XBeach output structure and other
+%   sources. Standardized coloring is used per source. Automatically
+%   computes Brier Skill Scores and makes sure the dune is located right on
+%   the figure. Additional profiles are supplied in the form of matrices
+%   from which the first column contains x-coordinates and successive
+%   columns contain z-values.
 %
 %   Syntax:
 %   xb_plot_profile(xb, varargin)
@@ -20,7 +21,6 @@ function fh = xb_plot_profile(xb, varargin)
 %               duros_p:        Profile computed by DUROS+
 %               duros_pp:       Profile computed by D++
 %               nonerodible:    Non-erodible layer
-%               title:          Figure title
 %               units:          Units used for x- and z-axis
 %               BSS:            Boolean indicating whether BSS should be
 %                               included
@@ -28,12 +28,12 @@ function fh = xb_plot_profile(xb, varargin)
 %                               flipped in case dune is located left
 %
 %   Output:
-%   none
+%   fh       = Figure handle
 %
 %   Example
 %   xb_plot_profile(xb, 'initial', profile0, 'measured', profile1)
 %
-%   See also xb_view
+%   See also xb_plot_hydro, xb_plot_morpho
 
 %% Copyright notice
 %   --------------------------------------------------------------------
