@@ -5,6 +5,11 @@ function xb = xb_generate_tide(varargin)
 %   default settings is used, unless otherwise provided. Settings can be
 %   provided by a varargin list of name/value pairs.
 %
+%   WARNING: to define two different timeseries on the lateral boundaries
+%            without specifying waterlevels at the back, set the paulrevere
+%            option in your parameter setting to 1 and define the lateral
+%            boundary conditions as if front and back in this function.
+%
 %   Syntax:
 %   xb = xb_generate_tide(varargin)
 %
@@ -20,6 +25,7 @@ function xb = xb_generate_tide(varargin)
 %   xb = xb_generate_tide()
 %   xb = xb_generate_tide('front', 10, 'back', 5)
 %   xb = xb_generate_tide('time', [0 1800 3600], 'front', [5 10 5], 'back', [5 5 5])
+%   xb = xb_generate_tide('time', [0 1800 3600], 'front', [5 10 5; 4 10 4]', 'back', [5 5 5; 5 5 5]')
 %
 %   See also xb_generate_model
 
