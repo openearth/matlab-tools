@@ -90,8 +90,9 @@ l   = max([size(S,2) size(S_f,2)]);
 n   = ceil(sqrt(l));
 m   = ceil(l/n);
 
+sp  = nan(1,l);
 for i = 1:l
-    subplot(m,n,i); hold on;
+    sp(i) = subplot(m,n,i); hold on;
     
     if ~isempty(S);     plot(f,S  (:,i),'-b');  end;
     if ~isempty(S);     plot(f,S_f(:,i),'-r');  end;
@@ -107,4 +108,11 @@ for i = 1:l
     xlabel(['f [' OPT.units ']']);
     ylabel(['S_{\eta\eta} [' OPT.units2 ']']);
     legend('raw', 'smooth', 'Location', 'NorthEast');
+end
+
+linkaxes(sp, 'x');
+
+if xb_exist(xb, 'SETTINGS.fcutoff')
+    fcutoff = xb_get(xb, 'SETTINGS.fcutoff');
+    set(gca, 'XLim', [0 fcutoff]);
 end
