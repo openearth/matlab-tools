@@ -1,4 +1,4 @@
-function xb_plot_hydro(xb, varargin)
+function fh = xb_plot_hydro(xb, varargin)
 %XB_PLOT_HYDRO  Create uniform wave transformation plots
 %
 %   Create uniform wave transformation plots. Depending on the amount of
@@ -86,7 +86,6 @@ OPT = struct( ...
     'urms_lf',          [], ...
     'urms_t',           [], ...
     'umean',            [], ...
-    'title',            '', ...
     'units',            'm', ...
     'units2',           'm/s' ...
 );
@@ -109,7 +108,7 @@ end
 
 %% plot
 
-figure; hold on;
+fh = figure; hold on;
 
 % determine dimensions
 x = xb_get(xb, 'DIMS.globalx_DATA');
@@ -139,14 +138,16 @@ si  = 1;
 if sp(1)
     
     ax(si) = subplot(n,1,si); si = si + 1; hold on;
+    
+    title('wave heights and water levels');
     ylabel(['height [' OPT.units ']']);
     
     % plot measurements
-    if ~isempty(OPT.zb);                addplot(OPT.zb(:,1),        OPT.zb(:,2),            '.',    'k',    'bathymetry (final)'                );  end;
-    if ~isempty(OPT.Hrms_hf);           addplot(OPT.Hrms_hf(:,1),   OPT.Hrms_hf(:,2),       '^',    'k',    'wave height (HF)'                  );  end;
-    if ~isempty(OPT.Hrms_lf);           addplot(OPT.Hrms_lf(:,1),   OPT.Hrms_lf(:,2),       'v',    'k',    'wave height (LF)'                  );  end;
-    if ~isempty(OPT.Hrms_t);            addplot(OPT.Hrms_t(:,1),    OPT.Hrms_t(:,2),        's',    'k',    'wave height'                       );  end;
-    if ~isempty(OPT.s);                 addplot(OPT.s(:,1),         OPT.s(:,2),             'o',    'k',    'setup'                             );  end;
+    if ~isempty(OPT.zb);                addplot(OPT.zb(:,1),        OPT.zb(:,2),            '.',    'k',    'bathymetry (final,measured)'       );  end;
+    if ~isempty(OPT.Hrms_hf);           addplot(OPT.Hrms_hf(:,1),   OPT.Hrms_hf(:,2),       '^',    'k',    'wave height (HF,measured)'         );  end;
+    if ~isempty(OPT.Hrms_lf);           addplot(OPT.Hrms_lf(:,1),   OPT.Hrms_lf(:,2),       'v',    'k',    'wave height (LF,measured)'         );  end;
+    if ~isempty(OPT.Hrms_t);            addplot(OPT.Hrms_t(:,1),    OPT.Hrms_t(:,2),        's',    'k',    'wave height (measured)'            );  end;
+    if ~isempty(OPT.s);                 addplot(OPT.s(:,1),         OPT.s(:,2),             'o',    'k',    'setup (measured)'                  );  end;
 
     % plot bathymetry
     if ~has_m || ~isempty(OPT.zb);      addplot(x,                  xb_get(xb, 'zb_i'),     ':',    'k',    'bathymetry (initial)'              );  end;
@@ -165,15 +166,17 @@ end
 if sp(2)
     
     ax(si) = subplot(n,1,si); si = si + 1; hold on;
+    
+    title('flow velocities');
     ylabel(['velocity [' OPT.units2 ']']);
     
     if xb_exist(xb, 'ue') && ~xb_exist(xb, 'u'); xb = xb_rename(xb, 'ue', 'u'); end;
     
     % plot measurements
-    if ~isempty(OPT.urms_hf);           addplot(OPT.urms_hf(:,1),   OPT.urms_hf(:,2),       '^',    'k',    'flow velocity (RMS,HF)'            );  end;
-    if ~isempty(OPT.urms_lf);           addplot(OPT.urms_lf(:,1),   OPT.urms_lf(:,2),       'v',    'k',    'flow velocity (RMS,LF)'            );  end;
-    if ~isempty(OPT.urms_t);            addplot(OPT.urms_t(:,1),    OPT.urms_t(:,2),        's',    'k',    'flow velocity (RMS)'               );  end;
-    if ~isempty(OPT.umean);             addplot(OPT.umean(:,1),     OPT.umean(:,2),         'o',    'k',    'flow velocity (mean)'              );  end;
+    if ~isempty(OPT.urms_hf);           addplot(OPT.urms_hf(:,1),   OPT.urms_hf(:,2),       '^',    'k',    'flow velocity (RMS,HF,measured)'   );  end;
+    if ~isempty(OPT.urms_lf);           addplot(OPT.urms_lf(:,1),   OPT.urms_lf(:,2),       'v',    'k',    'flow velocity (RMS,LF,measured)'   );  end;
+    if ~isempty(OPT.urms_t);            addplot(OPT.urms_t(:,1),    OPT.urms_t(:,2),        's',    'k',    'flow velocity (RMS,measured)'      );  end;
+    if ~isempty(OPT.umean);             addplot(OPT.umean(:,1),     OPT.umean(:,2),         'o',    'k',    'flow velocity (mean,measured)'     );  end;
     
     % plot orbital velocity
     if ~has_m || ~isempty(OPT.urms_hf); addplot(x,                  xb_get(xb, 'urms_hf'),  '--',  'g',    'flow velocity (RMS,HF)'             );  end;
@@ -187,8 +190,6 @@ end
 % add labels
 for i = 1:n
     subplot(n,1,i);
-    
-    if i == 1; title(OPT.title, 'Interpreter', 'none'); end;
 
     xlabel(['distance [' OPT.units ']']);
 

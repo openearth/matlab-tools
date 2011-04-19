@@ -1,4 +1,4 @@
-function xb_plot_morpho(xb, varargin)
+function fh = xb_plot_morpho(xb, varargin)
 %XB_PLOT_MORPHO  One line description goes here.
 %
 %   More detailed description goes here.
@@ -79,7 +79,7 @@ OPT = setproperty(OPT, varargin{:});
 
 %% plot
 
-figure; hold on;
+fh = figure; hold on;
 
 % determine dimensions
 x = xb_get(xb, 'DIMS.globalx_DATA');
@@ -114,7 +114,7 @@ if sp(1)
 
     % plot computation
     dz = xb_get(xb, 'dz');
-    if ~has_m || ~isempty(OPT.dz);      addplot(x,                  dz(end,:),              '-',    'k',    'computed'  );  end;
+    if ~has_m || ~isempty(OPT.dz);      addplot(x,                  dz(end,:),              '-',    'r',    'computed'  );  end;
     
     legend('show', 'Location', 'SouthWest');
 end
@@ -132,7 +132,7 @@ if sp(2)
     if ~isempty(OPT.ero);               addplot(OPT.ero(:,1),       OPT.ero(:,2),           'o',    'k',    'measured'  );  end;
 
     % plot computation
-    if ~has_m || ~isempty(OPT.ero);     addplot(t,                  xb_get(xb, 'ero'),      '-',    'k',    'computed'  );  end;
+    if ~has_m || ~isempty(OPT.ero);     addplot(t,                  xb_get(xb, 'ero'),      '-',    'g',    'computed'  );  end;
     
     legend('show', 'Location', 'SouthEast');
 end
@@ -152,7 +152,7 @@ if sp(3)
     % plot computation
     R   = xb_get(xb, 'R');
     R1  = R(find(~isnan(R),1,'first'));
-    if ~has_m || ~isempty(OPT.R);       addplot(t,                  R-R1,                   '-',    'k',    'computed'  );  end;
+    if ~has_m || ~isempty(OPT.R);       addplot(t,                  R-R1,                   '-',    'b',    'computed'  );  end;
     
     if sp(2); linkaxes(ax(si-2:si-1), 'x'); end;
     

@@ -1,4 +1,4 @@
-function xb_plot_profile(xb, varargin)
+function fh = xb_plot_profile(xb, varargin)
 %XB_PLOT_PROFILE  Create uniform profile plots
 %
 %   Create uniform profile plots using standardized coloring per source.
@@ -97,7 +97,7 @@ OPT = setproperty(OPT, varargin{:});
 
 %% plot
 
-figure; hold on;
+fh = figure; hold on;
 
 % read data
 x = xb_get(xb, 'DIMS.globalx_DATA');
