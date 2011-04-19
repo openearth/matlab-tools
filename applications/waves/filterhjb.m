@@ -17,7 +17,7 @@ if nargin <4
     av_yes = 0;
 end
 
-ii_cutoff = round(f_cutoff/df); % calculates integer for cut off frequency
+ii_cutoff = min(size(wav,1)-1,round(f_cutoff/df)); % calculates integer for cut off frequency
 
 A_wav = fft(wav);
 

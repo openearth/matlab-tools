@@ -1,31 +1,25 @@
-function n = xb_exist(xb, varargin)
-%XB_EXIST  Checks if certain fields exist in XBeach structure
+function varargout = xb_plot_spectrum(varargin)
+%XB_PLOT_SPECTRUM  One line description goes here.
 %
-%   Returns the number of fields from the provided list of field names that
-%   actually exist in the provided XBeach structure. You can use Special
-%   Filter Forces.
+%   More detailed description goes here.
 %
 %   Syntax:
-%   n = xb_exist(xb, varargin)
+%   varargout = xb_plot_spectrum(varargin)
 %
 %   Input:
-%   xb        = XBeach structure array
-%   varargin  = List of fieldnames
+%   varargin  =
 %
 %   Output:
-%   n         = Integer indicating the number of fields that exist in the
-%               XBeach structure
+%   varargout =
 %
 %   Example
-%   n = xb_exist(xb, 'nx', 'ny')
-%   n = xb_exist(xb, 'n*')
-%   n = xb_exist(xb, 'bcfile.fp')
+%   xb_plot_spectrum
 %
-%   See also xb_empty, xb_set, xb_get, xb_check
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 Deltares
+%   Copyright (C) 2011 Deltares
 %       Bas Hoonhout
 %
 %       bas.hoonhout@deltares.nl	
@@ -54,7 +48,7 @@ function n = xb_exist(xb, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 02 Dec 2010
+% Created: 18 Apr 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -64,23 +58,19 @@ function n = xb_exist(xb, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% check existance
+%% plot spectrum
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+for i = 1:m
+    figure; hold on;
+    plot(f,Snn(:,i),'b');
+    plot(f,Snnf(:,i),'r');
 
-n = 0;
-for i = 1:length(varargin)
-    if any(strfilter({xb.data.name}, varargin{i}))
-        n = n+1;
-    else
-        re = regexp(varargin{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
-        if ~isempty(re)
-            sub = xb_get(xb, re.sub);
-            if xb_check(sub)
-                if any(strfilter({sub.data.name}, re.field))
-                    n = n+1;
-                end
-            end
-        end
-    end
+    yl=ylim;
+
+    plot([OPT.fsplit OPT.fsplit],[min(yl) max(yl)],'k--');
+
+    title(num2str(i));
+    xlabel('f [Hz]'); ylabel('S_{\eta\eta} [m^2/s]');
+    legend('Non-filtered','Filtered');
+    hold off
 end

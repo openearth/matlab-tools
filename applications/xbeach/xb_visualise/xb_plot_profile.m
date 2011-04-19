@@ -108,18 +108,18 @@ zb0 = [squeeze(x(j,:))' squeeze(z(1,j,:))];
 zb1 = [squeeze(x(j,:))' squeeze(z(2:end,j,:))'];
 
 % plot profiles
-addplot(zb0,                '--',   'k',        'initial'           );
-addplot(OPT.measured,       '-',    'k',        'measured'          );
-addplot(OPT.nonerodible,    '-',    [.5 .5 .5], 'non-erodible'      );
+addplot(zb0,                '-',    2,  'k',        'initial'           );
+addplot(OPT.measured,       '-',    1,  'k',        'measured'          );
+addplot(OPT.nonerodible,    '-',    1,  [.5 .5 .5], 'non-erodible'      );
 
-addplot(OPT.other,          '--',   'c',        'other'             );
-addplot(OPT.durosta,        '-',    'b',        'DurosTA'           );
-addplot(OPT.duros,          ':',    'g',        'DUROS'             );
-addplot(OPT.duros_p,        '--',   'g',        'DUROS+'            );
-addplot(OPT.duros_pp,       '-',    'g',        'D++'               );
+addplot(OPT.other,          '--',   1,  'c',        'other'             );
+addplot(OPT.durosta,        '-',    1,  'b',        'DurosTA'           );
+addplot(OPT.duros,          ':',    1,  'g',        'DUROS'             );
+addplot(OPT.duros_p,        '-',    1,  'g',        'DUROS+'            );
+addplot(OPT.duros_pp,       '-.',   1,  'g',        'D++'               );
 
-addplot(OPT.xbeach,         '--',   'r',        'XBeach'            );
-addplot(zb1,                '-',    'r',        'XBeach (testbed)'  );
+addplot(OPT.xbeach,         '-' ,   1,  'r',        'XBeach'            );
+addplot(zb1,                '-',    2,  'r',        'XBeach (current)'  );
 
 % add BSS
 if OPT.BSS && ~isempty(OPT.measured)
@@ -141,8 +141,7 @@ if OPT.BSS && ~isempty(OPT.measured)
 end
 
 % add labels
-title(OPT.title, 'Interpreter', 'none');
-
+title('profiles');
 xlabel(['distance [' OPT.units ']']);
 ylabel(['height [' OPT.units ']']);
 
@@ -163,13 +162,12 @@ grid on;
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function addplot(data, linetype, color, name)
+function addplot(data, type, sz, color, name)
     if ~isempty(data);
         for i = 2:size(data,2)
-            p = plot(data(:,1), data(:,i), ...
+            p = plot(data(:,1), data(:,i), type, ...
                 'Color', color, ...
-                'LineStyle', linetype, ...
-                'LineWidth', 2, ...
+                'LineWidth', sz, ...
                 'DisplayName', name);
             
             hasbehavior(p,'legend',false);

@@ -1,12 +1,12 @@
-function [Snn Snnf f hrms hrmshi hrmslo] = xb_spectrum(ts, varargin)
-%XB_SPECTRUM  Computes a spectrum from a timeseries
+function varargout = xb_get_spectrum(varargin)
+%XB_GET_SPECTRUM  Computes a spectrum from a timeseries
 %
 %   Computes a spectrum from a timeseries
 %
 %   FUNCTION IS A COPY OF R.T. MCCALL'S MAKESPECTRUM FUNCTION
 %
 %   Syntax:
-%   [Snn Snnf f hrms hrmshi hrmslo] = xb_spectrum(ts, varargin)
+%   [Snn Snnf f hrms hrmshi hrmslo] = xb_get_spectrum(ts, varargin)
 %
 %   Input:
 %   ts        = Timeseries
@@ -21,9 +21,9 @@ function [Snn Snnf f hrms hrmshi hrmslo] = xb_spectrum(ts, varargin)
 %   hrmslo    = RMS wave height of low-frequency waves
 %
 %   Example
-%   [Snn Snnf f hrms hrmshi hrmslo] = xb_spectrum(ts)
+%   [Snn Snnf f hrms hrmshi hrmslo] = xb_get_spectrum(ts)
 %
-%   See also xb_skill
+%   See also xb_get_wavetrans, xb_get_sedero
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -56,7 +56,7 @@ function [Snn Snnf f hrms hrmshi hrmslo] = xb_spectrum(ts, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 14 Apr 2011
+% Created: 18 Apr 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -73,7 +73,6 @@ OPT = struct( ...
     'fsplit',       .05, ...
     'fcutoff',      1e8, ...
     'detrend',      false, ...
-    'plot',         false, ...
     'filterlength', 1, ...
     'dim',          2 ...
 );
@@ -129,24 +128,5 @@ for i = 1:m
     
     for ii = 1:length(Snnf(:,i))
         Snnf(ii,i)=mean(Snn(max(1,ii-round(OPT.filterlength/2)):min(length(Snnf(:,i)),ii+round(OPT.filterlength/2)),i));
-    end
-end
-
-%% plot
- 
-if OPT.plot
-    for i = 1:m
-        figure; hold on;
-        plot(f,Snn(:,i),'b');
-        plot(f,Snnf(:,i),'r');
-        
-        yl=ylim;
-        
-        plot([OPT.fsplit OPT.fsplit],[min(yl) max(yl)],'k--');
-        
-        title(num2str(i));
-        xlabel('f [Hz]'); ylabel('S_{\eta\eta} [m^2/s]');
-        legend('Non-filtered','Filtered');
-        hold off
     end
 end
