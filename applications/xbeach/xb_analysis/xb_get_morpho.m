@@ -133,11 +133,11 @@ xbo = xb_set(xbo, 'SETTINGS', xb_set([], ...
 
 xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
 
-xbo = xb_set(xbo, 'R',      R   );
-xbo = xb_set(xbo, 'Q',      Q   );
-xbo = xb_set(xbo, 'P',      P   );
-xbo = xb_set(xbo, 'sed',    sed );
-xbo = xb_set(xbo, 'ero',    ero );
-xbo = xb_set(xbo, 'dz',     dz  );
+xbo = xb_set(xbo, 'R',      R'      );
+xbo = xb_set(xbo, 'Q',      Q'      );
+xbo = xb_set(xbo, 'P',      P'      );
+xbo = xb_set(xbo, 'sed',    sed'    );
+xbo = xb_set(xbo, 'ero',    ero'    );
+xbo = xb_set(xbo, 'dz',     dz      );
 
 xbo = xb_meta(xbo, mfilename, 'morphology');

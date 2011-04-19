@@ -77,9 +77,15 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+%% remove nans
+
+measured = measured(~any(isnan(measured), 2),:);
+computed = computed(~any(isnan(computed), 2),:);
+
 %% compute skills
 
 x       = unique([computed(:,1) ; measured(:,1)]);
+x       = x(~isnan(x));
 
 zmt     = interp1(measured(:,1), measured(:,2), x);
 zct     = interp1(computed(:,1), computed(:,2), x);
