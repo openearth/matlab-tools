@@ -74,12 +74,14 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-%% compute wave transformation characteristics
+%% initialize input
+
+xb      = xb_get_transect(xb);
 
 dt      = 1/xb_get(xb, 'DIMS.globaltime');
-j       = ceil(xb_get(xb, 'DIMS.globaly')/2);
 
-% initialize output
+%% initialize output
+
 zb_i    = 0;
 zb_f    = 0;
 Hrms_hf = 0;
@@ -88,72 +90,68 @@ Hrms_t  = 0;
 s       = 0;
 urms_hf = 0;
 urms_lf = 0;
+urms_t  = 0;
 umean   = 0;
 
-if xb_exist(xb, 'ue') && ~xb_exist(xb, 'u'); xb = xb_rename(xb, 'ue', 'u'); end;
+%% compute wave transformation characteristics
 
 % determine bathymetry
 if xb_exist(xb, 'zb')
-    zb = xb_get(xb,'zb');
-    zb_i = squeeze(zb(1,j,:));
-    zb_f = squeeze(zb(end,j,:));
+    zb      = xb_get(xb,'zb');
+    zb_i    = zb(1,1,:);
+    zb_f    = zb(end,1,:);
 end
     
 % split HF and LF waves
 if xb_exist(xb, 'zs')
-    [Hrms_hf Hrms_lf] = filterhjb(xb_get(xb,'zs'),OPT.fsplit,dt,false);
+    if xb_exist(xb, 'zb')
+        [hf lf] = filterhjb(xb_get(xb,'zs')-xb_get(xb,'zb'),OPT.fsplit,dt,false);
+    else
+        [hf lf] = filterhjb(xb_get(xb,'zs'),OPT.fsplit,dt,false);
+    end
+    
+    Hrms_hf = sqrt(8).*std(hf,1);
+    Hrms_lf = sqrt(8).*std(lf,1);
 end
 if xb_exist(xb, 'u')
-    [urms_hf urms_lf] = filterhjb(xb_get(xb,'u'), OPT.fsplit,dt,false);
+    [hf lf] = filterhjb(xb_get(xb,'u'),OPT.fsplit,dt,false);
+    
+    urms_hf = std(hf,1);
+    urms_lf = std(lf,1);
 end
 
 % compute HF waves
 if xb_exist(xb, 'H')
-    Hrms_hf = sqrt(mean(xb_get(xb,'H').^2,1)+8*std(Hrms_hf,[],1).^2);
-    Hrms_hf = squeeze(Hrms_hf(1,j,:));
-end
-
-% compute LF waves
-if xb_exist(xb, 'zs')
-    Hrms_lf = sqrt(8).*std(Hrms_lf,[],1);
-    Hrms_lf = squeeze(Hrms_lf(1,j,:));
-    
-    if xb_exist(xb, 'H')
+    Hrms_hf = sqrt(mean(xb_get(xb,'H').^2,1)+Hrms_hf.^2);
+    if xb_exist(xb, 'zs')
         Hrms_t = sqrt(Hrms_lf.^2+Hrms_hf.^2);
     end
-    
+end
+
+% compute setup
+if xb_exist(xb, 'zs')
     if xb_exist(xb, 'zb') || xb_exist(xb, 'u')
         zs = xb_get(xb,'zs');
         
-        if xb_exist(xb, 'zb');  zb = xb_get(xb,'zb');   k = zs(end,j,:)-zb(end,j,:)>0.0001; end;
-        if xb_exist(xb, 'u');   u = xb_get(xb,'u');     k = abs(u(end,j,:))>0.0001;         end;
+        if xb_exist(xb, 'zb');  zb = xb_get(xb,'zb');   k = zs(end,1,:)-zb(end,1,:)>0.0001; end;
+        if xb_exist(xb, 'u');   u = xb_get(xb,'u');     k = abs(u(end,1,:))>0.0001;         end;
         
-        s = max(0,mean(zs-mean(zs(:,j,1),1),1));
+        s = max(0,mean(zs-mean(zs(:,1,1),1),1));
         s(:,:,~k) = 0;
-        s = squeeze(s(1,j,:));
     end
 end
     
 % compute HF orbital velocity
 if xb_exist(xb, 'urms')
-    urms_hf = sqrt(mean(xb_get(xb,'urms').^2,1)+std(urms_hf,[],1).^2);
-    urms_hf = squeeze(urms_hf(1,j,:));
-end
-
-% compute LF orbital velocity
-if xb_exist(xb, 'u')
-    urms_lf = std(urms_lf,[],1);
-    urms_lf = squeeze(urms_lf(1,j,:));
-    
-    if xb_exist(xb, 'urms')
+    urms_hf = sqrt(mean(xb_get(xb,'urms').^2,1)+urms_hf.^2);
+    if xb_exist(xb, 'u')
         urms_t = sqrt(urms_lf.^2+urms_hf.^2);
     end
 end
 
 % compute mean velocity
-if xb_exist(xb, 'u')
-    umean = mean(xb_get(xb,'u'),1);
-    umean = squeeze(umean(1,j,:));
+if xb_exist(xb, 'ue')
+    umean = mean(xb_get(xb,'ue'),1);
 end
 
 %% create xbeach structure
@@ -165,15 +163,15 @@ xbo = xb_set(xbo, 'SETTINGS', xb_set([], ...
 
 xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
 
-if ~isscalar(zb_i);     xbo = xb_set(xbo, 'zb_i',       zb_i);      end;
-if ~isscalar(zb_f);     xbo = xb_set(xbo, 'zb_f',       zb_f);      end;
-if ~isscalar(Hrms_hf);  xbo = xb_set(xbo, 'Hrms_hf',    Hrms_hf);   end;
-if ~isscalar(Hrms_lf);  xbo = xb_set(xbo, 'Hrms_lf',    Hrms_lf);   end;
-if ~isscalar(Hrms_t);   xbo = xb_set(xbo, 'Hrms_t',     Hrms_t);    end;
-if ~isscalar(s);        xbo = xb_set(xbo, 's',          s);         end;
-if ~isscalar(urms_hf);  xbo = xb_set(xbo, 'urms_hf',    urms_hf);   end;
-if ~isscalar(urms_lf);  xbo = xb_set(xbo, 'urms_lf',    urms_lf);   end;
-if ~isscalar(urms_t);   xbo = xb_set(xbo, 'urms_t',     urms_t);    end;
-if ~isscalar(umean);    xbo = xb_set(xbo, 'umean',      umean);     end;
+if ~isscalar(zb_i);     xbo = xb_set(xbo, 'zb_i',       squeeze(zb_i));      end;
+if ~isscalar(zb_f);     xbo = xb_set(xbo, 'zb_f',       squeeze(zb_f));      end;
+if ~isscalar(Hrms_hf);  xbo = xb_set(xbo, 'Hrms_hf',    squeeze(Hrms_hf));   end;
+if ~isscalar(Hrms_lf);  xbo = xb_set(xbo, 'Hrms_lf',    squeeze(Hrms_lf));   end;
+if ~isscalar(Hrms_t);   xbo = xb_set(xbo, 'Hrms_t',     squeeze(Hrms_t));    end;
+if ~isscalar(s);        xbo = xb_set(xbo, 's',          squeeze(s));         end;
+if ~isscalar(urms_hf);  xbo = xb_set(xbo, 'urms_hf',    squeeze(urms_hf));   end;
+if ~isscalar(urms_lf);  xbo = xb_set(xbo, 'urms_lf',    squeeze(urms_lf));   end;
+if ~isscalar(urms_t);   xbo = xb_set(xbo, 'urms_t',     squeeze(urms_t));    end;
+if ~isscalar(umean);    xbo = xb_set(xbo, 'umean',      squeeze(umean));     end;
 
 xbo = xb_meta(xbo, mfilename, 'hydrodynamics');

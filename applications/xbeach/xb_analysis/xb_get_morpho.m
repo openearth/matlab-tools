@@ -75,14 +75,15 @@ OPT = setproperty(OPT, varargin{:});
 
 %% determine profiles
 
+xb      = xb_get_transect(xb);
+
 x       = xb_get(xb, 'DIMS.globalx_DATA');
-j       = ceil(xb_get(xb, 'DIMS.globaly')/2);
-x       = squeeze(x(j,:));
+x       = squeeze(x(1,:));
 
 % determine bathymetry
 if xb_exist(xb, 'zb')
     zb      = xb_get(xb,'zb');
-    zb      = squeeze(zb(:,j,:));
+    zb      = squeeze(zb(:,1,:));
 else
     error('No bathymetry data found');
 end
