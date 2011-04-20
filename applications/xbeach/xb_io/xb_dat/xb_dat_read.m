@@ -141,6 +141,8 @@ else
     if OPT.stride(2) == 1; sz(2) = OPT.length(2); end;
 end
 
+dims_out(end+1:5) = 1;
+
 %% determine read method
 
 nitems = prod(OPT.length./OPT.stride);
@@ -214,7 +216,7 @@ if exist(fname, 'file')
             case 'memory'
                 % METHOD: minimal memory
 
-                loops = num2cell(repmat(1,1,5));
+                loops = num2cell(ones(1,5));
                 
                 if isempty(OPT.index)
                     dat = nan(floor(OPT.length./OPT.stride));
@@ -245,15 +247,18 @@ if exist(fname, 'file')
 
                 % loop through data arrays
                 for i = 1:length(loops{1})
-                    for j = 1:length(loops{4})
-                        for k = 1:length(loops{5})
+                    for j = 1:length(loops{5})
+                        for k = 1:length(loops{4})
 
                             % select starting point of current data array
-                            ii = (loops{1}(i)*loops{4}(j)*loops{5}(k)-1)*prod(dims(1:2));
+                            ii =    (loops{4}(k)-1);
+                            ii = ii+(loops{5}(j)-1)*dims_out(4);
+                            ii = ii+(loops{1}(i)-1)*prod(dims_out(4:5));
+                            ii = ii*prod(dims(1:2));
 
                             idx{1} = i;
-                            idx{4} = j;
-                            idx{5} = k;
+                            idx{5} = j;
+                            idx{4} = k;
 
                             % loop through current data array
                             for n = 1:length(loops{3})

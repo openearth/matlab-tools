@@ -9,6 +9,7 @@ function xb = xb_get_transect(xb, varargin)
 %   Input:
 %   xb        = XBeach output structure
 %   varargin  = transect:   transect number
+%               dim:        dimension that should be squeezed
 %
 %   Output:
 %   xb        = squeezed XBeach output structure
@@ -63,7 +64,8 @@ function xb = xb_get_transect(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
-    'transect',     [] ...
+    'transect',     [], ...
+    'dim',          2,  ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -86,8 +88,8 @@ data = {xb.data.name};
 for i = 1:length(data)
     if isnumeric(xb.data(i).value)
         if size(xb.data(i).value, 2) >= t
-            idx     = num2cell(repmat(':',1,ndims(xb.data(i).value)));
-            idx{2}  = t;
+            idx             = num2cell(repmat(':',1,ndims(xb.data(i).value)));
+            idx{OPT.dim}    = t;
             xb.data(i).value = xb.data(i).value(idx{:});
         end
     end
