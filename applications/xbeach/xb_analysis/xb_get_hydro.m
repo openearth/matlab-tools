@@ -12,14 +12,14 @@ function xbo = xb_get_hydro(xb, varargin)
 %
 %   Input:
 %   xb        = XBeach output structure
-%   varargin  = fcutoff:    cut-off frequency for high frequency waves
+%   varargin  = fsplit:     cut-off frequency for high frequency waves
 %
 %   Output:
 %   xbo       = XBeach hydrodynamics structure
 %
 %   Example
 %   xbo = xb_get_hydro(xb)
-%   xbo = xb_get_hydro(xb, 'fcutoff', .05)
+%   xbo = xb_get_hydro(xb, 'fsplit', .05)
 %
 %   See also xb_plot_hydro, xb_get_morpho, xb_get_spectrum
 
@@ -69,7 +69,7 @@ function xbo = xb_get_hydro(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
-    'fcutoff',          .1 ...
+    'fsplit',          .1 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -101,7 +101,10 @@ end
     
 % split HF and LF waves
 if xb_exist(xb, 'zs')
-    [Hrms_hf Hrms_lf] = filterhjb(xb_get(xb,'zs'),OPT.fcutoff,dt,false);
+    [Hrms_hf Hrms_lf] = filterhjb(xb_get(xb,'zs'),OPT.fsplit,dt,false);
+end
+if xb_exist(xb, 'u')
+    [urms_hf urms_lf] = filterhjb(xb_get(xb,'u'), OPT.fsplit,dt,false);
 end
 
 % compute HF waves
@@ -116,7 +119,7 @@ if xb_exist(xb, 'zs')
     Hrms_lf = squeeze(Hrms_lf(1,j,:));
     
     if xb_exist(xb, 'H')
-        Hrms_t = sqrt(Hrms_lf.^2+Hrms_hf);
+        Hrms_t = sqrt(Hrms_lf.^2+Hrms_hf.^2);
     end
     
     if xb_exist(xb, 'zb') || xb_exist(xb, 'u')
@@ -131,17 +134,19 @@ if xb_exist(xb, 'zs')
     end
 end
     
-% compute orbital velocity
+% compute HF orbital velocity
 if xb_exist(xb, 'urms')
-    urms_t = sqrt(mean(xb_get(xb,'urms').^2,1));
-    urms_t = squeeze(urms_t(1,j,:));
+    urms_hf = sqrt(mean(xb_get(xb,'urms').^2,1)+std(urms_hf,[],1).^2);
+    urms_hf = squeeze(urms_hf(1,j,:));
+end
 
-    if xb_exist(xb, 'u')
-        [urms_hf urms_lf] = filterhjb(xb_get(xb,'u'),OPT.fcutoff,dt,false);
-        urms_hf = 0;
-        
-        urms_lf = std(urms_lf,[],1);
-        urms_lf = squeeze(urms_lf(1,j,:));
+% compute LF orbital velocity
+if xb_exist(xb, 'u')
+    urms_lf = std(urms_lf,[],1);
+    urms_lf = squeeze(urms_lf(1,j,:));
+    
+    if xb_exist(xb, 'urms')
+        urms_t = sqrt(urms_lf.^2+urms_hf.^2);
     end
 end
 
@@ -156,7 +161,7 @@ end
 xbo = xb_empty();
 
 xbo = xb_set(xbo, 'SETTINGS', xb_set([], ...
-    'fcutoff',  OPT.fcutoff                     ));
+    'fsplit',  OPT.fsplit                     ));
 
 xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
 
