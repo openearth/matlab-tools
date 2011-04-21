@@ -86,7 +86,7 @@ j = ceil(xb_get(xb, 'DIMS.globaly')/2);
 
 n = 1;
 for i = 1:length(measured)
-    if length(OPT.vars) >= i-1
+    if length(OPT.vars) > i-1
         x = xb_get(xb, 'DIMS.globalx_DATA');
         t = xb_get(xb, 'DIMS.globaltime_DATA');
         y = xb_get(xb, OPT.vars{i});

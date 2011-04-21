@@ -90,12 +90,12 @@ end
 
 %% compute sedimentation and erosion
 
-R   = nan(1,size(xb,1));
-Q   = nan(1,size(xb,1));
-P   = nan(1,size(xb,1));
+R   = nan(1,size(zb,1));
+Q   = nan(1,size(zb,1));
+P   = nan(1,size(zb,1));
 
-sed = zeros(1,size(xb,1));
-ero = zeros(1,size(xb,1));
+sed = zeros(1,size(zb,1));
+ero = zeros(1,size(zb,1));
 
 dz  = zb-repmat(zb(1,:),size(zb,1),1);
 
@@ -103,8 +103,13 @@ for i = 2:size(dz,1)
 
     [xc zc] = findCrossings(x,zb(1,:),x,zb(i,:));
 
-    R(i)    = min(xc(zc>OPT.level));
-    Q(i)    = max(xc(zc<OPT.level));
+    xc1     = xc(zc>OPT.level);
+    xc2     = xc(zc<OPT.level);
+    
+    if isempty(xc1) || isempty(xc2); continue; end;
+    
+    R(i)    = min(xc1);
+    Q(i)    = max(xc2);
     P(i)    = max(xc(xc<Q(i)));
 
     iR      = find(x<R(i),1,'last');
