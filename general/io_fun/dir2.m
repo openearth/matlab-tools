@@ -282,7 +282,7 @@ function s = relativeToabsolutePath(s)
 % function is esigned to make dir2 mimic the output of dir as much as
 % possible
 
-s = fullfile(s);
+s = fullfile(s,'');
 
 if isempty(s)
     s = pwd;
