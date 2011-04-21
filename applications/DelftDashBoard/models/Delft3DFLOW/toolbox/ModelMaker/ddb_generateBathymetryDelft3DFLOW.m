@@ -72,6 +72,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     yg(isnan(yg))=0;
     
     z=interp2(xx,yy,zz,xg,yg);
+%    z=gridcellaveraging2(xx,yy,zz,xg,yg,dmin/111111,'max');
     
     switch opt
         case{'overwrite'}

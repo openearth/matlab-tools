@@ -100,8 +100,8 @@ if isempty(comp)
         p=squeeze(phi(:,:,k));
         p(a==0)=NaN;
         a(a==0)=NaN;
-        a=ddb_internaldiffusion(a);
-        p=ddb_internaldiffusion(p);
+        a=internaldiffusion(a);
+        p=internaldiffusion(p);
         
         ampu(k,:,:)=interp2(xg,yg,a,xx,yy);
         phaseu(k,:,:)=interp2(xg,yg,p,xx,yy);
@@ -122,8 +122,8 @@ else
     p=squeeze(phi(:,:,1));
     p(a==0)=NaN;
     a(a==0)=NaN;
-    a=ddb_internaldiffusion(a);
-    p=ddb_internaldiffusion(p);
+    a=internaldiffusion(a);
+    p=internaldiffusion(p);
     
     ampu(:,:)=interp2(xg,yg,squeeze(amp(:,:)),xx,yy);
     phaseu(:,:)=interp2(xg,yg,squeeze(phi(:,:)),xx,yy);

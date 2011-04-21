@@ -224,18 +224,18 @@ switch opt
             p=[];
             for k=1:size(gt(i).phi,3)
                 % Amplitude
-%                a=ddb_internaldiffusion(squeeze(gt(i).amp(:,:,k)));
-%                b=interp2(lon,lat,ddb_internaldiffusion(squeeze(gt(i).amp(:,:,k))),xp,yp);
+%                a=internaldiffusion(squeeze(gt(i).amp(:,:,k)));
+%                b=interp2(lon,lat,internaldiffusion(squeeze(gt(i).amp(:,:,k))),xp,yp);
                 if strcmpi(inptp,'matrix')
-                    a(k,:,:)=interp2(lon,lat,ddb_internaldiffusion(squeeze(gt(i).amp(:,:,k))),xp,yp);
+                    a(k,:,:)=interp2(lon,lat,internaldiffusion(squeeze(gt(i).amp(:,:,k))),xp,yp);
                 else
-                    a(k,:)=interp2(lon,lat,ddb_internaldiffusion(squeeze(gt(i).amp(:,:,k))),xp,yp);
+                    a(k,:)=interp2(lon,lat,internaldiffusion(squeeze(gt(i).amp(:,:,k))),xp,yp);
                 end
                 % Phase (bit more difficult)
                 sinp=sin(squeeze(gt(i).phi(:,:,k))*pi/180);
                 cosp=cos(squeeze(gt(i).phi(:,:,k))*pi/180);
-                sinp=ddb_internaldiffusion(sinp);
-                cosp=ddb_internaldiffusion(cosp);
+                sinp=internaldiffusion(sinp);
+                cosp=internaldiffusion(cosp);
                 sinpi=interp2(lon,lat,sinp,xp,yp);
                 cospi=interp2(lon,lat,cosp,xp,yp);
                 if strcmpi(inptp,'matrix')

@@ -24,12 +24,22 @@ xb0=xb0(ii1:ii2);
 yb0=yb0(ii1:ii2);
 zb0=zb0(ii1:ii2);
 
+%% Now sort by y
+[yb0,iindex] = sort(yb0,2,'ascend');
+xb0=xb0(iindex);
+zb0=zb0(iindex);
+
 ii1=bsearch(yb0,ymin,-1);
 ii2=bsearch(yb0,ymax,-1);
 
 xb0=xb0(ii1:ii2);
 yb0=yb0(ii1:ii2);
 zb0=zb0(ii1:ii2);
+
+%% Sort by x again
+[xb0,iindex] = sort(xb0,2,'ascend');
+yb0=yb0(iindex);
+zb0=zb0(iindex);
 
 z0=zeros(size(x0));
 z0(z0==0)=NaN;
@@ -80,13 +90,22 @@ for ix=1:nx
         xb=xb0(ii1:ii2);
         yb=yb0(ii1:ii2);
         zb=zb0(ii1:ii2);
-
+        
+        [yb,iindex] = sort(yb,2,'ascend');
+        xb=xb(iindex);
+        zb=zb(iindex);
+        
         ii1=bsearch(yb,ymin,-1);
         ii2=bsearch(yb,ymax,-1);
 
         xb=xb(ii1:ii2);
         yb=yb(ii1:ii2);
         zb=zb(ii1:ii2);
+
+        [xb,iindex] = sort(xb,2,'ascend');
+        yb=yb(iindex);
+        zb=zb(iindex);
+
         
         for i=1:size(x,1)
             
