@@ -83,7 +83,7 @@ for i = 1:length(folders); folders{i} = abspath(ffolders{i}); end;
 fffiles = dir(fdir);
 ffiles = {fffiles.name};
 ffiles = ffiles(~[fffiles.isdir]);
-files = [{'oetsettings'} ffiles];
+files = [{'oetsettings' 'closest'} ffiles];
 
 % release toolbox
 switch OPT.type
@@ -99,6 +99,8 @@ switch OPT.type
         [r m] = system('svn ?');
         
         if r > 0; error('Command-line Subversion client not found [svn]'); end;
+        
+        system(sprintf('cd %s && svn update\n', oetroot));
         
         files = oetrelease(...
             'folders'       , folders, ...
@@ -142,7 +144,7 @@ switch OPT.type
         end
         
         fprintf(fid, 'cd ..\n');
-        fprintf(fid, 'svn commit -m "Added tag %s" .\n', OPT.name);
+        fprintf(fid, 'svn commit -m "Added tag %s" %s\n', OPT.name, OPT.name);
         
         fclose(fid);
         
