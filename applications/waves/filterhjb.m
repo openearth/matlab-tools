@@ -24,7 +24,7 @@ A_wav = fft(wav);
 A_high = zeros(size(wav));
 A_low  = zeros(size(wav));
 
-A_high(ii_cutoff+2:length(wav)/2,:) = A_wav(ii_cutoff+2:length(wav)/2,:);
+A_high(ii_cutoff+2:round(length(wav)/2),:) = A_wav(ii_cutoff+2:round(length(wav)/2),:);
 
 if av_yes
     A_low(1,:) = 0.5*A_wav(1,:);
