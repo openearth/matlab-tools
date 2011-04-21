@@ -92,13 +92,14 @@ function oetsettings(varargin)
       
 %% Collect warning and directory state
 
-   state.warning = warning;
+%    state.warning = warning;
    state.pwd     = cd;
 
 %% Add paths
 
    basepath = fileparts(mfilename('fullpath'));
-   warning off
+%    warning off
+% keep the warning on
    addpathfast(basepath,'append',false); % excludes *.svn directories!
 
 %% Create tutorial search database
@@ -127,15 +128,17 @@ function oetsettings(varargin)
                     save(fullfile(docSearchDir,'searchdbversion.mat'),'searchDbVersion');
                 end
             catch
-                warning('OET:NoSearchDB',['Could not build search database because ',oetroot,' is read-only.', char(10),...
-                    'the OpenEarthTools help documentation is still available in the matlab help navigator.']);
+                warning('OET:NoSearchDB',...
+                    ['Could not build search database because %s is read-only. \n'...'
+                    'the OpenEarthTools help documentation is still available in the matlab help navigator.'],...
+                    docSearchDir);
             end
         end
     end
     
 %% Restore warning and directory state
 
-   warning(state.warning)
+%    warning(state.warning)
         cd(state.pwd)
 
    clear state

@@ -22,14 +22,14 @@ function addpathfast(basepath,varargin)
 % See also: ADDPATH, REGEXP, OETSETTINGS
 
    OPT.patterns = {[filesep,'.svn']}; % case sensitive
-   OPT.method   = 2; % 1 = via OS system call, 2 = Matlab (used to be slower but not any more), 3 = dir2
+   OPT.method   = 3; % 1 = via OS system call, 2 = Matlab (used to be slower but not any more), 3 = dir2
    OPT.append   = true; % add new path before or after existing path
    
    OPT = setproperty(OPT,varargin{:});
 
 %% Find all subdirs in basepath
 
-   if OPT.method==1|OPT.method==2
+   if OPT.method==1||OPT.method==2
 
       if OPT.method==1
       % via OS system call, was faster in older Matlab releases
@@ -75,7 +75,7 @@ function addpathfast(basepath,varargin)
 % via dir2, faster
 
       % do a dir commando that excludes all .svn and private directories, and does not include any files
-      dirs    = dir2(basepath,'dir_excl','^private$|^\.svn$','file_incl','');
+      dirs    = dir2(basepath,'dir_excl','^\+|^@|^private$|^\.svn$','file_incl','');
        
       if ~isempty(dirs)
       % concatenate the path and the directory names
@@ -83,7 +83,7 @@ function addpathfast(basepath,varargin)
       end
        
       % also include the basepath
-      newpath = [basepath filesep ';' strcat(dirs{:})];
+      newpath = strcat(dirs{:});
        
    end
 
