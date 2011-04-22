@@ -235,6 +235,3 @@ for n=1:nr
 
     end
 end
-
-%disp('Saving bct file');
-%delft3dflow_saveBctFile(flow,openBoundaries,fname);

@@ -39,6 +39,3 @@ if flow.nrTracers>0
         openBoundaries=generateTransportBoundaryConditions(flow,openBoundaries,opt,'tracer',i,dplayer);
     end
 end
-
-% disp('Saving bcc file');
-% SaveBccFile(Flow);

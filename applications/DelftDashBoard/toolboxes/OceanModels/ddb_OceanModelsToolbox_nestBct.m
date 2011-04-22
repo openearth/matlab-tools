@@ -36,6 +36,8 @@ openBoundaries=handles.Model(md).Input(ad).openBoundaries;
 % Set options
 opt=handles.Toolbox(tb).Input.options;
 
+xml_save('nest.xml',opt,'off');
+
 % Tide file
 ib=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
 ii=handles.Toolbox(ib).Input.activeTideModelBC;
@@ -141,8 +143,6 @@ switch handles.Toolbox(tb).Input.options.current.BC.source
             opt.current.BC.astroFile=bcaFile;
         end
 end
-
-
 
 try
     openBoundaries=generateBctFile(flow,openBoundaries,opt);
