@@ -57,8 +57,7 @@ end
 
 if ~isempty(runid)
     % First read data from mdf file
-    Flow=delft3dflow_readInput(inputdir,runid);
-    openBoundaries=Flow.openBoundaries;
+    [Flow,openBoundaries]=delft3dflow_readInput(inputdir,runid);
     vertGrid.KMax=Flow.KMax;
     vertGrid.layerType=Flow.layerType;
     vertGrid.thick=Flow.thick;

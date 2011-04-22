@@ -17,7 +17,7 @@ end
 disp('   Water levels ...');
 % Constant
 h=zeros(mmax,nmax)+opt.waterLevel.IC.constant;
-ddb_wldep('write',fname,h,'negate','n','bndopt','n');
+wldep('write',fname,h,'negate','n','bndopt','n');
 
 %% Velocities
 disp('   Velocities ...');

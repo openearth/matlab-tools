@@ -12,9 +12,9 @@ for i=1:nr
 end
 
 if strcmpi(flow.vertCoord,'z')
-    dplayer=GetLayerDepths(dp,flow.thick,flow.zBot,flow.zTop);
+    dplayer=getLayerDepths(dp,flow.thick,flow.zBot,flow.zTop);
 else
-    dplayer=GetLayerDepths(dp,flow.thick);
+    dplayer=getLayerDepths(dp,flow.thick);
 end
 
 % First interpolate data onto boundaries
@@ -66,16 +66,6 @@ for i=1:nr
 
 end
 
-% fname=Flow.CurrentU.BC.File;
-% 
-% load(fname);
-% 
-% fname=Flow.CurrentV.BC.File;
-% 
-% sv=load(fname);
-
-
-%fname=opt.current.BC.file;
 s=load(opt.current.BC.file_u);
 sv=load(opt.current.BC.file_v);
 
@@ -96,10 +86,9 @@ for it=it0:it1
     
     disp(['      Time step ' num2str(it) ' of ' num2str(it1-it0+1)]);
 
-%     uu=Interpolate3D(Flow,x,y,dplayer,s,it,'data');
-%     vv=Interpolate3D(Flow,x,y,dplayer,sv.s,it,'data');
     uu=interpolate3D(x,y,dplayer,s,it,'u');
     vv=interpolate3D(x,y,dplayer,sv,it,'v');
+
     nt=nt+1;
 
     for j=1:nr

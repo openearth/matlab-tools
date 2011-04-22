@@ -1,16 +1,16 @@
 function generateInitialConditions(flow,opt,par,ii,dplayer,fname)
 
-switch lower(opt.(par)(ii).IC.source)
-    case{'constant'}
+switch opt.(par)(ii).IC.source
+    case 4
         pars=[0 1000;opt.(par)(ii).IC.constant opt.(par)(ii).IC.constant];
-    case{'profile'}
+    case 5
         pars=opt.(par)(ii).IC.profile';
 end
 
-switch lower(opt.(par)(ii).IC.source)
+switch opt.(par)(ii).IC.source
 
-    case{'constant','profile'}
-    
+    case{4,5}
+        % Constant or profile
         depths=pars(1,:);
         vals=pars(2,:);
         if depths(2)>depths(1)
@@ -23,8 +23,8 @@ switch lower(opt.(par)(ii).IC.source)
         u=data;
         v=data;
                 
-    case{'file'}
-
+    case{2,3}
+        % File
         mmax=size(flow.gridXZ,1)+1;
         nmax=size(flow.gridYZ,2)+1;
 
@@ -157,17 +157,17 @@ switch lower(par)
         for k=k1:dk:k2
             dd=squeeze(u(:,:,k));
             dd=internaldiffusion(dd,'nst',5);
-            ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
+            wldep('append',fname,dd,'negate','n','bndopt','n');
         end
         for k=k1:dk:k2
             dd=squeeze(v(:,:,k));
             dd=internaldiffusion(dd,'nst',5);
-            ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
+            wldep('append',fname,dd,'negate','n','bndopt','n');
         end
     otherwise
         for k=k1:dk:k2
             dd=squeeze(data(:,:,k));
             dd=internaldiffusion(dd,'nst',5);
-            ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
+            wldep('append',fname,dd,'negate','n','bndopt','n');
         end
 end

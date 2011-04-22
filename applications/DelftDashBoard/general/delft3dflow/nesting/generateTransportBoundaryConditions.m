@@ -4,17 +4,19 @@ t0=flow.startTime;
 t1=flow.stopTime;
 dt=opt.bccTimeStep;
 
-switch lower(opt.(par)(ii).BC.source)
-    case{'constant'}
+switch opt.(par)(ii).BC.source
+    case 4
+        % Constant
         pars=[0 opt.(par)(ii).BC.constant]';
-    case{'profile'}
+    case 5
+        % Profile
         pars=opt.(par)(ii).BC.profile';
 end
 
-switch lower(opt.(par)(ii).BC.source)
+switch opt.(par)(ii).BC.source
 
-    case{'constant','profile'}
-
+    case{4,5}
+        % Constant or profile
         depths=pars(1,:);
         vals=pars(2,:);
         depths=[-100000 depths 100000];
@@ -41,8 +43,8 @@ switch lower(opt.(par)(ii).BC.source)
             openBoundaries(j).(par)(ii).timeSeriesB=tb;
         end      
         
-    case{'file'}
-        
+    case{2}
+        % File
         for i=1:length(openBoundaries)
             x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
             y(i,1)=0.5*(openBoundaries(i).y(1) + openBoundaries(i).y(2));

@@ -205,13 +205,12 @@ for n=1:nr
             case{'c','p'}
                 
                 % Current or current + tangential
-
                 openBoundaries(n).nrTimeSeries=length(times);
                 openBoundaries(n).timeSeriesT=times;
                 openBoundaries(n).timeSeriesA=squeeze(vel(n,1,:,:))';
                 openBoundaries(n).timeSeriesB=squeeze(vel(n,2,:,:))';
                 
-                                % Tangential component
+                % Tangential component
                 if strcmpi(openBoundaries(n).type,'x')
                     for k=1:flow.KMax
                         openBoundaries(n).timeSeriesAV(:,k)=squeeze(tanvel(n,1,k,:));
@@ -235,3 +234,6 @@ for n=1:nr
 
     end
 end
+
+%disp('Saving bct file');
+%delft3dflow_saveBctFile(flow,openBoundaries,fname);
