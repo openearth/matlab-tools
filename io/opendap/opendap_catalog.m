@@ -48,7 +48,7 @@ function varargout = opendap_catalog(varargin)
 %    nc_dump(files{1})
 %   
 %See web:  http://www.unidata.ucar.edu/Projects/THREDDS/tech/catalog/v1.0.2/Primer.html
-%See also: OPENDAP_CATALOG_DATASET, XML_READ, XMLREAD, FINDALLFILES, SNCTOOLS
+%See also: OPENDAP_CATALOG_DATASET, NC_CF_OPENDAP2CATALOG, XML_READ, XMLREAD, FINDALLFILES, SNCTOOLS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -133,7 +133,8 @@ function varargout = opendap_catalog(varargin)
    nc_folder_list = {};
 
 %% remote vs. local url
-if length(OPT.url) < 11 | (~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-10:end),'catalog.xml'))
+
+if length(OPT.url) < 11 | (~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-2:end),'xml'))
 
    if OPT.maxlevel > 1
       fprintf(2,'opendap_catalog: maxlevel ignored because request concerns local file system.\n')
@@ -159,9 +160,9 @@ else
 
    if      strcmpi(OPT.url(end-12:end),'contents.html') % HYRAX
         OPT.url = [OPT.url(1:end-13)   'catalog.xml'];
-   elseif  strcmpi(OPT.url(end-4:end),'.html')          % THREDDS
+   elseif  strcmpi(OPT.url(end-4:end),'.html')          % THREDDS custom catalogs
         OPT.url = [OPT.url(1:end-5)   '.xml'];
-   elseif  strcmpi(path2os(OPT.url(end),'h'),'/') % left out catalog.xml, is valid in broweser
+   elseif  strcmpi(path2os(OPT.url(end),'h'),'/') % left out catalog.xml, is valid in browser
         OPT.url = [OPT.url 'catalog.xml'];
    elseif ~strcmpi(OPT.url(end-3:end),'.xml')
       fprintf(2,'warning: opendap_catalog: url does not have extension ".xml" or ".html"')
@@ -175,30 +176,33 @@ else
    %% check
 
    if OPT.level > OPT.maxlevel
+      if ~(OPT.log==1) % ALWAYS report skipped items
+      dprintf(      1,['Skipped>maxlevel ',num2str(OPT.level,'%0.2d'),' catalog: ',OPT.url,'\n'])
+      end
       dprintf(OPT.log,['Skipped>maxlevel ',num2str(OPT.level,'%0.2d'),' catalog: ',OPT.url,'\n'])
    else
       dprintf(OPT.log,['Processing level ',num2str(OPT.level,'%0.2d'),' catalog: ',OPT.url,'\n'])
 
    %% load xml
    
-      pref.KeepNS = 0; % hyrax has thredds namespace, while thredds has not
+      pref.KeepNS = 0; % hyrax has thredds namespace, while thredds itself has not
    
    try
       
       D   = xml_read(OPT.url,pref);
       
       if OPT.debug
-         dprintf(OPT.log,'opendap_catalog: xml.\n')
-         dprintf(OPT.log,['fieldnames: ',str2line(fieldnames(D),'s',','),'\n'])
-        %dprintf(OPT.log,D.ATTRIBUTE,'\n')
+        dprintf(OPT.log,'opendap_catalog: xml.\n')
+        dprintf(OPT.log,['fieldnames: ',str2line(fieldnames(D),'s',','),'\n'])
+       %dprintf(OPT.log,D.ATTRIBUTE,'\n')
       end
    
    %% check
    
       if isfield(D.ATTRIBUTE,'xmlns') % thredds_COLON_xmlns
-      if ~strcmpi(D.ATTRIBUTE.xmlns,'http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0')
-         error('requested url is not in correct name space.')
-      end
+       if ~strcmpi(D.ATTRIBUTE.xmlns,'http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0')
+        error('requested url is not in correct name space.')
+       end
       end
    
    %% DATASET and CATALOGREF
@@ -206,14 +210,17 @@ else
       nc_folder_list = []; % TO DO
 
    catch
+      if ~(OPT.log==1) % ALWAYS report skipped items
+      dprintf(      1,['Skipped erronous ',                         '   catalog: ',OPT.url,'\n'])
+      end
       dprintf(OPT.log,['Skipped erronous ',                         '   catalog: ',OPT.url,'\n'])
    end
 
    end % OPT.level    
-   
+
 end
 
-%% filter catalog nc
+%% filter catalog nc to ditch
 
     if OPT.ignoreCatalogNc
         isCatalogNc = false(length(nc_file_list),1);
@@ -223,7 +230,7 @@ end
         nc_file_list(isCatalogNc) = [];
     end
     
-%% filter catalog nc
+%% filter catalog nc to keep
 
     if OPT.onlyCatalogNc
         isCatalogNc = false(length(nc_file_list),1);

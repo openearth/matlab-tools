@@ -58,6 +58,7 @@ function varargout = opendap_catalog_dataset(D,OPT)
       % Loop toplevel services
       % Examples are:
       % * 'http://coast-enviro.er.usgs.gov/thredds/roms_catalog.xml';
+      % * 'http://opendap.deltares.nl/thredds/enhancedCatalog.xml'; % compound service: error
 
       for i=1:length(D.service)
       
@@ -129,6 +130,9 @@ function varargout = opendap_catalog_dataset(D,OPT)
 % TO DO :loop over D.service(ii)
 % make cellstr of inherited serviceNames that contain requested OPT.serviceName
 
+if length(D.service) > 1
+    disp(['ERROR: nested services not yet implemented in :',OPT.url])
+end
          if strcmpi(D.dataset(i).metadata.serviceName,D.service.ATTRIBUTE.name) | ...
             strcmpi(D.dataset(i).metadata.serviceName,OPT.serviceName)
             OPT.serviceName_inherited = OPT.serviceName;
@@ -215,6 +219,17 @@ function varargout = opendap_catalog_dataset(D,OPT)
 
 %% CATALOGREF
 %  get deeper levels (recursive)
+% 
+% | http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html#catalogRef:
+% | 
+% | Constructing URLs
+% | The standard way to construct a dataset URL is to concatenate the service base with the access urlPath. If the service also has a sufffix, that is appended:
+% | 
+% |    URL = service.base + access.urlPath + service.suffix
+% | 
+% | A common mistake is to forget the trailing slash at the end of the service base URL.
+% | Clients have access to each of these elements and may make use of the URL in protocol-specific ways. For example the OpenDAP (DODS) protocol appends dds, das, dods etc to make the actual calls to the OpenDAP server.
+% | When a service base is a relative URL, it is resolved against the catalog URL. For example if the catalog URL is http://motherlode.ucar.edu:8080/thredds/dodsC/catalog.xml, and a service base is airtemp/, then the resolved base is http://motherlode.ucar.edu:8080/thredds/dodsC/airtemp/. Note that if the service base is /airtemp/, the resolved URL is http://motherlode.ucar.edu:8080/airtemp/. The java.net.URI class in JDK 1.4+ will resolve relative URLs. 
    
    if isfield(D,'catalogRef')
    
@@ -258,7 +273,7 @@ function varargout = opendap_catalog_dataset(D,OPT)
       
       if ~strcmpi(url,ID)
 
-      % EXTERNAL CATALOG reference
+      % EXTERNAL CATALOG reference (absolute)
       % this is always considerd one level deeper (tree and link)
 
          if strcmpi(access.urlPath(1:7),'http://')
@@ -273,15 +288,23 @@ function varargout = opendap_catalog_dataset(D,OPT)
             else
          
                OPT2.serviceName_inherited = [];
-               urlPath2add = opendap_catalog(OPT2);
+              %OPT2.serviceBaseURL        = ''; % RESET ?
+               urlPath2add                = opendap_catalog(OPT2);
             
             end % OPT.external
 
-      % LOCAL CATALOG reference
+      % LOCAL CATALOG reference (relative to catalog root or relative to catalog url)
+      % against catalog root: http://opendap.deltares.nl/thredds/catalog.html            
+      % against catalog url:  http://opendap.deltares.nl/thredds/catalog/opendap/catalog.html   
 
          else
          
-            OPT2.url   = [OPT2.serviceBaseURL access.urlPath service.suffix];
+            if access.urlPath(1)=='/' % against catalog root
+               ind        = strfind(OPT.serviceBaseURL,'/');
+               OPT2.url   = [OPT.serviceBaseURL(1:ind(3)-1) access.urlPath service.suffix];
+            else % against catalog url
+               OPT2.url   = [OPT2.serviceBaseURL access.urlPath service.suffix];
+            end
             
             % question: is the level related to the links, or to position in the opendap tree?
             % local catlogs are meant to make admin easier, so we can consider them as same level?
@@ -293,7 +316,7 @@ function varargout = opendap_catalog_dataset(D,OPT)
             end
 
             OPT2.serviceName_inherited = [];
-            urlPath2add = opendap_catalog(OPT2);
+            urlPath2add                = opendap_catalog(OPT2);
 
          end % if strcmpi(access.urlPath(1:7),'http://')
          
