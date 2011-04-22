@@ -23,7 +23,7 @@ function varargout=ddb_enclosure(cmd,varargin)
 
 %   Copyright 2000-2008 Deltares, the Netherlands
 %   http://www.delftsoftware.com
-%   $Id: ddb_enclosure.m 2568 2009-11-12 14:27:10Z ormondt $
+%   $Id$
 
 if nargin==0
     error('Missing input arguments.')

@@ -120,7 +120,7 @@ flow.dpsOpt=MDF.dpsopt;
 
 
 %% Read grid
-[flow.gridX,flow.gridY,enc]=wlgrid('read',[inpdir flow.gridFile]);
+[flow.gridX,flow.gridY,enc]=ddb_wlgrid('read',[inpdir flow.gridFile]);
 
 if isfield(flow,'coordSysType')
     if ~strcmpi(flow.coordSysType,'geographic')
@@ -131,12 +131,12 @@ if isfield(flow,'coordSysType')
 end
 
 [flow.gridXZ,flow.gridYZ]=getXZYZ(flow.gridX,flow.gridY);
-mn=enclosure('read',[inpdir flow.encFile]);
+mn=ddb_enclosure('read',[inpdir flow.encFile]);
 [flow.gridX,flow.gridY]=enclosure('apply',mn,flow.gridX,flow.gridY);
 flow.kcs=determineKCS(flow.gridX,flow.gridY);
 
 %% Read bathy
-dp=wldep('read',[inpdir flow.depFile],[flow.MMax flow.NMax]);
+dp=ddb_wldep('read',[inpdir flow.depFile],[flow.MMax flow.NMax]);
 flow.depth=-dp(1:end-1,1:end-1);
 flow.depthZ=GetDepthZ(flow.depth,flow.dpsOpt);
 
