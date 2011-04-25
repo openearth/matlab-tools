@@ -36,8 +36,6 @@ openBoundaries=handles.Model(md).Input(ad).openBoundaries;
 % Set options
 opt=handles.Toolbox(tb).Input.options;
 
-xml_save('nest.xml',opt,'off');
-
 % Tide file
 ib=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
 ii=handles.Toolbox(ib).Input.activeTideModelBC;
@@ -65,22 +63,22 @@ end
 
 wb = waitbox('Generating boundary conditions ...');
 
-% Water levels
-switch handles.Toolbox(tb).Input.options.waterLevel.BC.source
-    case {2,3}
-        % From file
-        % Make large file water level
-        t0=handles.Model(md).Input(ad).startTime;
-        t1=handles.Model(md).Input(ad).stopTime;
-        outfile='TMPOCEAN_waterlevel.mat';
-        errmsg=mergeOceanModelFiles(handles.Toolbox(tb).Input.folder,handles.Toolbox(tb).Input.name,outfile,'waterlevel',t0,t1);
-        if ~isempty(errmsg)
-            close(wb);
-            giveWarning('text',[errmsg ' Boundary generation aborted']);
-            return
-        end
-        opt.waterLevel.BC.file=outfile;
-end
+% % Water levels
+% switch handles.Toolbox(tb).Input.options.waterLevel.BC.source
+%     case {2,3}
+%         % From file
+%         % Make large file water level
+%         t0=handles.Model(md).Input(ad).startTime;
+%         t1=handles.Model(md).Input(ad).stopTime;
+%         outfile='TMPOCEAN_waterlevel.mat';
+%         errmsg=mergeOceanModelFiles(handles.Toolbox(tb).Input.folder,handles.Toolbox(tb).Input.name,outfile,'waterlevel',t0,t1);
+%         if ~isempty(errmsg)
+%             close(wb);
+%             giveWarning('text',[errmsg ' Boundary generation aborted']);
+%             return
+%         end
+%         opt.waterLevel.BC.file=outfile;
+% end
 
 switch handles.Toolbox(tb).Input.options.waterLevel.BC.source
     case {1,3}
@@ -102,29 +100,30 @@ switch handles.Toolbox(tb).Input.options.waterLevel.BC.source
         end
 end
 
-% Currents
-switch handles.Toolbox(tb).Input.options.current.BC.source
-    case {2,3}
-        % From file
-        % Make large file for currents
-        t0=handles.Model(md).Input(ad).startTime;
-        t1=handles.Model(md).Input(ad).stopTime;
-        outfile='TMPOCEAN_current_u.mat';
-        errmsg=mergeOceanModelFiles(handles.Toolbox(tb).Input.folder,handles.Toolbox(tb).Input.name,outfile,'current_u',t0,t1);
-        if ~isempty(errmsg)
-            close(wb);
-            giveWarning('text',[errmsg ' Boundary generation aborted']);
-            return
-        end
-        opt.current.BC.file_u=outfile;
-        outfile='TMPOCEAN_current_v.mat';
-        errmsg=mergeOceanModelFiles(handles.Toolbox(tb).Input.folder,handles.Toolbox(tb).Input.name,outfile,'current_v',t0,t1);
-        if ~isempty(errmsg)
-            giveWarning('text',[errmsg ' Boundary generation aborted']);
-            return
-        end
-        opt.current.BC.file_v=outfile;
-end
+% % Currents
+% switch handles.Toolbox(tb).Input.options.current.BC.source
+%     case {2,3}
+%         % From file
+%         % Make large file for currents
+%         t0=handles.Model(md).Input(ad).startTime;
+%         t1=handles.Model(md).Input(ad).stopTime;
+%         outfile='TMPOCEAN_current_u.mat';
+%         errmsg=mergeOceanModelFiles(handles.Toolbox(tb).Input.folder,handles.Toolbox(tb).Input.name,outfile,'current_u',t0,t1);
+%         if ~isempty(errmsg)
+%             close(wb);
+%             giveWarning('text',[errmsg ' Boundary generation aborted']);
+%             return
+%         end
+%         opt.current.BC.file_u=outfile;
+%         outfile='TMPOCEAN_current_v.mat';
+%         errmsg=mergeOceanModelFiles(handles.Toolbox(tb).Input.folder,handles.Toolbox(tb).Input.name,outfile,'current_v',t0,t1);
+%         if ~isempty(errmsg)
+%             giveWarning('text',[errmsg ' Boundary generation aborted']);
+%             return
+%         end
+%         opt.current.BC.file_v=outfile;
+% end
+
 switch handles.Toolbox(tb).Input.options.current.BC.source
     case {1,3}
         % Astronomic
@@ -145,8 +144,7 @@ switch handles.Toolbox(tb).Input.options.current.BC.source
 end
 
 try
-    openBoundaries=generateBctFile(flow,openBoundaries,opt);
-    delft3dflow_saveBctFile(flow,openBoundaries,handles.Model(md).Input(ad).bctFile);
+    [openBoundaries,errmsg]=makeBctBccIni('bct','flow',flow,'openboundaries',openBoundaries,'opt',opt,'cs',cs);
     handles.Model(md).Input(ad).openBoundaries=openBoundaries;
     flist=dir('TMPOCEAN*');
     for i=1:length(flist)

@@ -205,7 +205,11 @@ for k=1:length(s.wl.m)
                 m=[repmat(' ',1,5-length(num2str(m))) num2str(m)];
                 n=[repmat(' ',1,5-length(num2str(n))) num2str(n)];
                 st=['(M,N)=(' m ',' n ')'];
+                try
                 istation(nrused)=strmatch(st,stations);
+                catch
+                    shite=1
+                end
             end
         end
     end
@@ -424,7 +428,11 @@ for i=1:length(openBoundaries)
             catch
                 shite=1
             end
+            try
             wl(:,1)=nest.wl(:,j);
+            catch
+                shite3=1
+            end
             dps(1)=nest.dps(j);
             
             % B
@@ -484,10 +492,10 @@ for i=1:length(openBoundaries)
                 % Now interpolate over water column
                 
                 if strcmpi(vertGrid.layerType,'z')
-                    dplayer=squeeze(GetLayerDepths(dp,vertGrid.thick,vertGrid.zBot,vertGrid.zTop));
+                    dplayer=squeeze(getLayerDepths(dp,vertGrid.thick,vertGrid.zBot,vertGrid.zTop));
                     dplayer=fliplr(dplayer);
                 else
-                    dplayer=squeeze(GetLayerDepths(dp,vertGrid.thick));
+                    dplayer=squeeze(getLayerDepths(dp,vertGrid.thick));
                 end
                 
                 for it=1:length(nest.t)
@@ -576,7 +584,7 @@ for i=1:length(openBoundaries)
             openBoundaries(i).timeSeriesB=squeeze(u1(:,:,2));
         case{'r'}
             openBoundaries(i).timeSeriesT=nest.t;
-            calfac=1.0;
+            calfac=0.6;
             acor1=-dps(1)/dp(1);
             acor1=max(min(acor1,2.0),0.5);
             acor2=-dps(2)/dp(2);
@@ -588,11 +596,11 @@ for i=1:length(openBoundaries)
             for k=1:vertGrid.KMax
                 switch lower(openBoundaries(i).side)
                     case{'left','bottom'}
-                        r1(:,k)=acor1*squeeze(u1(:,k,1)) + squeeze(wl(:,1))*sqrt(9.81/dp(1));
-                        r2(:,k)=acor2*squeeze(u1(:,k,2)) + squeeze(wl(:,2))*sqrt(9.81/dp(2));
+                        r1(:,k)=acor1*squeeze(u1(:,k,1)) + calfac*squeeze(wl(:,1))*sqrt(9.81/dp(1));
+                        r2(:,k)=acor2*squeeze(u1(:,k,2)) + calfac*squeeze(wl(:,2))*sqrt(9.81/dp(2));
                     case{'top','right'}
-                        r1(:,k)=acor1*squeeze(u1(:,k,1)) - squeeze(wl(:,1))*sqrt(9.81/dp(1));
-                        r2(:,k)=acor2*squeeze(u1(:,k,2)) - squeeze(wl(:,2))*sqrt(9.81/dp(2));
+                        r1(:,k)=acor1*squeeze(u1(:,k,1)) - calfac*squeeze(wl(:,1))*sqrt(9.81/dp(1));
+                        r2(:,k)=acor2*squeeze(u1(:,k,2)) - calfac*squeeze(wl(:,2))*sqrt(9.81/dp(2));
                 end
             end
             openBoundaries(i).timeSeriesA=r1;
@@ -709,10 +717,10 @@ z(:,:,2)=nest.z(:,:,j);
 dp(1)=-bnd.depth(1);
 dp(2)=-bnd.depth(2);
 if strcmpi(vertGrid.layerType,'z')
-    dplayer=squeeze(GetLayerDepths(dp,vertGrid.thick,vertGrid.zBot,vertGrid.zTop));
+    dplayer=squeeze(getLayerDepths(dp,vertGrid.thick,vertGrid.zBot,vertGrid.zTop));
     dplayer=fliplr(dplayer);
 else
-    dplayer=squeeze(GetLayerDepths(dp,vertGrid.thick));
+    dplayer=squeeze(getLayerDepths(dp,vertGrid.thick));
 end
 
 if length(vertGrid.thick)==1

@@ -20,5 +20,6 @@ dp=ddb_wldep('read',filename,[handles.Model(md).Input(ad).MMax,handles.Model(md)
 handles.Model(md).Input(ad).depth=-dp(1:end-1,1:end-1);
 handles.Model(md).Input(ad).depth(handles.Model(md).Input(ad).depth==999.999)=NaN;
 handles.Model(md).Input(ad).depthZ=GetDepthZ(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).dpsOpt);
+handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',ad);
 setHandles(handles);
-ddb_plotFlowBathymetry(handles,'plot',ad);
+%ddb_plotFlowBathymetry(handles,'plot',ad);

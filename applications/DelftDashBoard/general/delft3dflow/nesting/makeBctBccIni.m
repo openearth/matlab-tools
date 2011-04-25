@@ -6,6 +6,7 @@ opt=[];
 openBoundaries=[];
 workdir='';
 inpdir='';
+cs=[];
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -32,8 +33,15 @@ for i=1:length(varargin)
                 openBoundaries=varargin{i+1};
             case{'opt'}
                 opt=varargin{i+1};
+            case{'cs'}
+                cs=varargin{i+1};
         end
     end
+end
+
+if ~isempty(cs)
+    flow.coordSysType=cs.type;
+    flow.coordSysName=cs.name;
 end
 
 if isempty(flow)

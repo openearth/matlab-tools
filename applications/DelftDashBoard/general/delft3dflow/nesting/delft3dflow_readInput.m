@@ -1,5 +1,4 @@
 function [flow,openBoundaries]=delft3dflow_readInput(inpdir,runid,varargin)
-
 % Returns flow structure with required Delft3D-FLOW input as well as boundary structure for nesting
 
 %% Read MDF file
@@ -132,13 +131,13 @@ end
 
 [flow.gridXZ,flow.gridYZ]=getXZYZ(flow.gridX,flow.gridY);
 mn=ddb_enclosure('read',[inpdir flow.encFile]);
-[flow.gridX,flow.gridY]=enclosure('apply',mn,flow.gridX,flow.gridY);
+[flow.gridX,flow.gridY]=ddb_enclosure('apply',mn,flow.gridX,flow.gridY);
 flow.kcs=determineKCS(flow.gridX,flow.gridY);
 
 %% Read bathy
 dp=ddb_wldep('read',[inpdir flow.depFile],[flow.MMax flow.NMax]);
 flow.depth=-dp(1:end-1,1:end-1);
-flow.depthZ=GetDepthZ(flow.depth,flow.dpsOpt);
+flow.depthZ=getDepthZ(flow.depth,flow.dpsOpt);
 
 if isfield(flow,'bndFile')
 

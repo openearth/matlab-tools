@@ -37,4 +37,4 @@ handles.Model(md).Input(id2).gridY=y2;
 [handles.Model(md).Input(id2).gridXZ,handles.Model(md).Input(id2).gridYZ]=GetXZYZ(x2,y2);
 handles.Model(md).Input(id2).MMax=size(x2,1)+1;
 handles.Model(md).Input(id2).NMax=size(x2,2)+1;
-handles=ddb_determineKCS(handles,id2);
+handles.Model(md).Input(id2).kcs=determineKCS(handles.Model(md).Input(id2).gridX,handles.Model(md).Input(id2).gridY);

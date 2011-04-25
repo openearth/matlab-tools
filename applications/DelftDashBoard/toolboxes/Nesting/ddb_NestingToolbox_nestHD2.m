@@ -43,7 +43,7 @@ if ~isempty(opt)
     vertGrid.zBot=handles.Model(md).Input(ad).zBot;
     % Consituent info
     % Run Nesthd2
-    bnd=nesthd2_02('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt);
+    bnd=nesthd2('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt);
     
     zersunif=zeros(2,1);
     

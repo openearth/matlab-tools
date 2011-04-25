@@ -31,7 +31,7 @@ handles.Model(md).Input(id).encFile=[attName '.enc'];
 handles.Model(md).Input(id).gridX=x;
 handles.Model(md).Input(id).gridY=y;
 
-[handles.Model(md).Input(id).gridXZ,handles.Model(md).Input(id).gridYZ]=GetXZYZ(x,y);
+[handles.Model(md).Input(id).gridXZ,handles.Model(md).Input(id).gridYZ]=getXZYZ(x,y);
 
 nans=zeros(size(x));
 nans(nans==0)=NaN;
@@ -42,7 +42,7 @@ handles.Model(md).Input(id).MMax=size(x,1)+1;
 handles.Model(md).Input(id).NMax=size(x,2)+1;
 handles.Model(md).Input(id).KMax=1;
 
-handles=ddb_determineKCS(handles,id);
+handles.Model(md).Input(id).kcs=determineKCS(handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
 
 handles=ddb_Delft3DFLOW_plotGrid(handles,'plot','domain',id);
 
