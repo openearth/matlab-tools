@@ -1,8 +1,6 @@
-function MDF=readMDFText(filename)
+function MDF=delft3dflow_readMDFText(filename)
 
 fid=fopen(filename);
-
-MDF=[];
 
 k=0;
 n=1;
@@ -16,38 +14,41 @@ for i=1:1000
         switch lower(v0{1}),
             case{'comment','commnt'}
             otherwise
-                if ~isempty(str2num(v0{1})) && length(v0)==1
+                if ~isnan(str2double(v0{1})) && length(v0)==1
+                    % Vertical layers
                     n=n+1;
-                    val=getfield(MDF,ActiveField);
-                    val(n)=str2num(v0{1});
-                    MDF=setfield(MDF,ActiveField,val);
-                elseif isempty(str2num(v0{1})) && length(v0)==1
-                    % Description
+                    val=MDF.(activeField);
+                    val(n)=str2double(v0{1});
+                    MDF.(activeField)=val;
+                elseif isnan(str2double(v0{1})) && length(v0)==1
+                    % Description, tidal forces
                     n=n+1;
                     if n==2
-                        vl=getfield(MDF,ActiveField);
+                        vl=MDF.(activeField);
                         val=[];
                         val{1}=vl;
-                        MDF=setfield(MDF,ActiveField,val);
+                        MDF.(activeField)=val;
                         val=[];
                     end
-                    val=getfield(MDF,ActiveField);
+                    val=MDF.(activeField);
                     strtmp=strread(v0{1},'%s','delimiter','#','whitespace','');
                     val{n}=strtmp{2};
-                    MDF=setfield(MDF,ActiveField,val);
+                    MDF.(activeField)=val;
                 else
                     n=1;
                     if length(v0)==2
-                        if ~isempty(str2num(v0{2}))
-                            MDF=setfield(MDF,v0{1},str2num(v0{2}));
+                        activeField=lower(deblank(v0{1}));
+                        if ~isnan(str2double(v0{2}))
+                            MDF.(activeField)=str2double(v0{2});
+                        elseif ~isnan(str2num(v0{2}))
+                            MDF.(activeField)=str2num(v0{2});
                         else
                             strtmp=strread(v0{2},'%s','delimiter','#','whitespace','');
-                            %                            MDF=setfield(MDF,v0{1},v0{2}());
                             if length(strtmp)>1
-                                MDF=setfield(MDF,v0{1},strtmp{2});
+                                MDF.(activeField)=strtmp{2};
                             end
                         end
-                        ActiveField=v0{1};
+%                        activeField=deblank(v0{1});
                     end
                 end
         end
