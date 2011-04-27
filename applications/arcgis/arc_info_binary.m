@@ -381,7 +381,7 @@ if OPT.data
             % even if the output mode is nansparse, the internal function uses
             % a structure. This structure is later converted to a nansparse,
             % because incremental writing of coordinates to a nansparse uses
-            % progressivly more overhead for large arrays 
+            % progressivly more overhead for large arrays
             Data(1:D.HTilesPerRow,1:D.HTilesPerColumn) =  {NaN};
     end
     
@@ -438,82 +438,120 @@ if OPT.data
             %% RTileType = 0x00 (constant block)
             %  All pixels take the value of the RMin. Data is ignored. It appears
             %  there is sometimes a bit of meaningless data (up to four bytes) in the block.
-            
-            if     D.RTileType(t)==hex2dec('00')
-                
-                %RTileData= repmat(D.RMin(t)     ,[D.HTileXSize D.HTileYSize]);
-                RTileData= nan([D.HTileXSize D.HTileYSize]);
-                
-                %% RTileType = 0x01 (raw 1bit data)
-                %  One full tile worth of data pixel values follows the RMin field, with 1bit per pixel.
-                
-            elseif D.RTileType(t)==hex2dec('01')
-                
-                RTileData      = fread(fid,n,'ubit1' );
-                RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
-                
-                %% RTileType = 0x04 (raw 4bit data)
-                %  One full tiles worth of data pixel values (one byte per pixel) follows the RMin field.
-                %  ? The high order four bits of a byte comes before the low order four bits. ?
-                
-            elseif D.RTileType(t)==hex2dec('04')
-                
-                RTileData      = fread(fid,n,'ubit4' );
-                RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
-                
-                %% RTileType = 0x08 (raw byte data)
-                %  One full tiles worth of data pixel values (one byte per pixel) follows the RMin field.
-                
-            elseif D.RTileType(t)==hex2dec('08')
-                
-                RTileData      = fread(fid,n,'uint8' );
-                RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
-                
-                %% RTileType = 0x10 (raw byte data)
-                %  One full tiles worth of data pixel values (one byte per pixel) follows the RMin field.
-                
-            elseif D.RTileType(t)==hex2dec('10')
-                
-                RTileData      = fread(fid,n,'uint16');
-                RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
-                
-                %% RTileType = 0x20 (raw byte data)
-                %  One full tiles worth of data pixel values follows the RMin field, with 32 bits per pixel (MSB).
-                
-            elseif D.RTileType(t)==hex2dec('20')
-                
-                RTileData      = fread(fid,n,'uint32');
-                RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
-                
-                %% RTileType = 0xCF/D7 (literal runs/nodata runs)
-                %  The data is organized in a series of runs. Each run starts with a marker which should be interpreted as:
-                %    * Marker < 128: The marker is followed by Marker pixels of literal data with two MSB/one byte per pixel.
-                %    * Marker > 127: The marker indicates that 256-Marker pixels of no data pixels should be
-                %                    put into the output stream. No data (other than the next marker) follows this marker.
-                
-            elseif D.RTileType(t)==hex2dec('CF') || ...
-                    D.RTileType(t)==hex2dec('D7')
-                
-                if  D.RTileType(t)==hex2dec('CF')
-                    fmt = 'uint16';
-                elseif D.RTileType(t)==hex2dec('D7')
-                    fmt = 'uint8';
-                end
-                
-                run        = 0;
-                nread      = 0;
-                RTileData  = nan([D.HTileXSize D.HTileYSize]);
-                
-                while nread < n
+            switch dec2hex(D.RTileType(t),2)
+                case '00'
                     
-                    marker     = fread(fid,     1,'uint8' );
+                    %RTileData= repmat(D.RMin(t)     ,[D.HTileXSize D.HTileYSize]);
+                    RTileData= nan([D.HTileXSize D.HTileYSize]);
                     
-                    if isempty(marker)
-                        bytes_read = D.RTileSize(t)*2;
-                    else
+                    %% RTileType = 0x01 (raw 1bit data)
+                    %  One full tile worth of data pixel values follows the RMin field, with 1bit per pixel.
+                    
+                case '01'
+                    
+                    RTileData      = fread(fid,n,'ubit1' );
+                    RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
+                    
+                    %% RTileType = 0x04 (raw 4bit data)
+                    %  One full tiles worth of data pixel values (one byte per pixel) follows the RMin field.
+                    %  ? The high order four bits of a byte comes before the low order four bits. ?
+                    
+                case '04'
+                    
+                    RTileData      = fread(fid,n,'ubit4' );
+                    RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
+                    
+                    %% RTileType = 0x08 (raw byte data)
+                    %  One full tiles worth of data pixel values (one byte per pixel) follows the RMin field.
+                    
+                case '08'
+                    
+                    RTileData      = fread(fid,n,'uint8' );
+                    RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
+                    
+                    %% RTileType = 0x10 (raw byte data)
+                    %  One full tiles worth of data pixel values (one byte per pixel) follows the RMin field.
+                    
+                case '10'
+                    
+                    RTileData      = fread(fid,n,'uint16');
+                    RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
+                    
+                    %% RTileType = 0x20 (raw byte data)
+                    %  One full tiles worth of data pixel values follows the RMin field, with 32 bits per pixel (MSB).
+                    
+                case '20'
+                    
+                    RTileData      = fread(fid,n,'uint32');
+                    RTileData      = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
+                    
+                    %% RTileType = 0xCF/D7 (literal runs/nodata runs)
+                    %  The data is organized in a series of runs. Each run starts with a marker which should be interpreted as:
+                    %    * Marker < 128: The marker is followed by Marker pixels of literal data with two MSB/one byte per pixel.
+                    %    * Marker > 127: The marker indicates that 256-Marker pixels of no data pixels should be
+                    %                    put into the output stream. No data (other than the next marker) follows this marker.
+                    
+                case {'CF','D7'}
+                    switch dec2hex(D.RTileType(t),2)
+                        case 'CF'
+                            fmt = 'uint16';
+                        case 'D7'
+                            fmt = 'uint8';
+                    end
+                    
+                    run        = 0;
+                    nread      = 0;
+                    RTileData  = nan([D.HTileXSize D.HTileYSize]);
+                    
+                    while nread < n
+                        
+                        marker     = fread(fid,     1,'uint8' );
+                        
+                        if isempty(marker)
+                            bytes_read = D.RTileSize(t)*2;
+                        else
+                            if marker     < 128
+                                count      = marker;
+                                stream     = fread(fid,count,fmt);
+                            elseif marker > 127
+                                count      = 256 - marker;
+                                stream     = nan(count,1);
+                            end
+                            
+                            run    = run + 1;
+                            nread  = nread + count;
+                            RTileData(nread-count+1:nread) = stream;
+                            
+                            if OPT.debug > 1
+                                disp(['    ',num2str([run count nread n],'%0.4d ')])
+                            end
+                            
+                        end
+                        
+                    end
+                    
+                    RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
+                    
+                    %% RTileType = 0xDF (literal runs/nodata runs)
+                    %  The data is organized in a series of runs. Each run starts with a marker which should be interpreted as:
+                    %    * Marker < 128: The marker is followed by Marker pixels of literal data with one byte per pixel.
+                    %    * Marker > 127: The marker indicates that 256-Marker pixels of no data pixels should be put
+                    %      into the output stream. No data (other than the next marker) follows this marker.
+                    %  This is similar to 0xD7, except that the data size is zero bytes instead of 1, so only RMin
+                    %  values are inserted into the output stream.
+                    
+                case 'DF'
+                    
+                    run        = 0;
+                    nread      = 0;
+                    RTileData  = nan([D.HTileXSize D.HTileYSize]);
+                    
+                    while nread < n
+                        
+                        marker     = fread(fid,     1,'uint8' );
                         if marker     < 128
+                            stream     = zeros(marker,1);
                             count      = marker;
-                            stream     = fread(fid,count,fmt);
                         elseif marker > 127
                             count      = 256 - marker;
                             stream     = nan(count,1);
@@ -529,97 +567,60 @@ if OPT.data
                         
                     end
                     
-                end
-                
-                RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
-                
-                %% RTileType = 0xDF (literal runs/nodata runs)
-                %  The data is organized in a series of runs. Each run starts with a marker which should be interpreted as:
-                %    * Marker < 128: The marker is followed by Marker pixels of literal data with one byte per pixel.
-                %    * Marker > 127: The marker indicates that 256-Marker pixels of no data pixels should be put
-                %      into the output stream. No data (other than the next marker) follows this marker.
-                %  This is similar to 0xD7, except that the data size is zero bytes instead of 1, so only RMin
-                %  values are inserted into the output stream.
-                
-            elseif D.RTileType(t)==hex2dec('DF')
-                
-                run        = 0;
-                nread      = 0;
-                RTileData  = nan([D.HTileXSize D.HTileYSize]);
-                
-                while nread < n
+                    %if length(RTileData) > n
+                    %   disp(['n_read n_required last_marker ( > 127 is NaNs):',num2str([length(RTileData ) n marker])])
+                    %end
                     
-                    marker     = fread(fid,     1,'uint8' );
-                    if marker     < 128
-                        stream     = zeros(marker,1);
-                        count      = marker;
-                    elseif marker > 127
-                        count      = 256 - marker;
-                        stream     = nan(count,1);
+                    %% chop data exceeding tilesize ??
+                    
+                    RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
+                    
+                    %% RTileType = F0 (run length encoded 16bit)
+                    %  The data is organized in a series of runs. Each run starts with a
+                    %  marker which should be interpreted as a count. The two bytes following
+                    %  the count should be interpreted as an MSB Int16 value. They indicate
+                    %  that count pixels of value should be inserted into the output stream.
+                    
+                case {'E0','F0','FC','F8'}
+                    switch dec2hex(D.RTileType(t),2)
+                        case 'E0'
+                            fmt = 'uint32';
+                        case 'F0'
+                            fmt = 'uint16';
+                        case {'FC','F8'}
+                            fmt = 'uint8';
                     end
                     
-                    run    = run + 1;
-                    nread  = nread + count;
-                    RTileData(nread-count+1:nread) = stream;
                     
-                    if OPT.debug > 1
-                        disp(['    ',num2str([run count nread n],'%0.4d ')])
+                    run        = 0;
+                    nread      = 0;
+                    RTileData  = nan([D.HTileXSize D.HTileYSize]);
+                    
+                    while nread < n
+                        
+                        count  = fread(fid,     1,'uint8');
+                        value  = fread(fid,     1,fmt);
+                        stream = repmat(value,[1 count]);
+                        
+                        run    = run + 1;
+                        nread  = nread + count;
+                        RTileData(nread-count+1:nread) = stream;
+                        
+                        if OPT.debug > 1
+                            disp(['    ',num2str([run count nread n],'%0.4d ')])
+                        end
+                        
                     end
                     
-                end
-                
-                %if length(RTileData) > n
-                %   disp(['n_read n_required last_marker ( > 127 is NaNs):',num2str([length(RTileData ) n marker])])
-                %end
-                
-                %% chop data exceeding tilesize ??
-                
-                RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
-                
-                %% RTileType = F0 (run length encoded 16bit)
-                %  The data is organized in a series of runs. Each run starts with a
-                %  marker which should be interpreted as a count. The two bytes following
-                %  the count should be interpreted as an MSB Int16 value. They indicate
-                %  that count pixels of value should be inserted into the output stream.
-                
-            elseif D.RTileType(t)==hex2dec('E0') || ...
-                    D.RTileType(t)==hex2dec('F0')
-                
-                if  D.RTileType(t)==hex2dec('E0')
-                    fmt = 'uint32';
-                elseif D.RTileType(t)==hex2dec('F0')
-                    fmt = 'uint16';
-                end
-                
-                run        = 0;
-                nread      = 0;
-                RTileData  = nan([D.HTileXSize D.HTileYSize]);
-                
-                while nread < n
+                    RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
                     
-                    count  = fread(fid,     1,'uint8');
-                    value  = fread(fid,     1,fmt);
-                    stream = repmat(value,[1 count]);
+                    %% RTileType = 0x??
                     
-                    run    = run + 1;
-                    nread  = nread + count;
-                    RTileData(nread-count+1:nread) = stream;
+                otherwise
                     
-                    if OPT.debug > 1
-                        disp(['    ',num2str([run count nread n],'%0.4d ')])
-                    end
+                    RTileData= Inf([D.HTileXSize D.HTileYSize]);
+                    fprintf(2,['error: arc_info_binary: integer data type ''',dec2hex(D.RTileType(t)),''' not yet implemented, inserted Inf.\n']);
                     
-                end
-                
-                RTileData = reshape(RTileData,[D.HTileXSize D.HTileYSize]) + D.RMin(t);
-                
-                %% RTileType = 0x??
-                
-            else
-                
-                RTileData= Inf([D.HTileXSize D.HTileYSize]);
-                fprintf(2,['error: arc_info_binary: integer data type ''',dec2hex(D.RTileType(t)),''' not yet implemented, inserted Inf.\n'])
-                
             end
             switch OPT.output_mode
                 case 'normal'
@@ -687,7 +688,7 @@ if OPT.data
                     
                     % remove empty (nan) values
                     nn = ~isnan(Data{t});
-
+                    
                     xyz(nValues+1:nValues+sum(sum(nn)),:) = [X(nn),Y(nn),Data{t}(nn)];
                     nValues = nValues+sum(sum(nn));
                 end
