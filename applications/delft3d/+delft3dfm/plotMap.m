@@ -7,9 +7,12 @@ function varargout = plotMap(varargin)
 %          % or 
 %    <h> = delft3dfm.plotMap(ncfile,<it>,<keyword,value>);
 %
-%   plots an delft3dfmtured map, optionally the handles h are returned.
+%   plots a delft3dfm map, optionally the handles h are returned.
 %   For plotting multiple timesteps it is most efficient
 %   to read the unstructured grid G once, and update D and plotMap.
+%   Note that you need to read the grid G from the map file (*_map.nc),
+%   not from the grid input file (*_net.nc) beause that lacks the
+%   node connectivity information.
 %
 %   The following optional <keyword,value> pairs have been implemented:
 %    * axis: only grid inside axis is plotted, use [] for while grid.
@@ -114,10 +117,14 @@ function varargout = plotMap(varargin)
 
 %% plot centres (= flow cells = circumcenters)
 
-if isfield(G,'peri')
+if ~(isfield(G,'peri') & isfield(G,'cen'))
+
+   error('unable to plot map: read BOTH the grid and map from *_map.nc (*_net.nc does not contain node connectivity!)')
+
+else
 
    if isempty(OPT.axis)
-      cen.mask = 1:G.cen.n; % TO DO: chekc whether all surrounding corners are outside, instead of centers
+      cen.mask = 1:G.cen.n; % TO DO: check whether all surrounding corners are outside, instead of centers
    else
       cen.mask = inpolygon(G.cen.x,G.cen.y,OPT.axis.x,OPT.axis.y);
    end
