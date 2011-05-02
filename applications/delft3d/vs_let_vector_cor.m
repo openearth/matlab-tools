@@ -124,7 +124,6 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
 %    cen = center data
 
 %% Initialize
-%% -----------------------
 
    nargchk(1,7,nargin);
    
@@ -144,7 +143,6 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
    end
    
 %% Define staggered ElementIndices
-%% -----------------------
 
    nc = ElementIndex{1}; % indices corners
    mc = ElementIndex{2}; % indices corners
@@ -198,7 +196,6 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
    %disp(['n c: ',num2str(nc)])
 
 %% i. Read curvi-linear data
-%% -----------------------
 
    if     dimension==3
    u.UKSI  = vs_let(NFStruct,GroupName,GroupIndex,char(ElementNames{1}),{nu,mu,kz},varargin{:});%
@@ -211,7 +208,6 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
    no_times = size(v.VETA,1);
 
 %% ii. Read and apply masks at interfaces
-%% -----------------------
 
    switch vs_type(NFStruct),
    case 'Delft3D-com',
@@ -234,7 +230,6 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
 
 %% iii. Interpolate
 %% iv.  Read and apply center masks
-%% -----------------------
 
    cor.U    = nan.*zeros(no_times,length(nc),length(mc),length(kz)); % U at corners, first (local), then global (global) after reorientation
    cor.V    = nan.*zeros(no_times,length(nc),length(mc),length(kz)); % V at corners, first (local), then global (global) after reorientation
@@ -256,8 +251,7 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
    end
  
    %% Average local (U,V) at faces to local (U,V) at centers
-   %% using weights actu/v that are (1/2) when both faces are active
-   %% -----------------------
+   %  using weights actu/v that are (1/2) when both faces are active
 
    for ik=1:size(u.UKSI,4) % all layers
     
@@ -272,7 +266,6 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
    end
 
 %% v. Reorient (after interpolating center alfas to corners !!)
-%% -----------------------
 
    switch vs_type(NFStruct),
    case 'Delft3D-com',
@@ -285,10 +278,10 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
      %cen.alfa = cen.alfa+cen.alfa0;
    end;
 
-   cor.alfa = corner2center(squeeze(cen.alfa))*pi/180;
+   cor.alfa = corner2center(permute(cen.alfa,[2 3 1]))*pi/180;
 
 %% Reorient local (U,V) to global (U,V), using work arrays (u,v)
-%% -----------------------
+
    for it=1:size(u.UKSI,1)
     if dimension==3
       for ik=1:size(u.UKSI,4)
@@ -315,7 +308,6 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
    end
    
 %% Output
-%% -----------------------
 
    if nargout==2, % U,V
      varargout={cor.U cor.V};

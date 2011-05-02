@@ -28,7 +28,7 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
 % Example 2:
 %   delft3d_grd2kml('g04.grd','epsg',28992,'dep','g04.dep','dpsopt','mean','ddep',150,'clim',[-50 0])
 %
-%See also: googlePlot, delft3d
+%See also: googlePlot, delft3d, delft3d_mdf2kml
 
 % updated by Bart Grasmeijer, Alkyon Hydraulic Consultancy & Research 19 November 2009
 

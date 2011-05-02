@@ -63,7 +63,6 @@ function DELFT3D_GRID_IMAGE
 %   4 x 4 active v velocity points
            
 help delft3d_grid_image
-%disp('syntax: help DELFT3D_GRID_IMAGE')
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2007 Delft University of Technology

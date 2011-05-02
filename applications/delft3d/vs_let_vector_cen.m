@@ -124,7 +124,6 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
 %    cen = center data
 
 %% Initialize
-%% -----------------------
 
    nargchk(1,7,nargin);
    
@@ -144,7 +143,6 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
    end
 
 %% Define staggered ElementIndices
-%% -----------------------
 
    nz = ElementIndex{1}; % indices centers
    mz = ElementIndex{2}; % indices centers
@@ -193,7 +191,6 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
    %disp(['n v: ',num2str(nv)])
 
 %% i. Read curvi-linear data
-%% -----------------------
 
    if     dimension==3
    u.UKSI  = vs_let(NFStruct,GroupName,GroupIndex,char(ElementNames{1}),{nu,mu,kz},varargin{:});%
@@ -206,7 +203,6 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
    no_times = size(v.VETA,1);
 
 %% ii. Read and apply masks at interfaces
-%% -----------------------
 
    switch vs_type(NFStruct),
    case 'Delft3D-com',
@@ -228,8 +224,7 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
    end
 
 %% iii. Interpolate
-%% iv.  Read and apply center masks
-%% -----------------------
+%  iv.  Read and apply center masks
 
    cen.U    = nan.*zeros(no_times,length(nz),length(mz),length(kz)); % U at centers, first (local), then global (global) after reorientation
    cen.V    = nan.*zeros(no_times,length(nz),length(mz),length(kz)); % V at centers, first (local), then global (global) after reorientation
@@ -251,8 +246,7 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
    end
    
    %% Average local (U,V) at faces to local (U,V) at centers
-   %% using weights actu/v that are (1/2) when both faces are active
-   %% -----------------------
+   %  using weights actu/v that are (1/2) when both faces are active
    
    for ik=1:size(u.UKSI,4) % all layers
    
@@ -267,7 +261,6 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
    end
 
 %% v. Reorient
-%% -----------------------
 
    switch vs_type(NFStruct),
    case 'Delft3D-com',
@@ -280,10 +273,9 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
      %cen.alfa = cen.alfa+cen.alfa0;
    end;
    
-   cen.alfa = squeeze(cen.alfa)*pi/180;
+   cen.alfa = permute(cen.alfa,[2 3 1])*pi/180;
 
 %% Reorient local (U,V) to global (U,V), using work arrays (u,v)
-%% -----------------------
 
    for it=1:size(u.UKSI,1)
     if dimension==3
@@ -312,7 +304,6 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
   end
    
 %% Output
-%% -----------------------
    
    if nargout==2, % U,V
      varargout={cen.U cen.V};

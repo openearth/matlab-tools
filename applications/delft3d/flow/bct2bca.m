@@ -8,8 +8,8 @@ function varargout = bct2bca(varargin)
 % into a  *.bca file (astronomic components boundary conditions).
 % using the  *.bnd file (boundary definition file) and using T_TIDE.
 %
-% Note that the *.bnd file should contain astronomical boudnaries
-% for all tiem series present in the *.bct file!!!
+% Note that the *.bnd file should contain astronomical boundaries
+% for all time series present in the *.bct file!!!
 %
 % Works for now only for 2D boundaries, not for 3D boundary specifications!
 %
@@ -34,9 +34,12 @@ function varargout = bct2bca(varargin)
 %
 %    * A0      :    include mean component A0 in *.bca (default 1)
 %                   Note: t_tide does not generally return an A0 component.
-%    * latitude:    [] default (same effect as none in t_tide)
 %
-%                   NOTE THAT ANY LATITUDE IS REQUIRED FOR T_TIDE TO INCLUDE NODAL FACTORS AT ALL
+% The following keywords are simply passed from/to  t_tide
+%
+%    * latitude:    see t_tide [] default (same effect as none in t_tide)
+%
+%    NOTE THAT ANY LATITUDE IS REQUIRED FOR T_TIDE TO INCLUDE NODAL FACTORS AT ALL
 %
 %    * shallow:     see t_tide (default '')
 %    * secular:     see t_tide (default 'mean')
@@ -63,7 +66,7 @@ function varargout = bct2bca(varargin)
 %    * residue:     Writes bct of residual  time series (value is name of *.bct file, default [])
 %    * prediction:  Writes bct of predicted time series (value is name of *.bct file, default [])
 %
-%    * unwrap:      Delft3D programmers in the past deciced to interpolate
+%    * unwrap:      Delft3D programmers in the past decided to interpolate
 %                   the phases inside a boundary segment linearly (as a scalar)
 %                   without correction  for the generally-known phase range
 %                   [0 360]: so the average of 359 and 1 will end up as 180
@@ -72,8 +75,10 @@ function varargout = bct2bca(varargin)
 %                   interpolated linearly where [359 1] should be specified as
 %                   [359 361]. logical, default 1.
 %
-%                   Note. The end points of two subsequent boudnaries are not the same, they are defined on
-%                   the adjacent waterlevel points, not on the common corner point !
+%    Note. The end points of two subsequent boundaries are not the same, they 
+%    are defined on the adjacent waterlevel points, not on the common corner point !
+%    To ensure that two boudnary segments use the same end point, make the boundaries
+%    overlap one (m,n) index (the GUI does not support this, but it is allowed).
 %
 %    OPT = bct2bca returns struct with default <keyword,value> pairs
 %
@@ -158,7 +163,6 @@ function varargout = bct2bca(varargin)
 % $HeadURL$
 
 %% Defaults
-%% -----------------
 
    OPT.timezone   = 0;
    OPT.period     = nan;
@@ -190,7 +194,6 @@ function varargout = bct2bca(varargin)
    OPT.bndfile    = '';
 
 %% Return defaults
-%% ----------------------
 
    if nargin==0
       varargout = {H};
@@ -213,7 +216,7 @@ function varargout = bct2bca(varargin)
       end
    end
 
-%% -----------------
+%% go
 
    if  isempty(OPT.latitude);warning('No latitude passed, performing simple harmonic analysis, not tidal analysis!');end
 
@@ -226,8 +229,7 @@ function varargout = bct2bca(varargin)
    disp(['Loading ',OPT.bctfile,'...']); % sometimes slow, especially moronic fixed width files with zillions of spaces as produced by NESTHDx
    BCT          = bct_io        ('read',OPT.bctfile);
 
-   %% Write residue/prediction to bct file
-   %% ----------------------
+%% Write residue/prediction to bct file
 
    if ~isempty(OPT.residue)
       BCTres = BCT;

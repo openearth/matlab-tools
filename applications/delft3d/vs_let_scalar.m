@@ -1,11 +1,13 @@
 function scalar = vs_let_scalar(varargin)
 %VS_LET_SCALAR   Read scalar data defined on grid centers from a trim- or com-file.
 %
-%     scalar = vs_let_scalar(NEFISstruct,groupname,groupindex,elementname)
+%     scalar = vs_let_scalar(NFStruct,'GroupName',GroupIndex,'ElementName',<ElementIndex>)
 %
 %  (1) removes the first and last rows and columns for COM and TRIM file, 
 %      which are dummy (only) when you load the full matrix (elementindices 0).
-%      does not remov anything for WAVM file which has not dummys.
+%      does not remov anything for WAVM file which has not dummys. Note, also 
+%      from the optional elements specified by ElementIndex, the 1st and 
+%      last dimension are removed.
 %  (2) and permutes result for one timestep data so scalar is [nmax x mmax x kmax x ...]
 %      and also swaps it for WAVM file to get nmax x mmax.
 %

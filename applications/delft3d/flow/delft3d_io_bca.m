@@ -1,8 +1,8 @@
 function varargout = delft3d_io_bca(cmd,varargin)
 %DELFT3D_IO_BCA   read/write astronomical boundary table (*.bca) <<beta version!>>
 %
-%       delft3d_io_bca('write',bcafile,BCA,BND)
-% Ok  = delft3d_io_bca('write',bcafile,BCA,BND)
+%       delft3d_io_bca('write',bcafile,BCA)
+% Ok  = delft3d_io_bca('write',bcafile,BCA)
 %
 % BCA = delft3d_io_bca('read' ,bcafile,BND)
 %
@@ -246,7 +246,7 @@ end % if fid > 0
 
 %% ------------------------------------
 
-function varargout = Local_write(bcafile,BCA,BND)
+function varargout = Local_write(bcafile,BCA)
 
 iostat = 0;
 
@@ -262,6 +262,7 @@ if fid > 0
    
          for icomp=1:length(BCA.DATA(ibnd).amp)
          
+            % mapping t_tide and delf3d outsourced to other functon
             % if strmatch('RHO' ,component); component = 'RO1'     ; end
             % if strmatch('SIG' ,component); component = 'SIGMA1'  ; end
             % if strmatch('THE1',component); component = 'THETA1'  ; end
@@ -281,13 +282,12 @@ if fid > 0
             amp       =      BCA.DATA(ibnd).amp  (icomp);
             phase     =      BCA.DATA(ibnd).phi  (icomp);
    	 
-           %fprintf(fid,'%8s %f7    %f7',pad(component,8,' '),amp,phase);
-            fprintf(fid,'%8s %15.7e %f7',pad(component,8,' '),amp,phase); % more decimals to get sufficient decimals for Neumann boundary
+            fprintf(fid,'%8s %15.7e %f7',pad(component,8,' '),amp,phase); % 15 = enough decimals to get sufficient decimals for Neumann boundary
             fprintf(fid,'\n');
             
          end % for icmp=1:length(BCA.components)
    
-   end % for ibnd = 1:BND.NTables
+   end % for ibnd = 1:BCA.DATA
    
    fid = fclose(fid);
    
