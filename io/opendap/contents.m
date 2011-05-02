@@ -7,7 +7,7 @@
 % * <a href="http://www.iges.org/grads/gds/">GDS: GrADS Data Server</a>.
 % This toolbox is most frequencly being used with THREDDS.
 %
-% A list of operational OPeNDAP servers for marine, coastal and climate data is:
+% A non-exhaustive list of operational OPeNDAP servers for marine, coastal and climate data is:
 % * NL: Delft: <a href="http://opendap.deltares.nl/">http://opendap.deltares.nl/</a> (THREDDS + HYRAX)
 % * NL: 3TU: <a href="http://opendap.tudelft.nl/thredds/catalog.html">http://opendap.tudelft.nl/thredds/catalog.html</a>
 % * NL: Delft: <a href="http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/">http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/</a> (THREDDS test)
@@ -22,6 +22,9 @@
 %                  <a href="http://data.nodc.noaa.gov/thredds/catalog.html">http://data.nodc.noaa.gov/thredds/catalog.html</a> (THREDDS)
 % * US: NOAA NDBC: <a href="http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.html">http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.html</a> (THREDDS)
 % * US: NOAA NCDC: <a href="http://nomads.ncdc.noaa.gov/dods/">http://nomads.ncdc.noaa.gov/dods/</a> (GrADS)
+% * US: NOAA :     <a href="http://dm1.caricoos.org/thredds/catalog/">CARICOOS</a> (THREDDS)
+% * US: NOAA :     <a href="http://www.weather.gov/ndfd/technical.htm">NDFD</a> (no direct opendap, but loads of data)
+% * US: NOAA :     <a href="http://dapper.pmel.noaa.gov/dchart/">PMEL DAPPER</a> (no direct opendap, but loads of data)
 % * US: Great Lakes: <a href="http://michigan.glin.net/thredds/catalog.html">http://michigan.glin.net/thredds/catalog.html</a> (THREDDS)
 % * US: UCAR: <a href="http://motherlode.ucar.edu/thredds/catalog.html">http://motherlode.ucar.edu/thredds/catalog.html</a> (THREDDS)
 % * EU: EUMETSAT: <a href="http://gsics.eumetsat.int/thredds/catalog.html">http://gsics.eumetsat.int/thredds/catalog.html</a> (THREDDS)

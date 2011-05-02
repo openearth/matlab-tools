@@ -6,8 +6,11 @@ function varargout = opendap_get_cache(varargin)
 % Example:
 %
 % opendap_get_cache('server','http://opendap.deltares.nl/thredds/',...
-%                  'dataset','/rijkswaterstaat/grainsize/',...
-%                    'local','e:\opendap\');
+%                    'local','e:\opendap\',...
+%                  'dataset','/rijkswaterstaat/grainsize/',... % will be appended to both server and local directory
+%                    'pause',1); % first time try with pause on
+%
+% pause = 2 pasues after every file, pause = 1 pauses only after verifying local directory
 %
 % Creates a cache of all netCDF files in:
 %   http://opendap.deltares.nl/thredds/fileServer/opendap/rijkswaterstaat/grainsize/
@@ -21,6 +24,7 @@ function varargout = opendap_get_cache(varargin)
    OPT.server   = 'http://opendap.deltares.nl/thredds/';
    OPT.local    = '';
    OPT.dataset  = '';
+   OPT.pause    = 1; % default verify only directory, set to 2 to verify every file
    
    if nargin==0
       varargout = {OPT};
@@ -43,18 +47,27 @@ function varargout = opendap_get_cache(varargin)
 
 %% download all one by one
 
+      disp(['Downloading to: '])
+      disp([base_loc])
+      if OPT.pause
+      pausedisp
+      end
+
       nnc = length(list);
       tic
       for inc=1:nnc
           
-         disp([num2str(inc,'%0.3d'),' of ',num2str(nnc,'%0.3d')])
-          
          ncfile = list{inc};
+         fprintf(['%0.4d of %0.4d : %s '],inc,nnc,ncfile);
+         if OPT.pause>1
+         pausedisp
+         end
+          
          urlwrite(path2os([base_url,filesep,ncfile],'h'),...
                           [base_loc,filesep,ncfile]);
               
-         toc
-         pausedisp
+         tmp=toc;
+         fprintf([' (passed time is %f s) \n'],tmp);
               
       end
    end
