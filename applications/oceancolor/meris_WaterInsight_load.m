@@ -56,6 +56,7 @@ function D = meris_WaterInsight_load(fname)
    D.institution                 = 'WaterInsight';
    D.references                  = 'http://www.waterinsight.nl';
    D.email                       = 'info@waterinsight.nl';
+   D.version                     = [];
 
    D.timezone                    = '+00:00'; % GMT
    D.epsg                        = 4326;      % wgs84

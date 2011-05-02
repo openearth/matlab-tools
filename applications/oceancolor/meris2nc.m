@@ -135,12 +135,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Name         = 'crs';
       nc(ifld).Nctype       = nc_int;
       nc(ifld).Dimension    = {}; % no dimension, dummy variable
-      nc(ifld).Attribute    = nc_cf_grid_mapping(D.epsg);
-     %nc(ifld).Attribute(1) = struct('Name', 'grid_mapping_name'          ,'Value', 'latitude_longitude');
-     %nc(ifld).Attribute(2) = struct('Name', 'longitude_of_prime_meridian','Value', D.longitude_of_prime_meridian);
-     %nc(ifld).Attribute(3) = struct('Name', 'semi_major_axis'            ,'Value', D.semi_major_axis            );
-     %nc(ifld).Attribute(4) = struct('Name', 'inverse_flattening'         ,'Value', D.inverse_flattening         );
-     %nc(ifld).Attribute(5) = struct('Name', 'comment'                    ,'Value', 'Value is EPSG code');
+      nc(ifld).Attribute    = nc_cf_grid_mapping(D.epsg); % will also add KNMI ADAGUC proj4_params
 
    %% Longitude
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
@@ -202,7 +197,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'Chla';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'chlorophyll-a');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'mg m-3'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_chlorophyll_in_sea_water'); % standard name
@@ -213,7 +208,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'Chla_std_err';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'chlorophyll-a standard error');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'mg m-3'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_chlorophyll_in_sea_water'); % quasi standard name
@@ -226,7 +221,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'TSM';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'suspended particulate matter');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); 
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_suspended_matter_in_sea_water'); % standard name
@@ -237,7 +232,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'TSM_std_err';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'suspended particulate matter standard error');% check: ASSUMED, NOT IN MAT FILES: standard error? 
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); 
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
@@ -250,7 +245,7 @@ function meris2nc(outputfile,D,varargin);
               ifld = ifld + 1;
       nc(ifld).Name         = 'CDOM';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'colored dissolved organic matter');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'attenuation_of_radiative_flux_due_to_dissolved_organic_matter_in_sea_water'); % quasi standard name
@@ -261,7 +256,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'CDOM_std_err';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'colored dissolved organic matter standard error');% check: ASSUMED, NOT IN MAT FILES: standard error? 
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_attenuation_of_radiative_flux_due_to_dissolved_organic_matter_in_sea_water'); % quasi standard name
@@ -274,7 +269,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'Kd';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','band','time'};
+      nc(ifld).Dimension    = {'band','time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'spectral extinction coefficient');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % units empirically confirmed
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'volume_attenuation_coefficient_of_downwelling_radiative_flux_in_sea_water_per_radiation_wavelength'); % standard name
@@ -283,7 +278,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'L2_flags';
       nc(ifld).Nctype       = 'double';                       % !!!!
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'MERIS Level 2 flags');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '24 bit bytestring'); 
       nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
@@ -306,7 +301,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'chisq';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Hydropt Chi^2, sum((observed - predicted differential reflectance spectrum)^2/instrument_error^2)');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'none'); 
       nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
@@ -314,7 +309,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'P';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', '-10log(cumulative probability of Chi^2)');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'none'); 
       nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
@@ -323,7 +318,7 @@ function meris2nc(outputfile,D,varargin);
         ifld = ifld + 1;
       nc(ifld).Name         = 'SD';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Secchi Depth from Kd');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm'); 
       nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');

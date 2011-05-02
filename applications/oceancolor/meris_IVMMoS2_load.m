@@ -66,21 +66,21 @@ function D = meris_IVMMoS2_load(fname)
 
 %% Load data
 
-   load([filepathstr(D.filename),filesep,D.basename,'_deltares.mat']);
+   load(fullfile(filepathstr(D.filename),[D.basename,'.mat']));
    D = mergestructs(D,d);
    clear 'd';
 
 %% Processing meta info
 
-   D.metaData.T          = [0 1 1 1]);
-   D.metaData.Ci	 = [1 5 5 0.3000]);
-   D.metaData.b		 = [1 2 3 4 5 6 7 9]);
-   D.metaData.Fdiff	 = 0.4000);
-   D.metaData.method	 = 1);
-   D.metaData.errormodel = 0);
-   D.metaData.maxIter	 = 100);
-   D.metaData.SIOP	 = 'NEWSIOP2006_5_ASnHGnPCD113yBIy'); % ME NEWSIOP2006_5_ASnHGnPCD113yBIy
-   D.metaData.fName	 = 'C:\Bio-Opti\AAN\LUT16.dat');
+   D.metaData.T          = [0 1 1 1];
+   D.metaData.Ci         = [1 5 5 0.3000];
+   D.metaData.b	         = [1 2 3 4 5 6 7 9];
+   D.metaData.Fdiff      = 0.4000;
+   D.metaData.method     = 1;
+   D.metaData.errormodel = 0;
+   D.metaData.maxIter    = 100;
+   D.metaData.SIOP       = 'NEWSIOP2006_5_ASnHGnPCD113yBIy'; % ME NEWSIOP2006_5_ASnHGnPCD113yBIy
+   D.metaData.fName      = 'C:\Bio-Opti\AAN\LUT16.dat';
    
 %% Append meta-info
 %  http://www.mumm.ac.be/OceanColour/Sensors/meris.php
