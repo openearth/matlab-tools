@@ -92,7 +92,7 @@ function varargout = csv2struct(fname,varargin)
    
       if OPT.units
       rec      = fgetl_no_comment_line(fid,OPT.CommentStyle);
-      units    = textscan(rec,'%s','Delimiter',',','CommentStyle',OPT.CommentStyle);
+      units    = textscan(rec,'%s','Delimiter',OPT.delimiter,'CommentStyle',OPT.CommentStyle);
       UNITS    = cellfun(@(x) x([2:end-1]),units{1},'UniformOutput',0);
       else
       UNITS    = [];
@@ -100,7 +100,7 @@ function varargout = csv2struct(fname,varargin)
    
    %% load
    
-      RAW = textscan(fid,fmt,'Delimiter',',');
+      RAW = textscan(fid,fmt,'Delimiter',OPT.delimiter);
       fclose(fid);
       
       for icol=1:length(RAW)

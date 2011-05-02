@@ -58,24 +58,22 @@ function xcen = corner2center1(xcor);
 dimensions_of_xcen = fliplr(sort(size(xcor))); % 1st element is biggest
 
 %% 1D
-%% ------------------------
+
 if dimensions_of_xcen(2)==1
    
    %% Initialize with nan
-   %% ------------------------
+
 
      %xcen = nan(1:length(xcor)-1);% not in R6
-      xcen = nan.*zeros(length(xcor)-1);
+      xcen = nan.*zeros(length(xcor)-1,1);
 
    %% Give value to those corner points that have 
-   %% 4 active center points around
-   %% and do not change them with 'internal extrapolations
-   %% ------------------------
+   %  4 active center points around
+   %  and do not change them with 'internal extrapolations
 
       xcen = (xcor(1:end-1) + xcor(2:end))./2;
      
 %% 2D or more
-%% ------------------------
 
 else
 

@@ -1,5 +1,5 @@
 function varargout = struct2xls(fname,S,varargin)
-%Beta version of STRUCT2XLS   Save 1D data + fieldnames from matlab struct into xls file 
+%STRUCT2XLS   Save 1D data + fieldnames from matlab struct into xls file 
 %
 % STRUCT2XLS(filename,struct) converts a matlab struct 
 % with 1D numerical fields !! to an excel file. Non-numeric 
