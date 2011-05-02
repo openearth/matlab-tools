@@ -199,7 +199,6 @@ if ~isempty(OPT.read) | isempty(L)
       % </skos:Concept>
       % </rdf:RDF> 
       
-      
          for i=1:length(L2.Concept)
           L2.Concept(i).about       = L2.Concept(i).ATTRIBUTE.about;
 

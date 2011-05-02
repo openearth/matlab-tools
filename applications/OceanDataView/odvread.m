@@ -336,7 +336,7 @@ function varargout = odv_read(fullfilename,varargin)
             end
             
             
-            for idat=4:length(D.data); % skip first 4 columns, they are chars anyway [Cruise	Station	Type	yyyy-mm-ddThh:mm:ss.sss]
+            for idat=[5 6    8 9:length(D.data)]; % skip first columns [1:4 7], they are chars anyway [Cruise	Station	Type	yyyy-mm-ddThh:mm:ss.sss ...LOCAL_CDI_ID]
                
                % make a double array, and make sure intermediate missing empty values are nan
                % str2num makes '' empty, so cell2mat beccomes too short, whereas

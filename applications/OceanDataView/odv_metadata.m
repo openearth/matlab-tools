@@ -73,6 +73,16 @@ else
    tmp  = dir([directory,'*.txt']);
    name = cellstr(char({tmp.name}));
    
+   %% pre allocate to have correct overall size, also if you removed some files
+            L.Versions = cell(size(L.LOCAL_CDI_ID));
+    L.Download_datenum = cell(size(L.LOCAL_CDI_ID));
+                L.name = cell(size(L.LOCAL_CDI_ID));
+                L.date = cell(size(L.LOCAL_CDI_ID));
+               L.bytes = cell(size(L.LOCAL_CDI_ID));
+               L.isdir = cell(size(L.LOCAL_CDI_ID));
+             L.datenum = cell(size(L.LOCAL_CDI_ID));
+              L.fnames = cell(size(L.LOCAL_CDI_ID));
+   
    for i=1:length(L.LOCAL_CDI_ID)
       n   = length(L.LOCAL_CDI_ID{i});
       ind = strmatch(L.LOCAL_CDI_ID{i},name); % search this way around, not the other way around
@@ -86,34 +96,46 @@ else
       % so therefore here's some code to try to clean up this mess by selecting
       % the most recent file associated with one LOCAL_CDI_ID.
       
-      L.fnames{i}   = name{ind};
-      
-      L.Versions{i} = {};
-      for j=1:length(ind)
-         if strcmpi(name{ind(j)}(n+1),'_'); % do not allows  blabla4x_ when you search only blabla4_
-            L.Versions{i}{end+1} = name{ind(j)}(n+2:end-4); % skip traling _ as it separates LOCAL_CDI_ID from version and skip leading .txt 
-         end
-      end
-      L.Download_datenum{i} = datenum(L.Versions{i},'yyyymmdd_HHMMSS');
-   
-      [~,jj]=max(L.Download_datenum{1});
-      
-      L.name{i}     = [name{ind(jj)}];
-      
-      tmp2 = dir([directory,filesep,L.name{i}]);
+      if ~isempty(ind) % if you removed some odv files
 
-      L.date{i}     = tmp2.date;
-      L.bytes{i}    = tmp2.bytes;
-      L.isdir{i}    = tmp2.isdir;
-      L.datenum{i}  = tmp2.datenum;
+         L.fnames{i}   = name{ind};
+         
+         L.Versions{i} = {};
+         for j=1:length(ind)
+            if strcmpi(name{ind(j)}(n+1),'_'); % do not allows  blabla4x_ when you search only blabla4_
+               L.Versions{i}{end+1} = name{ind(j)}(n+2:end-4); % skip traling _ as it separates LOCAL_CDI_ID from version and skip leading .txt 
+            end
+         end
+         L.Download_datenum{i} = datenum(L.Versions{i},'yyyymmdd_HHMMSS');
+         
+         [~,jj]=max(L.Download_datenum{i});
+         
+         L.name{i}     = [name{ind(jj)}];
+         
+         tmp2 = dir([directory,filesep,L.name{i}]);
+         
+         L.date{i}     = tmp2.date;
+         L.bytes{i}    = tmp2.bytes;
+         L.isdir{i}    = tmp2.isdir;
+         L.datenum{i}  = tmp2.datenum;
+      end
    
    end
 end
 
-L.fullfile  = addrowcol(L.name,0,-1,fliplr(directory));
+L.fullfile  = cellfun(@(x) helperfun(x,directory),L.name,'UniformOutput',0);
 
-% for some stupid reason the LOCAL_CDI_ID is not resolvable, only the
-% CDI_record_id is, which is not in the old versions
+function y=helperfun(x,pre)
+
+if isempty(x)
+    y='';
+else
+   y=[pre,x];
+end
+
+% due to some very strange decision the LOCAL_CDI_ID is not resolvable, only the
+% CDI_record_id is, which is not supplied in the old versions of RSM
+% deliveries.
 % L.xml = ['http://www.nodc.nl/v_cdi_v2/print_xml.aspx?n_code=',L.CDI_record_id];
 
 %%
