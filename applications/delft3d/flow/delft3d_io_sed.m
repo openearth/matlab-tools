@@ -10,6 +10,8 @@ function varargout = delft3d_io_sed(fname)
 %
 % optionally loads units and meta-info into structs U and M.
 %
+% Also works for *.mor files that have the same *.ini structure.
+%
 %See also: delft3d, inivalue
 
 %   --------------------------------------------------------------------
