@@ -98,7 +98,7 @@ function varargout = nc_cf_time(ncfile,varargin)
       name  = {};
       nt    = 0;
       for idim=1:length(fileinfo.Dataset)
-         if     strcmpi(fileinfo.Dataset(idim).Name     ,'time') & ...
+         if     strcmpi(fileinfo.Dataset(idim).Name     ,'time') && ...
             any(strcmpi(fileinfo.Dataset(idim).Dimension,'time'));
          nt        = nt+1;
          index(nt) =                   idim;
@@ -115,7 +115,7 @@ function varargout = nc_cf_time(ncfile,varargin)
    else
          if ischar(varargin{1})
             varname  = varargin{1};
-            varargin = {varargin{2:end}};
+            varargin = varargin(2:end);
          end
          M.datenum.units   = nc_attget(fileinfo.Filename,varname,'units');
          D.datenum         = nc_varget(fileinfo.Filename,varname,varargin{:});
@@ -126,8 +126,8 @@ function varargout = nc_cf_time(ncfile,varargin)
 %% output
    
    if nargout<3
-      if     length(index)==0
-         warning('no time vectors present.')
+      if     isempty(index)
+         warning('no time vectors present.') %#ok<WNTAG>
          varargout = {[]};
       elseif length(index)==1
          if     nargout==0 || nargout==1
@@ -138,7 +138,7 @@ function varargout = nc_cf_time(ncfile,varargin)
             error('to much output parameters')
          end
       else
-         warning('multiple time vectors present, please specify furter.')
+         warning('multiple time vectors present, please specify furter.') %#ok<WNTAG>
          varargout = {D};
       end
    end
