@@ -4,7 +4,7 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 %   h = surf(lon,lat,z)
 %   KMLfig2png(h,lat,lon,z,<keyword,value>) 
 %
-% make a surf or pcolor in lon/lat/z, and then pass it to KMLfig2png
+% make a surf or pcolor in lon/lat/z, and then pass it to KMLfigure_tiler
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -19,8 +19,12 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 % basePath  absolute path where to write kml files (will not appear inside kml, those contain only fileName)
 % baseUrl   absolute url where kml will appear. (A webkml needs absolute url, albeit only needed in the mother KML, local files can have relative paths.)
 %
+% Notes:    - See example in https://repos.deltares.nl/repos/OpenEarthTools/test/
+%           - Please close all other figures before calling this function
+%           - Using 'bgcolor',[255 0 255] helped me solve white NaN areas in GE
+%           - To increase number of zoom levels increase 'lowestLevel' (to e.g. 14) 
+%
 % See also: GOOGLEPLOT, PCOLOR, KMLFIG2PNG_ALPHA
-
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
