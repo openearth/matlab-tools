@@ -125,9 +125,9 @@ function varargout = tickmap(varargin)
    if ischar(OPT.units)
       units        = OPT.units;
       OPT          = rmfield(OPT,'units');
-      OPT.units{1} = units;
-      OPT.units{2} = OPT.units{1};
-      OPT.units{3} = OPT.units{1};
+      OPT.units{1} = pad(units       ,' ',1);
+      OPT.units{2} = pad(OPT.units{1},' ',1);
+      OPT.units{3} = pad(OPT.units{1},' ',1);
    end
 
    spaces  = repmat(' ',size(OPT.units{1}));

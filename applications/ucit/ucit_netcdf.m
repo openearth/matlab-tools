@@ -7,7 +7,11 @@ function varargout = ucit_netcdf(varargin)
 % netCDF files at, amongst others, the OPeNDAP server of Deltares:
 % <a href="http://opendap.deltares.nl/">opendap.deltares.nl</a>
 %
-%See also: 
+% For working faster with local copies (caches) of netCDF files,
+% please configure new sets in \ucit\gui\settings\UCIT_getDatatypes.m
+% and download the local cache with OPENDAP_GET_CACHE
+%
+%See also: snctools, ddb, opendap_get_cache
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares

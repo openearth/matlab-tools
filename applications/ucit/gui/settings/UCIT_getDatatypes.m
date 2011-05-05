@@ -73,7 +73,7 @@ function [datatypes] = UCIT_getDatatypes;
    datatypes.transect.datatype{i} =  'Jarkus Data'; % defines functionality
    
    %% Jarkus (local)
-if 0
+if 0 % set this to 1 to activate the local cache, and download it with OPENDAP_GET_CACHE
    i = i + 1;
    datatypes.transect.names  {i}  =  'Jarkus Data (local)';
    datatypes.transect.urls   {i}  =  '';
@@ -173,13 +173,13 @@ end
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 
    %% Vaklodingen (local)
-if 0
+if 0 % set this to 1 to activate the local cache, and download it with OPENDAP_GET_CACHE
    i = i + 1;
    datatypes.grid.names{i}        =  'Vaklodingen 20m (local)';
    datatypes.grid.urls {i}        =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
    datatypes.grid.catalog{i}      =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
    datatypes.grid.ldbs{i}         =  'f:\opendap\thredds\deltares\landboundaries\holland_fillable.nc';
-   datatypes.grid.axes{i}         =  1E5*[0.9783    1.2039    5.4272    5.6993];
+   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 end   
