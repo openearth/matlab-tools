@@ -73,13 +73,25 @@ end
 dirs  = find( [D.isdir]);
 files = find(~[D.isdir]);
 for ii = files
-    delete([D(ii).pathname D(ii).name]);
+    try
+        delete([D(ii).pathname D(ii).name]);
+    catch me
+        disp(['could not remove file: ' D(ii).pathname D(ii).name]);
+        disp('Reason:');
+        disp(me);
+    end
 end
 
 [~,order] = sort(cellfun(@length,{D(dirs).pathname}),'descend');
 dirs      = dirs(order);
 
 for ii = dirs
-    rmdir([D(ii).pathname D(ii).name]);
+    try
+        rmdir([D(ii).pathname D(ii).name]);
+    catch me
+        disp(['could not remove directory: ' D(ii).pathname D(ii).name]);
+        disp('Reason:');
+        disp(me);
+    end
 end
 
