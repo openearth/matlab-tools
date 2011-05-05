@@ -10,7 +10,7 @@ function nc_addrecs(ncfile,new_data)
 %   See also nc_addnewrecs, nc_cat.
 
 ncinfo = nc_info(ncfile);
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = snc_getpref('SNCTOOLS','PRESERVE_FVD',false);
 
 % Check that we were given good inputs.
 if ~isstruct ( new_data )

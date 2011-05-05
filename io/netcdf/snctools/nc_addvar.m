@@ -64,12 +64,12 @@ varstruct = validate_varstruct ( varstruct );
 
 backend = snc_write_backend(ncfile);
 switch ( backend )
-	case 'mexnc'
-		nc_addvar_mexnc(ncfile,varstruct);
-	case 'tmw_hdf4'
-		nc_addvar_hdf4(ncfile,varstruct);
-	otherwise
-		nc_addvar_tmw(ncfile,varstruct);
+     case 'mexnc'
+          nc_addvar_mexnc(ncfile,varstruct);
+     case 'tmw_hdf4'
+          nc_addvar_hdf4(ncfile,varstruct);
+     otherwise
+          nc_addvar_tmw(ncfile,varstruct);
 end
 
 % Now just use nc_attput to put in the attributes
@@ -107,20 +107,20 @@ dim_names = varstruct.Dimension;
 
 % have to reverse the order of the dimensions if we want to preserve the
 % fastest varying dimension and keep it consistent.
-if getpref('SNCTOOLS','PRESERVE_FVD',false)
-	dim_names = fliplr(dim_names);
+if snc_getpref('SNCTOOLS','PRESERVE_FVD',false)
+     dim_names = fliplr(dim_names);
 end
 
 for j = 1:num_dims
-	
-	idx = hdfsd('nametoindex',sd_id,dim_names{j});
+     
+     idx = hdfsd('nametoindex',sd_id,dim_names{j});
     if idx < 0
         hdfsd('end',sd_id);
         error('SNCTOOLS:addVar:hdf4:nametoindexFailed', ...
             'NAMETOINDEX failed on %s, \"%s\".\n', dim_names{j}, hfile);
     end
 
-	dim_sds_id = hdfsd('select',sd_id,idx);
+     dim_sds_id = hdfsd('select',sd_id,idx);
     if dim_sds_id < 0
         hdfsd('end',sd_id);
         error('SNCTOOLS:addVar:hdf4:selectFailed', ...
@@ -128,7 +128,7 @@ for j = 1:num_dims
     end
 
     dimids(j) = j-1;
-	[name,rank,dim_sizes(j),dtype,nattrs,status] = hdfsd('getinfo',dim_sds_id); %#ok<ASGLU>
+     [name,rank,dim_sizes(j),dtype,nattrs,status] = hdfsd('getinfo',dim_sds_id); %#ok<ASGLU>
     if status < 0
         hdfsd('endaccess',dim_sds_id);
         hdfsd('end',sd_id);
@@ -145,14 +145,14 @@ for j = 1:num_dims
 end
 
 switch(varstruct.Datatype)
-	case 'byte'
-		dtype = 'int8';
-	case 'short'
-		dtype = 'int16';
-	case 'int'
-		dtype = 'int32';
-	otherwise
-		dtype = varstruct.Datatype;
+     case 'byte'
+          dtype = 'int8';
+     case 'short'
+          dtype = 'int16';
+     case 'int'
+          dtype = 'int32';
+     otherwise
+          dtype = varstruct.Datatype;
 end
 sds_id = hdfsd('create',sd_id,varstruct.Name,dtype,num_dims,dim_sizes);
 if sds_id < 0
@@ -219,8 +219,8 @@ end
 
 % If preserving the fastest varying dimension in mexnc, we have to 
 % reverse their order.
-if getpref('SNCTOOLS','PRESERVE_FVD',false)
-	dimids = flipud(dimids);
+if snc_getpref('SNCTOOLS','PRESERVE_FVD',false)
+     dimids = flipud(dimids);
 end
 
 status = mexnc ( 'redef', ncid );
@@ -249,26 +249,26 @@ end
 
 if ~isempty(varstruct.Chunking)
 
-    if getpref('SNCTOOLS','PRESERVE_FVD',false)
+    if snc_getpref('SNCTOOLS','PRESERVE_FVD',false)
         chunking = fliplr(varstruct.Chunking);
     else
         chunking = varstruct.Chunking;
     end
     
-	if ( numel(chunking) ~= num_dims) 
-    	mexnc ( 'endef', ncid );
-	    mexnc ( 'close', ncid );
-	    error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:defVarChunking', ...
-		   'Chunking size does not jive with number of dimensions.');
-	end
+     if ( numel(chunking) ~= num_dims) 
+     mexnc ( 'endef', ncid );
+         mexnc ( 'close', ncid );
+         error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:defVarChunking', ...
+             'Chunking size does not jive with number of dimensions.');
+     end
 
-	status = mexnc('DEF_VAR_CHUNKING',ncid,varid,'chunked',chunking);
-	if ( status ~= 0 )
-	    ncerr = mexnc ( 'strerror', status );
-		mexnc ( 'endef', ncid );
-	    mexnc ( 'close', ncid );
-		error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:DEF_VAR_CHUNKING', ncerr );
-	end
+     status = mexnc('DEF_VAR_CHUNKING',ncid,varid,'chunked',chunking);
+     if ( status ~= 0 )
+         ncerr = mexnc ( 'strerror', status );
+          mexnc ( 'endef', ncid );
+         mexnc ( 'close', ncid );
+          error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:DEF_VAR_CHUNKING', ncerr );
+     end
 end
 
 if (varstruct.Shuffle || varstruct.Deflate)
@@ -276,9 +276,9 @@ if (varstruct.Shuffle || varstruct.Deflate)
     status = mexnc('DEF_VAR_DEFLATE',ncid,varid, varstruct.Shuffle,varstruct.Deflate,varstruct.Deflate);
     if ( status ~= 0 )
         ncerr = mexnc ( 'strerror', status );
-    	mexnc ( 'endef', ncid );
+     mexnc ( 'endef', ncid );
         mexnc ( 'close', ncid );
-    	error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:DEF_VAR_DEFLATE', ncerr );
+     error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:DEF_VAR_DEFLATE', ncerr );
     end
 end
 
@@ -307,7 +307,7 @@ function varstruct = validate_varstruct ( varstruct )
 % Must at least have a name.
 if ~isfield ( varstruct, 'Name' )
     error ( 'SNCTOOLS:NC_ADDVAR:badInput', ...
-	        'structure argument must have at least the ''Name'' field.' );
+             'structure argument must have at least the ''Name'' field.' );
 end
 
 % Check that required fields are there.

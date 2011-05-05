@@ -88,7 +88,7 @@ varnames = fieldnames ( input_buffer );
 for j = 1:numel(varnames)
     data = input_buffer.(varnames{j});
 
-    if getpref('SNCTOOLS','PRESERVE_FVD',false) 
+    if snc_getpref('SNCTOOLS','PRESERVE_FVD',false) 
         %&& (ndims(data) > 1) && (size(data,ndims(data)) > 1)
         if numel(vsize.(varnames{j})) == 1
             % netCDF variable is 1D
@@ -162,7 +162,7 @@ if length(input_buffer.(record_variable)) == 1
         if (numel(infile_vsize) > 2) && (ndims(input_buffer.(varnames{j})) ~= numel(infile_vsize))
             %
             % Ok we have a mismatch.
-            if getpref('SNCTOOLS','PRESERVE_FVD',false)
+            if snc_getpref('SNCTOOLS','PRESERVE_FVD',false)
                 rsz = [infile_vsize(1:end-1) numel(input_buffer.(record_variable))]; 
             else
                 rsz = [numel(input_buffer.(record_variable)) infile_vsize(2:end) ]; 

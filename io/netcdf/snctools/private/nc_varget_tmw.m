@@ -49,7 +49,7 @@ the_var_size = determine_varsize_tmw ( ncid, dimids, nvdims );
 
 % R2008b expects to preserve the fastest varying dimension, so if the
 % user didn't want that, we have to reverse the indices.
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+    preserve_fvd = snc_getpref('SNCTOOLS','PRESERVE_FVD',false);
 if ~preserve_fvd
     start = fliplr(start);
     count = fliplr(count);
@@ -194,11 +194,11 @@ switch ( var_type )
     case { nc_double, nc_float, nc_int, nc_short, nc_byte }
         fill_value = netcdf.getAtt(ncid,varid,'_FillValue','double');
         values(values==fill_value) = NaN;
-
+        
     otherwise
         error ( 'SNCTOOLS:nc_varget:unhandledFillValueType', ...
             'Unhandled fill value datatype %d', var_type );
-
+        
 end
 
 return
@@ -221,10 +221,10 @@ switch ( var_type )
     case { nc_double, nc_float, nc_int, nc_short, nc_byte }
         fill_value = netcdf.getAtt(ncid,varid,'missing_value','double');
         values(values==fill_value) = NaN;
-
+        
     otherwise
         error('SNCTOOLS:nc_varget:tmw:unhandledMissingValueDatatype', ...
-              'Unhandled datatype %d.', var_type );
+            'Unhandled datatype %d.', var_type );
 end
 
 
@@ -301,7 +301,7 @@ else
     end
 end
 
-if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
+if ~snc_getpref('SNCTOOLS','PRESERVE_FVD',false);
     the_var_size = fliplr(the_var_size);
 end
 

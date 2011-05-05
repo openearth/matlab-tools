@@ -27,8 +27,8 @@ else
    retrieval_method = '';
 end
 
-use_java  = getpref('SNCTOOLS','USE_JAVA' ,false);
-use_mexnc = getpref('SNCTOOLS','USE_MEXNC',false);
+use_java  = snc_getpref('SNCTOOLS','USE_JAVA' ,false);
+use_mexnc = snc_getpref('SNCTOOLS','USE_MEXNC',false);
 
 % Check for this early.
 if isa(ncfile,'ucar.nc2.NetcdfFile') && use_java

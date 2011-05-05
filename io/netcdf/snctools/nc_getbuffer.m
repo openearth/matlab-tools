@@ -92,7 +92,7 @@ for j = 1:num_datasets
         varstart = zeros(size(metadata.Dataset(j).Size));
         varcount = metadata.Dataset(j).Size;
 
-        if getpref('SNCTOOLS','PRESERVE_FVD',false)
+        if snc_getpref('SNCTOOLS','PRESERVE_FVD',false)
             varstart(end) = start;
             varcount(end) = count;
         else
