@@ -1,7 +1,7 @@
 function varargout = opendap2obs(varargin)
 %OPENDAP2OBS   get list of observation points from netCDF time series collection
 %
-%    delft3dfm.opendap2obs(<keyword,value>)
+%    dflowfm.opendap2obs(<keyword,value>)
 %
 % Example: 
 %
@@ -9,7 +9,7 @@ function varargout = opendap2obs(varargin)
 %                        'epsg', OPT.epsg,...
 %                        'file',['F:\delft3dfm\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(OPT.epsg),'.obs'])
 %
-%See also: delft3d_opendap2obs, delft3dfm.analyseHis, delft3d
+%See also: delft3d_opendap2obs, dflowfm.analyseHis, delft3d
 
 %% settings
 
@@ -45,8 +45,8 @@ function varargout = opendap2obs(varargin)
   
   [D.x,D.y] = convertCoordinates(D.lon,D.lat,'CS1.code',4326,'CS2.code',OPT.epsg)
 
-%% TO DO: exclude points outside delft3dfm extent,
-%  not really needed as delft3dfm already uses only points within set of associated gridcell
+%% TO DO: exclude points outside dflowfm extent,
+%  not really needed as dflowfm already uses only points within set of associated gridcell
 
 %% save file
 

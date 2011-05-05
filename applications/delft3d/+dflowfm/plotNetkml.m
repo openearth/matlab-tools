@@ -1,12 +1,12 @@
 function varargout = plotNet(varargin)
-%plotNetkml  Plot an delft3dfmtured grid in Google Earth
+%plotNetkml  Plot a D-Flow FM unstructured net in Google Earth
 %
-%     G  = delft3dfm.readNetkml(ncfile) 
-%    <h> = delft3dfm.plotNetkml(G     ,<keyword,value>) 
+%     G  = dflowfm.readNetkml(ncfile) 
+%    <h> = dflowfm.plotNetkml(G     ,<keyword,value>) 
 %          % or 
-%    <h> = delft3dfm.plotNetkml(ncfile,<keyword,value>) 
+%    <h> = dflowfm.plotNetkml(ncfile,<keyword,value>) 
 %
-%   plots an delft3dfm unstructured net (centers, corners, contours),
+%   plots a D-Flow FM unstructured net (centers, corners, contours),
 %   as kml file.
 %
 %   The following optional <keyword,value> pairs have been implemented:

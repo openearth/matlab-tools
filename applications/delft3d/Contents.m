@@ -59,7 +59,7 @@
 %   tide      - tools related to Delft3D-TIDE
 %   waq       - tools related to Delft3D-WAQ
 %   flow      - tools related to Delft3D-FLOW
-%   delft3dfm - tools related to Delft3D-FM (Flexible Mesh); Flow for unstructured grid
+%   dflowfm   - tools related to D-Flow FM (Flexible Mesh); Flow for unstructured grid
 %
 %See also: 
 

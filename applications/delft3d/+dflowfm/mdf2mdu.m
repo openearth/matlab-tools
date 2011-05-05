@@ -1,22 +1,22 @@
 function varargout = mdf2mdu(varargin)
-%MDF2MDU   convert Delft3D-flow model input to delft3dfm model input
+%MDF2MDU   convert Delft3D-flow model input to D-Flow FM model input
 %
-%   delft3dfm.mdf2mdu(<keyword,value>)
+%   dflowfm.mdf2mdu(<keyword,value>)
 %
 % Example:
 %
 %  OPT.mdf      = 'dcsm98a.mdf';
 %  OPT.pli_test = 'dcsm98_tst.pli';
-%  OPT.bnd      = 'dcsm98_delft3dfm.bnd'; % adapted *.bnd that overrides *.bnd without pli information in *.mdf
+%  OPT.bnd      = 'dcsm98_dflowfm.bnd'; % adapted *.bnd that overrides *.bnd without pli information in *.mdf
 %                                       % 2 extra columns: 
 %                                       % 1) name of *.pli, 
 %                                       % 2) sequence number within segment: make sure ends meets
 %  
-%  delft3dfm.mdf2mdu(OPT)
+%  dflowfm.mdf2mdu(OPT)
 %
-%See also: delft3dfm, delft3d
+%See also: dflowfm, delft3d
 
-% TO DO: allow for both bca (astro) and bct (setup), FLOW can already handle that, delft3dfm not yet
+% TO DO: allow for both bca (astro) and bct (setup), FLOW can already handle that, dflowfm not yet
 % TO DO: rewrite grd as netCDF
 % TO DO: write mdu too
 
@@ -93,7 +93,7 @@ function varargout = mdf2mdu(varargin)
       nc_varput([filename(OPT.ncfile),'_filled.nc'],'NetNode_z',N.z);
    end
 
-%% save delft3dfm-pli
+%% save dflowfm-pli
 %  make lots of separate polygons and link all polygons
 
    if OPT.debug
@@ -229,7 +229,7 @@ for ipli = 1:length(pli.names)
 
 end % ipli
 
-%% save test delft3dfm *.ext
+%% save test dflowfm *.ext
 
 fid = fopen([OPT.ext],'w');
 

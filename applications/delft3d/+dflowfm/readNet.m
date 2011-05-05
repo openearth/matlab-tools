@@ -1,9 +1,9 @@
 function varargout = readNet(varargin)
-%readNet   Reads network data of delft3dfmtured net.
+%readNet   Reads network data of a D-Flow FM unstructured net.
 %
-%     G = delft3dfm.readNet(ncfile) 
+%     G = dflowfm.readNet(ncfile) 
 %
-%   reads the network  network (grid) data from an delft3dfmt netCDF file. 
+%   reads the network  network (grid) data from a D-Flow FM NetCDF file. 
 %    cor: node = corner data (incl. connectivity)
 %    cen: flow = circumcenter = center data (incl. connectivity)
 %   peri: perimeter  = contour data
@@ -13,7 +13,7 @@ function varargout = readNet(varargin)
 % meaning in the network differs. G.link contains the relation
 % between the cor and cen object.
 %
-% See also: delft3dfm, delft3d
+% See also: dflowfm, delft3d
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
@@ -107,7 +107,7 @@ function varargout = readNet(varargin)
    
    if OPT.peri2cell
    
-   [G.peri.x ,G.peri.y] = delft3dfm.peri2cell(G.peri.x ,G.peri.y);
+   [G.peri.x ,G.peri.y] = dflowfm.peri2cell(G.peri.x ,G.peri.y);
    
    end % OPT.peri2cell
    

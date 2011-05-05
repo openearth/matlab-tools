@@ -1,16 +1,16 @@
 function varargout = peri2cell(varargin)
 %peri2cell   turn perimeter matrix into cell
 %
-%     G = delft3dfm.readNet(ncfile,'peri2cell',0) 
+%     G = dflowfm.readNet(ncfile,'peri2cell',0) 
 %
-%     x    = delft3dfm.peri2cell(G.peri.x);
-%     y    = delft3dfm.peri2cell(G.peri.y);
-%    [x,y] = delft3dfm.peri2cell(G.peri.x,G.peri.y) 
+%     x    = dflowfm.peri2cell(G.peri.x);
+%     y    = dflowfm.peri2cell(G.peri.y);
+%    [x,y] = dflowfm.peri2cell(G.peri.x,G.peri.y) 
 %
 % This function makes a kind of ragged array from the 
 % nan-padded perimeter matrix.
 %
-% See also: delft3dfm, delft3d
+% See also: dflowfm, delft3d
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares

@@ -1,13 +1,13 @@
 function varargout = plotMap(varargin)
-%plotMap Plot an unstructured map.
+%plotMap Plot a D-Flow FM unstructured map.
 %
-%     G  = delft3dfm.readNet(ncfile) 
-%     D  = delft3dfm.readMap(ncfile,<it>) 
-%    <h> = delft3dfm.plotMap(G,D,<keyword,value>) 
+%     G  = dflowfm.readNet(ncfile) 
+%     D  = dflowfm.readMap(ncfile,<it>) 
+%    <h> = dflowfm.plotMap(G,D,<keyword,value>) 
 %          % or 
-%    <h> = delft3dfm.plotMap(ncfile,<it>,<keyword,value>);
+%    <h> = dflowfm.plotMap(ncfile,<it>,<keyword,value>);
 %
-%   plots a delft3dfm map, optionally the handles h are returned.
+%   plots a D-Flow FM unstructured map, optionally the handles h are returned.
 %   For plotting multiple timesteps it is most efficient
 %   to read the unstructured grid G once, and update D and plotMap.
 %   Note that you need to read the grid G from the map file (*_map.nc),
@@ -21,13 +21,13 @@ function varargout = plotMap(varargin)
 %   For user-defined paramter: simply add them to D before calling plotMapkml.
 %   Cells with plot() properties, e.g. {'EdgeColor','k'}
 %    * patch
-%   Defaults values can be requested with OPT = delft3dfm.plotNet().
+%   Defaults values can be requested with OPT = dflowfm.plotNet().
 %
 %   Note: every flow cell is plotted individually as a patch: slow.
 %
 %   Apply any plot lay-out before plotMap: much fatser.
 %
-%   See also delft3dfm, delft3d
+%   See also dflowfm, delft3d
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
@@ -76,7 +76,7 @@ function varargout = plotMap(varargin)
    else
       if ischar(varargin{1})
       ncfile   = varargin{1};
-      G        = delft3dfm.readNet(ncfile);
+      G        = dflowfm.readNet(ncfile);
       else
       G        = varargin{1};
       end
@@ -85,14 +85,14 @@ function varargout = plotMap(varargin)
       if ~odd(nargin)
         if isnumeric(varargin{2}) & ischar(varargin{1}) % only output file, not input file
           it      = varargin{2};
-          D       = delft3dfm.readMap(ncfile,it);
+          D       = dflowfm.readMap(ncfile,it);
         elseif isstruct(varargin{2})
           D       = varargin{2};
         else
           error('when timestep is supplied the first argument should be ''ncfile''.')
         end
       else
-        D       = delft3dfm.readMap(ncfile); % readMap gets last it
+        D       = dflowfm.readMap(ncfile); % readMap gets last it
         nextarg = 2;
       end
       
@@ -133,7 +133,7 @@ else
    peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
    
    if ~iscell(G.peri.x) % can also be done in readNet
-     [x,y] = delft3dfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
+     [x,y] = dflowfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
    else
       x = G.peri.x;
       y = G.peri.y;
