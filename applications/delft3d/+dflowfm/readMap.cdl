@@ -1,6 +1,6 @@
 // For discussion on this netCDF format please refer to:
 // http://public.deltares.nl/display/NETCDF/netCDF
-netCDF runid_map.nc {                                                     // (this column) name in Delft3D-FM Matlab toolbox
+netCDF runid_map.nc {                                                     // (this column) name in D-Flow FM Matlab toolbox
 
 dimensions:
 	nNetNode = 42984 ;                                                // cor.n

@@ -1,25 +1,25 @@
 function varargout = analyseHis(varargin)
-%delft3dfm.analyseHis   analyse waterlevel time series against OPeNDAP data in time and frequency domain
+%dflowfm.analyseHis   analyse waterlevel time series against OPeNDAP data in time and frequency domain
 %
-%    delft3dfm.analyseHis(<ncfile>,<keyword,value>)
+%    dflowfm.analyseHis(<ncfile>,<keyword,value>)
 %
 % * For Delft3D-flow the trih history file can be converted to netCDF
-%   with VS_TRIH2NC such that delft3dfm.analyseHis also works on it.
-% * For delft3dfm.analyseHis to be able to detect associated data
+%   with VS_TRIH2NC such that dflowfm.analyseHis also works on it.
+% * For dflowfm.analyseHis to be able to detect associated data
 %   automatically, the observation points names have to be 
-%   generated with delft3dfm.opendap2obs or delft3d_opendap2obs.
+%   generated with dflowfm.opendap2obs or delft3d_opendap2obs.
 %
-% Example: delft3dfm, using a local cache of netCDF files
+% Example: dflowfm, using a local cache of netCDF files
 %          You can create such a local cache with opendap_get_cache
 %
 %    ncbase = 'F:\opendap\thredds\rijkswaterstaat/waterbase/sea_surface_height'
 %    epsg   = 28992
 %
-%    delft3dfm.delft3d_opendap2obs(ncbase,...
+%    dflowfm.delft3d_opendap2obs(ncbase,...
 %                          'epsg', epsg,...
 %                          'file',['F:\delft3dfm\run01\rijkswaterstaat_waterbase_sea_surface_height_',num2str(epsg),'.obs'])
 %    % ~ run model ~
-%         delft3dfm.analyseHis('nc','F:\delft3dfm\run01\trih-s01.nc',...
+%         dflowfm.analyseHis('nc','F:\delft3dfm\run01\trih-s01.nc',...
 %                       'datelim',datenum(1998,[1 5],[1 28]),...
 %                        'ncbase',ncbase,...
 %                            'vc','F:\opendap\thredds\noaa/gshhs/gshhs_i.nc')
@@ -38,7 +38,7 @@ function varargout = analyseHis(varargin)
 %         vs_trih2nc('F:\delft3dfm\run01\trih-s01.dat',...
 %                          'epsg',epsg)
 %         for m=1:12
-%         delft3dfm.analyseHis('F:\delft3dfm\run01\trih-s01.nc,...
+%         dflowfm.analyseHis('F:\delft3dfm\run01\trih-s01.nc,...
 %                       'datelim',datenum(1998,[m m+1],1),...
 %                       'datestr','mmm-dd',...
 %                        'ncbase',ncbase,...
@@ -46,7 +46,7 @@ function varargout = analyseHis(varargin)
 %                        't_tide',0)
 %         end
 %
-%See also: delft3dfm, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE, delft3d, OPENDAP_GET_CACHE
+%See also: dflowfm, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE, delft3d, OPENDAP_GET_CACHE
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
