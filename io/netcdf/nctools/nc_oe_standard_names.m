@@ -67,20 +67,30 @@ function varargout = nc_oe_standard_names(varargin)
 % $Keywords: $
 
 %% settings
+
 % defaults
+fillValues.double =  typecast(uint8([0    0    0    0    0    0  158   71]),'DOUBLE');            
+fillValues.float  =  typecast(uint8([                    0    0  240  124]),'SINGLE');
+fillValues.int    =  typecast(uint8([                    1    0    0  128]),'INT32' );
+fillValues.short  =  typecast(uint8([                              1  128]),'INT16' );
+fillValues.byte   =  typecast(uint8(                                  129 ),'INT8'  );
+fillValues.char   =  char(0);
+
 OPT = struct(...
     'nc_library',       'snc', ...                           % snc or matlab 
     'ncid',             '', ...                              % nectdf id (only for matlab library)
     'outputfile',       {[]}, ...                            % name of the nc file. 
     'varname',          {{{'test1'};{'test2'}}}, ...         % variable name
-    'oe_standard_name', {{{'test1'};{'test2'}}}, ...         % open earth standard name
+    'oe_standard_name', {{{'test1'};{'test2'}}}, ...         % cf (climate forecasting) standard name
     'dimension',        {{{'test1'};{'test2'}}}, ...	     % dimension names					
     'dimid',            [], ...                              % dimension id's for use with matlab nc library only
     ...                                                      %   It is (a little) faster to indicate dimid's than dimension names
     'timezone',         '+01:00' , ...                       % timezone
     'deflate',          false , ...                          % only for netcdf4 files, internally deflates (compresses) variables in NC file
-    'additionalAtts',   {[]} ...                             % append these attributes to the default attributes. Must be in form
-    );                                                       %    {'name1','name2','name3';'value1','value2','value3'} 
+    'additionalAtts',   {[]}, ...                            % append these attributes to the default attributes. Must be in form
+    ...                                                      %    {'name1','name2','name3';'value1','value2','value3'}
+    'fillValues',       fillValues ...                       % fill values for different variable classes     
+    ); 
 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
@@ -163,7 +173,7 @@ for i = 1:size(OPT.oe_standard_name,1)
                 );
  
     end
-    
+
     % append additional attributes
     for jj = 1:size(OPT.additionalAtts,2)
         Variable.Attribute(end+1).Name  = OPT.additionalAtts{1,jj};
@@ -174,8 +184,8 @@ for i = 1:size(OPT.oe_standard_name,1)
     switch OPT.nc_library
         case 'snc'
             nc_addvar(OPT.outputfile, Variable);
-            varargout = {[]};       
- 	case 'matlab'
+            varargout = {[]};
+        case 'matlab'
             varid = netcdf_addvar(OPT.ncid, Variable );
             if OPT.deflate
                 netcdf.defVarDeflate(OPT.ncid,varid,false,true,2);

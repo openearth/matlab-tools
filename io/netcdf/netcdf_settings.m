@@ -71,10 +71,10 @@ function netcdf_settings(varargin)
 %  Note that OET may contain some (temporary) modifications with respect to 
 %  the official mexcdf (email changes to the mexcdf moderator John Evans.)
 
-      addpath( ncroot                        ); % do not add 'switch' dirs
-      addpath([ncroot,filesep,'snctools'    ]);
-      addpath([ncroot,filesep,'nctools'     ]);
-      addpath([ncroot,filesep,'mexnc'       ]); % snctools needs some mexnc stuff
+      addpath( ncroot                            ); % do not add 'switch' dirs
+      addpathfast([ncroot,filesep,'snctools'    ]);
+      addpathfast([ncroot,filesep,'nctools'     ]);
+      addpathfast([ncroot,filesep,'mexnc'       ]); % snctools needs some mexnc stuff
       
 %% Use recent java API for OPeNDAP functionality
 %  (NB RESTOREDEFAULTPATH does not restore such a java path)

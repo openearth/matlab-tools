@@ -76,15 +76,14 @@ function addpathfast(basepath,varargin)
 
       % do a dir commando that excludes all .svn and private directories, and does not include any files
       dirs    = dir2(basepath,'dir_excl','^\+|^@|^private$|^\.svn$','file_incl','');
-       
+      
       if ~isempty(dirs)
-      % concatenate the path and the directory names
-      dirs    = strcat({dirs.pathname}, {dirs.name}, filesep, ';')';
+          % concatenate the path and the directory names
+          dirs    = strcat({dirs.pathname}, {dirs.name}, filesep, ';')';
+          newpath = strcat(dirs{:});
+      else
+          newpath = [];
       end
-       
-      % also include the basepath
-      newpath = strcat(dirs{:});
-       
    end
 
 %% add newpath to path

@@ -1,5 +1,5 @@
     end
-    
+
     % append additional attributes
     for jj = 1:size(OPT.additionalAtts,2)
         Variable.Attribute(end+1).Name  = OPT.additionalAtts{1,jj};
@@ -10,8 +10,8 @@
     switch OPT.nc_library
         case 'snc'
             nc_addvar(OPT.outputfile, Variable);
-            varargout = {[]};       
- 	case 'matlab'
+            varargout = {[]};
+        case 'matlab'
             varid = netcdf_addvar(OPT.ncid, Variable );
             if OPT.deflate
                 netcdf.defVarDeflate(OPT.ncid,varid,false,true,2);
