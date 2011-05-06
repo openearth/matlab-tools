@@ -2,7 +2,7 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 % KMLFIG2PNGnew   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
-%   KMLfig2png(h,lat,lon,z,<keyword,value>) 
+%   KMLfig2png(h,lat,lon,z,<keyword,value>)
 %
 % make a surf or pcolor in lon/lat/z, and then pass it to KMLfigure_tiler
 %
@@ -15,14 +15,14 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 % For plots with    light effects set:  'scaleHeight',true ,...
 % For plots without light effects set:  'scaleHeight',false,...
 %
-% fileName  relative filename, incl relative subPath. 
+% fileName  relative filename, incl relative subPath.
 % basePath  absolute path where to write kml files (will not appear inside kml, those contain only fileName)
 % baseUrl   absolute url where kml will appear. (A webkml needs absolute url, albeit only needed in the mother KML, local files can have relative paths.)
 %
 % Notes:    - See example in https://repos.deltares.nl/repos/OpenEarthTools/test/
 %           - Please close all other figures before calling this function
 %           - Using 'bgcolor',[255 0 255] helped me solve white NaN areas in GE
-%           - To increase number of zoom levels increase 'lowestLevel' (to e.g. 14) 
+%           - To increase number of zoom levels increase 'lowestLevel' (to e.g. 14)
 %
 % See also: GOOGLEPLOT, PCOLOR, KMLFIG2PNG_ALPHA
 %   --------------------------------------------------------------------
@@ -77,9 +77,9 @@ OPT.minLod             =     []; % minimum level of detail to keep a tile in vie
 OPT.minLod0            =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
 OPT.maxLod             =     [];
 OPT.maxLod0            =     -1;
-OPT.dWE                =     []; % determines how much extra data to tiles to be able 
+OPT.dWE                =     []; % determines how much extra data to tiles to be able
 OPT.dNS                =     []; % to generate them as fraction of size of smallest tile
-OPT.drawOrder          =      1; 
+OPT.drawOrder          =      1;
 OPT.bgcolor            = [100 155 100];  % background color to be made transparent
 OPT.colorbar           =   true;
 OPT.CBcolorbarlocation =  {'W'}; %{'N','E','S','W'}; %{'N','NNE','ENE','E','ESE','SSE','S','SSW','WSW','W','WNW','NNW'};
@@ -117,8 +117,10 @@ end
 
 OPT.h    = h;  % handle to input surf object
 
+if ishandle(h)
 if strcmpi(get(get(h,'parent'),'climMode'),'auto')
    error([mfilename,' manual clim required for identical colormapping in tiles']);
+end
 end
 
 OPT = setproperty(OPT, varargin);
@@ -136,7 +138,7 @@ if OPT.makeKML
 end
 
 %% make sure you always see something in GE, even at really low lowestLevel
-if OPT.lowestLevel <= OPT.highestLevel 
+if OPT.lowestLevel <= OPT.highestLevel
    disp(['OPT.lowestLevel (',num2str(OPT.lowestLevel),') set to OPT.highestLevel (',num2str(OPT.highestLevel ),') + 1 = ',num2str(OPT.highestLevel+1)])
    OPT.lowestLevel = OPT.highestLevel + 1;
 end
@@ -147,13 +149,13 @@ OPT.highestLevel  = max(OPT.highestLevel,1);
 % determines how much extra data to pass on to tiles to avoid holes in the
 % plotted mesh at tile boundaries. Defaults to 20% on all sides
 if  isempty(OPT.dWE)
-    OPT.dWE           = 0.2*360/(2^OPT.lowestLevel);  
-end                                                  
-if isempty(OPT.dNS)
-    OPT.dNS           = 0.2*360/(2^OPT.lowestLevel); 
+    OPT.dWE           = 0.2*360/(2^OPT.lowestLevel);
 end
-    
-%% set maxLod and minLod defaults   
+if isempty(OPT.dNS)
+    OPT.dNS           = 0.2*360/(2^OPT.lowestLevel);
+end
+
+%% set maxLod and minLod defaults
 if isempty(OPT.minLod),                 OPT.minLod = round(  OPT.dim/1.5); end
 if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = round(2*OPT.dim/1.5); end % you see 1 layers always
 if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = round(4*OPT.dim/1.5); end % you see 2 layers, except when fully zoomed in
@@ -217,6 +219,7 @@ else
 end
 
 %% figure settings
+if ishandle(h)
 % Some settings for the figure to make sure it is printed correctly
 OPT.ha  = get(OPT.h ,'Parent');
 OPT.hf  = get(OPT.ha,'Parent');
@@ -226,7 +229,7 @@ set(OPT.ha,'Position',[0 0 1 1])
 set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
 [0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
 'color',OPT.bgcolor/255,'InvertHardcopy','off');
-
+end
 %% run scripts (These are the core functions)
 %  some more background info: http://www.realityprime.com/articles/how-google-earth-really-works
 
@@ -257,16 +260,16 @@ if OPT.makeKML
             OPT.baseUrl = [OPT.baseUrl '\'];
         end
     end
-    
+
     % relative for local files
     if isempty(OPT.baseUrl)
        href.kml = fullfile(             OPT.subPath, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
     else
        href.kml = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
     end
-    
+
     href.kml = path2os(href.kml,'h'); % always use HTTP slashes
-    
+
     output = sprintf([...
         '<NetworkLink>'...
         '<name>network-linked-tiled-pngs</name>'...
@@ -282,7 +285,7 @@ if OPT.makeKML
                'open',OPT.open,...
             'visible',OPT.visible,...
         'description',OPT.description);
-        
+
  %% LOGO
  %  add png to directory of tiles (split png and href in KMLcolorbar)
 
@@ -292,13 +295,13 @@ if OPT.makeKML
 
       % add to one level deeper
      file.logo = fullfile(OPT.basePath,OPT.Name, [filename(OPT.logo),'4GE.png']);
-     
+
      % relative for local files
      if isempty(OPT.baseUrl)
         href.logo = fullfile(             OPT.subPath, OPT.Name, filenameext(file.logo));
      else
         href.logo = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, filenameext(file.logo));
-     end     
+     end
 
      href.logo = path2os(href.logo,'h'); % always use HTTP slashes
 
@@ -323,9 +326,9 @@ if OPT.makeKML
        else
           href.CB = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, [OPT.Name]);
        end
-       
+       href.CB = path2os(href.CB,'h');
        href.CB = path2os(href.CB,'h'); % always use HTTP slashes
-
+       if ishandle(OPT.ha)
        [clrbarstring,pngNames] = KMLcolorbar('CBcLim',clim(OPT.ha),...
                               'CBfileName',file.CB,...
                                'CBkmlName','colorbar',...
@@ -335,14 +338,14 @@ if OPT.makeKML
                                'CBvisible',OPT.visible,...
                            'CBtemplateVer',OPT.CBtemplateVer,...
                            'CBtemplateHor',OPT.CBtemplateHor);
-                      
-        
+
         % refer to one level deeper,  KMLcolorbar chops directory in <href>
-        clrbarstring = strrep(clrbarstring,['<Icon><href>' filename(file.CB)],...
-                                           ['<Icon><href>' href.CB]);
-        output = [output clrbarstring];
+       clrbarstring = strrep(clrbarstring,['<Icon><href>' filename(file.CB)],...
+                                          ['<Icon><href>' href.CB]);
+       output = [output clrbarstring];
+       end
     end
-    
+
     if OPT.debug
     var2evalstr(href)
     var2evalstr(file)
@@ -352,7 +355,7 @@ if OPT.makeKML
 
     output = [output KML_footer];
     fprintf(OPT.fid,'%s',output);
-    
+
     % close KML
     fclose(OPT.fid);
     multiWaitbar('fig2png_write_kml'   ,1,'label','Writing KML'    ,'color',[0.9 0.4 0.1])
@@ -367,5 +370,5 @@ elseif nargout==2
    varargout = {OPT,pngNames};
 end
 
-%% EOF   
+%% EOF
 

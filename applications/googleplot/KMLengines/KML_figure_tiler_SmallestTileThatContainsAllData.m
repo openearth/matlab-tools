@@ -12,6 +12,11 @@ dataBounds.S = min(D.lat(:));
 dataBounds.W = min(D.lon(:));
 dataBounds.E = max(D.lon(:));
 
+if isnan(dataBounds.N) || isnan(dataBounds.S) || isnan(dataBounds.W) || isnan(dataBounds.E)
+    code = '0';
+    return
+end
+
 code   = '0';
 search = true;
 while search;
