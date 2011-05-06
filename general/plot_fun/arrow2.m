@@ -205,34 +205,34 @@ warnings = 0;
 
 %% Input
    if nargin==2
-      I.u     = varargin{1};
-      I.v     = varargin{2};
+      I.u     = squeeze(varargin{1});
+      I.v     = squeeze(varargin{2});
    elseif nargin==3
-      I.u     = varargin{1};
-      I.v     = varargin{2};
-      I.scale = varargin{3};
+      I.u     = squeeze(varargin{1});
+      I.v     = squeeze(varargin{2});
+      I.scale =         varargin{3};
    elseif nargin==4
       if     isstruct(varargin{4})
-         I.u     = varargin{1};
-         I.v     = varargin{2};
-         I.scale = varargin{3};
+         I.u     = squeeze(varargin{1});
+         I.v     = squeeze(varargin{2});
+         I.scale =         varargin{3};
          I = mergestructs(I,varargin{4});
       elseif ischar(varargin{4})
-         I.u     = varargin{1};
-         I.v     = varargin{2};
-         I.scale = varargin{3};
-         I.color = varargin{4};
+         I.u     = squeeze(varargin{1});
+         I.v     = squeeze(varargin{2});
+         I.scale =         varargin{3};
+         I.color =         varargin{4};
      else
-         I.x     = varargin{1};
-         I.y     = varargin{2};
-         I.u     = varargin{3};
-         I.v     = varargin{4};
+         I.x     = squeeze(varargin{1});
+         I.y     = squeeze(varargin{2});
+         I.u     = squeeze(varargin{3});
+         I.v     = squeeze(varargin{4});
      end
    elseif nargin==5
-      I.x     = varargin{1};
-      I.y     = varargin{2};
-      I.u     = varargin{3};
-      I.v     = varargin{4};
+      I.x     = squeeze(varargin{1});
+      I.y     = squeeze(varargin{2});
+      I.u     = squeeze(varargin{3});
+      I.v     = squeeze(varargin{4});
       if ischar(varargin{5})
         I.color = varargin{5};
      elseif isstruct(varargin{5})
@@ -241,10 +241,10 @@ warnings = 0;
         I.scale = varargin{5};
      end
    elseif nargin==6
-      I.x     = varargin{1};
-      I.y     = varargin{2};
-      I.u     = varargin{3};
-      I.v     = varargin{4};
+      I.x     = squeeze(varargin{1});
+      I.y     = squeeze(varargin{2});
+      I.u     = squeeze(varargin{3});
+      I.v     = squeeze(varargin{4});
       I.scale = varargin{5};
       if     isstruct(varargin{6})
           I = mergestructs(I,varargin{6});
