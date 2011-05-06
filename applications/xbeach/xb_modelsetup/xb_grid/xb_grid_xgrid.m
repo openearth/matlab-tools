@@ -115,11 +115,11 @@ if OPT.vardx == 0
 elseif OPT.vardx == 1
     
     % prepare
-    k       = disper(2*pi/OPT.Tm, -zin(1), OPT.g);
+    hin     = max(OPT.wl-zin,0.01);
+    k       = disper(2*pi/OPT.Tm, hin(1), OPT.g);
     Llong   = 4*2*pi/k;
     x       = xin;
-    hin     = max(OPT.wl-zin,0.01);
-    
+        
     % grid settings
     ii = 1;
     xgr(ii) = xstart;
