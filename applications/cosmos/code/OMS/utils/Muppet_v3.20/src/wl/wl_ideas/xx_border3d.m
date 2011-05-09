@@ -1,0 +1,13 @@
+function l=xx_Border3D(x,y,dx,dy,varargin),
+  HShift=-1;
+  VShift=-1;
+  DarkGray=[1 1 1]*128/255;
+  White=[1 1 1];
+  Black=[0 0 0];
+  LightGray=[1 1 1]*223/255;
+  MidGray=[1 1 1]*192/255;
+  l(5)=patch(HShift+[x+dx-1 x x x+dx-1],VShift+[y+dy-1 y+dy-1 y y],-[1 1 1 1],1,'facecolor',MidGray,'edgecolor','none',varargin{:});
+  l(1)=line(HShift+[x+dx-1 x x],VShift+[y+dy-1 y+dy-1 y],-0.5*[1 1 1],'color',White,varargin{:});
+  l(2)=line(HShift+[x+dx-2 x+1 x+1],VShift+[y+dy-2 y+dy-2 y+1],-0.5*[1 1 1],'color',LightGray,varargin{:});
+  l(3)=line(HShift+[x+1 x+dx-2 x+dx-2],VShift+[y+1 y+1 y+dy-2],-0.5*[1 1 1],'color',DarkGray,varargin{:});
+  l(4)=line(HShift+[x x+dx-1 x+dx-1],VShift+[y y y+dy-1],-0.5*[1 1 1],'color',Black,varargin{:});

@@ -1,0 +1,522 @@
+Model "Santa Barabara 9"
+   Type        "XBeachCluster"
+   Abbr        sb9x
+   Runid       sb9x
+   Continent   "northamerica"
+   CoordSys     "WGS 84 / UTM zone 11N"
+   CoordSysType "projected"
+   Size        2
+   Priority    0
+   Nested      "santabarbaracoast"
+   WaveNested  "santabarbaracoast"
+   FlowSpinUp  0
+   WaveSpinUp  0
+   RunTime     72
+   TimeStep    2
+   MapTimeStep 180
+   HisTimeStep 10
+   ComTimeStep 30
+   UseMeteo    none
+   MorFac      10
+   WebSite     "SoCalCoastalHazards"
+   XBProfile 04601
+      PrfOrigin   194498.57 3818126.096
+      PrfAlpha    91.782
+      PrfLocation -120.3255 34.4595
+   EndXBProfile
+   XBProfile 04602
+      PrfOrigin   194395.653 3818073.974
+      PrfAlpha    91.2766
+      PrfLocation -120.3266 34.459
+   EndXBProfile
+   XBProfile 04603
+      PrfOrigin   194311.839 3818043.258
+      PrfAlpha    93.0201
+      PrfLocation -120.3275 34.4587
+   EndXBProfile
+   XBProfile 04604
+      PrfOrigin   194246.781 3818023.365
+      PrfAlpha    96.8288
+      PrfLocation -120.3282 34.4585
+   EndXBProfile
+   XBProfile 04605
+      PrfOrigin   194171.433 3817970.338
+      PrfAlpha    98.7862
+      PrfLocation -120.329 34.458
+   EndXBProfile
+   XBProfile 04606
+      PrfOrigin   194085.067 3817862.167
+      PrfAlpha    98.618
+      PrfLocation -120.3299 34.457
+   EndXBProfile
+   XBProfile 04607
+      PrfOrigin   194047.204 3817829.94
+      PrfAlpha    103.5714
+      PrfLocation -120.3303 34.4567
+   EndXBProfile
+   XBProfile 04608
+      PrfOrigin   194047.204 3817829.94
+      PrfAlpha    111.8384
+      PrfLocation -120.3303 34.4567
+   EndXBProfile
+   XBProfile 04609
+      PrfOrigin   194047.204 3817829.94
+      PrfAlpha    119.8555
+      PrfLocation -120.3303 34.4567
+   EndXBProfile
+   XBProfile 04610
+      PrfOrigin   194047.204 3817829.94
+      PrfAlpha    127.8033
+      PrfLocation -120.3303 34.4567
+   EndXBProfile
+   XBProfile 04611
+      PrfOrigin   194047.204 3817829.94
+      PrfAlpha    135.064
+      PrfLocation -120.3303 34.4567
+   EndXBProfile
+   XBProfile 04612
+      PrfOrigin   193898.326 3817779.336
+      PrfAlpha    130.3517
+      PrfLocation -120.3319 34.4562
+   EndXBProfile
+   XBProfile 04613
+      PrfOrigin   193612.687 3817766.716
+      PrfAlpha    112.9965
+      PrfLocation -120.335 34.456
+   EndXBProfile
+   XBProfile 04614
+      PrfOrigin   193398.729 3817695.808
+      PrfAlpha    97.6011
+      PrfLocation -120.3373 34.4553
+   EndXBProfile
+   XBProfile 04615
+      PrfOrigin   193277.055 3817633.299
+      PrfAlpha    94.3647
+      PrfLocation -120.3386 34.4547
+   EndXBProfile
+   XBProfile 04616
+      PrfOrigin   193267.864 3817633.603
+      PrfAlpha    103.9878
+      PrfLocation -120.3387 34.4547
+   EndXBProfile
+   XBProfile 04617
+      PrfOrigin   193157.209 3817626.239
+      PrfAlpha    102.7779
+      PrfLocation -120.3399 34.4546
+   EndXBProfile
+   XBProfile 04618
+      PrfOrigin   192993.604 3817687.149
+      PrfAlpha    96.2195
+      PrfLocation -120.3417 34.4551
+   EndXBProfile
+   XBProfile 04619
+      PrfOrigin   192881.844 3817646.351
+      PrfAlpha    94.2216
+      PrfLocation -120.3429 34.4547
+   EndXBProfile
+   XBProfile 04620
+      PrfOrigin   192780.38 3817638.688
+      PrfAlpha    93.9933
+      PrfLocation -120.344 34.4546
+   EndXBProfile
+   XBProfile 04621
+      PrfOrigin   192644.349 3817698.694
+      PrfAlpha    89.2087
+      PrfLocation -120.3455 34.4551
+   EndXBProfile
+   XBProfile 04622
+      PrfOrigin   192516.04 3817713.955
+      PrfAlpha    84.8786
+      PrfLocation -120.3469 34.4552
+   EndXBProfile
+   XBProfile 04623
+      PrfOrigin   192416.411 3817761.743
+      PrfAlpha    84.193
+      PrfLocation -120.348 34.4556
+   EndXBProfile
+   XBProfile 04624
+      PrfOrigin   192325.231 3817786.795
+      PrfAlpha    85.4619
+      PrfLocation -120.349 34.4558
+   EndXBProfile
+   XBProfile 04625
+      PrfOrigin   192233.323 3817789.838
+      PrfAlpha    86.9667
+      PrfLocation -120.35 34.4558
+   EndXBProfile
+   XBProfile 04626
+      PrfOrigin   192135.174 3817604.532
+      PrfAlpha    88.2046
+      PrfLocation -120.351 34.4541
+   EndXBProfile
+   XBProfile 04627
+      PrfOrigin   192060.903 3817584.535
+      PrfAlpha    91.0474
+      PrfLocation -120.3518 34.4539
+   EndXBProfile
+   XBProfile 04628
+      PrfOrigin   192014.218 3817564.048
+      PrfAlpha    96.4937
+      PrfLocation -120.3523 34.4537
+   EndXBProfile
+   XBProfile 04629
+      PrfOrigin   191960.544 3817610.318
+      PrfAlpha    102.3596
+      PrfLocation -120.3529 34.4541
+   EndXBProfile
+   XBProfile 04630
+      PrfOrigin   191942.162 3817610.927
+      PrfAlpha    111.7292
+      PrfLocation -120.3531 34.4541
+   EndXBProfile
+   XBProfile 04631
+      PrfOrigin   191885.543 3817568.313
+      PrfAlpha    114.6162
+      PrfLocation -120.3537 34.4537
+   EndXBProfile
+   XBProfile 04632
+      PrfOrigin   191698.407 3817474.52
+      PrfAlpha    101.7181
+      PrfLocation -120.3557 34.4528
+   EndXBProfile
+   XBProfile 04633
+      PrfOrigin   191505.392 3817480.924
+      PrfAlpha    91.6196
+      PrfLocation -120.3578 34.4528
+   EndXBProfile
+   XBProfile 04634
+      PrfOrigin   191413.479 3817483.976
+      PrfAlpha    92.6035
+      PrfLocation -120.3588 34.4528
+   EndXBProfile
+   XBProfile 04635
+      PrfOrigin   191302.819 3817476.634
+      PrfAlpha    91.3214
+      PrfLocation -120.36 34.4527
+   EndXBProfile
+   XBProfile 04636
+      PrfOrigin   191210.527 3817468.259
+      PrfAlpha    92.2232
+      PrfLocation -120.361 34.4526
+   EndXBProfile
+   XBProfile 04637
+      PrfOrigin   191110.169 3817494.051
+      PrfAlpha    92.2546
+      PrfLocation -120.3621 34.4528
+   EndXBProfile
+   XBProfile 04638
+      PrfOrigin   191001.352 3817542.16
+      PrfAlpha    91.4047
+      PrfLocation -120.3633 34.4532
+   EndXBProfile
+   XBProfile 04639
+      PrfOrigin   190890.311 3817523.395
+      PrfAlpha    89.8698
+      PrfLocation -120.3645 34.453
+   EndXBProfile
+   XBProfile 04640
+      PrfOrigin   190761.634 3817527.675
+      PrfAlpha    86.2151
+      PrfLocation -120.3659 34.453
+   EndXBProfile
+   XBProfile 04641
+      PrfOrigin   190660.531 3817531.04
+      PrfAlpha    86.1121
+      PrfLocation -120.367 34.453
+   EndXBProfile
+   XBProfile 04642
+      PrfOrigin   190559.427 3817534.406
+      PrfAlpha    85.8891
+      PrfLocation -120.3681 34.453
+   EndXBProfile
+   XBProfile 04643
+      PrfOrigin   190467.515 3817537.466
+      PrfAlpha    86.9404
+      PrfLocation -120.3691 34.453
+   EndXBProfile
+   XBProfile 04644
+      PrfOrigin   190366.778 3817551.839
+      PrfAlpha    86.7972
+      PrfLocation -120.3702 34.4531
+   EndXBProfile
+   XBProfile 04645
+      PrfOrigin   190274.866 3817554.902
+      PrfAlpha    87.8563
+      PrfLocation -120.3712 34.4531
+   EndXBProfile
+   XBProfile 04646
+      PrfOrigin   190182.954 3817557.965
+      PrfAlpha    88.795
+      PrfLocation -120.3722 34.4531
+   EndXBProfile
+   XBProfile 04647
+      PrfOrigin   190127.806 3817559.804
+      PrfAlpha    94.5546
+      PrfLocation -120.3728 34.4531
+   EndXBProfile
+   XBProfile 04648
+      PrfOrigin   190063.468 3817561.949
+      PrfAlpha    99.1916
+      PrfLocation -120.3735 34.4531
+   EndXBProfile
+   XBProfile 04649
+      PrfOrigin   189961.997 3817554.316
+      PrfAlpha    99.0249
+      PrfLocation -120.3746 34.453
+   EndXBProfile
+   XBProfile 04650
+      PrfOrigin   189806.494 3817581.963
+      PrfAlpha    91.5865
+      PrfLocation -120.3763 34.4532
+   EndXBProfile
+   XBProfile 04651
+      PrfOrigin   189660.169 3817608.882
+      PrfAlpha    83.9815
+      PrfLocation -120.3779 34.4534
+   EndXBProfile
+   XBProfile 04652
+      PrfOrigin   189540.316 3817601.868
+      PrfAlpha    81.2005
+      PrfLocation -120.3792 34.4533
+   EndXBProfile
+   XBProfile 04653
+      PrfOrigin   189455.742 3817549.184
+      PrfAlpha    84.3322
+      PrfLocation -120.3801 34.4528
+   EndXBProfile
+   XBProfile 04654
+      PrfOrigin   189437.36 3817549.798
+      PrfAlpha    94.528
+      PrfLocation -120.3803 34.4528
+   EndXBProfile
+   XBProfile 04655
+      PrfOrigin   189391.403 3817551.334
+      PrfAlpha    101.4189
+      PrfLocation -120.3808 34.4528
+   EndXBProfile
+   XBProfile 04656
+      PrfOrigin   189299.49 3817554.406
+      PrfAlpha    102.8755
+      PrfLocation -120.3818 34.4528
+   EndXBProfile
+   XBProfile 04657
+      PrfOrigin   189180.003 3817558.402
+      PrfAlpha    100.5482
+      PrfLocation -120.3831 34.4528
+   EndXBProfile
+   XBProfile 04658
+      PrfOrigin   189069.339 3817551.086
+      PrfAlpha    99.0388
+      PrfLocation -120.3843 34.4527
+   EndXBProfile
+   XBProfile 04659
+      PrfOrigin   188967.853 3817543.041
+      PrfAlpha    98.6666
+      PrfLocation -120.3854 34.4526
+   EndXBProfile
+   XBProfile 04660
+      PrfOrigin   188865.643 3817513.41
+      PrfAlpha    97.8669
+      PrfLocation -120.3865 34.4523
+   EndXBProfile
+   XBProfile 04661
+      PrfOrigin   188754.226 3817483.665
+      PrfAlpha    95.7859
+      PrfLocation -120.3877 34.452
+   EndXBProfile
+   XBProfile 04662
+      PrfOrigin   188615.987 3817477.278
+      PrfAlpha    90.2068
+      PrfLocation -120.3892 34.4519
+   EndXBProfile
+   XBProfile 04663
+      PrfOrigin   188496.867 3817492.287
+      PrfAlpha    87.4005
+      PrfLocation -120.3905 34.452
+   EndXBProfile
+   XBProfile 04664
+      PrfOrigin   188396.513 3817518.11
+      PrfAlpha    87.0755
+      PrfLocation -120.3916 34.4522
+   EndXBProfile
+   XBProfile 04665
+      PrfOrigin   188295.777 3817532.505
+      PrfAlpha    86.9
+      PrfLocation -120.3927 34.4523
+   EndXBProfile
+   XBProfile 04666
+      PrfOrigin   188203.494 3817524.583
+      PrfAlpha    88.2204
+      PrfLocation -120.3937 34.4522
+   EndXBProfile
+   XBProfile 04667
+      PrfOrigin   188111.58 3817527.667
+      PrfAlpha    89.4992
+      PrfLocation -120.3947 34.4522
+   EndXBProfile
+   XBProfile 04668
+      PrfOrigin   188028.474 3817519.015
+      PrfAlpha    91.9898
+      PrfLocation -120.3956 34.4521
+   EndXBProfile
+   XBProfile 04669
+      PrfOrigin   187918.177 3817522.718
+      PrfAlpha    90.4897
+      PrfLocation -120.3968 34.4521
+   EndXBProfile
+   XBProfile 04670
+      PrfOrigin   187826.262 3817525.805
+      PrfAlpha    91.6882
+      PrfLocation -120.3978 34.4521
+   EndXBProfile
+   XBProfile 04671
+      PrfOrigin   187724.787 3817518.197
+      PrfAlpha    91.4916
+      PrfLocation -120.3989 34.452
+   EndXBProfile
+   XBProfile 04672
+      PrfOrigin   187622.941 3817499.584
+      PrfAlpha    91.0733
+      PrfLocation -120.4 34.4518
+   EndXBProfile
+   XBProfile 04673
+      PrfOrigin   187521.081 3817480.55
+      PrfAlpha    90.8168
+      PrfLocation -120.4011 34.4516
+   EndXBProfile
+   XBProfile 04674
+      PrfOrigin   187428.056 3817450.626
+      PrfAlpha    91.6272
+      PrfLocation -120.4021 34.4513
+   EndXBProfile
+   XBProfile 04675
+      PrfOrigin   187334.645 3817409.274
+      PrfAlpha    92.3515
+      PrfLocation -120.4031 34.4509
+   EndXBProfile
+   XBProfile 04676
+      PrfOrigin   187249.3 3817334.176
+      PrfAlpha    93.6218
+      PrfLocation -120.404 34.4502
+   EndXBProfile
+   XBProfile 04677
+      PrfOrigin   187183.928 3816758.808
+      PrfAlpha    93.513
+      PrfLocation -120.4045 34.445
+   EndXBProfile
+   XBProfile 04678
+      PrfOrigin   187139.093 3816793.793
+      PrfAlpha    96.5712
+      PrfLocation -120.405 34.4453
+   EndXBProfile
+   XBProfile 04679
+      PrfOrigin   187049.408 3816863.34
+      PrfAlpha    97.6552
+      PrfLocation -120.406 34.4459
+   EndXBProfile
+   XBProfile 04680
+      PrfOrigin   186940.969 3816922.502
+      PrfAlpha    97.671
+      PrfLocation -120.4072 34.4464
+   EndXBProfile
+   XBProfile 04681
+      PrfOrigin   186840.612 3816948.341
+      PrfAlpha    97.9302
+      PrfLocation -120.4083 34.4466
+   EndXBProfile
+   XBProfile 04682
+      PrfOrigin   186740.983 3816995.768
+      PrfAlpha    98.4638
+      PrfLocation -120.4094 34.447
+   EndXBProfile
+   XBProfile 04683
+      PrfOrigin   186713.036 3816985.692
+      PrfAlpha    103.3629
+      PrfLocation -120.4097 34.4469
+   EndXBProfile
+   XBProfile 04684
+      PrfOrigin   186713.036 3816985.692
+      PrfAlpha    110.1654
+      PrfLocation -120.4097 34.4469
+   EndXBProfile
+   XBProfile 04685
+      PrfOrigin   186684.347 3816953.607
+      PrfAlpha    114.2527
+      PrfLocation -120.41 34.4466
+   EndXBProfile
+   XBProfile 04686
+      PrfOrigin   186604.075 3816756.303
+      PrfAlpha    111.0377
+      PrfLocation -120.4108 34.4448
+   EndXBProfile
+   XBProfile 04687
+      PrfOrigin   186483.819 3816737.899
+      PrfAlpha    109.6626
+      PrfLocation -120.4121 34.4446
+   EndXBProfile
+   XBProfile 04688
+      PrfOrigin   186483.819 3816737.899
+      PrfAlpha    115.012
+      PrfLocation -120.4121 34.4446
+   EndXBProfile
+   XBProfile 04689
+      PrfOrigin   186483.819 3816737.899
+      PrfAlpha    119.8608
+      PrfLocation -120.4121 34.4446
+   EndXBProfile
+   XBProfile 04690
+      PrfOrigin   186483.819 3816737.899
+      PrfAlpha    124.8441
+      PrfLocation -120.4121 34.4446
+   EndXBProfile
+   XBProfile 04691
+      PrfOrigin   186483.819 3816737.899
+      PrfAlpha    129.8992
+      PrfLocation -120.4121 34.4446
+   EndXBProfile
+   XBProfile 04692
+      PrfOrigin   186043.145 3817041.77
+      PrfAlpha    123.1866
+      PrfLocation -120.417 34.4472
+   EndXBProfile
+   XBProfile 04693
+      PrfOrigin   185812.214 3817016.095
+      PrfAlpha    104.7343
+      PrfLocation -120.4195 34.4469
+   EndXBProfile
+   XBProfile 04694
+      PrfOrigin   185654.446 3816976.935
+      PrfAlpha    95.4815
+      PrfLocation -120.4212 34.4465
+   EndXBProfile
+   XBProfile 04695
+      PrfOrigin   185516.564 3816981.599
+      PrfAlpha    89.9866
+      PrfLocation -120.4227 34.4465
+   EndXBProfile
+   XBProfile 04696
+      PrfOrigin   185389.378 3817030.397
+      PrfAlpha    85.4619
+      PrfLocation -120.4241 34.4469
+   EndXBProfile
+   XBProfile 04697
+      PrfOrigin   185289.769 3817078.263
+      PrfAlpha    84.7721
+      PrfLocation -120.4252 34.4473
+   EndXBProfile
+   XBProfile 04698
+      PrfOrigin   185180.97 3817126.441
+      PrfAlpha    82.1187
+      PrfLocation -120.4264 34.4477
+   EndXBProfile
+   XBProfile 04699
+      PrfOrigin   185071.039 3817141.183
+      PrfAlpha    79.6545
+      PrfLocation -120.4276 34.4478
+   EndXBProfile
+   XBProfile 04700
+      PrfOrigin   184969.927 3817144.609
+      PrfAlpha    79.5912
+      PrfLocation -120.4287 34.4478
+   EndXBProfile
+EndModel

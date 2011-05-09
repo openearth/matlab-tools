@@ -1,0 +1,312 @@
+As a follow up in the discussion 'Suggested language improvement, topic 2', I would like to contribute the following idea.
+The referencing of function/expression output can almost completely be implemented by defining a new class, which I have called funsubs (as shorthand for function subscripted referencing).
+The class consists of two files which implement the function output referencing:
+funsubs: to create a dummy object of class funsubs
+subsref: to execute the function output referencing
+The two files have been appended at the end of the post.
+
+
+SYNTAX
+
+Define a dummy object of type funsubs (which can be reused any number of times!):
+
+» SomeVariableName = funsubs;
+
+And apply it to a function/expression with a single output argument:
+
+% FunsubsObject   { Function/Expression }    Reference
+% ^                 ^                        ^
+% here:             for example:             for example
+% SomeVariableName  [B;C] or eig(magic(8))   (:,4) or (1:3)
+
+Or apply it to a function with multiple output arguments:
+
+% FunsubsObject { 'Function' , NOfOutArgs , ReqOutArg}  Reference
+% ^                ^                                    ^
+% here:             for example:                        for example
+% SomeVariableName  'eig(C)'       2        1           (:,1:3)
+
+The string containing the function is evaluated in the calling function. So, you may refer to any variable you have defined.
+
+
+EXAMPLES:
+
+» Ref=funsubs; % define a dummy object of type funsubs
+              % (can be used any number of times!)
+
+% and apply it
+
+» B=ones(8);
+» C=magic(8);
+
+» Ref{[B;C]}(:,4)
+
+
+     1
+     1
+     1
+     1
+     1
+     1
+     1
+     1
+    61
+    12
+    20
+    37
+    29
+    44
+    52
+     5
+
+» Ref{svd(C)}(1:3)
+
+ans =
+
+  260.0000
+  146.6424
+   18.3303
+
+» Ref{'svd(C)',3,2}(1:3,1:3)
+
+ans =
+
+  260.0000         0         0
+         0  146.6424         0
+         0         0   18.3303
+
+
+NOTES
+
+* Don't use the keyword 'end' in the referencing as Matlab will call the subsref procedure multiple times.
+For instance if you want the last three eigenvalues, and you type:
+
+» Ref{svd(C)}((end-3):end)
+
+Matlab (at least version 5.2) will evaluate
+
+Ref{svd(C)} % to determine the first value of end
+Ref{svd(C)} % to determine the second value of end
+Ref{svd(C)}(5:8) % to evaluate the expression (for the case of an 8x8-matrix C)
+
+resulting in three times doing a singular value decomposition! Increasing the computational load by a factor 3. For more cases of the keyword end this becomes even more dramatic.
+
+* This implementation cannot return a comma separated list; since as far as I know it is not possible for any user defined function to return a comma separated list.
+If the referencing would normally result in a comma separated list of length larger than one, a cell array containing the data is returned instead.
+» CellVariable={1 2 3 4};
+» CellVariable{1:3}
+
+ans =
+
+     1
+
+
+ans =
+
+     2
+
+
+ans =
+
+     3
+
+» Ref{CellVariable}{1:3}
+ans = 
+
+    [1]    [2]    [3]
+
+
+All comments or suggestions for improvement are welcome. I hope it is useful to someone.
+
+Greetings,
+
+Bert Jagers
+PhD University of Twente, The Netherlands
+WL | delft hydraulics, The Netherlands
+
+
+% ----- Start of @funsubs/funsubs.m --------
+
+function Obj=funsubs,
+% FUNSUBS object that implements function output reference
+%
+%       Usage:
+%         VariableName=funsubs
+%
+%       Example:
+%         F=funsubs;
+%         F(dir)
+
+% Copyright (c), April 14th, 1999
+% H.R.A. Jagers, Delft Hydraulics, The Netherlands
+
+Obj.Type=1;
+Obj=class(Obj,'funsubs');
+
+% ----- Start of @funsubs/subsref.m --------
+function B = subsref(Obj,S)
+%FUNSUBS/SUBSREF reference output of a function
+%       Get a part of a function output.
+%
+%       Usage:
+%          S{function call}reference
+%            Applies the reference to the output argument of the
+%            function.
+%          S{'function call',N,i}reference
+%            Applies the reference to the i-th output argument
+%            of the function when evaluated using N output arguments.
+%            Note that the function call must be supplied as a string
+%            in this case.
+%
+%       Note:
+%          * When the reference contains the keyword END once in the
+%            reference expression, the function call is evaluated twice.
+%            Depending on the locations where additional occurences of
+%            the keyword END are located in the reference expression, the
+%            number of function evaluations increases by one or more; in
+%            the worst case it doubles for every additional occurence!
+%            This is the caused by the way in which Matlab handles the
+%            keyword END. There is no work-arounnd. The usage of the
+%            keyword END in combination with function evaluation is
+%            therefore not recommended.
+%          * Unfortunately it is not possible to return comma separated lists. 
+%            Evaluations that should return a comma separated list return
+%            a cell array instead if the number of elements returned is
+%            larger than one.
+%
+%       Examples:
+%
+%          % return the upper left corner of the magic matrix
+%          % X=magic(8); Y=X(1:4,1:4); clear('X');
+%          S=funsubs; % define S as a funsubs object
+%          Y=S{magic(8)}(1:4,1:4)
+%
+%          % get the first three eigenvalues of magic(8)
+%          % E=eig(magic(8)); Y=E(1:3); clear('E');
+%          S=funsubs; % define S as a funsubs object
+%          Y=S{eig(magic(8))}(1:3)
+%
+%          % get the first three eigenvectors of magic(8)
+%          % [V,D]=eig(magic(8)); Y=V(:,1:3); clear('V','D');
+%          S=funsubs; % define S as a funsubs object
+%          Y=S{'eig(magic(8)',2,1}(:,1:3)
+%
+%          % get the first three eigenvectors of a matrix X
+%          % [V,D]=eig(X); Y=V(:,1:3); clear('V','D');
+%          X=rand(8);
+%          S=funsubs; % define S as a funsubs object
+%          Y=S{'eig(X)',2,1}(:,1:3)
+%
+%          % get the files and directories in the current directory
+%          % D=dir; Y={D.name}; if length(Y)==1, Y=Y{1}; end;
+%          S=funsubs; % define S as a funsubs object
+%          Y=S(dir).name;
+%          % if the directory contains only one file then Y will be
+%          % a string, and not a cell array containing one string!
+%
+%       See also: SUBSREF, FUNSUBS
+
+% Copyright (c), April 14th, 1999
+% H.R.A. Jagers, Delft Hydraulics, The Netherlands
+
+switch S(1).type
+case '{}',
+  switch length(S(1).subs),
+  case 1, % {function output} ...output reference...
+%    fprintf(1,'Evaluating function.\n');
+    if length(S)>1,
+      A=S(1).subs{1};
+      B=eval(['{A' Local_ref2str(S(2:end)) '}']);
+      if length(B)==1,
+        B=B{1};
+      end;
+    else,
+      B=S(1).subs{1};
+    end;
+  case 3, % {function output, NFO, NFR} ...output reference...
+    if length(S(1).subs)~=3,
+      error('Three arguments expected for type 2 function reference.');
+    end;
+    Function=S(1).subs{1};
+    NFO=S(1).subs{2};
+    NFR=S(1).subs{3};
+    if ~ischar(Function),
+      error('First argument should be a string containing a function reference.');
+    end;
+    if ~isequal(size(NFO),[1 1]) | NFO~=round(NFO) | NFO<1,
+      error('Second argument should be a valid number of output arguments.');
+    end;
+    if ~isequal(size(NFR),[1 1]) | NFR~=round(NFR) | NFR<1 | NFR>NFO,
+      error('Third argument should be a valid output argument number');
+    end;
+    try,
+      % fprintf(1,'Evaluating function.\n');
+      [Q{1:NFO}]=evalin('caller',Function);
+    catch,
+      error('Error when evaluating function');
+    end;
+    if length(S)>1,
+      A=Q{NFR};
+      B=eval(['{A' Local_ref2str(S(2:end)) '}']);
+      if length(B)==1,
+        B=B{1};
+      end;
+    else,
+      B=Q{NFR};
+    end;
+  otherwise,
+    error('One argument expected for type 1 function reference.');
+  end;
+case '()'
+  error('Function reference requires curly brackets: {}.');
+case '.'
+  error('Invalid reference to function output.');
+end;
+
+function str=Local_ref2str(ref),
+% REF2STR creates a string from a reference list
+%
+%     See also SUBSINDEX
+
+%     Copyright (c)  H.R.A. Jagers  12-05-1996
+
+if nargin>1,
+  fprintf(1,' * Too many input arguments\n');
+elseif nargin==1,
+  if isempty(ref) | isstruct(ref),
+    str='';
+    for k=1:length(ref),
+      switch ref(k).type,
+      case '.',
+        str=[str '.' ref(k).subs];
+      otherwise, % (), {}
+        switch ref(k).type,
+        case '()',
+          str=[str '('];
+        case '{}',
+          str=[str '{'];
+        end;
+        for  l=1:length(ref(k).subs),
+          if l~=1,
+            str=[str ','];
+          end;
+          if ischar(ref(k).subs{l}),
+            str=[str ref(k).subs{l}];
+          else,
+            str=[str '[' num2str(ref(k).subs{l}) ']'];
+          end;
+        end;
+        switch ref(k).type,
+        case '()',
+          str=[str ')'];
+        case '{}',
+          str=[str '}'];
+        end;
+      end;
+    end;
+  else,
+    fprintf(1,' * Expected a reference list as input.\n');
+  end;
+else
+  fprintf(1,' * Too few input arguments\n');
+end;

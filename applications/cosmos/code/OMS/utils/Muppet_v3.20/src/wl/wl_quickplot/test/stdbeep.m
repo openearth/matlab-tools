@@ -1,0 +1,12 @@
+function stdbeep(cmd)
+%STDBEEP Produce beep sound.
+%   MATLAB 5 compatible BEEP (MATLAB 6+) wrapper.
+%
+%   See Also BEEP.
+
+%   Copyright 2000-2009 Deltares, the Netherlands
+%   http://www.delftsoftware.com
+%   $Id$
+
+
+error(sprintf('Missing p-file for %s, contact supplier of code.',mfilename))
