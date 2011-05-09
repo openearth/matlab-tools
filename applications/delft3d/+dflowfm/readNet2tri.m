@@ -90,8 +90,7 @@ function varargout = readNet2tri(varargin)
    D.n(4)     = sum(nface==4); % become 2 triangles each
    D.n(5)     = sum(nface==5); % become 3 triangles each
    D.n(6)     = sum(nface==6); % become 4 triangles each
-   D.n(7)     = sum(nface==7); % become 5 triangles each
-   ntri       = sum(D.n.*[0 0 1 2 3 4 5]);
+   ntri       = sum(D.n.*[0 0 1 2 3 4]);
    D.tri      = repmat(int32(0),[ntri 3]);
    
 %% 3: re-use exisitng triangles
@@ -99,7 +98,7 @@ function varargout = readNet2tri(varargin)
    ind = find(nface==3);
    D.tri(1:length(ind),:)     = D.map(ind,1:3);
 
-%% 4: quadrilaterals: 2 triangles each
+%% plot existing triangles
 
    if OPT.debug
       ind = find(nface==3);
@@ -107,101 +106,63 @@ function varargout = readNet2tri(varargin)
       trisurf(tri,D.cor.x,D.cor.y,D.cor.z)
       view(0,90)
       hold on
-   end  
+   end
+   
+%% 4: quadrilaterals: 2 triangles each
 
    ind = find(nface==4);
    n   = D.n(3);
-
-   for i=1:length(ind)
-   
-       quad     = D.map(ind(i),1:4);
-       x        = D.cor.x(quad);
-       y        = D.cor.y(quad);
-       trilocal = delaunay(x,y); % sometimes fails for perfect square, and does not always yield 2 triangles
-       
-       if size(trilocal,1) > 2
-          warning(['quadrilateral is not divided onto 2 triangles but ',num2str(size(trilocal,1)),': triangle(s) ingnored'])
-          trilocal = trilocal(1:2,:);
-          if OPT.debug
-             plot(x,y,'c-o','linewidt',10)
-             pausedisp
-          end
-       elseif size(trilocal,1) < 2
-          warning(['quadrilateral is not divided onto 2 triangles but ',num2str(size(trilocal,1)),': triangle duplicated'])
-          trilocal = [trilocal;trilocal];
-          if OPT.debug
-             plot(x,y,'c-o','linewidt',10)
-             pausedisp
-          end
-       end
-       
-       D.tri(n+1:n+2,:) = quad(trilocal);
-       n   = n + 2;
-   
-   end
+   [D.tri,n] = nface2tri(D.map,D.cor.x,D.cor.y,D.tri,4,n,ind,OPT.debug,'quadrilateral');
 
 %% 5: pentagons: 3 triangles each
 
    ind = find(nface==5);
-   if ~(n== sum(D.n.*[0 0 1 2 0 0 0]))
-       error('error after tri + quad')
-   end
-   %n== D.n(3) + D.n(4)*2; % overwrite already existing 3 + 4
+   if ~(n== sum(D.n.*[0 0 1 2 0 0]));error('error after tri + quad');end
+   [D.tri,n] = nface2tri(D.map,D.cor.x,D.cor.y,D.tri,5,n,ind,OPT.debug,'pentagon');
+
+%% 6
+
+   ind = find(nface==6);
+   if ~(n== sum(D.n.*[0 0 1 2 3 0]));error('error after tri + quad + pent');end
+   [D.tri,n] = nface2tri(D.map,D.cor.x,D.cor.y,D.tri,6,n,ind,OPT.debug,'hexagon');
+
+%% out
+
+   varargout = {D};
+   
+%% genericish subsidiary for quad-, pent- and hexagons
+
+function [tri,n] = nface2tri(Map,X,Y,tri,type,n,ind,debug,txt)
+
+   order = type-2;
 
    for i=1:length(ind)
    
-       pent     = D.map(ind(i),1:5);
-       x        = D.cor.x(pent);
-       y        = D.cor.y(pent);
+       pointers = Map(ind(i),1:type);
+       x        = X(pointers);
+       y        = Y(pointers);
        trilocal = delaunay(x,y); % sometimes fails, and does not always yield 3 triangles
        
-       if size(trilocal,1) > 3
-          warning(['pentagon is not divided onto 3 triangles but ',num2str(size(trilocal,1)),': triangle(s) ingnored'])
-          trilocal = trilocal(1:3,:);
-          if OPT.debug
+       if size(trilocal,1) > order
+          warning([txt,' is not divided onto ',num2str(order),' triangles but ',num2str(size(trilocal,1)),': triangle(s) ingnored'])
+          trilocal = trilocal(1:order,:);
+          if debug
              plot(x,y,'c-o','linewidt',10)
              pausedisp
           end
-       elseif size(trilocal,1) < 3
-          warning(['pentagon is not divided onto 3 triangles but ',num2str(size(trilocal,1)),': triangle(s) duplicated'])
-          if size(trilocal,1) ==1
-          trilocal = [trilocal;trilocal;trilocal];
-          else
-          trilocal = [trilocal;trilocal(1,:)];
-          end
-          if OPT.debug
+       elseif size(trilocal,1) < order
+          warning([txt,' is not divided onto ',num2str(order),' triangles but ',num2str(size(trilocal,1)),': triangle(s) duplicated'])
+          
+          trilocal = repmat(trilocal,[order 1])
+          
+          if debug
              plot(x,y,'c-o','linewidt',10)
              pausedisp
           end
        end
        
-       D.tri(n+1:n+3,:) = pent(trilocal);
-       n   = n + 3;
+       tri(n+1:n+order,:) = pointers(trilocal);
+       n                  = n + order;
+       
+   end       
    
-   end
-
-%% 6
-
-   ind = find(nface==6);
-   if ~(n== sum(D.n.*[0 0 1 2 3 0 0]))
-       error('error after tri + quad + pent')
-   end
-
-   if ~isempty(ind)
-   error('hexagons not implemented yet')
-   end
-
-%% 7
-
-   ind = find(nface==7);
-   if ~(n== sum(D.n.*[0 0 1 2 3 4 0]))
-       error('error after tri + quad + hex')
-   end
-
-   if ~isempty(ind)
-   error('heptagons not implemented yet')
-   end
-
-%% out
-
-   varargout = {D};
