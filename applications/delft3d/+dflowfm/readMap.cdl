@@ -45,6 +45,7 @@ variables:
 		NetLinkType:flag_meanings = "closed_link_between_2D_nodes link_between_1D_nodes link_between_2D_nodes" 
 	int32 NetElemNode(nNetElem,nNetElemMaxNode), shape = [41888 7]    // link
 		NetElemNode:long_name = "Mapping from net cell to net nodes." 
+// TO DO        FlowElemContour_x:fill_value = -2147483647
 	int32 BndLink(nBndLink), shape = [2208]                           // bnd
 		BndLink:long_name = "Netlinks that compose the net boundary." 
 	double time(time), shape = [25]                                   // datenum
@@ -68,6 +69,7 @@ variables:
 		FlowElemContour_y:units = "m" 
 		FlowElemContour_y:standard_name = "projection_y_coordinate" 
 		FlowElemContour_y:long_name = "List of y-points forming flow element" 
+// TO DO        FlowElemContour_x:fill_value = nan
 	double FlowElem_bl(nFlowElem), shape = [41888]                   // cen.z
 		FlowElem_bl:units = "m" 
 		FlowElem_bl:standard_name = "sea_floor_depth" 

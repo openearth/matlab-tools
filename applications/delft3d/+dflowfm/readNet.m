@@ -9,7 +9,7 @@ function varargout = readNet(varargin)
 %   peri: perimeter  = contour data
 %   face: links (connections)
 %
-% NOTE: cor and cen are exactly idencitcal objects but their 
+% NOTE: cor and cen are exactly identical objects but their 
 % meaning in the network differs. G.link contains the relation
 % between the cor and cen object.
 %
@@ -146,4 +146,6 @@ function varargout = readNet(varargin)
    
 end
 
-varargout = {G};
+%% out
+
+   varargout = {G};

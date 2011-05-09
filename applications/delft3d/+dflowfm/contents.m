@@ -18,6 +18,7 @@ function G = readNet(varargin)
 %  dflowfm.plotNet          - Plot an unstructured grid.
 %  dflowfm.plotNetkml       - Plot an unstructured grid as Google Earth kml file (beta).
 %  dflowfm.peri2cell        - turn perimeter matrix into cell
+%  dflowfm.readNet2tri      - Reads network and triangulates quadrilaterals and pentagons
 %
 % Read/plot map (per timestep)
 %  dflowfm.readMap          - Reads solution data on an unstructured net.

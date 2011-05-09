@@ -91,7 +91,7 @@ else
    parameter = [];
 end
 
-IND = struct([]);
+   %IND = struct([]);
 
    if strcmp(NFSstruct.SubType,'Delft3D-trim')
 
@@ -252,7 +252,7 @@ IND = struct([]);
    fldnames = fieldnames(IND);
 
    if    nargout==0
-      if isempty(IND)
+      if ~exist('IND')
          disp('No constituents found.')
       else
       for i=1:length(fldnames)

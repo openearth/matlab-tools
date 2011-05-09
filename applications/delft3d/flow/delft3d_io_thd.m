@@ -58,8 +58,11 @@ function varargout=delft3d_io_thd(cmd,varargin),
 % $Revision$
 % $HeadURL$
 
-if nargin ==1
-   error(['AT least 2 input arguments required: d3d_io_...(''read''/''write'',filename)'])
+if nargin ==0
+   error(['AT least 1 input arguments required: d3d_io_...(''read''/''write'',filename)'])
+elseif nargin ==1
+   varargin = {cmd,varargin{:}};
+   cmd = 'read';
 end
 
 switch lower(cmd),

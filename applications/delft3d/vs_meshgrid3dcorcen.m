@@ -18,6 +18,7 @@ function varargout=vs_meshgrid3dcorcen(varargin),
 %     with value 0 indicating to not calulcate them, and 1 to calculate them
 %  * 'intface'  same as for keyword 'centres' 
 %  * 'latlon'   labels x to lon, and y to lat if coordinate system is spherical (default 1)
+%  * 'quiet'    1 (default 0)
 %
 % See also: VS_USE, VS_LET, VS_DISP, VS_MESHGRID2DCORCEN, VS_LET_SCALAR
 
@@ -87,6 +88,7 @@ TimeStep       = 1;
      P.u.elevation = 0; % provided P.face
      P.v.elevation = 0; % provided P.face
    P.latlon        = 1; % labels x to lon, and y to lat if spherical
+   P.quiet         = 1;
    
 %% Arguments
 %------------------------------------
@@ -103,9 +105,10 @@ TimeStep       = 1;
         iiargin   = iargin+2;
      elseif ischar(varargin{iargin}),
        switch lower(varargin{iargin})
-       case 'centres'        ;iargin=iargin+1;P.cen = mergestructs(P.centres,varargin{iargin});
-       case 'intface'        ;iargin=iargin+1;P.int = mergestructs(P.intface,varargin{iargin});
-       case 'latlon'         ;iargin=iargin+1;P.int = mergestructs(P.latlon ,varargin{iargin});
+       case 'centres'        ;iargin=iargin+1;P.cen   = mergestructs(P.cen    ,varargin{iargin});
+       case 'intface'        ;iargin=iargin+1;P.int   = mergestructs(P.int    ,varargin{iargin});
+       case 'latlon'         ;iargin=iargin+1;P.int   = mergestructs(P.latlon ,varargin{iargin});
+       case 'quiet'          ;iargin=iargin+1;P.quiet = varargin{iargin};
        otherwise
          error(sprintf('Invalid string argument: %s.',varargin{i}));
        end
@@ -184,7 +187,9 @@ TimeStep       = 1;
   if P.cor.zwl
      G.cor.zwl = center2corner(G.cen.zwl,'nearest');
      G.cor.zwl_comment = 'Waterlevel at corners extrapolated from centers by VS_MESHGRID3DCORCEN';
+     if ~P.quiet
      disp('Waterlevel at corners extrapolated from centers by VS_MESHGRID3DCORCEN')
+     end
   end
   
   %% Start 3D coordinates
