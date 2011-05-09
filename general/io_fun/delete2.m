@@ -61,7 +61,8 @@ function delete2(D)
 % $Keywords: $
 
 %% code
-if ~isequal(fieldnames(D),{ 'name'
+if ~isequal(fieldnames(D),{ 
+        'name'
         'date'
         'bytes'
         'isdir'
@@ -70,15 +71,21 @@ if ~isequal(fieldnames(D),{ 'name'
     error('input must be a struct returned by dir2')
 end
 
+state.warning = warning;
+warning off;
+
+warn = lastwarn;
 dirs  = find( [D.isdir]);
 files = find(~[D.isdir]);
 for ii = files
     try
         delete([D(ii).pathname D(ii).name]);
-    catch me
+    catch 
         disp(['could not remove file: ' D(ii).pathname D(ii).name]);
-        disp('Reason:');
-        disp(me);
+    end
+    if ~isequal(warn,lastwarn)
+        disp(['could not remove file: ' D(ii).pathname D(ii).name]);
+        warn = lastwarn;
     end
 end
 
@@ -88,10 +95,9 @@ dirs      = dirs(order);
 for ii = dirs
     try
         rmdir([D(ii).pathname D(ii).name]);
-    catch me
+    catch 
         disp(['could not remove directory: ' D(ii).pathname D(ii).name]);
-        disp('Reason:');
-        disp(me);
     end
 end
 
+warning(state.warning)
