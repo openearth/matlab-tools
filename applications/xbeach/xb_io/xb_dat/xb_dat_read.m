@@ -206,7 +206,7 @@ if exist(fname, 'file')
                 end
 
                 % dispose data out of range
-                for i = 1:length(dims_out)
+                for i = 1:length(dims)
                     if OPT.start(i) > 0 || OPT.length(i) < dims_out(i) || OPT.stride(i) > 1
                         idx = num2cell(repmat(':',1,length(dims_out)));
                         idx{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
