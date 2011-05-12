@@ -83,7 +83,7 @@ for i = 1:length(folders); folders{i} = abspath(ffolders{i}); end;
 fffiles = dir(fdir);
 ffiles = {fffiles.name};
 ffiles = ffiles(~[fffiles.isdir]);
-files = [{'oetsettings' 'closest'} ffiles];
+files = [{'oetsettings'} ffiles];
 
 % release toolbox
 switch OPT.type
