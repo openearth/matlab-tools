@@ -1,4 +1,4 @@
-function [r2 sci relbias bss] = xb_skill(measured, computed, varargin)
+function [r2 sci relbias bss] = xb_skill(measured, computed, initial, varargin)
 %XB_SKILL  Computes a variety skill scores
 %
 %   Computes a variety skill scores: R^2, Sci, Relative bias, Brier Skill
@@ -13,6 +13,8 @@ function [r2 sci relbias bss] = xb_skill(measured, computed, varargin)
 %   measured  = Measured data where the first column contains independent
 %               values and the second column contains dependent values
 %   computed  = Computed data where the first column contains independent
+%               values and the second column contains dependent values
+%   initial   = Initial data where the first column contains independent 
 %               values and the second column contains dependent values
 %   varargin  = var:    Name of the variable that is supplied
 %
@@ -77,10 +79,16 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+if ~exist('initial', 'var'); initial = []; end;
+
 %% remove nans
 
 measured = measured(~any(isnan(measured), 2),:);
 computed = computed(~any(isnan(computed), 2),:);
+
+if ~isempty(initial)
+    initial  = initial (~any(isnan(initial ), 2),:);
+end
 
 %% compute skills
 
@@ -89,6 +97,21 @@ x       = x(~isnan(x));
 
 zmt     = interp1(measured(:,1), measured(:,2), x);
 zct     = interp1(computed(:,1), computed(:,2), x);
+
+% determine active zone
+if ~isempty(initial)
+    zit = interp1(initial(:,1),  initial(:,2),  x);
+    
+    dz  = max(abs(zmt-zit),abs(zct-zit));
+    
+    zi1 = find(dz>0,1,'first');
+    zi2 = find(dz>0,1,'last');
+    
+    x   = x  (zi1:zi2);
+    zmt = zmt(zi1:zi2);
+    zct = zct(zi1:zi2);
+    zit = zit(zi1:zi2);
+end
 
 zc      = zct(~isnan(zct)&abs(zmt)>.05*max(abs(zmt)));
 zm      = zmt(~isnan(zct)&abs(zmt)>.05*max(abs(zmt)));
@@ -101,7 +124,12 @@ sci     = rms/max(rmsm,abs(mean(zm)));
 
 relbias = mean(zc-zm)/max(rmsm,abs(mean(zm)));
 
-bss     = 1-(std(zc-zm))^2/var(zm);
+% brier skill score
+if ~isempty(initial)
+    bss = BrierSkillScore(x, zct, x, zmt, x, zit, 'verbose', false);
+else
+    bss = 1-(std(zc-zm))^2/var(zm);
+end
 
 %% store skills
 

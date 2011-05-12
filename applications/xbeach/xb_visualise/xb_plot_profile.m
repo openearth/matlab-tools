@@ -104,8 +104,13 @@ x = xb_get(xb, 'DIMS.globalx_DATA');
 z = xb_get(xb, 'zb');
 j = ceil(size(x,1)/2);
 
-zb0 = [squeeze(x(j,:))' squeeze(z(1,j,:))];
-zb1 = [squeeze(x(j,:))' squeeze(z(2:end,j,:))'];
+z0  = squeeze(z(1,j,:));
+z1  = squeeze(z(2:end,j,:));
+
+if ~isvector(z1); z1 = z1'; end;
+
+zb0 = [squeeze(x(j,:))' z0];
+zb1 = [squeeze(x(j,:))' z1];
 
 % plot profiles
 addplot(zb0,                '-',    2,  'k',        'initial'           );
@@ -133,7 +138,7 @@ if OPT.BSS && ~isempty(OPT.measured)
             xc = get(c(i), 'XData')';
             zc = get(c(i), 'YData')';
             
-            [r2 sci relbias bss] = xb_skill([xm zm], [xc zc], 'var', 'zb');
+            [r2 sci relbias bss] = xb_skill([xm zm], [xc zc], zb0, 'var', 'zb');
             
             set(c(i), 'DisplayName', sprintf('%s - BSS=%4.2f', name, bss));
         end

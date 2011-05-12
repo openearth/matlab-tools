@@ -1,4 +1,4 @@
-function xb_write_skilltable(xb, measured, varargin)
+function xb_write_skilltable(xb, measured, initial, varargin)
 %XB_WRITE_SKILLTABLE  Writes Latex table with skills to file
 %
 %   Writes Latex table with skills to file
@@ -11,6 +11,9 @@ function xb_write_skilltable(xb, measured, varargin)
 %   measured  = Cell array containing measurement data with in the first
 %               column the x-axis values and the second column z-axis
 %               values
+%   initial   = Cell array containing initial data with in the first
+%               column the x-axis values and the second column z-axis
+%               values
 %   varargin  = file:   Filename
 %               title:  Table title
 %               vars:   Cell array with variable names to plot
@@ -19,7 +22,7 @@ function xb_write_skilltable(xb, measured, varargin)
 %   none
 %
 %   Example
-%   xb_write_skilltable(xb, measured)
+%   xb_write_skilltable(xb, measured, initial)
 %
 %   See also xb_skill
 
@@ -92,22 +95,30 @@ for i = 1:length(measured)
         y = xb_get(xb, OPT.vars{i});
         
         if isvector(y)
-            y = squeeze(y);
+            y0 = [];
+            y1 = squeeze(y);
         elseif ndims(y) == 2
-            y = squeeze(y(end,:))';
+            y0 = squeeze(y(1,:))';
+            y1 = squeeze(y(end,:))';
         elseif ndims(y) == 3
-            y = squeeze(y(end,j,:));
+            y0 = squeeze(y(1,j,:));
+            y1 = squeeze(y(end,j,:));
         end
         
+        initial  = [];
         computed = [];
         
-        if length(y) == length(x)
-            computed = [squeeze(x(j,:))'    y];
-        elseif length(y) == length(t)
-            computed = [squeeze(t)          y];
+        if length(y1) == length(x)
+            computed = [squeeze(x(j,:))'    y1];
+        elseif length(y1) == length(t)
+            computed = [squeeze(t)          y1];
         end
         
-        [r2 sci relbias bss]    = xb_skill(measured{i}, computed, 'var', OPT.vars{i});
+        if ~isempty(y0)
+            initial  = [computed(:,1)       y0];
+        end
+        
+        [r2 sci relbias bss]    = xb_skill(measured{i}, computed, initial, 'var', OPT.vars{i});
         labels{n}               = ['$' OPT.vars{i} '$'];
 
         skills(n,:) = [r2 sci relbias bss];
