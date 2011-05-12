@@ -1,16 +1,21 @@
 function varargout = readNet2tri(varargin)
 %readNet   Reads network data of a D-Flow FM unstructured net as a set of triangles
 %
-%     G = dflowfm.readNet2tri(ncfile) 
+%     G          = dflowfm.readNet2tri(ncfile) 
+%    [tri,x,y]   = dflowfm.readNet2tri(ncfile) 
+%    [tri,x,y,z] = dflowfm.readNet2tri(ncfile) 
 %
-%   reads the network network (grid) data from a D-Flow FM NetCDF file
+%   reads the network network (grid) data from a D-Flow FM netCDF file
 %   and triangulates it by splitting all quadrilatersls and pentagons
 %   into triangles. G contains
 %
-%    cor: node = corner data (incl. connectivity)
-%    map: original patch mapping information
-%    tri: triangulation mapping information
-%      n: numbers of [1 2 3 4 5 6 7]-agons
+%        cor: node = corner data (x,y,z)
+%        map: original patch mapping information
+%        tri: triangulation mapping information
+%          n: numbers of [1 2 3 4 5 6]-agons
+%  patch2tri: permutation index to replicate patch center
+%             data (triangles, quadrilaterals, pentagons, 
+%             hexagons) to triangle face data
 %
 % NOTE: cor and cen from dflowfm.readNet are exactly identical objects 
 % but their meaning in the network differs. G.link contains the 
@@ -22,14 +27,43 @@ function varargout = readNet2tri(varargin)
 %
 % Example:
 %
-%   ncfile = 'p01w_thd_crs_vak_map.nc';
-%   G      = dflowfm.readNet2tri(ncfile)
-%   trisurf(G.tri,G.cor.x,G.cor.y,G.cor.z)
-%   shading interp
-%   view(0,90)
-%   tickmap('xy')
+%    ncfile    = '*_map.nc'
+%    G         = dflowfm.readNet2tri(ncfile);
+%    G.datenum = nc_cf_time(ncfile);
 %
-% See also: dflowfm, delft3d, triquat, delauney
+%    % plot corner data: shading interp look
+%    
+%    trisurf(G.tri,G.cor.x,G.cor.y,G.cor.z);
+%    shading interp
+%    colorbarwithvtext('depth [m]')
+%    view   (0,90)
+%    axis    equal
+%    tickmap('xy')
+%    grid    on
+%     
+%    % plot center data: shading flat look
+%    
+%    figure
+%    tricontour(G.tri,G.cor.x,G.cor.y,G.cor.z,[-2 -2],'k')
+%    hold on
+%    for it=1:length(G.datenum)
+%      D      = dflowfm.readMap(ncfile,it);
+%      h = trisurf(G.tri,G.cor.x,G.cor.y,G.cor.y.*-1e3,... % set z below tricontour()
+%                  'FaceColor','flat',...
+%                      'cdata',D.cen.zwl(G.patch2tri),...
+%                  'EdgeColor','none');
+%      title(datestr(D.datenum))
+%      clim([-1 1]);
+%      colorbarwithvtext('\eta [m]')
+%      view   (0,90)
+%      axis    equal
+%      tickmap('xy')
+%      grid    on
+%      pausedisp
+%      delete(h)
+%     end    
+%
+% See also: DFLOWFM, DELFT3D, TRIQUAT, DELAUNEY, TRISURF, TRICONTOUR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
@@ -84,19 +118,20 @@ function varargout = readNet2tri(varargin)
 
 %% determine # of triangles
 
-   nface    = sum(D.map > 0,2);
+   nface       = sum(D.map > 0,2);
 
-   D.n(3)     = sum(nface==3);
-   D.n(4)     = sum(nface==4); % become 2 triangles each
-   D.n(5)     = sum(nface==5); % become 3 triangles each
-   D.n(6)     = sum(nface==6); % become 4 triangles each
-   ntri       = sum(D.n.*[0 0 1 2 3 4]);
-   D.tri      = repmat(int32(0),[ntri 3]);
+   D.n(3)      = sum(nface==3);
+   D.n(4)      = sum(nface==4); % become 2 triangles each
+   D.n(5)      = sum(nface==5); % become 3 triangles each
+   D.n(6)      = sum(nface==6); % become 4 triangles each
+   ntri        = sum(D.n.*[0 0 1 2 3 4]);
+   D.tri       = repmat(int32(0),[ntri 3]);
    
 %% 3: re-use exisitng triangles
 
    ind = find(nface==3);
-   D.tri(1:length(ind),:)     = D.map(ind,1:3);
+   D.tri      (1:length(ind),:) = D.map(ind,1:3);
+   D.patch2tri(1:length(ind))   = ind;
 
 %% plot existing triangles
 
@@ -111,24 +146,39 @@ function varargout = readNet2tri(varargin)
 %% 4: quadrilaterals: 2 triangles each
 
    ind = find(nface==4);
-   n   = D.n(3);
-   [D.tri,n] = nface2tri(D.map,D.cor.x,D.cor.y,D.tri,4,n,ind,OPT.debug,'quadrilateral');
+   length(ind)
+   rep = make1d(repmat(ind,[1 2])')';
+   D.patch2tri  = [D.patch2tri, rep];
+
+   n            = D.n(3);
+  [D.tri,n]     = nface2tri(D.map,D.cor.x,D.cor.y,D.tri,4,n,ind,OPT.debug,'quadrilateral');
 
 %% 5: pentagons: 3 triangles each
 
-   ind = find(nface==5);
+   ind = find(nface==5)
+   rep = make1d(repmat(ind,[1 3])')';
+   
    if ~(n== sum(D.n.*[0 0 1 2 0 0]));error('error after tri + quad');end
-   [D.tri,n] = nface2tri(D.map,D.cor.x,D.cor.y,D.tri,5,n,ind,OPT.debug,'pentagon');
+  [D.tri,n]     = nface2tri(D.map,D.cor.x,D.cor.y,D.tri,5,n,ind,OPT.debug,'pentagon');
+   D.patch2tri  = [D.patch2tri, rep];
 
-%% 6
+%% 6: hexagons: 4 triangles each
 
    ind = find(nface==6);
+   rep = make1d(repmat(ind,[1 4])')';
    if ~(n== sum(D.n.*[0 0 1 2 3 0]));error('error after tri + quad + pent');end
-   [D.tri,n] = nface2tri(D.map,D.cor.x,D.cor.y,D.tri,6,n,ind,OPT.debug,'hexagon');
+  [D.tri,n]     = nface2tri(D.map,D.cor.x,D.cor.y,D.tri,6,n,ind,OPT.debug,'hexagon');
+   D.patch2tri  = [D.patch2tri, rep];
 
 %% out
 
-   varargout = {D};
+   if nargout==1
+     varargout = {D};
+   elseif nargout==3
+     varargout = {D.tri,D.cor.x,D.cor.y};
+   elseif nargout==4
+     varargout = {D.tri,D.cor.x,D.cor.y,D.cor.z};
+   end
    
 %% genericish subsidiary for quad-, pent- and hexagons
 
@@ -141,7 +191,7 @@ function [tri,n] = nface2tri(Map,X,Y,tri,type,n,ind,debug,txt)
        pointers = Map(ind(i),1:type);
        x        = X(pointers);
        y        = Y(pointers);
-       trilocal = delaunay(x,y); % sometimes fails, and does not always yield 3 triangles
+       trilocal = delaunay(x,y); % sometimes fails, and does not always yield correct # of triangles
        
        if size(trilocal,1) > order
           warning([txt,' is not divided onto ',num2str(order),' triangles but ',num2str(size(trilocal,1)),': triangle(s) ingnored'])
