@@ -35,6 +35,13 @@ openBoundaries=handles.Model(md).Input(ad).openBoundaries;
 
 % Set options
 opt=handles.Toolbox(tb).Input.options;
+opt.waterLevel.BC.datafolder=handles.Toolbox(tb).Input.folder;
+opt.waterLevel.BC.dataname=handles.Toolbox(tb).Input.name;
+opt.current.BC.datafolder=handles.Toolbox(tb).Input.folder;
+opt.current.BC.dataname=handles.Toolbox(tb).Input.name;
+opt.inputDir='.\';
+
+
 
 % Tide file
 ib=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
@@ -57,6 +64,7 @@ if pathname~=0
         filename=[pathname filename];
     end
     handles.Model(md).Input(ad).bctFile=filename;
+    flow.bctFile=filename;
 else
     return
 end 
@@ -144,7 +152,7 @@ switch handles.Toolbox(tb).Input.options.current.BC.source
 end
 
 try
-    [openBoundaries,errmsg]=makeBctBccIni('bct','flow',flow,'openboundaries',openBoundaries,'opt',opt,'cs',cs);
+    openBoundaries=makeBctBccIni('bct','flow',flow,'openboundaries',openBoundaries,'opt',opt,'cs',cs);
     handles.Model(md).Input(ad).openBoundaries=openBoundaries;
     flist=dir('TMPOCEAN*');
     for i=1:length(flist)
