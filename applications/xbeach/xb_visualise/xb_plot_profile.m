@@ -129,7 +129,7 @@ addplot(zb1,                '-',    2,  'r',        'XBeach (current)'  );
 % add BSS
 if OPT.BSS && ~isempty(OPT.measured)
     xm = OPT.measured(:,1);
-    zm = OPT.measured(:,2);
+    zm = OPT.measured(:,end);
     
     c = get(gca, 'Children');
     for i = 1:length(c)
@@ -154,8 +154,8 @@ legend('show', 'Location', 'NorthWest')
 
 % flip figure if necessary
 if OPT.flip
-    dz  = zb1(:,2) - zb0(:,2);
-    if find(dz==max(dz)) > find(dz==min(dz))
+    zb  = zb0(:,2);
+    if find(zb==max(zb)) > find(zb==min(zb))
         set(gca, 'XDir', 'reverse');
     end
 end

@@ -1,4 +1,4 @@
-function xb_write_skilltable(xb, measured, initial, varargin)
+function xb_write_skilltable(xb, measured, varargin)
 %XB_WRITE_SKILLTABLE  Writes Latex table with skills to file
 %
 %   Writes Latex table with skills to file
