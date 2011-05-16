@@ -154,8 +154,9 @@ legend('show', 'Location', 'NorthWest')
 
 % flip figure if necessary
 if OPT.flip
-    zb  = zb0(:,2);
-    if find(zb==max(zb)) > find(zb==min(zb))
+    x0  = zb0(:,1);
+    z0  = zb0(:,2);
+    if x0(find(z0==max(z0),1,'first')) < x0(find(z0==min(z0),1,'last'))
         set(gca, 'XDir', 'reverse');
     end
 end
