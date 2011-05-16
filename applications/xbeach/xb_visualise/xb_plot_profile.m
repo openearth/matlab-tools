@@ -115,7 +115,7 @@ zb1 = [squeeze(x(j,:))' z1];
 % plot profiles
 addplot(zb0,                '-',    2,  'k',        'initial'           );
 addplot(OPT.measured,       '-',    1,  'k',        'measured'          );
-addpatch(OPT.nonerodible,'none',[.5 .5 .5],0.7,     'non-erodible'      );
+addpatch(OPT.nonerodible,   'none', [.5 .5 .5],0.7, 'non-erodible'      );
 
 addplot(OPT.other,          '--',   1,  'c',        'other'             );
 addplot(OPT.durosta,        '-',    1,  'b',        'DurosTA'           );

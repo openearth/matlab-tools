@@ -129,7 +129,7 @@ if sp(1)
 
     % plot computation
     dz = xb_get(xb, 'dz');
-    if ~has_m || ~isempty(OPT.dz);      addplot(x,                  dz(end,:),              '-',    'r',    'computed'  );  end;
+    if ~has_m || ~isempty(OPT.dz);      addplot(x,                  dz(end,:)',             '-',    'r',    'computed'  );  end;
     
     legend('show', 'Location', 'SouthWest');
 end
@@ -186,9 +186,15 @@ end
 
 function addplot(x, data, type, color, name)
     if ~isempty(data);
+        if length(x) < size(data,1)
+            data = data(1:length(x),:);
+        elseif length(x) > size(data,1)
+            x = linspace(min(x),max(x),size(data,1));
+        end
+        
         plot(x, data, type, ...
             'Color', color, ...
-            'LineWidth', 1, ...
+            'LineWidth', 2, ...
             'DisplayName', name);
     end
 end

@@ -117,14 +117,18 @@ for i = 2:size(dz,1)
     iP      = find(x<P(i),1,'last');
 
     % accretion area
-    sed(i)  =          .5 *     (x(iP+1)    - P(i)        ) .*  dz(i,iP+1)                       ;
-    sed(i)  = sed(i) + .5 * sum((x(iP+2:iQ) - x(iP+1:iQ-1)) .* (dz(i,iP+2:iQ) + dz(i,iP+1:iQ-1)));
-    sed(i)  = sed(i) + .5 *     (Q(i)       - x(iQ)       ) .*  dz(i,iQ)                         ;
+    if ~isempty(iP) && ~isempty(iQ)
+        sed(i)  =          .5 *     (x(iP+1)    - P(i)        ) .*  dz(i,iP+1)                       ;
+        sed(i)  = sed(i) + .5 * sum((x(iP+2:iQ) - x(iP+1:iQ-1)) .* (dz(i,iP+2:iQ) + dz(i,iP+1:iQ-1)));
+        sed(i)  = sed(i) + .5 *     (Q(i)       - x(iQ)       ) .*  dz(i,iQ)                         ;
+    end
 
     % erosion area
-    ero(i)  =          .5 *     (x(iQ+1)    - Q(i)        ) .*  dz(i,iQ+1)                       ;
-    ero(i)  = ero(i) + .5 * sum((x(iQ+2:iR) - x(iQ+1:iR-1)) .* (dz(i,iQ+2:iR) + dz(i,iQ+1:iR-1)));
-    ero(i)  = ero(i) + .5 *     (R(i)       - x(iR)       ) .*  dz(i,iR)                         ;
+    if ~isempty(iQ) && ~isempty(iR)
+        ero(i)  =          .5 *     (x(iQ+1)    - Q(i)        ) .*  dz(i,iQ+1)                       ;
+        ero(i)  = ero(i) + .5 * sum((x(iQ+2:iR) - x(iQ+1:iR-1)) .* (dz(i,iQ+2:iR) + dz(i,iQ+1:iR-1)));
+        ero(i)  = ero(i) + .5 *     (R(i)       - x(iR)       ) .*  dz(i,iR)                         ;
+    end
     
 end
 
