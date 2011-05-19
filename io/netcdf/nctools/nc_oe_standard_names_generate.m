@@ -90,12 +90,12 @@ for i = 1:size(raw,1)
     fprintf(fid,'%s\n',['               ''Dimension'', {OPT.dimension(i,:)}, ... ']);
     fprintf(fid,'%s\n',['               ''Attribute'', struct( ... ']);
     fprintf(fid,'%s\n',['                   ''Name'', ... ']);
-    fprintf(fid,'%s\n',['                   {''standard_name'', ''long_name'', ''units'', ''fill_value''}, ...']);
+    fprintf(fid,'%s\n',['                   {''standard_name'', ''long_name'', ''units'', ''_FillValue''}, ...']);
     fprintf(fid,'%s\n',['                   ''Value'', ... ']);
-    if strcmp(raw{i,3}(1:4), 'time')
-        fprintf(fid,'%s\n',['                   {''' raw{i,3} ''', ''' raw{i,4} ''', [''' raw{i,5} ''' ''' ' '' OPT.timezone' '], NaN} ...']);
+    if strncmp(raw{i,3}, 'time',4)
+        fprintf(fid,'%s\n',['                   {''' raw{i,3} ''', ''' raw{i,4} ''', [''' raw{i,5} ''' ''' ' '' OPT.timezone' '], OPT.fillValues.' raw{i,6} '} ...']);
     else
-        fprintf(fid,'%s\n',['                   {''' raw{i,3} ''', ''' raw{i,4} ''', ''' raw{i,5} ''', NaN} ...']);
+        fprintf(fid,'%s\n',['                   {''' raw{i,3} ''', ''' raw{i,4} ''', ''' raw{i,5} ''', OPT.fillValues.' raw{i,6} '} ...']);
     end
     fprintf(fid,'%s\n',['                   ) ...']);
     fprintf(fid,'%s\n',['                );']);
