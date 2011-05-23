@@ -8,7 +8,8 @@ function [P P_corr] = prob_is_exponential(P, varargin)
 %
 %   Input:
 %   P         = Vector with random draws for importance sampling stochast
-%   varargin  = Factor f used in sampling routine
+%   varargin  = #1: lower boundary of u-values
+%               #2: upper boundary of u-values
 %
 %   Output:
 %   P         = Modified vector with random draws
@@ -66,17 +67,15 @@ if ~isempty(varargin) && length(varargin)>1
     f1 = min([varargin{1:2}]);
     f2 = max([varargin{1:2}]);
 else
-    f = 1;
+    f1 = 0;
+    f2 = Inf;
 end
 
 %% importance sampling
 
-Pb      = exp(-[f2 f1]);
-ub      = norm_inv(Pb,0,1);
-
-u       = P*diff(ub);
+u       = P*diff([f1 f2]);
 P       = exp_cdf(u, 1);
 
 %% correction factor
 
-P_corr  = diff(ub)*exp(-u);
+P_corr  = diff([f1 f2])*exp(-u);

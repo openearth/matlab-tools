@@ -8,8 +8,8 @@ function [P P_corr] = prob_is_uniform(P, varargin)
 %
 %   Input:
 %   P         = Vector with random draws for importance sampling stochast
-%   varargin  = #1: lower frequency boundary of uniform distribution
-%               #2: upper frequency boundary of uniform distribution
+%   varargin  = #1: lower boundary of u-values
+%               #2: upper boundary of u-values
 %
 %   Output:
 %   P         = Modified vector with random draws
@@ -74,12 +74,9 @@ end
 
 %% importance sampling
 
-Pb      = exp(-[f2 f1]);
-ub      = norm_inv(Pb,0,1);
-
-u       = ub(1)+P*diff(ub);
+u       = f1+P*diff([f1 f2]);
 P       = norm_cdf(u,0,1);
 
 %% correction factor
 
-P_corr  = diff(ub)*norm_pdf(u,0,1);
+P_corr  = diff([f1 f2])*norm_pdf(u,0,1);

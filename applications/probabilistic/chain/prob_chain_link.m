@@ -1,25 +1,21 @@
-function [P P_corr] = prob_is_normal(P, varargin)
-%PROB_IS_NORMAL  Importance sampling method based on normal distribution
+function chain = prob_chain_link(chain, last_chain, last_output, varargin)
+%PROB_CHAIN_LINK  One line description goes here.
 %
-%   Importance sampling method based on normal distribution.
+%   More detailed description goes here.
 %
 %   Syntax:
-%   [P P_corr] = prob_is_uniform(P, varargin)
+%   varargout = prob_chain_link(varargin)
 %
 %   Input:
-%   P         = Vector with random draws for importance sampling stochast
-%   varargin  = #1: mean of normal distribution
-%               #2: standard deviation of normal distribution
+%   varargin  =
 %
 %   Output:
-%   P         = Modified vector with random draws
-%   P_corr    = Correction factor for probability of failure computation
+%   varargout =
 %
 %   Example
-%   [P P_corr] = prob_is_uniform(P, m, s)
+%   prob_chain_link
 %
-%   See also prob_is, prob_is_factor, prob_is_uniform, prob_is_incvariance,
-%            prob_is_exponential
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -52,7 +48,7 @@ function [P P_corr] = prob_is_normal(P, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 20 May 2011
+% Created: 23 May 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -64,19 +60,37 @@ function [P P_corr] = prob_is_normal(P, varargin)
 
 %% read options
 
-if ~isempty(varargin) && length(varargin)>1
-    f1 = varargin{1};
-    f2 = varargin{2};
-else
-    f1 = 0;
-    f2 = Inf;
+OPT = struct( ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% analyze last output
+
+if ~isstruct(last_output) || isempty(last_output) || isempty(fieldnames(last_output)); return; end;
+if ~isstruct(last_chain)  || isempty(last_chain)  || isempty(fieldnames(last_chain));  return; end;
+if ~isstruct(chain)       || isempty(chain)       || isempty(fieldnames(chain));       return; end;
+
+if isfield(last_output, 'Output')
+    last_output = last_output.Output;
 end
 
-%% importance sampling
+u_closest = last_output.u(abs(last_output.z)==min(abs(last_output.z)),:);
 
-u       = norm_inv(P,f1,f2);
-P       = norm_cdf(u,0,1);
+%% link chain
 
-%% correction factor
+% switch methods
+switch chain.Method
+    case 'FORM'
+        chain.Params = set_optval('startU',u_closest,chain.Params{:});
+    case 'MC'
+        IS = [];
+        for i = 1:length(chain.Stochast)
+            IS(i)           = exampleISVar;
+            IS(i).Name      = chain.Stochast.Name;
+            IS(i).Method    = @prob_is_normal;
+            IS(i).Params    = {u_closest(i) 1};
+        end
 
-P_corr  = norm_pdf(u,0,1)./norm_pdf(u,f1,f2);
+        chain.Params = set_optval('IS',IS,chain.Params{:});
+end

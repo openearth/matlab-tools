@@ -72,10 +72,21 @@ if ~isempty(IS) && ~isempty(fieldnames(IS))
         if any(idx)
             if isa(IS(idx).Method,'function_handle')
 
+                params = IS(idx).Params;
+                for j = 1:length(params)
+                    if iscell(params{j})
+                        if ~isempty(params{j})
+                            if isa(params{j}{1}, 'function_handle')
+                                params{j} = feval(params{j}{:});
+                            end
+                        end
+                    end
+                end
+                
                 [P(:,i) P_corr(:,i)] = feval(   ...
                     IS(idx).Method,             ...
                     P(:,i),                     ...
-                    IS(idx).Params{:}               );
+                    params{:}                       );
 
             end
         end

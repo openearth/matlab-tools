@@ -4,7 +4,7 @@ x = -3:.1:3;
 y = -3:.1:3;
 
 methods = {'none' 'factor' 'uniform' 'incvariance' 'exponential' 'normal'};
-args = {{} {3} {10 1e-9} {3} {10 1e-9} {2 1}};
+args = {{} {3} {-3 3} {3} {-3 3} {2 1}};
 
 % draw random numbers
 P1 = rand(1,10000);

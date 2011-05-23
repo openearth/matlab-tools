@@ -1,25 +1,21 @@
-function [P P_corr] = prob_is_normal(P, varargin)
-%PROB_IS_NORMAL  Importance sampling method based on normal distribution
+function chain = exampleChainVar(varargin)
+%EXAMPLECHAINVAR  One line description goes here.
 %
-%   Importance sampling method based on normal distribution.
+%   More detailed description goes here.
 %
 %   Syntax:
-%   [P P_corr] = prob_is_uniform(P, varargin)
+%   varargout = exampleChainVar(varargin)
 %
 %   Input:
-%   P         = Vector with random draws for importance sampling stochast
-%   varargin  = #1: mean of normal distribution
-%               #2: standard deviation of normal distribution
+%   varargin  =
 %
 %   Output:
-%   P         = Modified vector with random draws
-%   P_corr    = Correction factor for probability of failure computation
+%   varargout =
 %
 %   Example
-%   [P P_corr] = prob_is_uniform(P, m, s)
+%   exampleChainVar
 %
-%   See also prob_is, prob_is_factor, prob_is_uniform, prob_is_incvariance,
-%            prob_is_exponential
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -52,7 +48,7 @@ function [P P_corr] = prob_is_normal(P, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 20 May 2011
+% Created: 23 May 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -62,21 +58,31 @@ function [P P_corr] = prob_is_normal(P, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+%% create struct
 
-if ~isempty(varargin) && length(varargin)>1
-    f1 = varargin{1};
-    f2 = varargin{2};
-else
-    f1 = 0;
-    f2 = Inf;
-end
+chain = struct(             ...
+    'Method', {             ...
+        @MC                 ...
+        @MC                 ...
+        @FORM               ...
+    },                      ...
+    'Stochast', {           ...
+        exampleStochastVar  ...
+        exampleStochastVar  ...
+        exampleStochastVar  ...
+    },                      ...
+    'Params', {             ...
+        {'IS',exampleISVar} ...
+        {'IS',exampleISVar} ...
+        {}                  ...
+    },                      ...
+    'Link', {               ...
+        @prob_chain_link    ...
+        @prob_chain_link    ...
+        @prob_chain_link    ...
+    }                       ...
+);
 
-%% importance sampling
+%% modify struct
 
-u       = norm_inv(P,f1,f2);
-P       = norm_cdf(u,0,1);
-
-%% correction factor
-
-P_corr  = norm_pdf(u,0,1)./norm_pdf(u,f1,f2);
+chain(2).Params{2}.Method = @prob_is_normal;

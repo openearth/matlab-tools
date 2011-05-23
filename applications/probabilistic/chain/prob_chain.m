@@ -1,25 +1,21 @@
-function [P P_corr] = prob_is_normal(P, varargin)
-%PROB_IS_NORMAL  Importance sampling method based on normal distribution
+function result = prob_chain(chain, varargin)
+%PROB_CHAIN  One line description goes here.
 %
-%   Importance sampling method based on normal distribution.
+%   More detailed description goes here.
 %
 %   Syntax:
-%   [P P_corr] = prob_is_uniform(P, varargin)
+%   varargout = prob_chain(varargin)
 %
 %   Input:
-%   P         = Vector with random draws for importance sampling stochast
-%   varargin  = #1: mean of normal distribution
-%               #2: standard deviation of normal distribution
+%   varargin  =
 %
 %   Output:
-%   P         = Modified vector with random draws
-%   P_corr    = Correction factor for probability of failure computation
+%   varargout =
 %
 %   Example
-%   [P P_corr] = prob_is_uniform(P, m, s)
+%   prob_chain
 %
-%   See also prob_is, prob_is_factor, prob_is_uniform, prob_is_incvariance,
-%            prob_is_exponential
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -52,7 +48,7 @@ function [P P_corr] = prob_is_normal(P, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 20 May 2011
+% Created: 23 May 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -64,19 +60,27 @@ function [P P_corr] = prob_is_normal(P, varargin)
 
 %% read options
 
-if ~isempty(varargin) && length(varargin)>1
-    f1 = varargin{1};
-    f2 = varargin{2};
-else
-    f1 = 0;
-    f2 = Inf;
+OPT = struct( ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+%% execute chain
+
+last_chain      = struct();
+last_output     = struct();
+result          = {};
+
+for i = 1:length(chain)
+    
+    if isa(chain(i).Link, 'function_handle')
+        chain(i)    = feval(chain(i).Link, chain(i), last_chain, last_output);
+    end
+    
+    if isa(chain(i).Method, 'function_handle')
+        result{i}   = feval(chain(i).Method, 'stochast', chain(i).Stochast, chain(i).Params{:});
+        last_output = result(i).Output;
+    end
+    
+    last_chain  = chain(i);
 end
-
-%% importance sampling
-
-u       = norm_inv(P,f1,f2);
-P       = norm_cdf(u,0,1);
-
-%% correction factor
-
-P_corr  = norm_pdf(u,0,1)./norm_pdf(u,f1,f2);
