@@ -19,7 +19,7 @@ for i = 1:l
 
     % plot solution space
     pcolor(x,y,norm_pdf(x,0,1)'*norm_pdf(y,0,1)); shading interp;
-    plot(x,-x+2,'-k','LineWidth',2);
+    plot(x,-.1*x+2,'-k','LineWidth',2);
 
     % perform importance sampling    
     P_corr1 = ones(size(P1)); P1is = P1;
@@ -34,7 +34,7 @@ for i = 1:l
     u2 = norm_inv(P2is,0,1);
 
     % determine failures
-    Z = u1+u2-2;
+    Z = .1*u1+u2-2;
 
     scatter(u1(Z<=0),u2(Z<=0),10,'ok');
     scatter(u1(Z>0),u2(Z>0),10,'ok','filled');

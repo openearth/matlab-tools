@@ -62,27 +62,21 @@ function [P P_corr] = prob_is_exponential(P, varargin)
 
 %% read options
 
-if ~isempty(varargin)
-    if length(varargin) > 1
-        f1 = min([varargin{1:2}]);
-        f2 = max([varargin{1:2}]);
-        
-        Pb = exp(-[f2 f1]);
-        ub = norm_inv(Pb,0,1);
-        
-        f = diff(ub);
-    else
-        f = varargin{1};
-    end
+if ~isempty(varargin) && length(varargin)>1
+    f1 = min([varargin{1:2}]);
+    f2 = max([varargin{1:2}]);
 else
     f = 1;
 end
 
 %% importance sampling
 
-u       = f*P;
+Pb      = exp(-[f2 f1]);
+ub      = norm_inv(Pb,0,1);
+
+u       = P*diff(ub);
 P       = exp_cdf(u, 1);
 
 %% correction factor
 
-P_corr  = f*exp(-u);
+P_corr  = diff(ub)*exp(-u);

@@ -64,20 +64,16 @@ function [P P_corr] = prob_is_normal(P, varargin)
 
 %% read options
 
-if ~isempty(varargin)
-    if length(varargin) > 1
-        f1 = varargin{1};
-        f2 = varargin{2};
-    else
-        f = varargin{1};
-    end
+if ~isempty(varargin) && length(varargin)>1
+    f1 = varargin{1};
+    f2 = varargin{2};
 else
-    f = 1;
+    f1 = 0;
+    f2 = 1;
 end
 
 %% importance sampling
 
-u1      = norm_inv(P,0,1);
 u       = norm_inv(P,f1,f2);
 P       = norm_cdf(u,0,1);
 
