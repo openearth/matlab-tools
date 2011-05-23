@@ -1,4 +1,4 @@
-function [stations lambda id angle_within_range] = jarkus_derive_HB_stations(id, x_station, y_station, varargin)
+function [stations lambda id angle_within_range transects_facing_seaward transects_in_range] = jarkus_derive_HB_stations(id, x_station, y_station, varargin)
 %JARKUS_DERIVE_HB_STATIONS  Derive weight of hydraulic boundary condition stations
 %
 %   Function to derive the relevant boundary condition stations along the
@@ -118,6 +118,7 @@ end
 %%
 xr = [min(x_station) max(x_station)]; % x range
 [a b xcr ycr] = deal(nan(size(tr.rsp_x)));
+transects_in_range = true(size(xcr'));
 
 for i = 1:length(tr.rsp_x)
     [a(i) b(i)] = xydegN2ab(tr.rsp_x(i), tr.rsp_y(i), tr.angle(i));
@@ -127,13 +128,21 @@ for i = 1:length(tr.rsp_x)
             xcr(i) = tr.rsp_x(i);
             ycr(i) = interp1(x_station, y_station, xcr(i));
         else
-            if any(isnan(polyval([a(i) b(i)], xr)))
-                dbstopcurrent
+            [xtmp ytmp] = findCrossings(xr, polyval([a(i) b(i)], xr), x_station, y_station);
+            if isempty(xtmp)
+                transects_in_range(i) = false;
+%                 % no crossing, take closest HBC location
+%                 [dummy ix] = min(sqrt((x_station - tr.rsp_x(i)).^2 + (y_station - tr.rsp_y(i)).^2));
+%                 [xcr(i) ycr(i)] = deal(x_station(ix), y_station(ix));
+            else
+                % one or more crossings, take the one with shortest x
+                % difference
+                [dummy ix] = min(abs(xtmp - tr.rsp_x(i)));
+                [xcr(i) ycr(i)] = deal(xtmp(ix), ytmp(ix));
             end
-            [xcr(i) ycr(i)] = findCrossings(xr, polyval([a(i) b(i)], xr), x_station, y_station);
         end
     catch
-        [xcr(i) ycr(i)] = deal(NaN);
+        dbstopcurrent
     end
 end
 
@@ -144,12 +153,14 @@ stationids = 1:length(x_station);
 station_angle.station = xy2degN(x_station(1:end-1), y_station(1:end-1), x_station(2:end), y_station(2:end));
 station1id = NaN(size(xcr));
 station_angle.transect = NaN(size(xcr));
+transects_facing_seaward = true(size(xcr'));
 for i = 1:length(xcr)
-    if ~isnan(xcr(i))
-        try
-            station1id(i) = find(xcr(i) - x_station > 0, 1, 'last');
-            station_angle.transect(i) = station_angle.station(station1id(i));
-        end
+    station1idtmp = find(xcr(i) - x_station > 0, 1, 'last');
+    if isempty(station1idtmp)
+        transects_facing_seaward(i) = false;
+    else
+        station1id(i) = station1idtmp;
+        station_angle.transect(i) = station_angle.station(station1id(i));
     end
 end
 station2id = station1id + 1; % other station is the neighbouring one
@@ -168,9 +179,11 @@ station_distance.transect = NaN(size(xcr));
 lambda = NaN(size(xcr(:)));
 distance1 = NaN(size(xcr));
 for i = 1:length(xcr)
-    station_distance.transect(i) = station_distance.station(station1id(i));
-    distance1(i) = sqrt((x_station(station1id(i)) - xcr(i))^2 + (y_station(station1id(i)) - ycr(i))^2);
-    lambda(i) = 1 - distance1(i) / station_distance.transect(i);
+    if transects_facing_seaward(i)
+        station_distance.transect(i) = station_distance.station(station1id(i));
+        distance1(i) = sqrt((x_station(station1id(i)) - xcr(i))^2 + (y_station(station1id(i)) - ycr(i))^2);
+        lambda(i) = 1 - distance1(i) / station_distance.transect(i);
+    end
 end
 
 %% correct lambda in case of a virtual station
