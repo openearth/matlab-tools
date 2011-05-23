@@ -71,6 +71,8 @@ z_input = getInputVariables(OPT.x2zFunction);
 if strcmp(OPT.method, 'matrix')
     inputargs = {};
     if ismember('samples', z_input)
+        show_warning;
+        
         % create samples structure
         samples = x2samples(x, {stochast.Name});
         inputargs{end+1} = samples;
@@ -87,6 +89,8 @@ elseif strcmp(OPT.method, 'loop')
     for isample = 1:size(x,1)
         inputargs = {};
         if ismember('samples', z_input)
+            show_warning;
+            
             % create samples structure
             samples = x2samples(x(isample,:), {stochast.Name});
             inputargs{end+1} = samples;
@@ -122,3 +126,9 @@ for ivar = 1:length(stochast)
         inputargs = [inputargs {x(:,ivar)}];
     end
 end
+
+function show_warning()
+     warning('MATLAB:deprecated', [ ...
+        'The argument list of the Z-function you are using is deprecated. ' ...
+        'Please use the new argument list using the "variables" option and ' ...
+        'a varargin cell array.']);

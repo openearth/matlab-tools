@@ -1,4 +1,4 @@
-function [z ErosionVolume result] = x2z(samples, Resistance, varargin)
+function [z ErosionVolume result] = x2z_DUROS(samples, Resistance, varargin)
 %X2Z  Limit state function
 %
 %   More detailed description goes here.

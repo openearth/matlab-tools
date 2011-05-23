@@ -58,8 +58,10 @@ varargin = prob_checkinput(varargin{:});
 % defaults
 OPT = struct(...
     'stochast', struct(),... % stochast structure
-    'maxiter', 50,...        % maximum number of iterations
+    'x2zFunction', @x2z,...  % Function to transform x to z    
+    'variables', {{}},...    % aditional variables to use in x2zFunction
     'method', 'matrix',...   % z-function method 'matrix' (default) or 'loop'
+    'maxiter', 50,...        % maximum number of iterations
     'DerivativeSides', 1,... % 1 or 2 sided derivatives
     'startU', 0,...          % start value for elements of u-vector
     'du', .3,...             % step size for dz/du / Perturbation Value
@@ -67,8 +69,6 @@ OPT = struct(...
     'maxdZ', 0.1,...         % second stop criterion for change in z-value
     'epsBeta', .01,...       % stop criteria for change in Beta-value
     'Relaxation', .25,...    % Relaxation value
-    'x2zFunction', @x2z,...  % Function to transform x to z
-    'variables', {{}},...    % aditional variables to use in x2zFunction
     'dudistfactor', 0,...    % power factor to apply different du to each variable based on the response
     'logconvergence', '' ... % optionally specify file here to log convergence status
     );
