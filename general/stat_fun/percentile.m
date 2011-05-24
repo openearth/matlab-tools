@@ -7,7 +7,7 @@ function val = percentile(x, pct)
 %   val = percentile(x, pct)
 %
 %   Input:
-%   x   = data values (van be a matrix)
+%   x   = data values (can be a matrix)
 %   pct = percentile values (can be a vector)
 %
 %   Output:

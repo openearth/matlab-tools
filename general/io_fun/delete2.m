@@ -61,13 +61,16 @@ function delete2(D)
 % $Keywords: $
 
 %% code
-if ~isequal(fieldnames(D),{ 
+requiredfields =  { 
         'name'
         'date'
         'bytes'
         'isdir'
         'datenum'
-        'pathname'})
+        'pathname'
+        };
+
+if ~all(ismember(requiredfields,fieldnames(D)))
     error('input must be a struct returned by dir2')
 end
 

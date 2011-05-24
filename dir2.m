@@ -196,7 +196,7 @@ if isempty(newD)
 end
 %% add basepath
 % split basepath in path and folder name
-[a,b] = fileparts(OPT.basepath);
+[a,b,c] = fileparts(OPT.basepath);
 if ~strcmp(a(end),filesep)
     a = [a filesep];
 end
@@ -206,7 +206,7 @@ D     = dir(a);
 
 % find the folder from the basepath
 D     = D([D.isdir]);
-D     = D(ismember({D.name},b));
+D     = D(ismember({D.name},[b c]));
 
 % add field datenum for old matlab versions
 if ~isfield(D,'datenum')
