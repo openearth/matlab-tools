@@ -150,7 +150,7 @@ multiWaitbar('Making directories','close')
 multiWaitbar('Copying files','reset')
 file_to_copy  = D_srce(~[D_srce.isdir]);
 bytes_to_copy = sum([file_to_copy.bytes] + OPT.extraBytesForWaitbar);
-for ii = 2:length(file_to_copy);
+for ii = 1:length(file_to_copy);
     multiWaitbar('Copying files','label',[file_to_copy(ii).relativepathname file_to_copy(ii).name]);
     srcename = [D_srce(1).pathname D_srce(1).name filesep file_to_copy(ii).relativepathname file_to_copy(ii).name];
     destname = [D_dest(1).pathname D_dest(1).name filesep file_to_copy(ii).relativepathname file_to_copy(ii).name];
@@ -158,8 +158,8 @@ for ii = 2:length(file_to_copy);
     multiWaitbar('Copying files','increment',(file_to_copy(ii).bytes + OPT.extraBytesForWaitbar) / bytes_to_copy);
 end
 if OPT.remove_files_from_destination
-    label_msg = sprintf('Syncdirs completed, %d files where copied. %d files or folders where removed from destination',length(file_to_copy)-1,sum(to_remove));
+    label_msg = sprintf('Syncdirs completed, %d files copied. %d files or folders removed from destination',length(file_to_copy)-1,sum(to_remove));
 else
-    label_msg = sprintf('Syncdirs completed, %d files where copied. %d files or folders where found that are not in source.',length(file_to_copy)-1,sum(to_remove));
+    label_msg = sprintf('Syncdirs completed, %d files copied. %d files or folders found that are not in source.',length(file_to_copy)-1,sum(to_remove));
 end
 multiWaitbar('Copying files',1,'label',label_msg);
