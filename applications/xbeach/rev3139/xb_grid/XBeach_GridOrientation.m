@@ -100,7 +100,7 @@ if OPT.manual
     	'Finally click to select extent of y (arbitrary point at other alongshore side of the domain)')
     fprintf(1, '\n')
     
-    [xi yi]     = select_oblique_rectangle;
+    [xi yi]     = select_oblique_rectangle
     
     OPT.xori    = xi(1);
     OPT.yori    = yi(1);
