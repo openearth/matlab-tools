@@ -122,7 +122,7 @@ OPT.debug = 0;
 
 if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 4230, WGS84 4326
 
-   if strcmpi(log.proj_conv1.method.name,'Transverse Mercator') OPT.grid_mapping_name = 'transverse_mercator'
+   if strcmpi(log.proj_conv1.method.name,'Transverse Mercator') OPT.grid_mapping_name = 'transverse_mercator';
    else                                                         OPT.grid_mapping_name = '';
    end
 
