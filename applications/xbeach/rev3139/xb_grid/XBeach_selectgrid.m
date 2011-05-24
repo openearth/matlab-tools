@@ -137,9 +137,9 @@ if OPT.manual
     % Select polygon to include in bathy
     % Loop, picking up the points.
     fprintf(1, '%s\n',...
-    	'Select polygon to include in bathy',...
-    	'Left mouse button picks points.',...
-    	'Right mouse button picks last point.')
+        'Select polygon to include in bathy',...
+        'Left mouse button picks points.',...
+        'Right mouse button picks last point.')
     fprintf(1, '\n')
     [xi yi]=select_polygon
 end
@@ -177,13 +177,21 @@ for j = 1:nY
     % Extrapolate to land
     for i = floor(nX/2):nX
         if isnan(Z(i,j));
-            Z(i,j) = OPT.posdwn * max(OPT.posdwn*Z(i-1,j)-OPT.maxslp*OPT.dx, OPT.posdwn*OPT.dryval);
+            if OPT.posdwn==-1
+                Z(i,j) = min(Z(i-1,j)+OPT.maxslp*OPT.dx, OPT.dryval);
+            else
+                Z(i,j) = max(Z(i-1,j)-OPT.maxslp*OPT.dx, -OPT.dryval);
+            end
         end
     end
     % Extrapolate to sea
     for i = floor(nX/2):-1:1
         if isnan(Z(i,j));
-            Z(i,j) = OPT.posdwn * min(OPT.posdwn*Z(i+1,j)+OPT.seaslp*OPT.dx, OPT.posdwn*OPT.deepval);
+            if OPT.posdwn==-1
+               Z(i,j) = max(Z(i+1,j)-OPT.seaslp*OPT.dx, -OPT.deepval);
+            else
+               Z(i,j) = min(Z(i+1,j)+OPT.seaslp*OPT.dx, OPT.deepval);
+            end
         end
     end
 end
@@ -194,6 +202,13 @@ if OPT.plot
     shading interp;
     colorbar
 end
+    if OPT.posdwn==-1
+        Z=max(Z,OPT.posdwn*abs(OPT.deepval));
+        Z=min(Z,-OPT.posdwn*abs(OPT.dryval));
+    else
+        Z=min(Z,OPT.posdwn*abs(OPT.deepval));
+        Z=max(Z,-OPT.posdwn*abs(OPT.dryval));
+    end
 %
 % Include structures
 if OPT.struct
