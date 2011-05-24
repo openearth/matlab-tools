@@ -72,8 +72,14 @@ udata.p4 = p4;
 
 %% take care of function output
 % udata    = get(gcf,'Userdata');
-xi       = [udata.p1(1)];
-yi       = [udata.p1(2)];
+xi(1)       = [udata.p1(1)];
+yi(1)       = [udata.p1(2)];
+xi(2)       = [udata.p2(1)];
+yi(2)       = [udata.p2(2)];
+xi(3)       = [udata.p3(1)];
+yi(3)       = [udata.p3(2)];
+xi(4)       = [udata.p4(1)];
+yi(4)       = [udata.p4(2)];
 w        = sqrt(sum((p3-p2).^2));
 h        = sqrt(sum((p2-p1).^2));
 
