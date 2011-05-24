@@ -77,8 +77,9 @@ OPT.serverURL               = [];       % if a KML file is intended to be placed
 
 OPT.make_kmz                = false;    % this packs the entire file tree to a sing kmz file, convenient for portability
 OPT.lowestLevel             = 15;       % integer; Detail level of the highest resultion png tiles to generate. Advised range 12 to 18;
-% dimension of individual pixels in Lat and Lon can be calculated as follows:
-% 360/(2^OPT.lowestLevel) / OPT.tiledim
+                                        % dimension of individual pixels in Lat and Lon can be calculated as follows:
+                                        % 360/(2^OPT.lowestLevel) / OPT.tiledim
+                                        % Note that the lowest level should be 22 or lower.
 OPT.tiledim                 = 256;      % dimension of tiles in pixels.
 
 OPT.filledInTime            = false;    % this makes tiles appear in GE for every date until there is a newer tile. If set to off, tiles are only shown on the date they have
@@ -403,11 +404,11 @@ if OPT.make
     underscorePos       = strfind(tiles(1).name,'_');
     
     allTileCodes   = nan(length(tiles),50);
-    allTileNumbers = nan(length(tiles), 1);
+    allTileNumbers = uint64(nan(length(tiles), 1));
     for ii = 1:length(tiles)
         tileCode = tiles(ii).name(underscorePos+1:end-4);
         allTileCodes(ii,1:length(tileCode)) = tileCode;
-        allTileNumbers(ii) = sscanf(tileCode,'%f');
+        allTileNumbers(ii) = sscanf(tileCode,'%lo');
     end
     
     OPT2.lowestLevel    = max(sum(~isnan(allTileCodes),2));
@@ -476,7 +477,7 @@ if OPT.make
             end
             %% add png icon links to kml
             B = KML_figure_tiler_code2boundary(tilesOnLevel(nn,:));
-            iTiles = find(allTileNumbers ==  sscanf(tilesOnLevel(nn,:),'%f'));
+            iTiles = find(allTileNumbers ==  sscanf(tilesOnLevel(nn,:),'%lo'));
             for iTile = 1:length(iTiles)
                 pngFile = tiles(iTiles(iTile)).name;
                 if OPT.filledInTime
