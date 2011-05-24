@@ -63,62 +63,62 @@ function [z OPT] = prob_zfunctioncall(OPT, stochast, x, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% call z-function
+
 % check z-function
 z_input = getInputVariables(OPT.x2zFunction);
 
 % derive z based on x
 if strcmp(OPT.method, 'matrix')
-    inputargs = {};
-    if ismember('samples', z_input)
-        show_warning;
-        
-        % create samples structure
-        samples = x2samples(x, {stochast.Name});
-        inputargs{end+1} = samples;
-    else
-        inputargs = x2inputargs(x, inputargs, stochast);
-    end
-    if ismember('Resistance', z_input)
-        inputargs{end+1} = 0;
-    end
-    z = feval(OPT.x2zFunction, inputargs{:},...
-        OPT.variables{:});
+    [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input);
+    z = feval(OPT.x2zFunction, inputargs{:}, OPT.variables{:});
 elseif strcmp(OPT.method, 'loop')
     z = [];
     for isample = 1:size(x,1)
-        inputargs = {};
-        if ismember('samples', z_input)
-            show_warning;
-            
-            % create samples structure
-            samples = x2samples(x(isample,:), {stochast.Name});
-            inputargs{end+1} = samples;
-        else
-            inputargs = x2inputargs(x(isample,:), inputargs, stochast);
-        end
-        if ismember('Resistance', z_input)
-            inputargs{end+1} = 0;
-        end
-        z(isample,:) = feval(OPT.x2zFunction, inputargs{:},...
-            OPT.variables{:});
+        [inputargs OPT] = get_inputargs(OPT, x(isample,:), stochast, z_input);
+        z(isample,:) = feval(OPT.x2zFunction, inputargs{:}, OPT.variables{:});
     end
 end
 
+%%
+function [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input)
 
+    if any(ismember({'samples' 'Resistance'}, z_input))
+        show_warning;
+        
+        i1 = find(strcmpi('samples',    z_input));
+        i2 = find(strcmpi('Resistance', z_input));
+        
+        if ~isempty(i1)
+            inputargs{i1} = x2samples(x, {stochast.Name});
+        end
+        
+        if ~isempty(i2)
+            i3 = find(strcmpi('resistance', OPT.variables));
+            if ~isempty(i3)
+                inputargs{i2} = OPT.variables{i3+1};
+            else
+                inputargs{i2} = 0;
+            end
+            OPT.variables(i3:i3+1) = [];
+        end
+    else
+        inputargs = x2inputargs(OPT.x2zFunction, x, stochast);
+    end
+    
 %%
 function samples = x2samples(x, variable_names)
 samples = cell2struct(mat2cell(x, size(x,1), ones(size(x,2),1)), variable_names, 2);
 
 %%
-function inputargs = x2inputargs(x, inputargs, stochast)
+function inputargs = x2inputargs(fun, x, stochast)
 % create cell array of input arguments in same order as defined in
 % the stochast structure
+
+inputargs = {};
+
 for ivar = 1:length(stochast)
-    if ischar(stochast(ivar).propertyName)
-        % specific propertyName is defined in stochast structure
-        inputargs = [inputargs {stochast(ivar).propertyName} {x(:,ivar)}];
-    elseif stochast(ivar).propertyName
+    if isfield(stochast(ivar), 'Name') && isOETInputCompatible(fun)
         % propertyName is equal to Name in stochast structure
         inputargs = [inputargs {stochast(ivar).Name} {x(:,ivar)}];
     else

@@ -95,12 +95,12 @@ stochastid(2:2:end) = strcmp(varargin(1:2:end), 'stochast');
 if ~any(stochastid)
     error([upper(callerfun) ':stochast_not_defined'], 'stochast is not defined')
 else
-    if ~isfield(varargin{stochastid}, 'propertyName')
-        stochast = varargin{stochastid};
-        for istochast = 1:length(stochast)
-            stochast(istochast).propertyName = false;
-        end
-        varargin{stochastid} = stochast;
-    end
+%     if ~isfield(varargin{stochastid}, 'propertyName')
+%         stochast = varargin{stochastid};
+%         for istochast = 1:length(stochast)
+%             stochast(istochast).propertyName = false;
+%         end
+%         varargin{stochastid} = stochast;
+%     end
 end
 varargout = {varargin};

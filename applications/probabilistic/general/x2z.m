@@ -62,13 +62,24 @@ function z = x2z(varargin)
 
 %% read options
 
-OPT = struct(...
-    'samples',      [],         ...     % random samples
+OPT = struct(                   ...
     'resistance',   0           ...     % resistance value
 );
+
+% extract variables
+idx = 2*find(~strcmpi(fieldnames(OPT),varargin(1:2:end)))-1;
+VAR = cell2struct(varargin(idx+1),varargin(idx),2);
+varargin([idx idx+1]) = [];
 
 OPT = setproperty(OPT, varargin{:});
 
 %% compute z-values
 
-z = OPT.samples - OPT.resistance;
+f = fieldnames(VAR);
+
+z = 1;
+for i = 1:length(f)
+    z = z.*VAR.(f{i});
+end
+
+z = z - OPT.resistance;

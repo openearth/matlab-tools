@@ -175,7 +175,7 @@ while NextIter
     end
     
     % derive z based on x
-    [z(Calc,1) OPT] = prob_zfunctioncall(OPT, stochast, x(Calc,:));
+    z(Calc,1) = prob_zfunctioncall(OPT, stochast, x(Calc,:));
     
     if Converged
         % extra check for convergence

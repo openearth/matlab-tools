@@ -1,26 +1,23 @@
-function result = prob_chain(chain, varargin)
-%PROB_CHAIN  Executes a chain of probabilistic computations
+function iscompatible = isOETInputCompatible(fun, varargin)
+%ISOETINPUTCOMPATIBLE  Checks whether a function is compatible with the OET input standard
 %
-%   Executes a chain of probabilistic computations defined by a chain
-%   structure (see exampleChainVar). The probabilistic computations can
-%   either be a FORM or a Monte Carlo routine. Linker function link the
-%   results of one computation to the input of another. The result is a
-%   cell array with for each computation an output structure.
+%   Checks whether a function is compatible with the OET input standard
+%   using varargin and the setproperty function.
 %
 %   Syntax:
-%   result = prob_chain(chain, varargin)
+%   iscompatible = isOETInputCompatible(fun, varargin)
 %
 %   Input:
-%   chain     = Chain definition structure
+%   fun       = Function name or handle
 %   varargin  = none
 %
 %   Output:
-%   result    = Cell array with output structures
+%   iscompatible = Boolean indicating compatibility
 %
 %   Example
-%   result = prob_chain(chain)
+%   iscompatible = isOETInputCompatible('MC')
 %
-%   See also prob_chain_link, exampleChainVar, FORM, MC
+%   See also getFunctionCall, getInputVariables
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -53,7 +50,7 @@ function result = prob_chain(chain, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 23 May 2011
+% Created: 24 May 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
@@ -70,27 +67,32 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-%% execute chain
+%% read code
 
-last_chain      = struct();
-last_output     = struct();
-result          = {};
+iscompatible = false;
 
-for i = 1:length(chain)
-    
-    try
-        if isa(chain(i).Link, 'function_handle')
-            chain(i)    = feval(chain(i).Link, chain(i), last_chain, last_output, chain(i).LinkParams{:});
+if isa(fun, 'function_handle')
+    fun = func2str(fun);
+end
+
+input = getInputVariables(fun);
+
+if ismember('varargin', input)
+
+    file = which(fun);
+
+    if exist(file, 'file')
+
+        % open the m-file and read text
+        fid = fopen(file);
+        str = fread(fid, '*char')';
+        fclose(fid);
+
+        % remove comments
+        str = regexprep(str,'%.*?\n','');
+        
+        if ~isempty(regexpi(str, '=\s*setproperty\s*\(\s*.+,\s*varargin{:}\s*\)'))
+            iscompatible = true;
         end
-
-        if isa(chain(i).Method, 'function_handle')
-            result{i}   = feval(chain(i).Method, 'stochast', chain(i).Stochast, chain(i).Params{:});
-            last_output = result{i};
-        end
-
-        last_chain  = chain(i);
-    catch err
-        warning('Chain link #%d failed, skipping to next link [%s]', i, err.message);
     end
-    
 end

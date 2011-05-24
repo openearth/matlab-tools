@@ -104,4 +104,5 @@ OPT = setproperty(OPT, varargin{:});
 
 for i = find(~OPT.active)
     stochast(i).Distr = @deterministic;
+    stochast(i).Params = {0};
 end

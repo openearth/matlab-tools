@@ -1,21 +1,36 @@
 function chain = prob_chain_link(chain, last_chain, last_output, varargin)
-%PROB_CHAIN_LINK  One line description goes here.
+%PROB_CHAIN_LINK  Links the result of a probabilistic computation to the input of another
 %
-%   More detailed description goes here.
+%   Links the result of a probabilistic computation in a probabilistic
+%   computational chain to the input of another computation in the same
+%   chain. Linking is based on the design point which is read from a FORM
+%   result and approximated from a Monte Carlo result.
+%
+%   A FORM computation is started in the last known (approximated) design
+%   point. A Monte Carlo computation is started using normally distributed
+%   importance sampling around the last known (approximated) design point
+%   and with a given standard deviation in u-space.
 %
 %   Syntax:
-%   varargout = prob_chain_link(varargin)
+%   chain = prob_chain_link(chain, last_chain, last_output, varargin)
 %
 %   Input:
-%   varargin  =
+%   chain       = Item from a probabilistic computational chain to be
+%                 executed next
+%   last_chain  = Item from a probabilistic computational chain last
+%                 executed
+%   last_output = Output from the last executed item from a probabilistic
+%                 computational chain
+%   varargin    = sigma:    standard deviation to use in Monte Carlo linker
 %
 %   Output:
-%   varargout =
+%   chain       = Chain item adapted to results of last computation
 %
 %   Example
-%   prob_chain_link
+%   chain = prob_chain_link(chain, last_chain, last_output)
+%   chain = prob_chain_link(chain, last_chain, last_output, 'sigma', .1)
 %
-%   See also 
+%   See also prob_chain, exampleChainVar, FORM, MC
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -60,7 +75,8 @@ function chain = prob_chain_link(chain, last_chain, last_output, varargin)
 
 %% read options
 
-OPT = struct( ...
+OPT = struct(   ...
+    'sigma', 1  ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -71,26 +87,41 @@ if ~isstruct(last_output) || isempty(last_output) || isempty(fieldnames(last_out
 if ~isstruct(last_chain)  || isempty(last_chain)  || isempty(fieldnames(last_chain));  return; end;
 if ~isstruct(chain)       || isempty(chain)       || isempty(fieldnames(chain));       return; end;
 
-if isfield(last_output, 'Output')
-    last_output = last_output.Output;
-end
+%% estimate design point
 
-u_closest = last_output.u(abs(last_output.z)==min(abs(last_output.z)),:);
+switch func2str(last_chain.Method)
+    case 'FORM'
+        DP = last_output.Output.designpoint.finalU;
+    case 'MC'
+        last_output = approxMCDesignPoint(last_output);
+        DP = last_output.Output.designPoint.u;
+end
 
 %% link chain
 
 % switch methods
-switch chain.Method
+switch func2str(chain.Method)
     case 'FORM'
-        chain.Params = set_optval('startU',u_closest,chain.Params{:});
+        chain.Params = set_optval('startU',DP,chain.Params{:});
     case 'MC'
-        IS = [];
-        for i = 1:length(chain.Stochast)
-            IS(i)           = exampleISVar;
-            IS(i).Name      = chain.Stochast.Name;
-            IS(i).Method    = @prob_is_normal;
-            IS(i).Params    = {u_closest(i) 1};
-        end
+        
+        % determine active stochasts
+        active = find(~cellfun(@isempty, {chain.Stochast.Distr}) &     ...
+            ~strcmp('deterministic', cellfun(@func2str, {chain.Stochast.Distr}, 'UniformOutput', false)));
+        
+        if any(active)
+            IS = exampleISVar;
+            
+            n = 1;
+            for i = active
+                IS(n)           = exampleISVar;
+                IS(n).Name      = chain.Stochast(i).Name;
+                IS(n).Method    = @prob_is_normal;
+                IS(n).Params    = {DP(i) OPT.sigma};
+                
+                n = n + 1;
+            end
 
-        chain.Params = set_optval('IS',IS,chain.Params{:});
+            chain.Params = set_optval('IS',IS,chain.Params{:});
+        end
 end

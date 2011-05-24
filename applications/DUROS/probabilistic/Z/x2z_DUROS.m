@@ -1,10 +1,10 @@
 function [z ErosionVolume result] = x2z_DUROS(samples, Resistance, varargin)
-%X2Z  Limit state function
+%X2Z_DUROS  Limit state function
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   [z ErosionVolume] = x2z(x, varnames, Resistance, varargin)
+%   [z ErosionVolume] = x2z_DUROS(x, varnames, Resistance, varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function [z ErosionVolume result] = x2z_DUROS(samples, Resistance, varargin)
 %   varargout =
 %
 %   Example
-%   x2z
+%   x2z_DUROS
 %
 %   See also
 
