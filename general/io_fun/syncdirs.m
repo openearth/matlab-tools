@@ -86,52 +86,51 @@ D_srce          = dir2(source,     'dir_excl',OPT.source_dir_excl,     'file_inc
 D_dest          = dir2(destination,'dir_excl',OPT.destination_dir_excl,'file_incl',OPT.destination_file_incl);
 
 % add a field relativepathname to the source files
-for ii = 2:length(D_srce)
+for ii = 1:length(D_srce)
     D_srce(ii).relativepathname = strrep(D_srce(ii).pathname ,[D_srce(1).pathname D_srce(1).name filesep],'');
 end
 
 % add a field relativepathname to the destination files
-for ii = 2:length(D_dest)
+for ii = 1:length(D_dest)
     D_dest(ii).relativepathname = strrep(D_dest(ii).pathname ,[D_dest(1).pathname D_dest(1).name filesep],'');
 end
 
 %% look for existing / outdated / modified files and directories
-to_remove = false(size(D_dest));
+to_remove_from_dest = false(size(D_dest));
+to_remove_from_srce = false(size(D_dest));
+
+% find for files/folders with the same name and path
+[tf,loc] = ismember(...
+    strcat({D_dest.relativepathname}, {D_dest.name}),...
+    strcat({D_srce.relativepathname}, {D_srce.name}));
+
 for ii = 2:length(D_dest)
     remove_file = true;
-    % look for equal filename
-    tf1    = ismember({D_srce.name},D_dest(ii).name);
-    tf1(1) = false;
-    if any(tf1)
-        % and equal relative path
-        tf2 = ismember({D_srce(tf1).relativepathname},D_dest(ii).relativepathname);
-        if any(tf2)
-            tf1 = find(tf1);
-            jj  = tf1 (tf2);
-            % discern between directories and files
-            if isequal(D_dest(ii).isdir  ,D_srce(jj).isdir  )
-                if D_dest(ii).isdir
-                    remove_file = false;
-                else
-                    % for files compare file date...
-                    if isequal(D_dest(ii).datenum,D_srce(jj).datenum)
-                        % and file size
-                        if isequal(D_dest(ii).bytes,D_srce(jj).bytes  )
-                            remove_file = false;
-                        end
+    if tf(ii)
+        % discern between directories and files
+        if isequal(D_dest(ii).isdir  ,D_srce(loc(ii)).isdir  )
+            if D_dest(ii).isdir
+                remove_file = false;
+            else
+                % for files compare file date...
+                if isequal(D_dest(ii).datenum,D_srce(loc(ii)).datenum)
+                    % and file size
+                    if isequal(D_dest(ii).bytes,D_srce(loc(ii)).bytes  )
+                        remove_file = false;
                     end
                 end
             end
         end
     end
-    if remove_file 
-        to_remove(ii) = true;
+    if remove_file
+        to_remove_from_dest(ii)      = true;
     else
-        D_srce(jj) = [];
+        to_remove_from_srce(loc(ii)) = true;
     end
 end
+D_srce(to_remove_from_srce) = [];
 if OPT.remove_files_from_destination
-    delete2(D_dest(to_remove));
+    delete2(D_dest(to_remove_from_dest));
 end
 
 %% create directory tree
@@ -158,8 +157,8 @@ for ii = 1:length(file_to_copy);
     multiWaitbar('Copying files','increment',(file_to_copy(ii).bytes + OPT.extraBytesForWaitbar) / bytes_to_copy);
 end
 if OPT.remove_files_from_destination
-    label_msg = sprintf('Syncdirs completed, %d files copied. %d files or folders removed from destination',length(file_to_copy)-1,sum(to_remove));
+    label_msg = sprintf('Syncdirs completed, %d files copied. %d files or folders removed from destination',length(file_to_copy),sum(to_remove_from_dest));
 else
-    label_msg = sprintf('Syncdirs completed, %d files copied. %d files or folders found that are not in source.',length(file_to_copy)-1,sum(to_remove));
+    label_msg = sprintf('Syncdirs completed, %d files copied. %d files or folders found that are not in source.',length(file_to_copy),sum(to_remove_from_dest));
 end
 multiWaitbar('Copying files',1,'label',label_msg);
