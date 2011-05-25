@@ -84,7 +84,10 @@ end
 function [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input)
 
     if any(ismember({'samples' 'Resistance'}, z_input))
-        show_warning;
+        warning('OET:probabilistic:deprecated',  [ ...
+            'The argument list of the Z-function you are using is deprecated. ' ...
+            'Please use the new argument list using the "variables" option and ' ...
+            'a varargin cell array.']);
         
         i1 = find(strcmpi('samples',    z_input));
         i2 = find(strcmpi('Resistance', z_input));
@@ -126,9 +129,3 @@ for ivar = 1:length(stochast)
         inputargs = [inputargs {x(:,ivar)}];
     end
 end
-
-function show_warning()
-     warning('MATLAB:deprecated', [ ...
-        'The argument list of the Z-function you are using is deprecated. ' ...
-        'Please use the new argument list using the "variables" option and ' ...
-        'a varargin cell array.']);
