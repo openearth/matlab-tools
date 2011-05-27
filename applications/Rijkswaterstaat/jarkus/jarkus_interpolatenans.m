@@ -107,5 +107,7 @@ for i = 1:n
     if sum(notnan) > 1
         transects.(OPT.prop)(coords{:}) = interp1(interpolate(notnan), ...
             property(notnan), interpolate, options{:});
+    elseif OPT.extrap && strcmp(OPT.method, 'nearest') && sum(notnan) == 1
+        transects.(OPT.prop)(coords{:}) = deal(property(notnan));
     end
 end

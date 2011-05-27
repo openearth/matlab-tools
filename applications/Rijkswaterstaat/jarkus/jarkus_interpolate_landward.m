@@ -6,10 +6,10 @@ function transects = jarkus_interpolate_landward(transects, varargin)
 %   First is interpolated in cross-shore direction, then in time.
 %
 %   Syntax:
-%   varargout = jarkus_interpolate_landward(transects, varargin)
+%   transects = jarkus_interpolate_landward(transects, varargin)
 %
 %   Input:
-%   transects = jarkus data structure as provided by jarkus_transects
+%   transects   = jarkus data structure as provided by jarkus_transects
 %   varargin    = key/value pairs of optional parameters
 %                 prop      = property to be interpolated (default:
 %                               altitude)
