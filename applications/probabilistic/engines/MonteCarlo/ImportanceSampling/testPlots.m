@@ -7,8 +7,8 @@ methods = {'none' 'factor' 'uniform' 'incvariance' 'exponential' 'normal'};
 args = {{} {3} {-3 3} {3} {-3 3} {2 1}};
 
 % draw random numbers
-P1 = rand(1,10000);
-P2 = rand(1,10000);
+P1 = rand(1,1000);
+P2 = rand(1,1000);
 
 l = length(methods);
 sx = ceil(sqrt(l));
@@ -41,7 +41,7 @@ for i = 1:l
 
     % set layout
     set(gca,'XLim',[min(x) max(x)],'YLim',[min(y) max(y)]);
-    title(sprintf('%s (N_{fail} = %d ; P_f = %0.4f)', methods{i}, sum(Z>0), sum((Z>0).*P_corr)/length(Z)));
+    title({methods{i} sprintf('N_{fail} = %d ; P_f = %0.4f', sum(Z>0), sum((Z>0).*P_corr)/length(Z))});
 
     box on;
     grid on;

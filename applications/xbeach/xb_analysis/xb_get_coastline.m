@@ -8,7 +8,7 @@ function [xc yc dim dir idx] = xb_get_coastline(x, y, z, varargin)
 %   TODO: add interpolation option
 %
 %   Syntax:
-
+%
 %   varargout = xb_get_coastline(varargin)
 %
 %   Input:
