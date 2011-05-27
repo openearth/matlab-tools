@@ -1,9 +1,9 @@
 function varargout = jarkus_plot_transect(varargin)
 %JARKUS_PLOT_TRANSECT  Plot JARKUS transect
 %
-%   Plot one single transect of one year. Specify 'id' and 'year' as
-%   propertynam-propertyvalue pairs. The plot handle can be obtained as
-%   output argument.
+%   Plot one or multiple transects of one or multiple years. Specify 'id' 
+%   and 'year' as propertynam-propertyvalue pairs. The plot handle can be 
+%   obtained as output argument.
 %
 %   Syntax:
 %   varargout = jarkus_plot_transect(varargin)
@@ -81,27 +81,25 @@ end
 %%
 required_fields = {'cross_shore' 'altitude'};
 if all(ismember(required_fields, fieldnames(tr)))
-    altitude = squeeze(tr.altitude);
-    if isempty(altitude)
-        error('no data available for selected transect')
-    elseif ~isvector(altitude)
-        TODO('Implement support for multiple transects/years')
-    else
-        nnid = ~isnan(altitude);
-        ph = plot(tr.cross_shore(nnid), altitude(nnid));
-        % create displayname (to be used in legend)
-        displayname = '';
-        if ismember('id', fieldnames(tr))
-            displayname = sprintf('%stransect %i', displayname, tr.id);
-        end
-        if ismember('time', fieldnames(tr))
-            dmy = datevec(tr.time + datenum(1970,1,1));
-            displayname = sprintf('%s (%i)', displayname, dmy(1));
-        end
-        displayname = strtrim(displayname);
-        set(ph,...
-            'DisplayName', displayname);
-    end
+    % derive the size (dimensions) of the altitude array
+    dims = size(tr.altitude);
+    % convert altitude to a 2 dimensional array
+    altitude = reshape(tr.altitude, prod(dims(1:2)), dims(3));
+    % create identifier with cross-shore points where any data is available
+    nnid = sum(~isnan(altitude),1) ~= 0;
+    % plot all transects at once (multiple years and/or transects)
+    ph = plot(tr.cross_shore(nnid), altitude(:,nnid));
+    % creat displaynames to be used in legend
+    [ids years] = meshgrid(tr.id, year((datenum(1970,1,1) + tr.time)));
+    ids = reshape(ids, prod(dims(1:2)), 1);
+    years = reshape(years, prod(dims(1:2)), 1);
+    displayname = textscan(sprintf('transect %i (%i)\n', [ids years]'), '%s', prod(dims(1:2)), 'delimiter', '\n');
+    set(ph, {'Displayname'}, displayname{:});
+    % turn on legend
+    legend('toggle')
+    % add axis labels
+    xlabel('Cross-shore coordinate [m]')
+    ylabel('Altitude [m] w.r.t. NAP)')
 else
     error(['The following required fields are not found: ' sprintf('"%s" ', required_fields{~ismember(required_fields, fieldnames(tr))})])
 end
