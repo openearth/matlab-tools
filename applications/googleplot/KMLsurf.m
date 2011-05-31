@@ -83,6 +83,8 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    OPT.CBtemplateHor      = 'KML_colorbar_template_horizontal.png';
    OPT.CBtemplateVer      = 'KML_colorbar_template_vertical.png';
    OPT.CBcolorTitle       = '';
+   OPT.CBfontrgb          = [0 0 0];        % black
+   OPT.CBalpha            = 0.8;            % transparency
    
    if nargin==0
       varargout = {OPT};
