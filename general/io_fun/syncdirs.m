@@ -68,6 +68,7 @@ OPT.source_dir_excl                 = '';
 OPT.source_file_incl                = '.*';
 OPT.destination_dir_excl            = '';
 OPT.destination_file_incl           = '.*';
+OPT.ignorefiledate                  = false;
 OPT.extraBytesForWaitbar            = 40;  % To compensate for the the reduced throughput when copying many small files add some bytes to their size (this is only for the waitbar) 
 
 OPT = setproperty(OPT,varargin{:});
@@ -113,7 +114,7 @@ for ii = 2:length(D_dest)
                 remove_file = false;
             else
                 % for files compare file date...
-                if isequal(D_dest(ii).datenum,D_srce(loc(ii)).datenum)
+                if isequal(D_dest(ii).datenum,D_srce(loc(ii)).datenum) || ~OPT.ignorefiledate 
                     % and file size
                     if isequal(D_dest(ii).bytes,D_srce(loc(ii)).bytes  )
                         remove_file = false;
