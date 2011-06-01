@@ -150,7 +150,7 @@ else
     [P P_corr]      = prob_is(stochast, IS, P);
     
     % determine probability of exceedance
-	P_exc           = prod(1-P(:,active).*P_corr(:,active),2);
+	P_exc           = prod(1-P(:,active).*repmat(P_corr,1,sum(active)),2);
     
     % transform P to x
     x               = feval(OPT.P2xFunction, stochast, P);
