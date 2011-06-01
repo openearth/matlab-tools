@@ -80,6 +80,14 @@ xb      = xb_get_transect(xb);
 
 dt      = 1/xb_get(xb, 'DIMS.globaltime');
 
+f       = {xb.data.name};
+re      = regexp(f,'^(.+)_mean$','tokens');
+idx     = find(~cellfun(@isempty, re));
+
+for i = idx
+    xb  = xb_rename(xb, f{i}, re{i}{1}{1});
+end
+
 %% initialize output
 
 zb_i    = 0;
@@ -92,6 +100,7 @@ urms_hf = 0;
 urms_lf = 0;
 urms_t  = 0;
 umean   = 0;
+vmean   = 0;
 
 %% compute wave transformation characteristics
 
@@ -154,6 +163,10 @@ if xb_exist(xb, 'ue')
     umean = mean(xb_get(xb,'ue'),1);
 end
 
+if xb_exist(xb, 've')
+    vmean = mean(xb_get(xb,'ve'),1);
+end
+
 %% create xbeach structure
 
 xbo = xb_empty();
@@ -173,5 +186,6 @@ if ~isscalar(urms_hf);  xbo = xb_set(xbo, 'urms_hf',    squeeze(urms_hf));   end
 if ~isscalar(urms_lf);  xbo = xb_set(xbo, 'urms_lf',    squeeze(urms_lf));   end;
 if ~isscalar(urms_t);   xbo = xb_set(xbo, 'urms_t',     squeeze(urms_t));    end;
 if ~isscalar(umean);    xbo = xb_set(xbo, 'umean',      squeeze(umean));     end;
+if ~isscalar(vmean);    xbo = xb_set(xbo, 'vmean',      squeeze(vmean));     end;
 
 xbo = xb_meta(xbo, mfilename, 'hydrodynamics');

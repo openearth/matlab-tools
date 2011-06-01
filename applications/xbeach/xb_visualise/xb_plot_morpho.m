@@ -78,6 +78,7 @@ function fh = xb_plot_morpho(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
+    'handle',           [], ...
     'dz',               [], ...
     'sed',              [], ...
     'ero',              [], ...
@@ -94,7 +95,13 @@ OPT = setproperty(OPT, varargin{:});
 
 %% plot
 
-fh = figure; hold on;
+if isempty(OPT.handle)
+    fh = figure;
+else
+    fh = OPT.handle;
+end
+
+hold on;
 
 % determine dimensions
 x = xb_get(xb, 'DIMS.globalx_DATA');
