@@ -78,7 +78,7 @@ OPT = setproperty(OPT, varargin{:});
 
 xb      = xb_get_transect(xb);
 
-dt      = 1/xb_get(xb, 'DIMS.globaltime');
+dt      = mean(diff(xb_get(xb, 'DIMS.globaltime_DATA')));
 
 f       = {xb.data.name};
 re      = regexp(f,'^(.+)_mean$','tokens');
@@ -86,6 +86,10 @@ idx     = find(~cellfun(@isempty, re));
 
 for i = idx
     xb  = xb_rename(xb, f{i}, re{i}{1}{1});
+end
+
+if ~isempty(idx)
+    dt  = mean(diff(xb_get(xb, 'DIMS.meantime_DATA')));
 end
 
 %% initialize output
