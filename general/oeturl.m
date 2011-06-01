@@ -60,9 +60,7 @@ function url = oeturl(varargin)
 
 %% determine url
 
-root = strrep(regexprep(oetroot, '\w:', ''), '\', '/');
-
-re = regexp('$HeadURL$', ['^\$HeadURL:\s+(.+' root ')'], 'tokens');
+re = regexp('$HeadURL$', ['^\$HeadURL:\s+(.+trunk/matlab/)'], 'tokens');
 
 if ~isempty(re)
     url = re{1}{1};
