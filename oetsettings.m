@@ -19,7 +19,7 @@ function oetsettings(varargin)
 % * Matlab: + Scroll through the OpenEarthTools directories 
 %           + use help     : help netcdf, help general, help applications
 %           + use lookfor  : lookfor google, lookfor 
-%           + use doc      : doc xbeac, doc swan
+%           + use doc      : doc xbeach, doc swan
 %           + use tutorials: doc tutorials, also on www.openearth.nl
 %
 %See also:    oetsettings: path, restoredefaultpath, addpathfast,
