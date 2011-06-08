@@ -123,27 +123,3 @@ resultMC = MC(...
 resultFORM = FORM(...
     'stochast', stochast,...
     'x2zFunction', @prob_vdMeer_example_x2z);
-
-%% Z-function
-function z = prob_vdMeer_example_x2z(varargin)
-
-%% create samples-structure based on input arguments
-samples = struct(varargin{:});
-
-%% calculate z-values
-% pre-allocate z
-z = nan(size(samples.RhoS));
-% loop through all samples and derive z-values
-for i = 1:length(samples.RhoS)
-    Delta = (samples.RhoS(i) - samples.RhoW(i)) / samples.RhoW(i);    % [-] relative density
-    Ksi = samples.TanAlfa(i)/sqrt(samples.Steep(i));      % [-] Iribarren number
-    z(i,:) = samples.Cpl(i)*samples.P(i)^0.18*(samples.S(i)/sqrt(samples.N(i)))^0.2*Ksi^(-0.5)-samples.H(i)/Delta/samples.D(i); %[-] vdMeer
-end
-
-%{
-% alternatively, the z can be calculated as matrix operation (so, no loop
-% needed) as follows:
-Delta = (samples.RhoS - samples.RhoW) ./ samples.RhoW;    % [-] relative density
-Ksi = samples.TanAlfa ./ sqrt(samples.Steep);      % [-] Iribarren number
-z = samples.Cpl .* samples.P .^0.18.*(samples.S./sqrt(samples.N)).^0.2.*Ksi.^(-0.5)-samples.H./Delta./samples.D; %[-] vdMeer
-%}
