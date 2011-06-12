@@ -60,11 +60,15 @@ SetUIBackgroundColors;
 setHandles(handles);
 
 %% initialise ncfile list
-fns          = dir([fileparts(which(mfilename('fullpath'))) filesep '*.nc']);
+% fns          = dir([fileparts(which(mfilename('fullpath'))) filesep '*.nc']);
+fns = opendap_catalog('http://10.12.184.200:8080/thredds/catalog/VanOord/projects/catalog.xml', ...
+    'maxlevel',4, ...
+    'ignoreCatalogNc', 0, ...
+    'onlyCatalogNc', 1)
 
 if ~isempty(fns)
     
-    ncfiles      = cellstr([char(repmat({[fileparts(which(mfilename('fullpath'))) filesep]}, size(fns))), char({fns.name}')]);
+    ncfiles      = fns;%cellstr([char(repmat({[fileparts(which(mfilename('fullpath'))) filesep]}, size(fns))), char({fns.name}')]);
     
     if length(ncfiles)>1
         catalog  = nc_cf_merge_catalogs('filenames', ncfiles);
@@ -126,7 +130,6 @@ if ~isempty(fns)
         set(ph(cntr), 'facecolor','r','edgecolor','k','tag', 'OPeNDAPPoint')
         set(ph(cntr),'ButtonDownFcn',{@ddb_OPeNDAPclbkobj},'userdata',C.urlPath(j));
     end
-    
     
     ddb_OPeNDAPorderobjects;
     
