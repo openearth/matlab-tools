@@ -206,7 +206,7 @@ D     = dir(a);
 
 % find the folder from the basepath
 D     = D([D.isdir]);
-D     = D(ismember({D.name},[b c]));
+D     = D(strcmpi({D.name},[b c]));
 
 % add field datenum for old matlab versions
 if ~isfield(D,'datenum')
