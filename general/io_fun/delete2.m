@@ -77,7 +77,7 @@ end
 state.warning = warning;
 warning off;
 
-warn = lastwarn;
+warn  = lastwarn;
 dirs  = find( [D.isdir]);
 files = find(~[D.isdir]);
 for ii = files

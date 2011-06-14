@@ -63,13 +63,15 @@ function OPT = syncdirs(source, destination,varargin)
 % $Keywords: $
 
 %%
-OPT.remove_files_from_destination   = false;
+OPT.remove_files_from_destination   = false;  
+OPT.prevent_network_destination     = false;   % double check if destination is not a network adres 
 OPT.source_dir_excl                 = '';
 OPT.source_file_incl                = '.*';
 OPT.destination_dir_excl            = '';
 OPT.destination_file_incl           = '.*';
 OPT.ignorefiledate                  = false;
 OPT.extraBytesForWaitbar            = 40;  % To compensate for the the reduced throughput when copying many small files add some bytes to their size (this is only for the waitbar) 
+OPT.log                             = 1;
 
 OPT = setproperty(OPT,varargin{:});
 
@@ -77,6 +79,12 @@ if nargin==0;
     return;
 end
 %% code
+
+if OPT.prevent_network_destination
+    if isempty(regexp(destination,'^[A-Z]:','once'))
+        error('the destination is a network adres')
+    end
+end
 
 % create destination if it does not exist yet
 if ~exist(destination,'dir')
@@ -114,7 +122,7 @@ for ii = 2:length(D_dest)
                 remove_file = false;
             else
                 % for files compare file date...
-                if isequal(D_dest(ii).datenum,D_srce(loc(ii)).datenum) || ~OPT.ignorefiledate 
+                if isequal(D_dest(ii).datenum,D_srce(loc(ii)).datenum) || OPT.ignorefiledate 
                     % and file size
                     if isequal(D_dest(ii).bytes,D_srce(loc(ii)).bytes  )
                         remove_file = false;
@@ -129,11 +137,44 @@ for ii = 2:length(D_dest)
         to_remove_from_srce(loc(ii)) = true;
     end
 end
-D_srce(to_remove_from_srce) = [];
-if OPT.remove_files_from_destination
-    delete2(D_dest(to_remove_from_dest));
+
+% log message
+if OPT.log
+    temp = strcat(...
+        {D_srce(to_remove_from_srce).pathname},...
+        {D_srce(to_remove_from_srce).name})';
+    fprintf(OPT.log,'\nthe following files and folders apppear identical and will be skipped:\n');
+    fprintf(OPT.log,'     %s\n',temp{:});
 end
 
+D_srce(to_remove_from_srce) = [];
+if OPT.remove_files_from_destination
+    if ~isempty(to_remove_from_dest)
+        % log message
+        if OPT.log
+            temp = strcat(...
+                {D_dest(to_remove_from_dest).pathname},...
+                {D_dest(to_remove_from_dest).name})';
+            
+            fprintf(OPT.log,'attempting to remove files and folders:\n');
+            fprintf(OPT.log,'     %s\n',temp{:});
+        end
+        delete2(D_dest(to_remove_from_dest));
+    end
+end
+
+%% print log message
+if OPT.log
+    if length(D_srce)>1
+        temp = strcat(...
+            {D_srce(2:end).pathname},...
+            {D_srce(2:end).name})';
+        fprintf(OPT.log,'\nattempting to copy the following files and folders:\n');
+        fprintf(OPT.log,'     %s\n',temp{:});
+    else
+        fprintf(OPT.log,'\nno files and folders copied\n');
+    end
+end
 %% create directory tree
 multiWaitbar('Making directories','reset')
 dirs_to_make = D_srce([D_srce.isdir]);
@@ -147,6 +188,7 @@ end
 multiWaitbar('Making directories','close')
 
 %% copy files
+
 multiWaitbar('Copying files','reset')
 file_to_copy  = D_srce(~[D_srce.isdir]);
 bytes_to_copy = sum([file_to_copy.bytes] + OPT.extraBytesForWaitbar);
@@ -163,3 +205,13 @@ else
     label_msg = sprintf('Syncdirs completed, %d files copied. %d files or folders found that are not in source.',length(file_to_copy),sum(to_remove_from_dest));
 end
 multiWaitbar('Copying files',1,'label',label_msg);
+
+%% log message
+if OPT.log
+    fprintf(OPT.log,'Syncronization of\n    %s\nto\n    %s\nis completed. ',[D_srce(1).pathname D_srce(1).name],[D_dest(1).pathname D_dest(1).name]);
+    if OPT.remove_files_from_destination
+        fprintf('%d files were copied. %d files or folders removed from destination\n',length(file_to_copy),sum(to_remove_from_dest));
+    else
+        fprintf('%d files were copied. %d files or folders found that are not in source\n',length(file_to_copy),sum(to_remove_from_dest));
+    end
+end
