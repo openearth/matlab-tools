@@ -95,7 +95,7 @@ elseif exist(matfile, 'file') && ~OPT.skip_headers
     partype = {params_array.partype};
     upartype = unique(partype);
 else
-    warning('No XBeach parameter category definition found, skipping headers');
+    warning('OET:xbeach:headers', 'No XBeach parameter category definition found, skipping headers');
     parname = {xb.data.name};
     upartype = {'General'};
     partype = cell(size(parname));

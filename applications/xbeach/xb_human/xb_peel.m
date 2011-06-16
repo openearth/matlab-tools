@@ -88,7 +88,7 @@ for i = 1:length(names)
             % make sure variable name is valid
             if ~isvarname(names{i})
                 validname = get_validname(names{i});
-                warning(['Renamed variable "' names{i} '" to "' validname '"']);
+                warning('OET:xbeach:rename', ['Renamed variable "' names{i} '" to "' validname '"']);
                 names{i} = validname;
             end
             

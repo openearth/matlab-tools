@@ -113,7 +113,7 @@ for i = 1:length(OPT.actions)
     if exist(action, 'file') == 2 && nargin(action) == 4
         [x y z] = eval([action '(x, y, z, OPT);']);
     else
-        warning(['Ignoring non-existing grid finalisation option [' action ']']);
+        warning('OET:xbeach:finalise', ['Ignoring non-existing grid finalisation option [' action ']']);
     end
 end
 

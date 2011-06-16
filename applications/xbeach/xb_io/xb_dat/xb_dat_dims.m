@@ -165,7 +165,7 @@ else
 
     if f.bytes < prod(dims)*byt
         % smaller than minimal, adjust time assuming file is incomplete
-        warning(['File is smaller than minimum size, probably incomplete [' filename ']']);
+        warning('OET:xbeach:dimensions', ['File is smaller than minimum size, probably incomplete [' filename ']']);
 
         nt = floor(f.bytes/byt/nx/ny);
         dims = [nx ny nt];
@@ -263,7 +263,7 @@ else
 end
 
 if isempty(dims)
-    warning(['Dimensions could not be determined [' filename ']']);
+    warning('OET:xbeach:dimensions', ['Dimensions could not be determined [' filename ']']);
     
     names = {};
     type = 'unknown';

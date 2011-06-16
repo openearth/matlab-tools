@@ -187,7 +187,7 @@ if exist(fname, 'file')
                 ftype = 'double';
             otherwise
                 ftype = 'double';
-                warning(['Your filesize is weird, I assume it contains doubles [' fname ']']);
+                warning('OET:xbeach:dimensions', ['Your filesize is weird, I assume it contains doubles [' fname ']']);
         end
 
         fid = fopen(fname, 'r');
@@ -207,9 +207,15 @@ if exist(fname, 'file')
 
                 % dispose data out of range
                 for i = 1:length(dims)
-                    if OPT.start(i) > 0 || OPT.length(i) < dims_out(i) || OPT.stride(i) > 1
+                    if isempty(OPT.index)
+                        if OPT.start(i) > 0 || OPT.length(i) < dims_out(i) || OPT.stride(i) > 1
+                            idx = num2cell(repmat(':',1,length(dims_out)));
+                            idx{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
+                            dat = dat(idx{:});
+                        end
+                    else
                         idx = num2cell(repmat(':',1,length(dims_out)));
-                        idx{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
+                        idx{i} = 1+OPT.index{i};
                         dat = dat(idx{:});
                     end
                 end

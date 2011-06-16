@@ -92,7 +92,7 @@ if isscalar(OPT.front)
         % constant water level, but different in front and back
         type = 1;
     else
-        warning('Invalid tide definition, using front water level in back');
+        warning('OET:xbeach:tide', 'Invalid tide definition, using front water level in back');
         OPT.back = OPT.front;
         type = 0;
     end
@@ -104,7 +104,7 @@ elseif isvector(OPT.front)
         % varying water level in front and back
         type = 2;
     else
-        warning('Invalid tide definition, using front water level in back');
+        warning('OET:xbeach:tide', 'Invalid tide definition, using front water level in back');
         OPT.back = OPT.front;
         type = 2;
     end
