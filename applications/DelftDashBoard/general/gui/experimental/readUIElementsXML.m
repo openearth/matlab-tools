@@ -147,7 +147,13 @@ if isfield(xml,'elements')
                         s.elements(k).stringList = elxml(k).element.list;
                     else
                         for jj=1:length(elxml(k).element.list.texts)
-                            s.elements(k).list.text{jj}=elxml(k).element.list.texts(jj).text;
+                            try
+                                s.elements(k).list.text{jj}=elxml(k).element.list.texts(jj).text;
+                            catch
+                                % Robert: writexml standard saves
+                                % <texts><item></item></texts>
+                                s.elements(k).list.text{jj}=elxml(k).element.list.texts{jj};
+                            end
                         end
                     end
                     
