@@ -90,7 +90,7 @@ Par.Flow.longname='Flow input';
 Par.Sediment.longname='Sediment input';
 Par.Morphology.longname='Morphology input';
 Par.Output.longname='Output options';
-Par.Advanced.longname='Advanced options';
+Par.Advanced.longname='Advanced input';
 
 for i=1:length(params_array)
     ptype=params_array(i).partype;
@@ -464,7 +464,12 @@ for j=1:length(defaultsneeded);
     if isnumeric(def)
         fprintf(fid,'%s\n',[defaultsneeded{j} '=' num2str(def) ';']);
     else
-        fprintf(fid,'%s\n',[defaultsneeded{j} '=''' def ''';']);
+        % stop circular references
+        if strcmpi(def,defaultsneeded{j})
+            fprintf(fid,'%s\n',[defaultsneeded{j} '=0;']);
+        else
+            fprintf(fid,'%s\n',[defaultsneeded{j} '=''' def ''';']);
+        end
     end
 end
 
@@ -518,8 +523,11 @@ fclose(fid);
                     Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
                     Sub(count2).element.position=POS{count2};
                     Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
-                    Sub(count2).element.variable.type='character';
-                    Sub(count2).element.list=Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed(1);
+                    Sub(count2).element.variable.type='string';
+                    for in=1:length(Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed{1})
+                        Sub(count2).element.list.texts(in)=Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed{1}(in);
+                    end
+                    %Sub(count2).element.list=Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed(1);
                 end
                 
             otherwise
