@@ -535,6 +535,25 @@ fclose(fid);
                 Sub(count2).element.text=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
                 Sub(count2).element.position=POS{count2}(1:2);
         end
+        % does this parameter depend on other paramters?
+%        if ~isempty(Par.(index{i}).(index2{ii}).variables.(index3{iii}).condition{1})
+%            ncon = length(Par.(index{i}).(index2{ii}).variables.(index3{iii}).condition);
+%            Sub(count2).element.dependencies.dependency.action = 'enable';
+%            Sub(count2).element.dependencies.dependency.checkfor = 'any';
+%            Sub(count2).element.dependencies.dependency.tags.tag = 'selecttype';
+%            for icon=1:ncon
+%                % dependency should be something like:
+%                % Model(md).Input(ad).''parname''
+%                % where parname = par.nx, minus the par.
+%                % so we isolate the par.nx from the condition phrase and replace with Model(md) etc. 
+%                dependency = 4;
+%                
+%                Sub(count2).element.dependencies.dependency.checks(icon).check.variable = tag;
+%                Sub(count2).element.dependencies.dependency.checks(icon).check.value = value;
+%                Sub(count2).element.dependencies.dependency.checks(icon).check.operator = 'eq';
+%            end
+%            
+%        end
     end
 
 
