@@ -414,7 +414,7 @@ fprintf(fid,'%s\n','% pick up defaults from autogen subfunction');
 fprintf(fid,'%s\n','par=getdefaultpars;');
 fprintf(fid,'%s\n','');
 % Initial commands (are all these necessary?)
-fprintf(fid,'%s\n','ii=strmatch(''XBeach'',{handles.Model.Name},''exact'');');
+fprintf(fid,'%s\n','ii=strmatch(''XBeach'',{handles.Model.name},''exact'');');
 fprintf(fid,'%s\n','handles.Model(ii).Input(id).Description={''''};');
 fprintf(fid,'%s\n','handles.Model(ii).Input(id).Runid=runid;');
 fprintf(fid,'%s\n','handles.Model(ii).Input(id).AttName=handles.Model(ii).Input(id).Runid;');
@@ -519,7 +519,7 @@ fclose(fid);
                     Sub(count2).element.position=POS{count2};
                     Sub(count2).element.variable.name=Par.(index{i}).(index2{ii}).variables.(index3{iii}).name;
                     Sub(count2).element.variable.type='character';
-                    Sub(count2).element.list=Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed{1};
+                    Sub(count2).element.list=Par.(index{i}).(index2{ii}).variables.(index3{iii}).allowed(1);
                 end
                 
             otherwise
