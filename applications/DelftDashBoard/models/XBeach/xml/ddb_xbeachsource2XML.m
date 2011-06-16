@@ -186,7 +186,7 @@ DES.element.nrlines=10;
 DES.element.text='Description (max. 10 lines)';
 DES.element.textposition='above-left';
 
-xml_save('XBeach.description.xml',DES,XMLmat);
+xml_save([xmlp 'XBeach.description.xml'],DES,XMLmat);
 
 %% Write XML Physics etc. files (all but advanced)
 index=fieldnames(Par);
