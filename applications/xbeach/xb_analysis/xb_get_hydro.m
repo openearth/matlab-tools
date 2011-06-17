@@ -69,7 +69,8 @@ function xbo = xb_get_hydro(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
-    'fsplit',          .1 ...
+    'fsplit',          .1,      ...
+    'detrend',         true     ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -117,17 +118,23 @@ end
     
 % split HF and LF waves
 if xb_exist(xb, 'zs')
+    zs      = xb_get(xb,'zs');
+    df      = 1/(size(zs,1)*dt);
+    
     if xb_exist(xb, 'zb')
-        [hf lf] = filterhjb(xb_get(xb,'zs')-xb_get(xb,'zb'),OPT.fsplit,dt,false);
+        [hf lf] = filterhjb(zs-xb_get(xb,'zb'),OPT.fsplit,df,~OPT.detrend);
     else
-        [hf lf] = filterhjb(xb_get(xb,'zs'),OPT.fsplit,dt,false);
+        [hf lf] = filterhjb(zs,OPT.fsplit,df,~OPT.detrend);
     end
     
     Hrms_hf = sqrt(8).*std(hf,1);
     Hrms_lf = sqrt(8).*std(lf,1);
 end
 if xb_exist(xb, 'u')
-    [hf lf] = filterhjb(xb_get(xb,'u'),OPT.fsplit,dt,false);
+    u       = xb_get(xb,'u');
+    df      = 1/(size(zs,1)*dt);
+    
+    [hf lf] = filterhjb(u,OPT.fsplit,df,~OPT.detrend);
     
     urms_hf = std(hf,1);
     urms_lf = std(lf,1);

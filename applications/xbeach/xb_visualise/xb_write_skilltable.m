@@ -119,7 +119,7 @@ for i = 1:length(measured)
         end
         
         [r2 sci relbias bss]    = xb_skill(measured{i}, computed, initial, 'var', OPT.vars{i});
-        labels{n}               = ['$' OPT.vars{i} '$'];
+        labels{n}               = OPT.vars{i};
 
         skills(n,:) = [r2 sci relbias bss];
 
@@ -127,9 +127,18 @@ for i = 1:length(measured)
     end
 end
 
+% save tex file
+dim = num2cell(2*ones(1,length(labels)));
+dlm = num2cell(repmat('$',1,length(labels)));
+
 matrix2latex(skills, 'filename', OPT.file, ...
     'caption',  OPT.title, ...
-    'rowlabel', labels, ...
+    'rowlabel', cellfun(@cat, dim, dlm, labels, dlm, 'UniformOutput', false), ...
     'collabel', {'$R^2$','Sci','Rel. bias','BSS'}, ...
     'format',	{'%s', '%4.2f', '%4.2f', '%4.2f', '%4.2f'});
 
+% save mat file
+[fdir fname fext] = fileparts(OPT.file);
+
+BSS = cell2struct(num2cell(skills,2), labels);
+save([fname '.mat'], '-struct', 'BSS');

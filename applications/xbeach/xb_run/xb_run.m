@@ -80,9 +80,9 @@ OPT = setproperty(OPT, varargin{:});
 
 OPT.path = abspath(fullfile(OPT.path, OPT.name));
 
-if ~exist(OPT.path)
-    mkdir(OPT.path);
-end
+if ~exist(OPT.path, 'dir'); mkdir(OPT.path); end;
+if ~exist(fullfile(OPT.path, 'bin'),'dir'); mkdir(fullfile(OPT.path, 'bin')); end;
+
 
 %% write model
 
@@ -110,6 +110,17 @@ if isempty(OPT.binary)
     OPT.binary = xb_get_bin('type', bin_type);
 end
 
+% move downloaded binary to destination directory
+if exist(OPT.binary, 'dir') == 7
+    copyfile(fullfile(OPT.binary, '*'), fullfile(OPT.path, 'bin'));
+else
+    if isunix()
+        copyfile(OPT.binary, fullfile(OPT.path, 'bin', 'xbeach'));
+    else
+        copyfile(OPT.binary, fullfile(OPT.path, 'bin', 'xbeach.exe'));
+    end
+end
+
 %% run model
 
 if isunix()
@@ -117,7 +128,7 @@ if isunix()
         error('MPI support is not yet implemented, sorry!'); % TODO
     else
         % start xbeach
-        [r messages] = system(['cd ' OPT.path ' && ' OPT.binary]);
+        [r messages] = system(['cd ' OPT.path ' && bin/xbeach']);
         
         % get current running xbeach instances
         [r tasklist] = system(['ps | grep -i xbeach$']);
@@ -142,7 +153,7 @@ else
         drive = regexp(OPT.path, '^\s*([a-zA-Z]:)', 'match'); drive = drive{1};
         
         % start xbeach
-        [r messages] = system([drive ' && cd ' OPT.path ' && start ' OPT.binary]);
+        [r messages] = system([drive ' && cd ' OPT.path ' && start bin\xbeach.exe']);
         
         % get current running xbeach instances
         [r tasklist] = system('tasklist /FI "IMAGENAME eq xbeach.exe"');
