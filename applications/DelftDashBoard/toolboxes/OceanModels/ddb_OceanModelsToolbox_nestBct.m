@@ -42,19 +42,16 @@ opt.current.BC.dataname=handles.Toolbox(tb).Input.name;
 opt.inputDir='.\';
 
 
-
-% Tide file
-ib=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
-ii=handles.Toolbox(ib).Input.activeTideModelBC;
-name=handles.tideModels.model(ii).name;
-if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
-    tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
-else
-    tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
-end
-
 % Coordinate system
 cs=handles.screenParameters.coordinateSystem;
+% if ~strcmpi(cs.type,'geographic')
+%     % First convert boundary coordinates to WGS 84
+%     for ib=1:length(openBoundaries)
+%         [openBoundaries(ib).x,openBoundaries(ib).y]=convertCoordinates(openBoundaries(ib).x,openBoundaries(ib).y,'persistent', ...
+%             'CS1.name',cs.name,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+%     end
+% end
+
 
 % File name bct file
 [filename, pathname, filterindex] = uiputfile('*.bct', 'Select Hydrodynamic Boundary Conditions File',handles.Model(md).Input(ad).bctFile);
@@ -71,23 +68,6 @@ end
 
 wb = waitbox('Generating boundary conditions ...');
 
-% % Water levels
-% switch handles.Toolbox(tb).Input.options.waterLevel.BC.source
-%     case {2,3}
-%         % From file
-%         % Make large file water level
-%         t0=handles.Model(md).Input(ad).startTime;
-%         t1=handles.Model(md).Input(ad).stopTime;
-%         outfile='TMPOCEAN_waterlevel.mat';
-%         errmsg=mergeOceanModelFiles(handles.Toolbox(tb).Input.folder,handles.Toolbox(tb).Input.name,outfile,'waterlevel',t0,t1);
-%         if ~isempty(errmsg)
-%             close(wb);
-%             giveWarning('text',[errmsg ' Boundary generation aborted']);
-%             return
-%         end
-%         opt.waterLevel.BC.file=outfile;
-% end
-
 switch handles.Toolbox(tb).Input.options.waterLevel.BC.source
     case {1,3}
         % Astronomic
@@ -97,6 +77,14 @@ switch handles.Toolbox(tb).Input.options.waterLevel.BC.source
             for i=1:length(tempOpenBoundaries)
                 tempOpenBoundaries(i).forcing='A';
                 tempOpenBoundaries(i).type='Z';
+            end
+            % Tide file
+            ii=handles.Toolbox(tb).Input.activeTideModelWL;
+            name=handles.tideModels.model(ii).name;
+            if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+                tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
+            else
+                tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
             end
             [tempOpenBoundaries,astronomicComponentSets]=ddb_generateTemporaryBoundaryConditions(tempOpenBoundaries,tidefile,cs);
             bndFile='TMPOCEAN_wl.bnd';
@@ -108,30 +96,6 @@ switch handles.Toolbox(tb).Input.options.waterLevel.BC.source
         end
 end
 
-% % Currents
-% switch handles.Toolbox(tb).Input.options.current.BC.source
-%     case {2,3}
-%         % From file
-%         % Make large file for currents
-%         t0=handles.Model(md).Input(ad).startTime;
-%         t1=handles.Model(md).Input(ad).stopTime;
-%         outfile='TMPOCEAN_current_u.mat';
-%         errmsg=mergeOceanModelFiles(handles.Toolbox(tb).Input.folder,handles.Toolbox(tb).Input.name,outfile,'current_u',t0,t1);
-%         if ~isempty(errmsg)
-%             close(wb);
-%             giveWarning('text',[errmsg ' Boundary generation aborted']);
-%             return
-%         end
-%         opt.current.BC.file_u=outfile;
-%         outfile='TMPOCEAN_current_v.mat';
-%         errmsg=mergeOceanModelFiles(handles.Toolbox(tb).Input.folder,handles.Toolbox(tb).Input.name,outfile,'current_v',t0,t1);
-%         if ~isempty(errmsg)
-%             giveWarning('text',[errmsg ' Boundary generation aborted']);
-%             return
-%         end
-%         opt.current.BC.file_v=outfile;
-% end
-
 switch handles.Toolbox(tb).Input.options.current.BC.source
     case {1,3}
         % Astronomic
@@ -140,6 +104,14 @@ switch handles.Toolbox(tb).Input.options.current.BC.source
             for i=1:length(tempOpenBoundaries)
                 tempOpenBoundaries(i).forcing='A';
                 tempOpenBoundaries(i).type='C';
+            end
+            % Tide file
+            ii=handles.Toolbox(tb).Input.activeTideModelCur;
+            name=handles.tideModels.model(ii).name;
+            if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+                tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
+            else
+                tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
             end
             [tempOpenBoundaries,astronomicComponentSets]=ddb_generateTemporaryBoundaryConditions(tempOpenBoundaries,tidefile,cs);
             bndFile='TMPOCEAN_current.bnd';

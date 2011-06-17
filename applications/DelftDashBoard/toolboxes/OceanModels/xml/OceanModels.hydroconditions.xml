@@ -16,6 +16,12 @@
         <text>Astronomic + File</text>
         <text>Constant</text>
       </texts>
+      <values>
+        <value>1</value>
+        <value>2</value>
+        <value>3</value>
+        <value>4</value>
+      </values> 
     </list>
   </element> 
 
@@ -215,6 +221,12 @@
         <text>Astronomic + File</text>
         <text>Constant</text>
       </texts>
+      <values>
+        <value>1</value>
+        <value>2</value>
+        <value>3</value>
+        <value>4</value>
+      </values> 
     </list>
   </element> 
 
@@ -472,6 +484,17 @@
       </dependency>
     </dependencies> 
   </element>
+
+  <element>
+    <tag>edittimestep</tag>
+    <position>850 40 50 20</position>
+    <style>edit</style>
+    <type>real</type>
+    <text>Time Step (min)</text>
+    <variable>handles.Toolbox(tb).Input.options.bctTimeStep</variable>
+    <tooltipstring>Edit time step in bct file (min)</tooltipstring> 
+  </element> 
+
   <element>
     <tag>generatebctfile</tag>
     <style>pushbutton</style>

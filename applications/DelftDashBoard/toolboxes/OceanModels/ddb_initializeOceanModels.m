@@ -57,41 +57,43 @@ handles.Toolbox(ii).Input.outlineHandle=[];
 
 handles.Toolbox(ii).Input.autoWL=1;
 handles.Toolbox(ii).Input.activeTideModelWL=1;
-handles.Toolbox(ii).Input.options.waterLevel.BC.source=1;
+handles.Toolbox(ii).Input.options.waterLevel.BC.source=1; % astro
 handles.Toolbox(ii).Input.options.waterLevel.BC.astroFile='';
 handles.Toolbox(ii).Input.options.waterLevel.BC.bndAstroFile='';
 handles.Toolbox(ii).Input.options.waterLevel.BC.constant=0;
 
+
 handles.Toolbox(ii).Input.autoCur=1;
 handles.Toolbox(ii).Input.activeTideModelCur=1;
-handles.Toolbox(ii).Input.options.current.BC.source=1;
+handles.Toolbox(ii).Input.options.current.BC.source=1; % astro
 handles.Toolbox(ii).Input.options.current.BC.astroFile='';
 handles.Toolbox(ii).Input.options.current.BC.bndAstroFile='';
 
 handles.Toolbox(ii).Input.options.bctTimeStep=10;
 
 % Transport
-handles.Toolbox(ii).Input.options.salinity.BC.source=1;
+handles.Toolbox(ii).Input.options.salinity.BC.source=4; % constant
 handles.Toolbox(ii).Input.options.salinity.BC.profileFile='';
 handles.Toolbox(ii).Input.options.salinity.BC.constant=31;
 
-handles.Toolbox(ii).Input.options.temperature.BC.source=1;
+handles.Toolbox(ii).Input.options.temperature.BC.source=4; % constant
 handles.Toolbox(ii).Input.options.temperature.BC.profileFile='';
 handles.Toolbox(ii).Input.options.temperature.BC.constant=15;
 
-handles.Toolbox(ii).Input.options.bccTimeStep=10;
+handles.Toolbox(ii).Input.options.bccTimeStep=30;
 
 % Initial conditions
-handles.Toolbox(ii).Input.options.waterLevel.IC.source=1;
+handles.Toolbox(ii).Input.options.waterLevel.IC.source=4; % constant
 handles.Toolbox(ii).Input.options.waterLevel.IC.constant=0;
 
-handles.Toolbox(ii).Input.options.current.IC.source=2;
+handles.Toolbox(ii).Input.options.current.IC.source=4; % constant
 handles.Toolbox(ii).Input.options.current.IC.constant=0;
 
-handles.Toolbox(ii).Input.options.salinity.IC.source=2;
+handles.Toolbox(ii).Input.options.salinity.IC.source=4; % constant
 handles.Toolbox(ii).Input.options.salinity.IC.profileFile='';
 handles.Toolbox(ii).Input.options.salinity.IC.constant=31;
 
-handles.Toolbox(ii).Input.options.temperature.IC.source=2;
+handles.Toolbox(ii).Input.options.temperature.IC.source=4; % constant
 handles.Toolbox(ii).Input.options.temperature.IC.profileFile='';
 handles.Toolbox(ii).Input.options.temperature.IC.constant=15;
+

@@ -15,6 +15,11 @@
         <text>File</text>
         <text>Profile</text>
       </texts>
+      <values>
+        <value>4</value>
+        <value>2</value>
+        <value>5</value>
+      </values> 
     </list>
   </element>
   <element>
@@ -84,6 +89,11 @@
         <text>File</text>
         <text>Profile</text>
       </texts>
+      <values>
+        <value>4</value>
+        <value>2</value>
+        <value>5</value>
+      </values> 
     </list>
   </element>
   <element>
@@ -202,6 +212,16 @@
       </dependency>
     </dependencies> 
   </element>
+
+  <element>
+    <tag>edittimestep</tag>
+    <position>850 40 50 20</position>
+    <style>edit</style>
+    <type>real</type>
+    <text>Time Step (min)</text>
+    <variable>handles.Toolbox(tb).Input.options.bccTimeStep</variable>
+    <tooltipstring>Edit time step in bcc file (min)</tooltipstring> 
+  </element> 
 
   <element>
     <tag>generatebccfile</tag>

@@ -13,6 +13,9 @@
       <texts>
         <text>Constant</text>
       </texts>
+      <values>
+        <value>4</value>
+      </values> 
     </list>
   </element> 
   <element>
@@ -37,6 +40,10 @@
         <text>Constant</text>
         <text>File</text>
       </texts>
+      <values>
+        <value>4</value>
+        <value>2</value>
+      </values> 
     </list>
   </element> 
 
@@ -54,6 +61,11 @@
         <text>File</text>
         <text>Profile</text>
       </texts>
+      <values>
+        <value>4</value>
+        <value>2</value>
+        <value>5</value>
+      </values> 
     </list>
   </element>
   <element>
@@ -123,6 +135,11 @@
         <text>File</text>
         <text>Profile</text>
       </texts>
+      <values>
+        <value>4</value>
+        <value>2</value>
+        <value>5</value>
+      </values> 
     </list>
   </element>
   <element>
