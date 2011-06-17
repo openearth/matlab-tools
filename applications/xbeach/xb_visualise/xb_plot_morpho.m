@@ -19,9 +19,11 @@ function fh = xb_plot_morpho(xb, varargin)
 %               Q:          Measured separation point between erosion and
 %                           accretion
 %               P:          Measured delimitation of active zone
-%               units:      Units used for x- and z-axis
-%               units2:     Units used for secondary z-axis
-%               units3:     Units used for tertiary z-axis
+%               units_dist: Units used for distance axes
+%               units_vol:  Units used for volume axis
+%               units_time: Units used for time axis
+%               showall:    Show all data available instead of only show
+%                           data matched by measurements
 %
 %   Output:
 %   fh        = Figure handle
@@ -86,9 +88,10 @@ OPT = struct( ...
     'Q',                [], ...
     'P',                [], ...
     'title',            '', ...
-    'units',            'm', ...
-    'units2',           'm^3/m', ...
-    'units3',           'h' ...
+    'units_dist',       'm', ...
+    'units_vol',        'm^3/m', ...
+    'units_time',       'h', ...
+    'show_all',         false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -112,6 +115,8 @@ x = squeeze(x(j,:));
 % determine available data
 has_m           = ~isempty(OPT.dz) || ~isempty(OPT.ero) || ~isempty(OPT.R);
 
+if OPT.showall; has_m = false; end;
+
 % compute number of subplots
 sp = [0 0 0];
 if (has_m && ~isempty(OPT.dz)) || (~has_m && xb_exist(xb, 'dz'));   sp(1) = 1;  end;
@@ -128,8 +133,8 @@ if sp(1)
     ax(si) = subplot(n,1,si); si = si + 1; hold on;
     
     title('bed level change');
-    xlabel(['distance [' OPT.units ']']);
-    ylabel(['height [' OPT.units ']']);
+    xlabel(['distance [' OPT.units_dist ']']);
+    ylabel(['height [' OPT.units_dist ']']);
     
     % plot measurements
     if ~isempty(OPT.dz);                addplot(OPT.dz(:,1),        OPT.dz(:,2),            'o',    'k',    'measured'  );  end;
@@ -147,8 +152,8 @@ if sp(2)
     ax(si) = subplot(n,1,si); si = si + 1; hold on;
     
     title('erosion volume');
-    xlabel(['time [' OPT.units3 ']']);
-    ylabel(['volume [' OPT.units2 ']']);
+    xlabel(['time [' OPT.units_time ']']);
+    ylabel(['volume [' OPT.units_vol ']']);
     
     % plot measurements
     if ~isempty(OPT.ero);               addplot(OPT.ero(:,1),       OPT.ero(:,2),           'o',    'k',    'measured'  );  end;
@@ -165,8 +170,8 @@ if sp(3)
     ax(si) = subplot(n,1,si); si = si + 1; hold on;
     
     title('retreat distance');
-    xlabel(['time [' OPT.units3 ']']);
-    ylabel(['distance [' OPT.units ']']);
+    xlabel(['time [' OPT.units_time ']']);
+    ylabel(['distance [' OPT.units_dist ']']);
     
     % plot measurements
     if ~isempty(OPT.R);                 addplot(OPT.R(:,1),         OPT.R(:,2),             'o',    'k',    'measured'  );  end;

@@ -79,6 +79,7 @@ OPT = setproperty(OPT, varargin{:});
 
 xb      = xb_get_transect(xb);
 
+nx      = xb_get(xb, 'DIMS.globalx');
 dt      = mean(diff(xb_get(xb, 'DIMS.globaltime_DATA')));
 
 f       = {xb.data.name};
@@ -106,6 +107,14 @@ urms_lf = 0;
 urms_t  = 0;
 umean   = 0;
 vmean   = 0;
+
+% advanced
+rho     = 0;
+SK      = 0;
+AS      = 0;
+B       = 0;
+beta    = 0;
+uavg    = 0;
 
 %% compute wave transformation characteristics
 
@@ -145,6 +154,12 @@ if xb_exist(xb, 'H')
     Hrms_hf = sqrt(mean(xb_get(xb,'H').^2,1)+Hrms_hf.^2);
     if xb_exist(xb, 'zs')
         Hrms_t = sqrt(Hrms_lf.^2+Hrms_hf.^2);
+        
+        [zs H] = xb_get(xb,'zs','H');
+        for i = 1:nx
+            R       = corrcoef(detrend(zs(:,1,i)),H(:,1,i).^2);
+            rho(i)  = R(1,2);
+        end
     end
 end
 
@@ -174,8 +189,25 @@ if xb_exist(xb, 'ue')
     umean = mean(xb_get(xb,'ue'),1);
 end
 
+if xb_exist(xb, 'ua')
+    uavg = mean(xb_get(xb,'ua'),1);
+end
+
 if xb_exist(xb, 've')
     vmean = mean(xb_get(xb,'ve'),1);
+end
+
+% skewness and asymmetry
+if xb_exist(xb, 'Sk')
+    SK = mean(xb_get(xb,'Sk'),1);
+end
+
+if xb_exist(xb, 'As')
+    AS = mean(xb_get(xb,'As'),1);
+    if xb_exist(xb, 'Sk')
+        beta    = atan(AS./SK);
+        B       = sqrt(AS.^2+SK.^2);
+    end
 end
 
 %% create xbeach structure
@@ -198,5 +230,13 @@ if ~isscalar(urms_lf);  xbo = xb_set(xbo, 'urms_lf',    squeeze(urms_lf));   end
 if ~isscalar(urms_t);   xbo = xb_set(xbo, 'urms_t',     squeeze(urms_t));    end;
 if ~isscalar(umean);    xbo = xb_set(xbo, 'umean',      squeeze(umean));     end;
 if ~isscalar(vmean);    xbo = xb_set(xbo, 'vmean',      squeeze(vmean));     end;
+
+% advanced
+if ~isscalar(rho);      xbo = xb_set(xbo, 'rho',        squeeze(rho));       end;
+if ~isscalar(SK);       xbo = xb_set(xbo, 'SK',         squeeze(SK));        end;
+if ~isscalar(AS);       xbo = xb_set(xbo, 'AS',         squeeze(AS));        end;
+if ~isscalar(B);        xbo = xb_set(xbo, 'B',          squeeze(B));         end;
+if ~isscalar(beta);     xbo = xb_set(xbo, 'beta',       squeeze(beta));      end;
+if ~isscalar(uavg);     xbo = xb_set(xbo, 'uavg',       squeeze(uavg));      end;
 
 xbo = xb_meta(xbo, mfilename, 'hydrodynamics');

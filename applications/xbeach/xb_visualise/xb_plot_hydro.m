@@ -18,8 +18,10 @@ function fh = xb_plot_hydro(xb, varargin)
 %               Hrms_t:     Measured total wave height
 %               s:          Measured water level setup
 %               u:          Measured cross-shore flow velocity
-%               units:      Units used for x- and z-axis
-%               units2:     Units used for secondary z-axis
+%               units_dist: Units used for x- and z-axis
+%               units_vel:  Units used for secondary z-axis
+%               showall:    Show all data available instead of only show
+%                           data matched by measurements
 %
 %   Output:
 %   fh        = Figure handle
@@ -88,8 +90,9 @@ OPT = struct( ...
     'urms_t',           [], ...
     'umean',            [], ...
     'vmean',            [], ...
-    'units',            'm', ...
-    'units2',           'm/s' ...
+    'units_dist',       'm', ...
+    'units_vel',        'm/s', ...
+    'showall',          false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -133,6 +136,8 @@ has_bathy_c     = xb_exist(xb, 'zb_*');
 has_waves_c     = xb_exist(xb, 'Hrms_*') || xb_exist(xb, 's');
 has_flow_c      = xb_exist(xb, 'urms_*') || xb_exist(xb, 'umean') || xb_exist(xb, 'vmean');
 
+if OPT.showall; has_m = false; end;
+
 % compute number of subplots
 sp = [0 0];
 if (has_m && (has_bathy_m || has_waves_m)) || (~has_m && (has_bathy_c || has_waves_c)); sp(1) = 1;  end;
@@ -148,7 +153,7 @@ if sp(1)
     ax(si) = subplot(n,1,si); si = si + 1; hold on;
     
     title('wave heights and water levels');
-    ylabel(['height [' OPT.units ']']);
+    ylabel(['height [' OPT.units_dist ']']);
     
     % plot measurements
     if ~isempty(OPT.zb);                addplot(OPT.zb(:,1),        OPT.zb(:,2),            '.',    'k',    'bathymetry (final,measured)'       );  end;
@@ -176,7 +181,7 @@ if sp(2)
     ax(si) = subplot(n,1,si); si = si + 1; hold on;
     
     title('flow velocities');
-    ylabel(['velocity [' OPT.units2 ']']);
+    ylabel(['velocity [' OPT.units_vel ']']);
     
     if xb_exist(xb, 'ue') && ~xb_exist(xb, 'u'); xb = xb_rename(xb, 'ue', 'u'); end;
     
@@ -201,7 +206,7 @@ end
 for i = 1:n
     subplot(n,1,i);
 
-    xlabel(['distance [' OPT.units ']']);
+    xlabel(['distance [' OPT.units_dist ']']);
 
     legend
     legend('show', 'Location', 'NorthWest');
