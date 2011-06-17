@@ -55,14 +55,15 @@ function varargout = KML_poly(lat,lon,varargin)
 
 %% keyword,value
 
-   OPT.styleName  = [];
-   OPT.visibility = 1;
-   OPT.extrude    = 0;
-   OPT.timeIn     = [];
-   OPT.timeOut    = [];
-   OPT.name       = 'poly';
-   OPT.tessellate = 0;
-   OPT.precision  = 8;
+   OPT.styleName   = [];
+   OPT.visibility  = 1;
+   OPT.extrude     = 0;
+   OPT.timeIn      = [];
+   OPT.timeOut     = [];
+   OPT.name        = 'poly';
+   OPT.tessellate  = 0;
+   OPT.precision   = 8;
+   OPT.description = '';
    
 if nargin==0; varargout = {OPT}; return; end
 
@@ -131,6 +132,13 @@ else
     tessellate = '';
 end
 
+%% preprocess description
+
+if  ~isempty(OPT.description)
+    description = ['<description>' OPT.description '</description>\n'];
+else
+    description = '';
+end
    
 %% preproces timespan
 
@@ -217,6 +225,7 @@ end
 
    output = sprintf([...
     '<Placemark>\n'...
+    '%s'...                        % description
     '%s'...                        % visibility
     '%s'...                        % timeSpan
     '<name>%s</name>\n'...         % OPT.name
@@ -227,7 +236,7 @@ end
     '%s'...                        % inner coordinates
      '</Polygon>\n'...
     '</Placemark>\n'],...
-    visibility,timeSpan,OPT.name,OPT.styleName,altitudeMode,outerCoords,innerCoords);
+    description,visibility,timeSpan,OPT.name,OPT.styleName,altitudeMode,outerCoords,innerCoords);
     
     varargout = {output};
 

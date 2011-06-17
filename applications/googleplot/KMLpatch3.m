@@ -66,39 +66,39 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
 
 %% process varargin
 
-   % deal with colorbar options first
-   OPT                    = KMLcolorbar();
-   OPT                    = mergestructs(OPT,KML_header());
-   % rest of the options
-   OPT.fileName           = '';
-   OPT.kmlName            = '';
-   OPT.name               = '';
-   OPT.lineWidth          = 1;
-   OPT.lineColor          = [0 0 0];
-   OPT.lineAlpha          = 1;
-OPT.colorMap           = [];
-OPT.colorSteps         = 1;
-   OPT.fillAlpha          = 0.3;
-   OPT.polyOutline        = false; % outlines the polygon, including extruded edges
-   OPT.polyFill           = true;
-   OPT.openInGE           = false;
-   OPT.reversePoly        = [];
-   OPT.extrude            = true;
+    % deal with colorbar options first
+    OPT                    = KMLcolorbar();
+    OPT                    = mergestructs(OPT,KML_header());
+    % rest of the options
+    OPT.fileName           = '';
+    OPT.kmlName            = '';
+    OPT.name               = '';
+    OPT.lineWidth          = 1;
+    OPT.lineColor          = [0 0 0];
+    OPT.lineAlpha          = 1;
+    OPT.colorMap           = [];
+    OPT.colorSteps         = 1;
+    OPT.fillAlpha          = 0.3;
+    OPT.polyOutline        = false; % outlines the polygon, including extruded edges
+    OPT.polyFill           = true;
+    OPT.openInGE           = false;
+    OPT.reversePoly        = [];
+    OPT.extrude            = true;
 
-OPT.cLim               = [];
-   OPT.zScaleFun          = @(z) (z+20).*5;
-   OPT.timeIn             = [];
-   OPT.timeOut            = [];
-   OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
-OPT.colorbar           = 0;
-      OPT.fillColor          = [];
+    OPT.cLim               = [];
+    OPT.zScaleFun          = @(z) (z+20).*5;
+    OPT.timeIn             = [];
+    OPT.timeOut            = [];
+    OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
+    OPT.colorbar           = 0;
+    OPT.fillColor          = [];
 
-   OPT.text               = '';
-   OPT.latText            = [];
-   OPT.lonText            = [];
-   OPT.precision          = 8;
-   OPT.tessellate         = false;
-   OPT.lineOutline        = true; % draws a separate line element around the polygon. Outlines the polygon, excluding extruded edge
+    OPT.text               = '';
+    OPT.latText            = [];
+    OPT.lonText            = [];
+    OPT.precision          = 8;
+    OPT.tessellate         = false;
+    OPT.lineOutline        = true; % draws a separate line element around the polygon. Outlines the polygon, excluding extruded edge
    
    if nargin==0
       varargout = {OPT};
@@ -164,10 +164,10 @@ OPT.colorbar           = 0;
 
 %% pre-process color data
 
-   if   ~isempty(OPT.fillColor) &  isempty(OPT.colorMap) & OPT.colorSteps==1
+   if   ~isempty(OPT.fillColor) &&  isempty(OPT.colorMap) && OPT.colorSteps==1
        colorRGB = OPT.fillColor;
        c = 1;
-   elseif  isempty(OPT.fillColor) & ~isempty(OPT.colorMap)
+   elseif  isempty(OPT.fillColor) && ~isempty(OPT.colorMap)
    
        if isempty(OPT.cLim)
           OPT.cLim         = [min(c(:)) max(c(:))];
@@ -184,7 +184,7 @@ OPT.colorbar           = 0;
       
        c = round(((c-OPT.cLim(1))/(OPT.cLim(2)-OPT.cLim(1)+eps)*(OPT.colorSteps-1))+1);
        
-   elseif   isempty(OPT.fillColor) & isempty(OPT.colorMap) & OPT.colorSteps==1
+   elseif   isempty(OPT.fillColor) && isempty(OPT.colorMap) && OPT.colorSteps==1
 
        error('either keyword fillColor or keyword colorMap needs to be specified')
 
@@ -241,7 +241,7 @@ OPT.colorbar           = 0;
       'tessellate',OPT.tessellate,...
       'precision' ,OPT.precision);
    
-   if iscell(lat) & iscell(lon)
+   if iscell(lat) && iscell(lon)
        
        if length(c)==1 % c can be constant for all patches
           csize = 1;
@@ -292,7 +292,7 @@ OPT.colorbar           = 0;
        output = [output KML_poly(lat,lon,OPT.zScaleFun(z),OPT_poly)]; % make sure that lat(:),lon(:) have correct dimension nx1
    end
    
-   if OPT.lineOutline                          & isempty(c)
+   if OPT.lineOutline && isempty(c)
        OPT_line = struct(...
             'name','',...
        'styleName','style',...
