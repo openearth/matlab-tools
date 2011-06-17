@@ -65,10 +65,13 @@ function cmap = colormap_cpt(cpt,varargin)
 
 %% adjust of *.cpt filename so you can copy paste it from the website
 cpt = strrep(cpt,' ','_');
-if ~strcmpi(cpt(end-3:end),'.cpt')
+if length(cpt) > 3
+    if ~strcmpi(cpt(end-3:end),'.cpt')
+        cpt = [cpt '.cpt'];
+    end
+else
     cpt = [cpt '.cpt'];
 end
-
 %% open cpt file
 fid = fopen(cpt);
 
