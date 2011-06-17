@@ -150,6 +150,17 @@ wl=wlconst+wlastro+wl3d;
 vel=velconst+velastro+vel4d;
 tanvel=tanvelconst+tanvelastro+tanvel4d;
 
+% for iii=70:80
+%     plot(squeeze(wlastro(iii,1,:)));hold on;
+%     plot(squeeze(wlastro(iii,2,:)));hold on;
+% end
+% 
+% for iii=70:80
+%     plot(squeeze(velastro(iii,1,1,:)));hold on;
+%     plot(squeeze(velastro(iii,2,1,:)));hold on;
+% end
+
+
 %% Generate time series for each boundary
 for n=1:nr
     % Check if it's a time series boundary

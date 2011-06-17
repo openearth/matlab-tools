@@ -20,6 +20,14 @@ for i=1:nr
 
 end
 
+if isfield(flow,'coordSysType')
+    if ~strcmpi(flow.coordSysType,'geographic')
+        % First convert grid to WGS 84
+        [x,y]=convertCoordinates(x,y,'persistent','CS1.name',flow.coordSysName,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+    end
+    x=mod(x,360);
+end
+
 x=mod(x,360);
 
 fname=opt.waterLevel.BC.file;

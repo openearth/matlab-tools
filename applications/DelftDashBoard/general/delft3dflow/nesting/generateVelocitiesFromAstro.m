@@ -28,7 +28,7 @@ for i=1:nr
         A(j,1)=setA.amplitude(j);
         G(j,1)=setA.phase(j);
     end
-    prediction=makeTidePrediction(times,comp,A,G,45);
+    prediction=makeTidePrediction(times,comp,A,G,opt.latitude);
     
     for k=1:flow.KMax
         vel(i,1,k,:)=prediction;
@@ -44,7 +44,7 @@ for i=1:nr
         A(j,1)=setB.amplitude(j);
         G(j,1)=setB.phase(j);
     end
-    prediction=makeTidePrediction(times,comp,A,G,45);
+    prediction=makeTidePrediction(times,comp,A,G,opt.latitude);
     
     for k=1:flow.KMax
         vel(i,2,k,:)=prediction;
@@ -75,7 +75,7 @@ if itanvel
             A(j,1)=setA.amplitude(j);
             G(j,1)=setA.phase(j);
         end
-        prediction=makeTidePrediction(times,comp,A,G,45);
+        prediction=makeTidePrediction(times,comp,A,G,opt.latitude);
         for k=1:flow.KMax
             tanvel(i,1,k,:)=prediction;
         end
@@ -90,7 +90,7 @@ if itanvel
             A(j,1)=setB.amplitude(j);
             G(j,1)=setB.phase(j);
         end
-        prediction=makeTidePrediction(times,comp,A,G,45);
+        prediction=makeTidePrediction(times,comp,A,G,opt.latitude);
         for k=1:flow.KMax
             tanvel(i,2,k,:)=prediction;
         end

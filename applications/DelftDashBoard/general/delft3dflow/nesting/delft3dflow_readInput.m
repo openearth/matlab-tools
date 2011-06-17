@@ -121,13 +121,13 @@ flow.dpsOpt=MDF.dpsopt;
 %% Read grid
 [flow.gridX,flow.gridY,enc]=ddb_wlgrid('read',[inpdir flow.gridFile]);
 
-if isfield(flow,'coordSysType')
-    if ~strcmpi(flow.coordSysType,'geographic')
-        % First convert grid to WGS 84
-        [flow.gridX,flow.gridY]=convertCoordinates(flow.gridX,flow.gridY,'CS1.name',flow.coordSysName,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
-    end
-    flow.gridX=mod(flow.gridX,360);
-end
+% if isfield(flow,'coordSysType')
+%     if ~strcmpi(flow.coordSysType,'geographic')
+%         % First convert grid to WGS 84
+%         [flow.gridX,flow.gridY]=convertCoordinates(flow.gridX,flow.gridY,'CS1.name',flow.coordSysName,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+%     end
+%     flow.gridX=mod(flow.gridX,360);
+% end
 
 [flow.gridXZ,flow.gridYZ]=getXZYZ(flow.gridX,flow.gridY);
 mn=ddb_enclosure('read',[inpdir flow.encFile]);

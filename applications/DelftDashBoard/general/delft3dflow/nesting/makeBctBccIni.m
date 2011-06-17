@@ -18,6 +18,14 @@ for i=1:length(varargin)
     end
 end
 
+if isfield(opt,'runid')
+    runid=opt.runid;
+end
+
+if isfield(opt,'inputDir')
+    inpdir=opt.inputDir;
+end
+
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
@@ -39,14 +47,16 @@ for i=1:length(varargin)
     end
 end
 
+if isempty(flow)
+    [flow,openBoundaries]=delft3dflow_readInput(inpdir,runid,varargin);
+end
+
 if ~isempty(cs)
     flow.coordSysType=cs.type;
     flow.coordSysName=cs.name;
 end
 
-if isempty(flow)
-    [flow,openBoundaries]=delft3dflow_readInput(inpdir,runid,varargin);
-end
+opt.latitude=32;
 
 switch lower(option)
 

@@ -26,7 +26,7 @@ for i=1:nr
         A(j,1)=setA.amplitude(j);
         G(j,1)=setA.phase(j);
     end
-    prediction=makeTidePrediction(times,comp,A,G,45);
+    prediction=makeTidePrediction(times,comp,A,G,opt.latitude);
     wl(i,1,:)=prediction;
     
     ib=strmatch(openBoundaries(i).compB,compSet,'exact');
@@ -39,7 +39,7 @@ for i=1:nr
         A(j,1)=setB.amplitude(j);
         G(j,1)=setB.phase(j);
     end
-    prediction=makeTidePrediction(times,comp,A,G,45);
+    prediction=makeTidePrediction(times,comp,A,G,opt.latitude);
     wl(i,2,:)=prediction;
     
 end

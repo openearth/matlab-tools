@@ -52,6 +52,14 @@ switch opt.(par)(ii).BC.source
             y(i,2)=0.5*(openBoundaries(i).y(end-1) + openBoundaries(i).y(end));
         end
         
+        if isfield(flow,'coordSysType')
+            if ~strcmpi(flow.coordSysType,'geographic')
+                % First convert grid to WGS 84
+                [x,y]=convertCoordinates(x,y,'persistent','CS1.name',flow.coordSysName,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+            end
+            x=mod(x,360);
+        end
+
         fname=opt.(par)(ii).BC.file;
 
         s=load(fname);
@@ -69,7 +77,6 @@ switch opt.(par)(ii).BC.source
         end
 
         s.lon=mod(s.lon,360);
-        x=mod(x,360);
         
         nt=0;
 

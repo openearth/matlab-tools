@@ -24,46 +24,23 @@ for i=1:nr
     
     x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
     y(i,1)=0.5*(openBoundaries(i).y(1) + openBoundaries(i).y(2));
-
-    dx=openBoundaries(i).x(2)-openBoundaries(i).x(1);
-    dy=openBoundaries(i).y(2)-openBoundaries(i).y(1);
-    if strcmpi(openBoundaries(i).orientation,'negative')
-        dx=dx*-1;
-        dy=dy*-1;
-    end
-    switch lower(openBoundaries(i).side)
-        case{'left','right'}
-            % u-point
-            alphau(i,1)=atan2(dy,dx)-0.5*pi;
-            alphav(i,1)=atan2(dy,dx);
-        case{'bottom','top'}
-            % v-point
-            alphau(i,1)=atan2(dy,dx)+0.5*pi;
-            alphav(i,1)=atan2(dy,dx);
-    end
-
+    alphau(i,1)=openBoundaries(i).alphau(1);
+    alphav(i,1)=openBoundaries(i).alphav(1);
+    
     % End B
-
     x(i,2)=0.5*(openBoundaries(i).x(end-1) + openBoundaries(i).x(end));
     y(i,2)=0.5*(openBoundaries(i).y(end-1) + openBoundaries(i).y(end));
+    alphau(i,2)=openBoundaries(i).alphau(2);
+    alphav(i,2)=openBoundaries(i).alphav(2);
 
-    dx=openBoundaries(i).x(end)-openBoundaries(i).x(end-1);
-    dy=openBoundaries(i).y(end)-openBoundaries(i).y(end-1);
-    if strcmpi(openBoundaries(i).orientation,'negative')
-        dx=dx*-1;
-        dy=dy*-1;
-    end
-    switch lower(openBoundaries(i).side)
-        case{'left','right'}
-            % u-point
-            alphau(i,2)=atan2(dy,dx)-0.5*pi;
-            alphav(i,2)=atan2(dy,dx);
-        case{'bottom','top'}
-            % v-point
-            alphau(i,2)=atan2(dy,dx)+0.5*pi;
-            alphav(i,2)=atan2(dy,dx);
-    end
+end
 
+if isfield(flow,'coordSysType')
+    if ~strcmpi(flow.coordSysType,'geographic')
+        % First convert grid to WGS 84
+        [x,y]=convertCoordinates(x,y,'persistent','CS1.name',flow.coordSysName,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+    end
+    x=mod(x,360);
 end
 
 s=load(opt.current.BC.file_u);
@@ -110,6 +87,8 @@ for it=it0:it1
 
     end
 end
+
+clear s sv
 
 t=t0:dt/1440:t1;
 for j=1:nr
