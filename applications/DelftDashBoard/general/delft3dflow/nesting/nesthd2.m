@@ -1,7 +1,6 @@
 function varargout=nesthd2(varargin)
 % NESTHD2
 
-z0=0;
 stride=1;
 opt='both';
 admfile='';
@@ -12,7 +11,6 @@ runid=[];
 t0=[];
 t1=[];
 isave=0;
-outdir='';
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -26,8 +24,10 @@ for i=1:length(varargin)
             case{'mdffile'}
                 mdffile=varargin{i+1};
                 [inputdir,runid,ext]=fileparts(mdffile);
-            case{'outdir'}
-                outdir=varargin{i+1};
+            case{'inputdir'}
+                inputdir=varargin{i+1};
+            case{'runid'}
+                runid=varargin{i+1};
             case{'admfile'}
                 admfile=varargin{i+1};
             case{'zcor'}
@@ -59,10 +59,12 @@ if ~isempty(runid)
     % First read data from mdf file
     [Flow,openBoundaries]=delft3dflow_readInput(inputdir,runid);
     vertGrid.KMax=Flow.KMax;
-    vertGrid.layerType=Flow.layerType;
+    vertGrid.layerType=Flow.vertCoord;
     vertGrid.thick=Flow.thick;
-    vertGrid.zTop=Flow.zTop;
-    vertGrid.zBot=Flow.zBot;
+    if strcmpi(vertGrid.layerType,'z')
+        vertGrid.zTop=Flow.zTop;
+        vertGrid.zBot=Flow.zBot;
+    end
 end
 
 s=readNestAdmin(admfile);
@@ -73,10 +75,11 @@ nest=getNestSeries(hisfile,t0,t1,s,stride,opt);
 switch lower(opt)
     case{'hydro','both'}
         disp('Generating hydrodynamic boundary conditions ...');
-        openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,z0);
+        openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,zcor);
         if isave
-%        disp('Saving bct file');
-%        SaveBctFile(Flow);
+            disp('Saving bct file');
+            fname=[inputdir Flow.bctFile];
+            delft3dflow_saveBctFile(Flow,openBoundaries,fname);
         end
 end
 
@@ -85,8 +88,9 @@ switch lower(opt)
         disp('Generating transport boundary conditions ...');
         openBoundaries=nesthd2_transport(openBoundaries,vertGrid,s,nest);
         if isave
-%        disp('Saving bcc file');
-%        SaveBccFile(Flow);
+            disp('Saving bcc file');
+            fname=[inputdir Flow.bccFile];
+            delft3dflow_saveBccFile(Flow,openBoundaries,fname);
         end
 end
 
@@ -205,11 +209,7 @@ for k=1:length(s.wl.m)
                 m=[repmat(' ',1,5-length(num2str(m))) num2str(m)];
                 n=[repmat(' ',1,5-length(num2str(n))) num2str(n)];
                 st=['(M,N)=(' m ',' n ')'];
-                try
                 istation(nrused)=strmatch(st,stations);
-                catch
-                    shite=1
-                end
             end
         end
     end
@@ -335,8 +335,14 @@ end
 %% Constituents
 
 namc=vs_get('his-const','NAMCON');
+icn=0;
 for ic=1:size(namc,1)
-    nest.namcon{ic}=deblank(namc(ic,:));
+    switch lower(deblank(namc(ic,:)))
+        case{'turbulent energy','energy dissipation'}
+        otherwise
+            icn=icn+1;
+            nest.namcon{icn}=deblank(namc(ic,:));
+    end
 end
 
 switch lower(opt)
@@ -423,16 +429,8 @@ for i=1:length(openBoundaries)
             % A
             m=bnd.M1;
             n=bnd.N1;
-            try
             j= find(s.wl.m==m & s.wl.n==n,1);
-            catch
-                shite=1
-            end
-            try
             wl(:,1)=nest.wl(:,j);
-            catch
-                shite3=1
-            end
             dps(1)=nest.dps(j);
             
             % B
@@ -584,7 +582,8 @@ for i=1:length(openBoundaries)
             openBoundaries(i).timeSeriesB=squeeze(u1(:,:,2));
         case{'r'}
             openBoundaries(i).timeSeriesT=nest.t;
-            calfac=0.6;
+%            calfac=0.6;
+            calfac=1.0;
             acor1=-dps(1)/dp(1);
             acor1=max(min(acor1,2.0),0.5);
             acor2=-dps(2)/dp(2);
