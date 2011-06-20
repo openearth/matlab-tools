@@ -13,6 +13,7 @@ function xbo = xb_get_sedtrans(xb, varargin)
 %   xb        = XBeach output structure
 %   varargin  = Trep:   representative wave period
 %               rho:    sediment density
+%               por:    porosity
 %
 %   Output:
 %   xbo       = XBeach sedimenttransport structure
