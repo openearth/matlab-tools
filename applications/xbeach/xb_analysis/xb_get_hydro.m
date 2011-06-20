@@ -156,6 +156,8 @@ if xb_exist(xb, 'H')
         Hrms_t = sqrt(Hrms_lf.^2+Hrms_hf.^2);
         
         [zs H] = xb_get(xb,'zs','H');
+        
+        rho = zeros(nx,1);
         for i = 1:nx
             R       = corrcoef(detrend(zs(:,1,i)),H(:,1,i).^2);
             rho(i)  = R(1,2);

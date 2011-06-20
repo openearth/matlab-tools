@@ -1,4 +1,4 @@
-function fh = xb_plot_profile(xb, varargin)
+function xb_plot_profile(xb, varargin)
 %XB_PLOT_PROFILE  Create uniform profile plots
 %
 %   Create uniform profile plots from XBeach output structure and other
@@ -13,7 +13,8 @@ function fh = xb_plot_profile(xb, varargin)
 %
 %   Input:
 %   xb       =  XBeach output structure
-%   varargin =  measured:       Measured post storm profile
+%   varargin =  handle:         Figure or axes handle
+%               measured:       Measured post storm profile
 %               xbeach:         Profile computed by another version of
 %                               XBeach
 %               durosta:        Profile computed by DurosTA
@@ -28,7 +29,7 @@ function fh = xb_plot_profile(xb, varargin)
 %                               flipped in case dune is located left
 %
 %   Output:
-%   fh       = Figure handle
+%   none
 %
 %   Example
 %   xb_plot_profile(xb, 'initial', profile0, 'measured', profile1)
@@ -79,6 +80,7 @@ function fh = xb_plot_profile(xb, varargin)
 %% read options
 
 OPT = struct( ...
+    'handle',           [], ...
     'measured',         [], ...
     'xbeach',           [], ...
     'durosta',          [], ...
@@ -97,7 +99,20 @@ OPT = setproperty(OPT, varargin{:});
 
 %% plot
 
-fh = figure; hold on;
+% create handle
+if isempty(OPT.handle) || ~ishandle(OPT.handle)
+    figure;
+    ax = axes(gcf);
+else
+    switch get(OPT.handle, 'Type')
+        case 'figure'
+            ax = axes(OPT.handle);
+        case 'axes'
+            ax = OPT.handle;
+    end
+end
+
+ax = axes(ax); hold on;
 
 % read data
 x = xb_get(xb, 'DIMS.globalx_DATA');

@@ -1,4 +1,4 @@
-function fh = xb_plot_morpho(xb, varargin)
+function xb_plot_morpho(xb, varargin)
 %XB_PLOT_MORPHO  Create uniform morphology plots
 %
 %   Create uniform morphology plots from an XBeach morphology
@@ -12,7 +12,8 @@ function fh = xb_plot_morpho(xb, varargin)
 %
 %   Input:
 %   xb        = XBeach output structure
-%   varargin  = dz:         Measured bed level change
+%   varargin  = handles:    Figure handle or list of axes handles
+%               dz:         Measured bed level change
 %               sed:        Measured sedimentation volume in time
 %               ero:        Measured erosion volume in time
 %               R:          Measured retreat distance
@@ -26,7 +27,7 @@ function fh = xb_plot_morpho(xb, varargin)
 %                           data matched by measurements
 %
 %   Output:
-%   fh        = Figure handle
+%   none
 %
 %   Example
 %   xb_plot_morpho(xb)
@@ -80,7 +81,7 @@ function fh = xb_plot_morpho(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
-    'handle',           [], ...
+    'handles',          [], ...
     'dz',               [], ...
     'sed',              [], ...
     'ero',              [], ...
@@ -97,14 +98,6 @@ OPT = struct( ...
 OPT = setproperty(OPT, varargin{:});
 
 %% plot
-
-if isempty(OPT.handle)
-    fh = figure;
-else
-    fh = OPT.handle;
-end
-
-hold on;
 
 % determine dimensions
 x = xb_get(xb, 'DIMS.globalx_DATA');
@@ -123,14 +116,39 @@ if (has_m && ~isempty(OPT.dz)) || (~has_m && xb_exist(xb, 'dz'));   sp(1) = 1;  
 if (has_m && ~isempty(OPT.ero)) || (~has_m && xb_exist(xb, 'ero')); sp(2) = 1;  end;
 if (has_m && ~isempty(OPT.R)) || (~has_m && xb_exist(xb, 'R'));     sp(3) = 1;  end;
 
+% create handles
 n   = sum(sp);
 ax  = nan(1,n);
 si  = 1;
 
+if isempty(OPT.handles) || ~all(ishandle(OPT.handles))
+    figure;
+    for i = 1:n
+        ax(i) = subplot(n,1,i);
+    end
+else
+    idx = strcmpi(get(OPT.handles, 'Type'), 'figure');
+    if any(idx)
+        figure(OPT.handles(find(idx, 1)));
+        for i = 1:n
+            ax(i) = subplot(n,1,i);
+        end
+    else
+        sp(:) = 0;
+        idx = find(strcmpi(get(OPT.handles, 'Type'), 'axes'));
+        for i = 1:min([length(OPT.handles(idx)) n])
+            ax(i) = OPT.handles(idx(i));
+            sp(i) = 1;
+        end
+    end
+end
+
+hold on;
+
 % subplot 1
 if sp(1)
         
-    ax(si) = subplot(n,1,si); si = si + 1; hold on;
+    axes(ax(si)); si = si + 1; hold on;
     
     title('bed level change');
     xlabel(['distance [' OPT.units_dist ']']);
@@ -149,7 +167,7 @@ end
 % subplot 2
 if sp(2)
         
-    ax(si) = subplot(n,1,si); si = si + 1; hold on;
+    axes(ax(si)); si = si + 1; hold on;
     
     title('erosion volume');
     xlabel(['time [' OPT.units_time ']']);
@@ -167,7 +185,7 @@ end
 % subplot 3
 if sp(3)
         
-    ax(si) = subplot(n,1,si); si = si + 1; hold on;
+    axes(ax(si)); si = si + 1; hold on;
     
     title('retreat distance');
     xlabel(['time [' OPT.units_time ']']);
@@ -188,7 +206,7 @@ end
 
 % add labels
 for i = 1:sum(sp)
-    subplot(n,1,i);
+    axes(i);
     
     box on;
     grid on;

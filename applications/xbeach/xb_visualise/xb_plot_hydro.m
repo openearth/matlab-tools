@@ -1,4 +1,4 @@
-function fh = xb_plot_hydro(xb, varargin)
+function xb_plot_hydro(xb, varargin)
 %XB_PLOT_HYDRO  Create uniform wave transformation plots
 %
 %   Create uniform wave transformation plots from an XBeach hydrodynamics
@@ -12,19 +12,25 @@ function fh = xb_plot_hydro(xb, varargin)
 %
 %   Input:
 %   xb        = XBeach output structure
-%   varargin  = zb:         Measured final profile
+%   varargin  = handles:    Figure handle or list of axes handles
+%               zb:         Measured final profile
 %               Hrms_hf:    Measured high frequency wave height
 %               Hrms_lf:    Measured low frequency wave height
 %               Hrms_t:     Measured total wave height
 %               s:          Measured water level setup
 %               u:          Measured cross-shore flow velocity
+%               urms_hf     Measured high frequency oribtal velocity
+%               urms_lf     Measured low frequency oribtal velocity
+%               urms_t      Measured total oribtal velocity
+%               umean       Measured mean cross-shore flow velocity
+%               vmean       Measured mean longshore flow velocity
 %               units_dist: Units used for x- and z-axis
 %               units_vel:  Units used for secondary z-axis
 %               showall:    Show all data available instead of only show
 %                           data matched by measurements
 %
 %   Output:
-%   fh        = Figure handle
+%   none
 %
 %   Example
 %   xb_plot_hydro(xb)
@@ -78,7 +84,7 @@ function fh = xb_plot_hydro(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
-    'handle',           [], ...
+    'handles',          [], ...
     'zb',               [], ...
     'zs',               [], ...
     'Hrms_hf',          [], ...
@@ -113,14 +119,6 @@ end
 
 %% plot
 
-if isempty(OPT.handle)
-    fh = figure;
-else
-    fh = OPT.handle;
-end
-
-hold on;
-
 % determine dimensions
 x = xb_get(xb, 'DIMS.globalx_DATA');
 j = ceil(xb_get(xb, 'DIMS.globaly')/2);
@@ -143,14 +141,39 @@ sp = [0 0];
 if (has_m && (has_bathy_m || has_waves_m)) || (~has_m && (has_bathy_c || has_waves_c)); sp(1) = 1;  end;
 if (has_m && has_flow_m ) || (~has_m && has_flow_c);                                    sp(2) = 1;  end;
 
+% create handles
 n   = sum(sp);
 ax  = nan(1,n);
 si  = 1;
 
+if isempty(OPT.handles) || ~all(ishandle(OPT.handles))
+    figure;
+    for i = 1:n
+        ax(i) = subplot(n,1,i);
+    end
+else
+    idx = strcmpi(get(OPT.handles, 'Type'), 'figure');
+    if any(idx)
+        figure(OPT.handles(find(idx, 1)));
+        for i = 1:n
+            ax(i) = subplot(n,1,i);
+        end
+    else
+        sp(:) = 0;
+        idx = find(strcmpi(get(OPT.handles, 'Type'), 'axes'));
+        for i = 1:min([length(OPT.handles(idx)) n])
+            ax(i) = OPT.handles(idx(i));
+            sp(i) = 1;
+        end
+    end
+end
+
+hold on;
+
 % subplot 1
 if sp(1)
     
-    ax(si) = subplot(n,1,si); si = si + 1; hold on;
+    axes(ax(si)); si = si + 1; hold on;
     
     title('wave heights and water levels');
     ylabel(['height [' OPT.units_dist ']']);
@@ -178,7 +201,7 @@ end
 % subplot 2
 if sp(2)
     
-    ax(si) = subplot(n,1,si); si = si + 1; hold on;
+    axes(ax(si)); si = si + 1; hold on;
     
     title('flow velocities');
     ylabel(['velocity [' OPT.units_vel ']']);
@@ -204,7 +227,7 @@ end
 
 % add labels
 for i = 1:n
-    subplot(n,1,i);
+    axes(ax(i));
 
     xlabel(['distance [' OPT.units_dist ']']);
 

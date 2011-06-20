@@ -82,6 +82,7 @@ xb      = xb_get_transect(xb);
 t       = xb_get(xb, 'DIMS.globaltime_DATA');
 x       = xb_get(xb, 'DIMS.globalx_DATA');
 x       = squeeze(x(1,:));
+dx      = diff(x); dx = dx([1 1:end]);
 
 %% initialize output
 
@@ -100,7 +101,7 @@ S_as        = 0;
 %% compute sediment transport characteristics
 
 % sediment concentration
-if xb_exist(xb, 'cgg')
+if xb_exist(xb, 'ccg')
     c = OPT.rho.*mean(xb_get(xb, 'ccg'), 1);
 end
 
@@ -121,40 +122,40 @@ if xb_exist(xb, 'zb')
     zb = xb_get(xb, 'zb');
     dz = squeeze(zb(end,:)-zb(1,:));
     dz = dz(:);
-    S_dz = trapz(x, (1-OPT.por)*flipud(cumsum(flipud(dz))))./range(t);
+    S_dz = (1-OPT.por)*flipud(cumsum(flipud(dz))).*dx'./range(t);
 end
 
 if xb_exist(xb, 'dzav')
     dzav = xb_get(xb, 'dzav');
-    dzav = dzav(:);
-    S_av = trapz(x, (1-OPT.por)*flipud(cumsum(flipud(dzav))))./range(t);
+    dzav = squeeze(dzav(end,:,:));
+    S_av = (1-OPT.por)*flipud(cumsum(flipud(dzav))).*dx'./range(t);
 end
 
 if xb_exist(xb, 'Susg')
     Susg = xb_get(xb, 'Susg');
     Szsg = Susg;
-    Szsg(:,2:end) = 0.5*(Susg(:,1:end-1)+Susg(:,2:end));
+    Szsg(:,2:end) = 0.5*(Susg(:,:,1:end-1)+Susg(:,:,2:end));
     S_s = mean(Szsg,1);
 end
 
 if xb_exist(xb, 'Subg')
     Subg = xb_get(xb, 'Subg');
     Szbg = Subg;
-    Szbg(:,2:end) = 0.5*(Subg(:,1:end-1)+Subg(:,2:end));
+    Szbg(:,2:end) = 0.5*(Subg(:,:,1:end-1)+Subg(:,:,2:end));
     S_b = mean(Szbg,1);
 end
 
-if xb_exist(xb, 'zs', 'zb', 'cgg') == 3
+if xb_exist(xb, 'zs', 'zb', 'ccg') == 3
     h = xb_get(xb, 'zs') - xb_get(xb, 'zb');
     if xb_exist(xb, 'u')
-        S_lf = mean(xb_get(xb, 'u').*xb_get(xb, 'cgg').*h,1);
+        S_lf = mean(xb_get(xb, 'u').*xb_get(xb, 'ccg').*h,1);
         if xb_exist(xb, 'ue')
-            S_ut = mean((xb_get(xb, 'ue')-xb_get(xb, 'u')).*xb_get(xb, 'cgg').*h,1);
+            S_ut = mean((xb_get(xb, 'ue')-xb_get(xb, 'u')).*xb_get(xb, 'ccg').*h,1);
         end
     end
     
     if xb_exist(xb, 'ua')
-        S_as = mean(xb_get(xb, 'ua').*xb_get(xb, 'cgg').*h,1);
+        S_as = mean(xb_get(xb, 'ua').*xb_get(xb, 'ccg').*h,1);
     end
 end
 
