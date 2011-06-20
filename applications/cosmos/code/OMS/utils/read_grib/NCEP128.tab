@@ -1,0 +1,128 @@
+Number	Parameter					Units 	Mnemonic
+128 	Ocean depth - mean 				m 	AVDEPTH
+129 	Ocean depth - instantaneous 			m 	DEPTH
+130 	Ocean surface elevation relative to geoid 	m 	ELEV
+131 	Max ocean surface elevation in last 24 hours 	m 	MXEL24
+132 	Min ocean surface elevation in last 24 hours 	m 	MNEL24
+133 	Reserved 		
+134 	Reserved 		
+135 	Oxygen (O2 (aq))					O2
+136 	PO4 						Mol/kg 	PO4
+137 	NO3 						Mol/kg 	NO3
+138 	SiO4 						Mol/kg 	SiO4
+139 	CO2 (aq) 					Mol/kg 	CO2aq
+140 	HCO3 - 						Mol/kg 	HCO3
+141 	CO3 -- 						Mol/kg 	CO3
+142 	TCO2 						Mol/kg 	TCO2
+143 	TALK 						Mol/kg 	TALK
+144 	Reserved 		
+145 	Reserved 		
+146 	S11 - 1,1 component of ice stress tensor 		S11
+147 	S12 - 1,2 component of ice stress tensor 		S12
+148 	S22 - 2,2 component of ice stress tensor 		S22
+149 	T1 - First invariant of stress tensor 	 		INV1
+150 	T2 - Second invariant of stress tensor 	 		INV2
+151 	Reserved 	
+152 	Reserved 	
+153 	Reserved 	
+154 	Reserved 	
+155 	Wave Roughness 						WVRGH
+156 	Wave Stresses 						WVSTRS
+157 	Whitecap coverage 					WHITE
+158 	Swell direction width 					SWDIRWID
+159 	Swell frequency width 					SWFREWID
+160 	Wave age 						WVAGE
+161 	Physical Wave age 					PWVAGE
+162 	Reserved 	
+163 	Reserved 	
+164 	Reserved 	
+165 	Master length scale (turbulence) 		m 	LTURB
+166 	Reserved 	
+167 	Reserved 	
+168 	Reserved 	
+169 	Reserved 	
+170 	Net Air-Ice heat flux 				W/m^2 	AIHFLX
+171 	Net Air-Ocean heat flux 			W/m^2 	AOHFLX
+172 	Net Ice-Ocean heat flux 			W/m^2 	IOHFLX
+173 	Net Ice-Ocean salt flux 			kg/s 	IOSFLX
+174 	Reserved 	
+175 	Ocean Mixed Layer Temperature 			K 	OMLT
+176 	Ocean Mixed Layer Salinity 			kg/kg 	OMLS
+177 	Ocean Mixed Layer Potential Density (Ref 2000m) kg/m^3	OMLPOTDEN
+178     U Velocity in mixed layer 			m/s 	OMLU
+179 	V Velocity in mixed layer 			m/s	OMLV
+180	Assimilative Heat Flux 				W/m^2	ASHFL
+181	Assimilative Salt Flux 				mm/day	ASSFL
+182	Bottom Layer Depth 				m	BOTLD
+183	Barotropic U Velocity 				m/s	UBARO
+184 	Barotropic V Velocity 				m/s	VBARO
+185	Interface Depth 				m	INTFD
+186	Temperature 					C	WTMPC
+187	Salinity 					psu	SALIN
+188	Evaporation - Precipitation 			cm/day	EMNP
+189	Reserved
+190 	Kinetic Energy 					J/kg	KENG
+191	Reserved
+192	Layer Thickness 				m	LAYTH
+193	Sufrace Temperature Trend 			K/day	SSTT
+194	Surface Salinity Trend 				psu/day	SSST
+195	Reserved
+196	Reserved
+197	Reserved
+198	Reserved
+199	Reserved
+200	Reserved
+201	Reserved
+202	Reserved
+203	Reserved
+204	Reserved
+205	Reserved
+206	Reserved
+207	Reserved
+208	Reserved
+209	Reserved
+210	Reserved
+211	Reserved
+212	Reserved
+213	Reserved
+214	Reserved
+215	Reserved
+216	Reserved
+217	Reserved
+218	Reserved
+219	Reserved
+220	Reserved
+221	Reserved
+222	Reserved
+223	Reserved
+224	Reserved
+225	Reserved
+226	Reserved
+227	Reserved
+228	Reserved
+229	Reserved
+230	Reserved
+231	Reserved
+232	Reserved
+233	Reserved
+234	Reserved
+235	Reserved
+236	Reserved
+237	Reserved
+238	Reserved
+239	Reserved
+240	Reserved
+241	Reserved
+242	Reserved
+243	Reserved
+244	Reserved
+245	Reserved
+246	Reserved
+247	Reserved
+248	Reserved
+249	Reserved
+250	Reserved
+251	Reserved
+252	Reserved
+253	Reserved
+254 	Relative Error Variance 			      	RERRVAR

@@ -1,0 +1,117 @@
+function ExtractDataXBeach(hm,m)
+
+Model=hm.Models(m);
+
+dr=Model.Dir;
+
+outdir=[dr 'lastrun' filesep 'output' filesep];
+
+XBdims=getdimensions(outdir);
+
+x=XBdims.x;
+y=XBdims.y;
+
+x=x(:,2:end-1);
+y=y(:,2:end-1);
+
+%% Maps
+
+pars = struct( ...
+    'zb', {{'zb'}}, ...
+    'hs', {{'H'}}, ...
+    'tp', {{'T'}}, ...
+    'wl', {{'zs'}}, ...
+    'vel', {{'u','v'}} ...
+);
+
+fpars = fields(pars);
+for i = 1:length(fpars)
+    par = char(fpars(i));
+    
+    parfiles = pars.(par);
+    parfilesexist = zeros(size(parfiles));
+    for j = 1:length(parfiles)
+        fname = [outdir parfiles{j} '.dat'];
+        parfilesexist(j) = exist(fname, 'file');
+    end
+    
+    if all(parfilesexist)
+        s = struct('Parameter', par, 'Time', [], 'X', x, 'Y', y, 'Val', [], 'U', [], 'V', []);
+        
+        for j = 1:length(parfiles)
+            parfile = parfiles{j};
+            fname = [outdir parfile '.dat'];
+            
+            [Var info]=readvar(fname,XBdims,'2D');
+
+            if length(parfile)>5 && strcmpi(parfile(end-4:end), '_mean')
+                t=XBdims.tsmean;
+            else
+                t=XBdims.tsglobal;
+            end
+
+            nt=length(t);
+
+            switch length(parfiles)
+                case 1
+                    for k=1:nt
+                        s.Time(k)=Model.TFlowStart+t(k)./86400;
+                        s.Val(k,:,:)=squeeze(Var(:,2:end-1,k));
+                    end
+                case 2
+                    for k=1:nt
+                        s.Time(k)=Model.TFlowStart+t(k)./86400;
+                        switch j
+                            case 1
+                                s.U(k,:,:)=squeeze(Var(:,2:end-1,k));
+                            case 2
+                                s.V(k,:,:)=squeeze(Var(:,2:end-1,k));
+                        end
+                    end
+            end
+        end
+        
+        fname=[Model.ArchiveDir hm.CycStr filesep 'maps' filesep par '.mat'];
+        switch length(parfiles)
+            case 1
+                save(fname,'-struct','s','Parameter','Time','X','Y','Val');
+            case 2
+                save(fname,'-struct','s','Parameter','Time','X','Y','U', 'V');
+        end
+    end
+end
+
+%% Time Series
+
+archdir=[Model.ArchiveDir 'appended' filesep 'timeseries' filesep];
+
+points={'p1','p2'};
+npoints=2;
+
+for i=1:npoints
+
+    fname = [outdir 'point' num2str(i,'%0.3i') '.dat'];
+    
+    if exist(fname, 'file')
+        Var=readpoint(fname,XBdims,6);
+
+        t=Var(:,1);
+
+        % water levels
+        s.Val=Var(:,2);
+        s.Time=Model.TFlowStart+Model.MorFac*t./86400;
+        s.Parameter='wl';
+
+        fname=[archdir 'wl_' points{i} '.mat'];
+        save(fname,'-struct','s','Parameter','Time','Val');
+
+        % water levels
+        s.Val=sqrt(2)*Var(:,3);
+        s.Time=Model.TFlowStart+Model.MorFac*t./86400;
+        s.Parameter='hs';
+
+        fname=[archdir 'hs_' points{i} '.mat'];
+        save(fname,'-struct','s','Parameter','Time','Val');
+    end
+    
+end

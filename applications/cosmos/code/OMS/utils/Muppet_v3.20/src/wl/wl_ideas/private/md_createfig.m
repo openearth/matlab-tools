@@ -1,0 +1,206 @@
+function [fig,figoptions]=md_createfig,
+  % set default values
+
+  fig=[];
+  figoptions.Editable=1;
+
+  axoptions.Editable=1;
+  axoptions.Type='undefined';
+  axoptions.Name='[axes]';
+
+  % which kind of figure should be created?
+  labels={'free format figure', ...
+          '1 plot - portrait', ...
+          '1 plot - landscape', ...
+          '2 plots, vertical - portrait', ...
+          '2 plots, horizontal - portrait', ...
+          '2 plots, vertical - landscape', ...
+          '2 plots, horizontal - landscape', ...
+          '3 plots, vertical - portrait', ...
+          '3 plots, horizontal - landscape', ...
+          '4 plots, 2x2 - portrait', ...
+          '4 plots, 2x2 - landscape'};
+  [figtype,figname]=ui_typeandname(labels);
+
+  if isempty(figtype), % cancel pressed?
+    return;
+  end;
+
+  % create figure
+  fig=figure('menu','none', ...
+             'closerequestfcn','try, ideas; catch, if strcmp(questdlg(''Do you really want to close this figure?'','''',''Yes'',''No'',''No''),''Yes''), delete(gcbf); end; end;', ...
+             'integerhandle','off', ...
+             'inverthardcopy','off', ...
+             'numbertitle','off', ...
+             'tag','IDEAS - figure', ...
+             'name',['IDEAS: ' figname], ...
+             'renderer','zbuffer', ...
+             'visible','off', ...
+             'userdata',figoptions);
+
+  UIFM=uimenu('parent',fig, ...
+             'label','&Figure');
+  uimenu('parent',UIFM, ...
+         'label','&edit', ...
+         'separator','off', ...
+         'callback','if exist(''gc.m'')==2, gc(gcbf); end;');
+  uimenu('parent',UIFM, ...
+         'label','&refresh', ...
+         'separator','off', ...
+         'enable','off');
+  uimenu('parent',UIFM, ...
+         'label','&save', ...
+         'separator','on', ...
+         'callback','if exist(''md_save.m'')==2, md_save(gcbf); end;');
+  uimenu('parent',UIFM, ...
+         'label','&print', ...
+         'separator','on', ...
+         'callback','if exist(''md_print.m'')==2, md_print(gcbf); end;');
+  UIM=md_figzoom(fig);
+  set(findobj(UIM,'label','&done'),'visible','off');
+  UIM=md_camera(fig);
+  set(findobj(UIM,'label','&done'),'visible','off');
+
+  UIM=uimenu('parent',fig, ...
+             'label','&Animation');
+  uimenu('parent',UIM, ...
+         'label','&start', ...
+         'enable','on', ...
+         'separator','off', ...
+         'callback','if exist(''md_animate.m'')==2, md_animate(gcbf); end;');
+  uimenu('parent',UIM, ...
+         'label','&pause', ...
+         'enable','off', ...
+         'separator','off', ...
+         'callback','');
+  uimenu('parent',UIM, ...
+         'label','&continue', ...
+         'enable','off', ...
+         'separator','off', ...
+         'callback','');
+  uimenu('parent',UIM, ...
+         'label','&stop', ...
+         'enable','off', ...
+         'separator','off', ...
+         'callback','');
+  uimenu('parent',UIM, ...
+         'label','&new', ...
+         'enable','off', ...
+         'separator','on', ...
+         'callback','');
+  uimenu('parent',UIM, ...
+         'label','&edit', ...
+         'enable','off', ...
+         'separator','off', ...
+         'callback','');
+
+
+  % change figure as appropriate
+  % keep in mind that every axes object should have
+  %    * a unique tag
+  %    * userdata containing the axoptions
+  switch(figtype),
+  case '1 plot - portrait',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(1,1,1);
+    set(h,'tag','plot area','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','portrait','','');
+  case '1 plot - landscape',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(1,1,1);
+    set(h,'tag','plot area','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','landscape','','');
+  case '2 plots, vertical - portrait',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(2,1,1);
+    set(h,'tag','upper plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(2,1,2);
+    set(h,'tag','lower plot','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','portrait','','');
+  case '2 plots, horizontal - portrait',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(1,2,1);
+    set(h,'tag','left plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(1,2,2);
+    set(h,'tag','right plot','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','portrait','','');
+  case '2 plots, vertical - landscape',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(2,1,1);
+    set(h,'tag','upper plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(2,1,2);
+    set(h,'tag','lower plot','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','landscape','','');
+  case '2 plots, horizontal - landscape',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(1,2,1);
+    set(h,'tag','left plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(1,2,2);
+    set(h,'tag','right plot','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','landscape','','');
+  case '3 plots, vertical - portrait',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(3,1,1);
+    set(h,'tag','upper plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(3,1,2);
+    set(h,'tag','middle plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(3,1,3);
+    set(h,'tag','lower plot','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','portrait','','');
+  case '3 plots, horizontal - landscape',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(1,3,1);
+    set(h,'tag','left plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(1,3,2);
+    set(h,'tag','center plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(1,3,3);
+    set(h,'tag','right plot','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','landscape','','');
+  case '4 plots, 2x2 - portrait',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(2,2,1);
+    set(h,'tag','upper left plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(2,2,2);
+    set(h,'tag','upper right plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(2,2,3);
+    set(h,'tag','lower left plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(2,2,4);
+    set(h,'tag','lower right plot','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','portrait','','');
+  case '4 plots, 2x2 - landscape',
+    set(fig,'color',[1 1 1]);
+    figoptions.Editable=0;
+    h=subplot(2,2,1);
+    set(h,'tag','upper left plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(2,2,2);
+    set(h,'tag','upper right plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(2,2,3);
+    set(h,'tag','lower left plot','userdata',axoptions,'drawmode','fast');
+    h=subplot(2,2,4);
+    set(h,'tag','lower right plot','userdata',axoptions,'drawmode','fast');
+    md_paper('no edit','landscape','','');
+  case 'free format figure',
+    uimenu('parent',UIFM, ...
+         'label','save &tif', ...
+         'separator','on', ...
+         'callback','md_bitmap(gcbf); try, end;');
+    set(fig,'handlevisibility','off', ...
+        'papertype','a4letter', ...
+        'paperpositionmode','auto');
+  otherwise,
+    delete(fig);
+    fig=[];
+    Str=sprintf('Requested figure type not yet implemented.');
+    uiwait(msgbox(Str,'modal'));
+  end;
+
+  set(fig,'userdata',figoptions,'visible','on');
