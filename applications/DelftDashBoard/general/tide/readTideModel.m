@@ -93,6 +93,12 @@ end
 % Get dimensions
 x=nc_varget(fname,'lon');
 y=nc_varget(fname,'lat');
+xu=nc_varget(fname,'lon_u');
+yu=nc_varget(fname,'lat_u');
+xv=nc_varget(fname,'lon_v');
+yv=nc_varget(fname,'lat_v');
+
+
 cl=nc_varget(fname,'tidal_constituents');
 
 for i=1:size(cl,1)
@@ -110,8 +116,12 @@ else
     ic2=1;
 end
 
-iy1=find(y<=ymin,1,'last');
-iy2=find(y>=ymax,1,'first');
+dy=(ymax-ymin)/10;
+
+iy1=find(y<=ymin-dy,1,'last');
+iy2=find(y>=ymax+dy,1,'first');
+
+dx=(xmax-xmin)/10;
 
 iok=0;
 % Assuming global dataset
@@ -119,20 +129,25 @@ iok=0;
 if xmin>=x(1) && xmax<=x(end)
     % No problems
     iok=1;
-    ix1=find(x<=xmin,1,'last');
-    ix2=find(x>=xmax,1,'first');
+    ix1=find(x<=xmin-dx,1,'last');
+    ix2=find(x>=xmax+dx,1,'first');
 elseif xmin<x(1) && xmax<x(1)
     % Both to the left of the data
     % Check if moving the data 360 deg to the left helps
     xtmp=x-360;
+    xutmp=xu-360;
+    xvtmp=xv-360;
 elseif xmin>x(1) && xmax>x(1)
     % Both to the right of the data
     % Check if moving the data 360 deg to the right helps
     xtmp=x+360;
+    xutmp=xu+360;
+    xvtmp=xv+360;
 else
     % Probably pasting necessary
     xtmp=x;
 end
+
 
 if ~iok
     % Check again
@@ -140,8 +155,10 @@ if ~iok
         % No problems now, keep new x value
         iok=1;
         x=xtmp;
-        ix1=find(x<=xmin,1,'last');
-        ix2=find(x>=xmax,1,'first');
+        xu=xutmp;
+        xv=xvtmp;
+        ix1=find(x<=xmin-dx,1,'last');
+        ix2=find(x>=xmax+dx,1,'first');
     end
 end
 
@@ -187,13 +204,9 @@ for i=1:length(gt)
             dpright  = nc_varget(fname,'depth',[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
         end
         
-        try
         % Now paste
         gt(i).amp   = permute([permute(ampleft,[2 1 3]) permute(ampright,[2 1 3])],[2 1 3]);
         gt(i).phi   = permute([permute(phileft,[2 1 3]) permute(phiright,[2 1 3])],[2 1 3]);
-        catch
-            shite=1
-        end
         if getd
             depth = [dpleft' dpright'];
         end
@@ -206,9 +219,14 @@ for i=1:length(gt)
             depth = nc_varget(fname,'depth',[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
             depth = depth';
         end
-        lon=x(ix1:ix2);
-        lat=y(iy1:iy2);
+        lonz=x(ix1:ix2);
+        latz=y(iy1:iy2);
+        lonu=xu(ix1:ix2);
+        latu=yu(iy1:iy2);
+        lonv=xv(ix1:ix2);
+        latv=yv(iy1:iy2);
     end
+    gt(i).amp(gt(i).amp>100)=NaN;
     gt(i).amp=permute(gt(i).amp,[2 1 3]);
     gt(i).phi=permute(gt(i).phi,[2 1 3]);
     gt(i).phi(gt(i).amp==0)=NaN;
@@ -222,6 +240,18 @@ switch opt
         for i=1:length(gt)
             a=[];
             p=[];
+            switch gt(i).ampstr
+                case{'tidal_amplitude_h'}
+                    lon=lonz;
+                    lat=latz;
+                case{'tidal_amplitude_u'}
+                    lon=lonu;
+                    lat=latu;
+                case{'tidal_amplitude_v'}
+                    lon=lonv;
+                    lat=latv;
+            end
+
             for k=1:size(gt(i).phi,3)
                 % Amplitude
 %                a=internaldiffusion(squeeze(gt(i).amp(:,:,k)));
