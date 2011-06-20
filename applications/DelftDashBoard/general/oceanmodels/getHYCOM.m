@@ -45,6 +45,9 @@ lat=s.lat(imin:imax,jmin:jmax);
 
 clear s
 
+lon=double(lon);
+lat=double(lat);
+
 [xg,yg]=meshgrid(xl1(1):dx:xl1(2),yl1(1):dy:yl1(2));
 
 s.time=t;
