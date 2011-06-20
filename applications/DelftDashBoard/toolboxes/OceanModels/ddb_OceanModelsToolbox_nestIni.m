@@ -70,6 +70,28 @@ opt.salinity.IC.dataname=handles.Toolbox(tb).Input.name;
 opt.temperature.IC.datafolder=handles.Toolbox(tb).Input.folder;
 opt.temperature.IC.dataname=handles.Toolbox(tb).Input.name;
 
+switch opt.salinity.IC.source
+    case 5
+        fname=handles.Toolbox(tb).Input.options.salinity.IC.profileFile;
+        [pathstr,name,ext,vrsn]=fileparts(fname);
+        if isempty(pathstr)
+            pathstr='.';
+        end
+        opt.salinity.IC.datafolder=pathstr;
+        opt.salinity.IC.dataname=[name ext];        
+end
+
+switch opt.temperature.IC.source
+    case 5
+        fname=handles.Toolbox(tb).Input.options.temperature.IC.profileFile;
+        [pathstr,name,ext,vrsn]=fileparts(fname);
+        if isempty(pathstr)
+            pathstr='.';
+        end
+        opt.temperature.IC.datafolder=[pathstr filesep];
+        opt.temperature.IC.dataname=[name ext];        
+end
+
 for it=1:flow.nrTracers
     opt.tracer(it).IC.datafolder=handles.Toolbox(tb).Input.folder;
     opt.tracer(it).IC.dataname=handles.Toolbox(tb).Input.name;

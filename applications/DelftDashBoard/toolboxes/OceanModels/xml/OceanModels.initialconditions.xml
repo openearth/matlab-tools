@@ -86,7 +86,7 @@
         <checks>
           <check>
             <variable>handles.Toolbox(tb).Input.options.salinity.IC.source</variable>
-            <value>1</value>
+            <value>4</value>
             <operator>eq</operator>
           </check>
         </checks>
@@ -112,7 +112,7 @@
         <checks>
           <check>
             <variable>handles.Toolbox(tb).Input.options.salinity.IC.source</variable>
-            <value>3</value>
+            <value>5</value>
             <operator>eq</operator>
           </check>
         </checks>
@@ -160,7 +160,7 @@
         <checks>
           <check>
             <variable>handles.Toolbox(tb).Input.options.temperature.IC.source</variable>
-            <value>1</value>
+            <value>4</value>
             <operator>eq</operator>
           </check>
         </checks>
@@ -186,7 +186,7 @@
         <checks>
           <check>
             <variable>handles.Toolbox(tb).Input.options.temperature.IC.source</variable>
-            <value>3</value>
+            <value>5</value>
             <operator>eq</operator>
           </check>
         </checks>
