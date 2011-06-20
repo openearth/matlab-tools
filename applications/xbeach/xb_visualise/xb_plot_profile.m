@@ -102,17 +102,18 @@ OPT = setproperty(OPT, varargin{:});
 % create handle
 if isempty(OPT.handle) || ~ishandle(OPT.handle)
     figure;
-    ax = axes(gcf);
+    ax = axes;
 else
     switch get(OPT.handle, 'Type')
         case 'figure'
-            ax = axes(OPT.handle);
+            figure(OPT.handle);
+            ax = axes;
         case 'axes'
             ax = OPT.handle;
     end
 end
 
-ax = axes(ax); hold on;
+axes(ax); hold on;
 
 % read data
 x = xb_get(xb, 'DIMS.globalx_DATA');

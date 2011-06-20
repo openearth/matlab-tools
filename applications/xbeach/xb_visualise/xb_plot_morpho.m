@@ -206,7 +206,7 @@ end
 
 % add labels
 for i = 1:sum(sp)
-    axes(i);
+    axes(ax(i));
     
     box on;
     grid on;

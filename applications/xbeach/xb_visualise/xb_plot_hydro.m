@@ -18,7 +18,6 @@ function xb_plot_hydro(xb, varargin)
 %               Hrms_lf:    Measured low frequency wave height
 %               Hrms_t:     Measured total wave height
 %               s:          Measured water level setup
-%               u:          Measured cross-shore flow velocity
 %               urms_hf     Measured high frequency oribtal velocity
 %               urms_lf     Measured low frequency oribtal velocity
 %               urms_t      Measured total oribtal velocity
@@ -205,8 +204,6 @@ if sp(2)
     
     title('flow velocities');
     ylabel(['velocity [' OPT.units_vel ']']);
-    
-    if xb_exist(xb, 'ue') && ~xb_exist(xb, 'u'); xb = xb_rename(xb, 'ue', 'u'); end;
     
     % plot measurements
     if ~isempty(OPT.urms_hf);           addplot(OPT.urms_hf(:,1),   OPT.urms_hf(:,2),       '^',    'k',    'flow velocity (RMS,HF,measured)'   );  end;

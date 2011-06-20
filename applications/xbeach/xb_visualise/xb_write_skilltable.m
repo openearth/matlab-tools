@@ -94,6 +94,8 @@ for i = 1:length(measured)
         t = xb_get(xb, 'DIMS.globaltime_DATA');
         y = xb_get(xb, OPT.vars{i});
         
+        if isempty(y); continue; end;
+        
         if isvector(y)
             y0 = [];
             y1 = squeeze(y);
