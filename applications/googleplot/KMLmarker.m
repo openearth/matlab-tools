@@ -173,8 +173,8 @@ OPT.fid=fopen(OPT.fileName,'w');
 %% HEADER
 
 OPT_header = struct(...
-    'name',OPT.kmlName,...
-    'open',0,...
+    'kmlName',OPT.kmlName,...
+    'open',OPT.open,...
     'description',OPT.description);
 output = KML_header(OPT_header);
 
@@ -352,6 +352,6 @@ end
 if OPT.openInGE
     system(OPT.fileName);
 end
-
+ varargout = {OPT};
 %% EOF
 
