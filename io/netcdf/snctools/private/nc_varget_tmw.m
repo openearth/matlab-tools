@@ -40,16 +40,19 @@ function values = nc_varget_tmw_group(ncid,varname,start,count,stride)
 % name.  Since ncid may not be for the file, we do not close it.
 
 
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+
+
+
 
 varid=netcdf.inqVarID(ncid,varname);
 [dud,var_type,dimids]=netcdf.inqVar(ncid,varid); %#ok<ASGLU>
 nvdims = numel(dimids);
 
-the_var_size = determine_varsize_tmw ( ncid, dimids, nvdims );
+the_var_size = determine_varsize_tmw(ncid,dimids,nvdims,preserve_fvd);
 
 % R2008b expects to preserve the fastest varying dimension, so if the
 % user didn't want that, we have to reverse the indices.
-    preserve_fvd = snc_getpref('SNCTOOLS','PRESERVE_FVD',false);
 if ~preserve_fvd
     start = fliplr(start);
     count = fliplr(count);
@@ -74,13 +77,13 @@ end
 
 % If there is a fill value, missing value, scale_factor, or add_offset,
 % we will retrieve the data as double precision.
-use_missing_value  = false;
-has_scaling        = false;
-use_fill_value     = false;
+use_missing_value = false;
+has_scaling = false;
+use_fill_value = false;
 retrieve_as_double = false;
 try
     att_type = netcdf.inqAtt(ncid, varid, '_FillValue' );
-    if (att_type == var_type) | isnan(netcdf.getAtt(ncid, varid, '_FillValue' ))
+    if ( att_type == var_type )
         use_fill_value = true;
         retrieve_as_double = true;
     else
@@ -94,7 +97,7 @@ end
 try
     att_type = netcdf.inqAtt(ncid, varid, 'missing_value' );
     if ~use_fill_value
-        if (att_type == var_type) | isnan(netcdf.getAtt(ncid, varid, 'missing_value' ))
+        if (att_type == var_type)
             % fill value trumps missing values
             use_missing_value = true;
             retrieve_as_double = true;
@@ -194,11 +197,11 @@ switch ( var_type )
     case { nc_double, nc_float, nc_int, nc_short, nc_byte }
         fill_value = netcdf.getAtt(ncid,varid,'_FillValue','double');
         values(values==fill_value) = NaN;
-        
+
     otherwise
         error ( 'SNCTOOLS:nc_varget:unhandledFillValueType', ...
             'Unhandled fill value datatype %d', var_type );
-        
+
 end
 
 return
@@ -221,10 +224,10 @@ switch ( var_type )
     case { nc_double, nc_float, nc_int, nc_short, nc_byte }
         fill_value = netcdf.getAtt(ncid,varid,'missing_value','double');
         values(values==fill_value) = NaN;
-        
+
     otherwise
         error('SNCTOOLS:nc_varget:tmw:unhandledMissingValueDatatype', ...
-            'Unhandled datatype %d.', var_type );
+              'Unhandled datatype %d.', var_type );
 end
 
 
@@ -284,10 +287,11 @@ return
 
 
 %-----------------------------------------------------------------------
-function the_var_size = determine_varsize_tmw ( ncid, dimids, nvdims )
+function the_var_size = determine_varsize_tmw(ncid,dimids,nvdims,preserve_fvd)
 % DETERMINE_VARSIZE_TMW: Need to figure out just how big the variable is.
 %
-% VAR_SIZE = DETERMINE_VARSIZE_TMW(NCID,DIMIDS,NVDIMS);
+% 
+
 
 % If not a singleton, we need to figure out how big the variable is.
 if nvdims == 0
@@ -301,7 +305,8 @@ else
     end
 end
 
-if ~snc_getpref('SNCTOOLS','PRESERVE_FVD',false);
+% Reverse the dimensionsions?
+if ~preserve_fvd
     the_var_size = fliplr(the_var_size);
 end
 

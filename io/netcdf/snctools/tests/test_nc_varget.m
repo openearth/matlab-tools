@@ -56,7 +56,7 @@ function test_bad_missing_value()
 warning('off','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
 warning('off','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
 warning('off','SNCTOOLS:nc_varget:java:missingValueMismatch');
-nc_varget('testdata/badfillvalue.nc','z');
+nc_varget(['testdata' filesep 'badfillvalue.nc'],'z');
 warning('on','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
 warning('on','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
 warning('on','SNCTOOLS:nc_varget:java:missingValueMismatch');
@@ -67,7 +67,7 @@ function test_bad_fill_value()
 warning('off','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
 warning('off','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
 warning('off','SNCTOOLS:nc_varget:java:fillValueMismatch');
-nc_varget('testdata/badfillvalue.nc','y');
+nc_varget(['testdata' filesep 'badfillvalue.nc'],'y');
 warning('on','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
 warning('on','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
 warning('on','SNCTOOLS:nc_varget:java:fillValueMismatch');
@@ -80,6 +80,20 @@ warning('on','SNCTOOLS:nc_varget:java:fillValueMismatch');
 
 
 
+
+
+
+
+%--------------------------------------------------------------------------
+function test_1D_variable ( ncfile )
+% Verify that a 1D variable read returns a column.
+
+actData = nc_varget ( ncfile, 'test_1D' );
+
+sz = size(actData);
+if sz(1) ~= 6 && sz(2) ~= 1
+	error('failed');
+end
 
 
 
@@ -424,6 +438,7 @@ setpref('SNCTOOLS','USE_STD_HDF4_SCALING',oldpref);
 %--------------------------------------------------------------------------
 function run_local_tests(ncfile)
 
+test_1D_variable ( ncfile );
 test_readSingleValueFrom1dVariable ( ncfile );
 test_readSingleValueFrom2dVariable ( ncfile );
 test_read2x2hyperslabFrom2dVariable ( ncfile );
@@ -454,7 +469,16 @@ function run_opendap_tests()
 
 test_readOpendapVariable;
 
-test_nc_varget_neg_opendap;
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a'}
+        fprintf('negative tests filtered out on release %s.', v);
+    otherwise
+		test_nc_varget_neg_opendap;
+end
+return
+
+
 
 
 return

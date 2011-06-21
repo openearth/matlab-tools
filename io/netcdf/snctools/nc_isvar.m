@@ -26,12 +26,14 @@ retrieval_method = snc_read_backend(ncfile);
 switch(retrieval_method)
 	case 'tmw'
 		tf = nc_isvar_tmw(ncfile,varname);
-    case 'tmw_hdf4'
-        tf = nc_isvar_hdf4(ncfile,varname);
 	case 'java'
 		tf = nc_isvar_java(ncfile,varname);
 	case 'mexnc'
 		tf = nc_isvar_mexnc(ncfile,varname);
+    case 'tmw_hdf4'
+        tf = nc_isvar_hdf4(ncfile,varname);
+    case 'tmw_hdf4_2011a'
+        tf = nc_isvar_hdf4(ncfile,varname);
 	otherwise
 		error ( 'SNCTOOLS:NC_ISVAR:unrecognizedCase', ...
 		        '%s is not recognized method for NC_ISVAR.', retrieval_method );
@@ -41,6 +43,24 @@ end
 
 
 
+
+%--------------------------------------------------------------------------
+function bool = nc_isvar_hdf4_2011a(hfile,varname)
+import matlab.io.hdf4.*
+
+sd_id = sd.start(hfile,'read');
+
+try 
+    idx = sd.nameToIndex(sd_id,varname);
+    bool = true;
+catch
+    bool = false;
+end
+
+sd.close(sd_id);
+
+
+ 
 
 %--------------------------------------------------------------------------
 function bool = nc_isvar_hdf4(hfile,varname)

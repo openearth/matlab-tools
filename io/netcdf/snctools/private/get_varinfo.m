@@ -1,6 +1,8 @@
 function Dataset = get_varinfo ( ncid, varid )
 
 
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+
 [record_dimension, status] = mexnc ( 'INQ_UNLIMDIM', ncid );
 if status ~= 0
    	ncerr = mexnc('strerror', status);
@@ -100,7 +102,7 @@ end
 
 
 
-if getpref('SNCTOOLS','PRESERVE_FVD',false)
+if preserve_fvd
 	Dataset.Dimension = fliplr(Dataset.Dimension);
 	Dataset.Size = fliplr(Dataset.Size);
 	if isfield(Dataset,'Chunking')

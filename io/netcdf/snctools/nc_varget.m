@@ -45,12 +45,14 @@ retrieval_method = snc_read_backend(ncfile);
 switch(retrieval_method)
 	case 'tmw'
 		data = nc_varget_tmw(ncfile,varname,start,count,stride);
-    case 'tmw_hdf4'
-        data = nc_varget_hdf4(ncfile,varname,start,count,stride);
 	case 'java'
 		data = nc_varget_java(ncfile,varname,start,count,stride);
 	case 'mexnc'
 		data = nc_varget_mexnc(ncfile,varname,start,count,stride);
+    case 'tmw_hdf4'
+        data = nc_varget_hdf4(ncfile,varname,start,count,stride);
+    case 'tmw_hdf4_2011a'
+        data = nc_varget_hdf4_2011a(ncfile,varname,start,count,stride);
 end
 
 return

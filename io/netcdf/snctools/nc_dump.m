@@ -128,9 +128,10 @@ return
 %--------------------------------------------------------------------------
 function dump_variables(Dataset,restricted_variable,fid)
 
+pfvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+
 fprintf (fid,'variables:\n' );
 
-pfvd = snc_getpref('SNCTOOLS','PRESERVE_FVD',false);
 if pfvd == 0;
    fprintf (fid,'\t// Preference ''PRESERVE_FVD'':  false,\n' );
    fprintf (fid,'\t// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.\n' );

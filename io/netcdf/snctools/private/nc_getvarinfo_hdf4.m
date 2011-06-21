@@ -1,4 +1,9 @@
 function vinfo = nc_getvarinfo_hdf4(hfile,varname)
+
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+
+
+
 % HDF4 backend for nc_getvarinfo.
 if ~ischar(varname)
     error('SNCTOOLS:nc_getvarinfo:hdf4:variableNotChar', ...
@@ -29,7 +34,7 @@ try
     
     [name,rank,dim_sizes,data_type,nattrs,status] = hdfsd('getinfo',sds_id);
     if status < 0
-        error('SNCTOOLS:nc_info:hdf4Numeric:getinfoFailed', ...
+        error('SNCTOOLS:nc_info:hdf4:getinfoFailed', ...
             'Unable to get information about scientific dataset.\n');
     end
     
@@ -53,24 +58,44 @@ try
     if (rank == 0)
         vinfo.Dimension = {};
         vinfo.Size = 1;
+    elseif (rank == 1)
+        
+        % 1D variable sizes, particularly coordinate record variables, are
+        % finitely reported by hdfsd.  Not so for variables with higher
+        % rank.
+        dim_id = hdfsd('getdimid',sds_id,0);
+        [dname,dcount,ddatatype,dnattrs,status] = hdfsd('diminfo',dim_id);
+        if status < 0
+            error('SNCTOOLS:nc_info:hdf4:diminfoFailed', ...
+                'Unable to get information about dimension 0 for %s.\n', vinfo.Name);
+        end
+        vinfo.Dimension = {dname};
+        if isinf(dim_sizes) && isinf(dcount)
+            vinfo.Size = 0;
+        else
+            vinfo.Size = dim_sizes;
+        end
     else
         for j = 0:rank-1
             dim_id = hdfsd('getdimid',sds_id,j);
             if dim_id < 0
-                error('SNCTOOLS:nc_info:hdf4Numeric:getdimidFailed', ...
+                error('SNCTOOLS:nc_info:hdf4:getdimidFailed', ...
                     'Unable to get a dimension scale identifier for dimension %d for %s.\n',j, vinfo.Name);
             end
             [dname,dcount,ddatatype,dnattrs,status] = hdfsd('diminfo',dim_id); %#ok<ASGLU>
             if status < 0
-                error('SNCTOOLS:nc_info:hdf4Numeric:diminfoFailed', ...
+                error('SNCTOOLS:nc_info:hdf4:diminfoFailed', ...
                     'Unable to get information about dimension scale %d for %s.\n',j, vinfo.Name);
             end
             vinfo.Dimension{j+1} = dname;
             
-            % inf means unlimited, but currently zero.
+            % inf means unlimited dimension.
             if isinf(dcount)
                 if isinf(dim_sizes(j+1))
-                    vinfo.Size(j+1) = 0;
+                    % Try to resolve by getting the length of the
+                    % "coordinate variable".
+                    cvar = nc_getvarinfo(hfile,dname);
+                    vinfo.Size(j+1) = cvar.Size;
                 else
                     vinfo.Size(j+1) = dim_sizes(j+1);
                 end
@@ -80,7 +105,7 @@ try
         end
     end
     
-    if getpref('SNCTOOLS','PRESERVE_FVD',false)
+    if preserve_fvd
         vinfo.Dimension = fliplr(vinfo.Dimension);
         vinfo.Size = fliplr(vinfo.Size);
     end

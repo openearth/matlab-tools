@@ -36,6 +36,8 @@ return
 %-------------------------------------------------------------------------
 function Dataset = get_varinfo_tmw ( ncid, varid )
 
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+
 [ndims,nvars,ngatts,record_dimension] = netcdf.inq(ncid); %#ok<ASGLU>
 [varname,datatype,dims,natts] = netcdf.inqVar(ncid, varid);
 ndims = numel(dims);
@@ -121,7 +123,7 @@ if v(1) == '4'
 	end
 end
 
-if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
+if ~preserve_fvd
 	Dataset.Dimension = fliplr(Dataset.Dimension);
 	Dataset.Size = fliplr(Dataset.Size);
 	if isfield(Dataset,'Chunking')

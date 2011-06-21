@@ -185,9 +185,13 @@ error('test failure');
 %---------------------------------------------------------------------------
 function test_003 ( ncfile )
 
-%
 % Try with 2nd input that isn't a structure.
-nc_addnewrecs ( ncfile, [] );
+try
+    nc_addnewrecs ( ncfile, [] );
+catch
+    return
+end
+error('test failure');
 
 
 
@@ -203,9 +207,14 @@ nc_addnewrecs ( ncfile, [] );
 %---------------------------------------------------------------------------
 function test_004 ( ncfile )
 
-%
+
 % Try with 2nd input that is an empty structure.
-nc_addnewrecs ( ncfile, struct([]) );
+try
+    nc_addnewrecs ( ncfile, struct([]) );
+catch
+    return
+end
+error('test failure');
 
 
 
@@ -499,10 +508,7 @@ b.t1 = x;
 b.t2 = 1./(1+x);
 b.t3 = x.^2;
 nc_addnewrecs ( ncfile, b, 'ocean_time' );
-nb = nc_addnewrecs ( ncfile, b, 'ocean_time' );
-if ( ~isempty(nb) )
-    error ( 'nc_addnewrecs failed on %s.\n', ncfile );
-end
+nc_addnewrecs ( ncfile, b, 'ocean_time' );
 v = nc_getvarinfo ( ncfile, 't1' );
 if ( v.Size ~= 10 )
     error ( '%s:  expected var length was not 10.\n', mfilename );

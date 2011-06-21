@@ -35,11 +35,12 @@ end
 %--------------------------------------------------------------------------
 function test_generic_file()
 
-use_mexnc = getpref('SNCTOOLS','USE_MEXNC',false);
 v = version('-release');
 switch(v)
 	case { '14', '2006a', '2006b', '2007a', '2007b', '2008a'}
-		if ~use_mexnc
+		try
+		    v = mexnc('inq_libvers');
+		catch
 			fprintf('\tNo testing on java read-only configuration.\n');
 			return
         end

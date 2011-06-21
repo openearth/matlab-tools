@@ -1,15 +1,17 @@
 The Short And Sweet Of It...
 +-----------------------------------------------------------------------
-NetCDF-4 support is added as of R2010b.
+NetCDF-4 support is added as of R2010b...
+
+... but if you have R2011a and have never used SNCTOOLS, you may be 
+interested to know that R2011a has new high-level netcdf support.  
+Please check that out before proceeding with SNCTOOLS.
 
 Please add this directory to your matlab path.  You must also have 
 mexnc on your path in order for snctools to work.
 
 SNCTOOLS is only supported on R14 or higher.  It will not work on
-MATLAB versions below R14.
-
-If you have R13 or earlier and just need mexnc, then you should look at
-compiling mexnc yourself.  
+MATLAB versions below R14.  If you have R13 or earlier and just need 
+mexnc, then you should look at compiling mexnc yourself.  
 
 +-----------------------------------------------------------------------
 BASIC INSTALLATION AND USAGE
@@ -23,7 +25,7 @@ R2010b
     netCDF-4 files, but in order to write to such files, you should drop
     down to MATLAB's native netcdf package interface.
 
-    You should also download netcdf-java from Unidata at
+    You must also download netcdf-java from Unidata at
     http://www.unidata.ucar.edu/software/netcdf-java/ as this will
     allow you to read OPeNDAP URLs and GRIB files.  See the USE_JAVA
     section below.
@@ -36,8 +38,6 @@ R2010b
         addpath ([pwd '/mexcdf/mexnc']);
         addpath ([pwd '/mexcdf/snctools']);
         javaaddpath([pwd '/netcdfAll-4.2.jar']);
-        setpref('SNCTOOLS','USE_JAVA',true);
-        setpref('SNCTOOLS','USE_MEXNC',false);
 
     You can test out your installation with
 
@@ -61,8 +61,6 @@ R2008b, R2009a, R2009b, R2010a
         addpath ([pwd '/mexcdf/mexnc']);
         addpath ([pwd '/mexcdf/snctools']);
         javaaddpath([pwd '/netcdfAll-4.1.jar']);
-        setpref('SNCTOOLS','USE_JAVA',true);
-        setpref('SNCTOOLS','USE_MEXNC',false);
 
     You can test out your installation with
 
@@ -82,7 +80,6 @@ R2006a, R2006b, R2007a, R2007b, R2008a
         addpath ([pwd '/mexcdf/mexnc']);
         addpath ([pwd '/mexcdf/snctools']);
         javaaddpath([pwd '/netcdfAll-4.1.jar']);
-        setpref('SNCTOOLS','USE_JAVA',true);
         setpref('SNCTOOLS','USE_MEXNC',false);
 
     You can test out your installation with
@@ -112,7 +109,6 @@ R14
         addpath ([pwd '/mexcdf/mexnc']);
         addpath ([pwd '/mexcdf/snctools']);
         javaaddpath([pwd '/toolsUI-2.2.20.jar']);
-        setpref('SNCTOOLS','USE_JAVA',true);
         setpref('SNCTOOLS','USE_MEXNC',false);
 
     You can test out your installation with
@@ -127,14 +123,12 @@ R14
         setpref('SNCTOOLS','USE_MEXNC',true);
 
 +-----------------------------------------------------------------------
-SNCTOOLS PREFERENCES
+JAVA Versions
 
-USE_JAVA 
-    If you wish to enable the netcdf-java backend (useful
-    for reading OPeNDAP URLs, GRIB2 files, netCDF-4 files, and
-    others), then this preference must be turned on.  First, go to
-    http://www.unidata.ucar.edu/software/netcdf-java/ and make sure you
-    retrieve the correct version...
+    The java backend is useful for reading OPeNDAP URLs, GRIB2 files, 
+	and netCDF-4 files (if your version of MATLAB is R2010a or earlier)
+    Netcdf-java can be found at http://www.unidata.ucar.edu/software/netcdf-java/ 
+	but you should make sure you retrieve the correct version...
 
     If your version          Then you should download
     of MATLAB is...          netcdf-java version...
@@ -154,14 +148,13 @@ USE_JAVA
 
         >> javaaddpath ( '/path/to/netcdfAll-4.2.jar' );
 
-    You should then turn on the preference.
-    
-        >> setpref('SNCTOOLS','USE_JAVA',true);
-
     If you need to access password-protected OPeNDAP resources, you will
     need one more addition to your javapath, i.e.
 
         >> javaaddpath ( '/path/to/snctools/classes' );
+
++-----------------------------------------------------------------------
+SNCTOOLS PREFERENCES
 
 PRESERVE_FVD
     Way back in the old days, when mexnc/mexcdf was the only game
@@ -224,7 +217,7 @@ BUG Reports You Should Know About
     http://www.mathworks.com/support/bugreports/609383
 
 4)  Out-of-memory error with negative indices.  Affects R2008b through
-    R20910a, but this only affects those who would use mexnc or the native
+    R2010a, but this only affects those who would use mexnc or the native
     netcdf package directly, not snctools users.  Please consult this URL.
 
     http://www.mathworks.com/support/bugreports/618322

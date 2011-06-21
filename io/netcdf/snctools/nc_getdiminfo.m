@@ -27,12 +27,14 @@ backend = snc_read_backend(arg1);
 switch(backend)
 	case 'tmw'
 		dinfo = nc_getdiminfo_tmw(arg1,arg2);
-    case 'tmw_hdf4'
-        dinfo = nc_getdiminfo_hdf4(arg1,arg2);
 	case 'java'
 		dinfo = nc_getdiminfo_java(arg1,arg2);
 	case 'mexnc'
 		dinfo = nc_getdiminfo_mexnc(arg1,arg2);
+    case 'tmw_hdf4'
+        dinfo = nc_getdiminfo_hdf4(arg1,arg2);
+    case 'tmw_hdf4_2011a'
+        dinfo = nc_getdiminfo_hdf4_2011a(arg1,arg2);
 	otherwise
 		error('SNCTOOLS:nc_getdiminfo:unhandledBackend', ...
 		      'Unhandled backend ''%s''', backend );

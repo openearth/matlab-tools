@@ -6,6 +6,8 @@ function [values, the_var_size] = nc_varget_java (ncfile,varname,start,count,str
 import ucar.nc2.dods.*     
 import ucar.nc2.*          
                            
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+
 close_it = true;
 
 % Try it as a local file.  If not a local file, try as
@@ -77,7 +79,6 @@ else
 end
 
 % Java expects in C-style order.
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
 if preserve_fvd
     start = fliplr(start);
     count = fliplr(count);

@@ -13,8 +13,9 @@ fprintf('know that several preferences have been set.\n');
 
 getpref('SNCTOOLS')
 
-fprintf('Only the ''USE_JAVA'' and ''PRESERVE_FVD'' preferences are important\n');
-fprintf('for daily use of SNCTOOLS.  Check the top-level README for details.  \n');
+mver = version('-release');
+fprintf('Only the ''PRESERVE_FVD'' preference is important for daily\n');
+fprintf('use of SNCTOOLS.  Check the top-level README for details.  \n');
 fprintf('Bye-bye.\n');
 
 clear mex;
@@ -74,24 +75,16 @@ warning('off', 'SNCTOOLS:snc2mat:deprecated' );
 function test_java_backend()
 fprintf('Testing java backend ...\n');
 
-use_java = getpref('SNCTOOLS','USE_JAVA',false);
-use_mexnc = getpref('SNCTOOLS','USE_MEXNC',false);
-
-if ~use_java
-    fprintf('\tjava backend testing filtered out on ');
-    fprintf('configurations where SNCTOOLS ''USE_JAVA'' ');
-    fprintf('prefererence is false.\n');
-    return
-end
-
 v = version('-release');
 switch(v)
     case {'14','2006a','2006b','2007a','2007b','2008a'}
-        if use_mexnc 
+		try
+		    v = mexnc('inq_libvers');
+
+			%  mexnc is available, so do not use java
             fprintf('\tjava netcdf-3 testing filtered out on ');
-            fprintf('configurations where SNCTOOLS ''USE_MEXNC'' ');
-            fprintf('prefererence is true.\n');    
-        else
+            fprintf('configurations where mexnc is available.\n ');
+	    catch
             run_nc3_read_tests;
         end
                 
@@ -99,15 +92,15 @@ switch(v)
         fprintf('\tnetcdf-3 java backend testing with local files filtered out on release %s\n', v);
 end
 
+v = version('-release');
 switch(v)
     case {'2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a'}
-        if use_mexnc && netcdf4_capable
-            fprintf('\tjava netcdf-4 testing filtered out on ');
-            fprintf('configurations where SNCTOOLS ''USE_MEXNC'' ');
-            fprintf('prefererence is true.\n');    
-        else
+        if netcdf4_capable
             run_nc4_read_tests;
             run_nc4_enhanced_read_tests;
+        else
+            fprintf('\tnetcdf-4 testing filtered out because  ');
+            fprintf('netcdf-java is not available.\n');   
         end
                 
     otherwise
@@ -130,26 +123,14 @@ switch(v)
             fprintf('\tmexnc testing filtered out on PCWIN64 on release %s.\n', v);
             return;
         end
-		if ~getpref('SNCTOOLS','USE_MEXNC',false)
-		    fprintf('\tmexnc testing filtered out where preference USE_MEXNC set to false.\n');
-		        return
+		try
+		    v = mexnc('inq_libvers');
+		catch
+		    fprintf('\tmexnc testing filtered out where mex-file is not available.\n');
+		    return
 		end
         run_nc3_read_tests;
         run_nc3_write_tests;
-        if netcdf4_capable
-            run_nc4_read_tests;
-        	run_nc4_write_tests;
-        end
-        
-    case {'2008b','2009a','2009b','2010a'}
-		if ~getpref('SNCTOOLS','USE_MEXNC',false)
-		    fprintf('\tmexnc testing filtered out where preference USE_MEXNC set to false.\n');
-		        return
-		end
-        run_nc3_read_tests;
-        if netcdf4_capable
-            run_nc4_read_tests;
-        end
         
     otherwise
         fprintf('\tmexnc testing filtered out on release %s.\n', v);
@@ -178,10 +159,6 @@ switch(v)
         return;
         
     case { '2008b','2009a','2009b','2010a'}
-        if getpref('SNCTOOLS','USE_MEXNC',false)
-            fprintf('\ttmw netcdf testing filtered out where preference USE_MEXNC set to true.\n');
-            return
-        end
         run_nc3_read_tests;
         run_nc3_write_tests;
         
@@ -324,8 +301,8 @@ if getpref('SNCTOOLS','TEST_REMOTE',false) && getpref('SNCTOOLS','TEST_HTTP',fal
 end
 
 
-fprintf('\t\tjava http testing filtered out when either of SNCTOOLS ');
-fprintf('\n\t\tpreferences''TEST_REMOTE'' or ''TEST_HTTP'' is false.\n');
+fprintf('\t\tjava http testing filtered out when either of SNCTOOLS preferences ');
+fprintf('\n\t\t''TEST_REMOTE'' or ''TEST_HTTP'' is false.\n');
 
 return
 
@@ -339,6 +316,11 @@ if ~getpref('SNCTOOLS','TEST_GRIB2',false)
     return
 end
 
+import ucar.nc2.dods.*
+import ucar.nc2.*
+if ~exist('NetcdfFile','class')
+    error('netcdf-java must be available in order to read grib2 files.')
+end
 
 test_nc_attget('grib');
 test_nc_dump('grib');
@@ -348,9 +330,9 @@ test_nc_varget('grib');
 function run_opendap_tests()
 fprintf('\tTesting OPeNDAP...\n');
 
-if ~getpref ( 'SNCTOOLS', 'TEST_REMOTE', false )
-    fprintf('\t\tjava http testing filtered out when SNCTOOLS ');
-    fprintf('''TEST_REMOTE'' preference is false.\n');
+if ~(getpref('SNCTOOLS','TEST_REMOTE',false) && getpref('SNCTOOLS','TEST_OPENDAP',false))
+    fprintf('\t\tjava opendap testing filtered out when SNCTOOLS ');
+    fprintf('''TEST_REMOTE'' or ''TEST_OPENDAP'' preferences are false.\n');
     return
 end
 
@@ -362,9 +344,7 @@ test_nc_varget('opendap');
 v = version('-release');
 switch(v)
 	case { '14','2006a','2006b','2007a','2007b','2008a'}
-        if getpref('SNCTOOLS','USE_MEXNC',false)
-        	test_opendap_local_system;
-        end
+		;
 	otherwise
         test_opendap_local_system;
 end

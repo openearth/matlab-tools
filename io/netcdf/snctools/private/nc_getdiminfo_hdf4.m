@@ -33,7 +33,7 @@ if dimid < 0
     error('SNCTOOLS:getdiminfo:hdf4:getdimidFailed', 'getdimid failed.' );
 end
 
-[name,count,~,~,status] = hdfsd('diminfo',dimid);
+[name,count,dud,dud,status] = hdfsd('diminfo',dimid);
 if status < 0
     error('SNCTOOLS:getdiminfo:hdf4:getdimidFailed', 'diminfo failed.' );
 end

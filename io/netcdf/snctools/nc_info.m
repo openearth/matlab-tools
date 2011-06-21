@@ -51,12 +51,14 @@ function fileinfo = nc_info ( ncfile )
 switch(backend)
 	case 'tmw'
 		fileinfo = nc_info_tmw(ncfile);
-    case 'tmw_hdf4'
-        fileinfo = nc_info_hdf4(ncfile);
 	case 'java'
 		fileinfo = nc_info_java(ncfile);
 	case 'mexnc'
 		fileinfo = nc_info_mexnc(ncfile);
+    case 'tmw_hdf4'
+        fileinfo = nc_info_hdf4(ncfile);
+    case 'tmw_hdf4_2011a'
+        fileinfo = nc_info_hdf4(ncfile);
 	otherwise
 		error('SNCTOOLS:nc_info:unhandledBackend', ...
 		      '%s is not a recognized backend.', backend );

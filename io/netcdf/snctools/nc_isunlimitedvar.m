@@ -15,7 +15,7 @@ backend = snc_read_backend(ncfile);
 switch(backend)
 	case 'tmw'
 		tf = nc_isunlimitedvar_tmw(ncfile,varname);
-    case 'tmw_hdf4'
+    case {'tmw_hdf4','tmw_hdf4_2011a'}
         tf = nc_isunlimitedvar_hdf4(ncfile,varname);
 	case 'java'
 		tf = nc_isunlimitedvar_java(ncfile,varname);

@@ -26,11 +26,12 @@ return
 function run_positive_tests()
 
 ncfile = 'foo.nc';
-use_mexnc = getpref('SNCTOOLS','USE_MEXNC',false);
 v = version('-release');
 switch(v)
 	case { '14', '2006a', '2006b', '2007a', '2007b', '2008a'}
-		if ~use_mexnc
+		try
+			mexnc('inq_libvers');
+		catch %#ok<CTCH>
 			fprintf('\tNo testing yet on java read-only configuration.\n');
 			return
 		end

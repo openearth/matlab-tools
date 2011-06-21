@@ -2,6 +2,8 @@ function values = nc_varget_mexnc(ncfile,varname,start,count,stride)
 % Handler for NC_VARGET it case where the old community mex-file mexnc must
 % be used. 
 
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+
 
 [ncid,status]=mexnc('open',ncfile,'NOWRITE');
 if status ~= 0
@@ -25,7 +27,6 @@ try
     
     % mexnc does not preserve the fastest varying dimension.  If we want this,
     % then we flip the indices.
-    preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
     if preserve_fvd
         start = fliplr(start);
         count = fliplr(count);
@@ -85,7 +86,7 @@ try
     else
         % Ok it's not a 1D vector.  If we are not preserving the fastest
         % varying dimension, we should permute the data.
-        if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
+        if ~preserve_fvd
             pv = fliplr ( 1:length(the_var_size) );
             values = permute(values,pv);
         end

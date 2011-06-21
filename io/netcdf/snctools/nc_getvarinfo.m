@@ -35,12 +35,14 @@ backend = snc_read_backend(arg1);
 switch(backend)
 	case 'tmw'
 		Dataset = nc_getvarinfo_tmw(arg1,arg2);
-    case 'tmw_hdf4'
-        Dataset = nc_getvarinfo_hdf4(arg1,arg2);
 	case 'java'
 		Dataset = nc_getvarinfo_java(arg1,arg2);
 	case 'mexnc'
 		Dataset = nc_getvarinfo_mexnc(arg1,arg2);
+    case 'tmw_hdf4'
+        Dataset = nc_getvarinfo_hdf4(arg1,arg2);
+    case 'tmw_hdf4_2011a'
+        Dataset = nc_getvarinfo_hdf4_2011a(arg1,arg2);
 	otherwise
 		error('SNCTOOLS:nc_info:unhandledBackend', ...
 		      '%s is not a recognized backend.', backend);

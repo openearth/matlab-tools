@@ -1,4 +1,7 @@
 function nc_varput_tmw(ncfile,varname,data,start,count,stride)
+
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+
 ncid = netcdf.open(ncfile,'WRITE');
 try
     varid = netcdf.inqVarID(ncid, varname );
@@ -21,7 +24,6 @@ try
     data = handle_scaling_tmw(ncid,varid,data);
     data = handle_fill_value_tmw ( ncid, varid, data );
 
-	preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
     if ~preserve_fvd
         data = permute(data,fliplr(1:ndims(data)));
         start = fliplr(start);

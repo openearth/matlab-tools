@@ -20,13 +20,14 @@ function nc_cat(file1,file2,recsize)
 %       copyfile('f1.nc','f2.nc');
 %
 %       % Populate the first file.
-%       buf.time = [0 1 2];
-%       buf.money = [0 1000 2000];
+%       buf = struct('Name','Data');
+%       buf(1).Name = 'time';  buf(1).Data = [0 1 2];
+%       buf(2).Name = 'money';  buf(2).Data = [0 1000 2000];
 %       nc_addnewrecs('f1.nc',buf);
 %
 %       % Now populate the 2nd file.
-%       buf.time = [3 4 5 6];
-%       buf.money = [3000 4000 5000 6000];
+%       buf(1).Data = [3 4 5 6];
+%       buf(2).Data = [3000 4000 5000 6000];
 %       nc_addnewrecs('f2.nc',buf);
 %
 %       % Now concatenate them.
@@ -61,7 +62,7 @@ end
 
 
 if nargin < 3
-	b = nc_getbuffer(file2);
+	b = snc_getbuffer(file2);
 	nc_addrecs(file1,b);
 else
 	vinfo = nc_getvarinfo(file2,record_variable);
@@ -69,7 +70,7 @@ else
 	for j = 1:num_ops
 		start = (j-1)*recsize;
 		count = min(recsize, vinfo.Size-start);
-		b = nc_getbuffer(file2,start,count);
+		b = snc_getbuffer(file2,start,count);
 		nc_addrecs(file1,b);
 	end
 end

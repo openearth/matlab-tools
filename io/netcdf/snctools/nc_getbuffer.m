@@ -18,6 +18,7 @@ function theBuffer = nc_getbuffer ( ncfile, varargin )
 %
 %   See also NC_VARGET.
 
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
 
 % assume failure until success is known
 theBuffer = [];
@@ -92,7 +93,7 @@ for j = 1:num_datasets
         varstart = zeros(size(metadata.Dataset(j).Size));
         varcount = metadata.Dataset(j).Size;
 
-        if snc_getpref('SNCTOOLS','PRESERVE_FVD',false)
+        if preserve_fvd
             varstart(end) = start;
             varcount(end) = count;
         else

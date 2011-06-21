@@ -59,17 +59,18 @@ for idx = 0:ndatasets-1
 
 		% Do we already have it?
 		if (dim_count > 0) && any(strcmp(dname,{fileinfo.Dimension.Name}))
+            % we already have it.
 			continue;
-		else
+        else
 			dim_count = dim_count + 1;
 			fileinfo.Dimension(dim_count).Name = dname;
 			if isinf(dcount)
 				fileinfo.Dimension(dim_count).Unlimited = true;
-                if isinf(sds_dimsizes(dimidx+1))
-                   fileinfo.Dimension(dim_count).Length = 0;
-                else
+                %if isinf(sds_dimsizes(dimidx+1))
+                %   fileinfo.Dimension(dim_count).Length = 0;
+                %else
                     fileinfo.Dimension(dim_count).Length = sds_dimsizes(dimidx+1);
-                end
+                %end
 			else
 				fileinfo.Dimension(dim_count).Unlimited = false;
 				fileinfo.Dimension(dim_count).Length = dcount;
@@ -127,6 +128,7 @@ if isempty(fileinfo.Dataset)
     return
 end
 
+return;
 
 % Post process it.  For some reason, we cannot retrieve the length of an
 % unlimited coordinate variable via the low-level interface.  Have to fudge

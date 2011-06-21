@@ -17,6 +17,8 @@ switch(retrieval_method)
 		tf = nc_isatt_tmw(ncfile,varname,attrname);
 	case 'tmw_hdf4'
 		tf = nc_isatt_tmw_hdf4(ncfile,varname,attrname);
+	case 'tmw_hdf4_2011a'
+		tf = nc_isatt_tmw_hdf4_2011a(ncfile,varname,attrname);
 	case 'java'
 		tf = nc_isatt_java(ncfile,varname,attrname);
 	case 'mexnc'
@@ -75,6 +77,41 @@ status = hdfsd('end', sd_id);
 if status < 0
     error('SNCTOOLS:isatt:hdf4:end', 'END failed on %s.', hfile);
 end
+
+return
+
+%-----------------------------------------------------------------------
+function bool = nc_isatt_tmw_hdf4_2011a(hfile,varname,attrname)
+
+import matlab.io.hdf4.*
+
+sd_id = sd.start(hfile,'read');
+
+if isnumeric(varname);
+    obj_id = sd_id;
+else
+    
+	try
+		idx = sd.nameToIndex(sd_id,varname);
+		sds_id = sd.select(sd_id,idx);
+		obj_id = sds_id;
+	catch
+		obj_id = sd_id;	
+	end
+
+end
+
+try
+	attr_idx = sd.findAttr(obj_id,attrname);
+	bool = true;
+catch
+	bool = false;
+end
+
+if exist('sds_id','var')
+	sd.endAccess(sds_id);
+end
+sd.close(sd_id);
 
 return
 

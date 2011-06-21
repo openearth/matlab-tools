@@ -1,3 +1,53 @@
+* June 17 2011 John Evans <john.g.evans.ne@gmail.com> -r3583
+- Moved mexnc and hdf4 NC_ADDVAR backends into private directory.
+- Fix for bad fill value handling on netcdf-4.  Improves interoperability.
+- Fixed NC_ATTPUT to handle UINT8 attributes correctly on netcdf-4 (typecast
+- them).
+
+* June 14 2011 John Evans <john.g.evans.ne@gmail.com> -r3562
+- Fixed tilda issue in HDF4 backend for older releases
+
+* June 12 2011 John Evans <john.g.evans.ne@gmail.com> -r3559
+- Added 2011a HDF4 backend for read routines.
+
+* May 24 2011 John Evans <john.g.evans.ne@gmail.com> -r3551
+- Removed USE_MEXNC preference on R14 thru R2008a.  First choice now is
+- to try mexnc and then to fall back to java if mex-file not available.
+
+* May 22 2011 John Evans <john.g.evans.ne@gmail.com> -r3547
+- Removed more PERSISTENT relics.
+
+* May 18 2011 John Evans <john.g.evans.ne@gmail.com> -r3543
+- Fixed HDF4 backend bug.
+- Removed some GETPREF call sites.
+
+* May 18 2011 John Evans <john.g.evans.ne@gmail.com> -r3538
+- Removed persistent variables scheme for handling preferences.
+- USE_JAVA preference has been removed.
+- USE_MEXNC preference is only retrieved when < R2008b.
+
+* May 09 2011 John Evans <john.g.evans.ne@gmail.com> -r3527
+- Change preference handling to use persistent variables.
+
+* May 06 2011 John Evans <john.g.evans.ne@gmail.com> -r3522
+- Added better indication of known MATLAB bugs in test suite.
+
+* Apr 21 2011 John Evans <john.g.evans.ne@gmail.com> -r3519
+- Fixed some HDF4 testing issues. 
+
+* Apr 16 2011 John Evans <john.g.evans.ne@gmail.com> -r3514
+- Fixed fallout issue when PRESERVE_FVD preference was false.
+
+* Apr 13 2011 John Evans <john.g.evans.ne@gmail.com> -r3511
+- NC_GETBUFFER and NC_ADDRECS now work with Name/Data structures.
+
+* Apr 07 2011 John Evans <john.g.evans.ne@gmail.com> -r3507
+- Removed one more negative 2007a testpoint, this time from 
+- nc_varget/opendap.
+
+* Apr 05 2011 John Evans <john.g.evans.ne@gmail.com> -r3506
+- Changed test_nc_varget to use FILESEP instead.
+
 * Sun Mar 27 2011 John Evans <john.g.evans.ne@gmail.com> -r3504
 - Adopted Gerben de Boer's suggestions for NC_GETALL.
 

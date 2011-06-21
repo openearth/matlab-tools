@@ -158,8 +158,7 @@ return
 
 %--------------------------------------------------------------------------
 function test_http_non_dods (  )
-if (getpref ( 'SNCTOOLS', 'USE_JAVA', false)  && ...
-        getpref ( 'SNCTOOLS', 'TEST_REMOTE', false)  )
+if getpref ( 'SNCTOOLS', 'TEST_REMOTE', false) 
     
     load('testdata/nc_dump.mat');
     

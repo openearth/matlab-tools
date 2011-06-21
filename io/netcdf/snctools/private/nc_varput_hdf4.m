@@ -1,6 +1,9 @@
 function nc_varput_hdf4(hfile,varname,data,start,edges,stride)
 % HDF4 handler for NC_VARPUT.
 
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+use_std_hdf4_scaling = getpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
+
 sd_id = hdfsd('start',hfile,'write');
 if sd_id < 0
     error('SNCTOOLS:varput:hdf4:startFailed', ...
@@ -31,7 +34,7 @@ try
     % calibrate the data so as not to lose precision
     [cal,cal_err,offset,offset_err,data_type,status] = hdfsd('getcal',sds_id); %#ok<ASGLU>
     if ( status ~= -1 )
-        if getpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
+        if use_std_hdf4_scaling
             data = double(data)/cal + offset; 
         else
             % Use standard CF convention scaling.
@@ -119,7 +122,7 @@ try
     end
     
     % Do we transpose the data?
-    if getpref('SNCTOOLS','PRESERVE_FVD',false)
+    if preserve_fvd
         start = fliplr(start);
         edges = fliplr(edges);
         stride = fliplr(stride);

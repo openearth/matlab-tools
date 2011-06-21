@@ -1,7 +1,10 @@
 function data = nc_varget_hdf4(hfile,varname,start,edge,stride)
 % HDF4 backend for NC_VARGET
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+use_std_hdf4_scaling = getpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
+
 
 fid = fopen(hfile,'r');
 fullfile = fopen(fid);
@@ -70,7 +73,7 @@ try
     % fill value, scale factor, add_offset, missing value, etc
     [cal,cal_err,offset,offset_err,data_type,status] = hdfsd('getcal',sds_id); %#ok<ASGLU>
     if status == 0
-        if getpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
+        if use_std_hdf4_scaling
             data = cal*(double(data) - offset);  
         else
             % Use standard CF convention scaling.

@@ -162,6 +162,31 @@ test_missing_value_and_fill_value(mode);
 %--------------------------------------------------------------------------
 function test_1D_strided(ncfile )
 
+info = nc_info(ncfile);
+
+% This function may segfault on R2008b and R2009a unless the bug fix at
+% http://www.mathworks.com/support/bugreports/522794 is applied.  Do not
+% run the test unless the user is sure to do so.
+v = version('-release');
+switch(v)
+    case '2008b'
+		if ~getpref('SNCTOOLS','FORCE_R2008B_TESTS',false) && strcmp(info.Format,'NetCDF')
+		    fprintf('\n\t\t\tFiltering out test_1D_strided on R2008b, please consult the \n');
+		    fprintf('\t\t\tsection ''Bug Reports You Should Know About'' in the README for \n');
+		    fprintf('\t\t\tbug #522794, or go to http://www.mathworks.com/support/bugreports/522794.\n');
+            return
+		end
+        
+    case '2009a'
+		if ~getpref('SNCTOOLS','FORCE_R2009A_TESTS',false) && strcmp(info.Format,'NetCDF')
+		    fprintf('\n\t\t\tFiltering out test_1D_strided on R2009a, please consult the \n');
+		    fprintf('\t\t\tsection ''Bug Reports You Should Know About'' in the README for \n');
+		    fprintf('\t\t\tbug #522794, or go to http://www.mathworks.com/support/bugreports/522794.\n');
+            return
+		end
+        
+end
+
 input_data = [3.14159; 2];
 nc_varput ( ncfile, 'test_1D', input_data, 0, 2, 2 );
 output_data = nc_varget ( ncfile, 'test_1D', 0, 2, 2 );
@@ -529,11 +554,6 @@ input_data(1,1) = NaN;
 nc_attput ( ncfile, 'test_2D', 'missing_value', -1 );
 nc_varput ( ncfile, 'test_2D', input_data );
 
-%
-% Now change the _FillValue, to -2.  
-nc_attput ( ncfile, 'test_2D', '_FillValue', -2 );
-
-%
 % Now read the data back.  Should have a NaN in position (1,1).
 output_data = nc_varget ( ncfile, 'test_2D' );
 
@@ -586,11 +606,16 @@ end
 return
 
 
-%
+
 %--------------------------------------------------------------------------
 % Test a fill value / missing value conflict.  The fill value should take 
 % precedence.
 function test_missing_value_and_fill_value ( mode)
+
+if strcmp(mode,'netcdf4-classic')
+    % This test should not be done on netcdf-4 files.
+    return
+end
 
 ncfile = 'foo.nc';
 create_test_file(ncfile,mode);
@@ -605,7 +630,7 @@ input_data = reshape(input_data,count);
 input_data(1,1) = NaN;
 
 nc_attput ( ncfile, 'test_2D', '_FillValue', -1 );
-nc_attput ( ncfile, 'test_2D', 'missing_value', -1 );
+nc_attput ( ncfile, 'test_2D', 'missing_value', -2 );
 nc_varput ( ncfile, 'test_2D', input_data );
 
 
@@ -722,3 +747,15 @@ switch(v)
         fprintf('No negative tests run on %s...\n',v);
         return
 end
+
+
+
+
+
+
+
+
+
+
+
+
