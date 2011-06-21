@@ -104,7 +104,7 @@ guess = false;
 if ~isempty(xbout)
     idx = strcmpi(fname, {xbout.name});
     if any(idx)
-        ftype = xbout().type;
+        ftype = xbout(idx).type;
         if ~isfield(bytes, ftype)
             switch ftype
                 case 'real*8'
