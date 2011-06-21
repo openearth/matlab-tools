@@ -81,10 +81,13 @@ end
 %% code
 
 if OPT.prevent_network_destination
-    if isempty(regexp(destination,'^[A-Z]:','once'))
+    if ~isempty(regexp(destination,'^\\\\','once'))
         error('the destination is a network adres')
     end
 end
+
+
+
 
 % create destination if it does not exist yet
 if ~exist(destination,'dir')
