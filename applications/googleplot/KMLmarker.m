@@ -338,6 +338,9 @@ fprintf(OPT.fid,output);
 
 fclose(OPT.fid);
 
+%% close the waitbar
+multiWaitbar('closeall');
+
 %% compress to kmz?
 
 if strcmpi  ( OPT.fileName(end),'z')
