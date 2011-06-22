@@ -136,7 +136,11 @@ if isunix()
         pids = cellfun(@str2num, {re.pid});
         
         % determine new instance
-        pid = pids(end);
+        if ~isempty(pids)
+            pid = pids(end);
+        else
+            pid = 0;
+        end
     end
 else
     if OPT.nodes > 1
