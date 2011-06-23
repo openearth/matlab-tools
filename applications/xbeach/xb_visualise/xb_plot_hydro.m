@@ -142,32 +142,8 @@ if (has_m && has_flow_m ) || (~has_m && has_flow_c);                            
 
 % create handles
 n   = sum(sp);
-ax  = nan(1,n);
+ax  = xb_get_handles(n, 'handles', OPT.handles);
 si  = 1;
-
-if isempty(OPT.handles) || ~all(ishandle(OPT.handles))
-    figure;
-    for i = 1:n
-        ax(i) = subplot(n,1,i);
-    end
-else
-    idx = strcmpi(get(OPT.handles, 'Type'), 'figure');
-    if any(idx)
-        figure(OPT.handles(find(idx, 1)));
-        for i = 1:n
-            ax(i) = subplot(n,1,i);
-        end
-    else
-        sp(:) = 0;
-        idx = find(strcmpi(get(OPT.handles, 'Type'), 'axes'));
-        for i = 1:min([length(OPT.handles(idx)) n])
-            ax(i) = OPT.handles(idx(i));
-            sp(i) = 1;
-        end
-    end
-end
-
-hold on;
 
 % subplot 1
 if sp(1)
