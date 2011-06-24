@@ -236,8 +236,8 @@ if ~isempty(vars)
             menu = [menu{:} {['<a href="' cmd '">parent</a>']}];
         end
 
-        cmd = sprintf('matlab:xb_plot(%s);', path.obj);
-        menu = [menu{:} {['<a href="' cmd '">plot</a>']}];
+        cmd = sprintf('matlab:xb_view(%s);', path.obj);
+        menu = [menu{:} {['<a href="' cmd '">view</a>']}];
 
         if strcmpi(xb.type, 'input')
             cmd = sprintf('matlab:xb_write_input(''params.txt'', %s);', path.obj);

@@ -69,8 +69,7 @@ function xbo = xb_get_hydro(xb, varargin)
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
-    'fsplit',          .1,      ...
-    'detrend',         true     ...
+    'Trep',            12       ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -124,37 +123,37 @@ if xb_exist(xb, 'zb')
     zb_i    = zb(1,1,:);
     zb_f    = zb(end,1,:);
 end
-    
+
 % split HF and LF waves
-if xb_exist(xb, 'zs')
+if xb_exist(xb, 'hh_var')
+    hh = mean(xb_get(xb,'hh_var'));
+    
+    Hrms_lf = sqrt(8*abs(hh));
+elseif xb_exist(xb, 'zs')
     zs      = xb_get(xb,'zs');
-    df      = 1/(size(zs,1)*dt);
     
     if xb_exist(xb, 'zb')
-        [hf lf] = filterhjb(zs-xb_get(xb,'zb'),OPT.fsplit,df,~OPT.detrend);
-    else
-        [hf lf] = filterhjb(zs,OPT.fsplit,df,~OPT.detrend);
+        h       = zs-xb_get(xb,'zb');
+        hm      = nan(size(h));
+        
+        windowSize = 40*OPT.Trep/dt;
+        for i = 1:size(h,2)
+            hm(:,i) = filter(ones(1,windowSize)/windowSize,1,h(:,i));
+        end
+        zs = h-hm;
     end
     
-    Hrms_hf = sqrt(8).*std(hf,1);
-    Hrms_lf = sqrt(8).*std(lf,1);
+    Hrms_lf = sqrt(8).*std(zs,0,1);
 end
 if xb_exist(xb, 'u')
     u       = xb_get(xb,'u');
-    df      = 1/(size(zs,1)*dt);
-    
-    [hf lf] = filterhjb(u,OPT.fsplit,df,~OPT.detrend);
-    
-    urms_hf = std(hf,1);
-    urms_lf = std(lf,1);
+    urms_lf = std(u,0,1);
 end
 
 % compute HF waves
 if xb_exist(xb, 'H')
     Hrms_hf = sqrt(mean(xb_get(xb,'H').^2,1)+Hrms_hf.^2);
     if xb_exist(xb, 'zs')
-        Hrms_t = sqrt(Hrms_lf.^2+Hrms_hf.^2);
-        
         [zs H] = xb_get(xb,'zs','H');
         
         rho = zeros(nx,1);
@@ -164,6 +163,9 @@ if xb_exist(xb, 'H')
         end
     end
 end
+
+% compute total waves
+Hrms_t = sqrt(Hrms_lf.^2+Hrms_hf.^2);
 
 % compute setup
 if xb_exist(xb, 'zs')
@@ -181,10 +183,10 @@ end
 % compute HF orbital velocity
 if xb_exist(xb, 'urms')
     urms_hf = sqrt(mean(xb_get(xb,'urms').^2,1)+urms_hf.^2);
-    if xb_exist(xb, 'u')
-        urms_t = sqrt(urms_lf.^2+urms_hf.^2);
-    end
 end
+
+% compute total orbital velocity
+urms_t = sqrt(urms_lf.^2+urms_hf.^2);
 
 % compute mean velocity
 if xb_exist(xb, 'ue')
@@ -217,7 +219,7 @@ end
 xbo = xb_empty();
 
 xbo = xb_set(xbo, 'SETTINGS', xb_set([], ...
-    'fsplit',  OPT.fsplit                     ));
+    'Trep',  OPT.Trep                       ));
 
 xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
 

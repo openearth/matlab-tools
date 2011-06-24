@@ -94,8 +94,8 @@ if ~isempty(runs) && iscell(runs)
     end
     runs(strcmpi(' ', fpaths)) = [];
     
-    for i = 1:length(runs)
-        xb = xb_peel(runs{i});
+    for i = min([OPT.n length(runs)]):-1:1
+        xb = xb_peel(runs{end-i+1});
         
         if isdir(xb.path)
             fpath = xb.path;

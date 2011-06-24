@@ -128,13 +128,18 @@ if exist(logfile, 'file')
         end
         
         % timestep
-        re = regexpi(lines(i,:), 'Average dt \s*(.+)\s*', 'tokens');
+        re = regexpi(lines(i,:), 'Average dt :?\s*(.+)\s*', 'tokens');
         if xb_get(xb, 'timestep') == 0 && ~isempty(re)
             xb = xb_set(xb, 'timestep', eta2datenum(re{1}{1}));
         end
         
         % duration
         re = regexpi(lines(i,:), 'Total calculation time:\s*(.+)\s*', 'tokens');
+        if ~isempty(re)
+            xb = xb_set(xb, 'duration', eta2datenum(re{1}{1}));
+        end
+        
+        re = regexpi(lines(i,:), 'Duration\s*:\s*(.+)\s*', 'tokens');
         if ~isempty(re)
             xb = xb_set(xb, 'duration', eta2datenum(re{1}{1}));
         end
@@ -162,7 +167,7 @@ function date = eta2datenum(str)
     factors = [1 1/24 1/24/60 1/24/3600];
     
     for i = 1:length(units)
-        re = regexp(str, ['([\d\.]+)\s+' units{i}], 'tokens');
+        re = regexp(str, ['([\d\.Ee-]+)\s+' units{i}], 'tokens');
         if ~isempty(re)
             date = date + str2double(re{1}{1})*factors(i);
         end
