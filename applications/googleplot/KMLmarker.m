@@ -176,11 +176,16 @@ OPT_header = struct(...
     'kmlName',OPT.kmlName,...
     'open',OPT.open,...
     'description',OPT.description);
-output = KML_header(OPT_header);
+header = KML_header(OPT_header);
 
-output = [output '<!--############################-->\n'];
+fprintf(OPT.fid,'%s\n',header);
+
 
 %% STYLE
+
+output = ['<!--############################-->\n'];
+
+
 if ~isempty(OPT.colornormalState)
     temp                    = dec2hex(round([OPT.markerAlpha OPT.colornormalState].*255),2);
     OPT.colornormalState    = [' <color>' temp(1,:) temp(4,:) temp(3,:) temp(2,:) '</color>\n'];
