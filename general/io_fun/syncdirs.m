@@ -80,10 +80,12 @@ if nargin==0;
 end
 %% code
 
+
 if OPT.prevent_network_destination
     if ~isempty(regexp(destination,'^\\\\','once'))
         error('the destination is a network adres')
     end
+
 end
 
 
@@ -96,6 +98,7 @@ end
 
 D_srce          = dir2(source,     'dir_excl',OPT.source_dir_excl,     'file_incl',OPT.source_file_incl     );
 D_dest          = dir2(destination,'dir_excl',OPT.destination_dir_excl,'file_incl',OPT.destination_file_incl);
+
 
 % add a field relativepathname to the source files
 for ii = 1:length(D_srce)
@@ -143,11 +146,7 @@ end
 
 % log message
 if OPT.log
-    temp = strcat(...
-        {D_srce(to_remove_from_srce).pathname},...
-        {D_srce(to_remove_from_srce).name})';
-    fprintf(OPT.log,'\nthe following files and folders apppear identical and will be skipped:\n');
-    fprintf(OPT.log,'     %s\n',temp{:});
+    fprintf(OPT.log,'\n%d files and folders appear identical and will be skipped\n',sum(to_remove_from_srce));
 end
 
 D_srce(to_remove_from_srce) = [];
@@ -211,7 +210,7 @@ multiWaitbar('Copying files',1,'label',label_msg);
 
 %% log message
 if OPT.log
-    fprintf(OPT.log,'Syncronization of\n    %s\nto\n    %s\nis completed. ',[D_srce(1).pathname D_srce(1).name],[D_dest(1).pathname D_dest(1).name]);
+    fprintf(OPT.log,'Synchronization of\n    %s\nto\n    %s\nis completed. ',[D_srce(1).pathname D_srce(1).name],[D_dest(1).pathname D_dest(1).name]);
     if OPT.remove_files_from_destination
         fprintf('%d files were copied. %d files or folders removed from destination\n',length(file_to_copy),sum(to_remove_from_dest));
     else
