@@ -55,6 +55,9 @@ if nargin < 2
     inFile = [pat nam];
 end
 
+if nargin == 2
+    [fPat fName] = fileparts(inFile);
+end
 fid=fopen(inFile);
 kmlFile=fread(fid,'char');
 coorsStart=findstr('<coordinates>',char(kmlFile)')+13;
@@ -63,7 +66,7 @@ coorsStop=findstr('</coordinates>',char(kmlFile)')-1;
 ldb=[nan nan];
 for ii=1:length(coorsStart)
     tLdb=str2num(char(kmlFile(coorsStart(ii):coorsStop(ii)))')';
-    ldb=[ldb;tLdb(1:3:end) tLdb(2:3:end); nan nan];
+    ldb=[ldb;tLdb(1:3:end)' tLdb(2:3:end)'; nan nan];
 end
 
 if saveOutput==1
