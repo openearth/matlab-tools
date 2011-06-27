@@ -136,9 +136,9 @@ elseif xb_exist(xb, 'zs')
         h       = zs-xb_get(xb,'zb');
         hm      = nan(size(h));
         
-        windowSize = 40*OPT.Trep/dt;
-        for i = 1:size(h,2)
-            hm(:,i) = filter(ones(1,windowSize)/windowSize,1,h(:,i));
+        windowSize = ceil(40*OPT.Trep/dt);
+        for i = 1:size(h,3)
+            hm(:,:,i) = filter(ones(1,windowSize)/windowSize,1,h(:,:,i));
         end
         zs = h-hm;
     end

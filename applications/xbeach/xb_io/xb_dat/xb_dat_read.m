@@ -215,7 +215,7 @@ if exist(fname, 'file')
                         end
                     else
                         idx = num2cell(repmat(':',1,length(dims_out)));
-                        idx{i} = 1+OPT.index{i};
+                        idx{i} = max(min(OPT.index{i}+1, dims_out(i)),1);
                         dat = dat(idx{:});
                     end
                 end
@@ -241,7 +241,7 @@ if exist(fname, 'file')
                     
                     % build loop index
                     for i = 1:length(OPT.index)
-                        loops{i} = min(OPT.index{i}+1, dims_out(i));
+                        loops{i} = max(min(OPT.index{i}+1, dims_out(i)),1);
                     end
                     
                     if sz(1) > 1; loops{3} = 1+min(OPT.index{3}); end;

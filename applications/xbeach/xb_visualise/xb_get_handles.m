@@ -91,6 +91,8 @@ else
             ax(i) = subplot(n,1,i);
         end
     else
+        idx = find(strcmpi(get(OPT.handles, 'Type'), 'axes'));
+        
         for i = 1:min([n length(OPT.handles(idx))])
             ax(i) = OPT.handles(idx(i));
         end

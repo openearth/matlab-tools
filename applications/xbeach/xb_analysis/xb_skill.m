@@ -92,43 +92,48 @@ end
 
 %% compute skills
 
-x       = unique([computed(:,1) ; measured(:,1)]);
-x       = x(~isnan(x));
+[r2 sci relbias bss] = deal(nan);
 
-zmt     = interp1(measured(:,1), measured(:,2), x);
-zct     = interp1(computed(:,1), computed(:,2), x);
-
-% determine active zone
-if ~isempty(initial)
-    zit = interp1(initial(:,1),  initial(:,2),  x);
+if size(measured,1) > 1 && size(computed,1) > 1
     
-    dz  = max(abs(zmt-zit),abs(zct-zit));
-    
-    zi1 = find(dz>0,1,'first');
-    zi2 = find(dz>0,1,'last');
-    
-    x   = x  (zi1:zi2);
-    zmt = zmt(zi1:zi2);
-    zct = zct(zi1:zi2);
-    zit = zit(zi1:zi2);
-end
+    x       = unique([computed(:,1) ; measured(:,1)]);
+    x       = x(~isnan(x));
 
-zc      = zct(~isnan(zct)&abs(zmt)>.05*max(abs(zmt)));
-zm      = zmt(~isnan(zct)&abs(zmt)>.05*max(abs(zmt)));
+    zmt     = interp1(measured(:,1), measured(:,2), x);
+    zct     = interp1(computed(:,1), computed(:,2), x);
 
-r2      = mean((zc-mean(zc)).*(zm-mean(zm)))/(std(zm)*std(zc));
+    % determine active zone
+    if ~isempty(initial)
+        zit = interp1(initial(:,1),  initial(:,2),  x);
 
-rms     = sqrt(mean((zc-zm).^2));
-rmsm    = sqrt(mean(zm.^2));
-sci     = rms/max(rmsm,abs(mean(zm)));
+        dz  = max(abs(zmt-zit),abs(zct-zit));
 
-relbias = mean(zc-zm)/max(rmsm,abs(mean(zm)));
+        zi1 = find(dz>0,1,'first');
+        zi2 = find(dz>0,1,'last');
 
-% brier skill score
-if ~isempty(initial)
-    bss = BrierSkillScore(x, zct, x, zmt, x, zit, 'verbose', false);
-else
-    bss = 1-(std(zc-zm))^2/var(zm);
+        x   = x  (zi1:zi2);
+        zmt = zmt(zi1:zi2);
+        zct = zct(zi1:zi2);
+        zit = zit(zi1:zi2);
+    end
+
+    zc      = zct(~isnan(zct)&abs(zmt)>.05*max(abs(zmt)));
+    zm      = zmt(~isnan(zct)&abs(zmt)>.05*max(abs(zmt)));
+
+    r2      = mean((zc-mean(zc)).*(zm-mean(zm)))/(std(zm)*std(zc));
+
+    rms     = sqrt(mean((zc-zm).^2));
+    rmsm    = sqrt(mean(zm.^2));
+    sci     = rms/max(rmsm,abs(mean(zm)));
+
+    relbias = mean(zc-zm)/max(rmsm,abs(mean(zm)));
+
+    % brier skill score
+    if ~isempty(initial)
+        bss = BrierSkillScore(x, zct, x, zmt, x, zit, 'verbose', false);
+    else
+        bss = 1-(std(zc-zm))^2/var(zm);
+    end
 end
 
 %% store skills

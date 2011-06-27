@@ -108,7 +108,6 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-
 %% plot
 
 % determine dimensions
