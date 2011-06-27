@@ -67,8 +67,8 @@ function [x2,y2]= TransverseMercator(x1,y1,a,finv,k0,FE,FN,lat0,lon0,iopt)
 
 %%
 n1  = length(x1(:));
-x2  = repmat(nan,size(x1));
-y2  = repmat(nan,size(x1));
+x2  = nan(size(x1));
+y2  = nan(size(x1));
 
 f=1/finv;
 e2=2.0*f-f^2;
