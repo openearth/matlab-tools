@@ -1,6 +1,6 @@
 function [x2,y2]=LambertConicConformal2SP(x1,y1,a,finv,lonf,fe,latf,fn,lat1,lat2,iopt)
 
-n1 = length(x1);
+n1 = numel(x1);
 
 f  = 1/finv;
 e2 = 2*f-f^2;
@@ -37,6 +37,8 @@ if iopt==1
     y2    = fn + rf - r.*cos(theta);
     
 else
+    x2 = nan(size(x1));
+    y2 = nan(size(y1));
     for i=1:n1
         %           xy2geo
         east  = x1(i);
