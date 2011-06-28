@@ -93,7 +93,7 @@ switch func2str(last_chain.Method)
     case 'FORM'
         DP = last_output.Output.designpoint.finalU;
     case 'MC'
-        last_output = approxMCDesignPoint(last_output);
+        last_output = approxMCDesignPoint(last_output, 'method', 'MD');
         DP = last_output.Output.designPoint.u;
 end
 
