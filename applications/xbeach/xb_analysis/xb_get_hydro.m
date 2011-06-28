@@ -12,14 +12,14 @@ function xbo = xb_get_hydro(xb, varargin)
 %
 %   Input:
 %   xb        = XBeach output structure
-%   varargin  = fsplit:     cut-off frequency for high frequency waves
+%   varargin  = Trep:   repesentative wave period
 %
 %   Output:
 %   xbo       = XBeach hydrodynamics structure
 %
 %   Example
 %   xbo = xb_get_hydro(xb)
-%   xbo = xb_get_hydro(xb, 'fsplit', .05)
+%   xbo = xb_get_hydro(xb, 'Trep', 12)
 %
 %   See also xb_plot_hydro, xb_get_morpho, xb_get_spectrum
 
@@ -126,7 +126,7 @@ end
 
 % split HF and LF waves
 if xb_exist(xb, 'hh_var')
-    hh = mean(xb_get(xb,'hh_var'));
+    hh = mean(xb_get(xb,'hh_var'),1);
     
     Hrms_lf = sqrt(8*abs(hh));
 elseif xb_exist(xb, 'zs')
@@ -158,7 +158,7 @@ if xb_exist(xb, 'H')
         
         rho = zeros(nx,1);
         for i = 1:nx
-            R       = corrcoef(detrend(zs(:,1,i)),H(:,1,i).^2);
+            R       = corrcoef(detrend(squeeze(zs(:,1,i))),squeeze(H(:,1,i)).^2);
             rho(i)  = R(1,2);
         end
     end
@@ -172,8 +172,13 @@ if xb_exist(xb, 'zs')
     if xb_exist(xb, 'zb') || xb_exist(xb, 'u')
         zs = xb_get(xb,'zs');
         
-        if xb_exist(xb, 'zb');  zb = xb_get(xb,'zb');   k = zs(end,1,:)-zb(end,1,:)>0.0001; end;
-        if xb_exist(xb, 'u');   u = xb_get(xb,'u');     k = abs(u(end,1,:))>0.0001;         end;
+        if xb_exist(xb, 'zb')
+            zb = xb_get(xb,'zb');
+            k = zs(end,1,:)-zb(end,1,:)>0.0001;
+        elseif xb_exist(xb, 'u')
+            u = xb_get(xb,'u');
+            k = abs(u(end,1,:))>0.0001;
+        end
         
         s = max(0,mean(zs-mean(zs(:,1,1),1),1));
         s(:,:,~k) = 0;
