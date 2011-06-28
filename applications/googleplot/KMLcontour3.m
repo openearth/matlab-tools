@@ -59,7 +59,7 @@ if nargin==0
   return
 end
 
-[OPT, Set, Default] = setproperty(OPT, varargin);
+[OPT, Set, Default] = setproperty(OPT, varargin{:});
 
 kmlcode = KMLcontour(lat,lon,z,OPT);
 
