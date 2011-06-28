@@ -154,7 +154,8 @@ end
 if xb_exist(xb, 'H')
     Hrms_hf = sqrt(mean(xb_get(xb,'H').^2,1)+Hrms_hf.^2);
     if xb_exist(xb, 'zs')
-        [zs H] = xb_get(xb,'zs','H');
+        zs = xb_get(xb,'zs');
+        H = xb_get(xb,'H');
         
         rho = zeros(nx,1);
         for i = 1:nx
