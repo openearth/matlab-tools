@@ -201,15 +201,15 @@ while NextIter
         error(['FORM: derivative dz/du becomes complex for variable(s):' sprintf(' "%s"', complexvars{:})])
     end
     
-    % lineariseer de z-functie in u:
+    % linearise z-function in u:
     % z(u) = B + A(1)*u(1) + ... + A(n)*u(n)
-    % neem coefficienten A(i) gelijk aan -dz/du(i)
+    % coefficients A(i) equal to -dz/du(i)
     A = dzdu;
     B = z(Calc(end)) - A*u(Calc(end),:)';
     
-    % normaliseer bovenstaande z-functie door te delen door de wortel uit
-    % de som van de kwadraten van A(i).  De genormaliseerde z-functie is
-    % dan als volgt: z_norm(u) = beta + alpha(1)*u(1) + ... + alpha(n)*u(n)
+    % normalise z-function by dividing by the square root of the sum of the
+    % squares of A(i). The normalised z-function looks then like:
+    % z_norm(u) = beta + alpha(1)*u(1) + ... + alpha(n)*u(n)
     A_abs = sqrt(A*A');
     alphas(Iter,:) = A/A_abs;
     betas(Iter) = B/A_abs;
