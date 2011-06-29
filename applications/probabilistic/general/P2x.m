@@ -56,6 +56,8 @@ function x = P2x(stochast, P)
 
 %% allocate x, being same size as P
 x = zeros(size(P));
+% pre-allocate the X-structure
+X = struct();
 
 for i = 1:length(stochast)
     Params = stochast(i).Params;
