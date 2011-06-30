@@ -163,6 +163,9 @@ end
   ii=1;
   nn = find(~isnan(lon(:,ii)));
   
+  if isempty(nn)
+     return
+  end
   % always make polygons counter clockwise
   if poly_isclockwise(lon(nn,ii),lat(nn,ii))
       nn = flipud(nn);
