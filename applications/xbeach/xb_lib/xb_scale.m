@@ -93,9 +93,10 @@ xb = xb_set(xb, 'depthscale', nd);
 x = x/nl;
 z = z/nd;
 
-if ~isempty(OPT.zmin); z = z-min(min(z))+OPT.zmin; end;
+dz = 0;
+if ~isempty(OPT.zmin); dz = OPT.zmin-min(min(z)); end;
 
-xb = xb_bathy2input(xb, x, y, z);
+xb = xb_bathy2input(xb, x, y, z+dz);
 
 %% scale waves
 
@@ -111,8 +112,8 @@ end
 
 %% scale tide
 
-if xb_exist(xb,'zs0'); xb_set(xb,'zs0',xb_get(xb,'zs0')/nd); end;
-if xb_exist(xb,'zs0file'); xb_set(xb,'zs0file.tide',xb_get(xb,'zs0file.tide')/nd); end;
+if xb_exist(xb,'zs0'); xb_set(xb,'zs0',xb_get(xb,'zs0')/nd+dz); end;
+if xb_exist(xb,'zs0file'); xb_set(xb,'zs0file.tide',xb_get(xb,'zs0file.tide')/nd+dz); end;
 
 %% scale sediment
 
