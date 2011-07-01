@@ -178,14 +178,8 @@ if OPT.flip
 end
 
 % focus on active profile
-xact = squeeze(x(j,abs(z0-z1(:,end))>.001))';
-
-if ~isempty(OPT.measured)
-    xact = [xact ; squeeze( ...
-        OPT.measured(abs(OPT.measured(:,2)-OPT.measured(:,end))>.001,1))];
-end
-
-set(gca, 'XLim', [min(xact) max(xact)]);
+xlim = xb_get_activeprofile(xb);
+set(gca, 'XLim', xlim+.1*range(xlim)*[-1 1]);
 
 box on;
 grid on;
