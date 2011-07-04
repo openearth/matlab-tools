@@ -74,8 +74,6 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-%% determine profile
-
 %% determine profiles
 
 xb      = xb_get_transect(xb);
@@ -98,30 +96,33 @@ dz  = zb(end,:)-zb(1,:);
 %% determine active profile
 
 % total profile change
-At = trapz(x,abs(dz));
+At = abs(trapz(x,abs(dz)));
 
 % maximum profile change
 i1 = find(dz==max(dz))-1;
 i2 = i1+2;
 
-A = 0;
-while A/At<OPT.dzfrac
-    A = trapz(x(i1:i2),abs(dz(i1:i2)));
+A = 0; n = 0;
+while A/At<OPT.dzfrac && length(x)>n
+    A = abs(trapz(x(i1:i2),abs(dz(i1:i2))));
     
     i1n = max(i1-1,1);
     i2n = min(i2+1,length(x));
     
-    A1 = trapz(x(i1n:i2),abs(dz(i1n:i2)));
-    A2 = trapz(x(i1:i2n),abs(dz(i1:i2n)));
+    A1 = abs(trapz(x(i1n:i2),abs(dz(i1n:i2))));
+    A2 = abs(trapz(x(i1:i2n),abs(dz(i1:i2n))));
     
     if A1>A2
         i1 = i1n;
     else
         i2 = i2n;
     end
+    
+    n = n + 1;
 end
 
 %% prepare output
 
 ix = [i1 i2];
-x  = x(ix);
+[x i] = sort(x(ix));
+ix = ix(i);

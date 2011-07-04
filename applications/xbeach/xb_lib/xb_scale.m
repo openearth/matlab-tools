@@ -112,25 +112,25 @@ end
 
 %% scale tide
 
-if xb_exist(xb,'zs0'); xb_set(xb,'zs0',xb_get(xb,'zs0')/nd+dz); end;
-if xb_exist(xb,'zs0file'); xb_set(xb,'zs0file.tide',xb_get(xb,'zs0file.tide')/nd+dz); end;
+if xb_exist(xb,'zs0');      xb = xb_set(xb,'zs0',xb_get(xb,'zs0')/nd+dz);                   end;
+if xb_exist(xb,'zs0file');  xb = xb_set(xb,'zs0file.tide',xb_get(xb,'zs0file.tide')/nd+dz); end;
 
 %% scale sediment
 
-if xb_exist(xb,'D50'); xb_set(xb,'D50',xb_get(xb,'D50')/nw); end;
-if xb_exist(xb,'D90'); xb_set(xb,'D90',xb_get(xb,'D90')/nw); end;
+if xb_exist(xb,'D50');      xb = xb_set(xb,'D50',xb_get(xb,'D50')/nw);                      end;
+if xb_exist(xb,'D90');      xb = xb_set(xb,'D90',xb_get(xb,'D90')/nw);                      end;
 
 %% scale time
 
-if xb_exist(xb,'tstart');   xb_set(xb,'tstart',        xb_get(xb,'tstart')/nt); end;
-if xb_exist(xb,'tstop');    xb_set(xb,'tstop',         xb_get(xb,'tstop') /nt); end;
-if xb_exist(xb,'tint');     xb_set(xb,'tint',          xb_get(xb,'tint')  /nt); end;
-if xb_exist(xb,'tintg');    xb_set(xb,'tintg',         xb_get(xb,'tintg') /nt); end;
-if xb_exist(xb,'tintm');    xb_set(xb,'tintm',         xb_get(xb,'tintm') /nt); end;
-if xb_exist(xb,'tintp');    xb_set(xb,'tintp',         xb_get(xb,'tintp') /nt); end;
-if xb_exist(xb,'tsglobal'); xb_set(xb,'tsglobal.data', xb_get(xb,'tsglobal.data')/nt); end;
-if xb_exist(xb,'tsmean');   xb_set(xb,'tsmean.data',   xb_get(xb,'tsmean.data')  /nt); end;
-if xb_exist(xb,'tspoint');  xb_set(xb,'tspoint.data',  xb_get(xb,'tspoint.data') /nt); end;
+if xb_exist(xb,'tstart');   xb = xb_set(xb,'tstart',        xb_get(xb,'tstart')/nt);        end;
+if xb_exist(xb,'tstop');    xb = xb_set(xb,'tstop',         xb_get(xb,'tstop') /nt);        end;
+if xb_exist(xb,'tint');     xb = xb_set(xb,'tint',          xb_get(xb,'tint')  /nt);        end;
+if xb_exist(xb,'tintg');    xb = xb_set(xb,'tintg',         xb_get(xb,'tintg') /nt);        end;
+if xb_exist(xb,'tintm');    xb = xb_set(xb,'tintm',         xb_get(xb,'tintm') /nt);        end;
+if xb_exist(xb,'tintp');    xb = xb_set(xb,'tintp',         xb_get(xb,'tintp') /nt);        end;
+if xb_exist(xb,'tsglobal'); xb = xb_set(xb,'tsglobal.data', xb_get(xb,'tsglobal.data')/nt); end;
+if xb_exist(xb,'tsmean');   xb = xb_set(xb,'tsmean.data',   xb_get(xb,'tsmean.data')  /nt); end;
+if xb_exist(xb,'tspoint');  xb = xb_set(xb,'tspoint.data',  xb_get(xb,'tspoint.data') /nt); end;
 
 %% set meta data
 
