@@ -60,12 +60,29 @@ switch opt.(par)(ii).BC.source
             x=mod(x,360);
         end
 
-        fname=opt.(par)(ii).BC.file;
-
-        s=load(fname);
-
-        times=s.time;
+        x=mod(x,360);
         
+        minx=min(min(x));
+        maxx=max(max(x));
+        miny=min(min(y));
+        maxy=max(max(y));
+
+        % Find available times
+        flist=dir([opt.(par)(ii).BC.datafolder filesep opt.(par)(ii).BC.dataname '.' par '.*.mat']);
+        for i=1:length(flist)
+            tstr=flist(i).name(end-17:end-4);
+            times(i)=datenum(tstr,'yyyymmddHHMMSS');
+        end
+
+        s=load([opt.(par)(ii).BC.datafolder filesep opt.(par)(ii).BC.dataname '.' par '.' datestr(times(1),'yyyymmddHHMMSS') '.mat']);
+
+        s.lon=mod(s.lon,360);
+
+        ilon1=find(s.lon<minx,1,'last');
+        ilon2=find(s.lon>maxx,1,'first');
+        ilat1=find(s.lat<miny,1,'last');
+        ilat2=find(s.lat>maxy,1,'first');
+
         it0=find(times<=t0, 1, 'last' );
         it1=find(times>=t1, 1, 'first' );
 
@@ -75,11 +92,8 @@ switch opt.(par)(ii).BC.source
         if isempty(it1)
             it1=length(times);
         end
-
-        s.lon=mod(s.lon,360);
+        times=times(it0:it1);
         
-        nt=0;
-
         for j=1:length(openBoundaries)
             openBoundaries(j).(par)(ii).nrTimeSeries=0;
             openBoundaries(j).(par)(ii).timeSeriesT=[];
@@ -88,13 +102,23 @@ switch opt.(par)(ii).BC.source
             openBoundaries(j).(par)(ii).timeSeriesB=[];
         end
 
+        nt=0;
+        
         for it=it0:it1
             
-            disp(['      Time step ' num2str(it) ' of ' num2str(it1-it0+1)]);
-
-            t=times(it);
-            data=interpolate3D(x,y,dplayer,s,it);
             nt=nt+1;
+
+            disp(['      Time step ' num2str(nt) ' of ' num2str(it1-it0+1)]);
+
+            s=load([opt.(par)(ii).BC.datafolder filesep opt.(par)(ii).BC.dataname '.' par '.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+            
+            s.lon=s.lon(ilon1:ilon2);
+            s.lon=mod(s.lon,360);
+            s.lat=s.lat(ilat1:ilat2);
+            s.data=s.data(ilat1:ilat2,ilon1:ilon2,:);
+
+            t=times(nt);
+            data=interpolate3D(x,y,dplayer,s);
             for j=1:length(openBoundaries)
                 ta=squeeze(data(j,1,:))';
                 tb=squeeze(data(j,2,:))';

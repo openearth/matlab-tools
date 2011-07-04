@@ -30,13 +30,26 @@ end
 
 x=mod(x,360);
 
-fname=opt.waterLevel.BC.file;
+minx=min(min(x));
+maxx=max(max(x));
+miny=min(min(y));
+maxy=max(max(y));
 
-s=load(fname);
+% Find available times
+flist=dir([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterlevel.*.mat']);
+for i=1:length(flist)
+    tstr=flist(i).name(end-17:end-4);
+    times(i)=datenum(tstr,'yyyymmddHHMMSS');
+end
 
-s.lon=mod(s.lon,360);
+s=load([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterlevel.' datestr(times(1),'yyyymmddHHMMSS') '.mat']);
 
-times=s.time;
+lon360=mod(s.lon,360);
+ilon1=find(lon360<minx,1,'last');
+ilon2=find(lon360>maxx,1,'first');
+ilat1=find(s.lat<miny,1,'last');
+ilat2=find(s.lat>maxy,1,'first');
+lon360=lon360(ilon1:ilon2);
 
 it0=find(times<=t0, 1, 'last' );
 it1=find(times>=t1, 1, 'first' );
@@ -46,13 +59,18 @@ times=times(it0:it1);
 nt=0;
 
 for it=it0:it1
+    
     nt=nt+1;
-    wl00=squeeze(s.data(:,:,it))+opt.waterLevel.BC.constant;
+    disp(['Reading file ' num2str(nt) ' of ' num2str(it1-it0+1)]);
+    
+    s=load([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterlevel.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+    
+    wl00=s.data+opt.waterLevel.BC.constant;
+    wl00=wl00(ilat1:ilat2,ilon1:ilon2);
     wl00=internaldiffusion(wl00); 
-    wl00=interp2(s.lon,s.lat,wl00,x,y);
+    wl00=interp2(lon360,s.lat(ilat1:ilat2),wl00,x,y);
     wl0(:,:,nt)=wl00;
 end
-
 t=t0:dt/1440:t1;
 for j=1:nr
         wl(j,1,:) = spline(times,squeeze(wl0(j,1,:)),t);

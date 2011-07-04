@@ -56,11 +56,11 @@ end
 
 if igetvel
     
-    [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','vel','x',xx,'y',yy,'constituent','all','includedepth');
+    [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');
     
     % Units are cm/s
-    ampu=ampu/100;
-    ampv=ampv/100;
+%     ampu=ampu/100;
+%     ampv=ampv/100;
     
     % A
     ampau=ampu(:,1:nb);
@@ -144,11 +144,12 @@ for n=1:nb
         k=k+1;
         if igetvel
             %                disp(openBoundaries(n).name);
-            dpcorfac=openBoundaries(n).depth(1)/deptha(n);
+%            dpcorfac=openBoundaries(n).depth(1)/deptha(n);
             %                disp(openBoundaries(n).depth(1));
             %                disp(deptha(n));
             %                 dpcorfac=max(min(dpcorfac,1.5),0.75);
             %                 dpcorfac=1;
+            dpcorfac=-1/openBoundaries(n).depth(1);
         end
         astronomicComponentSets(k).name=openBoundaries(n).compA;
         astronomicComponentSets(k).nr=NrCons;
@@ -195,9 +196,10 @@ for n=1:nb
         % Side B
         k=k+1;
         if igetvel
-            dpcorfac=openBoundaries(n).depth(2)/depthb(n);
+%            dpcorfac=openBoundaries(n).depth(2)/depthb(n);
             %                 dpcorfac=max(min(dpcorfac,1.5),0.75);
             %                 dpcorfac=1;
+            dpcorfac=-1/openBoundaries(n).depth(2);
         end
         astronomicComponentSets(k).name=openBoundaries(n).compB;
         astronomicComponentSets(k).nr=NrCons;

@@ -45,23 +45,17 @@ if isfield(opt,par)
             yz=yyz;
             
             
+            % Find available times
             switch lower(par)
-                case{'current'}
-                    dataname=opt.(par)(ii).IC.file_u;
-                    s=load(dataname);
-                    dataname=opt.(par)(ii).IC.file_v;
-                    sv=load(dataname);
-                    s.lon=mod(s.lon,360);
-                    sv.lon=mod(sv.lon,360);
+                case{'current'}                    
+                    flist=dir([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.current_u.*.mat']);
                 otherwise
-                    dataname=opt.(par)(ii).IC.file;
-                    s=load(dataname);
-                    s.lon=mod(s.lon,360);
+                    flist=dir([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.' par '.*.mat']);
+            end            
+            for i=1:length(flist)
+                tstr=flist(i).name(end-17:end-4);
+                times(i)=datenum(tstr,'yyyymmddHHMMSS');
             end
-            
-            
-            times=s.time;
-            
             ts=flow.startTime;
             it1=find(times<=ts, 1, 'last' );
             it2=find(times>ts, 1, 'first' );
@@ -70,9 +64,39 @@ if isfield(opt,par)
             m1=(t1-ts)/(t1-t0);
             m2=(ts-t0)/(t1-t0);
             
+%             % Find available times
+%             switch lower(par)
+%                 case{'current'}                    
+%                     flist=dir([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.current_u.*.mat']);
+%                     dataname=opt.(par)(ii).IC.file_u;
+%                     s=load(dataname);
+%                     dataname=opt.(par)(ii).IC.file_v;
+%                     sv=load(dataname);
+%                     s.lon=mod(s.lon,360);
+%                     sv.lon=mod(sv.lon,360);
+%                 otherwise
+%                     flist=dir([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.' par '.*.mat']);
+%                     dataname=opt.(par)(ii).IC.file;
+%                     s=load(dataname);
+%                     s.lon=mod(s.lon,360);
+%             end
+
+            
+            
+            
             switch lower(par)
                 case{'current'}
                     
+                    % Load data
+                    su1=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.current_u.' datestr(times(it1),'yyyymmddHHMMSS') '.mat']);
+                    su2=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.current_u.' datestr(times(it2),'yyyymmddHHMMSS') '.mat']);
+                    sv1=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.current_v.' datestr(times(it1),'yyyymmddHHMMSS') '.mat']);
+                    sv2=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.current_v.' datestr(times(it2),'yyyymmddHHMMSS') '.mat']);
+                    su1.lon=mod(su1.lon,360);
+                    su2.lon=mod(su2.lon,360);
+                    sv1.lon=mod(sv1.lon,360);
+                    sv2.lon=mod(sv2.lon,360);
+
                     xu=zeros(size(xz));
                     yu=xu;
                     xv=xu;
@@ -108,10 +132,10 @@ if isfield(opt,par)
                         alphau(1:end-1,2:end-1,k)=atan2(dy,dx)-0.5*pi;
                     end
                     
-                    velu1=interpolate3D(xu,yu,dplayer,s,it1,'u');
-                    velu2=interpolate3D(xu,yu,dplayer,s,it2,'u');
-                    velv1=interpolate3D(xu,yu,dplayer,sv,it1,'v');
-                    velv2=interpolate3D(xu,yu,dplayer,sv,it2,'v');
+                    velu1=interpolate3D(xu,yu,dplayer,su1,'u');
+                    velu2=interpolate3D(xu,yu,dplayer,su2,'u');
+                    velv1=interpolate3D(xu,yu,dplayer,sv1,'v');
+                    velv2=interpolate3D(xu,yu,dplayer,sv2,'v');
                     
                     uvelu=m1*velu1+m2*velu2;
                     vvelu=m1*velv1+m2*velv2;
@@ -129,10 +153,10 @@ if isfield(opt,par)
                         alphav(2:end-1,1:end-1,k)=atan2(dy,dx)+0.5*pi;
                     end
                     
-                    velu1=interpolate3D(xv,yv,dplayer,s,it1,'u');
-                    velu2=interpolate3D(xv,yv,dplayer,s,it2,'u');
-                    velv1=interpolate3D(xv,yv,dplayer,sv,it1,'v');
-                    velv2=interpolate3D(xv,yv,dplayer,sv,it2,'v');
+                    velu1=interpolate3D(xv,yv,dplayer,su1,'u');
+                    velu2=interpolate3D(xv,yv,dplayer,su2,'u');
+                    velv1=interpolate3D(xv,yv,dplayer,sv1,'v');
+                    velv2=interpolate3D(xv,yv,dplayer,sv2,'v');
                     
                     uvelv=m1*velu1+m2*velu2;
                     vvelv=m1*velv1+m2*velv2;
@@ -140,8 +164,14 @@ if isfield(opt,par)
                     v = uvelv.*cos(alphav) + vvelv.*sin(alphav);
                     
                 otherwise
-                    s1=interpolate3D(xz,yz,dplayer,s,it1);
-                    s2=interpolate3D(xz,yz,dplayer,s,it2);
+                    % Load data
+                    s1=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.' par '.' datestr(times(it1),'yyyymmddHHMMSS') '.mat']);
+                    s2=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.' par '.' datestr(times(it2),'yyyymmddHHMMSS') '.mat']);
+                    s1.lon=mod(s1.lon,360);
+                    s2.lon=mod(s2.lon,360);
+
+                    s1=interpolate3D(xz,yz,dplayer,s1);
+                    s2=interpolate3D(xz,yz,dplayer,s2);
                     data=m1*s1+m2*s2;
             end
     end

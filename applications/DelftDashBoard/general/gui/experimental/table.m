@@ -171,9 +171,12 @@ for i=1:nrrows
                 h=uicontrol(parent,'Style','edit','String','','Position',[posx posy width(j) 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1]);
                 set(h,'Callback',@editTime_Callback,'Enable','on');
             case{'popupmenu'}
-                str=popuptext{j};
-%                 for ii=1:size(popuptext,1)
-%                     str{ii}=popuptext{ii,j};
+%                 if size(popuptext,2)>1
+%                     for ii=1:size(popuptext,1)
+%                         str{ii}=popuptext{ii,j};
+%                     end
+%                 else                    
+                    str=popuptext{j};
 %                 end
                 h=uicontrol(parent,'Style','popupmenu','Position',[posx posy width(j) 20],'BackgroundColor',[1 1 1]);
                 set(h,'Value',1);

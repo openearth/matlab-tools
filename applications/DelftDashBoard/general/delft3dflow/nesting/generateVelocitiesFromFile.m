@@ -43,30 +43,59 @@ if isfield(flow,'coordSysType')
     x=mod(x,360);
 end
 
-s=load(opt.current.BC.file_u);
-sv=load(opt.current.BC.file_v);
+minx=min(min(x));
+maxx=max(max(x));
+miny=min(min(y));
+maxy=max(max(y));
 
-s.lon=mod(s.lon,360);
+% Find available times
+flist=dir([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_u.*.mat']);
+for i=1:length(flist)
+    tstr=flist(i).name(end-17:end-4);
+    times(i)=datenum(tstr,'yyyymmddHHMMSS');
+end
+
+% Longitudes
+su=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_u.' datestr(times(1),'yyyymmddHHMMSS') '.mat']);
+sv=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_v.' datestr(times(1),'yyyymmddHHMMSS') '.mat']);
+su.lon=mod(su.lon,360);
 sv.lon=mod(sv.lon,360);
 x=mod(x,360);
 
-times=s.time;
+ilon1=find(su.lon<minx,1,'last');
+ilon2=find(su.lon>maxx,1,'first');
+ilat1=find(su.lat<miny,1,'last');
+ilat2=find(su.lat>maxy,1,'first');
 
+% Find required times
 it0=find(times<=t0, 1, 'last' );
 it1=find(times>=t1, 1, 'first' );
-
 times=times(it0:it1);
 
 nt=0;
-
+try
 for it=it0:it1
-    
-    disp(['      Time step ' num2str(it) ' of ' num2str(it1-it0+1)]);
-
-    uu=interpolate3D(x,y,dplayer,s,it,'u');
-    vv=interpolate3D(x,y,dplayer,sv,it,'v');
 
     nt=nt+1;
+
+    % Loop through all files
+    
+    disp(['Reading files ' num2str(nt) ' of ' num2str(it1-it0+1)]);
+
+    su=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_u.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+    sv=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_v.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+    
+    su.lon=su.lon(ilon1:ilon2);
+    su.lat=su.lat(ilat1:ilat2);
+    su.data=su.data(ilat1:ilat2,ilon1:ilon2,:);
+    sv.lon=sv.lon(ilon1:ilon2);
+    sv.lat=sv.lat(ilat1:ilat2);
+    sv.data=sv.data(ilat1:ilat2,ilon1:ilon2,:);
+    su.lon=mod(su.lon,360);
+    sv.lon=mod(sv.lon,360);
+
+    uu=interpolate3D(x,y,dplayer,su,'u');
+    vv=interpolate3D(x,y,dplayer,sv,'v');
 
     for j=1:nr
 
@@ -87,7 +116,9 @@ for it=it0:it1
 
     end
 end
-
+catch
+shite=0;    
+end
 clear s sv
 
 t=t0:dt/1440:t1;

@@ -1,4 +1,18 @@
-function err=getMeteoFromNomads2(meteoname,cycledate,cyclehour,t,xlim,ylim,dirstr,includeHeat)
+function err=getMeteoFromNomads3(meteoname,cycledate,cyclehour,t,xlim,ylim,dirstr,varargin)
+
+includeHeat=0;
+precip=0;
+
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'includeheat'}
+                includeHeat=varargin{i+1};
+            case{'precipitation'}
+                precip=varargin{i+1};
+        end                
+    end
+end
 
 err=[];
 ntry=1;
@@ -44,6 +58,8 @@ switch lower(meteoname)
         prstr='pressfc';
     case{'ncep_nam_analysis'}
         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/Anl_Complete';
+    case{'ncep_nam_analysis_precip'}
+        urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/3hr_Pcp';
 end
 
 try
@@ -61,6 +77,11 @@ try
 %     nanval2=att.ugrd10m.ml__FillValue;
 %     nanval3=-999000000;
     
+    if isfield(infr,'DataSet')
+        infr.Dataset=infr.DataSet;
+        infr=rmfield(infr,'DataSet');
+    end
+
     %% Time
     ii=fieldNr(infr.Dataset,'Name','time');
     nt=infr.Dataset(ii).Size;
@@ -118,13 +139,18 @@ try
         ilat2=length(lat);
     end
     
-    parstr={'ugrd10m','vgrd10m',prstr,'dswrfsfc','tmp2m','rh2m',cloudstr};
-    pr={'u','v','p','swrf','airtemp','relhum','cloudcover'};
-    
-    if includeHeat
-        npar=length(parstr);
+    if ~precip
+        parstr={'ugrd10m','vgrd10m',prstr,'dswrfsfc','tmp2m','rh2m',cloudstr};
+        pr={'u','v','p','swrf','airtemp','relhum','cloudcover'};
+        if includeHeat
+            npar=length(parstr);
+        else
+            npar=3;
+        end
     else
-        npar=3;
+        parstr={'apcpsfc'};
+        pr={'precip'};
+        npar=1;
     end
 
     for i=1:npar

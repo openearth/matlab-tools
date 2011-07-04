@@ -61,6 +61,11 @@ switch lower(tp)
         gt(1).phistr='tidal_phase_u';
         gt(2).ampstr='tidal_amplitude_v';
         gt(2).phistr='tidal_phase_v';
+    case{'q'}
+        gt(1).ampstr='tidal_amplitude_U';
+        gt(1).phistr='tidal_phase_U';
+        gt(2).ampstr='tidal_amplitude_V';
+        gt(2).phistr='tidal_phase_V';
     case{'u'}
         gt(1).ampstr='tidal_amplitude_u';
         gt(1).phistr='tidal_phase_u';
@@ -97,7 +102,6 @@ xu=nc_varget(fname,'lon_u');
 yu=nc_varget(fname,'lat_u');
 xv=nc_varget(fname,'lon_v');
 yv=nc_varget(fname,'lat_v');
-
 
 cl=nc_varget(fname,'tidal_constituents');
 

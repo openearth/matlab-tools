@@ -78,11 +78,17 @@ set(handles.GUIHandles.PushViewTimeSeries,   'CallBack',{@PushViewTimeSeries_Cal
 cltp={'popupmenu','editreal','editreal','checkbox'};
 wdt=[80 80 80 20];
 callbacks={'','','',@RefreshCorrections};
+% for i=1:length(handles.componentNames)
+%     ppm{i,1}=handles.componentNames{i};
+%     ppm{i,2}='';
+%     ppm{i,3}='';
+% end
 for i=1:length(handles.componentNames)
-    ppm{i,1}=handles.componentNames{i};
-    ppm{i,2}='';
-    ppm{i,3}='';
+    ppm1{i}=handles.componentNames{i};
 end
+ppm2={''};
+ppm3={''};
+ppm={ppm1,ppm2,ppm3};
 handles.GUIHandles.componentSetTable=table(wnd,'create','tag','componentSetTable','position',[50 110],'nrrows',8,'columntypes',cltp,'width',wdt,'popuptext',ppm,'callbacks',callbacks,'includebuttons',1);
 
 %

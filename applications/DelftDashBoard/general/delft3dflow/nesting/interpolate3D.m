@@ -1,4 +1,4 @@
-function s=interpolate3D(x,y,dplayer,d,it,varargin)
+function s=interpolate3D(x,y,dplayer,d,varargin)
 % Interpolate 4d matrix d onto vertical profiles
 % If KMax==1, take depth averaged values
 
@@ -32,7 +32,7 @@ y(isnan(y))=1e9;
 if kmax>1
     % 3D
     for k=1:nlevels
-        vald=squeeze(d.data(:,:,k,it));
+        vald=squeeze(d.data(:,:,k));
         switch lower(tp(1))
             case{'u','v'}
                 % Do NOT apply diffusion for velocities
@@ -45,7 +45,7 @@ if kmax>1
     end
 else
     for k=1:nlevels
-        vald=squeeze(d.data(:,:,k,it));
+        vald=squeeze(d.data(:,:,k));
         switch lower(tp(1))
             case{'u','v'}
                 % Do NOT apply diffusion for velocities

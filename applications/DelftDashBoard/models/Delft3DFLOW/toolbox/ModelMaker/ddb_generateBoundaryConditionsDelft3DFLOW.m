@@ -97,11 +97,11 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
         
         % Riemann or current boundaries present
         
-        %       [ampu,phaseu,depth,ConList]=extract_HC([handles.tideDir handles.tideModels.activeTideModelBC],yy,xx,'u');
-        %       [ampv,phasev,depth,ConList]=extract_HC([handles.tideDir handles.tideModels.activeTideModelBC],yy,xx,'v');
+%         [ampu,phaseu,depth,ConList]=extract_HC([handles.tideDir handles.tideModels.activeTideModelBC],yy,xx,'u');
+%         [ampv,phasev,depth,ConList]=extract_HC([handles.tideDir handles.tideModels.activeTideModelBC],yy,xx,'v');
 %         [ampu,phaseu,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'u');
 %         [ampv,phasev,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'v');
-        [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','vel','x',xx,'y',yy,'constituent','all','includedepth');
+        [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');
 
          % Units are m2/s
         
@@ -196,12 +196,12 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
             k=k+1;
             if igetvel
 %                disp(handles.Model(md).Input(id).openBoundaries(n).name);
-                dpcorfac=handles.Model(md).Input(id).openBoundaries(n).depth(1)/deptha(n);
+%                 dpcorfac=handles.Model(md).Input(id).openBoundaries(n).depth(1)/deptha(n);
 %                disp(handles.Model(md).Input(id).openBoundaries(n).depth(1));
 %                disp(deptha(n));
 %                 dpcorfac=max(min(dpcorfac,1.5),0.75);
 %                 dpcorfac=1;
-                dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(1)
+                dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(1);
             end
             handles.Model(md).Input(id).astronomicComponentSets(k).name=handles.Model(md).Input(id).openBoundaries(n).compA;
             handles.Model(md).Input(id).astronomicComponentSets(k).nr=NrCons;
@@ -218,10 +218,7 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
                         handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phaseau(i,n);
                     case{'r'}
                         a1=ampau(i,n)*dpcorfac;
-                        phi1=phaseau(i,n)
-                        if phi1==0
-                            shite=2
-                        end
+                        phi1=phaseau(i,n);
                         pp(n,i)=phi1;
                         % Minimum depth of 1 m !
                         a2=ampaz(i,n)*sqrt(9.81/max(-handles.Model(md).Input(id).openBoundaries(n).depth(1),1));
@@ -252,10 +249,10 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
             % Side B
             k=k+1;
             if igetvel
-                dpcorfac=handles.Model(md).Input(id).openBoundaries(n).depth(2)/depthb(n);
+%                 dpcorfac=handles.Model(md).Input(id).openBoundaries(n).depth(2)/depthb(n);
 %                 dpcorfac=max(min(dpcorfac,1.5),0.75);
 %                 dpcorfac=1;
-                dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(2)
+                dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(2);
             end
             handles.Model(md).Input(id).astronomicComponentSets(k).name=handles.Model(md).Input(id).openBoundaries(n).compB;
             handles.Model(md).Input(id).astronomicComponentSets(k).nr=NrCons;
