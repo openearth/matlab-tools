@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>selectshoreline</tag>
+    <style>listbox</style>
+    <text>Available Databases</text>
+    <textposition>above-center</textposition>
+    <variable>handles.Toolbox(tb).Input.activeDataset</variable>
+    <type>integer</type>
+    <position>10 10 150 105</position>
+    <tooltipstring>Select shoreline database</tooltipstring>
+    <onchange>ddb_ShorelineToolbox_export</onchange>
+    <option1>selectdataset</option1>
+    <list>
+      <texts>
+        <variable>handles.shorelines.longName</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>drawpolygon</tag>
+    <style>pushbutton</style>
+    <position>170 95 80 20</position>
+    <text>Draw Polygon</text>
+    <callback>ddb_ShorelineToolbox_export</callback>
+    <option1>drawpolygon</option1>
+  </element> 
+  <element>
+    <tag>deletepolygon</tag>
+    <style>pushbutton</style>
+    <position>170 70 80 20</position>
+    <text>Delete Polygon</text>
+    <callback>ddb_ShorelineToolbox_export</callback>
+    <option1>deletepolygon</option1>
+  </element> 
+  <element>
+    <tag>loadpolygon</tag>
+    <style>pushselectfile</style>
+    <position>170 40 80 20</position>
+    <text>Load Polygon</text>
+    <variable>handles.Toolbox(tb).Input.polygonFile</variable>
+    <onchange>ddb_ShorelineToolbox_export</onchange>
+    <option1>loadpolygon</option1>
+    <showfilename>no</showfilename> 
+    <extension>*.pol</extension>
+    <selectiontext>Select polygon file</selectiontext>
+    <tooltipstring>Select polygon file</tooltipstring> 
+  </element>
+  <element>
+    <tag>savepolygon</tag>
+    <style>pushsavefile</style>
+    <position>170 15 80 20</position>
+    <text>Save Polygon</text>
+    <variable>handles.Toolbox(tb).Input.polygonFile</variable>
+    <onchange>ddb_ShorelineToolbox_export</onchange>
+    <option1>savepolygon</option1>
+    <showfilename>no</showfilename> 
+    <extension>*.pol</extension>
+    <selectiontext>Save polygon file</selectiontext>
+    <tooltipstring>Save polygon file</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>deletepolygon</tag>
+          <tag>drawpolygon</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.polyLength</variable>
+            <type>integer</type>	              
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>selectscale</tag>
+    <style>popupmenu</style>
+    <text>Scale</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.activeScale</variable>
+    <type>integer</type>
+    <position>350 95 100 20</position>
+    <tooltipstring>Select scale</tooltipstring>
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.scaleText</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>textresolution</tag>
+    <style>text</style>
+    <variable>handles.Toolbox(tb).Input.resolutionText</variable>
+    <type>string</type>
+    <position>420 96</position>
+  </element>
+  <element>
+    <tag>selectexporttype</tag>
+    <style>popupmenu</style>
+    <text>Export Type</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.activeExportType</variable>
+    <position>350 70 60 20</position>
+    <tooltipstring>Select zoom level</tooltipstring>
+    <type>string</type>
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.exportTypes</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>exportshoreline</tag>
+    <style>pushsavefile</style>
+    <position>290 15 120 20</position>
+    <text>Export</text>
+    <variable>handles.Toolbox(tb).Input.shorelineFile</variable>
+    <onchange>ddb_ShorelineToolbox_export</onchange>
+    <option1>export</option1>
+    <showfilename>no</showfilename> 
+    <extension>*.ldb</extension>
+    <selectiontext>Save shoreline file</selectiontext>
+    <tooltipstring>Export shoreline</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>deletepolygon</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.polyLength</variable>
+            <type>integer</type>	              
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+</root>
