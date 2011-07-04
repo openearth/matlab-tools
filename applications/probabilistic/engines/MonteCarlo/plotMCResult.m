@@ -156,8 +156,8 @@ end
 activeVars = ~cellfun(@isempty, distributions);
 
 % determine indexes failure and non-failure points
-idxFail = find(result.Output.idFail);
-idxNoFail = find(~result.Output.idFail);
+idxFail = find(result.Output.idFail==1);
+idxNoFail = find(result.Output.idFail==0);
 
 % split failure and non-failure data points
 fail = [];

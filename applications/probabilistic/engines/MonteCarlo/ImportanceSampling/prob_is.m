@@ -73,6 +73,9 @@ if ~isempty(IS) && ~isempty(fieldnames(IS))
             if isa(IS(idx).Method,'function_handle')
 
                 params = IS(idx).Params;
+                
+                if ~iscell(params); params = {params}; end;
+                
                 for j = 1:length(params)
                     if iscell(params{j})
                         if ~isempty(params{j})

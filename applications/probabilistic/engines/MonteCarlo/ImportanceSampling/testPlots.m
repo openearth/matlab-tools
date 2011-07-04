@@ -34,10 +34,10 @@ for i = 1:l
     u2 = norm_inv(P2is,0,1);
 
     % determine failures
-    Z = .1*u1+u2-2;
+    Z = 2-.1*u1-u2;
 
-    scatter(u1(Z<=0),u2(Z<=0),10,'ok');
-    scatter(u1(Z>0),u2(Z>0),10,'ok','filled');
+    scatter(u1(Z>=0),u2(Z>=0),10,'ok');
+    scatter(u1(Z<0),u2(Z<0),10,'ok','filled');
 
     % set layout
     set(gca,'XLim',[min(x) max(x)],'YLim',[min(y) max(y)]);
