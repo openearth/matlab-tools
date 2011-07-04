@@ -88,7 +88,13 @@ for i = 1:length(samples.D50)
         end
         
         %% carry out DUROS+ computation
-        result = DUROS(xInitial, zInitial, samples.D50(i), samples.WL_t(i), samples.Hsig_t(i), samples.Tp_t(i));
+        [result messages] = DUROS(xInitial, zInitial, samples.D50(i), samples.WL_t(i), samples.Hsig_t(i), samples.Tp_t(i));
+        
+        if messages{end,1}<0
+            z(i,:) = nan;
+            continue;
+        end
+        
         Tp_t(i) = result(1).info.input.Tp_t;
 
         %% Derive z-value
@@ -113,5 +119,5 @@ for i = 1:length(samples.D50)
 %         save(fname, 'D50', 'WL_t', 'Hsig_t', 'Tp_t', 'Duration', 'Accuracy', 'i')
 %     end
 
-    z(i,:) = Resistance - RD(i);
+        z(i,:) = Resistance - RD(i);
 end
