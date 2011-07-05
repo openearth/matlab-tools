@@ -248,10 +248,10 @@ switch opt
                 case{'tidal_amplitude_h'}
                     lon=lonz;
                     lat=latz;
-                case{'tidal_amplitude_u'}
+                case{'tidal_amplitude_u','tidal_amplitude_U'}
                     lon=lonu;
                     lat=latu;
-                case{'tidal_amplitude_v'}
+                case{'tidal_amplitude_v','tidal_amplitude_v'}
                     lon=lonv;
                     lat=latv;
             end
