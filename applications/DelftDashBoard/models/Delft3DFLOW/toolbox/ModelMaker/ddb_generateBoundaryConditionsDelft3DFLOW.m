@@ -1,4 +1,6 @@
-function handles=ddb_generateBoundaryConditionsDelft3DFLOW(handles,id,varargin)
+function [handles,err]=ddb_generateBoundaryConditionsDelft3DFLOW(handles,id,varargin)
+
+err='';
 
 if ~isempty(varargin)
     % Check if routine exists
@@ -7,9 +9,14 @@ if ~isempty(varargin)
     end
 end
 
-if handles.Model(md).Input(id).nrOpenBoundaries>0
+if handles.Model(md).Input(id).nrOpenBoundaries==0
+    err='First generate or load open boundaries';
+    return
+end
 
-    wb = waitbox('Generating Boundary Conditions ...');
+wb = waitbox('Generating Boundary Conditions ...');
+    
+try
     
     ii=handles.Toolbox(tb).Input.activeTideModelBC;
     name=handles.tideModels.model(ii).name;
@@ -18,22 +25,22 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
     else
         tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
-
-
+    
+    
     x=handles.Model(md).Input(id).gridX;
     y=handles.Model(md).Input(id).gridY;
     z=handles.Model(md).Input(id).depth;
-
+    
     mmax=size(x,1);
     nmax=size(x,2);
-
+    
     % Generate boundary conditions
-
+    
     nb=handles.Model(md).Input(id).nrOpenBoundaries;
-
+    
     cs.name='WGS 84';
     cs.type='Geographic';
-
+    
     for i=1:nb
         xa(i)=handles.Model(md).Input(id).openBoundaries(i).x(1);
         ya(i)=handles.Model(md).Input(id).openBoundaries(i).y(1);
@@ -41,17 +48,17 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
         yb(i)=handles.Model(md).Input(id).openBoundaries(i).y(end);
         [xa(i),ya(i)]=ddb_coordConvert(xa(i),ya(i),handles.screenParameters.coordinateSystem,cs);
         [xb(i),yb(i)]=ddb_coordConvert(xb(i),yb(i),handles.screenParameters.coordinateSystem,cs);
-%         if xa(i)<0
-%             xa(i)=xa(i)+360;
-%         end
-%         if xb(i)<0
-%             xb(i)=xb(i)+360;
-%         end
+        %         if xa(i)<0
+        %             xa(i)=xa(i)+360;
+        %         end
+        %         if xb(i)<0
+        %             xb(i)=xb(i)+360;
+        %         end
     end
-%     xa(xa<0.125 & xa>0)=360;
-%     xa(xa<0.250 & xa>0.125)=0.25;
-%     xb(xb<0.125 & xb>0)=360;
-%     xb(xb<0.250 & xb>0.125)=0.25;
+    %     xa(xa<0.125 & xa>0)=360;
+    %     xa(xa<0.250 & xa>0.125)=0.25;
+    %     xb(xb<0.125 & xb>0)=360;
+    %     xb(xb<0.250 & xb>0.125)=0.25;
     
     xx=[xa xb];
     yy=[ya yb];
@@ -65,22 +72,21 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
             end
         end
     end
-
+    
     if igetwl
-%       [ampz,phasez,depth,ConList]=extract_HC([handles.tideDir handles.tideModels.activeTideModelBC],yy,xx,'z');
-       [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xx,'y',yy,'constituent','all');
-%       [ampz,phasez,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'z');
+        
+        [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xx,'y',yy,'constituent','all');
         
         ampaz=ampz(:,1:nb);
         ampbz=ampz(:,nb+1:end);
         phaseaz=phasez(:,1:nb);
         phasebz=phasez(:,nb+1:end);
-
+        
         ampaz(isnan(ampaz))=0.0;
         ampbz(isnan(ampbz))=0.0;
         phaseaz(isnan(phaseaz))=0.0;
         phasebz(isnan(phasebz))=0.0;
-
+        
     end
     
     igetvel=0;
@@ -97,17 +103,9 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
         
         % Riemann or current boundaries present
         
-%         [ampu,phaseu,depth,ConList]=extract_HC([handles.tideDir handles.tideModels.activeTideModelBC],yy,xx,'u');
-%         [ampv,phasev,depth,ConList]=extract_HC([handles.tideDir handles.tideModels.activeTideModelBC],yy,xx,'v');
-%         [ampu,phaseu,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'u');
-%         [ampv,phasev,depth,conList]=ddb_extractTidalConstituents(tidefile,xx,yy,'v');
         [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');
-
-         % Units are m2/s
         
-%         % Units are cm/s
-%         ampu=ampu/100;
-%         ampv=ampv/100;
+        % Units are m2/s
         
         % A
         ampau=ampu(:,1:nb);
@@ -122,11 +120,11 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
         % B
         phasebu=phaseu(:,nb+1:end);
         phasebv=phasev(:,nb+1:end);
-
+        
         % Depth
         deptha=-depth(1:nb);
         depthb=-depth(nb+1:end);
-
+        
         [semaa,ecca,inca,phaa]=ap2ep(ampau,phaseau,ampav,phaseav);
         [semab,eccb,incb,phab]=ap2ep(ampbu,phasebu,ampbv,phasebv);
         
@@ -163,11 +161,6 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
         [ampau,phaseau,ampav,phaseav]=ep2ap(semaa,ecca,inca,phaa);
         [ampbu,phasebu,ampbv,phasebv]=ep2ap(semab,eccb,incb,phab);
         
-%         ampau=ampav;
-%         phaseau=phaseav;
-%         ampbu=ampbv;
-%         phasebu=phasebv;
-        
         ampau(isnan(ampau))=0.0;
         ampbu(isnan(ampbu))=0.0;
         phaseau(isnan(phaseau))=0.0;
@@ -188,19 +181,13 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
     
     for n=1:nb
         if strcmp(handles.Model(md).Input(id).openBoundaries(n).forcing,'A')
-
+            
             handles.Model(md).Input(id).openBoundaries(n).compA=[handles.Model(md).Input(id).openBoundaries(n).name 'A'];
             handles.Model(md).Input(id).openBoundaries(n).compB=[handles.Model(md).Input(id).openBoundaries(n).name 'B'];
             
             % Side A
             k=k+1;
             if igetvel
-%                disp(handles.Model(md).Input(id).openBoundaries(n).name);
-%                 dpcorfac=handles.Model(md).Input(id).openBoundaries(n).depth(1)/deptha(n);
-%                disp(handles.Model(md).Input(id).openBoundaries(n).depth(1));
-%                disp(deptha(n));
-%                 dpcorfac=max(min(dpcorfac,1.5),0.75);
-%                 dpcorfac=1;
                 dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(1);
             end
             handles.Model(md).Input(id).astronomicComponentSets(k).name=handles.Model(md).Input(id).openBoundaries(n).compA;
@@ -249,9 +236,6 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
             % Side B
             k=k+1;
             if igetvel
-%                 dpcorfac=handles.Model(md).Input(id).openBoundaries(n).depth(2)/depthb(n);
-%                 dpcorfac=max(min(dpcorfac,1.5),0.75);
-%                 dpcorfac=1;
                 dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(2);
             end
             handles.Model(md).Input(id).astronomicComponentSets(k).name=handles.Model(md).Input(id).openBoundaries(n).compB;
@@ -285,7 +269,7 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
                         
                         phi3=180*phi3/pi;
                         phi3=mod(phi3,360);
-                                                
+                        
                         handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(i)=a3;
                         handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phi3;
                 end
@@ -300,14 +284,14 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
     
     attName=handles.Model(md).Input(id).attName;
     handles.Model(md).Input(id).bcaFile=[attName '.bca'];
-
+    
     ddb_saveBcaFile(handles,id);
     ddb_saveBndFile(handles,id);
     
-    close(wb);
-    
-else
-    GiveWarning('Warning','First generate or load open boundaries');
+catch
+    err='An error occured while generating boundary conditions!';
+    a=lasterror;
+    disp(a.message);
 end
 
-
+close(wb);

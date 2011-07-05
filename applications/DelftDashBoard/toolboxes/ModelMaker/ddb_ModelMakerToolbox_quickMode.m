@@ -272,8 +272,13 @@ catch
     GiveWarning('text',['Boundary condition generation not supported for ' handles.Model(md).longName]);
     return
 end
-handles=feval(f,handles,ad);
-setHandles(handles);
+
+[handles,err]=feval(f,handles,ad);
+if isempty(err)
+    setHandles(handles);
+else
+    GiveWarning('text',err);
+end
 
 %%
 function generateInitialConditions

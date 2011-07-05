@@ -29,7 +29,6 @@ tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox','runcallback'
 elements=handles.Model(md).GUI.elements.tabs(1).elements;
 itab=0;
 for k=1:length(elements)
-    disp(elements(k).style)
     if strcmpi(elements(k).style,'tabpanel')
         itab=1;
     end

@@ -62,7 +62,7 @@ if ~isempty(handles.Model(md).Input(id).crsFile)
     handles=ddb_readCrsFile(handles,id);
 end
 if ~isempty(handles.Model(md).Input(id).droFile)
-    handles=ddb_readDroFile(handles);
+    handles=ddb_readDroFile(handles,id);
 end
 if ~isempty(handles.Model(md).Input(id).dryFile)
     handles=ddb_readDryFile(handles,id);

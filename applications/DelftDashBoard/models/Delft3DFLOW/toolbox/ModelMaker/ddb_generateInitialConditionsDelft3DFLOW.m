@@ -52,7 +52,7 @@ if ~strcmpi(handles.Model(md).Input(id).waterLevel.ICOpt,'constant')
 
     t0=handles.Model(md).Input(id).startTime;
 
-    ii=handles.Toolbox(tb).Input.activeTideModelBC;
+    ii=handles.Toolbox(tb).Input.activeTideModelIC;
     name=handles.tideModels.model(ii).name;
 
     if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
