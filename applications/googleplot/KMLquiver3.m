@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = KMLquiver(lat,lon,z,u,v,varargin)
+function [OPT, Set, Default] = KMLquiver3(lat,lon,z,u,v,varargin)
 % KMLQUIVER3 Just like quiver3 (except no w yet)
 %
 %    KMLquiver3(LAT,lon,Z,V,u,<keyword,value>) % ! NOTE THE ORDER OF LAT/LON vs. V/U !
@@ -19,15 +19,15 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,z,u,v,varargin)
 %    OPT = KMLquiver3()
 %
 % Example:
-%
-%     [Lat Lon Z] = meshgrid(-80:10:80,-170:10:180,[3 6 9 12].*1e4);
-%     v = (rand(size(Lat))-.5);
-%     u = (rand(size(Lat))-.5);
-%     cmap = colormap_cpt('temperature');
-%     fillColors = cmap(ceil((u.^2+v.^2)*2*size(cmap,1)),:);
-%     KMLquiver3(Lat,Lon,Z,v,u,'arrowScale',5e5,'lineWidth',2,...
-%         'fillColor',fillColors,'fillAlpha',1);
-%
+%{
+    [Lat Lon Z] = meshgrid(-80:10:80,-170:10:180,[3 6 9 12].*1e4);
+    v = (rand(size(Lat))-.5);
+    u = (rand(size(Lat))-.5);
+    cmap = colormap_cpt('temperature');
+    fillColors = cmap(ceil((u.^2+v.^2)*2*size(cmap,1)),:);
+    KMLquiver3(Lat,Lon,Z,v,u,'arrowScale',5e5,'lineWidth',2,...
+        'fillColor',fillColors,'fillAlpha',1);
+%}
 % Adjust 'W1'..'W4' and 'L1'..'L4' for user defined arrow shapes
 % All lengths are a fraction of the base length.
 %
