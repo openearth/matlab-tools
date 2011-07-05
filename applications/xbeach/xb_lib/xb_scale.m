@@ -101,37 +101,76 @@ xb = xb_bathy2input(xb, x, y, z+dz);
 %% scale waves
 
 switch xb_get(xb, 'instat')
+    case {'stat' 'bichrom' 0 1}
+        xb = set_scale(xb,'Hrms',nd);
+        xb = set_scale(xb,'Trep',nt);
     case {'jons' 'jons_table' 4 41}
-        xb = xb_set(xb, 'bcfile.Hm0', xb_get(xb, 'bcfile.Hm0')/nd);
-        xb = xb_set(xb, 'bcfile.Tp',  xb_get(xb, 'bcfile.Tp' )/nt);
-        xb = xb_set(xb, 'bcfile.fp',  xb_get(xb, 'bcfile.fp' )*nt);
+        xb = set_scale(xb,'bcfile.Hm0',nd);
+        xb = set_scale(xb,'bcfile.Tp',nt);
+        xb = set_scale(xb,'bcfile.fp',1/nt);
     case {'vardens', 6}
-        xb = xb_set(xb, 'bcfile.freqs', xb_get(xb, 'bcfile.freqs')*nt);
-        xb = xb_set(xb, 'bcfile.vardens', (sqrt(xb_get(xb, 'bcfile.vardens'))/nd).^2);
+        xb = set_scale(xb,'bcfile.freqs',1/nt);
+        xb = set_scale(xb,'bcfile.vardens',nd,'RMSI');
+    otherwise
+        warning('OET:xbeach:scale', ['Cannot scale instat, unsupported value [' xb_get(xb, 'instat') ']']);
 end
 
 %% scale tide
 
-if xb_exist(xb,'zs0');      xb = xb_set(xb,'zs0',xb_get(xb,'zs0')/nd+dz);                   end;
-if xb_exist(xb,'zs0file');  xb = xb_set(xb,'zs0file.tide',xb_get(xb,'zs0file.tide')/nd+dz); end;
+xb = set_scale(xb,'zs0',nd);
+xb = set_scale(xb,'zs0file.tide',nd);
+
+xb = set_offset(xb,'zs0',dz);
+xb = set_offset(xb,'zs0file.tide',dz);
 
 %% scale sediment
 
-if xb_exist(xb,'D50');      xb = xb_set(xb,'D50',xb_get(xb,'D50')/nw);                      end;
-if xb_exist(xb,'D90');      xb = xb_set(xb,'D90',xb_get(xb,'D90')/nw);                      end;
+if xb_exist(xb,'D50')
+    xb = set_scale(xb,'D50',nw);
+    xb = set_scale(xb,'D90',nw);
+else
+    warning('OET:xbeach:scale', 'Cannot scale D50, value not present');
+end
 
 %% scale time
 
-if xb_exist(xb,'tstart');   xb = xb_set(xb,'tstart',        xb_get(xb,'tstart')/nt);        end;
-if xb_exist(xb,'tstop');    xb = xb_set(xb,'tstop',         xb_get(xb,'tstop') /nt);        end;
-if xb_exist(xb,'tint');     xb = xb_set(xb,'tint',          xb_get(xb,'tint')  /nt);        end;
-if xb_exist(xb,'tintg');    xb = xb_set(xb,'tintg',         xb_get(xb,'tintg') /nt);        end;
-if xb_exist(xb,'tintm');    xb = xb_set(xb,'tintm',         xb_get(xb,'tintm') /nt);        end;
-if xb_exist(xb,'tintp');    xb = xb_set(xb,'tintp',         xb_get(xb,'tintp') /nt);        end;
-if xb_exist(xb,'tsglobal'); xb = xb_set(xb,'tsglobal.data', xb_get(xb,'tsglobal.data')/nt); end;
-if xb_exist(xb,'tsmean');   xb = xb_set(xb,'tsmean.data',   xb_get(xb,'tsmean.data')  /nt); end;
-if xb_exist(xb,'tspoint');  xb = xb_set(xb,'tspoint.data',  xb_get(xb,'tspoint.data') /nt); end;
+if xb_exist(xb,'tstop') && xb_exist(xb,'tint','tintg','tintm','tintp','tsglobal','tsmean','tspoint')>0
+    xb = set_scale(xb,'tstart',nt);
+    xb = set_scale(xb,'tstop',nt);
+    xb = set_scale(xb,'tint',nt);
+    xb = set_scale(xb,'tintg',nt);
+    xb = set_scale(xb,'tintm',nt);
+    xb = set_scale(xb,'tintp',nt);
+    xb = set_scale(xb,'tsglobal.data',nt);
+    xb = set_scale(xb,'tsmean.data',nt);
+    xb = set_scale(xb,'tspoint.data',nt);
+else
+    warning('OET:xbeach:scale', 'Cannot scale time, values not present');
+end
 
 %% set meta data
 
 xb = xb_meta(xb, mfilename, 'input');
+
+%% pricate functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function xb = set_scale(xb, var, scale, varargin)
+
+if xb_exist(xb,var)
+    if ~isempty(varargin)
+        switch varargin{1}
+            case 'RMS'
+                xb = xb_set(xb,var,sqrt(xb_get(xb,var).^2/scale));
+            case 'RMSI'
+                xb = xb_set(xb,var,(sqrt(xb_get(xb,var))/scale).^2);
+        end
+    else
+        xb = xb_set(xb,var,xb_get(xb,var)/scale);
+    end
+end
+
+function xb = set_offset(xb, var, offset)
+
+if xb_exist(xb,var)
+	xb = xb_set(xb,var,xb_get(xb,var)+offset);
+end

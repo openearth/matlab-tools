@@ -210,6 +210,8 @@ else
             
             if any(i)
                 nt = floor(f.bytes/byt/nx/ny/ads(i));
+            else
+                nt = floor(f.bytes/byt/nx/ny);
             end
         end
         
