@@ -13,7 +13,7 @@ function OPT = KMLcurtain(lat, lon, z, C, varargin)
 %   C        = 2d array size(length(z)-1,length(lat)-1)
 %
 %   C should be 1 shorter than z and lat/lon, because C is center data,
-%   lat/lon and z are conrenr data
+%   lat/lon and z are corner data
 %
 %   varargin =
 %
