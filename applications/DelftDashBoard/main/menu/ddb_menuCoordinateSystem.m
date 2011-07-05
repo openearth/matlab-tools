@@ -165,16 +165,29 @@ end
 %%
 function [ok,iconv]=checkOK
 
-ButtonName = questdlg('Also convert existing model input? Otherwise model input will be discarded!', ...
-    'Convert existing model input', ...
-    'Cancel','No', 'Yes', 'Yes');
+% ButtonName = questdlg('Also convert existing model input? Otherwise model input will be discarded!', ...
+%     'Convert existing model input', ...
+%     'Cancel','No', 'Yes', 'Yes');
+% 
+% switch ButtonName,
+%     case 'Cancel',
+%         ok=0;
+%         iconv=0;
+%     case 'No',
+%         ok=1;
+%         iconv=0;
+%     case 'Yes',
+%         ok=1;
+%         iconv=1;
+% end
+
+ButtonName = questdlg('All model and toolbox input will be discarded! Continue?', ...
+    'Warning', ...
+    'No', 'Yes', 'Yes');
 
 switch ButtonName,
-    case 'Cancel',
-        ok=0;
-        iconv=0;
     case 'No',
-        ok=1;
+        ok=0;
         iconv=0;
     case 'Yes',
         ok=1;

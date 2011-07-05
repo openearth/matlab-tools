@@ -79,20 +79,26 @@ for i=1:length(handles.mapData.cities.lon)
 end
 set(handles.mapHandles.cities,'XData',xc,'YData',yc);
 
-% Models
-for i=1:length(handles.Model)
-    f=handles.Model(i).coordConvertFcn;
-    try
-        handles=f(handles);
-    end
-end
-
-% Toolboxes
-for i=1:length(handles.Toolbox)
-    f=handles.Toolbox(i).coordConvertFcn;
-    try
-        handles=f(handles);
-    end
-end
+%% Now reset everything ... Eventually, each model and toolbox should have
+%% its own coordinate conversion script.
 
 setHandles(handles);
+
+ddb_resetAll;
+
+% % Models
+% for i=1:length(handles.Model)
+%     f=handles.Model(i).coordConvertFcn;
+%     try
+%         handles=f(handles);
+%     end
+% end
+% 
+% % Toolboxes
+% for i=1:length(handles.Toolbox)
+%     f=handles.Toolbox(i).coordConvertFcn;
+%     try
+%         handles=f(handles);
+%     end
+% end
+% setHandles(handles);

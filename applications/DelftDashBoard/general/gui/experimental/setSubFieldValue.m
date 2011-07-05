@@ -1,8 +1,24 @@
 function s=setSubFieldValue(s,variable,v)
 
 if ischar(variable)
+
     variable=strrep(variable,'handles','s');
+    
+%     ip=strfind(variable,'.');
+%     if ~isempty(ip)
+%         ip=ip(end);
+%         str1=variable(1:ip-1);
+%         str1=variable(ip+1:end);
+%         b=eval(str);
+%         n=length(b);
+%         for ii=1:n
+%             
+%         end
+%     else
+%     end    
+    
     eval([variable '=v;']);
+    
 else
     
     varname=variable.name;

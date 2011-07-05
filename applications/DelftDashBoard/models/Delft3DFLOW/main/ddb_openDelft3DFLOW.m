@@ -19,6 +19,8 @@ switch opt
                 handles=ddb_readMDF(handles,filename,i);
                 handles=ddb_readAttributeFiles(handles,i);
             end
+            % Get coordinates of DD boundaries
+            handles=ddb_getDDBoundCoordinates(handles);
             handles.activeDomain=1;
             setHandles(handles);
             ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',0);
