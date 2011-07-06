@@ -5,8 +5,6 @@ function Y = make1D(X)
 % expressions with subindexing like 
 % Y = make1d(X(m1:m2,n1:n2,k1:k2))
 %
-% G.J. de Boer, 2004
-%
 % See also: RESHAPE, PERMUTE
 
 % $Id$
@@ -15,6 +13,8 @@ function Y = make1D(X)
 % $Revision$
 % $HeadURL$
 % $Keywords$
+
+% G.J. de Boer, 2004
 
 %Y = reshape(X,[prod(size(X)),1]);
 

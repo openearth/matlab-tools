@@ -1,14 +1,19 @@
 function [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi)
 %GRID_ORTH_GETDATAONLINE Linearly interpolates Z values for all crossings of a grid and a line 
 %
-% X and Y are expected to be created with meshgrid or similar. Orthogonal
-% and Curvi-linear grids are supported
+%   [crossing_x,crossing_y,crossing_z,crossing_d] = grid_orth_getDataOnLine(X,Y,Z,xi,yi)
+%
+% X and Y are expected to be created with meshgrid or similar. 
+% Orthogonal as well as Curvi-linear grids are supported
 % 
 % xi and yi are vectors that contain the end and start point of a
-% linesegment. polygons are not supported (must be given piece by piece)
+% linesegment. polygons are not supported (must be given piecewise)
+%
+% crossing_* contain all intersections of the lines with the grid X and Y.
 %
 % See also: grid_orth_getFixedMapOutlines, grid_orth_createFixedMapsOnAxes,
 %           grid_orth_identifyWhichMapsAreInPolygon, grid_orth_getDataFromNetCDFGrid
+%           nc_cf_gridset_getData, poly_fun, arbcross (from delft3d)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -82,6 +87,7 @@ end
 
 dx_max = max(diff(X(1,:)));
 dy_max = max(diff(Y(:,1)));
+
 %% crop area to search for crossings to line
 temp = ...
     X>=min(xi)-dx_max&X<=max(xi)+dx_max&...
@@ -90,7 +96,6 @@ mm   = max([1 find(any(temp,2),1,'first')-2]):1:min([size(X,1) find(any(temp,2),
 nn   = max([1 find(any(temp,1),1,'first')-2]):1:min([size(X,2) find(any(temp,1),1,'last')+2]);
 
 %% lengthen search line
-
 dx               = xi(2) - xi(1);
 dy               = yi(2) - yi(1);
 lengthen_factor  = min(dy_max / abs(dy), dx_max / abs(dx))*1.1;
@@ -125,6 +130,7 @@ for ii = mm
         end
     end
 end
+
 %% find all locations of crossings with columns
 for ii = nn
     P = InterX([X(mm,ii)';Y(mm,ii)'],[xi2;yi2]);
@@ -147,6 +153,7 @@ for ii = nn
         
     end
 end
+
 %% delete nan data
 if length(size(Z))==3
     crossing_z(isnan(crossing_x),:) = [];
@@ -157,8 +164,8 @@ crossing_y(isnan(crossing_x)) = [];
 crossing_x(isnan(crossing_x)) = [];
 
 %% find end points of crossings
-% determine the nearest crossings on the extended parts of the line at the
-% begin (1) and end (2), store them in crossing_x1 and crossing_x2 etc
+%  determine the nearest crossings on the extended parts of the line at the
+%  begin (1) and end (2), store them in crossing_x1 and crossing_x2 etc
 crossing_d = ((crossing_x - xi(1)).^2 + (crossing_y-yi(1)).^2).^.5;
 if dx>dy
     i1          = find(crossing_x<=min(xi));
@@ -199,10 +206,10 @@ else
 end
 
 %% sort the crossings by distance
-% find the 'body' of the crossings, the final line will be 
-% [startpoint body endpoint]. The start and enpoints are linearly
-% interpolated between the edges of the body, and the crossing_x1 and
-% crossing_x2 points
+%  find the 'body' of the crossings, the final line will be 
+%  [startpoint body endpoint]. The start and enpoints are linearly
+%  interpolated between the edges of the body, and the crossing_x1 and
+%  crossing_x2 points
 
 [dummy,ind] = sort(crossing_d);
 

@@ -363,7 +363,4 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    
    deletefile(pngname1)
    deletefile(pngname2)
-   if OPT.preview
-      close(FIG)
-   end
    

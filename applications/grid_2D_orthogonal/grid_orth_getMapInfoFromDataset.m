@@ -57,8 +57,8 @@ if isfield(OPT,'catalognc')
 end
 
 if isfield(OPT,'catalognc')
-    OPT.x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x')';
-    OPT.y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y')';
+    OPT.x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x'); % should be [n x 2], same as slow method.
+    OPT.y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y');
 else
     %% slow method for if there is no catalog nc
     OPT.x_ranges = nan(length(OPT.urls),2);

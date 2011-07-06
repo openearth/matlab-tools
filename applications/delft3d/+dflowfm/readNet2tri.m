@@ -44,7 +44,7 @@ function varargout = readNet2tri(varargin)
 %    % plot center data: shading flat look
 %    
 %    figure
-%    tricontour(G.tri,G.cor.x,G.cor.y,G.cor.z,[-2 -2],'k')
+%    % tricontour(G.tri,G.cor.x,G.cor.y,G.cor.z,[-2 -2],'k'); % not always works
 %    hold on
 %    for it=1:length(G.datenum)
 %      D      = dflowfm.readMap(ncfile,it);

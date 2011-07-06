@@ -15,7 +15,7 @@ function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx
 %
 % For additional keywords see: grid_orth_getDataFromNetCDFGrid
 %
-% See also: grid_2D_orthogonal, grid_orth_getDataFromNetCDFGrid
+% See also: grid_2D_orthogonal, grid_orth_getDataFromNetCDFGrid, nc_cf_gridset_getData
 
 %% Copyright notice
 %   --------------------------------------------------------------------

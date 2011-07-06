@@ -72,8 +72,8 @@ function varargout = nc_cf_standard_name_table(varargin);
 L = [];
 OPT.listReference = 'cf-standard-name-table';
 OPT.disp          = 1;
-OPT.standard_name = 'id';          % fieldname of L (xml)
-OPT.long_name     = 'description'; % fieldname of L (xml)
+OPT.standard_name = 'standard_name'; %'id';          % fieldname of L (xml)
+OPT.long_name     = 'long_name'; %'description'; % fieldname of L (xml)
 OPT.exact         = 1; % whether match description for standard_name should be exact
 
 OPT.read          = '';
@@ -110,21 +110,48 @@ if ~isempty(OPT.read) | isempty(L)
      % disp([OPT.listReference ': downloading looong xml file, please wait several minutes ...'])
      % urlwrite('')
       
-      disp([OPT.listReference ': parsing looong xml file, please wait several minutes ...'])
+      disp([OPT.listReference ': parsing looong xml file, please wait a minute ...'])
    
       L2  = xml_read([OPT.listReference '.xml'],PREF);
       
-     %save([fileparts(mfilename('fullpath')) OPT.listReference '.xml.mat'],'-struct','L2');
+      save([fileparts(mfilename('fullpath')) OPT.listReference '.xml.mat'],'-struct','L2');
      
-      % parse xml file, to allow indentical behavior for nc_cf_standard_name_table and P011
+      %% parse xml file, to allow indentical behavior for nc_cf_standard_name_table and P011
+      
+      % <?xml version="1.0"?>
+      % <standard_name_table xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="CFStandardNameTable-1.1.xsd">
+      %   <version_number>15</version_number>
+      %   <last_modified>2010-07-26T08:53:14Z</last_modified>
+      %   <institution>Program for Climate Model Diagnosis and Intercomparison</institution>
+      %   <contact>webmaster@pcmdi.llnl.gov</contact>
+      %   <entry id="age_of_stratospheric_air">
+      %     <canonical_units>s</canonical_units>
+      %     <description>&quot;Age of stratospheric air&quot; means an estimate of the time since a parcel of stratospheric air was last in contact with the troposphere.</description>
+      %   </entry>
+      % ...
+      %   <entry id="zenith_angle">
+      %     <canonical_units>degree</canonical_units>
+      %     <description>Zenith angle is the angle to the local vertical; a value of zero is directly overhead.</description>
+      %   </entry>
+      %   <alias id="specific_convective_available_potential_energy">
+      %     <entry_id>atmosphere_specific_convective_available_potential_energy</entry_id>
+      %   </alias>
+      % ...
+      %   <alias id="water_vapor_saturation_deficit">
+      %     <entry_id>water_vapor_saturation_deficit_in_air</entry_id>
+      %   </alias>
+      % </standard_name_table>
+      
       
       L.(OPT.standard_name)  = cell(1,length(L2.entry));
       for i=1:length(L2.entry)
-      L.(OPT.standard_name){i} = L2.entry(i).ATTRIBUTE.(OPT.standard_name); % can we do this shorter ?
+      L.(OPT.standard_name){i} = L2.entry(i).ATTRIBUTE.id; % can we do this shorter, perhaps cellfun ?
       end
       
-      L.(OPT.long_name) = {L2.entry(:).(OPT.long_name)};
+      L.(OPT.long_name) = {L2.entry(:).description};
       L.canonical_units = {L2.entry(:).canonical_units};
+      
+      %TO DO canonical_type
       
       ii = find((cellfun(@isnumeric,L.canonical_units)));
       for iii=1:length(ii)

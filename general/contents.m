@@ -1,15 +1,15 @@
 %
-% Non-specific tools in <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a> 
+% Non-specific tools in <a href="http://www.OpenEarth.eu">OpenEarthTools</a> 
 %
 % OpenEarthTools-management toolboxes.
 %   config_FUN          - OpenEarthTools configuration
-%   docgeneration       - generation of documentation
 %   matlabinterface_fun - matlab interface fun
 %   oet_defaults        - OpenEarthTools defaults
 %   oet_template        - OpenEarthTools templates
 %   SVN_fun             - SubVersion configuration
 %   
 % OpenEarthTools general toolboxes.
+%   allclear            - close all netcdf files
 %   color_fun           - colormap related tools
 %   colormaps           - colormaps
 %   debug_fun           - debug functions

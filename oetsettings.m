@@ -51,7 +51,7 @@ function oetsettings(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% This tools is part of <a href="http://OpenEarth.eu">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute 

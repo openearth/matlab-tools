@@ -298,8 +298,10 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       axislat
       grid     on
       if isfield(D,'datenum')
+      if  ~isempty(D.datenum); % static data do not have a timestamp
       title   ({mktex(fileinfo.Filename),...
-                datestr(D.datenum(1))}); % TO DO: there might be more times
+                datestr(D.datenum(1))}); % TO DO: there might be more times or none at all
+      end
       else
       title   ({mktex(fileinfo.Filename)})
       end

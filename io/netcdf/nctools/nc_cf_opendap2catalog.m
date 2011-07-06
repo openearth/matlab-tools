@@ -1,14 +1,15 @@
 function varargout = nc_cf_opendap2catalog(varargin)
-%NC_CF_OPENDAP2CATALOG   creates catalog of CF compliant netCDF files on one OPeNDAP server (BETA)
+%NC_CF_OPENDAP2CATALOG   creates catalog.nc of CF compliant netCDF files on OPeNDAP server
 %
 %   ATT = nc_cf_opendap2catalog(<baseurl>,<keyword,value>)
 %   ATT = nc_cf_opendap2catalog(<files>  ,<keyword,value>)
 %
 % Extracts meta-data from all netCDF files in <baseurl>, which can 
-% either be an opendap catalog or a local directory. Set 'maxlevel' 
-% to harvest deeper. When you query a local directory, and you want 
-% the catalog to work on a server, use keyword 'urlPathFcn' to 
-% replace the local root with the opendap root, e.g.:
+% be either an OPeNDAP catalog or a local directory. Set 'maxlevel' 
+% to harvest deeper (default 1). When you query a local directory, and you 
+% want the resulting catalog.nc to work on a server, use keyword
+% 'urlPathFcn' 
+% to  replace the local root with the opendap root, e.g.:
 %
 % 'urlPathFcn'= @(s) strrep(s,OPT.root_nc,['http://opendap.deltares.nl/thredds/dodsC/opendap/',OPT.path]))
 %
@@ -46,7 +47,7 @@ function varargout = nc_cf_opendap2catalog(varargin)
 %               'projectionEPSGcode' % from x,y
 % 
 %          (iii) Specified 1D variables 
-%                For grids, it is advised to only use the 1D dimension variables x, y,and time
+%                For orthogonal grids, it is advised to only use the 1D dimension variables x, y, and time
 %
 % from all specified netCDF files and stores them into a
 % struct for storage in netCDF file or mat file.
@@ -62,7 +63,7 @@ function varargout = nc_cf_opendap2catalog(varargin)
 %   catalog = nc2struct('catalog.nc')
 %   Element = structfun(@(x) (x(1)),catalog,'UniformOutput',0)
 %
-% For the stationtimeseries extra information is loaded.
+% For the stationtimeseries some extra information is loaded.
 %
 %See also: STRUCT2NC, NC2STRUCT, opendap_catalog, snctools, nc_cf_opendap2catalog_loop
 
@@ -274,6 +275,7 @@ for entry=1:length(OPT.files)
            end
 
            Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
+           
            % get standard_names only ...
            if strcmpi(Name,'standard_name')
 
@@ -400,18 +402,14 @@ for entry=1:length(OPT.files)
     
 end % entry
 
-%% remove amount to much pre-allocated in catalog dimension and make numeric or char matrix
+%% remove amount to much pre-allocated in catalog dimension 
 
    for ifld=1:length(OPT.catalog_entry)
        fldname = mkvar(OPT.catalog_entry{ifld});
        try
        ATT.(fldname) = cell2mat({ATT.(fldname){1:entry}}');
        catch
-          try
-             ATT.(fldname) = char({ATT.(fldname){1:entry}});
-          catch
-             ATT.(fldname) =     ({ATT.(fldname){1:entry}});
-          end
+       ATT.(fldname) =     ({ATT.(fldname){1:entry}});
        end
    end
    

@@ -10,7 +10,9 @@
 %% subset orthogonal Smith & Sandwell worldbathymetric data for DCSM region
 %  The full grid is way too large too handle.
 
-   D.url     = 'http://coast-enviro.er.usgs.gov/thredds/dodsC/bathy/smith_sandwell_v11';
+   D.url     = 'http://coast-enviro.er.usgs.gov/thredds/dodsC/bathy/smith_sandwell_v11'; % old
+   D.url     = 'http://geoport.whoi.edu/thredds/dodsC/bathy/smith_sandwell_v11'
+   
    nc_dump(D.url)
 
 %% get full coordinate sticks 
@@ -18,7 +20,7 @@
    D.lon         = nc_varget (D.url,'lon'); % -180 ... 180
    D.lat         = nc_varget (D.url,'lat'); %   90 ... -90
 
-%% Determine indices of subset based on the the subregion you want 
+%% Determine indices of subset based on the the subregion you want (bounding box) 
 
    OPT.lon       = [-4 10];
    OPT.lat       = [48 58];
@@ -29,10 +31,12 @@
 %% get subset
 %  note: nc_varget is zero-based
 
+   start         = [       ind.lat(1)       ind.lon(1)]-1; % use -1 to get from 1-based Matlab to 0-based netCDF index !!
+   count         = [length(ind.lat)  length(ind.lon)];
+
    D.lon         = D.lon(ind.lon);
    D.lat         = D.lat(ind.lat);
-   start         = [ind.lat(1)-1 ind.lon(1)-1]; % use -1 to get from 1-based Matlab to 0-based netCDF index !!
-   count         = [length(ind.lat) length(ind.lon)];
+
    D.z           = nc_varget(D.url,'topo' ,start,count);
    M.z.units     = nc_attget(D.url,'topo','units');
    M.z.long_name = nc_attget(D.url,'topo','long_name');

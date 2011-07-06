@@ -13,6 +13,8 @@ function G = readNet(varargin)
 % The D-Flow FM netCDF output specification has been published at
 % the Deltares wiki: http://public.deltares.nl/display/NETCDF/netCDF.
 %
+% POST-PROCESSING
+%
 % Read/plot grid (no time)
 %  dflowfm.readNet          - Reads network data of unstructured net.
 %  dflowfm.plotNet          - Plot an unstructured grid.
@@ -25,9 +27,12 @@ function G = readNet(varargin)
 %  dflowfm.plotMap          - Plot an unstructured map.
 %  dflowfm.plotMapkml       - Plot an unstructured map as Google Earth kml file (beta).
 %
+% PRE-PROCESSING
+%
 % Convert delft3d-flow model to  Delft3D-FM
 %  dflowfm.mdf2mdu          - convert Delft3D-flow model input to D-Flow FM model input
 %  dflowfm.opendap2obs      - get list of observation points from netCDF (OPeNDAP) time series collection
 %  dflowfm.analyseHis       - validate water levels with netCDF (OPeNDAP) time series collection for time series & t_tide
+%  dflowfm.fillDep          - fill depth values from OPeNDAP data source (single grid or gridset of tiles)
 %
 % See also: delft3d
