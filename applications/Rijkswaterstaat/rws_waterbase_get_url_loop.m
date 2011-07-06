@@ -81,7 +81,7 @@ index = find(DONAR.donar_wnsnum==ivar);
 %-%for ialt=1:length(OPT.codes{index});
 
    OPT.code           = DONAR.donar_wnsnum(index);
-   OPT.standard_name  = DONAR.cf_standard_name{index};
+   OPT.standard_name  = DONAR.standard_name{index};
    
 %% Make destination (clean)
 

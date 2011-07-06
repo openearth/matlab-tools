@@ -83,8 +83,9 @@ function rws_waterbase2nc(varargin)
    
 %% Parameter choice
 
-   DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
-
+   DONAR     = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
+   att_names = fieldnames(DONAR);
+   
 %% Parameter choice
 
    if  OPT.donar_wnsnum==0
@@ -95,17 +96,25 @@ function rws_waterbase2nc(varargin)
 
 for ivar=[OPT.donar_wnsnum]
 
-    index = find(DONAR.donar_wnsnum==ivar);
+    %% extract meta-data standards (DONAR, CF, UM Aquo, SeaDataNet)
 
-    OPT.standard_name  = DONAR.cf_standard_name{index};
-    OPT.name           = DONAR.name{index}; %(1:min(63,length(OPT.standard_name))); % matlab names have a max length of 63 characters
-    OPT.long_name      = DONAR.donar_wns_oms{index};
-    OPT.units          = DONAR.units{index};
-
-    mkpath(OPT.directory_nc);
+    index     = find(DONAR.donar_wnsnum==ivar);
+    OPT.name  = DONAR.name{index}; %(1:min(63,length(OPT.standard_name))); % matlab names have a max length of 63 characters
+    OPT.units = DONAR.units{index};
+    for iatt = 1:length(att_names)
+       att_name   = att_names{iatt};
+       att_val    = DONAR.(att_name);
+       if isnumeric(att_val)
+       att_values{iatt} = att_val(index);
+       else
+       att_values{iatt} = att_val{index};
+       end
+    end
 
     %% File loop of all files in a directory
     
+    mkpath(OPT.directory_nc);
+
     OPT.files          = dir([OPT.directory_raw,filesep,OPT.mask]);
     
     multiWaitbar(mfilename,0,'label','Creating netCDF from waterbase ASCII.','color',[0.2 0.6 0.])
@@ -234,7 +243,7 @@ for ivar=[OPT.donar_wnsnum]
         nc_attput(ncfile, nc_global, 'comment'         , 'The structure of this netCDF file is described in: https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions, http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventions.html#id2867470');
         nc_attput(ncfile, nc_global, 'version'         , D.version);
 
-        nc_attput(ncfile, nc_global, 'Conventions'     , 'CF-1.5');
+        nc_attput(ncfile, nc_global, 'Conventions'     , 'CF-1.5, UM Aquo 2010 proof of concept, SeaDataNet proof of concept'); % these are independent conventions, so separate by comma: http://www.unidata.ucar.edu/software/netcdf/conventions.html
         nc_attput(ncfile, nc_global, 'CF:featureType'  , 'timeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
 
         nc_attput(ncfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
@@ -489,25 +498,24 @@ end
       nc(ifld).Name             = OPT.name; % thre isn't always a standard name, and it can be over 63 chars long
       nc(ifld).Nctype           = 'float'; % no double needed
       nc(ifld).Dimension        = {'locations','time'};
-      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name);
-      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', D.data.units);
-      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.(OPT.name)) max(D.data.(OPT.name))]);
+
+      % standard names
+      for jj=1:length(att_names)
+      nc(ifld).Attribute(end+1) = struct('Name', att_names{jj}    ,'Value', att_values{jj});
+      end
+
       nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', single(OPT.fillvalue)); % needs to be same type as data itself (i.e. single)
       nc(ifld).Attribute(end+1) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');
-      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.data.(OPT.name)) max(D.data.(OPT.name))]);
       if OPT.stationTimeSeries
       nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
       end
-      for jj=1:length(OPT.att_name)
+
+      % custom atts
+      for jj=1:length(OPT.att_name)0
       nc(ifld).Attribute(end+1) = struct('Name', OPT.att_name{jj} ,'Value', OPT.att_val{jj});
       end
         
-      %  'donar_wnsnum
-      %  'aquo_lex_code'
-      %  'sdn_standard_name'
-      %  'sdn_long_name'
-      %  'sdn_units'
-
    %% 4 Create variables with attibutes
    % When variable definitons are created before actually writing the
    % data in the next cell, netCDF can nicely fit all data into the

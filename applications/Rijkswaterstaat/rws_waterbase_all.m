@@ -13,8 +13,8 @@ function rws_waterbase_all
 %% Initialize
 
    OPT.download       = 0; % get fresh downloads from rws and remove exisitng to sub dir old
-   OPT.make_nc        = 0; % makes mat files
-   OPT.make_catalog   = 0; % otherwise lod existing one
+   OPT.make_nc        = 1; % makes mat files
+   OPT.make_catalog   = 1; % otherwise lod existing one
    OPT.make_kml       = 1;
    OPT.baseurl        = 'http://live.waterbase.nl';
 
@@ -29,7 +29,7 @@ function rws_waterbase_all
                      29   54   22   23   24  ... %   Q eta  Hs dir  Tm 
                     332  346  347  360  363  ... %   N   N   N   O   P
                     364  380  491  492  493  ... %   P P04 NH4 N03 N02
-                    541  560 1083    1      ];   % DSe  Si DOC zwl    (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
+                    541  560 1083    1  377 ];   % DSe  Si DOC zwl  pH (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
 
 % DO 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
 
@@ -51,18 +51,15 @@ function rws_waterbase_all
       
       index = find(DONAR.donar_wnsnum==ivar);
 
-      OPT.code              = DONAR.donar_wnsnum(index);
-      OPT.donar_wnsnum      = DONAR.donar_wnsnum(index);
-      OPT.donar_wns_oms     = DONAR.donar_wns_oms{index};
-      OPT.donar_parcode     = DONAR.donar_parcode{index};
-      OPT.standard_name     = DONAR.cf_standard_name{index};
-      OPT.name              = DONAR.name{index};
-      OPT.aquo_lex_code     = DONAR.aquo_lex_code{index};
-      OPT.sdn_standard_name = DONAR.sdn_standard_name{index};
+       OPT.code              = DONAR.donar_wnsnum(index);
+       OPT.donar_wnsnum      = DONAR.donar_wnsnum(index);  % needed for url
+       OPT.donar_wns_oms     = DONAR.donar_wns_oms{index}; % needed for url
+       OPT.donar_parcode     = DONAR.donar_parcode{index}; % needed for disp
+       OPT.name              = DONAR.name{index};          % needed for directory
 
       subdir                = OPT.name;
       OPT.directory_nc      = [ ncbase,'\rijkswaterstaat\waterbase\'      ,filesep,subdir,filesep];
-      OPT.directory_kml     = [kmlbase,'\rijkswaterstaat\waterbase\'      ,filesep,subdir,filesep];
+      OPT.directory_kml     = [kmlbase,'\rijkswaterstaat\waterbase\'      ,filesep,];
       OPT.directory_raw     = [rawbase,'\rijkswaterstaat\waterbase\cache\',filesep,subdir,filesep];
       
       multiWaitbar(mfilename,n/length(donar_wnsnum),'label',['Processing substance: ',OPT.donar_parcode,'(',num2str(ivar),')'])
@@ -93,8 +90,8 @@ function rws_waterbase_all
                        'directory_nc' ,OPT.directory_nc,...
                        'directory_raw',OPT.directory_raw,...
                               'method',OPT.method,... % 'fgetl' for water levels or discharges
-                            'att_name',{'aquo_lex_code'           ,'donar_wnsnum'           ,'sdn_standard_name'},...
-                             'att_val',{DONAR.aquo_lex_code(index),DONAR.donar_wnsnum(index),DONAR.sdn_standard_name(index) },...
+                            'att_name',{},...
+                             'att_val',{},...
                                 'load',1,...% 1 = skip cached mat file, always load zipped txt file
                                'debug',0,...% check unit conversion and more
                                 'mask',['id' num2str(OPT.code) '*.zip']);  % as more ids are in same dir
@@ -123,13 +120,7 @@ function rws_waterbase_all
 
       OPT2.fileName           = [OPT.directory_kml,filesep,subdir,'.kml'];
       OPT2.kmlName            = ['rijkswaterstaat/waterbase/' subdir];
-      OPT2.text               = {['<B>',OPT.name,'</B>',...
-                                  ' / DONAR number: '     ,num2str(OPT.donar_wnsnum     ),...
-                                  ' / DONAR code: '       ,       (OPT.donar_parcode    ),... % '%O2 does not work
-                                  ' / DONAR description: ',num2str(OPT.donar_wns_oms    ),...
-                                  ' / CF standard name: ' ,       (OPT.standard_name    ) ,...
-                                  ' / BODC/SeaDataNet: '  ,       (OPT.sdn_standard_name),...
-                                  ' / Aquolex: '          ,       (OPT.aquo_lex_code    )]};
+      OPT2.text               = {['<B>',OPT.name,'</B>']}; % include more meta-data from DONAR
      %OPT2.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
      %OPT2.iconhighlightState = 'http://www.rijkswaterstaat.nl/images/favicon.ico';
 
