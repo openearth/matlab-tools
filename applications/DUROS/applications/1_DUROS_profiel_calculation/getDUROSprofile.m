@@ -108,8 +108,14 @@ if ~isempty(zInitial)
     face = [-1 x0+WL_t];
     % most landward-upper point of face
     [xface, zface] = deal([polyval(face,zmax); x2(1)], [zmax; z2(1)]);
-    % find intersections of face with initial profile
-    [xfaceintersect, zfaceintersect, xInitial, zInitial] = findCrossings(xInitial, zInitial, xface, zface, 'keeporiginalgrid');
+    
+    if (diff(xface)==0)
+        xfaceintersect = xface(1);
+        zfaceintersect = zface(1);
+    else
+        % find intersections of face with initial profile
+        [xfaceintersect, zfaceintersect, xInitial, zInitial] = findCrossings(xInitial, zInitial, xface, zface, 'keeporiginalgrid');
+    end
     %
     %% Create Toe
     %

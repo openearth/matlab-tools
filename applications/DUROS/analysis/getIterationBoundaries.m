@@ -155,6 +155,11 @@ if k>1 % means that most landward part of initial profile is below WL_t
     x00min = interp1(zInitial(k-1:k),xInitial(k-1:k),WL_t);  % x of intersection with WL_t
     Basis.x00min(end+1) = 9;
 else % means that most landward point of initial profile is at or above WL_t
+    if isempty(k)
+        % If this does not give us a crossing, the water line lies above
+        % the profile. That should be taken care of in DUROSCheckConditions
+        k = find(zInitial==WL_t,1,'first');
+    end
     x00min = xInitial(k)+zInitial(k)-WL_t; % x of intersection of WL_t and 1:1 slope through most landward point of the initial profile
     Basis.x00min(end+1) = 10;
 end

@@ -166,8 +166,8 @@ if length(xInitial2) ~= length(xInitial)
 end
 
 IterationBoundariesConsistent = x0max > x0min;
-NoPointsAboveWaterline = all(zInitial(xInitial>=x0min & xInitial<=x0max) < WL_t);
-if ~IterationBoundariesConsistent || NoPointsAboveWaterline
+NoPointsAtOrAboveWaterline = all(zInitial(xInitial>=x0min & xInitial<=x0max) <= WL_t);
+if ~IterationBoundariesConsistent || NoPointsAtOrAboveWaterline
     xDUROS = DUROSresult.xActive;
     zDUROS = DUROSresult.z2Active;
     Xr = DUROSresult.VTVinfo.Xr;
@@ -216,7 +216,7 @@ if ~IterationBoundariesConsistent || NoPointsAboveWaterline
         resultout.info.x0 = DUROSresult.info.x0;
         resultout.info.iter = 0;
         resultout.info.precision = TargetVolume;
-    elseif NoPointsAboveWaterline && any(strcmp(x0minBoundary,'maxRetreat'))
+    elseif NoPointsAtOrAboveWaterline && any(strcmp(x0minBoundary,'maxRetreat'))
         % No points above the water line within the retreat distance. Result is 0
         writemessage(45, ['Erosional length restricted within dunevalley. An additional erosion volume of 0 m^3/m^1 (TargetVolume = ' num2str(TargetVolume) ' m^3/m^1) leads to an additional retreat of 0 m.']);
         resultout.VTVinfo.TVolume = 0;
