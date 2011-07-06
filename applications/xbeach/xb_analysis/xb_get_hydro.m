@@ -175,14 +175,15 @@ if xb_exist(xb, 'zs')
         
         if xb_exist(xb, 'zb')
             zb = xb_get(xb,'zb');
-            k = zs(end,1,:)-zb(end,1,:)>0.0001;
+            k = zs-zb>0.0001;
         elseif xb_exist(xb, 'u')
             u = xb_get(xb,'u');
-            k = abs(u(end,1,:))>0.0001;
+            k = abs(u)>0.0001;
         end
         
-        s = max(0,mean(zs-mean(zs(:,1,1),1),1));
-        s(:,:,~k) = 0;
+        s = zs-mean(zs(:,1,1),1);
+        s(~k) = 0;
+        s = max(0,mean(s,1));
     end
 end
     
