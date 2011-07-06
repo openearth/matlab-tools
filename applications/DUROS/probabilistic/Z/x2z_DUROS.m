@@ -89,29 +89,15 @@ for i = 1:length(samples.D50)
         
         %% carry out DUROS+ computation
         [result messages] = DUROS(xInitial, zInitial, samples.D50(i), samples.WL_t(i), samples.Hsig_t(i), samples.Tp_t(i));
-        Tp_t(i) = result(1).info.input.Tp_t;
+        
+        %% derive z-value
+        
+        [RD(i) ErosionVolume(i)] = getRetreatDistance(result, messages, xRef);
 
-        %% Derive z-value
-        [x2 z2 result2] = getFinalProfile(result);
-        ErosionVolume(i) = result2.Volumes.Erosion;
-        RD(i) = xRef - result(end).VTVinfo.Xr;
-
-        %%
         if length(result) > 1
             samples.Duration(i) = -result(2).Volumes.Volume*samples.Duration(i);
             samples.Accuracy(i) = -result(2).Volumes.Volume*samples.Accuracy(i);
         end
-%         for var = {'D50' 'WL_t' 'Hsig_t' 'Tp_t' 'Duration' 'Accuracy' 'RD'}
-%             fprintf('%10e ', eval([var{1} '(' num2str(i) ')']))
-%         end
-%         fprintf('\n');
-%     catch me
-%         me
-%         ErosionVolume(i) = NaN;
-%         RD(i) = NaN;
-%         fname = tempname
-%         save(fname, 'D50', 'WL_t', 'Hsig_t', 'Tp_t', 'Duration', 'Accuracy', 'i')
-%     end
 
         z(i,:) = Resistance - RD(i);
 end
