@@ -150,11 +150,12 @@ elseif strcmp(cmd,'write')
    %% ------------------
 
    if nargin>2
-      dep  = varargin{1};
+      fname = varargin{1};
+      dep  = varargin{2};
    end
    
    if nargin>3
-      IDLA = varargin{2};
+      IDLA = varargin{3};
    end
    
    if nargin>4
@@ -179,7 +180,7 @@ elseif strcmp(cmd,'write')
       %pointslastline  = 1:(npoints - 4*nlines);
       %format          = '%8.6E %8.6e %8.6e %8.6e\n';
       
-      pointsperline   = 4;
+      pointsperline   = size(dep,1);
       nlines          = floor(npoints./pointsperline);
       pointslastline  = 1:(npoints - pointsperline*nlines);
       format          = [repmat('%8.6E ',[1 pointsperline      ]),'\n'];
