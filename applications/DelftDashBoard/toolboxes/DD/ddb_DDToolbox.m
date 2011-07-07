@@ -433,10 +433,26 @@ setHandles(handles);
 ddb_saveDDBoundFile(ddbound,handles.Model(md).ddFile);
 
 fid = fopen('batch_flw_dd.bat','wt');
-fprintf(fid,'%s\n','set argfile=delft3d-flow_args.txt');
-fprintf(fid,'%s\n',['echo -c ' handles.Model(md).ddFile ' >%argfile%']);
-fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\delftflow.exe %argfile% dummy delft3d');
+fprintf(fid,'%s\n','@ echo off');
+fprintf(fid,'%s\n','set argfile=config_flow2d3d_dd.ini');
+fprintf(fid,'%s\n',['set exedir=' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\']);
+fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
+% fprintf(fid,'%s\n','set argfile=delft3d-flow_args.txt');
+% fprintf(fid,'%s\n',['echo -c ' handles.Model(md).ddFile ' >%argfile%']);
+% fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\delftflow.exe %argfile% dummy delft3d');
 fclose(fid);
+
+% Write config file
+fini=fopen('config_flow2d3d_dd.ini','w');
+fprintf(fini,'%s\n','[FileInformation]');
+fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
+fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
+fprintf(fini,'%s\n','   FileVersion      = 00.01');
+fprintf(fini,'%s\n','[Component]');
+fprintf(fini,'%s\n','   Name                = flow2d3d');
+fprintf(fini,'%s\n',['   DDBfile             = ' handles.Model(md).ddFile]);
+fclose(fini);
 
 %        ddb_writeDDBacthfile;
 
