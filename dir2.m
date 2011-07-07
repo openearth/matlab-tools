@@ -279,7 +279,7 @@ end
 
 function s = relativeToabsolutePath(s)
 % this subfunction converts relative file paths to absolute file paths. The
-% function is esigned to make dir2 mimic the output of dir as much as
+% function is designed to make dir2 mimic the output of dir as much as
 % possible
 
 s = fullfile(s,'');
@@ -294,11 +294,18 @@ elseif s(1) == filesep
             % it is already an absolute networkpath
         else
             tmp = pwd;
-            s   = [tmp(1:2) s];
+            % Only on windows assume that the first two letters of tmp are
+            % the drive letter
+            if ispc
+            s  = [tmp(1:2) s];
+            end
         end
     else
         tmp = pwd;
+        
+        if ispc
         s   = [tmp(1:2) s];
+        end
     end
 elseif strcmp(s,'.')
     s   = pwd;
