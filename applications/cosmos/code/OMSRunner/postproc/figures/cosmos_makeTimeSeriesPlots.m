@@ -117,73 +117,76 @@ try
                         end
                     end
 
-                    % X Axis properties
-                    tlim=[tstart tstop];
-                    if tstop-tstart>8
-                        xticks=tstart:1:tstop;
-                    else
-                        xticks=tstart:0.5:tstop;
+                    % Check if there is any data in structure tms
+                    if ~isempty(tms)
+                        
+                        % X Axis properties
+                        tlim=[tstart tstop];
+                        if tstop-tstart>8
+                            xticks=tstart:1:tstop;
+                        else
+                            xticks=tstart:0.5:tstop;
+                        end
+                        
+                        % Y Axis properties
+                        switch yltp
+                            case{'sym'}
+                                yminabs=abs(ymin);
+                                ymaxabs=abs(ymax);
+                                yabs=ceil(max(yminabs,ymaxabs));
+                                ymin=-yabs;
+                                ymax=yabs;
+                            case{'fit'}
+                                ymin=floor(ymin);
+                                ymax=ceil(ymax);
+                            case{'positive'}
+                                ymin=0;
+                                ymax=ceil(ymax);
+                            case{'angle'}
+                                ymin=0;
+                                ymax=360;
+                        end
+                        ydif=ymax-ymin;
+                        if ydif<1
+                            ytck=0.05;
+                            ydec=2;
+                        elseif ydif<2
+                            ytck=0.1;
+                            ydec=1;
+                        elseif ydif<4
+                            ytck=0.2;
+                            ydec=1;
+                        elseif ydif<10
+                            ytck=0.5;
+                            ydec=1;
+                        elseif ydif<20
+                            ytck=1;
+                            ydec=1;
+                        elseif ydif<40
+                            ytck=2;
+                            ydec=1;
+                        elseif ydif<100
+                            ytck=5;
+                            ydec=1;
+                        else
+                            ytck=30;
+                            ydec=1;
+                        end
+                        ymax=max(ymax,ymin+0.1);
+                        if strcmp(yltp,'angle')
+                            ytck=45;
+                            ydec=0;
+                        end
+                        ylim=[ymin ymax];
+                        yticks=ymin:ytck:ymax;
+                        
+                        % Title
+                        ttl=[partit ' - ' Model.Stations(i).LongName];
+                        
+                        % And export the figure
+                        figname=[Model.Dir 'lastrun' filesep 'figures' filesep typ '.' stationfile '.png'];
+                        cosmos_timeSeriesPlot(figname,tms,'ylabel',ylab,'title',ttl,'xlim',tlim,'ylim',ylim,'xticks',xticks,'yticks',yticks);
                     end
-
-                    % Y Axis properties
-                    switch yltp
-                        case{'sym'}
-                            yminabs=abs(ymin);
-                            ymaxabs=abs(ymax);
-                            yabs=ceil(max(yminabs,ymaxabs));
-                            ymin=-yabs;
-                            ymax=yabs;
-                        case{'fit'}
-                            ymin=floor(ymin);
-                            ymax=ceil(ymax);
-                        case{'positive'}
-                            ymin=0;
-                            ymax=ceil(ymax);
-                        case{'angle'}
-                            ymin=0;
-                            ymax=360;
-                    end
-                    ydif=ymax-ymin;
-                    if ydif<1
-                        ytck=0.05;
-                        ydec=2;
-                    elseif ydif<2
-                        ytck=0.1;
-                        ydec=1;
-                    elseif ydif<4
-                        ytck=0.2;
-                        ydec=1;
-                    elseif ydif<10
-                        ytck=0.5;
-                        ydec=1;
-                    elseif ydif<20
-                        ytck=1;
-                        ydec=1;
-                    elseif ydif<40
-                        ytck=2;
-                        ydec=1;
-                    elseif ydif<100
-                        ytck=5;
-                        ydec=1;
-                    else
-                        ytck=30;
-                        ydec=1;
-                    end
-                    ymax=max(ymax,ymin+0.1);
-                    if strcmp(yltp,'angle')
-                        ytck=45;
-                        ydec=0;
-                    end
-                    ylim=[ymin ymax];
-                    yticks=ymin:ytck:ymax;
-                                        
-                    % Title
-                    ttl=[partit ' - ' Model.Stations(i).LongName];
-                    
-                    % And export the figure
-                    figname=[Model.Dir 'lastrun' filesep 'figures' filesep typ '.' stationfile '.png'];
-                    cosmos_timeSeriesPlot(figname,tms,'ylabel',ylab,'title',ttl,'xlim',tlim,'ylim',ylim,'xticks',xticks,'yticks',yticks);
-                    
                 end
             end
         end

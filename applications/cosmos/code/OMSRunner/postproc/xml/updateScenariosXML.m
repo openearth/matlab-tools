@@ -77,7 +77,7 @@ for iw=1:length(hm.Models(m).WebSite)
 
 
             if ~strcmpi(Model.CoordinateSystem,'wgs 84')
-                [lon,lat]=ConvertCoordinates(xloc,yloc,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                [lon,lat]=convertCoordinates(xloc,yloc,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
             else
                 lon=xloc;
                 lat=yloc;

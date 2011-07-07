@@ -32,7 +32,7 @@ for iw=1:length(Model.WebSite)
 
     if ~cluster
         if ~strcmpi(Model.CoordinateSystem,'wgs 84')
-            [lon,lat]=ConvertCoordinates(xloc,yloc,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+            [lon,lat]=convertCoordinates(xloc,yloc,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
         else
             lon=xloc;
             lat=yloc;
@@ -87,8 +87,8 @@ for iw=1:length(Model.WebSite)
             locx2=locx+Model.Profile(j).Length*cosa;
             locy2=locy+Model.Profile(j).Length*sina;
 
-            [locx,locy]=ConvertCoordinates(locx,locy,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
-            [locx2,locy2]=ConvertCoordinates(locx2,locy2,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+            [locx,locy]=convertCoordinates(locx,locy,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+            [locx2,locy2]=convertCoordinates(locx2,locy2,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
 
             model.stations(j).station.name      = Model.Profile(j).Name;
             model.stations(j).station.longname  = ['MOP ' Model.Profile(j).Name];
@@ -111,7 +111,7 @@ for iw=1:length(Model.WebSite)
         model.stations(j).station.name      = Model.Stations(j).Name;
         model.stations(j).station.longname  = Model.Stations(j).LongName;
         if ~strcmpi(Model.CoordinateSystem,'wgs 84')
-            [lon,lat]=ConvertCoordinates(Model.Stations(j).Location(1),Model.Stations(j).Location(2),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+            [lon,lat]=convertCoordinates(Model.Stations(j).Location(1),Model.Stations(j).Location(2),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
         else
             lon=Model.Stations(j).Location(1);
             lat=Model.Stations(j).Location(2);
@@ -148,8 +148,8 @@ for iw=1:length(Model.WebSite)
             %         xlim=Model.XLimPlot;
             %         ylim=Model.YLimPlot;
             %         if ~strcmpi(Model.CoordinateSystemType,'geographic')
-            %             [xlim(1),ylim(1)]=ConvertCoordinates(xlim(1),ylim(1),'persistent',Model.CoordinateSystem,Model.CoordinateSystemType,'WGS 84','geographic',hm.CoordinateSystems,hm.Operations);
-            %             [xlim(2),ylim(2)]=ConvertCoordinates(xlim(2),ylim(2),'persistent',Model.CoordinateSystem,Model.CoordinateSystemType,'WGS 84','geographic',hm.CoordinateSystems,hm.Operations);
+            %             [xlim(1),ylim(1)]=convertCoordinates(xlim(1),ylim(1),'persistent',Model.CoordinateSystem,Model.CoordinateSystemType,'WGS 84','geographic',hm.CoordinateSystems,hm.Operations);
+            %             [xlim(2),ylim(2)]=convertCoordinates(xlim(2),ylim(2),'persistent',Model.CoordinateSystem,Model.CoordinateSystemType,'WGS 84','geographic',hm.CoordinateSystems,hm.Operations);
             %         end
             %
             %         model.maps(k).map.xmin          = xlim(1);

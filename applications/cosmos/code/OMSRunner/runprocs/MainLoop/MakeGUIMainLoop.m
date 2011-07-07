@@ -59,7 +59,7 @@ function PushStartMainLoop_Callback(hObject,eventdata)
 
 hm=guidata(findobj('Tag','OMSMain'));
 
-StartMainLoop(hm);
+cosmos_startMainLoop(hm);
 
 %%
 function PushStopMainLoop_Callback(hObject,eventdata)
