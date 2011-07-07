@@ -1,8 +1,15 @@
+function varargout = fillDep(varargin)
 %fillDep fill depth values from OPeNDAP data source (single grid or gridset of tiles)
 %
 %     <out> = dflowfm.fillDep(<keyword,value>) 
 %
-%   See also dflowfm, delft3d
+% where  the following keywords mean:
+% * bathy   provides data sources, cellstr of files, e.g. opendap_catalog()
+% * ncfile  input map nc file
+% * out     input map nc file (same as ncfile with depth + timestaps added)
+% * ...
+%
+%   See also dflowfm, delft3d, nc_cf_gridset_getData
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
@@ -40,7 +47,6 @@
    OPT.out         = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc\ducktape_n_pur\precise\precise4h_vaklodingen_net.nc';
 
    OPT.bathy       = opendap_catalog('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen_remapped/catalog.xml');
-
    OPT.xname       = 'x'; % search for projection_x_coordinate, or longitude, or ...
    OPT.yname       = 'y'; % search for projection_x_coordinate, or latitude , or ...
    OPT.varname     = 'z'; % search for altitude, or ...
@@ -48,9 +54,12 @@
    OPT.poly        = '';
    OPT.method      = 'linear'; % only for 1st step, second step is nearest
    OPT.datenum     = datenum(1998,7,1); % get from mdu
-   OPT.ddatenummax = datenum(3,1,1); % temporal search window in years
-   OPT.debug       = 0;
+   OPT.ddatenummax = datenum(3,1,1); % temporal search window in years (for direction see 'order')
    OPT.order       = ''; % RWS: Specifieke Operator Laatste/Dichtsbij/Prioriteit
+
+   OPT.debug       = 0;
+   
+   OPT = setProperty(OPT,varargin{:});
    
 %% Load grid
 
@@ -109,3 +118,4 @@
    nc_addvar(OPT.out,nc);  
   
    nc_varput(OPT.out,'NetNode_t',fi);
+   

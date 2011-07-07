@@ -55,6 +55,36 @@ function varargout = delft3d_io_mor(varargin)
 % $HeadURL$
 % $Keywords: $
 
-[D,U,M] = delft3d_io_sed(varargin{:});
+OPT.FileOption  = {};
+
+[D,U,M] = delft3d_io_sed(varargin{:},'FileOption',OPT.FileOption);
 
 varargout  = {D,U,M};
+
+% [MorphologyFileInformation]
+%    FileCreatedBy    = Delft3D-FLOW-GUI, Version: 3.41.02         
+%    FileCreationDate = Thu May 12 2011, 17:58:05         
+%    FileVersion      = 02.00                        
+% [Morphology]
+%    EpsPar           = false                         Vertical mixing distribution according to van Rijn (overrules k-epsilon model)         
+%    IopKCW           = 1                             Flag for determining Rc and Rw         
+%    RDC              = 0.01                 [m]      Current related roughness height (only used if IopKCW <> 1)
+%    RDW              = 0.02                 [m]      Wave related roughness height (only used if IopKCW <> 1)
+%    MorFac           =  1.0000000e+000      [-]      Morphological scale factor
+%    MorStt           =  7.2000000e+002      [min]    Spin-up interval from TStart till start of morphological changes
+%    Thresh           =  5.0000001e-002      [m]      Threshold sediment thickness for transport and erosion reduction
+%    MorUpd           = false                         Update bathymetry during FLOW simulation
+%    EqmBc            = true                          Equilibrium sand concentration profile at inflow boundaries
+%    DensIn           = false                         Include effect of sediment concentration on fluid density
+%    AksFac           =  1.0000000e+000      [-]      van Rijn's reference height = AKSFAC * KS
+%    RWave            =  2.0000000e+000      [-]      Wave related roughness = RWAVE * estimated ripple height. Van Rijn Recommends range 1-3
+%    AlfaBs           =  1.0000000e+000      [-]      Streamwise bed gradient factor for bed load transport
+%    AlfaBn           =  1.5000000e+000      [-]      Transverse bed gradient factor for bed load transport
+%    Sus              =  1.0000000e+000      [-]      Multiplication factor for suspended sediment reference concentration
+%    Bed              =  1.0000000e+000      [-]      Multiplication factor for bed-load transport vector magnitude
+%    SusW             =  1.0000000e+000      [-]      Wave-related suspended sed. transport factor
+%    BedW             =  1.0000000e+000      [-]      Wave-related bed-load sed. transport factor
+%    SedThr           =  1.0000000e-003      [m]      Minimum water depth for sediment computations
+%    ThetSD           =  0.0000000e+000      [-]      Factor for erosion of adjacent dry cells
+%    HMaxTH           =  1.5000000e+000      [m]      Max depth for variable THETSD. Set < SEDTHR to use global value only
+%    FWFac            =  1.0000000e+000      [-]      Vertical mixing distribution according to van Rijn (overrules k-epsilon model)
