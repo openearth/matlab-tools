@@ -29,8 +29,7 @@ function varargout = swan_io_bot(cmd,varargin)
 %    before writing or after reading, default IDLA=4.
 %    Currently implemented are:
 %    * read : IDLA=3,4
-%    * write: IDLA=4 with an end of line after eveyr 4 numbers
-%             becauase only 120 characters are allowed per line.
+%    * write: IDLA=4
 %    
 %    % valid for IDLA  = 3
 %    % ---------------------------
@@ -83,7 +82,7 @@ function varargout = swan_io_bot(cmd,varargin)
 if     strcmp(cmd,'read') | ...
        strcmp(cmd,'load')
        
-   %% Input
+%% Input
 
    if isstruct(varargin{1})
    
@@ -127,8 +126,7 @@ if     strcmp(cmd,'read') | ...
       error('syntax: dep = swan_io_bot(''read'',filename,mnmax,<IDLA>');
    end
    
-   %% Read and open file
-   %% ------------------
+%% Read and open file
    
    fid = fopen(fname);
    
@@ -146,8 +144,7 @@ if     strcmp(cmd,'read') | ...
 
 elseif strcmp(cmd,'write')
 
-   %% Input
-   %% ------------------
+%% Input
 
    if nargin>2
       fname = varargin{1};
@@ -166,21 +163,11 @@ elseif strcmp(cmd,'write')
 
    if IDLA==4
       
-    %  %% only works when all lines are full
-    %  leng = prod(size(dep))./4;
-    %  dep  = reshape(dep,[4 leng])';
-    %  %% check whether the maximum lenght of file lines =  120 characters?
-    %  save(fname,'dep','-ascii')
-      
       fid = fopen(fname,'w');
       
       npoints         = length(dep(:));
       
-      %nlines          = floor(npoints./4);
-      %pointslastline  = 1:(npoints - 4*nlines);
-      %format          = '%8.6E %8.6e %8.6e %8.6e\n';
-      
-      pointsperline   = size(dep,1);
+      pointsperline   = size(dep,1); % was 4, due to old limitation of 120 chars per line
       nlines          = floor(npoints./pointsperline);
       pointslastline  = 1:(npoints - pointsperline*nlines);
       format          = [repmat('%8.6E ',[1 pointsperline      ]),'\n'];
