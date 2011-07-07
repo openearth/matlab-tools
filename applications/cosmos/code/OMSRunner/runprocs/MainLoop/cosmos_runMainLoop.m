@@ -1,4 +1,4 @@
-function RunMainLoop(hObject, eventdata)
+function cosmos_runMainLoop(hObject, eventdata)
 
 hm=guidata(findobj('Tag','OMSMain'));
 
@@ -108,7 +108,7 @@ hm=getRestartTimes(hm);
 starttime=now+1/86400;
 t = timer;
 set(t,'ExecutionMode','fixedRate','BusyMode','drop','period',5);
-set(t,'TimerFcn',{@RunModelLoop},'Tag','ModelLoop');
+set(t,'TimerFcn',{@cosmos_runModelLoop},'Tag','ModelLoop');
 startat(t,starttime);
 set(hm.TextModelLoopStatus,'String','Status : active');drawnow;
 

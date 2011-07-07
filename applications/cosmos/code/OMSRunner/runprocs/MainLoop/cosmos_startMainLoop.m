@@ -1,4 +1,4 @@
-function StartMainLoop(hm)
+function cosmos_startMainLoop(hm)
 
 delay=8;
 
@@ -11,5 +11,5 @@ end
 
 t = timer;
 set(t,'ExecutionMode','singleShot','BusyMode','drop');
-set(t,'TimerFcn',{@RunMainLoop},'Tag','MainLoop');
+set(t,'TimerFcn',{@cosmos_runMainLoop},'Tag','MainLoop');
 startat(t,starttime);

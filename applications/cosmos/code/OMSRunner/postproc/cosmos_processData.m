@@ -1,4 +1,4 @@
-function hm=ProcessData(hm,m)
+function hm=cosmos_processData(hm,m)
 
 Model=hm.Models(m);
 

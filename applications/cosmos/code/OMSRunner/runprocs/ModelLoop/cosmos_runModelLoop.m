@@ -149,7 +149,7 @@ try
         WriteLogFile(['Processing data ' hm.Models(m).Name]);
         
         % Process model results
-        hm=ProcessData(hm,m);
+        hm=cosmos_processData(hm,m);
         
         disp(['Post-processing ' hm.Models(m).Name ' finished']);
         
@@ -201,7 +201,7 @@ try
             set(hm.EditCycle,'String',datestr(hm.Cycle,'yyyymmdd HHMMSS'));
             set(hm.TextModelLoopStatus,'String','Status : waiting');drawnow;        
             guidata(findobj('Tag','OMSMain'),hm);
-            StartMainLoop(hm);
+            cosmos_startMainLoop(hm);
         end
     end
 
