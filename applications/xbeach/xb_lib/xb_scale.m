@@ -70,6 +70,7 @@ if ~xb_check(xb); error('Invalid XBeach structure'); end;
 OPT = struct( ...
     'depthscale', 1, ...
     'contraction', 1, ...
+    'wfunc', DuneErosionSettings('get', 'FallVelocity'), ...
     'zmin', [] ...
 );
 
@@ -126,8 +127,8 @@ xb = set_offset(xb,'zs0file.tide',dz);
 %% scale sediment
 
 if xb_exist(xb,'D50')
-    xb = set_scale(xb,'D50',nw);
-    xb = set_scale(xb,'D90',nw);
+    xb = set_scale(xb,'D50',sqrt(nw));
+    xb = set_scale(xb,'D90',sqrt(nw));
 else
     warning('OET:xbeach:scale', 'Cannot scale D50, value not present');
 end

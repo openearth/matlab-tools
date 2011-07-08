@@ -120,7 +120,7 @@ while NaNsinP
     if all(~any(isnan(P)))
         NaNsinP = false;
     elseif all(isnan(P)) || Iplus>100
-        error('Invalid boundaries in CDF');
+        warning('Invalid boundaries in CDF');
     end
 end
 

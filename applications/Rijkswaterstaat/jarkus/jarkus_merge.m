@@ -4,17 +4,18 @@ function transects = jarkus_merge(transects, varargin)
 %   Merges the altitude property of a JARKUS transect struct resulting from
 %   the jarkus_transects function in a specific dimension. The dimensions
 %   can either be time, cross_shore or alongshore. Two mergin methods are
-%   available: fill and envelope. The fill method fills NaN values with
-%   values from other transects, while the envelope takes the maximum
-%   values of all transects.
+%   available: fill, envelope or extend. The fill method fills NaN values
+%   with values from other transects, while the envelope takes the maximum
+%   values of all transects. The extend option enlarges the coverage area
+%   with past measurements.
 %
 %   Syntax:
 %   transects = jarkus_merge(transects, varargin)
 %
 %   Input:
 %   varargin    = key/value pairs of optional parameters
-%                 method    = method of merging fill/enevelop (default:
-%                               fill)
+%                 method    = method of merging fill/enevelop/extend
+%                               (default: fill)
 %                 dim       = dimension to be used for interpolation
 %                               time/cross_shore/alongshore (default: time)
 %                 reverse   = merge in reversed order (default: false)
@@ -131,6 +132,12 @@ for i = 1:length(dim_val)
             % update with larger values of current altitudes
             [altitude, idx] = max(altitude, alt);
             sources(idx) = dim_val(ii);
+        case 'extend'
+            % update only to extend coverage area'
+            idx1 = find(~isnan(alt),1,'first');
+            idx2 = find(~isnan(alt),1,'last');
+            altitude(idx1:idx2) = alt(idx1:idx2);
+            sources(idx1:idx2) = dim_val(ii);
     end
     
     % save last used value of merging dimension
