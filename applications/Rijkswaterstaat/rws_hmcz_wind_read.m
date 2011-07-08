@@ -185,6 +185,11 @@ no_cellstr    = 1;
                
                [tok01,record] = strtok(record);
                [tok02,record] = strtok(record);
+              
+               tok01 = strrep(tok01,'mrt','mar'); % as datenum doesn't recognise otherwise
+               tok01 = strrep(tok01,'mei','may');
+               tok01 = strrep(tok01,'okt','oct');
+               
                hr             = str2num(tok02(1:2));
                mn             = str2num(tok02(4:5));
                datenumnow     = datenum(tok01     ) + (hr + mn./60)./24;
