@@ -641,6 +641,41 @@ for i=1:length(openBoundaries)
 
 end
 
+%% And now do the Neumann boundaries (this only works in case of one water
+%% level boundary and cartesian coordinates).
+% First check if there are N boundaries
+ibndneu=[];
+nbndneu=0;
+ibndwl=[];
+nbndwl=0;
+for i=1:length(openBoundaries)
+    switch lower(openBoundaries(i).type)
+        case{'n'}
+            nbndneu=nbndneu+1;
+            ibndneu(nbndneu)=i;
+        case{'z'}
+            nbndwl=nbndwl+1;
+            ibndwl(nbndwl)=i;
+    end
+end
+if nbndneu>0 && nbndwl==1
+    % Compute length of water level boundary (take the first boundary)
+    bndwl=openBoundaries(ibndwl(1));
+    lngth=sqrt((bndwl.x(2)-bndwl.x(1)).^2 + (bndwl.y(2)-bndwl.y(1)).^2);
+    % Determine grid direction
+    if strcmpi(bndwl.orientation,'positive')
+        idir=1;
+    else
+        idir=-1;
+    end
+    wlgrad=idir*squeeze(bndwl(:,2))-squeeze(bndwl(:,1))/lngth;
+    for i=1:nbndneu
+        openBoundaries(ibndneu(i)).timeSeriesT=openBoundaries(ibndwl(1)).timeSeriesT;
+        openBoundaries(ibndneu(i)).timeSeriesA=wlgrad;
+        openBoundaries(ibndneu(i)).timeSeriesB=wlgrad;        
+    end
+end
+
 %%
 function openBoundaries=nesthd2_transport(openBoundaries,vertGrid,s,nest)
 

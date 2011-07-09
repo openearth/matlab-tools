@@ -1,4 +1,4 @@
-function err=getMeteoFromNomads3(meteoname,cycledate,cyclehour,t,xlim,ylim,dirstr,varargin)
+function err=getMeteoFromNomads3(meteosource,meteoname,cycledate,cyclehour,t,xlim,ylim,dirstr,varargin)
 
 includeHeat=0;
 precip=0;
@@ -20,7 +20,7 @@ ntry=1;
 cloudstr='otcdcclm';
 prstr='prmslmsl';
 
-switch lower(meteoname)
+switch lower(meteosource)
     case{'ncep_gfs_analysis'}
         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_GFS_ANALYSIS/analysis_complete';
         prstr='prmsl';
@@ -33,6 +33,7 @@ switch lower(meteoname)
     case{'gfs0p5'}
         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd' datestr(cycledate,'yyyymmdd') '/gfs_hd_' num2str(cyclehour,'%0.2i') 'z'];
         cloudstr='tcdcclm';
+        xlim=mod(xlim,360);
     case{'nam'}
         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/nam/nam' datestr(cycledate,'yyyymmdd') '/nam_' num2str(cyclehour,'%0.2i') 'z'];
         cloudstr='tcdcclm';
