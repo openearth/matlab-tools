@@ -1,6 +1,17 @@
 function [flow,openBoundaries]=delft3dflow_readInput(inpdir,runid,varargin)
 % Returns flow structure with required Delft3D-FLOW input as well as boundary structure for nesting
 
+cs='projected';
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'coordinatesystem'}
+                % Coordiate system type (projected or geographic)
+                cs=varargin{i+1};
+        end
+    end
+end
+
 %% Read MDF file
 
 MDF=delft3dflow_readMDFText([inpdir runid '.mdf']);
@@ -159,7 +170,7 @@ if isfield(flow,'bndFile')
     
     % Initialize individual boundary sections
     for i=1:length(openBoundaries)
-        openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,i,t0,t1,nrsed,nrtrac,nrharmo,x,y,z,kcs);
+        openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,i,t0,t1,nrsed,nrtrac,nrharmo,x,y,z,kcs,'coordinatesystem',cs);
     end
     
 end

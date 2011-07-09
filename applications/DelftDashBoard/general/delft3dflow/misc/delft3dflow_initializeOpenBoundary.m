@@ -1,8 +1,19 @@
-function openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,nb,t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs)
+function openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,nb,t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs,varargin)
+
+cs='projected';
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'coordinatesystem'}
+                % Coordiate system type (projected or geographic)
+                cs=varargin{i+1};
+        end
+    end
+end
 
 openBoundaries(nb).THLag=[0 0];
 
-[xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(openBoundaries(nb),x,y,depthZ,kcs);
+[xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(openBoundaries(nb),x,y,depthZ,kcs,'coordinatesystem',cs);
 
 openBoundaries(nb).x=xb;
 openBoundaries(nb).y=yb;

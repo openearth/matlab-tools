@@ -11,6 +11,7 @@ runid=[];
 t0=[];
 t1=[];
 isave=0;
+cs='projected';
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -51,13 +52,15 @@ for i=1:length(varargin)
                 t0=varargin{i+1};
             case{'stoptime'}
                 t1=varargin{i+1};
+            case{'coordinatesystem'}
+                cs=varargin{i+1};
         end
     end
 end
 
 if ~isempty(runid)
     % First read data from mdf file
-    [Flow,openBoundaries]=delft3dflow_readInput(inputdir,runid);
+    [Flow,openBoundaries]=delft3dflow_readInput(inputdir,runid,'coordinatesystem',cs);
     vertGrid.KMax=Flow.KMax;
     vertGrid.layerType=Flow.vertCoord;
     vertGrid.thick=Flow.thick;
@@ -413,13 +416,9 @@ nest.z=z;
 %%
 function openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,zcor)
 
-cr1=0;
-cr2=0;
-
 for i=1:length(openBoundaries)
     
     disp(['   Boundary ' openBoundaries(i).name ' - ' num2str(i) ' of ' num2str(length(openBoundaries))]);
-    
     
     bnd=openBoundaries(i);
     
@@ -441,7 +440,7 @@ for i=1:length(openBoundaries)
             dps(2)=nest.dps(j);
             
             wl=wl+zcor;
-            
+
     end
     
     switch lower(bnd.type)
@@ -580,6 +579,10 @@ for i=1:length(openBoundaries)
             openBoundaries(i).timeSeriesT=nest.t;
             openBoundaries(i).timeSeriesA=squeeze(u1(:,:,1));
             openBoundaries(i).timeSeriesB=squeeze(u1(:,:,2));
+        case{'n'}
+            openBoundaries(i).timeSeriesT=[nest.t(1);nest.t(end)];
+            openBoundaries(i).timeSeriesA=[0;0];
+            openBoundaries(i).timeSeriesB=[0;0];
         case{'r'}
             openBoundaries(i).timeSeriesT=nest.t;
 %            calfac=0.6;
