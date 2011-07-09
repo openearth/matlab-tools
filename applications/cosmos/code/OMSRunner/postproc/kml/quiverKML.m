@@ -10,13 +10,9 @@ overlayfile='';
 lookat=[];
 t=0;
 anim=0;
-thinning=2;
-
-x=x(1:thinning:end,1:thinning:end);
-y=y(1:thinning:end,1:thinning:end);
-u=u(:,1:thinning:end,1:thinning:end);
-v=v(:,1:thinning:end,1:thinning:end);
-
+thinning=1;
+thinningX=[];
+thinningY=[];
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -42,9 +38,31 @@ for i=1:length(varargin)
                 end
             case {'lookat'}
                 lookat=varargin{i+1};
+            case {'thinning'}
+                thinning=varargin{i+1};
+            case {'thinningx'}
+                thinningX=varargin{i+1};
+            case {'thinningy'}
+                thinningY=varargin{i+1};
+            case {'scalefactor'}
+                scalefactor=varargin{i+1};
         end
     end
 end
+
+thin1=thinning;
+thin2=thinning;
+if ~isempty(thinningX)
+    thin2=thinningX;
+end
+if ~isempty(thinningY)
+    thin1=thinningY;
+end
+
+x=x(1:thin1:end,1:thin2:end);
+y=y(1:thin1:end,1:thin2:end);
+u=u(:,1:thin1:end,1:thin2:end);
+v=v(:,1:thin1:end,1:thin2:end);
 
 c=makeColorMap(c,length(levs));
 
@@ -136,9 +154,7 @@ for it=1:length(t)
     
     uu=reshape(uu,[1 size(uu,1)*size(uu,2)]);
     vv=reshape(vv,[1 size(vv,1)*size(vv,2)]);
-    
-    fac=0.1;
-    
+        
     xp00(1)=0;
     yp00(1)=0;
     xp00(2)=1;
@@ -152,7 +168,7 @@ for it=1:length(t)
     
     ang00=atan2(yp00,xp00);
     dst00=sqrt(xp00.^2+yp00.^2);
-    dst00=dst00*fac;
+    dst00=dst00*scalefactor;
 
     for j=1:length(uu)
         vel(j)=sqrt(uu(j).^2+vv(j).^2);
@@ -195,7 +211,8 @@ for it=1:length(t)
         fprintf(fid,'%s\n','<coordinates>');
         zer=zeros(size(outerisland{i}.x))+0;
         vals=[outerisland{i}.x outerisland{i}.y zer]';
-        fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
+%        fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
+        fprintf(fid,'%5.5f,%5.5f,%i\n',vals);
         fprintf(fid,'%s\n','</coordinates>');
         for j=1:length(innerisland{i})
             fprintf(fid,'%s\n','<innerBoundaryIs>');
@@ -203,7 +220,8 @@ for it=1:length(t)
             fprintf(fid,'%s\n','<coordinates>');
             zer=zeros(size(innerisland{i}(j).x(1:deref:end)));
             vals=[innerisland{i}(j).x(1:deref:end) innerisland{i}(j).y(1:deref:end) zer]';
-            fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
+%            fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
+            fprintf(fid,'%5.5f,%5.5f,%i\n',vals);
             fprintf(fid,'%s\n','</coordinates>');
             fprintf(fid,'%s\n','</LinearRing>');
             fprintf(fid,'%s\n','</innerBoundaryIs>');

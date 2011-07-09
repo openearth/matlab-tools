@@ -69,8 +69,8 @@ if n>0
     %% Columns
     columns.beachprofile_change=-columns.beachprofile_change;
     
-    [x0,y0]=ConvertCoordinates(x0,y0,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
-    [x1,y1]=ConvertCoordinates(x1,y1,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+    [x0,y0]=convertCoordinates(x0,y0,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+    [x1,y1]=convertCoordinates(x1,y1,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
     
 %     profileKML(['profiles.' Model.Name],x0,y0,x1,y1,'kmz',1,'directory',figdir);
     
@@ -98,28 +98,26 @@ if n>0
     lookat.heading=ang;
 
     for j=1:length(col)
-        clim=[clmap0(j):dclmap(j):clmap1(j)];
 
         zmax=max(columns.(col{j}));
-        zfac=250/zmax;
         zfac=1000/zmax;
+        [tck,cdec]=cosmos_getTicksAndDecimals(0,ceil(zmax),10);
         
-        handles=hm.muppethandles;
-        clim=[clmap0(j) dclmap(j) clmap1(j)];
-        makeColorBar(handles,Model.Dir,col{j},clim,'jet',barlabel{j});
-        clim=[clmap0(j):dclmap(j):clmap1(j)];
-%        columnKML([col{j} '.' Model.Name],x0,y0,columns.(col{j}),'colormap',jet,'levels',clim,'kmz',1,'radius',15,'zfac',zfac,'directory',figdir,'url',Model.figureURL,'screenoverlay',[figdir col{j} '.colorbar.png'],'lookat',lookat);
+        clim=0:tck:ceil(zmax);
+
+        clrbarname=[figdir col{j} '.colorbar.png'];
+        cosmos_makeColorBar(clrbarname,'contours',clmap0(j):tck:clmap1(j),'colormap','jet','label',barlabel{j},'decimals',cdec);
         columnKML([col{j} '.' Model.Name],x0,y0,columns.(col{j}),'colormap',jet,'levels',clim,'kmz',1,'radius',100,'zfac',zfac,'directory',figdir,'url',Model.figureURL,'screenoverlay',[figdir col{j} '.colorbar.png'],'lookat',lookat);
         if exist([figdir col{j} '.colorbar.png'],'file')
             delete([figdir col{j} '.colorbar.png']);
         end
     end
     
-    [original_shoreline_x,original_shoreline_y]=ConvertCoordinates(original_shoreline_x,original_shoreline_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
-    [final_shoreline_x,final_shoreline_y]=ConvertCoordinates(final_shoreline_x,final_shoreline_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
-    [original_backbeach_x,original_backbeach_y]=ConvertCoordinates(original_backbeach_x,original_backbeach_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
-    [final_backbeach_x,final_backbeach_y]=ConvertCoordinates(final_backbeach_x,final_backbeach_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
-    [max_runup_x,max_runup_y]=ConvertCoordinates(max_runup_x,max_runup_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+    [original_shoreline_x,original_shoreline_y]=convertCoordinates(original_shoreline_x,original_shoreline_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+    [final_shoreline_x,final_shoreline_y]=convertCoordinates(final_shoreline_x,final_shoreline_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+    [original_backbeach_x,original_backbeach_y]=convertCoordinates(original_backbeach_x,original_backbeach_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+    [final_backbeach_x,final_backbeach_y]=convertCoordinates(final_backbeach_x,final_backbeach_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
+    [max_runup_x,max_runup_y]=convertCoordinates(max_runup_x,max_runup_y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
     
     %% Lines
     lookat.tilt=10;

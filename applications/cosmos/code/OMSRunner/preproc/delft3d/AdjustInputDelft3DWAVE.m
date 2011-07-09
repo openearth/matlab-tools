@@ -24,12 +24,23 @@ for i=1:n
 
     % Find boundary points nested grid
     switch lower(hm.Models(mm).Type)
-        case{'xbeachcluster','xbeach'}
+        case{'xbeachcluster'}
             d=[];
             for ip=1:hm.Models(mm).NrProfiles
                 d(ip,1)=hm.Models(mm).Profile(ip).OriginX;
                 d(ip,2)=hm.Models(mm).Profile(ip).OriginY;
             end
+            save(locfile,'d','-ascii');
+        case{'xbeach'}
+            d=[];
+            mdl=hm.Models(mm);            
+            ygrdname=[mdl.Dir 'input' filesep 'y.grd'];
+            ygrd = load(ygrdname, '-ascii');            
+            % crop grid
+            ygrd = ygrd(:,1);
+            lngth=ygrd(end);            
+            d(1,1)=mdl.XOri+cos(pi*(mdl.alpha+90)/180)*0.5*lngth;
+            d(1,2)=mdl.YOri+sin(pi*(mdl.alpha+90)/180)*0.5*lngth;
             save(locfile,'d','-ascii');
         otherwise
             if ~exist(locfile,'file')

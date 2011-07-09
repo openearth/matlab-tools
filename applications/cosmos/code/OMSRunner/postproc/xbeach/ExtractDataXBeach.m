@@ -18,10 +18,10 @@ y=y(:,2:end-1);
 
 pars = struct( ...
     'zb', {{'zb'}}, ...
-    'hs', {{'H'}}, ...
+    'hs', {{'H_mean'}}, ...
     'tp', {{'T'}}, ...
     'wl', {{'zs'}}, ...
-    'vel', {{'u','v'}} ...
+    'vel', {{'uu_mean','vv_mean'}} ...
 );
 
 fpars = fields(pars);
@@ -46,6 +46,7 @@ for i = 1:length(fpars)
 
             if length(parfile)>5 && strcmpi(parfile(end-4:end), '_mean')
                 t=XBdims.tsmean;
+                t=t-3600;
             else
                 t=XBdims.tsglobal;
             end
@@ -58,6 +59,9 @@ for i = 1:length(fpars)
                         s.Time(k)=Model.TFlowStart+t(k)./86400;
                         s.Val(k,:,:)=squeeze(Var(:,2:end-1,k));
                     end
+                    s.Val(nt+1,:,:)=s.Val(nt,:,:);
+                    s.Val(s.Val<0.1)=NaN;
+    
                 case 2
                     for k=1:nt
                         s.Time(k)=Model.TFlowStart+t(k)./86400;
@@ -68,8 +72,16 @@ for i = 1:length(fpars)
                                 s.V(k,:,:)=squeeze(Var(:,2:end-1,k));
                         end
                     end
+                        switch j
+                            case 1
+                    s.U(nt+1,:,:)=s.U(nt,:,:);
+                            case 2
+                    s.V(nt+1,:,:)=s.V(nt,:,:);
+                    end
             end
         end
+        
+        s.Time(end+1)=s.Time(end)+1/24;
         
         fname=[Model.ArchiveDir hm.CycStr filesep 'maps' filesep par '.mat'];
         switch length(parfiles)

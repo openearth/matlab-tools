@@ -4,8 +4,6 @@ tmpdir=hm.TempDir;
 
 mm=hm.Models(m).WaveNestModelNr;
 
-dr=hm.Models(m).Dir;
-
 outputdir=[hm.Models(mm).Dir 'lastrun' filesep 'output' filesep];
 
 switch lower(hm.Models(mm).Type)
@@ -19,6 +17,13 @@ switch lower(hm.Models(mm).Type)
             disp('Nesting in SWAN ...');
             
             [success,message,messageid]=copyfile([outputdir hm.Models(m).Runid '*.sp2'],tmpdir,'f');
+            
+            % Get rid of spaces in sp2 file names
+            flist=dir([tmpdir '*.sp2']);
+            for i=1:length(flist)
+                newname=strrep(flist(i).name,' ','');
+                movefile([tmpdir flist(i).name],[tmpdir newname]);
+            end
 
             tstart=hm.Models(mm).TWaveStart;
             dt=hm.Models(mm).WavmTimeStep;

@@ -14,3 +14,4 @@
 wlsettings;
 rmpath y:\app\matlab\toolbox\wl_snctools;
 rmpath y:\app\matlab\toolbox\wl_netcdf;
+rmpath y:\app\matlab\toolbox\wl_mexnc;

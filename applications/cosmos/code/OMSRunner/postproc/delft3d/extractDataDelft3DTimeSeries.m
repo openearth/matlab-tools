@@ -15,9 +15,10 @@ for i=1:Model.NrStations
     stLongName=Model.Stations(i).LongName;
     tstart=max(Model.TWaveOkay,Model.TFlowOkay);
  
-    data=[];
 
     for k=1:Model.Stations(i).NrParameters
+
+        data=[];
 
         par=Model.Stations(i).Parameters(k).Name;
         parLongName=getParameterInfo(hm,par,'longname');
@@ -50,7 +51,7 @@ for i=1:Model.NrStations
                 switch lower(fil)
                     case{'trih'}
                         if ~exist([outdir 'trih-' Model.Runid '.dat'],'file')
-                            killAll;
+%                             killAll;
                         else
                             ii=strmatch(filpar,fieldnames,'exact');
                             if ~isempty(ii)
@@ -63,7 +64,7 @@ for i=1:Model.NrStations
                         end
                     case{'trim'}
                         if ~exist([outdir 'trim-' Model.Runid '.dat'],'file')
-                            killAll;
+%                             killAll;
                         else
                             mm=Model.Stations(i).M;
                             nn=Model.Stations(i).N;

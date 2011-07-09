@@ -58,6 +58,5 @@ end
 
 cd(curdir);
 
-%ConvertBct2XBeach([tmpdir hm.Models(m).Name '.bct'],[tmpdir 'tide.txt'],hm.Models(m).MorFac,hm.Models(m).TFlowStart,tmpdir);
-ConvertBct2XBeach(tmpdir, [hm.Models(m).Name '.bct'],'tide.txt',hm.Models(m).TFlowStart,32); %FIXME
+ConvertBct2XBeach([tmpdir hm.Models(m).Name '.bct'],[tmpdir 'tide.txt'],hm.Models(m).TFlowStart); %FIXME
 delete([tmpdir hm.Models(m).Name '.bct']);

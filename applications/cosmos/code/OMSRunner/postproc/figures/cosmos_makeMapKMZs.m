@@ -9,6 +9,8 @@ if exist(posfile,'file')
     delete(posfile);
 end
 
+name='';
+
 try
     
     Model=hm.Models(m);
@@ -112,7 +114,7 @@ try
                     delete([fdr name '.colorbar.png']);
                 end
 
-            elseif strcmpi(par{1},'surfvel')
+            elseif strcmpi(par{1},'surfvel') || strcmpi(par{1},'vel')
                 % Polyline KML
                 clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
                 cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
@@ -126,13 +128,15 @@ try
                 vv=s(1).data.V(1:n3:end,:,:);
                 fdr=[dr 'lastrun' filesep 'figures' filesep];
                 quiverKML([name '.' Model.Name],xx,yy,uu,vv,'time',tim,'kmz',1,'colormap',jet(64),'levels',clim(1):clim(2):clim(3), ...
-                    'directory',fdr,'screenoverlay',[name '.colorbar.png']);
+                    'directory',fdr,'screenoverlay',[name '.colorbar.png'],'thinning',Model.mapPlots(im).thinning,'thinningx',Model.mapPlots(im).thinningX, ...
+                    'thinningy',Model.mapPlots(im).thinningY,'scalefactor',Model.mapPlots(im).scaleFactor);
                 if exist([fdr name '.colorbar.png'],'file')
                     delete([fdr name '.colorbar.png']);
                 end
                 
             else
-                % Muppet
+                
+                % 2d figure (png)
 
                 if ~isempty(s)
                     
@@ -242,7 +246,7 @@ try
 
 catch
 
-    WriteErrorLogFile(hm,['Something went wrong with generating Muppet maps - ' Model.Name]);
+    WriteErrorLogFile(hm,['Something went wrong with generating map figures of ' name ' - ' Model.Name]);
 
 end
 

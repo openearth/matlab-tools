@@ -259,7 +259,7 @@ if ~isempty(Model.TmzRad)
     fprintf(fid,'%s\n',['TmzRad= ' num2str(Model.TmzRad)]);
 end
 
-if strcmpi(Model.FlowNestType,'oceanmodel')
+if strcmpi(Model.FlowNestType,'oceanmodel') || Model.nudge
     fprintf(fid,'%s\n','Nudge = #Y#');
     fprintf(fid,'%s\n','NudVic= 50.0');
 end
@@ -267,7 +267,7 @@ end
 if ~isempty(Model.tracer)
     for i=1:length(Model.tracer)
         if Model.tracer(i).decay>0
-            fprintf(fid,'%s\n',['Decay' num2str(i) '= ' Model.tracer(i).decay]);
+            fprintf(fid,'%s\n',['Decay' num2str(i) '= ' num2str(Model.tracer(i).decay)]);
         end
     end
 end

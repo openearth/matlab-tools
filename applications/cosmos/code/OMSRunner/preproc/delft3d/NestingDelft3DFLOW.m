@@ -46,7 +46,8 @@ switch lower(Model.FlowNestType)
                 opt='both';
             end
             
-            nesthd2('hisfile',hisfile,'inputdir',tmpdir,'runid',runid1,'admfile',nstadm,'zcor',zcor,'save',1,'opt',opt);
+            cs=Model.CoordinateSystemType;
+            nesthd2('hisfile',hisfile,'inputdir',tmpdir,'runid',runid1,'admfile',nstadm,'zcor',zcor,'save',1,'opt',opt,'coordinatesystem',cs);
 
         else
 

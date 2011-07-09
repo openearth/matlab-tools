@@ -19,7 +19,7 @@ end
 for i=1:Model.NrProfiles
     if Model.Profile(i).Run
         disp(['Generating params.txt cluster ' Model.LongName ' - profile ' Model.Profile(i).Name]);
-        MakeXBeachProfileInput(hm,m,i);
+        cosmos_writeXBeachProfileParams(hm,m,i);
     end
 end
 

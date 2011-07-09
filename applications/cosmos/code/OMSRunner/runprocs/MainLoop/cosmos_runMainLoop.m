@@ -1,5 +1,16 @@
 function cosmos_runMainLoop(hObject, eventdata)
 
+% Clear data, close hidden windows etc.
+disp('Clearing memory ...');
+clear all;
+figs=findall(0,'Type','figure');
+for i=1:length(figs)
+    name=get(figs(i),'Name');
+    if ~strcmpi(name,'OMSMain')
+        close(figs(i));
+    end
+end
+
 hm=guidata(findobj('Tag','OMSMain'));
 
 disp('Start main loop ...');

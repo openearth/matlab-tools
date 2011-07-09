@@ -6,6 +6,7 @@ decs=[3 3 3 2 2 2 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
 cavg=(c2-c1)/np;
 
 ii=find(tcks<cavg,1,'last');
+
 if isempty(ii)
     tck=cavg;
     dec=1;

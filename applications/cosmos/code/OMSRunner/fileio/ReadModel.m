@@ -267,6 +267,13 @@ if isfield(model,'salinity')
     end
 end
 
+hm.Models(i).nudge=0;
+if isfield(model,'nudge')
+    if strcmpi(model.nudge(1),'y')
+        hm.Models(i).nudge=1;
+    end
+end
+
 % Discharges
 hm.Models(i).discharge=[];
 if isfield(model,'discharges')
@@ -372,8 +379,11 @@ end
 if isfield(model,'nx')
     hm.Models(i).nX=str2double(model.nx);
 end
-if isfield(model,'dy')
+if isfield(model,'ny')
     hm.Models(i).nY=str2double(model.ny);
+end
+if isfield(model,'alpha')
+    hm.Models(i).alpha=str2double(model.alpha);
 end
 
 %% Nesting
@@ -588,6 +598,22 @@ if isfield(model,'maps')
         hm.Models(i).mapPlots(j).colorBarDecimals=1;
         if isfield(model.maps(j).map,'colorbardecimals')
             hm.Models(i).mapPlots(j).colorBarDecimals=str2num(model.maps(j).map.colorbardecimals);
+        end
+        hm.Models(i).mapPlots(j).thinning=1;
+        if isfield(model.maps(j).map,'thinning')
+            hm.Models(i).mapPlots(j).thinning=str2num(model.maps(j).map.thinning);
+        end
+        hm.Models(i).mapPlots(j).thinningX=[];
+        if isfield(model.maps(j).map,'thinningx')
+            hm.Models(i).mapPlots(j).thinningX=str2num(model.maps(j).map.thinningx);
+        end
+        hm.Models(i).mapPlots(j).thinningY=[];
+        if isfield(model.maps(j).map,'thinningy')
+            hm.Models(i).mapPlots(j).thinningY=str2num(model.maps(j).map.thinningy);
+        end
+        hm.Models(i).mapPlots(j).scaleFactor=0.1;
+        if isfield(model.maps(j).map,'scalefactor')
+            hm.Models(i).mapPlots(j).scaleFactor=str2num(model.maps(j).map.scalefactor);
         end
 
 %         if ~isempty(hm.Models(i).WebSite)

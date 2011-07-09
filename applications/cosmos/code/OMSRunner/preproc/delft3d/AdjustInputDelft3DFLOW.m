@@ -159,11 +159,11 @@ for i=1:hm.NrModels
 
                         case{'xbeach'}
                             
-                            mdl = hm.Models(i).Profile(ip);
+                            mdl=hm.Models(i);
                             
                             % read grid
-                            xgrdname=[hm.Models(i).Dir 'input' filesep 'x.grd'];
-                            ygrdname=[hm.Models(i).Dir 'input' filesep 'y.grd'];
+                            xgrdname=[mdl.Dir 'input' filesep 'x.grd'];
+                            ygrdname=[mdl.Dir 'input' filesep 'y.grd'];
                             xgrd = load(xgrdname, '-ascii');
                             ygrd = load(ygrdname, '-ascii');
                             
@@ -172,10 +172,10 @@ for i=1:hm.NrModels
                             ygrd = ygrd(:,1:2)';
                             
                             % rotate grid
-                            alpha = mdl.Alpha/180*pi;
-                            R = [cos(alpha) sin(alpha); -sin(alpha) cos(alpha)];
-                            xg = mdl.OriginX+R(1,1)*xgrd+R(1,2)*ygrd;
-                            yg = mdl.OriginY+R(2,1)*xgrd+R(2,2)*ygrd;
+                            alpha = mdl.alpha/pi*180;
+                            R = [cos(alpha) -sin(alpha); sin(alpha) cos(alpha)];
+                            xg = mdl.XOri+R(1,1)*xgrd+R(1,2)*ygrd;
+                            yg = mdl.YOri+R(2,1)*xgrd+R(2,2)*ygrd;
                             
                             % write bnd file
                             fi2=fopen([hm.TempDir 'temp.bnd'],'wt');
@@ -192,7 +192,7 @@ for i=1:hm.NrModels
                             
                     if ~strcmpi(hm.Models(i).CoordinateSystem,Model.CoordinateSystem) || ~strcmpi(hm.Models(i).CoordinateSystemType,Model.CoordinateSystemType)
                         % Convert coordinates
-                        [xg,yg]=ConvertCoordinates(xg,yg,'persistent','CS1.name',hm.Models(i).CoordinateSystem,'CS1.type',hm.Models(i).CoordinateSystemType,'CS2.name',hm.Models(m).CoordinateSystem,'CS2.type',hm.Models(m).CoordinateSystemType);
+                        [xg,yg]=convertCoordinates(xg,yg,'persistent','CS1.name',hm.Models(i).CoordinateSystem,'CS1.type',hm.Models(i).CoordinateSystemType,'CS2.name',hm.Models(m).CoordinateSystem,'CS2.type',hm.Models(m).CoordinateSystemType);
                     end
 
                     wlgrid('write',[hm.TempDir 'temp.grd'],xg,yg,enc);

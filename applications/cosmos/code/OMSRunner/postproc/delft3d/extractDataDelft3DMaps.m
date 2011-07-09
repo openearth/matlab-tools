@@ -21,6 +21,7 @@ for ip=1:np
         fil='';
         filpar='';
         typ='';
+        data=[];
         
         fil=getParameterInfo(hm,par,'model',Model.Type,'datatype','map','file');
         filpar=getParameterInfo(hm,par,'model',Model.Type,'datatype','map','name');
@@ -46,7 +47,7 @@ for ip=1:np
                     data.Val=zeros();
                     % Read first time step to get dimensions and grid
                     if ~isempty(layer)
-                        data0 = qpread(fid,1,filpar,'griddata',1,0,0,39);
+                        data0 = qpread(fid,1,filpar,'griddata',1,0,0,layer);
                     else
                         data0 = qpread(fid,1,filpar,'griddata',1,0,0);
                     end                    
@@ -59,11 +60,7 @@ for ip=1:np
                             d = qpread(fid,1,filpar,'data',it,0,0,layer);
                         else
                             if length(times)>1
-                                try
                                 d = qpread(fid,1,filpar,'data',it,0,0);    
-                                catch
-                                    shi=1;
-                                end
                             else
                                 d = qpread(fid,1,filpar,'data',0,0);    
                             end
