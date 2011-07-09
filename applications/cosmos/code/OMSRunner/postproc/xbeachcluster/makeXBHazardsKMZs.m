@@ -100,14 +100,20 @@ if n>0
     for j=1:length(col)
 
         zmax=max(columns.(col{j}));
-        zfac=1000/zmax;
-        [tck,cdec]=cosmos_getTicksAndDecimals(0,ceil(zmax),10);
         
-        clim=0:tck:ceil(zmax);
+        if zmax>0
+            zfac=1000/zmax;
+            [tck,cdec]=cosmos_getTicksAndDecimals(0,ceil(zmax),10);
+            clim=0:tck:ceil(zmax);
+        else
+            zfac=1000/zmax;
+            clim=[0:0.1:1];
+        end
 
         clrbarname=[figdir col{j} '.colorbar.png'];
-        cosmos_makeColorBar(clrbarname,'contours',clmap0(j):tck:clmap1(j),'colormap','jet','label',barlabel{j},'decimals',cdec);
+        cosmos_makeColorBar(clrbarname,'contours',clim,'colormap','jet','label',barlabel{j},'decimals',cdec);
         columnKML([col{j} '.' Model.Name],x0,y0,columns.(col{j}),'colormap',jet,'levels',clim,'kmz',1,'radius',100,'zfac',zfac,'directory',figdir,'url',Model.figureURL,'screenoverlay',[figdir col{j} '.colorbar.png'],'lookat',lookat);
+
         if exist([figdir col{j} '.colorbar.png'],'file')
             delete([figdir col{j} '.colorbar.png']);
         end

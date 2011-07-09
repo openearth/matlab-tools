@@ -49,8 +49,10 @@ set(gca,'YTick',yticks);
 datetick(gca,'x',15,'keepticks');
 
 dy=ylim(2)-ylim(1);
-for it=1:2:length(xticks)
-    tx=text(xticks(it),ylim(1)-0.15*dy,datestr(xticks(it),'yyyy/mm/dd'));
+roundticks=find(round(xticks)==xticks);
+for it=1:length(roundticks)
+    itt=roundticks(it);
+    tx=text(xticks(itt),ylim(1)-0.15*dy,datestr(xticks(itt),'yyyy/mm/dd'));
     set(tx,'FontSize',5,'HorizontalAlignment','center');
 end
 

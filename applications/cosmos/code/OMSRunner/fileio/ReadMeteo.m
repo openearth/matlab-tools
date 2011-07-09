@@ -37,8 +37,9 @@ for i=1:length(txt)
         case {'ylim'},
             hm.Meteo(noset).YLim(1)=str2double(txt{i+1});
             hm.Meteo(noset).YLim(2)=str2double(txt{i+2});
+        case {'source'},
+            hm.Meteo(noset).source=txt{i+1};
     end
-
 
 end
 

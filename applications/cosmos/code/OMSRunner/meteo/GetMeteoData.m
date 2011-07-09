@@ -12,6 +12,7 @@ for i=1:hm.NrMeteoDatasets
 
     meteoname=hm.Meteo(i).Name;
     meteoloc=hm.Meteo(i).Location;
+    meteosource=hm.Meteo(i).source;
 
     xlim = hm.Meteo(i).XLim;
     ylim = hm.Meteo(i).YLim;
@@ -65,7 +66,7 @@ for i=1:hm.NrMeteoDatasets
                 case{'nomads'}
 %                    GetMeteoFromNomads(meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir);
 %                    GetMeteoFromNomads2(meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,inclh);
-                    GetMeteoFromNomads3(meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,inclh);
+                    GetMeteoFromNomads3(meteosource,meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,'includeHeat',inclh);
                 case{'matroos'}
                     disp(['Getting HIRLAM ' datestr(tt(1)) ' to ' datestr(tt(end)) ' ...']);
                     getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
