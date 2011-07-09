@@ -661,14 +661,14 @@ end
 if nbndneu>0 && nbndwl==1
     % Compute length of water level boundary (take the first boundary)
     bndwl=openBoundaries(ibndwl(1));
-    lngth=sqrt((bndwl.x(2)-bndwl.x(1)).^2 + (bndwl.y(2)-bndwl.y(1)).^2);
+    lngth=sqrt((bndwl.x(end)-bndwl.x(1)).^2 + (bndwl.y(end)-bndwl.y(1)).^2);
     % Determine grid direction
     if strcmpi(bndwl.orientation,'positive')
         idir=1;
     else
         idir=-1;
     end
-    wlgrad=idir*squeeze(bndwl(:,2))-squeeze(bndwl(:,1))/lngth;
+    wlgrad=idir*(squeeze(bndwl.timeSeriesB)-squeeze(bndwl.timeSeriesA))/lngth;
     for i=1:nbndneu
         openBoundaries(ibndneu(i)).timeSeriesT=openBoundaries(ibndwl(1)).timeSeriesT;
         openBoundaries(ibndneu(i)).timeSeriesA=wlgrad;
