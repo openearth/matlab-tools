@@ -34,11 +34,13 @@ set(h,'PaperPositionMode','manual');
 ax=axes;
 set(ax,'Units','centimeters');
 
+% Assuming x and y are on cell corners and z is in cell centres!
 pcolor(data.x,data.y,data.z);caxis(clim);
 colormap(clmap);
 shading flat;
 
-bgc=[0.5 0.5 0.5];
+% Random purplish color
+bgc=[0.8 0.1 0.8];
 
 set(ax,'XLim',xlim,'YLim',ylim);
 set(ax,'Box','off');
@@ -48,9 +50,8 @@ set(h,'Color',bgc);
 set(ax,'Color',bgc);
 set(h,'InvertHardCopy', 'off');
 
-print('-dpng','-r200','-painters','-loose',fname);
-
-uniquebgcolor=[127 127 127]; % <- select a color that does not exist in your image!!!
+print('-dpng','-r200','-painters',fname);
+uniquebgcolor=[204 25 204]; % <- select a color that does not exist in your image!!!
 im = imread(fname,'BackgroundColor',bgc);
 mask = bsxfun(@eq,im,reshape(uniquebgcolor,1,1,3));
 imwrite(im,fname,'png','Alpha',1-double(all(mask,3)));
