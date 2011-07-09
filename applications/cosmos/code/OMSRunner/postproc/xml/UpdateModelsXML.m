@@ -112,10 +112,12 @@ for iw=1:length(Model.WebSite)
         
         iok=0;
 
+        station=Model.Stations(ist);
+
         % First check if any plots are made for this station. If not, skip
         % it.
-        for ip=1:Model.Stations(ist).NrParameters
-            Parameter=Model.Stations(ist).Parameters(ip);
+        for ip=1:station.NrParameters
+            Parameter=station.Parameters(ip);
             if Parameter.PlotCmp || Parameter.PlotPrd || Parameter.PlotObs
                 iok=1;
             end
@@ -125,27 +127,27 @@ for iw=1:length(Model.WebSite)
             
             j=j+1;
             
-            model.stations(j).station.name      = Model.Stations(j).Name;
-            model.stations(j).station.longname  = Model.Stations(j).LongName;
+            model.stations(j).station.name      = station.Name;
+            model.stations(j).station.longname  = station.LongName;
             if ~strcmpi(Model.CoordinateSystem,'wgs 84')
-                [lon,lat]=convertCoordinates(Model.Stations(j).Location(1),Model.Stations(j).Location(2),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                [lon,lat]=convertCoordinates(station.Location(1),station.Location(2),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
             else
-                lon=Model.Stations(j).Location(1);
-                lat=Model.Stations(j).Location(2);
+                lon=station.Location(1);
+                lat=station.Location(2);
             end
             model.stations(j).station.longitude = lon;
             model.stations(j).station.latitude  = lat;
-            model.stations(j).station.type      = Model.Stations(j).Type;
+            model.stations(j).station.type      = station.Type;
             
             np=0;
-            for ip=1:Model.Stations(j).NrParameters
-                Parameter=Model.Stations(j).Parameters(ip);
+            for ip=1:station.NrParameters
+                Parameter=station.Parameters(ip);
                 typ=Parameter.Name;
                 if Parameter.PlotCmp || Parameter.PlotPrd || Parameter.PlotObs
                     np=np+1;
                     model.stations(j).station.plots(np).plot.parameter=typ;
                     model.stations(j).station.plots(np).plot.type='timeseries';
-                    model.stations(j).station.plots(np).plot.imgname=[typ '.' Model.Stations(j).Name '.png'];
+                    model.stations(j).station.plots(np).plot.imgname=[typ '.' station.Name '.png'];
                 end
             end
         end

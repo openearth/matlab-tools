@@ -27,7 +27,7 @@ for i=1:n
     if convc
         if ~strcmpi(hm.Models(m1).CoordinateSystem,hm.Models(m2).CoordinateSystem) || ~strcmpi(hm.Models(m1).CoordinateSystemType,hm.Models(m2).CoordinateSystemType)
             % Convert coordinates
-            [Spec.x,Spec.y]=ConvertCoordinates(Spec.x,Spec.y,'persistent','CS1.name',hm.Models(m1).CoordinateSystem,'CS1.type',hm.Models(m1).CoordinateSystemType,'CS2.name',hm.Models(m2).CoordinateSystem,'CS2.type',hm.Models(m2).CoordinateSystemType);
+            [Spec.x,Spec.y]=convertCoordinates(Spec.x,Spec.y,'persistent','CS1.name',hm.Models(m1).CoordinateSystem,'CS1.type',hm.Models(m1).CoordinateSystemType,'CS2.name',hm.Models(m2).CoordinateSystem,'CS2.type',hm.Models(m2).CoordinateSystemType);
         end
     end
     

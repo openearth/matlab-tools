@@ -183,11 +183,29 @@ if isfield(model,'cstbnd')
 else
     hm.Models(i).CstBnd=0;
 end
+hm.Models(i).SMVelo='euler';
 if isfield(model,'smvelo')
-    hm.Models(i).SMVelo=str2double(model.smvelo);
-else
-    hm.Models(i).SMVelo='euler';
+    if strcmpi(model.smvelo,'glm')   
+        hm.Models(i).SMVelo='GLM';
+    end
 end
+
+hm.Models(i).dirSpace='circle';
+hm.Models(i).nDirBins=36;
+
+if isfield(model,'dirspace')
+    hm.Models(i).dirSpace=model.dirspace;
+end
+if isfield(model,'ndirbins')
+    hm.Models(i).nDirBins=str2double(model.ndirbins);
+end
+if isfield(model,'startdir')
+    hm.Models(i).startDir=str2double(model.startdir);
+end
+if isfield(model,'enddir')
+    hm.Models(i).endDir=str2double(model.enddir);
+end
+
 if isfield(model,'flowwaterlevel')
     hm.Models(i).FlowWaterLevel=str2double(model.flowwaterlevel);
 else

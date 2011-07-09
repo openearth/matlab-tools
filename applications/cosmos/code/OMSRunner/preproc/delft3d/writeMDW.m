@@ -41,8 +41,14 @@ fprintf(fid,'%s\n','   DirConvention    = nautical');
 fprintf(fid,'%s\n','   SimMode          = non-stationary');
 fprintf(fid,'%s\n',['   TimeStep         = ' num2str(Model.WaveTimeStep)]);
 fprintf(fid,'%s\n','   OnlyInputVerify  = false');
-fprintf(fid,'%s\n','   DirSpace         = circle');
-fprintf(fid,'%s\n','   NDir             = 36');
+if strcmpi(Model.dirSpace,'circle')
+    fprintf(fid,'%s\n','   DirSpace         = circle');
+else
+    fprintf(fid,'%s\n','   DirSpace         = sector');
+    fprintf(fid,'%s\n',['   StartDir         = ' num2str(Model.startDir)]);
+    fprintf(fid,'%s\n',['   EndDir           = ' num2str(Model.endDir)]);
+end
+fprintf(fid,'%s\n',['   NDir             = ' num2str(Model.nDirBins)]);
 fprintf(fid,'%s\n','   FreqMin          = 5.0000001e-002');
 fprintf(fid,'%s\n','   FreqMax          = 1.0000000e+000');
 fprintf(fid,'%s\n','   NFreq            = 24');
@@ -116,26 +122,10 @@ fprintf(fid,'%s\n','[Domain]');
 fprintf(fid,'%s\n',['   Grid             = ' Model.Name '_swn.grd']);
 fprintf(fid,'%s\n',['   BedLevel         = ' Model.Name '_swn.dep']);
 
-if Model.FlowWaterLevel
-    fprintf(fid,'%s\n','   FlowWaterLevel   = 1');
-else
-    fprintf(fid,'%s\n','   FlowWaterLevel   = 0');
-end
-if Model.FlowBedLevel
-    fprintf(fid,'%s\n','   FlowBedLevel     = 1');
-else
-    fprintf(fid,'%s\n','   FlowBedLevel     = 0');
-end
-if Model.FlowVelocity
-    fprintf(fid,'%s\n','   FlowVelocity     = 1');
-else
-    fprintf(fid,'%s\n','   FlowVelocity     = 0');
-end
-if Model.FlowWind
-    fprintf(fid,'%s\n','   FlowWind         = 1');
-else
-    fprintf(fid,'%s\n','   FlowWind         = 0');
-end
+fprintf(fid,'%s\n',['   FlowWaterLevel   = ' num2str(Model.FlowWaterLevel)]);
+fprintf(fid,'%s\n',['   FlowBedLevel     = ' num2str(Model.FlowBedLevel)]);
+fprintf(fid,'%s\n',['   FlowVelocity     = ' num2str(Model.FlowVelocity)]);
+fprintf(fid,'%s\n',['   FlowWind         = ' num2str(Model.FlowWind)]);
 
 fprintf(fid,'%s\n','[Boundary]');
 % switch lower(hm.Models(Model.WaveNestModelNr).Type)
