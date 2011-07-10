@@ -7,6 +7,7 @@ xmax=max(max(x));
 ymax=max(max(y));
 dx=(xmax-xmin)/20;
 dy=(ymax-ymin)/20;
+
 nt=10;
 dtCurVec=1;
 pos=[];
@@ -51,7 +52,8 @@ for i=1:length(varargin)
                 timestep=varargin{i+1};
             case{'polygon'}
                 polxy=varargin{i+1};
-                polarea=polyarea(polxy(:,1),polxy(:,1));
+                xp=squeeze(polxy(:,1));
+                yp=squeeze(polxy(:,2));
             case{'coordinatesystem','cs'}
                 switch lower(varargin{i+1})
                     case{'geographic','geo','spherical','latlon'}
@@ -63,43 +65,74 @@ for i=1:length(varargin)
     end
 end
 
-if isempty(dy)
-    dy=dx;
-end
-
 dt=dtCurVec/(nt-1);
+
+if isempty(polxy)
+    % Make polygon from xlim and ylim
+    xp=[xmin xmax xmax xmin];
+    yp=[ymin ymin ymax ymax];
+end
 
 %% Start points of curved vectors
 
-nx=round((xmax-xmin)/dx)+1;
-ny=round((ymax-ymin)/dy)+1;
-n2=nx*ny;
+if ~isempty(pos)
+    x2=pos(:,1);
+    y2=pos(:,2);
+    iage=pos(:,3);
+    n2=length(x2);
+else
+   % Total number of arrows
+    polarea=polyarea(xp,yp);
+    n2=round(polarea/dx^2);
+    [x2,y2]=randomdistributeinpolygon(xp,yp,'nrpoints',n2);
+    iage=round(lifespan*rand(n2,1));
+end
+
 if n2>15000
     disp(['Number of curved arrows (' num2str(n2) ') exceeds 15000!']);
     return
 end
 
-if ~isempty(pos)
-    a=pos;
-    x2=a(:,1);
-    y2=a(:,2);
-    iage=a(:,3);
-    for ii=1:length(x2);
-        if iage(ii)>lifespan
-            x2(ii)=xmin+(xmax-xmin)*rand;
-            y2(ii)=ymin+(ymax-ymin)*rand;
-            iage(ii)=1;
-        end
-    end
-else
-    % TODO need to include some mercator stuff here
-    [x2,y2]=meshgrid(xmin:dx:xmin+(nx-1)*dx,ymin:dy:ymin+(ny-1)*dy);
-    x2=x2+0.5*dx*rand(ny,nx)+0.5*dx;
-    y2=y2+0.5*dx*rand(ny,nx)+0.5*dx;
-    x2=reshape(x2,[nx*ny 1]);
-    y2=reshape(y2,[nx*ny 1]);
-    iage=round(lifespan*rand(nx*ny,1));
+% Check for points past their lifespan
+idead=find(iage>=lifespan);
+for j=1:length(idead)
+    ii=idead(j);
+    [xn,yn]=randomdistributeinpolygon(xp,yp,'nrpoints',1);
+    x2(ii)=xn;
+    y2(ii)=yn;
+    iage(ii)=0;
 end
+
+% Check for points outside polygon
+iout=find(inpolygon(x2,y2,xp,yp)==0);
+for j=1:length(iout)
+    ii=iout(j);
+    [xn,yn]=randomdistributeinpolygon(xp,yp,'nrpoints',1);
+    x2(ii)=xn;
+    y2(ii)=yn;
+    iage(ii)=0;
+end
+
+% if ~isempty(pos)
+%     x2=pos(:,1);
+%     y2=pos(:,2);
+%     iage=pos(:,3);
+%     for ii=1:length(x2);
+%         if iage(ii)>lifespan
+%             x2(ii)=xmin+(xmax-xmin)*rand;
+%             y2(ii)=ymin+(ymax-ymin)*rand;
+%             iage(ii)=1;
+%         end
+%     end
+% else
+%     % TODO need to include some mercator stuff here
+%     [x2,y2]=meshgrid(xmin:dx:xmin+(nx-1)*dx,ymin:dy:ymin+(ny-1)*dy);
+%     x2=x2+0.5*dx*rand(ny,nx)+0.5*dx;
+%     y2=y2+0.5*dx*rand(ny,nx)+0.5*dx;
+%     x2=reshape(x2,[nx*ny 1]);
+%     y2=reshape(y2,[nx*ny 1]);
+%     iage=round(lifespan*rand(nx*ny,1));
+% end
 
 x1=x;
 y1=y;
@@ -177,4 +210,48 @@ for ii=1:n2
     pos(ii,1)=xax(nn1,ii)+nfrac*(xax(nn2,ii)-xax(nn1,ii));
     pos(ii,2)=yax(nn1,ii)+nfrac*(yax(nn2,ii)-yax(nn1,ii));
     pos(ii,3)=iage(ii)+1;
+end
+
+%%
+function [x,y]=randomdistributeinpolygon(xp,yp,varargin)
+
+np=[];
+dxp=[];
+
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'nrpoints'}
+                np=varargin{i+1};
+            case{'dx'}
+                dxp=varargin{i+1};
+        end
+    end
+end
+
+if isempty(np)
+    parea=polyarea(xp,yp);
+    np=round(parea/dxp^2);
+end
+
+xmin=min(min(xp));
+xmax=max(max(xp));
+ymin=min(min(yp));
+ymax=max(max(yp));
+
+nrInPol=0;
+x=zeros(np,1);
+y=zeros(np,1);
+while nrInPol<np
+    nrnew=np-nrInPol;
+    xr=xmin+rand(nrnew,1)*(xmax-xmin);
+    yr=ymin+rand(nrnew,1)*(ymax-ymin);
+    inp=inpolygon(xr,yr,xp,yp);
+    iinp=find(inp==1);
+    sumInp=length(iinp);
+    if sumInp>0
+        x(nrInPol+1:nrInPol+sumInp)=xr(iinp);
+        y(nrInPol+1:nrInPol+sumInp)=yr(iinp);
+    end
+    nrInPol=nrInPol+sumInp;
 end
