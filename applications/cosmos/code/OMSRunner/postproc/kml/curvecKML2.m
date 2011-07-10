@@ -14,6 +14,8 @@ anim=0;
 dxCurVec=2;
 lengthCurVec=10800;
 timeStepCurVec=3600;
+relativeSpeed=1;
+lines=0;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -46,6 +48,10 @@ for i=1:length(varargin)
                 lengthCurVec=varargin{i+1};
             case {'timestep'}
                 timeStepCurVec=varargin{i+1};
+            case {'relativespeed'}
+                relativeSpeed=varargin{i+1};
+            case {'lines'}
+                lines=varargin{i+1};
         end
     end
 end
@@ -166,18 +172,25 @@ for it=1:length(t)
     uu=squeeze(u(it,:,:));
     vv=squeeze(v(it,:,:));
     
-    [xp,yp,xax,yax,len,pos]=curvec(x,y,uu,vv,'dx',dxCurVec,'length',lengthCurVec,'timestep',timeStepCurVec,'position',pos,'CS','geographic');
+    [xp,yp,xax,yax,len,pos]=curvec(x,y,uu,vv,'dx',dxCurVec,'length',lengthCurVec,'timestep',timeStepCurVec,'nrvertices',3,'position',pos,'relativespeed',relativeSpeed,'CS','geographic');
 
     vel=len/lengthCurVec;
 
     innerisland=[];
     outerisland=[];
     for j=1:size(xp,2)
-        outerisland{j}.x=squeeze(xp(:,j));
-        outerisland{j}.y=squeeze(yp(:,j));
+        if lines
+            % Lines
+            outerisland{j}.x=squeeze(xax(1:end-1,j));
+            outerisland{j}.y=squeeze(yax(1:end-1,j));
+        else
+            % Arrows
+            outerisland{j}.x=squeeze(xp(:,j));
+            outerisland{j}.y=squeeze(yp(:,j));
+        end
         innerisland{j}=[];
     end
-   
+    
     for i=1:length(outerisland)
         
         st=styleName{end};
@@ -200,24 +213,15 @@ for it=1:length(t)
             vals=[outerisland{i}.x outerisland{i}.y zer]';
             fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
             fprintf(fid,'%s\n','</coordinates>');
-            for j=1:length(innerisland{i})
-                fprintf(fid,'%s\n','<innerBoundaryIs>');
-                fprintf(fid,'%s\n','<LinearRing>');
-                fprintf(fid,'%s\n','<coordinates>');
-                zer=zeros(size(innerisland{i}(j).x(1:deref:end)));
-                vals=[innerisland{i}(j).x(1:deref:end) innerisland{i}(j).y(1:deref:end) zer]';
-                fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
-                fprintf(fid,'%s\n','</coordinates>');
-                fprintf(fid,'%s\n','</LinearRing>');
-                fprintf(fid,'%s\n','</innerBoundaryIs>');
-            end
             fprintf(fid,'%s\n','</LineString>');
             fprintf(fid,'%s\n','</Placemark>');
             
         end
         
     end
+    
     fprintf(fid,'%s\n','</Folder>');
+
 end
 fprintf(fid,'%s\n','</Document>');
 fprintf(fid,'%s\n','</kml>');
@@ -226,7 +230,7 @@ fclose(fid);
 
 if strcmpi(kmlkmz,'kmz')
     if ~isempty(overlayfile)
-        zip([dr fname '.zip'],{[dr fname '.kml'],overlayfile});
+        zip([dr fname '.zip'],{[dr fname '.kml'],[dr overlayfile]});
     else
         zip([dr fname '.zip'],[dr fname '.kml']);
     end

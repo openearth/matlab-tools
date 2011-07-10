@@ -1,21 +1,75 @@
-function [polx,poly,len,pos]=omsKMLCurVec(x,y,u,v,pos,Ax,Plt,iopt)
+function [polx,poly,xax,yax,len,pos]=curvec(x,y,u,v,varargin)
 
-xmin0=Ax.XMin; xmax0=Ax.XMax;
-ymin0=Ax.YMin; ymax0=Ax.YMax;
-
-xmin=xmin0;
-xmax=xmax0;
-ymin=ymin0;
-ymax=ymax0;
-
-dx=Plt.DxCurVec;
-dy=dx;
-
+% Set default values
+xmin=min(min(x));
+ymin=min(min(y));
+xmax=max(max(x));
+ymax=max(max(y));
+dx=(xmax-xmin)/20;
+dy=(ymax-ymin)/20;
 nt=10;
-dt=Plt.DtCurVec/(nt-1);
+dtCurVec=1;
+pos=[];
+iopt=0;
 
-hdthck=Plt.HeadThickness;
-arthck=Plt.ArrowThickness;
+hdthck=0.6;
+arthck=0.2;
+lifespan=50;
+relspeed=1;
+timestep=1;
+
+polxy=[];
+
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'xlim'}
+                xmin=varargin{i+1}(1);
+                xmax=varargin{i+1}(2);
+            case{'ylim'}
+                ymin=varargin{i+1}(1);
+                ymax=varargin{i+1}(2);
+            case{'dx'}
+                dx=varargin{i+1};
+            case{'dy'}
+                dy=varargin{i+1};
+            case{'position'}
+                pos=varargin{i+1};
+            case{'length'}
+                dtCurVec=varargin{i+1};
+            case{'nrvertices'}
+                nt=varargin{i+1};
+            case{'headthickness'}
+                hdthck=varargin{i+1};
+            case{'arrowthickness'}
+                arthck=varargin{i+1};
+            case{'lifespan'}
+                lifespan=varargin{i+1};
+            case{'relativespeed'}
+                relspeed=varargin{i+1};
+            case{'timestep'}
+                timestep=varargin{i+1};
+            case{'polygon'}
+                polxy=varargin{i+1};
+                polarea=polyarea(polxy(:,1),polxy(:,1));
+            case{'coordinatesystem','cs'}
+                switch lower(varargin{i+1})
+                    case{'geographic','geo','spherical','latlon'}
+                        iopt=1;
+                    otherwise
+                        iopt=0;
+                end
+        end
+    end
+end
+
+if isempty(dy)
+    dy=dx;
+end
+
+dt=dtCurVec/(nt-1);
+
+%% Start points of curved vectors
 
 nx=round((xmax-xmin)/dx)+1;
 ny=round((ymax-ymin)/dy)+1;
@@ -24,8 +78,6 @@ if n2>15000
     disp(['Number of curved arrows (' num2str(n2) ') exceeds 15000!']);
     return
 end
-
-lifespan=Plt.LifeSpanCurVec;
 
 if ~isempty(pos)
     a=pos;
@@ -40,6 +92,7 @@ if ~isempty(pos)
         end
     end
 else
+    % TODO need to include some mercator stuff here
     [x2,y2]=meshgrid(xmin:dx:xmin+(nx-1)*dx,ymin:dy:ymin+(ny-1)*dy);
     x2=x2+0.5*dx*rand(ny,nx)+0.5*dx;
     y2=y2+0.5*dx*rand(ny,nx)+0.5*dx;
@@ -115,7 +168,7 @@ poly=poly(1:end-1,:);
 xax=reshape(xax,[nt+1 n2]);
 yax=reshape(yax,[nt+1 n2]);
 
-nn=(nt-1)*(Plt.RelSpeedCurVec*Plt.DDtCurVec/Plt.DtCurVec);
+nn=(nt-1)*(relspeed*timestep/dtCurVec);
 nfrac=nn-floor(nn);
 nn1=floor(nn)+1;
 nn2=floor(nn)+2;

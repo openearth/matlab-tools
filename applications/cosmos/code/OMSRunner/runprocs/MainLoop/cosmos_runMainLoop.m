@@ -3,6 +3,7 @@ function cosmos_runMainLoop(hObject, eventdata)
 % Clear data, close hidden windows etc.
 disp('Clearing memory ...');
 % clear all;
+fclose all;
 figs=findall(0,'Type','figure');
 for i=1:length(figs)
     name=get(figs(i),'Name');

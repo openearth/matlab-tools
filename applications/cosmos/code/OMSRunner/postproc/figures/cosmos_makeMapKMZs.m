@@ -90,7 +90,7 @@ try
                 end
 
                 if ~strcmpi(Model.CoordinateSystemType,'geographic')
-                    [s(id).data.X,s(id).data.Y]=ConvertCoordinates(s(id).data.X,s(id).data.Y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                    [s(id).data.X,s(id).data.Y]=convertCoordinates(s(id).data.X,s(id).data.Y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
                 end
 
             end
@@ -103,13 +103,14 @@ try
                 AvailableTimes=s(1).data.Time;
                 dt=86400*(AvailableTimes(2)-AvailableTimes(1));
                 n3=round(Model.mapPlots(im).dtAnim/dt);
+                n3=max(n3,1);
                 tim=s(id).data.Time(1:n3:end);
                 uu=s(1).data.U(1:n3:end,:,:);
                 vv=s(1).data.V(1:n3:end,:,:);
                 fdr=[dr 'lastrun' filesep 'figures' filesep];
-                curvecKML([name '.' Model.Name],xx,yy,uu,vv,'time',tim,'kmz',1,'colormap',jet(64),'levels',clim(1):clim(2):clim(3), ...
-                    'directory',fdr,'screenoverlay',[name '.colorbar.png'],'ddtcurvec',Model.mapPlots(im).Dataset(1).DdtCurVec, ...
-                    'dxcurvec',Model.mapPlots(im).Dataset(1).DxCurVec,'dtcurvec',Model.mapPlots(im).Dataset(1).DtCurVec);
+                curvecKML2([name '.' Model.Name],xx,yy,uu,vv,'time',tim,'kmz',1,'colormap',jet(64),'levels',clim(1):clim(2):clim(3), ...
+                    'directory',fdr,'screenoverlay',[name '.colorbar.png'],'timestep',Model.mapPlots(im).Dataset(1).DdtCurVec, ...
+                    'dx',Model.mapPlots(im).Dataset(1).DxCurVec,'relativespeed',0.5,'length',Model.mapPlots(im).Dataset(1).DtCurVec);
                 if exist([fdr name '.colorbar.png'],'file')
                     delete([fdr name '.colorbar.png']);
                 end

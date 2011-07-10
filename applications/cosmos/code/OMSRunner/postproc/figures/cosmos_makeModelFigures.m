@@ -6,7 +6,7 @@ delete(dr);
 
 %% Time Series
 disp('Making time series plots ...');
-cosmos_makeTimeSeriesPlots(hm,m);
+% cosmos_makeTimeSeriesPlots(hm,m);
 
 %% Maps
 switch lower(hm.Models(m).Type)

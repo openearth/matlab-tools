@@ -64,9 +64,7 @@ for i=1:hm.NrMeteoDatasets
 
             switch lower(meteoloc)
                 case{'nomads'}
-%                    GetMeteoFromNomads(meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir);
-%                    GetMeteoFromNomads2(meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,inclh);
-                    GetMeteoFromNomads3(meteosource,meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,'includeHeat',inclh);
+                    getMeteoFromNomads3(meteosource,meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,'includeHeat',inclh);
                 case{'matroos'}
                     disp(['Getting HIRLAM ' datestr(tt(1)) ' to ' datestr(tt(end)) ' ...']);
                     getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
