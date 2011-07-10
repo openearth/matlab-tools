@@ -1,4 +1,94 @@
 function [polx,poly,xax,yax,len,pos]=curvec(x,y,u,v,varargin)
+%CURVEC make curvy arrows from velocity vector fields
+%
+% Can be used for stills and animations.
+%
+% [polx,poly,xax,yax,len,pos] = curvec(x,y,u,v,'keyword','value')
+% 
+% INPUT
+% x,y   : values of the coordinates to be transformed
+% u,v   : values of the velocity components
+% 
+% OUTPUT
+% polx,poly  : n*2 matrix with polygons of curvy arrows
+% xax,yax    : n*2 matrix with axis coordinates of curvy arrows
+% len        : vector with length of curvy arrows (in m)
+% pos        : n*3 matrix with start coordinates for arrows in next time step
+%              (first two columns) and age of arrow (third column) 
+%
+% OPTIONAL INPUT ARGUMENTS
+% xlim           : Vector with horizontal limits in x-direction.
+% ylim           : Vector with horizontal limits in y-direction.
+% dx             : Average horizontal distance (in metres) between start points of arrows.
+% position       : n*3 matrix with start coordinates for arrows in next time step
+%                  (first two columns) and age of arrow (third column).
+% length         : Length of the curvy arrows (in seconds).
+% nrvertices     : Number of vertices along axis of arrows (default 15).
+% headthickness  : Relative width of arrow heads (default 0.6).
+% arrowthickness : Relative width of arrows (default 0.2).
+% lifespan       : Life span of arrows in animation (default 50).
+% relativespeed  : Factor for speed of curvy arrows (default 1.0).
+% timestep       : Time step of animation (in seconds).
+% polygon        : Matrix with coordinates of polygon within which curvy
+%                  arrows will be computed (first column x, second column
+%                  y). Overrides xlim and ylim.
+% cs             : Type of coordinate system. Must be 'geographic' or
+%                  'projected' (default).
+%
+% EXAMPLE 1 : Still
+% 
+% [x,y] = meshgrid(0:10:300,0:10:100);
+% u = zeros(size(x))+1;
+% v = cos(x/100);
+% [polx,poly]=curvec(x,y,u,v,'length',50,'dx',10);
+% patch(polx,poly);axis equal;
+%
+% EXAMPLE 2 : Animation
+% 
+% fig=figure;
+% ptch=patch(0,0,'r');
+% axis equal;
+% set(gca,'xlim',[-10 310],'ylim',[-10 110]);
+% aviobj = avifile('example.avi');
+% [x,y] = meshgrid(0:10:300,0:10:100);
+% pos=[];
+% for t=1:100
+%     disp(['Processing ' num2str(t) ' of 100 ...');
+%     u = zeros(size(x))+cos(t/5);
+%     v = cos(x/100);
+%     [polx,poly,xax,yax,len,pos]=curvec(x,y,u,v,'length',50,'dx',10,'position',pos,'timestep',20);
+%     set(ptch,'XData',polx,'YData',poly);
+%     F = getframe(fig);
+%     aviobj = addframe(aviobj,F);
+% end
+% close(fig)
+% aviobj = close(aviobj);
+%
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%
+%       Maarten.vanOrmondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
 
 % Set default values
 xmin=min(min(x));
@@ -6,10 +96,9 @@ ymin=min(min(y));
 xmax=max(max(x));
 ymax=max(max(y));
 dx=(xmax-xmin)/20;
-dy=(ymax-ymin)/20;
 
-nt=10;
-dtCurVec=1;
+nt=15;
+dtCurVec=[];
 pos=[];
 iopt=0;
 
@@ -32,8 +121,6 @@ for i=1:length(varargin)
                 ymax=varargin{i+1}(2);
             case{'dx'}
                 dx=varargin{i+1};
-            case{'dy'}
-                dy=varargin{i+1};
             case{'position'}
                 pos=varargin{i+1};
             case{'length'}
@@ -65,7 +152,11 @@ for i=1:length(varargin)
     end
 end
 
-dt=dtCurVec/(nt-1);
+if isempty(dtCurVec)
+    % Try to estimate good value for length
+    vmean=nanmean(nanmean(sqrt(u.^2+v.^2)));
+    dtCurVec=0.05*(xmax-xmin)/vmean;
+end
 
 if isempty(polxy)
     % Make polygon from xlim and ylim
@@ -164,6 +255,8 @@ for ii=1:n2
         relwdt(ii)=1.0;
     end
 end
+
+dt=dtCurVec/(nt-1);
 
 [xp,yp,xax,yax,len]=crvec(x2,y2,x1,y1,u,v,dt,nt,hdthck,arthck,relwdt,iopt);
 
