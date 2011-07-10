@@ -96,7 +96,7 @@ try
             end
 
             if strcmpi(par{1},'windvel')
-                % Polyline KML
+                % Curvec KML
                 clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
                 cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                 [xx,yy]=meshgrid(s(1).data.X,s(1).data.Y);
@@ -115,7 +115,7 @@ try
                 end
 
             elseif strcmpi(par{1},'surfvel') || strcmpi(par{1},'vel')
-                % Polyline KML
+                % Quiver KML
                 clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
                 cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                 xx=s(1).data.X;

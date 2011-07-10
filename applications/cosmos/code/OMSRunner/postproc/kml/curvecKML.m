@@ -165,6 +165,7 @@ for it=1:length(t)
     len=zeros(1,size(xp,2));
     for ii=2:np-1
         latfac=cos(pi*yaxn(ii,:)/180);
+        latfac=1;
         dlon=grdfac*latfac.*(xax(ii,:)-xax(ii-1,:));
         dlat=grdfac*(yaxn(ii,:)-yaxn(ii-1,:));
         len=len+sqrt(dlon.^2 + dlat.^2);

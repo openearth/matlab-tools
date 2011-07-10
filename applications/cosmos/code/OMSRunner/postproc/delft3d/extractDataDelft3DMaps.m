@@ -93,7 +93,7 @@ for ip=1:np
         s.X=data.X;
         s.Y=data.Y;
 
-        ifirst=find(times==hm.Cycle);
+        ifirst=find(abs(times-hm.Cycle)<0.001);
 
         if ~isempty(ifirst)
             s.Time=times(ifirst:end);
