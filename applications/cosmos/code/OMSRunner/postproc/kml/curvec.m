@@ -1,28 +1,29 @@
 function [polx,poly,xax,yax,len,pos]=curvec(x,y,u,v,varargin)
 %CURVEC make curvy arrows from velocity vector fields
 %
-% Can be used for stills and animations. This function computes streamlines
-% along randomly distributed seed points. 
+% This function computes streamlines along randomly distributed seed
+% points and generates curvy arrows along these streamlines.Can be used
+% for stills and animations. 
 %
 % [polx,poly,xax,yax,len,pos] = curvec(x,y,u,v,'keyword','value')
 %
 % INPUT
-% x,y   : values of the coordinates to be transformed
-% u,v   : values of the velocity components
+% x,y            : Values of the x and y coordinates of the velocity vector field.
+% u,v            : Values of the velocity components.
 % 
 % OUTPUT
-% polx,poly  : n*2 matrix with polygons of curvy arrows
-% xax,yax    : n*2 matrix with axis coordinates of curvy arrows
-% len        : vector with length of curvy arrows (in m)
-% pos        : n*3 matrix with start coordinates for arrows in next time step
-%              (first two columns) and age of arrow (third column) 
+% polx,poly      : n*2 matrix with polygons of curvy arrows.
+% xax,yax        : n*2 matrix with axis coordinates of curvy arrows.
+% len            : Vector with length of curvy arrows (in m).
+% pos            : n*3 matrix with start coordinates for arrows in next
+%                  time step, (first two columns) and age of arrow (third column).
 %
 % OPTIONAL INPUT ARGUMENTS
-% dx             : Average horizontal distance (in metres) between start points of arrows.
-% timestep       : Time step of animation (in seconds).
+% dx             : Average horizontal spacing (in metres) between start points of arrows.
+% timestep       : Time step of animation (in seconds). Only for animations.
 % length         : Length of the curvy arrows (in seconds).
-% xlim           : Vector with horizontal limits in x-direction.
-% ylim           : Vector with horizontal limits in y-direction.
+% xlim           : Horizontal limits in x-direction, e.g. [3000 8000].
+% ylim           : Horizontal limits in y-direction, e.g. [3000 8000].
 % position       : n*3 matrix with start coordinates for arrows in next time step
 %                  (first two columns) and age of arrow (third column).
 %                  This option is only required for animations.
@@ -39,7 +40,7 @@ function [polx,poly,xax,yax,len,pos]=curvec(x,y,u,v,varargin)
 % cs             : Type of coordinate system. Must be 'geographic' or
 %                  'projected' (default).
 %
-% Note: the maximum number of arrows is 15000!
+% Note: the maximum number of arrows is 15,000!
 % 
 % EXAMPLE 1 : Still
 % 
