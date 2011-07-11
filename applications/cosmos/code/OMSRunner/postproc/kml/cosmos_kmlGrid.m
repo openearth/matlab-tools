@@ -5,16 +5,21 @@ kmlkmz='kmz';
 overlayfile='';
 lookat=[];
 clr=[];
+url='';
 
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
             case {'color'}
                 clr=varargin{i+1};
+            case {'dir'}
+                dr=varargin{i+1};
             case {'kml'}
                 kmlkmz='kml';
             case {'kmz'}
                 kmlkmz='kmz';
+            case {'overlay'}
+                overlayfile=varargin{i+1};
         end
     end
 end
@@ -119,22 +124,21 @@ if ~isempty(lookat)
     fprintf(fid,'%s\n','</LookAt>');
 end
 
-% if ~isempty(overlayfile)
-%     if ~isempty(url)
-%         url=[url '/'];
-%     end
-%     [pathstr,namestr,ext,versn] = fileparts(overlayfile);
-%     fprintf(fid,'%s\n','<ScreenOverlay id="colorbar">');
-%     fprintf(fid,'%s\n','<Icon>');
-%     fprintf(fid,'%s\n',['<href>' url namestr ext '</href>']);
-%     fprintf(fid,'%s\n','</Icon>');
-%     fprintf(fid,'%s\n','<overlayXY x="1" y="1" xunits="pixels" yunits="pixels"/>');
-%     fprintf(fid,'%s\n','<screenXY x="10" y="10" xunits="pixels" yunits="pixels"/>');
-%     fprintf(fid,'%s\n','<rotation>0</rotation>');
-%     fprintf(fid,'%s\n','<size x="0" y="0" xunits="pixels" yunits="pixels"/>');
-%     fprintf(fid,'%s\n','</ScreenOverlay>');
-% end
-    
+if ~isempty(overlayfile)
+    if ~isempty(url)
+        url=[url '/'];
+    end
+    [pathstr,namestr,ext,versn] = fileparts(overlayfile);
+    fprintf(fid,'%s\n','<ScreenOverlay id="overlay">');
+    fprintf(fid,'%s\n','<Icon>');
+    fprintf(fid,'%s\n',['<href>' url namestr ext '</href>']);
+    fprintf(fid,'%s\n','</Icon>');
+    fprintf(fid,'%s\n','<overlayXY x="1" y="1" xunits="pixels" yunits="pixels"/>');
+    fprintf(fid,'%s\n','<screenXY x="10" y="10" xunits="pixels" yunits="pixels"/>');
+    fprintf(fid,'%s\n','<rotation>0</rotation>');
+    fprintf(fid,'%s\n','<size x="0" y="0" xunits="pixels" yunits="pixels"/>');
+    fprintf(fid,'%s\n','</ScreenOverlay>');
+end
     
 fprintf(fid,'%s\n','<Folder>');
 
