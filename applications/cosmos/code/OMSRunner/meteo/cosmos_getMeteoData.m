@@ -1,4 +1,4 @@
-function GetMeteoData(hm)
+function cosmos_getMeteoData(hm)
 
 
 for i=1:hm.NrMeteoDatasets
