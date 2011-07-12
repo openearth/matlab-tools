@@ -200,7 +200,7 @@ if ~isempty(x)
     if ~isempty(txt)
         for i=1:length(x)
             tx(i)=text(x(i),y(i),txt{i});
-            set(tx(i),'Tag',tag,'HitTest','off');
+            set(tx(i),'Tag',tag,'HitTest','off','Clipping','on');
             setappdata(tx(i),'parent',h);
             setappdata(tx(i),'number',i);
         end
