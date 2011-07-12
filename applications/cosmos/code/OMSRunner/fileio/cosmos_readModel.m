@@ -1,4 +1,4 @@
-function [hm,ok]=ReadModel(hm,fname,i)
+function [hm,ok]=cosmos_readModel(hm,fname,i)
 
 ok=1;
 
@@ -567,6 +567,7 @@ if isfield(model,'stations')
 end
 
 %% Map Datasets
+hm.Models(i).nrMapDatasets=0;
 if isfield(model,'mapdatasets')
     hm.Models(i).nrMapDatasets=length(model.mapdatasets);
     for j=1:hm.Models(i).nrMapDatasets
@@ -579,6 +580,7 @@ if isfield(model,'mapdatasets')
 end
 
 %% Map plots
+hm.Models(i).nrMapPlots=0;
 if isfield(model,'mapplots')
     hm.Models(i).nrMapPlots=length(model.mapplots);
     for j=1:hm.Models(i).nrMapPlots

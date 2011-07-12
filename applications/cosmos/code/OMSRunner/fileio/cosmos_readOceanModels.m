@@ -1,4 +1,4 @@
-function hm=ReadOceanModels(hm)
+function hm=cosmos_readOceanModels(hm)
 
 s=xml_load([hm.MainDir 'oceanmodels' filesep 'OceanModels.xml']);
 for i=1:length(s.models)

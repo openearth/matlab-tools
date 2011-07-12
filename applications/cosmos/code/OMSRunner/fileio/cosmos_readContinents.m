@@ -1,4 +1,4 @@
-function hm=ReadContinents(hm)
+function hm=cosmos_readContinents(hm)
 
 hm.Continents{1}='northamerica';
 hm.Continents{2}='centralamerica';
