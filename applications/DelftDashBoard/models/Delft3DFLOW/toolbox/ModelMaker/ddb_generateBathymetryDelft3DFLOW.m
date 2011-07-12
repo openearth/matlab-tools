@@ -83,7 +83,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
 
     z=handles.Model(md).Input(id).depth;
     
-    handles.Model(md).Input(id).depthZ=GetDepthZ(z,handles.Model(md).Input(id).dpsOpt);
+    handles.Model(md).Input(id).depthZ=getDepthZ(z,handles.Model(md).Input(id).dpsOpt);
 
     ddb_wldep('write',[attName '.dep'],z);
 
