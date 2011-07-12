@@ -214,8 +214,21 @@ for i=1:length(gt)
         if getd
             depth = [dpleft' dpright'];
         end
-        lon = [lonleft;lonright];
-        lat=y(iy1:iy2);
+        
+        % TODO This is still wrong!!! Make distinction between xu, xv and
+        % xz!
+        lonz = [lonleft;lonright];
+        lonu = [lonleft;lonright];
+        lonv = [lonleft;lonright];
+
+%         lonz=x(ix1:ix2);
+%         lonu=xu(ix1:ix2);
+%         lonv=xv(ix1:ix2);
+
+        latz=y(iy1:iy2);
+        latu=yu(iy1:iy2);
+        latv=yv(iy1:iy2);
+
     else
         gt(i).amp   = nc_varget(fname,gt(i).ampstr,[ix1-1 iy1-1 ic1-1],[ix2-ix1+1 iy2-iy1+1 ic2]);
         gt(i).phi   = nc_varget(fname,gt(i).phistr,[ix1-1 iy1-1 ic1-1],[ix2-ix1+1 iy2-iy1+1 ic2]);
