@@ -167,6 +167,7 @@ if ~isempty(x)
     set(h,'LineWidth',lineWidth);
     set(h,'HitTest','off');
     
+    
     setappdata(h,'color',lineColor);
     setappdata(h,'width',lineWidth);
     setappdata(h,'marker',marker);
@@ -194,6 +195,17 @@ if ~isempty(x)
         setappdata(mh(i),'number',i);
     end
     setappdata(h,'children',mh);
+
+    tx=[];
+    if ~isempty(txt)
+        for i=1:length(x)
+            tx(i)=text(x(i),y(i),txt{i});
+            set(tx(i),'Tag',tag,'HitTest','off');
+            setappdata(tx(i),'parent',h);
+            setappdata(tx(i),'number',i);
+        end
+    end
+    setappdata(h,'texthandles',tx);
     
     if ~isempty(callback) && strcmpi(opt,'withcallback')
         feval(callback,x,y,h);
@@ -298,6 +310,7 @@ set(gcf, 'windowbuttonupfcn',     {@stopTrack});
 function followTrack(imagefig, varargins)
 h=get(gcf,'CurrentObject');
 p=getappdata(h,'parent');
+tx=getappdata(p,'texthandles');
 x=getappdata(p,'x');
 y=getappdata(p,'y');
 ch=getappdata(p,'children');
@@ -320,6 +333,7 @@ end
 setappdata(p,'x',x);
 setappdata(p,'y',y);
 set(p,'XData',x,'YData',y);
+
 if closed
     if nr==1
         set(ch(1),'XData',x(nr),'YData',y(nr));
@@ -332,6 +346,9 @@ if closed
     end
 else
     set(ch(nr),'XData',x(nr),'YData',y(nr));
+    if ~isempty(tx)
+        set(tx(nr),'Position',[x(nr) y(nr)]);
+    end
 end
 ddb_updateCoordinateText('arrow');
 
@@ -340,6 +357,7 @@ function stopTrack(imagefig, varargins)
 
 h=get(gcf,'CurrentObject');
 p=getappdata(h,'parent');
+tx=getappdata(p,'texthandles');
 buttonUpDownFcn=getappdata(p,'windowbuttonupdownfcn');
 buttonMotionFcn=getappdata(p,'windowbuttonmotionfcn');
 feval(buttonUpDownFcn);
@@ -360,7 +378,9 @@ setappdata(p,'y',y);
 
 set(p,'XData',x,'YData',y);
 set(ch(nr),'XData',x(nr),'YData',y(nr));
-
+if ~isempty(tx)
+    set(tx(nr),'Position',[x(nr) y(nr)]);
+end
 
 callback=getappdata(p,'callback');
 if ~isempty(callback)

@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <toolbox>TropicalCyclone</toolbox>
+  <longname>Tropical Cyclone</longname>
+  <enable>1</enable>
+
+  <elements>
+    <element>
+      <tag>parameterpanel</tag>
+      <style>panel</style>
+      <position>40 10 300 160</position>
+      <text>Cyclone parameters</text>
+    </element> 
+
+    <element>
+      <tag>editname</tag>
+      <style>edit</style>
+      <position>110 120 150 20</position>
+      <text>Name</text>
+      <textposition>left</textposition>
+      <enable>0</enable>
+      <variable>handles.Toolbox(tb).Input.name</variable>
+      <type>string</type>
+      <tooltipstring>Edit name of tropical cyclone</tooltipstring>
+    </element> 
+    <element>
+      <tag>editradius</tag>
+      <style>edit</style>
+      <position>110 95 80 20</position>
+      <text>Radius (km)</text>
+      <textposition>left</textposition>
+      <enable>0</enable>
+      <variable>handles.Toolbox(tb).Input.radius</variable>
+      <type>real</type>
+      <tooltipstring>Edit radius of spider web</tooltipstring>
+    </element> 
+    <element>
+      <tag>editdirectionalbins</tag>
+      <style>edit</style>
+      <position>110 70 50 20</position>
+      <text>Dir Bins</text>
+      <textposition>left</textposition>
+      <enable>0</enable>
+      <variable>handles.Toolbox(tb).Input.nrDirectionalBins</variable>
+      <type>integer</type>
+      <tooltipstring>Edit number of directional bins in spiderweb file</tooltipstring>
+    </element> 
+    <element>
+      <tag>editradialbins</tag>
+      <style>edit</style>
+      <position>110 45 50 20</position>
+      <text>Radial Bins</text>
+      <textposition>left</textposition>
+      <enable>0</enable>
+      <variable>handles.Toolbox(tb).Input.nrRadialBins</variable>
+      <type>integer</type>
+      <tooltipstring>Edit number of radial bins in spiderweb file</tooltipstring>
+    </element> 
+    <element>
+      <tag>tabelpanel</tag>
+      <style>panel</style>
+      <position>350 10 600 160</position>
+      <text>Cyclone Data</text>
+    </element> 
+    <element>
+      <tag>cyclonetable</tag>
+      <style>table</style>
+      <position>380 20</position>
+      <nrrows>6</nrrows>
+      <includenumbers>yes</includenumbers>
+      <includebuttons>no</includebuttons>
+      <onchange>ddb_TropicalCycloneToolbox</onchange>
+      <option1>edittracktable</option1>
+      <columns>
+        <column>
+          <style>edittime</style>
+          <width>120</width>
+          <text>Date (yyyymmdd HHMMSS)</text>
+          <enable>1</enable>
+          <variable>handles.Toolbox(tb).Input.trackT</variable>
+        </column>
+        <column>
+          <style>editreal</style>
+          <width>80</width>
+          <text>Lon (deg)</text>
+          <enable>1</enable>
+          <variable>handles.Toolbox(tb).Input.trackX</variable>
+        </column>
+        <column>
+          <style>editreal</style>
+          <width>80</width>
+          <text>Lat (deg)</text>
+          <enable>1</enable>
+          <variable>handles.Toolbox(tb).Input.trackY</variable>
+        </column>
+        <column>
+          <style>editreal</style>
+          <width>80</width>
+          <text>Vmax (m/s)</text>
+          <enable>1</enable>
+          <variable>handles.Toolbox(tb).Input.trackVMax</variable>
+        </column>
+        <column>
+          <style>editreal</style>
+          <width>80</width>
+          <text>Pressure Drop (Pa)</text>
+          <enable>1</enable>
+          <variable>handles.Toolbox(tb).Input.trackPDrop</variable>
+        </column>
+      </columns>
+      <dependencies>
+        <dependency>
+          <action>enable</action>
+          <checkfor>all</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Toolbox(tb).Input.nrTrackPoints</variable>
+              <type>integer</type>	              
+              <value>1</value>
+              <operator>gt</operator>
+            </check>
+          </checks>
+        </dependency>
+      </dependencies>
+    </element>
+    <element>
+      <tag>drawtrack</tag>
+      <style>pushbutton</style>
+      <position>850 120 90 20</position>
+      <text>Draw Track</text>
+      <callback>ddb_TropicalCycloneToolbox</callback>
+      <option1>drawtrack</option1>
+      <tooltipstring>Draw cyclone track</tooltipstring> 
+    </element> 
+    <element>
+      <tag>loaddata</tag>
+      <style>pushbutton</style>
+      <position>850 95 90 20</position>
+      <text>Load Data</text>
+      <callback>ddb_TropicalCycloneToolbox</callback>
+      <option1>loaddata</option1>
+      <tooltipstring>Load hurricane data</tooltipstring> 
+    </element> 
+    <element>
+      <tag>savedata</tag>
+      <style>pushbutton</style>
+      <position>850 70 90 20</position>
+      <text>Save Data</text>
+      <callback>ddb_TropicalCycloneToolbox</callback>
+      <option1>savedata</option1>
+      <tooltipstring>Save hurricane data</tooltipstring>
+    </element> 
+    <element>
+      <tag>importtrack</tag>
+      <style>pushbutton</style>
+      <enable>0</enable>
+      <position>850 45 90 20</position>
+      <text>Import Track</text>
+      <callback>ddb_TropicalCycloneToolbox</callback>
+      <option1>importtrack</option1>
+      <tooltipstring>Import track file from UNISYS</tooltipstring>
+    </element> 
+    <element>
+      <tag>computecyclone</tag>
+      <style>pushbutton</style>
+      <position>850 20 90 20</position>
+      <text>Compute Cyclone</text>
+      <callback>ddb_TropicalCycloneToolbox</callback>
+      <option1>computecyclone</option1>
+      <tooltipstring>Compute cyclone wind for spider web file</tooltipstring> 
+    </element> 
+  </elements>
+</root>
