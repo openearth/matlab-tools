@@ -651,14 +651,19 @@ if isfield(model,'mapplots')
                     hm.Models(i).mapPlots(j).datasets(k).polygon=model.mapplots(j).mapplot.datasets(k).dataset.polygon;
                 end
 
+                hm.Models(i).mapPlots(j).datasets(k).relativeSpeed=[];
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'relativespeed')
+                    hm.Models(i).mapPlots(j).datasets(k).relativeSpeed=str2num(model.mapplots(j).mapplot.datasets(k).dataset.relativespeed);
+                end
+
                 hm.Models(i).mapPlots(j).datasets(k).scaleFactor=[];
                 if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'scalefactor')
                     hm.Models(i).mapPlots(j).datasets(k).scaleFactor=str2num(model.mapplots(j).mapplot.datasets(k).dataset.scalefactor);
                 end
 
                 hm.Models(i).mapPlots(j).datasets(k).colorBarDecimals=[];
-                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'scalefactor')
-                    hm.Models(i).mapPlots(j).datasets(k).scaleFactor=str2num(model.mapplots(j).mapplot.datasets(k).dataset.scalefactor);
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'colorbardecimals')
+                    hm.Models(i).mapPlots(j).datasets(k).scaleFactor=str2num(model.mapplots(j).mapplot.datasets(k).dataset.colorbardecimals);
                 end
 
                 hm.Models(i).mapPlots(j).datasets(k).colorMap=[];

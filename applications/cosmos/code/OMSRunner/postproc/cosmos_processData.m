@@ -34,8 +34,8 @@ if Model.ExtractData
                 MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'timeseries');
                 extractDataXBeachCluster(hm,m);
         end
-        convertTimeSeriesMat2NC(hm,m);
-        copyNCTimeSeriesToOPeNDAP(hm,m)
+        cosmos_convertTimeSeriesMat2NC(hm,m);
+        cosmos_copyNCTimeSeriesToOPeNDAP(hm,m)
     catch
         WriteErrorLogFile(hm,['Something went wrong with extracting data from ' Model.Name]);
         %     hm.Models(m).Status='failed';
@@ -100,7 +100,7 @@ if Model.MakeWebsite
     disp('Copying figures to local website ...');
     set(hm.TextModelLoopStatus,'String',['Status : copying to local website - ' mdl ' ...']);drawnow;
     try
-        CopyFiguresToLocalWebsite(hm,m);
+        cosmos_copyFiguresToLocalWebsite(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong while copying figures to local website of ' Model.Name]);
 %         hm.Models(m).Status='failed';
@@ -109,8 +109,8 @@ if Model.MakeWebsite
     %%
     disp('Updating models.xml on local website ...');
     try
-        UpdateModelsXML(hm,m);
-        updateScenariosXML(hm,m);
+        cosmos_updateModelsXML(hm,m);
+        cosmos_updateScenariosXML(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong while updating models.xml on local website for ' hm.Models(m).Name]);
 %         hm.Models(m).Status='failed';
@@ -124,7 +124,7 @@ if Model.UploadFTP
     try
         tic
         %        PostFTP(hm,m);
-        PostSCP(hm,m);
+        cosmos_postSCP(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong while upload to SCP server for ' Model.Name]);
         %         hm.Models(m).Status='failed';
@@ -135,7 +135,7 @@ if Model.UploadFTP
     if ~strcmpi(hm.Models(m).Status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
         disp('Uploading models.xml to website ...');
         try
-            PostXML(hm,m);
+            cosmos_postXML(hm,m);
         catch
             WriteErrorLogFile(hm,['Something went wrong while uploading models.xml to website for ' hm.Models(m).Name]);
             %         hm.Models(m).Status='failed';

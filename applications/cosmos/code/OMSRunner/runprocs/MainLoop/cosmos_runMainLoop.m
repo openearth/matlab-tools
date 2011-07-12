@@ -20,11 +20,11 @@ disp('Start main loop ...');
 disp('Reading models ...');
 set(hm.TextMainLoopStatus,'String','Status : Reading models ...');drawnow;
 
-hm=ReadMeteo(hm);
-hm=ReadOceanModels(hm);
-hm=readParameters(hm);
-hm=ReadContinents(hm);
-hm=ReadModels(hm);
+hm=cosmos_readMeteo(hm);
+hm=cosmos_readOceanModels(hm);
+hm=cosmos_readParameters(hm);
+hm=cosmos_readContinents(hm);
+hm=cosmos_readModels(hm);
 
 %% Time Management
 hm.NCyc=hm.NCyc+1;
@@ -89,32 +89,32 @@ end
 %% Start and stop times
 disp('Getting start and stop times ...');
 set(hm.TextModelLoopStatus,'String','Status : Getting start and stop times ...');drawnow;
-hm=GetStartStopTimes(hm);
+hm=cosmos_getStartStopTimes(hm);
 disp('Finished getting start and stop times');
 
 %% Meteo
 hm.GetMeteo=get(hm.ToggleGetMeteo,'Value');
 if hm.GetMeteo
     set(hm.TextModelLoopStatus,'String','Status : Getting meteo data ...');drawnow;
-    GetMeteoData(hm);
+    cosmos_getMeteoData(hm);
 end
 
 %% Ocean Model data
 if hm.GetOceanModel
     set(hm.TextModelLoopStatus,'String','Status : Getting ocean model data ...');drawnow;
-    GetOceanModelData(hm);
+    cosmos_getOceanModelData(hm);
 end
 
 %% Predictions and Observations
 if get(hm.ToggleGetObservations,'Value')
     set(hm.TextModelLoopStatus,'String','Status : Getting observations ...');drawnow;
-    getObservations(hm);
+    cosmos_getObservations(hm);
     set(hm.TextModelLoopStatus,'String','Status : Making predictions ...');drawnow;
-    getPredictions(hm);
+    cosmos_getPredictions(hm);
 end
 
 %% Restart times (times to generate restart files)
-hm=getRestartTimes(hm);
+hm=cosmos_getRestartTimes(hm);
 
 %% Run model loop
 starttime=now+1/86400;

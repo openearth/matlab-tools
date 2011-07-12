@@ -150,8 +150,6 @@ for i=1:length(varargin)
                 timestep=varargin{i+1};
             case{'polygon'}
                 polxy=varargin{i+1};
-                xp=squeeze(polxy(:,1));
-                yp=squeeze(polxy(:,2));
             case{'coordinatesystem','cs'}
                 switch lower(varargin{i+1})
                     case{'geographic','geo','spherical','latlon'}
@@ -173,6 +171,9 @@ if isempty(polxy)
     % Make polygon from xlim and ylim
     xp=[xmin xmax xmax xmin];
     yp=[ymin ymin ymax ymax];
+else
+    xp=squeeze(polxy(:,1));
+    yp=squeeze(polxy(:,2));
 end
 
 %% Start points of curved vectors
@@ -184,6 +185,9 @@ if ~isempty(pos)
 else
    % Total number of arrows
     polarea=polyarea(xp,yp);
+    if iopt
+        dx=dx/100000;
+    end
     n2=round(polarea/dx^2);
     [x2,y2]=randomdistributeinpolygon(xp,yp,'nrpoints',n2);
     iage=round(lifespan*rand(n2,1));
@@ -221,15 +225,6 @@ end
 % arrows are translated back after they are generated.
 x1=x;
 y1=y;
-m1=size(x1,1);
-n1=size(x1,2);
-xmean=nanmean(reshape(x1,m1*n1,1));
-ymean=nanmean(reshape(y1,m1*n1,1));
-
-x1=x1-xmean;
-y1=y1-ymean;
-x2=x2-xmean;
-y2=y2-ymean;
 
 x1(isnan(x1))=-999.0;
 y1(x1==-999.0)=-999.0;
@@ -250,23 +245,19 @@ if timestep>0
     end
 end
 
-% Length of each section in the arrow
-dt=dtCurVec/(nt-1);
+% % Length of each section in the arrow
+% dt=dtCurVec/(nt-1);
 
 % Compute arrows using mex file
-[xp,yp,xax,yax,len]=crvec(x2,y2,x1,y1,u,v,dt,nt,hdthck,arthck,relwdt,iopt);
+% [xp,yp,xax,yax,len]=crvec(x2,y2,x1,y1,u,v,dt,nt,hdthck,arthck,relwdt,iopt);
+% [xp,yp,xax,yax,len]=crvec2(x2,y2,x1,y1,u,v,dt,nt,hdthck,arthck,relwdt,iopt);
 
+[xp,yp,xax,yax,len]=crvec(x2,y2,x1,y1,u,v,dtCurVec,nt,hdthck,arthck,4,relwdt,iopt);
 % Set nan values
 xp(xp<1000.0 & xp>999.998)=NaN;
 yp(yp<1000.0 & yp>999.998)=NaN;
 xax(xax<1000.0 & xax>999.998)=NaN;
 yax(yax<1000.0 & yax>999.998)=NaN;
-
-% Translate back
-xp=xp+xmean;
-yp=yp+ymean;
-xax=xax+xmean;
-yax=yax+ymean;
 
 % Count number of points per arrow
 ic=1;
@@ -279,6 +270,9 @@ polx=reshape(xp,[ic n2]);
 poly=reshape(yp,[ic n2]);
 xax=reshape(xax,[nt+1 n2]);
 yax=reshape(yax,[nt+1 n2]);
+
+yax(yax<40)=NaN;
+yax(yax>60)=NaN;
 
 % Get rid of very short arrows
 ishort=len<0.01;

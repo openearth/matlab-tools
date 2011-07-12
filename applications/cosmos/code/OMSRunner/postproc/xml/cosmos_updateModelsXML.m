@@ -1,4 +1,4 @@
-function UpdateModelsXML(hm,m)
+function cosmos_updateModelsXML(hm,m)
 
 % Updates model xml file for all websites
 
@@ -158,11 +158,11 @@ for iw=1:length(Model.WebSite)
     for j=1:Model.nrMaps
         if Model.mapPlots(j).Plot
             k=k+1;
-            model.maps(k).map.filename      = [Model.mapPlots(j).Dataset.Parameter '.' Model.Name '.kmz'];
-            model.maps(k).map.parameter     = Model.mapPlots(j).Dataset.Parameter;
+            model.maps(k).map.filename      = [Model.mapPlots(j).name '.' Model.Name '.kmz'];
+%            model.maps(k).map.parameter     = Model.mapPlots(j).Dataset.Parameter;
             model.maps(k).map.longname      = Model.mapPlots(j).longName;
-            model.maps(k).map.shortname     = Model.mapPlots(j).shortName;
-            model.maps(k).map.unit          = Model.mapPlots(j).Unit;
+%            model.maps(k).map.shortname     = Model.mapPlots(j).shortName;
+%            model.maps(k).map.unit          = Model.mapPlots(j).Unit;
             model.maps(k).map.type          = 'kmz';
 
             %         xlim=Model.XLimPlot;
@@ -179,8 +179,8 @@ for iw=1:length(Model.WebSite)
             %         model.maps(k).map.animate       = 'true';
             model.maps(k).map.starttime     = datestr(hm.Cycle,'yyyymmdd HHMMSS');
             model.maps(k).map.stoptime      = datestr(hm.Cycle+Model.RunTime/1440,'yyyymmdd HHMMSS');
-            model.maps(k).map.nrsteps       = (Model.RunTime)/(Model.mapPlots(j).dtAnim/60)+1;
-            model.maps(k).map.timestep      = Model.mapPlots(j).dtAnim/3600;
+            model.maps(k).map.nrsteps       = (Model.RunTime)/(Model.mapPlots(j).timeStep/60)+1;
+            model.maps(k).map.timestep      = Model.mapPlots(j).timeStep/3600;
         end
     end
 

@@ -32,7 +32,7 @@ try
         %%   Pre-Processing
 
         % Check which models need to run next
-        [hm,WaitingList]=UpdateWaitingList(hm);
+        [hm,WaitingList]=cosmos_updateWaitingList(hm);
 
         % If there are model ready to run ...
         if ~isempty(WaitingList)
@@ -56,7 +56,7 @@ try
                         try
                             WriteLogFile(['Pre-processing ' hm.Models(m).Name]);
                             % Pre-processing
-                            PreProcess(hm,m);
+                            cosmos_preProcess(hm,m);
                         catch
                             WriteErrorLogFile(hm,['Something went wrong pre-processing ' hm.Models(m).Name]);
                             hm.Models(m).Status='failed';
@@ -67,7 +67,7 @@ try
                                 WriteLogFile(['Submitting job ' hm.Models(m).Name]);
                                 % Submitting
                                 %                            if ~strcmpi(hm.Models(m).Type,'xbeachcluster')
-                                SubmitJob(hm,m);
+                                cosmos_submitJob(hm,m);
                                 %                            end
                             end
                         catch
@@ -89,7 +89,7 @@ try
 
         % First check which simulations have been finished and are waiting to
         % be moved to local main directory
-        [hm,FinishedList]=CheckForFinishedSimulations(hm);
+        [hm,FinishedList]=cosmos_checkForFinishedSimulations(hm);
 
         % If there are simulations ready ...
         if ~isempty(FinishedList)
@@ -109,7 +109,7 @@ try
                         WriteLogFile(['Moving data ' hm.Models(m).Name]);
                         tic
                         % Move the model results to local main directory
-                        MoveData(hm,m);
+                        cosmos_moveModelData(hm,m);
                     catch
                         WriteErrorLogFile(hm,['Something went wrong moving data of ' hm.Models(m).Name]);
                         hm.Models(m).Status='failed';
@@ -156,11 +156,11 @@ try
         % Check if anything went wrong
         if ~strcmpi(hm.Models(m).Status,'failed')
             % Model finished, no failures
-            writeJoblistFile(hm,m,'finished');
+            cosmos_writeJoblistFile(hm,m,'finished');
             hm.Models(m).Status='finished';
         else
             % Model finished, with failures
-            writeJoblistFile(hm,m,'failed');
+            cosmos_writeJoblistFile(hm,m,'failed');
             hm.Models(m).Status='failed';
         end
 

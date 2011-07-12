@@ -1,4 +1,4 @@
-function PreProcess(hm,m)
+function cosmos_preProcess(hm,m)
 
 tmpdir=hm.TempDir;
 jobdir=hm.JobDir;
@@ -21,15 +21,15 @@ end
 switch lower(hm.Models(m).Type)
     case{'delft3dflow','delft3dflowwave'}
         [success,message,messageid] = copyfile([inpdir '*'],tmpdir,'f');
-        PreProcessDelft3D(hm,m)
+        cosmos_preProcessDelft3D(hm,m)
     case{'ww3'}
         [success,message,messageid] = copyfile([inpdir '*'],tmpdir,'f');
-        PreProcessWW3(hm,m)
+        cosmos_preProcessWW3(hm,m)
     case{'xbeach'}
         [success,message,messageid] = copyfile([inpdir '*'],tmpdir,'f');
-        PreProcessXBeach(hm,m)
+        cosmos_preProcessXBeach(hm,m)
     case{'xbeachcluster'}
-        PreProcessXBeachCluster(hm,m);
+        cosmos_preProcessXBeachCluster(hm,m);
 end
 
 disp(['Moving input to job directory - ' mdl]);

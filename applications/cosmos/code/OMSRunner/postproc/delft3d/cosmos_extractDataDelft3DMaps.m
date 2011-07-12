@@ -1,27 +1,29 @@
-function extractDataDelft3DMaps(hm,m)
+function cosmos_extractDataDelft3DMaps(hm,m)
 
 Model=hm.Models(m);
 dr=Model.Dir;
 outdir=[dr 'lastrun' filesep 'output' filesep];
 archdir = Model.ArchiveDir;
 
-Model.mapParameters={''};
-np=0;
-for i=1:length(Model.mapPlots)
-    par=Model.mapPlots(i).Dataset(1).Parameter;
-    ii=strmatch(par,Model.mapParameters,'exact');
-    % Skip duplicate map parameters (which occur in more than one plot)
-    if isempty(ii)
-        np=np+1;
-        Model.mapParameters{np}=Model.mapPlots(i).Dataset(1).Parameter;
-    end
-end
+% Model.mapParameters={''};
+% np=0;
+% for i=1:length(Model.mapPlots)
+%     par=Model.mapPlots(i).Dataset(1).Parameter;
+%     ii=strmatch(par,Model.mapParameters,'exact');
+%     % Skip duplicate map parameters (which occur in more than one plot)
+%     if isempty(ii)
+%         np=np+1;
+%         Model.mapParameters{np}=Model.mapPlots(i).Dataset(1).Parameter;
+%     end
+% end
+
+np=Model.nrMapDatasets;
 
 for ip=1:np
 
     try
 
-        par=Model.mapParameters{ip};
+        par=Model.mapDatasets(ip).name;
         fout=[archdir hm.CycStr filesep 'maps' filesep par '.mat'];
         
         data=[];

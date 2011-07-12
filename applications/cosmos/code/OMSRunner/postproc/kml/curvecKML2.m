@@ -10,6 +10,7 @@ overlayfile='';
 lookat=[];
 t=0;
 anim=0;
+polygon=[];
 
 dxCurVec=2;
 lengthCurVec=10800;
@@ -52,6 +53,8 @@ for i=1:length(varargin)
                 relativeSpeed=varargin{i+1};
             case {'lines'}
                 lines=varargin{i+1};
+            case {'polygon'}
+                polygon=varargin{i+1};
         end
     end
 end
@@ -124,8 +127,8 @@ end
 
 pos=[];
 
-ddt=3;
-
+%ddt=3;
+ddt=1;
 dt=t(2)-t(1);
 t0=t;
 
@@ -172,23 +175,22 @@ for it=1:length(t)
     uu=squeeze(u(it,:,:));
     vv=squeeze(v(it,:,:));
     
-    [xp,yp,xax,yax,len,pos]=curvec(x,y,uu,vv,'dx',dxCurVec,'length',lengthCurVec,'timestep',timeStepCurVec,'nrvertices',3,'position',pos,'relativespeed',relativeSpeed,'CS','geographic');
+    [xp,yp,xax,yax,len,pos]=curvec(x,y,uu,vv,'dx',dxCurVec,'length',lengthCurVec,'timestep',timeStepCurVec,'nrvertices',3,'position',pos, ...
+        'relativespeed',relativeSpeed,'polygon',polygon,'CS','geographic');
 
     vel=len/lengthCurVec;
 
-    innerisland=[];
     outerisland=[];
     for j=1:size(xp,2)
         if lines
             % Lines
-            outerisland{j}.x=squeeze(xax(1:end-1,j));
-            outerisland{j}.y=squeeze(yax(1:end-1,j));
+            outerisland{j}.x=squeeze(xax(1:end,j));
+            outerisland{j}.y=squeeze(yax(1:end,j));
         else
             % Arrows
             outerisland{j}.x=squeeze(xp(:,j));
             outerisland{j}.y=squeeze(yp(:,j));
         end
-        innerisland{j}=[];
     end
     
     for i=1:length(outerisland)
@@ -211,7 +213,7 @@ for it=1:length(t)
             fprintf(fid,'%s\n','<coordinates>');
             zer=zeros(size(outerisland{i}.x))+0;
             vals=[outerisland{i}.x outerisland{i}.y zer]';
-            fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
+            fprintf(fid,'%3.6f,%3.6f,%i\n',vals);
             fprintf(fid,'%s\n','</coordinates>');
             fprintf(fid,'%s\n','</LineString>');
             fprintf(fid,'%s\n','</Placemark>');
