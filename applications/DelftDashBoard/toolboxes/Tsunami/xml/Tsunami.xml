@@ -3,18 +3,14 @@
 <root>
   <toolbox>Tsunami</toolbox>
   <longname>Tsunami</longname>
-  <enable>1</enable>
+  <enable>0</enable>
   <elements>
-
-
     <element>
       <tag>parameterpanel</tag>
       <style>panel</style>
       <position>40 10 300 160</position>
       <text>Earthquake parameters</text>
     </element> 
-
-
     <element>
       <tag>editmw</tag>
       <style>edit</style>
@@ -28,7 +24,6 @@
       <type>real</type>
       <tooltipstring>Edit magnitude (Mw)</tooltipstring>
     </element> 
-
     <element>
       <tag>editdepthfromtop</tag>
       <style>edit</style>
@@ -42,7 +37,6 @@
       <type>real</type>
       <tooltipstring>Edit depth from top (km)</tooltipstring>
     </element> 
-
     <element>
       <tag>editlength</tag>
       <style>edit</style>
@@ -57,7 +51,6 @@
       <type>real</type>
       <tooltipstring>Edit fault length (km)</tooltipstring>
     </element> 
-
     <element>
       <tag>editwidth</tag>
       <style>edit</style>
@@ -72,7 +65,6 @@
       <type>real</type>
       <tooltipstring>Edit fault width (km)</tooltipstring>
     </element> 
-
     <element>
       <tag>editslip</tag>
       <style>edit</style>
@@ -87,8 +79,6 @@
       <type>real</type>
       <tooltipstring>Edit slip (m)</tooltipstring>
     </element> 
-
-
     <element>
       <tag>updatetable</tag>
       <style>checkbox</style>
@@ -97,15 +87,12 @@
       <variable>handles.Toolbox(tb).Input.updateTable</variable>
       <tooltipstring>Automatically update table</tooltipstring>
     </element> 
-
-
     <element>
       <tag>tabelpanel</tag>
       <style>panel</style>
       <position>350 10 600 160</position>
       <text>Fault Area Data</text>
     </element> 
-
     <element>
       <tag>tsunamitable</tag>
       <style>table</style>

@@ -194,7 +194,7 @@ if ~isempty(pathname)
     
     fclose(fid);
     
-    system([handles.toolBoxDir 'tropicalcyclone' filesep 'wes.exe ' name '.inp']);
+    system([handles.Toolbox(tb).miscDir 'wes.exe ' name '.inp']);
     
     handles.Model(md).Input(ad).spwFile=[name '.spw'];
     handles.Model(md).Input(ad).wind=1;
