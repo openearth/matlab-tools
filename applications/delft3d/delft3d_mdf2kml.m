@@ -105,12 +105,12 @@ end
 %% Read mdf-file
 
    MDF = delft3d_io_mdf('read',mdf);
-   G = wlgrid('read',MDF.keywords.filcco);
+   G = wlgrid('read',[pathstr,filesep,MDF.keywords.filcco]);
    xg = G.X;
    yg = G.Y;
 
 %% Convert grid
-
+disp('Converting the grid...')
    z = repmat(10,size(xg));
    if OPT.epsg ~= 4326
        [xg,yg]=convertCoordinates(xg,yg,'CS1.code',OPT.epsg,'CS2.code',4326);
@@ -126,10 +126,11 @@ end
        'lineWidth',1);
    
    %% Convert bathymetry
+   disp('Converting bathymetry...')
    if isfield(MDF.keywords,'fildep')
-       OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf,'dep',MDF.keywords.fildep,'clim',OPT.clim,'ddep',OPT.ddep);
+       OPT2 = delft3d_grd2kml([pathstr,filesep,MDF.keywords.filcco],'epsg',OPT.epsg,'mdf',mdf,'dep',[pathstr,filesep,MDF.keywords.fildep],'clim',OPT.clim,'ddep',OPT.ddep);
    else
-       OPT2 = delft3d_grd2kml(MDF.keywords.filcco,'epsg',OPT.epsg,'mdf',mdf);
+       OPT2 = delft3d_grd2kml([pathstr,filesep,MDF.keywords.filcco],'epsg',OPT.epsg,'mdf',mdf);
    end
    
    if OPT.dep3D
