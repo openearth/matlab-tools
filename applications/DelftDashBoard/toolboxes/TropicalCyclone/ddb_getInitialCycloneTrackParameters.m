@@ -37,7 +37,7 @@ function PushOK_CallBack(hObject,eventdata)
 h=guidata(gcf);
 h.t0=datenum(get(h.EditStartDate,'String'),'yyyymmdd HHMMSS');
 h.dt=str2double(get(h.EditTimeStep,'String'));
-if h.hol
+if ~h.hol
     h.vmax=str2double(get(h.EditVMax,'String'));
     h.pdrop=str2double(get(h.EditPDrop,'String'));
 else

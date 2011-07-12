@@ -97,7 +97,7 @@
         <column>
           <style>editreal</style>
           <width>80</width>
-          <text>Vmax (m/s)</text>
+          <text>Vmax (knots)</text>
           <enable>1</enable>
           <variable>handles.Toolbox(tb).Input.trackVMax</variable>
         </column>
