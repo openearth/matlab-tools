@@ -27,7 +27,7 @@
     <element>
       <tag>editradius</tag>
       <style>edit</style>
-      <position>110 95 80 20</position>
+      <position>110 95 50 20</position>
       <text>Radius (km)</text>
       <textposition>left</textposition>
       <enable>0</enable>

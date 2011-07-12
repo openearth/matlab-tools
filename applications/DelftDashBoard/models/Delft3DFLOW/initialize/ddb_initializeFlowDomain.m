@@ -128,7 +128,6 @@ handles.Model(md).Input(id).selectDrogue=0;
 handles.Model(md).Input(id).deleteDrogue=0;
 handles.Model(md).Input(id).changeDrogue=0;
 
-
 %% Files
 handles.Model(md).Input(id).grdFile='';
 handles.Model(md).Input(id).encFile='';
@@ -227,6 +226,8 @@ handles.Model(md).Input(id).rstInterval=0;
 handles.Model(md).Input(id).onlineVisualisation=0;
 handles.Model(md).Input(id).onlineCoupling=0;
 handles.Model(md).Input(id).fourierAnalysis=0;
+handles.Model(md).Input(id).airOut=0;
+handles.Model(md).Input(id).heatOut=0;
 
 handles.Model(md).Input(id).salinity.include=0;
 handles.Model(md).Input(id).temperature.include=0;

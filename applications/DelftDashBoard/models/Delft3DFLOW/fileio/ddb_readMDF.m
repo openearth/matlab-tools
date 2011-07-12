@@ -230,12 +230,12 @@ handles.Model(md).Input(id).dco=MDF.dco;
 handles.Model(md).Input(id).smoothingTime=MDF.tlfsmo;
 handles.Model(md).Input(id).thetQH=MDF.thetqh;
 
-if MDF.forfuv(1)=='N'
+if strcmpi(MDF.forfuv(1),'n')
     handles.Model(md).Input(id).forresterHor=0;
 else
     handles.Model(md).Input(id).forresterHor=1;
 end
-if MDF.forfww(1)=='N'
+if strcmpi(MDF.forfww(1),'n')
     handles.Model(md).Input(id).forresterVer=0;
 else
     handles.Model(md).Input(id).forresterVer=1;
@@ -252,29 +252,15 @@ handles.Model(md).Input(id).momSol=MDF.momsol;
 handles.Model(md).Input(id).obsFile=MDF.filsta;
 handles.Model(md).Input(id).crsFile=MDF.filcrs;
 handles.Model(md).Input(id).droFile=MDF.filpar;
-% SMhydr= #YYYYY#
-% SMderv= #YYYYYY#
-% SMproc= #YYYYYYYYYY#
-% PMhydr= #YYYYYY#
-% PMderv= #YYY#
-% PMproc= #YYYYYYYYYY#
-% SHhydr= #YYYY#
-% SHderv= #YYYYY#
-% SHproc= #YYYYYYYYYY#
-% SHflux= #YYYY#
-% PHhydr= #YYYYYY#
-% PHderv= #YYY#
-% PHproc= #YYYYYYYYYY#
-% PHflux= #YYYY#
 
 %% Coupling
-if MDF.online(1)=='N'
+if strcmpi(MDF.online(1),'n')
     handles.Model(md).Input(id).onlineVisualisation=0;
 else
     handles.Model(md).Input(id).onlineVisualisation=1;
 end
 if isfield(MDF,'waqmod')
-    if MDF.waqmod(1)=='N'
+    if strcmpi(MDF.waqmod(1),'n')
         handles.Model(md).Input(id).waqMod=0;
     else
         handles.Model(md).Input(id).waqMod=1;
@@ -283,7 +269,7 @@ end
 
 %% Wave online
 if isfield(MDF,'waveol')
-    if MDF.waveol(1)=='N'
+    if strcmpi(MDF.waveol(1),'n')
         handles.Model(md).Input(id).waveOnline=0;
     else
         handles.Model(md).Input(id).waveOnline=1;
@@ -310,7 +296,7 @@ handles.Model(md).Input(id).MNmaxw=MDF.mnmaxw;
 
 %% Z-layers
 if isfield(MDF,'zmodel')
-    if strcmpi(MDF.zmodel,'y')
+    if strcmpi(MDF.zmodel(1),'y')
         handles.Model(md).Input(id).layerType='z';
     end
 end
@@ -323,12 +309,12 @@ end
 
 %% Roller model
 if isfield(MDF,'roller')
-    if strcmpi(MDF.roller,'y')
+    if strcmpi(MDF.roller(1),'y')
         handles.Model(md).Input(id).roller.include=1;
     end
 end
 if isfield(MDF,'snelli')
-    if strcmpi(MDF.snelli,'y')
+    if strcmpi(MDF.snelli(1),'y')
         handles.Model(md).Input(id).roller.snellius=1;
     end
 end
@@ -346,8 +332,20 @@ if isfield(MDF,'thr')
 end
 
 if isfield(MDF,'cstbnd')
-    if strcmpi(MDF.cstbnd,'y')
+    if strcmpi(MDF.cstbnd(1),'y')
         handles.Model(md).Input(id).cstBnd=1;
+    end
+end
+
+if isfield(MDF,'airout')
+    if strcmpi(MDF.airout(1),'y')
+        handles.Model(md).Input(id).airOut=1;
+    end
+end
+
+if isfield(MDF,'heaout')
+    if strcmpi(MDF.heaout(1),'y')
+        handles.Model(md).Input(id).heatOut=1;
     end
 end
 

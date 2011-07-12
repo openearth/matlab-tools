@@ -386,6 +386,14 @@ tint=Flow.comInterval;
 MDF.Flpp =[tstart tint tstop];
 MDF.Flrst=Flow.rstInterval;
 
+if Flow.airOut
+    MDF.AirOut='Y';
+end
+
+if Flow.heatOut
+    MDF.heaOut='Y';
+end
+
 %% Z layers
 if Flow.KMax>1
     if strcmpi(Flow.layerType,'z')

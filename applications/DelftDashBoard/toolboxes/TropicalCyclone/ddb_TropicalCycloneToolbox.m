@@ -199,6 +199,7 @@ if ~isempty(pathname)
     handles.Model(md).Input(ad).spwFile=[name '.spw'];
     handles.Model(md).Input(ad).wind=1;
     handles.Model(md).Input(ad).windType='spiderweb';
+    handles.Model(md).Input(ad).airOut=1;
     
     setHandles(handles);
     
