@@ -1,4 +1,4 @@
-function GetOceanModelData(hm)
+function cosmos_getOceanModelData(hm)
 
 
 for i=1:length(hm.oceanModels)
