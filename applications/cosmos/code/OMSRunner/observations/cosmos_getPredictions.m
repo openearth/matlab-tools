@@ -1,4 +1,4 @@
-function getPredictions(hm)
+function cosmos_getPredictions(hm)
 
 %% Determine which predictions are needed 
 

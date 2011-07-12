@@ -1,4 +1,4 @@
-function getObservations(hm)
+function cosmos_getObservations(hm)
 
 %% Determine which observations are needed 
 
