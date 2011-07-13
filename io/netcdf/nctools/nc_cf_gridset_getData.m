@@ -1,4 +1,4 @@
-function [zi,ti,fi,list]=nc_cf_gridset_getData(xi,yi,varargin)
+function varargout=nc_cf_gridset_getData(xi,yi,varargin)
 %nc_cf_gridset_getData   interpolate data in space (and time) from a netCDF tile set
 %
 % [...] = nc_cf_gridset_getData(xi,yi,   <keyword,value>)
@@ -14,9 +14,40 @@ function [zi,ti,fi,list]=nc_cf_gridset_getData(xi,yi,varargin)
 %
 %See also: grid_orth_getDataFromNetCDFGrids, grid_orth_getDataOnLine
 
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Gerben de Boer
+%
+%       <g.j.deboer@deltares.nl>
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 OPT.bathy       = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen_remapped/catalog.xml';
 % can be cellstr of ncfiles as well, with last one being topex/gebco to fill holes
-
 
 OPT.xname       = 'x'; % search for projection_x_coordinate, or longitude, or ...
 OPT.yname       = 'y'; % search for projection_x_coordinate, or latitude , or ...
@@ -26,10 +57,16 @@ OPT.poly        = [];
 OPT.method      = 'linear'; % spatial
 OPT.ddatenummax = datenum(3,1,1); % temporal search window in years
 OPT.datenum     = datenum(1998,7,1); % ti
-OPT.order       = ''; % RWS: Specifieke Operator Laatste/Dichtsbij/Prioriteit
+OPT.order       = '{''backward'',''forward'',''|nearest|''}'; % RWS: Specifieke Operator Laatste/Dichtsbij/Prioriteit
+
 OPT.debug       = 0;
 
-if odd(nargin)
+if nargin==0
+    varargout = {OPT};
+    return
+end
+
+if odd(nargin) | nargin<3
    nextarg = 1;
    zi  = xi.*nan; % set increment to nan
 else
@@ -70,13 +107,15 @@ OPT = setProperty(OPT,varargin{nextarg:end});
     %% find valid dates
        
        L.datenum  = nc_cf_time(list{ifile});
-       if ~iscell(OPT.order)
-        if     strcmpi(OPT.order,'backward');L.ddatenum =   -(L.datenum - OPT.datenum);
-        elseif strcmpi(OPT.order,'forward' );L.ddatenum =   +(L.datenum - OPT.datenum);
-        elseif strcmpi(OPT.order,'nearest' );L.ddatenum = abs(L.datenum - OPT.datenum);
-        elseif strcmpi(OPT.order,'linear'  );error('TO DO')
-        else                                 L.ddatenum = abs(L.datenum - OPT.datenum);
-        end
+       if any(strfind(OPT.order,'|')) % extract default
+          ind = strfind(OPT.order,'|');
+          OPT.order = OPT.order(ind(1)+1:ind(2)-1);
+       end
+       if     strcmpi(OPT.order,'backward');L.ddatenum =   -(L.datenum - OPT.datenum);
+       elseif strcmpi(OPT.order,'forward' );L.ddatenum =   +(L.datenum - OPT.datenum);
+       elseif strcmpi(OPT.order,'nearest' );L.ddatenum = abs(L.datenum - OPT.datenum);
+       elseif strcmpi(OPT.order,'linear'  );error('TO DO')
+       else                                 L.ddatenum = abs(L.datenum - OPT.datenum);
        end
        L.ddatenum(L.ddatenum < 0              ) = nan;
        L.ddatenum(L.ddatenum > OPT.ddatenummax) = nan;
@@ -107,6 +146,7 @@ OPT = setProperty(OPT,varargin{nextarg:end});
              dzi = xi.*nan; % set increment to nan
              
 warning('TO DO: permute Z automacially into [t by y by x]')
+
              start = permute([(ind(idt)-1)  0  0],[1 2 3]); % @timedim
              count = permute([           1 -1 -1],[1 2 3]); % @timedim
 
@@ -160,3 +200,5 @@ warning('TO DO: permute Z automacially into [t by y by x]')
           end % any(mask)
        end % idt
        end % files
+       
+varargout{zi,ti,fi,list};

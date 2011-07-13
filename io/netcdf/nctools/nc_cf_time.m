@@ -110,7 +110,7 @@ function varargout = nc_cf_time(ncfile,varargin)
       for ivar=1:length(index)
          M(ivar).datenum.units         = nc_attget(fileinfo.Filename,name{ivar},'units');
          D(ivar).datenum               = nc_varget(fileinfo.Filename,name{ivar});
-        [D(ivar).datenum,D(ivar).zone] = udunits2datenum(D.datenum,M.datenum.units);
+        [D(ivar).datenum,D(ivar).zone] = udunits2datenum(double(D.datenum),M.datenum.units); % prevent integers from generating stairs in larger units
       end
    else
          if ischar(varargin{1})
@@ -119,7 +119,7 @@ function varargout = nc_cf_time(ncfile,varargin)
          end
          M.datenum.units   = nc_attget(fileinfo.Filename,varname,'units');
          D.datenum         = nc_varget(fileinfo.Filename,varname,varargin{:});
-        [D.datenum,D.zone] = udunits2datenum(D.datenum,M.datenum.units);
+        [D.datenum,D.zone] = udunits2datenum(double(D.datenum),M.datenum.units); % prevent integers from generating stairs in larger units
          index           = 1;
    end
    
