@@ -1,5 +1,5 @@
 function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
-% KMLFIG2PNGnew   makes a tiled png figure for google earth
+%KMLFIGURE_TILER   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
 %   KMLfig2png(h,lat,lon,z,<keyword,value>)

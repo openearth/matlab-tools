@@ -1,4 +1,4 @@
-%% Include KML in tutorial
+%% Include KML in web page tutorial
 % 
 % <html>
 % With the <a href="http://code.google.com/intl/nl/apis/earth/">Google Earth API</a> that can be
