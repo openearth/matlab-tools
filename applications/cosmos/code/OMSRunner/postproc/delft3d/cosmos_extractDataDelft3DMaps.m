@@ -39,7 +39,7 @@ for ip=1:np
                 typ='2dvector';
         end
 
-        layer=Model.mapPlots(ip).Dataset(1).layer;
+        layer=Model.mapDatasets(ip).layer;
         
         switch fil
             case{'wavm','trim'}

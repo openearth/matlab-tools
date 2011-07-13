@@ -154,7 +154,7 @@ for it=1:length(t)
     
     uu=reshape(uu,[1 size(uu,1)*size(uu,2)]);
     vv=reshape(vv,[1 size(vv,1)*size(vv,2)]);
-        
+    
     xp00(1)=0;
     yp00(1)=0;
     xp00(2)=1;
@@ -169,20 +169,27 @@ for it=1:length(t)
     ang00=atan2(yp00,xp00);
     dst00=sqrt(xp00.^2+yp00.^2);
     dst00=dst00*scalefactor;
-
+    
+    xp=zeros(5,length(uu));
+    xp(xp==0)=NaN;
+    yp=xp;
+    vel=zeros(length(uu));
+    
     for j=1:length(uu)
-        vel(j)=sqrt(uu(j).^2+vv(j).^2);
-        % Scale
-        dst0=dst00*vel(j);
-        % Rotate
-        ang=atan2(vv(j),uu(j));        
-        xp0=dst0.*cos(ang00+ang);
-        yp0=dst0.*sin(ang00+ang);
-        % Translate
-        xp0=xp0+x(j);
-        yp0=yp0+y(j);
-        xp(:,j)=xp0;
-        yp(:,j)=yp0;
+        if ~isnan(uu(j)) && ~isnan(vv(j))
+            vel(j)=sqrt(uu(j).^2+vv(j).^2);
+            % Scale
+            dst0=dst00*vel(j);
+            % Rotate
+            ang=atan2(vv(j),uu(j));
+            xp0=dst0.*cos(ang00+ang);
+            yp0=dst0.*sin(ang00+ang);
+            % Translate
+            xp0=xp0+x(j);
+            yp0=yp0+y(j);
+            xp(:,j)=xp0;
+            yp(:,j)=yp0;
+        end
     end
 
     yp=invmerc(yp);
@@ -196,38 +203,30 @@ for it=1:length(t)
     end
     
     for i=1:length(outerisland)
-        
-        st=styleName{end};
-        for k=1:length(levs)
-            if vel(i)<=levs(k)
-                st=styleName{k};
-                break
-            end
-        end
-        
-        fprintf(fid,'%s\n','<Placemark>');
-        fprintf(fid,'%s\n',['<styleUrl>#' st '</styleUrl>']);
-        fprintf(fid,'%s\n','<LineString>');
-        fprintf(fid,'%s\n','<coordinates>');
-        zer=zeros(size(outerisland{i}.x))+0;
-        vals=[outerisland{i}.x outerisland{i}.y zer]';
-%        fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
-        fprintf(fid,'%5.5f,%5.5f,%i\n',vals);
-        fprintf(fid,'%s\n','</coordinates>');
-        for j=1:length(innerisland{i})
-            fprintf(fid,'%s\n','<innerBoundaryIs>');
-            fprintf(fid,'%s\n','<LinearRing>');
+
+        if max(isnan(outerisland{i}.x))==0 && max(isnan(outerisland{i}.y))==0
+            
+            st=styleName{end};
+            for k=1:length(levs)
+                if vel(i)<=levs(k)
+                    st=styleName{k};
+                    break
+                end
+            end           
+            
+            fprintf(fid,'%s\n','<Placemark>');
+            fprintf(fid,'%s\n',['<styleUrl>#' st '</styleUrl>']);
+            fprintf(fid,'%s\n','<LineString>');
             fprintf(fid,'%s\n','<coordinates>');
-            zer=zeros(size(innerisland{i}(j).x(1:deref:end)));
-            vals=[innerisland{i}(j).x(1:deref:end) innerisland{i}(j).y(1:deref:end) zer]';
-%            fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
+            zer=zeros(size(outerisland{i}.x))+0;
+            vals=[outerisland{i}.x outerisland{i}.y zer]';
+            %        fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
             fprintf(fid,'%5.5f,%5.5f,%i\n',vals);
             fprintf(fid,'%s\n','</coordinates>');
-            fprintf(fid,'%s\n','</LinearRing>');
-            fprintf(fid,'%s\n','</innerBoundaryIs>');
+            fprintf(fid,'%s\n','</LineString>');
+            fprintf(fid,'%s\n','</Placemark>');
+            
         end
-        fprintf(fid,'%s\n','</LineString>');
-        fprintf(fid,'%s\n','</Placemark>');
         
     end
     fprintf(fid,'%s\n','</Folder>');

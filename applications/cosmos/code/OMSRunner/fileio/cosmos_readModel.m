@@ -28,6 +28,7 @@ hm.Models(i).Continent=model.continent;
 hm.Models(i).Dir=[hm.ScenarioDir 'models' filesep model.continent filesep model.name filesep];
 
 % Website
+try
 if isfield(model,'websites')
     for j=1:length(model.websites)
         hm.Models(i).WebSite(j).Name=model.websites(j).website.name;
@@ -38,6 +39,9 @@ else
     hm.Models(i).WebSite(1).Name=model.website;
     hm.Models(i).WebSite(1).Location(1)=str2double(model.locationx);
     hm.Models(i).WebSite(1).Location(2)=str2double(model.locationy);
+end
+catch
+    shite=1
 end
 
 hm.Models(i).ArchiveDir=[hm.ArchiveDir model.continent filesep model.name filesep 'archive' filesep];
@@ -592,7 +596,12 @@ if isfield(model,'mapplots')
         if isfield(model.mapplots(j).mapplot,'timestep')
              hm.Models(i).mapPlots(j).timeStep=str2double(model.mapplots(j).mapplot.timestep);
         end
-        
+
+        hm.Models(i).mapPlots(j).plot=1;
+        if isfield(model.mapplots(j).mapplot,'plot')
+             hm.Models(i).mapPlots(j).plot=str2double(model.mapplots(j).mapplot.plot);
+        end
+
         if isfield(model.mapplots(j).mapplot,'datasets')
 
             hm.Models(i).mapPlots(j).nrDatasets=length(model.mapplots(j).mapplot.datasets);
@@ -627,7 +636,7 @@ if isfield(model,'mapplots')
                 end
 
                 hm.Models(i).mapPlots(j).datasets(k).thinning=1;
-                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'thinningy')
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'thinning')
                     hm.Models(i).mapPlots(j).datasets(k).thinning=str2num(model.mapplots(j).mapplot.datasets(k).dataset.thinning);
                 end
                 
@@ -656,14 +665,14 @@ if isfield(model,'mapplots')
                     hm.Models(i).mapPlots(j).datasets(k).relativeSpeed=str2num(model.mapplots(j).mapplot.datasets(k).dataset.relativespeed);
                 end
 
-                hm.Models(i).mapPlots(j).datasets(k).scaleFactor=[];
+                hm.Models(i).mapPlots(j).datasets(k).scaleFactor=0.001;
                 if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'scalefactor')
                     hm.Models(i).mapPlots(j).datasets(k).scaleFactor=str2num(model.mapplots(j).mapplot.datasets(k).dataset.scalefactor);
                 end
 
                 hm.Models(i).mapPlots(j).datasets(k).colorBarDecimals=[];
                 if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'colorbardecimals')
-                    hm.Models(i).mapPlots(j).datasets(k).scaleFactor=str2num(model.mapplots(j).mapplot.datasets(k).dataset.colorbardecimals);
+                    hm.Models(i).mapPlots(j).datasets(k).colorBarDecimals=str2num(model.mapplots(j).mapplot.datasets(k).dataset.colorbardecimals);
                 end
 
                 hm.Models(i).mapPlots(j).datasets(k).colorMap=[];

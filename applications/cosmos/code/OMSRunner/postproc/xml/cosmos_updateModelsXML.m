@@ -155,11 +155,11 @@ for iw=1:length(Model.WebSite)
     end
 
     k=0;
-    for j=1:Model.nrMaps
-        if Model.mapPlots(j).Plot
+    for j=1:Model.nrMapPlots
+        if Model.mapPlots(j).plot
             k=k+1;
             model.maps(k).map.filename      = [Model.mapPlots(j).name '.' Model.Name '.kmz'];
-%            model.maps(k).map.parameter     = Model.mapPlots(j).Dataset.Parameter;
+            model.maps(k).map.parameter     = Model.mapPlots(j).name;
             model.maps(k).map.longname      = Model.mapPlots(j).longName;
 %            model.maps(k).map.shortname     = Model.mapPlots(j).shortName;
 %            model.maps(k).map.unit          = Model.mapPlots(j).Unit;

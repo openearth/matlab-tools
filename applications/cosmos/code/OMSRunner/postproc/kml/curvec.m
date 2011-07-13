@@ -112,6 +112,7 @@ arthck=0.5;
 lifespan=50;
 relspeed=1;
 timestep=0;
+nhead=4;
 
 polxy=[];
 
@@ -142,6 +143,8 @@ for i=1:length(varargin)
                 hdthck=varargin{i+1};
             case{'arrowthickness'}
                 arthck=varargin{i+1};
+            case{'nhead'}
+                nhead=varargin{i+1};
             case{'lifespan'}
                 lifespan=varargin{i+1};
             case{'relativespeed'}
@@ -249,10 +252,8 @@ end
 % dt=dtCurVec/(nt-1);
 
 % Compute arrows using mex file
-% [xp,yp,xax,yax,len]=crvec(x2,y2,x1,y1,u,v,dt,nt,hdthck,arthck,relwdt,iopt);
-% [xp,yp,xax,yax,len]=crvec2(x2,y2,x1,y1,u,v,dt,nt,hdthck,arthck,relwdt,iopt);
+[xp,yp,xax,yax,len]=crvec(x2,y2,x1,y1,u,v,dtCurVec,nt,hdthck,arthck,nhead,relwdt,iopt);
 
-[xp,yp,xax,yax,len]=crvec(x2,y2,x1,y1,u,v,dtCurVec,nt,hdthck,arthck,4,relwdt,iopt);
 % Set nan values
 xp(xp<1000.0 & xp>999.998)=NaN;
 yp(yp<1000.0 & yp>999.998)=NaN;

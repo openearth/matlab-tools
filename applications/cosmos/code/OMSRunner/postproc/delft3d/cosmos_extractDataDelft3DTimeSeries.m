@@ -1,4 +1,4 @@
-function extractDataDelft3DTimeSeries(hm,m)
+function cosmos_extractDataDelft3DTimeSeries(hm,m)
 
 Model=hm.Models(m);
 dr=Model.Dir;

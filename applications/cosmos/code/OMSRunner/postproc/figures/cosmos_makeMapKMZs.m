@@ -20,7 +20,7 @@ try
 
     for im=1:nmaps
 
-        if Model.mapPlots(im).mapPlot
+        if Model.mapPlots(im).plot
 
             if exist(posfile,'file')
                 delete(posfile);
@@ -36,11 +36,11 @@ try
 
             for id=1:ndat
                 
-                plotRoutine=Model.mapPlots(im).dataset(id).plotRoutine;
-                barlabel=Model.mapPlots(im).dataset(id).barLabel;
-                clmap=Model.mapPlots(im).dataset(id).colorMap;
+                plotRoutine=Model.mapPlots(im).datasets(id).plotRoutine;
+                barlabel=Model.mapPlots(im).datasets(id).barLabel;
+                clmap=Model.mapPlots(im).datasets(id).colorMap;
 
-                par{id}=Model.mapPlots(im).dataset(id).name;
+                par{id}=Model.mapPlots(im).datasets(id).name;
 
                 switch lower(par{id})
                     case{'landboundary'}
@@ -59,33 +59,31 @@ try
                         else
                             break;
                         end
-                        switch lower(Model.mapPlots(im).dataset(id).Type)
-                            case{'2dscalar','2dvector'}
-                                if strcmpi(Model.mapPlots(im).dataset(id).Type,'2dscalar')
-                                    mag=s(id).data.Val;
-                                else
+                        switch lower(Model.mapPlots(im).datasets(id).component)
+                            case{'2dscalar','2dvector','magnitude','vector'}
+                                if strcmpi(Model.mapPlots(im).datasets(id).component,'vector')
                                     for jj=1:size(s(id).data.U,1)
                                         mag(jj,:,:)=sqrt((squeeze(s(id).data.U(jj,:,:))).^2+(squeeze(s(id).data.V(jj,:,:))).^2);
                                     end
+                                else
+                                    mag=s(id).data.Val;
                                 end
                                 minc=min(min(min(mag)));
                                 maxc=max(max(max(mag)));
                                 clear mag;
                                 minc=min(minc,floor(minc));
                                 maxc=max(maxc,ceil(maxc));
-                                %             minc=max(minc,hm.Parameters(n).CLim(1));
-                                %             maxc=min(maxc,hm.Parameters(n).CLim(3));
-                                if isempty(Model.mapPlots(im).dataset(id).cLim)
+                                if isempty(Model.mapPlots(im).datasets(id).cLim)
                                     clim(1)=minc;
                                     clim(3)=maxc;
                                     [tck,cdec]=cosmos_getTicksAndDecimals(clim(1),clim(3),10);
                                     clim(2)=tck;
                                 else
-                                    clim=Model.mapPlots(im).dataset(id).cLim;
+                                    clim=Model.mapPlots(im).datasets(id).cLim;
                                     cdec=3;
                                 end
-                                if ~isempty(Model.mapPlots(im).colorBarDecimals)
-                                    cdec=Model.mapPlots(im).colorBarDecimals;
+                                if ~isempty(Model.mapPlots(im).datasets.colorBarDecimals)
+                                    cdec=Model.mapPlots(im).datasets.colorBarDecimals;
                                 end
                         end
                         nt=length(s(id).data.Time);
@@ -104,7 +102,7 @@ try
 
             switch lower(plotRoutine)
 
-                case{'plotcoloredvectors'}
+                case{'coloredvectors'}
                     % Quiver KML
                     clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
@@ -114,25 +112,38 @@ try
                     uu=s(1).data.U(1:n3:end,:,:);
                     vv=s(1).data.V(1:n3:end,:,:);
                     fdr=[dr 'lastrun' filesep 'figures' filesep];
+                    thin=Model.mapPlots(im).datasets.thinning;
+                    thinX=Model.mapPlots(im).datasets.thinningX;
+                    thinY=Model.mapPlots(im).datasets.thinningY;
+                    if thin>thinX 
+                        thinX=thin;
+                    end
+                    if thin>thinY
+                        thinY=thin;
+                    end
+                    
                     quiverKML([name '.' Model.Name],xx,yy,uu,vv,'time',tim,'kmz',1,'colormap',jet(64),'levels',clim(1):clim(2):clim(3), ...
-                        'directory',fdr,'screenoverlay',[name '.colorbar.png'],'thinning',Model.mapPlots(im).dataset.thinning,'thinningx',Model.mapPlots(im).dataset.thinningX, ...
-                        'thinningy',Model.mapPlots(im).dataset.thinningY,'scalefactor',Model.mapPlots(im).dataset.scaleFactor);
+                        'directory',fdr,'screenoverlay',[name '.colorbar.png'],'thinningx',thinX, ...
+                        'thinningy',thinY,'scalefactor',Model.mapPlots(im).datasets.scaleFactor);
                     if exist([fdr name '.colorbar.png'],'file')
                         delete([fdr name '.colorbar.png']);
                     end
                     
-                case{'plotcoloredcurvedarrows'}
+                case{'coloredcurvyarrows','coloredcurvylines'}
                     % Curvec KML
                     clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                     xx=s(1).data.X;
                     yy=s(1).data.Y;
+                    if size(s(1).data.X,1)==1 || size(s(1).data.X,2)==1
+                        [xx,yy]=meshgrid(xx,yy);
+                    end
                     tim=s(id).data.Time(1:n3:end);
                     uu=s(1).data.U(1:n3:end,:,:);
                     vv=s(1).data.V(1:n3:end,:,:);
                     fdr=[dr 'lastrun' filesep 'figures' filesep];
-                    if ~isempty(Model.mapPlots(im).Dataset(1).dataset(1).polygon)
-                        polxy=load([Model.Dir 'data' filesep Model.mapPlots(im).dataset(1).polygon]);
+                    if ~isempty(Model.mapPlots(im).datasets(1).polygon)
+                        polxy=load([Model.Dir 'data' filesep Model.mapPlots(im).datasets(1).polygon]);
                         if ~strcmpi(Model.CoordinateSystemType,'geographic')
                             xp=squeeze(polxy(:,1));
                             yp=squeeze(polxy(:,2));
@@ -143,16 +154,25 @@ try
                     else
                         polxy=[];
                     end
+                    
+                    if strcmpi(plotRoutine,'coloredcurvyarrows')
+                        ilines=0;
+                        nrvert=8;
+                    else
+                        ilines=1;
+                        nrvert=3;
+                    end
+                    
                     curvecKML2([name '.' Model.Name],xx,yy,uu,vv,'time',tim,'kmz',1,'colormap',jet(64),'levels',clim(1):clim(2):clim(3), ...
                         'directory',fdr,'screenoverlay',[name '.colorbar.png'],'timestep',Model.mapPlots(im).timeStep, ...
-                        'dx',Model.mapPlots(im).dataset(1).spacing,'relativespeed',0.5,'length',Model.mapPlots(im).Dataset(1).arrowLength,'lines',1,'polygon',polxy);
+                        'dx',Model.mapPlots(im).datasets.spacing,'relativespeed',0.5,'length',Model.mapPlots(im).datasets.arrowLength,'lines',ilines,'polygon',polxy,'nrvertices',nrvert, ...
+                        'nhead',2);
                     if exist([fdr name '.colorbar.png'],'file')
                         delete([fdr name '.colorbar.png']);
                     end
                     
-                case{'plotcoloredcurvedlines'}
-                case{'plotpatches'}
-                    % Patches                    
+                case{'patches'}
+                    % Patches
                     if ~isempty(s)
                         n2=round(dt/(Model.mapPlots(im).timeStep));
                         it2=0;

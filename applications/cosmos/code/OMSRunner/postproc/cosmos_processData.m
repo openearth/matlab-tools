@@ -15,7 +15,7 @@ if Model.ExtractData
                 MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'maps');
                 MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive','appended','timeseries');
                 MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive','appended','maps');
-                ExtractDataDelft3D(hm,m);
+                cosmos_extractDataDelft3D(hm,m);
             case{'xbeach'}
                 MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'timeseries');
                 MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'maps');

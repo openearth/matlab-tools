@@ -11,12 +11,14 @@ lookat=[];
 t=0;
 anim=0;
 polygon=[];
+nrvert=10;
 
 dxCurVec=2;
 lengthCurVec=10800;
 timeStepCurVec=3600;
 relativeSpeed=1;
 lines=0;
+nhead=4;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -55,6 +57,14 @@ for i=1:length(varargin)
                 lines=varargin{i+1};
             case {'polygon'}
                 polygon=varargin{i+1};
+            case {'nrvertices'}
+                if ~isempty(varargin{i+1})
+                    nrvert=varargin{i+1};
+                end
+            case {'nhead'}
+                if ~isempty(varargin{i+1})
+                    nhead=varargin{i+1};
+                end
         end
     end
 end
@@ -127,8 +137,9 @@ end
 
 pos=[];
 
-%ddt=3;
-ddt=1;
+% ddt=3;
+% ddt=1;
+
 dt=t(2)-t(1);
 t0=t;
 
@@ -143,6 +154,8 @@ k=1;
 t(1)=t0(1);
 u(1,:,:)=u0(1,:,:);
 v(1,:,:)=v0(1,:,:);
+
+ddt=round(dt*86400/timeStepCurVec);
 
 % First resample to higher time interval
 for it=1:length(t0)-1
@@ -175,8 +188,8 @@ for it=1:length(t)
     uu=squeeze(u(it,:,:));
     vv=squeeze(v(it,:,:));
     
-    [xp,yp,xax,yax,len,pos]=curvec(x,y,uu,vv,'dx',dxCurVec,'length',lengthCurVec,'timestep',timeStepCurVec,'nrvertices',3,'position',pos, ...
-        'relativespeed',relativeSpeed,'polygon',polygon,'CS','geographic');
+    [xp,yp,xax,yax,len,pos]=curvec(x,y,uu,vv,'dx',dxCurVec,'length',lengthCurVec,'timestep',timeStepCurVec,'nrvertices',nrvert,'position',pos, ...
+        'relativespeed',relativeSpeed,'polygon',polygon,'nhead',nhead,'CS','geographic');
 
     vel=len/lengthCurVec;
 
@@ -204,7 +217,7 @@ for it=1:length(t)
         end
         
         %% find nans
-        if max(isnan(outerisland{i}.x))==0
+        if max(isnan(outerisland{i}.x))==0 && max(isnan(outerisland{i}.y))==0
             
             fprintf(fid,'%s\n','<Placemark>');
             fprintf(fid,'%s\n',['<name>' num2str(i,'%0.5i') '</name>']);

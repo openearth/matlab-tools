@@ -3,6 +3,7 @@ function cosmos_makeColorBar(fname,varargin)
 
 labl='';
 colorBarDecimals=1;
+clmap='jet';
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -10,11 +11,17 @@ for i=1:length(varargin)
             case{'contours'}
                 contours=varargin{i+1};
             case{'label'}
-                labl=varargin{i+1};
+                if ~isempty(varargin{i+1})
+                    labl=varargin{i+1};
+                end
             case{'colormap'}
-                clmap=varargin{i+1};
+                if ~isempty(varargin{i+1})
+                    clmap=varargin{i+1};
+                end
             case{'decimals'}
-                colorBarDecimals=varargin{i+1};
+                if ~isempty(varargin{i+1})
+                    colorBarDecimals=varargin{i+1};
+                end
         end
     end
 end

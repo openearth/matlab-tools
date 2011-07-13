@@ -1,4 +1,4 @@
-function PostSCP(hm,m)
+function cosmos_postSCP(hm,m)
 
 % Post model output (kmz, png) to web server
 
