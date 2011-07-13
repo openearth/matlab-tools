@@ -73,6 +73,7 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    OPT.markerAlpha         =  0.6;
    OPT.html                = [];
    OPT.name                = [];
+   OPT.debug               = 0;
 
    OPT.iconnormalState     = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
    OPT.iconhighlightState  = 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png';
@@ -269,7 +270,9 @@ end
 %% Plot the points
 
    for ii=1:length(lon)
-      %disp(num2str([ii, length(lon)],'%g / %g'))
+      if OPT.debug
+      disp(num2str([ii, length(lon)],'%g / %g'))
+      end
       %% preprocess timespan
 
       timeSpan = KML_timespan(ii,'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);

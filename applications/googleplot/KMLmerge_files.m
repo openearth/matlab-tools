@@ -21,6 +21,7 @@ function varargout = KMLmerge_files(varargin)
    [OPT, Set, Default] = setproperty(OPT, varargin{:});
    
    if nargin==0 & nargout==1
+       varargout = {OPT};
        return
    end
 

@@ -1,10 +1,13 @@
 function varargout = KML_timespan(varargin)
 %KML_TIMESPAN   kml string from dates
 %
-%   timeSpan = KML_timespan(i,'timeIn',ti,'timeOut',to)
-%   timeSpan = KML_timespan( ,'timeIn',ti,'timeOut',to)
+%   timeSpan = KML_timespan(i,'timeIn',ti,'timeOut',to,'dateStrStyle',...)
+%   timeSpan = KML_timespan( ,'timeIn',ti,'timeOut',to,'dateStrStyle',...)
 %
 % where the optional i is the index into vectors ti and to.
+%
+% very slow when ti en to are datenums,
+%      fast when ti en to are strings.
 %
 %See also: GooglePlot
 

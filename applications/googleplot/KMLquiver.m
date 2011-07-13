@@ -72,7 +72,7 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 % Note: Notice the difference in how polygons and line are rendered by GE.
 %   Especially take care when plotting large figures near pole's
 %
-% See also: googlePlot, quiver, arrow2, KMLquiver3
+% See also: googlePlot, quiver, arrow2, KMLquiver3, KMLcurvedArrows
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -109,6 +109,7 @@ function [OPT, Set, Default] = KMLquiver(lat,lon,u,v,varargin)
 %% default settings
 OPT = struct(...
     'arrowStyle' ,'default',...
+    'stride'     ,1,...
     'arrowScale' ,1,...
     'fileName'   ,[],...
     'openInGE'   ,false,...
@@ -121,25 +122,23 @@ OPT = mergestructs(OPT,KML_header());
 
 [OPT, Set, Default] = setproperty(OPT, varargin);
 
-if length(OPT.timeIn ) ==1;OPT.timeIn  = repmat(OPT.timeIn ,[1 length(lat(1,:))]);end
-if length(OPT.timeOut) ==1;OPT.timeOut = repmat(OPT.timeOut,[1 length(lat(1,:))]);end
-
 %% pre defined arrow types
 % additional user settings override presets
 
 OPT2 = struct(...
     'arrowStyle' ,[],'arrowScale',[],'fileName'  ,[],...
-    'openInGE'  ,[],...
-    'timeIn'     ,datestr(OPT.timeIn ,OPT.dateStrStyle),...
-    'timeOut'    ,datestr(OPT.timeOut,OPT.dateStrStyle),...
+    'openInGE'   ,[],...
+    'stride'     ,1,...
+    'timeIn'     ,[],...
+    'timeOut'    ,[],...
     'arrowFill'  ,true,...
     'lineWidth'  ,1.5,...
     'lineColor'  ,[0 0 0],...
     'lineAlpha'  ,1,...
     'fillColor'  ,[1 0 0],...
     'fillAlpha'  ,0.75,...
-    'W1'         ,0.12,'W2'       ,0.25,'W3'       ,0.25,'W4'       ,0.15,...
-    'L1'         ,0.80,'L2'       ,0.70,'L3'       ,0.70,'L4'       ,0.20);
+    'W1'         ,0.05,'W2'       ,0.25,'W3'       ,0.25,'W4'       ,0.10,...
+    'L1'         ,0.70,'L2'       ,0.60,'L3'       ,0.60,'L4'       ,0.20);
 
 OPT2 = mergestructs(OPT2,KML_header());
 
@@ -185,10 +184,15 @@ end
 
 %% Calculate coordinates, scaling and orientation of arrows
 
-lat         = lat(:)';
-lon         = lon(:)';
-u           =   u(:)';
-v           =   v(:)';
+lat         = lat(1:OPT.stride:end);
+lon         = lon(1:OPT.stride:end);
+u           =   u(1:OPT.stride:end);
+v           =   v(1:OPT.stride:end);
+
+if length(OPT.timeIn ) ==1;OPT.timeIn  = repmat(OPT.timeIn ,[1 length(lat(1,:))]);end
+if length(OPT.timeOut) ==1;OPT.timeOut = repmat(OPT.timeOut,[1 length(lat(1,:))]);end
+OPT.timeIn  = datestr(OPT.timeIn ,OPT.dateStrStyle);
+OPT.timeOut = datestr(OPT.timeOut,OPT.dateStrStyle);
 
 % remove nan values
 nans = isnan(lat+lon+u+v);
@@ -337,9 +341,9 @@ for ii=1:length(lat(1,:))
     if length(OPT.lineColor(:,1))+length(OPT.lineWidth)+length(OPT.lineAlpha)>3
         OPT_line.styleName = ['arrowline' num2str(ii)];
     end
-    if isempty(OPT.timeIn) ,OPT_line.timeIn  = [];else OPT_line.timeIn  = datestr(OPT.timeIn(ii) ,OPT.dateStrStyle); end
-    if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle); end
-    
+    if isempty(OPT.timeIn) ,OPT_line.timeIn  = [];else OPT_line.timeIn  = OPT.timeIn(ii,:) ; end
+    if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = OPT.timeOut(ii,:); end
+
     newOutput = KML_line(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_line);
     
     if OPT.arrowFill
@@ -348,9 +352,8 @@ for ii=1:length(lat(1,:))
             OPT_poly.styleName = ['arrowfill' num2str(ii)];
         end
         
-        if isempty(OPT.timeIn) ,OPT_poly.timeIn  = [];else OPT_poly.timeIn  = datestr(OPT.timeIn(ii) ,OPT.dateStrStyle); end
-        if isempty(OPT.timeOut),OPT_poly.timeOut = [];else OPT_poly.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle); end
-        
+        if isempty(OPT.timeIn) ,OPT_poly.timeIn  = [];else OPT_poly.timeIn  = OPT.timeIn(ii,:) ; end
+        if isempty(OPT.timeOut),OPT_poly.timeOut = [];else OPT_poly.timeOut = OPT.timeOut(ii,:); end
         newOutput = [newOutput...
             KML_poly(arrowLat(:,ii),arrowLon(:,ii),'clampToGround',OPT_poly)];
     end

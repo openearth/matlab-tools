@@ -145,6 +145,9 @@ else
     coords = contours(lat,lon,z,OPT.levels);
 end
 
+if length(coords)==0
+    error(['no contours found, please check levels([1 end])=[',num2str(OPT.levels(1)),' - ',num2str(OPT.levels(end)),'] against z range [',num2str(min(z(:))),' - ',num2str(max(z(:))),']'])
+end
 %% pre allocate, find dimensions
 
 max_size = 1;

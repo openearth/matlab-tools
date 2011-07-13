@@ -13,7 +13,7 @@ function [OPT, Set, Default] = KMLcurvedArrows(x,y,u0,v0,varargin)
 %
 % see the keyword/value pair defaults for additional options
 %
-% See also: googlePlot
+% See also: googlePlot, KMLquiver, KMLquiver3, KMlcurvedArrows
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

@@ -23,6 +23,29 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 %           - Please close all other figures before calling this function
 %           - Using 'bgcolor',[255 0 255] helped me solve white NaN areas in GE
 %           - To increase number of zoom levels increase 'lowestLevel' (to e.g. 14)
+%           - For large data KMLfigure_tiler can be run in 2 sub modes
+%             1) tile generation in a file loop: save data or sub data to tiles
+%             2) tile joing: aggregate  all tiles to higher levels and generate 
+%                mother kml that binds them all.
+% 
+%             for =1:n
+%             [lon,lat,z]=load(files{i}))
+%             h = pcolor(lon,lat,z)
+%             KMLfigure_tiler(h,lat,lon,z,...
+%                'lowestLevel'       ,13,...    % +1 results in a x4 times larger dataset
+%                'printTiles'        ,true,...  % this loop prints all tiles
+%                'joinTiles'         ,false,... % do not join untill all tiles are there
+%                'mergeExistingTiles',true);    % merge partially overlapping tiles
+%             end
+%             
+%             % in the joining phase set handle to nan, lat and lon to extent to be 
+%             % joined, and z does not matter
+%             KMLfigure_tiler([],[30 60],[-10 40],nan,...
+%                'highestLevel'      ,[],...    % is set to whole world when lat=nan
+%                'printTiles'        ,false,... % this was done in phase 1
+%                'joinTiles'         ,true,...  %
+%                'mergeExistingTiles',true);    % 1 ! irrelevant when printTiles==0
+%           
 %
 % See also: GOOGLEPLOT, PCOLOR, KMLFIG2PNG_ALPHA
 %   --------------------------------------------------------------------
@@ -117,8 +140,8 @@ end
 
 OPT.h    = h;  % handle to input surf object
 
-if ishandle(h)
-if strcmpi(get(get(h,'parent'),'climMode'),'auto')
+if ishandle(OPT.h)
+if strcmpi(get(get(OPT.h,'parent'),'climMode'),'auto')
    error([mfilename,' manual clim required for identical colormapping in tiles']);
 end
 end
@@ -219,7 +242,7 @@ else
 end
 
 %% figure settings
-if ishandle(h)
+if ishandle(OPT.h)
 % Some settings for the figure to make sure it is printed correctly
 OPT.ha  = get(OPT.h ,'Parent');
 OPT.hf  = get(OPT.ha,'Parent');
@@ -235,7 +258,7 @@ end
 
 %   --------------------------------------------------------------------
 % Generates tiles at most detailed level
-if OPT.printTiles
+if OPT.printTiles & ishandle(OPT.h)
     KML_figure_tiler_printTile(OPT.basecode,D,OPT)
 end
 
