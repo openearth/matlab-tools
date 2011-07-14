@@ -240,15 +240,15 @@ if isfield(model,'morfac')
 else
     hm.Models(i).MorFac=1;
 end
-if isfield(model,'wavebedfriccoef')
-    hm.Models(i).WaveBedFricCoef=str2double(model.wavebedfriccoef);
-else
-    hm.Models(i).WaveBedFricCoef=0.067;
-end
 if isfield(model,'wavebedfric')
     hm.Models(i).WaveBedFric=model.wavebedfric;
 else
     hm.Models(i).WaveBedFric='jonswap';
+end
+if isfield(model,'wavebedfriccoef')
+    hm.Models(i).WaveBedFricCoef=str2double(model.wavebedfriccoef);
+else
+    hm.Models(i).WaveBedFricCoef=0.067;
 end
 
 hm.Models(i).windStress=[6.3000000e-004  0.0000000e+000  7.2300000e-003  1.0000000e+002];
