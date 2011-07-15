@@ -18,7 +18,7 @@ lengthCurVec=10800;
 timeStepCurVec=3600;
 relativeSpeed=1;
 lines=0;
-nhead=4;
+nhead=2;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
