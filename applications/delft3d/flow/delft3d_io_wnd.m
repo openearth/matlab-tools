@@ -306,7 +306,7 @@ end % function varargout=Local_read(fname,varargin),
 % --WRITE-----------------------------
 % ------------------------------------
 
-function iostat=Local_write(fname,DAT,varargin),
+function iostat=Local_write(fname,DAT,time_option,varargin),
 
    D.refdatenum = [];
    iostat       = 0;
@@ -315,13 +315,11 @@ function iostat=Local_write(fname,DAT,varargin),
    
    if odd(nargin)
 
-      if     ischar   (varargin{1})
+      if     ischar   (time_option)
 
          %% Use mdf filename
         
-         mdffilename = varargin{1};
-        
-         [MDF,iostat2] = delft3d_io_mdf('read',mdffilename,'case','lower');
+         [MDF,iostat2] = delft3d_io_mdf('read',time_option,'case','lower');
          
          if (iostat2<0)
             if nargout==1
@@ -336,20 +334,20 @@ function iostat=Local_write(fname,DAT,varargin),
 
          D.refdatenum    = time2datenum(MDF.keywords.itdate);
 
-      elseif isstruct(varargin{1})
+      elseif isstruct(time_option)
       
          %% Use mdf filename data directly
 
-         MDF.keywords    = varargin{1};
+         MDF.keywords    = time_option;
          D.refdatenum    = time2datenum(MDF.keywords.itdate);
 
-      elseif iscell(varargin{1})
+      elseif iscell(time_option)
       
          %% User specified meta data
 
-         D.refdatenum    = varargin{1};
+         D.refdatenum    = time_option;
       
-      elseif isstruct(varargin{1})
+      elseif isstruct(time_option)
       
          %% Use already read mdf data
 
@@ -364,7 +362,7 @@ function iostat=Local_write(fname,DAT,varargin),
       H.userfieldnames = false;
       
       if nargin>2
-         D = setproperty(D,varargin{:})
+         D = setproperty(D,varargin{:});
       end
 
 %% Locate
@@ -434,7 +432,6 @@ function iostat=Local_write(fname,DAT,varargin),
                end
                
                if     isfield(DAT,'datenum')
-               'a'
                   rawdata(:,1) = (DAT.datenum-D.refdatenum).*24.*60 ;
                elseif isfield(DAT,'minutes')
                   rawdata(:,1) = (DAT.minutes);
