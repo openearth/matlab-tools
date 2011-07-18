@@ -21,20 +21,19 @@ function degUC = degN2degunitcirle(degN)
 % Nautical convention      Cartesian convention
 % Positive inward to (0,0) Positive outward from (0,0)
 %
-%                                        
-% >   N-180   >            <   N-90   <  
-%    /     \                  /     \    
-% W-90      E-270          W-180     E-0/360
-%    \     /                  \     /    
-% <   S-0/360 <            >   S-270  >  
-%                                        
+%                                           
+% INWARD arrow                OUTWARD arrow
+%
+% > from N=0/360 >            <    to N=90   <  
+%      /       \                   /     \    
+% from W=270    from E=90     to W=180     to E=0/360
+%      \       /                   \     /    
+% < from S=180   <            >    to S=270  >  
+%                                           
 % angle between tail and   angle between tip and horizontal
 % vertical up.
 %
 %See also: DEGUNITCIRCLE2DEGN, DEGUC2DEGN
 
-degUC = - degN + 270;
-
-degUC(degUC<=0 ) = degUC(degUC<= 0) + 360;
-degUC(degUC>360) = degUC(degUC>360) - 360;
+degUC = mod(- degN + 270,360); % - degN  - 90
 

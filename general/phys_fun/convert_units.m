@@ -21,7 +21,7 @@ function Factor=convert_units(InUnits,OutUnits);
 % Note 3: add any unknown units by editing this function.
 %
 % See web: <a href="http://www.unidata.ucar.edu/software/udunit">http://www.unidata.ucar.edu/software/udunit</a>
-% See also: unitsratio (mapping toolbox), unitconv
+% See also: unitsratio (mapping toolbox), unitconv, qp_unitconversion (delft3d quickplot)
 
 %-----------------------------------------------------------------------
 % Tested : Matlab 6.5

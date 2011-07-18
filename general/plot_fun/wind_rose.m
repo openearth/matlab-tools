@@ -1,47 +1,46 @@
 function varargout = wind_rose(D,F,varargin)
 %WIND_ROSE   Wind rose of direction and intensity
 % 
-% Retrieved from the Matlab File Exchange on 22-07-2010 by Thijs Damsma
-% http://www.mathworks.com/matlabcentral/fileexchange/17748-windrose 
-%
 %   Syntax:
-%      [HANDLES,DATA] = WIND_ROSE(D,I,VARARGIN)
+%      [HANDLES,DATA] = WIND_ROSE(D,I,<keyword,value>)
 %
 %   Inputs:
 %      D   Directions
 %      I   Intensities
-%      VARARGIN:
-%       -dtype, type of input directions D, standard or meteo,
-%            if meteo, the conversion dnew=mod(-90-D,360) is done;
-%            if not meteo, standard is used (default)
-%       -n, number of D subdivisons
-%       -di, intensities subdivisons, default is automatic
-%       -ci, percentage circles to draw, default is automatic
-%       -labtitle, main title
-%       -lablegend, legend title
-%       -cmap, colormap [jet]
-%       -colors, to use instead of colormap, for each di
-%       -quad, Quadrant to show percentages [1]
-%       -ri, empty internal radius, relative to size of higher
-%            percentage [1/30]
-%       -legtype, legend type: 1, continuous, 2, separated boxes [2]
-%       -bcolor, full rectangle border color ['none']
-%       -lcolor, line colors for axes and circles ['k']
-%       -percbg, percentage labels bg ['w']
-%       -ax, to place wind rose on pervious axes, the input for ax
-%            must be [theax x y width], where theax is the previous
-%            axes, x and y are the location and width is the wind
-%            rose width relative to theax width (default=1/5)
-%       -parent, by default a new axes is created unless parent is
-%                given, ex, parent may be a subplot
-%       -iflip, flip the intensities as they go outward radially, ie,
-%                highest values are placed nearest the origin [{0} 1]
-%       -inorm, normalize intensities, means all angles will have 100%
-%       -incout, if 0, data outside di limits will not be used [0 {1}]
+%
+%   Optional keywords:
+%       - dtype     type of input directions D, standard or meteo, affects:
+%                   (i) 0-convention and (ii) visual interpetation (to/from)
+%                   if meteo,     0=from North, 90=from East , etc
+%                   if not meteo, 0=to   East , 90=to   North, etc (default)
+%       - n         number of D subdivisons
+%       - di        intensities subdivisons,    default is automatic
+%       - ci        percentage circles to draw, default is automatic
+%       - labtitle  main title
+%       - lablegend legend title
+%       - cmap      colormap [jet]
+%       - colors    to use instead of colormap, for each di
+%       - quad      Quadrant to show percentages [1]
+%       - ri        empty internal radius, relative to size of higher
+%                   percentage [1/30]
+%       - legtype   legend type: 1, continuous, 2, separated boxes [2]
+%       - bcolor    full rectangle border color ['none']
+%       - lcolor    line colors for axes and circles ['k']
+%       - percbg    percentage labels bg ['w']
+%       - ax        to place wind rose on pervious axes, the input for ax
+%                   must be [theax x y width], where theax is the previous
+%                   axes, x and y are the location and width is the wind
+%                   rose width relative to theax width (default=1/5)
+%       - parent    by default a new axes is created unless parent is
+%                   given, ex, parent may be a subplot
+%       - iflip     flip the intensities as they go outward radially, ie,
+%                   highest values are placed nearest the origin [{0} 1]
+%       - inorm     normalize intensities, means all angles will have 100%
+%       - incout    if 0, data outside di limits will not be used [0 {1}]
 %
 %   Output:
 %      HANDLES   Handles of all lines, fills, texts
-%      DATA   Wind rose occurences per direction and intensity
+%      DATA      Wind rose occurences per direction and intensity
 %
 %   Examle:
 %      d=0:10:350;
@@ -53,24 +52,20 @@ function varargout = wind_rose(D,F,varargin)
 %        V=[V 1:n];
 %      end
 %
-%      figure
-%      wind_rose(D,V)
-%
-%      figure
-%      wind_rose(D,V,'iflip',1)
-%
-%      figure
-%      wind_rose(D,V,'ci',[1 2 7],'dtype','meteo')
+%      figure; wind_rose(D,V)
+%      figure; wind_rose(D,V,'iflip',1)
+%      figure; wind_rose(D,V,'dtype','meteo','ci',[1 2 7])
 %
 %      % place it on a previous axes:
 %      ax=axes;
 %      plot(lon,lat)
 %      wind_rose(D,V,'ax',[ax x y 1/3])
 %
-%   MMA 26-11-2007, mma@odyle.net
+%   MMA 26-11-2007, mma@odyle.net / IEO, Instituto Español de Oceanografía
+%   La Coruña, España /  Retrieved from the Matlab File Exchange on 22-07-2010 
+%   by Thijs Damsma http://www.mathworks.com/matlabcentral/fileexchange/17748-windrose
 %
-%   IEO, Instituto Español de Oceanografía
-%   La Coruña, España
+% See also: wind_plot, degN2degunitcircle, degunitcircle2degN
 
 %   10-12-2007 - Added varargin ci and n (nAngles removed as input)
 %   17-12-2007 - Added varargin ax, colors
@@ -134,7 +129,7 @@ function varargout = wind_rose(D,F,varargin)
 %%
 handles=[];
 
-% varargin options:
+%% varargin options:
 OPT.dtype       = 'standard';
 OPT.nAngles     = 36;
 OPT.ri          = 1/30; % empty internal radius, relative to size of higher percentage [1/30]
@@ -158,6 +153,12 @@ OPT.directionLabels = true; % labels North South etc..
 
 OPT = setproperty(OPT, varargin{:});
 
+if nargin==0
+   varargout = {OPT};
+   close % jet launches figure, grr
+   return
+end
+
 if OPT.onAxes
       OPT.onAxesX = OPT.onAxes(2);
       OPT.onAxesY = OPT.onAxes(3);
@@ -167,7 +168,6 @@ end
 
 
 %% process auto quad function
-
 if ischar(OPT.quad)
     if strcmpi(OPT.quad,'auto')
       tmp = histc(mod(D,360),[0 90 180 270 360]);
@@ -239,17 +239,20 @@ end
 rs=1.2;
 rl=1.7;
 
-% directions conversion:
+%% directions conversion:
+  directional_interpretation = 'to ';
 if isequal(OPT.dtype,'meteo')
-  D=mod(-90-D,360);
+  D=mod(-90-D,360) + 180; % degN2deguc(D);
+  % add 180 as visual directional interpretation differs.
+  directional_interpretation = 'from ';
 end
 
 
-% angles subdivisons:
+%% angles subdivisons:
 D=mod(D,360);
 Ay=linspace(0,360,OPT.nAngles+1)-0.5*360/OPT.nAngles;
 
-% calc instensity subdivisions:
+%% calc instensity subdivisions:
 if isempty(OPT.Ag)
   % gen OPT.Ag:
   f=figure('visible','off');
@@ -286,7 +289,7 @@ for i=1:length(Ay)-1
 end
 b=sum(E,2)/length(D)*100;
 
-% normalize data:
+%% normalize data:
 if OPT.inorm
   n=sum(E,2);
   for i=1:length(n)
@@ -295,11 +298,11 @@ if OPT.inorm
   b=100*ones(size(b));
 end
 
-% check if has values higher or lower than the OPT.Ag limits
+%% check if has values higher or lower than the OPT.Ag limits
 hasH=length(find(F>OPT.Ag(end)));
 hasL=length(find(F<OPT.Ag(1)));
 
-% calc number of percentage circles to draw:
+%% calc number of percentage circles to draw:
 if isempty(OPT.ci)
   if OPT.inorm
     OPT.ci=[25 50 75];
@@ -322,7 +325,7 @@ else
   g=max(max(OPT.ci),max(b));
 end
 
-% plot axes, percentage circles and percent. data:
+%% plot axes, percentage circles and percent. data:
 if OPT.parent
   wrAx=OPT.parent;
   set(wrAx,'units','normalized');
@@ -356,7 +359,7 @@ for i=1:ncircles
 end
 handles=[handles labs];
 
-% calc colors:
+%% calc colors:
 if isempty(OPT.colors)
   cor={};
   for j=1:length(OPT.Ag)-1
@@ -366,7 +369,7 @@ else
   cor=OPT.colors;
 end
 
-% fill data:
+%% fill data:
 n=sum(E,2);
 if OPT.iflip, E=fliplr(E); end
 for i=1:length(Ay)-1
@@ -391,9 +394,9 @@ end
 axis equal
 axis off
 
-% uistack has problems in some matlab versions, so:
-%uistack(labs,'top')
-%uistack(circles,'top')
+%% uistack has problems in some matlab versions, so:
+%  uistack(labs,'top')
+%  uistack(circles,'top')
 ch=get(wrAx,'children');
 if OPT.inorm
   % only bring circles up in inorm case.
@@ -407,18 +410,18 @@ end
 set(wrAx,'children',ch);
 
 
-% N S E W labels:
+%% N S E W labels:
 if OPT.directionLabels
     bg='none';
     args={'BackgroundColor',bg,'FontSize',8};
-    h(1)=text(-g-OPT.ri, 0,'WEST', 'VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
-    h(2)=text( g+OPT.ri, 0,'EAST', 'VerticalAlignment','top',   'HorizontalAlignment','right',args{:});
-    h(3)=text( 0,-g-OPT.ri,'SOUTH','VerticalAlignment','bottom','HorizontalAlignment','left', args{:});
-    h(4)=text( 0, g+OPT.ri,'NORTH','VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
+    h(1)=text(-g-OPT.ri, 0,[directional_interpretation 'WEST' ], 'VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
+    h(2)=text( g+OPT.ri, 0,[directional_interpretation 'EAST' ], 'VerticalAlignment','top',   'HorizontalAlignment','right',args{:});
+    h(3)=text( 0,-g-OPT.ri,[directional_interpretation 'SOUTH'],'VerticalAlignment','bottom','HorizontalAlignment','left', args{:});
+    h(4)=text( 0, g+OPT.ri,[directional_interpretation 'NORTH'],'VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
     handles=[handles h];
 end
 
-% scale legend:
+%% scale legend:
 L=(g*rl-g-OPT.ri)/7;
 h=(g+OPT.ri)/10;
 dy=h/3;
@@ -458,7 +461,7 @@ elseif OPT.legType==2 % separated boxes.
 
 end
 
-% title and legend label:
+%% title and legend label:
 x=mean([-g*rs,g*rl]);
 y=mean([g+OPT.ri,g*rs]);
 handles(end+1)=text(x,y,OPT.titStr,'HorizontalAlignment','center');
