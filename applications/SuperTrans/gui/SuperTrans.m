@@ -60,23 +60,25 @@ end
 
 curdir=pwd;
 
-handles.EPSG = load('EPSG.mat');
-
-
-if exist('EPSG_ud.mat','file')
-    sud=load('EPSG_ud.mat');
-    fnames1=fieldnames(handles.EPSG);
-    for i=1:length(fnames1)
-        fnames2=fieldnames(handles.EPSG.(fnames1{i}));
-        for j=1:length(fnames2)
-            if ~isempty(sud.(fnames1{i}).(fnames2{j}))
-                nori=length(handles.EPSG.(fnames1{i}).(fnames2{j}));
-                nnew=length(sud.(fnames1{i}).(fnames2{j}));
-                for k=1:nnew
-                    if iscell(handles.EPSG.(fnames1{i}).(fnames2{j}))
-                        handles.EPSG.(fnames1{i}).(fnames2{j}){nori+k}=sud.(fnames1{i}).(fnames2{j}){k};
-                    else
-                        handles.EPSG.(fnames1{i}).(fnames2{j})(nori+k)=sud.(fnames1{i}).(fnames2{j})(k);
+if ~isempty(varargin)
+    handles.EPSG=varargin{1};
+else
+    handles.EPSG = load('EPSG.mat');
+    if exist('EPSG_ud.mat','file')
+        sud=load('EPSG_ud.mat');
+        fnames1=fieldnames(handles.EPSG);
+        for i=1:length(fnames1)
+            fnames2=fieldnames(handles.EPSG.(fnames1{i}));
+            for j=1:length(fnames2)
+                if ~isempty(sud.(fnames1{i}).(fnames2{j}))
+                    nori=length(handles.EPSG.(fnames1{i}).(fnames2{j}));
+                    nnew=length(sud.(fnames1{i}).(fnames2{j}));
+                    for k=1:nnew
+                        if iscell(handles.EPSG.(fnames1{i}).(fnames2{j}))
+                            handles.EPSG.(fnames1{i}).(fnames2{j}){nori+k}=sud.(fnames1{i}).(fnames2{j}){k};
+                        else
+                            handles.EPSG.(fnames1{i}).(fnames2{j})(nori+k)=sud.(fnames1{i}).(fnames2{j})(k);
+                        end
                     end
                 end
             end
