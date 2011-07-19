@@ -152,7 +152,9 @@ for i=1:length(varargin)
             case{'relativespeed'}
                 relspeed=varargin{i+1};
             case{'timestep'}
-                timestep=varargin{i+1};
+                if ~isempty(varargin{i+1})
+                    timestep=varargin{i+1};
+                end
             case{'polygon'}
                 polxy=varargin{i+1};
             case{'coordinatesystem','cs'}
