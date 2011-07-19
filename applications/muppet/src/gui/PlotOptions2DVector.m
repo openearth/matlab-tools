@@ -126,7 +126,7 @@ set(handles.EditDx,'String',num2str(handles.PlotOptions.DxCurVec));
 set(handles.EditDt,'String',num2str(handles.PlotOptions.DtCurVec));
 set(handles.EditHeadThickness,'String',num2str(handles.PlotOptions.HeadThickness));
 set(handles.EditArrowThickness,'String',num2str(handles.PlotOptions.ArrowThickness));
-set(handles.EditTimeStep,'String',num2str(handles.PlotOptions.DDtCurVec));
+% set(handles.EditTimeStep,'String',num2str(handles.PlotOptions.DDtCurVec));
 set(handles.EditLifeSpan,'String',num2str(handles.PlotOptions.LifeSpanCurVec));
 set(handles.EditRelativeSpeed,'String',num2str(handles.PlotOptions.RelSpeedCurVec));
 set(handles.EditNoFramesStationary,'String',num2str(handles.PlotOptions.NoFramesStationaryCurVec));
@@ -239,7 +239,7 @@ h.Figure(i).Axis(j).Plot(k).LineColor=handles.EdgeColors{get(handles.SelectEdgeC
 h.Figure(i).Axis(j).Plot(k).FillColor=handles.FillColors{get(handles.SelectFillColor,'Value')};
 h.Figure(i).Axis(j).Plot(k).HeadThickness=str2num(get(handles.EditHeadThickness,'String'));
 h.Figure(i).Axis(j).Plot(k).ArrowThickness=str2num(get(handles.EditArrowThickness,'String'));
-h.Figure(i).Axis(j).Plot(k).DDtCurVec=str2num(get(handles.EditTimeStep,'String'));
+%h.Figure(i).Axis(j).Plot(k).DDtCurVec=str2num(get(handles.EditTimeStep,'String'));
 h.Figure(i).Axis(j).Plot(k).LifeSpanCurVec=str2num(get(handles.EditLifeSpan,'String'));
 h.Figure(i).Axis(j).Plot(k).RelSpeedCurVec=str2num(get(handles.EditRelativeSpeed,'String'));
 h.Figure(i).Axis(j).Plot(k).NoFramesStationaryCurVec=str2num(get(handles.EditNoFramesStationary,'String'));
