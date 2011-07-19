@@ -227,7 +227,7 @@ for j=1:length(idead)
     if iopt==1
         % Geographic
         [xn,yn]=randomdistributeinpolygon(xp,invmerc(yp),'nrpoints',1);
-        y2=merc(y2);
+        yn=merc(yn);
     else
         [xn,yn]=randomdistributeinpolygon(xp,yp,'nrpoints',1);
     end
@@ -243,7 +243,7 @@ for j=1:length(iout)
     if iopt==1
         % Geographic
         [xn,yn]=randomdistributeinpolygon(xp,invmerc(yp),'nrpoints',1);
-        y2=merc(y2);
+        yn=merc(yn);
     else
         [xn,yn]=randomdistributeinpolygon(xp,yp,'nrpoints',1);
     end
