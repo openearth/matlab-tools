@@ -224,9 +224,8 @@ C     Load the output into a MATLAB array.
 
       np=m1*n1
       
-      open(800,file='out.txt')
+c      open(800,file='out.txt')
 
-      write(800,*)'a'
       if (iopt==1) then
          do i=1,m1
             do j=1,n1
@@ -235,7 +234,6 @@ C     Load the output into a MATLAB array.
             enddo
          enddo
       endif
-      write(800,*)'b'
       
       do i=1,m1
          do j=1,n1
@@ -246,7 +244,6 @@ C     Load the output into a MATLAB array.
             endif
          enddo
       enddo
-      write(800,*)'c'
 
 c     First compute axis coordinate (xss and yss)
       do it=1,nt
@@ -269,7 +266,6 @@ c     First compute axis coordinate (xss and yss)
          y2=y2+v2*dt
 
       enddo 
-      write(800,*)'d'
 
       ip=0
       do i=1,n2
@@ -382,7 +378,7 @@ c     Compute arrow length (in metres!)
          yax(ip)=999.99900000000
       enddo
       
-      close(800)
+c      close(800)
 
       return
 
