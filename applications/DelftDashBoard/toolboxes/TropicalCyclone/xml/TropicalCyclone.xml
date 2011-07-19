@@ -61,7 +61,7 @@
       <tag>tabelpanel</tag>
       <style>panel</style>
       <position>350 10 600 160</position>
-      <text>Cyclone Data</text>
+      <text>Track Data</text>
     </element> 
     <element>
       <tag>cyclonetable</tag>

@@ -46,6 +46,15 @@ view(2);
 
 xl=get(handles.GUIHandles.mapAxis,'xlim');
 yl=get(handles.GUIHandles.mapAxis,'ylim');
+
+if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    oldSys=handles.screenParameters.coordinateSystem;
+    newSys.name='WGS 84';
+    newSys.type='geographic';
+    [xl(1),yl(1)]=ddb_coordConvert(xl(1),yl(1),oldSys,newSys);
+    [xl(2),yl(2)]=ddb_coordConvert(xl(2),yl(2),oldSys,newSys);
+end
+
 axis equal;
 set(gca,'Xlim',xl,'ylim',yl);
 

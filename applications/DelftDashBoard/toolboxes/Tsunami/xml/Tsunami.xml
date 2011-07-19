@@ -3,7 +3,7 @@
 <root>
   <toolbox>Tsunami</toolbox>
   <longname>Tsunami</longname>
-  <enable>0</enable>
+  <enable>1</enable>
   <elements>
     <element>
       <tag>parameterpanel</tag>
@@ -90,7 +90,7 @@
     <element>
       <tag>tabelpanel</tag>
       <style>panel</style>
-      <position>350 10 600 160</position>
+      <position>350 10 630 160</position>
       <text>Fault Area Data</text>
     </element> 
     <element>
@@ -148,7 +148,7 @@
     <element>
       <tag>drawfaultline</tag>
       <style>pushbutton</style>
-      <position>900 95 90 20</position>
+      <position>880 45 90 20</position>
       <text>Draw Fault Line</text>
       <callback>ddb_TsunamiToolbox</callback>
       <option1>drawfaultline</option1>
@@ -156,7 +156,7 @@
     <element>
       <tag>computewaterlevel</tag>
       <style>pushbutton</style>
-      <position>900 70 90 20</position>
+      <position>880 20 90 20</position>
       <text>Compute Tsunami</text>
       <callback>ddb_TsunamiToolbox</callback>
       <option1>computewaterlevel</option1>
