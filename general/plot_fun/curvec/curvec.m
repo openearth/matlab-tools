@@ -205,6 +205,7 @@ else
         polarea=polyarea(xp,yp);
     end
     n2=round(polarea/dx^2);
+    n2=max(n2,5);
     if iopt==1
         % Geographic
         [x2,y2]=randomdistributeinpolygon(xp,invmerc(yp),'nrpoints',n2);
@@ -213,8 +214,10 @@ else
         [x2,y2]=randomdistributeinpolygon(xp,yp,'nrpoints',n2);
     end
     iage=round(lifespan*rand(n2,1));
-    iage=min(iage,47);
-    iage=max(iage,3);
+    if timestep==0
+        iage=min(iage,47);
+        iage=max(iage,3);
+    end
 end
 
 if n2>15000
@@ -309,6 +312,9 @@ xax=xax(1:end-1,:);
 yax=yax(1:end-1,:);
 
 % Determine position of arrows in next time step
+if isempty(timestep)
+    timestep=0;
+end
 if timestep>tlength
     timestep=tlength;
 end
