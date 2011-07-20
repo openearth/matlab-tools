@@ -164,6 +164,7 @@ switch lower(tp)
         iTileNrs=1:nnx;
         
         if strcmpi(handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic') && x0<-179
+            % Probably a global dataset
             xx=[xx-360 xx xx+360];       
             iTileNrs=[iTileNrs iTileNrs iTileNrs];
         end
@@ -205,11 +206,11 @@ switch lower(tp)
 
         % Start indices for each tile in larger matrix
         for i=1:nnnx
-            iStartX(i)=find(abs(xx-x0Tiles(i))<1e-6);
+%            iStartX(i)=find(abs(xx-x0Tiles(i))<1e-5);
+            iStartX(i)=find(abs(xx-x0Tiles(i))==min(abs(xx-x0Tiles(i))));
         end
         
         %% Get tiles
-%        for i=ix1:ix2
         for i=1:nnnx
 
             itile=iTilesX(i);
@@ -222,6 +223,8 @@ switch lower(tp)
                 % First check whether file exists at at all
                 
                 iav=find(handles.bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==itile & handles.bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
+                
+                fv=NaN;
                 
                 if ~isempty(iav)
                     
@@ -250,17 +253,21 @@ switch lower(tp)
                         try
                             zzz=nc_varget(ncfile, 'depth');
                             zzz=double(zzz);
+                            fv=nc_attget(ncfile,'depth','fill_value');
                             ok=1;
                         end
                     else
                         if exist(ncfile,'file')
                             zzz=nc_varget(ncfile, 'depth');
                             zzz=double(zzz);
+                            fv=nc_attget(ncfile,'depth','fill_value');
                             ok=1;
                         end
                     end
                 end
-                
+                if ~isnan(fv)
+                    zzz(zzz==fv)=NaN;
+                end
                 z((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=zzz;
                 
             end
