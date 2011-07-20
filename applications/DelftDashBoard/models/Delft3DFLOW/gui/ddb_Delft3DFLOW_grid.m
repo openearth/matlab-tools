@@ -66,9 +66,32 @@ setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
 
 %%
 function loadLayers
+handles=getHandles;
+[filename, pathname, filterindex] = uigetfile('*.lyr', 'Load layers file','');
+if ~isempty(pathname)
+    lyrs=load([pathname filename]);
+    sm=sum(lyrs);
+    if abs(sm-100)<1e-8
+        handles.Model(md).Input(ad).thick=lyrs;
+        handles.Model(md).Input(ad).sumLayers=100;
+        handles.Model(md).Input(ad).KMax=length(lyrs);
+        setHandles(handles);
+        setUIElement('delft3dflow.domain.domainpanel.grid.editkmax');
+        setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
+        setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
+    else
+        GiveWarning('Text','Sum of layers does not equal 100%');
+    end
+end
 
 %%
 function saveLayers
+handles=getHandles;
+[filename, pathname, filterindex] = uiputfile('*.lyr', 'Save layers file','');
+if ~isempty(pathname)
+    lyrs=handles.Model(md).Input(ad).thick;
+    save([pathname filename],'lyrs','-ascii');
+end
 
 %%
 function editKMax
