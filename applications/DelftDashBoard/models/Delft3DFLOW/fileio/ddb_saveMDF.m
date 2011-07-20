@@ -260,8 +260,13 @@ else
 end
 
 MDF.Roumet=Flow.roughnessType;
-MDF.Ccofu=Flow.uRoughness;
-MDF.Ccofv=Flow.vRoughness;
+if Flow.uniformRoughness
+    MDF.Ccofu=Flow.uRoughness;
+    MDF.Ccofv=Flow.vRoughness;
+else
+    MDF.Filrgh=Flow.rghFile;
+end
+
 MDF.Xlo=Flow.xlo;
 MDF.Vicouv=Flow.vicoUV;
 MDF.Dicouv=Flow.dicoUV;

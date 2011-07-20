@@ -20,7 +20,7 @@ if ~isempty(handles.Model(md).Input(id).depFile)
     nmax=handles.Model(md).Input(id).NMax;
     dp=ddb_wldep('read',handles.Model(md).Input(id).depFile,[mmax nmax]);
     handles.Model(md).Input(id).depth=-dp(1:end-1,1:end-1);
-    handles.Model(md).Input(id).depthZ=GetDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
+    handles.Model(md).Input(id).depthZ=getDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
 end
 if ~isempty(handles.Model(md).Input(id).bndFile)
     handles=ddb_readBndFile(handles,id);

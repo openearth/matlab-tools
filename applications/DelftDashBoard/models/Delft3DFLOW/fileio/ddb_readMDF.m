@@ -173,6 +173,13 @@ handles.Model(md).Input(id).uRoughness=MDF.ccofu;
 handles.Model(md).Input(id).vRoughness=MDF.ccofv;
 handles.Model(md).Input(id).xlo=MDF.xlo;
 handles.Model(md).Input(id).irov=MDF.irov;
+if isfield(MDF,'filrgh')
+    handles.Model(md).Input(id).rghFile=MDF.filrgh;
+    handles.Model(md).Input(id).uniformRoughness=0;
+else
+    handles.Model(md).Input(id).rghFile='';    
+    handles.Model(md).Input(id).uniformRoughness=1;
+end
 
 %% Viscosity
 handles.Model(md).Input(id).vicoUV=MDF.vicouv;

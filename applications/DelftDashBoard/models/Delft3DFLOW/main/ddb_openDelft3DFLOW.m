@@ -7,7 +7,11 @@ switch opt
         % DD
         [filename, pathname, filterindex] = uigetfile('*.ddb', 'Select ddbound file');
         if pathname~=0
-%            handles.WorkingDirectory=pathname;
+            pathname=pathname(1:end-1); % Get rid of last file seperator
+            if ~strcmpi(pathname,handles.workingDirectory)
+                cd(pathname);
+                handles.workingDirectory=pathname;
+            end
             ddb_plotDelft3DFLOW('delete');
             handles.Model(md).Input=[];
             handles=ddb_readDDBoundFile(handles,filename);
@@ -29,7 +33,11 @@ switch opt
         % One Domain
         [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF file');
         if pathname~=0
-%            handles.WorkingDirectory=pathname;
+            pathname=pathname(1:end-1); % Get rid of last file seperator
+            if ~strcmpi(pathname,handles.workingDirectory)
+                cd(pathname);
+                handles.workingDirectory=pathname;
+            end
             ddb_plotDelft3DFLOW('delete');
             id=handles.activeDomain;
             handles.Model(md).Input=clearStructure(handles.Model(md).Input,id);
@@ -47,7 +55,11 @@ switch opt
         % One Domain
         [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF file');
         if pathname~=0
-%            handles.WorkingDirectory=pathname;
+            pathname=pathname(1:end-1); % Get rid of last file seperator
+            if ~strcmpi(pathname,handles.workingDirectory)
+                cd(pathname);
+                handles.workingDirectory=pathname;
+            end
             ddb_plotDelft3DFLOW('delete');
             handles.Model(md).nrDomains=handles.Model(md).nrDomains+1;
             handles.activeDomain=handles.Model(md).nrDomains;
