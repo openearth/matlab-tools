@@ -1,5 +1,9 @@
-function Icon=MakeIcon(file,sz,nanval)
+function Icon=MakeIcon(file,sz,varargin)
 %MAKEICON No description
+nanval=1000;
+if ~isempty(varargin)
+    nanval=varargin{1};
+end
 
 a=imread(file);
 [r,c,d] = size(a);
