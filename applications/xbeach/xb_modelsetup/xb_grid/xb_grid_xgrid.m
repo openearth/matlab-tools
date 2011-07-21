@@ -18,6 +18,7 @@ function [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
 %   zin   = vector with bed levels; positive up
 % 
 %   Optional input in keyword,value pairs
+%     - xgrid    :: [m] vector which defines the variable xgrid
 %     - Tm       :: [s] incident short wave period (used for maximum grid size at offshore boundary) 
 %                       if you impose time series of wave conditions use the min(Tm) as input (default = 5)
 %     - dxmin    :: [m] minimum required cross shore grid size (usually over land) (default = 1)
@@ -84,8 +85,9 @@ function [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
 
 % defaults
 OPT = struct(...
+    'xgrid', [],...        % predefined xgrid vector
     'Tm',5,...             % incident short wave period (used for maximum grid size at offshore boundary) if you impose time series of wave conditions use the min(Tm) as input
-    'dxmin',5,...          % minimum required cross shore grid size (usually over land)
+    'dxmin',2,...          % minimum required cross shore grid size (usually over land)
     'vardx',1,...          % 0 = constant dx, 1 = varying dx
     'g', 9.81,...          % gravity constant
     'CFL', 0.9,...         % Courant number
@@ -110,6 +112,12 @@ if OPT.vardx == 0
     
     % constant dx
     xgr = (xin(1):OPT.dxmin:xin(end));
+    zgr = interp1(xin, zin, xgr);
+    
+elseif OPT.vardx == 1 && ~isempty(OPT.xgrid)
+    
+    % predefined xgrid
+    xgr = OPT.xgrid;
     zgr = interp1(xin, zin, xgr);
     
 elseif OPT.vardx == 1
