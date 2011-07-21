@@ -195,7 +195,11 @@ if Flow.waves
 else
     MDF.Rouwav='    ';    
 end
-MDF.Wstres=Flow.windStress;
+if Flow.nrWindStressBreakpoints==2
+    MDF.Wstres=[Flow.windStressCoefficients(1) Flow.windStressSpeeds(1) Flow.windStressCoefficients(2) Flow.windStressSpeeds(2)];
+else
+    MDF.Wstres=[Flow.windStressCoefficients(1) Flow.windStressSpeeds(1) Flow.windStressCoefficients(2) Flow.windStressSpeeds(2) Flow.windStressCoefficients(3) Flow.windStressSpeeds(3)];
+end
 MDF.Rhoa=Flow.rhoAir;
 MDF.Betac=Flow.betaC;
 if Flow.equili==1
@@ -296,9 +300,9 @@ if Flow.nrSediments>0
 end
 MDF.Iter=Flow.iter;
 if Flow.dryFlp
-    MDF.dryflp='YES';
+    MDF.Dryflp='YES';
 else
-    MDF.dryflp='NO';
+    MDF.Dryflp='NO';
 end
 MDF.Dpsopt=Flow.dpsOpt;
 MDF.Dpuopt=Flow.dpuOpt;

@@ -139,7 +139,14 @@ handles.Model(md).Input(id).salW=MDF.salw;
 if ~isempty(deblank(MDF.rouwav))
     handles.Model(md).Input(id).rouWav=MDF.rouwav;
 end
-handles.Model(md).Input(id).windStress=MDF.wstres;
+handles.Model(md).Input(id).nrWindStressBreakpoints=length(MDF.wstres)/2;
+if handles.Model(md).Input(id).nrWindStressBreakpoints==2
+    handles.Model(md).Input(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3)];
+    handles.Model(md).Input(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4)];
+else
+    handles.Model(md).Input(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3) MDF.wstres(5)];
+    handles.Model(md).Input(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4) MDF.wstres(6)];
+end
 
 %% Heat model
 handles.Model(md).Input(id).rhoAir=MDF.rhoa;
@@ -173,12 +180,13 @@ handles.Model(md).Input(id).uRoughness=MDF.ccofu;
 handles.Model(md).Input(id).vRoughness=MDF.ccofv;
 handles.Model(md).Input(id).xlo=MDF.xlo;
 handles.Model(md).Input(id).irov=MDF.irov;
+handles.Model(md).Input(id).rghFile='';
+handles.Model(md).Input(id).uniformRoughness=1;
 if isfield(MDF,'filrgh')
-    handles.Model(md).Input(id).rghFile=MDF.filrgh;
-    handles.Model(md).Input(id).uniformRoughness=0;
-else
-    handles.Model(md).Input(id).rghFile='';    
-    handles.Model(md).Input(id).uniformRoughness=1;
+    if ~isempty(MDF.filrgh)
+        handles.Model(md).Input(id).rghFile=MDF.filrgh;
+        handles.Model(md).Input(id).uniformRoughness=0;
+    end
 end
 
 %% Viscosity

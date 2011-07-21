@@ -77,6 +77,24 @@ try
         
         [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xx,'y',yy,'constituent','all');
         
+        if handles.Model(md).Input(id).timeZone~=0
+            % Try to make time zone changes
+            cnst=load([handles.settingsDir 'tidalconstituents\t_constituents.mat']);
+            for ic=1:size(cnst.const.name,1)
+                cns{ic}=deblank(cnst.const.name(ic,:));
+                frq(ic)=cnst.const.freq(ic);
+            end
+            
+            for ic=1:length(conList)
+                ii=strmatch(conList{ic},cns,'exact');
+                freq=frq(ii); % Freq in cycles per hour
+                for jj=1:size(phasez,2)
+                    phasez(ic,jj)=phasez(ic,jj)+360*handles.Model(md).Input(id).timeZone*freq;
+                end
+            end
+            phasez=mod(phasez,360);
+        end
+        
         ampaz=ampz(:,1:nb);
         ampbz=ampz(:,nb+1:end);
         phaseaz=phasez(:,1:nb);
@@ -104,6 +122,25 @@ try
         % Riemann or current boundaries present
         
         [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');
+
+        if handles.Model(md).Input(id).timeZone~=0
+            % Try to make time zone changes
+            cnst=load([handles.settingsDir 'tidalconstituents\t_constituents.mat']);
+            for ic=1:size(cnst.const.name,1)
+                cns{ic}=deblank(cnst.const.name(ic,:));
+                frq(ic)=cnst.const.freq(ic);
+            end
+            for ic=1:length(conList)
+                ii=strmatch(conList{ic},cns,'exact');
+                freq=frq(ii); % Freq in cycles per hour
+                for jj=1:size(phasez,2)
+                    phaseu(ic,jj)=phaseu(ic,jj)+360*handles.Model(md).Input(id).timeZone*freq;
+                    phasev(ic,jj)=phasev(ic,jj)+360*handles.Model(md).Input(id).timeZone*freq;
+                end
+            end
+            phaseu=mod(phaseu,360);
+            phasev=mod(phasev,360);
+        end
         
         % Units are m2/s
         
