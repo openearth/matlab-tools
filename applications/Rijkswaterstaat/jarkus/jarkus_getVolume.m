@@ -197,6 +197,8 @@ if x_min > LandwardBoundary
         warning('JARKUS_GETVOLUME:newboundary', 'Landward boundary adapted')
     end
     Redefined.LandwardBoundary = true;
+elseif isempty(LandwardBoundary)
+    LandwardBoundary = x_min;    
 end
 if x_max < SeawardBoundary
     % one or both profiles do not reach the seaward boundary
@@ -206,6 +208,8 @@ if x_max < SeawardBoundary
         warning('JARKUS_GETVOLUME:newboundary', 'Seaward boundary adapted')
     end
     Redefined.SeawardBoundary = true;
+elseif isempty(SeawardBoundary)
+    SeawardBoundary = x_max;
 end
 
 if LandwardBoundary == SeawardBoundary
