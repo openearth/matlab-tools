@@ -7,8 +7,11 @@ end
 fprintf('\t\tTesting NC_DUMP ...' );
 
 % For now we will run this test preserving the fastest varying dimension.
-oldpref = getpref('SNCTOOLS','PRESERVE_FVD',false);
-setpref('SNCTOOLS','PRESERVE_FVD',true);
+pvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+if ~pvd
+    return
+end
+
 
 switch(mode)
 	case 'hdf'
@@ -32,7 +35,7 @@ switch(mode)
 
 end
 
-setpref('SNCTOOLS','PRESERVE_FVD',oldpref);
+
 fprintf('OK\n');
 
 
@@ -188,6 +191,10 @@ run_common_files('hdf4');
 function dump_hdf4_tp()
 % dumps my temperature pressure file
 
+if getpref('SNCTOOLS','PRESERVE_FVD',false);
+	% don't bother.  The header dimension order is switched.
+	return
+end
 owd = pwd;
 
 testroot = fileparts(mfilename('fullpath'));

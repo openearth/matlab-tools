@@ -72,7 +72,7 @@ else
 	Dataset.Size = Size';
 end
 
-if getpref('SNCTOOLS','PRESERVE_FVD',false)
+if nc_getpref('PRESERVE_FVD')
 	Dataset.Dimension = fliplr(Dataset.Dimension);
 	Dataset.Size = fliplr(Dataset.Size);
 end

@@ -6,7 +6,7 @@ function [values, the_var_size] = nc_varget_java (ncfile,varname,start,count,str
 import ucar.nc2.dods.*     
 import ucar.nc2.*          
                            
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 close_it = true;
 

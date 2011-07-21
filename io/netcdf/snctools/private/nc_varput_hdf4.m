@@ -1,7 +1,7 @@
 function nc_varput_hdf4(hfile,varname,data,start,edges,stride)
 % HDF4 handler for NC_VARPUT.
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 use_std_hdf4_scaling = getpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
 
 sd_id = hdfsd('start',hfile,'write');
@@ -135,7 +135,7 @@ try
    	status = hdfsd('writedata',sds_id,start,stride,edges,data_wr);
    	if status < 0
    	    error('SNCTOOLS:varput:hdf4:writedataFailed', ...
-   	        'WRITEDATA failed on %s.\n', varname);
+   	        'WRITEDATA failed on %s.', varname);
    	end
 
 catch
@@ -151,12 +151,12 @@ status = hdfsd('endaccess',sds_id);
 if status < 0
     hdfsd('end',sd_id);
     error('SNCTOOLS:varput:hdf4:endaccessFailed', ...
-    'ENDACCESS failed on %s.\n', hfile);
+    'ENDACCESS failed on %s.', hfile);
 end
 status = hdfsd('end',sd_id);
 if status < 0
     error('SNCTOOLS:attput:hdf4:endFailed', ...
-        'END failed on %s, "%s".\n', hfile, hdf4_error_msg);
+        'END failed on %s, "%s".', hfile, hdf4_error_msg);
 end
 return
 

@@ -3,7 +3,7 @@ function nc_addvar_hdf4(hfile,varstruct,preserve_fvd)
 sd_id = hdfsd('start',hfile,'write');
 if sd_id < 0
     error('SNCTOOLS:addVar:hdf4:startFailed', ...
-        'START failed on %s.\n', hfile);
+        'START failed on %s.', hfile);
 end
 
 % Is the variable already present?
@@ -11,7 +11,7 @@ idx = hdfsd('nametoindex',sd_id,varstruct.Name);
 if idx >= 0
     hdfsd('end',sd_id);
     error('SNCTOOLS:nc_addvar:hdf4:variableAlreadyPresent', ...
-        '%s is already present.\n', varstruct.Name);
+        '%s is already present.', varstruct.Name);
 end
     
 % determine the lengths of the named dimensions
@@ -32,14 +32,14 @@ for j = 1:num_dims
     if idx < 0
         hdfsd('end',sd_id);
         error('SNCTOOLS:addVar:hdf4:nametoindexFailed', ...
-            'NAMETOINDEX failed on %s, \"%s\".\n', dim_names{j}, hfile);
+            'NAMETOINDEX failed on %s, \"%s\".', dim_names{j}, hfile);
     end
 
     dim_sds_id = hdfsd('select',sd_id,idx);
     if dim_sds_id < 0
         hdfsd('end',sd_id);
         error('SNCTOOLS:addVar:hdf4:selectFailed', ...
-            'SELECT failed on %s, \"%s\".\n', dim_names{j}, hfile);
+            'SELECT failed on %s, \"%s\".', dim_names{j}, hfile);
     end
 
     dimids(j) = j-1;
@@ -48,13 +48,13 @@ for j = 1:num_dims
         hdfsd('endaccess',dim_sds_id);
         hdfsd('end',sd_id);
         error('SNCTOOLS:addVar:hdf4:getinfoFailed', ...
-            'GETINFO failed on %s, \"%s\".\n', dim_names{j}, hfile);
+            'GETINFO failed on %s, \"%s\".', dim_names{j}, hfile);
     end
 
     status = hdfsd('endaccess',dim_sds_id);
     if status < 0
         error('SNCTOOLS:addVar:hdf4:endaccessFailed', ...
-            'ENDACCESS failed on %s, \"%s\".\n', dim_names{j}, hfile);
+            'ENDACCESS failed on %s, \"%s\".', dim_names{j}, hfile);
     end
 
 end
@@ -73,7 +73,7 @@ sds_id = hdfsd('create',sd_id,varstruct.Name,dtype,num_dims,dim_sizes);
 if sds_id < 0
     hdfsd('end',sd_id);
     error('SNCTOOLS:addVar:hdf4:createFailed', ...
-        'CREATE failed on %s, \"%s\".\n', varstruct.Name, hfile);
+        'CREATE failed on %s, \"%s\".', varstruct.Name, hfile);
 end
 
 % Attach the named dimensions to the dataset.
@@ -92,20 +92,20 @@ for j = 1:num_dims
         hdfsd('endaccess',sds_id);
         hdfsd('end',sd_id);
         error('SNCTOOLS:addVar:hdf4:setdimFailed', ...
-            'SETDIM failed on %s, \"%s\".\n', varstruct.Name, hfile);
+            'SETDIM failed on %s, \"%s\".', varstruct.Name, hfile);
     end
 end
 
 status = hdfsd('endaccess',sds_id);
 if status < 0
     error('SNCTOOLS:addVar:hdf4:endaccessFailed', ...
-        'ENDACCESS failed on %s, \"%s\".\n', varstruct.Name, hfile);
+        'ENDACCESS failed on %s, \"%s\".', varstruct.Name, hfile);
 end
 
 status = hdfsd('end',sd_id);
 if status < 0
     error('SNCTOOLS:addVar:hdf4:endFailed', ...
-        'END failed on %s, \"%s\".\n', hfile);
+        'END failed on %s, \"%s\".', hfile);
 end
 
 

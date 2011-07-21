@@ -32,7 +32,7 @@ function nc_addnewrecs(ncfile,input_buffer,record_variable) %#ok<INUSD>
 %  
 %   See also nc_varput, nc_cat.
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 % If the input structure is old-style, convert it to the name-value format.
 if ~isfield(input_buffer,'Name') || ~isfield(input_buffer,'Data')
@@ -156,7 +156,7 @@ function input_buffer = force_rank_match(ncfile,input_buffer,record_variable)
 % of the incoming data to match that of the infile variable.  We address 
 % this by forcing the leading dimension in these cases to be 1.
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 rec_idx = strcmp(record_variable,{input_buffer.Name});
 

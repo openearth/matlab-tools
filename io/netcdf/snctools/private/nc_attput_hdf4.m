@@ -4,7 +4,7 @@ function nc_attput_hdf4(hfile,varname,attname,attval)
 sd_id = hdfsd('start',hfile,'write');
 if sd_id < 0
     error('SNCTOOLS:attput:hdf4:startFailed', ...
-        'START failed on %s.\n', hfile);
+        'START failed on %s.', hfile);
 end
 
 if varname == -1
@@ -14,13 +14,13 @@ else
     if idx < 0
         hdfsd('end',sd_id);
         error('SNCTOOLS:nc_info:hdf4:nametoindexFailed', ...
-            'Unable to index %s.\n', varname);
+            'Unable to index %s.', varname);
     end
     obj_id = hdfsd('select',sd_id,idx);
     if  obj_id < 0
         hdfsd('end',sd_id);
         error('SNCTOOLS:nc_info:hdf4:selectFailed', ...
-            'Unable to select %s.\n', varname);
+            'Unable to select %s.', varname);
     end
 end
 
@@ -192,7 +192,7 @@ if status < 0
     end
     hdfsd('end',sd_id);
     error('SNCTOOLS:attput:hdf4:setattrFailed', ...
-        'SETATTR failed on %s.\n', hfile);
+        'SETATTR failed on %s.', hfile);
 end
 
 if varname ~= -1
@@ -200,13 +200,13 @@ if varname ~= -1
     if status < 0
         hdfsd('end',sd_id);
         error('SNCTOOLS:attput:hdf4:endaccessFailed', ...
-            'ENDACCESS failed on %s.\n', hfile);
+            'ENDACCESS failed on %s.', hfile);
     end
 end
 status = hdfsd('end',sd_id);
 if status < 0
     error('SNCTOOLS:attput:hdf4:endFailed', ...
-        'END failed on %s".\n', hfile);
+        'END failed on %s".', hfile);
 end
 return
 

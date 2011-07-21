@@ -49,6 +49,15 @@ test_java_backend;
 
 %--------------------------------------------------------------------------
 function pre_testing()
+
+% can we even run?
+if ~exist('nc_attget','file')
+	error('Cannot find NC_ATTGET.  Check the SNCTOOLS installation instructions again on how to set up your path.');
+end
+if ~exist('mexnc','file')
+	error('Cannot find MEXNC.  Check the SNCTOOLS installation instructions again on how to set up your path.');
+end
+
 % clear the error state
 lasterr(''); %#ok<LERR>
 
@@ -285,6 +294,7 @@ test_nc_varget(mode);
 test_nc_varput(mode);
 test_nc_attput(mode);
 test_nc_cat(mode);
+test_nc_varrename(mode);
 return
 %--------------------------------------------------------------------------
 function run_http_tests()

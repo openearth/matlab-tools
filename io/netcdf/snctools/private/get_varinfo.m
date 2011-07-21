@@ -1,7 +1,7 @@
 function Dataset = get_varinfo ( ncid, varid )
 
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 [record_dimension, status] = mexnc ( 'INQ_UNLIMDIM', ncid );
 if status ~= 0

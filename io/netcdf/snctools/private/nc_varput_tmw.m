@@ -1,6 +1,6 @@
 function nc_varput_tmw(ncfile,varname,data,start,count,stride)
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 ncid = netcdf.open(ncfile,'WRITE');
 try

@@ -128,7 +128,7 @@ return
 %--------------------------------------------------------------------------
 function dump_variables(Dataset,restricted_variable,fid)
 
-pfvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+pfvd = nc_getpref('PRESERVE_FVD');
 
 fprintf (fid,'variables:\n' );
 

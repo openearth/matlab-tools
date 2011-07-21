@@ -12,6 +12,6 @@ for j = 1:numel(info1.Dataset)
 end
 if not_found
     error('SNCTOOLS:nc_cat:noRecordVariableFound', ...
-        'Could not find a record variable in %s.', file1);
+        'Could not find a record variable in %s.', ncfile);
 end
 record_variable = info1.Dataset(idx).Name;

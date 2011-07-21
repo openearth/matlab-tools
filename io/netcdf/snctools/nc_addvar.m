@@ -51,7 +51,7 @@ function nc_addvar(ncfile,varstruct)
 %   See also nc_adddim.
 
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 if  ~ischar(ncfile) 
     error ( 'SNCTOOLS:NC_ADDVAR:badInput', 'file argument must be character' );

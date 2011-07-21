@@ -2,7 +2,7 @@ function vinfo = nc_getvarinfo_hdf4_2011a(hfile,varname)
 
 import matlab.io.hdf4.*
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 % HDF4 backend for nc_getvarinfo.
 if ~ischar(varname)

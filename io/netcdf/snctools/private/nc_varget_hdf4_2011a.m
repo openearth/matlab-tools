@@ -3,7 +3,7 @@ function data = nc_varget_hdf4(hfile,varname,start,edge,stride)
 
 import matlab.io.hdf4.*
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 use_std_hdf4_scaling = getpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
 
 

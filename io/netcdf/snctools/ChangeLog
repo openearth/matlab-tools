@@ -1,3 +1,22 @@
+* July 21 2011 John Evans <john.g.evans.ne@gmail.com> -r3609
+- Tentatively abstracting out GETPREF on PRESERVE_FVD to being mostly a
+- persistent variable operation.  Nearly doubles the speed.
+
+* July 06 2011 John Evans <john.g.evans.ne@gmail.com> -r3603
+- Added test check as to whether we can find SNCTOOLS, MEXNC.
+
+* July 03 2011 John Evans <john.g.evans.ne@gmail.com> -r3599
+- Properly erroring out if NC_VARRENAME used with HDF4.
+
+* June 24 2011 John Evans <john.g.evans.ne@gmail.com> -r3597
+- Fixed incorrect usage of inqFormat in NC_ATTPUT_TMW.
+
+* June 23 2011 John Evans <john.g.evans.ne@gmail.com> -r3595
+- Removed some test dependencies on error IDs.
+- Added 2011a HDF4 backend for NC_INFO routine.
+- Fixed bad parameter to an ERROR call.
+- Removed newlines from private hdf4 routine ERROR call sites.
+
 * June 17 2011 John Evans <john.g.evans.ne@gmail.com> -r3583
 - Moved mexnc and hdf4 NC_ADDVAR backends into private directory.
 - Fix for bad fill value handling on netcdf-4.  Improves interoperability.

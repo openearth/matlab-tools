@@ -34,8 +34,8 @@ end
 % Check for this early.
 if isa(ncfile,'ucar.nc2.NetcdfFile') 
     retrieval_method = retrieval_methods.java;
-	fmt = fmts.netcdf_java;
-	return
+    fmt = fmts.netcdf_java;
+    return
 end
 
 mv = version('-release');
@@ -44,16 +44,16 @@ fmt = snc_format(ncfile);
 
 % These cases have no alternatives.
 if strcmp(fmt,fmts.HDF4) 
-	switch(mv)
-		case {'14','2006a','2006b','2007a','2007b','2008a','2008b', ...
-		      '2009a','2009b','2010a','2010b'} 
-			  retrieval_method = retrieval_methods.tmw_hdf4;
-		otherwise
-			  retrieval_method = retrieval_methods.tmw_hdf4_2011a;
-		end
+    switch(mv)
+        case {'14','2006a','2006b','2007a','2007b','2008a','2008b', ...
+        '2009a','2009b','2010a','2010b'} 
+            retrieval_method = retrieval_methods.tmw_hdf4;
+        otherwise
+            retrieval_method = retrieval_methods.tmw_hdf4_2011a;
+        end
 
     fmt = fmts.HDF4;
-	return
+    return
 elseif (strcmp(fmt,fmts.GRIB) || strcmp(fmt,fmts.GRIB2) || strcmp(fmt,fmts.URL))
     % Always use netcdf-java for grib files or URLs (when java is enabled).
 
@@ -67,14 +67,14 @@ end
 
 switch ( mv )
     case { '11', '12', '13' };
-		error('Not supported on releases below R14.');
+            error('Not supported on releases below R14.');
 
     case { '14', '2006a', '2006b', '2007a', '2007b', '2008a' }
-		% No native matlab support here.  Use mexnc if available, 
-		% otherwise try java.
+        % No native matlab support here.  Use mexnc if available, 
+        % otherwise try java.
         if strcmp(fmt,fmts.NetCDF)
-			try
-		    	v = mexnc('inq_libvers');
+                try
+                v = mexnc('inq_libvers');
                 retrieval_method = retrieval_methods.mexnc;
             catch
                 if ~exist('NetcdfFile','class')
@@ -111,7 +111,7 @@ switch ( mv )
             % not netcdf-3 or netcdf-4
             % Last chance is if it is some format that netcdf-java can handle.
             retrieval_method = retrieval_methods.java;
-            fmt = fmts.netcdf-java;
+            fmt = fmts.netcdf_java;
         end
 
     otherwise
@@ -131,7 +131,7 @@ end
 
 if isempty(retrieval_method)
     error('SNCTOOLS:unknownBackendSituation', ...  
-	      'Could not determine which backend to use with %s.  If the file format is not netCDF, the java backend must be enabled.', ...
+            'Could not determine which backend to use with %s.  If the file format is not netCDF, the java backend must be enabled.', ...
        ncfile );
 end
 return

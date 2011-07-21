@@ -12,14 +12,14 @@ ncid  =netcdf.open(ncfile, nc_write_mode );
 try
     library_version = netcdf.inqLibVers();
     library_version = str2double(library_version(1));
-    fmt = netcdf.inqFormat(ncid);
-
+    
     netcdf.reDef(ncid);
 
     % If netcdf-4, make sure that the user did not try to set the 
     % fill value with NC_ATTPUT.
     if strcmp(attribute_name,'_FillValue')
         if library_version >= 4
+            fmt = netcdf.inqFormat(ncid);
             switch(fmt)
                 case {'FORMAT_CLASSIC','FORMAT_64BIT'}
                     % this is ok
@@ -33,6 +33,7 @@ try
     % If netcdf-4 and the attribute is uint8, typecast it to int8.
     if isa(attval,'uint8');
         if library_version >= 4
+            fmt = netcdf.inqFormat(ncid);
             switch(fmt)
                 case {'FORMAT_CLASSIC','FORMAT_64BIT'}
                     % this is ok

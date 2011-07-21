@@ -2,7 +2,7 @@ function data = nc_varget_hdf4(hfile,varname,start,edge,stride)
 % HDF4 backend for NC_VARGET
 
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 use_std_hdf4_scaling = getpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
 
 
@@ -15,7 +15,7 @@ v = nc_getvarinfo(fullfile,varname);
 sd_id = hdfsd('start',fullfile,'read');
 if sd_id < 0
     error('SNCTOOLS:varget:hdf4:startFailed', ...
-        'START failed on %s.\n', hfile);
+        'START failed on %s.', hfile);
 end
 
 try

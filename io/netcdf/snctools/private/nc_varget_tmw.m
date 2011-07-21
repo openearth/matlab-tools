@@ -40,7 +40,7 @@ function values = nc_varget_tmw_group(ncid,varname,start,count,stride)
 % name.  Since ncid may not be for the file, we do not close it.
 
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 
 
@@ -77,13 +77,13 @@ end
 
 % If there is a fill value, missing value, scale_factor, or add_offset,
 % we will retrieve the data as double precision.
-use_missing_value = false;
-has_scaling = false;
-use_fill_value = false;
+use_missing_value  = false;
+has_scaling        = false;
+use_fill_value     = false;
 retrieve_as_double = false;
 try
     att_type = netcdf.inqAtt(ncid, varid, '_FillValue' );
-    if ( att_type == var_type )
+    if (att_type == var_type) | isnan(netcdf.getAtt(ncid, varid, '_FillValue' ))
         use_fill_value = true;
         retrieve_as_double = true;
     else
@@ -97,7 +97,7 @@ end
 try
     att_type = netcdf.inqAtt(ncid, varid, 'missing_value' );
     if ~use_fill_value
-        if (att_type == var_type)
+        if (att_type == var_type) | isnan(netcdf.getAtt(ncid, varid, 'missing_value' ))
             % fill value trumps missing values
             use_missing_value = true;
             retrieve_as_double = true;

@@ -18,7 +18,7 @@ function theBuffer = nc_getbuffer ( ncfile, varargin )
 %
 %   See also NC_VARGET.
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 % assume failure until success is known
 theBuffer = [];

@@ -1,7 +1,7 @@
 function nc_varput_mexnc( ncfile, varname, data, start,count,stride )
 % Handler for MEXNC backend for NC_VARPUT.
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 [ncid, status] = mexnc('open',ncfile,nc_write_mode);
 if (status ~= 0)

@@ -36,7 +36,7 @@ return
 %-------------------------------------------------------------------------
 function Dataset = get_varinfo_tmw ( ncid, varid )
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 [ndims,nvars,ngatts,record_dimension] = netcdf.inq(ncid); %#ok<ASGLU>
 [varname,datatype,dims,natts] = netcdf.inqVar(ncid, varid);

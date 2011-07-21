@@ -2,7 +2,7 @@ function values = nc_varget_mexnc(ncfile,varname,start,count,stride)
 % Handler for NC_VARGET it case where the old community mex-file mexnc must
 % be used. 
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 
 [ncid,status]=mexnc('open',ncfile,'NOWRITE');

@@ -11,7 +11,7 @@ function nc_addrecs(ncfile,new_data)
 
 ncinfo = nc_info(ncfile);
 
-preserve_fvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
+preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 % If the input structure is old-style, convert it to the name-data format.
 if ~isfield(new_data,'Name') || ~isfield(new_data,'Data')

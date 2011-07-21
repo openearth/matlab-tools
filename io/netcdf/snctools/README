@@ -169,6 +169,7 @@ PRESERVE_FVD
     it really isn't necessary in all cases.  SNCTOOLS can be told to
     not transpose data by setting the PRESERVE_FVD preference
 
+        >> clear all 
         >> setpref('SNCTOOLS','PRESERVE_FVD',true);
 
     By default this preference is false.  If you set it to true,
@@ -176,6 +177,11 @@ PRESERVE_FVD
     might also end up breaking existing code that expected the data
     to be permuted to row-major order, so you need to be careful
     when using this.
+
+    For efficiency purposes, rather than physically retrieve the
+    preference every time it is needed, the preference is stored
+    internally as a persistent variable.  In order to change this
+    preference, you therefore must invoke CLEAR ALL first.
 
 USE_STD_HDF4_SCALING 
     The CF conventions differ from HDF4 in how scale factors are

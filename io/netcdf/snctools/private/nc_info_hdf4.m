@@ -11,14 +11,14 @@ fileinfo.Filename = hdf4file; % [name ext];
 sd_id = hdfsd('start',fullfile,'read');
 if sd_id < 0
     error('SNCTOOLS:nc_info:hdf4:startFailed', ...
-        'start failed on %s.\n', hdf4file);
+        'start failed on %s.', hdf4file);
 end
 
 [ndatasets,nglobal_attr,status] = hdfsd('fileinfo',sd_id);
 if status < 0
     hdfsd('end',sd_id);
     error('SNCTOOLS:nc_info:hdf4:fileinfoFailed', ...
-        'fileinfo failed on %s.\n', hdf4file);
+        'fileinfo failed on %s.', hdf4file);
 end
 
 dim_count = 0;
@@ -30,7 +30,7 @@ for idx = 0:ndatasets-1
     if sds_id < 0
         hdfsd('end',sd_id);
         error('SNCTOOLS:nc_info:hdf4:selectFailed', ...
-            'select failed on dataset with index %d\n', idx);
+            'Select failed on dataset with index %d.', idx);
     end
 
 	[sds_name,sds_rank,sds_dimsizes,dtype_wr,nattrs,status] = hdfsd('getinfo',sds_id); %#ok<ASGLU>
@@ -38,7 +38,7 @@ for idx = 0:ndatasets-1
         hdfsd('endaccess',sds_id);
         hdfsd('end',sd_id);
         error('SNCTOOLS:nc_info:hdf4:getinfoFailed', ...
-            'getinfo failed on dataset with index %d\n', idx);
+            'getinfo failed on dataset with index %d.', idx);
     end
 
 	% Look at each dimension
@@ -86,7 +86,7 @@ for idx = 0:ndatasets-1
     if status < 0
         hdfsd('end',sd_id);
         error('SNCTOOLS:nc_info:hdf4:endaccessFailed', ...
-            'endaccess failed on dataset with index %d\n', idx);
+            'endaccess failed on dataset with index %d.', idx);
     end
 end
 
@@ -103,14 +103,14 @@ if nglobal_attr > 0
         [name,atype,acount,status] = hdfsd('attrinfo',sd_id,j); %#ok<ASGLU>
         if status < 0
             error('SNCTOOLS:nc_info:hdf4:attrinfoFailed', ...
-                'Could not read attribute %d.\n', j );
+                'Could not read attribute %d.', j );
         end
         Attribute(j+1).Name = name;
         
         [Attribute(j+1).Value, status] = hdfsd('readattr',sd_id,j);
         if status < 0
             error('SNCTOOLS:nc_info:hdf4:readattrFailed', ...
-                'Could not read attribute %d.\n',j );
+                'Could not read attribute %d.',j );
         end
         Attribute(j+1).Datatype = class(Attribute(j+1).Value);
     end
@@ -121,7 +121,7 @@ fileinfo.Attribute = Attribute;
 status = hdfsd('end',sd_id);
 if status < 0
     error('SNCTOOLS:nc_info:hdf4:endFailed', ...
-        'end failed on %s.\n', hdf4file);
+        'end failed on %s.', hdf4file);
 end
 
 if isempty(fileinfo.Dataset) 
