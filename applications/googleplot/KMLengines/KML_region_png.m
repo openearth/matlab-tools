@@ -1,5 +1,5 @@
 function [succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT)
-%KML_REGION_PNG   (low level)
+%KML_REGION_PNG  subsidiary of KMLfigure_tiler
 %
 %  [succes, kml_id] = KML_region_png(level,G,c,kml_id,OPT)
 %

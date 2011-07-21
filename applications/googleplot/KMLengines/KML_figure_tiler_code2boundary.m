@@ -1,5 +1,5 @@
 function bnd =  KML_figure_tiler_code2boundary(code)
-%KML_FIG2PNGNEW_CODE2BOUNDARY   subsidiary of KMLfigure_tiler
+%KML_figure_tiler_code2boundary subsidiary of KMLfigure_tiler
 %
 %  bnd =  KML_figure_tiler_code2boundary(code)
 %

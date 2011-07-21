@@ -1,26 +1,28 @@
 function varargout = KMLline(lat,lon,varargin)
 % KMLLINE Just like line (and that's just like plot)
 %
-%    kmlline(lat,lon,<keyword,value>)
+%    kmlline(lat,lon,    <keyword,value>)
+%    kmlline(lat,lon,<z>,<keyword,value>)
 %
-% creates a kml file fname with lines at the Earth surface connecting the
-% coordinates defined in (lat,lon). As in plot, an array of coordinates can
-% be drawn at onece. Each column in (lat,lon) defines a new line. A single
-% line can be split by nan's in (lat,lon).
+% creates a kml file fname with lines at the Earth surface or optionally 
+% at <z> connecting the coordinates defined in (lat,lon). As in plot, 
+% an array of lines can be drawn at once. Each column in (lat,lon) 
+% defines a new line (size(lat,2)).. A single line can be split into 
+% segments by nan's in (lat,lon).
 % 
 % coordinates (lat,lon) are in decimal degrees. 
 %   LON is converted to a value in the range -180..180)
 %   LAT must be in the range -90..90
 %
 % be aware that GE draws the shortest possible connection between two 
-% points, when crossing the nul meridian
+% points, when crossing the null meridian.
 %
 % The kml code (without header/footer) that is written to file 
-% 'fileName' can optionally be returned.
+% 'fileName' can optionally be returned as argument.
 %
 %    kmlcode = kmlline(lat,lon,<keyword,value>)
 %
-% The following see <keyword,value> pairs have been implemented:
+% Some <keyword,value> pairs are described here:
 %  'fileName'       name of output file, Can be either a *.kml or *.kmz
 %                   or *.kmz (zipped *.kml) file. If not defined a gui pops up.
 %                   (When 0 or fid = fopen(...) writing to file is skipped
@@ -33,9 +35,6 @@ function varargout = KMLline(lat,lon,varargin)
 %  'lineWidth'  = 1;           % line width, can be a fraction
 %  'lineColor'  = [0 0 0];     % color of the lines in RGB (0..1) 
 %  'lineAlpha'  = 1;           % transparency of the line
-%
-%  'openInGE'   = false;       % opens output directly in google earth
-%  'description'= '';          % 
 %
 % Example 1: draw a spiral around the earth
 %   lat = linspace(-90,90,1000)'; lon = linspace(0,5*360,1000)';
@@ -120,11 +119,14 @@ function varargout = KMLline(lat,lon,varargin)
 
 %% see if height is defined
 
-   if ~isempty(varargin)
+   z = 'clampToGround';
+   if ~isempty(varargin);
        if isnumeric(varargin{1});
-           z = varargin{1};
-           varargin = varargin(2:length(varargin));
-           OPT.is3D        = true;        
+           z        = varargin{1};
+           varargin(1) = [];
+           if ~ischar(z)
+           OPT.is3D = true;
+           end
        end
    end
    
@@ -278,10 +280,10 @@ output = '';
    if OPT.is3D&&OPT.fill
        % fill properties
        OPT_fill = struct(...
-           'name','',...
-           'styleName',['fill_style' num2str(OPT.fill_nr(1))],...
+           'name'      ,'',...
+           'styleName' ,['fill_style' num2str(OPT.fill_nr(1))],...
            'visibility',OPT.visible,...
-           'extrude',1);
+           'extrude'   ,OPT.extrude);
        if isempty(OPT.timeIn) , OPT_fill.timeIn = [];else  OPT_fill.timeIn = datestr( OPT.timeIn(1),OPT.dateStrStyle); end
        if isempty(OPT.timeOut),OPT_fill.timeOut = [];else OPT_fill.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
    end

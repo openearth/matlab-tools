@@ -3,26 +3,29 @@ function varargout = contour2poly(c)
 %
 % [x,y] = CONTOUR2POLY(c) converts a contourc c vector like this
 %
-%  c = [level1 x1 x2 x3 ... level2 x2 x2 x3 ...;
-%       pairs1 y1 y2 y3 ... pairs2 y2 y2 y3 ...]
+%  c = [level1 x1 x2 x3 level2 x4 x5 x6 x7 ...;
+%       n1     y1 y2 y3 n2     y4 y5 y6 x7 ...]
 %
 % to a NaN-delimited polygon vectors like this:
 %
-%  x = [       x1 x2 x3 ... nan    x2 x2 x3 ...]
-%  y = [       x1 x2 x3 ... nan    x2 x2 x3 ...]
+%  x = [       x1 x2 x3 nan    x4 x5 x6 x7 ...]
+%  y = [       x1 x2 x3 nan    x4 x5 x6 x7 ...]
 %
 % [x,y]        = CONTOUR2POLY(c) Note that level information 
 %                is lost so this option is useful only for 
-%                contours with only 1 level.
+%                contours with only 1 level (e.g. coastline).
 %
-% [x,y,levels] = CONTOUR2POLY(c)
+% [x,y,levels,n] = CONTOUR2POLY(c)
+%
+% where levels contains the c value assiocated with each
+% polygonsegment, and n the number of points per segment.
 %
 % struc        = CONTOUR2POLY(c) Returns struct with fields 
-%                'x','y','n' and 'levels'.
+%                'x','y','levels' and 'n'.
 %
 % Note that although c=contourc also returns the contour x,y data 
 % without plotting, it does not work for curvi-linear grids, so 
-% we have to use [c,h]=contour(...); delete(h).
+% there we have to use [c,h]=contour(...); delete(h).
 %
 % Eaxmple:
 % 
@@ -66,22 +69,22 @@ function varargout = contour2poly(c)
    if ~isempty(c)
       
       %% pre-allocate for efficient memory (speed)
-      %% every [level1 pairs1] becomes a nan
-      %% except the first one
-      %% -----------------------------------------
+      %  every [level1 pairs1] becomes a nan
+      %  except the first one
+      %  -----------------------------------------
       
-      %% C = [level1 x1 x2 x3 ... level2 x2 x2 x3 ...;
-      %%      pairs1 y1 y2 y3 ... pairs2 y2 y2 y3 ...]
+      %  C = [level1 x1 x2 x3 ... level2 x2 x2 x3 ...;
+      %       pairs1 y1 y2 y3 ... pairs2 y2 y2 y3 ...]
                 
       length_c               = size(c,2);
       
       %% copy array and set delimiets to nan when all positions are known.
-      %% -----------------------------------------
+      %  -----------------------------------------
       S.x = c(1,2:end);
       S.y = c(2,2:end);
       
       %% Initialize
-      %% -----------------------------------------
+      %  -----------------------------------------
       
       ncontours     = 1;
       S.levels  (1) = c(1,1);%levels_per_contour
@@ -89,10 +92,11 @@ function varargout = contour2poly(c)
       delimiters(1) = S.n+1;
       
       %% Scroll through array (perhaps better to pre allocate:?
-      %% S.levels = levels_per_contour
-      %% S.n      = linepieces_per_contour
-      %% delimiters
-      %% -----------------------------------------
+      %  S.levels = levels_per_contour
+      %  S.n      = linepieces_per_contour
+
+      %%  delimiters
+      %  -----------------------------------------
       
       while delimiters(end) < length_c
       
@@ -103,10 +107,10 @@ function varargout = contour2poly(c)
       
       end
       
-      %% Overwrite all delimiter positions with NaNs
-      %% But remember, not the first one that we skip in the nan-separated array
-      %% and not the last one, that is not even present in the c vector
-      %% -----------------------------------------
+      %  Overwrite all delimiter positions with NaNs
+      %  But remember, not the first one that we skip in the nan-separated array
+      %  and not the last one, that is not even present in the c vector
+      %  -----------------------------------------
       
       delimiters      = delimiters(1:end-1);
       S.x(delimiters) = nan;
@@ -114,7 +118,7 @@ function varargout = contour2poly(c)
    
    
       %% Output
-      %% -----------------------------------------
+      %  -----------------------------------------
 
       if nargout==1
       
@@ -128,12 +132,16 @@ function varargout = contour2poly(c)
       
          varargout = {S.x,S.y,S.levels};
 
+      elseif nargout==4
+      
+         varargout = {S.x,S.y,S.levels,S.n};
+
       end
    
    else %  if ~isempty(c)
    
       %% Output
-      %% -----------------------------------------
+      %  -----------------------------------------
 
       if nargout==1
       
@@ -150,6 +158,10 @@ function varargout = contour2poly(c)
       elseif nargout==3
       
          varargout = {[],[],[]};
+
+      elseif nargout==4
+      
+         varargout = {[],[],[],[]};
          
       end   
    

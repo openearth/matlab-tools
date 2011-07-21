@@ -1,5 +1,5 @@
 function KML_figure_tiler_printTile(baseCode,D,OPT)
-%KML_FIG2PNGNEW_PRINTTILE subsidiary of KMLfigure_tiler
+%KML_figure_tiler_printTile subsidiary of KMLfigure_tiler
 %
 %See also:KMLfigure_tiler
 

@@ -1,15 +1,16 @@
-function [OPT, Set, Default] = KMLcurvedArrows(x,y,u0,v0,varargin)
+function varargout = KMLcurvedArrows(x,y,u0,v0,varargin)
 % KMLCURVEDARROWS makes nice curved arrows that 'go with the flow'
 %
 %   KMLcurvedArrows(x,y,u0,v0,varargin)
 %
 % x, y, u0, v0: must be a cell array, each cell with demsions of x and y
 %
-% NOTE: unlike all other GooglePlot functions, this one needs
-% an x and y, and not lat, lon (not order). This is because the particle 
-% tracking is perfomed in(x,y) space, the keryword coordConvFun 
+% NOTE
+% Unlike all other GooglePlot functions, this one needs
+% an [x,y], and not [lat,lon] (note order). This is because the particle 
+% tracking is perfomed in (x,y) space, the keyword coordConvFun 
 % determines how to transform the particle tracking results to (lat,lon).
-% also note the order u,v
+% on the fly. Note the order u,v.
 %
 % see the keyword/value pair defaults for additional options
 %
@@ -56,20 +57,25 @@ OPT.fileName         = [];
 OPT.time             = [1 1000]; %datenum containing begin and end times of animation
 
 %% arrow properties
-OPT.hdthck	     = 1.7;              % head thickness
-OPT.arthck	     = OPT.hdthck/4;     % arrow thickness
-OPT.dt 		     = 90;               % time (determines length of arrows)
-OPT.lifespan  	     = 50;               % number of timesteps an arrow is alive
-OPT.n_arrows 	     = 300;              % number of arrows
-OPT.flow_steps 	     = 4;                % (max is 21)
+OPT.hdthck	     = 1.7;                  % head thickness
+OPT.arthck	     = OPT.hdthck/4;         % arrow thickness
+OPT.dt 		     = 90;                   % time (determines length of arrows)
+OPT.lifespan  	     = 50;                   % number of timesteps an arrow is alive
+OPT.n_arrows 	     = 300;                  % number of arrows
+OPT.flow_steps 	     = 4;                    % (max is 21)
 OPT.colorScale 	     = .015;
 OPT.lineScale  	     = .02;
-OPT.interp_steps     = 1;                % interpolate in time between consecutive arrows
+OPT.interp_steps     = 1;                    % interpolate in time between consecutive arrows
 
-OPT.relwdt	     = @(x) ones(numel(x),1);               % relative width, leave at one
-OPT.nt 		     = @(x)numel(x);               % number of gridpoints
+OPT.relwdt	     = @(x)ones(numel(x),1); % relative width, leave at one
+OPT.nt 		     = @(x)numel(x);         % number of gridpoints
+OPT.x0 		     = []; % x of seeds
+OPT.y0 		     = []; % y of seeds
 
-if nargin==0;return;end
+if nargin==0
+   varargout = {OPT};
+   return
+end
 
 OPT.relwdt	     = ones(numel(x),1); % relative width, leave at one
 OPT.nt 		     = numel(x);         % number of gridpoints
@@ -113,13 +119,15 @@ elseif iscell(u0)
 end
 
 %% make initial seed of arrows
-x_nonan 	= x(~isnan(x));
-y_nonan 	= y(~isnan(y));
-seedPoints 	= linspace(1,numel(x_nonan)-numel(x_nonan)/OPT.n_arrows,OPT.n_arrows);
-seedPoints 	= round(seedPoints'+(numel(x_nonan)/OPT.n_arrows).*rand(OPT.n_arrows,1));
-x0 		    = x_nonan(seedPoints);
-y0 		    = y_nonan(seedPoints);
-t  		    = round((OPT.lifespan-1)*rand(size(x0)))+1;
+x_nonan       = x(~isnan(x)); % needed for adding new new arrows
+y_nonan       = y(~isnan(y));
+if isempty(OPT.x0) & isempty(OPT.y0)
+seedPoints    = linspace(1,numel(x_nonan)-numel(x_nonan)/OPT.n_arrows,OPT.n_arrows);
+seedPoints    = round(seedPoints'+(numel(x_nonan)/OPT.n_arrows).*rand(OPT.n_arrows,1));
+OPT.x0        = x_nonan(seedPoints);
+OPT.y0        = y_nonan(seedPoints);
+end
+t             = round((OPT.lifespan-1)*rand(size(OPT.x0)))+1;
 
 %% interpolate time
 time        = linspace(OPT.time(1),OPT.time(2),OPT.interp_steps*(length(u0)-1)+1);
@@ -150,7 +158,7 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
     end
 
     % make arrows
-    [xp,yp,xax,yax]=KML_curvedArrows(x0,y0,x,y,u,v,OPT.dt,OPT.nt,OPT.hdthck,OPT.arthck,OPT.relwdt);
+    [xp,yp,xax,yax]=KML_curvedArrows(OPT.x0,OPT.y0,x,y,u,v,OPT.dt,OPT.nt,OPT.hdthck,OPT.arthck,OPT.relwdt);
 
     % pre-proces xp and yp
     xax(xax<1000.0 & xax>999.998)=NaN; yax(yax<1000.0 & yax>999.998)=NaN;
@@ -177,7 +185,7 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
           'lineWidth',lineWidths(arrowSizes ~= 0),...
           'lineColor',lineColors(arrowSizes ~= 0,:));
     else
-    lineAlphas = ones(size(x0));
+    lineAlphas = ones(size(OPT.x0));
     lineAlphas(t==9|t==OPT.lifespan-8) = 0.9;
     lineAlphas(t==8|t==OPT.lifespan-7) = 0.8;
     lineAlphas(t==7|t==OPT.lifespan-6) = 0.7;
@@ -212,13 +220,13 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
     t(arrowSizes' == 0) = t(arrowSizes' == 0)-20;
     %t(arrowSizes' >  prctile(arrowSizes,99)) =  t(arrowSizes' >  prctile(arrowSizes,99))-4;
     % kill arrows
-    x0(t<1) = [];
-    y0(t<1) = [];
-     t(t<1) = [];
+    OPT.x0(t<1) = [];
+    OPT.y0(t<1) = [];
+         t(t<1) = [];
      
     %% add new ones if needed
-    if length(x0)<OPT.n_arrows
-        new_arrows = OPT.n_arrows-length(x0);
+    if length(OPT.x0)<OPT.n_arrows
+        new_arrows = OPT.n_arrows-length(OPT.x0);
         
         % pick new arrows. Use a bias so that arrows with small velocities
         % are more likely to be chosen.
@@ -237,9 +245,9 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
         [ignore,ind] = sort(s_nonan);
         seedPoints   = ind(end-new_arrows+1:end);
         if seedPoints < length(x_nonan)
-        x0 = [x0;x_nonan(seedPoints)];
-        y0 = [y0;y_nonan(seedPoints)];
-        t  = [t;50*ones(new_arrows,1)];
+        OPT.x0 = [OPT.x0;x_nonan(seedPoints)];
+        OPT.y0 = [OPT.y0;y_nonan(seedPoints)];
+        t      = [t   ;50*ones(new_arrows,1)];
         end
     end 
 end
@@ -253,3 +261,7 @@ KMLmerge_files('fileName',OPT.fileName,...
             'sourceFiles',sourceFiles,...
       'deleteSourceFiles',true);
 rmdir(tempPath,'s')
+
+if nargout > 0
+   varargout = {OPT.x0,OPT.y0};
+end

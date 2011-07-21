@@ -1,5 +1,5 @@
 function [output] = KML_polyq(lat,lon,varargin)
-%KML_POLY  low-level routine for creating KML string of polygon
+%KML_POLYq  low-level routine for creating KML string of polygon	
 %
 %   kmlstring = KML_poly(lat,lon,<z>,<keyword,value>)
 %

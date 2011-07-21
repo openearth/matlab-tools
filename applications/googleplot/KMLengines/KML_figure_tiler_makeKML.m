@@ -1,5 +1,5 @@
 function KML_figure_tiler_makeKML(OPT)
-%KML_FIG2PNGNEW_MAKEKML   subsidiary of KMLfigure_tiler
+%KML_figure_tiler_makeKML subsidiary of KMLfigure_tiler
 %
 %See also:KMLfigure_tiler
 

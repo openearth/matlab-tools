@@ -1,7 +1,7 @@
-function varargout = KMLcontour(lat,lon,z,varargin)
+function varargout = KMLcontour(lat,lon,c,varargin)
 % KMLCONTOUR   Just like contour
 %
-%    KMLcontour(lat,lon,z,<keyword,value>)
+%    KMLcontour(lat,lon,c,<keyword,value>)
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -23,6 +23,8 @@ function varargout = KMLcontour(lat,lon,z,varargin)
 % The kml code hat is written to file 'fileName' can optionally be returned.
 %
 %    kmlcode = KMLcontour(lat,lon,<keyword,value>)
+%
+% For 3D contours always use KMLcontour3.
 %
 % See also: googlePlot, contour, contour3
 
@@ -79,6 +81,11 @@ function varargout = KMLcontour(lat,lon,z,varargin)
    OPT.labelDecimals = 1;
    OPT.labelInterval = nan; % NaN means clabel is used
    OPT.zScaleFun     = @(z) (z+0)*0;
+   OPT.extrude       = true;   
+
+   OPT.zstride       = 1; % stride for interpolating z data to contours, only when z is supplied by KMLcontour3
+  %OPT.zlim          = 1; % TO DO: call contour for z separately, and use those lines to interpolate z to c contour instead of griddata on full z matrix
+
 %% 
    if nargin==0
     varargout = {OPT};
@@ -91,10 +98,11 @@ function varargout = KMLcontour(lat,lon,z,varargin)
 
 %% check if labels are defined
 %  see if height is defined
-
+z = []; % empty means same as c
 if ~isempty(varargin)
     if isnumeric(varargin{1})
-        c = varargin{1};
+        z = c;
+        c = varargin{1}; % can be 'clampToGround',[] or array
         varargin(1) = [];
         OPT.writeLabels = true;
     else
@@ -106,104 +114,107 @@ end
 
 %% set properties
 
-[OPT, Set, Default] = setproperty(OPT, varargin{:});
+   [OPT, Set, Default] = setproperty(OPT, varargin{:});
 
 %% input check
 
 % correct lat and lon
 
-if any((abs(lat)/90)>1)
-    error('latitude out of range, must be within -90..90')
-end
-lon = mod(lon+180, 360)-180;
+   if any((abs(lat)/90)>1)
+       error('latitude out of range, must be within -90..90')
+   end
+   lon = mod(lon+180, 360)-180;
 
 % color limits
 
-if isempty(OPT.cLim)
-    OPT.cLim = ([min(z(~isnan(z))) max(z(~isnan(z)))]);
-end
+   if isempty(OPT.cLim)
+       OPT.cLim = ([min(c(~isnan(c))) max(c(~isnan(c)))]);
+   end
 
 %% get filename, gui for filename, if not set yet
 
-if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
-    OPT.fileName = fullfile(filePath,fileName);
-end
+   if isempty(OPT.fileName)
+       [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+       OPT.fileName = fullfile(filePath,fileName);
+   end
 
 %% set kmlName if it is not set yet
 
-if isempty(OPT.kmlName)
-    [ignore OPT.kmlName] = fileparts(OPT.fileName);
-end
+   if isempty(OPT.kmlName)
+       [ignore OPT.kmlName] = fileparts(OPT.fileName);
+   end
 
 %% find contours
 
-if OPT.writeLabels & isnan(OPT.labelInterval)
-    FIG = figure('visible','on');
-    [coords,h] = contour(lat,lon,z,OPT.levels);
-else
-    coords = contours(lat,lon,z,OPT.levels);
-end
+   if OPT.writeLabels & isnan(OPT.labelInterval)
+       FIG = figure('visible','on');
+       [coords,h] = contour (lat,lon,c,OPT.levels);
+   else
+        coords    = contours(lat,lon,c,OPT.levels);
+   end
+   
+   if length(coords)==0
+       error(['no contours found, please check levels([1 end])=[',num2str(OPT.levels(1)),' - ',num2str(OPT.levels(end)),'] against c range [',num2str(min(c(:))),' - ',num2str(max(c(:))),']'])
+   end
 
-if length(coords)==0
-    error(['no contours found, please check levels([1 end])=[',num2str(OPT.levels(1)),' - ',num2str(OPT.levels(end)),'] against z range [',num2str(min(z(:))),' - ',num2str(max(z(:))),']'])
-end
-%% pre allocate, find dimensions
+%% pre allocate into 2D array for KMLline
 
-max_size = 1;
-jj = 1;ii = 0;
-while jj<size(coords,2)
-    ii = ii+1;
-    max_size = max(max_size,coords(2,jj));
-    jj = jj+coords(2,jj)+1;
-end
-lat = nan(max_size,ii);
-lon = nan(max_size,ii);
-level = nan(1,ii);
-%%
-jj = 1;ii = 0;
-while jj<size(coords,2)
-    ii = ii+1;
-    height(ii) = coords(1,jj);
-    lat(1:coords(2,jj),ii) = coords(1,[jj+1:jj+coords(2,jj)]);
-    lon(1:coords(2,jj),ii) = coords(2,[jj+1:jj+coords(2,jj)]);
-    jj = jj+coords(2,jj)+1;
-end
+  [p.lat,p.lon,height,p.n ]=contour2poly(coords);
+   p.lat = poly_split(p.lat);
+   p.lon = poly_split(p.lon);
 
-%% make z
-
-z = repmat(height,size(lat,1),1);
-
-sourceFiles = {};
-
+   if ~(ischar(z) | isempty(z))
+   for i=1:length(p.lon)
+   
+   disp([mfilename,':',num2str(100.*i/length(p.lon)),' %, set ''zstride'' to speed this up.'])
+   
+   p.z{i} = griddata(lat(1:OPT.zstride:end,1:OPT.zstride:end),...
+                     lon(1:OPT.zstride:end,1:OPT.zstride:end),...
+                     z  (1:OPT.zstride:end,1:OPT.zstride:end),p.lat{i},p.lon{i});
+   end
+   z   = nan(max(p.n),length(p.n));
+   end
+   lat = nan(max(p.n),length(p.n));
+   lon = nan(max(p.n),length(p.n));
+   for ii=1:length(p.n)
+       lat(1:p.n(ii),ii) = p.lat{ii};
+       lon(1:p.n(ii),ii) = p.lon{ii};
+       if ~(ischar(z) | isempty(z))
+       z  (1:p.n(ii),ii) = p.z  {ii};
+       end
+   end
+   c = repmat(height,max(p.n),1);
+   
+   sourceFiles = {};
+   
 %% make labels
-
-if OPT.writeLabels
-    if ~isnan(OPT.labelInterval)
-        latText    = lat(1:OPT.labelInterval:end,:);
-        lonText    = lon(1:OPT.labelInterval:end,:);
-        zText      =   z(1:OPT.labelInterval:end,:);
-        zText      =   zText(~isnan(latText));
-        labels     =   zText;
-        latText    = latText(~isnan(latText));
-        lonText    = lonText(~isnan(lonText));
-    else
-        t = clabel(coords,h);
-        for i=1:length(t)
-            p = get(t(i),'Position');
-            latText(i) = p(1);
-            lonText(i) = p(2);
-            labels {i} = get(t(i),'String');
-            zText      = str2num(char(labels));
-        end
-        close(FIG);
-    end
-    KMLtext(latText,lonText,labels,OPT.zScaleFun(zText),'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
-        'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'labelDecimals',OPT.labelDecimals);
-    
-    sourceFiles = [sourceFiles,{[OPT.fileName(1:end-4) 'labels.kml']}];
-    
-end
+   
+   if OPT.writeLabels
+       if ~isnan(OPT.labelInterval)
+           latText    = lat(1:OPT.labelInterval:end,:);
+           lonText    = lon(1:OPT.labelInterval:end,:);
+           zText      =   c(1:OPT.labelInterval:end,:);
+           zText      =   zText(~isnan(latText));
+           labels     =   zText;
+           latText    = latText(~isnan(latText));
+           lonText    = lonText(~isnan(lonText));
+       else
+           t = clabel(coords,h);
+           for i=1:length(t)
+               p = get(t(i),'Position');
+               latText(i) = p(1);
+               lonText(i) = p(2);
+               labels {i} = get(t(i),'String');
+               zText      = str2num(char(labels));
+           end
+           close(FIG);
+       end
+       KMLtext(latText,lonText,labels,OPT.zScaleFun(zText),'fileName',[OPT.fileName(1:end-4) 'labels.kml'],...
+           'kmlName','labels','timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'labelDecimals',OPT.labelDecimals);
+       
+       sourceFiles = [sourceFiles,{[OPT.fileName(1:end-4) 'labels.kml']}];
+       
+   end
 
 %% draw the lines
 
@@ -236,36 +247,65 @@ end
 lineColors = colorRGB(level,:);
 
 if OPT.is3D
+
     if nargout==1
+       if isempty(z)
+        kmlcode = KMLline(lat,lon,OPT.zScaleFun(c),'fileName',[OPT.fileName(1:end-4) 'lines.kml'],...
+            'is3D'     ,true,...
+            'kmlName'  ,'lines',...
+            'timeIn'   ,OPT.timeIn,...
+            'timeOut'  ,OPT.timeOut,...
+            'lineColor',lineColors,...
+            'lineWidth',OPT.lineWidth,...
+            'fillColor',lineColors,...
+            'extrude'  ,OPT.extrude);
+       else
         kmlcode = KMLline(lat,lon,OPT.zScaleFun(z),'fileName',[OPT.fileName(1:end-4) 'lines.kml'],...
-            'kmlName','lines',...
-            'timeIn',OPT.timeIn,...
-            'timeOut',OPT.timeOut,...
+            'is3D'     ,true,...
+            'kmlName'  ,'lines',...
+            'timeIn'   ,OPT.timeIn,...
+            'timeOut'  ,OPT.timeOut,...
             'lineColor',lineColors,...
             'lineWidth',OPT.lineWidth,...
-            'fillColor',lineColors);
+            'fillColor',lineColors,...
+            'extrude'  ,OPT.extrude);
+       end
     else
-        KMLline(lat,lon,OPT.zScaleFun(z),'fileName',[OPT.fileName(1:end-4) 'lines.kml'],...
-            'kmlName','lines',...
-            'timeIn',OPT.timeIn,...
-            'timeOut',OPT.timeOut,...
+       if isempty(z)
+        kmlcode = KMLline(lat,lon,OPT.zScaleFun(c),'fileName',[OPT.fileName(1:end-4) 'lines.kml'],...
+            'is3D'     ,true,...
+            'kmlName'  ,'lines',...
+            'timeIn'   ,OPT.timeIn,...
+            'timeOut'  ,OPT.timeOut,...
             'lineColor',lineColors,...
             'lineWidth',OPT.lineWidth,...
-            'fillColor',lineColors);
+            'fillColor',lineColors,...
+            'extrude'  ,OPT.extrude);
+       else
+        kmlcode = KMLline(lat,lon,OPT.zScaleFun(z),'fileName',[OPT.fileName(1:end-4) 'lines.kml'],...
+            'is3D'     ,true,...
+            'kmlName'  ,'lines',...
+            'timeIn'   ,OPT.timeIn,...
+            'timeOut'  ,OPT.timeOut,...
+            'lineColor',lineColors,...
+            'lineWidth',OPT.lineWidth,...
+            'fillColor',lineColors,...
+            'extrude'  ,OPT.extrude);
+       end
     end
 else
     if nargout==1
         kmlcode = KMLline(lat,lon,'fileName',[OPT.fileName(1:end-4) 'lines.kml'],...
-            'kmlName','lines',...
-            'timeIn',OPT.timeIn,...
-            'timeOut',OPT.timeOut,...
+            'kmlName'  ,'lines',...
+            'timeIn'   ,OPT.timeIn,...
+            'timeOut'  ,OPT.timeOut,...
             'lineColor',lineColors,...
             'lineWidth',OPT.lineWidth);
     else
         KMLline(lat,lon,'fileName',[OPT.fileName(1:end-4) 'lines.kml'],...
-            'kmlName','lines',...
-            'timeIn',OPT.timeIn,...
-            'timeOut',OPT.timeOut,...
+            'kmlName'  ,'lines',...
+            'timeIn'   ,OPT.timeIn,...
+            'timeOut'  ,OPT.timeOut,...
             'lineColor',lineColors,...
             'lineWidth',OPT.lineWidth);
     end
@@ -274,8 +314,8 @@ end
 %% colorbar
 
 if OPT.colorbar
-    OPT.CBfileName = [OPT.fileName(1:end-4) 'colorbar.kml'];
-    KMLcolorbar(OPT);
+    OPT.CBfileName = [OPT.fileName(1:end-4) '_colorbar.kml'];
+   [clrbarstring,pngNames] = KMLcolorbar(OPT);
     sourceFiles = [sourceFiles {OPT.CBfileName}];
 end
 
@@ -290,8 +330,8 @@ for i=1:length(sourceFiles)
     delete(sourceFiles{i});
 end
 
-if nargout ==1
-    varargout = {kmlcode};
+if nargout >0
+    varargout = {kmlcode,pngNames};
 end
 
 %% EOF

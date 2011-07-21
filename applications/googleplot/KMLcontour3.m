@@ -1,7 +1,16 @@
 function [OPT, Set, Default] = KMLcontour3(lat,lon,z,varargin)
 % KMLCONTOUR3   Just like contour3
 %
-%    KMLcontour3(lat,lon,z,<keyword,value>)
+%    KMLcontour3(lat,lon,c,  <keyword,value>)
+%
+% plots 3D contours with color c at level c.
+%
+%    KMLcontour3(lat,lon,z,c,<keyword,value>)
+%
+% plots 3D contours with color c at level z. z values are
+% interpolated from the z matrix at the location of the
+% c contours, this process (griddata) is SLOW. Set keyword 
+% 'zstride' to use only a subset from the z matrix to interpolate to.
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -9,11 +18,11 @@ function [OPT, Set, Default] = KMLcontour3(lat,lon,z,varargin)
 %
 % The most important keywords are 'fileName' and 'levels';
 %
-%    OPT = KMLcontour3(lat,lon,z,'fileName','mycontour3.kml','levels',20)
+%    OPT = KMLcontour3(lat,lon,z,<c>,'fileName','mycontour3.kml','levels',20)
 %
-% The kml code hat is written to fle 'fileName' can optionally be returned.
+% The kml code hat is written to file 'fileName' can optionally be returned.
 %
-%    kmlcode = KMLcontour3(lat,lon,<keyword,value>)
+%    kmlcode = KMLcontour3(lat,lon,z,<c>,<keyword,value>)
 %
 % See also: googlePlot, contour, contour3
 
@@ -54,17 +63,27 @@ function [OPT, Set, Default] = KMLcontour3(lat,lon,z,varargin)
 OPT               = KMLcontour();
 OPT.is3D          = true;
 OPT.zScaleFun     = @(z) (z+20)*10;
+OPT.zstride       = 1; % stride for interpolating z data to contours
 
+c = [];
+nextarg = 1;
 if nargin==0
   return
+elseif ~odd(nargin);
+  c = varargin{1};
+  varargin(1) = [];
 end
 
-[OPT, Set, Default] = setproperty(OPT, varargin{:});
+[OPT, Set, Default] = setproperty(OPT, varargin);
 
-kmlcode = KMLcontour(lat,lon,z,OPT);
+if isempty(c)
+   [kmlcode,pngNames] = KMLcontour(lat,lon,z,  OPT); % c==z
+else
+   [kmlcode,pngNames] = KMLcontour(lat,lon,z,c,OPT);
+end
 
-if nargout ==1
-   OPT = {kmlcode};
+if nargout > 0
+   OPT = {kmlcode,pngNames};
 end
 
 %% EOF

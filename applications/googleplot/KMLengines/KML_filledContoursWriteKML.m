@@ -1,5 +1,5 @@
 function KML_filledContoursWriteKML(OPT,lat,lon,z,latC,lonC,zC,contour)
-%KML_FILLEDCONTOURSWRITEKML  One line description goes here.
+%KML_FILLEDCONTOURSWRITEKML  subsidiary of KMLcontourf
 %
 %   More detailed description goes here.
 %

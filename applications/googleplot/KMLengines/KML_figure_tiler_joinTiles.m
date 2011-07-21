@@ -1,5 +1,5 @@
 function KML_figure_tiler_joinTiles(OPT)
-%KML_FIG2PNGNEW_JOINTILES   subsidiary of KMLfigure_tiler
+%KML_figure_tiler_joinTiles subsidiary of KMLfigure_tiler
 %
 %See also:KMLfigure_tiler
 

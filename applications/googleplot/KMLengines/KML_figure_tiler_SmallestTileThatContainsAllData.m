@@ -1,5 +1,5 @@
 function code = KML_figure_tiler_SmallestTileThatContainsAllData(D)
-%KML_FIG2PNGNEW_SMALLESTTILETHATCONTAINSALLDATA subsidiary of KMLfigure_tiler
+%KML_figure_tiler_SmallestTileThatContainsAllData subsidiary of KMLfigure_tiler
 %
 %   code = KML_figure_tiler_SmallestTileThatContainsAllData(D)
 %

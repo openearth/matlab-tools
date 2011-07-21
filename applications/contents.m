@@ -1,4 +1,4 @@
-% Application-specific tools in <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>
+% Application-specific tools in <a href="http://www.OpenEarth.eu">OpenEarthTools</a>
 %
 % OpenEarthTools application-specific toolboxes.
 %   arcgis             - tools to read Arc ASCII Grid Format

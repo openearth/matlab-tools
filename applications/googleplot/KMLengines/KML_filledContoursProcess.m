@@ -1,5 +1,5 @@
 function [latC,lonC,zC,contour] = KML_filledContoursProcess(OPT,E,C)
-%KML_FILLEDCONTOURSPROCESS  One line description goes here.
+%KML_FILLEDCONTOURSPROCESS   subsidiary of KMLcontourf
 %
 %   More detailed description goes here.
 %

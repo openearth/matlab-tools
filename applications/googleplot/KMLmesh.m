@@ -92,11 +92,7 @@ function varargout = KMLmesh(lat,lon,varargin)
 
 %% HEADER
 
-   OPT_header = struct(...
-              'name',OPT.kmlName,...
-              'open',0,...
-       'description',OPT.description);
-   output = KML_header(OPT_header);
+   output = KML_header(OPT);
    fprintf(OPT.fid,output);
 
 %% make mesh
@@ -109,8 +105,8 @@ function varargout = KMLmesh(lat,lon,varargin)
       KMLline(lat ,lon ,z ,OPT);
       KMLline(lat',lon',z',OPT);
    else
-      KMLline(lat ,lon ,OPT);
-      KMLline(lat',lon',OPT);
+      KMLline(lat ,lon    ,OPT);
+      KMLline(lat',lon'   ,OPT);
    end
 
    OPT.fileName = fileName;

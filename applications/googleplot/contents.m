@@ -6,8 +6,13 @@
 % plus the examples in the Tutorial, Developers Guide and Reference:
 % http://code.google.com/apis/kml/
 % This toolbox is part of the OpenEarthTools dstribition (http://OpenEarth.eu)
+%
+% Every googlePlot function has a number of <keyword,value> pairs with
+% good defaults. To get a list of the available keywords plus their
+% defaults call a function without input, e.g.: KMLline(). For examples
+% and tests: https://repos.deltares.nl/repos/OpenEarthTools/test/matlab/applications/googleplot/
 % 
-% Single object plots 
+% Single object(s) plots:
 %  KMLanimatedIcon                - adds place markers with color varying in time
 %  KMLcurtain                     - Create a time animated curtain for e.g. adcp data
 %  KMLcylinder                    - draw a 3D cylinder at a specific location
@@ -18,7 +23,7 @@
 %  KMLscatter                     - Just like scatter and plotc
 %  KMLtext                        - Just like text 
 %
-% Surface plots (2D & 3D)
+% Surface plots (continuous 2D & 3D):
 %  KMLcontour                     - Just like contour
 %  KMLcontour3                    - Just like contour3
 %  KMLcontourf                    - Just like contourf (BETA!!!)
@@ -34,12 +39,12 @@
 %  KMLtricontourf3                - Wrapper for KMLtricontourf, to make it 3D
 %  KMLtrisurf                     - Just like trisurf
 %
-% Vector plots
+% Vectors plots:
 %  KMLcurvedArrows                - makes nice curved arrows that 'go with the flow'
 %  KMLquiver                      - Just like quiver
 %  KMLquiver3                     - Just like quiver3 (except no w yet)
 %
-% File and image overlay mangling
+% File and image overlay mangling:
 %  KMLcolorbar                    - make KML colorbar
 %  KMLlogo                        - make a white logo *.png with transparent background of an image
 %  KMLtest                        - batch for all unit tests of googleplot

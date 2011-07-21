@@ -1,4 +1,7 @@
 function KML_figure_tiler_MergeTilesInTime(pathname)
+%KML_figure_tiler_MergeTilesInTime subsidiary of KMLfigure_tiler
+%
+%See also:KMLfigure_tiler
 
 multiWaitbar('Merging',0,'color',[.2 .6 .4],'label','Inquiring number of files...');
 allfiles = findAllFiles(pathname,'pattern_incl','*.png');

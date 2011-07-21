@@ -1,4 +1,4 @@
-function KML2kmz(varargin)
+function varargout = KML2kmz(varargin)
 %KML2KMZ   zip kml (and subsidiary files) files into kmz
 %
 %    KMLkmz(kml_file,<other_files,<other_files,<...>>>)
@@ -61,13 +61,14 @@ function KML2kmz(varargin)
    
    all_files = {};
    for i=1:nargin
-      if                 ischar(varargin{i})
-      all_files = {all_files{:} varargin{i}};
-      elseif          iscellstr(varargin{i})
-      all_files = {all_files{:} varargin{i}{:}};
-      else
-      error('only cellstr or char allowed')
-      end
+     if                 ischar(varargin{i})
+       all_files = {all_files{:} varargin{i}};
+     elseif          iscellstr(varargin{i})
+       all_files = {all_files{:} varargin{i}{:}};
+     else
+         varargin{2}
+       error(['nly cellstr or char allowed for input: ',num2str(i)])
+     end
    end
 
 %% remove redundancies
@@ -76,8 +77,10 @@ function KML2kmz(varargin)
 
 %% check
 
-   n = length(strmatch('.kml',cellfun(@(x)fileext(x),all_files,'UniformOutput',0)));
+ii = strmatch('.kml',cellfun(@(x)fileext(x),all_files,'UniformOutput',0));
+n = length(ii);
    if n > 1
+      char(all_files{ii})
       error(['Each *.kmz may contain only one *.kml (with can have arbitrary name), whereas yours has ',num2str(n),' *.kml files.'])
    end
 

@@ -129,11 +129,7 @@ function varargout = KMLlogo(varargin)
 
    if ischar(OPT.fileName)
       OPT.fid = fopen(OPT.fileName,'w');
-      OPT_header = struct(...
-                 'name',OPT.kmlName,...
-                 'open',0,...
-          'description',OPT.description);
-      output = KML_header(OPT_header);
+      output = KML_header(OPT);
       fprintf(OPT.fid,output);
    else
       OPT.fid = OPT.fileName;

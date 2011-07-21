@@ -6,7 +6,8 @@ function varargout = KML_header(varargin)
 % where the following <keyword,value> pairs have been implemented:
 %
 %   * kmlName      name that appears in Google Earth Places list (default 'ans.kml')
-%   * description  that appears in Google Earth Places list
+%   * snippet      name that appears in Google Earth Places list (default 'ans.kml')
+%   * description  text balloon that appears when clicking the snippet/name
 %   * open         whether to open kml file in GoogleEarth in call of KMLline(default 0)
 %   * visible      whther by default visible outside GE list item menu
 % 
@@ -57,6 +58,7 @@ function varargout = KML_header(varargin)
 
    OPT.open         = [];
    OPT.kmlName      = '';
+   OPT.snippet      = '';
    OPT.description  = '';
    OPT.visible      = 1;
 
@@ -103,9 +105,10 @@ function varargout = KML_header(varargin)
     '<Document>\n'...
     '%s'...
     '<name>%s</name>\n'...
+    '<snippet>%s</snippet>\n'...
     '<description>%s</description>\n'...
     '<visibility>%s</visibility>\n'...
     '<open>%d</open>\n' ],...
-    camera,OPT.kmlName , OPT.description, num2str(OPT.visible), OPT.open);
+    camera,OPT.kmlName , OPT.snippet, OPT.description, num2str(OPT.visible), OPT.open);
 
    varargout = {output};

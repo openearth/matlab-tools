@@ -115,7 +115,7 @@ function varargout = KML_colorbar(OPT)
    end
    h.ax = gca;
    if OPT.CBcLim(1)==OPT.CBcLim(2)
-      OPT.CBcLim = OPT.CBcLim + 10.*[-eps eps];
+      OPT.CBcLim = OPT.CBcLim + 1e3.*[-eps eps];
    end
    h.c  = colorbarlegend(gca,[0 1],[0 1],OPT.CBcLim,...
             'ontop',0,...
