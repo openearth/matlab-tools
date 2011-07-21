@@ -13,7 +13,7 @@ for i=1:1000
         % nn=length(v0);
         % concatenate strings containing =
         % still to be implemented
-        switch lower(v0{1}),
+        switch deblank(lower(v0{1})),
             case{'comment','commnt'}
             otherwise
                 if ~isnan(str2double(v0{1})) && length(v0)==1

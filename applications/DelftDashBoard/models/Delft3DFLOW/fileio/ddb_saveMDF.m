@@ -82,9 +82,9 @@ if Flow.tracers
 end
 switch Flow.windType
     case{'uniform','equidistant','spiderweb'}
-        MDF.wnsvwp='N';
+        MDF.Wnsvwp='N';
     case{'curvilinear'}
-        MDF.wnsvwp='Y';
+        MDF.Wnsvwp='Y';
 end
 MDF.Wndint=Flow.wndInt;
 if Flow.wind
