@@ -150,7 +150,7 @@ else
         dx = (volume - V(id1)) / z1;
     else
         % derive the dx between erosion point and the neighbouring point at the
-        % seaward side by an analitical solotion, using the abc-formula)
+        % seaward side by an analitical solution, using the abc-formula)
         a = .5*alfa * (1 - alfa);
         b = z1 * (1 - alfa);
         c = -.5 * z1^2 - volume + cumV(id1);
