@@ -78,7 +78,9 @@ OPT = struct(...
     'threshold', 1e-5,...
     'x', [],...
     'x2', [],...
-    'positive_landward', false);
+    'positive_landward', false,...
+    'method', 'intersection',...
+    'lowerboundary', 0);
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -90,6 +92,10 @@ if isempty(x)
     % no x-vectors specified
     if ~isequal(length(z), length(z2))
         error('z and z2 should have the same length')
+    end
+    
+    if strcmpi(OPT.method, '1in1')
+        error('x-vector must be specified')
     end
 else
     if ~isempty(OPT.x)
@@ -106,22 +112,35 @@ else
     end
 end
 
-%% find erosion point
-% id of positions where profiles meet or leave each other 
-id = diff(abs(z-z2) < OPT.threshold);
-% pre-allocate erosionpointid
-erosionpointid = false(size(z));
-if OPT.positive_landward
-    erosionpointid(find(id == 1, 1, 'last') + 1) = true;
+if strcmpi(OPT.method, 'intersection')
+    %% find erosion point
+    % id of positions where profiles meet or leave each other
+    id = diff(abs(z-z2) < OPT.threshold);
+    % pre-allocate erosionpointid
+    erosionpointid = false(size(z));
+    if OPT.positive_landward
+        erosionpointid(find(id == 1, 1, 'last') + 1) = true;
+    else
+        erosionpointid(find(id == -1, 1, 'first')) = true;
+    end
+    
+    %% prepare output
+    if isempty(x)
+        % give boolean vector indicating the erosion point as output
+        varargout = {erosionpointid};
+    else
+        % give x-coordinate of erosion point as output
+        varargout = {x(erosionpointid)};
+    end
+elseif strcmpi(OPT.method, '1in1')
+    V = jarkus_getVolume(...
+        x, z,...
+        'x2', x,...
+        'z2', z2,...
+        'LowerBoundary', OPT.lowerboundary);
+    varargout = {additional_erosionpoint(x, z, -V,...
+        'lowerboundary', OPT.lowerboundary,...
+        'positive_landward', OPT.positive_landward)};
 else
-    erosionpointid(find(id == -1, 1, 'first')) = true;
-end
-
-%% prepare output
-if isempty(x)
-    % give boolean vector indicating the erosion point as output
-    varargout = {erosionpointid};
-else
-    % give x-coordinate of erosion point as output
-    varargout = {x(erosionpointid)};
+    error(['method "' OPT.method '" unkown'])
 end
