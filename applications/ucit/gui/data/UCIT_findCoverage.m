@@ -64,6 +64,8 @@ for i = 1:size(batchvar1,1)
             error('Please specify polygons as ldbfile or matfile')
         end
         
+        disp(['Processing coverage of ' OPT.polyname{i}]);
+        
        % show wait bar
 %         cbh = waitbar(0,'Please wait ...');
 %         set(cbh, 'tag', 'wb')
