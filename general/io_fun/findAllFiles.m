@@ -16,7 +16,7 @@ function varargout = findAllFiles(varargin)
 %   returns absulote filenames if 1
 %
 % Notice that the pattern_excl paths are filtered with regexp. The syntax
-% is slightly different. Example: '*.svn' versus '.\.svn' see help regexp
+% is slightly different. Example: '*.svn' versus '\.svn' see help regexp
 % for more
 %
 % For the <keyword,value> pairs and their defaults call

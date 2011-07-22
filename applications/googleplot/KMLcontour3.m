@@ -24,6 +24,39 @@ function [OPT, Set, Default] = KMLcontour3(lat,lon,z,varargin)
 %
 %    kmlcode = KMLcontour3(lat,lon,z,<c>,<keyword,value>)
 %
+% Example: time animated 3d contour kml file:
+%         [lat,lon] = meshgrid(54:.1:57,2:.1:5);
+%         z = peaks(31);
+%         z = abs(z);
+%         t = now;
+% 
+%         OPT = KMLcontour3;
+%         OPT.zScaleFun   = @(z) (z+1)*2000;
+% 
+%         OPT.fileName    = 'timestep1.kml';
+%         OPT.timeIn      = t+0;
+%         OPT.timeOut     = t+2;
+%         KMLcontour3(lat   ,lon,   z+2, OPT);
+% 
+%         OPT.fileName    = 'timestep2.kml';
+%         OPT.timeIn      = t+2;
+%         OPT.timeOut     = t+3;
+%         KMLcontour3(lat   ,lon,   z+1, OPT);
+% 
+%         OPT.fileName    = 'timestep3.kml';
+%         OPT.timeIn      = t+3;
+%         OPT.timeOut     = t+4;
+%         KMLcontour3(lat   ,lon,   z+.5, OPT);
+% 
+%         OPT.fileName    = 'timestep4.kml';
+%         OPT.timeIn      = t+4;
+%         OPT.timeOut     = t+5;
+%         KMLcontour3(lat   ,lon,   z+.2, OPT);
+% 
+%         KMLmerge_files('fileName','Animated 3d contour.kml',...
+%             'sourceFiles',{'timestep1.kml','timestep2.kml','timestep3.kml','timestep4.kml'},...
+%             'deleteSourceFiles',true);
+% 
 % See also: googlePlot, contour, contour3
 
 %   --------------------------------------------------------------------
