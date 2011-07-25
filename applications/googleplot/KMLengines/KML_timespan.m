@@ -6,8 +6,9 @@ function varargout = KML_timespan(varargin)
 %
 % where the optional i is the index into vectors ti and to.
 %
-% very slow when ti en to are datenums,
-%      fast when ti en to are strings.
+% VERY SLOW (!) when ti en to are a vector of datenums,
+%          fast when ti en to are matrix   of strings.
+% So for many call apply datestr before you pass ti an to.
 %
 %See also: GooglePlot
 
@@ -24,8 +25,8 @@ function varargout = KML_timespan(varargin)
 
    OPT = setproperty(OPT,varargin{:});
    
-   if isnumeric(OPT.timeIn) ; OPT.timeIn  = datestr(OPT.timeIn ,OPT.dateStrStyle);end
-   if isnumeric(OPT.timeOut); OPT.timeOut = datestr(OPT.timeOut,OPT.dateStrStyle);end
+   if isnumeric(OPT.timeIn) ; if length(OPT.timeIn) >1;disp('googlePlot: timeIn  as datestr is MUCH faster!');end;OPT.timeIn  = datestr(OPT.timeIn ,OPT.dateStrStyle);end
+   if isnumeric(OPT.timeOut); if length(OPT.timeOut)>1;disp('googlePlot: timeOut as datestr is MUCH faster!');end;OPT.timeOut = datestr(OPT.timeOut,OPT.dateStrStyle);end
        
    if  ~isempty(OPT.timeIn)
        if length(OPT.timeIn)>1 & odd(nargin)

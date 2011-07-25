@@ -15,7 +15,8 @@
 % Single object(s) plots:
 %  KMLanimatedIcon                - adds place markers with color varying in time
 %  KMLcurtain                     - Create a time animated curtain for e.g. adcp data
-%  KMLcylinder                    - draw a 3D cylinder at a specific location
+%  KMLcolumn                      - draw a 3D cylinder at a specific location (enveloping tubes)
+%  KMLcylinder                    - draw a 3D cylinder at a specific location (stacked segments)
 %  KMLline                        - Just like line (and that's just like plot)
 %  KMLmarker                      - add a placemarker pushpin with text ballon
 %  KMLpatch                       - Just like patch

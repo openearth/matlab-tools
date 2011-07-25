@@ -259,8 +259,11 @@ for ii=1:nn
     multiWaitbar('Writing kml files ...', ii/nn, 'Color', [1.0 0.4 0.0]) % orange
 
     %% preprocess timespan
-    
-    timeSpan = KML_timespan(ii,'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
+    if isempty(OPT.timeIn) | isempty(OPT.timeOut)
+    timeSpan = '';
+    else
+    timeSpan = KML_timespan(ii,'timeIn',OPT.timeIn(ii),'timeOut',OPT.timeOut(ii),'dateStrStyle',OPT.dateStrStyle);
+    end
     
     %% preprocess html
     
@@ -360,6 +363,10 @@ end
 if OPT.openInGE
     system(OPT.fileName);
 end
- varargout = {OPT};
+
+if nargout > 0
+   varargout = {OPT};
+end
+
 %% EOF
 

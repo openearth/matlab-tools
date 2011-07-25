@@ -124,9 +124,8 @@ end
    timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut);
 
 %% preproces altitude mode
-if strcmpi(z,'clampToGround')
-    altitudeMode = sprintf([...
-        '<altitudeMode>clampToGround</altitudeMode>\n']);
+if ischar(z)
+    altitudeMode = sprintf('<altitudeMode>%s</altitudeMode>\n',z); % 'clampToGround', 'relativeToGround' (ski lift),  'absolute' (airplane) 
     z = zeros(size(lon));
 else
     altitudeMode =  '<altitudeMode>absolute</altitudeMode>\n';

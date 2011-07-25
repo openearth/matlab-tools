@@ -166,7 +166,7 @@ end
    if ~(ischar(z) | isempty(z))
    for i=1:length(p.lon)
    
-   disp([mfilename,':',num2str(100.*i/length(p.lon)),' %, set ''zstride'' to speed this up.'])
+   disp([mfilename,':',num2str(100.*i/length(p.lon),'% 0.3g'),' %, set ''zstride'' to speed this up.'])
    
    p.z{i} = griddata(lat(1:OPT.zstride:end,1:OPT.zstride:end),...
                      lon(1:OPT.zstride:end,1:OPT.zstride:end),...
@@ -317,6 +317,8 @@ if OPT.colorbar
     OPT.CBfileName = [OPT.fileName(1:end-4) '_colorbar.kml'];
    [clrbarstring,pngNames] = KMLcolorbar(OPT);
     sourceFiles = [sourceFiles {OPT.CBfileName}];
+else
+    pngNames = [];
 end
 
 %% merge labels, lines and colorbar

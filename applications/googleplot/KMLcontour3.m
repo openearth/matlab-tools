@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = KMLcontour3(lat,lon,z,varargin)
+function varargout = KMLcontour3(lat,lon,z,varargin)
 % KMLCONTOUR3   Just like contour3
 %
 %    KMLcontour3(lat,lon,c,  <keyword,value>)
@@ -98,16 +98,20 @@ OPT.is3D          = true;
 OPT.zScaleFun     = @(z) (z+20)*10;
 OPT.zstride       = 1; % stride for interpolating z data to contours
 
+if nargin==0
+   varargout = {OPT};
+end
+
 c = [];
 nextarg = 1;
 if nargin==0
   return
-elseif ~odd(nargin);
+elseif ~odd(nargin) & ~isstruct(varargin{1});
   c = varargin{1};
   varargin(1) = [];
 end
 
-[OPT, Set, Default] = setproperty(OPT, varargin);
+[OPT, Set, Default] = setproperty(OPT, varargin{:});
 
 if isempty(c)
    [kmlcode,pngNames] = KMLcontour(lat,lon,z,  OPT); % c==z
@@ -116,7 +120,9 @@ else
 end
 
 if nargout > 0
-   OPT = {kmlcode,pngNames};
+   varargout = {kmlcode, pngNames};
+else
+   varargout = {OPT, Set, Default};
 end
 
 %% EOF

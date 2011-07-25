@@ -127,6 +127,9 @@ function varargout = KMLline(lat,lon,varargin)
            if ~ischar(z)
            OPT.is3D = true;
            end
+       elseif ischar(varargin{1}) & odd(nargin) % when even(nargin), this is a keyword
+           z        = varargin{1}; % 'clampToGround', 'relativeToGround' (ski lift),  'absolute' (airplane)
+           varargin(1) = [];
        end
    end
    
@@ -308,7 +311,7 @@ output = '';
          if OPT.is3D
              newOutput = KML_line(lat(:,ii),lon(:,ii),OPT.zScaleFun(z(:,ii)),OPT_line);        
          else
-             newOutput = KML_line(lat(:,ii),lon(:,ii),'clampToGround'       ,OPT_line);
+             newOutput = KML_line(lat(:,ii),lon(:,ii),z                     ,OPT_line);
          end
 
          % add a fill if needed

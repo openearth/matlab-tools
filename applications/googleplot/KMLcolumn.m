@@ -1,4 +1,4 @@
-function varargout = KMLcylinder(lat,lon,z,c,R,varargin)
+function varargout = KMLcylinder(lat,lon,z,c,varargin)
 %KMLcylinder   draw a 3D cylinder at a specific location
 %
 %   KMLcylinder(lat,lon,z,c,R,<keyword,value>)
@@ -7,15 +7,15 @@ function varargout = KMLcylinder(lat,lon,z,c,R,varargin)
 %    z must be a cell with top and bottom coordinates of the layers (length(c)+1
 %    c must be a cell with values that are colors of the layers     (length(z)-1)
 %
-% Saves layer as stacked elements of equal radius.
+% Saves layer as nested columns of decreasing radius, each extrudes to the Earth surface.
+% All segments are extruded to ground level, floating columns are not possible,
+% use KMLcylinder for floating objects (slower in Google Earth though).
 %
 %  example:
 %
 %    KMLcylinder({51.9859},{4.3815},{[0 1 2 4 8 16 32]},{[1 2 3 4 5 6]},5e3,'fileName','KMLcylinder_test.kml')
 %
-% NOTE: for large sets of cylinder use KMLcolumn!
-%
-% See also: googlePlot, KMLcolumn
+% See also: googlePlot, KMLcylinder
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares for Building with Nature
@@ -56,6 +56,8 @@ function varargout = KMLcylinder(lat,lon,z,c,R,varargin)
    OPT                    = mergestructs(OPT,KML_header());
    % rest of the options
    OPT.nTH                = 12; % number of facets on side of cylinder
+   OPT.R                  = 1000; % radius in m
+   OPT.dR                 = 10; % reduction of Radius per layer
    OPT.epsg               = 23031;
    
    OPT.fileName           = '';
@@ -93,7 +95,7 @@ OPT.colorbar           = 0;
    
 %% limited error check
 
-    if ~isequal(size(lat),size(lon))
+    if ~isequal(size(lat),size(lon),size(c),size(z))
         error('lat and lon must be same size')
     end
     
@@ -110,12 +112,6 @@ OPT.colorbar           = 0;
       [ignore OPT.kmlName] = fileparts(OPT.fileName);
    end
    
-%% preproess cylinder perimeter
-
-   TH     = linspace(0,2*pi,OPT.nTH+1); % nTH is number of faces = non-overllaping edges (first=last)
-  [TH, R] = meshgrid(TH,R);
-  [dx,dy] = pol2cart(TH,R);
-  
 %% pre-process color data
 
    if isempty(OPT.cLim)
@@ -188,13 +184,19 @@ OPT.colorbar           = 0;
           'timeIn',datestr(OPT.timeIn ,OPT.dateStrStyle),...
          'timeOut',datestr(OPT.timeOut,OPT.dateStrStyle),...
       'visibility',1,...
-         'extrude',false,...
+         'extrude',true,...
       'tessellate',OPT.tessellate,...
       'precision' ,OPT.precision);
 
+%% preproess cylinder perimeter
+
+   TH0     = linspace(0,2*pi,OPT.nTH+1); % nTH is number of faces = non-overllaping edges (first=last)
+
    for i=1:length(lon) % cycle cylinders
    
+       if mod(i,10)==0
        disp([mfilename,': processing ',num2str(i),'/',num2str(length(lon))])
+       end
        
        % preallocate output
 
@@ -203,40 +205,39 @@ OPT.colorbar           = 0;
 
    %% calculate projected cylinder layer 'in place'
        
+       % TO DO: move outside loop?
        [x,y] = convertCoordinates(lon{i}(1),lat{i}(1),'persistent','CS1.code',4326,'CS2.code',OPT.epsg);% local center of circle
-        x = x + dx;% local perimeter of circle
-        y = y + dy;
-       [lon1,lat1] = convertCoordinates(x,y,'persistent','CS1.code',OPT.epsg,'CS2.code',4326);% spherical perimeter of circle
        
    %% loop cylinder layers
 
-        for ii=1:length(c{i}) % cycle layers
+        lat1 = repmat(nan,[OPT.nTH+1,length(c{i})]);
+        lon1 = repmat(nan,[OPT.nTH+1,length(c{i})]);
+        dx   = repmat(nan,[OPT.nTH+1,length(c{i})]);
+        dy   = repmat(nan,[OPT.nTH+1,length(c{i})]);
+        X    = repmat(  x,[OPT.nTH+1,length(c{i})]);
+        Y    = repmat(  y,[OPT.nTH+1,length(c{i})]);
+        
+        for ii=length(c{i}):-1:1 % cycle layers
+          [TH, R] = meshgrid(TH0,OPT.R - (ii-1).*OPT.dR);
+          [dx(:,ii),dy(:,ii)] = pol2cart(TH,R);
+        end
+
+       [lon1,lat1] = convertCoordinates(X+dx,Y+dy,'persistent','CS1.code',OPT.epsg,'CS2.code',4326);% spherical perimeter of circle
+       
+        if ~(z{i}(1)==0)
+           disp('warning: KMLcolumn: column extended down to earth')
+           % TO DO: add black segment below
+        end
+
+        for ii=length(c{i}):-1:1 % cycle layers
 
            OPT_poly.styleName = sprintf('style%d',c{i}(ii));
 
            %% draw cap
-           newOutput = KML_poly(lat1(:),lon1(:),OPT.zScaleFun(lon1(:).*0+z{i}(end)),OPT_poly); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+           newOutput = KML_poly(lat1(:,ii),lon1(:,ii),OPT.zScaleFun(lon1(:,ii).*0+z{i}(ii+1)),OPT_poly); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
            output(kk:kk+length(newOutput)-1) = newOutput;
            kk = kk+length(newOutput);
 
-           %% draw sides
-           for iii=1:OPT.nTH
-
-               LAT = [lat1(iii+1) lat1(iii+1) lat1(iii)  lat1(iii) lat1(iii+1)];
-               LON = [lon1(iii+1) lon1(iii+1) lon1(iii)  lon1(iii) lon1(iii+1)];
-               Z =   [z{i}(ii)    z{i}(ii+1)  z{i}(ii+1) z{i}(ii)  z{i}(ii)];
-
-               newOutput = KML_poly(LAT(:),LON(:),OPT.zScaleFun(Z(:)),OPT_poly); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
-               output(kk:kk+length(newOutput)-1) = newOutput;
-               kk = kk+length(newOutput);
-               if kk>1e5
-                   %then print and reset
-                   fprintf(OPT.fid,output(1:kk-1));
-                   kk = 1;
-                   output = repmat(char(1),1,1e5);
-               end
-                
-           end
         end
         fprintf(OPT.fid,output(1:kk-1)); % print output
         output = '';

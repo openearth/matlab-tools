@@ -14,7 +14,7 @@ function varargout = KMLcurvedArrows(x,y,u0,v0,varargin)
 %
 % see the keyword/value pair defaults for additional options
 %
-% See also: googlePlot, KMLquiver, KMLquiver3, KMlcurvedArrows
+% See also: googlePlot, curvec, mxcurvec, KMLquiver, KMLquiver3, KMlcurvedArrows
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -48,29 +48,31 @@ function varargout = KMLcurvedArrows(x,y,u0,v0,varargin)
 % $HeadURL$
 % $Keywords: $
 
-OPT                  = KML_header();
+   OPT                   = KML_header();
 
-OPT.coordConvFun     = @(x,y,EPSG) convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.code',4326); % do include epsg as we do numerous transformations
-OPT.colorSteps       = 9;
-OPT.colorMap         = @(m) colormap_cpt('YlOrRd 09',(m));
-OPT.fileName         = [];
-OPT.time             = [1 1000]; %datenum containing begin and end times of animation
+   OPT.coordConvFun      = @(x,y,EPSG) convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.code',4326); % do include epsg as we do numerous transformations
+   OPT.colorSteps        = 9;
+   OPT.colorMap          = @(m) colormap_cpt('YlOrRd 09',(m));
+   OPT.fileName          = [];
+   OPT.time              = [1 1000]; %datenum containing begin and end times of animation
+   
+   %% arrow properties
+   OPT.length           = 90;                   % lenght in seconds (determines length of arrows)
+   OPT.nrvertices       = 10;
+   OPT.headthickness    = 0.15;
+   OPT.arrowthickness   = 0.05;
+   OPT.nhead            = 2;                    % Number of vertices used for arrow head length (default 2, max nrvertices-1).
 
-%% arrow properties
-OPT.hdthck	     = 1.7;                  % head thickness
-OPT.arthck	     = OPT.hdthck/4;         % arrow thickness
-OPT.dt 		     = 90;                   % time (determines length of arrows)
-OPT.lifespan  	     = 50;                   % number of timesteps an arrow is alive
-OPT.n_arrows 	     = 300;                  % number of arrows
-OPT.flow_steps 	     = 4;                    % (max is 21)
-OPT.colorScale 	     = .015;
-OPT.lineScale  	     = .02;
-OPT.interp_steps     = 1;                    % interpolate in time between consecutive arrows
+   OPT.lifespan         = 50;                   % number of timesteps an arrow is alive
+   OPT.n_arrows         = 300;                  % number of arrows
+   OPT.flow_steps       = 4;                    % (max is OPT.nrvertices)
+   OPT.colorScale       = .015;
+   OPT.lineScale        = .02;
+   OPT.interp_steps     = 1;                    % interpolate in time between consecutive arrows
 
-OPT.relwdt	     = @(x)ones(numel(x),1); % relative width, leave at one
-OPT.nt 		     = @(x)numel(x);         % number of gridpoints
-OPT.x0 		     = []; % x of seeds
-OPT.y0 		     = []; % y of seeds
+%OPT.relwdt	     = @(x)ones(numel(x),1); % relative width, leave at one
+OPT.x0 		     = []; % initial x of seeds
+OPT.y0 		     = []; % initial y of seeds
 
 if nargin==0
    varargout = {OPT};
@@ -78,7 +80,6 @@ if nargin==0
 end
 
 OPT.relwdt	     = ones(numel(x),1); % relative width, leave at one
-OPT.nt 		     = numel(x);         % number of gridpoints
 
 %% set properties
 [OPT, Set, Default] = setproperty(OPT, varargin{:});
@@ -105,38 +106,42 @@ EPSG = load('EPSG');
 
 %% make arrows
 
-if isempty(OPT.time)
-   OPT.time = [nan nan];
-end    
+   if isempty(OPT.time)
+      OPT.time = [nan nan];
+   end    
 
-% get first data
-if isnumeric(u0)
-   u2 = u0;u1 = u0; clear u0; u0{1} = u1;u0{2} = u1;
-   v2 = v0;v1 = v0; clear v0; v0{1} = v1;v0{2} = v1;
-elseif iscell(u0)
-   u2 = u0{1};u1 = u2;
-   v2 = v0{1};v1 = v2;
-end
+%% get first data
+
+   if isnumeric(u0)
+      u2 = u0;u1 = u0; clear u0; u0{1} = u1;u0{2} = u1;
+      v2 = v0;v1 = v0; clear v0; v0{1} = v1;v0{2} = v1;
+   elseif iscell(u0)
+      u2 = u0{1};u1 = u2;
+      v2 = v0{1};v1 = v2;
+   end
 
 %% make initial seed of arrows
-x_nonan       = x(~isnan(x)); % needed for adding new new arrows
-y_nonan       = y(~isnan(y));
-if isempty(OPT.x0) & isempty(OPT.y0)
-seedPoints    = linspace(1,numel(x_nonan)-numel(x_nonan)/OPT.n_arrows,OPT.n_arrows);
-seedPoints    = round(seedPoints'+(numel(x_nonan)/OPT.n_arrows).*rand(OPT.n_arrows,1));
-OPT.x0        = x_nonan(seedPoints);
-OPT.y0        = y_nonan(seedPoints);
-end
-t             = round((OPT.lifespan-1)*rand(size(OPT.x0)))+1;
+
+   x_nonan       = x(~isnan(x)); % needed for adding new new arrows
+   y_nonan       = y(~isnan(y));
+   if isempty(OPT.x0) & isempty(OPT.y0)
+   seedPoints    = linspace(1,numel(x_nonan)-numel(x_nonan)/OPT.n_arrows,OPT.n_arrows);
+   seedPoints    = round(seedPoints'+(numel(x_nonan)/OPT.n_arrows).*rand(OPT.n_arrows,1));
+   OPT.x0        = x_nonan(seedPoints);
+   OPT.y0        = y_nonan(seedPoints);
+   end
+   t             = round((OPT.lifespan-1)*rand(size(OPT.x0)))+1;
 
 %% interpolate time
-time        = linspace(OPT.time(1),OPT.time(2),OPT.interp_steps*(length(u0)-1)+1);
-if numel(time)>1
-    time(end+1) = time(end)+time(end)-time(end-1);
-else
-    time(end+1) = time(end);
-end
+
+   time        = linspace(OPT.time(1),OPT.time(2),OPT.interp_steps*(length(u0)-1)+1);
+   if numel(time)>1
+       time(end+1) = time(end)+time(end)-time(end-1);
+   else
+       time(end+1) = time(end);
+   end
 %%
+
 for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
 
     if OPT.interp_steps > 0
@@ -157,14 +162,18 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
     v = v1;
     end
 
-    % make arrows
-    [xp,yp,xax,yax]=KML_curvedArrows(OPT.x0,OPT.y0,x,y,u,v,OPT.dt,OPT.nt,OPT.hdthck,OPT.arthck,OPT.relwdt);
+%% make arrows
+
+%   [xp,yp,xax,yax    ]=KML_curvedArrows(OPT.x0,OPT.y0,x ,y ,u,v,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.headthickness,OPT.relwdt);
+%   [xp,yp,xax,yax    ]=KML_curvedArrows(OPT.x0,OPT.y0,x, y, u,v,OPT.dt    ,OPT.nt        ,OPT.hdthck       ,OPT.arthck       ,OPT.relwdt);
+    [xp,yp,xax,yax,len]=mxcurvec        (OPT.x0,OPT.y0,x ,y ,u,v,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.arrowthickness,OPT.nhead ,OPT.relwdt,0);
 
     % pre-proces xp and yp
     xax(xax<1000.0 & xax>999.998)=NaN; yax(yax<1000.0 & yax>999.998)=NaN;
     xp ( xp<1000.0 &  xp>999.998)=NaN; yp ( yp<1000.0 &  yp>999.998)=NaN;
-    xp = reshape(xp,35,[]);          yp = reshape(yp,35,[]);
-    xp(end,:) = [];                  yp(end,:) = [];
+    ic=1;while ~isnan(xp(ic,1));ic=ic+1;end % NOT: ic =  (OPT.nrvertices - OPT.nhead)*2+5 due to nhead cut-off in mxcurvec
+    xp = reshape(xp,ic,[]);            yp = reshape(yp,ic,[]);
+    xp(end,:) = [];                    yp(end,:) = [];
 
     % convert coordinates
     [lon,lat]  = OPT.coordConvFun(xp,yp,EPSG); 
@@ -176,7 +185,7 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
     lineWidths = min(round(arrowSizes*OPT.lineScale)+2,10)/5;
     
     if any(isnan(time))
-    KMLline(lat(:,arrowSizes ~= 0),lon(:,arrowSizes ~= 0),...
+    KMLline(lat(:,arrowSizes ~= 0),lon(:,arrowSizes ~= 0),'relativeToGround',... % prevent flicker between seabed & MSL
            'fileName',fullfile(tempPath,sprintf('arrows%03d.kml',ii)),...
             'visible',OPT.visible,...
              'timeIn',OPT.timeIn,...
@@ -212,10 +221,11 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
     pause(0.01) % allows for better 'ctrl+c'-ing
     
     %% update y0 and x0
-    x0 = xax(OPT.flow_steps:21:end);
-    y0 = yax(OPT.flow_steps:21:end);
+    OPT.x0 = xax(OPT.flow_steps:OPT.nrvertices+1:end);
+    OPT.y0 = yax(OPT.flow_steps:OPT.nrvertices+1:end);
     
-    %% replace dead arrows
+%% replace dead arrows
+
     t = t-1;
     t(arrowSizes' == 0) = t(arrowSizes' == 0)-20;
     %t(arrowSizes' >  prctile(arrowSizes,99)) =  t(arrowSizes' >  prctile(arrowSizes,99))-4;
@@ -224,7 +234,8 @@ for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
     OPT.y0(t<1) = [];
          t(t<1) = [];
      
-    %% add new ones if needed
+%% add new ones if needed
+
     if length(OPT.x0)<OPT.n_arrows
         new_arrows = OPT.n_arrows-length(OPT.x0);
         
