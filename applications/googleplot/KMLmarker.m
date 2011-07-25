@@ -262,7 +262,7 @@ for ii=1:nn
     if isempty(OPT.timeIn) | isempty(OPT.timeOut)
     timeSpan = '';
     else
-    timeSpan = KML_timespan(ii,'timeIn',OPT.timeIn(ii),'timeOut',OPT.timeOut(ii),'dateStrStyle',OPT.dateStrStyle);
+    timeSpan = KML_timespan(ii,'timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
     end
     
     %% preprocess html

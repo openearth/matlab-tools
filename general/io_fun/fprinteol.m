@@ -11,10 +11,13 @@ function str = fprinteol(varargin)
 % where OperationSystem is a string with value
 % * 'u<nix>'
 %   'l<inux>' (default)
+%       (char(10)=\n) 
 % * 'd<os>'
 %   'w<indows>'
 %   'p<c>'
+%       (char([13 10])=\r\n) 
 % * 'm<ac>'
+%       (char(10)=\r) 
 %
 %See also: FOPEN, FPRINTF, FCLOSE
 
