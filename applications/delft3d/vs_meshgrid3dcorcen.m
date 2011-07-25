@@ -60,9 +60,7 @@ function varargout=vs_meshgrid3dcorcen(varargin),
 NFSstruct      = [];
 TimeStep       = 1;
 
-% Defaults
-%------------------------------------
-
+%% Defaults
 % calculate G.elevationcor SOMEHOW
 
    P.cor.cent      = 1; % = corner points
@@ -76,7 +74,6 @@ TimeStep       = 1;
    P.v.intf        = 0; % = v velocity points
 
 %% Read position of these grid points;
-%-----------------------------------
 
    P.cor.zwl       = 1; % CAN BE CALCULATED WITH PRELIMINARY VERSION OF CENTER2CORNER
    P.xy3d          = 1; % same for every layers, so no need THERE IS NEED WHEN MAKING CROSS SLICES
@@ -91,7 +88,6 @@ TimeStep       = 1;
    P.quiet         = 1;
    
 %% Arguments
-%------------------------------------
    
    NFSstruct = varargin{1};
    iargin    = 2;
@@ -120,8 +116,7 @@ TimeStep       = 1;
       NFSstruct=vs_use('lastread');
    end;
    
-% Read time in-dependent grid geometry
-%------------------------------------
+%% Read time in-dependent grid geometry
 
    if isempty(G)
       G = vs_meshgrid2dcorcen(NFSstruct);
@@ -135,13 +130,11 @@ TimeStep       = 1;
       y = 'y';
    end
 
-% Read time dependent grid geometry (waterlevel)
-%------------------------------------
+%% Read time dependent grid geometry (waterlevel)
 
    switch vs_type(NFSstruct),
 
-   %% Comfile
-   %-------------------------------------
+%% Comfile
 
    case {'Delft3D-com','Delft3D-tram','Delft3D-botm'},
 
@@ -152,8 +145,7 @@ TimeStep       = 1;
        d3dv.kcv = vs_get(NFSstruct,'KENMCNST'  ,{TimeStep},'KCV',{1:G.nmax-0,1:G.mmax-0},'quiet');%'{1:G.nmax-1,2:G.mmax-1}
 
 
-   %% Trimfile
-   %-------------------------------------
+%% Trimfile
 
    case 'Delft3D-trim',
 
@@ -167,8 +159,7 @@ TimeStep       = 1;
     error('Invalid NEFIS file for this action.');
   end; % switch vs_type(NFSstruct),
   
-  %% Apply masks
-  %-------------------------------------
+%% Apply masks
 
   d3dcen.kfu =        max(1,conv2([double(d3du.kfu(:,1))>0 double(d3du.kfu>0)],[1 1],'valid'));
   d3dcen.kfv =        max(1,conv2([double(d3dv.kfv(1,:))>0;double(d3dv.kfv>0)],[1;1],'valid'));
@@ -178,44 +169,49 @@ TimeStep       = 1;
   
   d3dcen.zwl(d3dcen.kfu==0 & d3dcen.kfv==0)=NaN;
   
-  %% Subset center data and extrapolate to corner data
-  %-------------------------------------
+%% Subset center data and extrapolate to corner data
   
      G.cen.zwl = d3dcen.zwl(2:end-1,2:end-1);
      G.cen.zwl_comment = 'Waterlevel at centers with application of time dependent velocity point masks';
 
-  if P.cor.zwl
-     G.cor.zwl = center2corner(G.cen.zwl,'nearest');
-     G.cor.zwl_comment = 'Waterlevel at corners extrapolated from centers by VS_MESHGRID3DCORCEN';
-     if ~P.quiet
-     disp('Waterlevel at corners extrapolated from centers by VS_MESHGRID3DCORCEN')
-     end
+  if P.cor.zwl 
+    sz = size(G.cen.zwl);
+    if all(sz>1) % not for 1d slices
+      G.cor.zwl = center2corner(G.cen.zwl,'nearest');
+      G.cor.zwl_comment = 'Waterlevel at corners extrapolated from centers by VS_MESHGRID3DCORCEN';
+    else
+      warning('1D slices not yet tested !')
+      if   sz(1)==1
+      G.cor.zwl = center2corner([G.cen.zwl;G.cen.zwl],'nearest');
+      G.cor.zwl = G.cor.zwl(1:2,:);
+      else sz(1)==2
+      G.cor.zwl = center2corner([G.cen.zwl G.cen.zwl],'nearest');
+      G.cor.zwl = G.cor.zwl(:,1);
+      end
+      G.cor.zwl_comment = 'Waterlevel at corners extrapolated from duplicated centers by VS_MESHGRID3DCORCEN';
+    end
+    if ~P.quiet
+    disp('Waterlevel at corners extrapolated from centers by VS_MESHGRID3DCORCEN')
+    end
   end
   
-  %% Start 3D coordinates
-  %-------------------------------------
-
-% CALCULATE Z LEVELS
-%------------------------------------
-
-   %% Calculate also 3D x-y-grids if P.xy3d==1
-   %% These contain the same, i.e. redundant, information
-   %% for every layer)
-   %% ------------------------
+%% Start 3D coordinates
+%  CALCULATE Z LEVELS
+%  Calculate also 3D x-y-grids if P.xy3d==1
+%  These contain the same, i.e. redundant, information
+%  for every layer)
    
 if strmatch('SIGMA-MODEL', G.layer_model)
    
 %% SIGMA-MODEL
-%-----------------------------------
 
-   %% Calculate sigma vertical positions
-   %--------------------------
+%% Calculate sigma vertical positions
 
    [G.sigma_cent,...
     G.sigma_intf]   = d3d_sigma(G.sigma_dz);
 
-   %% CENTRES IN VERTICAL
-   %-----------------------------------
+%% CENTRES IN VERTICAL
+
    
    if P.cor.cent
                 G.cor.cent.z   = zeros(size(G.cor.(x),1),size(G.cor.(x),2),G.kmax);
@@ -238,8 +234,7 @@ if strmatch('SIGMA-MODEL', G.layer_model)
       end
    end
 
-   %% INTERFACES IN VERTICAL
-   %-----------------------------------
+%% INTERFACES IN VERTICAL
 
    if P.cor.intf
                 G.cor.intf.z  = zeros(size(G.cor.(x),1),size(G.cor.(x),2),G.kmax+1);
@@ -264,17 +259,11 @@ if strmatch('SIGMA-MODEL', G.layer_model)
    
 elseif strmatch('Z-MODEL', G.layer_model)
 
-%% Z-MODEL
-%-----------------------------------
-
-   %% Calculate z vertical positions
-   %--------------------------
-
+%% Calculate z vertical positions
    G.z_intf    = G.ZK;
    G.z_cent    = corner2center1(G.ZK);
    
-   %% Calculate layer number of bottom
-   %--------------------------
+%% Calculate layer number of bottom
 
    for n=1:size(G.cen.dep,1)
    for m=1:size(G.cen.dep,2)
@@ -288,8 +277,7 @@ elseif strmatch('Z-MODEL', G.layer_model)
    G.cen.kbot              = floor(G.cen.kbotreal);
    G.cen.kbot_comments     = 'Vertical layer number in which the bottom resides with with k=1 just above ZBOT and k=kmax+1 just below ZTOP';
       
-   %% Calculate layer number of waterlevel
-   %--------------------------
+%% Calculate layer number of waterlevel
       
    for n=1:size(G.cen.zwl,1)
    for m=1:size(G.cen.zwl,2)
@@ -315,8 +303,7 @@ elseif strmatch('Z-MODEL', G.layer_model)
    G.cen.ktop(G.cen.ktop > G.kmax) = G.kmax;
        
 
-   %% CENTRES IN VERTICAL
-   %-----------------------------------
+%% CENTRES IN VERTICAL
    
 %   if P.cor.cent
 %   
@@ -338,8 +325,7 @@ elseif strmatch('Z-MODEL', G.layer_model)
 %      end
 %   end
  
-   %% INTERFACES IN VERTICAL
-   %-----------------------------------
+%% INTERFACES IN VERTICAL
  
 %   if P.cor.intf
 %
@@ -477,7 +463,6 @@ elseif strmatch('Z-MODEL', G.layer_model)
 end
 
 %% Return variables
-%--------------------------
 
    if nargout == 1
       varargout = {G};
