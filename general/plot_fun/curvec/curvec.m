@@ -9,7 +9,7 @@ function varargout=curvec(x,y,u,v,varargin)
 %
 % INPUT:
 % x,y            : Values of the x and y coordinates of the velocity vector field.
-% u,v            : Values of the velocity components.
+% u,v            : Values of the velocity components (u and v can be a M*N or M*N*2 matrix).
 % 
 % OUTPUT:
 % polx,poly      : n*2 matrix with polygons of curvy arrows.
@@ -27,10 +27,10 @@ function varargout=curvec(x,y,u,v,varargin)
 % position       : n*3 matrix with start coordinates for arrows in next time step
 %                  (first two columns) and age of arrow (third column).
 %                  This option is only required for animations.
-% nrvertices     : Number of vertices along axis of arrows (default 10).
+% nrvertices     : Number of vertices along axis of arrows (default 15).
 % headthickness  : Relative width of arrow heads (default 0.15).
 % arrowthickness : Relative width of arrows (default 0.05).
-% nhead          : Number of vertices used for arrow head length (default 2, max nrvertices-1).
+% nhead          : Number of vertices used for arrow head length (default 3, max nrvertices-1).
 % lifespan       : Life span of arrows in animation (default 50). Only for
 %                  animations.
 % relativespeed  : Factor for speed of curvy arrows (default 1.0). Only for
@@ -106,220 +106,237 @@ function varargout=curvec(x,y,u,v,varargin)
 
 %% initiate, handle and process heyword
 
-   OPT.length           = [];
-   OPT.nrvertices       = 10;
-   OPT.headthickness    = 0.15;
-   OPT.arrowthickness   = 0.05;
-   OPT.nhead            = 2;
+OPT.length           = [];
+OPT.nrvertices       = 15;
+OPT.headthickness    = 0.15;
+OPT.arrowthickness   = 0.05;
+OPT.nhead            = 3;
 
-   OPT.position         = [];
-   OPT.geofac           = 111111;
-   OPT.lifespan         =  50;
-   OPT.relativespeed    = 1;
-   OPT.timestep         = 0;
-   OPT.polygon          = [];
-   OPT.dx               = [];
-   OPT.xlim             = [];
-   OPT.ylim             = [];
-   OPT.coordinatesystem = ''; % 'geographic','geo','spherical','latlon'
-   OPT.cs               = ''; % 'geographic','geo','spherical','latlon'
-     OPT.iopt           = 0;
-   
-   if nargin==0
-      polx = OPT;return
-   end
-   
-   OPT = setProperty(OPT,varargin{:});
+OPT.position         = [];
+OPT.geofac           = 111111;
+OPT.lifespan         = 50;
+OPT.relativespeed    = 1;
+OPT.timestep         = 0;
+OPT.polygon          = [];
+OPT.dx               = [];
+OPT.xlim             = [];
+OPT.ylim             = [];
+OPT.coordinatesystem = ''; % 'geographic','geo','spherical','latlon'
+OPT.cs               = ''; % 'geographic','geo','spherical','latlon'
+OPT.iopt           = 0;
 
-   if ~isempty(OPT.xlim)
-      xmin=OPT.xlim(1);
-      xmax=OPT.xlim(2);
-   else
-      xmin=min(x(:));
-      xmax=max(x(:));
-   end
-   
-   if ~isempty(OPT.ylim)
-      ymin=OPT.ylim(1);
-      ymax=OPT.ylim(2);
-   else
-      ymin=min(y(:));
-      ymax=max(y(:));
-   end
+if nargin==0
+    polx = OPT;return
+end
 
-   if any(strcmpi(OPT.coordinatesystem,{'geographic','geo','spherical','latlon'})) | ...
-      any(strcmpi(OPT.cs              ,{'geographic','geo','spherical','latlon'}))
-       OPT.iopt=1;
-   end
+OPT = setproperty(OPT,varargin{:});
 
-   if isempty(OPT.length)
-       error('Could not make arrows. Please specify the length of the vectors (in seconds) with the keyword LENGTH!');
-   end
-   
-   if isempty(OPT.dx)
-       % Estimate good arrow distance
-       if OPT.iopt==1
-           OPT.dx=OPT.geofac*(xmax-xmin)/20;
-       else
-           OPT.dx=(xmax-xmin)/20;
-       end
-   end
-   
-   if isempty(OPT.polygon)
-       % Make polygon from xlim and ylim
-       xp=[xmin xmax xmax xmin];
-       yp=[ymin ymin ymax ymax];
-   else
-       xp=squeeze(OPT.polygon(:,1));
-       yp=squeeze(OPT.polygon(:,2));
-   end
+if ~isempty(OPT.xlim)
+    xmin=OPT.xlim(1);
+    xmax=OPT.xlim(2);
+else
+    xmin=min(x(:));
+    xmax=max(x(:));
+end
+
+if ~isempty(OPT.ylim)
+    ymin=OPT.ylim(1);
+    ymax=OPT.ylim(2);
+else
+    ymin=min(y(:));
+    ymax=max(y(:));
+end
+
+if any(strcmpi(OPT.coordinatesystem,{'geographic','geo','spherical','latlon'})) || ...
+        any(strcmpi(OPT.cs              ,{'geographic','geo','spherical','latlon'}))
+    OPT.iopt=1;
+end
+
+if isempty(OPT.length)
+    error('Could not make arrows. Please specify the length of the vectors (in seconds) with the keyword LENGTH!');
+end
+
+if isempty(OPT.dx)
+    % Estimate good arrow distance
+    if OPT.iopt==1
+        OPT.dx=OPT.geofac*(xmax-xmin)/20;
+    else
+        OPT.dx=(xmax-xmin)/20;
+    end
+end
+
+if isempty(OPT.polygon)
+    % Make polygon from xlim and ylim
+    xp=[xmin xmax xmax xmin];
+    yp=[ymin ymin ymax ymax];
+else
+    xp=squeeze(OPT.polygon(:,1));
+    yp=squeeze(OPT.polygon(:,2));
+end
 
 %% Start points of curved vectors
 
-   if ~isempty(OPT.position)
-       x2   = OPT.position(:,1);
-       y2   = OPT.position(:,2);
-       iage = OPT.position(:,3);
-       n2   = length(x2);
-   else
-       % Total number of arrows
-       if OPT.iopt==1
-           % Geographic
-           polarea=polyarea(xp*OPT.geofac,invmerc(yp)*OPT.geofac);
-       else
-           polarea=polyarea(xp,yp);
-       end
-       n2=round(polarea/OPT.dx^2);
-       n2=max(n2,5);
-       if OPT.iopt==1
-           % Geographic
-           [x2,y2]=randomdistributeinpolygon(xp,invmerc(yp),'nrpoints',n2);
-           y2=merc(y2);
-       else
-           [x2,y2]=randomdistributeinpolygon(xp,yp,'nrpoints',n2);
-       end
-       iage=round(OPT.lifespan*rand(n2,1));
-       if OPT.timestep==0
-           iage=min(iage,47);
-           iage=max(iage,3);
-       end
-   end
-   
-   if n2>15000
-       disp(['Number of curved arrows (' num2str(n2) ') exceeds 15000!']);
-       return
-   end
+if ~isempty(OPT.position)
+    x2   = OPT.position(:,1);
+    y2   = OPT.position(:,2);
+    iage = OPT.position(:,3);
+    n2   = length(x2);
+else
+    % Total number of arrows
+    if OPT.iopt==1
+        % Geographic
+        polarea=polyarea(xp*OPT.geofac,invmerc(yp)*OPT.geofac);
+    else
+        polarea=polyarea(xp,yp);
+    end
+    n2=round(polarea/OPT.dx^2);
+    n2=max(n2,5);
+    if OPT.iopt==1
+        % Geographic
+        [x2,y2]=randomdistributeinpolygon(xp,invmerc(yp),'nrpoints',n2);
+        y2=merc(y2);
+    else
+        [x2,y2]=randomdistributeinpolygon(xp,yp,'nrpoints',n2);
+    end
+    iage=round(OPT.lifespan*rand(n2,1));
+    if OPT.timestep==0
+        iage=min(iage,OPT.lifespan-3);
+        iage=max(iage,3);
+    end
+end
+
+if n2>15000
+    disp(['Number of curved arrows (' num2str(n2) ') exceeds 15000!']);
+    return
+end
 
 %% Check for points past their lifespan
 
-   idead=find(iage>=OPT.lifespan);
-   for j=1:length(idead)
-       ii=idead(j);
-       if OPT.iopt==1
-           % Geographic
-           [xn,yn]=randomdistributeinpolygon(xp,invmerc(yp),'nrpoints',1);
-           yn=merc(yn);
-       else
-           [xn,yn]=randomdistributeinpolygon(xp,yp,'nrpoints',1);
-       end
-       x2(ii)=xn;
-       y2(ii)=yn;
-       iage(ii)=0;
-   end
+idead=find(iage>=OPT.lifespan);
+for j=1:length(idead)
+    ii=idead(j);
+    if OPT.iopt==1
+        % Geographic
+        [xn,yn]=randomdistributeinpolygon(xp,invmerc(yp),'nrpoints',1);
+        yn=merc(yn);
+    else
+        [xn,yn]=randomdistributeinpolygon(xp,yp,'nrpoints',1);
+    end
+    x2(ii)=xn;
+    y2(ii)=yn;
+    iage(ii)=0;
+end
 
 %% Check for points outside polygon
 
-   iout=find(inpolygon(x2,y2,xp,yp)==0);
-   for j=1:length(iout)
-       ii=iout(j);
-       if OPT.iopt==1
-           % Geographic
-           [xn,yn]=randomdistributeinpolygon(xp,invmerc(yp),'nrpoints',1);
-           yn=merc(yn);
-       else
-           [xn,yn]=randomdistributeinpolygon(xp,yp,'nrpoints',1);
-       end
-       x2(ii)=xn;
-       y2(ii)=yn;
-       iage(ii)=0;
-   end
-   
-   x1=x;
-   y1=y;
-   
-   y1(isnan(x1))=-999.0;
-   u (isnan(x1))=-999.0;
-   v (isnan(x1))=-999.0;
-   x1(isnan(x1))=-999.0; % last itself
+iout=find(inpolygon(x2,y2,xp,yp)==0);
+for j=1:length(iout)
+    ii=iout(j);
+    if OPT.iopt==1
+        % Geographic
+        [xn,yn]=randomdistributeinpolygon(xp,invmerc(yp),'nrpoints',1);
+        yn=merc(yn);
+    else
+        [xn,yn]=randomdistributeinpolygon(xp,yp,'nrpoints',1);
+    end
+    x2(ii)=xn;
+    y2(ii)=yn;
+    iage(ii)=0;
+end
+
+x1=x;
+y1=y;
+
+y1(isnan(x1))=-999.0;
+u (isnan(x1))=-999.0;
+v (isnan(x1))=-999.0;
+x1(isnan(x1))=-999.0; % last itself
 
 %% Make arrows narrower that were just seeded or which are about to die
 
-   relwdt=zeros(n2,1)+1;
-   if OPT.timestep>0
-       for ii=1:n2
-           if iage(ii)<4
-               relwdt(ii)=iage(ii)/4;
-           elseif iage(ii)>OPT.lifespan-4
-               relwdt(ii)=(OPT.lifespan-iage(ii)+1)/4;
-           else
-               relwdt(ii)=1.0;
-           end
-       end
-   end
+relwdt=zeros(n2,1)+1;
+if OPT.timestep>0
+    for ii=1:n2
+        if iage(ii)<4
+            relwdt(ii)=iage(ii)/4;
+        elseif iage(ii)>OPT.lifespan-4
+            relwdt(ii)=(OPT.lifespan-iage(ii)+1)/4;
+        else
+            relwdt(ii)=1.0;
+        end
+    end
+end
 
 %% Compute arrows using mex file
 
-   [xp,yp,xax,yax,len]=mxcurvec(x2,y2,x1,y1,u,v,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.arrowthickness,OPT.nhead,relwdt,OPT.iopt);
+% check if u and v matrices and 3d (varying in time) or 2d (constant in time)
+if ndims(u)>2
+    u1=squeeze(u(:,:,1));
+    v1=squeeze(v(:,:,1));
+    u2=squeeze(u(:,:,2));
+    v2=squeeze(v(:,:,2));
+else
+    u1=u;
+    v1=v;
+    u2=u;
+    v2=v;
+end
+
+[xp,yp,xax,yax,len]=mxcurvec(x2,y2,x1,y1,u1,v1,u2,v2,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.arrowthickness,OPT.nhead,relwdt,OPT.iopt);
 
 %% Set nan values
 
-   xp (xp <1000.0 & xp >999.998)=NaN;
-   yp (yp <1000.0 & yp >999.998)=NaN;
-   xax(xax<1000.0 & xax>999.998)=NaN;
-   yax(yax<1000.0 & yax>999.998)=NaN;
+xp (xp <1000.0 & xp >999.998)=NaN;
+yp (yp <1000.0 & yp >999.998)=NaN;
+xax(xax<1000.0 & xax>999.998)=NaN;
+yax(yax<1000.0 & yax>999.998)=NaN;
 
 %% Count number of points per arrow
 
-   ic=1;while ~isnan(xp(ic,1));ic=ic+1;end % NOT: ic =  (OPT.nrvertices - OPT.nhead)*2+5 due to nhead cut-off in mxcurvec
+ic=1;while ~isnan(xp(ic,1));ic=ic+1;end % NOT: ic =  (OPT.nrvertices - OPT.nhead)*2+5 due to nhead cut-off in mxcurvec
 
 %% Put all arrows in 2D matrix
 
-   polx=reshape(xp ,[ic               n2]);
-   poly=reshape(yp ,[ic               n2]);
-   xax =reshape(xax,[OPT.nrvertices+1 n2]);
-   yax =reshape(yax,[OPT.nrvertices+1 n2]);
+polx=reshape(xp ,[ic               n2]);
+poly=reshape(yp ,[ic               n2]);
+xax =reshape(xax,[OPT.nrvertices+1 n2]);
+yax =reshape(yax,[OPT.nrvertices+1 n2]);
 
 %% Get rid of very short arrows
 
-   ishort=len<0.01;
-   polx(:,ishort)=NaN;
-   poly(isnan(polx))=NaN;
+ishort=len<0.01;
+polx(:,ishort)=NaN;
+poly(isnan(polx))=NaN;
 
 %% Get rid of NaN row
 
-   polx=polx(1:end-1,:);
-   poly=poly(1:end-1,:);
-   xax=xax(1:end-1,:);
-   yax=yax(1:end-1,:);
+polx=polx(1:end-1,:);
+poly=poly(1:end-1,:);
+xax=xax(1:end-1,:);
+yax=yax(1:end-1,:);
 
 %% Determine position of arrows in next time step
 
-   if isempty(OPT.timestep)
-       OPT.timestep=0;
-   end
-   if OPT.timestep>OPT.length
-      OPT.timestep=OPT.length;
-   end
-   nn=(OPT.nrvertices-1)*(OPT.relativespeed*OPT.timestep/OPT.length);
-   nfrac=nn-floor(nn);
-   nn1=floor(nn)+1;
-   nn2=floor(nn)+2;
-   nn2=min(nn2,OPT.nrvertices);
-   OPT.position(:,1)=xax(nn1,:)+nfrac*(xax(nn2,:)-xax(nn1,:));
-   OPT.position(:,2)=yax(nn1,:)+nfrac*(yax(nn2,:)-yax(nn1,:));
-   OPT.position(:,3)=iage+1;
+if isempty(OPT.timestep)
+    OPT.timestep=0;
+end
+if OPT.timestep>OPT.length
+    OPT.timestep=OPT.length;
+end
+nn=(OPT.nrvertices-1)*(OPT.relativespeed*OPT.timestep/OPT.length);
+nfrac=nn-floor(nn);
+nn1=floor(nn)+1;
+nn2=floor(nn)+2;
+nn2=min(nn2,OPT.nrvertices);
+OPT.position(:,1)=xax(nn1,:)+nfrac*(xax(nn2,:)-xax(nn1,:));
+OPT.position(:,2)=yax(nn1,:)+nfrac*(yax(nn2,:)-yax(nn1,:));
+OPT.position(:,3)=iage+1;
 
-   varargout = {polx,poly,xax,yax,OPT.length,OPT.position};
+% iout= xax(end,:)==xax(end-1,:);
+% OPT.position(iout,3)=OPT.lifespan;
+
+varargout = {polx,poly,xax,yax,OPT.length,OPT.position};
+
 %%
 function [x,y]=randomdistributeinpolygon(xp,yp,varargin)
 

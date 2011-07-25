@@ -29,20 +29,20 @@ C      mwpointer dt_pr,nt_pr,hdtck_pr,arthck_pr,xp_pr,yp_pr
 
 C-----------------------------------------------------------------------
 C
-      integer plhs(*), prhs(*)
+      integer*8 plhs(*), prhs(*)
  
-      integer nlhs, nrhs
+      integer*8 nlhs, nrhs
 
-      integer mxCreateDoubleMatrix, mxGetPr
-      integer mxGetM, mxGetN
+      integer*8 mxCreateDoubleMatrix, mxGetPr
+      integer*8 mxGetM, mxGetN
  
-      integer nrm1, nrn1, n2, nt, isize1, isize2, nmax
-      integer np2, np3, nhead, iopt
+      integer*8 nrm1, nrn1, n2, nt, isize1, isize2, nmax
+      integer*8 np2, np3, nhead, iopt
 
-      integer x2_pr,y2_pr,x1_pr,y1_pr,u1_pr,v1_pr,u2_pr,v2_pr
-      integer dt_pr,nt_pr,nhead_pr,hdthck_pr,arthck_pr,xp_pr,yp_pr
-      integer xax_pr,yax_pr,length_pr
-      integer relwdt_pr,iopt_pr
+      integer*8 x2_pr,y2_pr,x1_pr,y1_pr,u1_pr,v1_pr,u2_pr,v2_pr
+      integer*8 dt_pr,nt_pr,nhead_pr,hdthck_pr,arthck_pr,xp_pr,yp_pr
+      integer*8 xax_pr,yax_pr,length_pr
+      integer*8 relwdt_pr,iopt_pr
 
       double precision, dimension(:),   allocatable :: x1
       double precision, dimension(:),   allocatable :: y1
