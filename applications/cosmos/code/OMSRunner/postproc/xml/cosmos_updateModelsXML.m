@@ -26,55 +26,88 @@ for iw=1:length(Model.WebSite)
 
     model=[];
 
-    model.name=Model.Name;
-    model.longname=Model.LongName;
-    model.continent=Model.Continent;
+    model.name.value=Model.Name;
+    model.name.type='char';
+
+    model.longname.value=Model.LongName;
+    model.longname.type='char';
+
+    model.continent.value=Model.Continent;
+    model.continent.type='char';
 
     if ~cluster
+
         if ~strcmpi(Model.CoordinateSystem,'wgs 84')
             [lon,lat]=convertCoordinates(xloc,yloc,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
         else
             lon=xloc;
             lat=yloc;
         end
-        model.longitude=lon;
-        model.latitude=lat;
+
+        model.longitude.value=lon;
+        model.longitude.type='real';
+
+        model.latitude.value=lat;
+        model.latitude.type='real';
+
     end
 
-    model.type=Model.Type;
-    model.size=Model.Size;
-    model.starttime=datestr(Model.TOutputStart,'yyyymmdd HHMMSS');
-    model.stoptime =datestr(Model.TStop,'yyyymmdd HHMMSS');
-    model.timestep ='3';
-    model.simstart=[datestr(Model.SimStart,0) ' (CET)'];
-    model.simstop=[datestr(Model.SimStop,0) ' (CET)'];
+    model.type.value=Model.Type;
+    model.type.type='char';
+    
+    model.size.value=Model.Size;
+    model.size.type='int';
+    
+    model.starttime.value=datestr(Model.TOutputStart,'yyyymmdd HHMMSS');
+    model.starttime.type='date';
+    
+    model.stoptime.value =datestr(Model.TStop,'yyyymmdd HHMMSS');
+    model.stoptime.type='date';
+
+    model.timestep.value=3;
+    model.timestep.type='real';
+
+    model.simstart.value=[datestr(Model.SimStart,0) ' (CET)'];
+    model.simstart.type='char';
+
+    model.simstop.value=[datestr(Model.SimStop,0) ' (CET)'];
+    model.simstop.type='char';
 
     mins=floor(Model.RunDuration/60);
     secs=floor(Model.RunDuration-mins*60);
-    model.runduration=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.runduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.runduration.type='char';
 
     mins=floor(Model.MoveDuration/60);
     secs=floor(Model.MoveDuration-mins*60);
-    model.moveduration=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.moveduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.moveduration.type='char';
 
     mins=floor(Model.ExtractDuration/60);
     secs=floor(Model.ExtractDuration-mins*60);
-    model.extractduration=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.extractduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.extractduration.type='char';
 
     mins=floor(Model.PlotDuration/60);
     secs=floor(Model.PlotDuration-mins*60);
-    model.plotduration=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.plotduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.plotduration.type='char';
 
     mins=floor(Model.UploadDuration/60);
     secs=floor(Model.UploadDuration-mins*60);
-    model.uploadduration=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.uploadduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.uploadduration.type='char';
 
     mins=floor(Model.ProcessDuration/60);
     secs=floor(Model.ProcessDuration-mins*60);
-    model.processduration=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.processduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    model.processduration.type='char';
 
-    model.cycle=hm.CycStr;
-    model.lastupdate=[datestr(now,0) ' (CET)'];
+    model.cycle.value=hm.CycStr;
+    model.cycle.type='char';
+
+    model.lastupdate.value=[datestr(now,0) ' (CET)'];
+    model.lastupdate.type='char';
 
     if cluster
         for j=1:Model.NrProfiles
@@ -90,19 +123,32 @@ for iw=1:length(Model.WebSite)
             [locx,locy]=convertCoordinates(locx,locy,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
             [locx2,locy2]=convertCoordinates(locx2,locy2,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
 
-            model.stations(j).station.name      = Model.Profile(j).Name;
-            model.stations(j).station.longname  = ['MOP ' Model.Profile(j).Name];
-            model.stations(j).station.longitude = locx;
-            model.stations(j).station.latitude  = locy;
-            model.stations(j).station.longitude_end = locx2;
-            model.stations(j).station.latitude_end  = locy2;
-            model.stations(j).station.type      = 'profile';
+            model.stations(j).station.name.value          = Model.Profile(j).Name;
+            model.stations(j).station.name.type           = 'char';
 
-            fnamexml=[Model.ArchiveDir hm.CycStr filesep 'hazards' filesep Model.Profile(j).Name filesep Model.Profile(j).Name '.xml'];
-            if exist(fnamexml,'file')
-                h=xml_load(fnamexml);
-                model.stations(j).station.hazards=h.profile.proc;
-            end
+            model.stations(j).station.longname.value      = ['MOP ' Model.Profile(j).Name];
+            model.stations(j).station.longname.type           = 'char';
+
+            model.stations(j).station.longitude.value     = locx;
+            model.stations(j).station.longitude.type      = 'real';
+
+            model.stations(j).station.latitude.value      = locy;
+            model.stations(j).station.latitude.type       = 'real';
+
+            model.stations(j).station.longitude_end.value = locx2;
+            model.stations(j).station.longitude_end.type  = 'real';
+
+            model.stations(j).station.latitude_end.value  = locy2;
+            model.stations(j).station.latitude_end.type   = 'real';
+
+            model.stations(j).station.type.value          = 'profile';
+            model.stations(j).station.type.type           = 'char';
+
+%            fnamexml=[Model.ArchiveDir hm.CycStr filesep 'hazards' filesep Model.Profile(j).Name filesep Model.Profile(j).Name '.xml'];
+%            if exist(fnamexml,'file')
+%                h=xml_load(fnamexml);
+%                model.stations(j).station.hazards=h.profile.proc;
+%            end
 
         end
     end
@@ -127,27 +173,45 @@ for iw=1:length(Model.WebSite)
             
             j=j+1;
             
-            model.stations(j).station.name      = station.Name;
-            model.stations(j).station.longname  = station.LongName;
+            model.stations(j).station.name.value = station.Name;
+            model.stations(j).station.name.type  = 'char';
+
+            model.stations(j).station.longname.value = station.LongName;
+            model.stations(j).station.longname.type  = 'char';
+
             if ~strcmpi(Model.CoordinateSystem,'wgs 84')
                 [lon,lat]=convertCoordinates(station.Location(1),station.Location(2),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
             else
                 lon=station.Location(1);
                 lat=station.Location(2);
             end
-            model.stations(j).station.longitude = lon;
-            model.stations(j).station.latitude  = lat;
-            model.stations(j).station.type      = station.Type;
+
+            model.stations(j).station.longitude.value = lon;
+            model.stations(j).station.longitude.type  = 'real';
+
+            model.stations(j).station.latitude.value  = lat;
+            model.stations(j).station.latitude.type   = 'real';
+
+            model.stations(j).station.type.value      = station.Type;
+            model.stations(j).station.type.type       = 'char';
             
             np=0;
             for ip=1:station.NrParameters
                 Parameter=station.Parameters(ip);
                 typ=Parameter.Name;
                 if Parameter.PlotCmp || Parameter.PlotPrd || Parameter.PlotObs
+
                     np=np+1;
-                    model.stations(j).station.plots(np).plot.parameter=typ;
-                    model.stations(j).station.plots(np).plot.type='timeseries';
-                    model.stations(j).station.plots(np).plot.imgname=[typ '.' station.Name '.png'];
+
+                    model.stations(j).station.plots(np).plot.parameter.value = typ;
+                    model.stations(j).station.plots(np).plot.parameter.type  = 'char';
+
+                    model.stations(j).station.plots(np).plot.type.value      = 'timeseries';
+                    model.stations(j).station.plots(np).plot.type.type       = 'char';
+
+                    model.stations(j).station.plots(np).plot.imgname.value   = [typ '.' station.Name '.png'];
+                    model.stations(j).station.plots(np).plot.imgname.type    = 'char';
+
                 end
             end
         end
@@ -158,29 +222,36 @@ for iw=1:length(Model.WebSite)
     for j=1:Model.nrMapPlots
         if Model.mapPlots(j).plot
             k=k+1;
-            model.maps(k).map.filename      = [Model.mapPlots(j).name '.' Model.Name '.kmz'];
-            model.maps(k).map.parameter     = Model.mapPlots(j).name;
-            model.maps(k).map.longname      = Model.mapPlots(j).longName;
-%            model.maps(k).map.shortname     = Model.mapPlots(j).shortName;
-%            model.maps(k).map.unit          = Model.mapPlots(j).Unit;
-            model.maps(k).map.type          = 'kmz';
+            model.maps(k).map.filename.value     = [Model.mapPlots(j).name '.' Model.Name '.kmz'];
+            model.maps(k).map.filename.type      = 'char';
 
-            %         xlim=Model.XLimPlot;
-            %         ylim=Model.YLimPlot;
-            %         if ~strcmpi(Model.CoordinateSystemType,'geographic')
-            %             [xlim(1),ylim(1)]=convertCoordinates(xlim(1),ylim(1),'persistent',Model.CoordinateSystem,Model.CoordinateSystemType,'WGS 84','geographic',hm.CoordinateSystems,hm.Operations);
-            %             [xlim(2),ylim(2)]=convertCoordinates(xlim(2),ylim(2),'persistent',Model.CoordinateSystem,Model.CoordinateSystemType,'WGS 84','geographic',hm.CoordinateSystems,hm.Operations);
-            %         end
-            %
-            %         model.maps(k).map.xmin          = xlim(1);
-            %         model.maps(k).map.xmax          = xlim(2);
-            %         model.maps(k).map.ymin          = ylim(1);
-            %         model.maps(k).map.ymax          = ylim(2);
-            %         model.maps(k).map.animate       = 'true';
-            model.maps(k).map.starttime     = datestr(hm.Cycle,'yyyymmdd HHMMSS');
-            model.maps(k).map.stoptime      = datestr(hm.Cycle+Model.RunTime/1440,'yyyymmdd HHMMSS');
-            model.maps(k).map.nrsteps       = (Model.RunTime)/(Model.mapPlots(j).timeStep/60)+1;
-            model.maps(k).map.timestep      = Model.mapPlots(j).timeStep/3600;
+            model.maps(k).map.parameter.value    = Model.mapPlots(j).name;
+            model.maps(k).map.parameter.type     = 'char';
+
+            model.maps(k).map.longname.value      = Model.mapPlots(j).longName;
+            model.maps(k).map.longname.type     = 'char';
+
+%            model.maps(k).map.shortname.value     = Model.mapPlots(j).shortName;
+%            model.maps(k).map.shortname.type     = 'char';
+
+%            model.maps(k).map.unit.value          = Model.mapPlots(j).Unit;
+%            model.maps(k).map.unit.type     = 'char';
+
+            model.maps(k).map.type.value          = 'kmz';
+            model.maps(k).map.type.type     = 'char';
+
+            model.maps(k).map.starttime.value = datestr(hm.Cycle,'yyyymmdd HHMMSS');
+            model.maps(k).map.starttime.type  = 'date';
+
+            model.maps(k).map.stoptime.value  = datestr(hm.Cycle+Model.RunTime/1440,'yyyymmdd HHMMSS');
+            model.maps(k).map.stoptime.type   = 'date';
+
+            model.maps(k).map.nrsteps.value   = (Model.RunTime)/(Model.mapPlots(j).timeStep/60)+1;
+            model.maps(k).map.nrsteps.type    = 'int';
+
+            model.maps(k).map.timestep.value  = Model.mapPlots(j).timeStep/3600;
+            model.maps(k).map.timestep.type   = 'real';
+
         end
     end
 
@@ -188,15 +259,27 @@ for iw=1:length(Model.WebSite)
         kmlpar={'hmax','max_runup','beachprofile_change','flood_duration','shoreline'};
         lname={'Maximum wave height','Maximum run up','Beach profile change','Flood duration','Shoreline'};
         for i=1:length(kmlpar)
+
             k=k+1;
-            model.maps(k).map.filename  = [kmlpar{i} '.' Model.Name '.kmz'];
-            model.maps(k).map.parameter = kmlpar{i};
-            model.maps(k).map.longname  = lname{i};
-            model.maps(k).map.shortname = kmlpar{i};
-            model.maps(k).map.type      = 'kmz';
+
+            model.maps(k).map.filename.value  = [kmlpar{i} '.' Model.Name '.kmz'];
+            model.maps(k).map.filename.type   = 'char';
+
+            model.maps(k).map.parameter.value = kmlpar{i};
+            model.maps(k).map.parameter.type   = 'char';
+
+            model.maps(k).map.longname.value  = lname{i};
+            model.maps(k).map.longname.type   = 'char';
+
+            model.maps(k).map.shortname.value = kmlpar{i};
+            model.maps(k).map.shortname.type   = 'char';
+
+            model.maps(k).map.type.value      = 'kmz';
+            model.maps(k).map.type.type   = 'char';
         end
     end
 
-    xml_save(fname,model,'off');
+    struct2xml(fname,model);
+%    xml_save(fname,model,'off');
 
 end
