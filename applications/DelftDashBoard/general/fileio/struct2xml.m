@@ -17,10 +17,12 @@ function struct2xml(filename,s)
 % s.stations(2).station.lon.type='real';
 % struct2xml('test.xml',s);
 
+nindent=1;
+
 fid=fopen(filename,'wt');
 fprintf(fid,'%s\n','<?xml version="1.0"?>');
 fprintf(fid,'%s\n','<root>');
-splitstruct(fid,s,1,2);
+splitstruct(fid,s,1,nindent);
 fprintf(fid,'%s\n','</root>');
 fclose(fid);
 
