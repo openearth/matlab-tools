@@ -107,10 +107,11 @@ if Model.MakeWebsite
 %         return;
     end
     %%
-    disp('Updating models.xml on local website ...');
+    disp('Updating xml files on local website ...');
     try
         cosmos_updateModelsXML(hm,m);
-        cosmos_updateScenariosXML(hm,m);
+        cosmos_updateScenarioXML(hm,m);
+        cosmos_updateScenariosDotXML(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong while updating models.xml on local website for ' hm.Models(m).Name]);
 %         hm.Models(m).Status='failed';
@@ -120,11 +121,11 @@ end
 
 if Model.UploadFTP
     set(hm.TextModelLoopStatus,'String',['Status : uploading to SCP server - ' mdl ' ...']);drawnow;
-    disp('Uploading local website to SCP server ...');
+    disp('Uploading figures to web server ...');
     try
         tic
         %        PostFTP(hm,m);
-        cosmos_postSCP(hm,m);
+        cosmos_postFigures(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong while upload to SCP server for ' Model.Name]);
         %         hm.Models(m).Status='failed';
@@ -133,7 +134,7 @@ if Model.UploadFTP
     hm.Models(m).UploadDuration=toc;
     %%
     if ~strcmpi(hm.Models(m).Status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
-        disp('Uploading models.xml to website ...');
+        disp('Uploading xml files to web server ...');
         try
             cosmos_postXML(hm,m);
         catch

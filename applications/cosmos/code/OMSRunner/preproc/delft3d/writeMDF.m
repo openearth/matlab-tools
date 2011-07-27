@@ -30,7 +30,7 @@ fprintf(fid,'%s\n',['Filcco= #' Model.Name '.grd#']);
 fprintf(fid,'%s\n','Fmtcco= #FR#');
 fprintf(fid,'%s\n','Grdang= 0.0000000e+000');
 if ~strcmpi(Model.CoordinateSystemType,'geographic')
-    [lon,lat]=ConvertCoordinates(Model.WebSite(1).Location(1),Model.WebSite(1).Location(2),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+    [lon,lat]=convertCoordinates(Model.WebSite(1).Location(1),Model.WebSite(1).Location(2),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
     fprintf(fid,'%s\n',['Anglat= ' num2str(lat)]);
 end
 fprintf(fid,'%s\n',['Filgrd= #' Model.Name '.enc#']);

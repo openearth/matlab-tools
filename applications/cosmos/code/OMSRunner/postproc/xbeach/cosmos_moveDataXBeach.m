@@ -1,4 +1,4 @@
-function MoveDataXBeach(hm,m)
+function cosmos_moveDataXBeach(hm,m)
 
 rundir=[hm.JobDir hm.Models(m).Name  filesep ];
 

@@ -56,23 +56,16 @@ for i=1:hm.NrModels
     hm.Models(i).UploadDuration=0;
 end
 
-%% Check finished simulations
+%% Check finished models
 flist=dir([hm.ScenarioDir 'joblist' filesep 'finished.' datestr(hm.Cycle,'yyyymmdd.HHMMSS') '.*']);
 if ~isempty(flist)
-%     ButtonName = questdlg(['There are finished simulations for cycle ' datestr(hm.Cycle,'yyyymmdd HHMMSS') '. Delete them?'], ...
-%         'Delete finished simulations', ...
-%         'No', 'Yes', 'Yes');
-    ButtonName='no';
-    if strcmpi(ButtonName,'no')
-        for i=1:length(flist)
-            mdl=flist(i).name(26:end);
-            nr=findstrinstruct(hm.Models,'Name',mdl);
-            if ~isempty(nr)
-                hm.Models(nr).Status='finished';
-                hm.Models(nr).RunSimulation=0;
-            end
+    for i=1:length(flist)
+        mdl=flist(i).name(26:end);
+        nr=findstrinstruct(hm.Models,'Name',mdl);
+        if ~isempty(nr)
+            hm.Models(nr).Status='finished';
+            hm.Models(nr).RunSimulation=0;
         end
-    else
     end
 end
 
@@ -87,6 +80,13 @@ for i=1:hm.NrModels
     if strcmpi(hm.Models(i).Status,'waiting') && hm.Models(i).RunSimulation==0 && hm.Models(i).Priority>0
         hm.Models(i).Status='simulationfinished';
     end
+end
+
+%% Check which simulations inside the job dir have finished, so that
+%% model loop does not try to run them
+[hm,finishedList]=cosmos_checkForFinishedSimulations(hm);
+for i=1:length(finishedList)
+    hm.Models(finishedList(i)).Status='simulationfinished';
 end
 
 %% Start and stop times

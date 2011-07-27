@@ -1,10 +1,11 @@
-function MoveDataDelft3D(hm,m)
+function cosmos_moveDataDelft3D(hm,m)
 
 Model=hm.Models(m);
 
 rundir=[hm.JobDir Model.Name filesep];
 
 delete([rundir '*.exe']);
+delete([rundir 'finished.txt']);
 
 dr=Model.Dir;
 

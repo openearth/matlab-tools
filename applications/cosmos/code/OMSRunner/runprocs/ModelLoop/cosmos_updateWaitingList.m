@@ -1,4 +1,4 @@
-function [hm,WaitingList]=UpdateWaitingList(hm)
+function [hm,WaitingList]=cosmos_updateWaitingList(hm)
 
 j=0;
 

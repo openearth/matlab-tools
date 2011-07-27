@@ -1,4 +1,4 @@
-function PreProcessXBeachCluster(hm,m)
+function cosmos_preProcessXBeachCluster(hm,m)
 
 Model=hm.Models(m);
 

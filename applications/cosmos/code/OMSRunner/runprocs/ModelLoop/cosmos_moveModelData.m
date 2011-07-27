@@ -1,4 +1,4 @@
-function MoveData(hm,m)
+function cosmos_moveModelData(hm,m)
 
 dr=hm.Models(m).Dir;
 
@@ -26,13 +26,13 @@ switch lower(hm.Models(m).Type)
     case{'delft3dflow','delft3dflowwave'}
         MakeDir(dr,'restart','hot');
         MakeDir(dr,'restart','tri-rst');
-        MoveDataDelft3D(hm,m);
+        cosmos_moveDataDelft3D(hm,m);
     case{'ww3'}
-        MoveDataWW3(hm,m);
+        cosmos_moveDataWW3(hm,m);
     case{'xbeach'}
-        MoveDataXBeach(hm,m);
+        cosmos_moveDataXBeach(hm,m);
     case{'xbeachcluster'}
-        MoveDataXBeachCluster(hm,m);
+        cosmos_moveDataXBeachCluster(hm,m);
 end
 
 [status,message,messageid]=rmdir([hm.JobDir hm.Models(m).Name], 's');

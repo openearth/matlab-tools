@@ -1,4 +1,4 @@
-function MoveDataWW3(hm,m)
+function cosmos_moveDataWW3(hm,m)
 
 Model=hm.Models(m);
 

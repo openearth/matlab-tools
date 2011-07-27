@@ -1,4 +1,4 @@
-function MoveDataXBeachCluster(hm,m)
+function cosmos_moveDataXBeachCluster(hm,m)
 
 rundir=[hm.JobDir hm.Models(m).Name filesep];
 

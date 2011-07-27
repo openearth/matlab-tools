@@ -10,7 +10,8 @@ for iw=1:length(Model.WebSite)
     xloc=Model.WebSite(iw).Location(1);
     yloc=Model.WebSite(iw).Location(2);
 
-    dr=[hm.WebDir wbdir filesep 'scenarios' filesep hm.Scenario filesep Model.Continent filesep Model.Name filesep];
+    dr=[hm.WebDir wbdir filesep 'scenarios' filesep hm.Scenario filesep];
+%    dr=[hm.WebDir wbdir filesep 'scenarios' filesep hm.Scenario filesep Model.Continent filesep Model.Name filesep];
     if ~exist(dr,'dir')
         mkdir(dr);
     end
