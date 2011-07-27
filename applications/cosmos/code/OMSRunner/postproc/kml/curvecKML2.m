@@ -189,7 +189,7 @@ for it=1:length(t)
     vv=squeeze(v(it,:,:));
     
     [xp,yp,xax,yax,len,pos]=curvec(x,y,uu,vv,'dx',dxCurVec,'length',lengthCurVec,'timestep',timeStepCurVec,'nrvertices',nrvert,'position',pos, ...
-        'relativespeed',relativeSpeed,'polygon',polygon,'nhead',nhead,'CS','geographic');
+        'relativespeed',relativeSpeed,'polygon',polygon,'nhead',nhead,'cs','geographic');
 
     vel=len/lengthCurVec;
 
