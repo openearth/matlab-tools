@@ -58,10 +58,10 @@ for iw=1:length(Model.WebSite)
     model.size.value=Model.Size;
     model.size.type='int';
     
-    model.starttime.value=datestr(Model.TOutputStart,'yyyymmdd HHMMSS');
+    model.starttime.value=Model.TOutputStart;
     model.starttime.type='date';
     
-    model.stoptime.value =datestr(Model.TStop,'yyyymmdd HHMMSS');
+    model.stoptime.value=Model.TStop;
     model.stoptime.type='date';
 
     model.timestep.value=3;
@@ -237,13 +237,13 @@ for iw=1:length(Model.WebSite)
 %            model.maps(k).map.unit.value          = Model.mapPlots(j).Unit;
 %            model.maps(k).map.unit.type     = 'char';
 
-            model.maps(k).map.type.value          = 'kmz';
-            model.maps(k).map.type.type     = 'char';
+            model.maps(k).map.type.value      = 'kmz';
+            model.maps(k).map.type.type       = 'char';
 
-            model.maps(k).map.starttime.value = datestr(hm.Cycle,'yyyymmdd HHMMSS');
+            model.maps(k).map.starttime.value = hm.Cycle;
             model.maps(k).map.starttime.type  = 'date';
 
-            model.maps(k).map.stoptime.value  = datestr(hm.Cycle+Model.RunTime/1440,'yyyymmdd HHMMSS');
+            model.maps(k).map.stoptime.value  = hm.Cycle+Model.RunTime/1440;
             model.maps(k).map.stoptime.type   = 'date';
 
             model.maps(k).map.nrsteps.value   = (Model.RunTime)/(Model.mapPlots(j).timeStep/60)+1;

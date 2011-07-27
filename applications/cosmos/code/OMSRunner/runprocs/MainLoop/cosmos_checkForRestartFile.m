@@ -33,7 +33,6 @@ if nrst>0
                 dt=fname(7:end);
         end
         rsttime=datenum(dt,'yyyymmdd.HHMMSS');
-
         if rsttime<=t0 && rsttime>=t0-tspinup
             trst=rsttime;
             rstfil=fname;
