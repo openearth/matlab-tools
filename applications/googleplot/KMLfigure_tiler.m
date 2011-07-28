@@ -18,10 +18,13 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 % fileName  relative filename, incl relative subPath.
 % basePath  absolute path where to write kml files (will not appear inside kml, those contain only fileName)
 % baseUrl   absolute url where kml will appear. (A webkml needs absolute url, albeit only needed in the mother KML, local files can have relative paths.)
+% bgcolor   rgb color that is made transparent in GE. This applies to the values 
+%           that are NaN in Matlab. Make sure this color is NOT in your
+%           (interpolated) colorMap. By default is it olive-green 
+%           ([100 155 100]) that is not in the default jet colormap.
 %
 % Notes:    - See example in https://repos.deltares.nl/repos/OpenEarthTools/test/
 %           - Please close all other figures before calling this function
-%           - Using 'bgcolor',[255 0 255] helped me solve white NaN areas in GE
 %           - To increase number of zoom levels increase 'lowestLevel' (to e.g. 14)
 %           - For large data KMLfigure_tiler can be run in 2 sub modes
 %             1) tile generation in a file loop: save data or sub data to tiles
@@ -29,13 +32,16 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 %                mother kml that binds them all.
 % 
 %             for =1:n
-%             [lon,lat,z]=load(files{i}))
-%             h = pcolor(lon,lat,z)
-%             KMLfigure_tiler(h,lat,lon,z,...
-%                'lowestLevel'       ,13,...    % +1 results in a x4 times larger dataset
-%                'printTiles'        ,true,...  % this loop prints all tiles
-%                'joinTiles'         ,false,... % do not join untill all tiles are there
-%                'mergeExistingTiles',true);    % merge partially overlapping tiles
+%               [lon,lat,z]=load(files{i}))
+%               set(gca,'Color',[100 155 100]./255): % NOTE ORDER LON,LAT
+%               hold off
+%               h = pcolor(lon,lat,z)
+%               KMLfigure_tiler(h,lat,lon,z,...      % NOTE ORDER LAT,LON
+%                 'bgcolor'           ,[100 155 100],... % this color is made transparent in GE
+%                 'lowestLevel'       ,13,...    % +1 results in a x4 times larger dataset
+%                 'printTiles'        ,true,...  % this loop prints all tiles
+%                 'joinTiles'         ,false,... % do not join untill all tiles are there
+%                 'mergeExistingTiles',true);    % merge partially overlapping tiles
 %             end
 %             
 %             % in the joining phase set handle to nan, lat and lon to extent to be 
