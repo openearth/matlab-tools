@@ -28,20 +28,23 @@ hm.Models(i).Continent=model.continent;
 hm.Models(i).Dir=[hm.ScenarioDir 'models' filesep model.continent filesep model.name filesep];
 
 % Website
-try
 if isfield(model,'websites')
     for j=1:length(model.websites)
         hm.Models(i).WebSite(j).Name=model.websites(j).website.name;
-        hm.Models(i).WebSite(j).Location(1)=str2double(model.websites(j).website.locationx);
-        hm.Models(i).WebSite(j).Location(2)=str2double(model.websites(j).website.locationy);
+        hm.Models(i).WebSite(j).Location=[];
+        hm.Models(i).WebSite(j).elevation=[];
+        if isfield(model.websites(j).website,'locationx') && isfield(model.websites(j).website,'locationy')
+            hm.Models(i).WebSite(j).Location(1)=str2double(model.websites(j).website.locationx);
+            hm.Models(i).WebSite(j).Location(2)=str2double(model.websites(j).website.locationy);
+        end
+        if isfield(model.websites(j).website,'elevation')
+            hm.Models(i).WebSite(j).elevation=str2double(model.websites(j).website.elevation);
+        end
     end
 else
     hm.Models(i).WebSite(1).Name=model.website;
     hm.Models(i).WebSite(1).Location(1)=str2double(model.locationx);
     hm.Models(i).WebSite(1).Location(2)=str2double(model.locationy);
-end
-catch
-    shite=1
 end
 
 hm.Models(i).ArchiveDir=[hm.ArchiveDir model.continent filesep model.name filesep 'archive' filesep];

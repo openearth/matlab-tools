@@ -7,8 +7,6 @@ Model=hm.Models(m);
 for iw=1:length(Model.WebSite)
 
     wbdir=Model.WebSite(iw).Name;
-    xloc=Model.WebSite(iw).Location(1);
-    yloc=Model.WebSite(iw).Location(2);
 
     dr=[hm.WebDir wbdir filesep 'scenarios' filesep hm.Scenario filesep];
 %    dr=[hm.WebDir wbdir filesep 'scenarios' filesep hm.Scenario filesep Model.Continent filesep Model.Name filesep];
@@ -36,22 +34,65 @@ for iw=1:length(Model.WebSite)
     model.continent.value=Model.Continent;
     model.continent.type='char';
 
+    
+    %% Location
+    
     if ~cluster
-
-        if ~strcmpi(Model.CoordinateSystem,'wgs 84')
-            [lon,lat]=convertCoordinates(xloc,yloc,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
-        else
-            lon=xloc;
-            lat=yloc;
-        end
-
-        model.longitude.value=lon;
-        model.longitude.type='real';
-
-        model.latitude.value=lat;
-        model.latitude.type='real';
-
+        % Get value from xml
+        xloc=Model.WebSite(iw).Location(1);
+        yloc=Model.WebSite(iw).Location(2);
+    else
+        % Take average of start and end profile
+        xloc=0.5*(Model.Profile(1).OriginX+Model.Profile(end).OriginX);
+        yloc=0.5*(Model.Profile(1).OriginY+Model.Profile(end).OriginY);  
     end
+
+    if ~strcmpi(Model.CoordinateSystem,'wgs 84')
+        [lon,lat]=convertCoordinates(xloc,yloc,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+    else
+        lon=xloc;
+        lat=yloc;
+    end
+
+    model.longitude.value=lon;
+    model.longitude.type='real';
+    
+    model.latitude.value=lat;
+    model.latitude.type='real';
+    
+    %% Elevation
+
+    % First try to determine distance between corner points of model limits
+    if ~cluster
+        % Get value from xml
+        xlim=Model.XLim;
+        ylim=Model.YLim;
+    else
+        % Take average of start and end profile
+        for i=1:length(Model.Profile)
+            xloc(i)=Model.Profile(i).OriginX;
+            yloc(i)=Model.Profile(i).OriginY;
+        end
+        xlim(1)=min(xloc);
+        xlim(2)=max(xloc);
+        ylim(1)=min(yloc);
+        ylim(2)=max(yloc);
+    end    
+    if ~strcmpi(Model.CoordinateSystem,'wgs 84')
+        [xlim,ylim]=convertCoordinates(xlim,ylim,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+    end
+    dstx=111111*(xlim(2)-xlim(1))*cos(mean(ylim)*pi/180);
+    dsty=111111*(ylim(2)-ylim(1));    
+    dst=sqrt(dstx^2+dsty^2);
+
+    % Elevation is distance times 2
+    dst=dst*2;
+    dst=min(dst,10000000);
+
+    model.elevation.value=dst;
+    model.elevation.type='real';
+
+    %% Types and size
 
     model.type.value=Model.Type;
     model.type.type='char';
@@ -67,6 +108,8 @@ for iw=1:length(Model.WebSite)
 
     model.timestep.value=3;
     model.timestep.type='real';
+
+    %% Duration
 
     model.simstart.value=[datestr(Model.SimStart,0) ' (CET)'];
     model.simstart.type='char';
@@ -109,6 +152,8 @@ for iw=1:length(Model.WebSite)
 
     model.lastupdate.value=[datestr(now,0) ' (CET)'];
     model.lastupdate.type='char';
+
+    %% Profiles
 
     if cluster
         for j=1:Model.NrProfiles
@@ -154,6 +199,7 @@ for iw=1:length(Model.WebSite)
         end
     end
 
+    %% Stations
     j=0;
     for ist=1:Model.NrStations
         
@@ -218,6 +264,8 @@ for iw=1:length(Model.WebSite)
         end
         
     end
+
+    %% Maps
 
     k=0;
     for j=1:Model.nrMapPlots

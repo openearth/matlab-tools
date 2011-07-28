@@ -1,4 +1,4 @@
-function CopyFiguresToLocalWebsite(hm,m)
+function cosmos_copyFiguresToLocalWebsite(hm,m)
 
 Model=hm.Models(m);
 
