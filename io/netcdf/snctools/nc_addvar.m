@@ -34,7 +34,8 @@ function nc_addvar(ncfile,varstruct)
 %
 %   Example:  create a variable called 'mars' in a netCDF-4 classic file
 %   that has two dimensions, 'lat' and 'lon'.  Use 10x10 chunking scheme
-%   and turn on full deflate compression.
+%   and turn on full deflate compression.  Please note that this is the 
+%   ONLY recommended way to set a fill value in netCDF-4 files!
 %      nc_create_empty('myfile.nc', nc_netcdf4_classic);
 %      nc_adddim('myfile.nc','lon',361);
 %      nc_adddim('myfile.nc','lat',181);

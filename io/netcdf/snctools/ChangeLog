@@ -1,3 +1,11 @@
+* July 25 2011 John Evans <john.g.evans.ne@gmail.com> -r3623
+- Fixed test problem on 10a and below introduced in r3619
+
+* July 24 2011 John Evans <john.g.evans.ne@gmail.com> -r3619
+- Added NaN missing_value and NaN fill_value tests.
+- Fixed some typos.
+- Clarified a few statements about fill values.
+
 * July 21 2011 John Evans <john.g.evans.ne@gmail.com> -r3609
 - Tentatively abstracting out GETPREF on PRESERVE_FVD to being mostly a
 - persistent variable operation.  Nearly doubles the speed.

@@ -9,6 +9,7 @@ fprintf('\t\tTesting NC_DUMP ...' );
 % For now we will run this test preserving the fastest varying dimension.
 pvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
 if ~pvd
+    fprintf('\n');
     return
 end
 

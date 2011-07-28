@@ -1,32 +1,32 @@
 function test_nc_varget(mode)
 
 if nargin < 1
-	mode = 'netcdf-3';
+    mode = 'netcdf-3';
 end
 
 fprintf('\t\tTesting NC_VARGET ...  ' );
 
 testroot = fileparts(mfilename('fullpath'));
 switch(mode)
-	case 'hdf4';
-		run_hdf_tests;
+    case 'hdf4';
+        run_hdf_tests;
 
-	case 'grib'
-		run_grib2_tests;
+    case 'grib'
+        run_grib2_tests;
 
-	case 'netcdf-3'
+    case 'netcdf-3'
         ncfile = fullfile(testroot,'testdata/varget.nc');
-		run_local_tests(ncfile);
+        run_local_tests(ncfile);
 
-	case 'netcdf4-classic'
+    case 'netcdf4-classic'
         ncfile = fullfile(testroot,'testdata/varget4.nc');
-		run_local_tests(ncfile);
+        run_local_tests(ncfile);
 
     case 'netcdf4-enhanced'
         run_nc4_enhanced;
         
-	case 'opendap'
-		run_opendap_tests;
+    case 'opendap'
+        run_opendap_tests;
 
 end
 
@@ -92,7 +92,7 @@ actData = nc_varget ( ncfile, 'test_1D' );
 
 sz = size(actData);
 if sz(1) ~= 6 && sz(2) ~= 1
-	error('failed');
+    error('failed');
 end
 
 
@@ -322,6 +322,86 @@ end
 return
 
 %--------------------------------------------------------------------------
+function test_missing_value_nan(ncfile)
+% Special case where the missing value is NaN itself.
+
+actData = nc_varget ( ncfile, 'a' );
+
+if ~isa(actData,'double')
+    error ( 'float data was not converted to double');
+end
+
+if ~isnan( actData(end) )
+    error ( 'missing value not returned as NaN' );
+end
+
+return
+
+%--------------------------------------------------------------------------
+function test_fill_value_nan_extend(ncfile)
+% Special case where the fill value is NaN itself (on time series).
+
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a'}
+        % cannot run on these releases without further modification.
+        return
+    otherwise
+        % go ahead
+end
+
+delete('foo.nc');
+copyfile(ncfile,'foo.nc');
+ncfile = 'foo.nc';
+
+info = nc_info(ncfile);
+
+nc_adddim(ncfile,'time',0);
+
+clear v;
+if ~strcmp(info.Format,'HDF4')
+    v.Name = 'time';
+    v.Datatype = 'double';
+    v.Dimension = { 'time' };
+    nc_addvar ( ncfile, v );
+end
+
+clear v;
+
+v.Name = 'time2';
+v.Datatype = 'double';
+v.Dimension = { 'time' };
+v.Attribute.Name = '_FillValue';
+v.Attribute.Value = NaN;
+nc_addvar ( ncfile, v );
+
+% Now extend the time variable
+nc_varput(ncfile,'time',0);
+
+% Now retrieve 'time2'.  The only value should be NaN
+data = nc_varget(ncfile,'time2');
+if ~isnan(data)
+    error ( 'extended data not set with proper fill value');
+end
+
+
+%--------------------------------------------------------------------------
+function test_fill_value_nan(ncfile)
+% Special case where the fill value is NaN itself.
+
+actData = nc_varget ( ncfile, 'b' );
+
+if ~isa(actData,'double')
+    error ( 'float data was not converted to double');
+end
+
+if ~isnan( actData(end) )
+    error ( 'fill value not returned as NaN' );
+end
+
+return
+
+%--------------------------------------------------------------------------
 function test_scaling ( ncfile )
 
 expData = [32 32 32 32; 50 50 50 50; 68 68 68 68; ...
@@ -449,10 +529,14 @@ test_readFullSingletonVariable ( ncfile );
 test_readFullDoublePrecisionVariable ( ncfile );
 
 test_readStridedVariable ( ncfile );
-regression_NegSize(ncfile);
 test_scaling(ncfile);
-
 test_missing_value(ncfile);
+test_missing_value_nan(ncfile);
+test_fill_value_nan(ncfile);
+test_fill_value_nan_extend(ncfile);
+
+regression_NegSize(ncfile);
+
 test_bad_fill_value;
 test_bad_missing_value;
 return
@@ -474,7 +558,7 @@ switch(v)
     case {'14','2006a','2006b','2007a'}
         fprintf('negative tests filtered out on release %s.', v);
     otherwise
-		test_nc_varget_neg_opendap;
+        test_nc_varget_neg_opendap;
 end
 return
 

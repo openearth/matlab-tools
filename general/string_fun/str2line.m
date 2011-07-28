@@ -129,8 +129,11 @@ else
          line1D = [line1D(:)',char(cell2D{ii}),LF   ]; % add a LF (only)
          
       elseif strcmpi(lower(OS(1)),'s')
-         
-         line1D  = [strcat(line1D,char(cell2D{ii}),{varargin{2}})]; % %% add symbol, but keep also trailing spaces as symbol
+         try % in order not to crash on NaNs
+            line1D  = [strcat(line1D,char(cell2D{ii}),{varargin{2}})]; % %% add symbol, but keep also trailing spaces as symbol
+         catch
+            line1D = '';
+         end
          
       end
    end

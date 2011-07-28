@@ -10,9 +10,9 @@ function nc_attput(ncfile,varname,attname,attval)
 %   ATTVAL to be INT16.  Fill value attributes, however, will be cast to 
 %   the correct type.
 %
-%   Note:  Be aware that using NC_ATTPUT with the _FillValue attribute is
-%   dangerous with netCDF-4 files.  If the variable is not empty, all its
-%   data will be lost.
+%   Note:  Be aware that using NC_ATTPUT with the _FillValue attribute 
+%   is not allowed with netcdf-4 files.  The fill value must be only be set
+%   when the variable is created, so you should use NC_ADDVAR for this.
 %
 %   Example:  create an empty netcdf file and then write a global
 %   attribute.
