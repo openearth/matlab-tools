@@ -196,6 +196,16 @@ for iw=1:length(Model.WebSite)
 %                model.stations(j).station.hazards=h.profile.proc;
 %            end
 
+            % Plots
+            model.stations(j).station.plots(1).plot.parameter.value = 'beachprofile';
+            model.stations(j).station.plots(1).plot.parameter.type  = 'char';
+            
+            model.stations(j).station.plots(1).plot.type.value      = 'beachprofile';
+            model.stations(j).station.plots(1).plot.type.type       = 'char';
+            
+            model.stations(j).station.plots(1).plot.imgname.value   = [Model.Profile(j).Name '.png'];
+            model.stations(j).station.plots(1).plot.imgname.type    = 'char';
+
         end
     end
 

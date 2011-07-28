@@ -67,7 +67,7 @@ for i=1:hm.NrMeteoDatasets
                     getMeteoFromNomads3(meteosource,meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,'includeHeat',inclh);
                 case{'matroos'}
                     disp(['Getting HIRLAM ' datestr(tt(1)) ' to ' datestr(tt(end)) ' ...']);
-%                    getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
+                    getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
             end
 
             if tnext>hm.Meteo(i).tLastAnalyzed

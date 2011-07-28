@@ -1,4 +1,4 @@
-function hm=readScenario(hm)
+function hm=cosmos_readScenario(hm)
 
 fname=[hm.MainDir filesep 'scenarios' filesep hm.Scenario filesep hm.Scenario '.xml'];
 
