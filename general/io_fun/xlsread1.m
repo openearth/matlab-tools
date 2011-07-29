@@ -1,4 +1,4 @@
-function [data, text, rawData, customOutput]=xlsread1(file,sheet,range,mode,customFun)
+function [data, text, rawData, customOutput]=xlsread1(Excel,sheet,range,mode,customFun)
 % XLSREAD1 a faster way to read multiple excel files
 %
 % This is a modified version of the Matlab built in xlsread function,
@@ -125,7 +125,7 @@ function [data, text, rawData, customOutput]=xlsread1(file,sheet,range,mode,cust
 %   Copyright 1984-2007 The MathWorks, Inc.
 %   $Revision$  $Date$
 %=============================================================================
-Excel = evalin('caller','Excel'); % added command (Brandao 12/09/2008)
+% Excel = evalin('caller','Excel'); % added command (Brandao 12/09/2008)
 % initialise variables
 data = [];
 text = {};
@@ -139,14 +139,14 @@ elseif nargin < 3
     range = '';
 end
 
-% handle input values
-if nargin < 1 || isempty(file)
-    error('MATLAB:xlsread:FileName','Filename must be specified.');
-end
-
-if ~ischar(file)
-    error('MATLAB:xlsread:InputClass','Filename must be a string.');
-end
+% % handle input values
+% if nargin < 1 || isempty(file)
+%     error('MATLAB:xlsread:FileName','Filename must be specified.');
+% end
+% 
+% if ~ischar(file)
+%     error('MATLAB:xlsread:InputClass','Filename must be a string.');
+% end
 
 if nargin > 1
     % Verify class of sheet parameter
@@ -216,23 +216,23 @@ end
 % end
 %==============================================================================
 % select import mode from either normal or basic mode.
-if strcmpi(mode,'basic') || ~ispc
-    warning('MATLAB:xlsread:Mode',...
-        ['XLSREAD has limited import functionality on non-Windows platforms\n'...
-            'or in basic mode.  Refer to HELP XLSREAD for more information.']);
-    try
-		if nargout > 2
-	        [data,text,rawData] = xlsreadold(file,sheet);
-		else
-			[data,text] = xlsreadold(file,sheet);
-		end
-    catch exception
-        if isempty(exception.identifier)
-            exception = MException('MATLAB:xlsreadold:FormatError','%s', exception.message);
-        end
-        throw(exception);
-    end
-    return;
+% if strcmpi(mode,'basic') || ~ispc
+%     warning('MATLAB:xlsread:Mode',...
+%         ['XLSREAD has limited import functionality on non-Windows platforms\n'...
+%             'or in basic mode.  Refer to HELP XLSREAD for more information.']);
+%     try
+% 		if nargout > 2
+% 	        [data,text,rawData] = xlsreadold(file,sheet);
+% 		else
+% 			[data,text] = xlsreadold(file,sheet);
+% 		end
+%     catch exception
+%         if isempty(exception.identifier)
+%             exception = MException('MATLAB:xlsreadold:FormatError','%s', exception.message);
+%         end
+%         throw(exception);
+%     end
+%     return;
 % else  % block command crossed out (Brandao 12/09/2008)
 %     % Attempt to start Excel as ActiveX server process.
 %     try
@@ -259,7 +259,7 @@ if strcmpi(mode,'basic') || ~ispc
 %         end
 %         return;
 %     end
-end
+% end
 %==============================================================================
 try
      % open workbook
