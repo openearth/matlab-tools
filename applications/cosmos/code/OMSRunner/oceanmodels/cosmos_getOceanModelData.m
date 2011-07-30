@@ -13,14 +13,14 @@ for i=1:length(hm.oceanModels)
 
     % Check whether this ocean model dataset needs to be downloaded
     useThisOceanModel=0;
-    for j=1:hm.NrModels
-        if strcmpi(hm.Models(j).FlowNestType,'oceanmodel')
-            if strcmpi(oceanname,hm.Models(j).oceanModel)
+    for j=1:hm.nrModels
+        if strcmpi(hm.models(j).flowNestType,'oceanmodel')
+            if strcmpi(oceanname,hm.models(j).oceanModel)
                 useThisOceanModel=1;
                 % Find start and stop time for meteo data
-                t0=min(hm.Models(j).TFlowStart,t0);
-                t0=min(hm.Models(j).TWaveStart,t0);
-                t1=max(t1,hm.Models(j).TStop);
+                t0=min(hm.models(j).tFlowStart,t0);
+                t0=min(hm.models(j).tWaveStart,t0);
+                t1=max(t1,hm.models(j).tStop);
             end
         end
     end
@@ -29,15 +29,15 @@ for i=1:length(hm.oceanModels)
 
         display(oceanname);
 
-        outdir=[hm.ScenarioDir 'oceanmodels' filesep oceanname filesep];
+        outdir=[hm.scenarioDir 'oceanmodels' filesep oceanname filesep];
         
         switch lower(hm.oceanModel(i).type)
             case{'hycom'}
                 url=hm.oceanModel(i).URL;
                 outname=hm.oceanModel(i).name;
-                s=load([hm.MainDir 'oceanmodels' filesep 'hycom_sp.mat']);
+                s=load([hm.dataDir 'oceanmodels' filesep 'hycom_sp.mat']);
                 s=s.s;
-                MakeDir(hm.ScenarioDir,'oceanmodels',oceanname);
+                MakeDir(hm.scenarioDir,'oceanmodels',oceanname);
                 t0=floor(t0);
                 t1=ceil(t1);
                 getHYCOM(url,outname,outdir,'waterlevel',xlim,ylim,0.1,0.1,[t0 t1],s);

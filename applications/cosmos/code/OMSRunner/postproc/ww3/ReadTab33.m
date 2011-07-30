@@ -1,6 +1,6 @@
 function [t,hs,tp,wavdir]=ReadTab33(hm,m,fname)
 
-ns=hm.Models(m).NrStations;
+ns=hm.models(m).nrStations;
 
 fid=fopen(fname,'r');
 

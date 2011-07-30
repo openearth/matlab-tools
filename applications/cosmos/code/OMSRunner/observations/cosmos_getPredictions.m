@@ -6,19 +6,19 @@ nobs=0;
 idbs=[];
 iids=[];
 
-for i=1:hm.NrModels
-    for j=1:hm.Models(i).NrStations
-        for k=1:hm.Models(i).Stations(j).NrParameters
+for i=1:hm.nrModels
+    for j=1:hm.models(i).nrStations
+        for k=1:hm.models(i).stations(j).nrParameters
             % Check if predictions are plotted
-            if hm.Models(i).Stations(j).Parameters(k).PlotPrd
+            if hm.models(i).stations(j).parameters(k).plotPrd
                 % Get source and id for this parameter
-                prdsrc=hm.Models(i).Stations(j).Parameters(k).PrdSrc;
-                prdid=hm.Models(i).Stations(j).Parameters(k).PrdID;
+                prdsrc=hm.models(i).stations(j).parameters(k).prdSrc;
+                prdid=hm.models(i).stations(j).parameters(k).prdID;
                 % Determine which database observation is in
-                idb=strmatch(lower(prdsrc),hm.TideDatabases,'exact');
+                idb=strmatch(lower(prdsrc),hm.tideDatabases,'exact');
                 if ~isempty(idb)
                     % Determine which station is needed
-                    iid=strmatch(prdid,hm.TideStations{idb}.IDCode,'exact');
+                    iid=strmatch(prdid,hm.tideStations{idb}.IDCode,'exact');
                     if ~isempty(iid)                
                         % Check if data will already be generated
                         try
@@ -44,32 +44,32 @@ for i=1:nobs
     idb=idbs(i);
     iid=iids(i);
     
-    db=hm.TideDatabases{idb};
-    idcode=hm.TideStations{idb}.IDCode{iid};
+    db=hm.tideDatabases{idb};
+    idcode=hm.tideStations{idb}.IDCode{iid};
     
     % Make directory
-    MakeDir(hm.ScenarioDir,'observations',db,idcode);
+    MakeDir(hm.scenarioDir,'observations',db,idcode);
     
     disp(['Generating water level prediction for ' idcode ' from ' db ' ...']);
     
-    if strcmpi(hm.Scenario,'forecasts')
-        t0=floor(hm.Cycle-6);
+    if strcmpi(hm.scenario,'forecasts')
+        t0=floor(hm.cycle-6);
     else
-        t0=hm.Cycle;
+        t0=hm.cycle;
     end
-    t1=ceil(hm.Cycle+hm.RunTime/24);
+    t1=ceil(hm.cycle+hm.runTime/24);
 
     try
         
-        cmp=hm.TideStations{idb}.ComponentSet(iid);
+        cmp=hm.tideStations{idb}.componentSet(iid);
         comp=[];
         A=[];
         G=[];
 
-        for ii=1:length(cmp.Component)
-            comp{ii}=cmp.Component{ii};
+        for ii=1:length(cmp.component)
+            comp{ii}=cmp.component{ii};
             A(ii,1)=cmp.Amplitude(ii);
-            G(ii,1)=cmp.Phase(ii);
+            G(ii,1)=cmp.phase(ii);
         end
 
 %         dt=1/6;
@@ -82,7 +82,7 @@ for i=1:nobs
         latitude=45;
         val=makeTidePrediction(t,comp,A,G,latitude); 
         
-        fname=[hm.ScenarioDir 'observations' filesep db filesep idcode filesep 'wl.' idcode '.mat'];
+        fname=[hm.scenarioDir 'observations' filesep db filesep idcode filesep 'wl.' idcode '.mat'];
         data.Name=idcode;
         data.Parameter='water level';
         data.Time=t;

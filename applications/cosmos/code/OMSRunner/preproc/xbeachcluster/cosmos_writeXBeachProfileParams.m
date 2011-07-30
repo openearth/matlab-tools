@@ -2,21 +2,21 @@ function ok=cosmos_writeXBeachProfileParams(hm,m,i)
 
 ok=0;
 
-Profile=hm.Models(m).Profile(i);
+profile=hm.models(m).profile(i);
 
-tmpdir=[hm.TempDir filesep hm.Models(m).Profile(i).Name filesep];
+tmpdir=[hm.tempDir filesep hm.models(m).profile(i).name filesep];
 
 % flist=dir([tmpdir '*.sp2']);
 % for i=1:length(flist)
 %     Spec=readSWANSpec([tmpdir flist(i).name]);
 %     if i==1
 %         sp2.f=Spec.Freqs;
-%         sp2.d=Spec.Dirs;
+%         sp2.d=Spec.dirs;
 %     end
-%     sp2.t=Spec.Time(1).Time;
-%     f=Spec.Time(1).Points(1).Factor*Spec.Time(1).Points(1).Energy;
+%     sp2.t=Spec.time(1).time;
+%     f=Spec.time(1).points(1).Factor*Spec.time(1).points(1).energy;
 %     %     f=f';
-%     sp2.S(:,:,i)=f;
+%     sp2.s(:,:,i)=f;
 % end
 % 
 % hthreshold=0.9;
@@ -30,26 +30,26 @@ if ~isempty(thetamin)
 %     thetamin=max(thetamin,-90);
 %     thetamax=min(thetamax,90);
 
-    xrun=Profile.OriginX+cos(pi*Profile.Alpha/180)*Profile.dX;
-    yrun=Profile.OriginY+sin(pi*Profile.Alpha/180)*Profile.dX;
+    xrun=profile.originX+cos(pi*profile.alpha/180)*profile.dX;
+    yrun=profile.originY+sin(pi*profile.alpha/180)*profile.dX;
 
     % make param.txt file to run Xbeach
     fid = fopen([tmpdir 'params.txt'],'w');
     fprintf(fid,'%s\n\n','----------------------------------------------------');
     fprintf(fid,'%s\n\n','Grid input');
-    fprintf(fid,'%s\n',['nx       = ' num2str(Profile.nX)]);
+    fprintf(fid,'%s\n',['nx       = ' num2str(profile.nX)]);
     fprintf(fid,'%s\n','ny       = 0');
     fprintf(fid,'%s\n','xfile    = x.grd');
     fprintf(fid,'%s\n','yfile    = y.grd');
-    fprintf(fid,'%s\n',['xori     = ' num2str(Profile.OriginX)]);
-    fprintf(fid,'%s\n',['yori     = ' num2str(Profile.OriginY)]);
-    fprintf(fid,'%s\n',['alfa     = ' num2str(Profile.Alpha)]);
-    fprintf(fid,'%s\n',['depfile  = ' Profile.Name '.dep']);
+    fprintf(fid,'%s\n',['xori     = ' num2str(profile.originX)]);
+    fprintf(fid,'%s\n',['yori     = ' num2str(profile.originY)]);
+    fprintf(fid,'%s\n',['alfa     = ' num2str(profile.alpha)]);
+    fprintf(fid,'%s\n',['depfile  = ' profile.name '.dep']);
     fprintf(fid,'%s\n','posdwn    = -1');
 %     fprintf(fid,'%s\n','thetanaut = 1');
 %     fprintf(fid,'%s\n',['thetamin = ' num2str(thetamin)]);
 %     fprintf(fid,'%s\n',['thetamax = ' num2str(thetamax)]);
-%     fprintf(fid,'%s\n',['dtheta   = ' num2str(Profile.dTheta)]);
+%     fprintf(fid,'%s\n',['dtheta   = ' num2str(profile.dTheta)]);
     fprintf(fid,'%s\n','thetanaut = 0');
     fprintf(fid,'%s\n','thetamin  = -90');
     fprintf(fid,'%s\n','thetamax  = 90');
@@ -62,11 +62,11 @@ if ~isempty(thetamin)
     fprintf(fid,'%s\n','----------------------------------------------------');
     fprintf(fid,'%s\n','Time input');
     fprintf(fid,'%s\n','tstart   = 0.');
-    fprintf(fid,'%s\n',['tstop    = ' num2str(hm.Models(m).RunTime*60)]);
+    fprintf(fid,'%s\n',['tstop    = ' num2str(hm.models(m).runTime*60)]);
     fprintf(fid,'%s\n','taper	 = 100');
-    fprintf(fid,'%s\n',['tintg    = ' num2str(hm.Models(m).MapTimeStep*60)]);
-    fprintf(fid,'%s\n',['tintm    = ' num2str(hm.Models(m).MapTimeStep*60)]);
-    %fprintf(fid,'%s\n',['tintp    = ' num2str(hm.Models(m).HisTimeStep*60)]);
+    fprintf(fid,'%s\n',['tintg    = ' num2str(hm.models(m).mapTimeStep*60)]);
+    fprintf(fid,'%s\n',['tintm    = ' num2str(hm.models(m).mapTimeStep*60)]);
+    %fprintf(fid,'%s\n',['tintp    = ' num2str(hm.models(m).hisTimeStep*60)]);
     fprintf(fid,'%s\n',['tintp    = 60']);
     fprintf(fid,'%s\n','----------------------------------------------------');
     fprintf(fid,'%s\n','General constants');
@@ -98,7 +98,7 @@ if ~isempty(thetamin)
     fprintf(fid,'%s\n','Flow calculation options');
     fprintf(fid,'%s\n','nuh      = 0.1');
     fprintf(fid,'%s\n','nuhfac   = 1.0');
-    if strcmpi(hm.Models(m).Continent,'europe')
+    if strcmpi(hm.models(m).continent,'europe')
 %    fprintf(fid,'%s\n','C        = 30.');
     fprintf(fid,'%s\n','C        = 60.');
     else
@@ -108,7 +108,7 @@ if ~isempty(thetamin)
     fprintf(fid,'%s\n','----------------------------------------------------');
     fprintf(fid,'%s\n','Sediment transport calculation options');
     fprintf(fid,'%s\n','facua    = 0.10');
-    if strcmpi(hm.Models(m).Continent,'europe')
+    if strcmpi(hm.models(m).continent,'europe')
     fprintf(fid,'%s\n','D50      = 0.0002');
     fprintf(fid,'%s\n','D90      = 0.0003');
     else
@@ -119,7 +119,7 @@ if ~isempty(thetamin)
     fprintf(fid,'%s\n','nd       = 30');
     fprintf(fid,'%s\n','ne_layer = sedlayer.dep');
     fprintf(fid,'%s\n','struct   = 1');
-    if hm.Models(m).MorFac==0
+    if hm.models(m).morFac==0
         fprintf(fid,'%s\n','sedtrans = 0');
     else        
         fprintf(fid,'%s\n','sedtrans = 1');
@@ -127,7 +127,7 @@ if ~isempty(thetamin)
     fprintf(fid,'%s\n','sourcesink = 0');
     fprintf(fid,'%s\n','----------------------------------------------------');
     fprintf(fid,'%s\n','Morphological calculation options');
-    fprintf(fid,'%s\n',['morfac   = ' num2str(hm.Models(m).MorFac)]);
+    fprintf(fid,'%s\n',['morfac   = ' num2str(hm.models(m).morFac)]);
     fprintf(fid,'%s\n','morstart = 3600');
     fprintf(fid,'%s\n','wetslp   = 0.15');
     fprintf(fid,'%s\n','----------------------------------------------------');

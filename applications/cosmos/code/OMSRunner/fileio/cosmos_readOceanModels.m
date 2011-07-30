@@ -1,6 +1,6 @@
 function hm=cosmos_readOceanModels(hm)
 
-s=xml_load([hm.MainDir 'oceanmodels' filesep 'OceanModels.xml']);
+s=xml_load([hm.dataDir 'oceanmodels' filesep 'OceanModels.xml']);
 for i=1:length(s.models)
     hm.oceanModel(i).name = s.models(i).model.name;
     hm.oceanModel(i).longName = s.models(i).model.longname;

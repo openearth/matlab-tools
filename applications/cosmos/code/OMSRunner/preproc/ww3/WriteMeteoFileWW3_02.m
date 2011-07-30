@@ -1,7 +1,7 @@
 function [ncols,nrows]=WriteMeteoFileWW3_02(meteodir,meteoname,exedir,rundir,xlim,ylim,tstart,tstop,dt,usedtairsea)
 
-% meteoname=hm.Models(m).UseMeteo;
-% meteodir=[hm.ScenarioDir 'meteo' filesep meteoname filesep];
+% meteoname=hm.models(m).useMeteo;
+% meteodir=[hm.scenarioDir 'meteo' filesep meteoname filesep];
 
 fclose all;
 

@@ -1,21 +1,21 @@
 function convertTimeSeriesMat2NC(hm,m)
 
-Model=hm.Models(m);
-archdir = Model.ArchiveDir;
+model=hm.models(m);
+archdir = model.archiveDir;
 
-yr=year(hm.Cycle);
+yr=year(hm.cycle);
 t0=datenum(yr,1,1);
 
-for i=1:Model.NrStations
+for i=1:model.nrStations
     
-    stName=Model.Stations(i).Name;
-    stLongName=Model.Stations(i).LongName;
+    stName=model.stations(i).name;
+    stLongName=model.stations(i).longName;
     
-    for k=1:Model.Stations(i).NrParameters
+    for k=1:model.stations(i).nrParameters
         
-        if Model.Stations(i).Parameters(k).toOPeNDAP
+        if model.stations(i).parameters(k).toOPeNDAP
             
-            par=Model.Stations(i).Parameters(k).Name;
+            par=model.stations(i).parameters(k).name;
             parLongName=getParameterInfo(hm,par,'longname');
             
             fname=[archdir 'appended' filesep 'timeseries' filesep par '.' stName '.mat'];

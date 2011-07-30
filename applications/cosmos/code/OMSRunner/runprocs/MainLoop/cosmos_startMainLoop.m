@@ -2,11 +2,11 @@ function cosmos_startMainLoop(hm)
 
 delay=8;
 
-if now>hm.Cycle+delay/24
+if now>hm.cycle+delay/24
     starttime=now+1/86400;
 else
-    starttime=hm.Cycle+delay/24;
-    disp(['Execution of cycle ' datestr(hm.Cycle,'yyyymmdd.HHMMSS') ' will start at ' datestr(starttime)]);
+    starttime=hm.cycle+delay/24;
+    disp(['Execution of cycle ' datestr(hm.cycle,'yyyymmdd.HHMMSS') ' will start at ' datestr(starttime)]);
 end
 
 t = timer;

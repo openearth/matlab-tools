@@ -1,8 +1,8 @@
 function ExtractDataXBeach(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-dr=Model.Dir;
+dr=model.dir;
 
 outdir=[dr 'lastrun' filesep 'output' filesep];
 
@@ -56,7 +56,7 @@ for i = 1:length(fpars)
             switch length(parfiles)
                 case 1
                     for k=1:nt
-                        s.Time(k)=Model.TFlowStart+t(k)./86400;
+                        s.Time(k)=model.tFlowStart+t(k)./86400;
                         s.Val(k,:,:)=squeeze(Var(:,2:end-1,k));
                     end
                     s.Val(nt+1,:,:)=s.Val(nt,:,:);
@@ -64,7 +64,7 @@ for i = 1:length(fpars)
     
                 case 2
                     for k=1:nt
-                        s.Time(k)=Model.TFlowStart+t(k)./86400;
+                        s.Time(k)=model.tFlowStart+t(k)./86400;
                         switch j
                             case 1
                                 s.U(k,:,:)=squeeze(Var(:,2:end-1,k));
@@ -83,7 +83,7 @@ for i = 1:length(fpars)
         
         s.Time(end+1)=s.Time(end)+1/24;
         
-        fname=[Model.ArchiveDir hm.CycStr filesep 'maps' filesep par '.mat'];
+        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep par '.mat'];
         switch length(parfiles)
             case 1
                 save(fname,'-struct','s','Parameter','Time','X','Y','Val');
@@ -95,7 +95,7 @@ end
 
 %% Time Series
 
-archdir=[Model.ArchiveDir 'appended' filesep 'timeseries' filesep];
+archdir=[model.archiveDir 'appended' filesep 'timeseries' filesep];
 
 points={'p1','p2'};
 npoints=2;
@@ -111,7 +111,7 @@ for i=1:npoints
 
         % water levels
         s.Val=Var(:,2);
-        s.Time=Model.TFlowStart+Model.MorFac*t./86400;
+        s.Time=model.tFlowStart+model.morFac*t./86400;
         s.Parameter='wl';
 
         fname=[archdir 'wl_' points{i} '.mat'];
@@ -119,7 +119,7 @@ for i=1:npoints
 
         % water levels
         s.Val=sqrt(2)*Var(:,3);
-        s.Time=Model.TFlowStart+Model.MorFac*t./86400;
+        s.Time=model.tFlowStart+model.morFac*t./86400;
         s.Parameter='hs';
 
         fname=[archdir 'hs_' points{i} '.mat'];

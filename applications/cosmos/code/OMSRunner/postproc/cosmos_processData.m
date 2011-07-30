@@ -1,109 +1,109 @@
 function hm=cosmos_processData(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-mdl=Model.Name;
+mdl=model.name;
 
-if Model.ExtractData
+if model.extractData
     try
         disp('Extracting Data ...');
         tic
-        set(hm.TextModelLoopStatus,'String',['Status : extracting data - ' mdl ' ...']);drawnow;
-        switch lower(Model.Type)
+        set(hm.textModelLoopStatus,'String',['Status : extracting data - ' mdl ' ...']);drawnow;
+        switch lower(model.type)
             case{'delft3dflow','delft3dflowwave'}
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'timeseries');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'maps');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive','appended','timeseries');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive','appended','maps');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
                 cosmos_extractDataDelft3D(hm,m);
             case{'xbeach'}
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'timeseries');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'maps');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive','appended','timeseries');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive','appended','maps');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
                 ExtractDataXBeach(hm,m);
             case{'ww3'}
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'timeseries');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'maps');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive','appended','timeseries');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive','appended','maps');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
                 ExtractDataWW3(hm,m);
             case{'xbeachcluster'}
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'netcdf');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'hazards');
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'timeseries');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'netcdf');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
                 extractDataXBeachCluster(hm,m);
         end
         cosmos_convertTimeSeriesMat2NC(hm,m);
         cosmos_copyNCTimeSeriesToOPeNDAP(hm,m)
     catch
-        WriteErrorLogFile(hm,['Something went wrong with extracting data from ' Model.Name]);
-        %     hm.Models(m).Status='failed';
+        WriteErrorLogFile(hm,['Something went wrong with extracting data from ' model.name]);
+        %     hm.models(m).status='failed';
         %     return;
     end
-    hm.Models(m).ExtractDuration=toc;
+    hm.models(m).extractDuration=toc;
 end
 
-if Model.ArchiveInput
+if model.archiveInput
     try
         disp('Archiving input ...');
-        MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'input');
-        fname=[hm.ArchiveDir Model.Continent filesep Model.Name filesep 'archive' filesep hm.CycStr filesep 'input' filesep Model.Name '.zip'];
-        zip(fname,[Model.Dir 'lastrun' filesep 'input' filesep '*']);
+        MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'input');
+        fname=[hm.archiveDir model.continent filesep model.name filesep 'archive' filesep hm.cycStr filesep 'input' filesep model.name '.zip'];
+        zip(fname,[model.dir 'lastrun' filesep 'input' filesep '*']);
     catch
-        WriteErrorLogFile(hm,['Something went wrong with archiving input from ' Model.Name]);
+        WriteErrorLogFile(hm,['Something went wrong with archiving input from ' model.name]);
     end
 end
 
-if Model.DetermineHazards
+if model.DetermineHazards
     try
         disp('Determining hazards ...');
         tic
-        set(hm.TextModelLoopStatus,'String',['Status : determining hazards - ' mdl ' ...']);drawnow;
-        switch lower(Model.Type)
+        set(hm.textModelLoopStatus,'String',['Status : determining hazards - ' mdl ' ...']);drawnow;
+        switch lower(model.type)
             case{'delft3dflow','delft3dflowwave'}
-%                 MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'hazards');
+%                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
 %                 determineHazardsDelft3D(hm,m);
             case{'xbeach'}
-%                 MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'hazards');
+%                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
 %                 determineHazardsXBeach(hm,m);
             case{'ww3'}
-%                 MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'hazards');
+%                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
 %                 determineHazardsWW3(hm,m);
             case{'xbeachcluster'}
-                MakeDir(hm.ArchiveDir,Model.Continent,Model.Name,'archive',hm.CycStr,'hazards');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
                 determineHazardsXBeachCluster(hm,m);
         end
     catch
-        WriteErrorLogFile(hm,['Something went wrong with determining hazards from ' Model.Name]);
-        %     hm.Models(m).Status='failed';
+        WriteErrorLogFile(hm,['Something went wrong with determining hazards from ' model.name]);
+        %     hm.models(m).status='failed';
         %     return;
     end
-    hm.Models(m).HazardDuration=toc;
+    hm.models(m).hazardDuration=toc;
 end
 
-if Model.RunPost
+if model.runPost
     disp('Making figures ...');
-    set(hm.TextModelLoopStatus,'String',['Status : making figures - ' mdl ' ...']);drawnow;
+    set(hm.textModelLoopStatus,'String',['Status : making figures - ' mdl ' ...']);drawnow;
     try
         tic
         cosmos_makeModelFigures(hm,m);
     catch
-        WriteErrorLogFile(hm,['Something went wrong with making figures for ' Model.Name]);
-%         hm.Models(m).Status='failed';
+        WriteErrorLogFile(hm,['Something went wrong with making figures for ' model.name]);
+%         hm.models(m).status='failed';
 %         return;
     end
-    hm.Models(m).PlotDuration=toc;
+    hm.models(m).plotDuration=toc;
 end
 
-if Model.MakeWebsite
+if model.makeWebsite
     disp('Copying figures to local website ...');
-    set(hm.TextModelLoopStatus,'String',['Status : copying to local website - ' mdl ' ...']);drawnow;
+    set(hm.textModelLoopStatus,'String',['Status : copying to local website - ' mdl ' ...']);drawnow;
     try
         cosmos_copyFiguresToLocalWebsite(hm,m);
     catch
-        WriteErrorLogFile(hm,['Something went wrong while copying figures to local website of ' Model.Name]);
-%         hm.Models(m).Status='failed';
+        WriteErrorLogFile(hm,['Something went wrong while copying figures to local website of ' model.name]);
+%         hm.models(m).status='failed';
 %         return;
     end
     %%
@@ -111,35 +111,34 @@ if Model.MakeWebsite
     try
         cosmos_updateModelsXML(hm,m);
         cosmos_updateScenarioXML(hm,m);
-        cosmos_updateScenariosDotXML(hm,m);
     catch
-        WriteErrorLogFile(hm,['Something went wrong while updating models.xml on local website for ' hm.Models(m).Name]);
-%         hm.Models(m).Status='failed';
+        WriteErrorLogFile(hm,['Something went wrong while updating models.xml on local website for ' hm.models(m).name]);
+%         hm.models(m).status='failed';
 %         return;
     end
 end
 
-if Model.UploadFTP
-    set(hm.TextModelLoopStatus,'String',['Status : uploading to SCP server - ' mdl ' ...']);drawnow;
+if model.uploadFTP
+    set(hm.textModelLoopStatus,'String',['Status : uploading to SCP server - ' mdl ' ...']);drawnow;
     disp('Uploading figures to web server ...');
     try
         tic
         %        PostFTP(hm,m);
         cosmos_postFigures(hm,m);
     catch
-        WriteErrorLogFile(hm,['Something went wrong while upload to SCP server for ' Model.Name]);
-        %         hm.Models(m).Status='failed';
+        WriteErrorLogFile(hm,['Something went wrong while upload to SCP server for ' model.name]);
+        %         hm.models(m).status='failed';
         %         return;
     end
-    hm.Models(m).UploadDuration=toc;
+    hm.models(m).uploadDuration=toc;
     %%
-    if ~strcmpi(hm.Models(m).Status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
+    if ~strcmpi(hm.models(m).status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
         disp('Uploading xml files to web server ...');
         try
             cosmos_postXML(hm,m);
         catch
-            WriteErrorLogFile(hm,['Something went wrong while uploading models.xml to website for ' hm.Models(m).Name]);
-            %         hm.Models(m).Status='failed';
+            WriteErrorLogFile(hm,['Something went wrong while uploading models.xml to website for ' hm.models(m).name]);
+            %         hm.models(m).status='failed';
             %         return;
         end
     end

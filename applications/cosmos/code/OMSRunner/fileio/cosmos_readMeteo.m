@@ -1,6 +1,6 @@
 function hm=cosmos_readMeteo(hm)
 
-dirname=[hm.MainDir 'meteo' filesep];
+dirname=[hm.dataDir 'meteo' filesep];
 
 noset=0;
 
@@ -9,43 +9,43 @@ txt=ReadTextFile(fname);
 
 % Read Meteo
 
-hm.Meteo=[];
+hm.meteo=[];
 
 for i=1:length(txt)
 
     switch lower(txt{i}),
         case {'meteo'},
             noset=noset+1;
-            hm.Meteo(noset).LongName=txt{i+1};
-            hm.Meteo(noset).XLim=[];
-            hm.Meteo(noset).YLim=[];
+            hm.meteo(noset).longName=txt{i+1};
+            hm.meteo(noset).xLim=[];
+            hm.meteo(noset).yLim=[];
         case {'type'},
-            hm.Meteo(noset).Type=txt{i+1};
+            hm.meteo(noset).type=txt{i+1};
         case {'location'},
-            hm.Meteo(noset).Location=txt{i+1};
+            hm.meteo(noset).Location=txt{i+1};
         case {'name'},
-            hm.Meteo(noset).Name=txt{i+1};
+            hm.meteo(noset).name=txt{i+1};
         case {'timestep'},
-            hm.Meteo(noset).TimeStep=str2double(txt{i+1});
+            hm.meteo(noset).timeStep=str2double(txt{i+1});
         case {'cycleinterval'},
-            hm.Meteo(noset).CycleInterval=str2double(txt{i+1});
+            hm.meteo(noset).cycleInterval=str2double(txt{i+1});
         case {'delay'},
-            hm.Meteo(noset).Delay=str2double(txt{i+1});
+            hm.meteo(noset).Delay=str2double(txt{i+1});
         case {'xlim'},
-            hm.Meteo(noset).XLim(1)=str2double(txt{i+1});
-            hm.Meteo(noset).XLim(2)=str2double(txt{i+2});
+            hm.meteo(noset).xLim(1)=str2double(txt{i+1});
+            hm.meteo(noset).xLim(2)=str2double(txt{i+2});
         case {'ylim'},
-            hm.Meteo(noset).YLim(1)=str2double(txt{i+1});
-            hm.Meteo(noset).YLim(2)=str2double(txt{i+2});
+            hm.meteo(noset).yLim(1)=str2double(txt{i+1});
+            hm.meteo(noset).yLim(2)=str2double(txt{i+2});
         case {'source'},
-            hm.Meteo(noset).source=txt{i+1};
+            hm.meteo(noset).source=txt{i+1};
     end
 
 end
 
-hm.NrMeteoDatasets=noset;
+hm.nrMeteoDatasets=noset;
 
-for i=1:hm.NrMeteoDatasets
-    hm.MeteoNames{i}=hm.Meteo(i).Name;
-    hm.Meteo(i).tLastAnalyzed=rounddown(now-hm.Meteo(i).Delay/24,hm.Meteo(i).CycleInterval/24);
+for i=1:hm.nrMeteoDatasets
+    hm.meteoNames{i}=hm.meteo(i).name;
+    hm.meteo(i).tLastAnalyzed=rounddown(now-hm.meteo(i).Delay/24,hm.meteo(i).cycleInterval/24);
 end

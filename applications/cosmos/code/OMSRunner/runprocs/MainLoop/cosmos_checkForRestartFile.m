@@ -3,7 +3,7 @@ function [trst,rstfil]=cosmos_checkForRestartFile(hm,m,t0,tspinup,tp)
 trst=[];
 rstfil=[];
 
-dr=hm.Models(m).Dir;
+dr=hm.models(m).dir;
 
 switch lower(tp)
     case{'ww3'}

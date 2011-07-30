@@ -88,10 +88,10 @@ nc{'runup_xz'}(1:nrecp) = data.runup_xz;
 nc{'timemean'}(1:nrecm) = data.timem;    
 %nc{'timemean'}(1:nrecm) = floor(data.timem);                                 
 %nc{'timemean2'}(1:nrecm) = (data.timem-floor(data.timem)).*(24*3600*1000);  
-nc{'Hmean'}(1:nrecm,1:nx,1:ny) = data.Hmean;
-nc{'Hmin'}(1:nrecm,1:nx,1:ny) = data.Hmin;
-nc{'Hmax'}(1:nrecm,1:nx,1:ny) = data.Hmax;
-nc{'Hvar'}(1:nrecm,1:nx,1:ny) = data.Hvar;
+nc{'Hmean'}(1:nrecm,1:nx,1:ny) = data.hmean;
+nc{'Hmin'}(1:nrecm,1:nx,1:ny) = data.hmin;
+nc{'Hmax'}(1:nrecm,1:nx,1:ny) = data.hmax;
+nc{'Hvar'}(1:nrecm,1:nx,1:ny) = data.hvar;
 nc{'thetamean'}(1:nrecm,1:nx,1:ny) = data.thetamean;
 nc{'thetamin'}(1:nrecm,1:nx,1:ny) = data.thetamin;
 nc{'thetamax'}(1:nrecm,1:nx,1:ny) = data.thetamax;
@@ -114,7 +114,7 @@ nc{'zsmin'}(1:nrecm,1:nx,1:ny) = data.zsmin;
 nc{'zsvar'}(1:nrecm,1:nx,1:ny) = data.zsvar;
 
 % Add the following NetCDF global attributes
-nc.CREATION_DATE = ncchar(datestr(now,0));
+nc.cREATION_DATE = ncchar(datestr(now,0));
 
 % Update the NetCDF history attribute
 history = nc.history(:);

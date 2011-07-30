@@ -1,26 +1,26 @@
 function cosmos_extractDataDelft3DTimeSeries(hm,m)
 
-Model=hm.Models(m);
-dr=Model.Dir;
+model=hm.models(m);
+dr=model.dir;
 outdir=[dr 'lastrun' filesep 'output' filesep];
-archdir = Model.ArchiveDir;
+archdir = model.archiveDir;
 
 %% Time Series
-fid=qpfopen([outdir 'trih-' Model.Runid '.dat']);
+fid=qpfopen([outdir 'trih-' model.runid '.dat']);
 [fieldnames,dims,nval] = qpread(fid,1);
 
-for i=1:Model.NrStations
+for i=1:model.nrStations
 
-    stName=Model.Stations(i).Name;
-    stLongName=Model.Stations(i).LongName;
-    tstart=max(Model.TWaveOkay,Model.TFlowOkay);
+    stName=model.stations(i).name;
+    stLongName=model.stations(i).longName;
+    tstart=max(model.tWaveOkay,model.tFlowOkay);
  
 
-    for k=1:Model.Stations(i).NrParameters
+    for k=1:model.stations(i).nrParameters
 
         data=[];
 
-        par=Model.Stations(i).Parameters(k).Name;
+        par=model.stations(i).parameters(k).name;
         parLongName=getParameterInfo(hm,par,'longname');
 
         try
@@ -43,37 +43,37 @@ for i=1:Model.NrStations
                 s.Parameter=parLongName;
             end
 
-            fil=getParameterInfo(hm,par,'model',Model.Type,'datatype','timeseries','file');
-            filpar=getParameterInfo(hm,par,'model',Model.Type,'datatype','timeseries','name');
+            fil=getParameterInfo(hm,par,'model',model.type,'datatype','timeseries','file');
+            filpar=getParameterInfo(hm,par,'model',model.type,'datatype','timeseries','name');
             
             if ~isempty(fil) && ~isempty(filpar)
                 
                 switch lower(fil)
                     case{'trih'}
-                        if ~exist([outdir 'trih-' Model.Runid '.dat'],'file')
+                        if ~exist([outdir 'trih-' model.runid '.dat'],'file')
 %                             killAll;
                         else
                             ii=strmatch(filpar,fieldnames,'exact');
                             if ~isempty(ii)
-                                if ~isempty(Model.Stations(i).Parameters(k).layer)
-                                    data=qpread(fid,filpar,'data',0,i,Model.Stations(i).Parameters(k).layer);
+                                if ~isempty(model.stations(i).parameters(k).layer)
+                                    data=qpread(fid,filpar,'data',0,i,model.stations(i).parameters(k).layer);
                                 else
                                     data=qpread(fid,filpar,'data',0,i);
                                 end
                             end
                         end
                     case{'trim'}
-                        if ~exist([outdir 'trim-' Model.Runid '.dat'],'file')
+                        if ~exist([outdir 'trim-' model.runid '.dat'],'file')
 %                             killAll;
                         else
-                            mm=Model.Stations(i).M;
-                            nn=Model.Stations(i).N;
-                            fid=qpfopen([outdir 'trim-' Model.Runid '.dat']);
+                            mm=model.stations(i).m;
+                            nn=model.stations(i).N;
+                            fid=qpfopen([outdir 'trim-' model.runid '.dat']);
                             data=qpread(fid,filpar,'data',0,mm,nn);
                             if isfield(data,'XComp')
                                 % Vector data, needs to be converted to
                                 % magnitude
-                                filcomp=getParameterInfo(hm,par,'model',Model.Type,'datatype','timeseries','component');
+                                filcomp=getParameterInfo(hm,par,'model',model.type,'datatype','timeseries','component');
                                 switch lower(filcomp)
                                     case{'magnitude'}
                                         data.Val=sqrt(data.XComp.^2 + data.YComp.^2);
@@ -104,14 +104,14 @@ for i=1:Model.NrStations
                 s3.Time=data.Time;
                 s3.Val=data.Val;
                 
-                fname=[archdir hm.CycStr filesep 'timeseries' filesep par '.' stName '.mat'];
+                fname=[archdir hm.cycStr filesep 'timeseries' filesep par '.' stName '.mat'];
                 
                 save(fname,'-struct','s3','Name','Parameter','Time','Val');
                 
             end
 
         catch
-            WriteErrorLogFile(hm,['Something went wrong extracting time series data - ' hm.Models(m).Name]);
+            WriteErrorLogFile(hm,['Something went wrong extracting time series data - ' hm.models(m).name]);
         end
     end
 end

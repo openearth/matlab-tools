@@ -1,23 +1,23 @@
 function PostFTP(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-locdir=[hm.WebDir Model.WebSite filesep 'scenarios' filesep hm.Scenario filesep ...
-        Model.Continent filesep Model.Name filesep 'figures'];
+locdir=[hm.webDir model.webSite filesep 'scenarios' filesep hm.scenario filesep ...
+        model.continent filesep model.name filesep 'figures'];
 
 try
 
-    cont=hm.Models(m).Continent;
+    cont=hm.models(m).continent;
     disp('Connecting to FTP site ...');
     f=ftp('members.upc.nl','m.ormondt','8AMGU55S');
 
-    disp(['cd ' Model.WebSite filesep 'scenarios' hm.Scenario filesep cont]);
+    disp(['cd ' model.webSite filesep 'scenarios' hm.scenario filesep cont]);
     
-    cd(f,[Model.WebSite filesep 'scenarios' filesep hm.Scenario filesep cont]);
+    cd(f,[model.webSite filesep 'scenarios' filesep hm.scenario filesep cont]);
 
     try % to delete existing directory
         disp('Entering current directory ...');
-        cd(f,hm.Models(m).Name);
+        cd(f,hm.models(m).name);
         cd(f,'figures');
         disp('Deleting files in current directory ...');
         try
@@ -45,7 +45,7 @@ try
 
     try % to upload models.xml
         disp('Uploading models.xml ...');
-        mput(f,[hm.WebDir Model.WebSite filesep 'scenarios' filesep hm.Scenario ...
+        mput(f,[hm.webDir model.webSite filesep 'scenarios' filesep hm.scenario ...
                 filesep 'models.xml']);
         disp('models.xml uploaded ...');
     end
@@ -59,9 +59,9 @@ end
 
 % % Post data to FTP for Dano
 % 
-% if strcmpi(hm.Models(m).Name,'kuststrook')
+% if strcmpi(hm.models(m).name,'kuststrook')
 % 
-%     locdir=[hm.ArchiveDir filesep Model.Continent filesep Model.Name
+%     locdir=[hm.archiveDir filesep model.continent filesep model.name
 %     filesep 'archive' filesep 'appended' filesep 'timeseries'];
 % 
 %     try
@@ -97,9 +97,9 @@ end
 % 
 % end
 % 
-% if strcmpi(hm.Models(m).Name,'delflandxbeach')
+% if strcmpi(hm.models(m).name,'delflandxbeach')
 % 
-%     locdir=[hm.ArchiveDir filesep Model.Continent filesep Model.Name
+%     locdir=[hm.archiveDir filesep model.continent filesep model.name
 %     filesep 'lastrun' filesep 'input'];
 % 
 %     try

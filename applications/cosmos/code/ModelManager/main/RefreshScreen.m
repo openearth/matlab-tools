@@ -5,44 +5,44 @@ hm=guidata(findobj('Tag','MainWindow'));
 i=hm.ActiveModel;
 j=hm.ActiveContinent;
 
-if hm.Continents(j).NrModels>0
+if hm.continents(j).nrModels>0
 
     set(hm.ListModels1       ,'Enable','on');
 %     set(hm.ListModels2       ,'Enable','on');
-%     set(hm.SelectContinents2 ,'Enable','on');
-    set(hm.EditName          ,'Enable','on');
-    set(hm.EditAbbr          ,'Enable','on');
-    set(hm.EditRunid         ,'Enable','on');
-    set(hm.SelectContinent   ,'Enable','on');
-    set(hm.EditPosition1     ,'Enable','on');
-    set(hm.EditPosition2     ,'Enable','on');
-    set(hm.SelectSize        ,'Enable','on');
-    set(hm.EditXLim1         ,'Enable','on');
-    set(hm.EditXLim2         ,'Enable','on');
-    set(hm.EditYLim1         ,'Enable','on');
-    set(hm.EditYLim2         ,'Enable','on');
-    set(hm.SelectPriority    ,'Enable','on');
-    set(hm.ToggleNesting     ,'Enable','on');
-    set(hm.EditSpinUp        ,'Enable','on');
-    set(hm.EditRunTime       ,'Enable','on');
-    set(hm.EditTimeStep      ,'Enable','on');
-    set(hm.EditMapTimeStep   ,'Enable','on');
-    set(hm.EditHisTimeStep   ,'Enable','on');
-    set(hm.EditComTimeStep   ,'Enable','on');
+%     set(hm.selectContinents2 ,'Enable','on');
+    set(hm.editName          ,'Enable','on');
+    set(hm.editAbbr          ,'Enable','on');
+    set(hm.editRunid         ,'Enable','on');
+    set(hm.selectContinent   ,'Enable','on');
+    set(hm.editPosition1     ,'Enable','on');
+    set(hm.editPosition2     ,'Enable','on');
+    set(hm.selectSize        ,'Enable','on');
+    set(hm.editXLim1         ,'Enable','on');
+    set(hm.editXLim2         ,'Enable','on');
+    set(hm.editYLim1         ,'Enable','on');
+    set(hm.editYLim2         ,'Enable','on');
+    set(hm.selectPriority    ,'Enable','on');
+    set(hm.toggleNesting     ,'Enable','on');
+    set(hm.editSpinUp        ,'Enable','on');
+    set(hm.editRunTime       ,'Enable','on');
+    set(hm.editTimeStep      ,'Enable','on');
+    set(hm.editMapTimeStep   ,'Enable','on');
+    set(hm.editHisTimeStep   ,'Enable','on');
+    set(hm.editComTimeStep   ,'Enable','on');
 
-    set(hm.ListModels1,'String',hm.Continents(j).ModelNames);
-%     set(hm.ListModels2,'String',hm.Continents(j).ModelNames);
+    set(hm.ListModels1,'String',hm.continents(j).modelNames);
+%     set(hm.ListModels2,'String',hm.continents(j).modelNames);
 
-    n=strmatch(hm.Models(i).Name,hm.Continents(j).ModelNames,'exact');
+    n=strmatch(hm.models(i).name,hm.continents(j).modelNames,'exact');
     if isempty(n)
-        hm.ActiveModel=hm.Continents(j).Models(1);
+        hm.ActiveModel=hm.continents(j).models(1);
         i=hm.ActiveModel;
         n=1;
     end
     set(hm.ListModels1,'Value',n);
 
     ii=1;
-    switch lower(hm.Models(i).Type)
+    switch lower(hm.models(i).type)
         case{'delft3dflow'}
             ii=1;
         case{'delft3dflowwave'}
@@ -52,73 +52,73 @@ if hm.Continents(j).NrModels>0
         case{'xbeach'}
             ii=4;
     end
-    set(hm.SelectType,'Value',ii);
+    set(hm.selectType,'Value',ii);
         
-%     if hm.Models(i).Nested
-%         if ~isempty(hm.Models(i).NestModel)
-%             n=strmatch(hm.Models(i).NestModel,hm.Continents(j).ModelAbbrs,'exact');
+%     if hm.models(i).nested
+%         if ~isempty(hm.models(i).nestModel)
+%             n=strmatch(hm.models(i).nestModel,hm.continents(j).modelAbbrs,'exact');
 %         else
 %             n=1;
-%             hm.Models(i).NestModel=hm.Continents(j).ModelAbbrs{1};
+%             hm.models(i).nestModel=hm.continents(j).modelAbbrs{1};
 %         end
 %     else
-%         hm.Models(i).NestModel=[];
+%         hm.models(i).nestModel=[];
 %         n=1;
 %     end
 %     set(hm.ListModels2,'Value',n);
 % 
-%     if hm.Models(i).Nested
-%         set(hm.SelectContinents2,'Enable','on');
+%     if hm.models(i).nested
+%         set(hm.selectContinents2,'Enable','on');
 %         set(hm.ListModels2,'Enable','on');
 %     else
-%         set(hm.SelectContinents2,'Enable','off');
+%         set(hm.selectContinents2,'Enable','off');
 %         set(hm.ListModels2,'Enable','off');
 %     end
 % 
-    set(hm.EditName       ,'String',hm.Models(i).Name);
-    set(hm.EditAbbr       ,'String',hm.Models(i).Abbr);
-    set(hm.EditRunid      ,'String',hm.Models(i).Runid);
-    icont=strmatch(hm.Models(i).Continent,hm.ContinentAbbrs,'exact');
-    set(hm.SelectContinent,'Value',icont);
-    set(hm.EditPosition1  ,'String',num2str(hm.Models(i).Location(1)));
-    set(hm.EditPosition2  ,'String',num2str(hm.Models(i).Location(2)));
-    set(hm.SelectSize     ,'Value' ,hm.Models(i).Size);
-    set(hm.EditXLim1      ,'String',num2str(hm.Models(i).XLim(1)));
-    set(hm.EditXLim2      ,'String',num2str(hm.Models(i).XLim(2)));
-    set(hm.EditYLim1      ,'String',num2str(hm.Models(i).YLim(1)));
-    set(hm.EditYLim2      ,'String',num2str(hm.Models(i).YLim(2)));
-    set(hm.SelectPriority ,'Value' ,hm.Models(i).Priority+1);
-    set(hm.ToggleNesting  ,'Value' ,hm.Models(i).Nested);
-    set(hm.EditSpinUp     ,'String',num2str(hm.Models(i).SpinUp));
-    set(hm.EditRunTime    ,'String',num2str(hm.Models(i).RunTime));
-    set(hm.EditTimeStep   ,'String',num2str(hm.Models(i).TimeStep));
-    set(hm.EditMapTimeStep,'String',num2str(hm.Models(i).MapTimeStep));
-    set(hm.EditHisTimeStep,'String',num2str(hm.Models(i).HisTimeStep));
-    set(hm.EditComTimeStep,'String',num2str(hm.Models(i).ComTimeStep));
+    set(hm.editName       ,'String',hm.models(i).name);
+    set(hm.editAbbr       ,'String',hm.models(i).Abbr);
+    set(hm.editRunid      ,'String',hm.models(i).runid);
+    icont=strmatch(hm.models(i).continent,hm.continentAbbrs,'exact');
+    set(hm.selectContinent,'Value',icont);
+    set(hm.editPosition1  ,'String',num2str(hm.models(i).Location(1)));
+    set(hm.editPosition2  ,'String',num2str(hm.models(i).Location(2)));
+    set(hm.selectSize     ,'Value' ,hm.models(i).size);
+    set(hm.editXLim1      ,'String',num2str(hm.models(i).xLim(1)));
+    set(hm.editXLim2      ,'String',num2str(hm.models(i).xLim(2)));
+    set(hm.editYLim1      ,'String',num2str(hm.models(i).yLim(1)));
+    set(hm.editYLim2      ,'String',num2str(hm.models(i).yLim(2)));
+    set(hm.selectPriority ,'Value' ,hm.models(i).priority+1);
+    set(hm.toggleNesting  ,'Value' ,hm.models(i).nested);
+    set(hm.editSpinUp     ,'String',num2str(hm.models(i).spinUp));
+    set(hm.editRunTime    ,'String',num2str(hm.models(i).runTime));
+    set(hm.editTimeStep   ,'String',num2str(hm.models(i).timeStep));
+    set(hm.editMapTimeStep,'String',num2str(hm.models(i).mapTimeStep));
+    set(hm.editHisTimeStep,'String',num2str(hm.models(i).hisTimeStep));
+    set(hm.editComTimeStep,'String',num2str(hm.models(i).comTimeStep));
 
 else
     set(hm.ListModels1       ,'String',' ','Enable','off','Value',1);
 %     set(hm.ListModels2       ,'String',' ','Enable','off','Value',1);
-%     set(hm.SelectContinents2 ,'Value',j   ,'Enable','off');
-    set(hm.EditName          ,'String','','Enable','off');
-    set(hm.EditAbbr          ,'String','','Enable','off');
-    set(hm.EditRunid         ,'String','','Enable','off');
-    set(hm.SelectContinent   ,'Value',j  ,'Enable','off');
-    set(hm.EditPosition1     ,'String','','Enable','off');
-    set(hm.EditPosition2     ,'String','','Enable','off');
-    set(hm.SelectSize        ,'Value' ,1 ,'Enable','off');
-    set(hm.EditXLim1         ,'String','','Enable','off');
-    set(hm.EditXLim2         ,'String','','Enable','off');
-    set(hm.EditYLim1         ,'String','','Enable','off');
-    set(hm.EditYLim2         ,'String','','Enable','off');
-    set(hm.SelectPriority    ,'Value' ,1 ,'Enable','off');
-    set(hm.ToggleNesting     ,'Value' ,0 ,'Enable','off');
-    set(hm.EditSpinUp        ,'String','','Enable','off');
-    set(hm.EditRunTime       ,'String','','Enable','off');
-    set(hm.EditTimeStep      ,'String','','Enable','off');
-    set(hm.EditMapTimeStep   ,'String','','Enable','off');
-    set(hm.EditHisTimeStep   ,'String','','Enable','off');
-    set(hm.EditComTimeStep   ,'String','','Enable','off');
+%     set(hm.selectContinents2 ,'Value',j   ,'Enable','off');
+    set(hm.editName          ,'String','','Enable','off');
+    set(hm.editAbbr          ,'String','','Enable','off');
+    set(hm.editRunid         ,'String','','Enable','off');
+    set(hm.selectContinent   ,'Value',j  ,'Enable','off');
+    set(hm.editPosition1     ,'String','','Enable','off');
+    set(hm.editPosition2     ,'String','','Enable','off');
+    set(hm.selectSize        ,'Value' ,1 ,'Enable','off');
+    set(hm.editXLim1         ,'String','','Enable','off');
+    set(hm.editXLim2         ,'String','','Enable','off');
+    set(hm.editYLim1         ,'String','','Enable','off');
+    set(hm.editYLim2         ,'String','','Enable','off');
+    set(hm.selectPriority    ,'Value' ,1 ,'Enable','off');
+    set(hm.toggleNesting     ,'Value' ,0 ,'Enable','off');
+    set(hm.editSpinUp        ,'String','','Enable','off');
+    set(hm.editRunTime       ,'String','','Enable','off');
+    set(hm.editTimeStep      ,'String','','Enable','off');
+    set(hm.editMapTimeStep   ,'String','','Enable','off');
+    set(hm.editHisTimeStep   ,'String','','Enable','off');
+    set(hm.editComTimeStep   ,'String','','Enable','off');
 end
 
 guidata(gcf,hm);

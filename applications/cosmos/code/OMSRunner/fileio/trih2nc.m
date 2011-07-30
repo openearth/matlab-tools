@@ -24,7 +24,7 @@ function trih2nc(loc,trifile,ncfile)
 
         % loop through data fields
         for i = 1:length(fields)
-            name = fields(i).Name;
+            name = fields(i).name;
             nname = normalize_name(name);
             
             % skip empties
@@ -89,7 +89,7 @@ function s = nc_varset(name,nctype,dims,long_name,units,varargin)
     atts = {'standard_name','type','axis','_FillValue','coordinates'};
     for i = 1:length(varargin)
         if ~isempty(varargin{i})
-            s.Attribute(n).Name = atts{i};
+            s.Attribute(n).name = atts{i};
             s.Attribute(n).Value = varargin{i};
             n = n + 1;
         end

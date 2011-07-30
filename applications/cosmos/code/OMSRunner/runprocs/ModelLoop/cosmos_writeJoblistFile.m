@@ -1,13 +1,13 @@
 function writeJoblistFile(hm,m,opt)
 
-hm.Models(m).ProcessDuration=hm.Models(m).ExtractDuration+hm.Models(m).PlotDuration+hm.Models(m).UploadDuration;
-fid=fopen([hm.ScenarioDir  'joblist' filesep opt '.' datestr(hm.Cycle,'yyyymmdd.HHMMSS') '.' hm.Models(m).Name],'wt');
-fprintf(fid,'%s\n',datestr(hm.Models(m).SimStart,'yyyymmdd HHMMSS'));
-fprintf(fid,'%s\n',datestr(hm.Models(m).SimStop,'yyyymmdd HHMMSS'));
-fprintf(fid,'%s\n',['Run duration     : ' num2str(hm.Models(m).RunDuration,'%8.2f') ' s']);
-fprintf(fid,'%s\n',['Move duration    : ' num2str(hm.Models(m).MoveDuration,'%8.2f') ' s']);
-fprintf(fid,'%s\n',['Extract duration : ' num2str(hm.Models(m).ExtractDuration,'%8.2f') ' s']);
-fprintf(fid,'%s\n',['Plot duration    : ' num2str(hm.Models(m).PlotDuration,'%8.2f') ' s']);
-fprintf(fid,'%s\n',['Upload duration  : ' num2str(hm.Models(m).UploadDuration,'%8.2f') ' s']);
-fprintf(fid,'%s\n',['Process duration : ' num2str(hm.Models(m).ProcessDuration,'%8.2f') ' s']);
+hm.models(m).processDuration=hm.models(m).extractDuration+hm.models(m).plotDuration+hm.models(m).uploadDuration;
+fid=fopen([hm.scenarioDir  'joblist' filesep opt '.' datestr(hm.cycle,'yyyymmdd.HHMMSS') '.' hm.models(m).name],'wt');
+fprintf(fid,'%s\n',datestr(hm.models(m).simStart,'yyyymmdd HHMMSS'));
+fprintf(fid,'%s\n',datestr(hm.models(m).simStop,'yyyymmdd HHMMSS'));
+fprintf(fid,'%s\n',['Run duration     : ' num2str(hm.models(m).runDuration,'%8.2f') ' s']);
+fprintf(fid,'%s\n',['Move duration    : ' num2str(hm.models(m).moveDuration,'%8.2f') ' s']);
+fprintf(fid,'%s\n',['Extract duration : ' num2str(hm.models(m).extractDuration,'%8.2f') ' s']);
+fprintf(fid,'%s\n',['Plot duration    : ' num2str(hm.models(m).plotDuration,'%8.2f') ' s']);
+fprintf(fid,'%s\n',['Upload duration  : ' num2str(hm.models(m).uploadDuration,'%8.2f') ' s']);
+fprintf(fid,'%s\n',['Process duration : ' num2str(hm.models(m).processDuration,'%8.2f') ' s']);
 fclose(fid);

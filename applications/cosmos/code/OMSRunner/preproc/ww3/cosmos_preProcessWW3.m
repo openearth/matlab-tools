@@ -1,21 +1,21 @@
 function PreProcessWW3(hm,m)
 
-Model=hm.Models(m);
-dr=Model.Dir;
-tmpdir=hm.TempDir;
+model=hm.models(m);
+dr=model.dir;
+tmpdir=hm.tempDir;
 
 %% Get restart file
-fname=[dr 'restart' filesep Model.WaveRstFile '.zip'];
+fname=[dr 'restart' filesep model.waveRstFile '.zip'];
 if exist(fname,'file')
     unzip(fname,tmpdir);
-    [success,message,messageid]=movefile([tmpdir Model.WaveRstFile],[tmpdir 'restart.ww3'],'f');
+    [success,message,messageid]=movefile([tmpdir model.waveRstFile],[tmpdir 'restart.ww3'],'f');
 end
 
 %% Get nest file
-if Model.WaveNested
-    nr=Model.WaveNestNr;
-    mm=Model.WaveNestModelNr;
-    outputdir=[hm.Models(mm).Dir 'lastrun' filesep 'output' filesep];
+if model.waveNested
+    nr=model.waveNestNr;
+    mm=model.waveNestModelNr;
+    outputdir=[hm.models(mm).dir 'lastrun' filesep 'output' filesep];
     fname=[outputdir 'nest' num2str(nr) '.ww3'];
     if exist(fname,'file')
         [success,message,messageid]=copyfile(fname,[tmpdir 'nest.ww3'],'f');
@@ -26,40 +26,40 @@ end
 [nestrid,nestnames,x,y]=getWW3points(hm,m);
 
 %% Get start and stop times
-inpfile=[hm.TempDir 'ww3_shel.inp'];
-dtrst=hm.RunInterval/24;
-% trststart=max(Model.TStop-8*dtrst,Model.TWaveStart+dtrst);
-% trststart=hm.Cycle+hm.RunInterval/24;
-% trststop=hm.Cycle+hm.RunInterval/24;
+inpfile=[hm.tempDir 'ww3_shel.inp'];
+dtrst=hm.runInterval/24;
+% trststart=max(model.tStop-8*dtrst,model.tWaveStart+dtrst);
+% trststart=hm.cycle+hm.runInterval/24;
+% trststop=hm.cycle+hm.runInterval/24;
 
-% meteodir=[hm.ScenarioDir 'meteo' filesep Model.UseMeteo filesep];
+% meteodir=[hm.scenarioDir 'meteo' filesep model.useMeteo filesep];
 % tana=readTLastAnalyzed(meteodir);
-% hm.Models(m).TLastAnalyzed=rounddown(tana,hm.RunInterval/24);
-% Model.TLastAnalyzed=hm.Models(m).TLastAnalyzed;
+% hm.models(m).tLastAnalyzed=rounddown(tana,hm.runInterval/24);
+% model.tLastAnalyzed=hm.models(m).tLastAnalyzed;
 
 %% Determine restart times
 % trststart=-1e9;
-% trststart=max(trststart,Model.TWaveOkay); % Model must be spun-up
-% trststart=max(trststart,hm.Cycle+hm.RunInterval/24); % Start time of next cycle 
-% trststart=min(trststart,Model.TLastAnalyzed); % Restart time no later than last analyzed time in meteo fields
+% trststart=max(trststart,model.tWaveOkay); % Model must be spun-up
+% trststart=max(trststart,hm.cycle+hm.runInterval/24); % Start time of next cycle 
+% trststart=min(trststart,model.tLastAnalyzed); % Restart time no later than last analyzed time in meteo fields
 
-trststart=Model.restartTime;
+trststart=model.restartTime;
 
 trststop=trststart;
-toutstart=Model.TOutputStart;
+toutstart=model.tOutputStart;
 dtrst=dtrst*86400;
 dt=3600;
 
 %% Write ww3_shel.inp
-WriteWW3Shell(inpfile,Model.TWaveStart,toutstart,Model.TStop,dt,trststart,trststop,dtrst,nestrid,x,y);
+WriteWW3Shell(inpfile,model.tWaveStart,toutstart,model.tStop,dt,trststart,trststop,dtrst,nestrid,x,y);
 
 %% Get meteo data
-ii=strmatch(lower(Model.UseMeteo),lower(hm.MeteoNames),'exact');
-dt=hm.Meteo(ii).TimeStep;
-meteoname=Model.UseMeteo;
-meteodir=[hm.ScenarioDir 'meteo' filesep meteoname filesep];
-exedir=[hm.MainDir 'exe' filesep];
-WriteMeteoFileWW3_02(meteodir,meteoname,exedir,tmpdir,[0 360],[-90 90],Model.TWaveStart,Model.TStop,dt,Model.UseDtAirSea);
+ii=strmatch(lower(model.useMeteo),lower(hm.meteoNames),'exact');
+dt=hm.meteo(ii).timeStep;
+meteoname=model.useMeteo;
+meteodir=[hm.scenarioDir 'meteo' filesep meteoname filesep];
+exedir=[hm.exeDir];
+WriteMeteoFileWW3_02(meteodir,meteoname,exedir,tmpdir,[0 360],[-90 90],model.tWaveStart,model.tStop,dt,model.useDtAirSea);
 
 %% Pre and post-processing input files
 
@@ -68,17 +68,17 @@ WriteMeteoFileWW3_02(meteodir,meteoname,exedir,tmpdir,[0 360],[-90 90],Model.TWa
 % % ww3_prep
 % writeWW3prep([tmpdir 'ww3_prep.inp']);
 
-tstart=Model.TWaveStart;
-nt=(Model.TStop-tstart)*24+1;
+tstart=model.tWaveStart;
+nt=(model.tStop-tstart)*24+1;
 dt=3600;
 
 % ww3_outp
 
 % observations points
-ip0=Model.NrStations;
+ip0=model.nrStations;
 inest=0;
 if ip0>0
-    writeWW3outp([tmpdir 'ww3_outp_' Model.Runid '.inp'],tstart,dt,nt,2,1:ip0);
+    writeWW3outp([tmpdir 'ww3_outp_' model.runid '.inp'],tstart,dt,nt,2,1:ip0);
     inest=inest+1;
 end
 
@@ -94,14 +94,14 @@ end
 writeWW3gxoutf([tmpdir 'gx_outf.inp'],toutstart,dt,nt);
 
 %% Make batch file
-switch lower(Model.RunEnv)
+switch lower(model.runEnv)
     case{'win32'}
-        [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'ww3_grid.exe'],tmpdir,'f');
-        [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'ww3_prep.exe'],tmpdir,'f');
-        [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'ww3_shel.exe'],tmpdir,'f');
-        [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'ww3_outp.exe'],tmpdir,'f');
-        [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'gx_outf.exe'],tmpdir,'f');
-        writeWW3batchWin32([tmpdir 'run.bat'],nestnames,datestr(Model.TWaveStart,'yymmddHH'));
+        [success,message,messageid]=copyfile([hm.exeDir 'ww3_grid.exe'],tmpdir,'f');
+        [success,message,messageid]=copyfile([hm.exeDir 'ww3_prep.exe'],tmpdir,'f');
+        [success,message,messageid]=copyfile([hm.exeDir 'ww3_shel.exe'],tmpdir,'f');
+        [success,message,messageid]=copyfile([hm.exeDir 'ww3_outp.exe'],tmpdir,'f');
+        [success,message,messageid]=copyfile([hm.exeDir 'gx_outf.exe'],tmpdir,'f');
+        writeWW3batchWin32([tmpdir 'run.bat'],nestnames,datestr(model.tWaveStart,'yymmddHH'));
     case{'h4'}
-        writeWW3batchH4([tmpdir 'run.sh'],nestnames,datestr(Model.TWaveStart,'yymmddHH'));
+        writeWW3batchH4([tmpdir 'run.sh'],nestnames,datestr(model.tWaveStart,'yymmddHH'));
 end

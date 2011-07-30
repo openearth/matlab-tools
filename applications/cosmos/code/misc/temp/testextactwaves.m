@@ -6,7 +6,7 @@ runid='sca';
 archdir='E:\work\OperationalModelSystem\SoCalCoastalHazards\scenarios\forecasts_old\models\northamerica\southcalifornia\archive\maps\';
 
 
-dt=hm.Models(m).MapTimeStep;
+dt=hm.models(m).mapTimeStep;
 
 if ~exist([outdir 'wavm-' runid '.dat'],'file')
    killAll;
@@ -22,8 +22,8 @@ for t=t0:(dt/24):t1;
     it=find(times==t);
     hs = qpread(fid,1,'hsig wave height','griddata',it,0,0);
     s=[];
-    s.Parameter='hs';
-    s.Time=t;
+    s.parameter='hs';
+    s.time=t;
     s.x=hs.X;
     s.y=hs.Y;
     s.Val=hs.Val;
@@ -35,8 +35,8 @@ for t=t0:(dt/24):t1;
     it=find(times==t);
     tp = qpread(fid,1,'smoothed peak period','griddata',it,0,0);
     s=[];
-    s.Parameter='tp';
-    s.Time=t;
+    s.parameter='tp';
+    s.time=t;
     s.x=tp.X;
     s.y=tp.Y;
     s.Val=tp.Val;

@@ -1,33 +1,33 @@
 function cosmos_getMeteoData(hm)
 
 
-for i=1:hm.NrMeteoDatasets
+for i=1:hm.nrMeteoDatasets
 
-%    hm.MeteoNames{i}=hm.Meteo(i).Name;
-%    hm.Meteo(i).tLastAnalyzed=rounddown(now-hm.Meteo(i).Delay/24,hm.Meteo(i).CycleInterval/24);
-%     hm.Meteo(i).tLastAnalyzed=rounddown(now-hm.Meteo(i).Delay/24,hm.RunInterval/24);
+%    hm.meteoNames{i}=hm.meteo(i).name;
+%    hm.meteo(i).tLastAnalyzed=rounddown(now-hm.meteo(i).Delay/24,hm.meteo(i).cycleInterval/24);
+%     hm.meteo(i).tLastAnalyzed=rounddown(now-hm.meteo(i).Delay/24,hm.runInterval/24);
 
     t0=1e9;
     t1=-1e9;
 
-    meteoname=hm.Meteo(i).Name;
-    meteoloc=hm.Meteo(i).Location;
-    meteosource=hm.Meteo(i).source;
+    meteoname=hm.meteo(i).name;
+    meteoloc=hm.meteo(i).Location;
+    meteosource=hm.meteo(i).source;
 
-    xlim = hm.Meteo(i).XLim;
-    ylim = hm.Meteo(i).YLim;
+    xlim = hm.meteo(i).xLim;
+    ylim = hm.meteo(i).yLim;
 
     % Check whether this meteo dataset needs to be downloaded
     useThisMeteo=0;
     inclh=0;
-    for j=1:hm.NrModels
-        if strcmpi(meteoname,hm.Models(j).UseMeteo)
+    for j=1:hm.nrModels
+        if strcmpi(meteoname,hm.models(j).useMeteo)
             useThisMeteo=1;
             % Find start and stop time for meteo data
-            t0=min(hm.Models(j).TFlowStart,t0);
-            t0=min(hm.Models(j).TWaveStart,t0);
-            t1=max(t1,hm.Models(j).TStop);
-            if hm.Models(j).includeTemperature
+            t0=min(hm.models(j).tFlowStart,t0);
+            t0=min(hm.models(j).tWaveStart,t0);
+            t1=max(t1,hm.models(j).tStop);
+            if hm.models(j).includeTemperature
                 inclh=1;
             end
         end
@@ -37,11 +37,11 @@ for i=1:hm.NrMeteoDatasets
 
         display(meteoname);
 
-        outdir=[hm.ScenarioDir 'meteo' filesep meteoname filesep];
+        outdir=[hm.scenarioDir 'meteo' filesep meteoname filesep];
 
-        dt=hm.Meteo(i).CycleInterval/24;
+        dt=hm.meteo(i).cycleInterval/24;
 
-        %         switch lower(hm.Scenario)
+        %         switch lower(hm.scenario)
         %
         %             case{'forecasts'}
         %
@@ -53,7 +53,7 @@ for i=1:hm.NrMeteoDatasets
             cycledate=floor(tcyc);
             cyclehour=(tcyc-floor(tcyc))*24;
 
-            if tnext>hm.Meteo(i).tLastAnalyzed
+            if tnext>hm.meteo(i).tLastAnalyzed
                 % Next meteo output not yet available, so get the
                 % rest of the data from this cycle and then exit
                 % loop after this
@@ -70,14 +70,14 @@ for i=1:hm.NrMeteoDatasets
                     getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
             end
 
-            if tnext>hm.Meteo(i).tLastAnalyzed
+            if tnext>hm.meteo(i).tLastAnalyzed
                 break;
             end
 
         end
 
         fid=fopen([outdir 'tlastanalyzed.txt'],'wt');
-        fprintf(fid,'%s\n',datestr(hm.Meteo(i).tLastAnalyzed,'yyyymmdd HHMMSS'));
+        fprintf(fid,'%s\n',datestr(hm.meteo(i).tLastAnalyzed,'yyyymmdd HHMMSS'));
         fclose(fid);
         %                 tcyc=t0;
         %                 cycledate=floor(tcyc);
@@ -100,7 +100,7 @@ for i=1:hm.NrMeteoDatasets
         %                     cycledate=floor(tcyc);
         %                     cyclehour=(tcyc-floor(tcyc))*24;
         %
-        %                     tt=[t t+dt-hm.Meteo(i).TimeStep/24];
+        %                     tt=[t t+dt-hm.meteo(i).timeStep/24];
         %
         %                     switch lower(meteoloc)
         %                         case{'nomads'}

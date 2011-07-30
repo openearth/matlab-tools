@@ -2,17 +2,17 @@ function out=getParameterInfo(hm,par,varargin)
 
 out=[];
 
-npar=length(hm.Parameters);
+npar=length(hm.parameters);
 
 % Make cell array of all available parameters
 for i=1:npar
-    names{i}=hm.Parameters(i).parameter(1).shortname;
+    names{i}=hm.parameters(i).parameter(1).shortname;
 end
 
 % Find required parameter number
 ipar=strmatch(lower(par),lower(names),'exact');
 
-s=hm.Parameters(ipar).parameter(1);
+s=hm.parameters(ipar).parameter(1);
 
 if length(varargin)==1   
     out=s.(varargin{1});

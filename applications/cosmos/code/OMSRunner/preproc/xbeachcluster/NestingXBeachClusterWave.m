@@ -1,14 +1,14 @@
 function ok=NestingXBeachClusterWave(hm,m)
 
-tmpdir=hm.TempDir;
+tmpdir=hm.tempDir;
 
-mm=hm.Models(m).WaveNestModelNr;
+mm=hm.models(m).waveNestModelNr;
 
-outputdir=[hm.Models(mm).Dir 'lastrun' filesep 'output' filesep];
+outputdir=[hm.models(mm).dir 'lastrun' filesep 'output' filesep];
 
-np=hm.Models(m).NrProfiles;
+np=hm.models(m).nrProfiles;
 
-switch lower(hm.Models(mm).Type)
+switch lower(hm.models(mm).type)
 
     case{'delft3dwave','delft3dflowwave'}
 
@@ -18,31 +18,31 @@ switch lower(hm.Models(mm).Type)
 
             disp('Nesting in SWAN ...');
 
-            tstart=hm.Models(mm).TWaveStart;
-            dt=hm.Models(mm).WavmTimeStep;
-            runid=hm.Models(m).Runid;
+            tstart=hm.models(mm).tWaveStart;
+            dt=hm.models(mm).wavmTimeStep;
+            runid=hm.models(m).runid;
             outfile='sp2list.txt';
-            trefxbeach=hm.Models(m).TFlowStart;
-            morfac=hm.Models(m).MorFac;
+            trefxbeach=hm.models(m).tFlowStart;
+            morfac=hm.models(m).morFac;
 
-            MakeSpecList(outputdir,tstart,dt,runid,tmpdir,outfile,trefxbeach,hm.Models(m).RunTime,morfac);
+            MakeSpecList(outputdir,tstart,dt,runid,tmpdir,outfile,trefxbeach,hm.models(m).runTime,morfac);
 
-            ok=ExtractSWANNestSpec(outputdir,tmpdir,runid,trefxbeach,trefxbeach+hm.Models(m).RunTime/1440,hm,mm,m);
+            ok=ExtractSWANNestSpec(outputdir,tmpdir,runid,trefxbeach,trefxbeach+hm.models(m).runTime/1440,hm,mm,m);
             
             disp('Compressing sp2 files ...');
             for j=1:np
                 if ok(j)
-                    [status,message,messageid]=copyfile([tmpdir outfile],[tmpdir hm.Models(m).Profile(j).Name],'f');
+                    [status,message,messageid]=copyfile([tmpdir outfile],[tmpdir hm.models(m).profile(j).name],'f');
                 end
-                system([hm.MainDir 'exe' filesep 'zip.exe -q -j ' tmpdir hm.Models(m).Profile(j).Name filesep 'sp2.zip ' tmpdir hm.Models(m).Profile(j).Name filesep '*.sp2']);
-%                zip([tmpdir hm.Models(m).Profile(j).Name filesep 'sp2.zip'],[tmpdir hm.Models(m).Profile(j).Name filesep '*.sp2']);
-                delete([tmpdir hm.Models(m).Profile(j).Name filesep '*.sp2']);
+                system([hm.exeDir 'zip.exe -q -j ' tmpdir hm.models(m).profile(j).name filesep 'sp2.zip ' tmpdir hm.models(m).profile(j).name filesep '*.sp2']);
+%                zip([tmpdir hm.models(m).profile(j).name filesep 'sp2.zip'],[tmpdir hm.models(m).profile(j).name filesep '*.sp2']);
+                delete([tmpdir hm.models(m).profile(j).name filesep '*.sp2']);
             end
             
             delete([tmpdir outfile]);
             
         catch
-            WriteErrorLogFile(hm,['An error occured during nesting of XBeach in SWAN - ' hm.Models(m).Name]);
+            WriteErrorLogFile(hm,['An error occured during nesting of XBeach in SWAN - ' hm.models(m).name]);
         end
      
 end

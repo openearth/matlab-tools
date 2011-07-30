@@ -1,12 +1,12 @@
 function NestingXBeachFlow(hm,m)
 
-tmpdir=hm.TempDir;
+tmpdir=hm.tempDir;
 
 curdir=pwd;
 
-mm=hm.Models(m).FlowNestModelNr;
+mm=hm.models(m).flowNestModelNr;
 
-dr=hm.Models(mm).Dir;
+dr=hm.models(mm).dir;
 
 outputdir=[dr 'lastrun' filesep 'output' filesep ''];
 [success,message,messageid]=copyfile([outputdir 'trih-*'],tmpdir,'f');
@@ -15,31 +15,31 @@ cd(tmpdir);
 
 try
         
-    nstadm=[hm.Models(m).Dir 'nesting' filesep hm.Models(m).Name '.nst'];
+    nstadm=[hm.models(m).dir 'nesting' filesep hm.models(m).name '.nst'];
 
-    [status,message,messageid]=copyfile([hm.Models(m).Dir 'nesting' filesep hm.Models(m).Name '.bnd'],tmpdir,'f');
-    [status,message,messageid]=copyfile([hm.Models(m).Dir 'nesting' filesep hm.Models(m).Name '.nst'],tmpdir,'f');
+    [status,message,messageid]=copyfile([hm.models(m).dir 'nesting' filesep hm.models(m).name '.bnd'],tmpdir,'f');
+    [status,message,messageid]=copyfile([hm.models(m).dir 'nesting' filesep hm.models(m).name '.nst'],tmpdir,'f');
 
     fid=fopen('nesthd2.inp','wt');
-%    fprintf(fid,'%s\n',[hm.Models(m).Dir 'nesting' filesep hm.Models(m).Name '.bnd']);
-    fprintf(fid,'%s\n',[hm.Models(m).Name '.bnd']);
-    fprintf(fid,'%s\n',[hm.Models(m).Name '.nst']);
-    fprintf(fid,'%s\n',hm.Models(mm).Runid);
+%    fprintf(fid,'%s\n',[hm.models(m).dir 'nesting' filesep hm.models(m).name '.bnd']);
+    fprintf(fid,'%s\n',[hm.models(m).name '.bnd']);
+    fprintf(fid,'%s\n',[hm.models(m).name '.nst']);
+    fprintf(fid,'%s\n',hm.models(mm).runid);
     fprintf(fid,'%s\n','temp.bct');
     fprintf(fid,'%s\n','dummy.bcc');
     fprintf(fid,'%s\n','nest.dia');
     fprintf(fid,'%s\n','0.0');
     fclose(fid);
 
-    system([hm.MainDir 'exe' filesep 'nesthd2.exe < nesthd2.inp']);
+    system([hm.exeDir 'nesthd2.exe < nesthd2.inp']);
     fid=fopen('smoothbct.inp','wt');
     fprintf(fid,'%s\n','temp.bct');
-    fprintf(fid,'%s\n',[hm.Models(m).Name '.bct']);
+    fprintf(fid,'%s\n',[hm.models(m).name '.bct']);
     fprintf(fid,'%s\n','3');
 
     fclose(fid);
 
-    system([hm.MainDir 'exe' filesep 'smoothbct.exe < smoothbct.inp']);
+    system([hm.exeDir 'smoothbct.exe < smoothbct.inp']);
 
     delete('nesthd2.inp');
     delete('nest.dia');
@@ -49,8 +49,8 @@ try
     delete('dummy.bcc');
     delete('trih*');
 
-    delete([tmpdir hm.Models(m).Name '.bnd']);
-    delete([tmpdir hm.Models(m).Name '.nst']);
+    delete([tmpdir hm.models(m).name '.bnd']);
+    delete([tmpdir hm.models(m).name '.nst']);
 
 catch
     disp('An error occured during nesting');
@@ -58,5 +58,5 @@ end
 
 cd(curdir);
 
-ConvertBct2XBeach([tmpdir hm.Models(m).Name '.bct'],[tmpdir 'tide.txt'],hm.Models(m).TFlowStart); %FIXME
-delete([tmpdir hm.Models(m).Name '.bct']);
+ConvertBct2XBeach([tmpdir hm.models(m).name '.bct'],[tmpdir 'tide.txt'],hm.models(m).tFlowStart); %FIXME
+delete([tmpdir hm.models(m).name '.bct']);

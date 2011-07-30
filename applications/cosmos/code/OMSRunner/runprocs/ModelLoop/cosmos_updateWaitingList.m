@@ -2,32 +2,32 @@ function [hm,WaitingList]=cosmos_updateWaitingList(hm)
 
 j=0;
 
-for i=1:hm.NrModels
-    if strcmpi(hm.Models(i).Status,'waiting') && hm.Models(i).Priority>0 && hm.Models(i).Run
-        if ~hm.Models(i).FlowNested && ~hm.Models(i).WaveNested
+for i=1:hm.nrModels
+    if strcmpi(hm.models(i).status,'waiting') && hm.models(i).priority>0 && hm.models(i).run
+        if ~hm.models(i).flowNested && ~hm.models(i).waveNested
             j=j+1;
             tmplist(j)=i;
-            priority(j)=hm.Models(i).Priority;
+            priority(j)=hm.models(i).priority;
         else
-            if hm.Models(i).FlowNested
-                mmf=hm.Models(i).FlowNestModelNr;
-                statf=hm.Models(mmf).Status;
+            if hm.models(i).flowNested
+                mmf=hm.models(i).flowNestModelNr;
+                statf=hm.models(mmf).status;
             else
                 statf='finished';
             end
-            if hm.Models(i).WaveNested
-                mmw=hm.Models(i).WaveNestModelNr;
-                statw=hm.Models(mmw).Status;
+            if hm.models(i).waveNested
+                mmw=hm.models(i).waveNestModelNr;
+                statw=hm.models(mmw).status;
             else
                 statw='finished';
             end
             if strcmpi(statf,'finished') && strcmpi(statw,'finished')
                 j=j+1;
                 tmplist(j)=i;
-                priority(j)=hm.Models(i).Priority;
+                priority(j)=hm.models(i).priority;
             end
             if strcmpi(statf,'failed') || strcmpi(statw,'failed')
-                hm.Models(i).Status='failed';
+                hm.models(i).status='failed';
             end
         end
     end

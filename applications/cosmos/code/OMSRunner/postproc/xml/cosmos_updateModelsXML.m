@@ -2,84 +2,84 @@ function cosmos_updateModelsXML(hm,m)
 
 % Updates model xml file for all websites
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-for iw=1:length(Model.WebSite)
+for iw=1:length(model.webSite)
 
-    wbdir=Model.WebSite(iw).Name;
+    wbdir=model.webSite(iw).name;
 
-    dr=[hm.WebDir wbdir filesep 'scenarios' filesep hm.Scenario filesep];
-%    dr=[hm.WebDir wbdir filesep 'scenarios' filesep hm.Scenario filesep Model.Continent filesep Model.Name filesep];
+    dr=[hm.webDir wbdir filesep 'scenarios' filesep hm.scenario filesep];
+%    dr=[hm.webDir wbdir filesep 'scenarios' filesep hm.scenario filesep model.continent filesep model.name filesep];
     if ~exist(dr,'dir')
         mkdir(dr);
     end
 
-    fname=[dr Model.Name '.xml'];
+    fname=[dr model.name '.xml'];
 
-    switch lower(hm.Models(m).Type)
+    switch lower(hm.models(m).type)
         case{'xbeachcluster'}
             cluster=1;
         otherwise
             cluster=0;
     end
 
-    model=[];
+    mdl=[];
 
-    model.name.value=Model.Name;
-    model.name.type='char';
+    mdl.name.value=model.name;
+    mdl.name.type='char';
 
-    model.longname.value=Model.LongName;
-    model.longname.type='char';
+    mdl.longname.value=model.longName;
+    mdl.longname.type='char';
 
-    model.continent.value=Model.Continent;
-    model.continent.type='char';
+    mdl.continent.value=model.continent;
+    mdl.continent.type='char';
 
     
     %% Location
     
     if ~cluster
         % Get value from xml
-        xloc=Model.WebSite(iw).Location(1);
-        yloc=Model.WebSite(iw).Location(2);
+        xloc=model.webSite(iw).Location(1);
+        yloc=model.webSite(iw).Location(2);
     else
         % Take average of start and end profile
-        xloc=0.5*(Model.Profile(1).OriginX+Model.Profile(end).OriginX);
-        yloc=0.5*(Model.Profile(1).OriginY+Model.Profile(end).OriginY);  
+        xloc=0.5*(model.profile(1).originX+model.profile(end).originX);
+        yloc=0.5*(model.profile(1).originY+model.profile(end).originY);  
     end
 
-    if ~strcmpi(Model.CoordinateSystem,'wgs 84')
-        [lon,lat]=convertCoordinates(xloc,yloc,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+    if ~strcmpi(model.coordinateSystem,'wgs 84')
+        [lon,lat]=convertCoordinates(xloc,yloc,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
     else
         lon=xloc;
         lat=yloc;
     end
 
-    model.longitude.value=lon;
-    model.longitude.type='real';
+    mdl.longitude.value=lon;
+    mdl.longitude.type='real';
     
-    model.latitude.value=lat;
-    model.latitude.type='real';
+    mdl.latitude.value=lat;
+    mdl.latitude.type='real';
     
     %% Elevation
 
     % First try to determine distance between corner points of model limits
     if ~cluster
         % Get value from xml
-        xlim=Model.XLim;
-        ylim=Model.YLim;
+        xlim=model.xLim;
+        ylim=model.yLim;
     else
         % Take average of start and end profile
-        for i=1:length(Model.Profile)
-            xloc(i)=Model.Profile(i).OriginX;
-            yloc(i)=Model.Profile(i).OriginY;
+        for i=1:length(model.profile)
+            xloc(i)=model.profile(i).originX;
+            yloc(i)=model.profile(i).originY;
         end
         xlim(1)=min(xloc);
         xlim(2)=max(xloc);
         ylim(1)=min(yloc);
         ylim(2)=max(yloc);
     end    
-    if ~strcmpi(Model.CoordinateSystem,'wgs 84')
-        [xlim,ylim]=convertCoordinates(xlim,ylim,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+    if ~strcmpi(model.coordinateSystem,'wgs 84')
+        [xlim,ylim]=convertCoordinates(xlim,ylim,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
     end
     dstx=111111*(xlim(2)-xlim(1))*cos(mean(ylim)*pi/180);
     dsty=111111*(ylim(2)-ylim(1));    
@@ -89,139 +89,139 @@ for iw=1:length(Model.WebSite)
     dst=dst*2;
     dst=min(dst,10000000);
 
-    model.elevation.value=dst;
-    model.elevation.type='real';
+    mdl.elevation.value=dst;
+    mdl.elevation.type='real';
 
     %% Types and size
 
-    model.type.value=Model.Type;
-    model.type.type='char';
+    mdl.type.value=model.type;
+    mdl.type.type='char';
     
-    model.size.value=Model.Size;
-    model.size.type='int';
+    mdl.size.value=model.size;
+    mdl.size.type='int';
     
-    model.starttime.value=Model.TOutputStart;
-    model.starttime.type='date';
+    mdl.starttime.value=model.tOutputStart;
+    mdl.starttime.type='date';
     
-    model.stoptime.value=Model.TStop;
-    model.stoptime.type='date';
+    mdl.stoptime.value=model.tStop;
+    mdl.stoptime.type='date';
 
-    model.timestep.value=3;
-    model.timestep.type='real';
+    mdl.timestep.value=3;
+    mdl.timestep.type='real';
 
     %% Duration
 
-    model.simstart.value=[datestr(Model.SimStart,0) ' (CET)'];
-    model.simstart.type='char';
+    mdl.simstart.value=[datestr(model.simStart,0) ' (CET)'];
+    mdl.simstart.type='char';
 
-    model.simstop.value=[datestr(Model.SimStop,0) ' (CET)'];
-    model.simstop.type='char';
+    mdl.simstop.value=[datestr(model.simStop,0) ' (CET)'];
+    mdl.simstop.type='char';
 
-    mins=floor(Model.RunDuration/60);
-    secs=floor(Model.RunDuration-mins*60);
-    model.runduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
-    model.runduration.type='char';
+    mins=floor(model.runDuration/60);
+    secs=floor(model.runDuration-mins*60);
+    mdl.runduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    mdl.runduration.type='char';
 
-    mins=floor(Model.MoveDuration/60);
-    secs=floor(Model.MoveDuration-mins*60);
-    model.moveduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
-    model.moveduration.type='char';
+    mins=floor(model.moveDuration/60);
+    secs=floor(model.moveDuration-mins*60);
+    mdl.moveduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    mdl.moveduration.type='char';
 
-    mins=floor(Model.ExtractDuration/60);
-    secs=floor(Model.ExtractDuration-mins*60);
-    model.extractduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
-    model.extractduration.type='char';
+    mins=floor(model.extractDuration/60);
+    secs=floor(model.extractDuration-mins*60);
+    mdl.extractduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    mdl.extractduration.type='char';
 
-    mins=floor(Model.PlotDuration/60);
-    secs=floor(Model.PlotDuration-mins*60);
-    model.plotduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
-    model.plotduration.type='char';
+    mins=floor(model.plotDuration/60);
+    secs=floor(model.plotDuration-mins*60);
+    mdl.plotduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    mdl.plotduration.type='char';
 
-    mins=floor(Model.UploadDuration/60);
-    secs=floor(Model.UploadDuration-mins*60);
-    model.uploadduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
-    model.uploadduration.type='char';
+    mins=floor(model.uploadDuration/60);
+    secs=floor(model.uploadDuration-mins*60);
+    mdl.uploadduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    mdl.uploadduration.type='char';
 
-    mins=floor(Model.ProcessDuration/60);
-    secs=floor(Model.ProcessDuration-mins*60);
-    model.processduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
-    model.processduration.type='char';
+    mins=floor(model.processDuration/60);
+    secs=floor(model.processDuration-mins*60);
+    mdl.processduration.value=[num2str(mins) 'm ' num2str(secs) 's'];
+    mdl.processduration.type='char';
 
-    model.cycle.value=hm.CycStr;
-    model.cycle.type='char';
+    mdl.cycle.value=hm.cycStr;
+    mdl.cycle.type='char';
 
-    model.lastupdate.value=[datestr(now,0) ' (CET)'];
-    model.lastupdate.type='char';
+    mdl.lastupdate.value=[datestr(now,0) ' (CET)'];
+    mdl.lastupdate.type='char';
 
     %% Profiles
 
     if cluster
-        for j=1:Model.NrProfiles
-            locx=Model.Profile(j).OriginX;
-            locy=Model.Profile(j).OriginY;
+        for j=1:model.nrProfiles
+            locx=model.profile(j).originX;
+            locy=model.profile(j).originY;
 
-            cosa=cos(pi*Model.Profile(j).Alpha/180);
-            sina=sin(pi*Model.Profile(j).Alpha/180);
+            cosa=cos(pi*model.profile(j).alpha/180);
+            sina=sin(pi*model.profile(j).alpha/180);
 
-            locx2=locx+Model.Profile(j).Length*cosa;
-            locy2=locy+Model.Profile(j).Length*sina;
+            locx2=locx+model.profile(j).length*cosa;
+            locy2=locy+model.profile(j).length*sina;
 
-            [locx,locy]=convertCoordinates(locx,locy,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
-            [locx2,locy2]=convertCoordinates(locx2,locy2,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+            [locx,locy]=convertCoordinates(locx,locy,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+            [locx2,locy2]=convertCoordinates(locx2,locy2,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
 
-            model.stations(j).station.name.value          = Model.Profile(j).Name;
-            model.stations(j).station.name.type           = 'char';
+            mdl.stations(j).station.name.value          = model.profile(j).name;
+            mdl.stations(j).station.name.type           = 'char';
 
-            model.stations(j).station.longname.value      = ['MOP ' Model.Profile(j).Name];
-            model.stations(j).station.longname.type           = 'char';
+            mdl.stations(j).station.longname.value      = ['MOP ' model.profile(j).name];
+            mdl.stations(j).station.longname.type           = 'char';
 
-            model.stations(j).station.longitude.value     = locx;
-            model.stations(j).station.longitude.type      = 'real';
+            mdl.stations(j).station.longitude.value     = locx;
+            mdl.stations(j).station.longitude.type      = 'real';
 
-            model.stations(j).station.latitude.value      = locy;
-            model.stations(j).station.latitude.type       = 'real';
+            mdl.stations(j).station.latitude.value      = locy;
+            mdl.stations(j).station.latitude.type       = 'real';
 
-            model.stations(j).station.longitude_end.value = locx2;
-            model.stations(j).station.longitude_end.type  = 'real';
+            mdl.stations(j).station.longitude_end.value = locx2;
+            mdl.stations(j).station.longitude_end.type  = 'real';
 
-            model.stations(j).station.latitude_end.value  = locy2;
-            model.stations(j).station.latitude_end.type   = 'real';
+            mdl.stations(j).station.latitude_end.value  = locy2;
+            mdl.stations(j).station.latitude_end.type   = 'real';
 
-            model.stations(j).station.type.value          = 'profile';
-            model.stations(j).station.type.type           = 'char';
+            mdl.stations(j).station.type.value          = 'profile';
+            mdl.stations(j).station.type.type           = 'char';
 
-%            fnamexml=[Model.ArchiveDir hm.CycStr filesep 'hazards' filesep Model.Profile(j).Name filesep Model.Profile(j).Name '.xml'];
+%            fnamexml=[model.archiveDir hm.cycStr filesep 'hazards' filesep model.profile(j).name filesep model.profile(j).name '.xml'];
 %            if exist(fnamexml,'file')
 %                h=xml_load(fnamexml);
-%                model.stations(j).station.hazards=h.profile.proc;
+%                mdl.stations(j).station.hazards=h.profile.proc;
 %            end
 
             % Plots
-            model.stations(j).station.plots(1).plot.parameter.value = 'beachprofile';
-            model.stations(j).station.plots(1).plot.parameter.type  = 'char';
+            mdl.stations(j).station.plots(1).plot.parameter.value = 'beachprofile';
+            mdl.stations(j).station.plots(1).plot.parameter.type  = 'char';
             
-            model.stations(j).station.plots(1).plot.type.value      = 'beachprofile';
-            model.stations(j).station.plots(1).plot.type.type       = 'char';
+            mdl.stations(j).station.plots(1).plot.type.value      = 'beachprofile';
+            mdl.stations(j).station.plots(1).plot.type.type       = 'char';
             
-            model.stations(j).station.plots(1).plot.imgname.value   = [Model.Profile(j).Name '.png'];
-            model.stations(j).station.plots(1).plot.imgname.type    = 'char';
+            mdl.stations(j).station.plots(1).plot.imgname.value   = [model.profile(j).name '.png'];
+            mdl.stations(j).station.plots(1).plot.imgname.type    = 'char';
 
         end
     end
 
     %% Stations
     j=0;
-    for ist=1:Model.NrStations
+    for ist=1:model.nrStations
         
         iok=0;
 
-        station=Model.Stations(ist);
+        station=model.stations(ist);
 
         % First check if any plots are made for this station. If not, skip
         % it.
-        for ip=1:station.NrParameters
-            Parameter=station.Parameters(ip);
-            if Parameter.PlotCmp || Parameter.PlotPrd || Parameter.PlotObs
+        for ip=1:station.nrParameters
+            Parameter=station.parameters(ip);
+            if Parameter.plotCmp || Parameter.plotPrd || Parameter.plotObs
                 iok=1;
             end
         end
@@ -230,44 +230,44 @@ for iw=1:length(Model.WebSite)
             
             j=j+1;
             
-            model.stations(j).station.name.value = station.Name;
-            model.stations(j).station.name.type  = 'char';
+            mdl.stations(j).station.name.value = station.name;
+            mdl.stations(j).station.name.type  = 'char';
 
-            model.stations(j).station.longname.value = station.LongName;
-            model.stations(j).station.longname.type  = 'char';
+            mdl.stations(j).station.longname.value = station.longName;
+            mdl.stations(j).station.longname.type  = 'char';
 
-            if ~strcmpi(Model.CoordinateSystem,'wgs 84')
-                [lon,lat]=convertCoordinates(station.Location(1),station.Location(2),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+            if ~strcmpi(model.coordinateSystem,'wgs 84')
+                [lon,lat]=convertCoordinates(station.Location(1),station.Location(2),'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
             else
                 lon=station.Location(1);
                 lat=station.Location(2);
             end
 
-            model.stations(j).station.longitude.value = lon;
-            model.stations(j).station.longitude.type  = 'real';
+            mdl.stations(j).station.longitude.value = lon;
+            mdl.stations(j).station.longitude.type  = 'real';
 
-            model.stations(j).station.latitude.value  = lat;
-            model.stations(j).station.latitude.type   = 'real';
+            mdl.stations(j).station.latitude.value  = lat;
+            mdl.stations(j).station.latitude.type   = 'real';
 
-            model.stations(j).station.type.value      = station.Type;
-            model.stations(j).station.type.type       = 'char';
+            mdl.stations(j).station.type.value      = station.type;
+            mdl.stations(j).station.type.type       = 'char';
             
             np=0;
-            for ip=1:station.NrParameters
-                Parameter=station.Parameters(ip);
-                typ=Parameter.Name;
-                if Parameter.PlotCmp || Parameter.PlotPrd || Parameter.PlotObs
+            for ip=1:station.nrParameters
+                Parameter=station.parameters(ip);
+                typ=Parameter.name;
+                if Parameter.plotCmp || Parameter.plotPrd || Parameter.plotObs
 
                     np=np+1;
 
-                    model.stations(j).station.plots(np).plot.parameter.value = typ;
-                    model.stations(j).station.plots(np).plot.parameter.type  = 'char';
+                    mdl.stations(j).station.plots(np).plot.parameter.value = typ;
+                    mdl.stations(j).station.plots(np).plot.parameter.type  = 'char';
 
-                    model.stations(j).station.plots(np).plot.type.value      = 'timeseries';
-                    model.stations(j).station.plots(np).plot.type.type       = 'char';
+                    mdl.stations(j).station.plots(np).plot.type.value      = 'timeseries';
+                    mdl.stations(j).station.plots(np).plot.type.type       = 'char';
 
-                    model.stations(j).station.plots(np).plot.imgname.value   = [typ '.' station.Name '.png'];
-                    model.stations(j).station.plots(np).plot.imgname.type    = 'char';
+                    mdl.stations(j).station.plots(np).plot.imgname.value   = [typ '.' station.name '.png'];
+                    mdl.stations(j).station.plots(np).plot.imgname.type    = 'char';
 
                 end
             end
@@ -278,38 +278,38 @@ for iw=1:length(Model.WebSite)
     %% Maps
 
     k=0;
-    for j=1:Model.nrMapPlots
-        if Model.mapPlots(j).plot
+    for j=1:model.nrMapPlots
+        if model.mapPlots(j).plot
             k=k+1;
-            model.maps(k).map.filename.value     = [Model.mapPlots(j).name '.' Model.Name '.kmz'];
-            model.maps(k).map.filename.type      = 'char';
+            mdl.maps(k).map.filename.value     = [model.mapPlots(j).name '.' model.name '.kmz'];
+            mdl.maps(k).map.filename.type      = 'char';
 
-            model.maps(k).map.parameter.value    = Model.mapPlots(j).name;
-            model.maps(k).map.parameter.type     = 'char';
+            mdl.maps(k).map.parameter.value    = model.mapPlots(j).name;
+            mdl.maps(k).map.parameter.type     = 'char';
 
-            model.maps(k).map.longname.value      = Model.mapPlots(j).longName;
-            model.maps(k).map.longname.type     = 'char';
+            mdl.maps(k).map.longname.value      = model.mapPlots(j).longName;
+            mdl.maps(k).map.longname.type     = 'char';
 
-%            model.maps(k).map.shortname.value     = Model.mapPlots(j).shortName;
-%            model.maps(k).map.shortname.type     = 'char';
+%            mdl.maps(k).map.shortname.value     = model.mapPlots(j).shortName;
+%            mdl.maps(k).map.shortname.type     = 'char';
 
-%            model.maps(k).map.unit.value          = Model.mapPlots(j).Unit;
-%            model.maps(k).map.unit.type     = 'char';
+%            mdl.maps(k).map.unit.value          = model.mapPlots(j).Unit;
+%            mdl.maps(k).map.unit.type     = 'char';
 
-            model.maps(k).map.type.value      = 'kmz';
-            model.maps(k).map.type.type       = 'char';
+            mdl.maps(k).map.type.value      = 'kmz';
+            mdl.maps(k).map.type.type       = 'char';
 
-            model.maps(k).map.starttime.value = hm.Cycle;
-            model.maps(k).map.starttime.type  = 'date';
+            mdl.maps(k).map.starttime.value = hm.cycle;
+            mdl.maps(k).map.starttime.type  = 'date';
 
-            model.maps(k).map.stoptime.value  = hm.Cycle+Model.RunTime/1440;
-            model.maps(k).map.stoptime.type   = 'date';
+            mdl.maps(k).map.stoptime.value  = hm.cycle+model.runTime/1440;
+            mdl.maps(k).map.stoptime.type   = 'date';
 
-            model.maps(k).map.nrsteps.value   = (Model.RunTime)/(Model.mapPlots(j).timeStep/60)+1;
-            model.maps(k).map.nrsteps.type    = 'int';
+            mdl.maps(k).map.nrsteps.value   = (model.runTime)/(model.mapPlots(j).timeStep/60)+1;
+            mdl.maps(k).map.nrsteps.type    = 'int';
 
-            model.maps(k).map.timestep.value  = Model.mapPlots(j).timeStep/3600;
-            model.maps(k).map.timestep.type   = 'real';
+            mdl.maps(k).map.timestep.value  = model.mapPlots(j).timeStep/3600;
+            mdl.maps(k).map.timestep.type   = 'real';
 
         end
     end
@@ -321,24 +321,24 @@ for iw=1:length(Model.WebSite)
 
             k=k+1;
 
-            model.maps(k).map.filename.value  = [kmlpar{i} '.' Model.Name '.kmz'];
-            model.maps(k).map.filename.type   = 'char';
+            mdl.maps(k).map.filename.value  = [kmlpar{i} '.' model.name '.kmz'];
+            mdl.maps(k).map.filename.type   = 'char';
 
-            model.maps(k).map.parameter.value = kmlpar{i};
-            model.maps(k).map.parameter.type   = 'char';
+            mdl.maps(k).map.parameter.value = kmlpar{i};
+            mdl.maps(k).map.parameter.type   = 'char';
 
-            model.maps(k).map.longname.value  = lname{i};
-            model.maps(k).map.longname.type   = 'char';
+            mdl.maps(k).map.longname.value  = lname{i};
+            mdl.maps(k).map.longname.type   = 'char';
 
-            model.maps(k).map.shortname.value = kmlpar{i};
-            model.maps(k).map.shortname.type   = 'char';
+            mdl.maps(k).map.shortname.value = kmlpar{i};
+            mdl.maps(k).map.shortname.type   = 'char';
 
-            model.maps(k).map.type.value      = 'kmz';
-            model.maps(k).map.type.type   = 'char';
+            mdl.maps(k).map.type.value      = 'kmz';
+            mdl.maps(k).map.type.type   = 'char';
         end
     end
 
-    struct2xml(fname,model);
+    struct2xml(fname,mdl);
 %    xml_save(fname,model,'off');
 
 end

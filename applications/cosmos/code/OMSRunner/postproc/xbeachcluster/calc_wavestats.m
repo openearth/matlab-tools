@@ -51,24 +51,24 @@ for ii=1:length(specfile)
 %    out = readSwan2DSpec([inputdir,char(specfile(ii))]);
     out=readSP2([inputdir,char(specfile{ii})]);
     
-    t(ii)=out.Time.Time;
-    out.S(1,:,:)=out.Time.Points.Factor*out.Time.Points.Energy;
+    t(ii)=out.time.time;
+    out.s(1,:,:)=out.time.points.Factor*out.time.points.energy;
     out.f=out.Freqs;
-    out.d=out.Dirs';
+    out.d=out.dirs';
     
     % Convert the spectral data from energy density to variance units.
-    out.Sfix=(out.S.*2)./(row*g);
+    out.sfix=(out.s.*2)./(row*g);
     % Sum the energy over each direction to get the 1D Spectra
     dirres=abs(out.d(2)-out.d(1));
-    S1d=sum(out.Sfix,3)*dirres;
+    S1d=sum(out.sfix,3)*dirres;
     % Calculate Hs from the 1D spectra
     fi = [out.f(1):min(diff(out.f)):out.f(end)]';
-    Hs(ii) = 4*sqrt(trapz(trapz(interp2(out.d,out.f,squeeze(out.Sfix(1,:,:)),out.d,fi')))*(fi(2)-fi(1))*abs(out.d(2)-out.d(1)));
+    Hs(ii) = 4*sqrt(trapz(trapz(interp2(out.d,out.f,squeeze(out.sfix(1,:,:)),out.d,fi')))*(fi(2)-fi(1))*abs(out.d(2)-out.d(1)));
     % Find the frequency with the maximum energy
     imax=find(S1d==max(S1d));
     imax=imax(1);
     Tp(ii)=1/out.f(imax);
-    [id,jd]=find(squeeze(out.Sfix)==max(max(out.Sfix)));
+    [id,jd]=find(squeeze(out.sfix)==max(max(out.sfix)));
     id=id(1);
     jd=jd(1);
     Dp(ii)=out.d(jd);

@@ -1,12 +1,12 @@
 function hm=cosmos_readModels(hm)
 
-dirname=[hm.ScenarioDir 'models' filesep];
+dirname=[hm.scenarioDir 'models' filesep];
 
-continent=hm.Continents;
+continent=hm.continents;
 
 i=0;
 
-hm.Models=[];
+hm.models=[];
 
 for jj=1:length(continent)
     cntdir=[dirname continent{jj}];
@@ -28,30 +28,30 @@ for jj=1:length(continent)
     end
 end
 
-hm.NrModels=i;
+hm.nrModels=i;
 
-for i=1:hm.NrModels
-    hm.ModelNames{i}=hm.Models(i).LongName;
-    hm.ModelAbbrs{i}=hm.Models(i).Name;
-    hm.Models(i).NestedFlowModels=[];
-    hm.Models(i).NestedWaveModels=[];
+for i=1:hm.nrModels
+    hm.modelNames{i}=hm.models(i).longName;
+    hm.modelAbbrs{i}=hm.models(i).name;
+    hm.models(i).nestedFlowModels=[];
+    hm.models(i).nestedWaveModels=[];
 end
 
-for i=1:hm.NrModels
+for i=1:hm.nrModels
 
-    if hm.Models(i).FlowNested
-        fnest=hm.Models(i).FlowNestModel;
-        mm=findstrinstruct(hm.Models,'Name',fnest);
-        hm.Models(i).FlowNestModelNr=mm;
-        n=length(hm.Models(mm).NestedFlowModels);
-        hm.Models(mm).NestedFlowModels(n+1)=i;
+    if hm.models(i).flowNested
+        fnest=hm.models(i).flowNestModel;
+        mm=findstrinstruct(hm.models,'name',fnest);
+        hm.models(i).flowNestModelNr=mm;
+        n=length(hm.models(mm).nestedFlowModels);
+        hm.models(mm).nestedFlowModels(n+1)=i;
     end
-    if hm.Models(i).WaveNested
-        fnest=hm.Models(i).WaveNestModel;
-        mm=findstrinstruct(hm.Models,'Name',fnest);
-        hm.Models(i).WaveNestModelNr=mm;
-        n=length(hm.Models(mm).NestedWaveModels);
-        hm.Models(mm).NestedWaveModels(n+1)=i;
+    if hm.models(i).waveNested
+        fnest=hm.models(i).waveNestModel;
+        mm=findstrinstruct(hm.models,'name',fnest);
+        hm.models(i).waveNestModelNr=mm;
+        n=length(hm.models(mm).nestedWaveModels);
+        hm.models(mm).nestedWaveModels(n+1)=i;
     end
 end
 

@@ -27,7 +27,7 @@ function mopsp2xbeach(mopid,monthid,pnum,sdur,tstep,dr,FileRoot)
 % out2d.time = matlab datenumber
 % out2d.f = frequencies 
 % out2d.d = directions (nautical, based on CDIP output)
-% out2d.S = variance densities
+% out2d.s = variance densities
 % size(out2d.s) = [length(out2d.f) length(out2d.dir) length(out2d.time)]   
 %__________________________________________________________________________
 % JLE 9/25/09
@@ -87,7 +87,7 @@ end
 % Fix the 2d spectral file for each timestep.
 for jj=1:length(out2d.t)
     for ii=1:length(Dpc_fix)
-        Sfix(:,ii,jj)=out2d.S(:,sind(ii),jj);
+        Sfix(:,ii,jj)=out2d.s(:,sind(ii),jj);
     end
 end
 

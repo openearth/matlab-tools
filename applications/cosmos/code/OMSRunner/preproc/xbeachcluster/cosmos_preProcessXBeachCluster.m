@@ -1,48 +1,48 @@
 function cosmos_preProcessXBeachCluster(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-np=Model.NrProfiles;
+np=model.nrProfiles;
 
-tmpdir=hm.TempDir;
+tmpdir=hm.tempDir;
 
 for i=1:np
-    if Model.Profile(i).Run
-        [status,message,messageid]=copyfile([Model.Dir 'input' filesep Model.Profile(i).Name],[tmpdir filesep Model.Profile(i).Name],'f');
+    if model.profile(i).run
+        [status,message,messageid]=copyfile([model.dir 'input' filesep model.profile(i).name],[tmpdir filesep model.profile(i).name],'f');
     end
 end
 
-if Model.WaveNested
+if model.waveNested
     ok=NestingXBeachClusterWave(hm,m);
 end
 
-for i=1:Model.NrProfiles
-    if Model.Profile(i).Run
-        disp(['Generating params.txt cluster ' Model.LongName ' - profile ' Model.Profile(i).Name]);
+for i=1:model.nrProfiles
+    if model.profile(i).run
+        disp(['Generating params.txt cluster ' model.longName ' - profile ' model.profile(i).name]);
         cosmos_writeXBeachProfileParams(hm,m,i);
     end
 end
 
-if Model.FlowNested
+if model.flowNested
     NestingXBeachClusterFlow(hm,m);
 end
 
-%[status,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'xbeach_noMPI.exe'],tmpdir,'f');
+%[status,message,messageid]=copyfile([hm.exeDir 'xbeach_noMPI.exe'],tmpdir,'f');
 
 nprfperjob=hm.nrProfilesPerJob;
 
-switch Model.RunEnv
+switch model.runEnv
     
     case{'win32'}
 
-        [status,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'xbeach_dano.exe'],tmpdir,'f');
+        [status,message,messageid]=copyfile([hm.exeDir 'xbeach_dano.exe'],tmpdir,'f');
 
         % Make run batch file
         fid=fopen([tmpdir 'run.bat'],'wt');
         
         for i=1:np
             if ok(i)
-                id=Model.Profile(i).Name;
+                id=model.profile(i).name;
                 %        fprintf(fid,'%s\n',['copy xbeach_noMPI.exe ' id]);
                 fprintf(fid,'%s\n',['copy xbeach_dano.exe ' id]);
                 fprintf(fid,'%s\n',['cd ' id]);
@@ -87,7 +87,7 @@ switch Model.RunEnv
             fprintf(fid,'%s\n','### The name of this SGE job is explicitly set to another name;');
             fprintf(fid,'%s\n','### otherwise the name of the SGE script itself would be used. The name');
             fprintf(fid,'%s\n','### of the job also determines how the jobs output files will be called. ');
-            fprintf(fid,'%s\n',['#$ -N ' Model.Name]);
+            fprintf(fid,'%s\n',['#$ -N ' model.name]);
             fprintf(fid,'%s\n','### The next phrase asks for a "parallel environment" called "distrib",');
             fprintf(fid,'%s\n','### to be run with 4 slots (for instance 4 cores).');
             fprintf(fid,'%s\n','### "distrib" is a specific name for H3/H4 linux clusters (this name is');
@@ -150,7 +150,7 @@ switch Model.RunEnv
             fprintf(fid,'%s\n',['date -u ''+%Y%m%d %H%M%S'' >> running' num2str(j) '.txt']);
             for i=(j-1)*nprfperjob+1:min(j*nprfperjob,np)
                 if ok(i)
-                    id=Model.Profile(i).Name;
+                    id=model.profile(i).name;
                     fprintf(fid,'%s\n',['cd ' id]);
                     fprintf(fid,'%s\n','unzip sp2.zip');
                     fprintf(fid,'%s\n','$xbeach_bin_dir/xbeach >> output_xbeach 2>&1');

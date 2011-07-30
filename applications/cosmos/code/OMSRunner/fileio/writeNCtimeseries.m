@@ -11,7 +11,7 @@ end
 
 % First add time
 for i=1:length(s.datasets)
-    switch lower(s.datasets(i).Name)
+    switch lower(s.datasets(i).name)
         case{'time'}
             nc_add_dimension(ncfile,'time',length(s.datasets(i).data));
             v2=rmfield(s.datasets(i),'data');            
@@ -21,7 +21,7 @@ for i=1:length(s.datasets)
 end
 
 for i=1:length(s.datasets)
-    name=s.datasets(i).Name;
+    name=s.datasets(i).name;
     switch lower(name)
         case{'time'}
         otherwise

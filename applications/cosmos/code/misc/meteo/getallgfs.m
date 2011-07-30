@@ -12,7 +12,7 @@ cycnow=datenow+thnow;
 
 disp(datestr(cycnow,'yyyymmdd HHMMSS'));
 
-hm.ModelDirectory='d:\OperationalModelSystem\SantaBarbara\';
+hm.modelDirectory='d:\OperationalModelSystem\SantaBarbara\';
 
 for t=t0:dt:t1
     th=(t-floor(t))*24;
@@ -21,11 +21,11 @@ for t=t0:dt:t1
     if t<cycnow-0.25
         tt=[t t+0.125];
         disp(datestr(tt));
-        GetOpenDAP('gfs05',tcyc,tt,[],[],[hm.ModelDirectory 'meteo\']);
+        GetOpenDAP('gfs05',tcyc,tt,[],[],[hm.modelDirectory 'meteo\']);
     else
         tt=[t t1];
         disp(datestr(tt));
-        GetOpenDAP('gfs05',tcyc,tt,[],[],[hm.ModelDirectory 'meteo\']);
+        GetOpenDAP('gfs05',tcyc,tt,[],[],[hm.modelDirectory 'meteo\']);
         break
     end        
 end

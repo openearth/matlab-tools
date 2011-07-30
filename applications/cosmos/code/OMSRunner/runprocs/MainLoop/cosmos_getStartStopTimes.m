@@ -1,63 +1,63 @@
 function hm=cosmos_getStartStopTimes(hm)
 
-if strcmp(datestr(hm.Cycle,'mm-dd'),'01-01') == 1
-    y=num2str(str2num(datestr(hm.Cycle,'yyyy'))-1);
+if strcmp(datestr(hm.cycle,'mm-dd'),'01-01') == 1
+    y=num2str(str2num(datestr(hm.cycle,'yyyy'))-1);
 else
-    y=datestr(hm.Cycle,'yyyy');
+    y=datestr(hm.cycle,'yyyy');
 end
-hm.RefTime=datenum(['01/01/' y]);
+hm.refTime=datenum(['01/01/' y]);
 
-for i=1:hm.NrModels
-    t0(i)=hm.Cycle;
+for i=1:hm.nrModels
+    t0(i)=hm.cycle;
 end
 
 
-for i=1:hm.NrModels
-    hm.Models(i).TFlowStart=t0(i)+hm.Models(i).StartTime/24;
-    hm.Models(i).TOutputStart=hm.Cycle+hm.Models(i).StartTime/24;
-    hm.Models(i).TWaveStart=t0(i)+hm.Models(i).StartTime/24;
-    if hm.Models(i).RunTime==0
-        hm.Models(i).RunTime=hm.RunTime*60;
+for i=1:hm.nrModels
+    hm.models(i).tFlowStart=t0(i)+hm.models(i).startTime/24;
+    hm.models(i).tOutputStart=hm.cycle+hm.models(i).startTime/24;
+    hm.models(i).tWaveStart=t0(i)+hm.models(i).startTime/24;
+    if hm.models(i).runTime==0
+        hm.models(i).runTime=hm.runTime*60;
     else
-        hm.Models(i).RunTime=min(hm.Models(i).RunTime*60,hm.RunTime*60);
+        hm.models(i).runTime=min(hm.models(i).runTime*60,hm.runTime*60);
     end
-    hm.Models(i).TStop=hm.Cycle+hm.Models(i).StartTime/24+hm.Models(i).RunTime/1440;
-    hm.Models(i).RefTime=hm.RefTime;
-    hm.Models(i).RstInterval=hm.RunInterval*60;
-    hm.Models(i).FlowRstFile=[];
-    hm.Models(i).WaveRstFile=[];
-    hm.Models(i).TFlowOkay=t0(i);
-    hm.Models(i).TWaveOkay=t0(i);
+    hm.models(i).tStop=hm.cycle+hm.models(i).startTime/24+hm.models(i).runTime/1440;
+    hm.models(i).refTime=hm.refTime;
+    hm.models(i).rstInterval=hm.runInterval*60;
+    hm.models(i).flowRstFile=[];
+    hm.models(i).waveRstFile=[];
+    hm.models(i).tFlowOkay=t0(i);
+    hm.models(i).tWaveOkay=t0(i);
 end
 
-for i=1:hm.NrModels
+for i=1:hm.nrModels
 
-    nf=hm.Models(i).NestedFlowModels;
-    nw=hm.Models(i).NestedWaveModels;
+    nf=hm.models(i).nestedFlowModels;
+    nw=hm.models(i).nestedWaveModels;
 
     if isempty(nf) && isempty(nw)
 
         % No nesting in this model
-        tfok=t0(i)+hm.Models(i).StartTime/24;
-        twok=t0(i)+hm.Models(i).StartTime/24;
+        tfok=t0(i)+hm.models(i).startTime/24;
+        twok=t0(i)+hm.models(i).startTime/24;
         nested=1;
         m=i;
 
         % Start climbing through model tree
         while nested
             
-            if hm.Models(m).RunSimulation
+            if hm.models(m).runSimulation
                
-                hm.Models(m).TOutputStart=t0(m);
+                hm.models(m).tOutputStart=t0(m);
 
                 % WAVE
-                wspinup=hm.Models(m).WaveSpinUp/24;
-                hm.Models(m).TWaveStart=min(twok,hm.Models(m).TWaveStart);
-                switch lower(hm.Models(m).Type)
+                wspinup=hm.models(m).waveSpinUp/24;
+                hm.models(m).tWaveStart=min(twok,hm.models(m).tWaveStart);
+                switch lower(hm.models(m).type)
                     case{'ww3'}
-                        [rstw,rstfil]=cosmos_checkForRestartFile(hm,m,hm.Models(m).TWaveStart,wspinup,'ww3');
+                        [rstw,rstfil]=cosmos_checkForRestartFile(hm,m,hm.models(m).tWaveStart,wspinup,'ww3');
                     case{'delft3dflowwave'}
-                        [rstw,rstfil]=cosmos_checkForRestartFile(hm,m,hm.Models(m).TWaveStart,wspinup,'delft3dwave');
+                        [rstw,rstfil]=cosmos_checkForRestartFile(hm,m,hm.models(m).tWaveStart,wspinup,'delft3dwave');
                     otherwise
                         rstw=[];
                         rstfil=[];
@@ -65,56 +65,56 @@ for i=1:hm.NrModels
 
                 if ~isempty(rstw)
                     % Restart from restart file
-                    hm.Models(m).TWaveStart=rstw;
-                    hm.Models(m).TWaveOkay=hm.Models(m).TWaveStart;
+                    hm.models(m).tWaveStart=rstw;
+                    hm.models(m).tWaveOkay=hm.models(m).tWaveStart;
                 else
-%                    if hm.Models(m).TWaveStart+wspinup>twok
-                        hm.Models(m).TWaveStart=min(twok-wspinup,hm.Models(m).TWaveStart);
+%                    if hm.models(m).tWaveStart+wspinup>twok
+                        hm.models(m).tWaveStart=min(twok-wspinup,hm.models(m).tWaveStart);
 %                    end
-                    hm.Models(m).TWaveOkay=hm.Models(m).TWaveStart+wspinup;
+                    hm.models(m).tWaveOkay=hm.models(m).tWaveStart+wspinup;
                 end
-                hm.Models(m).WaveRstFile=rstfil;
+                hm.models(m).waveRstFile=rstfil;
 
                 % FLOW
-                fspinup=hm.Models(m).FlowSpinUp/24;
-                hm.Models(m).TFlowStart=min(tfok,hm.Models(m).TFlowStart);
+                fspinup=hm.models(m).flowSpinUp/24;
+                hm.models(m).tFlowStart=min(tfok,hm.models(m).tFlowStart);
                 % Flow always starts before wave
-%                 tfstartnowaves=hm.Models(m).TFlowStart;
-                hm.Models(m).TFlowStart=min(hm.Models(m).TWaveStart,hm.Models(m).TFlowStart);
-                switch lower(hm.Models(m).Type)
+%                 tfstartnowaves=hm.models(m).tFlowStart;
+                hm.models(m).tFlowStart=min(hm.models(m).tWaveStart,hm.models(m).tFlowStart);
+                switch lower(hm.models(m).type)
                     case{'delft3dflowwave','delft3dflow'}
-                        [rstf,rstfil]=cosmos_checkForRestartFile(hm,m,hm.Models(m).TFlowStart,fspinup,'delft3dflow');
+                        [rstf,rstfil]=cosmos_checkForRestartFile(hm,m,hm.models(m).tFlowStart,fspinup,'delft3dflow');
                     otherwise
                         rstf=[];
                         rstfil=[];
                 end
                 if ~isempty(rstf)
                     % Restart from restart file
-                    hm.Models(m).TFlowStart=rstf;
-                    hm.Models(m).TFlowOkay=hm.Models(m).TFlowStart;
+                    hm.models(m).tFlowStart=rstf;
+                    hm.models(m).tFlowOkay=hm.models(m).tFlowStart;
                 else
-%                    hm.Models(m).TFlowStart=max(hm.Models(m).TFlowStart,tfstartnowaves)-fspinup;
-                    hm.Models(m).TFlowStart=min(tfok-fspinup,hm.Models(m).TFlowStart);
-%                    hm.Models(m).TFlowStart=min(hm.Models(m).TWaveStart,hm.Models(m).TFlowStart);
-                    hm.Models(m).TFlowOkay=hm.Models(m).TFlowStart+fspinup;
+%                    hm.models(m).tFlowStart=max(hm.models(m).tFlowStart,tfstartnowaves)-fspinup;
+                    hm.models(m).tFlowStart=min(tfok-fspinup,hm.models(m).tFlowStart);
+%                    hm.models(m).tFlowStart=min(hm.models(m).tWaveStart,hm.models(m).tFlowStart);
+                    hm.models(m).tFlowOkay=hm.models(m).tFlowStart+fspinup;
                 end
-                hm.Models(m).FlowRstFile=rstfil;
+                hm.models(m).flowRstFile=rstfil;
 
-                tfok=hm.Models(m).TFlowStart;
-                twok=hm.Models(m).TWaveStart;
+                tfok=hm.models(m).tFlowStart;
+                twok=hm.models(m).tWaveStart;
 
             end
 
-            nested=hm.Models(m).FlowNested || hm.Models(m).WaveNested;
+            nested=hm.models(m).flowNested || hm.models(m).waveNested;
 
             m0=m;
             
-            if hm.Models(m0).FlowNested
-                m=hm.Models(m0).FlowNestModelNr;
+            if hm.models(m0).flowNested
+                m=hm.models(m0).flowNestModelNr;
             end
 
-            if hm.Models(m0).WaveNested
-                m=hm.Models(m0).WaveNestModelNr;
+            if hm.models(m0).waveNested
+                m=hm.models(m0).waveNestModelNr;
             end
 
         end

@@ -6,22 +6,22 @@ fid=fopen(fname1,'r');
 f=fgetl(fid);
 v=strread(f,'%s','whitespace','\\''');
 
-Spec.Name=v{1};
-Spec.Model=v{3};
+spec.name=v{1};
+spec.model=v{3};
 
 n=strread(v{2});
 
-Spec.NFreq=n(1);
-Spec.NDir=n(2);
-Spec.NPoints=n(3);
+spec.nFreq=n(1);
+spec.nDir=n(2);
+spec.nPoints=n(3);
 
-freq=textscan(fid,'%f',Spec.NFreq);
-Spec.Freqs=freq{1};
+freq=textscan(fid,'%f',spec.nFreq);
+spec.freqs=freq{1};
 
-dr=textscan(fid,'%f',Spec.NDir);
-Spec.Dirs=dr{1};
+dr=textscan(fid,'%f',spec.nDir);
+spec.dirs=dr{1};
 
-nbin=Spec.NFreq*Spec.NDir;
+nbin=spec.nFreq*spec.nDir;
 
 f=fgetl(fid);
 
@@ -32,30 +32,30 @@ while 1
     if ~ischar(f)
         break
     end
-    Spec.Time(k).Time=datenum(f,'yyyymmdd HHMMSS');
-    for i=1:Spec.NPoints
+    spec.time(k).time=datenum(f,'yyyymmdd HHMMSS');
+    for i=1:spec.nPoints
         f=fgetl(fid);
         v=strread(f,'%s','whitespace','\\''');
         pars=strread(v{2});
-        Spec.Time(k).Point(i).Name=v{1};
-        Spec.Time(k).Point(i).Lat=pars(1);
-        Spec.Time(k).Point(i).Lon=pars(2);
-        if Spec.Time(k).Point(i).Lon>180
-            Spec.Time(k).Point(i).Lon=Spec.Time(k).Point(i).Lon-360;
+        spec.time(k).point(i).name=v{1};
+        spec.time(k).point(i).lat=pars(1);
+        spec.time(k).point(i).lon=pars(2);
+        if spec.time(k).point(i).lon>180
+            spec.time(k).point(i).lon=spec.time(k).point(i).lon-360;
         end
-        Spec.Time(k).Point(i).Depth=pars(3);
-        Spec.Time(k).Point(i).WindSpeed=pars(4);
-        Spec.Time(k).Point(i).WindDir=pars(5);
-        if Spec.Time(k).Point(i).WindDir<0
-            Spec.Time(k).Point(i).WindDir+360;
+        spec.time(k).point(i).Depth=pars(3);
+        spec.time(k).point(i).windSpeed=pars(4);
+        spec.time(k).point(i).windDir=pars(5);
+        if spec.time(k).point(i).windDir<0
+            spec.time(k).point(i).windDir+360;
         end
-        Spec.Time(k).Point(i).CurSpeed=pars(6);
-        Spec.Time(k).Point(i).CurDir=pars(7);
-        if Spec.Time(k).Point(i).CurDir<0
-            Spec.Time(k).Point(i).CurDir+360;
+        spec.time(k).point(i).curSpeed=pars(6);
+        spec.time(k).point(i).curDir=pars(7);
+        if spec.time(k).point(i).curDir<0
+            spec.time(k).point(i).curDir+360;
         end
         data=textscan(fid,'%f',nbin);
-        Spec.Time(k).Point(i).Energy=data{1};
+        spec.time(k).point(i).energy=data{1};
         f=fgetl(fid);
     end        
 end
@@ -66,25 +66,25 @@ fclose(fid);
 convc=0;
 if ~strcmpi(coordsys,'wgs 84')
     convc=1;
-    for it=1:length(Spec.Time);
-        for ip=1:Spec.NPoints
-            [Spec.Time(it).Point(ip).Lon,Spec.Time(it).Point(ip).Lat]=ConvertCoordinates(Spec.Time(it).Point(ip).Lon,Spec.Time(it).Point(ip).Lat,'persistent','CS1.name','WGS 84','CS1.type','geographic','CS2.name',coordsys,'CS2.type',coordsystype);
+    for it=1:length(spec.time);
+        for ip=1:spec.nPoints
+            [spec.time(it).point(ip).lon,spec.time(it).point(ip).lat]=ConvertCoordinates(spec.time(it).point(ip).lon,spec.time(it).point(ip).lat,'persistent','CS1.name','WGS 84','CS1.type','geographic','CS2.name',coordsys,'CS2.type',coordsystype);
         end
     end
 end
 
-% Spec.Dirs=flipud(Spec.Dirs);
-% Spec.Freqs=flipud(Spec.Freqs);
+% spec.dirs=flipud(spec.dirs);
+% spec.freqs=flipud(spec.freqs);
 
-Spec.Dirs=Spec.Dirs*180/pi+180;
+spec.dirs=spec.dirs*180/pi+180;
 
 imin=0;
-for j=2:Spec.NDir
-    if Spec.Dirs(j)>Spec.Dirs(j-1)
+for j=2:spec.nDir
+    if spec.dirs(j)>spec.dirs(j-1)
         imin=1;
     end
     if imin
-        Spec.Dirs(j)=Spec.Dirs(j)-360;
+        spec.dirs(j)=spec.dirs(j)-360;
     end
 end
 
@@ -107,19 +107,19 @@ if convc
 else
     fprintf(fi2,'%s\n','LONLAT                                  locations in spherical coordinates');
 end
-fprintf(fi2,'%i\n',Spec.NPoints);
-for j=1:Spec.NPoints
-    fprintf(fi2,'%15.6f %15.6f\n',Spec.Time(1).Point(j).Lon,Spec.Time(1).Point(j).Lat);
+fprintf(fi2,'%i\n',spec.nPoints);
+for j=1:spec.nPoints
+    fprintf(fi2,'%15.6f %15.6f\n',spec.time(1).point(j).lon,spec.time(1).point(j).lat);
 end
 fprintf(fi2,'%s\n','AFREQ                                   absolute frequencies in Hz');
-fprintf(fi2,'%6i\n',Spec.NFreq);
-for j=1:Spec.NFreq
-    fprintf(fi2,'%15.4f\n',Spec.Freqs(j));
+fprintf(fi2,'%6i\n',spec.nFreq);
+for j=1:spec.nFreq
+    fprintf(fi2,'%15.4f\n',spec.freqs(j));
 end
 fprintf(fi2,'%s\n','NDIR                                   spectral nautical directions in degr');
-fprintf(fi2,'%i\n',Spec.NDir);
-for j=1:Spec.NDir
-    fprintf(fi2,'%15.4f\n',Spec.Dirs(j));
+fprintf(fi2,'%i\n',spec.nDir);
+for j=1:spec.nDir
+    fprintf(fi2,'%15.4f\n',spec.dirs(j));
 end
 fprintf(fi2,'%s\n','QUANT');
 fprintf(fi2,'%s\n','     1                                  number of quantities in table');
@@ -127,34 +127,34 @@ fprintf(fi2,'%s\n','EnDens                                  energy densities in 
 fprintf(fi2,'%s\n','J/m2/Hz/degr                            unit');
 fprintf(fi2,'%s\n','   -0.9900E+02                          exception value');
 
-for it=1:length(Spec.Time);
-    fprintf(fi2,'%s\n',datestr(Spec.Time(it).Time,'yyyymmdd.HHMMSS'));
-    for j=1:Spec.NPoints
+for it=1:length(spec.time);
+    fprintf(fi2,'%s\n',datestr(spec.time(it).time,'yyyymmdd.HHMMSS'));
+    for j=1:spec.nPoints
 
         rhow=1025;
         g=9.81;
         f=pi/180;
         
-        Spec.Time(it).Point(j).Energy=Spec.Time(it).Point(j).Energy*rhow*g*f;
+        spec.time(it).point(j).energy=spec.time(it).point(j).energy*rhow*g*f;
 
-        emax=max(max(Spec.Time(it).Point(j).Energy));
-        Spec.Time(it).Point(j).Factor=emax/990099;
-        Spec.Time(it).Point(j).Energy=round(Spec.Time(it).Point(j).Energy/Spec.Time(it).Point(j).Factor);
+        emax=max(max(spec.time(it).point(j).energy));
+        spec.time(it).point(j).factor=emax/990099;
+        spec.time(it).point(j).energy=round(spec.time(it).point(j).energy/spec.time(it).point(j).factor);
                
-        Spec.Time(it).Point(j).Energy=reshape(Spec.Time(it).Point(j).Energy,[Spec.NFreq Spec.NDir]);
-        Spec.Time(it).Point(j).Energy=transpose(Spec.Time(it).Point(j).Energy);
-%         Spec.Time(it).Point(j).Energy=flipud(Spec.Time(it).Point(j).Energy);
-%         Spec.Time(it).Point(j).Energy=fliplr(Spec.Time(it).Point(j).Energy);
-        Spec.Time(it).Point(j).Energy=reshape(Spec.Time(it).Point(j).Energy,[1 Spec.NFreq*Spec.NDir]);
+        spec.time(it).point(j).energy=reshape(spec.time(it).point(j).energy,[spec.nFreq spec.nDir]);
+        spec.time(it).point(j).energy=transpose(spec.time(it).point(j).energy);
+%         spec.time(it).point(j).energy=flipud(spec.time(it).point(j).energy);
+%         spec.time(it).point(j).energy=fliplr(spec.time(it).point(j).energy);
+        spec.time(it).point(j).energy=reshape(spec.time(it).point(j).energy,[1 spec.nFreq*spec.nDir]);
 
         
         
 
-        if Spec.Time(it).Point(j).Factor>0
+        if spec.time(it).point(j).factor>0
             fprintf(fi2,'%s\n','FACTOR');
-            fprintf(fi2,'%18.8e\n',Spec.Time(it).Point(j).Factor);
-            fmt=repmat([repmat('  %7i',1,Spec.NDir) '\n'],1,Spec.NFreq);
-            fprintf(fi2,fmt,Spec.Time(it).Point(j).Energy);
+            fprintf(fi2,'%18.8e\n',spec.time(it).point(j).factor);
+            fmt=repmat([repmat('  %7i',1,spec.nDir) '\n'],1,spec.nFreq);
+            fprintf(fi2,fmt,spec.time(it).point(j).energy);
         else
             fprintf(fi2,'%s\n','NODATA');
         end
@@ -179,39 +179,39 @@ fclose(fi2);
 % 
 % fid=fopen(fname2,'wt');
 % 
-% str1=['''' Spec.Name ''''];
-% str2=sprintf('%6.0f',Spec.NFreq);
-% str3=sprintf('%6.0f',Spec.NDir);
-% str4=sprintf('%6.0f',Spec.NPoints);
-% str5=['''' Spec.Model ''' '];
+% str1=['''' spec.name ''''];
+% str2=sprintf('%6.0f',spec.nFreq);
+% str3=sprintf('%6.0f',spec.nDir);
+% str4=sprintf('%6.0f',spec.nPoints);
+% str5=['''' spec.model ''' '];
 % 
 % str=[str1 ' ' str2 str3 str4 ' ' str5];
 % fprintf(fid,'%s\n',str);
 % 
-% nlines=floor(Spec.NFreq/8);
-% nlast=Spec.NFreq-nlines*8;
+% nlines=floor(spec.nFreq/8);
+% nlast=spec.nFreq-nlines*8;
 % fmt=repmat([repmat(' %9.2E',1,8) '\n'],1,nlines);
 % if nlast>0
 %     fmt=[fmt repmat(' %9.2E',1,nlast) '\n'];
 % end
-% fprintf(fid,fmt,Spec.Freqs);
+% fprintf(fid,fmt,spec.freqs);
 % 
-% nlines=floor(Spec.NDir/7);
-% nlast=Spec.NDir-nlines*7;
+% nlines=floor(spec.nDir/7);
+% nlast=spec.nDir-nlines*7;
 % fmt=repmat([repmat('  %9.2E',1,7) '\n'],1,nlines);
 % if nlast>0
 %     fmt=[fmt repmat('  %9.2E',1,nlast) '\n'];
 % end
-% fprintf(fid,fmt,Spec.Dirs);
+% fprintf(fid,fmt,spec.dirs);
 % 
-% nt=length(Spec.Time);
+% nt=length(spec.time);
 % 
 % for it=1:nt
-%     fprintf(fid,'%s\n',datestr(Spec.Time(it).Time,'yyyymmdd HHMMSS'));
+%     fprintf(fid,'%s\n',datestr(spec.time(it).time,'yyyymmdd HHMMSS'));
 % 
-%     for ip=1:Spec.NPoints
-%         str=['''' Spec.Time(it).Point(ip).Name '''' num2str(Spec.Time(it).Point(ip).Lat,'%10.2f') num2str(Spec.Time(it).Point(ip).Lon,'%10.2f') num2str(Spec.Time(it).Point(ip).Depth,'%10.1f')];
-%         fprintf(fid,'%s%s%s%7.2f%8.2f%10.1f%7.2f%6.1f%7.2f%6.1f\n','''',Spec.Time(it).Point(ip).Name,'''',Spec.Time(it).Point(ip).Lat,Spec.Time(it).Point(ip).Lon,Spec.Time(it).Point(ip).Depth,Spec.Time(it).Point(ip).WindSpeed,Spec.Time(it).Point(ip).WindDir,Spec.Time(it).Point(ip).CurSpeed,Spec.Time(it).Point(ip).CurDir);
+%     for ip=1:spec.nPoints
+%         str=['''' spec.time(it).point(ip).name '''' num2str(spec.time(it).point(ip).lat,'%10.2f') num2str(spec.time(it).point(ip).lon,'%10.2f') num2str(spec.time(it).point(ip).Depth,'%10.1f')];
+%         fprintf(fid,'%s%s%s%7.2f%8.2f%10.1f%7.2f%6.1f%7.2f%6.1f\n','''',spec.time(it).point(ip).name,'''',spec.time(it).point(ip).lat,spec.time(it).point(ip).lon,spec.time(it).point(ip).Depth,spec.time(it).point(ip).windSpeed,spec.time(it).point(ip).windDir,spec.time(it).point(ip).curSpeed,spec.time(it).point(ip).curDir);
 % 
 %         nlines=floor(nbin/7);
 %         nlast=nbin-nlines*7;
@@ -219,7 +219,7 @@ fclose(fi2);
 %         if nlast>0
 %             fmt=[fmt repmat('  %9.2E',1,nlast) '\n'];
 %         end
-%         fprintf(fid,fmt,Spec.Time(it).Point(ip).Energy);
+%         fprintf(fid,fmt,spec.time(it).point(ip).energy);
 % 
 %     end
 % 

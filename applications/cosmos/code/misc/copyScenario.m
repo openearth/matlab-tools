@@ -1,5 +1,5 @@
 clear all;close all;
-hm=ReadOMSConfigFile;
+hm=cosmos_readReadConfigFile;
 
 Continents{1}='northamerica';
 Continents{2}='centralamerica';
@@ -13,10 +13,10 @@ Continents{8}='world';
 scenori='forecasts';
 scennew='jan2010';
 
-MakeDir([hm.MainDir 'scenarios'],scennew);
-scendir=[hm.MainDir 'scenarios\' scennew '\'];
+MakeDir([hm.runDir 'scenarios'],scennew);
+scendir=[hm.runDir 'scenarios\' scennew '\'];
 
-oridir=[hm.MainDir 'scenarios\' scenori '\'];
+oridir=[hm.runDir 'scenarios\' scenori '\'];
 
 MakeDir(scendir,'observations');
 copyfile([oridir 'observations'],[scendir 'observations']);

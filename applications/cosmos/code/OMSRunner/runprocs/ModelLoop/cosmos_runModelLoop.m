@@ -44,39 +44,39 @@ try
             
             m=WaitingList(i);
             
-            if ~strcmpi(hm.Models(m).Status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
+            if ~strcmpi(hm.models(m).status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
                 
                 % Check if simulation actually needs to run (not sure how
                 % this could happen... TODO Should check it out.
-                if hm.Models(m).RunSimulation
-                    mdl=hm.Models(m).Name;
-                    set(hm.TextModelLoopStatus,'String',['Status : pre-processing ' mdl ' ...']);drawnow;
+                if hm.models(m).runSimulation
+                    mdl=hm.models(m).name;
+                    set(hm.textModelLoopStatus,'String',['Status : pre-processing ' mdl ' ...']);drawnow;
                     try
-                        WriteLogFile(['Pre-processing ' hm.Models(m).Name]);
+                        WriteLogFile(['Pre-processing ' hm.models(m).name]);
                         % Pre-processing
                         cosmos_preProcess(hm,m);
                     catch
-                        WriteErrorLogFile(hm,['Something went wrong pre-processing ' hm.Models(m).Name]);
-                        hm.Models(m).Status='failed';
+                        WriteErrorLogFile(hm,['Something went wrong pre-processing ' hm.models(m).name]);
+                        hm.models(m).status='failed';
                     end
                     try
                         % If pre-processing went okay, now submit the job
-                        if ~strcmpi(hm.Models(m).Status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
-                            WriteLogFile(['Submitting job ' hm.Models(m).Name]);
+                        if ~strcmpi(hm.models(m).status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
+                            WriteLogFile(['Submitting job ' hm.models(m).name]);
                             % Submitting
-                            %                            if ~strcmpi(hm.Models(m).Type,'xbeachcluster')
+                            %                            if ~strcmpi(hm.models(m).type,'xbeachcluster')
                             cosmos_submitJob(hm,m);
                             %                            end
                         end
                     catch
-                        WriteErrorLogFile(hm,['Something went wrong submitting job for ' hm.Models(m).Name]);
-                        hm.Models(m).Status='failed';
+                        WriteErrorLogFile(hm,['Something went wrong submitting job for ' hm.models(m).name]);
+                        hm.models(m).status='failed';
                     end
                 end
                 
                 % If everything went okay, set model status to running
-                if ~strcmpi(hm.Models(m).Status,'failed')
-                    hm.Models(m).Status='running';
+                if ~strcmpi(hm.models(m).status,'failed')
+                    hm.models(m).status='running';
                 end
                 
             end
@@ -100,24 +100,24 @@ try
             % Moving data
             m=FinishedList(i);
             
-            if ~strcmpi(hm.Models(m).Status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
-                mdl=hm.Models(m).Name;
-                set(hm.TextModelLoopStatus,'String',['Status : moving ' mdl ' ...']);drawnow;
+            if ~strcmpi(hm.models(m).status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
+                mdl=hm.models(m).name;
+                set(hm.textModelLoopStatus,'String',['Status : moving ' mdl ' ...']);drawnow;
                 try
-                    WriteLogFile(['Moving data ' hm.Models(m).Name]);
+                    WriteLogFile(['Moving data ' hm.models(m).name]);
                     tic
                     % Move the model results to local main directory
                     cosmos_moveModelData(hm,m);
                 catch
-                    WriteErrorLogFile(hm,['Something went wrong moving data of ' hm.Models(m).Name]);
-                    hm.Models(m).Status='failed';
+                    WriteErrorLogFile(hm,['Something went wrong moving data of ' hm.models(m).name]);
+                    hm.models(m).status='failed';
                 end
-                hm.Models(m).MoveDuration=toc;
+                hm.models(m).moveDuration=toc;
                 
                 % Set model status to simulationfinished (if everything went okay)
                 % The model is now ready for further post-processing (extracting data, making figures, uploading to website)
-                if ~strcmpi(hm.Models(m).Status,'failed')
-                    hm.Models(m).Status='simulationfinished';
+                if ~strcmpi(hm.models(m).status,'failed')
+                    hm.models(m).status='simulationfinished';
                 end
                 
             end
@@ -130,8 +130,8 @@ try
     
     % Find simulations that are finished and been moved to local pc
     m=[];
-    for i=1:hm.NrModels
-        if strcmpi(hm.Models(i).Status,'simulationfinished')
+    for i=1:hm.nrModels
+        if strcmpi(hm.models(i).status,'simulationfinished')
             m=i;
             % Only post-process one model at a time
             break;
@@ -141,41 +141,41 @@ try
     % If there is a simulation ready for processing ...
     if ~isempty(m)
         
-        mdl=hm.Models(m).Name;
-        set(hm.TextModelLoopStatus,'String',['Status : post-processing ' mdl ' ...']);drawnow;
+        mdl=hm.models(m).name;
+        set(hm.textModelLoopStatus,'String',['Status : post-processing ' mdl ' ...']);drawnow;
         
-        WriteLogFile(['Processing data ' hm.Models(m).Name]);
+        WriteLogFile(['Processing data ' hm.models(m).name]);
         
         % Process model results
         hm=cosmos_processData(hm,m);
         
-        disp(['Post-processing ' hm.Models(m).Name ' finished']);
+        disp(['Post-processing ' hm.models(m).name ' finished']);
         
         % Check if anything went wrong
-        if ~strcmpi(hm.Models(m).Status,'failed')
+        if ~strcmpi(hm.models(m).status,'failed')
             % Model finished, no failures
             cosmos_writeJoblistFile(hm,m,'finished');
-            hm.Models(m).Status='finished';
+            hm.models(m).status='finished';
         else
             % Model finished, with failures
             cosmos_writeJoblistFile(hm,m,'failed');
-            hm.Models(m).Status='failed';
+            hm.models(m).status='failed';
         end
         
     end
-    set(hm.TextModelLoopStatus,'String','Status : active');drawnow;
+    set(hm.textModelLoopStatus,'String','Status : active');drawnow;
     
     
     %%  Check if all simulations are finished
     
     alfin=1;
     failed=0;
-    for i=1:hm.NrModels
-        if ~strcmpi(hm.Models(i).Status,'finished') && ~strcmpi(hm.Models(i).Status,'failed') && hm.Models(i).Priority>0
+    for i=1:hm.nrModels
+        if ~strcmpi(hm.models(i).status,'finished') && ~strcmpi(hm.models(i).status,'failed') && hm.models(i).priority>0
             alfin=0;
         end
         % Check if one of the models failed.
-        if strcmpi(hm.Models(i).Status,'failed')
+        if strcmpi(hm.models(i).status,'failed')
             failed=1;
         end
     end
@@ -190,14 +190,14 @@ try
     if alfin && ~isempty(t2)
         delete(t1);
         delete(t2);
-        set(hm.TextModelLoopStatus,'String','Status : inactive');drawnow;
+        set(hm.textModelLoopStatus,'String','Status : inactive');drawnow;
         % If cycle mode is continuous, start new MainLoop
-        if strcmpi(hm.CycleMode,'continuous')
-            disp(['Finished cycle ' datestr(hm.Cycle,'yyyymmdd.HHMMSS')]);
-            hm.Cycle=hm.Cycle+hm.RunInterval/24;
-            disp(['Starting cycle ' datestr(hm.Cycle,'yyyymmdd.HHMMSS')]);
-            set(hm.EditCycle,'String',datestr(hm.Cycle,'yyyymmdd HHMMSS'));
-            set(hm.TextModelLoopStatus,'String','Status : waiting');drawnow;
+        if strcmpi(hm.cycleMode,'continuous')
+            disp(['Finished cycle ' datestr(hm.cycle,'yyyymmdd.HHMMSS')]);
+            hm.cycle=hm.cycle+hm.runInterval/24;
+            disp(['Starting cycle ' datestr(hm.cycle,'yyyymmdd.HHMMSS')]);
+            set(hm.editCycle,'String',datestr(hm.cycle,'yyyymmdd HHMMSS'));
+            set(hm.textModelLoopStatus,'String','Status : waiting');drawnow;
             guidata(findobj('Tag','OMSMain'),hm);
             cosmos_startMainLoop(hm);
         end

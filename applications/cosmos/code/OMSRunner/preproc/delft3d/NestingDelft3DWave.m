@@ -1,18 +1,18 @@
 function NestingDelft3DWave(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-tmpdir=hm.TempDir;
+tmpdir=hm.tempDir;
 
 curdir=pwd;
 
-mm=Model.WaveNestModelNr;
+mm=model.waveNestModelNr;
 
-% dr=Model.Dir;
+% dr=model.dir;
 
-outputdir=[hm.Models(mm).Dir 'lastrun' filesep 'output' filesep];
+outputdir=[hm.models(mm).dir 'lastrun' filesep 'output' filesep];
 
-switch lower(hm.Models(mm).Type)
+switch lower(hm.models(mm).type)
 
     case{'ww3'}
 
@@ -22,11 +22,11 @@ switch lower(hm.Models(mm).Type)
 
             % Nesting Delft3D in WWIII
             
-%             nt=(Model.TStop-Model.TWaveStart)*24+1;
+%             nt=(model.tStop-model.tWaveStart)*24+1;
 %            
 %             [status,message,messageid]=copyfile([outputdir 'out_pnt.ww3'],tmpdir,'f');
 %             [status,message,messageid]=copyfile([outputdir 'mod_def.ww3'],tmpdir,'f');
-%             [status,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'ww3_outp.exe'],tmpdir,'f');
+%             [status,message,messageid]=copyfile([hm.exeDir 'ww3_outp.exe'],tmpdir,'f');
 % 
 %             curdir=pwd;
 %             
@@ -36,7 +36,7 @@ switch lower(hm.Models(mm).Type)
 %             
 %             fid=fopen([tmpdir 'ww3_outp.inp'],'wt');
 %             fprintf(fid,'%s\n','$');
-%             fprintf(fid,'%s\n',[datestr(Model.TWaveStart,'yyyymmdd HHMMSS') ' 3600 ' num2str(nt)]);
+%             fprintf(fid,'%s\n',[datestr(model.tWaveStart,'yyyymmdd HHMMSS') ' 3600 ' num2str(nt)]);
 %             fprintf(fid,'%s\n','1');
 %             fprintf(fid,'%s\n','-1');
 %             fprintf(fid,'%s\n','0');
@@ -61,20 +61,20 @@ switch lower(hm.Models(mm).Type)
 %             for k=1:length(c)
 %                 name{k}=c{k}(1:end-3);
 %             end
-%             ip=strmatch(Model.Runid,name,'exact');
+%             ip=strmatch(model.runid,name,'exact');
 % 
 %             % Now extract the stations
 %             
-%             WriteWW3Outp([tmpdir 'ww3_outp.inp'],ip,Model.TWaveStart,3600,nt,1);
+%             WriteWW3Outp([tmpdir 'ww3_outp.inp'],ip,model.tWaveStart,3600,nt,1);
 %             
 %             system('ww3_outp.exe');
 %             
 %             cd(curdir);
             
-            fname=[outputdir 'ww3.' Model.Name '.spc'];
+            fname=[outputdir 'ww3.' model.name '.spc'];
 
-%            ConvertWW3spc(fname,[tmpdir 'ww3.spc'],Model.CoordinateSystem,Model.CoordinateSystemType,hm.CoordinateSystems,hm.Operations);
-            ConvertWW3spc(fname,[tmpdir Model.Name '.sp2'],Model.CoordinateSystem,Model.CoordinateSystemType);
+%            ConvertWW3spc(fname,[tmpdir 'ww3.spc'],model.coordinateSystem,model.coordinateSystemType,hm.coordinateSystems,hm.Operations);
+            ConvertWW3spc(fname,[tmpdir model.name '.sp2'],model.coordinateSystem,model.coordinateSystemType);
             
 %             delete([tmpdir 'ww3_outp.inp']);
 %             delete([tmpdir 'out_pnt.ww3']);
@@ -82,7 +82,7 @@ switch lower(hm.Models(mm).Type)
 %             delete([tmpdir 'ww3_outp.exe']);
             
         catch
-            WriteErrorLogFile(hm,['An error occured during nesting of Delft3D in WWIII - ' Model.Name]);
+            WriteErrorLogFile(hm,['An error occured during nesting of Delft3D in WWIII - ' model.name]);
         end
 
     case{'delft3dwave','delft3dflowwave'}
@@ -93,14 +93,14 @@ switch lower(hm.Models(mm).Type)
 
             disp('Nesting in SWAN ...');
             
-            [success,message,messageid]=copyfile([outputdir Model.Runid '*.sp2'],tmpdir,'f');
+            [success,message,messageid]=copyfile([outputdir model.runid '*.sp2'],tmpdir,'f');
 
-            ConvertSWANNestSpec(tmpdir,[tmpdir Model.Name '.sp2'],hm,mm,m);
+            ConvertSWANNestSpec(tmpdir,[tmpdir model.name '.sp2'],hm,mm,m);
             
-            delete([tmpdir Model.Runid '.*t*.sp2']);
+            delete([tmpdir model.runid '.*t*.sp2']);
             
         catch
-            WriteErrorLogFile(hm,['An error occured during nesting of Delft3D in SWAN - ' Model.Name]);
+            WriteErrorLogFile(hm,['An error occured during nesting of Delft3D in SWAN - ' model.name]);
         end
      
 end

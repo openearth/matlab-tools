@@ -22,8 +22,8 @@ function [out1d,out2d] = read_mopsp_mult(mopid,monthid,dstart,dend)
 %             file stored in the following format.
 %     out1d.t = matlab datenumber
 %     out1d.f = frequencies, (Hz)
-%     out1d.E = energy densities (m2/Hz)
-%     size(out1d.E) = [length(out1d.f) length(out1d.time)]
+%     out1d.e = energy densities (m2/Hz)
+%     size(out1d.e) = [length(out1d.f) length(out1d.time)]
 %     out1d.dmean = mean direction for each freq (deg)
 %     out1d.a1 = fourier coefficient for each freq
 %     out1d.b1 = fourier coefficient for each freq
@@ -40,7 +40,7 @@ function [out1d,out2d] = read_mopsp_mult(mopid,monthid,dstart,dend)
 %     out2d.t = matlab datenumber
 %     out2d.f = frequencies 
 %     out2d.d = directions 
-%     out2d.S = variance densities,
+%     out2d.s = variance densities,
 %     size(out2d.s) = [length(out2d.f) length(out2d.dir) length(out2d.time)]
 
 %   Assumptions:
@@ -135,7 +135,7 @@ elseif(dstart==1 & dend==1)
 end
 %__________________________________________________________________________
 %plot 1d spectral timeseries read in from MOP file
-maxE = max(max(out1d.E));
+maxE = max(max(out1d.e));
 c = maxE;
 for ii=1:31
   c = [c(1)/2; c];
@@ -144,7 +144,7 @@ cmap = jet(length(c)-1);
 cmap(1,:)= [1 1 1];
 
 figure
-pcolor(out1d.t',out1d.f,out1d.E)
+pcolor(out1d.t',out1d.f,out1d.e)
 colormap(cmap)
 shading interp
 colorbar
@@ -205,7 +205,7 @@ for ii=1:length(out1d.t)
     for jj=1:length(out1d.f)
         for kk=1:length(dir)
             if kk==dind(jj,ii)
-               S(jj,kk,ii)= (out1d.E(jj,ii))/dirres;
+               S(jj,kk,ii)= (out1d.e(jj,ii))/dirres;
             else
                S(jj,kk,ii) = 0;
             end

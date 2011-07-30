@@ -6,7 +6,7 @@ function write2DXbeachSpec(SS,name,sdur,tstep)
 %   Input:
 %     SS = struct('t',datenum(s),'f',freqs,'d',dirs,...
 %          'S',2D_variance_densities)
-%        size(SS.S) = [length(SS.f) length(SS.d) length(SS.t)]
+%        size(SS.s) = [length(SS.f) length(SS.d) length(SS.t)]
 %     name = 'text'; used in file name written (ex: 'VE')
 %     sdur = duration of each wave spectrum condition in seconds (ex: 3600)
 %     tstep = required time step in boundary condition file in seconds 
@@ -46,7 +46,7 @@ for ii=1:length(SS.t)
     end
 
     % spectral data
-    tmp = SS.S(:,:,ii);
+    tmp = SS.s(:,:,ii);
     So = tmp;
     for mm=1:size(So,1)
        fprintf(fid,' %9.4f',So(mm,:)); 

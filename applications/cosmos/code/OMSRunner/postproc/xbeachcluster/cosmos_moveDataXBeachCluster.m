@@ -1,13 +1,13 @@
 function cosmos_moveDataXBeachCluster(hm,m)
 
-rundir=[hm.JobDir hm.Models(m).Name filesep];
+rundir=[hm.jobDir hm.models(m).name filesep];
 
 delete([rundir '*.exe']);
 if exist([rundir 'run.bat'],'file')
     delete([rundir 'run.bat']);
 end
 
-dr=hm.Models(m).Dir;
+dr=hm.models(m).dir;
 
 lst=dir(rundir);
 for i=1:length(lst)
@@ -21,7 +21,7 @@ for i=1:length(lst)
                 inpdir=[dr 'lastrun' filesep 'input' filesep lst(i).name filesep];
                 outdir=[dr 'lastrun' filesep 'output' filesep lst(i).name filesep];
 
-                [status,message,messageid]=movefile([rundir lst(i).name filesep hm.Models(m).Runid '*.sp2'],inpdir,'f');
+                [status,message,messageid]=movefile([rundir lst(i).name filesep hm.models(m).runid '*.sp2'],inpdir,'f');
                 [status,message,messageid]=movefile([rundir lst(i).name filesep '*.zip'],inpdir,'f');
                 [status,message,messageid]=movefile([rundir lst(i).name filesep '*.txt'],inpdir,'f');
                 [status,message,messageid]=movefile([rundir lst(i).name filesep '*.dep'],inpdir,'f');

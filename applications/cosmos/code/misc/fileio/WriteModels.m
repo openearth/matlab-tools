@@ -5,10 +5,10 @@ i2=[];
 
 if nargin==1
     i1=1;
-    i2=hm.NrModels;
+    i2=hm.nrModels;
 else
-    for i=1:hm.NrModels
-        if strcmpi(hm.Models(i).Name,varargin{1})
+    for i=1:hm.nrModels
+        if strcmpi(hm.models(i).name,varargin{1})
             i1=i;
             i2=i;
         end
@@ -19,109 +19,109 @@ if ~isempty(i1)
 
     for i=i1:i2
 
-        dirname=[hm.ModelDirectory 'models\' hm.Models(i).Continent '\' hm.Models(i).Name];
+        dirname=[hm.modelDirectory 'models\' hm.models(i).continent '\' hm.models(i).name];
         system(['md ' dirname]);
 
-        fname=[dirname '\' hm.Models(i).Name '.dat'];
+        fname=[dirname '\' hm.models(i).name '.dat'];
 
         fid=fopen(fname,'wt');
 
-        fprintf(fid,'%s\n',['Model "' hm.Models(i).Name '"']);
-        fprintf(fid,'%s\n',['   Type        "' hm.Models(i).Type '"']);
-        fprintf(fid,'%s\n',['   Name        ' hm.Models(i).Name]);
-        fprintf(fid,'%s\n',['   Runid       ' hm.Models(i).Runid]);
-        fprintf(fid,'%s\n',['   Location    ' num2str(hm.Models(i).Location(1)) ' ' num2str(hm.Models(i).Location(2))]);
-        fprintf(fid,'%s\n',['   Continent   "' hm.Models(i).Continent '"']);
-        fprintf(fid,'%s\n',['   Size        ' num2str(hm.Models(i).Size)]);
-        fprintf(fid,'%s\n',['   XLim        ' num2str(hm.Models(i).XLim(1)) ' ' num2str(hm.Models(i).XLim(2))]);
-        fprintf(fid,'%s\n',['   YLim        ' num2str(hm.Models(i).YLim(1)) ' ' num2str(hm.Models(i).YLim(2))]);
-        fprintf(fid,'%s\n',['   Priority    ' num2str(hm.Models(i).Priority)]);
-        if hm.Models(i).Nested
-            fprintf(fid,'%s\n',['   Nested      "' hm.Models(i).NestModel '"']);
+        fprintf(fid,'%s\n',['Model "' hm.models(i).name '"']);
+        fprintf(fid,'%s\n',['   Type        "' hm.models(i).type '"']);
+        fprintf(fid,'%s\n',['   Name        ' hm.models(i).name]);
+        fprintf(fid,'%s\n',['   Runid       ' hm.models(i).runid]);
+        fprintf(fid,'%s\n',['   Location    ' num2str(hm.models(i).Location(1)) ' ' num2str(hm.models(i).Location(2))]);
+        fprintf(fid,'%s\n',['   Continent   "' hm.models(i).continent '"']);
+        fprintf(fid,'%s\n',['   Size        ' num2str(hm.models(i).size)]);
+        fprintf(fid,'%s\n',['   XLim        ' num2str(hm.models(i).xLim(1)) ' ' num2str(hm.models(i).xLim(2))]);
+        fprintf(fid,'%s\n',['   YLim        ' num2str(hm.models(i).yLim(1)) ' ' num2str(hm.models(i).yLim(2))]);
+        fprintf(fid,'%s\n',['   Priority    ' num2str(hm.models(i).priority)]);
+        if hm.models(i).nested
+            fprintf(fid,'%s\n',['   Nested      "' hm.models(i).nestModel '"']);
         end
-        if hm.Models(i).WaveNested
-            fprintf(fid,'%s\n',['   WaveNested  "' hm.Models(i).WaveNestModel '"']);
+        if hm.models(i).waveNested
+            fprintf(fid,'%s\n',['   WaveNested  "' hm.models(i).waveNestModel '"']);
         end
-        fprintf(fid,'%s\n',['   SpinUpTime  ' num2str(hm.Models(i).SpinUp)]);
-        fprintf(fid,'%s\n',['   RunTime     ' num2str(hm.Models(i).RunTime)]);
-        fprintf(fid,'%s\n',['   TimeStep    ' num2str(hm.Models(i).TimeStep)]);
-        fprintf(fid,'%s\n',['   MapTimeStep ' num2str(hm.Models(i).MapTimeStep)]);
-        fprintf(fid,'%s\n',['   HisTimeStep ' num2str(hm.Models(i).HisTimeStep)]);
-        fprintf(fid,'%s\n',['   ComTimeStep ' num2str(hm.Models(i).ComTimeStep)]);
-        if hm.Models(i).UseMeteo
+        fprintf(fid,'%s\n',['   SpinUpTime  ' num2str(hm.models(i).spinUp)]);
+        fprintf(fid,'%s\n',['   RunTime     ' num2str(hm.models(i).runTime)]);
+        fprintf(fid,'%s\n',['   TimeStep    ' num2str(hm.models(i).timeStep)]);
+        fprintf(fid,'%s\n',['   MapTimeStep ' num2str(hm.models(i).mapTimeStep)]);
+        fprintf(fid,'%s\n',['   HisTimeStep ' num2str(hm.models(i).hisTimeStep)]);
+        fprintf(fid,'%s\n',['   ComTimeStep ' num2str(hm.models(i).comTimeStep)]);
+        if hm.models(i).useMeteo
             fprintf(fid,'%s\n',['   UseMeteo    yes']);
         else
             fprintf(fid,'%s\n',['   UseMeteo    no']);
         end
-        for j=1:hm.Models(i).NrStations
-            fprintf(fid,'%s\n',['   Station "' hm.Models(i).Stations(j).Name2 '"']);
-            fprintf(fid,'%s\n',['      StName          "' hm.Models(i).Stations(j).Name1 '"']);
-            fprintf(fid,'%s\n',['      StLocation      ' num2str(hm.Models(i).Stations(j).Location(1)) ' ' num2str(hm.Models(i).Stations(j).Location(2))]);
-            if ~isempty(hm.Models(i).Stations(j).MN)
-                fprintf(fid,'%s\n',['      StMN            ' num2str(hm.Models(i).Stations(j).MN(1)) ' ' num2str(hm.Models(i).Stations(j).MN(2))]);
+        for j=1:hm.models(i).nrStations
+            fprintf(fid,'%s\n',['   Station "' hm.models(i).stations(j).name2 '"']);
+            fprintf(fid,'%s\n',['      StName          "' hm.models(i).stations(j).name1 '"']);
+            fprintf(fid,'%s\n',['      StLocation      ' num2str(hm.models(i).stations(j).Location(1)) ' ' num2str(hm.models(i).stations(j).Location(2))]);
+            if ~isempty(hm.models(i).stations(j).mN)
+                fprintf(fid,'%s\n',['      StMN            ' num2str(hm.models(i).stations(j).mN(1)) ' ' num2str(hm.models(i).stations(j).mN(2))]);
             end
-            for k=1:hm.Models(i).Stations(j).NrParameters
-                fprintf(fid,'%s\n',['      Parameter ' hm.Models(i).Stations(j).Parameters(k).Name]);                
-                if hm.Models(i).Stations(j).Parameters(k).PlotCmp
+            for k=1:hm.models(i).stations(j).nrParameters
+                fprintf(fid,'%s\n',['      Parameter ' hm.models(i).stations(j).parameters(k).name]);                
+                if hm.models(i).stations(j).parameters(k).plotCmp
                     str='yes';
                 else
                     str='no';
                 end
                 fprintf(fid,'%s\n',['         PlotCmp     ' str]);
                 %
-                if hm.Models(i).Stations(j).Parameters(k).PlotObs
+                if hm.models(i).stations(j).parameters(k).plotObs
                     str='yes';
                 else
                     str='no';
                 end
                 fprintf(fid,'%s\n',['         PlotObs     ' str]);
-                if ~strcmpi(hm.Models(i).Stations(j).Parameters(k).ObsCode,'none')
-                    fprintf(fid,'%s\n',['         ObsCode     ' hm.Models(i).Stations(j).Parameters(k).ObsCode]);
+                if ~strcmpi(hm.models(i).stations(j).parameters(k).obsCode,'none')
+                    fprintf(fid,'%s\n',['         ObsCode     ' hm.models(i).stations(j).parameters(k).obsCode]);
                 end
                 %
-                if hm.Models(i).Stations(j).Parameters(k).PlotPrd
+                if hm.models(i).stations(j).parameters(k).plotPrd
                     str='yes';
                 else
                     str='no';
                 end
                 fprintf(fid,'%s\n',['         PlotPrd     ' str]);
-                if ~strcmpi(hm.Models(i).Stations(j).Parameters(k).PrdCode,'none')
-                    fprintf(fid,'%s\n',['         PrdCode     ' hm.Models(i).Stations(j).Parameters(k).PrdCode]);
+                if ~strcmpi(hm.models(i).stations(j).parameters(k).prdCode,'none')
+                    fprintf(fid,'%s\n',['         PrdCode     ' hm.models(i).stations(j).parameters(k).prdCode]);
                 end
                 fprintf(fid,'%s\n','      EndParameter');
             end
             fprintf(fid,'%s\n',['   EndStation']);
         end
-        for j=1:hm.Models(i).NrAreas
-            fprintf(fid,'%s\n',['   Area    "' hm.Models(i).Areas(j).Name '"']);
-            fprintf(fid,'%s\n',['      AreaName   "' hm.Models(i).Areas(j).Name '"']);
-            fprintf(fid,'%s\n',['      AreaXLim   ' num2str(hm.Models(i).Areas(j).XLim(1)) ' ' num2str(hm.Models(i).Areas(j).XLim(2))]);
-            fprintf(fid,'%s\n',['      AreaYLim   ' num2str(hm.Models(i).Areas(j).YLim(1)) ' ' num2str(hm.Models(i).Areas(j).YLim(2))]);
-            if hm.Models(i).Areas(j).PlotWL
+        for j=1:hm.models(i).nrAreas
+            fprintf(fid,'%s\n',['   Area    "' hm.models(i).Areas(j).name '"']);
+            fprintf(fid,'%s\n',['      AreaName   "' hm.models(i).Areas(j).name '"']);
+            fprintf(fid,'%s\n',['      AreaXLim   ' num2str(hm.models(i).Areas(j).xLim(1)) ' ' num2str(hm.models(i).Areas(j).xLim(2))]);
+            fprintf(fid,'%s\n',['      AreaYLim   ' num2str(hm.models(i).Areas(j).yLim(1)) ' ' num2str(hm.models(i).Areas(j).yLim(2))]);
+            if hm.models(i).Areas(j).plotWL
                 str='yes';
             else
                 str='no';
             end
             fprintf(fid,'%s\n',['      AreaPlotWL ' str]);
-            if hm.Models(i).Areas(j).PlotVel
+            if hm.models(i).Areas(j).plotVel
                 str='yes';
             else
                 str='no';
             end
             fprintf(fid,'%s\n',['      AreaPlotVel ' str]);
-            if hm.Models(i).Areas(j).PlotVelMag
+            if hm.models(i).Areas(j).plotVelMag
                 str='yes';
             else
                 str='no';
             end
             fprintf(fid,'%s\n',['      AreaPlotVelMag ' str]);
-            if hm.Models(i).Areas(j).PlotHs
+            if hm.models(i).Areas(j).plotHs
                 str='yes';
             else
                 str='no';
             end
             fprintf(fid,'%s\n',['      AreaPlotHs ' str]);
-            if hm.Models(i).Areas(j).PlotTp
+            if hm.models(i).Areas(j).plotTp
                 str='yes';
             else
                 str='no';

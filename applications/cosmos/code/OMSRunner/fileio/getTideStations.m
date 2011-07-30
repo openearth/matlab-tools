@@ -1,10 +1,10 @@
 function hm=getTideStations(hm)
 
-flist=dir([hm.MainDir 'data' filesep 'tidestations' filesep '*.mat']);
+flist=dir([hm.dataDir 'tidestations' filesep '*.mat']);
 
 for i=1:length(flist)
-    fname=[hm.MainDir 'data' filesep 'tidestations' filesep flist(i).name];
+    fname=[hm.dataDir 'tidestations' filesep flist(i).name];
     load(fname);
-    hm.TideStations{i}=s;
-    hm.TideDatabases{i}=lower(s.DatabaseName);
+    hm.tideStations{i}=s;
+    hm.tideDatabases{i}=lower(s.DatabaseName);
 end

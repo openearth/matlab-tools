@@ -1,21 +1,21 @@
 function cosmos_writeXBeachParams(hm,m)
 
-tmpdir=hm.TempDir;
+tmpdir=hm.tempDir;
 
-Model=hm.Models(m);
+model=hm.models(m);
 
 % make param.txt file to run Xbeach
 fid = fopen([tmpdir 'params.txt'],'w');
 fprintf(fid,'%s\n\n','----------------------------------------------------');
 fprintf(fid,'%s\n\n','Grid input');
-fprintf(fid,'%s\n',['nx       = ' num2str(Model.nX)]);
-fprintf(fid,'%s\n',['ny       = ' num2str(Model.nY)]);
+fprintf(fid,'%s\n',['nx       = ' num2str(model.nX)]);
+fprintf(fid,'%s\n',['ny       = ' num2str(model.nY)]);
 fprintf(fid,'%s\n','xfile    = x.grd');
 fprintf(fid,'%s\n','yfile    = y.grd');
-fprintf(fid,'%s\n',['xori     = ' num2str(Model.XOri)]);
-fprintf(fid,'%s\n',['yori     = ' num2str(Model.YOri)]);
-fprintf(fid,'%s\n',['alfa     = ' num2str(Model.alpha)]);
-fprintf(fid,'%s\n',['depfile  = ' Model.Name '.dep']);
+fprintf(fid,'%s\n',['xori     = ' num2str(model.xOri)]);
+fprintf(fid,'%s\n',['yori     = ' num2str(model.yOri)]);
+fprintf(fid,'%s\n',['alfa     = ' num2str(model.alpha)]);
+fprintf(fid,'%s\n',['depfile  = ' model.name '.dep']);
 fprintf(fid,'%s\n','posdwn    = -1');
 fprintf(fid,'%s\n','thetanaut = 0');
 fprintf(fid,'%s\n','thetamin  = -40');
@@ -29,10 +29,10 @@ fprintf(fid,'%s\n','eps      = 0.01');
 fprintf(fid,'%s\n','----------------------------------------------------');
 fprintf(fid,'%s\n','Time input');
 fprintf(fid,'%s\n','tstart   = 0.');
-fprintf(fid,'%s\n',['tstop    = ' num2str(hm.Models(m).RunTime*60)]);
+fprintf(fid,'%s\n',['tstop    = ' num2str(hm.models(m).runTime*60)]);
 fprintf(fid,'%s\n','taper	 = 100');
-fprintf(fid,'%s\n',['tintg    = ' num2str(hm.Models(m).MapTimeStep*60)]);
-fprintf(fid,'%s\n',['tintm    = ' num2str(hm.Models(m).MapTimeStep*60)]);
+fprintf(fid,'%s\n',['tintg    = ' num2str(hm.models(m).mapTimeStep*60)]);
+fprintf(fid,'%s\n',['tintm    = ' num2str(hm.models(m).mapTimeStep*60)]);
 fprintf(fid,'%s\n','tintp    = 60');
 fprintf(fid,'%s\n','----------------------------------------------------');
 fprintf(fid,'%s\n','General constants');
@@ -78,7 +78,7 @@ fprintf(fid,'%s\n','sedtrans = 1');
 fprintf(fid,'%s\n','sourcesink = 0');
 fprintf(fid,'%s\n','----------------------------------------------------');
 fprintf(fid,'%s\n','Morphological calculation options');
-fprintf(fid,'%s\n',['morfac   = ' num2str(Model.MorFac)]);
+fprintf(fid,'%s\n',['morfac   = ' num2str(model.morFac)]);
 fprintf(fid,'%s\n','morstart = 3600');
 fprintf(fid,'%s\n','wetslp   = 0.15');
 fprintf(fid,'%s\n','morphology = 1');

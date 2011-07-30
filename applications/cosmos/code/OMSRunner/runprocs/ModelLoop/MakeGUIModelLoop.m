@@ -4,44 +4,44 @@ function hm=MakeGUIModelLoop(hm)
 
 uipanel('Title','Model Loop','Units','pixels','Position',[230 20 500 460]);
 
-hm.ToggleRunSimulation = uicontrol(gcf,'Style','checkbox','Position',[240  180 120  25],'String','Run Simulation','backgroundColor',[0.8 0.8 0.8]);
-set(hm.ToggleRunSimulation,'Value',hm.RunSimulation);
+hm.toggleRunSimulation = uicontrol(gcf,'Style','checkbox','Position',[240  180 120  25],'String','Run Simulation','backgroundColor',[0.8 0.8 0.8]);
+set(hm.toggleRunSimulation,'Value',hm.runSimulation);
 
-hm.ToggleExtractData = uicontrol(gcf,'Style','checkbox','Position',[240  160 120  25],'String','Extract Data','backgroundColor',[0.8 0.8 0.8]);
-set(hm.ToggleExtractData,'Value',hm.ExtractData);
+hm.toggleExtractData = uicontrol(gcf,'Style','checkbox','Position',[240  160 120  25],'String','Extract Data','backgroundColor',[0.8 0.8 0.8]);
+set(hm.toggleExtractData,'Value',hm.extractData);
 
-hm.ToggleDetermineHazards = uicontrol(gcf,'Style','checkbox','Position',[240  140 120  25],'String','Determine Hazards','backgroundColor',[0.8 0.8 0.8]);
-set(hm.ToggleDetermineHazards,'Value',hm.DetermineHazards);
+hm.toggleDetermineHazards = uicontrol(gcf,'Style','checkbox','Position',[240  140 120  25],'String','Determine Hazards','backgroundColor',[0.8 0.8 0.8]);
+set(hm.toggleDetermineHazards,'Value',hm.DetermineHazards);
 
-hm.ToggleRunPost = uicontrol(gcf,'Style','checkbox','Position',[240  120 120  25],'String','Run Post-Processing','backgroundColor',[0.8 0.8 0.8]);
-set(hm.ToggleRunPost,'Value',hm.RunPost);
+hm.toggleRunPost = uicontrol(gcf,'Style','checkbox','Position',[240  120 120  25],'String','Run Post-Processing','backgroundColor',[0.8 0.8 0.8]);
+set(hm.toggleRunPost,'Value',hm.runPost);
 
-hm.ToggleMakeWebsite = uicontrol(gcf,'Style','checkbox','Position',[240 100 120  25],'String','Make Website','backgroundColor',[0.8 0.8 0.8]);
-set(hm.ToggleMakeWebsite,'Value',hm.MakeWebsite);
+hm.toggleMakeWebsite = uicontrol(gcf,'Style','checkbox','Position',[240 100 120  25],'String','Make Website','backgroundColor',[0.8 0.8 0.8]);
+set(hm.toggleMakeWebsite,'Value',hm.makeWebsite);
 
-hm.ToggleUploadFTP = uicontrol(gcf,'Style','checkbox','Position',[240  80 120  25],'String','Upload FTP','backgroundColor',[0.8 0.8 0.8]);
-set(hm.ToggleUploadFTP,'Value',hm.UploadFTP);
+hm.toggleUploadFTP = uicontrol(gcf,'Style','checkbox','Position',[240  80 120  25],'String','Upload FTP','backgroundColor',[0.8 0.8 0.8]);
+set(hm.toggleUploadFTP,'Value',hm.uploadFTP);
 
-hm.ToggleArchiveInput = uicontrol(gcf,'Style','checkbox','Position',[240  60 120  25],'String','Archive Input','backgroundColor',[0.8 0.8 0.8]);
-set(hm.ToggleArchiveInput,'Value',hm.ArchiveInput);
+hm.toggleArchiveInput = uicontrol(gcf,'Style','checkbox','Position',[240  60 120  25],'String','Archive Input','backgroundColor',[0.8 0.8 0.8]);
+set(hm.toggleArchiveInput,'Value',hm.archiveInput);
 
-hm.PushStartModelLoop = uicontrol(gcf,'Style','pushbutton','Position',[650  30 70  25],'String','Start','enable','off');
-hm.PushStopModelLoop  = uicontrol(gcf,'Style','pushbutton','Position',[570  30 70  25],'String','Stop','enable','off');
+hm.pushStartModelLoop = uicontrol(gcf,'Style','pushbutton','Position',[650  30 70  25],'String','Start','enable','off');
+hm.pushStopModelLoop  = uicontrol(gcf,'Style','pushbutton','Position',[570  30 70  25],'String','Stop','enable','off');
 
-hm.TextModelLoopStatus = uicontrol(gcf,'Style','text','Position',[240  30  300  20],'String','Status : inactive','HorizontalAlignment','left','backgroundColor',[0.8 0.8 0.8]);
+hm.textModelLoopStatus = uicontrol(gcf,'Style','text','Position',[240  30  300  20],'String','Status : inactive','HorizontalAlignment','left','backgroundColor',[0.8 0.8 0.8]);
 
-set(hm.PushStartModelLoop,  'Callback',{@PushStartModelLoop_Callback});
-set(hm.PushStopModelLoop,   'Callback',{@PushStopModelLoop_Callback});
+set(hm.pushStartModelLoop,  'Callback',{@PushStartModelLoop_Callback});
+set(hm.pushStopModelLoop,   'Callback',{@PushStopModelLoop_Callback});
 
-set(hm.ToggleRunSimulation,  'Callback',{@ToggleRunSimulation_Callback});
-set(hm.ToggleExtractData,    'Callback',{@ToggleExtractData_Callback});
-set(hm.ToggleDetermineHazards,    'Callback',{@ToggleDetermineHazards_Callback});
-set(hm.ToggleRunPost,        'Callback',{@ToggleRunPost_Callback});
-set(hm.ToggleMakeWebsite,    'Callback',{@ToggleMakeWebsite_Callback});
-set(hm.ToggleUploadFTP,      'Callback',{@ToggleUploadFTP_Callback});
-set(hm.ToggleArchiveInput,   'Callback',{@ToggleArchiveInput_Callback});
+set(hm.toggleRunSimulation,  'Callback',{@ToggleRunSimulation_Callback});
+set(hm.toggleExtractData,    'Callback',{@ToggleExtractData_Callback});
+set(hm.toggleDetermineHazards,    'Callback',{@ToggleDetermineHazards_Callback});
+set(hm.toggleRunPost,        'Callback',{@ToggleRunPost_Callback});
+set(hm.toggleMakeWebsite,    'Callback',{@ToggleMakeWebsite_Callback});
+set(hm.toggleUploadFTP,      'Callback',{@ToggleUploadFTP_Callback});
+set(hm.toggleArchiveInput,   'Callback',{@ToggleArchiveInput_Callback});
 
-guidata(hm.MainWindow,hm);
+guidata(hm.mainWindow,hm);
 
 %%
 function PushStartModelLoop_Callback(hObject,eventdata)
@@ -55,18 +55,18 @@ function PushStopModelLoop_Callback(hObject,eventdata)
 hm=guidata(findobj('Tag','OMSMain'));
 t = timerfind('Tag', 'ModelLoop');
 delete(t);
-set(hm.TextModelLoopStatus,'String','Status : inactive');drawnow;
+set(hm.textModelLoopStatus,'String','Status : inactive');drawnow;
 
 %%
 function ToggleRunSimulation_Callback(hObject,eventdata)
 hm=guidata(findobj('Tag','OMSMain'));
-hm.RunSimulation=get(hObject,'Value');
+hm.runSimulation=get(hObject,'Value');
 guidata(findobj('Tag','OMSMain'),hm);
 
 %%
 function ToggleExtractData_Callback(hObject,eventdata)
 hm=guidata(findobj('Tag','OMSMain'));
-hm.ExtractData=get(hObject,'Value');
+hm.extractData=get(hObject,'Value');
 guidata(findobj('Tag','OMSMain'),hm);
 
 %%
@@ -78,23 +78,23 @@ guidata(findobj('Tag','OMSMain'),hm);
 %%
 function ToggleRunPost_Callback(hObject,eventdata)
 hm=guidata(findobj('Tag','OMSMain'));
-hm.RunPost=get(hObject,'Value');
+hm.runPost=get(hObject,'Value');
 guidata(findobj('Tag','OMSMain'),hm);
 
 %%
 function ToggleMakeWebsite_Callback(hObject,eventdata)
 hm=guidata(findobj('Tag','OMSMain'));
-hm.MakeWebsite=get(hObject,'Value');
+hm.makeWebsite=get(hObject,'Value');
 guidata(findobj('Tag','OMSMain'),hm);
 
 %%
 function ToggleUploadFTP_Callback(hObject,eventdata)
 hm=guidata(findobj('Tag','OMSMain'));
-hm.UploadFTP=get(hObject,'Value');
+hm.uploadFTP=get(hObject,'Value');
 guidata(findobj('Tag','OMSMain'),hm);
 
 %%
 function ToggleArchiveInput_Callback(hObject,eventdata)
 hm=guidata(findobj('Tag','OMSMain'));
-hm.ArchiveInput=get(hObject,'Value');
+hm.archiveInput=get(hObject,'Value');
 guidata(findobj('Tag','OMSMain'),hm);

@@ -1,4 +1,4 @@
-function Spec=readSWANSpec(fname)
+function spec=readSWANspec(fname)
 
 fid=fopen(fname,'r');
 
@@ -12,40 +12,33 @@ f=fgetl(fid);
 f=fgetl(fid);
 
 nchar=min(length(f),12);
-Spec.NPoints=str2double(f(1:nchar));
+spec.nPoints=str2double(f(1:nchar));
 
-for j=1:Spec.NPoints
+for j=1:spec.nPoints
     f=fgetl(fid);
-    [Spec.x(j) Spec.y(j)]=strread(f);
-end
-
-% if convc
-%     if ~strcmpi(hm.Models(m1).CoordinateSystem,hm.Models(m2).CoordinateSystem) || ~strcmpi(hm.Models(m1).CoordinateSystemType,hm.Models(m2).CoordinateSystemType)
-%         % Convert coordinates
-%         [Spec.x,Spec.y]=ConvertCoordinates(Spec.x,Spec.y,hm.Models(m1).CoordinateSystem,hm.Models(m1).CoordinateSystemType,hm.Models(m2).CoordinateSystem,hm.Models(m2).CoordinateSystemType,hm.CoordinateSystems,hm.Operations);
-%     end
-% end
-% 
-f=fgetl(fid);
-
-f=fgetl(fid);
-nchar=min(length(f),12);
-Spec.NFreq=str2double(f(1:nchar));
-
-for j=1:Spec.NFreq
-    f=fgetl(fid);
-    Spec.Freqs(j)=strread(f);
+    [spec.x(j) spec.y(j)]=strread(f);
 end
 
 f=fgetl(fid);
 
 f=fgetl(fid);
 nchar=min(length(f),12);
-Spec.NDir=str2double(f(1:nchar));
+spec.nFreq=str2double(f(1:nchar));
 
-for j=1:Spec.NDir
+for j=1:spec.NFreq
     f=fgetl(fid);
-    Spec.Dirs(j)=strread(f);
+    spec.freqs(j)=strread(f);
+end
+
+f=fgetl(fid);
+
+f=fgetl(fid);
+nchar=min(length(f),12);
+spec.nDir=str2double(f(1:nchar));
+
+for j=1:spec.NDir
+    f=fgetl(fid);
+    spec.dirs(j)=strread(f);
 end
 
 f=fgetl(fid);
@@ -59,27 +52,27 @@ f=f(1:15);
 
 it=1;
 
-Spec.Time(it).Time=datenum(f,'yyyymmdd.HHMMSS');
+spec.time(it).time=datenum(f,'yyyymmdd.HHMMSS');
 
-% if Spec.Time(it).Time>=starttime && Spec.Time(it).Time<=stoptime
+% if spec.time(it).time>=starttime && spec.time(it).time<=stoptime
 
-nbin=Spec.NDir*Spec.NFreq;
+nbin=spec.nDir*spec.nFreq;
 
-for j=1:Spec.NPoints
+for j=1:spec.nPoints
     f=fgetl(fid);
     deblank(f);
     if strcmpi(deblank(f),'factor')
         f=fgetl(fid);
-        Spec.Time(it).Points(j).Factor=strread(f);
+        spec.time(it).points(j).factor=strread(f);
         data=textscan(fid,'%f',nbin);
         data=data{1};
-        data=reshape(data,Spec.NDir,Spec.NFreq);
+        data=reshape(data,spec.nDir,spec.nFreq);
         data=data';
-        Spec.Time(it).Points(j).Energy=data;
+        spec.time(it).points(j).energy=data;
         f=fgetl(fid);
     else
-        Spec.Time(it).Points(j).Factor=0;
-        Spec.Time(it).Points(j).Energy=zeros(Spec.NFreq,Spec.NDir);
+        spec.time(it).points(j).factor=0;
+        spec.time(it).points(j).energy=zeros(spec.nFreq,spec.nir);
     end
 end
 

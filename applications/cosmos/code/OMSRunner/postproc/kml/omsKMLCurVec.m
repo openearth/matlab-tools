@@ -14,7 +14,7 @@ dy=dx;
 nt=10;
 dt=Plt.DtCurVec/(nt-1);
 
-hdthck=Plt.HeadThickness;
+hdthck=Plt.headThickness;
 arthck=Plt.ArrowThickness;
 
 nx=round((xmax-xmin)/dx)+1;

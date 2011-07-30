@@ -20,7 +20,7 @@ runuppar={'runup','runup_u','runup_v','runup_xw','runup_yw','runup_xz'};
 ntwavbnd=length(twavbnd);
 % Tide time series
 s=load([inputdir 'tide.txt']);
-%s3.Parameter='Water level';
+%s3.parameter='Water level';
 twl=tref+s(:,1)/86400;
 wl=s(:,2);
 ntwl=length(twl);

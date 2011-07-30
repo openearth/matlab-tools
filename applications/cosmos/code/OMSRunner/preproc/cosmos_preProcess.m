@@ -1,11 +1,11 @@
 function cosmos_preProcess(hm,m)
 
-tmpdir=hm.TempDir;
-jobdir=hm.JobDir;
+tmpdir=hm.tempDir;
+jobdir=hm.jobDir;
 
-dr=hm.Models(m).Dir;
+dr=hm.models(m).dir;
 inpdir=[dr 'input' filesep];
-mdl=hm.Models(m).Name;
+mdl=hm.models(m).name;
 
 lst=dir(tmpdir);
 for i=1:length(lst)
@@ -18,7 +18,7 @@ try
     delete([tmpdir '*']);
 end
 
-switch lower(hm.Models(m).Type)
+switch lower(hm.models(m).type)
     case{'delft3dflow','delft3dflowwave'}
         [success,message,messageid] = copyfile([inpdir '*'],tmpdir,'f');
         cosmos_preProcessDelft3D(hm,m)

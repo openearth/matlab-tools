@@ -1,39 +1,39 @@
 function PreProcessDelft3D(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-dr=Model.Dir;
+dr=model.dir;
 
-tmpdir=hm.TempDir;
+tmpdir=hm.tempDir;
 
-if ~isempty(Model.FlowRstFile)
+if ~isempty(model.flowRstFile)
     rstdir=[dr 'restart' filesep 'tri-rst' filesep];
-    fname=[rstdir Model.FlowRstFile '.zip'];
+    fname=[rstdir model.flowRstFile '.zip'];
     if exist(fname,'file')
        unzip(fname,tmpdir);
-       [success,message,messageid]=movefile([tmpdir Model.FlowRstFile],[tmpdir 'tri-rst.rst'],'f');
+       [success,message,messageid]=movefile([tmpdir model.flowRstFile],[tmpdir 'tri-rst.rst'],'f');
     end
 end
 
 AdjustInputDelft3DFLOW(hm,m);
 
-if strcmpi(Model.Type,'delft3dflowwave')
+if strcmpi(model.type,'delft3dflowwave')
     AdjustInputDelft3DWAVE(hm,m);
-    if ~isempty(Model.WaveRstFile)
+    if ~isempty(model.waveRstFile)
         rstdir=[dr 'restart' filesep 'hot' filesep];
-        fname=[rstdir Model.WaveRstFile '.zip'];
+        fname=[rstdir model.waveRstFile '.zip'];
         if exist(fname,'file')
             unzip(fname,tmpdir);
-            movefile([tmpdir Model.WaveRstFile],[tmpdir 'hot_1_00000000.000000']);
+            movefile([tmpdir model.waveRstFile],[tmpdir 'hot_1_00000000.000000']);
         end
     end
 end
 
-if Model.FlowNested || strcmpi(Model.FlowNestType,'oceanmodel')
+if model.flowNested || strcmpi(model.flowNestType,'oceanmodel')
     NestingDelft3DFLOW(hm,m);
 end
 
-if Model.WaveNested
+if model.waveNested
     NestingDelft3DWave(hm,m);
 end
 
@@ -42,24 +42,24 @@ end
 
 % % Couplnef
 % fname=[tmpdir 'couplnef.inp'];
-% t0=num2str(round((Model.TOutputStart-Model.RefTime)*86400));
-% t1=num2str(round((Model.TStop-Model.RefTime)*86400));
+% t0=num2str(round((model.tOutputStart-model.refTime)*86400));
+% t1=num2str(round((model.tStop-model.refTime)*86400));
 % findreplace(fname,'STARTTIMEKEY',t0);
 % findreplace(fname,'STOPTIMEKEY',t1);
 % % Hyd
-% fname=[tmpdir 'com-' Model.Runid '.hyd'];
-% tref=datestr(Model.RefTime,'yyyymmddHHMMSS');
-% t0=datestr(Model.TOutputStart,'yyyymmddHHMMSS');
-% t1=datestr(Model.TStop,'yyyymmddHHMMSS');
+% fname=[tmpdir 'com-' model.runid '.hyd'];
+% tref=datestr(model.refTime,'yyyymmddHHMMSS');
+% t0=datestr(model.tOutputStart,'yyyymmddHHMMSS');
+% t1=datestr(model.tStop,'yyyymmddHHMMSS');
 % findreplace(fname,'REFTIMEKEY',tref);
 % findreplace(fname,'STARTTIMEKEY',t0);
 % findreplace(fname,'STOPTIMEKEY',t1);
 % 
 % % Part
 % 
-% tref=Model.RefTime;
-% t0=Model.TOutputStart;
-% t1=Model.TStop;
+% tref=model.refTime;
+% t0=model.tOutputStart;
+% t1=model.tStop;
 % 
 % d0=floor(t0-tref);
 % h0=floor(24*((t0-tref)-d0));
@@ -70,22 +70,22 @@ end
 % t0str=[num2str(d0) ' ' num2str(h0) '  0  0'];
 % t1str=[num2str(d1) ' ' num2str(h1) '  0  0'];
 % 
-% fname=[tmpdir Model.Runid '.inp'];
+% fname=[tmpdir model.runid '.inp'];
 % 
 % findreplace(fname,'STARTTIMEKEY',t0str);
 % findreplace(fname,'STOPTIMEKEY',t1str);
 % 
-% [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'delpar.exe'],tmpdir,'f');
-% [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'coup203.exe'],tmpdir,'f');
+% [success,message,messageid]=copyfile([hm.exeDir 'delpar.exe'],tmpdir,'f');
+% [success,message,messageid]=copyfile([hm.exeDir 'coup203.exe'],tmpdir,'f');
 
 % Make run batch file
-switch lower(Model.Type)
+switch lower(model.type)
     case{'delft3dflow'}
-        switch lower(Model.RunEnv)
+        switch lower(model.runEnv)
             case{'win32'}
-                [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'delftflow.exe'],tmpdir,'f');
+                [success,message,messageid]=copyfile([hm.exeDir 'delftflow.exe'],tmpdir,'f');
                 fid=fopen([tmpdir 'run.bat'],'wt');
-                fprintf(fid,'%s\n',['echo -r ' Model.Runid ' > runid']);
+                fprintf(fid,'%s\n',['echo -r ' model.runid ' > runid']);
                 fprintf(fid,'%s\n','delftflow runid dummy delft3d');
                 % fprintf(fid,'%s\n','coup203');
                 % fprintf(fid,'%s\n','delpar');
@@ -109,7 +109,7 @@ switch lower(Model.Type)
                 fprintf(fid,'%s\n','export DHSDELFT_LICENSE_FILE="/f/license/"');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','# ============ set runid');
-                fprintf(fid,'%s\n',['runid=' Model.Runid '.mdf']);
+                fprintf(fid,'%s\n',['runid=' model.runid '.mdf']);
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','argfile=delft3d-flow_args.txt');
                 fprintf(fid,'%s\n','');
@@ -153,21 +153,21 @@ switch lower(Model.Type)
                 fclose(fid);
         end
     case{'delft3dflowwave'}
-        switch lower(Model.RunEnv)
+        switch lower(model.runEnv)
             case{'win32'}
-                [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'delftflow.exe'],tmpdir,'f');
-                [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'swan.bat'],tmpdir,'f');
-                [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'wave.exe'],tmpdir,'f');
-                [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'swan4072Ad.exe'],tmpdir,'f');
-                [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'mod.exe'],tmpdir,'f');
+                [success,message,messageid]=copyfile([hm.exeDir 'delftflow.exe'],tmpdir,'f');
+                [success,message,messageid]=copyfile([hm.exeDir 'swan.bat'],tmpdir,'f');
+                [success,message,messageid]=copyfile([hm.exeDir 'wave.exe'],tmpdir,'f');
+                [success,message,messageid]=copyfile([hm.exeDir 'swan4072Ad.exe'],tmpdir,'f');
+                [success,message,messageid]=copyfile([hm.exeDir 'mod.exe'],tmpdir,'f');
                 fid=fopen([tmpdir 'run.bat'],'wt');
-                fprintf(fid,'%s\n',['echo -r ' Model.Runid ' > runid']);
+                fprintf(fid,'%s\n',['echo -r ' model.runid ' > runid']);
                 fprintf(fid,'%s\n','start delftflow runid dummy delft3d');
-                fprintf(fid,'%s\n',['wave.exe ' Model.Runid '.mdw 1']);
+                fprintf(fid,'%s\n',['wave.exe ' model.runid '.mdw 1']);
                 fclose(fid);
             case{'h4'}
 
-                [success,message,messageid]=copyfile([hm.MainDir 'exe' filesep 'linux' filesep 'swan.bat'],tmpdir,'f');
+                [success,message,messageid]=copyfile([hm.exeDir 'linux' filesep 'swan.bat'],tmpdir,'f');
                 
                 fid=fopen([tmpdir 'run.sh'],'wt');
                 fprintf(fid,'%s\n','#!/bin/sh');
@@ -187,9 +187,9 @@ switch lower(Model.Type)
                 fprintf(fid,'%s\n','export DHSDELFT_LICENSE_FILE="/f/license/"');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','# ============ set runid');
-                fprintf(fid,'%s\n',['runid=' Model.Runid '.mdf']);
+                fprintf(fid,'%s\n',['runid=' model.runid '.mdf']);
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n',['mdwave=' Model.Runid '.mdw']);
+                fprintf(fid,'%s\n',['mdwave=' model.runid '.mdw']);
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','argfile=delft3d-flow_args.txt');
                 fprintf(fid,'%s\n','');

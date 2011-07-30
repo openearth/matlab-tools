@@ -20,8 +20,8 @@ for i=1:length(m)
     if m(i)>0
         if isempty(strmatch(deblank(name(i,:)),Names,'exact'))
             nobs=nobs+1;
-            ObservationPoints(nobs).Name=deblank(name(i,:));
-            ObservationPoints(nobs).M=m(i);
+            ObservationPoints(nobs).name=deblank(name(i,:));
+            ObservationPoints(nobs).m=m(i);
             ObservationPoints(nobs).N=n(i);
         end
     end

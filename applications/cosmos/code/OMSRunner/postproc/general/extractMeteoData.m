@@ -1,26 +1,26 @@
-function s2=extractMeteoData(meteodir,Model,dt,par)
+function s2=extractMeteoData(meteodir,model,dt,par)
 
-coordsys=Model.CoordinateSystem;
-coordsystype=Model.CoordinateSystemType;
-meteoname=Model.UseMeteo;
+coordsys=model.coordinateSystem;
+coordsystype=model.coordinateSystemType;
+meteoname=model.useMeteo;
 
-xlim=Model.XLim;
-ylim=Model.YLim;
+xlim=model.xLim;
+ylim=model.yLim;
 
 ylim(1)=max(ylim(1),-80);
 ylim(2)=min(ylim(2),80);
 
 
 if ~strcmpi(coordsystype,'geographic')
-    dx=Model.dXMeteo;
-    dy=Model.dXMeteo;
+    dx=model.dXMeteo;
+    dy=model.dXMeteo;
 else
     dx=0;
     dy=0;
 end
 
-tstart=Model.TFlowStart;
-tstop=Model.TStop;
+tstart=model.tFlowStart;
+tstop=model.tStop;
 
 dt=dt/24;
 

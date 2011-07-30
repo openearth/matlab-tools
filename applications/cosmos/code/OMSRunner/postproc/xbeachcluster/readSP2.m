@@ -35,7 +35,7 @@ Spec.NDir=str2double(deblank(f));
 
 for j=1:Spec.NDir
     f=fgetl(fid);
-    Spec.Dirs(j)=strread(f);
+    Spec.dirs(j)=strread(f);
 end
 
 f=fgetl(fid);
@@ -49,7 +49,7 @@ f=f(1:15);
 
 it=1;
 
-Spec.Time(it).Time=datenum(f,'yyyymmdd.HHMMSS');
+Spec.time(it).time=datenum(f,'yyyymmdd.HHMMSS');
 
 nbin=Spec.NDir*Spec.NFreq;
 
@@ -59,17 +59,17 @@ for j=1:Spec.NPoints
     deblank(f);
     if strcmpi(deblank(f),'factor')
         f=fgetl(fid);
-        Spec.Time(it).Points(j).Factor=strread(f);
+        Spec.time(it).points(j).Factor=strread(f);
         data=textscan(fid,'%f',nbin);
         data=data{1};
         data=reshape(data,Spec.NDir,Spec.NFreq);
         data=data';
         
-        Spec.Time(it).Points(j).Energy=single(data);
+        Spec.time(it).points(j).energy=single(data);
         f=fgetl(fid);
     else
-        Spec.Time(it).Points(j).Factor=0;
-        Spec.Time(it).Points(j).Energy=0;
+        Spec.time(it).points(j).Factor=0;
+        Spec.time(it).points(j).energy=0;
     end
 end
 

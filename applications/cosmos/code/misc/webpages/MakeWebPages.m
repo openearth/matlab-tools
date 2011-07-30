@@ -24,7 +24,7 @@ function MakeWebPage(fname,dr,mainurl)
 
 txt=ReadTextFile(fname);
 
-hm.MainURL=mainurl;
+hm.mainURL=mainurl;
 
 hm.BannerFile='img/santabarbaraheader.gif';
 % hm.BannerFile='img/OMSBanner.jpg';
@@ -46,11 +46,11 @@ for i=1:length(txt)
 
     switch lower(txt{i}),
         case {'webpage'},
-            hm.Name=txt{i+1};
+            hm.name=txt{i+1};
         case {'pagedir'}
-            hm.PageDir=txt{i+1};
+            hm.pageDir=txt{i+1};
         case {'pagetype'}
-            hm.PageType=txt{i+1};
+            hm.pageType=txt{i+1};
         case {'filename'}
             hm.FileName=txt{i+1};
         case {'activeheader'}
@@ -61,24 +61,24 @@ for i=1:length(txt)
             but='LeftButtons2';
         case {'button'}
             nbut=nbut+1;
-            hm.(but)(nbut).Name=txt{i+1};
+            hm.(but)(nbut).name=txt{i+1};
         case {'buttonurl'}
             hm.(but)(nbut).URL=txt{i+1};
         case {'entry'}
             nentry=nentry+1;
             npar=0;
         case {'title'}
-            hm.Entry(nentry).Title=txt{i+1};
+            hm.entry(nentry).title=txt{i+1};
         case {'image'}
-            hm.Entry(nentry).Image=txt{i+1};
+            hm.entry(nentry).Image=txt{i+1};
         case {'date'}
-            hm.Entry(nentry).Date=txt{i+1};
+            hm.entry(nentry).Date=txt{i+1};
         case {'paragraph'}
             npar=npar+1;
-            hm.Entry(nentry).Paragraph{npar}=txt{i+1};
+            hm.entry(nentry).paragraph{npar}=txt{i+1};
         case {'link'}
             nlinks=nlinks+1;
-            hm.Links(nlinks).Name=txt{i+1};
+            hm.Links(nlinks).name=txt{i+1};
         case {'linkurl'}
             hm.Links(nlinks).URL=txt{i+1};
         case {'question'}
@@ -89,34 +89,34 @@ for i=1:length(txt)
         case {'contactname'}
             ncontacts=ncontacts+1;
         case {'contactdetails'}
-            hm.Contacts(ncontacts).Details=txt{i+1};
+            hm.contacts(ncontacts).Details=txt{i+1};
         case {'scenario'}
             nscenarios=nscenarios+1;
-            hm.Scenarios(nscenarios).Name=txt{i+1};
+            hm.scenarios(nscenarios).name=txt{i+1};
         case {'scenarioabbr'}
-            hm.Scenarios(nscenarios).ShortName=txt{i+1};
+            hm.scenarios(nscenarios).shortName=txt{i+1};
     end
 end
 
-f=[dr hm.PageDir '\' hm.FileName];
+f=[dr hm.pageDir '\' hm.FileName];
 fid=fopen(f,'wt');
 
 WriteWebsiteInfo(fid);
-WriteWebsiteHead(fid,hm.Name,hm.MainURL);
+WriteWebsiteHead(fid,hm.name,hm.mainURL);
 WriteWebsiteHeader(fid,hm,hm.ActiveHeader,0,hm.BannerFile);
 
 buttons1=[];
 buttons2=[];
 if ~isempty(hm.LeftButtons1)
     for i=1:length(hm.LeftButtons1)
-        buttons1(i).link=[hm.MainURL hm.LeftButtons1(i).URL];
-        buttons1(i).text=hm.LeftButtons1(i).Name;
+        buttons1(i).link=[hm.mainURL hm.LeftButtons1(i).URL];
+        buttons1(i).text=hm.LeftButtons1(i).name;
     end
 end
 if ~isempty(hm.LeftButtons2)
     for i=1:length(hm.LeftButtons2)
-        buttons1(i).link=[hm.MainURL hm.LeftButtons2(i).URL];
-        buttons1(i).text=hm.LeftButtons2(i).Name;
+        buttons1(i).link=[hm.mainURL hm.LeftButtons2(i).URL];
+        buttons1(i).text=hm.LeftButtons2(i).name;
     end
 end
 if ~isempty(buttons1) || ~isempty(buttons2)
@@ -126,28 +126,28 @@ end
 fprintf(fid,'%s\n','            <div id="main">');
 fprintf(fid,'%s\n','');
 
-switch lower(hm.PageType)
+switch lower(hm.pageType)
 
     case{'home'}
         fprintf(fid,'%s\n','                <img src="img/CliffLV1cvPLSLG.jpg"/>');
         fprintf(fid,'%s\n','');
-        for i=1:length(hm.Entry)
-            fprintf(fid,'%s\n',['                <h3>' hm.Entry(i).Title '</h3>']);
-            for j=1:length(hm.Entry(i).Paragraph)
-                fprintf(fid,'%s\n',['                <p>' hm.Entry(i).Paragraph{j} '</p>']);
+        for i=1:length(hm.entry)
+            fprintf(fid,'%s\n',['                <h3>' hm.entry(i).title '</h3>']);
+            for j=1:length(hm.entry(i).paragraph)
+                fprintf(fid,'%s\n',['                <p>' hm.entry(i).paragraph{j} '</p>']);
             end
             fprintf(fid,'%s\n','');
         end
     
     case{'models'}
-        for i=1:length(hm.Entry)
+        for i=1:length(hm.entry)
             fprintf(fid,'%s\n','                <div class="entry">');
-            fprintf(fid,'%s\n',['                    <h2>' hm.Entry(i).Title '</h2>']);
+            fprintf(fid,'%s\n',['                    <h2>' hm.entry(i).title '</h2>']);
             fprintf(fid,'%s\n','                    <p class="date">.</p>');
             fprintf(fid,'%s\n','                    <div class="photo_text">');
-            fprintf(fid,'%s\n',['                        <p class="photo"><img src="' hm.MainURL hm.Entry(i).Image '"/></p>']);
-            for j=1:length(hm.Entry(i).Paragraph)
-                fprintf(fid,'%s\n',['                        <p>' hm.Entry(i).Paragraph{j} '</p>']);
+            fprintf(fid,'%s\n',['                        <p class="photo"><img src="' hm.mainURL hm.entry(i).Image '"/></p>']);
+            for j=1:length(hm.entry(i).paragraph)
+                fprintf(fid,'%s\n',['                        <p>' hm.entry(i).paragraph{j} '</p>']);
             end
             fprintf(fid,'%s\n','                    </div> <!-- end .photo_text -->');
             fprintf(fid,'%s\n','                </div> <!-- end .entry -->');
@@ -155,14 +155,14 @@ switch lower(hm.PageType)
         end
 
     case{'news'}
-        for i=1:length(hm.Entry)
+        for i=1:length(hm.entry)
             fprintf(fid,'%s\n','                <div class="entry">');
-            fprintf(fid,'%s\n',['                    <h3>' hm.Entry(i).Title '</h3>']);
-            fprintf(fid,'%s\n',['                    <p class="date">' hm.Entry(i).Date '</p>']);
+            fprintf(fid,'%s\n',['                    <h3>' hm.entry(i).title '</h3>']);
+            fprintf(fid,'%s\n',['                    <p class="date">' hm.entry(i).Date '</p>']);
             fprintf(fid,'%s\n','                    <div class="photo_text">');
-            fprintf(fid,'%s\n',['                        <p class="photo"><img src="' hm.MainURL hm.Entry(i).Image '"/></p>']);
-            for j=1:length(hm.Entry(i).Paragraph)
-                fprintf(fid,'%s\n',['                        <p>' hm.Entry(i).Paragraph{j} '</p>']);
+            fprintf(fid,'%s\n',['                        <p class="photo"><img src="' hm.mainURL hm.entry(i).Image '"/></p>']);
+            for j=1:length(hm.entry(i).paragraph)
+                fprintf(fid,'%s\n',['                        <p>' hm.entry(i).paragraph{j} '</p>']);
             end
             fprintf(fid,'%s\n','                    </div> <!-- end .photo_text -->');
             fprintf(fid,'%s\n','                </div> <!-- end .entry -->');
@@ -173,7 +173,7 @@ switch lower(hm.PageType)
         fprintf(fid,'%s\n','                <h2>Links</h2>');
         fprintf(fid,'%s\n','                <p></p>');
         for i=1:length(hm.Links)
-            fprintf(fid,'%s\n',['                <p><a href="' hm.Links(i).URL '">' hm.Links(i).Name '</a></p>']);
+            fprintf(fid,'%s\n',['                <p><a href="' hm.Links(i).URL '">' hm.Links(i).name '</a></p>']);
         end
         fprintf(fid,'%s\n','');
 
@@ -189,8 +189,8 @@ switch lower(hm.PageType)
     case{'contact'}
         fprintf(fid,'%s\n','                <h2>Contact</h2>');
         fprintf(fid,'%s\n','                <p></p>');
-        for i=1:length(hm.Contacts)
-            fprintf(fid,'%s\n',['                <p>' hm.Contacts(i).Details '</p>']);
+        for i=1:length(hm.contacts)
+            fprintf(fid,'%s\n',['                <p>' hm.contacts(i).Details '</p>']);
         end
         fprintf(fid,'%s\n','');
 
@@ -201,8 +201,8 @@ switch lower(hm.PageType)
     case{'scenarios'}
         fprintf(fid,'%s\n','                <h2>Scenarios</h2>');
         fprintf(fid,'%s\n','                <p></p>');
-        for i=1:length(hm.Scenarios)
-            fprintf(fid,'%s\n',['                <p><a href="results.html?s=' hm.Scenarios(i).ShortName '">' hm.Scenarios(i).Name '</a></p>']);
+        for i=1:length(hm.scenarios)
+            fprintf(fid,'%s\n',['                <p><a href="results.html?s=' hm.scenarios(i).shortName '">' hm.scenarios(i).name '</a></p>']);
         end
         fprintf(fid,'%s\n','');
         
@@ -211,7 +211,7 @@ end
 fprintf(fid,'%s\n','            </div> <!-- end #main -->');
 fprintf(fid,'%s\n','');
 
-if strcmpi(hm.PageType,'home')
+if strcmpi(hm.pageType,'home')
     WriteWebsiteFooter(fid,1);
 else
     WriteWebsiteFooter(fid,0);

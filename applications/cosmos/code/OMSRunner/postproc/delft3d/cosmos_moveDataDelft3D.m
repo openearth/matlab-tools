@@ -1,13 +1,13 @@
 function cosmos_moveDataDelft3D(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-rundir=[hm.JobDir Model.Name filesep];
+rundir=[hm.jobDir model.name filesep];
 
 delete([rundir '*.exe']);
 delete([rundir 'finished.txt']);
 
-dr=Model.Dir;
+dr=model.dir;
 
 delete([dr 'lastrun' filesep 'input' filesep '*']);
 
@@ -23,7 +23,7 @@ if nrst>0
         rstfil=rstfiles(j).name;
         dt=rstfil(end-14:end);
         rsttime=datenum(dt,'yyyymmdd.HHMMSS');
-        if abs(rsttime-Model.restartTime)<0.01
+        if abs(rsttime-model.restartTime)<0.01
             zip([dr 'restart' filesep 'tri-rst' filesep rstfil '.zip'],[rundir rstfil]);
             break
         end
@@ -39,14 +39,14 @@ if nrst>0
         rstfil=rstfiles(j).name;
         dt=rstfil(end-18:end-4);
         rsttime=datenum(dt,'yyyymmdd.HHMMSS');
-        if rsttime<Model.restartTime-3
+        if rsttime<model.restartTime-3
             delete([dr 'restart' filesep 'tri-rst' filesep rstfil]);
         end        
     end
 end
 
 
-hot0=[rundir 'hot_1_' datestr(Model.TWaveStart,'yyyymmdd.HHMMSS')];
+hot0=[rundir 'hot_1_' datestr(model.tWaveStart,'yyyymmdd.HHMMSS')];
 
 hot00=[rundir 'hot_1_00000000.000000'];
 if exist(hot00,'file')
@@ -69,7 +69,7 @@ if nhot>0
         dt=hotfil(7:end);
         hottime=datenum(dt,'yyyymmdd.HHMMSS');
         tstr=hotfil(16:end);
-        if abs(hottime-Model.restartTime)<0.01
+        if abs(hottime-model.restartTime)<0.01
 %            switch tstr
 %                case{'000000','060000','120000','180000'}
                     [status,message,messageid]=copyfile([rundir hotfil],[dr 'restart' filesep 'hot'],'f');
@@ -90,7 +90,7 @@ if nhot>0
         hotfil=hotfiles(j).name;
         dt=hotfil(7:end-4);
         hottime=datenum(dt,'yyyymmdd.HHMMSS');
-        if hottime<Model.restartTime-3
+        if hottime<model.restartTime-3
             delete([dr 'restart' filesep 'hot' filesep hotfil]);
         end        
     end
@@ -106,19 +106,19 @@ outdir=[dr filesep 'lastrun' filesep 'output'];
 % %% PART
 % [status,message,messageid]=movefile([rundir 'light_crude.csv'],outdir,'f');
 % [status,message,messageid]=movefile([rundir 'couplnef.out'],outdir,'f');
-% [status,message,messageid]=movefile([rundir 'his-' Model.Runid '.d*'],outdir,'f');
-% [status,message,messageid]=movefile([rundir 'map-' Model.Runid '.d*'],outdir,'f');
-% [status,message,messageid]=movefile([rundir 'plo-' Model.Runid '.d*'],outdir,'f');
-% [status,message,messageid]=movefile([rundir Model.Runid '.out'],outdir,'f');
+% [status,message,messageid]=movefile([rundir 'his-' model.runid '.d*'],outdir,'f');
+% [status,message,messageid]=movefile([rundir 'map-' model.runid '.d*'],outdir,'f');
+% [status,message,messageid]=movefile([rundir 'plo-' model.runid '.d*'],outdir,'f');
+% [status,message,messageid]=movefile([rundir model.runid '.out'],outdir,'f');
 
-% delete([rundir Model.Runid '.his']);
-% delete([rundir Model.Runid '.map']);
-% delete([rundir Model.Runid '.plo']);
+% delete([rundir model.runid '.his']);
+% delete([rundir model.runid '.map']);
+% delete([rundir model.runid '.plo']);
 
 %% SWAN
 delete([rundir '*.sp1']);
 
-[status,message,messageid]=movefile([rundir Model.Name '.sp2'],inpdir,'f');
+[status,message,messageid]=movefile([rundir model.name '.sp2'],inpdir,'f');
 [status,message,messageid]=movefile([rundir '*.sp2'],outdir,'f');
 
 delete([rundir 'swn-dia*']);

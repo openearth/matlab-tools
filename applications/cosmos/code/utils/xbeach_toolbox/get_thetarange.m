@@ -13,7 +13,7 @@ function [thetamin,thetamax]=get_thetarange(out2d,hthreshold)
 %     out2d.t = matlab datenumber
 %     out2d.f = frequencies 
 %     out2d.d = directions 
-%     out2d.S = variance densities,
+%     out2d.s = variance densities,
 %     size(out2d.s) = [length(out2d.f) length(out2d.dir) length(out2d.time)]     
 
 %   Outputs:
@@ -34,8 +34,8 @@ end
 % Estimate the range of angles from the timeseries of 2d spectra
 for jj=1:length(out2d.t)
     for kk=1:length(out2d.f)
-        tmin1(kk)=min(out2d.d(out2d.S(kk,:,jj)>Smin));
-        tmax1(kk)=max(out2d.d(out2d.S(kk,:,jj)>Smin));
+        tmin1(kk)=min(out2d.d(out2d.s(kk,:,jj)>Smin));
+        tmax1(kk)=max(out2d.d(out2d.s(kk,:,jj)>Smin));
     end
 	tmin(jj)=min(tmin1);
     tmax(jj)=max(tmax1);

@@ -5,7 +5,7 @@ function out = readSwan2DSpec(specfile)
 %   OUT = readSwan2DSpec(SPECFILE) reads the SWAN 2D spectra
 %   data in SPECFILE (full path and file name) and gives the locations 
 %   (OUT.locs), frequencies (OUT.f), directions 
-%   (OUT.d), and variance densities (OUT.S).
+%   (OUT.d), and variance densities (OUT.s).
 % 
 
 % modified by JLE 12/3/09 for only one time and one location and to remove

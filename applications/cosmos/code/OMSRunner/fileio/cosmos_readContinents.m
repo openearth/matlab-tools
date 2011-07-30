@@ -1,10 +1,10 @@
 function hm=cosmos_readContinents(hm)
 
-hm.Continents{1}='northamerica';
-hm.Continents{2}='centralamerica';
-hm.Continents{3}='southamerica';
-hm.Continents{4}='asia';
-hm.Continents{5}='europe';
-hm.Continents{6}='africa';
-hm.Continents{7}='australia';
-hm.Continents{8}='world';
+hm.continents{1}='northamerica';
+hm.continents{2}='centralamerica';
+hm.continents{3}='southamerica';
+hm.continents{4}='asia';
+hm.continents{5}='europe';
+hm.continents{6}='africa';
+hm.continents{7}='australia';
+hm.continents{8}='world';

@@ -1,10 +1,10 @@
 function cosmos_moveModelData(hm,m)
 
-dr=hm.Models(m).Dir;
+dr=hm.models(m).dir;
 
 MakeDir(dr,'lastrun');
 
-switch lower(hm.Models(m).Type)
+switch lower(hm.models(m).type)
     case{'delft3dflow','delft3dflowwave','ww3','xbeach'}
         
         [status,message,messageid]=rmdir([dr 'lastrun' filesep 'input'],'s');
@@ -22,7 +22,7 @@ MakeDir(dr,'lastrun','input');
 MakeDir(dr,'lastrun','output');
 MakeDir(dr,'lastrun','figures');
 
-switch lower(hm.Models(m).Type)
+switch lower(hm.models(m).type)
     case{'delft3dflow','delft3dflowwave'}
         MakeDir(dr,'restart','hot');
         MakeDir(dr,'restart','tri-rst');
@@ -35,4 +35,4 @@ switch lower(hm.Models(m).Type)
         cosmos_moveDataXBeachCluster(hm,m);
 end
 
-[status,message,messageid]=rmdir([hm.JobDir hm.Models(m).Name], 's');
+[status,message,messageid]=rmdir([hm.jobDir hm.models(m).name], 's');

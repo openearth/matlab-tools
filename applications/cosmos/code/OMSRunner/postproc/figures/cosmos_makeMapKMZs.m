@@ -13,14 +13,14 @@ name='';
 
 try
     
-    Model=hm.Models(m);
-    dr=Model.Dir;
+    model=hm.models(m);
+    dr=model.dir;
 
-    nmaps=length(Model.mapPlots);
+    nmaps=length(model.mapPlots);
 
     for im=1:nmaps
 
-        if Model.mapPlots(im).plot
+        if model.mapPlots(im).plot
 
             if exist(posfile,'file')
                 delete(posfile);
@@ -28,24 +28,24 @@ try
 
             % Dataset
 
-            ndat=Model.mapPlots(im).nrDatasets;
+            ndat=model.mapPlots(im).nrDatasets;
 
-            name=Model.mapPlots(im).name;
+            name=model.mapPlots(im).name;
 
             s=[];
 
             for id=1:ndat
                 
-                plotRoutine=Model.mapPlots(im).datasets(id).plotRoutine;
-                barlabel=Model.mapPlots(im).datasets(id).barLabel;
-                clmap=Model.mapPlots(im).datasets(id).colorMap;
+                plotRoutine=model.mapPlots(im).datasets(id).plotRoutine;
+                barlabel=model.mapPlots(im).datasets(id).barLabel;
+                clmap=model.mapPlots(im).datasets(id).colorMap;
 
-                par{id}=Model.mapPlots(im).datasets(id).name;
+                par{id}=model.mapPlots(im).datasets(id).name;
 
                 switch lower(par{id})
                     case{'landboundary'}
-                        if exist([dr 'data' filesep Model.Name '.ldb'],'file')
-                            [xldb,yldb]=landboundary('read',[dr 'data' filesep Model.Name '.ldb']);
+                        if exist([dr 'data' filesep model.name '.ldb'],'file')
+                            [xldb,yldb]=landboundary('read',[dr 'data' filesep model.name '.ldb']);
                         else
                             xldb=[0;0.01;0.01];
                             yldb=[0;0;0.01];
@@ -53,15 +53,15 @@ try
                         s(id).data.X=xldb;
                         s(id).data.Y=yldb;
                     otherwise
-                        fname=[Model.ArchiveDir hm.CycStr filesep 'maps' filesep par{id} '.mat'];
+                        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep par{id} '.mat'];
                         if exist(fname,'file')
                             s(id).data=load(fname);
                         else
                             break;
                         end
-                        switch lower(Model.mapPlots(im).datasets(id).component)
+                        switch lower(model.mapPlots(im).datasets(id).component)
                             case{'2dscalar','2dvector','magnitude','vector'}
-                                if strcmpi(Model.mapPlots(im).datasets(id).component,'vector')
+                                if strcmpi(model.mapPlots(im).datasets(id).component,'vector')
                                     for jj=1:size(s(id).data.U,1)
                                         mag(jj,:,:)=sqrt((squeeze(s(id).data.U(jj,:,:))).^2+(squeeze(s(id).data.V(jj,:,:))).^2);
                                     end
@@ -73,31 +73,31 @@ try
                                 clear mag;
                                 minc=min(minc,floor(minc));
                                 maxc=max(maxc,ceil(maxc));
-                                if isempty(Model.mapPlots(im).datasets(id).cLim)
+                                if isempty(model.mapPlots(im).datasets(id).cLim)
                                     clim(1)=minc;
                                     clim(3)=maxc;
                                     [tck,cdec]=cosmos_getTicksAndDecimals(clim(1),clim(3),10);
                                     clim(2)=tck;
                                 else
-                                    clim=Model.mapPlots(im).datasets(id).cLim;
+                                    clim=model.mapPlots(im).datasets(id).cLim;
                                     cdec=3;
                                 end
-                                if ~isempty(Model.mapPlots(im).datasets.colorBarDecimals)
-                                    cdec=Model.mapPlots(im).datasets.colorBarDecimals;
+                                if ~isempty(model.mapPlots(im).datasets.colorBarDecimals)
+                                    cdec=model.mapPlots(im).datasets.colorBarDecimals;
                                 end
                         end
                         nt=length(s(id).data.Time);
                 end
 
-                if ~strcmpi(Model.CoordinateSystemType,'geographic')
-                    [s(id).data.X,s(id).data.Y]=convertCoordinates(s(id).data.X,s(id).data.Y,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                if ~strcmpi(model.coordinateSystemType,'geographic')
+                    [s(id).data.X,s(id).data.Y]=convertCoordinates(s(id).data.X,s(id).data.Y,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
                 end
 
             end
             
             AvailableTimes=s(1).data.Time;
             dt=86400*(AvailableTimes(2)-AvailableTimes(1));
-            n3=round(Model.mapPlots(im).timeStep/dt);
+            n3=round(model.mapPlots(im).timeStep/dt);
             n3=max(n3,1);
 
             switch lower(plotRoutine)
@@ -112,9 +112,9 @@ try
                     uu=s(1).data.U(1:n3:end,:,:);
                     vv=s(1).data.V(1:n3:end,:,:);
                     fdr=[dr 'lastrun' filesep 'figures' filesep];
-                    thin=Model.mapPlots(im).datasets.thinning;
-                    thinX=Model.mapPlots(im).datasets.thinningX;
-                    thinY=Model.mapPlots(im).datasets.thinningY;
+                    thin=model.mapPlots(im).datasets.thinning;
+                    thinX=model.mapPlots(im).datasets.thinningX;
+                    thinY=model.mapPlots(im).datasets.thinningY;
                     if thin>thinX 
                         thinX=thin;
                     end
@@ -122,9 +122,9 @@ try
                         thinY=thin;
                     end
                     
-                    quiverKML([name '.' Model.Name],xx,yy,uu,vv,'time',tim,'kmz',1,'colormap',jet(64),'levels',clim(1):clim(2):clim(3), ...
+                    quiverKML([name '.' model.name],xx,yy,uu,vv,'time',tim,'kmz',1,'colormap',jet(64),'levels',clim(1):clim(2):clim(3), ...
                         'directory',fdr,'screenoverlay',[name '.colorbar.png'],'thinningx',thinX, ...
-                        'thinningy',thinY,'scalefactor',Model.mapPlots(im).datasets.scaleFactor);
+                        'thinningy',thinY,'scalefactor',model.mapPlots(im).datasets.scaleFactor);
                     if exist([fdr name '.colorbar.png'],'file')
                         delete([fdr name '.colorbar.png']);
                     end
@@ -142,12 +142,12 @@ try
                     uu=s(1).data.U(1:n3:end,:,:);
                     vv=s(1).data.V(1:n3:end,:,:);
                     fdr=[dr 'lastrun' filesep 'figures' filesep];
-                    if ~isempty(Model.mapPlots(im).datasets(1).polygon)
-                        polxy=load([Model.Dir 'data' filesep Model.mapPlots(im).datasets(1).polygon]);
-                        if ~strcmpi(Model.CoordinateSystemType,'geographic')
+                    if ~isempty(model.mapPlots(im).datasets(1).polygon)
+                        polxy=load([model.dir 'data' filesep model.mapPlots(im).datasets(1).polygon]);
+                        if ~strcmpi(model.coordinateSystemType,'geographic')
                             xp=squeeze(polxy(:,1));
                             yp=squeeze(polxy(:,2));
-                            [xp,yp]=convertCoordinates(xp,yp,'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                            [xp,yp]=convertCoordinates(xp,yp,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
                             polxy(:,1)=xp;
                             polxy(:,2)=yp;
                         end
@@ -163,9 +163,9 @@ try
                         nrvert=3;
                     end
                     
-                    curvecKML2([name '.' Model.Name],xx,yy,uu,vv,'time',tim,'kmz',1,'colormap',jet(64),'levels',clim(1):clim(2):clim(3), ...
-                        'directory',fdr,'screenoverlay',[name '.colorbar.png'],'timestep',Model.mapPlots(im).timeStep, ...
-                        'dx',Model.mapPlots(im).datasets.spacing,'relativespeed',0.5,'length',Model.mapPlots(im).datasets.arrowLength,'lines',ilines,'polygon',polxy,'nrvertices',nrvert, ...
+                    curvecKML2([name '.' model.name],xx,yy,uu,vv,'time',tim,'kmz',1,'colormap',jet(64),'levels',clim(1):clim(2):clim(3), ...
+                        'directory',fdr,'screenoverlay',[name '.colorbar.png'],'timestep',model.mapPlots(im).timeStep, ...
+                        'dx',model.mapPlots(im).datasets.spacing,'relativespeed',0.5,'length',model.mapPlots(im).datasets.arrowLength,'lines',ilines,'polygon',polxy,'nrvertices',nrvert, ...
                         'nhead',2);
                     if exist([fdr name '.colorbar.png'],'file')
                         delete([fdr name '.colorbar.png']);
@@ -174,7 +174,7 @@ try
                 case{'patches'}
                     % Patches
                     if ~isempty(s)
-                        n2=round(dt/(Model.mapPlots(im).timeStep));
+                        n2=round(dt/(model.mapPlots(im).timeStep));
                         it2=0;
                         t2=[];
                         for it=1:n3:nt
@@ -210,7 +210,7 @@ try
                                                 data2.Val=s(id).data.Val(it+1,:,:);
                                                 data.Val=f1*data.Val+f2*data2.Val;
                                             end
-                                            t=t+(ii-1)*Model.mapPlots(im).timeStep/86400;
+                                            t=t+(ii-1)*model.mapPlots(im).timeStep/86400;
                                         end
                                     end
                                     data.x=s(id).data.X;
@@ -234,12 +234,12 @@ try
                                 % Figure Properties
                                 figname=[dr 'lastrun' filesep 'figures' filesep name '.' datestr(t,'yyyymmdd.HHMMSS') '.png'];
                                 
-                                xlim=Model.XLimPlot;
-                                ylim=Model.YLimPlot;
+                                xlim=model.xLimPlot;
+                                ylim=model.yLimPlot;
                                 
-                                if ~strcmpi(Model.CoordinateSystemType,'geographic')
-                                    [xlim(1),ylim(1)]=convertCoordinates(xlim(1),ylim(1),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
-                                    [xlim(2),ylim(2)]=convertCoordinates(xlim(2),ylim(2),'persistent','CS1.name',Model.CoordinateSystem,'CS1.type',Model.CoordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                                if ~strcmpi(model.coordinateSystemType,'geographic')
+                                    [xlim(1),ylim(1)]=convertCoordinates(xlim(1),ylim(1),'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                                    [xlim(2),ylim(2)]=convertCoordinates(xlim(2),ylim(2),'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
                                 end
                                 
                                 % Make figure
@@ -258,7 +258,7 @@ try
                         end
                         
                         if ~isempty(flist)
-                            writeMapKMZ('filename',[name '.' Model.Name],'dir',figdr,'filelist',flist,'colorbar',[name '.colorbar.png'],'xlim',xlim,'ylim',ylim,'deletefiles',1);
+                            writeMapKMZ('filename',[name '.' model.name],'dir',figdr,'filelist',flist,'colorbar',[name '.colorbar.png'],'xlim',xlim,'ylim',ylim,'deletefiles',1);
                         end
                         
                     end
@@ -274,7 +274,7 @@ try
 
 catch
 
-    WriteErrorLogFile(hm,['Something went wrong with generating map figures of ' name ' - ' Model.Name]);
+    WriteErrorLogFile(hm,['Something went wrong with generating map figures of ' name ' - ' model.name]);
 
 end
 

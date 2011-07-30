@@ -1,8 +1,8 @@
 function cosmos_moveDataWW3(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-rundir=[hm.JobDir Model.Name filesep];
+rundir=[hm.jobDir model.name filesep];
 
 delete([rundir 'out_grd.ww3']);
 % delete([rundir 'out_pnt.ww3']);
@@ -12,7 +12,7 @@ delete([rundir 'out_grd.ww3']);
 % delete([rundir 'ww3_grid.inp']);
 % delete([rundir 'ww3_prep.inp']);
 
-dr=Model.Dir;
+dr=model.dir;
 
 inpdir=[dr 'lastrun' filesep 'input'];
 outdir=[dr 'lastrun' filesep 'output'];
@@ -25,27 +25,27 @@ outdir=[dr 'lastrun' filesep 'output'];
 [status,message,messageid]=movefile([rundir 'wind.ww3'],inpdir,'f');
 [status,message,messageid]=movefile([rundir 'restart.ww3'],inpdir,'f');
 
-% dtrst=hm.RunInterval/24;
+% dtrst=hm.runInterval/24;
 % 
-% trststart=max(Model.TStop-8*dtrst,Model.TWaveStart+dtrst);
-% trststart=hm.Cycle+hm.RunInterval/24;
-% trststart=hm.Cycle;
-% %trststart=Model.TWaveOKay+hm.RunInterval/24;
+% trststart=max(model.tStop-8*dtrst,model.tWaveStart+dtrst);
+% trststart=hm.cycle+hm.runInterval/24;
+% trststart=hm.cycle;
+% %trststart=model.tWaveOKay+hm.runInterval/24;
 % 
-% nrst=(Model.TStop-trststart)/dtrst+1;
+% nrst=(model.tStop-trststart)/dtrst+1;
 % nrst=1;
 
 % trststart=-1e9;
-% trststart=max(trststart,Model.TWaveOkay); % Model must be spun-up
-% trststart=max(trststart,hm.Cycle+hm.RunInterval/24); % Start time of next cycle 
-% trststart=min(trststart,Model.TLastAnalyzed); % Restart time no later than last analyzed time in meteo fields
+% trststart=max(trststart,model.tWaveOkay); % Model must be spun-up
+% trststart=max(trststart,hm.cycle+hm.runInterval/24); % Start time of next cycle 
+% trststart=min(trststart,model.tLastAnalyzed); % Restart time no later than last analyzed time in meteo fields
 
 % if nrst>0
 %     for j=1:nrst
 % 
 %         t1=trststart+(j-1)*dtrst;
 
-        rsttime=datestr(Model.restartTime,'yyyymmdd.HHMMSS');
+        rsttime=datestr(model.restartTime,'yyyymmdd.HHMMSS');
         
         MakeDir(dr,'restart');
 
@@ -66,7 +66,7 @@ if nrst>0
         rstfil=rstfiles(j).name;
         dt=rstfil(13:end-4);
         rsttime=datenum(dt,'yyyymmdd.HHMMSS');
-        if rsttime<Model.restartTime-3
+        if rsttime<model.restartTime-3
             delete([dr 'restart' filesep rstfil]);
         end        
     end

@@ -11,13 +11,13 @@ Spec.Y=grd.Y';
 Spec.Depth=depth(1:end-1,1:end-1);
 
 Spec.Freqs=s.Freqs;
-Spec.Dirs=s.Dirs;
+Spec.dirs=s.dirs;
 
-e=reshape(s.Time.Points,[201 201]);
+e=reshape(s.time.points,[201 201]);
 
 clear s;
 
-Spec.Energy=single(zeros(201,201,25,36));
+Spec.energy=single(zeros(201,201,25,36));
 
 rho=1024;
 g=9.81;
@@ -25,8 +25,8 @@ f=pi/180;
 
 for i=1:201
     for j=1:201
-%        e(i,j).Energy=0.5*rho*g*e(i,j).Factor*e(i,j).Energy;
-        Spec.Energy(i,j,:,:)=single(0.5*rho*g*e(i,j).Factor*e(i,j).Energy);
+%        e(i,j).energy=0.5*rho*g*e(i,j).Factor*e(i,j).energy;
+        Spec.energy(i,j,:,:)=single(0.5*rho*g*e(i,j).Factor*e(i,j).energy);
     end
 end
 

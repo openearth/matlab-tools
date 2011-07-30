@@ -28,38 +28,38 @@ for i=1:n
 
     f=fgetl(fid);
 
-    Spec.NPoints=str2double(f(1:12));
+    spec.nPoints=str2double(f(1:12));
 
-    for j=1:Spec.NPoints
+    for j=1:spec.nPoints
         f=fgetl(fid);
-        [Spec.x(j) Spec.y(j)]=strread(f);
+        [spec.x(j) spec.y(j)]=strread(f);
     end
     
     if convc
-        if ~strcmpi(hm.Models(m1).CoordinateSystem,hm.Models(m2).CoordinateSystem) || ~strcmpi(hm.Models(m1).CoordinateSystemType,hm.Models(m2).CoordinateSystemType)
+        if ~strcmpi(hm.models(m1).coordinateSystem,hm.models(m2).coordinateSystem) || ~strcmpi(hm.models(m1).coordinateSystemType,hm.models(m2).coordinateSystemType)
             % Convert coordinates
-            [Spec.x,Spec.y]=ConvertCoordinates(Spec.x,Spec.y,'persistent','CS1.name',hm.Models(m1).CoordinateSystem,'CS1.type',hm.Models(m1).CoordinateSystemType,'CS2.name',hm.Models(m2).CoordinateSystem,'CS2.type',hm.Models(m2).CoordinateSystemType);
+            [spec.x,spec.y]=ConvertCoordinates(spec.x,spec.y,'persistent','CS1.name',hm.models(m1).coordinateSystem,'CS1.type',hm.models(m1).coordinateSystemType,'CS2.name',hm.models(m2).coordinateSystem,'CS2.type',hm.models(m2).coordinateSystemType);
         end
     end
 
     f=fgetl(fid);
 
     f=fgetl(fid);
-    Spec.NFreq=str2double(f(1:12));
+    spec.nFreq=str2double(f(1:12));
     
-    for j=1:Spec.NFreq
+    for j=1:spec.nFreq
         f=fgetl(fid);
-        Spec.Freqs(j)=strread(f);
+        spec.freqs(j)=strread(f);
     end
 
     f=fgetl(fid);
 
     f=fgetl(fid);
-    Spec.NDir=str2double(f(1:12));
+    spec.nDir=str2double(f(1:12));
     
-    for j=1:Spec.NDir
+    for j=1:spec.nDir
         f=fgetl(fid);
-        Spec.Dirs(j)=strread(f);
+        spec.dirs(j)=strread(f);
     end
     
     f=fgetl(fid);
@@ -73,25 +73,25 @@ for i=1:n
     
     it=1;
     
-    Spec.Time(it).Time=datenum(f,'yyyymmdd.HHMMSS');
+    spec.time(it).time=datenum(f,'yyyymmdd.HHMMSS');
     
-    nbin=Spec.NDir*Spec.NFreq;
+    nbin=spec.nDir*spec.nFreq;
 
-    for j=1:Spec.NPoints  
+    for j=1:spec.nPoints  
         f=fgetl(fid);
         deblank(f);
         if strcmpi(deblank(f),'factor')
             f=fgetl(fid);
-            Spec.Time(it).Points(j).Factor=strread(f);
+            spec.time(it).points(j).factor=strread(f);
             data=textscan(fid,'%f',nbin);
             data=data{1};
-            data=reshape(data,Spec.NDir,Spec.NFreq);
+            data=reshape(data,spec.nDir,spec.nFreq);
             data=data';
-            Spec.Time(it).Points(j).Energy=data;
+            spec.time(it).points(j).energy=data;
             f=fgetl(fid);
         else
-            Spec.Time(it).Points(j).Factor=0;
-            Spec.Time(it).Points(j).Energy=0;
+            spec.time(it).points(j).factor=0;
+            spec.time(it).points(j).energy=0;
         end            
     end
 
@@ -102,7 +102,7 @@ for i=1:n
         fprintf(fi2,'%s\n','TIME                                    time-dependent data');
         fprintf(fi2,'%s\n','     1                                  time coding option');
         if convc
-            switch lower(hm.Models(m2).CoordinateSystemType)
+            switch lower(hm.models(m2).coordinateSystemType)
                 case{'proj','projection','projected','cart','cartesian','xy'}
                     fprintf(fi2,'%s\n','LOCATIONS');
                 otherwise
@@ -111,19 +111,19 @@ for i=1:n
         else
             fprintf(fi2,'%s\n','LONLAT                                  locations in spherical coordinates');
         end
-        fprintf(fi2,'%i\n',Spec.NPoints);
-        for j=1:Spec.NPoints
-            fprintf(fi2,'%15.6f %15.6f\n',Spec.x(j),Spec.y(j));
+        fprintf(fi2,'%i\n',spec.nPoints);
+        for j=1:spec.nPoints
+            fprintf(fi2,'%15.6f %15.6f\n',spec.x(j),spec.y(j));
         end
         fprintf(fi2,'%s\n','AFREQ                                   absolute frequencies in Hz');
-        fprintf(fi2,'%6i\n',Spec.NFreq);
-        for j=1:Spec.NFreq
-            fprintf(fi2,'%15.4f\n',Spec.Freqs(j));
+        fprintf(fi2,'%6i\n',spec.nFreq);
+        for j=1:spec.nFreq
+            fprintf(fi2,'%15.4f\n',spec.freqs(j));
         end
         fprintf(fi2,'%s\n','NDIR                                   spectral nautical directions in degr');
-        fprintf(fi2,'%i\n',Spec.NDir);
-        for j=1:Spec.NDir
-            fprintf(fi2,'%15.4f\n',Spec.Dirs(j));
+        fprintf(fi2,'%i\n',spec.nDir);
+        for j=1:spec.nDir
+            fprintf(fi2,'%15.4f\n',spec.dirs(j));
         end
         fprintf(fi2,'%s\n','QUANT');
         fprintf(fi2,'%s\n','     1                                  number of quantities in table');
@@ -132,13 +132,13 @@ for i=1:n
         fprintf(fi2,'%s\n','   -0.9900E+02                          exception value');
     end
     
-    fprintf(fi2,'%s\n',datestr(Spec.Time(it).Time,'yyyymmdd.HHMMSS'));
-    for j=1:Spec.NPoints
-        if Spec.Time(it).Points(j).Factor>0
+    fprintf(fi2,'%s\n',datestr(spec.time(it).time,'yyyymmdd.HHMMSS'));
+    for j=1:spec.nPoints
+        if spec.time(it).points(j).factor>0
             fprintf(fi2,'%s\n','FACTOR');
-            fprintf(fi2,'%18.8e\n',Spec.Time(it).Points(j).Factor);
-            fmt=repmat([repmat('  %7i',1,Spec.NDir) '\n'],1,Spec.NFreq);
-            fprintf(fi2,fmt,Spec.Time(it).Points(j).Energy');
+            fprintf(fi2,'%18.8e\n',spec.time(it).points(j).factor);
+            fmt=repmat([repmat('  %7i',1,spec.nDir) '\n'],1,spec.nFreq);
+            fprintf(fi2,fmt,spec.time(it).points(j).energy');
         else
             fprintf(fi2,'%s\n','NODATA');
         end

@@ -6,28 +6,28 @@ nobs=0;
 idbs=[];
 iids=[];
 ipars=[];
-for i=1:hm.NrModels
-    for j=1:hm.Models(i).NrStations
+for i=1:hm.nrModels
+    for j=1:hm.models(i).nrStations
         % First observations
-        for k=1:hm.Models(i).Stations(j).NrParameters
-            par=hm.Models(i).Stations(j).Parameters(k).Name;
+        for k=1:hm.models(i).stations(j).nrParameters
+            par=hm.models(i).stations(j).parameters(k).name;
             % Check if observations are plotted
-            if hm.Models(i).Stations(j).Parameters(k).PlotObs
+            if hm.models(i).stations(j).parameters(k).plotObs
                 % Get source and id for this parameter
-                obssrc=hm.Models(i).Stations(j).Parameters(k).ObsSrc;
-                obsid=hm.Models(i).Stations(j).Parameters(k).ObsID;
+                obssrc=hm.models(i).stations(j).parameters(k).obsSrc;
+                obsid=hm.models(i).stations(j).parameters(k).obsID;
                 % Determine which database observation is in
-                idb=strmatch(lower(obssrc),hm.ObservationDatabases,'exact');
+                idb=strmatch(lower(obssrc),hm.observationDatabases,'exact');
                 if ~isempty(idb)
                     % Determine which station is needed
-                    iid=strmatch(obsid,hm.ObservationStations{idb}.IDCode,'exact');
+                    iid=strmatch(obsid,hm.observationStations{idb}.IDCode,'exact');
                     if ~isempty(iid)
                         % Determine which parameter is needed
                         par2=getParameterInfo(hm,lower(par),'source',obssrc,'dbname');
-                        ipar=strmatch(lower(par2),lower(hm.ObservationStations{idb}.Parameters(iid).Name),'exact');
+                        ipar=strmatch(lower(par2),lower(hm.observationStations{idb}.parameters(iid).name),'exact');
                         if ~isempty(ipar)
                             % Check if this data is available
-                            if hm.ObservationStations{idb}.Parameters(iid).Status(ipar)>0
+                            if hm.observationStations{idb}.parameters(iid).status(ipar)>0
                                 % Check if data will already be downloaded
                                 if sum(idbs==idb & iids==iid & ipars==ipar)==0
                                     nobs=nobs+1;
@@ -55,21 +55,21 @@ for i=1:nobs
     iid=iids(i);
     ipar=ipars(i);
     
-    db=hm.ObservationDatabases{idb};
-    idcode=hm.ObservationStations{idb}.IDCode{iid};
-    par=hm.ObservationStations{idb}.Parameters(iid).Name{ipar};
+    db=hm.observationDatabases{idb};
+    idcode=hm.observationStations{idb}.IDCode{iid};
+    par=hm.observationStations{idb}.parameters(iid).name{ipar};
     
     disp(['Downloading observations of ' par ' for ' idcode ' from ' db ' ...']);
     
-    url=hm.ObservationStations{idb}.URL;
+    url=hm.observationStations{idb}.URL;
     
-    if strcmpi(hm.Scenario,'forecasts')
-        t0=floor(hm.Cycle-8);
+    if strcmpi(hm.scenario,'forecasts')
+        t0=floor(hm.cycle-8);
     else
-        t0=hm.Cycle;
+        t0=hm.cycle;
     end
 
-    t1=ceil(hm.Cycle+hm.RunTime/24);
+    t1=ceil(hm.cycle+hm.runTime/24);
 
     try
  
@@ -82,13 +82,13 @@ for i=1:nobs
 %                [t,val]=getTimeSeriesFromCoops(url,t0,t1,idcode,par2);
                 [t,val]=getWLFromCoops(idcode,t0,t1);
             case{'matroos'}
-                [t,val]=getTimeSeriesFromMatroos(url,t0,t1,hm.ObservationStations{idb}.Name{iid},par2);
+                [t,val]=getTimeSeriesFromMatroos(url,t0,t1,hm.observationStations{idb}.name{iid},par2);
         end
 
         if ~isempty(t)
             % Make directory
-            MakeDir(hm.ScenarioDir,'observations',db,idcode);
-            fname=[hm.ScenarioDir 'observations' filesep db filesep idcode filesep plotpar{i} '.' idcode '.mat'];
+            MakeDir(hm.scenarioDir,'observations',db,idcode);
+            fname=[hm.scenarioDir 'observations' filesep db filesep idcode filesep plotpar{i} '.' idcode '.mat'];
             data.Name=idcode;
             data.Parameter=par;
             data.Time=t;

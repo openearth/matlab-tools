@@ -13,7 +13,7 @@ function [thetamin,thetamax]=get_thetarange(out2d,hthreshold)
 %     out2d.t = matlab datenumber
 %     out2d.f = frequencies 
 %     out2d.d = directions 
-%     out2d.S = variance densities,
+%     out2d.s = variance densities,
 %     size(out2d.s) = [length(out2d.f) length(out2d.dir) length(out2d.time)]     
 
 %   Outputs:
@@ -25,7 +25,7 @@ function [thetamin,thetamax]=get_thetarange(out2d,hthreshold)
 thetamin=[];
 thetamax=[];
 
-st=sum(out2d.S,3);
+st=sum(out2d.s,3);
 stt=sum(st,1);
 
 sttt=sum(stt);

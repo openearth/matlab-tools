@@ -1,52 +1,52 @@
 function NestingDelft3DFLOW(hm,m)
 
-tmpdir=hm.TempDir;
+tmpdir=hm.tempDir;
 
 curdir=pwd;
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-switch lower(Model.FlowNestType)
+switch lower(model.flowNestType)
     case{'oceanmodel'}
 
         % Nesting in ocean model
-        datafolder=[hm.ScenarioDir 'oceanmodels' filesep Model.oceanModel filesep];
-        dataname=Model.oceanModel;
-        wlbndfile=[Model.Name '.wl.bnd'];
-        wlbcafile=[Model.Name '.wl.bca'];
-        curbndfile=[Model.Name '.current.bnd'];
-        curbcafile=[Model.Name '.current.bca'];
-        wlconst=Model.ZLevel;
-        writeNestXML([tmpdir 'nest.xml'],tmpdir,Model.Runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst);
-        cs.name=Model.CoordinateSystem;
-        cs.type=Model.CoordinateSystemType;
-        makeBctBccIni('bct','nestxml',[tmpdir 'nest.xml'],'inpdir',tmpdir,'runid',Model.Runid,'workdir',tmpdir,'cs',cs);
-        makeBctBccIni('bcc','nestxml',[tmpdir 'nest.xml'],'inpdir',tmpdir,'runid',Model.Runid,'workdir',tmpdir,'cs',cs);
+        datafolder=[hm.scenarioDir 'oceanmodels' filesep model.oceanModel filesep];
+        dataname=model.oceanModel;
+        wlbndfile=[model.name '.wl.bnd'];
+        wlbcafile=[model.name '.wl.bca'];
+        curbndfile=[model.name '.current.bnd'];
+        curbcafile=[model.name '.current.bca'];
+        wlconst=model.zLevel;
+        writeNestXML([tmpdir 'nest.xml'],tmpdir,model.runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst);
+        cs.name=model.coordinateSystem;
+        cs.type=model.coordinateSystemType;
+        makeBctBccIni('bct','nestxml',[tmpdir 'nest.xml'],'inpdir',tmpdir,'runid',model.runid,'workdir',tmpdir,'cs',cs);
+        makeBctBccIni('bcc','nestxml',[tmpdir 'nest.xml'],'inpdir',tmpdir,'runid',model.runid,'workdir',tmpdir,'cs',cs);
         delete([tmpdir 'nest.xml']);
         
     otherwise
         % Regular nesting
 
-        mm=Model.FlowNestModelNr;
-        dr=hm.Models(mm).Dir;       
+        mm=model.flowNestModelNr;
+        dr=hm.models(mm).dir;       
         outputdir=[dr 'lastrun' filesep 'output' filesep];
         usematlabnesthd2=1;
 
         if usematlabnesthd2
 
-            runid1=Model.Runid;
-            runid2=hm.Models(mm).Runid;
-            nstadm=[Model.Dir 'nesting' filesep Model.Name '.nst'];
-            zcor=hm.Models(mm).ZLevel-Model.ZLevel+Model.ZSeaLevelRise;
+            runid1=model.runid;
+            runid2=hm.models(mm).runid;
+            nstadm=[model.dir 'nesting' filesep model.name '.nst'];
+            zcor=hm.models(mm).zLevel-model.zLevel+model.zSeaLevelRise;
             
             hisfile=[outputdir 'trih-' runid2 '.dat'];
             
             opt='hydro';
-            if Model.includeSalinity || Model.includeTemperature || ~isempty(Model.tracer)
+            if model.includeSalinity || model.includeTemperature || ~isempty(model.tracer)
                 opt='both';
             end
             
-            cs=Model.CoordinateSystemType;
+            cs=model.coordinateSystemType;
             nesthd2('hisfile',hisfile,'inputdir',tmpdir,'runid',runid1,'admfile',nstadm,'zcor',zcor,'save',1,'opt',opt,'coordinatesystem',cs);
 
         else
@@ -57,32 +57,32 @@ switch lower(Model.FlowNestType)
 
             try
 
-                nstadm=[Model.Dir 'nesting' filesep Model.Name '.nst'];
+                nstadm=[model.dir 'nesting' filesep model.name '.nst'];
 
                 %% Water level correction
 
-                zcor=hm.Models(mm).ZLevel-Model.ZLevel+Model.ZSeaLevelRise;
+                zcor=hm.models(mm).zLevel-model.zLevel+model.zSeaLevelRise;
 
                 fid=fopen('nesthd2.inp','wt');
 
-                fprintf(fid,'%s\n',[Model.Name '.bnd']);
+                fprintf(fid,'%s\n',[model.name '.bnd']);
                 fprintf(fid,'%s\n',nstadm);
-                fprintf(fid,'%s\n',hm.Models(mm).Runid);
+                fprintf(fid,'%s\n',hm.models(mm).runid);
                 fprintf(fid,'%s\n','temp.bct');
                 fprintf(fid,'%s\n','dummy.bcc');
                 fprintf(fid,'%s\n','nest.dia');
                 fprintf(fid,'%s\n',num2str(zcor));
                 fclose(fid);
 
-                system([hm.MainDir 'exe' filesep 'nesthd2.exe < nesthd2.inp']);
+                system([hm.exeDir 'nesthd2.exe < nesthd2.inp']);
                 fid=fopen('smoothbct.inp','wt');
                 fprintf(fid,'%s\n','temp.bct');
-                fprintf(fid,'%s\n',[Model.Name '.bct']);
+                fprintf(fid,'%s\n',[model.name '.bct']);
                 fprintf(fid,'%s\n','3');
 
                 fclose(fid);
 
-                system([hm.MainDir 'exe' filesep 'smoothbct.exe < smoothbct.inp']);
+                system([hm.exeDir 'smoothbct.exe < smoothbct.inp']);
 
                 delete('nesthd2.inp');
                 delete('smoothbct.inp');
@@ -93,7 +93,7 @@ switch lower(Model.FlowNestType)
                 delete('trih*');
 
             catch
-                WriteErrorLogFile(hm,['An error occured during nesting of ' Model.Name]);
+                WriteErrorLogFile(hm,['An error occured during nesting of ' model.name]);
             end
 
             cd(curdir);

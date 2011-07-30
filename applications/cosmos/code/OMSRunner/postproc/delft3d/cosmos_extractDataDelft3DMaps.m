@@ -1,35 +1,35 @@
 function cosmos_extractDataDelft3DMaps(hm,m)
 
-Model=hm.Models(m);
-dr=Model.Dir;
+model=hm.models(m);
+dr=model.dir;
 outdir=[dr 'lastrun' filesep 'output' filesep];
-archdir = Model.ArchiveDir;
+archdir = model.archiveDir;
 
-% Model.mapParameters={''};
+% model.mapParameters={''};
 % np=0;
-% for i=1:length(Model.mapPlots)
-%     par=Model.mapPlots(i).Dataset(1).Parameter;
-%     ii=strmatch(par,Model.mapParameters,'exact');
+% for i=1:length(model.mapPlots)
+%     par=model.mapPlots(i).Dataset(1).parameter;
+%     ii=strmatch(par,model.mapParameters,'exact');
 %     % Skip duplicate map parameters (which occur in more than one plot)
 %     if isempty(ii)
 %         np=np+1;
-%         Model.mapParameters{np}=Model.mapPlots(i).Dataset(1).Parameter;
+%         model.mapParameters{np}=model.mapPlots(i).Dataset(1).parameter;
 %     end
 % end
 
-np=Model.nrMapDatasets;
+np=model.nrMapDatasets;
 
 for ip=1:np
 
     try
 
-        par=Model.mapDatasets(ip).name;
-        fout=[archdir hm.CycStr filesep 'maps' filesep par '.mat'];
+        par=model.mapDatasets(ip).name;
+        fout=[archdir hm.cycStr filesep 'maps' filesep par '.mat'];
         
         data=[];
         
-        fil=getParameterInfo(hm,par,'model',Model.Type,'datatype','map','file');
-        filpar=getParameterInfo(hm,par,'model',Model.Type,'datatype','map','name');
+        fil=getParameterInfo(hm,par,'model',model.type,'datatype','map','file');
+        filpar=getParameterInfo(hm,par,'model',model.type,'datatype','map','name');
         typ=getParameterInfo(hm,par,'type');
         
         switch lower(typ)
@@ -39,15 +39,15 @@ for ip=1:np
                 typ='2dvector';
         end
 
-        layer=Model.mapDatasets(ip).layer;
+        layer=model.mapDatasets(ip).layer;
         
         switch fil
             case{'wavm','trim'}
-                if ~exist([outdir fil '-' Model.Runid '.dat'],'file')
-                    disp(['trim file ' Model.Name ' does not exist!']);
+                if ~exist([outdir fil '-' model.runid '.dat'],'file')
+                    disp(['trim file ' model.name ' does not exist!']);
 %                    killAll;
                 else
-                    fid = qpfopen([outdir fil '-' Model.Runid '.dat']);
+                    fid = qpfopen([outdir fil '-' model.runid '.dat']);
                     times = qpread(fid,1,filpar,'times');
                     data.Val=zeros();
                     % Read first time step to get dimensions and grid
@@ -83,13 +83,13 @@ for ip=1:np
                     end
                 end
             case{'meteo'}
-                ii=strmatch(Model.UseMeteo,hm.MeteoNames,'exact');
-                dt=hm.Meteo(ii).TimeStep;
-                data = extractMeteoData([hm.ScenarioDir 'meteo' filesep Model.UseMeteo filesep],Model,dt,par);
+                ii=strmatch(model.useMeteo,hm.meteoNames,'exact');
+                dt=hm.meteo(ii).timeStep;
+                data = extractMeteoData([hm.scenarioDir 'meteo' filesep model.useMeteo filesep],model,dt,par);
                 times = data.Time;
             case{'oil-map'}
-                %                data=getSurfaceOil(outdir,Model.Runid,'Ekofisk (floating)');
-                data=getSurfaceOil(outdir,Model.Runid,'light_crude');
+                %                data=getSurfaceOil(outdir,model.runid,'Ekofisk (floating)');
+                data=getSurfaceOil(outdir,model.runid,'light_crude');
                 times=data.Time;
         end
 
@@ -98,7 +98,7 @@ for ip=1:np
         s.X=data.X;
         s.Y=data.Y;
 
-        ifirst=find(abs(times-hm.Cycle)<0.001);
+        ifirst=find(abs(times-hm.cycle)<0.001);
 
         if ~isempty(ifirst)
             s.Time=times(ifirst:end);
@@ -122,7 +122,7 @@ for ip=1:np
                     s.U=data.XComp;
                     s.V=data.YComp;
                 end
-                %                s.Mag=sqrt(s.U.^2+s.V.^2);
+                %                s.mag=sqrt(s.U.^2+s.V.^2);
                 %                save(fout,'-struct','s','Parameter','Time','X','Y','U','V','Mag');
                 save(fout,'-struct','s','Parameter','Time','X','Y','U','V');
         end
@@ -133,7 +133,7 @@ for ip=1:np
         %     save(fout,'-struct','s','Parameter','Time','x','y','Val');
         %     end
     catch
-        WriteErrorLogFile(hm,['Something went wrong extracting map data - ' par ' from ' fil ' in ' hm.Models(m).Name]);
+        WriteErrorLogFile(hm,['Something went wrong extracting map data - ' par ' from ' fil ' in ' hm.models(m).name]);
     end
 
 

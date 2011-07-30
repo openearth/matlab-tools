@@ -1,12 +1,12 @@
 function AdjustInputXBeach(hm,m)
 
-tmpdir=hm.TempDir;
+tmpdir=hm.tempDir;
 
 parfile=[tmpdir 'params.txt'];
 
-findreplace(parfile,'TSTOPKEY',num2str(hm.Models(m).RunTime*60));
-findreplace(parfile,'MORFACKEY',num2str(hm.Models(m).MorFac));
-findreplace(parfile,'DEPKEY',[hm.Models(m).Name '.dep']);
+findreplace(parfile,'TSTOPKEY',num2str(hm.models(m).runTime*60));
+findreplace(parfile,'MORFACKEY',num2str(hm.models(m).morFac));
+findreplace(parfile,'DEPKEY',[hm.models(m).name '.dep']);
 
-findreplace(parfile,'REFDATEKEY',datestr(hm.Cycle,'yyyymmdd'));
-findreplace(parfile,'REFTIMEKEY',datestr(hm.Cycle,'HHMMSS'));
+findreplace(parfile,'REFDATEKEY',datestr(hm.cycle,'yyyymmdd'));
+findreplace(parfile,'REFTIMEKEY',datestr(hm.cycle,'HHMMSS'));

@@ -1,27 +1,27 @@
 function PreProcessXBeach(hm,m)
 
-tmpdir=hm.TempDir;
+tmpdir=hm.tempDir;
 
 %AdjustInputXBeach(hm,m);
 %MakeXBeachParamsFile(hm,m);
 cosmos_writeXBeachParams(hm,m);
 
-if hm.Models(m).FlowNested
+if hm.models(m).flowNested
     NestingXBeachFlow(hm,m);
 end
 
-if hm.Models(m).WaveNested
+if hm.models(m).waveNested
     NestingXBeachWave(hm,m);
 end
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-switch Model.RunEnv
+switch model.runEnv
     
     case{'win32'}
         
         % copy xbeach executables
-        [success,message,messageid]=copyfile([hm.MainDir 'exe\xbeach_noMPI.exe'],tmpdir,'f');
+        [success,message,messageid]=copyfile([hm.exeDir 'xbeach_noMPI.exe'],tmpdir,'f');
         
         % Make run batch file
         fid=fopen([tmpdir 'run.bat'],'wt');
@@ -33,7 +33,7 @@ switch Model.RunEnv
         
     case{'h4'}
         
-        [success,message,messageid]=copyfile([hm.MainDir 'exe\xbeach'],tmpdir,'f');
+        [success,message,messageid]=copyfile([hm.exeDir 'xbeach'],tmpdir,'f');
         
         %         fid=fopen([tmpdir 'run.sh'],'wt');
         %         fprintf(fid,'%s\n','### ********************************************************************');
@@ -56,12 +56,12 @@ switch Model.RunEnv
         %         fprintf(fid,'%s\n','### The name of this SGE job is explicitly set to another name;');
         %         fprintf(fid,'%s\n','### otherwise the name of the SGE script itself would be used. The name');
         %         fprintf(fid,'%s\n','### of the job also determines how the jobs output files will be called. ');
-        %         fprintf(fid,'%s\n',['#$ -N ' hm.Models(m).Name]);
+        %         fprintf(fid,'%s\n',['#$ -N ' hm.models(m).name]);
         %         fprintf(fid,'%s\n','### The next phrase asks for a "parallel environment" called "distrib",');
         %         fprintf(fid,'%s\n','### to be run with 4 slots (for instance 4 cores).');
         %         fprintf(fid,'%s\n','### "distrib" is a specific name for H3/H4 linux clusters (this name is');
         %         fprintf(fid,'%s\n','### for instance "mpi" on DAS-2/DAS-3 linux clusters).');
-        % %        fprintf(fid,'%s\n',['#$ -pe distrib ' hm.Models(m).NumCores]);
+        % %        fprintf(fid,'%s\n',['#$ -pe distrib ' hm.models(m).numCores]);
         %         fprintf(fid,'%s\n',['#$ -pe distrib 2']);
         %         fprintf(fid,'%s\n','');
         %         fprintf(fid,'%s\n','### Start SGE.');
@@ -146,7 +146,7 @@ switch Model.RunEnv
         fprintf(fid,'%s\n','### The name of this SGE job is explicitly set to another name;');
         fprintf(fid,'%s\n','### otherwise the name of the SGE script itself would be used. The name');
         fprintf(fid,'%s\n','### of the job also determines how the jobs output files will be called. ');
-        fprintf(fid,'%s\n',['#$ -N ' Model.Name]);
+        fprintf(fid,'%s\n',['#$ -N ' model.name]);
         fprintf(fid,'%s\n','### The next phrase asks for a "parallel environment" called "distrib",');
         fprintf(fid,'%s\n','### to be run with 4 slots (for instance 4 cores).');
         fprintf(fid,'%s\n','### "distrib" is a specific name for H3/H4 linux clusters (this name is');

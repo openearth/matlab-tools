@@ -6,26 +6,26 @@ function [hm,ifin]=cosmos_checkForFinishedSimulations(hm)
 ifin=[];
 k=0;
 
-f=dir([hm.JobDir filesep 'finished.*']);
+f=dir([hm.jobDir filesep 'finished.*']);
 n=length(f);
 
 if n>0
-    fname=[hm.JobDir f(1).name];
+    fname=[hm.jobDir f(1).name];
     mdl=f(1).name(25:end);
-    m=findstrinstruct(hm.Models,'Name',mdl);
+    m=findstrinstruct(hm.models,'name',mdl);
     k=k+1;
     ifin(k)=m;
 end
 
 %% And now H4
-for i=1:hm.NrModels
-    switch lower(hm.Models(i).Type)
+for i=1:hm.nrModels
+    switch lower(hm.models(i).type)
         case{'xbeachcluster'}
             nprfperjob=hm.nrProfilesPerJob;
-            njobs=ceil(hm.Models(i).NrProfiles/nprfperjob);
+            njobs=ceil(hm.models(i).nrProfiles/nprfperjob);
             allready=1;
             for j=1:njobs
-                fname=[hm.JobDir hm.Models(i).Name filesep 'finished' num2str(j) '.txt'];
+                fname=[hm.jobDir hm.models(i).name filesep 'finished' num2str(j) '.txt'];
                 if ~exist(fname,'file')
                     allready=0;
                 end
@@ -35,7 +35,7 @@ for i=1:hm.NrModels
                 ifin(k)=i;
             end
         otherwise
-            fname=[hm.JobDir hm.Models(i).Name filesep 'finished.txt'];
+            fname=[hm.jobDir hm.models(i).name filesep 'finished.txt'];
             if exist(fname,'file')
                 k=k+1;
                 ifin(k)=i;
@@ -47,18 +47,18 @@ for i=1:length(ifin)
 
     m=ifin(i);
     
-    hm.Models(m).SimStart=0;
-    hm.Models(m).SimStop=0;
-    hm.Models(m).RunDuration=0;
+    hm.models(m).simStart=0;
+    hm.models(m).simStop=0;
+    hm.models(m).runDuration=0;
     
     try
         
-        switch hm.Models(m).Type
+        switch hm.models(m).type
             case{'xbeachcluster'}
                 startt=0;
                 stopt=0;
                 for j=1:njobs
-                    fname=[hm.JobDir hm.Models(m).Name filesep 'finished' num2str(j) '.txt'];
+                    fname=[hm.jobDir hm.models(m).name filesep 'finished' num2str(j) '.txt'];
                     fid=fopen(fname);
                     startstr = fgetl(fid);
                     stopstr = fgetl(fid);
@@ -78,9 +78,9 @@ for i=1:length(ifin)
                 stopt =datenum(stopstr,'yyyymmdd HHMMSS');
         end
         
-        hm.Models(m).SimStart=startt;
-        hm.Models(m).SimStop=stopt;
-        hm.Models(m).RunDuration=(stopt-startt)*86400;
+        hm.models(m).simStart=startt;
+        hm.models(m).simStop=stopt;
+        hm.models(m).runDuration=(stopt-startt)*86400;
         
     end
     

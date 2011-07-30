@@ -14,15 +14,15 @@ cltp={'editstring','editstring','checkbox','checkbox','popupmenu','checkbox','po
 wdt=[250 100 20 20 100 20 100];
 callbacks={@ChangeTable,@ChangeTable,@ChangeTable,@ChangeTable,@ChangeTable,@ChangeTable,@ChangeTable};
 
-if hm.Models(m).NrStations>0
-    for i=1:hm.Models(m).NrStations
-        data{i,1}=hm.Models(m).Stations(i).Name2;
-        data{i,2}=hm.Models(m).Stations(i).Name1;
-        data{i,3}=hm.Models(m).Stations(i).Parameters(1).PlotCmp;
-        data{i,4}=hm.Models(m).Stations(i).Parameters(1).PlotObs;
-        data{i,5}=hm.Models(m).Stations(i).Parameters(1).ObsCode;
-        data{i,6}=hm.Models(m).Stations(i).Parameters(1).PlotPrd;
-        data{i,7}=hm.Models(m).Stations(i).Parameters(1).PrdCode;
+if hm.models(m).nrStations>0
+    for i=1:hm.models(m).nrStations
+        data{i,1}=hm.models(m).stations(i).name2;
+        data{i,2}=hm.models(m).stations(i).name1;
+        data{i,3}=hm.models(m).stations(i).parameters(1).plotCmp;
+        data{i,4}=hm.models(m).stations(i).parameters(1).plotObs;
+        data{i,5}=hm.models(m).stations(i).parameters(1).obsCode;
+        data{i,6}=hm.models(m).stations(i).parameters(1).plotPrd;
+        data{i,7}=hm.models(m).stations(i).parameters(1).prdCode;
     end
 else
     data{1,1}='';
@@ -34,13 +34,13 @@ else
     data{1,7}='';
 end
 
-nr=hm.NrStations;
+nr=hm.nrStations;
 k=0;
 for i=1:nr
-    if strcmpi(hm.Stations(i).Continent,hm.Models(m).Continent)
+    if strcmpi(hm.stations(i).continent,hm.models(m).continent)
         k=k+1;
         for j=1:7
-            popuptext{k,j}=hm.Stations(i).IDCode;
+            popuptext{k,j}=hm.stations(i).IDCode;
         end
     end
 end
@@ -50,22 +50,22 @@ end
 
 table2(gcf,'table','create','position',[30 60],'nrrows',10,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'popuptext',popuptext);
 
-for j=1:hm.NrParameters
-    handles.Parameters{j}=hm.Parameters(j).LongName;
+for j=1:hm.nrParameters
+    handles.parameters{j}=hm.parameters(j).longName;
 end
-handles.SelectParameter= uicontrol(gcf,'Style','popupmenu','Position',[330 300 100 20],'String',handles.Parameters,'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.selectParameter= uicontrol(gcf,'Style','popupmenu','Position',[330 300 100 20],'String',handles.parameters,'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 
 handles.LoadObsFile = uicontrol(gcf,'Style','pushbutton','Position',[330 270  100 20],'String','Load Obs File','Tag','UIControl');
 
-handles.PushOK     = uicontrol(gcf,'Style','pushbutton','Position',[400  30  70 20],'String','OK','Tag','UIControl');
-handles.PushCancel = uicontrol(gcf,'Style','pushbutton','Position',[320  30  70 20],'String','Cancel','Tag','UIControl');
+handles.pushOK     = uicontrol(gcf,'Style','pushbutton','Position',[400  30  70 20],'String','OK','Tag','UIControl');
+handles.pushCancel = uicontrol(gcf,'Style','pushbutton','Position',[320  30  70 20],'String','Cancel','Tag','UIControl');
 
-set(handles.PushOK     ,'CallBack',{@PushOK_CallBack});
-set(handles.PushCancel ,'CallBack',{@PushCancel_CallBack});
+set(handles.pushOK     ,'CallBack',{@PushOK_CallBack});
+set(handles.pushCancel ,'CallBack',{@PushCancel_CallBack});
 set(handles.LoadObsFile ,'CallBack',{@LoadObsFile_CallBack});
-set(handles.SelectParameter ,'CallBack',{@SelectParameter_CallBack});
+set(handles.selectParameter ,'CallBack',{@SelectParameter_CallBack});
 
-handles.Models=hm.Models(m);
+handles.models=hm.models(m);
 
 guidata(gcf,handles);
 
@@ -75,8 +75,8 @@ RefreshAll(handles);
 function PushOK_CallBack(hObject,eventdata)
 handles=guidata(gcf);
 hm=guidata(findobj('Tag','MainWindow'));
-hm.Models(hm.ActiveModel).NrStations=handles.Models.NrStations;
-hm.Models(hm.ActiveModel).Stations=handles.Models.Stations;
+hm.models(hm.ActiveModel).nrStations=handles.models.nrStations;
+hm.models(hm.ActiveModel).stations=handles.models.stations;
 guidata(findobj('Tag','MainWindow'),hm);
 close(gcf);
 
@@ -127,21 +127,21 @@ if pathname~=0
         end
         fclose(fid);
 
-        handles.Models.Stations=[];
-        handles.Models.NrStations=length(m);
+        handles.models.stations=[];
+        handles.models.nrStations=length(m);
 
         for i=1:length(m)
-            handles.Models.Stations(i).Name1=deblank(name(i,:));
-            handles.Models.Stations(i).Name2=deblank(name(i,:));
-            handles.Models.Stations(i).M=m(i);
-            handles.Models.Stations(i).N=n(i);
-            handles.Models.Stations(i).Location(1)=x(i);
-            handles.Models.Stations(i).Location(2)=y(i);
+            handles.models.stations(i).name1=deblank(name(i,:));
+            handles.models.stations(i).name2=deblank(name(i,:));
+            handles.models.stations(i).m=m(i);
+            handles.models.stations(i).N=n(i);
+            handles.models.stations(i).Location(1)=x(i);
+            handles.models.stations(i).Location(2)=y(i);
 
-            for k=1:hm.NrParameters
-                handles.Models.Stations(i).Parameters(k).PlotCmp=0;
-                handles.Models.Stations(i).Parameters(k).PlotObs=0;
-                handles.Models.Stations(i).Parameters(k).PlotPrd=0;
+            for k=1:hm.nrParameters
+                handles.models.stations(i).parameters(k).plotCmp=0;
+                handles.models.stations(i).parameters(k).plotObs=0;
+                handles.models.stations(i).parameters(k).plotPrd=0;
             end
 
         end
@@ -154,23 +154,23 @@ end
 function RefreshAll(handles)
 
 hm=guidata(findobj('Tag','MainWindow'));
-nr=hm.NrStations;
+nr=hm.nrStations;
 
-ii=get(handles.SelectParameter,'Value');
+ii=get(handles.selectParameter,'Value');
 
 data{1,1}='';
 data{1,2}=0;
 data{1,3}=0;
 data{1,4}=0;
 
-for i=1:handles.Models.NrStations
-    data{i,1}=handles.Models.Stations(i).Name2;
-    data{i,2}=handles.Models.Stations(i).Name1;
-    data{i,3}=handles.Models.Stations(i).Parameters(ii).PlotCmp;
-    data{i,4}=handles.Models.Stations(i).Parameters(ii).PlotObs;
-    data{i,5}=handles.Models.Stations(i).Parameters(ii).ObsCode;
-    data{i,6}=handles.Models.Stations(i).Parameters(ii).PlotPrd;
-    data{i,7}=handles.Models.Stations(i).Parameters(ii).PrdCode;
+for i=1:handles.models.nrStations
+    data{i,1}=handles.models.stations(i).name2;
+    data{i,2}=handles.models.stations(i).name1;
+    data{i,3}=handles.models.stations(i).parameters(ii).plotCmp;
+    data{i,4}=handles.models.stations(i).parameters(ii).plotObs;
+    data{i,5}=handles.models.stations(i).parameters(ii).obsCode;
+    data{i,6}=handles.models.stations(i).parameters(ii).plotPrd;
+    data{i,7}=handles.models.stations(i).parameters(ii).prdCode;
 end
 
 table2(gcf,'table','change','data',data);
@@ -181,24 +181,24 @@ function ChangeTable
 handles=guidata(gcf);
 
 hm=guidata(findobj('Tag','MainWindow'));
-nr=hm.NrStations;
+nr=hm.nrStations;
 for i=1:nr
-    if strcmpi(hm.Stations(i).Continent,handles.Models.Continent)
-        stations{i}=hm.Stations(i).IDCode;
+    if strcmpi(hm.stations(i).continent,handles.models.continent)
+        stations{i}=hm.stations(i).IDCode;
     end
 end
 
 data=table2(gcf,'table','getdata');
-ii=get(handles.SelectParameter,'Value');
+ii=get(handles.selectParameter,'Value');
 
-for i=1:handles.Models.NrStations
-    handles.Models.Stations(i).Name2=data{i,1};
-    handles.Models.Stations(i).Name1=data{i,2};
-    handles.Models.Stations(i).Parameters(ii).PlotCmp=data{i,3};
-    handles.Models.Stations(i).Parameters(ii).PlotObs=data{i,4};
-    handles.Models.Stations(i).Parameters(ii).ObsCode=data{i,5};
-    handles.Models.Stations(i).Parameters(ii).PlotPrd=data{i,6};
-    handles.Models.Stations(i).Parameters(ii).PrdCode=data{i,7};
+for i=1:handles.models.nrStations
+    handles.models.stations(i).name2=data{i,1};
+    handles.models.stations(i).name1=data{i,2};
+    handles.models.stations(i).parameters(ii).plotCmp=data{i,3};
+    handles.models.stations(i).parameters(ii).plotObs=data{i,4};
+    handles.models.stations(i).parameters(ii).obsCode=data{i,5};
+    handles.models.stations(i).parameters(ii).plotPrd=data{i,6};
+    handles.models.stations(i).parameters(ii).prdCode=data{i,7};
 end
 guidata(gcf,handles);
 

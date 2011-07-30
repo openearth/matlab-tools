@@ -21,7 +21,7 @@ disp('Start main loop ...');
 
 %% Reading data
 disp('Reading models ...');
-set(hm.TextMainLoopStatus,'String','Status : Reading models ...');drawnow;
+set(hm.textMainLoopStatus,'String','Status : Reading models ...');drawnow;
 
 hm=cosmos_readMeteo(hm);
 hm=cosmos_readOceanModels(hm);
@@ -32,53 +32,53 @@ hm=cosmos_readModels(hm);
 %% Time Management
 hm.NCyc=hm.NCyc+1;
 
-hm.CycStr=[datestr(hm.Cycle,'yyyymmdd') '_' datestr(hm.Cycle,'HH') 'z'];
+hm.cycStr=[datestr(hm.cycle,'yyyymmdd') '_' datestr(hm.cycle,'HH') 'z'];
 
-set(hm.EditCycle,'String',datestr(hm.Cycle,'yyyymmdd HHMMSS'));
+set(hm.editCycle,'String',datestr(hm.cycle,'yyyymmdd HHMMSS'));
 
 %% Set initial durations and what needs to be done for each model
-for i=1:hm.NrModels
-    hm.Models(i).Status='waiting';
-    hm.Models(i).RunSimulation=hm.RunSimulation;
-    hm.Models(i).ExtractData=hm.ExtractData;
-    hm.Models(i).DetermineHazards=hm.DetermineHazards;
-    hm.Models(i).RunPost=hm.RunPost;
-    hm.Models(i).MakeWebsite=hm.MakeWebsite;
-    hm.Models(i).UploadFTP=hm.UploadFTP;
-    hm.Models(i).ArchiveInput=hm.ArchiveInput;
-    hm.Models(i).SimStart=datestr(now);
-    hm.Models(i).SimStop=datestr(now);
-    hm.Models(i).RunDuration=0;
-    hm.Models(i).MoveDuration=0;
-    hm.Models(i).ProcessDuration=0;
-    hm.Models(i).PlotDuration=0;
-    hm.Models(i).ExtractDuration=0;
-    hm.Models(i).UploadDuration=0;
+for i=1:hm.nrModels
+    hm.models(i).status='waiting';
+    hm.models(i).runSimulation=hm.runSimulation;
+    hm.models(i).extractData=hm.extractData;
+    hm.models(i).DetermineHazards=hm.DetermineHazards;
+    hm.models(i).runPost=hm.runPost;
+    hm.models(i).makeWebsite=hm.makeWebsite;
+    hm.models(i).uploadFTP=hm.uploadFTP;
+    hm.models(i).archiveInput=hm.archiveInput;
+    hm.models(i).simStart=datestr(now);
+    hm.models(i).simStop=datestr(now);
+    hm.models(i).runDuration=0;
+    hm.models(i).moveDuration=0;
+    hm.models(i).processDuration=0;
+    hm.models(i).plotDuration=0;
+    hm.models(i).extractDuration=0;
+    hm.models(i).uploadDuration=0;
 end
 
 %% Check finished models
-flist=dir([hm.ScenarioDir 'joblist' filesep 'finished.' datestr(hm.Cycle,'yyyymmdd.HHMMSS') '.*']);
+flist=dir([hm.scenarioDir 'joblist' filesep 'finished.' datestr(hm.cycle,'yyyymmdd.HHMMSS') '.*']);
 if ~isempty(flist)
     for i=1:length(flist)
         mdl=flist(i).name(26:end);
-        nr=findstrinstruct(hm.Models,'Name',mdl);
+        nr=findstrinstruct(hm.models,'name',mdl);
         if ~isempty(nr)
-            hm.Models(nr).Status='finished';
-            hm.Models(nr).RunSimulation=0;
+            hm.models(nr).status='finished';
+            hm.models(nr).runSimulation=0;
         end
     end
 end
 
-for i=1:hm.NrModels
-    if hm.Models(i).Priority==0
-        hm.Models(i).RunSimulation=0;
+for i=1:hm.nrModels
+    if hm.models(i).priority==0
+        hm.models(i).runSimulation=0;
     end
 end
 
 %% Check which simulations (just the computing part) already ran
-for i=1:hm.NrModels
-    if strcmpi(hm.Models(i).Status,'waiting') && hm.Models(i).RunSimulation==0 && hm.Models(i).Priority>0
-        hm.Models(i).Status='simulationfinished';
+for i=1:hm.nrModels
+    if strcmpi(hm.models(i).status,'waiting') && hm.models(i).runSimulation==0 && hm.models(i).priority>0
+        hm.models(i).status='simulationfinished';
     end
 end
 
@@ -86,33 +86,38 @@ end
 %% model loop does not try to run them
 [hm,finishedList]=cosmos_checkForFinishedSimulations(hm);
 for i=1:length(finishedList)
-    hm.Models(finishedList(i)).Status='simulationfinished';
+    hm.models(finishedList(i)).status='simulationfinished';
 end
 
 %% Start and stop times
 disp('Getting start and stop times ...');
-set(hm.TextModelLoopStatus,'String','Status : Getting start and stop times ...');drawnow;
+set(hm.textModelLoopStatus,'String','Status : Getting start and stop times ...');drawnow;
 hm=cosmos_getStartStopTimes(hm);
 disp('Finished getting start and stop times');
 
+%% Update, commit and upload scenarios.xml
+if hm.makeWebsite
+    cosmos_updateScenariosDotXML(hm);
+end
+
 %% Meteo
-hm.GetMeteo=get(hm.ToggleGetMeteo,'Value');
-if hm.GetMeteo
-    set(hm.TextModelLoopStatus,'String','Status : Getting meteo data ...');drawnow;
+hm.getMeteo=get(hm.toggleGetMeteo,'Value');
+if hm.getMeteo
+    set(hm.textModelLoopStatus,'String','Status : Getting meteo data ...');drawnow;
     cosmos_getMeteoData(hm);
 end
 
 %% Ocean Model data
-if hm.GetOceanModel
-    set(hm.TextModelLoopStatus,'String','Status : Getting ocean model data ...');drawnow;
+if hm.getOceanModel
+    set(hm.textModelLoopStatus,'String','Status : Getting ocean model data ...');drawnow;
     cosmos_getOceanModelData(hm);
 end
 
 %% Predictions and Observations
-if get(hm.ToggleGetObservations,'Value')
-    set(hm.TextModelLoopStatus,'String','Status : Getting observations ...');drawnow;
+if get(hm.toggleGetObservations,'Value')
+    set(hm.textModelLoopStatus,'String','Status : Getting observations ...');drawnow;
     cosmos_getObservations(hm);
-    set(hm.TextModelLoopStatus,'String','Status : Making predictions ...');drawnow;
+    set(hm.textModelLoopStatus,'String','Status : Making predictions ...');drawnow;
     cosmos_getPredictions(hm);
 end
 
@@ -125,8 +130,8 @@ t = timer;
 set(t,'ExecutionMode','fixedRate','BusyMode','drop','period',5);
 set(t,'TimerFcn',{@cosmos_runModelLoop},'Tag','ModelLoop');
 startat(t,starttime);
-set(hm.TextModelLoopStatus,'String','Status : active');drawnow;
+set(hm.textModelLoopStatus,'String','Status : active');drawnow;
 
-set(hm.TextMainLoopStatus,'String','Status : running');drawnow;
+set(hm.textMainLoopStatus,'String','Status : running');drawnow;
 
 guidata(findobj('Tag','OMSMain'),hm);

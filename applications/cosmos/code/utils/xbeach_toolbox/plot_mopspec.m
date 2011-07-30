@@ -17,7 +17,7 @@ load([mopid,'_',monthid,'_2dspec.mat']);
 % moment mean directions as a check.
 for ii=1:length(out1d.t)
     
-    Splot=out2d.S(:,:,ii);
+    Splot=out2d.s(:,:,ii);
     
     %Define colormap based on max energy
     maxS = max(max(Splot));
@@ -51,7 +51,7 @@ for ii=1:length(out1d.t)
     end
     % Now convert this to a 1D spectrum for the same time and plot
     subplot(2,1,2)
-    plot(out1d.f,out1d.E(:,ii),'-b');
+    plot(out1d.f,out1d.e(:,ii),'-b');
     xlabel('Frequency, Hz');
     ylabel('Energy Density, m^2/Hz');
     grid on
@@ -59,9 +59,9 @@ for ii=1:length(out1d.t)
     plot(out1d.f,Espec,'--r');
     legend('1d spectrum from CDIP','1d spectrum from 2d estimate');
     title(['Energy Density, m^2/Hz for MOP station VE 338',datestr(out1d.t(ii),0)]);
-    text(out1d.f(25),(max(out1d.E(:,ii))/4)*3,['Hs = ',num2str(out1d.hs(ii))]);
-    text(out1d.f(25),max(out1d.E(:,ii))/2,['Tp = ',num2str(out1d.tp(ii))]);
-    text(out1d.f(25),max(out1d.E(:,ii))/4,['Dp = ',num2str(out1d.dp(ii))]);
+    text(out1d.f(25),(max(out1d.e(:,ii))/4)*3,['Hs = ',num2str(out1d.hs(ii))]);
+    text(out1d.f(25),max(out1d.e(:,ii))/2,['Tp = ',num2str(out1d.tp(ii))]);
+    text(out1d.f(25),max(out1d.e(:,ii))/4,['Dp = ',num2str(out1d.dp(ii))]);
     a=axis;
     axis([0 0.5 a(3) a(4)]);
     

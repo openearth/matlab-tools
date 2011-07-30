@@ -1,30 +1,30 @@
 function cosmos_makeTimeSeriesPlots(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
 try
 
-    if Model.NrStations>0
+    if model.nrStations>0
 
-        nn=Model.NrStations;
+        nn=model.nrStations;
 
-        if strcmpi(hm.Scenario,'forecasts')
-            tstart=Model.TOutputStart-5;
+        if strcmpi(hm.scenario,'forecasts')
+            tstart=model.tOutputStart-5;
         else
-            tstart=Model.TOutputStart;
+            tstart=model.tOutputStart;
         end
-        tstop=Model.TStop;
+        tstop=model.tStop;
 
         for i=1:nn
             clear pars
 
-            for ip=1:Model.Stations(i).NrParameters
+            for ip=1:model.stations(i).nrParameters
                 
                 tms=[];
                 
-                Parameter=Model.Stations(i).Parameters(ip);
-                stationfile=Model.Stations(i).Name;                
-                typ=Parameter.Name;
+                Parameter=model.stations(i).parameters(ip);
+                stationfile=model.stations(i).name;                
+                typ=Parameter.name;
 
                 % Title and labels
                 partit=getParameterInfo(hm,typ,'plot','timeseries','title');
@@ -36,13 +36,13 @@ try
                 PlotPrd=0;
                 PlotObs=0;
                 
-                if Parameter.PlotCmp
+                if Parameter.plotCmp
                     PlotCmp=1;
                 end
-                if Parameter.PlotPrd
+                if Parameter.plotPrd
                     PlotPrd=1;
                 end
-                if Parameter.PlotObs
+                if Parameter.plotObs
                     PlotObs=1;
                 end
 
@@ -58,7 +58,7 @@ try
                     % Computed
                     if PlotCmp
                         nm=stationfile;
-                        fname=[Model.ArchiveDir 'appended' filesep 'timeseries' filesep typ '.' nm '.mat'];
+                        fname=[model.archiveDir 'appended' filesep 'timeseries' filesep typ '.' nm '.mat'];
                         if exist(fname,'file')
                             data=load(fname);
                             nd=nd+1;
@@ -77,9 +77,9 @@ try
 
                     % Predicted
                     if PlotPrd
-                        src=Parameter.PrdSrc;
-                        id=Parameter.PrdID;
-                        fname=[hm.ScenarioDir 'observations' filesep src filesep id filesep typ '.' id '.mat'];
+                        src=Parameter.prdSrc;
+                        id=Parameter.prdID;
+                        fname=[hm.scenarioDir 'observations' filesep src filesep id filesep typ '.' id '.mat'];
                         if exist(fname,'file')
                             data=load(fname);
                             nd=nd+1;
@@ -98,9 +98,9 @@ try
 
                     % Observed
                     if PlotObs
-                        src=Parameter.ObsSrc;
-                        id=Parameter.ObsID;
-                        fname=[hm.ScenarioDir 'observations' filesep src filesep id filesep typ '.' id '.mat'];
+                        src=Parameter.obsSrc;
+                        id=Parameter.obsID;
+                        fname=[hm.scenarioDir 'observations' filesep src filesep id filesep typ '.' id '.mat'];
                         if exist(fname,'file')
                             data=load(fname);
                             nd=nd+1;
@@ -181,10 +181,10 @@ try
                         yticks=ymin:ytck:ymax;
                         
                         % Title
-                        ttl=[partit ' - ' Model.Stations(i).LongName];
+                        ttl=[partit ' - ' model.stations(i).longName];
                         
                         % And export the figure
-                        figname=[Model.Dir 'lastrun' filesep 'figures' filesep typ '.' stationfile '.png'];
+                        figname=[model.dir 'lastrun' filesep 'figures' filesep typ '.' stationfile '.png'];
                         cosmos_timeSeriesPlot(figname,tms,'ylabel',ylab,'title',ttl,'xlim',tlim,'ylim',ylim,'xticks',xticks,'yticks',yticks);
                     end
                 end
@@ -193,5 +193,5 @@ try
     end
 
 catch
-    WriteErrorLogFile(hm,['Something went wrong with generating timeseries figure - ' typ ' - ' Model.Name]);
+    WriteErrorLogFile(hm,['Something went wrong with generating timeseries figure - ' typ ' - ' model.name]);
 end

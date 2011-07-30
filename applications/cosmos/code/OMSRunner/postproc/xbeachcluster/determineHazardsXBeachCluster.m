@@ -1,18 +1,18 @@
 function determineHazardsXBeachCluster(hm,m)
 
-Model=hm.Models(m);
+model=hm.models(m);
 
-dr=Model.Dir;
+dr=model.dir;
 
-np=hm.Models(m).NrProfiles;
+np=hm.models(m).nrProfiles;
 
 for ip=1:np
     
-    profile=Model.Profile(ip).Name;
+    profile=model.profile(ip).name;
     
     inputdir=[dr 'lastrun' filesep 'input' filesep profile filesep];
-    archivedir=[Model.ArchiveDir hm.CycStr filesep 'netcdf' filesep profile filesep];
-    xmldir=[Model.ArchiveDir hm.CycStr filesep 'hazards' filesep profile filesep];
+    archivedir=[model.archiveDir hm.cycStr filesep 'netcdf' filesep profile filesep];
+    xmldir=[model.archiveDir hm.cycStr filesep 'hazards' filesep profile filesep];
     
     % Check if simulation has run
     if exist([archivedir profile '.nc'],'file')
@@ -21,7 +21,7 @@ for ip=1:np
             mkdir(xmldir);
         end
         
-        tref=Model.TFlowStart;
+        tref=model.tFlowStart;
 
         % Compute run-up etc.
         profile_calcs(inputdir,archivedir,xmldir,profile,tref);

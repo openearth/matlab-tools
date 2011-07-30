@@ -1,11 +1,11 @@
 function cosmos_updateScenarioXML(hm,m)
 % Updates scenario xml file for present scenario on all websites
 
-for iw=1:length(hm.Models(m).WebSite)
+for iw=1:length(hm.models(m).webSite)
 
-    wbdir=hm.Models(m).WebSite(iw).Name;
+    wbdir=hm.models(m).webSite(iw).name;
 
-    dr=[hm.WebDir wbdir filesep 'scenarios' filesep hm.scenarioShortName filesep];
+    dr=[hm.webDir wbdir filesep 'scenarios' filesep hm.scenarioShortName filesep];
 
     fname=[dr hm.scenarioShortName '.xml'];
 
@@ -17,8 +17,8 @@ for iw=1:length(hm.Models(m).WebSite)
     scenario.longname.value=hm.scenarioLongName;
     scenario.longname.type='char';
 
-    t0=hm.Cycle;
-    t1=hm.Cycle+hm.RunTime/24;
+    t0=hm.cycle;
+    t1=hm.cycle+hm.runTime/24;
     
     scenario.starttime.value=t0;
     scenario.starttime.type='date';
@@ -44,24 +44,24 @@ for iw=1:length(hm.Models(m).WebSite)
     end
 
     im=0;
-    for i=1:hm.NrModels
+    for i=1:hm.nrModels
 
-        Model=hm.Models(i);
+        model=hm.models(i);
         
         % Check if model should be included in website
         incl=0;
-        for iw2=1:length(Model.WebSite)
-            if strcmpi(Model.WebSite(iw2).Name,wbdir)
+        for iw2=1:length(model.webSite)
+            if strcmpi(model.webSite(iw2).name,wbdir)
                 incl=1;
                 break;
             end
         end
 
-        if hm.Models(i).Run && incl
+        if hm.models(i).run && incl
 
             im=im+1;
 
-            scenario.models(im).model.shortname.value=Model.Name;
+            scenario.models(im).model.shortname.value=model.name;
             scenario.models(im).model.shortname.type='char';
 
         end
