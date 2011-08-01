@@ -62,11 +62,11 @@ for i = 1 : length(yearArray)
     %it will require more memory.
     transectsForYearStruct = transectStruct([transectStruct.time] == year);
      altitudeBlock = repmat(missing, length(transectIdArray), length(crossShoreCoordinateArray));
-       originBlock = repmat(nan,     length(transectIdArray), length(crossShoreCoordinateArray)); % use nan for missing here (only a short)
-     minCrossBlock = repmat(nan,       size(transectIdArray)); % defaults to nan
-     maxCrossBlock = repmat(nan,       size(transectIdArray)); % defaults to nan
-     timeTopoBlock = repmat(nan,       size(transectIdArray)); % write 1 per transect
-    timeBathyBlock = repmat(nan,       size(transectIdArray)); % write 1 per transect
+       originBlock = nan(length(transectIdArray), length(crossShoreCoordinateArray)); % use nan for missing here (only a short)
+     minCrossBlock = nan(size(transectIdArray)); % defaults to nan
+     maxCrossBlock = nan(size(transectIdArray)); % defaults to nan
+     timeTopoBlock = nan(size(transectIdArray)); % write 1 per transect
+    timeBathyBlock = nan(size(transectIdArray)); % write 1 per transect
     
     for j = 1 : length(transectIdArray)
         id = transectIdArray(j);
