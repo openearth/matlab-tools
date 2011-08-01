@@ -28,7 +28,11 @@ fclose(fid);
 
 %%
 function splitstruct(fid,s,ilev,nindent)
+try
 fnames=fieldnames(s);
+catch
+    shite=1
+end
 for k=1:length(fnames)
     if isfield(s.(fnames{k}),'value')
         write2xml(fid,s,fnames{k},ilev,nindent)

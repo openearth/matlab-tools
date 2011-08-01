@@ -65,37 +65,49 @@ end
 
 try
 
-    ok=1;
+%     ok=1;
     
-    infr=nc_info(urlstr);
+%     infr=nc_info(urlstr);
     
-    if ~ok
-        err='could not find file';
-        return
-    end
+%     if ~ok
+%         err='could not find file';
+%         return
+%     end
 
 %     nanval1=att.ugrd10m.missing_value;
 %     nanval2=att.ugrd10m.ml__FillValue;
 %     nanval3=-999000000;
     
-    if isfield(infr,'DataSet')
-        infr.Dataset=infr.DataSet;
-        infr=rmfield(infr,'DataSet');
-    end
+%     if isfield(infr,'DataSet')
+%         infr.Dataset=infr.DataSet;
+%         infr=rmfield(infr,'DataSet');
+%     end
+% 
+%     %% Time
+%     ii=fieldNr(infr.Dataset,'Name','time');
+%     nt=infr.Dataset(ii).Size;
+% 
+%     jj=fieldNr(infr.Dataset(ii).Attribute,'Name','minimum');
+%     tminstr=infr.Dataset(ii).Attribute(jj).Value;
+%     tminstr=nc_attget(url,'time','minimum');
+%     tminstr=deblank(strrep(tminstr,'z',' '));
+%     tmin=datenum(tminstr,'HHddmmmyyyy');
+% 
+%     jj=fieldNr(infr.Dataset(ii).Attribute,'Name','maximum');
+%     tmaxstr=infr.Dataset(ii).Attribute(jj).Value;
+%     tmax=datenum(tmaxstr,'HHddmmmyyyy');
 
-    %% Time
-    ii=fieldNr(infr.Dataset,'Name','time');
-    nt=infr.Dataset(ii).Size;
-
-    jj=fieldNr(infr.Dataset(ii).Attribute,'Name','minimum');
-    tminstr=infr.Dataset(ii).Attribute(jj).Value;
+    tminstr=nc_attget(urlstr,'time','minimum');
+    tmaxstr=nc_attget(urlstr,'time','maximum');
     tminstr=deblank(strrep(tminstr,'z',' '));
-    tmin=datenum(tminstr,'HHddmmmyyyy');
-
-    jj=fieldNr(infr.Dataset(ii).Attribute,'Name','maximum');
-    tmaxstr=infr.Dataset(ii).Attribute(jj).Value;
     tmaxstr=deblank(strrep(tmaxstr,'z',' '));
+    tmin=datenum(tminstr,'HHddmmmyyyy');
     tmax=datenum(tmaxstr,'HHddmmmyyyy');
+    timdim=nc_getdiminfo(urlstr,'time');
+    nt=timdim.Length;
+%     nanval1=nc_attget(urlstr,'ugrd10m','missing_value');
+%     nanval2=nc_attget(urlstr,'ugrd10m','_FillValue');
+%     nanval3=-999000000;
 
     dt=(tmax-tmin)/(nt-1);
     times=tmin:dt:tmax;
@@ -181,9 +193,10 @@ try
         end
 
         d.(parstr{i})=data;
-        ii=fieldNr(infr.Dataset,'Name',parstr{i});
-        jj=fieldNr(infr.Dataset(ii).Attribute,'Name','missing_value');
-        nanval1=infr.Dataset(ii).Attribute(jj).Value;
+        nanval1=nc_attget(urlstr,parstr{i},'missing_value');
+%         ii=fieldNr(infr.Dataset,'Name',parstr{i});
+%         jj=fieldNr(infr.Dataset(ii).Attribute,'Name','missing_value');
+%         nanval1=infr.Dataset(ii).Attribute(jj).Value;
         
         d.(parstr{i})(d.(parstr{i})==nanval1)=NaN;
 %         d.(parstr{i})(d.(parstr{i})==nanval2)=NaN;
