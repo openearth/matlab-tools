@@ -1,5 +1,5 @@
-function [G, F, C]=delft3d_kelvin_wave_input(G,varargin)
-%DELFT3D_KELVIN_WAVE_INPUT  MAIN INPUT specification of delft3d_kelvin_wave_*
+function [G, F, C]=input(G,varargin)
+%DELFT3D_KELVIN_WAVE.INPUT  MAIN INPUT specification of delft3d_kelvin_wave_*
 %
 % [G, F, C] = delft3d_kelvin_wave_input(G)
 %

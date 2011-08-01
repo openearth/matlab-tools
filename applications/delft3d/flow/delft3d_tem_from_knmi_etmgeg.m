@@ -1,4 +1,4 @@
-function delft3d_tem_from_knmi_etmgeg
+function delft3d_tem_from_knmi_etmgeg(varargin)
 %delft3d_tem_from_knmi_etmgeg    script that transforms KNMI etmgeg files to delft3d *.tem file
 %
 %  delft3d_tem_from_knmi_etmgeg(fname,ref_datenum)
@@ -19,14 +19,23 @@ function delft3d_tem_from_knmi_etmgeg
 %See also: KNMI_ETMGEG, DELFT3D_IO_TEM, KNMI_POTWIND, 
 %          delft3d_wnd_from_knmi_potwind, delft3d_wnd_from_nc
 
-   OPT.filename     = 'F:\checkouts\OpenEarthRawData\KNMI_etmgeg\raw\etmgeg_240_2001';
-   OPT.dir        = pwd;
-   OPT.refdatenum   = datenum(2007,1,1);%!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   OPT.filename     = 'etmgeg_240_2001';
+   OPT.dir          = pwd;
+   OPT.refdatenum   = []; %datenum(2007,1,1);%!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   if ischar(OPT.refdatenum)
+      mdf            = delft3d_io_mdf('read',OPT.refdatenum);
+      OPT.refdatenum = datenum(mdf.keywords.itdate,'yyyy-mm-dd');
+   elseif isempty(OPT.refdatenum)
+      error('refdatenum missing')
+   end
+
+   OPT = setproperty(OPT,varargin{:});
 
    C                = knmi_etmgeg(OPT.filename)
 
 %% Negative with respect to reference date not posible
-%% ----------------
+
    mask             = C.data.datenum > OPT.refdatenum;
    
    D.datenum        = C.data.datenum(mask);
@@ -40,7 +49,6 @@ function delft3d_tem_from_knmi_etmgeg
    D.cloudcover_units     = '%';  
    
 %% Negative with respect to reference date not posible
-%% ----------------
 
    AX = subplot_meshgrid(1,3,[.05],[.05])
    
@@ -71,7 +79,6 @@ function delft3d_tem_from_knmi_etmgeg
    print2screensize([OPT.dir,filesep,filename(OPT.filename),'_timeseries.png'])
 
 %% Mind that there are NaN's in the direction
-%% ----------------
 
    clf
   
@@ -86,8 +93,8 @@ function delft3d_tem_from_knmi_etmgeg
 
    print2screensize([OPT.dir,filesep,filename(OPT.filename),'_after_refdate_',datestr(OPT.refdatenum,30),'_NaNs.png'])
   
-%% Remove NaNs
-%% ---------------------------
+%% Remove nans (of either directory or speed)
+%  For Delft3D there is no need to be equidistant in time.
 
    D.datenum        = D.datenum       (~mask);
    D.RH             = D.RH            (~mask);
@@ -95,7 +102,6 @@ function delft3d_tem_from_knmi_etmgeg
    D.cloudcover     = D.cloudcover    (~mask);
   
 %% Save
-%% ---------------------------
 
   iostat = delft3d_io_tem('write',...
                                  [filename(OPT.filename),'_after_refdate_',datestr(OPT.refdatenum,30),'_nonan.tem'],...

@@ -1,5 +1,5 @@
-function delft3d_kelvin_wave_ampphase(G, ETA0, VEL0);
-%DELFT3D_KELVIN_WAVE_AMPPHASE  quick-n-dirty visual assessment of delft3d_kelvin_wave_* 
+function ampphase(G, ETA0, VEL0);
+%DELFT3D_KELVIN_WAVE.AMPPHASE  .
 %
 %See also: delft3d_kelvin_wave
 

@@ -1,5 +1,5 @@
-function delft3d_kelvin_wave_tidalcycle(G, F, C, T, ETA0, VEL0);
-%delft3d_kelvin_wave_TIDALCYCLE  quick-n-dirty visual assessment of delft3d_kelvin_wave_* 
+function tidalcycle(G, F, C, T, ETA0, VEL0);
+%delft3d_kelvin_wave.TIDALCYCLE  quick-n-dirty visual assessment of delft3d_kelvin_wave_* 
 %
 %See also: delft3d_kelvin_wave
 

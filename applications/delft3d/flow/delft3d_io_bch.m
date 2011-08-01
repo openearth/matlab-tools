@@ -4,14 +4,13 @@ function varargout=delft3d_io_bch(cmd,varargin),
 %  DATA=delft3d_io_bch('read' ,filename);
 %
 %       delft3d_io_bch('write',filename,DATA);
+%
 % where DATA has fields:
 %
 %   DATA.phases     (n_endpoints x n_boundaries x n_frequencies) in [deg]
 %   DATA.amplitudes (n_endpoints x n_boundaries x n_frequencies) in [data units]
 %   DATA.a0         (n_endpoints x n_boundaries                ) in [data units]
 %   DATA.frequencies(n_frequencies                             ) in [deh/hr]
-%
-% G.J. de Boer, Feb 2006.
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
@@ -84,9 +83,9 @@ case 'write',
   end;
 end;
 
-% ------------------------------------
-% ------------------------------------
-% ------------------------------------
+%% ------------------------------------
+%  ------------------------------------
+%  ------------------------------------
 
 function STRUCT=Local_read(varargin),
 
@@ -110,7 +109,7 @@ else
    STRUCT.nobnd  = prod(size(STRUCT.data))./(2*STRUCT.nof-n_freq_data0)/2;
    
    %% Read constant a0 (frequency = 0)
-   %% ----------------------
+   %  ----------------------
 
    indexa01 = [                            1:...
                                 STRUCT.nof  :...
@@ -123,14 +122,14 @@ else
    STRUCT.a0(2,:,:) = STRUCT.data(indexa02);   
    
    %% Remove constant a0 (frequency = 0)
-   %% ----------------------
+   %  ----------------------
 
    STRUCT.data(indexa01)=nan;
    STRUCT.data(indexa02)=nan;
    STRUCT.data = STRUCT.data(~isnan(STRUCT.data));
    
    %% Read amplitudes
-   %% ----------------------
+   %  ----------------------
  
    amplitudesA = STRUCT.data(                                           1:...
                                 (STRUCT.nof-n_freq_data0).*STRUCT.nobnd  );
@@ -143,7 +142,7 @@ else
    offset =2*STRUCT.nobnd*(STRUCT.nof-n_freq_data0);
    
    %% Read phases
-   %% ----------------------
+   %  ----------------------
    
    phasesA = STRUCT.data(                                               1+offset:...
                                 (STRUCT.nof-n_freq_data0).*STRUCT.nobnd  +offset);
@@ -160,65 +159,65 @@ end
 
 
 
-% ------------------------------------
-% ------------------------------------
-% ------------------------------------
+%% ------------------------------------
+%  ------------------------------------
+%  ------------------------------------
 
 function iostat=Local_write(filename,STRUCT),
 
-iostat         = 1;
-fid            = fopen(filename,'w');
-OS             = 'windows'; % or 'unix'
-fprintf_format = ' %9.6g';
-fprintf_spaces = '          ';
+iostat             = 1;
+fid                = fopen(filename,'w');
+OPT.OS             = 'windows'; % or 'unix'
+OPT.fprintf_format = ' %9.6g'; % note leading space !
+OPT.fprintf_spaces = '          '; % align with same width as fprintf_format
 
    %% A0?
-   %% ----------------------
+   %  ----------------------
    if isfield(STRUCT,'a0')
    
       STRUCT.frequencies = [0 STRUCT.frequencies];
    end
 
    %% FREQUENCIES
-   %% ----------------------
+   %  ----------------------
 
-   fprintf(fid,fprintf_format,STRUCT.frequencies); % extra space before value: ' %9.6f'
-   fprinteol(fid,OS(1))
-   fprinteol(fid,OS(1))
+   fprintf(fid,OPT.fprintf_format,STRUCT.frequencies); % extra space before value: ' %9.6f'
+   fprinteol(fid,OPT.OS(1))
+   fprinteol(fid,OPT.OS(1))
 
    %% AMPLITUDES and A0
-   %% ----------------------
+   %  ----------------------
    for i=1:size(STRUCT.amplitudes,1)
       for j=1:size(STRUCT.amplitudes,2)
          if isfield(STRUCT,'a0')
-         fprintf(fid,fprintf_format,STRUCT.a0        (i,j,1)); % extra space before value: ' %9.6f'
+         fprintf(fid,OPT.fprintf_format,STRUCT.a0        (i,j,1)); % extra space before value: ' %9.6f'
          end
-         fprintf(fid,fprintf_format,STRUCT.amplitudes(i,j,:)); % extra space before value: ' %9.6f'
-         fprinteol(fid,OS(1))
+         fprintf(fid,OPT.fprintf_format,STRUCT.amplitudes(i,j,:)); % extra space before value: ' %9.6f'
+         fprinteol(fid,OPT.OS(1))
       end
    end;
 
-   fprinteol(fid,OS(1))
+   fprinteol(fid,OPT.OS(1))
    
    %% PHASES
-   %% ----------------------
+   %  ----------------------
 
    for i=1:size(STRUCT.phases,1)
       for j=1:size(STRUCT.phases,2)
          if isfield(STRUCT,'a0')
-         fprintf(fid,fprintf_spaces);
+         fprintf(fid,OPT.fprintf_spaces);
          end
-         fprintf(fid,fprintf_format,STRUCT.phases(i,j,:)); % extra space before value: ' %9.6f'
-         fprinteol(fid,OS(1))
+         fprintf(fid,OPT.fprintf_format,STRUCT.phases(i,j,:)); % extra space before value: ' %9.6f'
+         fprinteol(fid,OPT.OS(1))
       end
    end;
    
-   fprinteol(fid,OS(1))
+   fprinteol(fid,OPT.OS(1))
 
 fclose(fid);
 iostat=1;
 
-% ------------------------------------
-% ------------------------------------
-% ------------------------------------
+%% ------------------------------------
+%  ------------------------------------
+%  ------------------------------------
 

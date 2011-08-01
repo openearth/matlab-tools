@@ -1,5 +1,5 @@
-function G = delft3d_kelvin_wave_grids(grdlayout,varargin)
-%delft3d_kelvin_wave_grids   collection of orthogonal kelvin wave grids
+function G = grids(grdlayout,varargin)
+%delft3d_kelvin_wave.grids   collection of orthogonal kelvin wave grids
 %
 %  G = delft3d_kelvin_wave_grids(grdlayout,<G>)
 %
@@ -19,8 +19,10 @@ function G = delft3d_kelvin_wave_grids(grdlayout,varargin)
    end
 
    U.grdlayout = grdlayout;
+   U.save      = '';
+   U.D0        = 10;
    
-   D0 = 10;
+   U = setProperty(U,varargin{:});
    
    switch U.grdlayout
    
@@ -37,7 +39,7 @@ function G = delft3d_kelvin_wave_grids(grdlayout,varargin)
       G.ix            = G.x0:G.dx:G.x1;
       G.iy            = G.y0:G.dy:G.y1;
    
-      G.dep             = D0.*ones(length(G.ix),length(G.iy));
+      G.dep           = U.D0.*ones(length(G.ix),length(G.iy));
 
       [G.xcor,G.ycor]         = meshgrid(G.ix, G.iy);
 
@@ -54,7 +56,7 @@ function G = delft3d_kelvin_wave_grids(grdlayout,varargin)
       G.ix            = G.x0:G.dx:G.x1;
       G.iy            = G.y0:G.dy:G.y1;
       
-      G.dep             = D0.*ones(length(G.ix),length(G.iy));
+      G.dep           = U.D0.*ones(length(G.ix),length(G.iy));
       
       [G.xcor,G.ycor]         = meshgrid(G.ix, G.iy);
 
@@ -105,7 +107,7 @@ function G = delft3d_kelvin_wave_grids(grdlayout,varargin)
       
       disp(['Increase # cells: ',num2str((size(G.ix).*size(G.iy))/(size(G.ix0).*size(G.iy0)))])
    
-      [G.xcor,G.ycor]         = meshgrid(G.ix, G.iy);
+      [G.cor.x,G.cor.y]         = meshgrid(G.ix, G.iy);
       
       case 33 
           
@@ -150,15 +152,17 @@ function G = delft3d_kelvin_wave_grids(grdlayout,varargin)
           %  ::::::::####
           %  ::::::::####
           %  ::::::::###+ Origin
-          %  ::::::::####
           %  ::::::::#### to prevent erronous eccentricities on and above
-          %  ::::::::#### the horizontal line through origin
+          %  ::::::::#### the horizontal line through origin, and to prevent
+          %               easterly winds from pushing the bulge against and 
+          %               through the southern boundary. Note that this will
+          %               generate some (additional) M4 at the origin.
       
       G.dx            = 500;
       G.dy            = 500;
    
       G.ix0           = [1:130 ];
-      G.iy0           = [-200:210];
+      G.iy0           = [-120:210];
    
       G.ix            = 0 - [G.ix0 max(G.ix0) + cumsum(1.25.^[1:25])].*G.dx;
       G.ix            = fliplr(G.ix);
@@ -167,7 +171,7 @@ function G = delft3d_kelvin_wave_grids(grdlayout,varargin)
       
       disp(['Increase # cells: ',num2str((size(G.ix).*size(G.iy))/(size(G.ix0).*size(G.iy0)))])
    
-      [G.xcor,G.ycor]         = meshgrid(G.ix, G.iy);
+      [G.cor.x,G.cor.y]         = meshgrid(G.ix, G.iy);
 
       case 331
           
@@ -344,5 +348,9 @@ function G = delft3d_kelvin_wave_grids(grdlayout,varargin)
       G.cen.x = corner2center(G.cor.x);
       G.cen.y = corner2center(G.cor.y);
    end  
+   
+   if ~isempty(U.save)
+      delft3d_io_grd('write',U.save,G.cor.x,G.cor.y);
+   end
 
 %% EOF

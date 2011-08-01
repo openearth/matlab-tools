@@ -1,5 +1,5 @@
-function varargout = delft3d_kelvin_wave_boundaries(G,varargin)
-%delft3d_kelvin_wave_boundaries  specificy open boundary segments for delft3d_kelvin_wave_grids
+function varargout = boundaries(G,varargin)
+%delft3d_kelvin_wave.boundaries  specificy open boundary segments for delft3d_kelvin_wave_grids
 %
 % delft3d_kelvin_wave_boundaries(G)
 % delft3d_kelvin_wave_boundaries(G,IN)
@@ -140,7 +140,7 @@ function varargout = delft3d_kelvin_wave_boundaries(G,varargin)
          bndnameB = [names{isides},'B'];
          
          %% first draw the 'skip' boundaries located at the start and end of each side
-         %--------------------------------------------------
+         % --------------------------------------------------
 
          if ~strcmp(bndtype_skip{isides}(1),'X')
 
@@ -208,7 +208,7 @@ function varargout = delft3d_kelvin_wave_boundaries(G,varargin)
          
          %% Second draw sides of each boundary, minus the start and end that were skipped.
          %  if the last segment has lenght one, add it to the previous segment
-         %--------------------------------------------------
+         % --------------------------------------------------
 
          if ~strcmp(bndtype{isides},'X')
             

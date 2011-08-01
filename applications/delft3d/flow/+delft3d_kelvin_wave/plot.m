@@ -1,5 +1,5 @@
-function S = delft3d_kelvin_wave_plot(G, ETA0, VEL0,C);
-%DELFT3D_KELVIN_WAVE_PLOT   quick-n-dirty visual assessment of delft3d_kelvin_wave_* 
+function S = plot(G, ETA0, VEL0,C);
+%DELFT3D_KELVIN_WAVE.PLOT   quick-n-dirty visual assessment of delft3d_kelvin_wave_* 
 %
 %See also: delft3d_kelvin_wave
 

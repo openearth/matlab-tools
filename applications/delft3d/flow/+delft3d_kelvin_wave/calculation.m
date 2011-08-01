@@ -1,7 +1,17 @@
-function varargout = delft3d_kelvin_wave_calculation(G, F, C,varargin)
-%DELFT3D_KELVIN_WAVE_CALCULATION   analytical solution (iterative friction) of Kelvin wave
+function varargout = calculation(G, F, C,varargin)
+%DELFT3D_KELVIN_WAVE.CALCULATION   analytical solution (iterative friction) of Kelvin wave
 %
 %  [ETA,<VEL>] = delft3d_kelvin_wave_calculation(G, F, C,<ifreq>)
+%
+% For documentation please refer to:
+%
+% * Jacobs, Walter, 2004. Modelling the Rhine River Plume 
+%   MSc. thesis, TU Delft, Civil Engineering.
+%   http://resolver.tudelft.nl/uuid:cf8e752d-7ba7-4394-9a94-2b73e14f9949
+% * de Boer, G.J. 2009. On the interaction between tides and
+%   stratification in the Rhine Region of Freshwater Influence
+%   PhD thesis TU Delft, Civil Engineering (chapter 3).
+%   http://resolver.tudelft.nl/uuid:c5c07865-be69-4db2-91e6-f675411a4136
 %
 %See also: delft3d_kelvin_wave
 

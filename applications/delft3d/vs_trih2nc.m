@@ -19,6 +19,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 % TO DO check consistency with delft3d_to_netcdf.exe of Bert Jagers
 % TO DO add sediment, turbulence etc
 % TO DO add cell methods to xcor = mean(x)
+% to do merge with OpenEarthTools\matlab\applications\cosmos\code\OMSRunner\fileio\trih2nc
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares

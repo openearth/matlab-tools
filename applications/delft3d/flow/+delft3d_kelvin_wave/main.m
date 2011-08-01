@@ -1,19 +1,5 @@
-%DELFT3D_KELVIN_WAVE_MAIN    MAIN SCRIPT for harmonic kelvin wave OBC 
-%
-% For documentation please refer to:
-%
-% * Jacobs, Walter, 2004. Modelling the Rhine River Plume 
-%   MSc. thesis, TU Delft, Civil Engineering.
-%   http://resolver.tudelft.nl/uuid:cf8e752d-7ba7-4394-9a94-2b73e14f9949
-% * de Boer, G.J. 2009. On the interaction between tides and
-%   stratification in the Rhine Region of Freshwater Influence
-%   PhD thesis TU Delft, Civil Engineering (chapter 3).
-%   http://resolver.tudelft.nl/uuid:c5c07865-be69-4db2-91e6-f675411a4136
-% * de Boer, G.J., Pietrzak, J.D., & Winterwerp, J.C. 2006. On the 
-%   vertical structure of the Rhine region of freshwater influence
-%   Ocean Dynamics, Vol. 56, 3-4, 198-216, special issue PECS 2004 
-%   (doi:10.1007/s10236-005-0042-1)
-%   http://dx.doi.org/10.1007/s10236-005-0042-1
+function main
+%DELFT3D_KELVIN_WAVE.MAIN    MAIN SCRIPT for harmonic kelvin wave OBC 
 %
 %See also: delft3d_kelvin_wave
 
@@ -56,8 +42,13 @@
 
 %% Initialize
 
-   U.workdir     = [pwd filesep 'delft3d_kelvin_wave_test' filesep];
-   U.grd         = '155x235.grd'; % [130x210] + 25 stretch
+   U.workdir     = ['F:\DELFT3D\PECS\tide_neap2\' filesep ];
+
+   U.grd         = '155x356.grd';   % [130x331] + 25 stretch
+   U.bnd         = '155x356_0.bnd';
+   U.gridoption  = 330; % in d3d_grd_square_basin
+
+   U.grd         = '155x235.grd';   % [130x210] + 25 stretch
    U.bnd         = '155x235_0.bnd';
    U.gridoption  = 33; % in d3d_grd_square_basin
 
@@ -72,29 +63,29 @@
 
 %% Generate harmonic boundary data
 
-   G               = delft3d_kelvin_wave_grids(U.gridoption); %[U.workdir,U.grd])
+   G               = delft3d_kelvin_wave.grids(U.gridoption,'save',[U.workdir filesep U.grd]); %[U.workdir,U.grd])
    G.base.x        =   -2250;
    G.base.y        = -725671;
    G.base.y        =   250;
    G.angle         = 0;
    G.D0            = 20;
 
-   [G, F, C   ]    = delft3d_kelvin_wave_input(G);
+   [G, F, C   ]    = delft3d_kelvin_wave.input(G);
 
    U.bchfilename   = ['Depth_',num2str(G.D0),'_ks_',num2str(C.Ks),'_amplitudes_',num2str(F.eta0),'.bch'];
 
    for ifreq=1:length(C.Tt)
-      [ETA0(ifreq), VEL0(ifreq)] = delft3d_kelvin_wave_calculation(G, F, C,ifreq);
+      [ETA0(ifreq), VEL0(ifreq)] = delft3d_kelvin_wave.calculation(G, F, C,ifreq);
    end
 
 %% Plot tidal results
 
     if U.debug
-       delft3d_kelvin_wave_plot      (G, ETA0, VEL0,C);
+       delft3d_kelvin_wave.plot      (G, ETA0, VEL0,C);
        figure
-       delft3d_kelvin_wave_ampphase  (G, ETA0, VEL0);
+       delft3d_kelvin_wave.ampphase  (G, ETA0, VEL0);
        T.t = (0:0.5:12).*3600;
-       delft3d_kelvin_wave_tidalcycle(G, F, C, T, ETA0, VEL0);
+       delft3d_kelvin_wave.tidalcycle(G, F, C, T, ETA0, VEL0);
     end
 
 %% Save harmonic boundary data in Delft3D format
@@ -105,8 +96,8 @@
    BCH.phases      = zeros(2,BND.NTables,length(C.w));
 
    % now add the constant offset
-   BCH.frequencies = [0 360./C.Tt.*3600]; % [s] to [deg/hour]
-   BCH.a0          = zeros(2,BND.NTables,1                      );
+   BCH.frequencies = [360./C.Tt.*3600]; % [s] to [deg/hour]
+   BCH.a0          = zeros(2,BND.NTables,1); % a0 separate, so not in frequencies: no 3D amplitudes and phases required
 
    for ifreq = 1:length(find(~(BCH.frequencies)==0))
 
@@ -170,6 +161,8 @@
       end % for i=1:BND.NTables
 
    end % for ifreq = length(BCH.frequencies)
+   
+   save BCH
 
    if U.writebch
       ok=delft3d_io_bch('write',[U.workdir,U.bchfilename],BCH);

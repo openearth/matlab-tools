@@ -1,5 +1,5 @@
-function OK = delft3d_kelvin_wave_bch(G, F, C,bndfile,bchfile,rieman2neuman)
-%DELFT3D_KELVIN_WAVE_BCH  write delft3d boudnary conditions for kelvin wave
+function OK = bch(G, F, C,bndfile,bchfile,rieman2neuman)
+%DELFT3D_KELVIN_WAVE.BCH  .
 %
 % OK = delft3d_kelvin_wave_bch(G, F, C,bndfile,bchfile)
 %
@@ -8,7 +8,7 @@ function OK = delft3d_kelvin_wave_bch(G, F, C,bndfile,bchfile,rieman2neuman)
 rieman2zero = 1;
 
 %% For Delft3d padd with dummy rows
-%----------------------------
+% ----------------------------
 
    for ifreq=1:length(C.Tt)
       [ETA0(ifreq), VEL0(ifreq)] = delft3d_kelvin_wave_calculation(G, F, C,ifreq);
@@ -16,7 +16,7 @@ rieman2zero = 1;
 
 
 %% Plot tidal results
-%----------------------------
+% ----------------------------
 
    % delft3d_kelvin_wave_plot(G, ETA0, VEL0,C);
    % figure
@@ -25,7 +25,7 @@ rieman2zero = 1;
    % delft3d_kelvin_wave_tidalcycle(G, F, C, T, ETA0, VEL0);
 
 %% Make harmonic boundary data
-%----------------------------
+% ----------------------------
 
 BND = delft3d_io_bnd('read',bndfile,G.mmax,G.nmax);
 

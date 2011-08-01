@@ -201,8 +201,12 @@ end
       G.cor.x   = varargin{3};
       G.cor.y   = varargin{4};
       end
-
+      
+      if fileexist=='o'
       OK   = wlgrid(cmd,fname,G.cor.x,G.cor.y);
+      else
+      OK = 0;
+      end
 
   %    %% Read and write again to write also enclosure
   %    

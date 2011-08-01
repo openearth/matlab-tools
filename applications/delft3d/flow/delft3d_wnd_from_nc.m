@@ -18,13 +18,15 @@ function delft3d_wnd_from_nc(varargin)
    OPT.nc         = 'http://opendap.deltares.nl/thredds/dodsC/opendap/knmi/potwind/potwind_242.nc';
    OPT.period     = datenum(2009, 1, 1 + [0 365]);
    OPT.dir        = pwd;
-   OPT.refdatenum = datenum(1998,1,1); % offset from delftd *.mdf
+   OPT.refdatenum = []; %datenum(1998,1,1); % offset from delftd *.mdf
    
    OPT = setproperty(OPT,varargin{:});
 
    if ischar(OPT.refdatenum)
-   mdf            = delft3d_io_mdf('read',OPT.refdatenum);
-   OPT.refdatenum = datenum(mdf.keywords.itdate,'yyyy-mm-dd');
+      mdf            = delft3d_io_mdf('read',OPT.refdatenum);
+      OPT.refdatenum = datenum(mdf.keywords.itdate,'yyyy-mm-dd');
+   elseif isempty(OPT.refdatenum)
+      error('refdatenum missing')
    end
 
    [dummy,start,count] = nc_varget_range(OPT.nc,'time',OPT.period);
@@ -42,7 +44,7 @@ function delft3d_wnd_from_nc(varargin)
   print2screensize([OPT.dir,filesep,filename(OPT.nc),'_after_refdate_',datestr(OPT.refdatenum,30),'_NaN_in_direction.png'])
   
 %% Remove nans (of either directory or speed)
-%  no need to be equidistant
+%  For Delft3D there is no need to be equidistant in time.
 
    mask      = find(~isnan(W.UP) & ~isnan(W.DD));
  % W.UX      = interp1(W.datenum(mask),W.UX(mask),W.datenum);

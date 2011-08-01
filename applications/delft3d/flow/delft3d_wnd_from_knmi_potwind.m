@@ -1,4 +1,4 @@
-function delft3d_wnd_from_knmi_potwind
+function delft3d_wnd_from_knmi_potwind(varargin)
 %delft3d_wnd_from_knmi_potwind     script that transforms KNMI hydra file to delft3d *.wnd file
 %
 %  delft3d_wnd_from_knmi_potwind(fname,ref_datenum)
@@ -9,7 +9,16 @@ function delft3d_wnd_from_knmi_potwind
 
    OPT.filename   = 'potwind_249_2001';
    OPT.dir        = pwd;
-   OPT.refdatenum = datenum(2007,1,1) ; % same as in MDF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   OPT.refdatenum = []; %datenum(2007,1,1) ; % same as in MDF !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+   OPT = setproperty(OPT,varargin{:});
+
+   if ischar(OPT.refdatenum)
+      mdf            = delft3d_io_mdf('read',OPT.refdatenum);
+      OPT.refdatenum = datenum(mdf.keywords.itdate,'yyyy-mm-dd');
+   elseif isempty(OPT.refdatenum)
+      error('refdatenum missing')
+   end
 
    W = knmi_potwind(OPT.filename,'calms',0,'variables',0,'pol2cart',1)
 
@@ -32,7 +41,7 @@ function delft3d_wnd_from_knmi_potwind
   print2screensize([OPT.dir,filesep,filename(OPT.filename),'_after_refdate_',datestr(OPT.refdatenum,30),'_NaN_in_direction.png'])
   
 %% Remove nans (of either directory or speed)
-%% no need to be equidistant
+%  For Delft3D there is no need to be equidistant in time.
 
    mask      = find(~isnan(W.UP) & ~isnan(W.DD));
  % W.UX      = interp1(W.datenum(mask),W.UX(mask),W.datenum);
