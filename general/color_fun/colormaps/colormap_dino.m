@@ -1,12 +1,13 @@
 function varargout = colormap_dino(varargin)
 %COLORMAP_DINO  colors coding of sediments according to dinoloket.nl
 %
-%    [map,labels] = colormap_dino
+%    [map,label_list] = colormap_dino
 %
 %  labels   = colormap_dino(mapindex)
 %  mapindex = colormap_dino(labels)
 %
-% where mapindex are indixes in the range 1:length(labels)
+% where mapindex are indixes in the range 1:length(labels),
+% NaN when supplied labels do not exist in label_list.
 % where labels is a (nsted) cellstr
 %
 % Example:
@@ -65,7 +66,8 @@ labels = {'clay',...
          'no sample available',...
          'not named',...
          'peat',...
-         'sand'};
+         'sand',...
+         'shells'};
          
 % colors grabbed from rgb screenshots cuts of color from 
 % e.g. http://www.dinoloket.nl/dinoLks/minisite/Entry?datatype=bor&id=BF020264&queryProperty=NitgNumber
@@ -83,11 +85,12 @@ map = [148    0  211
        255  255  255 % white
        255  255  255 % white
        244  164   96
-       255  255    0]./256;
+       255  255    0
+       255  153   0]./256;
 
 if nargin==0
    varargout = {map, labels};
-elseif isnumeric(varargin{1})
+elseif isnumeric(varargin{1}) & ~isnan(varargin{1})
    indices   = varargin{1};
    varargout = {{labels{indices}}};
 else % allow any nesting of labels, and return same structure
@@ -99,12 +102,20 @@ else % allow any nesting of labels, and return same structure
    if iscellstr(label_values)
       indices = 1:n;
       for i=1:n
-         indices(i) = strmatch(lower(label_values{i}), labels, 'exact');
+         ii = strmatch(lower(label_values{i}), labels, 'exact');
+         if ~isempty(ii)
+            indices(i) = ii;
+         else
+            indices(i) = nan;
+         end
       end
-   else
+   elseif iscell(label_values)
       for i=1:n
+      disp(num2str(i))
       indices{i} = colormap_dino(label_values{i});
       end
+   else
+      indices = nan;
    end
    varargout = {indices};
 end
