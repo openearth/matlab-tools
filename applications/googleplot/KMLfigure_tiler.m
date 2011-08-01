@@ -1,4 +1,4 @@
-function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
+function varargout = KMLfigure_tiler(h,lat,lon,z,varargin)
 %KMLFIGURE_TILER   makes a tiled png figure for google earth
 %
 %   h = surf(lon,lat,z)
@@ -28,9 +28,9 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 %           - To increase number of zoom levels increase 'lowestLevel' (to e.g. 14)
 %           - For large data KMLfigure_tiler can be run in 2 sub modes
 %             1) tile generation in a file loop: save data or sub data to tiles
-%             2) tile joing: aggregate  all tiles to higher levels and generate 
+%             2) tile joing: aggregate  all tiles to higher levels and generate
 %                mother kml that binds them all.
-% 
+%
 %             for =1:n
 %               [lon,lat,z]=load(files{i}))
 %               set(gca,'Color',[100 155 100]./255): % NOTE ORDER LON,LAT
@@ -43,15 +43,15 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 %                 'joinTiles'         ,false,... % do not join untill all tiles are there
 %                 'mergeExistingTiles',true);    % merge partially overlapping tiles
 %             end
-%             
-%             % in the joining phase set handle to nan, lat and lon to extent to be 
+%
+%             % in the joining phase set handle to nan, lat and lon to extent to be
 %             % joined, and z does not matter
 %             KMLfigure_tiler([],[30 60],[-10 40],nan,...
 %                'highestLevel'      ,[],...    % is set to whole world when lat=nan
 %                'printTiles'        ,false,... % this was done in phase 1
 %                'joinTiles'         ,true,...  %
 %                'mergeExistingTiles',true);    % 1 ! irrelevant when printTiles==0
-%           
+%
 %
 % See also: GOOGLEPLOT, PCOLOR, KMLFIG2PNG_ALPHA
 
@@ -102,6 +102,7 @@ OPT.fileName           =     []; % relative filename, incl relative subpath
 OPT.basePath           =     ''; % absolute path where to write kml files (will not appear inside kml, those remain relative)
 OPT.baseUrl            =     ''; % absolute url where kml will appear. (A webkml needs absolute url, albeit only needed in the mother KML, local files can have relative paths.)
 OPT.logo               =     [];
+OPT.alphaChannel       =     NaN;% add possibility for spatially variable transparency. alphaChannel is a handle to a black-and-white figure which gives a mask of transparency values (black = opaque zero, white = opaque 100%)
 OPT.alpha              =      1;
 OPT.minLod             =     []; % minimum level of detail to keep a tile in view. Is calculated when left blank.
 OPT.minLod0            =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
@@ -132,6 +133,7 @@ else
    D.lat = lat;
    D.lon = lon;
    D.z   = z;
+
    %if ~isequal(size(D.lon) - size(D.z),[0 0])
    %  D.z = addrowcol(D.z,1,1,Inf); % no, lat KML_figure_tiler_printTile handles that
    %end
@@ -154,6 +156,10 @@ end
 end
 
 OPT = setproperty(OPT, varargin);
+% If individual pixels have individual alpha levels....
+% if ndims(OPT.alpha) == 2
+%     D.alpha = OPT.alpha;
+% end
 
 %% initialize waitbars
 
@@ -187,8 +193,13 @@ end
 
 %% set maxLod and minLod defaults
 if isempty(OPT.minLod),                 OPT.minLod = round(  OPT.dim/1.5); end
-if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = round(2*OPT.dim/1.5); end % you see 1 layers always
-if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = round(4*OPT.dim/1.5); end % you see 2 layers, except when fully zoomed in
+% Inserted by Hessel Winsemius to enable use of alpha as grid
+if size(OPT.alpha,1)==1 & size(OPT.alpha,2)==1
+    if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = round(2*OPT.dim/1.5); end % you see 1 layers always
+    if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = round(4*OPT.dim/1.5); end % you see 2 layers, except when fully zoomed in
+else
+    if isempty(OPT.maxLod), OPT.maxLod = round(2*OPT.dim/1.5);end
+end
 
 if isempty(OPT.basePath)
     OPT.basePath = pwd;
@@ -259,6 +270,14 @@ set(OPT.ha,'Position',[0 0 1 1])
 set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
 [0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
 'color',OPT.bgcolor/255,'InvertHardcopy','off');
+end
+if ishandle(OPT.alphaChannel)
+    OPT.ha_alpha = get(OPT.alphaChannel, 'Parent');
+    OPT.hf_alpha = get(OPT.ha_alpha,'Parent');
+    set(OPT.ha_alpha,'Position',[0 0 1 1])
+    set(OPT.hf_alpha,'PaperUnits', 'inches','PaperPosition',...
+    [0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
+    'color',[0 0 0],'InvertHardcopy','off');
 end
 %% run scripts (These are the core functions)
 %  some more background info: http://www.realityprime.com/articles/how-google-earth-really-works
