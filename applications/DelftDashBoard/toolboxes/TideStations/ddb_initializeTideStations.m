@@ -62,3 +62,4 @@ handles.Toolbox(ii).Input.activeTideStationHandle=[];
 handles.Toolbox(ii).Input.components={''};
 handles.Toolbox(ii).Input.amplitudes=0;
 handles.Toolbox(ii).Input.phases=0;
+handles.Toolbox(ii).Input.timeZone=0;

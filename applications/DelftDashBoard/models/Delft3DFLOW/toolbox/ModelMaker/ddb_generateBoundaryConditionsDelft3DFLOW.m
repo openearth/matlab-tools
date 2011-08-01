@@ -26,14 +26,6 @@ try
         tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
     
-    
-    x=handles.Model(md).Input(id).gridX;
-    y=handles.Model(md).Input(id).gridY;
-    z=handles.Model(md).Input(id).depth;
-    
-    mmax=size(x,1);
-    nmax=size(x,2);
-    
     % Generate boundary conditions
     
     nb=handles.Model(md).Input(id).nrOpenBoundaries;
@@ -79,10 +71,10 @@ try
         
         if handles.Model(md).Input(id).timeZone~=0
             % Try to make time zone changes
-            cnst=load([handles.settingsDir 'tidalconstituents\t_constituents.mat']);
-            for ic=1:size(cnst.const.name,1)
-                cns{ic}=deblank(cnst.const.name(ic,:));
-                frq(ic)=cnst.const.freq(ic);
+            cnst=t_getconsts;
+            for ic=1:size(cnst.name,1)
+                cns{ic}=deblank(cnst.name(ic,:));
+                frq(ic)=cnst.freq(ic);
             end
             
             for ic=1:length(conList)
@@ -125,10 +117,10 @@ try
 
         if handles.Model(md).Input(id).timeZone~=0
             % Try to make time zone changes
-            cnst=load([handles.settingsDir 'tidalconstituents\t_constituents.mat']);
-            for ic=1:size(cnst.const.name,1)
-                cns{ic}=deblank(cnst.const.name(ic,:));
-                frq(ic)=cnst.const.freq(ic);
+            cnst=t_getconsts;
+            for ic=1:size(cnst.name,1)
+                cns{ic}=deblank(cnst.name(ic,:));
+                frq(ic)=cnst.freq(ic);
             end
             for ic=1:length(conList)
                 ii=strmatch(conList{ic},cns,'exact');

@@ -108,6 +108,16 @@
       <tooltipstring>Edit time step for tide signal to be viewed or exported</tooltipstring> 
     </element>
     <element>
+      <tag>edittimezone</tag>
+      <style>edit</style>
+      <position>550 55 110 20</position>
+      <variable>handles.Toolbox(tb).Input.timeZone</variable>
+      <type>real</type>
+      <text>Time Zone (h)</text>
+      <textposition>left</textposition>
+      <tooltipstring>Edit time zone (time series will be shifted to local time zone)</tooltipstring> 
+    </element>
+    <element>
       <tag>tidetable</tag>
       <style>table</style>
       <position>660 20</position>

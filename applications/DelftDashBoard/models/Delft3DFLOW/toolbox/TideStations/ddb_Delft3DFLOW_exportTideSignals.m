@@ -87,8 +87,8 @@ for i=1:nrp
     end
     
     latitude=handles.Toolbox(tb).Input.database(iac).y(k);
-    
-    wl=makeTidePrediction(tim,components,amplitudes,phases,latitude);
+
+    wl=makeTidePrediction(tim,components,amplitudes,phases,latitude,'timezone',handles.Toolbox(tb).Input.timeZone);
     
     shortName=handles.Toolbox(tb).Input.database(iac).stationShortNames{k};
     fname=[shortName '.tek'];

@@ -11,7 +11,6 @@ marker='';
 markerEdgeColor='r';
 markerFaceColor='r';
 markerSize=4;
-maxPoints=10000;
 txt=[];
 callback=[];
 onStartCallback=[];

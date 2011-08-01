@@ -302,8 +302,8 @@ switch opt
         end
         
     case{'limits'}
-        varargout{1}=lon;
-        varargout{2}=lat;
+        varargout{1}=lonz;
+        varargout{2}=latz;
         for i=1:length(gt)
             varargout{2*i+1}=gt(i).amp;
             varargout{2*i+2}=gt(i).phi;

@@ -1,4 +1,14 @@
-function wl=makeTidePrediction(tim,components,amplitudes,phases,latitude)
+function wl=makeTidePrediction(tim,components,amplitudes,phases,latitude,varargin)
+
+timeZone=0;
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'timezone'}
+                timeZone=varargin{i+1};                
+        end
+    end
+end
 
 const=t_getconsts;
 k=0;
@@ -18,8 +28,14 @@ for i=1:length(amplitudes)
         freq(k,1)=const.freq(ju);
         tidecon(k,1)=amplitudes(i);
         tidecon(k,2)=0;
+        % convert time zone
+        if timeZone~=0
+            phases(i)=phases(i)+360*timeZone*const.freq(ju);
+            phases(i)=mod(phases(i),360);
+        end
         tidecon(k,3)=phases(i);
-        tidecon(k,4)=0;
+        tidecon(k,4)=0;    
     end
 end
 wl=t_predic(tim,names,freq,tidecon,latitude);
+
