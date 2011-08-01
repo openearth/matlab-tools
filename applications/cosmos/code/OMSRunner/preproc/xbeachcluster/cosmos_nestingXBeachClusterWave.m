@@ -1,4 +1,4 @@
-function ok=NestingXBeachClusterWave(hm,m)
+function ok=cosmos_nestingXBeachClusterWave(hm,m)
 
 tmpdir=hm.tempDir;
 

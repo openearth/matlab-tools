@@ -10,9 +10,9 @@ function ExtractGrads(hm,m)
 % [wu0,header]=read_grads('ww3.ctl','WU');
 % [wv0,header]=read_grads('ww3.ctl','WV');
 
-t0=header.tDEF.vec(1);
-dt=header.tDEF.vec(2);
-n=header.tDEF.num;
+t0=header.TDEF.vec(1);
+dt=header.TDEF.vec(2);
+n=header.TDEF.num;
 
 ww3.lon=header.XDEF.vec;
 ww3.lat=header.YDEF.vec;

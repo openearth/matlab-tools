@@ -34,6 +34,7 @@ end
 
 disp(['Moving input to job directory - ' mdl]);
 
+MakeDir(jobdir);
 MakeDir(jobdir,mdl);
 
 [success,message,messageid]=movefile([tmpdir '*'],[jobdir mdl],'f');

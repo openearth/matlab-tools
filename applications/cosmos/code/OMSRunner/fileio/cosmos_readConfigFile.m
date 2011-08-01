@@ -83,6 +83,7 @@ end
 
 hm.scenarioDir=[hm.runDir 'scenarios' filesep hm.scenario filesep];
 hm.jobDir=[hm.jobDir hm.scenario filesep];
+hm.h4.path=[hm.h4.path hm.scenario '/'];
 hm.modelDir=[hm.scenarioDir 'models' filesep];
 hm.archiveDir=hm.modelDir;
 hm.tempDir=[hm.runDir 'temp' filesep];

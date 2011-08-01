@@ -1,4 +1,4 @@
-function ExtractDataWW3(hm,m)
+function cosmos_extractDataWW3(hm,m)
 
 model=hm.models(m);
 
@@ -127,7 +127,7 @@ if model.nrStations>0
             n1=find(s.Time<tstart);
             if ~isempty(n1)
                 n1=n1(end);
-                s.Time=s.time(1:n1);
+                s.Time=s.Time(1:n1);
                 s.Val=s.Val(1:n1);
             else
                 s.Time=[];
@@ -168,7 +168,7 @@ if model.nrStations>0
             n1=find(s.Time<model.tOutputStart);
             if ~isempty(n1)
                 n1=n1(end);
-                s.Time=s.time(1:n1);
+                s.Time=s.Time(1:n1);
                 s.Val=s.Val(1:n1);
             else
                 s.Time=[];

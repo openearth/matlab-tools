@@ -24,10 +24,10 @@ for i=1:hm.nrModels
                     if ~isempty(iid)
                         % Determine which parameter is needed
                         par2=getParameterInfo(hm,lower(par),'source',obssrc,'dbname');
-                        ipar=strmatch(lower(par2),lower(hm.observationStations{idb}.parameters(iid).name),'exact');
+                        ipar=strmatch(lower(par2),lower(hm.observationStations{idb}.Parameters(iid).Name),'exact');
                         if ~isempty(ipar)
                             % Check if this data is available
-                            if hm.observationStations{idb}.parameters(iid).status(ipar)>0
+                            if hm.observationStations{idb}.Parameters(iid).Status(ipar)>0
                                 % Check if data will already be downloaded
                                 if sum(idbs==idb & iids==iid & ipars==ipar)==0
                                     nobs=nobs+1;
@@ -57,7 +57,7 @@ for i=1:nobs
     
     db=hm.observationDatabases{idb};
     idcode=hm.observationStations{idb}.IDCode{iid};
-    par=hm.observationStations{idb}.parameters(iid).name{ipar};
+    par=hm.observationStations{idb}.Parameters(iid).Name{ipar};
     
     disp(['Downloading observations of ' par ' for ' idcode ' from ' db ' ...']);
     
@@ -82,7 +82,7 @@ for i=1:nobs
 %                [t,val]=getTimeSeriesFromCoops(url,t0,t1,idcode,par2);
                 [t,val]=getWLFromCoops(idcode,t0,t1);
             case{'matroos'}
-                [t,val]=getTimeSeriesFromMatroos(url,t0,t1,hm.observationStations{idb}.name{iid},par2);
+                [t,val]=getTimeSeriesFromMatroos(url,t0,t1,hm.observationStations{idb}.Name{iid},par2);
         end
 
         if ~isempty(t)

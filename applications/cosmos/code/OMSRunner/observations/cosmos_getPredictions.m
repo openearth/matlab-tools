@@ -61,15 +61,15 @@ for i=1:nobs
 
     try
         
-        cmp=hm.tideStations{idb}.componentSet(iid);
+        cmp=hm.tideStations{idb}.ComponentSet(iid);
         comp=[];
         A=[];
         G=[];
 
-        for ii=1:length(cmp.component)
-            comp{ii}=cmp.component{ii};
+        for ii=1:length(cmp.Component)
+            comp{ii}=cmp.Component{ii};
             A(ii,1)=cmp.Amplitude(ii);
-            G(ii,1)=cmp.phase(ii);
+            G(ii,1)=cmp.Phase(ii);
         end
 
 %         dt=1/6;
@@ -90,7 +90,7 @@ for i=1:nobs
         save(fname,'-struct','data','Name','Parameter','Time','Val');
 
     catch
-        disp(['Something went wrong while predicting water level for ' idcode ' from ' db]);
+        WriteErrorLogFile(hm,['Something went wrong while predicting water level for ' idcode ' from ' db ' - see oms.err']);
     end
 
 end

@@ -1,4 +1,4 @@
-function PreProcessWW3(hm,m)
+function cosmos_preProcessWW3(hm,m)
 
 model=hm.models(m);
 dr=model.dir;

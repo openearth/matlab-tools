@@ -80,9 +80,9 @@ for i=1:n
                 
                 fprintf(fi2,'%s\n',datestr(spec.time(it).time,'yyyymmdd.HHMMSS'));
                 
-                if spec.time(it).points(jj).Factor>0
+                if spec.time(it).points(jj).factor>0
                     fprintf(fi2,'%s\n','FACTOR');
-                    fprintf(fi2,'%18.8e\n',spec.time(it).points(jj).Factor);
+                    fprintf(fi2,'%18.8e\n',spec.time(it).points(jj).factor);
                     fmt=repmat([repmat('  %7i',1,spec.nDir) '\n'],1,spec.nFreq);
                     fprintf(fi2,fmt,spec.time(it).points(jj).energy');
                 else

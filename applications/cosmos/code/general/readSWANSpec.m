@@ -1,4 +1,4 @@
-function spec=readSWANspec(fname)
+function spec=readSWANSpec(fname)
 
 fid=fopen(fname,'r');
 
@@ -25,7 +25,7 @@ f=fgetl(fid);
 nchar=min(length(f),12);
 spec.nFreq=str2double(f(1:nchar));
 
-for j=1:spec.NFreq
+for j=1:spec.nFreq
     f=fgetl(fid);
     spec.freqs(j)=strread(f);
 end
@@ -36,7 +36,7 @@ f=fgetl(fid);
 nchar=min(length(f),12);
 spec.nDir=str2double(f(1:nchar));
 
-for j=1:spec.NDir
+for j=1:spec.nDir
     f=fgetl(fid);
     spec.dirs(j)=strread(f);
 end

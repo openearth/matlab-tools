@@ -1,4 +1,4 @@
-function extractDataXBeachCluster(hm,m)
+function cosmos_extractDataXBeachCluster(hm,m)
 
 model=hm.models(m);
 

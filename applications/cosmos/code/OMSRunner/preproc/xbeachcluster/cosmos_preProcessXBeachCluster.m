@@ -13,7 +13,7 @@ for i=1:np
 end
 
 if model.waveNested
-    ok=NestingXBeachClusterWave(hm,m);
+    ok=cosmos_nestingXBeachClusterWave(hm,m);
 end
 
 for i=1:model.nrProfiles
@@ -24,7 +24,7 @@ for i=1:model.nrProfiles
 end
 
 if model.flowNested
-    NestingXBeachClusterFlow(hm,m);
+    cosmos_nestingXBeachClusterFlow(hm,m);
 end
 
 %[status,message,messageid]=copyfile([hm.exeDir 'xbeach_noMPI.exe'],tmpdir,'f');

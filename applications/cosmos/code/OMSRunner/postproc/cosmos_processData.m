@@ -27,12 +27,12 @@ if model.extractData
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
-                ExtractDataWW3(hm,m);
+                cosmos_extractDataWW3(hm,m);
             case{'xbeachcluster'}
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'netcdf');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
-                extractDataXBeachCluster(hm,m);
+                cosmos_extractDataXBeachCluster(hm,m);
         end
         cosmos_convertTimeSeriesMat2NC(hm,m);
         cosmos_copyNCTimeSeriesToOPeNDAP(hm,m)

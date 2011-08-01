@@ -1,6 +1,4 @@
-function NestingXBeachClusterFlow(hm,m)
-
-curdir=pwd;
+function cosmos_nestingXBeachClusterFlow(hm,m)
 
 mm=hm.models(m).flowNestModelNr;
 
