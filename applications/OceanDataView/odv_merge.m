@@ -8,7 +8,7 @@ function R = odvplot_overview_kml(D,varargin)
 %
 %   odv_merge(D,'sdn_standard_name',''SDN:P011::ODSDM021'',<keyword,value>)
 %
-% Works only for trajectory data, i.e. when D.cast = 0;
+% Works for both trajectory and cast data, but only for 1 parameter.
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: OceanDataView
@@ -83,13 +83,13 @@ function R = odvplot_overview_kml(D,varargin)
 %% find column to use as vertical axis
    OPT.index.z = 0;
    if D(1).cast
-   if isempty(OPT.z)
+    if isempty(OPT.z)
       [OPT.index.z, ok] = listdlg('ListString', {D(1).sdn_long_name{10:2:end}} ,...
                            'InitialValue', [1],... % first is likely pressure so suggest 2 others
                            'PromptString', 'Select single variables to plot as colored dots', ....
                                    'Name', 'Selection of c/z-variable');
       OPT.index.z = OPT.index.z*2-1 + 9; % 10th is first on-meta data item
-   else
+    else
       for i=1:length(D(1).sdn_standard_name)
       %disp(['SDN name: ',D.sdn_standard_name{i},'  <-?->  ',OPT.sdn_standard_name])
          if any(strfind(D(1).sdn_standard_name{i},OPT.z))
@@ -101,15 +101,15 @@ function R = odvplot_overview_kml(D,varargin)
          error([OPT.z,' not found.'])
          return
       end
-   end
+    end
    end
 
 %% resolve parameter
 
     if isempty(D(1).sdn_long_name)
-   [~,M.sdn_standard_name,~] =  sdn_parameter_mapping_resol(D(1).odv_name);
-    M.sdn_long_name =  '';
-    M.sdn_units     =  '';
+     [~,M.sdn_standard_name,~] =  sdn_parameter_mapping_resol(D(1).odv_name);
+      M.sdn_long_name =  '';
+      M.sdn_units     =  '';
     end
 
 %% merge parameter
@@ -125,7 +125,7 @@ function R = odvplot_overview_kml(D,varargin)
     'sdn_units'};
     
     for ifld=1:length(fldnames)
-       fldname = fldnames{ifld};
+       fldname     = fldnames{ifld};
        R.(fldname) = D(1).(fldname){OPT.index.var};
     end
 

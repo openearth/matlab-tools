@@ -3,7 +3,7 @@ function OPT = nc_multibeam_copync2server(OPT)
 %
 %See also: nc_multibeam, snctools
 
-%% generate a catalog
+%% generate a catalog: alsways for server, even when copy2server is false
 if ~isfield(OPT,'datestr')
     OPT.datestr        = 'yyyy-mm-ddTHH:MM:SS'; % default for high-freq timeseries
 end

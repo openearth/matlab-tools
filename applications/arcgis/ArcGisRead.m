@@ -1,5 +1,5 @@
 function varargout = ArcGisRead(fname,varargin)
-%ARCGISREAD  read gridded data set in Arc ASCII Grid Format, and save as *.mat, *.nc file
+%ARCGISREAD  Read gridded data set in Arc ASCII Grid Format, and save as *.mat, *.nc file
 %
 %   S      = arcgisread(filename,<keyword,value>)
 %  [X,Y,D] = arcgisread(filename,<keyword,value>)

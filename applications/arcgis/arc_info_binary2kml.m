@@ -1,5 +1,5 @@
 function nan=ARC_INFO_BINARY2KML
-%ARC_INFO_BINARY2KML   save arc_info_binary file as kml
+%ARC_INFO_BINARY2KML   example script to save ESRI grid (ascii or adf) file as kml
 %
 %See also: ARC_INFO_BINARY, ARCGISREAD, KMLFIG2PNG
 
@@ -46,32 +46,37 @@ lgnd = {'Grain size small d10 [micrometer]',...
 for im= 1:5 %:length(maps)
 
    close all
-
-   [X,Y,D,M] = arc_info_binary([maps{im},'\'],...
+   
+   if ~isempty(dir([fname{im},'\*.adf']))
+      
+     [X,Y,D,M] = arc_info_binary([fname{im},'\'],...
         'debug',0,...
          'plot',0,...
        'export',1,...
         'clim',clims(im,:),...
         'epsg',epsg(im),...
-          'vc','F:\checkouts\OpenEarthRawData\deltares\landboundaries\processed\northsea.nc');
-       disp(['succes: ',num2str(im),' ',maps{im}]);
-       succes(im) = 1;
+          'vc','http://opendap.deltares.nl/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc'); % coastline for debugging
+   else
+     [X,Y,D] = ArcGisRead(ascii{im})       
+     M = [];
+   end
+   disp(['succes: ',num2str(im),' ',maps{im}]);
+   succes(im) = 1;
        
-   %A = ArcGisRead(ascii{im})       
-       
-   [X,Y] = meshgrid(X,Y);
-   
-   [lon,lat]=convertCoordinates(X,Y,'CS1.code',epsg(im),'CS2.code',4326);
+   [X  ,Y  ] = meshgrid(X,Y);
+   [LON,LAT] = convertCoordinates(X,Y,'CS1.code',epsg(im),'CS2.code',4326); % to WGS84 for Google
    
    clear X Y
  
-   h = pcolorcorcen(lon,lat,D);
+   h = pcolorcorcen(LON,LAT,D);
    
    caxis(clims(im,:));
    
-   KMLfig2png(h,...
+   % see help KMLfigure_tiler for LAARGE file chunking
+   
+   KMLfigure_tiler(h,...
         'levels',[-2 4],...
       'fileName',[last_subdir(maps{im}),'.kml'],...
-   'description',[lgnd{im},'. data: <a href="http://www.tno.nl/bouw_en_ondergrond/"> TNO bouw en ondergrond</a>, plot: <a href="http://www.OpenEarth.eu"> OpenEarthTools</a> financed by <a href="http://www.ecoshape.nl"> Ecoshape</a>.']);
+   'description',[lgnd{im}]);
 
 end

@@ -12,7 +12,7 @@ function rws_waterbase_all
 
 %% Initialize
 
-   OPT.download       = 0; % get fresh downloads from rws and remove exisitng to sub dir old
+   OPT.download       = 1; % get fresh downloads from rws and remove exisitng to sub dir old
    OPT.make_nc        = 1; % makes mat files
    OPT.make_catalog   = 1; % otherwise lod existing one
    OPT.make_kml       = 1;
@@ -68,9 +68,9 @@ function rws_waterbase_all
    
    if OPT.download
       rws_waterbase_get_url_loop('donar_wnsnum' ,OPT.code,...
-                    'directory_raw',OPT.directory_raw,...
-                'directory_raw_old',[OPT.directory_raw filesep 'old'],...
-                          'cleanup',1); % remove date from file name > version control on cached download too ?
+                                 'directory_raw',OPT.directory_raw,...
+                             'directory_raw_old',[OPT.directory_raw filesep 'old'],...
+                                       'cleanup',1); % remove date from file name > version control on cached download too ?
                                  
    end
    

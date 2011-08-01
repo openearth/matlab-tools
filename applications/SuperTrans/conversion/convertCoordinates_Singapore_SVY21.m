@@ -45,13 +45,40 @@ function [lon2,lat2]=convertCoordinates_Singapore_SVY21(X,Y)
 % $HeadURL$
 % $Keywords: $
 
-%% use radian
-A=  1.366666666    .*pi./180;
-B=103.8333333333333.*pi./180;
-
-[lon,lat]= TransverseMercator(X,Y,6378137,298.257223563,1,28001.642,38744.572,A,B,2);
+% PROJCS["SVY21 / Singapore TM",
+%     GEOGCS["SVY21",
+%         DATUM["SVY21",
+%             SPHEROID["WGS 84",6378137,298.257223563,
+a    = 6378137;
+finv = 298.257223563;
+%                 AUTHORITY["EPSG","7030"]],
+%             AUTHORITY["EPSG","6757"]],
+%         PRIMEM["Greenwich",0,
+%             AUTHORITY["EPSG","8901"]],
+%         UNIT["degree",0.01745329251994328,
+%             AUTHORITY["EPSG","9122"]],
+%         AUTHORITY["EPSG","4757"]],
+%     UNIT["metre",1,
+%         AUTHORITY["EPSG","9001"]],
+%     PROJECTION["Transverse_Mercator"],
+%     PARAMETER["latitude_of_origin",1.366666666666667],
+lat0 =  1.366666666    .*pi./180; % radian
+%     PARAMETER["central_meridian",103.8333333333333],
+lon0 =103.8333333333333.*pi./180;
+%     PARAMETER["scale_factor",1],
+k0 = 1;
+%     PARAMETER["false_easting",28001.642],
+FE = 28001.642;
+%     PARAMETER["false_northing",38744.572],
+FN = 38744.572;
+%     AUTHORITY["EPSG","3414"],
+%     AXIS["Easting",EAST],
+%     AXIS["Northing",NORTH]]
+    
+[lon,lat]= TransverseMercator(X,Y,a,finv,k0,FE,FN,lat0,lon0,2);
 
 %% convert back to deg
+
 lon2=lon.*180./pi;
 lat2=lat.*180./pi;
 

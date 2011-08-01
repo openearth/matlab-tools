@@ -1,5 +1,5 @@
 function varargout = arc_info_binary(varargin)
-%ARC_INFO_BINARY  read arc/info binary grid format (BETA in progress !!!)
+%ARC_INFO_BINARY  Read gridded data set in Arc Binary Grid Format
 %
 %        D    = arc_info_binary(name)
 %   [X,Y,D]   = arc_info_binary(name)

@@ -12,9 +12,9 @@ function varargout = swan_quantity
 %  OVLNAM(IVTYPE) =    long name                         
 %  OVUNIT(IVTYPE) =    unit name                         
 %  OVSVTY(IVTYPE) =    type (scalar/vector etc.)         
-%  OVLLIM(IVTYPE) =    lower and upper limit             
+%  OVLLIM(IVTYPE) =    lower and upper limit for ascii plotting width
 %  OVULIM(IVTYPE) =                                      
-%  OVLEXP(IVTYPE) =    lowest and highest expected value 
+%  OVLEXP(IVTYPE) =    lowest and highest expected value: valid_range 
 %  OVHEXP(IVTYPE) =                                      
 %  OVEXCV(IVTYPE) =    exception value                   
 %

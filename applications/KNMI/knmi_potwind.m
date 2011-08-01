@@ -158,7 +158,7 @@ function varargout = knmi_potwind(varargin)
          unzip(W.file.name,tempdir);
          deletezip   = fname;
       else
-         fname = W.file.name
+         fname = W.file.name;
       end
 
       W.file.date     = tmp.date;

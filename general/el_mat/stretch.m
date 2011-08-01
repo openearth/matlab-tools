@@ -101,7 +101,7 @@ function varargout = stretch(method0,par1,par2,varargin)
 % $Keywords$
 
 %% Input
-%----------------
+% ----------------
 
 f0       = 1;
 n0       = 1;
@@ -128,7 +128,7 @@ end;
 
   
 %% Method
-%----------------
+% ----------------
 
 switch lower(method0)
 
@@ -165,7 +165,7 @@ switch lower(method0)
 end
 
 %% Calculate
-%----------------
+% ----------------
 
 switch method
 
@@ -205,11 +205,11 @@ case 'ns2f'
          iter = iter + 1;
          
          %% We reduce the adapation of f 
-         %% with the relative error
-         %% when we get clopser to the solution
-         %% This adaption is not applied
-         %% when the error is larger than 99%
-         %% because then f would be increased !!
+         %  with the relative error
+         %  when we get clopser to the solution
+         %  This adaption is not applied
+         %  when the error is larger than 99%
+         %  because then f would be increased !!
          err  = min(abs((s0(end)) - s)/s,0.99);
 
          if     (s0(end) - s) > accuracy
@@ -243,11 +243,11 @@ case 'ns2f'
 case 'sf2n'
 
       %% CAN NEVER BE PRECISE: eventual s will be bigger than s
-      %%                           s
-      %% +-------------------------+      
-      %% |  |   |    |      |      : |
-      %%  1  2   3    4       5
-      %%                           +-+ too much   
+      %                            s
+      %  +-------------------------+      
+      %  |  |   |    |      |      : |
+      %   1  2   3    4       5
+      %                            +-+ too much   
 
       n  = 1;
       dx = f;

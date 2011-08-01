@@ -1,5 +1,5 @@
 function arcgridwrite(fileName,X,Y,Z,varargin)
-%ARCGRIDWRITE- Write gridded data set in Arc ASCII Grid Format
+%ARCGRIDWRITE save gridded data set in ArcGIS ASCII format
 %
 %   arcgridwrite(fileName,X,Y,Z)- converts data in a matlab
 %   grid (as produced by eg. meshgrid and griddata) into a text file
