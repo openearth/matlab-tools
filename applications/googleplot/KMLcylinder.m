@@ -13,7 +13,7 @@ function varargout = KMLcylinder(lat,lon,z,c,R,varargin)
 %
 %    KMLcylinder({51.9859},{4.3815},{[0 1 2 4 8 16 32]},{[1 2 3 4 5 6]},5e3,'fileName','KMLcylinder_test.kml')
 %
-% NOTE: for large sets of cylinder use KMLcolumn!
+% NOTE: for large sets of cylinders use KMLcolumn!
 %
 % See also: googlePlot, KMLcolumn
 
@@ -67,6 +67,7 @@ function varargout = KMLcylinder(lat,lon,z,c,R,varargin)
 OPT.colorMap           = @(z) jet(z);
 OPT.colorSteps         = 32;
    OPT.fillAlpha          = 1;
+  %OPT.lineOutline        = true;  % TO BE IMPLEMENTED, see KMLcolumn
    OPT.polyOutline        = false; % outlines the polygon, including extruded edges
    OPT.polyFill           = true;
    OPT.openInGE           = false;
@@ -82,7 +83,6 @@ OPT.colorbar           = 0;
 
    OPT.precision          = 8;
    OPT.tessellate         = false;
-   OPT.lineOutline        = true; % draws a separate line element around the polygon. Outlines the polygon, excluding extruded edge
 
    if nargin==0
       varargout = {OPT};
@@ -93,7 +93,7 @@ OPT.colorbar           = 0;
    
 %% limited error check
 
-    if ~isequal(size(lat),size(lon))
+    if ~isequal(size(lat),size(lon),size(c),size(z))
         error('lat and lon must be same size')
     end
     
@@ -110,7 +110,7 @@ OPT.colorbar           = 0;
       [ignore OPT.kmlName] = fileparts(OPT.fileName);
    end
    
-%% preproess cylinder perimeter
+%% pre-process cylinder perimeter
 
    TH     = linspace(0,2*pi,OPT.nTH+1); % nTH is number of faces = non-overllaping edges (first=last)
   [TH, R] = meshgrid(TH,R);
@@ -126,8 +126,12 @@ OPT.colorbar           = 0;
    if   ~isempty(OPT.fillColor) &  isempty(OPT.colorMap) & OPT.colorSteps==1
        colorRGB = OPT.fillColor;
        c{i}        = 1;
-   elseif  isempty(OPT.fillColor) & ~isempty(OPT.colorMap)
+   elseif  isempty(OPT.fillColor) & ~isempty(OPT.colorMap);
    
+       if isempty(OPT.colorSteps)
+           OPT.colorSteps = size(OPT.colorMap,1);
+       end
+
        colorRGB = OPT.colorMap(OPT.colorSteps);
       
        % clip c to min and max 

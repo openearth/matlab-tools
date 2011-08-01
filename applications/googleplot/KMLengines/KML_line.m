@@ -110,13 +110,13 @@ end
 if  OPT.extrude
     extrude = '<extrude>1</extrude>\n';
 else
-    extrude = '';
+    extrude = ''; % no extrude is default
 end
 %% preprocess tessellate
 if  OPT.tessellate
     tessellate = '<tessellate>1</tessellate>\n';
 else
-    tessellate = '';
+    tessellate = ''; % no tessellate is default
 end
 
 %% preproces timespan

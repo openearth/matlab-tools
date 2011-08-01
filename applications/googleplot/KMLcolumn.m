@@ -1,7 +1,7 @@
-function varargout = KMLcylinder(lat,lon,z,c,varargin)
-%KMLcylinder   draw a 3D cylinder at a specific location
+function varargout = KMLcolumn(lat,lon,z,c,varargin)
+%KMLcolumn   draw a 3D cylinder at a specific location
 %
-%   KMLcylinder(lat,lon,z,c,R,<keyword,value>)
+%   KMLcolumn(lat,lon,z,c,R,<keyword,value>)
 %
 %    lat,lon must be cells with one double each
 %    z must be a cell with top and bottom coordinates of the layers (length(c)+1
@@ -18,7 +18,7 @@ function varargout = KMLcylinder(lat,lon,z,c,varargin)
 % See also: googlePlot, KMLcylinder
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares for Building with Nature
+%   Copyright (C) 2011 Deltares for NMDC.eu
 %       Gerben J. de Boer
 %
 %       gerben.deboer@Deltares.nl
@@ -69,10 +69,12 @@ function varargout = KMLcylinder(lat,lon,z,c,varargin)
 OPT.colorMap           = @(z) jet(z);
 OPT.colorSteps         = 32;
    OPT.fillAlpha          = 1;
-   OPT.polyOutline        = false; % outlines the polygon, including extruded edges
+   OPT.lineOutline        = true;  % outlines the interface between column segments, EXCLUDING EXTRUDED EDGES
+   OPT.polyOutline        = false; % outlines the all polygon faces, INCLUDING EXTRUDED EDGES
    OPT.polyFill           = true;
    OPT.openInGE           = false;
    OPT.reversePoly        = [];
+   OPT.colorNaN           = [.5 .5 .5]; % 
 
 OPT.cLim               = [];
    OPT.zScaleFun          = @(z) 1000*z;
@@ -84,7 +86,6 @@ OPT.colorbar           = 0;
 
    OPT.precision          = 8;
    OPT.tessellate         = false;
-   OPT.lineOutline        = true; % draws a separate line element around the polygon. Outlines the polygon, excluding extruded edge
 
    if nargin==0
       varargout = {OPT};
@@ -92,7 +93,7 @@ OPT.colorbar           = 0;
    end
 
    [OPT, Set, Default] = setproperty(OPT, varargin{:});
-   
+
 %% limited error check
 
     if ~isequal(size(lat),size(lon),size(c),size(z))
@@ -122,7 +123,11 @@ OPT.colorbar           = 0;
    if   ~isempty(OPT.fillColor) &  isempty(OPT.colorMap) & OPT.colorSteps==1
        colorRGB = OPT.fillColor;
        c{i}        = 1;
-   elseif  isempty(OPT.fillColor) & ~isempty(OPT.colorMap)
+   elseif  isempty(OPT.fillColor) & ~isempty(OPT.colorMap);
+       
+       if isempty(OPT.colorSteps)
+           OPT.colorSteps = size(OPT.colorMap,1);
+       end
    
        colorRGB = OPT.colorMap(OPT.colorSteps);
       
@@ -156,12 +161,28 @@ OPT.colorbar           = 0;
    end
 
 %% STYLE
+
+% for cap
+
+   if OPT.lineOutline
    OPT_stylePoly = struct(...
-       'name'       ,['style' num2str(1)],...
-       'fillColor'  ,colorRGB(1,:),...
+       'name'       ,['style0' ],...
        'lineColor'  ,OPT.lineColor,...
        'lineAlpha'  ,OPT.lineAlpha,...
        'lineWidth'  ,OPT.lineWidth,...
+       'polyFill'   ,false,...
+       'polyOutline',OPT.lineOutline); 
+      output = [output KML_stylePoly(OPT_stylePoly)];
+   end
+
+% for body faces
+
+   OPT_stylePoly = struct(...
+       'name'       ,['style' num2str(1)],...
+       'lineColor'  ,OPT.lineColor,...
+       'lineAlpha'  ,OPT.lineAlpha,...
+       'lineWidth'  ,OPT.lineWidth,...
+       'fillColor'  ,colorRGB(1,:),...
        'fillAlpha'  ,OPT.fillAlpha,...
        'polyFill'   ,OPT.polyFill,...
        'polyOutline',OPT.polyOutline); 
@@ -170,6 +191,19 @@ OPT.colorbar           = 0;
        OPT_stylePoly.fillColor = colorRGB(ii,:);
        output = [output KML_stylePoly(OPT_stylePoly)];
    end
+
+% for base for floating column
+
+   OPT_stylePoly = struct(...
+       'name'       ,['styleNaN' ],...
+       'lineColor'  ,OPT.lineColor,...
+       'lineAlpha'  ,OPT.lineAlpha,...
+       'lineWidth'  ,OPT.lineWidth,...
+       'fillColor'  ,OPT.colorNaN,...
+       'fillAlpha'  ,OPT.fillAlpha,...
+       'polyFill'   ,OPT.polyFill,...
+       'polyOutline',OPT.polyOutline); 
+      output = [output KML_stylePoly(OPT_stylePoly)];
 
    % print and clear output
    
@@ -188,7 +222,13 @@ OPT.colorbar           = 0;
       'tessellate',OPT.tessellate,...
       'precision' ,OPT.precision);
 
-%% preproess cylinder perimeter
+   if OPT.lineOutline
+   OPT_polycap = OPT_poly;
+   OPT_polycap.styleName = 'style0';
+   OPT_polycap.extrude   = 0;
+   end
+
+%% pre-process cylinder perimeter
 
    TH0     = linspace(0,2*pi,OPT.nTH+1); % nTH is number of faces = non-overllaping edges (first=last)
 
@@ -224,19 +264,33 @@ OPT.colorbar           = 0;
 
        [lon1,lat1] = convertCoordinates(X+dx,Y+dy,'persistent','CS1.code',OPT.epsg,'CS2.code',4326);% spherical perimeter of circle
        
-        if ~(z{i}(1)==0)
-           disp('warning: KMLcolumn: column extended down to earth')
-           % TO DO: add black segment below
-        end
-
         for ii=length(c{i}):-1:1 % cycle layers
+        
+        % draw cap to be extruded
 
            OPT_poly.styleName = sprintf('style%d',c{i}(ii));
-
-           %% draw cap
            newOutput = KML_poly(lat1(:,ii),lon1(:,ii),OPT.zScaleFun(lon1(:,ii).*0+z{i}(ii+1)),OPT_poly); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
            output(kk:kk+length(newOutput)-1) = newOutput;
            kk = kk+length(newOutput);
+           
+        % draw outline of cap (not to be extruded)
+
+           if OPT.lineOutline
+           newOutput = KML_poly(lat1(:,ii),lon1(:,ii),OPT.zScaleFun(lon1(:,ii).*0+z{i}(ii+1)),OPT_polycap); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+           end
+           output(kk:kk+length(newOutput)-1) = newOutput;
+           kk = kk+length(newOutput);
+
+        % handle cylinder where lowest segment does not go down to earth
+        % this one has no additional dR, so you see it flickering in Google
+
+           if  ii==1 & ~(z{i}(1)==0)
+           disp('warning: KMLcolumn: column extended down to earth')
+           OPT_poly.styleName = 'styleNaN';
+           newOutput = KML_poly(lat1(:,ii),lon1(:,ii),OPT.zScaleFun(lon1(:,ii).*0+z{i}(ii)),OPT_poly); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+           output(kk:kk+length(newOutput)-1) = newOutput;
+           kk = kk+length(newOutput);
+           end
 
         end
         fprintf(OPT.fid,output(1:kk-1)); % print output

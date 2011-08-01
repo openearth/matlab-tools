@@ -54,6 +54,7 @@ function varargout = KMLfigure_tiler (h,lat,lon,z,varargin)
 %           
 %
 % See also: GOOGLEPLOT, PCOLOR, KMLFIG2PNG_ALPHA
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

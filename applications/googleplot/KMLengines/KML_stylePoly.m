@@ -70,6 +70,14 @@ lineColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 temp      = dec2hex(round([OPT.fillAlpha, OPT.fillColor].*255),2);
 fillColor = [temp(1,:) temp(4,:) temp(3,:) temp(2,:)];
 
+if     OPT.polyOutline & ~OPT.polyFill
+    appearance = ['<outline>1</outline><fill>0</fill>\n']; % OPT.polyOutline
+elseif OPT.polyFill & ~OPT.polyOutline
+    appearance = ['<outline>0</outline><fill>1</fill>\n'];       % OPT.polyFill
+else
+    appearance = ''; % filled + outlines=google's default
+end
+
 output = sprintf([...
     '<Style id="%s">\n'...       % OPT.name
     '<LineStyle>\n'...
@@ -78,11 +86,10 @@ output = sprintf([...
     '</LineStyle>\n'...
     '<PolyStyle>\n'...
     '<color>%s</color>\n'...     % fillColor
-    '<outline>%d</outline>\n'... % OPT.polyOutline
-    '<fill>%d</fill>\n'...       % OPT.polyFill
+    '%s\n'...                      % OPT.polyOutline & OPT.polyFill
     '</PolyStyle>\n'...
     '</Style>\n'],...
     OPT.name,lineColor,OPT.lineWidth,...
-    fillColor,OPT.polyOutline,OPT.polyFill);
+    fillColor,appearance);
     
     varargout ={output};
