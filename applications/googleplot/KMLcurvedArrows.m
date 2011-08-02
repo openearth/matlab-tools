@@ -54,7 +54,7 @@ function varargout = KMLcurvedArrows(x,y,u0,v0,varargin)
    OPT.colorSteps        = 9;
    OPT.colorMap          = @(m) colormap_cpt('YlOrRd 09',(m));
    OPT.fileName          = [];
-   OPT.time              = [1 1000]; %datenum containing begin and end times of animation
+   OPT.time              = [1 1000]; % containing begin and end times of animation
    
    %% arrow properties
    OPT.length           = 90;                   % lenght in seconds (determines length of arrows)
@@ -111,13 +111,20 @@ EPSG = load('EPSG');
    end    
 
 %% get first data
+%  u0    is nt data array
+%  u1,v1 is one  timestep
+%  u2,v2 is next timestep
 
    if isnumeric(u0)
-      u2 = u0;u1 = u0; clear u0; u0{1} = u1;u0{2} = u1;
-      v2 = v0;v1 = v0; clear v0; v0{1} = v1;v0{2} = v1;
+     if length(size(u0))==2
+       u2 = u0;u1 = u0; clear u0; u0{1} = u1;u0{2} = u1;
+       v2 = v0;v1 = v0; clear v0; v0{1} = v1;v0{2} = v1;
+     else
+       warning('TO DO')
+     end
    elseif iscell(u0)
-      u2 = u0{1};u1 = u2;
-      v2 = v0{1};v1 = v2;
+       u2 = u0{1};u1 = u2;
+       v2 = v0{1};v1 = v2;
    end
 
 %% make initial seed of arrows
@@ -125,10 +132,10 @@ EPSG = load('EPSG');
    x_nonan       = x(~isnan(x)); % needed for adding new new arrows
    y_nonan       = y(~isnan(y));
    if isempty(OPT.x0) & isempty(OPT.y0)
-   seedPoints    = linspace(1,numel(x_nonan)-numel(x_nonan)/OPT.n_arrows,OPT.n_arrows);
-   seedPoints    = round(seedPoints'+(numel(x_nonan)/OPT.n_arrows).*rand(OPT.n_arrows,1));
-   OPT.x0        = x_nonan(seedPoints);
-   OPT.y0        = y_nonan(seedPoints);
+     seedPoints  = linspace(1,numel(x_nonan)-numel(x_nonan)/OPT.n_arrows,OPT.n_arrows);
+     seedPoints  = round(seedPoints'+(numel(x_nonan)/OPT.n_arrows).*rand(OPT.n_arrows,1));
+     OPT.x0      = x_nonan(seedPoints);
+     OPT.y0      = y_nonan(seedPoints);
    end
    t             = round((OPT.lifespan-1)*rand(size(OPT.x0)))+1;
 
@@ -136,7 +143,7 @@ EPSG = load('EPSG');
 
    time        = linspace(OPT.time(1),OPT.time(2),OPT.interp_steps*(length(u0)-1)+1);
    if numel(time)>1
-       time(end+1) = time(end)+time(end)-time(end-1);
+       time(end+1) = time(end)+(time(end)-time(end-1));
    else
        time(end+1) = time(end);
    end
@@ -145,28 +152,25 @@ EPSG = load('EPSG');
 for ii = 1:OPT.interp_steps*(length(u0)-1)+1;
 
     if OPT.interp_steps > 0
-    if rem((ii-1),OPT.interp_steps)==0 %only update when needed
-        u1 = u2;v1 = v2;
-    end
-    if rem((ii-2),OPT.interp_steps)==0 %only update when needed
-         % read trim file of next timestep
-        u2 = u0{(ii-2)/OPT.interp_steps+2}; 
-        v2 = v0{(ii-2)/OPT.interp_steps+2};
-    end
-    a = rem((ii-1),OPT.interp_steps)/OPT.interp_steps;
-    b = 1-a;
-    u = a*u2+b*u1;
-    v = a*v2+b*v1;
+      if rem((ii-1),OPT.interp_steps)==0 %only update when needed
+          u1 = u2;v1 = v2;
+      end
+      if rem((ii-2),OPT.interp_steps)==0 %only update when needed
+          u2 = u0{(ii-2)/OPT.interp_steps+2}; 
+          v2 = v0{(ii-2)/OPT.interp_steps+2};
+      end
+         a = rem((ii-1),OPT.interp_steps)/OPT.interp_steps;
+         b = 1-a;
+         u = a*u2+b*u1;
+         v = a*v2+b*v1;
     else
-    u = u1;
-    v = v1;
+         u = u1;
+         v = v1;
     end
 
 %% make arrows
 
-%   [xp,yp,xax,yax    ]=KML_curvedArrows(OPT.x0,OPT.y0,x ,y ,u,v,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.headthickness,OPT.relwdt);
-%   [xp,yp,xax,yax    ]=KML_curvedArrows(OPT.x0,OPT.y0,x, y, u,v,OPT.dt    ,OPT.nt        ,OPT.hdthck       ,OPT.arthck       ,OPT.relwdt);
-    [xp,yp,xax,yax,len]=mxcurvec        (OPT.x0,OPT.y0,x ,y ,u,v,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.arrowthickness,OPT.nhead ,OPT.relwdt,0);
+    [xp,yp,xax,yax,len]=mxcurvec(OPT.x0,OPT.y0,x ,y ,u ,v ,u ,v ,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.arrowthickness,OPT.nhead,OPT.relwdt,0);
 
     % pre-proces xp and yp
     xax(xax<1000.0 & xax>999.998)=NaN; yax(yax<1000.0 & yax>999.998)=NaN;

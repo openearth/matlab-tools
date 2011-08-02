@@ -267,7 +267,7 @@ end
    fprintf(OPT.fid,'%s',output);output = [];
    fprintf(OPT.fid,'<Folder>');
    fprintf(OPT.fid,'%s',['<name>',OPT.kmlName,'</name>']); % note format '%s' to allow % inside name
-   fprintf(OPT.fid,'  <open>0</open>'); % TO DO 1
+   fprintf(OPT.fid,['  <open>',num2str(OPT.open),'</open>']); % TO DO 1
 
    %% set time as wide as all samples, note that header also contains gtime already
    
