@@ -167,6 +167,8 @@ handles.Model(md).Input(id).layerType='sigma';
 handles.Model(md).Input(id).zBot=0;
 handles.Model(md).Input(id).zTop=0;
 
+handles.Model(md).Input(id).initialConditions='unif';
+
 %%
 function handles=ddb_initializeOtherInput(handles,id,runid)
 
@@ -202,8 +204,6 @@ handles.Model(md).Input(id).latitude=0.0;
 handles.Model(md).Input(id).orientation=0.0;
 handles.Model(md).Input(id).thick=100;
 handles.Model(md).Input(id).sumLayers=100;
-handles.Model(md).Input(id).initialConditions='unif';
-handles.Model(md).Input(id).initialConditionsType=1;
 handles.Model(md).Input(id).uniformRoughness=1;
 handles.Model(md).Input(id).uniformViscosity=1;
 

@@ -192,3 +192,25 @@ if handles.Model(md).Input(id).nrSediments>0 && handles.Model(md).Input(id).sedi
     end
     ddb_saveMorFile(handles,id);
 end
+
+if handles.Model(md).Input(id).wind
+    if strcmpi(handles.Model(md).Input(id).windType,'uniform')
+        if isempty(handles.Model(md).Input(id).wndFile)
+            [filename, pathname, filterindex] = uiputfile('*.wnd', ['Select Wind File - domain ' runid],'');
+            if pathname~=0
+                curdir=[lower(cd) '\'];
+                if ~strcmpi(curdir,pathname)
+                    filename=[pathname filename];
+                end
+            else
+                filename=[];
+            end
+            if ~isempty(filename)
+                handles.Model(md).Input(id).wndFile=filename;
+            end
+        end
+        if ~isempty(handles.Model(md).Input(id).wndFile)
+            ddb_saveWndFile(handles,id)
+        end
+    end
+end

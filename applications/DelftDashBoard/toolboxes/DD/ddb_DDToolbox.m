@@ -201,6 +201,7 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         % Copy active domain to new domain
         handles.Model(md).Input(id2)=handles.Model(md).Input(ad);
         handles.Model(md).Input(id2).runid=runid2;
+        handles.Model(md).Input(id2).attName=handles.Toolbox(tb).Input.attributeName;
         % Create backup of original model with id0
         handles.Toolbox(tb).Input.originalDomain=handles.Model(md).Input(ad);
         

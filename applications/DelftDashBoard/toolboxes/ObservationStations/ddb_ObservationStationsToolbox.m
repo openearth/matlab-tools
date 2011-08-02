@@ -76,6 +76,7 @@ data=[];
 %         ddb_plotTimeSeries(time,data,stationName);
 %     end
 %     
+%     close(wb);
 %     
 % catch
 %     
@@ -133,8 +134,8 @@ if strcmp(get(h,'Tag'),'ObservationStations')
     posx=pos(1,1);
     posy=pos(1,2);
     iac=handles.Toolbox(tb).Input.activeDatabase;
-    dxsq=(handles.Toolbox(tb).Input.database(iac).xLoc-posx).^2;
-    dysq=(handles.Toolbox(tb).Input.database(iac).yLoc-posy).^2;
+    dxsq=(handles.Toolbox(tb).Input.database(iac).xLocLocal-posx).^2;
+    dysq=(handles.Toolbox(tb).Input.database(iac).yLocLocal-posy).^2;
     dist=(dxsq+dysq).^0.5;
     [y,n]=min(dist);
     handles.Toolbox(tb).Input.activeObservationStation=n;
@@ -161,7 +162,7 @@ handles.Toolbox(tb).Input.activeObservationStationHandle=[];
 % Plot new active station
 n=handles.Toolbox(tb).Input.activeObservationStation;
 iac=handles.Toolbox(tb).Input.activeDatabase;
-plt=plot3(handles.Toolbox(tb).Input.database(iac).xLoc(n),handles.Toolbox(tb).Input.database(iac).yLoc(n),1000,'o');
+plt=plot3(handles.Toolbox(tb).Input.database(iac).xLocLocal(n),handles.Toolbox(tb).Input.database(iac).yLocLocal(n),1000,'o');
 set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveObservationStation');
 handles.Toolbox(tb).Input.activeObservationStationHandle=plt;
 
@@ -214,6 +215,13 @@ iac=handles.Toolbox(tb).Input.activeDatabase;
 x=handles.Toolbox(tb).Input.database(iac).xLoc;
 y=handles.Toolbox(tb).Input.database(iac).yLoc;
 z=zeros(size(x))+500;
+
+cs0.name=handles.Toolbox(tb).Input.database(iac).coordinateSystem;
+cs0.type=handles.Toolbox(tb).Input.database(iac).coordinateSystemType;
+[x,y]=ddb_coordConvert(x,y,cs0,handles.screenParameters.coordinateSystem);
+
+handles.Toolbox(tb).Input.database(iac).xLocLocal=x;
+handles.Toolbox(tb).Input.database(iac).yLocLocal=y;
 
 plt=plot3(x,y,z,'o');hold on;
 set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','y');

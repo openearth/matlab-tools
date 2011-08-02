@@ -1,7 +1,12 @@
-function [x,y,h]=UIPolyline(h,opt,varargin)
+function varargout=UIPolyline(h,opt,varargin)
 
-if strcmpi(get(h,'Type'),'axes')
-    ax=h;
+try
+    tp=get(h,'Type');
+    if strcmpi(tp,'axes')
+        ax=h;
+    end
+catch
+    return
 end
 
 % Default values
@@ -120,17 +125,28 @@ switch lower(opt)
         setappdata(h,'closed',closed);
         setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);        
-        drawPolyline(h,'nocallback');
+        h=drawPolyline(h,'nocallback');
 
     case{'delete'}
-        ch=getappdata(h,'children');
-        delete(h);
-        delete(ch);
+        try
+            ch=getappdata(h,'children');
+            delete(h);
+            delete(ch);
+        end
 
 end
 
+if nargout==1
+    varargout{1}=h;
+elseif nargout==2
+    varargout{1}=x;
+    varargout{2}=y;
+else
+    varargout{1}=h;
+end
+
 %%
-function drawPolyline(h,varargin)
+function h=drawPolyline(h,varargin)
 
 opt='withcallback';
 if ~isempty(varargin)

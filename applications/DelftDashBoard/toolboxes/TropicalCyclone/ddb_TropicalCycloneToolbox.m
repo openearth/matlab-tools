@@ -5,6 +5,10 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     ddb_plotTropicalCyclone('activate');
+    handles=getHandles;
+    if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
+        giveWarning('text','The Tropical Cyclone Toolbox only works in geographic coordinate systems!');
+    end
 else
     %Options selected
     opt=lower(varargin{1});    
@@ -149,7 +153,9 @@ handles=getHandles;
 [filename, pathname, filterindex] = uiputfile('*.spw', 'Select Spiderweb File','');
 
 if ~isempty(pathname)
-    
+
+    wb = waitbox('Generating Spiderweb Wind Field ...');%pause(0.1);
+
     inp=handles.Toolbox(tb).Input;
     
     [path,name,ext]=fileparts(filename);
@@ -175,9 +181,9 @@ if ~isempty(pathname)
     
     fid=fopen('trackfile.trk','wt');
     
-    fprintf(fid,'%s\n','* File for hurricane KATRINA; starting at 20050823 UTC !!');
+    fprintf(fid,'%s\n','* File for tropical cyclone');
     fprintf(fid,'%s\n','* File contains Cyclone information ; TIMES in UTC');
-    fprintf(fid,'%s\n','* Created by DEEPAK VATVANI from http://flhurricane.com/cyclone/stormhistory.php?storm=12&year=2005');
+    fprintf(fid,'%s\n',['* Created by ']);
     fprintf(fid,'%s\n','* UNIT = Kts, Nmi ,Pa');
     fprintf(fid,'%s\n','* METHOD= 1:A&B;           4:Vm,Pd; Rw default');
     fprintf(fid,'%s\n','*         2:R100_etc;      5:Vm & Rw(RW may be default - US data; Pd = 2 Vm*Vm);');
@@ -201,6 +207,8 @@ if ~isempty(pathname)
     handles.Model(md).Input(ad).windType='spiderweb';
     handles.Model(md).Input(ad).airOut=1;
     
+    close(wb);
+
     setHandles(handles);
     
 end

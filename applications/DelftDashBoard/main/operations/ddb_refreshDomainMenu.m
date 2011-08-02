@@ -56,6 +56,9 @@ for i=1:handles.Model(md).nrDomains
     feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',i);
 end
 
+% Select toolbox tab.
+tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox','runcallback',0);
+
 %% And now set all elements and execute active tab!
 
 

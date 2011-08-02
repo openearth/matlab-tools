@@ -207,7 +207,7 @@
     <tag>radioblock</tag>
     <style>radiobutton</style>
     <position>340 75</position>
-    <text>Linear</text>
+    <text>Block</text>
     <variable>handles.Model(md).Input(ad).discharges(handles.Model(md).Input(ad).activeDischarge).interpolation</variable>
     <value>block</value>
     <type>string</type>
