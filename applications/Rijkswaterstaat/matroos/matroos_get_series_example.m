@@ -29,6 +29,10 @@ OPT.vc     = 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/g
    L.lat = nc_varget(OPT.vc,'lat');
    plot(L.lon,L.lat)
    end
+   
+   disp('<CTRL>+<C> to prevent testing matroos_get_series_example sequentially (SLOW)')
+   pausedisp
+   
 
 %% method 2: all stations sequentially
 

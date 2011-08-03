@@ -3,10 +3,16 @@ function varargout = noos_read(varargin)
 %
 %   [time, values, headerlines] = noos_read(cellstr)
 %
-% where the headerlines can be interpreted with 
-% MATROOS_NOOS_HEADER2META if the NOOS file file originates
-% from matroos. When the file contains multiple data blocks,
-% [time, values, headerlines], are cells. Alternative output:
+% When the file contains multiple data blocks,
+%  [time, values, headerlines], are cells. 
+%
+% The headerlines can be interpreted with MATROOS_NOOS_HEADER2META 
+% if the NOOS file file originates from the matroos service: GET_SERIES. 
+%
+% The headerlines can also contain non-standard header information
+% as in the the matroos service: GET_MAP2SERIES. 
+%
+% Alternative output:
 %
 %   D = noos_read(cellstr)
 %
@@ -14,7 +20,7 @@ function varargout = noos_read(varargin)
 %
 %See also: MATROOS_NOOS_HEADER2META
 
-%% TO DO: parse a file with only concatenated comment blocks (in cas eof no data)
+%% TO DO: parse a file with only concatenated comment blocks (in case of no data)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Rijkswaterstaat
@@ -74,6 +80,8 @@ function varargout = noos_read(varargin)
 %  Mind that data sections can be missing altogether!: so header blocks are concatenated
 %  The NOOS format is as follows, where multiple blocks can occur, seperated by headers
 
+%% Example from: GET_SERIES
+
 % #------------------------------------------------------
 % # Timeseries retrieved from the MATROOS maps1d database
 % # Created at Tue Oct 28 20:33:51 CET 2008
@@ -117,28 +125,70 @@ function varargout = noos_read(varargin)
 % 200709010120   -0.289261430501938
 % 200709010130   -0.256232291460037
 
-   ind   = strmatch('# Timeseries retrieved from the MATROOS series database',allLines);
-   nloc  = length(ind);
+%% Example from: GET_MAP2SERIES
+
+% # ----------------------------------------------------------------
+% #                                                                 
+% # Timeseries created at Wed Aug  3 14:32:02 CEST 2011 by Matroos  
+% # Values retrieved from mapdata interpolated in space             
+% #                                                                 
+% # Source           : hmcn_kustfijn                                
+% # Analysis time    : 20110803085000                               
+% # Time zone        : GMT                                          
+% # Coordinate system: RD                                           
+% # x-coordinate     : 227674.22                                    
+% # y-coordinate     : 633319.8                                     
+% #                                                                 
+% # ----------------------------------------------------------------
+% #                                                                 
+% # Variable     : sep                                              
+% # long_name    : waterlevel                                       
+% # units        : m                                                
+% # missing value: 9.96920996838687e+36                             
+% #                                                                 
+% 201108030000    0.83237                                           
+% 201108030010    0.78763                                           
+% 201108030020    0.73298                                           
+% 201108030030    0.67331                                           
+
+
+   % find all comment lines.
+   % we assume contiguous blocks with # exist in between between contiguous data blocks
    
-   hind0 = ind-1;
-   hind1 = ind+9;
-   ind0  = ind+10;
-   ind1  = [(ind(2:end)-2)' length(allLines)];
+   ind   = strmatch('#',allLines)';
    
+   % handle case where 1st line is data instead of header
+   if ~(ind(1)==1)
+      ind = [0 ind];
+   end
+
+   % header start & end indices
+   hind0 = ind(find(diff(ind)>1)+1); % indices at start of blocks
+   hind0 = [1 hind0]; % 1st block always starts at line 1, regardless of whether it starts with a comment line or data line
+   
+   hind1 = ind(find(diff(ind)>1));
+   hind1 = [hind1 ind(end)];
+   
+   % data start & end indices
+   dind0 = hind1+1;
+   dind1 = [(hind0(2:end)-1) length(allLines)];
+   
+   nloc  = length(hind0);
+
 %% parse data
 
    for iloc=1:nloc
    
       %% read data lines, with pre-allocated vectors for speed
       
-      done                 = 0;
-      pointIndex           = 1;
-      nt                   = ind1(iloc) - ind0(iloc) + 1;
-      D(iloc).header       = allLines(hind0(iloc):hind1(iloc));
-      D(iloc).datenum      = repmat(nan,[1 nt]);
+      done                  = 0;
+      pointIndex            = 1;
+      nt                    = dind1(iloc) - dind0(iloc) + 1;
+      D(iloc).header        = allLines(hind0(iloc):hind1(iloc));
+      D(iloc).datenum       = repmat(nan,[1 nt]);
       D(iloc).(OPT.varname) = repmat(nan,[1 nt]);
       
-      for i = ind0(iloc):ind1(iloc)
+      for i = dind0(iloc):dind1(iloc)
           line                              = allLines{i};
           data                              = sscanf(line,'%f %f');
           D(iloc).(OPT.varname)(pointIndex) = data(end);
