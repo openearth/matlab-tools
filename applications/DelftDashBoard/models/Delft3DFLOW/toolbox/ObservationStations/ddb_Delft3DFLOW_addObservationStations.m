@@ -17,8 +17,8 @@ ymax=max(max(yg));
 
 n=0;
 
-x=handles.Toolbox(tb).Input.database(iac).xLoc;
-y=handles.Toolbox(tb).Input.database(iac).yLoc;
+x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
+y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
 
 x=[x-360 x x+360];
 y=[y y y];
