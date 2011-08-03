@@ -18,8 +18,8 @@ ymax=max(max(yg));
 ns=length(handles.Toolbox(tb).Input.database(iac).xLoc);
 n=0;
 
-x=handles.Toolbox(tb).Input.database(iac).xLoc;
-y=handles.Toolbox(tb).Input.database(iac).yLoc;
+x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
+y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
 
 % First find points within grid bounding box
 for i=1:ns
