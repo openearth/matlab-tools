@@ -40,58 +40,58 @@ if isempty(varargin)
     setUIElements('delft3dflow.output.outputpanel.fourier');
     
     
-    enab=ones(length(handles.Model(md).Input(ad).fourier.editTable.startTime),10);
-    for i=1:length(handles.Model(md).Input(ad).fourier.editTable.startTime)
-        if handles.Model(md).Input(ad).fourier.editTable.nrCycles(i)==0
-            enab(i,10)=0;
-        else
-            enab(i,8:9)=0;
-        end
-    end
-    h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable1');
-    table(h,'refresh','enable',enab);
+%     enab=ones(length(handles.Model(md).Input(ad).fourier.editTable.startTime),10);
+%     for i=1:length(handles.Model(md).Input(ad).fourier.editTable.startTime)
+%         if handles.Model(md).Input(ad).fourier.editTable.nrCycles(i)==0
+%             enab(i,10)=0;
+%         else
+%             enab(i,8:9)=0;
+%         end
+%     end
+%     h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable1');
+%     table(h,'refresh','enable',enab);
 
-    enab=ones(length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber),6);
-    for i=1:length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber)
-        if handles.Model(md).Input(ad).fourier.generateTable.componentNumber(i)==1
-            % A0
-            enab(i,6)=0;
-        else
-            enab(i,4:5)=0;
-        end
-    end
-    h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable2');
-    table(h,'refresh','enable',enab);
+%     enab=ones(length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber),6);
+%     for i=1:length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber)
+%         if handles.Model(md).Input(ad).fourier.generateTable.componentNumber(i)==1
+%             % A0
+%             enab(i,6)=0;
+%         else
+%             enab(i,4:5)=0;
+%         end
+%     end
+%     h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable2');
+%     table(h,'refresh','enable',enab);
    
 else
     handles=getHandles;
     opt=varargin{1};
     switch(lower(opt))
         case{'changetable1'}
-            enab=ones(length(handles.Model(md).Input(ad).fourier.editTable.startTime),10);
-            for i=1:length(handles.Model(md).Input(ad).fourier.editTable.startTime)
-                if handles.Model(md).Input(ad).fourier.editTable.nrCycles(i)==0
-                    enab(i,10)=0;
-                else
-                    enab(i,8:9)=0;
-                end
-            end
-            setUIElements('delft3dflow.output.outputpanel.fourier');
-            h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable1');
-            table(h,'refresh','enable',enab);
+%             enab=ones(length(handles.Model(md).Input(ad).fourier.editTable.startTime),10);
+%             for i=1:length(handles.Model(md).Input(ad).fourier.editTable.startTime)
+%                 if handles.Model(md).Input(ad).fourier.editTable.nrCycles(i)==0
+%                     enab(i,10)=0;
+%                 else
+%                     enab(i,8:9)=0;
+%                 end
+%             end
+%             setUIElements('delft3dflow.output.outputpanel.fourier');
+%             h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable1');
+%             table(h,'refresh','enable',enab);
         case{'changetable2'}
-            enab=ones(length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber),6);
-            for i=1:length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber)
-                if handles.Model(md).Input(ad).fourier.generateTable.componentNumber(i)==1
-                    % A0
-                    enab(i,6)=0;
-                else
-                    enab(i,4:5)=0;
-                end
-            end
-            setUIElements('delft3dflow.output.outputpanel.fourier');
-            h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable2');
-            table(h,'refresh','enable',enab);
+%             enab=ones(length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber),6);
+%             for i=1:length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber)
+%                 if handles.Model(md).Input(ad).fourier.generateTable.componentNumber(i)==1
+%                     % A0
+%                     enab(i,6)=0;
+%                 else
+%                     enab(i,4:5)=0;
+%                 end
+%             end
+%             setUIElements('delft3dflow.output.outputpanel.fourier');
+%             h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable2');
+%             table(h,'refresh','enable',enab);
         case{'generateinput'}
             
             spinuptime=handles.Model(md).Input(ad).fourier.spinUpTime/1440;
@@ -115,10 +115,14 @@ else
                 freq=freqs(ii);
                 [v,u,f]=t_vuf(0.5*(handles.Model(md).Input(ad).startTime+handles.Model(md).Input(ad).stopTime),ii,32);
                 u=u*360;
-                
-                period=1/freq/24;
-                
+                        
                 ttot=handles.Model(md).Input(ad).stopTime-handles.Model(md).Input(ad).startTime-spinuptime;
+                
+                if freq==0
+                    period=ttot;
+                else
+                    period=1/freq/24;
+                end
                 
                 ncyc=floor(ttot/period);
                 dt=handles.Model(md).Input(ad).timeStep;
@@ -150,7 +154,7 @@ else
             ddb_saveFouFile(handles,ad);
             
         case{'openfoufile'}
-%            ddb_saveFouFile(handles,id);
+%            ddb_openFouFile(handles,id);
             
     end
 end

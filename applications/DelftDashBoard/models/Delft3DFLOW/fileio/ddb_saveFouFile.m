@@ -1,4 +1,4 @@
-function saveFouFile(handles,id)
+function ddb_saveFouFile(handles,id)
 
 tab=handles.Model(md).Input(id).fourier.editTable;
 fid=fopen(handles.Model(md).Input(id).fourier.fouFile,'wt');

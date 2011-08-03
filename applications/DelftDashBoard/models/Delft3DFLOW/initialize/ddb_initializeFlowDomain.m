@@ -371,8 +371,9 @@ handles.Model(md).Input(id).trachy.trtv='';
 handles.Model(md).Input(id).trachy.trtDt=0;
 
 %% Fourier analysis
-handles.Model(md).Input(id).fourier.parameterList={'wl','uv','qf'};
-handles.Model(md).Input(id).fourier.tableOption='edit';
+handles.Model(md).Input(id).fourier.parameterList={'water level','velocity','discharge'};
+handles.Model(md).Input(id).fourier.pList={'wl','uv','qf'};
+handles.Model(md).Input(id).fourier.tableOption='generate';
 handles.Model(md).Input(id).fourier.include=0;
 handles.Model(md).Input(id).fourier.fouFile='';
 
