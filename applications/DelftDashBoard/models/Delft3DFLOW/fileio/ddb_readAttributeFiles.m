@@ -29,12 +29,13 @@ end
 
 % ddb_initialize Tracers and Sediment
 for i=1:handles.Model(md).Input(id).nrTracers
-    handles=ddb_initializeTracer(handles,i);
+    handles=ddb_initializeTracer(handles,id,i);
 end
 
 % Initialize sediment
-for i=1:handles.Model(md).Input(id).nrSediments
-    handles=ddb_initializeSediment(handles,id,i);
+if handles.Model(md).Input(id).sediments.include
+    handles=ddb_readSedFile(handles,id);
+    handles=ddb_readMorFile(handles,id);
 end
 
 if ~isempty(handles.Model(md).Input(id).bcaFile)
@@ -79,7 +80,4 @@ if ~isempty(handles.Model(md).Input(id).srcFile)
         handles=ddb_readDisFile(handles,id);
     end
 end
-if handles.Model(md).Input(id).sediments.include
-    handles=ddb_readSedFile(handles,id);
-    handles=ddb_readMorFile(handles,id);
-end
+

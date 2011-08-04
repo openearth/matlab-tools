@@ -131,7 +131,7 @@ h2.Model(md).Input(ad).tracer=handles.Model(md).Input(ad).tracer;
 h2.Model(md).Input(ad).nrTracers=handles.Model(md).Input(ad).nrTracers;
 for ii=1:handles.Model(md).Input(ad).nrTracers
     if handles.Model(md).Input(ad).tracer(ii).new
-        h2=ddb_initializeTracer(h2,ii);
+        h2=ddb_initializeTracer(h2,ad,ii);
     end
 end
 if handles.Model(md).Input(ad).nrTracers==0

@@ -11,12 +11,12 @@
     <value>edit</value>
     <list>
       <texts>
-        <text>Edit</text>
         <text>Generate</text>
+        <text>Edit</text>
       </texts>
       <values>
-        <value>edit</value>
         <value>generate</value>
+        <value>edit</value>
       </values>
     </list> 
   </element>
@@ -55,6 +55,14 @@
     <extension>*.fou</extension>
     <selectiontext>Select fourier file</selectiontext>
     <tooltipstring>Select Delft3D fourier file</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>pushopenfoufile</tag>
+        </tags>
+      </dependency>
+    </dependencies>
   </element>
 
   <element>
@@ -144,22 +152,16 @@
         </list>
       </column>
       <column>
-        <style>checkbox</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.max</variable>
-        <width>25</width>
-        <text>Max</text>
-      </column>
-      <column>
-        <style>checkbox</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.min</variable>
-        <width>25</width>
-        <text>Min</text>
-      </column>
-      <column>
-        <style>checkbox</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.ellipse</variable>
-        <width>25</width>
-        <text>Ell</text>
+        <style>popupmenu</style>
+        <variable>handles.Model(md).Input(ad).fourier.editTable.option</variable>
+        <type>integer</type>
+        <width>70</width>
+        <text>Option</text>
+        <list>
+	  <texts>
+	    <variable>handles.Model(md).Input(ad).fourier.optionList</variable>
+	  </texts>
+        </list>
       </column>
     </columns>
   </element>
@@ -169,8 +171,7 @@
   <element>
     <tag>generatepanel</tag>
     <style>panel</style>
-    <bordertype>none</bordertype>
-    <position>100 25 690 110</position>
+    <position>150 35 690 95</position>
     <dependencies>
       <dependency>
         <action>visible</action>
@@ -193,7 +194,7 @@
     <tag>fouriertable2</tag>
     <style>table</style>
     <position>20 10</position>
-    <nrrows>4</nrrows>
+    <nrrows>3</nrrows>
     <includenumbers>no</includenumbers>
     <includebuttons>yes</includebuttons>
     <onchange>ddb_Delft3DFLOW_fourier</onchange>
@@ -238,6 +239,12 @@
       </column>
       <column>
         <style>checkbox</style>
+        <variable>handles.Model(md).Input(ad).fourier.generateTable.fourier</variable>
+        <width>25</width>
+        <text>F</text>
+      </column>
+      <column>
+        <style>checkbox</style>
         <variable>handles.Model(md).Input(ad).fourier.generateTable.max</variable>
         <width>25</width>
         <text>Max</text>
@@ -260,7 +267,7 @@
   <element>
     <tag>pushgenerate</tag>
     <style>pushbutton</style>
-    <position>600 80 70 20</position>
+    <position>550 30 70 20</position>
     <text>Generate</text>
     <callback>ddb_Delft3DFLOW_fourier</callback>
     <option1>generateinput</option1>
@@ -268,9 +275,9 @@
   </element>
 
   <element>
-    <tag>pushgenerate</tag>
+    <tag>editspinuptime</tag>
     <style>edit</style>
-    <position>600 55 70 20</position>
+    <position>550 55 70 20</position>
     <text>Spin-up time (min)</text>
     <parent>delft3dflow.output.outputpanel.fourier.generatepanel</parent>
     <variable>handles.Model(md).Input(ad).fourier.spinUpTime</variable>

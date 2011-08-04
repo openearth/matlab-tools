@@ -11,14 +11,15 @@ for i=1:length(tab.period)
     else
         lstr=num2str(tab.layer(i));
     end
-    if tab.max(i)
-        optstr='max';
-    elseif tab.min(i)
-        optstr='min';
-    elseif tab.ellipse(i)
-        optstr='y';
-    else
-        optstr='';
+    switch tab.option(i)
+        case 1
+            optstr='';
+        case 2
+            optstr='max';
+        case 3
+            optstr='min';
+        case 4
+            optstr='y';
     end
     
     t0str=num2str((tab.startTime(i)-handles.Model(md).Input(id).itDate)*1440,'%10.2f');

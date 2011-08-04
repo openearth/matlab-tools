@@ -94,6 +94,13 @@ else
 %             table(h,'refresh','enable',enab);
         case{'generateinput'}
             
+            % Compute mean latitude of model
+            xm=nanmean(nanmean(handles.Model(md).Input(ad).gridX));
+            ym=nanmean(nanmean(handles.Model(md).Input(ad).gridY));
+            cs.name='WGS 84';
+            cs.type='Geographic';
+            [xm,ym]=ddb_coordConvert(xm,ym,handles.screenParameters.coordinateSystem,cs);
+
             spinuptime=handles.Model(md).Input(ad).fourier.spinUpTime/1440;
 
             tt=t_getconsts;
@@ -106,15 +113,19 @@ else
 
             handles.Model(md).Input(ad).fourier.editTable=[];
 
+            k=0;
+            
             for j=1:length(handles.Model(md).Input(ad).fourier.generateTable.componentNumber)
                 
                 % Find index of component
-                %ii=strmatch(lower(cnst{j}),lower(cnsts),'exact');
                 ii=handles.Model(md).Input(ad).fourier.generateTable.componentNumber(j);
                 
                 freq=freqs(ii);
-                [v,u,f]=t_vuf(0.5*(handles.Model(md).Input(ad).startTime+handles.Model(md).Input(ad).stopTime),ii,32);
-                u=u*360;
+
+                % Compute argument based on argument at reference time and correction of the mean model time 
+                [v,u,f]=t_vuf(0.5*(handles.Model(md).Input(ad).startTime+handles.Model(md).Input(ad).stopTime),ii,ym);
+                [vref,uref,fref]=t_vuf(handles.Model(md).Input(ad).itDate,ii,ym);
+                u=(vref+u)*360;
                         
                 ttot=handles.Model(md).Input(ad).stopTime-handles.Model(md).Input(ad).startTime-spinuptime;
                 
@@ -130,20 +141,39 @@ else
                 ntimesteps=round(1440*ttot/dt);
                 tstart=handles.Model(md).Input(ad).stopTime-ntimesteps*dt/1440;
                 tstop=handles.Model(md).Input(ad).stopTime;
+                               
+                nopt=0;
+                optNr=[];
+                if handles.Model(md).Input(ad).fourier.generateTable.fourier(j)
+                    nopt=nopt+1;
+                    optNr(nopt)=1;
+                end
+                if handles.Model(md).Input(ad).fourier.generateTable.max(j)
+                    nopt=nopt+1;
+                    optNr(nopt)=2;
+                end
+                if handles.Model(md).Input(ad).fourier.generateTable.min(j)
+                    nopt=nopt+1;
+                    optNr(nopt)=3;
+                end
+                if handles.Model(md).Input(ad).fourier.generateTable.ellipse(j)
+                    nopt=nopt+1;
+                    optNr(nopt)=4;
+                end
                 
-                handles.Model(md).Input(ad).fourier.editTable.parameterNumber(j)=handles.Model(md).Input(ad).fourier.generateTable.parameterNumber(j);
-                handles.Model(md).Input(ad).fourier.editTable.period(j)=period;
-                handles.Model(md).Input(ad).fourier.editTable.startTime(j)=tstart;
-                handles.Model(md).Input(ad).fourier.editTable.startTime(j)=tstart;
-                handles.Model(md).Input(ad).fourier.editTable.stopTime(j)=tstop;
-                handles.Model(md).Input(ad).fourier.editTable.nrCycles(j)=ncyc;
-                handles.Model(md).Input(ad).fourier.editTable.nodalAmplificationFactor(j)=f;
-                handles.Model(md).Input(ad).fourier.editTable.astronomicalArgument(j)=u;
-                handles.Model(md).Input(ad).fourier.editTable.layer(j)=handles.Model(md).Input(ad).fourier.generateTable.layer(j);
-                handles.Model(md).Input(ad).fourier.editTable.max(j)=handles.Model(md).Input(ad).fourier.generateTable.max(j);
-                handles.Model(md).Input(ad).fourier.editTable.min(j)=handles.Model(md).Input(ad).fourier.generateTable.min(j);
-                handles.Model(md).Input(ad).fourier.editTable.ellipse(j)=handles.Model(md).Input(ad).fourier.generateTable.ellipse(j);
-                
+                for n=1:nopt
+                    k=k+1;
+                    handles.Model(md).Input(ad).fourier.editTable.parameterNumber(k)=handles.Model(md).Input(ad).fourier.generateTable.parameterNumber(j);
+                    handles.Model(md).Input(ad).fourier.editTable.period(k)=period;
+                    handles.Model(md).Input(ad).fourier.editTable.startTime(k)=tstart;
+                    handles.Model(md).Input(ad).fourier.editTable.startTime(k)=tstart;
+                    handles.Model(md).Input(ad).fourier.editTable.stopTime(k)=tstop;
+                    handles.Model(md).Input(ad).fourier.editTable.nrCycles(k)=ncyc;
+                    handles.Model(md).Input(ad).fourier.editTable.nodalAmplificationFactor(k)=f;
+                    handles.Model(md).Input(ad).fourier.editTable.astronomicalArgument(k)=u;
+                    handles.Model(md).Input(ad).fourier.editTable.layer(k)=handles.Model(md).Input(ad).fourier.generateTable.layer(j);
+                    handles.Model(md).Input(ad).fourier.editTable.option(k)=optNr(n);
+                end
             end
             
             setHandles(handles);
@@ -154,7 +184,8 @@ else
             ddb_saveFouFile(handles,ad);
             
         case{'openfoufile'}
-%            ddb_openFouFile(handles,id);
+            
+%            ddb_readFouFile(handles,id);
             
     end
 end

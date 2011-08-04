@@ -335,7 +335,7 @@ handles=ddb_initializeTemperature(handles,id);
 
 handles.Model(md).Input(id).tracer=[];
 for i=1:handles.Model(md).Input(id).nrTracers
-    handles=ddb_initializeTracer(handles,i);
+    handles=ddb_initializeTracer(handles,id,i);
 end
 handles.Model(md).Input(id).cstBnd=0;
 
@@ -373,6 +373,7 @@ handles.Model(md).Input(id).trachy.trtDt=0;
 %% Fourier analysis
 handles.Model(md).Input(id).fourier.parameterList={'water level','velocity','discharge'};
 handles.Model(md).Input(id).fourier.pList={'wl','uv','qf'};
+handles.Model(md).Input(id).fourier.optionList={'fourier','max','min','ellipse'};
 handles.Model(md).Input(id).fourier.tableOption='generate';
 handles.Model(md).Input(id).fourier.include=0;
 handles.Model(md).Input(id).fourier.fouFile='';
@@ -388,11 +389,13 @@ handles.Model(md).Input(id).fourier.editTable.layer=1;
 handles.Model(md).Input(id).fourier.editTable.max=0;
 handles.Model(md).Input(id).fourier.editTable.min=0;
 handles.Model(md).Input(id).fourier.editTable.ellipse=0;
+handles.Model(md).Input(id).fourier.editTable.option=1;
 
 handles.Model(md).Input(id).fourier.generateTable.parameterNumber=1;
 handles.Model(md).Input(id).fourier.generateTable.astronomicalComponents='M2';
 handles.Model(md).Input(id).fourier.generateTable.componentNumber=1;
 handles.Model(md).Input(id).fourier.generateTable.layer=1;
+handles.Model(md).Input(id).fourier.generateTable.fourier=1;
 handles.Model(md).Input(id).fourier.generateTable.max=0;
 handles.Model(md).Input(id).fourier.generateTable.min=0;
 handles.Model(md).Input(id).fourier.generateTable.ellipse=0;
