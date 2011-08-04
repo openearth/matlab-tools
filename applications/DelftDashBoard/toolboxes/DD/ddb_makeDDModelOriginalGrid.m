@@ -8,12 +8,15 @@ nmax=ndd(2);
 x1=handles.Model(md).Input(id1).gridX;
 y1=handles.Model(md).Input(id1).gridY;
 
+% Set coordinates where new domain is made to nan
 x1(mmin+1:mmax-1,nmin+1:nmax-1)=NaN;
 y1(mmin+1:mmax-1,nmin+1:nmax-1)=NaN;
 
 sz1=size(x1);
 iac1=zeros(sz1);
 iac1(isfinite(x1))=1;
+
+% Run along dd boundaries to get rid of extra cells
 
 % sides
 % bottom
@@ -67,6 +70,24 @@ for j=nmin+1:nmax-1
         x1(mmax,j)=NaN;
         y1(mmax,j)=NaN;
     end
+end
+
+% And the corner points
+% Bottom left
+if mmin==1 && nmin==1
+    x1(mmin,nmin)=NaN;
+end
+% Bottom right
+if mmax==sz1(1) && nmin==1
+    x1(mmax,nmin)=NaN;
+end
+% Top left
+if mmin==1 && nmax==sz1(2)
+    x1(mmin,nmax)=NaN;
+end
+% Top right
+if mmax==sz1(1) && nmax==sz1(2)
+    x1(mmax,nmax)=NaN;
 end
 
 [x1,y1,mcut,ncut]=CutNanRows(x1,y1);

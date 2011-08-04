@@ -11,6 +11,9 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
 
     dpori=handles.Model(md).Input(id).depth;
     dmax=max(max(dpori));
+    if isempty(dmax)
+        dmax=NaN;
+    end
 
     if isnan(dmax)
         opt='overwrite';

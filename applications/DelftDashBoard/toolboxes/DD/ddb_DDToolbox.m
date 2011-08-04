@@ -216,9 +216,26 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         % Grid
         [handles,mcut,ncut]=ddb_makeDDModelOriginalGrid(handles,ad,mdd,ndd);
         
+        if max(mcut)>0 || max(ncut)>0 
+            
+            sz=size(handles.Model(md).Input(ad).depthZ);
+            handles.Model(md).Input(ad).depth=handles.Model(md).Input(ad).depth(mcut(1)+1:sz(1)-mcut(2),ncut(1)+1:sz(2)-ncut(2));
+            handles.Model(md).Input(ad).depthZ=handles.Model(md).Input(ad).depthZ(mcut(1)+1:sz(1)-mcut(2),ncut(1)+1:sz(2)-ncut(2));
+            
+            if mcut(1)>0 || ncut(1)>0
+                % TODO Change m and n indices of attributes
+                for i=1:handles.Model(md).Input(ad).nrObservationPoints
+                    handles.Model(md).Input(ad).observationPoints(i).M=handles.Model(md).Input(ad).observationPoints(i).M - mcut(1);
+                    handles.Model(md).Input(ad).observationPoints(i).N=handles.Model(md).Input(ad).observationPoints(i).N - ncut(1);
+                end
+            end
+            
+        end
+        
         % New Domain
         % Attributes
-        handles=ddb_makeDDModelNewAttributes(handles,ad,id2,runid1,runid2);       
+        handles=ddb_makeDDModelNewAttributes(handles,ad,id2,handles.Model(md).Input(id2).attName);
+        handles=ddb_removeDDModelAttributes(handles,ad);
         
         % Delete corner points and temporary grid
         plotCornerPoints('delete');
@@ -245,6 +262,11 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         
         % Generate dd boundaries
         generateDD;
+        
+        switch lower(handles.Model(md).Input(ad).initialConditions)
+            case{'ini','trim','rst'}
+                GiveWarning('text',['The domain ' runid1 ' uses an initial conditions file. Please consider generating an initial conditions file for the domain ' runid2 ' as well.']);
+        end
         
     else
         GiveWarning('Warning','First select corner points!');

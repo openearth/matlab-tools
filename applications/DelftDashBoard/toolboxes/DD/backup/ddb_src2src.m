@@ -68,10 +68,10 @@ for i=1:length(srcM)
             nsrc=nsrc+1;
             fprintf(fid,'%s  %6i   %6i   %6i\n',[srcNames{i} repmat(' ',1,20-length(srcNames{i})) ' ' typNames{i}],tm,tn,srcK(i));
         else
-            warning=['Source point ' srcNames{i} ' not found!']
+            warning=['Source point ' srcNames{i} ' not found!'];
         end
     else
-        warning=['Source point ' srcNames{i} ' not found!']
+        warning=['Source point ' srcNames{i} ' not found!'];
     end
 end
 fclose(fid);

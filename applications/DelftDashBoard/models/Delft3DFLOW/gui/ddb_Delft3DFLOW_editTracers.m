@@ -1,4 +1,4 @@
-function ddb_editD3DFlowPollutants
+function ddb_Delft3DFLOW_editTracers
 
 handles=getHandles;
 
@@ -59,6 +59,14 @@ if ~isempty(name)
         set(handles.GUIHandles.ListTracers,'String',str);
         set(handles.GUIHandles.ListTracers,'Value',ii);
         guidata(gcf,handles);
+
+        switch lower(handles.Model(md).Input(ad).initialConditions)
+            case{'ini'}
+                GiveWarning('text',['The initial conditions file (*.ini) may not contain values for ' name '! If it does not, regenerate it with the Model Maker toolbox.']);
+            case{'trim','rst'}
+                GiveWarning('text',['The initial conditions file may not contain values for ' name '!']);
+        end
+        
     else
         GiveWarning('text','A constituent with this name already exists!')
     end

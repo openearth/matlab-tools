@@ -74,7 +74,16 @@ if length(name)>8
                 end
                 set(handles.GUIHandles.ListSediments,'String',str);
                 set(handles.GUIHandles.ListSediments,'Value',ii);
+                
                 guidata(gcf,handles);
+                
+                switch lower(handles.Model(md).Input(ad).initialConditions)
+                    case{'ini'}
+                        GiveWarning('text',['The initial conditions file (*.ini) may not contain values for ' name '! If it does not, regenerate it with the Model Maker toolbox.']);
+                    case{'trim','rst'}
+                        GiveWarning('text',['The initial conditions file may not contain values for ' name '!']);
+                end
+
             else
                 GiveWarning('text','A constituent with this name already exists!')
             end

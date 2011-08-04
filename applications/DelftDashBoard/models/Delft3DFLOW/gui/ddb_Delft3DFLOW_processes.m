@@ -12,7 +12,7 @@ else
     switch(lower(opt))
 
         case{'edittracers'}
-            ddb_editD3DFlowPollutants;
+            ddb_Delft3DFLOW_editTracers;
             setUIElement('delft3dflow.processes.checktracers');
             setUIElement('delft3dflow.processes.pushedittracers');
 

@@ -39,3 +39,8 @@ handles.Toolbox(ii).Input.activeTideModelBC=1;
 handles.Toolbox(ii).Input.activeTideModelIC=1;
 
 handles.Toolbox(ii).Input.gridOutlineHandle=[];
+
+if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
+    handles.Toolbox(ii).Input.dX=1000;
+    handles.Toolbox(ii).Input.dY=1000;
+end
