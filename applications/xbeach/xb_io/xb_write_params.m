@@ -80,6 +80,10 @@ end
 
 if ~iscell(OPT.header); OPT.header = {OPT.header}; end;
 
+if isdir(filename)
+    filename = fullfile(filename, 'params.txt');
+end
+
 %% write parameter file
 matfile = fullfile(fileparts(which('xb_get_params')), 'params.mat');
 

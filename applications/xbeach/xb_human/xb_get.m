@@ -121,7 +121,11 @@ for i = 1:length(vars)
                 [out{:}] = xb_get(sub, re.field, 'type', OPT.type);
                 varargout{n:n+length(out)-1} = out{:};
                 n = n + length(out);
+            else
+                n = n + 1;
             end
+        else
+            n = n + 1;
         end
     end
     
