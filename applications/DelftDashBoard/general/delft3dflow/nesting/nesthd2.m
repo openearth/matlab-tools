@@ -278,9 +278,11 @@ switch lower(opt)
                 wl0(:,i)=zeros(nt,1);
             end
         end
-        wl(:,k)=wl0*squeeze(s.wl.w(k,:)');
+        wl{k}=wl0*squeeze(s.wl.w(k,:)');
     end
 
+    clear wl00
+    
     % velocities
 
     if kmax==1
@@ -305,11 +307,11 @@ switch lower(opt)
     v0=zeros(nt,kmax,4);
     z0=zeros(nt,kmax,4);
 
-    u=zeros(nt,kmax,length(s.vel.m));
-    v=u;
-    z=u;
     
     for k=1:length(s.vel.m)
+        u{k}=zeros(nt,kmax,length(s.vel.m));
+        v{k}=u{k};
+        z{k}=u{k};
         w=squeeze(s.vel.w(k,:)');
         for i=1:4
             m=s.vel.mm(k,i);
@@ -328,9 +330,9 @@ switch lower(opt)
             v0(:,:,i)=v0(:,:,i)*w(i);
             z0(:,:,i)=z0(:,:,i)*w(i);
         end
-        u(:,:,k)=sum(u0,3);
-        v(:,:,k)=sum(v0,3);
-        z(:,:,k)=sum(z0,3);
+        u{k}=sum(u0,3);
+        v{k}=sum(v0,3);
+        z{k}=sum(z0,3);
     end
     clear u0 v0 z0 w vel00
 end
@@ -396,8 +398,8 @@ switch lower(opt)
                 end
                 salw=w.*sal0;
                 zw=w.*z0;
-                sal(:,:,k)=nansum(salw,3);
-                z(:,:,k)=nansum(zw,3);
+                sal{k}=nansum(salw,3);
+                z{k}=nansum(zw,3);
                 
                 nest.constituent(ic).data=sal;
 
@@ -429,14 +431,14 @@ for i=1:length(openBoundaries)
             m=bnd.M1;
             n=bnd.N1;
             j= find(s.wl.m==m & s.wl.n==n,1);
-            wl(:,1)=nest.wl(:,j);
+            wl(:,1)=nest.wl{j};
             dps(1)=nest.dps(j);
             
             % B
             m=bnd.M2;
             n=bnd.N2;
             j= find(s.wl.m==m & s.wl.n==n,1);
-            wl(:,2)=nest.wl(:,j);
+            wl(:,2)=nest.wl{j};
             dps(2)=nest.dps(j);
             
             wl=wl+zcor;
@@ -451,17 +453,17 @@ for i=1:length(openBoundaries)
             m=bnd.M1;
             n=bnd.N1;
             j=find(s.wl.m==m & s.wl.n==n,1);
-            u(:,:,1)=nest.u(:,:,j);
-            v(:,:,1)=nest.v(:,:,j);
-            z(:,:,1)=nest.z(:,:,j);
+            u(:,:,1)=nest.u{j};
+            v(:,:,1)=nest.v{j};
+            z(:,:,1)=nest.z{j};
             
             % B
             m=bnd.M2;
             n=bnd.N2;
             j=find(s.wl.m==m & s.wl.n==n,1);
-            u(:,:,2)=nest.u(:,:,j);
-            v(:,:,2)=nest.v(:,:,j);
-            z(:,:,2)=nest.z(:,:,j);
+            u(:,:,2)=nest.u{j};
+            v(:,:,2)=nest.v{j};
+            z(:,:,2)=nest.z{j};
             
             u(isnan(u))=0;
             v(isnan(v))=0;
@@ -739,15 +741,15 @@ par=nest.constituent(ipar).data;
 m=bnd.M1;
 n=bnd.N1;
 j=find(s.wl.m==m & s.wl.n==n,1);
-val(:,:,1)=par(:,:,j);
-z(:,:,1)=nest.z(:,:,j);
+val(:,:,1)=par{j};
+z(:,:,1)=nest.z{j};
 
 % B
 m=bnd.M2;
 n=bnd.N2;
 j=find(s.wl.m==m & s.wl.n==n,1);
-val(:,:,2)=par(:,:,j);
-z(:,:,2)=nest.z(:,:,j);
+val(:,:,2)=par{j};
+z(:,:,2)=nest.z{j};
 
 % Now interpolate over water column
 
