@@ -254,13 +254,13 @@ STRINGSIZE = 100;
     
     
     
-    if strmatch('angle', fieldnames(grid))
+    if strcmp('angle', fieldnames(grid))
         nc_varput(filename, 'angle'          , grid.angle);
     end
-    if strmatch('meanHighWater', fieldnames(grid))
+    if strcmp('meanHighWater', fieldnames(grid))
         nc_varput(filename, 'mean_high_water', grid.meanHighWater);
     end
-    if strmatch('meanLowWater', fieldnames(grid))
+    if strcmp('meanLowWater', fieldnames(grid))
         nc_varput(filename, 'mean_low_water' , grid.meanLowWater);
     end
 
