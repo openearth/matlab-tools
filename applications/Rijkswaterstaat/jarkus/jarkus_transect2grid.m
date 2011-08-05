@@ -15,31 +15,29 @@ function [grid] = jarkus_transect2grid(transectStruct)
  %% we have to determine how much data we want to allocate to store all
  %  transects. find all id's
     
-    [transectIdArray, uniqueIdArray] = unique([transectStruct.id]);
-    [transectIdArray, sortedIdArray] = sort(transectIdArray);
-    
+    [transectIdArray, uniqueIdArray] = unique([transectStruct.id]); % unique output is sorted in ascending order
     grid.id = transectIdArray;
 
- %% find areacodes per id corresponding names
-    
-    uniqueTransectStruct       =                   transectStruct(uniqueIdArray);
-    sortedUniqueTransectStruct =             uniqueTransectStruct(sortedIdArray);
-    grid.areaCode              =      [sortedUniqueTransectStruct.areaCode];
-    grid.areaName              = char({sortedUniqueTransectStruct.areaName});
-    grid.alongshoreCoordinate  =      [sortedUniqueTransectStruct.alongshoreCoordinate];
-    
+ %% find areacodes per id corresponding names (first extract, then sort otherwise all altitudes are copied as well)
+ 
+    % extract
+    areaCode              =      [transectStruct.areaCode];
+    areaName              = char({transectStruct.areaName});
+    alongshoreCoordinate  =      [transectStruct.alongshoreCoordinate];
+    % unique (== unique + sort)
+    grid.areaCode              = areaCode(uniqueIdArray);
+    grid.areaName              = areaName(uniqueIdArray,:);
+    grid.alongshoreCoordinate  = alongshoreCoordinate(uniqueIdArray);
+
  %% find all years
-    
-    grid.time                  = sort(unique([transectStruct.time]));
+    grid.time                  = unique([transectStruct.time]); % unique output is sorted in ascending order
     
  %% compute cross-shore grid
-    
-    minCrossShoreCoordinate    = min(cellfun(@min, {transectStruct.crossShoreCoordinate}));
-    maxCrossShoreCoordinate    = max(cellfun(@max, {transectStruct.crossShoreCoordinate}));
-    grid.crossShoreCoordinate  = minCrossShoreCoordinate:5:maxCrossShoreCoordinate; % what is the 5 doing here !
+    minCrossShoreCoordinate    = min([transectStruct.crossShoreCoordinate]); % cellfun is slow and not needed here: min(cellfun(@min, {transectStruct.crossShoreCoordinate}));
+    maxCrossShoreCoordinate    = max([transectStruct.crossShoreCoordinate]); % max(cellfun(@max, {transectStruct.crossShoreCoordinate}));
+    grid.crossShoreCoordinate  = minCrossShoreCoordinate:5:maxCrossShoreCoordinate; % what is the 5 doing here ! Finer sampled data is going to be lost
     
  %% display result
-    
     disp(['created a ' num2str(length(grid.crossShoreCoordinate)) ' by ' num2str(length(grid.id)) ' by ' num2str(length(grid.time)) ' grid.']);
 
 end % end function jarkus_transect2grid

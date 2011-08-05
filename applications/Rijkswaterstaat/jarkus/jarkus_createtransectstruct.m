@@ -22,6 +22,11 @@ function [transect] = jarkus_createtransectstruct()
     transect.alongshoreCoordinate = 0; % dam
     transect.timeTopo             = 0; % days since 1970
     transect.timeBathy            = 0; % days since 1970
+    transect.year                 = []; % year of recording (human rep. of time)
+    transect.dayTopo              = []; % day of Topo recording (human rep. of timeTopo)
+    transect.dayBathy             = []; % day of Bathy recording (human rep. of timeBathy)
+    transect.monthTopo            = []; % month of Topo recording (human rep. of timeTopo)
+    transect.monthBathy           = []; % month of Bathy recording (human rep. of timeBathy)
     transect.n                    = 0;
     % this is jarkus specific.... should be moved to another entity 
     % Origin of the data (and combine 1,3 and 5):
