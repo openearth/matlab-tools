@@ -363,12 +363,13 @@ switch lower(opt)
             sal00=qpread(fid,1,par,'griddata',isteps,istation);
             sal0=zeros(nt,kmax,4);
             sal0(sal0==0)=NaN;
-            sal=zeros(nt,kmax,length(s.wl.m));
-            sal(sal==0)=NaN;
-            z=sal;
             
             % Loop past every support point
             for k=1:length(s.wl.m)
+
+                sal{k}=zeros(nt,kmax,length(s.wl.m));
+                sal{k}(sal{k}==0)=NaN;
+                z{k}=sal{k};
                 
                 % Loop past surrounding points
                 for i=1:4
@@ -404,6 +405,8 @@ switch lower(opt)
                 nest.constituent(ic).data=sal;
 
             end
+            clear sal0 sal00 z0 salw zw w w0 wsum wmult sal   
+            
         end
 end
 
