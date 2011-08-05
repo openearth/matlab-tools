@@ -75,7 +75,11 @@ OPT = setproperty(OPT, varargin{:});
 
 %% write referred files
 
-fdir = fileparts(filename);
+if isdir(filename)
+    fdir = filename;
+else
+    fdir = fileparts(filename);
+end
 
 if OPT.write_files
     

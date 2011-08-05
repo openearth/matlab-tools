@@ -8,7 +8,8 @@ function z = Pf2z(samples, Pf, varargin)
 %   z = Pf2z(samples, Pf, varargin)
 %
 %   Input:
-%   samples   = list of z-values from Monte Carlo routine
+%   samples   = list of z-values from Monte Carlo routine or result
+%               structure from MC routine
 %   Pf        = list of failure probabilities
 %   varargin  = increment:  initial increment used in search routine
 %               resistance: original resistance used in computation of
@@ -72,10 +73,37 @@ function z = Pf2z(samples, Pf, varargin)
 OPT = struct(...
     'increment',    10,         ...
     'resistance',   0,          ...
-    'correction',   []          ...
+    'correction',   [],         ...
+    'interpolate',  true        ...
 );
 
 OPT = setproperty(OPT, varargin{:});
+
+%% read MC structure
+
+if isstruct(samples)
+    S = samples;
+    
+    if isfield(S, 'settings') && isstruct(S.settings)
+        if isfield(S.settings, 'Resistance')
+            OPT.resistance = S.settings.Resistance;
+        end
+        if isfield(S.settings, 'variables')
+            idx = find(strcmpi(S.settings.variables, 'resistance'));
+            if ~isempty(idx) && length(S.settings.variables)>idx
+                OPT.resistance = S.settings.variables{idx+1};
+            end
+        end
+    end
+    if isfield(S, 'Output') && isstruct(S.Output)
+        if isfield(S.Output, 'P_corr')
+            OPT.correction = S.Output.P_corr;
+        end
+        if isfield(S.Output, 'z')
+            samples = S.Output.z;
+        end
+    end
+end
 
 %% initialisation
 
@@ -96,36 +124,43 @@ for i = 1:length(Pf)
     ll = -Inf;
     ul = Inf;
     
-    Pfl = nan;
+    R   = [];
+    Pfc = [];
     
     while true
         
         if ~isinf(ll)
             if ~isinf(ul)
-                R = mean([ll ul]);
+                R = [R mean([ll ul])];
             else
-                R = ll + OPT.increment;
+                R = [R ll + OPT.increment];
             end
         else
             if ~isinf(ul)
-                R = ul - OPT.increment;
+                R = [R ul - OPT.increment];
             else
-                R = 0;
+                R = [R 0];
             end
         end
         
-        Pfi = sum((R-samples<0).*OPT.correction)./N;
+        Pfc = [Pfc sum((R(end)-samples<0).*OPT.correction)./N];
         
-        if Pfl == Pfi
-            z(i) = R;
-            break;
-        elseif Pfi > Pf(i)
-            ll = R;
-        elseif Pfi < Pf(i)
-            ul = R;
+        if length(Pfc) > 1 && ~isinf(ll) && ~isinf(ul) && Pfc(end) == Pfc(end-1)
+            
+            if OPT.interpolate
+                [Pfc ii] = unique(Pfc);
+                R        = R(ii);
+                
+                R        = [R interp1(Pfc, R, Pf(i))];
+                Pfc      = [Pfc Pf(i)];
+            end
+            
+            z(i) = R(end); break;
+            
+        elseif Pfc(end) >= Pf(i)
+            ll = R(end);
+        elseif Pfc(end) <= Pf(i)
+            ul = R(end);
         end
-        
-        Pfl = Pfi;
-        
     end
 end
