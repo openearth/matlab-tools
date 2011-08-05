@@ -435,6 +435,7 @@ if nrbnd>0
     end
     handles.Model(md).Input(ad).nrOpenBoundaries=nrbnd-1;
     handles.Model(md).Input(ad).activeOpenBoundary=max(iac,1);
+    handles.Model(md).Input(ad).activeOpenBoundaries=handles.Model(md).Input(ad).activeOpenBoundary;
     
     handles=ddb_countOpenBoundaries(handles,ad);
 
