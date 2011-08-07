@@ -23,22 +23,23 @@ function result = MC(varargin)
 %            contains all stochastic variable information. Other defaults
 %            and input is stored in the 'settings' field. The 'Output'
 %            field contains the following information:
-%               P_f : probability of failure
-%               Pexc : probability of exceedance for each individual
-%               realisation
-%               Pcor : correction factor (only plays a role in importance
-%               sampling applications)
-%               Calc : number of calculations (equal to 'NrSamples' in
-%               settings-field)
+%               P_f :    probability of failure
+%               Beta :   ??
+%               P_exc :  probability of exceedance for each individual
+%                        realisation
+%               P_corr : correction factor (only plays a role in importance
+%                        sampling applications)
+%               Calc :   number of calculations (equal to 'NrSamples' in
+%                        settings-field)
 %               idFail : boolean indicating which calculations failed
-%               u : values in the normally distributed spaces (for each
-%               sample and each variable)
-%               P : probabilities of non-exceedance for each of the
-%               individual variable-sample combinations
-%               x : actual variable values (each row corresponds to one
-%               realisation)
-%               z : result of z-function for each realisation (negative
-%               z-values are considered as failure, corresponding to idFail)
+%               u :      values in the normally distributed spaces (for each
+%                        sample and each variable)
+%               P :      probabilities of non-exceedance for each of the
+%                        individual variable-sample combinations
+%               x :      actual variable values (each row corresponds to one
+%                        realisation)
+%               z :      result of z-function for each realisation (negative
+%                        z-values are considered as failure, corresponding to idFail)
 %
 %   Example
 %   MC
