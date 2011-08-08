@@ -130,6 +130,9 @@ xb = xb_empty();
 % add data
 xb = xb_join(xb, bathy, waves, tide, settings, wavegrid);
 
+% set start and stop times
+xb = xb_set_start_time(xb, 'waterlevel', wl);
+
 % add meta data
 xb = xb_meta(xb, mfilename, 'input');
 
