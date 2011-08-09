@@ -144,7 +144,7 @@ for i = 1:length(Pf)
         end
         
         Pfc = [Pfc sum((R(end)-samples<0).*OPT.correction)./N];
-        
+               
         if length(Pfc) > 1 && ~isinf(ll) && ~isinf(ul) && Pfc(end) == Pfc(end-1)
             
             if OPT.interpolate
@@ -156,7 +156,8 @@ for i = 1:length(Pf)
             end
             
             z(i) = R(end); break;
-            
+        elseif sum(OPT.correction)./N < Pf(i)
+        	z(i) = -Inf; break;
         elseif Pfc(end) >= Pf(i)
             ll = R(end);
         elseif Pfc(end) <= Pf(i)
