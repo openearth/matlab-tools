@@ -139,8 +139,7 @@ function varargout = boundaries(G,varargin)
          bndnameA = [names{isides},'A'];
          bndnameB = [names{isides},'B'];
          
-         %% first draw the 'skip' boundaries located at the start and end of each side
-         % --------------------------------------------------
+      %% first draw the 'skip' boundaries located at the start and end of each side
 
          if ~strcmp(bndtype_skip{isides}(1),'X')
 
@@ -206,9 +205,8 @@ function varargout = boundaries(G,varargin)
 
          end
          
-         %% Second draw sides of each boundary, minus the start and end that were skipped.
-         %  if the last segment has lenght one, add it to the previous segment
-         % --------------------------------------------------
+      %% Second draw sides of each boundary, minus the start and end that were skipped.
+      %  if the last segment has lenght one, add it to the previous segment
 
          if ~strcmp(bndtype{isides},'X')
             

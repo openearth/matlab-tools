@@ -11,11 +11,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %
 %   vs_trih2nc('P:\aproject\trih-n15.dat','epsg',28992)
 %
-% nc looks same as nc of unstruc
+% nc looks same as nc of dflowfm.
 %
-%See also: snctools, vs_use, unstruc.analyseHis, delft3d_io_obs
+%See also: snctools, vs_use, dflowfm, delft3d_io_obs
 
-% TO DO add depth
+% TO DO add morphological! depth
 % TO DO check consistency with delft3d_to_netcdf.exe of Bert Jagers
 % TO DO add sediment, turbulence etc
 % TO DO add cell methods to xcor = mean(x)
@@ -68,9 +68,10 @@ function varargout = vs_trih2nc(vsfile,varargin)
       OPT.institution    = '';
       OPT.timezone       = timezone_code2iso('GMT');
       OPT.debug          = 0;
-      OPT.time           = 0;
+      OPT.time           = 0; % subset of time indices in NEFIS file, 1-based
       OPT.epsg           = 28992;
-      OPT.type           = 'float'; %'double'; % the nefis file is by default singl precision
+      OPT.type           = 'float'; %'double'; % the nefis file is by default single precision
+      OPT.quiet          = 'quiet';
       
       if ~odd(nargin)
          ncfile   = varargin{1};
@@ -108,7 +109,6 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
       %% Add overall meta info
       %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
-      %------------------
    
       nc_attput(ncfile, nc_global, 'title'         , '');
       nc_attput(ncfile, nc_global, 'institution'   , OPT.institution);
@@ -152,10 +152,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
 %% 2 Create dimensions
 
-      nc_add_dimension(ncfile, 'time'            , length(T.datenum));
-      nc_add_dimension(ncfile, 'station'         , size(G.name,1))
-      nc_add_dimension(ncfile, 'station_name_len', size(G.name,2));
-      nc_add_dimension(ncfile, 'sigma'           , G.kmax  );
+      nc_add_dimension(ncfile, 'time'             , length(T.datenum));
+      nc_add_dimension(ncfile, 'Station'          , size(G.name,1))
+      nc_add_dimension(ncfile, 'station_name_len' , size(G.name,2));
+      nc_add_dimension(ncfile, 'Layer'            , G.kmax  );
+      nc_add_dimension(ncfile, 'LayerInterf'      , G.kmax+1);
 
       ifld = 0;
       ifld     = ifld + 1;clear attr
@@ -164,7 +165,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'NAMST');
       nc(ifld) = struct('Name', 'station_name', ...
           'Nctype'   , 'char', ...
-          'Dimension', {{'station','station_name_len'}}, ...
+          'Dimension', {{'Station','station_name_len'}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr
@@ -175,7 +176,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.m(:)) max(G.m(:))]);
       nc(ifld) = struct('Name', 'n', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'station'}}, ...
+          'Dimension', {{'Station'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -186,7 +187,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.n(:)) max(G.n(:))]);
       nc(ifld) = struct('Name', 'm', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'station'}}, ...
+          'Dimension', {{'Station'}}, ...
           'Attribute', attr);
 
    if any(strfind(G.coordinates,'CARTESIAN'))
@@ -201,7 +202,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.x(:)) max(G.x(:))]);
       nc(ifld) = struct('Name', 'x', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'station'}}, ...
+          'Dimension', {{'Station'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -214,7 +215,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.y(:)) max(G.y(:))]);
       nc(ifld) = struct('Name', 'y', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'station'}}, ...
+          'Dimension', {{'Station'}}, ...
           'Attribute', attr);
 
    end
@@ -231,7 +232,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.lon(:)) max(G.lon(:))]);
       nc(ifld) = struct('Name', 'longitude', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'station'}}, ...
+          'Dimension', {{'Station'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -244,20 +245,43 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.lat(:)) max(G.lat(:))]);
       nc(ifld) = struct('Name', 'latitude', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'station'}}, ...
+          'Dimension', {{'Station'}}, ...
           'Attribute', attr);
 
    end
 
       ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Depth in station');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'DPS');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
+      nc(ifld) = struct('Name', 'depth', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'Station'}}, ...
+          'Attribute', attr);
+
+      ifld     = ifld + 1;clear attr
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'layer index');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
-      nc(ifld) = struct('Name', 'sigma', ...
+      nc(ifld) = struct('Name', 'k', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'sigma'}}, ...
+          'Dimension', {{'Layer'}}, ...
+          'Attribute', attr);
+
+      ifld     = ifld + 1;clear attr
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'relative layer thickness');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'THICK');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
+      nc(ifld) = struct('Name', 'dsigma', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'Layer'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -287,7 +311,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'waterlevel', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'station'}}, ...
+          'Dimension', {{'time', 'Station'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -304,7 +328,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'u_x', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','station','sigma'}}, ...
+          'Dimension', {{'time','Station','Layer'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -321,7 +345,41 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'u_y', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','station','sigma'}}, ...
+          'Dimension', {{'time','Station','Layer'}}, ...
+          'Attribute', attr);
+      
+      ifld     = ifld + 1;clear attr
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'specific_kinetic_energy_of_sea_water');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'k');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2 s-2'); % 
+      if isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      else
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      end
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZTUR');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      nc(ifld) = struct('Name', 'TKE', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'time','Station','LayerInterf'}}, ...
+          'Attribute', attr);
+      
+      ifld     = ifld + 1;clear attr
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_kinetic_energy_dissipation_per_unit_area_due_to_vertical_friction');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'eps');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'W m-2'); % 
+      if isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      else
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      end
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZTUR');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      nc(ifld) = struct('Name', 'eps', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'time','Station','LayerInterf'}}, ...
           'Attribute', attr);
       
 %% 4 Create variables with attibutes
@@ -341,23 +399,39 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_varput(ncfile, 'x'            , G.x);
       nc_varput(ncfile, 'y'            , G.y);
       nc_varput(ncfile, 'time'         , T.datenum - OPT.refdatenum);
-      nc_varput(ncfile, 'sigma'        , [1:G.kmax   ]');
+      nc_varput(ncfile, 'k'            , [1:G.kmax   ]');
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
       nc_varput(ncfile, 'longitude'    ,G.lon);
       nc_varput(ncfile, 'latitude'     ,G.lat);
       end      
       
-      data = vs_let(F,'his-series','ZWL');
+      data = vs_let(F,'his-const','THICK',OPT.quiet);
+      nc_varput(ncfile,'dsigma',data);
+      nc_attput(ncfile,'dsigma','actual_range',[min(data(:)) max(data(:))]);
+      
+      data = vs_let(F,'his-const','DPS',OPT.quiet);
+      nc_varput(ncfile,'depth',data);
+      nc_attput(ncfile,'depth','actual_range',[min(data(:)) max(data(:))]);
+
+      data = vs_let(F,'his-series','ZWL',OPT.quiet);
       nc_varput(ncfile,'waterlevel',data);
-      nc_attput(ncfile,'waterlevel','actual_range',data);
+      nc_attput(ncfile,'waterlevel','actual_range',[min(data(:)) max(data(:))]);
 
-      data = vs_let(F,'his-series','ZCURU');
+      data = vs_let(F,'his-series','ZCURU',OPT.quiet);
       nc_varput(ncfile,'u_x',data);
-      nc_attput(ncfile,'u_x','actual_range',data);
+      nc_attput(ncfile,'u_x','actual_range',[min(data(:)) max(data(:))]);
 
-      data = vs_let(F,'his-series','ZCURV');
+      data = vs_let(F,'his-series','ZCURV',OPT.quiet);
       nc_varput(ncfile,'u_y',data);
-      nc_attput(ncfile,'u_y','actual_range',data);
+      nc_attput(ncfile,'u_y','actual_range',[min(data(:)) max(data(:))]);
+
+      data = vs_let(F,'his-series','ZTUR',{0 0 1},OPT.quiet);
+      nc_varput(ncfile,'TKE',data);
+      nc_attput(ncfile,'TKE','actual_range',[min(data(:)) max(data(:))]);
+
+      data = vs_let(F,'his-series','ZTUR',{0 0 2},OPT.quiet);
+      nc_varput(ncfile,'eps',data);
+      nc_attput(ncfile,'eps','actual_range',[min(data(:)) max(data(:))]);
 
      %data = vs_let(F,'his-series','ZTAUKS')
      %nc_varput(ncfile,'tau_x,data);

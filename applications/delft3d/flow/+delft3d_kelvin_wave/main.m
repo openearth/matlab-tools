@@ -42,7 +42,7 @@ function main
 
 %% Initialize
 
-   U.workdir     = ['F:\DELFT3D\PECS\tide_neap2\' filesep ];
+   U.workdir     = ['F:\DELFT3D\PECS\tide_neap2\' filesep ]; % pwd
 
    U.grd         = '155x356.grd';   % [130x331] + 25 stretch
    U.bnd         = '155x356_0.bnd';

@@ -51,21 +51,19 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
 % $Keywords$
 
    %% Make sure traling directory end with a slash
-   %-----------------------------------------------
    
    if isdir(fullfilename) & ~strcmp(fullfilename(end),filesep)
       fullfilename = [fullfilename filesep];
    end
 
-   %% Chop directory into parts
-   %-----------------------------------------------
+%% Chop directory into parts
 
-   [PATHSTR,NAME,EXT,VERSN] = fileparts(fullfilename);
+   [PATHSTR,NAME,EXT] = fileparts(fullfilename);
    
-   PATHSTR                  = path2os(PATHSTR);
+   PATHSTR            = path2os(PATHSTR);
 
-   slash_positions          = findstr(PATHSTR,filesep);
-   slash_positions          = [slash_positions length(fullfilename)-1];
+   slash_positions    = findstr(PATHSTR,filesep);
+   slash_positions    = [slash_positions length(fullfilename)-1];
    
    if nargin==2
       nsubdir = varargin{1};
@@ -78,8 +76,7 @@ function start_of_PATHSTR = first_subdir(fullfilename,varargin)
       disp(['Warning: n truncated to : ',num2str(nsubdir)]);
    end
    
-   %% Gather relevant directory parts
-   %-----------------------------------------------
+%% Gather relevant directory parts
    
    if sign(nsubdir) > 0
    start_of_PATHSTR  = PATHSTR(1:1+slash_positions(nsubdir)-1);

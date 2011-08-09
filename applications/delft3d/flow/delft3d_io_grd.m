@@ -202,7 +202,7 @@ end
       G.cor.y   = varargin{4};
       end
       
-      if fileexist=='o'
+      if action=='o'
       OK   = wlgrid(cmd,fname,G.cor.x,G.cor.y);
       else
       OK = 0;

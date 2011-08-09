@@ -12,6 +12,7 @@
 %  arcgridwrite         - save gridded data set in ArcGIS ASCII format
 %  arc_info_binary2kml  - Example script to save ESRI grid (ascii or adf) file as kml
 %  arcgridread          - (matlab mapping toolbox) Read gridded data set in Arc ASCII Grid Format
+%  grid_2D_orthogonal   - FYI: toolbox for manipulating tiled netCDF gridsets
 %
 % Shape files: 
 % info: http://www.gdal.org/ogr/drv_shapefile.html
@@ -23,5 +24,6 @@
 %  shaperead            - (matlab mapping toolbox) Read vector features and attributes from shapefile
 %  shapewrite           - (matlab mapping toolbox) Write geographic data structure to shapefile
 %  arc_shape2kml        - save ESRI shape file as Google Earth file
+%  ldbTool              - FYI: GUI interface for manipulation shape files (aka landboundaries)
 %
-%See also: convertCoordinates, googlePlot
+%See also: convertCoordinates, googlePlot, nc_cf_grid, nc_cf_gridset
