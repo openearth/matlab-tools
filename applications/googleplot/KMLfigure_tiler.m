@@ -33,9 +33,11 @@ function varargout = KMLfigure_tiler(h,lat,lon,z,varargin)
 %
 %             for =1:n
 %               [lon,lat,z]=load(files{i}))
+%               clf
 %               set(gca,'Color',[100 155 100]./255): % NOTE ORDER LON,LAT
 %               hold off
 %               h = pcolor(lon,lat,z)
+%               axis off                             % do NOT use axis equal
 %               KMLfigure_tiler(h,lat,lon,z,...      % NOTE ORDER LAT,LON
 %                 'bgcolor'           ,[100 155 100],... % this color is made transparent in GE
 %                 'lowestLevel'       ,13,...    % +1 results in a x4 times larger dataset
@@ -46,7 +48,7 @@ function varargout = KMLfigure_tiler(h,lat,lon,z,varargin)
 %
 %             % in the joining phase set handle to nan, lat and lon to extent to be
 %             % joined, and z does not matter
-%             KMLfigure_tiler([],[30 60],[-10 40],nan,...
+%             KMLfigure_tiler([],[30 60],[-10 40],nan,... %% lat, lon BB is area to be merged
 %                'highestLevel'      ,[],...    % is set to whole world when lat=nan
 %                'printTiles'        ,false,... % this was done in phase 1
 %                'joinTiles'         ,true,...  %
@@ -220,7 +222,7 @@ if isempty(OPT.fileName)
     [OPT.Name, OPT.Path] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','renderedPNG.kml');
     OPT.fileName = fullfile(OPT.Path,OPT.Name);
     OPT.subPath  =  '';       % relative part of path that will appear in kml
-    OPT.basePath =  OPT.Path; % here we do not know difference between basepath
+    %OPT.basePath =  OPT.Path; % here we do not know difference between basepath
 else
     [OPT.subPath OPT.Name] = fileparts(OPT.fileName);
     OPT.Path = [OPT.basePath filesep OPT.subPath];
@@ -312,6 +314,8 @@ if OPT.makeKML
 
     % relative for local files
     if isempty(OPT.baseUrl)
+        OPT
+        OPT.basecode
        href.kml = fullfile(             OPT.subPath, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
     else
        href.kml = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
