@@ -190,7 +190,8 @@ end
    end
    
    for jj = 1:size(c,2) 
-       OPT_poly.timeIn = datestr(OPT.timeIn (jj) ,OPT.dateStrStyle);
+       OPT_poly.timeIn  = datestr(OPT.timeIn (jj) ,OPT.dateStrStyle);
+       OPT_poly.timeOut = datestr(OPT.timeOut(jj) ,OPT.dateStrStyle);
        lat2 = lat(jj + [0 0 1 1 0])';
        lon2 = lon(jj + [0 0 1 1 0])';
        nn   = 1;
