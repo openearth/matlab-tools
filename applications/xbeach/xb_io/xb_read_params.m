@@ -86,7 +86,7 @@ fclose(fid);
 %% read params
 
 % obtain all keywords and values using regular expressions
-[exprNames endIndex] = regexp(txt, ...
+[exprNames endIndex] = regexp([txt char(10)], ...
     '\s*(?<name>.*?)\s*=\s*(?<value>.*?)\s*\n', 'names', 'end', 'dotexceptnewline');
 
 names = {exprNames.name};
