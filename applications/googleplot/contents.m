@@ -5,7 +5,9 @@
 % http://www.opengeospatial.org/standards/kml
 % plus the examples in the Tutorial, Developers Guide and Reference:
 % http://code.google.com/apis/kml/
-% This toolbox is part of the OpenEarthTools dstribition (http://OpenEarth.eu)
+% http://code.google.com/p/kml-samples/
+% http://code.google.com/p/earth-issues/
+% This toolbox is part of the OpenEarthTools distribition (http://OpenEarth.eu)
 %
 % Every googlePlot function has a number of <keyword,value> pairs with
 % good defaults. To get a list of the available keywords plus their

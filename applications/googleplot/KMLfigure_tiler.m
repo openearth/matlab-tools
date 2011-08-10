@@ -26,6 +26,14 @@ function varargout = KMLfigure_tiler(h,lat,lon,z,varargin)
 % Notes:    - See example in https://repos.deltares.nl/repos/OpenEarthTools/test/
 %           - Please close all other figures before calling this function
 %           - To increase number of zoom levels increase 'lowestLevel' (to e.g. 14)
+%           - The parent axes of h are changed: axis normal; axis off
+%           - Alpha: wwe recommend not to use a uniform alpha, you'd better drag the alpha
+%             slider in Google earth for that. For non-uniform alpha, use the alphaChannel
+%             added in the framework of the FloodControl2015 project 'Global Flood Observatory':
+%             alphaChannel overrides alpha and is a handle to a figure of exactly 
+%             the same size as the original figure to be plotted, but contains 
+%             only black-and-white. Black areas are 100% transparent while white 
+%             areas will be made 100% visible. Gray areas are obviously somewhere in between.
 %           - For large data KMLfigure_tiler can be run in 2 sub modes
 %             1) tile generation in a file loop: save data or sub data to tiles
 %             2) tile joing: aggregate  all tiles to higher levels and generate
@@ -47,15 +55,15 @@ function varargout = KMLfigure_tiler(h,lat,lon,z,varargin)
 %             end
 %
 %             % in the joining phase set handle to nan, lat and lon to extent to be
-%             % joined, and z does not matter
-%             KMLfigure_tiler([],[30 60],[-10 40],nan,... %% lat, lon BB is area to be merged
+%             % joined (bounding box), and z does not matter
+%             KMLfigure_tiler([],[30 60],[-10 40],nan,...
 %                'highestLevel'      ,[],...    % is set to whole world when lat=nan
 %                'printTiles'        ,false,... % this was done in phase 1
-%                'joinTiles'         ,true,...  %
+%                'joinTiles'         ,true,...  % this is what we do now
 %                'mergeExistingTiles',true);    % 1 ! irrelevant when printTiles==0
 %
 %
-% See also: GOOGLEPLOT, PCOLOR, KMLFIG2PNG_ALPHA
+% See also: GOOGLEPLOT, PCOLOR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
@@ -152,9 +160,12 @@ end
 OPT.h    = h;  % handle to input surf object
 
 if ishandle(OPT.h)
-if strcmpi(get(get(OPT.h,'parent'),'climMode'),'auto')
+OPT.ax = get(OPT.h,'parent');
+if strcmpi(get(OPT.ax,'climMode'),'auto')
    error([mfilename,' manual clim required for identical colormapping in tiles']);
 end
+axis(OPT.ax,'off')
+axis(OPT.ax,'normal')
 end
 
 OPT = setproperty(OPT, varargin);
@@ -222,7 +233,7 @@ if isempty(OPT.fileName)
     [OPT.Name, OPT.Path] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','renderedPNG.kml');
     OPT.fileName = fullfile(OPT.Path,OPT.Name);
     OPT.subPath  =  '';       % relative part of path that will appear in kml
-    %OPT.basePath =  OPT.Path; % here we do not know difference between basepath
+    OPT.basePath =  OPT.Path; % here we do not know difference between basepath
 else
     [OPT.subPath OPT.Name] = fileparts(OPT.fileName);
     OPT.Path = [OPT.basePath filesep OPT.subPath];
@@ -314,8 +325,6 @@ if OPT.makeKML
 
     % relative for local files
     if isempty(OPT.baseUrl)
-        OPT
-        OPT.basecode
        href.kml = fullfile(             OPT.subPath, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);
     else
        href.kml = fullfile(OPT.baseUrl, OPT.subPath, OPT.Name, [OPT.Name '_' OPT.basecode(1:OPT.highestLevel) '.kml']);

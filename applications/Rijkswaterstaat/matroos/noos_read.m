@@ -16,7 +16,7 @@ function varargout = noos_read(varargin)
 %
 %   D = noos_read(cellstr)
 %
-% where D has fields  datenum, value and headers.
+% where D has fields datenum, value and headers.
 %
 %See also: MATROOS_NOOS_HEADER2META
 

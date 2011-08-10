@@ -90,6 +90,8 @@ function comment = iscommentline(rec,varargin)
       
          if remove_spaces_at_start
             currentrec = deblankstart(rec{linenumber});
+         else
+            currentrec = rec;
          end
       
          if ~isempty(currentrec)

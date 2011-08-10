@@ -142,9 +142,9 @@ end;
                              break;
                           else
                              if isempty(sectionName)
-                             out.(mkvar(section)).(key) = keyValue; % in case section name has spaces etc. use mkvar()
+                             out.(mkvar(section)).(mkvar(key)) = keyValue; % in case section name has spaces etc. use mkvar()
                              else
-                             out.(key) = keyValue;
+                             out.(mkvar(key)) = keyValue;
                              end
                           end
 
