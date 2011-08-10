@@ -4,7 +4,7 @@ function OUT = filenameext(fullfilename)
 % Note that FILENAMEEXT is vectorized, whereas FILEPARTS is not.
 %
 % See also:
-% FILEPARTS, FILEPATHSTR, FILENAME, FILEEXT, FULLFILE
+% FILEPARTS, FILEPATHSTR, FILENAME, FILEEXT, FULLFILE, FILEPATHSTRNAME
 
 % $Id$
 % $Date$

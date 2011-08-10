@@ -46,7 +46,8 @@ function varargout = analyseHis(varargin)
 %                        't_tide',0)
 %         end
 %
-%See also: dflowfm, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE, delft3d, OPENDAP_GET_CACHE
+%See also: dflowfm, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE, delft3d, OPENDAP_GET_CACHE, 
+%          nc2struct, dflowfm.indexHis
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares

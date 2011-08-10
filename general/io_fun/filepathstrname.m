@@ -1,13 +1,12 @@
-function PATHSTR = filepathstr(fullfilename,varargin)
-%FILEPATHSTR   Returns PATHSTR from    [PATHSTR,NAME,EXT] = FILEPARTS(FILE).
-% 
-% By default PATHSTR does NOT end with a filesep.
-% PATHSTR(fullfilename,1) adds a filesep.
+function OUT = filenameext(fullfilename)
+%FILEPATHSTRNAME   Returns [PATHSTR,NAME] from [PATHSTR,NAME,EXT] = FILEPARTS(FILE).
 %
-% Note that FILEPATHSTR is vectorized, whereas FILEPARTS is not.
+% Note that FILEPATHSTRNAME is vectorized, whereas FILEPARTS is not.
+%
+% FILEPATHSTRNAME is usefile for saving a file with a different extension.
 %
 % See also:
-% FILEPARTS, FILENAME, FILEEXT, FILENAMEEXT, FULLFILE, FILEPATHSTRNAME
+% FILEPARTS, FILEPATHSTR, FILENAME, FILENAMEEXT, FILEEXT, FULLFILE
 
 % $Id$
 % $Date$
@@ -20,18 +19,12 @@ for iname=1:size(fullfilename,1)
 
    [PATHSTR{iname},NAME{iname},EXT{iname}] = fileparts(fullfilename(iname,:));
 
-end 
+end   
 
-PATHSTR = char(PATHSTR);
-
-if nargin==2
-   if varrgin{1}
-   PATHSTR = [PATHSTR,filesep];
-   end
-end
+OUT = [char(PATHSTR),repmat(filesep,size(NAME,2),1),char(NAME)];
 
 % Feb 2008, vectorized.
-   
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
 %       Gerben J. de Boer

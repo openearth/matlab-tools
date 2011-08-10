@@ -1,12 +1,16 @@
 function INFO = vs_get_elm_def(NFSstruct,ElmName,varargin)
 %VS_GET_ELM_DEF   Read NEFIS Element data
 %
-% Sz = vs_get_elm_def(NFSstruct,ElmName) returns
-% the information from the fielde ElmDef 
+%    Sz = vs_get_elm_def(NFSstruct,ElmName) 
+%
+% returns the information from the fielde ElmDef 
 % in the NEFIS struct as returned by NFSstruct = vs_use(...).
 %
-% Not case sensitive, neither for ElmName, not
-% for strings in NFSstruct.
+%    Sz = vs_get_elm_def(NFSstruct,ElmName,<field>) 
+%
+% returns only the request field, e.,g. CelName or Name.
+%
+% Not case sensitive, neither for ElmName, not for strings in NFSstruct.
 %
 % Returns [] for non-existing NEFIS Element.
 %
@@ -54,4 +58,8 @@ function INFO = vs_get_elm_def(NFSstruct,ElmName,varargin)
       INFO = NFSstruct.ElmDef(i);
       end
    end
+   
+   if nargin > 2
+      INFO = INFO.(varargin{1});
+   end   
 

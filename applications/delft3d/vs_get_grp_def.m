@@ -1,12 +1,16 @@
 function INFO = vs_get_grp_def(NFSstruct,GrpName,varargin)
 %VS_GET_GRP_DEF   Read NEFIS Element data
 %
-% Sz = vs_get_grp_def(NFSstruct,ElmName) returns
-% the information from the Group GrpDef 
+%    Sz = vs_get_grp_def(NFSstruct,ElmName) 
+%
+% returns the information from the Group GrpDef 
 % in the NEFIS struct as returned by NFSstruct = vs_use(...).
 %
-% Not case sensitive, neither for GrpName, not
-% for strings in NFSstruct.
+%    Sz = vs_get_grp_def(NFSstruct,ElmName,<field>) 
+%
+% returns only the request field, e.,g. Description, Units or Name.
+%
+% Not case sensitive, neither for GrpName, not for strings in NFSstruct.
 %
 % Returns [] for non-existing NEFIS Group.
 %
@@ -55,3 +59,6 @@ function INFO = vs_get_grp_def(NFSstruct,GrpName,varargin)
       end
    end
 
+   if nargin > 2
+      INFO = INFO.(varargin{1});
+   end

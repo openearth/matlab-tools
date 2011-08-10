@@ -69,8 +69,7 @@ function varargout = vs_trih_station(trih,varargin)
 
    iostat =  1;
    
-   %% Input
-   %% ------------------------------
+%% Input
 
    if nargin==1
       station_id = [];
@@ -78,8 +77,7 @@ function varargout = vs_trih_station(trih,varargin)
       station_id = varargin{1};
    end
    
-   %% Get names from indices or vv.
-   %% ------------------------------
+%% Get names from indices or vv.
 
 if strcmp(trih.SubType,'Delft3D-trih')
     OPT.GrpName = 'his-const';
@@ -118,8 +116,7 @@ end
       iostat = -1;
    end
 
-   %% Get data
-   %% ------------------------------
+%% Get data
 
    if iostat==1
    
@@ -132,7 +129,7 @@ end
          
         %ST.grdang    = squeeze(vs_let(trih,OPT.GrpName,'GRDANG',{1,ST.index}));
          ST.angle     = squeeze(vs_let(trih,OPT.GrpName,'ALFAS' ,{  ST.index},'quiet'));
-         ST.angle_explanation = 'orientation (deg) ksi-axis (u velocity) w.r.t. pos. x-axis at water level point';
+         ST.angle_explanation =  vs_get_elm_def(trih,'ALFAS','Description');
          
          ST.kmax        =  squeeze(vs_let(trih,OPT.GrpName,'KMAX'));
          ST.coordinates =  vs_let(trih,'his-const','COORDINATES'      ,'quiet');
@@ -154,13 +151,11 @@ end
       
       ST.FileName        = trih.FileName;
       ST.extracted_at    = datestr(now,31);
-      ST.extracted_with  = 'vs_trih_station.m  of G.J. de Boer (gerben.deboer@wldelft.nl)';
+      ST.extracted_with  = '$Id$ $HeadURL$';
       
    end
-
    
-   %% Output
-   %% ------------------------------
+%% Output
 
    if     nargout==1
      if iostat==1

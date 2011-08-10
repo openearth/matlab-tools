@@ -11,9 +11,23 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %
 %   vs_trih2nc('P:\aproject\trih-n15.dat','epsg',28992)
 %
-% nc looks same as nc of dflowfm.
+% nc looks same as nc of dflowfm, so it loads well into Quickplot.
 %
-%See also: snctools, vs_use, dflowfm, delft3d_io_obs
+% Example how to use this netCDF file: read all
+%   H = nc2struct(ncfile)
+%
+% Example how to use this netCDF file: select one station
+%   dflowfm.indexHis(ncfile,<station_name>);
+%   ind = 48;
+%   D.station_name = nc_varget (ncfile,'station_name',[  ind-1 0],[ 1 -1   ]);
+%   D.eta          = nc_varget (ncfile,'waterlevel'  ,[0 ind-1  ],[-1  1   ]);
+%   D.u            = nc_varget (ncfile,'u_x'         ,[0 ind-1 0],[-1  1 -1]);
+%   D.v            = nc_varget (ncfile,'u_y'         ,[0 ind-1 0],[-1  1 -1]);
+%   D.sigma        = nc_varget (ncfile,'dsigma');
+%   D.dep          = nc_varget (ncfile,'depth'       ,[  ind-1  ],[1]);
+%   D.datenum      = nc_cf_time(ncfile)
+%
+%See also: snctools, vs_use, dflowfm, delft3d_io_obs, dflowfm.indexHis
 
 % TO DO add morphological! depth
 % TO DO check consistency with delft3d_to_netcdf.exe of Bert Jagers
@@ -121,7 +135,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_attput(ncfile, nc_global, 'email'         , '');
    
       nc_attput(ncfile, nc_global, 'comment'       , '');
-      nc_attput(ncfile, nc_global, 'version'       , M.version);
+      nc_attput(ncfile, nc_global, 'version'       , ['$Id$ $Headurl$ ', M.version]);
    						   
       nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.4');
       nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
@@ -159,10 +173,10 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_add_dimension(ncfile, 'LayerInterf'      , G.kmax+1);
 
       ifld = 0;
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr;d3d_name = 'NAMST';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'station_name');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'station name');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'NAMST');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       nc(ifld) = struct('Name', 'station_name', ...
           'Nctype'   , 'char', ...
           'Dimension', {{'Station','station_name_len'}}, ...
@@ -174,8 +188,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.m(:)) max(G.m(:))]);
-      nc(ifld) = struct('Name', 'n', ...
-          'Nctype'   , OPT.type, ...
+      nc(ifld) = struct('Name', 'station_m_index', ...
+          'Nctype'   , OPT.type, ...	
           'Dimension', {{'Station'}}, ...
           'Attribute', attr);
       
@@ -185,7 +199,15 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.n(:)) max(G.n(:))]);
-      nc(ifld) = struct('Name', 'm', ...
+      nc(ifld) = struct('Name', 'station_n_index', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'Station'}}, ...
+          'Attribute', attr);
+
+      ifld     = ifld + 1;clear attr;d3d_name = 'ALFAS';
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
+      nc(ifld) = struct('Name', 'station_angle', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'Station'}}, ...
           'Attribute', attr);
@@ -200,7 +222,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.x(:)) max(G.x(:))]);
-      nc(ifld) = struct('Name', 'x', ...
+      nc(ifld) = struct('Name', 'station_x_coordinate', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'Station'}}, ...
           'Attribute', attr);
@@ -213,7 +235,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.y(:)) max(G.y(:))]);
-      nc(ifld) = struct('Name', 'y', ...
+      nc(ifld) = struct('Name', 'station_y_coordinate', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'Station'}}, ...
           'Attribute', attr);
@@ -230,7 +252,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.lon(:)) max(G.lon(:))]);
-      nc(ifld) = struct('Name', 'longitude', ...
+      nc(ifld) = struct('Name', 'station_longitude', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'Station'}}, ...
           'Attribute', attr);
@@ -243,19 +265,19 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.lat(:)) max(G.lat(:))]);
-      nc(ifld) = struct('Name', 'latitude', ...
+      nc(ifld) = struct('Name', 'station_latitude', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'Station'}}, ...
           'Attribute', attr);
 
    end
 
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr; d3d_name = 'DPS';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Depth in station');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'DPS');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
       nc(ifld) = struct('Name', 'depth', ...
@@ -274,10 +296,10 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Dimension', {{'Layer'}}, ...
           'Attribute', attr);
 
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'relative layer thickness');
+      ifld     = ifld + 1;clear attr;d3d_name = 'THICK';
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'THICK');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
       nc(ifld) = struct('Name', 'dsigma', ...
           'Nctype'   , OPT.type, ...
@@ -296,9 +318,9 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
 %% 3 Create variables
 
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr; d3d_name = 'ZWL';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_surface_elevation');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'water level');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
       if isempty(OPT.epsg)
@@ -306,7 +328,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       else
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZWL');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'waterlevel', ...
@@ -314,16 +336,16 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Dimension', {{'time', 'Station'}}, ...
           'Attribute', attr);
       
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr;d3d_name = 'ZCURU';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_x_velocity');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'horizontal velocity component in x-direction');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       if isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZCURU');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'u_x', ...
@@ -331,16 +353,16 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Dimension', {{'time','Station','Layer'}}, ...
           'Attribute', attr);
       
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr;d3d_name = 'ZCURV';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_y_velocity');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'horizontal velocity component in y-direction');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       if isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZCURV');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'u_y', ...
@@ -350,8 +372,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
       
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'specific_kinetic_energy_of_sea_water');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'k');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2 s-2'); % 
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'k');       % not in NEFIS file
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2 s-2');  % not in NEFIS file 
       if isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
@@ -367,8 +389,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
       
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_kinetic_energy_dissipation_per_unit_area_due_to_vertical_friction');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'eps');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'W m-2'); % 
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'eps');    % not in NEFIS file
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'W m-2');  % not in NEFIS file
       if isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
@@ -393,16 +415,17 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
 %% 5 Fill variables
 
-      nc_varput(ncfile, 'station_name' , G.name);
-      nc_varput(ncfile, 'm'            , G.m);
-      nc_varput(ncfile, 'n'            , G.n);
-      nc_varput(ncfile, 'x'            , G.x);
-      nc_varput(ncfile, 'y'            , G.y);
+      nc_varput(ncfile, 'station_name'        , G.name);
+      nc_varput(ncfile, 'station_angle'       , G.angle);
+      nc_varput(ncfile, 'station_m_index'     , G.m);
+      nc_varput(ncfile, 'station_n_index'     , G.n);
+      nc_varput(ncfile, 'station_x_coordinate', G.x);
+      nc_varput(ncfile, 'station_y_coordinate', G.y);
       nc_varput(ncfile, 'time'         , T.datenum - OPT.refdatenum);
       nc_varput(ncfile, 'k'            , [1:G.kmax   ]');
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
-      nc_varput(ncfile, 'longitude'    ,G.lon);
-      nc_varput(ncfile, 'latitude'     ,G.lat);
+      nc_varput(ncfile, 'station_longitude'    ,G.lon);
+      nc_varput(ncfile, 'station_latitude'     ,G.lat);
       end      
       
       data = vs_let(F,'his-const','THICK',OPT.quiet);

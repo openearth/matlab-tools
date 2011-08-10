@@ -4,7 +4,7 @@ function NAME = filename(fullfilename)
 % Note that FILENAME is vectorized, whereas FILEPARTS is not.
 %
 % See also:
-% FILEPARTS, FILEPATHSTR, FILEEXT, FILENAMEEXT, FULLFILE
+% FILEPARTS, FILEPATHSTR, FILEEXT, FILENAMEEXT, FULLFILE, FILEPATHSTRNAME
 
 % $Id$
 % $Date$

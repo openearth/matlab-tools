@@ -1,7 +1,10 @@
 function trih2nc(loc,trifile,ncfile)
+% to do : merge with VS_TRIH2NC
+%See also: VS_TRIH2NC
+
 
     trifile = [loc filesep trifile];
-    ncfile = [loc filesep ncfile];
+    ncfile  = [loc filesep ncfile];
     
     % create netcdf file
     nc_create_empty(ncfile,nc_clobber_mode);

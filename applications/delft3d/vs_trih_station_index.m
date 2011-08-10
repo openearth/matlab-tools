@@ -15,13 +15,13 @@ function indices = vs_trih_station_index(trih,varargin)
 % When the specified name is not found, an empty value
 % (0x0 or 0x1) is returned.
 %
-% vs_get_trih_station_index(trih,stationname,method)
+% VS_TRIH_STATION_INDEX(trih,stationname,method)
 % to choose a method:
 % - 'strcmp'   gives only the 1st exact match.
 % - 'strmatch' gives all matches in which the string pattern
 %              stationname is present (default).
 %
-% vs_get_trih_station_index(trih) prints a list with all
+% VS_TRIH_STATION_INDEX(trih) prints a list with all
 % station names and indices on screen with 7 columns:
 % index,name,m,n,angle,x,y.
 %
@@ -29,8 +29,8 @@ function indices = vs_trih_station_index(trih,varargin)
 %
 % Vectorized over 1st dimension of stationname.
 %
-% See also: VS_USE, VS_LET, STATION, VS_TRIH_STATION
-%           VS_TRIH_CROSSSECTION_INDEX
+% See also: vs_trih2nc, dflowfm.indexHis, adcp_plot
+%           VS_USE, VS_LET, STATION, VS_TRIH_STATION, VS_TRIH_CROSSSECTION_INDEX
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -68,7 +68,14 @@ function indices = vs_trih_station_index(trih,varargin)
 % 2009 sep 28: added implementation of WAQ hda files [Yann Friocourt]
 
 if ~isstruct(trih)
+   if strcmpi(fileext(trih),'.nc')
+   ncfile = trih;
+   trih.SubType   = 'netCDF';
+   ST.Description = 'DFLOW monitoring point (*.obs) time serie.';
+   error('This is a netCDD file: use dflow.indexHis instead')
+   else
    trih = vs_use(trih);
+   end
 end
 
    method = 'strcmp';
@@ -87,26 +94,25 @@ if nargin > 2
 end
 
 %% Do we work with a FLOW or WAQ file?
-%% ------------------------
-if strcmp(trih.SubType,'Delft3D-trih')
-    OPT.GrpName = 'his-const';
-    OPT.ElmName = 'NAMST';
-    ST.Description     = 'Delft3d-FLOW monitoring point (*.obs) time serie.';
-elseif strcmp(trih.SubType,'Delft3D-waq-history')
-    OPT.GrpName = 'DELWAQ_PARAMS';
-    OPT.ElmName = 'LOCATION_NAMES';
-    ST.Description     = 'Delft3d-WAQ monitoring point (*.obs) time serie.';
-end
+
+   if strcmp(trih.SubType,'Delft3D-trih')
+       OPT.GrpName    = 'his-const';
+       OPT.ElmName    = 'NAMST';
+       ST.Description = 'Delft3d-FLOW monitoring point (*.obs) time serie.';
+   elseif strcmp(trih.SubType,'Delft3D-waq-history')
+       OPT.GrpName    = 'DELWAQ_PARAMS';
+       OPT.ElmName    = 'LOCATION_NAMES';
+       ST.Description = 'Delft3d-WAQ monitoring point (*.obs) time serie.';
+   end
 
 %% Load all station names
-%% ------------------------
-namst = squeeze(vs_let(trih(1),OPT.GrpName,OPT.ElmName));
 
-nstat = size(namst,1);
+   namst = squeeze(vs_let(trih(1),OPT.GrpName,OPT.ElmName));
+   
+   nstat = size(namst,1);
 
 %% Cycle all stations and quit immediatlety
-%% when a match has been found
-%% ------------------------
+%  when a match has been found
 
 switch method
 
