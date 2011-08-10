@@ -4,6 +4,36 @@
  *
  ***************************************************************************/
 
+/*----- LGPL --------------------------------------------------------------------
+ *
+ *   Copyright (C)  Stichting Deltares, 2011.
+ *
+ *   This library is free software; you can redistribute it and/or
+ *   modify it under the terms of the GNU Lesser General Public
+ *   License as published by the Free Software Foundation version 2.1.
+ *
+ *   This library is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public
+ *   License along with this library; if not, see <http://www.gnu.org/licenses/>.
+ *
+ *   contact: delft3d.support@deltares.nl
+ *   Stichting Deltares
+ *   P.O. Box 177
+ *   2600 MH Delft, The Netherlands
+ *
+ *   All indications and logos of, and references to, "Delft3D" and "Deltares"
+ *   are registered trademarks of Stichting Deltares, and remain the property of
+ *   Stichting Deltares. All rights reserved.
+ *
+ *-------------------------------------------------------------------------------
+ *   http://www.deltaressystems.com
+ *   $HeadURL: https://repos.deltares.nl/repos/ds/trunk/src/tools/matlab/Delft3D-toolbox/progsrc/private/writeavi.cpp $
+ *   $Id: writeavi.cpp 14474 2011-01-07 12:56:41Z jagers $
+ */
 
 #define  STRICT
 #define  INC_OLE2
@@ -40,7 +70,7 @@ char * chkGetString(const mxArray * mxA, const char * StrName)
       if (dimarray[0]==1)
          StrLen = dimarray[1];
    }
-   
+
    if (StrLen < 0) {
       char * temp = (char*)mxCalloc(128,sizeof(char));
       strcat(temp,"Invalid ");
@@ -52,7 +82,7 @@ char * chkGetString(const mxArray * mxA, const char * StrName)
    if (Name == NULL) {
       mexErrMsgTxt("Memory allocation error.");
    }
-   
+
    return Name;
 }
 
@@ -83,9 +113,9 @@ PAVIFILESTRUCT GetAVI(const mxArray * mxA)
    int pavih = chkGetPosInt(mxA);
    if (pavih < 0)
       mexErrMsgTxt("Invalid AVI handle.");
-   
+
    PAVIFILESTRUCT pavi = (PAVIFILESTRUCT) pavih;
-   
+
   /*
    * Check AVIFILE for validity; if not valid
    * DLL will cause segment violation
@@ -109,7 +139,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
    int ndims, d;
    const int *dimarray;
    LPBYTE vals, frame;
-   
+
    char str[256];
   /*
    printf("%i input argument(s) and %i output argument(s).\n",nrhs,nlhs);
@@ -129,7 +159,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
    else if ( mxIsChar(prhs[0]) != 1)
       mexErrMsgTxt("Missing AVI command.");
    char * cmdStr = chkGetString(prhs[0],"AVI command");
-   
+
    PAVIFILESTRUCT pavifil = NULL;
    HRESULT hr;
   /******************************************************************
@@ -145,7 +175,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
          mexErrMsgTxt("Too many input arguments.");
       else {
          WORD wVer;
-         
+
          /* first let's make sure we are running on 1.1 */
          wVer = HIWORD(VideoForWindowsVersion());
          if (wVer < 0x010a) {
@@ -156,14 +186,14 @@ const mxArray *prhs[]  // Array of right hand side arguments
          }
          else {
             AVIFileInit();
-            
+
             pavifil = (PAVIFILESTRUCT) malloc(sizeof(AVIFILESTRUCT));
             pavifil->pfile        = NULL;
             pavifil->ps           = NULL;
             pavifil->psCompressed = NULL;
             pavifil->bitinf       = NULL;
          }
-         
+
          int pavih = (int) pavifil;
          plhs[0] = mxCreateDoubleMatrix(1,1,mxREAL);
          *mxGetPr(plhs[0])=(double)(pavih);
@@ -179,7 +209,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
          mexErrMsgTxt("Invalid number of input arguments.");
       else {
          mxArray * val;
-         
+
          // Color resolution ...
          int bits = chkGetPosInt(prhs[1]);
          if (bits != 8 && bits != 24 && bits != 32)
@@ -214,12 +244,12 @@ const mxArray *prhs[]  // Array of right hand side arguments
          if (bits == 8) {
             // leave bmiColors random
          }
-         
+
          /* Use Foreground Window to make sure the options dialog is
           * shown on top!
           */
          HWND win = GetForegroundWindow();
-         
+
          COMPVARS xcompvars;
          _fmemset(&xcompvars, 0, sizeof(xcompvars));
          xcompvars.cbSize=sizeof(xcompvars);
@@ -286,7 +316,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
          printf("lpState     = %i [LPVOID]\n",xcompvars.lpState);
          printf("cbState     = %i [LONG]\n",xcompvars.cbState);
          printf("--------------------------------\n");
- */         
+ */
          ICCompressorChoose(win,
          ICMF_CHOOSE_KEYFRAME || ICMF_CHOOSE_DATARATE ,
          bitinf, NULL, &xcompvars,"Compression Options");
@@ -368,7 +398,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
                mexErrMsgTxt("Missing File Name.");
             else {
                char * FileName = chkGetString(prhs[2],"File Name");
-               
+
                hr = AVIFileOpen(&pavifil->pfile, // returned file pointer
                FileName,                  // file name
                OF_WRITE | OF_CREATE,      // mode to open file with
@@ -389,7 +419,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
             else {
                AVIFileExit();
                free(pavifil);
-               
+
                plhs[0] = mxCreateDoubleMatrix(1,1,mxREAL);
                *mxGetPr(plhs[0])=(double)(0);
             }
@@ -432,7 +462,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
                      if (dimarray[0] > 256)
                         mexErrMsgTxt("Too many colours in colour table");
                      NClrs = dimarray[0];
-                     
+
                   }
                }
                else if (bits == 24 || bits == 32) {
@@ -474,11 +504,11 @@ const mxArray *prhs[]  // Array of right hand side arguments
                      pavifil->bitinf->bmiColors[i].rgbBlue  = vals[i+2*NClrs];
                   }
                }
-               
+
                // Fill in the header for the video stream....
                AVICOMPRESSOPTIONS opts;
                mxArray * val;
-               
+
                // Set the compressor options ...
                _fmemset(&opts, 0, sizeof(opts));
                //
@@ -536,7 +566,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
                AVICOMPRESSOPTIONS FAR * aopts[1] = {&opts};
                if (!AVISaveOptions(win, ICMF_CHOOSE_KEYFRAME, 1, &pavifil->ps, (LPAVICOMPRESSOPTIONS FAR *) &aopts))
                   goto error;
- 
+
                printf("fccType          = %i [DWORD]\n",opts.fccType);
                printf("fccHandler       = %i [DWORD]\n",opts.fccHandler);
                printf("dwKeyFrameEvery  = %i [DWORD]\n",opts.dwKeyFrameEvery);
@@ -549,7 +579,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
                printf("cbParms          = %i [DWORD]\n",opts.cbParms);
                printf("dwInterleaveEvery= %i [DWORD]\n",opts.dwInterleaveEvery);
  */
-               
+
                // The video stream will run with fps Frames per Second ....
                _fmemset(&strhdr, 0, sizeof(strhdr));
                strhdr.fccType                = streamtypeVIDEO;// stream type
@@ -558,14 +588,14 @@ const mxArray *prhs[]  // Array of right hand side arguments
                strhdr.dwRate                 = fps;
                strhdr.dwSuggestedBufferSize  = pavifil->bitinf->bmiHeader.biSizeImage;
                SetRect(&strhdr.rcFrame, 0, 0, width, height);
-               
+
                // And create the stream;
                hr = AVIFileCreateStream(pavifil->pfile,    // file pointer
                &pavifil->ps,    // returned stream pointer
                &strhdr);        // stream header
                if (hr != AVIERR_OK)
                   goto error;
-               
+
 /*               char *hh;
                hh = "INFOILNGA000Undefined IART8000Artist  ";
                hh[8]=10;
@@ -580,20 +610,20 @@ const mxArray *prhs[]  // Array of right hand side arguments
                //   hh,38);
                hr = AVIStreamWriteData(pavifil->ps, 1414744396,
                   hh,38); */
-               
+
                // Create compressed stream;
                hr = AVIMakeCompressedStream(&pavifil->psCompressed,
                pavifil->ps, &opts, NULL);
                if (hr != AVIERR_OK)
                   goto error;
-               
+
                hr = AVIStreamSetFormat(pavifil->psCompressed, 0,
                pavifil->bitinf,    // stream format
                pavifil->bitinf->bmiHeader.biSize +   // format size
                pavifil->bitinf->bmiHeader.biClrUsed * sizeof(RGBQUAD));
                if (hr != AVIERR_OK)
                   goto error;
-               
+
                // error trap
                error:
                /*
@@ -722,12 +752,12 @@ const mxArray *prhs[]  // Array of right hand side arguments
                   AVIStreamClose(pavifil->ps);
                   pavifil->ps = NULL;
                }
-               
+
                if (pavifil->psCompressed) {
                   AVIStreamClose(pavifil->psCompressed);
                   pavifil->psCompressed = NULL;
                }
-               
+
                if (pavifil->pfile) {
                   AVIFileClose(pavifil->pfile);
                   pavifil->pfile = NULL;
@@ -741,7 +771,7 @@ const mxArray *prhs[]  // Array of right hand side arguments
             mexErrMsgTxt("Unrecognized AVI command.");
          }
       }
-      
+
       int pavih = (int) pavifil;
       plhs[0] = mxCreateDoubleMatrix(1,1,mxREAL);
       *mxGetPr(plhs[0])=(double)(pavih);
