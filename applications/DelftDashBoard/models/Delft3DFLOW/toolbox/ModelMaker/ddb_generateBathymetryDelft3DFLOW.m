@@ -68,14 +68,18 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     xl(2)=xl(2)+dbuf;
     yl(1)=yl(1)-dbuf;
     yl(2)=yl(2)+dbuf;
+
 %    dmin=15000;
-    [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+    [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin/2);
     
     xg(isnan(xg))=0;
     yg(isnan(yg))=0;
     
+%    zz=min(zz,5);
+    zz=min(zz,handles.Toolbox(tb).Input.zMax);
+
     z=interp2(xx,yy,zz,xg,yg);
-%    z=gridcellaveraging2(xx,yy,zz,xg,yg,dmin/111111,'max');
+%    z=gridcellaveraging2(xx,yy,zz,xg,yg,dmin,'min');
     
     switch opt
         case{'overwrite'}
@@ -84,6 +88,12 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
             handles.Model(md).Input(id).depth(isnan(handles.Model(md).Input(id).depth))=z(isnan(handles.Model(md).Input(id).depth));
     end
 
+    switch lower(handles.Model(md).Input(id).dpsOpt)
+        case{'dp'}
+            handles.Model(md).Input(id).depth(:,1)=handles.Model(md).Input(id).depth(:,2);
+            handles.Model(md).Input(id).depth(1,:)=handles.Model(md).Input(id).depth(2,:);
+    end
+    
     z=handles.Model(md).Input(id).depth;
     
     handles.Model(md).Input(id).depthZ=getDepthZ(z,handles.Model(md).Input(id).dpsOpt);

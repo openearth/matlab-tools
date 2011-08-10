@@ -258,7 +258,7 @@ try
                 end
                 
                 handles.Model(md).Input(id).astronomicComponentSets(k).correction(i)=0;
-                handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(i)=0;
+                handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(i)=1;
                 handles.Model(md).Input(id).astronomicComponentSets(k).phaseCorrection(i)=0;
             end
             
@@ -304,7 +304,7 @@ try
                 end
                 
                 handles.Model(md).Input(id).astronomicComponentSets(k).correction(i)=0;
-                handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(i)=0;
+                handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(i)=1;
                 handles.Model(md).Input(id).astronomicComponentSets(k).phaseCorrection(i)=0;
             end
         end

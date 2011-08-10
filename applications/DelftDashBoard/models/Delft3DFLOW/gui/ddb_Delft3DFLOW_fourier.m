@@ -92,6 +92,41 @@ else
 %             setUIElements('delft3dflow.output.outputpanel.fourier');
 %             h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable2');
 %             table(h,'refresh','enable',enab);
+
+        case{'maketable'}
+            
+            components={'M2','S2','N2','K2','K1','O1','P1','Q1'};
+            
+            handles.Model(md).Input(ad).fourier.generateTable.parameterNumber=[];
+            handles.Model(md).Input(ad).fourier.generateTable.componentNumber=[];
+            handles.Model(md).Input(ad).fourier.generateTable.layer=[];
+            handles.Model(md).Input(ad).fourier.generateTable.fourier=[];
+            handles.Model(md).Input(ad).fourier.generateTable.max=[];
+            handles.Model(md).Input(ad).fourier.generateTable.min=[];
+            handles.Model(md).Input(ad).fourier.generateTable.ellipse=[];
+            
+            tt=t_getconsts;
+            names=tt.name;
+            
+            for i=1:size(names,1)
+                cnsts{i}=deblank(names(i,:));
+            end
+
+            for i=1:length(components)                
+                ii=strmatch(components{i},cnsts,'exact');
+                handles.Model(md).Input(ad).fourier.generateTable.parameterNumber(i)=1;
+                handles.Model(md).Input(ad).fourier.generateTable.componentNumber(i)=ii;
+                handles.Model(md).Input(ad).fourier.generateTable.layer(i)=1;
+                handles.Model(md).Input(ad).fourier.generateTable.fourier(i)=1;
+                handles.Model(md).Input(ad).fourier.generateTable.max(i)=0;
+                handles.Model(md).Input(ad).fourier.generateTable.min(i)=0;
+                handles.Model(md).Input(ad).fourier.generateTable.ellipse(i)=0;
+            end
+            
+            setHandles(handles);
+            
+            setUIElements('delft3dflow.output.outputpanel.fourier');
+
         case{'generateinput'}
             
             % Compute mean latitude of model
@@ -126,7 +161,8 @@ else
                 [v,u,f]=t_vuf(0.5*(handles.Model(md).Input(ad).startTime+handles.Model(md).Input(ad).stopTime),ii,ym);
                 [vref,uref,fref]=t_vuf(handles.Model(md).Input(ad).itDate,ii,ym);
                 u=(vref+u)*360;
-                        
+                u=mod(u,360);
+                
                 ttot=handles.Model(md).Input(ad).stopTime-handles.Model(md).Input(ad).startTime-spinuptime;
                 
                 if freq==0

@@ -364,6 +364,13 @@ if isfield(MDF,'heaout')
     end
 end
 
+if isfield(MDF,'filfou')
+    if ~isempty(MDF.filfou)
+        handles.Model(md).Input(id).fouFile=MDF.filfou;
+        handles.Model(md).Input(id).fourier.include=1;
+    end
+end
+
 % Cstbnd= #yes#
 % TraFrm= #vrijn2004.frm#
 % Trtrou= #Y#

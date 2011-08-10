@@ -431,8 +431,8 @@ if Flow.cstBnd
 end
 
 if Flow.fourier.include
-    if ~isempty(Flow.fourier.fouFile)
-        MDF.Filfou=Flow.fourier.fouFile;
+    if ~isempty(Flow.fouFile)
+        MDF.Filfou=Flow.fouFile;
     end
 end
 

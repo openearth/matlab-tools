@@ -99,7 +99,7 @@ else
             clearInstructions;
 
         case{'openfile'}
-            handles=ddb_readDryFile(handles);
+            handles=ddb_readDryFile(handles,ad);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
             setHandles(handles);
 

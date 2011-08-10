@@ -31,8 +31,10 @@ z0(z0==0)=NaN;
 
 % dx()=mean(dst1,dst2);
 
-%dx=zeros(size(x0))+dx;
-dx=zeros(size(x0))+0.02;
+
+
+dx=zeros(size(x0))+dx;
+%dx=zeros(size(x0))+0.02;
 
 mxdx=max(max(dx));
 mxdx=0.01;
@@ -160,7 +162,7 @@ for ix=1:nx
                         zb2=zb2(ii1:ii2);
                         
                         dst=sqrt((xb2-x(i,j)).^2+(yb2-y(i,j)).^2);
-                        zb3=zb2(dst<=dx(i,j));
+                        zb3=zb2(dst<=0.5*dx(i,j));
 
                         if ~isempty(zb3)
                             switch lower(opt)

@@ -86,7 +86,7 @@ else
             clearInstructions;
 
         case{'openfile'}
-            handles=ddb_readThdFile(handles);
+            handles=ddb_readThdFile(handles,ad);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','thindams');
             setHandles(handles);
             

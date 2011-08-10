@@ -39,6 +39,8 @@ for i=1:length(lst)
         name=strrep(name,'/','');
         name=strrep(name,'.','');
         name=strrep(name,',','');
+        name=strrep(name,'(','');
+        name=strrep(name,')','');
         name=name(double(name)<1000);
         handles.Toolbox(ii).Input.database(i).stationShortNames{j}=name;
     end

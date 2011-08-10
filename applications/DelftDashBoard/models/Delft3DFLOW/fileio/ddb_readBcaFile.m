@@ -22,7 +22,7 @@ for i=1:10000
             handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(j)=str2double(v0{2});
             handles.Model(md).Input(id).astronomicComponentSets(k).phase(j)=nan;
             handles.Model(md).Input(id).astronomicComponentSets(k).correction(j)=0;
-            handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(j)=0;
+            handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(j)=1;
             handles.Model(md).Input(id).astronomicComponentSets(k).phaseCorrection(j)=0;
             j=j+1;
         else
@@ -31,7 +31,7 @@ for i=1:10000
             handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(j)=str2double(v0{2});
             handles.Model(md).Input(id).astronomicComponentSets(k).phase(j)=str2double(v0{3});
             handles.Model(md).Input(id).astronomicComponentSets(k).correction(j)=0;
-            handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(j)=0;
+            handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(j)=1;
             handles.Model(md).Input(id).astronomicComponentSets(k).phaseCorrection(j)=0;
             j=j+1;
         end

@@ -34,7 +34,7 @@
     <style>pushselectfile</style>
     <position>10 10 50 20</position>
     <text>Open</text>
-    <variable>handles.Model(md).Input(ad).fourier.fouFile</variable>
+    <variable>handles.Model(md).Input(ad).fouFile</variable>
     <type>string</type>
     <onchange>ddb_Delft3DFLOW_fourier</onchange>
     <option1>openfoufile</option1>
@@ -48,7 +48,7 @@
     <style>pushsavefile</style>
     <position>65 10 50 20</position>
     <text>Save</text>
-    <variable>handles.Model(md).Input(ad).fourier.fouFile</variable>
+    <variable>handles.Model(md).Input(ad).fouFile</variable>
     <type>string</type>
     <onchange>ddb_Delft3DFLOW_fourier</onchange>
     <option1>savefoufile</option1>
@@ -271,6 +271,16 @@
     <text>Generate</text>
     <callback>ddb_Delft3DFLOW_fourier</callback>
     <option1>generateinput</option1>
+    <parent>delft3dflow.output.outputpanel.fourier.generatepanel</parent>
+  </element>
+
+  <element>
+    <tag>pushmaketable</tag>
+    <style>pushbutton</style>
+    <position>550 5 70 20</position>
+    <text>Fill Table</text>
+    <callback>ddb_Delft3DFLOW_fourier</callback>
+    <option1>maketable</option1>
     <parent>delft3dflow.output.outputpanel.fourier.generatepanel</parent>
   </element>
 

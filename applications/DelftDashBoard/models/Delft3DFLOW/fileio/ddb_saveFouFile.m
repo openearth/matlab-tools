@@ -1,7 +1,7 @@
 function ddb_saveFouFile(handles,id)
 
 tab=handles.Model(md).Input(id).fourier.editTable;
-fid=fopen(handles.Model(md).Input(id).fourier.fouFile,'wt');
+fid=fopen(handles.Model(md).Input(id).fouFile,'wt');
 plist=handles.Model(md).Input(ad).fourier.pList;
 for i=1:length(tab.period)
     par=plist{tab.parameterNumber(i)};
