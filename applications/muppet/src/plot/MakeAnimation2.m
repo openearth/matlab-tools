@@ -90,14 +90,9 @@ end
 
 wb = awaitbar(0,'Generating AVI...');
 
-iwb=0;
-
 n2=1;
 
 nf=0;
-
-nblocks=length(AnimationSettings.FirstStep:AnimationSettings.Increment:AnimationSettings.LastStep);
-
 
 %% KMZ stuff
 
@@ -140,19 +135,10 @@ if AnimationSettings.makeKMZ
 
 end
 
-% AnimationSettings.startTime=datenum(1976,1,2,0,0,0);
-% AnimationSettings.stopTime=datenum(1976,1,5,0,0,0);
-% AnimationSettings.timeStep=15/1440;
-
-% AnimationSettings.startTime=datenum(2009,2,5,0,0,0);
-% AnimationSettings.stopTime=datenum(2009,2,28,0,0,0);
-% AnimationSettings.timeStep=1/24;
-
 timeStep=AnimationSettings.timeStep/86400;
 
 nrFrames=round((AnimationSettings.stopTime-AnimationSettings.startTime)/timeStep);
 
-%for iblock=AnimationSettings.FirstStep:AnimationSettings.Increment:AnimationSettings.LastStep
 for iblock=1:nrFrames
 
     t=AnimationSettings.startTime+(iblock-1)*timeStep;
@@ -202,6 +188,7 @@ for iblock=1:nrFrames
         % Update datasets
         for j=1:NrSub
             for k=1:handles.Figure(ifig).Axis(j).Nr
+ 
                 m=FindDatasetNr(handles.Figure(ifig).Axis(j).Plot(k).Name,Data);
 
                 tFrac1(m)=1;
