@@ -192,17 +192,17 @@ switch lower(par)
         for k=k1:dk:k2
             dd=squeeze(u(:,:,k));
             dd=internaldiffusion(dd,'nst',5);
-            wldep('append',fname,dd,'negate','n','bndopt','n');
+            ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
         end
         for k=k1:dk:k2
             dd=squeeze(v(:,:,k));
             dd=internaldiffusion(dd,'nst',5);
-            wldep('append',fname,dd,'negate','n','bndopt','n');
+            ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
         end
     otherwise
         for k=k1:dk:k2
             dd=squeeze(data(:,:,k));
             dd=internaldiffusion(dd,'nst',5);
-            wldep('append',fname,dd,'negate','n','bndopt','n');
+            ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
         end
 end

@@ -259,6 +259,8 @@ for k=1:length(s.wl.m)
     dps(k)=dps0*squeeze(s.wl.w(k,:)');
 end
 
+clear dps00 dps0
+
 %% Hydrodynamics    
 
 switch lower(opt)
@@ -281,7 +283,7 @@ switch lower(opt)
         wl{k}=wl0*squeeze(s.wl.w(k,:)');
     end
 
-    clear wl00
+    clear wl00 wl0
     
     % velocities
 
@@ -359,17 +361,25 @@ switch lower(opt)
             
             % Salinity
             %    if Flow.salinity.include
+
+
+            if ic==1
+                sal00=qpread(fid,1,par,'griddata',isteps,istation);
+            else
+                sal00=qpread(fid,1,par,'data',isteps,istation);
+            end
             
-            sal00=qpread(fid,1,par,'griddata',isteps,istation);
             sal0=zeros(nt,kmax,4);
             sal0(sal0==0)=NaN;
             
             % Loop past every support point
             for k=1:length(s.wl.m)
-
-                sal{k}=zeros(nt,kmax,length(s.wl.m));
+                
+                sal{k}=zeros(nt,kmax);
                 sal{k}(sal{k}==0)=NaN;
-                z{k}=sal{k};
+                if ic==1
+                    z{k}=sal{k};
+                end
                 
                 % Loop past surrounding points
                 for i=1:4
@@ -378,10 +388,14 @@ switch lower(opt)
                     if m>0
                         ii= find(mused==m&nused==n,1);
                         sal0(:,:,i)=squeeze(sal00.Val(:,ii,:));
-                        z0(:,:,i)=squeeze(sal00.Z(:,ii,:));
+                        if ic==1
+                            z0(:,:,i)=squeeze(sal00.Z(:,ii,:));
+                        end
                     else
                         sal0(:,:,i)=zeros(nt,kmax,1);
-                        z0(:,:,i)=zeros(nt,kmax,1);
+                        if ic==1
+                            z0(:,:,i)=zeros(nt,kmax,1);
+                        end
                     end
                 end
                 
@@ -392,20 +406,20 @@ switch lower(opt)
                     w(:,:,i)=w0(i);
                 end
                 w(isnan(sal0))=NaN;
-                wsum=nansum(w,3);
-                wmult=1./wsum;
+                wmult=1./nansum(w,3);
                 for i=1:4
                     w(:,:,i)=w(:,:,i).*wmult;
                 end
-                salw=w.*sal0;
-                zw=w.*z0;
-                sal{k}=nansum(salw,3);
-                z{k}=nansum(zw,3);
+                sal{k}=nansum(w.*sal0,3);
+                if ic==1
+                    z{k}=nansum(w.*z0,3);
+                end
                 
-                nest.constituent(ic).data=sal;
-
             end
-            clear sal0 sal00 z0 salw zw w w0 wsum wmult sal   
+            
+            nest.constituent(ic).data=sal;
+
+            clear sal0 sal00 z0 salw zw w w0 wsum wmult sal
             
         end
 end
