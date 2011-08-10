@@ -65,7 +65,6 @@ handles.Annotation=h.Figure(handles.i).Annotation(handles.j);
 
 PutInCentre(hObject);
 
-pos=handles.Annotation.Position;
 set(handles.EditX1,'String',num2str(handles.Annotation.Position(1)));
 set(handles.EditY1,'String',num2str(handles.Annotation.Position(2)));
 set(handles.EditX2,'String',num2str(handles.Annotation.Position(3)));
@@ -238,7 +237,7 @@ h=guidata(findobj('Name','Muppet'));
 i=handles.i;
 j=handles.j;
 
-handles.Figure(i).Annotation(j).Position(1)=str2num(get(handles.EditX1,'String'));
+h.Figure(i).Annotation(j).Position(1)=str2num(get(handles.EditX1,'String'));
 h.Figure(i).Annotation(j).Position(2)=str2num(get(handles.EditY1,'String'));
 h.Figure(i).Annotation(j).Position(3)=str2num(get(handles.EditX2,'String'));
 h.Figure(i).Annotation(j).Position(4)=str2num(get(handles.EditY2,'String'));

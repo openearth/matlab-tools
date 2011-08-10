@@ -24,7 +24,7 @@ function varargout = Options3D(varargin)
  
 % Edit the above text to modify the response to help Options3D
  
-% Last Modified by GUIDE v2.5 14-Nov-2007 20:16:03
+% Last Modified by GUIDE v2.5 21-Dec-2009 21:17:11
  
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -76,6 +76,8 @@ handles.CameraAngle(2)=handles.Axis.CameraAngle(2);
 handles.CameraViewAngle=handles.Axis.CameraViewAngle;
 handles.DataAspectRatio=handles.Axis.DataAspectRatio;
 handles.LightStrength=handles.Axis.LightStrength;
+handles.LightAzimuth=handles.Axis.LightAzimuth;
+handles.LightElevation=handles.Axis.LightElevation;
 handles.ZMin=handles.Axis.ZMin;
 handles.ZMax=handles.Axis.ZMax;
 handles.ZTick=handles.Axis.ZTick;
@@ -91,6 +93,8 @@ set(handles.EditDataAspectRatioX,'String',num2str(handles.DataAspectRatio(1)));
 set(handles.EditDataAspectRatioY,'String',num2str(handles.DataAspectRatio(2)));
 set(handles.EditDataAspectRatioZ,'String',num2str(handles.DataAspectRatio(3)));
 set(handles.EditLightStrength,'String',num2str(handles.LightStrength));
+set(handles.EditLightAzimuth,'String',num2str(handles.LightAzimuth));
+set(handles.EditLightElevation,'String',num2str(handles.LightElevation));
 
 set(handles.EditZMin,'String',num2str(handles.ZMin));
 set(handles.EditZMax,'String',num2str(handles.ZMax));
@@ -167,6 +171,8 @@ h.Figure(i).Axis(j).CameraAngle=handles.CameraAngle;
 h.Figure(i).Axis(j).CameraViewAngle=handles.CameraViewAngle;
 h.Figure(i).Axis(j).DataAspectRatio=handles.DataAspectRatio;
 h.Figure(i).Axis(j).LightStrength=handles.LightStrength;
+h.Figure(i).Axis(j).LightAzimuth=handles.LightAzimuth;
+h.Figure(i).Axis(j).LightElevation=handles.LightElevation;
 h.Figure(i).Axis(j).ZMin=handles.ZMin;
 h.Figure(i).Axis(j).ZMax=handles.ZMax;
 h.Figure(i).Axis(j).ZTick=handles.ZTick;
@@ -620,5 +626,67 @@ function TogglePerspective_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of TogglePerspective
+
+
+
+
+
+function EditLightAzimuth_Callback(hObject, eventdata, handles)
+% hObject    handle to EditLightAzimuth (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of EditLightAzimuth as text
+%        str2double(get(hObject,'String')) returns contents of EditLightAzimuth as a double
+
+[val,ok]=str2num(get(hObject,'String'));
+if ok
+    handles.LightAzimuth=val;
+else
+    set(hObject,'String',num2str(handles.LightAzimuth));
+end
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function EditLightAzimuth_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to EditLightAzimuth (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function EditLightElevation_Callback(hObject, eventdata, handles)
+% hObject    handle to EditLightElevation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of EditLightElevation as text
+%        str2double(get(hObject,'String')) returns contents of EditLightElevation as a double
+
+[val,ok]=str2num(get(hObject,'String'));
+if ok
+    handles.LightElevation=val;
+else
+    set(hObject,'String',num2str(handles.LightElevation));
+end
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function EditLightElevation_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to EditLightElevation (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 

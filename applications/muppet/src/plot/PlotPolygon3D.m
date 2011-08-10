@@ -27,50 +27,67 @@ end
  
 if strcmp(mode,'new')
     for ii=1:polno
+%         xldb(1,:)=ldb{ii}(:,1)';
+%         xldb(2,:)=ldb{ii}(:,1)';
+%         yldb(1,:)=ldb{ii}(:,2)';
+%         yldb(2,:)=ldb{ii}(:,2)';
+%         zldb(1,:)=zeros(size(xldb(1,:)))+Plt.Elevations(1);
+%         zldb(2,:)=zeros(size(xldb(1,:)))+Plt.Elevations(2);
+%         ldbplt=surf(xldb,yldb,zldb);hold on;
+%         p=patch(xldb(2,:),yldb(2,:),zldb(2,:),FindColor(Plt.FillColor));
+%         SetObjectData(ldbplt,i,j,k,'3dpolygon');
+%         SetObjectData(p,i,j,k,'3dpolygon2');
+%         clear xldb
+%         clear yldb
+%         clear zldb
+
+    
+        
+        xx=ldb{ii}(:,1);
+        yy=ldb{ii}(:,2);
+        nx=length(xx);
+
+        zz=zeros(size(xx))+Plt.Elevations(1);
+        zz=[zz;zeros(size(xx))+Plt.Elevations(2)];
+
+        xx=[xx;xx];
+        yy=[yy;yy];
+
+        vtcs=[xx yy zz];
+        
+        for jj=1:nx-1
+            fcs(jj,:)=[jj jj+1 jj+nx+1 jj+nx];
+        end
+
+        ldbplt=patch('vertices',vtcs,'faces',fcs);
+        
         xldb(1,:)=ldb{ii}(:,1)';
         xldb(2,:)=ldb{ii}(:,1)';
         yldb(1,:)=ldb{ii}(:,2)';
         yldb(2,:)=ldb{ii}(:,2)';
         zldb(1,:)=zeros(size(xldb(1,:)))+Plt.Elevations(1);
         zldb(2,:)=zeros(size(xldb(1,:)))+Plt.Elevations(2);
-%        ldbplt=surf(xldb,yldb,zldb);hold on;
-%        ldbplt=surface(xldb,yldb,zldb);hold on;
-        ldbplt=patch(xldb,yldb,zldb,FindColor(Plt.FillColor));hold on;
+        
+%         ldbplt=surf(xldb,yldb,zldb);hold on;
         p=patch(xldb(2,:),yldb(2,:),zldb(2,:),FindColor(Plt.FillColor));
         SetObjectData(ldbplt,i,j,k,'3dpolygon');
         SetObjectData(p,i,j,k,'3dpolygon2');
         clear xldb
         clear yldb
         clear zldb
+    
+    
+        set(ldbplt,'EdgeColor','none');
+        set(ldbplt,'FaceLighting','gouraud','FaceColor',FindColor(Plt.FillColor));
+        set(p,'FaceColor',FindColor(Plt.FillColor),'EdgeColor','none');
+        set(p,'FaceLighting','none');
+
+    
     end
 else
     ldbplt=findobj(gcf,'Tag','3dpolygon','UserData',[i,j,k]);
     p=findobj(gcf,'Tag','3dpolygon2','UserData',[i,j,k]);
 end
 
-set(ldbplt,'EdgeColor','none');
-set(ldbplt,'FaceLighting','gouraud','FaceColor',FindColor(Plt.FillColor));
 
-set(ldbplt,'BackFaceLighting','lit');
-set(ldbplt,'AmbientStrength',0.9);
-set(ldbplt,'SpecularStrength',0.9);
-set(ldbplt,'DiffuseStrength',0.9);
-material shiny;
-
-set(ldbplt,'SpecularColorReflectance',1);
-set(ldbplt,'SpecularExponent',100);
-
-set(p,'FaceColor',FindColor(Plt.FillColor));
-%set(p,'FaceLighting','none');
-set(p,'FaceLighting','gouraud');
-set(p,'BackFaceLighting','lit');
-set(p,'AmbientStrength',0.9);
-set(p,'SpecularStrength',0.9);
-set(p,'DiffuseStrength',1.0);
-%lightangle(45,80);
-
-set(p,'SpecularColorReflectance',1);
-set(p,'SpecularExponent',100);
-
-material shiny;
 

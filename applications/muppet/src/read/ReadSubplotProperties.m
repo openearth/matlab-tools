@@ -87,6 +87,8 @@ if ifirst==1
     h.CameraViewAngle=10;
     h.DataAspectRatio=[100 100 1];
     h.LightStrength=0.4;
+    h.LightAzimuth=0;
+    h.LightElevation=55;
     h.Perspective=1;
     h.XScale='linear';
     h.YScale='linear';
@@ -455,7 +457,13 @@ switch lower(txt{itxt}),
         h.DataAspectRatio(3)=str2num(txt{itxt+3});
 
     case {'lightstrength'},
-        h.LightStrength=str2num(txt{itxt+1});
+        h.LightStrength=str2double(txt{itxt+1});
+
+    case {'lightazimuth'},
+        h.LightAzimuth=str2double(txt{itxt+1});
+
+    case {'lightelevation'},
+        h.LightElevation=str2double(txt{itxt+1});
 
     case {'perspective'},
         switch lower(txt{itxt+1}),

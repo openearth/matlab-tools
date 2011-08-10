@@ -1,4 +1,4 @@
-function Set3DPlot(FigureProperties,SubplotProperties);
+function Set3DPlot(FigureProperties,SubplotProperties)
  
 if SubplotProperties.Perspective
     set(gca,'Projection','perspective');
@@ -13,7 +13,7 @@ set(gca,'CameraViewAngle',SubplotProperties.CameraViewAngle);
 h=light;
 set(h,'style','local');
 %lightangle(h,-135,55);
-lightangle(h,0,55);
+lightangle(h,SubplotProperties.LightAzimuth,SubplotProperties.LightElevation);
 
 set(gca,'Units',FigureProperties.Units);
 set(gca,'Position',SubplotProperties.Position*FigureProperties.cm2pix);

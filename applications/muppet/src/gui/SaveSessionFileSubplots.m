@@ -212,6 +212,10 @@ if iLayout==0
         fprintf(fid,'%s\n',txt);
         txt=['      LightStrength   ' num2str(Axis.LightStrength)];
         fprintf(fid,'%s\n',txt);
+        txt=['      LightAzimuth    ' num2str(Axis.LightAzimuth)];
+        fprintf(fid,'%s\n',txt);
+        txt=['      LightElevation  ' num2str(Axis.LightElevation)];
+        fprintf(fid,'%s\n',txt);
         if Axis.Perspective==0
             txt='      Perspective     no';
             fprintf(fid,'%s\n',txt);

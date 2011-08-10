@@ -69,9 +69,9 @@ netcdf.defDim(NCid,          xstr,           dimSizeX);
 netcdf.defDim(NCid,          ystr,           dimSizeY);
 netcdf.defDim(NCid,          'info',         1);
 
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {xstr},  'cf_standard_name', {standardxstr},'dimension', {xstr});
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {ystr},  'cf_standard_name', {standardystr}, 'dimension', {ystr});
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {varstr},  'cf_standard_name', {'depth'},    'dimension', {xstr,ystr},'tp',OPT.tp);
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {xstr},  'cf_standard_name', {standardxstr},'dimension', {xstr});
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {ystr},  'cf_standard_name', {standardystr}, 'dimension', {ystr});
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {varstr},  'cf_standard_name', {'depth'},    'dimension', {xstr,ystr},'tp',OPT.tp);
 
 %% Expand NC file
 netcdf.endDef(NCid)

@@ -3,9 +3,9 @@ delete('bin\*');
 statspath='Y:\app\MATLAB2009b\toolbox\stats';
 rmpath(statspath);
 
-mkdir('qptmp');
-copyfile('F:\checkout\opendelft3d\trunk\src\tools_lgpl\matlab\quickplot\progsrc\private\*.m','qptmp');
-copyfile('F:\checkout\opendelft3d\trunk\src\tools_lgpl\matlab\quickplot\progsrc\*.m','qptmp');
+% mkdir('qptmp');
+% copyfile('F:\checkout\opendelft3d\trunk\src\tools_lgpl\matlab\quickplot\progsrc\private\*.m','qptmp');
+% copyfile('F:\checkout\opendelft3d\trunk\src\tools_lgpl\matlab\quickplot\progsrc\*.m','qptmp');
 addpath('qptmp');
 %flist=dir('F:\checkout\opendelft3d\trunk\src\tools_lgpl\matlab\quickplot\progsrc\private\*fil.m');
 
@@ -30,10 +30,10 @@ end
 
 fclose(fid);
 
-mcc -m -d F:\checkout\OpenEarthTools\trunk\matlab\applications\muppet\bin muppet.m -B complist
+mcc -m -d c:\work\checkouts\OpenEarthTools\trunk\matlab\applications\muppet\bin muppet.m -B complist
 
 delete('complist');
 
-delete('qptmp\*.m');
-rmpath('qptmp');
-rmdir('qptmp','s');
+% delete('qptmp\*.m');
+% rmpath('qptmp');
+% rmdir('qptmp','s');
