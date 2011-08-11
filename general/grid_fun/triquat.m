@@ -134,7 +134,6 @@ itri     = [];
 
 %% first walk alomng 1st dimension, 
 %  while keeping the 2nd dimension constant
-%---------------------------
 
 for ncen=1:szcen2
 
@@ -143,10 +142,9 @@ for ncen=1:szcen2
       mncen = mncen + 1;
       mncor = mncor + 1 + (mcen==1); % at the transition from end of row to begining of row skip 1 corner cell.
       
-      %% Define a polygon for quadrangle
-      %  Note: do not by incident define a Z or N shape
-      %  always define a C or V or U shape.
-      %---------------------------
+%% Define a polygon for quadrangle
+%  Note: do not by incident define a Z or N shape
+%  always define a C or V or U shape.
       
       quat1         = [mncor              ,...
                        mncor + 1          ,...
@@ -157,8 +155,7 @@ for ncen=1:szcen2
       if ~OPT.active
       
          %% Define mapping indices triangles <> quadrangle
-         %---------------------------
-         
+
          itri                     = [2*mncen-1 2*mncen];
          tri_per_quat(mncen,:)    = itri;  % 2 traingles per quadrangle
          quat_per_tri(itri)       = mncen; % 1 quadrangle for both traingles
@@ -168,7 +165,7 @@ for ncen=1:szcen2
          %    be more or less random
          %  - For curvilinear grids the trainagle definition should 
          %    be such that the diagonal is short as possible
-         %---------------------------
+
          
          tri(itri(1),:)      = [mncor             , ...
                                 mncor + 1         , ...
@@ -197,7 +194,6 @@ for ncen=1:szcen2
          %    be more or less random
          %  - For curvilinear grids the trainagle definition should 
          %    be such that the diagonal is short as possible
-         %---------------------------
          
          tri(itri(1),:)      = [mncor             , ...
                                 mncor + 1         , ...
@@ -256,23 +252,23 @@ elseif nargout ==4
 end
 
 %% function polygon_around_square(mncor, szcor1,geometry)
-%% 
-%% 
-%% if strcmp(geometry,'open')
-%% 
-%% pol = [mncor             , ...
-%%        mncor + 1         , ...
-%%        mncor + szcor1 + 1, ...
-%%        mncor + szcor1    ];
-%% 
-%% elseif strcmp(geometry,'open')
-%% 
-%% pol = [mncor             , ...
-%%        mncor + 1         , ...
-%%        mncor + szcor1 + 1, ...
-%%        mncor + szcor1    , ...
-%%        mncor             ];
-%% 
-%% end       
+%  
+%  
+%  if strcmp(geometry,'open')
+%  
+%  pol = [mncor             , ...
+%         mncor + 1         , ...
+%         mncor + szcor1 + 1, ...
+%         mncor + szcor1    ];
+%  
+%  elseif strcmp(geometry,'open')
+%  
+%  pol = [mncor             , ...
+%         mncor + 1         , ...
+%         mncor + szcor1 + 1, ...
+%         mncor + szcor1    , ...
+%         mncor             ];
+%  
+%  end       
 
 %% EOF

@@ -75,9 +75,8 @@ function varargout = tri2quat(tri,varargin)
    quat_per_tri = repmat(0,[ntri  1]);
    tri_per_quat = repmat(0,[nquat 2]);
 
-   %% every triangle belongs to exactly 1 quadrangle (no more, no less)
-   %  every quadrangle has exactly 2 traingles (no more, no less)
-   %-------------------------------------------------------------------
+%% every triangle belongs to exactly 1 quadrangle (no more, no less)
+%  every quadrangle has exactly 2 traingles (no more, no less)
    
    for itri = 1:ntri
    
@@ -106,8 +105,7 @@ function varargout = tri2quat(tri,varargin)
    
    end
    
-   %  Output
-   %-------------------------------------------------------------------
+%  Output
 
    if nargout==1
       OUT.tri_per_quat = tri_per_quat;

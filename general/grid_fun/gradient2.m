@@ -105,9 +105,7 @@ function varargout = gradient2(varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   -------------------------------------------------------------------- 
 
-
 %% In
-% ------------------------------
 
    x   = squeeze(varargin{1});
    y   = squeeze(varargin{2});
@@ -134,16 +132,14 @@ function varargout = gradient2(varargin)
    sz2cen = sz2cor - 1;
    
 %% Keywords
-% ------------------------------
 
    OPT.discretisation = 'upwind';
    OPT.average        = 'mean';
 
-   %% Cycle keywords in input argument list
-   %  to overwrite default values.
-   %  Align code lines as much as possible
-   %  to allow for block editing in textpad.
-   % ------------------------
+%% Cycle keywords in input argument list
+%  to overwrite default values.
+%  Align code lines as much as possible
+%  to allow for block editing in textpad.
    
    if nargin>3
    iargin = 4;
@@ -162,32 +158,29 @@ function varargout = gradient2(varargin)
    
    if strcmp(OPT.discretisation,'upwind')
 
-      %% Triangulate curvi-linear grid
-      %  and calculate gradients in all separate triangles.
-      % -------------------------------------
+%% Triangulate curvi-linear grid
+%  and calculate gradients in all separate triangles.
       
-         map     = triquat(x,y);
+         map     = triquat(x,y,'active',0); % we want to put data  back into the full matrix, so we also want holes back here !
          
-         %% replaces below 3 calls becuase it's faster, 
-         %% becuase we know the structure of the data,
-         %% while delaunay considers the co-ordinates 
-         %% randomly distributed.
+%% replaces below 3 calls becuase it's faster, 
+%  becuase we know the structure of the data,
+%  while delaunay considers the co-ordinates 
+%  randomly distributed.
          
          % map.quat = quat(x,y);
          % tri      = delaunay(x,y);
          % map      = tri2quat(tri,quat);
       
-      %% Calculate gradient per triangle
-      % -------------------------------------
+%% Calculate gradient per triangle
 
          [tri.fx,tri.fy] = tri_grad(x,y,z,map.tri);
          
          fx =  zeros([sz1cen,sz2cen]);
          fy =  zeros([sz1cen,sz2cen]);
          
-      %% Map value at centres of trangles to centers
-      %  of quadrangles using mapper provided by triquat.
-      % -------------------------------------
+%% Map value at centres of trangles to centers
+%  of quadrangles using mapper provided by triquat.
       
       % 1ST traingle per quadrangle : tri_per_quat(:,1)
       % 2ND traingle per quadrangle : tri_per_quat(:,2)
@@ -220,8 +213,7 @@ function varargout = gradient2(varargin)
          fxB =  nan.*zeros(szcor);
          fyB =  nan.*zeros(szcor);   
          
-   %% Calculations
-   % --------------------
+%% Calculations
 
 %     |       |       |       |         
 %     +   x   +   x   +   x   +   x     
@@ -237,12 +229,12 @@ function varargout = gradient2(varargin)
 %     o---+---o---+---o---+---o---+-    
 %            A3
 
-  %% Looped approach
-  % ------------------
+%% Looped approach
 
    n_triangles = 1; % one triangle per time in a looped manner
    
-   %% tri indices into corner (x,y) matrices
+%% tri indices into corner (x,y) matrices.
+
    triA     = zeros(n_triangles,3);
    triB     = zeros(n_triangles,3);
   
@@ -266,8 +258,7 @@ function varargout = gradient2(varargin)
    end
    end
    
-  %% Vectorized attempt
-  % ------------------
+%% Vectorized attempt
   
   %   %% all inpout excpet outer rows and columns
   %   n_triangles = (szcor(1)-2)*(szcor(2)-2)
@@ -295,8 +286,7 @@ function varargout = gradient2(varargin)
   %    fyB(2:end-1,2:end-1)] = tri_grad(x,y,z,triB);
   %                    
 
-  %% Average
-  % ------------------
+%% Average
 
       if     strcmp(OPT.average,'min')
          fx  = min(fxA, fxB);  
@@ -319,7 +309,6 @@ function varargout = gradient2(varargin)
 
 
 %% Out
-% ------------------------------
 
 if nargout<2
    out.fx    = fx;
