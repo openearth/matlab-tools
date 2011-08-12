@@ -38,5 +38,5 @@ if ~isempty(strfind(computer(),'64'))
 end
 
 % invoke MEX compilation tool
-mex(mexopts{:},'c:\Projects\AlkyonTools\matlab\trunk\gentool\insidepoly_dblengine.c');
-mex(mexopts{:},'c:\Projects\AlkyonTools\matlab\trunk\gentool\insidepoly_sglengine.c');
+mex(mexopts{:},'insidepoly_dblengine.c');
+mex(mexopts{:},'insidepoly_sglengine.c');
