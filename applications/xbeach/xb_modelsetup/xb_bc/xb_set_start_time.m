@@ -80,6 +80,10 @@ if isempty(morstart)
     morstart = 0;
 end
 [tstop morfac] = xb_get(xb, 'tstop', 'morfac');
+if isempty(morfac)
+    % if morfac is not in the xb structure, set it to one
+    morfac = 1;
+end
 [x z] = xb_get(xb, 'xfile.xfile', 'depfile.depfile');
 % derive duration
 duration = tstop - max(morstart, tstart);
