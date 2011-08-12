@@ -23,6 +23,11 @@ function [cbd] = colorbardiscrete(colorbartitle,levels,varargin)
 %       fontsize:   label fontsize (default is 7)
 %       peer:       axes to with which the colorbar should be associated (default
 %                   is the current axes)
+%       fixed:      uses the fixed colors from the colormap (no
+%                   interpolation)
+%       yticklabel: cell array of strings with user defined yticklabels
+%       reallevels: vector with real levels (changes the labels to these
+%                   levels)
 %
 %   Output:
 %   cbd = axes handle to the discrete colorbar
@@ -45,14 +50,27 @@ function [cbd] = colorbardiscrete(colorbartitle,levels,varargin)
 %       ax1pos = get(ax1,'position'); set(ax1,'position',ax1pos+[-0.07 0 0 0]);
 %       cbd1pos = get(cbd1,'position'); set(cbd1,'position',cbd1pos+[-0.07 0 0 0]);
 %
-%   See also contourf
+%% Example 3
+%       figure;
+%       mylevels = [-10 -5 0 .6 .8 1.0 1.25 1.5 1.75 2.0 2.5 3.0 3.5 10.0];
+%       mybed = reclass(Z,mylevels);
+%       pcolor(X,Y,mybed);
+%       shading flat;
+%       mymap = colormap(jet(13));
+%       clim([1:14]);
+%       axis equal; axis tight;
+%       hold on;
+%       colorbardiscrete('test',[1:13],'fixed',true,'reallevels',mylevels);
+
+%
+%   See also contourf, reclass
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 Alkyon Hydraulic Consultancy & Research
+%   Copyright (C) 2011 ARCADIS
 %       grasmeijerb
 %
-%       bart.grasmeijer@alkyon.nl
+%       bart.grasmeijer@arcadis.nl
 %
 %       P.O. Box 248
 %       8300 AE Emmeloord
@@ -141,6 +159,12 @@ for i=1:size(optvals,2),
         case 'fixed'
             fixed = optvals{2,i};
             OptionUsed(i)=1;
+        case 'yticklabel'
+            yticklabel = optvals{2,i};
+            OptionUsed(i)=1;
+        case 'reallevels'
+            reallevels = optvals{2,i};
+            OptionUsed(i)=1;
     end
 end;
 optvals(:,OptionUsed)=[];                                                   % delete used options
@@ -212,6 +236,13 @@ x  = 0;
 y  = 0;
 %
 
+if ~isempty(reallevels)
+    for i = 1:length(reallevels)-1
+    yticklabel{i} = [num2str(reallevels(i)) '-' num2str(reallevels(i+1))];
+end
+
+end
+
 if (nc == nv)
     for i=1:nc
         
@@ -223,10 +254,14 @@ if (nc == nv)
         
         %        place texts for v-ranges
         
+        if isempty(yticklabel)
         if (i==nc)
             label= ['>',num2str(levels(nv),fmt),' ',unit];
         else
             label = [num2str(levels(i),fmt),' - ',num2str(levels(i+1),fmt),' ',unit];
+        end
+        else
+            label = yticklabel{i};
         end
         %
         text (x+1.5*dx,y,100,label, ...
