@@ -16,11 +16,11 @@ function mtrxr = reclass(mtrx,cls,varargin)
 %       mybed = reclass(Z,mylevels);
 %       pcolor(X,Y,mybed);
 %       shading flat;
-%       mymap = colormap(jet(13));
-%       clim([1:14]);
+%       mymap = colormap(jet(length(mylevels)-1));
+%       clim([1:length(mylevels)]);
 %       axis equal; axis tight;
 %       hold on;
-%       colorbardiscrete('test',[1:13],'fixed',true,'reallevels',mylevels);
+%       colorbardiscrete('test',[1:length(mylevels)-1],'fixed',true,'reallevels',mylevels);
 %
 %   See also colorbardiscrete
 
