@@ -118,6 +118,7 @@ fontsize = 7;
 peeraxes = gca;
 unit = '';
 fixed = false;
+reallevels = [];
 
 %% optional arguments
 optvals = varargin;
@@ -238,9 +239,9 @@ y  = 0;
 
 if ~isempty(reallevels)
     for i = 1:length(reallevels)-1
-    yticklabel{i} = [num2str(reallevels(i)) '-' num2str(reallevels(i+1))];
-end
-
+        yticklabel{i} = [num2str(reallevels(i)) '-' num2str(reallevels(i+1))];
+    end
+    
 end
 
 if (nc == nv)
@@ -255,11 +256,11 @@ if (nc == nv)
         %        place texts for v-ranges
         
         if isempty(yticklabel)
-        if (i==nc)
-            label= ['>',num2str(levels(nv),fmt),' ',unit];
-        else
-            label = [num2str(levels(i),fmt),' - ',num2str(levels(i+1),fmt),' ',unit];
-        end
+            if (i==nc)
+                label= ['>',num2str(levels(nv),fmt),' ',unit];
+            else
+                label = [num2str(levels(i),fmt),' - ',num2str(levels(i+1),fmt),' ',unit];
+            end
         else
             label = yticklabel{i};
         end
