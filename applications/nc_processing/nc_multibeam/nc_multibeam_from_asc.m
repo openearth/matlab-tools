@@ -256,7 +256,7 @@ if OPT.make
                 if all(abs(D{kk}{1}(:) - nodata_value < 100.*eps))
                     D{kk}{1} = nan; %#ok<AGROW>
                 else
-                    D{kk}{1}(abs(D{kk}{1}-nodata_value < 100.*eps)) = nan; %#ok<AGROW>
+                    D{kk}{1}(abs(D{kk}{1}-nodata_value) < 100.*eps) = nan; %#ok<AGROW>
                 end
             end
             multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
