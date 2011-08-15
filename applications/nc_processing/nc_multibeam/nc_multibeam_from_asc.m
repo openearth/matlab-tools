@@ -122,6 +122,8 @@ function varargout = nc_multibeam_from_asc(varargin)
        error('DATA WITHOUT COORDINATE INFO IS USELESS, PLEASE PROVIDE the EPSGcode, see epsg-registry.org')
    end
 
+   ncfiles = {};
+   
 if OPT.make
 
    multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
@@ -147,9 +149,7 @@ if OPT.make
        fns = dir(fullfile(OPT.raw_path,OPT.raw_extension));
    end
    
-   ncfiles = {};
-    
-%% check if files are found
+   %% check if files are found
 
    if isempty(fns)
        error('no raw files')
@@ -160,7 +160,7 @@ if OPT.make
    dates = cellfun(OPT.dateFcn,{fns.name});
    [dates,ind]= sort(dates);
    fns = fns(ind);
-
+   
 %% initialize waitbar
 
    WB.done       = 0;
@@ -253,10 +253,10 @@ if OPT.make
                 kk       = kk+1;
                 D{kk}    = textscan(fid,'%f32',floor(OPT.block_size/ncols)*ncols,'CollectOutput',true); %#ok<AGROW>
                 D{kk}{1} = reshape(D{kk}{1},ncols,[])'; %#ok<AGROW>
-                if all(D{kk}{1}(:)==nodata_value)
+                if all(abs(D{kk}{1}(:) - nodata_value < 100.*eps))
                     D{kk}{1} = nan; %#ok<AGROW>
                 else
-                    D{kk}{1}(D{kk}{1}==nodata_value) = nan; %#ok<AGROW>
+                    D{kk}{1}(abs(D{kk}{1}-nodata_value < 100.*eps)) = nan; %#ok<AGROW>
                 end
             end
             multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
