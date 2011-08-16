@@ -72,7 +72,8 @@ function varargout = nc2struct(ncfile,varargin)
 % However, why does nc_getall currently not work with opendap libaries??
 % And what about global atts, part of D (NOOOOOOOOO!), or part of M(perhaps), or part of M.nc_global.?
 
-OPT.global2att = 2; % 0=not at all, 1=as fields, 2=as subfields of nc_global
+OPT.global2att   = 2; % 0=not at all, 1=as fields, 2=as subfields of nc_global
+OPT.time2datenum = 1; % time > datenum in extra variabkle datenum
 
 if nargin==0
    varargout = {OPT};
@@ -105,6 +106,15 @@ end
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
       D.(fldname) = nc_varget(fileinfo.Filename,fldname);
+      if OPT.time2datenum
+         j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name});
+         if ~isempty(j)
+            if strcmpi(fileinfo.Dataset(idat).Attribute(j).Value,'time')
+            D.datenum = nc_cf_time(fileinfo.Filename,fldname);
+            disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+            end
+         end
+      end
       if ischar(D.(fldname))
          D.(fldname) = cellstr(D.(fldname));
       end
@@ -118,16 +128,22 @@ else
 
    ndat = length(fileinfo.Dataset);
    if OPT.global2att>0
+   
+%% attributes
+   
    for iatt=1:length(fileinfo.Attribute);
       attname  = fileinfo.Attribute(iatt).Name;
       attname  = mkvar(attname); % ??? Invalid field name: 'CF:featureType'.
       if     OPT.global2att==1;
-      M.(attname) = fileinfo.Attribute(iatt).Value;
+         M.(attname) = fileinfo.Attribute(iatt).Value;
       elseif OPT.global2att==2
-      M.nc_global.(attname) = fileinfo.Attribute(iatt).Value;
+         M.nc_global.(attname) = fileinfo.Attribute(iatt).Value;
       end
    end
    end
+   
+%% data
+   
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
       for iatt=1:length(fileinfo.Dataset(idat).Attribute);

@@ -77,12 +77,16 @@ for i=1:length(urls)
    
       disp('    name                 : first date - last date  n  urlPath                                                   ')
       for i=1:length(L)
-          t{i} = nc_cf_time(L{i},'time');
-         t0(i) = t{i}(1);
-         t1(i) = t{i}(end);
-         nt(i) = length(t{i});
-        %disp([num2str(i,'%0.3d'),'/',num2str(length(L),'%0.3d')])
-         disp([num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-21),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.2d'),' ',L{i}])
+         try
+             t{i} = nc_cf_time(L{i},'time');
+            t0(i) = t{i}(1);
+            t1(i) = t{i}(end);
+            nt(i) = length(t{i});
+           %disp([num2str(i,'%0.3d'),'/',num2str(length(L),'%0.3d')])
+            disp([num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-21),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.2d'),' ',L{i}])
+         catch
+            error(['not a valid netCDF CF gridset file: ',L{i}]);
+         end
       end
    
    %% get all available dates

@@ -391,7 +391,9 @@ for entry=1:length(OPT.files)
 %% include variables
 
    for ivar = 1:length(OPT.varname)
+       if nc_isvar(OPT.filename, OPT.varname{ivar})
        VAR.(OPT.varname{ivar}){entry} = nc_varget(OPT.filename, OPT.varname{ivar});
+       end
    end
     
 %% pause
