@@ -41,7 +41,11 @@ function varargout = ArcGisRead(fname,varargin)
    OPT      = setproperty(OPT,varargin{:});
 
    D.varname         = OPT.varname;      
-   D.long_name       = OPT.long_name;    
+   D.long_name       = OPT.long_name; 
+   if isempty(D.long_name)
+       [PATHSTR,NAME,EXT] = fileparts(fname); 
+       D.long_name=[NAME EXT];
+   end
    D.standard_name   = OPT.standard_name;
    D.units           = OPT.units;        
 
@@ -50,6 +54,11 @@ function varargout = ArcGisRead(fname,varargin)
    D.filename = fname;
    fid        = fopen(fname);
    basename   = fullfile(fileparts(fname),filename(fname));
+   
+  if OPT.plot
+      TMP = figure;
+  end
+
 
 %% Read header
 
@@ -112,18 +121,26 @@ end
 %% Plot data (do this last, as it can be really sloooow)
 
    if OPT.plot
-      TMP = figure;
       pcolor(D.x,D.y,D.(D.varname));
       shading interp;
       axis    equal;
       caxis  (OPT.clim)
-     %tickmap('xy')
-      xlim([D.xllcorner D.xllcorner+D.cellsize*D.ncols])
-      ylim([D.yllcorner D.yllcorner+D.cellsize*D.nrows])
-      colorbarwithtitle([OPT.long_name,' [',OPT.units,']']);
+      tickmap('xy')
+      %diff = abs(D.xllcorner-D.xllcorner+D.cellsize*D.ncols)*0.05;
+      %xlim([D.xllcorner-diff D.xllcorner+D.cellsize*D.ncols]+diff)
+      %diff = abs(D.yllcorner-D.yllcorner+D.cellsize*D.nrows)*0.05;
+      %ylim([D.yllcorner-diff D.yllcorner+D.cellsize*D.nrows+diff])
+      title(fname);
+      colorbarwithtitle(['',' [',OPT.units,']']);
+      hold on
+      X=[D.x(1),D.x(end),D.x(end),D.x(1),D.x(1)];
+      Y=[D.y(1),D.y(1),D.y(end),D.y(end),D.y(1)];
+      plot(X,Y,'--r')
+      grid on
       if OPT.export
          print2screensize([basename,'.png'])
       end
+      pausedisp
       try;close(TMP);end
    end
    
