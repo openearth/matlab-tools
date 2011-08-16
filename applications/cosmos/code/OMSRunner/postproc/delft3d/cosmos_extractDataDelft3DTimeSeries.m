@@ -15,7 +15,6 @@ for i=1:model.nrStations
     stLongName=model.stations(i).longName;
     tstart=max(model.tWaveOkay,model.tFlowOkay);
  
-
     for k=1:model.stations(i).nrParameters
 
         data=[];

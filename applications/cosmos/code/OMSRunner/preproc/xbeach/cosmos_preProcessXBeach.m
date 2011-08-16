@@ -1,4 +1,4 @@
-function PreProcessXBeach(hm,m)
+function cosmos_preProcessXBeach(hm,m)
 
 tmpdir=hm.tempDir;
 
@@ -204,8 +204,8 @@ switch model.runEnv
         fprintf(fid,'%s\n','');
         fprintf(fid,'%s\n','### General, start XBeach in parallel by means of mpirun.');
         fprintf(fid,'%s\n','');
-        fprintf(fid,'%s\n','StageIn');
-        fprintf(fid,'%s\n','cd $DELTAQ_LocalTempDir');
+%        fprintf(fid,'%s\n','StageIn');
+%        fprintf(fid,'%s\n','cd $DELTAQ_LocalTempDir');
         fprintf(fid,'%s\n',['date -u ''+%Y%m%d %H%M%S'' >> running.txt']);
         %                fprintf(fid,'%s\n','unzip sp2.zip');
         fprintf(fid,'%s\n','$xbeach_bin_dir/xbeach >> output_xbeach 2>&1');
@@ -214,9 +214,9 @@ switch model.runEnv
         fprintf(fid,'%s\n','rm *.sp2');
         fprintf(fid,'%s\n','');
         fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');
-        fprintf(fid,'%s\n','StageOut');
+%        fprintf(fid,'%s\n','StageOut');
         fprintf(fid,'%s\n','');
-        fprintf(fid,'%s\n','cd $DELTAQ_JobDir');
+%        fprintf(fid,'%s\n','cd $DELTAQ_JobDir');
         fprintf(fid,'%s\n','');
         fprintf(fid,'%s\n',['mv running.txt finished.txt']);
         fprintf(fid,'%s\n','');

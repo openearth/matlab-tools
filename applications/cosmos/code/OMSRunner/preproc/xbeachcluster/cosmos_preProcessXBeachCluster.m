@@ -145,8 +145,8 @@ switch model.runEnv
             fprintf(fid,'%s\n','');
             fprintf(fid,'%s\n','### General, start XBeach in parallel by means of mpirun.');
             fprintf(fid,'%s\n','');
-            fprintf(fid,'%s\n','StageIn');
-            fprintf(fid,'%s\n','cd $DELTAQ_LocalTempDir');
+%            fprintf(fid,'%s\n','StageIn');
+%            fprintf(fid,'%s\n','cd $DELTAQ_LocalTempDir');
             fprintf(fid,'%s\n',['date -u ''+%Y%m%d %H%M%S'' >> running' num2str(j) '.txt']);
             for i=(j-1)*nprfperjob+1:min(j*nprfperjob,np)
                 if ok(i)
@@ -162,9 +162,9 @@ switch model.runEnv
             end
             fprintf(fid,'%s\n','');
             fprintf(fid,'%s\n',['date -u ''+%Y%m%d %H%M%S'' >> running' num2str(j) '.txt']);
-            fprintf(fid,'%s\n','StageOut');
+%            fprintf(fid,'%s\n','StageOut');
             fprintf(fid,'%s\n','');
-            fprintf(fid,'%s\n','cd $DELTAQ_JobDir');
+%            fprintf(fid,'%s\n','cd $DELTAQ_JobDir');
             fprintf(fid,'%s\n','');
             fprintf(fid,'%s\n',['mv running' num2str(j) '.txt finished' num2str(j) '.txt']);
             fprintf(fid,'%s\n','');

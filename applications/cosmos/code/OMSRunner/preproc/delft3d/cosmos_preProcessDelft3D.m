@@ -1,4 +1,4 @@
-function PreProcessDelft3D(hm,m)
+function cosmos_preProcessDelft3D(hm,m)
 
 model=hm.models(m);
 
@@ -167,7 +167,7 @@ switch lower(model.type)
                 fclose(fid);
             case{'h4'}
 
-                [success,message,messageid]=copyfile([hm.exeDir 'linux' filesep 'swan.bat'],tmpdir,'f');
+                [success,message,messageid]=copyfile([hm.exeDir 'linux' filesep 'swan.sh'],tmpdir,'f');
                 
                 fid=fopen([tmpdir 'run.sh'],'wt');
                 fprintf(fid,'%s\n','#!/bin/sh');
@@ -200,16 +200,16 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','export D3D_HOME=/opt/delft3d');
                 fprintf(fid,'%s\n','');
-%                fprintf(fid,'%s\n','swanbatdir=./');
+                fprintf(fid,'%s\n','swanbatdir=./');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','export ARCH=intel');
-%                fprintf(fid,'%s\n','export PATH=$swanbatdir:$PATH');
+                fprintf(fid,'%s\n','export PATH=$swanbatdir:$PATH');
                 fprintf(fid,'%s\n','export PATH=$exedir:$PATH');
                 fprintf(fid,'%s\n','export LD_LIBRARY_PATH=$exedir:$LD_LIBRARY_PATH');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','StageIn');
+%                fprintf(fid,'%s\n','StageIn');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','cd $DELTAQ_LocalTempDir');
+%                fprintf(fid,'%s\n','cd $DELTAQ_LocalTempDir');
                 fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','echo ===================================================================');
@@ -234,9 +234,9 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','StageOut');
+%                fprintf(fid,'%s\n','StageOut');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','cd $DELTAQ_JobDir');
+%                fprintf(fid,'%s\n','cd $DELTAQ_JobDir');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','mv running.txt finished.txt');
                 fclose(fid);
