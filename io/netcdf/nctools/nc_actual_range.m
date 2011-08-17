@@ -60,32 +60,42 @@ function actual_range = nc_actual_range(ncfile,varname)
 %% get actual_range
 
    info = nc_getvarinfo(ncfile, varname);
-   ind  = ismember({info.Attribute.Name}, 'standard_name');
-   
-   if ~strcmpi({'latitude',...
+   fullsearch = 1;
+   if ~isempty(info.Attribute)
+      ind  = ismember({info.Attribute.Name}, 'standard_name');
+      if ~(ind==0)
+        if ~strcmpi({'latitude',...
                 'longitude',...
                 'projection_x_coordinate',...
                 'projection_y_coordinate',...
                 'time',...
                 'z'},info.Attribute(ind).Value)
-      warning('variable is not a CF coordinate variable and might not be contiguous')
-   end
+         warning('variable is not a CF coordinate variable and might not be contiguous')
+        end
+      else
+         warning('variable is not a CF coordinate variable and might not be contiguous')
+      end
 
 %% read attribute if present
    
-   ind  = ismember({info.Attribute.Name}, 'actual_range');
+      ind  = ismember({info.Attribute.Name}, 'actual_range');
 
-   if sum(ind)==1
-
-      actual_range = (info.Attribute(ind).Value);
-      if ischar(actual_range); % not everyone knows you can insert matrices inside attributes, so some some put space separates strings in
-         actual_range = str2num(actual_range);
+      if sum(ind)==1
+        actual_range = (info.Attribute(ind).Value);
+        if ischar(actual_range); % not everyone knows you can insert matrices inside attributes, so some some put space separates strings in
+          actual_range = str2num(actual_range);
+        end
+        actual_range = actual_range(:)';
+        fullsearch = 0;
       end
-      actual_range = actual_range(:)';
+      
+   else
+      warning('variable is not a CF coordinate variable and might not be contiguous')
+   end
    
 %% read data
    
-   else
+   if fullsearch
        
       sz     = info.Size;
       varmin =  Inf;
@@ -95,6 +105,10 @@ function actual_range = nc_actual_range(ncfile,varname)
       %  for 2D read all ribs
       %  for 3D read all faces
 
+      if sz==1
+         varmin       = nc_varget(ncfile,varname);
+         varmax       = varmin;          
+      else
       for idim=1:length(sz)
          start        =   0.*sz;
          count        =      sz;
@@ -105,6 +119,7 @@ function actual_range = nc_actual_range(ncfile,varname)
          varmin       = min(min(varval(:)),varmin(:));
          varmax       = max(max(varval(:)),varmax(:));
       end
+   end
    
       actual_range = [varmin varmax];
   
