@@ -219,11 +219,7 @@ if ischar(OPT.fileName)
 
 %% HEADER
 
-   OPT_header = struct(...
-              'name',OPT.kmlName,...
-              'open',0,...
-       'description',OPT.description);
-   output = KML_header(OPT_header);
+   output = KML_header(OPT);
    
    fprintf(OPT.fid,output);
 

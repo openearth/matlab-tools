@@ -52,6 +52,7 @@ function nc_cf_gridset_get_list(varargin)
    OPT.matname = ['nc_cf_gridset_get_list.mat'];
    OPT. ncname = ['nc_cf_gridset_get_list.nc'];   
    OPT.fid     = 1;
+   OPT.bbfmt   = '%+09.1f'
    
    OPT = setProperty(OPT,varargin{firstarg:end});
    
@@ -70,6 +71,7 @@ for i=1:length(urls)
    %% get available files
    
       L = opendap_catalog(url);
+      namewidth = max(21,size(filename(char(L)),2)); % width for printing names
       L = sort(L);
    
    %% get meta-info
@@ -81,9 +83,15 @@ for i=1:length(urls)
              t{i} = nc_cf_time(L{i},'time');
             t0(i) = t{i}(1);
             t1(i) = t{i}(end);
+            xlim  = nc_actual_range(L{i},'x');
+            ylim  = nc_actual_range(L{i},'y');
+            x0(i) = xlim(1);
+            x1(i) = xlim(2);
+            y0(i) = ylim(1);
+            y1(i) = ylim(2);
             nt(i) = length(t{i});
            %disp([num2str(i,'%0.3d'),'/',num2str(length(L),'%0.3d')])
-            disp([num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-21),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.2d'),' ',L{i}])
+            disp([num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-namewidth),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.2d'),' ',L{i}])
          catch
             error(['not a valid netCDF CF gridset file: ',L{i}]);
          end
@@ -99,19 +107,20 @@ for i=1:length(urls)
    %% make ascii table with available years
    
       years = unique(year(allt));
-      array =repmat('~',[length(L) length(years)]);
-      mask  =repmat(0  ,[length(L) length(years)]);
-      dprintf(OPT.fid,[url,' ', datestr(now),'\n']);
+      array = repmat('~',[length(L) length(years)]);
+      mask  = repmat(0  ,[length(L) length(years)]);
+      dprintf(OPT.fid,'%s\n',[url,' ', datestr(now)]);
       yearheader = [addrowcol(num2str(years')',0,-54,' ')];
       for iy=1:size(yearheader,1)
       dprintf(OPT.fid,[yearheader(iy,:),'\n']);
       end
-      dprintf(OPT.fid,'#   name                 : first date - last date  n                                                            \n')
+      spp = repmat(' ',[1 length(years)]);
+      dprintf(OPT.fid,['#   ',pad('name',' ',-namewidth),': first date - last date  nt',spp,'  [x0 x1 y0 y1]                                             \n'])
       for i=1:length(L)
          [dummy,dummy,ind]=intersect(year(t{i}),years);
          array(i,ind)='#';
          mask (i,ind)=1;
-         dprintf(OPT.fid,[num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-21),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.2d'),' ',array(i,:),'\n'])
+         dprintf(OPT.fid,[num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-namewidth),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.2d'),' ',array(i,:),' ',num2str(x0(i),OPT.bbfmt),' ',num2str(x1(i),OPT.bbfmt),' ',num2str(y0(i),OPT.bbfmt),' ',num2str(y1(i),OPT.bbfmt),'\n'])
       end
       
       if OPT.fid > 1

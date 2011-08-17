@@ -31,8 +31,19 @@ function S = vaklodingen_definition(varargin)
  OPT.debug = 0;
  OPT.epsg  = 28992;
  
+ if odd(nargin)
+ name = varargin{1};
+ OPT  = setproperty(OPT,varargin{2:end});
+ else
+ name = [];
+ OPT  = setproperty(OPT,varargin{:});
+ end
+ 
 %% define all kaartbladen
  
+   D.xname        = cellstr(num2str([109:1:140]'))';
+   D.yname        = cellstr([num2str([51:-2:05]','%0.2d') num2str([50:-2:04]','%0.2d')])';
+
    D.ncols        = 500; % nx
    D.nrows        = 625; % ny
    D.cellsize     = 20;  % dx = dy by definition
@@ -41,9 +52,6 @@ function S = vaklodingen_definition(varargin)
   
   [D.xllcorner,...
    D.yllcorner]=meshgrid(D.xllcorner,D.yllcorner);
-   
-   D.xname        = cellstr(num2str([109:1:140]'));
-   D.yname        = cellstr([num2str([51:-2:05]','%0.2d') num2str([50:-2:04]','%0.2d')]);
  
 %% create all kaartbladen
  
@@ -54,15 +62,15 @@ function S = vaklodingen_definition(varargin)
      x1 = D.xllcorner(iy,ix) + D.cellsize*D.ncols;
      y0 = D.yllcorner(iy,ix);
      y1 = D.yllcorner(iy,ix) + D.cellsize*D.nrows;
-     D.x{ix,iy}           = [x0 x1 x1 x0 x0 nan]; % nan-separated BB x
-     D.y{ix,iy}           = [y0 y0 y1 y1 y0 nan]; % nan-separated BB x
-     D.BoundingBox{ix,iy} = [x0 y0;x1 y1]; % see shaperead: [minX minY;maxX maxY]
+     D.x             {iy,ix}= [x0 x1 x1 x0 x0 nan]; % nan-separated BB x
+     D.y             {iy,ix} = [y0 y0 y1 y1 y0 nan]; % nan-separated BB x
+     D.BoundingBox   {iy,ix} = [x0 y0;x1 y1]; % see shaperead: [minX minY;maxX maxY]
     end
    end
 
 %% select one kaartblad
 
-   if nargin==1
+   if ~isempty(name)
       name = varargin{1};
       xxx  = name(3:5);
       yyyy = name(7:10);
@@ -72,12 +80,12 @@ function S = vaklodingen_definition(varargin)
    
       S = D;
 
-      S.name        = D.name{ix,iy};
+      S.name        = D.name{iy,ix};
       S.xname       = D.xname{ix};
       S.yname       = D.yname{iy};
-      S.xllcorner   = D.xllcorner(ix,iy);
-      S.yllcorner   = D.yllcorner(ix,iy);
-      S.BoundingBox = D.BoundingBox{ix,iy};
+      S.xllcorner   = D.xllcorner(iy,ix);
+      S.yllcorner   = D.yllcorner(iy,ix);
+      S.BoundingBox = D.BoundingBox{iy,ix};
       S             = rmfield(S,'x');
       S             = rmfield(S,'y');
       S.X           = S.xllcorner + [.5:1:S.ncols-0.5]*S.cellsize;
@@ -89,10 +97,20 @@ function S = vaklodingen_definition(varargin)
 %%
  if OPT.debug
     plot(cell2mat(D.x)', cell2mat(D.y)')
-    [S.lonllcorner,S.latllcorner] = convertCoordinates(S.xllcorner,S.yllcorner,'CS1.code',OPT.epsg,'CS2.code',4326);
-    KMLmarker(S.latllcorner,S.lonllcorner,'name',D.name,'kmlname','vaklodingen llcorner','fileName','vaklodingenll.kml')
+    hold on
+    for ix=1:length(D.xname)
+    D.name{iy,ix} = ['KB' D.xname{ix} '_' D.yname{iy}];
+    text(D.xllcorner(:,ix),...
+         D.yllcorner(:,ix),mkvar(char(D.name{:,ix})),'rotation',45,'fontsize',8)
+    end
+   
+    [S.lonllcorner,S.latllcorner] = convertCoordinates(S.xllcorner+D.ncols.*D.cellsize./2,...
+                                                       S.yllcorner+D.nrows.*D.cellsize./2,'CS1.code',OPT.epsg,'CS2.code',4326);
+    KMLmarker(S.latllcorner,S.lonllcorner,'name',D.name,'kmlname','vaklodingen names','fileName','vaklodingen_definition_name.kml')
+    
     [lon,lat]=convertCoordinates(cell2mat(D.x)', cell2mat(D.y)','CS1.code',OPT.epsg,'CS2.code',4326);
-    KMLline(lat,lon,'kmlname','vaklodingen BB','fileName','vaklodingenBB.kml','lineColor',[ .5 .5 .5], 'lineWidth',2)
+    KMLline(lat,lon,'kmlname','vaklodingen bounding box','fileName','vaklodingen_definition_BB.kml','lineColor',[ .5 .5 .5], 'lineWidth',2)
+    KMLmerge_files('sourceFiles',{'vaklodingen_definition_name.kml','vaklodingen_definition_BB.kml'},'fileName','vaklodingen_definition.kml')
  end
 
 %% Examples
