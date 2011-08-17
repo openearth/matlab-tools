@@ -1,5 +1,5 @@
 function [X, Y, Z, Ztime] = rws_data2grid(mapurls, minx, maxx, miny, maxy, OPT)
-warning('This function is deprecated in favour of grid_orth_data2grid')
+error('This function is deprecated in favour of grid_orth_data2grid')
 %RWS_DATA2GRID get data in fixed otrhogonal grid from bundle of netCDF files
 %
 %   [X, Y, Z, Ztime] = rws_data2grid(mapurls, minx, maxx, miny, maxy, <keyword,value>)

@@ -5,6 +5,7 @@
   <catalogRef xlink:href="http://gsics.eumetsat.int/thredds/catalog.xml"              xlink:title="EUMETSAT"  name=""/>
   <catalogRef xlink:href="http://michigan.glin.net/thredds/catalog.xml"               xlink:title="GLIN"      name=""/>
   <catalogRef xlink:href="http://geoservices.knmi.nl/thredds/catalog.xml"             xlink:title="KNMI"      name=""/>
+  <catalogRef xlink:href="http://thredds.met.no/thredds/catalog.xml"                  xlink:title="met.no"    name=""/>
   <catalogRef xlink:href="http://data.nodc.noaa.gov/thredds/catalog.xml"              xlink:title="NOAA NODC" name=""/>
   <catalogRef xlink:href="http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.xml" xlink:title="NOAA NDBC" name=""/>
   <catalogRef xlink:href="http://motherlode.ucar.edu/thredds/catalog.xml"             xlink:title="UCAR"      name=""/>

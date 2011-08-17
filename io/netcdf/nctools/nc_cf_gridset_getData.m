@@ -147,6 +147,10 @@ OPT = setProperty(OPT,varargin{nextarg:end});
              
 warning('TO DO: permute Z automacially into [t by y by x]')
 
+% nc_index.x = nc_varfind(list{ifile}, 'attributename','standard_name','attributevalue','projection_x_coordinate');
+% nc_index.y = nc_varfind(list{ifile}, 'attributename','standard_name','attributevalue','projection_y_coordinate');
+% nc_index.t = nc_varfind(list{ifile}, 'attributename','standard_name','attributevalue','time');
+
              start = permute([(ind(idt)-1)  0  0],[1 2 3]); % @timedim
              count = permute([           1 -1 -1],[1 2 3]); % @timedim
 

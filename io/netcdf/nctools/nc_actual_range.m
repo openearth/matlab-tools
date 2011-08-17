@@ -78,6 +78,9 @@ function actual_range = nc_actual_range(ncfile,varname)
    if sum(ind)==1
 
       actual_range = (info.Attribute(ind).Value);
+      if ischar(actual_range); % not everyone knows you can insert matrices inside attributes, so some some put space separates strings in
+         actual_range = str2num(actual_range);
+      end
       actual_range = actual_range(:)';
    
 %% read data

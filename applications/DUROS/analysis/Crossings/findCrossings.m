@@ -17,7 +17,7 @@ function [xcr zcr x1_new_out z1_new_out x2_new_out z2_new_out crossdir] = findCr
 %
 % Output:
 %
-%   See also addXvaluesExactCrossings
+%   See also addXvaluesExactCrossings, POLYINTERSECT
 %
 
 % --------------------------------------------------------------------

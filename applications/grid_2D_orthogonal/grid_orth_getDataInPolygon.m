@@ -127,8 +127,8 @@ OPT.whattodo        = 1;
 OPT.type            = 1;
 OPT.counter         = 0;
 OPT.urls            = [];
-OPT.x_ranges        = [];
-OPT.y_ranges        = [];
+OPT.x_ranges        = {};
+OPT.y_ranges        = {};
 
 OPT = setproperty(OPT, varargin{:});
 

@@ -14,8 +14,8 @@ clc
 %% next run sand balance
 OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
 OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
-OPT.workdir         = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\scripts\sedbudget\vaklodingen\';
-OPT.polygondir      = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\scripts\sedbudget\vaklodingen\polygons\';
+OPT.workdir         =  pwd;
+OPT.polygondir      = [pwd,'\polygons\'];
 OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
 OPT.min_coverage    = [50 75 90];                       % coverage percentage (can be several, e.g. [50 75 90]
 OPT.urls = {'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB120_3332.nc'
@@ -198,7 +198,7 @@ OPT.urls = {'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/va
 	'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB110_4948.nc'
 	'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB115_4140.nc'
 	'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB124_2322.nc'};
-OPT.x_ranges = [90000 96460
+x_ranges = [90000 96460 % turn into cell below
 	40000 50000
 	60000 70000
 	160000 170000
@@ -378,7 +378,7 @@ OPT.x_ranges = [90000 96460
 	-10000 0
 	40000 50000
 	130000 130400];
-OPT.y_ranges = [475000 487500
+y_ranges = [475000 487500
 	412500 425000
 	362500 375000
 	587500 600000
@@ -558,6 +558,11 @@ OPT.y_ranges = [475000 487500
 	375000 387500
 	425000 437500
 	549740 550000];
+
+for i=1:size(y_ranges,1)
+  OPT.x_ranges{i}            = x_ranges(i,:);
+  OPT.y_ranges{i}            = y_ranges(i,:);
+end
 
 if 0
     try rmdir(fullfile(OPT.workdir, 'coverage'),  's'); end

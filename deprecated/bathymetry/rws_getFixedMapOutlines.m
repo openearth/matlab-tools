@@ -1,5 +1,5 @@
 function OPeNDAPlinks = rws_getFixedMapOutlines(type,varargin)
-warning('This function is deprecated in favour of grid_orth_getFixedMapOutlines')
+error('This function is deprecated in favour of grid_orth_getFixedMapOutlines')
 %RWS_GETFIXEDMAPOUTLINES   retrieve list of availble netCDF files from OPeNDAP server/local disc
 %
 %   Syntax:

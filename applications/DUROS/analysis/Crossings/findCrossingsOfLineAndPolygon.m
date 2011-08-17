@@ -20,7 +20,7 @@ function [xcr, zcr] = findCrossingsOfLineAndPolygon(x1,z1,x2,z2)
 %               xcr  = array of x-values crossings found
 %               zcr	 = array of corresponding z-values of crossings found (same size as x1)
 %
-%   See also addXvaluesExactCrossings, findCrossings
+%   See also addXvaluesExactCrossings, findCrossings, POLYINTERSECT
 %
 
 % --------------------------------------------------------------------------

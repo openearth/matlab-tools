@@ -14,8 +14,8 @@ clc
 %% next run sand balance
 OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
 OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
-OPT.workdir         = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\scripts\sedbudget\jarkus\';
-OPT.polygondir      = 'D:\checkouts\VO-rawdata\projects\151027_maasvlakte_2\scripts\sedbudget\jarkus\polygons\';
+OPT.workdir         =  pwd;
+OPT.polygondir      = [pwd,'\polygons\'];
 OPT.polygon         = [];
 OPT.cellsize        = [];                               % left empty will be determined automatically
 OPT.datathinning    = 1;                                % stride with which to skip through the data
@@ -102,7 +102,7 @@ OPT.urls = {'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/ja
 	'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/jarkusKB133_1110.nc'
 	'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/jarkusKB112_4544.nc'
 	'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/jarkusKB123_2120.nc'};
-OPT.x_ranges = [50000 60000
+x_ranges = [50000 60000 % turn into cell below
 	130000 140000
 	70000 80000
 	40000 50000
@@ -175,7 +175,7 @@ OPT.x_ranges = [50000 60000
 	220000 230000
 	10000 20000
 	120000 130000];
-OPT.y_ranges = [437500 450000
+y_ranges = [437500 450000
 	587500 600000
 	487500 500000
 	400000 412500
@@ -248,5 +248,10 @@ OPT.y_ranges = [437500 450000
 	612500 625000
 	400000 412500
 	550000 562500];
+	
+for i=1:size(y_ranges,1)
+  OPT.x_ranges{i}            = x_ranges(i,:);
+  OPT.y_ranges{i}            = y_ranges(i,:);
+end
 
 grid_orth_getSandBalance(OPT);

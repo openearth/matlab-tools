@@ -57,38 +57,23 @@ if isfield(OPT,'catalognc')
 end
 
 if isfield(OPT,'catalognc')
-    OPT.x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x'); % should be [n x 2], same as slow method.
-    OPT.y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y');
+    x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x'); % should be [n x 2], same as slow method.
+    y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y');
+    for i=1:size(x_ranges,1)
+    OPT.x_ranges{i} = x_ranges(i,:);
+    OPT.y_ranges{i} = y_ranges(i,:);
+    end
 else
     %% slow method for if there is no catalog nc
-    OPT.x_ranges = nan(length(OPT.urls),2);
-    OPT.y_ranges = nan(length(OPT.urls),2);
     wbh = waitbar(0,'Please wait ...');
     varname_x = nc_varfind(OPT.urls{1}, 'attributename','standard_name','attributevalue','projection_x_coordinate');
     varname_y = nc_varfind(OPT.urls{1}, 'attributename','standard_name','attributevalue','projection_y_coordinate');
     for i = 1:length(OPT.urls)
         waitbar(i/length(OPT.urls), wbh, 'Extracting map outlines from nc files ...')
 
-        x_range = nc_getvarinfo(OPT.urls{i}, varname_x);
-        y_range = nc_getvarinfo(OPT.urls{i}, varname_y);
-
-        if any(ismember({y_range.Attribute.Name}, 'actual_range')) && ...
-           any(ismember({x_range.Attribute.Name}, 'actual_range'))
-            xrange = x_range.Attribute(ismember({x_range.Attribute.Name}, 'actual_range')).Value;
-            yrange = y_range.Attribute(ismember({y_range.Attribute.Name}, 'actual_range')).Value;
-            if isstr(xrange);xrange = str2num(xrange);end;OPT.x_ranges(i,:) = xrange;
-            if isstr(yrange);yrange = str2num(yrange);end;OPT.y_ranges(i,:) = yrange;
-        else
-            info_x            = nc_getvarinfo(OPT.urls{i}, varname_x);
-            OPT.x_ranges(i,:) = [...
-                nc_varget(OPT.urls{i}, varname_x, 0, 1) ...
-                nc_varget(OPT.urls{i}, varname_x, info_x.Size - 1, 1)];
-
-            info_y            = nc_getvarinfo(OPT.urls{i}, varname_y);
-            OPT.y_ranges(i,:) = [...
-                nc_varget(OPT.urls{i}, varname_y, 0, 1) ...
-                nc_varget(OPT.urls{i}, varname_y, info_y.Size - 1, 1)];
-        end
+        OPT.x_ranges{i} = sort(nc_actual_range(OPT.urls{i}, varname_x));
+        OPT.y_ranges{i} = sort(nc_actual_range(OPT.urls{i}, varname_y));
+        
     end
     close(wbh)
 end

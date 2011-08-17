@@ -14,7 +14,7 @@ function [x2add] = addXvaluesExactCrossings(x_new,z1_new,z2_new)
 % Output:
 % x2add  = 
 %
-% See also: 
+% See also: , POLYINTERSECT
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology

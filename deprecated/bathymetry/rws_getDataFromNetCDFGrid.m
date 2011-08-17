@@ -1,5 +1,5 @@
 function [X, Y, Z, T] = rws_getDataFromNetCDFGrid(varargin)
-warning('This function is deprecated in favour of grid_orth_getDataFromNetCDFGrid')
+error('This function is deprecated in favour of grid_orth_getDataFromNetCDFGrid')
 %rws_GETDATAFROMNETCDFGRID  This routine gets data from a netCDF grid file.
 %
 %   This routine gets data from a NetCDF grid file

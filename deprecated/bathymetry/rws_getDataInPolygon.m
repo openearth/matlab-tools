@@ -1,5 +1,5 @@
 function [X, Y, Z, Ztime] = rws_getDataInPolygon(varargin)
-warning('This function is deprecated in favour of grid_orth_getDataInPolygon')
+error('This function is deprecated in favour of grid_orth_getDataInPolygon')
 %RWS_GETDATAINPOLYGON   load grid data inside a polygon from an OPeNDAP server
 %
 %       [X, Y, Z, Ztime] = rws_getDataInPolygon(<keyword,value>);

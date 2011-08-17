@@ -55,12 +55,12 @@ function d = UCIT_getMetaData_grid
         d.axes          = datatypes.grid.axes{ind};
         d.cellsize      = datatypes.grid.cellsize{ind};
         d.urls          = opendap_catalog(datatypes.grid.catalog{ind});
-        OPT2            = grid_orth_getMapInfoFromDataset(d.catalog);
-        d.contour       = [OPT2.x_ranges OPT2.y_ranges] ;
+        OPT2            = grid_orth_getMapInfoFromDataset(d.catalog)
+        d.contour       = [cell2mat([OPT2.x_ranges(:)])  cell2mat([OPT2.y_ranges(:)])];
         d.names         = d.urls;
         d.x_ranges      = OPT2.x_ranges;
         d.y_ranges      = OPT2.y_ranges;
-        
+
         set(findobj('tag','UCIT_mainWin'),'UserData',d);
     else
         disp('Data gathered from gui-data UCIT console')

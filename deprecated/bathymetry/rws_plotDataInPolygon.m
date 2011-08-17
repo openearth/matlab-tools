@@ -1,5 +1,5 @@
 function rws_plotDataInPolygon(X, Y, Z, Ztime, varargin)
-warning('This function is deprecated in favour of grid_orth_plotDataInPolygon')
+error('This function is deprecated in favour of grid_orth_plotDataInPolygon')
 %RWS_PLOTDATAINPOLYGON
 %
 %   rws_plotDataInPolygon(X, Y, Z, Ztime, <keyword,value>)

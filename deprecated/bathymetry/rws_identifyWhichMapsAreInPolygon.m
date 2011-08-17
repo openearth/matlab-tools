@@ -1,5 +1,5 @@
 function [mapurls, minx, maxx, miny, maxy] = rws_identifyWhichMapsAreInPolygon(ah, polygon)
-warning('This function is deprecated in favour of grid_orth_identifyWhichMapsAreInPolygon')
+error('This function is deprecated in favour of grid_orth_identifyWhichMapsAreInPolygon')
 %RWS_IDENTIFYWHICHMAPSAREINPOLYGON  Script to identify which fixed maps are located inside a polygon partly or as a whole
 %
 % See also: rws_createFixedMapsOnAxes, rws_createFixedMapsOnFigure,

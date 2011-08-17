@@ -142,7 +142,7 @@ if length(OPT.url) < 11 | (~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end
    
    [nc_file_list,nc_folder_list] = findAllFiles(OPT.url,'pattern_incl','*.nc','recursive',OPT.maxlevel>1);
    
-   % make sure thwere is a file separator at the end of the url field 
+   % make sure there is a file separator at the end of the url field 
    if strcmp(filesep,OPT.url(end))
         %do nothing
    else

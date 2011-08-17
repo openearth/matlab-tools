@@ -59,11 +59,6 @@ OPT.dataset                = 'd:\checkouts\vo_nc\projects\151027_maasvlakte_2\el
 OPT.ldburl                 = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc'; % indicate landboundary file to use in plotting (default holland.nc)
 OPT.polygon                = [];
 
-catalog                    = nc2struct(OPT.dataset);
-OPT.urls                   = catalog.urlPath;
-OPT.x_ranges               = catalog.projectionCoverage_x;
-OPT.y_ranges               = catalog.projectionCoverage_y;
-
 % provide general settings for grid_orth_getDataInPolygon
 OPT.inputtimes             = [];                                     % if left empty routine will automatically retrieve times from database
 OPT.starttime              = datenum(2010,09,01);                    % indicate starttime for profile extraction
@@ -75,6 +70,14 @@ OPT.thinning               = 1;                                      % stride to
 OPT.plot_profile           = 1;
 
 OPT = setproperty(OPT, varargin{:});
+
+% do this AFTER setproperty
+catalog                    = nc2struct(OPT.dataset);
+OPT.urls                   = catalog.urlPath;
+for i=1:size(catalog.projectionCoverage_x,1)
+OPT.x_ranges{i}            = catalog.projectionCoverage_x(i,:);
+OPT.y_ranges{i}            = catalog.projectionCoverage_y(i,:);
+end
 
 %% GETDATA --------------------------------------------------------------------------
 

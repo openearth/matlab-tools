@@ -1,5 +1,5 @@
 function ah = rws_createFixedMapsOnAxes(ah, urls, varargin)
-warning('This function is deprecated in favour of grid_orth_createFixedMapsOnAxes')
+error('This function is deprecated in favour of grid_orth_createFixedMapsOnAxes')
 %rws_CREATEFIXEDMAPSONAXES   plot fixed maps retrieved from OPeNDAP server to any arbitrary axes
 %
 % See also: rws_getDataInPolygon, rws_getFixedMapOutlines, rws_identifyWhichMapsAreInPolygon, getDataFromNetCDFGrid
