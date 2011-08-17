@@ -107,12 +107,14 @@ end
       fldname     = fileinfo.Dataset(idat).Name;
       D.(fldname) = nc_varget(fileinfo.Filename,fldname);
       if OPT.time2datenum
+         if ~isempty(fileinfo.Dataset(idat).Attribute)
          j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name});
          if ~isempty(j)
             if strcmpi(fileinfo.Dataset(idat).Attribute(j).Value,'time')
             D.datenum = nc_cf_time(fileinfo.Filename,fldname);
             disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
             end
+         end
          end
       end
       if ischar(D.(fldname))
