@@ -33,6 +33,7 @@ function G = readNet(varargin)
 %  dflowfm.mdf2mdu          - convert Delft3D-flow model input to D-Flow FM model input
 %  dflowfm.opendap2obs      - get list of observation points from netCDF (OPeNDAP) time series collection
 %  dflowfm.analyseHis       - validate water levels with netCDF (OPeNDAP) time series collection for time series & t_tide
+%  dflowfm.indexHis         - show overview of locations incl. coordinates
 %  dflowfm.fillDep          - fill depth values from OPeNDAP data source (single grid or gridset of tiles)
 %
 % See also: delft3d

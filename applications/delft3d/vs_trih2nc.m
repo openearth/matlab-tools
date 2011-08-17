@@ -23,7 +23,6 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %   D.eta          = nc_varget (ncfile,'waterlevel'  ,[0 ind-1  ],[-1  1   ]);
 %   D.u            = nc_varget (ncfile,'u_x'         ,[0 ind-1 0],[-1  1 -1]);
 %   D.v            = nc_varget (ncfile,'u_y'         ,[0 ind-1 0],[-1  1 -1]);
-%   D.sigma        = nc_varget (ncfile,'dsigma');
 %   D.dep          = nc_varget (ncfile,'depth'       ,[  ind-1  ],[1]);
 %   D.datenum      = nc_cf_time(ncfile)
 %
@@ -296,14 +295,26 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Dimension', {{'Layer'}}, ...
           'Attribute', attr);
 
-      ifld     = ifld + 1;clear attr;d3d_name = 'THICK';
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
-      nc(ifld) = struct('Name', 'dsigma', ...
+      ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer midpoints');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: sigma eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
+      nc(ifld) = struct('Name', 'sigma', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'Layer'}}, ...
+          'Attribute', attr);
+          
+      ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer interfaces');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: sigmaInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
+      nc(ifld) = struct('Name', 'sigmaInterf', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'LayerInterf'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -429,8 +440,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       end      
       
       data = vs_let(F,'his-const','THICK',OPT.quiet);
-      nc_varput(ncfile,'dsigma',data);
-      nc_attput(ncfile,'dsigma','actual_range',[min(data(:)) max(data(:))]);
+     [sigma,sigmaInterf] = d3d_sigma(data); % [0 .. 1]
+      
+      nc_varput(ncfile,'sigma',sigma-1);
+      nc_attput(ncfile,'sigma','actual_range',[min(sigma(:)) max(sigma(:))]);
+
+      nc_varput(ncfile,'sigmaInterf',sigmaInterf-1);
+      nc_attput(ncfile,'sigmaInterf','actual_range',[min(sigmaInterf(:)) max(sigmaInterf(:))]); % [-1 1]
       
       data = vs_let(F,'his-const','DPS',OPT.quiet);
       nc_varput(ncfile,'depth',data);
