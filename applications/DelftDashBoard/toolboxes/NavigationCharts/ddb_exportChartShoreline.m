@@ -1,10 +1,10 @@
 function ddb_exportChartShoreline(handles)
 
-iac=handles.Toolbox(tb).ActiveDatabase;
-ii=handles.Toolbox(tb).ActiveChart;
-fname=handles.Toolbox(tb).Charts(iac).Box(ii).Name;
+iac=handles.Toolbox(tb).Input.activeDatabase;
+ii=handles.Toolbox(tb).Input.activeChart;
+fname=handles.Toolbox(tb).Input.charts(iac).box(ii).Name;
 
-[filename, pathname, filterindex] = uiputfile('*.ldb', 'Select Ldb File',[fname '.ldb']);
+[filename, pathname, filterindex] = uiputfile('*.ldb', 'Select land boundary file',[fname '_shoreline.ldb']);
 if pathname~=0
     curdir=[lower(cd) '\'];
     if ~strcmpi(curdir,pathname)
@@ -13,12 +13,12 @@ if pathname~=0
 
     wb=waitbox('Exporting Ldb File ...');
 
-    orisys.Name='WGS 84';
-    orisys.Type='geographic';
+    orisys.name='WGS 84';
+    orisys.type='geographic';
 
-    newsys=handles.ScreenParameters.CoordinateSystem;
+    newsys=handles.screenParameters.coordinateSystem;
 
-    s=handles.Toolbox(tb).Layers;
+    s=handles.Toolbox(tb).Input.layers;
 
     fn=fieldnames(s);
     nf=length(fn);

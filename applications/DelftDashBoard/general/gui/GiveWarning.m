@@ -64,10 +64,14 @@ handles.Text=varargin{2};
 
 PutInCentre(hObject);
 
-StatName=[h.settingsDir '\icons\god2.jpg'];
-c = imread(StatName,'jpeg');
-image(c);
-tick(gca,'x','none');tick(gca,'y','none');
+if ~isempty(h)
+    StatName=[h.settingsDir '\icons\god2.jpg'];
+    c = imread(StatName,'jpeg');
+    image(c);
+    tick(gca,'x','none');tick(gca,'y','none');
+else
+    set(gca,'Visible','off');
+end
 
 set(handles.text1,'String',handles.Text);
  

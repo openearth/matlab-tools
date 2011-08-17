@@ -1,8 +1,8 @@
 function ddb_exportChartContours(handles)
 
-iac=handles.Toolbox(tb).ActiveDatabase;
-ii=handles.Toolbox(tb).ActiveChart;
-fname=handles.Toolbox(tb).Charts(iac).Box(ii).Name;
+iac=handles.Toolbox(tb).Input.activeDatabase;
+ii=handles.Toolbox(tb).Input.activeChart;
+fname=handles.Toolbox(tb).Input.charts(iac).box(ii).Name;
 
 [filename, pathname, filterindex] = uiputfile('*.xyz', 'Select XYZ File',[fname '_contours.xyz']);
 if pathname~=0
@@ -13,12 +13,12 @@ if pathname~=0
 
     wb=waitbox('Exporting XYZ File ...');
 
-    orisys.Name='WGS 84';
-    orisys.Type='geographic';
+    orisys.name='WGS 84';
+    orisys.type='geographic';
 
-    newsys=handles.ScreenParameters.CoordinateSystem;
+    newsys=handles.screenParameters.coordinateSystem;
 
-    s=handles.Toolbox(tb).Layers;
+    s=handles.Toolbox(tb).Input.layers;
 
     ncnt=length(s.DEPCNT);
     

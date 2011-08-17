@@ -20,11 +20,11 @@ switch lower(option)
             set(h,'Visible','on');
             set(h,'HandleVisibility','on');
         end
-        ii=strmatch('NavigationCharts',{handles.Toolbox(:).Name},'exact');
+        ii=strmatch('NavigationCharts',{handles.Toolbox(:).name},'exact');
         h=findobj(gca,'Tag','NavigationChartLayer','UserData','LNDARE');
         if ~isempty(h)
             set(h,'HandleVisibility','on');
-            if handles.Toolbox(ii).ShowShoreline
+            if handles.Toolbox(ii).Input.showShoreline
                 set(h,'Visible','on');
             else
                 set(h,'Visible','off');
@@ -33,7 +33,7 @@ switch lower(option)
         h=findobj(gca,'Tag','NavigationChartLayer','UserData','SOUNDG');
         set(h,'HandleVisibility','on');
         if ~isempty(h)
-            if handles.Toolbox(ii).ShowSoundings
+            if handles.Toolbox(ii)Input.showSoundings
                 set(h,'Visible','on');
             else
                 set(h,'Visible','off');
@@ -42,7 +42,7 @@ switch lower(option)
         h=findobj(gca,'Tag','NavigationChartLayer','UserData','DEPCNT');
         set(h,'HandleVisibility','on');
         if ~isempty(h)
-            if handles.Toolbox(ii).ShowContours
+            if handles.Toolbox(ii).Input.showContours
                 set(h,'Visible','on');
             else
                 set(h,'Visible','off');

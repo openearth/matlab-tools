@@ -1,56 +1,60 @@
-function ddb_NavigationChartsToolbox
+function ddb_NavigationChartsToolbox(varargin)
 
-handles=getHandles;
-
-h=findall(gca,'Tag','BBoxENC');
-if isempty(h)
-    handles=PlotChartOutlines(handles);
+if isempty(varargin)
+    % New tab selected
+    handles=getHandles;
+    ddb_zoomOff;
+    ddb_refreshScreen;
+    selectDatabase;
+    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+    h=findobj(gca,'Tag','BBoxENC');
+    if isempty(h)
+        handles=plotChartOutlines(handles);
+        setHandles(handles);
+    else
+        ddb_plotNavigationCharts('activate');
+    end
 else
-    ddb_plotNavigationCharts(handles,'activate');
+    %Options selected
+    opt=lower(varargin{1});    
+    switch opt
+        case{'selectdatabase'}
+            selectDatabase;
+        case{'selectchart'}
+            pushSelectChart;
+        case{'toggleshoreline'}
+            toggleShoreline;
+        case{'togglesoundings'}
+            toggleSoundings;
+        case{'togglecontours'}
+            toggleContours;
+        case{'exportshoreline'}
+            exportShoreline;
+        case{'exportsoundings'}
+            exportSoundings;
+        case{'exportcontours'}
+            exportContours;
+    end    
 end
 
-iac=handles.Toolbox(tb).ActiveDatabase;
-ii=handles.Toolbox(tb).ActiveChart;
-
-uipanel('Title','Navigation Charts','Units','pixels','Position',[50 20 960 160],'Tag','UIControl');
-
-handles.PushSelectChart        = uicontrol(gcf,'Style','pushbutton','String','Select Chart','Position',   [60 140 140  20],'Tag','UIControl');
-handles.PushPlotOptions        = uicontrol(gcf,'Style','pushbutton','String','Plot Options','Position',   [220 140 140  20],'Tag','UIControl');
-set(handles.PushPlotOptions,  'Enable','off');
-handles.PushDeleteChart        = uicontrol(gcf,'Style','pushbutton','String','Delete Chart','Position',   [370 140 140  20],'Tag','UIControl');
-handles.PushExportShoreline = uicontrol(gcf,'Style','pushbutton','String','Export Land Boundary',      'Position',   [60  115 140  20],'Tag','UIControl');
-handles.PushExportSoundings    = uicontrol(gcf,'Style','pushbutton','String','Export Depth Soundings',    'Position',   [60  90 140  20],'Tag','UIControl');
-handles.PushExportContours     = uicontrol(gcf,'Style','pushbutton','String','Export Depth Contours',     'Position',   [60  65 140  20],'Tag','UIControl');
-
-handles.ToggleShoreline     = uicontrol(gcf,'Style','checkbox','String','Show Land Boundary','Value',handles.Toolbox(tb).ShowShoreline,'Position',   [220 110 150  20],'Tag','UIControl');
-handles.ToggleSoundings        = uicontrol(gcf,'Style','checkbox','String','Show Depth Soundings','Value',handles.Toolbox(tb).ShowSoundings,'Position',   [220 85 150  20],'Tag','UIControl');
-handles.ToggleContours         = uicontrol(gcf,'Style','checkbox','String','Show Depth Contours','Value',handles.Toolbox(tb).ShowContours,'Position',   [220 60 150  20],'Tag','UIControl');
-
-str=handles.Toolbox(tb).Charts(iac).Box(ii).Description;
-handles.TextChartNr     = uicontrol(gcf,'Style','text','String',str,      'Position',   [60  30 500  20],'HorizontalAlignment','left','Tag','UIControl');
-
-set(handles.PushSelectChart,  'Callback',{@PushSelectChart_Callback});
-set(handles.PushPlotOptions,  'Callback',{@PushPlotOptions_Callback});
-set(handles.PushDeleteChart,  'Callback',{@PushDeleteChart_Callback});
-set(handles.PushExportShoreline,       'Callback',{@PushExportShoreline_Callback});
-set(handles.PushExportSoundings,       'Callback',{@PushExportSoundings_Callback});
-set(handles.PushExportContours,       'Callback',{@PushExportContours_Callback});
-
-set(handles.ToggleShoreline,  'Callback',{@ToggleShoreline_Callback});
-set(handles.ToggleSoundings,     'Callback',{@ToggleSoundings_Callback});
-set(handles.ToggleContours,      'Callback',{@ToggleContours_Callback});
-
-SetUIBackgroundColors;
-
+%%
+function selectDatabase
+handles=getHandles;
+h=findobj(gca,'Tag','NavigationChartLayer');
+if ~isempty(h)
+    delete(h);
+end
+handles.Toolbox(tb).Input.activeChart=1;
+handles.Toolbox(tb).Input.activeChartName='';
+handles=plotChartOutlines(handles);
 setHandles(handles);
- 
-% Refresh(handles);
+setUIElement('textchartname');
 
 %%
-function PushSelectChart_Callback(hObject,eventdata)
+function pushSelectChart
 ddb_zoomOff;
-set(gcf,'WindowButtonMotionFcn',@MoveMouse);
-set(gcf,'WindowButtonDownFcn',@SelectArea);
+set(gcf,'WindowButtonMotionFcn',@moveMouse);
+set(gcf,'WindowButtonDownFcn',@selectArea);
 
 %%
 function PushPlotOptions_Callback(hObject,eventdata)
@@ -64,11 +68,11 @@ if ~isempty(h)
 end
 
 %%
-function ToggleShoreline_Callback(hObject,eventdata)
+
+function toggleShoreline
 handles=getHandles;
-iplt=get(hObject,'Value');
-handles.Toolbox(tb).ShowShoreline=iplt;
-h=findall(gca,'Tag','NavigationChartLayer','UserData','LNDARE');
+iplt=handles.Toolbox(tb).Input.showShoreline;
+h=findobj(gca,'Tag','NavigationChartLayer','UserData','LNDARE');
 if ~isempty(h)
     if iplt
         set(h,'Visible','on');
@@ -76,14 +80,12 @@ if ~isempty(h)
         set(h,'Visible','off');
     end
 end
-setHandles(handles);
 
 %%
-function ToggleSoundings_Callback(hObject,eventdata)
+function toggleSoundings
 handles=getHandles;
-iplt=get(hObject,'Value');
-handles.Toolbox(tb).ShowSoundings=iplt;
-h=findall(gca,'Tag','NavigationChartLayer','UserData','SOUNDG');
+iplt=handles.Toolbox(tb).Input.showSoundings;
+h=findobj(gca,'Tag','NavigationChartLayer','UserData','SOUNDG');
 if ~isempty(h)
     if iplt
         set(h,'Visible','on');
@@ -91,14 +93,12 @@ if ~isempty(h)
         set(h,'Visible','off');
     end
 end
-setHandles(handles);
 
 %%
-function ToggleContours_Callback(hObject,eventdata)
+function toggleContours
 handles=getHandles;
-iplt=get(hObject,'Value');
-handles.Toolbox(tb).ShowContours=iplt;
-h=findall(gca,'Tag','NavigationChartLayer','UserData','DEPCNT');
+iplt=handles.Toolbox(tb).Input.showContours;
+h=findobj(gca,'Tag','NavigationChartLayer','UserData','DEPCNT');
 if ~isempty(h)
     if iplt
         set(h,'Visible','on');
@@ -106,20 +106,19 @@ if ~isempty(h)
         set(h,'Visible','off');
     end
 end
-setHandles(handles);
 
 %%
-function PushExportShoreline_Callback(hObject,eventdata)
+function exportShoreline
 handles=getHandles;
 ddb_exportChartShoreline(handles);
 
 %%
-function PushExportSoundings_Callback(hObject,eventdata)
+function exportSoundings
 handles=getHandles;
 ddb_exportChartSoundings(handles);
 
 %%
-function PushExportContours_Callback(hObject,eventdata)
+function exportContours
 handles=getHandles;
 ddb_exportChartContours(handles);
 
@@ -127,11 +126,11 @@ ddb_exportChartContours(handles);
 function handles=ChangeNavigationChartsDatabase(handles)
 
 %%
-function MoveMouse(hObject,eventdata)
+function moveMouse(hObject,eventdata)
 
 handles=getHandles;
 
-iac=handles.Toolbox(tb).ActiveDatabase;
+iac=handles.Toolbox(tb).Input.activeDatabase;
 
 pos = get(gca, 'CurrentPoint');
 posx=pos(1,1);
@@ -139,27 +138,30 @@ posy=pos(1,2);
 xlim=get(gca,'xlim');
 ylim=get(gca,'ylim');
 
-str=handles.Toolbox(tb).Charts(iac).Box(handles.Toolbox(tb).ActiveChart).Description;
-
 if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)
 
-    i=FindBox(handles,posx,posy);
+    i=findBox(handles,posx,posy);
     
-    kar=findall(gca,'Tag','BBoxENC');
+    kar=findobj(gca,'Tag','BBoxENC');
     set(kar,'Color','Blue');
     set(kar,'LineWidth',1);
 
+    handles.Toolbox(tb).Input.activeChartName='';
+
     if ~isempty(i)
-        kar=findobj(gcf,'Tag','BBoxENC','UserData',i);
+        kar=findobj(gca,'Tag','BBoxENC','UserData',i);
         set(kar,'Color','Red');
-        str=handles.Toolbox(tb).Charts(iac).Box(i).Description;
+        handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iac).box(i).Description;
     end
 
+    setHandles(handles);
+
+    setUIElement('textchartname');
+
 end
-set(handles.TextChartNr,'String',str);
 
 %%
-function SelectArea(hObject,eventdata)
+function selectArea(hObject,eventdata)
 
 handles=getHandles;
 
@@ -169,62 +171,84 @@ posy=pos(1,2);
 xlim=get(gca,'xlim');
 ylim=get(gca,'ylim');
 
-if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)
+iab=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.Toolbox(tb).Input.activeChart;
 
-    i=FindBox(handles,posx,posy);
-    
-    if ~isempty(i)
-        handles=SelectNavigationChart(handles,i);
-        setHandles(handles);
-    else
+handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iab).box(iac).Description;
+
+switch get(gcf,'SelectionType')
+    case{'normal'}
+            
+        if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)            
+            i=findBox(handles,posx,posy);            
+            if ~isempty(i)
+                handles=selectNavigationChart(handles,i);                
+                handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iab).box(i).Description;
+            else
+                % Make chart outlines blue again
+                kar=findobj(gca,'Tag','BBoxENC');
+                set(kar,'Color','Blue');
+                set(kar,'LineWidth',1);
+                % Make active chart outline red
+                kar=findobj(gca,'Tag','BBoxENC','UserData',iac);
+                set(kar,'Color','Red');
+                set(kar,'LineWidth',2);
+            end            
+        end
+    otherwise
         % Make chart outlines blue again
         kar=findobj(gca,'Tag','BBoxENC');
         set(kar,'Color','Blue');
         set(kar,'LineWidth',1);
         % Make active chart outline red
-        kar=findobj(gcf,'Tag','BBoxENC','UserData',handles.Toolbox(tb).ActiveChart);
+        kar=findobj(gca,'Tag','BBoxENC','UserData',iac);
         set(kar,'Color','Red');
         set(kar,'LineWidth',2);
-    end
-
 end
+
+setHandles(handles);
+
+setUIElement('textchartname');
 
 ddb_setWindowButtonUpDownFcn;
 ddb_setWindowButtonMotionFcn;
 
 %%
-function handles=SelectNavigationChart(handles,i)
+function handles=selectNavigationChart(handles,i)
 
-iac=handles.Toolbox(tb).ActiveDatabase;
+iac=handles.Toolbox(tb).Input.activeDatabase;
 
-kar=findall(gca,'Tag','BBoxENC');
+kar=findobj(gca,'Tag','BBoxENC');
 set(kar,'Color','Blue','LineWidth',1);
 set(kar,'LineWidth',1);
 
-kar=findobj(gcf,'Tag','BBoxENC','UserData',i);
+kar=findobj(gca,'Tag','BBoxENC','UserData',i);
 set(kar,'Color','Red');
 set(kar,'LineWidth',2);
-handles.Toolbox(tb).ActiveChart=i;
+handles.Toolbox(tb).Input.activeChart=i;
 
 wb=waitbox('Loading chart ...');
-name=handles.Toolbox(tb).Charts(iac).Box(i).Name;
-fname=[handles.ToolBoxDir 'NavigationCharts' filesep handles.Toolbox(tb).Databases{iac} filesep name filesep name '.mat'];
-load(fname);
+name=handles.Toolbox(tb).Input.charts(iac).box(i).Name;
+fname=[handles.toolBoxDir 'NavigationCharts' filesep handles.Toolbox(tb).Input.databases{iac} filesep name filesep name '.mat'];
+s=load(fname);
+if isfield(s,'s')
+    s=s.s;
+end
 
-handles.Toolbox(tb).Layers=s.Layers;
+handles.Toolbox(tb).Input.layers=s.Layers;
 
 fn=fieldnames(s.Layers);
 for i=1:length(fn)
     layer=deblank(fn{i});
     switch lower(layer)
         case{'lndare'}
-            handles.Toolbox(tb).PlotLayer.(layer)=handles.Toolbox(tb).ShowShoreline;
+            handles.Toolbox(tb).Input.plotLayer.(layer)=handles.Toolbox(tb).Input.showShoreline;
         case{'depcnt'}
-            handles.Toolbox(tb).PlotLayer.(layer)=handles.Toolbox(tb).ShowContours;
+            handles.Toolbox(tb).Input.plotLayer.(layer)=handles.Toolbox(tb).Input.showContours;
         case{'soundg'}
-            handles.Toolbox(tb).PlotLayer.(layer)=handles.Toolbox(tb).ShowSoundings;
+            handles.Toolbox(tb).Input.plotLayer.(layer)=handles.Toolbox(tb).Input.showSoundings;
         otherwise
-            handles.Toolbox(tb).PlotLayer.(layer)=-1;
+            handles.Toolbox(tb).Input.plotLayer.(layer)=-1;
     end
 end
 
@@ -234,18 +258,16 @@ ddb_plotChartLayers(handles);
 
 setHandles(handles);
 
-set(handles.TextChartNr,'String',handles.Toolbox(tb).Charts(iac).Box(handles.Toolbox(tb).ActiveChart).Description);
-
 %%
-function i=FindBox(handles,x,y)
+function i=findBox(handles,x,y)
 
-iac=handles.Toolbox(tb).ActiveDatabase;
+iac=handles.Toolbox(tb).Input.activeDatabase;
 
-area=handles.Toolbox(tb).Charts(iac).Area;
-x1=handles.Toolbox(tb).Charts(iac).xl(:,1);
-x2=handles.Toolbox(tb).Charts(iac).xl(:,2);
-y1=handles.Toolbox(tb).Charts(iac).yl(:,1);
-y2=handles.Toolbox(tb).Charts(iac).yl(:,2);
+area=handles.Toolbox(tb).Input.charts(iac).area;
+x1=handles.Toolbox(tb).Input.charts(iac).xl(:,1);
+x2=handles.Toolbox(tb).Input.charts(iac).xl(:,2);
+y1=handles.Toolbox(tb).Input.charts(iac).yl(:,1);
+y2=handles.Toolbox(tb).Input.charts(iac).yl(:,2);
 
 ii=find(x>x1 & x<x2 & y>y1 & y<y2);
 
@@ -263,27 +285,27 @@ if n>0
 end
 
 %%
-function handles=PlotChartOutlines(handles)
+function handles=plotChartOutlines(handles)
 
-h=findall(gca,'Tag','BBoxENC');
+h=findobj(gca,'Tag','BBoxENC');
 delete(h);
 
-cs.Name='WGS 84';
-cs.Type='Geographic';
+cs.name='WGS 84';
+cs.type='Geographic';
 
-iac=handles.Toolbox(tb).ActiveDatabase;
+iac=handles.Toolbox(tb).Input.activeDatabase;
 
-n=length(handles.Toolbox(tb).Charts(iac).Box);
+n=length(handles.Toolbox(tb).Input.charts(iac).box);
 
 for i=1:n
-    x1(i)=handles.Toolbox(tb).Charts(iac).Box(i).X(1);
-    y1(i)=handles.Toolbox(tb).Charts(iac).Box(i).Y(1);
-    x2(i)=handles.Toolbox(tb).Charts(iac).Box(i).X(2);
-    y2(i)=handles.Toolbox(tb).Charts(iac).Box(i).Y(2);
+    x1(i)=handles.Toolbox(tb).Input.charts(iac).box(i).X(1);
+    y1(i)=handles.Toolbox(tb).Input.charts(iac).box(i).Y(1);
+    x2(i)=handles.Toolbox(tb).Input.charts(iac).box(i).X(2);
+    y2(i)=handles.Toolbox(tb).Input.charts(iac).box(i).Y(2);
 end
 
-[x1,y1]=ddb_coordConvert(x1,y1,cs,handles.ScreenParameters.CoordinateSystem);
-[x2,y2]=ddb_coordConvert(x2,y2,cs,handles.ScreenParameters.CoordinateSystem);
+[x1,y1]=ddb_coordConvert(x1,y1,cs,handles.screenParameters.coordinateSystem);
+[x2,y2]=ddb_coordConvert(x2,y2,cs,handles.screenParameters.coordinateSystem);
 
 for i=1:n
     xx=[x1(i) x2(i) x2(i) x1(i) x1(i)];
@@ -297,15 +319,11 @@ for i=1:n
     area(i)=(xl(i,2)-xl(i,1))*(yl(i,2)-yl(i,1));
 end
 
-handles.Toolbox(tb).Charts(iac).xl=xl;
-handles.Toolbox(tb).Charts(iac).yl=yl;
-handles.Toolbox(tb).Charts(iac).Area=area;
+handles.Toolbox(tb).Input.charts(iac).xl=xl;
+handles.Toolbox(tb).Input.charts(iac).yl=yl;
+handles.Toolbox(tb).Input.charts(iac).area=area;
 
-
-i=handles.Toolbox(tb).ActiveChart;
+i=handles.Toolbox(tb).Input.activeChart;
 kar=findobj(gca,'Tag','BBoxENC','UserData',i);
 set(kar,'Color','Red');
 set(kar,'LineWidth',2);
-
-
-

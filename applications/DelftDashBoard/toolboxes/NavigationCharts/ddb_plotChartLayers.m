@@ -1,13 +1,13 @@
 function ddb_plotChartLayers(handles)
 
-s=handles.Toolbox(tb).Layers;
-p=handles.Toolbox(tb).PlotLayer;
+s=handles.Toolbox(tb).Input.layers;
+p=handles.Toolbox(tb).Input.plotLayer;
 
-orisys.Name='WGS 84';
-orisys.Type='geographic';
-newsys=handles.ScreenParameters.CoordinateSystem;
+orisys.name='WGS 84';
+orisys.type='geographic';
+newsys=handles.screenParameters.coordinateSystem;
 
-h=findobj(gcf,'Tag','NavigationChartLayer');
+h=findobj(gca,'Tag','NavigationChartLayer');
 if ~isempty(h)
     delete(h);
 end
