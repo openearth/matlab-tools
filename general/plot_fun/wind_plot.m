@@ -66,7 +66,7 @@ function varargout = wind_plot(t,D,F,varargin)
    OPT.dtype   = 'meteo';
 
    OPT.thleg   = '\theta [\circ]';
-   OPT.thlabel = 'wind direction [\circ]';
+   OPT.thlabel = 'wind from direction [\circ]';
    OPT.thcolor = 'r';
 
    OPT.Uleg    = '|U| [m/s]';

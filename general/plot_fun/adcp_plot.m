@@ -120,7 +120,7 @@ function varargout = adcp_plot(edge_time, edge_z, face_time, face_z, degn, uabs,
    axes(ax);hline([90 270],'k-');axes(AX(1,2))
    set(ax,'YTickLabel',{'N','E','S','W','N'}); % tex arrows do not work here
    ylabel(OPT.ylabel)
-   text(1.08,0,'\theta [degrees]','units','normalized','rotation',90)
+   text(1.08,0,'current to direction [\circ]','units','normalized','rotation',90)
    text(1.0 ,0,OPT.watermark,'units','normalized','rotation',90,'fontsize',6,'verticalalignment','top')
    xx = xlim;
    

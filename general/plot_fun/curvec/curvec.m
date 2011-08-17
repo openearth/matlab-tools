@@ -129,7 +129,7 @@ OPT.xlim             = [];
 OPT.ylim             = [];
 OPT.coordinatesystem = ''; % 'geographic','geo','spherical','latlon'
 OPT.cs               = ''; % 'geographic','geo','spherical','latlon'
-OPT.iopt             = 0;
+OPT.iopt             = 0;% 0: (x,y), 1: (lat,lon)
 OPT.starttime        = [];
 OPT.stoptime         = [];
 OPT.times            = [];
@@ -180,7 +180,7 @@ else
 end
 
 if any(strcmpi(OPT.coordinatesystem,{'geographic','geo','spherical','latlon'})) || ...
-        any(strcmpi(OPT.cs              ,{'geographic','geo','spherical','latlon'}))
+   any(strcmpi(OPT.cs              ,{'geographic','geo','spherical','latlon'}))
     OPT.iopt=1;
 end
 
@@ -220,7 +220,7 @@ for it=1:nt
     
     %% Interpolate in time
 
-    % Check if u and v matrices and 3d (varying in time) or 2d (constant in time)
+    % Check if u and v matrices are 3d (varying in time) or 2d (constant in time)
     if ndims(u)>2
 
         if isempty(OPT.times)
@@ -357,7 +357,7 @@ for it=1:nt
     
     %% Make arrows narrower that were just seeded or which are about to die
     
-    relwdt=zeros(n2,1)+1;
+    relwdt=ones(n2,1);
     if OPT.timestep>0 && OPT.fade
         for ii=1:n2
             if iage(ii)<4
@@ -370,7 +370,7 @@ for it=1:nt
         end
     end
     
-    %% Compute arrows using mex file    
+    %% Compute arrows using mex file
     [xar,yar,xax,yax,len]=mxcurvec(x2,y2,x1,y1,u1,v1,u2,v2,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.arrowthickness,OPT.nhead,relwdt,OPT.iopt);
     
     %% Set nan values
@@ -399,44 +399,42 @@ for it=1:nt
     
     %% Get rid of NaN row
     
-    polx=polx(1:end-1,:);
-    poly=poly(1:end-1,:);
-    xax=xax(1:end-1,:);
-    yax=yax(1:end-1,:);
+    polx = polx(1:end-1,:);
+    poly = poly(1:end-1,:);
+    xax  =  xax(1:end-1,:);
+    yax  =  yax(1:end-1,:);
     
     %% Determine position of arrows in next time step
     
     if isempty(OPT.timestep)
         OPT.timestep=0;
     end
-    if OPT.timestep>OPT.length
-        OPT.timestep=OPT.length;
-    end
-    nn=(OPT.nrvertices-1)*(OPT.relativespeed*OPT.timestep/OPT.length);
-    nfrac=nn-floor(nn);
-    nn1=floor(nn)+1;
-    nn2=floor(nn)+2;
-    nn2=min(nn2,OPT.nrvertices);
-    OPT.position(:,1)=xax(nn1,:)+nfrac*(xax(nn2,:)-xax(nn1,:));
-    OPT.position(:,2)=yax(nn1,:)+nfrac*(yax(nn2,:)-yax(nn1,:));
-    OPT.position(:,3)=iage+1;
+    OPT.timestep = min(OPT.timestep,OPT.length);
+    nn    = (OPT.nrvertices-1)*(OPT.relativespeed*OPT.timestep/OPT.length);
+    nfrac = nn-floor(nn);
+    nn1   = floor(nn)+1;
+    nn2   = floor(nn)+2;
+    nn2   = min(nn2,OPT.nrvertices);
+    OPT.position(:,1) = xax(nn1,:)+nfrac*(xax(nn2,:)-xax(nn1,:));
+    OPT.position(:,2) = yax(nn1,:)+nfrac*(yax(nn2,:)-yax(nn1,:));
+    OPT.position(:,3) = iage+1;
     
     % iout= xax(end,:)==xax(end-1,:);
     % OPT.position(iout,3)=OPT.lifespan;
 
     if nt>1
         % Multiple
-        xarrow{it}=polx;
-        yarrow{it}=poly;
-        xaxis{it}=xax;
-        yaxis{it}=yax;
-        arrlen{it}=len;
+        xarrow{it} = polx;
+        yarrow{it} = poly;
+        xaxis{it}  = xax;
+        yaxis{it}  = yax;
+        arrlen{it} = len;
     else
-        xarrow=polx;
-        yarrow=poly;
-        xaxis=xax;
-        yaxis=yax;
-        arrlen=len;
+        xarrow = polx;
+        yarrow = poly;
+        xaxis  = xax;
+        yaxis  = yax;
+        arrlen = len;
     end    
     
 end
@@ -474,12 +472,12 @@ nrInPol=0;
 x=zeros(np,1);
 y=zeros(np,1);
 while nrInPol<np
-    nrnew=np-nrInPol;
-    xr=xmin+rand(nrnew,1)*(xmax-xmin);
-    yr=ymin+rand(nrnew,1)*(ymax-ymin);
-    inp=inpolygon(xr,yr,xp,yp);
-    iinp=find(inp==1);
-    sumInp=length(iinp);
+    nrnew  = np-nrInPol;
+    xr     = xmin+rand(nrnew,1)*(xmax-xmin);
+    yr     = ymin+rand(nrnew,1)*(ymax-ymin);
+    inp    = inpolygon(xr,yr,xp,yp);
+    iinp   = find(inp==1);
+    sumInp = length(iinp);
     if sumInp>0
         x(nrInPol+1:nrInPol+sumInp)=xr(iinp);
         y(nrInPol+1:nrInPol+sumInp)=yr(iinp);
