@@ -1,5 +1,8 @@
 function varargout=nesthd2(varargin)
 % NESTHD2
+% 
+% e.g. nesthd2('runid','tst','inputdir','d:\temp\','admfile','d:\temp\nesting.adm','hisfile','d:\run01\trih-ovr.dat','opt','hydro')
+%
 
 stride=1;
 opt='both';
@@ -179,8 +182,14 @@ stations = qpread(fid,1,'water level','stations');
 times = qpread(fid,1,'water level','times');
 
 if ~isempty(t0)
-    it1=find(times==t0);
-    it2=find(times==t1);
+    it1=find(times<=t0-1/86400,1,'last');
+    it2=find(times>=t1+1/86400,1,'first');
+    if isempty(it1)
+        it1=1;
+    end
+    if isempty(it2)
+        it2=length(times);
+    end
 else
     it1=1;
     it2=length(times);
