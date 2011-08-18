@@ -106,6 +106,7 @@ function varargout = nc_multibeam_from_asc(varargin)
    OPT.version             = 'Trial';
    OPT.terms_for_use       = 'These data is for internal use by ... staff only!';
    OPT.disclaimer          = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+   OPT.eps                 = 1e3.*eps;
    
    if nargin==0
        varargout = {OPT};
@@ -253,10 +254,10 @@ if OPT.make
                 kk       = kk+1;
                 D{kk}    = textscan(fid,'%f32',floor(OPT.block_size/ncols)*ncols,'CollectOutput',true); %#ok<AGROW>
                 D{kk}{1} = reshape(D{kk}{1},ncols,[])'; %#ok<AGROW>
-                if all(abs(D{kk}{1}(:) - nodata_value < 100.*eps))
+                if all(abs(D{kk}{1}(:) - nodata_value) < OPT.eps)
                     D{kk}{1} = nan; %#ok<AGROW>
                 else
-                    D{kk}{1}(abs(D{kk}{1}-nodata_value) < 100.*eps) = nan; %#ok<AGROW>
+                    D{kk}{1}(abs(D{kk}{1}-nodata_value) < OPT.eps) = nan; %#ok<AGROW>
                 end
             end
             multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
