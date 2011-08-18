@@ -18,8 +18,8 @@ function rws_waterbase_all
    OPT.make_kml       = 1;
    OPT.baseurl        = 'http://live.waterbase.nl';
 
-   rawbase = 'F:\checkouts\OpenEarthRawData';   % @ local
-    ncbase = 'F:\opendap\thredds\';             % @ local
+   rawbase = 'D:\checkout\OpenEarthRawData';    % @ local
+    ncbase = 'D:\opendap.deltares.nl\thredds\'; % @ local
    urlbase = 'http://opendap.deltares.nl:8080'; % production server (links)
    kmlbase = 'F:\kml\';                         % @ local, no links to other kml or images any more
 

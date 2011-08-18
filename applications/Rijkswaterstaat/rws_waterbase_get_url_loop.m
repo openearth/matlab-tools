@@ -86,14 +86,14 @@ index = find(DONAR.donar_wnsnum==ivar);
 %% Make destination (clean)
 
       if ~exist   ([OPT.directory_raw],'dir')
-          disp    (['Created: ',OPT.directory_raw])
           mkpath  ([OPT.directory_raw])
+          disp    (['Created: ',OPT.directory_raw])
       end
 
       if OPT.cleanup
          ~exist   ([OPT.directory_raw_old],'dir');
-          disp    (['Created: ',OPT.directory_raw_old]);
           mkpath  ([OPT.directory_raw_old]);
+          disp    (['Created: ',OPT.directory_raw_old]);
           try
           movefile([OPT.directory_raw     filesep '*' num2str(OPT.code) '*'],... % sometimes more codes end up in the same directory (1+54, 346+347, 363+364), so remove only files with indentical codes
                    [OPT.directory_raw_old filesep]);

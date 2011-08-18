@@ -120,6 +120,13 @@ i = i + 1;
 datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
 datatypes.grid.specificactions{i}   =  {};
 
+
+%% Dienst zeeland (local)
+
+i = i + 1;
+datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
+datatypes.grid.specificactions{i}   =  {};
+
 %% AHN100
 
 i = i + 1;
