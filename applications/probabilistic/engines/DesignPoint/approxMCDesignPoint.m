@@ -16,7 +16,7 @@ function result = approxMCDesignPoint(result, varargin)
 %   Input:
 %   result      = result structure from MC routine
 %   varargin    = 'PropertyName' PropertyValue pairs (optional)
-%   
+%
 %                 'precision'   = precision of Desing Point approximation,
 %                                   which is the maximum Z value of
 %                                   approximation. The square of this value
@@ -56,11 +56,11 @@ function result = approxMCDesignPoint(result, varargin)
 %   Copyright (C) 2009 Deltares
 %       B.M. (Bas) Hoonhout
 %
-%       Bas.Hoonhout@Deltares.nl	
+%       Bas.Hoonhout@Deltares.nl
 %
 %       Deltares
-%       P.O. Box 177 
-%       2600 MH Delft 
+%       P.O. Box 177
+%       2600 MH Delft
 %       The Netherlands
 %
 %   This library is free software; you can redistribute it and/or
@@ -112,7 +112,7 @@ idxFail = find(result.Output.idFail);
 if OPT.threshold > 0
     % determine failure index ranking based on probability of occurance
     [p idxRank] = sort(prod(result.Output.P(idxFail, :), 2), 'descend');
-   
+
     % if threshold is larger than one, take that number of indexes from
     % ranking, otherwise assume a percentage is provided
     if OPT.threshold >= 1
@@ -126,34 +126,34 @@ tDP = tic;
 
     % calculate mode and centre of gravity
     a = zeros(1, length(varNames));
-    
+
     switch OPT.method
         case 'AD'
             % average direction method
-            
+
             c = [];
             phi_M1 = [];
             length_M1 = 0;
-                
+
             % define first non-zero axis as reference axis
             refAxis = find(result.Output.u(idxFail(1), :), 1, 'first');
-            
+
             % walk through failure points to calculate directions
             for j = 1:length(idxFail)
-                
+
                 % determine failure point in u-space
                 x = result.Output.u(idxFail(j), :);
-                
+
                 % determine length reference axis
                 refLength = x(refAxis) - a(refAxis);
-                
+
                 % calculate directions of all axes with respect to
                 % reference axis
                 for i = 1:length(x)
-                    
+
                     % calculate axis length
                     curLength = x(i) - a(i);
-                    
+
                     % determine quarter where axis is located and calculate
                     % direction accordingly
                     if refLength == 0 || curLength == 0
@@ -196,47 +196,48 @@ tDP = tic;
                     end
                 end
             end
-            
+
             % calculate b-vector from average direction
             b = tan(phi_M1);
-            
+
             length_M1 = sqrt(sum(b.^2)) * refLength;
-            
+
             % calculate c-vector from b-vector
             c = a + length_M1 .* b;
         case 'MD'
             % minimal disctance method
-            
+
             c = [];
-                
+
             % define first non-zero axis as reference axis
             refAxis = find(result.Output.u(idxFail(1), :), 1, 'first');
-            
+
             % walk through failure points to calculate directions
             minX = [];
             minDistance = Inf;
             for j = 1:length(idxFail)
-                
+
                 % determine failure point in u-space
                 x = result.Output.u(idxFail(j), :);
-                
+
                 % determine length reference axis
                 refLength = x(refAxis) - a(refAxis);
-                
+
                 % calculate distances of point from mode
                 distance = sqrt(sum((x - a).^2));
-                
+
                 if distance < minDistance
                     minDistance = distance;
                     minX = x;
                 end
             end
-            
+
             % define c-vector
             c = minX;
         otherwise
             % centre of gravity method
-            c = mean(result.Output.u(idxFail, :));
+            weights = repmat(result.Output.P_corr(idxFail, :), 1, size(result.Output.u, 2));
+            c       = wmean(result.Output.u(idxFail, :), weights);
     end
 
     % calculate limit crossing along line between mode and centre of gravity
@@ -244,7 +245,7 @@ tDP = tic;
 
     % calculate probability of failure
     designPoint.P = 1 - norm_cdf(sqrt(sum((designPoint.u).^2)), 0, 1);
-    
+
 designPoint.time = toc(tDP);
 
 %% optimize result
@@ -253,7 +254,7 @@ designPointOptimized = struct('u', [], 'x', [], 'z', Inf, 'P', 0);
 
 % if first estimation of design point is available, try to optimize
 if ~isempty(designPoint.u) && ~any(isnan(designPoint.u)) && ~isempty(OPT.optimize)
-    
+
     tDPO = tic;
         switch OPT.optimize
             case 'FORM'
@@ -283,7 +284,7 @@ if ~isempty(designPoint.u) && ~any(isnan(designPoint.u)) && ~isempty(OPT.optimiz
                 end
         end
     designPointOptimized.time = toc(tDPO) + designPoint.time;
-    
+
 end
 
 %% return variable

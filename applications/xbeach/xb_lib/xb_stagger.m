@@ -69,6 +69,16 @@ if mean(mean(diff(x,1,2))) > mean(mean(diff(x,1,1))) && ...
     y = y';
 end
 
+%% superfast support
+
+superfast = false;
+
+if size(x,2) == 1
+    superfast = true;
+    x = repmat(x,1,3);
+    y = [y y+1 y+2];
+end
+
 %% output struct
 
 g = struct( ...
@@ -197,3 +207,12 @@ g.alfau(nx+1,:) = g.alfau(nx,:);
 
 g.alfav(:,1:ny) = atan2(g.yz(:,2:ny+1)-g.yz(:,1:ny),g.xz(:,2:ny+1)-g.xz(:,1:ny));
 g.alfav(:,ny+1) = g.alfav(:,ny);
+
+%% superfast support (continued)
+
+if superfast
+    f = fieldnames(g);
+    for i = 1:length(f)
+        g.(f{i}) = g.(f{i})(:,1);
+    end
+end

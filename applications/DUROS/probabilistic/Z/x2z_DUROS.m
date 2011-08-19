@@ -72,6 +72,7 @@ else
 end
 xRef = max(findCrossings(xInitial, zInitial, [min(xInitial) max(xInitial)]', ones(2,1)*zRef));
 
+z = [];
 for i = 1:length(samples.D50)
 %     try
         %% set calculation values for additional volume
