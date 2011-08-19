@@ -69,9 +69,14 @@ end
 if odd(nargin) | nargin<3
    nextarg = 1;
    zi  = xi.*nan; % set increment to nan
+   ti  = xi.*nan; % set increment to nan
+   fi  = xi.*nan; % set increment to nan
 else
    nextarg = 2;
    zi  = varargin{1};
+   % TO DO
+   ti  = xi.*nan; % set increment to nan
+   fi  = xi.*0; % set increment to nan
 end
 
 OPT = setProperty(OPT,varargin{nextarg:end});
@@ -205,4 +210,4 @@ warning('TO DO: permute Z automacially into [t by y by x]')
        end % idt
        end % files
        
-varargout{zi,ti,fi,list};
+varargout = {zi,ti,fi,list};

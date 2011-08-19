@@ -99,7 +99,8 @@ function varargout = readNet2tri(varargin)
 
 %% input
 
-   OPT.debug = 0;
+   OPT.debug     = 0;
+   OPT.spherical = 0;
 
    if nargin==0
       varargout = {OPT};
@@ -111,10 +112,15 @@ function varargout = readNet2tri(varargin)
 
 %% read network: corners only: input file
 
-   D.cor.x    = nc_varget(ncfile,'NetNode_x');
-   D.cor.y    = nc_varget(ncfile,'NetNode_y');
-   D.cor.z    = nc_varget(ncfile,'NetNode_z');
-   D.map      = nc_varget(ncfile,'NetElemNode');
+   if OPT.spherical % done by dflowfm.add_CF_coordinates.m
+   D.cor.x    = nc_varget(ncfile,'NetNode_lon'); 
+   D.cor.y    = nc_varget(ncfile,'NetNode_lat'); 
+   else
+   D.cor.x    = nc_varget(ncfile,'NetNode_x'  );
+   D.cor.y    = nc_varget(ncfile,'NetNode_y'  );
+   end
+   D.cor.z    = nc_varget(ncfile,'NetNode_z'  );%'NetNode_z'  
+   D.map      = nc_varget(ncfile,'NetElemNode');%'NetElemNode'
 
 %% determine # of triangles
 
@@ -146,7 +152,6 @@ function varargout = readNet2tri(varargin)
 %% 4: quadrilaterals: 2 triangles each
 
    ind = find(nface==4);
-   length(ind)
    rep = make1d(repmat(ind,[1 2])')';
    D.patch2tri  = [D.patch2tri, rep];
 
@@ -155,7 +160,7 @@ function varargout = readNet2tri(varargin)
 
 %% 5: pentagons: 3 triangles each
 
-   ind = find(nface==5)
+   ind = find(nface==5);
    rep = make1d(repmat(ind,[1 3])')';
    
    if ~(n== sum(D.n.*[0 0 1 2 0 0]));error('error after tri + quad');end

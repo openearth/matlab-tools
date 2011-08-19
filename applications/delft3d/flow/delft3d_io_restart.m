@@ -29,11 +29,13 @@ function varargout=DELFT3D_IO_RESTART(cmd,varargin),
 %
 % iostat = DELFT3D_IO_RESTART('write',filename,DAT.data,<platform>);
 %
-%   where DAT is a struct with the above fieldnames, of which the order is irrelevant.
+%   where DAT is a struct with the above fieldnames, of which the order 
+%   is irrelevant, because only the names are relevant.
 %
 %   iostat = DELFT3D_IO_RESTART('write',filename,DAT.data,<platform>,1);	
 %   where DAT is a struct with any fieldname, that are written in the order
-%   the fields aree present in the struct.
+%   the fields are present in the struct, rather than in the fixex order 
+%   assumed by delft3d (not recommended).
 %
 %   Where platform can be
 %   - u<nix>   , l<inux>
@@ -41,7 +43,7 @@ function varargout=DELFT3D_IO_RESTART(cmd,varargin),
 %
 %   Where iostat=1/0/-1/-2/-3 when successfull/cancelled/ error finding/opening/reading file.
 %
-%   DELFT3D_IO_RESTART does not overwrite an existing file, but asks confirmation.
+%   DELFT3D_IO_RESTART does not overwrite an existing file, but asks for confirmation.
 %
 %   The restart file is a flat binary file where every 2D matrix is stored as
 %   a Fortran unformatted binary record: [(int32) (mmax x nmax float32) (int32)]
@@ -105,7 +107,6 @@ if nargin<3
 end
 
 %% Switch read/write
-%% ------------------
 
 switch lower(cmd)
 
@@ -162,14 +163,12 @@ if nargin==1
 end
    
 %% Get info on contents of restart file
-%% ------------------------
 
    if ischar(varargin{1})
    
       mdffilename = varargin{1};
       
-      %% Size and layers
-      %% ------------------------
+   %% Size and layers
    
       [MDF,iostat2] = delft3d_io_mdf('read',mdffilename,'case','lower');
       
@@ -189,8 +188,7 @@ end
       D.nmax = MDF.keywords.mnkmax(2);
       D.kmax = MDF.keywords.mnkmax(3);
       
-      %% Parameters
-      %% ------------------------
+   %% Parameters
    
       MDF.keywords.sub1   = char(upper(MDF.keywords.sub1  ));
       MDF.keywords.tkemod = char(lower(MDF.keywords.tkemod));
@@ -233,8 +231,7 @@ end
    
    elseif isstruct (varargin{1})
    
-      %% Size and layers
-      %% ------------------------
+   %% Size and layers
    
       GRID        = varargin{1};
       D.mmax      = size(GRID.X,1)+1;
@@ -245,8 +242,8 @@ end
    
    elseif isnumeric(varargin{1})
    
-      %% Size and layers
-      %% ------------------------
+   %% Size and layers
+
    
       SIZE        = varargin{1};
       D.kmax      = varargin{2};
@@ -257,12 +254,10 @@ end
    PAR.nparameters = length(PAR.nlayers > 0);
 
 %% Read restart file
-%% ------------------------
 
    if ~isempty(SIZE)
    
-      %% Locate
-      %% ------------------------
+   %% Locate
       
       tmp = dir(fname);
       
@@ -277,8 +272,7 @@ end
          D.filedate  = tmp.date;
          D.filebytes = tmp.bytes;
       
-         %% Open
-         %% ------------------------
+      %% Open
    
          fid = fopen(fname,'r','b'); % Try UNIX format ...
    
@@ -290,16 +284,16 @@ end
    
          elseif fid > 2
    
-            %% Test for platform (and reopen)
-            %%------------------------
-            %% Unformated binary access fortran files as the ones written by 
-            %% Delft3D FLOW contain a one 4bytes header and one 4 bytes 
-            %% trailer (being equal to the header) per 2D mxn matrix.
-            %% The total file size is thus kmax x (mmax x nmax + 8)
-            %% See: http://local.wasp.uwa.edu.au/~pbourke/dataformats/fortran/
-            %% The header can be tested to see what platform the file was written on.
-            %% It should also eb skipped when reading data.
-            %% ------------------------
+            %  Test for platform (and reopen)
+            % ------------------------
+            %  Unformated binary access fortran files as the ones written by 
+            %  Delft3D FLOW contain a one 4bytes header and one 4 bytes 
+            %  trailer (being equal to the header) per 2D mxn matrix.
+            %  The total file size is thus kmax x (mmax x nmax + 8)
+            %  See: http://local.wasp.uwa.edu.au/~pbourke/dataformats/fortran/
+            %  The header can be tested to see what platform the file was written on.
+            %  It should also eb skipped when reading data.
+            %  ------------------------
             
             header = fread(fid,1,'int32');
             
@@ -323,8 +317,7 @@ end
             
          if fid > 2
    
-         %% Read
-         %% ------------------------
+      %% Read
             
          try
             
@@ -339,16 +332,14 @@ end
                         ' map fields of ',num2str(D.mmax),' x ',num2str(D.nmax)])
             end
             
-            %% Loop over variables
-            %% ------------------------
+         %% Loop over variables
             
             for iname=1:length(D.names)
             
                name          = char(D.names{iname});
                D.data.(name) = zeros([D.mmax D.nmax D.nlayers(iname)]);
                
-            %% Loop over layers
-            %% ------------------------
+         %% Loop over layers
    
                for k=1:D.nlayers(iname)
                
@@ -356,8 +347,7 @@ end
                     disp(['Reading: ',name,' k: ',num2str(k)])
                   end
               
-                  %% Data
-                  %% ------------------------
+               %% Data
    
                   ARRAY = fread(fid,SIZE,'float32');
                   
@@ -368,13 +358,11 @@ end
                      D.data.(name)(1:D.mmax,1:D.nmax,k) = ARRAY;
                   end
                   
-                  %% Fortran trailer
-                  %% ------------------------
+               %% Fortran trailer
                   
                   trailer = fread(fid,1,'int32');
                   
-                  %% Subsequent fortran footer when not EOF
-                  %% ------------------------
+               %% Subsequent fortran footer when not EOF
                   
                   if ~(iname==length(D.names ) & ...
                        k    ==D.nlayers(iname))
@@ -386,8 +374,7 @@ end
             
             end % for iname=1:length(D.names)
       
-            %% Finished succesfully
-            %% --------------------------------------
+         %% Finished succesfully
       
             D.iostat    = 1;
             D.read_by   = 'delft3d_io_restart';
@@ -425,7 +412,6 @@ end
    end % SIZE   
    
 %% Output
-%% ------------------------
 
    if nargout==1
       varargout = {D};   
@@ -452,8 +438,7 @@ function iostat=Local_write(fname,DAT,varargin),
       userfieldnames = false;
    end
 
-   %% Locate
-   %% ------------------------
+%% Locate
    
    tmp       = dir(fname);
    writefile = [];
@@ -478,8 +463,7 @@ function iostat=Local_write(fname,DAT,varargin),
    
    if writefile
 
-     %% Open
-     %% ------------------------
+  %% Open
 
       switch lower(OS);
       case {'pc','pcwin','dos','windows','l','ieee-le'},
@@ -500,8 +484,7 @@ function iostat=Local_write(fname,DAT,varargin),
       
          try
          
-            %% Write
-            %% ------------------------
+         %% Write
 	    
             if userfieldnames
             
@@ -546,7 +529,7 @@ function iostat=Local_write(fname,DAT,varargin),
 % --WRITEfortranbinaryrecord----------
 % ------------------------------------
 
-function WRITEfortranbinaryrecord(fid,MAP)
+function WRITEfortranbinaryrecord(fid,MAP) % different for 64 bit?
 
    dim    =  size(MAP);
    header = 4*prod(dim(1:2));

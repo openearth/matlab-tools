@@ -43,18 +43,18 @@ function varargout = fillDep(varargin)
 % $HeadURL$
 % $Keywords: $
 
-   OPT.ncfile      = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc\ducktape_n_pur\precise\precise4h_net.nc';
-   OPT.out         = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc\ducktape_n_pur\precise\precise4h_vaklodingen_net.nc';
+   OPT.ncfile      = 'awad2d_net.nc';
+   OPT.out         = 'awad2d_vaklodingen_net.nc';
 
-   OPT.bathy       = opendap_catalog('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen_remapped/catalog.xml');
+   OPT.bathy       = opendap_catalog('F:\opendap\thredds\rijkswaterstaat\vaklodingen_remapped\');
    OPT.xname       = 'x'; % search for projection_x_coordinate, or longitude, or ...
    OPT.yname       = 'y'; % search for projection_x_coordinate, or latitude , or ...
    OPT.varname     = 'z'; % search for altitude, or ...
 
    OPT.poly        = '';
    OPT.method      = 'linear'; % only for 1st step, second step is nearest
-   OPT.datenum     = datenum(1998,7,1); % get from mdu
-   OPT.ddatenummax = datenum(3,1,1); % temporal search window in years (for direction see 'order')
+   OPT.datenum     = datenum(2010,7,1); % get from mdu
+   OPT.ddatenummax = datenum(10,1,1); % temporal search window in years (for direction see 'order')
    OPT.order       = ''; % RWS: Specifieke Operator Laatste/Dichtsbij/Prioriteit
 
    OPT.debug       = 0;
@@ -63,7 +63,7 @@ function varargout = fillDep(varargin)
    
 %% Load grid
 
-   G             = delft3dfm.readNet(OPT.ncfile);
+   G             = dflowfm.readNet(OPT.ncfile);
    G.cor.z       = G.cor.z.*nan; % G.cor.z       = nc_varget(OPT.ncfile,'NetNode_z')';
    G.cor.datenum = G.cor.z.*nan; % G.cor.datenum = nc_varget(OPT.ncfile,'NetNode_t')';
    
@@ -75,17 +75,29 @@ function varargout = fillDep(varargin)
    end
 
 %% data   
-   
+   if ischar(OPT.bathy)
    list = opendap_catalog(OPT.bathy);
+   end
    
-%% fill holes with samples of nearest/latest/first in time
+   OPT2 = OPT;
+   OPT2 = rmfield(OPT2,'ncfile');
+   OPT2 = rmfield(OPT2,'out');
 
-   [zi,ti,fi,fi_legend]=nc_cf_gridset_getData(G.cor.x,G.cor.y,   OPT);
+   %% fill holes with samples of nearest/latest/first in time
+   [zi,ti,fi,fi_legend]=nc_cf_gridset_getData(G.cor.x,G.cor.y,   OPT2);
+   
+   G.cor.z       = zi;
+   G.cor.datenum = ti;
+   G.cor.files   = fi;
    
    % internal interpolation ? 
 
-   OPT.method          = 'nearest';
-   [zi,ti,fi,fi_legend]=nc_cf_gridset_getData(G.cor.x,G.cor.y,zi,OPT);
+   OPT.method           = 'nearest';
+   [zi,ti,fi,fi_legend] =nc_cf_gridset_getData(G.cor.x,G.cor.y,zi,OPT2);
+   extra = isnan(G.cor.z) & ~isnan(zi);
+   G.cor.z(extra)       = zi(extra);
+   G.cor.datenum(extra) = nan;
+   G.cor.files(extra)   = 0;
        
 %% save
 
@@ -95,6 +107,7 @@ function varargout = fillDep(varargin)
    
 %% add date of sample points to ncfile (not in unstruc output)
    
+   clear nc
    nc.Name      = 'NetNode_t';
    nc.Nctype    = 'double';
    nc.Dimension = { 'nNetNode' };
@@ -108,14 +121,21 @@ function varargout = fillDep(varargin)
   
    nc_varput(OPT.out,'NetNode_t',G.cor.datenum - datenum(1970,1,1));
 
+%% add data source to ncfile (not in unstruc output)
+
+   clear nc
    nc.Name      = 'NetNode_file';
    nc.Nctype    = 'int';
    nc.Dimension = { 'nNetNode' };
-   nc.Attribute(1).Name  = 'flag_value';
-   nc.Attribute(1).Value = @unique(fi);
-   nc.Attribute(2).Name  = 'flag_name';
-   nc.Attribute(2).Value = @fi_legend;
+   nc.Attribute(1).Name  = 'files';
+   nc.Attribute(1).Value = [num2str([1:length(fi_legend)]') addrowcol(addrowcol(char(fi_legend),0,-1,' = '),0,1,';')]';
+   %nc.Attribute(1).Name  = 'flag_values';    % TO DO
+   %nc.Attribute(1).Value = @unique(fi);      % TO DO
+   %nc.Attribute(2).Name  = 'flag_masks';     % TO DO
+   %nc.Attribute(2).Value = @fi_legend;       % TO DO
+   %nc.Attribute(3).Name  = 'flag_meanings';  % TO DO
+   %nc.Attribute(3).Value = @fi_legend;       % TO DO
    nc_addvar(OPT.out,nc);  
   
-   nc_varput(OPT.out,'NetNode_t',fi);
+   nc_varput(OPT.out,'NetNode_file',int8(G.cor.files));
    

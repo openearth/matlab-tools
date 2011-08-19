@@ -63,17 +63,17 @@ function actual_range = nc_actual_range(ncfile,varname)
    fullsearch = 1;
    if ~isempty(info.Attribute)
       ind  = ismember({info.Attribute.Name}, 'standard_name');
-      if ~(ind==0)
+      if any(ind)
         if ~strcmpi({'latitude',...
                 'longitude',...
                 'projection_x_coordinate',...
                 'projection_y_coordinate',...
                 'time',...
-                'z'},info.Attribute(ind).Value)
-         warning('variable is not a CF coordinate variable and might not be contiguous')
+                'z'},info.Attribute(ind).Value);
+         warning(['variable is not a CF coordinate variable and might not be contiguous: ',varname])
         end
       else
-         warning('variable is not a CF coordinate variable and might not be contiguous')
+         warning(['variable is not a CF coordinate variable and might not be contiguous: ',varname])
       end
 
 %% read attribute if present
