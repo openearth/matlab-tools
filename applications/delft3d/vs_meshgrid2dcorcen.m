@@ -171,7 +171,6 @@ NFSstruct      = varargin{1};
    %disp(['n v: ',num2str(nv)])
 
 %% READ POSITION OF THESE GRID POINTS;
-% ------------------------------------
 
 P.face         = 1; % calculate      u.x, u.y, v.x, v.y
 P.geometry     = 1; % calculate/load guu, guv, gvu, gvv
@@ -183,7 +182,6 @@ P.timestep     = 1; % for WAVM file that has only time-dependent XP and YP
 P.latlon       = 1; % labels x to lon, and y to lat if spherical
 
 %% Arguments
-% -------------------------------------
    
    while iargin<=nargin,
      if    isstruct(varargin{iargin}),
@@ -218,7 +216,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
    end;
    
 %% Read depth interpolation options from input file
-% -------------------------------------
 
    if ~isempty(P.mdf),
      mdf      = delft3d_io_mdf('read',P.mdf);
@@ -233,7 +230,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
    switch vs_type(NFSstruct),
 
 %% comfile
-% -------------------------------------
 
    case {'Delft3D-com','Delft3D-tram','Delft3D-botm'},
 
@@ -289,7 +285,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
      G.cen.alfa    =  vs_get(NFSstruct,'GRID',     'ALFAS',{nz  ,mz  },'quiet');%'
 
 %% TRIMFILE
-% -------------------------------------
 
    case 'Delft3D-trim',
 
@@ -300,7 +295,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
      G.dryflp      =  vs_get(NFSstruct,'map-const','DRYFLP'           ,'quiet');
 
      %% Checks for Z model legacy
-     % -------------------------------------
      if ~isempty(vs_get_elm_size(NFSstruct,'LAYER_MODEL'))
       G.layer_model =  vs_let(NFSstruct,'map-const','LAYER_MODEL'      ,'quiet');
       G.layer_model =  permute(G.layer_model,[1 3 2]);
@@ -325,7 +319,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
      % depfile       = -vs_get(NFSstruct,'map-const','DP0'  ,{ncor,mcor},'quiet')
 
      %% Read center data (if any)
-     %--------------------------
      DPS0 = 0;
      for ielm =1:length(NFSstruct.ElmDef)
         if strcmpi(NFSstruct.ElmDef(ielm).Name,'DPS0')

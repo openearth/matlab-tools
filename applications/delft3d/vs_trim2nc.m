@@ -13,7 +13,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
 %
 %See also: snctools, vs_use, delft3d2nc
 
-% TO DO add depth
 % TO DO check consistency with delft3d_to_netcdf.exe of Bert Jagers
 % TO DO add sediment, turbulence etc
 % TO DO add cell methods to xcor = mean(x)
@@ -67,7 +66,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       OPT.time           = 0;
       OPT.epsg           = [];
       OPT.type           = 'float'; %'double'; % the nefis file is by default singl precision
-      OPT.debug          = 1;
+      OPT.debug          = 0;
       
       if ~odd(nargin)
          ncfile   = varargin{1};
@@ -103,7 +102,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
       %% Add overall meta info
       %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
-      %------------------
    
       nc_attput(ncfile, nc_global, 'title'         , '');
       nc_attput(ncfile, nc_global, 'institution'   , OPT.institution);
@@ -147,16 +145,29 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
 %% 2 Create dimensions
 
-      nc_add_dimension(ncfile, 'time' , length(T.datenum));
-      nc_add_dimension(ncfile, 'm'    , G.mmax-2);
-      nc_add_dimension(ncfile, 'n'    , G.nmax-2);
-      nc_add_dimension(ncfile, 'm_cor', G.mmax-1);
-      nc_add_dimension(ncfile, 'n_cor', G.nmax-1);
-      nc_add_dimension(ncfile, 'sigma', G.kmax  );
+      nc_add_dimension(ncfile, 'time'             , length(T.datenum));
+      nc_add_dimension(ncfile, 'm'                , G.mmax-2);
+      nc_add_dimension(ncfile, 'n'                , G.nmax-2);
+      nc_add_dimension(ncfile, 'm_cor'            , G.mmax-1);
+      nc_add_dimension(ncfile, 'n_cor'            , G.nmax-1);
+      nc_add_dimension(ncfile, 'Layer'            , G.kmax  );
+      nc_add_dimension(ncfile, 'LayerInterf'      , G.kmax+1);
 
       ifld = 0;
-      
-   %% dimensions
+
+%% time
+     
+      ifld     = ifld + 1;clear attr
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'time');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
+      nc(ifld) = struct('Name', 'time', ...
+          'Nctype'   , 'double', ...
+          'Dimension', {{'time'}}, ...
+          'Attribute', attr);
+
+%% add values of dimensions
 
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell centers');
@@ -194,17 +205,18 @@ function varargout = vs_trim2nc(vsfile,varargin)
           'Dimension', {{'n_cor'}}, ...
           'Attribute', attr);
 
-   %% coordinates
+%% horizontal coordinates
 
    if any(strfind(G.coordinates,'CARTESIAN'))
    
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'x of cell centers');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centres, x-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XWAT,XZ');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and m/n = m/nmax removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.x(:)) max(G.cen.x(:))]);
       nc(ifld) = struct('Name', 'x', ...
           'Nctype'   , OPT.type, ...
@@ -213,11 +225,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'y of cell centers');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centres, y-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YWAT,YZ');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and m/n = m/nmax removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.y(:)) max(G.cen.y(:))]);
       nc(ifld) = struct('Name', 'y', ...
           'Nctype'   , OPT.type, ...
@@ -226,26 +239,27 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'x of cell corners');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, x-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XCOR');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.x(:)) max(G.cor.x(:))]);
-      nc(ifld) = struct('Name', 'x_cor', ...
+      nc(ifld) = struct('Name', 'grid_x', ...
           'Nctype'   , 'double', ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'y of cell corners');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, y-coordinate');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YCOR');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.y(:)) max(G.cor.y(:))]);
-      nc(ifld) = struct('Name', 'y_cor', ...
+      nc(ifld) = struct('Name', 'grid_y', ...
           'Nctype'   , 'double', ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
@@ -255,11 +269,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'longitude of cell centers');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centers, longitude-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XWAT,XZ');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and n = m/nmax removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lon(:)) max(G.cen.lon(:))]);
       nc(ifld) = struct('Name', 'longitude', ...
           'Nctype'   , OPT.type, ...
@@ -268,11 +283,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'latitude of cell centers');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centers, latitude-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YWAT,YZ');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and n = m/nmax removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lat(:)) max(G.cen.lat(:))]);
       nc(ifld) = struct('Name', 'latitude', ...
           'Nctype'   , OPT.type, ...
@@ -286,8 +302,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XCOR');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lon(:)) max(G.cor.lon(:))]);
-      nc(ifld) = struct('Name', 'longitude_cor', ...
+      nc(ifld) = struct('Name', 'grid_longitude', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
@@ -299,32 +316,96 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'YCOR');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lat(:)) max(G.cor.lat(:))]);
-      nc(ifld) = struct('Name', 'latitude_cor', ...
+      nc(ifld) = struct('Name', 'grid_latitude', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'n_cor', 'm_cor'}}, ...
           'Attribute', attr);
    end
 
+%% vertical coordinates
+
       ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'layer index');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
-      nc(ifld) = struct('Name', 'sigma', ...
+      nc(ifld) = struct('Name', 'k', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'sigma'}}, ...
+          'Dimension', {{'Layer'}}, ...
           'Attribute', attr);
-      
+
+      ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer midpoints');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: sigma eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
+      nc(ifld) = struct('Name', 'Layer', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'Layer'}}, ...
+          'Attribute', attr);
+          
+      ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer interfaces');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: sigmaInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
+      nc(ifld) = struct('Name', 'LayerInterf', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'LayerInterf'}}, ...
+          'Attribute', attr);
+          
+      ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centers, depth');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'DP DP0 DPS');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'sea_floor_depth');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
+      if isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'grid_x grid_y');
+      else
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'grid_latitude grid_longitude');
+      end
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
+      nc(ifld) = struct('Name', 'grid_depth', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'n_cor', 'm_cor'}}, ...
+          'Attribute', attr);
+          
+      ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'depth of cell corners');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'DPS0');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'sea_floor_depth');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
+      if isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      else
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      end
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
+      nc(ifld) = struct('Name', 'depth', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'n', 'm'}}, ...
+          'Attribute', attr);
+
       ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'time');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
-      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
-      nc(ifld) = struct('Name', 'time', ...
-          'Nctype'   , 'double', ...
-          'Dimension', {{'time'}}, ...
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'KCS');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Non-active/active in cennl centre');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
+      if isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      else
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      end
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'KCS');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      nc(ifld) = struct('Name', 'zactive', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'n', 'm'}}, ...
           'Attribute', attr);
 
 %% 3 Create variables
@@ -346,23 +427,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
           'Nctype'   , OPT.type, ...
           'Dimension', {{'time', 'n', 'm'}}, ...
           'Attribute', attr);
-
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'KFU');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Non-active/active in U-point');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'KFU');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'KFU', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'n', 'm'}}, ...
-          'Attribute', attr);
       
       if isfield(I,'salinity')
       ifld     = ifld + 1;clear attr
@@ -379,7 +443,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'salinity', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
+          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
           'Attribute', attr);
       end
 
@@ -398,7 +462,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'temperature', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
+          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
           'Attribute', attr);
       end
 
@@ -416,7 +480,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'u', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
+          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -433,7 +497,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'v', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
+          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -451,7 +515,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'w', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'sigma', 'n', 'm'}}, ...
+          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
           'Attribute', attr);
 
 %% 4 Create variables with attibutes
@@ -465,22 +529,53 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
 %% 5 Fill variables
 
-      nc_varput(ncfile, 'm'            , [2:G.mmax-1  ]');
-      nc_varput(ncfile, 'n'            , [2:G.nmax-1  ]');
-      nc_varput(ncfile, 'm_cor'        , [1:G.mmax-1  ]');
-      nc_varput(ncfile, 'n_cor'        , [1:G.nmax-1  ]');
-      nc_varput(ncfile, 'x'            ,    G.cen.x);
-      nc_varput(ncfile, 'y'            ,    G.cen.y);
-      nc_varput(ncfile, 'x_cor'        ,    G.cor.x);
-      nc_varput(ncfile, 'y_cor'        ,    G.cor.y);
-      nc_varput(ncfile, 'time'         , T.datenum - OPT.refdatenum);
-      nc_varput(ncfile, 'sigma'        , [1:G.kmax   ]');
+      nc_varput(ncfile, 'time'          , T.datenum - OPT.refdatenum);
+
+      nc_varput(ncfile, 'm'             , [2:G.mmax-1  ]');
+      nc_varput(ncfile, 'n'             , [2:G.nmax-1  ]');
+      nc_varput(ncfile, 'm_cor'         , [1:G.mmax-1  ]');
+      nc_varput(ncfile, 'n_cor'         , [1:G.nmax-1  ]');
+
+      nc_varput(ncfile, 'x'             ,    G.cen.x);
+      nc_varput(ncfile, 'y'             ,    G.cen.y);
+      
+      nc_attput(ncfile, 'x'             ,'actual_range',[min(G.cen.x(:)) max(G.cen.x(:))]);
+      nc_attput(ncfile, 'y'             ,'actual_range',[min(G.cen.y(:)) max(G.cen.y(:))]);
+
+      nc_varput(ncfile, 'grid_x'        ,    G.cor.x);
+      nc_varput(ncfile, 'grid_y'        ,    G.cor.y);
+      nc_attput(ncfile, 'grid_x'        ,'actual_range',[min(G.cor.x(:)) max(G.cor.x(:))]);
+      nc_attput(ncfile, 'grid_y'        ,'actual_range',[min(G.cor.y(:)) max(G.cor.y(:))]);
+
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
-      nc_varput(ncfile, 'longitude'    ,G.cen.lon);
-      nc_varput(ncfile, 'latitude'     ,G.cen.lat);
-      nc_varput(ncfile, 'longitude_cor',G.cor.lon);
-      nc_varput(ncfile, 'latitude_cor' ,G.cor.lat);
+      nc_varput(ncfile, 'longitude'     ,G.cen.lon);
+      nc_varput(ncfile, 'latitude'      ,G.cen.lat);
+      nc_attput(ncfile, 'longitude'     ,'actual_range',[min(G.cen.lon(:)) max(G.cen.lon(:))]);
+      nc_attput(ncfile, 'latitude'      ,'actual_range',[min(G.cen.lat(:)) max(G.cen.lat(:))]);
+
+      nc_varput(ncfile, 'grid_longitude',G.cor.lon);
+      nc_varput(ncfile, 'grid_latitude' ,G.cor.lat);
+      nc_attput(ncfile, 'grid_longitude','actual_range',[min(G.cor.lon(:)) max(G.cor.lon(:))]);
+      nc_attput(ncfile, 'grid_latitude' ,'actual_range',[min(G.cor.lat(:)) max(G.cor.lat(:))]);
       end      
+
+      data = vs_let(F,'map-const','THICK','quiet');
+     [sigma,sigmaInterf] = d3d_sigma(data); % [0 .. 1]
+
+      nc_varput(ncfile, 'k'             ,1:G.kmax);
+      nc_varput(ncfile, 'Layer'         ,sigma-1);
+      nc_attput(ncfile, 'Layer'         ,'actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
+				        
+      nc_varput(ncfile, 'LayerInterf'   ,sigmaInterf-1);
+      nc_attput(ncfile, 'LayerInterf'   ,'actual_range',[min(sigmaInterf(:)-1) max(sigmaInterf(:)-1)]); % [-1 0]
+
+      nc_varput(ncfile, 'depth'         ,-G.cen.dep); % positive down !
+      nc_varput(ncfile, 'grid_depth'    ,-G.cor.dep); % positive down !
+      nc_attput(ncfile, 'depth'         ,'actual_range',[min(-G.cen.dep(:)) max(-G.cen.dep(:))]);
+      nc_attput(ncfile, 'grid_depth'    ,'actual_range',[min(-G.cor.dep(:)) max(-G.cor.dep(:))]);
+      
+      nc_varput(ncfile, 'zactive'       ,G.cen.mask);
+      nc_attput(ncfile, 'zactive'       ,'actual_range',[0 1]);
       
       i = 0;
       
@@ -488,7 +583,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
       R.u   = [Inf -Inf];
       R.v   = [Inf -Inf];
       R.w   = [Inf -Inf];
-      R.KFU   = [Inf -Inf];
 
       for it = OPT.time
       
@@ -501,20 +595,19 @@ function varargout = vs_trim2nc(vsfile,varargin)
           G = vs_meshgrid3dcorcen(F, it, G);
           
           if isfield(I,'salinity')
-          D.salinity    = vs_let_scalar    (F,'map-series' ,{it},'R1'       , {0 0 0 I.salinity.index   });
-          nc_varput(ncfile,'salinity', shiftdim(salinity  ,2),[i-1, 0  0  0], [1, size(shiftdim(D.sal,2))       ]); % go from y, x, z to z, y, x
+          D.salinity    = vs_let_scalar    (F,'map-series' ,{it},'R1'       , {0 0 0 I.salinity.index   },'quiet');
+          nc_varput(ncfile,'salinity'   , shiftdim(D.salinity  ,2),[i-1, 0  0  0], [1, size(shiftdim(D.salinity,2))       ]); % go from y, x, z to z, y, x
           end
           if isfield(I,'temperature')
-          D.temperature = vs_let_scalar    (F,'map-series' ,{it},'R1'       , {0 0 0 I.temperature.index});
-          nc_varput(ncfile,'temperature', shiftdim(temperature  ,2),[i-1, 0  0  0], [1, size(shiftdim(D.sal,2))       ]); % go from y, x, z to z, y, x
+          D.temperature = vs_let_scalar    (F,'map-series' ,{it},'R1'       , {0 0 0 I.temperature.index},'quiet');
+          nc_varput(ncfile,'temperature', shiftdim(D.temperature  ,2),[i-1, 0  0  0], [1, size(shiftdim(D.temperature,2))       ]); % go from y, x, z to z, y, x
           end
           
          [D.u,D.v] = vs_let_vector_cen(F, 'map-series',{it},{'U1','V1'}, {0,0,0},'quiet');
-%           D.w      = vs_let_scalar    (F, 'map-series',{it},'WPHY'     , {0,0,0});
-          D.KFU = vs_let_scalar    (F,'map-series' ,{it},'KFU');
+          D.w      = vs_let_scalar    (F, 'map-series',{it},'WPHY'     , {0,0,0},'quiet');
           D.u      = permute(D.u,[4 2 3 1]); % z y x
           D.v      = permute(D.v,[4 2 3 1]); % z y x
-%           D.w      = permute(D.w,[3 1 2]);   % z y x
+          D.w      = permute(D.w,[3 1 2]);   % z y x
           
           %% apply masks
           
@@ -530,23 +623,18 @@ function varargout = vs_trim2nc(vsfile,varargin)
           nc_varput(ncfile,'eta'     , G.cen.zwl,[i-1, 0, 0   ],[1, size(G.cen.zwl   )]);
           nc_varput(ncfile,'u'       , D.u      ,[i-1, 0, 0, 0],[1, size(D.u         )]);
           nc_varput(ncfile,'v'       , D.v      ,[i-1, 0, 0, 0],[1, size(D.v         )]);
-%           nc_varput(ncfile,'w'       , D.w      ,[i-1, 0, 0, 0],[1, size(D.w         )]);
-          nc_varput(ncfile,'KFU'     , D.KFU    ,[i-1, 0, 0   ],[1, size(D.KFU       )]);
- 
+          nc_varput(ncfile,'w'       , D.w      ,[i-1, 0, 0, 0],[1, size(D.w         )]);
           
           R.eta = [min(R.eta(1),min(G.cen.zwl(:))) max(R.eta(2),max(G.cen.zwl(:)))];
           R.u   = [min(R.u  (1),min(D.u      (:))) max(R.u  (2),max(D.u      (:)))];  
           R.v   = [min(R.v  (1),min(D.v      (:))) max(R.v  (2),max(D.v      (:)))];  
-%           R.w   = [min(R.w  (1),min(D.w      (:))) max(R.w  (2),max(D.w      (:)))];
-          R.KFU = [min(R.KFU(1),min(D.KFU    (:))) max(R.KFU(2),max(D.KFU    (:)))];
-
+          R.w   = [min(R.w  (1),min(D.w      (:))) max(R.w  (2),max(D.w      (:)))];
           
       end
       
       nc_attput(ncfile,'eta','actual_range',R.eta)
       nc_attput(ncfile,'u'  ,'actual_range',R.u  );
       nc_attput(ncfile,'v'  ,'actual_range',R.v  );
-%       nc_attput(ncfile,'w'  ,'actual_range',R.w  );
-      nc_attput(ncfile,'KFU','actual_range',R.KFU)
-       
+      nc_attput(ncfile,'w'  ,'actual_range',R.w  );
+      
 %% EOF      

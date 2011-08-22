@@ -182,7 +182,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'm of cell centers');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell centers');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
@@ -193,7 +193,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'n of cell centers');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of cell centers');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
@@ -443,10 +443,10 @@ function varargout = vs_trih2nc(vsfile,varargin)
      [sigma,sigmaInterf] = d3d_sigma(data); % [0 .. 1]
       
       nc_varput(ncfile,'sigma',sigma-1);
-      nc_attput(ncfile,'sigma','actual_range',[min(sigma(:)) max(sigma(:))]);
+      nc_attput(ncfile,'sigma','actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
 
       nc_varput(ncfile,'sigmaInterf',sigmaInterf-1);
-      nc_attput(ncfile,'sigmaInterf','actual_range',[min(sigmaInterf(:)) max(sigmaInterf(:))]); % [-1 1]
+      nc_attput(ncfile,'sigmaInterf','actual_range',[min(sigmaInterf(:)-1) max(sigmaInterf(:)-1)]); % [-1 1]
       
       data = vs_let(F,'his-const','DPS',OPT.quiet);
       nc_varput(ncfile,'depth',data);
