@@ -1,10 +1,10 @@
-function [z ErosionVolume result] = x2z_DUROS(samples, Resistance, varargin)
+function [z ErosionVolume result] = x2z_DUROS(varargin)
 %X2Z_DUROS  Limit state function
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   [z ErosionVolume] = x2z_DUROS(x, varnames, Resistance, varargin)
+%   [z ErosionVolume] = x2z_DUROS(varargin)
 %
 %   Input:
 %   varargin  =
@@ -54,51 +54,55 @@ function [z ErosionVolume result] = x2z_DUROS(samples, Resistance, varargin)
 % $Revision$
 % $HeadURL$
 
+%%
+OPT = struct(...
+    'Resistance', 50,...
+    'xInitial', [-250; -24.375; 5.625; 55.725; 230.625; 1950],...
+    'zInitial', [15; 15; 3; 0; -3; -14.4625],...
+    'WL_t', [],...
+    'Hsig_t', [],...
+    'Tp_t', [],...
+    'D50', [],...
+    'Duration', [],...
+    'Accuracy', [],...
+    'R', [],...
+    'zRef', 5);
+
+OPT = setproperty(OPT, varargin{:});
+
 %% cross-shore profile
-if ~isempty(varargin)
-    xInitial = varargin{1};
-    zInitial = varargin{2};
-    xInitial = xInitial(~isnan(zInitial));
-    zInitial = zInitial(~isnan(zInitial));
-else
-    [xInitial zInitial] = SimpleProfile;
-end
+xInitial = OPT.xInitial(~isnan(OPT.zInitial));
+zInitial = OPT.zInitial(~isnan(OPT.zInitial));
 
 % reference for retreat distance
-if length(varargin) > 2
-    zRef = varargin{3};
-else
-    zRef = 5;
-end
-xRef = max(findCrossings(xInitial, zInitial, [min(xInitial) max(xInitial)]', ones(2,1)*zRef));
+xRef = max(findCrossings(xInitial, zInitial, [min(xInitial) max(xInitial)]', ones(2,1)*OPT.zRef));
 
-z = [];
-for i = 1:length(samples.D50)
+for i = 1:length(OPT.D50)
 %     try
         %% set calculation values for additional volume
         DuneErosionSettings('set',...
-            'AdditionalVolume', [num2str(samples.Duration(i)) '*Volume + ' num2str(samples.Accuracy(i)) '*Volume'],... string voor het bepalen van het toeslagvolume gedurende de berekening (afslagvolume is negatief)
+            'AdditionalVolume', [num2str(OPT.Duration(i)) '*Volume + ' num2str(OPT.Accuracy(i)) '*Volume'],... % string voor het bepalen van het toeslagvolume gedurende de berekening (afslagvolume is negatief)
             'BoundaryProfile', false,...       % Grensprofiel berekenen is niet nodig, gebruiken we niet
             'FallVelocity', {@getFallVelocity 'a' 0.476 'b' 2.18 'c' 3.226 'D50'});
         
         % set coastal curvature, if provided
-        if ismember('R', fieldnames(samples)) && ~isempty(samples.R(i))
-            DuneErosionSettings('set', 'Bend', 180 / (pi * samples.R(i)) * 1000);
+        if ~isempty(OPT.R) && numel(OPT.R) >= i
+            DuneErosionSettings('set', 'Bend', 180 / (pi * OPT.R(i)) * 1000);
         else
             DuneErosionSettings('set', 'Bend', 0);
         end
         
         %% carry out DUROS+ computation
-        [result messages] = DUROS(xInitial, zInitial, samples.D50(i), samples.WL_t(i), samples.Hsig_t(i), samples.Tp_t(i));
+        [result messages] = DUROS(xInitial, zInitial, OPT.D50(i), OPT.WL_t(i), OPT.Hsig_t(i), OPT.Tp_t(i));
         
         %% derive z-value
         
         [RD(i) ErosionVolume(i)] = getRetreatDistance(result, messages, xRef);
 
         if length(result) > 1
-            samples.Duration(i) = -result(2).Volumes.Volume*samples.Duration(i);
-            samples.Accuracy(i) = -result(2).Volumes.Volume*samples.Accuracy(i);
+            OPT.Duration(i) = -result(2).Volumes.Volume*OPT.Duration(i);
+            OPT.Accuracy(i) = -result(2).Volumes.Volume*OPT.Accuracy(i);
         end
 
-        z(i,:) = Resistance - RD(i);
+        z(i,:) = OPT.Resistance - RD(i);
 end
