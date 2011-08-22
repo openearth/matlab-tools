@@ -132,8 +132,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
      [G.cen.lon,G.cen.lat] = convertcoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
      [G.cor.lon,G.cor.lat] = convertcoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
 
-      nc_attput(ncfile, nc_global, 'geospatial_lat_min'  , min(G.cor.lon(:)));
-      nc_attput(ncfile, nc_global, 'geospatial_lat_max'  , max(G.cor.lon(:)));
+      nc_attput(ncfile, nc_global, 'geospatial_lat_min'  , min(G.cor.lat(:)));
+      nc_attput(ncfile, nc_global, 'geospatial_lat_max'  , max(G.cor.lat(:)));
       nc_attput(ncfile, nc_global, 'geospatial_lon_min'  , min(G.cor.lon(:)));
       nc_attput(ncfile, nc_global, 'geospatial_lon_max'  , max(G.cor.lon(:)));
       nc_attput(ncfile, nc_global, 'geospatial_lat_units', 'degrees_north');
