@@ -68,7 +68,8 @@ function varargout = locate_datapoint(handle, varargin)
 props = {'type' 'xdata' 'ydata' 'DisplayName'};
 
 h = findobj(handle,'-depth', Inf,...
-    'type', 'line');
+    'type', 'line', '-or', 'type', 'patch');
+% the type 'patch' is needed for scatter plots
 values = get(h, props);
 set(findobj(handle, 'type', 'axes'), 'nextplot', 'add')
 ph = plot(NaN, NaN, 'r+', 'MarkerSize', 10);
