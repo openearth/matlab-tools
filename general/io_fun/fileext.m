@@ -13,6 +13,10 @@ function EXT = fileext(fullfilename)
 % $HeadURL$
 % $Keywords$
 
+if iscellstr(fullfilename)
+    fullfilename = char(fullfilename);
+end
+
 for iname=1:size(fullfilename,1)
 
    [PATHSTR{iname},NAME{iname},EXT{iname}] = fileparts(fullfilename(iname,:));

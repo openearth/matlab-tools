@@ -1,9 +1,28 @@
-function OPT = grid_orth_getMapInfoFromDataset(dataset)
+function varargout = grid_orth_getMapInfoFromDataset(dataset)
 %GRID_ORTH_GETMAPINFOFROMDATASET  Extracts meta info from an OPeNDAP catalog or a local directory.
 %
 %   OPT = grid_orth_getmapinfofromdataset(url)
+%   [urls, x_ranges, y_ranges] = grid_orth_getmapinfofromdataset(url)
+%
+% where OPT has fields
+% * urls
+% * x_ranges
+% * y_ranges
 %
 % extract meta info from an OPeNDAP catalog or a local directory.
+%
+% Example:
+%
+% [urls,x,y]=grid_orth_getMapInfoFromDataset('http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.html')
+%  xx = cell2mat(cellfun(@(x) [x(1) x(2) x(2) x(1) x(1)]',x,'un',0));
+%  yy = cell2mat(cellfun(@(x) [x(1) x(1) x(2) x(2) x(1)]',y,'un',0));
+%  plot(xx,yy)
+%  hold on
+%  text(min(xx),min(yy),filename(urls),'rotation',45);
+%  axis tight
+%  tickmap('xy')
+%  L = nc2struct('http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc');
+%  plot(L.x,L.y)
 %
 %See also: GRID_2D_ORTHOGONAL
 
@@ -20,45 +39,42 @@ function OPT = grid_orth_getMapInfoFromDataset(dataset)
 % $HeadURL$
 % $Keywords: $
   
-OPT.dataset = dataset;
-
+OPT.dataset    = dataset;
+OPT.catalognc  = []; % make sure urls and ranges come from same source: either 100% catalog.cn or 100% catalog.xml+nc_actual_range
 disp('Retrieving map info from dataset ...')
 
-% check for catalog.nc link
+%% catalog.nc: direct dodsC url
 if strcmpi(OPT.dataset(end-9:end),'catalog.nc')
-    
     OPT.catalognc = OPT.dataset;
-    OPT.urls = cellstr([nc_varget(OPT.dataset,'urlPath')]);
-    
-    % temporary fix of very weird bug!!! Occasionally the char matrix or urlPaths in
-    % the catalog nc gets flipped!!!! If this happens flip it back.
-    if ~strcmp(OPT.urls{1}(end-2:end),'.nc')
-        OPT.urls = cellstr(char(OPT.urls)');
-    end    
+%% catalog.nc: check for presence of catalog.nc inside range of files listed in catalog.xml
 else
-    OPT.urls     = opendap_catalog(OPT.dataset,'ignoreCatalogNc',0);
+    OPT.urls    = opendap_catalog(OPT.dataset,'ignoreCatalogNc',0);
     isCatalogNc = false(length(OPT.urls),1);
     for ii = 1:length(OPT.urls)
         isCatalogNc(ii) = strcmpi(OPT.urls{ii}(end-9:end),'catalog.nc');
     end
     if any(isCatalogNc)
         OPT.catalognc = OPT.urls{isCatalogNc};
-        OPT.urls(isCatalogNc) = [];
+        OPT.urls      = []; % throw away urls from catalog as it's order is not in any sorted order: not related to catalog.nc contents
     end
 end
 
-if isfield(OPT,'catalognc')
+if ~isempty(OPT.catalognc)
+    OPT.urls      = cellstr([nc_varget(OPT.catalognc,'urlPath')]);
+    % temporary fix of very weird bug!!! Occasionally the char matrix or urlPaths in
+    % the catalog nc gets flipped!!!! If this happens flip it back.
+    if ~strcmp(OPT.urls{1}(end-2:end),'.nc')
+        OPT.urls = cellstr(char(OPT.urls)');
+    end    
+
     try 
-        nc_varget(OPT.catalognc,'projectionCoverage_x');
+     x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x'); % should be [n x 2], same as slow method.
+     y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y');
     catch
-        disp('there is a catalog nc, but it doens''t have the new projectionCoverage_x variable, so it cannot be used to speed up the tedious process of getting all the boundaries of the nc files')
-        OPT = rmfield(OPT,'catalognc');
+     disp('there is a catalog nc, but it doens''t have the new projectionCoverage_x variable, so it cannot be used to speed up the tedious process of getting all the boundaries of the nc files')
+     OPT = rmfield(OPT,'catalognc');
     end
-end
-
-if isfield(OPT,'catalognc')
-    x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x'); % should be [n x 2], same as slow method.
-    y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y');
+    % put matrix into cell to avoid confusion with 1 or 3 tiles
     for i=1:size(x_ranges,1)
     OPT.x_ranges{i} = x_ranges(i,:);
     OPT.y_ranges{i} = y_ranges(i,:);
@@ -76,4 +92,10 @@ else
         
     end
     close(wbh)
+end
+
+if nargout==1
+   varargout = {OPT};
+else
+   varargout = {OPT.urls,OPT.x_ranges,OPT.y_ranges};
 end
