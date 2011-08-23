@@ -37,7 +37,7 @@ function chain = prob_chain_link(chain, last_chain, last_output, varargin)
 %   Copyright (C) 2011 Deltares
 %       Bas Hoonhout
 %
-%       bas.hoonhout@deltares.nl	
+%       bas.hoonhout@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -57,9 +57,9 @@ function chain = prob_chain_link(chain, last_chain, last_output, varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -93,7 +93,7 @@ switch func2str(last_chain.Method)
     case 'FORM'
         DP = last_output.Output.designpoint.finalU;
     case 'MC'
-        last_output = approxMCDesignPoint(last_output, 'method', 'MD');
+        last_output = approxMCDesignPoint(last_output, 'method', 'COG');
         DP = last_output.Output.designPoint.u;
 end
 
@@ -104,21 +104,21 @@ switch func2str(chain.Method)
     case 'FORM'
         chain.Params = set_optval('startU',DP,chain.Params{:});
     case 'MC'
-        
+
         % determine active stochasts
         active = find(~cellfun(@isempty, {chain.Stochast.Distr}) &     ...
             ~strcmp('deterministic', cellfun(@func2str, {chain.Stochast.Distr}, 'UniformOutput', false)));
-        
+
         if any(active)
             IS = exampleISVar;
-            
+
             n = 1;
             for i = active
                 IS(n)           = exampleISVar;
                 IS(n).Name      = chain.Stochast(i).Name;
                 IS(n).Method    = @prob_is_normal;
                 IS(n).Params    = {DP(i) OPT.sigma};
-                
+
                 n = n + 1;
             end
 
