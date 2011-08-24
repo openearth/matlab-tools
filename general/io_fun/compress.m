@@ -138,7 +138,7 @@ else
 end
 % 7za a -t7z files.7z *.txt
 
-fileNameIn = sprintf('"%s" ',fileNameIn{:});
+fileNameIn    = sprintf('"%s" ',fileNameIn{:});
 
 dosstring     = sprintf('"%s" a %s "%s" %s %s',path7zip,OPT.type,fullfile(fileNameOut),fileNameIn,OPT.args);
 

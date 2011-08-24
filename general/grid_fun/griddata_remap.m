@@ -96,36 +96,21 @@ end
     
 XI = unique(XI);
 YI = unique(YI);
-    
+[tfx,n] = ismember (x,XI);
+[tfy,m] = ismember (y,YI);   
+tf = tfx & tfy;
 if OPT.errorCheck    
     if all(dimx ~= length(XI))||all(dimy ~= length(YI))
         error(['XI and YI must be either 1D vectors, or 2D vectors made with'...
                'meshgrid. Also, no duplicate values are allowed in XI or YI'])
     end
+    if ~(all(tf))
+        error('some points could not be mapped to the XI,YI grid, maybe use griddata_average instead');
+    end
 end
+
 
 %% remap x and y to rounded gridpoints
 
 ZI = nan(length(YI),length(XI));
-for ii = 1:length(x)
-    nn = find(abs(YI - y(ii)) < OPT.tolerance);
-    mm = find(abs(XI - x(ii)) < OPT.tolerance);
-    if OPT.errorCheck
-        if any(nn)&&any(mm)
-            if isnan(ZI(nn,mm))
-                ZI(nn,mm) = z(ii);
-            else
-                warning('duplicate z value found at point #%d (z = %0.4f and z = %0.4f) at coordinates (x = %0.24f, y = %0.4f)',...
-                    ii,ZI(nn,mm),z(ii),x(ii),y(ii)) %#ok<*WNTAG>
-            end
-        else
-            warning(['point #%d (z = %0.4f) at coordinates (x = %0.4f, y = %0.4f)\n ',...
-                '     could not be mapped to the XI,YI grid, maybe use griddata_average instead.\n',...
-                '     The closest match off by dx = %0.6f, dy = %0.6f'],...
-                ii,z(ii),x(ii),y(ii),min(abs(XI - x(ii))),min(abs(YI - y(ii))));
-        end
-    else % without error check
-        ZI(nn,mm) = z(ii);
-    end
-end
-
+ZI(sub2ind(size(ZI),m(tf),n(tf))) = z(tf);
