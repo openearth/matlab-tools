@@ -78,4 +78,4 @@ function Hsig_t = interpolate_Hsig(WL_t, P, h_grid, EHs_tabel, sigmaHs)
 mu_Hs = interp1(h_grid, EHs_tabel, WL_t);         % verwachtingswaarde Hs, gegeven de waterstand
 mu_Hs(WL_t>max(h_grid)) = max(EHs_tabel);         % afvangen als waarden buiten grenzen van tabel
 mu_Hs(WL_t<min(h_grid)) = min(EHs_tabel);         % afvangen als waarden buiten grenzen van tabel
-Hsig_t = norm_inv(P, mu_Hs, sigmaHs);            % bereken Hs
+Hsig_t = norm_inv(P, mu_Hs, sigmaHs);             % bereken Hs
