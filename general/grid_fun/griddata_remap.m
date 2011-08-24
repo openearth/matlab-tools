@@ -66,7 +66,6 @@ function ZI = griddata_remap(X, Y, Z, XI, YI, varargin)
 %% set properties
 
 OPT.errorCheck = true;
-OPT.tolerance  = eps;
 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
@@ -83,19 +82,44 @@ y(nans) = [];
 z(nans) = [];
 
 %% input check
+dimx = size(XI);
+dimy = size(YI);
+
 if OPT.errorCheck
-    dimx = size(XI);
-    dimy = size(YI);
-    if length(dimx) ~= 2
+    if length(dimx) ~= 2 
         error('XI must be a 1D or 2D array')
     end
-    
-    dimx(dimx == 1) = [];
-    dimy(dimy == 1) = [];
+    if length(dimy) ~= 2 
+        error('YI must be a 1D or 2D array')
+    end
+end    
+
+dimx(dimx == 1) = [];
+dimy(dimy == 1) = [];
+
+if length(dimx) == 2;
+    XI = XI(1,:);
+else
+    XI = XI(:);
 end
-    
-XI = unique(XI);
-YI = unique(YI);
+if length(dimy) == 2;
+    YI = YI(:,1);
+else
+    YI = YI(:);
+end
+
+if OPT.errorCheck
+     if length(unique(XI)) ~= length(XI);
+                 error(['XI and YI must be either 1D vectors, or 2D vectors made with'...
+               'meshgrid. Also, no duplicate values are allowed in XI or YI'])
+     end
+     if length(unique(YI)) ~= length(YI);
+        error(['XI and YI must be either 1D vectors, or 2D vectors made with'...
+               'meshgrid. Also, no duplicate values are allowed in XI or YI'])
+     end
+end
+
+
 [tfx,n] = ismember (x,XI);
 [tfy,m] = ismember (y,YI);   
 tf = tfx & tfy;
