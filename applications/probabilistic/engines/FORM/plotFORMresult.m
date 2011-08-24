@@ -1,7 +1,9 @@
 function varargout = plotFORMresult(result, fhandle)
-%PLOTFORMRESULT  One line description goes here.
+%PLOTFORMRESULT  plot iteration trajectory of FORM calculation
 %
-%   More detailed description goes here.
+%   Plot routine to show for each of the stochastic variables as well as
+%   for the Z and Beta values the development as function of the individual
+%   realisations.
 %
 %   Syntax:
 %   varargout = plotFORMresult(result, fhandle)
@@ -15,7 +17,7 @@ function varargout = plotFORMresult(result, fhandle)
 %   Example
 %   plotFORMresult
 %
-%   See also
+%   See also FORM
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -61,12 +63,8 @@ active = ~cellfun(@isempty, {stochast.Distr}) &...
     'UniformOutput', false));
 Nstoch = sum(active);   % number of random variables (deterministic ones excuded)
 
-NrFigureColumns = ceil(sqrt(Nstoch));
-if NrFigureColumns*(NrFigureColumns-1) >= Nstoch
-    NrFigureRows = NrFigureColumns-1;
-else
-    NrFigureRows = NrFigureColumns;
-end
+NrFigureColumns = ceil(sqrt(Nstoch+2));
+NrFigureRows = NrFigureColumns - floor(mod(NrFigureColumns^2, Nstoch+2) / NrFigureColumns);
 
 if exist('fhandle', 'var') && ishandle(fhandle) && strcmp(get(fhandle, 'Type'), 'figure')
     fig = fhandle;
@@ -76,28 +74,47 @@ end
 
 % dimensions: number of calculations and number of iterations. Each
 % iteration consists of Nstoch+1 calculations of the z-variable, i.e.
-% a computations for the current state vector x and Nstoch perturbations,
+% a computation for the current state vector x and Nstoch perturbations,
 % (1 for each random variable)
 Nx = size(result.Output.x,1);
 xnums = 1:Nx;
+if result.Output.Converged
+    Nx = Nx - 1;
+end
 Ndv = result.settings.DerivativeSides; % 1 or 2 sided derivatives
-if mod(Nx-1, Ndv*Nstoch+1) ~=0
+if mod(Nx, Ndv*Nstoch+1) ~=0
     error('length of resultvector x no multiple of number of random variables');
 end
-IterIndex = [(Ndv*Nstoch+1:Ndv*Nstoch+1:Nx-1) Nx];
+IterIndex = Ndv*Nstoch+1:Ndv*Nstoch+1:Nx;
 
-% make subplots for each active stochast
 activeInd = find(active);
-for i = activeInd
+
+ax = zeros(1,Nstoch+2); % pre-allocate ax
+% make subplots for each active stochast
+for ifig = 1:Nstoch+2
     % prepare subplot and add title and axis labels
-    subplot(NrFigureRows, NrFigureColumns, find(activeInd == i),...
+    ax(ifig) = subplot(NrFigureRows, NrFigureColumns, ifig,...
         'Nextplot', 'add',...
-        'XLim', [0 Nx])
-    title(result.Input(i).Name)
+        'XLim', [0 Nx]);
     xlabel('Calculations')
-    ylabel(result.Input(i).Name)
+    if ifig == Nstoch + 1
+        % plot Z
+        title('Z')
+        xi = result.Output.z;
+    elseif ifig == Nstoch + 2
+        % plot Beta
+        title('Beta')
+        xi = NaN(size(result.Output.z));
+        xi(IterIndex) = result.Output.Betas;
+    else
+        % plot stochastic variables
+        istoch = activeInd(ifig);
+        title(result.Input(istoch).Name)
+        xi = result.Output.x(:,istoch);
+    end
+    % apply title as ylabel as well
+    ylabel(get(get(gca, 'title'), 'String'))
         
-    xi = result.Output.x(:,i);
     % plot FORM iterations
     plot(xnums(IterIndex), xi(IterIndex),...
         'DisplayName', 'FORM iterations',...
@@ -110,6 +127,8 @@ for i = activeInd
     set(leg,...
         'location', 'best');
 end
+
+linkaxes(ax,'x');
 
 %%
 if nargout == 1
