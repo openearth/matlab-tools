@@ -25,6 +25,8 @@ function dtnm = time2datenum(datestring,varargin)
 % in all of which '-' and ':' can be any character and the symbols
 % correspond with those in datestr. Note mm (month) vs. MM (minute).
 %
+% Non-uniform date format, incl empty lines, is not allowed.
+%
 % Note for convenience that the function is vectorized.
 %
 % See also: DATENUM, DATESTR, ISO2DATENUM, XLSDATE2DATENUM, UDUNITS2DATENUM
@@ -86,7 +88,6 @@ MI       = [];
 SC       = [];
 
 %% TIME
-%% ---------------------------
 
 if isempty(HH) & isempty(timestring)
       HH       = 0;
@@ -121,7 +122,6 @@ elseif ~isempty(timestring)
 end 
 
 %% DATE
-%% ---------------------------
 
 if ischar(datestring)
 
@@ -172,6 +172,12 @@ elseif isnumeric(datestring)
 end % if iswhatever(datestring)
 
 dtnm = datenum(yy,mm,dd,HH,MI,SC);
+
+if length(dtnm) < size(datestring,1)
+    warning('time2datenum: not all input has same format, aborted.')
+    dtnm = [];
+    % e.g. time2datenum(['20110101';'        ';'20110103';'20110103';'20110103'])
+end
 
 % EOF
 

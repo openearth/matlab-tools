@@ -393,7 +393,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'KCS');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Non-active/active in cennl centre');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Non-active/active in cell centre');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
       if isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');

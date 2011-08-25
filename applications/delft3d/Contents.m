@@ -63,6 +63,7 @@
 %   waq       - tools related to Delft3D-WAQ
 %   flow      - tools related to Delft3D-FLOW
 %   dflowfm   - tools related to D-Flow FM (Flexible Mesh); Flow for unstructured grid
+%   delft3d_kelvin_wave - generating frictional kelvin wave boundaries for idealized rectangular models
 %
 %See also: 
 

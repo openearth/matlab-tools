@@ -167,7 +167,7 @@ function varargout = struct2xls(fname,S,varargin)
                if (size(S.(fldname),2)==1)
                   S.(fldname) = S.(fldname)';
                   if OPT.warning
-                  warning(['Field ''',fldname,''' has been transposed to fit into an Excel column.'])
+                  fprintf(2,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
                   end
                end
             end
@@ -176,8 +176,9 @@ function varargout = struct2xls(fname,S,varargin)
             if length(size(S.(fldname)))==2
                if (size(S.(fldname),1)==1)
                   S.(fldname) = S.(fldname)';
-                  warning(['Field ''',fldname,''' has been transposed to fit into an Excel column.'])
-                  fprintf(2,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.'])
+                  if OPT.warning
+                  fprintf(2,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
+                  end
                end
             end
          end

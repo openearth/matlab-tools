@@ -1,4 +1,4 @@
-%DELFT3D_KELVIN_WAVE.MAIN    
+%DELFT3D_KELVIN_WAVE - generating frictional kelvin wave boundaries for idealized rectangular models
 %
 % Elementary Toolbox for generating frictional kelvin wave 
 % open boundaries by iterating an analytical solution, and sampling

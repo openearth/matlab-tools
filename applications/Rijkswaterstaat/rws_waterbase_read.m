@@ -269,6 +269,19 @@ for ifile=1:length(fnames)
        datenumbers = nan;
        else
        datenumbers = time2datenum(datestring,timestring);
+       if length(datenumbers) < length(datestring)
+          datenumbers = repmat(nan,[length(datestring) 1]);
+          
+          % handle missing times
+          for i=1:length(datestring)
+          tmp = time2datenum(datestring{i},timestring{i});
+          if ~isempty(tmp)
+          datenumbers(i) = tmp;
+          end
+          end
+          
+       end
+
        end
        
        if     strcmpi(OPT.display,'multiWaitbar') % textread files are small: no waitbar needed
@@ -365,7 +378,7 @@ for ifile=1:length(fnames)
 
                                geomask.par    =                    D.data(istat).epsg==7415;
             [D.data(istat).lon(geomask.par),...
-             D.data(istat).lat(geomask.par)]  = convertcoordinates(D.data(istat).x(geomask.par),...
+             D.data(istat).lat(geomask.par)]  = convertCoordinates(D.data(istat).x(geomask.par),...
                                                                    D.data(istat).y(geomask.par),'persistent','CS1.code',7415,'CS2.code',4326);
 
                                geomask.unknow = ~(geomask.ed50 | geomask.par | geomask.ll);
@@ -703,13 +716,15 @@ for ifile=1:length(fnames)
    
    end % D.locations==1
    
-   if OPT.url
+   if OPT.url % onyl works when downloaded with rws_waterbase_get_url
    
       fidurl = fopen(strrep(fname,'.txt','.url'),'r');
+      if fidurl > 0
       rec    = fgetl(fidurl); % [InternetShortcut]
       rec    = fgetl(fidurl); % URL=%s
       fclose(fidurl);
       D.url  = rec(5:end);
+      end
    
    end
    

@@ -296,6 +296,16 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma thickness at layer midpoints');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '%');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
+      nc(ifld) = struct('Name', 'THICK', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'Layer'}}, ...
+          'Attribute', attr);
+
+      ifld     = ifld + 1;clear attr;
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer midpoints');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
@@ -439,9 +449,12 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_varput(ncfile, 'station_latitude'     ,G.lat);
       end      
       
-      data = vs_let(F,'his-const','THICK',OPT.quiet);
-     [sigma,sigmaInterf] = d3d_sigma(data); % [0 .. 1]
+      THICK = vs_let(F,'his-const','THICK',OPT.quiet);
+     [sigma,sigmaInterf] = d3d_sigma(THICK); % [0 .. 1]
       
+      nc_varput(ncfile,'THICK'THICK);
+      nc_attput(ncfile,'THICK','actual_range',[min(THICK) max(THICK)]);
+
       nc_varput(ncfile,'sigma',sigma-1);
       nc_attput(ncfile,'sigma','actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
 
