@@ -192,7 +192,6 @@ x_d = x_d(notnan);
 z_d_cs = z_d_cs(notnan);
 
 %% create xbeach grid
-
 [x_xb z_xb] = xb_grid_xgrid(x_d, z_d_cs, OPT.xgrid{:});
 [y_xb] = xb_grid_ygrid(y_d, OPT.ygrid{:});
 
@@ -307,11 +306,14 @@ yori = min(min(ygrid));
 xgrid = xgrid - xori;
 ygrid = ygrid - yori;
 
+%% derive whether xgrid is variable or equidistant
+vardx = ~isscalar(unique(diff(xgrid)));
+
 %% create xbeach structures
 
 xb = xb_empty();
 xb = xb_set(xb, 'nx', nx, 'ny', ny, 'xori', xori, 'yori', yori, ...
-    'alfa', mod(360-alpha, 360), 'vardx', 1, 'posdwn', OPT.posdwn);
+    'alfa', mod(360-alpha, 360), 'vardx', vardx, 'posdwn', OPT.posdwn);
 
 if ~isempty(OPT.ne)
     xb = xb_bathy2input(xb, xgrid, ygrid, zgrid, negrid);
