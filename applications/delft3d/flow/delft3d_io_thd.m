@@ -160,8 +160,8 @@ else
 
       for i=1:S.NTables
       
-         m = S.DATA(i).m;
-         n = S.DATA(i).n;
+         m = S.m(i);
+         n = S.n(i);
 
          if     strcmpi(S.DATA(i).direction,'u')
          
