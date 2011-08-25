@@ -91,8 +91,15 @@ if ~isempty(OPT.index); error('Index reading not yet available for netCDF'); end
 
 %% read netcdf file
 
+if isdir(fname)
+    ncfiles = dir(fullfile(fname, '*.nc'));
+    if ~isempty(ncfiles)
+        fname   = fullfile(fname, ncfiles(1).name);
+    end
+end
+
 if ~exist(fname, 'file')
-    error(['File does not exist [' fname ']'])
+	error(['File does not exist [' fname ']'])
 end
 
 variables = xb_empty();

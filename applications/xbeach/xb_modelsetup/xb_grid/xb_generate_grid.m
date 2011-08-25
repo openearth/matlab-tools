@@ -98,7 +98,7 @@ OPT = struct( ...
     'finalise', true, ...
     'posdwn', false, ...
     'zdepth', 100, ...
-    'superfast', false ...
+    'superfast', true ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -307,13 +307,28 @@ xgrid = xgrid - xori;
 ygrid = ygrid - yori;
 
 %% derive whether xgrid is variable or equidistant
-vardx = ~isscalar(unique(diff(xgrid)));
+
+dx = unique(diff(xgrid,1,2));
+dy = unique(diff(ygrid,1,1));
+
+vardx = ~isscalar(dx)||(~isempty(dy)&&~isscalar(dy));
 
 %% create xbeach structures
 
 xb = xb_empty();
 xb = xb_set(xb, 'nx', nx, 'ny', ny, 'xori', xori, 'yori', yori, ...
     'alfa', mod(360-alpha, 360), 'vardx', vardx, 'posdwn', OPT.posdwn);
+
+if ~vardx
+    xgrid = [];
+    ygrid = [];
+    
+    if ~isempty(dy)
+        xb = xb_set(xb, 'dx', dx, 'dy', dy);
+    else
+        xb = xb_set(xb, 'dx', dx);
+    end
+end
 
 if ~isempty(OPT.ne)
     xb = xb_bathy2input(xb, xgrid, ygrid, zgrid, negrid);
