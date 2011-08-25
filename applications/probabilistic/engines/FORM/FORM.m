@@ -143,7 +143,9 @@ elseif isscalar(OPT.startU)
 else
     error('FORM:startU', 'The parameter "startU" should be either a scalar or a vector with the length of the # stochasts')
 end
-[u id_low id_upp] = prescribeU(startU, [], du, OPT.Relaxation, rel_ids);
+u = [];
+currentU = startU;
+Relaxation = OPT.Relaxation;
 
 %% initialise FORM-procedure
 NextIter = true;            % condition to go to next iteration
@@ -155,6 +157,9 @@ Iter = 0;                   % number of iterations so far
 
 %% start FORM iteration procedure
 while NextIter
+    % derive a new series of u-values for the next iteration
+    [u id_low id_upp] = prescribeU(currentU, u, du, Relaxation, rel_ids);
+    
     Iter = Iter + 1;
     % check whether current iteration is the first one
     FirstIter = Iter == 1;
@@ -181,8 +186,25 @@ while NextIter
         % extra check for convergence
         Converged = abs(z(Calc(end))) < OPT.maxdZ / OPT.Relaxation;
         
-        % exit while loop
-        break
+        if Converged
+            % exit while loop
+            break
+        else
+            if ~isempty(OPT.logconvergence)
+                fid = fopen(OPT.logconvergence, 'a');
+                fprintf(fid, 'Go back into iteration loop at Iter=%i\n', Iter);
+                fclose(fid);
+            end
+            % remove last calculation and go back into iteration loop
+            u(end,:) = [];
+            z(end,:) = [];
+            Calc = size(z,1);
+            Iter = Iter - 1;
+            currentU = -alphas(Iter,:).*betas(Iter);
+            Relaxation = OPT.Relaxation;
+            du = duIter;
+            continue
+        end
     end
     
     % derive dz/du for each of the active u-values
@@ -240,6 +262,7 @@ while NextIter
         % carry out one more calculation using a relaxation value of 1
         % to make u = -alpha*beta, otherwise the final u solution is
         % not consistent with alpha and beta
+        duIter = du;
         du = zeros(size(stochast));
         Relaxation = 1;
     else
@@ -258,8 +281,7 @@ while NextIter
         end
     end
     
-    % derive a new series of u-values for the next iteration
-    [u id_low id_upp] = prescribeU(-alphas(Iter,:).*betas(Iter), u, du, Relaxation, rel_ids);
+    currentU = -alphas(Iter,:).*betas(Iter);
 end
 
 %%
