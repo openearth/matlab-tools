@@ -59,7 +59,7 @@ varargin = prob_checkinput(varargin{:});
 OPT = struct(...
     'stochast', struct(),... % stochast structure
     'x2zFunction', @x2z,...  % Function to transform x to z    
-    'variables', {{}},...    % aditional variables to use in x2zFunction
+    'x2zVariables', {{}},... % aditional variables to use in x2zFunction
     'method', 'matrix',...   % z-function method 'matrix' (default) or 'loop'
     'maxiter', 50,...        % maximum number of iterations
     'DerivativeSides', 1,... % 1 or 2 sided derivatives
@@ -82,17 +82,17 @@ end
 
 %% series of FORM calculations
 Resistance = [];
-if any(cellfun(@ischar, OPT.variables))
-    char_id = find(cellfun(@ischar, OPT.variables));
-    Resistance_id = char_id(ismember(OPT.variables(char_id), 'Resistance')) + 1;
+if any(cellfun(@ischar, OPT.x2zVariables))
+    char_id = find(cellfun(@ischar, OPT.x2zVariables));
+    Resistance_id = char_id(ismember(OPT.x2zVariables(char_id), 'Resistance')) + 1;
     if ~isempty(Resistance_id)
-        Resistance = OPT.variables{Resistance_id};
+        Resistance = OPT.x2zVariables{Resistance_id};
     end
 end
 
 % in case of multiple Resistance-values
 if ~isempty(Resistance) && ~isscalar(Resistance)
-    variables_id = find(ismember(varargin(1:2:end), 'variables'))*2;
+    variables_id = find(ismember(varargin(1:2:end), 'x2zVariables'))*2;
     % a series of z-criteria
     if issorted(Resistance)
         startU = OPT.startU; % startU for the first FORM run

@@ -70,17 +70,21 @@ z_input = getInputVariables(OPT.x2zFunction);
 
 % derive z based on x
 if strcmp(OPT.method, 'matrix')
-    [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input);
-    z = feval(OPT.x2zFunction, inputargs{:}, OPT.variables{:});
+    [z OPT] = zfuntioncall(OPT, stochast, x, z_input);
 elseif strcmp(OPT.method, 'loop')
     z = [];
     for isample = 1:size(x,1)
-        [inputargs OPT] = get_inputargs(OPT, x(isample,:), stochast, z_input);
-        z(isample,:) = feval(OPT.x2zFunction, inputargs{:}, OPT.variables{:});
+        [z(isample,:) OPT] = zfuntioncall(OPT, stochast, x(isample,:), z_input);
     end
 end
 
-%%
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [z OPT] = zfuntioncall(OPT, stochast, x, z_input)
+
+    [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input);
+    z               = feval(OPT.x2zFunction, inputargs{:}, OPT.x2zVariables{:});
+
 function [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input)
 
     if any(ismember({'samples' 'Resistance'}, z_input))
@@ -97,23 +101,21 @@ function [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input)
         end
         
         if ~isempty(i2)
-            i3 = find(strcmpi('resistance', OPT.variables));
+            i3 = find(strcmpi('resistance', OPT.x2zVariables));
             if ~isempty(i3)
-                inputargs{i2} = OPT.variables{i3+1};
+                inputargs{i2} = OPT.x2zVariables{i3+1};
             else
                 inputargs{i2} = 0;
             end
-            OPT.variables(i3:i3+1) = [];
+            OPT.x2zVariables(i3:i3+1) = [];
         end
     else
         inputargs = x2inputargs(OPT.x2zFunction, x, stochast);
     end
     
-%%
 function samples = x2samples(x, variable_names)
 samples = cell2struct(mat2cell(x, size(x,1), ones(size(x,2),1)), variable_names, 2);
 
-%%
 function inputargs = x2inputargs(fun, x, stochast)
 % create cell array of input arguments in same order as defined in
 % the stochast structure

@@ -91,7 +91,7 @@ varargin = prob_checkinput(varargin{:});
 OPT = struct(...
     'stochast',     struct(),   ...     % stochast structure
     'x2zFunction',  @x2z,       ...     % Function to transform x to z
-    'variables',    {{}},       ...     % aditional variables to use in x2zFunction
+    'x2zVariables', {{}},       ...     % aditional variables to use in x2zFunction
     'method',       'matrix',   ...     % z-function method 'matrix' (default) or 'loop'
     'NrSamples',    1e2,        ...     % number of samples
     'IS',           struct(),   ...     % sampling structure
