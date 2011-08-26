@@ -297,7 +297,7 @@ elseif s(1) == filesep
             % Only on windows assume that the first two letters of tmp are
             % the drive letter
             if ispc
-            s  = [tmp(1:2) s];
+                s  = [tmp(1:2) s];
             end
         end
     else
