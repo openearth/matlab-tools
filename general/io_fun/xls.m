@@ -2,6 +2,7 @@ classdef xls
     %XLS  fast, object oriented, reading and writing of xls files
     %
     %   Still in beta
+    %   absolute filename must be used
     %
     %   Methods for class xls:
     %   close  open   read   write  
@@ -76,12 +77,13 @@ classdef xls
                 error('file could not be opened')
             end
             fclose(fid);
-            % use the absolute path for filename
-            if isempty(strfind(filename,'.'))
-                obj.filename     = which(filename);
-            else % append a '.' to make which look for a file is there is no '.' in the filename
-                obj.filename     = which([filename '.']);
-            end
+%             % use the absolute path for filename
+%             if ~isempty(strfind(filename,'.'))
+%                 obj.filename     = which(filename);
+%             else % append a '.' to make which look for a file is there is no '.' in the filename
+%                 obj.filename     = which([filename '.']);
+%             end
+            obj.filename     = filename;
             obj.data_written = false;
         end
         function obj = open(obj)
