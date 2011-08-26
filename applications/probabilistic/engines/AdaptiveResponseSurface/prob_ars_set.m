@@ -78,8 +78,10 @@ ARS.betamin     = min([ARS.betamin sqrt(sum(u(end,:).^2,2))]);
 
 %% fit data
 
+notinf      = all(isfinite(ARS.u),2) & isfinite(ARS.z);
+
 if ARS.n >= 2*sum(ARS.active)+1
-    notinf      = all(isfinite(ARS.u),2) & isfinite(ARS.z);
+%if length(notinf) >= 2*sum(ARS.active)+1
     ARS.fit     = polyfitn(ARS.u(notinf,:), ARS.z(notinf), 2);
     ARS.hasfit  = true;
 end

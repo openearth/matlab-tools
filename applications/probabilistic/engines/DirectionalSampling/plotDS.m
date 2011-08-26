@@ -1,21 +1,27 @@
-function plotDS(result, varargin)
-%PLOTDS  One line description goes here.
+function plotDS(varargin)
+%PLOTDS Plots results from DS function
 %
-%   More detailed description goes here.
+%   Plots results of DS function. Can also be used to plot intermediate
+%   results and create animations by updating data.
 %
 %   Syntax:
-%   varargout = plotDS(varargin)
+%   plotDS(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = DS result structure
+%                   or
+%               separate DS result variables in order:
+%                   un beta ARS P_f P_e P_a Accuracy Calc Calc_ARS Calc_dir
+%                   progress exact notexact converged
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   plotDS
+%   plotDS(result)
+%   plotDS(un,beta,ARS,P_f,P_e,P_a,Accuracy,Calc,Calc_ARS,Calc_dir,progress,exact,notexact,converged)
 %
-%   See also 
+%   See also DS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -59,144 +65,119 @@ function plotDS(result, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% settings
+%% read input
 
-OPT = struct(...
-    'animate',  false,  ...
-    'save',     false,  ...
-    'MC',       [],     ...
-    'idx',      [1 2]   ...
-);
-
-OPT = setproperty(OPT, varargin{:});
-
-%% initialize
-
-N = result.Output.Calc;
-
-%% make plot
-
-figure;
-
-c = repmat('cymk',1,ceil(N));
-
-iu1 = OPT.idx(1);
-iu2 = OPT.idx(2);
-
-u = vertcat(result.Output.process.u{:});
-u = u(:,[iu1 iu2]);
-u = u(:);
-u = u(~isinf(u));
-lim = [min(u) max(u)];
-
-g = linspace(lim(1),lim(2),100);
-[gx gy] = meshgrid(g,g);
-
-fac = result.Output.computations/sum(cellfun(@length, result.Output.process.beta(result.Output.exact)));
-
-nm = 0;
-it0 = ~OPT.animate*(N-1)+1;
-for it = it0:N
-    jt0 = (it-1)*OPT.animate+1;
-    
-    subplot(3,1,[1 2]); hold on;
-
-    % response surface
-    if ~isempty(result.Output.process.RS(it).u)
-        try
-            rsz = reshape(polyvaln(result.Output.process.RS(it).fit,[gx(:) gy(:)]), size(gx));
-        catch
-            rsz = zeros(size(gx));
+if isempty(varargin)
+    error('No data');
+else
+    if isstruct(varargin{1})
+        r = varargin{1};
+        f = fieldnames(r.Output);
+        for i = 1:length(f)
+            eval([f{i} '=r.Output.(f{i});']);
+            progress = 1;
         end
     else
-        rsz = zeros(size(gx));
-    end
-    
-    if it==it0
-        prs = pcolor(gx,gy,rsz); shading flat;
-    else
-        set(prs,'CData',rsz);
-    end
-    
-    clim(max(max(abs([min(min(rsz)) max(max(rsz))])),1)*[-1 1]);
-    
-    % MC samples
-    if it == it0 && ~isempty(OPT.MC)
-        scatter(OPT.MC.Output.u(~OPT.MC.Output.idFail,iu1),OPT.MC.Output.u(~OPT.MC.Output.idFail,iu2),3,'MarkerEdgeColor','k');
-        scatter(OPT.MC.Output.u(OPT.MC.Output.idFail,iu1),OPT.MC.Output.u(OPT.MC.Output.idFail,iu2),3,'MarkerEdgeColor','k','MarkerFaceColor','k');
-    end
-    
-    % DS samples
-    for jt = jt0:it
-        if result.Output.converged(jt)
-            if result.Output.exact(jt)
-                nm = nm + fac*size(result.Output.process.u{jt},1);
-                plot(squeeze(result.Output.process.u{jt}(:,iu1)),squeeze(result.Output.process.u{jt}(:,iu2)),['-x' c(jt)]);
-            else
-                plot(squeeze(result.Output.process.u{jt}(:,iu1)),squeeze(result.Output.process.u{jt}(:,iu2)),['--x' c(jt)]);
-            end
-            plot(squeeze(result.Output.process.u{jt}(1,iu1)),squeeze(result.Output.process.u{jt}(1,iu2)),['s' c(jt)]);
-            plot(squeeze(result.Output.process.u{jt}(end,iu1)),squeeze(result.Output.process.u{jt}(end,iu2)),['o' c(jt)]);
-        else
-            plot(squeeze(result.Output.process.u{jt}(1,iu1)),squeeze(result.Output.process.u{jt}(1,iu2)),['s' c(jt)]);
-            plot(squeeze(result.Output.process.u{jt}(:,iu1)),squeeze(result.Output.process.u{jt}(:,iu2)),[':x' c(jt)]);
-        end
-    end
-    
-    % beta sphere
-    [x1,y1] = cylinder(result.Output.process.betamin(it),100);
-    [x2,y2] = cylinder(result.Output.process.betath(it),100);
-    
-    if it==it0
-        pbm = plot(x1(1,:),y1(1,:),':k');
-        pbt = plot(x2(1,:),y2(1,:),'-k');
-    else
-        set(pbm,'XData',x1(1,:),'YData',y1(1,:));
-        set(pbt,'XData',x2(1,:),'YData',y2(1,:));
-    end
-
-    if it==it0
-        xlabel('u_1');
-        ylabel('u_2');
-    end
-    
-    set(gca,'XLim',lim,'YLim',lim);
-    
-    beta = result.Output.betas(1:it);
-    idx = beta>0;
-    Pl = 1-chi2_cdf(beta.^2,2);
-    Pl(~idx) = 0;
-    Pf = cumsum(Pl,1)./[1:length(beta)]';
-    
-    title({'Directional sampling with Adaptive Response Surface' sprintf('model runs: %d ; probability of failure: %7.6f', round(nm), Pf(end))});
-    
-    box on;
-    
-    % plot failure probability
-    subplot(3,1,3); hold on;
-    
-    if it==it0
-        ppf = plot(1:it,Pf,'-r','DisplayName','Directional Sampling');
-        
-        if ~isempty(OPT.MC)
-            plot(1:OPT.MC.Output.Calc,cumsum((OPT.MC.Output.z<0).*OPT.MC.Output.P_corr)./[1:OPT.MC.Output.Calc]','-b','DisplayName','Monte Carlo');
-        end
-        
-        xlabel('P_f');
-        ylabel('number of samples');
-        legend show;
-    else
-        set(ppf,'XData',1:it,'YData',Pf);
-    end
-    
-    box on;
-   
-    if OPT.animate
-        drawnow;
-        if OPT.save
-            print(gcf, '-dpng', sprintf('frame_%04d.png', it));
-        end
-        pause(.1);
+        [un beta ARS P_f P_e P_a Accuracy Calc Calc_ARS Calc_dir progress exact notexact converged] = deal(varargin{:});
     end
 end
 
+%% plot
+
+fh = findobj('Tag','DSprogress');
+
+% initialize plot
+if isempty(fh)
+    fh = figure('Tag','DSprogress');
+
+    subplot(3,1,[1 2]); hold on;
+
+    uitable( ...
+        'Units','normalized', ...
+        'Position',[0.09 0.05 0.82 0.25],...
+        'Data', [], ...
+        'ColumnName', {'total', 'exact', 'approx', 'not converged' 'model'},...
+        'RowName', {'N' 'P' 'Accuracy' 'Ratio'});
+end
+
+ax  = findobj(gcf,'Type','axes','Tag','');
+uit = findobj(gcf,'Type','uitable');
+
+% create plot grid
+lim         = linspace(-10,10,100);
+[gx gy]     = meshgrid(lim,lim);
+
+% plot response surface
+d = find(ARS.active, 2);
+
+if ARS.hasfit
+    dat         = zeros(numel(gx),sum(ARS.active));
+    dat(:,d)    = [gx(:) gy(:)];
+    rsz         = reshape(polyvaln(ARS.fit,dat), size(gx));
+
+    ph = findobj(fh,'Tag','ARS');
+    if isempty(ph)
+        ph = pcolor(ax,gx,gy,rsz);
+        set(ph,'Tag','ARS');
+        colorbar; shading flat;
+    else
+        set(ph,'CData',rsz)
+    end
+end
+
+% plot DS samples
+up = un.*repmat(beta(:),1,size(un,2));
+
+ph1 = findobj(fh,'Tag','P1');
+ph2 = findobj(fh,'Tag','P2');
+ph3 = findobj(fh,'Tag','P3');
+
+if isempty(ph1) || isempty(ph2) || isempty(ph3)
+    ph1 = scatter(ax,un(~converged,d(1)),un(~converged,d(2)),'MarkerEdgeColor','b');
+    ph2 = scatter(ax,up(notexact,  d(1)),up(notexact,  d(2)),'MarkerEdgeColor','r');
+    ph3 = scatter(ax,up(exact,     d(1)),up(exact,     d(2)),'MarkerEdgeColor','g');
+
+    set(ph1,'Tag','P1');
+    set(ph2,'Tag','P2');
+    set(ph3,'Tag','P3');
+else
+    set(ph1,'XData',un(~converged,d(1)),'YData',un(~converged,d(2)));
+    set(ph2,'XData',up(notexact,  d(1)),'YData',up(notexact,  d(2)));
+    set(ph3,'XData',up(exact,     d(1)),'YData',up(exact,     d(2)));
+end
+
+% plot beta sphere
+[x1,y1] = cylinder(ARS.betamin,100);
+[x2,y2] = cylinder(ARS.betamin+ARS.dbeta,100);
+
+ph1 = findobj(fh,'Tag','B1');
+ph2 = findobj(fh,'Tag','B2');
+
+if isempty(ph1) || isempty(ph2)
+    ph1 = plot(ax,x1(1,:),y1(1,:),':k');
+    ph2 = plot(ax,x2(1,:),y2(1,:),'-k');
+
+    set(ph1,'Tag','B1');
+    set(ph2,'Tag','B2');
+else
+    set(ph1,'XData',x1(1,:),'YData',y1(1,:));
+    set(ph2,'XData',x2(1,:),'YData',y2(1,:));
+end
+
+% create labels
+xlabel('u_1');
+ylabel('u_2');
+
+title(sprintf('%4.3f%%', progress*100));
+
+% update table contents
+data = { ...
+    length(beta) sum(exact) sum(notexact) sum(~converged)   Calc                ; ...
+    P_f          P_e        P_a           ''                Calc_ARS            ; ...
+    Accuracy     ''         ''            ''                Calc_dir            ; ...
+    ''           P_e/P_f    P_a/P_f       ''                Calc/length(beta)   };
+
+set(uit,'Data',data);
+set(ax,'XLim',[min(gx(:)) max(gx(:))],'YLim',[min(gy(:)) max(gy(:))]);
+
+drawnow;

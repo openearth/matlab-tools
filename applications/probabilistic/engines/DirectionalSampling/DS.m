@@ -1,21 +1,54 @@
 function result = DS(varargin)
-%DS  One line description goes here.
+%DS runs a probabilistic computation by Directional Sampling
 %
-%   More detailed description goes here.
+%   Runs a probabilistic computation by Directional Sampling. The
+%   implementation is largely obtained from Grooteman (2011) and is called
+%   Adaptive Directional Importance Sampling (ADIS). Besides the
+%   conventional directional sampling, importance sampling is automatically
+%   applied using a beta sphere with a radius of the minimum beta drawn so
+%   far plus a certain threshold. Any samples drawn within this sphere is
+%   marked as important and computed exactly. Any samples outside this
+%   sphere is of less importance and computed using an Adaptive Response
+%   Surface (ARS), if available.
+%   Also convergence is automatically determined using a confidence
+%   interval and required accuarcy. Finally, it is checked whether the
+%   resulting probability of failure is mainly obtained from the exact
+%   computed samples. Otherwise, the most important approximated samples
+%   are recalculated using the exact method until this requirement is
+%   satisfied.
 %
 %   Syntax:
-%   varargout = DS(varargin)
+%   result = DS(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = name/value pairs:
+%               stochast:       Stochast structure
+%               seed:           Seed for random generator
+%               x2zFunction:    Function handle to transform x to z
+%               x2zVariables:   Additional variables for the x2zFunction
+%               P2xFunction:    Function handle to transform P to x
+%               P2xVariables:   Additional variables for the P2xFunction
+%               z20Function:    Function handle to find z=0 along a line
+%               z20Variables:   Additional variables for the z20Function
+%               ARS:            Boolean indicating whether to use ARS
+%               beta0:          Initial beta value in line search
+%               dbeta:          Initial beta threshold for beta sphere
+%               Pratio:         Maximum fraction of failure probability
+%                               determined by approximated samples
+%               confidence:     Confidence interval in convergence
+%                               criterium
+%               accuracy:       Accuracy in convergence criterium
+%               plot:           Boolean indicating whether to plot result
+%               animate:        Boolean indicating whether to animate
+%                               progress
 %
 %   Output:
-%   varargout =
+%   result = DS result structure
 %
 %   Example
-%   DS
+%   result = DS('stochast', exampleStochastVar, 'x2zFunction', x2z)
 %
-%   See also 
+%   See also MC, FORM
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -64,23 +97,25 @@ function result = DS(varargin)
 varargin = prob_checkinput(varargin{:});
 
 OPT = struct(...
-    'stochast',         struct(),           ...     % stochast structure
-    'x2zFunction',      @x2z,               ...     % Function to transform x to z
-    'x2zVariables',     {{}},               ...     % aditional variables to use in x2zFunction
-    'method',           'matrix',           ...     % z-function method 'matrix' (default) or 'loop'
-    'NrSamples',        1,                  ...     % number of samples per iteration
-    'P2xFunction',      @P2x,               ...     % function to transform P to x
-    'seed',             NaN,                ...     % seed for random generator
-    'z20Function',      @find_zero_poly,    ...     % line search function
-    'z20Variables',     {{}},               ...     % additonal variables to use in z20Function
-    'ARS',              true,               ...     % adaptive response surface
-    'beta0',            1,                  ...     % initial beta value
-    'dbeta',            .1,                 ...     % initial beta threshold
-    'Pratio',           .4,                 ...     % threshold for fraction approximated samples
-    'confidence',       .95,                ...     % confidence interval of result
-    'accuracy',         .5,                 ...     % accuracy of result
-    'plot',             false,              ...     % plot result
-    'animate',          true                ...     % plot progress
+    'stochast',         struct(),           ...
+    'seed',             NaN,                ...
+    'x2zFunction',      @x2z,               ...
+    'x2zVariables',     {{}},               ...
+    'P2xFunction',      @P2x,               ...
+    'P2xVariables',     {{}},               ...
+    'z20Function',      @find_zero_poly2,   ...
+    'z20Variables',     {{}},               ...
+    'ARS',              true,               ...
+    'beta0',            3,                  ...
+    'dbeta',            .01,                ...
+    'Pratio',           .4,                 ...
+    'confidence',       .95,                ...
+    'accuracy',         .2,                 ...
+    'plot',             false,              ...
+    'animate',          false,              ...
+    ...
+    'method',           'matrix',           ...     % currently not used
+    'NrSamples',        1                   ...     % currently not used
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -105,7 +140,7 @@ end
 
 % compute origin
 n           = 1;
-n0          = nan;
+nARS        = nan;
 b0          = 0;
 z0          = beta2z(OPT, zeros(1,N), b0);
 
@@ -193,7 +228,7 @@ while Pr > OPT.Pratio
         end
 
         % exact line search
-        if ~OPT.ARS || (abs(b(end)) <= ARS.betamin+ARS.dbeta && (~ARS.hasfit || ca))
+        if ~OPT.ARS || ~ARS.hasfit || abs(b(end)) <= ARS.betamin+ARS.dbeta && ca
             ii          = unique([1 2 length(b)]);
             
             [be ze ne ce] = feval(@OPT.z20Function, un(idx,:), b(ii), z(ii), ...
@@ -218,10 +253,12 @@ while Pr > OPT.Pratio
         if OPT.ARS && exact(idx)
             ARS        	= prob_ars_set(ue,ze,'ARS',ARS);
             
-            if ARS.hasfit && isnan(n0)
-                n0      = n;
+            if ARS.hasfit && isnan(nARS)
+                nARS    = n;
             end
         end
+        
+        ndir            = (n-nARS)/(sum(exact)-2*sum(ARS.active)+1);
         
         % update probability of failure
         dPe             = (1-chi2_cdf(beta(   exact&beta>0).^2,sum(active)))/length(beta);
@@ -238,11 +275,11 @@ while Pr > OPT.Pratio
         Pr              = Pa/Pf;
         
         % determine progress
-        progress        = min([1 length(beta)/((1-Pf)/(minCOV^2*Pf))]);
-        
-        % show progress
         if OPT.animate
-            plot_progress(un, beta, ARS, Pf, Pe, Pa, Accuracy, n, n0, progress, exact, notexact, converged);
+            nPr         = max([0 find(cumsum(sort(dPa,'descend'))>Pa-OPT.Pratio*Pf,1,'first')-1]);
+            progress    = min([1 length(beta)/((1-Pf)/(minCOV^2*Pf)+nPr)]);
+        
+            plotDS(un, beta, ARS, Pf, Pe, Pa, Accuracy, n, nARS, ndir, progress, exact, notexact, converged);
         end
         
     end
@@ -256,11 +293,6 @@ while Pr > OPT.Pratio
     
 end
 
-% plot result
-if OPT.plot
-    plot_progress(un, beta, ARS, Pf, Pe, Pa, Accuracy, n, n0, progress, exact, notexact, converged);
-end
-
 % prepare output
 u           = un.*repmat(beta(:),1,size(un,2));
 [x P]       = u2x(OPT, u);
@@ -272,8 +304,12 @@ result = struct(...
     'Input',        stochast,                               ...
     'Output',       struct(                                 ...
         'P_f',          Pf,                                 ...
+        'P_e',          Pe,                                 ...
+        'P_a',          Pa,                                 ...
         'Beta',         norm_inv(1-Pf, 0, 1),               ...
         'Calc',         n,                                  ...
+        'Calc_ARS',     nARS,                               ...
+        'Calc_dir',     ndir,                               ...
         'un',           un,                                 ...
         'beta',         beta(:),                            ...
         'u',            u,                                  ...
@@ -289,6 +325,11 @@ result = struct(...
         'ARS',          ARS                                 ...
     )                                                       ...
 );
+
+% plot result
+if OPT.plot
+    plotDS(result);
+end
 
 end
 
@@ -309,7 +350,7 @@ end
 
 function [x P] = u2x(OPT, u)
     P       = norm_cdf(u,0,1);
-    x       = feval(OPT.P2xFunction, OPT.stochast, P);
+    x       = feval(OPT.P2xFunction, OPT.stochast, P, OPT.P2xVariables{:});
 end
 
 function u = beta2u(un, beta)
@@ -317,108 +358,4 @@ function u = beta2u(un, beta)
     for i = 1:length(beta)
     	u = [u ; beta(i).*un];
     end
-end
-
-function plot_progress(un, beta, ARS, Pf, Pe, Pa, Accuracy, n, n0, progress, exact, notexact, converged)
-
-    fh = findobj('Tag','DSprogress');
-    
-    % initialize plot
-    if isempty(fh)
-        fh = figure('Tag','DSprogress');
-        
-        subplot(3,1,[1 2]); hold on;
-        
-        uitable( ...
-            'Units','normalized', ...
-            'Position',[0.09 0.05 0.82 0.25],...
-            'Data', [], ...
-            'ColumnName', {'total', 'exact', 'approx', 'not converged' 'model'},...
-            'RowName', {'N' 'P' 'Accuracy' 'Ratio'});
-    end
-    
-    ax  = findobj(gcf,'Type','axes','Tag','');
-    uit = findobj(gcf,'Type','uitable');
-    
-    % create plot grid
-    lim         = linspace(-10,10,100);
-    [gx gy]     = meshgrid(lim,lim);
-
-    % plot response surface
-    d = find(ARS.active, 2);
-            
-    if ARS.hasfit
-        dat         = zeros(numel(gx),sum(ARS.active));
-        dat(:,d)    = [gx(:) gy(:)];
-        rsz         = reshape(polyvaln(ARS.fit,dat), size(gx));
-
-        ph = findobj(fh,'Tag','ARS');
-        if isempty(ph)
-            ph = pcolor(ax,gx,gy,rsz);
-            set(ph,'Tag','ARS');
-            colorbar; shading flat;
-        else
-            set(ph,'CData',rsz)
-        end
-    end
-
-    % plot DS samples
-    up = un.*repmat(beta(:),1,size(un,2));
-    
-    ph1 = findobj(fh,'Tag','P1');
-    ph2 = findobj(fh,'Tag','P2');
-    ph3 = findobj(fh,'Tag','P3');
-    
-    if isempty(ph1) || isempty(ph2) || isempty(ph3)
-        ph1 = scatter(ax,un(~converged,d(1)),un(~converged,d(2)),'MarkerEdgeColor','b');
-        ph2 = scatter(ax,up(notexact,  d(1)),up(notexact,  d(2)),'MarkerEdgeColor','r');
-        ph3 = scatter(ax,up(exact,     d(1)),up(exact,     d(2)),'MarkerEdgeColor','g');
-        
-        set(ph1,'Tag','P1');
-        set(ph2,'Tag','P2');
-        set(ph3,'Tag','P3');
-    else
-        set(ph1,'XData',un(~converged,d(1)),'YData',un(~converged,d(2)));
-        set(ph2,'XData',up(notexact,  d(1)),'YData',up(notexact,  d(2)));
-        set(ph3,'XData',up(exact,     d(1)),'YData',up(exact,     d(2)));
-    end
-
-    % plot beta sphere
-    [x1,y1] = cylinder(ARS.betamin,100);
-    [x2,y2] = cylinder(ARS.betamin+ARS.dbeta,100);
-
-    ph1 = findobj(fh,'Tag','B1');
-    ph2 = findobj(fh,'Tag','B2');
-    
-    if isempty(ph1) || isempty(ph2)
-        ph1 = plot(ax,x1(1,:),y1(1,:),':k');
-        ph2 = plot(ax,x2(1,:),y2(1,:),'-k');
-        
-        set(ph1,'Tag','B1');
-        set(ph2,'Tag','B2');
-    else
-        set(ph1,'XData',x1(1,:),'YData',y1(1,:));
-        set(ph2,'XData',x2(1,:),'YData',y2(1,:));
-    end
-
-    % create labels
-    xlabel('u_1');
-    ylabel('u_2');
-    
-    title(sprintf('%4.3f%%', progress*100));
-
-    % update table contents
-    nf = (n-n0)/(sum(exact)-2*sum(ARS.active)+1);
-    
-    data = { ...
-        length(beta) sum(exact) sum(notexact) sum(~converged)   n               ; ...
-        Pf           Pe         Pa            ''                n0              ; ...
-        Accuracy     ''         ''            ''                nf              ; ...
-        ''           Pe/Pf      Pa/Pf         ''                n/length(beta)  };
-
-    set(uit,'Data',data);
-    set(ax,'XLim',[min(gx(:)) max(gx(:))],'YLim',[min(gy(:)) max(gy(:))]);
-    
-    drawnow;
-            
 end
