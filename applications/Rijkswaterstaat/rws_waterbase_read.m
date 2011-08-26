@@ -126,6 +126,9 @@ for ifile=1:length(fnames)
    %% Automatic load method detection
 
       D = dir(fname);
+      if isempty(D)
+          error(['file not found:',fname]);
+      end
       if isnumeric(OPT.method)
           if D.bytes < OPT.method
              OPT.method = 'textread';
