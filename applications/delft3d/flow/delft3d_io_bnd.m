@@ -60,30 +60,30 @@ function varargout=delft3d_io_bnd(cmd,varargin),
 %              * removed useless threeD keyword [Anton de Fockert]
 
 if nargin ==1
-   error(['At least 2 input arguments required: delft3d_io_bnd(''read''/''write'',filename)'])
+    error(['At least 2 input arguments required: delft3d_io_bnd(''read''/''write'',filename)'])
 end
 
 switch lower(cmd),
-case 'read',
-  S=Local_read(varargin{:});
-  if nargout==1
-     varargout = {S};
-  elseif nargout >1
-    error('too much output paramters: 0 or 1')
-  end
-  if S.iostat<0,
-     error(['Error opening file: ',varargin{1}])
-  end;
-case 'write',
-  iostat=Local_write(varargin{:});
-  if nargout==1
-     varargout = {iostat};
-  elseif nargout >1
-    error('too much output paramters: 0 or 1')
-  end
-  if iostat<0,
-     error(['Error opening file: ',varargin{1}])
-  end;
+    case 'read',
+        S=Local_read(varargin{:});
+        if nargout==1
+            varargout = {S};
+        elseif nargout >1
+            error('too much output paramters: 0 or 1')
+        end
+        if S.iostat<0,
+            error(['Error opening file: ',varargin{1}])
+        end;
+    case 'write',
+        iostat=Local_write(varargin{:});
+        if nargout==1
+            varargout = {iostat};
+        elseif nargout >1
+            error('too much output paramters: 0 or 1')
+        end
+        if iostat<0,
+            error(['Error opening file: ',varargin{1}])
+        end;
 end;
 
 % ------------------------------------
@@ -100,129 +100,129 @@ S.filename = varargin{1};
 %   threeD    = 0;
 %end
 
-   mmax = Inf;
-   nmax = Inf;
-   G    = [];
+mmax = Inf;
+nmax = Inf;
+G    = [];
 if nargin==2
-   G    = varargin{2};
-   mmax = G.mmax;
-   nmax = G.nmax;
+    G    = varargin{2};
+    mmax = G.mmax;
+    nmax = G.nmax;
 end
 
 fid          = fopen(S.filename,'r');
 if fid==-1
-   S.iostat   = fid;
+    S.iostat   = fid;
 else
-   S.iostat   = -1;
-   i            = 0;
-
-   while ~feof(fid)
-
-      i = i + 1;
-
-      S.DATA(i).name         = strtrim(fscanf(fid,'%20c',1));
-      S.DATA(i).bndtype      = fscanf(fid,'%1s' ,1);
-      S.DATA(i).datatype     = fscanf(fid,'%1s' ,1);
-      S.DATA(i).mn           = fscanf(fid,'%i'  ,4);
-
-      % turns the endpoint-description along gridlines into vectors
-
-      [S.DATA(i).m,...
-       S.DATA(i).n]=meshgrid(S.DATA(i).mn(1):S.DATA(i).mn(3),...
-                             S.DATA(i).mn(2):S.DATA(i).mn(4));
-
-      if S.DATA(i).mn(1)==mmax+1
-         S.DATA(i).mn(1)= mmax;
-      end
-      if S.DATA(i).mn(2)==nmax+1
-         S.DATA(i).mn(2)= nmax;
-      end
-      if S.DATA(i).mn(3)==mmax+1
-         S.DATA(i).mn(3)= mmax;
-      end
-      if S.DATA(i).mn(4)==nmax+1
-         S.DATA(i).mn(4)= nmax;
-      end
-
-      S.DATA(i).alfa         = fscanf(fid,'%f'  ,1);
-
-      rec = fgetl(fid);
-
-      %if threeD
-      if strcmpi('C',S.DATA(i).bndtype) | ...
-         strcmpi('Q',S.DATA(i).bndtype) | ...
-         strcmpi('T',S.DATA(i).bndtype) | ...
-         strcmpi('R',S.DATA(i).bndtype)
-
-     [S.DATA(i).vert_profile,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
-
-        if strcmpi(S.DATA(i).vert_profile,'3D')
-
-        [dummy,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
-
-         S.DATA(i).vert_profile = '3d-profile';
-
+    S.iostat   = -1;
+    i            = 0;
+    
+    while ~feof(fid)
+        
+        i = i + 1;
+        
+        S.DATA(i).name         = strtrim(fscanf(fid,'%20c',1));
+        S.DATA(i).bndtype      = fscanf(fid,'%1s' ,1);
+        S.DATA(i).datatype     = fscanf(fid,'%1s' ,1);
+        S.DATA(i).mn           = fscanf(fid,'%i'  ,4);
+        
+        % turns the endpoint-description along gridlines into vectors
+        
+        [S.DATA(i).m,...
+            S.DATA(i).n]=meshgrid(S.DATA(i).mn(1):S.DATA(i).mn(3),...
+            S.DATA(i).mn(2):S.DATA(i).mn(4));
+        
+        if S.DATA(i).mn(1)==mmax+1
+            S.DATA(i).mn(1)= mmax;
         end
-
-        if ~(strcmpi(S.DATA(i).vert_profile,'uniform')     | ...
-             strcmpi(S.DATA(i).vert_profile,'Logarithmic') | ...
-             strcmpi(S.DATA(i).vert_profile,'3d-profile'))
-
-           error(['Not a valid profile: ''',S.DATA(i).vert_profile])
-
+        if S.DATA(i).mn(2)==nmax+1
+            S.DATA(i).mn(2)= nmax;
         end
-
-      end
-      %end
-
-      if strcmp('A',S.DATA(i).datatype)
-
-
-         [S.DATA(i).labelA,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
-         [S.DATA(i).labelB,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
-
-      else
-      end
-
-      try % for conversion to unstruc use labelA as pli number and labelB as sequence number inside that pli
-
-      [S.DATA(i).pli_name,rec]  = strtok(rec);
-       S.DATA(i).pli_nr         = str2num(strtok(rec));
-
-      catch
-      end
-
-   end
-
-   S.iostat   = 1;
-   S.NTables  = i;
-
-   %% (m,n) coordinates as used for D3D matrices with dummy rows and columns
-
-   for i=1:S.NTables
-      S.m(i,:) = [S.DATA(i).mn(1) S.DATA(i).mn(3)];
-      S.n(i,:) = [S.DATA(i).mn(2) S.DATA(i).mn(4)];
-   end
-
-   if ~isempty(G)
-     S.x = nan(size(S.m));
-      S.y = nan(size(S.m));
-
-   for i=1:S.NTables
-   for j=1:2
-      S.x(i,j) = G.cend.x(S.n(i,j),S.m(i,j));
-      S.y(i,j) = G.cend.y(S.n(i,j),S.m(i,j));
-   end
-   end
-   end
-
-
-   %% (m,n) coordinates as used for matrices without dummy rows
-   %  boundaries defined at faces (so each segment is spanned between two corners)
-
-   fclose(fid);
-   iostat=1;
-
+        if S.DATA(i).mn(3)==mmax+1
+            S.DATA(i).mn(3)= mmax;
+        end
+        if S.DATA(i).mn(4)==nmax+1
+            S.DATA(i).mn(4)= nmax;
+        end
+        
+        S.DATA(i).alfa         = fscanf(fid,'%f'  ,1);
+        
+        rec = fgetl(fid);
+        
+        %if threeD
+        if strcmpi('C',S.DATA(i).bndtype) | ...
+                strcmpi('Q',S.DATA(i).bndtype) | ...
+                strcmpi('T',S.DATA(i).bndtype) | ...
+                strcmpi('R',S.DATA(i).bndtype)
+            
+            [S.DATA(i).vert_profile,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
+            
+            if strcmpi(S.DATA(i).vert_profile,'3D')
+                
+                [dummy,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
+                
+                S.DATA(i).vert_profile = '3d-profile';
+                
+            end
+            
+            if ~(strcmpi(S.DATA(i).vert_profile,'uniform')     | ...
+                    strcmpi(S.DATA(i).vert_profile,'Logarithmic') | ...
+                    strcmpi(S.DATA(i).vert_profile,'3d-profile'))
+                
+                error(['Not a valid profile: ''',S.DATA(i).vert_profile])
+                
+            end
+            
+        end
+        %end
+        
+        if strcmp('A',S.DATA(i).datatype)
+            
+            
+            [S.DATA(i).labelA,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
+            [S.DATA(i).labelB,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
+            
+        else
+        end
+        
+        try % for conversion to unstruc use labelA as pli number and labelB as sequence number inside that pli
+            
+            [S.DATA(i).pli_name,rec]  = strtok(rec);
+            S.DATA(i).pli_nr         = str2num(strtok(rec));
+            
+        catch
+        end
+        
+    end
+    
+    S.iostat   = 1;
+    S.NTables  = i;
+    
+    %% (m,n) coordinates as used for D3D matrices with dummy rows and columns
+    
+    for i=1:S.NTables
+        S.m(i,:) = [S.DATA(i).mn(1) S.DATA(i).mn(3)];
+        S.n(i,:) = [S.DATA(i).mn(2) S.DATA(i).mn(4)];
+    end
+    
+    if ~isempty(G)
+        S.x = nan(size(S.m));
+        S.y = nan(size(S.m));
+        
+        for i=1:S.NTables
+            for j=1:2
+                S.x(i,j) = G.cend.x(S.n(i,j),S.m(i,j));
+                S.y(i,j) = G.cend.y(S.n(i,j),S.m(i,j));
+            end
+        end
+    end
+    
+    
+    %% (m,n) coordinates as used for matrices without dummy rows
+    %  boundaries defined at faces (so each segment is spanned between two corners)
+    
+    fclose(fid);
+    iostat=1;
+    
 end
 
 
@@ -238,55 +238,55 @@ fid          = fopen(filename,'w');
 OS           = 'windows';
 
 for i=1:length(S.DATA)
-
-   fprintfstringpad(fid,20,S.DATA(i).name,' ');
-
-   fprintf(fid,'%1c',' ');
-   % fprintf automatically adds one space between all printed variables
-   % within one call
-   fprintf(fid,'%1c %1c %5i %5i %5i %5i %f',...
-           S.DATA(i).bndtype ,...
-           S.DATA(i).datatype,...
-           S.DATA(i).mn(1)   ,...
-           S.DATA(i).mn(2)   ,...
-           S.DATA(i).mn(3)   ,...
-           S.DATA(i).mn(4)   ,...
-           S.DATA(i).alfa    );
-
-   if S.DATA(i).threeD
-   if strcmp('C',S.DATA(i).bndtype) | ...
-      strcmp('Q',S.DATA(i).bndtype) | ...
-      strcmp('T',S.DATA(i).bndtype) | ...
-      strcmp('R',S.DATA(i).bndtype)
-
-      if ~isfield(S.DATA(i),'vert_profile')
-         % DEFAULT
-         vert_profile = 'Uniform';
-         %vert_profile = 'Logarithmic';
-      else
-         vert_profile = S.DATA(i).vert_profile;
-      end
-      fprintf(fid,'%1c',' ');
-      fprintfstringpad(fid,20,vert_profile,' ');
-
-   end
-   end
-
-   if strcmp('A',S.DATA(i).datatype)
-   % print only labels for *.bca file if present
-   if isfield(S.DATA(i),'labelA')
-   fprintf(fid,'%12s %12s',...
-           S.DATA(i).labelA,...
-           S.DATA(i).labelB);
-   end
-   end
-
-   if     strcmp(lower(OS(1)),'u')
-      fprintf(fid,'\n');
-   elseif strcmp(lower(OS(1)),'w')
-      fprintf(fid,'\r\n');
-   end
-
+    
+    fprintfstringpad(fid,20,S.DATA(i).name,' ');
+    
+    fprintf(fid,'%1c',' ');
+    % fprintf automatically adds one space between all printed variables
+    % within one call
+    fprintf(fid,'%1c %1c %5i %5i %5i %5i %f',...
+        S.DATA(i).bndtype ,...
+        S.DATA(i).datatype,...
+        S.DATA(i).mn(1)   ,...
+        S.DATA(i).mn(2)   ,...
+        S.DATA(i).mn(3)   ,...
+        S.DATA(i).mn(4)   ,...
+        S.DATA(i).alfa    );
+    
+%     if S.DATA(i).threeD
+        if strcmp('C',S.DATA(i).bndtype) | ...
+                strcmp('Q',S.DATA(i).bndtype) | ...
+                strcmp('T',S.DATA(i).bndtype) | ...
+                strcmp('R',S.DATA(i).bndtype)
+            
+            if ~isfield(S.DATA(i),'vert_profile')
+                % DEFAULT
+                vert_profile = 'Uniform';
+                %vert_profile = 'Logarithmic';
+            else
+                vert_profile = S.DATA(i).vert_profile;
+            end
+            fprintf(fid,'%1c',' ');
+            fprintfstringpad(fid,20,vert_profile,' ');
+            
+        end
+%     end
+    
+    if strcmp('A',S.DATA(i).datatype)
+        % print only labels for *.bca file if present
+        if isfield(S.DATA(i),'labelA')
+            fprintf(fid,'%12s %12s',...
+                S.DATA(i).labelA,...
+                S.DATA(i).labelB);
+        end
+    end
+    
+    if     strcmp(lower(OS(1)),'u')
+        fprintf(fid,'\n');
+    elseif strcmp(lower(OS(1)),'w')
+        fprintf(fid,'\r\n');
+    end
+    
 end;
 fclose(fid);
 iostat=1;
