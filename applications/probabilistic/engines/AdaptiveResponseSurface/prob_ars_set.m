@@ -62,7 +62,8 @@ function ARS = prob_ars_set(u, z, varargin)
 %% settings
 
 OPT = struct(...
-    'ARS',      prob_ars_struct     ...
+    'ARS',      prob_ars_struct,    ...
+    'maxZ',     Inf                 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -79,9 +80,9 @@ ARS.betamin     = min([ARS.betamin sqrt(sum(u(end,:).^2,2))]);
 %% fit data
 
 notinf      = all(isfinite(ARS.u),2) & isfinite(ARS.z);
+notout      = abs(ARS.z)<=OPT.maxZ;
 
 if ARS.n >= 2*sum(ARS.active)+1
-%if length(notinf) >= 2*sum(ARS.active)+1
-    ARS.fit     = polyfitn(ARS.u(notinf,:), ARS.z(notinf), 2);
+    ARS.fit     = polyfitn(ARS.u(notinf&notout,:), ARS.z(notinf&notout), 2);
     ARS.hasfit  = true;
 end

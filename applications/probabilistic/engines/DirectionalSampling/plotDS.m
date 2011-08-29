@@ -154,6 +154,8 @@ ph1 = findobj(fh,'Tag','B1');
 ph2 = findobj(fh,'Tag','B2');
 
 if isempty(ph1) || isempty(ph2)
+    plot(ax,0,0,'ok');
+    
     ph1 = plot(ax,x1(1,:),y1(1,:),':k');
     ph2 = plot(ax,x2(1,:),y2(1,:),'-k');
 
@@ -175,7 +177,7 @@ data = { ...
     length(beta) sum(exact) sum(notexact) sum(~converged)   Calc                ; ...
     P_f          P_e        P_a           ''                Calc_ARS            ; ...
     Accuracy     ''         ''            ''                Calc_dir            ; ...
-    ''           P_e/P_f    P_a/P_f       ''                Calc/length(beta)   };
+    Accuracy/P_f P_e/P_f    P_a/P_f       ''                Calc/length(beta)   };
 
 set(uit,'Data',data);
 set(ax,'XLim',[min(gx(:)) max(gx(:))],'YLim',[min(gy(:)) max(gy(:))]);

@@ -64,10 +64,9 @@ function [bn zn n converged] = find_zero_poly2(un, b, z, varargin)
 OPT = struct(...
     'zFunction',        '',                 ...
     'epsZ',             1e-2,               ...     % precision in stop criterium
-    'maxinput',         4,                  ...     % maximum number of known points to use within known interval
     'maxiter',          50,                 ...     % maximum number of iterations
     'maxretry',         1,                  ...     % maximum number of iterations before retry
-    'maxorder',         3,                  ...     % maximum order of polynom in line search
+    'maxorder',         2,                  ...     % maximum order of polynom in line search
     'maxratio',         10                  ...     % maximum ratio between interval boundaries
 );
 
@@ -120,57 +119,120 @@ if any(abs(z)<OPT.epsZ)
     end
 end
 
-% check if finite interval is available, restrict search
-if startsearch && any(z>0) && any(z<0)
-    
-    n        = ceil(OPT.maxinput/2);
-    
-    [bu bui] = sort(b(z<0),          'ascend' );
-    [bl bli] = sort(b(z>0&b<min(bu)),'descend');
-    
-    nu       = min([n length(bu)]);
-    nl       = min([n length(bl)]);
-    
-    iu       = ismember(b,bu(1:nu));
-    il       = ismember(b,bl(1:nl));
-    
-    zu       = z(iu);
-    zl       = z(il);
-    
-    % if asymptotic, add extra point in the middle of interval
-    if abs(zu(1))/abs(zl(1))>OPT.maxratio || abs(zl(1))/abs(zu(1))>OPT.maxratio
-        
-        n   = n+1;
-        
-        bn  = mean([bl(1) bu(1)]);
-        zn  = feval(OPT.zFunction, un, bn);
-        
-    end
-        
-	% select points closest to zero point    
-    b       = [b(il) b(iu)];
-    z       = [z(il) z(iu)];
-end
+% remove nan's
+b   = b(~isnan(z));
+z   = z(~isnan(z));
 
 %% search zero
 
 if startsearch
         
     while isempty(zn) || abs(zn(end))>OPT.epsZ
+        
+        ii          = ~ismember(b,bn);
+        
+        b           = [b(ii) bn];
+        z           = [z(ii) zn];
 
-        % fit polygon through know points and approximate zero
-        p   = polyfit([z zn],[b bn],min([length([b bn])-1 OPT.maxorder]));
-        bn  = [bn polyval(p,0)];
+        % set model evaluations in order of absolute z-value
+        order       = min(OPT.maxorder, length(z)-1);
+        ii          = isort(abs(z));
+        
+        % check if finite interval is available, and if so, preserve it
+        if any(z>0) && any(z<0)
+            il      = ii(z>=0);
+            iu      = ii(z<0);
+            
+            ni      = ceil((order+1)/2);
+            nl      = min(ni,length(il));
+            nu      = min(ni,length(iu));
+            
+            ii      = [il(1:nl) iu(1:nu)];
+            ii      = ii(isort(abs(z(ii))));
+            
+            % remove outliers
+            while max(abs(z(ii)))/min(abs(z(ii)))>OPT.maxratio
+                if length(ii)>2
+                    npos    = sum(z(ii)>=0);
+                    nneg    = sum(z(ii)<0);
+                    
+                    if npos<2
+                        ii(find(z(ii)<0,1,'last')) = [];
+                    elseif nneg<2
+                        ii(find(z(ii)>=0,1,'last')) = [];
+                    else
+                        ii(end) = [];
+                    end
+                else
+                    n       = n+1;
+        
+                    bn      = [bn mean(b(ii))];
+                    zn      = [zn feval(OPT.zFunction, un, bn(end))];
+                    
+                    im      = ~ismember(b,bn);
+                    
+                    b       = [b(im) bn];
+                    z       = [z(im) zn];
+                    
+                    ii      = [ii length(z)];
+                    ii      = ii(isort(abs(z(ii))));
+                    
+                    order   = min(OPT.maxorder, length(ii)-1);
+                    
+                    break;
+                end
+                
+                order       = min(OPT.maxorder, length(ii)-1);
+            end
+        end
+        
+        ii          = ii(1:order+1);
+        
+        % select evaluations closest to z is zero
+        [zs bs]     = deal(z(ii), b(ii));
+        
+        % fit polynom to selected points and decrease order until a real
+        % root is found
+        for o = order:-1:1
+            
+            p       = polyfit(bs(1:o+1), zs(1:o+1), o);
+            
+            if all(isfinite(p))
+                rts     = sort(roots(p));
+                oi1     = isreal(rts);
+                oi2     = rts>0;
 
-        if bn(end)<0
+                if any(oi1)
+
+                    % select the smallest positive real root, if available,
+                    % or the smallest negative real root otherwise
+                    if any(oi1&oi2)
+                        b0 = min(rts(oi1&oi2));
+                    else
+                        b0 = max(rts(oi1));
+                    end
+
+                    break;
+                end
+            end
+        end
+    
+        % skip negative beta values
+        if b0<0
             break;
         else
+            
             n   = n+1;
+            
+            % add new beta and z-value
+            bn  = [bn b0];
             zn  = [zn feval(OPT.zFunction, un, bn(end))];
+            
         end
 
-        % if maximum numbers of samples is not yet reached, check if infinity
-        % is reached and, if so, start retry search for finite numbers
+        % if maximum numbers of samples is not yet reached, check if
+        % infinity is reached and, if so, start retry search for finite
+        % numbers
         if length(zn)<=OPT.maxretry
             while ~isfinite(zn(end))
 
@@ -192,8 +254,14 @@ if startsearch
             end
         end
 
-        % give up in case infinity or maximum number of iterations is reached
+        % give up in case infinity or maximum number of iterations is
+        % reached
         if ~isfinite(zn(end)) || length(zn)>=OPT.maxiter
+            break;
+        end
+        
+        % give up in case new value is not closer to zero
+        if all(abs(zn(end))>abs(zs))
             break;
         end
     end

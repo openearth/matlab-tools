@@ -31,6 +31,7 @@ function result = DS(varargin)
 %               z20Function:    Function handle to find z=0 along a line
 %               z20Variables:   Additional variables for the z20Function
 %               ARS:            Boolean indicating whether to use ARS
+%               maxZ:           Maximum z-values of samples used for ARS
 %               beta0:          Initial beta value in line search
 %               dbeta:          Initial beta threshold for beta sphere
 %               Pratio:         Maximum fraction of failure probability
@@ -106,6 +107,7 @@ OPT = struct(...
     'z20Function',      @find_zero_poly2,   ...
     'z20Variables',     {{}},               ...
     'ARS',              true,               ...
+    'maxZ',             Inf,                ...
     'beta0',            3,                  ...
     'dbeta',            .01,                ...
     'Pratio',           .4,                 ...
@@ -134,9 +136,11 @@ active      = ~cellfun(@isempty, {stochast.Distr}) &     ...
               ~strcmp('deterministic', cellfun(@func2str, {stochast.Distr}, 'UniformOutput', false));
 
 % set random seed
-if ~isnan(OPT.seed)
-    rand('seed', OPT.seed)
+if isnan(OPT.seed)
+    OPT.seed = rand('seed');
 end
+
+rand('seed', OPT.seed)
 
 % compute origin
 n           = 1;
@@ -196,17 +200,21 @@ while Pr > OPT.Pratio
         end
         
         % determine unit vector
-        b               = b0;
-        z               = z0;
-        
         if OPT.ARS && ARS.hasfit
-            b           = [b OPT.beta0];
-            z           = [z prob_ars_get(un(idx,active).*OPT.beta0,'ARS',ARS)];
+            ba          = OPT.beta0;
+            za          = prob_ars_get(un(idx,active).*OPT.beta0,'ARS',ARS);
+            be          = [];
+            ze          = [];
         else
             n           = n+1;
-            b           = [b OPT.beta0];
-            z           = [z beta2z(OPT, un(idx,:), OPT.beta0)];
+            ba          = [];
+            za          = [];
+            be          = OPT.beta0;
+            ze          = beta2z(OPT, un(idx,:), OPT.beta0);
         end
+        
+        b               = [b0 ba be];
+        z               = [z0 za ze];
 
         % order initial result
         zi              = find(abs(z)==min(abs(z)));
@@ -220,25 +228,38 @@ while Pr > OPT.Pratio
         
         % approximate line search
         if OPT.ARS && ARS.hasfit
-            [ba za na ca] = feval(@OPT.z20Function, un(idx,active), b, z, ...
+            [bn zn nn ca] = feval(@OPT.z20Function, un(idx,active), b, z, ...
                 'zFunction', @(x,y)prob_ars_get(x.*y,'ARS',ARS), OPT.z20Variables{:});
             
-            b           = [b ba];
-            z           = [z za];
+            ba          = [ba bn];
+            za          = [za zn];
+            
+            b           = [b  bn];
+            z           = [z  zn];
         end
 
         % exact line search
-        if ~OPT.ARS || ~ARS.hasfit || abs(b(end)) <= ARS.betamin+ARS.dbeta && ca
+        if ~OPT.ARS || ~ARS.hasfit || (abs(b(end)) <= ARS.betamin+ARS.dbeta && ca)
+            
             ii          = unique([1 2 length(b)]);
             
-            [be ze ne ce] = feval(@OPT.z20Function, un(idx,:), b(ii), z(ii), ...
+            % select unit vector and approximated point closest to zero
+            if OPT.ARS && ARS.hasfit
+                ii      = unique([ii find(abs(z)==min(abs(z)),1,'first')]);
+            end
+            
+            [bn zn nn ce] = feval(@OPT.z20Function, un(idx,:), b(ii), z(ii), ...
                 'zFunction', @(x,y)beta2z(OPT,x,y), OPT.z20Variables{:});
             
-            ue          = beta2u(un(idx,:),be(:));
+            if ~ce; disp(nn); end;
             
-            b           = [b be];
-            z           = [z ze];
-            n           = n+ne;
+            be          = [be bn];
+            ze          = [ze zn];
+            
+            b           = [b  bn];
+            z           = [z  zn];
+            
+            n           = n+nn;
 
             exact(idx)  = true;
         end
@@ -251,7 +272,8 @@ while Pr > OPT.Pratio
             
         % update response surface
         if OPT.ARS && exact(idx)
-            ARS        	= prob_ars_set(ue,ze,'ARS',ARS);
+            ue          = beta2u(un(idx,:),be(:));
+            ARS        	= prob_ars_set(ue,ze,'ARS',ARS,'maxZ',OPT.maxZ);
             
             if ARS.hasfit && isnan(nARS)
                 nARS    = n;
@@ -263,13 +285,18 @@ while Pr > OPT.Pratio
         % update probability of failure
         dPe             = (1-chi2_cdf(beta(   exact&beta>0).^2,sum(active)))/length(beta);
         dPa             = (1-chi2_cdf(beta(notexact&beta>0).^2,sum(active)))/length(beta);
+        dP              = [dPe dPa];
         Pe              = sum(dPe);
         Pa              = sum(dPa);
         Pf              = Pe+Pa;
         
         % check convergence
-        COV             = sqrt((1-Pf)/(length(beta)*Pf));
-        Accuracy        = norm_inv((OPT.confidence+1)/2,0,1)*COV;
+        if sum(dP>0)>1 && Pf > 0
+            Var             = 1/(length(beta)*(length(beta)-1))*sum((dP-Pf).^2);
+            COV             = sqrt(Var)/Pf;
+        end
+        
+        Accuracy        = norm_inv((OPT.confidence+1)/2,0,1)*COV*Pf;
         
         % update approximation ratio
         Pr              = Pa/Pf;
@@ -277,8 +304,9 @@ while Pr > OPT.Pratio
         % determine progress
         if OPT.animate
             nPr         = max([0 find(cumsum(sort(dPa,'descend'))>Pa-OPT.Pratio*Pf,1,'first')-1]);
-            progress    = min([1 length(beta)/((1-Pf)/(minCOV^2*Pf)+nPr)]);
-        
+            nCOV        = max([0 .5+sqrt(.25+sum((dP-Pf).^2)/(minCOV*Pf)^2)]);
+            progress    = min([1 length(beta)/(nCOV+nPr)]);
+            
             plotDS(un, beta, ARS, Pf, Pe, Pa, Accuracy, n, nARS, ndir, progress, exact, notexact, converged);
         end
         
@@ -322,7 +350,8 @@ result = struct(...
         'COV',          COV,                                ...
         'Accuracy',     Accuracy,                           ...
         'Pratio',       Pr,                                 ...
-        'ARS',          ARS                                 ...
+        'ARS',          ARS,                                ...
+        'seed',         rand('seed')                        ...
     )                                                       ...
 );
 
