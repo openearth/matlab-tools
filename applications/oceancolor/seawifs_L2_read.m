@@ -1,7 +1,7 @@
 function varargout = seawifs_l2_read(fname,varargin);
 %SEAWIFS_L2_READ   load one image from a SeaWiFS/MODIS (subscened) L2 HDF file
 %
-%   D = seawifs_l2_read(filename,varname,<keyword,value>)
+%   D = seawifs_l2_read(filename,<varname>,<keyword,value>)
 %
 % load one image from a <a href="http://oceancolor.gsfc.nasa.gov/SeaWiFS/">SeaWiFS</a> L2 HDF file 
 % incl. full lat, lon arrays and L2 flags. The L2 hdf file can be gzipped or bz2 zipped.
@@ -130,35 +130,58 @@ function varargout = seawifs_l2_read(fname,varargin);
       
       for group=1:length(I.Vgroup);if strcmpi(I.Vgroup(group).Name,'Geophysical Data');
          break;end
-      end   
+      end
       
+%%    parameter meta-info
+      
+      H.varnames = {I.Vgroup(group).SDS.Name};
+      
+      for ivar=1:length(H.varnames)
+      
+         for isds=1:length(I.Vgroup(group).SDS); 
+         
+            if strcmpi(I.Vgroup(group).SDS(isds).Name,H.varnames{ivar});
+         
+            M = I.Vgroup(group).SDS(isds);
+         
+            break;end;
+            
+         end   
+      
+         % TO DO D.(att_name) = h4_att_get(I,'sds_name','att_name')
+      
+         for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'long_name');
+            H.long_names{ivar} = M.Attributes(iatt).Value(1:end-1);break;end % remove trailing char(0)
+         end   
+         
+         for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'units');
+            H.units{ivar}      = M.Attributes(iatt).Value(1:end-1);break;end % remove trailing char(0)
+         end   
+         
+      end
+      
+      H.txt = [          addrowcol(char(H.varnames  ),0,-1,' '),...
+                         addrowcol(char(H.long_names),0,-1,' - '), ...
+               addrowcol(addrowcol(char(H.units     ),0,1 ,']'),0,-1,'[')];
+
+%%    selection box
+
       if odd(nargin)
       
-         varnames = {I.Vgroup(group).SDS.Name};
-      
-       % varnames = {'chlor_a',...
-       %             'angstrom_510',...
-       %             'K_490',...
-       %             'nLw_412',...
-       %             'nLw_443',...
-       %             'nLw_490',...
-       %             'nLw_510',...
-       %             'nLw_555',...
-       %             'nLw_670',...
-       %             'tau_865',...
-       %             'eps_78',...
-       %             'l2_flags',...
-       %             'tau_555'}; % better to get them from file 
-                     
-         [varind, ok] = listdlg('ListString', varnames, .....
+         [varind, ok] = listdlg('ListString', H.txt, .....
                              'SelectionMode', 'single', ...                           % we can only plot one for now
                               'PromptString', 'Select a geophysical parameter:', .... % title of pulldown menu
-                                      'Name', 'Loading SeaWiFS/MODIS L2 file:',...          % title of window
+                                      'Name', 'Loading SeaWiFS/MODIS L2 file:',...    % title of window
                                   'ListSize', [500, 300]);
-                                  varname = varnames{varind};
+          varname = H.varnames{varind};
+      else
+          varind = strmatch(varname,H.varnames)
       end
       
       
+      D.name      = H.varnames{varind};
+      D.long_name = H.long_names{varind};
+      D.units     = H.units{varind};
       
 %%    Data, coordinates, time
       
@@ -213,37 +236,6 @@ function varargout = seawifs_l2_read(fname,varargin);
       T.cntl_pt_rows = hdfread(hdfname,'cntl_pt_rows');
       T.cntl_pt_cols = hdfread(hdfname,'cntl_pt_cols');
       
-%%    meta-info
-      
-      for isds=1:length(I.Vgroup(group).SDS); 
-      
-         if strcmpi(I.Vgroup(group).SDS(isds).Name,varname);
-      
-         M = I.Vgroup(group).SDS(isds);
-      
-         break;end;
-         
-      end   
-      
-% TO DO D.(att_name) = h4_att_get(I,'sds_name','att_name')
-      
-      for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'long_name');
-         D.long_name = M.Attributes(iatt).Value(1:end-1);break;end % remove trailing char(0)
-      end   
-      
-      D.units     = ''; % for L2 flags
-      for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'units');
-         D.units     = M.Attributes(iatt).Value(1:end-1);break;end % remove trailing char(0)
-      end   
-      
-      for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'slope');
-         D.slope = M.Attributes(iatt).Value;break;end
-      end   
-      
-      for iatt=1:length(M.Attributes);if strcmpi(M.Attributes(iatt).Name,'intercept');
-         D.intercept = M.Attributes(iatt).Value;break;end
-      end   
-      
 %%    (geodata = rawdata * slope + intercept)
 %     http://www.icess.ucsb.edu/seawifs/software/seadas4.8/src/idl_utils/io/wr_swf_hdf_sd.pro
       
@@ -295,7 +287,7 @@ function varargout = seawifs_l2_read(fname,varargin);
       
       if OPT.mask
          D.mask      = seawifs_mask(D.l2_flags,[2 10],'disp',0); % remove clouds, ice and land
-         D.(varname) = D.(varname) .*D.mask;
+         D.(varname) = double(D.(varname)).*D.mask; % yu cannot mix int16 and int32(flags)
       end
       
       %% plot image (can be slow: no default)
