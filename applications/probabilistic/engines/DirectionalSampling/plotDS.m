@@ -100,8 +100,8 @@ if isempty(fh)
         'RowName', {'N' 'P' 'Accuracy' 'Ratio'});
 end
 
-ax  = findobj(gcf,'Type','axes','Tag','');
-uit = findobj(gcf,'Type','uitable');
+ax  = findobj(fh,'Type','axes','Tag','');
+uit = findobj(fh,'Type','uitable');
 
 % create plot grid
 lim         = linspace(-10,10,100);
@@ -115,11 +115,12 @@ if ARS.hasfit
     dat(:,d)    = [gx(:) gy(:)];
     rsz         = reshape(polyvaln(ARS.fit,dat), size(gx));
 
-    ph = findobj(fh,'Tag','ARS');
+    ph = findobj(ax,'Tag','ARS');
     if isempty(ph)
         ph = pcolor(ax,gx,gy,rsz);
-        set(ph,'Tag','ARS');
-        colorbar; shading flat;
+        set(ph,'Tag','ARS','DisplayName','ARS');
+        colorbar('peer',ax);
+        shading(ax,'flat');
     else
         set(ph,'CData',rsz)
     end
@@ -128,18 +129,18 @@ end
 % plot DS samples
 up = un.*repmat(beta(:),1,size(un,2));
 
-ph1 = findobj(fh,'Tag','P1');
-ph2 = findobj(fh,'Tag','P2');
-ph3 = findobj(fh,'Tag','P3');
+ph1 = findobj(ax,'Tag','P1');
+ph2 = findobj(ax,'Tag','P2');
+ph3 = findobj(ax,'Tag','P3');
 
 if isempty(ph1) || isempty(ph2) || isempty(ph3)
     ph1 = scatter(ax,un(~converged,d(1)),un(~converged,d(2)),'MarkerEdgeColor','b');
     ph2 = scatter(ax,up(notexact,  d(1)),up(notexact,  d(2)),'MarkerEdgeColor','r');
     ph3 = scatter(ax,up(exact,     d(1)),up(exact,     d(2)),'MarkerEdgeColor','g');
 
-    set(ph1,'Tag','P1');
-    set(ph2,'Tag','P2');
-    set(ph3,'Tag','P3');
+    set(ph1,'Tag','P1','DisplayName','not converged');
+    set(ph2,'Tag','P2','DisplayName','approximated');
+    set(ph3,'Tag','P3','DisplayName','exact');
 else
     set(ph1,'XData',un(~converged,d(1)),'YData',un(~converged,d(2)));
     set(ph2,'XData',up(notexact,  d(1)),'YData',up(notexact,  d(2)));
@@ -150,27 +151,30 @@ end
 [x1,y1] = cylinder(ARS.betamin,100);
 [x2,y2] = cylinder(ARS.betamin+ARS.dbeta,100);
 
-ph1 = findobj(fh,'Tag','B1');
-ph2 = findobj(fh,'Tag','B2');
+ph1 = findobj(ax,'Tag','B1');
+ph2 = findobj(ax,'Tag','B2');
 
 if isempty(ph1) || isempty(ph2)
-    plot(ax,0,0,'ok');
+    plot(ax,0,0,'ok','DisplayName','origin');
     
     ph1 = plot(ax,x1(1,:),y1(1,:),':k');
     ph2 = plot(ax,x2(1,:),y2(1,:),'-k');
 
-    set(ph1,'Tag','B1');
-    set(ph2,'Tag','B2');
+    set(ph1,'Tag','B1','DisplayName','\beta_{min}');
+    set(ph2,'Tag','B2','DisplayName','\beta_{threshold}');
 else
     set(ph1,'XData',x1(1,:),'YData',y1(1,:));
     set(ph2,'XData',x2(1,:),'YData',y2(1,:));
 end
 
 % create labels
-xlabel('u_1');
-ylabel('u_2');
+xlabel(ax,'u_1');
+ylabel(ax,'u_2');
 
-title(sprintf('%4.3f%%', progress*100));
+title(ax,sprintf('%4.3f%%', progress*100));
+
+legend(ax,'-DynamicLegend','Location','NorthWest');
+legend(ax,'show');
 
 % update table contents
 data = { ...

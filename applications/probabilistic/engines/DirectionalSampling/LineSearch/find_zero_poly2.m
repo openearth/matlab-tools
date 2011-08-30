@@ -67,7 +67,8 @@ OPT = struct(...
     'maxiter',          50,                 ...     % maximum number of iterations
     'maxretry',         1,                  ...     % maximum number of iterations before retry
     'maxorder',         2,                  ...     % maximum order of polynom in line search
-    'maxratio',         10                  ...     % maximum ratio between interval boundaries
+    'maxratio',         10,                 ...     % maximum ratio between interval boundaries
+    'animate',          false               ...     % animate progress
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -221,7 +222,8 @@ if startsearch
         % root is found
         for o = order:-1:1
             
-            p       = polyfit(bs(1:o+1), zs(1:o+1), o);
+            p       = polyfit(bs(1:o+1),zs(1:o+1),o);
+            b0a     = interp1(zs,bs,0,'linear','extrap');
             
             if all(isfinite(p))
                 rts     = sort(roots(p));
@@ -230,10 +232,13 @@ if startsearch
 
                 if any(oi1)
 
-                    % select the smallest positive real root, if available,
-                    % or the smallest negative real root otherwise
+                    % select the positive real root closest to the points
+                    % with smallest z-values, if available, or the smallest
+                    % negative real root otherwise
                     if any(oi1&oi2)
-                        b0 = min(rts(oi1&oi2));
+                        ii = find(oi1&oi2);
+                        ii = ii(isort(abs(rts(ii)-b0a)));
+                        b0 = rts(ii(1));
                     else
                         b0 = max(rts(oi1));
                     end
@@ -241,6 +246,10 @@ if startsearch
                     break;
                 end
             end
+        end
+        
+        if OPT.animate
+            plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p);
         end
     
         % skip negative beta values
@@ -297,3 +306,78 @@ if startsearch
     end
     
 end
+
+function plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p)
+
+    brange = max(abs([b0 b bn]))+1;
+    
+    fh = findobj('Tag','LSprogress');
+
+    % initialize plot
+    if isempty(fh)
+        fh = figure('Tag','LSprogress'); hold on;
+    end
+    
+    ax  = findobj(fh,'Type','axes','Tag','');
+
+    % original data
+    ph = findobj(ax,'Tag','LSpath1');
+    if isempty(ph)
+        ph = plot(ax,b,z,'xk');
+        set(ph,'Tag','LSpath1','DisplayName','initial');
+    else
+        set(ph,'XData',b,'YData',z);
+    end
+    
+    % added data
+    ph = findobj(ax,'Tag','LSpath2');
+    if isempty(ph)
+        ph = plot(ax,bn,zn,'xr');
+        set(ph,'Tag','LSpath2','DisplayName','added');
+    else
+        set(ph,'XData',bn,'YData',zn);
+    end
+    
+    % selected data
+    ph = findobj(ax,'Tag','LSpath3');
+    if isempty(ph)
+        ph = plot(ax,bs,zs,'og');
+        set(ph,'Tag','LSpath3','DisplayName','selected');
+    else
+        set(ph,'XData',bs,'YData',zs);
+    end
+    
+    % poly fit
+    grb = linspace(-brange,brange,100);
+    grz = polyval(p, grb);
+    
+    ph = findobj(ax,'Tag','LSpoly');
+    if isempty(ph)
+        ph = plot(ax, grb, grz, '-b','DisplayName','fit');
+        set(ph,'Tag','LSpoly');
+    else
+        set(ph,'XData',grb,'YData',grz);
+    end
+    
+    % zero location
+    ph = findobj(ax,'Tag','LSzero');
+    if isempty(ph)
+        ph = plot(ax,b0,0,'or','MarkerFaceColor','r');
+        set(ph,'Tag','LSzero','DisplayName','root');
+    else
+        set(ph,'XData',b0,'YData',0);
+    end
+    
+    % layout
+    grid(ax,'on');
+    xlabel(ax,'\beta');
+    ylabel(ax,'z');
+    
+    title(ax,func2str(OPT.zFunction));
+    
+    legend(ax,'-DynamicLegend','Location','NorthWest');
+    legend(ax,'show');
+    
+    set(ax,'XLim',brange*[-1 1],'YLim',[-100 100]);
+    
+    drawnow;

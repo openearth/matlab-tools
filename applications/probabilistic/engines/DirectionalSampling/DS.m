@@ -32,7 +32,7 @@ function result = DS(varargin)
 %               z20Variables:   Additional variables for the z20Function
 %               ARS:            Boolean indicating whether to use ARS
 %               maxZ:           Maximum z-values of samples used for ARS
-%               beta0:          Initial beta value in line search
+%               beta1:          Initial beta value in line search
 %               dbeta:          Initial beta threshold for beta sphere
 %               Pratio:         Maximum fraction of failure probability
 %                               determined by approximated samples
@@ -111,10 +111,10 @@ OPT = struct(...
     'ARSgetVariables',  {{}},               ...
     'ARSsetFunction',   @prob_ars_set,      ...
     'ARSsetVariables',  {{}},               ...
-    'beta0',            4,                  ...
+    'beta1',            4,                  ...
     'dbeta',            .01,                ...
     'Pratio',           .4,                 ...
-    'minsamples',       5,                  ...
+    'minsamples',       1,                  ...
     'confidence',       .95,                ...
     'accuracy',         .2,                 ...
     'plot',             false,              ...
@@ -206,16 +206,16 @@ while Pr > OPT.Pratio
         
         % determine unit vector
         if OPT.ARS && ARS.hasfit
-            ba          = OPT.beta0;
-            za          = feval(OPT.ARSgetFunction,un(idx,active).*OPT.beta0,'ARS',ARS,OPT.ARSgetVariables{:});
+            ba          = OPT.beta1;
+            za          = feval(OPT.ARSgetFunction,un(idx,active).*OPT.beta1,'ARS',ARS,OPT.ARSgetVariables{:});
             be          = [];
             ze          = [];
         else
             n           = n+1;
             ba          = [];
             za          = [];
-            be          = OPT.beta0;
-            ze          = beta2z(OPT, un(idx,:), OPT.beta0);
+            be          = OPT.beta1;
+            ze          = beta2z(OPT, un(idx,:), OPT.beta1);
         end
         
         b               = [b0 ba be];
@@ -247,7 +247,7 @@ while Pr > OPT.Pratio
         % exact line search
         if ~OPT.ARS || ~ARS.hasfit || (abs(b(end)) <= ARS.betamin+ARS.dbeta && ca)
             
-            ii          = unique([1 2 length(b)]);
+            ii          = [1 2];
             
             % select unit vector and approximated point closest to zero
             if OPT.ARS && ARS.hasfit
@@ -375,7 +375,7 @@ end
 function [z x u P] = beta2z(OPT, un, beta)
     [x u P] = beta2x(OPT, un, beta);
     
-    nf      = ~any(isinf(x),2);
+    nf      = ~any(~isfinite(x),2);
     if any(nf); z(nf) = prob_zfunctioncall(OPT, OPT.stochast, x(nf,:)); end;
     z(~nf)  = -Inf;
 end

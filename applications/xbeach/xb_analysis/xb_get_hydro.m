@@ -152,7 +152,10 @@ end
 
 % compute HF waves
 if xb_exist(xb, 'H')
-    Hrms_hf = sqrt(mean(xb_get(xb,'H').^2,1)+Hrms_hf.^2);
+    Hrms_hf = sqrt(mean(xb_get(xb,'H').^2,1)+Hrms_hf.^2);                  % high frequency component from low frequency waves is
+                                                                           % added to the high frequency waves here. the component
+                                                                           % is set to zero until consensus is reached about 
+                                                                           % whether this is useful or not.
     if xb_exist(xb, 'zs')
         zs = xb_get(xb,'zs');
         H = xb_get(xb,'H');
