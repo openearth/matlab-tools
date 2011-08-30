@@ -367,7 +367,10 @@ function data = ui_getdata(obj, info, vars, slider)
     iobj = findobj(pobj, 'Tag', 'ReadIndicator');
     set(iobj, 'Visible', 'on'); drawnow;
     
-    data = cell(size(vars));
+    data{1} = nan([1 info.dims.ny+1 info.dims.nx+1]);
+    for i = 2:length(vars)
+        data{i} = data{1};
+    end
     
     t1 = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'));
     t2 = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'));
