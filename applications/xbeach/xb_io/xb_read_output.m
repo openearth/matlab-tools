@@ -85,12 +85,18 @@ if ~exist(fname, 'file')
 end
 
 % determine data type (dat/netcdf)
-if isdir(fname) || strcmpi(fname(end-3:end), '.dat')
-  variables = xb_read_dat(fname, varargin{:});
+if strcmpi(fname(end-3:end), '.dat')
+    variables = xb_read_dat(fname, varargin{:});
 elseif strcmpi(fname(end-2:end), '.nc')
-  variables = xb_read_netcdf(fname, varargin{:});
-elseif isdir(fileparts(fname))
-  variables = xb_read_dat(fileparts(fname), varargin{:});
+    variables = xb_read_netcdf(fname, varargin{:});
+elseif isdir(fname)
+    if ~isempty(dir(fullfile(fname,'*.nc')))
+        variables = xb_read_netcdf(fname, varargin{:});
+    elseif ~isempty(dir(fullfile(fname,'*.dat')))
+        variables = xb_read_dat(fname, varargin{:});
+    else
+        error(['Output type not recognised [' fname ']']);
+    end
 else
     error(['Output type not recognised [' fname ']']);
 end
