@@ -111,9 +111,10 @@ OPT = struct(...
     'ARSgetVariables',  {{}},               ...
     'ARSsetFunction',   @prob_ars_set,      ...
     'ARSsetVariables',  {{}},               ...
-    'beta0',            3,                  ...
+    'beta0',            4,                  ...
     'dbeta',            .01,                ...
     'Pratio',           .4,                 ...
+    'minsamples',       5,                  ...
     'confidence',       .95,                ...
     'accuracy',         .2,                 ...
     'plot',             false,              ...
@@ -150,6 +151,8 @@ n           = 1;
 nARS        = nan;
 b0          = 0;
 z0          = beta2z(OPT, zeros(1,N), b0);
+b           = [];
+z           = [];
 
 if z0<0
     error('Origin is part of failure area. This situation is currently not supported.');
@@ -174,13 +177,12 @@ Pr          = Inf;
 while Pr > OPT.Pratio
     
     COV         = Inf;
+    reevaluate  = unique([find(abs(b) <= ARS.betamin+ARS.dbeta) find(notexact)]);
     
-    while COV > minCOV
-        
-        idx                 = abs(beta) <= ARS.betamin+ARS.dbeta & notexact;
+    while COV > minCOV || ~isempty(reevaluate)
         
         % if no samples within beta sphere are left, draw new directions
-        if ~any(idx)
+        if isempty(reevaluate)
             
             idx             = size(un,1)+[1:OPT.NrSamples];
             exact(idx)      = false;
@@ -199,7 +201,7 @@ while Pr > OPT.Pratio
             un(idx,:)       = u./repmat(ul,1,N);
             
         else
-            idx = find(idx,1,'first');
+            idx             = reevaluate(1);
         end
         
         % determine unit vector
@@ -293,9 +295,9 @@ while Pr > OPT.Pratio
         Pf              = Pe+Pa;
         
         % check convergence
-        if sum(dP>0)>1 && Pf > 0
-            Var             = 1/(length(beta)*(length(beta)-1))*sum((dP-Pf).^2);
-            COV             = sqrt(Var)/Pf;
+        if sum(dP>0)>OPT.minsamples && Pf > 0
+            sigma           = sqrt(1/(length(beta)*(length(beta)-1))*sum((dP-Pf).^2));
+            COV             = sigma/Pf;
         end
         
         Accuracy        = norm_inv((OPT.confidence+1)/2,0,1)*COV*Pf;
@@ -310,6 +312,10 @@ while Pr > OPT.Pratio
             progress    = min([1 length(beta)/(nCOV+nPr)]);
             
             plotDS(un, beta, ARS, Pf, Pe, Pa, Accuracy, n, nARS, ndir, progress, exact, notexact, converged);
+        end
+        
+        if ~isempty(reevaluate)
+            reevaluate(1) = [];
         end
         
     end

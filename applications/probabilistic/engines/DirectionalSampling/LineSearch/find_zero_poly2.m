@@ -140,8 +140,8 @@ if startsearch
         
         % check if finite interval is available, and if so, preserve it
         if any(z>0) && any(z<0)
-            il      = ii(z>=0);
-            iu      = ii(z<0);
+            il      = ii(z(ii)>=0);
+            iu      = ii(z(ii)<0);
             
             ni      = ceil((order+1)/2);
             nl      = min(ni,length(il));
@@ -163,6 +163,32 @@ if startsearch
                     else
                         ii(end) = [];
                     end
+                else
+                    n       = n+1;
+        
+                    bn      = [bn mean(b(ii))];
+                    zn      = [zn feval(OPT.zFunction, un, bn(end))];
+                    
+                    im      = ~ismember(b,bn);
+                    
+                    b       = [b(im) bn];
+                    z       = [z(im) zn];
+                    
+                    ii      = [ii length(z)];
+                    ii      = ii(isort(abs(z(ii))));
+                    
+                    order   = min(OPT.maxorder, length(ii)-1);
+                    
+                    break;
+                end
+                
+                order       = min(OPT.maxorder, length(ii)-1);
+            end
+        else
+            % remove outliers
+            while max(abs(z(ii)))/min(abs(z(ii)))>OPT.maxratio
+                if length(ii)>2
+                    ii(end) = [];
                 else
                     n       = n+1;
         
