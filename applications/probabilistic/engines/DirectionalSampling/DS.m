@@ -273,7 +273,9 @@ while Pr > OPT.Pratio
         notexact(idx)   = ~exact(idx) && converged(idx);
         exact(idx)      = exact(idx) && converged(idx);
         beta(idx)       = b(end);
-            
+        
+        nb              = length(beta);
+        
         % update response surface
         if OPT.ARS && exact(idx)
             ue          = beta2u(un(idx,:),be(:));
@@ -287,16 +289,17 @@ while Pr > OPT.Pratio
         ndir            = (n-nARS)/(sum(exact)-2*sum(ARS.active)+1);
         
         % update probability of failure
-        dPe             = (1-chi2_cdf(beta(   exact&beta>0).^2,sum(active)))/length(beta);
-        dPa             = (1-chi2_cdf(beta(notexact&beta>0).^2,sum(active)))/length(beta);
-        dP              = [dPe dPa];
+        dPe             = (1-chi2_cdf(beta(   exact&beta>0).^2,sum(active)))/nb;
+        dPa             = (1-chi2_cdf(beta(notexact&beta>0).^2,sum(active)))/nb;
+        dPo             = zeros(size(beta(beta<=0)));
+        dP              = [dPe dPa dPo];
         Pe              = sum(dPe);
         Pa              = sum(dPa);
         Pf              = Pe+Pa;
         
         % check convergence
         if sum(dP>0)>OPT.minsamples && Pf > 0
-            sigma           = sqrt(1/(length(beta)*(length(beta)-1))*sum((dP-Pf).^2));
+            sigma           = sqrt(1/(nb*(nb-1))*sum((dP-Pf).^2));
             COV             = sigma/Pf;
         end
         
@@ -309,7 +312,7 @@ while Pr > OPT.Pratio
         if OPT.animate
             nPr         = max([0 find(cumsum(sort(dPa,'descend'))>Pa-OPT.Pratio*Pf,1,'first')-1]);
             nCOV        = max([0 .5+sqrt(.25+sum((dP-Pf).^2)/(minCOV*Pf)^2)]);
-            progress    = min([1 length(beta)/(nCOV+nPr)]);
+            progress    = min([1 nb/(nCOV+nPr)]);
             
             plotDS(un, beta, ARS, Pf, Pe, Pa, Accuracy, n, nARS, ndir, progress, exact, notexact, converged);
         end
