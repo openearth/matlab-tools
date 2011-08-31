@@ -492,86 +492,140 @@ else
     hm.models(i).morFac=0;
 end
 
+%% Time-series datasets
+hm.models(i).nrTimeSeriesDatasets=0;
+if isfield(model,'timeseriesdatasets')
+    hm.models(i).nrTimeSeriesDatasets=length(model.timeseriesdatasets);
+    for j=1:hm.models(i).nrTimeSeriesDatasets
+        hm.models(i).timeSeriesDatasets(j).parameter=model.timeseriesdatasets(j).dataset.parameter;
+        hm.models(i).timeSeriesDatasets(j).station=model.timeseriesdatasets(j).dataset.station;
+        if isfield(model.timeseriesdatasets(j).dataset,'locationx')
+            hm.models(i).timeSeriesDatasets(j).location(1)=str2double(model.timeseriesdatasets(j).dataset.locationx);
+        end
+        if isfield(model.timeseriesdatasets(j).dataset,'locationy')
+            hm.models(i).timeSeriesDatasets(j).location(2)=str2double(model.timeseriesdatasets(j).dataset.locationy);
+        end
+        if isfield(model.timeseriesdatasets(j).dataset,'locationm')
+            hm.models(i).timeSeriesDatasets(j).m=str2double(model.timeseriesdatasets(j).dataset.locationm);
+        end
+        if isfield(model.timeseriesdatasets(j).dataset,'locationn')
+            hm.models(i).timeSeriesDatasets(j).n=str2double(model.timeseriesdatasets(j).dataset.locationn);
+        end        
+        hm.models(i).timeSeriesDatasets(j).layer=[];
+        if isfield(model.timeseriesdatasets(j).dataset,'layer')
+            hm.models(i).timeSeriesDatasets(j).layer=str2double(model.timeseriesdatasets(j).dataset.layer);
+        end
+        hm.models(i).timeSeriesDatasets(j).toOPeNDAP=0;
+        if isfield(model.timeseriesdatasets(j).dataset,'toopendap')
+            hm.models(i).timeSeriesDatasets(j).toOPeNDAP=str2double(model.timeseriesdatasets(j).dataset.toopendap);
+        end        
+    end
+end
+
 %% Stations
-if isfield(model,'stations')
-
+if isfield(model,'stations')    
     hm.models(i).nrStations=length(model.stations);
-
-    for j=1:hm.models(i).nrStations
-
+    for j=1:hm.models(i).nrStations        
         hm.models(i).stations(j).name=model.stations(j).station.name;
         hm.models(i).stations(j).longName=model.stations(j).station.longname;
-        hm.models(i).stations(j).Location(1)=str2double(model.stations(j).station.locationx);
-        hm.models(i).stations(j).Location(2)=str2double(model.stations(j).station.locationy);
-        if isfield(model.stations(j).station,'locationm')
-            hm.models(i).stations(j).m=str2double(model.stations(j).station.locationm);
-            hm.models(i).stations(j).N=str2double(model.stations(j).station.locationn);
-        end
+        hm.models(i).stations(j).location(1)=str2double(model.stations(j).station.locationx);
+        hm.models(i).stations(j).location(2)=str2double(model.stations(j).station.locationy);
+        %         if isfield(model.stations(j).station,'locationm')
+        %             hm.models(i).stations(j).m=str2double(model.stations(j).station.locationm);
+        %             hm.models(i).stations(j).n=str2double(model.stations(j).station.locationn);
+        %         end
         hm.models(i).stations(j).type=model.stations(j).station.type;
-
-        %% SP2
-        if isfield(model.stations(j).station,'storesp2')
-            hm.models(i).stations(j).storeSP2=str2double(model.stations(j).station.storesp2);
-            if isfield(model.stations(j).station,'sp2id')
-                hm.models(i).stations(j).sP2id=model.stations(j).station.sp2id;
-            else
-                hm.models(i).stations(j).sP2id='';
+        
+        %         %% SP2
+        %         if isfield(model.stations(j).station,'storesp2')
+        %             hm.models(i).stations(j).storeSP2=str2double(model.stations(j).station.storesp2);
+        %             if isfield(model.stations(j).station,'sp2id')
+        %                 hm.models(i).stations(j).SP2id=model.stations(j).station.sp2id;
+        %             else
+        %                 hm.models(i).stations(j).SP2id='';
+        %             end
+        %         else
+        %             hm.models(i).stations(j).storeSP2=0;
+        %             hm.models(i).stations(j).SP2id='';
+        %         end
+        hm.models(i).stations(j).plots=[];
+        if isfield(model.stations(j).station,'plots')
+            hm.models(i).stations(j).nrPlots=length(model.stations(j).station.plots);
+            for k=1:hm.models(i).stations(j).nrPlots
+                hm.models(i).stations(j).plots(k).type='timeseries';
+                if isfield(model.stations(j).station.plots(k).plot,'type')
+                    hm.models(i).stations(j).plots(k).type=model.stations(j).station.plots(k).plot.type;
+                end
+                hm.models(i).stations(j).plots(k).nrDatasets=length(model.stations(j).station.plots(k).plot.datasets);
+                for id=1:length(model.stations(j).station.plots(k).plot.datasets)
+                    hm.models(i).stations(j).plots(k).datasets(id).parameter=model.stations(j).station.plots(k).plot.datasets(id).dataset.parameter;
+                    hm.models(i).stations(j).plots(k).datasets(id).type=model.stations(j).station.plots(k).plot.datasets(id).dataset.type;
+                    hm.models(i).stations(j).plots(k).datasets(id).source=[];
+                    hm.models(i).stations(j).plots(k).datasets(id).id=[];
+                    if isfield(model.stations(j).station.plots(k).plot.datasets(id).dataset,'source')
+                        hm.models(i).stations(j).plots(k).datasets(id).source=model.stations(j).station.plots(k).plot.datasets(id).dataset.source;
+                    end
+                    if isfield(model.stations(j).station.plots(k).plot.datasets(id).dataset,'id')
+                        hm.models(i).stations(j).plots(k).datasets(id).id=model.stations(j).station.plots(k).plot.datasets(id).dataset.id;
+                    end
+                end
             end
-        else
-            hm.models(i).stations(j).storeSP2=0;
-            hm.models(i).stations(j).sP2id='';
-        end
-
-        %% Parameters
-        hm.models(i).stations(j).nrParameters=length(model.stations(j).station.parameters);
-        for k=1:hm.models(i).stations(j).nrParameters
-
-            % Defaults
-            hm.models(i).stations(j).parameters(k).plotCmp=0;
-            hm.models(i).stations(j).parameters(k).plotObs=0;
-            hm.models(i).stations(j).parameters(k).plotPrd=0;
-            hm.models(i).stations(j).parameters(k).obsCode='';
-            hm.models(i).stations(j).parameters(k).prdCode='';
-            hm.models(i).stations(j).parameters(k).obsID='';
-            hm.models(i).stations(j).parameters(k).prdID='';
-            hm.models(i).stations(j).parameters(k).layer=[];
-            hm.models(i).stations(j).parameters(k).toOPeNDAP=0;
-            
-            hm.models(i).stations(j).parameters(k).name=model.stations(j).station.parameters(k).parameter.name;
-
-            if isfield(model.stations(j).station.parameters(k).parameter,'plotcmp')
-                hm.models(i).stations(j).parameters(k).plotCmp=str2double(model.stations(j).station.parameters(k).parameter.plotcmp);
-            end
-
-            if isfield(model.stations(j).station.parameters(k).parameter,'plotobs')
-                hm.models(i).stations(j).parameters(k).plotObs=str2double(model.stations(j).station.parameters(k).parameter.plotobs);
-            end
-            if isfield(model.stations(j).station.parameters(k).parameter,'obssrc')
-                hm.models(i).stations(j).parameters(k).obsSrc=model.stations(j).station.parameters(k).parameter.obssrc;
-            end
-            if isfield(model.stations(j).station.parameters(k).parameter,'obsid')
-                hm.models(i).stations(j).parameters(k).obsID=model.stations(j).station.parameters(k).parameter.obsid;
-            end
-
-            if isfield(model.stations(j).station.parameters(k).parameter,'plotprd')
-                hm.models(i).stations(j).parameters(k).plotPrd=str2double(model.stations(j).station.parameters(k).parameter.plotprd);
-            end
-            if isfield(model.stations(j).station.parameters(k).parameter,'prdsrc')
-                hm.models(i).stations(j).parameters(k).prdSrc=model.stations(j).station.parameters(k).parameter.prdsrc;
-            end
-            if isfield(model.stations(j).station.parameters(k).parameter,'prdid')
-                hm.models(i).stations(j).parameters(k).prdID=model.stations(j).station.parameters(k).parameter.prdid;
-            end
-            if isfield(model.stations(j).station.parameters(k).parameter,'layer')
-                hm.models(i).stations(j).parameters(k).layer=str2double(model.stations(j).station.parameters(k).parameter.layer);
-            end
-            if isfield(model.stations(j).station.parameters(k).parameter,'toopendap')
-                hm.models(i).stations(j).parameters(k).toOPeNDAP=str2double(model.stations(j).station.parameters(k).parameter.toopendap);
-            end
-
         end
     end
 end
+
+% hm.models(i).stations(j).nrParameters=length(model.stations(j).station.parameters);
+% 
+%         %% Parameters
+%         hm.models(i).stations(j).nrParameters=length(model.stations(j).station.parameters);
+%         for k=1:hm.models(i).stations(j).nrParameters
+% 
+%             % Defaults
+%             hm.models(i).stations(j).parameters(k).plotCmp=0;
+%             hm.models(i).stations(j).parameters(k).plotObs=0;
+%             hm.models(i).stations(j).parameters(k).plotPrd=0;
+%             hm.models(i).stations(j).parameters(k).obsCode='';
+%             hm.models(i).stations(j).parameters(k).prdCode='';
+%             hm.models(i).stations(j).parameters(k).obsID='';
+%             hm.models(i).stations(j).parameters(k).prdID='';
+%             hm.models(i).stations(j).parameters(k).layer=[];
+%             hm.models(i).stations(j).parameters(k).toOPeNDAP=0;
+%             
+%             hm.models(i).stations(j).parameters(k).name=model.stations(j).station.parameters(k).parameter.name;
+% 
+%             if isfield(model.stations(j).station.parameters(k).parameter,'plotcmp')
+%                 hm.models(i).stations(j).parameters(k).plotCmp=str2double(model.stations(j).station.parameters(k).parameter.plotcmp);
+%             end
+% 
+%             if isfield(model.stations(j).station.parameters(k).parameter,'plotobs')
+%                 hm.models(i).stations(j).parameters(k).plotObs=str2double(model.stations(j).station.parameters(k).parameter.plotobs);
+%             end
+%             if isfield(model.stations(j).station.parameters(k).parameter,'obssrc')
+%                 hm.models(i).stations(j).parameters(k).obsSrc=model.stations(j).station.parameters(k).parameter.obssrc;
+%             end
+%             if isfield(model.stations(j).station.parameters(k).parameter,'obsid')
+%                 hm.models(i).stations(j).parameters(k).obsID=model.stations(j).station.parameters(k).parameter.obsid;
+%             end
+% 
+%             if isfield(model.stations(j).station.parameters(k).parameter,'plotprd')
+%                 hm.models(i).stations(j).parameters(k).plotPrd=str2double(model.stations(j).station.parameters(k).parameter.plotprd);
+%             end
+%             if isfield(model.stations(j).station.parameters(k).parameter,'prdsrc')
+%                 hm.models(i).stations(j).parameters(k).prdSrc=model.stations(j).station.parameters(k).parameter.prdsrc;
+%             end
+%             if isfield(model.stations(j).station.parameters(k).parameter,'prdid')
+%                 hm.models(i).stations(j).parameters(k).prdID=model.stations(j).station.parameters(k).parameter.prdid;
+%             end
+%             if isfield(model.stations(j).station.parameters(k).parameter,'layer')
+%                 hm.models(i).stations(j).parameters(k).layer=str2double(model.stations(j).station.parameters(k).parameter.layer);
+%             end
+%             if isfield(model.stations(j).station.parameters(k).parameter,'toopendap')
+%                 hm.models(i).stations(j).parameters(k).toOPeNDAP=str2double(model.stations(j).station.parameters(k).parameter.toopendap);
+%             end
+% 
+%         end
+%     end
+% end
 
 %% Map Datasets
 hm.models(i).nrMapDatasets=0;
@@ -690,6 +744,60 @@ if isfield(model,'mapplots')
 
             end
         end
+    end
+end
+
+%% Hazards
+hm.models(i).nrHazards=0;
+hm.models(i).hazards=[];
+if isfield(model,'hazards')
+    hm.models(i).nrHazards=length(model.hazards);
+    for j=1:hm.models(i).nrHazards       
+        hm.models(i).hazards(j).type=model.hazards(j).hazard.type;
+        hm.models(i).hazards(j).name=model.hazards(j).hazard.name;
+        hm.models(i).hazards(j).longName=model.hazards(j).hazard.longname;
+        hm.models(i).hazards(j).location(1)=str2double(model.hazards(j).hazard.locationx);
+        hm.models(i).hazards(j).location(2)=str2double(model.hazards(j).hazard.locationy);        
+        hm.models(i).hazards(j).wlStation=[];
+        if isfield(model.hazards(j).hazard,'wlstation')
+            hm.models(i).hazards(j).wlStation=model.hazards(j).hazard.wlstation;
+        end        
+        hm.models(i).hazards(j).geoJpgFile=[];
+        if isfield(model.hazards(j).hazard,'geojpgfile')
+            hm.models(i).hazards(j).geoJpgFile=model.hazards(j).hazard.geojpgfile;
+        end        
+        hm.models(i).hazards(j).geoJgwFile=[];
+        if isfield(model.hazards(j).hazard,'geojgwfile')
+            hm.models(i).hazards(j).geoJgwFile=model.hazards(j).hazard.geojgwfile;
+        end       
+        hm.models(i).hazards(j).x0=[];
+        if isfield(model.hazards(j).hazard,'x0')
+            hm.models(i).hazards(j).x0=str2double(model.hazards(j).hazard.x0);
+        end       
+        hm.models(i).hazards(j).y0=[];
+        if isfield(model.hazards(j).hazard,'y0')
+            hm.models(i).hazards(j).y0=str2double(model.hazards(j).hazard.y0);
+        end       
+        hm.models(i).hazards(j).coastOrientation=[];
+        if isfield(model.hazards(j).hazard,'orientation')
+            hm.models(i).hazards(j).coastOrientation=str2double(model.hazards(j).hazard.orientation);
+        end       
+        hm.models(i).hazards(j).length1=[];
+        if isfield(model.hazards(j).hazard,'length1')
+            hm.models(i).hazards(j).length1=str2double(model.hazards(j).hazard.length1);
+        end
+        hm.models(i).hazards(j).length2=[];
+        if isfield(model.hazards(j).hazard,'length2')
+            hm.models(i).hazards(j).length2=str2double(model.hazards(j).hazard.length2);
+        end        
+        hm.models(i).hazards(j).width1=[];
+        if isfield(model.hazards(j).hazard,'width1')
+            hm.models(i).hazards(j).width1=str2double(model.hazards(j).hazard.width1);
+        end
+        hm.models(i).hazards(j).width2=[];
+        if isfield(model.hazards(j).hazard,'width2')
+            hm.models(i).hazards(j).width2=str2double(model.hazards(j).hazard.width2);
+        end        
     end
 end
 
