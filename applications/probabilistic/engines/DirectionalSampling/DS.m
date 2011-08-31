@@ -164,6 +164,7 @@ beta        = nan(0,1);
 exact       = false(0,1);
 notexact    = false(0,1);
 converged   = false(0,1);
+reevaluate  = [];
 
 % initialize response surface
 ARS         = prob_ars_struct(          ...
@@ -174,10 +175,10 @@ ARS         = prob_ars_struct(          ...
             
 % start iterations
 Pr          = Inf;
-while Pr > OPT.Pratio
+finalise    = false;
+while Pr > OPT.Pratio || ~isempty(reevaluate)
     
     COV         = Inf;
-    reevaluate  = unique([find(abs(b) <= ARS.betamin+ARS.dbeta) find(notexact)]);
     
     while COV > minCOV || ~isempty(reevaluate)
         
@@ -222,11 +223,13 @@ while Pr > OPT.Pratio
         z               = [z0 za ze];
 
         % order initial result
-        zi              = find(abs(z)==min(abs(z)));
-        zi              = [mod(zi+2,2)+1 zi];
+        if length(z)>1
+            zi          = find(abs(z)==min(abs(z)));
+            zi          = [mod(zi+2,2)+1 zi];
 
-        b               = b(zi);
-        z               = z(zi);
+            b           = b(zi);
+            z           = z(zi);
+        end
         
         ca              = false;
         ce              = false;
@@ -324,12 +327,19 @@ while Pr > OPT.Pratio
     end
     
     % update beta threshold
-    betas       = abs(beta(notexact&beta>0));
-    idx         = isort(betas);
-    if ~isempty(idx)
-        ARS.dbeta   = abs(betas(idx(1)))-ARS.betamin;
+    if Pr > OPT.Pratio
+        betas       = abs(beta(notexact&beta>0));
+        idx         = isort(betas);
+        if ~isempty(idx)
+            ARS.dbeta   = abs(betas(idx(1)))-ARS.betamin;
+            reevaluate  = find(abs(beta) <= ARS.betamin+ARS.dbeta & notexact);
+        end
     end
     
+    if isempty(reevaluate) && ~finalise
+        reevaluate  = find(notexact);
+        finalise    = true;
+    end
 end
 
 % prepare output

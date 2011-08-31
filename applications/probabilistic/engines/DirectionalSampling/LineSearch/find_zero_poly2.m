@@ -178,12 +178,8 @@ if startsearch
                     ii      = [ii length(z)];
                     ii      = ii(isort(abs(z(ii))));
                     
-                    order   = min(OPT.maxorder, length(ii)-1);
-                    
                     break;
                 end
-                
-                order       = min(OPT.maxorder, length(ii)-1);
             end
         else
             % remove outliers
@@ -204,15 +200,12 @@ if startsearch
                     ii      = [ii length(z)];
                     ii      = ii(isort(abs(z(ii))));
                     
-                    order   = min(OPT.maxorder, length(ii)-1);
-                    
                     break;
                 end
-                
-                order       = min(OPT.maxorder, length(ii)-1);
             end
         end
         
+        order       = min(OPT.maxorder, length(ii)-1);
         ii          = ii(1:order+1);
         
         % select evaluations closest to z is zero
