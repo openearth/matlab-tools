@@ -26,6 +26,7 @@ fprintf(fid,'%s\n','mkdir figures');
 fprintf(fid,'%s\n','cd figures');
 fprintf(fid,'%s\n','rm *.png');
 fprintf(fid,'%s\n','rm *.kmz');
+fprintf(fid,'%s\n','rm *.html');
 fprintf(fid,'%s\n',['put ' locdir filesep '*.*']);
 fprintf(fid,'%s\n','close');
 fprintf(fid,'%s\n','exit');

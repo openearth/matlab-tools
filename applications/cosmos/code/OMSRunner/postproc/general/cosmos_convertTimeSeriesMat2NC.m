@@ -1,4 +1,4 @@
-function convertTimeSeriesMat2NC(hm,m)
+function cosmos_convertTimeSeriesMat2NC(hm,m)
 
 model=hm.models(m);
 archdir = model.archiveDir;
@@ -6,62 +6,59 @@ archdir = model.archiveDir;
 yr=year(hm.cycle);
 t0=datenum(yr,1,1);
 
-for i=1:model.nrStations
+for i=1:model.nrTimeSeriesDatasets
     
-    stName=model.stations(i).name;
-    stLongName=model.stations(i).longName;
+    stName=model.timeSeriesDatasets(i).station;
+    stLongName=stName;
     
-    for k=1:model.stations(i).nrParameters
+    if model.timeSeriesDatasets(i).toOPeNDAP
         
-        if model.stations(i).parameters(k).toOPeNDAP
+        par=model.timeSeriesDatasets(i).parameter;
+        parLongName=getParameterInfo(hm,par,'longname');
+        
+        fname=[archdir 'appended' filesep 'timeseries' filesep par '.' stName '.mat'];
+        
+        if exist(fname,'file')
             
-            par=model.stations(i).parameters(k).name;
-            parLongName=getParameterInfo(hm,par,'longname');
+            s=load(fname);
+            it1=find(s.Time>=t0,1,'first');
+            s.Time=s.Time(it1:end);
+            s.Val=s.Val(it1:end);
             
-            fname=[archdir 'appended' filesep 'timeseries' filesep par '.' stName '.mat'];
+            OPT.title                  = '';
+            OPT.institution            = '';
+            OPT.source                 = '';
+            OPT.history                = ['tranformation to netCDF: $HeadURL$'];
+            OPT.references             = '';
+            OPT.email                  = '';
+            OPT.comment                = '';
+            OPT.version                = '';
+            OPT.acknowledge            =['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution];
+            OPT.disclaimer             = 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
             
-            if exist(fname,'file')
-                                
-                s=load(fname);
-                it1=find(s.Time>=t0,1,'first');
-                s.Time=s.Time(it1:end);
-                s.Val=s.Val(it1:end);
-                
-                OPT.title                  = '';
-                OPT.institution            = '';
-                OPT.source                 = '';
-                OPT.history                = ['tranformation to netCDF: $HeadURL$'];
-                OPT.references             = '';
-                OPT.email                  = '';
-                OPT.comment                = '';
-                OPT.version                = '';
-                OPT.acknowledge            =['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution];
-                OPT.disclaimer             = 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
-                
-                %% Define dimensions/coordinates
-                
-                OPT.lon                    = 4.908893108;
-                OPT.lat                    = 52.37952805;
-                OPT.station_name           = stLongName;
-                OPT.wgs84.code             = 4326;
-                
-                %% Define variable (define some data)
-                
-                OPT.val                    = s.Val;
-                OPT.datenum                = s.Time;
-                OPT.timezone               = '+00:00';  % MET=+1
-                OPT.varname                = par;   % free to choose: will appear in netCDF tree
-                OPT.units                  = 'm/s';         % from UDunits package: http://www.unidata.ucar.edu/software/udunits/
-                OPT.long_name              = parLongName; % free to choose: will appear in plots
-                OPT.standard_name          = parLongName;
-                OPT.val_type               = 'single';      % 'single' or 'double'
-                OPT.fillvalue              = nan;
-                
-                ncfile=[archdir 'appended' filesep 'timeseries' filesep stName '.' par '.' num2str(yr) '.nc'];
-                
-                writeNC(ncfile,OPT);
-                
-            end
+            %% Define dimensions/coordinates
+            
+            OPT.lon                    = 4.908893108;
+            OPT.lat                    = 52.37952805;
+            OPT.station_name           = stLongName;
+            OPT.wgs84.code             = 4326;
+            
+            %% Define variable (define some data)
+            
+            OPT.val                    = s.Val;
+            OPT.datenum                = s.Time;
+            OPT.timezone               = '+00:00';  % MET=+1
+            OPT.varname                = par;   % free to choose: will appear in netCDF tree
+            OPT.units                  = 'm/s';         % from UDunits package: http://www.unidata.ucar.edu/software/udunits/
+            OPT.long_name              = parLongName; % free to choose: will appear in plots
+            OPT.standard_name          = parLongName;
+            OPT.val_type               = 'single';      % 'single' or 'double'
+            OPT.fillvalue              = nan;
+            
+            ncfile=[archdir 'appended' filesep 'timeseries' filesep stName '.' par '.' num2str(yr) '.nc'];
+            
+            writeNC(ncfile,OPT);
+            
         end
     end
 end

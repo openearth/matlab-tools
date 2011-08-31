@@ -211,70 +211,40 @@ for iw=1:length(model.webSite)
 
     %% Stations
     j=0;
+
     for ist=1:model.nrStations
         
-        iok=0;
-
         station=model.stations(ist);
-
-        % First check if any plots are made for this station. If not, skip
-        % it.
-        for ip=1:station.nrParameters
-            Parameter=station.parameters(ip);
-            if Parameter.plotCmp || Parameter.plotPrd || Parameter.plotObs
-                iok=1;
-            end
+        
+        j=j+1;
+        
+        mdl.stations(j).station.name.value = station.name;
+        mdl.stations(j).station.name.type  = 'char';
+        
+        mdl.stations(j).station.longname.value = station.longName;
+        mdl.stations(j).station.longname.type  = 'char';
+        
+        if ~strcmpi(model.coordinateSystem,'wgs 84')
+            [lon,lat]=convertCoordinates(station.location(1),station.location(2),'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+        else
+            lon=station.location(1);
+            lat=station.location(2);
         end
         
-        if iok
-            
-            j=j+1;
-            
-            mdl.stations(j).station.name.value = station.name;
-            mdl.stations(j).station.name.type  = 'char';
-
-            mdl.stations(j).station.longname.value = station.longName;
-            mdl.stations(j).station.longname.type  = 'char';
-
-            if ~strcmpi(model.coordinateSystem,'wgs 84')
-                [lon,lat]=convertCoordinates(station.Location(1),station.Location(2),'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
-            else
-                lon=station.Location(1);
-                lat=station.Location(2);
-            end
-
-            mdl.stations(j).station.longitude.value = lon;
-            mdl.stations(j).station.longitude.type  = 'real';
-
-            mdl.stations(j).station.latitude.value  = lat;
-            mdl.stations(j).station.latitude.type   = 'real';
-
-            mdl.stations(j).station.type.value      = station.type;
-            mdl.stations(j).station.type.type       = 'char';
-            
-            np=0;
-            for ip=1:station.nrParameters
-                Parameter=station.parameters(ip);
-                typ=Parameter.name;
-                if Parameter.plotCmp || Parameter.plotPrd || Parameter.plotObs
-
-                    np=np+1;
-
-                    mdl.stations(j).station.plots(np).plot.parameter.value = typ;
-                    mdl.stations(j).station.plots(np).plot.parameter.type  = 'char';
-
-                    mdl.stations(j).station.plots(np).plot.type.value      = 'timeseries';
-                    mdl.stations(j).station.plots(np).plot.type.type       = 'char';
-
-                    mdl.stations(j).station.plots(np).plot.imgname.value   = [typ '.' station.name '.png'];
-                    mdl.stations(j).station.plots(np).plot.imgname.type    = 'char';
-
-                end
-            end
-        end
+        mdl.stations(j).station.longitude.value = lon;
+        mdl.stations(j).station.longitude.type  = 'real';
+        
+        mdl.stations(j).station.latitude.value  = lat;
+        mdl.stations(j).station.latitude.type   = 'real';
+        
+        mdl.stations(j).station.type.value      = station.type;
+        mdl.stations(j).station.type.type       = 'char';
+        
+        mdl.stations(j).station.html.value      = [station.name '.html'];
+        mdl.stations(j).station.html.type       = 'char';
         
     end
-
+    
     %% Maps
 
     k=0;
@@ -338,7 +308,14 @@ for iw=1:length(model.webSite)
         end
     end
 
+    %% Hazards
+    hazarchdir=[model.archiveDir hm.cycStr filesep 'hazards' filesep];
+    flist=dir([hazarchdir '*.xml']);
+    for ih=1:length(flist)
+        s=xml2struct([hazarchdir flist(ih).name]);
+        mdl.warnings(ih).warning=s;
+    end
+    
     struct2xml(fname,mdl);
-%    xml_save(fname,model,'off');
 
 end

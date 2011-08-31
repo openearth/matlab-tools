@@ -60,10 +60,11 @@ if model.DetermineHazards
         disp('Determining hazards ...');
         tic
         set(hm.textModelLoopStatus,'String',['Status : determining hazards - ' mdl ' ...']);drawnow;
+        cosmos_determineHazards(hm,m);
         switch lower(model.type)
             case{'delft3dflow','delft3dflowwave'}
 %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
-%                 determineHazardsDelft3D(hm,m);
+%                 cosmos_determineHazardsDelft3D(hm,m);
             case{'xbeach'}
 %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
 %                 determineHazardsXBeach(hm,m);
@@ -71,7 +72,7 @@ if model.DetermineHazards
 %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
 %                 determineHazardsWW3(hm,m);
             case{'xbeachcluster'}
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
+                makeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
                 determineHazardsXBeachCluster(hm,m);
         end
     catch

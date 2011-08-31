@@ -5,18 +5,6 @@ dr=model.dir;
 outdir=[dr 'lastrun' filesep 'output' filesep];
 archdir = model.archiveDir;
 
-% model.mapParameters={''};
-% np=0;
-% for i=1:length(model.mapPlots)
-%     par=model.mapPlots(i).Dataset(1).parameter;
-%     ii=strmatch(par,model.mapParameters,'exact');
-%     % Skip duplicate map parameters (which occur in more than one plot)
-%     if isempty(ii)
-%         np=np+1;
-%         model.mapParameters{np}=model.mapPlots(i).Dataset(1).parameter;
-%     end
-% end
-
 np=model.nrMapDatasets;
 
 for ip=1:np
@@ -104,6 +92,7 @@ for ip=1:np
             s.Time=times(ifirst:end);
         else
             s.Time=times;
+            ifirst=1;
         end
 
         switch typ
