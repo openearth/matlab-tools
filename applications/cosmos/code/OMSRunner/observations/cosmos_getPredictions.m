@@ -1,34 +1,33 @@
 function cosmos_getPredictions(hm)
 
-%% Determine which predictions are needed 
+%% First determine which predictions are needed 
 
 nobs=0;
 idbs=[];
 iids=[];
 
+                            try
+
 for i=1:hm.nrModels
-    for j=1:hm.models(i).nrStations
-        for k=1:hm.models(i).stations(j).nrParameters
-            % Check if predictions are plotted
-            if hm.models(i).stations(j).parameters(k).plotPrd
-                % Get source and id for this parameter
-                prdsrc=hm.models(i).stations(j).parameters(k).prdSrc;
-                prdid=hm.models(i).stations(j).parameters(k).prdID;
-                % Determine which database observation is in
-                idb=strmatch(lower(prdsrc),hm.tideDatabases,'exact');
-                if ~isempty(idb)
-                    % Determine which station is needed
-                    iid=strmatch(prdid,hm.tideStations{idb}.IDCode,'exact');
-                    if ~isempty(iid)                
-                        % Check if data will already be generated
-                        try
-                        if sum(idbs==idb & iids==iid)==0
-                            nobs=nobs+1;
-                            idbs(nobs)=idb;
-                            iids(nobs)=iid;
-                        end
-                        catch
-                            disp('something went wrong');
+    % Check if observations are plotted
+    for k=1:hm.models(i).nrStations
+        for iplt=1:length(hm.models(i).stations(k).plots)
+            for ip=1:length(hm.models(i).stations(k).plots(iplt).datasets)
+                if strcmpi(hm.models(i).stations(k).plots(iplt).datasets(ip).type,'predicted')
+                    prdsrc=hm.models(i).stations(k).plots(iplt).datasets(ip).source;
+                    prdid=hm.models(i).stations(k).plots(iplt).datasets(ip).id;
+                    % Determine which database observation is in
+                    idb=strmatch(lower(prdsrc),hm.tideDatabases,'exact');
+                    if ~isempty(idb) && ~isempty(prdid)
+                        % Determine which station is needed
+                        iid=strmatch(prdid,hm.tideStations{idb}.IDCode,'exact');
+                        if ~isempty(iid)
+                            % Check if data will already be downloaded
+                            if sum(idbs==idb(1) & iids==iid(1))==0
+                                nobs=nobs+1;
+                                idbs(nobs)=idb(1);
+                                iids(nobs)=iid(1);
+                            end
                         end
                     end
                 end
@@ -36,6 +35,10 @@ for i=1:hm.nrModels
         end
     end
 end
+
+                            catch
+                                sghite=1
+                            end
 
 %% Now go get the data
 

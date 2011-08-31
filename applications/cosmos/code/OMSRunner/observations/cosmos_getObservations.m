@@ -1,43 +1,45 @@
 function cosmos_getObservations(hm)
 
-%% Determine which observations are needed 
+%% First determine which observations are needed 
+
 
 nobs=0;
 idbs=[];
 iids=[];
 ipars=[];
+
 for i=1:hm.nrModels
-    for j=1:hm.models(i).nrStations
-        % First observations
-        for k=1:hm.models(i).stations(j).nrParameters
-            par=hm.models(i).stations(j).parameters(k).name;
-            % Check if observations are plotted
-            if hm.models(i).stations(j).parameters(k).plotObs
-                % Get source and id for this parameter
-                obssrc=hm.models(i).stations(j).parameters(k).obsSrc;
-                obsid=hm.models(i).stations(j).parameters(k).obsID;
-                % Determine which database observation is in
-                idb=strmatch(lower(obssrc),hm.observationDatabases,'exact');
-                if ~isempty(idb)
-                    % Determine which station is needed
-                    iid=strmatch(obsid,hm.observationStations{idb}.IDCode,'exact');
-                    if ~isempty(iid)
-                        % Determine which parameter is needed
-                        par2=getParameterInfo(hm,lower(par),'source',obssrc,'dbname');
-                        ipar=strmatch(lower(par2),lower(hm.observationStations{idb}.Parameters(iid).Name),'exact');
-                        if ~isempty(ipar)
-                            % Check if this data is available
-                            if hm.observationStations{idb}.Parameters(iid).Status(ipar)>0
-                                % Check if data will already be downloaded
-                                if sum(idbs==idb & iids==iid & ipars==ipar)==0
-                                    nobs=nobs+1;
-                                    idbs(nobs)=idb;
-                                    iids(nobs)=iid;
-                                    ipars(nobs)=ipar;
-                                    % Parameter name used by OpenDAP
-                                    opendappar{nobs}=getParameterInfo(hm,lower(par),'source',obssrc,'name');
-                                    plotpar{nobs}=lower(par);
-                                end                                                                    
+    % Check if observations are plotted
+    for k=1:hm.models(i).nrStations
+        for iplt=1:length(hm.models(i).stations(k).plots)
+            for ip=1:length(hm.models(i).stations(k).plots(iplt).datasets)
+                if strcmpi(hm.models(i).stations(k).plots(iplt).datasets(ip).type,'observed')
+                    par=hm.models(i).stations(k).plots(iplt).datasets(ip).parameter;
+                    obssrc=hm.models(i).stations(k).plots(iplt).datasets(ip).source;
+                    obsid=hm.models(i).stations(k).plots(iplt).datasets(ip).id;
+                    % Determine which database observation is in
+                    idb=strmatch(lower(obssrc),hm.observationDatabases,'exact');
+                    if ~isempty(idb)
+                        % Determine which station is needed
+                        iid=strmatch(obsid,hm.observationStations{idb}.IDCode,'exact');
+                        if ~isempty(iid)
+                            % Determine which parameter is needed
+                            par2=getParameterInfo(hm,lower(par),'source',obssrc,'dbname');
+                            ipar=strmatch(lower(par2),lower(hm.observationStations{idb}.Parameters(iid).Name),'exact');
+                            if ~isempty(ipar)
+                                % Check if this data is available
+                                if hm.observationStations{idb}.Parameters(iid).Status(ipar)>0
+                                    % Check if data will already be downloaded
+                                    if sum(idbs==idb & iids==iid & ipars==ipar)==0
+                                        nobs=nobs+1;
+                                        idbs(nobs)=idb;
+                                        iids(nobs)=iid;
+                                        ipars(nobs)=ipar;
+                                        % Parameter name used by OpenDAP
+                                        opendappar{nobs}=getParameterInfo(hm,lower(par),'source',obssrc,'name');
+                                        plotpar{nobs}=lower(par);
+                                    end
+                                end
                             end
                         end
                     end
