@@ -1,4 +1,4 @@
-function AdjustInputDelft3DFLOW(hm,m)
+function cosmos_adjustInputDelft3DFLOW(hm,m)
 
 model=hm.models(m);
 
@@ -83,15 +83,28 @@ fname=[tmpdir model.name '.obs'];
 
 fid=fopen(fname,'wt');
 
-for i=1:model.nrStations
-    len=length(deblank(model.stations(i).name));
-    namestr=[model.stations(i).name repmat(' ',1,22-len)];
-    len=length(num2str(model.stations(i).m));
-    mstr=[repmat(' ',1,5-len) num2str(model.stations(i).m)];
-    len=length(num2str(model.stations(i).N));
-    nstr=[repmat(' ',1,7-len) num2str(model.stations(i).N)];
-    str=[namestr mstr nstr];
-    fprintf(fid,'%s\n',str);
+% stations=[];
+usedStations={''};
+% for j=1:length(model.stations)
+%     stations{j}=model.stations(j).name;
+% end
+n=0;
+for i=1:model.nrTimeSeriesDatasets
+    st=model.timeSeriesDatasets(i).station;
+    ii=strmatch(st,usedStations,'exact');
+    if isempty(ii)
+        % This station hasn't been made an observation point yet
+        n=n+1;
+        usedStations{n}=st;
+        len=length(deblank(st));
+        namestr=[st repmat(' ',1,22-len)];
+        len=length(num2str(model.timeSeriesDatasets(i).m));
+        mstr=[repmat(' ',1,5-len) num2str(model.timeSeriesDatasets(i).m)];
+        len=length(num2str(model.timeSeriesDatasets(i).n));
+        nstr=[repmat(' ',1,7-len) num2str(model.timeSeriesDatasets(i).n)];
+        str=[namestr mstr nstr];
+        fprintf(fid,'%s\n',str);
+    end
 end
 
 % Nesting Points

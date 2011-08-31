@@ -20,12 +20,27 @@ for i=1:length(model.nestedWaveModels)
     k=k+1;
     locfile{k}=[hm.models(mm).runid '.loc'];
 end
-for i=1:model.nrStations
-    if model.stations(i).storeSP2
+
+% for i=1:model.nrStations
+%     if model.stations(i).storeSP2
+%         k=k+1;
+%         locfile{k}=[model.stations(i).SP2id '.loc'];
+%     end
+% end
+
+for i=1:model.nrTimeSeriesDatasets
+    if strcmpi(model.timeSeriesDatasets(i).parameter,'sp2')
         k=k+1;
-        locfile{k}=[model.stations(i).sP2id '.loc'];
+        locfile{k}=[model.timeSeriesDatasets(i).SP2id '.loc'];
+        for k=1:model.nrStations
+            stations{k}=model.stations(k).name;
+        end
+        istat=strmatch(model.timeSeriesDatasets(i).station,stations,'exact');
+        xy=[model.stations(istat).location(1) model.stations(istat).location(2)];
+        save([hm.tempDir locfile{k}],'xy','-ascii');
     end
 end
+
 nloc=k;
 
 fprintf(fid,'%s\n','[WaveFileInformation]');

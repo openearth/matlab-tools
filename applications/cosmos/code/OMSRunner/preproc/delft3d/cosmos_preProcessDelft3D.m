@@ -15,10 +15,10 @@ if ~isempty(model.flowRstFile)
     end
 end
 
-AdjustInputDelft3DFLOW(hm,m);
+cosmos_adjustInputDelft3DFLOW(hm,m);
 
 if strcmpi(model.type,'delft3dflowwave')
-    AdjustInputDelft3DWAVE(hm,m);
+    cosmos_adjustInputDelft3DWAVE(hm,m);
     if ~isempty(model.waveRstFile)
         rstdir=[dr 'restart' filesep 'hot' filesep];
         fname=[rstdir model.waveRstFile '.zip'];

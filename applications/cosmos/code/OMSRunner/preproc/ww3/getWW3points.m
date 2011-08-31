@@ -7,21 +7,16 @@ x=[];
 y=[];
 
 %% Observation points
-
-n=model.nrStations;
-
 imod=0;
-
-if n>0
-    imod=imod+1;
+ip=0;
+if model.nrTimeSeriesDatasets>0
+    imod=1;
     rid{imod}=model.runid;
-    names{imod}=model.name;
-    ip=0;
-    for k=1:n
-        ip=ip+1;
-        x{imod}(ip)=model.stations(k).Location(1);
-        y{imod}(ip)=model.stations(k).Location(2);
-    end
+end
+for i=1:model.nrTimeSeriesDatasets
+    ip=ip+1;
+    x{imod}(ip)=model.timeSeriesDatasets(i).location(1);
+    y{imod}(ip)=model.timeSeriesDatasets(i).location(2);
 end
 
 %% Nesting points

@@ -1,4 +1,4 @@
-function AdjustInputDelft3DWAVE(hm,m)
+function cosmos_adjustInputDelft3DWAVE(hm,m)
 
 model=hm.models(m);
 
@@ -58,18 +58,11 @@ for i=1:n
         % Convert coordinates
         xx=locs(:,1);
         yy=locs(:,2);
-        [xx,yy]=ConvertCoordinates(xx,yy,'persistent','CS1.name',hm.models(mm).coordinateSystem,'CS1.type',hm.models(mm).coordinateSystemType,'CS2.name',model.coordinateSystem,'CS2.type',model.coordinateSystemType);
+        [xx,yy]=convertCoordinates(xx,yy,'persistent','CS1.name',hm.models(mm).coordinateSystem,'CS1.type',hm.models(mm).coordinateSystemType,'CS2.name',model.coordinateSystem,'CS2.type',model.coordinateSystemType);
         locs(:,1)=xx;
         locs(:,2)=yy;
     end
     save([tmpdir hm.models(mm).runid '.loc'],'locs','-ascii');
     
-    for nn=1:model.nrStations
-        if model.stations(nn).storeSP2
-            xy=[model.stations(nn).Location(1) model.stations(nn).Location(2)];
-            locfile=[tmpdir model.stations(nn).sP2id '.loc'];
-            save(locfile,'xy','-ascii');
-        end
-    end
 
 end
