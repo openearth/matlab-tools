@@ -84,7 +84,8 @@ zn              = [];
 converged       = false;
 startsearch     = true;
 
-% check if origin is available, assume it is exact
+% check if z-evaluation at origin (beta=0) is available, 
+% assume z-evaluation is exact, so not from ARS aproximation
 if ~converged && any(b==0)
     
     % store origin as scaling factor
@@ -97,6 +98,7 @@ if ~converged && any(b==0)
     end
     
     if abs(z(i0))<OPT.epsZ
+        
         % origin is limit state, abort
         bn          = b(i0);
         zn          = z(i0);
@@ -105,7 +107,7 @@ if ~converged && any(b==0)
     end
 end
 
-% check if limit state is available, check value
+% check if beta value for which z=0 is already available
 if ~converged && any(abs(z)<OPT.epsZ)
     
     id = find(abs(z)<OPT.epsZ,1,'first');
@@ -125,11 +127,11 @@ end
 b = b(~isnan(z));
 z = z(~isnan(z));
 
-%% search zero
+%% search beta value for which limit state function (z) = 0
 
 if startsearch && length(z)>1
     
-    % replace values close to infinity
+    % first: delete beta-z combinations for which z is extremely large
     while any(abs(z)>abs(z0^OPT.maxinfpow))
         ii        = abs(z)==max(abs(z));
 
@@ -147,6 +149,10 @@ if startsearch && length(z)>1
         end
     end
         
+    % then: start loop, in each iteration a new beta-z value is added
+    % until [a] the beta-value is found for which z=0 or [b] the search
+    % procedure is terminated because this direction does not have
+    % a (relevant)crossing with the limit state.
     while isempty(zn) || abs(zn(end))>OPT.epsZ
         
         ii          = ~ismember(b,bn);
@@ -158,7 +164,8 @@ if startsearch && length(z)>1
         order       = min(OPT.maxorder, length(z)-1);
         ii          = isort(abs(z));
         
-        % check if finite interval is available, and if so, preserve it
+        % check if both positive and negative z-values are available. If so, define 
+        % finite search boundaries
         if any(z>0) && any(z<0)
             il      = ii(z(ii)>=0);
             iu      = ii(z(ii)<0);
@@ -171,7 +178,9 @@ if startsearch && length(z)>1
             ii      = ii(isort(abs(z(ii))));
         end
         
-        % remove outliers
+        % remove outliers, to make sure they dont have a bad infleunce on
+        % the fit of the polynome that is used to estimate for which beta z
+        % is equal to zero
         while max(abs(z(ii)))/min(abs(z(ii)))>OPT.maxratio
             if length(ii)>2
                 ii(end) = [];
@@ -193,14 +202,15 @@ if startsearch && length(z)>1
             end
         end
         
+        % define the order of the polynome
         order       = min(OPT.maxorder, length(ii)-1);
         ii          = ii(1:order+1);
         
-        % select evaluations closest to z is zero
+        % select evaluations closest to z=0
         [zs bs]     = deal(z(ii), b(ii));
         
-        % fit polynom to selected points and decrease order until a real
-        % root is found
+        % fit polynome to selected points and decrease order until a real
+        % root (z=0) is found
         b0          = -Inf;
         for o = order:-1:1
             
@@ -239,7 +249,7 @@ if startsearch && length(z)>1
             end
         end
     
-        % skip negative beta values
+        % stop procedure if z=0 is found for negative beta value
         if b0<0
             break;
         else
@@ -250,20 +260,22 @@ if startsearch && length(z)>1
             bn  = [bn b0];
             zn  = [zn feval(OPT.zFunction, un, bn(end))];
             
-            % simulate infinity if z-value exceeds maximum ratio
+            % set z-value to infinity if z-value exceeds maximum allowed
+            % value
             if abs(zn(end))>abs(z0^OPT.maxinfpow)
                 zn(end) = zn(end)*Inf;
             end
             
         end
 
+        % plot progress of search
         if OPT.animate
             plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p);
         end
         
         % if maximum numbers of samples is not yet reached, check if
-        % infinity is reached and, if so, start retry search for finite
-        % numbers
+        % last z-value is "infinitely" large. If so, start procedure to search for finite 
+        % z-values numbers
         if length(zn)<=OPT.maxretry
             while ~isfinite(zn(end))
 
@@ -297,6 +309,7 @@ if startsearch && length(z)>1
         end
     end
 
+    % check for convergence
     if ~isempty(zn) && abs(zn(end))<OPT.epsZ
         converged = true;
     end
