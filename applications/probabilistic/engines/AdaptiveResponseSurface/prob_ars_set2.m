@@ -75,23 +75,22 @@ ARS             = OPT.ARS;
 ARS.n           = ARS.n+1;
 ARS.u           = [ARS.u ; u(:,ARS.active)];
 ARS.z           = [ARS.z ; z(:)];
-ARS.betamin     = min([ARS.betamin sqrt(sum(u(end,:).^2,2))]);
 
 %% fit data
 
 notinf      = all(isfinite(ARS.u),2) & isfinite(ARS.z);
 notout      = abs(ARS.z)<=OPT.maxZ;
-nva = sum(ARS.active);  % number of active variables
+nva         = sum(ARS.active);
 
 % derive 2nd degree response surface with all cross terms
-if ARS.n >= 1+nva+nva*(nva+1)/2
+if length(ARS.z) >= 1+nva+nva*(nva+1)/2
     ARS.hasfit  = true;
     ARS.fit     = polyfitn(ARS.u(notinf&notout,:), ARS.z(notinf&notout), 2);
 
 % derive 2nd degree response surface with no cross terms
-elseif ARS.n >= 2*nva+1
+elseif length(ARS.z) >= 2*nva+1
     ARS.hasfit  = true;
-    pfmat = [zeros(1,nva); eye(nva); 2*eye(nva)];
+    pfmat       = [zeros(1,nva); eye(nva); 2*eye(nva)];
     ARS.fit     = polyfitn(ARS.u(notinf&notout,:), ARS.z(notinf&notout), pfmat);
 end
 

@@ -66,8 +66,9 @@ OPT = struct(...
     'epsZ',             1e-2,               ...     % precision in stop criterium
     'maxiter',          50,                 ...     % maximum number of iterations
     'maxretry',         1,                  ...     % maximum number of iterations before retry
-    'maxorder',         2,                  ...     % maximum order of polynom in line search
+    'maxorder',         3,                  ...     % maximum order of polynom in line search
     'maxratio',         10,                 ...     % maximum ratio between interval boundaries
+    'maxinfpow',        10,                 ...     % maximum power of z0 which is assumed to be infinite
     'animate',          false               ...     % animate progress
 );
 
@@ -76,6 +77,7 @@ OPT = setproperty(OPT, varargin{:});
 %% determine approach
 
 n               = 0;
+z0              = 0;
 bn              = [];
 zn              = [];
 
@@ -83,7 +85,7 @@ converged       = false;
 startsearch     = true;
 
 % check if origin is available, assume it is exact
-if any(b==0)
+if ~converged && any(b==0)
     
     % store origin as scaling factor
     i0 = find(b==0,1,'first');
@@ -95,7 +97,7 @@ if any(b==0)
     end
     
     if abs(z(i0))<OPT.epsZ
-        % origin is design point, abort
+        % origin is limit state, abort
         bn          = b(i0);
         zn          = z(i0);
         converged   = true;
@@ -103,8 +105,8 @@ if any(b==0)
     end
 end
 
-% check if design point is available, check value
-if any(abs(z)<OPT.epsZ)
+% check if limit state is available, check value
+if ~converged && any(abs(z)<OPT.epsZ)
     
     id = find(abs(z)<OPT.epsZ,1,'first');
     zi = feval(OPT.zFunction, un, b(id));
@@ -114,19 +116,36 @@ if any(abs(z)<OPT.epsZ)
     zn = zi;
     
     if abs(zn)<OPT.epsZ
-        % design point already available, abort
+        % limit state already available, abort
         converged   = true;
         startsearch = false;
     end
 end
 
-% remove nan's
-b   = b(~isnan(z));
-z   = z(~isnan(z));
+b = b(~isnan(z));
+z = z(~isnan(z));
 
 %% search zero
 
-if startsearch
+if startsearch && length(z)>1
+    
+    % replace values close to infinity
+    while any(abs(z)>abs(z0^OPT.maxinfpow))
+        ii        = abs(z)==max(abs(z));
+
+        if length(z)>2
+            b(ii) = [];
+            z(ii) = [];
+        else
+            n     = n+1;
+            
+            bn    = mean(b);
+            zn    = feval(OPT.zFunction, un, bn(end));
+            
+            b(ii) = bn;
+            z(ii) = zn;
+        end
+    end
         
     while isempty(zn) || abs(zn(end))>OPT.epsZ
         
@@ -150,58 +169,27 @@ if startsearch
             
             ii      = [il(1:nl) iu(1:nu)];
             ii      = ii(isort(abs(z(ii))));
-            
-            % remove outliers
-            while max(abs(z(ii)))/min(abs(z(ii)))>OPT.maxratio
-                if length(ii)>2
-                    npos    = sum(z(ii)>=0);
-                    nneg    = sum(z(ii)<0);
-                    
-                    if npos<2
-                        ii(find(z(ii)<0,1,'last')) = [];
-                    elseif nneg<2
-                        ii(find(z(ii)>=0,1,'last')) = [];
-                    else
-                        ii(end) = [];
-                    end
-                else
-                    n       = n+1;
+        end
         
-                    bn      = [bn mean(b(ii))];
-                    zn      = [zn feval(OPT.zFunction, un, bn(end))];
-                    
-                    im      = ~ismember(b,bn);
-                    
-                    b       = [b(im) bn];
-                    z       = [z(im) zn];
-                    
-                    ii      = [ii length(z)];
-                    ii      = ii(isort(abs(z(ii))));
-                    
-                    break;
-                end
-            end
-        else
-            % remove outliers
-            while max(abs(z(ii)))/min(abs(z(ii)))>OPT.maxratio
-                if length(ii)>2
-                    ii(end) = [];
-                else
-                    n       = n+1;
-        
-                    bn      = [bn mean(b(ii))];
-                    zn      = [zn feval(OPT.zFunction, un, bn(end))];
-                    
-                    im      = ~ismember(b,bn);
-                    
-                    b       = [b(im) bn];
-                    z       = [z(im) zn];
-                    
-                    ii      = [ii length(z)];
-                    ii      = ii(isort(abs(z(ii))));
-                    
-                    break;
-                end
+        % remove outliers
+        while max(abs(z(ii)))/min(abs(z(ii)))>OPT.maxratio
+            if length(ii)>2
+                ii(end) = [];
+            else
+                n       = n+1;
+
+                bn      = [bn mean(b(ii))];
+                zn      = [zn feval(OPT.zFunction, un, bn(end))];
+
+                im      = ~ismember(b,bn);
+
+                b       = [b(im) bn];
+                z       = [z(im) zn];
+
+                ii      = [ii length(z)];
+                ii      = ii(isort(abs(z(ii))));
+
+                break;
             end
         end
         
@@ -213,36 +201,42 @@ if startsearch
         
         % fit polynom to selected points and decrease order until a real
         % root is found
+        b0          = -Inf;
         for o = order:-1:1
             
             p       = polyfit(bs(1:o+1),zs(1:o+1),o);
-            b0a     = interp1(zs,bs,0,'linear','extrap');
+            
+            [x ii]  = unique(zs);
+            if length(x)>1
+                b0a = interp1(x,bs(ii),0,'linear','extrap');
+            else
+                b0a = 0;
+            end
             
             if all(isfinite(p))
                 rts     = sort(roots(p));
-                oi1     = isreal(rts);
-                oi2     = rts>0;
+                
+                if ~isempty(rts)
+                    oi1     = isreal(rts);
+                    oi2     = rts>0;
 
-                if any(oi1)
+                    if any(oi1)
 
-                    % select the positive real root closest to the points
-                    % with smallest z-values, if available, or the smallest
-                    % negative real root otherwise
-                    if any(oi1&oi2)
-                        ii = find(oi1&oi2);
-                        ii = ii(isort(abs(rts(ii)-b0a)));
-                        b0 = rts(ii(1));
-                    else
-                        b0 = max(rts(oi1));
+                        % select the positive real root closest to the points
+                        % with smallest z-values, if available, or the smallest
+                        % negative real root otherwise
+                        if any(oi1&oi2)
+                            ii = find(oi1&oi2);
+                            ii = ii(isort(abs(rts(ii)-b0a)));
+                            b0 = rts(ii(1));
+                        else
+                            b0 = max(rts(oi1));
+                        end
+
+                        break;
                     end
-
-                    break;
                 end
             end
-        end
-        
-        if OPT.animate
-            plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p);
         end
     
         % skip negative beta values
@@ -256,8 +250,17 @@ if startsearch
             bn  = [bn b0];
             zn  = [zn feval(OPT.zFunction, un, bn(end))];
             
+            % simulate infinity if z-value exceeds maximum ratio
+            if abs(zn(end))>abs(z0^OPT.maxinfpow)
+                zn(end) = zn(end)*Inf;
+            end
+            
         end
 
+        if OPT.animate
+            plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p);
+        end
+        
         % if maximum numbers of samples is not yet reached, check if
         % infinity is reached and, if so, start retry search for finite
         % numbers
@@ -289,7 +292,7 @@ if startsearch
         end
         
         % give up in case new value is not closer to zero
-        if all(abs(zn(end))>abs(zs))
+        if any(abs(zn(end))>=abs(zs)) && length(z)>length(zs)
             break;
         end
     end
@@ -303,6 +306,7 @@ end
 function plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p)
 
     brange = max(abs([b0 b bn]))+1;
+    zrange = max(abs([z zn]))+1;
     
     fh = findobj('Tag','LSprogress');
 
@@ -326,9 +330,9 @@ function plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p)
     ph = findobj(ax,'Tag','LSpath2');
     if isempty(ph)
         ph = plot(ax,bn,zn,'xr');
-        set(ph,'Tag','LSpath2','DisplayName','added');
+        set(ph,'Tag','LSpath2','DisplayName',sprintf('added (%d)',length(zn)));
     else
-        set(ph,'XData',bn,'YData',zn);
+        set(ph,'XData',bn,'YData',zn,'DisplayName',sprintf('added (%d)',length(zn)));
     end
     
     % selected data
@@ -371,6 +375,6 @@ function plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p)
     legend(ax,'-DynamicLegend','Location','NorthWest');
     legend(ax,'show');
     
-    set(ax,'XLim',brange*[-1 1],'YLim',[-100 100]);
+    set(ax,'XLim',brange*[-1 1],'YLim',zrange*[-1 1]);
     
     drawnow;

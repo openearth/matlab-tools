@@ -109,12 +109,12 @@ OPT = struct(...
     'ARS',              true,               ...
     'ARSgetFunction',   @prob_ars_get,      ...
     'ARSgetVariables',  {{}},               ...
-    'ARSsetFunction',   @prob_ars_set,      ...
+    'ARSsetFunction',   @prob_ars_set2,     ...
     'ARSsetVariables',  {{}},               ...
     'beta1',            4,                  ...
-    'dbeta',            .01,                ...
+    'dbeta',            .1,                 ...
     'Pratio',           .4,                 ...
-    'minsamples',       1,                  ...
+    'minsamples',       50,                 ...
     'confidence',       .95,                ...
     'accuracy',         .2,                 ...
     'plot',             false,              ...
@@ -206,7 +206,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)
         end
         
         % determine unit vector
-        if OPT.ARS && ARS.hasfit
+        if OPT.ARS && ARS.hasfit && any(converged)
             ba          = OPT.beta1;
             za          = feval(OPT.ARSgetFunction,un(idx,active).*OPT.beta1,'ARS',ARS,OPT.ARSgetVariables{:});
             be          = [];
@@ -221,21 +221,12 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)
         
         b               = [b0 ba be];
         z               = [z0 za ze];
-
-        % order initial result
-        if length(z)>1
-            zi          = find(abs(z)==min(abs(z)));
-            zi          = [mod(zi+2,2)+1 zi];
-
-            b           = b(zi);
-            z           = z(zi);
-        end
         
         ca              = false;
         ce              = false;
         
         % approximate line search
-        if OPT.ARS && ARS.hasfit
+        if OPT.ARS && ARS.hasfit && any(converged)
             [bn zn nn ca] = feval(@OPT.z20Function, un(idx,active), b, z, ...
                 'zFunction', @(x,y)feval(OPT.ARSgetFunction,x.*y,'ARS',ARS,OPT.ARSgetVariables{:}), ...
                 OPT.z20Variables{:});
@@ -248,7 +239,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)
         end
 
         % exact line search
-        if ~OPT.ARS || ~ARS.hasfit || (abs(b(end)) <= ARS.betamin+ARS.dbeta && ca)
+        if ~OPT.ARS || ~ARS.hasfit || ~any(converged) || (abs(b(end)) <= ARS.betamin+ARS.dbeta && ca)
             
             ii          = [1 2];
             
@@ -280,9 +271,13 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)
         nb              = length(beta);
         
         % update response surface
-        if OPT.ARS && exact(idx)
+        if OPT.ARS && ~isempty(ze)
             ue          = beta2u(un(idx,:),be(:));
             ARS        	= feval(OPT.ARSsetFunction,ue,ze,'ARS',ARS,OPT.ARSsetVariables{:});
+            
+            if ce
+                ARS.betamin = min([ARS.betamin sqrt(sum(ue(end,:).^2,2))]);
+            end
             
             if ARS.hasfit && isnan(nARS)
                 nARS    = n;
