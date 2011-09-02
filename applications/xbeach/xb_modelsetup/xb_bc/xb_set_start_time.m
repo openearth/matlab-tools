@@ -89,7 +89,14 @@ end
 duration = tstop - max(morstart, tstart);
 
 % reduce x and z to vectors
-x = x(1,:);
+if isempty(x)
+    % equidistant grid: vardx = 0
+    dx = xb_get(xb, 'dx');
+    x = 0:dx:(size(z,2)-1)*dx;
+else
+    % variable grid: vardx = 1
+    x = x(1,:);
+end
 % take minimum z in alongshore direction
 z = min(z, [], 1); 
 
