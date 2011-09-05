@@ -1,3 +1,6 @@
+% First run oetsettings
+% Start GUI with cosmos.m
+
 wlsettings;
 
 rmpath p:\delta\wlsettings\dl_snctools;
