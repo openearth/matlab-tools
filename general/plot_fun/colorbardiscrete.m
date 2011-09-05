@@ -119,6 +119,7 @@ peeraxes = gca;
 unit = '';
 fixed = false;
 reallevels = [];
+yticklabel = [];
 
 %% optional arguments
 optvals = varargin;
