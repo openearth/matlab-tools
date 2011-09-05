@@ -76,6 +76,14 @@ end
 [mmax nmax] = size(mtrx);
 mtrxr = NaN(mmax,nmax);
 
+if cls(1) == -Inf
+	cls(1) = min(  2*cls(2)-cls(3),  min(min(mtrx))  );
+end
+
+if cls(end) == Inf
+	cls(end) = max(  2*cls(end-1)-cls(end-2),  max(max(mtrx))  );
+end
+
 for k = 2:length(cls)
     i = find(mtrx >= cls(k-1) & mtrx <= cls(k));
     if OPT.interp
