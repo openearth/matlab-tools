@@ -53,14 +53,15 @@ function [cbd] = colorbardiscrete(colorbartitle,levels,varargin)
 %% Example 3
 %       figure;
 %       mylevels = [-10 -5 0 .6 .8 1.0 1.25 1.5 1.75 2.0 2.5 3.0 3.5 10.0];
+%       [X,Y,Z] = peaks;
 %       mybed = reclass(Z,mylevels);
 %       pcolor(X,Y,mybed);
 %       shading flat;
-%       mymap = colormap(jet(13));
-%       clim([1:14]);
+%       mymap = colormap(jet(length(mylevels)-1));
+%       clim([1:length(mylevels)]);
 %       axis equal; axis tight;
 %       hold on;
-%       colorbardiscrete('test',[1:13],'fixed',true,'reallevels',mylevels);
+%       colorbardiscrete('test',[1:length(mylevels)-1],'fixed',true,'reallevels',mylevels);
 
 %
 %   See also contourf, reclass
