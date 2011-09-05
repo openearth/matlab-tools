@@ -1,13 +1,22 @@
-function animateXBvar(XB,var,mode,movie,cax,thinning,gridstraight)
-% animateXBvar(XB,var,mode,movie,cax,thinning,gridstraight)
-% function animates XB variable in pcolor mode (1) (11, with contour lines) 
-% or overwash mode (2) or quiver mode (3) surf (4) sediment layers (5)
-% movie : 0 (no), 1 (png), 2 (avi)
-% cax : color axis
-% thinning: thinning factor for quivers
-% gridstraight: rotate grid to x-y plain.
-
-alfa=101;
+function animateXBvar(XB,var,mode,movie,cax,thinning,gridstraight,alfa)
+% Animate XBeach variable 
+% animateXBvar(XB,var,mode,movie(optional),cax(optional),thinning(optional),gridstraight(optional),alfa(optional))
+% 
+% XB   = XBeach meta data from getdimensions or xb_getdimensions function
+% var  = single output array read by readvar or cell array of 2 output arrays
+% mode = type of plot required: in pcolor mode (1) (11, with contour lines), 
+%        3D mode (2), quiver mode (3), surf (4) or sediment layers (5)
+% movie = save to movie files: 0 (no), 1 (png), 2 (avi). Default 0
+% cax   = color axis ([min max]) for figure, default auto
+% thinning = thinning factor for quivers (n)
+% gridstraight =  rotate grid to x-y plain  (0/1). Default = 0
+% alfa = angle from east to x (required in case gridstraight == 1)
+%
+% example:
+% XB = getdimensions(pwd);
+% zs = readvar('zs.dat',XB,'2d');
+% zb = readvar('zb.dat',XB,'2d');
+% animateXBvar(XB,{zs zb},2);
 
 if iscell(var)
     s=size(var{1});
