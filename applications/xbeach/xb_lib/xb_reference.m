@@ -84,46 +84,95 @@ for i = 1:length(upartype)
     
     if ~isempty(ipars) && sum([params_array(ipars).noinstances]) > 0
         
-        % create type header
-        fprintf(fid, 'h3.%s\n', esc(upartype{i}));
-
-        fprintf(fid, '{table-plus:width=1200}\n');
-        fprintf(fid, '||Name||Units||Advanced||Deprecated||Affects||Description||Required||Default||Min||Max||Condition||\n');
+        addheader(fid, OPT.type, upartype{i});
 
         for j = ipars
-            for k = 1:params_array(j).noinstances
-                if k == 1
-                    fprintf(fid, '|%s|%s|%s|%s|%s|%s|', ...
-                        esc(params_array(j).name), ...
-                        esc(params_array(j).units), ...
-                        bin(params_array(j).advanced), ...
-                        bin(params_array(j).deprecated), ...
-                        esc(params_array(j).affects), ...
-                        esc(params_array(j).comment)            );
-                else
-                    fprintf(fid, '| | | | | | |');
-                end
-
-                fprintf(fid, '%s|%s|%s|%s|%s|\n', ...
-                    bin(params_array(j).required{k}), ...
-                    esc(params_array(j).default{k}), ...
-                    esc(params_array(j).minval{k}), ...
-                    esc(params_array(j).maxval{k}), ...
-                    esc(params_array(j).condition{k})           );
-
-            end
+            addinstance(fid, OPT.type, params_array(j));
         end
 
-        fprintf(fid, '{table-plus}\n');
+        addfooter(fid, OPT.type);
+        
     end
 end
 
 fclose(fid);
 
-function str = esc(str)
+function addheader(fid, type, partype)
+    switch type
+        case 'wiki'
+            fprintf(fid, 'h3.%s\n', esc(type, partype));
+            fprintf(fid, '{table-plus:width=1200}\n');
+            fprintf(fid, '||Name||Units||Advanced||Deprecated||Affects||Description||Required||Default||Min||Max||Condition||\n');
+        case 'html'
+            fprintf(fid, '<h3>%s</h3>\n', esc(type, partype));
+            fprintf(fid, '<table border="0">\n');
+            fprintf(fid, '<tr><th>Name</th><th>Units</th><th>Advanced</th><th>Deprecated</th><th>Affects</th><th>Description</th><th>Required</th><th>Default</th><th>Min</th><th>Max</th><th>Condition</th></tr>\n');
+    end
+end
+
+function addinstance(fid, type, param)
+    for i = 1:param.noinstances
+        switch type
+            case 'wiki'
+                if i == 1
+                    fprintf(fid, '|%s|%s|%s|%s|%s|%s|', ...
+                        esc(type, param.name), ...
+                        esc(type, param.units), ...
+                        bin(type, param.advanced), ...
+                        bin(type, param.deprecated), ...
+                        esc(type, param.affects), ...
+                        esc(type, param.comment)            );
+                else
+                    fprintf(fid, '| | | | | | |');
+                end
+
+                fprintf(fid, '%s|%s|%s|%s|%s|\n', ...
+                    bin(type, param.required{i}), ...
+                    esc(type, param.default{i}), ...
+                    esc(type, param.minval{i}), ...
+                    esc(type, param.maxval{i}), ...
+                    esc(type, param.condition{i})           );
+            case 'html'
+                if i == 1
+                    fprintf(fid, '<tr><td nowrap>%s</td><td nowrap>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td>', ...
+                        esc(type, param.name), ...
+                        esc(type, param.units), ...
+                        bin(type, param.advanced), ...
+                        bin(type, param.deprecated), ...
+                        esc(type, param.affects), ...
+                        esc(type, param.comment)            );
+                else
+                    fprintf(fid, '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>');
+                end
+
+                fprintf(fid, '<td>%s</td><td nowrap>%s</td><td nowrap>%s</td><td nowrap>%s</td><td>%s</td></tr>\n', ...
+                    bin(type, param.required{i}), ...
+                    esc(type, param.default{i}), ...
+                    esc(type, param.minval{i}), ...
+                    esc(type, param.maxval{i}), ...
+                    esc(type, param.condition{i})           );
+        end
+    end
+end
+
+function addfooter(fid, type)
+    switch type
+        case 'wiki'
+            fprintf(fid, '{table-plus}\n');
+        case 'html'
+            fprintf(fid, '</table>\n');
+    end
+end
+
+function str = esc(type, str)
     if ~iscell(str); str = {str}; end;
     
-    r = '|()[]{}-';
+    switch type
+        case 'wiki'
+            r = '|()[]{}-';
+        case 'html'
+            r = '';
+    end
     
     for i = 1:length(str)
         if isnumeric(str{i}); str{i} = num2str(str{i}); end;
@@ -136,13 +185,22 @@ function str = esc(str)
     str = [' ' sprintf('%s ', str{:})];
 end
 
-function str = bin(str)
+function str = bin(type, str)
     if iscell(str); str = str{1}; end;
     
-    if str
-        str = '(/)';
-    else
-        str = '(x)';
+    switch type
+        case 'wiki'
+            if str
+                str = '(/)';
+            else
+                str = '(x)';
+            end
+        case 'html'
+            if str
+                str = 'yes';
+            else
+                str = 'no';
+            end
     end
 end
 
