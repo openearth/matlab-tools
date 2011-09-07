@@ -105,8 +105,17 @@ for iadjust = 1:length(OPT.adjustfun)
     if iadjust == 1
         history = sprintf('%s modified by: ', history);
     end
-    transects = feval(OPT.adjustfun{iadjust}, transects);
-    sprintf('%s %s', history, OPT.adjustfun{iadjust});
+    if iscell(OPT.adjustfun{iadjust})
+        transects = feval(OPT.adjustfun{iadjust}{1}, transects, OPT.adjustfun{iadjust}{2:end});
+    else
+        transects = feval(OPT.adjustfun{iadjust}, transects);
+    end
+    if iscell(OPT.adjustfun{iadjust})
+        sprintf('%s %s', history, char(OPT.adjustfun{iadjust}{1}));
+        TODO('add also the arguments of the "adjustfun" to the history')
+    else
+        sprintf('%s %s', history, char(OPT.adjustfun{iadjust}));
+    end
 end
 
 %% obtain dimensions
