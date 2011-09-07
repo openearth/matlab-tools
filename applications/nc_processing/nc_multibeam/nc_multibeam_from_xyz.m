@@ -49,7 +49,7 @@ function varargout = nc_multibeam_from_xyz(varargin)
 
 %%
 OPT.netcdfversion       = 3;
-OPT.block_size          = 3e6;
+OPT.block_size          = 5e6;
 OPT.make                = true;
 OPT.copy2server         = false;
 
@@ -204,6 +204,15 @@ if OPT.make
                               'delimiter',OPT.delimiter,...
                             'headerlines',headerlines,...
                     'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
+                
+                if numel(unique(cellfun(@numel,D))) ~= 1
+                    if OPT.zip
+                        n = fullfile(OPT.cache_path,fns_unzipped(ii).name);
+                    else
+                        n = fullfile(OPT.raw_path  ,fns_unzipped(ii).name);
+                    end
+                    error('error reading file: %s',n);
+                end
                 headerlines     = 0; % only skip headerlines on first read
                 
                 % waitbar stuff
@@ -226,14 +235,19 @@ if OPT.make
                 
                 for x0      = minx : OPT.mapsizex : maxx
                     for y0  = miny : OPT.mapsizey : maxy
+
+                        try
+                        xbounds = [x0 x0+((OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex];
+                        ybounds = [y0 y0+((OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey];
                         
-                        ids =  inpolygon(D{OPT.xid},D{OPT.yid},...
-                            [x0 x0+((OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex x0+((OPT.mapsizex/OPT.gridsizex)-1) * OPT.gridsizex x0 x0],...
-                            [y0 y0 y0+((OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey y0+((OPT.mapsizey/OPT.gridsizey)-1) * OPT.gridsizey y0]);
-                        
+                        ids     = D{OPT.xid}>=min(xbounds) & D{OPT.xid}<=max(xbounds) & ...
+                                  D{OPT.yid}>=min(ybounds) & D{OPT.yid}<=max(ybounds);
+                        catch
+                            n=1;
+                        end
                         if sum(ids)>0
                             x   =  D{OPT.xid}(ids);
-                            y   =  D{OPT.yid}(ids);
+                            y   =  D{OPT.yid}(ids);   
                             z   =  D{OPT.zid}(ids)*OPT.zfactor;
                             
                             % generate X,Y,Z

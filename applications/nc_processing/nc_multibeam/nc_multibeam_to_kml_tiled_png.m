@@ -76,6 +76,7 @@ OPT.basepath_www            = [];
 OPT.serverURL               = [];       % if a KML file is intended to be placed on the server, the path must be hardcoded in the KML file
 
 OPT.make_kmz                = false;    % this packs the entire file tree to a sing kmz file, convenient for portability
+OPT.highestLevel            = 10;
 OPT.lowestLevel             = 15;       % integer; Detail level of the highest resultion png tiles to generate. Advised range 12 to 18;
                                         % dimension of individual pixels in Lat and Lon can be calculated as follows:
                                         % 360/(2^OPT.lowestLevel) / OPT.tiledim
@@ -272,6 +273,7 @@ if OPT.make
         lat = [lat(1,:) + (lat(1,:)-lat(2,:))*.55; lat; lat(end,:) + (lat(end,:)-lat(end-1,:))*.55];
         
         % extend last time interval for visibility period in Google Earth
+        date(isnan(date)) = nanmax(date);
         date4GE          = date;
         date4GE(end+1,1) = date(end)+1;
         
@@ -333,7 +335,7 @@ if OPT.make
                 
                 %% MAKE TILES
                 KMLfigure_tiler(h,lat,lon,z*OPT.lightAdjust,...
-                    'highestLevel'      ,10,...
+                    'highestLevel'      ,OPT.highestLevel,...
                     'lowestLevel'       ,OPT.lowestLevel,...
                     'timeIn'            ,date4GE(jj),...
                     'timeOut'           ,date4GE(jj+1),...
