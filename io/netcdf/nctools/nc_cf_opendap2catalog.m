@@ -173,7 +173,7 @@ OPT.varname        = {}; % could be {'x','y','time'}
    OPT = setproperty(OPT,varargin{nextarg:end});
    
    if isempty(OPT.catalog_dir)
-      if ~strcmpi(OPT.base(1:7),'http://')
+      if length(OPT.base)>7 &&  ~strcmpi(OPT.base(1:7),'http://')
          OPT.catalog_dir = OPT.base;
       end
    end
