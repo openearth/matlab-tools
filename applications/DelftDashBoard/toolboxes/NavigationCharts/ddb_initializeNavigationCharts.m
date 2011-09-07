@@ -13,11 +13,15 @@ if isdir([handles.toolBoxDir 'navigationcharts'])
             switch(lst(i).name)
                 case{'.','..'}
                 otherwise
-                    k=k+1;
-                    disp(['Loading navigation charts ' lst(i).name ' ...']);
-                    s=load([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat']);
-                    handles.Toolbox(ii).Input.databases{k}=lst(i).name;
-                    handles.Toolbox(ii).Input.charts(k).box=s.Box;
+                    if exist([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat'],'file')
+                        k=k+1;
+                        disp(['Loading navigation charts ' lst(i).name ' ...']);
+                        s=load([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat']);
+                        handles.Toolbox(ii).Input.databases{k}=lst(i).name;
+                        handles.Toolbox(ii).Input.charts(k).box=s.Box;
+                    else
+                        disp([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat not found!']);
+                    end
             end
         end
     end
