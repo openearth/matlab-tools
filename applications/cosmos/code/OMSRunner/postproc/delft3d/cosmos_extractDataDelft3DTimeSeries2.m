@@ -90,6 +90,22 @@ if exist(trihfile,'file')
                                     data.Val=ang;
                             end
                         end
+                    case{'sp2mat'}
+                        if ~exist([archdir hm.cycStr filesep 'sp2' filesep 'sp2.' stName '.mat'],'file')
+
+                        else
+                            d=load([archdir hm.cycStr filesep 'sp2' filesep 'sp2.' stName '.mat']);
+                            for t=1:length(d.SP2Data.time)
+                                data.Time(t)=d.SP2Data.time(t).spec.times;
+                                if strcmpi(par,'hswell')
+                                    data.Val(t)=d.SP2Data.time(t).Separation.Swell.Hs;
+                                end
+                                if strcmpi(par,'tswell')
+                                    data.Val(t)=d.SP2Data.time(t).Separation.Swell.Tp;
+                                end
+                            end
+
+                        end
                 end
             end
             
