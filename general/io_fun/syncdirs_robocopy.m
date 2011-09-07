@@ -96,7 +96,6 @@ end
 robocopy_path = fullfile(fileparts(mfilename('fullpath')),'private','robocopy','robocopy.exe');
 
 dosstring = sprintf('%s "%s " "%s " /E /PURGE /FFT',robocopy_path,source,destination);
-dosstring = sprintf('%s "%s " "%s " /E /PURGE /FFT /NDL /NFL',robocopy_path,source,destination);
 if OPT.quiet
     [status,result] = system([dosstring ' /NDL /NFL']);
 else
