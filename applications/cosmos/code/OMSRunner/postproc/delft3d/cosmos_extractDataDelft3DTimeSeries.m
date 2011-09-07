@@ -14,7 +14,7 @@ for i=1:model.nrStations
     stName=model.stations(i).name;
     stLongName=model.stations(i).longName;
     tstart=max(model.tWaveOkay,model.tFlowOkay);
- 
+
     for k=1:model.stations(i).nrParameters
 
         data=[];
@@ -44,13 +44,13 @@ for i=1:model.nrStations
 
             fil=getParameterInfo(hm,par,'model',model.type,'datatype','timeseries','file');
             filpar=getParameterInfo(hm,par,'model',model.type,'datatype','timeseries','name');
-            
+
             if ~isempty(fil) && ~isempty(filpar)
-                
+
                 switch lower(fil)
                     case{'trih'}
                         if ~exist([outdir 'trih-' model.runid '.dat'],'file')
-%                             killAll;
+                            %                             killAll;
                         else
                             ii=strmatch(filpar,fieldnames,'exact');
                             if ~isempty(ii)
@@ -63,7 +63,7 @@ for i=1:model.nrStations
                         end
                     case{'trim'}
                         if ~exist([outdir 'trim-' model.runid '.dat'],'file')
-%                             killAll;
+                            %                             killAll;
                         else
                             mm=model.stations(i).m;
                             nn=model.stations(i).N;
@@ -84,29 +84,45 @@ for i=1:model.nrStations
                                 end
                             end
                         end
+                    case{'sp2mat'}
+                        if ~exist([archdir hm.cycStr filesep 'sp2' filesep 'sp2.' stName '.mat'],'file')
+
+                        else
+                            d=load([archdir hm.cycStr filesep 'sp2' filesep 'sp2.' stName '.mat']);
+                            for t=1:length(d.SP2Data.time)
+                                data.Time(t)=d.SP2Data.time(t).spec.times;
+                                if strcmpi(par,'hswell')
+                                    data.Val(t)=d.SP2Data.time(t).Separation.Swell.Hs;
+                                end
+                                if strcmpi(par,'tswell')
+                                    data.Val(t)=d.SP2Data.time(t).Separation.Swell.Tp;
+                                end
+                            end
+
+                        end
                 end
             end
-            
+
             if ~isempty(data)
 
                 n2=find(data.Time>=tstart);
                 n2=n2(1)+1;
                 s2.Time=data.Time(n2:end);
                 s2.Val=data.Val(n2:end);
-                
+
                 s.Time=[s.Time;s2.Time];
                 s.Val=[s.Val;s2.Val];
                 save(fname,'-struct','s','Name','Parameter','Time','Val');
-                
+
                 s3.Name=stLongName;
                 s3.Parameter=parLongName;
                 s3.Time=data.Time;
                 s3.Val=data.Val;
-                
+
                 fname=[archdir hm.cycStr filesep 'timeseries' filesep par '.' stName '.mat'];
-                
+
                 save(fname,'-struct','s3','Name','Parameter','Time','Val');
-                
+
             end
 
         catch
