@@ -71,11 +71,14 @@ if isscalar(varargin) && isstruct(varargin{1})
     % structure input argument is assumed to be created by jarkus_transects
     tr = varargin{1};
 else
-    if ~all(ismember({'id' 'year'}, varargin(1:2:end)))
-        error('At least "id" and "time" should be specified')
-    end
     % transect structure is obtained by jarkus_transects
-    tr = jarkus_transects(varargin{:});
+    try
+        tr = jarkus_transects(varargin{:});
+    catch E
+        if strcmp(E.identifier, 'MATLAB:Java:GenericException')
+            error('Memory problems occured, confine your selection by specifying "id" and "year".')
+        end
+    end
 end
 
 %%
@@ -93,7 +96,20 @@ if all(ismember(required_fields, fieldnames(tr)))
     [ids years] = meshgrid(tr.id, year((datenum(1970,1,1) + tr.time)));
     ids = reshape(ids, prod(dims(1:2)), 1);
     years = reshape(years, prod(dims(1:2)), 1);
-    displayname = textscan(sprintf('transect %i (%i)\n', [ids years]'), '%s', prod(dims(1:2)), 'delimiter', '\n');
+    if isscalar(unique(ids))
+        % put transect number in title
+        title(sprintf('transect %i', unique(ids)));
+        % put years in legend
+        displayname = textscan(sprintf('%i\n', years'), '%s', dims(1), 'delimiter', '\n');
+    elseif isscalar(unique(years))
+        % put year in title
+        title(sprintf('year %i', unique(years)));
+        % put transect number in legend
+        displayname = textscan(sprintf('transect %i\n', ids'), '%s', dims(2), 'delimiter', '\n');
+    else
+        % put both transect numbers and years in legend
+        displayname = textscan(sprintf('transect %i (%i)\n', [ids years]'), '%s', prod(dims(1:2)), 'delimiter', '\n');
+    end
     set(ph, {'Displayname'}, displayname{:});
     % turn on legend
     legend('toggle')
