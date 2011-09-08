@@ -1,4 +1,4 @@
-function [k] = disper(h,T)
+function [k] = dispersion(h,T)
 % Really stupid and inefficient routine to solve dispersion relation
 g=9.81;
 omega=2*pi/T;
