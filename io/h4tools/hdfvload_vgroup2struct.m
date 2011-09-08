@@ -81,9 +81,9 @@ end
          % and anyway if it was written by hdfvsave_struct2vgroup 
          % it came from a matlab struct, and the fldname is a valid struct name .
          
-         %% Check whether vgroupname represents a 
-         %% muldi-dimensional array element.
-         %% --------------------------------
+      %% Check whether vgroupname represents a 
+      %  muldi-dimensional array element.
+      
          bracket1 = strfind(fldname,'(');
          bracket2 = strfind(fldname,')');
          if ~isempty(bracket1)
@@ -93,8 +93,8 @@ end
             end
          end
          
-         %% Load
-         %% --------------------------------
+      %% Load
+
          [      DATA.(fldname)(fldindex),...
           ATTRIBUTES.(fldname)(fldindex)] = hdfvload_vgroup2struct(finfo.Vgroup(i),file_name,[hdftree,filesep,fldname]);
          
@@ -102,9 +102,7 @@ end
       
          fldname  = mkvar(finfo.Vgroup(i).Name);
 
-      
-         %% Load
-         %% --------------------------------
+      %% Load
          [      DATA.(fldname),...
           ATTRIBUTES.(fldname)] = hdfvload_vgroup2struct(finfo.Vgroup(i),file_name,[hdftree,filesep,fldname]);
          

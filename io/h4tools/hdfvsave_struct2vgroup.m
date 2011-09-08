@@ -55,17 +55,14 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
    OPT.debug                     = 0;
 
       %%  1 Open the HDF file.
-      %% -------------------------
 
          % to be done at highest level by hdfvsave.m
 
       %%  2 Initialize the Vgroup interface.
-      %% -------------------------
       
          status = hdfv('start',file_id);
       
       %%  3 Create the new vgroup.
-      %% -------------------------
       
          % vgroup_id = hdfv('attach',file_id,vgroup_ref,access)
          % vgroup_ref = -1 when a new vgroup is created
@@ -75,7 +72,6 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
          vgroup_id  = hdfv('attach',file_id, vgroup_ref , 'w');
          
       %% INSERT VGROUP INTO PARENT VGROUP
-      %% -------------------------
 
          if ~isempty(VGROUP_ID_PARENT)
          ref = hdfv('insert',VGROUP_ID_PARENT, vgroup_id);
@@ -83,26 +79,22 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
          
       
       %%  4 Optionally assign a vgroup name
-      %%    Note: names need not be unique.
-      %% -------------------------
+      %     Note: names need not be unique.
       
          % status = hdfv('setname',vgroup_id,name)
 
          status = hdfv('setname',vgroup_id,fldname);
       
       %%  5 Optionally assign a vgroup class.
-      %%    Note: optional
-      %%    Note: classes are user defined, and not HDF defined.
-      %% -------------------------
+      %     Note: optional
+      %     Note: classes are user defined, and not HDF defined.
       
          % status = hdfv('setclass',vgroup_id,class)
 
       
       %%  6 Inserts data objects.
-      %% -------------------------
             
          %% Meta data
-         %% -------------------------
 
          status = hdfv('setattr',vgroup_id,'foo'                ,'foo'); % for soem reason the first attribute fials
          status = hdfv('setattr',vgroup_id,'date_added'         ,datestr(datenum(now)));
@@ -112,7 +104,6 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
          
 
          %% Matlab struct
-         %% -------------------------
          
        %  vgroup_ref = hdfv('Queryref',vgroup_id);
        %  status     = hdfv('detach'  ,vgroup_id);
@@ -133,15 +124,13 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
          
          fldname = char(fldnames{ifield});
          
-            %% Structures
-            %% ----------------------------------
+         %% Structures
             
             if isstruct(datastruct.(fldname))
             
                if length(datastruct.(fldname)) >1
                
-                  %% Multi-dimensional structure
-                  %% ----------------------------------
+               %% Multi-dimensional structure
                   
                   for idim=1:length(datastruct.(fldname))
                      
@@ -175,7 +164,6 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
                end % length(datastruct) >1                  
             
             %% Numerical data
-            %% ----------------------------------
             
             elseif isnumeric(datastruct.(fldname))
             
@@ -191,7 +179,6 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
                end
              
             %% Characters
-            %% ----------------------------------
             
             elseif ischar(datastruct.(fldname))
             
@@ -214,7 +201,6 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
                end              
 
             %% Logicals
-            %% ----------------------------------
             
             elseif islogical(datastruct.(fldname))
 
@@ -238,7 +224,6 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
                end            
 
             %% Cells
-            %% ----------------------------------
             
             elseif iscell(datastruct.(fldname))
             
@@ -249,17 +234,14 @@ function varargout = hdfvsave_struct2vgroup(file_id,file_name,datastruct,fldname
          end % for ifield = 1:nfield
          
       %%  7 Terminate access to the vgroup.
-      %% -------------------------
       
          status = hdfv('detach',vgroup_id);
       
       %%  8 Terminate access to the Vgroup interface.
-      %% -------------------------
       
          status = hdfv('end',file_id);
          
       %%  9 Close the HDF file.
-      %% -------------------------
          
          % to be done at highest level by hdfvsave.m
 

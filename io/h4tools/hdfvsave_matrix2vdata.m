@@ -49,12 +49,10 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
 %   --------------------------------------------------------------------
 
             %% 6.01 Open a file.
-            %% -------------------------
       
                % to be done at highest level of hdfvsave.m
       
             %% 6.02 Initialize the Vdata interface.
-            %% -------------------------
       
                % Also required when NOT writing to a vgroup but to the highest
                % file level !!!!
@@ -62,7 +60,6 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
                status = hdfv('start',file_id);
 
             %% 6.03 Create the new vdata.
-            %% -------------------------
       
                % vdata_id = hdfvs('attach',file_id,vdata_ref,access)
                % Establishes access to a specified vdata; access can be
@@ -74,7 +71,6 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
                end
            
             %% 6.04 Assign a vdata name. (NOT optional otherwise HDFTOOL crashes)
-            %% -------------------------
       
                % status = hdfvs('setname',vdata_id,name)
                % Assigns a name to a vdata
@@ -82,14 +78,12 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
                status = hdfvs('setname',vdata_id,fldname);
             
             %% 6.05 Assign a vdata class. (optional)
-            %% -------------------------
                 
                 % status = hdfvs('setclass',vdata_id,class)
                 % status = hdfvs('setclass',vdata_id,class)
                 % Assigns a class to a vdata
             
             %% 6.06 Define the fields.
-            %% -------------------------
             
                % status = hdfvs('fdefine',vdata_id,fieldname,data_type,order)
                %  Defines a new vdata field. data_type is a string
@@ -113,7 +107,6 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
                status = hdfvs('fdefine',vdata_id,fieldname,data_type,order);
       
             %% 6.07 Initialize fields for writing.
-            %% -------------------------
             
                % status = hdfvs('setfields',vdata_id,fields)
                % Specifies the vdata fields to be written to
@@ -134,7 +127,6 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
                status = hdfvs('setfields',vdata_id,fieldname);
               
             %% 6.08 Set the interlace mode.
-            %% -------------------------
             
                % status = hdfvs('setinterlace',vdata_id,interlace)
                %  Sets the interlace mode for a vdata; interlace can be
@@ -142,9 +134,7 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
 
                status = hdfvs('setinterlace',vdata_id,'no');
                
-               
                %% INSERT VDATA INTO VGROUP
-               %% -------------------------
                
                   %% When VGROUP_ID is empty, vdata is added on 
                   %% the highest level in file,
@@ -155,8 +145,7 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
                   end
                   
                %% ACTUALLY ADD DATA VALUES
-               %% NOTE that all data of 3 and more dimensions are squeezed to 2 dimensions
-               %% -------------------------
+               %  NOTE that all data of 3 and more dimensions are squeezed to 2 dimensions
 
                   data{1,1} = datafield;
                 % data{2,1} = rand(3,5,2); % will be a 2D array
@@ -164,19 +153,16 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
                   hdfvs('write',vdata_id,data);
 
             %% 6.09 Dispose of the vdata identifier.
-            %% -------------------------
       
                status = hdfvs('detach',vdata_id);
                %  Terminates access to a specified vdata
       
             %% 6.10 Terminate access to the Vdata interface.
-            %% -------------------------
       
                % ???????????
                status = hdfv('end',file_id);
                
             %% 6.10b Terminate access to the Vgroup file and interface ??
-            %% -------------------------
                
                % close vgroup interface ??
                % there are always warnings to open vgroups
@@ -187,7 +173,6 @@ function status = hdfvsave_matrix2vdata(file_id,datafield,fldname,VGROUP_ID)
                %status = hdfv('end',file_id);
             
             %% 6.11 Close the file.      
-            %% -------------------------
                     
                % to be done at highest level of hdfvsave.m
 

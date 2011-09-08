@@ -127,7 +127,6 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
 %   --------------------------------------------------------------------
 
 %% Deal optional arguments
-%% -------------------------
 
    if odd(nargin)
       
@@ -150,8 +149,7 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
 
    end
    
-   %% Set defaults for keywords
-   %% ----------------------
+%% Set defaults for keywords
 
    OPT.vgroup_name    = [];
    OPT.load_main_data = 1;
@@ -161,8 +159,7 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
    OPT.sdsselection   = [];
    OPT.vdataselection = [];
 
-   %% Cycle keywords in input argument list to overwrite default values.
-   %% ----------------------
+%% Cycle keywords in input argument list to overwrite default values.
 
    if nargin>1
        
@@ -185,15 +182,14 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
       end
    end
    
-   %% Return default aguments (with 0 as arg, because 0 args => input GUI)
-   %% ----------------------
+%% Return default aguments (with 0 as arg, because 0 args => input GUI)
+
    if nargin==1 & varargin{1}==0
       DATA = OPT;
       return
    end
    
-   %% Initialize
-   %% ----------------------
+%% Initialize
    
    DATA       = [];
    ATTRIBUTES = [];
@@ -209,8 +205,7 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
             
             if OPT.load_main_data
             
-               %% Load SDS and Vdata in current Vgroup
-               %% -------------------------
+            %% Load SDS and Vdata in current Vgroup
                
                [DATA ,ATTRIBUTES ,status] = hdfvload_vdatas2struct (finfo,file_name,hdftree,'debug',OPT.debug,...
                                                                                    'vdataselection',OPT.vdataselection);
@@ -237,8 +232,7 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
                
             end % if OPT.load_main_data
 
-            %% Add file meta information
-            %% -------------------------
+         %% Add file meta information
 
             if isfield(finfo,'Attributes')
                for iatr = 1:length(finfo.Attributes)
@@ -253,8 +247,7 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
                end
             end
                
-            %% Load lower Vgroups
-            %% -------------------------
+         %% Load lower Vgroups
                
             if isfield(finfo,'Vgroup')
             
@@ -290,8 +283,7 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
 
                   fldname = mkvar(finfo.Vgroup(iVgroup).Name);
                   
-                  %% Check if only this vgroup must be loaded as substruct 
-                  %% ------------------------------------------------
+               %% Check if only this vgroup must be loaded as substruct 
                   
                   load_this_vgroup = 0;
                   

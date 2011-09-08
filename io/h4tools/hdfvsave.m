@@ -135,7 +135,6 @@ function varargout = hdfvsave(file_name,datastruct,varargin)
    OPT.debug                     = 0;
 
 %% Deal optional arguments
-%% -------------------------
 
    if nargin==1
       error('syntax: HDFVSAVE(file_name,datastruct,<...>) ')
@@ -166,15 +165,14 @@ function varargout = hdfvsave(file_name,datastruct,varargin)
       end
    end
    
-   %% Return default aguments (with 0 as arg, because 0 args => input GUI)
-   %% ----------------------
+%% Return default aguments (with 0 as arg, because 0 args => input GUI)
+
    if nargin==0
       varargout = {OPT};
       return
    end   
 
 %%  1a. Check the HDF file(name).
-%% -------------------------
 
    status    = 0;
 
@@ -220,10 +218,10 @@ function varargout = hdfvsave(file_name,datastruct,varargin)
    end
    
    %% http://hdf.ncsa.uiuc.edu/training/HDFtraining/UsersGuide/Fundmtls.fm2.html#29514
-   %% TABLE 2B - File Access Code Flags
-   %% DFACC_READ     1 Read access
-   %% DFACC_WRITE    2 Read and write access
-   %% DFACC_CREATE   4 Create with read and write access
+   %  TABLE 2B - File Access Code Flags
+   %  DFACC_READ     1 Read access
+   %  DFACC_WRITE    2 Read and write access
+   %  DFACC_CREATE   4 Create with read and write access
    
    if     strcmpi(OPT.overwrite_append(1),'a')
       access_mode = 'DFACC_WRITE';
@@ -232,12 +230,11 @@ function varargout = hdfvsave(file_name,datastruct,varargin)
    end
 
 %%  1b. Open
-%% -------------------------
 
 if status >= 0
 
    %% Follows recipe at:
-   %% http://hdf.ncsa.uiuc.edu/training/HDFtraining/UsersGuide/Fundmtls.fm2.html#19271
+   %  http://hdf.ncsa.uiuc.edu/training/HDFtraining/UsersGuide/Fundmtls.fm2.html#19271
    
    file_id = hdfh('open',file_name,access_mode,0); % n_dds = 0 for default data descriptors
    if file_id == -1
@@ -247,21 +244,19 @@ if status >= 0
    end
    
 %%  Cycle datastruct
-%% -------------------------
 
-   %% Check whether fields is already present
-   %% in hdf vfile as SDS, Vgroup, VData before overwriting
-   %% SO obtain tree-info from existing file.
-   %% ----------
+   %  Check whether fields is already present
+   %  in hdf vfile as SDS, Vgroup, VData before overwriting
+   %  SO obtain tree-info from existing file.
    
    if strcmpi(OPT.overwrite_append(1),'a')
       file_info                = hdfinfo(file_name);
       overwrite_append_fldname = 'A'; % 'p'
-      %% note that the HDF file doubles in size every time you append
-      %% the same struct to it, it does not increas elinearly in size
-      %% when adding info. Even when you add just annotation, the file
-      %% grows with a size more than the datastruct. SO by default we
-      %% just append everything, as that does not results in larger file size !?!
+      %  note that the HDF file doubles in size every time you append
+      %  the same struct to it, it does not increas elinearly in size
+      %  when adding info. Even when you add just annotation, the file
+      %  grows with a size more than the datastruct. SO by default we
+      %  just append everything, as that does not results in larger file size !?!
    else
       file_info  = [];
       overwrite_append_fldname = 'A'; % 'p'
@@ -270,7 +265,6 @@ if status >= 0
    if length(datastruct) >1
 
       %% Multi-dimensional structure
-      %% ----------------------------------
 
       for idim=1:length(datastruct)
       
@@ -298,10 +292,8 @@ if status >= 0
       fldname = char(fldnames{ifield});
    
       %% Write data
-      %% ----------
    
          %% Structures
-         %% ----------------------------------
    
          if isstruct(datastruct(idim).(fldname))
          
@@ -311,7 +303,6 @@ if status >= 0
             end
             
             %% Check whether data with that name already exists
-            %% --------------------
    
             if strcmpi(OPT.overwrite_append(1),'a')
             
@@ -331,7 +322,6 @@ if status >= 0
             end
             
             %% Write (multi-dimensional) data
-            %% --------------------
    
             % all vdata residing lower in datastruct are 
             % appended by hdfvsave_struct2vgroup(...) which calls 
@@ -340,7 +330,7 @@ if status >= 0
             if lower(overwrite_append_fldname)=='a'
 
                %% Write more-dimensional structs as Vgroups with identical names
-               %% --------------------
+
                for idim2 = 1:length(datastruct(idim).(fldname))
 
                   status = hdfvsave_struct2vgroup(file_id,file_name,datastruct(idim).(fldname)(idim2),fldname,VGROUP_ID_PARENT);
@@ -363,7 +353,6 @@ if status >= 0
             end
          
          %% Numerical data
-         %% ----------------------------------
    
          elseif isnumeric(datastruct(idim).(fldname))
          
@@ -379,7 +368,6 @@ if status >= 0
             end         
             
          %% Characters
-         %% ----------------------------------
    
          elseif ischar   (datastruct(idim).(fldname)) | ...
                 iscellstr(datastruct(idim).(fldname))
@@ -409,7 +397,6 @@ if status >= 0
             end
     
          %% Logicals
-         %% ----------------------------------
          
          elseif islogical(datastruct(idim).(fldname))
          
@@ -433,7 +420,6 @@ if status >= 0
             end
    
          %% Cells
-         %% ----------------------------------
    
          elseif    iscell(datastruct(idim).(fldname)) & ...
                ~iscellstr(datastruct(idim).(fldname))
@@ -447,10 +433,9 @@ if status >= 0
    end % length(datastruct) >1
    
 %%  Add hdfvsave meta information
-%%  vgroup_id is not used yet and is [] ...
-%%  Make sure not to add a field with the same name as a data field
-%%  (names are not unqiue in HDF, only ID numbersd are) to prevent hdfvload errors 
-%% -------------------------
+%   vgroup_id is not used yet and is [] ...
+%   Make sure not to add a field with the same name as a data field
+%   (names are not unqiue in HDF, only ID numbersd are) to prevent hdfvload errors 
 
    if OPT.add_annotation
       
@@ -477,8 +462,7 @@ if status >= 0
    end
    
 %%  Add user meta information
-%%  vgroup_id is not used yet and is [] ...
-%% -------------------------
+%   vgroup_id is not used yet and is [] ...
 
    if ~isempty(meta_info)
    fldnames  = fieldnames(meta_info);
@@ -487,13 +471,13 @@ if status >= 0
    for ifield = 1:nfield
    
       fldname = char(fldnames{ifield});
-      %% After using hdfvload there is a field for every SD, 
-      %% even if the SD has no attributes.
-      %% For symmetry we want the following to be possible though:
-      %% > [DATA,META]=hdfvload(fname)
-      %% >             hdfvsave(fname,DATA,META)
-      %% So we have to skip empty attribute values here.
-      %% -------------------------
+      %  After using hdfvload there is a field for every SD, 
+      %  even if the SD has no attributes.
+      %  For symmetry we want the following to be possible though:
+      %  > [DATA,META]=hdfvload(fname)
+      %  >             hdfvsave(fname,DATA,META)
+      %  So we have to skip empty attribute values here.
+
       if ~isempty(meta_info.(fldname))
          status  = hdfvsave_char2sdsatr(file_id,file_name,[],fldname,meta_info.(fldname));
       end
@@ -502,7 +486,6 @@ if status >= 0
    end
    
 %%  9 Close the HDF file.
-%% -------------------------
 
    status = hdfh('close',file_id);
 
@@ -515,7 +498,6 @@ if status >= 0
 end % if status  > 0
 
 %%  Return status
-%% -------------------------
 
    if nargout==1
       varargout = {status};

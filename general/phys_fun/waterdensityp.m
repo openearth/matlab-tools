@@ -44,13 +44,13 @@ if (ms~=mt) | (ns~=nt)
    error('S & T must have same dimensions')
 end
 
-if     mp==1  & np==1                                                           % P is a scalar.  Fill to size of S
+if     mp==1  & np==1         % P is a scalar.  Fill to size of S
    P = P(1)*ones(ms,ns);
-elseif np==ns & mp==1                                                           % P is row vector with same cols as S
-   P = P( ones(1,ms), : );                                                      %   Copy down each column.
-elseif mp==ms & np==1                                                           % P is column vector
-   P = P( :, ones(1,ns) );                                                      %   Copy across each row
-elseif mp==ms & np==ns                                                          % PR is a matrix size(S)
+elseif np==ns & mp==1         % P is row vector with same cols as S
+   P = P( ones(1,ms), : );    %   Copy down each column.
+elseif mp==ms & np==1         % P is column vector
+   P = P( :, ones(1,ns) );    %   Copy across each row
+elseif mp==ms & np==ns        % PR is a matrix size(S)
 else
    error('P has wrong dimensions')
 end
@@ -66,7 +66,7 @@ end
 
 densP0 = waterdensity0(S,T);
 K      = waterseck(S,T,P);
-P      = P/10;                                                                  % convert from db to atm pressure units
+P      = P/10; % convert from db to atm pressure units
 dens   = densP0./(1-P./K);
 
 if Transpose

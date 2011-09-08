@@ -58,7 +58,6 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
-%   --------------------------------------------------------------------
 
    if ~strcmpi(SDS_NAME,mkvar(SDS_NAME))
       error(['Invalid field name: ',SDS_NAME])
@@ -80,7 +79,6 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
    opt.debug = 0;
 
       %%  1 - Open a file.
-      %% -------------------------
       
          %% Create the HDF file.
          %% to be done at highest level of hdfvsave.m
@@ -89,8 +87,7 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          %  file_id = hopen(FILE_NAME, DFACC_CREATE, 0)
       
       %%  2 - Initialize the Vdata interface.
-      %%      This is done at one higher level.
-      %% -------------------------
+      %       This is done at one higher level.
       
          % Also required when NOT writing to a vgroup but to the highest
          % file level !!!!
@@ -99,7 +96,6 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          %end
 
       %%  3 - Initialize SD interface. 
-      %% -------------------------
       
          sd_id = hdfsd('start',FILE_NAME, 'rdwr');
          if sd_id == -1
@@ -107,7 +103,6 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          end
          
       %%  4 - Create the SDS
-      %% -------------------------
 
          if nargin > 5
             attr = varargin{1};
@@ -130,7 +125,6 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          end
          
       %%  5 - get sds ref
-      %% -------------------------
       
          sds_ref = hdfsd('idtoref',sds_id);
 
@@ -138,8 +132,7 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          % disp([ sds_id,sds_ref ])
 
       %%  6 - Add the SDS to the vgroup. 
-      %% Apparently only 1 SDS per Vgroup is allowed.
-      %% -------------------------
+      %  Apparently only 1 SDS per Vgroup is allowed.
 
          %% Note: the tag DFTAG_NDG is used when adding an SDS.
          %  Refer to HDF Reference Manual, Section III, Table 3K,
@@ -169,7 +162,6 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          end
 
       %%  7 - close the current SDS
-      %% -------------------------
 
          status = hdfsd('endaccess',sds_id);
          if status == -1
@@ -177,8 +169,6 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          end
 
       %%  8 - close the file
-      %% -------------------------
-        
 
          status = hdfsd('end',sd_id);
          if status == -1
@@ -186,7 +176,6 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          end
 
       %%  9 - Terminate access to the vgroup.
-      %% -------------------------
       
       % Done at higher level
 
@@ -194,7 +183,6 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          %status = hdfv('detach',vgroup_id);
       
       %% 10 - Terminate access to the Vgroup interface.
-      %% -------------------------
       
       % Done at higher level
 
@@ -202,6 +190,5 @@ function status = hdfsave_matrix2sds(file_id,FILE_NAME,vgroup_id,SDS_NAME,dat, v
          %end
 
       %% 11 - Close the file.      
-      %% -------------------------
               
          % to be done at highest level of hdfvsave.m

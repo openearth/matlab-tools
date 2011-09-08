@@ -47,13 +47,11 @@ function varargout = hdfvload_vdatas2struct(finfo,file_name,hdftree,varargin)
 %   --------------------------------------------------------------------
 
    %% Set defaults for keywords
-   %% ----------------------
 
    OPT.debug                   = 1;
    OPT.vdataselection          = [];
    
    %% Cycle keywords in input argument list to overwrite default values.
-   %% ----------------------
 
    iargin = 1;
    
@@ -72,13 +70,11 @@ function varargout = hdfvload_vdatas2struct(finfo,file_name,hdftree,varargin)
    end; 
    
    %% Initialize
-   %% ----------------------
    
    DATA        = [];
    ATTRIBUTES  = [];
 
    %% Load numeric fields
-   %% --------------------------------------
 
    if isfield(finfo,'Vdata')
 
@@ -115,20 +111,17 @@ function varargout = hdfvload_vdatas2struct(finfo,file_name,hdftree,varargin)
       end
       
       %% Load attributes as character fields
-      %% --------------------------------------
       
       if nargout>1
       
          if isfield(finfo,'Ref')
          
             %% Open file, interface and vgroup
-            %% -----------------------------------------
 
             file_id        = hdfh('open'  ,finfo.Filename,'DFACC_READ',0); % 0 = default data descriptors, remember to close it later
             status         = hdfv('start' ,file_id); % remember to end it later
             
             %% Refs are in finfo struct
-            %% -----------------------------------------
 
             %[refs,count]   = hdfv('lone'  ,file_id,1); % works only ...
             %[refs,nref ]   = hdfv('lone'  ,file_id,count);
@@ -138,7 +131,6 @@ function varargout = hdfvload_vdatas2struct(finfo,file_name,hdftree,varargin)
             nattrs         = hdfv('nattrs',vgroup_id);
             
             %% Chars are also taken care of as arrays
-            %% -----------------------------------------
             
             for iattr   = 1:nattrs
             
@@ -152,7 +144,6 @@ function varargout = hdfvload_vdatas2struct(finfo,file_name,hdftree,varargin)
             end
                
             %% Close file, interface and vgroup
-            %% -----------------------------------------
 
             status         = hdfv('detach',vgroup_id);
             status         = hdfv('end'   ,file_id);

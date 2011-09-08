@@ -69,15 +69,13 @@ function varargout = hdfvload_sds2struct(finfo,file_name,hdftree,varargin)
 %   http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-   %% Set defaults for keywords
-   %% ----------------------
+%% Set defaults for keywords
 
    OPT.save_logicals2integers  = true;
    OPT.debug                   = 1;
    OPT.sdsselection            = [];
    
-   %% Cycle keywords in input argument list to overwrite default values.
-   %% ----------------------
+%% Cycle keywords in input argument list to overwrite default values.
 
    iargin = 1;
    
@@ -95,15 +93,13 @@ function varargout = hdfvload_sds2struct(finfo,file_name,hdftree,varargin)
      iargin=iargin+1;
    end; 
    
-   %% Initialize
-   %% ----------------------
+%% Initialize
 
    DATA       = [];
    ATTRIBUTES = [];
 
    %% DO not load numeric fields like this:
-   %% It results in flipped dimensions
-   %% --------------------------------------
+   %  It results in flipped dimensions
 
    % nSDS  = length(finfo.SDS);
    % 
@@ -119,16 +115,15 @@ function varargout = hdfvload_sds2struct(finfo,file_name,hdftree,varargin)
 
    if isfield(finfo,'SDS')
 
-      %% Open the file
-      %% --------------------------------------
+   %% Open the file
+
       access_mode = 'read';
       sd_id = hdfsd('start', file_name, access_mode);
       if sd_id == -1
         error('HDF sdstart failed')
       end
       
-      %% Cycle all SDS
-      %% --------------------------------------
+   %% Cycle all SDS
 
       nSDS  = length(finfo.SDS);
       
@@ -147,14 +142,12 @@ function varargout = hdfvload_sds2struct(finfo,file_name,hdftree,varargin)
             
             %% get sds ID from index (which also opens it 
             %  so it needs to be closed as well, which si done with 'endaccess')
-            %% --------------------------------------
             
             sds_index = finfo.SDS(idata).Index;
             sds_id    = hdfsd('select',sd_id, sds_index);
             
             %% sds SDS data with sdsid2mat(...) which is the
-            %% reciprocal of mat2sdsid(...) with which the data set was created.
-            %% --------------------------------------
+            %  reciprocal of mat2sdsid(...) with which the data set was created.
       	    
             [name,...
              DATA.(fldname),...
@@ -164,7 +157,6 @@ function varargout = hdfvload_sds2struct(finfo,file_name,hdftree,varargin)
             status = hdfsd('endaccess',sds_id);
             
             %% Conditionally transform int8 to logical
-            %% --------------------------------------
             
             if OPT.save_logicals2integers
                attr = finfo.SDS(idata).Attributes;
@@ -194,8 +186,8 @@ function varargout = hdfvload_sds2struct(finfo,file_name,hdftree,varargin)
 
       end % if nSDS > 0
       
-      %% close the file
-      %% --------------------------------------
+   %% close the file
+
       status = hdfsd('end',sd_id);
       if sd_id == -1
         error('HDF sdend failed')

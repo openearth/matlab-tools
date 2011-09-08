@@ -10,18 +10,18 @@
 
    OPT.fname   = 'trim-RUNID.def';
    OPT.export  = 1;
-   OPT.pause   = 1;
+   OPT.pause   = 0;
    OPT.uvscale = 1e4; % 1 m/s becomes x m
    OPT.wscale  = 2e3; % 1 m/s becomes x m
    OPT.axis    = [-50e3 0 0 100e3 -20 2];
-
-   OPT.clim    = [11.5 12.5];
-   OPT.scalar  = 'temperature'; %'salinity'
-   OPT.title   = 'temperature [\circ C] at HW'; %'salinity'
    
    OPT.clim    = [25 35];
    OPT.scalar  = 'salinity'
-   OPT.title   = 'salinity [psu] at HW';
+   OPT.title   = 'salinity [psu]';
+
+   OPT.clim    = [11.5 12.5];
+   OPT.scalar  = 'temperature';
+   OPT.title   = 'temperature [\circ C]';
 
 %% spatial subset settings
 %  plot not all point as matlab is too slow for that,
@@ -133,18 +133,21 @@
       
    %% lay-out
 
+      set(gca,'xtick',[-50:25:0].*1e3)
+      set(gca,'ytick',[0:25:100].*1e3)
       axis   (OPT.axis)
+      zlim([-20 1.5])
+      tickmap('xy')
       grid    on
-      title  (OPT.title)
+      title  ([OPT.title, ' ',datestr(T.datenum(it),'HH:MM')])
       set    (gca,'dataAspectRatio',[1 1 5e-4])
       view   (40,30)
       set    (h.q,'clipping','on')
       set    (h.s,'clipping','on')
       caxis  (OPT.clim)
       alpha  (0.5)
-      tickmap('xy')
       shading interp
-      h.c = colorbar
+      h.c = colorbar;
       set(h.c,'position',[0.18 0.7 0.05 0.25])
       set(h.c,'ytick',OPT.clim)
       if strcmp(OPT.scalar,'temperature')
@@ -152,12 +155,11 @@
       else
       set(h.c,'yticklabel',{'fresher','34.5'})
       end
-      axis tight
       
    %% export
 
       if OPT.export
-      print2screensize([fileparts(H.DatExt),filesep,OPT.scalar,'_',num2str(it,'%0.2d')])
+      print2screensizeoverwrite([fileparts(H.DatExt),filesep,OPT.scalar,'_',num2str(it,'%0.2d')])
       end
    
       if OPT.pause

@@ -44,7 +44,7 @@ if mS == 1
   Transpose = 1;
 end
 
-b0 =  8.24493e-1;                                                               % define constants UNESCO 1983 eqn(13) p17.
+b0 =  8.24493e-1; % define constants UNESCO 1983 eqn(13) p17.
 b1 = -4.0899e-3;
 b2 =  7.6438e-5;
 b3 = -8.2467e-7;

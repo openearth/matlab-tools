@@ -35,7 +35,6 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
 % now vgroup_id is not used yet ...
 
       %%  1 - Open a file.
-      %% -------------------------
       
          %% Create the HDF file.
          %% to be done at highest level of hdfvsave.m
@@ -44,8 +43,7 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
          %  file_id = hopen(FILE_NAME, DFACC_CREATE, 0)
       
       %%  2 - Initialize the Vdata interface.
-      %%      This is done at one higher level.
-      %% -------------------------
+      %       This is done at one higher level.
       
          % Also required when NOT writing to a vgroup but to the highest
          % file level !!!!
@@ -54,7 +52,6 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
          %end
 
       %%  3 - Initialize SD interface. 
-      %% -------------------------
       
          sd_id = hdfsd('start',FILE_NAME, 'rdwr');
          if sd_id == -1
@@ -62,7 +59,6 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
          end
          
       %%  4a- Create the SDS attribute
-      %% -------------------------
 
          status = hdfsd('setattr', sd_id, ATR_NAME, atr);
          if status == -1
@@ -70,12 +66,10 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
          end
 
 %      %%  4 - Create the SDS
-%      %% -------------------------
 %
 %         sds_id = mat2sdsid(sd_id, SDS_NAME, dat, varargin{:});
 %         
 %      %%  5 - get sds ref
-%      %% -------------------------
 %      
 %         sds_ref = hdfsd('idtoref',sds_id);
 %
@@ -83,8 +77,7 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
 %         % disp([ sds_id,sds_ref ])
 %
 %      %%  6 - Add the SDS to the vgroup. 
-%      %% Apparently only 1 SDS per Vgroup is allowed.
-%      %% -------------------------
+%      %  Apparently only 1 SDS per Vgroup is allowed.
 %
 %         %% Note: the tag DFTAG_NDG is used when adding an SDS.
 %         %  Refer to HDF Reference Manual, Section III, Table 3K,
@@ -114,7 +107,6 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
 %         end
 %
 %      %%  7 - close the current SDS
-%      %% -------------------------
 %
 %         status = hdfsd('endaccess',sds_id);
 %         if status == -1
@@ -122,7 +114,6 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
 %         end
 
       %%  8 - close the file
-      %% -------------------------
         
 
          status = hdfsd('end',sd_id);
@@ -131,7 +122,6 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
          end
 
       %%  9 - Terminate access to the vgroup.
-      %% -------------------------
       
       % Done at higher level
 
@@ -139,7 +129,6 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
          %status = hdfv('detach',vgroup_id);
       
       %% 10 - Terminate access to the Vgroup interface.
-      %% -------------------------
       
       % Done at higher level
 
@@ -147,7 +136,6 @@ function status = hdfvsave_char2sdsatr(file_id,FILE_NAME,vgroup_id,ATR_NAME,atr,
          %end
 
       %% 11 - Close the file.      
-      %% -------------------------
               
          % to be done at highest level of hdfvsave.m
 
