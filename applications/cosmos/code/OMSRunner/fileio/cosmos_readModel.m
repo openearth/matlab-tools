@@ -499,6 +499,7 @@ if isfield(model,'timeseriesdatasets')
     for j=1:hm.models(i).nrTimeSeriesDatasets
         hm.models(i).timeSeriesDatasets(j).parameter=model.timeseriesdatasets(j).dataset.parameter;
         hm.models(i).timeSeriesDatasets(j).station=model.timeseriesdatasets(j).dataset.station;
+        hm.models(i).timeSeriesDatasets(j).location=[];
         if isfield(model.timeseriesdatasets(j).dataset,'locationx')
             hm.models(i).timeSeriesDatasets(j).location(1)=str2double(model.timeseriesdatasets(j).dataset.locationx);
         end
@@ -514,6 +515,10 @@ if isfield(model,'timeseriesdatasets')
         hm.models(i).timeSeriesDatasets(j).layer=[];
         if isfield(model.timeseriesdatasets(j).dataset,'layer')
             hm.models(i).timeSeriesDatasets(j).layer=str2double(model.timeseriesdatasets(j).dataset.layer);
+        end
+        hm.models(i).timeSeriesDatasets(j).sp2id=[];
+        if isfield(model.timeseriesdatasets(j).dataset,'sp2id')
+            hm.models(i).timeSeriesDatasets(j).sp2id=str2double(model.timeseriesdatasets(j).dataset.sp2id);
         end
         hm.models(i).timeSeriesDatasets(j).toOPeNDAP=0;
         if isfield(model.timeseriesdatasets(j).dataset,'toopendap')

@@ -6,20 +6,21 @@ outdir=[dr 'lastrun' filesep 'output' filesep];
 archdir = model.archiveDir;
 mkdir([archdir hm.cycStr filesep 'sp2']); %% sp2 Folder at line 24 cannot be created straight away from that line, dont know how to do it
 %% Read and store the spectra
-for i=1:model.nrStations
+for i=1:model.nrTimeSeriesDatasets
 
-    stName=model.stations(i).name;
-    stLongName=model.stations(i).longName;
+    stName=model.timeSeriesDatasets(i).station;
+%    stLongName=model.stations(i).longName;
     tstart=max(model.tWaveOkay,model.tFlowOkay);
 
     try
-        model.stations(i).sp2id=lower(model.stations(i).sP2id);
-        sp2list=dir([outdir '/' model.stations(i).sp2id '.*.sp2']);
+%         model.stations(i).sp2id=lower(model.stations(i).sP2id);
+        sp2list=dir([outdir '/' model.timeSeriesDatasets(i).sp2id '.*.sp2']);
 
         for j=1:length(sp2list)
             [SP2Data.time(j).Separation,SP2Data.time(j).spec,SP2Data.time(j).Bulk]=...
                 getWaveSeparationFromSP2(([outdir sp2list(j).name]));
-            SP2Data.Station=stLongName;
+%            SP2Data.Station=stLongName;
+            SP2Data.Station=stName;
         end
         fname=[archdir hm.cycStr filesep 'sp2' filesep 'sp2.' stName '.mat'];
         save(fname,'SP2Data');

@@ -31,12 +31,16 @@ end
 for i=1:model.nrTimeSeriesDatasets
     if strcmpi(model.timeSeriesDatasets(i).parameter,'sp2')
         k=k+1;
-        locfile{k}=[model.timeSeriesDatasets(i).SP2id '.loc'];
-        for k=1:model.nrStations
-            stations{k}=model.stations(k).name;
+        locfile{k}=[model.timeSeriesDatasets(i).sp2id '.loc'];
+        if isempty(model.timeSeriesDatasets(i).location)
+            for j=1:model.nrStations
+                stations{j}=model.stations(j).name;
+            end
+            istat=strmatch(model.timeSeriesDatasets(i).station,stations,'exact');
+            xy=[model.stations(istat).location(1) model.stations(istat).location(2)];
+        else
+            xy=model.timeSeriesDatasets(i).location;
         end
-        istat=strmatch(model.timeSeriesDatasets(i).station,stations,'exact');
-        xy=[model.stations(istat).location(1) model.stations(istat).location(2)];
         save([hm.tempDir locfile{k}],'xy','-ascii');
     end
 end
