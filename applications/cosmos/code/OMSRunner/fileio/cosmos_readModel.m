@@ -518,7 +518,7 @@ if isfield(model,'timeseriesdatasets')
         end
         hm.models(i).timeSeriesDatasets(j).sp2id=[];
         if isfield(model.timeseriesdatasets(j).dataset,'sp2id')
-            hm.models(i).timeSeriesDatasets(j).sp2id=str2double(model.timeseriesdatasets(j).dataset.sp2id);
+            hm.models(i).timeSeriesDatasets(j).sp2id=model.timeseriesdatasets(j).dataset.sp2id;
         end
         hm.models(i).timeSeriesDatasets(j).toOPeNDAP=0;
         if isfield(model.timeseriesdatasets(j).dataset,'toopendap')
