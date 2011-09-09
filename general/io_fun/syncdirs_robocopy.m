@@ -84,7 +84,9 @@ function [status,result] = syncdirs_robocopy(source,destination,varargin)
 % $Keywords: $
 
 %%
-OPT.quiet = false;
+OPT.quiet     = false;
+OPT.file_excl = '';
+OPT.dir_excl  = '';
 
 OPT       = setproperty(OPT,varargin{:});
 
@@ -95,9 +97,22 @@ end
 %%
 robocopy_path = fullfile(fileparts(mfilename('fullpath')),'private','robocopy','robocopy.exe');
 
-dosstring = sprintf('%s "%s " "%s " /E /PURGE /FFT',robocopy_path,source,destination);
-if OPT.quiet
-    [status,result] = system([dosstring ' /NDL /NFL']);
-else
-    [status,result] = system([dosstring ' /V /ETA /FP'],'-echo');
+flags = '/E /PURGE /FFT';
+% append file_excl
+if ~isempty(OPT.file_excl)
+    flags = [flags ' /XF "' OPT.file_excl '"'];
 end
+
+% append dir_excl
+if ~isempty(OPT.dir_excl)
+    flags = [flags ' /XD "' OPT.dir_excl '"'];
+end
+
+if OPT.quiet
+    flags = [flags ' /NDL /NFL'];
+else
+    flags = [flags ' /ETA /FP'];
+end
+
+[status,result] = robocopy(source,destination,flags,OPT.quiet);
+
