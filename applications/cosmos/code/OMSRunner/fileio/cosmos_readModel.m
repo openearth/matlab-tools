@@ -574,6 +574,7 @@ if isfield(model,'stations')
                         hm.models(i).stations(j).plots(k).datasets(id).id=model.stations(j).station.plots(k).plot.datasets(id).dataset.id;
                     end
                 end
+                hm.models(i).stations(j).storeSP2=0;
             end
         end
     end
