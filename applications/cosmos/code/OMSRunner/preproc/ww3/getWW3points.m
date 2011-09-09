@@ -14,10 +14,16 @@ if model.nrTimeSeriesDatasets>0
     rid{imod}=model.runid;
     names{imod}=model.name;
 end
+stations={''};
 for i=1:model.nrTimeSeriesDatasets
-    ip=ip+1;
-    x{imod}(ip)=model.timeSeriesDatasets(i).location(1);
-    y{imod}(ip)=model.timeSeriesDatasets(i).location(2);
+    stat=model.timeSeriesDatasets(i).station;
+    istat=strmatch(stat,stations,'exact');
+    if isempty(istat)
+        ip=ip+1;
+        stations{ip}=stat;
+        x{imod}(ip)=model.timeSeriesDatasets(i).location(1);
+        y{imod}(ip)=model.timeSeriesDatasets(i).location(2);
+    end
 end
 
 %% Nesting points
