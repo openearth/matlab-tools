@@ -79,7 +79,8 @@ OPT = setproperty(OPT, varargin{:});
 xb      = xb_get_transect(xb);
 
 nx      = xb_get(xb, 'DIMS.globalx');
-dt      = mean(diff(xb_get(xb, 'DIMS.globaltime_DATA')));
+t       = xb_get(xb, 'DIMS.globaltime_DATA');
+dt      = min([mean(diff(t)) t(end)]);
 
 f       = {xb.data.name};
 re      = regexp(f,'^(.+)_mean$','tokens');
@@ -90,7 +91,8 @@ for i = idx
 end
 
 if ~isempty(idx)
-    dt  = mean(diff(xb_get(xb, 'DIMS.meantime_DATA')));
+    t   = xb_get(xb, 'DIMS.meantime_DATA');
+    dt  = min([mean(diff(t)) t(end)]);
 end
 
 %% initialize output
