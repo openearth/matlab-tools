@@ -116,7 +116,7 @@ if isempty(get_optval('wl', xgrid))
 end
 OPT.bathy = set_optval('xgrid', xgrid, OPT.bathy);
 
-bathy = xb_generate_grid(OPT.bathy{:});
+bathy = xb_generate_bathy(OPT.bathy{:});
 
 %% create wavedir grid
 

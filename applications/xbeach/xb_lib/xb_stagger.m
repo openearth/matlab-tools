@@ -7,18 +7,19 @@ function g = xb_stagger(x, y)
 %   itself.
 %
 %   Syntax:
-%   varargout = xb_stagger(varargin)
+%   g = xb_stagger(x, y)
 %
 %   Input:
-%   varargin  =
+%   x       = x-coordinates of z-points
+%   y       = y-coordinates of z-points
 %
 %   Output:
-%   varargout =
+%   g       = structure with grid information
 %
 %   Example
-%   xb_stagger
+%   g = xb_stagger(x,y);
 %
-%   See also 
+%   See also xb_generate_bathy
 
 %% Copyright notice
 %   --------------------------------------------------------------------
