@@ -7,7 +7,7 @@ function ConvertBct2XBeach(fin,fout,trefxbeach)
 % morfac : MORFAC
 % trefxbeach : reference time xbeach
 
-Info=bct_io('read',fin);
+Info=ddb_bct_io('read',fin);
 
 itd=Info.Table(1).ReferenceTime;
 itd=datenum(num2str(itd),'yyyymmdd');

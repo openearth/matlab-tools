@@ -116,7 +116,7 @@ end
 %% Predictions and Observations
 if get(hm.toggleGetObservations,'Value')
     set(hm.textModelLoopStatus,'String','Status : Getting observations ...');drawnow;
-%    cosmos_getObservations(hm);
+    cosmos_getObservations(hm);
     set(hm.textModelLoopStatus,'String','Status : Making predictions ...');drawnow;
     cosmos_getPredictions(hm);
 end

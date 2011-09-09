@@ -119,7 +119,7 @@ end
 %% Time series in individual rip currents
 for it=1:nt
     for i=1:nrRips
-        rips(i).t(it)=t(i);
+        rips(i).t(it)=t(it);
         rips(i).vmax(it)=max(max(vcrs(rind1(i):rind2(i),:,it)));
     end
 end

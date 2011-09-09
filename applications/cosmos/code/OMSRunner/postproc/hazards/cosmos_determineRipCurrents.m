@@ -46,6 +46,18 @@ warningLevels=[0.15 0.3 0.5];
 ripCurrentTimeStack(figname,t,ycrs,vcrsmax,wl,rips,warningLevel,warningLevels,ref,geojpg,geojgw);
 
 %% Individual time series figures per rip
+for ir=1:length(rips)
+    fn=[model.dir 'lastrun' filesep 'figures' filesep hazard.name '.ripcurrent' num2str(ir) '.png'];
+    data.x=rips(ir).t;
+    data.y=rips(ir).vmax;
+    data.color='k';
+    data.name='rip current';
+    xl=[rips(ir).t(1) rips(ir).t(end)];
+    xtcks=[rips(ir).t(1):1/8:rips(ir).t(end)];
+    cosmos_timeSeriesPlot(fn,data,'xlim',xl,'xticks',xtcks,'ylim',[0 1],'yticks',[0:0.2:1],'ylabel','Current velocity (m/s)','title','Rip current velocity');
+%    cosmos_ripCurrentTimeSeries(fn,rips,ir,wl,warningLevels);
+end
+
 
 %% Hazard xml and html
 fname=[hazarchdir hazard.name '.xml'];

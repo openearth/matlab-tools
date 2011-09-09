@@ -12,6 +12,7 @@ ip=0;
 if model.nrTimeSeriesDatasets>0
     imod=1;
     rid{imod}=model.runid;
+    names{imod}=model.name;
 end
 for i=1:model.nrTimeSeriesDatasets
     ip=ip+1;

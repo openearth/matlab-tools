@@ -60,7 +60,6 @@ if model.DetermineHazards
         disp('Determining hazards ...');
         tic
         set(hm.textModelLoopStatus,'String',['Status : determining hazards - ' mdl ' ...']);drawnow;
-        cosmos_determineHazards(hm,m);
         switch lower(model.type)
             case{'delft3dflow','delft3dflowwave'}
 %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
@@ -95,6 +94,18 @@ if model.runPost
 %         return;
     end
     hm.models(m).plotDuration=toc;
+end
+
+if model.DetermineHazards
+    try
+        disp('Determining hazards ...');
+        tic
+        set(hm.textModelLoopStatus,'String',['Status : determining hazards - ' mdl ' ...']);drawnow;
+        cosmos_determineHazards(hm,m);
+    catch
+        WriteErrorLogFile(hm,['Something went wrong with determining hazards from ' model.name]);
+    end
+    hm.models(m).hazardDuration=toc;
 end
 
 if model.makeWebsite
