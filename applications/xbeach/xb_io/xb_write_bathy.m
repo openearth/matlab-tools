@@ -90,7 +90,14 @@ for i = 1:length(f)
     if xb_exist(xb, f{i})
         varargout{c} = OPT.(f{i});
         data = xb_get(xb, f{i});
-        save(fullfile(OPT.path, OPT.(f{i})), '-ascii', 'data');
+        fname = fullfile(OPT.path, OPT.(f{i}));
+        if isnumeric(data)
+            save(fname, '-ascii', 'data');
+        else
+            fid = fopen(fname, 'w');
+            fprintf(fid, '%s', data);
+            fclose(fid);
+        end
         c = c+1;
     end
 end
