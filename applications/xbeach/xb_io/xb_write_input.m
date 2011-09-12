@@ -101,11 +101,12 @@ if OPT.write_files
                     % assume file to be a grid and try writing it
                     try
                         xb.data(i).value = [xb.data(i).name '.txt'];
+                        fname = fullfile(fdir, xb.data(i).value);
                         data = xb_get(sub, 'data');
                         if isnumeric(data)
-                            save(fullfile(fdir, xb.data(i).value), '-ascii', 'data');
+                            save(fname, '-ascii', 'data');
                         elseif iscell(data)
-                            fid = fopen(fullfile(fdir, xb.data(i).value), 'w');
+                            fid = fopen(fname, 'w');
                             for j = 1:length(data)
                                 if isnumeric(data{j})
                                     fprintf(fid, '%f\n', data{j});
@@ -114,13 +115,13 @@ if OPT.write_files
                                 end
                             end
                             fclose(fid);
-                        else
-                            % unknown type, ignore
-                            xb = xb_del(xb, xb.data(i).name);
+                        elseif ischar(data)
+                            fid = fopen(fname, 'w');
+                            fprintf(fid, '%s', data);
+                            fclose(fid);
                         end
                     catch
                         % cannot write file, ignore
-                        xb = xb_del(xb, xb.data(i).name);
                     end
             end
         end

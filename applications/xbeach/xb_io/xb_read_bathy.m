@@ -79,7 +79,15 @@ for ivar = 1:length(vars)
             A = load(files{ivar});
             xb = xb_set(xb, '-units', vars{ivar}, {A 'm'});
         catch
-            error(['Bathymetry definition file incorrectly formatted [' files{ivar} ']']);
+            try
+                fid = fopen(files{ivar}, 'r');
+                data = fread(fid, '*char')';
+                fclose(fid);
+
+                xb = xb_set(xb, '-units', 'data', {data 'm'});
+            catch
+                error(['Bathymetry definition file incorrectly formatted [' files{ivar} ']']);
+            end
         end
     else
         error(['Bathymetry definition file does not exist [' files{ivar} ']'])
