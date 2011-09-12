@@ -297,9 +297,9 @@ end
       end
       %% preprocess timespan
 
-      if size(OPT.timeIn,1)==1
+      if size(OPT.timeIn,1)<2 % deal with enpty and scalar times
       timeSpan = KML_timespan('timeIn',OPT.timeIn      ,'timeOut',OPT.timeOut      ,'dateStrStyle',OPT.dateStrStyle);
-      else
+      elseif size(OPT.timeIn,1)>1
       timeSpan = KML_timespan('timeIn',OPT.timeIn(ii,:),'timeOut',OPT.timeOut(ii,:),'dateStrStyle',OPT.dateStrStyle);
       end
 

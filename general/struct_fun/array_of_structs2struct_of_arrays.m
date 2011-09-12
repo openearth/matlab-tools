@@ -8,9 +8,9 @@ function S1 = array_of_structs2struct_of_arrays(S2,varargin)
 % corresponds to the size of s2. You can adjust this with PERMUTE.
 %
 % All fields with a common name need to be of the same type, and have the
-% same size if numeric. cellstrings are turned in chars.
+% same size if numeric. cellstrings are turned into chars.
 %
-% Example: if s2(1:6) is an array of 6 structures, each with fields
+% Example: if s2(1:6) is an array of 6 structs, in which each with field looks like:
 %   
 %     a: 'lampje'
 %     b: [1x3]
@@ -22,11 +22,11 @@ function S1 = array_of_structs2struct_of_arrays(S2,varargin)
 %     b: [6x1x3]
 %     c: [6x1x2]
 %
-% If field b would have an odd size (or be []) in one element s2(i), this is 
-% considered an error. To continue with all fieldnames that are OK (a & c in this case)
+% If a field has an odd size (or is []) in one element s2(i), this is 
+% considered an error. To continue with the other fieldnames that are OK 
 % use array_of_structs2struct_of_arrays(s2,'IgnoreErrors',1);
 %   
-%See also: STRUCT_OF_ARRAYS2ARRAY_OF_STRUCTS, CELL2STRUCT, STRUCT2CELL, PERMUTE
+%See also: CELL2STRUCT, STRUCT2CELL, PERMUTE, cell2mat
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -81,7 +81,7 @@ for ifld = 1 : length(fldnames)  % loop on fields
    ignore = 0;
    
    if str
-      % check for identical type
+      %% check for identical type
       for i = 1 : n
          if ~(ischar(S2(i).(fldname)) |iscellstr(S2(i).(fldname)))
          if OPT.IgnoreErrors
@@ -92,7 +92,7 @@ for ifld = 1 : length(fldnames)  % loop on fields
          end
          end
       end
-      % merge data      
+      %% merge data      
       if ~ignore
           for i = 1 : n
              if ischar(S2(i).(fldname))
@@ -104,13 +104,13 @@ for ifld = 1 : length(fldnames)  % loop on fields
       end
    else
       sz = size(S2(1).(fldname));
-      % check for identical type
+      %% check for identical type
       for i = 1 : n
          if ~isnumeric(S2(i).(fldname))
          error(['Field ''',fldname,''' in struct(',num2str(i),') is not numeric while in struct(1) it is.'])
          end
       end
-      % check for identical size
+      %% check for identical size
       for i = 1 : n
          if ~isequal(size(S2(i).(fldname)),sz)
          if OPT.IgnoreErrors
@@ -121,7 +121,7 @@ for ifld = 1 : length(fldnames)  % loop on fields
          end
          end
       end    
-      % merge data
+      %% merge data
       if ~ignore
           S1.(fldname) = repmat(nan,[n sz(:)']);
           for i = 1 : n

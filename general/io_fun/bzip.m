@@ -37,7 +37,7 @@ function bzip(fname,varargin)
 %
 %   bzip('20050201-AVHRR16_L-EUR-L2P-mcsst_..._cnavo-v01.nc.bz2','-d -k')
 %
-%See also: ZIP
+%See also: ZIP, compress, uncompress
 
 %% Copyright notice
 %   --------------------------------------------------------------------

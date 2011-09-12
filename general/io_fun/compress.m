@@ -60,7 +60,7 @@ function OPT = compress(fileNameOut,fileNameIn,varargin)
 %       compress('test.zip',{'c:\Temp\test.doc'},'type','-tzip')
 %           compresses c:\temp\test.doc to test.zip
 %
-%   See also: uncompress
+%   See also: uncompress, bzip, zip, unzip
 
 %% Copyright notice
 %   --------------------------------------------------------------------

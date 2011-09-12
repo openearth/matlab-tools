@@ -2,8 +2,10 @@ function stringout = mkvar(stringin,varargin);
 %MKVAR   Make char string into valid variable name.
 %
 % stringout = mkvar(stringin)
+%
 % Replaces everything in s1 that's not a letter or digit with '_'
 % so s2 can be used as variable name or as fieldname in a struct.
+% s1 cna be a 2D char or a cellstr.
 %
 % If necesarry the first position is filled with 'x' rather than '_'.
 % stringout = mkvar(stringin,letter) replaces the first position with the 
@@ -62,27 +64,32 @@ function stringout = mkvar(stringin,varargin);
       OPT.firstletter = varargin{1}';
    end
    
-   keep             = (isletter(stringin) | ('0' <= stringin & stringin <= '9')) & ~ismember(stringin,OPT.excludes);
-   stringout        = stringin;
-   stringout(~keep) = '_';
-   
-   if stringout(1)  == '_'
-      stringout(1)  = OPT.firstletter;
-   end
-
-%% First character can not be a number
-%  either replace or pad.
-
-   keep1  = isletter(stringin(1));
-   if ~keep1
-   if nargin==3
+   if nargin>2
        OPT.whattodo1st = varargin{2};
    end    
-       
-   if strcmpi(OPT.whattodo1st(1),'a');
-      stringout    = [OPT.firstletter,stringout];
-   elseif strcmpi(OPT.whattodo1st(1),'r');
-      stringout(1) = OPT.firstletter;
+   
+       makechar = 0;
+   if ischar(stringin)
+       stringin = cellstr(stringin);
+       makechar = 1;
    end
-   end
+   
+    stringout = stringin;
+    for i=1:length(stringin)
 
+       keep                = (isletter(stringin{i}) | ('0' <= stringin{i} & stringin{i} <= '9')) & ~ismember(stringin{i},OPT.excludes);
+       stringout{i}(~keep) = '_';
+
+       if stringout{i}(1)  == '_' | ...
+          ('0' <= stringout{i}(1) & stringout{i}(1) <= '9')
+           if strcmpi(OPT.whattodo1st(1),'r');
+              stringout{i}(1)  = OPT.firstletter;
+           elseif strcmpi(OPT.whattodo1st(1),'a');
+              stringout{i}  = [OPT.firstletter, stringout{i}];
+           end
+       end
+    end
+   
+   if makechar
+       stringout = char(stringout);
+   end
