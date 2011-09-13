@@ -34,10 +34,10 @@ function varargout = rws_waterbase_get_url_loop(varargin)
 % $Revision$
 % $HeadURL$
 
-%% TO DO: convert to SI units here
-%% TO DO: add option to loop entire donar_substances.csv
-%% TO DO: remove time from file name: so we can do version control
-%% TO DO: return url as argument used to get data
+% TO DO: convert to SI units here
+% TO DO: add option to loop entire donar_substances.csv
+% TO DO: remove time from file name: so we can do version control
+% TO DO: return url as argument used to get data
 
 %% Choose parameter and provide CF standard_names and units.
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/

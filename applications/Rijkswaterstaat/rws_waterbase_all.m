@@ -9,28 +9,29 @@ function rws_waterbase_all
    close all
    
 % TO DO: merge kmls for al substances
+% TO DO: move only identical DONAR ID to old
 
 %% Initialize
 
-   OPT.download       = 1; % get fresh downloads from rws and remove exisitng to sub dir old
-   OPT.make_nc        = 1; % makes mat files
-   OPT.make_catalog   = 1; % otherwise lod existing one
-   OPT.make_kml       = 1;
+   OPT.download       = 0; % get fresh downloads from rws and move exisitng to sub dir old
+   OPT.make_nc        = 0; % makes also temporary mat files, moves exisiting nc to old subdir
+   OPT.make_catalog   = 0; % otherwise load existing one
+   OPT.make_kml       = 0; % processing all kml only takas about 4 hours
    OPT.baseurl        = 'http://live.waterbase.nl';
 
    rawbase = 'D:\checkout\OpenEarthRawData';    % @ local
     ncbase = 'D:\opendap.deltares.nl\thredds\'; % @ local
    urlbase = 'http://opendap.deltares.nl:8080'; % production server (links)
-   kmlbase = 'F:\kml\';                         % @ local, no links to other kml or images any more
+   kmlbase = 'd:\kml.deltares.nl\';             % @ local, no links to other kml or images any more
 
 %% Parameter choice
 
    donar_wnsnum = [ 559   44  282  410  209  ... % sal   T Chl SPM pO2
                      29   54   22   23   24  ... %   Q eta  Hs dir  Tm 
-                    332  346  347  360  363  ... %   N   N   N   O   P
-                    364  380  491  492  493  ... %   P P04 NH4 N03 N02
+                    332  346  347  360  363  ... % KjN   N   N  O2 PO4
+                    364  380  491  492  493  ... %   P P04 NH4 N02 N03
                     541  560 1083    1  377 ];   % DSe  Si DOC zwl  pH (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
-
+                
 % DO 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
 
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
@@ -62,7 +63,7 @@ function rws_waterbase_all
       OPT.directory_kml     = [kmlbase,'\rijkswaterstaat\waterbase\'      ,filesep,];
       OPT.directory_raw     = [rawbase,'\rijkswaterstaat\waterbase\cache\',filesep,subdir,filesep];
       
-      multiWaitbar(mfilename,n/length(donar_wnsnum),'label',['Processing substance: ',OPT.donar_parcode,'(',num2str(ivar),')'])
+      multiWaitbar(mfilename,n/length(donar_wnsnum),'label',['Processing substance: ',OPT.donar_parcode,' (',num2str(ivar),')'])
 
 %% Download from waterbase.nl
    
@@ -101,7 +102,8 @@ function rws_waterbase_all
 %  make sure urlPath alreayd links to place where we are going to put them.
 %  so we can copy catalog.nc together with the other nc files.
 %  For making kml below we use local still files !
-%  Idea: make a special *_local_machine catalog?
+%  Idea: make a special *_local_machine catalog? Be aware this causes
+%  catalog to contain non-expected files.
 
    if OPT.make_catalog
    CATALOG = nc_cf_opendap2catalog('base',[OPT.directory_nc],... % dir where to READ netcdf
@@ -119,12 +121,25 @@ function rws_waterbase_all
    if OPT.make_kml
 
       OPT2.fileName           = [OPT.directory_kml,filesep,subdir,'.kml'];
-      OPT2.kmlName            = ['rijkswaterstaat/waterbase/' subdir];
-      OPT2.text               = {['<B>',OPT.name,'</B>']}; % include more meta-data from DONAR
+      OPT2.kmlName            = ['Rijkswaterstaat time series ' subdir];
+      OPT2.text               = {['<B>',OPT.name,'</B>']};
      %OPT2.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
      %OPT2.iconhighlightState = 'http://www.rijkswaterstaat.nl/images/favicon.ico';
 
       OPT2.description        = {['data: Rijkswaterstaat (http://www.rws.nl) via (',OPT.baseurl,'), presentation: http://www.OpenEarth.eu']};
+      
+      OPT2.description        = ['<![CDATA[<hr> This is a proof-of-concept demo of how time series of the MWTL monitoring '...
+                                 'data from Rijkswaterstaat could be presented in Google Earth for easy navigation in time space. '...
+                                 'The data in this proof-of-concept demo is a cache that is updated a few times per year. For up-to-date'...
+                                 'data and meta-data please visit the original source provided by Rijkswaterstaat: <a href="http://live.waterbase.nl">waterbase</a>.'....
+                                 'For real-time (unvalidated) data please visit <a href="http://www.rijkswaterstaat.nl/water/scheepvaartberichten_waterdata/monitoring_meetsystemen/lmw/mfps/">MFPS</a> or <a href="http://matroos.deltares.nl">Matroos</a> (model forecasts).'...
+                                 '<hr><table bgcolor="#333333" cellpadding="3" cellspacing="1"><tbody><tr><td colspan="2" bgcolor="#666666"><div style="color:#FFFFFF;">Credits:</div></td></tr>',...
+	                             '<tr><td    bgcolor="#FFFFFF">data source     </td><td bgcolor="#FFFFFF">Rijkswaterstaat</td></tr>',...
+	                             '<tr><td    bgcolor="#FFFFFF">data source url </td><td bgcolor="#FFFFFF">http://www.rws.nl</td></tr>',...
+	                             '<tr><td    bgcolor="#FFFFFF">data provider   </td><td bgcolor="#FFFFFF">',OPT.baseurl,'</td>',...
+	                             '<tr><td    bgcolor="#FFFFFF">data distributor</td><td bgcolor="#FFFFFF">http://www.OpenEarth.eu</td>',...
+	                             '</tr></tbody></table><hr>]]>'];
+      
       OPT2.name               = OPT.name;
       
       OPT2.lon                = 1;
@@ -132,14 +147,17 @@ function rws_waterbase_all
       OPT2.z                  = 100e4;
       OPT2.varname            = subdir;
       
-      OPT2.logokmlName        = 'Rijkswaterstaat logo';
-      OPT2.overlayXY          = [.5 1];
-      OPT2.screenXY           = [.5 1];
-      OPT2.imName             = 'overheid.png';
-      OPT2.logoName           = 'overheid4GE.png';
+      OPT2.logokmlName        = {'Rijkswaterstaat logo','OpenEarth logo'};
+      OPT2.overlayXY          = {[.5 1],[0 0.00]};
+      OPT2.screenXY           = {[.5 1],[0 0.04]};
+      OPT2.imName             = {'overheid.png',[fileparts(oetlogo),filesep,'oet4GE.png'];};
+      OPT2.logoName           = {'overheid4GE.png','oet4GE.png'};
+      
       OPT2.varPathFcn         = @(s) path2os(strrep(s,['http://opendap.deltares.nl/thredds/dodsC/opendap/'],ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
       OPT2.resolveUrl         = cellfun(@(x) ['http://live.waterbase.nl/index.cfm?loc=',upper(x),'&page=start.locaties.databeschikbaarheid&taal=nl&loc=&wbwns=',num2str(OPT.donar_wnsnum),'|',strtrim(strrep(OPT.donar_wns_oms,' ','+')),'&whichform=2'],CATALOG.station_id,'un',0);
       OPT2.resolveName        = 'www.rws.nl (waterbase)';
+      OPT2.credit             = ' data: www.rws.nl plot: www.OpenEarth.eu';
+      OPT2.preview            = 1;
       
       nc_cf_stationtimeseries2kmloverview(CATALOG,OPT2); % inside urlPath is used to read netCDF data
       

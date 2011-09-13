@@ -33,14 +33,15 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
    OPT.lat                = [];
    OPT.z                  = [];
    
-   OPT.logokmlName        = 'Rijkswaterstaat logo';
-   OPT.overlayXY          = [.5 1];
-   OPT.screenXY           = [.5 1];
-   OPT.imName             = 'overheid.png';
-   OPT.logoName           = 'overheid4GE.png';
+   OPT.logokmlName        = 'OpenEarth logo';
+   OPT.overlayXY          = [0 0.00];
+   OPT.screenXY           = [0 0.04];
+   OPT.imName             = [fileparts(oetlogo),filesep,'oet4GE.png'];
+   OPT.logoName           = 'OET4GE.png';
 
    OPT.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
    OPT.iconhighlightState = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
+   OPT.credit             = 'Plot created with: www.OpenEarth.eu';
    
    OPT.varname            = []; % statistics
    OPT.preview            = 1;  % add 2 previews of - and hence requires - varname
@@ -196,7 +197,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
     
        ncfile = OPT.varPathFcn(D.urlPath{ii});
        
-           [DATA,META] = nc_cf_stationTimeSeries(ncfile,varname,'plot',OPT.preview);
+           [DATA,META] = nc_cf_stationTimeSeries(ncfile,varname,'plot',OPT.preview*2);
        units.(varname) = META.(varname).units;
        
        if ~isempty(OPT.resolveName)
@@ -207,7 +208,7 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
        
        if OPT.preview
           pngname1{ii} = [fileparts(OPT.fileName),D.station_id{ii},'.png'];
-          text(1,0,{' data: www.rws.nl plot: www.OpenEarth.eu'},'rotation',90,'units','normalized','ve','top')
+          text(1,0,{OPT.credit},'rotation',90,'units','normalized','ve','top')
           set(findfont,'fontsize',7);print2screensizeoverwrite(pngname1{ii},400);clf
 
           pngname2{ii} = [fileparts(OPT.fileName),D.station_id{ii},'_hist.png'];
@@ -215,12 +216,11 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
           xlabel(mktex([META.(varname).long_name,' [',META.(varname).units,']']))
           ylabel(['# (total # ',num2str(length(DATA.(varname))),')'])
           grid on
-          text(1,0,{' data: www.rws.nl plot: www.OpenEarth.eu'},'rotation',90,'units','normalized','ve','top')
+          text(1,0,{OPT.credit},'rotation',90,'units','normalized','ve','top')
           set(findfont,'fontsize',7);print2screensizeoverwrite(pngname2{ii},400);clf
           preview  = ['<hr><img src="',filenameext(pngname1{ii}),'" alt="Preview">'...
                           '<img src="',filenameext(pngname2{ii}),'" alt="Preview">'];
-
-       close
+          close all
 
        end
        
@@ -344,13 +344,29 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
 %% LOGO
 %  add url of logo kml @ OpenEarth wiki
 
-   output = KMLlogo('kmlName'  ,OPT.logokmlName,...
-                    'overlayXY',OPT.overlayXY,...
-                    'screenXY' ,OPT.screenXY,...
-                    'imName'   ,OPT.imName,...
-                    'logoName' ,OPT.logoName);
+   if ischar(OPT.logokmlName)
+     if exist(OPT.imName)==2
+       output = KMLlogo('kmlName'  ,OPT.logokmlName,...
+                        'overlayXY',OPT.overlayXY,...
+                        'screenXY' ,OPT.screenXY,...
+                        'imName'   ,OPT.imName,...
+                        'logoName' ,OPT.logoName);
 
-   fprintf(fid,output    ,'%s');
+       fprintf(fid,output    ,'%s');
+     end
+   else
+     for i=1:length(OPT.logokmlName)
+       if exist(OPT.imName{i})==2
+       output = KMLlogo('kmlName'  ,OPT.logokmlName{i},...
+                        'overlayXY',OPT.overlayXY{i},...
+                        'screenXY' ,OPT.screenXY{i},...
+                        'imName'   ,OPT.imName{i},...
+                        'logoName' ,OPT.logoName{i});
+
+       fprintf(fid,output    ,'%s');
+       end
+     end
+   end
    fprintf(fid,KML_footer,'%s');
 
 %% close KML
@@ -361,6 +377,8 @@ function OPT = nc_cf_stationtimeseries2kmloverview(metadatadatabase,varargin)
 
    KML2kmz(OPT.fileName,oetlogo,OPT.logoName,{pngname1{:},pngname2{:}}) % oet logo, OPT.iconnormalState,OPT.iconhighlightState, are cahced because they're googles
    
+   if OPT.preview
    deletefile(pngname1)
    deletefile(pngname2)
+   end
    

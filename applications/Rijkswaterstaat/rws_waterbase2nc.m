@@ -35,7 +35,6 @@ function rws_waterbase2nc(varargin)
 % $HeadURL$
 % $Keywords: $
 
-% TO DO: add link to site-specific waterbase url as called in getWaterbaseData
 % TO DO: make time dimension unlimited
 % TO DO: use single precision for parameter
 % TO DO: save meta-info properties as int8 with each number explained in an att called legend, see also CF flags
@@ -44,7 +43,7 @@ function rws_waterbase2nc(varargin)
 %  http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/standard-name-table/
 %  keep name shorter than namelengthmax (=63)
 
-   OPT.donar_wnsnum       = []; %[9]; % 0=all or select index from OPT.names above
+   OPT.donar_wnsnum       = []; % 0=all or select index from OPT.names above
 
 %% Initialize
 
@@ -169,9 +168,9 @@ for ivar=[OPT.donar_wnsnum]
 
     if ~(all(isnan(D.data.datenum)))
 
-        %% Unit conversion
-        % deal with RWS specific, non-general units here,
-        % the general ones are done by convert_units
+     %% Unit conversion
+     % deal with RWS specific, non-general units here,
+     % the general ones are done by convert_units
         if ~(isempty(OPT.units) | isnan(OPT.units))
           if OPT.debug
             ['data > goal units = ' D.data.units, ' > ' OPT.units]
@@ -190,11 +189,13 @@ for ivar=[OPT.donar_wnsnum]
              end
           elseif strcmpi(D.data.units,'DIMSLS')  % introduced by rws between june 2010 and mar 2011
              if strcmpi(OPT.units,'psu')
-             D.data.units       = 'psu';
+                D.data.units       = 'psu';
              elseif strcmpi(OPT.units,'ppt')
-             D.data.units       = 'ppt';
+                D.data.units       = 'ppt';
+             elseif strcmpi(OPT.units,'1') % for pH
+                D.data.units       = '1';
              else
-             error(['no conversion defined for data units:',D.data.units])
+                error(['no conversion defined for data units:',D.data.units])
              end
           elseif strcmpi(D.data.units,'cm t.o.v. NAP')
              D.data.units           = 'cm';
@@ -212,6 +213,7 @@ for ivar=[OPT.donar_wnsnum]
           if OPT.debug
             ['data units kept = ' D.data.units]
           end
+          D.data.units = '';
         end
         D.version     = '';
 

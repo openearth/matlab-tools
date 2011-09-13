@@ -72,8 +72,14 @@ function varargout = rws_waterbase_get_url(varargin);
    OPT.baseurl  = 'http://live.waterbase.nl';
 
 %% Substance names
-
-   Substance = rws_waterbase_get_substances;
+   Substance = [];
+   while isempty(Substance)
+      Substance = rws_waterbase_get_substances;
+      if isempty(Substance)
+      fprintf(2,[OPT.baseurl,': Online source not available. Trying again to get list of: Substances']);
+      pause(5)
+      end
+   end
   %Substance = rws_waterbase_get_substances_csv('donar_substances.csv');
 
 %% Select substance name
@@ -98,8 +104,15 @@ function varargout = rws_waterbase_get_url(varargin);
                                                                    Substance.FullName{indSub},'"'])
 
 %% Location names
+   Station = [];
+   while isempty(Station)
+      Station = rws_waterbase_get_locations(Substance.Code(indSub),Substance.CodeName{indSub});
+      if isempty(Station)
+      fprintf(2,[OPT.baseurl,' failed. Trying again to get list of: Stations']);
+      pause(5)
+      end
+   end
 
-   Station = rws_waterbase_get_locations(Substance.Code(indSub),Substance.CodeName{indSub});
 
 %% Select Location names
 
@@ -200,24 +213,21 @@ function varargout = rws_waterbase_get_url(varargin);
      end
 
       %disp(urlName)
+      status=0;
+      while status==0
+          [s status] = urlwrite([urlName],OutputName);
 
-      [s status] = urlwrite([urlName],OutputName);
-
-      if (status == 0)
-        warndlg([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
-        close(h);
-
-        return;
-      else
-      
-        fidurl = fopen(OutputNameUrl, 'w+');
-        fprintf(fidurl,'[InternetShortcut]\r\n'); % window eol (as *.url is IE thing)
-        fprintf(fidurl,'URL=%s',urlName);
-        fclose(fidurl);
-        % TO DO add time of last update
-      
+          if (status == 0)
+            fprintf(2,[OPT.baseurl,': Online source not available. Trying again to get ',Substance.FullName,' at ',Substance.Code]);
+            pause(5)
+          else
+            fidurl = fopen(OutputNameUrl, 'w+');
+            fprintf(fidurl,'[InternetShortcut]\r\n'); % window eol (as *.url is IE thing)
+            fprintf(fidurl,'URL=%s',urlName);
+            fclose(fidurl);
+            % TO DO add time of last update
+          end
       end
-
    else
 
 %% Pad multiple files returned for multiple locations
@@ -237,7 +247,6 @@ function varargout = rws_waterbase_get_url(varargin);
             if (status == 0)
               warndlg([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
               close(h);
-
               return;
             end
             ind    = regexp(s, '\n');

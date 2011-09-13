@@ -290,7 +290,7 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
       datetick('x')
       grid     on
       title   ({mktex(filenameext(fileinfo.Filename)),...
-               ['"',D.station_name(:)','"',...
+               ['"',mktex(D.station_name(:)'),'"',...
                 ' (',num2str(D.lon(1)),'\circE',...
                  ',',num2str(D.lat(1)),'\circN)']})
               
@@ -309,8 +309,9 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
       end
               
       ylabel  ([mktex(long_name),' [',mktex(units),']']);
-      
+      if OPT.plot==1 % this allows to pass 2 and to overrule credit
       text(1,0,'Created with: www.OpenEarth.eu','rotation',90,'fontsize',8,'units','normalized','verticalalignment','top')
+      end
       
       if ~isempty(OPT.pngname)
          print2screensizeoverwrite(OPT.pngname)
