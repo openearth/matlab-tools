@@ -38,6 +38,7 @@ function Factor=convert_units(InUnits,OutUnits);
 
     InUnits = strrep( InUnits,'%','0.01');
    OutUnits = strrep(OutUnits,'%','0.01');
+   percent  = 0.01; % same as in UD units
 
 %% replace all occurences like m2 with m^2
 
