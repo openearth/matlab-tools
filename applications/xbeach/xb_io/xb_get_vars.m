@@ -68,12 +68,18 @@ OPT = setproperty(OPT, varargin{:});
 
 %% get variables
 
-if isdir(fname) || strcmpi(fname(end-3:end), '.dat')
+if strcmpi(fname(end-3:end), '.dat')
     vars = get_vars_dat(fname, OPT.vars);
 elseif strcmpi(fname(end-2:end), '.nc')
     vars = get_vars_netcdf(fname, OPT.vars);
-elseif isdir(fileparts(fname))
-    vars = get_vars_dat(fname, OPT.vars);
+elseif isdir(fname)
+    if ~isempty(dir(fullfile(fname,'*.nc')))
+        vars = get_vars_netcdf(fname, OPT.vars);
+    elseif ~isempty(dir(fullfile(fname,'*.dat')))
+        vars = get_vars_dat(fname, OPT.vars);
+    else
+        error(['Output type not recognised [' fname ']']);
+    end
 else
     error(['Output type not recognised [' fname ']']);
 end
@@ -107,6 +113,13 @@ end
 
 function vars = get_vars_netcdf(fname, filter)
     vars = {};
+    
+    if isdir(fname)
+        ncfiles = dir(fullfile(fname, '*.nc'));
+        if ~isempty(ncfiles)
+            fname   = fullfile(fname, ncfiles(1).name);
+        end
+    end
     
     info = nc_info(fname);
     for i = 1:length({info.Dataset.Name})

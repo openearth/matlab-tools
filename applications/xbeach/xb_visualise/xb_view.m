@@ -101,6 +101,11 @@ function ui_build(obj)
     pobj = get_pobj(obj);
     info = get(pobj, 'userdata');
     
+    if length(info.t)<=1
+        close(obj);
+        error('No data');
+    end
+    
     sliderstep = [1 5]/(length(info.t)-1);
     
     % plot area
