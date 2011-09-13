@@ -39,7 +39,7 @@ function varargout = KMLmerge_files(varargin)
    end
    
    if ~length(OPT.foldernames)==length(OPT.sourceFiles) & ~isempty(OPT.foldernames)
-      error('length of foldernames does ot match number of files.')
+      error('length of foldernames does not match number of files.')
    end
 
 %% filename, gui for filename, if not set yet

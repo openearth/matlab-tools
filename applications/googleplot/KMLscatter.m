@@ -130,10 +130,17 @@ function varargout = KMLscatter(lat,lon,c,varargin)
    elseif ~length(c)==length(lon)
       error('c should have length 1 or have same size as lon')
    end
-
-   lon    = lon(~isnan(c(:)));
-   lat    = lat(~isnan(c(:)));
-   c      =   c(~isnan(c(:)));
+   mask   = ~isnan(c(:));
+   lon    = lon(mask);
+   lat    = lat(mask);
+   c      =   c(mask);
+   
+   if ~isempty(OPT.name) 
+       OPT.name = OPT.name(mask);
+   end
+   if ~isempty(OPT.html)   
+       OPT.html = OPT.html(mask);
+   end
    
    if isnumeric(OPT.colorMap)
       OPT.colorSteps = size(OPT.colorMap,1);
@@ -203,7 +210,7 @@ for ii = 1:OPT.colorSteps
         ' </Style>' eol...
         '<Style id="cmarker_',num2str(ii,'%0.3d'),'h">' eol...
         ' <BalloonStyle><text>' eol...
-        ' <h3>$[name]</h3>'... % variable per dot
+        ' $[name]'... % variable per dot
         ' $[description]' eol... % variable per dot
         ' </text></BalloonStyle>' eol...
         ' <IconStyle>' eol...
@@ -266,7 +273,7 @@ end
    output = [output '<!--############################-->' eol];
    fprintf(OPT.fid,'%s',output);output = [];
    fprintf(OPT.fid,'<Folder>');
-   fprintf(OPT.fid,'%s',['<name>',OPT.kmlName,'</name>']); % note format '%s' to allow % inside name
+   fprintf(OPT.fid,'%s',['<name> scatter points </name>']); % note format '%s' to allow % inside name
    fprintf(OPT.fid,['  <open>',num2str(OPT.open),'</open>']); % TO DO 1
 
    %% set time as wide as all samples, note that header also contains gtime already
@@ -314,6 +321,7 @@ end
           '<Placemark>\n'...
           ' <name></name>\n'...            % no names so we see just the scatter points
           ' <visibility>%s</visibility>\n'...
+          ' <snippet></snippet>\n'...      % prevent html from showing up in menu
           ' <description><![CDATA['...     % start required wrapper for html
           '%s'...
           ']]></description>\n'...         % end   required wrapper for html
@@ -330,6 +338,7 @@ end
       newOutput= sprintf([...
           '<Placemark>\n'...
           ' <name></name>\n'...            % no names so we see just the scatter points
+          ' <snippet></snippet>\n'...      % prevent html from showing up in menu
           ' <visibility>%s</visibility>\n'...
           '%s',...                         % timeSpan
           ' <styleUrl>#%s</styleUrl>\n'... % styleName
@@ -343,6 +352,7 @@ end
       newOutput= sprintf([...
           '<Placemark>\n'...
           ' <name>%s</name>\n'...          % no names so we see just the scatter points
+          ' <snippet></snippet>\n'...      % prevent html from showing up in menu
           ' <visibility>%s</visibility>\n'...
           '%s',...                         % timeSpan
           ' <styleUrl>#%s</styleUrl>\n'... % styleName
@@ -358,6 +368,7 @@ end
       newOutput= sprintf([...
           '<Placemark>\n'...
           ' <name>%s</name>\n'...          % no names so we see just the scatter points
+          ' <snippet></snippet>\n'...      % prevent html from showing up in menu
           ' <visibility>%s</visibility>\n'...
           ' <description><![CDATA['...     % start required wrapper for html
           '%s'...

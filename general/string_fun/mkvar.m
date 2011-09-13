@@ -74,21 +74,19 @@ function stringout = mkvar(stringin,varargin);
        makechar = 1;
    end
    
-    stringout = stringin;
-    for i=1:length(stringin)
-
-       keep                = (isletter(stringin{i}) | ('0' <= stringin{i} & stringin{i} <= '9')) & ~ismember(stringin{i},OPT.excludes);
-       stringout{i}(~keep) = '_';
-
-       if stringout{i}(1)  == '_' | ...
-          ('0' <= stringout{i}(1) & stringout{i}(1) <= '9')
-           if strcmpi(OPT.whattodo1st(1),'r');
-              stringout{i}(1)  = OPT.firstletter;
-           elseif strcmpi(OPT.whattodo1st(1),'a');
-              stringout{i}  = [OPT.firstletter, stringout{i}];
-           end
-       end
-    end
+   stringout = stringin;
+   for i=1:length(stringin)
+      keep                = (isletter(stringin{i}) | ('0' <= stringin{i} & stringin{i} <= '9')) & ~ismember(stringin{i},OPT.excludes);
+      stringout{i}(~keep) = '_';
+      if stringout{i}(1)  == '_' | ...
+         ('0' <= stringout{i}(1) & stringout{i}(1) <= '9')
+          if strcmpi(OPT.whattodo1st(1),'r');
+             stringout{i}(1)  = OPT.firstletter;
+          elseif strcmpi(OPT.whattodo1st(1),'a');
+             stringout{i}  = [OPT.firstletter, stringout{i}];
+          end
+      end
+   end
    
    if makechar
        stringout = char(stringout);
