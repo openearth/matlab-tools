@@ -82,7 +82,7 @@ else
 end
 
 %%
-required_fields = {'cross_shore' 'altitude'};
+required_fields = {'cross_shore' 'altitude' 'time', 'id'};
 if all(ismember(required_fields, fieldnames(tr)))
     % derive the size (dimensions) of the altitude array
     dims = size(tr.altitude);
@@ -112,10 +112,10 @@ if all(ismember(required_fields, fieldnames(tr)))
     end
     set(ph, {'Displayname'}, displayname{:});
     % turn on legend
-    legend('toggle')
+    legend show
     % add axis labels
     xlabel('Cross-shore coordinate [m]')
-    ylabel('Altitude [m] w.r.t. NAP)')
+    ylabel('Altitude [m] w.r.t. NAP')
 else
     error(['The following required fields are not found: ' sprintf('"%s" ', required_fields{~ismember(required_fields, fieldnames(tr))})])
 end
