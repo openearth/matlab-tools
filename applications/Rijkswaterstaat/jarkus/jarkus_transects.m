@@ -320,7 +320,7 @@ for i = 1:length(OPT.output)
 
         % select relevant dimension data
         for j = 1:dims
-            dim = jInfo.Dataset(ivar).Dimension{j};
+            dim = regexprep(jInfo.Dataset(ivar).Dimension{j},'[^\w_]','');
 
             rsize(j) = jDims.(dim).resultLength;
 
@@ -358,7 +358,7 @@ for i = 1:length(OPT.output)
 
             % determine non-stride selection
             for k = 1:dims
-                dim = jInfo.Dataset(ivar).Dimension{k};
+                dim = regexprep(jInfo.Dataset(ivar).Dimension{k},'[^\w_]','');
 
                 if jDims.(dim).stride == false
                     start(k) = jDims.(dim).indices(coords(k));
@@ -375,6 +375,11 @@ for i = 1:length(OPT.output)
                 % distribute data over output variables
                 transects.(var)(idx{:}) = data;
             end
+        end
+        
+        if jInfo.Dataset(ivar).Nctype == nc_char
+            % make sure type char is stored as such
+            transects.(var) = char(transects.(var));
         end
     end
 end
