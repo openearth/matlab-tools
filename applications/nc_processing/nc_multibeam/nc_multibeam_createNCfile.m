@@ -56,15 +56,7 @@ dimSizeY = (OPT.mapsizey/OPT.gridsizey);
 
 %% define coordinate variables
 %  add variable: coordinate system reference (this variable contains all projection information, e.g. for use in ArcGIS)
-
-   try
-       epsg_wkt_str = epsg_wkt(OPT.EPSGcode);
-       proj4paramrs        = epsg_wkt(OPT.EPSGcode);
-   catch
-       epsg_wkt_str = 'epsg_wkt could not be retrieved'; % merge this to epsg_wkt
-       proj4        = epsg_wkt(OPT.EPSGcode);
-   end
-   
+  
    x  = unique(X);
    dx = abs(unique(diff(x)));
    if length(dx) == 1

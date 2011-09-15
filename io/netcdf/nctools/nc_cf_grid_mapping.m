@@ -88,9 +88,12 @@ OPT.debug = 0;
       OPT.proj4_params = epsg_proj4(epsg);
 
 %% get WKT string via web service
-
-      OPT.wkt = epsg_wkt(epsg);
-
+    try
+        OPT.wkt = epsg_wkt(epsg);
+    catch
+        OPT.wkt = 'epsg_wkt could not be retrieved';
+    end
+    
 %% get human readable string
 
       switch epsg
