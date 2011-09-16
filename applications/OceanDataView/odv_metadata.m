@@ -1,11 +1,17 @@
 function L = odv_metadata(directory)
 %ODV_METADATA   read meta-data table and connect associated mess of files
 %
+% L = odv_metadata(directory)
+%
 %  only works for data sent by later versions of seadatanet
+%
+% Example:
+%
+% L = odv_metadata('userab12c34-data_centre000-311210_result')
 %
 %See also: OceanDataView, 
 
-% What a delight would it be if SDN would just adopt some kind of standard syntax as opendap or ISO191xx xml, 
+% What a delight would it be if SDN would just adopt some kind of standard syntax as netcdf or ISO191xx xml, 
 % so we could simply use nc_cf_opendap2catalog or xmlread to get meta-data, pfff.
 
 %   --------------------------------------------------------------------
@@ -108,7 +114,7 @@ else
          end
          L.Download_datenum{i} = datenum(L.Versions{i},'yyyymmdd_HHMMSS');
          
-         [~,jj]=max(L.Download_datenum{i});
+         [dummy,jj]=max(L.Download_datenum{i});
          
          L.name{i}     = [name{ind(jj)}];
          

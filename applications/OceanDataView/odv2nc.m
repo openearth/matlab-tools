@@ -1,4 +1,4 @@
-function odv2nc(varargin)
+function varargout = odv2nc(varargin)
 %ODV2NC  transforms one ODV CTD casts into one netCDF file
 %
 %     odv2nc(<keyword,value>) 
@@ -7,16 +7,17 @@ function odv2nc(varargin)
 %
 %   * fillvalue      (default nan)
 %   * dump           whether to check nc_dump on matlab command line after writing file (default 0)
-%   * directory_raw  directory where to get the raw data from (default [])
-%   * directory_nc   directory where to put the nc data to (default [])
-%   * mask           file mask (default 'potwind*')
+%   * odvfile        input file
+%   * ncfile         output file, if empty, extension of odvfile is replaced with nc
 %   * refdatenum     default (datenum(1970,1,1))
-%   * ext            extension to add to the files before *.nc (default '')
 %   * pause          pause between files (default 0)
 %
 % Example:
-%  odv2nc('directory_raw','F:\foo\raw',...
-%         'directory_nc', 'F:\foo\processed')
+%
+%  L = odv_metadata('userab12c34-data_centre000-311210_result')
+%  for i=1:length(L.fullfile)
+%     odv2nc(L.fullfile{i})
+%  end
 %
 %See also: OceanDataView, snctools
 
@@ -32,86 +33,84 @@ function odv2nc(varargin)
    OPT.dump              = 1;
    OPT.disp              = 1;
    OPT.pause             = 1;
-   OPT.stationTimeSeries = 0; % coordinates attribute
+   OPT.odvfile           = '';
+   OPT.ncfile            = '';
+   OPT.stationTimeSeries = 0;  % coordinates attribute
+   OPT.version           = ''; % from odv meta-data file or zip file name
 
    OPT.refdatenum        = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum        = datenum(1970,1,1); % lunix  datenumber convention
    OPT.fillvalue         = nan; % NaNs do work in netcdf API
    
-%% File loop
-
-   OPT.directory_raw     = [fileparts(mfilename('fullpath')),filesep,'usergd30d98-data_centre630-270409_result',filesep];
-   OPT.directory_nc      = [fileparts(mfilename('fullpath')),filesep,'usergd30d98-data_centre630-270409_result',filesep];
-   OPT.prefix            = 'result_CTDCAST';
-   OPT.mask              = '*.txt';
-
 %% Keyword,value
 
+   if odd(nargin)
+      OPT.odvfile = varargin{1};
+      varargin = {varargin{2:end}};
+   end
+
    OPT = setproperty(OPT,varargin{:});
-
-%% File loop
-
-   OPT.files     = dir([OPT.directory_raw,filesep,OPT.prefix,'*',OPT.mask]);
+   if nargin == 0
+     varargout = {OPT};
+     return
+   end
    
-for ifile=1:length(OPT.files)
-   
-   OPT.filename = OPT.files(ifile).name;
-      
-   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
 %% 0 Read all raw data
 
-   D = odvread([OPT.directory_raw,filesep,OPT.filename]);
-   
-   if D.cast==0
-      error('only ODV profile data can be written to netCDF yet, timeseries and trajectories not yet.')
-   end
-
-   D.version          = last_subdir([OPT.directory_raw])
+   D = odvread(OPT.odvfile);
    D.timezone         = 'GMT';
 
 %% 1a Create netCDF file
 
-   outputfile    = [OPT.directory_nc filesep filename(OPT.filename) '.nc'];
+   if isempty(OPT.ncfile)
+      OPT.ncfile = [filepathstrname(OPT.odvfile),'.nc'];
+   end
    
-   nc_create_empty (outputfile)
+   nc_create_empty (OPT.ncfile)
 
    %% Add overall meta info
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    % ------------------
 
-   nc_attput(outputfile, nc_global, 'title'          , 'Profile data');
-   nc_attput(outputfile, nc_global, 'institution'    , D.institution);
-   nc_attput(outputfile, nc_global, 'source'         , '');
-   nc_attput(outputfile, nc_global, 'history'        , ['Tranformation to netCDF: $HeadURL$']);
-   nc_attput(outputfile, nc_global, 'references'     , 'data:<http://www.nioz.nl>, distribution:<http://www.nodc.nl>,<http://www.seadatanet.org>, netCDF conversion:<http://www.OpenEarth.eu>');
-   nc_attput(outputfile, nc_global, 'email'          , '');
+   nc_attput(OPT.ncfile, nc_global, 'title'          , 'Profile data');
+   nc_attput(OPT.ncfile, nc_global, 'institution'    , D.institution);
+   nc_attput(OPT.ncfile, nc_global, 'source'         , '');
+   nc_attput(OPT.ncfile, nc_global, 'history'        , ['Tranformation to netCDF: $HeadURL$']);
+   nc_attput(OPT.ncfile, nc_global, 'references'     , 'data:<http://www.nioz.nl>, distribution:<http://www.nodc.nl>,<http://www.seadatanet.org>, netCDF conversion:<http://www.OpenEarth.eu>');
+   nc_attput(OPT.ncfile, nc_global, 'email'          , '');
    
-   nc_attput(outputfile, nc_global, 'comment'        , 'There is no SeaDataNet netCDF convention yet, this is just a trial to speed-up the SDN netCDF process.');
-   nc_attput(outputfile, nc_global, 'version'        , D.version);
+   nc_attput(OPT.ncfile, nc_global, 'comment'        , 'There is no SeaDataNet netCDF convention yet, this is just a trial to speed-up the SDN netCDF process.');
+   nc_attput(OPT.ncfile, nc_global, 'version'        , OPT.version);
 						    
-   nc_attput(outputfile, nc_global, 'Conventions'    , 'CF-1.4');
-   nc_attput(outputfile, nc_global, 'CF:featureType' , '');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+   nc_attput(OPT.ncfile, nc_global, 'Conventions'    , 'CF-1.4/SeaDataNet-0.7'); % http://www.unidata.ucar.edu/software/netcdf/conventions.html
    						    
-   nc_attput(outputfile, nc_global, 'terms_for_use'  ,['These data can be used freely for research purposes provided that the following source is acknowledged:.',D.institution]);
-   nc_attput(outputfile, nc_global, 'disclaimer'     , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+   nc_attput(OPT.ncfile, nc_global, 'terms_for_use'  ,['These data can be used freely for research purposes provided that the following source is acknowledged:.',D.institution]);
+   nc_attput(OPT.ncfile, nc_global, 'disclaimer'     , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
    
    %% Add SeaDataNet attrbutes: this allows only one ODV file per netCDF file !!!
+   %  current standard http://www.seadatanet.org/content/download/3886/29530/version/2/file/SeaDataNet+Formats+0.7.doc, we prefer it to be a coordinate   
    
-   nc_attput(outputfile, nc_global, 'SDN_LOCAL_CDI_ID',D.LOCAL_CDI_ID);
-   nc_attput(outputfile, nc_global, 'SDN_EDMO_code'   ,D.EDMO_code);
+   nc_attput(OPT.ncfile, nc_global, 'SDN_LOCAL_CDI_ID',D.LOCAL_CDI_ID);
+   nc_attput(OPT.ncfile, nc_global, 'SDN_EDMO_code'   ,D.EDMO_code);
 
 %% 2 Create dimensions
 
-   dimz = mkvar(D.local_name{10});
-
-   nc_add_dimension(outputfile, 'station', 1) % a CTD/bottle cast has one time per station
-   nc_add_dimension(outputfile, dimz, size(D.rawdata,2))
-
-   nc_add_dimension(outputfile, 'cruise_str'            , size(D.cruise       ,2));
-   nc_add_dimension(outputfile, 'station_str'           , size(D.station      ,2));
-   nc_add_dimension(outputfile, 'type_str'              , size(D.type         ,2));
-   nc_add_dimension(outputfile, 'LOCAL_CDI_ID_str'      , size(D.LOCAL_CDI_ID ,2));
+   if D.cast
+   dimname = mkvar(D.local_name{10});
+   else
+   dimname = 'location';
+   end
+   
+   nc_add_dimension(OPT.ncfile, dimname, length(D.data{1}))
+   nc_add_dimension(OPT.ncfile, 'cruise_str'            , size(char(D.metadata.cruise ),2));
+   nc_add_dimension(OPT.ncfile, 'station_str'           , size(char(D.metadata.station),2));
+   nc_add_dimension(OPT.ncfile, 'type_str'              , size(char(D.metadata.type   ),2));
+   nc_add_dimension(OPT.ncfile, 'SDN_LOCAL_CDI_ID_str'  , length(D.LOCAL_CDI_ID));
+   if length(D) > 1
+   nc_add_dimension(OPT.ncfile, 'SDN_LOCAL_CDI_ID'      , length(D));
+   error('merging multiple CDI into one netCDFf file not implemented yet')
+   end
 
 %% 3 Create variables: SDN meta-info
    
@@ -122,28 +121,30 @@ for ifile=1:length(OPT.files)
    
       ifld = ifld + 1;
    nc(ifld).Name         = 'cruise_id';
-   nc(ifld).Nctype       = 'char'; % no double needed
-   nc(ifld).Dimension    = {'station','cruise_str'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'cruise identification number');
-   nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'cruise_id');
+   nc(ifld).Nctype       = 'char';
+   nc(ifld).Dimension    = {dimname,'cruise_str'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'        ,'Value', 'cruise identification number');
+   nc(ifld).Attribute(2) = struct('Name', 'sdn_standard_name','Value', 'cruise_id');
 
    %% Station number
    
       ifld = ifld + 1;
    nc(ifld).Name         = 'station_id';
-   nc(ifld).Nctype       = 'char'; % no double needed
-   nc(ifld).Dimension    = {'station','station_str'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification number');
-   nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
+   nc(ifld).Nctype       = 'char';
+   nc(ifld).Dimension    = {dimname,'station_str'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'        ,'Value', 'station identification number');
+   nc(ifld).Attribute(2) = struct('Name', 'standard_name'    ,'Value', 'station_id');
+   nc(ifld).Attribute(3) = struct('Name', 'sdn_standard_name','Value', 'station_id');
 
    %% Type
    
       ifld = ifld + 1;
    nc(ifld).Name         = 'type';
-   nc(ifld).Nctype       = 'char'; % no double needed
-   nc(ifld).Dimension    = {'station','type_str'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'type of observation');
-   nc(ifld).Attribute(2) = struct('Name', 'comment'        ,'Value', 'B for bottle or C for CTD, XBT or stations with >250 samples');
+   nc(ifld).Nctype       = 'char';
+   nc(ifld).Dimension    = {dimname,'type_str'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'        ,'Value', 'type of observation');
+   nc(ifld).Attribute(2) = struct('Name', 'comment'          ,'Value', 'B for bottle or C for CTD, XBT or stations with >250 samples');
+   nc(ifld).Attribute(3) = struct('Name', 'sdn_standard_name','Value', 'type');
    
    %% Define dimensions in this order:
    %  time,z,y,x
@@ -164,7 +165,7 @@ for ifile=1:length(OPT.files)
       ifld = ifld + 1;
    nc(ifld).Name         = 'time';
    nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
-   nc(ifld).Dimension    = {'station'};
+   nc(ifld).Dimension    = {dimname};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value',['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
@@ -177,10 +178,11 @@ for ifile=1:length(OPT.files)
       ifld = ifld + 1;
    nc(ifld).Name         = 'lon';
    nc(ifld).Nctype       = 'float'; % no double needed
-   nc(ifld).Dimension    = {'station'}; % QuickPlot error: plots dimensions instead of datestr
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
+   nc(ifld).Dimension    = {dimname}; % QuickPlot error: plots dimensions instead of datestr
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'        ,'Value', 'station longitude');
+   nc(ifld).Attribute(2) = struct('Name', 'units'            ,'Value', 'degrees_east');
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'    ,'Value', 'longitude');
+   nc(ifld).Attribute(4) = struct('Name', 'sdn_standard_name','Value', 'lon');
     
    %% Latitude
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
@@ -188,28 +190,29 @@ for ifile=1:length(OPT.files)
       ifld = ifld + 1;
    nc(ifld).Name         = 'lat';
    nc(ifld).Nctype       = 'float'; % no double needed
-   nc(ifld).Dimension    = {'station'}; % QuickPlot error: plots dimensions instead of datestr
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
-   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
+   nc(ifld).Dimension    = {dimname}; % QuickPlot error: plots dimensions instead of datestr
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'        ,'Value', 'station latitude');
+   nc(ifld).Attribute(2) = struct('Name', 'units'            ,'Value', 'degrees_north');
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'    ,'Value', 'latitude');
+   nc(ifld).Attribute(4) = struct('Name', 'sdn_standard_name','Value', 'lat');
 
    %% LOCAL_CDI_ID
    
       ifld = ifld + 1;
    nc(ifld).Name         = 'LOCAL_CDI_ID';
-   nc(ifld).Nctype       = 'char'; % no double needed
-   nc(ifld).Dimension    = {'station','LOCAL_CDI_ID_str'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'LOCAL_CDI_ID_str');
-   nc(ifld).Attribute(2) = struct('Name', 'comment'        ,'Value', ' ');
+   nc(ifld).Nctype       = 'char';
+   nc(ifld).Dimension    = {dimname,'SDN_LOCAL_CDI_ID_str'};
+   nc(ifld).Attribute(1) = struct('Name', 'sdn_standard_name','Value', 'SDN_LOCAL_CDI_ID');
+   nc(ifld).Attribute(2) = struct('Name', 'comment'          ,'Value', ' ');
 
    %% EDMO_code
    
       ifld = ifld + 1;
-   nc(ifld).Name         = 'EDMO_code';
+   nc(ifld).Name         = 'SDN_EDMO_code';
    nc(ifld).Nctype       = 'int'; % no double needed
-   nc(ifld).Dimension    = {'station'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'EDMO_code_str');
-   nc(ifld).Attribute(2) = struct('Name', 'comment'        ,'Value', ' ');
+   nc(ifld).Dimension    = {dimname};
+   nc(ifld).Attribute(1) = struct('Name', 'sdn_standard_name','Value', 'SDN_EDMO_code');
+   nc(ifld).Attribute(2) = struct('Name', 'comment'          ,'Value', ' ');
    
    %% Bottom depth
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
@@ -217,7 +220,7 @@ for ifile=1:length(OPT.files)
       ifld = ifld + 1;
    nc(ifld).Name         = 'bot_depth';
    nc(ifld).Nctype       = 'float'; % no double needed
-   nc(ifld).Dimension    = {'station'}; % QuickPlot error: plots dimensions instead of datestr
+   nc(ifld).Dimension    = {dimname}; % QuickPlot error: plots dimensions instead of datestr
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'bottom depth');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'meter');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', '');
@@ -230,22 +233,23 @@ for ifile=1:length(OPT.files)
          ifld = ifld + 1;
       nc(ifld).Name         = mkvar(D.local_name{ivar});
       nc(ifld).Nctype       = 'float';
-      if ivar==10
-      nc(ifld).Dimension    = {dimz};
-      else
-      nc(ifld).Dimension    = {'station',dimz};
-      end
-      nc(ifld).Attribute( 1) = struct('Name', 'long_name'         ,'Value', D.local_name{ivar});
+      nc(ifld).Dimension    = {dimname};
+      % <subject></subject>
+      nc(ifld).Attribute( 1) = struct('Name', 'standard_name'     ,'Value', D.standard_name{ivar});
       nc(ifld).Attribute( 2) = struct('Name', 'units'             ,'Value', D.units{ivar});
-      nc(ifld).Attribute( 3) = struct('Name', 'standard_name'     ,'Value', D.standard_name{ivar});
-      nc(ifld).Attribute( 4) = struct('Name', 'sdn_units'         ,'Value', D.sdn_units{ivar});
-      nc(ifld).Attribute( 5) = struct('Name', 'sdn_long_name'     ,'Value', D.sdn_long_name{ivar});
-      nc(ifld).Attribute( 6) = struct('Name', 'sdn_standard_name' ,'Value', D.sdn_standard_name{ivar});
-      nc(ifld).Attribute( 7) = struct('Name', '_FillValue'        ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute( 8) = struct('Name', 'cell_bounds'       ,'Value', 'point');
+      nc(ifld).Attribute( 3) = struct('Name', 'local_name'        ,'Value', D.local_name{ivar});
+      % <object></object>
+      nc(ifld).Attribute( 4) = struct('Name', 'sdn_standard_name' ,'Value', D.sdn_standard_name{ivar});
+      % <units></units>
+      nc(ifld).Attribute( 5) = struct('Name', 'sdn_units'         ,'Value', D.sdn_units{ivar});
+      nc(ifld).Attribute( 6) = struct('Name', 'sdn_long_name'     ,'Value', '');
+      nc(ifld).Attribute( 7) = struct('Name', 'sdn_description'   ,'Value', D.sdn_long_name{ivar});
+
+      nc(ifld).Attribute( 8) = struct('Name', '_FillValue'        ,'Value', OPT.fillvalue);
+      nc(ifld).Attribute( 9) = struct('Name', 'cell_bounds'       ,'Value', 'point');
       if ivar==10
-      nc(ifld).Attribute( 9) = struct('Name', 'positive'          ,'Value', 'down');
-      nc(ifld).Attribute(10) = struct('Name', 'AXIS'              ,'Value', 'Z');
+      nc(ifld).Attribute(10) = struct('Name', 'positive'          ,'Value', 'down');
+      nc(ifld).Attribute(11) = struct('Name', 'AXIS'              ,'Value', 'Z');
       else
       nc(ifld).Attribute( 9) = struct('Name', 'coordinates'       ,'Value', mkvar(D.local_name{10}));
       end
@@ -262,35 +266,33 @@ for ifile=1:length(OPT.files)
          disp(['adding ',num2str(ifld),' ',nc(ifld).Name]);
          %var2evalstr(nc(ifld))
       end
-      nc_addvar(outputfile, nc(ifld));   
+      nc_addvar(OPT.ncfile, nc(ifld));   
    end
 
 %% 5 Fill variables: SDN data, skip flags for now
 
-   nc_varput(outputfile, 'cruise_id'    , D.cruise);
-   nc_varput(outputfile, 'station_id'   , D.station);
-   nc_varput(outputfile, 'type'         , D.type);
-   nc_varput(outputfile, 'LOCAL_CDI_ID' , D.LOCAL_CDI_ID);
-   nc_varput(outputfile, 'EDMO_code'    , D.EDMO_code);
+   nc_varput(OPT.ncfile, 'cruise_id'    , D.cruise);
+   if D.cast
+   nc_varput(OPT.ncfile, 'station_id'   , D.station);
+   end
+   nc_varput(OPT.ncfile, 'type'         , D.type);
 
-   nc_varput(outputfile, 'time'         , D.data.datenum-OPT.refdatenum);
-   nc_varput(outputfile, 'lon'          , D.data.longitude);
-   nc_varput(outputfile, 'lat'          , D.data.latitude);
-   nc_varput(outputfile, 'bot_depth'    , D.data.bot_depth);
+   nc_varput(OPT.ncfile, 'LOCAL_CDI_ID' , D.LOCAL_CDI_ID);
+   nc_varput(OPT.ncfile, 'SDN_EDMO_code', D.EDMO_code);
+
+   nc_varput(OPT.ncfile, 'time'         , D.metadata.datenum-OPT.refdatenum);
+   nc_varput(OPT.ncfile, 'lon'          , D.metadata.longitude);
+   nc_varput(OPT.ncfile, 'lat'          , D.metadata.latitude);
+   nc_varput(OPT.ncfile, 'bot_depth'    , D.metadata.bot_depth);
 
    for ivar=[10:2:length(D.local_name)] % below 10 is meta-data
-   data = str2num(char(D.rawdata{ivar,:}));
-   
-   if ~isempty(data)
-      nc_varput(outputfile, mkvar(D.local_name{ivar}), reshape(data,[1 length(data)]));
-   end
-   
+   nc_varput(OPT.ncfile, mkvar(D.local_name{ivar}), D.data{ivar});
    end
    
 %% 6 Check
 
    if OPT.dump
-   nc_dump(outputfile);
+   nc_dump(OPT.ncfile);
    end
    
    if OPT.pause

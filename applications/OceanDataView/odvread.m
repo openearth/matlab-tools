@@ -134,10 +134,12 @@ function varargout = odv_read(fullfilename,varargin)
    
    OPT = setproperty(OPT,varargin{:});
 
-   D = struct('odv_name'     ,'',...
-              'standard_name','','units','',...
-              'local_name'   ,'','local_units','',...
-              'sdn_long_name','','sdn_standard_name','','sdn_units','',...
+   D = struct('odv_name'         ,'',...
+              'standard_name'    ,'','units'      ,'',...
+              'local_name'       ,'','local_units','',...
+              'sdn_standard_name','','sdn_units'  ,'',...
+              'sdn_long_name'    ,'',...% 'sdn_units_long_name'    ,'',...
+              'sdn_description'  ,'',...% 'sdn_units_description'  ,'',...
               'data',''); % determine command line order
 
   [D.file.path D.file.name D.file.ext] = fileparts(fullfilename);
@@ -232,15 +234,15 @@ function varargout = odv_read(fullfilename,varargin)
                      D.odv_name{iSDN  } =  D.lines.header{iline}(3:end); % QV columns
                      
                      if ~OPT.resolve
-                    [~,D.sdn_standard_name{iSDN-1},~] =  sdn_parameter_mapping_parse(D.lines.header{iline});
-                    [~,D.sdn_standard_name{iSDN  },~] =  sdn_parameter_mapping_parse(D.lines.header{iline}); % QV columns
+                    [dummy,D.sdn_standard_name{iSDN-1},dummy] =  sdn_parameter_mapping_parse(D.lines.header{iline});
+                    [dummy,D.sdn_standard_name{iSDN  },dummy] =  sdn_parameter_mapping_parse(D.lines.header{iline}); % QV columns
                      D.sdn_long_name{iSDN-1} =  '';
                      D.sdn_long_name{iSDN  } =  '';
                      D.sdn_units    {iSDN-1} =  '';
                      D.sdn_units    {iSDN  } =  '';
                      else
-                    [~,D.sdn_standard_name{iSDN-1},~,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline});
-                    [~,D.sdn_standard_name{iSDN  },~,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline}); % QV columns
+                    [dummy,D.sdn_standard_name{iSDN-1},dummy,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline});
+                    [dummy,D.sdn_standard_name{iSDN  },dummy,q,u] =  sdn_parameter_mapping_parse(D.lines.header{iline}); % QV columns
                      D.sdn_long_name{iSDN-1} =  q;
                      D.sdn_long_name{iSDN  } =  q;
                      D.sdn_units    {iSDN-1} =  u;
