@@ -22,6 +22,8 @@ function [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
 %     - Tm       :: [s] incident short wave period (used for maximum grid size at offshore boundary) 
 %                       if you impose time series of wave conditions use the min(Tm) as input (default = 5)
 %     - dxmin    :: [m] minimum required cross shore grid size (usually over land) (default = 1)
+%     - dxmax    :: [m] user-specified maximum grid size, when usual wave
+%                       period / CFL condition does not suffice (default Inf)
 %     - vardx    :: [-] 0 = constant dx, 1 = varying dx (default = 1)
 %     - g        :: [ms^-2] gravity constant (default = 9.81)
 %     - CFL      :: [-] Courant number in grid generator (default = 0.9)
@@ -88,6 +90,7 @@ OPT = struct(...
     'xgrid', [],...        % predefined xgrid vector
     'Tm',5,...             % incident short wave period (used for maximum grid size at offshore boundary) if you impose time series of wave conditions use the min(Tm) as input
     'dxmin',2,...          % minimum required cross shore grid size (usually over land)
+    'dxmax',Inf,...        % user-specified maximum grid size, when usual wave period / CFL condition does not suffice
     'vardx',1,...          % 0 = constant dx, 1 = varying dx
     'g', 9.81,...          % gravity constant
     'CFL', 0.9,...         % Courant number
@@ -137,6 +140,7 @@ elseif OPT.vardx == 1
         
         % compute dx; minimum value dx (on dry land) = dxmin
         dxmax = Llong/OPT.ppwl;
+        dxmax = min(dxmax,OPT.dxmax);
         % dxmax = sqrt(g*hgr(min(ii)))*Tlong_min/12;
         dx(ii) = sqrt(OPT.g*hgr(ii))*OPT.dtref/OPT.CFL;
         dx(ii) = min(dx(ii),OPT.depthfac*hgr(ii));

@@ -21,6 +21,13 @@ for i=1:2:length(varargin)-1
 end
 
 
+% XBdims=getdimensions;
+XBdims=getdimensions;
+nt=XBdims.nt;
+x=XBdims.x;
+y=XBdims.y;
+ny = XBdims.ny;
+
 % function plotprofile(start,stop,inp,fac,cols,lw,ylimit,pausel,movie,row)
 
 %  plotprofile(start,stop,inp,fac,cols,lw,ylimit,pausel,movie,row)
@@ -47,7 +54,7 @@ if  ~exist('movie','var')
 end
 
 if  ~exist('row','var')
-    row=2;
+    row=min(2,ny+1);
 end
 
 if  ~exist('pausel','var')
@@ -57,13 +64,6 @@ end
 if  ~exist('stride','var')
     stride=1;
 end
-
-
-% XBdims=getdimensions;
-XBdims=getdimensions;
-nt=XBdims.nt;
-x=XBdims.x;
-y=XBdims.y;
 
 % original profile
 fidzb0=fopen('zb.dat','r');
