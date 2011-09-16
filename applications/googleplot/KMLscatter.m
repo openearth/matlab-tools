@@ -406,8 +406,10 @@ end
    
    fprintf(OPT.fid,'</Folder>');
 
-   fprintf(OPT.fid,'%s',clrbarstring);
-
+   if OPT.colorbar
+       fprintf(OPT.fid,'%s',clrbarstring);
+   end
+   
 %% FOOTER
 
    output = KML_footer;
