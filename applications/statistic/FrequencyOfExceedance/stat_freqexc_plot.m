@@ -1,0 +1,170 @@
+function stat_freqexc_plot(res, varargin)
+%STAT_FREQEXC_PLOT  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = stat_freqexc_plot(varargin)
+%
+%   Input:
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   stat_freqexc_plot
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Bas Hoonhout
+%
+%       bas.hoonhout@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 15 Sep 2011
+% Created with Matlab version: 7.12.0.635 (R2011a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% read settings
+
+OPT = struct( ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+figure;
+isf  = isfinite(res.data);
+xlim = [min(res.time) max(res.time)];
+ylim = [min(res.data(isf)) max(res.data(isf))].*[.9 1.1];
+
+%% plot data
+
+s1 = subplot(3,1,1); hold on;
+
+plot(res.time,res.data,'-b');
+p1 = plot(xlim,zeros(1,2),'-r');
+p2 = plot(0,0,'or');
+
+set(p1,'Tag','threshold');
+set(p2,'Tag','maxima');
+
+box on;
+grid on;
+xlabel('time');
+ylabel('value');
+title('data');
+
+%% plot number of exceedances
+
+s2 = subplot(3,1,2); hold on;
+
+plot([res.peaks.threshold],[res.peaks.nmax],'-b');
+p3 = plot(zeros(1,2),get(gca,'YLim'),'-r');
+
+set(p3,'Tag','numexc');
+
+box on;
+grid on;
+xlabel('number of exceedances');
+ylabel('value');
+
+%% plot frequency of exceedance
+
+s3 = subplot(3,1,3); hold on;
+
+plot([res.peaks.threshold],[res.peaks.frequency],'-b');
+p4 = plot(zeros(1,2),get(gca,'YLim'),'-r');
+
+set(p4,'Tag','freqexc');
+
+box on;
+grid on;
+xlabel('frequency of exceedance');
+ylabel('value');
+
+set(s1,'XLim',xlim,'YLim',ylim);
+set(s2,'XLim',ylim);
+set(s3,'XLim',ylim,'YLim',[0 1]);
+
+%% make it all dynamic
+
+set(gcf,'windowbuttonmotionfcn',{@setpointer, [s1 s2 s3], res});
+
+function setpointer(obj, event, objs, res)
+    if ~isempty(objs)
+        cobj = [];
+        for i = 1:length(objs)
+            cp = get(objs(i), 'currentpoint');
+            x = cp(1,1);
+            y = cp(1,2);
+
+            xlim = get(objs(i), 'xlim');
+            ylim = get(objs(i), 'ylim');
+            xv = xlim([1 1 2 2]);
+            yv = ylim([1 2 2 1]);
+
+            if inpolygon(x, y, xv, yv)
+                cobj = objs(i);
+                
+                if i == 1
+                    v = y;
+                else
+                    v = x;
+                end
+                
+                break;
+            end
+        end
+        
+        if ~isempty(cobj)
+            set(obj, 'pointer', 'crosshair');
+
+            p1 = findobj(objs(1),'Tag','threshold');
+            p2 = findobj(objs(1),'Tag','maxima');
+            p3 = findobj(objs(2),'Tag','numexc');
+            p4 = findobj(objs(3),'Tag','freqexc');
+
+            [th i] = closest(v,[res.peaks.threshold]);
+            
+            set(p1,'YData',v*[1 1]);
+            set(p2,'XData',[res.peaks(i).maxima.time],'YData',[res.peaks(i).maxima.value]);
+            set(p3,'XData',v*[1 1]);
+            set(p4,'XData',v*[1 1]);
+        else
+            set(obj, 'pointer', 'arrow');
+        end
+    end
