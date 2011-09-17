@@ -256,7 +256,7 @@ if fid > 0
 
    for ibnd = 1:length(BCA.DATA)
    
-         fprintf(fid,'%c'  ,strtrim(BCA.DATA(ibnd).Label)); % format '%12s' results in leading spaces
+         fprintf(fid,'%c'  ,strtrim(BCA.DATA(ibnd).label)); % format '%12s' results in leading spaces
          
          fprintf(fid,'\n');
    
