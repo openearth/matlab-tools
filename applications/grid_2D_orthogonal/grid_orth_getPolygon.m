@@ -1,4 +1,4 @@
-function OPT = grid_orth_getPolygon(OPT)
+function varargout = grid_orth_getPolygon(OPT)
 %GRID_ORTH_GETPOLYGON Allows user to select and save a polygon.
 
 %% Copyright notice
@@ -41,71 +41,146 @@ function OPT = grid_orth_getPolygon(OPT)
 % $HeadURL$
 % $Keywords: $
 
-ah = findobj('type','axes','tag',OPT.tag);
-try delete(findobj(ah,'tag','selectionpoly'));  end %#ok<*TRYNC> delete any remaining poly
+if nargin==0
+   OPT.polygon = [];
+end
+
+try ah = findobj('type','axes','tag',OPT.tag);
+delete(findobj(ah,'tag','selectionpoly')); 
+end %#ok<*TRYNC> delete any remaining poly
 
 % if no polygon is available yet draw one
 if isempty(OPT.polygon)
+
     % make sure the proper axes is current
     try axes(ah); end
     
+%% question
+
     jjj = menu({'Zoom to your place of interest first.',...
         'Next select one of the following options.',...
         'Finish clicking of a polygon with the <right mouse> button.'},...
         '1. click a polygon',...
-        '2. click a polygon and save to ldb file',...
-        '3. load a polygon from ldb file',...
-        '4. click a polygon and save to mat file',...
-        '5. load a polygon from mat file' ...
+        '2. click a polygon and save to a file for reuse',...
+        '3. load a polygon from any file type' ...
         );
-    
-    if jjj~=3 ||jjj~=5
+        
+%% load polygon
+
+    if ismember(jjj,[1 2])
         % draw a polygon using polydraw making sure it is tagged properly
         disp('Please click a polygon from which to select data ...')
         [x,y] = polydraw('g','linewidth',2,'tag','selectionpoly');
-        
-    elseif jjj==3
-        % load and plot a polygon
-        [fileName, filePath] = uigetfile({'*.ldb','Delt3D landboundary file (*.ldb)'},'Pick a landboundary file');
-        [x,y]=landboundary_da('read',fullfile(filePath,fileName));
-        x = x';
-        y = y';
-    elseif jjj==5
-        % load and plot a polygon
-        [fileName, filePath] = uigetfile({'*.mat','Two column xy array (*.mat)'},'Pick a polygon');
-        load(fullfile(filePath,fileName));
-        x = polygon(:,1)';
-        y = polygon(:,2)';
+    else
+    
+       if isfield(OPT, 'polygondir') % needed when this routine is called from generateVolumeDevelopment
+           polygondir = OPT.polygondir;
+       else
+           polygondir = [];
+       end
+    
+       % load and plot a polygon
+       [fileName, filePath, filterindex] = uigetfile({'*.ldb','Delt3D landboundary file (*.ldb)';...
+                                         '*.nc' ,'Two variable (x,y) netCDF file (*.nc)';...
+                                         '*.mat','Two column xy array (*.mat)';...
+                                         '*.shp','Shape file (*.shp)';...
+                                         '*.*'  ,'All Files (*.*)'},'Pick a file',[polygondir filesep '*.ldb']);
+       if filterindex==1
+         [x,y]=landboundary_da('read',fullfile(filePath,fileName));
+       elseif filterindex==2
+          x = nc_varget(fullfile(filePath,fileName),'x');
+          y = nc_varget(fullfile(filePath,fileName),'y');
+       elseif filterindex==3
+          % load and plot a polygon
+          load(fullfile(filePath,fileName));
+          x = polygon(:,1);
+          y = polygon(:,2);
+       elseif filterindex==4
+          R = arc_shape_read(fullfile(filePath,fileName))   
+          x = R.X;
+          y = R.Y;
+       end
+       x = reshape(x,[1 length(x)]);
+       y = reshape(y,[1 length(y)]);
+
     end
     
-    % save polygon
+%% save polygon
+    
     if jjj==2
-        [fileName, filePath] = uiputfile({'*.ldb','Delt3D landboundary file (*.ldb)'},'Specifiy a landboundary file',...
-            ['polygon_',datestr(now)]);
-        landboundary_da('write',fullfile(filePath,fileName),x,y);
-    end
-    if jjj==4                       
-        if isfield(OPT, 'polygondir') % needed when this routine is called from generateVolumeDevelopment
-            polygondir = OPT.polygondir;
-            if ~exist(polygondir)
-                mkpath(polygondir)
-            end
-        else
-            polygondir = [];
-        end
-        [fileName, filePath] = uiputfile([polygondir filesep 'polygon_',datestr(now,'yyyy-mm-dd_HH.MM.ss') '.mat'],'Specify a polygon');
-        
-        polygon = [x' y']; %#ok<NASGU>
-        save(fullfile(filePath,fileName),'polygon');
+
+       if isfield(OPT, 'polygondir') % needed when this routine is called from generateVolumeDevelopment
+           polygondir = OPT.polygondir;
+           if ~exist(polygondir)
+               mkpath(polygondir)
+           end
+       else
+           polygondir = [];
+       end
+
+       [fileName, filePath, filterindex] = uiputfile({'*.ldb','Delt3D landboundary file (*.ldb)';...
+                                         '*.nc' ,'Two variable (x,y) netCDF file (*.nc)';...
+                                         '*.mat','Two column xy array (*.mat)';...
+                                         '*.shp','Shape file (*.shp)';...
+                                         '*.*'  ,'All Files (*.*)'},'Save as:',[polygondir filesep 'polygon_',datestr(now,'yyyy-mm-dd_HH.MM.ss') '.ldb']);
+                                         
+       if filterindex==1
+       
+          landboundary_da('write',fullfile(filePath,fileName),x,y);
+          
+       elseif filterindex==2
+       
+          nc_create_empty(fullfile(filePath,fileName))
+          
+          nc_adddim(fullfile(filePath,fileName),'points',length(x));
+          varstruct.Nctype    = 'double';
+          varstruct.Dimension = { 'points' };
+
+          varstruct.Name      = 'x';
+          varstruct.Attribute(1) = struct('Name', 'units'        ,'Value', 'm');
+          varstruct.Attribute(2) = struct('Name', 'long_name'    ,'Value', 'projection_x_coordinate');
+          varstruct.Attribute(3) = struct('Name', 'standard_name','Value', 'x');
+          nc_addvar(fullfile(filePath,fileName),varstruct);
+          nc_varput(fullfile(filePath,fileName),'x',x);
+          varstruct.Attribute(4) = struct('Name', 'coordinates'  ,'Value', 'x y');
+
+          varstruct.Name      = 'y';
+          varstruct.Attribute(1) = struct('Name', 'units'        ,'Value', 'm');
+          varstruct.Attribute(2) = struct('Name', 'long_name'    ,'Value', 'projection_y_coordinate');
+          varstruct.Attribute(3) = struct('Name', 'standard_name','Value', 'y');
+          varstruct.Attribute(4) = struct('Name', 'coordinates'  ,'Value', 'x y');
+          nc_addvar(fullfile(filePath,fileName),varstruct);
+          nc_varput(fullfile(filePath,fileName),'y',y);
+          
+       elseif filterindex==3
+       
+          polygon = [x' y']; %#ok<NASGU>
+          save(fullfile(filePath,fileName),'polygon');
+       elseif filterindex==4
+          try
+          shapewrite(fullfile(filePath,fileName),{[x',y']})
+          catch
+          error('install oss.deltares.nl toolbox for writing *.shp files: shapewrite.m missing.')
+          end
+       end
     end
     
-    % combine x and y in the variable polygon and close it
+%% combine x and y in the variable polygon and close it
+    
     OPT.polygon = [x' y'];
     OPT.polygon = [OPT.polygon; OPT.polygon(1,:)];
+    
+    clear x y
     
 else
     
     x = OPT.polygon(:,1);
     y = OPT.polygon(:,2);
     
+end
+
+if nargout==1
+   varargout = {OPT};
+else
+   varargout = {OPT.polygon(:,1),OPT.polygon(:,2)};
 end

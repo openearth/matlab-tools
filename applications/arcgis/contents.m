@@ -25,5 +25,7 @@
 %  shapewrite           - (matlab mapping toolbox) Write geographic data structure to shapefile
 %  arc_shape2kml        - save ESRI shape file as Google Earth file
 %  ldbTool              - FYI: GUI interface for manipulation shape files (aka landboundaries)
+%  shape                - (oss.deltares.nl delft3d matlab toolbox) open shape file
+%  shapewrite           - (oss.deltares.nl delft3d matlab toolbox) write shape file
 %
 %See also: convertCoordinates, googlePlot, nc_cf_grid, nc_cf_gridset
