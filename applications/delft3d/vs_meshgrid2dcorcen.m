@@ -163,6 +163,9 @@ NFSstruct      = varargin{1};
    mcor = [mz(1)-1,mz];% indices v faces % add one before 
    ncor = [nz(1)-1,nz];% indices v faces % add one before
    
+   G.mcor = mcor;
+   G.ncor = ncor;
+   
    %disp(['m z: ',num2str(mz)])
    %disp(['n z: ',num2str(nz)])
    %disp(['m u: ',num2str(mu)])
