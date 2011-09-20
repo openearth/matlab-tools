@@ -252,7 +252,7 @@ if OPT.make
                 multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+ftell(fid))/WB.bytesToDo)
                 multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
                 kk       = kk+1;
-                D{kk}    = textscan(fid,'%f32',floor(OPT.block_size/ncols)*ncols,'CollectOutput',true); %#ok<AGROW>
+                D{kk}    = textscan(fid,'%f64',floor(OPT.block_size/ncols)*ncols,'CollectOutput',true); %#ok<AGROW>
                 D{kk}{1} = reshape(D{kk}{1},ncols,[])'; %#ok<AGROW>
                 if all(abs(D{kk}{1}(:) - nodata_value) < OPT.eps)
                     D{kk}{1} = nan; %#ok<AGROW>
