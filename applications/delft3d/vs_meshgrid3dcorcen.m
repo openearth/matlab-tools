@@ -149,11 +149,15 @@ TimeStep       = 1;
 
    case 'Delft3D-trim',
 
-     d3dcen.zwl = vs_get(NFSstruct,'map-series',{TimeStep},'S1' ,{1:G.nmax-0,1:G.mmax-0},'quiet');%'
-       d3du.kfu = vs_get(NFSstruct,'map-series',{TimeStep},'KFU',{1:G.nmax-0,1:G.mmax-0},'quiet');%'
-       d3dv.kfv = vs_get(NFSstruct,'map-series',{TimeStep},'KFV',{1:G.nmax-0,1:G.mmax-0},'quiet');%'
-       d3du.kcu = vs_get(NFSstruct,'map-const' ,{       1},'KCU',{1:G.nmax-0,1:G.mmax-0},'quiet');%'
-       d3dv.kcv = vs_get(NFSstruct,'map-const' ,{       1},'KCV',{1:G.nmax-0,1:G.mmax-0},'quiet');%'
+     d3dcen.zwl  = vs_get(NFSstruct,'map-series',{TimeStep},'S1' ,{1:G.nmax-0,1:G.mmax-0},'quiet');%'
+       d3du.kfu  = vs_get(NFSstruct,'map-series',{TimeStep},'KFU',{1:G.nmax-0,1:G.mmax-0},'quiet');%'
+       d3dv.kfv  = vs_get(NFSstruct,'map-series',{TimeStep},'KFV',{1:G.nmax-0,1:G.mmax-0},'quiet');%'
+       d3du.kcu  = vs_get(NFSstruct,'map-const' ,{       1},'KCU',{1:G.nmax-0,1:G.mmax-0},'quiet');%'
+       d3dv.kcv  = vs_get(NFSstruct,'map-const' ,{       1},'KCV',{1:G.nmax-0,1:G.mmax-0},'quiet');%'
+       output = char(vs_find(NFSstruct,'DPS'));
+       if strcmp(output, 'map-sed-series');
+           G.cor.dps = -vs_get(NFSstruct,'map-sed-series' ,{TimeStep},'DPS'  ,{G.ncor,G.mcor},'quiet');%'
+       end
       
   otherwise,
     error('Invalid NEFIS file for this action.');
