@@ -57,7 +57,7 @@ function [datatypes] = UCIT_getDatatypes;
    datatypes.transect.urls   {i}  =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
    datatypes.transect.areas  {i}  =  ''; % set by UCIT_loadRelevantInfo2Popup(1,2)
    datatypes.transect.catalog{i}  =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/profiles/catalog.xml';
-   datatypes.transect.ldbs{i}     =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
+   datatypes.transect.ldbs{i}     =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.transect.axes{i}     =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.transect.datatype{i} =  'Jarkus Data'; % defines functionality
 
@@ -112,7 +112,7 @@ end
    datatypes.grid.names{i}        =  'Jarkus 20m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Jarkus';
@@ -134,18 +134,7 @@ end
    datatypes.grid.names{i}        =  'Vaklodingen 20m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
-   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
-   datatypes.grid.cellsize{i}     =  20;
-   datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
-  
-   %% Vaklodingen (remapped)
-
-   i = i + 1;
-   datatypes.grid.names{i}        =  'Vaklodingen 20m (remapped)';
-   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen_remapped/';
-   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen_remapped/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
@@ -161,25 +150,36 @@ end
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
   
-   %% Vaklodingen remapped
+   %% Vaklodingen (remapped)
 
    i = i + 1;
-   datatypes.grid.names{i}        =  'Vaklodingen 20m remapped';
+   datatypes.grid.names{i}        =  'Vaklodingen 20m [remapped]';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen_remapped/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen_remapped/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
+   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+   datatypes.grid.cellsize{i}     =  20;
+   datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
+  
+   %% Vaklodingen remapped (test)
+
+   i = i + 1;
+   datatypes.grid.names{i}        =  'Vaklodingen 20m [remapped] (test/next release)';
+   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen_remapped/';
+   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen_remapped/catalog.xml';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 
-   %% Vaklodingen (local)
+   %% Vaklodingen (local) Texel test vaklodingenKB121_2120.nc  vaklodingenKB121_2322.nc
 if 0 % set this to 1 to activate the local cache, and download it with OPENDAP_GET_CACHE
    i = i + 1;
    datatypes.grid.names{i}        =  'Vaklodingen 20m (local)';
-   datatypes.grid.urls {i}        =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
-   datatypes.grid.catalog{i}      =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen\';
+   datatypes.grid.urls {i}        =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen_remapped\';
+   datatypes.grid.catalog{i}      =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen_remapped\';
    datatypes.grid.ldbs{i}         =  'f:\opendap\thredds\deltares\landboundaries\holland_fillable.nc';
-   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+   datatypes.grid.axes{i}         =  1E5*[ 0.9797    1.2919    5.3083    5.6847];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 end   
@@ -190,7 +190,7 @@ end
    datatypes.grid.names{i}        =  'AHN Kusthoogte 5m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/kustlidar/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  5;
    datatypes.grid.datatype{i}     =  'kustlidar'; % for rws_*
@@ -212,7 +212,7 @@ end
    datatypes.grid.names{i}        =  'Dienst zeeland 20m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.21 0.91 3.6 4.3];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Zeeland';
@@ -229,7 +229,7 @@ end
    datatypes.grid.datatype{i}     =  'Zeeland';
    
    %% Dienst zeeland (local)
-if 1 % set this to 1 to activate the local cache, and download it with OPENDAP_GET_CACHE
+if 0 % set this to 1 to activate the local cache, and download it with OPENDAP_GET_CACHE
    i = i + 1;
    datatypes.grid.names{i}        =  'Dienst zeeland 20m (local)';
    datatypes.grid.urls {i}        =  'd:\opendap.deltares.nl\thredds\rijkswaterstaat\DienstZeeland\';
@@ -246,7 +246,7 @@ end
    datatypes.grid.names{i}        =  'AHN 100m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/tno/ahn100m/mv100.nc';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  100;
    datatypes.grid.datatype{i}     =  'AHN'; % for rws_*
@@ -257,7 +257,7 @@ end
    datatypes.grid.names{i}        =  'AHN 250m'; % note 250 is in 100 directory on server
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/tno/ahn100m/mv250.nc';
    datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  250;
    datatypes.grid.datatype{i}     =  'AHN'; % for rws_*
