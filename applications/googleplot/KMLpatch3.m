@@ -198,10 +198,7 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
 
    OPT.fid=fopen(OPT.fileName,'w');
 
-   OPT_header = struct(...
-       'name',OPT.kmlName,...
-       'open',0);
-   output = KML_header(OPT_header);
+   output = KML_header(OPT);
 
    if OPT.colorbar
       clrbarstring = KMLcolorbar(OPT);

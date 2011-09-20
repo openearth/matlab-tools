@@ -58,12 +58,7 @@ function varargout = KMLmerge_files(varargin)
 %% Write the new file
 
    fid0=fopen(OPT.fileName,'w');
-   OPT_header = struct(...
-       'kmlName',OPT.kmlName,...
-   'description',OPT.description,...
-       'visible',OPT.visible,...
-          'open',OPT.open);
-   fprintf(fid0,'%s',KML_header(OPT_header));
+   fprintf(fid0,'%s',KML_header(OPT));
    
    for ii = 1:length(OPT.sourceFiles)
    if exist(OPT.sourceFiles{ii})

@@ -129,12 +129,7 @@ function varargout = KMLtext(lat,lon,label,varargin)
 
 %% HEADER
 
-   OPT_header = struct(...
-       'kmlName',OPT.kmlName,...
-          'open',OPT.open,...
-       'visible',OPT.visible,...
-   'description',OPT.description);
-   output = KML_header(OPT_header);
+output = KML_header(OPT);
 
 output = [output '<!--############################-->\n'];
 

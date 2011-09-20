@@ -275,12 +275,7 @@ end
     if ~isempty(OPT.CBfileName)
        fname = [OPT.CBfileName,'.kml'];
        OPT.CBfid    = fopen(fname,'w');
-       OPT_header = struct(...
-                  'name',OPT.CBkmlName,...
-                  'open',OPT.CBopen,...
-               'visible',OPT.CBvisible,...
-           'description',OPT.CBdescription);
-       output = [KML_header(OPT_header) colorbarstring KML_footer];
+       output = [KML_header(OPT) colorbarstring KML_footer];
        fprintf(OPT.CBfid,'%s',output);
        fclose (OPT.CBfid);
        %pngNames{end+1} = fname;

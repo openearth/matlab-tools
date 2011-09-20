@@ -42,6 +42,12 @@ function varargout = KMLcolumn(lat,lon,z,c,varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
 % $Id$
 % $Date$
 % $Author$
@@ -150,10 +156,7 @@ OPT.colorbar           = 0;
 
    OPT.fid=fopen(OPT.fileName,'w');
 
-   OPT_header = struct(...
-       'name',OPT.kmlName,...
-       'open',0);
-   output = KML_header(OPT_header);
+   output = KML_header(OPT);
 
    if OPT.colorbar
       clrbarstring = KMLcolorbar(OPT);

@@ -172,11 +172,7 @@ OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
 
-OPT_header = struct(...
-    'kmlName',OPT.kmlName,...
-    'open',OPT.open,...
-    'description',OPT.description);
-header = KML_header(OPT_header);
+header = KML_header(OPT);
 
 fprintf(OPT.fid,'%s\n',header);
 
