@@ -93,7 +93,7 @@ x = varargin{2};
 
 rf = figure('visible','off');
 
-axs = findobj(fh,'Type','Axes');
+axs = flipud(findobj(fh,'Type','Axes'));
 
 if length(axes)>x*y
     error('Insufficient number of subplots');
