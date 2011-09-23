@@ -254,9 +254,9 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
        v.KCV       =  vs_get(NFSstruct,'KENMCNST' ,'KCV'  ,{nv  ,mv  },'quiet');%'
 
        cen.KCS     =  vs_get(NFSstruct,'KENMCNST' ,'KCS'  ,{nz  ,mz  },'quiet');%'
-       cen.CODW    =  vs_get(NFSstruct,'TEMPOUT'  ,'CODW' ,{nz  ,mz  },'quiet');%'
+%        cen.CODW    =  vs_get(NFSstruct,'TEMPOUT'  ,'CODW' ,{nz  ,mz  },'quiet');%'
 
-       cor.CODB    =  vs_get(NFSstruct,'TEMPOUT'  ,'CODB' ,{ncor,mcor},'quiet');%'
+%        cor.CODB    =  vs_get(NFSstruct,'TEMPOUT'  ,'CODB' ,{ncor,mcor},'quiet');%'
        
      G.cor.dep     = -vs_get(NFSstruct,'INITBOT'  ,'DP0'  ,{ncor,mcor},'quiet');%'
      G.cen.dep     = -vs_get(NFSstruct,'INITBOT'  ,'DPS'  ,{nz  ,mz  },'quiet');%' 
@@ -314,9 +314,9 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
        v.KCV       =  vs_get(NFSstruct,'map-const','KCV'  ,{nv  ,mv  },'quiet');%'
 
        cen.KCS     =  vs_get(NFSstruct,'map-const','KCS'  ,{nz  ,mz  },'quiet');%'
-       cen.CODW    =  vs_get(NFSstruct,'TEMPOUT'  ,'CODW' ,{nz  ,mz  },'quiet');%'
+%        cen.CODW    =  vs_get(NFSstruct,'TEMPOUT'  ,'CODW' ,{nz  ,mz  },'quiet');%'
      
-       cor.CODB    =  vs_get(NFSstruct,'TEMPOUT'  ,'CODB' ,{ncor,mcor},'quiet');%'
+%        cor.CODB    =  vs_get(NFSstruct,'TEMPOUT'  ,'CODB' ,{ncor,mcor},'quiet');%'
 
      % depfile contains a raw copy of the dep fuile, so can be either corner or center
      % depfile       = -vs_get(NFSstruct,'map-const','DP0'  ,{ncor,mcor},'quiet')
@@ -414,19 +414,19 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
 
       %% -1/1 Non-active/Active bottom point (fixed)
       % -------------------------------------
-         cor.CODB(  cor.CODB ==-1) = nan;
+%          cor.CODB(  cor.CODB ==-1) = nan;
  
       %% -1/1 Non-active/Active water level point (fixed)
       % -------------------------------------
-         cen.CODW(  cen.CODW ==-1) = nan; % = now G.KCS
+         cen.KCS(  cen.KCS ==-1) = nan; % = now G.KCS
 
          if P.logicalmask
             % turn into logical array to save memory
             u.KCU    = ~isnan(u.KCU   );
             v.KCV    = ~isnan(v.KCV   );
             cen.KCS  = ~isnan(cen.KCS );
-            cor.CODB = ~isnan(cor.CODB);
-            cen.CODW = ~isnan(cen.CODW);
+%             cor.CODB = ~isnan(cor.CODB);
+%             cen.CODW = ~isnan(cen.CODW);
          end
          
       %% Calculate grid properties
@@ -440,11 +440,11 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
       %  the velocity points, otherwise coordinates at your boundayr get lost.
       % -------------------------------------
 
-         G.cen.(x)(~(cen.CODW)) = nan;
-         G.cen.(y)(~(cen.CODW)) = nan;
+         G.cen.(x)(~(cen.KCS)) = nan;
+         G.cen.(y)(~(cen.KCS)) = nan;
          
-         G.cor.(x)(~(cor.CODB)) = nan;
-         G.cor.(y)(~(cor.CODB)) = nan;
+%          G.cor.(x)(~(cor.CODB)) = nan;
+%          G.cor.(y)(~(cor.CODB)) = nan;
          
 
       %% Redefine masks
@@ -454,8 +454,8 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
          G.cen.mask            = ones(size(cen.KCS));
          G.cen.mask(~cen.KCS)  = nan;
          
-         G.cor.mask            = ones(size(cor.CODB));
-         G.cor.mask(~cor.CODB) = nan;
+%          G.cor.mask            = ones(size(cor.CODB));
+%          G.cor.mask(~cor.CODB) = nan;
       
          G.u.mask              = ones(size(u.KCU));
          G.u.mask(~u.KCU)      = nan;
@@ -464,7 +464,7 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
          G.v.mask(~v.KCV)      = nan;
          
          G.cen.dep = G.cen.dep.*G.cen.mask;
-         G.cor.dep = G.cor.dep.*G.cor.mask;          
+%          G.cor.dep = G.cor.dep.*G.cor.mask;          
          
 
 %% Calculate depths at velocity points
