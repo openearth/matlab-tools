@@ -1,7 +1,7 @@
-function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
+function [BSS alpha beta gamma epsilon] = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
 %BRIERSKILLSCORE  Brier Skill Score of cross-shore profile
 %
-%   Derive Brier Skill Score (Sutherland et al, 2004). 
+%   Derive Brier Skill Score (Sutherland et al, 2004).
 %
 %   Syntax:
 %   BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, nx)
@@ -24,19 +24,29 @@ function BSS = BrierSkillScore(xc, zc, xm, zm, x0, z0, varargin)
 %                   - false for suppressing messages
 %
 %   Output:
-%   BSS =
+%   BSS     = Brier Skill Score
+%   alpha   = measure of phase error; when the sand is moved to the wrong
+%             position. Perfect modeling of the phase gives alpha=1
+%   beta    = measure of amplitude error; when the wrong volume of sand is
+%             moved. Perfect modeling of phase and amplitude gives beta=0
+%   gamma   = measure of the map mean error; when the predicted average bed
+%             level is different from the measured. Perfect modeling of the 
+%             mean gives gamma=0
+%   epsilon = measure of the map mean error; when the predicted average bed
+%             level is different from the measured. Perfect modeling of the
+%             mean gives epsilon=0
 %
 %   Example
 %   BrierSkillScore
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares
 %       Pieter van Geer / C.(Kees) den Heijer
 %
-%       Kees.denHeijer@Deltares.nl	
+%       Kees.denHeijer@Deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -94,7 +104,7 @@ if OPT.equidistant
     newxlow = max([min(x0) min(xc) min(xm)]);
     newxhigh = min([max(x0) max(xc) max(xm)]);
     xextends = newxhigh - newxlow;
-
+    
     nx = OPT.equidistant;
     x_new = newxlow:xextends/nx:newxhigh;
 else
@@ -117,7 +127,7 @@ zm_new = interp1(xm, zm, x_new);
 id = ~(isnan(z0_new) | isnan(zc_new) | isnan(zm_new));
 [x_new z0_new zc_new zm_new] = deal(x_new(id), z0_new(id), zc_new(id), zm_new(id));
 
-%% calculate BSS
+%% derive weight
 if OPT.equidistant
     % weight is equaly devided over all points.
     weight = ones(size(x_new));
@@ -125,12 +135,44 @@ else
     % weight is defined as half of diff left and half of diff right of each
     % point; first and last point are considered to have only one side.
     weight = diff([x_new(1) diff(x_new)/2 + x_new(1:end-1) x_new(end)]);
+    weight = weight / sum(weight);
 end
-total = sum(weight);
+
+if nargout < 2
+    %% calculate BSS only
+    mse_p = sum( (zm_new - zc_new).^2 .* weight );
+    mse_0 = sum( (zm_new - z0_new).^2 .* weight );
+    BSS = 1. - (mse_p/mse_0);
     
-mse_p = sum(((zm_new - zc_new).^2).*weight)/total;
-mse_0 = sum(((zm_new - z0_new).^2).*weight)/total;
-BSS = 1. - (mse_p/mse_0);
+else
+    %% Murphy Epstein (1989) decomposition
+    % A.H. Murphy and E.S. Epstein, 1989. Skill scores and correlation
+    % coefficients in model verification. Monthly Weather Review,  117  (1989), pp. 572–581.
+    % also described in J. Sutherland , A.H. Peet, R.L. Soulsby, 2004 (DOI: 10.1016/j.coastaleng.2004.07.015)
+    % BSS = (alpha - beta - gamma + epsilon)/(1 + epsilon)
+    
+    % correlation including weight
+    r = corr_weighted([(zc_new-z0_new);(zm_new-z0_new)]', weight);
+    
+    % standard deviation including weight
+    % use sqrt(var) instead of std, because var has the possibility to
+    % introduce a weight
+    std_zc = sqrt(var(zc_new-z0_new, weight));
+    std_zm = sqrt(var(zm_new-z0_new, weight));
+    
+    % mean including weight
+    mean_zc = wmean(zc_new-z0_new, weight);
+    mean_zm = wmean(zm_new-z0_new, weight);
+    
+    % decomposition terms
+    alpha = r(2)^2;
+    beta  = (r(2)-(std_zc/std_zm))^2;
+    gamma = ((mean_zc - mean_zm)/std_zm)^2;
+    epsilon = (mean_zm/std_zm)^2;
+    
+    % BSS
+    BSS = (alpha - beta - gamma + epsilon)/(1+epsilon);
+end
 
 %% apply lower threshold
 below_threshold = BSS < OPT.lower_threshold;
