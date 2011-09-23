@@ -234,7 +234,7 @@ if 0 % set this to 1 to activate the local cache, and download it with OPENDAP_G
    datatypes.grid.names{i}        =  'Dienst zeeland 20m (local)';
    datatypes.grid.urls {i}        =  'd:\opendap.deltares.nl\thredds\rijkswaterstaat\DienstZeeland\';
    datatypes.grid.catalog{i}      =  'd:\opendap.deltares.nl\thredds\rijkswaterstaat\DienstZeeland\';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
+   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.21 0.91 3.6 4.3];%1E5*[-0.21 0.91 3.6 5];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Zeeland';

@@ -1,4 +1,4 @@
-function nc_cf_gridset_overview(varargin)
+function varargout = nc_cf_gridset_overview(varargin)
 %NC_CF_GRIDSET_OVERVIEW   make kml file with links to each tile in a netCDF gridset
 %
 %   nc_cf_gridset_overview(<keyword,value>)
@@ -46,7 +46,7 @@ function nc_cf_gridset_overview(varargin)
 
 %% File keywords
 
-if nargin==0;varargout = {OPT};OPT;return;end
+if nargin==0;varargout = {OPT};return;end
 
 OPT = setproperty(OPT,varargin{:});
 

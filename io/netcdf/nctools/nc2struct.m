@@ -82,7 +82,7 @@ end
 
 %% Load file info
 
-   %% get info from ncfile
+   % get info from ncfile
    if isstruct(ncfile)
       fileinfo = ncfile;
    else
@@ -154,8 +154,12 @@ else
       M.(fldname).(attname) = fileinfo.Dataset(idat).Attribute(iatt).Value;
       end
    end
-
+   
+   if nargout<2
+   varargout = {D};
+   else
    varargout = {D,M};
+   end
 
 end
 

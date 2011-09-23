@@ -9,6 +9,8 @@ function varargout = csv2struct(fname,varargin)
 %
 %    [DATA,units] = csv2struct(fname,'units',1,,<keyword,value>)
 %
+% e.g. D = csv2struct('somefile.csv','delimiter',';','CommentStyle','%')
+%
 % See also: XLS2STRUCT, NC2STRUCT, LOAD & SAVE('-struct',...)
 
 %% Copyright notice

@@ -91,7 +91,7 @@ function varargout = nc_cf_standard_names(varargin)
 
 %% settings
 
-% defaults
+%unidata defaults for _FillValue
 fillValues.double =  typecast(uint8([0    0    0    0    0    0  158   71]),'DOUBLE');            
 fillValues.float  =  typecast(uint8([                    0    0  240  124]),'SINGLE');
 fillValues.int    =  typecast(uint8([                    1    0    0  128]),'INT32' );

@@ -106,7 +106,7 @@ function varargout = nc_multibeam_from_asc(varargin)
    OPT.version             = 'Trial';
    OPT.terms_for_use       = 'These data is for internal use by ... staff only!';
    OPT.disclaimer          = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
-   OPT.eps                 = 1e3.*eps;
+   OPT.eps                 = 1e12.*eps; % needed for doubles and nodatavalues like 999.999999
    
    if nargin==0
        varargout = {OPT};
@@ -141,7 +141,6 @@ if OPT.make
    EPSG             = load('EPSG');
 
    mkpath(fullfile(OPT.basepath_local,OPT.netcdf_path));
-   delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'*.nc'));
    
    if OPT.zip
        mkpath(OPT.cache_path);
@@ -153,7 +152,7 @@ if OPT.make
    %% check if files are found
 
    if isempty(fns)
-       error('no raw files')
+       error(['no raw files in: ',OPT.raw_path])
    end
     
 %% sort so that the time vector ends up continuously increasing in the netCDF file  
@@ -212,7 +211,6 @@ if OPT.make
         
    %% read asc
    %  TO DO: merge this codecell that read asc file with arcgisread, arc_asc_read
-
 
         for ii = 1:length(fns_unzipped)
             disp(fns_unzipped(ii).name);
