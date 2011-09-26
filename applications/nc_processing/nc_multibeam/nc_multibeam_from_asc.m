@@ -133,15 +133,17 @@ if OPT.make
    if isempty(OPT.raw_path)
        error %#ok<LTARG>
    end
-   if isempty(OPT.netcdf_path)
-       warning(['OPT.netcdf_path isempty',])%#ok<LTARG>
-   end
-
+   
    %%
    EPSG             = load('EPSG');
 
-   mkpath(fullfile(OPT.basepath_local,OPT.netcdf_path));
+   if isempty(fullfile(OPT.basepath_local,OPT.netcdf_path))
+       warning(['fullfile(OPT.basepath_local,OPT.netcdf_path) isempty',])%#ok<LTARG>
+   end
    
+   mkpath(fullfile(OPT.basepath_local,OPT.netcdf_path));
+   delete(fullfile(OPT.basepath_local,OPT.netcdf_path,'*.nc')); % TO DO: relocate existing files
+
    if OPT.zip
        mkpath(OPT.cache_path);
        fns = dir(fullfile(OPT.raw_path,OPT.zip_extension));

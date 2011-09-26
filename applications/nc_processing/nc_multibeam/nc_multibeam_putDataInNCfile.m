@@ -1,12 +1,15 @@
-function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
+function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z,varargin)
 %NC_MULTIBEAM_PUTDATAINNCFILE
 %
-%   nc_multibeam_putdatainncfile(OPT,ncfile,time,Z)
+%   nc_multibeam_putdatainncfile(OPT,ncfile,time,Z,<keyword,value>)
 %
 % adds variable to a netcdf file (incl time) using matlabs native (2008b+) netcdf
 %
 %See also: nc_multibeam, snctools
 
+   OPT.debug       = 1;
+   OPT = setProperty(OPT,varargin{:});
+   
    dimSizeX = (OPT.mapsizex/OPT.gridsizex);
    dimSizeY = (OPT.mapsizey/OPT.gridsizex);
 
@@ -14,7 +17,7 @@ function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
 
    NCid = netcdf.open(ncfile, 'NC_WRITE');
 
-%% get already availbale timesteps in nc file
+%% get already available timesteps in nc file
 
    varid = netcdf.inqVarID(NCid,'time');
    [~,dimlen] = netcdf.inqDim(NCid,netcdf.inqDimID(NCid,'time'));
@@ -30,7 +33,7 @@ function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
        jj = find(time0 == time,1)-1;
    else
        jj = length(time0);
-       netcdf.putVar(NCid,varid,jj,1,time); 
+       netcdf.putVar(NCid,varid,jj,1,time);
    end
    
    varid = netcdf.inqVarID(NCid,'z');
@@ -39,20 +42,42 @@ function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z)
 
 if jj ~= length(time0) % then existing nc file already has data
     % read Z data
-    Z0 = netcdf.getVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1]);
-    % Z0(Z0>1e35) = nan; Should not be necessary to manually set high values to nan
+    Z0       = netcdf.getVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1]);
     Znotnan  = ~isnan(Z);
     Z0notnan = ~isnan(Z0);
     notnan   = Znotnan&Z0notnan;
     % check if data will be overwritten
     if any(notnan) % values are not nan in both existing and new data
         [~,filename] = fileparts(ncfile);
-         if isequal(Z0(notnan),Z(notnan))
+        date = nc_cf_time(ncfile,'time',jj,1);
+        if OPT.debug
+            TMP = figure;
+            subplot(1,3,1)
+            pcolorcorcen(Z0); % TO DO: this appears to be empty for some reason
+            colorbar('horiz')
+            axis equal
+            title('existing Z')
+            
+            subplot(1,3,2)
+            pcolorcorcen(Z);
+            colorbar('horiz')
+            axis equal
+            title('new Z')
+            
+            subplot(1,3,3)
+            pcolorcorcen(notnan);
+            colorbar('horiz')
+            title('overlap')
+            axis equal
+            print2screensize([filepathstrname(ncfile),'_',datestr(date,'YYYYMMDD'),'.png'])
+            clf;close(TMP)
+        end
+        if isequal(Z0(notnan),Z(notnan))
             % this is ok
-            fprintf(1,'in %s, data is overwritten by identical values from a different source \n',filename)
+            fprintf(1,'in %s, WARNING: %d values is overwritten by identical values from a different source at %s \n',filename,sum(notnan),date)
         else 
             % this is (most likely) not ok   
-            fprintf(2,'in %s, data is overwritten by different values from a different source \n',filename)
+            fprintf(2,'in %s, ERROR? : %d values is overwritten by different values from a different source at %s \n',filename,sum(notnan),date)
         end
     end
     Z0(Znotnan) = Z(Znotnan);

@@ -9,7 +9,7 @@ OPT.num_bytes = 20000; % pad header
 
 %% create empty outputfile
 %  indicate NetCDF outputfile name and create empty structure
-if ~exist(OPT.netcdf_path,'dir')
+if ~exist(OPT.netcdf_path,'dir') & ~isempty(OPT.netcdf_path)
     mkdir(OPT.netcdf_path)
 end
 
