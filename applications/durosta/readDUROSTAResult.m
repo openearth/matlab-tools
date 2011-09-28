@@ -149,7 +149,7 @@ if OPT.readDAF && ~isempty(fun_file) && isfield(fun_file, 'name') && ~isempty(da
 
             % add data to result struct if valid
             if isfield(data, 'Val') && dataProp.Quant1 > 0
-                D.Output.RAW.(daf.Quant.ShortName{dataProp.Quant1}) = data.Val;
+                D.Output.RAW.(genvarname(daf.Quant.ShortName{dataProp.Quant1})) = data.Val;
             end
         end
     else
