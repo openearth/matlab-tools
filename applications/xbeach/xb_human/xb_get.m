@@ -112,18 +112,25 @@ for i = 1:length(vars)
             varargout{n} = out;
             n = n + 1;
         end
-    else
-        re = regexp(vars{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
-        if ~isempty(re)
-            sub = xb_get(xb, re.sub);
-            if xb_check(sub)
-                out = cell(1,sum(strfilter({sub.data.name}, re.field)));
-                [out{:}] = xb_get(sub, re.field, 'type', OPT.type);
-                varargout{n:n+length(out)-1} = out{:};
-                n = n + length(out);
+    elseif strfind(vars{i},'.')
+        
+        sub = xb;
+        field = vars{i};
+        while true
+            re = regexp(field,'^(?<sub>.+?)\.(?<field>.+)$','names');
+            if ~isempty(re)
+                sub = xb_get(sub, re.sub);
+                field = re.field;
             else
-                n = n + 1;
+                break;
             end
+        end
+        
+        if xb_check(sub)
+            out = cell(1,sum(strfilter({sub.data.name}, field)));
+            [out{:}] = xb_get(sub, field, 'type', OPT.type);
+            varargout{n:n+length(out)-1} = out{:};
+            n = n + length(out);
         else
             n = n + 1;
         end
