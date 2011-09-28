@@ -85,9 +85,9 @@ if ~exist(fname, 'file')
 end
 
 % determine data type (dat/netcdf)
-if strcmpi(fname(end-3:end), '.dat')
+if length(fname)>3 && strcmpi(fname(end-3:end), '.dat')
     variables = xb_read_dat(fname, varargin{:});
-elseif strcmpi(fname(end-2:end), '.nc')
+elseif length(fname)>2 && strcmpi(fname(end-2:end), '.nc')
     variables = xb_read_netcdf(fname, varargin{:});
 elseif isdir(fname)
     if ~isempty(dir(fullfile(fname,'*.nc')))
