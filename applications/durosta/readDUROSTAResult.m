@@ -126,7 +126,7 @@ if OPT.readDAF && ~isempty(fun_file) && isfield(fun_file, 'name') && ~isempty(da
         % retrieve short names for variables and add items to struct
         % accordingly
         for j = 1:length(daf.Quant.ShortName)
-            D.Output.RAW.(daf.Quant.ShortName{j}) = [];
+            D.Output.RAW.(genvarname(daf.Quant.ShortName{j})) = [];
         end
 
         % retrieve variable definitions
