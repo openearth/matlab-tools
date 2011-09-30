@@ -154,7 +154,7 @@ end
 %% get and set keyword value parameters
 
 OPT = [];
-OPT = FindCSOptions(OPT,EPSG,varargin);
+OPT = FindCSOptions(OPT,EPSG,varargin{:});
 
 %% Transform input coordinates to geographic 2D radians
 
