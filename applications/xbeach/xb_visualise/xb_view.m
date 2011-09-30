@@ -107,6 +107,9 @@ function ui_build(obj)
     end
     
     sliderstep = [1 5]/(length(info.t)-1);
+    if length(info.t) == 1
+        sliderstep = [1 1];
+    end
     
     % plot area
     uipanel(pobj, 'Tag', 'PlotPanel', 'Title', 'plot', 'Unit', 'pixels');

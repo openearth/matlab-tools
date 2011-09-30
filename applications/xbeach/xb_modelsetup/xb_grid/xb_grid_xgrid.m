@@ -164,7 +164,7 @@ elseif OPT.vardx == 1
         xlast=xgr(ii);
     end
 else
-    error('Nop, this is not going to work; vardx = [0 1]');
+    error('Nope, this is not going to work; vardx = [0 1]');
 end
 
 % chop off last grid cell, if limit is exceeded

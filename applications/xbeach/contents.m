@@ -1,6 +1,10 @@
 % Generic Matlab tools for XBeach.
 %
-% For more info on XBeach please refer to our <a href="http://public.deltares.nl/display/XBEACH/">wiki</a> & <a href="http://www.xbeach.org/">mailinglist</a>. For more info on this toolbox, please refer to out <a href="http://public.deltares.nl/display/OET/XBeach+Toolbox/">toolbox wiki</a>.
+% For more information on XBeach or this matlab toolbox we encourage you to go to the <a href="matlab:web('http://oss.deltares.nl/web/xbeach','-browser')">XBeach portal</a>. 
+% IT contains lots of information on xbeach including a getting started section, but also a discussion board
+% where one can search for answers to questions of other users or participate in the discussion.
+%
+% For more info on XBeach please refer to our <a href="matlab:web('http://public.deltares.nl/display/XBEACH/','-browser')">wiki</a> & <a href="matlab:web('http://www.xbeach.org/','-browser')">mailinglist</a>. For more info on this toolbox, please refer to our <a href="matlab:web('http://public.deltares.nl/display/OET/XBeach+Toolbox/','-browser')">toolbox wiki</a>.
 %
 % Toolboxes:
 %   xb_analysis        - perform analysis on xbeach results
