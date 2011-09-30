@@ -15,12 +15,15 @@
 % run('...\openearthtools\matlab\oetsettings.m')
 
 %% Define data on an opendap server
+% for converting non-open access GECBO grids to same netCDF structure: see https://repos.deltares.nl/repos/OpenEarthRawData/trunk/gebco/
 url_grid{1} = 'http://geoport.whoi.edu/thredds/dodsC/bathy/etopo1_bed_g2';
 url_grid{2} = 'http://geoport.whoi.edu/thredds/dodsC/bathy/etopo2_v2c.nc';
 url_grid{3} = 'http://geoport.whoi.edu/thredds/dodsC/bathy/srtm30plus_v1.nc';
 url_grid{4} = 'http://geoport.whoi.edu/thredds/dodsC/bathy/srtm30plus_v6';
 url_grid{5} = 'http://geoport.whoi.edu/thredds/dodsC/bathy/smith_sandwell_v9.1.nc';
 url_grid{6} = 'http://geoport.whoi.edu/thredds/dodsC/bathy/smith_sandwell_v11';
+url_grid{7} = 'F:\checkouts\OpenEarthRawData\gebco\raw\gebco_30sec.nc';
+url_grid{8} = 'F:\checkouts\OpenEarthRawData\gebco\raw\gebco_1min.nc';
 
 url_line    = 'http://opendap.deltares.nl/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
 
@@ -33,7 +36,7 @@ L.lat    = nc_varget(url_line,'lat');
 boundingbox.lon = [ 0 10];
 boundingbox.lat = [50 55];
 
-for i=1:length(url_grid)
+for i=7:length(url_grid)
 
    ncfile = url_grid{i}
 
@@ -59,7 +62,7 @@ for i=1:length(url_grid)
    
    %% Plot data subset
    figure(i)
-   pcolorcorcen(G.lon,G.lat,G.topo)
+   pcolorcorcen(G.lon,G.lat,double(G.topo))
    hold on
    plot(L.lon,L.lat,'k')
    axis([boundingbox.lon boundingbox.lat])
