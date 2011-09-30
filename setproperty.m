@@ -140,6 +140,15 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 
 %% shortcut function if there is nothing to set (1)
 if nargin==1||isempty(inputCell)
+    if nargout > 1 % process Set
+        flds1         = fieldnames(OPT);
+        Set = [flds1,repmat({false},size(flds1))]';
+        Set = struct(Set{:});
+    end
+    if nargout > 2 % process Default
+        Default = [flds1,repmat({true},size(flds1))]';
+        Default = struct(Default{:});
+    end
     return
 end
 
@@ -167,6 +176,15 @@ end
 
 %% shortcut function if there is nothing to set (2)
 if numel(inputCell) == 1 && isempty(inputCell{1})
+    if nargout > 1 % process Set
+        flds1         = fieldnames(OPT);
+        Set = [flds1,repmat({false},size(flds1))]';
+        Set = struct(Set{:});
+    end
+    if nargout > 2 % process Default
+        Default = [flds1,repmat({true},size(flds1))]';
+        Default = struct(Default{:});
+    end
     return
 end
 
