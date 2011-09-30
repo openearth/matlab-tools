@@ -120,3 +120,18 @@ for var = OPT.vars2update
             xb = xb_set(xb, 'tstop', tstart_min + duration);
     end
 end
+
+if xb_exist(xb, 'bcfile.duration')
+    data    = xb_get(xb, 'bcfile.duration');
+    dt      = xb_get(xb, 'tstop')-sum(data);
+    data(end) = data(end) + dt + 1;
+    xb      = xb_set(xb, 'bcfile.duration', data);
+end
+
+if xb_exist(xb, 'zs0file.time')
+    data    = xb_get(xb, 'zs0file.time');
+    dt      = xb_get(xb, 'tstop')-data(end);
+    data(end) = data(end) + dt + 1;
+    xb      = xb_set(xb, 'zs0file.time', data);
+end
+

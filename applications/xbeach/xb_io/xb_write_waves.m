@@ -94,7 +94,8 @@ OPT = struct( ...
     'jonswap_file', 'jonswap', ...
     'vardens_file', 'vardens', ...
     'unknown_file', 'wave', ...
-    'omit_filelist', false ...
+    'omit_filelist', false, ...
+    'maxduration', 1800 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -190,6 +191,26 @@ for i = 1:length(vars)
             xb = xb_set(xb, vars{i}, var*ones(1,tlength));
     end
 end
+
+%% set maximum duration
+
+[duration timestep] = xb_get(xb, 'duration', 'timestep');
+
+while any(duration>OPT.maxduration)
+    i           = find(duration>OPT.maxduration,1,'first');
+    n           = floor(duration(i)/OPT.maxduration);
+    d           = [repmat(OPT.maxduration,1,n) mod(duration(i), OPT.maxduration)];
+    idx         = [1:i-1 repmat(i,1,n+1) i+1:length(duration)];
+    duration    = [duration(1:i-1) d duration(i+1:end)];
+    for j = 1:length(vars)
+        if strcmpi(vars{j}, 'duration'); continue; end;
+        
+        data    = xb_get(xb, vars{j});
+        xb      = xb_set(xb, vars{j}, data(idx));
+    end
+end
+
+xb = xb_set(xb, 'duration', duration);
 
 %% create file list
 
