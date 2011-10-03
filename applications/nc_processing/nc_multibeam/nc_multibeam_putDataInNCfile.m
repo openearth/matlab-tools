@@ -87,6 +87,13 @@ end
 %% Write z data
 
    netcdf.putVar(NCid,varid,[0 0 jj],[dimSizeX dimSizeY 1],Z); % matlab uses reverse order, so here [x y t] to get [t y x] in ncbrowse and snctools
+   
+%% Update actual_range
+
+   actual_range = netcdf.getAtt(NCid,varid,'actual_range');
+   actual_range(1) = min(actual_range(1),min(Z(:)));
+   actual_range(2) = max(actual_range(2),max(Z(:)));
+   netcdf.putAtt(NCid,varid,'actual_range',actual_range);
 
 %% Close NC file
 

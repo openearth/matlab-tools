@@ -4,33 +4,38 @@ function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
 %    nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
 %
 %See also: nc_multibeam, snctools
-
-OPT.num_bytes = 20000; % pad header
+   OPT0                = nc_multibeam_from_asc;
+   OPT0.num_bytes      = 20000; % pad header
+   OPT0.netcdfversion  = 3;
+   if nargin==0
+       varargout = {OPT};
+       return
+   end
+   OPT = setproperty(OPT0, OPT);
 
 %% create empty outputfile
 %  indicate NetCDF outputfile name and create empty structure
-if ~exist(OPT.netcdf_path,'dir') & ~isempty(OPT.netcdf_path)
-    mkdir(OPT.netcdf_path)
-end
+
+   if ~exist(OPT.netcdf_path,'dir') & ~isempty(OPT.netcdf_path)
+       mkdir(OPT.netcdf_path)
+   end
 
 % avoid use of netCDF as it is incompatible with R and arcGIS, onyl use netCDF4 when you really need it,
-% a.g. when you have lots of nodatavalues, fort which netCDF4 provides effective per-variable zipping
+% e.g. when you have lots of nodatavalues, fort which netCDF4 provides effective per-variable zipping
 
-switch  OPT.netcdfversion
-    case 3
-        deflatenc = false;
-        mode      = netcdf.getConstant('NOCLOBBER');
-    case 4
-        deflatenc = true;
-        mode      = netcdf.getConstant('NETCDF4');
-        mode      = bitor(mode,netcdf.getConstant('NOCLOBBER'));
-end
+   mode = netcdf.getConstant('NOCLOBBER');
+   switch  OPT.netcdfversion
+       case 3
+           deflatenc = false;
+       case 4
+           deflatenc = true;
+           mode      = bitor(mode,netcdf.getConstant('NETCDF4'));
+   end
 
-
-NCid     = netcdf.create(ncfile,mode);
-globalID = netcdf.getConstant('NC_GLOBAL');
-dimSizeX = (OPT.mapsizex/OPT.gridsizex);
-dimSizeY = (OPT.mapsizey/OPT.gridsizey);
+   NCid     = netcdf.create(ncfile,mode);
+   globalID = netcdf.getConstant('NC_GLOBAL');
+   dimSizeX = (OPT.mapsizex/OPT.gridsizex);
+   dimSizeY = (OPT.mapsizey/OPT.gridsizey);
 
 
 %% add attributes global to the dataset
@@ -90,11 +95,11 @@ dimSizeY = (OPT.mapsizey/OPT.gridsizey);
    netcdf_addvar(NCid, nc);
    
    nc_oe_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'time'}, 'oe_standard_name', {'time'},                    'dimension', {'time'}        ,'timezone', '+01:00');
-   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lon'},  'cf_standard_name', {'longitude'},               'dimension', {'x','y'}       ,'deflate',deflatenc,'additionalAtts',{'grid_mapping';'WGS84'});
-   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lat'},  'cf_standard_name', {'latitude'},                'dimension', {'x','y'}       ,'deflate',deflatenc,'additionalAtts',{'grid_mapping';'WGS84'});
-   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'x'},    'cf_standard_name', {'projection_x_coordinate'}, 'dimension', {'x'}                               ,'additionalAtts',{'actual_range_','grid_mapping';actual_range.x,'EPSG'});
-   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'y'},    'cf_standard_name', {'projection_y_coordinate'}, 'dimension', {'y'}                               ,'additionalAtts',{'actual_range_','grid_mapping';actual_range.y,'EPSG'});
-   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'z'},    'cf_standard_name', {'altitude'},                'dimension', {'x','y','time'},'deflate',deflatenc);%
+   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lon'},  'cf_standard_name', {'longitude'},               'dimension', {'x','y'}       ,'deflate',deflatenc,'additionalAtts',{'grid_mapping'                             ;'WGS84'});
+   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lat'},  'cf_standard_name', {'latitude'},                'dimension', {'x','y'}       ,'deflate',deflatenc,'additionalAtts',{'grid_mapping'                             ;'WGS84'});
+   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'x'},    'cf_standard_name', {'projection_x_coordinate'}, 'dimension', {'x'}                               ,'additionalAtts',{'grid_mapping','coordinates','actual_range';'EPSG','lon lat',actual_range.x});
+   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'y'},    'cf_standard_name', {'projection_y_coordinate'}, 'dimension', {'y'}                               ,'additionalAtts',{'grid_mapping','coordinates','actual_range';'EPSG','lon lat',actual_range.y});
+   nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'z'},    'cf_standard_name', {'altitude'},                'dimension', {'x','y','time'},'deflate',deflatenc,'additionalAtts',{'grid_mapping','coordinates','actual_range';'EPSG','lon lat',[nan nan]});
 
 %% Expand NC file
 

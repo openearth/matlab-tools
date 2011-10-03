@@ -112,7 +112,6 @@ function varargout = nc_multibeam_from_asc(varargin)
        varargout = {OPT};
        return
    end
-   
    OPT = setproperty(OPT, varargin{:});
 
    if ~(OPT.gridsizex==OPT.gridsizey)
