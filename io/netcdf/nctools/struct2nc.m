@@ -84,100 +84,106 @@ function varargout = struct2nc(outputfile,D,varargin)
 
 %% Initialize
 
-OPT.dump              = 0;
-OPT.disp              = 0;
-OPT.pause             = 0;
-
-if nargin==0
-   varargout = {OPT};
-   return
-end
+   OPT.dump              = 0;
+   OPT.disp              = 0;
+   OPT.pause             = 0;
+   OPT.debug             = 0;
+   OPT.header            = 0;
+   
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
 
 %% Units
 
-if odd(nargin)
-    M           = varargin{1};
-    varargin{1} = [];
-    attnames    = fieldnames(M);
-    natt        = length(attnames);
-else
-    natt        = 0;
-end
+   if odd(nargin)
+       M           = varargin{1};
+       varargin{1} = [];
+       attnames    = fieldnames(M);
+       natt        = length(attnames);
+   else
+       natt        = 0;
+   end
+   
+   OPT = setproperty(OPT,varargin{:})
 
 %% Parse struct to netCDF
 
-fldnames = fieldnames(D);
-nfld     = length(fldnames);
+   fldnames = fieldnames(D);
+   nfld     = length(fldnames);
 
 %% 0 Create file
 
-nc_create_empty (outputfile);
+   nc_create_empty (outputfile);
 
 %% 1 Add global meta-info to file
 %  Add overall meta info:
 %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
 
-for iatt=1:natt
-    attname = attnames{iatt};
-    if ~isstruct(M.(attname)); % others are variable attributes
-        nc_attput(outputfile, nc_global,attname,M.(attname));
-    end
-end
+   for iatt=1:natt
+       attname = attnames{iatt};
+       if ~isstruct(M.(attname)); % others are variable attributes
+           nc_attput(outputfile, nc_global,attname,M.(attname));
+       end
+   end
 
 %% 2 Create dimensions
+%    Do realize automatic - and hence useless - dimension names 
+%    violoates the self-descrivbing philosphy of netCDF ...
 
-dimension_lengths = [];
-
-for ifld=1:nfld
-    
-    fldname = fldnames{ifld};
-    
-    if iscellstr(D.(fldname))
-        D.(fldname) = char(D.(fldname));
-    end
-    
-    dimension_lengths = [dimension_lengths size(D.(fldname))];
-    
-end
-
-dimension_lengths = sort(unique(dimension_lengths));
-dimension_lengths = setdiff(dimension_lengths,0);
-for ilen=1:length(dimension_lengths)
-    nc_add_dimension(outputfile, ['dimension_length_',num2str(dimension_lengths(ilen))], dimension_lengths(ilen));
-end
+   dimension_lengths = [];
+   
+   for ifld=1:nfld
+       
+       fldname = fldnames{ifld};
+       
+       if iscellstr(D.(fldname))
+           D.(fldname) = char(D.(fldname));
+       end
+       
+       dimension_lengths = [dimension_lengths size(D.(fldname))];
+       
+   end
+   
+   dimension_lengths = sort(unique(dimension_lengths));
+   dimension_lengths = setdiff(dimension_lengths,0);
+   for ilen=1:length(dimension_lengths)
+       nc_add_dimension(outputfile, ['dimension_length_',num2str(dimension_lengths(ilen))], dimension_lengths(ilen));
+   end
 
 %% 3 Create variables
 
-clear nc
-ifld = 0;
-
-for ifld=1:nfld
-    
-    fldname = fldnames{ifld};
-    
-    nc(ifld).Name               = fldname;
-    nc(ifld).Nctype             = nc_type(class(D.(fldname)));
-    
-    dimensions = {};
-    for idim=1:length(size(D.(fldname)))
-        dimension_length = ['dimension_length_',num2str(size(D.(fldname),idim))];
-        dimensions{idim} = dimension_length;
-    end
-    
-    nc(ifld).Dimension          = dimensions;
-    
-    par_att = 0;
-    for iatt=1:natt
-        attname                     = attnames{iatt};
-        if isstruct(M.(attname)) % others are file attributes
-            if isfield(M.(attname),fldname)
-                par_att                     = par_att + 1;
-                nc(ifld).Attribute(par_att) = struct('Name',attname,'Value', M.(attname).(fldname));
-            end
-        end
-    end
-    
-end
+   clear nc
+   ifld = 0;
+   
+   for ifld=1:nfld
+       
+       fldname = fldnames{ifld};
+       
+       nc(ifld).Name               = fldname;
+       nc(ifld).Nctype             = nc_type(class(D.(fldname)));
+       
+       dimensions = {};
+       for idim=1:length(size(D.(fldname)))
+           dimension_length = ['dimension_length_',num2str(size(D.(fldname),idim))];
+           dimensions{idim} = dimension_length;
+       end
+       
+       nc(ifld).Dimension          = dimensions;
+       
+       par_att = 0;
+       for iatt=1:natt
+           attname                     = attnames{iatt};
+           if isstruct(M.(attname)) % others are file attributes
+               if isfield(M.(attname),fldname)
+                   par_att                     = par_att + 1;
+                   nc(ifld).Attribute(par_att) = struct('Name',attname,'Value', M.(attname).(fldname));
+               end
+           end
+       end
+       
+   end
 
 %% 4 Create variables with attibutes
 %  When variable definitons are created before actually writing the
@@ -186,59 +192,63 @@ end
 
 % var2evalstr(nc)
 
-for ifld=1:length(nc)
-    fldname = fldnames{ifld};
-    if OPT.disp;disp([num2str(ifld),' ',nc(ifld).Name]);end
-    if sum(~ismember(nc(ifld).Dimension,'dimension_length_0')) == 2
-        nc_addvar(outputfile, nc(ifld));
-    end
-end
-
+   for ifld=1:length(nc)
+       fldname = fldnames{ifld};
+       if OPT.disp;disp([num2str(ifld),' ',nc(ifld).Name]);end
+       if sum(~ismember(nc(ifld).Dimension,'dimension_length_0')) > 1 % also allow 3D variables
+           nc_addvar(outputfile, nc(ifld));
+       end
+   end
+   
 %% 5 Fill variables
 
-for ifld=1:nfld
-    
-    fldname = fldnames{ifld};
-    
-    if ~length(D.(fldname))==0
-        
-        % The MEXNC and JAVA netCDF interfaces cannot deal with the
-        % character 0 (the Matlab native interface can).
-        % You can solve this by writing to the file per line
-        % (slow for much lines), or replacing all 0s with a space character.
-        % 0 characters can end up in a string when you expand it by
-        % indexing a non-existing cell. Example:
-        % >>  a = repmat(' ',[2 2])
-        % >>  a(20) = 'b'
-        % >>  a==0
-        %
-        % The default fill value is 0, not ' '. Use strvcat() etc instead.
-        
-        if ischar(D.(fldname))
-            
-            nullmask = D.(fldname)==0;
-            D.(fldname)(nullmask) = ' ';
-            %col = size(D.(fldname),2);
-            %for row=1:size(D.(fldname),1)
-            %nc_varput(outputfile, fldname , D.(fldname)(row,:),[row 1]-1,[1 col],[1 1]); % zero-based !!
-            %end
-        end
-        nc_varput(outputfile, fldname , D.(fldname)); % cannot handle logicals
-        
-    end
-    
-end
+   for ifld=1:nfld
+       
+       fldname = fldnames{ifld};
+       
+       if ~length(D.(fldname))==0
+           
+           % The MEXNC and JAVA netCDF interfaces cannot deal with the
+           % character 0 (the Matlab native interface can).
+           % You can solve this by writing to the file per line
+           % (slow for much lines), or replacing all 0s with a space character.
+           % 0 characters can end up in a string when you expand it by
+           % indexing a non-existing cell. Example:
+           % >>  a = repmat(' ',[2 2])
+           % >>  a(20) = 'b'
+           % >>  a==0
+           %
+           % The default fill value is 0, not ' '. Use strvcat() etc instead.
+           
+           if ischar(D.(fldname))
+               
+               nullmask = D.(fldname)==0;
+               D.(fldname)(nullmask) = ' ';
+               %col = size(D.(fldname),2);
+               %for row=1:size(D.(fldname),1)
+               %nc_varput(outputfile, fldname , D.(fldname)(row,:),[row 1]-1,[1 col],[1 1]); % zero-based !!
+               %end
+           end
+           if OPT.debug
+              disp(fldname)
+              var2evalstr(nc(ifld))
+           end
+           nc_varput(outputfile, fldname , D.(fldname)); % cannot handle logicals
+           
+       end
+       
+   end
 
 %% 6 Check
 
-if OPT.dump
-    nc_dump(outputfile);
-end
+   if OPT.dump
+       nc_dump(outputfile);
+   end
 
 %% Pause
 
-if OPT.pause
+   if OPT.pause
     pausedisp
-end
+   end
 
 %% EOF

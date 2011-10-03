@@ -80,7 +80,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 % $HeadURL$
 % $Keywords$
 
-%TO DO: handle indirect time mapping where there is no variable time(time)
+%TO DO: permute x, y and t
 %TO DO: allow to get all time related parameters, and plot them on by one (with pause in between)
 %TO DO: document <keyword,value> pairs
 %TO DO: also extract x and y vectors
@@ -93,6 +93,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    OPT.oned    = 0;
    OPT.varname = []; % one if dimensions are (latitude,longitude), 0 if variables are (latitude,longitude)
    OPT.stride  = 1;
+   OPT.debug   = 0;
 
    if nargin > 1
    OPT.varname = varargin{1};
@@ -126,18 +127,31 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       warning(['netCDF file might not be a grid: needs Attribute Conventions=CF-1.4'])
    end
 
-%% Get coordinates
+%% Get coordinate variables
 
-   lonname           = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
-   if isempty(lonname)
-      disp('no longitude present')
+   lonname          = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
+   if isempty(lonname);disp('no longitude present');end
+
+   latname          = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
+   if isempty(latname);disp('no latitude present');end
+
+   xname            = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate');
+   if isempty(xname);disp('no x present');end
+   
+   yname            = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate');
+   if isempty(yname);disp('no y present');end
+   
+   tname            = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
+   if isempty(tname);disp('no times present');end
+   
+   if OPT.debug
+    lonname
+    latname
+    xname
+    yname
+    tname
    end
-
-   latname           = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'latitude');
-   if isempty(latname)
-      disp('no latitude present')      
-   end
-
+   
 %% Find specified (or all parameters) that have latitude AND longitude as either
 %  * dimension
 %  * coordinates attribute
@@ -145,81 +159,122 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 
    if isempty(OPT.varname)
    
-      coordvar = [];
+      coord.varindex = [];
+      coord.vartype  = {};
+      coord.vardim   = {};
+      
       for ivar=1:length(fileinfo.Dataset)
       
-         lat = false;
-         lon = false;
+        direct.lat = false;
+        direct.lon = false;
+        direct.x   = false;
+        direct.y   = false;       
          
-         %%   direct mapping: find dimension latitude, longitude OR
-         
-         for idim=1:length(fileinfo.Dataset(ivar).Dimension)
-
+        %%  (lon,lat) direct mapping: find dimension latitude, longitude OR ...
+        for idim=1:length(fileinfo.Dataset(ivar).Dimension)
             if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),latname))));
-               lat = true;
+               direct.lat = idim;
             end
-	    
             if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),lonname))));
-               lon = true;
+               direct.lon = idim;
             end
-            
-         end
+        end
          
-         %% indirect mapping: find index of coordinates attribute
-         if (lat && lon)
-            
-            coordvar = [coordvar ivar];
+        %%  (x,y) direct mapping: find dimension x, y OR ...
+        for idim=1:length(fileinfo.Dataset(ivar).Dimension)
+            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),xname))));
+               direct.x = idim;
+            end
+            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),yname))));
+               direct.y = idim;
+            end
+        end
          
-         else
+        if (direct.lat && direct.lon) | (direct.x && direct.y)
+             coord.varindex = [coord.varindex  ivar];
+             if (direct.x && direct.y) & (direct.lon && direct.lat)
+                coord.vartype{end+1} = {'(lat,lon) orthogonal','(x,y) orthogonal'};
+                coord.vardim {end+1} = {[direct.x direct.y],[direct.lon direct.lat]};
+             elseif (direct.x && direct.y)
+                coord.vartype{end+1} = '(x,y) orthogonal';
+                coord.vardim {end+1} = {[direct.x direct.y]};
+             elseif (direct.lon && direct.lat)
+                coord.vartype{end+1} = '(lat,lon) orthogonal';
+                coord.vardim {end+1} = {[direct.lon direct.lat]};
+             end
+        end
+                  
+        %% indirect mapping: find index of coordinates attribute
 
-            atrindex = nc_atrname2index(fileinfo.Dataset(ivar),'coordinates');
-            
-            if ~isempty(atrindex)
-            
-               % check whether coordinates attribute refers to variables that have standard_name latitude & longitude
-               coordvarnames = strtokens2cell(fileinfo.Dataset(ivar).Attribute(atrindex).Value);
-               
-               lat = false;
-               lon = false;
-               
-               for ii=1:length(coordvarnames)
-               
-                  varindex = nc_varname2index(fileinfo,coordvarnames{ii});
-               
-                  % find index of standard_name attribute
-                  atrindex = nc_atrname2index(fileinfo.Dataset(varindex),'standard_name');
-               
-                  if ~isempty(atrindex)
-                     if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'latitude')
-                     lat=true;
-                     end
-                     if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'longitude')
-                     lon=true;
-                     end
-                  end
-	       
-               end
-            
-               if lat && lon 
-                  coordvar = [coordvar ivar];
-               end
-            
-            end % if ~isempty(atrindex)
-            
-         end % if ~(lat && lon)
+        atrindex = nc_atrname2index(fileinfo.Dataset(ivar),'coordinates');
+
+        if ~isempty(atrindex)
+
+           % check whether coordinates attribute refers to variables that have standard_name latitude & longitude
+           coord.varnames = strtokens2cell(fileinfo.Dataset(ivar).Attribute(atrindex).Value);
+
+           indirect.lat = false;
+           indirect.lon = false;
+           indirect.x   = false;
+           indirect.y   = false;
+
+           for ii=1:length(coord.varnames)
+
+              varindex = nc_varname2index(fileinfo,coord.varnames{ii});
+
+              % find index of standard_name attribute
+              atrindex = nc_atrname2index(fileinfo.Dataset(varindex),'standard_name');
+
+              if ~isempty(atrindex)
+                 if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'latitude')
+                 indirect.lat=true;
+                 end
+                 if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'longitude')
+                 indirect.lon=true;
+                 end
+                 if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'projection_x_coordinate')
+                 indirect.x=true;
+                 end
+                 if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'projection_y_coordinate')
+                 indirect.y=true;
+                 end                       
+              end
+           end
+
+        if (indirect.lat && indirect.lon) | (indirect.x && indirect.y)
+             coord.varindex = [coord.varindex  ivar];
+             if (indirect.x && indirect.y) & (indirect.lon && indirect.lat)
+                coord.vartype{end+1} = {'(lat,lon) curvilinear','(x,y) curvilinear'};
+                coord.vardim {end+1} = {[indirect.x indirect.y],[indirect.lon indirect.lat]};
+             elseif (indirect.x && indirect.y)
+                coord.vartype{end+1} = '(x,y) curvilinear';
+                coord.vardim {end+1} = {[indirect.x indirect.y]};
+             elseif (indirect.lon && indirect.lat)
+                coord.vartype{end+1} = '(lat,lon) curvilinear';
+                coord.vardim {end+1} = {[indirect.lon indirect.lat]};
+             end
+        end
+
+        end % if ~isempty(atrindex)
          
-      end
+      end % for ivar=1:length(fileinfo.Dataset)
       
-      coordvarlist = cellstr(char(fileinfo.Dataset(coordvar).Name));
+      coord.varnames = cellstr(char(fileinfo.Dataset(coord.varindex).Name));
+      
+      coord.varlist = cellfun(@(x,y) [x, ' ',y],coord.varnames, coord.vartype','UniformOutput',0);
 
-      [ii, ok] = listdlg('ListString', coordvarlist, .....
+      %% ad coords to name
+      
+      [ii, ok] = listdlg('ListString', coord.varlist, .....
                       'SelectionMode', 'single', ...
                        'PromptString', 'Select one variable', ....
                                'Name', 'Selection of variable',...
                            'ListSize', [500, 300]); 
-      
-      varindex    = coordvar(ii);
-      OPT.varname = coordvarlist{ii};
+
+      varindex    = coord.varindex(ii);
+      vardim      = coord.vardim  {ii};
+      vartype     = coord.vartype {ii};
+      OPT.varname = coord.varnames{ii};
       
    else
    
@@ -238,35 +293,55 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    
 %% get data
 
-   I = nc_getvarinfo(ncfile,OPT.varname);
-   
+%fileinfo.Dataset(varindex).Dimension
+%nc_isatt (ncfile,OPT.varname,'coordinates')
+%nc_attget(ncfile,OPT.varname,'coordinates')
+% add coordinates and dimension variables
+%pausedisp
+
+   M.lon.units     = nc_attget(ncfile,lonname,'units');
+   M.lat.units     = nc_attget(ncfile,latname,'units');
+
+   I = nc_getvarinfo(ncfile,lonname);
    start  = I.Size.*0;
    count  = I.Size.*0 -1;
    stride = I.Size.*0 + OPT.stride;
-   
-   M.lon.units     = nc_attget(ncfile,lonname,'units');
-   M.lat.units     = nc_attget(ncfile,latname,'units');
-   D.lon           = nc_varget(ncfile,lonname    ,start,count,stride);
-   D.lat           = nc_varget(ncfile,latname    ,start,count,stride);
-   D.(OPT.varname) = nc_varget(ncfile,OPT.varname,start,count,stride);
+   if strfind(vartype,'(lat,lon)')
+   D.lon           = nc_varget(ncfile,lonname );AXx='lon';dimtype='ll';
+   D.lat           = nc_varget(ncfile,latname );AXy='lat';
+   elseif strfind(vartype,'(x,y)')
+   D.x             = nc_varget(ncfile,xname   );AXx='x';dimtype='xy';
+   D.y             = nc_varget(ncfile,yname   );AXy='y';
+   end
 
+%TO DO check for time dimension here and permute to [t,y,x] or [t,x,y]
 %% Get datenum
 
    D.datenum = nc_cf_time(ncfile); % choose dimension name of variable in case there are more time vectors
-   if ~isempty(D.datenum)
-      disp('no time present')      
+   if isempty(D.datenum)
+      disp(['no time present'])
    end
 
-%% get coordinates
+%% Get data
 
+   I      = nc_getvarinfo(ncfile,OPT.varname);
+   start  = I.Size.*0;
+   count  = I.Size.*0 -1;
+   stride = I.Size.*0 + OPT.stride;
+
+   D.(OPT.varname) = nc_varget(ncfile,OPT.varname,start,count,stride);
+
+%% get coordinates
+     if nc_isatt(ncfile,OPT.varname,'coordinates');
      coordinates = nc_attget(ncfile,OPT.varname,'coordinates');
+     end
      
      % use lat, lon as specified in coordinates (when nmore lats are there)
      
-     if isvector(D.lat) & isvector(D.lon)
-        OPT.oned = 1;
-        D.lat    = D.lat(:)';
-        D.lon    = D.lon(:)';
+     if isvector(D.(AXx)) & isvector(D.(AXy))
+        OPT.oned    = 1;
+        D.(AXx)     = D.(AXx)(:)';
+        D.(AXy)     = D.(AXy)(:)';
      end
       
 %% get Attributes
@@ -283,19 +358,31 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    if OPT.plot
    if ~isempty(OPT.varname)
 
-      if OPT.oned
-      pcolorcorcen(D.lon,D.lat,D.(OPT.varname)')
-      elseif length(size(D.(OPT.varname)))==2
-      pcolorcorcen(D.lon,D.lat,D.(OPT.varname))
-      else % figure out proper x and y dimensions (there might also be z or t dimensions)
-         if getpref('SNCTOOLS','PRESERVE_FVD')
-         pcolorcorcen(D.lon,D.lat,D.(OPT.varname)(:,:,1))
-         else
-         pcolorcorcen(D.lon,D.lat,D.(OPT.varname)(1,:,:))
+      try
+         if OPT.oned &  length(size(D.(OPT.varname)))==2
+            pcolorcorcen(D.(AXx),D.(AXy),D.(OPT.varname)')
+         elseif OPT.oned
+            if getpref('SNCTOOLS','PRESERVE_FVD')
+            pcolorcorcen(D.(AXx),D.(AXy),D.(OPT.varname)(:,:,1))
+            else
+            pcolorcorcen(D.(AXx),D.(AXy),D.(OPT.varname)(1,:,:))
+            end
+         elseif length(size(D.(OPT.varname)))==2
+            pcolorcorcen(D.(AXx),D.(AXy),D.(OPT.varname))
+         else % figure out proper x and y dimensions (there might also be z or t dimensions)
+            if getpref('SNCTOOLS','PRESERVE_FVD')
+            pcolorcorcen(D.(AXx),D.(AXy),D.(OPT.varname)(:,:,1))
+            else
+            pcolorcorcen(D.(AXx),D.(AXy),D.(OPT.varname)(1,:,:))
+            end
          end
+      catch
+         error('not all permutations of (x,y,t) yet implemented')
       end
-      tickmap ('ll')
+      tickmap (dimtype)
+      if strcmp(dimtype,'ll')
       axislat
+      end
       grid     on
       if isfield(D,'datenum')
       if  ~isempty(D.datenum); % static data do not have a timestamp

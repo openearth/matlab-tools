@@ -3,7 +3,7 @@ function nc_cf_gridset_get_list(varargin)
 %
 %    nc_cf_gridset_get_list(url,<keyword,value>)
 %
-% saves overview of grid tiles to *.xls, *.mat and *.nc file, 
+% saves overview of grid tiles to *.txt file (and *.xls, *.mat and *.nc file), 
 % choose custom names with keywords 'xlsname', 'matname', 'ncname' 
 %
 % Example: for OpenEarth test and production server
@@ -48,16 +48,20 @@ function nc_cf_gridset_get_list(varargin)
    end
    
   %OPT.xlsname = [mfilename('fullpath'),'.xls'];
-   OPT.xlsname = ['nc_cf_gridset_get_list.xls'];
-   OPT.matname = ['nc_cf_gridset_get_list.mat'];
-   OPT. ncname = ['nc_cf_gridset_get_list.nc'];   
+   OPT.xlsname = ''; % add to output dir too
+   OPT.matname = ''; % add to output dir too
+   OPT. ncname = ''; % add to output dir too
    OPT.fid     = 1;
-   OPT.bbfmt   = '%+09.1f'
+   OPT.bbfmt   = '%+09.1f';
    
    OPT = setProperty(OPT,varargin{firstarg:end});
    
    if ischar(OPT.fid)
-       OPT.fid = fopen(OPT.fid,'w');
+      delete(OPT.fid);
+      OPT.xlsname = [fileparts(OPT.fid),filesep,'nc_cf_gridset_get_list.xls']; % add to output dir too
+      OPT.matname = [fileparts(OPT.fid),filesep,'nc_cf_gridset_get_list.mat']; % add to output dir too
+      OPT. ncname = [fileparts(OPT.fid),filesep,'nc_cf_gridset_get_list.nc2']; % add to output dir too
+      OPT.fid = fopen(OPT.fid,'w');
    end
    
    if ischar(urls); urls = cellstr(urls);end
@@ -77,7 +81,7 @@ for i=1:length(urls)
    %% get meta-info
    %  TO DO: get bounding box too
    
-      disp('    name                 : first date - last date  n  urlPath                                                   ')
+      disp(['    ',pad('name  ',' ',namewidth),': first date - last date  nt  urlPath                                                   '])
       for i=1:length(L)
          try
              t{i} = nc_cf_time(L{i},'time');
@@ -91,7 +95,7 @@ for i=1:length(urls)
             y1(i) = ylim(2);
             nt(i) = length(t{i});
            %disp([num2str(i,'%0.3d'),'/',num2str(length(L),'%0.3d')])
-            disp([num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-namewidth),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.2d'),' ',L{i}])
+            disp([num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-namewidth),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.3d'),' ',L{i}])
          catch
             error(['not a valid netCDF CF gridset file: ',L{i}]);
          end
@@ -110,21 +114,21 @@ for i=1:length(urls)
       array = repmat('~',[length(L) length(years)]);
       mask  = repmat(0  ,[length(L) length(years)]);
       dprintf(OPT.fid,'%s\n',[url,' ', datestr(now)]);
-      yearheader = [addrowcol(num2str(years')',0,-54,' ')];
+      yearheader = [addrowcol(num2str(years')',0,-(34+namewidth),' ')];
       for iy=1:size(yearheader,1)
       dprintf(OPT.fid,[yearheader(iy,:),'\n']);
       end
       spp = repmat(' ',[1 length(years)]);
-      dprintf(OPT.fid,['#   ',pad('name',' ',-namewidth),': first date - last date  nt',spp,'  [x0 x1 y0 y1]                                             \n'])
+      dprintf(OPT.fid,['#   ',pad('name',' ',-namewidth),': first date - last date  nt ',spp,'  [x0 x1 y0 y1]                                             \n'])
       for i=1:length(L)
          [dummy,dummy,ind]=intersect(year(t{i}),years);
          array(i,ind)='#';
          mask (i,ind)=1;
-         dprintf(OPT.fid,[num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-namewidth),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.2d'),' ',array(i,:),' ',num2str(x0(i),OPT.bbfmt),' ',num2str(x1(i),OPT.bbfmt),' ',num2str(y0(i),OPT.bbfmt),' ',num2str(y1(i),OPT.bbfmt),'\n'])
+         dprintf(OPT.fid,[num2str(i,'%0.3d'),' ',pad(filename(L{i}),' ',-namewidth),': ',datestr(t0(i),29),' - ',datestr(t1(i),29),' ',num2str(nt(i),'%0.3d'),' ',array(i,:),' ',num2str(x0(i),OPT.bbfmt),' ',num2str(x1(i),OPT.bbfmt),' ',num2str(y0(i),OPT.bbfmt),' ',num2str(y1(i),OPT.bbfmt),'\n'])
       end
       
       if OPT.fid > 1
-          fclose(OPT.fid)
+          fclose(OPT.fid);
       end
       
    %% make xls table with available years
@@ -136,17 +140,14 @@ for i=1:length(urls)
       S.aantal     = nt;
    %%
       for i=1:length(years)
-      
       varname = ['year_',(num2str(years(i)))];
-      
       S.(varname) = mask(:,i);
-      
       end
-      
-      struct2xls(OPT.xlsname,S,'header',{url,datestr(now),'Created with $nc_cf_gridset_get_list.m$'})
+
+      if ~isempty(OPT.xlsname);delete(OPT.xlsname);struct2xls(OPT.xlsname,S,'header',{url,datestr(now),'Created with $nc_cf_gridset_get_list.m$'});end
       % in case there is no Excel installed make other formats too
-      struct2nc (OPT. ncname,S,'header',{url,datestr(now),'Created with $nc_cf_gridset_get_list.m$'})
-      save      (OPT.matname,'-struct','S')
+      if ~isempty(OPT. ncname);delete(OPT. ncname);struct2nc  (OPT. ncname,S,'header',{url,datestr(now),'Created with $nc_cf_gridset_get_list.m$'});end
+      if ~isempty(OPT.matname);delete(OPT.matname);save      (OPT.matname,'-struct','S');end
       
 
 end

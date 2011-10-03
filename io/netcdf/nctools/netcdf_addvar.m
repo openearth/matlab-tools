@@ -25,13 +25,15 @@ function varid = netcdf_addvar ( ncid, varstruct )
 %      "Dimension" is a cell array of dimension names.
 %
 %      "Attribute" is also a structure array.  Each element has two
-%      fields, "Name", and "Value".
+%      fields, "Name", and "Value", e.g.
+%
+%      varstruct.Attribute(    1) = struct('Name', 'long_name' ,'Value', 'time');
+%      varstruct.Attribute(end+1) = struct('Name', 'units'     ,'Value', 'days since 1970-01-01');
 %
 % Output: 
 %     None.  In case of an error, an exception is thrown.
 %
 %See also: nc_addvar, nctools, snctools
-
 
 %Checks on the input
 if  ischar(ncid) 
@@ -69,7 +71,6 @@ for j = 1:length(varstruct.Attribute)
         end
                 
     end    
-    
     
 end
 

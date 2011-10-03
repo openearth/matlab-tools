@@ -230,11 +230,12 @@ OPT.varname        = {}; % could be {'x','y','time'}
 
 for entry=1:length(OPT.files)
 
-   OPT.filename = OPT.files{entry};
-   if strcmpi(OPT.disp,'multiWaitbar')
-   multiWaitbar(mfilename,entry/length(OPT.files),'label',['Adding ',filename(OPT.filename) ' to catalog'])
-   end
+ OPT.filename = OPT.files{entry};
+ if strcmpi(OPT.disp,'multiWaitbar')
+ multiWaitbar(mfilename,entry/length(OPT.files),'label',['Adding ',filename(OPT.filename) ' to catalog'])
+ end
    
+ try
    fileinfo       = nc_info(OPT.filename);
 
 %% get relevant global attributes
@@ -401,6 +402,10 @@ for entry=1:length(OPT.files)
    if OPT.pause
        pausedisp
    end
+   
+ catch
+     disp(['skipped erronous datasest: ',OPT.filename])
+ end
     
 end % entry
 
