@@ -71,7 +71,7 @@ for i = 1:size(varargin,1)
 end
 
 %% Create legend and set properties.
-[leg object_h plot_h text_strings] = legend(plotAxes,'toggle');
+[leg object_h plot_h text_strings] = legend(plotAxes,'-DynamicLegend');
 
 if any(plot_h~=-1) && any(~cellfun(@isempty, get(plot_h, 'Tag')))
     % retrieve DisplayNames which are alternativily saved in Tags, because

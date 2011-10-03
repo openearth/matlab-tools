@@ -290,7 +290,7 @@ classdef MTestExplorer < handle
             textLabel.setText('  Sort by: ');
             choices = {'<directory structure>','<category>','<status>'};
             this.JToolBar = get(get(this.HToolBar,'JavaContainer'),'ComponentPeer');
-            this.JCombo = javax.swing.JComboBox(choices);
+            this.JCombo = handle(javax.swing.JComboBox(choices),'CallbackProperties');
             set(this.JCombo, 'ActionPerformedCallback', @this.buildtree,...
                 'KeyPressedCallback',@this.keypressed_callback);
             this.JToolBar(1).addSeparator;
@@ -302,7 +302,7 @@ classdef MTestExplorer < handle
             drawnow;
             textLabel = javax.swing.JLabel;
             textLabel.setText('  Search tests: ');
-            this.JSearchField = javax.swing.JTextField('Enter search string');
+            this.JSearchField = handle(javax.swing.JTextField('Enter search string'),'CallbackProperties');
             set(this.JSearchField,...
                 'KeyTypedCallback',@this.searchfield_callback,...
                 'MousePressedCallback',@this.selecttextfield);
@@ -321,11 +321,11 @@ classdef MTestExplorer < handle
             this.HProgressToolbar = uitoolbar(this.HMainFigure);
             drawnow;
             this.JToolBarProgress = get(get(this.HProgressToolbar,'JavaContainer'),'ComponentPeer');
-            this.JProgressBar = javax.swing.JProgressBar;
+            this.JProgressBar = handle(javax.swing.JProgressBar,'CallbackProperties');
             this.JToolBarProgress(1).add(this.JProgressBar,1);
             this.JProgressBar.setMaximumSize(java.awt.Dimension(32767,15));
             this.JProgressBar.setVisible(1);
-            set(this.JProgressBar,'StringPainted','on');
+            this.JProgressBar.setStringPainted(true)
             this.JProgressBar.setString('Idle...');
 
             %% Create tree
@@ -335,7 +335,7 @@ classdef MTestExplorer < handle
             import java.awt.*;
 
             % create a tree
-            this.JTree = javax.swing.JTree;
+            this.JTree = handle(javax.swing.JTree,'CallbackProperties');
             set(this.JTree,...
                 'MouseClickedCallback',{@this.mouseclickedontree_callback,'mouse'},...
                 'TreeExpandedCallback',@this.treeexpanded_callback,...
@@ -352,8 +352,6 @@ classdef MTestExplorer < handle
             this.JTree.repaint;
             set(this.JTree,'UserData',this);
 
-            %ToolTipManager.sharedInstance().registerComponent(tree);
-            
             % place tree in scrollpane
             this.JScrollPane = javax.swing.JScrollPane(this.JTree);
             % create JPanel to host the tree
