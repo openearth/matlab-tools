@@ -3,11 +3,16 @@ function varargout = grid_orth_getMapInfoFromDataset(dataset)
 %
 %   OPT = grid_orth_getmapinfofromdataset(url)
 %   [urls, x_ranges, y_ranges] = grid_orth_getmapinfofromdataset(url)
+%   [urls, x_ranges, y_ranges,...
+%         <x_bounding_box,y_bounding_box>] = grid_orth_getmapinfofromdataset(url)
 %
 % where OPT has fields
 % * urls
 % * x_ranges
 % * y_ranges
+
+% x_bounding_box,y_bounding_box cells can be turned 
+% into NaN-separated polygons with poly_join.
 %
 % extract meta info from an OPeNDAP catalog or a local directory.
 %
@@ -24,7 +29,7 @@ function varargout = grid_orth_getMapInfoFromDataset(dataset)
 %  L = nc2struct('http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc');
 %  plot(L.x,L.y)
 %
-%See also: GRID_2D_ORTHOGONAL
+%See also: GRID_2D_ORTHOGONAL, POLY_JOIN
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and 
@@ -39,8 +44,15 @@ function varargout = grid_orth_getMapInfoFromDataset(dataset)
 % $HeadURL$
 % $Keywords: $
   
-OPT.dataset    = dataset;
+OPT.dataset    = [];
 OPT.catalognc  = []; % make sure urls and ranges come from same source: either 100% catalog.cn or 100% catalog.xml+nc_actual_range
+
+if nargin==0
+   varargout = {OPT};
+   return
+end
+OPT.dataset    = dataset;
+
 disp('Retrieving map info from dataset ...')
 
 %% catalog.nc: direct dodsC url
@@ -96,6 +108,9 @@ end
 
 if nargout==1
    varargout = {OPT};
-else
+elseif nargout==3
    varargout = {OPT.urls,OPT.x_ranges,OPT.y_ranges};
+elseif nargout==5
+   [bbx,bby]=grid_orth_range2boundingbox(OPT.x_ranges,OPT.y_ranges);
+   varargout = {OPT.urls,OPT.x_ranges,OPT.y_ranges,bbx,bby};
 end

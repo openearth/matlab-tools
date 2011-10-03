@@ -1,5 +1,5 @@
-function [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, varargin)
-%GRID_ORTH_GETDATAFROMNETCDFGRIDS Get data in fixed otrhogonal grid from bundle of netCDF files.
+function varargout = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, varargin)
+%GRID_ORTH_GETDATAFROMNETCDFGRIDS Get data in fixed orthogonal grid from bundle of netCDF files.
 %
 %   [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, <keyword,value>)
 %
@@ -63,17 +63,21 @@ OPT.tag             = [];
 OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
 OPT.workdir         = pwd;
 OPT.polygondir      = [];
-OPT.polygon         = [];
-OPT.cellsize        = [];                               % cellsize is assumed to be regular in x and y direction and is determined automatically
-OPT.datathinning    = 1;                                % stride with which to skip through the data
-OPT.inputtimes      = [];                               % starting points (in Matlab epoch time)
-OPT.starttime       = [];
-OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
-OPT.min_coverage    = .25;                               % coverage percentage (can be several, e.g. [50 75 90]
-OPT.plotresult      = 1;                                % 0 = off; 1 = on;
-OPT.warning         = 1;                                % 0 = off; 1 = on;
-OPT.postProcessing	= 1;                                % 0 = off; 1 = on;
-OPT.whattodo(1)     = 1;                                % volume plots
+OPT.polygon         = [];    % search polygon (default: [] use entire grid)
+OPT.cellsize        = [];    % cellsize is assumed to be regular in x and y direction and is determined automatically
+OPT.datathinning    = 1;     % stride with which to skip through the data
+
+%???% 
+OPT.inputtimes      = [];    % starting points (in Matlab epoch time)
+%???% 
+
+OPT.starttime       = [];    % this is a datenum of the starting time to search
+OPT.searchinterval  = -730;  % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
+OPT.min_coverage    = .25;   % coverage percentage (can be several, e.g. [50 75 90]
+OPT.plotresult      = 1;     % 0 = off; 1 = on;
+OPT.warning         = 1;     % 0 = off; 1 = on;
+OPT.postProcessing  = 1;     % 0 = off; 1 = on;
+OPT.whattodo(1)     = 1;     % volume plots
 OPT.type            = 1;
 OPT.counter         = 0;
 OPT.urls            = [];
@@ -87,10 +91,23 @@ OPT.dy             = [];
 
 OPT = setproperty(OPT,varargin{:});
 
+if nargin==0
+   varargout = {OPT};
+   return
+end
+
+
 % get cell size
 %urls      = grid_orth_getFixedMapOutlines(OPT.dataset);
-x         = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); 
-OPT.cellsize = mean(diff(x));
+x            = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); 
+y            = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate')); 
+dx = unique(diff(x));
+dy = unique(diff(x));
+if dx==dy
+   OPT.cellsize = dx;
+else
+   error(['dx ',num2str(dx),' is not equal to dy ',num2str(dx)])
+end
 
 if isempty(OPT.dx)
     OPT.dx = OPT.cellsize*OPT.datathinning;
@@ -99,6 +116,11 @@ end
 if isempty(OPT.dy)
     OPT.dy = OPT.cellsize*OPT.datathinning;
 end
+
+if mod(min(x)-minx,OPT.cellsize) > 0; error(['requested minx = ',num2str(minx),' does not overlap with x vector: ',num2str(var2evalstr(x))]);end
+if mod(min(x)-maxx,OPT.cellsize) > 0; error(['requested maxx = ',num2str(maxx),' does not overlap with x vector: ',num2str(var2evalstr(x))]);end
+if mod(min(y)-miny,OPT.cellsize) > 0; error(['requested miny = ',num2str(miny),' does not overlap with y vector: ',num2str(var2evalstr(y))]);end
+if mod(min(y)-maxy,OPT.cellsize) > 0; error(['requested maxy = ',num2str(maxy),' does not overlap with y vector: ',num2str(var2evalstr(y))]);end
 
 % generate x and y vectors spanning the fixed map extents
 x         = minx : OPT.dx  : maxx;
@@ -157,3 +179,5 @@ for i = 1:length(mapurls)
     % clear unused variables to save memory
     clear z zt
 end
+
+varargout = {X, Y, Z, Ztime};

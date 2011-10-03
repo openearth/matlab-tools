@@ -76,11 +76,11 @@ function [X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid(varargin)
 %% settings
 % defaults
 OPT = struct(...
-    'ncfile', [], ...                               % filename of nc file to use
-    'starttime', [], ...                            % this is a datenum of the starting time to search
-    'searchinterval', -30, ...                      % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
-    'polygon', [], ...                              % search polygon (default: [] use entire grid)
-    'stride', [1 1 1] ...                           % stride vector indicating thinning factor
+    'ncfile', [], ...          % filename of nc file to use
+    'starttime', [], ...       % this is a datenum of the starting time to search
+    'searchinterval', -30, ... % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
+    'polygon', [], ...         % search polygon (default: [] use entire grid)
+    'stride', [1 1 1] ...      % stride vector indicating thinning factor
     );
 
 % overrule default settings by property pairs, given in varargin
@@ -145,11 +145,18 @@ if ~isempty(xstart) || isempty(ystart)
         
         % TO DO: add nearest in time
         % TO DO: add linear interpolation in time
+        if ~isempty(OPT.polygon)
+        XX   = repmat(X',size(Y,1),          1);
+        YY   = repmat(Y ,        1, size(X',2));
+        mask = isnan(Z(inpolygon(XX, YY, OPT.polygon(:,1), OPT.polygon(:,2))));
+        else
+        mask = ':';
+        end
         
         %% one by one place separate grids on overall grid
         for id_t = [idt(idt_in)-1]'
             % So long as not all Z values inpolygon are nan try to add data
-            if sum(isnan(Z(inpolygon(repmat(X',size(Y,1),1), repmat(Y, 1, size(X',2)), OPT.polygon(:,1), OPT.polygon(:,2)))))~=0
+            if sum(mask)~=0 % trick: sum(':')=58
                if getpref('SNCTOOLS','PRESERVE_FVD')==0 
                Z_next    = nc_varget(OPT.ncfile, nc_index.z, [id_t                ystart-1                                  xstart-1], ...
                                                              [1   floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], ...

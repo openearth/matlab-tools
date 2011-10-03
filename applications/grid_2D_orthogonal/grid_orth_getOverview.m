@@ -1,5 +1,7 @@
 function OPT = grid_orth_getOverview(OPT)
 %GRID_ORTH_GETOVERVIEW Plots geographical extents of netcdf tiles on overview.
+%
+%See also: grid_2D_orthogonal
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -41,27 +43,37 @@ function OPT = grid_orth_getOverview(OPT)
 % $HeadURL$
 % $Keywords: $
 
+OPT.tag     = [];
+OPT.dataset = [];
+OPT.urls    = [];
+
+if nargin==0
+   varargout = {OPT};
+   return
+end
+
 if ~isfield(OPT, 'tag'); OPT.tag = OPT.dataset; end
 
 axes = findobj('type','axes');
 if isempty(axes) || ~any(ismember(get(axes, 'tag'), {OPT.tag})) % if an overview figure is already present don't run this function again
     
-    % Step 0.1: get fixed map urls from OPeNDAP server
+    %% Step 0.1: get fixed map urls from OPeNDAP server
     if ~isempty(OPT.urls)
         urls = OPT.urls; 
     else
         OPT = mergestructs(OPT,grid_orth_getMapInfoFromDataset(OPT.dataset));
     end
-    % Step 0.2: create a figure with tagged patches
+    
+    %% Step 0.2: create a figure with tagged patches
     figure(10);clf;axis equal;box on;hold on
     
-    % Step 0.3: plot landboundary
+    %% Step 0.3: plot landboundary
     try % try loop to prevent crashing when no internet connection is available
         OPT.x = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate'));
         OPT.y = nc_varget(OPT.ldburl, nc_varfind(OPT.ldburl, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate'));
         plot(OPT.x, OPT.y, 'k', 'linewidth', 2);
     end
     
-    % Step 0.4: plot fixed map patches on axes and return the axes handle
+    %% Step 0.4: plot fixed map patches on axes and return the axes handle
     ah = grid_orth_createFixedMapsOnAxes(gca, OPT, 'tag', OPT.tag); %#ok<*NODEF,*NASGU>
 end
