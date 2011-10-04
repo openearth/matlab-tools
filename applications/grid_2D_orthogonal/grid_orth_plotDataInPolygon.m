@@ -59,11 +59,9 @@ if ~isempty(OPT.ldburl)
 end
 
 %% find unqiue date values
-%-----------------
+
 v = unique(Ztime(find(~isnan(Ztime))));
-if length(v)==1
-    v=[v(1) - 1 v];
-end
+%if length(v)==1;v=[v(1) - 1 v];end
 nv = length(v);
 
 if nv == 0
@@ -71,7 +69,7 @@ if nv == 0
 end
 
 %% Step 1: plot resulting X, Y and Z grid
-%-----------------
+
 figure(2);clf;
 
 % plot

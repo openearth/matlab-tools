@@ -43,14 +43,15 @@ function OPT = grid_orth_getOverview(OPT)
 % $HeadURL$
 % $Keywords: $
 
-OPT.tag     = [];
-OPT.dataset = [];
-OPT.urls    = [];
-
-if nargin==0
-   varargout = {OPT};
-   return
-end
+%OPT0.tag     = [];
+%OPT0.dataset = [];
+%OPT0.urls    = [];
+%
+%if nargin==0
+%   varargout = {OPT0};
+%   return
+%end
+%OPT = setproperty(OPT0,OPT);
 
 if ~isfield(OPT, 'tag'); OPT.tag = OPT.dataset; end
 
