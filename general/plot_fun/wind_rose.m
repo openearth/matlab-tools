@@ -13,7 +13,7 @@ function varargout = wind_rose(D,F,varargin)
 %                   (i) 0-convention and (ii) visual interpetation (to/from)
 %                   if meteo,     0=from North, 90=from East , etc
 %                   if not meteo, 0=to   East , 90=to   North, etc (default)
-%                   if current,   0=to North,   90=to East, ets...
+%                   if current,   0=to North,   90=to East, etc...
 %       - nAngels   number of D subdivisons
 %       - Ag        intensities subdivisons,    default is automatic
 %       - ci        percentage circles to draw, default is automatic
