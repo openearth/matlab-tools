@@ -73,6 +73,17 @@ end
 
 if ~isempty(OPT.catalognc)
     OPT.urls      = cellstr([nc_varget(OPT.catalognc,'urlPath')]);
+    
+    if ~strcmp(fileparts(OPT.catalognc),...
+               fileparts(OPT.urls{1}  ));
+       fprintf(2,['Catalog \n'])
+       fprintf(2,'%s\n',OPT.catalognc)
+       fprintf(2,['is not in same directory as netCDF files \n'])
+       fprintf(2,'%s\n',OPT.urls{1})
+       fprintf(2,['Ignoring catalog and persueing with \n'])
+       fprintf(2,'%s\n',fileparts(OPT.catalognc))
+       error(mfilename)
+    end
     % temporary fix of very weird bug!!! Occasionally the char matrix or urlPaths in
     % the catalog nc gets flipped!!!! If this happens flip it back.
     if ~strcmp(OPT.urls{1}(end-2:end),'.nc')

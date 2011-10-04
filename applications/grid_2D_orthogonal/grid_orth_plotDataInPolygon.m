@@ -118,7 +118,7 @@ figure(3); clf;
    caxis   ([1-.5 nv+.5])
    colormap(jet(nv));
    [ax,c1] =  colorbarwithtitle('',1:nv+1); %#ok<NASGU>
-   set(ax,'yticklabel',datestr(v,1))
+   set(ax,'yticklabel',datestr(v,29))
    end
    
    axis    equal

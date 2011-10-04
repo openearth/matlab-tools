@@ -45,102 +45,19 @@ function [datatypes] = UCIT_getActions;
 % TO DO: save as datatypes.transect(i).names instead of datatypes.transect.names{i}
 % add data type
 
-i = 0;
-
-%% Transect data
+tmp=UCIT_getDatatypes;
 %  NOTE: Keep this file consistent with UCIT_getDatatypes!
+%  here we choose identical functions for all data, please modify this manually if needed
 
-%% Jarkus
-i = i + 1;
+for i=1:length(tmp.transect.datatype)
 datatypes.transect.commonactions{i}     =  {'UCIT_selectTransect','UCIT_plotTransect','UCIT_exportTransects2GoogleEarth', 'UCIT_plotMultipleYears','UCIT_analyseTransectVolume','UCIT_calculateMKL','UCIT_calculateTKL'};
 datatypes.transect.specificactions{i}   =  {};
-
-%% Jarkus (test)
-i = i + 1;
-datatypes.transect.commonactions{i}     =  {'UCIT_selectTransect','UCIT_plotTransect','UCIT_exportTransects2GoogleEarth', 'UCIT_plotMultipleYears','UCIT_analyseTransectVolume','UCIT_calculateMKL','UCIT_calculateTKL'};
-datatypes.transect.specificactions{i}   =  {};
-
-%% Lidar USA
-i = i + 1;
-datatypes.transect.commonactions{i}     =  {'UCIT_selectTransect','UCIT_plotTransect','UCIT_exportTransects2GoogleEarth', 'UCIT_plotMultipleYears','UCIT_analyseTransectVolume','UCIT_calculateMKL','UCIT_calculateTKL'};
-datatypes.transect.specificactions{i}   =  {};
+end
 
 %% Grid data
 %  names are a unique tag, datatype governs the actions
 
-i = 0;
-
-%% Jarkus
-
-i = i + 1;
+for i=1:length(tmp.grid.datatype)
 datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
 datatypes.grid.specificactions{i}   =  {};
-
-%% Jarkus (test)
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-
-%% Vaklodingen
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-%% Vaklodingen (test)
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-%% Kustlidar
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-%% Kustlidar (test)
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-
-%% Dienst zeeland
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-%% Dienst zeeland (test)
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-
-%% Dienst zeeland (local)
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-%% AHN100
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-%% AHN250
-
-i = i + 1;
-datatypes.grid.commonactions{i}     =  {'UCIT_plotDataInPolygon', 'UCIT_plotDataInGoogleEarth', 'UCIT_plotDifferenceMap','UCIT_getCrossSection','UCIT_sandBalanceInPolygon', 'UCIT_IsohypseInPolygon'};
-datatypes.grid.specificactions{i}   =  {};
-
-%% Lines data
-
-%% Point data
-
-
+end

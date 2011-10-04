@@ -16,6 +16,7 @@ function plotGrid(X,Y,Z,scheme,d,v)
 %                   4: morphology plot          - v = [-35 -20 -17.5 -15 -12.5 -10 -7.5 -5 -4.5 -4 -3.5 -3 -2.5 -2 -1.5 -1 -0.5  0 .5 1 2];
 %                   5: difference maps          - v = [-7.5 -5 -4 -3 -2 -1 -.25 0 .25 1 2 3 4 5 7.5];
 %                   6: contours                 - v = [-3 -3 -2 -2];
+%                   7: map of datenums - v is unique(Z) is not specified
 %               v = vector containing countour or class information (only for scheme 6)
 %
 %   Output:     no output
@@ -154,11 +155,10 @@ switch  scheme
     case 7
         
         %% find unique date values
-        %-----------------
-        v = unique(Z(find(~isnan(Z)))); %#ok<*FNDSB>
-        if length(v)==1
-            v=[v(1) - 1 v];
+        if nargin < 5
+        v = unique(Z(find(~isnan(Z))))
         end
+        %if length(v)==1;v=[v(1) - 1 v];end
         nv = length(v);
 
         if nv == 0
@@ -181,7 +181,7 @@ switch  scheme
             caxis   ([1-.5 nv+.5])
             colormap(jet(nv));
             [ax,c1] =  colorbarwithtitle('',1:nv+1); %#ok<NASGU>
-            set(ax,'yticklabel',datestr(v,1))
+            set(ax,'yticklabel',datestr(v,29))
         end
         axis equal
 end
