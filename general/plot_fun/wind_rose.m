@@ -13,21 +13,22 @@ function varargout = wind_rose(D,F,varargin)
 %                   (i) 0-convention and (ii) visual interpetation (to/from)
 %                   if meteo,     0=from North, 90=from East , etc
 %                   if not meteo, 0=to   East , 90=to   North, etc (default)
-%       - n         number of D subdivisons
-%       - di        intensities subdivisons,    default is automatic
+%                   if current,   0=to North,   90=to East, ets...
+%       - nAngels   number of D subdivisons
+%       - Ag        intensities subdivisons,    default is automatic
 %       - ci        percentage circles to draw, default is automatic
-%       - labtitle  main title
-%       - lablegend legend title
+%       - titStr    main title
+%       - legStr    legend title
 %       - cmap      colormap [jet]
 %       - colors    to use instead of colormap, for each di
-%       - quad      Quadrant to show percentages [1]
+%       - quad      Quadrant to show percentages ['auto']
 %       - ri        empty internal radius, relative to size of higher
 %                   percentage [1/30]
-%       - legtype   legend type: 1, continuous, 2, separated boxes [2]
+%       - legType   legend type: 1, continuous, 2, separated boxes [2]
 %       - bcolor    full rectangle border color ['none']
 %       - lcolor    line colors for axes and circles ['k']
-%       - percbg    percentage labels bg ['w']
-%       - ax        to place wind rose on pervious axes, the input for ax
+%       - percBg    percentage labels bg ['w']
+%       - onAxes    to place wind rose on pervious axes, the input for ax
 %                   must be [theax x y width], where theax is the previous
 %                   axes, x and y are the location and width is the wind
 %                   rose width relative to theax width (default=1/5)
@@ -36,7 +37,9 @@ function varargout = wind_rose(D,F,varargin)
 %       - iflip     flip the intensities as they go outward radially, ie,
 %                   highest values are placed nearest the origin [{0} 1]
 %       - inorm     normalize intensities, means all angles will have 100%
-%       - incout    if 0, data outside di limits will not be used [0 {1}]
+%       - IncHiLow  if 0, data outside di limits will not be used [0 {1}]
+%       - directionLabels  put the labels North, East, South, West on the
+%                   axes (default: true)
 %
 %   Output:
 %      HANDLES   Handles of all lines, fills, texts
@@ -245,8 +248,11 @@ if isequal(OPT.dtype,'meteo')
   D=mod(-90-D,360) + 180; % degN2deguc(D);
   % add 180 as visual directional interpretation differs.
   directional_interpretation = 'from ';
+elseif isequal(OPT.dtype,'current')
+  D=mod(-90-D,360) + 180; % degN2deguc(D);
+  % add 180 as visual directional interpretation differs.
+  directional_interpretation = 'to ';
 end
-
 
 %% angles subdivisons:
 D=mod(D,360);
