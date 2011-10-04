@@ -154,6 +154,7 @@ Calc = 0;                   % number of calculations so far
 Iter = 0;                   % number of iterations so far
 [z, betas, criteriumZ, criteriumZ2, criteriumBeta] = deal(NaN(OPT.maxiter,1));  % preallocate 
 [P alphas x] = deal(NaN(OPT.DerivativeSides*sum(active)*OPT.maxiter+1,Nstoch));
+dzdu = zeros(size(P));
 
 %% start FORM iteration procedure
 while NextIter
@@ -208,14 +209,9 @@ while NextIter
     end
     
     % derive dz/du for each of the active u-values
-    dzdu = zeros(1,Nstoch);
-    sts = 1:Nstoch;
-    for st = sts(active)
-        % derive dz/du for the active variables
-        dzdu(st) = (z(id_upp(st)) - z(id_low(st))) / (u(id_upp(st),st) - u(id_low(st),st));
-    end
+    dzdu(Iter,active) = (z(id_upp(active)) - z(id_low(active))) ./ sum(u(id_upp(active), active) - u(id_low(active), active), 2);
     
-    if any(imag(dzdu))
+    if any(imag(dzdu(Iter,:)))
         % complex dzdu will cause problems in the next iteration
         % warn user in error message which variable(s) cause the problems
         varnames = {stochast.Name};
@@ -226,7 +222,7 @@ while NextIter
     % linearise z-function in u:
     % z(u) = B + A(1)*u(1) + ... + A(n)*u(n)
     % coefficients A(i) equal to -dz/du(i)
-    A = dzdu;
+    A = dzdu(Iter,:);
     B = z(Calc(end)) - A*u(Calc(end),:)';
     
     % normalise z-function by dividing by the square root of the sum of the
@@ -298,6 +294,7 @@ alphas = alphas(1:indend,:);
 alpha = alphas(indend,:);
 betas = betas(1:indend);
 beta = betas(indend);
+dzdu = dzdu(1:indend);
 criteriumZ = criteriumZ(1:indend);
 criteriumZ2 = criteriumZ2(1:indend);
 criteriumBeta = criteriumBeta(1:indend);
@@ -315,7 +312,8 @@ result = struct(...
         'Iter', Iter,...
         'Calc', size(u,1),...
         'alphas', alphas,...
-        'Betas', betas, ...
+        'Betas', betas,...
+        'dzdu', dzdu,...
         'u', u,...
         'P', P,...
         'x', x,...
