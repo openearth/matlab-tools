@@ -1,9 +1,13 @@
 classdef NcFile < handle
-    %NETCDFFILE  One line description goes here.
+    %NETCDFFILE  wraps a netcdf file for easy read access.
     %
-    %   More detailed description goes here.
+    %   The NcFile wraps a netcdf file for easy read access. After
+    %   initiating the class (call the constructor function) the resulting
+    %   object contains all Attributes, Dimensions, Variables in the netcdf
+    %   file. A variable can be isolated and called as a normal variable in
+    %   your workspace.
     %
-    %   See also NetCDFFile.NetCDFFile
+    %   See also NcFile.NcFile NcVariable nc_info nc_dump
     
     %% Copyright notice
     %   --------------------------------------------------------------------
@@ -50,13 +54,13 @@ classdef NcFile < handle
     
     %% Properties
     properties
-        FileName;
-        Format;
+        FileName;        % Location of the netcdf file (either local or on an opendap server)
+        Format;          % netcdf format (read from the file)
     end
     properties (Dependent = true)
-        Attributes;
-        Dimensions;
-        Variables;
+        Attributes;      % A list with all global attributes (read from the file)
+        Dimensions;      % A list with all dimensions (read from the file)
+        Variables;       % A list with all variables (read from the file)
     end
     
     properties (Hidden = true)
@@ -72,23 +76,25 @@ classdef NcFile < handle
     methods
         %% Constructor
         function this = NcFile(url, varargin)
-            %NETCDFFILE  One line description goes here.
+            %NCFILE  Creates an NcFile object that handles netcdf files
             %
-            %   More detailed description goes here.
+            %   This method creates a NcFile object. With this object
+            %   information stored in an netcdf file can easily be accessed
+            %   and viewed
             %
             %   Syntax:
-            %   this = NetCDFFile(varargin)
+            %   ncfile = NcFile(location)
             %
             %   Input:
-            %   varargin  =
+            %   location  - file location (local) or url of the netcdf file 
             %
             %   Output:
-            %   this       = Object of class "NetCDFFile"
+            %   ncfile    - NcFile object of the specified url
             %
             %   Example
-            %   NetCDFFile
+            %   ncfile = NcFile('http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc')
             %
-            %   See also NcFile
+            %   See also NcFile NcVariable NcDimension
             
             %% Check url
             if nargin < 1 || ~ischar(url)
@@ -140,6 +146,29 @@ classdef NcFile < handle
         
         %% Retrieve methods
         function variable = getvariable(this,name)
+            %GETVARIABLE  Retrieves the specified NcVariable from the file
+            %
+            %   This method retrieves the variable with the specified name
+            %   from the netcdf file.
+            %
+            %   Syntax:
+            %   variable = getvariable(name)
+            %
+            %   Input:
+            %   name      - Name of the variable (should be identical to
+            %               the name of the desired variable in the netcdf
+            %               file.
+            %
+            %   Output:
+            %   variable  - An NcVariable object of the desired variable
+            %
+            %   Example
+            %   ncfile = NcFile('http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc');
+            %   var = ncfile.getvariable('altitude');
+            %
+            %   See also NcFile NcVariable NcDimension
+            
+            %% Search variable
             for i = 1:length(this.Variables)
                 if strcmp(this.Variables(i).Name,name)
                     variable = this.Variables(i);
@@ -149,12 +178,58 @@ classdef NcFile < handle
             error('NcFile:NoVariable',['No variable with such a name (' name ')']);
         end
         function dimension = getdimension(this,name)
+            %GETDIMENSION  Retrieves the specified NcDimension from the file
+            %
+            %   This method retrieves the dimension with the specified name
+            %   from the netcdf file.
+            %
+            %   Syntax:
+            %   dimension = getdimension(name)
+            %
+            %   Input:
+            %   name      - Name of the dimension (should be identical to
+            %               the name of the desired dimension in the netcdf
+            %               file.
+            %
+            %   Output:
+            %   dimension - An NcDimension object of the desired dimension
+            %
+            %   Example
+            %   ncfile = NcFile('http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc');
+            %   dim = ncfile.getdimension('alongshore');
+            %
+            %   See also NcFile NcVariable NcDimension
+
+            %% Search for dimension
             dimension = this.Dimensions(ismember({this.Dimensions.Name}',name));
             if isempty(dimension)
                 error('NcFile:NoDimension',['No dimension with such a name (' name ')']);
             end
         end
         function attributeValue = getattributevalue(this,name)
+            %GETATTRIBUTEVALUE  Retrieves the value of the specified attribute from the file
+            %
+            %   This method retrieves the value of the attribute with the 
+            %   specified name from the netcdf file.
+            %
+            %   Syntax:
+            %   value = getattributevalue(name)
+            %
+            %   Input:
+            %   name      - Name of the attribute (should be identical to
+            %               the name of the desired attribute in the netcdf
+            %               file.
+            %
+            %   Output:
+            %   value     - The value of the specified attribute
+            %
+            %   Example
+            %   ncfile = NcFile('http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc');
+            %   value = ncfile.getattributevalue('title');
+            %
+            %   See also NcFile NcVariable NcDimension
+            
+            %% Search attribute
             attribute = this.Attributes(ismember(({this.Attributes.Name}'),name));
             if isempty(attribute)
                 error('NcFile:NoAttribute',['No attribute with such a name (' name ')']);

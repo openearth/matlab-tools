@@ -1,9 +1,11 @@
 classdef NcDimension < handle
-    %NCDIMENSION  One line description goes here.
+    %NCDIMENSION  Wraps a netcdf dimension for easy read access.
     %
-    %   More detailed description goes here.
+    %   NcDimension wraps a netcdf dimension for easy read access and can
+    %   be contained in a NcFile or NcVariable object. There is no method
+    %   to create an NcDimension object on itself
     %
-    %   See also NcDimension.NcDimension
+    %   See also NcFile NcVariable
     
     %% Copyright notice
     %   --------------------------------------------------------------------
@@ -50,32 +52,33 @@ classdef NcDimension < handle
     
     %% Properties
     properties
-        FileName
-        Name
-        Length
-        Unlimited
+        FileName    % Location of the netcdf file (either local or on an opendap server)
+        Name        % Name of the dimension
+        Length      % Length of the dimension
+        Unlimited   % Specifies whether the dimension is unlimited
     end
     
     %% Methods
     methods
         function this = NcDimension(url,info)
-            %NCDIMENSION  One line description goes here.
+            %NCDIMENSION  Creates an NcDimension object
             %
-            %   More detailed description goes here.
+            %   This method creates an NcDimension object and is internally
+            %   used in NcVariable and Ncfile.
             %
             %   Syntax:
-            %   this = NcDimension(varargin)
+            %   this = NcDimension(url,info)
             %
             %   Input:
-            %   varargin  =
+            %   url        = The url / path to the netcdf file
+            %   info       = The struct with information about the
+            %                dimension returned by nc_info.
             %
             %   Output:
             %   this       = Object of class "NcDimension"
             %
-            %   Example
-            %   NcDimension
             %
-            %   See also NcDimension
+            %   See also NcFile NcVariable
             
             if nargin == 0
                 return;

@@ -1,9 +1,40 @@
 classdef NcVariable < handle
-    %NCVARIABLE  One line description goes here.
+    %NCVARIABLE  wraps a variable in an ncfile for easy read access
     %
-    %   More detailed description goes here.
+    %   The NcVariable wraps a variable in a netcdf file for easy read 
+    %   access. It stores the url / path as a pointer and only reads the
+    %   specified information (instead of the complete variable) to
+    %   increase spead.
     %
-    %   See also NcVariable.NcVariable
+    %   creating an NcVariable can be done in two ways:
+    %   1. By creating an NcFile object and retrieving one of the
+    %      variables:
+    %           ncfile = NcFile(url);
+    %           var = ncfile.Variables(1); 
+    %               OR 
+    %           var = ncfile.getvariable('test');
+    %   2. Create one from scratch:
+    %           var = NcVariable(url,'test');
+    %
+    %   The obtained object contains field (similar to fields of a struct)
+    %   that provide information about the variable like data type, size
+    %   and name. To read the content of a variable it should just be
+    %   treated as any other double:
+    %
+    %           content = var(1,:)
+    %           content = var(end,1:10)
+    %           content = var(10:5:end,2,16)
+    %           content = var(x < 15,:) % will not work yet if the specified sequence is not equidistant
+    %
+    %   not functioning yet:
+    %           content = var([1,3,10],:)
+    %
+    %   The NcVariable object reads the netcdf file on every call to the
+    %   values (like the examples above). for performance considerations it
+    %   is therefore recommended to store the retrieved values in seperate
+    %   variables in your workspace (a = var(1:10);)
+    %
+    %   See also NcVariable.NcVariable NcFile NcDimension nc_info nc_dump nc_varget
     
     %% Copyright notice
     %   --------------------------------------------------------------------
@@ -50,36 +81,41 @@ classdef NcVariable < handle
     
     %% Properties
     properties
-        FileName
-        Name
-        NcType
-        DataType
-        Unlimited
-        Dimensions
-        Size
-        Attributes
+        FileName    % Location of the netcdf file (either local or on an opendap server)
+        Name        % Name of the variable as present in the netcdf file
+        NcType      % variable type of the variable in question (read from file)
+        DataType    % Data type of the variable content (double, float, int etc.)
+        Unlimited   
+        Dimensions  % The dimensions of the variable (read from file) in the form of NcDimension objects
+        Size        % The variable size (deduced from the dimensions
+        Attributes  % Attributes (read from file)
     end
     
     %% Methods
     methods
         function this = NcVariable(url,variableInfo,dimensions)
-            %NCVARIABLE  One line description goes here.
+            %NCVARIABLE  Creates an NcVariable object of the specified variable in the specified file
             %
-            %   More detailed description goes here.
+            %   This method creates an NcVariable object from the specified
+            %   variable in the specified file. The NcVariable object gives
+            %   easy read access to a variable in the file.
             %
             %   Syntax:
-            %   this = NcVariable(varargin)
+            %   var = NcVariable(url,name)
             %
             %   Input:
-            %   varargin  =
+            %   url        = Location of the netcdf file (url or local path)
+            %   name       = Name of the desired variable in the netcdf file
             %
             %   Output:
-            %   this       = Object of class "NcVariable"
+            %   var        = NcVariable object referencing the desired
+            %                variable in the specified netcdf file.
             %
             %   Example
-            %   NcVariable
+            %   var = NcVariable('http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc','altitude');
+            %   figure; plot(var(end,1,:));
             %
-            %   See also NcVariable
+            %   See also NcVariable NcFile NcDimension
             
             %% return empty object when no input is given
             if nargin == 0
@@ -119,6 +155,30 @@ classdef NcVariable < handle
             end
         end
         function sz = getsize(this)
+            %GETSIZE  Returns the size (dimensions) of the NcVariable object
+            %
+            %   This function returns the size of the NcVariable (length of
+            %   the dimensions)
+            %
+            %   Syntax:
+            %   sz = var.getsize();
+            %       OR
+            %   sz = getsize(var);
+            %
+            %   Input:
+            %   var        = An NcVariable object
+            %
+            %   Output:
+            %   sz         = An 1xN double with dimension lengths in which
+            %                N is the number of dimensions of this
+            %                variable.
+            %
+            %   Example
+            %   var = NcVariable('http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc','altitude');
+            %   sz = getsize(var);
+            %
+            %   See also NcVariable NcVariable.NcVariable NcFile NcDimension
+            
             if (length(this) > 1)
                 sz = size(this);
             else
