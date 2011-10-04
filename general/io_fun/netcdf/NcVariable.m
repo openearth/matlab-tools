@@ -224,17 +224,31 @@ classdef NcVariable < handle
                         start = nan(1,nDims);
                         len = nan(1,nDims);
                         stride = nan(1,nDims);
+                        filter = false(1,nDims);
+                        s2 = s;
                         for i = 1:length(this.Dimensions)
                             if length(s.subs) < i
                                 start(i) = 0;
                                 len(i) = inf;
                                 stride(i) = 1;
+                                filter(i) = false;
                             else
-                                [start(i) len(i) stride(i)] = parsesubs(s.subs{i});
+                                [start(i) len(i) stride(i) filter(i)] = parsesubs(s.subs{i});
+                            end
+                            if ~filter(i)
+                                s2.subs{i} = ':';
+                            else
+                                if islogical(s2.subs{i})
+                                    s2.subs{i}=find(s2.subs{i});
+                                end
+                                s2.subs{i} = s2.subs{i} - start(i);
                             end
                         end
                         varargout{1} = nc_varget(this.FileName,this.Name,start,len,stride);
-                        
+                        if any(filter)
+                            s2.subs(strcmp(s2.subs,':'))=[];
+                            varargout{1} = subsref(varargout{1},s2);
+                        end
                         return
                     else
                         %% reference to one of the objects in the array
@@ -252,7 +266,8 @@ classdef NcVariable < handle
     end
 end
 
-function [start len stride] = parsesubs(sub)
+function [start len stride filter] = parsesubs(sub)
+filter = false;
 if islogical(sub)
     sub = find(sub==1);
 end
@@ -278,10 +293,13 @@ if isnumeric(sub)
     if length(unique(d)) == 1
         start = min(sub)-1;
         stride = d(1);
-        len = floor((max(sub) - min(sub)) / stride);
+        len = floor((max(sub) - min(sub)) / stride)+1;
     else
-        error('Need a constant stride');
-        % TODO: come up with a solution
+        start = min(sub)-1;
+        stride = 1;
+        len = max(sub);
+        filter = true;
+        % TODO: come up with a better solution (xb_read_dat ?)
     end
 end
 
