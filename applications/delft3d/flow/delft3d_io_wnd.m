@@ -333,6 +333,7 @@ function iostat=Local_write(fname,DAT,time_option,varargin),
          end     
 
          D.refdatenum    = time2datenum(MDF.keywords.itdate);
+         DAT.datenum = (DAT.minutes./60/24)+D.refdatenum;
 
       elseif isstruct(time_option)
       
@@ -340,12 +341,20 @@ function iostat=Local_write(fname,DAT,time_option,varargin),
 
          MDF.keywords    = time_option;
          D.refdatenum    = time2datenum(MDF.keywords.itdate);
+         DAT.datenum = (DAT.minutes./60/24)+D.refdatenum;         
 
       elseif iscell(time_option)
       
          %% User specified meta data
 
          D.refdatenum    = time_option;
+         
+      elseif isnumeric(time_option)
+      
+         %% User specified meta data
+
+         D.refdatenum    = time_option;
+         DAT.datenum = (DAT.minutes./60/24)+D.refdatenum;
       
       elseif isstruct(time_option)
       
@@ -361,8 +370,8 @@ function iostat=Local_write(fname,DAT,time_option,varargin),
 
       H.userfieldnames = false;
       
-      if nargin>2
-         D = setproperty(D,varargin{:});
+      if nargin>3
+         D.refdatenum = varargin{:};
       end
 
 %% Locate
