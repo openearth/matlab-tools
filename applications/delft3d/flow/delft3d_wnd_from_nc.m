@@ -1,5 +1,5 @@
 function delft3d_wnd_from_nc(varargin)
-%delft3d_wnd_from_nc     script that transforms netCDf wind file to delft3d *.wnd file
+%delft3d_wnd_from_nc transforms netCDf wind file to delft3d *.wnd file
 %
 %  delft3d_wnd_from_nc(<keyword,value>)
 %
@@ -12,6 +12,47 @@ function delft3d_wnd_from_nc(varargin)
 % * nc    :     name or opendap url of netCDF file with wind data
 %
 %See also: KNMI_POTWIND, DELFT3D_IO_WND, delft3d_wnd_from_knmi_potwind
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 ARCADIS
+%       grasmeijerb
+%
+%       bart.grasmeijer@arcadis.nl
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 05 Oct 2011
+% Created with Matlab version: 7.12.0.635 (R2011a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 
 %% get data
 
@@ -56,4 +97,8 @@ function delft3d_wnd_from_nc(varargin)
    W.UP       = W.UP     (mask);
    W.DD       = W.DD     (mask);
    
-   delft3d_io_wnd('write',[OPT.dir,filesep,filename(OPT.nc),'_after_refdate_',datestr(OPT.refdatenum,30),'_nonan.wnd'],W,'refdatenum',OPT.refdatenum)
+   nc_filename = filename(OPT.nc);
+   refdatestr = datestr(OPT.refdatenum,30);
+   myfilesep = filesep;
+   
+   delft3d_io_wnd('write',[OPT.dir,myfilesep,nc_filename,'_after_refdate_',refdatestr,'_nonan.wnd'],W,'refdatenum',OPT.refdatenum)
