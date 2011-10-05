@@ -155,7 +155,7 @@ switch  scheme
     case 7
         
         %% find unique date values
-        if nargin < 5
+        if nargin < 6
         v = unique(Z(find(~isnan(Z))))
         end
         %if length(v)==1;v=[v(1) - 1 v];end
