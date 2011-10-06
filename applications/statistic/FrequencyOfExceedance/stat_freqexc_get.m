@@ -72,7 +72,6 @@ OPT = setproperty(OPT, varargin{:});
 
 dt              = mean(diff(t));
 duration        = range(t);
-frac            = sum(~isfinite(x))/length(x);
 
 res = stat_freqexc_struct;
 
@@ -80,6 +79,7 @@ res.time        = t(:);
 res.data        = x(:);
 res.duration    = duration;
 res.dt          = dt;
+res.fraction    = sum(isfinite(x))/length(x);
 
 %% find maxima
 
@@ -96,8 +96,8 @@ for i = 1:length(g)
     res.peaks(i).maxima     = struct('time', [], 'value', [], 'duration', []);
 
     % determine up- and down crossings
-    uc = find(x(1:end-1)<=g(i)&x(2:end)>g(i));
-    dc = find(x(2:end)<=g(i)&x(1:end-1)>g(i));
+    uc = find((x(1:end-1)<=g(i)|isnan(x(1:end-1)))&x(2:end)>g(i));
+    dc = find((x(2:end)<=g(i)|isnan(x(2:end)))&x(1:end-1)>g(i));
 
     if isempty(uc) && isempty(dc)
         if x(1) >= g(i)
@@ -145,5 +145,5 @@ for i = 1:length(g)
     end
     
     res.peaks(i).nmax      = length(res.peaks(i).maxima);
-    res.peaks(i).frequency = sum([res.peaks(i).maxima.duration])/duration;
+    res.peaks(i).frequency = sum([res.peaks(i).maxima.duration])/duration/res.fraction;
 end

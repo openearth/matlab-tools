@@ -62,6 +62,7 @@ function stat_freqexc_plot(res, varargin)
 %% read settings
 
 OPT = struct( ...
+    'interactive', true ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -99,8 +100,8 @@ set(p3,'Tag','numexc');
 
 box on;
 grid on;
-xlabel('number of exceedances');
-ylabel('value');
+xlabel('value');
+ylabel('number of exceedances');
 
 %% plot frequency of exceedance
 
@@ -113,8 +114,8 @@ set(p4,'Tag','freqexc');
 
 box on;
 grid on;
-xlabel('frequency of exceedance');
-ylabel('value');
+xlabel('value');
+ylabel('frequency of exceedance');
 
 set(s1,'XLim',xlim,'YLim',ylim);
 set(s2,'XLim',ylim);
@@ -122,7 +123,9 @@ set(s3,'XLim',ylim,'YLim',[0 1]);
 
 %% make it all dynamic
 
-set(gcf,'windowbuttonmotionfcn',{@setpointer, [s1 s2 s3], res});
+if OPT.interactive
+    set(gcf,'windowbuttonmotionfcn',{@setpointer, [s1 s2 s3], res});
+end
 
 function setpointer(obj, event, objs, res)
     if ~isempty(objs)
