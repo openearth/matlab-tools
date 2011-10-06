@@ -65,14 +65,13 @@ try
          fprintf(fid,'%1c',string(j));
       end
    end
-   iostat=1;
 catch
    % error
    iostat=-1;
 end
 
 if nargout==1
-   VARARGOUT = {iostat};
+   varargout = {iostat};
 end
 
 %% EOF
