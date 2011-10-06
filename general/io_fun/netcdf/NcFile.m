@@ -239,7 +239,22 @@ classdef NcFile < handle
     end
     methods (Hidden = true)
         function this = seturl(this,url,varargin)
-            %% Try to find file or url
+            %% Try to find url locally
+            if exist('url','file')
+                this.FileName = url;
+                return;
+            end
+            
+            [pt fname ext] = fileparts(url);
+            if isempty(pt)
+                files = which([fname ext]);
+                if ~isempty(files)
+                    this.FileName = files;
+                    return;
+                end
+            end
+            
+            %% Try to find file or url on www
             urlConnection = urlreadwrite('NetCDFFile',url);
             urlConnectionSuccessfull = (~isempty(urlConnection) && ~isempty(urlConnection.getContentType));
             if urlConnectionSuccessfull || exist(url,'file')

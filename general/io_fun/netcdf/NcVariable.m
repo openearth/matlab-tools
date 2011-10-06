@@ -13,6 +13,9 @@ classdef NcVariable < handle
     %           var = ncfile.Variables(1); 
     %               OR 
     %           var = ncfile.getvariable('test');
+    %               OR
+    %           var = ncfile.Variables('test');
+    %
     %   2. Create one from scratch:
     %           var = NcVariable(url,'test');
     %
@@ -149,7 +152,13 @@ classdef NcVariable < handle
                 this.NcType = variableInfo.Nctype;
                 this.DataType = variableInfo.Datatype;
                 this.Unlimited = variableInfo.Unlimited;
-                this.Dimensions = dimensions(ismember({dimensions.Name}',variableInfo.Dimension));
+                this.Dimensions = NcDimension;
+                if isempty(variableInfo.Dimension)
+                    this.Dimensions(1) = [];
+                end
+                for i = 1:length(variableInfo.Dimension)
+                   this.Dimensions(i) = dimensions(strcmp({dimensions.Name}',variableInfo.Dimension(i))); 
+                end
                 this.Size = variableInfo.Size;
                 this.Attributes = variableInfo.Attribute;
             end
@@ -207,16 +216,35 @@ classdef NcVariable < handle
                         varargout{i} = builtin('subsref',this(i),s);
                     end
                 case '()'
-                    if length(s)<2
-                        %% Retrieve data from file
-                        if length(this) > 1
-                            if length(s.subs) > length(size(this))
-                                error('Unknown reference');
+                    if length(this) > 1
+                        if all(cellfun(@ischar,s(1).subs))
+                            varargout{1} = NcVariable;
+                            varargout{1}(1) = [];
+                            for i=1:length(s(1).subs)
+                                varargout{1}(i) = this(ismember({this.Name}',s(1).subs{i}));
                             end
-                            varargout{1} = builtin('subsref',this,s);
-                            return;
+                        elseif length(s(1).subs) > length(size(this))
+                            error('Unknown reference');
+                        else
+                            varargout{1} = builtin('subsref',this,s(1));
                         end
-                        if length(s.subs) > length(this.Size)
+                        if length(s) > 1
+                            obj = varargout{1};
+                            tmp = cell(1,length(obj));
+                            for i = 1:length(obj)
+                                tmp{i} = subsref(obj(i),s(2:end));
+                            end
+                            if length(obj) == 1
+                                varargout{1} = tmp{1};
+                            else
+                                varargout{1} = tmp;
+                            end
+                        end
+                        return;
+                    end
+                    if length(s)<2
+                        %% Retrieve data
+                        if length(s(1).subs) > length(this.Size)
                             error(['This variable has only ' num2str(length(this.Size)) ' dimensions']);
                         end
                         
@@ -225,15 +253,15 @@ classdef NcVariable < handle
                         len = nan(1,nDims);
                         stride = nan(1,nDims);
                         filter = false(1,nDims);
-                        s2 = s;
+                        s2 = s(1);
                         for i = 1:length(this.Dimensions)
-                            if length(s.subs) < i
+                            if length(s(1).subs) < i
                                 start(i) = 0;
                                 len(i) = inf;
                                 stride(i) = 1;
                                 filter(i) = false;
                             else
-                                [start(i) len(i) stride(i) filter(i)] = parsesubs(s.subs{i});
+                                [start(i) len(i) stride(i) filter(i)] = parsesubs(s(1).subs{i});
                             end
                             if ~filter(i)
                                 s2.subs{i} = ':';
@@ -255,7 +283,14 @@ classdef NcVariable < handle
                         varargout{1} = builtin('subsref',this,s);
                     end
                 case '{}'
-                    % No support for indexing using '{}'
+                    if (length(this) > 1)
+                        id = ismember({this.Name},s.subs);
+                        if all(~id)
+                            error(['Could not find variable with name: ' s.subs]);
+                        end
+                        varargout{1} = this(id);
+                        return;
+                    end
                     error('NcVariable:subsref',...
                         'Not a supported subscripted reference')
             end
