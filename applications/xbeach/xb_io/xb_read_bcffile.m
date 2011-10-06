@@ -80,16 +80,22 @@ switch upper(fname(1))
     case 'E'
         fdims = [dims.globaly dims.wave_angle];
     case 'Q'
-        % distinguish between files with separate Qx, Qy and Qtot data or
-        % files with just Qtot
+        % distinguish between files with separate Qx, Qy, Qtot and eta data
+        % or files with just Qtot
         if OPT.nt > 0
-            if info.bytes/8/dims.globaly/OPT.nt > 1
+            cols = info.bytes/8/dims.globaly/OPT.nt;
+            
+            if cols > 3
+                fdims = [dims.globaly 4];
+            elseif cols > 1
                 fdims = [dims.globaly 3];
             else
                 fdims = [dims.globaly];
             end
         else
-            if mod(info.bytes/8/dims.globaly,3) == 0
+            if mod(info.bytes/8/dims.globaly,4) == 0
+                fdims = [dims.globaly 4];
+            elseif mod(info.bytes/8/dims.globaly,3) == 0
                 fdims = [dims.globaly 3];
             else
                 fdims = [dims.globaly];

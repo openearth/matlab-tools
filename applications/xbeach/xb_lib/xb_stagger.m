@@ -6,6 +6,31 @@ function g = xb_stagger(x, y)
 %   XBeach grid. Works similar to the gridprops function from XBeach
 %   itself.
 %
+%   The last character of each variable name indicates the location within
+%   a grid cell for which the value is comuted (z, u, v or c, see
+%   illustration). The variable name further consists of x or y,
+%   indicating a location in world coordinates, or of ds or dn, indicating
+%   distances or surfaces in grid coordinates. The alfa* variables are
+%   orientation of the specified points.
+%
+%        coast
+%
+%      |   |   |   
+%   ---+---c-u-+---  ^     ^
+%      |   v z |     | ds  |
+%   ---+---+---+---  v     | s
+%      |   |   |           |
+%   ---+---+---+---
+%      |   |   |   
+%
+%          <--->
+%            dn
+%
+%      <-------
+%          n
+%
+%         sea
+%
 %   Syntax:
 %   g = xb_stagger(x, y)
 %
