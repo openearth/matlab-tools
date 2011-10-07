@@ -103,7 +103,10 @@ plot([res.peaks.threshold],[res.peaks.nmax],'-b');
 
 if isfield(res,'filter')
     plot(res.filter.threshold*ones(1,2),get(gca,'YLim'),'-g');
-    plot(res.filter.threshold,res.filter.nmax,'og');
+    
+    [y i]   = sort([res.filter.maxima.value],2,'descend');
+    
+    plot(y,1:res.filter.nmax,'-g');
 end
 
 p3 = plot(zeros(1,2),get(gca,'YLim'),'-r');
@@ -123,12 +126,16 @@ plot([res.peaks.threshold],[res.peaks.frequency],'-b');
 
 if isfield(res,'filter')
     plot(res.filter.threshold*ones(1,2),get(gca,'YLim'),'-g');
-    plot(res.filter.threshold,res.filter.frequency,'og');
+    plot(y,[1:res.filter.nmax]./res.filter.nmax,'-g');
 end
 
 if isfield(res,'fit')
     plot([res.fit.fits.y],[res.fit.fits.f],'Color',[.8 .8 .8]);
     plot(res.fit.y,res.fit.f,'-r');
+end
+
+if isfield(res,'combined')
+    plot(res.combined.y,res.combined.f,'-k','LineWidth',2);
 end
 
 p4 = plot(zeros(1,2),get(gca,'YLim'),'-r');

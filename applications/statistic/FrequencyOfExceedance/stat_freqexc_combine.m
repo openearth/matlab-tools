@@ -1,10 +1,10 @@
-function res = stat_freqexc_filter(res, varargin)
-%STAT_FREQEXC_CONSOLIDATE  One line description goes here.
+function res = stat_freqexc_combine(res, varargin)
+%STAT_FREQEXC_COMBINE  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = stat_freqexc_consolidate(varargin)
+%   varargout = stat_freqexc_combine(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function res = stat_freqexc_filter(res, varargin)
 %   varargout =
 %
 %   Example
-%   stat_freqexc_consolidate
+%   stat_freqexc_combine
 %
 %   See also
 
@@ -49,7 +49,7 @@ function res = stat_freqexc_filter(res, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 06 Oct 2011
+% Created: 07 Oct 2011
 % Created with Matlab version: 7.12.0.635 (R2011a)
 
 % $Id$
@@ -62,35 +62,28 @@ function res = stat_freqexc_filter(res, varargin)
 %% read settings
 
 OPT = struct( ...
-    'mask',         'yyyy', ...
-    'threshold',    nan     ...
+    'f',        [1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5], ...
+    'split',    .1                                  ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-%% filter maxima
-
-if ~isnan(OPT.threshold)
-    [n ni] = closest(OPT.threshold,[res.peaks.threshold]);
-else
-    [n ni] = max(cellfun(@length,{res.peaks.maxima}));
+if ~isfield(res, 'filter')
+    error('No data selected, please use stat_freqexc_filter first');
 end
 
-y      = num2cell(datestr([res.peaks(ni).maxima.time],OPT.mask),2);
-years  = unique(y);
-mis    = nan(size(years));
-
-for i = 1:length(years)
-    idx    = find(ismember(y,years(i)));
-    [m mi] = max([res.peaks(ni).maxima(idx).value]);
-    mis(i) = idx(mi);
+if ~isfield(res, 'fit')
+    error('No fit made, pleas use stat_freqexc_fit first');
 end
 
-%% save peaks
+%% combine data and fit
 
-res.filter = struct(                    ...
-    'mask',         OPT.mask,           ...
-    'threshold',    OPT.threshold,      ...
-    'frequency',    sum([res.peaks(ni).maxima(mis).duration])/res.duration/res.fraction, ...
-    'nmax',         length(mis),        ...
-    'maxima',       res.peaks(ni).maxima(mis)   );
+yf  = sort([res.filter.maxima.value],2,'descend');
+yc1 = interp1([1:res.filter.nmax]./res.filter.nmax,yf,OPT.f(OPT.f>=OPT.split),'linear','extrap');
+
+[f fi] = unique(res.fit.f);
+yc2 = interp1(f,res.fit.y(fi),OPT.f(OPT.f<OPT.split),'linear','extrap');
+
+res.combined.f = OPT.f;
+res.combined.y = [yc1 yc2];
+

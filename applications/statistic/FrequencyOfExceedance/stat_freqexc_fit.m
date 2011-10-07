@@ -69,7 +69,7 @@ OPT = struct( ...
 OPT = setproperty(OPT, varargin{:});
 
 if ~isfield(res, 'filter')
-    error('No data selected, pleas use stat_freqexc_filter first');
+    error('No data selected, please use stat_freqexc_filter first');
 end
 
 %% fit data
