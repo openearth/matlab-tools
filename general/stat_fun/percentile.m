@@ -1,7 +1,8 @@
 function val = percentile(x, pct)
-%PERCENTILE  find the percentile values of a matrix
+%PERCENTILE  find the percentile values
 %
-%   More detailed description goes here.
+%   Returns the value of <x> for which <pct>% is smaller and 100 - <pct>%
+%   is larger
 %
 %   Syntax:
 %   val = percentile(x, pct)
@@ -15,7 +16,7 @@ function val = percentile(x, pct)
 %
 %   Example
 %     x    = rand(100000,7)*100;
-%     pct  = [5:15:95]';
+%     pct  = [21 50 75];
 %     val  = percentile(x,pct)
 %
 %   See also 
@@ -67,13 +68,13 @@ function val = percentile(x, pct)
 % sort x
 x   = sort(x);
 
-% vectorice pct
+% vectorize pct
 pct = pct(:);
 
 % match indices with percentiles
 ind = (size(x,1)*(pct/100))+1.5;
 
-% lenghten x
+% lengthen x
 x   = x([1 1:end end],:);
 
 % find interpolation factors a and b
