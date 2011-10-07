@@ -77,6 +77,12 @@ ylim = [min(res.data(isf)) max(res.data(isf))].*[.9 1.1];
 s1 = subplot(3,1,1); hold on;
 
 plot(res.time,res.data,'-b');
+
+if isfield(res,'filter')
+    plot(xlim,res.filter.threshold*ones(1,2),'-g');
+    plot([res.filter.maxima.time],[res.filter.maxima.value],'og');
+end
+
 p1 = plot(xlim,zeros(1,2),'-r');
 p2 = plot(0,0,'or');
 
@@ -94,6 +100,12 @@ title('data');
 s2 = subplot(3,1,2); hold on;
 
 plot([res.peaks.threshold],[res.peaks.nmax],'-b');
+
+if isfield(res,'filter')
+    plot(res.filter.threshold*ones(1,2),get(gca,'YLim'),'-g');
+    plot(res.filter.threshold,res.filter.nmax,'og');
+end
+
 p3 = plot(zeros(1,2),get(gca,'YLim'),'-r');
 
 set(p3,'Tag','numexc');
@@ -108,6 +120,17 @@ ylabel('number of exceedances');
 s3 = subplot(3,1,3); hold on;
 
 plot([res.peaks.threshold],[res.peaks.frequency],'-b');
+
+if isfield(res,'filter')
+    plot(res.filter.threshold*ones(1,2),get(gca,'YLim'),'-g');
+    plot(res.filter.threshold,res.filter.frequency,'og');
+end
+
+if isfield(res,'fit')
+    plot([res.fit.fits.y],[res.fit.fits.f],'Color',[.8 .8 .8]);
+    plot(res.fit.y,res.fit.f,'-r');
+end
+
 p4 = plot(zeros(1,2),get(gca,'YLim'),'-r');
 
 set(p4,'Tag','freqexc');

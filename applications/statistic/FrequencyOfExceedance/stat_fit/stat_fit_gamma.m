@@ -1,4 +1,4 @@
-function y = stat_fit_gamma(data,f,varargin)
+function f = stat_fit_gamma(data,y,varargin)
 %STAT_FIT_GAMMA  One line description goes here.
 %
 %   More detailed description goes here.

@@ -62,22 +62,38 @@ function res = stat_freqexc_fit(res, varargin)
 %% read settings
 
 OPT = struct( ...
-    'f',      1./[1 1.001 1.1 2 5 10 25 30 50 100 200 500 1000 5000 10000 50000 100000], ...
-    'fcnfit', {@stat_fit_rayleigh @stat_fit_gumbel @stat_fit_normal @stat_fit_max} ...
+    'y',      -10:.1:10, ...
+    'fcnfit', {{@stat_fit_rayleigh @stat_fit_gumbel @stat_fit_normal @stat_fit_gamma}} ...
 );
 
 OPT = setproperty(OPT, varargin{:});
+
+if ~isfield(res, 'filter')
+    error('No data selected, pleas use stat_freqexc_filter first');
+end
 
 %% fit data
 
 res.fit = struct();
 
-data    = [res.peaks.maxima.value];
+data    = [res.filter.maxima.value];
 
+n = 1;
 for i = 1:length(OPT.fcnfit)
-    if ishandle(OPT.fcnfit{i})
-        feval(OPT.fcnfit{i},data,OPT.f);
+    if isa(OPT.fcnfit{i}, 'function_handle')
+        res.fit.fits(n) = struct(   ...
+            'fcn',  OPT.fcnfit{i},  ...
+            'y',    OPT.y(:),          ...
+            'f',    1-feval(OPT.fcnfit{i},data,OPT.y(:)));
+        
+        n = n+1;
     end
 end
 
+%% compute average
 
+f = [res.fit.fits.f];
+f = f(:,~all(isnan(f),1));
+
+res.fit.y = OPT.y(:);
+res.fit.f = mean(f,2);

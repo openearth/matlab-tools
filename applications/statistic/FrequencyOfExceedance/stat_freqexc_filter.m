@@ -1,4 +1,4 @@
-function res = stat_freqexc_consolidate(res, varargin)
+function res = stat_freqexc_filter(res, varargin)
 %STAT_FREQEXC_CONSOLIDATE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -63,30 +63,34 @@ function res = stat_freqexc_consolidate(res, varargin)
 
 OPT = struct( ...
     'mask',         'yyyy', ...
-    'threshold',    -Inf    ...
+    'threshold',    nan     ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 %% determine year maxima
 
-[n ni] = max(cellfun(@length,{res.peaks.maxima}));
+if ~isnan(OPT.threshold)
+    [n ni] = closest(OPT.threshold,[res.peaks.threshold]);
+else
+    [n ni] = max(cellfun(@length,{res.peaks.maxima}));
+end
 
 y      = num2cell(datestr([res.peaks(ni).maxima.time],OPT.mask),2);
 years  = unique(y);
-mis    = [];
+mis    = nan(size(years));
 
 for i = 1:length(years)
-    idx    = ismember(y,years(i));
+    idx    = find(ismember(y,years(i)));
     [m mi] = max([res.peaks(ni).maxima(idx).value]);
-    
-    if m >= OPT.threshold
-        mis = [mis mi];
-    end
+    mis(i) = idx(mi);
 end
 
 %% consolidate peaks
 
-res.peaks        = res.peaks(ni);
-res.peaks.nmax   = length(mis);
-res.peaks.maxima = res.peaks.maxima(mis);
+res.filter = struct(                    ...
+    'mask',         OPT.mask,           ...
+    'threshold',    OPT.threshold,      ...
+    'frequency',    sum([res.peaks(ni).maxima(mis).duration])/res.duration/res.fraction, ...
+    'nmax',         length(mis),        ...
+    'maxima',       res.peaks(ni).maxima(mis)   );
