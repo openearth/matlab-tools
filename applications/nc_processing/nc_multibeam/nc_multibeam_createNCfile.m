@@ -11,7 +11,7 @@ function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
        varargout = {OPT};
        return
    end
-   OPT = setproperty(OPT0, OPT);
+   OPT = setproperty(OPT0, {OPT},'onExtraField','silentIgnore');
 
 %% create empty outputfile
 %  indicate NetCDF outputfile name and create empty structure
