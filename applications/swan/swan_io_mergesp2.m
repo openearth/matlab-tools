@@ -117,6 +117,7 @@ for i=1:n
     f=fgetl(fid);
     f=fgetl(fid);
     f=fgetl(fid);
+    CS = strtrim(f(1:12));
 
     f=fgetl(fid);
 
@@ -198,6 +199,8 @@ for i=1:n
                 otherwise
                     fprintf(fi2,'%s\n','LONLAT                                  locations in spherical coordinates');
             end
+        elseif strcmp(CS,'LOCATIONS')
+            fprintf(fi2,'%s\n','LOCATIONS');            
         else
             fprintf(fi2,'%s\n','LONLAT                                  locations in spherical coordinates');
         end
