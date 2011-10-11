@@ -20,8 +20,8 @@ function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 % will be applied to correct for e.g. the difference between North in geographical
 % coordinate systems and the y direction in projected coordinate systems.
 % The third and fourth input argument must be matrices containing the u and v
-% components of the vector field. The third and fourth output argument are
-% matrices of the corrected u and v components of the vector field.
+% components of the original vector field. The third and fourth output argument are
+% matrices of the u and v components of the corrected vector field.
 %
 % [x2,y2,u2,v2,<log>] = convertCoordinatesNew(x1,y1,u1,v1,'keyword','value')
 %
@@ -191,7 +191,7 @@ switch OPT.CS1.type
         y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
         [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',EPSG);
         if vectorCorrection
-            x1v = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG)+10;
+            x1v = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG)+10; % End of vector is 10 m in positive x direction
             y1v = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
             [lat1v,lon1v] = ConvertCoordinatesProjectionConvert(x1v,y1v,OPT.CS1,OPT.proj_conv1,'xy2geo',EPSG);
         end
@@ -199,7 +199,7 @@ switch OPT.CS1.type
         lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG);
         lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',EPSG);
         if vectorCorrection
-            lon1v = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG)+2e-6;
+            lon1v = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG)+2e-6; % End of vector is 2e-6 radians to the East
             lat1v = convertUnits(y1,OPT.CS1.UoM.name,'radian',EPSG);
         end
 end
@@ -266,16 +266,22 @@ end
 
 % Vector correction
 if vectorCorrection
+    % Compute components of difference vector of CS1 and CS2 
     dx=x2v-x2;
     dy=y2v-y2;
     switch OPT.CS2.type
         case 'geographic 2D'
+            % Correct for the fact that 1 degree longitude is shorter than
+            % one degree latitude
             dx=dx.*cos(pi.*y2/180);
         otherwise
     end
+    % Angle is difference between x direction in CS1 and CS2
     angle=atan2(dy,dx);
+    % Rotate vector field
     u2=u1.*cos(angle)-v1.*sin(angle);
     v2=u1.*sin(angle)+v1.*cos(angle);
+    % Set output arguments
     varargout{1}=u2;
     varargout{2}=v2;
     varargout{3}=OPT;
