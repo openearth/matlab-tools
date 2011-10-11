@@ -103,7 +103,7 @@ for ifig = 1:Nstoch+2
         xi = result.Output.z;
     elseif ifig == Nstoch + 2
         % plot Beta
-        title('Beta')
+        title('\beta')
         xi = NaN(size(result.Output.z));
         xi(IterIndex) = result.Output.Betas;
     else
@@ -122,13 +122,30 @@ for ifig = 1:Nstoch+2
     % plot individual calculations
     plot(xnums, xi, 'b:',...
         'DisplayName', 'all computations');
+    if Nstoch + 2 == NrFigureColumns *  NrFigureRows
+        % add legend
+        leg = legend('toggle');
+        set(leg,...
+            'location', 'best');
+    end
+end
+
+linkaxes(ax,'x');
+
+if Nstoch + 2 < NrFigureColumns *  NrFigureRows
+    ax(ifig+1) = subplot(NrFigureRows, NrFigureColumns, ifig+1);
+    plot(1, NaN,...
+        'DisplayName', 'FORM iterations',...
+        'LineWidth', 2);
+    hold on
+    plot(1, NaN, 'b:',...
+        'DisplayName', 'all computations');
     % add legend
     leg = legend('toggle');
     set(leg,...
         'location', 'best');
+    set(ax(ifig+1), 'visible', 'off')
 end
-
-linkaxes(ax,'x');
 
 %%
 if nargout == 1
