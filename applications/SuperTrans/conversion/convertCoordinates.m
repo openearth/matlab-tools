@@ -1,4 +1,4 @@
-function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
+function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 %CONVERTCOORDINATES transformation between coordinate systems
 %
 % [x2,y2,<log>] = convertCoordinatesNew(x1,y1,'keyword','value')
@@ -6,8 +6,8 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 % Note 1: Beware of the Lon-Lat order of in- and output arguments!
 % Note 2: (x1,y1) can be vectors or matrices.
 % Note 3: Does not work for MatLab 7.0 and older (invalid MEX file warnings)
-% Note 4: Dutch Rijksdriehoek(RD) to WGS 84 conversions are NOT exact. 
-%         Accuracy is better than 0.5m (plate tectonics), but multiple 
+% Note 4: Dutch Rijksdriehoek(RD) to WGS 84 conversions are NOT exact.
+%         Accuracy is better than 0.5m (plate tectonics), but multiple
 %         conversions can mess things up.
 %         For accurate conversions, see  <a href="http://www.rdnap.nl/">www.rdnap.nl/</a>
 %
@@ -16,9 +16,18 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 % log   : contains all conversion parameters that were used.
 %         To check this output, use 'var2evalstr(log)'.
 %
-% Optionally the data structure with EPSG codes can be pre-loaded 
-% * in the active memory, 
-% * CONVERTCOORDINATES can be told to keep it as persistent dataset 
+% Additionally, vector fields can be transformed. In this case, a vector rotation
+% will be applied to correct for e.g. the difference between North in geographical
+% coordinate systems and the y direction in projected coordinate systems.
+% The third and fourth input argument must be matrices containing the u and v
+% components of the vector field. The third and fourth output argument are
+% matrices of the corrected u and v components of the vector field.
+%
+% [x2,y2,u2,v2,<log>] = convertCoordinatesNew(x1,y1,u1,v1,'keyword','value')
+%
+% Optionally the data structure with EPSG codes can be pre-loaded
+% * in the active memory,
+% * CONVERTCOORDINATES can be told to keep it as persistent dataset
 %   To remove it from memory, see PERSISTENT, or issue clear all
 % Both methods greatly speeds up the routine if many calls are made,
 % so the call is either
@@ -47,7 +56,7 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 %    CS1.type = projection type
 %
 % When multiple coordinate systems fit the criteria, an error message is
-% returende that lists these options.
+% returned that lists these options.
 %
 % Projection types supported     : projected and geographic 2D
 % Projection not (yet) supported : engineering, geographic 3D, vertical, geocentric,  compound
@@ -73,12 +82,16 @@ function [x2,y2,OPT]=convertCoordinates(x1,y1,varargin)
 %
 %   [lon,lat,log]=convertCoordinates(52,5.5,'CS1.code',4326,'CS2.code',4326,'CS2.UoM.name','sexagesimal DMS')
 %
+% Example 4: Rijksdriehoek to WGS 84 including vector correction:
+%
+%   [lon,lat,u2,v2,log]=convertCoordinates(200000,500000,10,15,'persistent','CS1.code',28992,'CS2.code',4326)
+%
 % +-------+-----------------------------+------------------+
 % | code  |  name                       |  type            |
 % +-------+-----------------------------+------------------+
-% |  4326 | 'WGS 84'                    | 'geographic 2D'  |  To find 
+% |  4326 | 'WGS 84'                    | 'geographic 2D'  |  To find
 % |  4230 | 'ED50'                      | 'geographic 2D'  |  specifications of
-% | 28992 | 'Amersfoort / RD New'       | 'projected'      |  more coordinate 
+% | 28992 | 'Amersfoort / RD New'       | 'projected'      |  more coordinate
 % |  7415 | 'Amersfoort / RD New + NAP' | 'projected'      |  systems:
 % | 32631 | 'WGS 84 / UTM zone 31N'     | 'projected'      |  (name <=> code):
 % | 23031 | 'ED50 / UTM zone 31N'       | 'projected'      |  <a href="http://www.epsg-registry.org">www.epsg-registry.org</a>
@@ -131,14 +144,28 @@ end
 
 %% check if EPSG codes are given
 
+% Check if vector correction is required
+if isnumeric(varargin{1})
+    % Vectors u and v are input
+    vectorCorrection=1;
+    u1=varargin{1};
+    v1=varargin{2};
+    for i=1:length(varargin)-2
+        v{i}=varargin{i+2};
+    end
+    varargin=v;
+else
+    vectorCorrection=0;
+end
+    
 if odd(length(varargin))
     if strcmpi(varargin{1},'persistent')
-       persistent EPSG
-       if isempty(EPSG)
-          EPSG = load('EPSG');
-       end
+        persistent EPSG
+        if isempty(EPSG)
+            EPSG = load('EPSG');
+        end
     elseif isstruct(varargin{1})
-       EPSG = varargin{1};
+        EPSG = varargin{1};
     end
     varargin(1) = [];
 else
@@ -160,12 +187,21 @@ OPT = FindCSOptions(OPT,EPSG,varargin{:});
 
 switch OPT.CS1.type
     case 'projected' % convert projection to geographic radians
-         x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG);
-         y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
+        x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG);
+        y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
         [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',EPSG);
+        if vectorCorrection
+            x1v = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG)+10;
+            y1v = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
+            [lat1v,lon1v] = ConvertCoordinatesProjectionConvert(x1v,y1v,OPT.CS1,OPT.proj_conv1,'xy2geo',EPSG);
+        end
     case 'geographic 2D' % do nothing, except for a unit conversion
         lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG);
         lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',EPSG);
+        if vectorCorrection
+            lon1v = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG)+2e-6;
+            lat1v = convertUnits(y1,OPT.CS1.UoM.name,'radian',EPSG);
+        end
 end
 
 %% find datum transformation options
@@ -188,12 +224,23 @@ if ischar(OPT.datum_trans)
         % no transformation required
         lat2 = lat1;
         lon2 = lon1;
+        if vectorCorrection
+            lat2v = lat1v;
+            lon2v = lon1v;
+        end
     elseif strcmpi(OPT.datum_trans,'no direct transformation available');
         [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans_to_WGS84'  ,EPSG);
-        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84',EPSG);        
+        [lat2,lon2] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84',EPSG);
+        if vectorCorrection
+            [lat2v,lon2v] = ConvertCoordinatesDatumTransform(lat1v,lon1v,OPT,'datum_trans_to_WGS84'  ,EPSG);
+            [lat2v,lon2v] = ConvertCoordinatesDatumTransform(lat2v,lon2v,OPT,'datum_trans_from_WGS84',EPSG);
+        end
     end
 else
     [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans'          ,EPSG);
+    if vectorCorrection
+        [lat2v,lon2v] = ConvertCoordinatesDatumTransform(lat1v,lon1v,OPT,'datum_trans'          ,EPSG);
+    end
 end
 
 %% Transform geographic 2D radians to output coordinates
@@ -203,9 +250,37 @@ switch OPT.CS2.type
         [y2,x2] = ConvertCoordinatesProjectionConvert(lon2,lat2,OPT.CS2,OPT.proj_conv2,'geo2xy',EPSG);
         x2 = convertUnits(x2,'metre',OPT.CS2.UoM.name,EPSG);
         y2 = convertUnits(y2,'metre',OPT.CS2.UoM.name,EPSG);
+        if vectorCorrection
+            [y2v,x2v] = ConvertCoordinatesProjectionConvert(lon2v,lat2v,OPT.CS2,OPT.proj_conv2,'geo2xy',EPSG);
+            x2v = convertUnits(x2v,'metre',OPT.CS2.UoM.name,EPSG);
+            y2v = convertUnits(y2v,'metre',OPT.CS2.UoM.name,EPSG);
+        end
     case 'geographic 2D'
         x2 = convertUnits(lon2,'radian',OPT.CS2.UoM.name,EPSG);
         y2 = convertUnits(lat2,'radian',OPT.CS2.UoM.name,EPSG);
+        if vectorCorrection
+            x2v = convertUnits(lon2v,'radian',OPT.CS2.UoM.name,EPSG);
+            y2v = convertUnits(lat2v,'radian',OPT.CS2.UoM.name,EPSG);
+        end
+end
+
+% Vector correction
+if vectorCorrection
+    dx=x2v-x2;
+    dy=y2v-y2;
+    switch OPT.CS2.type
+        case 'geographic 2D'
+            dx=dx.*cos(pi.*y2/180);
+        otherwise
+    end
+    angle=atan2(dy,dx);
+    u2=u1.*cos(angle)-v1.*sin(angle);
+    v2=u1.*sin(angle)+v1.*cos(angle);
+    varargout{1}=u2;
+    varargout{2}=v2;
+    varargout{3}=OPT;
+else
+    varargout{1}=OPT;
 end
 
 end
