@@ -29,13 +29,19 @@ function StructOut = delwaq_intersect(varargin)
 %   StructOut.UTime(1) = File(StructOut.iUfile(1)).Time(StructOut.iUTime(1))
 %
 %   See also: DELWAQ, DELWAQ_CONC, DELWAQ_DIFF, DELWAQ_RES
-%             DELWAQ_TIME, DELWAQ_STAT
+%             DELWAQ_TIME, DELWAQ_STAT, WAQ
 
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-11 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 IdFile(1:nargin) = 0;
 for inar = 1:nargin

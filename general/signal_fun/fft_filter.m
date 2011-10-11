@@ -56,7 +56,7 @@ function varargout = fft_filter(varargin)
 %
 %   © G.J. de Boer, g.j.deboer@tudelft.nl, June 2005
 %
-%   See also: fft, fft_anal, harmanal
+%   See also: fft, fft_anal, harmanal, thompson1983
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology

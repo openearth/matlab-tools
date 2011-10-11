@@ -21,12 +21,18 @@ function structOut = delwaq_stat(File,File2Save,SubstanceNames,IntervalTime,Type
 %       'log10'- Base 10 logarithm: log10(File)
 % 
 %   See also: DELWAQ, DELWAQ_CONC, DELWAQ_RES, DELWAQ_TIME, DELWAQ_DIFF, 
-%             DELWAQ_INTERSECT
+%             DELWAQ_INTERSECT, WAQ
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 if nargin<5
     Type = 'none';

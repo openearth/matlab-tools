@@ -5,7 +5,7 @@ function varargout = godin_filter(time,data)
 %
 % where time is in days
 %
-%See also: THOMPSON1983, T_TIDE
+%See also: THOMPSON1983, T_TIDE, fft_filter
 
 % equidistant time function
 

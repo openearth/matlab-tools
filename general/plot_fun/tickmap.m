@@ -111,7 +111,6 @@ function varargout = tickmap(varargin)
        end
        nextarg = 3;
    end
-
   
 %%  Keywords
     

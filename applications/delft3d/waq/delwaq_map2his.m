@@ -1,5 +1,5 @@
 function structOut = delwaq_map2his(FileName,SegmentNr,SegmentNames,File2Save,SubstanceNames)
-%DELWAQ_DIFF Read Delwaq MAP file a write a Delwaq HIS file.
+%DELWAQ_MAP2HIS Read Delwaq MAP file a write a Delwaq HIS file.
 %
 %   STRUCTOUT = DELWAQ_MAP2HIS(FILENAME,SEGEMENTNR,SEGMENTNAMES,FILE2SAVE)
 %   Reads FILENAME and creates the His file FILE2SAVE, SEGEMENTNR and
@@ -10,12 +10,18 @@ function structOut = delwaq_map2his(FileName,SegmentNr,SegmentNames,File2Save,Su
 %   Create the HIS file only for substances specified in SUBSTANCENAMES
 %
 %   See also: DELWAQ, DELWAQ_XY2SEGNR, DELWAQ_RES, DELWAQ_TIME, DELWAQ_STAT, 
-%             DELWAQ_INTERSECT
+%             DELWAQ_INTERSECT, WAQ
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 if nargin<5
    SubstanceNames = 0;

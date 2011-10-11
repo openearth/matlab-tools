@@ -1,5 +1,5 @@
 function structOut = delwaq_ada2his(FileName,File2Save,SegmentNr,SegmentNames,SubstanceNames)
-%DELWAQ_DIFF Read Delwaq ADA file a write a Delwaq HIS file.
+%DELWAQ_ADA2HIS Read Delwaq ADA file a write a Delwaq HIS file.
 %
 %   STRUCTOUT = DELWAQ_ADA2HIS(FILENAME,,FILE2SAVE,SEGEMENTNR,SEGMENTNAMES)
 %   Reads FILENAME and creates the His file FILE2SAVE, SEGEMENTNR and
@@ -10,12 +10,18 @@ function structOut = delwaq_ada2his(FileName,File2Save,SegmentNr,SegmentNames,Su
 %   Create the HIS file only for substances specified in SUBSTANCENAMES
 %
 %   See also: DELWAQ, DELWAQ_XY2SEGNR, DELWAQ_RES, DELWAQ_TIME, DELWAQ_STAT, 
-%             DELWAQ_INTERSECT
+%             DELWAQ_INTERSECT, WAQ
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 if nargin<5
    SubstanceNames = 0;

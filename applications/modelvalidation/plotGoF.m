@@ -1,13 +1,14 @@
-function plotGoF(STATS, varargin)
-%plotGoF plots target diagram
-%as explained in Jolliff et al., 2009 [Summary diagrams for coupled
-%hydrodynamic-ecosystem model skill assessment, Jason K. Jolliff et al.,
-%Journal of Marine Systems 76 (2009) 64-82].
+function varargout = plotGoF(STATS, varargin)
+%PLOTGOF plots target diagram
 %
-% plotGoF(STATS)
+% plots 'Goodness of Fit' target diagramas explained in:
+% <a href="http://dx.doi.org/10.1016/j.jmarsys.2008.05.014">Jason K. Jolliff et al., 2009.</a> Summary diagrams for coupled hydrodynamic-
+% ecosystem model skill assessment, Journal of Marine Systems 76 (2009) 64-82 .
 %
-%  where STATS is the result of GoFStats:
-%  STATS = GoFStats(D3DTimePoints, D3DValues, NetCDFTime, NetCDFValues, Info);
+%    plotGoF(STATS)
+%
+% where STATS is the result of GoFStats:
+% STATS = GoFStats(D3DTimePoints, D3DValues, NetCDFTime, NetCDFValues, Info);
 %
 % Example:
 % plotGoF(STATS, 'figure', 2);
@@ -16,7 +17,7 @@ function plotGoF(STATS, varargin)
 %   * <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a> (full definition)
 %   * <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788">http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788</a> (simple)
 %
-%See also: GOFSTATS, GOFTIMESERIES
+%See also: GOFSTATS, GOFTIMESERIES, http://dx.doi.org/10.1016/j.jmarsys.2008.05.014
 
 % $Id$
 % $Date$
@@ -25,21 +26,23 @@ function plotGoF(STATS, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%
-
 %% Default values
-OPT.figure = 1;
-OPT.R1 = 0.67;
-OPT.R2 = 0.1; %radius innermost crcle
-OPT.limfct = 0.1;
-OPT.tickvec = -10:1:10; %default             tickvec=[-3:0.5:3];
-OPT.colvec = ['b', 'r', 'g', 'k'];
+OPT.figure   = 1;
+OPT.R1       = 0.67;
+OPT.R2       = 0.1; %radius innermost crcle
+OPT.limfct   = 0.1;
+OPT.tickvec  = -10:1:10; %default             tickvec=[-3:0.5:3];
+OPT.colvec   = ['b', 'r', 'g', 'k'];
 %OPT.markvec = ['x'];
-OPT.markvec = ['<'; '+'; 'o'; '*'; 'x'; 's'; 'd'; 'p'; 'h'; '^'; 'v'; '>'];
-OPT.mrksiz =[6; 7; 7; 7; 7; 7; 7; 7; 7; 6; 6; 6];
-OPT.xmin = -2; OPT.xmax = 2;
-OPT.ymin = -2; OPT.ymax = 2;
+OPT.markvec  = ['<'; '+'; 'o'; '*'; 'x'; 's'; 'd'; 'p'; 'h'; '^'; 'v'; '>'];
+OPT.mrksiz   = [6; 7; 7; 7; 7; 7; 7; 7; 7; 6; 6; 6];
+OPT.xmin     = -2; OPT.xmax = 2;
+OPT.ymin     = -2; OPT.ymax = 2;
 
+if nargin==0
+   varargout = {OPT};
+   return
+end
 OPT = setProperty(OPT, varargin{:});
 
 %% Plot statistics

@@ -56,7 +56,7 @@ end
 
 d = get(gca,'dataaspectratio');
 
-d(2) = d(1).*cos(pi*lat/180);
+d(2) = d(1).*cosd(lat);
 
 daspect(d);
 

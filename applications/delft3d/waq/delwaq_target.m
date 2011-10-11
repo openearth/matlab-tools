@@ -19,12 +19,18 @@ function structOut = delwaq_target(File1,File2,File2Save,SubstanceNames,Segments
 
 % 
 %   See also: DELWAQ, DELWAQ_CONC, DELWAQ_RES, DELWAQ_TIME, DELWAQ_STAT, 
-%             DELWAQ_INTERSECT
+%             DELWAQ_INTERSECT, WAQ
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 
 if nargin<6
     Type = 'none';
