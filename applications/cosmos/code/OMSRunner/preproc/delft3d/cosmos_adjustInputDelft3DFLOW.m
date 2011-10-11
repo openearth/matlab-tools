@@ -6,7 +6,7 @@ tmpdir=hm.tempDir;
 
 %% MDF File
 mdffile=[tmpdir model.runid '.mdf'];
-writeMDF(hm,m,mdffile);
+cosmos_writeMDF(hm,m,mdffile);
 
 %% Check if ini file needs to be made (used in 3d simulations)
 if isempty(model.flowRstFile) && model.makeIniFile
@@ -83,28 +83,16 @@ fname=[tmpdir model.name '.obs'];
 
 fid=fopen(fname,'wt');
 
-% stations=[];
-usedStations={''};
-% for j=1:length(model.stations)
-%     stations{j}=model.stations(j).name;
-% end
-n=0;
-for i=1:model.nrTimeSeriesDatasets
-    st=model.timeSeriesDatasets(i).station;
-    ii=strmatch(st,usedStations,'exact');
-    if isempty(ii)
-        % This station hasn't been made an observation point yet
-        n=n+1;
-        usedStations{n}=st;
-        len=length(deblank(st));
-        namestr=[st repmat(' ',1,22-len)];
-        len=length(num2str(model.timeSeriesDatasets(i).m));
-        mstr=[repmat(' ',1,5-len) num2str(model.timeSeriesDatasets(i).m)];
-        len=length(num2str(model.timeSeriesDatasets(i).n));
-        nstr=[repmat(' ',1,7-len) num2str(model.timeSeriesDatasets(i).n)];
-        str=[namestr mstr nstr];
-        fprintf(fid,'%s\n',str);
-    end
+for istat=1:model.nrStations
+    st=model.stations(istat).name;
+    len=length(deblank(st));
+    namestr=[st repmat(' ',1,22-len)];
+    len=length(num2str(model.stations(istat).m));
+    mstr=[repmat(' ',1,5-len) num2str(model.stations(istat).m)];
+    len=length(num2str(model.stations(istat).n));
+    nstr=[repmat(' ',1,7-len) num2str(model.stations(istat).n)];
+    str=[namestr mstr nstr];
+    fprintf(fid,'%s\n',str);
 end
 
 % Nesting Points

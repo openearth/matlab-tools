@@ -492,40 +492,6 @@ else
     hm.models(i).morFac=0;
 end
 
-%% Time-series datasets
-hm.models(i).nrTimeSeriesDatasets=0;
-if isfield(model,'timeseriesdatasets')
-    hm.models(i).nrTimeSeriesDatasets=length(model.timeseriesdatasets);
-    for j=1:hm.models(i).nrTimeSeriesDatasets
-        hm.models(i).timeSeriesDatasets(j).parameter=model.timeseriesdatasets(j).dataset.parameter;
-        hm.models(i).timeSeriesDatasets(j).station=model.timeseriesdatasets(j).dataset.station;
-        hm.models(i).timeSeriesDatasets(j).location=[];
-        if isfield(model.timeseriesdatasets(j).dataset,'locationx')
-            hm.models(i).timeSeriesDatasets(j).location(1)=str2double(model.timeseriesdatasets(j).dataset.locationx);
-        end
-        if isfield(model.timeseriesdatasets(j).dataset,'locationy')
-            hm.models(i).timeSeriesDatasets(j).location(2)=str2double(model.timeseriesdatasets(j).dataset.locationy);
-        end
-        if isfield(model.timeseriesdatasets(j).dataset,'locationm')
-            hm.models(i).timeSeriesDatasets(j).m=str2double(model.timeseriesdatasets(j).dataset.locationm);
-        end
-        if isfield(model.timeseriesdatasets(j).dataset,'locationn')
-            hm.models(i).timeSeriesDatasets(j).n=str2double(model.timeseriesdatasets(j).dataset.locationn);
-        end        
-        hm.models(i).timeSeriesDatasets(j).layer=[];
-        if isfield(model.timeseriesdatasets(j).dataset,'layer')
-            hm.models(i).timeSeriesDatasets(j).layer=str2double(model.timeseriesdatasets(j).dataset.layer);
-        end
-        hm.models(i).timeSeriesDatasets(j).sp2id=[];
-        if isfield(model.timeseriesdatasets(j).dataset,'sp2id')
-            hm.models(i).timeSeriesDatasets(j).sp2id=model.timeseriesdatasets(j).dataset.sp2id;
-        end
-        hm.models(i).timeSeriesDatasets(j).toOPeNDAP=0;
-        if isfield(model.timeseriesdatasets(j).dataset,'toopendap')
-            hm.models(i).timeSeriesDatasets(j).toOPeNDAP=str2double(model.timeseriesdatasets(j).dataset.toopendap);
-        end        
-    end
-end
 
 %% Stations
 if isfield(model,'stations')    
@@ -535,25 +501,36 @@ if isfield(model,'stations')
         hm.models(i).stations(j).longName=model.stations(j).station.longname;
         hm.models(i).stations(j).location(1)=str2double(model.stations(j).station.locationx);
         hm.models(i).stations(j).location(2)=str2double(model.stations(j).station.locationy);
-        %         if isfield(model.stations(j).station,'locationm')
-        %             hm.models(i).stations(j).m=str2double(model.stations(j).station.locationm);
-        %             hm.models(i).stations(j).n=str2double(model.stations(j).station.locationn);
-        %         end
+        if isfield(model.stations(j).station,'locationm')
+            hm.models(i).stations(j).m=str2double(model.stations(j).station.locationm);
+            hm.models(i).stations(j).n=str2double(model.stations(j).station.locationn);
+        end
         hm.models(i).stations(j).type=model.stations(j).station.type;
+
         
-        %         %% SP2
-        %         if isfield(model.stations(j).station,'storesp2')
-        %             hm.models(i).stations(j).storeSP2=str2double(model.stations(j).station.storesp2);
-        %             if isfield(model.stations(j).station,'sp2id')
-        %                 hm.models(i).stations(j).SP2id=model.stations(j).station.sp2id;
-        %             else
-        %                 hm.models(i).stations(j).SP2id='';
-        %             end
-        %         else
-        %             hm.models(i).stations(j).storeSP2=0;
-        %             hm.models(i).stations(j).SP2id='';
-        %         end
+        %% Time-series datasets
+        hm.models(i).stations(j).nrDatasets=0;
+        if isfield(model.stations(j).station,'datasets')
+            hm.models(i).stations(j).nrDatasets=length(model.stations(j).station.datasets);
+            for k=1:hm.models(i).stations(j).nrDatasets
+                hm.models(i).stations(j).datasets(k).parameter=model.stations(j).station.datasets(k).dataset.parameter;
+                hm.models(i).stations(j).datasets(k).layer=[];
+                hm.models(i).stations(j).datasets(k).sp2id=[];
+                hm.models(i).stations(j).datasets(k).toOPeNDAP=0;
+                if isfield(model.stations(j).station.datasets(k).dataset,'layer')
+                    hm.models(i).stations(j).datasets(k).layer=str2double(model.stations(j).station.datasets(k).dataset.layer);
+                end
+                if isfield(model.stations(j).station.datasets(k).dataset,'sp2id')
+                    hm.models(i).stations(j).datasets(k).sp2id=model.stations(j).station.datasets(k).dataset.sp2id;
+                end
+                if isfield(model.stations(j).station.datasets(k).dataset,'toopendap')
+                    hm.models(i).stations(j).datasets(k).toOPeNDAP=str2double(model.stations(j).station.datasets(k).dataset.toopendap);
+                end
+            end
+        end
+
         hm.models(i).stations(j).plots=[];
+        %% Time-series plots
         if isfield(model.stations(j).station,'plots')
             hm.models(i).stations(j).nrPlots=length(model.stations(j).station.plots);
             for k=1:hm.models(i).stations(j).nrPlots

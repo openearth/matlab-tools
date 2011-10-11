@@ -23,7 +23,7 @@ if model.waveNested
 end
 
 %% Get output locations
-[nestrid,nestnames,x,y]=getWW3points(hm,m);
+[nestrid,nestnames,x,y]=cosmos_getWW3outputPoints(hm,m);
 
 %% Get start and stop times
 inpfile=[hm.tempDir 'ww3_shel.inp'];
@@ -76,18 +76,8 @@ dt=3600;
 
 % observations points
 
-ip0=0;
-stations={''};
-for i=1:model.nrTimeSeriesDatasets
-    stat=model.timeSeriesDatasets(i).station;
-    istat=strmatch(stat,stations,'exact');
-    if isempty(istat)
-        ip0=ip0+1;
-        stations{ip0}=stat;
-    end
-end
+ip0=model.nrStations;
 
-%ip0=model.nrStations;
 inest=0;
 if ip0>0
     writeWW3outp([tmpdir 'ww3_outp_' model.runid '.inp'],tstart,dt,nt,2,1:ip0);

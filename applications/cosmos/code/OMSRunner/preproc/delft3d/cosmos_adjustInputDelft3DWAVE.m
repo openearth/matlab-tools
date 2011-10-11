@@ -6,7 +6,7 @@ tmpdir=hm.tempDir;
 
 %% MDW File
 mdwfile=[tmpdir model.runid '.mdw'];
-writeMDW(hm,m,mdwfile);
+cosmos_writeMDW(hm,m,mdwfile);
 
 %% DIOConfig file 
 writeDIOConfig(tmpdir);

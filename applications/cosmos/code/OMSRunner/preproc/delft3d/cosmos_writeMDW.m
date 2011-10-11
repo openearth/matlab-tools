@@ -1,4 +1,4 @@
-function writeMDW(hm,m,fname)
+function cosmos_writeMDW(hm,m,fname)
 
 model=hm.models(m);
 

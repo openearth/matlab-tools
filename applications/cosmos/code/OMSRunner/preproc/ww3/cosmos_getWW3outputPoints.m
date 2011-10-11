@@ -1,4 +1,4 @@
-function [rid,names,x,y]=getWW3points(hm,m)
+function [rid,names,x,y]=cosmos_getWW3outputPoints(hm,m)
 
 model=hm.models(m);
 
