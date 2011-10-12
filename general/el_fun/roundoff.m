@@ -11,7 +11,8 @@ function Xround = roundoff(X, n, varargin)
 %   X        = number, or matrix of numbers, to be rounded
 %   n        = number of decimal digits to be rounded to (can also be
 %              negative)
-%   varargin = optional mode: either 'normal' (default), 'ceil' or 'floor'
+%   varargin = optional mode: either 'round' (default), 'ceil', 'floor' or
+%               'fix'
 %
 %   Output:
 %   Xround   = rounded X, same size as X
@@ -33,11 +34,11 @@ function Xround = roundoff(X, n, varargin)
 %               ans =
 %                   10
 %
-%   See also round
+%   See also round floor ceil fix
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %
@@ -77,21 +78,23 @@ elseif nargin == 0
     error('ROUNDOFF:NotEnoughInputs','At least input argument "X" must be specified')
 end
 if round(n) ~= n
-    error('ROUNDOFF:IntegerReq','Input must be an integer')
+    error('ROUNDOFF:IntegerReq','Input "n" must be an integer')
 end
 
 
 %% check varargin
-mode = 'normal';
+mode = @round;
 if ~isempty(varargin)
     mode = varargin{1};
+    if ~ismember(char(mode), {'round' 'ceil' 'floor' 'fix'})
+        error(sprintf('Invalid mode: "%s"', char(mode)))
+    end
+    
+    % for backward compatibility, change 'normal' to 'round'
+    if strcmp(char(mode), 'normal')
+        warning(sprintf('Mode "%s" changed to "%s".', mode, 'round'))
+        mode = @round;
+    end
 end
 
-switch mode
-    case 'ceil'
-        Xround = ceil(X.*10.^n)./10.^n;
-    case 'floor'
-        Xround = floor(X.*10.^n)./10.^n;
-    otherwise
-        Xround = round(X.*10.^n)./10.^n;
-end
+Xround = feval(mode, X.*10.^n) ./ 10.^n;
