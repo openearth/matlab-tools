@@ -133,7 +133,7 @@ function varargout = KMLline(lat,lon,varargin)
        end
    end
    
-   [OPT, Set, Default] = setproperty(OPT, varargin{:});
+   [OPT, Set, Default] = setproperty(OPT, varargin);
 
 %% input check
 
