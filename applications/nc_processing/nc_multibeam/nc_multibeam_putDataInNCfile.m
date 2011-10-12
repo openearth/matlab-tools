@@ -8,7 +8,7 @@ function nc_multibeam_putDataInNCfile(OPT,ncfile,time,Z,varargin)
 %See also: nc_multibeam, snctools
 
    OPT.debug       = 1;
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
    dimSizeX = (OPT.mapsizex/OPT.gridsizex);
    dimSizeY = (OPT.mapsizey/OPT.gridsizex);
