@@ -81,12 +81,17 @@ data    = [res.filter.maxima.value];
 n = 1;
 for i = 1:length(OPT.fcnfit)
     if isa(OPT.fcnfit{i}, 'function_handle')
-        res.fit.fits(n) = struct(   ...
-            'fcn',  OPT.fcnfit{i},  ...
-            'y',    OPT.y(:),          ...
-            'f',    1-feval(OPT.fcnfit{i},data,OPT.y(:)));
-        
-        n = n+1;
+        try
+            res.fit.fits(n) = struct(   ...
+                'fcn',  OPT.fcnfit{i},  ...
+                'y',    OPT.y(:),          ...
+                'f',    1-feval(OPT.fcnfit{i},data,OPT.y(:)));
+
+            n = n+1;
+        catch
+            e = lasterror;
+            disp(e.message);
+        end
     end
 end
 

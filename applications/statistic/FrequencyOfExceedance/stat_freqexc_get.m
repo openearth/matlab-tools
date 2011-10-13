@@ -81,6 +81,8 @@ res.duration    = duration;
 res.dt          = dt;
 res.fraction    = sum(isfinite(x))/length(x);
 
+years           = res.duration/365.2425;
+
 %% find maxima
 
 % create computational grid
@@ -93,24 +95,26 @@ for i = 1:length(g)
 
     % initialize values
     res.peaks(i).threshold  = g(i);
-    res.peaks(i).maxima     = struct('time', [], 'value', [], 'duration', []);
+    res.peaks(i).maxima     = struct('time', {}, 'value', {}, 'duration', {});
 
     % determine up- and down crossings
     uc = find((x(1:end-1)<=g(i)|isnan(x(1:end-1)))&x(2:end)>g(i));
     dc = find((x(2:end)<=g(i)|isnan(x(2:end)))&x(1:end-1)>g(i));
-
+    
+    startidx = 1;
+    
     if isempty(uc) && isempty(dc)
         if x(1) >= g(i)
-            uc = 1;
+            uc = startidx;
             dc = length(x);
         end
     elseif isempty(uc)
-        uc = 1;
+        uc = startidx;
     elseif isempty(dc)
         dc = length(x);
     else
         if uc(1) > dc(1)
-            uc = [1;uc(:)];
+            uc = [startidx;uc(:)];
         end
         if uc(end) > dc(end)
             dc = [dc(:);length(x)];
@@ -123,7 +127,7 @@ for i = 1:length(g)
         
         tj      = uc(j):dc(j);
         [m k]   = max(x(tj));
-        idx     = find(abs(tj(k)-[res.peaks(i).maxima.time])<OPT.horizon,1);
+        idx     = find(abs(t(tj(k))-[res.peaks(i).maxima.time])<OPT.horizon,1);
 
         % add waves to result structure if distant enought from previous
         % peak, otherwise merge with previous peak
@@ -144,6 +148,7 @@ for i = 1:length(g)
         end
     end
     
-    res.peaks(i).nmax      = length(res.peaks(i).maxima);
-    res.peaks(i).frequency = sum([res.peaks(i).maxima.duration])/duration/res.fraction;
+    res.peaks(i).nmax           = length(res.peaks(i).maxima);
+    res.peaks(i).probability    = sum([res.peaks(i).maxima.duration])/duration/res.fraction;
+    res.peaks(i).frequency      = [res.peaks(i).nmax]/years;
 end

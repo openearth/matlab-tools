@@ -1,10 +1,10 @@
-function varargout = sobek_freqexc_join(varargin)
-%SOBEK_FREQEXC_JOIN  One line description goes here.
+function stat_freqexc_logplot(res, varargin)
+%STAT_FREQEXC_LOGPLOT  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = sobek_freqexc_join(varargin)
+%   varargout = stat_freqexc_logplot(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function varargout = sobek_freqexc_join(varargin)
 %   varargout =
 %
 %   Example
-%   sobek_freqexc_join
+%   stat_freqexc_logplot
 %
 %   See also
 
@@ -49,7 +49,7 @@ function varargout = sobek_freqexc_join(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 14 Sep 2011
+% Created: 11 Oct 2011
 % Created with Matlab version: 7.12.0.635 (R2011a)
 
 % $Id$
@@ -59,12 +59,41 @@ function varargout = sobek_freqexc_join(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
-OPT.keyword=value;
-OPT = setproperty(OPT,varargin{:});
+%% read settings
 
-if nargin==0;
-    varargout = OPT;
-    return;
+OPT = struct( ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+figure; hold on;
+
+xlim = [1e-1 1e5];
+ylim = [res.filter.threshold max(res.combined.y)];
+ylim = [-.5 4];
+
+%% plot frequency of exceedance
+
+plot(1./[res.peaks.frequency],[res.peaks.threshold],'xb','LineWidth',2,'DisplayName','peaks');
+
+if isfield(res,'filter')
+    [y i]   = sort([res.filter.maxima.value],2,'descend');
+    plot(1./([1:res.filter.nmax]./res.filter.nmax),y,'xg','LineWidth',2,'DisplayName','peaks (filtered)');
 end
-%% code
+
+if isfield(res,'fit')
+    plot(1./[res.fit.fits.f],[res.fit.fits.y],'Color',[.8 .8 .8],'DisplayName','fit');
+    plot(1./res.fit.f,res.fit.y,'-r','LineWidth',2,'DisplayName','fit (average)');
+end
+
+if isfield(res,'combined')
+    plot(1./res.combined.f,res.combined.y,'-xk','LineWidth',3,'DisplayName','combined');
+    plot(1./res.combined.split.*[1 1],ylim,':k','LineWidth',3,'DisplayName','combination divide');
+end
+
+box on;
+grid on;
+xlabel('Herhalingstijd [jaar]');
+ylabel('Meerpeil');
+
+set(gca,'XLim',xlim,'YLim',ylim,'XScale','log');

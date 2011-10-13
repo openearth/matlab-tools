@@ -73,17 +73,27 @@ if ~isfield(res, 'filter')
 end
 
 if ~isfield(res, 'fit')
-    error('No fit made, pleas use stat_freqexc_fit first');
+    error('No fit made, please use stat_freqexc_fit first');
 end
 
 %% combine data and fit
 
-yf  = sort([res.filter.maxima.value],2,'descend');
-yc1 = interp1([1:res.filter.nmax]./res.filter.nmax,yf,OPT.f(OPT.f>=OPT.split),'linear','extrap');
+f = [res.peaks.frequency];
+x = [res.peaks.threshold];
+
+idx = x>=x(f==max(f));
+f = f(idx);
+x = x(idx);
+
+[x xi] = sort(x,'ascend');
+[f fi] = unique(f(xi),'last');
+
+yc1 = interp1(log(f),x(fi),log(OPT.f(OPT.f>=OPT.split)),'linear','extrap');
 
 [f fi] = unique(res.fit.f);
-yc2 = interp1(f,res.fit.y(fi),OPT.f(OPT.f<OPT.split),'linear','extrap');
+yc2 = interp1(log(f),res.fit.y(fi),log(OPT.f(OPT.f<OPT.split)),'linear','extrap');
 
-res.combined.f = OPT.f;
-res.combined.y = [yc1 yc2];
+res.combined.f      = OPT.f(:)';
+res.combined.y      = [yc1(:);yc2(:)]';
+res.combined.split  = OPT.split;
 

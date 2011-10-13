@@ -93,7 +93,7 @@ box on;
 grid on;
 xlabel('time');
 ylabel('value');
-title('data');
+title('');
 
 %% plot number of exceedances
 
@@ -118,11 +118,11 @@ grid on;
 xlabel('value');
 ylabel('number of exceedances');
 
-%% plot frequency of exceedance
+%% plot probability of exceedance
 
 s3 = subplot(3,1,3); hold on;
 
-plot([res.peaks.threshold],[res.peaks.frequency],'-b');
+plot([res.peaks.threshold],[res.peaks.probability],'-b');
 
 if isfield(res,'filter')
     plot(res.filter.threshold*ones(1,2),get(gca,'YLim'),'-g');
@@ -135,7 +135,10 @@ if isfield(res,'fit')
 end
 
 if isfield(res,'combined')
-    plot(res.combined.y,res.combined.f,'-k','LineWidth',2);
+    plot(res.combined.y,res.combined.f,'-xk','LineWidth',2);
+    
+    ysplit = interp1(res.combined.f,res.combined.y,res.combined.split);
+    plot(ysplit,res.combined.split,'ok','LineWidth',2);
 end
 
 p4 = plot(zeros(1,2),get(gca,'YLim'),'-r');
@@ -145,7 +148,7 @@ set(p4,'Tag','freqexc');
 box on;
 grid on;
 xlabel('value');
-ylabel('frequency of exceedance');
+ylabel('probability of exceedance');
 
 set(s1,'XLim',xlim,'YLim',ylim);
 set(s2,'XLim',ylim);
@@ -197,6 +200,8 @@ function setpointer(obj, event, objs, res)
             set(p2,'XData',[res.peaks(i).maxima.time],'YData',[res.peaks(i).maxima.value]);
             set(p3,'XData',v*[1 1]);
             set(p4,'XData',v*[1 1]);
+            
+            title(objs(1),sprintf('value = %3.2f', v));
         else
             set(obj, 'pointer', 'arrow');
         end

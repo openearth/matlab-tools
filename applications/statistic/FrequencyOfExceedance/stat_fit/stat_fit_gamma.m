@@ -61,5 +61,11 @@ function f = stat_fit_gamma(data,y,varargin)
 
 %% fit gamma
 
-pars    = wggamfit(data,0);
+shift   = abs(min((floor(min(data)*10)/10)-0.01,0));
+%shift   = 0;
+
+data    = data+shift;
+y       = y+shift;
+
+pars    = wggamfit(data(data>0),0);
 f       = wggamcdf(y,pars(1,1),pars(1,2),pars(1,3));

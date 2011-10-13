@@ -67,6 +67,13 @@ for i = 1:length(varargin)
         m   = varargin{i}{2};
         
         if ischar(varargin{i}{1})
+            
+            not = varargin{i}{1}(1) == '^';
+            
+            if not
+                varargin{i}{1} = varargin{i}{1}(2:end);
+            end
+            
             tm  = num2cell(datestr(t, varargin{i}{1}),2);
         
             switch class(m)
@@ -78,7 +85,7 @@ for i = 1:length(varargin)
             tm  = t;
         end
         
-        idx    = ~ismember(tm,m);
+        idx    = ismember(tm,m) == not;
         
         x(idx) = nan;
     end
