@@ -1,21 +1,32 @@
 function his = sobek_his_read(filename, varargin)
-%SOBEK_HIS_READ  One line description goes here.
+%SOBEK_HIS_READ  Reads a SOBEK HIS file into a struct
 %
-%   More detailed description goes here.
+%   Reads a SOBEK HIS file, including column and variable description into
+%   a struct.
 %
 %   Syntax:
-%   varargout = sobek_his_read(varargin)
+%   his = sobek_his_read(filename, varargin)
 %
 %   Input:
-%   varargin  =
+%   filename  = Path to HIS file to be read
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   his       = Structure with data from HIS file:
+%
+%               header:     Struct with file headers
+%               params:     Struct array with parameter names
+%               locations:  Struct array with location names and ids
+%               time:       Time axis
+%               data:       Level data with dimensions
+%                           time x params x locations
 %
 %   Example
-%   sobek_his_read
+%   his = sobek_his_read('CALCPNT.HIS');
+%   res = stat_freqexc_get(his.time, squeeze(his.data(:,1,1)));
+%   stat_freqexc_plot(res);
 %
-%   See also
+%   See also sobek_his_mtx, stat_freqexc_get
 
 %% Copyright notice
 %   --------------------------------------------------------------------

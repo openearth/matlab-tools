@@ -1,21 +1,38 @@
 function [t x] = stat_freqexc_mask(t,x,varargin)
-%STAT_FREQEXC_MASK  One line description goes here.
+%STAT_FREQEXC_MASK  Masks a timeseries based on the time axis
 %
-%   More detailed description goes here.
+%   Masks parts of a time series based on one or more masks. The masks are
+%   applied on the time axis and are based on the datestr function. Points
+%   in the time series that DO NOT match a mask are set to nan. A mask
+%   consists of a cell array with two items. The first item is a datestr
+%   expression, while the second is a cell or numerical array with valid
+%   values for this expression. The first item in a mask can be preceded by
+%   a ^-sign, indicating NOT. In this case the point matching the mask are
+%   set to nan.
+%
+%   The result is a time series with nan's.
 %
 %   Syntax:
-%   varargout = stat_freqexc_mask(varargin)
+%   [t x] = stat_freqexc_mask(t,x,varargin)
 %
 %   Input:
-%   varargin  =
+%   t         = time axis of timeseries (datenum format)
+%   x         = level axis of time series
+%   varargin  = masks
 %
 %   Output:
-%   varargout =
+%   t         = time axis of timeseries (datenum format)
+%   x         = level axis of time series
 %
 %   Example
-%   stat_freqexc_mask
+%   % only use the first three months of any year, but skip the first day
+%   [tm xm] = stat_freqexc_mask(t,x,{'mm', [1 2 3]},{'^dd', 1})
 %
-%   See also
+%   figure; hold on;
+%   plot(t,x,'-b');
+%   plot(tm,xm,'-r');
+%
+%   See also stat_freqexc_get
 
 %% Copyright notice
 %   --------------------------------------------------------------------

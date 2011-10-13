@@ -1,21 +1,27 @@
 function stat_freqexc_plot(res, varargin)
-%STAT_FREQEXC_PLOT  One line description goes here.
+%STAT_FREQEXC_PLOT  Plots a result structure from any of the stat_freqexc_* functions interactively
 %
-%   More detailed description goes here.
+%   Plots the time series, determined and filtered maxima, fitted data and
+%   probabilities of exceedance from any of the stat_freqexc_* functions
+%   that return a result structure alike the structure from
+%   stat_freqexc_get.
 %
 %   Syntax:
-%   varargout = stat_freqexc_plot(varargin)
+%   stat_freqexc_plot(res, varargin)
 %
 %   Input:
-%   varargin  =
+%   res       = Result structure from a stat_freqexc_* function
+%   varargin  = interactive:    Enable/disable interactive plot
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   stat_freqexc_plot
+%   stat_freqexc_plot(res)
+%   stat_freqexc_plot(res, 'interactive', false)
 %
-%   See also
+%   See also stat_freqexc_get, stat_freqexc_filter, stat_freqexc_fit,
+%            stat_freqexc_combine, stat_freqexc_logplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

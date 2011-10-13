@@ -1,21 +1,72 @@
 function res = stat_freqexc_get(t, x, varargin)
-%STAT_FREQEXC_GET  One line description goes here.
+%STAT_FREQEXC_GET  Determines the frequency of exceedance of a timeseries
 %
-%   More detailed description goes here.
+%   Determines the frequency of exceedance of a timeseries over the entire
+%   range of this timeseries. A computational grid with a given resolution
+%   running from the minimum value to the maximum value of the timeseries
+%   is used as threshold values. For each level in this grid, the number of
+%   exceedances is counted and the corresponding time, duration and maximum
+%   level determined. A given time horizon is used to differ between two
+%   succeeding maxima and a single maximum that temporarily drops below the
+%   exceedance level.
+%
+%   Time series may contain nan values. Sections not interrupted by nan's
+%   are considered continuous periods. In case such section starts or ends
+%   above the threshold value, it is assumed that at some point outside the
+%   continuous period the level drops below the threshold value. A section
+%   entirely above the treshold value is therefore also interpreted as a
+%   single exceedance.
+%
+%   The result is a structure containing generic information on the
+%   timeseries and a description of all maxima found for each threshold in
+%   the computational grid. This result is translated in probabilities and
+%   frequencies of exceedance.
 %
 %   Syntax:
-%   varargout = stat_freqexc_get(varargin)
+%   res = stat_freqexc_get(t, x, varargin)
 %
 %   Input:
-%   varargin  =
+%   t         = time axis of timeseries (datenum format)
+%   x         = level axis of time series
+%   varargin  = dx:         resolution of computational grid
+%               horizon:    horizon in days in which multiple maxima are
+%                           considered to be a single maximum
 %
 %   Output:
-%   varargout =
+%   res       = result structure with exceedance information:
+%
+%               time:       original time axis
+%               data:       original level axis
+%               duration:   total length of timeseries in days
+%               dt:         average sample frequency in days
+%               fraction:   fraction of non-nan values in time series
+%               peaks:      structure array with maxima for each level in
+%                           computational grid:
+%
+%                           threshold:      computational grid value
+%                           nmax:           number of found maxima
+%                           probability:    probability of exceedance [-]
+%                           frequency:      frequency of exceedance [1/yr]
+%                           maxima:         structure array with maxima for
+%                                           current level in computational
+%                                           grid:
+%
+%                                           time:       time of maximum
+%                                           value:      level of maximum
+%                                           duration:   duration of peak
 %
 %   Example
-%   stat_freqexc_get
+%   res = stat_freqexc_get(t,x,'horizon',15);
 %
-%   See also
+%   idx = closest(0,[res.peaks.threshold]);
+%
+%   figure; hold on;
+%   plot(res.time,res.data,'-b');
+%   plot([res.peaks(idx).maxima.time],[res.peaks(idx).maxima.value],'or');
+%
+%   stat_freqexc_plot(res);
+%
+%   See also stat_freqexc_mask, stat_freqexc_filter, stat_freqexc_plot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

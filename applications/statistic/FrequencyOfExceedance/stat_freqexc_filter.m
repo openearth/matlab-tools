@@ -1,21 +1,40 @@
 function res = stat_freqexc_filter(res, varargin)
-%STAT_FREQEXC_CONSOLIDATE  One line description goes here.
+%STAT_FREQEXC_FILTER  Selects the maxima corresponding to a single threshold value from a stat_freqexc_get result struct and filters them
 %
-%   More detailed description goes here.
+%   Selects a single threshold value from the computational grid used by
+%   the stat_freqexc_get function based on the result structure from this
+%   function. If no threshold is given, the treshold with the maximum
+%   number of maxima is used. The corresponding maxima are filtered
+%   according to their time axis value using datestr formatting. From all
+%   points with the same value resulting from the datestr formatted mask,
+%   the maximum is chosen and the others are discarded. This function is
+%   useful to determine monthly or yearly maxima.
+%
+%   The original result structure is returned with an extra field
+%   containing the filtered subset from the original peaks field.
 %
 %   Syntax:
-%   varargout = stat_freqexc_consolidate(varargin)
+%   res = stat_freqexc_filter(res, varargin)
 %
 %   Input:
-%   varargin  =
+%   res       = Result structure from the stat_freqexc_get function
+%   varargin  = mask:       datestr formatted mask
+%               threshold:  threshold above which maxima are determined
+%               
 %
 %   Output:
-%   varargout =
+%   res       = Modified result structure with extra field filter with
+%               similar fields to the peak field
 %
 %   Example
-%   stat_freqexc_consolidate
+%   % determine yearly maxima
+%   res = stat_freqexc_filter(res, 'mask', 'yyyy');
+%   % determine monthly maxima
+%   res = stat_freqexc_filter(res, 'mask', 'mm-yyyy');
+%   % determine yearly maxima above a specified threshold
+%   res = stat_freqexc_filter(res, 'mask', 'yyyy', 'threshold', -.2);
 %
-%   See also
+%   See also stat_freqexc_get, stat_freqexc_fit, stat_freqexc_plot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

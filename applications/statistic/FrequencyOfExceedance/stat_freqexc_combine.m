@@ -1,21 +1,34 @@
 function res = stat_freqexc_combine(res, varargin)
-%STAT_FREQEXC_COMBINE  One line description goes here.
+%STAT_FREQEXC_COMBINE  Combines the empirical and fitted exceedance data to a single frequency of exceedance line
 %
-%   More detailed description goes here.
+%   Combines the fitted data from stat_freqexc_fit with the original high
+%   frequency data obtained from the stat_freqexc_get function into a
+%   single description of the frequency of exceedance.
+%
+%   The result is the original result structure with an extra field
+%   containing the description of the combined frequency of exceedance.
 %
 %   Syntax:
-%   varargout = stat_freqexc_combine(varargin)
+%   res = stat_freqexc_combine(res, varargin)
 %
 %   Input:
-%   varargin  =
+%   res       = Result structure from the stat_freqexc_fit function
+%   varargin  = f:          computational grid for frequencies to be
+%                           returned
+%               split:  	split frequency between empirical and fitted
+%                           data
 %
 %   Output:
-%   varargout =
+%   res       = Modified result structure with extra field combined:
+%
+%               f:          computational grid for frequencies
+%               y:          levels corresponding to computational grid
+%               split:      split frequency used
 %
 %   Example
-%   stat_freqexc_combine
+%   res = stat_freqexc_combine(res, 'f', [1e0 1e-1 1e-2], 'split', 5e-2);
 %
-%   See also
+%   See also stat_freqexc_fit, stat_freqexc_plot, stat_freqexc_logplot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

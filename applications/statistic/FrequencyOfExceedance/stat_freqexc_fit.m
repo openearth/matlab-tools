@@ -1,21 +1,43 @@
 function res = stat_freqexc_fit(res, varargin)
-%STAT_FREQEXC_FIT  One line description goes here.
+%STAT_FREQEXC_FIT  Fits one or more distributions through filtered maxima
 %
-%   More detailed description goes here.
+%   Fits user-defined distributions through the maxima filtered by the
+%   stat_freqexc_filter function. A given computational grid describes the
+%   range and resolution of the levels to be returned. The frequencies are
+%   computed for these levels only.
+%
+%   The original result structure is returned containing an extra field
+%   with individual fits and the overall average fit.
 %
 %   Syntax:
-%   varargout = stat_freqexc_fit(varargin)
+%   varargout = stat_freqexc_fit(res, varargin)
 %
 %   Input:
-%   varargin  =
+%   res       = Result structure from the stat_freqexc_filter function
+%   varargin  = y:          computational grid for levels to be returned
+%               fcnfit:  	cell array with handles of user-defined fit
+%                           functions
 %
 %   Output:
-%   varargout =
+%   res       = Modified result structure with extra field fit:
+%
+%               y:          computational grid for levels
+%               f:          frequencies corresponding to computational grid
+%                           obtained by averaging individual fits
+%               fits:       structure array with individual fits:
+%
+%                           fcn:    handle to user-defined fit function
+%                           y:      computational grid for levels
+%                           f:      frequencies corresponding to
+%                                   computational grid
 %
 %   Example
-%   stat_freqexc_fit
+%   % change computational grid
+%   res = stat_freqexc_fit(res, 'y', 0:10);
+%   % only fit gumbel distribution
+%   res = stat_freqexc_fit(res, 'fcnfit', {@stat_fit_gumbel});
 %
-%   See also
+%   See also stat_freqexc_filter, stat_freqexc_combine, stat_freqexc_plot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

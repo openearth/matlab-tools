@@ -1,21 +1,28 @@
 function varargout = sobek_his_mtx(his, varargin)
-%SOBEK_HIS_MTX  One line description goes here.
+%SOBEK_HIS_MTX  Converts a HIS file structure to a matrix
 %
-%   More detailed description goes here.
+%   Converts a structure obtained from the sobek_his_read function to a
+%   matrix as if a SOBEK ascii file is read from disk. For each parameter
+%   a separate matrix is returned.
 %
 %   Syntax:
-%   varargout = sobek_his_mtx(varargin)
+%   varargout = sobek_his_mtx(his, varargin)
 %
 %   Input:
-%   varargin  =
+%   his       = Result structure from sobek_his_read function
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   varargout = Matrices for each parameter with dimensions
+%               time x (locations + 3)
+%               where the first three columns indicate year, month and day
+%               respectively
 %
 %   Example
-%   sobek_his_mtx
+%   his = sobek_his_read('CALCPNT.HIS');
+%   A   = sobek_his_mtx(his);
 %
-%   See also
+%   See also sobek_his_read
 
 %% Copyright notice
 %   --------------------------------------------------------------------

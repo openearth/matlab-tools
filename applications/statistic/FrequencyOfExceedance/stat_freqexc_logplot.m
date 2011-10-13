@@ -1,21 +1,25 @@
 function stat_freqexc_logplot(res, varargin)
-%STAT_FREQEXC_LOGPLOT  One line description goes here.
+%STAT_FREQEXC_LOGPLOT  Plots a result structure from any of the stat_freqexc_* functions on logarithmic scale
 %
-%   More detailed description goes here.
+%   Plots the empirical, filtered, fitted and combined frequencies of
+%   exceedance from any of the stat_freqexc_* functions that return a
+%   result structure alike the structure from stat_freqexc_get.
 %
 %   Syntax:
-%   varargout = stat_freqexc_logplot(varargin)
+%   stat_freqexc_logplot(res, varargin)
 %
 %   Input:
-%   varargin  =
+%   res       = Result structure from a stat_freqexc_* function
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   stat_freqexc_logplot
+%   stat_freqexc_logplot(res)
 %
-%   See also
+%   See also stat_freqexc_get, stat_freqexc_filter, stat_freqexc_fit,
+%            stat_freqexc_combine, stat_freqexc_plot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
