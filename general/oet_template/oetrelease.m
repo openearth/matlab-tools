@@ -108,7 +108,7 @@ end
        end
    end
    
-%% gather all related files (dependecies in entire active path)
+%% gather all related files (dependencies in entire active path)
 
    i = 0;
    while i < length(files)
