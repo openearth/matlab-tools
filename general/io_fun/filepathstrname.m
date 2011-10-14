@@ -23,9 +23,12 @@ for iname=1:size(fullfilename,1)
 
    [PATHSTR{iname},NAME{iname},EXT{iname}] = fileparts(fullfilename(iname,:));
 
-end   
-
+end
+if all(cellfun(@(x) isempty(x),PATHSTR))
+OUT = char(NAME);
+else
 OUT = [char(PATHSTR),repmat(filesep,size(NAME,2),1),char(NAME)];
+end
 
 % Feb 2008, vectorized.
 

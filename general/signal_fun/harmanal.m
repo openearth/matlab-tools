@@ -44,7 +44,7 @@ function [varargout] = harmanal(t,h,varargin);
 % transposed. The resulting hfit is returned with the size of h 
 % (to be able to calculate h - hfit easily).
 %
-% See also: T_TIDE, FFT_ANAL, FFT_FILTER, TIDEANAL
+% See also: T_TIDE, FFT_ANAL, FFT_FILTER, HARMANAL_PREDICT
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2009 Delft University of Technology
@@ -87,6 +87,11 @@ function [varargout] = harmanal(t,h,varargin);
    OPT.names            = []; 
    OPT.T                = [];
    OPT.timeseries       = [];
+   
+   if nargin==0
+       varargout = { OPT};
+       return
+   end
    
    if nargin>3
       nextarg = 1;
@@ -152,7 +157,7 @@ function [varargout] = harmanal(t,h,varargin);
    end
    
    nc = size(OPT.timeseries,1); % size 2 is time
-   if nc>0 & OPT.screenoutput
+   if nc>0 & OPT.screenoutput==1
       disp(['Message: harmanal: fitting ',num2str(nc),' non-harmonic functions'])
    end
 
@@ -226,6 +231,9 @@ function [varargout] = harmanal(t,h,varargin);
      %FIT.(OPT.parameter)             = coef*M;
       FIT.(OPT.parameter)             = nan.*zeros(size(h));
       FIT.(OPT.parameter)(mask2keep)  = coef*M;
+      
+      % TO DO reconstruct hfit to fill NaN gaps
+      % with HARMANAL_PREDICT
       
       a = coef(2:2:2*nw+1);
       b = coef(3:2:2*nw+1);
@@ -354,14 +362,14 @@ function [varargout] = harmanal(t,h,varargin);
        
        if OPT.errors
        FIT.residue  = h(:) - FIT.(OPT.parameter)(:);
-       FIT.rmserror = rms(FIT.residue(:));
-       FIT.minerror = min(FIT.residue(:));
-       FIT.maxerror = max(FIT.residue(:));
+       FIT.rmserror = nanrms(FIT.residue(:));
+       FIT.minerror = nanmin(FIT.residue(:));
+       FIT.maxerror = nanmax(FIT.residue(:));
        end       
       
 %% DISPLAY
    
-      if OPT.screenoutput
+      if OPT.screenoutput==1
    
          spaces  = repmat(' ',[1 namewidth  ]);
          spaces1 = repmat('-',[1 namewidth  ]);
@@ -418,21 +426,25 @@ function [varargout] = harmanal(t,h,varargin);
       
       if (t(end)-t(1)) >= T_rayleigh
       
-         if OPT.screenoutput;
-         disp('Rayleigh criterion: OK');
+         if OPT.screenoutput==1
+         disp(['Rayleigh criterion: OK']);
          end
 
       else
 
          %% Always display when not OK
          
+         if OPT.screenoutput==1 % overrule with e.g. -1
          disp(['Rayleigh criterion: NOT OK for ',...
                deblank(OPT.names(closest_components,:)),...
                ' & ',...
-               deblank(OPT.names(closest_components+1,:))]);
+               deblank(OPT.names(closest_components+1,:)),' dt=',...
+               num2str(t(end)-t(1)),' T_rayleigh=',...
+               num2str(T_rayleigh)]);
+         end
 
       end
-      if OPT.screenoutput;
+      if OPT.screenoutput==1
       disp(['  df_{min} possible data / present with specified components = ',...
              num2str(1/(t(end)-t(1))),' / ',...
              num2str(min(diff(sort(OPT.freq(:)))))]);
@@ -441,14 +453,14 @@ function [varargout] = harmanal(t,h,varargin);
 %% NYQUIST CHECK       
 
       if (1/2/min(diff(t))) > (max(OPT.freq))
-      if OPT.screenoutput;
+      if OPT.screenoutput==1
       disp('Nyquist criterion: OK')
       end
       else
       disp('Nyquist criterion: NOT OK')
       end
       
-      if OPT.screenoutput;
+      if OPT.screenoutput==1
       disp(['  f_{max} possible / present with dataset                    = ',...
             num2str(1/2/min(diff(t))),' / ',...
             num2str(max(OPT.freq))]);

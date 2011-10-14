@@ -5,7 +5,7 @@ function y = rms(x)
 % For matrices, RMS(X) is a row vector containing the
 % root mean square of each column.
 %
-%See also: MEAN, MAX, MIN, STD
+%See also: MEAN, MAX, MIN, STD, NANRMS
 
 % $Id$
 % $Date$

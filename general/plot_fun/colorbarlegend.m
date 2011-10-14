@@ -46,6 +46,13 @@ function varargout = colorbarlegend(varargin)
 % Note: colorbar does not appear correctly on screen, but prints
 % correctly to A4 paper when no automatic subplots and colorbars are present.
 %
+% Example:
+% colorbarlegend([.7 .8],[ .2 .8],[0 30],...
+%     'orientation','vertical',...
+%   'titleposition','vtext',...
+%           'title','quantity [units]',...
+%           'ctick',[0 20 25 27.5 30])
+%
 %See also: COLORBAR, AXESONTOP, KML colorbar
 
 %   --------------------------------------------------------------------

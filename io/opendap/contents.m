@@ -10,10 +10,11 @@
 % A non-exhaustive list of operational OPeNDAP servers for marine, coastal and climate data is:
 % * NL: Delft: <a href="http://opendap.deltares.nl/">http://opendap.deltares.nl/</a> (THREDDS + HYRAX)
 % * NL: 3TU: <a href="http://opendap.tudelft.nl/thredds/catalog.html">http://opendap.tudelft.nl/thredds/catalog.html</a>
-% * NL: Delft: <a href="http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/">http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/</a> (THREDDS test)
+% * NL: Delft: <a href="http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/">http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/</a> (THREDDS + pydap test)
 % * NL: Rijkswaterstaat: <a href="http://matroos.deltares.nl:8080/thredds/">http://matroos.deltares.nl:8080/thredds/</a> (THREDDS + password)
 % * NL: Rijkswaterstaat: <a href="http://matroos.deltares.nl/direct/opendap.html">http://matroos.deltares.nl/direct/opendap.html</a> (HYRAX + password)
 % * NL: KNMI (test): <a href="http://geoservices.knmi.nl/thredds/catalog.html">http://geoservices.knmi.nl/thredds/catalog.html</a> (THREDDS)
+% * NL: NMDC (test): <a href="http://geoservices.knmi.nl/thredds/catalog.html">http://opendap.nmdc.nl/knmi/thredds/catalog.html</a> (THREDDS)
 % * FR: IFREMER: <a href="http://www.ifremer.fr/thredds/catalog.html">http://www.ifremer.fr/thredds/catalog.html</a> (THREDDS)
 % * US: NOAA NCEP <a href="http://nomads.ncep.noaa.gov:9090/dods">http://nomads.ncep.noaa.gov:9090/dods</a> (GrADS)
 % * US: NASA GSFC: <a href="http://agdisc.gsfc.nasa.gov/dods">agdisc</a>, <a href="http://nsipp.gsfc.nasa.gov:9090/dods">nsipp</a>, <a href="http://voda.gsfc.nasa.gov:9090/dods">voda</a>, <a href="http://goldsmr1.sci.gsfc.nasa.gov/dods">goldsmr1</a>, ~<a href="http://goldsmr2.sci.gsfc.nasa.gov/dods">2</a>, ~<a href="http://goldsmr3.sci.gsfc.nasa.gov/dods">3</a> (GrADS)
@@ -28,6 +29,7 @@
 % * US: Great Lakes: <a href="http://michigan.glin.net/thredds/catalog.html">http://michigan.glin.net/thredds/catalog.html</a> (THREDDS)
 % * US: UCAR: <a href="http://motherlode.ucar.edu/thredds/catalog.html">http://motherlode.ucar.edu/thredds/catalog.html</a> (THREDDS)
 % * EU: EUMETSAT: <a href="http://gsics.eumetsat.int/thredds/catalog.html">http://gsics.eumetsat.int/thredds/catalog.html</a> (THREDDS)
+% * EU: Norway met office: <a href="http://thredds.met.no/thredds/catalog.html">http://thredds.met.no/thredds/catalog.html</a> (THREDDS)
 % * Godae <a href="http://www.usgodae.org/dods/GDS">http://www.usgodae.org/dods/GDS</a> (GrADS)
 %
 %   opendap_catalog       - get list of netCDF files (dataset) from opendap catalog
