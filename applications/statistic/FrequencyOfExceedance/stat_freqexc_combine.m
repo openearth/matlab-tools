@@ -91,7 +91,7 @@ end
 
 %% combine data and fit
 
-f = [res.peaks.frequency];
+f = [res.peaks.frequency]./res.fraction;
 x = [res.peaks.threshold];
 
 idx = x>=x(f==max(f));

@@ -78,7 +78,7 @@ ylim = [-.5 4];
 
 %% plot frequency of exceedance
 
-plot(1./[res.peaks.frequency],[res.peaks.threshold],'xb','LineWidth',2,'DisplayName','peaks');
+plot(1./[res.peaks.frequency].*res.fraction,[res.peaks.threshold],'xb','LineWidth',2,'DisplayName','peaks');
 
 if isfield(res,'filter')
     [y i]   = sort([res.filter.maxima.value],2,'descend');
