@@ -202,4 +202,6 @@ for i = 1:length(g)
     res.peaks(i).nmax           = length(res.peaks(i).maxima);
     res.peaks(i).probability    = sum([res.peaks(i).maxima.duration])/duration;
     res.peaks(i).frequency      = [res.peaks(i).nmax]/years;
+    res.peaks(i).duration       = sum([res.peaks(i).maxima.duration])/years;
+    res.peaks(i).duration_pp    = res.peaks(i).duration./res.peaks(i).frequency;
 end
