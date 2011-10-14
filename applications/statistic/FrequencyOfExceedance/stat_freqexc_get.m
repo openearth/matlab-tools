@@ -47,6 +47,8 @@ function res = stat_freqexc_get(t, x, varargin)
 %                           nmax:           number of found maxima
 %                           probability:    probability of exceedance [-]
 %                           frequency:      frequency of exceedance [1/yr]
+%                           duration:       duration of exceedance [day/yr]
+%                           duration_pp:    duration per peak [day/1]
 %                           maxima:         structure array with maxima for
 %                                           current level in computational
 %                                           grid:
@@ -141,7 +143,7 @@ mn = min(round(x(isfinite(x))/OPT.dx)*OPT.dx);
 mx = max(round(x(isfinite(x))/OPT.dx)*OPT.dx);
 
 g  = mn:OPT.dx:mx;
-        
+
 for i = 1:length(g)
 
     % initialize values
@@ -151,9 +153,9 @@ for i = 1:length(g)
     % determine up- and down crossings
     uc = find((x(1:end-1)<=g(i)|isnan(x(1:end-1)))&x(2:end)>g(i));
     dc = find((x(2:end)<=g(i)|isnan(x(2:end)))&x(1:end-1)>g(i));
-    
+
     startidx = 1;
-    
+
     if isempty(uc) && isempty(dc)
         if x(1) >= g(i)
             uc = startidx;
@@ -175,7 +177,7 @@ for i = 1:length(g)
     % determine wave maxima
     c = 1;
     for j = 1:length(uc)
-        
+
         tj      = uc(j):dc(j);
         [m k]   = max(x(tj));
         idx     = find(abs(t(tj(k))-[res.peaks(i).maxima.time])<OPT.horizon,1);
@@ -183,7 +185,7 @@ for i = 1:length(g)
         % add waves to result structure if distant enought from previous
         % peak, otherwise merge with previous peak
         if ~isempty(idx)
-            
+
             if res.peaks(i).maxima(idx).value < m
                 res.peaks(i).maxima(idx).time   = t(tj(k));
                 res.peaks(i).maxima(idx).value  = m;
@@ -198,7 +200,7 @@ for i = 1:length(g)
             c = c+1;
         end
     end
-    
+
     res.peaks(i).nmax           = length(res.peaks(i).maxima);
     res.peaks(i).probability    = sum([res.peaks(i).maxima.duration])/duration;
     res.peaks(i).frequency      = [res.peaks(i).nmax]/years;
