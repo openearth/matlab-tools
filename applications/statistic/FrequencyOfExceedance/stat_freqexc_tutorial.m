@@ -62,7 +62,7 @@ stat_freqexc_plot(res);
 % description of the frequency of exceedance. We would like to combine both
 % to a single description for specified frequencies:
 
-res = stat_freqexc_combine(res, 'f', [1e1 1e0 1e-1 1e-2 1e-3 1e-4 1e-5]);
+res = stat_freqexc_combine(res, 'f', [1e0 1e-2 1e-3 1e-4 1e-5]);
 
 % It is time to plot the final result:
 
