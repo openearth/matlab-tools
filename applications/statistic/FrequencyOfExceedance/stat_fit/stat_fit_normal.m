@@ -1,21 +1,27 @@
 function f = stat_fit_normal(data,y,varargin)
-%STAT_FIT_NORMAL  One line description goes here.
+%STAT_FIT_NORMAL  Fits a normal distribution through a dataset
 %
-%   More detailed description goes here.
+%   Fits a normal distribution through a dataset and returns the values for
+%   the independent variable corresponding with a given set of dependent
+%   values.
 %
 %   Syntax:
-%   varargout = stat_fit_normal(varargin)
+%   f = stat_fit_normal(data,y,varargin)
 %
 %   Input:
-%   varargin  =
+%   data      = Array with data
+%   y         = Array with dependent values to be returned
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   f         = Array with independent values
 %
 %   Example
-%   stat_fit_normal
+%   f = stat_fit_normal(data,y)
+%   figure; plot(f,y);
 %
-%   See also
+%   See also stat_freqexc_fit, stat_fit_rayleigh, stat_fit_gumbel,
+%            stat_fit_gamma
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,5 +67,5 @@ function f = stat_fit_normal(data,y,varargin)
 
 %% fit normal
 
-[mu sigma]  = norm_fit(data, 0);
-f           = norm_cdf(y,mu,sigma);
+[mu sigma]  = norm_fit(data);
+f           = 1-norm_cdf(y,mu,sigma);

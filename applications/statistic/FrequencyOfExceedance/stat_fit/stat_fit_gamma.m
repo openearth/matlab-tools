@@ -1,21 +1,27 @@
 function f = stat_fit_gamma(data,y,varargin)
-%STAT_FIT_GAMMA  One line description goes here.
+%STAT_FIT_GAMMA  Fits a gamma distribution through a dataset
 %
-%   More detailed description goes here.
+%   Fits a gamma distribution through a dataset and returns the values
+%   for the independent variable corresponding with a given set of
+%   dependent values.
 %
 %   Syntax:
-%   varargout = stat_fit_gamma(varargin)
+%   f = stat_fit_gamma(data,y,varargin)
 %
 %   Input:
-%   varargin  =
+%   data      = Array with data
+%   y         = Array with dependent values to be returned
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   f         = Array with independent values
 %
 %   Example
-%   stat_fit_gamma
+%   f = stat_fit_gamma(data,y)
+%   figure; plot(f,y);
 %
-%   See also
+%   See also stat_freqexc_fit, stat_fit_normal, stat_fit_gumbel,
+%            stat_fit_rayleigh
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -59,13 +65,11 @@ function f = stat_fit_gamma(data,y,varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% shift data
+
+x0      = min(data);
+
 %% fit gamma
 
-shift   = abs(min((floor(min(data)*10)/10)-0.01,0));
-%shift   = 0;
-
-data    = data+shift;
-y       = y+shift;
-
-pars    = wggamfit(data(data>0),0);
-f       = wggamcdf(y,pars(1,1),pars(1,2),pars(1,3));
+phat    = gam_fit(data-x0,0);
+f       = 1-gam_cdf(y-x0,phat(1),phat(2));

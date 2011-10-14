@@ -1,21 +1,27 @@
 function f = stat_fit_gumbel(data,y,varargin)
-%STAT_FIT_GUMBEL  One line description goes here.
+%STAT_FIT_GUMBEL  Fits a Gumbel distribution through a dataset
 %
-%   More detailed description goes here.
+%   Fits a Gumbel distribution through a dataset and returns the values
+%   for the independent variable corresponding with a given set of
+%   dependent values.
 %
 %   Syntax:
-%   varargout = stat_fit_gumbel(varargin)
+%   f = stat_fit_gumbel(data,y,varargin)
 %
 %   Input:
-%   varargin  =
+%   data      = Array with data
+%   y         = Array with dependent values to be returned
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   f         = Array with independent values
 %
 %   Example
-%   stat_fit_gumbel
+%   f = stat_fit_gumbel(data,y)
+%   figure; plot(f,y);
 %
-%   See also
+%   See also stat_freqexc_fit, stat_fit_normal, stat_fit_rayleigh,
+%            stat_fit_gamma
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,13 +67,5 @@ function f = stat_fit_gumbel(data,y,varargin)
 
 %% fit gumbel
 
-m   = mean(data);
-var = mean((data-m).^2);
-
-b   = sqrt(6*var/pi()^2);
-a   = m - b*(-psi(1));
-
-f   = nan(size(y));
-for i = 1:length(y)
-    f(i) = exp(-exp((a-y(i))/b));
-end
+phat    = ev_fit(-data);
+f       = ev_cdf(-y,phat(1),phat(2));

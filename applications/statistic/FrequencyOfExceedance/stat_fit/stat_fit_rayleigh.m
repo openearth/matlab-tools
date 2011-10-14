@@ -1,21 +1,27 @@
 function f = stat_fit_rayleigh(data,y,varargin)
-%STAT_FIT_RAYLEIGH  One line description goes here.
+%STAT_FIT_RAYLEIGH  Fits a Rayleigh distribution through a dataset
 %
-%   More detailed description goes here.
+%   Fits a Rayleigh distribution through a dataset and returns the values
+%   for the independent variable corresponding with a given set of
+%   dependent values.
 %
 %   Syntax:
-%   varargout = stat_fit_rayleigh(varargin)
+%   f = stat_fit_rayleigh(data,y,varargin)
 %
 %   Input:
-%   varargin  =
+%   data      = Array with data
+%   y         = Array with dependent values to be returned
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   f         = Array with independent values
 %
 %   Example
-%   stat_fit_rayleigh
+%   f = stat_fit_rayleigh(data,y)
+%   figure; plot(f,y);
 %
-%   See also
+%   See also stat_freqexc_fit, stat_fit_normal, stat_fit_gumbel,
+%            stat_fit_gamma
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -59,16 +65,11 @@ function f = stat_fit_rayleigh(data,y,varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% shift data
+
+x0      = min(data);
+
 %% fit rayleigh
 
-data    = sort(data);
-n       = length(data);
-
-% standard gumbel variate
-fd      = (0.5:n-0.5)/n;
-fds     = sqrt(-log(1-fd));
-
-% fit data
-p       = polyfit(data(:),fds(:),1);
-ff      = polyval(p,y);
-f       = 1-exp(-(ff.^2));
+phat    = rayl_fit(data-x0);
+f       = 1-rayl_cdf(y-x0,phat);
