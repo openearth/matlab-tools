@@ -75,3 +75,10 @@ stat_freqexc_plot(res);
 % on logarithmic scale:
 
 stat_freqexc_logplot(res);
+
+%% Write Hydra input
+%
+% Write the combined frequency of exceedance line now to a text file that
+% can be used with the Hydra models, like Hydra-Zoet:
+
+stat_freqexc_writehydra(res);

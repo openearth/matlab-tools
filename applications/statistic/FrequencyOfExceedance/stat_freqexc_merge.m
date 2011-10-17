@@ -1,21 +1,27 @@
 function res = stat_freqexc_merge(varargin)
-%STAT_FREQEXC_MERGE  One line description goes here.
+%STAT_FREQEXC_MERGE  Merge two or more result structures from stat_freqexc_get
 %
-%   More detailed description goes here.
+%   Merge two or more result structures with frequency of exceedance
+%   analysis results from the stat_freq_exc function. The timeseries are
+%   concatenated and the peaks found are merged. Different structures are
+%   assumed to describe independent periods in time. See the documentation
+%   of the stat_freqexc_get function for the implications of this
+%   assumption.
 %
 %   Syntax:
-%   varargout = stat_freqexc_merge(varargin)
+%   res = stat_freqexc_merge(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = Series of result structures
 %
 %   Output:
-%   varargout =
+%   varargout = Merged result structure
 %
 %   Example
-%   stat_freqexc_merge
+%   res = stat_freqexc_merge(res1, res2, res3);
+%   stat_freqexc_plot(res);
 %
-%   See also
+%   See also stat_freqexc_get, stat_freqexc_plot
 
 %% Copyright notice
 %   --------------------------------------------------------------------

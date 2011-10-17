@@ -1,21 +1,25 @@
-function res = stat_freqexc_struct(varargin)
-%STAT_FREQEXC_STRUCT  Creates an empty result structure for stat_freqexc_* functions
+function fname = stat_freqexc_writehydra(res, varargin)
+%STAT_FREQEXC_WRITEHYDRA  Write combined frequency of exceedance line to Hydra model input
 %
-%   Creates an empty result structure for stat_freqexc_* functions.
+%   Write the combined frequency of exceedance to an input file to be used
+%   with Hydra models. The frequency of occurrance in 1/yr is converted to
+%   1/month using the fraction property of the result structure used as
+%   input. The filename of the generated file is returned.
 %
 %   Syntax:
-%   varargout = stat_freqexc_struct(varargin)
+%   fname = stat_freqexc_writehydra(res, varargin)
 %
 %   Input:
-%   varargin  = none
+%   res       = Results structure from the stat_freqexc_combine function
+%   varargin  = filename:       Name of file to be written
 %
 %   Output:
-%   res       = Empty result structure
+%   fname     = Name of written file
 %
 %   Example
-%   res = stat_freqexc_struct;
+%   fname = stat_freqexc_writehydra(res);
 %
-%   See also stat_freqexc_get
+%   See also stat_freqexc_combine
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -49,7 +53,7 @@ function res = stat_freqexc_struct(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 15 Sep 2011
+% Created: 17 Oct 2011
 % Created with Matlab version: 7.12.0.635 (R2011a)
 
 % $Id$
@@ -59,18 +63,26 @@ function res = stat_freqexc_struct(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% create freqexc struct
+%% read settings
 
-res = struct(               ...
-    'time', [],             ...
-    'data', [],             ...
-    'duration', 0,          ...
-    'dt', 0,                ...
-    'peaks', struct(        ...
-        'threshold', 0,     ...
-        'frequency', 0,     ...
-        'nmax', 0,          ...
-        'maxima', struct(   ...
-            'time', [],     ...
-            'value', [],    ...
-            'duration', []      )));
+OPT = struct( ...
+    'filename', 'ovkans_piekmeerpeil.txt' ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+if ~isfield(res, 'combined')
+    error('No combined data available, please use stat_freqexc_combine first');
+end
+
+%% write file
+
+fname = OPT.filename;
+
+fid = fopen(fname,'w');
+fprintf(fid, '* %25s %25s\n', 'Piekwaarde', 'overschrijdingskans');
+fprintf(fid, '* %25s %25s\n', '[m+NAP]', '[-]');
+for i=1:length(res.combined.f)
+    fprintf(fid, '  %25.3e %25.3e\n', res.combined.y(i), res.combined.f(i)/(12*res.fraction));
+end
+fclose(fid);
