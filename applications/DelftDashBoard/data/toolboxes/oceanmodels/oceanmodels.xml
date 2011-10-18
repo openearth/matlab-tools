@@ -5,7 +5,7 @@
     <model>
       <name>hycom_Jan2011-present</name>
       <longname>HYCOM + NCODA Global 1/12 Degree Analysis - Jan 2011 - present</longname>
-      <url>http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_90.9/2011</url>
+      <url>http://tds.hycom.org/thredds/dodsC/GLBa0.08/expt_90.9</url>
       <type>hycom</type>
       <gridcoordinates>hycom.mat</gridcoordinates>
     </model>
@@ -19,7 +19,7 @@
     <model>
       <name>ncom_region1</name>
       <longname>Navy Coastal Ocean Model (NCOM) - Region 1</longname>
-      <url>http://edac-dap.northerngulfinstitute.org/thredds/dodsC/ncom/region1</url>
+      <url>http://ecowatch.ncddc.noaa.gov/thredds/dodsC/ncom/region1</url>
       <region>1</region>
       <type>ncom</type>
     </model>
