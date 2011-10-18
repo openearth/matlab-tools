@@ -1,4 +1,5 @@
 function [handles,ok]=ddb_getDirectories(handles)
+% Find DDB directories
 
 ok=1;
 

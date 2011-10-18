@@ -176,7 +176,7 @@ Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
 dos(['copy ' fileparts(which('ddsettings')) '\main\menu\ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
-strfrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.txt'),'$revision',num2str(Revision));
+strrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.txt'),'$revision',num2str(Revision));
 
 delete('complist');
 delete('earthicon.rc');
