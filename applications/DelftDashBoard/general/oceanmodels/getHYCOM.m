@@ -1,9 +1,9 @@
-function getHYCOM2(url,outname,outdir,par,xl,yl,dx,dy,t,s)
+function getHYCOM(url,outname,outdir,par,xl,yl,dx,dy,t,s,daynum)
 % Download Hycom data
 
 fname=url;
 
-daynum=nc_varget(fname,'MT');
+%daynum=nc_varget(fname,'MT');
 dt=daynum+datenum(1900,12,31);
 
 if length(t)>1

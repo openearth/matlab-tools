@@ -1,7 +1,8 @@
-function getMeteo(meteoname,meteoloc,t0,t1,xlim,ylim,outdir,cycleInterval,dt,varargin)
+function getMeteo(meteoname,meteoloc,t0,t1,xlim,ylim,outdir,cycleInterval,dt,pars,pr,varargin)
 
 usertcyc=0;
 includeHeat=0;
+% pars = '';
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -14,6 +15,10 @@ for i=1:length(varargin)
                 % user-specified cycle
                 includeHeat=varargin{i+1};
         end
+%     elseif iscell(varargin{i})
+%         for j=1:length(varargin{i})
+%             pars{j}=varargin{i}{j};
+%         end
     end
 end
 
@@ -24,7 +29,7 @@ dt=dt/24;
 if cycleInterval>1000
     % All data in one nc file
     tt=[t0 t1];
-    getMeteoFromNomads3(meteoname,0,0,tt,xlim,ylim,outdir,'includeheat',includeHeat);
+    getMeteoFromNomads3(meteoname,meteoname,0,0,tt,xlim,ylim,outdir,pars,pr,includeHeat);
 else
 
     for t=t0:dcyc:t1
@@ -51,7 +56,7 @@ else
 
         switch lower(meteoloc)
             case{'nomads'}
-                getMeteoFromNomads3(meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,includeHeat);
+                getMeteoFromNomads3(meteoname,meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,pars,pr,includeHeat);
                 %            getMeteoFromNomads(meteoname,cycledate,cyclehour,t0:dt:t1,xlim,ylim,outdir,0);
             case{'matroos'}
                 getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);

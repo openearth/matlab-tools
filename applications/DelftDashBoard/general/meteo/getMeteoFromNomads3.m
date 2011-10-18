@@ -1,4 +1,4 @@
-function err=getMeteoFromNomads3(meteosource,meteoname,cycledate,cyclehour,t,xlim,ylim,dirstr,varargin)
+function err=getMeteoFromNomads3(meteosource,meteoname,cycledate,cyclehour,t,xlim,ylim,dirstr,parstr,pr,varargin)
 
 includeHeat=0;
 precip=0;
@@ -17,51 +17,57 @@ end
 err=[];
 ntry=1;
 
-cloudstr='otcdcclm';
-prstr='prmslmsl';
-
+urlstr = getMeteoUrl(meteosource,cycledate,cyclehour);
 switch lower(meteosource)
-    case{'ncep_gfs_analysis'}
-        urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_GFS_ANALYSIS/analysis_complete';
-        prstr='prmsl';
-    case{'ncep_gfs'}
-        urlstr=['http://nomads.ncdc.noaa.gov/dods/NCEP_GFS/' datestr(cycledate,'yyyymm') '/' datestr(cycledate,'yyyymmdd') '/gfs_3_' datestr(cycledate,'yyyymmdd')  '_' num2str(cyclehour,'%0.2i') '00_fff'];
-        prstr='prmsl';
-    case{'gfs1p0'}
-        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs' datestr(cycledate,'yyyymmdd') '/gfs_' num2str(cyclehour,'%0.2i') 'z'];
-        cloudstr='tcdcclm';
-    case{'gfs0p5'}
-        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd' datestr(cycledate,'yyyymmdd') '/gfs_hd_' num2str(cyclehour,'%0.2i') 'z'];
-        cloudstr='tcdcclm';
+    case{'gfs1p0','gfs0p5'}
         xlim=mod(xlim,360);
-    case{'nam'}
-        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/nam/nam' datestr(cycledate,'yyyymmdd') '/nam_' num2str(cyclehour,'%0.2i') 'z'];
-        cloudstr='tcdcclm';
-    case{'gdas'}
-        if year(now)~=year(cycledate)
-            ystr=num2str(year(cycledate));
-            mstr=num2str(month(cycledate),'%0.2i');
-            dr=[ystr mstr '/'];
-            extstr='';
-        else
-            dr='';
-            extstr='.grib2';
-        end
-%        urlstr=['http://nomad3.ncep.noaa.gov:9090/dods/gdas/rotating/' dr 'gdas' datestr(cycledate,'yyyymmdd')  num2str(cyclehour,'%0.2i') extstr];
-        urlstr=['http://nomad3.ncep.noaa.gov:9090/pub/gdas/rotating/' dr 'gdas' datestr(cycledate,'yyyymmdd')  num2str(cyclehour,'%0.2i') extstr];
-    case{'ncep_nam'}
-        ystr=num2str(year(cycledate));
-        mstr=num2str(month(cycledate),'%0.2i');
-        dr=[ystr mstr '/'];
-        urlstr=['http://nomads.ncdc.noaa.gov/dods/NCEP_NAM/' dr datestr(cycledate,'yyyymmdd') '/nam_218_' datestr(cycledate,'yyyymmdd') '_' num2str(cyclehour,'%0.2i') '00_fff'];
-    case{'ncepncar_reanalysis'}
-        urlstr='http://nomad3.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-1/6hr/grb2d/grb2d';
-        prstr='pressfc';
-    case{'ncep_nam_analysis'}
-        urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/Anl_Complete';
-    case{'ncep_nam_analysis_precip'}
-        urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/3hr_Pcp';
 end
+
+% cloudstr='otcdcclm';
+% prstr='prmslmsl';
+% 
+% switch lower(meteosource)
+%     case{'ncep_gfs_analysis'}
+%         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_GFS_ANALYSIS/analysis_complete';
+%         prstr='prmsl';
+%     case{'ncep_gfs'}
+%         urlstr=['http://nomads.ncdc.noaa.gov/dods/NCEP_GFS/' datestr(cycledate,'yyyymm') '/' datestr(cycledate,'yyyymmdd') '/gfs_3_' datestr(cycledate,'yyyymmdd')  '_' num2str(cyclehour,'%0.2i') '00_fff'];
+%         prstr='prmsl';
+%     case{'gfs1p0'}
+%         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs' datestr(cycledate,'yyyymmdd') '/gfs_' num2str(cyclehour,'%0.2i') 'z'];
+%         cloudstr='tcdcclm';
+%     case{'gfs0p5'}
+%         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd' datestr(cycledate,'yyyymmdd') '/gfs_hd_' num2str(cyclehour,'%0.2i') 'z'];
+%         cloudstr='tcdcclm';
+%         xlim=mod(xlim,360);
+%     case{'nam'}
+%         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/nam/nam' datestr(cycledate,'yyyymmdd') '/nam_' num2str(cyclehour,'%0.2i') 'z'];
+%         cloudstr='tcdcclm';
+%     case{'gdas'}
+%         if year(now)~=year(cycledate)
+%             ystr=num2str(year(cycledate));
+%             mstr=num2str(month(cycledate),'%0.2i');
+%             dr=[ystr mstr '/'];
+%             extstr='';
+%         else
+%             dr='';
+%             extstr='.grib2';
+%         end
+%         urlstr=['http://nomad3.ncep.noaa.gov:9090/dods/gdas/rotating/' dr 'gdas' datestr(cycledate,'yyyymmdd')  num2str(cyclehour,'%0.2i') extstr];
+% %        urlstr=['http://nomad3.ncep.noaa.gov:9090/pub/gdas/rotating/' dr 'gdas' datestr(cycledate,'yyyymmdd')  num2str(cyclehour,'%0.2i') extstr];
+%     case{'ncep_nam'}
+%         ystr=num2str(year(cycledate));
+%         mstr=num2str(month(cycledate),'%0.2i');
+%         dr=[ystr mstr '/'];
+%         urlstr=['http://nomads.ncdc.noaa.gov/dods/NCEP_NAM/' dr datestr(cycledate,'yyyymmdd') '/nam_218_' datestr(cycledate,'yyyymmdd') '_' num2str(cyclehour,'%0.2i') '00_fff'];
+%     case{'ncepncar_reanalysis'}
+%         urlstr='http://nomad3.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-1/6hr/grb2d/grb2d';
+%         prstr='pressfc';
+%     case{'ncep_nam_analysis'}
+%         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/Anl_Complete';
+%     case{'ncep_nam_analysis_precip'}
+%         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/3hr_Pcp';
+% end
 
 try
 
@@ -151,20 +157,22 @@ try
         ilat1=1;
         ilat2=length(lat);
     end
-    
-    if ~precip
-        parstr={'ugrd10m','vgrd10m',prstr,'dswrfsfc','tmp2m','rh2m',cloudstr};
-        pr={'u','v','p','swrf','airtemp','relhum','cloudcover'};
-        if includeHeat
-            npar=length(parstr);
-        else
-            npar=3;
-        end
-    else
-        parstr={'apcpsfc'};
-        pr={'precip'};
-        npar=1;
-    end
+
+    % Waarom?
+%     if ~precip
+%         parstr={'ugrd10m','vgrd10m',prstr,'dswrfsfc','tmp2m','rh2m',cloudstr};
+%         pr={'u','v','p','swrf','airtemp','relhum','cloudcover'};
+%         if includeHeat
+%             npar=length(parstr);
+%         else
+%             npar=3;
+%         end
+%     else
+%         parstr={'apcpsfc'};
+%         pr={'precip'};
+%         npar=1;
+%     end
+    npar = length(parstr);
 
     for i=1:npar
  
@@ -236,8 +244,8 @@ try
             s.(pr{j})=squeeze(d.(parstr{j})(k,:,:));
             if ~isnan(max(max(s.(pr{j}))))
                 fname=[meteoname '.' pr{j} '.' tstr '.mat'];
-                disp([dirstr fname]);
-                save([dirstr fname],'-struct','s');
+                disp([dirstr filesep fname]);
+                save([dirstr filesep fname],'-struct','s');
             end
         end
     end
