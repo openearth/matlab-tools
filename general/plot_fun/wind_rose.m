@@ -11,9 +11,11 @@ function varargout = wind_rose(D,F,varargin)
 %   Optional keywords:
 %       - dtype     type of input directions D, standard or meteo, affects:
 %                   (i) 0-convention and (ii) visual interpetation (to/from)
-%                   if meteo,     0=from North, 90=from East , etc
-%                   if not meteo, 0=to   East , 90=to   North, etc (default)
-%                   if current,   0=to North,   90=to East, etc...
+%                   direction     0			 |	90
+%                   -------------------------|---------------
+%                   meteo:        from North |  from East 
+%                   current:      to   North |  to   East
+%                   otherwise:    to   East  |  to   North
 %       - nAngels   number of D subdivisons
 %       - Ag        intensities subdivisons,    default is automatic
 %       - ci        percentage circles to draw, default is automatic
@@ -243,15 +245,18 @@ rs=1.2;
 rl=1.7;
 
 %% directions conversion:
-  directional_interpretation = 'to ';
-if isequal(OPT.dtype,'meteo')
-  D=mod(-90-D,360) + 180; % degN2deguc(D);
-  % add 180 as visual directional interpretation differs.
-  directional_interpretation = 'from ';
-elseif isequal(OPT.dtype,'current')
-  D=mod(-90-D,360) + 180; % degN2deguc(D);
-  % add 180 as visual directional interpretation differs.
-  directional_interpretation = 'to ';
+ 
+switch OPT.dtype
+    case 'meteo'
+        D=mod(-90-D,360) + 180; % degN2deguc(D);
+        % add 180 as visual directional interpretation differs.
+        directional_interpretation = 'from ';
+    case 'current'
+        D=mod(-90-D,360) + 180; % degN2deguc(D);
+        % add 180 as visual directional interpretation differs.
+        directional_interpretation = 'to ';
+    otherwise
+        directional_interpretation = 'to ';
 end
 
 %% angles subdivisons:

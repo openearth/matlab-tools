@@ -98,7 +98,7 @@ for ii = 1:length(fileNames)
     contents = fread(fid,'*char')';
     fclose(fid);
     
-    replacementsToMake = length(findstr(contents,str1));
+    replacementsToMake = length(strfind(contents,str1));
     if replacementsToMake>0
         newcontents = strrep(contents,str1,str2);
         numberOfReplacements = numberOfReplacements + replacementsToMake;
