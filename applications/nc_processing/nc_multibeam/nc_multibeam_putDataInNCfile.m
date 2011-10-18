@@ -53,7 +53,7 @@ if jj ~= length(time0) % then existing nc file already has data
         if OPT.debug
             TMP = figure;
             subplot(1,3,1)
-            pcolorcorcen(Z0); % TO DO: this appears to be empty for some reason
+            pcolorcorcen(double(Z0)); % TO DO: this appears to be empty for some reason
             colorbar('horiz')
             axis equal
             title('existing Z')
@@ -65,19 +65,23 @@ if jj ~= length(time0) % then existing nc file already has data
             title('new Z')
             
             subplot(1,3,3)
-            pcolorcorcen(notnan);
+            pcolorcorcen(Z-double(Z0));
             colorbar('horiz')
-            title('overlap')
+            title('difference')
             axis equal
-            print2screensize([filepathstrname(ncfile),'_',datestr(date,'YYYYMMDD'),'.png'])
+            colormap(colormap_cpt('temperature'))
+            colormap(jet)
+            clim_diff = 2*percentile(abs(Z(notnan)-double(Z0(notnan))),95);
+            clim([-1 1]*clim_diff)
+            print2screensizeoverwrite([filepathstrname(ncfile),'_',datestr(date,'YYYYMMDD'),'.png'])
             clf;close(TMP)
         end
         if isequal(Z0(notnan),Z(notnan))
             % this is ok
-            fprintf(1,'in %s, WARNING: %d values is overwritten by identical values from a different source at %s \n',filename,sum(notnan),date)
+            fprintf(1,'in %s, WARNING: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan),datestr(date,'YYYYMMDD'))
         else 
             % this is (most likely) not ok   
-            fprintf(2,'in %s, ERROR? : %d values is overwritten by different values from a different source at %s \n',filename,sum(notnan),date)
+            fprintf(2,'in %s, ERROR: %d values are overwritten by different values from a different source at %s \n',ncfile,sum(notnan),datestr(date,'YYYYMMDD'))
         end
     end
     Z0(Znotnan) = Z(Znotnan);

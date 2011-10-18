@@ -125,7 +125,7 @@ function varargout = nc_multibeam_from_asc(varargin)
    ncfiles = {};
    
 if OPT.make
-
+   multiWaitbar( 'CloseAll' );
    multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
    disp('generating nc files... ')
    %% limited input check

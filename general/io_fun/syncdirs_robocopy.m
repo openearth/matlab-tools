@@ -97,7 +97,7 @@ end
 %%
 robocopy_path = fullfile(fileparts(mfilename('fullpath')),'private','robocopy','robocopy.exe');
 
-flags = '/E /PURGE /FFT';
+flags = '/E /PURGE /FFT /R:2 /W:5';
 % append file_excl
 if ~isempty(OPT.file_excl)
     flags = [flags ' /XF "' OPT.file_excl '"'];
@@ -111,7 +111,7 @@ end
 if OPT.quiet
     flags = [flags ' /NDL /NFL'];
 else
-    flags = [flags ' /ETA /FP'];
+    flags = [flags ' /NFL /ETA /FP'];
 end
 
 [status,result] = robocopy(source,destination,flags,OPT.quiet);

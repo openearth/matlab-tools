@@ -143,12 +143,12 @@ if OPT.make
     disp('generating kml files... ')
  
  %% initialize waitbars
- 
-    multiWaitbar('kml_print_all_tiles' ,'close')
-    multiWaitbar('fig2png_print_tile'  ,'close')
-    multiWaitbar('merge_all_tiles'     ,'close')
-    multiWaitbar('fig2png_merge_tiles' ,'close')
-    multiWaitbar('fig2png_write_kml'   ,'close')
+    multiWaitbar( 'CloseAll' );
+%     multiWaitbar('kml_print_all_tiles' ,'close')
+%     multiWaitbar('fig2png_print_tile'  ,'close')
+%     multiWaitbar('merge_all_tiles'     ,'close')
+%     multiWaitbar('fig2png_merge_tiles' ,'close')
+%     multiWaitbar('fig2png_write_kml'   ,'close')
     
     multiWaitbar('kml_print_all_tiles' ,0,'label','Printing tiles: total'       ,'color',[0.0 0.3 0.6])
     multiWaitbar('fig2png_print_tile'  ,0,'label','Printing tiles: per file'    ,'color',[0.0 0.5 1.0])
@@ -296,7 +296,12 @@ if OPT.make
             
             % subtract reference plane form data (reference plane is zeros
             % if not set otherwise
-            z = z-z_reference;
+            if numel(z_reference) == 1 && isnan(z_reference)
+                z = nan;
+            else
+                z = z-z_reference;
+            end
+            
             
             if sum(~isnan(z(:)))>=3
                 if ~OPT.quiet

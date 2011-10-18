@@ -38,8 +38,11 @@ if OPT.copy2server
         disp('copying skipped because OPT.basepath_network is equal to OPT.basepath_local')
     else
         % delete current nc files
+        try
+        rmdir (fullfile(OPT.basepath_network,OPT.netcdf_path),'s');
+        end
         mkpath(fullfile(OPT.basepath_network,OPT.netcdf_path));
-        delete(fullfile(OPT.basepath_network,OPT.netcdf_path, '*.nc'));
+%         delete(fullfile(OPT.basepath_network,OPT.netcdf_path, '*.nc'));
         
         % determine total scope of work
         fns  = dir(fullfile(OPT.basepath_local,OPT.netcdf_path, '*.nc'));
