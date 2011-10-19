@@ -110,7 +110,7 @@ OPT.CS2.ellips.semi_minor_axis  = [];
 OPT.CS2.UoM.name                = []; 
 OPT.CS2.UoM.code                = []; 
 
-[OPT, Set, Default]     = setPropertyInDeeperStruct(OPT,varargin{:});
+[OPT, Set, Default]     = setproperty(OPT,varargin);
 
 OPT.CS1 = ConvertCoordinatesCheckInput(OPT.CS1,STD);
 OPT.CS2 = ConvertCoordinatesCheckInput(OPT.CS2,STD);

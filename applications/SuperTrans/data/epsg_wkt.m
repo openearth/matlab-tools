@@ -99,6 +99,6 @@ else
         end
     catch
         str = sprintf('failed to retreive well known text of EPSG code %d',epsg_code);
-        fprintf(2,[mfilename,': cannot get wkt, please work online to be able to access http://spatialreference.org \n'])
+        fprintf(2,[mfilename,': cannot get wkt, please work online to be able to access http://spatialreference.org \n']);
     end
 end
