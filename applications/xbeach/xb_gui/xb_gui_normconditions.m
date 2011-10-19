@@ -87,7 +87,7 @@ function varargout = xb_gui_normconditions
     
     uicontrol(pobj, 'units', 'normalized', 'style', 'edit', 'tag', 'name', ...
         'position', [.05 .93 .75 .04], 'fontsize', 14, 'backgroundcolor', 'w', 'callback', @setloc);
-    fe = uicontrol(pobj, 'units', 'normalized', 'style', 'edit', 'tag', 'freq', ...
+    uicontrol(pobj, 'units', 'normalized', 'style', 'edit', 'tag', 'freq', ...
         'position', [.85 .93 .10 .04], 'string', '10000', 'backgroundcolor', 'w');
     uicontrol(pobj, 'units', 'normalized', 'style', 'pushbutton', 'tag', 'pick', ...
         'position', [.88 .02 .1 .04], 'string', 'Pick', 'callback', @pickloc);
@@ -134,6 +134,11 @@ function setloc(obj, event)
         else
             set(lobj, 'xdata', x, 'ydata', y);
         end
+        
+        zfac = 20;
+        xlim = x+range(get(mobj,'XLim'))./zfac.*[-1 1];
+        ylim = y+range(get(mobj,'YLim'))./zfac.*[-1 1];
+        set(mobj,'XLim',xlim,'YLim',ylim);
     else
         errordlg(['The location "' get(obj, 'string') '" could not be found in the Netherlands. Please check the name.'],'Location not found')
     end

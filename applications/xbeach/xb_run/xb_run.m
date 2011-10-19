@@ -78,17 +78,30 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-OPT.path = abspath(fullfile(OPT.path, OPT.name));
-
-if ~exist(OPT.path, 'dir'); mkdir(OPT.path); end;
-if ~exist(fullfile(OPT.path, 'bin'),'dir'); mkdir(fullfile(OPT.path, 'bin')); end;
-
+% check whether we deal with path or XBeach stucture
+write = ~(ischar(xb) && (exist(xb, 'dir') || exist(xb, 'file')));
 
 %% write model
 
-fpath = fullfile(OPT.path, 'params.txt');
+if ~write
+    
+    OPT.path = abspath(regexprep(xb, 'params.txt$', ''));
+    
+    fpath = fullfile(OPT.path, 'params.txt');
+    
+else
+    
+    OPT.path = abspath(fullfile(OPT.path, OPT.name));
+    
+    if ~exist(OPT.path, 'dir'); mkdir(OPT.path); end;
+    
+    fpath = fullfile(OPT.path, 'params.txt');
 
-xb_write_input(fpath, xb);
+    xb_write_input(fpath, xb);
+    
+end
+
+if ~exist(fullfile(OPT.path, 'bin'),'dir'); mkdir(fullfile(OPT.path, 'bin')); end;
 
 %% retrieve binary
 
