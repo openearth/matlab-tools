@@ -73,6 +73,7 @@ function varargout = nc_plot_coastline(varargin)
 OPT = struct( ...
     'coordsys', 'RD', ...
     'coastline', 'holland', ...
+    'fill', 'y', ...
     'plot', true ...
 );
 
@@ -107,7 +108,11 @@ end
 %% plot data
 
 if OPT.plot
-    varargout = {plot(x, y)};
+    if ~isempty(OPT.fill)
+        varargout = {fillpolygon([x y], 'k', OPT.fill)};
+    else
+        varargout = {plot(x, y)};
+    end
 else
     varargout = {x y};
 end
