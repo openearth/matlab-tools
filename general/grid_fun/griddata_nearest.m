@@ -21,6 +21,11 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI,varargin)
 %    i) GRIDDATA leads to (DELAUNAY) triangulation errors.
 %   ii) large X and Y matrixes lead to MEMORY issues in GRIDDATA
 %
+%     ZI = griddata_nearest(X,Y,Z,XI,YI,<keyword,value>)
+%     where keyword 'Rmax' discards cases where the distance > Rmax
+%     this prevent filling in of clouds or land with neighbouring 
+%     sea values.
+%
 %   See also: GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_AVERAGE, GRIDDATE_REMAP,
 %   INTERP2, BIN2
 
@@ -62,6 +67,7 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI,varargin)
 %        or use inverse distance
 % TO DO: throw away any points outside (note: they can be nearest !!)
 % TO DO: make space varying Rmax official ?
+
 OPT.ndisp = 100;
 OPT.Rmax  = Inf; % make this optionally same size as X and Y.
 OPT.quiet = false;

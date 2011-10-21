@@ -1,13 +1,13 @@
-function varargout = xy2mn(x,y,xv,yv)
+function varargout = xy2mn(x,y,xv,yv,varargin)
 %XY2MN  get indices of random (x,y) points in curvilinear grid
 %
-%   [m,n] = xy2mn(xy2mn(x,y,xv,yv) 
+%   [m,n] = xy2mn(x,y,xv,yv) 
 %
 % returns indices (m,n) of the curvilinear (x,y) 
 % grid of points closest to the random points 
 % (xv,yv) where m is the 1st, and  n is the 
 % 2nd dimension of x and y. If multiple points are 
-% euqally near, one (m,n) combi is arbitrarily chosen.
+% equally near, one (m,n) combi is arbitrarily chosen.
 %
 % Alternatives:
 %  struct      = xy2mn(...) with fields m, n, mn and eps (match accuracy)
@@ -15,7 +15,7 @@ function varargout = xy2mn(x,y,xv,yv)
 % [m,n,mn,eps] = xy2mn(...)
 % where mn = the linear index, and eps the distance.
 %
-% See also: SUB2IND, IN2SUB, FIND, MIN, MAX
+% See also: SUB2IND, IND2SUB, FIND, MIN, MAX
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -42,6 +42,9 @@ function varargout = xy2mn(x,y,xv,yv)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+OPT.Rmax  = Inf; % make this optionally same size as X and Y.
+OPT  = setproperty(OPT,varargin{:});
 
 mn   = zeros(size(xv));
 m    = zeros(size(xv));
@@ -79,7 +82,6 @@ mmax = size(x,1);
    for i=1:length(xv(:))
 
       %% Get matrix of distances between random point and all matrix nodes
-      %-------------------------------
       dist = sqrt((x - xv(i)).^2 + ...
                   (y - yv(i)).^2);
                   
@@ -89,28 +91,29 @@ mmax = size(x,1);
                   %hold on
                   
       %% The (m,n) we are looking for is where this distance is minimal 
-      %-------------------------------
 
       [accuracies,mns] = min(dist(:));
       
-      if length(accuracies) >1 
+      if length(accuracies) > 1 
          disp(['Point ',num2str(xv(i)),'',num2str(yv(i)),'has multiple matches in matrix, one is arbitrarily chosen.'])
       end
       
       accuracy(i) = accuracies(1);
       mn(i)       = mns(1);
 
-      %% NOT zero based,
-      %  can also use sub2ind here.
-      %-------------------------------
+      %% NOT zero based, can also use sub2ind here.
+      if accuracy(i) < OPT.Rmax
       m(i)        = mod(mn(i)-1,mmax)+1;
       n(i)        = div(mn(i)-1,mmax)+1;
+      else
+      m(i)        = nan;
+      n(i)        = nan;          
+      end
    end
 
 %end
 
 %% Output
-%-------------------------------
 
 if nargout==1
    S.m   = m;
