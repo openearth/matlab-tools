@@ -1,12 +1,13 @@
 function varargout = opendap_catalog(varargin)
-%OPENDAP_CATALOG   get urls of all datasets in an OPeNDAP THREDDS/HYRAX catalog.xml url
+%OPENDAP_CATALOG   crawler for THREDDS OPeNDAP catalogues: returns set of urls
 %
-%   nc_file_list = opendap_catalog(url)
+%   nc_file_list = opendap_catalog(baseurl)
 %
-% loads the urls of all datsets (netCDF files) that reside 
+% crawls the urls of all datsets (netCDF files) that reside 
 % under the OPeNDAP catalog.xml located at the specified url,
 % as well as all catalogs that it links to. Onyl works for THREDDS, and 
-% sometimes for HYRAX. doe snot work for GrADS.
+% sometimes for HYRAX. doe snot work for GrADS. Use nc_cf_opendap2catalog
+% to harvest meta-data from all these OPeNDAP urls.
 %
 % When url does not start with 'http', the url is assumed
 % to be a local directory, and all netCDF files (*.nc) 
@@ -15,7 +16,7 @@ function varargout = opendap_catalog(varargin)
 % Any trailing /contents.html is replaced with /catalog.xml (HYRAX).
 % When starting with ''http', any trailing / is replaced with /catalog.xml.
 %
-%   nc_file_list = opendap_catalog(url,<keyword,value>)
+%   nc_file_list = opendap_catalog(baseurl,<keyword,value>)
 %
 % The following important <keyword,value> pairs are implemented.
 % You can list all keyword by calling OPT = filelist = opendap_catalog().
@@ -93,6 +94,7 @@ function varargout = opendap_catalog(varargin)
 %% keywords
 
    OPT.url                   = 'http://opendap.deltares.nl/thredds/catalog/opendap/catalog.xml';
+   OPT.onExtraField          = 'silentIgnore'; % to prevent subsidiary opendap_dataset from throwing warnings too
    OPT.serviceType           = 'OPENDAP'; % only load this service type
    OPT.serviceBase           = [];
    OPT.serviceName           = [];
@@ -112,7 +114,7 @@ function varargout = opendap_catalog(varargin)
       varargout = {OPT};
       return
    end
-
+   
    nextarg = 1;
    if nargin == 1
       if ~isstruct(varargin{1})
@@ -123,11 +125,10 @@ function varargout = opendap_catalog(varargin)
       if ( odd(nargin) & ~isstruct(varargin{2})) | ...
          (~odd(nargin) &  isstruct(varargin{2}));
          OPT.url = varargin{1};
-         nextarg = 2;
+         nextarg     = 2;
      end
    end
-
-   OPT = setproperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,{varargin{nextarg:end}},'onExtraField','silentIgnore');
    
    nc_file_list   = {};
    nc_folder_list = {};

@@ -1,13 +1,16 @@
 function varargout = nc_cf_opendap2catalog(varargin)
-%NC_CF_OPENDAP2CATALOG   creates catalog.nc of CF compliant netCDF files on OPeNDAP server
+%NC_CF_OPENDAP2CATALOG   harvester for netCDF-CF in THREDDS OPeNDAP catalogues: returns meta-data
 %
 %   ATT = nc_cf_opendap2catalog(<baseurl>,<keyword,value>)
 %   ATT = nc_cf_opendap2catalog(<files>  ,<keyword,value>)
 %
 % Extracts meta-data from all netCDF files in <baseurl>, which can 
-% be either an OPeNDAP catalog or a local directory. Set 'maxlevel' 
-% to harvest deeper (default 1). When you query a local directory, and you 
-% want the resulting catalog.nc to work on a server, use keyword
+% be either an OPeNDAP catalog or a local directory. It is a harvester 
+% on top of the crawler OPENDAP_CATALOG.
+% 
+%
+% Set 'maxlevel' to crawl deeper (default 1). When you query a local directory, 
+% and you want the resulting catalog.nc to work on a server, use keyword
 % 'urlPathFcn' 
 % to  replace the local root with the opendap root, e.g.:
 %
@@ -97,6 +100,7 @@ function varargout = nc_cf_opendap2catalog(varargin)
 
 %% which directories to scan
 
+OPT                = opendap_catalog();
 OPT.base           = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.xml'; % base url where to inquire, NB: needs to end with catalog.xml
 OPT.files          = [];
 OPT.directory      = '.'; % relative path that ends up in catalog
@@ -108,10 +112,8 @@ OPT.save           = 0; % save catalog in directory
 OPT.catalog_dir    = [];
 OPT.catalog_name   = 'catalog.nc'; % exclude from indexing
 OPT.xls_name       = 'catalog.xls'; % exclude from indexing
-OPT.maxlevel       = 1;
 OPT.separator      = ';'; % for long names
 OPT.datatype       = 'stationtimeseries'; % CF data types (grid, stationtimeseries upcoming CF standard https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions)
-OPT.debug          = 0;
 OPT.disp           = 'multiWaitbar';
 OPT.datestr        = 'yyyy-mm-ddTHH:MM:SS'; % default for high-freq timeseries
 
@@ -187,7 +189,13 @@ OPT.varname        = {}; % could be {'x','y','time'}
 %% File inquiry
 
     if isempty(OPT.files)
-        OPT.files = opendap_catalog(OPT.base,'maxlevel',OPT.maxlevel,'ignoreCatalogNc',1);
+        OPT.url = OPT.base;
+        
+        keyvals = reshape([fieldnames(OPT)'; ...
+	                      struct2cell(OPT)'], 1, ...
+                  2*length(fieldnames(OPT)));
+        
+        OPT.files = opendap_catalog(OPT.base,keyvals{:},'onExtraField','silentIgnore');
     end
 
 %% pre-allocate catalog (Note: expanding char array lead to 0 as fillvalues)

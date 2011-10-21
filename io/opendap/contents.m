@@ -32,10 +32,11 @@
 % * EU: Norway met office: <a href="http://thredds.met.no/thredds/catalog.html">http://thredds.met.no/thredds/catalog.html</a> (THREDDS)
 % * Godae <a href="http://www.usgodae.org/dods/GDS">http://www.usgodae.org/dods/GDS</a> (GrADS)
 %
-%   opendap_catalog       - get list of netCDF files (dataset) from opendap catalog
+%   opendap_catalog       - crawler for THREDDS OPeNDAP catalogues: returns set of urls
 %                           NB: these Dataset urls from an OPeNDAP server can be 
 %                           accessed directly with the snctools (only THREDDS + HYRAX, not GrADS).
 %   opendap_get_cache     - get a local cache of an opendap folder (catalogRef)
-%   nc_cf_opendap2catalog - crawls server, extracts CF compliant meta-info from files, stores as catalog.nc
+%   nc_cf_opendap2catalog - harvester for netCDF-CF in THREDDS OPeNDAP catalogues: returns meta-data
+%                           runs on top of the OPENDAP_CATALOG crawler
 %
 %See also: snctools, nctools
