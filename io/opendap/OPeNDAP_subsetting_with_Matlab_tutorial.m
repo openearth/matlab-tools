@@ -28,7 +28,6 @@ url_grid{8} = 'F:\checkouts\OpenEarthRawData\gebco\raw\gebco_1min.nc';
 url_line    = 'http://opendap.deltares.nl/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
 
 %% Get line data: 1D vectors are small, so we can get all data
-nc_dump(url_line)
 L.lon    = nc_varget(url_line,'lon');
 L.lat    = nc_varget(url_line,'lat');
 
@@ -36,7 +35,7 @@ L.lat    = nc_varget(url_line,'lat');
 boundingbox.lon = [ 0 10];
 boundingbox.lat = [50 55];
 
-for i=7:length(url_grid)
+for i=1:length(url_grid)
 
    ncfile = url_grid{i}
 
@@ -58,11 +57,11 @@ for i=7:length(url_grid)
    G.lat    = nc_varget(ncfile,'lat' ,start(1),count(1),stride(1)); % 1D
    G.lon    = nc_varget(ncfile,'lon' ,start(2),count(2),stride(2)); % 1D
    G.topo   = nc_varget(ncfile,'topo',start(:),count(:),stride(:)); % 2D
-   G.title  = nc_attget(ncfile,nc_global,'title')
+   G.title  = nc_attget(ncfile,nc_global,'title');
    
    %% Plot data subset
    figure(i)
-   pcolorcorcen(G.lon,G.lat,double(G.topo))
+   h = pcolorcorcen(G.lon,G.lat,double(G.topo))
    hold on
    plot(L.lon,L.lat,'k')
    axis([boundingbox.lon boundingbox.lat])
@@ -71,7 +70,20 @@ for i=7:length(url_grid)
    grid on
    clim ([-50 150])
    title(mktex(G.title))
-   colorbarwithvtext('z [m]')
    print2screensize(mkvar(G.title))
+
+   %% Plot data source subset (GEBCO only, from version created by OpenEarthRawData conversion script)
+   if nc_isvar(ncfile,'SID')
+   G.topo   = nc_varget(ncfile,'SID' ,start(:),count(:),stride(:)); % 2D
+   delete(h)
+   h = pcolorcorcen(G.lon,G.lat,double(G.topo))
+   ctick = nc_attget(ncfile,'SID','flag_values');
+   colormap(colormap_cpt('Paired 12',length(ctick)))
+   clim ([min(ctick) max(ctick)]+[-.5 .5])
+   [ax,c]=colorbarwithvtext('source',ctick);
+   set(ax,'yticklabel',strtokens2cell(nc_attget(ncfile,'SID','flag_short_labels')))
+   set(ax,'FontSize',5)
+   print2screensize([mkvar(G.title),'_SID'])
+   end
    
 end   

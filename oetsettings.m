@@ -15,7 +15,7 @@ function oetsettings(varargin)
 % *    ,,        models <a href="https://repos.deltares.nl/repos/OpenEartModels/trunk/">https://repos.deltares.nl/repos/OpenEartModels/trunk/matlab</a>
 % *    ,,         tools <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
 % * 2. OPeNDAP/netCDF   <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
-% * 3. Google Earth     <a href="http://kml.deltares.nl">http://kml.deltares.nl</a>
+% * 3. Google Earth     <a href="http://kml.deltares.nl">http://kml.deltares.nl</a>, opendap
 % * Matlab: + Scroll through the OpenEarthTools directories 
 %           + use help     : help netcdf, help general, help applications
 %           + use lookfor  : lookfor google, lookfor 
@@ -24,7 +24,7 @@ function oetsettings(varargin)
 %
 %See also:    oetsettings: path, restoredefaultpath, addpathfast,
 %          OpenEarthTools: general, applications, io, tutorials
-%              highlights: convertcoordinates, googleplot
+%              highlights: convertcoordinates, googleplot, opendap
 
 %% Copyright notice
 %   --------------------------------------------------------------------

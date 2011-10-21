@@ -1,8 +1,8 @@
 function varargout = struct2nc(outputfile,D,varargin)
 %STRUCT2NC   save struct with 1D arrays to netCDF file (beta)
 %
-%   nc2struct(ncfile,dat    ,<keyword,value>)
-%   nc2struct(ncfile,dat,atr,<keyword,value>)
+%   struct2nc(ncfile,dat    ,<keyword,value>)
+%   struct2nc(ncfile,dat,atr,<keyword,value>)
 %
 %   ncfile - netCDF file name
 %   dat    - structure of 1D arrays of numeric/character data

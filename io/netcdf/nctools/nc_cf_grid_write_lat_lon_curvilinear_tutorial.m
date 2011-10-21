@@ -132,9 +132,11 @@
    % the data matrix at index (1,1) rather than the default of having the 
    % lower-left corner of the data matrix  at index (1,1).
 
-%  nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
+   if ~isempty(OPT.time)
+   nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
                                         % you can optionally use 'time' as a 3rd dimension. see 
                                         % nc_cf_stationTimeSeries_write_tutorial for info on time.          
+   end
 
 %% 3.a Create coordinate variables: longitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
@@ -198,6 +200,20 @@
       nc(ifld).Attribute(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(OPT.wgs84.code)]);
 
+%% 3z   Optionally crate time dimension
+
+   if ~isempty(OPT.time)
+   OPT.refdatenum             = datenum(1970,1,1); 
+   clear nc;ifld = 1;
+   nc(ifld).Name             = 'time';   % dimension 'time' is here filled with variable 'time'
+   nc(ifld).Nctype           = 'double'; % time should always be in doubles
+   nc(ifld).Dimension        = {'time'};
+   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'time');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'time');
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.datenum(:)) max(D.datenum(:))]-OPT.refdatenum);
+   end
+
 %% 4   Create dependent variable
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
 %      Parameters with standard names:
@@ -206,7 +222,11 @@
    ifld = ifld + 1;
    nc(ifld).Name             = OPT.varname;
    nc(ifld).Nctype           = nc_type(OPT.val_type);
-   nc(ifld).Dimension        = {'col','row'}; % {'time','col','row'}
+   if ~isempty(OPT.time)
+   nc(ifld).Dimension        = {'time','col','row'}
+   else
+   nc(ifld).Dimension        = {'col','row'};
+   end
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );

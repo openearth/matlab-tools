@@ -75,6 +75,7 @@
    OPT.standard_name          = 'sea_floor_depth_below_geoid'; % or 'altitude'
    OPT.val_type               = 'single';      % 'single' or 'double'
    OPT.fillvalue              = nan;
+   OPT.time                   = []; %now;
    
 %% 1.a Create netCDF file
 
@@ -112,9 +113,11 @@
    % the data matrix at index (1,1) rather than the default of having the 
    % lower-left corner of the data matrix  at index (1,1).
 
-%  nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
+   if ~isempty(OPT.time)
+   nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
                                         % you can optionally use 'time' as a 3rd dimension. see 
                                         % nc_cf_stationTimeSeries_write_tutorial for info on time.          
+   end
 
 %% 3.a Create coordinate vector: longitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
@@ -175,6 +178,20 @@
       nc(ifld).Attribute(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(OPT.wgs84.code)]);
 
+%% 3z   Optionally crate time dimension
+
+   if ~isempty(OPT.time)
+   OPT.refdatenum             = datenum(1970,1,1); 
+   clear nc;ifld = 1;
+   nc(ifld).Name             = 'time';   % dimension 'time' is here filled with variable 'time'
+   nc(ifld).Nctype           = 'double'; % time should always be in doubles
+   nc(ifld).Dimension        = {'time'};
+   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'time');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'time');
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.datenum(:)) max(D.datenum(:))]-OPT.refdatenum);
+   end
+
 %% 4   Create dependent variable
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
 %      Parameters with standard names:
@@ -183,12 +200,16 @@
    ifld = ifld + 1;
    nc(ifld).Name             = OPT.varname;
    nc(ifld).Nctype           = nc_type(OPT.val_type);
-   nc(ifld).Dimension        = {'lon','lat'}; % {'time','lon','lat'}
+   if ~isempty(OPT.time)
+   nc(ifld).Dimension        = {'time','lon','lat'}
+   else
+   nc(ifld).Dimension        = {'lon','lat'};
+   end
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.val(:)) max(OPT.val(:))]);
-   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon'); % not required as the coordinates are vectors
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
    if ~isempty(OPT.standard_name)
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
@@ -206,6 +227,9 @@
    nc_varput(ncfile, 'lat'          , OPT.lat       );
    nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code);
    nc_varput(ncfile, OPT.varname    , OPT.val       );
+   if ~isempty(OPT.time)
+   nc_varput(ncfile, 'time'         , D.datenum - OPT.refdatenum);
+   end
       
 %% 6   Check file summary
    

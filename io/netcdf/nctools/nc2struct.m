@@ -1,12 +1,12 @@
 function varargout = nc2struct(ncfile,varargin)
 %NC2STRUCT   load netCDF file with to struct (beta)
 %
-%   dat      = struct2nc(ncfile,<keyword,value>)
-%% [dat,atr] = struct2nc(ncfile,<keyword,value>)
+%   dat      = nc2struct(ncfile,<keyword,value>)
+%  [dat,atr] = nc2struct(ncfile,<keyword,value>)
 %
 %   ncfile - netCDF file name
 %   dat    - structure of 1D arrays of numeric/character data
-%%  atr    - optional structure of file and variable attributes
+%   atr    - optional structure of file and variable attributes
 %
 % Note that this function has limited applicability only
 % because it does the naming of dimensions based on size only

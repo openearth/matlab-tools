@@ -157,114 +157,123 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %  * coordinates attribute
 %  and select one.
 
-   if isempty(OPT.varname)
+   coord.varindex = [];
+   coord.vartype  = {};
+   coord.vardim   = {};
    
-      coord.varindex = [];
-      coord.vartype  = {};
-      coord.vardim   = {};
+   for ivar=1:length(fileinfo.Dataset)
+   
+     direct.lat = false;
+     direct.lon = false;
+     direct.x   = false;
+     direct.y   = false;       
       
-      for ivar=1:length(fileinfo.Dataset)
+     %%  (lon,lat) direct mapping: find dimension latitude, longitude OR ...
+     for idim=1:length(fileinfo.Dataset(ivar).Dimension)
+         if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),latname))));
+            direct.lat = idim;
+         end
+         if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),lonname))));
+            direct.lon = idim;
+         end
+     end
       
-        direct.lat = false;
-        direct.lon = false;
-        direct.x   = false;
-        direct.y   = false;       
-         
-        %%  (lon,lat) direct mapping: find dimension latitude, longitude OR ...
-        for idim=1:length(fileinfo.Dataset(ivar).Dimension)
-            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),latname))));
-               direct.lat = idim;
-            end
-            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),lonname))));
-               direct.lon = idim;
-            end
-        end
-         
-        %%  (x,y) direct mapping: find dimension x, y OR ...
-        for idim=1:length(fileinfo.Dataset(ivar).Dimension)
-            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),xname))));
-               direct.x = idim;
-            end
-            if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),yname))));
-               direct.y = idim;
-            end
-        end
-         
-        if (direct.lat && direct.lon) | (direct.x && direct.y)
-             coord.varindex = [coord.varindex  ivar];
-             if (direct.x && direct.y) & (direct.lon && direct.lat)
-                coord.vartype{end+1} = {'(lat,lon) orthogonal','(x,y) orthogonal'};
-                coord.vardim {end+1} = {[direct.x direct.y],[direct.lon direct.lat]};
-             elseif (direct.x && direct.y)
-                coord.vartype{end+1} = '(x,y) orthogonal';
-                coord.vardim {end+1} = {[direct.x direct.y]};
-             elseif (direct.lon && direct.lat)
-                coord.vartype{end+1} = '(lat,lon) orthogonal';
-                coord.vardim {end+1} = {[direct.lon direct.lat]};
-             end
-        end
-                  
-        %% indirect mapping: find index of coordinates attribute
+     %%  (x,y) direct mapping: find dimension x, y OR ...
+     if ~isempty(xname)
+     for idim=1:length(fileinfo.Dataset(ivar).Dimension)
+         if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),xname))));
+            direct.x = idim;
+         end
+         if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),yname))));
+            direct.y = idim;
+         end
+     end
+     end
+      
+     if (direct.lat && direct.lon) | (direct.x && direct.y)
+          coord.varindex = [coord.varindex  ivar];
+          if (direct.x && direct.y) & (direct.lon && direct.lat)
+             coord.vartype{end+1} = {'(lat,lon) orthogonal','(x,y) orthogonal'};
+             coord.vardim {end+1} = {[direct.x direct.y],[direct.lon direct.lat]};
+          elseif (direct.x && direct.y)
+             coord.vartype{end+1} = '(x,y) orthogonal';
+             coord.vardim {end+1} = {[direct.x direct.y]};
+          elseif (direct.lon && direct.lat)
+             coord.vartype{end+1} = '(lat,lon) orthogonal';
+             coord.vardim {end+1} = {[direct.lon direct.lat]};
+          end
+     end
+               
+     %% indirect mapping: find index of coordinates attribute
 
-        atrindex = nc_atrname2index(fileinfo.Dataset(ivar),'coordinates');
+     atrindex = nc_atrname2index(fileinfo.Dataset(ivar),'coordinates');
 
-        if ~isempty(atrindex)
+     if ~isempty(atrindex)
 
-           % check whether coordinates attribute refers to variables that have standard_name latitude & longitude
-           coord.varnames = strtokens2cell(fileinfo.Dataset(ivar).Attribute(atrindex).Value);
+       % check whether coordinates attribute refers to variables that have
+       % (x,y) or (lat,lon) standard_name 
+       % Note: there can be multiple pairs of coordinates, e.g.: "x y lon lat"
+       % Here we assume they are grouped.
+       
+       coord.varnames = strtokens2cell(fileinfo.Dataset(ivar).Attribute(atrindex).Value);
 
-           indirect.lat = false;
-           indirect.lon = false;
-           indirect.x   = false;
-           indirect.y   = false;
+       for ii=1:2:length(coord.varnames)
+         indirect.lat = false;
+         indirect.lon = false;
+         indirect.x   = false;
+         indirect.y   = false;
+         for iii=0:1
 
-           for ii=1:length(coord.varnames)
+           varindex = nc_varname2index(fileinfo,coord.varnames{ii+iii});
 
-              varindex = nc_varname2index(fileinfo,coord.varnames{ii});
+           % find index of standard_name attribute
+           atrindex = nc_atrname2index(fileinfo.Dataset(varindex),'standard_name');
 
-              % find index of standard_name attribute
-              atrindex = nc_atrname2index(fileinfo.Dataset(varindex),'standard_name');
-
-              if ~isempty(atrindex)
-                 if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'latitude')
-                 indirect.lat=true;
-                 end
-                 if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'longitude')
-                 indirect.lon=true;
-                 end
-                 if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'projection_x_coordinate')
-                 indirect.x=true;
-                 end
-                 if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'projection_y_coordinate')
-                 indirect.y=true;
-                 end                       
+           if ~isempty(atrindex)
+              if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'latitude')
+              indirect.lat=true;
               end
+              if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'longitude')
+              indirect.lon=true;
+              end
+              if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'projection_x_coordinate')
+              indirect.x=true;
+              end
+              if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'projection_y_coordinate')
+              indirect.y=true;
+              end                       
            end
-
-        if (indirect.lat && indirect.lon) | (indirect.x && indirect.y)
-             coord.varindex = [coord.varindex  ivar];
-             if (indirect.x && indirect.y) & (indirect.lon && indirect.lat)
-                coord.vartype{end+1} = {'(lat,lon) curvilinear','(x,y) curvilinear'};
-                coord.vardim {end+1} = {[indirect.x indirect.y],[indirect.lon indirect.lat]};
-             elseif (indirect.x && indirect.y)
-                coord.vartype{end+1} = '(x,y) curvilinear';
-                coord.vardim {end+1} = {[indirect.x indirect.y]};
-             elseif (indirect.lon && indirect.lat)
-                coord.vartype{end+1} = '(lat,lon) curvilinear';
-                coord.vardim {end+1} = {[indirect.lon indirect.lat]};
-             end
         end
+      end
 
-        end % if ~isempty(atrindex)
-         
-      end % for ivar=1:length(fileinfo.Dataset)
+      if (indirect.lat && indirect.lon) | (indirect.x && indirect.y)
+         coord.varindex = [coord.varindex  ivar];
+         if (indirect.x && indirect.y) & (indirect.lon && indirect.lat)
+            coord.vartype{end+1} = {'(lat,lon) curvilinear','(x,y) curvilinear'};
+            coord.vardim {end+1} = {[indirect.x indirect.y],[indirect.lon indirect.lat]};
+         elseif (indirect.x && indirect.y)
+            coord.vartype{end+1} = '(x,y) curvilinear';
+            coord.vardim {end+1} = {[indirect.x indirect.y]};
+         elseif (indirect.lon && indirect.lat)
+            coord.vartype{end+1} = '(lat,lon) curvilinear';
+            coord.vardim {end+1} = {[indirect.lon indirect.lat]};
+         end
+      end
+    end % if ~isempty(atrindex)
       
-      coord.varnames = cellstr(char(fileinfo.Dataset(coord.varindex).Name));
-      
-      coord.varlist = cellfun(@(x,y) [x, ' ',y],coord.varnames, coord.vartype','UniformOutput',0);
+  end % for ivar=1:length(fileinfo.Dataset)
+   
+  coord.varnames = cellstr(char(fileinfo.Dataset(coord.varindex).Name));
+   
+  coord.varlist = cellfun(@(x,y) [x, ' ',y],coord.varnames, coord.vartype','UniformOutput',0);
 
+  if isempty(OPT.varname)
+   
+      if OPT.debug
+          var2evalstr(coord)
+      end
+      
       %% ad coords to name
-      
       [ii, ok] = listdlg('ListString', coord.varlist, .....
                       'SelectionMode', 'single', ...
                        'PromptString', 'Select one variable', ....
@@ -276,20 +285,23 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       vartype     = coord.vartype {ii};
       OPT.varname = coord.varnames{ii};
       
-   else
+  else
    
    %% get index of chosen variable name
    
-      nvar = length(fileinfo.Dataset);
-      
+      nvar = length(coord.varnames);
+      var2evalstr(coord)
       for ivar=1:nvar
-         if strcmp(fileinfo.Dataset(ivar).Name,OPT.varname)
+         if strcmp(coord.varnames{ivar},OPT.varname)
          varindex = ivar;
+         vardim      = coord.vardim  {ivar};
+         vartype     = coord.vartype {ivar};
+         % TO DO: check for multiple occurences of same matrix: f(x,y) or z(lon,lat)
          break
          end
       end
       
-   end
+  end
    
 %% get data
 

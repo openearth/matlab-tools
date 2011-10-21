@@ -99,6 +99,7 @@
    OPT.standard_name          = 'sea_floor_depth_below_geoid'; % or 'altitude'
    OPT.val_type               = 'single';      % 'single' or 'double'
    OPT.fillvalue              = nan;
+   OPT.time                   = []; %now;
    
 %% 1.a Create netCDF file
 
@@ -120,7 +121,7 @@
    nc_attput(ncfile, nc_global, 'version'       , OPT.version);
 
    nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.5');
-   nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+   nc_attput(ncfile, nc_global, 'featureType'   , 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
 
    nc_attput(ncfile, nc_global, 'terms_for_use' , OPT.acknowledge);
    nc_attput(ncfile, nc_global, 'disclaimer'    , OPT.disclaimer);
@@ -135,10 +136,10 @@
    % the arcGIS ASCII file approach of having upper-left corner of 
    % the data matrix at index (1,1) rather than the default of having the 
    % lower-left corner of the data matrix  at index (1,1).
-
-%  nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
+   if ~isempty(OPT.time)
+   nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
                                         % you can optionally use 'time' as a 3rd dimension. see 
-                                        % nc_cf_stationTimeSeries_write_tutorial for info on time.          
+   end                                  % nc_cf_stationTimeSeries_write_tutorial for info on time.          
 
 %% 3.a Create coordinate variables: x and y
 
@@ -150,8 +151,8 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.x(:)) max(OPT.x(:))]); % TO DO add half grid cell offset
-   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
+   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon x y'); % CF allows to put TWO sets of coordinates here
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg wgs84');
 
    ifld = ifld + 1;
    nc(ifld).Name             = 'y';
@@ -161,8 +162,8 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.y(:)) max(OPT.y(:))]); % TO DO add half grid cell offset
-   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg');
+   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon x y'); % CF allows to put TWO sets of coordinates here
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg wgs84');
 
 %% 3.b Create coordinate variables: coordinate system: epsg
 %      http://www.epsg-registry.org/
@@ -186,7 +187,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'x y'); % 'lat lon');
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg wgs84');
 
 %% 3.d Create coordinate variables: latitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
@@ -200,7 +201,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'x y'); % 'lat lon');
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg wgs84');
 
 %% 3.e Create coordinate variables: coordinate system: WGS84 default
 %      global ellispes: WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS update etc.
@@ -214,6 +215,20 @@
    nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code); % contains ADAGUC attributes, although ADAGUC cannot handle the curvilinear file generated here
    
    var2evalstr(nc(ifld).Attribute)
+   
+%% 3z   Optionally crate time dimension
+
+   if ~isempty(OPT.time)
+   OPT.refdatenum             = datenum(1970,1,1); 
+   clear nc;ifld = 1;
+   nc(ifld).Name             = 'time';   % dimension 'time' is here filled with variable 'time'
+   nc(ifld).Nctype           = 'double'; % time should always be in doubles
+   nc(ifld).Dimension        = {'time'};
+   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'time');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'time');
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.datenum(:)) max(D.datenum(:))]-OPT.refdatenum);
+   end
 
 %% 4   Create dependent variable
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
@@ -234,13 +249,16 @@
    ifld = ifld + 1;
    nc(ifld).Name             = OPT.varname;
    nc(ifld).Nctype           = nc_type(OPT.val_type);
-   nc(ifld).Dimension        = {'col','row'}; % {'time','col','row'}
+   if ~isempty(OPT.time)
+   nc(ifld).Dimension        = {'time','col','row'}
+   else
+   nc(ifld).Dimension        = {'col','row'};
+   end
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.val(:)) max(OPT.val(:))]);
-   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
-   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates2'   ,'Value', 'x y');
+   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon x y'); % CF allows to put TWO sets of coordinates here
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
    if ~isempty(OPT.standard_name)
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
@@ -261,6 +279,9 @@
    nc_varput(ncfile, 'lat'          , OPT.lat       );
    nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code);
    nc_varput(ncfile, OPT.varname    , OPT.val       );
+   if ~isempty(OPT.time)
+   nc_varput(ncfile, 'time'         , D.datenum - OPT.refdatenum);
+   end
       
 %% 6   Check file summary
    
