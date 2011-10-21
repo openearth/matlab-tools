@@ -150,9 +150,10 @@ switch OPT.type
         
         fprintf('Creating tag "%s"...', OPT.name);
         
-        r = system('maketag.bat');
+        [r m] = system('maketag.bat');
         
         if r > 0
+            disp(m);
             error(['Creating tag failed']);
         else
             fprintf(' done');
