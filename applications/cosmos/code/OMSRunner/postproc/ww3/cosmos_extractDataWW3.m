@@ -49,6 +49,26 @@ delete('ww3.grads');
 %% Time Series
 
 if model.nrStations>0
+
+    archdir=[model.archiveDir hm.cycStr filesep 'sp2' filesep];
+
+    % 2D spectra
+    k=0;
+    % Find stations for which 2D spectra must be stored. 
+    for istat=1:model.nrStations
+        for j=1:model.stations(istat).nrDatasets
+            if strcmpi(model.stations(istat).datasets(j).parameter,'sp2')
+                k=k+1;
+                isp2(k)=istat;
+                fnames{k}=[archdir 'sp2.' model.stations(istat).datasets(j).sp2id '.mat'];
+            end
+        end
+    end    
+    if k>0
+        cosmos_extractWW3spectra([outdir 'ww3.' model.name '.spc'],isp2,fnames);
+    end
+    
+    % Wave statistics
     
     [t,hs,tp,wavdir]=ReadTab33(hm,m,[outdir 'tab33.ww3']);
     
@@ -60,7 +80,7 @@ if model.nrStations>0
 
         st=model.stations(istat).name;
 
-        for i=1:model.stations(istat).nrDatasets
+%        for i=1:model.stations(istat).nrDatasets
                         
             % Hs
             fname=[archdir 'hs.' st '.mat'];
@@ -80,7 +100,7 @@ if model.nrStations>0
                 end
             end
             
-            s2.Val=hs(:,i);
+            s2.Val=hs(:,istat);
             s2.Time=t;
             
             n2=find(s2.Time>=tstart);
@@ -97,7 +117,7 @@ if model.nrStations>0
             save(fname,'-struct','s','Parameter','Time','Val');
             
             s3.Parameter='hs';
-            s3.Val=hs(:,i);
+            s3.Val=hs(:,istat);
             s3.Time=t;
             fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'hs.' st '.mat'];
             save(fname,'-struct','s3','Parameter','Time','Val');
@@ -121,7 +141,7 @@ if model.nrStations>0
             end
             
             % wave heights
-            s2.Val=tp(:,i);
+            s2.Val=tp(:,istat);
             s2.Time=t;
             
             n2=find(s2.Time>=model.tOutputStart);
@@ -138,12 +158,12 @@ if model.nrStations>0
             save(fname,'-struct','s','Parameter','Time','Val');
             
             s3.Parameter='tp';
-            s3.Val=tp(:,i);
+            s3.Val=tp(:,istat);
             s3.Time=t;
             fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'tp.' st '.mat'];
             save(fname,'-struct','s3','Parameter','Time','Val');
             
-        end
+%        end
     end
 end
 

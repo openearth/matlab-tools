@@ -21,13 +21,13 @@ spec=readSWANSpec(fname);
 
 if isempty(tstart)
     it1=1;
-    it2=length(spec.times);
+    it2=length(spec.time);
 else
-    it1=find(spec.times==tstart);
+    it1=find(spec.time.time==tstart);
     if isempty(tstop)
         it2=it1;
     else
-        it2=find(spec.times==tstop);
+        it2=find(spec.time.time==tstop);
     end
 end
 

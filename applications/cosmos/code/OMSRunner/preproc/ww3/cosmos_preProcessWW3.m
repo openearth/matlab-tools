@@ -28,20 +28,6 @@ end
 %% Get start and stop times
 inpfile=[hm.tempDir 'ww3_shel.inp'];
 dtrst=hm.runInterval/24;
-% trststart=max(model.tStop-8*dtrst,model.tWaveStart+dtrst);
-% trststart=hm.cycle+hm.runInterval/24;
-% trststop=hm.cycle+hm.runInterval/24;
-
-% meteodir=[hm.scenarioDir 'meteo' filesep model.useMeteo filesep];
-% tana=readTLastAnalyzed(meteodir);
-% hm.models(m).tLastAnalyzed=rounddown(tana,hm.runInterval/24);
-% model.tLastAnalyzed=hm.models(m).tLastAnalyzed;
-
-%% Determine restart times
-% trststart=-1e9;
-% trststart=max(trststart,model.tWaveOkay); % Model must be spun-up
-% trststart=max(trststart,hm.cycle+hm.runInterval/24); % Start time of next cycle 
-% trststart=min(trststart,model.tLastAnalyzed); % Restart time no later than last analyzed time in meteo fields
 
 trststart=model.restartTime;
 
@@ -58,15 +44,14 @@ ii=strmatch(lower(model.useMeteo),lower(hm.meteoNames),'exact');
 dt=hm.meteo(ii).timeStep;
 meteoname=model.useMeteo;
 meteodir=[hm.scenarioDir 'meteo' filesep meteoname filesep];
-exedir=[hm.exeDir];
-WriteMeteoFileWW3_02(meteodir,meteoname,exedir,tmpdir,[0 360],[-90 90],model.tWaveStart,model.tStop,dt,model.useDtAirSea);
+
+[lon,lat]=writeMeteoFileWW3(meteodir,meteoname,tmpdir,model.xLim,model.yLim,model.tWaveStart,model.tStop,dt,model.useDtAirSea);
+writeWW3_prepWind([tmpdir 'ww3_prep.inp'],lon,lat);
 
 %% Pre and post-processing input files
 
 % % ww3_grid
 % writeWW3grid([tmpdir 'ww3_grid.inp']);
-% % ww3_prep
-% writeWW3prep([tmpdir 'ww3_prep.inp']);
 
 tstart=model.tWaveStart;
 nt=(model.tStop-tstart)*24+1;
@@ -80,7 +65,10 @@ ip0=model.nrStations;
 
 inest=0;
 if ip0>0
-    writeWW3outp([tmpdir 'ww3_outp_' model.runid '.inp'],tstart,dt,nt,2,1:ip0);
+    % Table output (wave statistics)
+    writeWW3outp([tmpdir 'ww3_outp_' model.name '.inp'],tstart,dt,nt,2,1:ip0);
+    % 2D Spectra output
+    writeWW3outp([tmpdir 'ww3_outp_' model.name '_sp2.inp'],tstart,dt,nt,1,1:ip0);
     inest=inest+1;
 end
 

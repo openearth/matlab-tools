@@ -72,7 +72,7 @@ for j=1:spec.nPoints
         f=fgetl(fid);
     else
         spec.time(it).points(j).factor=0;
-        spec.time(it).points(j).energy=zeros(spec.nFreq,spec.nir);
+        spec.time(it).points(j).energy=zeros(spec.nFreq,spec.nDir);
     end
 end
 

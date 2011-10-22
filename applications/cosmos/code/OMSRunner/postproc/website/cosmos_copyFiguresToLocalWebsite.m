@@ -10,7 +10,9 @@ for iw=1:length(model.webSite)
         dir1=[dr 'lastrun' filesep 'figures' filesep '*.*'];
         MakeDir([hm.webDir 'scenarios' filesep],hm.scenario,cont,hm.models(m).name,'figures');
         dir2=[hm.webDir 'scenarios' filesep  hm.scenario filesep  cont  filesep  hm.models(m).name filesep 'figures'];
-        delete([dir2 filesep '*.*']);
+        delete([dir2 filesep '*.html']);
+        delete([dir2 filesep '*.kmz']);
+        delete([dir2 filesep '*.png']);
         [status,message,messageid]=copyfile(dir1,dir2,'f');
     catch
         disp(['Something went wrong with copying to local website - ' hm.models(m).name]);

@@ -1,5 +1,5 @@
 clear all;close all;
-hm=cosmos_readReadConfigFile;
+hm=cosmos_readConfigFile;
 
 Continents{1}='northamerica';
 Continents{2}='centralamerica';
@@ -11,7 +11,7 @@ Continents{7}='australia';
 Continents{8}='world';
 
 scenori='forecasts';
-scennew='jan2010';
+scennew='june2009';
 
 MakeDir([hm.runDir 'scenarios'],scennew);
 scendir=[hm.runDir 'scenarios\' scennew '\'];
@@ -23,10 +23,12 @@ copyfile([oridir 'observations'],[scendir 'observations']);
 
 MakeDir(scendir,'joblist');
 
+
+
 % MakeDir(scendir,'meteo','gfs1p0');
 MakeDir(scendir,'meteo','gfs1p0');
-MakeDir(scendir,'meteo','nam');
-% MakeDir(scendir,'meteo','hirlam');
+% MakeDir(scendir,'meteo','nam');
+MakeDir(scendir,'meteo','hirlam');
 % MakeDir(scendir,'meteo','wrf');
 
 for i=1:8
@@ -35,6 +37,8 @@ end
 
 for i=1:8
     cnt=Continents{i};
+    switch lower(cnt)
+        case{'world','europe'}
     lst=dir([oridir 'models\' cnt]);
     for j=1:length(lst)
         switch lst(j).name
@@ -47,9 +51,13 @@ for i=1:8
                 MakeDir([scendir 'models\' cnt '\' model],'restart');
                 MakeDir([scendir 'models\' cnt '\' model],'lastrun');
                 MakeDir([scendir 'models\' cnt '\' model],'nesting');
+                MakeDir([scendir 'models\' cnt '\' model],'data');
                 copyfile([oridir 'models\' cnt '\' model '\' model '.xml'],[scendir 'models\' cnt '\' model]);
                 copyfile([oridir 'models\' cnt '\' model '\input\*'],[scendir 'models\' cnt '\' model '\input']);
+                copyfile([oridir 'models\' cnt '\' model '\data\*'],[scendir 'models\' cnt '\' model '\data']);
                 [success,message,messageid] = copyfile([oridir 'models\' cnt '\' model '\nesting\*'],[scendir 'models\' cnt '\' model '\nesting']);
         end
+    end
+        otherwise
     end
 end

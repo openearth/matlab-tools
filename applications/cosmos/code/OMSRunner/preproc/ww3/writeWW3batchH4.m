@@ -33,6 +33,11 @@ for i=1:length(names)
     fprintf(fid,'%s\n',['cp ww3_outp_' names{i} '.inp ww3_outp.inp']);    
     fprintf(fid,'%s\n','$exedir/ww3_outp >> screenfile');
     fprintf(fid,'%s\n',['mv ww3.' datstr '.spc ww3.' names{i} '.spc']);    
+    if i==1
+        fprintf(fid,'%s\n',['cp ww3_outp_' names{i} '_sp2.inp ww3_outp.inp']);    
+        fprintf(fid,'%s\n','$exedir/ww3_outp >> screenfile');
+        fprintf(fid,'%s\n',['mv ww3.' datstr '.spc ww3.' names{i} '.spc']);    
+    end
 end
 fprintf(fid,'%s\n','');
 fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');

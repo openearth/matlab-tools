@@ -1,7 +1,6 @@
-function [ncols,nrows]=WriteMeteoFileWW3(meteodir,meteoname,exedir,rundir,xlim,ylim,tstart,tstop,dt,usedtairsea)
-
-% meteoname=hm.models(m).useMeteo;
-% meteodir=[hm.scenarioDir 'meteo' filesep meteoname filesep];
+function [lon,lat]=writeMeteoFileWW3(meteodir,meteoname,rundir,xlim,ylim,tstart,tstop,dt,usedtairsea)
+% Generates WAVEWATCH III wind file and return vectors of longitude and
+% latitude (needed to write ww3_prep.inp)
 
 fclose all;
 
@@ -14,32 +13,35 @@ nt=(tstop-tstart)/dt+1;
 for it=1:nt
     t=tstart+(it-1)*dt;
     tstr=datestr(t,'yyyymmddHHMMSS');
-    fstr=[meteodir meteoname '_' tstr '.mat'];
-    fstr2=[meteodir meteoname '.' tstr '.mat'];
-    if exist(fstr,'file')
-        s=load(fstr);
-    elseif exist(fstr2,'file')
-        s=load(fstr2);
+    fstru=[meteodir meteoname '.u.' tstr '.mat'];
+    fstrv=[meteodir meteoname '.v.' tstr '.mat'];
+    if exist(fstru,'file')
+        su=load(fstru);
+        sv=load(fstrv);
     else
         % find first available file
         for n=1:1000
             t0=t+n*dt;
             tstr=datestr(t0,'yyyymmddHHMMSS');
-            fstr=[meteodir meteoname '_' tstr '.mat'];
-            fstr2=[meteodir meteoname '.' tstr '.mat'];
-            if exist(fstr,'file')
-                s=load(fstr);
-                break
-            elseif exist(fstr2,'file')
-                s=load(fstr2);
+            fstru=[meteodir meteoname '.u.' tstr '.mat'];
+            fstrv=[meteodir meteoname '.v.' tstr '.mat'];
+            if exist(fstru,'file')
+                su=load(fstru);
+                sv=load(fstrv);
                 break
             end
         end
     end
 
-    [u,lon,lat]=getMeteoMatrix(s.u,s.lon,s.lat,xlim,ylim);
-    [v,lon,lat]=getMeteoMatrix(s.v,s.lon,s.lat,xlim,ylim);
+    [u,lon,lat]=getMeteoMatrix(su.u,su.lon,su.lat,xlim,ylim);
+    [v,lon,lat]=getMeteoMatrix(sv.v,sv.lon,sv.lat,xlim,ylim);
     
+    % Work around (must be fixed in getMeteoMatrix!!!)
+    if lon(end)==359
+        u(:,end)=u(:,1);
+        lon(end)=360;
+    end
+
     nrows=size(u,1);
     ncols=size(u,2);
     
@@ -93,14 +95,6 @@ end
 
 fclose(fid);
 
-% %% Run ww3_prep
-% curdir=pwd;
-% cd(rundir);
-% str=[exedir 'ww3_prep'];
-% system(str);
-% delete('ww3.wnd');
-% delete('ww3_prep.inp');
-% cd(curdir);
 
 clear s
 

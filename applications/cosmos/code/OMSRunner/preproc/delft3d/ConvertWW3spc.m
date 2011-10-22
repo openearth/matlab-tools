@@ -147,9 +147,6 @@ for it=1:length(spec.time);
 %         spec.time(it).point(j).energy=fliplr(spec.time(it).point(j).energy);
         spec.time(it).point(j).energy=reshape(spec.time(it).point(j).energy,[1 spec.nFreq*spec.nDir]);
 
-        
-        
-
         if spec.time(it).point(j).factor>0
             fprintf(fi2,'%s\n','FACTOR');
             fprintf(fi2,'%18.8e\n',spec.time(it).point(j).factor);

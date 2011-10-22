@@ -23,12 +23,16 @@ if exist(trihfile,'file')
         for i=1:model.stations(istat).nrDatasets
             
             data=[];
-            
-            par=model.stations(istat).datasets(i).parameter;
-            parLongName=getParameterInfo(hm,par,'longname');
-            
+
             try
                 
+                par=model.stations(istat).datasets(i).parameter;
+                
+                switch par
+                    case{'sp2'}
+                    otherwise
+                parLongName=getParameterInfo(hm,par,'longname');
+                                
                 s.Time=[];
                 s.Val=[];
                 fname=[archdir 'appended' filesep 'timeseries' filesep par '.' stName '.mat'];
@@ -64,8 +68,8 @@ if exist(trihfile,'file')
                         case{'trih'}
                             ii=strmatch(filpar,fieldnames,'exact');
                             if ~isempty(ii)
-                                if ~isempty(model.timeSeriesDatasets(i).layer)
-                                    data=qpread(fid,filpar,'data',0,istat,model.timeSeriesDatasets(i).layer);
+                                if ~isempty(model.stations(istat).datasets(i).layer)
+                                    data=qpread(fid,filpar,'data',0,istat,model.stations(istat).datasets(i).layer);
                                 else
                                     data=qpread(fid,filpar,'data',0,istat);
                                 end
@@ -130,7 +134,7 @@ if exist(trihfile,'file')
                     save(fname,'-struct','s3','Parameter','Time','Val');
                     
                 end
-                
+                end                
             catch
                 WriteErrorLogFile(hm,['Something went wrong extracting time series data - ' hm.models(m).name]);
             end

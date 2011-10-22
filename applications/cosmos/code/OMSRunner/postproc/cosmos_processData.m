@@ -12,6 +12,7 @@ if model.extractData
         switch lower(model.type)
             case{'delft3dflow','delft3dflowwave'}
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'sp2');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
@@ -24,6 +25,7 @@ if model.extractData
                 ExtractDataXBeach(hm,m);
             case{'ww3'}
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'sp2');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');

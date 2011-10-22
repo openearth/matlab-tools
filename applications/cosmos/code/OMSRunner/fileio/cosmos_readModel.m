@@ -254,6 +254,12 @@ else
     hm.models(i).waveBedFricCoef=0.067;
 end
 
+if isfield(model,'whitecapping')
+    hm.models(i).whiteCapping=model.whitecapping;
+else
+    hm.models(i).whiteCapping='Westhuysen';
+end
+
 hm.models(i).windStress=[6.3000000e-004  0.0000000e+000  7.2300000e-003  1.0000000e+002];
 
 if isfield(model,'windstress')
@@ -494,64 +500,74 @@ end
 
 
 %% Stations
-if isfield(model,'stations')    
-    hm.models(i).nrStations=length(model.stations);
-    for j=1:hm.models(i).nrStations        
-        hm.models(i).stations(j).name=model.stations(j).station.name;
-        hm.models(i).stations(j).longName=model.stations(j).station.longname;
-        hm.models(i).stations(j).location(1)=str2double(model.stations(j).station.locationx);
-        hm.models(i).stations(j).location(2)=str2double(model.stations(j).station.locationy);
-        if isfield(model.stations(j).station,'locationm')
-            hm.models(i).stations(j).m=str2double(model.stations(j).station.locationm);
-            hm.models(i).stations(j).n=str2double(model.stations(j).station.locationn);
+if isfield(model,'stations')
+    j=0;
+    for istat=1:length(model.stations)
+        iac=1;
+        if isfield(model.stations(istat).station,'active')
+            iac=str2double(model.stations(istat).station.active);
         end
-        hm.models(i).stations(j).type=model.stations(j).station.type;
+        if iac
 
-        
-        %% Time-series datasets
-        hm.models(i).stations(j).nrDatasets=0;
-        if isfield(model.stations(j).station,'datasets')
-            hm.models(i).stations(j).nrDatasets=length(model.stations(j).station.datasets);
-            for k=1:hm.models(i).stations(j).nrDatasets
-                hm.models(i).stations(j).datasets(k).parameter=model.stations(j).station.datasets(k).dataset.parameter;
-                hm.models(i).stations(j).datasets(k).layer=[];
-                hm.models(i).stations(j).datasets(k).sp2id=[];
-                hm.models(i).stations(j).datasets(k).toOPeNDAP=0;
-                if isfield(model.stations(j).station.datasets(k).dataset,'layer')
-                    hm.models(i).stations(j).datasets(k).layer=str2double(model.stations(j).station.datasets(k).dataset.layer);
-                end
-                if isfield(model.stations(j).station.datasets(k).dataset,'sp2id')
-                    hm.models(i).stations(j).datasets(k).sp2id=model.stations(j).station.datasets(k).dataset.sp2id;
-                end
-                if isfield(model.stations(j).station.datasets(k).dataset,'toopendap')
-                    hm.models(i).stations(j).datasets(k).toOPeNDAP=str2double(model.stations(j).station.datasets(k).dataset.toopendap);
+            j=j+1;
+            hm.models(i).nrStations=j;
+
+            hm.models(i).stations(j).name=model.stations(istat).station.name;
+            hm.models(i).stations(j).longName=model.stations(istat).station.longname;
+            hm.models(i).stations(j).location(1)=str2double(model.stations(istat).station.locationx);
+            hm.models(i).stations(j).location(2)=str2double(model.stations(istat).station.locationy);
+            if isfield(model.stations(istat).station,'locationm')
+                hm.models(i).stations(j).m=str2double(model.stations(istat).station.locationm);
+                hm.models(i).stations(j).n=str2double(model.stations(istat).station.locationn);
+            end
+            hm.models(i).stations(j).type=model.stations(istat).station.type;
+
+            
+            %% Time-series datasets
+            hm.models(i).stations(j).nrDatasets=0;
+            if isfield(model.stations(istat).station,'datasets')
+                hm.models(i).stations(j).nrDatasets=length(model.stations(istat).station.datasets);
+                for k=1:hm.models(i).stations(j).nrDatasets
+                    hm.models(i).stations(j).datasets(k).parameter=model.stations(istat).station.datasets(k).dataset.parameter;
+                    hm.models(i).stations(j).datasets(k).layer=[];
+                    hm.models(i).stations(j).datasets(k).sp2id=hm.models(i).stations(j).name;
+                    hm.models(i).stations(j).datasets(k).toOPeNDAP=0;
+                    if isfield(model.stations(istat).station.datasets(k).dataset,'layer')
+                        hm.models(i).stations(j).datasets(k).layer=str2double(model.stations(istat).station.datasets(k).dataset.layer);
+                    end
+                    if isfield(model.stations(istat).station.datasets(k).dataset,'sp2id')
+                        hm.models(i).stations(j).datasets(k).sp2id=model.stations(istat).station.datasets(k).dataset.sp2id;
+                    end
+                    if isfield(model.stations(istat).station.datasets(k).dataset,'toopendap')
+                        hm.models(i).stations(j).datasets(k).toOPeNDAP=str2double(model.stations(istat).station.datasets(k).dataset.toopendap);
+                    end
                 end
             end
-        end
 
-        hm.models(i).stations(j).plots=[];
-        %% Time-series plots
-        if isfield(model.stations(j).station,'plots')
-            hm.models(i).stations(j).nrPlots=length(model.stations(j).station.plots);
-            for k=1:hm.models(i).stations(j).nrPlots
-                hm.models(i).stations(j).plots(k).type='timeseries';
-                if isfield(model.stations(j).station.plots(k).plot,'type')
-                    hm.models(i).stations(j).plots(k).type=model.stations(j).station.plots(k).plot.type;
-                end
-                hm.models(i).stations(j).plots(k).nrDatasets=length(model.stations(j).station.plots(k).plot.datasets);
-                for id=1:length(model.stations(j).station.plots(k).plot.datasets)
-                    hm.models(i).stations(j).plots(k).datasets(id).parameter=model.stations(j).station.plots(k).plot.datasets(id).dataset.parameter;
-                    hm.models(i).stations(j).plots(k).datasets(id).type=model.stations(j).station.plots(k).plot.datasets(id).dataset.type;
-                    hm.models(i).stations(j).plots(k).datasets(id).source=[];
-                    hm.models(i).stations(j).plots(k).datasets(id).id=[];
-                    if isfield(model.stations(j).station.plots(k).plot.datasets(id).dataset,'source')
-                        hm.models(i).stations(j).plots(k).datasets(id).source=model.stations(j).station.plots(k).plot.datasets(id).dataset.source;
+            hm.models(i).stations(j).plots=[];
+            %% Time-series plots
+            if isfield(model.stations(istat).station,'plots')
+                hm.models(i).stations(j).nrPlots=length(model.stations(istat).station.plots);
+                for k=1:hm.models(i).stations(j).nrPlots
+                    hm.models(i).stations(j).plots(k).type='timeseries';
+                    if isfield(model.stations(istat).station.plots(k).plot,'type')
+                        hm.models(i).stations(j).plots(k).type=model.stations(istat).station.plots(k).plot.type;
                     end
-                    if isfield(model.stations(j).station.plots(k).plot.datasets(id).dataset,'id')
-                        hm.models(i).stations(j).plots(k).datasets(id).id=model.stations(j).station.plots(k).plot.datasets(id).dataset.id;
+                    hm.models(i).stations(j).plots(k).nrDatasets=length(model.stations(istat).station.plots(k).plot.datasets);
+                    for id=1:length(model.stations(istat).station.plots(k).plot.datasets)
+                        hm.models(i).stations(j).plots(k).datasets(id).parameter=model.stations(istat).station.plots(k).plot.datasets(id).dataset.parameter;
+                        hm.models(i).stations(j).plots(k).datasets(id).type=model.stations(istat).station.plots(k).plot.datasets(id).dataset.type;
+                        hm.models(i).stations(j).plots(k).datasets(id).source=[];
+                        hm.models(i).stations(j).plots(k).datasets(id).id=[];
+                        if isfield(model.stations(istat).station.plots(k).plot.datasets(id).dataset,'source')
+                            hm.models(i).stations(j).plots(k).datasets(id).source=model.stations(istat).station.plots(k).plot.datasets(id).dataset.source;
+                        end
+                        if isfield(model.stations(istat).station.plots(k).plot.datasets(id).dataset,'id')
+                            hm.models(i).stations(j).plots(k).datasets(id).id=model.stations(istat).station.plots(k).plot.datasets(id).dataset.id;
+                        end
                     end
+                    hm.models(i).stations(j).storeSP2=0;
                 end
-                hm.models(i).stations(j).storeSP2=0;
             end
         end
     end

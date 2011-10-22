@@ -33,7 +33,7 @@ for istat=1:model.nrStations
         if strcmpi(model.stations(istat).datasets(i).parameter,'sp2')
             k=k+1;
             locfile{k}=[model.stations(istat).datasets(i).sp2id '.loc'];
-            xy=model.stations(istat).datasets(i).location;
+            xy=model.stations(istat).location;
             save([hm.tempDir locfile{k}],'xy','-ascii');
         end
     end
@@ -95,8 +95,12 @@ fprintf(fid,'%s\n',['   BedFricCoef      = ' num2str(model.waveBedFricCoef)]);
 fprintf(fid,'%s\n','   Triads           = false');
 fprintf(fid,'%s\n','   Diffraction      = false');
 fprintf(fid,'%s\n','   WindGrowth       = true');
-% fprintf(fid,'%s\n','   WhiteCapping     = Westhuysen');
-fprintf(fid,'%s\n','   WhiteCapping     = Komen');
+if isfield(model,'whiteCapping')
+    wcap=model.whiteCapping;
+else
+    wcap='Komen';
+end
+fprintf(fid,'%s\n',['   WhiteCapping     = ' wcap]);
 fprintf(fid,'%s\n','   Quadruplets      = true');
 fprintf(fid,'%s\n','   Refraction       = true');
 fprintf(fid,'%s\n','   FreqShift        = true');

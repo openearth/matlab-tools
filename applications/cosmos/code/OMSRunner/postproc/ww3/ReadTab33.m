@@ -22,6 +22,7 @@ for i=1:1000
         hs(i,j)=pars(3);
         wavdir(i,j)=pars(6);
         tp(i,j)=1/pars(8);
+        tp(i,j)=min(tp(i,j),50);
     end
     str=fgetl(fid);
     str=fgetl(fid);
