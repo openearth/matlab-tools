@@ -145,7 +145,7 @@ if ~isempty(tri)
     C = tricontourc(tri,lat,lon,z,OPT.levels);
     E = edges_tri_grid(tri,lat,lon,z);
 else
-    [C,DUM] = contours(lat,lon,z,OPT.levels);
+    C = contours(lat,lon,z,OPT.levels);
     E = edges_structured_grid(lat,lon,z);
 end
 

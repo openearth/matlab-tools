@@ -113,7 +113,7 @@ colorbarFig = figure('Visible','Off');
 
 %% get filename, gui for filename, if not set yet
 
-if isempty(OPT.CBfileName) & nargout==0 % if nargout==1, kml is a return argument, and not written to kml file
+if isempty(OPT.CBfileName) && nargout==0 % if nargout==1, kml is a return argument, and not written to kml file
     [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
     OPT.CBfileName = fullfile(filePath,fileName);
 end
@@ -135,7 +135,7 @@ end
 
 %% make colorbar pngs as separate files
 
-[PATHSTR,NAME,EXT] = fileparts(OPT.CBfileName);
+[PATHSTR,NAME] = fileparts(OPT.CBfileName);
 % % allow for '.' in middle of file name
 % if ~isempty(EXT)
 %    NAME  =[NAME,'.',EXT];

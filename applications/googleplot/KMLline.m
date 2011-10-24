@@ -201,7 +201,7 @@ function varargout = KMLline(lat,lon,varargin)
 
 %% get filename, gui for filename, if not set yet
 
-   if ischar(OPT.fileName) & isempty(OPT.fileName); % can be char ('', default) or fid
+   if ischar(OPT.fileName) && isempty(OPT.fileName); % can be char ('', default) or fid
       [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
       OPT.fileName = fullfile(filePath,fileName);
 
@@ -295,7 +295,7 @@ output = '';
          % update linestyle
          OPT_line.styleName = ['line_style' num2str(OPT.line_nr(ii))];
          % update timeIn and timeOut if multiple times are defined
-         if length(OPT.timeIn )>1, OPT_line.timeIn = datestr(OPT.timeIn (ii),OPT.dateStrStyle);end
+         if length(OPT.timeIn )>1,OPT_line.timeIn  = datestr(OPT.timeIn (ii),OPT.dateStrStyle);end
          if length(OPT.timeOut)>1,OPT_line.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle);end
          if OPT.is3D&&OPT.fill
              OPT_fill.styleName = ['fill_style' num2str(OPT.fill_nr(ii))];
