@@ -87,7 +87,7 @@ function varargout = KML_header(varargin)
 
 %% preproces timespan
 
-   timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
+   timeSpan = KML_timespan('timeIn',min(OPT.timeIn),'timeOut',max(OPT.timeOut),'dateStrStyle',OPT.dateStrStyle);
    
 %% camera
 

@@ -29,10 +29,10 @@ function varargout = KML_timespan(varargin)
    if isnumeric(OPT.timeOut); if length(OPT.timeOut)>1;disp('googlePlot: timeOut as datestr is MUCH faster!');end;OPT.timeOut = datestr(OPT.timeOut,OPT.dateStrStyle);end
        
    if  ~isempty(OPT.timeIn)
-       if length(OPT.timeIn)>1 & odd(nargin)
+       if length(OPT.timeIn)>1 && odd(nargin)
            tt = ii;
-       elseif iscellstr(OPT.timeIn)
-           timeIn  = OPT.timeIn{tt};
+%        elseif iscellstr(OPT.timeIn)
+%            timeIn  = OPT.timeIn{tt};
        else
            tt = 1;
        end
