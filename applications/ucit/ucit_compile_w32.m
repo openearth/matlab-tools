@@ -1,10 +1,9 @@
 delete('bin\*');
 mkdir bin;
-%  add wlsettings and oesettings
-% if isempty(which('drawgrid'))
-%     wlsettings;
-% end
 
+%%  add wlsettings and oesettings
+% wlsettings;
+% addpath('d:\OpenEarthTools\matlab\'); oetsettings
 
 % remove annoying startup.m in wafo dir from path
 rmpath('D:\McTools\matlab\applications\wave\wafo\docs\');
@@ -57,12 +56,12 @@ while proceed == 1
         proceed = 0;
     end
     
-    % add additional functions (based on debugging)
-    fprintf(fid,'%s\n','inspect.m');
-    fprintf(fid,'%s\n','erosed.m');
-
 end
 
+% add additional functions (based on debugging)
+fprintf(fid,'%s\n','inspect.m');
+fprintf(fid,'%s\n','erosed.m');
+  
 fclose(fid);
 
 try
@@ -71,19 +70,17 @@ try
     fclose(fid);
     system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd 'Deltares_icon.rc"']);
 end
- 
-mcc -m -v -d bin ucit_netcdf.m -B complist -a ..\..\io\netcdf\toolsUI-4.1.jar 
 
-% mcc -m -v -d bin ucit_netcdf.m -B complist -a ..\..\io\netcdf\toolsUI-4.1.jar -M Deltares_icon.res 
-% mcc -m -v -d exe DelftDashBoard.m -B complist -a settings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
- 
+% compile it
+mcc -m -v -d bin ucit_netcdf.m -B complist -a ..\..\io\netcdf\netcdfAll-4.2.jar -a ucit_icons.mat -a EPSG.mat
+
 % delete('Deltares_icon.rc');
 % delete('Deltares_icon.res');
 
 dos(['copy ' which('ucit_about.txt') ' bin']);
-dos(['copy ' which('ucit_icons.mat') ' bin']);
-dos(['copy ' which('EPSG.mat') ' bin']);
-revnumb = '????';
+% dos(['copy ' which('ucit_icons.mat') ' bin']);
+% dos(['copy ' which('EPSG.mat') ' bin']);
+revnumb = '1';
 
 if isappdata(0,'revisionnumber')
     revnumb = num2str(getappdata(0,'revisionnumber'));
