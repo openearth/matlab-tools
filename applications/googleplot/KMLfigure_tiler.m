@@ -231,7 +231,7 @@ end
 % gui for filename, if not set yet
 if isempty(OPT.fileName)
     [OPT.Name, OPT.Path] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as','renderedPNG.kml');
-    OPT.fileName = fullfile(OPT.Path,OPT.Name);
+    OPT.fileName = fullfile(OPT.Name);
     OPT.subPath  =  '';       % relative part of path that will appear in kml
     OPT.basePath =  OPT.Path; % here we do not know difference between basepath
 else
@@ -340,7 +340,7 @@ if OPT.makeKML
         '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'... % link
         '</NetworkLink>'],...
         OPT.visible,OPT.timeSpan,href.kml);
-    file.kml = [OPT.basePath, filesep,OPT.fileName];
+    file.kml = fullfile(OPT.basePath,OPT.fileName);
     OPT.fid=fopen(file.kml,'w');
 
  %% LOGO
