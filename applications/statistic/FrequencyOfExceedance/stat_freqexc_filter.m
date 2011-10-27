@@ -81,7 +81,7 @@ function res = stat_freqexc_filter(res, varargin)
 %% read settings
 
 OPT = struct( ...
-    'mask',         'yyyy', ...
+    'mask',         [], ...
     'threshold',    nan     ...
 );
 
@@ -95,14 +95,19 @@ else
     [n ni] = max(cellfun(@length,{res.peaks.maxima}));
 end
 
-y      = num2cell(datestr([res.peaks(ni).maxima.time],OPT.mask),2);
-years  = unique(y);
-mis    = nan(size(years));
+if ~isempty(OPT.mask)
+    y      = num2cell(datestr([res.peaks(ni).maxima.time],OPT.mask),2);
+    ids    = unique(y);
+    
+    mis    = nan(size(ids));
 
-for i = 1:length(years)
-    idx    = find(ismember(y,years(i)));
-    [m mi] = max([res.peaks(ni).maxima(idx).value]);
-    mis(i) = idx(mi);
+    for i = 1:length(ids)
+        idx    = find(ismember(y,ids(i)));
+        [m mi] = max([res.peaks(ni).maxima(idx).value]);
+        mis(i) = idx(mi);
+    end
+else
+    mis    = 1:length(res.peaks(ni).maxima);
 end
 
 %% save peaks
