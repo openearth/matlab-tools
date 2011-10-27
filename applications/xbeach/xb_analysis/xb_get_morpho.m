@@ -90,49 +90,7 @@ end
 
 %% compute sedimentation and erosion
 
-R   = nan(1,size(zb,1));
-Q   = nan(1,size(zb,1));
-P   = nan(1,size(zb,1));
-
-sed = zeros(1,size(zb,1));
-ero = zeros(1,size(zb,1));
-
-dz  = zb-repmat(zb(1,:),size(zb,1),1);
-
-for i = 2:size(dz,1)
-
-    [xc zc] = findCrossings(x,zb(1,:),x,zb(i,:));
-
-    xc1     = xc(zc>OPT.level);
-    xc2     = xc(zc<OPT.level);
-    
-    if isempty(xc1) || isempty(xc2); continue; end;
-    
-    R(i)    = min(xc1);
-    Q(i)    = max(xc2);
-    P(i)    = max(xc(xc<Q(i)));
-
-    iR      = find(x<R(i),1,'last');
-    iQ      = find(x<Q(i),1,'last');
-    iP      = find(x<P(i),1,'last');
-
-    % accretion area
-    if ~isempty(iP) && ~isempty(iQ)
-        sed(i)  =          .5 *     (x(iP+1)    - P(i)        ) .*  dz(i,iP+1)                       ;
-        sed(i)  = sed(i) + .5 * sum((x(iP+2:iQ) - x(iP+1:iQ-1)) .* (dz(i,iP+2:iQ) + dz(i,iP+1:iQ-1)));
-        sed(i)  = sed(i) + .5 *     (Q(i)       - x(iQ)       ) .*  dz(i,iQ)                         ;
-    end
-
-    % erosion area
-    if ~isempty(iQ) && ~isempty(iR)
-        ero(i)  =          .5 *     (x(iQ+1)    - Q(i)        ) .*  dz(i,iQ+1)                       ;
-        ero(i)  = ero(i) + .5 * sum((x(iQ+2:iR) - x(iQ+1:iR-1)) .* (dz(i,iQ+2:iR) + dz(i,iQ+1:iR-1)));
-        ero(i)  = ero(i) + .5 *     (R(i)       - x(iR)       ) .*  dz(i,iR)                         ;
-    end
-    
-end
-
-ero = -ero;
+[sed ero dz R Q P] = xb_get_sedero(x,zb,'level',OPT.level);
 
 %% create xbeach structure
 
