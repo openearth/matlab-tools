@@ -94,7 +94,7 @@ end
 f = [res.peaks.frequency]./res.fraction;
 x = [res.peaks.threshold];
 
-idx = x>=x(f==max(f));
+idx = x>=min(x(f==max(f)));
 f = f(idx);
 x = x(idx);
 
