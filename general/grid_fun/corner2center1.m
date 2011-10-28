@@ -1,11 +1,11 @@
-function xcen = corner2center1(xcor);
+function xcen = corner2center1(xcor,dim);
 %CORNER2CENTER1  calculates centers in between vector of corner points.
 %
 %   xcen = corner2center1(xcor) 
 %
 %   Interpolates a 1D vector linearly to obtain center values
-%   from corner values. The cdnter array is one element smaller.
-%   Works for non-equidistant grid spacing.
+%   from corner values. The center array is one element smaller.
+%   Works for non-equidistant grid spacing too.
 %
 %   Do note that only for equidistant grid spacing the following holds:
 %   xcor = center2corner1(corner2center1(xcor))
@@ -13,10 +13,15 @@ function xcen = corner2center1(xcor);
 %   corner points:   o---o-----o--------o------------o---o-o 
 %   center points:     +----+------+----------+--------+--+  
 %
-%   See also: CORNER2CENTER, CENTER2CORNER, CENTER2CORNER1
+%   xcen = corner2center1(xcor,<dim>)
+%
+%   Interpolates matrix linearly in one dimension only,
+%   to obtain center values in that dimension.
+%
+%   See also: CORNER2CENTER, CENTER2CORNER, CENTER2CORNER1, CONV
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2006 Delft University of Technology
+%   Copyright (C) 2006-2011 Delft University of Technology
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl	
@@ -55,28 +60,53 @@ function xcen = corner2center1(xcor);
 % $HeadURL$
 % $Keywords: $
 
-dimensions_of_xcen = fliplr(sort(size(xcor))); % 1st element is biggest
+%% 1D vectors
 
-%% 1D
-
-if dimensions_of_xcen(2)==1
+if isvector(xcor)
    
    %% Initialize with nan
-
 
      %xcen = nan(1:length(xcor)-1);% not in R6
       xcen = nan.*zeros(length(xcor)-1,1);
 
    %% Give value to those corner points that have 
    %  4 active center points around
-   %  and do not change them with 'internal extrapolations
+   %  and do not change them with 'internal extrapolations'
 
       xcen = (xcor(1:end-1) + xcor(2:end))./2;
      
-%% 2D or more
+%% 2D or more matrices
 
 else
 
-   error('only 1D arrays allowed, use center2corner instead') 
+   if ~(nargin==2)
+      error('for matrices you need to specify a dimension')
+   end
+
+% swap requested dimension into dim 1
+
+   cor.size      = size(xcor);
+   cor.dim       = 1:length(cor.size);
+
+   cor1.dim      = cor.dim;
+   cor1.dim(dim) = 1; 
+   cor1.dim(1)   = dim; 
+   cor1.size     = cor.size(cor1.dim);
+   xcor          = permute(xcor,cor1.dim);
+
+% now apply corner2center in this dim 1 (now requested one)
+
+   cen.size     = cor.size;
+   cen.size(cor.dim==dim) = cen.size(cor.dim==dim)-1;
+   cen.dim      = cor.dim;
+   cen1.size    = cor1.size;
+   cen1.size(1) = cen1.size(1)-1;
+   cen1.dim     = cor1.dim;
+   xcen = (xcor(1:end-1,:) + xcor(2:end,:))./2;
+
+% no reshape/swap result back into input dimension order
+
+   xcen = reshape(xcen,cen1.size);
+   xcen = permute(xcen,cen1.dim);
 
 end
