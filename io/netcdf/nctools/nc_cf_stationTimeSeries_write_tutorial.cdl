@@ -1,11 +1,10 @@
-NetCDF F:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\nc_cf_stationTimeSeries_write_tutorial.nc {
-
 // The netCDF CF conventions for timeseries are defined here:
 // http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/ch05s04.html
 // and more in detail here too (NOTE: still evolving)
 // https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
 // This timeseries file can be loaded into matlab with nc_cf_stationtimeseries.m
-// To create this netCDF file with Matlab please see nc_cf_stationTimeSeries_write_tutorial.m
+// To create this netCDF file with Matlab please see nc_cf_stationTimeSeries_write_tutorial
+NetCDF-3 Classic nc_cf_stationTimeSeries_write_tutorial.nc {
 
 dimensions:
 	time = 6 ;
@@ -68,14 +67,14 @@ variables:
 		windspeed:standard_name = "wind_speed" 
 
 //global Attributes:
-		:title = " " 
-		:institution = " " 
-		:source = " " 
+		:title = "" 
+		:institution = "" 
+		:source = "" 
 		:history = "tranformation to netCDF: $HeadURL: https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab/io/netcdf/nctools/nc_cf_stationTimeSeries_write_tutorial.m $" 
-		:references = " " 
-		:email = " " 
-		:comment = " " 
-		:version = " " 
+		:references = "" 
+		:email = "" 
+		:comment = "" 
+		:version = "" 
 		:Conventions = "CF-1.4" 
 		:CF:featureType = "Grid" 
 		:terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: " 

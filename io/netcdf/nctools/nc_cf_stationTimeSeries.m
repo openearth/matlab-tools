@@ -252,7 +252,7 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
         D.(OPT.varname) = [];
       end
    else
-      D.(OPT.varname) = nc_varget(ncfile,OPT.varname,start,count);
+      D.(OPT.varname) = nc_varget(ncfile,OPT.varname);
    end
       
 %% get Attributes

@@ -95,7 +95,8 @@
    OPT.standard_name          = 'sea_floor_depth_below_geoid'; % or 'altitude'
    OPT.val_type               = 'single';      % 'single' or 'double'
    OPT.fillvalue              = nan;
-      
+   OPT.time                   = now; % []; %now;
+
 %% 1.a Create netCDF file
 
    ncfile = fullfile(fileparts(mfilename('fullpath')),[mfilename,'.nc']);
@@ -203,15 +204,16 @@
 %% 3z   Optionally crate time dimension
 
    if ~isempty(OPT.time)
-   OPT.refdatenum             = datenum(1970,1,1); 
-   clear nc;ifld = 1;
+   OPT.refdatenum            = datenum(1970,1,1); 
+   OPT.timezone              = '+00:00';
+   ifld = ifld + 1;
    nc(ifld).Name             = 'time';   % dimension 'time' is here filled with variable 'time'
    nc(ifld).Nctype           = 'double'; % time should always be in doubles
    nc(ifld).Dimension        = {'time'};
    nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'time');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'time');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.datenum(:)) max(D.datenum(:))]-OPT.refdatenum);
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.time(:)) max(OPT.time(:))]-OPT.refdatenum);
    end
 
 %% 4   Create dependent variable
@@ -248,12 +250,21 @@
    nc_varput(ncfile, 'lon'          , OPT.lon       );
    nc_varput(ncfile, 'lat'          , OPT.lat       );
    nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code);
+   if ~isempty(OPT.time)
+   nc_varput(ncfile, 'time'         , OPT.time - OPT.refdatenum);
+   nc_varput(ncfile, OPT.varname    , permute(OPT.val,[3 1 2]));
+   else
    nc_varput(ncfile, OPT.varname    , OPT.val       );
+   end
       
 %% 6   Check file summary
    
    nc_dump(ncfile);
    fid = fopen(fullfile(fileparts(mfilename('fullpath')),[mfilename,'.cdl']),'w');
+   fprintf(fid,'%s\n', '// The netCDF CF conventions for grids are defined here:')
+   fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/ch05s06.html')
+   fprintf(fid,'%s\n', '// This grid file can be loaded into matlab with nc_cf_grid.m')
+   fprintf(fid,'%s\n',['// To create this netCDF file with Matlab please see ',mfilename])
    nc_dump(ncfile,fid);
    fclose(fid)
 

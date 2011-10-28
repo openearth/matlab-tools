@@ -103,14 +103,20 @@ Names = {tempstruct(:).Name};
 for i = 1:length(Names)
     Attributes = tempstruct(i).Attribute;
     if ~isempty(Attributes)
-    if any(strcmp({Attributes.Name} , OPT.attributename) & strcmp({Attributes.Value} , OPT.attributevalue))
-        if isempty(varname)
-            varname{end+1} = Names{i};
-            varindex    = i;
-        else
-            % disp('NB: more than one variable fits the description')
-            varname{end+1} = Names{i};
-            varindex = [varindex i];
+    if any(strcmp({Attributes.Name} , OPT.attributename))
+        for iatt=1:length(Attributes)
+          if iscellstr(Attributes(iatt).Value) % char are cells in later versions of snctools
+            if strcmp(char(Attributes(iatt).Value),OPT.attributevalue)
+                if isempty(varname)
+                    varname{end+1} = Names{i};
+                    varindex    = i;
+                else
+                    % disp('NB: more than one variable fits the description')
+                    varname{end+1} = Names{i};
+                    varindex = [varindex i];
+                end
+            end
+          end
         end
     end
     end

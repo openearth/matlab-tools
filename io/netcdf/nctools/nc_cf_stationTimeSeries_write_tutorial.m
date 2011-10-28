@@ -199,6 +199,13 @@
    
    nc_dump(ncfile);
    fid = fopen(fullfile(fileparts(mfilename('fullpath')),[mfilename,'.cdl']),'w');
+   fprintf(fid,'%s\n', '// The netCDF CF conventions for timeseries are defined here:');
+   fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/ch05s04.html');
+   fprintf(fid,'%s\n', '// and more in detail here too (NOTE: still evolving)');
+   fprintf(fid,'%s\n', '// https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions');
+   fprintf(fid,'%s\n', '// This timeseries file can be loaded into matlab with nc_cf_stationtimeseries.m');
+   fprintf(fid,'%s\n',['// To create this netCDF file with Matlab please see ',mfilename]');
+
    nc_dump(ncfile,fid);
    fclose(fid);
 

@@ -428,11 +428,12 @@ end % entry
        end
    end
    
-   if ~all(isnan(ATT.datenum_start))
+   if ~all(isnan(ATT.datenum_end))
    ATT.timecoverage_start   = datestr(ATT.datenum_start,OPT.datestr);
    else
    ATT.timecoverage_start   = [];
    end
+   
    if ~all(isnan(ATT.datenum_end))
    ATT.timecoverage_end     = datestr(ATT.datenum_end  ,OPT.datestr);
    else
@@ -487,6 +488,11 @@ end % entry
       end
       struct2xls(xlsname,XLS);
 
+   elseif nargout==0
+       
+       warning('output neither stored with ''save'' keyword, nor returned as argument: saved as ATT.mat.')
+       save ATT
+       
    end
 
    if strcmpi(OPT.disp,'multiWaitbar')
