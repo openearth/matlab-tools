@@ -8,6 +8,7 @@ fullfile = fopen(fid);
 fclose(fid);
 
 fileinfo.Filename = hdf4file; % [name ext];
+fileinfo.Datatype = [];       % Never used for HDF4.
 
 sd_id = sd.start(fullfile,'read');
 

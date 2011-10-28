@@ -29,16 +29,20 @@ else
 	end
 end
 
-jvarid = jncid.findVariable(varname);
-if isempty(jvarid)
-	close(jncid);
-	error ( 'SNCTOOLS:NC_GETVARINFO:badVariableName', ...
-        'Could not locate variable %s', varname );
+if isa(varname,'ucar.nc2.Variable')
+    jvarid = varname;
+else
+    jvarid = jncid.findVariable(varname);
+    if isempty(jvarid)
+        close(jncid);
+        error ( 'SNCTOOLS:NC_GETVARINFO:badVariableName', ...
+            'Could not locate variable %s', varname );
+    end
 end
 
 % All the details are hidden here because we need the exact same
 % functionality in nc_info.
-Dataset = snc_java_varid_info ( jvarid );
+Dataset = nc_getvaridinfo_java(jvarid);
 
 % If we were passed a java file id, don't close it upon exit.
 if close_it

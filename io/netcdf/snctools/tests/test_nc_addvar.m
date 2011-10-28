@@ -434,6 +434,9 @@ error ( 'succeeded when it should have failed.' );
 function test_singletons (ncfile,mode)
 % Create singletons of different datatypes.
 
+if exist(ncfile,'file')
+    delete(ncfile);
+end
 nc_create_empty (ncfile,mode);
 clear varstruct;
 varstruct.Name = 'x';

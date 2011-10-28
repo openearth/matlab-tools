@@ -9,7 +9,7 @@ switch(fmt)
         switch(v)
             case {'14','2006a','2006b','2007a','2007b','2008a'}
 				try
-                    v = mexnc('inq_libvers');
+                    mexnc('inq_libvers');
                 catch
                     error('No write capability on MATLAB version R%s when mexnc mex-file is not present.', version('-release'));
                 end
@@ -22,14 +22,25 @@ switch(fmt)
     case 'NetCDF-4'
         switch(v)
             case {'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a'}
-                error('No write capability with a version earlier than R2010b.');
+                lver = mexnc('inq_libvers');
+                if lver(1) == '4'
+                   backend = 'mexnc';
+                else 
+                   error('No write capability with a version earlier than R2010b.');
+                end 
 
             otherwise
-                   backend = 'tmw';
+               backend = 'tmw';
         end
 
     case 'HDF4'
-		backend = 'tmw_hdf4';
+        switch(v)
+            case {'14','2006a','2006b','2007a','2007b','2008a','2008b', ...
+                '2009a','2009b','2010a','2010b','2011a'}
+		        backend = 'tmw_hdf4';
+            otherwise
+                backend = 'tmw_hdf4_2011b';
+        end
         return
 
 end

@@ -45,7 +45,7 @@ if status, error( mexnc ( 'strerror', status ) ), end
 
 % Test 1:  delete a double precision attribute of a variable
 status = mexnc ( 'ATTDEL', ncid, varid, 'test_double' );
-if status, error( mexnc ( 'strerror', status ) ), end
+if (status < 0), error( mexnc ( 'strerror', status ) ), end
 
 [attnum, status] = mexnc ( 'inq_attid', ncid, varid, 'test_double' );
 if ( status >= 0 )

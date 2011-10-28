@@ -1,10 +1,10 @@
-function Dataset = snc_java_varid_info ( jvarid )
-% SNC_JAVA_VARID_INFO:  returns metadata structure for a netcdf variable
+function Dataset = nc_getvaridinfo_java(jvarid)
+% NC_GETVARIDINFO_JAVA:  returns metadata structure for a netcdf variable
 %
 % This function is private to SNCTOOLS.  It is called by nc_info and
 % nc_getvarinfo, and uses the java API.
 %
-% USAGE:   Dataset = snc_java_varid_info ( jvarid );
+% USAGE:   Dataset = nc_getvaridinfo_java(jvarid);
 % 
 % PARAMETERS:
 % Input:
@@ -12,13 +12,12 @@ function Dataset = snc_java_varid_info ( jvarid )
 %         of type ucar.nc2.dods.DODSVariable
 % Output:
 %     Dataset:
-%         array of metadata structures.  The fields are
-%         
-%         Name
-%         Nctype
-%         Unlimited
-%         Dimension
-%         Attribute
+%         struct of variable metadata
+
+Attribute = struct('Name','','Nctype',0,'Datatype','','Value',NaN);
+Dataset = struct('Name','','Nctype','','Datatype','','Unlimited',false,...
+    'Dimension',{''},'Size',[],'Attribute',Attribute,'Chunking',[],...
+    'Shuffle',0,'Deflate',0);
 
 Dataset.Name = char ( jvarid.getName() );
 
@@ -38,9 +37,12 @@ switch ( datatype )
         Dataset.Nctype = nc_short;
         Dataset.Datatype = 'int16';
         
-        % So apparently, DODSNetcdfFile returns 'String', while
-        % NetcdfFile returns 'char'???
-    case { 'String', 'char' }
+    % So apparently, DODSNetcdfFile returns 'String', while
+    % NetcdfFile returns 'char'???
+    case 'String'
+        Dataset.Nctype = 12;
+        Dataset.Datatype = 'string';
+    case 'char'
         Dataset.Nctype = nc_char;
         Dataset.Datatype = 'char';
     case 'byte'
@@ -79,7 +81,7 @@ end
 
 % Get the list of attributes.
 j_att_list = jvarid.getAttributes();
-Dataset.Attribute = snc_java_bundle_atts ( j_att_list );
+Dataset.Attribute = nc_getattsinfo_java(j_att_list);
 
 return
 

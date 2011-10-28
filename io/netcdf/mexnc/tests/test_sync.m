@@ -164,7 +164,7 @@ try
 	error_condition = 1;
 end
 if ( error_condition == 1 )
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid, ncerr );
+	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
 	error ( err_msg );
 end
 
@@ -176,7 +176,7 @@ try
 	error_condition = 1;
 end
 if ( error_condition == 1 )
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid, ncerr );
+	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
 	error ( err_msg );
 end
 

@@ -11,6 +11,9 @@ function test_inq_varid ( ncfile )
 % Test 7:  Non character variable name
 %
 
+if nargin < 1
+    ncfile = 'foo.nc';
+end
 
 error_condition = 0;
 
@@ -74,42 +77,37 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 2:  Bad ncid.
-testid = 'Test 2';
-[varid, status] = mexnc('INQ_VARID', -20000, 'x_double');
+[varid, status] = mexnc('INQ_VARID', -20000, 'x_double'); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 3:  Empty set ncid.
-testid = 'Test 3';
-try
-	[varid, status] = mexnc('INQ_VARID', [], 'x_double');
+try %#ok<TRYNC>
+	mexnc('INQ_VARID', [], 'x_double');
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 4:  Non numeric ncid
-testid = 'Test 4';
-try
-	[varid, status] = mexnc('INQ_VARID', 'ncid', 'x_double');
+try %#ok<TRYNC>
+	mexnc('INQ_VARID', 'ncid', 'x_double');
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed\n');
 end
 
 

@@ -39,7 +39,7 @@ if ~isfield(input_buffer,'Name') || ~isfield(input_buffer,'Data')
     input_buffer = convert_buffer(input_buffer);
 end
 
-record_variable = find_record_variable(ncfile);
+record_variable = snc_find_record_variable(ncfile);
 
 % Check that the record variable is present in the input buffer.
 if ~any(strcmp(record_variable,{input_buffer.Name}));

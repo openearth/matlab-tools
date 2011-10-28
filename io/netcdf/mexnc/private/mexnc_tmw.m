@@ -9,6 +9,8 @@ if (numel(op) > 3) && strcmp(op(1:3),'nc_')
     op = op(4:end);
 end
 
+v = version('-release');
+
 % If the leading three chars are 'nc', and the 3rd char is NOT '_', then 
 % strip the first two chars.
 if (numel(op) > 3) && strcmp(op(1:2),'nc') && (op(3) ~= '_')
@@ -17,8 +19,14 @@ end
 
 switch op
 	case { 'def_var_deflate', 'def_var_chunking', 'inq_var_deflate', 'inq_var_chunking' }
-        error ('MEXNC:netcdf4:notSupported', ...
-            '%s is not supported by the netCDF package.', op );
+        switch(v)
+            case { '14', '2006a','2006b','2007a','2007b','2008a','2008b', ...
+                    '2009a','2009b','2010a'}
+                error ('MEXNC:netcdf4:notSupported', ...
+                    '%s is not supported in release %s.', op, v );
+            otherwise
+                handler = eval ( ['@handle_' op] );
+        end
 
     case { 'close', 'copy_att', 'create', '_create', 'def_dim', 'def_var', 'del_att'}
         handler = eval ( ['@handle_' op] );
@@ -494,13 +502,16 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_inq_dim ( varargin )
+function varargout = handle_inq_dim(op,ncid,dimid) %#ok<INUSL>
 %      [name,length,status] = mexnc('INQ_DIM',ncid,dimid);
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(dimid,{'numeric'},{'real','nonempty','finite'});
 
 varargout = cell(1,nargout);
 
 try
-    [name,dimlen] = netcdf.inqDim(varargin{2:end});
+    [name,dimlen] = netcdf.inqDim(ncid,dimid);
     status = 0;
 catch myException
     name = '';
@@ -526,6 +537,9 @@ end
 function varargout = handle_inq_dimlen(op,ncid,dimid) %#ok<INUSL,DEFNU>
 %      [dimlength,status] = mexnc('INQ_DIMLEN',ncid,dimid);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(dimid,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 try
@@ -550,6 +564,9 @@ end
 function varargout = handle_inq_dimname(op,ncid,dimid) %#ok<INUSL,DEFNU>
 %      [dimname,status] = mexnc('INQ_DIMNAME',ncid,dimid);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(dimid,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 try
@@ -573,6 +590,8 @@ end
 %--------------------------------------------------------------------------
 function varargout = handle_inq_ndims(op,ncid) %#ok<INUSL,DEFNU>
 %      [ndims,status] = mexnc('INQ_NDIMS',ncid);
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
 
 varargout = cell(1,nargout);
 
@@ -646,6 +665,9 @@ end
 function varargout = handle_inq_dimid(op,ncid,name) %#ok<INUSL>
 % [dimid,status] = mexnc('INQ_DIMID',ncid,name);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(name,{'char'},{'row'});
+
 varargout = cell(1,nargout);
 
 try
@@ -671,6 +693,10 @@ end
 function varargout = handle_inq_attid(op,ncid,varid,attname) %#ok<INUSL,DEFNU>
 %     [attid,status] = mexnc('INQ_ATTID',ncid,varid,attname);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(attname,{'char'},{'row'});
+
 varargout = cell(1,nargout);
 
 try
@@ -695,6 +721,9 @@ end
 %--------------------------------------------------------------------------
 function varargout = handle_inq_var(op,ncid,varid) %#ok<INUSL>
 % [varname,xtype,ndims,dimids,natts,status] = mexnc('INQ_VAR',ncid,varid);
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
 
 varargout = cell(1,nargout);
 
@@ -747,6 +776,9 @@ end
 function varargout = handle_inq_varname(op,ncid,varid) %#ok<INUSL,DEFNU>
 %      [varname,status] = mexnc('INQ_VARNAME',ncid,varid);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 try
@@ -770,6 +802,9 @@ end
 %--------------------------------------------------------------------------
 function varargout = handle_inq_vartype(op,ncid,varid) %#ok<INUSL,DEFNU>
 %      [vartype,status] = mexnc('INQ_VARTYPE',ncid,varid);
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
 
 varargout = cell(1,nargout);
 
@@ -795,6 +830,9 @@ end
 function varargout = handle_inq_varndims(op,ncid,varid) %#ok<INUSL,DEFNU>
 %      [varndims,status] = mexnc('INQ_VARNDIMS',ncid,varid);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 try
@@ -818,6 +856,9 @@ end
 %--------------------------------------------------------------------------
 function varargout = handle_inq_vardimid(op,ncid,varid) %#ok<INUSL,DEFNU>
 %      [dimids,status] = mexnc('INQ_VARDIMID',ncid,varid);
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
 
 varargout = cell(1,nargout);
 
@@ -850,6 +891,9 @@ function varargout = handle_inq_varnatts(op,ncid,varid) %#ok<INUSL,DEFNU>
 % [varnatts,status] = mexnc('INQ_VARNATTS',ncid,varid);
 % [varname,xtype,ndims,dimids,natts,status] = mexnc('INQ_VAR',ncid,varid);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 try
@@ -870,13 +914,16 @@ end
 
 
 %--------------------------------------------------------------------------
-function varargout = handle_inq_varid(op,ncid,varid) %#ok<INUSL>
+function varargout = handle_inq_varid(op,ncid,varname) %#ok<INUSL>
 % [varid,status] = mexnc('INQ_VARID',ncid,varname);
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varname,{'char'},{'row'});
 
 varargout = cell(1,nargout);
 
 try
-    varid = netcdf.inqVarID(ncid,varid);
+    varid = netcdf.inqVarID(ncid,varname);
     status = 0;
 catch myException
     varid = -1;
@@ -925,6 +972,10 @@ function varargout = handle_inq_atttype(op,ncid,varid,attname) %#ok<INUSL,DEFNU>
 %     [datatype,attlen,status] = mexnc('INQ_ATT',ncid,varid,attname);
 %     [att_type,status] = mexnc('INQ_ATTTYPE',ncid,varid,attname);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(attname,{'char'},{'row'});
+
 varargout = cell(1,nargout);
 
 try
@@ -949,6 +1000,10 @@ function varargout = handle_inq_attlen(op,ncid,varid,attname) %#ok<INUSL,DEFNU>
 %     [datatype,attlen,status] = mexnc('INQ_ATT',ncid,varid,attname);
 %     [att_len,status] = mexnc('INQ_ATTLEN',ncid,varid,attname);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(attname,{'char'},{'row'});
+
 varargout = cell(1,nargout);
 
 try
@@ -971,6 +1026,10 @@ end
 %--------------------------------------------------------------------------
 function varargout = handle_inq_attname(op,ncid,varid,attid) %#ok<INUSL>
 %     [attname,status] = mexnc('INQ_ATTNAME',ncid,varid,attid);
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(attid,{'numeric'},{'real','nonempty','finite'});
 
 varargout = cell(1,nargout);
 
@@ -995,6 +1054,8 @@ end
 function varargout = handle_inq_unlimdim(op,ncid) %#ok<INUSL,DEFNU>
 %      [ndims,nvars, ngatts, unlimdim, status] = mexnc('INQ',ncid);
 %      [unlimdim,status] = mexnc ('INQ_UNLIMDIM',ncid);
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
 
 varargout = cell(1,nargout);
 
@@ -1124,7 +1185,7 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_get_var ( varargin )
+function varargout = handle_get_var(op,ncid,varid)
 %     [data,status] = mexnc('GET_VAR_DOUBLE',ncid,varid);
 %     [data,status] = mexnc('GET_VAR_FLOAT', ncid,varid);
 %     [data,status] = mexnc('GET_VAR_INT',   ncid,varid);
@@ -1133,13 +1194,16 @@ function varargout = handle_get_var ( varargin )
 %     [data,status] = mexnc('GET_VAR_UCHAR', ncid,varid);
 %     [data,status] = mexnc('GET_VAR_TEXT',  ncid,varid);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 try
-    if strcmpi(varargin{1},'get_var_uchar')
-           data = netcdf.getVar(varargin{2:end},'uint8');
+    if strcmpi(op,'get_var_uchar')
+           data = netcdf.getVar(ncid,varid,'uint8');
     else
-           data = netcdf.getVar(varargin{2:end});
+           data = netcdf.getVar(ncid,varid);
     end
     status = 0;
 catch myException
@@ -1159,7 +1223,7 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_get_var1 ( varargin )
+function varargout = handle_get_var1(op,ncid,varid,start)
 %     [data,status] = mexnc('GET_VAR1_DOUBLE',ncid,varid,start);
 %     [data,status] = mexnc('GET_VAR1_FLOAT', ncid,varid,start);
 %     [data,status] = mexnc('GET_VAR1_INT',   ncid,varid,start);
@@ -1168,27 +1232,30 @@ function varargout = handle_get_var1 ( varargin )
 %     [data,status] = mexnc('GET_VAR1_UCHAR', ncid,varid,start);
 %     [data,status] = mexnc('GET_VAR1_TEXT',  ncid,varid,start);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(start,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 % If the op is get_var1_x, and if the variable is a singleton, then we have to remap
 % the operation as 'get_var_x'.
-[varname,xtype,dimids] = netcdf.inqVar(varargin{2:3}); %#ok<ASGLU>
+[varname,xtype,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
 if ( numel(dimids) == 0 ) 
-    op = varargin{1};
-    varargin{1} = ['get_var_' op(10:end)];
-    [varargout{:}] = handle_get_var(varargin{1:end-1});
+    new_op = ['get_var_' op(10:end)];
+    [varargout{:}] = handle_get_var(new_op,ncid,varid);
     return
 end
 
 % Must flip the indices.
-varargin{4} = fliplr(varargin{4}(:)');
+start = fliplr(start(:)');
 %varargin{4} = varargin{4}(:)';
 
 try
-    if strcmpi(varargin{1},'get_var1_uchar')
-           data = netcdf.getVar(varargin{2:end},'uint8');
+    if strcmpi(op,'get_var1_uchar')
+           data = netcdf.getVar(ncid,varid,start,'uint8');
     else
-           data = netcdf.getVar(varargin{2:end});
+           data = netcdf.getVar(ncid,varid,start);
     end
     status = 0;
 catch myException
@@ -1209,7 +1276,7 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_get_vara ( varargin )
+function varargout = handle_get_vara(op,ncid,varid,start,count)
 %     [data,status] = mexnc('GET_VARA_DOUBLE',ncid,varid,start,count);
 %     [data,status] = mexnc('GET_VARA_FLOAT', ncid,varid,start,count);
 %     [data,status] = mexnc('GET_VARA_INT',   ncid,varid,start,count);
@@ -1218,24 +1285,24 @@ function varargout = handle_get_vara ( varargin )
 %     [data,status] = mexnc('GET_VARA_UCHAR', ncid,varid,start,count);
 %     [data,status] = mexnc('GET_VARA_TEXT',  ncid,varid,start,count);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(start,{'numeric'},{'real','nonempty','finite'});
+validateattributes(count,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 % Must flip the indices.
-varargin{4} = fliplr(varargin{4}(:)');
-varargin{5} = fliplr(varargin{5}(:)');
-%varargin{4} = varargin{4}(:)';
-%varargin{5} = varargin{5}(:)';
-
-%[varname,xtype,dimids] = netcdf.inqVar(varargin{2}, varargin{3}); %#ok<ASGLU>
-
+start = fliplr(start(:)');
+count = fliplr(count(:)');
 
 % If the variable is a singleton, just use get_var instead.
 
 try
-    if strcmpi(varargin{1},'get_vara_uchar')
-           data = netcdf.getVar(varargin{2:end},'uint8');
+    if strcmpi(op,'get_vara_uchar')
+           data = netcdf.getVar(ncid,varid,start,count,'uint8');
     else
-           data = netcdf.getVar(varargin{2:end});
+           data = netcdf.getVar(ncid,varid,start,count);
     end
     status = 0;
 catch myException
@@ -1256,7 +1323,7 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_get_vars ( varargin )
+function varargout = handle_get_vars (op,ncid,varid,start,count,stride)
 %     [data,status] = mexnc('GET_VARS_DOUBLE',ncid,varid,start,count,stride);
 %     [data,status] = mexnc('GET_VARS_FLOAT', ncid,varid,start,count,stride);
 %     [data,status] = mexnc('GET_VARS_INT',   ncid,varid,start,count,stride);
@@ -1265,21 +1332,25 @@ function varargout = handle_get_vars ( varargin )
 %     [data,status] = mexnc('GET_VARS_UCHAR', ncid,varid,start,count,stride);
 %     [data,status] = mexnc('GET_VARS_TEXT',  ncid,varid,start,count,stride);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(start,{'numeric'},{'real','nonempty','finite'});
+validateattributes(count,{'numeric'},{'real','nonempty','finite'});
+validateattributes(stride,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 % Must flip the indices.
-varargin{4} = fliplr(varargin{4}(:)');
-varargin{5} = fliplr(varargin{5}(:)');
-varargin{6} = fliplr(varargin{6}(:)');
-%varargin{4} = varargin{4}(:)';
-%varargin{5} = varargin{5}(:)';
-%varargin{6} = varargin{6}(:)';
+start = fliplr(start(:)');
+count = fliplr(count(:)');
+stride= fliplr(stride(:)');
+
 
 try
-    if strcmpi(varargin{1},'get_vars_uchar')
-           data = netcdf.getVar(varargin{2:end},'uint8');
+    if strcmpi(op,'get_vars_uchar')
+           data = netcdf.getVar(ncid,varid,start,count,stride,'uint8');
     else
-           data = netcdf.getVar(varargin{2:end});
+           data = netcdf.getVar(ncid,varid,start,count,stride);
     end
     status = 0;
 catch myException
@@ -1301,7 +1372,7 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_put_var ( varargin )
+function varargout = handle_put_var(op,ncid,varid,data) %#ok<INUSL>
 %     status = mexnc('PUT_VAR_DOUBLE',ncid,varid,data);
 %     status = mexnc('PUT_VAR_FLOAT', ncid,varid,data);
 %     status = mexnc('PUT_VAR_INT',   ncid,varid,data);
@@ -1311,10 +1382,13 @@ function varargout = handle_put_var ( varargin )
 %     status = mexnc('PUT_VAR_TEXT',  ncid,varid,data);
 %     status = mexnc('PUT_VAR1_DOUBLE',ncid,varid,start,data);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 try
-    netcdf.putVar(varargin{2:end})
+    netcdf.putVar(ncid,varid,data)
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -1329,7 +1403,7 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_put_var1 ( varargin )
+function varargout = handle_put_var1(op,ncid,varid,start,data) %#ok<INUSL>
 %     status = mexnc('PUT_VAR1_DOUBLE',ncid,varid,start,data);
 %     status = mexnc('PUT_VAR1_FLOAT', ncid,varid,start,data);
 %     status = mexnc('PUT_VAR1_INT',   ncid,varid,start,data);
@@ -1341,19 +1415,23 @@ function varargout = handle_put_var1 ( varargin )
 %         starting index.
 %
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(start,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 % Must switch the order of the start index.
-varargin{4} = fliplr(varargin{4}(:)');
-%varargin{4} = varargin{4}(:)';
+start = fliplr(start(:)');
+
 
 try
-    [varname,xtype,dimids] = netcdf.inqVar(varargin{2}, varargin{3}); %#ok<ASGLU>
+    [varname,xtype,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
     if isempty(dimids)
         % Don't use a start argument for singletons.
-        netcdf.putVar(varargin{[2:3 5]});
+        netcdf.putVar(ncid,varid,data);
     else
-        netcdf.putVar(varargin{2:end});
+        netcdf.putVar(ncid,varid,start,data);
     end
     status = 0;
 catch myException
@@ -1369,7 +1447,7 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_put_vara ( varargin )
+function varargout = handle_put_vara (op,ncid,varid,start,count,data) %#ok<INUSL>
 %     status = mexnc('PUT_VARA_DOUBLE',ncid,varid,start,count,data);
 %     status = mexnc('PUT_VARA_FLOAT', ncid,varid,start,count,data);
 %     status = mexnc('PUT_VARA_INT',   ncid,varid,start,count,data);
@@ -1379,26 +1457,28 @@ function varargout = handle_put_vara ( varargin )
 %     status = mexnc('PUT_VARA_TEXT',  ncid,varid,start,count,data);
 %
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(start,{'numeric'},{'real','nonempty','finite'});
+validateattributes(count,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 % Must switch the order of the indices.
-start = fliplr((varargin{4}(:))');
-count = fliplr((varargin{5}(:))');
+start = fliplr((start(:))');
+count = fliplr((count(:))');
 if any(count<0)
     idx = find(count<0);
-    ncid = varargin{2};
-    varid = varargin{3};
     [varname,xtype,dimids] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
     for j = 1:numel(idx)
         [dud,len] = netcdf.inqDim(ncid,dimids(idx(j))); %#ok<ASGLU>
         count(idx(j)) = len;
     end
 end
-varargin{4} = start;
-varargin{5} = count;
+
 
 try
-    netcdf.putVar(varargin{2:end})
+    netcdf.putVar(ncid,varid,start,count,data)
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -1412,7 +1492,7 @@ end
 
 
 %------------------------------------------------------------------------------------------
-function varargout = handle_put_vars ( varargin )
+function varargout = handle_put_vars(op,ncid,varid,start,count,stride,data) %#ok<INUSL>
 %     status = mexnc('PUT_VARS_DOUBLE',ncid,varid,start,count,stride,data);
 %     status = mexnc('PUT_VARS_FLOAT', ncid,varid,start,count,stride,data);
 %     status = mexnc('PUT_VARS_INT',   ncid,varid,start,count,stride,data);
@@ -1422,15 +1502,21 @@ function varargout = handle_put_vars ( varargin )
 %     status = mexnc('PUT_VARS_TEXT',  ncid,varid,start,count,stride,data);
 %
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(start,{'numeric'},{'real','nonempty','finite'});
+validateattributes(count,{'numeric'},{'real','nonempty','finite'});
+validateattributes(stride,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 % Must switch the order of the start, count, and stride indices.
-varargin{4} = fliplr((varargin{4}(:))');
-varargin{5} = fliplr((varargin{5}(:))');
-varargin{6} = fliplr((varargin{6}(:))');
+start = fliplr((start(:))');
+count = fliplr((count(:))');
+stride = fliplr((stride(:))');
 
 try
-    netcdf.putVar(varargin{2:end})
+    netcdf.putVar(ncid,varid,start,count,stride,data)
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -1451,7 +1537,7 @@ function varargout = handle_redef(op,ncid) %#ok<INUSL,DEFNU>
 varargout = cell(1,nargout);
 
 try
-    netcdf.redef(ncid);
+    netcdf.reDef(ncid);
     status = 0;
 catch myException
     status = exception2status(myException);
@@ -1471,6 +1557,11 @@ end
 %--------------------------------------------------------------------------
 function varargout = handle_rename_att(op,ncid,dimid,oldName,newName) %#ok<INUSL>
 %      status = mexnc('RENAME_ATT',ncid,dimid,oldName,newName);
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(dimid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(oldName,{'char'},{'row'});
+validateattributes(newName,{'char'},{'row'});
 
 varargout = cell(1,nargout);
 
@@ -1496,6 +1587,10 @@ end
 function varargout = handle_rename_dim(op,ncid,dimid,name) %#ok<INUSL>
 %      status = mexnc('RENAME_DIM',ncid,dimid,name);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(dimid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(name,{'char'},{'row'});
+
 varargout = cell(1,nargout);
 
 try
@@ -1520,6 +1615,10 @@ end
 function varargout = handle_rename_var(op,ncid,varid,newname) %#ok<INUSL>
 %      status = mexnc('RENAME_VAR',ncid,varid,new_varname);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(newname,{'char'},{'row'});
+
 varargout = cell(1,nargout);
 
 try
@@ -1543,6 +1642,9 @@ end
 %--------------------------------------------------------------------------
 function varargout = handle_set_fill(op,ncid,mode) %#ok<INUSL,DEFNU>
 %      [old_fill_mode,status] = mexnc('SET_FILL',ncid,new_fill_mode)
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(mode,{'numeric'},{'real','nonempty','finite'});
 
 varargout = cell(1,nargout);
 
@@ -1679,6 +1781,8 @@ varargout{1} = msg;
 function varargout = handle_sync(op,ncid) %#ok<INUSL,DEFNU>
 %      status = mexnc('SYNC',ncid );
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+
 varargout = cell(1,nargout);
 
 try
@@ -1704,7 +1808,7 @@ function varargout = handle_varget(op,ncid,varid,start,count,autoscale) %#ok<DEF
 % Unless it's a char variable, we wish to return the data in double precision.
 if ischar(varid)
 	try
-    	varid = netcdf.inqVarId(ncid,varid);
+    	varid = netcdf.inqVarID(ncid,varid);
 	catch me %#ok<NASGU>
     	varargout{1} = NaN;
 	    varargout{2} = -1;
@@ -1777,7 +1881,7 @@ function varargout = handle_varputg(op,ncid,varid,start,count,stride,imap,value,
 error(nargchk(8,9,nargin,'struct'));
 
 if ischar(varid)
-    varid = netcdf.inqVarId(ncid,varid);
+    varid = netcdf.inqVarID(ncid,varid);
 end
 
 
@@ -1828,7 +1932,7 @@ function varargout = handle_vargetg (op,ncid,varid,start,count,stride,imap,autos
 try
     
     if ischar(varid)
-        varid = netcdf.inqVarId(ncid,varid);
+        varid = netcdf.inqVarID(ncid,varid);
     end
 
     % Unless it's a char variable, we wish to return the data in double precision.
@@ -1890,47 +1994,6 @@ function status = exception2status ( myException )
 % status numbers.
 
 switch ( myException.identifier )
-    case {'MATLAB:badfilename_mx', ...
-          'MATLAB:nargchk:notEnoughInputs', ...
-          'MATLAB:netcdf:argumentWasNotChar', ...
-          'MATLAB:netcdf:badArgumentDatatype', ...
-          'MATLAB:netcdf:badIDDatatype', ...
-          'MATLAB:netcdf:badModeDatatype', ...
-          'MATLAB:netcdf:badSizeArgumentDatatype', ...
-          'MATLAB:netcdf:countArgumentHasBadDatatype', ...
-          'MATLAB:netcdf:emptySetID', ...
-          'MATLAB:netcdf:pCreate:invalidArgument', ...
-          'MATLAB:netcdf:startArgumentHasBadDatatype', ...
-          'MATLAB:netcdf:strideArgumentHasBadDatatype', ...
-          'MATLAB:netcdf:getVar:badDatatypeSpecification', ...
-          'MATLAB:netcdf:getVara:indexExceedsDimensionBound', ...
-          'MATLAB:netcdf:open:notANetcdfFile', ...
-          'MATLAB:netcdf:putVar:dataSizeMismatch', ...
-          'MATLAB:netcdf:putVar1:dataSizeMismatch', ...
-          'MATLAB:netcdf:putVara:dataSizeMismatch', ...
-          'MATLAB:netcdf:putVars:dataSizeMismatch', ...
-          'MATLAB:netcdf:putVar:indexExceedsDimensionBound', ...
-          'MATLAB:netcdf:putVar1:indexExceedsDimensionBound', ...
-          'MATLAB:netcdf:putVara:indexExceedsDimensionBound', ...
-          'MATLAB:netcdf:putVars:indexExceedsDimensionBound', ...
-          'MATLAB:netcdf:putVar1:startPlusCountExceedsDimensionBound', ...
-          'MATLAB:netcdf:putVara:startPlusCountExceedsDimensionBound', ...
-          'MATLAB:netcdf:putVars:startPlusCountExceedsDimensionBound', ...
-          'MATLAB:netcdf_common:unpackDimids:badDimidsType', ...
-          'MATLAB:netcdf_common:ndimsLargerThanNetcdfLimits', ...
-          'MATLAB:netcdf:ndimsLargerThanNetcdfLimits', ...
-          'MATLAB:netcdf_common:unpack_ndims_and_dimids:badDimidsType', ...
-          'MATLAB:netcdf_common:unpackIntSingleton:argumentIsEmptySet', ...
-          'MATLAB:netcdf_common:unpack_xtype:emptySetDatatype', ...
-          'MATLAB:netcdf:emptySetSizeParameter', ...
-          'MATLAB:netcdf:emptySetParameter', ...
-          'MATLAB:netcdf:unpack_xtype:emptySetDatatype', ...
-          'MATLAB:netcdf:unpackDimids:badDimidsType', ...
-          'MATLAB:netcdf:unpackIntSingleton:argumentIsEmptySet', ...
-          'MATLAB:netcdf:unrecognizedCharParameter', ...
-          'MATLAB:inputArgUndefined', ...
-          'MATLAB:unassignedOutputs'}
-        rethrow ( myException );
 
     case 'MATLAB:netcdf:open:noSuchFile'
         status = 2;
@@ -1942,104 +2005,15 @@ switch ( myException.identifier )
         status = -1;
         return
 
-    
-    % This was a bad error ID in R2008b and R2009a.  Nothing we can do but 
-    % to return -1.
-    case {'MATLAB:netcdf:putAttText'}
+        
+    otherwise
         status = -1;
         return
 
 end
 
-% All cases where the input argument count was bad should be real errors.
-if ~isempty(regexp(myException.identifier,':badInputArgumentCount', 'once'))
-    rethrow ( myException );
-end
-
-% Special case.
-% Now look at particular releases where we know there is an issue.
-switch version('-release')
-    case '2008b'
-        if ( strcmp(myException.identifier,'MATLAB:netcdf:create:unknownErrorStatus') && ...
-            strcmp(myException.message,'Invalid argument') )
-            status = netcdf.getConstant('NC_EINVAL');
-            return
-        end
-        if ( strcmp(myException.identifier,'MATLAB:netcdf:pCreate:unknownErrorStatus') && ...
-            strcmp(myException.message,'Invalid argument') )
-            status = netcdf.getConstant('NC_EINVAL');
-            return
-        end
-end
 
 
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:notNetcdfID', 'once'))
-    status = netcdf.getConstant('NC_EBADID');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:operationNotAllowedInDefineMode', 'once'))
-    status = netcdf.getConstant('NC_ENOTINDEFINE');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:invalidDimensionIdOrName', 'once'))
-    status = netcdf.getConstant('NC_EBADDIM');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:nameContainsIllegalCharacters', 'once'))
-    status = netcdf.getConstant('NC_EBADNAME');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:attemptToConvertBetweenTextAndNumbers', 'once'))
-    status = netcdf.getConstant('NC_ECHAR');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:netcdfFileExistsAndNoClobber', 'once'))
-    status = netcdf.getConstant('NC_EEXIST');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:invalidArgument', 'once'))
-    status = netcdf.getConstant('NC_EINVAL');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:nameIsAlreadyInUse', 'once'))
-    status = netcdf.getConstant('NC_ENAMEINUSE');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:operationNotAllowedInDataMode', 'once'))
-    status = netcdf.getConstant('NC_ENOTINDEFINE');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:attributeNotFound', 'once'))
-    status = netcdf.getConstant('NC_ENOTATT');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:variableNotFound', 'once'))
-    status = netcdf.getConstant('NC_ENOTVAR');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:onlyOneUnlimitedDimensionAllowed', 'once'))
-    status = netcdf.getConstant('NC_EUNLIM');
-    return
-end
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:.*:unlimitedDimensionInTheWrongIndex', 'once'))
-    status = netcdf.getConstant('NC_UNLIMPOS');
-    return
-end
-
-%
-% These exceptions 
-if ~isempty(regexp(myException.identifier,'MATLAB:netcdf:abort:', 'once'))
-    status = -1;
-    return
-end
-
-% 
-% If we get this far, then we know that something has not been properly 
-% handled.
-myException %#ok<NOPRT>
-myException.stack(1)
-myException.stack(end)
-error('Encountered an unhandled exception.');
 
 
 
@@ -2156,7 +2130,7 @@ if ischar(varid)
 		% needed for backwards compatibility.
 		varid = -1;
 	else
-    	varid = netcdf.inqVarId(ncid,varid);
+    	varid = netcdf.inqVarID(ncid,varid);
 	end
 end
 
@@ -2246,7 +2220,7 @@ if ischar(varid)
 		% needed for backwards compatibility.
 		varid = -1;
 	else
-    	varid = netcdf.inqVarId(ncid,varid);
+    	varid = netcdf.inqVarID(ncid,varid);
 	end
 end
 
@@ -2653,7 +2627,7 @@ function varargout = handle_varput1(op,ncid,varid,start,data,autoscale) %#ok<INU
 error(nargchk(5,6,nargin,'struct'));
 
 if ischar(varid)
-    varid = netcdf.inqVarId(ncid,varid);
+    varid = netcdf.inqVarID(ncid,varid);
 end
 
 switch(class(data))
@@ -2716,7 +2690,7 @@ function varargout = handle_varget1(op,ncid,varid,start,autoscale) %#ok<INUSL,DE
 error(nargchk(4,5,nargin,'struct'));
 
 if ischar(varid)
-    varid = netcdf.inqVarId(ncid,varid);
+    varid = netcdf.inqVarID(ncid,varid);
 end
 
 % If there was an autoscale argument, we need to get rid of it before
@@ -2783,7 +2757,7 @@ function varargout = handle_varput(op,ncid,varid,start,count,data,autoscale) %#o
 
 
 if ischar(varid)
-    varid = netcdf.inqVarId(ncid,varid);
+    varid = netcdf.inqVarID(ncid,varid);
 end
 
 switch(class(data))
@@ -2829,4 +2803,71 @@ switch nargout
 end
 
 
+%------------------------------------------------------------------------------------------
+function [storage,chunksize,status] = handle_inq_var_chunking(op,ncid,varid) %#ok<DEFNU,INUSL>
+% [storage,chunksize,status] = mexnc('inq_var_chunking',ncid,xdvarid);
 
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+
+try
+    [storage,chunksize] = netcdf.inqVarChunking(ncid,varid);
+    status = 0;
+catch me %#ok<NASGU>
+    status = -1;
+end
+%------------------------------------------------------------------------------------------
+function status = handle_def_var_chunking(op,ncid,varid,storage,chunksize) %#ok<DEFNU,INUSL>
+% status = mexnc('DEF_VAR_CHUNKING',ncid,varid,storage,chunksize)
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(storage,{'char'},{'row'});
+if strcmpi(storage,'chunked')
+    validateattributes(chunksize,{'numeric'},{'real','nonempty','finite'});
+else
+    validateattributes(chunksize,{'numeric'},{'real','finite'});
+end
+
+try
+    netcdf.defVarChunking(ncid,varid,storage,chunksize);
+    status = 0;
+catch me %#ok<NASGU>
+    status = -1;
+end
+
+
+%------------------------------------------------------------------------------------------
+function status = handle_def_var_deflate(op,ncid,varid,shuffle,deflate,deflate_level) %#ok<DEFNU,INUSL>
+% status = mexnc('DEF_VAR_CHUNKING',ncid,varid,storage,chunksize)
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(shuffle,{'numeric'},{'real','nonempty','finite'});
+validateattributes(deflate,{'numeric'},{'real','nonempty','finite'});
+validateattributes(deflate_level,{'numeric'},{'real','nonempty','finite'});
+
+
+try
+    netcdf.defVarDeflate(ncid,varid,logical(shuffle),logical(deflate),deflate_level);
+    status = 0;
+catch me %#ok<NASGU>
+    status = -1;
+end
+
+%------------------------------------------------------------------------------------------
+function [shuffle,deflate,deflate_level,status] = handle_inq_var_deflate(op,ncid,varid) %#ok<DEFNU,INUSL>
+% [shuffle,deflate,deflate_level,status] = mexnc('INQ_VAR_DEFLATE',ncid,varid)
+
+validateattributes(ncid,{'numeric'},{'real','nonempty','finite'});
+validateattributes(varid,{'numeric'},{'real','nonempty','finite'});
+
+shuffle = false;
+deflate = false;
+deflate_level = 0;
+try
+    [shuffle,deflate,deflate_level] = netcdf.inqVarDeflate(ncid,varid);
+    status = 0;
+catch me %#ok<NASGU>
+    status = -1;
+end

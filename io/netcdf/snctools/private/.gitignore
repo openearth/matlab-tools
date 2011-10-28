@@ -1,3 +1,9 @@
 /isnc3.m
 /isnc4.m
+/nc_get_attribute_struct.m
+/nc_get_attribute_struct_tmw.m
 /nc_getall_tmw.m
+/snc_getbuffer.m
+/snc_java_bundle_atts.m
+/snc_java_varid_info.m
+/validate_index_vectors.m

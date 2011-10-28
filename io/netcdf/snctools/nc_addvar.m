@@ -70,6 +70,8 @@ switch ( backend )
         nc_addvar_mexnc(ncfile,varstruct,preserve_fvd);
     case 'tmw_hdf4'
         nc_addvar_hdf4(ncfile,varstruct,preserve_fvd);
+    case 'tmw_hdf4_2011b'
+        nc_addvar_hdf4(ncfile,varstruct,preserve_fvd);
     otherwise
         nc_addvar_tmw(ncfile,varstruct,preserve_fvd);
 end

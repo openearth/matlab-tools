@@ -1,13 +1,9 @@
-function [values, the_var_size] = nc_varget_java (ncfile,varname,start,count,stride)
+function values = nc_varget_java (ncfile,varname,varargin)
 % NC_VARGET_JAVA:  Java backend for nc_varget.
-%
-% See the help section for nc_varget.
 
 import ucar.nc2.dods.*     
 import ucar.nc2.*          
                            
-preserve_fvd = nc_getpref('PRESERVE_FVD');
-
 close_it = true;
 
 % Try it as a local file.  If not a local file, try as
@@ -37,53 +33,30 @@ end
 % Get the variable object
 jvarid = jncid.findVariable(varname);
 if isempty ( jvarid )
-    error('SNCTOOLS:NC_VARGET:JAVA:noSuchVariable', ...
+    error('snctools:varget:java:noSuchVariable', ...
 	    'findVariable failed on variable ''%s'', file ''%s''.',...
         varname,ncfile);
 end
 
 
+varinfo = nc_getvarinfo_java ( jncid, jvarid );
+var_size = varinfo.Size;
+
 theDataType = jvarid.getDataType();
 theDataTypeString = char ( theDataType.toString() ) ;
-theDimensions = jvarid.getDimensions();
-num_var_dims = theDimensions.size();
 
-
-% Check that the start, count, stride parameters have appropriate lengths.
-% Otherwise we risk confusing the mex-file.
-validate_index_vectors ( start, count, stride, num_var_dims );
-
-varinfo = nc_getvarinfo ( ncfile, varname );
-%varinfo = nc_getvarinfo ( jncid, jvarid );
-the_var_size = varinfo.Size;
+[start,count,stride] = get_indexing(jvarid,varinfo,varargin{:});
 
 % If no data has been written to an unlimited variable, then there's 
 % nothing to do.  Just return.
-if prod(the_var_size) == 0
+if prod(var_size) == 0
 	values = [];
 	return
 end
 
 
-[read_method,start,count] ...
-    = determine_read_method_java(start,count,stride,varinfo);
+read_method = determine_read_method(start,count,stride,varinfo);
 
-% If the user had set non-positive numbers (or inf) in "count", then
-% we replace them with what we need to get the
-% rest of the variable.
-negs = find((count<0) | isinf(count));
-if isempty(stride)
-    count(negs) =        the_var_size(negs) - start(negs);
-else
-    count(negs) = floor((the_var_size(negs) - start(negs))./stride(negs));
-end
-
-% Java expects in C-style order.
-if preserve_fvd
-    start = fliplr(start);
-    count = fliplr(count);
-    stride = fliplr(stride);
-end
 
 
 % Finally!  Read the freakin' data.
@@ -115,10 +88,21 @@ try
     
 catch %#ok<CTCH>
 	if close_it
-    	close ( jncid );
+    	close(jncid);
 	end
-    rethrow ( lasterror ); %#ok<LERR>
+    rethrow(lasterror); %#ok<LERR>
 end
+
+values = post_process(jvarid,theDataType,var_size,values);
+
+% If we were passed a java file id, don't close it upon exit.
+if close_it
+	close ( jncid );
+end
+
+
+%--------------------------------------------------------------------------
+function values = post_process(jvarid,theDataType,var_size,values)
 
 values = handle_fill_value_java ( jvarid, theDataType, values );
 values = handle_missing_value_java ( jvarid, theDataType, values );
@@ -127,16 +111,18 @@ values = handle_scaling_java ( jvarid, values );
 % remove any singleton dimensions.
 values = squeeze ( values );
 
-% If we were passed a java file id, don't close it upon exit.
-if close_it
-	close ( jncid );
-end
 
-if length(the_var_size) == 1
+
+% Permute?
+if (numel(var_size) == 1) ...
+        && (strcmp(theDataType,'String') || strcmp(theDataType,'char'))
+    values = values';
+elseif length(var_size) == 1
     values = values(:);
 else
+    preserve_fvd = nc_getpref('PRESERVE_FVD');
     if preserve_fvd
-        pv = fliplr ( 1:length(the_var_size) );
+        pv = fliplr ( 1:length(var_size) );
         values = permute(values,pv);
     end
 end                                                                                   
@@ -152,6 +138,66 @@ return
 
 
 %--------------------------------------------------------------------------
+function [start,count,stride] = get_indexing(jvarid,varinfo,varargin)
+
+import ucar.nc2.dods.*     
+import ucar.nc2.* 
+
+theDimensions = jvarid.getDimensions();
+nDims = theDimensions.size();
+
+
+switch(numel(varargin))
+    case 0
+        start = zeros(1,nDims);
+        count = varinfo.Size;
+        stride = ones(1,nDims);
+    case 2
+        start = varargin{1};
+        count = varargin{2};
+        stride = ones(1,nDims);
+    case 3
+        start = varargin{1};
+        count = varargin{2};
+        stride = varargin{3};        
+    otherwise
+        error('SNCTOOLS:wrongNumberOfInputs','Wrong number of inputs.');
+end
+
+if isempty(varinfo.Dimension)
+    % It's a singleton variable.
+	start = 0;
+	count = 1;
+	return
+end
+
+
+
+% If the user had set non-positive numbers (or inf) in "count", then
+% we replace them with what we need to get the
+% rest of the variable.
+negs = find((count<0) | isinf(count));
+if any(negs)
+if isempty(stride)
+    count(negs) =        varinfo.Xize(negs) - start(negs);
+else
+    count(negs) = floor((varinfo.Size(negs) - start(negs))./stride(negs));
+end
+end
+
+
+% Java expects in C-style order.
+preserve_fvd = nc_getpref('PRESERVE_FVD');
+if preserve_fvd
+    start = fliplr(start);
+    count = fliplr(count);
+    stride = fliplr(stride);
+end
+
+
+
+
+%--------------------------------------------------------------------------
 function values = nc_var1_get_java ( jvarid, theDataTypeString )
 % NC_VAR1_GET_JAVA:  reads a scalar.
 
@@ -161,6 +207,10 @@ switch ( theDataTypeString )
         values = jvarid.read();
         values = char ( values.toString() );
 
+    case 'String'
+        jdata = jvarid.read();
+        values = snc_pp_strings(jvarid,jdata,1);
+        
     case { 'double', 'float', 'int', 'short', 'byte' }
         values = jvarid.readScalarDouble();
 
@@ -175,33 +225,31 @@ return
 
 
 
-
-
-
 %--------------------------------------------------------------------------
 function values = nc_var_get_java ( jvarid, theDataTypeString )
 % NC_VAR_GET_JAVA:  reads the entire variable
 
-values = jvarid.read();
-values = copyToNDJavaArray(values);
-switch ( theDataTypeString )
-    case 'char'
-        %
-    case 'double'
-        values = double(values);
-    case 'float'
-        values = single(values);
-    case 'int'
-        values = int32(values);
-    case 'short'
-        values = int16(values);
-    case 'byte'
-        values = int8(values);
-        
+raw_data = jvarid.read();
+switch(theDataTypeString)
+    case 'String'
+        n = jvarid.getShape();
+        sz = double(n');
+        values = snc_pp_strings(jvarid,raw_data,sz);
+
     otherwise
-        error ( 'SNCTOOLS:nc_varget:var:java:unhandledDatatype', ...
-            'unhandled datatype ''%s''', theDataTypeString );
         
+        values = copyToNDJavaArray(raw_data);
+        switch ( theDataTypeString )
+            case 'char'
+                %
+            case {'double','float','int','short','byte'}
+                values = double(values);
+                
+            otherwise
+                error ( 'SNCTOOLS:nc_varget:var:unhandledDatatype', ...
+                    'unhandled datatype ''%s''', theDataTypeString );
+                
+        end
 end
 return
 
@@ -217,17 +265,20 @@ return
 function values = nc_vara_get_java(jvarid,theDataTypeString,start,count)
 % NC_VARA_GET_JAVA:  reads a contiguous subset
 
-values = jvarid.read(start, count);
+jdata = jvarid.read(start, count);
 switch ( theDataTypeString )
     case 'char'
-        values = copyToNDJavaArray(values);
+        values = copyToNDJavaArray(jdata);
     case { 'double', 'float', 'int', 'short', 'byte' }
-        values = copyToNDJavaArray(values);
+        values = copyToNDJavaArray(jdata);
         values = double ( values );
+    case 'String'
+        values = snc_pp_strings(jvarid,jdata,count);
+        
     otherwise
         error('SNCTOOLS:nc_varget:vara:java:unhandledDatatype', ...
             'unhandled datatype ''%s''', theDataTypeString );
-    
+        
 end
 return
     
@@ -258,6 +309,9 @@ values = jvarid.read(section_selector);
 switch ( theDataTypeString )
     case 'char'
         values = copyToNDJavaArray(values);
+    case 'String'
+        values = snc_pp_strings(jvarid,values,count);
+        
     case { 'double', 'float', 'int', 'short', 'byte' }
         values = copyToNDJavaArray(values);
         values = double ( values );
@@ -280,7 +334,7 @@ return
 
 
 %--------------------------------------------------------------------------
-function [read_method, start, count] = determine_read_method_java(start,count,stride,varinfo)
+function read_method = determine_read_method(start,count,stride,varinfo)
 % Determine the read method that we will instruct java to use in order to
 % properly read in the netCDF data.
 
@@ -290,8 +344,6 @@ function [read_method, start, count] = determine_read_method_java(start,count,st
 % well.
 if isempty(varinfo.Dimension)
 	read_method = 'GET_VAR1';
-	start = 0;
-	count = 1;
 	return
 end
 
@@ -320,7 +372,7 @@ function values = handle_fill_value_java ( jvarid, var_type, values )
 % Handle the fill value, if any.  Change those values into NaN.
 fillvalue_att = jvarid.findAttribute ( '_FillValue' );
 if ~isempty(fillvalue_att)
-	att_dtype = fillvalue_att.getDataType();
+    att_dtype = fillvalue_att.getDataType();
     if ~strcmp(char(att_dtype.toString()), char(var_type.toString()))
         warning('SNCTOOLS:nc_varget:java:fillValueMismatch', ...
             'The _FillValue attribute datatype is incorrect.  The _FillValue attribute will not be honored.');
@@ -328,15 +380,15 @@ if ~isempty(fillvalue_att)
     end
     
     switch ( char ( var_type.toString() ) )
-    case 'char'
-        % For now, do nothing.  Does a fill value even make sense with char 
-        % data?  If it does, please tell me so.
-
-    case { 'double', 'float', 'long', 'short', 'byte' }
-        fill_value = fillvalue_att.getNumericValue().doubleValue();
-        values = double(values);
-        values(values==fill_value) = NaN;
-
+        case 'char'
+            % For now, do nothing.  Does a fill value even make sense with char
+            % data?  If it does, please tell me so.
+            
+        case { 'double', 'float', 'long', 'short', 'byte' }
+            fill_value = fillvalue_att.getNumericValue().doubleValue();
+            values = double(values);
+            values(values==fill_value) = NaN;
+            
     end
 end
 
@@ -355,14 +407,14 @@ function values = handle_missing_value_java ( jvarid, theDataType, values )
 % If there is a fill value attribute, then that had precedence.  Do nothing.
 fvatt = jvarid.findAttribute ( '_FillValue' );
 if ~isempty(fvatt)
-	return
+    return
 end
 
 %
 % Handle the missing value, if any.  Change those values into NaN.
 missing_value_att = jvarid.findAttribute ( 'missing_value' );
 if ~isempty(missing_value_att)
-	att_dtype = missing_value_att.getDataType();
+    att_dtype = missing_value_att.getDataType();
     if ~strcmp(char(att_dtype.toString()), char(theDataType.toString()))
         warning('SNCTOOLS:nc_varget:java:missingValueMismatch', ...
             'The missing_value attribute datatype is incorrect.  The missing_value attribute will not be honored.');
@@ -371,14 +423,14 @@ if ~isempty(missing_value_att)
     
     values = double(values);
     switch ( char ( theDataType.toString() ) )
-    case 'char'
-        % For now, do nothing.  Does a fill value even make sense with 
-        % char data?  Matlab doesn't allow for NaNs in character arrays.
-
-    case { 'double', 'float', 'long', 'short', 'byte' }
-        missing_value = missing_value_att.getNumericValue().doubleValue();
-        values(values==missing_value) = NaN;
-
+        case 'char'
+            % For now, do nothing.  Does a fill value even make sense with
+            % char data?  Matlab doesn't allow for NaNs in character arrays.
+            
+        case { 'double', 'float', 'long', 'short', 'byte' }
+            missing_value = missing_value_att.getNumericValue().doubleValue();
+            values(values==missing_value) = NaN;
+            
     end
 end
 
@@ -425,7 +477,6 @@ end
 values = double(values) * scale_factor + add_offset;
 
 return
-
 
 
 

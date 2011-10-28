@@ -1,49 +1,19 @@
-function nc_varput_tmw(ncfile,varname,data,start,count,stride)
+function nc_varput_tmw(ncfile,varname,data,varargin)
 
 preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 ncid = netcdf.open(ncfile,'WRITE');
 try
-    varid = netcdf.inqVarID(ncid, varname );
-    [dud,var_type,var_dim]=netcdf.inqVar(ncid,varid); %#ok<ASGLU>
-    nvdims = numel(var_dim);
+    varid = netcdf.inqVarID(ncid,varname);
+    [dud,xtype,dims]=netcdf.inqVar(ncid,varid); %#ok<ASGLU>
     
-    v = nc_getvarinfo(ncfile,varname);
-    nc_count = v.Size;
+    indexing = get_indexing(dims,data,preserve_fvd,varargin{:});
     
-    [start, count] = nc_varput_validate_indexing(nvdims,data,start,count,stride);
-    
-    % check that the length of the start argument matches the rank of the 
-    % variable.
-    if numel(start) ~= numel(nc_count)
-        error('SNCTOOLS:NC_VARPUT:badIndexing', ...
-              'Length of START index (%d) does not make sense with a variable rank of %d.', ...
-               numel(start), numel(count) );
-    end
-    
-    data = handle_scaling_tmw(ncid,varid,data);
-    data = handle_fill_value_tmw ( ncid, varid, data );
+    data = pre_process(ncid,varid,xtype,preserve_fvd,data);
 
-    if ~preserve_fvd
-        data = permute(data,fliplr(1:ndims(data)));
-        start = fliplr(start);
-        count = fliplr(count);
-        stride = fliplr(stride);
-    end
+    ncargs = [indexing, {data}];
     
-    if ( var_type == nc_char ) && (~ischar(data))
-        data = char(data);
-    end
-    
-    if isempty(start) || (nvdims == 0)
-        netcdf.putVar(ncid,varid,data);
-    elseif isempty(count)
-        netcdf.putVar(ncid,varid,start,data);
-    elseif isempty(stride)
-        netcdf.putVar(ncid,varid,start,count,data);
-    else
-        netcdf.putVar(ncid,varid,start,count,stride,data);
-    end  
+    netcdf.putVar(ncid,varid,ncargs{:});
 
 catch myException
     netcdf.close(ncid);
@@ -53,7 +23,41 @@ end
 netcdf.close(ncid);
 return
 
+%--------------------------------------------------------------------------
+function indexing = get_indexing(dims,data,preserve_fvd,varargin)
 
+indexing = varargin;
+
+% no indexing arguments provided and NOT a singleton.
+if (numel(indexing) == 0) && ~isempty(dims)
+    start = zeros(1,numel(dims));
+    if numel(dims) == 1
+        count = numel(data);
+    else
+        count = size(data);
+    end
+    indexing = {start, count};
+end
+
+if ~preserve_fvd
+    for j = 1:numel(indexing)
+        indexing{j} = fliplr(indexing{j});
+    end
+end
+
+
+%--------------------------------------------------------------------------
+function data = pre_process(ncid,varid,xtype,preserve_fvd,data)
+
+if ~preserve_fvd
+    data = permute(data,fliplr(1:ndims(data)));
+end
+
+data = handle_scaling_tmw(ncid,varid,data);
+data = handle_fill_value_tmw(ncid,varid,data);
+if ( xtype == nc_char ) && (~ischar(data))
+    data = char(data);
+end
 %--------------------------------------------------------------------------
 function data = handle_scaling_tmw(ncid,varid,data)
 % If there is a scale factor and/or  add_offset attribute, convert the data
@@ -62,29 +66,34 @@ function data = handle_scaling_tmw(ncid,varid,data)
 have_scale_factor = 0;
 have_add_offset = 0;
 
+
 varname = netcdf.inqVar(ncid,varid);
 try
     att_type = netcdf.inqAtt(ncid, varid, 'scale_factor' );
     if att_type == netcdf.getConstant('NC_CHAR')
-        warning('SNCTOOLS:nc_varput:scaleFactorShouldNotBeChar', ...
+        warning('snctools:varput:scaleFactorShouldNotBeChar', ...
             'The scale_factor attribute for %s should not be char, it will be ignored.', ...
             varname);
     else
         have_scale_factor = 1;
+        scale_factor = netcdf.getAtt(ncid, varid, 'scale_factor','double');
     end
-catch %#ok<CTCH>  
+catch %#ok<CTCH>
+    scale_factor = 1.0;
 end
 
 try
     att_type = netcdf.inqAtt(ncid, varid, 'add_offset' );
     if att_type == netcdf.getConstant('NC_CHAR')
-        warning('SNCTOOLS:nc_varput:addOffsetShouldNotBeChar', ...
+        warning('snctools:varput:addOffsetShouldNotBeChar', ...
             'The add_offset attribute for %s should not be char, it will be ignored.', ...
             varname);
-    else   
+    else
         have_add_offset = 1;
+        add_offset = netcdf.getAtt(ncid, varid, 'add_offset','double');
     end
-catch %#ok<CTCH> 
+catch %#ok<CTCH>
+    add_offset = 0.0;
 end
 
 %
@@ -93,34 +102,19 @@ if ~(have_scale_factor || have_add_offset)
     return;
 end
 
-scale_factor = 1.0;
-add_offset = 0.0;
 
-try
-    
-    if have_scale_factor
-        scale_factor = netcdf.getAtt(ncid, varid, 'scale_factor','double');
-    end
-    
-    if have_add_offset
-        add_offset = netcdf.getAtt(ncid, varid, 'add_offset','double');
-    end
-    
-    data = (double(data) - add_offset) / scale_factor;
-    
-    %
-    % When scaling to an integer, we should add 0.5 to the data.  Otherwise
-    % there is a tiny loss in precision, e.g. 82.7 should round to 83, not 
-    % 82.
-    [varname,xtype] = netcdf.inqVar(ncid,varid);  %#ok<ASGLU>
-    switch xtype
-        case { nc_int, nc_short, nc_byte, nc_char }
-            data = round(data);
-    end
+data = (double(data) - add_offset) / scale_factor;
 
-catch myException
-    rethrow(myException);
+%
+% When scaling to an integer, we should add 0.5 to the data.  Otherwise
+% there is a tiny loss in precision, e.g. 82.7 should round to 83, not
+% 82.
+[varname,xtype] = netcdf.inqVar(ncid,varid);  %#ok<ASGLU>
+switch xtype
+    case { nc_int, nc_short, nc_byte, nc_char }
+        data = round(data);
 end
+
 
 return
 
@@ -141,7 +135,7 @@ try
     [varname,xtype] = netcdf.inqVar(ncid,varid);
     att_type = netcdf.inqAtt(ncid,varid,'_FillValue');
     if att_type ~= xtype
-        warning('SNCTOOLS:nc_varput:badFillValueType', ...
+        warning('snctools:varput:badFillValueType', ...
             ['The datatype for the "_FillValue" attribute does not match ' ...
             'the datatype of the "%s" variable.  It will be ignored.'], ...
             varname);
@@ -164,7 +158,7 @@ try
         case 'char'
             myClass = 'text';
         otherwise
-            error ( 'SNCTOOLS:NC_VARPUT:unhandledDatatype', ...
+            error ( 'snctools:varput:unhandledDatatype', ...
                 'Unhandled datatype for fill value, ''%s''.', ...
                 class(data) );
     end

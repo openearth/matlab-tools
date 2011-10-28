@@ -16,11 +16,11 @@ switch(mode)
 
     case 'netcdf-3'
         ncfile = fullfile(testroot,'testdata/varget.nc');
-        run_local_tests(ncfile);
+        run_local_tests(ncfile,testroot);
 
     case 'netcdf4-classic'
         ncfile = fullfile(testroot,'testdata/varget4.nc');
-        run_local_tests(ncfile);
+        run_local_tests(ncfile,testroot);
 
     case 'netcdf4-enhanced'
         run_nc4_enhanced;
@@ -36,9 +36,304 @@ fprintf('OK\n');
 %--------------------------------------------------------------------------
 function run_nc4_enhanced()
 testroot = fileparts(mfilename('fullpath'));
-ncfile = fullfile(testroot,'testdata/enhanced.nc');
 
+ncfile = fullfile(testroot,'testdata/enhanced.nc');
 test_enhanced_group_and_var_have_same_name(ncfile);
+
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a',...
+            '2009b','2010a','2010b','2011a'};
+        fprintf('\tfiltering out enhanced-model datatype tests on %s.\n', v);
+        return;
+
+end
+
+% Strings
+ncfile = fullfile(testroot,'testdata/moons.nc');
+test_enhanced_vara_strings(ncfile);
+
+% Enums
+ncfile = fullfile(testroot,'testdata/tst_enum_data.nc');
+test_1D_enum_var(ncfile);
+test_1D_enum_vara(ncfile);
+test_1D_enum_vars(ncfile);
+
+% VLens
+ncfile = fullfile(testroot,'testdata/tst_vlen_data.nc');
+test_1D_vlen_var(ncfile);
+test_1D_vlen_vara(ncfile);
+test_1D_vlen_vars(ncfile);
+
+% Opaques
+ncfile = fullfile(testroot,'testdata/tst_opaque_data.nc');
+test_1D_opaque_var(ncfile);
+test_1D_opaque_vara(ncfile);
+test_1D_opaque_vars(ncfile);
+
+% Compounds
+ncfile = fullfile(testroot,'testdata/tst_comp.nc');
+test_1D_cmpd_var(ncfile);
+test_1D_cmpd_vara(ncfile);
+test_1D_cmpd_vars(ncfile);
+
+
+%--------------------------------------------------------------------------
+function test_1D_cmpd_vara(ncfile)
+
+act_data = nc_varget(ncfile,'obs',1,2);
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+exp_data = struct(...
+    'day', int8([-99 20]'), ...
+    'elev', int16([-99 6]'), ...
+    'count', int32([  -99 3]'), ...
+    'relhum', single([ -99 0.75]'), ...
+    'time', [ -99 5000.01]', ...
+    'category', uint8([ 255 200]'), ...
+    'id', uint16([65535 64000]'), ...
+    'particularity', uint32([ 4294967295 4220002000]'), ...
+    'attention_span', int64([ (intmin('int64')) + 2 9000000000000000000]'));
+  
+if pfd
+    exp_data =exp_data';
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_1D_cmpd_vars(ncfile)
+
+act_data = nc_varget(ncfile,'obs',0,2,2);
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+exp_data = struct(...
+    'day', int8([15  20]'), ...
+    'elev', int16([2  6]'), ...
+    'count', int32([ 1  3]'), ...
+    'relhum', single([0.5  0.75]'), ...
+    'time', [3600.01  5000.01]', ...
+    'category', uint8([0 200]'), ...
+    'id', uint16([0 64000]'), ...
+    'particularity', uint32([0 4220002000]'), ...
+    'attention_span', int64([0 9000000000000000000]'));
+  
+if pfd
+    exp_data =exp_data';
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+
+%--------------------------------------------------------------------------
+function test_1D_cmpd_var(ncfile)
+
+act_data = nc_varget(ncfile,'obs');
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+exp_data = struct(...
+    'day', int8([15 -99 20]'), ...
+    'elev', int16([2 -99 6]'), ...
+    'count', int32([ 1 -99 3]'), ...
+    'relhum', single([0.5 -99 0.75]'), ...
+    'time', [3600.01 -99 5000.01]', ...
+    'category', uint8([0 255 200]'), ...
+    'id', uint16([0 65535 64000]'), ...
+    'particularity', uint32([0 4294967295 4220002000]'), ...
+    'attention_span', int64([0 (intmin('int64')) + 2 9000000000000000000]'));
+  
+if pfd
+    exp_data =exp_data';
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+
+%--------------------------------------------------------------------------
+function test_1D_opaque_var(ncfile)
+
+act_data = nc_varget(ncfile,'raw_obs');
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+v = (1:11)';                                        exp_data{1} = uint8(v);
+v = [170 187 204 221 238 255 238 221 204 187 170]'; exp_data{2} = uint8(v);
+v = 255*ones(11,1);                                 exp_data{3} = uint8(v);
+v = [202 254 186 190 202 254 186 190 202 254 186]'; exp_data{4} = uint8(v);
+v = [207 13 239 172 237 12 175 224 250 202 222]';   exp_data{5} = uint8(v);
+
+if pfd
+    exp_data =exp_data';
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_1D_opaque_vara(ncfile)
+
+act_data = nc_varget(ncfile,'raw_obs',1,3);
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+v = (1:11)';                                        exp_data{1} = uint8(v);
+v = [170 187 204 221 238 255 238 221 204 187 170]'; exp_data{2} = uint8(v);
+v = 255*ones(11,1);                                 exp_data{3} = uint8(v);
+v = [202 254 186 190 202 254 186 190 202 254 186]'; exp_data{4} = uint8(v);
+v = [207 13 239 172 237 12 175 224 250 202 222]';   exp_data{5} = uint8(v);
+
+exp_data = exp_data(2:4);
+if pfd
+    exp_data =exp_data';
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_1D_opaque_vars(ncfile)
+
+act_data = nc_varget(ncfile,'raw_obs',0,3,2);
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+v = (1:11)';                                        exp_data{1} = uint8(v);
+v = [170 187 204 221 238 255 238 221 204 187 170]'; exp_data{2} = uint8(v);
+v = 255*ones(11,1);                                 exp_data{3} = uint8(v);
+v = [202 254 186 190 202 254 186 190 202 254 186]'; exp_data{4} = uint8(v);
+v = [207 13 239 172 237 12 175 224 250 202 222]';   exp_data{5} = uint8(v);
+
+exp_data = exp_data(1:2:5);
+if pfd
+    exp_data =exp_data';
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_1D_vlen_vara(ncfile)
+
+act_data = nc_varget(ncfile,'ragged_array',1,3);
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+exp_data = { single(20:23)' single(30:32)' single(40:41)' };
+if pfd
+    exp_data =exp_data';
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+%--------------------------------------------------------------------------
+function test_1D_vlen_var(ncfile)
+
+act_data = nc_varget(ncfile,'ragged_array');
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+exp_data = { single(10:14)' single(20:23)' single(30:32)' single(40:41)' single(-999)};
+if pfd
+    exp_data =exp_data';
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_1D_vlen_vars(ncfile)
+
+act_data = nc_varget(ncfile,'ragged_array',0,3,2);
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+
+exp_data = { single(10:14)' single(30:32)' single(-999)};
+if pfd
+    exp_data =exp_data';
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+%--------------------------------------------------------------------------
+function test_1D_enum_vars(ncfile)
+
+act_data = nc_varget(ncfile,'primary_cloud',0,3,2);
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+if pfd
+    exp_data = { 'Clear', 'Clear', 'Missing' }';
+else
+    exp_data = { 'Clear', 'Clear', 'Missing' };
+end
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_1D_enum_var(ncfile)
+
+act_data = nc_varget(ncfile,'primary_cloud');
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+if pfd
+    exp_data = { 'Clear', 'Stratus', 'Clear', 'Cumulonimbus', 'Missing' }';
+else
+    exp_data = { 'Clear', 'Stratus', 'Clear', 'Cumulonimbus', 'Missing' };
+end
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_1D_enum_vara(ncfile)
+
+act_data = nc_varget(ncfile,'primary_cloud',1,3);
+
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+if pfd
+    exp_data = { 'Stratus', 'Clear', 'Cumulonimbus' }';
+else
+    exp_data = { 'Stratus', 'Clear', 'Cumulonimbus' };
+end
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_enhanced_vara_strings(ncfile)
+
+varname = 'ourano';
+exp_data = {'Puck'};
+act_data = nc_varget(ncfile,varname,[0 0],[1 1]);
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+act_data = nc_varget(ncfile,varname,[0 0],[1 2]);
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
+if pfd
+    exp_data = {'Puck','Umbriel'};
+else
+    exp_data = {'Puck','Miranda'};
+end
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
 
 %--------------------------------------------------------------------------
 function test_enhanced_group_and_var_have_same_name(ncfile)
@@ -51,23 +346,23 @@ if any( find(ddiff > eps) )
 end
 
 %--------------------------------------------------------------------------
-function test_bad_missing_value()
+function test_bad_missing_value(testroot)
 
 warning('off','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
 warning('off','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
 warning('off','SNCTOOLS:nc_varget:java:missingValueMismatch');
-nc_varget(['testdata' filesep 'badfillvalue.nc'],'z');
+nc_varget([testroot filesep 'testdata' filesep 'badfillvalue.nc'],'z');
 warning('on','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
 warning('on','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
 warning('on','SNCTOOLS:nc_varget:java:missingValueMismatch');
 
 %--------------------------------------------------------------------------
-function test_bad_fill_value()
+function test_bad_fill_value(testroot)
 
 warning('off','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
 warning('off','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
 warning('off','SNCTOOLS:nc_varget:java:fillValueMismatch');
-nc_varget(['testdata' filesep 'badfillvalue.nc'],'y');
+nc_varget([testroot filesep 'testdata' filesep 'badfillvalue.nc'],'y');
 warning('on','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
 warning('on','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
 warning('on','SNCTOOLS:nc_varget:java:fillValueMismatch');
@@ -312,10 +607,11 @@ function test_missing_value(ncfile)
 actData = nc_varget ( ncfile, 'sst_mv' );
 
 if ~isa(actData,'double')
-    error ( 'short data was not converted to double');
+    warning ( 'short data was not converted to double');
 end
 
 if ~isnan( actData(end) )
+    nc_dump(ncfile, 'sst_mv' )
     error ( 'missing value not converted to nan.\n'  );
 end
 
@@ -328,7 +624,7 @@ function test_missing_value_nan(ncfile)
 actData = nc_varget ( ncfile, 'a' );
 
 if ~isa(actData,'double')
-    error ( 'float data was not converted to double');
+    warning ( 'float data was not converted to double');
 end
 
 if ~isnan( actData(end) )
@@ -350,7 +646,9 @@ switch(v)
         % go ahead
 end
 
+if exist('foo.nc')==2
 delete('foo.nc');
+end
 copyfile(ncfile,'foo.nc');
 ncfile = 'foo.nc';
 
@@ -392,7 +690,7 @@ function test_fill_value_nan(ncfile)
 actData = nc_varget ( ncfile, 'b' );
 
 if ~isa(actData,'double')
-    error ( 'float data was not converted to double');
+    warning ( 'float data was not converted to double');
 end
 
 if ~isnan( actData(end) )
@@ -516,7 +814,7 @@ setpref('SNCTOOLS','USE_STD_HDF4_SCALING',oldpref);
 
 
 %--------------------------------------------------------------------------
-function run_local_tests(ncfile)
+function run_local_tests(ncfile,testroot)
 
 test_1D_variable ( ncfile );
 test_readSingleValueFrom1dVariable ( ncfile );
@@ -537,8 +835,18 @@ test_fill_value_nan_extend(ncfile);
 
 regression_NegSize(ncfile);
 
-test_bad_fill_value;
-test_bad_missing_value;
+test_bad_fill_value(testroot);
+test_bad_missing_value(testroot);
+
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b'}
+        %
+    otherwise
+        test_nc_varget_neg(ncfile);
+end
+            
+
 return
 
 
@@ -565,7 +873,6 @@ return
 
 
 
-return
 
 
 

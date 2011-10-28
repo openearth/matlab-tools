@@ -53,9 +53,11 @@ end
 backend = snc_write_backend(ncfile);
 switch(backend)
 	case 'tmw'
-		nc_varput_tmw(ncfile,varname,data,start,count,stride);
+		nc_varput_tmw(ncfile,varname,data,varargin{:});
 	case 'tmw_hdf4'
 		nc_varput_hdf4(ncfile,varname,data,start,count,stride);
+	case 'tmw_hdf4_2011b'
+		nc_varput_hdf4_2011b(ncfile,varname,data,start,count,stride);
 	case 'mexnc'
 		nc_varput_mexnc(ncfile,varname,data,start,count,stride);
 end

@@ -15,6 +15,10 @@ function test_rename_var ( ncfile )
 % Test 14:  new variable name is ''
 % Test 15:  new variable name is non char
 
+if nargin < 1
+    ncfile = 'foo.nc';
+end
+
 error_condition = 0;
 
 [ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
@@ -82,43 +86,38 @@ end
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 2:  Bad ncid.
-testid = 'Test 2';
 status = mexnc ( 'RENAME_VAR', -20000, xdvarid, 'x2' );
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
+%--------------------------------------------------------------------------
 % Test 3:  Empty set ncid.
-testid = 'Test 3';
-try
-	status = mexnc ( 'RENAME_VAR', [], xdvarid, 'x2' );
+try %#ok<TRYNC>
+	mexnc ( 'RENAME_VAR', [], xdvarid, 'x2' );
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 4:  Non numeric ncid
-testid = 'Test 4';
-try
-	status = mexnc ( 'RENAME_VAR', 'ncid', xdvarid, 'x2' );
+try %#ok<TRYNC>
+	mexnc ( 'RENAME_VAR', 'ncid', xdvarid, 'x2' );
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 

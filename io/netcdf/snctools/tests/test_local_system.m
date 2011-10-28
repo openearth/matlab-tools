@@ -36,7 +36,7 @@ numops = 1000;
 ncfile = cell(numops,1);
 for j = 1:numops
 	if mod(j,10) == 0
-		fprintf('%d...', j);
+		fprintf('\n%d / %d...', j,numops);
 	end
 	x = tempname;
 	ncfile{j} = sprintf('%s%04d.nc', x, j);
@@ -74,8 +74,10 @@ nc_addvar ( ncfile, varstruct );
 clear varstruct;
 varstruct.Name = 'y';
 varstruct.Datatype = 'double';
-varstruct.Dimension = { 'x', 'time' };
-
+varstruct.Dimension = {'time' , 'x'};
+% {'x','time'} would give:
+%??? Error using ==> netcdflib
+%Library failure "NetCDF: NC_UNLIMITED in the wrong index".
 nc_addvar ( ncfile, varstruct );
 
 

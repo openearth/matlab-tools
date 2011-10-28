@@ -91,43 +91,37 @@ end
 
 
 
-
-% Test 2:  Bad ncid.
-testid = 'Test 2';
+%--------------------------------------------------------------------------
+% Bad ncid.
 [name, length, status] = mexnc('INQ_DIM', -20000, xdimid);
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
-
-% Test 3:  Empty set ncid.
-testid = 'Test 3';
+%--------------------------------------------------------------------------
+% Empty set ncid.
 try
 	[name, length, status] = mexnc('INQ_DIM', [], xdimid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed.');
 end
 
 
 
 
 
-
-% Test 4:  Non numeric ncid
-testid = 'Test 4';
+%--------------------------------------------------------------------------
+% Non numeric ncid
 try
 	[name, length, status] = mexnc('INQ_DIM', 'ncid', xdimid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
@@ -309,26 +303,24 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 22:  Bad ncid.
-testid = 'Test 22';
 [name, status] = mexnc('INQ_DIMNAME', -20000, xdimid);
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
+%--------------------------------------------------------------------------
 % Test 23:  Empty set ncid.
-testid = 'Test 23';
 try
 	[name, status] = mexnc('INQ_DIMNAME', [], xdimid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
@@ -336,15 +328,14 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 24:  Non numeric ncid
-testid = 'Test 24';
 try
 	[name, status] = mexnc('INQ_DIMNAME', 'ncid', xdimid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 

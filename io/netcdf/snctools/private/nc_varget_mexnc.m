@@ -8,7 +8,7 @@ preserve_fvd = nc_getpref('PRESERVE_FVD');
 [ncid,status]=mexnc('open',ncfile,'NOWRITE');
 if status ~= 0
     ncerr = mexnc('strerror', status);
-    error ( 'SNCTOOLS:nc_varget:mexnc:open', ncerr );
+    error ( 'snctools:varget:mexnc:open', ncerr );
 end
 
 
@@ -16,12 +16,12 @@ try
     [varid, status]=mexnc('inq_varid',ncid,varname);
     if status ~= 0
         ncerr = mexnc('strerror', status);
-        error ( 'SNCTOOLS:nc_varget:mexnc:inq_varid', ncerr );
+        error ( 'snctools:varget:mexnc:inqVarID', ncerr );
     end
     
     [dud,var_type,nvdims,dimids,dud,status]=mexnc('inq_var',ncid,varid); %#ok<ASGLU>
     if status ~= 0
-        error ( 'SNCTOOLS:nc_varget:mexnc:inq_var', mexnc('strerror',status) );
+        error ( 'snctools:varget:mexnc:inqVar', mexnc('strerror',status) );
     end
     
     
@@ -36,7 +36,7 @@ try
     
     % Check that the start, count, stride parameters have appropriate lengths.
     % Otherwise we get confusing error messages later on.
-    validate_index_vectors(start,count,stride,nvdims);
+    %snc_validate_idx(start,count,stride,nvdims);
     
     % What mexnc operation will we use?
     [funcstr_family, funcstr] = determine_funcstr(var_type,nvdims,start,count,stride);
@@ -68,12 +68,12 @@ try
             [values, status] = mexnc(funcstr,ncid,varid,start,count,stride);
     
         otherwise
-            error ( 'SNCTOOLS:nc_varget:mexnc:unhandledType', ...
+            error ( 'snctools:varget:mexnc:unhandledType', ...
                     'Unhandled function string type ''%s''\n', funcstr_family);
     end
     
     if ( status ~= 0 )
-        error('SNCTOOLS:nc_varget:mexnc:getVarFuncstrFailure', ...
+        error('snctools:varget:mexnc:getVarFuncstrFailure', ...
             mexnc('strerror',status) );
     end
     

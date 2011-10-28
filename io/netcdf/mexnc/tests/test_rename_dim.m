@@ -15,6 +15,10 @@ function test_rename_dim ( ncfile )
 % Test 14:  new dimension name is ''
 % Test 15:  new dimension name is non char
 
+if nargin < 1
+    ncfile = 'foo.nc';
+end
+
 error_condition = 0;
 
 [ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
@@ -74,27 +78,24 @@ end
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 2:  Bad ncid.
-testid = 'Test 2';
 status = mexnc ( 'RENAME_DIM', -20000, xdimid, 'x2' );
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
+%--------------------------------------------------------------------------
 % Test 3:  Empty set ncid.
-testid = 'Test 3';
-try
-	status = mexnc ( 'RENAME_DIM', [], xdimid, 'x2' );
+try %#ok<TRYNC>
+	mexnc ( 'RENAME_DIM', [], xdimid, 'x2' );
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
@@ -102,21 +103,20 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 4:  Non numeric ncid
-testid = 'Test 4';
-try
-	status = mexnc ( 'RENAME_DIM', 'ncid', xdimid, 'x2' );
+try %#ok<TRYNC>
+	mexnc ( 'RENAME_DIM', 'ncid', xdimid, 'x2' );
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 5:  Bad dimid.
 testid = 'Test 2';
 status = mexnc ( 'RENAME_DIM', ncid, -20000, 'x2' );

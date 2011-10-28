@@ -7,6 +7,7 @@ fullfile = fopen(fid);
 fclose(fid);
 
 fileinfo.Filename = hdf4file; % [name ext];
+fileinfo.Datatype = [];       % Never used for HDF4.
 
 sd_id = hdfsd('start',fullfile,'read');
 if sd_id < 0

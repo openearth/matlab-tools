@@ -173,7 +173,7 @@ nc_attput ( ncfile, nc_global, 'new_att2', single(0) );
 x = nc_attget ( ncfile, nc_global, 'new_att2' );
 
 if ( ~strcmp(class(x), 'single' ) )
-	error('%class of retrieved attribute was not single.');
+	error('class of retrieved attribute was not single.');
 end
 if ( double(x) ~= 0 )
 	error ( 'retrieved attribute was not same as written value' );
@@ -320,7 +320,7 @@ return
 function run_negative_tests(ncfile,mode)
 v = version('-release');
 switch(v)
-    case { '14','2006a','2006b','2007a'}
+    case { '14','2006a','2006b','2007a','2007b'}
         fprintf('No negative tests run on %s...  ',v);
     otherwise
 		test_nc_attput_neg(ncfile,mode);

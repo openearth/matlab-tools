@@ -7,7 +7,7 @@ function nc_create_empty ( ncfile, mode )
 %       'noclobber'       - creates netcdf-3 file if it does not already
 %                           exist.
 %       '64bit_offset'    - creates a netcdf-3 file with 64-bit offset
-%       'netcdf4-classic' - creates a netcdf-4 file
+%       'netcdf4-classic' - creates a netcdf-3 file with 64-bit offset
 %
 %   MODE can also be a numeric value that corresponds either to one of the
 %   named netcdf modes or a numeric bitwise-or of them.

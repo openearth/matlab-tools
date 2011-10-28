@@ -4,15 +4,10 @@ function Dataset = nc_getvarinfo ( arg1, arg2 )
 %   VINFO = NC_GETVARINFO(NCFILE,VARNAME) returns a metadata structure 
 %   about the variable VARNAME in the netCDF file NCFILE.
 %
-%   VINFO = NC_GETVARINFO(NCID,VARID) returns a metadata structure VINFO
-%   about the variable whose netCDF variable-id is VARID, and whose parent
-%   file-id is NCID.  The netCDF file is assumed to be open, and in this
-%   case the file will not be closed upon completion.
-%
 %   VINFO will have the following fields:
 %
 %       Name      - A string containing the name of the variable.
-%       Class     - The MATLAB class corresponding to the datatype.
+%       Datatype  - The datatype of the variable.
 %       Unlimited - Either 1 if the variable has an unlimited dimension or 
 %                   0 if not.
 %       Dimension - a cell array with the names of the dimensions upon 
@@ -25,15 +20,19 @@ function Dataset = nc_getvarinfo ( arg1, arg2 )
 %    fields.
 %
 %       Name      - A string containing the name of the attribute.
-%       Class     - The MATLAB class corresponding to the datatype.
+%       Datatype  - The datatype of the variable.
 %       Value     - Value of the attribute.
 %
 %   See also nc_info.
 
+if ~ischar(arg1)
+    warning('SNCTOOLS:NC_GETVARINFO:deprecatedSyntax', ...
+            'Using numeric IDs as arguments to NC_GETVARINFO is a deprecated syntax.');
+end
 
 backend = snc_read_backend(arg1);
 switch(backend)
-	case 'tmw'
+	case {'tmw', 'tmw_enhanced_h5'}
 		Dataset = nc_getvarinfo_tmw(arg1,arg2);
 	case 'java'
 		Dataset = nc_getvarinfo_java(arg1,arg2);

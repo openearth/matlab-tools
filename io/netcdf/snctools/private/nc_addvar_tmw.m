@@ -59,21 +59,63 @@ if ~isempty(varstruct.Chunking)
 end
 
 if (varstruct.Shuffle || varstruct.Deflate)
-		if varstruct.Shuffle
-			shuffle = true;
-		else
-			shuffle = false;
-		end
-		if varstruct.Deflate
-			deflate = true;
-		else
-			deflate = false;
-		end
-    netcdf.defVarDeflate(ncid,varid,shuffle,deflate,varstruct.Deflate);
+   if varstruct.Shuffle
+       shuffle = true;
+   else
+       shuffle = false;
+   end
+   if varstruct.Deflate
+       deflate = true;
+   else
+       deflate = false;
+   end
+   netcdf.defVarDeflate(ncid,varid,shuffle,deflate,varstruct.Deflate);
 end
 
+handle_attributes(ncid,varid,varstruct);
+
+
+%--------------------------------------------------------------------------
+function handle_attributes(ncid,varid,varstruct)
+
+if isempty(varstruct.Attribute)
+    return
+end
+
+% Check for _FillValue.  Netcdf-4 is a special case.
+v = netcdf.inqLibVers();
+idx = find(strcmp({varstruct.Attribute.Name},'_FillValue'));
+if ~isempty(idx) && str2double(v(1)) > 3
+    fmt = netcdf.inqFormat(ncid);
+    if strcmp(fmt,'FORMAT_NETCDF4') || strcmp(fmt,'FORMAT_NETCDF4_CLASSIC')
+        
+        attval = varstruct.Attribute(idx).Value;
+        
+        [name,xtype] = netcdf.inqVar(ncid,varid); %#ok<ASGLU>
+        switch(xtype)
+            case nc_double
+                attval = double(attval);
+            case nc_float
+                attval = single(attval);
+            case nc_int
+                attval = int32(attval);
+            case nc_short
+                attval = int16(attval);
+            case nc_byte
+                attval = int8(attval);
+            case nc_char
+                attval = char(attval);
+        end
+        netcdf.defVarFill(ncid,varid,false,attval);
+        
+        % Remove the attribute name/pair value now.
+        varstruct.Attribute(idx) = [];
+    end
+end
+
+
 % Now just use nc_attput to put in the attributes
-for j = 1:length(varstruct.Attribute)
+for j = 1:numel(varstruct.Attribute)
     attname = varstruct.Attribute(j).Name;
     attval = varstruct.Attribute(j).Value;
     nc_attput_tmw(ncid,varid,attname,attval);

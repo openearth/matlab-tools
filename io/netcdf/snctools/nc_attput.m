@@ -17,12 +17,11 @@ function nc_attput(ncfile,varname,attname,attval)
 %   Example:  create an empty netcdf file and then write a global
 %   attribute.
 %       nc_create_empty('myfile.nc');
-%       attval = sprintf('created on %s', datestr(now));
+%       attval = ['created on %s', datestr(now)];
 %       nc_attput('myfile.nc',nc_global,'history',attval);
 %       nc_dump('myfile.nc');
 %
 %   See also nc_attget.
-%
 
 backend = snc_write_backend(ncfile);
 switch backend
@@ -30,11 +29,11 @@ switch backend
         nc_attput_mex(ncfile,varname,attname,attval);
     case 'tmw_hdf4'
         nc_attput_hdf4(ncfile,varname,attname,attval);
+    case 'tmw_hdf4_2011b'
+        nc_attput_hdf4_2011b(ncfile,varname,attname,attval);
     otherwise
         nc_attput_tmw(ncfile,varname,attname,attval);
 end
 
 
 return
-
-

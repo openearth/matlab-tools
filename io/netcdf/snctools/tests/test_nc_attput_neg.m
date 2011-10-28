@@ -1,16 +1,17 @@
 function test_nc_attput_neg(ncfile,mode)
 
+if strcmp(mode,'hdf4')
+    return
+end
+
 v = version('-release');
 switch(v)
-    case { '14','2006a','2006b','2007a'}
-        fprintf('No negative tests run on %s...  ',v);
-        return
-    case {'2007b','2008a','2008b','2009a','2009b','2010a'}
-		test_write_fill_value ( ncfile,mode );
-        return
+    case {'14','2006a','2006b','2007a','2007b'}
+        fprintf(' negative testing filtered out on %s ', v);
     otherwise
-		test_write_fill_value ( ncfile,mode );
-        return
+        test_bad_datatype(ncfile,mode);
+        test_write_var_not_there(ncfile,mode);
+		test_write_fill_value(ncfile,mode);
 end
 
 return;
@@ -19,14 +20,65 @@ return;
 
 
 
+%--------------------------------------------------------------------------
+function test_bad_datatype(ncfile,mode)
 
+nc_create_empty(ncfile,mode);
+nc_adddim(ncfile,'x',5);
+v.Name = 'y';
+v.Dimension = {'x'};
+nc_addvar(ncfile,v);
+
+try
+	nc_attput(ncfile,-1,'test_double_att',int64(0));
+catch me
+    %me.identifier
+    %me.message
+    switch(me.identifier)
+        case {'MATLAB:imagesci:netcdf:libraryFailure' ...                % R2011b 
+                'snctools:attput:badDatatype', ...                       % netcdf4-classic
+                'MATLAB:netcdf:putAttInt64:ebadtype:invalidDataType' ... % R2011a
+                'MATLAB:netcdf:putAtt:invalidDatatype', ...              % R2009b
+                'snctools:attput:mexnc:unhandledDatatype' }              % R2008a
+            return
+        otherwise
+            rethrow(me);
+    end
+end
+error('failed');
+
+%--------------------------------------------------------------------------
+function test_write_var_not_there(ncfile,mode)
+
+
+nc_create_empty(ncfile,mode);
+nc_adddim(ncfile,'x',5);
+v.Name = 'y';
+v.Dimension = {'x'};
+nc_addvar(ncfile,v);
+
+try
+	nc_attput(ncfile,'z_double','test_double_att',0);
+catch me
+    %me.identifier
+    %me.message
+    switch(me.identifier)
+        case {'MATLAB:imagesci:netcdf:libraryFailure', ...             % 2011b
+                'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ... % 2011a
+                'MATLAB:netcdf:inqVarID:variableNotFound', ...         % 2009b
+                'snctools:attput:mexnc:inq_varid' }
+            return
+        otherwise
+            rethrow(me);
+    end
+end
+error('failed');
 
 %--------------------------------------------------------------------------
 function test_write_fill_value(ncfile,mode)
 % Fill values for netcdf-4 files should only be set before the nc_enddef 
 % has been called.  It's fine for netcdf-3 files, though.
 
-ncfile = 'foo.nc';
 nc_create_empty(ncfile,mode);
 nc_adddim(ncfile,'x',5);
 v.Name = 'y';
@@ -41,8 +93,13 @@ if strcmp(info.Format,'NetCDF-4 Classic')
 	% This should issue an error.
 	try
 		nc_attput(ncfile,'y','_FillValue',-99);
-	catch
-		return;
+	catch me
+        switch(me.identifier)
+            case {'snctools:attput:netcdf4ClassicFillValue'}
+                return;
+            otherwise
+                rethrow(me);
+        end
 	end
 
 	% If we get this far, then we failed to detect the condition.

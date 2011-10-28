@@ -23,6 +23,10 @@ function test_inq_attid ( ncfile )
 % Test 19:  INQ_ATTNAME:  non character att name
 
 
+if nargin < 1
+    ncfile = 'foo.nc';
+end
+
 error_condition = 0;
 
 [ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
@@ -115,58 +119,48 @@ if ( status == 0 )
 	error ( err_msg );
 end
 
-	
+%--------------------------------------------------------------------------	
 % Test 5:  INQ_ATTID:  ncid = []
-testid = 'Test 5';
-try
-	[value,status] = mexnc ( 'INQ_ATTID', [], varid, 'test_double' );
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+try %#ok<TRYNC>
+	mexnc ( 'INQ_ATTID', [], varid, 'test_double' );
+	error('succeeded when it should have failed');
 end
 
-
+%--------------------------------------------------------------------------	
 % Test 6:  INQ_ATTID:  varid = [] 
-testid = 'Test 6';
-try
-	[value,status] = mexnc ( 'INQ_ATTID', ncid, [], 'test_double' );
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+try %#ok<TRYNC>
+	mexnc ( 'INQ_ATTID', ncid, [], 'test_double' );
+	error('succeeded when it should have failed');
 end
 
-
+%--------------------------------------------------------------------------	
 % Test 7:  INQ_ATTID:  name = []
-testid = 'Test 7';
-try
-	[value,status] = mexnc ( 'INQ_ATTID', ncid, varid, [] );
+try %#ok<TRYNC>
+	mexnc ( 'INQ_ATTID', ncid, varid, [] );
 	error_condition = 1;
 end
 if error_condition
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+	error('succeeded when it should have failed');
 end
 
-
+%--------------------------------------------------------------------------	
 % Test 8:  INQ_ATTID:  non numeric ncid
-testid = 'Test 8';
-try
-	[value,status] = mexnc ( 'INQ_ATTID', 'ncid', varid, 'test_double' );
+try %#ok<TRYNC>
+	mexnc ( 'INQ_ATTID', 'ncid', varid, 'test_double' );
 	error_condition = 1;
 end
 if error_condition
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+	error('succeeded when it should have failed');
 end
 
-
+%--------------------------------------------------------------------------	
 % Test 9:  INQ_ATTID:  non numeric varid
-testid = 'Test 9';
-try
-	[value,status] = mexnc ( 'INQ_ATTID', ncid, 'varid', 'test_double' );
+try %#ok<TRYNC>
+	mexnc ( 'INQ_ATTID', ncid, 'varid', 'test_double' );
 	error_condition = 1;
 end
 if error_condition
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+	error('succeeded when it should have failed');
 end
 
 
@@ -186,57 +180,48 @@ end
 testid = 'Test 11';
 [value,status] = mexnc ( 'INQ_ATTNAME', -2000, varid, attnum );
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+	error('succeeded when it should have failed');
 end
 
-	
+%--------------------------------------------------------------------------
 % Test 12:  INQ_ATTNAME:  Invalid varid 
-testid = 'Test 12';
-[value,status] = mexnc ( 'INQ_ATTNAME', ncid, -2000, attnum );
+[value,status] = mexnc ( 'INQ_ATTNAME', ncid, -2000, attnum ); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+	error('succeeded when it should have failed\n');
 end
 
-	
+%--------------------------------------------------------------------------	
 % Test 13:  INQ_ATTNAME:  Invalid attnum. 
-testid = 'Test 13';
-[value,status] = mexnc ( 'INQ_ATTNAME', ncid, varid, -2000 );
+[value,status] = mexnc ( 'INQ_ATTNAME', ncid, varid, -2000 ); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+	error('succeeded when it should have failed\n');
 end
 
-	
+%--------------------------------------------------------------------------	
 % Test 14:  INQ_ATTNAME:  ncid = []
-testid = 'Test 14';
-try
-	[value,status] = mexnc ( 'INQ_ATTNAME', [], varid, attnum );
+try %#ok<TRYNC>
+	mexnc ( 'INQ_ATTNAME', [], varid, attnum );
 	error_condition = 1;
 end
 if error_condition
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+	error('succeeded when it should have failed\n');
 end
 
-
-% Test 15:  INQ_ATTNAME:  varid = [] 
-testid = 'Test 15';
-try
-	[value,status] = mexnc ( 'INQ_ATTNAME', ncid, [], attnum );
+%--------------------------------------------------------------------------
+try %#ok<TRYNC>
+	mexnc ( 'INQ_ATTNAME', ncid, [], attnum );
 	error_condition = 1;
 end
 if error_condition
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
-	error ( err_msg );
+	error('succeeded when it should have failed\n');
 end
 
 
+%--------------------------------------------------------------------------
 % Test 16:  INQ_ATTNAME:  name = []
 testid = 'Test 16';
-try
-	[value,status] = mexnc ( 'INQ_ATTNAME', ncid, varid, [] );
+try %#ok<TRYNC>
+	mexnc ( 'INQ_ATTNAME', ncid, varid, [] );
 	error_condition = 1;
 end
 if error_condition

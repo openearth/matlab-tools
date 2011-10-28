@@ -52,7 +52,7 @@ if status, error( mexnc ( 'strerror', status ) ), end
 if status, error( mexnc ( 'strerror', status ) ), end
 
 [datatype, len, status] = mexnc('ATTINQ', ncid, varid, 'test_double');
-if status, error(mexnc( 'strerror', status)), end
+if status < 0, error(mexnc( 'strerror', status)), end
 
 if ( datatype ~= 6 )
 	error ( 'returned datatype was not NC_DOUBLE, ATTINQ failed' );

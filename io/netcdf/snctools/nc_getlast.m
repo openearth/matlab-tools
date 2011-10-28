@@ -4,18 +4,6 @@ function values = nc_getlast(ncfile, var, num_datums)
 % DATA = NC_GETLAST(NCFILE,VARNAME,NUM_DATUMS) retrieves NUM_DATUMS 
 % datums from the netCDF variable VARNAME in the netCDF file NCFILE.
 % If NUM_DATUMS is not supplied, the default value is 1.
-%
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% $Id$
-% $LastChangedDate$
-% $LastChangedRevision$
-% $LastChangedBy$
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 
 if ~ischar(ncfile) 

@@ -26,6 +26,8 @@ switch(backend)
     	nc_adddim_tmw(ncfile,dimname,dimlen);
     case 'tmw_hdf4'
     	nc_adddim_hdf4(ncfile,dimname,dimlen);
+    case 'tmw_hdf4_2011b'
+    	nc_adddim_hdf4_2011b(ncfile,dimname,dimlen);
     case 'mexnc'
     	nc_adddim_mexnc(ncfile,dimname,dimlen);
     otherwise

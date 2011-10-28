@@ -13,7 +13,6 @@ fprintf('know that several preferences have been set.\n');
 
 getpref('SNCTOOLS')
 
-mver = version('-release');
 fprintf('Only the ''PRESERVE_FVD'' preference is important for daily\n');
 fprintf('use of SNCTOOLS.  Check the top-level README for details.  \n');
 fprintf('Bye-bye.\n');
@@ -34,6 +33,7 @@ warning('on', 'SNCTOOLS:nc_datatype_string:deprecated' );
 warning('on', 'SNCTOOLS:nc_diff:deprecated' );
 warning('on', 'SNCTOOLS:nc_getall:dangerous' );
 warning('on', 'SNCTOOLS:snc2mat:deprecated' );
+warning('on', 'SNCTOOLS:NC_GETVARINFO:deprecatedSyntax');
         
 
 
@@ -77,6 +77,7 @@ warning('off', 'SNCTOOLS:nc_datatype_string:deprecated' );
 warning('off', 'SNCTOOLS:nc_diff:deprecated' );
 warning('off', 'SNCTOOLS:nc_getall:dangerous' );
 warning('off', 'SNCTOOLS:snc2mat:deprecated' );
+warning('off', 'SNCTOOLS:NC_GETVARINFO:deprecatedSyntax');
 
 
 
@@ -89,7 +90,6 @@ switch(v)
     case {'14','2006a','2006b','2007a','2007b','2008a'}
 		try
 		    v = mexnc('inq_libvers');
-
 			%  mexnc is available, so do not use java
             fprintf('\tjava netcdf-3 testing filtered out on ');
             fprintf('configurations where mexnc is available.\n ');
@@ -129,9 +129,10 @@ v = version('-release');
 switch(v)
     case { '14','2006a','2006b','2007a','2007b','2008a'}
         if strcmp(computer,'PCWIN64')
-            fprintf('\tmexnc testing filtered out on PCWIN64 on release %s.\n', v);
+            fprintf('\tmexnc not supported on PCWIN64, release %s.\n', v);
             return;
         end
+
 		try
 		    v = mexnc('inq_libvers');
 		catch
@@ -140,6 +141,10 @@ switch(v)
 		end
         run_nc3_read_tests;
         run_nc3_write_tests;
+        if v(1) == '4'
+            run_nc4_read_tests;
+            run_nc4_write_tests;
+        end
         
     otherwise
         fprintf('\tmexnc testing filtered out on release %s.\n', v);
@@ -185,11 +190,11 @@ return
 function run_nc3_write_tests()
 
 test_nc_adddim;
-test_nc_addhist;
-test_nc_addnewrecs;
-test_nc_varput;
-test_nc_addvar(nc_clobber_mode);
 test_nc_attput;
+test_nc_addhist;
+test_nc_varput;
+test_nc_addnewrecs;
+test_nc_addvar(nc_clobber_mode);
 test_nc_create_empty;
 test_nc_varrename;
 test_nc_addrecs(nc_clobber_mode);
@@ -200,11 +205,11 @@ function run_nc4_write_tests()
 
 mode = 'netcdf4-classic';
 test_nc_adddim(mode);
-test_nc_addhist(mode);
-test_nc_addnewrecs(mode);
-test_nc_varput(mode);
-test_nc_addvar(mode);
 test_nc_attput(mode);
+test_nc_addhist(mode);
+test_nc_varput(mode);
+test_nc_addnewrecs(mode);
+test_nc_addvar(mode);
 test_nc_create_empty(mode);
 test_nc_varrename(mode);
 test_nc_addrecs(mode);
@@ -216,6 +221,7 @@ function run_nc3_read_tests()
 fprintf('\tTesting netcdf-3...\n');
 
 test_nc_attget;
+test_nc_varget;
 test_nc_datatype_string;
 test_nc_iscoordvar;
 test_nc_isunlimitedvar;
@@ -225,10 +231,9 @@ test_nc_varsize;
 test_nc_getvarinfo;
 test_nc_getbuffer;
 test_nc_info;
-test_nc_varget;
 test_nc_getdiminfo;
 test_snc2mat;
-test_nc_getall;
+%test_nc_getall;
 test_nc_dump;
 
 %--------------------------------------------------------------------------
@@ -239,6 +244,7 @@ mode = 'netcdf4-classic';
 fprintf('\tTesting %s..\n',mode);
 
 test_nc_attget(mode);
+test_nc_varget(mode);
 test_nc_datatype_string;
 test_nc_iscoordvar(mode);
 test_nc_isunlimitedvar(mode);
@@ -249,7 +255,6 @@ test_nc_varsize(mode);
 test_nc_getvarinfo(mode);
 test_nc_getbuffer(mode);
 test_nc_info(mode);
-test_nc_varget(mode);
 test_nc_getdiminfo(mode);
 
 % Only do this on 10b for the moment.
@@ -266,6 +271,8 @@ function run_nc4_enhanced_read_tests()
 mode = 'netcdf4-enhanced';
 fprintf('\tTesting %s...\n',mode);
 test_nc_varget(mode);
+test_nc_info(mode);
+test_nc_attget(mode);
 
 
 %--------------------------------------------------------------------------
@@ -346,7 +353,7 @@ if ~(getpref('SNCTOOLS','TEST_REMOTE',false) && getpref('SNCTOOLS','TEST_OPENDAP
     return
 end
 
-test_nc_dump('opendap');
+test_nc_info('opendap');
 test_nc_varget('opendap');
 
 % If we are using mexnc or if the release is 8b or higher, run this

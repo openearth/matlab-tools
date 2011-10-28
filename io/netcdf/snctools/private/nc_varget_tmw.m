@@ -1,4 +1,4 @@
-function values = nc_varget_tmw(ncfile,varname,start,count,stride)
+function values = nc_varget_tmw(ncfile,varname,varargin)
 
 ncid=netcdf.open(ncfile,'NOWRITE');
 
@@ -22,10 +22,17 @@ if lv(1) == '4'
 end
 
 try
-    values = nc_varget_tmw_group(gid,local_varname,start,count,stride);
+    values = nc_varget_tmw_group(gid,local_varname,varargin{:});
 catch me
     netcdf.close(ncid);
-    rethrow(me);
+    switch(me.identifier)
+        case {'MATLAB:imagesci:netcdf:unrecognizedVarDatatype'}
+            values = h5read(ncfile,['/' varname],varargin{:});
+        otherwise
+            values = nc_varget_java(ncfile,varname,varargin{:});
+    end
+    return
+
 end
 
 netcdf.close(ncid);
@@ -33,7 +40,7 @@ netcdf.close(ncid);
 
 
 %--------------------------------------------------------------------------
-function values = nc_varget_tmw_group(ncid,varname,start,count,stride)
+function values = nc_varget_tmw_group(ncid,varname,varargin)
 
 % The assumption is that ncid is ID for the group (possibly the root group)
 % containing the named variable, which had better not have a slash in the
@@ -43,13 +50,24 @@ function values = nc_varget_tmw_group(ncid,varname,start,count,stride)
 preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 
-
-
 varid=netcdf.inqVarID(ncid,varname);
-[dud,var_type,dimids]=netcdf.inqVar(ncid,varid); %#ok<ASGLU>
+[dud,xtype,dimids]=netcdf.inqVar(ncid,varid); %#ok<ASGLU>
 nvdims = numel(dimids);
 
 the_var_size = determine_varsize_tmw(ncid,dimids,nvdims,preserve_fvd);
+
+switch(nargin)
+    case 2
+        start = zeros(1,nvdims);
+        count = the_var_size;
+        stride = ones(1,nvdims);
+    case 4
+        stride = ones(1,nvdims);
+    otherwise
+        error('SNCTOOLS:wrongNumberOfInputs','Wrong number of inputs.');
+end
+
+
 
 % R2008b expects to preserve the fastest varying dimension, so if the
 % user didn't want that, we have to reverse the indices.
@@ -62,7 +80,7 @@ end
 
 % Check that the start, count, stride parameters have appropriate
 % lengths.  Otherwise we get confusing error messages later on.
-validate_index_vectors(start,count,stride,nvdims);
+snc_validate_idx(start,count,stride,nvdims);
 
 
 % If the user had set non-positive numbers in "count", then we replace
@@ -79,11 +97,11 @@ end
 % we will retrieve the data as double precision.
 use_missing_value  = false;
 has_scaling        = false;
-use_fill_value     = false;
-retrieve_as_double = false;
+use_fill_value     = true; % make this a setpref option to have consistency with test_nc_varget>test_missing_value
+retrieve_as_double = true; % make this a setpref option to have consistency with test_nc_varget>test_missing_value
 try
     att_type = netcdf.inqAtt(ncid, varid, '_FillValue' );
-    if (att_type == var_type) | isnan(netcdf.getAtt(ncid, varid, '_FillValue' ))
+    if (att_type == var_type) % | isnan(netcdf.getAtt(ncid, varid, '_FillValue' ))
         use_fill_value = true;
         retrieve_as_double = true;
     else
@@ -97,7 +115,7 @@ end
 try
     att_type = netcdf.inqAtt(ncid, varid, 'missing_value' );
     if ~use_fill_value
-        if (att_type == var_type) | isnan(netcdf.getAtt(ncid, varid, 'missing_value' ))
+        if (att_type == var_type) % | isnan(netcdf.getAtt(ncid, varid, 'missing_value' ))
             % fill value trumps missing values
             use_missing_value = true;
             retrieve_as_double = true;
@@ -108,6 +126,7 @@ try
         end
     end
 catch %#ok<CTCH>
+    %
 end
 
 try
@@ -115,6 +134,7 @@ try
     has_scaling = true;
     retrieve_as_double = true;
 catch %#ok<CTCH>
+    %
 end
 
 try
@@ -122,10 +142,11 @@ try
     has_scaling = true;
     retrieve_as_double = true;
 catch %#ok<CTCH>
+    %
 end
 
 % NC_CHAR can never be retrieved as numeric.
-if ( var_type == nc_char)
+if ( xtype == nc_char)
     retrieve_as_double = false;
 end
 
@@ -162,10 +183,10 @@ end
 
 
 if use_fill_value
-    values = handle_fill_value_tmw(ncid,varid,var_type,values);
+    values = handle_fill_value_tmw(ncid,varid,xtype,values);
 end
 if use_missing_value
-    values = handle_missing_value_tmw(ncid,varid,var_type,values);
+    values = handle_missing_value_tmw(ncid,varid,xtype,values);
 end
 if has_scaling
     values = handle_scaling_tmw(ncid,varid,values);

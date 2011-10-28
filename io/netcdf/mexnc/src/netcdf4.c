@@ -177,6 +177,132 @@ void handle_nc_def_var_chunking
 
 
 
+/***********************************************************************
+ *
+ * HANDLE_NC_INQ_FORMAT:
+ *
+ * EXTERNL int
+ * nc_inq_format(int ncid, int *formatp);
+ **********************************************************************/
+void handle_nc_inq_format 
+( 
+    int            nlhs, 
+    mxArray       *plhs[], 
+    int            nrhs, 
+    const mxArray *prhs[], 
+    op            *nc_op 
+) 
+{
+
+    int ncid, format;
+	
+    /* 
+     * Return status from netcdf operation.  
+     * */
+    int      status;
+
+
+    /*
+     * Make sure that the inputs are the right type.
+     * */
+    check_numeric_argument_type ( prhs, nc_op->opname, 1 );
+
+	status = nc_inq_format(ncid,&format);
+    switch(format) {
+        case NC_FORMAT_CLASSIC:
+			plhs[0] = mxCreateString ( "FORMAT_CLASSIC" );
+            break;
+
+        case NC_FORMAT_64BIT:
+			plhs[0] = mxCreateString ( "FORMAT_64BIT" );
+            break;
+
+        case NC_FORMAT_NETCDF4:
+			plhs[0] = mxCreateString ( "FORMAT_NETCDF4" );
+            break;
+
+        case NC_FORMAT_NETCDF4_CLASSIC:
+			plhs[0] = mxCreateString ( "FORMAT_NETCDF4_CLASSIC" );
+            break;
+
+    }
+    plhs[1] = mexncCreateDoubleScalar ( status );
+
+
+    return;
+
+}
+
+
+
+
+
+
+/***********************************************************************
+ *
+ * HANDLE_NC_DEF_VAR_FILL:
+ *
+ * EXTERNL int
+ * nc_def_var_fill(int ncid, int varid, int no_fill, const void *fill_value);
+ **********************************************************************/
+void handle_nc_def_var_fill 
+( 
+    int            nlhs, 
+    mxArray       *plhs[], 
+    int            nrhs, 
+    const mxArray *prhs[], 
+    op            *nc_op 
+) 
+{
+
+    int ncid, varid, no_fill;
+    void *fill_value;
+	
+
+    /*
+     * Pointer shortcut to matrix data.
+     * */
+    double *pr;
+
+
+    /* 
+     * Return status from netcdf operation.  
+     * */
+    int      status;
+
+
+    /*
+     * Make sure that the inputs are the right type.
+     * */
+    check_numeric_argument_type ( prhs, nc_op->opname, 1 );
+    check_numeric_argument_type ( prhs, nc_op->opname, 2 );
+    check_numeric_argument_type ( prhs, nc_op->opname, 3 );
+    check_numeric_argument_type ( prhs, nc_op->opname, 4 );
+
+    
+    
+    pr = mxGetData ( prhs[1] );
+    ncid = (int)(pr[0]);
+    pr = mxGetData ( prhs[2] );
+    varid = (int)(pr[0]);
+    pr = mxGetData ( prhs[3] );
+    no_fill = (int)(pr[0]);
+
+    fill_value = mxGetData(prhs[4]);
+
+	status = nc_def_var_fill(ncid,varid,no_fill,fill_value);
+    plhs[0] = mexncCreateDoubleScalar ( status );
+
+
+    return;
+
+}
+
+
+
+
+
+
 
 /***********************************************************************
  *
@@ -302,6 +428,10 @@ void handle_nc_inq_var_chunking
 	 * */
 	int ndims;
 
+	/*
+	 * File format.  
+	 * */
+	int format;
 
     /*
      * Make sure that the inputs are the right type.
@@ -313,6 +443,26 @@ void handle_nc_inq_var_chunking
     ncid = (int)(pr[0]);
     pr = mxGetData ( prhs[2] );
     varid = (int)(pr[0]);
+
+	status = nc_inq_format(ncid,&format);
+	if ( status != NC_NOERR ) {
+        sprintf ( error_message, 
+                 "Internal call to nc_inq_format failed, operation \"%s\", line %d file \"%s\"\n", 
+                  nc_op->opname, __LINE__, __FILE__ );
+        mexErrMsgTxt ( error_message );
+        return;
+	}
+
+	switch(format){
+		case NC_FORMAT_CLASSIC:
+		case NC_FORMAT_64BIT:
+			plhs[0] = mxCreateString ( "contiguous" );
+			plhs[1] = mxCreateNumericArray(0,0, mxDOUBLE_CLASS, mxREAL );
+			plhs[2] = mxCreateNumericArray(0,0, mxDOUBLE_CLASS, mxREAL );
+			return;
+	}
+
+
 
 	status = nc_inq_varndims(ncid,varid,&ndims);
 	if ( status != NC_NOERR ) {
@@ -379,6 +529,7 @@ void handle_nc_inq_var_deflate
     int shuffle;
     int deflate;
     int deflate_level;
+    int format;
 	
 
     /*
@@ -402,6 +553,17 @@ void handle_nc_inq_var_deflate
     ncid = (int)(pr[0]);
     pr = mxGetData ( prhs[2] );
     varid = (int)(pr[0]);
+
+	switch(format){
+		case NC_FORMAT_CLASSIC:
+		case NC_FORMAT_64BIT:
+    		plhs[0] = mxCreateDoubleScalar(0);
+		    plhs[1] = mxCreateDoubleScalar(0);
+		    plhs[2] = mxCreateDoubleScalar(0);
+    		plhs[3] = mxCreateDoubleScalar(0);
+			return;
+	}
+
 
     status = nc_inq_var_deflate(ncid,varid,&shuffle,&deflate,&deflate_level);
     plhs[0] = mxCreateDoubleScalar(shuffle);

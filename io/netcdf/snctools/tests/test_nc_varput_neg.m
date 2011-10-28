@@ -40,11 +40,9 @@ function run_generic_tests(input_ncfile)
 ncfile = 'foo.nc';
 copyfile(input_ncfile,ncfile);
 
-
-
-test_write_1D_size_mismatch ( ncfile );
-test_write_1D_bad_stride ( ncfile );
-
+test_write_1D_size_mismatch(ncfile);
+test_write_1D_bad_stride(ncfile);
+test_write_1D_rank_mismatch(ncfile);
 
 test_write_2D_strided_bad_start ( ncfile );
 test_write_2D_chunk_bad_count ( ncfile );
@@ -96,6 +94,39 @@ catch me
 end
 error('nc_varput succeeded when it should not have.');
 
+
+
+
+
+
+
+
+%--------------------------------------------------------------------------
+function test_write_1D_rank_mismatch ( ncfile )
+
+global ignore_eids
+
+input_data = [0 0; 1 1];
+try
+    nc_varput ( ncfile, 'test_1D', input_data, [0 0], [2 2] );
+catch me
+    if ignore_eids
+        return
+    end
+    switch(me.identifier)
+        case { 'MATLAB:netcdf:putVara:dataSizeMismatch', ...
+                'snctools:varput:badIndexing', ...
+                'SNCTOOLS:NC_VARPUT:MEXNC:putVara:dataSizeMismatch', ...
+                'SNCTOOLS:varput:hdf4:writedataFailed'}
+            return
+        otherwise
+            rethrow(me);
+    end
+end        
+
+error('nc_varput succeeded when it should not have.');
+
+return
 
 
 

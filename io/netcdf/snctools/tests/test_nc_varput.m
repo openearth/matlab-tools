@@ -1,56 +1,4 @@
 function test_nc_varput(mode)
-% TEST_NC_VARPUT:
-%
-%
-% Generic Tests, should all fail gracefully.
-% 1:  pass 0 arguments into nc_varput.
-% 2:  pass 1 arguments into nc_varput.
-% 3:  pass 2 arguments into nc_varput.
-% 4:  bad filename into nc_varput.
-% 5:  bad varname into nc_varput.
-% 6:  try to write a 2D matrix to a singleton
-% 7:  try to write a 2D matrix to a 2D var using 'put_var', but having the 
-%     wrong size
-% 8:  try to write a 2D matrix to a 2D var using 'put_vara', 
-%            but having the wrong size
-% Test 009:  try to write a 2D matrix to a 2D var using 'put_vars', 
-%            but having the wrong size
-
-%            
-%            
-%
-% put_var1
-% write to a singleton variable and read it back.
-%
-% write to a 1D variable with just a start
-% write to a 1D variable with a bad count
-% write to a 1D variable with a good count
-% write to a 1D variable with a bad stride
-% write to a 1D variable with a good stride.
-%
-% write 1 datum to a singleton variable, bad start.  Should fail.
-% write 1 datum to a singleton variable, bad count.  Should fail.
-% write 1 datum to a singleton variable, give a stride.  Should fail.
-%
-% put_var
-% using put_var, write all the data to a 2D dataset.
-% using put_vara, write a chunk of the data to a 2D dataset.
-% using put_vara, write a chunk of data to a 2D dataset.
-% using put_vars, write a chunk of data to a 2D dataset.
-% write too much to a 2D dataset (using put_var).  Should fail.
-% write too little to a 2D dataset (using put_var).  Should fail.
-% use put_vara, write with a bad offset.  Should fail.
-% use put_vars, write with a bad start.  Should fail.
-% use put_vara, write with a bad count.  Should fail.
-% use put_vars, write with a bad stride.  Should fail.
-%
-% test reading with scale factors, add offsets.
-% test writing with scale factors, add offsets.
-% test reading with scale factor, no add offset.
-% test writing/reading with _FillValue
-% test reading with missing_value
-% test reading with floating point scale factor
-% test with _FillValue and missing_value
 
 if nargin < 1
 	mode = nc_clobber_mode;
@@ -250,7 +198,7 @@ function test_write_1D_one_element ( ncfile )
 
 
 input_data = 3.14159;
-nc_varput ( ncfile, 'test_1D', input_data, 8 );
+nc_varput ( ncfile, 'test_1D', input_data, 4 );
 
 
 

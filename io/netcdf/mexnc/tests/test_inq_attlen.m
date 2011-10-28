@@ -67,7 +67,7 @@ if attlen ~= 2
 end
 
 
-%
+%--------------------------------------------------------------------------
 % Test 2:  bad ncid
 testid = 'Test 2';
 [attlen, status] = mexnc ( 'inq_attlen', -2000, varid, 'test_double' );
@@ -85,7 +85,7 @@ try
 	error_condition = 1;
 end
 if ( error_condition == 1 )
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid, ncerr );
+	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
 	error ( err_msg );
 end
 
@@ -97,7 +97,7 @@ try
 	error_condition = 1;
 end
 if ( error_condition == 1 )
-	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid, ncerr );
+	err_msg = sprintf ( '%s:  %s:  succeeded when it should have failed\n', mfilename, testid);
 	error ( err_msg );
 end
 

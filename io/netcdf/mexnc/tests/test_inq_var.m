@@ -49,7 +49,10 @@ function test_inq_var ( ncfile )
 
 error_condition = 0;
 
-%
+if nargin < 1
+    ncfile = 'foo.nc';
+end
+
 % Create a netcdf file with
 [ncid, status] = mexnc ( 'create', ncfile, nc_clobber_mode );
 if ( status ~= 0 )
@@ -236,26 +239,24 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 12:  Bad ncid.
-testid = 'Test 12';
-[name, status] = mexnc('INQ_VARNAME', -20000, xdvarid);
+[name, status] = mexnc('INQ_VARNAME', -20000, xdvarid); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
+%--------------------------------------------------------------------------
 % Test 13:  Empty set ncid.
-testid = 'Test 13';
-try
-	[name, status] = mexnc('INQ_VARNAME', [], xdvarid);
+try %#ok<TRYNC>
+	name = mexnc('INQ_VARNAME', [], xdvarid); %#ok<NASGU>
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
@@ -263,21 +264,21 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 14:  Non numeric ncid
-testid = 'Test 14';
-try
-	[name, status] = mexnc('INQ_VARNAME', 'ncid', xdvarid);
+
+try %#ok<TRYNC>
+	name = mexnc('INQ_VARNAME', 'ncid', xdvarid); %#ok<NASGU>
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 15:  Bad varid.
 testid = 'Test 15';
 [name, status] = mexnc('INQ_VARNAME', ncid, -20000);
@@ -335,26 +336,24 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 22:  Bad ncid.
-testid = 'Test 22';
-[datatype, status] = mexnc('INQ_VARTYPE', -20000, xdvarid);
+[datatype, status] = mexnc('INQ_VARTYPE', -20000, xdvarid); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
+%--------------------------------------------------------------------------
 % Test 23:  Empty set ncid.
-testid = 'Test 23';
-try
-	[datatype, status] = mexnc('INQ_VARTYPE', [], xdvarid);
+try %#ok<TRYNC>
+	mexnc('INQ_VARTYPE', [], xdvarid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
@@ -362,27 +361,25 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 24:  Non numeric ncid
-testid = 'Test 24';
-try
-	[datatype, status] = mexnc('INQ_VARTYPE', 'ncid', xdvarid);
+try %#ok<TRYNC>
+	mexnc('INQ_VARTYPE', 'ncid', xdvarid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
 
+%--------------------------------------------------------------------------
 % Test 25:  Bad varid.
-testid = 'Test 25';
-[datatype, status] = mexnc('INQ_VARTYPE', ncid, -20000);
+[datatype, status] = mexnc('INQ_VARTYPE', ncid, -20000); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
@@ -435,26 +432,23 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 32:  Bad ncid.
-testid = 'Test 32';
-[ndims, status] = mexnc('INQ_VARNDIMS', -20000, xdvarid);
+[ndims, status] = mexnc('INQ_VARNDIMS', -20000, xdvarid); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 33:  Empty set ncid.
-testid = 'Test 33';
-try
-	[ndims, status] = mexnc('INQ_VARNDIMS', [], xdvarid);
+try %#ok<TRYNC>
+	mexnc('INQ_VARNDIMS', [], xdvarid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
@@ -462,27 +456,25 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 34:  Non numeric ncid
-testid = 'Test 34';
-try
-	[ndims, status] = mexnc('INQ_VARNDIMS', 'ncid', xdvarid);
+try %#ok<TRYNC>
+	mexnc('INQ_VARNDIMS', 'ncid', xdvarid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
 
+%--------------------------------------------------------------------------
 % Test 35:  Bad varid.
-testid = 'Test 35';
-[ndims, status] = mexnc('INQ_VARNDIMS', ncid, -20000);
+[ndims, status] = mexnc('INQ_VARNDIMS', ncid, -20000); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
@@ -535,54 +527,48 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 42:  Bad ncid.
-testid = 'Test 42';
-[dimids, status] = mexnc('INQ_VARDIMID', -20000, xdvarid);
+[dimids, status] = mexnc('INQ_VARDIMID', -20000, xdvarid); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 43:  Empty set ncid.
-testid = 'Test 43';
-try
-	[dimids, status] = mexnc('INQ_VARDIMID', [], xdvarid);
+try %#ok<TRYNC>
+	mexnc('INQ_VARDIMID', [], xdvarid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 44:  Non numeric ncid
-testid = 'Test 44';
-try
-	[dimids, status] = mexnc('INQ_VARDIMID', 'ncid', xdvarid);
+try %#ok<TRYNC>
+	mexnc('INQ_VARDIMID', 'ncid', xdvarid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
 
+%--------------------------------------------------------------------------
 % Test 45:  Bad varid.
-testid = 'Test 45';
-[dimids, status] = mexnc('INQ_VARDIMID', ncid, -20000);
+[dimids, status] = mexnc('INQ_VARDIMID', ncid, -20000); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
@@ -635,53 +621,47 @@ end
 
 
 
+%--------------------------------------------------------------------------
 % Test 52:  Bad ncid.
-testid = 'Test 52';
-[varnatts, status] = mexnc('INQ_VARNATTS', -20000, xdvarid);
+[varnatts, status] = mexnc('INQ_VARNATTS', -20000, xdvarid); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed\n');
 end
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 53:  Empty set ncid.
-testid = 'Test 53';
-try
-	[varnatts, status] = mexnc('INQ_VARNATTS', [], xdvarid);
+try %#ok<TRYNC>
+	mexnc('INQ_VARNATTS', [], xdvarid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 54:  Non numeric ncid
-testid = 'Test 54';
-try
-	[varnatts, status] = mexnc('INQ_VARNATTS', 'ncid', xdvarid);
+try %#ok<TRYNC>
+	mexnc('INQ_VARNATTS', 'ncid', xdvarid);
 	error_condition = 1;
 end
 if error_condition == 1
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
-	error ( err_msg );
+	error('Succeeded when it should have failed');
 end
 
 
 
 
-
+%--------------------------------------------------------------------------
 % Test 55:  Bad varid.
-testid = 'Test 55';
-[varnatts, status] = mexnc('INQ_VARNATTS', ncid, -20000);
+[varnatts, status] = mexnc('INQ_VARNATTS', ncid, -20000); %#ok<ASGLU>
 if ( status == 0 )
-	err_msg = sprintf ( '%s:  %s:  Succeeded when it should have failed\n', mfilename, testid );
+	error('Succeeded when it should have failed');
 	error ( err_msg );
 end
 

@@ -236,12 +236,36 @@ return
 function test_netcdf4_enhanced(ncfile)
 
 delete(ncfile);
-try
-	[ncid, status] = mexnc ( 'create', ncfile, 'netcdf4' );
-catch
-	return
+v = version('-release');
+switch(v)
+    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a' }
+%       [ncid, status] = mexnc ( 'create', ncfile, 'netcdf4' );
+% 		if status == 0
+% 			error('Should not have succeeded in creating a file in netcdf4 mode.');
+% 		end
+%       mexnc('close',ncid);
+        throw_error = 0;
+        try
+            [ncid, status] = mexnc('create',ncfile,'netcdf4');
+            throw_error = 1;          
+        end
+        if throw_error
+            error('failed');
+        end
+    case {  '2008b', '2009a', '2009b', '2010a'}
+        [ncid, status] = mexnc ( 'create', ncfile, 'netcdf4' );
+		if status == 0
+			error('Should not have succeeded in creating a file in netcdf4 mode.');
+		end
+        mexnc('close',ncid);
+    otherwise
+        % 10b and higher, this should work.
+        [ncid, status] = mexnc ( 'create', ncfile, 'netcdf4' );
+        if status < 0, error('failed'), end
+        mexnc('close',ncid);
 end
-error ( 'Should not have succeeded in creating a file in enhanced mode');
+
+
 
 
 return

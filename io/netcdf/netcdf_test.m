@@ -5,10 +5,14 @@ function OK =  netcdf_test
 
 %%
 disp([mfilename,' test 1'])
-%test_opendap_local_system
+test_snctools
+
+%%
+disp([mfilename,' test 2'])
+test_opendap_local_system
 
 %% java heap space has by default  130,875,392 bytes
-disp([mfilename,' test 2'])
+disp([mfilename,' test 3'])
 f = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
 
 try
@@ -30,7 +34,7 @@ end
    disp('		For increasing java heap space see:')
    disp('		http://www.mathworks.com/support/solutions/en/data/1-18I2C/')
 
-%% SLOW !!
-disp([mfilename,' test 3'])
+%% was SLOW, but not any more after getpref updates !!
+disp([mfilename,' test 4'])
 disp('		please be patient: testing 1000 times')
 test_local_system % load opendap vars, save as local netcdf3, load it again & compare

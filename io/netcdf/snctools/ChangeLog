@@ -1,3 +1,49 @@
+* October 11 2011 John Evans <john.g.evans.ne@gmail.com> -r3801
+- Requalifying on all releases.
+
+* October 9 2011 John Evans <john.g.evans.ne@gmail.com> -r3798
+- Added proper fill value support on mexnc/netcdf-4.
+
+* October 9 2011 John Evans <john.g.evans.ne@gmail.com> -r3792
+- No longer allowing writing of uint16, uint32, uint64, int64 
+- attributes to netcdf-4 classic files on 10a, 11b
+- Splitting 2007b, 2008a mexnc backend from rest.
+
+* September 26 2011 John Evans <john.g.evans.ne@gmail.com> -r3774
+- Fixed java backend bug where not-existing variable condition was
+- not being detected.
+
+* September 26 2011 John Evans <john.g.evans.ne@gmail.com> -r3756
+- Fixed tilda issue for R2008b.
+
+* September 25 2011 John Evans <john.g.evans.ne@gmail.com> -r3750
+- Refactored TMW NC_VARGET backend.
+
+* September 23 2011 John Evans <john.g.evans.ne@gmail.com> -r3745
+- Fixed java char-vs-string issue plaguing NC_INFO.
+
+* September 22 2011 John Evans <john.g.evans.ne@gmail.com> -r3742
+- Restricting said enhanced model datatypes to 2011b, as 2011a 
+- seems to work ok only on maci.
+
+* September 17 2011 John Evans <john.g.evans.ne@gmail.com> -r3737
+- Added support simple enhanced model datatypes, 2011ab only.
+- Added generic 'NetCDF' format field for 10a and below.
+- Fixed HDF4 write backend determination for 11a.
+
+* September 06 2011 John Evans <john.g.evans.ne@gmail.com> -r3701
+- Added HDF4 SD write backend for 2011b.
+
+* August 25 2011 John Evans <john.g.evans.ne@gmail.com> -r3688
+- Fixed R14 issue with strings.
+
+* August 21 2011 John Evans <john.g.evans.ne@gmail.com> -r3683
+- Fixed a testing issue for opendap data.
+
+* August 20 2011 John Evans <john.g.evans.ne@gmail.com> -r3679
+- Support added for reading NC_STRING variables and attributes.
+- Lots of refactoring in private directory, mostly java backend.
+
 * July 25 2011 John Evans <john.g.evans.ne@gmail.com> -r3623
 - Fixed test problem on 10a and below introduced in r3619
 

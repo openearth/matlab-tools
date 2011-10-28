@@ -11,9 +11,9 @@ function nc_dump(file_name, varargin)
 %   with fid = fopen(...) instead of to screen (default fid=1: screen).
 %   NC_DUMP(NCFILE,LOCATION,<'fname'>) prints output to new file 'fname'.
 %
-%   If the preference 'USE_JAVA' is set to true and netcdf-java is on the
-%   javaclasspath, NC_DUMP can also display metadata for GRIB2 files and 
-%   OPeNDAP URLS files as if they were netCDF files.
+%   If netcdf-java is on the java classpath, NC_DUMP can also display 
+%   metadata for GRIB2 files and OPeNDAP URLS files as if they were netCDF 
+%   files.
 %
 %   Setting the preference 'PRESERVE_FVD' to true will compel MATLAB to 
 %   display the dimensions in the opposite order from what the C utility 
@@ -76,7 +76,10 @@ if dump_group_name
 end
 
 dump_dimension_metadata(group, fid );
-dump_variables(group.Dataset,restricted_variable,fid);
+
+dump_datatype_metadata(group,fid);
+
+not_found = dump_variables(group.Dataset,restricted_variable,fid);
 if isempty(restricted_variable)
     if isfield(group,'Name') && ~strcmp(group.Name,'/')
         dump_group_attributes(group,fid,false);
@@ -86,9 +89,12 @@ if isempty(restricted_variable)
 end
 
 
-if isfield(group,'Group') && numel(group.Group) > 0 
-    for j = 1:numel(group.Group)
-        dump_group(group.Group(j),dump_group_name,restricted_variable,fid);
+if not_found || isempty(restricted_variable)
+    
+    if isfield(group,'Group') && numel(group.Group) > 0
+        for j = 1:numel(group.Group)
+            dump_group(group.Group(j),dump_group_name,restricted_variable,fid);
+        end
     end
 end
 
@@ -101,6 +107,73 @@ fprintf('\n');
 
 return
 
+
+%--------------------------------------------------------------------------
+function dump_datatype_metadata(info,fid)
+
+if isempty(info.Datatype)
+    return
+end
+
+ndatatypes = numel(info.Datatype);
+
+fprintf(fid,'datatypes:\n');
+for j = 1:ndatatypes
+    switch(info.Datatype(j).Class)
+        case 'enum'
+            dump_enum_datatype_metadata(info.Datatype(j),fid);
+        case 'opaque'
+            dump_opaque_datatype_metadata(info.Datatype(j),fid);
+        case 'vlen'
+            dump_vlen_datatype_metadata(info.Datatype(j),fid);
+        case 'compound'
+            dump_compound_datatype_metadata(info.Datatype(j), fid);
+        otherwise
+            warning('snctools:unhandledHDF5class', ...
+                    'Unhandled HDF5 class %s.\n', info.Datatype(j).Class);
+    end
+end
+fprintf(fid,'\n');
+
+return
+
+
+%--------------------------------------------------------------------------
+function dump_opaque_datatype_metadata(info,fid)
+
+fprintf(fid,'\topaque(%d) ''%s''\n', info.Size, info.Name);
+
+return
+
+%--------------------------------------------------------------------------
+function dump_vlen_datatype_metadata(info,fid)
+
+fprintf(fid,'\t%s vlen ''%s''\n', info.Type.Type, info.Name);
+
+
+return
+
+%--------------------------------------------------------------------------
+function dump_compound_datatype_metadata(info,fid)
+
+
+fprintf(fid,'\tcompound ''%s''\n', info.Name);
+for j = 1:numel(info.Type.Member)
+    fprintf('\t\t%s %s\n', info.Type.Member(j).Datatype.Type, info.Type.Member(j).Name);
+end
+
+return
+
+%--------------------------------------------------------------------------
+function dump_enum_datatype_metadata(info,fid)
+
+
+fprintf(fid,'\t%s enum ''%s''\n', info.Type.Type, info.Name);
+for j = 1:numel(info.Type.Member)
+    fprintf('\t\t%s = %d\n', info.Type.Member(j).Name, info.Type.Member(j).Value);
+end
+
+return
 
 %--------------------------------------------------------------------------
 function dump_dimension_metadata(info,fid)
@@ -126,7 +199,22 @@ return
 
 
 %--------------------------------------------------------------------------
-function dump_variables(Dataset,restricted_variable,fid)
+function not_found = dump_variables(Dataset,restricted_variable,fid)
+
+% Is it here?
+not_found = true;
+
+for j = 1:numel(Dataset)
+    if ~isempty(restricted_variable)
+        if strcmp(restricted_variable,Dataset(j).Name)
+            not_found = false;
+        end
+    end
+end
+
+if not_found && ~isempty(restricted_variable)
+    return
+end
 
 pfvd = nc_getpref('PRESERVE_FVD');
 
@@ -159,6 +247,9 @@ fprintf (fid,'\n' );
 %--------------------------------------------------------------------------
 function dump_single_variable ( var_metadata , fid )
 
+if isempty(var_metadata.Datatype)
+    var_metadata.Datatype = 'ENHANCED MODEL DATATYPE';
+end
 fprintf(fid,'\t%s ', var_metadata.Datatype);
 
 fprintf(fid,'%s', var_metadata.Name );
@@ -256,8 +347,32 @@ switch ( attribute.Datatype )
     case 'double'
         att_val = sprintf ('%g ', attribute.Value );
         att_type = '';
+    case 'string'
+        att_type = '';
+        % If it's a single cellstr, then treat it like a char array.
+        if iscellstr(attribute.Value) && (numel(attribute.Value) == 1)
+            att_val = sprintf ('"%s" ', attribute.Value{1} );
+        elseif isempty(attribute.Value)
+            att_val = '{}';
+        else
+            att_val = cellstr2str(attribute.Value);
+        end
     otherwise
-        error('unhandled datatype "%s"', attribute.Datatype);
+        if strncmp(attribute.Datatype,'enum',4)
+            att_val = cellstr2str(attribute.Value);
+            att_type = '';
+        elseif strncmp(attribute.Datatype,'vlen',4)
+            att_val = vlenattr2str(attribute);
+            att_type = '';
+        elseif strncmp(attribute.Datatype,'opaque',6)
+            att_val = vlenattr2str(attribute);
+            att_type = '';
+        elseif strncmp(attribute.Datatype,'compound',8)
+            att_val = '';
+            att_type = [attribute.Datatype ' (not displayed)'];
+        else
+            error('unhandled datatype "%s"', attribute.Datatype);
+        end
 end
 
 if ~exist('varname','var')
@@ -269,7 +384,53 @@ else
 end
 
 return
+   
+
+%--------------------------------------------------------------------------
+function strval = compoundattr2str(attr)
+strval = '{';
+fields = fieldnames(attr.Value);
+n = numel(fields);
+for j = 1:n
+    strval = [strval ' ' compound_field_val2str(attr.Value.(fields{j}))];
+end
+strval = [strval '}'];
+
+%--------------------------------------------------------------------------
+function strval = compound_field_val2str(field_value)
+
+if isnumeric(field_value)
+    strval = num2str(field_value);
+else
+    strval = field_value;
+end
+
+%--------------------------------------------------------------------------
+function strval = vlenattr2str(attr)
+strval = '{';
+for j = 1:numel(attr.Value)
+    strval = [strval vlenattval2str(attr.Value{j})];
+end
+strval = [strval '}'];
+
+
+%--------------------------------------------------------------------------
+function strval = vlenattval2str(vlen_val)
+if isnumeric(vlen_val)
+    strval = sprintf('{ %s }', num2str(vlen_val'));
+else
+    warning('not handled');
+end
     
+%--------------------------------------------------------------------------
+function strval = cellstr2str(attval)
+
+strval = ['{''' attval{1} '''' ];
+for j = 2:numel(attval)
+    strval = sprintf('%s, ''%s''', strval, attval{j});
+end
+strval = [strval '}'];
+            
 %--------------------------------------------------------------------------
 function dump_group_attributes(group,fid,is_global)
 

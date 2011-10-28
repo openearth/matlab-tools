@@ -39,19 +39,20 @@ function data = nc_varget(ncfile, varname, varargin )
 
 error(nargchk(2,5,nargin,'struct'));
 
-[start, count, stride] = parse_and_validate_args(ncfile,varname,varargin{:});
-
 retrieval_method = snc_read_backend(ncfile);
 switch(retrieval_method)
 	case 'tmw'
-		data = nc_varget_tmw(ncfile,varname,start,count,stride);
+		data = nc_varget_tmw(ncfile,varname,varargin{:});
 	case 'java'
-		data = nc_varget_java(ncfile,varname,start,count,stride);
+		data = nc_varget_java(ncfile,varname,varargin{:});
 	case 'mexnc'
+        [start,count,stride] = parse_and_validate_args(ncfile,varname,varargin{:});
 		data = nc_varget_mexnc(ncfile,varname,start,count,stride);
     case 'tmw_hdf4'
+        [start,count,stride] = parse_and_validate_args(ncfile,varname,varargin{:});
         data = nc_varget_hdf4(ncfile,varname,start,count,stride);
     case 'tmw_hdf4_2011a'
+        [start,count,stride] = parse_and_validate_args(ncfile,varname,varargin{:});
         data = nc_varget_hdf4_2011a(ncfile,varname,start,count,stride);
 end
 
@@ -90,21 +91,17 @@ switch(class(ncfile))
 	case { 'char', 'ucar.nc2.NetcdfFile', 'ucar.nc2.dods.DODSNetcdfFile' }
 		
 	otherwise
-    	error ( 'SNCTOOLS:NC_VARGET:badInput', ...
+    	error ( 'snctools:varget:badInput', ...
 			'The filename should be character or an already opened netCDF file.' );
 end
 if ~ischar(varname)
-    error ( 'SNCTOOLS:NC_VARGET:badInput', 'the variable name must be character.' );
+    error( 'snctools:vargetbadInput', ...
+        'The variable name must be character.');
 end
 
-if ~isnumeric ( start )
-    error ( 'SNCTOOLS:NC_VARGET:badInput', 'the ''start'' argument must be numeric.' );
-end
-if ~isnumeric ( count )
-    error ( 'SNCTOOLS:NC_VARGET:badInput', 'the ''count'' argument must be numeric.' );
-end
-if ~isnumeric ( stride )
-    error ( 'SNCTOOLS:NC_VARGET:badInput', 'the ''stride'' argument must be numeric.' );
+if ~isnumeric(start) || ~isnumeric(count) || ~isnumeric(stride)
+    error ( 'snctools:varget:badIndexArgument', ...
+        'The index arguments must be numeric.' );
 end
 
 

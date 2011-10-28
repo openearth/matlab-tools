@@ -22,12 +22,12 @@ end
 
 
 %--------------------------------------------------------------------------
-function test_file_does_not_exist ( ncfile )
+function test_file_does_not_exist ( )
 
 % netcdf file does not exist.
 try
 	snc2mat ( 'bad.nc', 'bad.mat' );
-catch %#ok<NASGU>
+catch  %#ok<CTCH>
     %  'MATLAB:netcdf:open:noSuchFile'
     return
 end
@@ -37,12 +37,12 @@ function test_generic_file()
 
 v = version('-release');
 switch(v)
-	case { '14', '2006a', '2006b', '2007a', '2007b', '2008a'}
-		try
-		    v = mexnc('inq_libvers');
-		catch
-			fprintf('\tNo testing on java read-only configuration.\n');
-			return
+    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a'}
+        try
+            mexnc('inq_libvers');
+        catch %#ok<CTCH>
+            fprintf('\tNo testing on java read-only configuration.\n');
+            return
         end
 end
 ncfile= 'foo.nc';

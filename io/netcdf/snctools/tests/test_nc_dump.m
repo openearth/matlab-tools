@@ -31,9 +31,6 @@ switch(mode)
 	case 'grib'
 		run_grib_tests;
 
-	case 'opendap'
-		run_opendap_tests;
-
 end
 
 

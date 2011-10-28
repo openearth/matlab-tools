@@ -85,6 +85,8 @@ if (varstruct.Shuffle || varstruct.Deflate)
     end
 end
 
+handle_attributes(ncid,varid,varstruct);
+
 status = mexnc ( 'enddef', ncid );
 if ( status ~= 0 )
     ncerr = mexnc ( 'strerror', status );
@@ -101,13 +103,59 @@ end
 
 
 
-% Now just use nc_attput to put in the attributes
-for j = 1:length(varstruct.Attribute)
-    attname = varstruct.Attribute(j).Name;
-    attval = varstruct.Attribute(j).Value;
-    nc_attput(ncfile,varstruct.Name,attname,attval);
+%--------------------------------------------------------------------------
+function handle_attributes(ncid,varid,varstruct)
+
+if isempty(varstruct.Attribute)
+    return
+end
+
+% Check for _FillValue.  Netcdf-4 is a special case.
+v = mexnc('inq_libvers');
+idx = find(strcmp({varstruct.Attribute.Name},'_FillValue'));
+if ~isempty(idx) && str2double(v(1)) > 3
+    fmt = mexnc('INQ_FORMAT',ncid);
+    if strcmp(fmt,'FORMAT_NETCDF4') || strcmp(fmt,'FORMAT_NETCDF4_CLASSIC')
+        
+        attval = varstruct.Attribute(idx).Value;
+        
+        [xtype,status] = mexnc('INQ_VARTYPE',ncid,varid);
+        if ( status ~= 0 )
+            ncerr = mexnc ( 'strerror', status );
+            mexnc ( 'close', ncid );
+            error ( 'snctools:addvar:mexnc:inqVarType', ncerr );
+        end
+
+        switch(xtype)
+            case nc_double
+                attval = double(attval);
+            case nc_float
+                attval = single(attval);
+            case nc_int
+                attval = int32(attval);
+            case nc_short
+                attval = int16(attval);
+            case nc_byte
+                attval = int8(attval);
+            case nc_char
+                attval = char(attval);
+        end
+        status = mexnc('def_var_fill',ncid,varid,false,attval);
+        if ( status ~= 0 )
+            ncerr = mexnc ( 'strerror', status );
+            mexnc ( 'close', ncid );
+            error ( 'snctools:addvar:mexnc:defVarFill', ncerr );
+        end
+        
+        % Remove the attribute name/pair value now.
+        varstruct.Attribute(idx) = [];
+    end
 end
 
 
-
-%--------------------------------------------------------------------------
+% Now just use nc_attput to put in the attributes
+for j = 1:numel(varstruct.Attribute)
+    attname = varstruct.Attribute(j).Name;
+    attval = varstruct.Attribute(j).Value;
+    nc_attput_mex(ncid,varid,attname,attval);
+end
