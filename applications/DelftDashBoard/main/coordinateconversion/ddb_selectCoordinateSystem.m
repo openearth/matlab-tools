@@ -1,19 +1,14 @@
-function [CS,type,nr,ok]=ddb_selectCoordinateSystem(CoordinateSystems,EPSG,varargin)
+function [CS,type,nr,ok]=ddb_selectCoordinateSystem(coordinateSystems,EPSG,varargin)
 
 handles.ok=0;
 iboth=0;
-handles.CoordinateSystems=CoordinateSystems;
-nr=0;
+handles.coordinateSystems=coordinateSystems;
 
-type=[];
-
+% Default coordinate systems
 handles.CSproj='Amersfoort / RD New';
 handles.CSgeo ='WGS 84';
-
-handles.iproj=strmatch(lower(handles.CSproj),lower(handles.CoordinateSystems.CoordSysCart),'exact');
-handles.igeo=strmatch(lower(handles.CSgeo),lower(handles.CoordinateSystems.CoordSysGeo),'exact');
-
 csdefaulttype='geographic';
+cstype='both';
 
 for i=1:length(varargin)
     switch lower(varargin{i})
@@ -35,13 +30,22 @@ end
 
 switch lower(cstype)
     case{'geographic'}
-        CoordinateSystemStrings=handles.CoordinateSystems.CoordSysGeo;
+        CoordinateSystemStrings=handles.coordinateSystems.coordSysGeo;
         handles.CSgeo = cs0;
-        ics = handles.igeo;
     case{'projected'}
-        CoordinateSystemStrings=handles.CoordinateSystems.CoordSysCart;
+        CoordinateSystemStrings=handles.coordinateSystems.coordSysCart;
         handles.CSproj= cs0;
-        ics = handles.iproj;
+end
+
+% Find indices of default
+handles.iproj=strmatch(lower(handles.CSproj),lower(handles.coordinateSystems.coordSysCart),'exact');
+handles.igeo=strmatch(lower(handles.CSgeo),lower(handles.coordinateSystems.coordSysGeo),'exact');
+
+switch lower(cstype)
+    case{'geographic'}
+        ics=handles.igeo;
+    case{'projected'}
+        ics=handles.iproj;
 end
 
 handles.Window=MakeNewWindow('Select Coordinate System',[400 480]);
@@ -131,14 +135,14 @@ function radioGeo_CallBack(hObject,eventdata)
 handles=guidata(gcf);
 set(handles.radioProj,'Value',0);
 set(handles.radioGeo,'Value',1);
-set(handles.SelectCS,'String',handles.CoordinateSystems.CoordSysGeo);
+set(handles.SelectCS,'String',handles.coordinateSystems.coordSysGeo);
 set(handles.SelectCS,'Value',handles.igeo);
 
 function radioProj_CallBack(hObject,eventdata)
 handles=guidata(gcf);
 set(handles.radioProj,'Value',1);
 set(handles.radioGeo,'Value',0);
-set(handles.SelectCS,'String',handles.CoordinateSystems.CoordSysCart);
+set(handles.SelectCS,'String',handles.coordinateSystems.coordSysCart);
 set(handles.SelectCS,'Value',handles.iproj);
 
 function SelectCS_CallBack(hObject,eventdata)
