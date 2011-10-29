@@ -14,7 +14,6 @@ end
 toolboxElements=handles.Toolbox(tb).GUI.elements;
 handles.Model(md).GUI.elements.tabs(1).elements=toolboxElements;
 handles.Model(md).GUI.elements.tabs(1).elements=addUIElements(gcf,toolboxElements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);
-
 setHandles(handles);
 
 % Find handle of tab panel and get tab info
