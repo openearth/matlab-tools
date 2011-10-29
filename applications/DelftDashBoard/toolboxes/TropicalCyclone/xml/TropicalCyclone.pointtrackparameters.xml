@@ -1,0 +1,380 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <title>Cyclone Parameters</title>
+  <width>210</width>
+  <height>330</height>
+  <tag>cycloneparameters</tag>
+  <elements>
+  <element>
+    <tag>edittstart</tag>
+    <style>edit</style>
+    <enable>0</enable>
+    <position>90 295 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackT(handles.Toolbox(tb).Input.activeCyclonePoint)</variable>
+    <type>datetime</type>
+    <text>Time</text>
+    <textposition>left</textposition>
+  </element>
+  <element>
+    <tag>selectquadrant</tag>
+    <style>popupmenu</style>
+    <position>90 270 110 20</position>
+    <text>Quadrant</text>
+    <textposition>left</textposition>
+    <enable>1</enable>
+    <variable>handles.Toolbox(tb).Input.activeQuadrant</variable>
+    <type>integer</type>
+    <tooltipstring>Select quadrant</tooltipstring>
+    <list>
+      <texts>
+        <text>North East</text>
+        <text>North West</text>
+        <text>South West</text>
+        <text>South East</text>
+      </texts>
+    </list> 
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.quadrantOption</variable>
+            <value>perquadrant</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element> 
+  <element>
+    <tag>editvmax</tag>
+    <style>edit</style>
+    <position>90 245 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackVMax(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <type>real</type>
+    <text>Vmax (kts)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit maximum wind speed</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>2</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>3</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>4</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>5</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>6</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selectquadrant</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editrmax</tag>
+    <style>edit</style>
+    <position>90 220 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackRMax(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <type>real</type>
+    <text>Rmax (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit radius of maximum wind speed</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>3</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>5</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selectquadrant</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editpdrop</tag>
+    <style>edit</style>
+    <position>90 195 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackPDrop(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <type>real</type>
+    <text>Pdrop (Pa)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>3</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>4</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selectquadrant</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editb</tag>
+    <style>edit</style>
+    <position>90 170 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackB(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <type>real</type>
+    <text>Holland B</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit Holland's B parameter</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selectquadrant</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>edita</tag>
+    <style>edit</style>
+    <position>90 145 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackA(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <type>real</type>
+    <text>Holland A</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit Holland's A parameter</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selectquadrant</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editr35</tag>
+    <style>edit</style>
+    <position>90 120 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackR35(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <type>real</type>
+    <text>R35 (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>2</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selectquadrant</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editr50</tag>
+    <style>edit</style>
+    <position>90 95 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackR50(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <type>real</type>
+    <text>R50 (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>2</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selectquadrant</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editr65</tag>
+    <style>edit</style>
+    <position>90 70 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackR65(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <type>real</type>
+    <text>R65 (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>2</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selectquadrant</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editr100</tag>
+    <style>edit</style>
+    <position>90 45 110 20</position>
+    <variable>handles.Toolbox(tb).Input.trackR100(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <type>real</type>
+    <text>R100 (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.method</variable>
+            <type>integer</type>	              
+            <value>2</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>update</action>
+        <tags>
+          <tag>selectquadrant</tag>
+        </tags>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>pushok</tag>
+    <style>pushbutton</style>
+    <position>150 10 50 20</position>
+    <text>OK</text>
+    <callback>ddb_changeCycloneValue</callback>
+    <option1>pushok</option1>
+  </element>  
+  <element>
+    <tag>pushcancel</tag>
+    <style>pushbutton</style>
+    <position>90 10 50 20</position>
+    <text>Cancel</text>
+    <callback>ddb_changeCycloneValue</callback>
+    <option1>pushcancel</option1>
+  </element>  
+  </elements>
+</root>
