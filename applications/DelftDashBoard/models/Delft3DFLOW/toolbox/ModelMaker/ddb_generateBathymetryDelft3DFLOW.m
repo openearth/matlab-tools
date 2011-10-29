@@ -76,7 +76,11 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     yg(isnan(yg))=0;
     
 %    zz=min(zz,5);
-    zz=min(zz,handles.Toolbox(tb).Input.zMax);
+    isn=isnan(zz);
+    mmtb=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
+
+    zz=min(zz,handles.Toolbox(mmtb).Input.zMax);
+    zz(isn)=NaN;
 
     z=interp2(xx,yy,zz,xg,yg);
 %    z=gridcellaveraging2(xx,yy,zz,xg,yg,dmin,'min');

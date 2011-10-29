@@ -300,7 +300,7 @@ handles.Model(md).Input(id).hisInterval=MDF.flhis(2);
 handles.Model(md).Input(id).comStartTime=handles.Model(md).Input(id).itDate+MDF.flpp(1)/1440;
 handles.Model(md).Input(id).comInterval=MDF.flpp(2);
 handles.Model(md).Input(id).comStopTime=handles.Model(md).Input(id).itDate+MDF.flpp(3)/1440;
-handles.Model(md).Input(id).restartInterval=MDF.flrst;
+handles.Model(md).Input(id).rstInterval=MDF.flrst;
 
 %% Meteo data on equidistant grid
 handles.Model(md).Input(id).ampFile=MDF.filwp;
@@ -308,6 +308,10 @@ handles.Model(md).Input(id).amuFile=MDF.filwu;
 handles.Model(md).Input(id).amvFile=MDF.filwv;
 handles.Model(md).Input(id).wndgrd=MDF.wndgrd;
 handles.Model(md).Input(id).MNmaxw=MDF.mnmaxw;
+
+if ~isempty(handles.Model(md).Input(id).amuFile)
+    handles.Model(md).Input(id).windType='equidistant';
+end
 
 %% Z-layers
 if isfield(MDF,'zmodel')

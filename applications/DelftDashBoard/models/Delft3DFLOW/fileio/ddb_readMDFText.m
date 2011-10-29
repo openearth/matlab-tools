@@ -3,7 +3,7 @@ function MDF=ddb_readMDFText(filename)
 MDF=ddb_initializeMDF;
 
 fid=fopen(filename);
-
+    
 k=0;
 n=1;
 for i=1:1000

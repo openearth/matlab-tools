@@ -400,7 +400,7 @@ if Flow.airOut
 end
 
 if Flow.heatOut
-    MDF.heaOut='Y';
+    MDF.HeaOut='Y';
 end
 
 %% Z layers
