@@ -19,6 +19,7 @@ markerSize=4;
 maxPoints=10000;
 txt=[];
 callback=[];
+doubleclickcallback=[];
 closed=0;
 userdata=[];
 
@@ -61,6 +62,8 @@ for i=1:length(varargin)
                 windowbuttonupdownfcn=varargin{i+1};
             case{'windowbuttonmotionfcn'}
                 windowbuttonmotionfcn=varargin{i+1};
+            case{'doubleclickcallback'}
+                doubleclickcallback=varargin{i+1};
         end
     end
 end
@@ -91,6 +94,7 @@ switch lower(opt)
         setappdata(h,'axes',ax);
         setappdata(h,'closed',closed);
         setappdata(h,'callback',callback);
+        setappdata(h,'doubleclickcallback',doubleclickcallback);
         setappdata(h,'tag',tag);        
         setappdata(h,'color',lineColor);
         setappdata(h,'width',lineWidth);
@@ -110,6 +114,7 @@ switch lower(opt)
     case{'plot'}
         h=plot3(0,0,9000);
         setappdata(h,'callback',callback);
+        setappdata(h,'doubleclickcallback',doubleclickcallback);
         set(h,'userdata',userdata);
         setappdata(h,'tag',tag);        
         setappdata(h,'x',x);
@@ -166,6 +171,7 @@ markerSize=getappdata(h,'markersize');
 maxPoints=getappdata(h,'maxpoints');
 txt=getappdata(h,'text');
 callback=getappdata(h,'callback');
+doubleclickcallback=getappdata(h,'doubleclickcallback');
 ax=getappdata(h,'axes');
 closed=getappdata(h,'closed');
 userdata=get(h,'userdata');
@@ -194,6 +200,7 @@ if ~isempty(x)
     setappdata(h,'text',txt);
     set(h,'userdata',userdata);
     setappdata(h,'callback',callback);
+    setappdata(h,'doubleclickcallback',doubleclickcallback);
     setappdata(h,'x',x);
     setappdata(h,'y',y);
     setappdata(h,'tag',tag);
@@ -319,8 +326,20 @@ ddb_updateCoordinateText('crosshair');
 
 %%
 function moveVertex(imagefig, varargins)
-set(gcf, 'windowbuttonmotionfcn', {@followTrack});
-set(gcf, 'windowbuttonupfcn',     {@stopTrack});
+
+mouseclick=get(gcf,'SelectionType');
+switch mouseclick
+    case{'normal'}
+        set(gcf, 'windowbuttonmotionfcn', {@followTrack});
+        set(gcf, 'windowbuttonupfcn',     {@stopTrack});
+    case{'alt'}
+        h=get(gcf,'CurrentObject');
+        p=getappdata(h,'parent');
+        callback=getappdata(p,'doubleclickcallback');
+        if ~isempty(callback)
+            feval(callback,h);
+        end
+end
 
 %%
 function followTrack(imagefig, varargins)

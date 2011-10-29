@@ -252,7 +252,8 @@ wl=[];
 
 % bed levels
 
-dps00=qpread(fid,1,'bed level at station','data',1,istation);
+%dps00=qpread(fid,1,'bed level at station','data',1,istation);
+dps00=qpread(fid,1,'bed level','data',1,istation);
 for k=1:length(s.wl.m)
     for i=1:4
         m=s.wl.mm(k,i);

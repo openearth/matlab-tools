@@ -85,8 +85,12 @@ for i=1:length(elements)
                     end
 
                 end
-                
-                
+
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                    set(elements(i).textHandle,'Enable','off');
+                end
+                                
             case{'panel'}
                 elements(i).handle=uipanel('Title',elements(i).title,'Units','pixels','Position',position,'BackgroundColor',bgc);
 %                elements(i).handle=uicontrol(figh,'Style','frame','String',elements(i).title,'Units','pixels','Position',position,'BackgroundColor',bgc);
@@ -125,7 +129,11 @@ for i=1:length(elements)
                     hh=findobj(gcf,'Tag',elements(i).parent);
                     set(elements(i).handle,'Parent',hh);
                 end
-                
+
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
+
             case{'checkbox'}
                 
                 % Check box
@@ -155,6 +163,10 @@ for i=1:length(elements)
                     set(elements(i).handle,'Parent',hh);
                 end
                 
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
+                
             case{'pushbutton'}
                 elements(i).handle=uicontrol(figh,'Style','pushbutton','String',elements(i).text,'Position',position);
                 set(elements(i).handle,'Parent',parent);
@@ -166,6 +178,10 @@ for i=1:length(elements)
                     set(elements(i).handle,'Parent',hh);
                 end
 
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
+                
             case{'togglebutton'}
                 elements(i).handle=uicontrol(figh,'Style','togglebutton','String',elements(i).text,'Position',position);
                 set(elements(i).handle,'Parent',parent);
@@ -177,6 +193,10 @@ for i=1:length(elements)
                     set(elements(i).handle,'Parent',hh);
                 end
 
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
+                
             case{'listbox'}
 
                 % List box
@@ -206,6 +226,10 @@ for i=1:length(elements)
                     set(elements(i).handle,'Parent',hh);
                 end
 
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
+                
             case{'popupmenu'}
 
                 % Pop-up menu
@@ -231,6 +255,10 @@ for i=1:length(elements)
                     end
                 end
 
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
+                
             case{'text'}
                 
                 % Text
@@ -281,7 +309,11 @@ for i=1:length(elements)
 %                     elements(i).textHandle=uicontrol(figh,'Parent',parent,'Style','text','String',elements(i).text,'Position',position,'BackgroundColor',bgc);
 %                     setTextPosition(elements(i).textHandle,position,elements(i).textPosition);
 %                 end
-            
+
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
+
             case{'pushselectfile','pushsavefile'}
                 
                 % Push select file
@@ -316,6 +348,9 @@ for i=1:length(elements)
 
                 end
                 
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
                 
             case{'tabpanel'}
                 
@@ -357,7 +392,7 @@ for i=1:length(elements)
                         disableTab(gcf,elements(i).tabs(j).tag);
                     end                    
                 end
-                
+
             case{'table'}
                 
                 tag=elements(i).tag;
@@ -429,11 +464,9 @@ for i=1:length(elements)
     %drawnow;
     
     set(elements(i).handle,'Tag',elements(i).tag);
-    try
+
     setappdata(elements(i).handle,'getFcn',getFcn);
-    catch
-        shite=999
-    end
+
     setappdata(elements(i).handle,'setFcn',setFcn);
     setappdata(elements(i).handle,'element',elements(i));
 end
