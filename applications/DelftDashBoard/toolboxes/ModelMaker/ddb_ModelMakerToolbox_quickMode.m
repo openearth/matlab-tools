@@ -152,7 +152,9 @@ function generateGrid
 
 handles=getHandles;
 
-if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=6000000
+npmax=20000000;
+
+if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     f=str2func(['ddb_generateGrid' handles.Model(md).name]);
     try
         handles=feval(f,handles,ad,0,0,'ddb_test');
@@ -231,7 +233,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=6000000
     setHandles(handles);
     
 else
-    GiveWarning('Warning','Maximum number of grid points (2,000,000) exceeded ! Please reduce grid resolution.');
+    GiveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
 end
 
 %%

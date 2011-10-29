@@ -3,7 +3,7 @@
 <root>
   <toolbox>Ocean Models</toolbox>
   <longname>Ocean Models</longname>
-  <enable>0</enable>
+  <enable>1</enable>
   <elements>
     <element>
       <position>40 10 1000 140</position>

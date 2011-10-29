@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>selecttidemodels</tag>
+    <style>listbox</style>
+    <text>Available Tide Models</text>
+    <textposition>above-center</textposition>
+    <variable>handles.Toolbox(tb).Input.activeModel</variable>
+    <type>integer</type>
+    <position>10 10 200 105</position>
+    <tooltipstring>Select tide model</tooltipstring>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>selectmodel</option1>
+    <list>
+      <texts>
+        <variable>handles.tideModels.longNames</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>editxmin</tag>
+    <style>edit</style>
+    <position>270 95 50 20</position>
+    <text>X Min</text>
+    <textposition>left</textposition>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.Toolbox(tb).Input.xLim(1)</variable>
+    <type>real</type>
+    <tooltipstring>Edit minimum x coordinate</tooltipstring>
+  </element> 
+  <element>
+    <tag>editxmax</tag>
+    <style>edit</style>
+    <position>270 70 50 20</position>
+    <text>X Max</text>
+    <textposition>left</textposition>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.Toolbox(tb).Input.xLim(2)</variable>
+    <type>real</type>
+    <tooltipstring>Edit maximum x coordinate</tooltipstring>
+  </element> 
+  <element>
+    <tag>editymin</tag>
+    <style>edit</style>
+    <position>270 45 50 20</position>
+    <text>Y Min</text>
+    <textposition>left</textposition>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.Toolbox(tb).Input.yLim(1)</variable>
+    <type>real</type>
+    <tooltipstring>Edit minimum y coordinate</tooltipstring>
+  </element> 
+  <element>
+    <tag>editymax</tag>
+    <style>edit</style>
+    <position>270 20 50 20</position>
+    <text>Y Max</text>
+    <textposition>left</textposition>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.Toolbox(tb).Input.yLim(2)</variable>
+    <type>real</type>
+    <tooltipstring>Edit maximum y coordinate</tooltipstring>
+  </element> 
+  <element>
+    <tag>drawbox</tag>
+    <style>pushbutton</style>
+    <position>330 95 80 20</position>
+    <text>Draw Box</text>
+    <callback>ddb_TideDatabaseToolbox_export</callback>
+    <option1>drawrectangle</option1>
+  </element> 
+  <element>
+    <tag>selectexporttype</tag>
+    <style>popupmenu</style>
+    <text>Export Type</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.activeExportType</variable>
+    <position>500 40 70 20</position>
+    <tooltipstring>Select zoom level</tooltipstring>
+    <type>string</type>
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.exportTypes</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>exportdata</tag>
+    <style>pushsavefile</style>
+    <position>500 15 70 20</position>
+    <text>Export</text>
+    <variable>handles.Toolbox(tb).Input.exportFile</variable>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>export</option1>
+    <showfilename>no</showfilename> 
+    <extension>*.tek</extension>
+    <selectiontext>Select data file</selectiontext>
+    <tooltipstring>Export tide data</tooltipstring> 
+  </element>
+</root>

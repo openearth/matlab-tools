@@ -106,7 +106,6 @@ wb = waitbox('Generating boundary conditions ...');
 
 try
     openBoundaries=makeBctBccIni('bcc','flow',flow,'openboundaries',openBoundaries,'opt',opt,'cs',cs);
-    delft3dflow_saveBccFile(flow,openBoundaries,handles.Model(md).Input(ad).bccFile);
     handles.Model(md).Input(ad).openBoundaries=openBoundaries;
     flist=dir('TMPOCEAN*');
     for i=1:length(flist)
