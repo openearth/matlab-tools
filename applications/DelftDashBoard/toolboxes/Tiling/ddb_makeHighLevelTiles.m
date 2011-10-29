@@ -71,6 +71,7 @@ for i=1:nnx
                         z=double(z);
                         z=z';
                         netcdf.close(ncid);
+                        z(z==-9999)=NaN;
                     else
                         z=zeros(ny,nx);
                         z(z==0)=NaN;
@@ -100,6 +101,10 @@ for i=1:nnx
                 yy=ymin:dy:ymax;
                 
                 fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl' num2str(k,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                
+                z(isnan(z))=-9999;
+                z=int16(z);
+                
                 nc_grid_createNCfile2(fname,xx,yy,z,OPT);
                 
             end

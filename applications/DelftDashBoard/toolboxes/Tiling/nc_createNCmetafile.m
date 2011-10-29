@@ -52,18 +52,18 @@ end
 % crsVariable=' '
 % netcdf_addvar(NCid, crsVariable);
 
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'grid_size_x'},  'cf_standard_name', {'grid_size_x'},'dimension',{'zoomlevels'});
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'grid_size_y'},  'cf_standard_name', {'grid_size_y'},'dimension',{'zoomlevels'});
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'x0'},  'cf_standard_name', {'x0'},'dimension',{'zoomlevels'});
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'y0'},  'cf_standard_name', {'y0'},'dimension',{'zoomlevels'});
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'nx'},  'cf_standard_name', {'nx'},'dimension',{'zoomlevels'},'tp','int');
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'ny'},  'cf_standard_name', {'ny'},'dimension',{'zoomlevels'},'tp','int');
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'ntilesx'},  'cf_standard_name', {'ntilesx'},'dimension',{'zoomlevels'},'tp','int');
-nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'ntilesy'},  'cf_standard_name', {'ntilesy'},'dimension',{'zoomlevels'},'tp','int');
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'grid_size_x'},  'cf_standard_name', {'grid_size_x'},'dimension',{'zoomlevels'});
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'grid_size_y'},  'cf_standard_name', {'grid_size_y'},'dimension',{'zoomlevels'});
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'x0'},  'cf_standard_name', {'x0'},'dimension',{'zoomlevels'});
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'y0'},  'cf_standard_name', {'y0'},'dimension',{'zoomlevels'});
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'nx'},  'cf_standard_name', {'nx'},'dimension',{'zoomlevels'},'tp','int');
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'ny'},  'cf_standard_name', {'ny'},'dimension',{'zoomlevels'},'tp','int');
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'ntilesx'},  'cf_standard_name', {'ntilesx'},'dimension',{'zoomlevels'},'tp','int');
+ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'ntilesy'},  'cf_standard_name', {'ntilesy'},'dimension',{'zoomlevels'},'tp','int');
 
 for k=1:length(dxk)
-    nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {['iavailable' num2str(k)]},  'cf_standard_name', {['iavailable' num2str(k)]},'dimension',{['nravailable' num2str(k)]},'tp','int');
-    nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {['javailable' num2str(k)]},  'cf_standard_name', {['javailable' num2str(k)]},'dimension',{['nravailable' num2str(k)]},'tp','int');
+    ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {['iavailable' num2str(k)]},  'cf_standard_name', {['iavailable' num2str(k)]},'dimension',{['nravailable' num2str(k)]},'tp','int');
+    ddb_nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {['javailable' num2str(k)]},  'cf_standard_name', {['javailable' num2str(k)]},'dimension',{['nravailable' num2str(k)]},'tp','int');
 end
 
 %% Expand NC file

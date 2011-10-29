@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <toolbox>Tiling</toolbox>
+  <longname>Tiling</longname>
+  <enable>1</enable>
+  <elements>
+    <element>
+      <position>50 10 950 140</position>
+      <style>tabpanel</style>
+      <tag>tilingpanel</tag>
+      <tabs>
+        <tab>
+          <tag>bathymetry</tag>
+          <tabstring>Bathymetry</tabstring>
+          <callback>ddb_TilingToolbox_bathymetry</callback>
+          <elements>Tiling.bathymetry.xml</elements>
+        </tab>
+        <tab>
+          <tag>shoreline</tag>
+          <tabstring>Shoreline</tabstring>
+          <callback>ddb_TilingToolbox_shoreline</callback>
+          <elements>Tiling.shoreline.xml</elements>
+        </tab>
+      </tabs>
+    </element>
+  </elements>
+</root>

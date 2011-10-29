@@ -6,7 +6,7 @@ nat=length(f);
 
 sz=[480 nat*20+140];
 
-handles.SearchWindow    = MakeNewWindow_st('Edit Attributes',sz,'modal');
+handles.SearchWindow    = MakeNewWindow('Edit Attributes',sz,'modal');
 bgc = get(gcf,'Color');
 
 for i=1:nat

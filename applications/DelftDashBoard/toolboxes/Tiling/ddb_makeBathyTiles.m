@@ -25,7 +25,7 @@ for k=2:nrzoom
     nyk(k)=ny;
 end
 
-izoomstart=6;
+izoomstart=4;
 izoomstop=nrzoom;
 
 if imaketiles
