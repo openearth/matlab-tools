@@ -17,8 +17,15 @@ for i=1:length(flist)
         switch lower(flist(i).name)
             case{'.','..','.svn'}
             otherwise
-                k=k+1;
-                name{k}=flist(i).name;
+                fname=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                if exist(fname,'file')
+                    xml=xml_load(fname);
+                    switch lower(xml.enable)
+                        case{'1','y','yes'}
+                            k=k+1;
+                            name{k}=flist(i).name;
+                    end
+                end
         end
     end
 end

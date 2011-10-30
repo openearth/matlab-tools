@@ -16,7 +16,10 @@ function ddcompile2(varargin)
 %     end
 % end
 
-mkdir('exe');
+inipath=[fileparts(fileparts(fileparts(which('DelftDashBoard')))) filesep];
+
+mkdir('exe\data');
+mkdir('exe\bin');
 
 statspath='Y:\app\MATLAB2009b\toolbox\stats';
 rmpath(statspath);
@@ -32,21 +35,21 @@ fprintf(fid,'%s\n','DelftDashBoard.m');
 exclude = varargin;
 
 % Add models
-flist=dir('models');
+flist=dir([inipath 'models']);
 for i=1:length(flist)
     switch flist(i).name
         case{'.','..','.svn'}
         case exclude
         otherwise
             % m files
-            flist2=dir(['models' filesep flist(i).name filesep '*']);
+            flist2=dir([inipath 'models' filesep flist(i).name filesep '*']);
             for j=1:length(flist2)
                 switch flist2(j).name
                     case{'.','..','.svn'}
                     case exclude
                     otherwise
                         if strcmpi(flist2(j).name,'toolbox')
-                            flist3=dir(['models' filesep flist(i).name filesep 'toolbox']);
+                            flist3=dir([inipath 'models' filesep flist(i).name filesep 'toolbox']);
                             for n=1:length(flist3)
                                 switch flist3(n).name
                                     case{'.','..','.svn'}
@@ -70,7 +73,6 @@ for i=1:length(flist)
             end
     end
 end
-
 
 % Add toolboxes
 flist=dir('toolboxes');
@@ -97,21 +99,16 @@ for i=1:length(flist)
         case{'.','..','.svn'}
         otherwise
             mkdir(['ddbsettings' filesep flist(i).name]);
-            flist2=dir(['settings' filesep flist(i).name filesep '*']);
-            for j=1:length(flist2)
-                switch flist2(j).name
-                    case{'.','..','.svn'}
-                    otherwise
-                        copyfile(['settings' filesep flist(i).name filesep flist2(j).name],['ddbsettings' filesep flist(i).name]);
-                end
-            end
+            copyfiles(['settings' filesep flist(i).name],['ddbsettings' filesep flist(i).name]);
     end
 end
 
 mkdir(['ddbsettings' filesep 'models' filesep 'xml']);
 mkdir(['ddbsettings' filesep 'toolboxes' filesep 'xml']);
 
-% Copy xml files
+%% Copy xml files
+
+% Models
 flist=dir('models');
 for i=1:length(flist)
     switch flist(i).name
@@ -124,19 +121,13 @@ for i=1:length(flist)
             try
                 if isdir(['models' filesep flist(i).name filesep 'misc'])
                     mkdir(['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
-                    flist2=dir(['models' filesep flist(i).name filesep 'misc' filesep '*']);
-                    for j=1:length(flist2)
-                        switch flist2(j).name
-                            case{'.','..','.svn'}
-                            otherwise
-                                copyfile(['models' filesep flist(i).name filesep 'misc' filesep flist2(j).name],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
-                        end
-                    end
+                    copyfiles(['models' filesep flist(i).name filesep 'misc'],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
                 end
-                copyfile(['models' filesep flist(i).name filesep 'misc' filesep '*'],['ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);                
             end
     end
 end
+
+% Toolboxes
 flist=dir('toolboxes');
 for i=1:length(flist)
     switch flist(i).name
@@ -149,25 +140,28 @@ for i=1:length(flist)
             try
                 if isdir(['toolboxes' filesep flist(i).name filesep 'misc'])
                     mkdir(['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
-                    flist2=dir(['toolboxes' filesep flist(i).name filesep 'misc' filesep '*']);
-                    for j=1:length(flist2)
-                        switch flist2(j).name
-                            case{'.','..','.svn'}
-                            otherwise
-                                copyfile(['toolboxes' filesep flist(i).name filesep 'misc' filesep flist2(j).name],['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
-                        end
-                    end
+                    copyfiles(['toolboxes' filesep flist(i).name filesep 'misc'],['ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
                 end
             end
     end
 end
 
+%% Include icon
 try
     fid=fopen('earthicon.rc','wt');
     fprintf(fid,'%s\n','ConApp ICON settings\icons\Earth-icon32x32.ico');
     fclose(fid);
     system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
 end
+
+%% Generate data folder in exe folder
+
+
+mkdir('exe\data');
+inipath=
+
+ddb_copyAllFilesToDataFolder(inipath,ddbdir,additionalToolboxDir);
+
 
 mcc -m -v -d exe DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
 

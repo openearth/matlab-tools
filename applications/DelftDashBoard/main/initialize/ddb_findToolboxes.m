@@ -19,9 +19,16 @@ for i=1:length(flist)
         switch lower(flist(i).name)
             case{'.','..','.svn'}
             otherwise
-                k=k+1;
-                name{k}=flist(i).name;
-                tp{k}='standard';
+                fname=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                if exist(fname,'file')
+                xml=xml_load(fname);
+                switch lower(xml.enable)
+                    case{'1','y','yes'}
+                        k=k+1;
+                        name{k}=flist(i).name;
+                        tp{k}='standard';
+                end
+            end
         end
     end
 end
@@ -36,9 +43,16 @@ if ~isempty(dr2)
             switch lower(flist(i).name)
                 case{'.','..','.svn'}
                 otherwise
-                    k=k+1;
-                    name{k}=flist(i).name;
-                    tp{k}='additional';
+                    fname=[dr2 filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                    if exist(fname,'file')
+                        xml=xml_load(fname);
+                        switch lower(xml.enable)
+                            case{'1','y','yes'}
+                                k=k+1;
+                                name{k}=flist(i).name;
+                                tp{k}='additional';
+                        end
+                    end
             end
         end
     end

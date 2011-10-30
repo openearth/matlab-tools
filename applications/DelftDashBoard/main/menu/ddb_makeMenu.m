@@ -13,10 +13,12 @@ for k=1:length(handles.Toolbox)
     else
         enab='off';
     end
-    if k==2
-        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox},'longname',handles.Toolbox(k).longName,'Separator','on','enable',enab);
-    else
-        handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox,},'longname',handles.Toolbox(k).longName,'enable',enab);
+    if strcmpi(enab,'on')
+        if k==2
+            handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox},'longname',handles.Toolbox(k).longName,'Separator','on','enable',enab);
+        else
+            handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox,},'longname',handles.Toolbox(k).longName,'enable',enab);
+        end
     end
 end
 
@@ -29,7 +31,9 @@ for k=1:length(handles.Model)
     else
         enab='off';
     end
-    handles=ddb_addMenuItem(handles,'Model',handles.Model(k).name,     'Callback',{@ddb_menuModel},'longname',handles.Model(k).longName,'Checked','off','enable',enab);
+    if strcmpi(enab,'on')
+        handles=ddb_addMenuItem(handles,'Model',handles.Model(k).name,     'Callback',{@ddb_menuModel},'longname',handles.Model(k).longName,'Checked','off','enable',enab);
+    end
 end
 
 %% Domain
