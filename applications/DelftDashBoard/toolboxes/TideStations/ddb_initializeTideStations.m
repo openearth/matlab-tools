@@ -2,7 +2,7 @@ function handles=ddb_initializeTideStations(handles,varargin)
 
 ii=strmatch('TideStations',{handles.Toolbox(:).name},'exact');
 
-dr=handles.Toolbox(ii).miscDir;
+dr=handles.Toolbox(ii).dataDir;
 lst=dir([dr '*.nc']);
 
 handles.Toolbox(ii).Input.databases={''};

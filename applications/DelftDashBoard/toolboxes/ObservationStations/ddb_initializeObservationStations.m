@@ -2,7 +2,7 @@ function handles=ddb_initializeObservationStations(handles,varargin)
 
 ii=strmatch('ObservationStations',{handles.Toolbox(:).name},'exact');
 
-dr=handles.Toolbox(ii).miscDir;
+dr=handles.Toolbox(ii).dataDir;
 lst=dir([dr '*.mat']);
 
 for i=1:length(lst)
