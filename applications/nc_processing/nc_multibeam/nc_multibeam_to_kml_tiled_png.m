@@ -173,8 +173,10 @@ if OPT.make
     
 %% create kml directory if it does not yet exist
 
+    if ~isempty(OPT.relativepath)
     if path2os(OPT.relativepath(end)) == filesep
        OPT.relativepath = OPT.relativepath(1:end-1); % remove trailing slash, gives issues
+    end
     end
 
     if exist(fullfile(OPT.basepath_local,OPT.relativepath),'dir')

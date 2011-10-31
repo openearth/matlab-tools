@@ -20,9 +20,8 @@ function varargout = nc_cf_gridset_overview(varargin)
 
  %% set options
 
+ OPT                  = KML_header;
  OPT.fileName         = '';
- OPT.kmlName          = '';
- OPT.description      = '';
 
  OPT.EPSGcode         = 28992; % should be inside dataset
 
@@ -48,7 +47,7 @@ function varargout = nc_cf_gridset_overview(varargin)
 
 if nargin==0;varargout = {OPT};return;end
 
-OPT = setproperty(OPT,varargin{:});
+OPT = setproperty(OPT,varargin,'onExtraField','silentIgnore');
 
 %%
 
@@ -76,11 +75,7 @@ OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
 
-OPT_header = struct(...
-    'name'       ,OPT.kmlName,...
-    'open'       ,0,...
-    'description',OPT.description);
-output = KML_header(OPT_header);
+output = KML_header(OPT);
 
 %% STYLE
 
@@ -231,14 +226,14 @@ for ii=1:length(lat2(1,:))
         'x: % 7.0f -% 7.0f<br>\n'...                                   % [xmin xmax]
         'y: % 7.0f -% 7.0f<br>\n'...                                   % [ymin ymax]
         '<hr />\n'...
-        '<a href="%s">Time animation</a>'...                           % link to timeseries
+        ... % 'Time animation'... %'<a href="%s">Time animation</a>'...% link to timeseries
         '%s'...                                                        % table with links to pre-remj
         ']]></description>\n'...
         '<styleUrl>#MarkerBalloonStyle</styleUrl>\n'...
         '<Point><coordinates>%3.8f,%3.8f,0</coordinates></Point>\n'... % lat lon
         '</Placemark>\n'],...
         markerNames{ii},markerX(ii,:),markerY(ii,:),...
-        ' ',... %[tempString 'png.kml'],...
+        ... % [tempString 'png.kml'],...
         table,markerLon(ii),markerLat(ii))];
 end
 

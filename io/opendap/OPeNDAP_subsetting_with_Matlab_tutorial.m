@@ -81,7 +81,7 @@ for i=1:length(url_grid)
    colormap(colormap_cpt('Paired 12',length(ctick)))
    clim ([min(ctick) max(ctick)]+[-.5 .5])
    [ax,c]=colorbarwithvtext('source',ctick);
-   set(ax,'yticklabel',strtokens2cell(nc_attget(ncfile,'SID','flag_short_labels')))
+   set(ax,'yticklabel',strtokens2cell(nc_attget(ncfile,'SID','flag_short_labels'),';'))
    set(ax,'FontSize',5)
    print2screensize([mkvar(G.title),'_SID'])
    end
