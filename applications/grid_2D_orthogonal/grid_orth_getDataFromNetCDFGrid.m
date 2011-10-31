@@ -58,9 +58,9 @@ function [X, Y, Z, T] = grid_orth_getDataFromNetCDFGrid(varargin)
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 % Created: 24 Mar 2009
@@ -115,25 +115,25 @@ if ~isempty(OPT.polygon)
     
     % Find out which part of X and Y data lies within the extent of the polygon
     % NB: these are indexes, should be reduced with one for netCDF call as nc files start counting at 0
-    xstart   = find(X1>minx, 1, 'first');
-    xlength  = find(X1<maxx, 1, 'last');
-    ystart   = find(Y1<maxy, 1, 'first');
-    ylength  = find(Y1>miny, 1, 'last');
+    xstart  = find(X1>minx, 1, 'first');
+    xcount  = find(X1<maxx, 1, 'last');
+    ystart  = find(Y1<maxy, 1, 'first');
+    ycount  = find(Y1>miny, 1, 'last');
     
 else
-    xstart   = 1;
-    xlength  = size(X0,1);
-    ystart   = 1;
-    ylength  = size(Y0,1);
+    xstart  = 1;
+    xcount  = size(X0,1);
+    ystart  = 1;
+    ycount  = size(Y0,1);
 end
 
-if ~isempty(xstart) || isempty(ystart)
+if ~(isempty(xstart) || isempty(ystart) || isempty(xcount) || isempty(ycount))
     
     %% get relevant data (possibly using stride)
-    X        = nc_varget(OPT.ncfile, nc_index.x, xstart - 1, floor((xlength-(xstart-1))/OPT.stride(3)), OPT.stride(3));
-    Y        = nc_varget(OPT.ncfile, nc_index.y, ystart - 1, floor((ylength-(ystart-1))/OPT.stride(2)), OPT.stride(2));
-    Z        = zeros(size(Y,1), size(X,1))*nan;
-    T        = zeros(size(Y,1), size(X,1))*nan;
+    X        = nc_varget(OPT.ncfile, nc_index.x, xstart - 1, floor((xcount-(xstart-1))/OPT.stride(3)), OPT.stride(3));
+    Y        = nc_varget(OPT.ncfile, nc_index.y, ystart - 1, floor((ycount-(ystart-1))/OPT.stride(2)), OPT.stride(2));
+    Z        = nan(size(Y,1), size(X,1));
+    T        = nan(size(Y,1), size(X,1));
     
     %% find the data files that lie within the temporal search window
     if ~isempty(nc_index.t)
@@ -146,43 +146,43 @@ if ~isempty(xstart) || isempty(ystart)
         % TO DO: add nearest in time
         % TO DO: add linear interpolation in time
         if ~isempty(OPT.polygon)
-        XX   = repmat(X',size(Y,1),          1);
-        YY   = repmat(Y ,        1, size(X',2));
-        mask = isnan(Z(inpolygon(XX, YY, OPT.polygon(:,1), OPT.polygon(:,2))));
+            XX   = repmat(X',size(Y,1),          1);
+            YY   = repmat(Y ,        1, size(X',2));
+            mask = isnan(Z(inpolygon(XX, YY, OPT.polygon(:,1), OPT.polygon(:,2))));
         else
-        mask = ':';
+            mask = ':';
         end
         
         %% one by one place separate grids on overall grid
         for id_t = [idt(idt_in)-1]'
             % So long as not all Z values inpolygon are nan try to add data
             if sum(mask)~=0 % trick: sum(':')=58
-               if getpref('SNCTOOLS','PRESERVE_FVD')==0 
-               Z_next    = nc_varget(OPT.ncfile, nc_index.z, [id_t                ystart-1                                  xstart-1], ...
-                                                             [1   floor((ylength-(ystart-1))/OPT.stride(2)) floor((xlength-(xstart-1))/OPT.stride(3))], ...
-                                                              OPT.stride);
-               if floor((xlength-(xstart-1))/OPT.stride(3)) == 1 && floor((ylength-(ystart-1))/OPT.stride(2)) ~=1
-                    Z_next = transpose(Z_next); % wonder if this is needed or only occurs when n cols == 1
-               end
-               elseif getpref('SNCTOOLS','PRESERVE_FVD')==1
-               Z_next    = nc_varget(OPT.ncfile, nc_index.z, [                xstart-1                                  ystart-1                  id_t], ...
-                                                             [floor((xlength-(xstart-1))/OPT.stride(3)) floor((ylength-(ystart-1))/OPT.stride(2)) 1], ...
-                                                              OPT.stride);
-               Z_next = transpose(Z_next);
-               end
-               
-               if sum(sum(~isnan(Z_next))) ~=0
+                if getpref('SNCTOOLS','PRESERVE_FVD')==0
+                    Z_next    = nc_varget(OPT.ncfile, nc_index.z, [id_t                ystart-1                                  xstart-1], ...
+                                                                  [1   floor((ycount-(ystart-1))/OPT.stride(2)) floor((xcount-(xstart-1))/OPT.stride(3))], ...
+                        OPT.stride);
+                    if xor(floor((xcount-(xstart-1))/OPT.stride(3)) == 1,  floor((ycount-(ystart-1))/OPT.stride(2)) ==1)
+                        Z_next = transpose(Z_next); % wonder if this is needed or only occurs when n cols == 1
+                    end
+                elseif getpref('SNCTOOLS','PRESERVE_FVD')==1
+                    Z_next    = nc_varget(OPT.ncfile, nc_index.z, [                xstart-1                                  ystart-1                  id_t], ...
+                                                                  [floor((xcount-(xstart-1))/OPT.stride(3)) floor((ycount-(ystart-1))/OPT.stride(2)) 1], ...
+                        OPT.stride);
+                    Z_next = transpose(Z_next);
+                end
+                
+                if sum(sum(~isnan(Z_next))) ~=0
                     disp(['... adding data from: ' datestr(t(idt(id_t+1)))])
                     try
-                    ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
+                        ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
                     catch
-                    xx=0    
+                        xx=0
                     end
-                        
-                        
+                    
+                    
                     Z(ids2add) = Z_next(ids2add);           % add Z values from Z_next grid to Z grid at places where there is data in Z_next and no data in Z yet
                     T(ids2add) = t(idt(id_t+1));            % add time information to T at those places where Z data was added
-               end
+                end
             end
         end
     else % do this if there is no time variable in the nc file (e.g. AHN)
@@ -191,14 +191,14 @@ if ~isempty(xstart) || isempty(ystart)
         
         % find right indices
         xstart_inv  = find(X0 == X1(xstart));
-        xlength     = length(xstart:xlength);
+        xcount     = length(xstart:xcount);
         ystart_inv  = find(Y0 == Y1(ystart));
-        ylength     = length(ystart:ylength);
+        ycount     = length(ystart:ycount);
         
         % get data without time variable
-        X        = nc_varget(OPT.ncfile, nc_index.x,  xstart_inv - 1,       xlength/OPT.stride(2), OPT.stride(2));
-        Y        = nc_varget(OPT.ncfile, nc_index.y,  ystart_inv - ylength, ylength/OPT.stride(1), OPT.stride(1));
-        Z_next   = nc_varget(OPT.ncfile, nc_index.z, [xstart_inv - 1       ystart_inv - ylength], [xlength/OPT.stride(1) ylength/OPT.stride(2)], OPT.stride);
+        X        = nc_varget(OPT.ncfile, nc_index.x,  xstart_inv - 1,       xcount/OPT.stride(2), OPT.stride(2));
+        Y        = nc_varget(OPT.ncfile, nc_index.y,  ystart_inv - ycount, ycount/OPT.stride(1), OPT.stride(1));
+        Z_next   = nc_varget(OPT.ncfile, nc_index.z, [xstart_inv - 1       ystart_inv - ycount], [xcount/OPT.stride(1) ycount/OPT.stride(2)], OPT.stride);
         Z        = Z_next';
         
     end
