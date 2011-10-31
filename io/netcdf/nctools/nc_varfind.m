@@ -10,14 +10,14 @@ function varargout = nc_varfind(ncfile,varargin)
 %   no match was found, and a cell array when more then 1 variable match description.
 %
 %   ncfile  = name of local file, OPeNDAP address, or result of ncfile = nc_info()
-%   varname = string variable containing the variable names 
+%   varname = string variable containing the variable names
 %             where an attribute name and value match was be detected.
 %
 %   The following <keyword,value> pairs have been implemented accepted (values indicated are the current default settings):
 %       'attributename' , []       = attributename to search for in netCDF file (e.g. 'standard_name')
 %       'attributevalue', []       = attributevalue to search for in netCDF file
 %
-%      [varname,index] = nc_varfind(fileinfo,...) 
+%      [varname,index] = nc_varfind(fileinfo,...)
 %
 %    also returns the incides into the fileinfo = nc_info(ncfile)
 %
@@ -35,7 +35,7 @@ function varargout = nc_varfind(ncfile,varargin)
 %   Copyright (C) 2009 Delft University of Technology
 %       Mark van Koningsveld
 %
-%       m.vankoningsveld@tudelft.nl	
+%       m.vankoningsveld@tudelft.nl
 %
 %       Hydraulic Engineering Section
 %       Faculty of Civil Engineering and Geosciences
@@ -83,19 +83,19 @@ varindex = [];
 
 %% get info from ncfile
 if isstruct(ncfile)
-   fileinfo = ncfile;
+    fileinfo = ncfile;
 else
-   fileinfo = nc_info(ncfile);
+    fileinfo = nc_info(ncfile);
 end
 
 %% deal with name change in scntools
 if     isfield(fileinfo,'Dataset'); % new
-  tempstruct = fileinfo.Dataset;
+    tempstruct = fileinfo.Dataset;
 elseif isfield(fileinfo,'DataSet'); % old
-  tempstruct = fileinfo.DataSet;
-  disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
+    tempstruct = fileinfo.DataSet;
+    disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
 else
-   error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
+    error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
 end
 
 %% find
@@ -103,32 +103,45 @@ Names = {tempstruct(:).Name};
 for i = 1:length(Names)
     Attributes = tempstruct(i).Attribute;
     if ~isempty(Attributes)
-    if any(strcmp({Attributes.Name} , OPT.attributename))
-        for iatt=1:length(Attributes)
-          if iscellstr(Attributes(iatt).Value) % char are cells in later versions of snctools
-            if strcmp(char(Attributes(iatt).Value),OPT.attributevalue)
-                if isempty(varname)
-                    varname{end+1} = Names{i};
-                    varindex    = i;
+        if any(strcmp({Attributes.Name} , OPT.attributename))
+            for iatt=1:length(Attributes)
+                if iscellstr(Attributes(iatt).Value) % char are cells in later versions of snctools
+                    if strcmp(char(Attributes(iatt).Value),OPT.attributevalue) && strcmp({Attributes(iatt).Name} , OPT.attributename)
+                        if isempty(varname)
+                            varname{end+1} = Names{i};
+                            varindex    = i;
+                        else
+                            % disp('NB: more than one variable fits the description')
+                            varname{end+1} = Names{i};
+                            varindex = [varindex i];
+                        end
+                    end
                 else
-                    % disp('NB: more than one variable fits the description')
-                    varname{end+1} = Names{i};
-                    varindex = [varindex i];
+                    if ~isnumeric(Attributes(iatt).Value)
+                        if strcmp(char(Attributes(iatt).Value),OPT.attributevalue) && strcmp({Attributes(iatt).Name} , OPT.attributename)
+                            if isempty(varname)
+                                varname{end+1} = Names{i};
+                                varindex    = i;
+                            else
+                                % disp('NB: more than one variable fits the description')
+                                varname{end+1} = Names{i};
+                                varindex = [varindex i];
+                            end
+                        end
+                    end
                 end
             end
-          end
         end
-    end
     end
 end
 
 if length(varname)==1
-   varname = char(varname);
+    varname = char(varname);
 end
 
 
 if nargout==1
-   varargout= {varname};
+    varargout= {varname};
 elseif nargout==2
-   varargout= {varname,varindex};
+    varargout= {varname,varindex};
 end
