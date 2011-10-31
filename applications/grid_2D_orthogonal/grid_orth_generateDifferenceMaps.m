@@ -69,6 +69,8 @@ OPT.searchinterval         = -7;                                     % acceptabl
 % specify plotting details
 OPT.plot_difference_map    = 1;
 OPT.caxis                  = [-2 2];                                 % coloring limits to use in the difference plot
+OPT.colormap               = colormap(colormap_cpt('srtRdBu10',100));
+OPT.figure_handle          = 3;
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -161,13 +163,12 @@ results.no_change_coverage_perc          = (sum(sum((~isnan(Z2(id)-Z1(id)))))/to
 %% PLOT RESULTS --------------------------------------------------------------------------
 
 if OPT.plot_difference_map
-    figure(3);clf
+    figure(OPT.figure_handle);clf
     
     surf(X1, Y1, Z2-Z1);
     caxis(OPT.caxis)
     
-    cmap = colormap_cpt('GMT_jet');
-    colormap(cmap);
+    colormap(OPT.colormap);
     
     colorbar;
     
