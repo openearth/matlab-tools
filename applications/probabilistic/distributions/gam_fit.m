@@ -137,7 +137,7 @@ if ncen == 0
     if any(x == 0)
         parmhat = [ahat bhat.*scalex];
         parmci = cast([NaN NaN; NaN NaN],class(x));
-        warning(message('stats:gamfit:ZerosInData'));
+        warning('stats:gamfit:ZerosInData','Zeros in data -- returning method of moments estimates.');
         return
 
     % Otherwise, find MLEs.
