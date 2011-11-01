@@ -70,14 +70,20 @@ end
 
 if length(varargin) > 0 && ~isempty(varargin{1})
     xb = xb_set(xb, 'xfile', xb_set([], 'xfile', varargin{1}));
+    xb = xb_set(xb, 'nx', size(varargin{1},2)-1);
+    xb = xb_set(xb, 'ny', size(varargin{1},1)-1);
 end
 
 if length(varargin) > 1 && ~isempty(varargin{2})
     xb = xb_set(xb, 'yfile', xb_set([], 'yfile', varargin{2}));
+    xb = xb_set(xb, 'nx', size(varargin{2},2)-1);
+    xb = xb_set(xb, 'ny', size(varargin{2},1)-1);
 end
 
 if length(varargin) > 2 && ~isempty(varargin{3})
     xb = xb_set(xb, 'depfile', xb_set([], 'depfile', varargin{3}));
+    xb = xb_set(xb, 'nx', size(varargin{3},2)-1);
+    xb = xb_set(xb, 'ny', size(varargin{3},1)-1);
 end
 
 if length(varargin) > 3 && ~isempty(varargin{4})
