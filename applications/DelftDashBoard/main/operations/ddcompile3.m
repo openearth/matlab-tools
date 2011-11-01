@@ -34,34 +34,6 @@ fprintf(fid,'%s\n','DelftDashBoard.m');
 
 exclude = varargin;
 
-% Add models
-files=ddb_findAllFiles([inipath 'models'],'*.m');
-for i=1:length(files)
-    fprintf(fid,'%s\n',files{i});
-end
-
-% Add toolboxes
-files=ddb_findAllFiles([inipath 'toolboxes'],'*.m');
-for i=1:length(files)
-    fprintf(fid,'%s\n',files{i});
-end
-
-% Add additional toolboxes
-inifile=[inipath 'DelftDashBoard.ini'];
-try
-    additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
-catch
-    additionalToolboxDir=[];
-end
-if ~isempty(additionalToolboxDir)
-    files=ddb_findAllFiles(additionalToolboxDir,'*.m');
-    for i=1:length(files)
-        fprintf(fid,'%s\n',files{i});
-    end
-end
-
-fclose(fid);
-
 % Make directory for compiled settings
 mkdir([inipath 'ddbsettings']);
 flist=dir([inipath 'settings']);
@@ -77,63 +49,113 @@ end
 mkdir([inipath 'ddbsettings' filesep 'models' filesep 'xml']);
 mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep 'xml']);
 
-%% Copy xml and misc files
-% Models
-flist=dir('models');
-for i=1:length(flist)
-    switch flist(i).name
-        case{'.','..','.svn'}
-        otherwise
-            try
-                mkdir([inipath 'ddbsettings' filesep 'models' filesep flist(i).name filesep 'xml']);
-                copyfile([inipath 'models' filesep flist(i).name filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'models' filesep flist(i).name filesep 'xml']);
-            end
-            try
-                if isdir([inipath 'models' filesep flist(i).name filesep 'misc'])
-                    mkdir([inipath 'ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
-                    copyfiles([inipath 'models' filesep flist(i).name filesep 'misc'],[inipath 'ddbsettings' filesep 'models' filesep flist(i).name filesep 'misc']);
-                end
-            end
-    end
-end
-
-% Toolboxes
-flist=dir('toolboxes');
-for i=1:length(flist)
-    switch flist(i).name
-        case{'.','..','.svn'}
-        otherwise
-            try
-                mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
-                copyfile([inipath 'toolboxes' filesep flist(i).name filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
-            end
-            try
-                if isdir([inipath 'toolboxes' filesep flist(i).name filesep 'misc'])
-                    mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
-                    copyfiles([inipath 'toolboxes' filesep flist(i).name filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
-                end
-            end
-    end
-end
-if ~isempty(additionalToolboxDir)
-    flist=dir(additionalToolboxDir);
-    for i=1:length(flist)
-        switch flist(i).name
-            case{'.','..','.svn'}
-            otherwise
-                try
-                    mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
-                    copyfile([additionalToolboxDir filesep flist(i).name filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'xml']);
-                end
-                try
-                    if isdir([additionalToolboxDir filesep flist(i).name filesep 'misc'])
-                        mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
-                        copyfiles([additionalToolboxDir filesep flist(i).name filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep flist(i).name filesep 'misc']);
+% Add models
+flist=dir([inipath 'models']);
+for j=1:length(flist)
+    if flist(j).isdir
+        model=flist(j).name;
+        % Check if xml file exists and whether model is enabled
+        xmlfile=[inipath 'models' filesep model filesep 'xml' filesep model '.xml'];
+        if exist(xmlfile,'file')
+            xml=xml_load(xmlfile);
+            switch lower(xml.enable)
+                case{'1','y','yes'}
+                    % Model is enabled
+                    % Add all m files
+                    files=ddb_findAllFiles([inipath 'models' filesep model],'*.m');
+                    for i=1:length(files)
+                        fprintf(fid,'%s\n',files{i});
                     end
-                end
+                    % Copy xml files and misc files
+                    try
+                        mkdir([inipath 'ddbsettings' filesep 'models' filesep model filesep 'xml']);
+                        copyfile([inipath 'models' filesep model filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'models' filesep model filesep 'xml']);
+                    end
+                    try
+                        if isdir([inipath 'models' filesep model filesep 'misc'])
+                            mkdir([inipath 'ddbsettings' filesep 'models' filesep model filesep 'misc']);
+                            copyfiles([inipath 'models' filesep model filesep 'misc'],[inipath 'ddbsettings' filesep 'models' filesep model filesep 'misc']);
+                        end
+                    end
+            end
         end
     end
 end
+
+% Add toolboxes
+flist=dir([inipath 'toolboxes']);
+for j=1:length(flist)
+    if flist(j).isdir
+        toolbox=flist(j).name;
+        % Check if xml file exists and whether toolbox is enabled
+        xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep toolbox '.xml'];
+        if exist(xmlfile,'file')
+            xml=xml_load(xmlfile);
+            switch lower(xml.enable)
+                case{'1','y','yes'}
+                    % Model is enabled
+                    files=ddb_findAllFiles([inipath 'toolboxes' filesep toolbox],'*.m');
+                    for i=1:length(files)
+                        fprintf(fid,'%s\n',files{i});
+                    end                    
+                    % Copy xml files and misc files
+                    try
+                        mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                        copyfile([inipath 'toolboxes' filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                    end
+                    try
+                        if isdir([inipath 'toolboxes' filesep toolbox filesep 'misc'])
+                            mkdir([inipath 'ddbsettings' filesep 'models' filesep toolbox filesep 'misc']);
+                            copyfiles([inipath 'toolboxes' filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+                        end
+                    end
+            end
+        end
+    end
+end
+
+% Add additional toolboxes
+inifile=[inipath 'DelftDashBoard.ini'];
+try
+    additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
+catch
+    additionalToolboxDir=[];
+end
+if ~isempty(additionalToolboxDir)
+    % Add toolboxes
+    flist=dir(additionalToolboxDir);
+    for j=1:length(flist)
+        if flist(j).isdir
+            toolbox=flist(j).name;
+            % Check if xml file exists and whether toolbox is enabled
+            xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep toolbox '.xml'];
+            if exist(xmlfile,'file')
+                xml=xml_load(xmlfile);
+                switch lower(xml.enable)
+                    case{'1','y','yes'}
+                        % Model is enabled
+                        files=ddb_findAllFiles([additionalToolboxDir toolbox],'*.m');
+                        for i=1:length(files)
+                            fprintf(fid,'%s\n',files{i});
+                        end
+                        % Copy xml files and misc files
+                        try
+                            mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                            copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                        end
+                        try
+                            if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
+                                mkdir([inipath 'ddbsettings' filesep 'models' filesep toolbox filesep 'misc']);
+                                copyfiles([additionalToolboxDir filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+                            end
+                        end
+                end
+            end
+        end
+    end
+end
+
+fclose(fid);
 
 %% Include icon
 try

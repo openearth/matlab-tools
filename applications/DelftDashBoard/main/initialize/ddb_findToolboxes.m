@@ -3,7 +3,7 @@ function ddb_findToolboxes
 handles=getHandles;
 
 if isdeployed
-    dr=[ctfroot filesep 'toolboxes'];
+    dr=[ctfroot filesep 'ddbsettings' filesep 'toolboxes'];
 else
     ddb_root = fileparts(which('DelftDashBoard.ini'));
     dr=[ddb_root filesep 'toolboxes'];
@@ -11,52 +11,75 @@ end
 
 handles.Toolbox(1).name='dummy';
 
-% Find standard toolboxes
-flist=dir(dr);
-k=0;
-for i=1:length(flist)
-    if flist(i).isdir
-        switch lower(flist(i).name)
-            case{'.','..','.svn'}
-            otherwise
-                fname=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
-                if exist(fname,'file')
-                xml=xml_load(fname);
-                switch lower(xml.enable)
-                    case{'1','y','yes'}
-                        k=k+1;
-                        name{k}=flist(i).name;
-                        tp{k}='standard';
-                end
+if isdeployed
+    
+    % No difference between standard and additional toolboxes and toolboxes
+    % are all enabled
+    flist=dir(dr);
+    k=0;
+    for i=1:length(flist)        
+        if flist(i).isdir
+            switch lower(flist(i).name)
+                case{'.','..','.svn'}
+                otherwise
+                    k=k+1;
+                    name{k}=flist(i).name;
+                    tp{k}='standard';
             end
         end
     end
-end
-
-% Find additional toolboxes
-dr2=handles.additionalToolboxDir;
-if ~isempty(dr2)
-    addpath(genpath(dr2));
-    flist=dir(dr2);
+    
+else
+    
+    % Find standard toolboxes
+    flist=dir(dr);
+    k=0;
     for i=1:length(flist)
         if flist(i).isdir
             switch lower(flist(i).name)
                 case{'.','..','.svn'}
                 otherwise
-                    fname=[dr2 filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                    fname=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
                     if exist(fname,'file')
                         xml=xml_load(fname);
                         switch lower(xml.enable)
                             case{'1','y','yes'}
                                 k=k+1;
                                 name{k}=flist(i).name;
-                                tp{k}='additional';
+                                tp{k}='standard';
                         end
                     end
             end
         end
     end
+    
+    % Find additional toolboxes
+    dr2=handles.additionalToolboxDir;
+    if ~isempty(dr2)
+        addpath(genpath(dr2));
+        flist=dir(dr2);
+        for i=1:length(flist)
+            if flist(i).isdir
+                switch lower(flist(i).name)
+                    case{'.','..','.svn'}
+                    otherwise
+                        fname=[dr2 filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                        if exist(fname,'file')
+                            xml=xml_load(fname);
+                            switch lower(xml.enable)
+                                case{'1','y','yes'}
+                                    k=k+1;
+                                    name{k}=flist(i).name;
+                                    tp{k}='additional';
+                            end
+                        end
+                end
+            end
+        end
+    end
+    
 end
+
 
 % Set names and functions
 nt=k;
@@ -69,17 +92,10 @@ for i=1:nt
     handles.Toolbox(i).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
     if isdeployed
         % Executable
-        if strcmpi(tp{i},'standard')
-            handles.Toolbox(i).dir=[dr filesep name{i} filesep];
-            handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
-            handles.Toolbox(i).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
-            handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
-        else
-            handles.Toolbox(i).dir=[dr2 filesep name{i} filesep];
-            handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
-            handles.Toolbox(i).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
-            handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
-        end
+        handles.Toolbox(i).dir=[dr filesep name{i} filesep];
+        handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
+        handles.Toolbox(i).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
+        handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
     else
         % From Matlab
         if strcmpi(tp{i},'standard')

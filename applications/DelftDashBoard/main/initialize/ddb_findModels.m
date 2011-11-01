@@ -8,27 +8,33 @@ else
     ddb_root = fileparts(which('DelftDashBoard.ini'));
     dr=[ddb_root filesep 'models'];
 end
-
+    
 flist=dir(dr);
-
 k=0;
 for i=1:length(flist)
     if flist(i).isdir
         switch lower(flist(i).name)
             case{'.','..','.svn'}
             otherwise
-                fname=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
-                if exist(fname,'file')
-                    xml=xml_load(fname);
-                    switch lower(xml.enable)
-                        case{'1','y','yes'}
-                            k=k+1;
-                            name{k}=flist(i).name;
+                if isdeployed
+                    %All models are by definition enabled
+                    k=k+1;
+                    name{k}=flist(i).name;
+                else
+                    fname=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                    if exist(fname,'file')
+                        xml=xml_load(fname);
+                        switch lower(xml.enable)
+                            case{'1','y','yes'}
+                                k=k+1;
+                                name{k}=flist(i).name;
+                        end
                     end
                 end
         end
     end
 end
+
 nt=k;
 
 for i=1:nt
