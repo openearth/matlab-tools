@@ -74,7 +74,7 @@ end
 if ~isempty(OPT.catalognc)
     OPT.urls      = cellstr([nc_varget(OPT.catalognc,'urlPath')]);
     
-    if ~strcmp(fileparts(OPT.catalognc),...
+    if ~strcmpi(fileparts(OPT.catalognc),...
                fileparts(OPT.urls{1}  ));
        fprintf(2,['Catalog \n'])
        fprintf(2,'%s\n',OPT.catalognc)

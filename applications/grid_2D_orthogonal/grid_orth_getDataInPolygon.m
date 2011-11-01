@@ -110,7 +110,7 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
 %% TODO: the script does not work yet for all thinning factors. Some counter problems remain.
 OPT.dataset         = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
 OPT.tag             = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
-OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+OPT.ldburl          = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc';
 OPT.workdir         = 'sedbudget\';
 OPT.polygondir      = 'sedbudget\polygons\';
 OPT.polygon         = [];
