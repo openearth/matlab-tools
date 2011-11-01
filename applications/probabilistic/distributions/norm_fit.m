@@ -190,7 +190,7 @@ end
 % The default options include turning statsfminbx's display off.  This
 % function gives its own warning/error messages, and the caller can
 % turn display on to get the text output from statsfminbx if desired.
-options = statset(statset('normfit'), options);
+options = stat_set(stat_set('normfit'), options);
 tolBnd = options.TolBnd;
 options = optimset(options);
 dfltOptions = struct('DerivativeCheck','off', 'HessMult',[], ...

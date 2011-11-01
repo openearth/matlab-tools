@@ -145,7 +145,7 @@ if ncen == 0
         % The default options include turning fzero's display off.  This
         % function gives its own warning/error messages, and the caller can
         % turn display on to get the text output from fzero if desired.
-        options = statset(statset('gamfit'), options);
+        options = stat_set(stat_set('gamfit'), options);
 
         % From the likelihood equations, bhat = xbar/ahat, so the 2D
         % log-likelihood reduces to a 1D profile.  First, bracket the
@@ -243,7 +243,7 @@ else % ncen > 0
     % The default options include turning statsfminbx's display off.  This
     % function gives its own warning/error messages, and the caller can
     % turn display on to get the text output from statsfminbx if desired.
-    options = statset(statset('gamfit'), options);
+    options = stat_set(stat_set('gamfit'), options);
     % For data with censoring, TolBnd is applied to both the shape
     % parameter a and the scale parameter b.
     tolBnd = options.TolBnd;

@@ -67,7 +67,7 @@ function f = stat_fit_gamma(data,y,varargin)
 
 %% shift data
 
-x0      = min(data);
+x0      = min(data)-eps;
 
 %% fit gamma
 

@@ -78,9 +78,9 @@ end
 % gives its own warning/error messages, and the caller can turn display on
 % to get the text output from fzero if desired.
 if nargin < 5 || isempty(options)
-    options = statset('evfit');
+    options = stat_set('evfit');
 else
-    options = statset(statset('evfit'),options);
+    options = stat_set(stat_set('evfit'),options);
 end
 
 classX = class(x);
@@ -97,7 +97,7 @@ if n == 0 || nuncensored == 0 || ~isfinite(rangex)
     parmhat = NaN(1,2,classX);
     parmci = NaN(2,2,classX);
     return
-    
+
 elseif ncensored == 0
     % The likelihood surface for constant data has its maximum at the
     % boundary sigma==0.  Return something reasonable anyway.
@@ -141,7 +141,7 @@ x0 = (x - maxx) ./ rangex;
 if ncensored == 0
     sigmahat = (sqrt(6)*std(x0))/pi;
     wgtmeanUnc = sum(freq.*x0) ./ n;
-    
+
 else
     % ... or use the "least squares" method when there is censoring ...
     if rangexUnc > 0
@@ -149,7 +149,7 @@ else
         pmid = (p(1:(end-1))+p(2:end)) / 2;
         linefit = polyfit(log(-log((1-pmid))), q(2:end), 1);
         sigmahat = linefit(1);
-        
+
         % ...unless there's only one uncensored value.
     else
         sigmahat = ones(classX);
@@ -180,7 +180,7 @@ end
 bnds = [lower upper];
 
 % ... then find the root of the likelihood eqn.  That is the MLE for sigma,
-% and the MLE for mu has an explicit sol'n. 
+% and the MLE for mu has an explicit sol'n.
 [sigmahat, lkeqnval, err] = fzero(@lkeqn, bnds, options, x0, freq, wgtmeanUnc);
 if (err < 0)
     error(message('stats:evfit:NoSolution')); % should never happen
@@ -196,7 +196,7 @@ parmhat = [(rangex*muhat)+maxx rangex*sigmahat];
 if nargout == 2
     probs = [alpha/2; 1-alpha/2];
     [nlogL, acov] = evlike(parmhat, x, censoring, freq);
-    
+
     % Compute the CI for mu using a normal approximation for muhat.  Compute
     % the CI for sigma using a normal approximation for log(sigmahat), and
     % transform back to the original scale.
