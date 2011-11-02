@@ -67,9 +67,7 @@ function xb = xb_grid_delft3d(varargin)
 
 %% check function availability
 
-if exist('wlgrid','file') ~= 2 || exist('wldep','file') ~= 2
-    error('Functions wlgird and/or wldep are not available. Please include the Deltf3D toolbox.');
-end
+add_delft3d_path;
 
 %% read input
 
@@ -203,4 +201,15 @@ function z = wldep2xb(z, sz)
     c = textscan(z, '%f');
     z = reshape(c{1}, fliplr(sz)+1)';
     z = remove_dummy_columns(z);
+end
+
+function add_delft3d_path()
+    if exist('wlgrid','file') ~= 2 || exist('wldep','file') ~= 2
+        d3dpath = 'C:\Delft3D\w32\delft3d_matlab';
+        if exist(d3dpath, 'dir')
+            addpath(genpath(d3dpath));
+        else
+            error('Cannot add Delft3D path');
+        end
+    end
 end
