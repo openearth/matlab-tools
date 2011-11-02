@@ -78,6 +78,9 @@ end
 % extract path, if xbeach structure is supplied
 if xb_check(fname)
     fname = xb_get(fname, 'path');
+    if ~isdir(fname)
+        fname = fileparts(fname);
+    end
 end
 
 if ~exist(fname, 'file')
