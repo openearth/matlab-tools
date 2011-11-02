@@ -237,7 +237,7 @@ disp('Converting the grid...')
 
 %% Process obs points: black and as diamond also
 
-   if OPT.src
+   if OPT.obs
     nr=0;
     
     try
