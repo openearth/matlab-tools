@@ -76,7 +76,7 @@ fdir = [fileparts(which(mfilename)) filesep];
 fdirs = dir(fullfile(fdir, 'xb_*'));
 ffolders = {fdirs.name};
 ffolders = ffolders([fdirs.isdir]);
-folders = ffolders;
+folders = [{'..\..\io\' '..\..\general\'} ffolders];
 for i = 1:length(folders); folders{i} = abspath(ffolders{i}); end;
 
 % select all files and oetsettings
