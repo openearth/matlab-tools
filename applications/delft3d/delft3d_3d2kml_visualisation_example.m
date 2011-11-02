@@ -10,7 +10,7 @@ function delft3d_3d2kml_visualisation_example(varargin)
    OPT.clim      = [-1 1];
    OPT.epsg      = 28992;
    OPT.zscalefun = @(z)(z).*1e4+2e4; 
-   OPT.dm          = 3; % cross shore stride % do not plot all point as matlab is too slow for that (and the human mind too limited)
+   OPT.dm          = 3; % cross shore stride % do not plot all points as matlab is too slow for that (and the human mind too limited)
    OPT.dn          = 3; % along shore stride
    OPT.hslice      = 0;
    OPT.u           = 1;

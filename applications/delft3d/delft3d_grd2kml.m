@@ -32,27 +32,34 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
 
 % updated by Bart Grasmeijer, Alkyon Hydraulic Consultancy & Research 19 November 2009
 
+   OPT2             = KMLpcolor;
+   OPT2.reversePoly = true;
+   OPT2.colorSteps  = 62;
+   OPT2.lineColor   = [.5 .5 .5];
+   OPT2.kmlName     = 'depth [m]';
+   OPT2.lineWidth   = 0; % to prevent rastering of the pixels (WHY?)
+   OPT2.polyOutline = true;
+   OPT2.polyFill    = true;
 
-  %grdfile         = 'lake_and_sea_5_ll.grd';
+   % defaults for Dutch vaklodingen
+   OPT2.cLim        = [-50 25]; % limits of color scale
+   OPT2.colorMap    = @(m) colormap_cpt('bathymetry_vaklodingen',m);
+   OPT2.colorSteps  = 500;
+   
+   OPT = OPT2;
    OPT.epsg        = [];  % 28992; % 7415; % 28992; ['Amersfoort / RD New']
-   OPT.ddep        = 200;  % offset
-   OPT.fdep        = 10; % factor
-   OPT.clim        = [-200 0];  %
    OPT.debug       = 0;
-   OPT.reversePoly = true;
-   OPT.colorSteps  = 62;
-   OPT.lineColor   = [.5 .5 .5];
-   OPT.fillAlpha   = 0.5;
 
    OPT.dep         = [];  %'dep_at_cor_triangulated_filled_corners.dep';
    OPT.mdf         = [];  % or dpsopt
    OPT.dpsopt      = [];  % or mdf
    
-   OPT = setproperty(OPT,varargin{:});
-   
    if nargin==0
       return
    end
+
+   OPT  = setproperty(OPT ,varargin);
+   OPT2 = setproperty(OPT2,varargin,'onExtraField','silentIgnore');
    
    G = delft3d_io_grd('read',grdfile);
    
@@ -80,8 +87,9 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
       OPT.fillAlpha = 1;
    end
    
-   % OPT.ddep = max(abs(max(G.cen.dep(:))),0);
-
+   disp(['min z & cLim(1): ',num2str(min(-G.cen.dep(:))),' & ',num2str(OPT2.cLim(1))]);
+   disp(['max z & cLim(2): ',num2str(max(-G.cen.dep(:))),' & ',num2str(OPT2.cLim(2))]);
+   
    if OPT.debug
        TMP = figure;
        pcolorcorcen(G.cor.lon,G.cor.lat,-G.cor.dep);
@@ -93,29 +101,17 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
        end
    end
    
-   KMLpcolor(G.cor.lat,G.cor.lon,-G.cen.dep,...
-                   'fileName',[filename(grdfile),'_2D.kml'],...
-                'reversePoly',OPT.reversePoly,...
-                       'cLim',OPT.clim,...
-                 'colorSteps',OPT.colorSteps,...
-                    'kmlName','depth [m]',...
-                  'lineColor',OPT.lineColor,...
-                  'lineAlpha',.6,...
-                  'lineWidth',0,... % to prevent rastering of the pixels (WHY?)
-                'polyOutline',true,...
-                   'polyFill',true);
+   OPT2.fileName = [filename(grdfile),'_3D.kml'];
    
-   KMLsurf  (G.cor.lat,G.cor.lon,(-G.cor.dep+OPT.ddep)*OPT.fdep,... % at corners for z !!
-                             -G.cen.dep,...
-                   'fileName',[filename(grdfile),'_3D.kml'],...
-                'reversePoly',OPT.reversePoly,...
-                       'cLim',OPT.clim,...
-                 'colorSteps',OPT.colorSteps,...
-                    'kmlName','depth [m]',...
-                  'lineColor',OPT.lineColor,...
-                  'lineAlpha',.6,...
-                'polyOutline',true,...
-                  'fillAlpha',OPT.fillAlpha,...
-                  'fillAlpha',.8);
+   KMLsurf  (G.cor.lat,G.cor.lon,-G.cor.dep,... % at corners for z !!
+                                 -G.cen.dep,OPT2);
+   OPT2.fileName  = [filename(grdfile),'_2D.kml'];
+   OPT2.zScaleFun =  @(z)'clampToGround';
+   
+   KMLpcolor(G.cor.lat,G.cor.lon,-G.cen.dep,OPT2);
+
+   OPT2.fileName  = [filename(grdfile),'_mesh.kml'];
+
+   KMLmesh  (G.cor.lat,G.cor.lon,'clampToGround',OPT2);
 
 %%EOF

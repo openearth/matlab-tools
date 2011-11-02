@@ -112,12 +112,10 @@ cmd   = varargin{1};
 fname = varargin{2};
 
 %% Read and calculate
-%  ----------------------
 
 if strcmpi(cmd,'read')
     
     %% File info
-    %% ----------------------
     
     if isstruct(varargin{3})
         G           = varargin{3};
@@ -135,7 +133,6 @@ if strcmpi(cmd,'read')
     end
     
     %% Keywords
-    %  ----------------------
     
     OPT.dummy        = 0;
     OPT.nodatavalue  = -999;
@@ -143,13 +140,12 @@ if strcmpi(cmd,'read')
     OPT.location     = '';
     OPT.dpsopt       = '';
     
-    OPT = setProperty(OPT,varargin{4:end});
+    OPT = setproperty(OPT,varargin{4:end});
     
     G.location       = OPT.location;
     G.dpsopt         = OPT.dpsopt  ;
     
     %% Apply check and fills for inout matrix locations
-    %  ----------------------
     
     if strcmpi(OPT.location,'cor')
         if isempty(OPT.dpsopt)
@@ -184,7 +180,6 @@ if strcmpi(cmd,'read')
     end
     
     %% Raw data
-    %  ----------------------
     
     %% Read bare number matrix without additional information
     %  Note SIZE is here [mmax nmax] % m first
@@ -206,8 +201,8 @@ if strcmpi(cmd,'read')
     end
     
     %% we swap so [n] is the first dimension
-    %% we DON"T swap so [n] is the first dimension [changed GJ de Boer 2009 Apr 22]
-    %% D3Dmatrix = D3Dmatrix';
+    %  we DON"T swap so [n] is the first dimension [changed GJ de Boer 2009 Apr 22]
+    %  D3Dmatrix = D3Dmatrix';
     
     %% Aply mask
     D3Dmatrix(D3Dmatrix ==OPT.nodatavalue) = OPT.missingvalue;
@@ -216,7 +211,6 @@ if strcmpi(cmd,'read')
     G.cor.dep_comment = 'positive: down';
     
     %% Depth at other grid locations
-    %  ----------------------
     
     %  we don't know where these data points are corners or centers.
     %  so it has to be specified
@@ -253,7 +247,6 @@ else strcmpi(cmd,'write');
     warning('Under construction.')
     
     %% Keywords
-    %  ----------------------
     
     OPT.location    = '';
     OPT.nodatavalue = -999;
@@ -267,7 +260,6 @@ else strcmpi(cmd,'write');
     tmp         = fileparts(fname);
     
     %% Get input data at corners or centers
-    %  ----------------------------------------------
     
     if ~isfield(OPT,'location')
         error('keyword ''location'' missing')

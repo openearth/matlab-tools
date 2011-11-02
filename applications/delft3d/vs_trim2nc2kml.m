@@ -1,11 +1,11 @@
 function vs_trim2netcdf2kml
 %VS_TRIM2NETCDF2KML   exmaple script how visualize delft3d results in google earth
 %
-% This is an exampel script, reowkr it untill it fits your needs.
+% This is an example script, rework it untill it fits your needs.
 %
-% Plots scalers + vectors + lay-out items.
+% Plots: scalers as patches + vectors + lay-out items.
 %
-% use vs_trim2nc first, as we should use the delft3d NEFIS file any more (trim*).
+% use VS_TRIM2NC first, as we should use the delft3d NEFIS file any more (trim*).
 %
 % The result of this script can be found here:
 %  http://kml.deltares.nl/kml/deltares/q4408-mkm/stationair2/

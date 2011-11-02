@@ -1,5 +1,5 @@
 function varargout = vs_trim2kml(varargin)
-%VS_TRIM2KML make a Google Earth movie of a scaler variable
+%VS_TRIM2KML make a Google Earth movie tiles of one scaler variable
 %
 % Example:
 %
@@ -92,7 +92,7 @@ end
 
 %% load time and grid
 
-trimfile   = vs_use(OPT.filename);
+ trimfile   = vs_use(OPT.filename);
  G          = vs_meshgrid2dcorcen(trimfile);
  T          = vs_time(trimfile);
  

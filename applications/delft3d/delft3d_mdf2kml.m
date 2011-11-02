@@ -1,7 +1,7 @@
 function OPT = delft3d_mdf2kml(mdf,varargin)
-%DELFT3D_MDF2KML  One line description goes here.
+%DELFT3D_MDF2KML  plot complete spatial schematization (grd,dep,thd,dry,src,obs) as kml
 %
-%   Create a kml-file (or kmz-file) of a Delft3D model setup
+%   Create a 2D kml-file (or kmz-file) of a Delft3D model setup
 %
 %   Syntax:
 %   delft3d_mdf2kml(mdf,<keyword,value>)
@@ -14,6 +14,8 @@ function OPT = delft3d_mdf2kml(mdf,varargin)
 %   dep       = switch for bathymetry output (true/false)
 %   dry       = switch for dry points output (true/false)
 %   thd       = switch for thin dams output (true/false)
+%   src       = switch for river sources output (true/false)
+%   obs       = switch for obser vation points output (true/false)
 %   kmz       = switch for saving to kmz (true/false)
 %
 %   Example
@@ -25,9 +27,11 @@ function OPT = delft3d_mdf2kml(mdf,varargin)
 %     'dep',1,... 
 %     'dry',1,... 
 %     'thd',1,... 
+%     'src',1,... 
+%     'obs',1,... 
 %     'kmz',1) 
 %
-%   See also DELTF3D_GRD2KML, googleplot, VS_TRIM_TO_KML_TILED_PNG
+%   See also DELFT3D_GRD2KML, googleplot, VS_TRIM_TO_KML_TILED_PNG
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -73,31 +77,39 @@ function OPT = delft3d_mdf2kml(mdf,varargin)
 
 %% Handle input arguments
 
-OPT.epsg        = 4326;             % epsg-code: 28992; % 7415; % 28992; ['Amersfoort / RD New']
-OPT.ddep        = 10;               % height offset
-OPT.grdColor    = [0.7 0.7 0.7];    % color of grid lines
-OPT.dep         = false;            % switch for bathymetry
-OPT.clim        = [-50 0];          % color limits for bathymetry
-OPT.dry         = false;            % switch for dry points
-OPT.dryColor    = [1 0 0.5];        % color of dry points
-OPT.thd         = false;            % switch for thin dams
-OPT.thdColor    = [0 1 0];          % color for thin dams
-OPT.thdWidth    = 2;                % width of thin dams
-OPT.kmz         = false;            % switch for output to kmz
-OPT.dep3D       = false;            % for 3D view of bathymetry. NB: by using this option, drypoints and thindams can get invisible because they are below the bathymetry.
+   OPT2            = delft3d_grd2kml;
 
-OPT = setproperty(OPT,varargin{:});
+   OPT = OPT2;
+   OPT.epsg        = 4326;             % epsg-code: 28992; % 7415; % 28992; ['Amersfoort / RD New']
+   OPT.ddep        = 10;               % height offset
+   OPT.grdColor    = [0.7 0.7 0.7];    % color of grid lines
+   OPT.dep         = false;            % switch for bathymetry
+   OPT.clim        = [-50 0];          % color limits for bathymetry
+   OPT.dry         = false;            % switch for dry points
+   OPT.dryColor    = [163 208 1]./256; % color of dry points
+   OPT.thd         = false;            % switch for thin dams
+   OPT.thdColor    = [216 215 1]./256; % color for thin dams
+   OPT.thdWidth    = 2;                % width of thin dams
+   OPT.src         = false;            % switch for thin dams
+   OPT.srcColor    = [153 0 153]./256; % color for thin dams
+   OPT.obs         = false;            % switch for thin dams
+   OPT.obsColor    = [0 0 0]./256; % color for thin dams
+   OPT.kmz         = false;            % switch for output to kmz
+   OPT.dep3D       = false;            % for 3D view of bathymetry. NB: by using this option, drypoints and thindams can get invisible because they are below the bathymetry.
+   
+   if nargin==0
+      return
+   end
 
-if nargin==0
-    return
-end
+   OPT  = setproperty(OPT ,varargin);
+   OPT2 = setproperty(OPT2,varargin,'onExtraField','silentIgnore');
 
 if ~exist(mdf,'file')
     error('mdf file does not exist')
     return
 end
 
-[pathstr,name,ext,versn] = fileparts(mdf);
+[pathstr,name,ext] = fileparts(mdf);
 if isempty(pathstr)
     pathstr = pwd;
 end
@@ -117,7 +129,6 @@ disp('Converting the grid...')
    end
    
    kmlFiles{1} = 'grid.kml';
-   
    KMLmesh(yg,xg,z,...
        'fileName',kmlFiles{1},...
        'kmlName','grid',...
@@ -128,9 +139,12 @@ disp('Converting the grid...')
    %% Convert bathymetry
    disp('Converting bathymetry...')
    if isfield(MDF.keywords,'fildep')
-       OPT2 = delft3d_grd2kml([pathstr,filesep,MDF.keywords.filcco],'epsg',OPT.epsg,'mdf',mdf,'dep',[pathstr,filesep,MDF.keywords.fildep],'clim',OPT.clim,'ddep',OPT.ddep);
+       OPT2.dep = [pathstr,filesep,MDF.keywords.fildep];
+       OPT2.mdf = mdf;
+       OPT2 = delft3d_grd2kml([pathstr,filesep,MDF.keywords.filcco],OPT2);
    else
-       OPT2 = delft3d_grd2kml([pathstr,filesep,MDF.keywords.filcco],'epsg',OPT.epsg,'mdf',mdf);
+       OPT2.dep = '';
+       OPT2 = delft3d_grd2kml([pathstr,filesep,MDF.keywords.filcco],OPT2);
    end
    
    if OPT.dep3D
@@ -180,6 +194,87 @@ disp('Converting the grid...')
         KMLpatch3(yDry,xDry,z,'fileName',kmlFiles{end},'fillColor',OPT.dryColor,'fillAlpha',0.8,'kmlName','drypoints');
     end
    end
+
+%% Process src points
+
+   if OPT.src
+    nr=0;
+    
+    try
+        D = delft3d_io_src('read' ,MDF.keywords.filsrc);
+        nr = length(D.m);
+    catch
+        disp('No src points found...')
+    end
+    
+    if nr>0
+    
+        clear x1 y1
+    
+        for i = 1:nr
+            m = D.m(i);
+            n = D.n(i);
+            x1(1)=(xg(m  ,n-1)+xg(m  ,n  ))./2;
+            y1(1)=(yg(m  ,n-1)+yg(m  ,n  ))./2;
+            x1(2)=(xg(m  ,n  )+xg(m-1,n  ))./2;
+            y1(2)=(yg(m  ,n  )+yg(m-1,n  ))./2;
+            x1(3)=(xg(m-1,n-1)+xg(m-1,n  ))./2;
+            y1(3)=(yg(m-1,n-1)+yg(m-1,n  ))./2;
+            x1(4)=(xg(m  ,n-1)+xg(m-1,n-1))./2;
+            y1(4)=(yg(m  ,n-1)+yg(m-1,n-1))./2;
+            xSrc{i} = x1';
+            ySrc{i} = y1';
+        end
+        
+        %     [m,n]=size([xDry{:}]);
+        %     z = mat2cell(repmat(OPT.ddep+1, size([xDry{:}])),m,repmat(1,n,1));
+        z = cellfun(@(x) ones(size(x))+OPT.ddep,xSrc,'UniformOutput',false);
+        
+        kmlFiles{end+1} = 'srcpoints.kml';
+        KMLpatch3(ySrc,xSrc,z,'fileName',kmlFiles{end},'fillColor',OPT.srcColor,'fillAlpha',0.8,'kmlName','srcpoints');
+    end
+   end
+
+%% Process obs points: black and as diamond also
+
+   if OPT.src
+    nr=0;
+    
+    try
+        D = delft3d_io_obs('read' ,MDF.keywords.filsta);
+        nr = length(D.m);
+    catch
+        disp('No obs points found...')
+    end
+    
+    if nr>0
+    
+        clear x1 y1
+    
+        for i = 1:nr
+            m = D.m(i);
+            n = D.n(i);
+            x1(1)=(xg(m  ,n-1)+xg(m  ,n  ))./2;
+            y1(1)=(yg(m  ,n-1)+yg(m  ,n  ))./2;
+            x1(2)=(xg(m  ,n  )+xg(m-1,n  ))./2;
+            y1(2)=(yg(m  ,n  )+yg(m-1,n  ))./2;
+            x1(3)=(xg(m-1,n-1)+xg(m-1,n  ))./2;
+            y1(3)=(yg(m-1,n-1)+yg(m-1,n  ))./2;
+            x1(4)=(xg(m  ,n-1)+xg(m-1,n-1))./2;
+            y1(4)=(yg(m  ,n-1)+yg(m-1,n-1))./2;
+            xObs{i} = x1';
+            yObs{i} = y1';
+        end
+        
+        %     [m,n]=size([xDry{:}]);
+        %     z = mat2cell(repmat(OPT.ddep+1, size([xDry{:}])),m,repmat(1,n,1));
+        z = cellfun(@(x) ones(size(x))+OPT.ddep,xObs,'UniformOutput',false);
+        
+        kmlFiles{end+1} = 'obspoints.kml';
+        KMLpatch3(yObs,xObs,z,'fileName',kmlFiles{end},'fillColor',OPT.obsColor,'fillAlpha',0.8,'kmlName','obspoints');
+    end
+   end
+
 
 %% Process thin dams
 
@@ -235,7 +330,7 @@ disp('Converting the grid...')
    end
 
    if OPT.kmz
-       zip     ([name,'.kmz'],{[name,'.kml'],[filename(MDF.keywords.filcco),'_2D_ver_lft.png']})
+       zip     ([name,'.kmz'],{[name,'.kml']}) % ,[filename(MDF.keywords.filcco),'_2D_ver_lft.png']
        copyfile([name,'.kmz.zip'],[name,'.kmz'])
        delete  ([name,'.kmz.zip']);
        delete  ([name,'.kml']);

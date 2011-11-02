@@ -1,6 +1,6 @@
 % DELFT3D - tools related to <a href="http://www.delft3d.nl">Delft3d</a>
 %
-% For most functionality, you need the proprietery Delft3D Matlab toolbox first:
+% For most functionality, you need the Delft3D Matlab toolbox first:
 %
 %    addpath('C:\Delft3D\w32\matlab\')
 %
@@ -49,13 +49,18 @@
 %
 % Visualise Delft3D 3D in Matlab
 %   delft3d_3d_visualisation_example     - Example to make 3D graphics image
-%   delft3d_3d2kml_visualisation_example - Example to make 3D graphics for Google Earth
 %
-% Visualise delft3d input/outyput in Google Earth:
-%   vs_trim2kml                          - output: make a Google Earth movie of a scaler variable (vector)
-%   vs_trim_to_kml_tiled_png             - output: make a Google Earth movie of a scaler variable (tiles)
-%   delft3d_mdf2kml                      - input:  Save flow input to Google Earth
-%   delft3d_grd2kml                      - input:  Save grid (and depth) file as kml feed for Google Earth
+% Visualise delft3d input/output in Google Earth:
+%   As you can from the number of examples see this is work in progres.
+%   We aim to built these tools generically on a netCDF conversion of 
+%   the NEFIS trim file. All examples use GooglePlot for basic Google Earth plotting.
+%
+%   delft3d_grd2kml                      - plot grid, depth as vector objects
+%   delft3d_mdf2kml                      - plot also thin dams, dry points, sources and stations as vector objects
+%   delft3d_3d2kml_visualisation_example - plot scalar as 3D moving flying carpet + 3D velocities
+%   vs_trim2kml                          - plot scaler as 2D tiles
+%   vs_trim_to_kml_tiled_png             - plot scaler as 2D tiles (via netCDF)
+%   vs_trim2nc2kml                       - plot scaler + the works as 2D objects (via netCDF)
 %
 % Toolboxes
 %   part      - tools related to Delft3D-PART
