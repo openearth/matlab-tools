@@ -144,7 +144,7 @@ switch OPT.type
         end
         
         fprintf(fid, 'cd ..\n');
-        fprintf(fid, 'svn commit -m "Added tag %s" %s\n', OPT.name, OPT.name);
+        %fprintf(fid, 'svn commit -m "Added tag %s" %s\n', OPT.name, OPT.name);
         
         fclose(fid);
         
