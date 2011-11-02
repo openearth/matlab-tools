@@ -452,7 +452,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       THICK = vs_let(F,'his-const','THICK',OPT.quiet);
      [sigma,sigmaInterf] = d3d_sigma(THICK); % [0 .. 1]
       
-      nc_varput(ncfile,'THICK'THICK);
+      nc_varput(ncfile,'THICK',THICK);
       nc_attput(ncfile,'THICK','actual_range',[min(THICK) max(THICK)]);
 
       nc_varput(ncfile,'sigma',sigma-1);
