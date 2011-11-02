@@ -85,10 +85,13 @@ if ispc()
     
     fcontents = fcontents';
     fcontents = regexprep(fcontents, '\s*\\\r\n\s*', '');
+    fcontents = regexp(fcontents,'\[HKEY_LOCAL_MACHINE.*?\]','split');
     
-    % search for app names
+    % search for app data
+    apps = cell(1,length(fcontents));
     re = regexp(fcontents, '\s*"DisplayName"\s*=\s*"(.*?)"\s*\r\n', 'tokens');
-    apps = [re{:}];
+    idx = ~cellfun(@isempty, re);
+    apps(idx) = cellfun(@(x)x{1},re(idx));
 elseif isunix()
     error('Unix systems are not supported'); % TODO
 else

@@ -100,7 +100,7 @@ url = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodin
 x = nc_varget(url, 'x');
 y = nc_varget(url, 'y');
 z = nc_varget(url, 'z');
-z = squeeze(z(end,:,:));
+z = squeeze(z(end-1,:,:));
 
 % plot bathymetry obtained from Vaklodingen datasource
 pcolor(x, y, z); shading flat; axis equal; colorbar;
@@ -202,15 +202,14 @@ plot(t, h, '-r', cumsum(duration), Hs, '-g', cumsum(duration), Tp, '-b'); snapno
 xbm = xb_generate_model( ...
     'bathy',    {'x', x, 'y', y, 'z', z, 'ne', ne, ...
         'crop', [99000 532000 7500 6000], ...
-        'finalise', {'landward_polder' 'lateral_sandwalls' 'lateral_extend' 'seaward_flatten'}}, ...
+        'finalise', {'landward_extend' 'lateral_sandwalls' 'lateral_extend' 'seaward_flatten'}}, ...
     'tide',     {'time' t, 'front', h, 'back', 0}, ...
     'waves',    {'Hm0', Hs, 'Tp', Tp, 'duration', duration}, ...
     'settings', {'tstop', 1800, 'tint', 600} ...
 );
 
 % plot the final rotated, cropped and finalised bathymetry
-xbb = xb_input2bathy(xbm);
-[xf yf zf nef] = xb_get(xbb, 'xfile', 'yfile', 'depfile', 'ne_layer');
+[xf yf zf nef] = xb_input2bathy(xbm);
 pcolor(xf, yf, zf); shading flat; axis equal; colorbar; snapnow;
 pcolor(xf, yf, nef); shading flat; axis equal; colorbar;
 

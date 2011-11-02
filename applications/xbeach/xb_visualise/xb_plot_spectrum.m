@@ -94,25 +94,25 @@ sp  = nan(1,l);
 for i = 1:l
     sp(i) = subplot(m,n,i); hold on;
     
-    if ~isempty(S);     plot(f,S  (:,i),'-b');  end;
-    if ~isempty(S);     plot(f,S_f(:,i),'-r');  end;
+    if ~isempty(S);     plot(f,S  (:,i),'-b','DisplayName','raw');  end;
+    if ~isempty(S_f);   plot(f,S_f(:,i),'-r','DisplayName','smooth');  end;
 
     yl = ylim;
-
-    if xb_exist(xb, 'SETTINGS.fsplit')
-        fsplit = xb_get(xb, 'SETTINGS.fsplit');
-        plot([fsplit fsplit],[min(yl) max(yl)],'--k');
-    end
 
     title(num2str(i));
     xlabel(['f [' OPT.units ']']);
     ylabel(['S_{\eta\eta} [' OPT.units2 ']']);
-    legend('raw', 'smooth', 'Location', 'NorthEast');
+    legend show;
+    
+    if xb_exist(xb, 'SETTINGS.fsplit')
+        fsplit = xb_get(xb, 'SETTINGS.fsplit');
+        plot([fsplit fsplit],[0 max(yl)],'--k');
+        set(gca, 'YLim', yl);
+    end
 end
 
 linkaxes(sp, 'x');
 
-if xb_exist(xb, 'SETTINGS.fcutoff')
-    fcutoff = xb_get(xb, 'SETTINGS.fcutoff');
-    set(gca, 'XLim', [0 fcutoff]);
-end
+mS = max(S,[],2);
+mf = f(find(mS>=.1*mean(mS),1,'last'));
+set(gca, 'XLim', [0 mf]);

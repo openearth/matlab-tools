@@ -32,9 +32,9 @@ xbm = xb_generate_model
 
 %%
 
-fpath = fullfile(strrep(abspath(fileparts(which(mfilename))), [filesep 'trunk' filesep], [filesep 'test' filesep]), 'datoutput', '2D');
+xbr = xb_run(xbm);
 
-xbo = xb_read_output(fpath)
+xbo = xb_read_output(xbr)
 
 %%
 % In these examples the structures contain data. The _data_ field of the

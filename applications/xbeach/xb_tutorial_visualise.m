@@ -8,7 +8,7 @@
 %% Visualise model input
 %
 % Once your model setup is finished, or at least you think so, you can
-% visualise your bathymetry and other data using the _xb_plot_ function.
+% visualise your bathymetry and other data using the _xb_view_ function.
 % This function basically plots any vector or matrix data from an XBeach
 % structure. It provides a simple interface to select the data to be
 % plotted (can be multiple) and the way it should be plotted.
@@ -17,7 +17,7 @@
 xbm = xb_generate_model;
 
 % plot model setup
-xb_plot(xbm);
+xb_view(xbm);
 
 %%
 % Depending on the amount of vector and matrix data, the plotting options
@@ -40,19 +40,19 @@ xbm = xb_generate_model( ...
     'waves',    {'Hm0', Hs, 'Tp', Tp, 'duration', duration} ...
 );
 
-xb_plot(xbm);
+xb_view(xbm);
 
 %% Visualise model output
 %
-% The _xb_plot_ function also works for XBeach output structures obtained
+% The _xb_view_ function also works for XBeach output structures obtained
 % from the _xb_read_output_ function. Again, all vector and matrix data is
 % plotted and also a slider to walk through time becomes available. The
 % slider can also be animated. Difference plots can be made with a
 % secondary slider, the difference between the two moments in time is
 % plotted.
 
-fpath = fullfile(strrep(abspath(fileparts(which(mfilename))), [filesep 'trunk' filesep], [filesep 'test' filesep]), 'datoutput', '2D');
+xbr = xb_run(generate_model);
 
-xbo = xb_read_output(fpath);
+xbo = xb_read_output(xbr);
 
-xb_plot(xbo);
+xb_view(xbo);
