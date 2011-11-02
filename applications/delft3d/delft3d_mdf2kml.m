@@ -90,10 +90,10 @@ function OPT = delft3d_mdf2kml(mdf,varargin)
    OPT.thd         = false;            % switch for thin dams
    OPT.thdColor    = [216 215 1]./256; % color for thin dams
    OPT.thdWidth    = 2;                % width of thin dams
-   OPT.src         = false;            % switch for thin dams
-   OPT.srcColor    = [153 0 153]./256; % color for thin dams
-   OPT.obs         = false;            % switch for thin dams
-   OPT.obsColor    = [0 0 0]./256; % color for thin dams
+   OPT.src         = false;            % switch for source&sink
+   OPT.srcColor    = [153 0 153]./256; % color for source&sink
+   OPT.obs         = false;            % switch for observation points
+   OPT.obsColor    = [0 0 0]./256;     % color for observation points
    OPT.kmz         = false;            % switch for output to kmz
    OPT.dep3D       = false;            % for 3D view of bathymetry. NB: by using this option, drypoints and thindams can get invisible because they are below the bathymetry.
    
