@@ -77,13 +77,13 @@ fdirs = dir(fullfile(fdir, 'xb_*'));
 ffolders = {fdirs.name};
 ffolders = ffolders([fdirs.isdir]);
 folders = [{'..\..\io\' '..\..\general\'} ffolders];
-for i = 1:length(folders); folders{i} = abspath(ffolders{i}); end;
+for i = 1:length(folders); folders{i} = abspath(folders{i}); end;
 
 % select all files and oetsettings
 fffiles = dir(fdir);
 ffiles = {fffiles.name};
 ffiles = ffiles(~[fffiles.isdir]);
-files = [{'oetsettings'} ffiles];
+files = [{'oetsettings' '..\SuperTrans\data\EPSG.mat'} ffiles];
 
 % release toolbox
 switch OPT.type

@@ -58,6 +58,8 @@ function IsCalls = getCalls(fun, directory, varargin)
 %%
 getdefaults('directory', cd, 1);
 
+IsCalls  = {};
+
 %%
 [fhandle fl fun] = checkfhandle(fun);
 if ~fl

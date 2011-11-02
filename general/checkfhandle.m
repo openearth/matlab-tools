@@ -58,9 +58,14 @@ if ~isa(fhandle, 'function_handle')
             disp(['The function specified ("' fhandle '") turned out to be a variable in the current workspace as well.']);
             fl = false;
         otherwise
-            fhandle = eval(['@' fname]);
+            try
+                fhandle = eval(['@' fname]);
+            catch
+                fhandle = [];
+            end
+                
             if ~isa(fhandle, 'function_handle')
-                disp(['The function specified ("' fhandle '") could not be found.']);
+                disp(['The function specified ("' fname '") could not be found.']);
                 fl = false;
             end
     end

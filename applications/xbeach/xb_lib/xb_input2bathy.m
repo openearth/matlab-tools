@@ -66,4 +66,8 @@ function [x y z ne] = xb_input2bathy(xb, varargin)
 
 if ~xb_check(xb); error('Invalid XBeach structure'); end;
 
+if xb_exist(xb, 'xyfile')
+    xb = xb_grid_delft3d(xb);
+end
+
 [x y z ne] = xb_get(xb, 'xfile.xfile', 'yfile.yfile', 'depfile.depfile', 'ne_layer.ne_layer');
