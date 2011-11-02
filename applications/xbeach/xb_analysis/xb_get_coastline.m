@@ -90,7 +90,7 @@ if isempty(y); y = 0; end;
 
 %% determine orientation
 
-% convert from fector to matrix
+% convert from vector to matrix
 if isvector(x) && isvector(y)
     [x y] = meshgrid(x, y);
 end
