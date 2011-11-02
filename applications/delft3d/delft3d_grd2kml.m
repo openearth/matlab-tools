@@ -112,6 +112,6 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
 
    OPT2.fileName  = [filename(grdfile),'_mesh.kml'];
 
-   KMLmesh  (G.cor.lat,G.cor.lon,'clampToGround',OPT2);
+   %KMLmesh  (G.cor.lat,G.cor.lon,'clampToGround',OPT2);
 
 %%EOF
