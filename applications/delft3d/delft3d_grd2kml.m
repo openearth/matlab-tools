@@ -11,7 +11,6 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
 %       mdf       = name of mdf file toretrieve dpsopt
 %       dpsopt    = only when mdf not specified: dpsopt in mdf file 
 %                   to specify location of depth values in *.dep filee.g. 'max','mean', 'dp'
-%       ddep      = depth offset
 %       linecolor = color of the grid lines
 %
 %   Output:
@@ -26,7 +25,8 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
 %   delft3d_grd2kml('i:\R1501_Grootschalige_modellen\roosters\A2275_western_mediterranean_r02.grd');
 %
 % Example 2:
-%   delft3d_grd2kml('g04.grd','epsg',28992,'dep','g04.dep','dpsopt','mean','ddep',150,'clim',[-50 0])
+%   delft3d_grd2kml('g04.grd','epsg',28992,'dep','g04.dep','dpsopt','mean',...
+%                    'zScaleFun',@(z) z*100,'cLim',[-50 0])
 %
 %See also: googlePlot, delft3d, delft3d_mdf2kml
 
