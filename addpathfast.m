@@ -26,6 +26,8 @@ function addpathfast(basepath,varargin)
    OPT.append   = true; % add new path before or after existing path
    
    OPT = setproperty(OPT,varargin{:});
+   
+   if ~exist(basepath,'dir'); return; end;
 
 %% Find all subdirs in basepath
 
