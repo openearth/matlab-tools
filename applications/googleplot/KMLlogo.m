@@ -102,13 +102,19 @@ function varargout = KMLlogo(varargin)
    im = ind2rgb(im,map).*255;
    end
    
-   % make alpha sum of rgb values
-   if OPT.invertblackwhite
-   im4alpha =  sum(im,3)./255./3;
-   else
-   im4alpha = 1-sum(im,3)./255./3;
+   im4alpha = im(:,:,3);
+   
+   % Use exisitng alpha when present,
+   % otherwise calculate alpha by scaling image
+   if ~any(im4alpha > 0)
+       % make alpha sum of rgb values
+       if OPT.invertblackwhite
+       im4alpha =  sum(im,3)./255./3;
+       else
+       im4alpha = 1-sum(im,3)./255./3;
+       end
+       im4alpha = im4alpha./max(im4alpha(:));% scale so lightest pixel is fully white
    end
-   im4alpha = im4alpha./max(im4alpha(:));% scale so lightest pixel is fully white
    
    if isempty(OPT.logoName)
    OPT.logoName = fullfile(fileparts(imName),[filename(imName),'4GE.png']);

@@ -3,13 +3,14 @@ function varargout = KMLcolumn(lat,lon,z,c,varargin)
 %
 %   KMLcolumn(lat,lon,z,c,R,<keyword,value>)
 %
-%    lat,lon must be cells with one double each
-%    z must be a cell with top and bottom coordinates of the layers (length(c)+1
-%    c must be a cell with values that are colors of the layers     (length(z)-1)
+%    lat,lon cells with one double each
+%    z       cell with top & bottom coordinates of the layers (length(c)+1)
+%    c       cell with values that are colors of the layers   (length(z)-1)
 %
-% Saves layer as nested columns of decreasing radius, each extrudes to the Earth surface.
-% All segments are extruded to ground level, floating columns are not possible,
-% use KMLcylinder for floating objects (slower in Google Earth though).
+% Saves layers as nested columns of decreasing radius, each  
+% extruded to the Earth's surface. All segments are extruded  
+% to ground level, floating columns are not possible, use  
+% KMLcylinder for that (slower in Google Earth though).
 %
 %  example:
 %
