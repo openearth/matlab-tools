@@ -69,7 +69,7 @@ yMeris(inot) = nan;
 dataMeris(inot) = nan;
 eMeris(inot) = nan;
 
-iseg  = naninterp2(gridStruct.X,gridStruct.Y,gridStruct.Index(:,:,1),xMeris,yMeris,'nearest');
+iseg  = naninterp(gridStruct.X,gridStruct.Y,gridStruct.Index(:,:,1),xMeris,yMeris,'nearest');
 iseg = round(iseg);
 useg = unique(iseg(~isnan(iseg)));
 useg(useg<=0) = [];
@@ -151,7 +151,7 @@ if length(useg)>5
             end %i
 
         otherwise
-            zi  = naninterp2(xMeris,yMeris,dataMeris,gridStruct.cen.x(useg),gridStruct.cen.y(useg),method);
+            zi  = naninterp(xMeris,yMeris,dataMeris,gridStruct.cen.x(useg),gridStruct.cen.y(useg),method);
     end
 end
 ZI(useg) = zi;
