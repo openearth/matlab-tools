@@ -98,9 +98,13 @@ if ~isnan(b)
             alpha = alpha + pi;
         end
     end
-
-    % convert units
-    if strcmpi(OPT.units, 'degrees')
-        alpha = alpha/pi*180;
+else
+    if dir == -1
+        alpha = pi;
     end
+end
+
+% convert units
+if strcmpi(OPT.units, 'degrees')
+    alpha = alpha/pi*180;
 end

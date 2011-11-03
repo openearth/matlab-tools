@@ -34,7 +34,7 @@ function xb = xb_generate_model(varargin)
 %   xb = xb_generate_model('write', false);
 %   xb = xb_generate_model('bathy', {'x', [ ... ], 'z', [ ... ]}, 'waves', {'Hm0', 9, 'Tp', 18});
 %
-%   See also xb_generate_settings, xb_generate_grid, xb_generate_waves,
+%   See also xb_generate_settings, xb_generate_bathy, xb_generate_waves,
 %   xb_generate_tide, xb_write_input
 
 %% Copyright notice
