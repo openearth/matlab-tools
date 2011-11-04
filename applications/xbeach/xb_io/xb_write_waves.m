@@ -1,10 +1,10 @@
 function filename = xb_write_waves(xb, varargin)
 %XB_WRITE_WAVES  Writes wave definition files for XBeach input
 %
-%   Writes JONSWAP or variance density spectrum files for XBeach input. In 
+%   Writes JONSWAP or variance density spectrum files for XBeach input. In
 %   case of conditions changing in time, a file list file is created
 %   refering to multiple wave definition files. In case of a JONSWAP
-%   spectrum, the file list file can be omitted and a single matrix 
+%   spectrum, the file list file can be omitted and a single matrix
 %   formatted file is created. Returns the filename of the file to be
 %   referred in the params.txt file.
 %
@@ -48,7 +48,7 @@ function filename = xb_write_waves(xb, varargin)
 %   Copyright (C) 2010 Deltares
 %       Bas Hoonhout
 %
-%       bas.hoonhout@deltares.nl	
+%       bas.hoonhout@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -68,9 +68,9 @@ function filename = xb_write_waves(xb, varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -95,7 +95,7 @@ OPT = struct( ...
     'vardens_file', 'vardens', ...
     'unknown_file', 'wave', ...
     'omit_filelist', false, ...
-    'maxduration', 1800 ...
+    'maxduration', 3600 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -141,21 +141,21 @@ switch type
         end
     case {'ezs'}
         vars = {'contents' 'duration' 'timestep'};
-        
+
         fname = 'bc/gen.ezs';
-        
+
         bcpath = abspath(fullfile(OPT.path, 'bc'));
         if ~exist(bcpath, 'dir')
             mkdir(bcpath);
         end
-        
+
         tlength = 1;
         xb = xb_set(xb, 'duration', 0, 'timestep', 0);
     case {'unknown'}
         vars = {'contents' 'duration' 'timestep'};
-        
+
         fname = OPT.unknown_file;
-        
+
         % determine length of time series
         tlength = get_time_length(xb, vars);
     otherwise
@@ -182,7 +182,7 @@ end
 % extend constant parameters to length of time series
 for i = 1:length(vars)
     if strcmpi(vars{i}, 'contents'); continue; end;
-    
+
     var = xb_get(xb, vars{i});
     switch length(var)
         case 0
@@ -200,11 +200,12 @@ while any(duration>OPT.maxduration)
     i           = find(duration>OPT.maxduration,1,'first');
     n           = floor(duration(i)/OPT.maxduration);
     d           = [repmat(OPT.maxduration,1,n) mod(duration(i), OPT.maxduration)];
-    idx         = [1:i-1 repmat(i,1,n+1) i+1:length(duration)];
+    d(d==0)     = [];
+    idx         = [1:i-1 repmat(i,1,length(d)) i+1:length(duration)];
     duration    = [duration(1:i-1) d duration(i+1:end)];
     for j = 1:length(vars)
         if strcmpi(vars{j}, 'duration'); continue; end;
-        
+
         data    = xb_get(xb, vars{j});
         xb      = xb_set(xb, vars{j}, data(idx));
     end
@@ -242,14 +243,14 @@ else
             else
                 filename = fname;
             end
-            
+
             fname_i = filename;
         else
             fname_i = [fname '_' num2str(i) '.txt'];
         end
 
         fname_i = fullfile(OPT.path, fname_i);
-        
+
         switch type
             case 'jonswap'
                 write_jonswap_file(fname_i, i, xb)
@@ -276,7 +277,7 @@ for i = 1:length(vars)
 
     t = max(t, length(var));
 end
-    
+
 % write single jonswap wave file
 function write_jonswap_file(fname, idx, xb)
 vars = {'Hm0' 'fp' 'mainang' 'gammajsp' 's' 'fnyq'};
@@ -289,7 +290,7 @@ for i = 1:length(vars)
     end
 end
 fclose(fid);
-    
+
 % write matrix formatted jonswap wave file
 function write_jonswap_mtx_file(fname, tlength, xb)
 vars = {'Hm0' 'Tp' 'mainang' 'gammajsp' 's' 'duration' 'timestep'};
@@ -303,7 +304,7 @@ for i = 1:tlength
     fprintf(fid, '\n');
 end
 fclose(fid);
-    
+
 % write single variance density spectrum file
 function write_vardens_file(fname, idx, xb)
 [freqs dirs vardens] = xb_get(xb, 'freqs', 'dirs', 'vardens');
