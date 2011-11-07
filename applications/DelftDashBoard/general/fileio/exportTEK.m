@@ -1,5 +1,9 @@
 function exportTEK(data,times,fname,blname,comments)
 
+if size(data,1)==1
+    data=data';
+end
+
 fid=fopen(fname,'w');
 
 if nargin==4

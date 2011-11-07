@@ -19,7 +19,7 @@ ntry=1;
 
 urlstr = getMeteoUrl(meteosource,cycledate,cyclehour);
 switch lower(meteosource)
-    case{'gfs1p0','gfs0p5'}
+    case{'gfs1p0','gfs0p5','ncep_gfs_analysis'}
         xlim=mod(xlim,360);
 end
 
@@ -105,10 +105,12 @@ try
 
     tminstr=nc_attget(urlstr,'time','minimum');
     tmaxstr=nc_attget(urlstr,'time','maximum');
-    tminstr=deblank(strrep(tminstr,'z',' '));
-    tmaxstr=deblank(strrep(tmaxstr,'z',' '));
-    tmin=datenum(tminstr,'HHddmmmyyyy');
-    tmax=datenum(tmaxstr,'HHddmmmyyyy');
+    tminstr=deblank(strrep(tminstr,'z',''));
+    tmaxstr=deblank(strrep(tmaxstr,'z',''));
+    tmin=datenum(tminstr(3:end),'ddmmmyyyy')+str2double(tminstr(1:2))/24;
+    tmax=datenum(tmaxstr(3:end),'ddmmmyyyy')+str2double(tmaxstr(1:2))/24;
+%     tmin=datenum(tminstr,'HHddmmmyyyy');
+%     tmax=datenum(tmaxstr,'HHddmmmyyyy');
     timdim=nc_getdiminfo(urlstr,'time');
     nt=timdim.Length;
 %     nanval1=nc_attget(urlstr,'ugrd10m','missing_value');
@@ -118,7 +120,7 @@ try
     dt=(tmax-tmin)/(nt-1);
     times=tmin:dt:tmax;
     if ~isempty(t)
-        it1=find(times==t(1));
+        it1=find(abs(times-t(1))<0.01,1,'first');
         it2=find(times<=t(end),1,'last');
     else
         it1=0;
