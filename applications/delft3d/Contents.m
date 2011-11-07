@@ -70,5 +70,5 @@
 %   dflowfm   - tools related to D-Flow FM (Flexible Mesh); Flow for unstructured grid
 %   delft3d_kelvin_wave - generating frictional kelvin wave boundaries for idealized rectangular models
 %
-%See also: 
+%See also: SWAN, googlePlot, convertcoordinates, flow, waq
 

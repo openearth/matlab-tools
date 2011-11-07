@@ -65,35 +65,35 @@ function xcor = center2corner1(xcen,varargin)
 dimensions_of_xcen = fliplr(sort(size(xcen))); % 1st element is biggest
 
 %% Method
-%% ------------------------
+%  ------------------------
    method = 'linear';
    if nargin==2
    method = varargin{1};
    end
 
 %% 1D
-%% ------------------------
+%  ------------------------
 if dimensions_of_xcen(2)==1
    
    %% Initialize with nan
-   %% ------------------------
+   %  ------------------------
 
       xcor = nan.*zeros([1 length(xcen)+1]);
 
    %% Give value to those corner points that have 
-   %% 4 active center points around
-   %% and do not change them with 'internal extrapolations
-   %% ------------------------
+   %  4 active center points around
+   %  and do not change them with 'internal extrapolations
+   %  ------------------------
 
       xcor(2:end-1) = (xcen(1:end-1) + xcen(2:end))./2;
 
    %% Orthogonal mirroring (only of still empty values)
-   %% ------------------------
+   %  ------------------------
   
       xcor = mirror_in_1st_dimension1D(xcen ,xcor ,method);
      
 %% 2D or more
-%% ------------------------
+%  ------------------------
 
 else
 
@@ -158,19 +158,19 @@ function xcor = mirror_in_1st_dimension1D(xcen,xcor,method)
   if strcmpi(method,'linear')
 
   %% Linear
-  %% --------------------
+  %  --------------------
 
      for m=1:length(xcen)-1
 
         %% mirror back when not yet filled in
-        %% -------------------------------------
+        %  -------------------------------------
 
         if isnan(xcor(m ))
            xcor(m  ) = (+ 3*xcen(m  ) -   xcen(m+1))/2; % is nan when one or more elements are nan
         end
         
         %% mirror forward when not yet filled in
-        %% -------------------------------------
+        %  -------------------------------------
         
         if isnan(xcor(m+2))
            xcor(m+2) = (-   xcen(m  )+ 3*xcen(m+1))/2; % is nan when one or more elements are nan
@@ -181,19 +181,19 @@ function xcor = mirror_in_1st_dimension1D(xcen,xcor,method)
   elseif strcmpi(method,'nearest')
   
   %% Nearest
-  %% --------------------
+  %  --------------------
   
      for m=1:length(xcen)-1
 
         %% mirror back when not yet filled in
-        %% -------------------------------------
+        %  -------------------------------------
 
         if isnan(xcor(m ))
            xcor(m  ) = (+ 1*xcen(m  )              )  ; % is nan when one or more elements are nan
         end
         
         %% mirror forward when not yet filled in
-        %% -------------------------------------
+        %  -------------------------------------
         
         if isnan(xcor(m+2))
            xcor(m+2) = (             + 1*xcen(m+1))  ; % is nan when one or more elements are nan

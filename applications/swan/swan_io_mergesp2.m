@@ -1,5 +1,7 @@
 function swan_io_mergesp2(dr,fout,varargin)
-%SWAN_IO_MERGESP2  Create one sp2-file in which sp2-files at different moments in time are merged (for wave nesting)
+%SWAN_IO_MERGESP2  Merge multiple sp2 files into 1 sp2 file
+%
+%   Create one sp2-file in which sp2-files at different moments in time are merged (for wave nesting).
 %
 %   For nested Delft3D Wave models it is possible to specify the wave output of the outer grid as input
 %   for the nested grid (specified at the boundary), using 2D wave spectra (sp2-files). For non-stationary
@@ -23,7 +25,7 @@ function swan_io_mergesp2(dr,fout,varargin)
 %       with CS1.code = 32631, CS1.type = 'xy', CS2.code = 4326, CS2.type = 'geo'
 %   swan_io_mergesp2('d:\test\','test.sp2','fexclude',{'nest_t1.sp2','nest_t2.sp2'}) 
 %
-%   See also
+%   See also SWAN
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -1,4 +1,5 @@
 function [Bulk,Separation]=waveseparation(freqs,dirs,energy,factor)
+%waveseparation
 
 % Organize directional bin
 % dirs(dirs<0)=dirs(dirs<0)+360;
