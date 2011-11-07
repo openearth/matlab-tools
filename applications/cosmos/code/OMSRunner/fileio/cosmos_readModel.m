@@ -479,6 +479,11 @@ if isfield(model,'usemeteo')
 else
     hm.models(i).useMeteo='none';
 end
+if isfield(model,'meteobackup1')
+    hm.models(i).backupMeteo=model.meteobackup1;
+else
+    hm.models(i).backupMeteo='none';
+end
 if isfield(model,'prcorr')
     hm.models(i).prCorr=str2double(model.prcorr);
 else
