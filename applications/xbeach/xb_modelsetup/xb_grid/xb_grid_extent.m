@@ -78,9 +78,11 @@ if isvector(x) && isvector(y)
     [x y] = meshgrid(x, y);
 end
     
-xmin = min(min(x));
-xmax = max(max(x));
-ymin = min(min(y));
-ymax = max(max(y));
+xmin = min(x(:));
+xmax = max(x(:));
+ymin = min(y(:));
+ymax = max(y(:));
 
-cellsize = min(min(sqrt(diff(x).^2+diff(y).^2)));
+alldiff = [diff(x(:)); diff(y(:))];
+
+cellsize = min(alldiff(alldiff>0));

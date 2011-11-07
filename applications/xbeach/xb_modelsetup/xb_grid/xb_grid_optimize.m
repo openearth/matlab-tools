@@ -171,8 +171,8 @@ else
     end
 
     % create dummy grid
-    x_d = xmin:cellsize:xmax;
-    y_d = ymin:cellsize:ymax;
+    x_d = linspace(xmin, xmax, ceil((xmax-xmin)/cellsize));
+    y_d = linspace(ymin, ymax, ceil((xmax-xmin)/cellsize));
 
     % rotate dummy grid to world coordinates
     [x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, alpha, 'origin', [xori yori]);
