@@ -35,28 +35,65 @@ end
 %% Meteo
 if ~strcmpi(model.useMeteo,'none')
 
-    ii=strmatch(model.useMeteo,hm.meteoNames,'exact');
-    dt=hm.meteo(ii).timeStep;
+    try
 
-    coordsys=hm.models(m).coordinateSystem;
-    coordsystype=hm.models(m).coordinateSystemType;
+        ii=strmatch(model.useMeteo,hm.meteoNames,'exact');
+        dt=hm.meteo(ii).timeStep;
 
-    if ~strcmpi(coordsystype,'geographic')
-        dx=model.dXMeteo;
-        dy=model.dYMeteo;
-    else
-        dx=0;
-        dy=0;
+        coordsys=hm.models(m).coordinateSystem;
+        coordsystype=hm.models(m).coordinateSystemType;
+
+        if ~strcmpi(coordsystype,'geographic')
+            dx=model.dXMeteo;
+            dy=model.dYMeteo;
+        else
+            dx=0;
+            dy=0;
+        end
+    
+        meteodir=[hm.scenarioDir 'meteo' filesep model.useMeteo filesep];
+
+        if model.includeTemperature
+            hstr='includeheat';
+        else
+            hstr='noheat';
+        end
+        WriteD3DMeteoFile3(meteodir,model.useMeteo,tmpdir,'meteo',model.xLim,model.yLim,dx,dy,coordsys,coordsystype,model.refTime,model.tFlowStart-0.5,model.tStop,dt,hstr);
+
+    catch
+
+        % Regular meteo failed
+
+        if ~strcmpi(model.backupMeteo,'none')
+        
+            ii=strmatch(model.backupMeteo,hm.meteoNames,'exact');
+            dt=hm.meteo(ii).timeStep;
+
+            coordsys=hm.models(m).coordinateSystem;
+            coordsystype=hm.models(m).coordinateSystemType;
+
+            if ~strcmpi(coordsystype,'geographic')
+                dx=model.dXMeteo;
+                dy=model.dYMeteo;
+            else
+                dx=0;
+                dy=0;
+            end
+    
+            meteodir=[hm.scenarioDir 'meteo' filesep model.backupMeteo filesep];
+
+            if model.includeTemperature
+                hstr='includeheat';
+            else
+                hstr='noheat';
+            end
+            WriteD3DMeteoFile3(meteodir,model.backupMeteo,tmpdir,'meteo',model.xLim,model.yLim,dx,dy,coordsys,coordsystype,model.refTime,model.tFlowStart-0.5,model.tStop,dt,hstr);
+            
+        else
+            error('No backup meteo specified!');            
+        end
     end
     
-    meteodir=[hm.scenarioDir 'meteo' filesep model.useMeteo filesep];
-
-    if model.includeTemperature
-        hstr='includeheat';
-    else
-        hstr='noheat';
-    end
-    WriteD3DMeteoFile3(meteodir,model.useMeteo,tmpdir,'meteo',model.xLim,model.yLim,dx,dy,coordsys,coordsystype,model.refTime,model.tFlowStart-0.5,model.tStop,dt,hstr);
 end
 
 %% Discharges
