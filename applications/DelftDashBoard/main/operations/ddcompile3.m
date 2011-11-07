@@ -105,7 +105,7 @@ for j=1:length(flist)
                     end
                     try
                         if isdir([inipath 'toolboxes' filesep toolbox filesep 'misc'])
-                            mkdir([inipath 'ddbsettings' filesep 'models' filesep toolbox filesep 'misc']);
+                            mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
                             copyfiles([inipath 'toolboxes' filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
                         end
                     end
@@ -145,7 +145,7 @@ if ~isempty(additionalToolboxDir)
                         end
                         try
                             if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
-                                mkdir([inipath 'ddbsettings' filesep 'models' filesep toolbox filesep 'misc']);
+                                mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
                                 copyfiles([additionalToolboxDir filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
                             end
                         end
@@ -168,7 +168,8 @@ end
 %% Generate data folder in exe folder
 ddb_copyAllFilesToDataFolder(inipath,[inipath filesep 'exe' filesep 'data' filesep],additionalToolboxDir);
 
-mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
+%mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
+mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\netcdfAll-4.2.jar -M earthicon.res
 
 % make about.txt file
 Revision = '$Revision$';
