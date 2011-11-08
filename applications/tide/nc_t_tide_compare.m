@@ -90,8 +90,16 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
      [M,Ma] = nc2struct(ncmodel{ifile});% Load model    data
      [D,Da] = nc2struct(ncdata{ifile}); % Load observed data
      
+     D.station_name = make1d(char(D.station_name))';
+     D.station_id   = make1d(char(D.station_id  ))';
+     
      if abs(M.longitude - D.longitude) > OPT.eps;error('lon coordinates of model and data do not match');end
      if abs(M.latitude  - D.latitude ) > OPT.eps;error('lat coordinates of model and data do not match');end
+
+     D.title = [D.station_name,' (',...
+                D.station_id  ,') [',...
+                num2str(D.longitude),'\circ E, ',...
+                num2str(D.latitude ),'\circ N]'];
 
    %% SCATTER plot
 
@@ -172,7 +180,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          plot(xlims       ,ylims       ,'-','color',[.5 .5 .5])
          plot(xlims + 0.01,ylims       ,'-','color',[.5 .5 .5])
          
-         title([char(D.station_name),' (',char(D.station_id),') [',num2str(D.longitude),'\circ E, ',num2str(D.latitude),'\circ N]'])
+         title(D.title)
          
         subplot(1,2,2)
          xlims = [0 360];
@@ -319,7 +327,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
       %% SPECTRUM lay-out
 
          subplot(2,1,1)
-         title([char(D.station_name),' (',char(D.station_id),') [',num2str(D.longitude),'\circ E, ',num2str(D.latitude),'\circ N]'])
+         title(D.title)
 
          xlim([.02 .27])
          set(gca,'xtick',[1 2 3 4 5 6]./24)

@@ -88,6 +88,9 @@ function varargout = analyseHis(varargin)
    OPT.t_tide      = 1;
    OPT.label       = '';
    OPT.names       = {}; % id names of stations to include
+   OPT.units       = [];
+   OPT.timezone    = '+00:00'; % common time zone for data and modle comparison in plots
+   OPT.model_timezone    = '+01:00'; % time zone of model is not present in model output (model not time zone aware)
 
    OPT.pause       = 0;
    OPT.standard_name = 'sea_surface_height';
@@ -137,14 +140,15 @@ end
    end
 
 %% load model data
-% TO DO: [M,meta]   = nc_cf_stationTimeSeries(OPT.nc,OPT.hisname,'period',OPT.datelim([1 end]))
+% TO DO: [M,Mmeta]   = nc_cf_stationTimeSeries(OPT.nc,OPT.hisname,'period',OPT.datelim([1 end]))
 
-   M.datenum       =         nc_cf_time(OPT.nc,'time'); % USE nc_cf_time_range()
-   M.(OPT.varname) =         nc_varget (OPT.nc,OPT.hisname);
-   M.name          = cellstr(nc_varget (OPT.nc,OPT.hisnamename)); % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
-   M.lon           = nan;
-   M.lat           = nan;
-   meta.(OPT.varname).units = nc_attget(OPT.nc,OPT.hisname,'units'); % in case there is no data
+  [M.datenum,...
+   Mmeta.datenum.timezone]   = nc_cf_time(OPT.nc,'time'); % USE nc_cf_time_range()
+   M.(OPT.varname)           = nc_varget (OPT.nc,OPT.hisname);
+   M.name                    = cellstr(nc_varget (OPT.nc,OPT.hisnamename)); % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
+   M.lon                     = nan;
+   M.lat                     = nan;
+   Mmeta.(OPT.varname).units = nc_attget(OPT.nc,OPT.hisname,'units'); % in case there is no data
 
 %% prepare
 
@@ -167,7 +171,31 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
    %             (ii) full netCDF url as name of observation point for direct retrieval
      [bool,ind] = strfindb(dataurls,upper(M.name{ist}));
       dataurl   = dataurls{bool};
-     [D,meta]   = nc_cf_stationTimeSeries(dataurl,OPT.varname,'period',OPT.datelim([1 end])); % returns lon and lat
+     [D,Dmeta]   = nc_cf_stationTimeSeries(dataurl,OPT.varname,'period',OPT.datelim([1 end])); % returns lon and lat
+
+     if ~isequal(Mmeta.(OPT.varname).units, Dmeta.(OPT.varname).units)
+     error(['units of model and data differ, model: "',...
+               char(Mmeta.(OPT.varname).units),'"   - data: "',...
+               char(Dmeta.(OPT.varname).units),'"'])
+     OPT.units
+     end
+     
+     if ~isequal(Mmeta.datenum.timezone,Dmeta.datenum.timezone)
+     disp(['time zones of model and data differ, model: "',...
+               char(Mmeta.datenum.timezone),'"   - data: "',...
+               char(Dmeta.datenum.timezone),'"'])
+     disp(['converted to common timezone ',OPT.timezone]);
+     
+     if isempty(char(Mmeta.datenum.timezone))
+         Mmeta.datenum.timezone = OPT.model_timezone;
+     end
+
+     M.datenum = M.datenum - timezone_code2datenum(char(Mmeta.datenum.timezone)) ...
+                           + timezone_code2datenum(OPT.timezone);
+     D.datenum = D.datenum - timezone_code2datenum(char(Dmeta.datenum.timezone)) ...
+                           + timezone_code2datenum(OPT.timezone);
+     end
+     
      % copy meta-data that is not in model output (yet ...)
      M.lon          = D.lon;
      M.lat          = D.lat;
@@ -194,8 +222,16 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
 
  if ~isempty(D.datenum)
    
-    %% interpolate model to data times
+    %% interpolate model to data times in common timezone
+
     DM.(OPT.varname) = interp1(M.datenum,M.(OPT.varname)(:,ist),D.datenum)';  % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
+    
+    DM.(OPT.varname) = reshape(DM.(OPT.varname),size(D.(OPT.varname)));
+    
+    D.title = [OPT.label,char(D.station_name(:)'),' (',...
+                          char(D.station_id(:)'),') [',...
+                          num2str(D.lon),'\circ E, ',...
+                          num2str(D.lat),'\circ N]'];
     
 %% plot timeseries difference
 
@@ -203,10 +239,10 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
     
     plot    (D.datenum,DM.(OPT.varname) - D.(OPT.varname),'g','DisplayName','model - data')
     legend  ('Location','NorthEast')
-    title   ([OPT.label,char(D.station_name),' (',char(D.station_id),') [',num2str(D.lon),'\circ E, ',num2str(D.lat),'\circ N]'])
+    title   (D.title)
     grid on
     ylim    (OPT.ylim)
-    ylabel  (['\eta [',meta.(OPT.varname).units,']']);
+    ylabel  (['\eta [',Dmeta.(OPT.varname).units,']']);
     timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
     text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
@@ -231,14 +267,14 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
 
     plot    (D.(OPT.varname),DM.(OPT.varname),'k.','DisplayName','model vs. data') % model on y-axis: 'model to high' visible as higher results
     hold on
-    title   ([OPT.label,char(D.station_name),' (',char(D.station_id),') [',num2str(D.lon),'\circ E, ',num2str(D.lat),'\circ N]'])
+    title   (D.title)
     text    (0,1,txte,'units','normalized','verticalalignment','top','FontName','fixedwidth')
     grid on
     axis equal
     ylim  (OPT.ylim)
-    ylabel(['\color{blue}\eta [',meta.(OPT.varname).units,'] (model)'])
+    ylabel(['\color{blue}\eta [',Dmeta.(OPT.varname).units,'] (model)'])
     xlim  (OPT.ylim)
-    xlabel(['\color{red}\eta [',meta.(OPT.varname).units,'] (data)'])
+    xlabel(['\color{red}\eta [',Dmeta.(OPT.varname).units,'] (data)'])
     plot  (xlim,ylim,'k--','linewidth',1)
     for deta = [.25 .5]
     plot  (xlim+deta,ylim-deta,'k:')
@@ -260,10 +296,10 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
     plot    (D.datenum,D.(OPT.varname),'r','DisplayName','data')
     end
     legend  ('Location','NorthEast')
-    title   ([OPT.label,char(D.station_name),' (',char(D.station_id),') [',num2str(D.lon),'\circ E, ',num2str(D.lat),'\circ N]'])
+    title   (D.title)
     grid on
     ylim    (OPT.ylim)
-    ylabel  (['\eta [',meta.(OPT.varname).units,']']);
+    ylabel  (['\eta [',Dmeta.(OPT.varname).units,']']);
     timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
     text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
@@ -288,7 +324,7 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
           'period',OPT.datelim, ... % D.datenum([1 end]),... % use OPT.datelim
              'lat',D.lat,...
              'lon',D.lon,...
-           'units',meta.(OPT.varname).units,...
+           'units',Dmeta.(OPT.varname).units,...
          'ascfile',[fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist}),'_t_tide.t_tide'],...
           'ncfile',nc_t_tide_data);
     clear D
@@ -301,7 +337,7 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
           'period',OPT.datelim, ... % M.datenum([1 end]),... % use OPT.datelim
              'lat',M.lat,...
              'lon',M.lon,...
-           'units',meta.(OPT.varname).units,...
+           'units',Dmeta.(OPT.varname).units,...
          'ascfile',[fileparts(OPT.nc),filesep,'t_tide',filesep,filename(OPT.nc),'_',mkvar(M.name{ist}),'_t_tide.t_tide'],...
           'ncfile',nc_t_tide_model);
      

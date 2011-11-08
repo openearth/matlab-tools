@@ -169,7 +169,7 @@ end
    nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Rijkswaterstaat DONAR code of station');
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
    nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.station_id);clear nc
+   nc_varput         (OPT.ncfile,nc.Name,D.station_id(:)');clear nc
 
    nc.Name = 'station_name';
    nc.Datatype     = 'char';
@@ -177,7 +177,7 @@ end
    nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'name of station');
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_name');
    nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.station_name);clear nc
+   nc_varput         (OPT.ncfile,nc.Name,D.station_name(:)');clear nc
 
    nc.Name = 'longitude';
    nc.Datatype     = 'double';

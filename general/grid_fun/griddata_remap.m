@@ -21,8 +21,7 @@ function ZI = griddata_remap(X, Y, Z, XI, YI, varargin)
 %   Example
 %   griddata_remap
 %
-%   See also: GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_AVERAGE, GRIDDATE_REMAP,
-%   INTERP2, BIN2 
+%   See also: GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_AVERAGE, INTERP2, BIN2 
 
 %% Copyright notice
 %   --------------------------------------------------------------------

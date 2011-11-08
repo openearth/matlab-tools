@@ -18,7 +18,7 @@ function num = timezone_code2iso(varargin)
 %   num = timezone_code2iso('CET') % gives +01:00 % (U.S./Canadian Eastern Standard Time)
 %   num = timezone_code2iso('EST') % gives +01:00 % (Central European Time (CET))
 %
-%See also: datenum
+%See also: datenum, TIMEZONE_CODE2datenum
 
 %% Copyright notice
 %   --------------------------------------------------------------------

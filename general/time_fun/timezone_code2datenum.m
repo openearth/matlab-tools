@@ -1,26 +1,19 @@
-function C = strtokens2cell(STR,DELIM)
-%STRTOKENS2CELL   rewrites space delimitered keyword list to cell array
+function days = timezone_code2iso(isostring)
+%TIMEZONE_CODE2datenum convert between ISO +HH:MM notation and datenum
 %
-% C = strtokens2cell(STR) rewrites space delimitered keyword 
-% list into cell array
+%   days = timezone_code2datenum(isostring)
 %
-% C = strtokens2cell(STR,DELIM) rewrites space delimitered keyword 
-% list into cell array using first token in DELIM as delimiter
+% returns time in days (datenum)
+%
+% Examples:
+%
+%   num = timezone_code2iso('+01:00') % gives +1/24
+%
+%See also: datenum, TIMEZONE_CODE2iso
 
-% example:
-%
-%    C = strtokens2cell('a b')
-%
-% gives C{1}='a';C{2}='b'
-%
-%   C = 
-%  
-%      'a'    'b'
-%
-% See also: STRTOK, EXPRESSIONSFROMSTRING
-
+%% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2006 Deltares
+%   Copyright (C) 2011 Deltares
 %       Gerben de Boer
 %
 %       gerben.deboer@deltares.nl	
@@ -44,22 +37,14 @@ function C = strtokens2cell(STR,DELIM)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
 % $HeadURL$
-
-rest_of_STR = STR;
-no_of_tok   = 0;
-if nargin==1
-    DELIM = ' ';
-end
-
-while ~(length(deblank(rest_of_STR))==0)
-   [tok, rest_of_STR]  = strtok(rest_of_STR,DELIM);
-   no_of_tok           = no_of_tok + 1;
-   C{no_of_tok}        = tok;
-end   
-
-%% EOF
+% $Keywords: $
+   
+   days = datenum(isostring)- datenum(year(now),1,1);
+   
+%% EOF   

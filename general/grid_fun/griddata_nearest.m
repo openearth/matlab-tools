@@ -13,21 +13,20 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI,varargin)
 %   all points [X,Y] in a (delaunay triangulation) mesh
 %   before interpolation. Instead GRIDDATA_NEAREST
 %   finds the closest point in the random set of points
-%   [X,Y] for all points [XI,YI]  one-at-a-time and
+%   [X,Y] for all points [XI,YI] one-at-a-time and
 %   copies the associated value.
 %
 %   Note: GRIDDATA_NEAREST is much slower than GRIDDATA, but
-%   owes it existence to those cases where
+%   owes it existence to those cases where:
 %    i) GRIDDATA leads to (DELAUNAY) triangulation errors.
 %   ii) large X and Y matrixes lead to MEMORY issues in GRIDDATA
 %
 %     ZI = griddata_nearest(X,Y,Z,XI,YI,<keyword,value>)
 %     where keyword 'Rmax' discards cases where the distance > Rmax
-%     this prevent filling in of clouds or land with neighbouring 
+%     this prevent filling through clouds or land with neighbouring 
 %     sea values.
 %
-%   See also: GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_AVERAGE, GRIDDATE_REMAP,
-%   INTERP2, BIN2
+%   See also: GRIDDATA, GRIDDATA_AVERAGE, GRIDDATA_REMAP, INTERP2, BIN2
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -72,13 +71,15 @@ OPT.ndisp = 100;
 OPT.Rmax  = Inf; % make this optionally same size as X and Y.
 OPT.quiet = false;
 
+if nargin==0;ZI = OPT;return;end
+
 OPT  = setproperty(OPT,varargin{:});
 
 ZI   = NaN((size(XI)));
 R    = NaN((size(X )));
 npix = length(XI(:));
 
-% print commandline waitbar
+%% print commandline waitbar
 if ~OPT.quiet
     s = arrayfun(@(n) sprintf('|%d%%',n),0:10:100,'UniformOutput',false);
     s{end} = [s{end} '     '];
@@ -114,7 +115,7 @@ for ipix = 1:npix % index in new (orthogonal) grid
         [pix.distance,pix.index] = min(R(:)); % index in old (random point) grid
     end
     
-
+    %% take care of max distance
     
     if (pix.distance < OPT.Rmax)
         ZI(ipix)                 = Z(pix.index);
@@ -129,7 +130,8 @@ for ipix = 1:npix % index in new (orthogonal) grid
         end
     end
     
-end
+end % ipix
+
 if ~OPT.quiet
     fprintf('\n');
 end
