@@ -15,8 +15,15 @@ try
     tmaxstr=nc_attget(urlstr,'time','maximum');
     tminstr=deblank(strrep(tminstr,'z',''));
     tmaxstr=deblank(strrep(tmaxstr,'z',''));
-    tmin=datenum(tminstr(3:end),'ddmmmyyyy')+str2double(tminstr(1:2))/24;
-    tmax=datenum(tmaxstr(3:end),'ddmmmyyyy')+str2double(tmaxstr(1:2))/24;
+    for i=1:10
+        try
+            tmin=datenum(tminstr(3:end),'ddmmmyyyy')+str2double(tminstr(1:2))/24;
+            tmax=datenum(tmaxstr(3:end),'ddmmmyyyy')+str2double(tmaxstr(1:2))/24;
+            break
+        catch
+            pause(0.1);
+        end
+    end
     timdim=nc_getdiminfo(urlstr,'time');
     nt=timdim.Length;
 
