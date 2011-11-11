@@ -598,17 +598,26 @@ else
     tp=el.variable.type;
 end
 
-switch tp
-    case{'string'}
-    case{'datetime'}
-        v=datenum(v,'yyyy mm dd HH MM SS');
-    case{'date'}
-        v=datenum(v,'yyyy mm dd');
-    case{'time'}
-        v=datenum(v,'HH MM SS');
-    otherwise
-        v=str2double(v);
+for i=1:10
+    try
+        switch tp
+            case{'string'}
+            case{'datetime'}
+                v=datenum(v,'yyyy mm dd HH MM SS');
+            case{'date'}
+                v=datenum(v,'yyyy mm dd');
+            case{'time'}
+                v=datenum(v,'HH MM SS');
+            otherwise
+                v=str2double(v);
+        end
+        break;
+    catch
+        % Try again, not sure why this fails sometimes
+        pause(0.1);
+    end
 end
+
 s=setSubFieldValue(s,el.variable,v);
 
 feval(setFcn,s);
