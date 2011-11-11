@@ -8,6 +8,17 @@ times=t0:dt/1440:t1;
 openBoundaries=delft3dflow_readBndFile([opt.inputDir filesep opt.waterLevel.BC.bndAstroFile]);
 astronomicComponentSets=delft3dflow_readBcaFile([opt.inputDir filesep opt.waterLevel.BC.astroFile]);
 
+if ~isempty(opt.waterLevel.BC.corFile)
+    corrections=delft3dflow_readBcaFile(opt.waterLevel.BC.corFile);
+    for j=1:length(corrections(1).component)
+        ii=strmatch(astronomicComponentSets(1).component{j},astronomicComponentSets(1).component,'exact');
+        for i=1:length(astronomicComponentSets)
+            astronomicComponentSets(i).amplitude(ii)=astronomicComponentSets(i).amplitude(ii)*corrections(i).amplitude(j);
+            astronomicComponentSets(i).phase(ii)=astronomicComponentSets(i).phase(ii)+corrections(i).phase(j);
+        end
+    end
+end
+
 for k=1:length(astronomicComponentSets)
     compSet{k}=astronomicComponentSets(k).name;
 end

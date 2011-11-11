@@ -1,5 +1,11 @@
 function openBoundaries=generateBctFile(flow,openBoundaries,opt)
 
+%opt.waterLevel.BC.corFile='c:\work\socal\tide\run01\newbnd\cor01\cor01.cor';
+%opt.current.BC.corFile='c:\work\socal\tide\run01\newbnd\cor01\cor01.cor';
+
+opt.waterLevel.BC.corFile=[];
+opt.current.BC.corFile=[];
+
 genWLAstro=0;
 %genWLHarmo=0;
 genWLConst=0;
