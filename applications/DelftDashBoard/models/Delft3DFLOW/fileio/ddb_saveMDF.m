@@ -95,13 +95,13 @@ if Flow.wind
             end
         case{'equidistant'}
             if ~isempty(Flow.amuFile)
-                MDF.Filamu=Flow.amuFile;
+                MDF.Filwu=Flow.amuFile;
             end
             if ~isempty(Flow.amvFile)
-                MDF.Filamv=Flow.amvFile;
+                MDF.Filwv=Flow.amvFile;
             end
             if ~isempty(Flow.ampFile)
-                MDF.Filamp=Flow.ampFile;
+                MDF.Filwp=Flow.ampFile;
             end
 % if met
 %     MDF.Wndgrd=Flow.wndgrd;
@@ -403,6 +403,7 @@ if Flow.heatOut
     MDF.HeaOut='Y';
 end
 
+
 %% Z layers
 if Flow.KMax>1
     if strcmpi(Flow.layerType,'z')
@@ -428,6 +429,14 @@ end
 
 if Flow.cstBnd
     MDF.CstBnd='Y';
+end
+
+if Flow.pAvBnd>0
+    MDF.Pavbnd=Flow.pAvBnd;
+end
+
+if Flow.nudge
+    MDF.Nudge='Y';
 end
 
 if Flow.fourier.include

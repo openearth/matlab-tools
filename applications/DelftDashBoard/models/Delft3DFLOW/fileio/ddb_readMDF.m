@@ -313,6 +313,16 @@ if ~isempty(handles.Model(md).Input(id).amuFile)
     handles.Model(md).Input(id).windType='equidistant';
 end
 
+if isfield(MDF,'pavbnd')
+    handles.Model(md).Input(id).pAvBnd=MDF.pavbnd;
+end
+
+if isfield(MDF,'nudge')
+    if MDF.nudge(1)=='Y'
+        handles.Model(md).Input(id).nudge=1;
+    end
+end
+
 %% Z-layers
 if isfield(MDF,'zmodel')
     if strcmpi(MDF.zmodel(1),'y')

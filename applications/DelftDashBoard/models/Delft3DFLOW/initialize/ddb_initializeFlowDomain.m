@@ -307,7 +307,7 @@ handles.Model(md).Input(id).traSol='Cyclic-method';
 handles.Model(md).Input(id).momSol='Cyclic';
 handles.Model(md).Input(id).onlineVisualisation=0;
 handles.Model(md).Input(id).waveOnline=0;
-
+handles.Model(md).Input(id).nudge=0;
 
 % HLES stuff
 handles.Model(md).Input(id).Htural=1.6666660e+000;
@@ -328,6 +328,7 @@ handles.Model(md).Input(id).velocity.ICConst=0;
 
 % Wind
 handles=ddb_initializeWind(handles,id);
+handles.Model(md).Input(id).pAvBnd=-999;
 
 % Constituents
 handles=ddb_initializeSalinity(handles,id);
