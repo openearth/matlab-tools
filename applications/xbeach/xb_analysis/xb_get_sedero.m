@@ -96,7 +96,8 @@ for i = 2:size(dz,1)
     xc1     = xc(zc>OPT.level);
     xc2     = xc(zc<OPT.level);
     
-    if isempty(xc1) || isempty(xc2); continue; end;
+    if isempty(xc1); xc1 = x(end); end;
+    if isempty(xc2); xc2 = x(1);   end;
     
     R(i)    = min(xc1);
     Q(i)    = max(xc2(xc2<R(i)));

@@ -28,7 +28,7 @@ function xbo = xb_get_hydro(xb, varargin)
 %   Copyright (C) 2011 Deltares
 %       Bas Hoonhout
 %
-%       bas.hoonhout@deltares.nl	
+%       bas.hoonhout@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -48,9 +48,9 @@ function xbo = xb_get_hydro(xb, varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -129,15 +129,19 @@ end
 % split HF and LF waves
 if xb_exist(xb, 'hh_var')
     hh = mean(xb_get(xb,'hh_var'),1);
-    
+
     Hrms_lf = sqrt(8*abs(hh));
+elseif xb_exist(xb, 'hh')
+    hh      = xb_get(xb,'hh');
+
+    Hrms_lf = sqrt(8).*std(hh,0,1);
 elseif xb_exist(xb, 'zs')
     zs      = xb_get(xb,'zs');
-    
+
     if xb_exist(xb, 'zb')
         h       = zs-xb_get(xb,'zb');
         hm      = nan(size(h));
-        
+
         windowSize = ceil(40*OPT.Trep/dt);
         for i = 1:size(h,1)
             ws        = min([windowSize i-1 size(h,1)-i]);
@@ -145,7 +149,7 @@ elseif xb_exist(xb, 'zs')
         end
         zs = h-hm;
     end
-    
+
     Hrms_lf = sqrt(8).*std(zs,0,1);
 end
 if xb_exist(xb, 'u')
@@ -157,12 +161,12 @@ end
 if xb_exist(xb, 'H')
     Hrms_hf = sqrt(mean(xb_get(xb,'H').^2,1)+Hrms_hf.^2);                  % high frequency component from low frequency waves is
                                                                            % added to the high frequency waves here. the component
-                                                                           % is set to zero until consensus is reached about 
+                                                                           % is set to zero until consensus is reached about
                                                                            % whether this is useful or not.
     if xb_exist(xb, 'zs')
         zs = xb_get(xb,'zs');
         H = xb_get(xb,'H');
-        
+
         rho = zeros(nx,1);
         for i = 1:nx
             R       = corrcoef(detrend(squeeze(zs(:,1,i))),squeeze(H(:,1,i)).^2);
@@ -178,7 +182,7 @@ Hrms_t = sqrt(Hrms_lf.^2+Hrms_hf.^2);
 if xb_exist(xb, 'zs')
     if xb_exist(xb, 'zb') || xb_exist(xb, 'u')
         zs = xb_get(xb,'zs');
-        
+
         if xb_exist(xb, 'zb')
             zb = xb_get(xb,'zb');
             k = zs-zb>0.0001;
@@ -186,13 +190,13 @@ if xb_exist(xb, 'zs')
             u = xb_get(xb,'u');
             k = abs(u)>0.0001;
         end
-        
+
         s = zs-mean(zs(:,1,1),1);
         s(~k) = 0;
         s = max(0,mean(s,1));
     end
 end
-    
+
 % compute HF orbital velocity
 if xb_exist(xb, 'urms')
     urms_hf = sqrt(mean(xb_get(xb,'urms').^2,1)+urms_hf.^2);
