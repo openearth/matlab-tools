@@ -40,7 +40,8 @@
 %  KMLtricontour3                 - Just like contour3
 %  KMLtricontourf                 - Just like tricontourc
 %  KMLtricontourf3                - Wrapper for KMLtricontourf, to make it 3D
-%  KMLtrisurf                     - Just like trisurf
+%  KMLtrimesh                     - Just like trimesh (fastest for tri egdes)
+%  KMLtrisurf                     - Just like trisurf (tri faces)
 %
 % Vectors plots:
 %  KMLcurvedArrows                - makes nice curved arrows that 'go with the flow'
