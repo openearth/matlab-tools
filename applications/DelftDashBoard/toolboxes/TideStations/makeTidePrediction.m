@@ -23,6 +23,8 @@ for i=1:length(amplitudes)
     if isempty(ju)
         disp(['Could not find ' name ' - Component skipped.']);
     else
+%         switch lower(cmp)
+%             case{'m2','s2','k2','n2','k1','o1','p1','q1','mf','mm','m4','ms4','mn4'}
         k=k+1;
         names(k,:)=name;
         freq(k,1)=const.freq(ju);
@@ -35,7 +37,7 @@ for i=1:length(amplitudes)
         end
         tidecon(k,3)=phases(i);
         tidecon(k,4)=0;    
-    end
+        end
+%     end
 end
 wl=t_predic(tim,names,freq,tidecon,latitude);
-
