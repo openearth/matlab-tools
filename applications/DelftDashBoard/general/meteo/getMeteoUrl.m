@@ -100,6 +100,8 @@ switch lower(meteosource)
         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/Anl_Complete';
     case{'ncep_nam_analysis_precip'}
         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/3hr_Pcp';
+    case{'ncep_gfs_analysis_precip'}
+        urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_GFS_ANALYSIS/3hrPrecip';
     case{'hirlam'}
         url='http://matroos.deltares.nl:8080/opendap/maps/normal/knmi_hirlam_maps/';
         ncfile=[datestr(cycledate+cyclehour/24,'yyyymmddHHMM') '.nc'];
