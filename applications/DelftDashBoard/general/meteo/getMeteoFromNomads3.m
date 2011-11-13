@@ -5,7 +5,7 @@ ntry=1;
 
 urlstr = getMeteoUrl(meteosource,cycledate,cyclehour);
 switch lower(meteosource)
-    case{'gfs1p0','gfs0p5','ncep_gfs_analysis'}
+    case{'gfs1p0','gfs0p5','ncep_gfs_analysis','ncep_gfs_analysis_precip'}
         xlim=mod(xlim,360);
 end
 
@@ -135,12 +135,12 @@ try
                 disp([dirstr filesep fname]);
                 save([dirstr filesep fname],'-struct','s');
             else
-                % Only NaNs found ...
-                sz=size(s.(pr{j}));
-                s.(pr{j})=zeros(sz);
-                fname=[meteoname '.' pr{j} '.' tstr '.mat'];
-                disp([dirstr filesep fname]);
-                save([dirstr filesep fname],'-struct','s');
+                % Only NaNs found, skip this file...
+%                 sz=size(s.(pr{j}));
+%                 s.(pr{j})=zeros(sz);
+%                 fname=[meteoname '.' pr{j} '.' tstr '.mat'];
+%                 disp([dirstr filesep fname]);
+%                 save([dirstr filesep fname],'-struct','s');
             end
         end
     end
