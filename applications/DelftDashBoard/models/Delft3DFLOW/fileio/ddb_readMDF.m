@@ -154,6 +154,16 @@ handles.Model(md).Input(id).betaC=MDF.betac;
 handles.Model(md).Input(id).kTemp=MDF.ktemp;
 handles.Model(md).Input(id).fClou=MDF.fclou;
 handles.Model(md).Input(id).sArea=MDF.sarea;
+handles.Model(md).Input(id).secchi=MDF.secchi;
+handles.Model(md).Input(id).stantn=MDF.stantn;
+handles.Model(md).Input(id).dalton=MDF.dalton;
+
+if isfield(MDF,'filtmp')
+    if ~isempty(MDF.filtmp)
+        handles.Model(md).Input(id).tmpFile=MDF.filtmp;
+    end
+end
+
 if MDF.temint(1)=='N'
     handles.Model(md).Input(id).temint=0;
 else
@@ -309,6 +319,10 @@ handles.Model(md).Input(id).amvFile=MDF.filwv;
 handles.Model(md).Input(id).wndgrd=MDF.wndgrd;
 handles.Model(md).Input(id).MNmaxw=MDF.mnmaxw;
 
+handles.Model(md).Input(id).amtFile=MDF.filwt;
+handles.Model(md).Input(id).amcFile=MDF.filwc;
+handles.Model(md).Input(id).amrFile=MDF.filwr;
+
 if ~isempty(handles.Model(md).Input(id).amuFile)
     handles.Model(md).Input(id).windType='equidistant';
 end
@@ -383,6 +397,10 @@ if isfield(MDF,'filfou')
         handles.Model(md).Input(id).fouFile=MDF.filfou;
         handles.Model(md).Input(id).fourier.include=1;
     end
+end
+
+if isfield(MDF,'tmzrad')
+    handles.Model(md).Input(id).timeZoneSolarRadiation=MDF.tmzrad;
 end
 
 % Cstbnd= #yes#

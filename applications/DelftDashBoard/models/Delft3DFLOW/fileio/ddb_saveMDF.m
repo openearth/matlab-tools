@@ -215,10 +215,27 @@ end
 MDF.Ktemp=Flow.kTemp;
 MDF.Fclou=Flow.fClou;
 MDF.Sarea=Flow.sArea;
+if Flow.kTemp~=0
+    MDF.Secchi=Flow.secchi;
+    MDF.Stantn=Flow.stanton;
+    MDF.Dalton=Flow.dalton;
+    MDF.Filtmp=Flow.tmpFile;
+    MDF.Fmttmp='FR';
+    if ~isempty(Flow.amtFile)
+        MDF.Filwt=Flow.amtFile;
+    end
+    if ~isempty(Flow.amcFile)
+        MDF.Filwc=Flow.amcFile;
+    end
+    if ~isempty(Flow.amrFile)
+        MDF.Filwr=Flow.amrFile;
+    end
+end
+
 if Flow.temint==1
-    MDF.Temint='N';
-else
     MDF.Temint='Y';
+else
+    MDF.Temint='N';
 end
 
 % Tidal forces
@@ -443,6 +460,10 @@ if Flow.fourier.include
     if ~isempty(Flow.fouFile)
         MDF.Filfou=Flow.fouFile;
     end
+end
+
+if Flow.timeZoneSolarRadiation~=0
+    MDF.TmZRad=Flow.timeZoneSolarRadiation;
 end
 
 %% Now save everything to mdf file

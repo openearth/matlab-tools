@@ -194,6 +194,9 @@ handles.Model(md).Input(id).spwFile='';
 handles.Model(md).Input(id).amuFile='';
 handles.Model(md).Input(id).amvFile='';
 handles.Model(md).Input(id).ampFile='';
+handles.Model(md).Input(id).amtFile='';
+handles.Model(md).Input(id).amcFile='';
+handles.Model(md).Input(id).amrFile='';
 handles.Model(md).Input(id).wndgrd='';
 handles.Model(md).Input(id).MNmaxw=[];
 
@@ -273,10 +276,7 @@ handles.Model(md).Input(id).rhoAir=1.0;
 handles.Model(md).Input(id).betaC=0.5;
 handles.Model(md).Input(id).equili=0;
 handles.Model(md).Input(id).verticalTurbulenceModel='K-epsilon';
-handles.Model(md).Input(id).kTemp=0;
-handles.Model(md).Input(id).fClou=0;
-handles.Model(md).Input(id).sArea=0;
-handles.Model(md).Input(id).temint=0;
+handles.Model(md).Input(id).temint=1;
 handles.Model(md).Input(id).roughnessType='C';
 handles.Model(md).Input(id).uRoughness=65;
 handles.Model(md).Input(id).vRoughness=65;
@@ -308,6 +308,15 @@ handles.Model(md).Input(id).momSol='Cyclic';
 handles.Model(md).Input(id).onlineVisualisation=0;
 handles.Model(md).Input(id).waveOnline=0;
 handles.Model(md).Input(id).nudge=0;
+
+% Heat model
+handles.Model(md).Input(id).kTemp=0;
+handles.Model(md).Input(id).fClou=0;
+handles.Model(md).Input(id).sArea=0;
+handles.Model(md).Input(id).timeZoneRadiation=0;
+handles.Model(md).Input(id).secchi=3;
+handles.Model(md).Input(id).stanton=0.0013;
+handles.Model(md).Input(id).dalton=0.0013;
 
 % HLES stuff
 handles.Model(md).Input(id).Htural=1.6666660e+000;
