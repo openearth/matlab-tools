@@ -6,6 +6,7 @@ function varargout = KMLcolumn(lat,lon,z,c,varargin)
 %    lat,lon cells with one double each
 %    z       cell with top & bottom coordinates of the layers (length(c)+1)
 %    c       cell with values that are colors of the layers   (length(z)-1)
+%    R       Radius of the cylinder (double)
 %
 % Saves layers as nested columns of decreasing radius, each  
 % extruded to the Earth's surface. All segments are extruded  
@@ -53,7 +54,7 @@ function varargout = KMLcolumn(lat,lon,z,c,varargin)
 % $Date$
 % $Author$
 % $Revision$
-% $HeadURL$
+% % $HeadURL$
 % $Keywords: $
 
 %% process varargin
@@ -73,8 +74,8 @@ function varargout = KMLcolumn(lat,lon,z,c,varargin)
    OPT.lineWidth          = 1;
    OPT.lineColor          = [0 0 0];
    OPT.lineAlpha          = 1;
-OPT.colorMap           = @(z) jet(z);
-OPT.colorSteps         = 32;
+   OPT.colorMap           = @(z) jet(z);
+   OPT.colorSteps         = 32;
    OPT.fillAlpha          = 1;
    OPT.lineOutline        = true;  % outlines the interface between column segments, EXCLUDING EXTRUDED EDGES
    OPT.polyOutline        = false; % outlines the all polygon faces, INCLUDING EXTRUDED EDGES
@@ -83,13 +84,13 @@ OPT.colorSteps         = 32;
    OPT.reversePoly        = [];
    OPT.colorNaN           = [.5 .5 .5]; % 
 
-OPT.cLim               = [];
+   OPT.cLim               = [];
    OPT.zScaleFun          = @(z) 1000*z;
    OPT.timeIn             = [];
    OPT.timeOut            = [];
    OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
-OPT.colorbar           = 0;
-      OPT.fillColor          = [];
+   OPT.colorbar           = 0;
+   OPT.fillColor          = [];
 
    OPT.precision          = 8;
    OPT.tessellate         = false;
