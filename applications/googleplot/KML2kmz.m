@@ -7,7 +7,7 @@ function varargout = KML2kmz(varargin)
 %
 % example
 %
-%    KMLkmz('release.kml',{'icon_file.png','figure_file.png'},'logo_file.png')
+%    KML2kmz('release.kml',{'icon_file.png','figure_file.png'},'logo_file.png')
 %
 %    will create 'release.kmz' with inside {release.kml','icon_file.png','figure_file.png','logo_file.png'}
 %
