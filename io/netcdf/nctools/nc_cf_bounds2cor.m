@@ -5,7 +5,7 @@ function C = nc_cf_bounds2cor(B)
 %
 %   where C = [m n] if bounds = [m-1 x n-1 x 4]
 %
-%   It is an error if the cells ar enot contiguous.
+%   It is an error if the cells are not contiguous.
 %
 %   For documentation of the CF bounds standard see:
 %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventions.html#cell-boundaries
@@ -64,7 +64,7 @@ if length(size(B))==2
       
       if dim==2
       
-        if all(B(2:end  ,1)==B(1:end-1,2))
+        if all(isequalwithequalnans(B(2:end  ,1), B(1:end-1,2)))
       
           C(1:end-1) = B( : ,1); 
           C(    end) = B(end,2); 
@@ -73,7 +73,7 @@ if length(size(B))==2
          
       elseif dim==1
 
-        if all(B(1,2:end  )==B(2,1:end-1))
+        if all(isequalwithequalnans(B(1,2:end  ), B(2,1:end-1)))
 
           C(:,1:end-1) = B(1, : ); 
           C(:,    end) = B(2,end); 
@@ -119,9 +119,9 @@ else
    							
    % we assume matlab arrays are not swapped as native netcdf library does
    
-        if all(all(B( :     ,2:end  ,1)==   B( :     ,1:end-1,2))) & ...
-           all(all(B(2:end  ,2:end  ,1)==   B(1:end-1,1:end-1,3))) & ...
-           all(all(B(2:end  , :     ,1)==   B(1:end-1, :     ,4)))
+        if all(all(isequalwithequalnans(B( :     ,2:end  ,1), B( :     ,1:end-1,2)))) & ...
+           all(all(isequalwithequalnans(B(2:end  ,2:end  ,1), B(1:end-1,1:end-1,3)))) & ...
+           all(all(isequalwithequalnans(B(2:end  , :     ,1), B(1:end-1, :     ,4))))
    
            C(1:end-1,1:end-1) = B( : , : ,1); 
            C(1:end-1,  end  ) = B( : ,end,2); 

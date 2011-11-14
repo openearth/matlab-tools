@@ -129,7 +129,7 @@
 
    nc_add_dimension(ncfile, 'col', OPT.ncols); % !!! use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
    nc_add_dimension(ncfile, 'row', OPT.nrows); % !!! use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
-   nc_add_dimension(ncfile, 'edges', 4); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
+   nc_add_dimension(ncfile, 'vertices', 4); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
    
    % You might insert a vector 'col' that runs [OPT.ncols:-1:1] to have
    % the arcGIS ASCII file approach of having upper-left corner of 
@@ -155,13 +155,13 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon'); % !!! lon matrix can be plotted as a function of lat and itself
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'         ,'Value', 'lonbounds latbounds');
+   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'         ,'Value', 'lonbounds');
 
    ifld = ifld + 1;
    nc(ifld).Name             = 'lonbounds';
    nc(ifld).Nctype           = nc_type(OPT.lon_type);
-   nc(ifld).Dimension        = {'col','row','edges'}; % !!!
-   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
+   nc(ifld).Dimension        = {'col','row','vertices'}; % !!!
+   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude vertices');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.cor.lon(:)) max(OPT.cor.lon(:))]); % TO DO add half grid cell offset
@@ -181,13 +181,13 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon'); % !!! lat matrix can be plotted as a function of lon and itself
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'         ,'Value', 'lonbounds latbounds');
+   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'         ,'Value', 'latbounds');
 
    ifld = ifld + 1;
    nc(ifld).Name             = 'latbounds';
    nc(ifld).Nctype           = nc_type(OPT.lat_type);
-   nc(ifld).Dimension        = {'col','row','edges'}; % !!!
-   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
+   nc(ifld).Dimension        = {'col','row','vertices'}; % !!!
+   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude vertices');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.cor.lat(:)) max(OPT.cor.lat(:))]); % TO DO add half grid cell offset

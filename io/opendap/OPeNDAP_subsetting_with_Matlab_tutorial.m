@@ -76,7 +76,7 @@ for i=1:length(url_grid)
    if nc_isvar(ncfile,'SID')
    G.topo   = nc_varget(ncfile,'SID' ,start(:),count(:),stride(:)); % 2D
    delete(h)
-   h = pcolorcorcen(G.lon,G.lat,double(G.topo))
+   h = pcolorcorcen(G.lon,G.lat,double(G.topo));
    ctick = nc_attget(ncfile,'SID','flag_values');
    colormap(colormap_cpt('Paired 12',length(ctick)))
    clim ([min(ctick) max(ctick)]+[-.5 .5])

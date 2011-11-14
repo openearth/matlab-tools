@@ -28,6 +28,8 @@ function varargout=inivalue(fileName,varargin)
 % if sectionName or the keyName is not found, it returns []
 % if the keyName is empty, the entire section is returned as struct.
 % if the sectionName is empty, the entire file is returned as struct.
+% if the sectionName is NaN, the entire file is returned as struct.
+%    and no sectionName is assumed to be present at all in the file
 %
 % Note that a *.url file is has the *.ini file format.
 % Optionally a struct with field 'commentchar' can be passed to skip comment lines.
@@ -93,21 +95,24 @@ end;
          break;
       end;
 
-      if isempty(sectionName) | strcmp(strtrim(rec), sectionString) > 0 % allow leading spaces
+      if isempty(sectionName)| isnan(sectionName) | strcmp(strtrim(rec), sectionString) > 0 % allow leading spaces
       
           if isempty(sectionName)
              i0=find(rec=='[');
              i1=find(rec==']');
              section = rec(i0+1:i1-1);
+             rec          = fgetl_no_comment_line(fid,OPT.commentchar);
+          elseif isnan(sectionName)
+             section = '';
           else
              section = sectionName;
+             rec          = fgetl_no_comment_line(fid,OPT.commentchar);
           end
           
        %% look for the key
           
           sectionFound = 1;
           keyFound     = 0;
-          rec          = fgetl_no_comment_line(fid,OPT.commentchar);
           
           while keyFound==0
 
