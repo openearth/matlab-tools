@@ -18,7 +18,7 @@ function varargout = meris_directory(directory,varargin)
 %
 % The default for the optional <extension> is '.mat'.
 %
-%See also: MERIS_NAME2META, MERIS_FLAGS, MERIS_MASK
+%See also: MERIS_NAME2META, MERIS_FLAGS, MERIS_MASK, findAllFiles
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -59,11 +59,10 @@ function varargout = meris_directory(directory,varargin)
       ext = varargin{1};
    end
    
-   S.filenames = dir([directory,filesep,'MER*',ext])
-   S.n         = length(S.filenames)
+   S.filenames = dir([directory,filesep,'MER*',ext]);
+   S.n         = length(S.filenames);
   
    %% Check for double occurences of images after removal of extensions (SIOPS)
-   %------------------------------------
    
    iname       = 0;
    isiop       = 0;
@@ -71,14 +70,14 @@ function varargout = meris_directory(directory,varargin)
    NAMEs = [];
    SIOPs = [];
 
-   for ifile=2:length(S.filenames)
+   for ifile=1:length(S.filenames)
    
       meris.name = S.filenames(ifile).name( 1:59 );
       meris.siop = S.filenames(ifile).name(60:end);
       
       if iname==0
       
-         NAMEs{1} = meris.name
+         NAMEs{1} = meris.name;
          iname    = 1;
    
       else
@@ -91,7 +90,6 @@ function varargout = meris_directory(directory,varargin)
       end
       
       %% Check for double occurences of extensions (SIOPS)
-      %------------------------------------
 
          if ~isempty(meris.siop)
          
@@ -114,7 +112,6 @@ function varargout = meris_directory(directory,varargin)
    end
    
    %% Output
-   %------------------------------------
 
    if nargout<2
       varargout = {NAMEs};

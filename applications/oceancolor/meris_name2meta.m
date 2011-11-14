@@ -1,7 +1,18 @@
-function varargout = meris_name2meta(name),
+function varargout = meris_name2meta(name,keyword),
 %MERIS_NAME2META  retrieves meta-information from MERIS filename.
 %
-% D = MERIS_NAME2META(filename) where D is a struct
+% D     = MERIS_NAME2META(filename) where D is a struct
+% val   = MERIS_NAME2META(filename,keyword) gets only the 
+%         requested field 'keyword' from D, handy for use in expressions.
+% dummy = MERIS_NAME2META() returns dummy example output struct
+%
+% where filename can be a char or a cellstr with multiple names
+%
+% Examples:
+%
+%     MERIS_NAME2META('MER_FR__2PNUPA20060630_102426_000000982049_00051_22650_5089')
+%     MERIS_NAME2META(meris_directory(pwd),'center')
+%     MERIS_NAME2META(meris_directory(pwd),'datenum')
 %
 % See MERIS product handbook section 2.2.1.
 % <http://envisat.esa.int/handbooks/meris/>
@@ -155,8 +166,47 @@ function varargout = meris_name2meta(name),
 % $HeadURL$
 % $Keywords: $
 
+% 
+
+if nargin<1
+   name = 'MER_XXX_YZpGGGyyyymmdd_HHMMSS_ttttttttPccc_OOOOO_aaaaa_QQQQ.SS';
+end
+
+if nargin<2
+   keyword = [];
+end
+
+if ischar(name)
+   DAT = meris_name2metaONE(name);
+elseif iscellstr(name)
+   DAT = cellfun(@(x) meris_name2metaONE(x),name);
+end
+
+if nargout<2
+   if isempty(keyword)
+      varargout = {DAT};
+   else
+     if ischar(name)
+       varargout = {DAT.(keyword)};
+    else
+      if isnumeric(DAT(1).(keyword))
+       varargout = {cell2mat({DAT.(keyword)})};
+      else
+        if ischar(name)
+          varargout = {DAT.(keyword)};
+        else
+          varargout = {{DAT.(keyword)}};
+        end
+      end
+    end
+   end
+end
+
+%% --------------------------------------------------
+
+function DAT = meris_name2metaONE(name,keyword)
+
 %% 2.2.1.1 Product identification scheme
-%----------------------------------------------
 
    DAT.filename                = name;
    name                        = filename(name);
@@ -171,7 +221,6 @@ function varargout = meris_name2meta(name),
    DAT.parent_child            = name(10:10);% Z
 
 %% 2.2.1.2 Acquisition identification scheme
-%----------------------------------------------
 
    DAT.processing_stage_flag   = name(11:11); % p
    DAT.center                  = name(12:14); % GGG
@@ -185,7 +234,7 @@ function varargout = meris_name2meta(name),
    DAT.duration_in_seconds     = str2num(name(31:38)); % tttttttt
    
    DAT.datenum                 = datenum([DAT.start_day, DAT.start_time],'yyyymmddHHMMSS');
-   DAT.datenum(2)              = DAT.datenum(1) + DAT.duration_in_seconds./3600./24;
+   DAT.end_datenum             = DAT.datenum(1) + DAT.duration_in_seconds./3600./24;
 
    DAT.mission_phase           = str2num(name(39:39)); % P
    DAT.cycle_number            = str2num(name(40:42)); % ccc
@@ -197,7 +246,6 @@ function varargout = meris_name2meta(name),
    DAT.counter                 = str2num(name(56:59)); % QQQQ
 
 %% Place
-%----------------------------------------------
 
    DAT.coordinate_system       = 'geographic';
    DAT.coordinate_units        = 'deg';
@@ -205,7 +253,6 @@ function varargout = meris_name2meta(name),
 
 %% Processing type
 %  Not quite waterproof, because storing meta-info in filename is not a professional approach.
-%----------------------------------------------
 
 if length(name) > 60
    DAT.satellite               = name(61:62); % SS
@@ -222,12 +269,6 @@ if length(name) > 60
       DAT.algorithm            = filename(name(60:end)); % remove extension
    
    end
-end
-
-if nargout==1
-   varargout = {DAT};
-%elseif nargout==2
-%   varargout = {DAT,INFO};
 end
 
 %% EOF
