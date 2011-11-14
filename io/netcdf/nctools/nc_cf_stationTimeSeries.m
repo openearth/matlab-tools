@@ -141,7 +141,7 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
 %% Get datenum
 
    if isempty(OPT.period)
-  [D.datenum,            M.datenum.timezone] = nc_cf_time      (ncfile);
+  [D.datenum,              M.datenum.timezone] = nc_cf_time      (ncfile);
    start = [];
    count = [];
    else

@@ -12,6 +12,7 @@ function netcdf_settings(varargin)
 % * 2009b add yourselves http://www.mathworks.com/support/bugreports/609383
 % * 2010a OK
 % * 2010b OK
+% * 2011a OK
 %
 % For reading large netCDF files with Java memory issues can arise, see:
 % http://www.mathworks.com/support/solutions/en/data/1-18I2C/
@@ -41,7 +42,7 @@ function netcdf_settings(varargin)
       
    if ~isempty(S)
      
-     % prevent error message of .svn  directories
+     % prevent error message of .svn directories
      % that were not added by addpathfast
      state = warning;
      warning off
@@ -118,10 +119,10 @@ function netcdf_settings(varargin)
        setpref ( 'SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
        % keep snctools default
        setpref ( 'SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
-                                              % 1: We do not want to transpose matrices because:
-                                              %    (i)  we have some LARGE datasets and need a performance boost
-                                              %    (ii) some use the netCDF API directly which does not do this. 
-                                              %    May break previous work though ...
+                                               % 1: We do not want to transpose matrices because:
+                                               %    (i)  we have some LARGE datasets and need a performance boost
+                                               %    (ii) some use the netCDF API directly which does not do this. 
+                                               %    May break previous work though ...
                                               
        %% add basic authentication class
        

@@ -128,6 +128,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    end
 
 %% Get coordinate variables
+%  might be multiple due to bounds variables, so we use cellstr throughout
 
    lonname          = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'longitude');
    if isempty(lonname);disp('no longitude present');end
@@ -143,6 +144,13 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    
    tname            = nc_varfind(ncfile, 'attributename', 'standard_name', 'attributevalue', 'time');
    if isempty(tname);disp('no times present');end
+   
+   if ischar(lonname);lonname = cellstr(lonname);end
+   if ischar(latname);latname = cellstr(latname);end
+   if ischar(xname  );xname   = cellstr(xname  );end
+   if ischar(yname  );yname   = cellstr(yname  );end
+   if ischar(tname  );tname   = cellstr(tname  );end
+
    
    if OPT.debug
     lonname
@@ -170,26 +178,42 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
       
      %%  (lon,lat) direct mapping: find dimension latitude, longitude OR ...
      for idim=1:length(fileinfo.Dataset(ivar).Dimension)
-         if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),latname))));
-            direct.lat = idim;
+         for icell=1:length(latname)
+           if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),latname{icell}))));
+             direct.lat = idim;
+             fileinfo.Dataset(ivar).latname    = latname{icell};
+             break
+           end
          end
-         if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),lonname))));
-            direct.lon = idim;
+         for icell=1:length(lonname)
+           if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),lonname{icell}))));
+             direct.lon = idim;
+             fileinfo.Dataset(ivar).lonname    = lonname{icell};
+             break
+           end
          end
      end
       
      %%  (x,y) direct mapping: find dimension x, y OR ...
      if ~isempty(xname)
      for idim=1:length(fileinfo.Dataset(ivar).Dimension)
-         if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),xname))));
-            direct.x = idim;
+         for icell=1:length(xname)
+           if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),xname{icell}))));
+             direct.x = idim;
+             fileinfo.Dataset(ivar).xname    = xname{icell};
+             break
+           end
          end
-         if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),yname))));
-            direct.y = idim;
+         for icell=1:length(yname)
+           if any(cell2mat((strfind(fileinfo.Dataset(ivar).Dimension(idim),yname{icell}))));
+             direct.y = idim;
+             fileinfo.Dataset(ivar).yname    = yname{icell};
+             break
+           end
          end
      end
      end
-      
+     
      if (direct.lat && direct.lon) | (direct.x && direct.y)
           coord.varindex = [coord.varindex  ivar];
           if (direct.x && direct.y) & (direct.lon && direct.lat)
@@ -232,15 +256,19 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
            if ~isempty(atrindex)
               if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'latitude')
               indirect.lat=true;
+              fileinfo.Dataset(varindex).latname    = latname{icell};
               end
               if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'longitude')
               indirect.lon=true;
+              fileinfo.Dataset(varindex).lonname   = lonname{icell};
               end
               if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'projection_x_coordinate')
               indirect.x=true;
+              fileinfo.Dataset(varindex).xname    = xname{icell};
               end
               if strcmpi(fileinfo.Dataset(varindex).Attribute(atrindex).Value,'projection_y_coordinate')
               indirect.y=true;
+              fileinfo.Dataset(varindex).yname    = yname{icell};
               end                       
            end
         end
@@ -290,19 +318,18 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
    %% get index of chosen variable name
    
       nvar = length(coord.varnames);
-      var2evalstr(coord)
       for ivar=1:nvar
          if strcmp(coord.varnames{ivar},OPT.varname)
          varindex = ivar;
-         vardim      = coord.vardim  {ivar};
-         vartype     = coord.vartype {ivar};
+         vardim   = coord.vardim  {ivar};
+         vartype  = coord.vartype {ivar};
          % TO DO: check for multiple occurences of same matrix: f(x,y) or z(lon,lat)
          break
          end
       end
       
   end
-   
+  
 %% get data
 
 %fileinfo.Dataset(varindex).Dimension
@@ -310,6 +337,18 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %nc_attget(ncfile,OPT.varname,'coordinates')
 % add coordinates and dimension variables
 %pausedisp
+
+if length(lonname) > 1
+    error(['multiple lonname found:',str2line(lonname,'s',',')])
+else
+    lonname = char(lonname);
+end
+
+if length(latname) > 1
+    error('multiple latname found')
+else
+    latname = char(latname);
+end
 
    M.lon.units     = nc_attget(ncfile,lonname,'units');
    M.lat.units     = nc_attget(ncfile,latname,'units');

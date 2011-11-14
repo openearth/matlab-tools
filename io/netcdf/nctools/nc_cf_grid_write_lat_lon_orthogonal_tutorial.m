@@ -55,7 +55,9 @@
    OPT.lat_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
    OPT.lon_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
 
-   OPT.lon                    = [2 4 6];
+   OPT.cor.lon                = [1 3 5 7];      % pixel corners
+   OPT.cor.lat                = [49.5:1:54.5];
+   OPT.lon                    = [2 4 6];        % pixel centers
    OPT.lat                    = [50 51 52 53 54];
    OPT.ncols                  = length(OPT.lon);
    OPT.nrows                  = length(OPT.lat);
@@ -108,6 +110,7 @@
    
    nc_add_dimension(ncfile, 'lon', OPT.ncols); % !!! use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
    nc_add_dimension(ncfile, 'lat', OPT.nrows); % !!! use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
+   nc_add_dimension(ncfile, 'edges', 2); % For each coordinate tick we need two endpoints
 
    % You might insert a vector 'col' that runs [OPT.ncols:-1:1] to have
    % the arcGIS ASCII file approach of having upper-left corner of 
@@ -132,6 +135,17 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
+   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'         ,'Value', 'lonbounds latbounds');
+
+   ifld = ifld + 1;
+   nc(ifld).Name             = 'lonbounds'; % dimension 'lon' is here filled with variable 'lon'
+   nc(ifld).Nctype           = nc_type(OPT.lon_type);
+   nc(ifld).Dimension        = {'lon','edges'}; % !!!
+   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude edges');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
+   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.cor.lon(:)) max(OPT.cor.lon(:))]); % TO DO add half grid cell offset
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
 %% 3.b Create coordinate vector: latitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
@@ -144,6 +158,17 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
    nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]); % TO DO add half grid cell offset
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
+   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'         ,'Value', 'lonbounds latbounds');
+
+   ifld = ifld + 1;
+   nc(ifld).Name             = 'latbounds'; % dimension 'lat' is here filled with variable 'lat'
+   nc(ifld).Nctype           = nc_type(OPT.lat_type);
+   nc(ifld).Dimension        = {'lat','edges'}; % !!!
+   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude edges');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
+   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.cor.lat(:)) max(OPT.cor.lat(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
 %% 3.c Create coordinate variables: coordinate system: WGS84 default
@@ -179,7 +204,7 @@
       nc(ifld).Attribute(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude');
       nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(OPT.wgs84.code)]);
 
-%% 3z   Optionally crate time dimension
+%% 3z   Optionally create time dimension
 
    if ~isempty(OPT.time)
    OPT.refdatenum            = datenum(1970,1,1); 
@@ -225,6 +250,8 @@
       
 %% 5.b Fill all variables
 
+   nc_varput(ncfile, 'lonbounds'    , nc_cf_cor2bounds(OPT.cor.lon)');
+   nc_varput(ncfile, 'latbounds'    , nc_cf_cor2bounds(OPT.cor.lat)');
    nc_varput(ncfile, 'lon'          , OPT.lon       );
    nc_varput(ncfile, 'lat'          , OPT.lat       );
    nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code);

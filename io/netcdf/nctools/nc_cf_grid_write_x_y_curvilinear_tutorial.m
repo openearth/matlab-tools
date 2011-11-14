@@ -216,7 +216,7 @@
    
    var2evalstr(nc(ifld).Attribute)
    
-%% 3z   Optionally crate time dimension
+%% 3z   Optionally create time dimension
 
    if ~isempty(OPT.time)
    OPT.refdatenum            = datenum(1970,1,1); 

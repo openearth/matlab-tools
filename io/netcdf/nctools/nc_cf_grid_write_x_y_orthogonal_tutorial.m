@@ -214,7 +214,7 @@
    nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code); % includes ADAGUC attributes
    var2evalstr(nc(ifld).Attribute)
 
-%% 3z   Optionally crate time dimension
+%% 3z   Optionally create time dimension
 
    if ~isempty(OPT.time)
    OPT.refdatenum            = datenum(1970,1,1); 
