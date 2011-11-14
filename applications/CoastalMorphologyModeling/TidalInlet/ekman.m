@@ -1,5 +1,6 @@
 %% Program to plot Ekman spiral
 %% Input section
+clear all; close all;
 i=sqrt(-1)                   % To make sure i is the complex i
 h=120;                       % Water depth
 nut=.02;                     % (constant) turbulence viscosity
@@ -32,6 +33,5 @@ quiver3(xek,yek,zek,taux,tauy,0,'r','linewidth',2);
 title('Ekman spiral')
 xlabel('u');ylabel('v');
 zlabel('z')
-set(gca,'projection','perspective')
-set(gcf,'color','w')
+print('-dpng','ekman.png')
 print('-depsc','ekman.eps')

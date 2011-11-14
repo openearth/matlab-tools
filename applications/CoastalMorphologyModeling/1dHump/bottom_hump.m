@@ -14,6 +14,7 @@ xlabel('Distance from upstream -> (m)','FontName','TimesNewRoman','FontSize', 16
 ylabel('Bed level (m)','FontName','TimesNewRoman','FontSize', 16);
 xlim([0,16]);
 ylim([-0.8,0]);
+drawnow();
 
 n = 0.4;
 Chezy = 45.57;
@@ -31,6 +32,7 @@ c = 5.*Qs./h;
 for i=1:4               % for 4 hours
 x1 = x+c*3600*i*dt;
 B(i) = plot(x1,y-0.6,'--r','LineWidth',2);
+drawnow();
 end
 print('-depsc','bottomhump.eps')
-
+print('-dpng','bottomhump.png')

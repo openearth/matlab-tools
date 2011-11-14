@@ -1,4 +1,4 @@
-clear all
+clear all; close all
 %
 % Input
 %
@@ -83,9 +83,9 @@ for it=1:nt;
    end
 end
 figure(2);
-subplot(131);
+subplot(121);
 plot(etat(750:1500,1),tt(750:1500));
-subplot(132);
+subplot(122);
 pcolor(x,tt(750:1500)',vt(750:1500,:));
 shading interp;
 caxis([-1 1]);
@@ -94,7 +94,6 @@ colorbar;
 %plot(detady(750:1500),tt(750:1500));
 figure(3);
 plot(x,vt(750,:),'b-',x,vt(870,:),'b-.',x,vt(1000,:),'b:',x,vt(1120,:),'r-',x,vt(1250,:),'r-.',x,vt(1380,:),'r:')
-set(gca,'fontsize',11,'fontweight','bold')
 legend('0/6T','1/6T','2/6T','3/6T','4/6T','5/6T');
 title ('Longshore tidal velocity profiles');
 xlabel('Cross-shore distance (m)');
@@ -102,24 +101,19 @@ ylabel('Longshore velocity (m/s)')
 figure(4);
 subplot(411)
 plot(tt(750:1500),etat(750:1500,1),'linewidth',2)
-set(gca,'fontsize',11,'fontweight','bold')
 title ('Tidal water level');
-ylabel('eta (m)')
+ylabel('\eta (m)')
 grid on
 subplot(4,1,[2:3])
 plot(tt(750:1500),vt(750:1500,[1,41,71]),'linewidth',2)
-set(gca,'fontsize',11,'fontweight','bold')
 title ('Longshore tidal velocity');
 ylabel('Longshore velocity (m/s)')
-legend('h=40m','h=20m','h=5m')
+legend('h=40m','h=20m','h=5m','location','southeast')
 grid on
 subplot(414)
 plot(tt(750:1500),detady(750:1500),'r','linewidth',2)
-set(gca,'fontsize',11,'fontweight','bold')
 title ('Longshore water level gradient');
 xlabel('Time (hr)');
-ylabel('detady (-)')
-set(gcf,'color','w')
+ylabel('d\eta/dy (-)')
 grid on
-pause
-print('-dtiff','tide1dtime.tif')
+print('-dpng','tide1dtime.png')

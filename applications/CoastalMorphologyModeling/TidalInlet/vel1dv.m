@@ -5,7 +5,7 @@ taper=100;
 nuconstant=0
 c={'b','r'}
 for icor=0:1
-    f=2*7.27e-5*sin(phi*pi/180)*icor;
+    f=2*7.27e-5*sin(phi*pi/180)*(icor);
     tauw=1;
     dir=45;
     tauwx=tauw*cos(dir*pi/180);
@@ -30,7 +30,7 @@ for icor=0:1
     if nuconstant==0
         vstar=sqrt(sqrt(tauwx^2+tauwy^2)/rho);
         nut=-kappa*vstar*z.*(h+z)/h;
-        nut(end/2:end)=max(nut(end/2:end),kappa*vstar*H)
+        nut(ceil(end/2):end)=max(nut(ceil(end/2):end),kappa*vstar*H)
     else
         nut=ones(size(z))*nuconstant;
     end

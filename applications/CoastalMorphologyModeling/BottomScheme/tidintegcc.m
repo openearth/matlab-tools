@@ -95,14 +95,13 @@ fac=3600*24;
 p=plot(t/fac,zb1(1:nt),'k',t2/fac,zb2,'r-',t2(1:ncont:end)/fac,zb2(1:ncont:end),'r*',t3/fac,zb3(1:length(t3)),'b',t3e/fac,zb3e,'b*')
 set(p,'linewidth',2);
 %l=legend('Brute force solution','Tide-averaged + C.C.','Morphological factor',' " after full cycle','RAM')
-l=legend('Brute force solution','Tide-averaged + C.C.',' - flow recomputation ','Morphological factor',' " after full cycle');
-set(l,'location','northwest')
-set(l,'fontweight','bold');
-Title('Comparison of time-integration methods','fontweight','bold');
+legend('Brute force solution','Tide-averaged + C.C.',' - flow recomputation ','Morphological factor',' MF after full cycle','location','northwest');
+title('Comparison of time-integration methods','fontweight','bold');
 axis([0 370 -11 4]);
-text(20,-2,strcat('h_0=',num2str(h0),' h_s_h=',num2str(hsh),' q_m_e_a_n=',num2str(qmean),' q_a_m_p=',num2str(qamp)),'fontweight','bold')
-text(20,-4,strcat('a=',num2str(a),' b=',num2str(b)),'fontweight','bold')
-text(20,-6,strcat('n_t_i_d_e=',num2str(nttide),' n=',num2str(n),' n_c_o_n_t=',num2str(ncont)),'fontweight','bold')
+text(20,-2,strcat('h_0=',num2str(h0),'  h_{sh}=',num2str(hsh),'  q_{mean}=',num2str(qmean),'  q_{amp}=',num2str(qamp)),'fontweight','bold')
+text(20,-4,strcat('a=',num2str(a),'  b=',num2str(b)),'fontweight','bold')
+text(20,-6,strcat('n_{tide}=',num2str(nttide),'  n=',num2str(n),'  n_{cont}=',num2str(ncont)),'fontweight','bold')
 xlabel('Time (days)','fontweight','bold');ylabel('z_b (m)')
 set(gca,'fontweight','bold');
+drawnow();
 print('-depsc','tidentegcc.eps')

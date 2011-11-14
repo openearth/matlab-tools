@@ -5,9 +5,9 @@ d=25;                 % Height of active profile
 dt=.1;              % Time step (yr)
 nt=400;               % Number of time steps
 interval=20;           % Output interval
-%% Read outline for graphucs
+%% Read outline for graphics
 xyg=load('ijmuiden.txt')
-xyg(xyg==-999)=nan;
+xyg(xyg==-999)=NaN;
 xg=xyg(:,1);
 yg=xyg(:,2);
 %% Read initial coastline
@@ -53,7 +53,7 @@ for i=2:ns-1
     end
 end
 nS=.5*(n(1:ns-1)+n(2:ns));      % n of transport points
-sS=.5*(s(1:ns-1)+s(2:ns));      % x of transport points
+sS=.5*(s(1:ns-1)+s(2:ns));      % s of transport points
 xS=.5*(x(1:ns-1)+x(2:ns));      % x of transport points
 yS=.5*(y(1:ns-1)+y(2:ns));      % y of transport points
 %% Plot initial coastline
@@ -160,12 +160,10 @@ for it=1:nt;
         subplot(211);hold on
         plot(s/1000,n);
         ylabel('coastline position (m)')
-        set(gca,'fontweight','bold')
         subplot(212);hold on
         plot(sS/1000,S,sS/1000,Sp,sS/1000,Sm);
         xlabel('longshore distance (km)')
-        ylabel('sediment transport (m^3/yr')
-        set(gca,'fontweight','bold')
+        ylabel('sediment transport (m^3/yr)')
 %         figure(2)
 %         subplot(131);hold on
 %         plot(xref,yref,xp,yp,'.',x,y);set(gca,'ylim',[min(y),max(y)]);axis equal
@@ -185,7 +183,6 @@ for it=1:nt;
         plot(xg/1000,yg/1000,'k','linewidth',2)
         xlabel('X (km)')
         ylabel('Y (km)')
-        set(gca,'fontweight','bold')
     end
 end
         figure(2);
@@ -193,8 +190,8 @@ end
         plot(s/1000,n,'linewidth',2);
         subplot(212);hold on
         plot(sS/1000,S,sS/1000,Sp,sS/1000,Sm,'linewidth',2');
-        figure(3)
-        print('-dpng','íjmuiden.png')
-        print('-depsc2','íjmuiden.eps')
+        legend('Total transport','N transport','S transport');
+        print('-dpng','ijmuiden.png')
+        print('-depsc2','ijmuiden.eps')
         
 

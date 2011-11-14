@@ -17,25 +17,26 @@ for it=1:12;
    p1=plot(x/L,etas/eta1);hold on;
    set(p1,'Color',[(12-it)/12 (12-it)/12 (12-it)/12]);
    text(.25,1.5,'Standing mode');
-   ylabel('eta/eta1');
+   ylabel('\eta/\eta1');
    set(gca,'XTick',[0:0.25:1]);
    subplot(312);axis([0 1 -2 2]);
    p2=plot(x/L,etap/eta1);hold on;
    set(p2,'Color',[(12-it)/12 (12-it)/12 (12-it)/12]);
    text(.25,1.5,'Propagating mode');
-   ylabel('eta/eta1');
+   ylabel('\eta/\eta1');
    set(gca,'XTick',[0:0.25:1]);
    subplot(313);axis([0 1 -2 2]);
    p3=plot(x/L,etat/eta1);hold on;
    set(p3,'Color',[(12-it)/12 (12-it)/12 (12-it)/12]);
    text(.25,1.5,'Total');
-   ylabel('eta/eta1');
+   ylabel('\eta/\eta1');
    xlabel('x/L');
    set(gca,'XTick',[0:0.25:1]);
 end
 subplot(313);
 plot(x/L,etamp,'--k',x/L,-etamp,'--k');
-print('-deps','resonance.eps')
+print('-deps2','resonance.eps')
+print('-dpng','resonance.png')
 figure(2);clf;
 for i=2:2:10;
    r=i*.1;
@@ -49,5 +50,6 @@ for i=2:2:10;
    title('Tidal amplification factor');
    legend ('r=0.2','r=0.4','r=0.6','r=0.8','r=1.0')
 end
-print('-deps','amplification.eps')
+print('-deps2','amplification.eps')
+print('-dpng','amplification.png')
 

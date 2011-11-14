@@ -34,4 +34,5 @@ B(i) = plot(x1,y-0.6,'--r','LineWidth',2);
 end
 
 print('-depsc','bottomchannel.eps')
+print('-dpng','bottomchannel.png')
 

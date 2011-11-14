@@ -30,26 +30,27 @@ zb=zbmean-Ab*exp(-((-x-xb)/Rb).^2).*cos(2*pi*(x/Lb-t/Tb));
 figure(1);
 subplot(321);
 plot(x,zb,x,eta,'linewidth',2);
-title('Profile');xlabel('x (m)');ylabel('z_b,eta (m)');
+title('Profile');ylabel('z_{b}, eta (m)');
 axis([-800 0 min(zb) max(zb)]);
 subplot(323);
 plot(x,Hrms,'linewidth',2);
-title('Wave height');xlabel('x (m)');ylabel('H_r_m_s (m)');
+title('Wave height');ylabel('H_{rms} (m)');
 axis([-800 0 min(Hrms) 1.1*max(Hrms)]);
 subplot(325); 
 plot(x,dir*180/pi,'linewidth',2);
-title('Wave direction');xlabel('x (m)');ylabel('Dir (^o)');
+title('Wave direction');xlabel('x (m)');ylabel('Dir (°)');
 axis([-800 0 0 1.1*max(dir*180/pi)]);
 subplot(322);
 plot(x,Dw,x,Dr,'linewidth',2);
-title('Dissipation');xlabel('x (m)');ylabel('D_w,D_r (W/m^2)');
+title('Dissipation');ylabel('D_w,D_r (W/m²)');
 axis([-800 0 0 1.1*max(Dw)]);
 subplot(324);
 plot(x,Dh,'linewidth',2);
-title('Hor. viscosity');xlabel('x (m)');ylabel('D_h (m^2/s)');
+title('Hor. viscosity');ylabel('D_h (m²/s)');
 axis([-800 0 0 1.1*max(Dh)]);
 subplot(326);
 plot(x,vs,x,vt,'linewidth',2);
 title('Longshore velocity');xlabel('x (m)');ylabel('v (m/s)');
 axis([-800 0 0 1.1*max(vs)]);
-print('-depsc','profilemodel.eps')
+print('-depsc2','profilemodel.eps')
+print('-dpng','profilemodel.png')

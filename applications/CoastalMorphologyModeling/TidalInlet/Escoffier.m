@@ -1,13 +1,13 @@
-clear all;close all
+clear all;close all; fclose all;
 obrien=4.69e-4/(0.3048)^(3*0.85)*0.3048^2;
 Ac=0:10:50000;
-col=['b','r','g']
+col=['b','r','g'];
 for p=1:3
     for isc=1:3
          if p==1
             Lgorge=2000*2^(isc-1);
         else
-            Lgorge=4000
+            Lgorge=4000;
         end
        if p==2
             h=sqrt(Ac/50/2^(isc-1));
@@ -33,24 +33,23 @@ for p=1:3
         P=2*etamp*A./sqrt(1+phi.^2);
         f=figure(p)
         set(f,'color','w','resize','off')
-        plot(Ac,uamp,col(isc),'linewidth',2);hold on
-        xlabel('A_c (m^2)');ylabel('v_m_a_x (m/s)')
-        set(gca,'fontweight','bold','fontsize',20,'linewidth',2)
+        plot(Ac,uamp,col(isc),'linewidth',2);hold on;
+        xlabel('A_{c} (m²)');ylabel('v_{max} (m/s)')
         % figure(2)
 %         plot(Ac,1./sqrt(1+phi.^2),col(isc),'linewidth',2);hold on
-                 figure(10+p)
-                 set(gcf,'color','w')
-                 loglog(Ac,P,col(isc),Ac,2*1.06*Ac/omega,'k','linewidth',2);hold on
-        xlabel('A_c (m^2)');ylabel('P (m^3/s)')
-        set(gca,'fontweight','bold','fontsize',20,'linewidth',2)
+         figure(10+p)
+         set(gcf,'color','w')
+         loglog(Ac,P,col(isc),'linewidth',2);hold on
+        xlabel('A_{c} (m²)');ylabel('P (m³/s)')
     end
+    loglog(Ac,2*1.06*Ac/omega,'k');
     figure(p)
     if p==1
-        legend('L_g_o_r_g_e=2000 m','L_g_o_r_g_e=4000 m','L_g_o_r_g_e=8000 m')
+        legend('L_{gorge}=2000 m','L_{gorge}=4000 m','L_{gorge}=8000 m')
     elseif p==2
-        legend('B/h = 50','B/h=100','B/h=200')
+        legend('B/h = 50','B/h = 100','B/h = 200')
     elseif p==3
-        legend('tidal amp = .5 m','tidal amp.=1 m','tidal amp.=2m')
+        legend('tidal amplitude=0.5 m','tidal amplitude=1 m','tidal amplitude=2m')
     end
     plot(Ac,ones(size(Ac))*1.06,'k')
     fname=['escoffier',num2str(p),'.png']
@@ -59,11 +58,11 @@ for p=1:3
     print('-depsc2',fname)
     figure(10+p)
     if p==1
-        legend('L_g_o_r_g_e=2000 m','L_g_o_r_g_e=4000 m','L_g_o_r_g_e=8000 m','location','northwest')
+        legend('L_{gorge}=2000 m','L_{gorge}=4000 m','L_{gorge}=8000 m','location','northwest')
     elseif p==2
         legend('B/h = 50','B/h=100','B/h=200','location','northwest')
     elseif p==3
-        legend('tidal amp = .5 m','tidal amp.=1 m','tidal amp.=2m','location','northwest')
+        legend('tidal amp.=0.5 m','tidal amp.=1 m','tidal amp.=2m','location','northwest')
     end
     fname=['escoffier',num2str(10+p),'.png']
     print('-dpng',fname)

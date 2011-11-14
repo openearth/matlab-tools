@@ -1,4 +1,4 @@
-function[Dw,Qb]=Baldock(gamma,k,h,H,T,opt);
+function[Dw,Qb]=Baldock2(gamma,k,h,H,T,opt);
 % Compute dissipation according to Baldock
 alpha=1;rho=1000;g=9.81;
 Hmax=0.88/k*tanh(gamma*k*h/0.88);

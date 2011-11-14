@@ -1,4 +1,4 @@
-clear all
+clear all;
 dx=.1
 u=2;
 C=65;
@@ -12,6 +12,13 @@ alpha=1
 h=5
 ca=1
 x=[0:dx:500];
+figure;
+%set(gca,'fontsize',11,'fontweight','bold')
+title('Adaptation of concentration to equilibrium');
+xlabel('distance (m)')
+ylabel('c/c_a')
+set(gcf,'color','w')
+hold on
 for ic=0:10
     c0=ic*.1
     c(1)=max(c0,ca*a/h);
@@ -21,13 +28,6 @@ for ic=0:10
         S=(ceq/c(i-1)-1)*ws*max(ca,c(i-1));
         c(i)=c(i-1)+dx/u*S;
     end
-    figure(1);
-    plot(x,c,'k','linewidth',2);hold on
+    plot(x,c,'k','linewidth',2);hold on;
 end
-figure(1)
-set(gca,'fontsize',11,'fontweight','bold')
-title('Adaptation of concentration to equilibrium')
-xlabel('distance (m)')
-ylabel('c/c_a')
-set(gcf,'color','w')
 print('-depsc','concadaptation.eps')

@@ -7,7 +7,7 @@ theta=1-erf(u1);
  figure(1);
  subplot(211)
  plot(x1,y1,'linewidth',2);axis([-3 3 -1 1]);
- xlabel('x_*');ylabel('y_*');grid
+ xlabel('x_{*}');ylabel('y_{*}');grid
 subplot(212)
 c=['b','g','r','k']
 for i=1:4
@@ -18,3 +18,4 @@ for i=1:4
 end
 xlabel('x (m)');ylabel('y (m)');legend('after 1 year','after 2 years','after 4 years','after 8 years')
 print('-depsc','pelnarddelta.eps')
+print('-dpng','pelnarddelta.png')

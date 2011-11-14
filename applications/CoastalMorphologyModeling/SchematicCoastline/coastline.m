@@ -12,6 +12,7 @@ nx=length(x);
 %% Initialise white figure
 figure(1);
 set(gcf,'color','w')
+hold on
 %% Run three different cases
 for j=1:3
     %% Define initial disturbance: gaussian hump
@@ -43,30 +44,30 @@ for j=1:3
             y(i)=y(i)+dydt(i)*dt;
         end
         if mod(it,500)==0
-            fill(x/1000,y0,'r');hold on;fill(x/1000,y,'y');hold off%axis equal
+            fill(x/1000,y0,'r');hold on;fill(x/1000,y,'y');hold off %axis equal
             ylabel('y (m)')
             if j==1
                 title('S_x independent of y')
             elseif j==2
-                title('S_x=S_x_0(y/B_d+1)')
+                title('S_x=S_{x0}(y/B_d+1)')
             else
-                title('S_x=S_x_0[min(y/B_d+1,1)]')
+                title('S_x=S_{x0}[min(y/B_d+1,1)]')
                 xlabel('longshore distance (km)')
             end
             drawnow;
-            print('-djpeg',[num2str(j*100+it/500),'.jpg'])
+            print('-dpng',[num2str(j*100+it/500),'.png'])
         end
     end
-    fill(x/1000,y0,'r');hold on;fill(x/1000,y,'y')%axis equal
+    fill(x/1000,y0,'r');hold on;fill(x/1000,y,'y'); %axis equal
     plot(x/1000,y,'k','linewidth',2);hold off
             ylabel('y (m)')
             if j==1
                 title('S_x independent of y')
             elseif j==2
-                title('S_x=S_x_0(y/B_d+1)')
+                title('S_x=S_{x0}(y/B_{d}+1)')
             else
-                title('S_x=S_x_0[min(y/B_d+1,1)]')
+                title('S_x=S_{x0}[min(y/B_d+1,1)]')
                 xlabel('longshore distance (km)')
             end
-    print('-djpeg',[num2str(j*100+it/500+1),'.jpg'])
+    print('-dpng',[num2str(j*100+it/500+1),'.png'])
 end

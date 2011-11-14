@@ -1,3 +1,4 @@
+clear all; close all;
 h0=5;
 x0=1000;R=200;
 height=-2;
@@ -31,10 +32,13 @@ for it=1:nt
    if mod(it,50)==0
       subplot(311)
       plot(x,zb0,x,zb,'linewidth',2,'Color',[(nt-it)/nt (nt-it)/nt (nt-it)/nt]);hold on
+      ylabel('bottom level (m)');
       subplot(312)
       plot(x,Sx0,x,Sx,'linewidth',2,'Color',[(nt-it)/nt (nt-it)/nt (nt-it)/nt]);hold on
+      ylabel('sediment transport (m3/m)')
       subplot(313)
       plot(x,dzb0,x,dzb,'linewidth',2,'Color',[(nt-it)/nt (nt-it)/nt (nt-it)/nt]);hold on
+      ylabel('bottom level change (m)')
    end
-   
+   xlabel('distance (m)');
 end

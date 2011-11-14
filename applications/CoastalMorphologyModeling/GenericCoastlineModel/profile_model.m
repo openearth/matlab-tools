@@ -17,12 +17,10 @@ rho=1025;                     % Water density
 D50=200e-6;                   % D50 grain diameter
 D90=300e-6;                   % D90 grain diameter
 dxmin=2;                      % Minimum grid size
-% nphi=10;                      % Number of coast directions
-% phimin=200;                   % Smallest coast angle considered
-nphi=1;                      % Number of coast directions
-phimin=300;                   % Smallest coast angle considered
+nphi=10;                      % Number of coast directions
+phimin=200;                   % Smallest coast angle considered
 dphi=20;                      % Step size coast angles
-dphi
+
 %% Profile definition 
 profile=load('profile.txt')
 x1=profile(:,1);
@@ -83,8 +81,6 @@ for iphi=1:nphi;
                     balance_1d(Hrms0,dir0,eta0,Tp,x,zb,gamma,beta,hmin);
                 %% Solve longshore current with stationary solver
                 [vs]=longshore_current(x,Fy,h,Hrms,Tp,k,ks,rho,hmin);
-                %% Solve longshore current with instationary solver, including viscosity
-                %[vt,Dh]=longshore_current_t(x,Fy,h,Hrms,Tp,Dr,k,ks,rho,hmin);
                 %% Compute longshore transport rate
                 u=zeros(size(vs));
                 [S,Slong]=soulsby_van_rijn(x,h,Tp,k,Hrms,u,vs,ks,hmin,D50,D90);
@@ -93,7 +89,7 @@ for iphi=1:nphi;
                 else
                     Sc(:,ic,iphi)=S;
                     Slongc(iH)=Slong;
-                    if abs(Slong)>0&plt
+                    if abs(Slong)>0&plt&~exist(octave_config_info) % plotting extremely slow under GNU plot
                         %% Plot results
                         figure(1);
                         subplot(321);

@@ -49,14 +49,14 @@ for it=2:nt
     %
     % Compute deep water celerity
     % ---------------------------
-    k0=disper(h(1),T);
+    k0=dispersion(h(1),T);
     C0=omega/k0;
     %
     % Compute k,C,Cg for all points
     % -----------------------------
     for i=1:nx
         if h(i)>hmin
-            k(i)=disper(h(i),T);
+            k(i)=dispersion(h(i),T);
             C(i)=omega/k(i);
             n(i)=0.5+k(i)*h(i)/sinh(2*k(i)*h(i));
             Cg(i)=n(i)*C(i);

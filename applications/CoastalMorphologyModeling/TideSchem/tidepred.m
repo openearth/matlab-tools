@@ -1,4 +1,4 @@
-clear all
+clear all; close all;
 % Dimensions Grays Harbor
 A=237000000;
 Bh=24000;
@@ -80,14 +80,12 @@ for j=1:6;
     figure(3)
     subplot(6,3,3*j-2);
     plot(t,u);
-    set(gca,'fontweight','bold');
     axis([starttime endtime -3 3]);
-    datetick;
+    datetick('x','mm/yy');
     if j==1;title('U (m/s)');end
     if j<6;set(gca,'xticklabel',[]);end
     subplot(6,3,3*j-1);
     plot(t,s,t,faclo*s_lo);
-    set(gca,'fontweight','bold');
     axis([starttime endtime -25 25]);
     if     j==1;text(starttime+10,15,'M2               ');
     elseif j==2;text(starttime+10,15,'M2+S2+N2         ');
@@ -96,32 +94,36 @@ for j=1:6;
     elseif j==5;text(starttime+10,15,'M2+S2+N2+O1+K1+Mean');
     elseif j==6;text(starttime+10,15,'M2*1.0836+C1+Mean  ');
     end
-    datetick;
-    if j==1;title('U^3 (m^3/s^3)');end
+    datetick('x','mm/yy');
+    if j==1;title('U³ (m³/s³)');end
     if j<6;set(gca,'xticklabel',[]);end
     subplot(6,3,3*j);
     plot(t,cs*faccs,t,cspos*faccs,t,csmin*faccs);
-    set(gca,'fontweight','bold');
     axis([starttime endtime -50 50]);
-    datetick;
-    if j==1;title('Cum. U^3 (m^3/s^3)');end
+    datetick('x','mm/yy');
+	
+    if j==1;title('Cum. U³ (m³/s³)');end
     if j<6;set(gca,'xticklabel',[]);end
     drawnow
     figure(1);
     if j>4
         if j==5;ch='b';else; ch='r';end
         plot(t,cs*faccs,ch,t,cspos*faccs,ch,t,csmin*faccs,ch,'linewidth',2);
-        hold on
-        set(gca,'fontweight','bold');
-        axis([starttime endtime -50 50]);
-        datetick;
-        if title('Cum. U^3 (m^3/s^3)');end
         legend('M2+S2+N2+O1+K1+Mean','1.08M2+C1+Mean')
+        hold on
+        axis([starttime endtime -50 50]);
+        datetick('x','mm/yy');
+        title('Cum. U³ (m³/s³)')
+        
+		
     end
 end
+
 figure(1)
 set(gcf,'color','w')
 print('-depsc','tiderep.eps')
+print('-dpng','tiderep.png')
 figure(3)
 set(gcf,'color','w')
 print('-depsc','tidepred.eps')
+print('-dpng','tidepred.png')
