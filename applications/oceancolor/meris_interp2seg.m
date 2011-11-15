@@ -180,7 +180,7 @@ end
 w = nanmean(w,2);
 
 % -------------------------------------------------------------------------
-% Ensamble
+% Ensemble
 % -------------------------------------------------------------------------
 function [xe qe] = ensemble(x,q,ne,type)
 
@@ -195,7 +195,7 @@ Xe = X + W;
 Xe(Xe<=0) = nan;
 [ir ic] = find(isnan(Xe));
 
-if any(isnan(Xe))
+if any(any(isnan(Xe)))
    Xe(ir,ic) = X(ir,ic);
 end
 
