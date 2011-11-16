@@ -193,10 +193,10 @@ W = repmat(q,1,ne).*randn(ns,ne);
 Xe = X + W;
 
 Xe(Xe<=0) = nan;
-[ir ic] = find(isnan(Xe));
+inan = find(isnan(Xe));
 
 if any(any(isnan(Xe)))
-   Xe(ir,ic) = X(ir,ic);
+   Xe(inan) = X(inan);
 end
 
 if strcmp(type,'log')
