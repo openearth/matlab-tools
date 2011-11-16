@@ -69,6 +69,17 @@ yv=[pntn(2) pntnn(2)];
 % determine crossings of transect with grid
 % [xc,yc]=int_lngrd(xv,yv,x,y);
 [xc,yc,dum,dum] = grid_orth_getDataOnLine(x,y,repmat(1,size(x)),xv,yv);
+
+if xc(1)<xc(2) && xc(2)>xc(3)
+    xctemp = xc; yctemp = yc;
+    xc(1)= xctemp(end); xc(end)= xctemp(1);
+    yc(1)= yctemp(end); yc(end)= yctemp(1);
+elseif xc(1)>xc(2) && xc(2)<xc(3)
+    xctemp = xc; yctemp = yc;
+    xc(1)= xctemp(end); xc(end)= xctemp(1);
+    yc(1)= yctemp(end); yc(end)= yctemp(1);
+end
+
 xc = [xv(1) ; xc ; xv(2)];
 yc = [yv(1) ; yc ; yv(2)];
 
