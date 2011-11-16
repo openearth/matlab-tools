@@ -20,10 +20,10 @@ if isfield(opt,par)
             depths=pars(1,:);
             vals=pars(2,:);
             if depths(2)>depths(1)
-                depths=[-10000 depths 10000];
-            else
-                depths=[10000 depths -10000];
+                depths=depths*-1;
             end
+            depths=[10000 depths -10000];
+            depths=depths*-1;
             vals =[vals(1) vals vals(end)];
             data=interp1(depths,vals,dplayer);
             u=data;
@@ -59,10 +59,18 @@ if isfield(opt,par)
             ts=flow.startTime;
             it1=find(times<=ts, 1, 'last' );
             it2=find(times>ts, 1, 'first' );
+            if isempty(it2)
+                it2=length(times);
+            end
             t0=times(it1);
             t1=times(it2);
-            m1=(t1-ts)/(t1-t0);
-            m2=(ts-t0)/(t1-t0);
+            if it1==it2
+                m1=1;
+                m2=0;
+            else
+                m1=(t1-ts)/(t1-t0);
+                m2=(ts-t0)/(t1-t0);
+            end
             
 %             % Find available times
 %             switch lower(par)
@@ -169,7 +177,6 @@ if isfield(opt,par)
                     s2=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.' par '.' datestr(times(it2),'yyyymmddHHMMSS') '.mat']);
                     s1.lon=mod(s1.lon,360);
                     s2.lon=mod(s2.lon,360);
-
                     s1=interpolate3D(xz,yz,dplayer,s1);
                     s2=interpolate3D(xz,yz,dplayer,s2);
                     data=m1*s1+m2*s2;

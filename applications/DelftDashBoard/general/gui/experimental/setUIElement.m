@@ -108,13 +108,14 @@ switch lower(el.style)
         end
 
     case{'listbox','popupmenu'}
-        
+
         if isfield(el.list.text,'variable')
             stringList=getSubFieldValue(s,el.list.text.variable);
         else
             stringList=el.list.text;
         end
         
+        ii=1;
         if isempty(stringList)
             ii=1;
         elseif isempty(stringList{1})
@@ -125,20 +126,21 @@ switch lower(el.style)
             else
                 tp=lower(el.variable.type);
             end
-            
             switch tp
                 case{'string'}
-                    str=getSubFieldValue(s,el.variable);
-                    %                    if isfield(el.list.value,'variable')
-                    if isfield(el.list,'value')
-                        if isfield(el.list.value,'variable')
-                            values=getSubFieldValue(s,el.list.value.variable);
+                    if ~isempty(el.variable)
+                        str=getSubFieldValue(s,el.variable);
+                        %                    if isfield(el.list.value,'variable')
+                        if isfield(el.list,'value')
+                            if isfield(el.list.value,'variable')
+                                values=getSubFieldValue(s,el.list.value.variable);
+                            else
+                                values=el.list.value;
+                            end
+                            ii=strmatch(lower(str),lower(values),'exact');
                         else
-                            values=el.list.value;
+                            ii=strmatch(lower(str),lower(stringList),'exact');
                         end
-                        ii=strmatch(lower(str),lower(values),'exact');
-                    else
-                        ii=strmatch(lower(str),lower(stringList),'exact');
                     end
                 otherwise
 %                    ii=getSubFieldValue(s,el.variable);

@@ -4,6 +4,8 @@ if size(data,1)==1
     data=data';
 end
 
+data(isnan(data))=-999;
+
 fid=fopen(fname,'w');
 
 if nargin==4
