@@ -73,7 +73,24 @@
     <position>560 60 100 20</position>
     <text>Generate Layers</text>
     <callback>ddb_Delft3DFLOW_grid</callback>
-    <option1>selectenclosure</option1>
+    <option1>generatelayers</option1>
+    <dependencies>
+      <dependency>
+        <tags>
+          <tag>editkmax</tag>
+        </tags>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).KMax</variable>
+            <type>integer</type>
+            <value>1</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
   </element>
   <element>
     <tag>pushsavelayers</tag>

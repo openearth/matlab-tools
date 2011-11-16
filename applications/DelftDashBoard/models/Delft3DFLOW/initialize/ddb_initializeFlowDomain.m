@@ -313,7 +313,7 @@ handles.Model(md).Input(id).nudge=0;
 handles.Model(md).Input(id).kTemp=0;
 handles.Model(md).Input(id).fClou=0;
 handles.Model(md).Input(id).sArea=0;
-handles.Model(md).Input(id).timeZoneRadiation=0;
+handles.Model(md).Input(id).timeZoneSolarRadiation=0;
 handles.Model(md).Input(id).secchi=3;
 handles.Model(md).Input(id).stanton=0.0013;
 handles.Model(md).Input(id).dalton=0.0013;
@@ -418,3 +418,8 @@ handles.Model(md).Input(id).fourier.astronomicalComponents=[];
 for i=1:size(tt.name,1)
     handles.Model(md).Input(id).fourier.astronomicalComponents{i}=deblank(tt.name(i,:));
 end
+
+handles.Model(md).Input(id).thickTop=2;
+handles.Model(md).Input(id).thickBot=2;
+handles.Model(md).Input(id).layerOption=1;
+

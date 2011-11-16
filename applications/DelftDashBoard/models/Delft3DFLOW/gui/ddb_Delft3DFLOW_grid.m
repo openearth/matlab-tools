@@ -56,6 +56,7 @@ setHandles(handles);
 
 %%
 function generateLayers
+ddb_Delft3DFLOW_generateLayers;
 
 %%
 function changeLayers
@@ -118,5 +119,6 @@ if kmax~=kmax0
     handles.Model(md).Input(ad).sumLayers=sum(handles.Model(md).Input(ad).thick);
     setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
     setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
+    setUIElement('delft3dflow.domain.domainpanel.grid.pushgeneratelayers');
 end
 
