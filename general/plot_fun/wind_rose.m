@@ -42,10 +42,14 @@ function varargout = wind_rose(D,F,varargin)
 %       - IncHiLow  if 0, data outside di limits will not be used [0 {1}]
 %       - directionLabels  put the labels North, East, South, West on the
 %                   axes (default: true)
+%       - centersectors  Center sectors around 0 .. 360 (default) or not
 %
 %   Output:
 %      HANDLES   Handles of all lines, fills, texts
 %      DATA      Wind rose occurences per direction and intensity
+%                NOTE: if type meteo, occurrences are ordered following
+%                cartesian directions, so first sector is 90-ddir to 90
+%                deg, etc.
 %
 %   Examle:
 %      d=0:10:350;
@@ -155,7 +159,7 @@ OPT.inorm       = 0;
 OPT.parent      = 0;
 OPT.IncHiLow    = 1; % include values higher and lower than the limits of OPT.Ag.
 OPT.directionLabels = true; % labels North South etc..
-
+OPT.centersectors = true;% Center sectors around 0 .. 360 or not
 OPT = setproperty(OPT, varargin{:});
 
 if nargin==0
@@ -261,7 +265,12 @@ end
 
 %% angles subdivisons:
 D=mod(D,360);
-Ay=linspace(0,360,OPT.nAngles+1)-0.5*360/OPT.nAngles;
+if OPT.centersectors
+   Ay=linspace(0,360,OPT.nAngles+1)-0.5*360/OPT.nAngles;
+else
+   Ay=linspace(0,360,OPT.nAngles+1);
+end
+    
 
 %% calc instensity subdivisions:
 if isempty(OPT.Ag)
