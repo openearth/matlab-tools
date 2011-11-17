@@ -6,7 +6,9 @@ function y = nanrms(x,varargin)
 % root mean square of each column. All NaN valuez
 % are neglected.
 %
-%See also: nanMEAN, nanMAX, nanMIN, STD
+% NANRMS(X,DIM) takes the rms along the dimension DIM of X. 
+%
+%See also: RMS, nanMEAN, nanMAX, nanMIN, STD
 
 % $Id$
 % $Date$

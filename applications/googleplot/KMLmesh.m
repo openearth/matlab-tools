@@ -1,7 +1,7 @@
 function varargout = KMLmesh(lat,lon,varargin)
 % KMLMESH Just like mesh
 %
-%    KMLmesh(lat,lon,z,<keyword,value>)
+%    KMLmesh(lat,lon,<z>,<keyword,value>)
 % 
 % KMLmesh differs from KMLpcolor in the sense that KMLmesh
 % plots actual lines, whereas KMLpcolor plots patches. 
@@ -13,7 +13,7 @@ function varargout = KMLmesh(lat,lon,varargin)
 %
 %    OPT = KMLmesh()
 %
-% See also: googlePlot, KMLpcolor, mesh, pcolor
+% See also: googlePlot, KMLpcolor, mesh, pcolor, KMLtrimesh
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -64,7 +64,7 @@ function varargout = KMLmesh(lat,lon,varargin)
 %% see if height is defined
 
    if ~isempty(varargin)
-       if ~ischar(varargin{1});
+       if ~ischar(varargin{1}) | strcmpi(varargin{1},'clampToGround')
            z = varargin{1};
            varargin = varargin(2:length(varargin));
            OPT.is3D        = true;      

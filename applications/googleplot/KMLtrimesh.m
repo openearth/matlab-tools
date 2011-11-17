@@ -4,9 +4,9 @@ function varargout = KMLtrimesh(tri,lat,lon,varargin)
 %   [OPT, Set, Default] = KMLtrimesh(tri,lat,lon,  <keyword,value>)
 %   [OPT, Set, Default] = KMLtrimesh(tri,lat,lon,z,<keyword,value>)
 %
-% is implemented veyr fast: it assembles long lines
-% that assemble all faces. Lines plot orders of magnitude 
-% faster in google earth then patch edges.
+% is implemented very fast compared to KMLtrisurf: it assembles 
+% long lines that assemble all faces. Lines plot orders of  
+% magnitude faster in google earth than patch edges.
 %
 % You can KMLtrimesh edges in combination with KMLtrisurf for faces.
 %
