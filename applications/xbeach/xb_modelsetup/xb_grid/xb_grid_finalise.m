@@ -143,15 +143,15 @@ function [x y z] = lateral_extend_curvi(x, y, z, OPT)
     
     alfav1 = g.alfav(:,1);
     dalfav1 = diff(g.alfav(:,1:2), 1, 2);
-    dalfav1_ext = dalfav1 * linspace(1/n, 1, n);
+    dalfav1_ext = dalfav1 * linspace(1-1/n, 0, n);
     alfav1_mean = ones(size(alfav1)) .* mean(alfav1);
     % Interpolate from the edge to the mean of the edge
     alfav1_ext = repmat(alfav1, 1, n) + (alfav1_mean - alfav1) * linspace(0, 1-1/n, n);
-%     alfav1_ext = fliplr(repmat(alfav1, 1, n) - dalfav1_ext);
+%     alfav1_ext = fliplr(repmat(alfav1, 1, n) - cumsum(dalfav1_ext,2));
        
     % translate relative polar coordinates to absolute cartesian
     % coordinates
-    x1_ext = repmat(x(:,1), 1, n) + cos(alfav1_ext) .* fliplr(cumsum(dn1_ext, 2)); %-?
+    x1_ext = repmat(x(:,1), 1, n) + cos(alfav1_ext) .* -fliplr(cumsum(dn1_ext, 2)); %-?
     y1_ext = repmat(y(:,1), 1, n) + sin(alfav1_ext) .* -fliplr(cumsum(dn1_ext, 2));
 
     x11_ext = repmat(x1_ext(:,1), 1, n) + repmat(cos(alfav1_mean), 1, n) .* -fliplr(cumsum(repmat(dn1_mean, 1, n), 2));
