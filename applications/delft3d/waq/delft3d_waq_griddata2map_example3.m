@@ -14,13 +14,6 @@
 % * cell corner/center differences
 % * any dummy rows in the Delft3D-FLOW/WAQ grids
 %
-% Any missing m=files are in:
-% * cd Y:\app\matlab\toolbox\
-% * wlsettings
-% * cd P:\mctools\mc_toolbox\
-% * mcsettings
-% ---------------------------------------------------
-%
 %See also: DELWAQ, FLOW2WAQ3D, ADDROWCOL, CORNER2CENTER
 
 % $Id$
@@ -32,14 +25,14 @@
 %% G.J. de Boer <gerben.deboer@deltares.nl>, <g.j.deboer@tudelft.nl>
 
 %% Input
-%% ---------------------------------------------------
+% ---------------------------------------------------
 
    OPT.directory.wavm  = 'F:\vanClaire\';
    OPT.files.wavm      = 'vWind1';
    OPT.refdatenum      = datenum(2008,1,1);% reference date in WAQ simulation
    
 %% Script options
-%% ---------------------------------------------------
+% ---------------------------------------------------
 
    OPT.plot.Segments   = 1;
    OPT.pause           = 1;
@@ -60,7 +53,7 @@
                                      %             uniformly spaced, otherwise the same as 'spline'
 
 %% WAQ input/output
-%% ---------------------------------------------------
+% ---------------------------------------------------
 
    OPT.directory.waq   = 'F:\vanClaire\';
    OPT.files.waqgrid   = 'S1S2_M2M4M6.cco';
@@ -73,13 +66,13 @@
    
 
 %% Load FLOW/WAQ grid
-%% ---------------------------------------------------
+% ---------------------------------------------------
 
    FLOW = delwaq('open',[OPT.directory.waq,filesep,OPT.files.waqgrid]);
    
-   %% Remove moronic fields of which the meaning is unclear.
-   %% due to moronic dummy rows and columns.
-   %% Only add all dummy rows and columsn when aggregatting to WAQ grid.
+   % Remove moronic fields of which the meaning is unclear.
+   % due to moronic dummy rows and columns.
+   % Only add all dummy rows and columsn when aggregatting to WAQ grid.
    
    FLOW.cor.x    = FLOW.X(1:end-1,1:end-1);
    FLOW.cor.y    = FLOW.Y(1:end-1,1:end-1);
@@ -94,7 +87,7 @@
    FLOW.flow2waqcoupling3D          = flow2waq3d_coupling(FLOW.Index       ,FLOW.NoSeg        ,'i'); % new flow2waq3d_coupling !! per 2008 May 13  
    
    %% Plot FLOW/WAQ grid (debug)
-   %% ----------------------------------
+   % ----------------------------------
 
    if OPT.plot.Segments
    figure('name','plotSegments')
@@ -113,10 +106,10 @@
    end
 
 %% Generate tau data
-%% ----------------------------------
+% ----------------------------------
 
    %% Load WAVM data in struct W<ave>
-   %% ----------------------------------
+   % ----------------------------------
 
 wavm = vs_use([OPT.directory.wavm,filesep,'wavm-',OPT.files.wavm,'.def']);
 T    = vs_time(wavm);
@@ -150,7 +143,7 @@ for it = 1:T.nt_loaded
    W.cor.L   (~W.cor.code) = nan;
 
    %% Calculate wave-induced bed shear stress intro struct C<alculated>
-   %% ------------------------------------
+   % ------------------------------------
 
    C.cor.L = wavedispersion(W.cor.Tm,W.cor.dep);
 
@@ -166,10 +159,10 @@ for it = 1:T.nt_loaded
      
        rhow   = 1000;
 
-       %% Swart, D. H., 1974: Offshore sediment transport and 
-       %% equilibrium beach profiles. Delft Hydraulics Laboratory Publ. No. 131, 302 pp., (page 146+ ?? Eq 6.73)
-       %% See Delft3d manual page 9-68 Eq. 9.174
-       %% See korte golven dictaat Eq. (3.20)
+       % Swart, D. H., 1974: Offshore sediment transport and 
+       % equilibrium beach profiles. Delft Hydraulics Laboratory Publ. No. 131, 302 pp., (page 146+ ?? Eq 6.73)
+       % See Delft3d manual page 9-68 Eq. 9.174
+       % See korte golven dictaat Eq. (3.20)
        
        % r = A./ks
        C.cor.r                   = C.cor.ubot./OPT.rough./(2*pi./W.cor.Tm);    % ubot./omega./r, FLOW manual Eq. (9.175)
@@ -185,11 +178,11 @@ for it = 1:T.nt_loaded
    C.cor.tau  = abs(C.cor.tau); % get rid of complex numbers
 
 %% Grid WAVM to FLOW grid
-%% ----------------------------------
+% ----------------------------------
 
-   %% interpolate from orthogonal data set
-   %% goal vertices may not contain NaN
-   %% so we pass a 1D of only real coordinates
+   % interpolate from orthogonal data set
+   % goal vertices may not contain NaN
+   % so we pass a 1D of only real coordinates
    
    mask     = (~isnan(FLOW.cen.x)) & ...
               (~isnan(FLOW.cen.y));
@@ -220,7 +213,7 @@ for it = 1:T.nt_loaded
    end
                                             
    %% Plot silt data to FLOW grid (debug)
-   %% ----------------------------------
+   % ----------------------------------
 
    if OPT.plot.tau
    figure('name','plotsilt2FLOW')
@@ -237,13 +230,13 @@ for it = 1:T.nt_loaded
    end
 
 %% Aggregate FLOW data to WAQ grid
-%% and write to WAQ file
-%% ----------------------------------
+% and write to WAQ file
+% ----------------------------------
 
    if OPT.FLOW2WAQ
 
       %% add dummy rows and columsn to corect aggregation indexing
-      %% ----------------------------------
+      % ----------------------------------
       
       fullmatrix = FLOW.cen.tau(:,:);
       
@@ -255,13 +248,13 @@ for it = 1:T.nt_loaded
       
       fullmatrix(isnan(fullmatrix)) = OPT.backgroundvalue;
       
-      %% Duplicate value for all KMAX layers, 
-      %% as WAQ needs all data 3D in 3D computation, 
-      %% even 2D data as bed shear stresses.
-      %% All other dummy elements are set to zero.
-      %%
-      %% The 2D > 3D below method works only if all layers in all columns are active
-      %% ----------------------
+      % Duplicate value for all KMAX layers, 
+      % as WAQ needs all data 3D in 3D computation, 
+      % even 2D data as bed shear stresses.
+      % All other dummy elements are set to zero.
+      %
+      % The 2D > 3D below method works only if all layers in all columns are active
+      % ----------------------
       
       WAQ2D.tau = flow2waq3d(fullmatrix,FLOW.flow2waqcoupling2D);
 
@@ -275,7 +268,7 @@ for it = 1:T.nt_loaded
       WAQ.tau(1,(1:nWAQ2D) + nWAQ2D.*(OPT.k-1)) = WAQ2D.tau;
       
       %% Write to waq map file
-      %% ----------------------------------
+      % ----------------------------------
 
       if (it==1)
         STRUCT    = delwaq('write',[OPT.directory.waq,filesep,'tau.map'],...
