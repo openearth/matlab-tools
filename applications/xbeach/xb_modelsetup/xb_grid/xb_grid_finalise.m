@@ -130,6 +130,51 @@ function [x y z] = lateral_extend(x, y, z, OPT)
         y = [(y(1,1)-[n*dy1:-dy1:dy1])'*ones(1,size(y,2)) ; y ; (y(end,1)+[dy2:dy2:n*dy2])'*ones(1,size(y,2))];
         z = [ones(n,1)*z(1,:) ; z ; ones(n,1)*z(end,:)];
     end
+    
+function [x y z] = lateral_extend_curvi(x, y, z, OPT)
+    g = xb_stagger(x, y);
+    
+    n = OPT.n;
+    
+    dn1 = g.dnv(:,1);
+    dn1_mean = ones(size(dn1)) .* mean(dn1);
+    % Interpolate from the edge to the mean of the edge
+    dn1_ext = repmat(dn1, 1, n) + (dn1_mean - dn1) * linspace(0, 1-1/n, n);
+    
+    alfav1 = g.alfav(:,1);
+    alfav1_mean = ones(size(alfav1)) .* mean(alfav1);
+    % Interpolate from the edge to the mean of the edge
+    alfav1_ext = repmat(alfav1, 1, n) + (alfav1_mean - alfav1) * linspace(0, 1-1/n, n);
+       
+    % translate relative polar coordinates to absolute cartesian
+    % coordinates
+    x1_ext = repmat(x(:,1), 1, n) + cos(alfav1_ext) .* -fliplr(cumsum(dn1_ext, 2)); %-?
+    y1_ext = repmat(y(:,1), 1, n) + sin(alfav1_ext) .* -fliplr(cumsum(dn1_ext, 2));
+
+    x11_ext = repmat(x1_ext(:,1), 1, n) + repmat(cos(alfav1_mean), 1, n) .* -fliplr(cumsum(repmat(dn1_mean, 1, n), 2));
+    y11_ext = repmat(y1_ext(:,1), 1, n) + repmat(sin(alfav1_mean), 1, n) .* -fliplr(cumsum(repmat(dn1_mean, 1, n), 2));
+    
+    dn2 = g.dnv(:,end);
+    dn2_mean = ones(size(dn2)) .* mean(dn2);
+    % Interpolate from the edge to the mean of the edge
+    dn2_ext = repmat(dn2, 1, n) + (dn2_mean - dn2) * linspace(1/n, 1, n);
+    
+    alfav2 = g.alfav(:,end);
+    alfav2_mean = ones(size(alfav2)) .* mean(alfav2);
+    % Interpolate from the edge to the mean of the edge
+    alfav2_ext = repmat(alfav2, 1, n) + (alfav2_mean - alfav2) * linspace(1/n, 1, n);
+    
+    % translate relative polar coordinates to absolute cartesian
+    % coordinates
+    x2_ext = repmat(x(:,end), 1, n) + cos(alfav2_ext) .* cumsum(dn2_ext, 2);
+    y2_ext = repmat(y(:,end), 1, n) + sin(alfav2_ext) .* cumsum(dn2_ext, 2);
+    
+    x22_ext = repmat(x2_ext(:,end), 1, n) + repmat(cos(alfav1_mean), 1, n) .* -cumsum(repmat(dn2_mean, 1, n), 2);
+    y22_ext = repmat(y2_ext(:,end), 1, n) + repmat(sin(alfav1_mean), 1, n) .* cumsum(repmat(dn2_mean, 1, n), 2);
+    
+    x = [x11_ext x1_ext x x2_ext x22_ext];
+    y = [y11_ext y1_ext y y2_ext y22_ext];
+    z = [repmat(z(:,1), 1, 2*n) z repmat(z(:,end), 1, 2*n)];
 
 function [x y z] = lateral_sandwalls(x, y, z, OPT)
     if min(size(z)) > 3
