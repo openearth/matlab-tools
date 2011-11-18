@@ -13,6 +13,8 @@ function Xround = roundoff(X, n, varargin)
 %              negative)
 %   varargin = optional mode: either 'round' (default), 'ceil', 'floor' or
 %               'fix'
+%              optional 4th argument 'multiple': by this option, X can be
+%              rounded to multiples of n
 %
 %   Output:
 %   Xround   = rounded X, same size as X
@@ -77,9 +79,7 @@ if nargin == 1
 elseif nargin == 0
     error('ROUNDOFF:NotEnoughInputs','At least input argument "X" must be specified')
 end
-if round(n) ~= n
-    error('ROUNDOFF:IntegerReq','Input "n" must be an integer')
-end
+
 
 
 %% check varargin
@@ -97,4 +97,17 @@ if ~isempty(varargin)
     end
 end
 
-Xround = feval(mode, X.*10.^n) ./ 10.^n;
+
+if length(varargin) == 2 && strcmpi(varargin{2}, 'multiple')
+    % optionally, X can be rounded to multiples of n
+    multiple = n;
+else
+    if round(n) ~= n
+        error('ROUNDOFF:IntegerReq','Input "n" must be an integer')
+    end
+    % by default, n represents the number of decimal digits where X must be
+    % rounded to
+    multiple = 10.^-n;
+end
+
+Xround = feval(mode, X ./ multiple) .* multiple;
