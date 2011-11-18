@@ -126,22 +126,18 @@ classdef NcFile < handle
             this.attributes = info.Attribute;
         end
         function value = get.Dimensions(this)
-            if ~isempty(this.dimensions)
-                value = this.dimensions;
-                return;
+            if ~strcmp(class(this.dimensions),'NcDimension')
+                info = nc_info(this.FileName);
+                this.dimensions = NcDimension(this.FileName,info.Dimension);
             end
-            
-            info = nc_info(this.FileName);
-            this.dimensions = NcDimension(this.FileName,info.Dimension);
+            value = this.dimensions;
         end
         function value = get.Variables(this)
-            if ~isempty(this.variables)
-                value = this.variables;
-                return;
+            if ~strcmp(class(this.dimensions),'NcVariable')
+                info = nc_info(this.FileName);
+                this.variables = NcVariable(this.FileName,info.Dataset,this.Dimensions);
             end
-            
-            info = nc_info(this.FileName);
-            this.variables = NcVariable(this.FileName,info.Dataset,this.Dimensions);
+            value = this.variables;
         end
         
         %% Retrieve methods
