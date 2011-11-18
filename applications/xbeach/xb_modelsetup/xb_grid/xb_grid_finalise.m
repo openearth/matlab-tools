@@ -123,8 +123,22 @@ function [x y z] = lateral_extend(x, y, z, OPT)
     if min(size(z)) > 3
         n = OPT.n;
         
-        dy1 = y(2,1)-y(1,1);
-        dy2 = y(end,1)-y(end-1,1);
+%         s = xb_stagger(x,y);
+%         
+%         % determine grid curvature
+%         dalfa1 = mean(s.alfaz(:,1)-s.alfaz(:,2));
+%         dalfa2 = mean(s.alfaz(:,end)-s.alfaz(:,end-1));
+%         
+%         % determine truning rate
+%         ralfa1 = dalfa1/n;
+%         ralfa2 = dalfa2/n;
+%         
+%         % determine minimal grid size
+%         dn1 = min(s.dnz(:,1));
+%         dn2 = min(s.dnz(:,end));
+
+        dy1
+        dy2
 
         x = [ones(n,1)*x(1,:) ; x ; ones(n,1)*x(end,:)];
         y = [(y(1,1)-[n*dy1:-dy1:dy1])'*ones(1,size(y,2)) ; y ; (y(end,1)+[dy2:dy2:n*dy2])'*ones(1,size(y,2))];
@@ -132,52 +146,100 @@ function [x y z] = lateral_extend(x, y, z, OPT)
     end
     
 function [x y z] = lateral_extend_curvi(x, y, z, OPT)
-    g = xb_stagger(x, y);
     
-    n = OPT.n;
+    g           = xb_stagger(x, y);
     
-    dn1 = g.dnv(:,1);
-    dn1_mean = ones(size(dn1)) .* mean(dn1);
-    % Interpolate from the edge to the mean of the edge
-    dn1_ext = repmat(dn1, 1, n) + (dn1_mean - dn1) * linspace(0, 1-1/n, n);
+    n           = OPT.n;
+    nx          = size(x,1);
     
-    alfav1 = g.alfav(:,1);
-    dalfav1 = diff(g.alfav(:,1:2), 1, 2);
-    dalfav1_ext = dalfav1 * linspace(1-1/n, 0, n);
-    alfav1_mean = ones(size(alfav1)) .* mean(alfav1);
-    % Interpolate from the edge to the mean of the edge
-    alfav1_ext = repmat(alfav1, 1, n) + (alfav1_mean - alfav1) * linspace(0, 1-1/n, n);
-%     alfav1_ext = fliplr(repmat(alfav1, 1, n) - cumsum(dalfav1_ext,2));
-       
-    % translate relative polar coordinates to absolute cartesian
-    % coordinates
-    x1_ext = repmat(x(:,1), 1, n) + cos(alfav1_ext) .* -fliplr(cumsum(dn1_ext, 2)); %-?
-    y1_ext = repmat(y(:,1), 1, n) + sin(alfav1_ext) .* -fliplr(cumsum(dn1_ext, 2));
-
-    x11_ext = repmat(x1_ext(:,1), 1, n) + repmat(cos(alfav1_mean), 1, n) .* -fliplr(cumsum(repmat(dn1_mean, 1, n), 2));
-    y11_ext = repmat(y1_ext(:,1), 1, n) + repmat(sin(alfav1_mean), 1, n) .* -fliplr(cumsum(repmat(dn1_mean, 1, n), 2));
+    L1          = sqrt(diff(x([1 end],1)).^2+diff(y([1 end],1)).^2);
+    L2          = sqrt(diff(x([1 end],end)).^2+diff(y([1 end],end)).^2);
+        
+    % 1: dalfav bepalen
+    phi1a       = atan2((y(1,1)-y(end,1)),(x(1,1)-x(end,1)));
+    phi1b       = atan2((y(1,2)-y(end,2)),(x(1,2)-x(end,2)));
+    phi2a       = atan2((y(1,end)-y(end,end)),(x(1,end)-x(end,end)));
+    phi2b       = atan2((y(1,end-1)-y(end,end-1)),(x(1,end-1)-x(end,end-1)));
+    dphi1       = phi1a-phi1b;
+    dphi2       = phi2a-phi2b;
     
-    dn2 = g.dnv(:,end);
-    dn2_mean = ones(size(dn2)) .* mean(dn2);
-    % Interpolate from the edge to the mean of the edge
-    dn2_ext = repmat(dn2, 1, n) + (dn2_mean - dn2) * linspace(1/n, 1, n);
+    % 2: orientatie nieuwe cross-shore gridlijnen bepalen
+    dphi1_ext   = dphi1 * linspace(1-1/n, 0, n+1);
+    dphi2_ext   = dphi2 * linspace(1-1/n, 0, n+1);
     
-    alfav2 = g.alfav(:,end);
-    alfav2_mean = ones(size(alfav2)) .* mean(alfav2);
-    % Interpolate from the edge to the mean of the edge
-    alfav2_ext = repmat(alfav2, 1, n) + (alfav2_mean - alfav2) * linspace(1/n, 1, n);
+    phi1_ext    = repmat(phi1a, 1, n+1) + fliplr(cumsum(dphi1_ext, 2));
+    phi2_ext    = repmat(phi2a, 1, n+1) + cumsum(dphi2_ext, 2);
     
-    % translate relative polar coordinates to absolute cartesian
-    % coordinates
-    x2_ext = repmat(x(:,end), 1, n) + cos(alfav2_ext) .* cumsum(dn2_ext, 2);
-    y2_ext = repmat(y(:,end), 1, n) + sin(alfav2_ext) .* cumsum(dn2_ext, 2);
+    phi1_ext    = [repmat(phi1_ext(1),1,n-1) phi1_ext];
+    phi2_ext    = [phi2_ext repmat(phi2_ext(end),1,n-1)];
     
-    x22_ext = repmat(x2_ext(:,end), 1, n) + repmat(cos(alfav1_mean), 1, n) .* -cumsum(repmat(dn2_mean, 1, n), 2);
-    y22_ext = repmat(y2_ext(:,end), 1, n) + repmat(sin(alfav1_mean), 1, n) .* cumsum(repmat(dn2_mean, 1, n), 2);
+    % 3: orientatie nieuwe longshore gridlijnen bepalen
+    gam1_ext    = mean([[phi1_ext(2:end) phi1a];phi1_ext(1:end)])+.5*pi;
+    gam2_ext    = mean([phi2_ext(1:end);[phi2a phi2_ext(1:end-1)]])+.5*pi;
     
-    x = [x11_ext x1_ext x x2_ext x22_ext];
-    y = [y11_ext y1_ext y y2_ext y22_ext];
-    z = [repmat(z(:,1), 1, 2*n) z repmat(z(:,end), 1, 2*n)];
+    % 4: afstand nieuwe grid lijnen bepalen
+    dn1m        = mean(g.dnz([1 end],1));
+    dn2m        = mean(g.dnz([1 end],end));
+    
+    dn1         = dn1m + (g.dnz(1,1)-dn1m) * linspace(1-1/n, 0, n+1);
+    dn2         = dn2m + (g.dnz(1,end)-dn2m) * linspace(1-1/n, 0, n+1);
+    
+    dn1         = [repmat(dn1(end),1,n-1) fliplr(dn1)];
+    dn2         = [dn2 repmat(dn2(end),1,n-1)];
+    
+    % 5: gridlijnkromming correctie bepalen
+    dy1         = (y(:,1)-y(1,1));
+    dx1         = (x(:,1)-x(1,1));
+    dy2         = (y(:,end)-y(1,end));
+    dx2         = (x(:,end)-x(1,end));
+    
+    A1          = sqrt(dx1.^2+dy1.^2);
+    A2          = sqrt(dx2.^2+dy2.^2);
+    
+    alpha1      = phi1a - atan2(dy1,dx1);
+    alpha2      = phi2a - atan2(dy2,dx2);
+    
+    alpha1(isnan(alpha1)) = 0;
+    alpha2(isnan(alpha2)) = 0;
+    
+    corr1       = fliplr((A1.*sin(alpha1))*[linspace(1-1/n, 0, n+1) zeros(1,n-1)]);
+    corr2       = (A2.*sin(alpha2))*[linspace(1-1/n, 0, n+1) zeros(1,n-1)];
+    
+    % 6: build grid extends
+    x1a = x(1,1)+fliplr(cumsum(fliplr(dn1.*cos(gam1_ext))));
+    y1a = y(1,1)+fliplr(cumsum(fliplr(dn1.*sin(gam1_ext))));
+    x1b = x1a-L1*cos(phi1_ext);
+    y1b = y1a-L1*sin(phi1_ext);
+    
+    x2a = x(1,end)-cumsum(dn2.*cos(gam2_ext));
+    y2a = y(1,end)-cumsum(dn2.*sin(gam2_ext));
+    x2b = x2a-L2*cos(phi2_ext);
+    y2b = y2a-L2*sin(phi2_ext);
+    
+    x1_ext = repmat(x1a,nx,1)+A1.*cos(alpha1)*cos(phi1_ext);
+    y1_ext = repmat(y1a,nx,1)+A1.*cos(alpha1)*sin(phi1_ext);
+    x2_ext = repmat(x2a,nx,1)+A2.*cos(alpha2)*cos(phi2_ext);
+    y2_ext = repmat(y2a,nx,1)+A2.*cos(alpha2)*sin(phi2_ext);
+    
+    x1_ext = x1_ext+corr1.*repmat(cos(phi1_ext-.5*pi),nx,1);
+    y1_ext = y1_ext+corr1.*repmat(sin(phi1_ext-.5*pi),nx,1);
+    x2_ext = x2_ext+corr2.*repmat(cos(phi2_ext-.5*pi),nx,1);
+    y2_ext = y2_ext+corr2.*repmat(sin(phi2_ext-.5*pi),nx,1);
+    
+    z1_ext = repmat(z(:,1),1,size(x1_ext,2));
+    z2_ext = repmat(z(:,end),1,size(x2_ext,2));
+    
+    % 7: build grids
+    
+    x = [x1_ext x x2_ext];
+    y = [y1_ext y y2_ext];
+    z = [z1_ext z z2_ext];
+    
+%     figure; pcolor(x,y,z); hold on; axis image;
+%     plot([x2a;x2b],[y2a;y2b])
+%     plot([x1a;x1b],[y1a;y1b])
+%     plot(x2_ext,y2_ext,'o')
+%     plot(x1_ext,y1_ext,'o')
 
 function [x y z] = lateral_sandwalls(x, y, z, OPT)
     if min(size(z)) > 3
