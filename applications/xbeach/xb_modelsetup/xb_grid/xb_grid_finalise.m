@@ -123,22 +123,8 @@ function [x y z] = lateral_extend(x, y, z, OPT)
     if min(size(z)) > 3
         n = OPT.n;
         
-%         s = xb_stagger(x,y);
-%         
-%         % determine grid curvature
-%         dalfa1 = mean(s.alfaz(:,1)-s.alfaz(:,2));
-%         dalfa2 = mean(s.alfaz(:,end)-s.alfaz(:,end-1));
-%         
-%         % determine truning rate
-%         ralfa1 = dalfa1/n;
-%         ralfa2 = dalfa2/n;
-%         
-%         % determine minimal grid size
-%         dn1 = min(s.dnz(:,1));
-%         dn2 = min(s.dnz(:,end));
-
-        dy1
-        dy2
+        dy1 = y(2,1)-y(1,1);
+        dy2 = y(end,1)-y(end-1,1);
 
         x = [ones(n,1)*x(1,:) ; x ; ones(n,1)*x(end,:)];
         y = [(y(1,1)-[n*dy1:-dy1:dy1])'*ones(1,size(y,2)) ; y ; (y(end,1)+[dy2:dy2:n*dy2])'*ones(1,size(y,2))];
