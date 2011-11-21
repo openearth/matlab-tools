@@ -132,22 +132,36 @@ function [x y z] = lateral_extend(x, y, z, OPT)
     end
     
 function [x y z] = lateral_extend_curvi(x, y, z, OPT)
+    n           = OPT.n;
+    r           = .15;
     
     % TODO
-    % - use separate n value for curvi correction
-    % - determine n value for curvi corr. based on cross-shore curvature
-    % - support individual orientation of grid cells (gradually decrease
-    % divergence/convergence of grids and grid cells)
+    % - use separate n value for curvi correction DONE
+    % - determine n value for curvi corr. based on cross-shore curvature DONE, but not perfect
+    % - support individual orientation of grid cells (gradually decrease divergence/convergence of grids and grid cells) DONE, but not perfect
+    % - add transition area (see warning). consider gamma part to be extended to each grid line
+    
+    % EXPLANATION
+    % 1 and 2 refer to right and left lateral boundary respectively
+    % a and b refer to offshore and nearshore boundary respectively
+    % _ext refers to the extension grids
+    % phi refers to the orientation of the cross-shore grid lines
+    % gam refers to the orientation of the longshore grid lines
+    % alpha refers to other angles
+    % dx, dy, dn refers to distances in world coordinates (x,y) or longshore grid coordinates (n)
+    % n refers to a number of longshore grid cells
+    
+    % WARNING
+    % only use with mildly curved grids! curvatures are immediately
+    % corrected, without transitional area. a negative turning rate may
+    % become a positive one immediately. grid cell sizes are based on 
+    % averages, which means that large grid cells become small relatively
+    % fast and small grid cells become large relatively fast in order to
+    % obtain equally sized grid cells in only a few steps.
 
     g           = xb_stagger(x, y);
-    
-    n           = OPT.n;
     nx          = size(x,1);
     
-    % determine length of cross-shore grid line
-    L1          = sqrt(diff(x([1 end],1)).^2+diff(y([1 end],1)).^2);
-    L2          = sqrt(diff(x([1 end],end)).^2+diff(y([1 end],end)).^2);
-        
     % determine the orientation of the last two cross-shore grid lines and
     % use the difference as rate of curvature
     phi1a       = atan2((y(1,1)-y(end,1)),(x(1,1)-x(end,1)));
@@ -157,33 +171,11 @@ function [x y z] = lateral_extend_curvi(x, y, z, OPT)
     dphi1       = phi1a-phi1b;
     dphi2       = phi2a-phi2b;
     
-    % determine orientation of cross-shore grid lines of grid extension
-    dphi1_ext   = dphi1 * linspace(1-1/n, 0, n+1);
-    dphi2_ext   = dphi2 * linspace(1-1/n, 0, n+1);
+    % determine correction for curved cross-shore grid lines with respect
+    % to a arbitrary straight cross-shore grid line
+    dn1m        = mean(g.dnz(1:end,1));
+    dn2m        = mean(g.dnz(1:end,end));
     
-    phi1_ext    = repmat(phi1a, 1, n+1) + fliplr(cumsum(dphi1_ext, 2));     % flip to correct order of grid lines in final grid extension
-    phi2_ext    = repmat(phi2a, 1, n+1) + cumsum(dphi2_ext, 2);             % order of grid lines in final grid extension is already ok
-    
-    phi1_ext    = [repmat(phi1_ext(1),1,n-1) phi1_ext];
-    phi2_ext    = [phi2_ext repmat(phi2_ext(end),1,n-1)];
-    
-    % determine mean orientation between two succeeding cross-shore grid
-    % lines and assume that the longshore grid line is perpendicular to
-    % this orientation, so add 0.5*pi
-    gam1_ext    = mean([[phi1_ext(2:end) phi1a];phi1_ext(1:end)])+.5*pi;
-    gam2_ext    = mean([phi2_ext(1:end);[phi2a phi2_ext(1:end-1)]])+.5*pi;
-    
-    % determine distance of cross-shore grid line of grid extension
-    dn1m        = mean(g.dnz([1 end],1));
-    dn2m        = mean(g.dnz([1 end],end));
-    
-    dn1         = dn1m + (g.dnz(1,1)-dn1m) * linspace(1-1/n, 0, n+1);
-    dn2         = dn2m + (g.dnz(1,end)-dn2m) * linspace(1-1/n, 0, n+1);
-    
-    dn1         = [repmat(dn1(end),1,n-1) fliplr(dn1)];                     % flip! see above
-    dn2         = [dn2 repmat(dn2(end),1,n-1)];                             % do not flip! see above
-    
-    % determine correction for curved cross-shore grid lines
     dy1         = (y(:,1)-y(1,1));
     dx1         = (x(:,1)-x(1,1));
     dy2         = (y(:,end)-y(1,end));
@@ -198,20 +190,98 @@ function [x y z] = lateral_extend_curvi(x, y, z, OPT)
     alpha1(isnan(alpha1)) = 0;
     alpha2(isnan(alpha2)) = 0;
     
-    corr1       = fliplr((A1.*sin(alpha1))*[linspace(1-1/n, 0, n+1) zeros(1,n-1)]);
-    corr2       = (A2.*sin(alpha2))*[linspace(1-1/n, 0, n+1) zeros(1,n-1)];
+    corr1       = A1.*sin(alpha1);
+    corr2       = A2.*sin(alpha2);
+    
+    % determine number of steps necessary to phase out all curvatures in
+    % the grid
+    mn1         = min(g.dnz(:,1)+abs(corr1));
+    mx1         = max(g.dnz(:,1)+abs(corr1));
+    mn2         = min(g.dnz(:,end)+abs(corr2));
+    mx2         = max(g.dnz(:,end)+abs(corr2));
+    
+    n1a         = log10(dn1m/mn1)/log10(1+r);
+    n1b         = log10(dn1m/mx1)/log10(1-r);
+    n1          = ceil(max(n1a,n1b));
+    
+    n2a         = log10(dn2m/mn2)/log10(1+r);
+    n2b         = log10(dn2m/mx2)/log10(1-r);
+    n2          = ceil(max(n2a,n2b));
+    
+    % create a correction matrix for the curvatures in the cross-shore grid
+    % lines
+    corr1       = fliplr(corr1*[linspace(1-1/(n1+1), 0, n1+1) zeros(1,n-1)]);
+    corr2       = corr2*[linspace(1-1/(n2+1), 0, n2+1) zeros(1,n-1)];
+    
+    % determine the curvature of the seaward and landward boundaries and
+    % compute the curvatures of the extension grids necessary to phase out
+    % the curvature of these boudaries
+    gam1a       = atan2((y(1,1)-y(1,2)),(x(1,1)-x(1,2)));
+    gam1b       = atan2((y(end,1)-y(end,2)),(x(end,1)-x(end,2)));
+    gam2a       = atan2((y(1,end-1)-y(1,end)),(x(1,end-1)-x(1,end)));
+    gam2b       = atan2((y(end,end-1)-y(end,end)),(x(end,end-1)-x(end,end)));
+    
+    dgam1       = diff([gam1a gam1b]);
+    dgam2       = diff([gam2a gam2b]);
+    
+    gam1_ext    = .5*dgam1 * linspace(1, 1/(n1+1), n1+1);
+    gam2_ext    = .5*dgam2 * linspace(1, 1/(n2+1), n2+1);
+    
+    gam1a_ext   = repmat(gam1a, 1, n1+1) + gam1_ext;
+    gam1b_ext   = repmat(gam1b, 1, n1+1) - gam1_ext;
+    gam2a_ext   = repmat(gam2a, 1, n2+1) + fliplr(gam2_ext);
+    gam2b_ext   = repmat(gam2b, 1, n2+1) - fliplr(gam2_ext);
+    
+    gam1a_ext   = [repmat(gam1a_ext(1),1,n-1) gam1a_ext];
+    gam1b_ext   = [repmat(gam1b_ext(1),1,n-1) gam1b_ext];
+    gam2a_ext   = [gam2a_ext repmat(gam2a_ext(end),1,n-1)];
+    gam2b_ext   = [gam2b_ext repmat(gam2b_ext(end),1,n-1)];
+    
+    % determine the length of the cross-shore grid lines
+    L1          = sqrt(diff(x([1 end],1)).^2+diff(y([1 end],1)).^2);
+    L2          = sqrt(diff(x([1 end],end)).^2+diff(y([1 end],end)).^2);
+    
+    % determine orientation of cross-shore grid lines of grid extension and
+    % determine the orientation of the cross-shore grid lines in the
+    % extension grids necessary to phase out the total grid curvature
+    dphi1_ext   = dphi1 * linspace(1-1/(n1+1), 0, n1+1);
+    dphi2_ext   = dphi2 * linspace(1-1/(n2+1), 0, n2+1);
+    
+    phi1_ext    = repmat(phi1a, 1, n1+1) + fliplr(cumsum(dphi1_ext, 2));
+    phi2_ext    = repmat(phi2a, 1, n2+1) + cumsum(dphi2_ext, 2);
+    
+    phi1_ext    = [repmat(phi1_ext(1),1,n-1) phi1_ext];
+    phi2_ext    = [phi2_ext repmat(phi2_ext(end),1,n-1)];
+    
+    % determine the distance of the cross-shore grid lines in the grid
+    % extension based on the average cell size of teh border cells
+    dn1m        = mean(g.dnz([1 end],1));
+    dn2m        = mean(g.dnz([1 end],end));
+    
+    dn1         = dn1m + (g.dnz(1,1)-dn1m) * linspace(1-1/(n1+1), 0, n1+1);
+    dn2         = dn2m + (g.dnz(1,end)-dn2m) * linspace(1-1/(n2+1), 0, n2+1);
+    
+    dn1         = [repmat(dn1(end),1,n-1) fliplr(dn1)];
+    dn2         = [dn2 repmat(dn2(end),1,n-1)];
     
     % build grid extensions
-    x1a = x(1,1)+fliplr(cumsum(fliplr(dn1.*cos(gam1_ext))));
-    y1a = y(1,1)+fliplr(cumsum(fliplr(dn1.*sin(gam1_ext))));
+    x1a = x(1,1)+fliplr(cumsum(fliplr(dn1.*cos(gam1a_ext))));
+    y1a = y(1,1)+fliplr(cumsum(fliplr(dn1.*sin(gam1a_ext))));
+    x1b = x(end,1)+fliplr(cumsum(fliplr(dn1.*cos(gam1b_ext))));
+    y1b = y(end,1)+fliplr(cumsum(fliplr(dn1.*sin(gam1b_ext))));
     
-    x2a = x(1,end)-cumsum(dn2.*cos(gam2_ext));
-    y2a = y(1,end)-cumsum(dn2.*sin(gam2_ext));
+    x2a = x(1,end)-cumsum(dn2.*cos(gam2a_ext));
+    y2a = y(1,end)-cumsum(dn2.*sin(gam2a_ext));
+    x2b = x(end,end)-cumsum(dn2.*cos(gam2b_ext));
+    y2b = y(end,end)-cumsum(dn2.*sin(gam2b_ext));
     
-    x1_ext = repmat(x1a,nx,1)+A1.*cos(alpha1)*cos(phi1_ext);
-    y1_ext = repmat(y1a,nx,1)+A1.*cos(alpha1)*sin(phi1_ext);
-    x2_ext = repmat(x2a,nx,1)+A2.*cos(alpha2)*cos(phi2_ext);
-    y2_ext = repmat(y2a,nx,1)+A2.*cos(alpha2)*sin(phi2_ext);
+    Ln1 = sqrt((x1a-x1b).^2+(y1a-y1b).^2);
+    Ln2 = sqrt((x2a-x2b).^2+(y2a-y2b).^2);
+    
+    x1_ext = repmat(x1a,nx,1)+A1/L1.*cos(alpha1)*(cos(phi1_ext).*Ln1);
+    y1_ext = repmat(y1a,nx,1)+A1/L1.*cos(alpha1)*(sin(phi1_ext).*Ln1);
+    x2_ext = repmat(x2a,nx,1)+A2/L2.*cos(alpha2)*(cos(phi2_ext).*Ln2);
+    y2_ext = repmat(y2a,nx,1)+A2/L2.*cos(alpha2)*(sin(phi2_ext).*Ln2);
     
     x1_ext = x1_ext+corr1.*repmat(cos(phi1_ext-.5*pi),nx,1);
     y1_ext = y1_ext+corr1.*repmat(sin(phi1_ext-.5*pi),nx,1);
