@@ -131,10 +131,6 @@ if xb_exist(xb, 'hh_var')
     hh = mean(xb_get(xb,'hh_var'),1);
 
     Hrms_lf = sqrt(8*abs(hh));
-elseif xb_exist(xb, 'hh')
-    hh      = xb_get(xb,'hh');
-
-    Hrms_lf = sqrt(8).*std(hh,0,1);
 elseif xb_exist(xb, 'zs')
     zs      = xb_get(xb,'zs');
 
