@@ -87,6 +87,8 @@ function [varargout] = harmanal(t,h,varargin);
    OPT.names            = []; 
    OPT.T                = [];
    OPT.timeseries       = [];
+   OPT.transformFun     = @(x) x;% @(x) log10(x);
+   OPT.transformFunInv  = @(x) x;% @(x) 10.^x;
    
    if nargin==0
        varargout = { OPT};
@@ -100,6 +102,10 @@ function [varargout] = harmanal(t,h,varargin);
    end
    
    OPT = setproperty(OPT,varargin{nextarg:end});
+   
+   if ~(OPT.transformFun(OPT.transformFunInv(1))==1)
+      error('transformFunInv(x) is not the inverse of transformFun(x) for x=1')
+   end
 
 %% Add and reformat (optional) fieldnames
 
@@ -126,7 +132,6 @@ function [varargout] = harmanal(t,h,varargin);
    end
    
    nw     = length(OPT.omega);
-   
    
    if isempty(OPT.names)
       OPT.names = num2str([1:nw]');
@@ -196,6 +201,7 @@ function [varargout] = harmanal(t,h,varargin);
    %        __
    %  b0 +  \ [Ai*cos(wi*t) + Bi*sin(wi*t)]]
    %        /_ i
+   %
    % on the right hand side according to h = M * coef
    % ------------------------------------------
    %M      = repmat(0,  2*nw+1   ,length(t));
@@ -224,13 +230,13 @@ function [varargout] = harmanal(t,h,varargin);
          end
       end
       
-      coef  = h(mask2keep)/M;
+      coef  = OPT.transformFun(h(mask2keep))/M;
       
 %% rewrite to get tidal parameters
 
      %FIT.(OPT.parameter)             = coef*M;
       FIT.(OPT.parameter)             = nan.*zeros(size(h));
-      FIT.(OPT.parameter)(mask2keep)  = coef*M;
+      FIT.(OPT.parameter)(mask2keep)  = OPT.transformFunInv(coef*M);
       
       % TO DO reconstruct hfit to fill NaN gaps
       % with HARMANAL_PREDICT
@@ -484,6 +490,8 @@ function [varargout] = harmanal(t,h,varargin);
       FIT.T               = OPT.T     ;
       FIT.names           = OPT.names ;
       FIT.mean            = coef(1)   ;
+      FIT.transformFun    = OPT.transformFun   ;
+      FIT.transformFunInv = OPT.transformFunInv;
       
       varargout = {FIT};
    elseif nargout==2

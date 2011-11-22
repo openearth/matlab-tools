@@ -84,6 +84,8 @@ function varargout = harmanal_predict(t,varargin)
    OPT.mean             = [];
    OPT.hamplitudes      = [];
    OPT.hphases          = [];
+   OPT.transformFun     = @(x) x;% @(x) log10(x);
+   OPT.transformFunInv  = @(x) x;% @(x) 10.^x;
    
    if nargin==0
        varargout = { OPT};
@@ -91,6 +93,10 @@ function varargout = harmanal_predict(t,varargin)
    end
 
    OPT = setproperty(OPT,varargin{:});
+
+   if ~(OPT.transformFun(OPT.transformFunInv(1))==1)
+      error('transformFunInv(x) is not the inverse of transformFun(x) for x=1')
+   end
 
 %% Add and reformat (optional) fieldnames
 
@@ -123,8 +129,10 @@ function varargout = harmanal_predict(t,varargin)
 h = zeros(size(t)) + OPT.mean;
 for ic=1:length(OPT.hamplitudes)
     
-    h =h + OPT.hamplitudes(ic).*cos(OPT.omega(ic).*t - OPT.hphases(ic));
+    h = h + OPT.hamplitudes(ic).*cos(OPT.omega(ic).*t - OPT.hphases(ic));
     
 end
+
+h = OPT.transformFunInv(h);
 
 varargout = {h};

@@ -14,6 +14,11 @@ function elapsedtime = edatenum(varargin)
 % Timeunit can be (default 's'):
 % y<ear>,mo<nth>,d<ay>,h<our>,mi<nute>,s<econd>
 %
+% Note when datenums are single precision, edatenum
+% can only return into multiples of quanta of about 45 min:
+% for datenums around present:
+% Example: diff(single(datenum(2010,1,1,[0 .7500],0,0))) = 0 !!
+%
 % See also: ETIME, DATENUM
 
 %% Copyright notice
