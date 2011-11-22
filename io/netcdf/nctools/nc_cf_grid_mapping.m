@@ -21,6 +21,7 @@ function varargout = nc_cf_grid_mapping(epsg,varargin)
 %    nc.Dimension    = {};
 %    nc.Attribute    = S;
 %    nc_addvar(ncfile, nc);  
+%    nc_varput(ncfile, 'crs',23031);  
 %
 % CF knows the folowing attributes
 % * grid_mapping_name
@@ -32,14 +33,16 @@ function varargout = nc_cf_grid_mapping(epsg,varargin)
 % * false_easting
 % * false_northing
 % * scale_factor_at_projection_origin
+%
 % For plotting with the ADAGUC package, additional keywords are required:
 % * projection_name
 % * EPSG_code
-% * proj4_params (via http://spatialreference.org/ref/)
-% WKT
-% * wkt (via http://spatialreference.org/ref/)
+% * proj4_params (retrieved via (cached) http://spatialreference.org/ref/)
 %
-%see also: convertcoordinates, nc_cf_grid
+% WKT
+% * wkt (retrieved via (cached) http://spatialreference.org/ref/)
+%
+%see also: convertcoordinates, nc_cf_grid, snctools
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares for Building with Nature
@@ -72,7 +75,7 @@ function varargout = nc_cf_grid_mapping(epsg,varargin)
 
 OPT.debug = 0;
 
-%% EPSG: includes CF parameter
+%% EPSG: includes CF parameters
 
    [dummy,dummy,log] = convertCoordinates(1,1,'CS1.code',epsg,'CS2.code',4326);
 
@@ -80,14 +83,14 @@ OPT.debug = 0;
       var2evalstr(log)
    end
 
-
 %% get proj4 string
-%  needed to make netCDf file ADAGUC compliant
-%  for now a lookup table, needs to be a proper function (web service or osgeo warapper)
+%  needed to make netCDF file ADAGUC compliant
+%  for now a lookup table, needs to be a proper function (web service or osgeo wrapper)
 
       OPT.proj4_params = epsg_proj4(epsg);
 
 %% get WKT string via web service
+
     try
         OPT.wkt = epsg_wkt(epsg);
     catch
@@ -109,21 +112,21 @@ OPT.debug = 0;
 
 %% TO DO: use Appendix F. Grid Mappings
 % -------------------------
-% . albers_conical_equal_area
-% . azimuthal_equidistant
-% . lambert_azimuthal_equal_area
-% . lambert_conformal_conic
-% . lambert_cylindrical_equal_area
-% . latitude_longitude
-% . mercator
-% . orthographic
-% . polar_stereographic
-% . rotated_latitude_longitude
-% . stereographic
-% x transverse_mercator
-% . vertical_perspective
+% .  albers_conical_equal_area
+% .  azimuthal_equidistant
+% .  lambert_azimuthal_equal_area
+% .  lambert_conformal_conic
+% .  lambert_cylindrical_equal_area
+% .  latitude_longitude
+% .  mercator
+% .  orthographic
+% .  polar_stereographic
+% .  rotated_latitude_longitude
+% .  stereographic
+% OK transverse_mercator
+% .  vertical_perspective
 
-if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 4230, WGS84 4326
+  if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 4230, WGS84 4326
 
    if strcmpi(log.proj_conv1.method.name,'Transverse Mercator') OPT.grid_mapping_name = 'transverse_mercator';
    else                                                         OPT.grid_mapping_name = '';
@@ -166,8 +169,7 @@ if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 4230, WGS84 4326
       OPT.wkt,...
      'value is equal to EPSG code'});
      
-else        
-
+  else        
 
    S = struct('Name', ...
     {'name',...                             % CF
@@ -194,20 +196,20 @@ else
       OPT.wkt,...
      'value is equal to EPSG code'});
      
-end
+  end
 
 %% out
 
-if OPT.debug
-   var2evalstr(S)
-end
-
-if nargout==1
-
-   varargout = {S};
-
-else
-   WKT = epsg_wkt(epsg) ;
-   varargout = {S,WKT};
-
-end
+   if OPT.debug
+      var2evalstr(S)
+   end
+   
+   if nargout==1
+   
+      varargout = {S};
+   
+   else
+      WKT = epsg_wkt(epsg) ;
+      varargout = {S,WKT};
+   
+   end
