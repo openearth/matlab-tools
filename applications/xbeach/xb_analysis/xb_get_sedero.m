@@ -99,9 +99,9 @@ for i = 2:size(dz,1)
     if isempty(xc1); xc1 = x(end); end;
     if isempty(xc2); xc2 = x(1);   end;
     
-    R(i)    = min(xc1);
-    Q(i)    = max(xc2(xc2<R(i)));
-    P(i)    = max(xc(xc<Q(i)));
+    R(i)    = min([Inf xc1]);
+    Q(i)    = max([-Inf xc2(xc2<R(i))]);
+    P(i)    = max([-Inf xc(xc<Q(i))]);
 
     iR      = find(x<R(i),1,'last');
     iQ      = find(x<Q(i),1,'last');
@@ -126,4 +126,4 @@ end
 ero     = -ero;
 
 xc      = findCrossings(x,z(1,:),x([1 end]),OPT.level*[1 1]);
-R(1)    = min(xc);
+R(1)    = min([Inf xc]);

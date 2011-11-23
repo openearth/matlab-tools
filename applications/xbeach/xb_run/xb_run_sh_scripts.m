@@ -123,6 +123,10 @@ end
 
 [retcode messages] = system(cmd);
 
+% remove passwords from possible error messages
+cmd         = strrep(cmd, OPT.ssh_pass, '*****');
+messages    = strrep(messages, OPT.ssh_pass, '*****');
+
 job_id = 0;
 job_name = 0;
 

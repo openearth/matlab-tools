@@ -124,5 +124,7 @@ end
 %% prepare output
 
 ix = [i1 i2];
-[x i] = sort(x(ix));
-ix = ix(i);
+try
+    [x i] = sort(x(ix));
+    ix = ix(i);
+end
