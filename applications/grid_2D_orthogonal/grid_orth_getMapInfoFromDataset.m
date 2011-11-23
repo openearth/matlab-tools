@@ -73,7 +73,13 @@ end
 
 if ~isempty(OPT.catalognc)
     OPT.urls      = cellstr([nc_varget(OPT.catalognc,'urlPath')]);
-    
+
+    % temporary fix of very weird bug!!! Occasionally the char matrix or urlPaths in
+    % the catalog nc gets flipped!!!! If this happens flip it back.
+    if ~strcmp(OPT.urls{1}(end-2:end),'.nc')
+        OPT.urls = cellstr(char(OPT.urls)');
+    end    
+  
     if ~strcmpi(fileparts(OPT.catalognc),...
                fileparts(OPT.urls{1}  ));
        fprintf(2,['Catalog \n'])
@@ -84,23 +90,24 @@ if ~isempty(OPT.catalognc)
        fprintf(2,'%s\n',fileparts(OPT.catalognc))
        error(mfilename)
     end
-    % temporary fix of very weird bug!!! Occasionally the char matrix or urlPaths in
-    % the catalog nc gets flipped!!!! If this happens flip it back.
-    if ~strcmp(OPT.urls{1}(end-2:end),'.nc')
-        OPT.urls = cellstr(char(OPT.urls)');
-    end    
 
-    try 
-     x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x'); % should be [n x 2], same as slow method.
-     y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y');
+    try
+        x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x'); % should be [n x 2], same as slow method.
+        if size(x_ranges,2)>2
+            x_ranges = x_ranges';
+        end
+        y_ranges = nc_varget(OPT.catalognc,'projectionCoverage_y');
+        if size(y_ranges,2)>2
+            y_ranges = y_ranges';
+        end
     catch
-     disp('there is a catalog nc, but it doens''t have the new projectionCoverage_x variable, so it cannot be used to speed up the tedious process of getting all the boundaries of the nc files')
-     OPT = rmfield(OPT,'catalognc');
+        disp('there is a catalog nc, but it doens''t have the new projectionCoverage_x variable, so it cannot be used to speed up the tedious process of getting all the boundaries of the nc files')
+        OPT = rmfield(OPT,'catalognc');
     end
     % put matrix into cell to avoid confusion with 1 or 3 tiles
     for i=1:size(x_ranges,1)
-    OPT.x_ranges{i} = x_ranges(i,:);
-    OPT.y_ranges{i} = y_ranges(i,:);
+        OPT.x_ranges{i} = x_ranges(i,:);
+        OPT.y_ranges{i} = y_ranges(i,:);
     end
 else
     %% slow method for if there is no catalog nc
