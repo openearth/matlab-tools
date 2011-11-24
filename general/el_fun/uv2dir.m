@@ -16,11 +16,17 @@ if nargin == 2,
     convention='cartesian';
 end;
 
+u = u(:);
+v = v(:);
+dir = zeros(length(u));
+
 if strcmpi(convention,'cartesian')
     dir = mod(atan2(u,v)*180/pi,360);
 else if strcmpi(convention,'nautical')
        dir = mod(atan2(-u,-v)*180/pi,360); 
     end
 end
+
+dir(u==0&v==0) = NaN;
 
 end
