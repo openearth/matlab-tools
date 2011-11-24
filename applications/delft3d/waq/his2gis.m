@@ -15,7 +15,7 @@
 
 %%% Updates:
 %%% 24-nov-11
-%%% >> automated creation of 'listofyearslg' used in naming the output files
+%%% >> removed 'listofyearslg' and changed 'listofyears' definition. no more wrong naming for csv output files.
 %%% 21-nov-11
 %%% >> new options:
 %%% - OPT.figur.station/year/myvariable = explicitly choose the station, the year and myvariable to plot
@@ -51,15 +51,15 @@ disp('user variables');
 %%% options
 OPT.write=1; %%% write output files in GIS format (default=1);
 OPT.figur=0; %%% plot figure with results (default=0);
-    OPT.figur.station={'Noordzee'};
-    OPT.figur.myvariable={'PO4r'};
-    OPT.figur.year={'2002'};
+    OPT.figur.station='Noordzee';
+    OPT.figur.myvariable='PO4r';
+    OPT.figur.year='2002';
 
 %%% lists
 %%% averaged, areas, years, years(long), stations, and substances
 listofaveraged={'year','fall','spring','summer','winter','year_std'}';
 listofareas={'','BE','FR','GM','NL1','NL2','UK1','UK2','CH','NA','ATM'}';
-listofyears={'96','97','98','99','00','01','02'}'; 
+listofyears={'1996','1997','1998','1999','2000','2001','2002'}'; %%% format=YYYY 
 listofstations={'Noordzee','UKC6','UKO5','NO2','DO1','DC1','UKC5','UKC4','DO2','UKC3', ... %%% 10
     'UKO4','NLO3','GO3','DWD1','UKO3','GO2','NLO2','DWD2','UKC2','UKO2', ... %%% 20
     'GO1','GC1','UKC1','GWD1','UKO1','NLO1','UKC7','BO1','FO1','UKC8', ... %%% 30
@@ -75,18 +75,6 @@ nbyears=size(listofyears,1);
 nbstations=size(listofstations,1);
 nbsubstances=size(listofsubstances,1);
 
-%%% listofyearslg (for year>1911)
-listofyearslg=cell(nbyears,1); crit=11;
-%%%% nb: this works only for years>1911
-for kk=1:nbyears
-    if str2double(listofyears{kk})>crit
-        listofyearslg{kk}=['19',listofyears{kk}]; %%% 19th century
-    else
-        listofyearslg{kk}=['20',listofyears{kk}]; %%% 20th century
-    end
-end
-nbyearslg=size(listofyearslg,1);
-
 %%% combinations
 %%% define the desired combination of substances(=variables) from listofsubstances
 myvariablesnames={'TNr','AlgNr','OrgNr','NO3r','NH4r','DetNS1r','TPr','AlgPr','OrgPr','PO4r'}'; %%% names of the variables
@@ -97,8 +85,7 @@ nblistofmyvariables=size(listofmyvariables,1);
 
 %%% error message
 %%% check if user variables are consistent before proceeding
-if nbmyvariables ~= nblistofmyvariables || ... %%% inconsistency in myvariables
-        nbyears ~= nbyearslg %%% inconsistency in years
+if nbmyvariables ~= nblistofmyvariables %%% inconsistency in myvariables
     disp('calculation stopped');
     disp('check >USER VARIABLES for inconsistencies');
     break
@@ -115,7 +102,8 @@ listofmysubstances=zeros(nbsubstances,1); %%% chosen substances
 for kk=1:nbyears %%% loop over the years
     for jj=1:nbareas %%% loop over the areas
 
-foldername=[runid,listofyears{kk},listofareas{jj}]; %%%% name of the new folder
+alp=char(listofyears(kk)); %%% conversion to format YY
+foldername=[runid,alp(1,3:4),listofareas{jj}]; %%%% name of the new folder
 cd(maindir); cd(foldername); %%%% change path to new folder
 struct=delwaq('open','TBNT.HIS'); %%%% load data
 
@@ -167,7 +155,7 @@ if OPT.write %%% csv files in GIS format
     for mm=1:nbmyvariables %%% loop over my variables
         for kk=1:nbyears %%% loop over the years
     
-    filename=[listofyearslg{kk},'_', ...
+    filename=[listofyears{kk},'_', ...
         myvariablesnames{mm},'_',listofaveraged{ll},'.csv']; %%% name=year_myvariable_averaged.dat
 
     file=fopen(filename,'w');
@@ -204,7 +192,7 @@ if OPT.figur
     bar(dataplot(:,:, ...
         strmatch(OPT.figur.station,listofstations,'exact'), ... %%% station
         strmatch(OPT.figur.myvariable,myvariablesnames,'exact'), ... %%% myvariable
-        strmatch(OPT.figur.year,listofyearslg,'exact')), ... %%% year
+        strmatch(OPT.figur.year,listofyears,'exact')), ... %%% year
         'stacked'); axis([0 nbaveraged+1 0 0.03]);
     ylabel(myvariablesnames{10});
     legend(listofareas,'location','eastoutside');
