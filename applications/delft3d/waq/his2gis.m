@@ -14,6 +14,12 @@
 %%% 4) define the user variables, i.e. the combinations of substances (>USER VARIABLES >>COMBINATIONS)
 
 %%% Updates:
+%%% 24-nov-11
+%%% >> automated creation of 'listofyearslg' used in naming the output files
+%%% 21-nov-11
+%%% >> new options:
+%%% - OPT.figur.station/year/myvariable = explicitly choose the station, the year and myvariable to plot
+%%%   the corresponding figure and to avoid miscounting. NB: Values are case sensitive
 %%% 18-nov-11
 %%% >> no more subscript2, outputfiles are directly renamed and sorted in folders (less cpu time)
 %%% >> no more subscript1, 'listofmyvariables' is stored into a cell array (less cpu time)
@@ -25,9 +31,6 @@
 %%% >> new options:
 %%% - OPT.write = write output in GIS format
 %%% - OPT.figur = plot figure
-
-%%% To do list:
-%%% >> automate 'listofyearslg'?
 
 clear all; hold off; close all;
 
@@ -48,13 +51,15 @@ disp('user variables');
 %%% options
 OPT.write=1; %%% write output files in GIS format (default=1);
 OPT.figur=0; %%% plot figure with results (default=0);
+    OPT.figur.station={'Noordzee'};
+    OPT.figur.myvariable={'PO4r'};
+    OPT.figur.year={'2002'};
 
 %%% lists
 %%% averaged, areas, years, years(long), stations, and substances
 listofaveraged={'year','fall','spring','summer','winter','year_std'}';
 listofareas={'','BE','FR','GM','NL1','NL2','UK1','UK2','CH','NA','ATM'}';
 listofyears={'96','97','98','99','00','01','02'}'; 
-listofyearslg={'1996','1997','1998','1999','2000','2001','2002'}';
 listofstations={'Noordzee','UKC6','UKO5','NO2','DO1','DC1','UKC5','UKC4','DO2','UKC3', ... %%% 10
     'UKO4','NLO3','GO3','DWD1','UKO3','GO2','NLO2','DWD2','UKC2','UKO2', ... %%% 20
     'GO1','GC1','UKC1','GWD1','UKO1','NLO1','UKC7','BO1','FO1','UKC8', ... %%% 30
@@ -67,9 +72,20 @@ listofsubstances={'DetN-r','DetP-r','NH4-r','NO3-r','PO4-r','DIN_E-N-r','DIN_N-N
 nbaveraged=size(listofaveraged,1);
 nbareas=size(listofareas,1);
 nbyears=size(listofyears,1);
-nbyearslg=size(listofyearslg,1);
 nbstations=size(listofstations,1);
 nbsubstances=size(listofsubstances,1);
+
+%%% listofyearslg (for year>1911)
+listofyearslg=cell(nbyears,1); crit=11;
+%%%% nb: this works only for years>1911
+for kk=1:nbyears
+    if str2double(listofyears{kk})>crit
+        listofyearslg{kk}=['19',listofyears{kk}]; %%% 19th century
+    else
+        listofyearslg{kk}=['20',listofyears{kk}]; %%% 20th century
+    end
+end
+nbyearslg=size(listofyearslg,1);
 
 %%% combinations
 %%% define the desired combination of substances(=variables) from listofsubstances
@@ -185,7 +201,11 @@ if OPT.figur
     order=[naveraged narea nstation nmyvariable nyear];
     dataplot=permute(outputdata,order); %% permutation of the data
 
-    bar(dataplot(:,:,1,10,6),'stacked'); axis([0 nbaveraged+1 0 0.03]);
+    bar(dataplot(:,:, ...
+        strmatch(OPT.figur.station,listofstations,'exact'), ... %%% station
+        strmatch(OPT.figur.myvariable,myvariablesnames,'exact'), ... %%% myvariable
+        strmatch(OPT.figur.year,listofyearslg,'exact')), ... %%% year
+        'stacked'); axis([0 nbaveraged+1 0 0.03]);
     ylabel(myvariablesnames{10});
     legend(listofareas,'location','eastoutside');
     set(gca,'xticklabel',listofaveraged);
