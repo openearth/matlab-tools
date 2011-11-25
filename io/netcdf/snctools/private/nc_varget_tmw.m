@@ -110,6 +110,7 @@ try
             varname);
     end
 catch %#ok<CTCH>
+    use_fill_value = false;
 end
 
 try
