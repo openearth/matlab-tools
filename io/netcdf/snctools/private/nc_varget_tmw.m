@@ -101,7 +101,7 @@ use_fill_value     = true; % make this a setpref option to have consistency with
 retrieve_as_double = true; % make this a setpref option to have consistency with test_nc_varget>test_missing_value
 try
     att_type = netcdf.inqAtt(ncid, varid, '_FillValue' );
-    if (att_type == var_type) % | isnan(netcdf.getAtt(ncid, varid, '_FillValue' ))
+    if (att_type == xtype) % | isnan(netcdf.getAtt(ncid, varid, '_FillValue' ))
         use_fill_value = true;
         retrieve_as_double = true;
     else
