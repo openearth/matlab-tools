@@ -1,4 +1,4 @@
-function knowledgegraphs(session) %#ok<INUSD>
+function knowledgegraphs(session_filename) %#ok<INUSD>
 % KNOWLEDGEGRAPHS OpenEarth utility for the visualisation and analysis of knowledge graphs
 %
 % KNOWLEDGEGRAPHS is a utility for the visualisation and analysis of knowledge graphs.
@@ -23,6 +23,7 @@ clc
 % try warning off; delete('lastsession.mat'); warning on; end
 
 global ontology; 
+global session;
 
 %% start always in the path with DelftConStruct
 cd(fileparts(which('knowledgegraphs'))); curdir=pwd;
@@ -52,6 +53,8 @@ set(fig,'color','w')
 %% get default settings for startup (preferably the lastsession info) session info is global info 
 if nargin == 0
     kngr_getDefaultSession
+else
+    load(session_filename);
 end
 
 %% delete non-used buttons
