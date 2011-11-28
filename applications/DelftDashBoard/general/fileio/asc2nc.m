@@ -1,5 +1,67 @@
-function asc2nc(ascfile,ncfile,OPT)
+function asc2nc(ascfile, ncfile, OPT)
+%ASC2NC  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   asc2nc(ascfile, ncfile, OPT)
+%
+%   Input:
+%   ascfile =
+%   ncfile  =
+%   OPT     =
+%
+%
+%
+%
+%   Example
+%   asc2nc
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 27 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 fid=fopen(ascfile,'r');
 
 str=fgets(fid);
@@ -87,13 +149,13 @@ nn=1000;
 
 for i=1:nrows/nn
     
-%    disp([num2str(i) ' of ' num2str(nrows/nn)]);
+    %    disp([num2str(i) ' of ' num2str(nrows/nn)]);
     
-%    tic
+    %    tic
     z = textscan(fid,'%f',ncols*nn);
     z = cell2mat(z);
     try
-    z=reshape(z,[ncols nn]);
+        z=reshape(z,[ncols nn]);
     catch
         kut=1;
     end
@@ -101,12 +163,12 @@ for i=1:nrows/nn
     z=flipud(z);
     z(z==noval)=-9999;
     z=int16(z);
-%    toc
-
-%    tic    
+    %    toc
+    
+    %    tic
     netcdf.putVar(NCid,varid,[nrows-nn*i 0],[nn ncols],z);
-%    toc
-       
+    %    toc
+    
 end
 
 fclose(fid);
@@ -114,5 +176,6 @@ fclose(fid);
 %% close NC file
 
 netcdf.close(NCid)
+
 
 

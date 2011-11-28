@@ -1,4 +1,75 @@
-function err=getMeteoFromNomads3(meteosource,meteoname,cycledate,cyclehour,t,xlim,ylim,dirstr,parstr,pr,varargin)
+function err = getMeteoFromNomads3(meteosource, meteoname, cycledate, cyclehour, t, xlim, ylim, dirstr, parstr, pr, varargin)
+%GETMETEOFROMNOMADS3  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   err = getMeteoFromNomads3(meteosource, meteoname, cycledate, cyclehour, t, xlim, ylim, dirstr, parstr, pr, varargin)
+%
+%   Input:
+%   meteosource =
+%   meteoname   =
+%   cycledate   =
+%   cyclehour   =
+%   t           =
+%   xlim        =
+%   ylim        =
+%   dirstr      =
+%   parstr      =
+%   pr          =
+%   varargin    =
+%
+%   Output:
+%   err         =
+%
+%   Example
+%   getMeteoFromNomads3
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 27 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 
 err=[];
 ntry=1;
@@ -10,7 +81,7 @@ switch lower(meteosource)
 end
 
 try
-
+    
     tminstr=nc_attget(urlstr,'time','minimum');
     tmaxstr=nc_attget(urlstr,'time','maximum');
     tminstr=deblank(strrep(tminstr,'z',''));
@@ -26,7 +97,7 @@ try
     end
     timdim=nc_getdiminfo(urlstr,'time');
     nt=timdim.Length;
-
+    
     dt=(tmax-tmin)/(nt-1);
     times=tmin:dt:tmax;
     if ~isempty(t)
@@ -36,7 +107,7 @@ try
         it1=0;
         it2=length(times)-1;
     end
-
+    
     %% Longitude
     lon=nc_varget(urlstr,'lon');
     if ~isempty(xlim)
@@ -52,7 +123,7 @@ try
         ilon1=1;
         ilon2=length(lon);
     end
-
+    
     %% Latitude
     lat=nc_varget(urlstr,'lat');
     if ~isempty(ylim)
@@ -68,11 +139,11 @@ try
         ilat1=1;
         ilat2=length(lat);
     end
-
+    
     npar = length(parstr);
-
+    
     for i=1:npar
- 
+        
         tic
         disp(['Loading ' parstr{i} ' ...']);
         ok=0;
@@ -93,11 +164,11 @@ try
             err=['could not download ' parstr{i}];
             return
         end
-
+        
         d.(parstr{i})=data;
         nanval1=nc_attget(urlstr,parstr{i},'missing_value');
         
-        d.(parstr{i})(d.(parstr{i})==nanval1)=NaN;        
+        d.(parstr{i})(d.(parstr{i})==nanval1)=NaN;
         
         switch lower(parstr{i})
             case{'tmp2m'}
@@ -107,16 +178,16 @@ try
                     d.(parstr{i})=d.(parstr{i})-273.15;
                 end
         end
-
+        
         nlon=(ilon2-ilon1);
         nlat=(ilat2-ilat1);
         dlon=(lon(ilon2)-lon(ilon1))/nlon;
         dlat=(lat(ilat2)-lat(ilat1))/nlat;
         x=lon(ilon1):dlon:lon(ilon2);
         y=lat(ilat1):dlat:lat(ilat2);
-    
-    end
         
+    end
+    
     %% Output
     k=0;
     for ii=it1:it2
@@ -136,21 +207,21 @@ try
                 save([dirstr filesep fname],'-struct','s');
             else
                 % Only NaNs found, skip this file...
-%                 sz=size(s.(pr{j}));
-%                 s.(pr{j})=zeros(sz);
-%                 fname=[meteoname '.' pr{j} '.' tstr '.mat'];
-%                 disp([dirstr filesep fname]);
-%                 save([dirstr filesep fname],'-struct','s');
+                %                 sz=size(s.(pr{j}));
+                %                 s.(pr{j})=zeros(sz);
+                %                 fname=[meteoname '.' pr{j} '.' tstr '.mat'];
+                %                 disp([dirstr filesep fname]);
+                %                 save([dirstr filesep fname],'-struct','s');
             end
         end
     end
-
+    
 catch
-
+    
     disp('Something went wrong downloading meteo data');
     a=lasterror;
     disp(a.stack(1));
-
+    
 end
 
 %%
@@ -181,3 +252,4 @@ for i=1:length(s)
         break
     end
 end
+

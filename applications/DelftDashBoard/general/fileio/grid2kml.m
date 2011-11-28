@@ -1,8 +1,4 @@
-function grid2kml(gridFile,clr);
-
-% function grid2kml(gridFile,clr);
-%
-% by Arjan Mol
+function grid2kml(gridFile,clr)
 
 if ~exist('gridFile')
     g=ddb_wlgrid('read');

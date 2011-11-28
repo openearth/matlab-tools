@@ -1,4 +1,67 @@
-function [handle,tabhandles]=tabpanel(fcn,varargin)
+function [handle tabhandles] = tabpanel(fcn, varargin)
+%TABPANEL  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   [handle tabhandles] = tabpanel(fcn, varargin)
+%
+%   Input:
+%   fcn        =
+%   varargin   =
+%
+%   Output:
+%   handle     =
+%   tabhandles =
+%
+%   Example
+%   tabpanel
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 27 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 
 tabnames=[];
 inputarguments=[];
@@ -107,18 +170,18 @@ for i=1:ntabs
     tabs(i) = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',position,'Tag','dummy','BorderType','beveledout','BackgroundColor',backgroundColor,'Visible','on');
     
     % Add text, first use bold
-    tabText(i) = uicontrol(fig,'Units','pixels','Parent',panelHandle,'Style','text','String','dummy','Position',position,'FontWeight','bold','HorizontalAlignment','center','BackgroundColor',backgroundColor,'Visible','off');   
+    tabText(i) = uicontrol(fig,'Units','pixels','Parent',panelHandle,'Style','text','String','dummy','Position',position,'FontWeight','bold','HorizontalAlignment','center','BackgroundColor',backgroundColor,'Visible','off');
     set(tabText(i),'Enable','inactive');
-
+    
     % Set user data
     usd.nr=i;
     usd.panelHandle=panelHandle;
     set(tabs(i),'UserData',usd);
     set(tabText(i),'UserData',usd);
-
+    
     % Left position for next tab
     leftpos=leftpos+30;
-
+    
 end
 
 % Create new main panel
@@ -213,8 +276,8 @@ for i=1:ntabs
     
     position=[leftpos(i)+1 vertpos wdt(i)-3 3];
     set(blankText(i),'Position',position);
-
-    % Add callback   
+    
+    % Add callback
     set(tabs(i),'ButtonDownFcn',{@clickTab});
     set(tabText(i),'ButtonDownFcn',{@clickTab});
     
@@ -222,10 +285,10 @@ for i=1:ntabs
     usd=get(tabs(i),'UserData');
     set(tabs(i),'UserData',usd);
     set(tabText(i),'UserData',usd);
-
+    
     % Left position for next tab
     leftpos(i+1)=leftpos(i)+wdt(i)+1;
-
+    
 end
 
 % Set values for all tabs
@@ -262,7 +325,7 @@ enable=get(hObject,'Enable');
 %profile on
 switch lower(enable)
     case{'off'}
-    otherwise            
+    otherwise
         select(h,nr,'withcallback');
 end
 % profile off
@@ -348,9 +411,9 @@ vertPosText=vertPosTabs+bottomTextMargin;
 posLargeTabs=[1 1 panelPosition(3) panelPosition(4)+20];
 
 for i=1:panel.nrTabs
-
+    
     set(panel.largeTabHandles(i),'Position',posLargeTabs);
-
+    
     pos=get(panel.tabHandles(i),'Position');
     pos(2)=vertPosTabs;
     set(panel.tabHandles(i),'Position',pos);
@@ -367,3 +430,4 @@ end
 
 panel.position=panelPosition;
 set(h,'UserData',panel);
+

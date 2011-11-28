@@ -1,4 +1,71 @@
-function z0=gridcellaveraging(xb0,yb0,zb0,x0,y0,dx,opt)
+function z0 = gridcellaveraging(xb0, yb0, zb0, x0, y0, dx, opt)
+%GRIDCELLAVERAGING  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   z0 = gridcellaveraging(xb0, yb0, zb0, x0, y0, dx, opt)
+%
+%   Input:
+%   xb0 =
+%   yb0 =
+%   zb0 =
+%   x0  =
+%   y0  =
+%   dx  =
+%   opt =
+%
+%   Output:
+%   z0  =
+%
+%   Example
+%   gridcellaveraging
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 27 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 
 if size(xb0,1)>1 || size(xb0,2)>1
     xb0=reshape(xb0,[1 size(xb0,1)*size(xb0,2)]);
@@ -86,7 +153,7 @@ for ix=1:nx
         
         ii1=bsearch(xb0,xmin,-1);
         ii2=bsearch(xb0,xmax,-1);
-
+        
         xb=xb0(ii1:ii2);
         yb=yb0(ii1:ii2);
         zb=zb0(ii1:ii2);
@@ -97,19 +164,19 @@ for ix=1:nx
         
         ii1=bsearch(yb,ymin,-1);
         ii2=bsearch(yb,ymax,-1);
-
+        
         xb=xb(ii1:ii2);
         yb=yb(ii1:ii2);
         zb=zb(ii1:ii2);
-
+        
         [xb,iindex] = sort(xb,2,'ascend');
         yb=yb(iindex);
         zb=zb(iindex);
-
+        
         
         for i=1:size(x,1)
             
-%             disp([num2str(i) ' of ' num2str(size(x,1))]);
+            %             disp([num2str(i) ' of ' num2str(size(x,1))]);
             
             for j=1:size(x,2)
                 
@@ -145,11 +212,11 @@ for ix=1:nx
                 end
             end
         end
-%         try
+        %         try
         z0(ig1:ig2,jg1:jg2)=z;
-%         catch
-%             shite=1
-%         end
+        %         catch
+        %             shite=1
+        %         end
     end
 end
 
@@ -185,7 +252,7 @@ while a <= b,
     elseif vec(c) < val,
         a = c + 1;
     else
-        b = c - 1;			
+        b = c - 1;
     end;
 end;
 
@@ -197,4 +264,5 @@ if tol < 0,
         index = c+1;
     end;
 end;
+
 

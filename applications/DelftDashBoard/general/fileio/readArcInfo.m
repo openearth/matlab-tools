@@ -1,4 +1,66 @@
-function varargout=readArcInfo(fname,varargin)
+function varargout = readArcInfo(fname, varargin)
+%READARCINFO  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = readArcInfo(fname, varargin)
+%
+%   Input:
+%   fname     =
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   readArcInfo
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 27 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 
 iinfo=0;
 irows=[];
@@ -71,10 +133,10 @@ else
         tic
         ztmp = textscan(fid,'',nr,'HeaderLines',irows(1)-1+6);
         toc
-%         for i=1:irows(2)-irows(1)+1
-%             str  = fgetl(fid);
-%             ztmp(i,:) = str2num(str);
-%         end
+        %         for i=1:irows(2)-irows(1)+1
+        %             str  = fgetl(fid);
+        %             ztmp(i,:) = str2num(str);
+        %         end
         ztmp=ztmp(:,icols(1):icols(2));
         for i=1:icols(2)-icols(1)+1
             z(:,i)=ztmp{i};
@@ -84,11 +146,11 @@ else
         z=flipud(z);
         x=xll+cellsz*(icols(1)-1):cellsz:xll+cellsz*(icols(2)-1);
         y=yll+cellsz*(irows(1)-1):cellsz:yll+cellsz*(irows(2)-1);
-
+        
     elseif ~isempty(xx) || ~isempty(yy)
-
+        
         frewind(fid);
-
+        
         x=xll:cellsz:(xll+(ncols-1)*cellsz);
         y=(yll+(nrows-1)*cellsz):-cellsz:yll;
         
@@ -96,26 +158,26 @@ else
         i2=find(y<=yy(1),1,'first');
         j1=find(x<=xx(1),1,'last');
         j2=find(x>=xx(2),1,'first');
-
-
         
-%         for i=1:irows(1)-1
-%             fdum=fgetl(fid);
-%         end
-%         f=dlmread()
+        
+        
+        %         for i=1:irows(1)-1
+        %             fdum=fgetl(fid);
+        %         end
+        %         f=dlmread()
         nr=i2-i1+1;
         tic
         ztmp = textscan(fid,'',nr,'HeaderLines',i1-1+6);
         toc
-%         for i=1:irows(2)-irows(1)+1
-%             str  = fgetl(fid);
-%             ztmp(i,:) = str2num(str);
-%         end
+        %         for i=1:irows(2)-irows(1)+1
+        %             str  = fgetl(fid);
+        %             ztmp(i,:) = str2num(str);
+        %         end
         ztmp=ztmp(:,j1:j2);
         for j=1:j2-j1+1
             z(:,j)=ztmp{j};
         end
-%        z=z';
+        %        z=z';
         z(z==noval)=NaN;
         z=flipud(z);
         x=x(j1:j2);
@@ -124,7 +186,7 @@ else
     else
         z0 = textscan(fid,'%f');
         z=reshape(z0{1},ncols,nrows);
-%         z=z';
+        %         z=z';
         z(z==noval)=NaN;
         z=flipud(z);
         x=xll:cellsz:(xll+(ncols-1)*cellsz);
@@ -138,6 +200,7 @@ else
     fclose(fid);
     
 end
+
 
 
 
