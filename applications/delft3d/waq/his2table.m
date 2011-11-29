@@ -11,7 +11,6 @@
 %%% >> "winter" averaged (january + february)
 %%% >> "growing season" averaged (march to october excl.) for Netherlands, Germany, UK
 %%% >> "growing season" averaged (march to october incl.) for Belgium, France
-%%% Note that many things are hard-coded and not 'generic'. Modify the script with care!
 
 %%% 1) define the correct paths to the data and local script (>USER VARIABLES >>PATHS)
 %%% 2) define the averaged, areas, years, stations, countries and substances (>USER VARIABLES >>LISTS)
@@ -20,7 +19,18 @@
 %%% 3) specify the OPT values (>USER VARIABLES >>OPTIONS)
 
 %%% Updates:
-%%% 24-nov-11
+%%% 28-nov-11
+%%% >> minor correction regarding oxygen output (print minimum instead of maximum)
+%%% 25-nov-11
+%%% >> replaced 'listofyearslg' with 'listofyears' (long format, YYYY, 4 digits)
+%%% >> minimum values for winter, year, and summer
+%%% >> systematically printing out all depths (all, surface, bottom) in the output tables, and remove
+%%%    unnecessary lines later in excel
+%%% >> new conditions to attribute score to oxygen values
+%%% >> removed the loop over the areas
+%%% >> add calculation of the N/P ratio (=DIN/DIP) if needed (and if DIN and DIP are also calculated). because
+%%%    mean(a/b)~=mean(a)/mean(b), it was not possible to calculate the N/P ratio from the output file (in excel)
+%%% 24-nov-11 
 %%% >> averaged/standard deviation/maximum for winter and year
 %%% >> averaged/standard deviation/maximum for summer, depending on the duration of the 
 %%%    growing period, i.e. depending on the country (>CALCULATIONS >>SUMMER SEASON)
@@ -31,18 +41,12 @@
 %%% >> threshold values are hard-coded
 %%% >> score is assign to (station/variable/depth/averaged) by comparison with threshold values
 %%%    (only relevant score are assigned, non-relevant are skipped -> less cputime + less ram)
-%%% >> table5_appendix4.csv is written correctly (except for oxygen) and successfully imported into excel
+%%% >> table5_appendix4.csv is written correctly and successfully imported into excel
 %%% >> loop over the years is now working correctly for tab5_app4 (-> writing in different csv files).
-%%% >> NO LOOP OVER AREAS, i.e. no loop over the clones ('listofareas={''})
-%%%    (not writing correct output, it should be working properly for the calculations though)
 
 %%% To do list:
 %%% >> check values for vectwinter, vectgrowingsea1 & vectgrowingsea2
-%%% >> check threshold values
-%%% >> assign threshold conditions for oxygen?
-%%% >> how do we define N/P? and Phaeocystis? (=which combination of substances?)
-%%% >> 'listofdepths' = {'bottom','surface'} or {'all'}, orders matters; get rid of that ^^
-%%% >> loop over areas
+%%% >> 'listofdepths' = {'all','bottom','surface'}, orders and size matter; get rid of that!
 
 clear all; hold off; close all;
 
@@ -51,14 +55,21 @@ clear all; hold off; close all;
 disp('user variables');
 %%% paths
 localdir='d:\matlab'; cd(localdir);  %%% path to local script (new version)
-% localdir='d:\checkouts\openearthtools\matlab\applications\delft3d\waq\'; cd(localdir); %%% path to local checkout (old version)
-maindir='p:\z4351-ospar07\ICG-EMO_2010\nzbgem_backup\'; %%% path to data
+% localdir='d:\checkouts\openearthtools\matlab\applications\delft3d\waq\'; cd(localdir); %%% path to local checkout
+maindir='p:\z4351-ospar07\ICG-EMO_2010\nzbgem_backup\' %%% path to data
 thresdir=localdir; %%% path to the threshold data
 runid='ONA';
 
-%%% additional stations
-ext_bott=''; %%% extension for bottom station names
-ext_surf=''; %%% extension for surface station names
+%%% load data
+%%% the threshold data is hard-coded, according to table3 in the ICG-EMO guidance document
+listofthresholdstations={'GO2','GC1','UKC1','NLO2','NLC2','NLC3','BC1','BO1','FC2','FO1'}';
+listofthresholdvariables={'DIN','DIP','Chlfa','N/P','Oxygen','Phaeocystis'}';
+thresholddata=[14,24,10.8,15,30,30,15,12,15,15; ... %%% DIN
+   0.9,0.9,0.68,0.8,0.8,0.8,0.8,0.8,1.2,1.2; ... %%% DIP
+   3,6,15,4.5,15,15,7.5,4.2,4,4; ... %%% Chla
+   24,24,24,24,24,24,24,24,24,24; ... %%% N/P ratio
+   6,6,6,6,6,6,6,6,6,6; ... %%% oxygen
+   1e6,1e6,1e6,1e6,1e6,1e6,1e6,1e6,1e6,1e6]'; %%% Phaeocystis   
 
 %%% season vectors
 vectyear=1:52; %%% indices for years
@@ -66,29 +77,31 @@ vectwinter=[1:4,49:52]; %%% "winter" averaged (january + february)
 vectgrowingsea1=13:36; %%% "growing season" (march to october excl.) for Netherlands, Germany, UK
 vectgrowingsea2=9:40; %%% "growing season" (march to october incl.) for Belgium, France
 
-%%% lists: averaged, areas, years, stations, countries, and substances
+%%% lists: averaged, years, stations, countries, and substances
 listofaveraged={'winter','summer','year'}';
-listofareas={''}'; %% DO NOT MODIFY
-listofyears={'02','97','98','99','00','01'}';
+listofyears={'2002','1997','1998','1999','2000','2001'}';
 listofstations={'NLC2','NLC3','NLO2','GC1','GO2','UKC1','BC1','BO1','FC2','FO1'}';
 listofcountries={'NL','G','UK','B','F'}';
 listofsubstances={'NH4','NO3','PO4','Chlfa','OXY','PHAEOCYS_E','PHAEOCYS_N','PHAEOCYS_P'}';
+listofdepths={'all'};%,'bottom','surface'}'; %%% MODIFY CAREFULLY, ORDERS AND SIZE MATTERS!
+%%% NB: Except for 'listofdepths', the order is the list does not matter.
+%%%     if you want to add a new country, you have to define the length of the summer season
+%%%     for this country (>CALCULATION >>SUMMER SEASON). also check that all the countries in 'listofstations'
+%%%     are indeed listed in 'listofcountries' (if not, you will get an error message)
+
+%%% additional stations
+ext_bott=''; %%% extension for bottom station names
+ext_surf=''; %%% extension for surface station names
 
 %%% combinations: define the desired combination of substances(=variables) from listofsubstances
-myvariablesnames={'DIN','DIP','Chlfa','Oxygen','Phaeocystis'}';
-listofmyvariables={[1,2];3;4;5;[6,7,8]};
-
-%%% load data
-listofthresholdstations={'GO2','GC1','UKC1','NLO2','NLC2','NLC3','BC1','BO1','FC2','FO1'}';
-    %%% NB: names need to be consistent with 'listofstations' (case sensitive)
-listofthresholdvariables={'DIN','DIP','Chlfa','N/P','Oxygen','Phaeocystis'}';
-    %%% NB: names need to be consistent with 'myvariablesnames' (case sensitive)
-thresholddata=[14,24,10.8,15,30,30,15,12,15,15; ... %%% DIN
-   0.9,0.9,0.68,0.8,0.8,0.8,0.8,0.8,1.2,1.2; ... %%% DIP
-   3,6,15,4.5,15,15,7.5,4.2,4,4; ... %%% Chla
-   24,24,24,24,24,24,24,24,24,24; ... %%% N/P ratio
-   6,6,6,6,6,6,6,6,6,6; ... %%% oxygen
-   1e6,1e6,1e6,1e6,1e6,1e6,1e6,1e6,1e6,1e6]'; %%% Phaeocystis   
+myvariablesnames={'DIN','DIP','N/P','Chlfa','Oxygen'}';
+listofmyvariables={[1,2];3;1;4;5}; %%% numbers of the substances in 'listofsubstances'
+%%% NB: names need to be consistent (case sensitive) with names in 'listofthresholdvariables';
+%%%     the order does not matter and you don't need to have all the names from 'listofthresholdvariables'.
+%%%     Note that if N/P is calculated, then DIN and DIP are required (N/P = DIN/DIP).
+%%%     You can choose any substance for N/P, it does not intervene in the calculation. But you have to choose
+%%%     at least one, otherwise you'll get an error for inconsistency in the size of the 'listofmyvariables'.
+%%%     (by default you should choose 1).
 
 %%% output options
 OPT.table.write=1; %%% output in (table2_appendix2) format
@@ -98,38 +111,22 @@ OPT.table2.write=1; %%% woutput in (table5_appendix4) format
 %% GLOBAL PARAMETERS
 %%% numbers
 nbaveraged=size(listofaveraged,1);
-nbareas=size(listofareas,1);
 nbyears=size(listofyears,1);
 nbstations=size(listofstations,1);
 nbcountries=size(listofcountries,1);
 nbsubstances=size(listofsubstances,1);
 nbmyvariables=size(myvariablesnames,1);
 nblistofmyvariables=size(listofmyvariables,1);
-crit=11; %%% for listofyearslg (=11 by default)
+nbdepths=size(listofdepths,1);
 
 %%% initialisation
-listofyearslg=cell(nbyears,1);
 listofstationsbott=cell(nbstations,1);
 listofstationssurf=cell(nbstations,1);
-listofthresholdbott=cell(nbstations,1);
-listofthresholdsurf=cell(nbstations,1);
 
-%%% listofyearslg
-%%%% nb: this works only for years>1911
-for kk=1:nbyears
-    if str2double(listofyears{kk})>crit
-        listofyearslg{kk}=['19',listofyears{kk}]; %%% 19th century
-    else
-        listofyearslg{kk}=['20',listofyears{kk}]; %%% 20th century
-    end
-end
-
-%%% listofstationsbott and listofstationssurf
+%%% additional stations for surface and bottom layers
 for nn=1:nbstations
-    listofstationsbott{nn}=[listofstations{nn},ext_bott]; %%% stations name for bottom layer (listofstations)
-    listofstationssurf{nn}=[listofstations{nn},ext_surf]; %%% stations name for surface layer (listofstations)
-    listofthresholdbott{nn}=[listofthresholdstations{nn},ext_bott]; 
-    listofthresholdsurf{nn}=[listofthresholdstations{nn},ext_surf];
+    listofstationsbott{nn}=[listofstations{nn},ext_bott]; %%% stations name for bottom layer
+    listofstationssurf{nn}=[listofstations{nn},ext_surf]; %%% stations name for surface layer
 end
 listofstations=[listofstations;listofstationsbott;listofstationssurf];
 nbstations=size(listofstations,1);
@@ -147,8 +144,8 @@ end
 %% CALCULATIONS
 disp('calculations');
 %%% initialisation
-outputdata=zeros(nbstations,nbaveraged,nbmyvariables,3,nbareas,nbyears); %%% output matrix data
-score=cell(nbstations,nbaveraged,nbmyvariables,nbareas,nbyears); %%% score according to local threshold
+outputdata=zeros(nbstations,nbaveraged,nbmyvariables,4,nbyears); %%% output matrix data
+score=cell(nbstations,nbaveraged,nbmyvariables,nbyears); %%% score according to local threshold
 listofmystations=zeros(nbstations,1); %%% chosen stations
 listofmysubstances=zeros(nbsubstances,1); %%% chosen substances
 countryid=zeros(nbstations,nbcountries); %%% which station in which country
@@ -164,64 +161,74 @@ for nn=1:nbstations %%% assign the correct length of the summer growing season
     if countryid(nn,strmatch('NL',listofcountries)) || countryid(nn,strmatch('G',listofcountries)) || ...
             countryid(nn,strmatch('UK',listofcountries)) %%% if stations is in nl, germany, or uk
         vectgrowingseason{nn}=vectgrowingsea1;
-    else %%% or if the station is somewhere else (belgium, france)
-        vectgrowingseason{nn}=vectgrowingsea2;
+    elseif countryid(nn,strmatch('B',listofcountries)) || countryid(nn,strmatch('F',listofcountries))
+        vectgrowingseason{nn}=vectgrowingsea2; %%% or if the station is in belgium or france
+    else
+        fprintf('\nThe country of station %s is unknown.',listofstations{nn});
+        fprintf('\nCalculation stopped.');
+        break
     end 
 end
 
 %%% main loop
 for kk=1:nbyears %%% loop over the years
-    for jj=1:nbareas %%% loop over the areas
+    alp=char(listofyears{kk}); %%% short format (YY)
+    foldername=[runid,alp(1,3:4)]; %%%% name of the new folder
+    cd(maindir); cd(foldername); %%%% change path to new folder
+    struct=delwaq('open','TBNT.HIS'); %%%% load data
 
-foldername=[runid,listofyears{kk},listofareas{jj}]; %%%% name of the new folder
-cd(maindir); cd(foldername); %%%% change path to new folder
-struct=delwaq('open','TBNT.HIS'); %%%% load data
-
-if kk==1 && jj==1 %% choose stations and substances (to do only once)
+if kk==1 %% choose stations and substances (to do only once)
     stationsnames=struct.SegmentName; %%% all stations in the his file
     substancesnames=struct.SubsName; %%% all substances in the his file
 
     for ii=1:nbstations %%% find my stations
-        listofmystations(ii)=strmatch(listofstations{ii},stationsnames,'exact');
+    	listofmystations(ii)=strmatch(listofstations{ii},stationsnames,'exact');
     end
 
-    for ii=1:nbsubstances %%% find my substances
-        listofmysubstances(ii)=strmatch(listofsubstances{ii},substancesnames,'exact');
-    end
+	for ii=1:nbsubstances %%% find my substances
+    	listofmysubstances(ii)=strmatch(listofsubstances{ii},substancesnames,'exact');
+	end
 end
 
-[~,data]=delwaq('read',struct,listofmysubstances,listofmystations,0); %%% read data
+    [~,data]=delwaq('read',struct,listofmysubstances,listofmystations,vectyear); %%% read data
 
-for mm=1:nbmyvariables %%% loop over myvariables
-    tempdata=sum(data(listofmyvariables{mm},:,:),1); %%% myvariables (=sum of substances)
+    for mm=1:nbmyvariables %%% loop over myvariables
+        if strncmp('N/P',myvariablesnames{mm},3)
+            tempdata=sum(data(listofmyvariables{strmatch('DIN',myvariablesnames,'exact')},:,:),1)./ ...
+                sum(data(listofmyvariables{strmatch('DIP',myvariablesnames,'exact')},:,:),1);
+        else
+            tempdata=sum(data(listofmyvariables{mm},:,:),1); %%% myvariables (=sum of substances)
+        end
         
-    for ll=1:nbaveraged %%% loop over the time-period averaged
-        if strmatch(listofaveraged{ll},'winter','exact')
+        for ll=1:nbaveraged %%% loop over the time-period averaged
+        
+        if strncmp('winter',listofaveraged{ll},6)
             vect=vectwinter; %%% winter averaged
-        elseif strmatch(listofaveraged{ll},'year','exact')
+        elseif strncmp('year',listofaveraged{ll},4)
             vect=vectyear; %%% year averaged
         else
             vect=vectgrowingseason; %%% summer averaged
         end
         
-        if strmatch(listofaveraged{ll},'summer','exact'); %%% summer = station by station 
+        if strncmp('summer',listofaveraged{ll},6); %%% summer = station by station 
             for nn=1:nbstations %%% because of different growing season per countries
-                outputdata(nn,ll,mm,1,jj,kk)=mean(tempdata(:,nn,vect{nn}),3);
-                outputdata(nn,ll,mm,2,jj,kk)=std(tempdata(:,nn,vect{nn}),0,3);
-                outputdata(nn,ll,mm,3,jj,kk)=max(tempdata(:,nn,vect{nn}),[],3)';
+                outputdata(nn,ll,mm,1,kk)=mean(tempdata(:,nn,vect{nn}),3);
+                outputdata(nn,ll,mm,2,kk)=std(tempdata(:,nn,vect{nn}),0,3);
+                outputdata(nn,ll,mm,3,kk)=max(tempdata(:,nn,vect{nn}),[],3)';
+                outputdata(nn,ll,mm,4,kk)=min(tempdata(:,nn,vect{nn}),[],3)';
             end
         else %%% otherwise (year, winter)
-            outputdata(:,ll,mm,1,jj,kk)=mean(tempdata(:,:,vect),3)';
-            outputdata(:,ll,mm,2,jj,kk)=std(tempdata(:,:,vect),0,3)';
-            outputdata(:,ll,mm,3,jj,kk)=max(tempdata(:,:,vect),[],3)';
+            outputdata(:,ll,mm,1,kk)=mean(tempdata(:,:,vect),3)';
+            outputdata(:,ll,mm,2,kk)=std(tempdata(:,:,vect),0,3)';
+            outputdata(:,ll,mm,3,kk)=max(tempdata(:,:,vect),[],3)';
+            outputdata(:,ll,mm,4,kk)=min(tempdata(:,:,vect),[],3)';
         end
+        end
+         
+        clear tempdata %%% cleaning
     end
     
-    clear tempdata %%% cleaning
-end
-
-clear struct data %%% cleaning
-    end
+    clear struct data %%% cleaning
 end
 
 
@@ -232,36 +239,38 @@ if OPT.table.write
     
     cd(localdir); tablename=['tab2app3','.csv'];
     table=fopen(tablename,'w');
-    fprintf(table,'%s','Target area');
+    fprintf(table,'Target area,Averaged,Depth');
 
     %%%%% header of the file
     for kk=1:nbyears %%% loop over the years
-        fprintf(table,',%s, ',listofyearslg{kk});
+        fprintf(table,',%s, ',listofyears{kk});
     end
     
     %%%%% data
     for nn=1:nbstations/3 %%% loop over the stations
-        fprintf(table,'\n%s',listofstations{nn}); %%% name of the station
-        
-        %%%%% header
+        fprintf(table,'\n%s, , ',listofstations{nn}); %%% name of the station
+    
+    %%%%% header of data
         for kk=1:nbyears %%% loop over the years
-            fprintf(table,',mean,std');
-        end
-        
-        for mm=1:nbmyvariables %%% loop over myvariables
-            fprintf(table,'\n%s',myvariablesnames{mm});
-        
-        %%%%% find relevant season depending on variable
-        if strncmp('DIN',myvariablesnames{mm},3) || strncmp('DIP',myvariablesnames{mm},3)
-            indave=strmatch('winter',listofaveraged,'exact'); %%% = winter for din, dip, n/p
-        elseif strncmp(myvariablesnames{mm},'Chlfa',5)
-            indave=strmatch('summer',listofaveraged,'exact'); %%% = summer for chlfa 
+        	fprintf(table,',mean,std');
         end
             
-        %%%%% print the values in the table
-            for kk=1:nbyears %%% loop over the years
-                fprintf(table,',%1.6f,%1.6f', ...
-                        outputdata(nn,indave,mm,1,jj,kk),outputdata(nn,indave,mm,2,jj,kk));
+        for mm=1:nbmyvariables %%% loop over myvariables
+    %%%%% find relevant season depending on variable
+        if strncmp('DIN',myvariablesnames{mm},3) || strncmp('DIP',myvariablesnames{mm},3) || strncmp('N/P',myvariablesnames{mm},3)
+        	indave=strmatch('winter',listofaveraged,'exact'); %%% = winter for din, dip, n/p
+    	elseif strncmp(myvariablesnames{mm},'Chlfa',5)
+        	indave=strmatch('summer',listofaveraged,'exact'); %%% = summer for chlfa 
+        end
+        
+    %%%%% print the values in the table
+            for pp=1:nbdepths
+                incr=(pp-1)*nbstations/nbdepths;
+                fprintf(table,'\n%s,%s,%s',myvariablesnames{mm},listofaveraged{indave},listofdepths{pp});
+                for kk=1:nbyears %%% loop over the years
+                    fprintf(table,',%1.6f,%1.6f', ...
+                            outputdata(incr+nn,indave,mm,1,kk),outputdata(incr+nn,indave,mm,2,kk));
+                end
             end
         end
     end
@@ -273,8 +282,8 @@ end
 if OPT.table2.write  
     disp('writing output (table2)');
 
-for kk=1:nbyears
-    cd(localdir); table2name=['tab5_app4_',listofyearslg{kk},'.csv'];
+	kk=strmatch('2002',listofyears);
+    cd(localdir); table2name=['tab5_app4_',listofyears{kk},'.csv'];
     table2=fopen(table2name,'w');
     
     %%%% header of the file
@@ -284,54 +293,64 @@ for kk=1:nbyears
     end
     fprintf(table2,'\nvariable,averaged,depth');
     for nn=1:nbstations/3  %%% loop over the stations
-        fprintf(table2,',thres,mean,std,max,score');
+        fprintf(table2,',thres,mean,std,max/min,score');
     end
     
     %%%% data of the csv file
     for mm=1:nbmyvariables %%% loop over the variables
         
-        %%%% choose season depending on variable
-        if strncmp('DIN',myvariablesnames{mm},3) || strncmp('DIP',myvariablesnames{mm},3) || strncmp('N/P',myvariablesnames{mm},3)
-            indave=strmatch('winter',listofaveraged,'exact'); %%% = winter for din, dip, n/p
-            listofdepths={'bottom','surface'}';
-        elseif strncmp(myvariablesnames{mm},'Chlfa',5)
-            indave=strmatch('summer',listofaveraged,'exact'); %%% = summer for chlfa 
-            listofdepths={'all'};
-        else
-            indave=strmatch('year',listofaveraged,'exact'); %%% = year if unknown
-            listofdepths={'all'};
-        end
-        nbdepths=size(listofdepths,1);
+    %%%% choose season depending on variable
+	if strncmp('DIN',myvariablesnames{mm},3) || strncmp('DIP',myvariablesnames{mm},3) || strncmp('N/P',myvariablesnames{mm},3)
+    	indave=strmatch('winter',listofaveraged,'exact'); %%% = winter for din, dip, n/p
+	elseif strncmp(myvariablesnames{mm},'Chlfa',5)
+    	indave=strmatch('summer',listofaveraged,'exact'); %%% = summer for chlfa 
+    else
+        indave=strmatch('year',listofaveraged,'exact'); %%% = year if unknown
+	end
         
         for pp=1:nbdepths %%% loop over the depths
-            fprintf(table2,'\n%s,%s,%s',myvariablesnames{mm}, ...
-                    listofaveraged{indave},listofdepths{pp});
+            incr=(pp-1)*nbstations/nbdepths;
+            fprintf(table2,'\n%s,%s,%s',myvariablesnames{mm},listofaveraged{indave},listofdepths{pp});
                 
-        %%%% find the threshold value
-            for nn=1:nbstations/3 %%% loop over the stations
+   %%%% find the threshold value
+            for nn=1:nbstations/3 %%% loop over the station
                 indvariable=strmatch(myvariablesnames{mm},listofthresholdvariables,'exact');
                 indstation=strmatch(listofstations{nn},listofthresholdstations,'exact');
                 thresholdvalue=thresholddata(indstation,indvariable); %%% threshold value
                 
         %%%% assign a score
-            incr=(pp-2+nbdepths)*nbstations/3; %%% choose the correct station among 'all', 'bottom' and 'surface'
-            if outputdata(incr+nn,indave,mm,1,jj,kk) >= thresholdvalue || outputdata(incr+nn,indave,mm,3,jj,kk) >= thresholdvalue
-                score{incr+nn,indave,mm,jj,kk}={'++'};
-            elseif outputdata(incr+nn,indave,mm,1,jj,kk)+outputdata(incr+nn,indave,mm,2,jj,kk) >= thresholdvalue
-                score{incr+nn,indave,mm,jj,kk}={'OO'};
-            else
-                score{incr+nn,indave,mm,jj,kk}={'--'};
-            end
+            if strncmp('Oxygen',myvariablesnames{mm},6) %%% specific conditions for oxygen (careful: case sensitive name)
+                if outputdata(incr+nn,indave,mm,1,kk) <= thresholdvalue || outputdata(incr+nn,indave,mm,4,kk) <= thresholdvalue
+                    score{incr+nn,indave,mm,kk}={'++'};
+                elseif outputdata(incr+nn,indave,mm,1,kk)-outputdata(incr+nn,indave,mm,2,kk) <= thresholdvalue
+                    score{incr+nn,indave,mm,kk}={'OO'};
+                else
+                    score{incr+nn,indave,mm,kk}={'--'};
+                end
 
-        %%%% print the result in the table         
+            %%%% print the result in the table         
             fprintf(table2,',%1.4f,%1.4f,%1.4f,%1.4f,%s',thresholddata(indstation,indvariable), ...
-                        outputdata(incr+nn,indave,mm,1,jj,kk),outputdata(incr+nn,indave,mm,2,jj,kk), ...
-                        outputdata(incr+nn,indave,mm,3,jj,kk),char(score{incr+nn,indave,mm,jj,kk}));
+                        outputdata(incr+nn,indave,mm,1,kk),outputdata(incr+nn,indave,mm,2,kk), ...
+                        outputdata(incr+nn,indave,mm,4,kk),char(score{incr+nn,indave,mm,kk}));
+
+            else %%% normal conditions for all the other parameters
+                if outputdata(incr+nn,indave,mm,1,kk) >= thresholdvalue || outputdata(incr+nn,indave,mm,3,kk) >= thresholdvalue
+                    score{incr+nn,indave,mm,kk}={'++'};
+                elseif outputdata(incr+nn,indave,mm,1,kk)+outputdata(incr+nn,indave,mm,2,kk) >= thresholdvalue
+                    score{incr+nn,indave,mm,kk}={'OO'};
+                else
+                    score{incr+nn,indave,mm,kk}={'--'};
+                end
+
+            %%%% print the result in the table         
+            fprintf(table2,',%1.4f,%1.4f,%1.4f,%1.4f,%s',thresholddata(indstation,indvariable), ...
+                        outputdata(incr+nn,indave,mm,1,kk),outputdata(incr+nn,indave,mm,2,kk), ...
+                        outputdata(incr+nn,indave,mm,3,kk),char(score{incr+nn,indave,mm,kk}));
+            end
             end
         end
     end
     fclose(table2);
-end
 end
 
 break
