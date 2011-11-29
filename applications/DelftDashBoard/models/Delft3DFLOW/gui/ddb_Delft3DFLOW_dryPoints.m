@@ -1,5 +1,65 @@
 function ddb_Delft3DFLOW_dryPoints(varargin)
+%DDB_DELFT3DFLOW_DRYPOINTS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_Delft3DFLOW_dryPoints(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_Delft3DFLOW_dryPoints
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 handles=getHandles;
 
 ddb_zoomOff;
@@ -13,13 +73,13 @@ if isempty(varargin)
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drypoints');
     setHandles(handles);
     setUIElements('delft3dflow.domain.domainpanel.drypoints');
-
+    
 else
     
     opt=varargin{1};
     
     switch(lower(opt))
-
+        
         case{'add'}
             handles.Model(md).Input(ad).selectDryPoint=0;
             handles.Model(md).Input(ad).changeDryPoint=0;
@@ -33,7 +93,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-
+            
         case{'delete'}
             handles.Model(md).Input(ad).addDryPoint=0;
             handles.Model(md).Input(ad).selectDryPoint=0;
@@ -45,7 +105,7 @@ else
                 handles=deleteDryPoint(handles);
             end
             setHandles(handles);
-
+            
         case{'select'}
             handles.Model(md).Input(ad).addDryPoint=0;
             handles.Model(md).Input(ad).deleteDryPoint=0;
@@ -58,7 +118,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-                        
+            
         case{'change'}
             handles.Model(md).Input(ad).addDryPoint=0;
             handles.Model(md).Input(ad).selectDryPoint=0;
@@ -71,7 +131,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-
+            
         case{'edit'}
             handles.Model(md).Input(ad).addDryPoint=0;
             handles.Model(md).Input(ad).selectDryPoint=0;
@@ -87,7 +147,7 @@ else
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
             setHandles(handles);
             clearInstructions;
-
+            
         case{'selectfromlist'}
             handles.Model(md).Input(ad).addDryPoint=0;
             handles.Model(md).Input(ad).selectDryPoint=0;
@@ -97,15 +157,15 @@ else
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drypoints');
             setHandles(handles);
             clearInstructions;
-
+            
         case{'openfile'}
             handles=ddb_readDryFile(handles,ad);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drypoints');
             setHandles(handles);
-
+            
         case{'savefile'}
             ddb_saveDryFile(handles,ad);
-
+            
     end
 end
 
@@ -156,12 +216,12 @@ function handles=deleteDryPoint(handles)
 nrdry=handles.Model(md).Input(ad).nrDryPoints;
 
 if nrdry>0
-    iac=handles.Model(md).Input(ad).activeDryPoint;    
+    iac=handles.Model(md).Input(ad).activeDryPoint;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','drypoints');
     if nrdry>1
         handles.Model(md).Input(ad).dryPoints=removeFromStruc(handles.Model(md).Input(ad).dryPoints,iac);
         handles.Model(md).Input(ad).dryPointNames=removeFromCellArray(handles.Model(md).Input(ad).dryPointNames,iac);
-    else   
+    else
         handles.Model(md).Input(ad).dryPointNames={''};
         handles.Model(md).Input(ad).activeDryPoint=1;
         handles.Model(md).Input(ad).dryPoints(1).M1=[];
@@ -220,4 +280,5 @@ setUIElement('delft3dflow.domain.domainpanel.drypoints.editdryn2');
 setUIElement('delft3dflow.domain.domainpanel.drypoints.toggleadddrypoint');
 setUIElement('delft3dflow.domain.domainpanel.drypoints.toggleselectdrypoint');
 setUIElement('delft3dflow.domain.domainpanel.drypoints.togglechangedrypoint');
+
 

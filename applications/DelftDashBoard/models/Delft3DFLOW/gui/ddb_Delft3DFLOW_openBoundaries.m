@@ -1,5 +1,65 @@
 function ddb_Delft3DFLOW_openBoundaries(varargin)
+%DDB_DELFT3DFLOW_OPENBOUNDARIES  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_Delft3DFLOW_openBoundaries(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_Delft3DFLOW_openBoundaries
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 handles=getHandles;
 
 ddb_zoomOff;
@@ -18,7 +78,7 @@ else
     end
     
     switch(lower(opt))
-
+        
         case{'add'}
             handles.Model(md).Input(ad).selectOpenBoundary=0;
             handles.Model(md).Input(ad).changeOpenBoundary=0;
@@ -32,7 +92,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-
+            
         case{'delete'}
             handles.Model(md).Input(ad).addOpenBoundary=0;
             handles.Model(md).Input(ad).selectOpenBoundary=0;
@@ -44,7 +104,7 @@ else
                 % Delete dry point selected from list
                 deleteOpenBoundary;
             end
-
+            
         case{'select'}
             handles.Model(md).Input(ad).addOpenBoundary=0;
             handles.Model(md).Input(ad).deleteOpenBoundary=0;
@@ -57,7 +117,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-                        
+            
         case{'change'}
             handles.Model(md).Input(ad).addOpenBoundary=0;
             handles.Model(md).Input(ad).selectOpenBoundary=0;
@@ -70,7 +130,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-
+            
         case{'editindices'}
             handles.Model(md).Input(ad).addOpenBoundary=0;
             handles.Model(md).Input(ad).selectOpenBoundary=0;
@@ -96,7 +156,7 @@ else
             n2str=num2str(handles.Model(md).Input(ad).openBoundaries(n).N2);
             name=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
             if strcmpi(handles.Model(md).Input(ad).openBoundaries(n).name(1),'(') && ...
-                strcmpi(handles.Model(md).Input(ad).openBoundaries(n).name(end),')')
+                    strcmpi(handles.Model(md).Input(ad).openBoundaries(n).name(end),')')
                 handles.Model(md).Input(ad).openBoundaries(n).name=name;
                 handles.Model(md).Input(ad).openBoundaryNames{n}=name;
             end
@@ -104,8 +164,8 @@ else
             clearInstructions;
             setHandles(handles);
             refreshOpenBoundaries;
-
-         case{'editname'}
+            
+        case{'editname'}
             handles.Model(md).Input(ad).addOpenBoundary=0;
             handles.Model(md).Input(ad).selectOpenBoundary=0;
             handles.Model(md).Input(ad).changeOpenBoundary=0;
@@ -117,7 +177,7 @@ else
             setUIElement('delft3dflow.openboundaries.listopenboundaries');
             clearInstructions;
             refreshOpenBoundaries;
-
+            
         case{'selectfromlist'}
             handles.Model(md).Input(ad).addOpenBoundary=0;
             handles.Model(md).Input(ad).selectOpenBoundary=0;
@@ -128,7 +188,7 @@ else
             clearInstructions;
             setHandles(handles);
             refreshOpenBoundaries;
-
+            
         case{'selecttype'}
             tp=handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type;
             iac=handles.Model(md).Input(ad).activeOpenBoundaries;
@@ -154,7 +214,7 @@ else
             end
             setHandles(handles);
             refreshOpenBoundaries;
-
+            
         case{'selectforcing'}
             fc=handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).forcing;
             iac=handles.Model(md).Input(ad).activeOpenBoundaries;
@@ -165,7 +225,7 @@ else
             handles=ddb_countOpenBoundaries(handles,ad);
             setHandles(handles);
             refreshOpenBoundaries;
-
+            
         case{'editalpha'}
             alp=handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).alpha;
             iac=handles.Model(md).Input(ad).activeOpenBoundaries;
@@ -176,7 +236,7 @@ else
             handles=ddb_countOpenBoundaries(handles,ad);
             setHandles(handles);
             refreshOpenBoundaries;
-
+            
         case{'selectprofile'}
             prf=handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).profile;
             iac=handles.Model(md).Input(ad).activeOpenBoundaries;
@@ -198,7 +258,7 @@ else
             end
             setHandles(handles);
             refreshOpenBoundaries;
-
+            
         case{'flowconditions'}
             ddb_zoomOff;
             set(gcf, 'windowbuttondownfcn',   []);
@@ -214,11 +274,11 @@ else
                 case{'Q'}
                     EditD3DFlowConditionsQHRelation;
             end
-
+            
         case{'transportconditions'}
             ddb_zoomOff;
             set(gcf, 'windowbuttondownfcn',   []);
-            ddb_editD3DFlowTransportConditionsTimeSeries;           
+            ddb_editD3DFlowTransportConditionsTimeSeries;
             
         case{'open'}
             handles.Model(md).Input(ad).addOpenBoundary=0;
@@ -271,12 +331,12 @@ else
                     case{'bcc'}
                         handles.Model(md).Input(ad).bccFile=filename;
                         handles=ddb_readBccFile(handles,ad);
-                end              
+                end
                 clearInstructions;
                 setHandles(handles);
-                refreshOpenBoundaries;             
+                refreshOpenBoundaries;
             end
-
+            
         case{'save'}
             handles.Model(md).Input(ad).addOpenBoundary=0;
             handles.Model(md).Input(ad).selectOpenBoundary=0;
@@ -327,12 +387,12 @@ else
                     case{'bcc'}
                         handles.Model(md).Input(ad).bccFile=filename;
                         ddb_saveBccFile(handles,ad);
-                end              
+                end
                 clearInstructions;
                 setHandles(handles);
                 refreshOpenBoundaryFiles;
             end
-
+            
     end
 end
 
@@ -369,7 +429,7 @@ if ok==1
     handles.Model(md).Input(ad).openBoundaries(iac).type='Z';
     handles.Model(md).Input(ad).openBoundaries(iac).forcing='A';
     handles.Model(md).Input(ad).openBoundaries(iac).profile='Uniform';
-
+    
     t0=handles.Model(md).Input(ad).startTime;
     t1=handles.Model(md).Input(ad).stopTime;
     nrsed=handles.Model(md).Input(ad).nrSediments;
@@ -382,7 +442,7 @@ if ok==1
     
     handles.Model(md).Input(ad).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(ad).openBoundaries,iac, ...
         t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs);
-  
+    
     handles.Model(md).Input(ad).openBoundaries(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
     handles.Model(md).Input(ad).openBoundaryNames{iac}=handles.Model(md).Input(ad).openBoundaries(iac).name;
     handles.Model(md).Input(ad).activeOpenBoundary=iac;
@@ -411,12 +471,12 @@ handles=getHandles;
 nrbnd=handles.Model(md).Input(ad).nrOpenBoundaries;
 
 if nrbnd>0
-    iac=handles.Model(md).Input(ad).activeOpenBoundary;    
+    iac=handles.Model(md).Input(ad).activeOpenBoundary;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','openboundaries');
     if nrbnd>1
         handles.Model(md).Input(ad).openBoundaries=removeFromStruc(handles.Model(md).Input(ad).openBoundaries,iac);
         handles.Model(md).Input(ad).openBoundaryNames=removeFromCellArray(handles.Model(md).Input(ad).openBoundaryNames,iac);
-    else   
+    else
         handles.Model(md).Input(ad).openBoundaryNames={''};
         handles.Model(md).Input(ad).activeOpenBoundary=1;
         handles.Model(md).Input(ad).openBoundaries(1).name='';
@@ -438,11 +498,11 @@ if nrbnd>0
     handles.Model(md).Input(ad).activeOpenBoundaries=handles.Model(md).Input(ad).activeOpenBoundary;
     
     handles=ddb_countOpenBoundaries(handles,ad);
-
+    
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
     setHandles(handles);
     refreshOpenBoundaries;
-%    refreshOpenBoundaryFiles;
+    %    refreshOpenBoundaryFiles;
 end
 
 %%
@@ -617,6 +677,7 @@ if icp==1
         end
     end
 end
-    
+
+
 
 

@@ -1,5 +1,72 @@
-function [ampu,phaseu,depth,conList]=ddb_extractTidalConstituents(fname,xx,yy,opt1,varargin)
+function [ampu phaseu depth conList] = ddb_extractTidalConstituents(fname, xx, yy, opt1, varargin)
+%DDB_EXTRACTTIDALCONSTITUENTS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   [ampu phaseu depth conList] = ddb_extractTidalConstituents(fname, xx, yy, opt1, varargin)
+%
+%   Input:
+%   fname    =
+%   xx       =
+%   yy       =
+%   opt1     =
+%   varargin =
+%
+%   Output:
+%   ampu     =
+%   phaseu   =
+%   depth    =
+%   conList  =
+%
+%   Example
+%   ddb_extractTidalConstituents
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 if ~isempty(varargin)
     comp=varargin{1};
 else
@@ -65,7 +132,7 @@ switch lower(opt1)
         ampstr='tidal_amplitude_v';
         phistr='tidal_phase_v';
 end
-    
+
 xv=x(ix1:ix2);
 yv=y(iy1:iy2);
 [xg,yg]=meshgrid(xv,yv);
@@ -80,7 +147,7 @@ dpt=dpt';
 depth=interp2(xg,yg,dpt,xx,yy);
 
 if isempty(comp)
-
+    
     % Get all constituents
     amp=nc_varget(fname,ampstr,[ix1-1 iy1-1 0],[ix2-ix1+1 iy2-iy1+1 nrcons]);
     phi=nc_varget(fname,phistr,[ix1-1 iy1-1 0],[ix2-ix1+1 iy2-iy1+1 nrcons]);
@@ -88,11 +155,11 @@ if isempty(comp)
     phi=double(phi);
     amp=permute(amp,[2 1 3]);
     phi=permute(phi,[2 1 3]);
-
-%     figure(800);
-%     pcolor(amp(:,:,1));colorbar;
-%     figure(900);
-%     pcolor(phi(:,:,1));colorbar;
+    
+    %     figure(800);
+    %     pcolor(amp(:,:,1));colorbar;
+    %     figure(900);
+    %     pcolor(phi(:,:,1));colorbar;
     
     for k=1:nrcons
         
@@ -106,8 +173,8 @@ if isempty(comp)
         ampu(k,:,:)=interp2(xg,yg,a,xx,yy);
         phaseu(k,:,:)=interp2(xg,yg,p,xx,yy);
     end
-
-
+    
+    
 else
     
     % Get one constituents
@@ -127,8 +194,9 @@ else
     
     ampu(:,:)=interp2(xg,yg,squeeze(amp(:,:)),xx,yy);
     phaseu(:,:)=interp2(xg,yg,squeeze(phi(:,:)),xx,yy);
-
+    
 end
 
 ampu=squeeze(ampu);
 phaseu=squeeze(phaseu);
+

@@ -1,5 +1,65 @@
 function ddb_editD3DFlowCrossSections
+%DDB_EDITD3DFLOWCROSSSECTIONS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_editD3DFlowCrossSections
+%
+%   Input:
 
+%
+%
+%
+%
+%   Example
+%   ddb_editD3DFlowCrossSections
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 ddb_refreshScreen('Domain','Cross Sections');
 handles=getHandles;
 
@@ -241,19 +301,19 @@ if posx>=xlim(1) && posx<=xlim(2) && posy>=ylim(1) && posy<=ylim(2)
             n2=handles.Model(md).Input(id).CrossSections(i).N2;
             if ( m2==m1 && m==m1 && ((n<=n2 && n>=n1) || (n<=n1 && n>=n2)) ) || ...
                     ( n2==n1 && n==n1 && ((m<=m2 && m>=m1) || (m<=m1 && m>=m2)) )
-                    handles.GUIData.ActiveCrossSection=i;
-                    RefreshCrossSections(handles);
-                    handles.GUIData.DeleteSelectedCrossSection=0;
-                    setHandles(handles);
-                    if handles.Mode=='c'
-                        ddb_plotFlowAttributes(handles,'CrossSections','activate',ad,i,i);
-                        set(gcf,'windowbuttondownfcn',{@DragLine,@AddCrossSection});
-                    elseif handles.Mode=='s'
-                        ddb_plotFlowAttributes(handles,'CrossSections','activate',ad,i,i);
-                    elseif handles.Mode=='d'
-                        handles=DeleteCrossSection(handles);
-                    end
-                    break
+                handles.GUIData.ActiveCrossSection=i;
+                RefreshCrossSections(handles);
+                handles.GUIData.DeleteSelectedCrossSection=0;
+                setHandles(handles);
+                if handles.Mode=='c'
+                    ddb_plotFlowAttributes(handles,'CrossSections','activate',ad,i,i);
+                    set(gcf,'windowbuttondownfcn',{@DragLine,@AddCrossSection});
+                elseif handles.Mode=='s'
+                    ddb_plotFlowAttributes(handles,'CrossSections','activate',ad,i,i);
+                elseif handles.Mode=='d'
+                    handles=DeleteCrossSection(handles);
+                end
+                break
             end
         end
     end
@@ -386,4 +446,5 @@ else
     set(handles.GUIHandles.EditCrsM2,'String',[]);
     set(handles.GUIHandles.EditCrsN2,'String',[]);
 end
+
 

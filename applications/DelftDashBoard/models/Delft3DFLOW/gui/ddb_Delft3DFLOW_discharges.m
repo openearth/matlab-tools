@@ -1,5 +1,65 @@
 function ddb_Delft3DFLOW_discharges(varargin)
+%DDB_DELFT3DFLOW_DISCHARGES  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_Delft3DFLOW_discharges(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_Delft3DFLOW_discharges
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 handles=getHandles;
 
 ddb_zoomOff;
@@ -18,7 +78,7 @@ else
     opt=varargin{1};
     
     switch(lower(opt))
-
+        
         case{'add'}
             handles.Model(md).Input(ad).selectDischarge=0;
             handles.Model(md).Input(ad).changeDischarge=0;
@@ -33,7 +93,7 @@ else
             end
             setHandles(handles);
             refreshDischarges;
-
+            
         case{'delete'}
             handles.Model(md).Input(ad).addDischarge=0;
             handles.Model(md).Input(ad).selectDischarge=0;
@@ -46,7 +106,7 @@ else
             end
             setHandles(handles);
             refreshDischarges;
-
+            
         case{'select'}
             handles.Model(md).Input(ad).addDischarge=0;
             handles.Model(md).Input(ad).deleteDischarge=0;
@@ -60,7 +120,7 @@ else
             end
             setHandles(handles);
             refreshDischarges;
-                        
+            
         case{'change'}
             handles.Model(md).Input(ad).addDischarge=0;
             handles.Model(md).Input(ad).selectDischarge=0;
@@ -74,7 +134,7 @@ else
             end
             setHandles(handles);
             refreshDischarges;
-
+            
         case{'edit'}
             handles.Model(md).Input(ad).addDischarge=0;
             handles.Model(md).Input(ad).selectDischarge=0;
@@ -93,7 +153,7 @@ else
             clearInstructions;
             setHandles(handles);
             refreshDischarges;
-
+            
         case{'editdischargedata'}
             handles.Model(md).Input(ad).selectDischarge=0;
             handles.Model(md).Input(ad).changeDischarge=0;
@@ -101,7 +161,7 @@ else
             setHandles(handles);
             clearInstructions;
             ddb_editD3DDischargeData(handles.Model(md).Input(ad).activeDischarge)
-
+            
         case{'selectfromlist'}
             handles.Model(md).Input(ad).addDischarge=0;
             handles.Model(md).Input(ad).selectDischarge=0;
@@ -112,23 +172,23 @@ else
             clearInstructions;
             setHandles(handles);
             refreshDischarges;
-
+            
         case{'opensrcfile'}
             handles=ddb_readSrcFile(handles);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','discharges');
             setHandles(handles);
             refreshDischarges;
-
+            
         case{'savesrcfile'}
             ddb_saveSrcFile(handles,ad);
-
+            
         case{'opendisfile'}
             handles=ddb_readDisFile(handles);
             setHandles(handles);
-
+            
         case{'savedisfile'}
             ddb_saveDisFile(handles,ad);
-
+            
     end
 end
 
@@ -177,12 +237,12 @@ function handles=deleteDischarge(handles)
 nrdis=handles.Model(md).Input(ad).nrDischarges;
 
 if nrdis>0
-    iac=handles.Model(md).Input(ad).activeDischarge;    
+    iac=handles.Model(md).Input(ad).activeDischarge;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','discharges');
     if nrdis>1
         handles.Model(md).Input(ad).discharges=removeFromStruc(handles.Model(md).Input(ad).discharges,iac);
         handles.Model(md).Input(ad).dischargeNames=removeFromCellArray(handles.Model(md).Input(ad).dischargeNames,iac);
-    else   
+    else
         handles.Model(md).Input(ad).dischargeNames={''};
         handles.Model(md).Input(ad).activeDischarge=1;
         handles.Model(md).Input(ad).discharges(1).M=[];
@@ -246,4 +306,5 @@ setUIElement('delft3dflow.discharges.togglechangedischarge');
 setUIElement('delft3dflow.discharges.editoutfallm');
 setUIElement('delft3dflow.discharges.editoutfalln');
 setUIElement('delft3dflow.discharges.editoutfallk');
+
 

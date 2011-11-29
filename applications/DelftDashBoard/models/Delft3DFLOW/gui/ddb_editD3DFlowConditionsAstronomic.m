@@ -1,5 +1,65 @@
 function ddb_editD3DFlowConditionsAstronomic
+%DDB_EDITD3DFLOWCONDITIONSASTRONOMIC  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_editD3DFlowConditionsAstronomic
+%
+%   Input:
 
+%
+%
+%
+%
+%   Example
+%   ddb_editD3DFlowConditionsAstronomic
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 h=getHandles;
 
 handles=h.Model(md).Input(ad);
@@ -187,18 +247,18 @@ handles=guidata(findobj('Name','Astronomic Boundary Conditions'));
 str=handles.componentSets;
 str=str{get(hObject,'Value')};
 %if ~strcmp(str,handles.ActiveComponentSet)
-    [handles,ok]=ChangeData(handles);
-    if ok==1
-        handles.ActiveComponentSet=str;
-        set(handles.GUIHandles.EditComponentSetName,'String',handles.ActiveComponentSet);
-        set(handles.GUIHandles.panel2,'Title',['Astronomical Data for Set ' handles.ActiveComponentSet]);
-        RefreshComponentSet(handles);
-        guidata(findobj('Name','Astronomic Boundary Conditions'),handles);
-        RefreshCorrections;
-    else
-        ii=strmatch(handles.ActiveComponentSet,handles.componentSets,'exact');
-        set(hObject,'Value',ii);
-    end
+[handles,ok]=ChangeData(handles);
+if ok==1
+    handles.ActiveComponentSet=str;
+    set(handles.GUIHandles.EditComponentSetName,'String',handles.ActiveComponentSet);
+    set(handles.GUIHandles.panel2,'Title',['Astronomical Data for Set ' handles.ActiveComponentSet]);
+    RefreshComponentSet(handles);
+    guidata(findobj('Name','Astronomic Boundary Conditions'),handles);
+    RefreshCorrections;
+else
+    ii=strmatch(handles.ActiveComponentSet,handles.componentSets,'exact');
+    set(hObject,'Value',ii);
+end
 %end
 
 %%
@@ -391,3 +451,4 @@ dt=h.Model(strcmp('Delft3DFLOW',{h.Model.name})).Input(h.ActiveDomain).TimeStep/
 
 [prediction,times]=delftPredict2007(cmp,A,G,t0,t1,dt);
 ddb_plotTimeSeries(times,prediction,'');
+

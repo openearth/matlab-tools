@@ -1,5 +1,66 @@
-function ddb_saveFouFile(handles,id)
+function ddb_saveFouFile(handles, id)
+%DDB_SAVEFOUFILE  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_saveFouFile(handles, id)
+%
+%   Input:
+%   handles =
+%   id      =
+%
+%
+%
+%
+%   Example
+%   ddb_saveFouFile
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 tab=handles.Model(md).Input(id).fourier.editTable;
 fid=fopen(handles.Model(md).Input(id).fouFile,'wt');
 plist=handles.Model(md).Input(ad).fourier.pList;
@@ -32,14 +93,15 @@ for i=1:length(tab.period)
     ampstr=[repmat(' ',1,12-length(ampstr)) ampstr];
     argstr=num2str(tab.astronomicalArgument(i),'%10.5f');
     argstr=[repmat(' ',1,12-length(argstr)) argstr];
-
+    
     lstr=[repmat(' ',1,5-length(lstr)) lstr];
     lstr=deblank(lstr);
     optstr=[repmat(' ',1,5-length(optstr)) optstr];
-
+    
     str=[parstr ' ' t0str t1str nrstr ampstr argstr lstr optstr];
     str=deblank(str);
     fprintf(fid,'%s\n',str);
     
 end
 fclose(fid);
+

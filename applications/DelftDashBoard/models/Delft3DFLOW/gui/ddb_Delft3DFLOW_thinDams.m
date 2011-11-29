@@ -1,5 +1,65 @@
 function ddb_Delft3DFLOW_thinDams(varargin)
+%DDB_DELFT3DFLOW_THINDAMS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_Delft3DFLOW_thinDams(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_Delft3DFLOW_thinDams
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 handles=getHandles;
 
 ddb_zoomOff;
@@ -16,7 +76,7 @@ if isempty(varargin)
 else
     opt=varargin{1};
     switch(lower(opt))
-
+        
         case{'add'}
             handles.Model(md).Input(ad).selectThinDam=0;
             handles.Model(md).Input(ad).changeThinDam=0;
@@ -29,7 +89,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-
+            
         case{'delete'}
             handles.Model(md).Input(ad).addThinDam=0;
             handles.Model(md).Input(ad).selectThinDam=0;
@@ -40,7 +100,7 @@ else
                 handles=deleteThinDam(handles);
             end
             setHandles(handles);
-
+            
         case{'select'}
             handles.Model(md).Input(ad).addThinDam=0;
             handles.Model(md).Input(ad).deleteThinDam=0;
@@ -48,7 +108,7 @@ else
             ddb_clickObject('tag','drypoint','callback',@selectThinDamFromMap);
             setHandles(handles);
             setInstructions({'','','Select thin dam from map'});
-
+            
         case{'change'}
             handles.Model(md).Input(ad).addThinDam=0;
             handles.Model(md).Input(ad).selectThinDam=0;
@@ -58,7 +118,7 @@ else
                 setInstructions({'','','Select thin dam to change from map'});
             end
             setHandles(handles);
-
+            
         case{'edit'}
             handles.Model(md).Input(ad).addThinDam=0;
             handles.Model(md).Input(ad).selectThinDam=0;
@@ -74,7 +134,7 @@ else
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','thindams');
             setHandles(handles);
             clearInstructions;
-
+            
         case{'selectfromlist'}
             handles.Model(md).Input(ad).addThinDam=0;
             handles.Model(md).Input(ad).selectThinDam=0;
@@ -84,7 +144,7 @@ else
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','thindams');
             setHandles(handles);
             clearInstructions;
-
+            
         case{'openfile'}
             handles=ddb_readThdFile(handles,ad);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','thindams');
@@ -128,13 +188,13 @@ if m1>0 && (m1==m2 || n1==n2)
         handles.Model(md).Input(ad).nrThinDams=handles.Model(md).Input(ad).nrThinDams+1;
         iac=handles.Model(md).Input(ad).nrThinDams;
     end
-
+    
     if x1==x2 && y1==y2
         if uv==1
             handles.Model(md).Input(ad).thinDams(iac).UV='V';
         else
             handles.Model(md).Input(ad).thinDams(iac).UV='U';
-        end            
+        end
     else
         if m2~=m1
             handles.Model(md).Input(ad).thinDams(iac).UV='V';
@@ -181,12 +241,12 @@ function handles=deleteThinDam(handles)
 nrdry=handles.Model(md).Input(ad).nrThinDams;
 
 if nrdry>0
-    iac=handles.Model(md).Input(ad).activeThinDam;    
+    iac=handles.Model(md).Input(ad).activeThinDam;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','thindams');
     if nrdry>1
         handles.Model(md).Input(ad).thinDams=removeFromStruc(handles.Model(md).Input(ad).thinDams,iac);
         handles.Model(md).Input(ad).thinDamNames=removeFromCellArray(handles.Model(md).Input(ad).thinDamNames,iac);
-    else   
+    else
         handles.Model(md).Input(ad).thinDamNames={''};
         handles.Model(md).Input(ad).activeThinDam=1;
         handles.Model(md).Input(ad).thinDams(1).M1=[];
@@ -248,3 +308,4 @@ setUIElement('delft3dflow.domain.domainpanel.thindams.radiov');
 setUIElement('delft3dflow.domain.domainpanel.thindams.toggleaddthindam');
 setUIElement('delft3dflow.domain.domainpanel.thindams.toggleselectthindam');
 setUIElement('delft3dflow.domain.domainpanel.thindams.togglechangethindam');
+

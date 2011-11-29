@@ -1,5 +1,65 @@
 function ddb_Delft3DFLOW_drogues(varargin)
+%DDB_DELFT3DFLOW_DROGUES  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_Delft3DFLOW_drogues(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_Delft3DFLOW_drogues
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 handles=getHandles;
 
 ddb_zoomOff;
@@ -13,13 +73,13 @@ if isempty(varargin)
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drogues');
     setHandles(handles);
     setUIElements('delft3dflow.monitoring.monitoringpanel.drogues');
-
+    
 else
     
     opt=varargin{1};
     
     switch(lower(opt))
-
+        
         case{'add'}
             handles.Model(md).Input(ad).selectDrogue=0;
             handles.Model(md).Input(ad).changeDrogue=0;
@@ -33,7 +93,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-
+            
         case{'delete'}
             handles.Model(md).Input(ad).addDrogue=0;
             handles.Model(md).Input(ad).selectDrogue=0;
@@ -45,7 +105,7 @@ else
                 handles=deleteDrogue(handles);
             end
             setHandles(handles);
-
+            
         case{'select'}
             handles.Model(md).Input(ad).addDrogue=0;
             handles.Model(md).Input(ad).deleteDrogue=0;
@@ -58,7 +118,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-                        
+            
         case{'change'}
             handles.Model(md).Input(ad).addDrogue=0;
             handles.Model(md).Input(ad).selectDrogue=0;
@@ -71,7 +131,7 @@ else
                 clearInstructions;
             end
             setHandles(handles);
-
+            
         case{'edit'}
             handles.Model(md).Input(ad).addDrogue=0;
             handles.Model(md).Input(ad).selectDrogue=0;
@@ -89,7 +149,7 @@ else
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drogues');
             setHandles(handles);
             clearInstructions;
-
+            
         case{'selectfromlist'}
             handles.Model(md).Input(ad).addDrogue=0;
             handles.Model(md).Input(ad).selectDrogue=0;
@@ -99,15 +159,15 @@ else
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drogues');
             setHandles(handles);
             clearInstructions;
-
+            
         case{'openfile'}
             handles=ddb_readDroFile(handles);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drogues');
             setHandles(handles);
-
+            
         case{'savefile'}
             ddb_saveDroFile(handles,ad);
-
+            
     end
 end
 
@@ -160,12 +220,12 @@ function handles=deleteDrogue(handles)
 nrobs=handles.Model(md).Input(ad).nrDrogues;
 
 if nrobs>0
-    iac=handles.Model(md).Input(ad).activeDrogue;    
+    iac=handles.Model(md).Input(ad).activeDrogue;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','drogues');
     if nrobs>1
         handles.Model(md).Input(ad).drogues=removeFromStruc(handles.Model(md).Input(ad).drogues,iac);
         handles.Model(md).Input(ad).drogueNames=removeFromCellArray(handles.Model(md).Input(ad).drogueNames,iac);
-    else   
+    else
         handles.Model(md).Input(ad).drogueNames={''};
         handles.Model(md).Input(ad).activeDrogue=1;
         handles.Model(md).Input(ad).drogues(1).M=[];
@@ -223,4 +283,5 @@ setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.editdroname');
 setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.toggleadddrogue');
 setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.toggleselectdrogue');
 setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.togglechangedrogue');
+
 

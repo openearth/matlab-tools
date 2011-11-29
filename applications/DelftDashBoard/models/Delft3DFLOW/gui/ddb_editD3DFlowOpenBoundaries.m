@@ -1,5 +1,65 @@
 function ddb_editD3DFlowOpenBoundaries
+%DDB_EDITD3DFLOWOPENBOUNDARIES  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_editD3DFlowOpenBoundaries
+%
+%   Input:
 
+%
+%
+%
+%
+%   Example
+%   ddb_editD3DFlowOpenBoundaries
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 ddb_refreshScreen('Boundaries');
 handles=getHandles;
 
@@ -562,9 +622,9 @@ if ok==1
     handles.Model(md).Input(ad).openBoundaries(iac).N1=n1;
     handles.Model(md).Input(ad).openBoundaries(iac).M2=m2;
     handles.Model(md).Input(ad).openBoundaries(iac).N2=n2;
-
+    
     handles=ddb_initializeBoundary(handles,iac);
-  
+    
     handles.Model(md).Input(ad).openBoundaries(iac).Name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
     handles.Model(md).Input(ad).openBoundaryNames{iac}=handles.Model(md).Input(ad).openBoundaries(iac).Name;
     handles.Model(md).Input(ad).activeOpenBoundary=iac;
@@ -593,12 +653,12 @@ isel=fliplr(isel);
 for k=1:length(isel)
     iac0=isel(k);
     iacnew=iac0;
-
+    
     if iacnew==nrbnd
         iacnew=nrbnd-1;
     end
     ddb_plotFlowAttributes(handles,'OpenBoundaries','delete',id,iac0,iacnew);
-
+    
     if nrbnd>1
         for j=iac0:nrbnd-1
             handles.Model(md).Input(id).OpenBoundaries(j)=handles.Model(md).Input(id).OpenBoundaries(j+1);
@@ -671,13 +731,13 @@ if nb>0
     set(handles.GUIHandles.TextBndType, 'Enable','on');
     set(handles.GUIHandles.TextForcing, 'Enable','on');
     set(handles.GUIHandles.TextProfile, 'Enable','on');
-
+    
     set(handles.GUIHandles.SelectBoundaryType,     'Enable','on');
     set(handles.GUIHandles.SelectForcingType,      'Enable','on');
     set(handles.GUIHandles.SelectProfile,          'Enable','on');
-
+    
     set(handles.GUIHandles.PushSelectOpenBoundary, 'Enable','on');
-
+    
     set(handles.GUIHandles.PushFlowConditions,     'Enable','on');
     if handles.Model(md).Input(id).Salinity.Include || handles.Model(md).Input(id).Temperature.Include || handles.Model(md).Input(id).sediments.include || ...
             handles.Model(md).Input(id).Tracers
@@ -695,7 +755,7 @@ if nb>0
     for i=1:nb
         Names{i}=handles.Model(md).Input(id).OpenBoundaries(i).Name;
     end
-
+    
     if length(get(handles.GUIHandles.ListOpenBoundaries,'Value'))==1
         set(handles.GUIHandles.ListOpenBoundaries,'Value',1);
     end
@@ -703,7 +763,7 @@ if nb>0
     if length(get(handles.GUIHandles.ListOpenBoundaries,'Value'))==1
         set(handles.GUIHandles.ListOpenBoundaries,'Value',n);
     end
-
+    
     tp=handles.Model(md).Input(id).OpenBoundaries(n).Type;
     tps={'Z','C','N','T','Q','R'};
     ii=strmatch(tp,tps,'exact');
@@ -722,7 +782,7 @@ if nb>0
     frs={'A','H','T','Q'};
     ii=strmatch(fr,frs,'exact');
     set(handles.GUIHandles.SelectForcingType,'Value',ii);
-
+    
     prf={'uniform','logarithmic','3d-profile'};
     ii=strmatch(lower(handles.Model(md).Input(id).OpenBoundaries(n).Profile),prf,'exact');
     set(handles.GUIHandles.SelectProfile,'Value',1);
@@ -730,15 +790,15 @@ if nb>0
         case{'Z','N'}
             str={'Uniform'};
         case{'T'}
-            str={'Uniform','Logarithmic'};            
+            str={'Uniform','Logarithmic'};
         case{'C','Q','R'}
             str={'Uniform','Logarithmic','Per Layer'};
     end
     set(handles.GUIHandles.SelectProfile,'String',str);
     set(handles.GUIHandles.SelectProfile,'Value',ii);
-       
+    
     handles=ddb_countOpenBoundaries(handles,id);
-
+    
     set(handles.GUIHandles.PushSaveBoundaryDefinitions,  'Enable','on');
     if handles.Model(md).Input(id).NrAstro>0
         set(handles.GUIHandles.PushOpenAstronomicConditions, 'Enable','on');
@@ -785,7 +845,7 @@ if nb>0
         set(handles.GUIHandles.PushOpenTransportConditions, 'Enable','off');
         set(handles.GUIHandles.PushSaveTransportConditions, 'Enable','off');
     end
-
+    
     nsel=length(get(handles.GUIHandles.ListOpenBoundaries,'Value'));
     if nsel>1
         set(handles.GUIHandles.EditBndM1,   'Enable','off','BackgroundColor',[0.831 0.816 0.784]);
@@ -819,15 +879,15 @@ else
     set(handles.GUIHandles.TextBndType, 'Enable','off');
     set(handles.GUIHandles.TextForcing, 'Enable','off');
     set(handles.GUIHandles.TextProfile, 'Enable','off');
-
+    
     set(handles.GUIHandles.PushSelectOpenBoundary, 'Enable','off');
-
+    
     set(handles.GUIHandles.SelectBoundaryType,     'Enable','off');
     set(handles.GUIHandles.SelectForcingType,      'Enable','off');
     set(handles.GUIHandles.SelectProfile,          'Enable','off');
     set(handles.GUIHandles.PushFlowConditions,     'Enable','off');
     set(handles.GUIHandles.PushTransportConditions,'Enable','off');
-
+    
     set(handles.GUIHandles.ListOpenBoundaries,'String',[]);
     set(handles.GUIHandles.EditBndM1,   'String',[]);
     set(handles.GUIHandles.EditBndN1,   'String',[]);
@@ -835,26 +895,26 @@ else
     set(handles.GUIHandles.EditBndN2,   'String',[]);
     set(handles.GUIHandles.EditBndName, 'String',[]);
     set(handles.GUIHandles.EditAlpha,   'String',[]);
-
+    
     set(handles.GUIHandles.PushSaveBoundaryDefinitions,  'Enable','off');
     set(handles.GUIHandles.PushOpenAstronomicConditions, 'Enable','off');
     set(handles.GUIHandles.PushOpenAstronomicCorrections,'Enable','off');
     set(handles.GUIHandles.PushOpenHarmonicConditions,   'Enable','off');
     set(handles.GUIHandles.PushOpenTimeSeriesConditions, 'Enable','off');
     set(handles.GUIHandles.PushOpenTransportConditions,  'Enable','off');
-
+    
     set(handles.GUIHandles.PushSaveAstronomicConditions, 'Enable','off');
     set(handles.GUIHandles.PushSaveAstronomicCorrections,'Enable','off');
     set(handles.GUIHandles.PushSaveHarmonicConditions,   'Enable','off');
     set(handles.GUIHandles.PushSaveTimeSeriesConditions, 'Enable','off');
     set(handles.GUIHandles.PushSaveTransportConditions,  'Enable','off');
-
+    
     set(handles.GUIHandles.TextBoundaryDefinitionsFile, 'String','File : ');
     set(handles.GUIHandles.TextAstronomicConditionsFile,'String','File : ');
     set(handles.GUIHandles.TextHarmonicConditionsFile,  'String','File : ');
     set(handles.GUIHandles.TextTimeSeriesConditionsFile,'String','File : ');
     set(handles.GUIHandles.TextTransportConditionsFile, 'String','File : ');
-       
+    
 end
 
 %%
@@ -930,6 +990,7 @@ if icp==1
         end
     end
 end
-    
+
+
 
 

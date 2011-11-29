@@ -1,12 +1,75 @@
-function handles=ddb_Delft3DFLOW_plotAttributes(handles,opt,att,varargin)
-% Plots, deletes, activates and deactivates Delft3D-FLOW dry points.
+function handles = ddb_Delft3DFLOW_plotAttributes(handles, opt, att, varargin)
+%DDB_DELFT3DFLOW_PLOTATTRIBUTES  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   handles = ddb_Delft3DFLOW_plotAttributes(handles, opt, att, varargin)
+%
+%   Input:
+%   handles  =
+%   opt      =
+%   att      =
+%   varargin =
+%
+%   Output:
+%   handles  =
+%
+%   Example
+%   ddb_Delft3DFLOW_plotAttributes
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% Plots, deletes, activates and deactivates Delft3D-FLOW dry points.
 % Options are:
 % plot
 % delete
 % update
 %
 % Optional input arguments:
-% 'domain'  - domain nr 
+% 'domain'  - domain nr
 % 'visible' - 1 or 0
 % 'active' - 1 or 0
 
@@ -105,7 +168,7 @@ end
 
 switch lower(opt)
     case{'plot'}
-
+        
         % First delete existing objects
         if ~isempty(allPlotHandles)
             for i=1:nr
@@ -124,7 +187,7 @@ switch lower(opt)
                 [x,y,txt,xtxt,ytxt]=getXY(handles,att,imd,iad,i);
                 c=colpas;
                 if strcmpi(tp,'line')
-
+                    
                     % Line
                     for j=1:length(x)
                         x1=x{j};
@@ -165,7 +228,7 @@ switch lower(opt)
                     set(plt,'UserData',i);
                     attStruc(i).plotHandles=plt;
                     attStruc(i).textHandles=[];
-
+                    
                     % Set active color
                     if i==iac && act
                         set(attStruc(i).plotHandles,'FaceColor',colact);
@@ -179,7 +242,7 @@ switch lower(opt)
                 else
                     set(attStruc(i).plotHandles,'HitTest','off');
                 end
-    
+                
                 % Set visibility
                 if vis
                     set(attStruc(i).plotHandles,'Visible','on');
@@ -192,11 +255,11 @@ switch lower(opt)
                     set(attStruc(i).plotHandles,'Visible','off');
                     set(attStruc(i).plotHandles,'Visible','off');
                 end
-
+                
             end
-
+            
         end
-
+        
         % Now delete old objects
         if ~isempty(allPlotHandles)
             try
@@ -208,71 +271,71 @@ switch lower(opt)
                 delete(allTextHandles);
             end
         end
-
-                
+        
+        
     case{'delete'}
-
+        
         try
-        if ~isempty(allPlotHandles)
-            delete(allPlotHandles);
-%            drawnow;
-        end
-
-        if ~isempty(allTextHandles)
-            delete(allTextHandles);
-%            drawnow;
-        end
-        for i=1:nr
-            attStruc(i).plotHandles=[];
-            attStruc(i).textHandles=[];
-        end
+            if ~isempty(allPlotHandles)
+                delete(allPlotHandles);
+                %            drawnow;
+            end
+            
+            if ~isempty(allTextHandles)
+                delete(allTextHandles);
+                %            drawnow;
+            end
+            for i=1:nr
+                attStruc(i).plotHandles=[];
+                attStruc(i).textHandles=[];
+            end
         end
         
     case{'update'}
         
         try
-        % Set colors
-        if ~isempty(allPlotHandles)
-            if strcmpi(tp,'line')
-                set(allPlotHandles,'Color',colpas);
-                if act
-                    set(attStruc(iac).plotHandles,'Color',colact);
+            % Set colors
+            if ~isempty(allPlotHandles)
+                if strcmpi(tp,'line')
+                    set(allPlotHandles,'Color',colpas);
+                    if act
+                        set(attStruc(iac).plotHandles,'Color',colact);
+                    end
+                else
+                    set(allPlotHandles,'FaceColor',colpas);
+                    if act
+                        set(attStruc(iac).plotHandles,'FaceColor',colact);
+                    end
                 end
-            else
-                set(allPlotHandles,'FaceColor',colpas);
+            end
+            
+            if ~isempty(allPlotHandles)
+                % Set hittest
                 if act
-                    set(attStruc(iac).plotHandles,'FaceColor',colact);
+                    set(allPlotHandles,'HitTest','on');
+                else
+                    set(allPlotHandles,'HitTest','off');
+                end
+                % Set visibility plot handles
+                if vis
+                    set(allPlotHandles,'Visible','on');
+                else
+                    set(allPlotHandles,'Visible','off');
                 end
             end
-        end
-        
-        if ~isempty(allPlotHandles)
-            % Set hittest
-            if act
-                set(allPlotHandles,'HitTest','on');
-            else
-                set(allPlotHandles,'HitTest','off');
-            end
-            % Set visibility plot handles
-            if vis
-                set(allPlotHandles,'Visible','on');
-            else
-                set(allPlotHandles,'Visible','off');
-            end
-        end
-
-        if ~isempty(allTextHandles)
-            % Set visibility text handles
-            if vis
-                if act
-                    set(allTextHandles,'Visible','on');
+            
+            if ~isempty(allTextHandles)
+                % Set visibility text handles
+                if vis
+                    if act
+                        set(allTextHandles,'Visible','on');
+                    else
+                        set(allTextHandles,'Visible','off');
+                    end
                 else
                     set(allTextHandles,'Visible','off');
                 end
-            else
-                set(allTextHandles,'Visible','off');
             end
-        end
         end
 end
 
@@ -402,4 +465,5 @@ end
 
 xtxt=0.5*(x{1}(1)+x{end}(end));
 ytxt=0.5*(y{1}(1)+y{end}(end));
+
 
