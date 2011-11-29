@@ -1,4 +1,67 @@
-function varargout=UIPolyline(h,opt,varargin)
+function varargout = UIPolyline(h, opt, varargin)
+%UIPOLYLINE  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = UIPolyline(h, opt, varargin)
+%
+%   Input:
+%   h         =
+%   opt       =
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   UIPolyline
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 
 try
     tp=get(h,'Type');
@@ -70,14 +133,14 @@ end
 
 switch lower(opt)
     case{'draw'}
-       
+        
         % Plot first (invisible) point
         
         x=0;
-        y=0;       
+        y=0;
         h=plot3(x,y,9000);
         set(h,'Visible','off');
-
+        
         set(h,'Tag',tag);
         set(h,'Color',lineColor);
         set(h,'LineWidth',lineWidth);
@@ -95,7 +158,7 @@ switch lower(opt)
         setappdata(h,'closed',closed);
         setappdata(h,'callback',callback);
         setappdata(h,'doubleclickcallback',doubleclickcallback);
-        setappdata(h,'tag',tag);        
+        setappdata(h,'tag',tag);
         setappdata(h,'color',lineColor);
         setappdata(h,'width',lineWidth);
         setappdata(h,'marker',marker);
@@ -107,7 +170,7 @@ switch lower(opt)
         setappdata(h,'closed',closed);
         setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);
-
+        
         set(gcf, 'windowbuttondownfcn',   {@clickNextPoint,h});
         set(gcf, 'windowbuttonmotionfcn', {@moveMouse,h});
         
@@ -116,7 +179,7 @@ switch lower(opt)
         setappdata(h,'callback',callback);
         setappdata(h,'doubleclickcallback',doubleclickcallback);
         set(h,'userdata',userdata);
-        setappdata(h,'tag',tag);        
+        setappdata(h,'tag',tag);
         setappdata(h,'x',x);
         setappdata(h,'y',y);
         setappdata(h,'color',lineColor);
@@ -129,16 +192,16 @@ switch lower(opt)
         setappdata(h,'text',txt);
         setappdata(h,'closed',closed);
         setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
-        setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);        
+        setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);
         h=drawPolyline(h,'nocallback');
-
+        
     case{'delete'}
         try
             ch=getappdata(h,'children');
             delete(h);
             delete(ch);
         end
-
+        
 end
 
 if nargout==1
@@ -218,7 +281,7 @@ if ~isempty(x)
         setappdata(mh(i),'number',i);
     end
     setappdata(h,'children',mh);
-
+    
     tx=[];
     if ~isempty(txt)
         for i=1:length(x)
@@ -234,7 +297,7 @@ if ~isempty(x)
         feval(callback,x,y,h);
     end
 end
-        
+
 %%
 function clickNextPoint(imagefig, varargins,h)
 
@@ -246,14 +309,14 @@ buttonUpDownFcn=getappdata(h,'windowbuttonupdownfcn');
 buttonMotionFcn=getappdata(h,'windowbuttonmotionfcn');
 
 if strcmp(mouseclick,'normal')
-
+    
     pos=get(ax, 'CurrentPoint');
     posx=pos(1,1);
     posy=pos(1,2);
     
     xl=get(ax,'XLim');
     yl=get(ax,'YLim');
-
+    
     if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
         
         x=getappdata(h,'x');
@@ -272,7 +335,7 @@ if strcmp(mouseclick,'normal')
         
         set(h,'XData',x,'YData',y,'ZData',z);
         set(h,'Visible','on');
-
+        
         if np==maxPoints
             feval(buttonUpDownFcn);
             feval(buttonMotionFcn);
@@ -421,4 +484,5 @@ callback=getappdata(p,'callback');
 if ~isempty(callback)
     feval(callback,x,y,h);
 end
+
 

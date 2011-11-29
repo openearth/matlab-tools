@@ -1,6 +1,75 @@
-function getHYCOM(url,outname,outdir,par,xl,yl,dx,dy,t,s,daynum)
-% Download Hycom data
+function getHYCOM(url, outname, outdir, par, xl, yl, dx, dy, t, s, daynum)
+%GETHYCOM  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   getHYCOM(url, outname, outdir, par, xl, yl, dx, dy, t, s, daynum)
+%
+%   Input:
+%   url     =
+%   outname =
+%   outdir  =
+%   par     =
+%   xl      =
+%   yl      =
+%   dx      =
+%   dy      =
+%   t       =
+%   s       =
+%   daynum  =
+%
+%
+%
+%
+%   Example
+%   getHYCOM
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% Download Hycom data
 fname=url;
 
 %daynum=nc_varget(fname,'MT');
@@ -66,7 +135,7 @@ p = [xxx yyy];
 tri=delaunay(xxx,yyy);
 
 switch lower(par)
-
+    
     case{'temperature'}
         disp('Downloading temperature ...');
         tic
@@ -78,7 +147,7 @@ switch lower(par)
         else
             data=permute(data,[3 4 2 1]);
         end
-        disp('Interpolating ...');      
+        disp('Interpolating ...');
         tic
         for k=1:nd
             for it=1:nt
@@ -89,7 +158,7 @@ switch lower(par)
         end
         toc
         s.data=single(s.data);
-
+        
     case{'salinity'}
         disp('Downloading salinity ...');
         tic
@@ -102,7 +171,7 @@ switch lower(par)
             data=permute(data,[3 4 2 1]);
         end
         
-        disp('Interpolating ...');      
+        disp('Interpolating ...');
         tic
         for k=1:nd
             for it=1:nt
@@ -113,7 +182,7 @@ switch lower(par)
         end
         toc
         s.data=single(s.data);
-
+        
     case{'waterlevel'}
         disp('Downloading water level ...');
         tic
@@ -121,11 +190,11 @@ switch lower(par)
         toc
         if ndims(data)==2
             data(:,:,1)=data;
-%            data=permute(data,[1 2 3]);
+            %            data=permute(data,[1 2 3]);
         else
             data=permute(data,[2 3 1]);
         end
-        disp('Interpolating ...');      
+        disp('Interpolating ...');
         tic
         for it=1:nt
             d=squeeze(data(:,:,it));
@@ -134,9 +203,9 @@ switch lower(par)
         end
         toc
         s.data=single(s.data);
-
+        
     case{'current_u'}
-
+        
         disp('Downloading u ...');
         tic
         data=nc_varget(fname,'u',[it1-1 0 imin-1 jmin-1],[nt nd id jd]);
@@ -147,7 +216,7 @@ switch lower(par)
         else
             data=permute(data,[3 4 2 1]);
         end
-        disp('Interpolating ...');      
+        disp('Interpolating ...');
         tic
         s.data=[];
         for k=1:nd
@@ -159,9 +228,9 @@ switch lower(par)
         end
         toc
         s.data=single(s.data);
-
+        
     case{'current_v'}
-
+        
         disp('Downloading v ...');
         tic
         data=nc_varget(fname,'v',[it1-1 0 imin-1 jmin-1],[nt nd id jd]);
@@ -172,7 +241,7 @@ switch lower(par)
         else
             data=permute(data,[3 4 2 1]);
         end
-        disp('Interpolating ...');      
+        disp('Interpolating ...');
         tic
         s.data=[];
         for k=1:nd
@@ -200,6 +269,7 @@ for it=1:length(s.time)
         end
     elseif ndims(s.data)==4
         s2.data=squeeze(s2.data(:,:,:,it));
-    end    
+    end
     save(fname,'-struct','s2');
 end
+

@@ -1,4 +1,67 @@
-function hg=UIRectangle(hg,opt,varargin)
+function hg = UIRectangle(hg, opt, varargin)
+%UIRECTANGLE  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   hg = UIRectangle(hg, opt, varargin)
+%
+%   Input:
+%   hg       =
+%   opt      =
+%   varargin =
+%
+%   Output:
+%   hg       =
+%
+%   Example
+%   UIRectangle
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 29 Nov 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 
 if strcmpi(get(hg,'Type'),'axes')
     ax=hg;
@@ -78,22 +141,22 @@ for i=1:length(varargin)
                 ddx=varargin{i+1};
             case{'ddy'}
                 ddy=varargin{i+1};
-
+                
         end
     end
 end
 
 switch lower(opt)
     case{'draw'}
-       
+        
         % Plot first (invisible) point
         
         hg = hggroup;
-
+        
         set(hg,'Visible','off');
-
+        
         set(hg,'Tag',tag);
-                
+        
         setappdata(hg,'x0',x0);
         setappdata(hg,'y0',y0);
         setappdata(hg,'dx',dx);
@@ -105,7 +168,7 @@ switch lower(opt)
         setappdata(hg,'closed',closed);
         setappdata(hg,'callback',callback);
         setappdata(hg,'onstartcallback',onStartCallback);
-        setappdata(hg,'tag',tag);        
+        setappdata(hg,'tag',tag);
         setappdata(hg,'linecolor',lineColor);
         setappdata(hg,'linewidth',lineWidth);
         setappdata(hg,'marker',marker);
@@ -117,7 +180,7 @@ switch lower(opt)
         setappdata(hg,'movable',movable);
         setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);
-
+        
         set(gcf, 'windowbuttondownfcn',   {@startRectangle,hg});
         set(gcf, 'windowbuttonmotionfcn', {@dragRectangle,hg});
         
@@ -135,7 +198,7 @@ switch lower(opt)
         setappdata(hg,'closed',closed);
         setappdata(hg,'callback',callback);
         setappdata(hg,'onstartcallback',onStartCallback);
-        setappdata(hg,'tag',tag);        
+        setappdata(hg,'tag',tag);
         setappdata(hg,'linecolor',lineColor);
         setappdata(hg,'linewidth',lineWidth);
         setappdata(hg,'marker',marker);
@@ -147,12 +210,12 @@ switch lower(opt)
         setappdata(hg,'movable',movable);
         setappdata(hg,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(hg,'windowbuttonmotionfcn',windowbuttonmotionfcn);
-
+        
         hg=plotRectangle(hg,'nocallback');
-
+        
     case{'delete'}
         delete(hg);
-
+        
 end
 
 %%
@@ -194,7 +257,7 @@ if ~isempty(x0)
     [x,y]=computeCoordinates(x0,y0,dx,dy,rotation);
     
     h=plot(x,y,'g');
-
+    
     set(h,'Color',lineColor);
     set(h,'LineWidth',lineWidth);
     set(h,'HitTest','off');
@@ -202,7 +265,7 @@ if ~isempty(x0)
     hg = hggroup;
     set(h,'Parent',hg);
     set(hg,'Tag',tag);
-
+    
     setappdata(hg,'line',h);
     setappdata(hg,'color',lineColor);
     setappdata(hg,'width',lineWidth);
@@ -220,7 +283,7 @@ if ~isempty(x0)
     setappdata(hg,'ddx',ddx);
     setappdata(hg,'ddy',ddy);
     setappdata(hg,'x',x);
-    setappdata(hg,'y',y);    
+    setappdata(hg,'y',y);
     setappdata(hg,'rotation',rotation);
     setappdata(hg,'tag',tag);
     setappdata(hg,'axes',ax);
@@ -276,9 +339,9 @@ if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
     
     h=plot(x0,y0);
     set(h,'Parent',hg);
-
+    
     set(hg,'Visible','on');
-
+    
     setappdata(hg,'line',h);
     lineWidth=getappdata(hg,'linewidth');
     lineColor=getappdata(hg,'linecolor');
@@ -317,7 +380,7 @@ if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
     
     set(gcf, 'windowbuttonupfcn',     {@finishRectangle,hg});
     set(gcf, 'windowbuttonmotionfcn', {@dragRectangle,hg});
-
+    
 end
 
 %%
@@ -334,9 +397,9 @@ yl=get(ax,'YLim');
 
 
 if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
-
-
-
+    
+    
+    
     x0=getappdata(hg,'x0');
     y0=getappdata(hg,'y0');
     ddx=getappdata(hg,'ddx');
@@ -346,7 +409,7 @@ if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
         
         h=getappdata(hg,'line');
         mh=getappdata(hg,'markers');
-
+        
         dx=posx-x0;
         dy=posy-y0;
         
@@ -354,12 +417,12 @@ if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
             x0=posx;
             dx=-dx;
         end
-
+        
         if dy<0
             y0=posy;
             dy=-dy;
         end
-
+        
         % Round to cell size
         if ~isempty(ddx)
             nx=max(1,round(dx/ddx));
@@ -369,7 +432,7 @@ if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
             ny=max(1,round(dy/ddy));
             dy=ny*ddy;
         end
-
+        
         setappdata(hg,'dx',dx);
         setappdata(hg,'dy',dy);
         rotation=0;
@@ -521,7 +584,7 @@ ddb_updateCoordinateText('arrow');
 
 switch opt
     case{'finish'}
-
+        
         setappdata(hg,'x0',x0);
         setappdata(hg,'y0',y0);
         setappdata(hg,'dx',dx);
@@ -529,7 +592,7 @@ switch opt
         setappdata(hg,'rotation',rotation);
         setappdata(hg,'x',x);
         setappdata(hg,'y',y);
-
+        
         buttonUpDownFcn=getappdata(hg,'windowbuttonupdownfcn');
         buttonMotionFcn=getappdata(hg,'windowbuttonmotionfcn');
         feval(buttonUpDownFcn);
@@ -546,14 +609,14 @@ function [x0,y0,dx,dy,rotation]=computeDxDy(x0,y0,dx,dy,rotation,ddx,ddy,posx,po
 
 switch opt
     case{'movecornerpoint'}
-
+        
         dposx=posx0-x(i);
         dposy=posy0-y(i);
         posx=posx-dposx;
         posy=posy-dposy;
-
+        
         switch i
-            case 1               
+            case 1
                 
                 x00=[posx posy];
                 
@@ -594,7 +657,7 @@ switch opt
         
         dx=max(dx,0);
         dy=max(dy,0);
-
+        
         if ~isempty(ddx)
             nx=max(1,round(dx/ddx));
             dx=nx*ddx;
@@ -614,7 +677,7 @@ switch opt
         rot=180*atan2(posy-y0,posx-x0)/pi;
         drot=rot-rot0;
         rotation=rotation+drot;
-
+        
 end
 
 %%
@@ -629,4 +692,5 @@ x(4)=x(3)+dx*cos(pi*(rotation+180)/180);
 y(4)=y(3)+dx*sin(pi*(rotation+180)/180);
 x(5)=x0;
 y(5)=y0;
+
 
