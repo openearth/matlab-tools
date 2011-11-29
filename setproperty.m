@@ -379,7 +379,7 @@ if nargout > 1 % process Set
         end
     end
     if any(fldsExtra)
-        switch lower(method)
+        switch lower(onExtraField)
             case {'silentappend','warnappend'}
                 for ii = find(fldsExtra)
                     switch length(fldsCell{ii})
@@ -417,7 +417,7 @@ if nargout > 2 % process Default
         end
     end
     if any(fldsExtra)
-        switch lower(method)
+        switch lower(onExtraField)
             case {'silentappend','warnappend'}
                 for ii = find(fldsExtra)
                     switch length(fldsCell{ii})
