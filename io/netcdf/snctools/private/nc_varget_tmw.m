@@ -58,11 +58,15 @@ the_var_size = determine_varsize_tmw(ncid,dimids,nvdims,preserve_fvd);
 
 switch(nargin)
     case 2
-        start = zeros(1,nvdims);
-        count = the_var_size;
+        start  = zeros(1,nvdims);
+        count  = the_var_size;
         stride = ones(1,nvdims);
     case 4
+        % Fix still to be tested
+        start  = varargin{1};
+        count  = varargin{2};
         stride = ones(1,nvdims);
+        
     otherwise
         error('SNCTOOLS:wrongNumberOfInputs','Wrong number of inputs.');
 end
