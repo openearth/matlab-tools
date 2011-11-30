@@ -167,7 +167,13 @@ switch lower(model.type)
                 fclose(fid);
             case{'h4'}
 
-                [success,message,messageid]=copyfile([hm.exeDir 'linux' filesep 'swan.sh'],tmpdir,'f');
+                switch lower(model.whiteCapping)
+                    case{'komenrogers'}
+                        fname='swan.komenrogers.sh';
+                    otherwise
+                        fname='swan.sh';
+                end
+                [success,message,messageid]=copyfile([hm.exeDir 'linux' filesep fname],[tmpdir 'swan.sh'],'f');
                 
                 fid=fopen([tmpdir 'run.sh'],'wt');
                 fprintf(fid,'%s\n','#!/bin/sh');
