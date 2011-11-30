@@ -3,10 +3,6 @@ function cosmos_getMeteoData(hm)
 
 for i=1:hm.nrMeteoDatasets
 
-%    hm.meteoNames{i}=hm.meteo(i).name;
-%    hm.meteo(i).tLastAnalyzed=rounddown(now-hm.meteo(i).Delay/24,hm.meteo(i).cycleInterval/24);
-%     hm.meteo(i).tLastAnalyzed=rounddown(now-hm.meteo(i).Delay/24,hm.runInterval/24);
-
     t0=1e9;
     t1=-1e9;
 
@@ -39,77 +35,39 @@ for i=1:hm.nrMeteoDatasets
 
         outdir=[hm.scenarioDir 'meteo' filesep meteoname filesep];
 
-        dt=hm.meteo(i).cycleInterval/24;
-
-        %         switch lower(hm.scenario)
-        %
-        %             case{'forecasts'}
-        %
-        for t=t0:dt:t1
-
-            tnext=t+dt;
-
-            tcyc=t;
-            cycledate=floor(tcyc);
-            cyclehour=(tcyc-floor(tcyc))*24;
-
-            if tnext>hm.meteo(i).tLastAnalyzed
-                % Next meteo output not yet available, so get the
-                % rest of the data from this cycle and then exit
-                % loop after this
-                tt=[t t1];
-            else
-                tt=[t t+dt];
+        s=xml_load([hm.dataDir 'meteo' filesep 'meteomodels.xml']);
+        
+        for im=1:length(s.models)
+            if strcmpi(s.models(im).model.name,meteosource)
+                meteomodel=s.models(im).model;
             end
-
-            switch lower(meteoloc)
-                case{'nomads'}
-                    getMeteoFromNomads3(meteosource,meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir,'includeHeat',inclh);
-                case{'matroos'}
-                    disp(['Getting HIRLAM ' datestr(tt(1)) ' to ' datestr(tt(end)) ' ...']);
-                    getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
-            end
-
-            if tnext>hm.meteo(i).tLastAnalyzed
-                break;
-            end
-
+        end
+        
+        if inclh
+            parstr{1}=meteomodel.uwindstr;
+            parstr{2}=meteomodel.vwindstr;
+            parstr{3}=meteomodel.pressstr;
+            parstr{4}=meteomodel.tempstr;
+            parstr{5}=meteomodel.humidstr;
+            parstr{6}=meteomodel.cloudstr;
+            pr={'u','v','p','airtemp','relhum','cloudcover'};
+        else
+            parstr{1}=meteomodel.uwindstr;
+            parstr{2}=meteomodel.vwindstr;
+            parstr{3}=meteomodel.pressstr;
+            pr={'u','v','p'};
         end
 
+        cycleInterval=hm.meteo(i).cycleInterval;
+        dt=hm.meteo(i).timeStep;
+        
+%        if inclh
+        getMeteo(meteosource,meteoloc,t0,t1,xlim,ylim,outdir,cycleInterval,dt,parstr,pr,'tlastanalyzed',hm.meteo(i).tLastAnalyzed,'outputmeteoname',meteoname);
+%        end
+        
         fid=fopen([outdir 'tlastanalyzed.txt'],'wt');
         fprintf(fid,'%s\n',datestr(hm.meteo(i).tLastAnalyzed,'yyyymmdd HHMMSS'));
         fclose(fid);
-        %                 tcyc=t0;
-        %                 cycledate=floor(tcyc);
-        %                 cyclehour=(tcyc-floor(tcyc))*24;
-        %                 tt=[t0 t1];
-        %
-        %                 switch lower(meteoloc)
-        %                     case{'nomads'}
-        %                         GetMeteoFromNomads(meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir);
-        %                     case{'matroos'}
-        %                         getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
-        %                 end
 
-        %             otherwise
-        %
-        %                 for t=t0:dt:t1
-        %
-        %                     tcyc=t;
-        %
-        %                     cycledate=floor(tcyc);
-        %                     cyclehour=(tcyc-floor(tcyc))*24;
-        %
-        %                     tt=[t t+dt-hm.meteo(i).timeStep/24];
-        %
-        %                     switch lower(meteoloc)
-        %                         case{'nomads'}
-        %                             GetMeteoFromNomads(meteoname,cycledate,cyclehour,tt,xlim,ylim,outdir);
-        %                         case{'matroos'}
-        %                             getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
-        %                     end
-        %                 end
-        %
-        %         end
     end
 end

@@ -226,8 +226,8 @@ if ~strcmpi(model.useMeteo,'none')
     fprintf(fid,'%s\n','Filwu = #meteo.amu#');
     fprintf(fid,'%s\n','Filwv = #meteo.amv#');
     fprintf(fid,'%s\n','Wndgrd= #A#');
-    if ~model.flowNested && ~strcmpi(model.flowNestType,'oceanmodel')
-        fprintf(fid,'%s\n',['Pavbnd = ' num2str(model.prCorr)]);
+    if (~model.flowNested && ~strcmpi(model.flowNestType,'oceanmodel')) || model.applyPressureCorrection
+        fprintf(fid,'%s\n',['Pavbnd= ' num2str(model.prCorr)]);
     end
     fprintf(fid,'%s\n','AirOut= #YES#');
 end

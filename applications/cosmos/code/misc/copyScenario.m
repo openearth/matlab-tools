@@ -11,7 +11,7 @@ Continents{7}='australia';
 Continents{8}='world';
 
 scenori='forecasts';
-scennew='june2009';
+scennew='socal_dec2010';
 
 MakeDir([hm.runDir 'scenarios'],scennew);
 scendir=[hm.runDir 'scenarios\' scennew '\'];
@@ -28,7 +28,7 @@ MakeDir(scendir,'joblist');
 % MakeDir(scendir,'meteo','gfs1p0');
 MakeDir(scendir,'meteo','gfs1p0');
 % MakeDir(scendir,'meteo','nam');
-MakeDir(scendir,'meteo','hirlam');
+% MakeDir(scendir,'meteo','hirlam');
 % MakeDir(scendir,'meteo','wrf');
 
 for i=1:8
@@ -38,7 +38,7 @@ end
 for i=1:8
     cnt=Continents{i};
     switch lower(cnt)
-        case{'world','europe'}
+        case{'world','europe','northamerica'}
     lst=dir([oridir 'models\' cnt]);
     for j=1:length(lst)
         switch lst(j).name
@@ -54,7 +54,9 @@ for i=1:8
                 MakeDir([scendir 'models\' cnt '\' model],'data');
                 copyfile([oridir 'models\' cnt '\' model '\' model '.xml'],[scendir 'models\' cnt '\' model]);
                 copyfile([oridir 'models\' cnt '\' model '\input\*'],[scendir 'models\' cnt '\' model '\input']);
+                try
                 copyfile([oridir 'models\' cnt '\' model '\data\*'],[scendir 'models\' cnt '\' model '\data']);
+                end
                 [success,message,messageid] = copyfile([oridir 'models\' cnt '\' model '\nesting\*'],[scendir 'models\' cnt '\' model '\nesting']);
         end
     end

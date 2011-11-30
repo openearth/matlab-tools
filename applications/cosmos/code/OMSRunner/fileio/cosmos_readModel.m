@@ -489,6 +489,11 @@ if isfield(model,'prcorr')
 else
     hm.models(i).prCorr=101200.0;
 end
+if isfield(model,'applypressurecorrection')
+    hm.models(i).applyPressureCorrection=str2double(model.applypressurecorrection);
+else
+    hm.models(i).applyPressureCorrection=0;
+end
 if isfield(model,'dxmeteo')
     hm.models(i).dXMeteo=str2double(model.dxmeteo);
 else

@@ -123,9 +123,9 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','export PATH=$exedir:$PATH');
                 fprintf(fid,'%s\n','export LD_LIBRARY_PATH=$exedir:$LD_LIBRARY_PATH');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','StageIn');
+%                fprintf(fid,'%s\n','StageIn');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','cd $DELTAQ_LocalTempDir');
+%                fprintf(fid,'%s\n','cd $DELTAQ_LocalTempDir');
                 fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','echo ===================================================================');
@@ -145,9 +145,9 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','StageOut');
+%                fprintf(fid,'%s\n','StageOut');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','cd $DELTAQ_JobDir');
+%                fprintf(fid,'%s\n','cd $DELTAQ_JobDir');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','mv running.txt finished.txt');
                 fclose(fid);
