@@ -200,7 +200,11 @@ try
             s.dLat=dlat;
             s.lon=x;
             s.lat=y;
-            s.(pr{j})=squeeze(d.(parstr{j})(k,:,:));
+            if ndims(d.(parstr{j}))==2
+                s.(pr{j})=squeeze(d.(parstr{j}));
+            else
+                s.(pr{j})=squeeze(d.(parstr{j})(k,:,:));
+            end
             if ~isnan(max(max(s.(pr{j}))))
                 fname=[meteoname '.' pr{j} '.' tstr '.mat'];
                 disp([dirstr filesep fname]);
