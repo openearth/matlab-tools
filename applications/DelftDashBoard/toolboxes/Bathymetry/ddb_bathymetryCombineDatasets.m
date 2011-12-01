@@ -1,5 +1,65 @@
 function ddb_bathymetryCombineDatasets
+%DDB_BATHYMETRYCOMBINEDATASETS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_bathymetryCombineDatasets
+%
+%   Input:
 
+%
+%
+%
+%
+%   Example
+%   ddb_bathymetryCombineDatasets
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 ddb_refreshScreen('Toolbox','Combine Datasets');
 
 handles=guidata(findobj('Tag','MainWindow'));
@@ -88,12 +148,12 @@ function PushAddDataset_Callback(hObject,eventdata)
 handles=guidata(findobj('Tag','MainWindow'));
 
 filterspec=       {'*.mat', 'Mat File'; ...
-                   '*.xyz', 'Samples file (*.xyz)'};
-    
+    '*.xyz', 'Samples file (*.xyz)'};
+
 [filename, pathname, filterindex] = uigetfile(filterspec);
 
 if filterindex>0
-
+    
     handles.Bathymetry.NrDatasets=handles.Bathymetry.NrDatasets+1;
     ii=handles.Bathymetry.NrDatasets;
     handles.Bathymetry.ActiveDataset=ii;
@@ -105,7 +165,7 @@ if filterindex>0
     handles.Bathymetry.Dataset(ii).VerticalCoordinateSystem.Name='Mean Sea Level';
     handles.Bathymetry.Dataset(ii).VerticalCoordinateSystem.Level=0;
     handles.Bathymetry.Dataset(ii).Edit=1;
-
+    
     switch filterindex,
         case 1
             % Mat File
@@ -315,19 +375,19 @@ function RefreshAll(handles)
 Bathy=handles.Bathymetry;
 
 if Bathy.NrDatasets>0
-
+    
     set(handles.PushUseDataset,          'Enable','on');
     set(handles.PushRemoveDataset ,      'Enable','on');
-
+    
     ii=Bathy.ActiveDataset;
-
+    
     set(handles.ListDatasets,'Value',1);
     set(handles.ListDatasets,'String',Bathy.Datasets);
     set(handles.ListDatasets,'Value',Bathy.ActiveDataset);
-
+    
     set(handles.TextHorizontalCoordinateSystem,'String',[Bathy.Dataset(ii).HorizontalCoordinateSystem.Name ' - ' Bathy.Dataset(ii).HorizontalCoordinateSystem.Type]);
     set(handles.TextVerticalCoordinateSystem,  'String',[Bathy.Dataset(ii).VerticalCoordinateSystem.Name '  (M.S.L. ' num2str(Bathy.Dataset(ii).VerticalCoordinateSystem.Level) ' m)']);
-
+    
     k=strmatch(Bathy.Dataset(ii).Name,Bathy.UsedDatasets,'exact');
     if ~isempty(k)
         set(handles.PushUseDataset,   'Enable','off');
@@ -337,11 +397,11 @@ if Bathy.NrDatasets>0
     if ~Bathy.Dataset(ii).Edit
         set(handles.PushRemoveDataset, 'Enable','off');
     end
-
+    
     jj=Bathy.ActiveUsedDataset;
     set(handles.ListUsedDatasets,'Value',jj);
     set(handles.ListUsedDatasets,'String',Bathy.UsedDatasets);
-
+    
     if Bathy.NrUsedDatasets>0
         set(handles.EditZMax,'String',num2str(Bathy.UsedDataset(jj).ZMax),'Enable','on');
         set(handles.EditZMin,'String',num2str(Bathy.UsedDataset(jj).ZMin),'Enable','on');
@@ -355,43 +415,44 @@ if Bathy.NrDatasets>0
         set(handles.TextZMin,'Enable','off');
         set(handles.PushGenerateDataset,'Enable','off');
     end
-
+    
     set(handles.EditXMax,'String',num2str(Bathy.NewDataset.XMax));
     set(handles.EditXMin,'String',num2str(Bathy.NewDataset.XMin));
     set(handles.EditDX,  'String',num2str(Bathy.NewDataset.dX));
     set(handles.EditYMax,'String',num2str(Bathy.NewDataset.YMax));
     set(handles.EditYMin,'String',num2str(Bathy.NewDataset.YMin));
     set(handles.EditDY,  'String',num2str(Bathy.NewDataset.dY));
-
+    
     set(handles.ToggleAutomaticLimits,'Value',Bathy.NewDataset.AutoLimits);
     
     if Bathy.NewDataset.AutoLimits
         set(handles.EditXMax,'Enable','off');
         set(handles.EditXMin,'Enable','off');
-%         set(handles.EditDX,  'Enable','off');
+        %         set(handles.EditDX,  'Enable','off');
         set(handles.EditYMax,'Enable','off');
         set(handles.EditYMin,'Enable','off');
-%         set(handles.EditDY,  'Enable','off');
+        %         set(handles.EditDY,  'Enable','off');
         set(handles.TextXMax,'Enable','off');
         set(handles.TextXMin,'Enable','off');
-%         set(handles.TextDX,  'Enable','off');
+        %         set(handles.TextDX,  'Enable','off');
         set(handles.TextYMax,'Enable','off');
         set(handles.TextYMin,'Enable','off');
-%         set(handles.TextDY,  'Enable','off');
+        %         set(handles.TextDY,  'Enable','off');
         set(handles.PushDrawBBox,  'Enable','off');
     else
         set(handles.EditXMax,'Enable','on');
         set(handles.EditXMin,'Enable','on');
-%         set(handles.EditDX,  'Enable','on');
+        %         set(handles.EditDX,  'Enable','on');
         set(handles.EditYMax,'Enable','on');
         set(handles.EditYMin,'Enable','on');
-%         set(handles.EditDY,  'Enable','on');
+        %         set(handles.EditDY,  'Enable','on');
         set(handles.TextXMax,'Enable','on');
         set(handles.TextXMin,'Enable','on');
-%         set(handles.TextDX,  'Enable','on');
+        %         set(handles.TextDX,  'Enable','on');
         set(handles.TextYMax,'Enable','on');
         set(handles.TextYMin,'Enable','on');
-%         set(handles.TextDY,  'Enable','on');
+        %         set(handles.TextDY,  'Enable','on');
         set(handles.PushDrawBBox,  'Enable','on');
     end
 end
+

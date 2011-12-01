@@ -1,5 +1,65 @@
 function ddb_DDToolbox(varargin)
+%DDB_DDTOOLBOX  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_DDToolbox(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_DDToolbox
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
@@ -7,12 +67,12 @@ if isempty(varargin)
     ddb_plotDD('activate');
     handles=getHandles;
     
-    % Make 
+    % Make
     handles.Toolbox(tb).Input.domains=[];
     for i=1:length(handles.Model(md).Input)
         handles.Toolbox(tb).Input.domains{i}=handles.Model(md).Input(i).runid;
     end
-
+    
     % If m2 or n2 is nan, set m1 and n1 to NaN
     m2=handles.Toolbox(tb).Input.secondCornerPointM;
     n2=handles.Toolbox(tb).Input.secondCornerPointN;
@@ -21,7 +81,7 @@ if isempty(varargin)
         handles.Toolbox(tb).Input.firstCornerPointN=NaN;
     end
     setHandles(handles);
-
+    
     % If m1 or n1 is nan, delete corner points
     m1=handles.Toolbox(tb).Input.firstCornerPointM;
     n1=handles.Toolbox(tb).Input.firstCornerPointN;
@@ -30,12 +90,12 @@ if isempty(varargin)
     end
     
     clearInstructions;
-%    setUIElements(handles.Toolbox(tb).GUI.elements);
+    %    setUIElements(handles.Toolbox(tb).GUI.elements);
     setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     
 else
     %Options selected
-    opt=lower(varargin{1});    
+    opt=lower(varargin{1});
     switch opt
         case{'editrefinement'}
             editRefinement;
@@ -53,7 +113,7 @@ else
             makeNewDomain;
         case{'makeddboundaries'}
             generateDD;
-    end    
+    end
 end
 
 %%
@@ -174,14 +234,14 @@ if ~isempty(ii)
     GiveWarning('Warning',['A domain with runid "' handles.Toolbox(tb).Input.newRunid '" already exists!']);
     
 elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
-        
+    
     [filename, pathname, filterindex] = uiputfile('*.grd', 'New Overall Grid File',handles.Model(md).Input(ad).grdFile);
-
+    
     if pathname~=0
         
         % Delete existing domains
         ddb_plotDelft3DFLOW('delete');
-
+        
         % Set filenames new grid file
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
@@ -216,7 +276,7 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         % Grid
         [handles,mcut,ncut]=ddb_makeDDModelOriginalGrid(handles,ad,mdd,ndd);
         
-        if max(mcut)>0 || max(ncut)>0 
+        if max(mcut)>0 || max(ncut)>0
             
             sz=size(handles.Model(md).Input(ad).depthZ);
             handles.Model(md).Input(ad).depth=handles.Model(md).Input(ad).depth(mcut(1)+1:sz(1)-mcut(2),ncut(1)+1:sz(2)-ncut(2));
@@ -324,7 +384,7 @@ function plotTemporaryDDGrid(opt)
 
 switch lower(opt)
     case{'plot'}
-
+        
         % Delete existing grid
         h=findobj(gca,'Tag','TemporaryDDGrid');
         if ~isempty(h)
@@ -349,7 +409,7 @@ switch lower(opt)
         z2=zeros(size(x2))+9000;
         grd=mesh(x2,y2,z2);
         set(grd,'FaceColor','none','EdgeColor','r','Tag','TemporaryDDGrid');
-
+        
     case{'delete'}
         % Delete existing grid
         h=findobj(gca,'Tag','TemporaryDDGrid');
@@ -456,3 +516,4 @@ setHandles(handles);
 ddb_saveDDBoundFile(ddbound,handles.Model(md).ddFile);
 
 ddb_writeDDBatchFile(handles.Model(md).ddFile);
+

@@ -1,5 +1,65 @@
-function ddb_hurricaneToolbox
+function varargout = ddb_HurricaneToolbox(varargin)
+%DDB_HURRICANETOOLBOX  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = ddb_HurricaneToolbox(varargin)
+%
+%   Input:
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   ddb_HurricaneToolbox
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 handles=getHandles;
 
 ddb_plotDD(handles,'activate');
@@ -82,8 +142,8 @@ handles=getHandles;
 
 ispeed = str2double(get(hObject,'String'));
 if ispeed > 25
-   GiveWarning('text','Usually the storm centre moves slower than 25 kts. Are you sure?');
-end   
+    GiveWarning('text','Usually the storm centre moves slower than 25 kts. Are you sure?');
+end
 handles.Toolbox(tb).Input.initSpeed=ispeed;
 handles=RefreshAllHurricane(handles);
 setHandles(handles);
@@ -95,15 +155,15 @@ handles=getHandles;
 
 idir = str2double(get(hObject,'String'));
 if idir < 0
-   idir = idir + 360.;
-   GiveWarning('text','Adjusting the value between 0 and 360 degrees');
+    idir = idir + 360.;
+    GiveWarning('text','Adjusting the value between 0 and 360 degrees');
 elseif idir > 360.
-   idir = rem(idir,360.);
-   GiveWarning('text','Adjusting the value between 0 and 360 degrees');
-end   
+    idir = rem(idir,360.);
+    GiveWarning('text','Adjusting the value between 0 and 360 degrees');
+end
 handles.Toolbox(tb).Input.initDir=idir;
 handles=RefreshAllHurricane(handles);
-setHandles(handles); 
+setHandles(handles);
 
 %%
 function SelectInputOption_CallBack(hObject,eventdata)
@@ -231,15 +291,15 @@ hnd.hol=handles.Toolbox(tb).Input.holland;
 hnd=ddb_getInitialHurricaneTrackParameters(hnd);
 
 if hnd.ok
-
+    
     [x,y,h]=UIPolyline(gca,'draw','Tag','HurricaneTrack','Marker','o','Callback',@changeHurricanePolygon,'closed',0);
-
+    
     [x,y]=DrawPolyline('g',1.5,'o','r');
     if ~isempty(h)
         delete(h);
     end
     if ~isempty(x)
-
+        
         %     hnd.t0=floor(now);
         %     hnd.dt=6;
         %     hnd.vmax=20;
@@ -254,20 +314,20 @@ if hnd.ok
         %     hnd.hol=handles.Toolbox(tb).Input.holland;
         %
         %     hnd=ddb_getInitialHurricaneTrackParameters(hnd);
-
+        
         %     if hnd.ok
-
+        
         handles.Toolbox(tb).Input.startTime=hnd.t0;
         handles.Toolbox(tb).Input.timeStep=hnd.dt;
         handles.Toolbox(tb).Input.vMax=hnd.vmax;
         handles.Toolbox(tb).Input.pDrop=hnd.pdrop;
         handles.Toolbox(tb).Input.parA=hnd.para;
         handles.Toolbox(tb).Input.parB=hnd.parb;
-
+        
         handles.Toolbox(tb).Input.nrPoint=length(x);
         handles.Toolbox(tb).Input.trX=x;
         handles.Toolbox(tb).Input.trY=y;
-
+        
         for i=1:handles.Toolbox(tb).Input.nrPoint
             handles.Toolbox(tb).Input.date(i)=hnd.t0+(i-1)*hnd.dt/24;
             if hnd.hol
@@ -278,13 +338,13 @@ if hnd.ok
                 handles.Toolbox(tb).Input.par2(i)=hnd.parb;
             end
         end
-
+        
         DrawHurricaneTrack(handles);
-
+        
         handles=RefreshAllHurricane(handles);
-
+        
         setHandles(handles);
-
+        
     end
 end
 
@@ -300,23 +360,23 @@ ddb_setWindowButtonUpDownFcn;
 ddb_setWindowButtonMotionFcn;
 
 if ~isempty(x)
-
+    
     handles=getHandles;
     
-
+    
     handles.Toolbox(tb).Input.nrPoint=handles.Toolbox(tb).Input.nrPoint+1;
     np=handles.Toolbox(tb).Input.nrPoint;
-
+    
     handles.Toolbox(tb).Input.date(np)=handles.Toolbox(tb).Input.date(np-1)+(handles.Toolbox(tb).Input.date(np-1)-handles.Toolbox(tb).Input.date(np-2));
     handles.Toolbox(tb).Input.trX(np)=x;
     handles.Toolbox(tb).Input.trY(np)=y;
     handles.Toolbox(tb).Input.par1(np)=handles.Toolbox(tb).Input.par1(np-1);
     handles.Toolbox(tb).Input.par2(np)=handles.Toolbox(tb).Input.par2(np-1);
-
+    
     handles=RefreshAllHurricane(handles);
-
+    
     setHandles(handles);
-
+    
 end
 
 %%
@@ -355,7 +415,7 @@ handles.Toolbox(tb).Input.par2=[];
 for i=1:size(data,1)
     str1=data{i,1};
     str2=data{i,2};
-%    handles.Toolbox(tb).Input.date(i)=datenum(str1,'dd mm yyyy')+str2double(str2)/24;
+    %    handles.Toolbox(tb).Input.date(i)=datenum(str1,'dd mm yyyy')+str2double(str2)/24;
     handles.Toolbox(tb).Input.date(i)=datenum(str1,'dd mm yyyy')+str2/24;
     handles.Toolbox(tb).Input.trX(i) =data{i,3};
     handles.Toolbox(tb).Input.trY(i) =data{i,4};
@@ -381,9 +441,9 @@ end
 
 npoi = handles.Toolbox(tb).Input.nrPoint;
 if npoi > 0
-   set(handles.PushSave  ,'Enable','on');
+    set(handles.PushSave  ,'Enable','on');
 else
-   set(handles.PushSave  ,'Enable','off');
+    set(handles.PushSave  ,'Enable','off');
 end
 
 RefreshDetailTrack(handles);
@@ -394,7 +454,7 @@ RefreshDetailTrack(handles);
 %    ndate_start = datenum(handles.Toolbox(tb).Input.date{1});
 %    ndate_stop  = datenum(handles.Toolbox(tb).Input.date{npoi});
 %    handles.Toolbox(tb).Input.D3d_simper= ((ndate_stop - ndate_start)*24. + handles.Toolbox(tb).Input.time{npoi}) * 60. ;
-%    
+%
 % else
 %    handles.Toolbox(tb).Input.D3d_start = ' ';
 %    handles.Toolbox(tb).Input.D3d_sttime= 0.;
@@ -493,3 +553,4 @@ ddb_updateCoordinateText('arrow');
 %%
 function PushUnisysWebsite_CallBack(hObject,eventdata)
 web http://weather.unisys.com/hurricane -browser
+

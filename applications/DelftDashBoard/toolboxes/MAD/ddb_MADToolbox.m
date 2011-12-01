@@ -1,5 +1,65 @@
-function ddb_mADToolbox
+function varargout = ddb_MADToolbox(varargin)
+%DDB_MADTOOLBOX  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = ddb_MADToolbox(varargin)
+%
+%   Input:
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   ddb_MADToolbox
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 handles=getHandles;
 
 ddb_plotMAD(handles,'activate');
@@ -11,7 +71,7 @@ if isempty(handles.Toolbox(tb).Models)
     handles.Toolbox(tb).Models(1).Description='No models available';
     handles.Toolbox(tb).nrModels=0;
     handles=getMADModels(handles);
-    ddb_plotMADModels(handles);    
+    ddb_plotMADModels(handles);
 end
 
 hp = uipanel('Title','Model Application Database','Units','pixels','Position',[50 20 960 160],'Tag','UIControl');
@@ -89,7 +149,7 @@ if ~isempty(handles.Model(md).Input(id).GrdFile)
             clr=[0 0 255];
         case{'green'}
             clr=[0 255 0];
-    end            
+    end
     grid2kml(fname,clr);
 end
 setHandles(handles);
@@ -106,7 +166,7 @@ setHandles(handles);
 %%
 function SelectMADModel(imagefig, varargins)
 h=gco;
-if strcmp(get(h,'Tag'),'MADModels')  
+if strcmp(get(h,'Tag'),'MADModels')
     handles=getHandles;
     xy=handles.Toolbox(tb).xy;
     pos = get(gca, 'CurrentPoint');
@@ -130,14 +190,14 @@ end
 function ListMADModels_CallBack(hObject,eventdata)
 handles=getHandles;
 if handles.Toolbox(tb).nrModels>0
-ii=get(hObject,'Value');
-h0=findall(gcf,'Tag','ActiveMADModel');
-delete(h0);
-plt=plot3(handles.Toolbox(tb).xy(ii,1),handles.Toolbox(tb).xy(ii,2),1000,'p');
-set(plt,'MarkerSize',15,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveMADModel');
-handles.Toolbox(tb).ActiveMADModel=ii;
-RefreshDescription(handles);
-setHandles(handles);
+    ii=get(hObject,'Value');
+    h0=findall(gcf,'Tag','ActiveMADModel');
+    delete(h0);
+    plt=plot3(handles.Toolbox(tb).xy(ii,1),handles.Toolbox(tb).xy(ii,2),1000,'p');
+    set(plt,'MarkerSize',15,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveMADModel');
+    handles.Toolbox(tb).ActiveMADModel=ii;
+    RefreshDescription(handles);
+    setHandles(handles);
 end
 
 %%
@@ -150,9 +210,9 @@ function handles=getMADModels(handles)
 
 
 try
-
+    
     wb = waitbox('Loading Model Application Database ...');
-
+    
     xDoc = xmlread('http://wiki.deltares.nl/download/attachments/4325644/georss.xml');
     
     % Find a deep list of all <listitem> elements.
@@ -182,7 +242,7 @@ try
     end
     
     handles.Toolbox(tb).nrModels=nmod;
-
+    
     x=lon;
     y=lat;
     cs.Name='WGS 84';
@@ -204,26 +264,27 @@ function ddb_plotMADModels(handles)
 
 try
     
-h=findall(gca,'Tag','MADModels');
-if ~isempty(h)
-    delete(h);
+    h=findall(gca,'Tag','MADModels');
+    if ~isempty(h)
+        delete(h);
+    end
+    h=findall(gca,'Tag','ActiveMADModel');
+    if ~isempty(h)
+        delete(h);
+    end
+    
+    x=handles.Toolbox(tb).xy(:,1);
+    y=handles.Toolbox(tb).xy(:,2);
+    z=zeros(size(x))+800;
+    
+    plt=plot3(x,y,z,'rp');
+    set(plt,'MarkerFaceColor','y');
+    set(plt,'MarkerSize',15,'MarkerEdgeColor','k','MarkerFaceColor','y');
+    set(plt,'Tag','MADModels');
+    
+    n=handles.Toolbox(tb).ActiveMADModel;
+    plt=plot3(handles.Toolbox(tb).xy(n,1),handles.Toolbox(tb).xy(n,2),1000,'p');
+    set(plt,'MarkerSize',15,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveMADModel');
+    
 end
-h=findall(gca,'Tag','ActiveMADModel');
-if ~isempty(h)
-    delete(h);
-end
 
-x=handles.Toolbox(tb).xy(:,1);
-y=handles.Toolbox(tb).xy(:,2);
-z=zeros(size(x))+800;
-
-plt=plot3(x,y,z,'rp');
-set(plt,'MarkerFaceColor','y');
-set(plt,'MarkerSize',15,'MarkerEdgeColor','k','MarkerFaceColor','y');
-set(plt,'Tag','MADModels');
-
-n=handles.Toolbox(tb).ActiveMADModel;
-plt=plot3(handles.Toolbox(tb).xy(n,1),handles.Toolbox(tb).xy(n,2),1000,'p');
-set(plt,'MarkerSize',15,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveMADModel');
-
-end

@@ -1,5 +1,65 @@
 function ddb_bathymetryExport
+%DDB_BATHYMETRYEXPORT  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_bathymetryExport
+%
+%   Input:
 
+%
+%
+%
+%
+%   Example
+%   ddb_bathymetryExport
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 ddb_refreshScreen('Toolbox','Export');
 
 handles=getHandles;
@@ -172,47 +232,48 @@ set(handles.SelectZoomLevel,'Value',jj);
 set(handles.SelectZoomLevel,'String',zstr);
 
 if isempty(handles.bathymetry.dataset(ii).refinementFactor)
-
-%     dg=handles.bathymetry.dataset(ii).zoomLevel(jj).GridCellSize(1);
-%     mn=handles.bathymetry.dataset(ii).zoomLevel(jj).GridCellSize(2);
-%     sc=handles.bathymetry.dataset(ii).zoomLevel(jj).GridCellSize(3);
+    
+    %     dg=handles.bathymetry.dataset(ii).zoomLevel(jj).GridCellSize(1);
+    %     mn=handles.bathymetry.dataset(ii).zoomLevel(jj).GridCellSize(2);
+    %     sc=handles.bathymetry.dataset(ii).zoomLevel(jj).GridCellSize(3);
     
     cellSize=handles.bathymetry.dataset(ii).zoomLevel(jj).dx;
-%     cellSize=dms2degrees([dg mn sc]);
+    %     cellSize=dms2degrees([dg mn sc]);
     if strcmpi(handles.bathymetry.dataset(ii).horizontalCoordinateSystem.type,'Geographic')
         cellSize=cellSize*100000;
     end
-
+    
     str=['Cell Size : ~ ' num2str(cellSize,'%10.0f') ' m'];
-%    str=['Cell Size : ' num2str(dg) 'd ' num2str(mn) 'm ' num2str(sc) 's'];
+    %    str=['Cell Size : ' num2str(dg) 'd ' num2str(mn) 'm ' num2str(sc) 's'];
     set(handles.TextCellSize,'String',str);
 else
-
-%     tileMax=handles.bathymetry.dataset(ii).MaxTileSize;
-%     nLevels=handles.bathymetry.dataset(ii).nrZoomLevels;
-%     nRef=handles.bathymetry.dataset(ii).refinementFactor;
-%     nCell=handles.bathymetry.dataset(ii).nrCells;
-% 
-%     tileSizes(1)=tileMax;
-%     for i=2:nLevels
-%         tileSizes(i)=tileSizes(i-1)/nRef;
-%     end
-%     cellSizes=tileSizes/nCell;
-%     cellSize=cellSizes(jj);
-
+    
+    %     tileMax=handles.bathymetry.dataset(ii).MaxTileSize;
+    %     nLevels=handles.bathymetry.dataset(ii).nrZoomLevels;
+    %     nRef=handles.bathymetry.dataset(ii).refinementFactor;
+    %     nCell=handles.bathymetry.dataset(ii).nrCells;
+    %
+    %     tileSizes(1)=tileMax;
+    %     for i=2:nLevels
+    %         tileSizes(i)=tileSizes(i-1)/nRef;
+    %     end
+    %     cellSizes=tileSizes/nCell;
+    %     cellSize=cellSizes(jj);
+    
     
     cellSizeX=handles.bathymetry.dataset(ii).zoomLevel(jj).dx;
     cellSizeY=handles.bathymetry.dataset(ii).zoomLevel(jj).dy;
     
-%     ym=mean(handles.Toolbox(tb).polygonY);
+    %     ym=mean(handles.Toolbox(tb).polygonY);
     if strcmpi(handles.bathymetry.dataset(ii).horizontalCoordinateSystem.type,'geographic')
         cellSize=0.5*(cellSizeX+cellSizeY)*100000;
     else
         cellSize=0.5*(cellSizeX+cellSizeY);
     end
-
+    
     str=['Cell Size : ~ ' num2str(cellSize,'%10.0f') ' m'];
     set(handles.TextCellSize,'String',str);
-
+    
 end
+
 

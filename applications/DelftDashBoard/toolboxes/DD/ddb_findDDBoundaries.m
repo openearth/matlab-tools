@@ -1,6 +1,73 @@
-function ddbound=ddb_findDDBoundaries(ddbound,x1,y1,x2,y2,runid1,runid2)
+function ddbound = ddb_findDDBoundaries(ddbound, x1, y1, x2, y2, runid1, runid2)
+%DDB_FINDDDBOUNDARIES  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddbound = ddb_findDDBoundaries(ddbound, x1, y1, x2, y2, runid1, runid2)
+%
+%   Input:
+%   ddbound =
+%   x1      =
+%   y1      =
+%   x2      =
+%   y2      =
+%   runid1  =
+%   runid2  =
+%
+%   Output:
+%   ddbound =
+%
+%   Example
+%   ddb_findDDBoundaries
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 % This function finds DD boundaries for 2 grids and returns a ddb
-% structure ddbound. ddbound can be empty (i.e. ddbound=[]). This function 
+% structure ddbound. ddbound can be empty (i.e. ddbound=[]). This function
 % assumes that the grid comes in according to the Delft3D convention (i.e.
 % x(m,n) and NOT x(n,m) as in meshgrid).
 
@@ -15,7 +82,7 @@ bottom2=findBoundarySections(x2,y2,'bottom');
 left2=findBoundarySections(x2,y2,'left');
 right2=findBoundarySections(x2,y2,'right');
 
-%% Find matching sections 
+%% Find matching sections
 ddbound=ddb_findMatchingOpenBoundaries(ddbound,top1,bottom2,runid1,runid2);
 ddbound=ddb_findMatchingOpenBoundaries(ddbound,top2,bottom1,runid2,runid1);
 ddbound=ddb_findMatchingOpenBoundaries(ddbound,right1,left2,runid1,runid2);
@@ -25,7 +92,7 @@ ddbound=ddb_findMatchingOpenBoundaries(ddbound,right2,left1,runid2,runid1);
 function s=findBoundarySections(x,y,opt)
 % This function finds all grid cells that are potential DD boundaries
 % It assumes that the grid comes in according to the Delft3D convention (i.e.
-% x(m,n) and NOT x(n,m) like meshgrid). It checks for horizontal (along m lines) boundaries. 
+% x(m,n) and NOT x(n,m) like meshgrid). It checks for horizontal (along m lines) boundaries.
 % Therefore x and y need to be transposed in case of left and right boundaries.
 
 switch lower(opt)
@@ -53,7 +120,7 @@ switch lower(opt)
     case{'bottom','left'}
         for i=2:nx
             for j=1:ny
-                % Check if both corner points are active 
+                % Check if both corner points are active
                 if ~isnan(x(i,j)) && ~isnan(x(i-1,j))
                     % Check if both corner points below are active, if so :
                     % skip
@@ -83,7 +150,7 @@ switch lower(opt)
     case{'top','right'}
         for i=2:nx
             for j=1:ny
-                % Check if both corner points are active 
+                % Check if both corner points are active
                 if ~isnan(x(i,j)) && ~isnan(x(i-1,j))
                     % Check if both corner points below are active, if so :
                     % skip
@@ -257,7 +324,7 @@ bnd=[];
 k=0;
 
 for ii=1:length(grid1.i1)
-
+    
     % Check if this section has not already been used
     if ~grid1.used(ii)
         
@@ -338,7 +405,7 @@ for ii=1:length(grid1.i1)
                             np=np+1;
                             bnd(k).x(np)=grid2.x2(iii);
                             bnd(k).y(np)=grid2.y2(iii);
-                        end                        
+                        end
                     end
                 end
             end
@@ -389,3 +456,4 @@ for i=1:length(bnd0)
         end
     end
 end
+

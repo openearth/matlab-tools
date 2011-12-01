@@ -1,4 +1,65 @@
-function varargout=matchDDDepths(varargin)
+function varargout = matchDDDepths(varargin)
+%MATCHDDDEPTHS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = matchDDDepths(varargin)
+%
+%   Input:
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   matchDDDepths
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 % Changes first one (in case of dpsopt=dp and coarse domain to the right/top of fine domain) or two depth rows
 % in finer domain (with runid2), based on value found in coarser domain (with runid1).
 % e.g.
@@ -191,9 +252,9 @@ end
 
 %%
 function txt=ReadTextFile(FileName)
- 
+
 fid=fopen(FileName);
- 
+
 k=0;
 for i=1:1000
     tx0=fgets(fid);
@@ -214,7 +275,7 @@ for i=1:1000
         end
     end
 end
- 
+
 fclose(fid);
 
 %%
@@ -245,43 +306,43 @@ function varargout=wldep(cmd,varargin)
 %       created by H.R.A. Jagers, Delft Hydraulics
 
 if nargin==0,
-   if nargout>0,
-      varargout=cell(1,nargout);
-   end;
-   return;
+    if nargout>0,
+        varargout=cell(1,nargout);
+    end;
+    return;
 end;
 
 switch cmd,
-case 'read',
-   if nargout>1, % automatically add 'multiple'
-      if nargin==3, % cmd, filename, size
-         varargin{3}='multiple';
-      end;
-   end;
-   Dep=Local_depread(varargin{:});
-   if isstruct(Dep),
-      if length(Dep)<nargout,
-         error('Too many output arguments.');
-      end;
-      if nargout==1
-         varargout{1}=Dep;
-      else
-         for i=1:max(1,nargout),
-            varargout{i}=Dep(i).Data;
-         end;
-      end
-   elseif nargout>1,
-      error('Too many output arguments.');
-   else, % nargout<=1
-      varargout={Dep};
-   end;
-case {'write','append'}
-   Out=Local_depwrite(cmd,varargin{:});
-   if nargout>0,
-      varargout{1}=Out;
-   end;
-otherwise,
-   error('Unknown command');
+    case 'read',
+        if nargout>1, % automatically add 'multiple'
+            if nargin==3, % cmd, filename, size
+                varargin{3}='multiple';
+            end;
+        end;
+        Dep=Local_depread(varargin{:});
+        if isstruct(Dep),
+            if length(Dep)<nargout,
+                error('Too many output arguments.');
+            end;
+            if nargout==1
+                varargout{1}=Dep;
+            else
+                for i=1:max(1,nargout),
+                    varargout{i}=Dep(i).Data;
+                end;
+            end
+        elseif nargout>1,
+            error('Too many output arguments.');
+        else, % nargout<=1
+            varargout={Dep};
+        end;
+    case {'write','append'}
+        Out=Local_depwrite(cmd,varargin{:});
+        if nargout>0,
+            varargout{1}=Out;
+        end;
+    otherwise,
+        error('Unknown command');
 end;
 
 function DP=Local_depread(filename,dimvar,option)
@@ -296,98 +357,98 @@ function DP=Local_depread(filename,dimvar,option)
 DP=[];
 
 if nargin<2,
-   error('No size or grid specified.');
+    error('No size or grid specified.');
 end;
 
 if nargin<3,
-   multiple=0;
+    multiple=0;
 else,
-   multiple=strcmp(option,'multiple');
-   if ~multiple,
-      warning('Unknown option.');
-   end;
+    multiple=strcmp(option,'multiple');
+    if ~multiple,
+        warning('Unknown option.');
+    end;
 end;
 
 if strcmp(filename,'?'),
-   [fname,fpath]=uigetfile('*.*','Select depth file');
-   if ~ischar(fname),
-      return;
-   end;
-   filename=[fpath,fname];
+    [fname,fpath]=uigetfile('*.*','Select depth file');
+    if ~ischar(fname),
+        return;
+    end;
+    filename=[fpath,fname];
 end;
 
 fid=fopen(filename);
 if fid<0,
-   error(['Cannot open ',filename,'.']);
+    error(['Cannot open ',filename,'.']);
 end;
 if isstruct(dimvar), % new grid format G.X, G.Y, G.Enclosure
-   dim=size(dimvar.X)+1;
+    dim=size(dimvar.X)+1;
 elseif iscell(dimvar), % old grid format {X Y Enclosure}
-   dim=size(dimvar{1})+1;
+    dim=size(dimvar{1})+1;
 else
-   dim=dimvar;
+    dim=dimvar;
 end;
 i=1;
 More=1;
 while 1,
-   %
-   % Skip lines starting with *
-   %
-   line='*';
-   cl=0;
-   while ~isempty(line) && line(1)=='*'
-      if cl>0
-         DP(i).Comment{cl,1}=line;
-      end
-      cl=cl+1;
-      currentpoint=ftell(fid);
-      line=fgetl(fid);
-   end
-   fseek(fid,currentpoint,-1);
-   %
-   [DP(i).Data,NRead]=fscanf(fid,'%f',dim);
-   if NRead==0 % accept bagger input files containing 'keyword' on the first line ...
-      str=fscanf(fid,['''%[^' char(10) char(13) ''']%['']']);
-      if ~isempty(str) && isequal(str(end),'''')
-         [DP(i).Data,NRead]=fscanf(fid,'%f',dim);
-         DP(i).Keyword=str(1:end-1);
-      end
-   end
-   DP(i).Data=DP(i).Data;
-   %
-   % Read remainder of last line
-   %
-   Rem=fgetl(fid);
-   if ~ischar(Rem)
-      Rem='';
-   else
-      Rem=deblank(Rem);
-   end
-   if NRead<prod(dim) 
-      if strcmp(Rem,'')
-         Str=sprintf('Not enough data in the file for complete field %i (only %i out of %i values).',i,NRead,prod(dim));
-         if i==1 % most probably wrong file format
-            error(Str);
-         else
-            warning(Str);
-         end
-      else
-         error(sprintf('Invalid string while reading data: %s',Rem));
-      end
-   end
-   pos=ftell(fid);
-   if isempty(fscanf(fid,'%f',1)),
-      break; % no more data (at least not readable)
-   elseif ~multiple,
-      fprintf('More data in the file. Use ''multiple'' option to read all fields.\n');
-      break; % don't read data although there seems to be more ...
-   end;
-   fseek(fid,pos,-1);
-   i=i+1;
+    %
+    % Skip lines starting with *
+    %
+    line='*';
+    cl=0;
+    while ~isempty(line) && line(1)=='*'
+        if cl>0
+            DP(i).Comment{cl,1}=line;
+        end
+        cl=cl+1;
+        currentpoint=ftell(fid);
+        line=fgetl(fid);
+    end
+    fseek(fid,currentpoint,-1);
+    %
+    [DP(i).Data,NRead]=fscanf(fid,'%f',dim);
+    if NRead==0 % accept bagger input files containing 'keyword' on the first line ...
+        str=fscanf(fid,['''%[^' char(10) char(13) ''']%['']']);
+        if ~isempty(str) && isequal(str(end),'''')
+            [DP(i).Data,NRead]=fscanf(fid,'%f',dim);
+            DP(i).Keyword=str(1:end-1);
+        end
+    end
+    DP(i).Data=DP(i).Data;
+    %
+    % Read remainder of last line
+    %
+    Rem=fgetl(fid);
+    if ~ischar(Rem)
+        Rem='';
+    else
+        Rem=deblank(Rem);
+    end
+    if NRead<prod(dim)
+        if strcmp(Rem,'')
+            Str=sprintf('Not enough data in the file for complete field %i (only %i out of %i values).',i,NRead,prod(dim));
+            if i==1 % most probably wrong file format
+                error(Str);
+            else
+                warning(Str);
+            end
+        else
+            error(sprintf('Invalid string while reading data: %s',Rem));
+        end
+    end
+    pos=ftell(fid);
+    if isempty(fscanf(fid,'%f',1)),
+        break; % no more data (at least not readable)
+    elseif ~multiple,
+        fprintf('More data in the file. Use ''multiple'' option to read all fields.\n');
+        break; % don't read data although there seems to be more ...
+    end;
+    fseek(fid,pos,-1);
+    i=i+1;
 end;
 fclose(fid);
 if ~multiple,
-   DP=DP.Data;
+    DP=DP.Data;
 end;
 
 
@@ -414,60 +475,60 @@ end
 
 OK=0;
 if isstruct(DP),
-   % DP(1:N).Data=Matrix;
-   fid=fopen(filename,'w');
-   
-   for i=1:length(DP),
-      if isfield(DP,'Keyword') && ~isempty(DP(i).Keyword)
-         fprintf(fid,'''%s''\n',DP(i).Keyword);
-      end
-      DP(i).Data=DP(i).Data;
-      DP(i).Data(isnan(DP(i).Data))=-999;
-      
-      Frmt=repmat('%15.8f  ',[1 size(DP(i).Data,1)]);
-      k=8*12;
-      Frmt((k-1):k:length(Frmt))='\';
-      Frmt(k:k:length(Frmt))='n';
-      Frmt(end-1:end)='\n';
-      fprintf(fid,Frmt,DP(i).Data);
-   end;
-   
-   fclose(fid);
-   
+    % DP(1:N).Data=Matrix;
+    fid=fopen(filename,'w');
+    
+    for i=1:length(DP),
+        if isfield(DP,'Keyword') && ~isempty(DP(i).Keyword)
+            fprintf(fid,'''%s''\n',DP(i).Keyword);
+        end
+        DP(i).Data=DP(i).Data;
+        DP(i).Data(isnan(DP(i).Data))=-999;
+        
+        Frmt=repmat('%15.8f  ',[1 size(DP(i).Data,1)]);
+        k=8*12;
+        Frmt((k-1):k:length(Frmt))='\';
+        Frmt(k:k:length(Frmt))='n';
+        Frmt(end-1:end)='\n';
+        fprintf(fid,Frmt,DP(i).Data);
+    end;
+    
+    fclose(fid);
+    
 else
-   % DP=Matrix;
-   if DP(end,end)~=-999,
-       switch lower(negate)
-           case {'y'}
-               DP=-DP;
-       end;
-       switch lower(bndopt)
-           case {'9'}
-               DP=[DP -999*ones(size(DP,1),1); ...
-                   -999*ones(1,size(DP,2)+1)];
-           case {'b'}
-               DP=[DP DP(:,end); ...
-                   DP(end,:) DP(end,end)];
-       end
-   end
-   
-   DP(isnan(DP))=-999;
-   
-   switch cmd,
-   case{'write'}
-      fid=fopen(filename,'w');
-   case{'append'}
-      fid=fopen(filename,'a');
-   end
-   
-   Frmt=repmat('%15.8f  ',[1 size(DP,1)]);
-   k=8*12;
-   Frmt((k-1):k:length(Frmt))='\';
-   Frmt(k:k:length(Frmt))='n';
-   Frmt(end-1:end)='\n';
-   fprintf(fid,Frmt,DP);
-   
-   fclose(fid);
+    % DP=Matrix;
+    if DP(end,end)~=-999,
+        switch lower(negate)
+            case {'y'}
+                DP=-DP;
+        end;
+        switch lower(bndopt)
+            case {'9'}
+                DP=[DP -999*ones(size(DP,1),1); ...
+                    -999*ones(1,size(DP,2)+1)];
+            case {'b'}
+                DP=[DP DP(:,end); ...
+                    DP(end,:) DP(end,end)];
+        end
+    end
+    
+    DP(isnan(DP))=-999;
+    
+    switch cmd,
+        case{'write'}
+            fid=fopen(filename,'w');
+        case{'append'}
+            fid=fopen(filename,'a');
+    end
+    
+    Frmt=repmat('%15.8f  ',[1 size(DP,1)]);
+    k=8*12;
+    Frmt((k-1):k:length(Frmt))='\';
+    Frmt(k:k:length(Frmt))='n';
+    Frmt(end-1:end)='\n';
+    fprintf(fid,Frmt,DP);
+    
+    fclose(fid);
 end;
 OK=1;
 
@@ -498,3 +559,4 @@ switch lower(dpsopt)
     case{'mean'}
         zz(2:end,2:end)=(z1+z2+z3+z4)/4;
 end
+

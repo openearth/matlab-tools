@@ -1,5 +1,67 @@
-function s=ddb_findBoundarySections(x,y,opt)
-% This function finds all grid cells that are potential open (or DD) boundaries
+function s = ddb_findBoundarySections(x, y, opt)
+%DDB_FINDBOUNDARYSECTIONS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   s = ddb_findBoundarySections(x, y, opt)
+%
+%   Input:
+%   x   =
+%   y   =
+%   opt =
+%
+%   Output:
+%   s   =
+%
+%   Example
+%   ddb_findBoundarySections
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% This function finds all grid cells that are potential open (or DD) boundaries
 
 switch lower(opt)
     case{'left','right'}
@@ -26,7 +88,7 @@ switch lower(opt)
     case{'bottom','left'}
         for i=2:nx
             for j=1:ny
-                % Check if both corner points are active 
+                % Check if both corner points are active
                 if ~isnan(x(i,j)) && ~isnan(x(i-1,j))
                     % Check if both corner points below are active, if so :
                     % skip
@@ -56,7 +118,7 @@ switch lower(opt)
     case{'top','right'}
         for i=2:nx
             for j=1:ny
-                % Check if both corner points are active 
+                % Check if both corner points are active
                 if ~isnan(x(i,j)) && ~isnan(x(i-1,j))
                     % Check if both corner points below are active, if so :
                     % skip
@@ -102,4 +164,5 @@ s.x1=xx1;
 s.x2=xx2;
 s.y1=yy1;
 s.y2=yy2;
+
 

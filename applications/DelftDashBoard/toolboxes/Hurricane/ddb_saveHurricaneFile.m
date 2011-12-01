@@ -1,5 +1,67 @@
-function ddb_saveHurricaneFile(handles,filename1,filename2)
+function ddb_saveHurricaneFile(handles, filename1, filename2)
+%DDB_SAVEHURRICANEFILE  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_saveHurricaneFile(handles, filename1, filename2)
+%
+%   Input:
+%   handles   =
+%   filename1 =
+%   filename2 =
+%
+%
+%
+%
+%   Example
+%   ddb_saveHurricaneFile
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 fid = fopen(filename1,'w');
 
 % time=clock;
@@ -34,11 +96,11 @@ txt=['NrPoint           ' num2str(handles.Toolbox(tb).Input.nrPoint)];
 fprintf(fid,'%s \n',txt);
 
 for i=1:handles.Toolbox(tb).Input.nrPoint
-   txt=['TrackData         ' datestr(handles.Toolbox(tb).Input.date(i),'yyyymmdd HHMMSS') ' ' ...
-                     num2str(handles.Toolbox(tb).Input.trY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.trX(i),'%6.2f') ' ' ...
-                     num2str(handles.Toolbox(tb).Input.par1(i),'%5.1f') ' ' num2str(handles.Toolbox(tb).Input.par2(i),'%5.1f')];
-
-   fprintf(fid,'%s \n',txt);
+    txt=['TrackData         ' datestr(handles.Toolbox(tb).Input.date(i),'yyyymmdd HHMMSS') ' ' ...
+        num2str(handles.Toolbox(tb).Input.trY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.trX(i),'%6.2f') ' ' ...
+        num2str(handles.Toolbox(tb).Input.par1(i),'%5.1f') ' ' num2str(handles.Toolbox(tb).Input.par2(i),'%5.1f')];
+    
+    fprintf(fid,'%s \n',txt);
 end
 
 fclose(fid);
@@ -50,25 +112,25 @@ fclose(fid);
 % %------------------------------------------------------
 % function SaveWesOldTrackFile(handles,filename2)
 % fid = fopen(filename2,'w');
-% 
+%
 % % time=clock;
 % datestring=datestr(datenum(clock),31);
-% 
+%
 % usrstring='- Unknown user';
 % usr=getenv('username');
-% 
+%
 % if size(usr,1)>0
 %     usrstring=[' - File created by ' usr];
 % end
-% 
+%
 % txt=['* ddb_hurricaneToolbox - DelftDashBoard v' handles.delftDashBoardVersion usrstring ' - ' datestring];
 % fprintf(fid,'%s \n',txt);
-% 
+%
 % txt = '*year MM DD HH  LAT  LON      Dm     Vm      MaxW   R100  R50    R35    B      A     Pdrop';
 % fprintf(fid,'%s \n',txt);
 % txt = '*    (UTC)                    deg.  (kts)    (kts) (nm)  (nm)   (nm)                    (Pa)';
 % fprintf(fid,'%s \n',txt);
-% 
+%
 % if handles.Toolbox(tb).Input.Date(1)<handles.Model(md).Input(ad).ItDate
 %     GiveWarning('Warning','First time hurricane data is smaller than Delft3D reference time!');
 % %     for ii=handles.Toolbox(tb).Input.NrPoint+1:2
@@ -85,7 +147,7 @@ fclose(fid);
 % %     handles.Toolbox(tb).Input.Par2(1)=handles.Toolbox(tb).Input.Par2(2);
 % %     handles.Toolbox(tb).Input.NrPoint=handles.Toolbox(tb).Input.NrPoint+1;
 % end
-% 
+%
 % if handles.Toolbox(tb).Input.Date(end)<handles.Model(md).Input(ad).StopTime
 %     GiveWarning('Warning','Last time hurricane data is smaller than Delft3D stop time!');
 % %     n=handles.Toolbox(tb).Input.NrPoint;
@@ -96,7 +158,7 @@ fclose(fid);
 % %     handles.Toolbox(tb).Input.Par2(n+1)=handles.Toolbox(tb).Input.Par2(n);
 % %     handles.Toolbox(tb).Input.NrPoint=handles.Toolbox(tb).Input.NrPoint+1;
 % end
-% 
+%
 % if handles.Toolbox(tb).Input.Date(1)>handles.Model(md).Input(ad).ItDate
 %     n=handles.Toolbox(tb).Input.NrPoint;
 %     handles.Toolbox(tb).Input.Date(2:n+1)=handles.Toolbox(tb).Input.Date(1:end);
@@ -111,13 +173,13 @@ fclose(fid);
 %     handles.Toolbox(tb).Input.Par2(1)=handles.Toolbox(tb).Input.Par2(2);
 %     handles.Toolbox(tb).Input.NrPoint=n+1;
 % end
-% 
+%
 % if handles.Toolbox(tb).Input.Holland > 0
 %    for i=1:handles.Toolbox(tb).Input.NrPoint
 % %      [YY MM DD] = datevec(handles.Toolbox(tb).Input.Date{i});
 % %      dattim     = [ num2str(YY,'%04d') ' ' num2str(MM,'%02d') ' ' ...
 % %                     num2str(DD,'%02d') ' ' num2str(handles.Toolbox(tb).Input.Time{i},'%02d')];
-%                 
+%
 %      dattim=datestr(handles.Toolbox(tb).Input.Date(i),'yyyy mm dd HH');
 %      if i==1
 %        txt=[ dattim ' ' ...
@@ -135,7 +197,7 @@ fclose(fid);
 %              ' 1e30 '];
 %      end
 %      fprintf(fid,'%s \n',txt);
-%    end  
+%    end
 % else
 %    for i=1:handles.Toolbox(tb).Input.NrPoint
 % %      [YY MM DD] = datevec(handles.Toolbox(tb).Input.Date{i});
@@ -147,26 +209,26 @@ fclose(fid);
 %              num2str(handles.Toolbox(tb).Input.TrY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.TrX(i),'%6.2f') '  ' ...
 %              num2str(handles.Toolbox(tb).Input.InitDir,'%5.1f')   '     ' ...
 %              num2str(handles.Toolbox(tb).Input.InitSpeed,'%5.1f') '    '  ...
-%              num2str(handles.Toolbox(tb).Input.Par1(i),'%5.1f') '  1e30  1e30  1e30  1e30   1e30  ' ...             
+%              num2str(handles.Toolbox(tb).Input.Par1(i),'%5.1f') '  1e30  1e30  1e30  1e30   1e30  ' ...
 %              num2str(handles.Toolbox(tb).Input.Par2(i),'%5.1f')];
 %      else
 %        txt=[ dattim ' ' ...
 %              num2str(handles.Toolbox(tb).Input.TrY(i),'%6.2f') ' ' num2str(handles.Toolbox(tb).Input.TrX(i),'%6.2f') ...
 %              '                     ' ...
-%              num2str(handles.Toolbox(tb).Input.Par1(i),'%5.1f') '  1e30  1e30  1e30  1e30   1e30  '... 
+%              num2str(handles.Toolbox(tb).Input.Par1(i),'%5.1f') '  1e30  1e30  1e30  1e30   1e30  '...
 %              num2str(handles.Toolbox(tb).Input.Par2(i),'%5.1f')];
 %      end
 %      fprintf(fid,'%s \n',txt);
-%    end  
+%    end
 % end
-% 
+%
 % fclose(fid);
-% 
+%
 % %------------------------------------------------------
 % function SaveWesInputfile(handles,filename2)
-% 
+%
 % fout= fopen('wes.inp','w');
-% 
+%
 % fprintf(fout,'%s\n','COMMENT             = WES run');
 % fprintf(fout,'%s\n','COMMENT             = Grid: none');
 % fprintf(fout,'%s\n','BACKGROUND_WIND     = NO');
@@ -199,9 +261,9 @@ fclose(fid);
 % fprintf(fout,'%s\n','D3D_COORDINATES     = Spherical');
 % fprintf(fout,'%s\n','NO._OF_OBS._DATA    = 0');
 % fprintf(fout,'%s\n','OBS._DATA_FILE_NAME =');
-% fprintf(fout,'%s\n','SVWP OUTPUT TYPE    = NO');  
+% fprintf(fout,'%s\n','SVWP OUTPUT TYPE    = NO');
 % fprintf(fout,'%s\n','MERGE_WINDS_&_PRES. = NO');
-% 
+%
 % % fin = fopen('wes_default.inp','r');
 % % fout= fopen('wes.inp','w');
 % % for i=1:24
@@ -221,13 +283,13 @@ fclose(fid);
 % %      end
 % %    fprintf(fout,'%s',txt);
 % % end
-% % 
+% %
 % % fclose(fin);
 % fclose(fout);
-% 
+%
 % %------------------------------------------------------
 % function SaveDefaultGrid(handles)
-% 
+%
 % xmin = single( int16(handles.Toolbox(tb).Input.TrX(1)-20) );
 % ymin = single( int16(handles.Toolbox(tb).Input.TrY(1)-20) );
 % if xmin < -180
@@ -239,21 +301,22 @@ fclose(fid);
 % if ymin > 30
 %    ymin = 30;
 % end
-% 
+%
 % dxdy = 0.1;
-% 
+%
 % X(1,1) = xmin+180;
 % Y(1,1) = ymin;
 % for i=2:400
 %    X(i,1) = X(i-1,1)+dxdy;
 %    Y(i,1) = Y(i-1,1);
 % end
-% 
+%
 % for j=2:400
 %    for i=1:400
 %       X(i,j) = X(i,j-1);
 %       Y(i,j) = Y(i,j-1) + dxdy;
 %    end
-% end 
+% end
 % ddb_wlgrid('write','default.grd',X,Y,'default.enc');
-% 
+%
+
