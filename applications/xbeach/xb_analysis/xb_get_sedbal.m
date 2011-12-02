@@ -65,6 +65,7 @@ function xbo = xb_get_sedbal(xb, varargin)
 %% read options
 
 OPT = struct( ...
+    't', Inf ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -74,6 +75,10 @@ if xb_exist(xb, 'DIMS')
     y   = xb_get(xb, 'DIMS.globaly_DATA');
     t   = xb_get(xb, 'DIMS.globaltime_DATA');
     tm  = xb_get(xb, 'DIMS.meantime_DATA');
+    
+    t   = t(t<=OPT.t);
+    tm  = tm(tm<=OPT.t);
+    nt  = length(t);
     
     g = xb_stagger(x,y);
 else
@@ -85,7 +90,7 @@ end
 if xb_exist(xb, 'zb')
     zb = xb_get(xb, 'zb');
     
-    sed_DATA = squeeze(zb(end,:,:)-zb(1,:,:)).*g.dsdnz';
+    sed_DATA = squeeze(zb(nt,:,:)-zb(1,:,:)).*g.dsdnz';
     ero_DATA = -sed_DATA;
     
     sed_DATA(sed_DATA<0) = 0;
@@ -113,7 +118,7 @@ sed     = sum(sum(sed_DATA));
 ero     = sum(sum(ero_DATA));
 trans   = sum(cell2mat(struct2cell(S)));
 
-bal     = sed-ero-trans;
+bal     = sed-ero+trans;
 
 %% create xbeach structure
 
@@ -154,10 +159,11 @@ function r = integrate_transport(xb, var, g, x, y, t, tm)
         
         da      = .5*pi*(var(2)=='v');
         
+        nt      = length(t);
         tint    = repmat(diff([t(1)-mean(diff(t));t]),[1 1 size(y,1) size(x,2)]);
 
         v       = xb_get(xb, var);
-        v       = squeeze(sum(sum(v,2).*tint,1));
+        v       = squeeze(sum(sum(v(1:nt,:,:,:),2).*tint,1));
 
         r.front = squeeze(-v(:,1)    .*cos(g.alfau(1,:)    -da)'.*g.dnu(1,:)'    );
         r.back  = squeeze( v(:,end)  .*cos(g.alfau(end,:)  -da)'.*g.dnu(end,:)'  );
