@@ -1,5 +1,69 @@
-function [times,u,v]=generateVelocitiesFromFile(flow,openBoundaries,opt)
+function [times u v] = generateVelocitiesFromFile(flow, openBoundaries, opt)
+%GENERATEVELOCITIESFROMFILE  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   [times u v] = generateVelocitiesFromFile(flow, openBoundaries, opt)
+%
+%   Input:
+%   flow           =
+%   openBoundaries =
+%   opt            =
+%
+%   Output:
+%   times          =
+%   u              =
+%   v              =
+%
+%   Example
+%   generateVelocitiesFromFile
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 t0=flow.startTime;
 t1=flow.stopTime;
 dt=opt.bctTimeStep;
@@ -19,7 +83,7 @@ end
 
 % First interpolate data onto boundaries
 for i=1:nr
-
+    
     % End A
     
     x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
@@ -32,7 +96,7 @@ for i=1:nr
     y(i,2)=0.5*(openBoundaries(i).y(end-1) + openBoundaries(i).y(end));
     alphau(i,2)=openBoundaries(i).alphau(2);
     alphav(i,2)=openBoundaries(i).alphav(2);
-
+    
 end
 
 if isfield(flow,'coordSysType')
@@ -74,50 +138,50 @@ times=times(it0:it1);
 
 nt=0;
 try
-for it=it0:it1
-
-    nt=nt+1;
-
-    % Loop through all files
-    
-    disp(['Reading files ' num2str(nt) ' of ' num2str(it1-it0+1)]);
-
-    su=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_u.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
-    sv=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_v.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
-    
-    su.lon=su.lon(ilon1:ilon2);
-    su.lat=su.lat(ilat1:ilat2);
-    su.data=su.data(ilat1:ilat2,ilon1:ilon2,:);
-    sv.lon=sv.lon(ilon1:ilon2);
-    sv.lat=sv.lat(ilat1:ilat2);
-    sv.data=sv.data(ilat1:ilat2,ilon1:ilon2,:);
-    su.lon=mod(su.lon,360);
-    sv.lon=mod(sv.lon,360);
-
-    uu=interpolate3D(x,y,dplayer,su,'u');
-    vv=interpolate3D(x,y,dplayer,sv,'v');
-
-    for j=1:nr
-
-        tua=squeeze(uu(j,1,:))';
-        tub=squeeze(uu(j,2,:))';
-        tva=squeeze(vv(j,1,:))';
-        tvb=squeeze(vv(j,2,:))';
-
-        ua = tua.*cos(alphau(j,1)) + tva.*sin(alphau(j,1));
-        ub = tub.*cos(alphau(j,2)) + tvb.*sin(alphau(j,2));
-        va = tua.*cos(alphav(j,1)) + tva.*sin(alphav(j,1));
-        vb = tub.*cos(alphav(j,2)) + tvb.*sin(alphav(j,2));
-
-        u0(j,1,:,nt)=ua;
-        u0(j,2,:,nt)=ub;
-        v0(j,1,:,nt)=va;
-        v0(j,2,:,nt)=vb;
-
+    for it=it0:it1
+        
+        nt=nt+1;
+        
+        % Loop through all files
+        
+        disp(['Reading files ' num2str(nt) ' of ' num2str(it1-it0+1)]);
+        
+        su=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_u.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+        sv=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_v.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+        
+        su.lon=su.lon(ilon1:ilon2);
+        su.lat=su.lat(ilat1:ilat2);
+        su.data=su.data(ilat1:ilat2,ilon1:ilon2,:);
+        sv.lon=sv.lon(ilon1:ilon2);
+        sv.lat=sv.lat(ilat1:ilat2);
+        sv.data=sv.data(ilat1:ilat2,ilon1:ilon2,:);
+        su.lon=mod(su.lon,360);
+        sv.lon=mod(sv.lon,360);
+        
+        uu=interpolate3D(x,y,dplayer,su,'u');
+        vv=interpolate3D(x,y,dplayer,sv,'v');
+        
+        for j=1:nr
+            
+            tua=squeeze(uu(j,1,:))';
+            tub=squeeze(uu(j,2,:))';
+            tva=squeeze(vv(j,1,:))';
+            tvb=squeeze(vv(j,2,:))';
+            
+            ua = tua.*cos(alphau(j,1)) + tva.*sin(alphau(j,1));
+            ub = tub.*cos(alphau(j,2)) + tvb.*sin(alphau(j,2));
+            va = tua.*cos(alphav(j,1)) + tva.*sin(alphav(j,1));
+            vb = tub.*cos(alphav(j,2)) + tvb.*sin(alphav(j,2));
+            
+            u0(j,1,:,nt)=ua;
+            u0(j,2,:,nt)=ub;
+            v0(j,1,:,nt)=va;
+            v0(j,2,:,nt)=vb;
+            
+        end
     end
-end
 catch
-shite=0;    
+    shite=0;
 end
 clear s sv
 
@@ -131,3 +195,4 @@ for j=1:nr
     end
 end
 times=t;
+

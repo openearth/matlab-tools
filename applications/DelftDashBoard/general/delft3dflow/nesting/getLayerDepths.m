@@ -1,5 +1,67 @@
-function dplayer=getLayerDepths(dp,thick,varargin)
+function dplayer = getLayerDepths(dp, thick, varargin)
+%GETLAYERDEPTHS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   dplayer = getLayerDepths(dp, thick, varargin)
+%
+%   Input:
+%   dp       =
+%   thick    =
+%   varargin =
+%
+%   Output:
+%   dplayer  =
+%
+%   Example
+%   getLayerDepths
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 nlayers=length(thick);
 thick=thick*0.01;
 
@@ -7,14 +69,14 @@ mmax=size(dp,1);
 nmax=size(dp,2);
 
 if nargin==2
-     
+    
     % Sigma layers
     
     sig(1)=0.5*thick(1);
     for i=2:nlayers
         sig(i)=sig(i-1)+0.5*thick(i-1)+0.5*thick(i);
     end
-
+    
     if ndims(dp)==2
         % Initial Conditions
         % Make sure that boundary points are also computed. This is necessary
@@ -85,7 +147,7 @@ if nargin==2
             dplayer(:,i)=dp*sig(i);
         end
     end
-
+    
 else
     % Z-layers
     zbot=varargin{1};
@@ -100,7 +162,7 @@ else
     for k=2:nlayers
         d(k)=d(k-1)-0.5*thick(k-1)*dpth-0.5*thick(k)*dpth;
     end
-
+    
     if ndims(dp)==2
         for i=1:mmax
             for j=1:nmax
@@ -114,3 +176,4 @@ else
     end
     
 end
+

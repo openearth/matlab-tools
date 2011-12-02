@@ -1,5 +1,68 @@
-function nbnd=bnd2bnd(grd1,bnd1,grd2,bnd2)
+function nbnd = bnd2bnd(grd1, bnd1, grd2, bnd2)
+%BND2BND  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   nbnd = bnd2bnd(grd1, bnd1, grd2, bnd2)
+%
+%   Input:
+%   grd1 =
+%   bnd1 =
+%   grd2 =
+%   bnd2 =
+%
+%   Output:
+%   nbnd =
+%
+%   Example
+%   bnd2bnd
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 [x0,y0,enc1]=ddb_wlgrid('read',grd1);
 x1=zeros(size(x0,1)+1,size(x0,2)+1);
 y1=zeros(size(x1));
@@ -40,7 +103,7 @@ for i=1:length(Mstart0)
     Nstart=Nstart0(i);
     Mend=Mend0(i);
     Nend=Nend0(i);
-
+    
     if Nend==Nstart
         if isfinite(x1(Nstart)) & x1(Nstart)~=0
             n1=Nstart;
@@ -72,7 +135,7 @@ for i=1:length(Mstart0)
             n2=Nend-1;
         end
     end
-
+    
     xbnd1=x1(m1,n1);
     xbnd2=x1(m2,n2);
     ybnd1=y1(m1,n1);
@@ -101,7 +164,7 @@ for i=1:length(Mstart0)
         tm2=0;
         tn2=0;
     end
-
+    
     if tm1==tm2 & tm1>0
         nc=nc+1;
         if isfinite(x2(tm1+1)) & x2(tm1+1)~=0
@@ -117,7 +180,7 @@ for i=1:length(Mstart0)
         else
             bndN1(nc)=tn1;
             bndN2(nc)=tn2+1;
-        end            
+        end
     elseif tn1==tn2 & tn1>0
         nc=nc+1;
         if isfinite(x2(tn1+1)) & x2(tn1+1)~=0
@@ -126,14 +189,14 @@ for i=1:length(Mstart0)
         else
             bndN1(nc)=tn1+1;
             bndN2(nc)=tn2+1;
-        end            
+        end
         if tm2>tm1
             bndM1(nc)=tm1+1;
             bndM2(nc)=tm2;
         else
             bndM1(nc)=tm1;
             bndM2(nc)=tm2+1;
-        end            
+        end
     else
         Warning=['Boundary section ' deblank(bndNames{i}) ' not found!']
         bndM1(max(nc,1))=0;
@@ -152,3 +215,4 @@ fclose(fid);
 if nbnd==0
     delete(bnd2)
 end
+

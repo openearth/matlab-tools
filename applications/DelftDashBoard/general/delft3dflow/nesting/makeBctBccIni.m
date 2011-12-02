@@ -1,5 +1,66 @@
-function openBoundaries=makeBctBccIni(option,varargin)
-% Generates bct, bcc and ini files
+function openBoundaries = makeBctBccIni(option, varargin)
+%MAKEBCTBCCINI  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   openBoundaries = makeBctBccIni(option, varargin)
+%
+%   Input:
+%   option         =
+%   varargin       =
+%
+%   Output:
+%   openBoundaries =
+%
+%   Example
+%   makeBctBccIni
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% Generates bct, bcc and ini files
 
 flow=[];
 opt=[];
@@ -59,7 +120,7 @@ end
 opt.latitude=32;
 
 switch lower(option)
-
+    
     case{'bct'}
         
         %% BCT
@@ -67,26 +128,26 @@ switch lower(option)
         % Merge data files
         
         % Water levels
-%         switch opt.waterLevel.BC.source
-%             case {2,3}
-%                 t0=flow.startTime;
-%                 t1=flow.stopTime;
-%                 outfile=[workdir 'TMPOCEAN_waterlevel.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.waterLevel.BC.datafolder,opt.waterLevel.BC.dataname,outfile,'waterlevel',t0,t1);
-%                 opt.waterLevel.BC.file=outfile;
-%         end
-%         % Current
-%         switch opt.current.BC.source
-%             case {2,3}
-%                 t0=flow.startTime;
-%                 t1=flow.stopTime;
-%                 outfile=[workdir 'TMPOCEAN_current_u.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.current.BC.datafolder,opt.current.BC.dataname,outfile,'current_u',t0,t1);
-%                 opt.current.BC.file_u=outfile;
-%                 outfile=[workdir 'TMPOCEAN_current_v.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.current.BC.datafolder,opt.current.BC.dataname,outfile,'current_v',t0,t1);
-%                 opt.current.BC.file_v=outfile;
-%         end
+        %         switch opt.waterLevel.BC.source
+        %             case {2,3}
+        %                 t0=flow.startTime;
+        %                 t1=flow.stopTime;
+        %                 outfile=[workdir 'TMPOCEAN_waterlevel.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.waterLevel.BC.datafolder,opt.waterLevel.BC.dataname,outfile,'waterlevel',t0,t1);
+        %                 opt.waterLevel.BC.file=outfile;
+        %         end
+        %         % Current
+        %         switch opt.current.BC.source
+        %             case {2,3}
+        %                 t0=flow.startTime;
+        %                 t1=flow.stopTime;
+        %                 outfile=[workdir 'TMPOCEAN_current_u.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.current.BC.datafolder,opt.current.BC.dataname,outfile,'current_u',t0,t1);
+        %                 opt.current.BC.file_u=outfile;
+        %                 outfile=[workdir 'TMPOCEAN_current_v.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.current.BC.datafolder,opt.current.BC.dataname,outfile,'current_v',t0,t1);
+        %                 opt.current.BC.file_v=outfile;
+        %         end
         
         openBoundaries=generateBctFile(flow,openBoundaries,opt);
         delft3dflow_saveBctFile(flow,openBoundaries,[inpdir flow.bctFile]);
@@ -95,33 +156,33 @@ switch lower(option)
         
         %% BCC
         
-%         % Merge data files
-%         
-%         % Salinity
-%         switch opt.salinity.BC.source
-%             case {2,3}
-%                 % File
-%                 t0=flow.startTime;
-%                 t1=flow.stopTime;
-%                 outfile=[workdir 'TMPOCEAN_salinity.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.salinity.BC.datafolder,opt.salinity.BC.dataname,outfile,'salinity',t0,t1);
-%                 opt.salinity.BC.file=outfile;
-%             case {5}
-%                 % Profile
-%                 opt.salinity.BC.profile=load([opt.salinity.BC.datafolder filesep opt.salinity.BC.dataname]);
-%         end
-%         % Temperature
-%         switch opt.temperature.BC.source
-%             case {2,3}
-%                 t0=flow.startTime;
-%                 t1=flow.stopTime;
-%                 outfile=[workdir 'TMPOCEAN_temperature.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.temperature.BC.datafolder,opt.temperature.BC.dataname,outfile,'temperature',t0,t1);
-%                 opt.temperature.BC.file=outfile;
-%             case {5}
-%                 % Profile
-%                 opt.temperature.BC.profile=load([opt.temperature.BC.datafolder filesep opt.temperature.BC.dataname]);
-%         end
+        %         % Merge data files
+        %
+        %         % Salinity
+        %         switch opt.salinity.BC.source
+        %             case {2,3}
+        %                 % File
+        %                 t0=flow.startTime;
+        %                 t1=flow.stopTime;
+        %                 outfile=[workdir 'TMPOCEAN_salinity.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.salinity.BC.datafolder,opt.salinity.BC.dataname,outfile,'salinity',t0,t1);
+        %                 opt.salinity.BC.file=outfile;
+        %             case {5}
+        %                 % Profile
+        %                 opt.salinity.BC.profile=load([opt.salinity.BC.datafolder filesep opt.salinity.BC.dataname]);
+        %         end
+        %         % Temperature
+        %         switch opt.temperature.BC.source
+        %             case {2,3}
+        %                 t0=flow.startTime;
+        %                 t1=flow.stopTime;
+        %                 outfile=[workdir 'TMPOCEAN_temperature.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.temperature.BC.datafolder,opt.temperature.BC.dataname,outfile,'temperature',t0,t1);
+        %                 opt.temperature.BC.file=outfile;
+        %             case {5}
+        %                 % Profile
+        %                 opt.temperature.BC.profile=load([opt.temperature.BC.datafolder filesep opt.temperature.BC.dataname]);
+        %         end
         openBoundaries=generateBccFile(flow,openBoundaries,opt);
         delft3dflow_saveBccFile(flow,openBoundaries,[inpdir flow.bccFile]);
         
@@ -131,51 +192,51 @@ switch lower(option)
         
         % Merge data files
         
-%         % Water levels
-%         switch opt.waterLevel.IC.source
-%             case {2,3}
-%                 t0=flow.startTime;
-%                 t1=flow.stopTime;
-%                 outfile=[workdir 'TMPOCEAN_waterlevel.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.waterLevel.IC.datafolder,opt.waterLevel.IC.dataname,outfile,'waterlevel',t0,t1);
-%                 opt.waterLevel.IC.file=outfile;
-%         end
-%         % Current
-%         switch opt.current.IC.source
-%             case {2,3}
-%                 t0=flow.startTime;
-%                 t1=flow.stopTime;
-%                 outfile=[workdir 'TMPOCEAN_current_u.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.current.IC.datafolder,opt.current.IC.dataname,outfile,'current_u',t0,t1);
-%                 opt.current.IC.file_u=outfile;
-%                 outfile=[workdir 'TMPOCEAN_current_v.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.current.IC.datafolder,opt.current.IC.dataname,outfile,'current_v',t0,t1);
-%                 opt.current.IC.file_v=outfile;
-%         end
-%         % Salinity
-%         switch opt.salinity.IC.source
-%             case {2,3}
-%                 t0=flow.startTime;
-%                 t1=flow.stopTime;
-%                 outfile=[workdir 'TMPOCEAN_salinity.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.salinity.IC.datafolder,opt.salinity.IC.dataname,outfile,'salinity',t0,t1);
-%                 opt.salinity.IC.file=outfile;
-%             case {5}
-%                 % Profile
-%                 opt.salinity.IC.profile=load([opt.salinity.IC.datafolder filesep opt.salinity.IC.dataname]);
-%         end
-%         % Temperature
-%         switch opt.temperature.IC.source
-%             case {2,3}
-%                 t0=flow.startTime;
-%                 t1=flow.stopTime;
-%                 outfile=[workdir 'TMPOCEAN_temperature.mat'];
-%                 errmsg=mergeOceanModelFiles(opt.temperature.IC.datafolder,opt.temperature.IC.dataname,outfile,'temperature',t0,t1);
-%                 opt.temperature.IC.file=outfile;
-%             case {5}
-%                 % Profile
-%                 opt.temperature.IC.profile=load([opt.temperature.IC.datafolder filesep opt.temperature.IC.dataname]);
-%         end
+        %         % Water levels
+        %         switch opt.waterLevel.IC.source
+        %             case {2,3}
+        %                 t0=flow.startTime;
+        %                 t1=flow.stopTime;
+        %                 outfile=[workdir 'TMPOCEAN_waterlevel.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.waterLevel.IC.datafolder,opt.waterLevel.IC.dataname,outfile,'waterlevel',t0,t1);
+        %                 opt.waterLevel.IC.file=outfile;
+        %         end
+        %         % Current
+        %         switch opt.current.IC.source
+        %             case {2,3}
+        %                 t0=flow.startTime;
+        %                 t1=flow.stopTime;
+        %                 outfile=[workdir 'TMPOCEAN_current_u.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.current.IC.datafolder,opt.current.IC.dataname,outfile,'current_u',t0,t1);
+        %                 opt.current.IC.file_u=outfile;
+        %                 outfile=[workdir 'TMPOCEAN_current_v.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.current.IC.datafolder,opt.current.IC.dataname,outfile,'current_v',t0,t1);
+        %                 opt.current.IC.file_v=outfile;
+        %         end
+        %         % Salinity
+        %         switch opt.salinity.IC.source
+        %             case {2,3}
+        %                 t0=flow.startTime;
+        %                 t1=flow.stopTime;
+        %                 outfile=[workdir 'TMPOCEAN_salinity.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.salinity.IC.datafolder,opt.salinity.IC.dataname,outfile,'salinity',t0,t1);
+        %                 opt.salinity.IC.file=outfile;
+        %             case {5}
+        %                 % Profile
+        %                 opt.salinity.IC.profile=load([opt.salinity.IC.datafolder filesep opt.salinity.IC.dataname]);
+        %         end
+        %         % Temperature
+        %         switch opt.temperature.IC.source
+        %             case {2,3}
+        %                 t0=flow.startTime;
+        %                 t1=flow.stopTime;
+        %                 outfile=[workdir 'TMPOCEAN_temperature.mat'];
+        %                 errmsg=mergeOceanModelFiles(opt.temperature.IC.datafolder,opt.temperature.IC.dataname,outfile,'temperature',t0,t1);
+        %                 opt.temperature.IC.file=outfile;
+        %             case {5}
+        %                 % Profile
+        %                 opt.temperature.IC.profile=load([opt.temperature.IC.datafolder filesep opt.temperature.IC.dataname]);
+        %         end
         
         generateIniFile(flow,opt,[inpdir flow.iniFile]);
         
@@ -196,3 +257,4 @@ end
 if exist([workdir 'TMPOCEAN_temperature.mat'],'file')
     delete([workdir 'TMPOCEAN_temperature.mat']);
 end
+

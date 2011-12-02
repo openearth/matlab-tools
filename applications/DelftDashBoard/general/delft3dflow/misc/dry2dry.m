@@ -1,5 +1,68 @@
-function ndry=dry2dry(grd1,dry1,grd2,dry2)
+function ndry = dry2dry(grd1, dry1, grd2, dry2)
+%DRY2DRY  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ndry = dry2dry(grd1, dry1, grd2, dry2)
+%
+%   Input:
+%   grd1 =
+%   dry1 =
+%   grd2 =
+%   dry2 =
+%
+%   Output:
+%   ndry =
+%
+%   Example
+%   dry2dry
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 [x0,y0,enc1]=ddb_wlgrid('read',grd1);
 x1=zeros(size(x0,1)+1,size(x0,2)+1);
 y1=zeros(size(x1));
@@ -38,7 +101,7 @@ ip=zeros(size(xc2));
 %fid = fopen('dry.ldb','wt');
 
 for i=1:length(Mstart)
-
+    
     if Mend(i)<Mstart(i) || Nend(i)<Nstart(i)
         mtmp=Mstart(i);
         ntmp=Nstart(i);
@@ -47,13 +110,13 @@ for i=1:length(Mstart)
         Mend(i)=mtmp;
         Nend(i)=ntmp;
     end
-
+    
     n=0;
     for j=Mstart(i)-1:Mend(i)
         n=n+1;
         ldbx{i}(n)=x1(j,Nstart(i)-1);
         ldby{i}(n)=y1(j,Nstart(i)-1);
-    end        
+    end
     for j=Nstart(i):Nend(i)
         n=n+1;
         ldbx{i}(n)=x1(Mend(i),j);
@@ -63,20 +126,20 @@ for i=1:length(Mstart)
         n=n+1;
         ldbx{i}(n)=x1(j,Nend(i));
         ldby{i}(n)=y1(j,Nend(i));
-    end        
+    end
     for j=Nend(i)-1:-1:Nstart(i)-1
         n=n+1;
         ldbx{i}(n)=x1(Mstart(i)-1,j);
         ldby{i}(n)=y1(Mstart(i)-1,j);
     end
-
+    
     ip=ip+inpolygon(xc2,yc2,ldbx{i},ldby{i});
-
-%     fprintf(fid,'%2s %0.3i\n','BL',i);
-%     fprintf(fid,'%7.0f %7.0f\n',n,2);
-%     for j=1:n
-%         fprintf(fid,'%10.1f %10.1f\n',ldbx{i}(j),ldby{i}(j));
-%     end
+    
+    %     fprintf(fid,'%2s %0.3i\n','BL',i);
+    %     fprintf(fid,'%7.0f %7.0f\n',n,2);
+    %     for j=1:n
+    %         fprintf(fid,'%10.1f %10.1f\n',ldbx{i}(j),ldby{i}(j));
+    %     end
     
 end
 
@@ -94,5 +157,6 @@ ndry=length(mdry);
 if ndry==0
     delete(dry2)
 end
+
 
 

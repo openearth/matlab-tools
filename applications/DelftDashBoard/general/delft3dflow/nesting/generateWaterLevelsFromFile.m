@@ -1,5 +1,68 @@
-function [times,wl]=generateWaterLevelsFromFile(flow,openBoundaries,opt)
+function [times wl] = generateWaterLevelsFromFile(flow, openBoundaries, opt)
+%GENERATEWATERLEVELSFROMFILE  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   [times wl] = generateWaterLevelsFromFile(flow, openBoundaries, opt)
+%
+%   Input:
+%   flow           =
+%   openBoundaries =
+%   opt            =
+%
+%   Output:
+%   times          =
+%   wl             =
+%
+%   Example
+%   generateWaterLevelsFromFile
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 t0=flow.startTime;
 t1=flow.stopTime;
 dt=opt.bctTimeStep;
@@ -9,15 +72,15 @@ dt=opt.bctTimeStep;
 nr=length(openBoundaries);
 
 for i=1:nr
-
+    
     % End A
     x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
     y(i,1)=0.5*(openBoundaries(i).y(1) + openBoundaries(i).y(2));
-
+    
     % End B
     x(i,2)=0.5*(openBoundaries(i).x(end-1) + openBoundaries(i).x(end));
     y(i,2)=0.5*(openBoundaries(i).y(end-1) + openBoundaries(i).y(end));
-
+    
 end
 
 if isfield(flow,'coordSysType')
@@ -67,13 +130,14 @@ for it=it0:it1
     
     wl00=s.data+opt.waterLevel.BC.constant;
     wl00=wl00(ilat1:ilat2,ilon1:ilon2);
-    wl00=internaldiffusion(wl00); 
+    wl00=internaldiffusion(wl00);
     wl00=interp2(lon360,s.lat(ilat1:ilat2),wl00,x,y);
     wl0(:,:,nt)=wl00;
 end
 t=t0:dt/1440:t1;
 for j=1:nr
-        wl(j,1,:) = spline(times,squeeze(wl0(j,1,:)),t);
-        wl(j,2,:) = spline(times,squeeze(wl0(j,2,:)),t);
+    wl(j,1,:) = spline(times,squeeze(wl0(j,1,:)),t);
+    wl(j,2,:) = spline(times,squeeze(wl0(j,2,:)),t);
 end
 times=t;
+
