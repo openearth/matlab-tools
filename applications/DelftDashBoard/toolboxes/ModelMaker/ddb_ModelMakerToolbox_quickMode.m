@@ -1,5 +1,65 @@
 function ddb_ModelMakerToolbox_quickMode(varargin)
+%DDB_MODELMAKERTOOLBOX_QUICKMODE  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_ModelMakerToolbox_quickMode(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_ModelMakerToolbox_quickMode
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 handles=getHandles;
 ddb_zoomOff;
 
@@ -16,7 +76,7 @@ if isempty(varargin)
 else
     
     %Options selected
-
+    
     opt=lower(varargin{1});
     
     switch opt
@@ -179,9 +239,9 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         dmin=dmin*111111;
     end
-%    dmin=dmin/2;
-%     dmin=15000;
-
+    %    dmin=dmin/2;
+    %     dmin=15000;
+    
     % Find coordinates of corner points
     x(1)=xori;
     y(1)=yori;
@@ -191,7 +251,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     y(3)=y(2)+ny*dy*sin(pi*(handles.Toolbox(tb).Input.rotation+90)/180);
     x(4)=x(3)+nx*dx*cos(pi*(handles.Toolbox(tb).Input.rotation+180)/180);
     y(4)=y(3)+nx*dx*sin(pi*(handles.Toolbox(tb).Input.rotation+180)/180);
-
+    
     xl(1)=min(x);
     xl(2)=max(x);
     yl(1)=min(y);
@@ -201,7 +261,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     xl(2)=xl(2)+dbuf;
     yl(1)=yl(1)-dbuf;
     yl(2)=yl(2)+dbuf;
-
+    
     % Convert limits to cs of bathy data
     coord=handles.screenParameters.coordinateSystem;
     iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
@@ -211,10 +271,10 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     [xlb,ylb]=ddb_coordConvert(xl,yl,coord,dataCoord);
     
     [xx,yy,zz,ok]=ddb_getBathy(handles,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
-
+    
     % xx and yy are in coordinate system of bathymetry (usually WGS 84)
     % convert bathy grid to active coordinate system
-
+    
     if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
         [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
         [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
@@ -225,11 +285,11 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     end
     
     [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
-
+    
     close(wb);
-
+    
     handles=feval(f,handles,ad,x,y);
-
+    
     setHandles(handles);
     
 else
@@ -302,3 +362,4 @@ else
     GiveWarning('Warning','First generate or load a grid');
 end
 setHandles(handles);
+

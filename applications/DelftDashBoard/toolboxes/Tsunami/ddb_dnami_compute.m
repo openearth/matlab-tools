@@ -1,5 +1,65 @@
 function handles = ddb_dnami_compute(handles)
+%DDB_DNAMI_COMPUTE  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   handles = ddb_dnami_compute(handles)
+%
+%   Input:
+%   handles =
+%
+%   Output:
+%   handles =
+%
+%   Example
+%   ddb_dnami_compute
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 wb = waitbox('Generating Initial Tsunami ...');
 
 progdir=[handles.ToolBoxDir 'tsunami'];
@@ -12,11 +72,11 @@ raddeg=180/pi;
 nseg=handles.Toolbox(tb).Input.NrSegments;
 
 for i=1:nseg
-   userfaultL(i)=handles.Toolbox(tb).Input.FaultLength(i);
-   strike    (i)=handles.Toolbox(tb).Input.Strike(i);
-   dip       (i)=handles.Toolbox(tb).Input.Dip(i);
-   slip      (i)=handles.Toolbox(tb).Input.SlipRake(i);
-end    
+    userfaultL(i)=handles.Toolbox(tb).Input.FaultLength(i);
+    strike    (i)=handles.Toolbox(tb).Input.Strike(i);
+    dip       (i)=handles.Toolbox(tb).Input.Dip(i);
+    slip      (i)=handles.Toolbox(tb).Input.SlipRake(i);
+end
 
 Mw=handles.Toolbox(tb).Input.Magnitude;
 totflength=handles.Toolbox(tb).Input.TotalFaultLength;
@@ -33,9 +93,9 @@ filout=['dtt_out.txt'];
 fid=fopen(filout,'w');
 
 fprintf(fid,'%s %s\n','* East   North  strike    area   depth  dip   lambda         mu', .....
-                      '    U1    U2      U3     L     W     name     Figure');
+    '    U1    U2      U3     L     W     name     Figure');
 fprintf(fid,'%s %s \n','* (km)   (km)  (deg CW N)  0/1  (km)   (deg)         ', .....
-            '             (mm)   (mm)    (mm)  (km)   (km)            ');
+    '             (mm)   (mm)    (mm)  (km)   (km)            ');
 %
 % assume strike and fault direction are identical (as in the rest of the program)
 % i.e. U3 == 0 always
@@ -76,7 +136,7 @@ fprintf(fid,'%s %4.0f %6.1f %6.1f\n', 'Z ', utmz,((utmz-1)*6-180),ygrdarea(1));
 Mg=fix((xgrdarea(2)-xgrdarea(1))/grdsize) + 1;
 Ng=fix((ygrdarea(2)-ygrdarea(1))/grdsize) + 1;
 fprintf(fid,'%s %12.5f %12.5f %12.5f %12.5f %5s %5s\n', 'G ', .....
-        xgrdarea(1),ygrdarea(1),grdsize,grdsize,int2str(Mg),int2str(Ng));
+    xgrdarea(1),ygrdarea(1),grdsize,grdsize,int2str(Mg),int2str(Ng));
 
 ngfile=1;
 fprintf(fid,'%s %s\n', 'S ', [workdir '\' handles.Model(md).Input(ad).GrdFile]);
@@ -182,3 +242,4 @@ switch ButtonName,
 end
 
 figure(handles.GUIHandles.MainWindow);
+

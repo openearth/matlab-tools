@@ -1,5 +1,65 @@
 function ddb_modelMakerInitialConditions
+%DDB_MODELMAKERINITIALCONDITIONS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_modelMakerInitialConditions
+%
+%   Input:
 
+%
+%
+%
+%
+%   Example
+%   ddb_modelMakerInitialConditions
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 ddb_refreshScreen('Toolbox','Initial Conditions');
 
 handles=getHandles;
@@ -162,7 +222,7 @@ switch lower(handles.GUIData.ConstType{ival})
     case{'water level'}
         set(handles.GUIHandles.SelectDataSource,'String',handles.TideModels.longName);
         ii=strmatch(lower(handles.Model(md).Input(ad).WaterLevel.ICOpt),lower(handles.TideModels.Name),'exact');
-        set(handles.GUIHandles.SelectDataSource,'Value',ii);        
+        set(handles.GUIHandles.SelectDataSource,'Value',ii);
         icpar=handles.Model(md).Input(ad).WaterLevel.ICPar;
         icconst=handles.Model(md).Input(ad).WaterLevel.ICConst;
     case{'velocity'}
@@ -199,7 +259,7 @@ switch lower(handles.GUIData.ConstType{ival})
         set(handles.GUIHandles.SelectDataSource,'Value',ii);
         icpar=handles.Model(md).Input(ad).Temperature.ICPar;
         icconst=handles.Model(md).Input(ad).Temperature.ICConst;
-   case{'sediment'}
+    case{'sediment'}
         str{1}='Constant';
         str{2}='Linear';
         str{3}='Block';
@@ -293,7 +353,7 @@ switch lower(handles.GUIData.ConstType{ival})
         handles.Model(md).Input(ad).Salinity.ICPar=icpar;
     case{'temperature'}
         handles.Model(md).Input(ad).Temperature.ICPar=icpar;
-   case{'sediment'}
+    case{'sediment'}
         j=handles.GUIData.ConstNr(ival);
         handles.Model(md).Input(ad).Sediment(j).ICPar=icpar;
     case{'tracer'}
@@ -302,3 +362,4 @@ switch lower(handles.GUIData.ConstType{ival})
 end
 
 setHandles(handles);
+

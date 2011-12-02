@@ -1,5 +1,65 @@
-function hm=ddb_readModels(hm)
+function hm = ddb_readModels(hm)
+%DDB_READMODELS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   hm = ddb_readModels(hm)
+%
+%   Input:
+%   hm =
+%
+%   Output:
+%   hm =
+%
+%   Example
+%   ddb_readModels
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 dirname=[hm.ScenarioDir 'models\'];
 
 continent=hm.Continents;
@@ -7,20 +67,20 @@ continent=hm.Continents;
 noset=0;
 
 for jj=1:8
-
+    
     cntdir=[dirname continent{jj}];
     dr=dir(cntdir);
     for kk=1:length(dr)
         if dr(kk).isdir && ~strcmpi(dr(kk).name(1),'.')
-
+            
             fname=[dirname continent{jj} '\' dr(kk).name '\' dr(kk).name '.dat'];
             txt=ReadTextFile(fname);
-
+            
             % Read Models
-
+            
             
             for i=1:length(txt)
-
+                
                 switch lower(txt{i}),
                     case {'model'},
                         noset=noset+1;
@@ -42,11 +102,11 @@ for jj=1:8
                         hm.Models(noset).UseMeteo='none';
                         hm.Models(noset).MorFac=0;
                         hm.Models(noset).NestedFlowModels=[];
-                        hm.Models(noset).NestedWaveModels=[];                        
+                        hm.Models(noset).NestedWaveModels=[];
                         hm.Models(noset).Continent=continent{jj};
-                        hm.Models(noset).Dir=[hm.ScenarioDir 'models\' continent{jj} '\' dr(kk).name '\']; 
-                        hm.Models(noset).WebSite='none'; 
-                        hm.Models(noset).ArchiveDir=[hm.ArchiveDir continent{jj} '\' dr(kk).name '\archive\']; 
+                        hm.Models(noset).Dir=[hm.ScenarioDir 'models\' continent{jj} '\' dr(kk).name '\'];
+                        hm.Models(noset).WebSite='none';
+                        hm.Models(noset).ArchiveDir=[hm.ArchiveDir continent{jj} '\' dr(kk).name '\archive\'];
                         hm.Models(noset).XTick=0.5;
                         hm.Models(noset).YTick=0.5;
                         hm.Models(noset).PrCorr=101200.0;
@@ -270,4 +330,5 @@ for i=1:hm.NrModels
         hm.Models(mm).NestedWaveModels(n+1)=i;
     end
 end
+
 

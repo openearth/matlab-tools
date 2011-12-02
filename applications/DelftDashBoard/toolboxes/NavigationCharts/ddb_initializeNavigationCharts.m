@@ -16,14 +16,14 @@ function handles = ddb_initializeNavigationCharts(handles, varargin)
 %   Example
 %   ddb_initializeNavigationCharts
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
 %       Maarten van Ormondt
 %
-%       Maarten.vanOrmondt@deltares.nl	
+%       Maarten.vanOrmondt@deltares.nl
 %
 %       P.O. Box 177
 %       2600 MH Delft
@@ -44,13 +44,13 @@ function handles = ddb_initializeNavigationCharts(handles, varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 01 Dec 2011
+% Created: 02 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
 % $Id: $

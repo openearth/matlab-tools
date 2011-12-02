@@ -1,5 +1,65 @@
 function ddb_TsunamiToolbox(varargin)
+%DDB_TSUNAMITOOLBOX  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_TsunamiToolbox(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_TsunamiToolbox
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
@@ -25,7 +85,7 @@ if isempty(varargin)
     ddb_plotTsunami('activate');
 else
     %Options selected
-    opt=lower(varargin{1});    
+    opt=lower(varargin{1});
     switch opt
         case{'editdepth'}
             editQuakeParameters;
@@ -43,7 +103,7 @@ else
             drawFaultLine;
         case{'computewaterlevel'}
             computeWaterLevel;
-    end    
+    end
 end
 
 %%
@@ -89,15 +149,15 @@ if strcmpi(cs0.type,'geographic')
     cs1.type='projected';
     [x,y]=ddb_coordConvert(x,y,cs0,cs1);
     handles.Toolbox(tb).Input.segmentX=x;
-    handles.Toolbox(tb).Input.segmentY=y;    
-else    
+    handles.Toolbox(tb).Input.segmentY=y;
+else
     handles.Toolbox(tb).Input.segmentX=x;
     handles.Toolbox(tb).Input.segmentY=y;
     cs1.name='WGS 84';
     cs1.type='geographic';
     [lon,lat]=ddb_coordConvert(x,y,cs0,cs1);
     handles.Toolbox(tb).Input.segmentLon=lon;
-    handles.Toolbox(tb).Input.segmentLat=lat;    
+    handles.Toolbox(tb).Input.segmentLat=lat;
 end
 
 
@@ -106,9 +166,9 @@ handles.Toolbox(tb).Input.length=pd(end)/1000;
 
 % Compute magnitude
 if (handles.Toolbox(tb).Input.length > 0)
-   Mw = (log10(handles.Toolbox(tb).Input.length) + 2.44) / 0.59;
-   handles.Toolbox(tb).Input.Mw = Mw ;
-end  
+    Mw = (log10(handles.Toolbox(tb).Input.length) + 2.44) / 0.59;
+    handles.Toolbox(tb).Input.Mw = Mw ;
+end
 
 % Compute slip
 
@@ -118,8 +178,8 @@ Areaeq=4;
 
 %
 %       Options to detrmine the fault area, names below refers to the authors
-%         1 = Ward 2004; 
-%         2 = Coopersmith / Wells 1994 [Dreger 1999]; 
+%         1 = Ward 2004;
+%         2 = Coopersmith / Wells 1994 [Dreger 1999];
 %         3 = average (Jef);
 %         4 = Max. Length and Max width from options 1 & 2
 %
@@ -151,14 +211,14 @@ if (Mw > 5)
         fwidth     = area/totflength;
     end
     
-%     handles.Toolbox(tb).Input.TotalFaultLength=totflength;
-%     handles.Toolbox(tb).Input.FaultWidth=fwidth;
-%     handles.Toolbox(tb).Input.Dislocation=disloc;
+    %     handles.Toolbox(tb).Input.TotalFaultLength=totflength;
+    %     handles.Toolbox(tb).Input.FaultWidth=fwidth;
+    %     handles.Toolbox(tb).Input.Dislocation=disloc;
 else
-%     handles.Toolbox(tb).Input.Mw=0.0;
-%     handles.Toolbox(tb).Input.TotalFaultLength=0;
-%     handles.Toolbox(tb).Input.FaultWidth=0;
-%     handles.Toolbox(tb).Input.Dislocation=0;
+    %     handles.Toolbox(tb).Input.Mw=0.0;
+    %     handles.Toolbox(tb).Input.TotalFaultLength=0;
+    %     handles.Toolbox(tb).Input.FaultWidth=0;
+    %     handles.Toolbox(tb).Input.Dislocation=0;
 end
 
 handles.Toolbox(tb).Input.width=fwidth;
@@ -230,7 +290,7 @@ if ~isempty(pathname)
             newSys.name='WGS 84';
             newSys.type='geographic';
             [xx1,yy1]=ddb_coordConvert(xx,yy,oldSys,newSys);
-        end        
+        end
         ddb_plotInitialTsunami(handles,xx1,yy1,zz);
         
         % Interpolate initial tsunami wave onto model grid(s)
@@ -293,12 +353,13 @@ if ~isempty(pathname)
                     end
                 end
         end
-
-      setHandles(handles);
-
+        
+        setHandles(handles);
+        
     catch
         close(wb);
         GiveWarning('txt','Some went wrong while generating tsunami wave.');
     end
 end
+
 

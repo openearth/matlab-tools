@@ -1,5 +1,66 @@
-function handles=ddb_saveMDFOMS(handles,id)
+function handles = ddb_saveMDFOMS(handles, id)
+%DDB_SAVEMDFOMS  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   handles = ddb_saveMDFOMS(handles, id)
+%
+%   Input:
+%   handles =
+%   id      =
+%
+%   Output:
+%   handles =
+%
+%   Example
+%   ddb_saveMDFOMS
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 handles=ddb_countOpenBoundaries(handles,id);
 
 Flow=handles.Model(md).Input(ad);
@@ -11,21 +72,21 @@ incconst=Flow.Salinity.Include || Flow.Temperature.Include || Flow.sediments.inc
 MDF.Ident='Delft3D-FLOW  .03.02 3.39.26';
 MDF.Runtxt=Flow.Description;
 MDF.Filcco=Flow.GrdFile;
-MDF.Fmtcco='FR'; 
+MDF.Fmtcco='FR';
 MDF.Runtxt=Flow.Description;
 if strcmp(handles.ScreenParameters.CoordinateSystem.Type,'Cartesian')
     MDF.Anglat=Flow.Latitude;
 end
 MDF.Grdang=Flow.Orientation;
 MDF.Filgrd=Flow.EncFile;
-MDF.Fmtgrd='FR'; 
+MDF.Fmtgrd='FR';
 MDF.MNKmax(1)=Flow.MMax;
 MDF.MNKmax(2)=Flow.NMax;
 MDF.MNKmax(3)=Flow.KMax;
 MDF.Thick=Flow.Thick;
 if ~isempty(Flow.DepFile)
     MDF.Fildep=Flow.DepFile;
-    MDF.Fmtdep= 'FR'; 
+    MDF.Fmtdep= 'FR';
 else
     MDF.DepUni=Flow.UniformDepth;
 end
@@ -86,12 +147,12 @@ if Flow.Wind
     end
     if ~isempty(Flow.SpwFile)
         MDF.Filweb=Flow.SpwFile;
-    end        
-%     switch lower(Flow.WindType)
-%         case{'uniform'}
-%         case{'spiderweb'}
-%             MDF.Filweb=Flow.SpwFile;
-%     end
+    end
+    %     switch lower(Flow.WindType)
+    %         case{'uniform'}
+    %         case{'spiderweb'}
+    %             MDF.Filweb=Flow.SpwFile;
+    %     end
 end
 MDF.Filwnd='dummy.wnd';
 switch Flow.InitialConditions,
@@ -128,7 +189,7 @@ switch Flow.InitialConditions,
     case{'rst'}
         MDF.Restid=Flow.RstId;
     case{'trim'}
-        MDF.Restid=Flow.TrimId;        
+        MDF.Restid=Flow.TrimId;
 end
 if Flow.NrOpenBoundaries>0
     MDF.Filbnd=Flow.BndFile;
@@ -168,7 +229,7 @@ MDF.Salw=Flow.SalW;
 if Flow.Waves
     MDF.Rouwav=Flow.RouWav;
 else
-    MDF.Rouwav='    ';    
+    MDF.Rouwav='    ';
 end
 MDF.Wstres=Flow.WindStress;
 MDF.Rhoa=Flow.RhoAir;
@@ -375,11 +436,11 @@ for i=1:length(Names)
             end
         case{'tidfor'}
             if size(getfield(MDF,Names{i}))>0
-                str='Tidfor= #M2 S2 N2 K2 #';    
+                str='Tidfor= #M2 S2 N2 K2 #';
                 fprintf(fid,'%s\n',str);
-                str='        #K1 O1 P1 Q1 #';    
+                str='        #K1 O1 P1 Q1 #';
                 fprintf(fid,'%s\n',str);
-                str='        #MF MM SSA---#';    
+                str='        #MF MM SSA---#';
                 fprintf(fid,'%s\n',str);
             end
         case{'itdate'}
@@ -434,3 +495,4 @@ str='METEO5KEY';
 fprintf(fid,'%s\n',str);
 
 fclose(fid);
+

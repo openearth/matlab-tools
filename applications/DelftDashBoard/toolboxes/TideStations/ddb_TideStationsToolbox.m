@@ -1,5 +1,65 @@
 function ddb_TideStationsToolbox(varargin)
+%DDB_TIDESTATIONSTOOLBOX  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_TideStationsToolbox(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_TideStationsToolbox
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
@@ -15,7 +75,7 @@ if isempty(varargin)
     end
 else
     %Options selected
-    opt=lower(varargin{1});    
+    opt=lower(varargin{1});
     switch opt
         case{'makeobservationpoints'}
             addObservationPoints;
@@ -29,7 +89,7 @@ else
             exportTideSignal;
         case{'exportalltidesignals'}
             exportAllTideSignals;
-    end    
+    end
 end
 
 %%
@@ -97,10 +157,10 @@ function selectTideStationFromMap(imagefig, varargins)
 
 h=gco;
 
-if strcmp(get(h,'Tag'),'TideStations')  
-
+if strcmp(get(h,'Tag'),'TideStations')
+    
     handles=getHandles;
-
+    
     % Find the nearest tide station n
     pos = get(handles.GUIHandles.mapAxis, 'CurrentPoint');
     iac=handles.Toolbox(tb).Input.activeDatabase;
@@ -111,13 +171,13 @@ if strcmp(get(h,'Tag'),'TideStations')
     dist=(dxsq+dysq).^0.5;
     [y,n]=min(dist);
     handles.Toolbox(tb).Input.activeTideStation=n;
-
+    
     setHandles(handles);
-
+    
     selectTideStation;
-
+    
     setUIElement('selecttidestation');
-
+    
 end
 
 %%
@@ -242,4 +302,5 @@ end
 setHandles(handles);
 
 setUIElement('tidetable');
+
 

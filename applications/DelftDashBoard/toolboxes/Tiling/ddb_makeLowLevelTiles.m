@@ -1,5 +1,76 @@
-function ddb_makeLowLevelTiles(dr,dataname,ncfiles,dxk,dyk,nnxk,nnyk,nxk,nyk,x0,y0,OPT)
+function ddb_makeLowLevelTiles(dr, dataname, ncfiles, dxk, dyk, nnxk, nnyk, nxk, nyk, x0, y0, OPT)
+%DDB_MAKELOWLEVELTILES  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_makeLowLevelTiles(dr, dataname, ncfiles, dxk, dyk, nnxk, nnyk, nxk, nyk, x0, y0, OPT)
+%
+%   Input:
+%   dr       =
+%   dataname =
+%   ncfiles  =
+%   dxk      =
+%   dyk      =
+%   nnxk     =
+%   nnyk     =
+%   nxk      =
+%   nyk      =
+%   x0       =
+%   y0       =
+%   OPT      =
+%
+%
+%
+%
+%   Example
+%   ddb_makeLowLevelTiles
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 for i=1:length(ncfiles)
     x=nc_varget(ncfiles{i},'lon');
     y=nc_varget(ncfiles{i},'lat');
@@ -35,20 +106,20 @@ for i=694:nnx
         
         xx=xmin:dx:xmax;
         yy=ymin:dy:ymax;
-                
+        
         ifile=find(xmn<=xmin+1e-5 & xmx>=xmin & ymn<=ymin+1e-5 & ymx>=ymin);
         
         if ~isempty(ifile)
             i1=round((xmin-xmn(ifile))/dx);
             j1=round((ymin-ymn(ifile))/dy);
-%                zz=nc_varget(ncfiles{ifile},'depth',[j1 i1],[ny nx]);
-                zz=nc_varget(ncfiles{ifile},'depth',[i1 j1],[nx ny]);
-%                zz=double(zz);
-%                zz(zz<-9998&zz>-10000)=NaN;
-%            if ~isnan(max(max(zz)))
+            %                zz=nc_varget(ncfiles{ifile},'depth',[j1 i1],[ny nx]);
+            zz=nc_varget(ncfiles{ifile},'depth',[i1 j1],[nx ny]);
+            %                zz=double(zz);
+            %                zz(zz<-9998&zz>-10000)=NaN;
+            %            if ~isnan(max(max(zz)))
             if ~isempty(find(zz~=-9999, 1))
-%                zz=single(zz);
-%                zz=zz';
+                %                zz=single(zz);
+                %                zz=zz';
                 fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
                 nc_grid_createNCfile2(fname,xx,yy,zz,OPT);
             end
@@ -56,3 +127,4 @@ for i=694:nnx
         
     end
 end
+

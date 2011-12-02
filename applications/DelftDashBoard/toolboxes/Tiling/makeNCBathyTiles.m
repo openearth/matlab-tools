@@ -1,5 +1,71 @@
-function makeNCBathyTiles(fname1,dr,dataname,nrzoom,nx,ny,OPT)
+function makeNCBathyTiles(fname1, dr, dataname, nrzoom, nx, ny, OPT)
+%MAKENCBATHYTILES  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   makeNCBathyTiles(fname1, dr, dataname, nrzoom, nx, ny, OPT)
+%
+%   Input:
+%   fname1   =
+%   dr       =
+%   dataname =
+%   nrzoom   =
+%   nx       =
+%   ny       =
+%   OPT      =
+%
+%
+%
+%
+%   Example
+%   makeNCBathyTiles
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
 [ncols,nrows,x00,y00,dx0]=readArcInfo(fname1,'info');
 
 pbyp=0;
@@ -59,7 +125,7 @@ if imaketiles
                 for j=1:nny
                     
                     disp(['Processing ' num2str((i-1)*nny+j) ' of ' num2str(nnx*nny) ' ...']);
-
+                    
                     xmin = x0(k)+(i-1)*nx*dx;
                     ymin = y0(k)+(j-1)*ny*dy;
                     xmax = xmin+(nx-1)*dx;
@@ -79,14 +145,14 @@ if imaketiles
                     
                     if pbyp
                         % Read data piece by piece
-%                        [x,y,z]=readArcInfo(fname1,'columns',[j1 j2],'rows',[i1 i2],'x',xx,'y',yy);
+                        %                        [x,y,z]=readArcInfo(fname1,'columns',[j1 j2],'rows',[i1 i2],'x',xx,'y',yy);
                         [x,y,zz]=readArcInfo(fname1,'x',xx,'y',yy);
-%                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z);
+                        %                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z);
                     else
                         zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));
                     end
                     
-%                    zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));
+                    %                    zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));
                     zz=single(zz);
                     zz=zz';
                     fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
@@ -122,12 +188,12 @@ if imaketiles
                     if max(max(iex))>0
                         
                         % Now get the surrounding files and merge them
-%                          figure(1)
-%                          clf
-%                          
-                         zz=zeros(4*ny,4*nx);
-                         zz(zz==0)=NaN;
-
+                        %                          figure(1)
+                        %                          clf
+                        %
+                        zz=zeros(4*ny,4*nx);
+                        zz(zz==0)=NaN;
+                        
                         for ii=1:4
                             for jj=1:4
                                 fname=[dr 'zl' num2str(k-1,'%0.2i') '\' dataname '.zl' num2str(k-1,'%0.2i') '.' num2str(iind(ii),'%0.5i') '.' num2str(jind(jj),'%0.5i') '.nc'];
@@ -142,22 +208,22 @@ if imaketiles
                                     z=zeros(ny,nx);
                                     z(z==0)=NaN;
                                 end
-%                        subplot(4,4,ii*jj)
-%                        surf(double(z));view(2);axis equal;shading flat;colorbar;
-
+                                %                        subplot(4,4,ii*jj)
+                                %                        surf(double(z));view(2);axis equal;shading flat;colorbar;
+                                
                                 zz((jj-1)*ny+1:jj*ny,(ii-1)*nx+1:ii*nx)=z;
-%                                 clf;
-%                                 surf(double(zz));view(2);axis equal;shading flat;colorbar;hold on;set(gca,'xlim',[0 1200],'ylim',[0 1200]);
-%                                 drawnow;
-%                                pause(2)
+                                %                                 clf;
+                                %                                 surf(double(zz));view(2);axis equal;shading flat;colorbar;hold on;set(gca,'xlim',[0 1200],'ylim',[0 1200]);
+                                %                                 drawnow;
+                                %                                pause(2)
                             end
                         end
-%                         if (i-1)*nny+j==13
-%                             xxxx=1
-%                         end
+                        %                         if (i-1)*nny+j==13
+                        %                             xxxx=1
+                        %                         end
                         % Now crop and derefine tile
                         
-%                        zz=zz(ny-1:3*ny-1,nx-1:3*nx-1);
+                        %                        zz=zz(ny-1:3*ny-1,nx-1:3*nx-1);
                         zz=zz(ny:3*ny,nx:3*nx);
                         z=derefine3(zz);
                         z=z';
@@ -173,11 +239,11 @@ if imaketiles
                             xx=xmin:dx:xmax;
                             yy=ymin:dy:ymax;
                             
-%                             figure(2)
-%                             clf
-%                             surf(lon,lat,double(z));view(2);axis equal;shading flat;colorbar;
-%                             title(num2str(max(max(z))))
-%                            pause(5)
+                            %                             figure(2)
+                            %                             clf
+                            %                             surf(lon,lat,double(z));view(2);axis equal;shading flat;colorbar;
+                            %                             title(num2str(max(max(z))))
+                            %                            pause(5)
                             
                             fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl' num2str(k,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
                             nc_grid_createNCfile2(fname,xx,yy,z,OPT);
@@ -220,3 +286,4 @@ if imakemeta
     fnamemeta=[dr dataname '.nc'];
     nc_createNCmetafile(fnamemeta,x0,y0,dxk,dyk,nnxk,nnyk,nxk,nyk,iavailable,javailable,OPT);
 end
+

@@ -1,5 +1,65 @@
 function ddb_plotGridOutline(c)
+%DDB_PLOTGRIDOUTLINE  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_plotGridOutline(c)
+%
+%   Input:
+%   c =
+%
+%
+%
+%
+%   Example
+%   ddb_plotGridOutline
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 handles=getHandles;
 
 xori=handles.Toolbox(tb).Input.XOri;
@@ -29,7 +89,7 @@ set(plt,'Tag','GridOutline');
 hold on;
 
 for i=1:4
-%    sh(i)=plot3(x(i),y(i),5000,'ko');
+    %    sh(i)=plot3(x(i),y(i),5000,'ko');
     sh(i)=plot3(x(i),y(i),200,'ko');hold on;
     set(sh(i),'Tag','SelectionHighlight','MarkerSize',4);
     set(sh(i),'MarkerEdgeColor','k');
@@ -96,67 +156,67 @@ handles=getHandles;
 
 switch usd.nr,
     case 1
-
-            x0=[posx posy];
-
-            x1=[usd.x(3) usd.y(3)];
-            x2=[usd.x(2) usd.y(2)];
-            pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
-            distx=det([x2-x1 ; x1-x0])/pt;
-
-            x1=[usd.x(4) usd.y(4)];
-            x2=[usd.x(3) usd.y(3)];
-            pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
-            disty=det([x2-x1 ; x1-x0])/pt;
-
-            if distx>0 && disty>0
-                handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
-                handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
-                handles.Toolbox(tb).Input.XOri=posx;
-                handles.Toolbox(tb).Input.YOri=posy;
-                set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
-                set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
-                set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-                set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
-            end
-            
-     case 2
-         
-         x0=[posx posy];
-
-         x1=[usd.x(1) usd.y(1)];
-         x2=[usd.x(4) usd.y(4)];
-         pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
-         distx=det([x2-x1 ; x1-x0])/pt;
-
-         x1=[usd.x(4) usd.y(4)];
-         x2=[usd.x(3) usd.y(3)];
-         pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
-         disty=det([x2-x1 ; x1-x0])/pt;
-
-         if distx>0 && disty>0
-
-             handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
-             handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
-             
-             handles.Toolbox(tb).Input.XOri=posx-handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.dX*cos(pi*handles.Toolbox(tb).Input.Rotation/180);
-             handles.Toolbox(tb).Input.YOri=posy-handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.dX*sin(pi*handles.Toolbox(tb).Input.Rotation/180);
-
-             set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
-             set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
-             set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-             set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
-
-         end
-
-    case 3
+        
         x0=[posx posy];
-
+        
+        x1=[usd.x(3) usd.y(3)];
+        x2=[usd.x(2) usd.y(2)];
+        pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
+        distx=det([x2-x1 ; x1-x0])/pt;
+        
+        x1=[usd.x(4) usd.y(4)];
+        x2=[usd.x(3) usd.y(3)];
+        pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
+        disty=det([x2-x1 ; x1-x0])/pt;
+        
+        if distx>0 && disty>0
+            handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
+            handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
+            handles.Toolbox(tb).Input.XOri=posx;
+            handles.Toolbox(tb).Input.YOri=posy;
+            set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
+            set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
+            set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
+            set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
+        end
+        
+    case 2
+        
+        x0=[posx posy];
+        
         x1=[usd.x(1) usd.y(1)];
         x2=[usd.x(4) usd.y(4)];
         pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
         distx=det([x2-x1 ; x1-x0])/pt;
-
+        
+        x1=[usd.x(4) usd.y(4)];
+        x2=[usd.x(3) usd.y(3)];
+        pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
+        disty=det([x2-x1 ; x1-x0])/pt;
+        
+        if distx>0 && disty>0
+            
+            handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
+            handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
+            
+            handles.Toolbox(tb).Input.XOri=posx-handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.dX*cos(pi*handles.Toolbox(tb).Input.Rotation/180);
+            handles.Toolbox(tb).Input.YOri=posy-handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.dX*sin(pi*handles.Toolbox(tb).Input.Rotation/180);
+            
+            set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
+            set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
+            set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
+            set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
+            
+        end
+        
+    case 3
+        x0=[posx posy];
+        
+        x1=[usd.x(1) usd.y(1)];
+        x2=[usd.x(4) usd.y(4)];
+        pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
+        distx=det([x2-x1 ; x1-x0])/pt;
+        
         x1=[usd.x(2) usd.y(2)];
         x2=[usd.x(1) usd.y(1)];
         pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
@@ -165,37 +225,37 @@ switch usd.nr,
         if distx>0 && disty>0
             handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
             handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
-
+            
             set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
             set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
         end
-
+        
     case 4
         x0=[posx posy];
-
+        
         x1=[usd.x(3) usd.y(3)];
         x2=[usd.x(2) usd.y(2)];
         pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
         distx=det([x2-x1 ; x1-x0])/pt;
-
+        
         x1=[usd.x(2) usd.y(2)];
         x2=[usd.x(1) usd.y(1)];
         pt=sqrt((x2(1)-x1(1))^2  + (x2(2)-x1(2))^2);
         disty=det([x2-x1 ; x1-x0])/pt;
-
+        
         if distx>0 && disty>0
-
+            
             handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
             handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
-
+            
             handles.Toolbox(tb).Input.XOri=posx+handles.Toolbox(tb).Input.nY*handles.Toolbox(tb).Input.dY*sin(pi*handles.Toolbox(tb).Input.Rotation/180);
             handles.Toolbox(tb).Input.YOri=posy-handles.Toolbox(tb).Input.nY*handles.Toolbox(tb).Input.dY*cos(pi*handles.Toolbox(tb).Input.Rotation/180);
-
+            
             set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
             set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
             set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
             set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
-
+            
         end
 end
 
@@ -251,3 +311,4 @@ function StopTrack(imagefig, varargins)
 ddb_setWindowButtonUpDownFcn;
 ddb_setWindowButtonMotionFcn;
 set(0,'userdata',[]);
+

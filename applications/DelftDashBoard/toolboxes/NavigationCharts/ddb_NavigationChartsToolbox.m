@@ -1,5 +1,65 @@
 function ddb_NavigationChartsToolbox(varargin)
+%DDB_NAVIGATIONCHARTSTOOLBOX  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   ddb_NavigationChartsToolbox(varargin)
+%
+%   Input:
+%   varargin =
+%
+%
+%
+%
+%   Example
+%   ddb_NavigationChartsToolbox
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 02 Dec 2011
+% Created with Matlab version: 7.11.0.584 (R2010b)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+%%
 if isempty(varargin)
     % New tab selected
     handles=getHandles;
@@ -16,7 +76,7 @@ if isempty(varargin)
     end
 else
     %Options selected
-    opt=lower(varargin{1});    
+    opt=lower(varargin{1});
     switch opt
         case{'selectdatabase'}
             selectDatabase;
@@ -34,7 +94,7 @@ else
             exportSoundings;
         case{'exportcontours'}
             exportContours;
-    end    
+    end
 end
 
 %%
@@ -139,25 +199,25 @@ xlim=get(gca,'xlim');
 ylim=get(gca,'ylim');
 
 if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)
-
+    
     i=findBox(handles,posx,posy);
     
     kar=findobj(gca,'Tag','BBoxENC');
     set(kar,'Color','Blue');
     set(kar,'LineWidth',1);
-
+    
     handles.Toolbox(tb).Input.activeChartName='';
-
+    
     if ~isempty(i)
         kar=findobj(gca,'Tag','BBoxENC','UserData',i);
         set(kar,'Color','Red');
         handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iac).box(i).Description;
     end
-
+    
     setHandles(handles);
-
+    
     setUIElement('textchartname');
-
+    
 end
 
 %%
@@ -178,11 +238,11 @@ handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iab).
 
 switch get(gcf,'SelectionType')
     case{'normal'}
-            
-        if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)            
-            i=findBox(handles,posx,posy);            
+        
+        if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)
+            i=findBox(handles,posx,posy);
             if ~isempty(i)
-                handles=selectNavigationChart(handles,i);                
+                handles=selectNavigationChart(handles,i);
                 handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iab).box(i).Description;
             else
                 % Make chart outlines blue again
@@ -193,7 +253,7 @@ switch get(gcf,'SelectionType')
                 kar=findobj(gca,'Tag','BBoxENC','UserData',iac);
                 set(kar,'Color','Red');
                 set(kar,'LineWidth',2);
-            end            
+            end
         end
     otherwise
         % Make chart outlines blue again
@@ -315,7 +375,7 @@ for i=1:n
     xl(i,1)=min(x1(i),x2(i));
     xl(i,2)=max(x1(i),x2(i));
     yl(i,1)=min(y1(i),y2(i));
-    yl(i,2)=max(y1(i),y2(i));    
+    yl(i,2)=max(y1(i),y2(i));
     area(i)=(xl(i,2)-xl(i,1))*(yl(i,2)-yl(i,1));
 end
 
@@ -327,3 +387,4 @@ i=handles.Toolbox(tb).Input.activeChart;
 kar=findobj(gca,'Tag','BBoxENC','UserData',i);
 set(kar,'Color','Red');
 set(kar,'LineWidth',2);
+
