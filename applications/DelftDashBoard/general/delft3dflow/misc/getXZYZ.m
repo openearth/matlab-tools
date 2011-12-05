@@ -1,4 +1,4 @@
-function varargout = getXZYZ(varargin)
+function [xz,yz] = getXZYZ(x,y)
 %GETXZYZ  One line description goes here.
 %
 %   More detailed description goes here.
