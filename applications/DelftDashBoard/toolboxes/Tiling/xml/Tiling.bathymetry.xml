@@ -128,9 +128,29 @@
     <tooltipstring>Edit vertical level w.r.t. Mean Sea Level</tooltipstring>
   </element> 
   <element>
+    <tag>selectpositiveupdown</tag>
+    <style>popupmenu</style>
+    <position>500 10 50 20</position>
+    <text>Positive</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.bathymetry.positiveUp</variable>
+    <type>integer</type>
+    <tooltipstring>Select positive direction in data file</tooltipstring>
+    <list>
+      <texts>
+        <text>up</text>
+        <text>down</text>
+      </texts>
+      <values>
+        <value>1</value>
+        <value>0</value>
+      </values>
+    </list>
+  </element>  
+  <element>
     <tag>selectprecision</tag>
     <style>popupmenu</style>
-    <position>830 70 100 20</position>
+    <position>830 95 100 20</position>
     <text>Precision</text>
     <textposition>left</textposition>
     <variable>handles.Toolbox(tb).Input.bathymetry.type</variable>
@@ -149,6 +169,17 @@
       </values>
     </list>
   </element>  
+  <element>
+    <tag>editdataname</tag>
+    <style>edit</style>
+    <position>830 65 100 20</position>
+    <text>Data Name</text>
+    <textposition>left</textposition>
+    <enable>1</enable>
+    <variable>handles.Toolbox(tb).Input.bathymetry.dataName</variable>
+    <type>string</type>
+    <tooltipstring>Edit short name of data files (no spaces)</tooltipstring>
+  </element> 
   <element>
     <tag>editattributes</tag>
     <style>pushbutton</style>

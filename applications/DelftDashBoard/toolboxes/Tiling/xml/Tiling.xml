@@ -21,6 +21,7 @@
           <tabstring>Shoreline</tabstring>
           <callback>ddb_TilingToolbox_shoreline</callback>
           <elements>Tiling.shoreline.xml</elements>
+          <enable>0</enable>
         </tab>
       </tabs>
     </element>
