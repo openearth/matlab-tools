@@ -26,6 +26,7 @@
     <tooltipstring>Edit model start time</tooltipstring>
     <text>Start Time</text>
     <textposition>left</textposition>
+    <onchange>ddb_updateOutputTimes</onchange>
   </element>
   <element>
     <tag>editstoptime</tag>
@@ -36,6 +37,7 @@
     <tooltipstring>Edit model stop time</tooltipstring>
     <text>Stop Time</text>
     <textposition>left</textposition>
+    <onchange>ddb_updateOutputTimes</onchange>
   </element>
   <element>
     <tag>edittimestep</tag>

@@ -229,6 +229,7 @@
     <textposition>left</textposition>
     <variable>handles.Model(md).Input(ad).startTime</variable>
     <type>datetime</type>
+    <onchange>ddb_updateOutputTimes</onchange>
   </element>
   <element>
     <tag>editstoptime</tag>
@@ -239,6 +240,7 @@
     <textposition>left</textposition>
     <variable>handles.Model(md).Input(ad).stopTime</variable>
     <type>datetime</type>
+    <onchange>ddb_updateOutputTimes</onchange>
   </element>
   <element>
     <tag>edittimestep</tag>
