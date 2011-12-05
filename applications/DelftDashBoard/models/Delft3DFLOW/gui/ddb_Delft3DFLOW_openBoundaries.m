@@ -101,8 +101,8 @@ else
             setInstructions({'','','Select open boundary from map to delete'});
             setHandles(handles);
             if handles.Model(md).Input(ad).deleteOpenBoundary
-                % Delete dry point selected from list
-                deleteOpenBoundary;
+                % Delete open boundary selected from list
+                deleteOpenBoundaries;
             end
             
         case{'select'}
@@ -462,6 +462,18 @@ end
 setHandles(handles);
 refreshOpenBoundaries;
 %refreshOpenBoundaryFiles;
+
+
+%%
+function deleteOpenBoundaries
+handles=getHandles;
+iac=handles.Model(md).Input(ad).activeOpenBoundaries;
+for ii=length(iac):-1:1
+    handles.Model(md).Input(ad).activeOpenBoundary=iac(ii);
+    setHandles(handles);
+    deleteOpenBoundary;    
+    handles=getHandles;
+end
 
 %%
 function deleteOpenBoundary
