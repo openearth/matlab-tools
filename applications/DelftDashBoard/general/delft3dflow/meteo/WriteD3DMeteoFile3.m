@@ -59,6 +59,13 @@ function varargout = WriteD3DMeteoFile3(varargin)
 % $HeadURL$
 % $Keywords: $
 
+if ~strcmpi(meteodir(end),filesep)
+    meteodir=[meteodir filesep];
+end
+if ~strcmpi(rundir(end),filesep)
+    meteodir=[rundir filesep];
+end
+
 %%
 inclh=0;
 if ~isempty(varargin)
