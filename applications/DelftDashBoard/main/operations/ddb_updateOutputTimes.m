@@ -2,7 +2,8 @@ function ddb_updateOutputTimes(varargin)
 %ddb_Delft3DFLOW_changeStartStopTimes
 %
 %   This function updates start and stop times of output, when start or
-%   stop time of model is changed.
+%   stop time of model is changed. Start and stop times of wind input are
+%   also updated.
 %   To be used within Delft Dashboard only
 
 %% Copyright notice
@@ -44,17 +45,37 @@ function ddb_updateOutputTimes(varargin)
 % $Keywords: $
 
 handles=getHandles;
-if isfield(handles.Model(md).Input(ad),'mapStartTime')
-    handles.Model(md).Input(ad).mapStartTime=handles.Model(md).Input(ad).startTime;
+nrdomains=length(handles.Model(md).Input);
+% Start and stop times of other domains
+for id=1:nrdomains
+    if id~=ad
+        handles.Model(md).Input(id).startTime=handles.Model(md).Input(id).startTime;
+        handles.Model(md).Input(id).stopTime=handles.Model(md).Input(ad).stopTime;
+    end
 end
-if isfield(handles.Model(md).Input(ad),'mapStopTime')
-    handles.Model(md).Input(ad).mapStopTime=handles.Model(md).Input(ad).stopTime;
-end
-if isfield(handles.Model(md).Input(ad),'comStartTime')
-    handles.Model(md).Input(ad).comStartTime=handles.Model(md).Input(ad).startTime;
-end
-if isfield(handles.Model(md).Input(ad),'comStopTime')
-    handles.Model(md).Input(ad).comStopTime=handles.Model(md).Input(ad).stopTime;
+% Output times for all domains
+for id=1:nrdomains
+    if isfield(handles.Model(md).Input(id),'mapStartTime')
+        handles.Model(md).Input(id).mapStartTime=handles.Model(md).Input(id).startTime;
+    end
+    if isfield(handles.Model(md).Input(id),'mapStopTime')
+        handles.Model(md).Input(id).mapStopTime=handles.Model(md).Input(id).stopTime;
+    end
+    if isfield(handles.Model(md).Input(id),'comStartTime')
+        handles.Model(md).Input(id).comStartTime=handles.Model(md).Input(id).startTime;
+    end
+    if isfield(handles.Model(md).Input(id),'comStopTime')
+        handles.Model(md).Input(id).comStopTime=handles.Model(md).Input(id).stopTime;
+    end
+    if isfield(handles.Model(md).Input(id),'windTimeSeriesSpeed')
+        if length(handles.Model(md).Input(id).windTimeSeriesSpeed)==2
+            if handles.Model(md).Input(id).windTimeSeriesSpeed(1)==handles.Model(md).Input(id).windTimeSeriesSpeed(2) && ...
+                handles.Model(md).Input(id).windTimeSeriesDirection(1)==handles.Model(md).Input(id).windTimeSeriesDirection(2)
+                handles.Model(md).Input(id).windTimeSeriesT(1)=handles.Model(md).Input(id).startTime;
+                handles.Model(md).Input(id).windTimeSeriesT(2)=handles.Model(md).Input(id).stopTime;
+            end
+        end        
+    end
 end
 setHandles(handles);
 
