@@ -77,6 +77,9 @@ else
     % Read in one go!
     [x,y,z]=readArcInfo(fname1);
 end
+if ~OPT.positiveup
+    z=z*-1;
+end
 
 imaketiles=1;
 imakemeta=1;
@@ -156,6 +159,9 @@ if imaketiles
                     zz=single(zz);
                     zz=zz';
                     fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                    
+                    OPT.fillValue=-999;
+
                     nc_grid_createNCfile2(fname,xx,yy,zz,OPT);
                     
                 end
@@ -246,6 +252,9 @@ if imaketiles
                             %                            pause(5)
                             
                             fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl' num2str(k,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+
+                            OPT.fillValue=-999;
+
                             nc_grid_createNCfile2(fname,xx,yy,z,OPT);
                             
                         end

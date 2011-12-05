@@ -78,7 +78,7 @@ globalID = netcdf.getConstant('NC_GLOBAL');
 
 %% add attributes global to the dataset
 
-netcdf.putAtt(NCid,globalID, 'Conventions',     OPT.Conventions);
+netcdf.putAtt(NCid,globalID, 'Conventions',     OPT.conventions);
 netcdf.putAtt(NCid,globalID, 'CF:featureType',  OPT.CF_featureType); % http://www.unidata.ucar.edu/software/netcdf-java/v4.1/javadoc/ucar/nc2/constants/CF.FeatureType.html
 netcdf.putAtt(NCid,globalID, 'title',           OPT.title);
 netcdf.putAtt(NCid,globalID, 'institution',     OPT.institution);

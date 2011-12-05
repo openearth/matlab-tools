@@ -65,10 +65,10 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     setUIElements('bathymetrypanel.export');
-    %    ddb_plotBathymetry('activate');
+%    ddb_plotBathymetry('activate');
 else
     %Options selected
-    opt=lower(varargin{1});
+    opt=lower(varargin{1});    
     switch opt
         case{'selectdataset'}
             selectDataset;
@@ -78,7 +78,7 @@ else
             editAttributes;
         case{'generatetiles'}
             generateTiles;
-    end
+    end    
 end
 
 %%
@@ -86,7 +86,7 @@ function selectDataset
 
 handles=getHandles;
 
-[ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.Toolbox(tb).Input.bathymetry.fileName,'info');
+[ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.Toolbox(tb).Input.bathymetry.dataFile,'info');
 
 % Determine default values for this dataset
 
@@ -109,13 +109,13 @@ else
     handles.Toolbox(tb).Input.bathymetry.nrZoom=1;
 end
 
+setHandles(handles);
+
 setUIElement('tilingpanel.bathymetry.editnx');
 setUIElement('tilingpanel.bathymetry.editny');
 setUIElement('tilingpanel.bathymetry.editnrzoom');
 setUIElement('tilingpanel.bathymetry.editx0');
 setUIElement('tilingpanel.bathymetry.edity0');
-
-setHandles(handles);
 
 %%
 function selectCS
@@ -163,10 +163,11 @@ handles=getHandles;
 OPT.EPSGcode                     = handles.Toolbox(tb).Input.bathymetry.EPSGcode;
 OPT.EPSGname                     = handles.Toolbox(tb).Input.bathymetry.EPSGname;
 OPT.EPSGtype                     = handles.Toolbox(tb).Input.bathymetry.EPSGtype;
-OPT.VertCoordName                = handles.Toolbox(tb).Input.bathymetry.VertCoordName;
-OPT.VertCoordLevel               = handles.Toolbox(tb).Input.bathymetry.VertCoordLevel;
+OPT.VertCoordName                = handles.Toolbox(tb).Input.bathymetry.vertCoordName;
+OPT.VertCoordLevel               = handles.Toolbox(tb).Input.bathymetry.vertCoordLevel;
 OPT.nc_library                   = handles.Toolbox(tb).Input.bathymetry.nc_library;
 OPT.tp                           = handles.Toolbox(tb).Input.bathymetry.type;
+OPT.positiveup                   = handles.Toolbox(tb).Input.bathymetry.positiveUp;
 
 f=fieldnames(handles.Toolbox(tb).Input.bathymetry.attributes);
 
@@ -174,14 +175,13 @@ for i=1:length(f);
     OPT.(f{i})=handles.Toolbox(tb).Input.bathymetry.attributes.(f{i});
 end
 
-fname=handles.Toolbox(tb).Input.bathymetry.fileName;
+fname=handles.Toolbox(tb).Input.bathymetry.dataFile;
 dr=[handles.Toolbox(tb).Input.bathymetry.dataDir filesep handles.Toolbox(tb).Input.bathymetry.dataName filesep];
 dataname=handles.Toolbox(tb).Input.bathymetry.dataName;
 nrzoom=handles.Toolbox(tb).Input.bathymetry.nrZoom;
 nx=handles.Toolbox(tb).Input.bathymetry.nx;
 ny=handles.Toolbox(tb).Input.bathymetry.ny;
 
-wb = waitbox('Generating Tiles ...');
+wb = waitbox('Generating Tiles ...'); 
 makeNCBathyTiles(fname,dr,dataname,nrzoom,nx,ny,OPT);
 close(wb);
-

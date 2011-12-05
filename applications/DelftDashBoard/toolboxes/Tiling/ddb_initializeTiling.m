@@ -80,7 +80,7 @@ handles.Toolbox(ii).Input.bathymetry.nx=300;
 handles.Toolbox(ii).Input.bathymetry.ny=300;
 handles.Toolbox(ii).Input.bathymetry.nrZoom=5;
 
-handles.Toolbox(ii).Input.bathymetry.fileName='';
+handles.Toolbox(ii).Input.bathymetry.dataFile='';
 handles.Toolbox(ii).Input.bathymetry.dataName='';
 handles.Toolbox(ii).Input.bathymetry.dataDir=[handles.bathyDir];
 
@@ -91,6 +91,7 @@ handles.Toolbox(ii).Input.bathymetry.vertCoordName                = 'MSL';
 handles.Toolbox(ii).Input.bathymetry.vertCoordLevel               = 0.0;
 handles.Toolbox(ii).Input.bathymetry.nc_library                   = 'matlab';
 handles.Toolbox(ii).Input.bathymetry.type                         = 'float';
+handles.Toolbox(ii).Input.bathymetry.positiveUp                   = 1;
 
 handles.Toolbox(ii).Input.bathymetry.radioGeo                     = 1;
 handles.Toolbox(ii).Input.bathymetry.radioProj                    = 0;
@@ -128,4 +129,3 @@ handles.Toolbox(ii).Input.shoreline.terms_for_use                = 'Use as you l
 handles.Toolbox(ii).Input.shoreline.disclaimer                   = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
 handles.Toolbox(ii).Input.shoreline.nc_library                   = 'matlab';
 handles.Toolbox(ii).Input.shoreline.type                         = 'float';
-
