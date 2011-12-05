@@ -61,7 +61,7 @@ function varargout = findStringUI(varargin)
 
 %%
 
-handles.SearchWindow    = MakeNewWindow_st('Find',[295 320],'modal');
+handles.SearchWindow    = MakeNewWindow('Find',[295 320],'modal');
 bgc = get(gcf,'Color');
 
 handles.ListCS     = uicontrol(gcf,'Style','listbox','String',{''},'Position', [ 20 100 255 200],'BackgroundColor',[1 1 1]);
