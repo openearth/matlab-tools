@@ -76,7 +76,7 @@ ntry=1;
 
 urlstr = getMeteoUrl(meteosource,cycledate,cyclehour);
 switch lower(meteosource)
-    case{'gfs1p0','gfs0p5','ncep_gfs_analysis','ncep_gfs_analysis_precip'}
+    case{'gfs1p0','gfs0p5','ncep_gfs_analysis','ncepncar_reanalysis','ncep_gfs_analysis_precip'}
         xlim=mod(xlim,360);
 end
 
