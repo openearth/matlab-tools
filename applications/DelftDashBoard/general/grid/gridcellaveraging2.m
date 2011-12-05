@@ -1,4 +1,4 @@
-function varargout = gridcellaveraging2(varargin)
+function z0=gridcellaveraging(xb0,yb0,zb0,x0,y0,dx,opt)
 %GRIDCELLAVERAGING2  One line description goes here.
 %
 %   More detailed description goes here.

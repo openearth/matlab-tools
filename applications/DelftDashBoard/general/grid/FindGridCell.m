@@ -1,4 +1,4 @@
-function varargout = FindGridCell(varargin)
+function [m,n]=findGridCell(posx0,posy0,x,y)
 %FINDGRIDCELL  One line description goes here.
 %
 %   More detailed description goes here.
