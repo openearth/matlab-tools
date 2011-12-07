@@ -111,7 +111,7 @@ for ii=1:length(id)-1
     fprintf(fid,'%s \n','				<LinearRing>');
     fprintf(fid,'%s \n','					<coordinates>');
     for ij=1:size(data,1)
-        fprintf(fid,'%s \n',[num2str(data(ij,1),'%15.6f') ',' num2str(data(ij,2),'%15.6f') ', 0']);
+        fprintf(fid,'%s \n',[num2str(data(ij,1),'%15.6f') ',' num2str(data(ij,2),'%15.6f') ',0']);
     end
     fprintf(fid,'%s \n','</coordinates>');
     fprintf(fid,'%s \n','				</LinearRing>');
