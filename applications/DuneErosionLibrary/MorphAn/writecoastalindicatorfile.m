@@ -147,4 +147,4 @@ end
 nc_varput(filename, 'id'                      , areacode*1000000 + along);
 nc_varput(filename, 'areacode'                , areacode);
 nc_varput(filename, 'alongshore'              , along);
-nc_varput(filename, 'time'                    , time);
+nc_varput(filename, 'time'                    , (time-1970)*365);
