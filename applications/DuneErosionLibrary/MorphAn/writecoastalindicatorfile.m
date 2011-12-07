@@ -22,7 +22,7 @@ function filename = writecoastalindicatorfile(filename,indicators)
 %   Copyright (C) 2011 Deltares
 %       Pieter van Geer
 %
-%       pieter.vangeer@deltares.nl
+%       pieter.vangeer@deltareindicators.nl
 %
 %       Rotterdamseweg 185
 %       2629 HD Delft
@@ -37,7 +37,7 @@ function filename = writecoastalindicatorfile(filename,indicators)
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
 %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-%   GNU General Public License for more details.
+%   GNU General Public License for more detailindicators.
 %
 %   You should have received a copy of the GNU General Public License
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
@@ -47,9 +47,9 @@ function filename = writecoastalindicatorfile(filename,indicators)
 % OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute
-% your own tools.
+% your own toolindicators.
 
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.propindicators.special.keywordindicators.html>
 % Created: 07 Dec 2011
 % Created with Matlab version: 7.10.0.499 (R2010a)
 
@@ -61,15 +61,15 @@ function filename = writecoastalindicatorfile(filename,indicators)
 % $Keywords: $
 
 %% Check fields of indicator struct
-along = s.rsplocatie;
-areacode = s.kustvaknummer;
-time = s.time;
+along = indicators.rsplocatie;
+areacode = indicators.kustvaknummer;
+time = indicators.time;
 
 %% create empty file
 nc_create_empty(filename)
 
 %% Add overall meta info
-%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventions.html#description-of-file-contents
+%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventionindicators.html#description-of-file-contents
 %------------------
 
 nc_attput(filename, nc_global, 'title'         , 'coastal indicator');
@@ -132,19 +132,19 @@ for i = 1:length(nc)
     nc_addvar(filename, nc(i));
 end
 
-for i = 1:length(s.indicatoren)
-    varname = strrep(s.indicatoren(i).name,' ','_');
+for i = 1:length(indicators.indicatoren)
+    varname = strrep(indicators.indicatoren(i).name,' ','_');
     nc(end+1).Name = varname;
-    nc(i).Nctype       = 'double';
-    nc(i).Dimension    = {'alongshore','time'};
-    nc(i).Attribute(1) = struct('Name', 'indicator_name','Value', s.indicatoren(i).name);
-    nc(i).Attribute(5) = struct('Name', '_FillValue'    ,'Value', NaN);
-    nc_addvar(filename, nc(i));
-    nc_varput(filename, varname, s.indicatoren(i).values);
+    nc(end).Nctype       = 'double';
+    nc(end).Dimension    = {'alongshore','time'};
+    nc(end).Attribute(1) = struct('Name', 'indicator_name','Value', indicators.indicatoren(i).name);
+    nc(end).Attribute(2) = struct('Name', '_FillValue'    ,'Value', NaN);
+    nc_addvar(filename, nc(end));
+    nc_varput(filename, varname, indicators.indicatoren(i).values);
 end
 
 %% store variables
-nc_varput(filename, 'id'                      , id);
+nc_varput(filename, 'id'                      , areacode*1000000 + along);
 nc_varput(filename, 'areacode'                , areacode);
 nc_varput(filename, 'alongshore'              , along);
 nc_varput(filename, 'time'                    , time);
