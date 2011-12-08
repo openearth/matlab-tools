@@ -203,9 +203,9 @@ for iblock=1:nrFrames
                         Data(m).DateTime=Data(m).AvailableTimes(iTime);
                         Data=UpdateDatasets(Data,0,iTime,m);
                     else
-                        iTime1=find(handles.Figure(ifig).Axis(j).dataset(k).availableTimes<t,1,'last');
+                        iTime1=find(handles.Figure(ifig).Axis(j).dataset(k).availableTimes-1e-4<t,1,'last');
                         Data=UpdateDatasets(Data,0,iTime1,m);
-                        iTime2=find(handles.Figure(ifig).Axis(j).dataset(k).availableTimes>=t,1,'first');
+                        iTime2=find(handles.Figure(ifig).Axis(j).dataset(k).availableTimes+1e-4>=t,1,'first');
                         Data2=UpdateDatasets(Data2,0,iTime2,m);
 
                         t1=handles.Figure(ifig).Axis(j).dataset(k).availableTimes(iTime1);

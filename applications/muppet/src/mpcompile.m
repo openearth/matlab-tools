@@ -6,8 +6,8 @@ rmpath(statspath);
 % mkdir('qptmp');
 % copyfile('F:\checkout\opendelft3d\trunk\src\tools_lgpl\matlab\quickplot\progsrc\private\*.m','qptmp');
 % copyfile('F:\checkout\opendelft3d\trunk\src\tools_lgpl\matlab\quickplot\progsrc\*.m','qptmp');
-addpath('qptmp');
-%flist=dir('F:\checkout\opendelft3d\trunk\src\tools_lgpl\matlab\quickplot\progsrc\private\*fil.m');
+% addpath('qptmp');
+% flist=dir('F:\checkout\opendelft3d\trunk\src\tools_lgpl\matlab\quickplot\progsrc\private\*fil.m');
 
 fid=fopen('complist','wt');
 
