@@ -66,6 +66,8 @@ for j=1:noset
             DataProperties=ImportSimonaSDS(DataProperties,j);
         case {'mat'}
             DataProperties=ImportMAT(DataProperties,j);
+        case {'tekalhistogram'}
+            DataProperties=mp_importTekalHistogram(DataProperties,j);
     end
     if strcmpi(DataProperties(j).Type,'timeseries')
         DataProperties(j).x=DataProperties(j).x+DataProperties(j).TimeZone/24;
