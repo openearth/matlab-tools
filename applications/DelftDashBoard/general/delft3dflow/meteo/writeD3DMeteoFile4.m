@@ -75,8 +75,8 @@ function writeD3DMeteoFile4(meteodir, meteoname, rundir, fname, xlim, ylim, coor
 
 parameter={'u','v','p'};
 
-dx=[];
-dy=[];
+dx=100000;
+dy=100000;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
