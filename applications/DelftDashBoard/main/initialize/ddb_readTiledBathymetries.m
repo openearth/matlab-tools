@@ -59,7 +59,26 @@ function handles = ddb_readTiledBathymetries(handles)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% When enabled on OpenDAP
+% % Check for updates on OpenDAP and add data to structure
+% localdir = handles.bathyDir;
+% url = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/bathymetry.xml';
+% xmlfile = 'bathymetry.xml';
+% handles.bathymetry = ddb_getXmlData(localdir,url,xmlfile);
+% 
+% % Add specific fields to structure
+% fld = fieldnames(handles.bathymetry);
+% names = '';longNames = '';
+% for ii=1:length(handles.bathymetry.(fld{1}))
+%     handles.bathymetry.(fld{1})(ii).useCache = str2double(handles.bathymetry.(fld{1})(ii).useCache);
+%     handles.bathymetry.(fld{1})(ii).edit = str2double(handles.bathymetry.(fld{1})(ii).edit);
+%     names{ii}= handles.bathymetry.(fld{1})(ii).name;
+%     longNames{ii} = handles.bathymetry.(fld{1})(ii).longName;
+% end
+% handles.bathymetry.datasets = names;
+% handles.bathymetry.nrDatasets = length(handles.bathymetry.(fld{1}));
+
+%% For the time being...
 if exist([handles.bathyDir '\tiledbathymetries.def'])==2
     txt=ReadTextFile([handles.bathyDir '\tiledbathymetries.def']);
 else

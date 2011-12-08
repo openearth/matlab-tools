@@ -59,7 +59,27 @@ function handles = ddb_readTideModels(handles)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% When enabled on OpenDAP
+% % Check for updates on OpenDAP and add data to structure
+% localdir = handles.tideDir;
+% url = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/tidemodels.xml';
+% xmlfile = 'tidemodels.xml';
+% handles.tideModels = ddb_getXmlData(localdir,url,xmlfile);
+
+% % Add specific fields to structure
+% fld = fieldnames(handles.tideModels);
+% names = '';longNames = '';
+% for ii=1:length(handles.tideModels.(fld{1}))
+%     handles.tideModels.(fld{1})(ii).useCache = str2double(handles.tideModels.(fld{1})(ii).useCache);
+%     names{ii}= handles.tideModels.(fld{1})(ii).name;
+%     longNames{ii} = handles.tideModels.(fld{1})(ii).longName;
+% end
+% handles.tideModels.longNames = longNames;
+% handles.tideModels.names = names;
+% handles.tideModels.nrModels = length(handles.tideModels.(fld{1}));
+
+
+%% For the time being...
 if exist([handles.tideDir '\tidemodels.def'])==2
     txt=ReadTextFile([handles.tideDir '\tidemodels.def']);
 else

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- Written on 08-Dec-2011 13:46:21 using the XML Toolbox for Matlab -->
+<root>
+  <model>
+    <name>tpxo62</name>
+    <longName>TPXO 6.2 Global Inverse Tide Model</longName>
+    <version>1</version>
+    <type>netCDF</type>
+    <URL>http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
+    <useCache>1</useCache>
+  </model>
+  <model>
+    <name>tpxo72</name>
+    <longName>TPXO 7.2 Global Inverse Tide Model</longName>
+    <version>1</version>
+    <type>netCDF</type>
+    <URL>http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
+    <useCache>1</useCache>
+  </model>
+  <model>
+    <name>med</name>
+    <longName>Mediterranean</longName>
+    <version>1</version>
+    <type>netCDF</type>
+    <URL>http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/delftdashboard/tidemodels</URL>
+    <useCache>1</useCache>
+  </model>
+</root>

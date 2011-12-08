@@ -60,7 +60,27 @@ function handles = ddb_initializeTideStations(handles, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% When enabled on OpenDAP
+% % Check xml-file for updates
+% ii=strmatch('TideStations',{handles.Toolbox(:).name},'exact');
+% dr=handles.Toolbox(ii).dataDir;
+% flist = dir([dr '*.xml']);
+% xmlfile = flist(1).name;
+% url = ['http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/toolboxes/TideStations/' xmlfile];
+% handles.Toolbox(ii).Input = ddb_getXmlData(dr,url,xmlfile);
+% 
+% % Update nc-files when necessary
+% fld = fieldnames(handles.Toolbox(ii).Input);
+% for ii=1:length(handles.Toolbox(ii).Input.(fld{1}))
+%     if handles.Toolbox(ii).Input.(fld{1})(ii).update == 1
+%         cstr = strsplit(handles.Toolbox(ii).Input.(fld{1})(ii).URL,'/');
+%         urlwrite(handles.Toolbox(ii).Input.(fld{1})(ii).URL,[dr cstr{end}]);
+%     end
+% end
+% 
+% % Remaining code remains the same from flist = dir([dr '*.nc'])
+
+%% For the time being...
 ii=strmatch('TideStations',{handles.Toolbox(:).name},'exact');
 
 dr=handles.Toolbox(ii).dataDir;

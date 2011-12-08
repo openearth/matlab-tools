@@ -59,7 +59,26 @@ function handles = ddb_readShorelines(handles)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% When enabled on OpenDAP
+% % Check for updates on OpenDAP and add data to structure
+% localdir = handles.shorelineDir;
+% url = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/shorelines/shorelines.xml';
+% xmlfile = 'shorelines.xml';
+% handles.shorelines = ddb_getXmlData(localdir,url,xmlfile);
+
+% % Add specific fields to structure
+% fld = fieldnames(handles.shorelines);
+% names = '';longNames = '';
+% for ii=1:length(handles.shorelines.(fld{1}))
+%     handles.shorelines.(fld{1})(ii).useCache = str2double(handles.shorelines.(fld{1})(ii).useCache);
+%     names{ii}= handles.shorelines.(fld{1})(ii).name;
+%     longNames{ii} = handles.shorelines.(fld{1})(ii).longName;
+% end
+% handles.shorelines.longName = longNames;
+% handles.shorelines.names = names;
+% handles.shorelines.nrShorelines = length(handles.shorelines.(fld{1}));
+
+%% For the time being...
 if exist([handles.shorelineDir '\Shorelines.def'])==2
     txt=ReadTextFile([handles.shorelineDir '\Shorelines.def']);
 else
