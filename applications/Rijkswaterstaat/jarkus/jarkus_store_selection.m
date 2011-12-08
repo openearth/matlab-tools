@@ -112,7 +112,7 @@ for iadjust = 1:length(OPT.adjustfun)
     end
     if iscell(OPT.adjustfun{iadjust})
         sprintf('%s %s', history, char(OPT.adjustfun{iadjust}{1}));
-        TODO('add also the arguments of the "adjustfun" to the history')
+        TODO('add also the arguments of the "adjustfun" to the history');
     else
         sprintf('%s %s', history, char(OPT.adjustfun{iadjust}));
     end
@@ -130,7 +130,8 @@ for ivar = 1:length(varnames)
         dimdata.(dimensions.(varnames{ivar}){idim}) = length(transects.(varnames{ivar}));
     else
         for idim = 1:ndims
-            dimdata.(dimensions.(varnames{ivar}){idim}) = size(transects.(varnames{ivar}), idim);
+            dim = regexprep(dimensions.(varnames{ivar}){idim}, '[^\w_]', '');
+            dimdata.(dim) = size(transects.(varnames{ivar}), idim);
         end
     end
 end
