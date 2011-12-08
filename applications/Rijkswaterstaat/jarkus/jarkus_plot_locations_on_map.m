@@ -101,7 +101,8 @@ ph = plot(x, y, xytr{:});
 lh = findobj(ph, 'XData', x, 'YData', y);
 set(lh, 'DisplayName', 'Coastline')
 th = ph(ph~=lh);
-set(th, 'marker', 'o');
+set(th, 'marker', 'o',...
+    'linestyle', 'none');
 for ith = 1:length(th)
     xt = get(th(ith), 'XData');
     yt = get(th(ith), 'YData');
