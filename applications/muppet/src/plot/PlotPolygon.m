@@ -49,6 +49,7 @@ if Plt.FillPolygons==1
 %        hatch(h2,'cross');
 %        set(h2,'FaceColor','none');
 
+        set(h2,'EdgeColor',FindColor(Plt.LineColor));
         set(h2,'FaceColor',FindColor(Plt.FillColor));
     end
     z=zeros(size(get(h1,'ZData')))+Plt.PolygonElevation;

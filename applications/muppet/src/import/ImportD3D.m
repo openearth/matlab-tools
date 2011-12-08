@@ -36,7 +36,7 @@ end
 
 if DataProperties(nr).DateTime>0
     if Size(1)>1
-        ITime=find(Times>DataProperties(nr).DateTime-1.0e-6 & Times<DataProperties(nr).DateTime+1.0e-6);
+        ITime=find(Times>DataProperties(nr).DateTime-1.0e-5 & Times<DataProperties(nr).DateTime+1.0e-5);
         if isempty(ITime)
 %            h=findobj('Tag','waitbox');
 %            close(h);

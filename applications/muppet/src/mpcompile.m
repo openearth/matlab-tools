@@ -30,7 +30,8 @@ end
 
 fclose(fid);
 
-mcc -m -d c:\work\checkouts\OpenEarthTools\trunk\matlab\applications\muppet\bin muppet.m -B complist
+% mcc -m -d c:\work\checkouts\OpenEarthTools\trunk\matlab\applications\muppet\bin muppet.m -B complist
+mcc -m -d F:\checkout\OpenEarthTools\trunk\matlab\applications\muppet\bin muppet.m -B complist
 
 delete('complist');
 

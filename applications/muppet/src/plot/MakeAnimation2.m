@@ -89,6 +89,7 @@ if ~strcmpi(AnimationSettings.FileName(end-2:end),'gif')
 end
 
 wb = awaitbar(0,'Generating AVI...');
+hh=[];
 
 n2=1;
 

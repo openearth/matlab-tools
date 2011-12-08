@@ -6,8 +6,10 @@ Ax=handles.Figure(i).Axis(j);
 Plt=handles.Figure(i).Axis(j).Plot(k);
 Data=handles.DataProperties(Plt.AvailableDatasetNr);
 
-xmin0=Ax.XMin; xmax0=xmin0+0.01*Ax.Position(3)*Ax.Scale;
-ymin0=Ax.YMin; ymax0=ymin0+0.01*Ax.Position(4)*Ax.Scale;
+% xmin0=Ax.XMin; xmax0=xmin0+0.01*Ax.Position(3)*Ax.Scale;
+% ymin0=Ax.YMin; ymax0=ymin0+0.01*Ax.Position(4)*Ax.Scale;
+xmin0=Ax.XMin; xmax0=Ax.XMax;
+ymin0=Ax.YMin; ymax0=Ax.YMax;
 
 xmin=xmin0-0.1*(xmax0-xmin0);
 xmax=xmax0+0.1*(xmax0-xmin0);
@@ -37,14 +39,14 @@ v=Data.v;
 % u(x1==-999.0)=-999.0;
 % v(x1==-999.0)=-999.0;
 
-timestep=[];
+timestep=0;
 if ~isempty(handles.AnimationSettings.timeStep)
     timestep=handles.AnimationSettings.timeStep;
 end
-
+%Ax.coordinateSystem.type='geographic';
 [polx,poly,xax,yax,len,pos]=curvec(x1,y1,u,v,'dx',dx,'length',Plt.DtCurVec,'nrvertices',nt,'nhead',4, ...
     'xlim',[xmin xmax],'ylim',[ymin ymax],'position',pos,'lifespan',lifespan,'timestep',timestep, ...
-    'headthickness',hdthck,'arrowthickness',arthck,'CS',Ax.coordinateSystem.type);
+    'headthickness',hdthck,'arrowthickness',arthck,'cs',Ax.coordinateSystem.type,'relativespeed',Plt.RelSpeedCurVec);
 polz=zeros(size(polx))+100;
 
 % Ax.MaxZ=n2*10;

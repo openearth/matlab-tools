@@ -297,7 +297,7 @@ if NewDatasetName(handles.DataProperties,handles.NrAvailableDatasets,name)
     handles.CombinedDatasetProperties(n).Operation=handles.Operations{get(handles.SelectOperation,'Value')};
     handles.CombinedDatasetProperties(n).UnifOpt=get(handles.ToggleUniformValue,'Value');
 
-    handles.DataProperties=Combine(handles.DataProperties,handles.CombinedDatasetProperties,nr,n);
+    handles.DataProperties=mp_combineDataset(handles.DataProperties,handles.CombinedDatasetProperties,nr,n);
  
     for i=1:handles.NrAvailableDatasets;
         handles.AvailableDatasetNames{i}=handles.DataProperties(i).Name;

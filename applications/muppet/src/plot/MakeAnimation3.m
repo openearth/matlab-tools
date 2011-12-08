@@ -88,7 +88,8 @@ if ~strcmpi(AnimationSettings.FileName(end-2:end),'gif')
 %     AviHandle = writeavi('open', AviHandle,AnimationSettings.FileName);
 %     AviHandle = writeavi('addvideo', AviHandle, AnimationSettings.FrameRate, sz(1),sz(2), 24, AviOps);
 
-    AviHandle = avifile(AnimationSettings.FileName,'FPS',AnimationSettings.FrameRate);
+%    AviHandle = avifile(AnimationSettings.FileName,'FPS',AnimationSettings.FrameRate,'Compression','MSVC');
+    AviHandle = avifile(AnimationSettings.FileName,'FPS',AnimationSettings.FrameRate,'Compression','WMV3');
     
 end
 
