@@ -188,7 +188,10 @@ for ipar=1:npar
         it1=length(t);
     end
     
+    n=0;
     for it=it0:it1
+        
+        n=n+1;
         
         s=load([meteodir flist(it).name]);
         
@@ -198,7 +201,7 @@ for ipar=1:npar
             val=interp2(lon,lat,val,xgeo,ygeo);
         end
         
-        s2.time(it)=t(it);
+        s2.time(n)=t(it);
         
         if ~strcmpi(coordsystype,'geographic')
             s2.x=xlim(1):dx:xlim(2);
@@ -219,7 +222,7 @@ for ipar=1:npar
             s2.dy=csz(2);
         end
         
-        s2.(parameter{ipar})(:,:,it)=val;
+        s2.(parameter{ipar})(:,:,n)=val;
         
     end
     
