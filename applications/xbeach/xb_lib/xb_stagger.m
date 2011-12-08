@@ -188,43 +188,55 @@ g.dnc(:,1:ny)   = sqrt((g.xu(:,2:ny+1)-g.xu(:,1:ny)).^2+(g.yu(:,2:ny+1)-g.yu(:,1
 g.dnc(:,ny+1)   = g.dnc(:,ny);
 
 %% compute cell areas
+% dsdnz
+i = 2:size(x,1); % equivalent to 2:nx+1
+j = 2:size(y,2); % equivalent to 2:ny+1
 
-x1 = g.xc(1:nx  ,2:ny+1) - g.xc(1:nx  ,1:ny  );
-x3 = g.xc(2:nx+1,1:ny  ) - g.xc(1:nx  ,1:ny  );
-x2 = g.xc(2:nx+1,2:ny+1) - g.xc(2:nx+1,1:ny  );
-x4 = g.xc(2:nx+1,2:ny+1) - g.xc(1:nx  ,2:ny+1);
-y1 = g.yc(1:nx  ,2:ny+1) - g.yc(1:nx  ,1:ny  );
-y3 = g.yc(2:nx+1,1:ny  ) - g.yc(1:nx  ,1:ny  );
-y2 = g.yc(2:nx+1,2:ny+1) - g.yc(2:nx+1,1:ny  );
-y4 = g.yc(2:nx+1,2:ny+1) - g.yc(1:nx  ,2:ny+1);
+x1 = g.xc(i-1, j  ) - g.xc(i-1, j-1);
+x2 = g.xc(i  , j  ) - g.xc(i  , j-1);
+x3 = g.xc(i  , j-1) - g.xc(i-1, j-1);
+x4 = g.xc(i  , j  ) - g.xc(i-1, j  );
 
-g.dsdnz(2:nx+1,2:ny+1) = 0.5*(abs(x1.*y3-x3.*y1)+abs(x2.*y4-x4.*y2));
+y1 = g.yc(i-1, j  ) - g.yc(i-1, j-1);
+y2 = g.yc(i  , j  ) - g.yc(i  , j-1);
+y3 = g.yc(i  , j-1) - g.yc(i-1, j-1);
+y4 = g.yc(i  , j  ) - g.yc(i-1, j  );
+
+g.dsdnz(i,j) = 0.5 * ( abs(x1 .* y3 - x3 .* y1) + abs(x2 .* y4 - x4 .* y2) );
 g.dsdnz(:,1) = g.dsdnz(:,2);
 g.dsdnz(1,:) = g.dsdnz(2,:);
 
-x1 = g.xv(1:nx  ,2:ny+1) - g.xv(1:nx  ,1:ny  );
-x3 = g.xv(2:nx+1,1:ny  ) - g.xv(1:nx  ,1:ny  );
-x2 = g.xv(2:nx+1,2:ny+1) - g.xv(2:nx+1,1:ny  );
-x4 = g.xv(2:nx+1,2:ny+1) - g.xv(1:nx  ,2:ny+1);
-y1 = g.yv(1:nx  ,2:ny+1) - g.yv(1:nx  ,1:ny  );
-y3 = g.yv(2:nx+1,1:ny  ) - g.yv(1:nx  ,1:ny  );
-y2 = g.yv(2:nx+1,2:ny+1) - g.yv(2:nx+1,1:ny  );
-y4 = g.yv(2:nx+1,2:ny+1) - g.yv(1:nx  ,2:ny+1);
+% dsdnu
+i = 1:size(x,1)-1; % equivalent to 1:nx
+j = 2:size(y,2); % equivalent to 2:ny+1
 
-g.dsdnu(1:nx,2:ny+1) = 0.5*(abs(x1.*y3-x3.*y1)+abs(x2.*y4-x4.*y2));
+x1 = g.xv(i  , j  ) - g.xv(i  , j-1);
+x2 = g.xv(i+1, j  ) - g.xv(i+1, j-1);
+x3 = g.xv(i+1, j-1) - g.xv(i  , j-1);
+x4 = g.xv(i+1, j  ) - g.xv(i  , j  );
+y1 = g.yv(i  , j  ) - g.yv(i  , j-1);
+y2 = g.yv(i+1, j  ) - g.yv(i+1, j-1);
+y3 = g.yv(i+1, j-1) - g.yv(i  , j-1);
+y4 = g.yv(i+1, j  ) - g.yv(i  , j  );
+
+g.dsdnu(i,j) = 0.5 * ( abs(x1.*y3 - x3.*y1) + abs(x2.*y4 - x4.*y2) );
 g.dsdnu(:,1) = g.dsdnu(:,2);
 g.dsdnu(nx+1,:) = g.dsdnu(nx,:);
 
-x1 = g.xu(1:nx  ,2:ny+1) - g.xu(1:nx  ,1:ny  );
-x3 = g.xu(2:nx+1,1:ny  ) - g.xu(1:nx  ,1:ny  );
-x2 = g.xu(2:nx+1,2:ny+1) - g.xu(2:nx+1,1:ny  );
-x4 = g.xu(2:nx+1,2:ny+1) - g.xu(1:nx  ,2:ny+1);
-y1 = g.yu(1:nx  ,2:ny+1) - g.yu(1:nx  ,1:ny  );
-y3 = g.yu(2:nx+1,1:ny  ) - g.yu(1:nx  ,1:ny  );
-y2 = g.yu(2:nx+1,2:ny+1) - g.yu(2:nx+1,1:ny  );
-y4 = g.yu(2:nx+1,2:ny+1) - g.yu(1:nx  ,2:ny+1);
+% dsdnv
+i = 2:size(x,1); % equivalent to 2:nx+1
+j = 1:size(y,2)-1; % equivalent to 1:ny
 
-g.dsdnv(2:nx+1,1:ny) = 0.5*(abs(x1.*y3-x3.*y1)+abs(x2.*y4-x4.*y2));
+x1 = g.xu(i-1 , j+1) - g.xu(i-1 , j  );
+x2 = g.xu(i   , j+1) - g.xu(i   , j  );
+x3 = g.xu(i   , j  ) - g.xu(i-1 , j  );
+x4 = g.xu(i   , j+1) - g.xu(i-1 , j+1);
+y1 = g.yu(i-1 , j+1) - g.yu(i-1 , j  );
+y2 = g.yu(i   , j+1) - g.yu(i   , j  );
+y3 = g.yu(i   , j  ) - g.yu(i-1 , j  );
+y4 = g.yu(i   , j+1) - g.yu(i-1 , j+1);
+
+g.dsdnv(i,j) = 0.5 * ( abs(x1.*y3 - x3.*y1) + abs(x2.*y4 - x4.*y2) );
 g.dsdnv(:,ny+1) = g.dsdnv(:,ny);
 g.dsdnv(1,:) = g.dsdnv(2,:);
 
