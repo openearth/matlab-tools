@@ -189,7 +189,9 @@ if inputSize.LowerBoundary(1)>1; x_min = max([x_min min(LowerBoundary(:,1))]); x
 if inputSize.LandwardBoundary(1)>1; LandwardBoundary = LandwardBoundary(1,1); end
 if inputSize.SeawardBoundary(1)>1; SeawardBoundary = SeawardBoundary(1,1); end
 if inputSize.x2(1)>1; x_min = max([x_min min(x2)]); x_max = min([x_max max(x2)]); end
-if x_min > LandwardBoundary
+if isempty(LandwardBoundary)
+    LandwardBoundary = x_min;
+elseif x_min > LandwardBoundary
     % one or both profiles do not reach the landward boundary
     LandwardBoundary = x_min;
     inputSize.LandwardBoundary(:) = size(LandwardBoundary);
@@ -200,7 +202,9 @@ if x_min > LandwardBoundary
 elseif isempty(LandwardBoundary)
     LandwardBoundary = x_min;    
 end
-if x_max < SeawardBoundary
+if isempty(SeawardBoundary)
+    SeawardBoundary = x_max;
+elseif x_max < SeawardBoundary
     % one or both profiles do not reach the seaward boundary
     SeawardBoundary = x_max;
     inputSize.SeawardBoundary(:) = size(SeawardBoundary);
