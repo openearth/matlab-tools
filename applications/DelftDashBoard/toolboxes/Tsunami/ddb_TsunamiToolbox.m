@@ -276,7 +276,7 @@ if ~isempty(pathname)
         slips=handles.Toolbox(tb).Input.segmentSlip;
         
         % Compute tsunami wave (in projected coordinate system)
-        [xx,yy,zz]=ddb_computeTsunamiWave(xs,ys,depths,dips,wdts,sliprakes,slips);
+        [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips);
         
         % Plot figure (first convert to geographic coordinate system)
         if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
