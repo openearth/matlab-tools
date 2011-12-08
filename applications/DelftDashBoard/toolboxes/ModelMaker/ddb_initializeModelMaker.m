@@ -106,3 +106,10 @@ if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
     handles.Toolbox(ii).Input.dY=1000;
 end
 
+%% Bathymetry
+handles.Toolbox(ii).Input.bathymetry.activeDataset=1;
+handles.Toolbox(ii).Input.bathymetry.activeSelectedDataset=1;
+handles.Toolbox(ii).Input.bathymetry.selectedDatasetNames={''};
+handles.Toolbox(ii).Input.bathymetry.selectedDatasets=[];
+handles.Toolbox(ii).Input.bathymetry.nrSelectedDatasets=0;
+

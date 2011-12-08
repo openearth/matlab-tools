@@ -2,9 +2,102 @@
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
-    <tag>editdescription</tag>
-    <style>text</style>
-    <position>45 50</position>
-    <text></text>
+    <tag>selectbathymetry</tag>
+    <style>listbox</style>
+    <text>Available Datasets</text>
+    <textposition>above-center</textposition>
+    <variable>handles.Toolbox(tb).Input.bathymetry.activeDataset</variable>
+    <type>integer</type>
+    <position>10 10 180 105</position>
+    <tooltipstring>Available bathymetry datasets</tooltipstring>
+    <onchange>ddb_ModelMakerToolbox_bathymetry</onchange>
+    <option1>selectdataset</option1>
+    <list>
+      <texts>
+        <variable>handles.bathymetry.datasets</variable>
+      </texts>
+    </list>
   </element>
+  <element>
+    <tag>usedataset</tag>
+    <style>pushbutton</style>
+    <position>195 95 80 20</position>
+    <text>Use Dataset</text>
+    <callback>ddb_ModelMakerToolbox_bathymetry</callback>
+    <option1>usedataset</option1>
+    <tooltipstring>Use selected dataset (from list on the left)</tooltipstring>
+  </element> 
+  <element>
+    <tag>selecteddatasets</tag>
+    <style>listbox</style>
+    <text>Selection</text>
+    <textposition>above-center</textposition>
+    <variable>handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset</variable>
+    <type>integer</type>
+    <position>280 10 150 105</position>
+    <tooltipstring>Selected datasets. Datasets should be ordered from high resolution (will be used first) to low resolution.</tooltipstring>
+    <onchange>ddb_ModelMakerToolbox_bathymetry</onchange>
+    <option1>pickselecteddataset</option1>
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>removedataset</tag>
+    <style>pushbutton</style>
+    <position>440 95 80 20</position>
+    <text>Remove</text>
+    <callback>ddb_ModelMakerToolbox_bathymetry</callback>
+    <option1>removedataset</option1>
+  </element> 
+  <element>
+    <tag>datasetup</tag>
+    <style>pushbutton</style>
+    <position>440 70 80 20</position>
+    <text>Move Up</text>
+    <callback>ddb_ModelMakerToolbox_bathymetry</callback>
+    <option1>datasetup</option1>
+  </element> 
+  <element>
+    <tag>datasetdown</tag>
+    <style>pushbutton</style>
+    <position>440 45 80 20</position>
+    <text>Move Down</text>
+    <callback>ddb_ModelMakerToolbox_bathymetry</callback>
+    <option1>datasetdown</option1>
+  </element>
+  
+  <element>
+    <tag>editzmax</tag>
+    <style>edit</style>
+    <position>580 95 50 20</position>
+    <tooltipstring>Edit maximum height to be used for this dataset</tooltipstring>
+    <text>Z Max</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).zMax</variable>
+  </element>
+
+  <element>
+    <tag>editzmin</tag>
+    <style>edit</style>
+    <position>580 70 50 20</position>
+    <tooltipstring>Edit minimum height to be used for this dataset</tooltipstring>
+    <text>Z Min</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).zMin</variable>
+  </element>
+
+  <element>
+    <tag>generatebathymetry</tag>
+    <style>pushbutton</style>
+    <position>910 10 80 20</position>
+    <text>Generate</text>
+    <callback>ddb_ModelMakerToolbox_bathymetry</callback>
+    <option1>generatebathymetry</option1>
+    <tooltipstring>Generate model bathymetry</tooltipstring>
+  </element> 
 </root>

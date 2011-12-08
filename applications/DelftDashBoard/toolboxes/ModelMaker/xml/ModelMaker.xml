@@ -19,9 +19,9 @@
         <tab>
           <tag>bathymetry</tag>
           <tabstring>Bathymetry</tabstring>
-          <callback>ddb_ModelMakerToolbox</callback>
+          <callback>ddb_ModelMakerToolbox_bathymetry</callback>
           <elements>ModelMaker.bathymetry.xml</elements>
-          <enable>0</enable>
+          <enable>1</enable>
         </tab>
         <tab>
           <tag>initialconditions</tag>
