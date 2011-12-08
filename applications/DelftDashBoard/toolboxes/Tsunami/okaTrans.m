@@ -22,6 +22,7 @@ function [x z] = okaTrans(depth, dip, wdt, sliprake, slip, xx)
 %   okaTrans
 %
 %   See also
+% Get central transect from Okada 85
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -71,14 +72,18 @@ xl=round(3*wdt/2);
 [E,N] = meshgrid(-xl:dx:xl,-xl:dx:xl);
 lngth=wdt;
 % Focal depth
-focdpt = wdt*sin(dip*pi/180) + depth;
-[uE,uN,uZ] = okada85(E,N,focdpt,0,dip,lngth,wdt,sliprake,slip,0);
+%focdpt = 0.5*wdt*sin(dip*pi/180) + depth;
+%[uE,uN,uZ] = okada85(E,N,focdpt,0,dip,lngth,wdt,sliprake,slip,0);
+[uE,uN,uZ] = okada85(E,N,depth,0,dip,lngth,wdt,sliprake,slip,0);
 
-
+% ix0 is index of southern most transect
 ix0=size(E,1)/2-wdt/2/dx;
+% ix is xx/dx north of ix0
 ix=ix0+xx/2;
 ix=round(ix);
+% ix can be no higher than central transect
 ix=min(ix,ceil(size(E,1)/2));
+% and ix is at least 1
 ix=max(ix,1);
 
 x=E(ix,:);
