@@ -110,6 +110,10 @@ fclose(fid);
 
 %% write mpi script
 
+if ~ismember(OPT.binary(1), {'/' '~' '$'})
+    OPT.binary = ['$(pwd)/' OPT.binary];
+end
+
 fid = fopen(fullfile(lpath, 'mpi.sh'), 'wt');
 
 switch upper(OPT.mpitype)
@@ -129,10 +133,10 @@ switch upper(OPT.mpitype)
             fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
             %fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE >> $(pwd)/machinefile\n');
             fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
-            fprintf(fid,'mpirun -np $NSLOTS $(pwd)/%s >> %s.log 2>&1\n', OPT.binary, name);
+            fprintf(fid,'mpirun -np $NSLOTS %s >> %s.log 2>&1\n', OPT.binary, name);
             fprintf(fid,'mpdallexit\n');
         else
-            fprintf(fid,'$(pwd)/%s >> %s.log 2>&1\n', OPT.binary, name);
+            fprintf(fid,'%s >> %s.log 2>&1\n', OPT.binary, name);
         end
     case 'MPICH2'
         fprintf(fid,'#!/bin/sh\n');
@@ -148,9 +152,9 @@ switch upper(OPT.mpitype)
             fprintf(fid,'export PATH=$MPICH2_ROOT/bin:$PATH\n');
             fprintf(fid,'export MPD_CON_EXT="sge_$JOB_ID.$SGE_TASK_ID"\n');
 
-            fprintf(fid,'mpirun -machinefile $TMPDIR/machines -n $NSLOTS $(pwd)/%s >> %s.log\n', OPT.binary, name);
+            fprintf(fid,'mpirun -machinefile $TMPDIR/machines -n $NSLOTS %s >> %s.log\n', OPT.binary, name);
         else
-            fprintf(fid,'$(pwd)/%s >> %s.log 2>&1\n', OPT.binary, name);
+            fprintf(fid,'%s >> %s.log 2>&1\n', OPT.binary, name);
         end
 otherwise
         error(['Unknown MPI type [' OPT.mpitype ']']);

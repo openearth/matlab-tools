@@ -97,7 +97,8 @@ OPT = struct( ...
     'ssh_pass', '', ...
     'ssh_prompt', false, ...
     'path_local', '', ...
-    'path_remote', '' ...
+    'path_remote', '', ...
+    'copy', true ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -108,6 +109,11 @@ if isempty(OPT.path_remote); OPT.path_remote = xb_getprefdef('path_remote', '~')
 
 % check whether we deal with path or XBeach stucture
 write = ~(ischar(xb) && (exist(xb, 'dir') || exist(xb, 'file')));
+
+% check if copying is possible
+if ~exist(OPT.binary, 'file')
+    OPT.copy = false;
+end
 
 %% write model
 
@@ -130,7 +136,11 @@ else
     
 end
 
-if ~exist(fullfile(fpath, 'bin'),'dir'); mkdir(fullfile(fpath, 'bin')); end;
+if OPT.copy
+    if ~exist(fullfile(fpath, 'bin'),'dir')
+        mkdir(fullfile(fpath, 'bin'));
+    end
+end
 
 %% retrieve binary
 
@@ -149,16 +159,30 @@ if isempty(OPT.binary)
 end
 
 % move downloaded binary to destination directory
-if exist(OPT.binary, 'dir') == 7
-    copyfile(fullfile(OPT.binary, '*'), fullfile(fpath, 'bin'));
+if OPT.copy
+    binpath = 'bin/xbeach';
+    
+    if exist(OPT.binary, 'dir') == 7
+        copyfile(fullfile(OPT.binary, '*'), fullfile(fpath, 'bin'));
+    else
+        copyfile(OPT.binary, fullfile(fpath, 'bin', 'xbeach'));
+
+        % copy library versions along
+        libdir_src = fullfile(fileparts(OPT.binary),'.libs');
+        if exist(libdir_src, 'dir')
+            libdir_dst = fullfile(fpath, 'bin', '.libs');
+            if ~exist(libdir_dst, 'dir'); mkdir(libdir_dst); end;
+            copyfile(fullfile(libdir_src, '*'), libdir_dst);
+        end
+    end
 else
-    copyfile(OPT.binary, fullfile(fpath, 'bin', 'xbeach'));
+    binpath = OPT.binary;
 end
 
 %% write run scripts
 
 fname = xb_write_sh_scripts(fpath, rpath, 'name', OPT.name, ...
-    'binary', 'bin/xbeach', 'nodes', OPT.nodes, 'mpitype', OPT.mpitype);
+    'binary', binpath, 'nodes', OPT.nodes, 'mpitype', OPT.mpitype);
 
 %% run run scripts
 

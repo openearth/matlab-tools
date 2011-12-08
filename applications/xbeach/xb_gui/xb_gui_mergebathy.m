@@ -26,7 +26,7 @@ function varargout = xb_gui_mergebathy()
 %   Copyright (C) 2011 Deltares
 %       Bas Hoonhout
 %
-%       bas.hoonhout@deltares.nl	
+%       bas.hoonhout@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -46,9 +46,9 @@ function varargout = xb_gui_mergebathy()
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -68,7 +68,7 @@ function varargout = xb_gui_mergebathy()
 
     winsize = [800 600];
     winpos = (sz(3:4)-winsize)/2;
-    
+
     pobj = figure( ...
         'name', 'Bathymetry select tool', ...
         'numbertitle', 'off', ...
@@ -76,34 +76,34 @@ function varargout = xb_gui_mergebathy()
         'position', [winpos winsize], ...
         'inverthardcopy', 'off', ...
         'resize', 'off');
-    
+
     uicontrol(pobj, 'units', 'normalized', 'style', 'edit', 'tag', 'name', ...
         'position', [.05 .93 .60 .04], 'fontsize', 14, 'backgroundcolor', 'w', 'callback', @setloc);
     uicontrol(pobj, 'units', 'normalized', 'style', 'pushbutton', 'tag', 'merge', ...
         'position', [.88 .02 .10 .04], 'string', 'Merge', 'callback', @mergedata);
-    
+
     uicontrol(pobj, 'units', 'normalized', 'style', 'popupmenu', 'tag', 'type', ...
         'position', [.68 .93 .23 .04], 'string', 'ARCGIS file|XBeach grid files', 'backgroundcolor', 'w');
     uicontrol(pobj, 'units', 'normalized', 'style', 'pushbutton', 'tag', 'add', ...
         'position', [.93 .93 .05 .04], 'string', 'Add', 'callback', @addfile);
     uitable(pobj, 'units', 'normalized', 'tag', 'table', 'position', [.68 .14 .30 .75], ...
         'columnname', {'type', 'value'}, 'columnwidth', {75 150});
- 
+
     % create axes
     ax1 = axes('position', [.05 .14 .60 .75]); hold on; box on;
-    
+
     hl = nc_plot_coastline; axis equal;
     set(hl, 'Color', [.8 .8 .8]);
-    
+
     ax3 = axes('position', get(ax1, 'position'), 'tag', 'map2', 'color', 'none', ...
         'xticklabel', {}, 'yticklabel', {}); hold on;
-    
+
     % get jarkus transects
     j = jarkus_transects('cross_shore', [0 5000], 'output', {'id' 'x' 'y' 'cross_shore'});
     for i = 1:length(j.id)
         plot(j.x(i,:), j.y(i,:), '-g', 'tag', num2str(j.id(i)));
     end
-    
+
     % get vaklodingen areas
 %     urls = vaklodingen_url;
 %     url = urls{strfilter(urls, '/vaklodingen.nc$')};
@@ -113,20 +113,20 @@ function varargout = xb_gui_mergebathy()
     for i = 1:size(rectangles, 1)
         rectangle('position', rectangles(i,:), 'tag', strtrim(ids(i,:)), 'edgecolor', 'b');
     end
-    
+
     ax2 = axes('position', get(ax1, 'position'), 'tag', 'map', 'color', 'none', ...
         'xticklabel', {}, 'yticklabel', {}); hold on;
-    
+
     linkaxes([ax1 ax2 ax3], 'xy');
-    
+
     xb_gui_dragselect(ax2, 'fcn', @addselect);
-    
+
     uiwait(pobj);
-    
+
     varargout = get(pobj, 'UserData');
-    
+
     close(pobj);
-    
+
 end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,12 +138,12 @@ function type = gettype()
 end
 
 function file = getfile()
-    
+
 end
 
 function addfile(obj, event)
     pobj = get(obj, 'parent');
-    
+
     type = gettype;
     switch type
         case 'ARCGIS file'
@@ -152,16 +152,16 @@ function addfile(obj, event)
         case 'XBeach grid files'
             [fname fpath] = uigetfile({'*.grd', 'X coordinate file (*.grd)'}, 'Select bathymetry file');
             xfile = fullfile(fpath, fname);
-            
+
             [fname fpath] = uigetfile({'*.grd', 'Y coordinate file (*.grd)'}, 'Select bathymetry file', fpath);
             yfile = fullfile(fpath, fname);
-            
+
             [fname fpath] = uigetfile({'*.dep', 'Z coordinate file (*.dep)'}, 'Select bathymetry file', fpath);
             zfile = fullfile(fpath, fname);
-            
+
             file = [xfile '|' yfile '|' zfile];
     end
-    
+
     if ~isempty(file)
         cobj = findobj(pobj, 'tag', 'table');
         data = get(cobj, 'data');
@@ -179,15 +179,15 @@ end
 
 function addselect(obj, event, aobj, polx, poly)
     dobj = findobj(obj, 'tag', 'map2');
-    
+
     data = cell(0,2);
-    
+
     % add jarkus
     lobjs = findobj(dobj, 'type', 'line');
     x = get(lobjs, 'xdata'); x = [x{:}];
     y = get(lobjs, 'ydata'); y = [y{:}];
-    
-	i = inpolygon(x, y, polx, poly);
+
+    i = inpolygon(x, y, polx, poly);
     if any(i)
         idx = i(1:2:end)|i(2:2:end);
         ids = str2double(get(lobjs(idx), 'tag'));
@@ -203,7 +203,7 @@ function addselect(obj, event, aobj, polx, poly)
             data = [data{:} datai];
         end
     end
-    
+
     % add vaklodingen
     robjs = findobj(dobj, 'type', 'rectangle');
     p = get(robjs, 'position'); p = [p{:}];
@@ -212,7 +212,7 @@ function addselect(obj, event, aobj, polx, poly)
     x(2:4:end) = p(1:4:end); y(2:4:end) = p(2:4:end)+p(4:4:end);
     x(3:4:end) = p(1:4:end)+p(3:4:end); y(3:4:end) = p(2:4:end)+p(4:4:end);
     x(4:4:end) = p(1:4:end)+p(3:4:end); y(4:4:end) = p(2:4:end);
-    
+
     idx = [];
     for i = 1:4:length(x)
         [xi yi] = polyintersect(x(i:i+3), y(i:i+3), polx, poly);
@@ -220,10 +220,10 @@ function addselect(obj, event, aobj, polx, poly)
             idx = [idx (i-1)/4+1];
         end
     end
-    
+
     if ~isempty(idx)
         ids = get(robjs(idx), 'tag');
-        
+
         if ~iscell(ids); ids = {ids}; end;
 
         for i = 1:length(ids)
@@ -231,7 +231,7 @@ function addselect(obj, event, aobj, polx, poly)
             data = [data{:} datai];
         end
     end
-    
+
     % add to table
     if ~isempty(data)
         tobj = findobj(obj, 'tag', 'table');
@@ -253,20 +253,20 @@ end
 function setloc(obj, event)
     pobj = get(obj, 'parent');
     mobj = findobj(pobj, 'tag', 'map');
-    
+
     [x y] = str2coord([get(obj, 'string') ', nederland']);
-    
+
     if ~isempty(x) && ~isempty(y)
         lobj = findobj(mobj, 'tag', 'loc');
         if isempty(lobj)
             zoom(10);
             zoom('reset');
-            
+
             plot(mobj, x, y, 'or', 'tag', 'loc');
         else
             set(lobj, 'xdata', x, 'ydata', y);
         end
-        
+
         xlim = get(mobj, 'xlim');
         ylim = get(mobj, 'ylim');
         set(mobj, 'xlim', x+[-1 1]*diff(xlim)/2);
@@ -280,9 +280,9 @@ function mergedata(obj, event)
     pobj = get(obj, 'parent');
     tobj = findobj(pobj, 'tag', 'table');
     tdata = get(tobj, 'data');
-    
+
     x = {}; y = {}; z = {};
-    
+
     wb = waitbar(0, 'Reading grids...');
     for i = 1:size(tdata, 1)
         switch tdata{i,1}
@@ -296,10 +296,17 @@ function mergedata(obj, event)
                 idx = strfilter(urls, ['*' tdata{i,2} '.nc']);
                 info = nc_info(urls{idx});
                 nt = info.Dimension(strcmpi('time', {info.Dimension.Name})).Length-1;
-                
+
                 x{i} = nc_varget(urls{idx}, 'x');
                 y{i} = nc_varget(urls{idx}, 'y');
-                z{i} = nc_varget(urls{idx}, 'z', [nt 0 0], [1 -1 -1]);
+                zta  = nc_varget(urls{idx}, 'z');
+                z{i} = squeeze(zta(end,:,:));
+
+                for t = size(zta,1):-1:1
+                    ii = isnan(z{i});
+                    zt = squeeze(zta(t,:,:));
+                    z{i}(ii) = zt(ii);
+                end
             case 'ARCGIS file'
                 [x{i} y{i} z{i}] = arc_asc_read(tdata{i,2}, 'zscale', 1);
             case 'XBeach grid files'
@@ -307,16 +314,16 @@ function mergedata(obj, event)
                 xb = xb_read_bathy('xfile', files{1}, 'yfile', files{2}, 'depfile', files{3});
                 [x{i} y{i} z{i}] = xb_get(xb, 'xfile', 'yfile', 'depfile');
         end
-        
+
         waitbar(i/size(tdata, 1), wb);
     end
     waitbar(1, wb, 'Merging grids...');
-    
+
     [x y z] = xb_grid_merge('x', x, 'y', y, 'z', z);
-    
+
     close(wb);
-    
+
     set(pobj, 'UserData', {x y z});
-    
+
     uiresume(pobj);
 end

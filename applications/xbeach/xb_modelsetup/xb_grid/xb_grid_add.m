@@ -143,6 +143,7 @@ end
 
 if ~isempty(OPT.ne)
     xb = xb_bathy2input(xb, xgrid, ygrid, zgrid, negrid);
+    xb = xb_set(xb, 'struct', 1);
 else
     xb = xb_bathy2input(xb, xgrid, ygrid, zgrid);
 end
