@@ -226,6 +226,7 @@ for ipar=1:npar
         
     end
     
+%    writeD3DmeteoPart([rundir fname '.' extstr],s2,parameter{ipar},meteostr,unitstr,unit,reftime);
     writeD3Dmeteo([rundir fname '.' extstr],s2,parameter{ipar},meteostr,unitstr,unit,reftime);
     
 end
