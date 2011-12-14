@@ -176,11 +176,13 @@ g.yc(nx+1,ny+1)     = 1.5 * g.yu(nx+1,ny+1) - 0.5*g.yu(nx,ny+1);
 g.dsz(2:nx+1,:) = sqrt((g.xu(2:nx+1,:)-g.xu(1:nx,:)).^2+(g.yu(2:nx+1,:)-g.yu(1:nx,:)).^2);
 g.dsz(1,:)      = g.dsz(2,:);
 
-g.dsu(1:nx,:)   = sqrt((g.xz(2:nx+1,:)-g.xz(1:nx,:)).^2+(g.yz(2:nx+1,:)-g.yz(1:nx,:)).^2);
-g.dsu(nx+1,:)   = g.dsu(nx,:);
+i = 1:nx;
+j = 1:ny+1;
+g.dsu(i,j)    = sqrt( (g.xz(i+1,j)-g.xz(i,j)).^2 + (g.yz(i+1,j)-g.yz(i,j)).^2 );
+g.dsu(nx+1,:) = g.dsu(nx,:);
 
-i = 2:size(x,1);
-j = 1:size(y,2);
+i = 2:nx+1;
+j = 1:ny+1;
 g.dsv(i,j)      = sqrt( (g.xc(i,j)-g.xc(i-1,j)).^2 + (g.yc(i,j)-g.yc(i-1,j)).^2 );
 g.dsv(1   , j)  = g.dsv(2 , j);
 g.dsv(nx+1, j)  = g.dsv(nx, j);
