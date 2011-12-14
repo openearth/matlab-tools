@@ -308,7 +308,7 @@ function mergedata(obj, event)
                     z{i}(ii) = zt(ii);
                 end
             case 'ARCGIS file'
-                [x{i} y{i} z{i}] = arc_asc_read(tdata{i,2}, 'zscale', 1);
+                [x{i} y{i} z{i}] = arc_asc_read(tdata{i,2}, 'zscale', 100);
             case 'XBeach grid files'
                 files = regexp(tdata{i,2}, '\|', 'split');
                 xb = xb_read_bathy('xfile', files{1}, 'yfile', files{2}, 'depfile', files{3});
@@ -319,7 +319,7 @@ function mergedata(obj, event)
     end
     waitbar(1, wb, 'Merging grids...');
 
-    [x y z] = xb_grid_merge('x', x, 'y', y, 'z', z);
+    [x y z] = xb_grid_merge('x', x, 'y', y, 'z', z, 'maxsize', 'max');
 
     close(wb);
 

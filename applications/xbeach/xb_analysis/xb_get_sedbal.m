@@ -65,7 +65,8 @@ function xbo = xb_get_sedbal(xb, varargin)
 %% read options
 
 OPT = struct( ...
-    't', Inf ...
+    't', Inf, ...
+    'porosity', .4 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -80,7 +81,7 @@ if xb_exist(xb, 'DIMS')
     tm  = tm(tm<=OPT.t);
     nt  = length(t);
     
-    g = xb_stagger(x,y);
+    g   = xb_stagger(x,y);
 else
     error('Grid not specified');
 end
@@ -90,7 +91,7 @@ end
 if xb_exist(xb, 'zb')
     zb = xb_get(xb, 'zb');
     
-    sed_DATA = squeeze(zb(nt,:,:)-zb(1,:,:)).*g.dsdnz';
+    sed_DATA = (1-OPT.porosity)*squeeze(zb(min(nt,size(zb,1)),:,:)-zb(1,:,:)).*g.dsdnz';
     ero_DATA = -sed_DATA;
     
     sed_DATA(sed_DATA<0) = 0;
@@ -106,11 +107,18 @@ Svbg_DATA = integrate_transport(xb, 'Svbg', g, x, y, t, tm);
 
 S_DATA    = [Susg_DATA Svsg_DATA Subg_DATA Svbg_DATA];
 
-S         = struct();
-f         = fieldnames(S_DATA);
-for i = 1:length(f)
-    S.(f{i}) = sum(sum([S_DATA.(f{i})]));
-end
+S_s       = sum(cat(3,S_DATA.s),3);
+S_n       = sum(cat(3,S_DATA.n),3);
+
+% positive is cell in, negative is cell out
+S_cell    = zeros(size(g.xz))';
+S_cell(2:end,2:end) = S_n(1:end-1,2:end)-S_n(2:end,2:end) + ...
+                      S_s(2:end,1:end-1)-S_s(2:end,2:end);
+
+S.front   =  [0;S_s(2:end,1  )];
+S.back    = -[0;S_s(2:end,end)];
+S.right   =  [0;S_n(1  ,2:end)'];
+S.left    = -[0;S_n(end,2:end)'];
 
 %% compute balance
 
@@ -118,7 +126,9 @@ sed     = sum(sum(sed_DATA));
 ero     = sum(sum(ero_DATA));
 trans   = sum(cell2mat(struct2cell(S)));
 
-bal     = sed-ero+trans;
+bal     = sed-ero-trans;
+
+bal_cell = sed_DATA-ero_DATA-S_cell;
 
 %% create xbeach structure
 
@@ -128,13 +138,21 @@ xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
 
 xbo = xb_set(xbo,               ...
     'time',         max(t),     ...
+    'surface',      sum(sum(g.dsdnz)), ...
     'bal',          bal,        ...
     'sed',          sed,        ...
     'ero',          ero,        ...
     'trans',        trans,      ...
+    'bal_DATA', xb_set([],      ...
+        'total',    bal,        ...
+        'cell',     bal_cell,   ...
+        'sedero',   sed-ero),   ...
     'sed_DATA',     sed_DATA,   ...
     'ero_DATA',     ero_DATA,   ...
     'trans_DATA', xb_set([],    ...
+        'cell',     S_cell,     ...
+        's',        S_s,        ...
+        'n',        S_n,        ...
         'front',    S.front,    ...
         'back',     S.back,     ...
         'right',    S.right,    ...
@@ -149,11 +167,13 @@ end
 
 function r = integrate_transport(xb, var, g, x, y, t, tm)
     
-    r       = struct('front',[],'back',[],'right',[],'left',[]);
+    r       = struct('s', [], 'n', []);
     
     if xb_exist(xb, [var '_mean'])
         var = [var '_mean'];
         t   = tm;
+    elseif xb_exist(xb, var)
+        warning('Using instantaneous transports, which can deviate from the time-averaged transports considerably!');
     end
     
     if xb_exist(xb, var)
@@ -166,9 +186,7 @@ function r = integrate_transport(xb, var, g, x, y, t, tm)
         v       = xb_get(xb, var);
         v       = squeeze(sum(sum(v(1:nt,:,:,:),2).*tint,1));
 
-        r.front = squeeze(-v(:,1)    .*cos(g.alfau(1,:)    -da)'.*g.dnu(1,:)'    );
-        r.back  = squeeze( v(:,end)  .*cos(g.alfau(end,:)  -da)'.*g.dnu(end,:)'  );
-        r.right = squeeze(-v(2,:)    .*cos(g.alfav(:,2)    -da)'.*g.dsv(:,2)'    );
-        r.left  = squeeze( v(end-1,:).*cos(g.alfav(:,end-1)-da)'.*g.dsv(:,end-1)');
+        r.s     = squeeze(v.*cos(g.alfau-da)'.*g.dnu');
+        r.n     = squeeze(v.*cos(g.alfav-da)'.*g.dsv');
     end
 end

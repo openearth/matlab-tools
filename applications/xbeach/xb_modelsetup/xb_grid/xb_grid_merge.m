@@ -109,7 +109,7 @@ for i = 1:n
 end
 
 % maximize grid size
-dd = xb_grid_resolution(xmin:dd:xmax, ymin:dd:ymax);
+dd = xb_grid_resolution(xmin:dd:xmax, ymin:dd:ymax, 'maxsize', OPT.maxsize);
 
 % create output grid
 [x y] = meshgrid(xmin:dd:xmax, ymin:dd:ymax);

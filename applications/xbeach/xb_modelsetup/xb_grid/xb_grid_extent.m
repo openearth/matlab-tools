@@ -74,9 +74,9 @@ OPT = setproperty(OPT, varargin{:});
 
 %% determine grid extent and minimum grid size
 
-if isvector(x) && isvector(y)
-    [x y] = meshgrid(x, y);
-end
+% if isvector(x) && isvector(y)
+%     [x y] = meshgrid(x, y);
+% end
     
 xmin = min(x(:));
 xmax = max(x(:));

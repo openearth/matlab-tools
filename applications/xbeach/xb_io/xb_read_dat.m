@@ -113,15 +113,8 @@ end
 
 if isempty(fdir); fdir = fullfile('.', ''); end;
 
-% get dimensions
-dims = xb_read_dims(fdir);
-
-% store dims in xbeach struct
+% allocate dims in xbeach struct
 d = xb_empty();
-f = fieldnames(dims);
-for i = 1:length(f)
-    d = xb_set(d, f{i}, dims.(f{i}));
-end
 d = xb_meta(d, mfilename, 'dimensions', fdir);
 xb = xb_set(xb, 'DIMS', d);
 
@@ -153,6 +146,13 @@ for i = 1:length(names)
         xb = xb_set(xb, varname, dat);
         
     end
+end
+
+% store dims in struct
+dims = xb_read_dims(fdir, 'dimensions', dims, 'start', start, 'length', len, 'stride', stride);
+f = fieldnames(dims);
+for i = 1:length(f)
+    d = xb_set(d, f{i}, dims.(f{i}));
 end
 
 % set meta data

@@ -209,6 +209,7 @@ while any(duration>OPT.maxduration)
         data    = xb_get(xb, vars{j});
         xb      = xb_set(xb, vars{j}, data(idx));
     end
+    tlength     = tlength+n;
 end
 
 xb = xb_set(xb, 'duration', duration);

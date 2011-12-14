@@ -1,4 +1,4 @@
-function XBdims = xb_read_dims(filename)
+function XBdims = xb_read_dims(filename, varargin)
 %XB_READ_DIMS  read dimensions from xbeach output
 %
 %   Routine to read the dimension from either netcdf of .dat xbeach output.
@@ -65,6 +65,17 @@ function XBdims = xb_read_dims(filename)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+%% read options
+
+OPT = struct( ...
+    'dimensions', {{}}, ...
+    'start', [], ...
+    'length', [], ...
+    'stride', [] ...
+);
+
+OPT = setproperty(OPT, varargin{:});
 
 %% read dims
 
@@ -176,6 +187,15 @@ elseif strcmpi(extension, '.dat')
     
 else
     error(['directory or file "' filename '" does not exist'])
+end
+
+%% apply filters
+
+for i = 1:length(OPT.dimensions)
+    if ismember(OPT.dimensions{i}, {'globaltime' 'meantime' 'pointtime'})
+        XBdims.([OPT.dimensions{i} '_DATA']) =        XBdims.([OPT.dimensions{i} '_DATA'])(OPT.start(i)+[1:OPT.stride(i):OPT.length(i)]);
+        XBdims.(OPT.dimensions{i})           = length(XBdims.([OPT.dimensions{i} '_DATA']));
+    end
 end
 
 %% jaap's convenience attributes (not officially supported)

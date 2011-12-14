@@ -11,7 +11,9 @@ function [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x, y, varargin)
 %   Input:
 %   x           = x-coordinates of grid to be cropped
 %   y           = y-coordinates of grid to be cropped
-%   varargin    = maxsize:  maximum grid size in bytes (default 10MB)
+%   varargin    = maxsize:  maximum grid size in bytes (default 10MB), in
+%                           case the value is 'max' the maximum size in the
+%                           currently available memory space is used.
 %
 %   Output:
 %   cellsize    = maximum cellsize in regular grid
@@ -80,5 +82,10 @@ OPT = setproperty(OPT, varargin{:});
 [xmin xmax ymin ymax cellsize] = xb_grid_extent(x, y);
 
 %% maximize resolution
+
+if strcmpi(OPT.maxsize, 'max')
+    m           = memory;
+    OPT.maxsize = min(m.MaxPossibleArrayBytes, m.MemAvailableAllArrays*.01);
+end
 
 cellsize = max(cellsize, sqrt((xmax-xmin)*(ymax-ymin)/OPT.maxsize*8));
