@@ -82,12 +82,10 @@ info = struct();
 
 if exist(fname, 'file')
     
-    [pathstr, name, ext, versn] = fileparts(fname);
-
     fid = fopen(fname);
 
     % walk through file
-    i = 1; j = 1; ni = 0;
+    i = 1; j = 1;
     while ~feof(fid)
         fline = fgetl(fid);
         fline = strrep(fline, ',', '.');

@@ -7,11 +7,12 @@ function g = xb_stagger(x, y)
 %   itself.
 %
 %   The last character of each variable name indicates the location within
-%   a grid cell for which the value is comuted (z, u, v or c, see
+%   a grid cell for which the value is computed (z, u, v or c, see
 %   illustration). The variable name further consists of x or y,
 %   indicating a location in world coordinates, or of ds or dn, indicating
-%   distances or surfaces in grid coordinates. The alfa* variables are
-%   orientation of the specified points.
+%   distances or surfaces in grid coordinates. The dsdn* variables are grid
+%   cell surfaces. The alfa* variables are orientations of the specified
+%   points.
 %
 %        coast
 %

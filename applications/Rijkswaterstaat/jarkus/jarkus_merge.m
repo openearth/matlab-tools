@@ -107,18 +107,18 @@ for i = 1:length(dim_val)
     % determine altitudes in current step
     switch OPT.dim
         case 'time'
-            alt = squeeze(transects.altitude(ii,:,:));
+            alt = transects.altitude(ii,:,:);
         case 'cross_shore'
-            alt = squeeze(transects.altitude(:,:,ii));
+            alt = transects.altitude(:,:,ii);
         case 'alongshore'
         case 'id'
-            alt = squeeze(transects.altitude(:,ii,:));
+            alt = transects.altitude(:,ii,:);
     end
     
     % allocate merged altitudes variable
     if isempty(altitude)
-        altitude = nan(size(alt));
-        sources = nan(size(alt));
+        altitude = nan([size(alt)]);
+        sources = nan([size(alt)]);
     end
     
     % determine merging method
