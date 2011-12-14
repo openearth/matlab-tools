@@ -156,8 +156,8 @@ g.xc(1:nx,1:ny)     = 0.25*(g.xz(1:nx,1:ny) + g.xz(2:nx+1,1:ny  ) + g.xz(1:nx,2:
 g.yc(1:nx,1:ny)     = 0.25*(g.yz(1:nx,1:ny) + g.yz(2:nx+1,1:ny  ) + g.yz(1:nx,2:ny+1) + g.yz(2:nx+1,2:ny+1));
 g.xc(nx+1,1:ny)     = 0.5 *(g.xu(nx+1,1:ny) + g.xu(nx+1  ,2:ny+1));
 g.yc(nx+1,1:ny)     = 0.5 *(g.yu(nx+1,1:ny) + g.yu(nx+1  ,2:ny+1));
-g.xc(1:nx,ny+1)     = 0.5 *(g.xu(1:nx,ny+1) + g.xu(2:nx+1,ny+1  ));
-g.yc(1:nx,ny+1)     = 0.5 *(g.yu(1:nx,ny+1) + g.yu(2:nx+1,ny+1  ));
+g.xc(1:nx,ny+1)     = 0.5 *(g.xv(1:nx,ny+1) + g.xv(2:nx+1,ny+1  ));
+g.yc(1:nx,ny+1)     = 0.5 *(g.yv(1:nx,ny+1) + g.yv(2:nx+1,ny+1  ));
 g.xc(nx+1,ny+1)     = 1.5 * g.xu(nx+1,ny+1) - 0.5*g.xu(nx,ny+1);
 g.yc(nx+1,ny+1)     = 1.5 * g.yu(nx+1,ny+1) - 0.5*g.yu(nx,ny+1);
 
