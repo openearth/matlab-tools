@@ -104,14 +104,9 @@ OPT = setproperty(OPT, varargin{:});
 
 type = xb_get(xb, 'type');
 
-if strcmpi(type, 'jonswap_mtx')
-    type = 'jonswap';
-    OPT.omit_filelist = true;
-end
-
 % check parameter dimensions
 switch type
-    case 'jonswap'
+    case {'jonswap' 'jonswap_mtx'}
         vars = {'Hm0' 'Tp' 'fp' 'mainang' 'gammajsp' 's' 'fnyq' 'duration' 'timestep'};
 
         fname = OPT.jonswap_file;
@@ -196,6 +191,8 @@ end
 
 [duration timestep] = xb_get(xb, 'duration', 'timestep');
 
+if isnan(duration); duration = OPT.maxduration; end;
+
 while any(duration>OPT.maxduration)
     i           = find(duration>OPT.maxduration,1,'first');
     n           = floor(duration(i)/OPT.maxduration);
@@ -218,7 +215,7 @@ xb = xb_set(xb, 'duration', duration);
 
 % create file list file, if necessary
 [duration timestep] = xb_get(xb, 'duration', 'timestep');
-if length(duration) > 1 && ~(strcmpi(type, 'jonswap') && OPT.omit_filelist)
+if length(duration) > 1 && ~(strcmpi(type, 'jonswap') && OPT.omit_filelist) && ~strcmpi(type, 'jonswap_mtx')
     filename = [OPT.filelist_file '.txt'];
     fid = fopen(fullfile(OPT.path, filename), 'w');
     fprintf(fid, 'FILELIST\n');
@@ -232,14 +229,14 @@ end
 
 % determine whether single matrix formatted jonswap file should be
 % created, otherwise write single or multiple wave files
-if length(duration) > 1 && strcmpi(type, 'jonswap') && OPT.omit_filelist
+if strcmpi(type, 'jonswap_mtx') || (length(duration) > 1 && strcmpi(type, 'jonswap') && OPT.omit_filelist)
     filename = [fname '.txt'];
     write_jonswap_mtx_file(fullfile(OPT.path, filename), tlength, xb)
 else
     % loop through time series and write wave files
     for i = 1:length(duration)
         if length(duration) == 1
-            if isempty(regexp(fname, '.\w+$', 'once'))
+            if isempty(regexp(fname, '\.\w+$', 'once'))
                 filename = [fname '.txt'];
             else
                 filename = fname;

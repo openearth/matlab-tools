@@ -85,7 +85,7 @@ function res = stat_freqexc_fit(res, varargin)
 
 OPT = struct( ...
     'y',      -10:.1:10, ...
-    'fcnfit', {{@stat_fit_rayleigh @stat_fit_gumbel @stat_fit_normal @stat_fit_gamma}} ...
+    'fcnfit', {{@stat_fit_gev}} ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -119,8 +119,13 @@ end
 
 %% compute average
 
-f = [res.fit.fits.f];
-f = f(:,~all(isnan(f),1));
+if ~isempty(res.fit) && ~isempty(fieldnames(res.fit))
+    f = [res.fit.fits.f];
+    f = f(:,~all(isnan(f),1));
 
-res.fit.y = OPT.y(:);
-res.fit.f = mean(f,2);
+    res.fit.y = OPT.y(:);
+    res.fit.f = mean(f,2);
+else
+    res.fit.y = nan;
+    res.fit.f = nan;
+end

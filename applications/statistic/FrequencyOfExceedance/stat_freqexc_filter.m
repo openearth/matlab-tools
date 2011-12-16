@@ -91,6 +91,8 @@ OPT = setproperty(OPT, varargin{:});
 
 if ~isnan(OPT.threshold)
     [n ni] = closest(OPT.threshold,[res.peaks.threshold]);
+elseif isfield(res, 'threshold')
+    [n ni] = closest(res.threshold,[res.peaks.threshold]);
 else
     [n ni] = max(cellfun(@length,{res.peaks.maxima}));
 end

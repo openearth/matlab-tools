@@ -206,4 +206,43 @@ for i = 1:length(g)
     res.peaks(i).frequency      = [res.peaks(i).nmax]/years;
     res.peaks(i).duration       = sum([res.peaks(i).maxima.duration])/years;
     res.peaks(i).duration_pp    = res.peaks(i).duration./res.peaks(i).frequency;
+    
+    % GPD fit
+    if exist('gpfit')
+        data                    = [res.peaks(i).maxima.value];
+        mu                      = min(data)-eps;
+        
+        if length(data)>1
+            fit                 = gpfit(data-mu);
+        else
+            fit                 = nan(1,2);
+        end
+
+        res.peaks(i).GPD        = struct(           ...
+            'mu',                 mu,               ...
+            'xi',                 fit(1),           ...
+            'sigma',              fit(2));
+    end
+end
+
+%% determine threshold
+
+if isfield(res.peaks, 'GPD')
+    
+    GPD          = [res.peaks.GPD];
+    
+    sigma        = [GPD.sigma];
+    sigma_var    = nan(size(sigma));
+    sigma_varvar = nan(size(sigma));
+    
+    sigma(isnan(sigma)) = 0;
+    
+    for i = length(sigma):-1:1
+        sigma_var   (i) = var(sigma    (i:end));
+        sigma_varvar(i) = var(sigma_var(i:end));
+    end
+    
+    idx = find(diff(sigma_varvar)>0,1,'first');
+    
+    res.threshold = res.peaks(idx).threshold;
 end
