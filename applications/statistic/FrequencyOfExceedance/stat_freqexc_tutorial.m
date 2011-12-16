@@ -79,6 +79,12 @@ stat_freqexc_plot(res);
 
 stat_freqexc_logplot(res);
 
+%% Plot duration of peaks
+%
+% Plot the average duration of a peak given the threshold of exceedance:
+
+stat_freqexc_plotduration(res);
+
 %% Write Hydra input
 %
 % Write the combined frequency of exceedance line now to a text file that

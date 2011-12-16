@@ -1,25 +1,21 @@
-function stat_freqexc_logplot(res, varargin)
-%STAT_FREQEXC_LOGPLOT  Plots a result structure from any of the stat_freqexc_* functions on logarithmic scale
+function stat_freqexc_plotduration(res, varargin)
+%STAT_FREQEXC_PLOTDURATION  One line description goes here.
 %
-%   Plots the empirical, filtered, fitted and combined frequencies of
-%   exceedance from any of the stat_freqexc_* functions that return a
-%   result structure alike the structure from stat_freqexc_get.
+%   More detailed description goes here.
 %
 %   Syntax:
-%   stat_freqexc_logplot(res, varargin)
+%   varargout = stat_freqexc_plotduration(varargin)
 %
 %   Input:
-%   res       = Result structure from a stat_freqexc_* function
-%   varargin  = none
+%   varargin  =
 %
 %   Output:
-%   none
+%   varargout =
 %
 %   Example
-%   stat_freqexc_logplot(res)
+%   stat_freqexc_plotduration
 %
-%   See also stat_freqexc_get, stat_freqexc_filter, stat_freqexc_fit,
-%            stat_freqexc_combine, stat_freqexc_plot
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -53,7 +49,7 @@ function stat_freqexc_logplot(res, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 11 Oct 2011
+% Created: 16 Dec 2011
 % Created with Matlab version: 7.12.0.635 (R2011a)
 
 % $Id$
@@ -66,39 +62,47 @@ function stat_freqexc_logplot(res, varargin)
 %% read settings
 
 OPT = struct( ...
+    'frac', .1 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 figure; hold on;
 
-xlim = [1e-1 1e5];
-ylim = [res.filter.threshold max(res.combined.y)];
-ylim = [-.5 4];
+th   = [res.peaks.threshold];
+dpp  = [res.peaks.duration_pp];
+dpp(isnan(dpp)) = 0;
+
+xlim = max(dpp).*[-1 1];
+ylim = minmax(th);
 
 %% plot frequency of exceedance
 
-plot(1./[res.peaks.frequency].*res.fraction,[res.peaks.threshold],'xb','LineWidth',2,'DisplayName','peaks');
+c  = 0;
+dx = 0;
+
+plot(dpp,th,'xb','LineWidth',2,'DisplayName','duration')
 
 if isfield(res,'filter')
-    [y i]   = sort([res.filter.maxima.value],2,'descend');
-    plot(1./([1:res.filter.nmax]./res.filter.nmax),y,'xg','LineWidth',2,'DisplayName','peaks (filtered)');
-end
-
-if isfield(res,'fit')
-    plot(1./[res.fit.fits.f],[res.fit.fits.y],'Color',[.8 .8 .8],'DisplayName','fit');
-    plot(1./res.fit.f,res.fit.y,'-r','LineWidth',2,'DisplayName','fit (average)');
-end
-
-if isfield(res,'combined')
-    plot(1./res.combined.f,res.combined.y,'-xk','LineWidth',3,'DisplayName','combined');
-    plot(1./res.combined.split.*[1 1],ylim,':k','LineWidth',3,'DisplayName','combination divide');
+    th0 = res.filter.threshold;
+    top = max(th)-OPT.frac*(max(th)-th0);
+    
+    plot(xlim, top.*[1 1], 'r', 'DisplayName', 'top');
+    plot(xlim, th0.*[1 1], 'r', 'DisplayName', 'threshold');
+    
+    idx = th>=th0&th<=top;
+    dx  = abs((top-th0)./mean(diff(th(idx))./diff(dpp(idx))));
+    c   = findCrossings(dpp,th,xlim,th0.*[1 1]);
+    
+    plot([-c -c+dx c-dx c],[th0 top top th0],'k','LineWidth',2,'DisplayName','trapezium');
 end
 
 box on;
 grid on;
-xlabel('return period [year]');
+xlabel('duration [days]');
 ylabel('value');
 legend show;
 
-set(gca,'XLim',xlim,'YLim',ylim,'XScale','log');
+title(sprintf('top = %d ; base = %d', round(c), round(dx+c)));
+
+set(gca,'XLim',xlim,'YLim',ylim);
