@@ -91,7 +91,12 @@ end
 if xb_exist(xb, 'zb')
     zb = xb_get(xb, 'zb');
     
-    sed_DATA = (1-OPT.porosity)*squeeze(zb(min(nt,size(zb,1)),:,:)-zb(1,:,:)).*g.dsdnz';
+    if nt > size(zb,1)
+        nt = size(zb,1);
+        [t tm] = deal(t(1:nt), tm(1:nt));
+    end
+    
+    sed_DATA = (1-OPT.porosity)*squeeze(zb(nt,:,:)-zb(1,:,:)).*g.dsdnz';
     ero_DATA = -sed_DATA;
     
     sed_DATA(sed_DATA<0) = 0;
@@ -137,7 +142,7 @@ xbo = xb_empty();
 xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
 
 xbo = xb_set(xbo,               ...
-    'time',         max(t),     ...
+    'time',         t(nt),     ...
     'surface',      sum(sum(g.dsdnz)), ...
     'bal',          bal,        ...
     'sed',          sed,        ...
