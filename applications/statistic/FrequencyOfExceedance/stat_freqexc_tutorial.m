@@ -19,6 +19,9 @@ his = sobek_his_read('CALCPNT.HIS');
 
 [t x] = stat_freqexc_mask(his.time, squeeze(his.data(:,1,1)), {'mm' [1 2 3 10 11 12]});
 
+% shift time axis to fit hydrological year (starts at October 1st)
+t = t+92;
+
 %% Determine maxima
 %
 % Count maxima in time series that exceed different thresholds, thus
@@ -37,7 +40,7 @@ stat_freqexc_plot(res);
 % value analysis we only need a single threshold and the maxima for each
 % year. We can select this data from the just obtained result:
 
-res = stat_freqexc_filter(res, 'mask', 'yyyy', 'threshold', -.2);
+res = stat_freqexc_filter(res, 'mask', 'yyyy');
 
 % Again, plot the result with the very same function:
 
@@ -62,7 +65,7 @@ stat_freqexc_plot(res);
 % description of the frequency of exceedance. We would like to combine both
 % to a single description for specified frequencies:
 
-res = stat_freqexc_combine(res, 'f', [1e0 1e-2 1e-3 1e-4 1e-5]);
+res = stat_freqexc_combine(res, 'f', 1./[.3 .5 1 5 1e2 1e3 1e4 1e5]);
 
 % It is time to plot the final result:
 
