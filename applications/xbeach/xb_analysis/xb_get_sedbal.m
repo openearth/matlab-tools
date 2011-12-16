@@ -9,7 +9,10 @@ function xbo = xb_get_sedbal(xb, varargin)
 %
 %   Input:
 %   xb        = XBeach output structure
-%   varargin  = none
+%   varargin  = t:          time at which balance should be computed
+%                           (approximately)
+%               porosity:   porosity of bed
+%               morfac:     morphological factor between transports and bed
 %
 %   Output:
 %   xbo       = XBeach sediment balance structure
@@ -66,7 +69,8 @@ function xbo = xb_get_sedbal(xb, varargin)
 
 OPT = struct( ...
     't', Inf, ...
-    'porosity', .4 ...
+    'porosity', .4, ...
+    'morfac', 1 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -105,10 +109,10 @@ end
 
 %% compute transports over boundaries
 
-Susg_DATA = integrate_transport(xb, 'Susg', g, x, y, t, tm);
-Svsg_DATA = integrate_transport(xb, 'Svsg', g, x, y, t, tm);
-Subg_DATA = integrate_transport(xb, 'Subg', g, x, y, t, tm);
-Svbg_DATA = integrate_transport(xb, 'Svbg', g, x, y, t, tm);
+Susg_DATA = integrate_transport(xb, 'Susg', g, x, y, t, tm, OPT.morfac);
+Svsg_DATA = integrate_transport(xb, 'Svsg', g, x, y, t, tm, OPT.morfac);
+Subg_DATA = integrate_transport(xb, 'Subg', g, x, y, t, tm, OPT.morfac);
+Svbg_DATA = integrate_transport(xb, 'Svbg', g, x, y, t, tm, OPT.morfac);
 
 S_DATA    = [Susg_DATA Svsg_DATA Subg_DATA Svbg_DATA];
 
@@ -170,7 +174,7 @@ end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function r = integrate_transport(xb, var, g, x, y, t, tm)
+function r = integrate_transport(xb, var, g, x, y, t, tm, f)
     
     r       = struct('s', [], 'n', []);
     
@@ -191,7 +195,7 @@ function r = integrate_transport(xb, var, g, x, y, t, tm)
         v       = xb_get(xb, var);
         v       = squeeze(sum(sum(v(1:nt,:,:,:),2).*tint,1));
 
-        r.s     = squeeze(v.*cos(g.alfau-da)'.*g.dnu');
-        r.n     = squeeze(v.*cos(g.alfav-da)'.*g.dsv');
+        r.s     = f.*squeeze(v.*cos(g.alfau-da)'.*g.dnu');
+        r.n     = f.*squeeze(v.*cos(g.alfav-da)'.*g.dsv');
     end
 end

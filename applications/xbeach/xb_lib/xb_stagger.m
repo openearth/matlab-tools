@@ -173,34 +173,45 @@ g.yc(nx+1,ny+1)     = 1.5 * g.yu(nx+1,ny+1) - 0.5*g.yu(nx,ny+1);
 
 %% compute cell boundary lengths
 
-g.dsz(2:nx+1,:) = sqrt((g.xu(2:nx+1,:)-g.xu(1:nx,:)).^2+(g.yu(2:nx+1,:)-g.yu(1:nx,:)).^2);
-g.dsz(1,:)      = g.dsz(2,:);
-
-i = 1:nx;
+i = 2:nx+1;
 j = 1:ny+1;
-g.dsu(i,j)    = sqrt( (g.xz(i+1,j)-g.xz(i,j)).^2 + (g.yz(i+1,j)-g.yz(i,j)).^2 );
-g.dsu(nx+1,:) = g.dsu(nx,:);
+
+g.dsz(i   ,j   )    = sqrt( (g.xu(i,j)-g.xu(i-1,j)).^2 + (g.yu(i,j)-g.yu(i-1,j)).^2 );
+g.dsz(1   ,j   )    = g.dsz(2,j);
 
 i = 2:nx+1;
 j = 1:ny+1;
-g.dsv(i,j)      = sqrt( (g.xc(i,j)-g.xc(i-1,j)).^2 + (g.yc(i,j)-g.yc(i-1,j)).^2 );
-g.dsv(1   , j)  = g.dsv(2 , j);
-g.dsv(nx+1, j)  = g.dsv(nx, j);
 
-g.dsc(1:nx,:)   = sqrt((g.xv(2:nx+1,:)-g.xv(1:nx,:)).^2+(g.yv(2:nx+1,:)-g.yv(1:nx,:)).^2);
-g.dsc(nx+1,:)   = g.dsc(nx,:);
+g.dsv(i   ,j   )    = sqrt( (g.xc(i,j)-g.xc(i-1,j)).^2 + (g.yc(i,j)-g.yc(i-1,j)).^2 );
+g.dsv(1   ,j   )    = g.dsv(2 , j);
+g.dsv(nx+1,j   )    = g.dsv(nx, j);
 
-g.dnz(:,2:ny+1) = sqrt((g.xv(:,2:ny+1)-g.xv(:,1:ny)).^2+(g.yv(:,2:ny+1)-g.yv(:,1:ny)).^2);
-g.dnz(:,1)      = g.dnz(:,2);
+i = 1:nx;
+j = 1:ny+1;
 
-g.dnu(:,2:ny+1) = sqrt((g.xc(:,2:ny+1)-g.xc(:,1:ny)).^2+(g.yc(:,2:ny+1)-g.yc(:,1:ny)).^2);
-g.dnu(:,1)      = g.dnu(:,2);
+g.dsu(i   ,j   )    = sqrt( (g.xz(i+1,j)-g.xz(i,j)).^2 + (g.yz(i+1,j)-g.yz(i,j)).^2 );
+g.dsu(nx+1,j   )    = g.dsu(nx,j);
 
-g.dnv(:,1:ny)   = sqrt((g.xz(:,2:ny+1)-g.xz(:,1:ny)).^2+(g.yz(:,2:ny+1)-g.yz(:,1:ny)).^2);
-g.dnv(:,ny+1)   = g.dnv(:,ny);
+g.dsc(i   ,j   )    = sqrt( (g.xv(i+1,j)-g.xv(i,j)).^2 + (g.yv(i+1,j)-g.yv(i,j)).^2 );
+g.dsc(nx+1,j   )    = g.dsc(nx,j);
 
-g.dnc(:,1:ny)   = sqrt((g.xu(:,2:ny+1)-g.xu(:,1:ny)).^2+(g.yu(:,2:ny+1)-g.yu(:,1:ny)).^2);
-g.dnc(:,ny+1)   = g.dnc(:,ny);
+i = 1:nx+1;
+j = 2:ny+1;
+
+g.dnz(i   ,j   )    = sqrt( (g.xv(i,j)-g.xv(i,j-1)).^2 + (g.yv(i,j)-g.yv(i,j-1)).^2 );
+g.dnz(i   ,1   )    = g.dnz(i,2);
+
+g.dnu(i   ,j   )    = sqrt( (g.xc(i,j)-g.xc(i,j-1)).^2 + (g.yc(i,j)-g.yc(i,j-1)).^2 );
+g.dnu(i   ,1   )    = g.dnu(:,2);
+
+i = 1:nx+1;
+j = 1:ny;
+
+g.dnv(i   ,j   )    = sqrt( (g.xz(i,j+1)-g.xz(i,j)).^2 + (g.yz(i,j+1)-g.yz(i,j)).^2 );
+g.dnv(i   ,ny+1)    = g.dnv(i,ny);
+
+g.dnc(i   ,j   )    = sqrt( (g.xu(i,j+1)-g.xu(i,j)).^2 + (g.yu(i,j+1)-g.yu(i,j)).^2 );
+g.dnc(i   ,ny+1)    = g.dnc(i,ny);
 
 %% compute cell areas
 
@@ -235,8 +246,8 @@ y2 = g.yv(i+1, j  ) - g.yv(i+1, j-1);
 y3 = g.yv(i+1, j-1) - g.yv(i  , j-1);
 y4 = g.yv(i+1, j  ) - g.yv(i  , j  );
 
-g.dsdnu(i,j) = 0.5 * ( abs(x1.*y3 - x3.*y1) + abs(x2.*y4 - x4.*y2) );
-g.dsdnu(:,1) = g.dsdnu(:,2);
+g.dsdnu(i,j)    = 0.5 * ( abs(x1.*y3 - x3.*y1) + abs(x2.*y4 - x4.*y2) );
+g.dsdnu(:,1)    = g.dsdnu(:,2);
 g.dsdnu(nx+1,:) = g.dsdnu(nx,:);
 
 % dsdnv
@@ -252,21 +263,30 @@ y2 = g.yu(i   , j+1) - g.yu(i   , j  );
 y3 = g.yu(i   , j  ) - g.yu(i-1 , j  );
 y4 = g.yu(i   , j+1) - g.yu(i-1 , j+1);
 
-g.dsdnv(i,j) = 0.5 * ( abs(x1.*y3 - x3.*y1) + abs(x2.*y4 - x4.*y2) );
+g.dsdnv(i,j)    = 0.5 * ( abs(x1.*y3 - x3.*y1) + abs(x2.*y4 - x4.*y2) );
 g.dsdnv(:,ny+1) = g.dsdnv(:,ny);
-g.dsdnv(1,:) = g.dsdnv(2,:);
+g.dsdnv(1,:)    = g.dsdnv(2,:);
 
 %% compute cell orientations
 
-g.alfaz(2:nx,:) = atan2(g.yz(3:nx+1,:)-g.yz(1:nx-1,:),g.xz(3:nx+1,:)-g.xz(1:nx-1,:));
-g.alfaz(1,:)    = g.alfaz(2 ,:);
-g.alfaz(nx+1,:) = g.alfaz(nx,:);
+i = 2:nx;
+j = 1:ny+1;
 
-g.alfau(1:nx,:) = atan2(g.yz(2:nx+1,:)-g.yz(1:nx,:),g.xz(2:nx+1,:)-g.xz(1:nx,:));
-g.alfau(nx+1,:) = g.alfau(nx,:);
+g.alfaz(i   ,j   )  = atan2(g.yz(i+1,j)-g.yz(i-1,j),g.xz(i+1,j)-g.xz(i-1,j));
+g.alfaz(1   ,j   )  = g.alfaz(2 ,j);
+g.alfaz(nx+1,j   )  = g.alfaz(nx,j);
 
-g.alfav(:,1:ny) = atan2(g.yz(:,2:ny+1)-g.yz(:,1:ny),g.xz(:,2:ny+1)-g.xz(:,1:ny));
-g.alfav(:,ny+1) = g.alfav(:,ny);
+i = 1:nx;
+j = 1:ny+1;
+
+g.alfau(i   ,j   )  = atan2(g.yz(i+1,j)-g.yz(i,j),g.xz(i+1,j)-g.xz(i,j));
+g.alfau(nx+1,j   )  = g.alfau(nx,j);
+
+i = 1:nx+1;
+j = 1:ny;
+
+g.alfav(i   ,j   )  = atan2(g.yz(i,j+1)-g.yz(i,j),g.xz(i,j+1)-g.xz(i,j));
+g.alfav(i   ,ny+1)  = g.alfav(i,ny);
 
 %% superfast support (continued)
 
