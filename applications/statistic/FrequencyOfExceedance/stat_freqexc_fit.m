@@ -94,6 +94,10 @@ if ~isfield(res, 'filter')
     error('No data selected, please use stat_freqexc_filter first');
 end
 
+if ~exist('gevfit') && ~ismember('fcnfit', varargin(1:2:end))
+    OPT.fcnfit = {@stat_fit_rayleigh @stat_fit_gumbel @stat_fit_normal @stat_fit_gamma};
+end
+
 %% fit data
 
 res.fit = struct();
