@@ -81,6 +81,7 @@ if xb_exist(xb, 'DIMS')
     t   = xb_get(xb, 'DIMS.globaltime_DATA');
     tm  = xb_get(xb, 'DIMS.meantime_DATA');
     
+    t0 = t(1);
     t   = t(t<=OPT.t);
     tm  = tm(tm<=OPT.t);
     nt  = length(t);
@@ -91,7 +92,6 @@ else
 end
 
 %% compute sedimentation and erosion
-
 if xb_exist(xb, 'zb')
     zb = xb_get(xb, 'zb');
     
@@ -129,6 +129,11 @@ S.back    = -[0;S_s(2:end,end)];
 S.right   =  [0;S_n(1  ,2:end)'];
 S.left    = -[0;S_n(end,2:end)'];
 
+if xb_exist(xb, 'Susg_mean', 'Svsg_mean', 'Subg_mean', 'Svbg_mean') == 4
+    
+    t = tm;
+end
+
 %% compute balance
 
 sed     = sum(sum(sed_DATA));
@@ -146,6 +151,7 @@ xbo = xb_empty();
 xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
 
 xbo = xb_set(xbo,               ...
+    'tstart',       t0,        ...
     'time',         t(nt),     ...
     'surface',      sum(sum(g.dsdnz)), ...
     'bal',          bal,        ...
