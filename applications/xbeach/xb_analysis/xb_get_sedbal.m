@@ -11,6 +11,7 @@ function xbo = xb_get_sedbal(xb, varargin)
 %   xb        = XBeach output structure
 %   varargin  = t:          time at which balance should be computed
 %                           (approximately)
+%               margin:     grid margin
 %               porosity:   porosity of bed
 %               morfac:     morphological factor between transports and bed
 %
@@ -69,6 +70,7 @@ function xbo = xb_get_sedbal(xb, varargin)
 
 OPT = struct( ...
     't', Inf, ...
+    'margin', 1, ...
     'porosity', .4, ...
     'morfac', 1 ...
 );
@@ -81,12 +83,16 @@ if xb_exist(xb, 'DIMS')
     t   = xb_get(xb, 'DIMS.globaltime_DATA');
     tm  = xb_get(xb, 'DIMS.meantime_DATA');
     
-    t0 = t(1);
+    t0  = t(1);
     t   = t(t<=OPT.t);
     tm  = tm(tm<=OPT.t);
     nt  = length(t);
     
     g   = xb_stagger(x,y);
+    
+    d   = OPT.margin;
+    
+    A   = sum(sum(g.dsdnz(1+d:end-d,1+d:end-d)));
 else
     error('Grid not specified');
 end
@@ -105,6 +111,11 @@ if xb_exist(xb, 'zb')
     
     sed_DATA(sed_DATA<0) = 0;
     ero_DATA(ero_DATA<0) = 0;
+    
+    sed_DATA([1:d+1 end-d+1:end],:)  = 0;
+    sed_DATA(:,[1:d+1 end-d+1:end])  = 0;
+    ero_DATA([1:d+1 end-d+1:end],:)  = 0;
+    ero_DATA(:,[1:d+1 end-d+1:end])  = 0;
 end
 
 %% compute transports over boundaries
@@ -121,28 +132,28 @@ S_n       = sum(cat(3,S_DATA.n),3);
 
 % positive is cell in, negative is cell out
 S_cell    = zeros(size(g.xz))';
-S_cell(2:end,2:end) = S_n(1:end-1,2:end)-S_n(2:end,2:end) + ...
-                      S_s(2:end,1:end-1)-S_s(2:end,2:end);
+S_cell(2+d:end-d,2+d:end-d) = S_n(1+d:end-1-d,2+d:end-d  ) - S_n(2+d:end-d,2+d:end-d) + ...
+                              S_s(2+d:end-d  ,1+d:end-1-d) - S_s(2+d:end-d,2+d:end-d);
 
-S.front   =  [0;S_s(2:end,1  )];
-S.back    = -[0;S_s(2:end,end)];
-S.right   =  [0;S_n(1  ,2:end)'];
-S.left    = -[0;S_n(end,2:end)'];
-
-if xb_exist(xb, 'Susg_mean', 'Svsg_mean', 'Subg_mean', 'Svbg_mean') == 4
-    
-    t = tm;
-end
+S.front   = zeros(size(g.xz,2),1);
+S.back    = zeros(size(g.xz,2),1);
+S.right   = zeros(size(g.xz,1),1);
+S.left    = zeros(size(g.xz,1),1);
+                  
+S.front(1+d:end-d)    =  S_s(1+d:end-d,1+d      ) ;
+S.back (1+d:end-d)    = -S_s(1+d:end-d,end-d    ) ;
+S.right(1+d:end-d)    =  S_n(1+d      ,1+d:end-d)';
+S.left (1+d:end-d)    = -S_n(end-d    ,1+d:end-d)';
 
 %% compute balance
 
-sed     = sum(sum(sed_DATA));
-ero     = sum(sum(ero_DATA));
-trans   = sum(cell2mat(struct2cell(S)));
+sed       = sum(sum(sed_DATA));
+ero       = sum(sum(ero_DATA));
+trans     = sum(cell2mat(struct2cell(S)));
 
-bal     = sed-ero-trans;
+bal       = sed-ero-trans;
 
-bal_cell = sed_DATA-ero_DATA-S_cell;
+bal_cell  = sed_DATA-ero_DATA-S_cell;
 
 %% create xbeach structure
 
@@ -151,9 +162,10 @@ xbo = xb_empty();
 xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
 
 xbo = xb_set(xbo,               ...
-    'tstart',       t0,        ...
-    'time',         t(nt),     ...
-    'surface',      sum(sum(g.dsdnz)), ...
+    'tstart',       t0,         ...
+    'time',         t(nt),      ...
+    'surface',      A, ...
+    'margin',       d,          ...
     'bal',          bal,        ...
     'sed',          sed,        ...
     'ero',          ero,        ...

@@ -88,6 +88,14 @@ function g = xb_stagger(x, y)
 % $HeadURL$
 % $Keywords: $
 
+%% read xbeach structure
+
+if xb_check(x)
+    if xb_exist(x,'DIMS')
+        [x y] = xb_get(x, 'DIMS.globalx_DATA', 'DIMS.globaly_DATA');
+    end
+end
+
 %% transpose grid
 
 if mean(mean(diff(x,1,2))) > mean(mean(diff(x,1,1))) && ...
