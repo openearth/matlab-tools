@@ -2,7 +2,8 @@ function varargout = xb_split(xb, varargin)
 %XB_SPLIT  Splits a XBeach structure in multiple XBeach structures
 %
 %   Splits a XBeach structure in multiple XBeach structures by moving
-%   several fields to one XBeach structure and others to another.
+%   several fields to one XBeach structure and others to another. User '*'
+%   to select all non-matched fields.
 %
 %   Syntax:
 %   varargout = xb_split(xb, varargin)
@@ -66,6 +67,9 @@ function varargout = xb_split(xb, varargin)
 
 varargout = {};
 
+ri = nan;
+r  = false(size(xb.data));
+
 for i = 1:length(varargin)
     f = varargin{i};
     
@@ -73,8 +77,19 @@ for i = 1:length(varargin)
         f = {f};
     end
     
-    idx = ismember({xb.data.name}, f);
-    
-    varargout{i} = xb;
-    varargout{i}.data = xb.data(idx);
+    if ~ismember('*', f)
+        idx = ismember({xb.data.name}, f);
+
+        r(idx) = true;
+
+        varargout{i} = xb;
+        varargout{i}.data = xb.data(idx);
+    else
+        ri = i;
+    end
+end
+
+if ~isnan(ri)
+    varargout{ri} = xb;
+	varargout{ri}.data = xb.data(~r);
 end

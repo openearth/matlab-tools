@@ -77,16 +77,36 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-if xb_exist(xb, 'DIMS')
-    x   = xb_get(xb, 'DIMS.globalx_DATA');
-    y   = xb_get(xb, 'DIMS.globaly_DATA');
-    t   = xb_get(xb, 'DIMS.globaltime_DATA');
-    tm  = xb_get(xb, 'DIMS.meantime_DATA');
+if xb_check(xb)
+    [d xb] = xb_split(xb, 'DIMS', '*');
+    
+    filter = '/.*_(mean|min|max|var)';
+    
+    idxm   = strfilter({xb.data.name},filter);
+    
+    t_max  = min(cellfun(@(x)size(x,1),{xb.data(~idxm).value}));
+    tm_max = min(cellfun(@(x)size(x,1),{xb.data( idxm).value}));
+else
+    error('Invalid XBeach structure');
+end
+
+if xb_exist(d, 'DIMS')
+    x   = xb_get(d, 'DIMS.globalx_DATA');
+    y   = xb_get(d, 'DIMS.globaly_DATA');
+    t   = xb_get(d, 'DIMS.globaltime_DATA');
+    tm  = xb_get(d, 'DIMS.meantime_DATA');
+    
+    t   = t(1:t_max);
+    tm  = tm(1:tm_max);
     
     t0  = t(1);
     t   = t(t<=OPT.t);
     tm  = tm(tm<=OPT.t);
     nt  = length(t);
+    
+    if t(end) ~= tm(end) && any(idxm)
+        warning(sprintf('Mean time not equal to global time (globaltime = %d, meantime = %d)', t(end), tm(end)));
+    end
     
     g   = xb_stagger(x,y);
     
