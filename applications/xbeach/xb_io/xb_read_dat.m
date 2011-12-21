@@ -118,6 +118,8 @@ d = xb_empty();
 d = xb_meta(d, mfilename, 'dimensions', fdir);
 xb = xb_set(xb, 'DIMS', d);
 
+dims = {};
+
 % read dat files one-by-one
 for i = 1:length(names)
     varname = names(i).name(1:length(names(i).name)-4);
@@ -133,10 +135,10 @@ for i = 1:length(names)
     if isbinary(fpath)
         
         % determine dimensions
+        [d dims] = xb_dat_dims(fpath);
+        
         if ~isempty(OPT.dims)
             d = OPT.dims;
-        else
-            d = xb_dat_dims(fpath);
         end
 
         % read dat file

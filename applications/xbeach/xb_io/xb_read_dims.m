@@ -192,7 +192,7 @@ end
 %% apply filters
 
 for i = 1:length(OPT.dimensions)
-    if ismember(OPT.dimensions{i}, {'globaltime' 'meantime' 'pointtime'})
+    if ismember(OPT.dimensions{i}, {'t' 'globaltime' 'meantime' 'pointtime'})
         XBdims.([OPT.dimensions{i} '_DATA']) =        XBdims.([OPT.dimensions{i} '_DATA'])(OPT.start(i)+[1:OPT.stride(i):OPT.length(i)]);
         XBdims.(OPT.dimensions{i})           = length(XBdims.([OPT.dimensions{i} '_DATA']));
     end

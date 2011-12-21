@@ -111,6 +111,8 @@ xb = xb_empty();
 xb = xb_meta(xb, mfilename, 'dimensions', fname);
 variables = xb_set(variables, 'DIMS', xb);
 
+dims = {};
+
 % read all variables that match filters
 names = xb_get_vars(fname, 'vars', OPT.vars);
 
