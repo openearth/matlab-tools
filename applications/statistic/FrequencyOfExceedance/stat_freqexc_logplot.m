@@ -72,9 +72,10 @@ OPT = setproperty(OPT, varargin{:});
 
 figure; hold on;
 
+th   = [res.peaks.threshold];
+
 xlim = [1e-1 1e5];
-ylim = [res.filter.threshold max(res.combined.y)];
-ylim = [-.5 4];
+ylim = [min(th) 2*max(th)];
 
 %% plot frequency of exceedance
 
@@ -88,6 +89,10 @@ end
 if isfield(res,'fit')
     plot(1./[res.fit.fits.f],[res.fit.fits.y],'Color',[.8 .8 .8],'DisplayName','fit');
     plot(1./res.fit.f,res.fit.y,'-r','LineWidth',2,'DisplayName','fit (average)');
+    
+    if isfield(res.fit,'f_GEV')
+        plot(1./res.fit.f_GEV,res.fit.y,':r','DisplayName','fit (GEV)');
+    end
 end
 
 if isfield(res,'combined')
@@ -99,6 +104,6 @@ box on;
 grid on;
 xlabel('return period [year]');
 ylabel('value');
-legend show;
+set(legend('show'),'Location','NorthWest');
 
 set(gca,'XLim',xlim,'YLim',ylim,'XScale','log');

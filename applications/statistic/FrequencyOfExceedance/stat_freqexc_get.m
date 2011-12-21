@@ -31,6 +31,7 @@ function res = stat_freqexc_get(t, x, varargin)
 %   varargin  = dx:         resolution of computational grid
 %               horizon:    horizon in days in which multiple maxima are
 %                           considered to be a single maximum
+%               margin:     safety margin used in threshold determination
 %
 %   Output:
 %   res       = result structure with exceedance information:
@@ -116,7 +117,8 @@ function res = stat_freqexc_get(t, x, varargin)
 
 OPT = struct( ...
     'dx', .01, ...
-    'horizon', 15 ...
+    'horizon', 15, ...
+    'margin', .05 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -233,16 +235,25 @@ if isfield(res.peaks, 'GPD')
     
     sigma        = [GPD.sigma];
     sigma_var    = nan(size(sigma));
-    sigma_varvar = nan(size(sigma));
     
     sigma(isnan(sigma)) = 0;
     
     for i = length(sigma):-1:1
-        sigma_var   (i) = var(sigma    (i:end));
-        sigma_varvar(i) = var(sigma_var(i:end));
+        sigma_var(i) = var(sigma    (i:end));
     end
     
-    idx = find(diff(sigma_varvar)>0,1,'first');
+    dsigma_var = diff(sigma_var);
+    dsigma_var(abs(dsigma_var)<eps) = [];
     
-    res.threshold = res.peaks(idx).threshold;
+    n = length(dsigma_var);
+    
+    idx = find(dsigma_var==max(dsigma_var(1:round(.5*n)))>0,1,'first');
+    
+    if length(idx) == 1
+        res.threshold = (1+OPT.margin)*res.peaks(idx).threshold;
+    end
+end
+
+if ~isfield(res, 'threshold')
+    res.threshold = (1+OPT.margin)*max(cellfun(@length,{res.peaks.maxima}));
 end

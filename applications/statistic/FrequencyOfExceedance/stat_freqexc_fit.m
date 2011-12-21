@@ -84,7 +84,7 @@ function res = stat_freqexc_fit(res, varargin)
 %% read settings
 
 OPT = struct( ...
-    'y',      -10:.1:10, ...
+    'y',      -10:.01:10, ...
     'fcnfit', {{@stat_fit_gev}} ...
 );
 
@@ -95,7 +95,7 @@ if ~isfield(res, 'filter')
 end
 
 if ~exist('gevfit') && ~ismember('fcnfit', varargin(1:2:end))
-    OPT.fcnfit = {@stat_fit_rayleigh @stat_fit_gumbel @stat_fit_normal @stat_fit_gamma};
+    OPT.fcnfit = {@stat_fit_gumbel};
 end
 
 %% fit data
@@ -133,3 +133,12 @@ else
     res.fit.y = nan;
     res.fit.f = nan;
 end
+
+%% add GEV, if available
+
+if exist('gevfit') && (length(OPT.fcnfit)>1 || isempty(OPT.fcnfit) || ...
+        ~strcmpi(func2str(OPT.fcnfit{1}), 'stat_fit_gev'))
+    
+    res.fit.f_GEV = feval(@stat_fit_gev,data,OPT.y(:));
+end
+

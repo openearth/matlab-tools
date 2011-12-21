@@ -1,21 +1,53 @@
 function [bn zn n converged] = find_zero_poly2(un, b, z, varargin)
-%FIND_ZERO_POLY2  One line description goes here.
+%FIND_ZERO_POLY2  Line search algorithm for roots
 %
-%   More detailed description goes here.
+%   Searches for a root aling a specified direction in the solution space
+%   described by a customizable function. This function is based on the
+%   polyfit and roots function. These functions are embedded in a series of
+%   additional functionalities to minimize the number of (unnecessary)
+%   model evaluations and thus increase efficiency.
+%
+%   The additional measures to increase efficiency are described in the
+%   memo Extending the OpenEarth probabilistic toolbox, which is part of
+%   the SBW2011 project at Deltares. The headers in this function
+%   correspond to this memo.
+%
+%   This function is still in development. Different functions with similar
+%   purpose exist as well.
+%
+%   Hoonhout, B.M. (2011). Extending the OpenEarth probabilistic toolbox.
+%   Memo to Diermanse, F.L.M.. Deltares. Project 1204206.004.
 %
 %   Syntax:
-%   varargout = find_zero_poly2(varargin)
+%   [bn zn n converged] = find_zero_poly2(un, b, z, varargin)
 %
 %   Input:
-%   varargin  =
+%   un        = unit vector (direction)
+%   b         = beforehand evaluated positions along direction
+%   z         = beforehand evaluated results corresponding to b
+%   varargin  = zFunction:      Function handle for model evaluation which
+%                               takes two parameters: unit vector and
+%                               length
+%               epsZ:           Precision in stop criterium
+%               maxiter:        Maximum number of iterations
+%               maxretry:       Maximum number of iterations before retry
+%               maxorder:       Maximum order of polynom in line search
+%               maxratio:       Maximum ratio between interval boundaries
+%               maxinfpow:      Maximum power of z0 which is assumed to be
+%                               infinite 
+%               animate:        Boolean indicating wheter process should be
+%                               animated 
 %
 %   Output:
-%   varargout =
+%   bn          = newly evaluated positions along direction
+%   zn          = newly evaluated results corresponding to bn
+%   n           = number of model evaluations made
+%   converged   = flag indicating if result has converged
 %
 %   Example
-%   find_zero_poly2
+%   [bn zn n converged] = find_zero_poly2(un, b, z, 'zFunction', @(x,y)beta2z(OPT,x,y))
 %
-%   See also 
+%   See also DS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -59,6 +91,65 @@ function [bn zn n converged] = find_zero_poly2(un, b, z, varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% definitions
+
+%   evaluation:         computation of a single z-value corresponding to a
+%                       single combination of unit vector and beta value
+%   sample:             single randomly drawn direction with, in case of
+%                       conversions, corresponding beta value on the limit
+%                       state
+%   approximated:       result obtained from ARS
+%   exact:              result obtained from model
+
+%% conventions
+
+%   b*                  beta values
+%   z*                  z-values
+%   u*                  vectors in standard normal space
+%   n*                  counter
+%   i*                  index
+
+%   *e                  exact values
+%   *a                  approximated values
+%   *n                  unit vectors
+%   *l                  vector magintudes
+
+%% principle
+
+%   origin handling
+%
+%   approximate results handling
+%
+%   START LINE SEARCH
+%
+%       infinity approximation
+%
+%       LOOP until root is found
+%
+%           finite interval preservation
+%
+%           outlier detection
+%
+%           point selection
+%
+%           LOOP while lowering order of polynome until root is found
+%
+%               estimate root
+%
+%           END LOOP
+%
+%           evaluate new root estimate
+%
+%           initial retry in case of infinite results
+%
+%           maximalisation
+%
+%       END LOOP
+%
+%       check convergence
+%
+%   STOP LINE SEARCH
+
 %% settings
 
 OPT = struct(...
@@ -74,7 +165,7 @@ OPT = struct(...
 
 OPT = setproperty(OPT, varargin{:});
 
-%% determine approach
+%% initialise
 
 n               = 0;
 z0              = 0;
@@ -83,6 +174,8 @@ zn              = [];
 
 converged       = false;
 startsearch     = true;
+
+%% origin handling
 
 % check if z-evaluation at origin (beta=0) is available, 
 % assume z-evaluation is exact, so not from ARS aproximation
@@ -107,6 +200,8 @@ if ~converged && any(b==0)
     end
 end
 
+%% approximate results handling
+
 % check if beta value for which z=0 is already available
 if ~converged && any(abs(z)<OPT.epsZ)
     
@@ -124,20 +219,28 @@ if ~converged && any(abs(z)<OPT.epsZ)
     end
 end
 
+%% line search
+
+% remove nan's from initial results
 b = b(~isnan(z));
 z = z(~isnan(z));
 
-%% search beta value for which limit state function (z) = 0
-
 if startsearch && length(z)>1
     
-    % first: delete beta-z combinations for which z is extremely large
+    %% infinity approximation
+    
+    % delete beta-z combinations for which z is extremely large
     while any(abs(z)>abs(z0^OPT.maxinfpow))
+        
+        % select largest value
         ii        = abs(z)==max(abs(z));
 
+        % only delete if more than 2 evaluations are available
         if length(z)>2
             b(ii) = [];
             z(ii) = [];
+            
+        % otherwise, instead add another evaluation half way
         else
             n     = n+1;
             
@@ -148,13 +251,17 @@ if startsearch && length(z)>1
             z(ii) = zn;
         end
     end
+    
+    %% line search loop
         
-    % then: start loop, in each iteration a new beta-z value is added
+    % start loop, in each iteration a new beta-z value is added
     % until [a] the beta-value is found for which z=0 or [b] the search
     % procedure is terminated because this direction does not have
     % a (relevant)crossing with the limit state.
     while isempty(zn) || abs(zn(end))>OPT.epsZ
         
+        % add new samples from infinity approximation to initial
+        % evaluations
         ii          = ~ismember(b,bn);
         
         b           = [b(ii) bn];
@@ -164,8 +271,10 @@ if startsearch && length(z)>1
         order       = min(OPT.maxorder, length(z)-1);
         ii          = isort(abs(z));
         
-        % check if both positive and negative z-values are available. If so, define 
-        % finite search boundaries
+        %% finite interval preservation
+        
+        % check if both positive and negative z-values are available. If
+        % so, define finite search boundaries
         if any(z>0) && any(z<0)
             il      = ii(z(ii)>=0);
             iu      = ii(z(ii)<0);
@@ -178,12 +287,18 @@ if startsearch && length(z)>1
             ii      = ii(isort(abs(z(ii))));
         end
         
-        % remove outliers, to make sure they dont have a bad infleunce on
+        %% outlier detection
+        
+        % remove outliers, to make sure they don't have a bad infleunce on
         % the fit of the polynome that is used to estimate for which beta z
         % is equal to zero
         while max(abs(z(ii)))/min(abs(z(ii)))>OPT.maxratio
+            
+            % only delete outlier if more than 2 evaluations are available
             if length(ii)>2
                 ii(end) = [];
+                
+            % otherwise, instead add another evaluation half way
             else
                 n       = n+1;
 
@@ -202,18 +317,23 @@ if startsearch && length(z)>1
             end
         end
         
+        %% point selection
+        
         % define the order of the polynome
         order       = min(OPT.maxorder, length(ii)-1);
-        ii          = ii(1:order+1);
         
-        % select evaluations closest to z=0
+        % select same number of evaluations closest to z=0 as the order
+        ii          = ii(1:order+1);
         [zs bs]     = deal(z(ii), b(ii));
+        
+        %% line search algorithm
         
         % fit polynome to selected points and decrease order until a real
         % root (z=0) is found
         b0          = -Inf;
         for o = order:-1:1
             
+            % fit polynome
             p       = polyfit(bs(1:o+1),zs(1:o+1),o);
             
             [x ii]  = unique(zs);
@@ -223,18 +343,25 @@ if startsearch && length(z)>1
                 b0a = 0;
             end
             
+            % continue if fit does not have any singularities
             if all(isfinite(p))
+                
+                % compute roots
                 rts     = sort(roots(p));
                 
+                % continue of roots are found
                 if ~isempty(rts)
+                    
+                    % select real and positive roots separately
                     oi1     = isreal(rts);
                     oi2     = rts>0;
 
+                    % continue if a real root is found
                     if any(oi1)
 
-                        % select the positive real root closest to the points
-                        % with smallest z-values, if available, or the smallest
-                        % negative real root otherwise
+                        % select the positive real root closest to the
+                        % points with smallest z-values, if available, or
+                        % the smallest negative real root otherwise
                         if any(oi1&oi2)
                             ii = find(oi1&oi2);
                             ii = ii(isort(abs(rts(ii)-b0a)));
@@ -243,6 +370,8 @@ if startsearch && length(z)>1
                             b0 = max(rts(oi1));
                         end
 
+                        % a root is found, stop decreasing the order of the
+                        % polynome
                         break;
                     end
                 end
@@ -256,7 +385,8 @@ if startsearch && length(z)>1
             
             n   = n+1;
             
-            % add new beta and z-value
+            % add new beta and z-value at the location of the new root
+            % estimate
             bn  = [bn b0];
             zn  = [zn feval(OPT.zFunction, un, bn(end))];
             
@@ -273,20 +403,32 @@ if startsearch && length(z)>1
             plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p);
         end
         
-        % if maximum numbers of samples is not yet reached, check if
-        % last z-value is "infinitely" large. If so, start procedure to search for finite 
-        % z-values numbers
+        %% initial retry
+        
+        % if maximum number of evaluations is not yet reached, check if
+        % last z-value is "infinitely" large. If so, start procedure to
+        % search for finite z-values numbers
         if length(zn)<=OPT.maxretry
+            
+            % loop while last z-value is still infinite
             while ~isfinite(zn(end))
 
                 bt  = [b bn];
                 zt  = [z zn];
 
-                % overwrite infinite values with new approximates
+                % overwrite infinite values with new approximates by
+                % evaluating a point halfway the last known finite point
+                % and the last evaluated infinite point
                 if length(bt)>1
                     n           = n+1;
                     bn(end)     = mean(bt(end-1:end));
                     zn(end)     = feval(OPT.zFunction, un, bn(end));
+                    
+                    % set z-value to infinity if z-value exceeds maximum
+                    % allowed value
+                    if abs(zn(end))>abs(z0^OPT.maxinfpow)
+                        zn(end) = zn(end)*Inf;
+                    end
                 else
                     break;
                 end
@@ -296,6 +438,8 @@ if startsearch && length(z)>1
                 end
             end
         end
+        
+        %% maximalisation
 
         % give up in case infinity or maximum number of iterations is
         % reached
@@ -315,6 +459,8 @@ if startsearch && length(z)>1
     end
     
 end
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p)
 

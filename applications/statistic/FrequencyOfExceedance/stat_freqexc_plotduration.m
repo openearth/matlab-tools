@@ -62,7 +62,7 @@ function stat_freqexc_plotduration(res, varargin)
 %% read settings
 
 OPT = struct( ...
-    'frac', .1 ...
+    'n', 5 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -83,18 +83,23 @@ dx = 0;
 
 plot(dpp,th,'xb','LineWidth',2,'DisplayName','duration')
 
+for i = 3:length(dpp)
+    dpp(i) = min(min(dpp(1:i-1))-1e-6,dpp(i));
+end
+
+plot(dpp,th,'-b','LineWidth',2,'DisplayName','duration (fit)')
+
 if isfield(res,'filter')
     th0 = res.filter.threshold;
-    top = max(th)-OPT.frac*(max(th)-th0);
+    top = max([res.peaks([res.peaks.nmax]>=OPT.n).threshold]);
     
     plot(xlim, top.*[1 1], 'r', 'DisplayName', 'top');
     plot(xlim, th0.*[1 1], 'r', 'DisplayName', 'threshold');
     
-    idx = th>=th0&th<=top;
-    dx  = abs((top-th0)./mean(diff(th(idx))./diff(dpp(idx))));
-    c   = findCrossings(dpp,th,xlim,th0.*[1 1]);
+    c1  = max(findCrossings(dpp,th,xlim,th0.*[1 1]));
+    c2  = max(findCrossings(dpp,th,xlim,top.*[1 1]));
     
-    plot([-c -c+dx c-dx c],[th0 top top th0],'k','LineWidth',2,'DisplayName','trapezium');
+    plot([-c1 -c2 c2 c1],[th0 top top th0],'k','LineWidth',2,'DisplayName','trapezium');
 end
 
 box on;
@@ -103,6 +108,6 @@ xlabel('duration [days]');
 ylabel('value');
 legend show;
 
-title(sprintf('top = %d ; base = %d', round(c), round(dx+c)));
+title(sprintf('top = %d ; base = %d', round(c2), round(c1)));
 
 set(gca,'XLim',xlim,'YLim',ylim);

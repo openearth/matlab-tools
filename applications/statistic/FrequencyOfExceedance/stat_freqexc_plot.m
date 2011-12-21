@@ -138,6 +138,10 @@ end
 if isfield(res,'fit')
     plot([res.fit.fits.y],[res.fit.fits.f],'Color',[.8 .8 .8]);
     plot(res.fit.y,res.fit.f,'-r');
+    
+    if isfield(res.fit,'f_GEV')
+        plot(res.fit.y,res.fit.f_GEV,':r');
+    end
 end
 
 if isfield(res,'combined')
