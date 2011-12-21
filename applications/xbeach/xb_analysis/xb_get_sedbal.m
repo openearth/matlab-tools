@@ -160,10 +160,10 @@ S.back    = zeros(size(g.xz,2),1);
 S.right   = zeros(size(g.xz,1),1);
 S.left    = zeros(size(g.xz,1),1);
                   
-S.front(1+d:end-d)    =  S_s(1+d:end-d,1+d      ) ;
-S.back (1+d:end-d)    = -S_s(1+d:end-d,end-d    ) ;
-S.right(1+d:end-d)    =  S_n(1+d      ,1+d:end-d)';
-S.left (1+d:end-d)    = -S_n(end-d    ,1+d:end-d)';
+S.front(2+d:end-d)    =  S_s(2+d:end-d,1+d      ) ;
+S.back (2+d:end-d)    = -S_s(2+d:end-d,end-d    ) ;
+S.right(2+d:end-d)    =  S_n(1+d      ,2+d:end-d)';
+S.left (2+d:end-d)    = -S_n(end-d    ,2+d:end-d)';
 
 %% compute balance
 
@@ -233,7 +233,15 @@ function r = integrate_transport(xb, var, g, x, y, t, tm, f)
         v       = xb_get(xb, var);
         v       = squeeze(sum(sum(v(1:nt,:,:,:),2).*tint,1));
 
-        r.s     = f.*squeeze(v.*cos(g.alfau-da)'.*g.dnu');
-        r.n     = f.*squeeze(v.*cos(g.alfav-da)'.*g.dsv');
+%         r.s     = f.*squeeze(v.*cos(g.alfau-da)'.*g.dnu');
+%         r.n     = f.*squeeze(v.*cos(g.alfav-da)'.*g.dsv');
+
+        if var(2)=='v'
+            r.s     = zeros(size(squeeze(v)));
+            r.n     = f.*squeeze(v.*g.dsv');
+        else
+            r.s     = f.*squeeze(v.*g.dnu');
+            r.n     = zeros(size(squeeze(v)));
+        end
     end
 end
