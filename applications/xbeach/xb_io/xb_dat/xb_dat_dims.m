@@ -134,7 +134,7 @@ if regexp(fname, '^(point|rugau)\d+$')
     % point data
     nvars = floor(f.bytes/byt/d.pointtime)-1;
     dims = [d.pointtime nvars+1];
-    names = {'t' 'variables'};
+    names = {'pointtime' 'variables'};
     type = 'point';
     
 elseif regexp(fname, '^(drifter)\d+$')
@@ -142,7 +142,7 @@ elseif regexp(fname, '^(drifter)\d+$')
     % drifter data
     time = floor(f.bytes/byt/3);
     dims = [time 3];
-    names = {'t' 'xyt'};
+    names = {'pointtime' 'variables'};
     type = 'drifter';
     
 else
@@ -153,14 +153,16 @@ else
 
     % determine time dimension
     if regexp(fname, '_(mean|max|min|var)$')
-        nt = d.meantime;
+        tname = 'meantime';
     else
-        nt = d.globaltime;
+        tname = 'globaltime';
     end
+    
+    nt = d.(tname);
 
     % set minimal dimensions
     dims = [nx ny nt];
-    names = {'x' 'y' 't'};
+    names = {'globalx' 'globaly' tname};
     type = '2d';
 
     if f.bytes < prod(dims)*byt
@@ -233,22 +235,22 @@ else
                 case 1
                     % waves
                     dims = [nx ny d.wave_angle nt];
-                    names = {'x' 'y' 'theta' 't'};
+                    names = {'globalx' 'globaly' 'wave_angle' tname};
                     type = 'wave';
                 case 2
                     % sediments
                     dims = [nx ny d.sediment_classes nt];
-                    names = {'x' 'y' 'd' 't'};
+                    names = {'globalx' 'globaly' 'sediment_classes' tname};
                     type = 'sediment';
                 case 3
                     % grain distribution
                     dims = [nx ny d.bed_layers nt];
-                    names = {'x' 'y' 'gd' 't'};
+                    names = {'globalx' 'globaly' 'bed_layers' tname};
                     type = 'graindist';
                 case 4
                     % bed layers
                     dims = [nx ny d.sediment_classes d.bed_layers nt];
-                    names = {'x' 'y' 'd' 'gd' 't'};
+                    names = {'globalx' 'globaly' 'sediment_classes' 'bed_layers' tname};
                     type = 'bedlayers';
                 otherwise
                     % huh?!
@@ -258,7 +260,7 @@ else
             % no name match, no size match, assume it is a normal x,y,t dat
             % file that is too long
             dims = [nx ny nt];
-            names = {'x' 'y' 't'};
+            names = {'globalx' 'globaly' tname};
             type = '2d';
         end
     end

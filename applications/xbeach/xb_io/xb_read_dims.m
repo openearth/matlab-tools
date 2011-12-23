@@ -69,10 +69,6 @@ function XBdims = xb_read_dims(filename, varargin)
 %% read options
 
 OPT = struct( ...
-    'dimensions', {{}}, ...
-    'start', [], ...
-    'length', [], ...
-    'stride', [] ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -187,15 +183,6 @@ elseif strcmpi(extension, '.dat')
     
 else
     error(['directory or file "' filename '" does not exist'])
-end
-
-%% apply filters
-
-for i = 1:length(OPT.dimensions)
-    if ismember(OPT.dimensions{i}, {'t' 'globaltime' 'meantime' 'pointtime'})
-        XBdims.([OPT.dimensions{i} '_DATA']) =        XBdims.([OPT.dimensions{i} '_DATA'])(OPT.start(i)+[1:OPT.stride(i):OPT.length(i)]);
-        XBdims.(OPT.dimensions{i})           = length(XBdims.([OPT.dimensions{i} '_DATA']));
-    end
 end
 
 %% jaap's convenience attributes (not officially supported)

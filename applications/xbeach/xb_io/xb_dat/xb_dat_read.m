@@ -113,15 +113,7 @@ OPT = setproperty(OPT, varargin{:});
 dat = [];
 
 % convert dat dimensions to output dimensions
-switch length(dims)
-    case 2
-        dims = [1 dims([2 1])];
-        dims_out = dims([end 2 1]);
-    case 3
-        dims_out = dims([end 2 1]);
-    otherwise
-        dims_out = dims([end 2 1 3:end-1]);
-end
+[dims_out dims] = xb_dims2nc(dims);
 
 [OPT.start OPT.length OPT.stride] = xb_index(dims_out, OPT.start, OPT.length, OPT.stride);
 

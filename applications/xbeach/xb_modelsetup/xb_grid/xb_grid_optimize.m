@@ -110,6 +110,9 @@ y_w = OPT.y;
 z_w = OPT.z;
 ne_w = OPT.ne;
 
+% empty memory
+OPT = rmfield(OPT, {'x' 'y' 'z'});
+
 % make sure coordinates are matrices
 if isvector(x_w) && isvector(y_w)
     [x_w y_w] = meshgrid(x_w, y_w);
@@ -148,9 +151,15 @@ if isvector(z_w)
     x_d = x_r;
     y_d = [];
     z_d_cs = z_w;
+    
+    % empty memory
+    clear x_r y_r
 else
     % determine resolution and extent
     [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x_r, y_r);
+    
+    % empty memory
+    clear x_r y_r
     
     % crop grid
     if ischar(OPT.crop) && strcmpi(OPT.crop, 'select')
@@ -189,9 +198,15 @@ notnan = ~isnan(z_d_cs);
 x_d = x_d(notnan);
 z_d_cs = z_d_cs(notnan);
 
+% clear memory
+clear x_d_w y_d_w
+
 %% create xbeach grid
 [x_xb z_xb] = xb_grid_xgrid(x_d, z_d_cs, OPT.xgrid{:});
 [y_xb] = xb_grid_ygrid(y_d, OPT.ygrid{:});
+
+% clear memory
+clear y_d z_d z_d_cs
 
 [xgrid ygrid] = meshgrid(x_xb, y_xb);
 
@@ -231,6 +246,9 @@ else
         end
     end
 end
+
+% clear memory
+clear x_d x_w y_w z_w ne_w x_xb y_xb z_xb x_xb_w y_xb_w
 
 %% finalise grid
 

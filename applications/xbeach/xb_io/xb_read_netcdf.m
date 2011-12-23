@@ -108,10 +108,9 @@ info = nc_info(fname);
 
 % allocate dims in xbeach struct
 xb = xb_empty();
+xb = xb_set(xb, 'START', OPT.start, 'LENGTH', OPT.length, 'STRIDE', OPT.stride, 'INDEX', OPT.index);
 xb = xb_meta(xb, mfilename, 'dimensions', fname);
 variables = xb_set(variables, 'DIMS', xb);
-
-dims = {};
 
 % read all variables that match filters
 names = xb_get_vars(fname, 'vars', OPT.vars);
@@ -121,8 +120,6 @@ for i = 1:length({info.Dataset.Name})
     if ~any(strcmpi(info.Dataset(i).Name, names)); continue; end;
     
     [start len stride] = xb_index(info.Dataset(i).Size, OPT.start, OPT.length, OPT.stride);
-    
-    dims = info.Dataset(i).Dimension;
     
     % read data
     variables.data(c).name = info.Dataset(i).Name;
@@ -141,7 +138,7 @@ for i = 1:length({info.Dataset.Name})
 end
 
 % store dims in xbeach struct
-XBdims = xb_read_dims(fname, 'dimensions', dims, 'start', start, 'length', len, 'stride', stride);
+XBdims = xb_read_dims(fname);
 f = fieldnames(XBdims);
 for i = 1:length(f)
     xb = xb_set(xb, f{i}, XBdims.(f{i}));

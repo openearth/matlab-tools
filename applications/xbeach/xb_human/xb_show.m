@@ -139,8 +139,8 @@ if ~isempty(vars)
     fprintf('\n');
 
     % show data
-    format = '%-15s %-10s %-10s %-10s %-10s %-30s';
-    fprintf([format '\n'], 'variable', 'size', 'bytes', 'class', 'units', 'value');
+    format = '%-15s %-10s %-10s %-10s %-10s %-30s %-30s';
+    fprintf([format '\n'], 'variable', 'size', 'bytes', 'class', 'units', 'value', 'dimensions');
     for i = 1:length(xb.data)
         if ~any(strfilter(xb.data(i).name, vars)); continue; end;
 
@@ -194,6 +194,16 @@ if ~isempty(vars)
             class = info.class;
         end
         
+        % determine dimensions
+        dimensions = '';
+        if isfield(xb.data(i), 'dimensions')
+            if iscell(xb.data(i).dimensions)
+                dimensions = sprintf('%s ',xb.data(i).dimensions{:});
+            else
+                dimensions = xb.data(i).dimensions;
+            end
+        end
+        
         % determine units
         units = '';
         if isfield(xb.data(i), 'units')
@@ -222,7 +232,8 @@ if ~isempty(vars)
             num2str(info.bytes), ...
             class, ...
             units, ...
-            value);
+            value, ...
+            dimensions);
     end
     
     fprintf('\n');

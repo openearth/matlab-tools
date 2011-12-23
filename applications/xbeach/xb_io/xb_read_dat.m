@@ -115,10 +115,9 @@ if isempty(fdir); fdir = fullfile('.', ''); end;
 
 % allocate dims in xbeach struct
 d = xb_empty();
+d = xb_set(d, 'START', OPT.start, 'LENGTH', OPT.length, 'STRIDE', OPT.stride, 'INDEX', OPT.index);
 d = xb_meta(d, mfilename, 'dimensions', fdir);
 xb = xb_set(xb, 'DIMS', d);
-
-dims = {};
 
 % read dat files one-by-one
 for i = 1:length(names)
@@ -135,27 +134,34 @@ for i = 1:length(names)
     if isbinary(fpath)
         
         % determine dimensions
-        [d dims] = xb_dat_dims(fpath);
-        
         if ~isempty(OPT.dims)
-            d = OPT.dims;
+            dims     = OPT.dims;
+            dimnames = {};
+        else
+            [dims dimnames] = xb_dat_dims(fpath);
         end
 
         % read dat file
-        dat = xb_dat_read(fpath, d, ...
+        dat = xb_dat_read(fpath, dims, ...
             'start', OPT.start, 'length', OPT.length, 'stride', OPT.stride, 'index', OPT.index);
 
         xb = xb_set(xb, varname, dat);
+        
+        % add dimensions
+        [nc_dims dims idx_dims] = xb_dims2nc(dims);
+        idx = strcmpi(varname, {xb.data.name});
+        xb.data(idx).dimensions = dimnames(idx_dims);
         
     end
 end
 
 % store dims in struct
-dims = xb_read_dims(fdir, 'dimensions', dims, 'start', start, 'length', len, 'stride', stride);
+dims = xb_read_dims(fdir);
 f = fieldnames(dims);
 for i = 1:length(f)
     d = xb_set(d, f{i}, dims.(f{i}));
 end
+xb = xb_set(xb, 'DIMS', d);
 
 % set meta data
 xb = xb_meta(xb, mfilename, 'output', fname);
