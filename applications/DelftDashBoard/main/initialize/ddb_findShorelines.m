@@ -70,63 +70,67 @@ for i=1:handles.shorelines.nrShorelines
     
     switch lower(handles.shorelines.shoreline(i).type)
         case{'netcdftiles'}
+            if handles.shorelines.shoreline(i).update == 1
             
-            if strcmpi(handles.shorelines.shoreline(i).URL(1:4),'http')
-                % OpenDAP
-                fname=[handles.shorelines.shoreline(i).URL '/' handles.shorelines.shoreline(i).name '.nc'];
-                if handles.shorelines.shoreline(i).useCache
-                    % First copy meta data file to local cache
-                    localdir = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep];
-                    if exist([localdir 'temp.nc'],'file')
-                        try
-                            delete([localdir 'temp.nc']);
-                        end
-                    end
-                    try
-                        if ~exist(localdir,'dir')
-                            mkdir(localdir);
-                        end
-                        % Try to copy nc meta file
-                        urlwrite(fname,[localdir 'temp.nc']);
-                        if exist([localdir 'temp.nc'],'file')
-                            x0=nc_varget([localdir 'temp.nc'],'origin_x');
-                            movefile([localdir 'temp.nc'],[localdir handles.shorelines.shoreline(i).name '.nc']);
-                        end
-                        fname = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep handles.shorelines.shoreline(i).name '.nc'];
-                    catch
-                        % If no access to openDAP server possible, check
-                        % whether meta data file is already available in
-                        % cache
+                if strcmpi(handles.shorelines.shoreline(i).URL(1:4),'http')
+                    % OpenDAP
+                    fname=[handles.shorelines.shoreline(i).URL '/' handles.shorelines.shoreline(i).name '.nc'];
+                    if handles.shorelines.shoreline(i).useCache
+                        % First copy meta data file to local cache
+                        localdir = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep];
                         if exist([localdir 'temp.nc'],'file')
                             try
                                 delete([localdir 'temp.nc']);
                             end
                         end
-                        disp(['Connection to OpenDAP server could not be made for shoreline ' handles.shorelines.shoreline(i).longName ' - try using cached data instead']);
-                        fname = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep handles.shorelines.shoreline(i).name '.nc'];
-                        if exist(fname,'file')
-                            % File already exists, continue
-                        else
-                            % File does not exist, this should produce a
-                            % warning
-                            disp(['Shoreline ' handles.shorelines.shoreline(i).longName ' not available!']);
-                            handles.shorelines.shoreline(i).isAvailable=0;
+                        try
+                            if ~exist(localdir,'dir')
+                                mkdir(localdir);
+                            end
+                            % Try to copy nc meta file
+                            urlwrite(fname,[localdir 'temp.nc']);
+                            if exist([localdir 'temp.nc'],'file')
+                                x0=nc_varget([localdir 'temp.nc'],'origin_x');
+                                movefile([localdir 'temp.nc'],[localdir handles.shorelines.shoreline(i).name '.nc']);
+                            end
+                            fname = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep handles.shorelines.shoreline(i).name '.nc'];
+                        catch
+                            % If no access to openDAP server possible, check
+                            % whether meta data file is already available in
+                            % cache
+                            if exist([localdir 'temp.nc'],'file')
+                                try
+                                    delete([localdir 'temp.nc']);
+                                end
+                            end
+                            disp(['Connection to OpenDAP server could not be made for shoreline ' handles.shorelines.shoreline(i).longName ' - try using cached data instead']);
+                            fname = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep handles.shorelines.shoreline(i).name '.nc'];
+                            if exist(fname,'file')
+                                % File already exists, continue
+                            else
+                                % File does not exist, this should produce a
+                                % warning
+                                disp(['Shoreline ' handles.shorelines.shoreline(i).longName ' not available!']);
+                                handles.shorelines.shoreline(i).isAvailable=0;
+                            end
                         end
+                    else
+                        % Read meta data from openDAP server
                     end
                 else
-                    % Read meta data from openDAP server
+                    % Local
+                    fname=[handles.shorelines.shoreline(i).URL filesep handles.shorelines.shoreline(i).name '.nc'];
+                    if exist(fname,'file')
+                        % File already exists, continue
+                    else
+                        % File does not exist, this should produce a
+                        % warning
+                        disp(['Bathymetry dataset ' handles.shorelines.shoreline(i).longName ' not available!']);
+                        handles.shorelines.shoreline(i).isAvailable=0;
+                    end
                 end
             else
-                % Local
-                fname=[handles.shorelines.shoreline(i).URL filesep handles.shorelines.shoreline(i).name '.nc'];
-                if exist(fname,'file')
-                    % File already exists, continue
-                else
-                    % File does not exist, this should produce a
-                    % warning
-                    disp(['Bathymetry dataset ' handles.shorelines.shoreline(i).longName ' not available!']);
-                    handles.shorelines.shoreline(i).isAvailable=0;
-                end
+                fname = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep handles.shorelines.shoreline(i).name '.nc'];
             end
             
             if handles.shorelines.shoreline(i).isAvailable

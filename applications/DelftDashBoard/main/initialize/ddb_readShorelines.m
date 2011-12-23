@@ -60,54 +60,53 @@ function handles = ddb_readShorelines(handles)
 % $Keywords: $
 
 %% When enabled on OpenDAP
-% % Check for updates on OpenDAP and add data to structure
-% localdir = handles.shorelineDir;
-% url = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/shorelines/shorelines.xml';
-% xmlfile = 'shorelines.xml';
-% handles.shorelines = ddb_getXmlData(localdir,url,xmlfile);
+% Check for updates on OpenDAP and add data to structure
+localdir = handles.shorelineDir;
+url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/shorelines/shorelines.xml';
+xmlfile = 'shorelines.xml';
+handles.shorelines = ddb_getXmlData(localdir,url,xmlfile);
 
-% % Add specific fields to structure
-% fld = fieldnames(handles.shorelines);
-% names = '';longNames = '';
-% for ii=1:length(handles.shorelines.(fld{1}))
-%     handles.shorelines.(fld{1})(ii).useCache = str2double(handles.shorelines.(fld{1})(ii).useCache);
-%     names{ii}= handles.shorelines.(fld{1})(ii).name;
-%     longNames{ii} = handles.shorelines.(fld{1})(ii).longName;
-% end
-% handles.shorelines.longName = longNames;
-% handles.shorelines.names = names;
-% handles.shorelines.nrShorelines = length(handles.shorelines.(fld{1}));
+% Add specific fields to structure
+fld = fieldnames(handles.shorelines);
+names = '';longNames = '';
+for ii=1:length(handles.shorelines.(fld{1}))
+    handles.shorelines.(fld{1})(ii).useCache = str2double(handles.shorelines.(fld{1})(ii).useCache);
+    names{ii}= handles.shorelines.(fld{1})(ii).name;
+    longNames{ii} = handles.shorelines.(fld{1})(ii).longName;
+end
+handles.shorelines.longName = longNames;
+handles.shorelines.names = names;
+handles.shorelines.nrShorelines = length(handles.shorelines.(fld{1}));
 
 %% For the time being...
-if exist([handles.shorelineDir '\Shorelines.def'])==2
-    txt=ReadTextFile([handles.shorelineDir '\Shorelines.def']);
-else
-    error(['Shorelines defintion file ''' [handles.shorelineDir '\Shorelines.def'] ''' not found!']);
-end
-
-k=0;
-
-for i=1:length(txt)
-    switch lower(txt{i})
-        case{'shoreline'}
-            k=k+1;
-            handles.shorelines.longName{k}=txt{i+1};
-            handles.shorelines.nrShorelines=k;
-            handles.shorelines.shoreline(k).longName=txt{i+1};
-            handles.shorelines.shoreline(k).useCache=1;
-        case{'name'}
-            handles.shorelines.shoreline(k).name=txt{i+1};
-            handles.shorelines.name{k}=txt{i+1};
-        case{'type'}
-            handles.shorelines.shoreline(k).type=txt{i+1};
-        case{'url'}
-            handles.shorelines.shoreline(k).URL=txt{i+1};
-        case{'usecache'}
-            if strcmpi(txt{i+1}(1),'y')
-                handles.shorelines.shoreline(k).useCache=1;
-            else
-                handles.shorelines.shoreline(k).useCache=0;
-            end
-    end
-end
-
+% if exist([handles.shorelineDir '\Shorelines.def'])==2
+%     txt=ReadTextFile([handles.shorelineDir '\Shorelines.def']);
+% else
+%     error(['Shorelines defintion file ''' [handles.shorelineDir '\Shorelines.def'] ''' not found!']);
+% end
+% 
+% k=0;
+% 
+% for i=1:length(txt)
+%     switch lower(txt{i})
+%         case{'shoreline'}
+%             k=k+1;
+%             handles.shorelines.longName{k}=txt{i+1};
+%             handles.shorelines.nrShorelines=k;
+%             handles.shorelines.shoreline(k).longName=txt{i+1};
+%             handles.shorelines.shoreline(k).useCache=1;
+%         case{'name'}
+%             handles.shorelines.shoreline(k).name=txt{i+1};
+%             handles.shorelines.name{k}=txt{i+1};
+%         case{'type'}
+%             handles.shorelines.shoreline(k).type=txt{i+1};
+%         case{'url'}
+%             handles.shorelines.shoreline(k).URL=txt{i+1};
+%         case{'usecache'}
+%             if strcmpi(txt{i+1}(1),'y')
+%                 handles.shorelines.shoreline(k).useCache=1;
+%             else
+%                 handles.shorelines.shoreline(k).useCache=0;
+%             end
+%     end
+% end

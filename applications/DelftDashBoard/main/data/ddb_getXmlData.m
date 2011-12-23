@@ -66,9 +66,9 @@ serverdata = [];
 if exist(file)==2
     data=xml_load(file);
     try
-        urlwrite(url,[localdir filesep 'temp.xml'])
+        urlwrite(url,[localdir filesep 'temp.xml']);
         serverdata = xml_load([localdir filesep 'temp.xml']);
-        delete [localdir filesep 'temp.xml']; %cleanup
+        delete([localdir filesep 'temp.xml']); %cleanup
     catch
         % Data cannot be updated
         fld = fieldnames(data);
@@ -79,7 +79,7 @@ if exist(file)==2
     end 
 else
     try
-        urlwrite(url,file)
+        urlwrite(url,file);
         data=xml_load(file);
         % All data needs to be updated
         fld = fieldnames(data);
@@ -97,7 +97,7 @@ if ~isempty(serverdata)
     fld = fieldnames(data);
     for aa=1:length(data)
         names{aa} = data(aa).(fld{1}).name;
-        %versions{aa} = str2double(data(aa).(fld{1}).version);
+        versions(aa) = str2double(data(aa).(fld{1}).version);
         data(aa).(fld{1}).update = 0;
     end
     
@@ -109,10 +109,23 @@ if ~isempty(serverdata)
             data(llength+1).(fld{1}).update = 1;
         % Check for version updates on server
         else
-            id = find(ismember(serverdata(bb).(fld{1}).name,names));
+            [AA,id] = ismember(serverdata(bb).(fld{1}).name,names);
             if versions(id) ~= str2double(serverdata(bb).(fld{1}).version);
-                data(id) = serverdata(bb);
-                data(id).(fld{1}).update = 1;
+                Qupdate = questdlg(['There is an update for ' serverdata(bb).(fld{1}).name... 
+                    ', would you like to delete the old cache and update?'], ...
+                         'Update?', ...
+                         'Yes', 'No', 'Yes');
+                switch Qupdate,
+                case 'Yes',
+                    data(id) = serverdata(bb);
+                    data(id).(fld{1}).update = 1;
+                    if isdir([localdir filesep serverdata(bb).(fld{1}).name])
+                        rmdir([localdir filesep serverdata(bb).(fld{1}).name],'s');
+                    end
+                case 'No',
+                    data(id).(fld{1}).update = 0;
+                end 
+
             end
         end
     end

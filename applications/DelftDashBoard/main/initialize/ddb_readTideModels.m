@@ -60,53 +60,53 @@ function handles = ddb_readTideModels(handles)
 % $Keywords: $
 
 %% When enabled on OpenDAP
-% % Check for updates on OpenDAP and add data to structure
-% localdir = handles.tideDir;
-% url = 'http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/tidemodels/tidemodels.xml';
-% xmlfile = 'tidemodels.xml';
-% handles.tideModels = ddb_getXmlData(localdir,url,xmlfile);
+% Check for updates on OpenDAP and add data to structure
+localdir = handles.tideDir;
+url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/tidemodels/tidemodels.xml';
+xmlfile = 'tidemodels.xml';
+handles.tideModels = ddb_getXmlData(localdir,url,xmlfile);
 
-% % Add specific fields to structure
-% fld = fieldnames(handles.tideModels);
-% names = '';longNames = '';
-% for ii=1:length(handles.tideModels.(fld{1}))
-%     handles.tideModels.(fld{1})(ii).useCache = str2double(handles.tideModels.(fld{1})(ii).useCache);
-%     names{ii}= handles.tideModels.(fld{1})(ii).name;
-%     longNames{ii} = handles.tideModels.(fld{1})(ii).longName;
-% end
-% handles.tideModels.longNames = longNames;
-% handles.tideModels.names = names;
-% handles.tideModels.nrModels = length(handles.tideModels.(fld{1}));
+% Add specific fields to structure
+fld = fieldnames(handles.tideModels);
+names = '';longNames = '';
+for ii=1:length(handles.tideModels.(fld{1}))
+    handles.tideModels.(fld{1})(ii).useCache = str2double(handles.tideModels.(fld{1})(ii).useCache);
+    names{ii}= handles.tideModels.(fld{1})(ii).name;
+    longNames{ii} = handles.tideModels.(fld{1})(ii).longName;
+end
+handles.tideModels.longNames = longNames;
+handles.tideModels.names = names;
+handles.tideModels.nrModels = length(handles.tideModels.(fld{1}));
 
 
 %% For the time being...
-if exist([handles.tideDir '\tidemodels.def'])==2
-    txt=ReadTextFile([handles.tideDir '\tidemodels.def']);
-else
-    error(['Tidemodel defintion file ''' [handles.tideDir '\tidemodels.def'] ''' not found!']);
-end
-
-k=0;
-
-for i=1:length(txt)
-    switch lower(txt{i})
-        case{'tidemodel'}
-            k=k+1;
-            handles.tideModels.longNames{k}=txt{i+1};
-            handles.tideModels.nrModels=k;
-            handles.tideModels.model(k).longName=txt{i+1};
-            handles.tideModels.model(k).useCache=1;
-        case{'name'}
-            handles.tideModels.model(k).name=txt{i+1};
-            handles.tideModels.names{k}=txt{i+1};
-        case{'url'}
-            handles.tideModels.model(k).URL=txt{i+1};
-        case{'usecache'}
-            if strcmpi(txt{i+1}(1),'y')
-                handles.tideModels.model(k).useCache=1;
-            else
-                handles.tideModels.model(k).useCache=0;
-            end
-    end
-end
+% if exist([handles.tideDir '\tidemodels.def'])==2
+%     txt=ReadTextFile([handles.tideDir '\tidemodels.def']);
+% else
+%     error(['Tidemodel defintion file ''' [handles.tideDir '\tidemodels.def'] ''' not found!']);
+% end
+% 
+% k=0;
+% 
+% for i=1:length(txt)
+%     switch lower(txt{i})
+%         case{'tidemodel'}
+%             k=k+1;
+%             handles.tideModels.longNames{k}=txt{i+1};
+%             handles.tideModels.nrModels=k;
+%             handles.tideModels.model(k).longName=txt{i+1};
+%             handles.tideModels.model(k).useCache=1;
+%         case{'name'}
+%             handles.tideModels.model(k).name=txt{i+1};
+%             handles.tideModels.names{k}=txt{i+1};
+%         case{'url'}
+%             handles.tideModels.model(k).URL=txt{i+1};
+%         case{'usecache'}
+%             if strcmpi(txt{i+1}(1),'y')
+%                 handles.tideModels.model(k).useCache=1;
+%             else
+%                 handles.tideModels.model(k).useCache=0;
+%             end
+%     end
+% end
 
