@@ -149,9 +149,10 @@ for i = 1:length(names)
         
         % add dimensions
         [nc_dims dims idx_dims] = xb_dims2nc(dims);
-        idx = strcmpi(varname, {xb.data.name});
-        xb.data(idx).dimensions = dimnames(idx_dims);
-        
+        if length(dimnames) == length(idx_dims)
+            idx = strcmpi(varname, {xb.data.name});
+            xb.data(idx).dimensions = dimnames(idx_dims);
+        end
     end
 end
 

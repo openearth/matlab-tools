@@ -68,7 +68,7 @@ l = length(dat_dims);
 switch l
     case 2
         dat_dims = [1 dat_dims([2 1])];
-        idx_dims = [l 2 1];
+        idx_dims = [l+1 2 1];
     case 3
         idx_dims = [l 2 1];
     otherwise
