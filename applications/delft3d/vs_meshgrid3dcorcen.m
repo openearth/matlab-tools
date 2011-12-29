@@ -156,7 +156,11 @@ TimeStep       = 1;
        d3dv.kcv  = vs_get(NFSstruct,'map-const' ,{       1},'KCV',{1:G.nmax-0,1:G.mmax-0},'quiet');%'
        output = char(vs_find(NFSstruct,'DPS'));
        if strcmp(output, 'map-sed-series');
-           G.cor.dps = -vs_get(NFSstruct,'map-sed-series' ,{TimeStep},'DPS'  ,{G.ncor,G.mcor},'quiet');%'
+           G.cor.dps = -vs_get(NFSstruct,'map-sed-series' ,{TimeStep},'DPS'  ,{G.ncor,G.mcor},'quiet');%' % depth is positive up here (in contrast to NEFIS files) !!!
+       end
+       output = char(vs_find(NFSstruct,'DPSED'));
+       if strcmp(output, 'map-sed-series');
+           G.cor.dpsed = vs_get(NFSstruct,'map-sed-series' ,{TimeStep},'DPSED'  ,{G.ncor,G.mcor},'quiet');%' % depth is positive up here (in contrast to NEFIS files) !!!
        end
       
   otherwise,
