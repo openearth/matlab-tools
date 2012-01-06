@@ -85,6 +85,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       OPT.epsg           = 28992;
       OPT.type           = 'float'; %'double'; % the nefis file is by default single precision
       OPT.quiet          = 'quiet';
+      OPT.mode           = '64bit_offset' ;
       
       if ~odd(nargin)
          ncfile   = varargin{1};
@@ -118,7 +119,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       
 %% 1a Create file (add all NEFIS 'map-version' group info)
 
-      nc_create_empty (ncfile)
+      nc_create_empty (ncfile,OPT.mode)
 
       %% Add overall meta info
       %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
