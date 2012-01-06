@@ -4,7 +4,7 @@ function OPT = KMLcurtain(lat, lon, z, C, varargin)
 %   Function still in beta!
 %
 %   Syntax:
-%   OPT = KMLcurtain(lat, lon, z, C, varargin)
+%   OPT = KMLcurtain(lat, lon, z, C, <keyword,value>)
 %
 %   Input:
 %   lat      = 1d vector 
@@ -13,17 +13,10 @@ function OPT = KMLcurtain(lat, lon, z, C, varargin)
 %   C        = 2d array size(length(z)-1,length(lat)-1)
 %
 %   C should be 1 shorter than z and lat/lon, because C is center data,
-%   lat/lon and z are corner data
+%   lat/lon and z are corner data. Specify the keywords timeIn and 
+%   timeOut with the same size as C.
 %
-%   varargin =
-%
-%   Output:
-%   OPT      =
-%
-%   Example
-%   KMLcurtain
-%
-%   See also
+%   See also: googlePlot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -211,7 +204,7 @@ end
                lat2,...
                lon2,...
                OPT.zScaleFun(...
-               z  (ii+1-nn +[0 1 1 0 0]*nn)'),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+               z  (ii+1-nn +[0 1 1 0 0]*nn)'),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension [nx1]
            nn = 1;
            output(kk:kk+length(newOutput)-1) = newOutput;
            kk = kk+length(newOutput);

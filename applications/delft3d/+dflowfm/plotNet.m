@@ -75,7 +75,7 @@ function varargout = plotNet(varargin)
       else
       G        = varargin{1};
       end
-      OPT = setProperty(OPT,varargin{2:end});
+      OPT = setproperty(OPT,varargin{2:end});
    end
    
    if isnumeric(OPT.axis) & ~isempty(OPT.axis) % axis vector 2 polygon

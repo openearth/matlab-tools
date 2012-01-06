@@ -135,7 +135,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_attput(ncfile, nc_global, 'email'         , '');
    
       nc_attput(ncfile, nc_global, 'comment'       , '');
-      nc_attput(ncfile, nc_global, 'version'       , ['$Id$ $Headurl$ ', M.version]);
+      nc_attput(ncfile, nc_global, 'version'       , ['$Id$ $HeadURL$ ', M.version]);
    						   
       nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.4');
       nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions

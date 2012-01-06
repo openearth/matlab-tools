@@ -207,7 +207,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
 %% horizontal coordinates
 
-   if any(strfind(G.coordinates,'CARTESIAN'))
+   if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old error)
    
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');

@@ -106,7 +106,13 @@ function varargout = KMLlogo(varargin)
    
    % Use exisitng alpha when present,
    % otherwise calculate alpha by scaling image
-   if ~any(im4alpha > 0)
+   if any(im4alpha(:) > 0)
+       %im4alpha = im4alpha./max(im4alpha(:)).*255
+       null = im4alpha==0
+       im4alpha = (.5 + im4alpha./max(im4alpha(:)))*255
+       im4alpha(null) = 0;
+       pcolor(double(im4alpha));colorbar
+   else
        % make alpha sum of rgb values
        if OPT.invertblackwhite
        im4alpha =  sum(im,3)./255./3;

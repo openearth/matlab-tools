@@ -1,7 +1,7 @@
 function varargout = xy2mn(x,y,xv,yv,varargin)
 %XY2MN  get indices of random (x,y) points in curvilinear grid
 %
-%   [m,n] = xy2mn(x,y,xv,yv) 
+%   [m,n] = xy2mn(x,y,xv,yv,<Rmax>) 
 %
 % returns indices (m,n) of the curvilinear (x,y) 
 % grid of points closest to the random points 
@@ -9,13 +9,16 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 % 2nd dimension of x and y. If multiple points are 
 % equally near, one (m,n) combi is arbitrarily chosen.
 %
+% Rmax is the maximal distance taken into consideration.
+% Default Inf, when empty, it is the max(sqrt) of all cells.
+%
 % Alternatives:
 %  struct      = xy2mn(...) with fields m, n, mn and eps (match accuracy)
 % [m,n,mn]     = xy2mn(...)
 % [m,n,mn,eps] = xy2mn(...)
 % where mn = the linear index, and eps the distance.
 %
-% See also: SUB2IND, IND2SUB, FIND, MIN, MAX
+% See also: SUB2IND, IND2SUB, FIND, MIN, MAX, griddata_nearest
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -44,6 +47,7 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 %   --------------------------------------------------------------------
 
 OPT.Rmax  = Inf; % make this optionally same size as X and Y.
+
 OPT  = setproperty(OPT,varargin{:});
 
 mn   = zeros(size(xv));
@@ -76,6 +80,10 @@ mmax = size(x,1);
 %   end
 %
 %case 'curvilinear'
+
+if isempty(OPT.Rmax)
+  OPT.Rmax = nanmax(make1d(sqrt(grid_area(D.cen.x,D.cen.y))));
+end
 
    accuracy  = zeros(size(xv)); % distance between matrix node and random point
 

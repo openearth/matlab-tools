@@ -1,5 +1,5 @@
 function matlabDates = xlsdate2datenum(excelDates)
-%XLSDATE2DATENUM   calculate matlab datenumber from xls code
+%XLSDATE2DATENUM   xls date (days since 30-12-1899) to matlab datenumber 
 %
 % matlabDates = xlsdate2datenum(excelDates)
 %
@@ -64,11 +64,11 @@ end
    elseif ischar(excelDates)
    
       %% 'dd-mm-yyyy         '
-      %%  or 
-      %% 'dd-mm-yyyy HH:MM:SS'
-      %% first we fill spaces with 00:00:00
-      %% then we apply datenum to all rows
-      %% ---------------------------------
+      %   or 
+      %  'dd-mm-yyyy HH:MM:SS'
+      %  first we fill spaces with 00:00:00
+      %  then we apply datenum to all rows
+      %  ---------------------------------
       
       if size(excelDates,2)==19
          mask                   = strmatch(' ',excelDates(:,19));

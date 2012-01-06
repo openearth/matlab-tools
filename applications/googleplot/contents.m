@@ -10,9 +10,9 @@
 % This toolbox is part of the OpenEarthTools distribition (http://OpenEarth.eu)
 %
 % Every googlePlot function has a number of <keyword,value> pairs with
-% good defaults. To get a list of the available keywords plus their
-% defaults call a function without input, e.g.: KMLline(). For examples
-% and tests: https://repos.deltares.nl/repos/OpenEarthTools/test/matlab/applications/googleplot/
+% good defaults. To get a list of the available keywords plus their defaults,
+% call a function without input, e.g.: KMLline(). For examples and tests:
+% https://svn.oss.deltares.nl/repos/openearthtools/test/matlab/applications/googlePlot/
 % 
 % Single object(s) plots:
 %  KMLanimatedIcon                - adds place markers with color varying in time

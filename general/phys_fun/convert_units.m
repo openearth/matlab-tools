@@ -21,7 +21,7 @@ function Factor=convert_units(InUnits,OutUnits);
 % Note 3: add any unknown units by editing this function.
 %
 % See web: <a href="http://www.unidata.ucar.edu/software/udunit">http://www.unidata.ucar.edu/software/udunit</a>
-% See also: unitsratio (mapping toolbox), unitconv, qp_unitconversion (delft3d quickplot)
+% See also: unitsratio (mapping toolbox), unitconv, qp_unitconversion, convertUnits
 
 %-----------------------------------------------------------------------
 % Tested : Matlab 6.5
@@ -134,6 +134,9 @@ function Factor=convert_units(InUnits,OutUnits);
    millisecond     = ms;                      % milliseconds
    milliseconds    = ms;                      % milliseconds
    
+   nanosecond      = 1e-9*s;                  % nanoseconds
+   nanoseconds     = nanosecond;              % nanoseconds
+
    min             = 60*s;                    % minutes
    mins            = min;                     % minutes
    minute          = min;                     % minutes

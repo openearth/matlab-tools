@@ -18,7 +18,8 @@ function varargout = plotNet(varargin)
 %    * peri: a struct with KMLline properties for connection line
 %   Defaults values can be requested with OPT = dflowfm.plotNet().
 %
-%   Note: all flow cells are plotted as one NaN-separated line: fast.
+%   Note: all flow cell boundaries are plotted as chained NaN-separated line: 
+%   fast to plot, slow to create.
 %
 %   See also dflowfm, delft3d
 
@@ -59,21 +60,21 @@ function varargout = plotNet(varargin)
 
 %% input
 
-   OPT.axis = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
-   % arguments to plot(x,y,OPT.keyword{:})
-   OPT.fileName = [];
+%  arguments to plot(x,y,OPT.keyword{:})
    OPT.cen = struct(... % KMLpatch3()
-         'iconnormalState','circle-white.png',...
+         'iconnormalState','http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png',...
         'colornormalState',[0 0 1],... % blue
-        'scalenormalState',.1,...
+        'scalenormalState',0.2,... % less is not shonw in GE
      'scalehighlightState',0); % no mouse-over
    OPT.cor  = struct(... % KMLpatch3()
-         'iconnormalState','circle-white.png',...
+         'iconnormalState','http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png',...
         'colornormalState',[1 1 0],... % yellow
-        'scalenormalState',.1,...
+        'scalenormalState',0.2,... % less is not shonw in GE
      'scalehighlightState',0); % no mouse-over
-   OPT.peri = struct('lineWidth',1); % KMLline
-   OPT.epsg = 28992;
+   OPT.axis     = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
+   OPT.fileName = [];
+   OPT.peri     = struct('lineWidth',1); % KMLline
+   OPT.epsg     = 28992;
    
    if nargin==0
       varargout = {OPT};
@@ -88,7 +89,7 @@ function varargout = plotNet(varargin)
       end
       OPT = setProperty(OPT,varargin{2:end});
    end
-
+   
    if isnumeric(OPT.axis) & ~isempty(OPT.axis) % axis vector 2 polygon
    tmp        = OPT.axis;
    OPT.axis.x = tmp([1 2 2 1]);
@@ -96,8 +97,14 @@ function varargout = plotNet(varargin)
    end
    
    sourceFiles = {};
-
-%% plot corners ([= nodes)
+   
+   [tmppath,tmpname]     = fileparts(ncfile);
+   
+   if ~isempty(tmppath)
+   tmpname = [tmppath filesep tmpname];
+   end
+   
+%% plot corners (= nodes)
 
    if isfield(G,'cor') & ~isempty(OPT.cor)
    
@@ -110,7 +117,7 @@ function varargout = plotNet(varargin)
         cor.mask = inpolygon(G.cor.x,G.cor.y,OPT.axis.x,OPT.axis.y);
      end
      
-     sourceFiles{end+1} = [tempname(fileparts(ncfile)),'_cor.kml'];
+     sourceFiles{end+1} = [tmpname,'_cor.kml'];
      OPT.cor.fileName = sourceFiles{end};
      KMLmarker(cor.lat(cor.mask),cor.lon(cor.mask),OPT.cor);
 
@@ -135,7 +142,7 @@ function varargout = plotNet(varargin)
    
    if isfield(G,'cen') & ~isempty(OPT.cen)
        
-     sourceFiles{end+1} = [tempname(fileparts(ncfile)),'_cen.kml'];
+     sourceFiles{end+1} = [tmpname,'_cen.kml'];
      OPT.cen.fileName = sourceFiles{end};
      KMLmarker(cen.lat(cen.mask),cen.lon(cen.mask),OPT.cen);
    
@@ -150,25 +157,30 @@ function varargout = plotNet(varargin)
 
    if isfield(G,'peri') & ~isempty(OPT.peri)
        
-     peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
-     peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
+     %% OLD method, SLOW in GE, but fast to generate
+     %  peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
+     %  peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
+     %  
+     %  if ~iscell(G.peri.x) % can also be done in readNet
+     %    [x,y] = dflowfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
+     %     x    = poly_join(x);
+     %     y    = poly_join(y);
+     %  else
+     %     x    = poly_join({G.peri.x{peri.mask}});
+     %     y    = poly_join({G.peri.y{peri.mask}});
+     %  end
      
-     if ~iscell(G.peri.x) % can also be done in readNet
-       [x,y] = dflowfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
-        x    = poly_join(x);
-        y    = poly_join(y);
-     else
-        x    = poly_join({G.peri.x{peri.mask}});
-        y    = poly_join({G.peri.y{peri.mask}});
-     end
+     %% NEW method, FAST in GE, but slower to generate
+     
+    [peri.x peri.y]=tri2poly(G.cor.Link',G.cor.x,G.cor.y,'log',2);
      
     % TO DO check whether x and y are not already spherical 
-    [cor.lon,cor.lat] = convertCoordinates(x,y,'CS1.code',OPT.epsg,'CS2.code',4326);
+    [peri.lon,peri.lat] = convertCoordinates(peri.x,peri.y,'CS1.code',OPT.epsg,'CS2.code',4326);
      
-     sourceFiles{end+1} = [tempname(fileparts(ncfile)),'_peri.kml'];
+     sourceFiles{end+1} = [tmpname,'_peri.kml'];
      OPT.peri.fileName = sourceFiles{end};
      disp('plotting KMLline segments, please wait ...')
-     h = KMLline(cor.lat,cor.lon,OPT.peri);   
+     h = KMLline(peri.lat,peri.lon,OPT.peri);   
    
    end
    

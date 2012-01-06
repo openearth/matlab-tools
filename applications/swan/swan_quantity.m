@@ -67,6 +67,8 @@ function varargout = swan_quantity
    OVLEXP = cell(1,nval);
    OVHEXP = cell(1,nval);
    OVEXCV = cell(1,nval);
+   OVCFUD = cell(1,nval); % TO DO CF UD units
+   OVCFSD = cell(1,nval); % TO DO CF standard_names
 
 %% Manually edited 3 things from code form SWANMAIN.for below
    %% 1

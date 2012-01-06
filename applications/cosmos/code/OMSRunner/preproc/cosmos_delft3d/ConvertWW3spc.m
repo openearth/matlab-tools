@@ -1,4 +1,5 @@
 function ConvertWW3spc(fname1,fname2,coordsys,coordsystype)
+% ConvertWW3spc(fname1,fname2,coordsys,coordsystype)
 
 %% Read Spec
 fid=fopen(fname1,'r');

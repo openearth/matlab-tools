@@ -16,6 +16,7 @@ function netcdf_settings(varargin)
 %
 % For reading large netCDF files with Java memory issues can arise, see:
 % http://www.mathworks.com/support/solutions/en/data/1-18I2C/
+% see also: java.lang.Runtime.getRuntime.gc
 %
 %See also: OETSETTINGS, NC_CF_GRID_TEST, NETCDF_TEST, javarmpath
 

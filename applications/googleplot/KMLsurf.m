@@ -25,6 +25,11 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 % The keyword 'colorMap' can either be a function handle to be sampled with
 % keyword 'colorSteps', or a colormap rgb array (then 'colorSteps' is ignored).
 %
+% Example:
+%
+%  [x,y,z]=peaks;
+%  KMLsurf(x,y,z,'fileName','peaks.kml','zScaleFun',@(z) 1e5*z + 1e5)
+%
 % See also: googlePlot, surf
 
 %   --------------------------------------------------------------------

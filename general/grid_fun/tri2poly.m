@@ -1,19 +1,19 @@
-function varargout = tri2poly(tri,x,y,varargin)
-%TRI2POLY   rewrite tri connectivity to nan-separated polygons (for fast plotting)
+function varargout = tri2poly(connectivity,x,y,varargin)
+%TRI2POLY   rewrite bi/tri connectivity into long NaN-separated polygons (for fast plotting)
 %
 %  [X Y]   = tri2poly(tri,x,y)
 %  [X Y Z] = tri2poly(tri,x,y,z)
 %
-%Example:
-%
-% [x,y,z]=peaks(20);
-% tri = delaunay(x,y);
-% h=trisurf(tri,x,y,z)
-% set(h','edgecolor','none')
-% view(0,90)
-% hold on
-% [X,Y,Z]=tri2poly(tri,x,y,z);plot3(X,Y,Z,'k'); %
-% trimesh(tri,x,y,z,'edgecolor','k')
+% Example:
+% 
+%  [x,y,z]=peaks(20);
+%  tri = delaunay(x,y);
+%  h=trisurf(tri,x,y,z)
+%  set(h','edgecolor','none')
+%  view(0,90)
+%  hold on
+%  [X,Y,Z]=tri2poly(tri,x,y,z);plot3(X,Y,Z,'k'); %
+%  trimesh(tri,x,y,z,'edgecolor','k')
 %
 %See also: poly_fun, trimesh
 
@@ -52,66 +52,99 @@ function varargout = tri2poly(tri,x,y,varargin)
 
 %% input
 
-OPT.debug = 0;
-
-if odd(nargin)
-   nextarg = 1;
-else
-   nextarg = 2;
-   z = varargin{1};    
-end
-
-OPT = setproperty(OPT,varargin{nextarg:end});
+   OPT.debug = 0;
+   OPT.log   = 0; % 1=command line, 2=multiwaitbar
+   
+   if odd(nargin)
+      nextarg = 1;
+   else
+      nextarg = 2;
+      z = varargin{1};    
+   end
+   
+   OPT = setproperty(OPT,varargin{nextarg:end});
 
 %% assemble sides of triangle into heap of line segments
 
-   duo.ends = reshape([tri(:,[1 2 2 3 3 1])]',[2 size(tri,1)*3])';
+if     size(connectivity,2)==2
+
+   duo.ends = connectivity;
+
+elseif size(connectivity,2)==3
+
+   duo.ends = reshape([connectivity(:,[1 2 2 3 3 1])]',[2 size(connectivity,1)*3])';
    
 %% remove double segments sort segments on nearness
 
-   duo.ends = sort(duo.ends,2); % lowest point per segment 1 col
+   duo.ends =     sort(duo.ends,2); % lowest point per segment 1 col
    duo.ends = sortrows(duo.ends,[1 2]); % sort on point nu so we can use diff to trace doubles
-   d = diff(duo.ends,[],1);
+   d            = diff(duo.ends,[],1);
    d = find(d(:,1)==0 & d(:,2)==0);
    duo.ends(d,:)=[];
-   duo.done = duo.ends.*0;
    
+elseif size(connectivity,2)>3
+
+   error('only bi and tri connectivity implemented')
+
+end
+
+duo.done = duo.ends.*0;
+duo
+
 %% start with 1st full line segment
    
-   ipol          = 1;             % ipol is index into assambles polygons 
-   j             = 1;             % j    is index into duo segment 
-   i             = duo.ends(j,2); % i    is index into x,y,z (tri pointer)
-   pol{ipol}     = duo.ends(j,:);
-   duo.done(j,:) = 1;
+   ipol           = 1;             % ipol is index into assambles polygons 
+   j              = 1;             % j    is index into duo segment 
+   i              = duo.ends(j,2); % i    is index into x,y,z (tri pointer)
+   pol{ipol}      = repmat(0,[1 sum(~duo.done(:,1))]);
+   ipt            = 1;
+   pol{ipol}(1:2) = duo.ends(j,:);
+   duo.done(j,:)  = 1;
    
    while ~all(duo.done)
    
-% find new segment for current polygon
+% find new segment for current polygon [most timeconsuming line]
        
-      [sides,js]= find(duo.ends'==i & duo.done'==0); % sorted transposed so it is already sorted on js
+     mask = (duo.ends'==i & duo.done'==0); % sorted transposed so it is already sorted on js
       
 % if none found start new polygon
     
-       if ~any(js)
-         [js,sides] = find(duo.done==0);
-          if ~any(js)
-             break
-          else
-             ipol      = ipol+1;
-             js        = js(end); % end gives longer polygons
-             sides     = sides(end);
-             i         = duo.ends(js,sides);
-             pol{ipol} = i;
-          end
-       end
+      if ~any(mask)
+        [js,sides] = find(duo.done==0);
+         if ~any(js)
+            break
+         else
+            if OPT.log>0
+            end
+            lab=[num2str(ipol),' polygons found with ',num2str(sum(duo.done(:,1))),' points (still ',num2str(sum(~duo.done(:,1))),' points to do)'];
+            if OPT.log==1
+            disp(lab)
+            elseif OPT.log==2
+            multiWaitbar( 'merge', sum(duo.done(:,1))./size(duo.done,1) ,'label',lab);
+            end
+   
+            pol{ipol}(pol{ipol}==0)=[];
+            ipol           = ipol+1;
+            js             = js(end); % end gives longer polygons
+            sides          = sides(end);
+            i              = duo.ends(js,sides);
+            pol{ipol}      = repmat(0,[1 sum(~duo.done(:,1))]);
+            ipt            = 1;
+            pol{ipol}(ipt) = i;
+         end
+      else
+     [sides,js]= find(mask);
+      end
    
 % attach other end of segment to current polygon
        
-       j = js(1);
-       otherside        = -(sides(1)-1.5)+1.5; % 1 => 2, 2 => 1: if one segment was match, we need to add the other
-       i                = duo.ends(j,otherside);
-       duo.done(j,:)    = 1;
-       pol{ipol}(end+1) = i;
+      j = js(1);
+      otherside        = -(sides(1)-1.5)+1.5; % 1 => 2, 2 => 1: if one segment was match, we need to add the other
+      i                = duo.ends(j,otherside);
+      duo.done(j,:)    = 1;
+      ipt              = ipt + 1;
+      pol{ipol}(ipt) = i;
+      
    end
 
 %% assemble coordinates
@@ -124,39 +157,40 @@ OPT = setproperty(OPT,varargin{nextarg:end});
    P.z = poly_join(cellfun(@(p) z(p),pol,'UniformOutput',0));
    end
    
-   %size(tri,1)*3+length(pol) % all segments + end points for each polygon
+   %size(connectivity,1)*3+length(pol) % all segments + end points for each polygon
    %sum(cellfun(@(x) length(x),pol))
    
-   %size(tri,1)*3+length(pol)*2  % all segments + end points for each polygon + na for each polygon
+   %size(connectivity,1)*3+length(pol)*2  % all segments + end points for each polygon + na for each polygon
    %length(P.x)
    
 %% plotting for debugging
 
-if OPT.debug
-close all   
- figure(1)
-   trisurf(tri,x,y,z)
-   hold on
-   %KMLtrisurf(tri,x,y,z,'fileName','peaks.kml',...
-   %                    'zScaleFun',@(z) 3e4 + 1e4.*z)
-   map = jet(length(pol)).*0;
-   for p=1:length(pol)
-   plot3(x(pol{p})   ,y(pol{p})   ,z(pol{p})       ,'color',map(p,:),'linewidth',p)
-   
-   plot3(x(pol{p}(1)),y(pol{p}(1)),z(pol{p}(1)),'o','color',map(p,:))
-   end
+if OPT.debug & size(connectivity,2)==3
 
- figure(2)
-   h=trisurf(tri,x,y,z.*0,'EdgeColor','r');
-   hold on
-   view(0,90)
-   map = jet(length(pol)).*0;
-   for p=1:length(pol)
-   plot(x(pol{p})   ,y(pol{p})   ,'color',map(p,:),'linewidth',.5+p)
-   pause(0.1)
-   plot(x(pol{p}(1)),y(pol{p}(1)),'o','color',map(p,:))
-   end
-   plot(P.x,P.y,'b')
+   close all   
+    figure(1)
+      trisurf(connectivity,x,y,z)
+      hold on
+      %KMLtrisurf(connectivity,x,y,z,'fileName','peaks.kml',...
+      %                    'zScaleFun',@(z) 3e4 + 1e4.*z)
+      map = jet(length(pol)).*0;
+      for p=1:length(pol)
+      plot3(x(pol{p})   ,y(pol{p})   ,z(pol{p})       ,'color',map(p,:),'linewidth',p)
+      
+      plot3(x(pol{p}(1)),y(pol{p}(1)),z(pol{p}(1)),'o','color',map(p,:))
+      end
+   
+    figure(2)
+      h=trisurf(connectivity,x,y,z.*0,'EdgeColor','r');
+      hold on
+      view(0,90)
+      map = jet(length(pol)).*0;
+      for p=1:length(pol)
+      plot(x(pol{p})   ,y(pol{p})   ,'color',map(p,:),'linewidth',.5+p)
+      pause(0.1)
+      plot(x(pol{p}(1)),y(pol{p}(1)),'o','color',map(p,:))
+      end
+      plot(P.x,P.y,'b')
    
 end
 
@@ -173,4 +207,8 @@ else
     elseif nargout==4
     varargout = {P.x,P.y,P.z,n};
     end
+end
+
+if OPT.log==2
+multiWaitbar( 'merge', 'close');
 end

@@ -133,7 +133,6 @@ NFSstruct      = varargin{1};
    end
    
 %% Define staggered ElementIndices
-% -------------------------
 
    nz = ElementIndex{1}; % indices centers
    mz = ElementIndex{2}; % indices centers
@@ -396,28 +395,23 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
   end;
 
 %% Calculate masks
-% -------------------------------------
 
    switch vs_type(NFSstruct),
    case {'Delft3D-com','Delft3D-tram','Delft3D-botm',...
          'Delft3D-trim'}, % not wave
 
       %% 0/1 Non-active/Active velocity point (fixed)
-      % -------------------------------------
          u.KCU (  u.KCU  ==0 ) = nan;
          v.KCV (  v.KCV  ==0 ) = nan;
 
       %% 0/1/2 Non-active/Active/Boundary water level point (fixed)
-      % -------------------------------------
          cen.KCS (  cen.KCS  ==0 ) = nan;
          cen.KCS (  cen.KCS  ==2 ) = nan;
 
       %% -1/1 Non-active/Active bottom point (fixed)
-      % -------------------------------------
 %          cor.CODB(  cor.CODB ==-1) = nan;
  
       %% -1/1 Non-active/Active water level point (fixed)
-      % -------------------------------------
          cen.KCS(  cen.KCS ==-1) = nan; % = now G.KCS
 
          if P.logicalmask
@@ -438,7 +432,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
       %  Apply masks
       %  Do not set the inactive corner points to nan before calculating
       %  the velocity points, otherwise coordinates at your boundayr get lost.
-      % -------------------------------------
 
          G.cen.(x)(~(cen.KCS)) = nan;
          G.cen.(y)(~(cen.KCS)) = nan;
@@ -449,7 +442,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
 
       %% Redefine masks
       %  Set overall masks as [ones and NaNs] to allow for muliplication
-      % -------------------------------------
          
          G.cen.mask            = ones(size(cen.KCS));
          G.cen.mask(~cen.KCS)  = nan;
@@ -468,7 +460,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
          
 
 %% Calculate depths at velocity points
-% -------------------------------------
 
      G.u.dep = nan.*ones(size(G.u.mask));
      G.v.dep = nan.*ones(size(G.v.mask));
@@ -506,7 +497,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
    end;
 
 %% Calculate velocity points
-% -------------------------------------
 
    if P.face
 
@@ -524,14 +514,12 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
    end
    
 %% Load grid cell areas
-% -------------------------------------
    
    if P.area
    
       switch vs_type(NFSstruct),
       
       %% comfile
-      % -------------------------------------
       case {'Delft3D-com','Delft3D-tram','Delft3D-botm'},
       
          G.cen.area = vs_let(NFSstruct,'GRID','GSQS',{nz,mz},'quiet');
@@ -539,7 +527,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
          G.cen.area_comment = 'This area is incorrectly calculated by Delft3D-FLOW,and is not equal to the area of the two constituting triangles.';
       
       %% trimfile, wavm file
-      % -------------------------------------
       case {'Delft3D-trim','Delft3D-hwgxy'}
       
          G.cen.area = grid_area(G.cor.(x),G.cor.(y));
@@ -552,14 +539,12 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
    end
 
 %% Load grid cell sizes
-% -------------------------------------
    
    if P.geometry
    
       switch vs_type(NFSstruct),
       
       %% comfile
-      % -------------------------------------
       case {'Delft3D-com','Delft3D-tram','Delft3D-botm'},
       
          G.u.gvu = vs_let(NFSstruct,'GRID','GVU',{nu,mu},'quiet');
@@ -575,14 +560,13 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
          G.v.gvv = permute(G.v.gvv,[2 3 1]);
 
       %% trimfile, wavm file
-      % -------------------------------------
       case {'Delft3D-trim','Delft3D-hwgxy'}
       
          [G.v.guv,G.u.gvu,...
           G.u.guu,G.v.gvv] = grid_corner2perimeter(G.cor.(x),G.cor.(y));
 
          %% At the boundary the comfile gives realistic boundary-perpendicular distances
-         %% while with this method they are undefined (NaN).
+         %  while with this method they are undefined (NaN).
       	  
       otherwise,
          error('Invalid NEFIS file for this action.');
@@ -590,7 +574,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
       
       %% Calculate grid distance at center points
       %  (needed for du_dksi at center points)
-      % -------------------------------------
 
       G.cen.guu = (G.u.guu(:      ,1:end-1) + G.u.guu(:    ,2:end))./2; % average in m-direction, is 2nd dim
       G.cen.gvv = (G.v.gvv(1:end-1,:      ) + G.v.gvv(2:end,:    ))./2; % average in n-direction, is 1st dim
@@ -599,7 +582,6 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
       % G.cen.gvv should be G.cen.gv as 2nd letter is direction
 
       %% Apply masks
-      % -------------
 
       % DO NOT SET TEMPORARY DRY VELOCITY POINTS TO NAN 
       % NOR BOUNDARY POINTS
@@ -614,13 +596,11 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
 
 %% rembember input file as meta info
 %  for later version checking
-% --------------------------
 
    %G.NFSstruct = NFSstruct;
     G.FileName = NFSstruct.FileName;
 
 %% Return variables
-%--------------------------
    
    if nargout == 1
       varargout = {G};
