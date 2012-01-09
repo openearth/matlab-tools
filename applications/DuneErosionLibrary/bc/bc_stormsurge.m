@@ -87,7 +87,7 @@ if ~isempty(OPT.h_max)
     [OPT.h0 OPT.ha OPT.hs] = deal(ampl{:});
 end
 
-dt = .5; t = 0:dt:OPT.Tsim; to = t*3600;                                                                        % // time  
+dt = .5; t = 0:dt:OPT.Tsim; to = ceil(t*3600);                                                                  % // time  
 
 h = OPT.h0+OPT.ha*cos(2.*pi.*(t-OPT.Tpeak)./OPT.Ttide)+OPT.hs*cos(pi.*(t-OPT.Tpeak)./OPT.Tsurge).^2;            % // surge level  
 
@@ -115,7 +115,7 @@ end
 
 Hp(Ho == max(Ho)) = OPT.Hm0_max;
 To(To == max(To)) = OPT.Tp_max;
-dtwo = 3600*repmat(dtw,1,OPT.nwaves);
+dtwo = ceil(3600*repmat(dtw,1,OPT.nwaves));
 
 if OPT.plot == 1
     Hop(Hop == max(Hop)) = OPT.Hm0_max;

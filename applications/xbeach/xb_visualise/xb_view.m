@@ -157,6 +157,16 @@ function ui_build(obj)
         'String', 'fix caxis', ...
         'Enable', 'off', ...
         'Callback', @ui_togglecaxis);
+    
+    uicontrol(pobj, 'Style', 'checkbox', 'Tag', 'ToggleTransect', ...
+        'String', 'transect', ...
+        'Enable', 'off', ...
+        'Callback', @ui_toggletransect);
+    
+    uicontrol(pobj, 'Style', 'slider', 'Tag', 'SliderTransect', ...
+        'Min', 1, 'Max', size(info.y,1), 'Value', 1, 'SliderStep', [1 5]/(size(info.y,1)-1), ...
+        'Enable', 'off', ...
+        'Callback', @ui_settransect);
 
     % reload button
     uicontrol(pobj, 'Style', 'pushbutton', 'Tag', 'ButtonReload', ...
@@ -179,6 +189,7 @@ function ui_build(obj)
     if info.ndims == 2
         set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'on');
         set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'on');
+        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'on');
     end
     
     if strcmpi(info.type, 'input')
@@ -231,6 +242,8 @@ function ui_resize(obj, event)
     set(findobj(obj, 'Tag', 'ToggleCompare'), 'Position', [[.85 .55].*winsize [.1 .05].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleSurf'), 'Position', [[.85 .5].*winsize [.1 .05].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleCAxisFix'), 'Position', [[.85 .45].*winsize [.1 .05].*winsize]);
+    set(findobj(obj, 'Tag', 'ToggleTransect'), 'Position', [[.85 .40].*winsize [.1 .05].*winsize]);
+    set(findobj(obj, 'Tag', 'SliderTransect'), 'Position', [[.85 .375].*winsize [.1 .025].*winsize]);
     set(findobj(obj, 'Tag', 'ButtonReload'), 'Position', [[.85 .125].*winsize [.1 .035].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleAnimate'), 'Position', [[.85 .07].*winsize [.1 .035].*winsize]);
     set(findobj(obj, 'Tag', 'ReadIndicator'), 'Position', [[.85 .25].*winsize [.1 .025].*winsize]);
@@ -257,7 +270,13 @@ function ui_togglesurf(obj, event)
     pobj = get_pobj(obj);
     
     info = get(pobj, 'userdata');
-    info.surf = get(obj, 'Value');
+    if get(obj, 'Value')
+        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'off');
+        info.surf = true;
+    else
+        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'on');
+        info.surf = false;
+    end
     set(pobj, 'userdata', info);
 
     cla(get_axis(obj));
@@ -274,6 +293,51 @@ function ui_togglecaxis(obj, event)
     else
         info.caxis = [];
     end
+    set(pobj, 'userdata', info);
+    
+    ui_plot(obj, []);
+end
+
+function ui_toggletransect(obj, event)
+    pobj = get_pobj(obj);
+    
+    info = get(pobj, 'userdata');
+    if get(obj, 'Value')
+        set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'ToggleCompare'), 'Enable', 'on');
+        
+        sobj = findobj(pobj, 'Tag', 'SliderTransect');
+        set(sobj, 'Enable', 'on');
+        
+        ax = get_axis(obj);
+        set(gcf,'CurrentAxes',ax(1)); [x y] = ginput(1);
+        [y i] = closest(y, info.y(:,1));
+        set(sobj, 'Value', i);
+        
+        info.transect = [y i];
+    else
+        set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'on');
+        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'on');
+        set(findobj(pobj, 'Tag', 'ToggleCompare'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'SliderTransect'), 'Enable', 'off');
+        
+        info.transect = [];
+    end
+    set(pobj, 'userdata', info);
+    
+    cla(get_axis(obj));
+    
+    ui_plot(obj, []);
+end
+
+function ui_settransect(obj, event)
+    pobj = get_pobj(obj);
+    sobj = findobj(pobj, 'Tag', 'SliderTransect');
+    
+    info = get(pobj, 'userdata');
+    i = round(get(sobj, 'Value'));
+    info.transect = [info.y(i,1) i];
     set(pobj, 'userdata', info);
     
     ui_plot(obj, []);
@@ -362,6 +426,7 @@ function ui_read(obj)
         info.compare = false;
         info.surf = false;
         info.caxis = [];
+        info.transect = [];
         
         set(pobj, 'userdata', info);
     else
@@ -391,20 +456,29 @@ function data = ui_getdata(obj, info, vars, slider)
         t = t2;
     end
     
+    if ~isempty(info.transect)
+        ri = info.transect(2);
+        rl = 1;
+    else
+        ri = 1;
+        rl = -1;
+    end
+    
     switch info.type
         case 'input'
             for i = 1:length(vars)
                 data{i}(1,:,:) = xb_get(info.input, vars{:});
+                data{i} = data{i}(1,ri,:);
             end
         case 'output_xb'
             for i = 1:length(vars)
                 d = xb_get(info.input, vars{i});
-                data{i}(1,:,:) = d(t,:,:);
+                data{i}(1,:,:) = d(t,ri,:);
             end
         case 'output_dir'
             [data{1:length(vars)}] = xb_get( ...
-                xb_read_output(info.fpath, 'vars', vars, 'start', [t-1 0 0], ...
-                'length', [1 -1 -1]), vars{:});
+                xb_read_output(info.fpath, 'vars', vars, 'start', [t-1 ri-1 0], ...
+                'length', [1 rl -1]), vars{:});
     end
     
     if info.diff && slider == 2
@@ -428,23 +502,22 @@ function ui_plot(obj, event)
     pobj = get_pobj(obj);
     info = get(pobj, 'userdata');
     
-    if ismember(get(obj, 'Tag'), {'SelectVar' 'ToggleSurf' 'ToggleCompare'})
+    if ismember(get(obj, 'Tag'), {'SelectVar' 'ToggleSurf' 'ToggleCompare' 'ToggleTransect'})
         delete(get_axis(obj));
     end
     
     vars = selected_vars(obj);
     data = ui_getdata(obj, info, vars, 2);
     
-    switch info.ndims
-        case 1
-            if info.compare
-                data0 = ui_getdata(obj, info, vars, 1);
-                data = cat(1, data, data0);
-            end
-            
-            plot_1d(obj, info, data, vars);
-        case 2
-            plot_2d(obj, info, data, vars);
+    if info.ndims == 1 || ~isempty(info.transect)
+        if info.compare
+            data0 = ui_getdata(obj, info, vars, 1);
+            data = cat(2, data, data0);
+        end
+
+        plot_1d(obj, info, data, vars);
+    else
+        plot_2d(obj, info, data, vars);
     end
 end
 
@@ -505,6 +578,10 @@ function plot_1d(obj, info, data, vars)
                     'DisplayName', strrep(vars{i}, '_', '\_'));
             end
         end
+    end
+    
+    if ~isempty(info.transect)
+        title(sprintf('y = %3.2f m (i = %d)', info.transect(1), info.transect(2)), 'Interpreter', 'none');
     end
     
     % include legend at the 'Best' location

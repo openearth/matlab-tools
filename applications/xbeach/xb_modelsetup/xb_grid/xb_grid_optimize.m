@@ -258,20 +258,22 @@ if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise
         notnan = ~isnan(zgrid(i,:));
         if any(~notnan) && sum(notnan) > 1
             zgrid(i,~notnan) = interp1(xgrid(i,notnan), zgrid(i,notnan), xgrid(i,~notnan));
-            if ~isempty(OPT.ne); negrid(i,~notnan) = OPT.zdepth+zgrid(i,~notnan); end;
         end
 
         j = find(~isnan(zgrid(i,:)), 1, 'first');
         if ~isempty(j) && j > 1
             zgrid(i,1:j-1) = zgrid(i,j);
-            if ~isempty(OPT.ne); negrid(i,1:j-1) = OPT.zdepth+zgrid(i,j); end;
         end
 
         j = find(~isnan(zgrid(i,:)), 1, 'last');
         if ~isempty(j) && j < size(zgrid, 2)
             zgrid(i,j+1:end) = zgrid(i,j);
-            if ~isempty(OPT.ne); negrid(i,j+1:end) = OPT.zdepth+zgrid(i,j); end;
         end
+    end
+    
+    if ~isempty(OPT.ne)
+        notnan          = ~isnan(negrid);
+        negrid(~notnan) = OPT.zdepth+zgrid(~notnan);
     end
 end
 

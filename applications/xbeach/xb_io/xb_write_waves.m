@@ -209,7 +209,7 @@ while any(duration>OPT.maxduration)
     tlength     = tlength+n;
 end
 
-xb = xb_set(xb, 'duration', duration);
+xb = xb_set(xb, 'duration', ceil(duration));
 
 %% create file list
 
