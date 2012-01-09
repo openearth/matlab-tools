@@ -167,7 +167,8 @@ for i=1:nt
             handles.Toolbox(i).dir=[dr2 filesep name{i} filesep];
             handles.Toolbox(i).xmlDir=[handles.Toolbox(i).dir 'xml' filesep];
             handles.Toolbox(i).miscDir=[handles.Toolbox(i).dir 'misc' filesep];
-            handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
+            handles.Toolbox(i).dataDir=[handles.Toolbox(i).dir 'data' filesep];
+%             handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
         end
     end
 end
