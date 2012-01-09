@@ -62,6 +62,14 @@ function ddb_getCoordinateSystems
 %%
 handles=getHandles;
 
+localdir = handles.superTransDir;
+url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/supertrans/SuperTrans.xml';
+xmlfile = 'SuperTrans.xml';
+supertransdata = ddb_getXmlData(localdir,url,xmlfile);
+
+for ii=1:length(supertransdata)
+    urlwrite(supertransdata(ii).file.URL,[handles.superTransDir filesep supertransdata(ii).file.name]);
+end    
 handles.EPSG=load([handles.superTransDir 'EPSG.mat']);
 
 nproj=0;

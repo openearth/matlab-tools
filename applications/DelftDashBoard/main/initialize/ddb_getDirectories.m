@@ -140,11 +140,11 @@ handles.additionalToolboxDir=additionalToolboxDir;
 handles.shorelineDir=[ddbdir 'shorelines' filesep];
 handles.satelliteDir=[ddbdir 'imagery' filesep];
 
-if isdeployed
+%if isdeployed
     handles.superTransDir=[ddbdir 'supertrans' filesep];
-else
-    dr=fileparts(which('EPSG.mat'));
-    handles.superTransDir=[dr filesep];
-end
+%else
+%    dr=fileparts(which('EPSG.mat'));
+%    handles.superTransDir=[dr filesep];
+%end
 
 
