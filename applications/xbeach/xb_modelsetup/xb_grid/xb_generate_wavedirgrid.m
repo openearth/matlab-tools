@@ -9,6 +9,7 @@ function xb = xb_generate_wavedirgrid(xb,varargin)
 %   Input:
 %   varthr      = threshold (percentage of maximum variance) that is taken into account to set-up wavedir grid
 %   nbins       = number of directional bins
+%   normal      = direction normal to the shore line (optional)
 %   plot        = 0 = no plot, 1 = plot of directional wave grid
 %
 %   Output:
@@ -72,6 +73,7 @@ function xb = xb_generate_wavedirgrid(xb,varargin)
 OPT = struct( ...
             'varthr', 0.05, ...
             'nbins', 1, ...
+            'normal', [], ...
             'plot', false ...
             );
 
@@ -121,15 +123,17 @@ if ismember(xb_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
 
     end
 
-    % only include bins that propagate wave action with a component
-    % towards the shore
-    theta_min = max(theta_min,270-alpha-90);
-    theta_max = min(theta_max,270-alpha+90);
+    if ~isempty(OPT.normal)
+        % only include bins that propagate wave action with a component
+        % towards the shore
+        theta_min = max(theta_min,OPT.normal-alpha-90);
+        theta_max = min(theta_max,OPT.normal-alpha+90);
 
-    % make shoe there is wavebin normal to the shore
-    safety = 15; % degrees
-    thata_min = min(theta_min, 270-alpha-safety);
-    thata_max = max(theta_max, 270-alpha+safety);
+        % make shoe there is wavebin normal to the shore
+        safety = 15; % degrees
+        thata_min = min(theta_min, OPT.normal-alpha-safety);
+        thata_max = max(theta_max, OPT.normal-alpha+safety);
+    end
 
     % plot([theta_min theta_min; theta_max theta_max]',[0 1; 0 1;]','r--o','LineWidth',1.5,'MarkerSize',8);
     % plot([270-alpha 270-alpha],[0 1],'g--o','LineWidth',1.5,'MarkerSize',8); grid on;

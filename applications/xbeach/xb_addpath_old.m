@@ -1,21 +1,18 @@
 function xb_addpath_old(varargin)
-%XB_ADDPATH_OLD  One line description goes here.
+%XB_ADDPATH_OLD  Add old XBeach functions to Matlab path
 %
-%   More detailed description goes here.
+%   Add old XBeach functions to Matlab path
 %
 %   Syntax:
-%   varargout = xb_addpath_old(varargin)
+%   xb_addpath_old(varargin)
 %
 %   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
+%   varargin  = none
 %
 %   Example
 %   xb_addpath_old
 %
-%   See also
+%   See also oetsettings
 
 %% Copyright notice
 %   --------------------------------------------------------------------
