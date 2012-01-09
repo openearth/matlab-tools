@@ -63,6 +63,8 @@ function handles = ddb_initializeObservationStations(handles, varargin)
 %%
 ii=strmatch('ObservationStations',{handles.Toolbox(:).name},'exact');
 
+ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
+
 dr=handles.Toolbox(ii).dataDir;
 lst=dir([dr '*.mat']);
 

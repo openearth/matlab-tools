@@ -63,6 +63,8 @@ function handles = ddb_initializeTropicalCyclone(handles, varargin)
 %%
 ii=strmatch('TropicalCyclone',{handles.Toolbox(:).name},'exact');
 
+ddb_getToolboxData(handles.Toolbox(ii).miscDir,ii);
+
 if nargin>1
     switch varargin{1}
         case{'test'}

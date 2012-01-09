@@ -63,6 +63,8 @@ function handles = ddb_initializeTsunami(handles, varargin)
 %%
 ii=strmatch('Tsunami',{handles.Toolbox(:).name},'exact');
 
+ddb_getToolboxData(handles.Toolbox(ii).miscDir,ii);
+
 if nargin>1
     switch varargin{1}
         case{'test'}

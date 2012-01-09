@@ -62,7 +62,7 @@ function handles = ddb_readTiledBathymetries(handles)
 %% When enabled on OpenDAP
 % Check for updates on OpenDAP and add data to structure
 localdir = handles.bathyDir;
-url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/bathymetry/bathymetry2.xml';
+url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/bathymetry/bathymetry.xml';
 xmlfile = 'bathymetry.xml';
 handles.bathymetry = ddb_getXmlData(localdir,url,xmlfile);
 

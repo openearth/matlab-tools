@@ -67,9 +67,11 @@ url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/supertrans/Supe
 xmlfile = 'SuperTrans.xml';
 supertransdata = ddb_getXmlData(localdir,url,xmlfile);
 
-for ii=1:length(supertransdata)
-    urlwrite(supertransdata(ii).file.URL,[handles.superTransDir filesep supertransdata(ii).file.name]);
-end    
+if ~isempty(supertransdata)
+    for ii=1:length(supertransdata.file)
+        urlwrite(supertransdata.file(ii).URL,[handles.superTransDir filesep supertransdata.file(ii).name]);
+    end
+end
 handles.EPSG=load([handles.superTransDir 'EPSG.mat']);
 
 nproj=0;

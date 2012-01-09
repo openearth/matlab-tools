@@ -83,6 +83,8 @@ function handles = ddb_initializeTideStations(handles, varargin)
 %% For the time being...
 ii=strmatch('TideStations',{handles.Toolbox(:).name},'exact');
 
+ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
+
 dr=handles.Toolbox(ii).dataDir;
 lst=dir([dr '*.nc']);
 
