@@ -101,7 +101,7 @@ if xb_exist(d, 'DIMS')
     
     t0  = t(1);
     t   = t(t<=OPT.t);
-    tm  = tm(tm<=OPT.t);
+    tm  = [t0; tm(tm<=OPT.t)];
     nt  = length(t);
     
     if t(end) ~= tm(end) && any(idxm)
@@ -140,10 +140,10 @@ end
 
 %% compute transports over boundaries
 
-Susg_DATA = integrate_transport(xb, 'Susg', g, x, y, t, tm, OPT.morfac);
-Svsg_DATA = integrate_transport(xb, 'Svsg', g, x, y, t, tm, OPT.morfac);
-Subg_DATA = integrate_transport(xb, 'Subg', g, x, y, t, tm, OPT.morfac);
-Svbg_DATA = integrate_transport(xb, 'Svbg', g, x, y, t, tm, OPT.morfac);
+Susg_DATA = integrate_transport(xb, 'Susg', g, t, tm, OPT.morfac);
+Svsg_DATA = integrate_transport(xb, 'Svsg', g, t, tm, OPT.morfac);
+Subg_DATA = integrate_transport(xb, 'Subg', g, t, tm, OPT.morfac);
+Svbg_DATA = integrate_transport(xb, 'Svbg', g, t, tm, OPT.morfac);
 
 S_DATA    = [Susg_DATA Svsg_DATA Subg_DATA Svbg_DATA];
 
@@ -212,25 +212,30 @@ end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function r = integrate_transport(xb, var, g, x, y, t, tm, f)
+function r = integrate_transport(xb, var, g, t, tm, f)
     
     r       = struct('s', [], 'n', []);
     
-    if xb_exist(xb, [var '_mean'])
+    % check availability of mean variable resp. instantaneous variable 
+    meanvar = xb_exist(xb, [var '_mean']);
+    instvar = xb_exist(xb, var);
+    
+    if meanvar
         var = [var '_mean'];
         t   = tm;
-    elseif xb_exist(xb, var)
+    elseif instvar
         warning('Using instantaneous transports, which can deviate from the time-averaged transports considerably!');
     end
     
     if xb_exist(xb, var)
         
-        da      = .5*pi*(var(2)=='v');
+%         da      = .5*pi*(var(2)=='v');
         
-        nt      = length(t);
-        tint    = repmat(diff([t(1)-mean(diff(t));t]),[1 1 size(y,1) size(x,2)]);
+        tint    = diff(t);
+        nt      = length(t) - 1; 
 
         v       = xb_get(xb, var);
+        tint    = repmat(tint,[1 1 size(v,3) size(v,4)]);
         v       = squeeze(sum(sum(v(1:nt,:,:,:),2).*tint,1));
 
 %         r.s     = f.*squeeze(v.*cos(g.alfau-da)'.*g.dnu');
