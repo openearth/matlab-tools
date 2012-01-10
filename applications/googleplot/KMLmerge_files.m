@@ -16,6 +16,7 @@ function varargout = KMLmerge_files(varargin)
    OPT.fileName          = '';
    OPT.sourceFiles       = {};
    OPT.foldernames       = {}; % TO DO check for existing folder names
+   OPT.distinctDocuments = 0;  % avoids conflicts among styles (e.g. icon's and line's)
    OPT.deleteSourceFiles = false;
 
    [OPT, Set, Default] = setproperty(OPT, varargin{:});
@@ -55,39 +56,49 @@ function varargout = KMLmerge_files(varargin)
        [ignore OPT.kmlName] = fileparts(OPT.fileName);
    end
 
-%% Write the new file
-
+   %% Write the new file
+   
    fid0=fopen(OPT.fileName,'w');
    fprintf(fid0,'%s',KML_header(OPT));
    
    for ii = 1:length(OPT.sourceFiles)
-   if exist(OPT.sourceFiles{ii})
-       contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n','bufsize',1e6);
-       cutoff   = strfind(contents,'Document');
-    
-       flag = true;
-       for jj = 1:length(contents)
-           other_flag = true;
-           if ~isempty(cutoff{jj})
-               contents{jj} = strrep(contents{jj},'<Document>','');
-               contents{jj} = strrep(contents{jj},'</Document>','');
-               flag = ~flag;
-               other_flag = false;
+       if exist(OPT.sourceFiles{ii})
+           contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n','bufsize',1e6);
+           cutoff   = strfind(contents,'Document');
+           
+           flag = true;
+           for jj = 1:length(contents)
+               other_flag = true;
+               if ~isempty(cutoff{jj})
+                   contents{jj} = strrep(contents{jj},'<Document>','');
+                   contents{jj} = strrep(contents{jj},'</Document>','');
+                   flag = ~flag;
+                   other_flag = false;
+               end
+               if flag&&other_flag
+                   contents{jj} = [];
+               end
            end
-           if flag&&other_flag
-               contents{jj} = [];
-           end  
+           
+           if ~OPT.distinctDocuments
+               fprintf(fid0,'%s','<Folder>'); %
+           else
+               fprintf(fid0,'%s','<Document>');
+           end
+           
+           if ~isempty(OPT.foldernames)
+               fprintf(fid0,'<name>%s</name>',OPT.foldernames{ii});
+           end
+           fprintf(fid0,'%s\n',contents{:}); % for large files do not insert any indentation: '___indentation___%s\n'
+
+           if ~OPT.distinctDocuments
+               fprintf(fid0,'%s','</Folder>'); %
+           else
+               fprintf(fid0,'%s','</Document>');
+           end
+       else
+           disp(['Does not exist:',OPT.sourceFiles{ii}])
        end
-       
-       fprintf(fid0,'%s','<Folder>');
-       if ~isempty(OPT.foldernames)
-       fprintf(fid0,'<name>%s</name>',OPT.foldernames{ii});
-       end
-       fprintf(fid0,'%s\n',contents{:}); % for large files do not insert any indentation: '___indentation___%s\n'
-       fprintf(fid0,'%s','</Folder>');
-   else
-      disp(['Does not exist:',OPT.sourceFiles{ii}])
-   end
    end
 
 %% close KML
