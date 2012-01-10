@@ -258,8 +258,8 @@ no_cellstr    = 1;
               for im = 1:DAT.data.number_of_monitoring_points_areas
 
               quotes = strfind(string,'''');
-              name            = string(quotes(1)+1:1:quotes(end)-1);
-              string          = string(quotes(end)+1:end);
+              name   = string(quotes(1)+1:1:quotes(end)-1);
+              string = string(quotes(end)+1:end);
                
               DAT.data.monitoring.name{im} = name;
 
@@ -272,7 +272,15 @@ no_cellstr    = 1;
               end
               DAT.data.monitoring.number_of_segments(im) = number_of_segments;
               
-              DAT.data.monitoring.indices{im} = str2num(sscanf(string,'%d',DAT.data.monitoring.number_of_segments(im)));
+              if isempty(string)
+                  for i=1:DAT.data.monitoring.number_of_segments(im)
+                  vals(i) = waq_fgetl_number(fid,n,comment);
+                  end
+              else
+                 vals = str2num(sscanf(string,'%d',DAT.data.monitoring.number_of_segments(im)));
+              end
+              
+              DAT.data.monitoring.indices{im} = vals;
               
               while length(DAT.data.monitoring.indices{im}) < DAT.data.monitoring.number_of_segments(im)
 
@@ -497,13 +505,12 @@ no_cellstr    = 1;
            [DAT.data.Th_lags_Number_of_overridings,n] = waq_fgetl_number(fid,n,comment);% length option
            
            for i=1:DAT.data.Th_lags_Number_of_overridings
-           [vals,n] = waq_fgetl_number(fid,n,comment)% length option
+           [vals,n] = waq_fgetl_number(fid,n,comment);% length option
            
            DAT.data.Th_lags.boundary(i) = vals(1);
            DAT.data.Th_lags.value   (i) = vals(2);
           
            end
-            
 
 %      % +------------------------------------------+
 %      % |                                          |
