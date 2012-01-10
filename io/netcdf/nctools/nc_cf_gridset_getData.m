@@ -10,7 +10,15 @@ function varargout=nc_cf_gridset_getData(xi,yi,varargin)
 % [zi,ti             ] = nc_cf_gridset_getData(...)
 % [zi,ti,fi,fi_legend] = nc_cf_gridset_getData(...)
 %
-% where fi is the nc from which the data were interpolated
+% where fi is the nc from which the data were interpolated.
+%
+% Example: Slufter Texel using one file
+%
+%    nc_cf_gridset_getData(116e3,573e3,'bathy',{'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/kustlidar/09bn2.nc'})
+%
+% Example: Slufter Texel using all files
+%
+%    nc_cf_gridset_getData(116e3,573e3,'bathy','http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html')
 %
 %See also: grid_orth_getDataFromNetCDFGrids, grid_orth_getDataOnLine
 
@@ -66,7 +74,7 @@ if nargin==0
     return
 end
 
-if odd(nargin) | nargin<3
+if ~odd(nargin)
    nextarg = 1;
    zi  = xi.*nan; % set increment to nan
    ti  = xi.*nan; % set increment to nan
@@ -94,11 +102,7 @@ OPT = setProperty(OPT,varargin{nextarg:end});
    if iscell(OPT.bathy) % already list of nc files
        list = OPT.bathy;
    else
-       if any(strfind(OPT.bathy,'catalog.xml'))
-          list = opendap_catalog(OPT.bathy);
-       elseif ~iscell()
-          list = {list};
-       end
+       list = opendap_catalog(OPT.bathy);
    end
    
 %% fill holes with samples of nearest/latest/first time

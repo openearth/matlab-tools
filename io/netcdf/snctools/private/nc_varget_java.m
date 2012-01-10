@@ -1,4 +1,4 @@
-function values = nc_varget_java (ncfile,varname,varargin)
+function values = nc_varget_java(ncfile,varname,varargin)
 % NC_VARGET_JAVA:  Java backend for nc_varget.
 
 import ucar.nc2.dods.*     
@@ -179,7 +179,7 @@ end
 negs = find((count<0) | isinf(count));
 if any(negs)
 if isempty(stride)
-    count(negs) =        varinfo.Xize(negs) - start(negs);
+    count(negs) =        varinfo.Size(negs) - start(negs);
 else
     count(negs) = floor((varinfo.Size(negs) - start(negs))./stride(negs));
 end

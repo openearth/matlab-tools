@@ -110,9 +110,13 @@ function varargout = nc_cf_time(ncfile,varargin)
       
       %% get data
       for ivar=1:length(index)
+         try
          M(ivar).datenum.units         = nc_attget(fileinfo.Filename,name{ivar},'units');
          D(ivar).datenum               = nc_varget(fileinfo.Filename,name{ivar});
         [D(ivar).datenum,D(ivar).zone] = udunits2datenum(double(D.datenum),M.datenum.units); % prevent integers from generating stairs in larger units
+         catch
+             error(['variable ',fileinfo.Filename,':',name{ivar},' has no units'])
+         end
       end
    else
          if ischar(varargin{1})
