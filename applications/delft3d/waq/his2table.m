@@ -1,3 +1,6 @@
+%HIS2table example to get OSPAR csv from TBNT runs 
+%
+%See also: waq, delwaq
 
 %% HIS2TABLE
 %%% Reads substances from TBNT runs and outputs csv tables to fit tables for the ospar report

@@ -1,3 +1,6 @@
+%netcdf2dis example to convert NetCDF data to dis files for Delft3D-Flow
+%
+%See also: waq, delwaq
 
 %% NETCDF2DIS
 %%% Author: Dr M. Chatelain (mathieu.chatelain@deltares.nl)

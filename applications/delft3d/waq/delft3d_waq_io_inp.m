@@ -56,13 +56,12 @@ no_cellstr    = 1;
 
    global fid
 
-   %% 0 - command line file name or 
-   %%     Launch file open GUI
-   %% ------------------------------------------
+%% 0 - command line file name or 
+%      Launch file open GUI
 
-   %% No file name specified if even number of arguments
-   %% i.e. 2 or 4 input parameters
-   % -----------------------------
+%% No file name specified if even number of arguments
+%  i.e. 2 or 4 input parameters
+   
    if mod(nargin,2)     == 0 
      [shortfilename, pathname, filterindex] = uigetfile( ...
         {'*.inp' ,'Delft3d-PART input file (*.inp)'; ...
@@ -77,16 +76,14 @@ no_cellstr    = 1;
          iostat         = 1;
       end
 
-   %% No file name specified if odd number of arguments
-   % -----------------------------
+%% No file name specified if odd number of arguments
    
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
       DAT.filename   = varargin{1};
       iostat         = 1;
    end
    
-   %% I - Check if file exists (actually redundant after file GUI)
-   %% ------------------------------------------
+%% I - Check if file exists (actually redundant after file GUI)
 
    tmp = dir(DAT.filename);
 
@@ -105,8 +102,7 @@ no_cellstr    = 1;
    
       fid              = delft3d_waq_io_inp_fopen(DAT.filename,'r');
       
-      %% II - Check if can be opened (locked etc.)
-      %% ------------------------------------------
+   %% II - Check if can be opened (locked etc.)
 
       if fid < 0
          
@@ -118,13 +114,11 @@ no_cellstr    = 1;
       
       elseif fid > 2
 
-         %% II - Check if can be read (format etc.)
-         %% ------------------------------------------
+   %% II - Check if can be read (format etc.)
 
 %         try
          
-            %% Read meta info about file structure
-            %% ------------------------------------------
+      %% Read meta info about file structure
             
             n = 1; % number of lines that have been read
             rec                                = fgetl         (fid);
@@ -135,14 +129,13 @@ no_cellstr    = 1;
             comment                            = strtoknoquotes(rec);
             DAT.commentcharacter               = comment;
             
-            %% +------------------------------------------+
-            %% |                                          |
-            %% | first block: identification              |
-            %% |                                          |
-            %% +------------------------------------------+
+      % +------------------------------------------+
+      % |                                          |
+      % | first block: identification              |
+      % |                                          |
+      % +------------------------------------------+
 
-            %% Read 4 identification lines 
-            %% ------------------------------------------
+      %% Read 4 identification lines 
             
            [DAT.data.run_identification{1},n]      = waq_fgetl_string(fid,n,comment);
            [DAT.data.run_identification{2},n]      = waq_fgetl_string(fid,n,comment);
@@ -153,8 +146,8 @@ no_cellstr    = 1;
             DAT.data.run_identification            = char(DAT.data.run_identification);
             end
             
-            %% Read substances 
-            %% ------------------------------------------
+      %% Read substances 
+
            [numbers,n]                             = waq_fgetl_number(fid,n,comment);
             DAT.data.number_of_active_substances   = numbers(1);
             DAT.data.number_of_inactive_substances = numbers(2);
@@ -170,14 +163,13 @@ no_cellstr    = 1;
                                                          strtoknoquotes(rec));
             end
 
-            %% +------------------------------------------+
-            %% |                                          |
-            %% | second block of model input (timers)     |
-            %% |                                          |
-            %% +------------------------------------------+
+      % +------------------------------------------+
+      % |                                          |
+      % | second block of model input (timers)     |
+      % |                                          |
+      % +------------------------------------------+
 
-            %% Timers
-            %% ------------------------------------------
+      %% Timers
 
            [rec,n]                         = waq_fgetl(fid,n,comment);
            [number,rec]                    = strtok(rec);
@@ -194,8 +186,7 @@ no_cellstr    = 1;
            end
            %[DAT.data.integration_option,n] = waq_fgetl_number(fid,n,comment);
            
-            %% Detailed balance options
-            %% ------------------------------------------
+      %% Detailed balance options
             
            [string,n]                      = waq_fgetl(fid,n,comment);
             string                         = strtrim(string);
@@ -210,14 +201,12 @@ no_cellstr    = 1;
             
             end
             
-            %% Times
-            %% ------------------------------------------
-
-            % 1998/01/01-00:00:00      ; start time 
-            % 1999/01/01-00:00:00      ; stop time 
-            %              OR
-            % 0000000                  ; start time 
-            % 365000000                ; stop time              
+      %% Times
+      % 1998/01/01-00:00:00      ; start time 
+      % 1999/01/01-00:00:00      ; stop time 
+      %              OR
+      % 0000000                  ; start time 
+      % 365000000                ; stop time              
             
             slashes = strfind(string,'/');
             if isempty(slashes)
@@ -247,8 +236,7 @@ no_cellstr    = 1;
            [DAT.data.constant_timestep,n]  = waq_fgetl_number(fid,n,comment);
            [DAT.data.time_step,n]          = waq_fgetl_number(fid,n,comment);
 
-            %% Monitoring
-            %% ------------------------------------------
+      %% Monitoring
 
            [DAT.data.monitoring_points_areas_usage,n]     = waq_fgetl_number(fid,n,comment);
            [DAT.data.number_of_monitoring_points_areas,n] = waq_fgetl_number(fid,n,comment);
@@ -307,8 +295,7 @@ no_cellstr    = 1;
            DAT.data.monitoring_transects_usage = str2num(strtok(string));
           %[DAT.data.monitoring_transects_usage,n] = waq_fgetl_number(fid,n,comment);
            
-            %% Output Timers
-            %% ------------------------------------------
+      %% Output Timers
 
            % 1998/01/01-00:00:00       1999/01/01-00:00:00       1000000      ; monitoring
            % 1998/12/01-00:00:00       2000/01/01-00:00:00       0010000      ; map, dump
@@ -318,8 +305,8 @@ no_cellstr    = 1;
            %  334000000       365000000       0010000      ; map, dump
            %  0000000       365000000       0010000      ; history 
            
-            %% Monitoring
-            %%------------------------------------------
+      %% Monitoring
+
            [string,n]                          = waq_fgetl(fid,n,comment);
             string                             = strtrim(string);
             
@@ -334,8 +321,8 @@ no_cellstr    = 1;
             DAT.data.stop  = time2datenum(strtrim(DAT.data.monitoring_stop ));
             end
 
-            %% Map
-            %%------------------------------------------
+      %% Map
+
            [string,n]                          = waq_fgetl(fid,n,comment);
             string                             = strtrim(string);
             [DAT.data.map_start,string] = strtok(string);
@@ -349,8 +336,8 @@ no_cellstr    = 1;
             DAT.data.stop  = time2datenum(strtrim(DAT.data.map_stop ));
             end
             
-            %% History
-            %%------------------------------------------
+      %% History
+
            [string,n]                          = waq_fgetl(fid,n,comment);
             string                             = strtrim(string);
             [DAT.data.history_start,string] = strtok(string);
@@ -364,14 +351,13 @@ no_cellstr    = 1;
             DAT.data.stop  = time2datenum(strtrim(DAT.data.history_stop ));
             end
             
-            %% +------------------------------------------+
-            %% |                                          |
-            %% | third block of model input (grid layout) |
-            %% |                                          |
-            %% +------------------------------------------+
+            %  +------------------------------------------+
+            %  |                                          |
+            %  | third block of model input (grid layout) |
+            %  |                                          |
+            %  +------------------------------------------+
 
-            %% Grid
-            %% ------------------------------------------
+      %% Grid
            
            [DAT.data.number_of_segments,n] = waq_fgetl_number(fid,n,comment);
 
@@ -379,27 +365,23 @@ no_cellstr    = 1;
             string                             = strtrim(string);
             
             if strcmpi(strtok(string),'MULTIGRID')
-               DAT.data.multigrid = 1;
+               DAT.data.grid_layout_usage = 'MULTIGRID';
+              [string,n]                          = waq_fgetl(fid,n,comment);
+               string                             = strtrim(string);
+            elseif strcmpi(strtok(string),'INCLUDE')
+               DAT.data.grid_layout_usage = 'INCLUDE';
               [string,n]                          = waq_fgetl(fid,n,comment);
                string                             = strtrim(string);
             else
-               DAT.data.multigrid = 0;
+               DAT.data.grid_layout_usage = str2num(string);
             end
             
-            if strcmpi(strtok(string),'INCLUDE')
-               DAT.data.grid.INCLUDE = 1;
-              [string,n]                          = waq_fgetl(fid,n,comment);
-               string                             = strtrim(string);
-           %else
-           %   DAT.data.grid.INCLUDE = 0;
-            end
-            
-           DAT.data.grid_layout_usage      = str2num(strtok(string));
+          %DAT.data.grid_layout_usage      = str2num(strtok(string));
           %[DAT.data.grid_layout_usage ,n] = waq_fgetl_number(fid,n,comment);
            
-            %% Features
-            %% ------------------------------------------
-           if ~(DAT.data.multigrid)
+      %% Features
+
+           if strcmpi(DAT.data.grid_layout_usage,'MULTIGRID')
            
            [DAT.data.features(1)    ,n] = waq_fgetl_number(fid,n,comment);% one time-independent contribution
            [DAT.data.features(2)    ,n] = waq_fgetl_number(fid,n,comment);% number of items
@@ -411,6 +393,15 @@ no_cellstr    = 1;
            [DAT.data.features(8)    ,n] = waq_fgetl_number(fid,n,comment);% bottom segments
            [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% no time-dependent contributions
            
+           else
+           
+           [DAT.data.features(1)    ,n] = waq_fgetl_number(fid,n,comment);% one time-independent contribution
+           [DAT.data.features(2)    ,n] = waq_fgetl_number(fid,n,comment);% number of items
+           [DAT.data.features(3)    ,n] = waq_fgetl_number(fid,n,comment);% only feature 2 is specified
+           [DAT.data.features(4)    ,n] = waq_fgetl_number(fid,n,comment);% input in this file
+           [DAT.data.features(5)    ,n] = waq_fgetl_number(fid,n,comment);% input option without defaults
+           [DAT.data.features(6)    ,n] = waq_fgetl_number(fid,n,comment);% integrated segments
+           [DAT.data.features(7)    ,n] = waq_fgetl_number(fid,n,comment);% no time-dependent contributions
            end
            
 %-%        [string,n]                   = waq_fgetl(fid,n,comment);
@@ -441,17 +432,16 @@ no_cellstr    = 1;
 %-%
 %-%        [DAT.data.features(9)    ,n] = waq_fgetl_number(fid,n,comment);% time-dependent contributions
            
-            %% Volumes
-            %% ------------------------------------------
+      %% Volumes
             
            [DAT.data.first_volume_option,n] = waq_fgetl_number(fid,n,comment);
            [DAT.data.volumes_file       ,n] = waq_fgetl_string(fid,n,comment);
 
-            %% +-----------------------------------------+
-            %% |                                         |
-            %% | fourth block of model input (transport) |
-            %% |                                         |
-            %% +-----------------------------------------+
+      %  +-----------------------------------------+
+      %  |                                         |
+      %  | fourth block of model input (transport) |
+      %  |                                         |
+      %  +-----------------------------------------+
             
            [DAT.data.exchanges_in_directions_123(1)     ,n] = waq_fgetl_number(fid,n,comment);% exchanges in direction 1
            [DAT.data.exchanges_in_directions_123(2)     ,n] = waq_fgetl_number(fid,n,comment);% exchanges in direction 2
@@ -479,47 +469,56 @@ no_cellstr    = 1;
            [DAT.data.length_option                      ,n] = waq_fgetl_number(fid,n,comment);% length option
            [DAT.data.length_file                        ,n] = waq_fgetl_string(fid,n,comment);% length file
 
-            %% +------------------------------------------+
-            %% |                                          |
-            %% | fifth block of model input (boundary condition)
-            %% |                                          |
-            %% +------------------------------------------+
+      % +------------------------------------------+
+      % |                                          |
+      % | fifth block of model input (boundary condition)
+      % |                                          |
+      % +------------------------------------------+
+      
+           [string,n] = waq_fgetl_string(fid,n,comment);% length file
+           string = ['''' string ''''];
+            boundaries = {};
+            while ~strcmpi(string(1),';')
+                boundaries{end+1} = string;
+                string = strtrim(fgetl(fid));n=n+1;
+            end
+            boundaries = str2line(boundaries,'s',' ');
             
-%DAT.data           
-%pausedisp
-
-%           [string,n]                   = waq_fgetl(fid,n,comment)
+            ind  = strfind(boundaries,'''');
+            nbnd = length(ind)./2;
+            ind = reshape(ind,[2 nbnd]);
+            
+            for ibnd=1:nbnd
+            DAT.data.boundary{ibnd} = boundaries(ind(1,ibnd)+1:ind(2,ibnd)-1);
+            end
+            
+           [DAT.data.Th_lags_number               ,n] = waq_fgetl_number(fid,n,comment);% length option
+           [DAT.data.Th_lags_value                ,n] = waq_fgetl_number(fid,n,comment);% length option
+           [DAT.data.Th_lags_Number_of_overridings,n] = waq_fgetl_number(fid,n,comment);% length option
            
-%; fifth block of model input (boundary condition)
-%'1 (In/out 1)' '1 (In/out 1)' '1/1 (In/out 1)'
-%'2 (In/out 1)' '2 (In/out 1)' '1/2 (In/out 1)'
-%'3 (In/out 1)' '3 (In/out 1)' '1/3 (In/out 1)'
-%'4 (In/out 1)' '4 (In/out 1)' '1/4 (In/out 1)'
-%'5 (In/out 1)' '5 (In/out 1)' '1/5 (In/out 1)'
-%'6 (In/out 1)' '6 (In/out 1)' '1/6 (In/out 1)'
-%'7 (In/out 1)' '7 (In/out 1)' '1/7 (In/out 1)'
-%'8 (In/out 1)' '8 (In/out 1)' '1/8 (In/out 1)'
-%'9 (In/out 1)' '9 (In/out 1)' '1/9 (In/out 1)'
-%'10 (In/out 1)' '10 (In/out 1)' '1/10 (In/out 1)'
-%'11 (In/out 1)' '11 (In/out 1)' '1/11 (In/out 1)'
-%'12 (In/out 1)' '12 (In/out 1)' '1/12 (In/out 1)'
-%'13 (In/out 1)' '13 (In/out 1)' '1/13 (In/out 1)'
+           for i=1:DAT.data.Th_lags_Number_of_overridings
+           [vals,n] = waq_fgetl_number(fid,n,comment)% length option
+           
+           DAT.data.Th_lags.boundary(i) = vals(1);
+           DAT.data.Th_lags.value   (i) = vals(2);
+          
+           end
             
 
-%            %% +------------------------------------------+
-%            %% |                                          |
-%            %% | sixth block of model input (waste loads) |
-%            %% |                                          |
-%            %% +------------------------------------------+
+%      % +------------------------------------------+
+%      % |                                          |
+%      % | sixth block of model input (waste loads) |
+%      % |                                          |
+%      % +------------------------------------------+
 %
 %
 %           [DAT.data.waste_loads_continuous_releases    ,n] = waq_fgetl_number(fid,n,comment);% no waste loads/continuous releases
 %           
-%            %% +------------------------------------------+
-%            %% |                                          |
-%            %% | seventh block of model input (process parameters)
-%            %% |                                          |
-%            %% +------------------------------------------+
+%      % +------------------------------------------+
+%      % |                                          |
+%      % | seventh block of model input (process parameters)
+%      % |                                          |
+%      % +------------------------------------------+
 %
 %            string                          = strtrim(waq_fgetl(fid,n,comment))
 %            
@@ -570,7 +569,6 @@ no_cellstr    = 1;
    DAT.read.iostatus = iostat;
    
    %% Function output
-   %% -----------------------------
 
    if nargout    < 2
       varargout= {DAT};

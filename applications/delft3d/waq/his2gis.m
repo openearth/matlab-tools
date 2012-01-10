@@ -1,3 +1,6 @@
+%HIS2GIS  example to get csv of concentrations for tagged substances/areas from TBNT runs 
+%
+%See also: waq, delwaq
 
 %% HIS2GIS
 %%% Reads substances from TBNT runs and outputs csv tabels with concentrations for each tagged substance and area

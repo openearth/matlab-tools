@@ -1,3 +1,6 @@
+%netcdf2loa example to convert NetCDF data to loads files for DelWAQ-GEM
+%
+%See also: waq, delwaq
 
 %% NETCDF2LOA
 %%% Author: Dr M. Chatelain (mathieu.chatelain@deltares.nl)
