@@ -69,7 +69,7 @@ handles.GUIData.backgroundImageType='bathymetry';
 
 for i=1:handles.bathymetry.nrDatasets
     if handles.bathymetry.dataset(i).isAvailable
-        handles.screenParameters.backgroundBathymetry=handles.bathymetry.dataset(i).longName;
+        handles.screenParameters.backgroundBathymetry=handles.bathymetry.dataset(i).name;
         break
     end
 end
