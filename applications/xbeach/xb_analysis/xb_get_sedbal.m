@@ -138,6 +138,19 @@ if xb_exist(xb, 'zb')
     ero_DATA(:,[1:d+1 end-d+1:end])  = 0;
 end
 
+% compute the volume change due to avalanching
+if xb_exist(xb, 'dzav')
+    dzav = xb_get(xb, 'dzav');
+%     av_DATA = (1-OPT.porosity)*squeeze(dzav(nt,:,:)).*g.dsdnz';
+%     % for (sofar) unknown reasons, the dzav is not everywhere zero at t0;
+%     therefore, in the following line a work-around is found by
+%     "-dzav(1,:,:)"
+    av_DATA = (1-OPT.porosity)*squeeze(dzav(nt,:,:)-dzav(1,:,:)).*g.dsdnz';
+else
+    av_DATA = zeros(size(g.dsdnz'));
+    warning('"dzav" not available. If run includes avalanching, the cell-balance will locally be non-zero.')
+end
+
 %% compute transports over boundaries
 
 Susg_DATA = integrate_transport(xb, 'Susg', g, t, tm, OPT.morfac);
@@ -173,7 +186,7 @@ trans     = sum(cell2mat(struct2cell(S)));
 
 bal       = sed-ero-trans;
 
-bal_cell  = sed_DATA-ero_DATA-S_cell;
+bal_cell  = sed_DATA-ero_DATA-S_cell - av_DATA;
 
 %% create xbeach structure
 
@@ -196,6 +209,7 @@ xbo = xb_set(xbo,               ...
         'sedero',   sed-ero),   ...
     'sed_DATA',     sed_DATA,   ...
     'ero_DATA',     ero_DATA,   ...
+    'av_DATA',      av_DATA,    ...
     'trans_DATA', xb_set([],    ...
         'cell',     S_cell,     ...
         's',        S_s,        ...
