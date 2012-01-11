@@ -60,7 +60,7 @@ function varargout = KML_header(varargin)
    OPT.kmlName      = '';
    OPT.snippet      = '';
    OPT.description  = '';
-   OPT.visible      = 1;
+   OPT.visible      = true;
 
    OPT.cameralon    = [];
    OPT.cameralat    = [];

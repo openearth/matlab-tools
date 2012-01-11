@@ -1,4 +1,4 @@
-function [OPT, Set, Default] = KMLtricontour3(lat,lon,tri,z,varargin)
+function [OPT, Set, Default] = KMLtricontour3(tri,lat,lon,z,varargin)
 % KMLTRICONTOUR3   Just like contour3
 %
 % see the keyword/vaule pair defaults for additional options
@@ -49,4 +49,4 @@ end
 
 [OPT, Set, Default] = setproperty(OPT, varargin);
 
-KMLtricontour(lat,lon,tri,z,OPT);
+KMLtricontour(tri,lat,lon,z,OPT);

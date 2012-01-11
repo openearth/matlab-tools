@@ -54,7 +54,7 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
    OPT.colorSteps    = [];   
    OPT.is3D          = false;
    OPT.cLim          = [];
-   OPT.writeLabels   = true;
+   OPT.writeLabels   = false;
    OPT.labelDecimals = 1;
    OPT.labelInterval = 5;
    OPT.zScaleFun     = @(z) (z+0)*0;
@@ -179,12 +179,16 @@ function varargout = KMLtricontour(tri,lat,lon,z,varargin)
    colors     = OPT.colorMap(OPT.colorSteps);
    lineColors = colors(level,:);
    
-   if OPT.is3D
-       KMLline(lat,lon,OPT);
-   else
-       KMLline(lat,lon,OPT);
-   end
 
+   OPTkmlline = KMLline;
+   OPTkmlline = setproperty(OPTkmlline,{OPT},'onExtraField','silentIgnore');
+   OPTkmlline.lineColor = lineColors;
+   OPTkmlline.fillColor = lineColors;
+   if OPT.is3D
+       KMLline(lat,lon,z,OPTkmlline);
+   else
+       KMLline(lat,lon,OPTkmlline);
+   end
 %% colorbar
    if OPT.colorbar
       KMLcolorbar(OPT);

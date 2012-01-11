@@ -194,11 +194,6 @@ end
    
    for ii=1:size(tri,1)
        OPT_poly.styleName = sprintf('style%d',c(ii));
-       %             if OPT.reversePoly
-       %                 LAT = LAT(end:-1:1);
-       %                 LON = LON(end:-1:1);
-       %                   Z =   Z(end:-1:1);
-       %             end
        newOutput = KML_poly(lat(tri(ii,[1:3 1])),...
                             lon(tri(ii,[1:3 1])),...
                 OPT.zScaleFun(z(tri(ii,[1:3 1]))),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
