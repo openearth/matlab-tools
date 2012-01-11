@@ -21,7 +21,7 @@ function varargout = KMLmerge_files(varargin)
 
    [OPT, Set, Default] = setproperty(OPT, varargin{:});
    
-   if nargin==0 & nargout==1
+   if nargin==0 && nargout==1
        varargout = {OPT};
        return
    end
@@ -39,7 +39,7 @@ function varargout = KMLmerge_files(varargin)
     end
    end
    
-   if ~length(OPT.foldernames)==length(OPT.sourceFiles) & ~isempty(OPT.foldernames)
+   if ~length(OPT.foldernames)==length(OPT.sourceFiles) && ~isempty(OPT.foldernames)
       error('length of foldernames does not match number of files.')
    end
 
@@ -62,14 +62,15 @@ function varargout = KMLmerge_files(varargin)
    fprintf(fid0,'%s',KML_header(OPT));
    
    for ii = 1:length(OPT.sourceFiles)
-       if exist(OPT.sourceFiles{ii})
+       if exist(OPT.sourceFiles{ii},'file')
            contents = textread(OPT.sourceFiles{ii},'%s','delimiter','\n','bufsize',1e6);
            cutoff   = strfind(contents,'Document');
+           id_cutoff = find(~cellfun(@isempty, cutoff));
            
            flag = true;
            for jj = 1:length(contents)
                other_flag = true;
-               if ~isempty(cutoff{jj})
+               if jj == id_cutoff(1) || jj == id_cutoff(end) % remove just the first and last <Document> (</Document>)
                    contents{jj} = strrep(contents{jj},'<Document>','');
                    contents{jj} = strrep(contents{jj},'</Document>','');
                    flag = ~flag;
@@ -81,9 +82,9 @@ function varargout = KMLmerge_files(varargin)
            end
            
            if ~OPT.distinctDocuments
-               fprintf(fid0,'%s','<Folder>'); %
+               fprintf(fid0,'%s\n','<Folder>'); %
            else
-               fprintf(fid0,'%s','<Document>');
+               fprintf(fid0,'%s\n','<Document>');
            end
            
            if ~isempty(OPT.foldernames)
@@ -92,9 +93,9 @@ function varargout = KMLmerge_files(varargin)
            fprintf(fid0,'%s\n',contents{:}); % for large files do not insert any indentation: '___indentation___%s\n'
 
            if ~OPT.distinctDocuments
-               fprintf(fid0,'%s','</Folder>'); %
+               fprintf(fid0,'%s\n','</Folder>'); %
            else
-               fprintf(fid0,'%s','</Document>');
+               fprintf(fid0,'%s\n','</Document>');
            end
        else
            disp(['Does not exist:',OPT.sourceFiles{ii}])
