@@ -168,6 +168,15 @@ if nargin==0
    return
 end
 
+
+
+%% error check
+
+if isempty(D)
+    warning('WIND_ROSE:no data','D cannot be empty in wind_rose(D,F,varargin)');
+    return
+end
+    
 if OPT.onAxes
       OPT.onAxesX = OPT.onAxes(2);
       OPT.onAxesY = OPT.onAxes(3);
@@ -331,9 +340,9 @@ if isempty(OPT.ci)
   else
     dcircles=[1 2 5 10 15 20 25 30 50];
     ncircles=3;
-    d=abs(1./(dcircles/max(b))-ncircles);
-    i=find(d==min(d));
-    d=dcircles(i(1));
+    d = abs(1./(dcircles/max(b))-ncircles);
+    i = find(d==min(d),1,'first');
+    d = dcircles(i(1));
     if d*ncircles<max(b)
       ncircles=ncircles+1;
     end

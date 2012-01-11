@@ -1,6 +1,10 @@
 function Xround = roundoff(X, n, varargin)
 %ROUNDOFF   routine rounds number to predefined number of decimal digits
 %
+%   Please be aware of floating point behaviour like:
+%      roundoff(1.4,1) == 1.4 = false
+%      14/10           == 1.4 = true
+%
 %   This routine returns a rounded number to a specified number of decimal
 %   digits
 %

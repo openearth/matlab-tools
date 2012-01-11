@@ -470,7 +470,7 @@ else
                         elseif elapsedtime == 1
                             eta = 'Completed in 1 sec';
                         else
-                            eta = 'Completed in within 1 sec'; % Nearly done (<1sec)
+                            eta = 'Completed within 1 sec'; % Nearly done (<1sec)
                         end
                     end
                 end
