@@ -215,8 +215,8 @@ while NextIter
         % complex dzdu will cause problems in the next iteration
         % warn user in error message which variable(s) cause the problems
         varnames = {stochast.Name};
-        complexvars = varnames(imag(dzdu) == 1);
-        error(['FORM: derivative dz/du becomes complex for variable(s):' sprintf(' "%s"', complexvars{:})])
+        complexvars = varnames(imag(dzdu(Iter,:)) ~= 0);
+        error(sprintf('FORM: derivative dz/du becomes complex for variable(s):%s\n\tReconsider stochastic variable and z-function to solve the problem.', sprintf(' "%s"', complexvars{:})))
     end
     
     % linearise z-function in u:
