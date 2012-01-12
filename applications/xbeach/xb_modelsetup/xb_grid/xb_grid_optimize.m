@@ -158,9 +158,6 @@ else
     % determine resolution and extent
     [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x_r, y_r);
     
-    % empty memory
-    clear x_r y_r
-    
     % crop grid
     if ischar(OPT.crop) && strcmpi(OPT.crop, 'select')
         fh = figure;
@@ -178,6 +175,9 @@ else
     elseif OPT.crop
         [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w);
     end
+    
+    % empty memory
+    clear x_r y_r
 
     % create dummy grid
     x_d = linspace(xmin, xmax, ceil((xmax-xmin)/cellsize));
