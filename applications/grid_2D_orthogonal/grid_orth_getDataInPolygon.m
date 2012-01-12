@@ -25,6 +25,7 @@ function [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(varargin)
 %       'searchinterval  , -730                              = acceptable interval to include data from (in days)
 %       'min_coverage    , 25                                = coverage percentage (can be several, e.g. [50 75 90]
 %       'plotresult      , 1                                 = indicates whether the output should be plotted
+%       'plotoverview'   , 1                                 = indicates whether the overview map should be plotted 
 %       'warning         , 1                                 = indicates whether warnings should be turned on (1) or off (0)
 %       'postProcessing  , 1                                 =  
 %       'whattodo        , 1                                 =  
@@ -121,6 +122,7 @@ OPT.starttime       = OPT.inputtimes(1);
 OPT.searchinterval  = -730;                             % acceptable interval to include data from (in days)
 OPT.min_coverage    = 25;                               % coverage percentage (can be several, e.g. [50 75 90]
 OPT.plotresult      = 1;
+OPT.plotoverview    = 1;
 OPT.warning         = 1;
 OPT.postProcessing  = 1;
 OPT.whattodo        = 1;
@@ -139,16 +141,19 @@ OPT = grid_orth_getOverview(OPT);
 OPT = grid_orth_getPolygon(OPT);
 
 % delete the pre existing polygon and replace it with the just generated closed one
-
-try delete(findobj(ah,'tag','selectionpoly')); end
-try axes(ah); end; hold on
+if OPT.plotoverview
+    try delete(findobj(ah,'tag','selectionpoly')); end
+    try axes(ah); end; hold on
+end
 if ~all(OPT.polygon(1,:)==OPT.polygon(end,:))
     OPT.polygon = [OPT.polygon;OPT.polygon(1,:)];
 end
 
-plot(OPT.polygon(:,1), OPT.polygon(:,2),'color', 'g', 'linewidth', 2,'tag' ,'selectionpoly');drawnow;
-
-%axis([min(x) max(x) min(y) max(y)]) % does not work
+if OPT.plotoverview
+    plot(OPT.polygon(:,1), OPT.polygon(:,2),'color', 'g', 'linewidth', 2,'tag' ,'selectionpoly');drawnow;
+end
+%
+% %axis([min(x) max(x) min(y) max(y)]) % does not work
 
 %% Step 2: identify which maps are in polygon
 [mapurls, minx, maxx, miny, maxy] = grid_orth_identifyWhichMapsAreInPolygon(OPT, OPT.polygon);

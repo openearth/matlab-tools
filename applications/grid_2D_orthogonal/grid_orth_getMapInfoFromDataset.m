@@ -78,19 +78,32 @@ if ~isempty(OPT.catalognc)
     % the catalog nc gets flipped!!!! If this happens flip it back.
     if ~strcmp(OPT.urls{1}(end-2:end),'.nc')
         OPT.urls = cellstr(char(OPT.urls)');
-    end    
-  
-    if ~strcmpi(fileparts(OPT.catalognc),...
-               fileparts(OPT.urls{1}  ));
-       fprintf(2,['Catalog \n'])
-       fprintf(2,'%s\n',OPT.catalognc)
-       fprintf(2,['is not in same directory as netCDF files \n'])
-       fprintf(2,'%s\n',OPT.urls{1})
-       fprintf(2,['Ignoring catalog and persueing with \n'])
-       fprintf(2,'%s\n',fileparts(OPT.catalognc))
-       error(mfilename)
     end
-
+    
+    if isempty(fileparts(OPT.urls{1}))
+        fp=fileparts(OPT.catalognc);
+        for i=1:length(OPT.urls)
+            OPT.urls{i}=[fp '/' OPT.urls{i}];
+        end
+    else
+       
+%     if abspath
+        if ~strcmpi(fileparts(OPT.catalognc),...
+                   fileparts(OPT.urls{1}  ));
+           fprintf(2,['Catalog \n'])
+           fprintf(2,'%s\n',OPT.catalognc)
+           fprintf(2,['is not in same directory as netCDF files \n'])
+           fprintf(2,'%s\n',OPT.urls{1})
+           fprintf(2,['Ignoring catalog and persueing with \n'])
+           fprintf(2,'%s\n',fileparts(OPT.catalognc))
+           error(mfilename)
+        end
+%     elseif replath
+%         basepath = dir(catyalog.nc)
+%         urls= [basepath urls]
+%     end
+    end
+    
     try
         x_ranges = nc_varget(OPT.catalognc,'projectionCoverage_x'); % should be [n x 2], same as slow method.
         if size(x_ranges,2)>2

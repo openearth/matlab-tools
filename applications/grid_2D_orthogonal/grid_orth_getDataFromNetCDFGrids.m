@@ -75,6 +75,7 @@ OPT.starttime       = [];    % this is a datenum of the starting time to search
 OPT.searchinterval  = -730;  % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
 OPT.min_coverage    = .25;   % coverage percentage (can be several, e.g. [50 75 90]
 OPT.plotresult      = 1;     % 0 = off; 1 = on;
+OPT.plotoverview    = 1;     % 0 = off; 1 = on;
 OPT.warning         = 1;     % 0 = off; 1 = on;
 OPT.postProcessing  = 1;     % 0 = off; 1 = on;
 OPT.whattodo(1)     = 1;     % volume plots
