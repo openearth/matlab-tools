@@ -64,7 +64,7 @@ function [x y] = ddb_getShoreline(handles, xl, yl, ires)
 % $Keywords: $
 
 %%
-iac=strmatch(lower(handles.screenParameters.shoreline),lower(handles.shorelines.longName),'exact');
+iac=strmatch(lower(handles.screenParameters.shoreline),lower(handles.shorelines.names),'exact');
 ldb=handles.shorelines.shoreline(iac);
 
 name=ldb.name;

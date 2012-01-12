@@ -200,6 +200,9 @@ for i=1:handles.bathymetry.nrDatasets
                 handles.bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
                 
             end
+        case{'kaartblad'}        
+            handles.bathymetry.dataset(i).horizontalCoordinateSystem.name='Amersfoort / RD New';
+            handles.bathymetry.dataset(i).horizontalCoordinateSystem.type='Cartesian';
     end
 end
 

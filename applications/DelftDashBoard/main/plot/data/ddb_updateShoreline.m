@@ -64,7 +64,7 @@ tic
 
 disp('Getting World Vector Shoreline ...');
 
-iac=strmatch(lower(handles.screenParameters.shoreline),lower(handles.shorelines.longName),'exact');
+iac=strmatch(lower(handles.screenParameters.shoreline),lower(handles.shorelines.names),'exact');
 
 %% Determine limits
 xl=get(gca,'xlim');

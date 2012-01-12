@@ -71,9 +71,9 @@ h=get(hObject,'Parent');
 ch=get(h,'Children');
 set(ch,'Checked','off');
 set(hObject,'Checked','on');
-
-if ~strcmpi(handles.screenParameters.backgroundBathymetry,lbl)
-    handles.screenParameters.backgroundBathymetry=lbl;
+iac=strmatch(lbl,handles.bathymetry.longNames,'exact');
+if ~strcmpi(handles.screenParameters.backgroundBathymetry,handles.bathymetry.datasets{iac})
+    handles.screenParameters.backgroundBathymetry=handles.bathymetry.datasets{iac};
     setHandles(handles);
     ddb_updateDataInScreen;
 end

@@ -110,7 +110,7 @@ if usedd
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).zMax=1e4;
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).zMin=-1e4;
     
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames{n}=handles.bathymetry.datasets{iac};
+    handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames{n}=handles.bathymetry.longNames{iac};
     
     handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=n;
     
@@ -168,6 +168,11 @@ function generateBathymetry
 handles=getHandles;
 if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
     id=handles.activeDomain;
-    handles = ddb_generateBathymetry(handles, id, 'datasets',handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames);
+    for i=1:handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets        
+        nr=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).number;
+        datasets{i}=handles.bathymetry.datasets{nr};
+    end
+%    handles = ddb_generateBathymetry(handles, id, 'datasets',handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames);
+    handles = ddb_generateBathymetry(handles, id, 'datasets',datasets);
     setHandles(handles);
 end

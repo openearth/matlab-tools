@@ -76,6 +76,7 @@ for ii=1:length(handles.bathymetry.(fld{1}))
     longNames{ii} = handles.bathymetry.(fld{1})(ii).longName;
 end
 handles.bathymetry.datasets = names;
+handles.bathymetry.longNames = longNames;
 handles.bathymetry.nrDatasets = length(handles.bathymetry.(fld{1}));
 
 %% For the time being...

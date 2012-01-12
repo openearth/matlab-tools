@@ -168,7 +168,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         isn=isnan(zz);
         mmtb=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
         
-        zz=min(zz,handles.Toolbox(mmtb).Input.zMax);
+%        zz=min(zz,handles.Toolbox(mmtb).Input.zMax);
         zz(isn)=NaN;
         
         z=interp2(xx,yy,zz,xg,yg);

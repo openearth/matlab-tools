@@ -14,7 +14,7 @@
     <option1>selectdataset</option1>
     <list>
       <texts>
-        <variable>handles.bathymetry.datasets</variable>
+        <variable>handles.bathymetry.longNames</variable>
       </texts>
     </list>
   </element>

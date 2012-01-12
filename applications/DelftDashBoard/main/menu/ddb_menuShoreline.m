@@ -71,8 +71,11 @@ ch=get(h,'Children');
 set(ch,'Checked','off');
 set(hObject,'Checked','on');
 
-if ~strcmpi(handles.screenParameters.shoreline,lbl)
-    handles.screenParameters.shoreline=lbl;
+%iac=strmatch(lbl,handles.bathymetry.longNames,'exact');
+iac=strmatch(lbl,handles.shorelines.longName,'exact');
+
+if ~strcmpi(handles.screenParameters.shoreline,handles.shorelines.names{iac})
+    handles.screenParameters.shoreline=handles.shorelines.names{iac};
     setHandles(handles);
     ddb_updateDataInScreen;
 end

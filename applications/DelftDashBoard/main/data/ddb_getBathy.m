@@ -81,6 +81,8 @@ for i=1:length(varargin)
                 bathy=varargin{i+1};
             case{'maxcellsize'}
                 maxcellsize=varargin{i+1}; % in metres!
+            case{'time'}
+                tm=varargin{i+1}; % in metres!
         end
     end
 end
@@ -576,6 +578,31 @@ switch lower(tp)
         %         x=x(1:ithin:end,1:ithin:end);
         %         y=y(1:ithin:end,1:ithin:end);
         %         z=z(1:ithin:end,1:ithin:end);
+
+    case{'kaartblad'}
+        pol(1,1)=xl(1);
+        pol(2,1)=xl(2);
+        pol(3,1)=xl(2);
+        pol(4,1)=xl(1);
+        pol(5,1)=xl(1);
+        pol(1,2)=yl(1);
+        pol(2,2)=yl(1);
+        pol(3,2)=yl(2);
+        pol(4,2)=yl(2);
+        pol(5,2)=yl(1);
+
+        dataset = handles.bathymetry.dataset(iac).URL;
+        [x, y, z, Ztime] = grid_orth_getDataInPolygon(...
+            'dataset'       , dataset, ...
+            'polygon'       , pol, ...
+            'starttime'     , datenum([2011 10 28]), ...
+            'searchinterval', 0, ...
+            'plotresult', 0, ...
+            'datathinning'  , 1);
+        ok=1;
+%         in=1;
+%         [x,y,z,Ztemps] = getDataInPolygon('1',2007,0601,-10*12,10,pol,in);
+
 end
 
 toc

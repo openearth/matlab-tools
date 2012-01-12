@@ -105,15 +105,15 @@ uimenu('Label','Bathymetry','Tag','menuBathymetry');
 for i=1:handles.bathymetry.nrDatasets
     if strcmpi(handles.bathymetry.datasets{i},handles.screenParameters.backgroundBathymetry)
         if handles.bathymetry.dataset(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','on');
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','on');
         else
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','off');
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','off');
         end
     else
         if handles.bathymetry.dataset(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','on');
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','on');
         else
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.datasets{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','off');
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','off');
         end
     end
 end

@@ -2,7 +2,7 @@
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
-    <tag>editdescription</tag>
+    <tag>initialconditions</tag>
     <style>text</style>
     <position>45 50</position>
     <text></text>

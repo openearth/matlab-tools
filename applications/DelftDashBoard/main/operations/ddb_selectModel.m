@@ -65,6 +65,13 @@ handles=getHandles;
 % Making previous model invisible
 set(handles.Model(md).GUI.elements(1).handle,'Visible','off');
 
+% Remove all elements from toolbox tab
+parent=handles.Model(md).GUI.elements.tabs(1).handle;
+ch=get(parent,'Children');
+if ~isempty(ch)
+    delete(ch);
+end
+
 % Setting new active model
 ii=strmatch(mdl,{handles.Model.name},'exact');
 handles.activeModel.name=mdl;

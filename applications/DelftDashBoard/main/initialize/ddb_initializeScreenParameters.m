@@ -76,7 +76,7 @@ end
 
 for i=1:handles.shorelines.nrShorelines
     if handles.shorelines.shoreline(i).isAvailable
-        handles.screenParameters.shoreline=handles.shorelines.shoreline(i).longName;
+        handles.screenParameters.shoreline=handles.shorelines.shoreline(i).name;
         break
     end
 end
