@@ -67,30 +67,103 @@
     <text>Move Down</text>
     <callback>ddb_ModelMakerToolbox_bathymetry</callback>
     <option1>datasetdown</option1>
-  </element>
-  
+  </element>  
   <element>
     <tag>editzmax</tag>
     <style>edit</style>
     <position>580 95 50 20</position>
-    <tooltipstring>Edit maximum height to be used for this dataset</tooltipstring>
     <text>Z Max</text>
     <textposition>left</textposition>
     <type>real</type>
     <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).zMax</variable>
+    <tooltipstring>Edit maximum height (positive upward) to be used from this dataset.</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets</variable>
+            <type>integer</type>	              
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
   </element>
-
   <element>
     <tag>editzmin</tag>
     <style>edit</style>
     <position>580 70 50 20</position>
-    <tooltipstring>Edit minimum height to be used for this dataset</tooltipstring>
     <text>Z Min</text>
     <textposition>left</textposition>
     <type>real</type>
     <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).zMin</variable>
+    <tooltipstring>Edit minimum height (positive upward) to be used from this dataset.</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets</variable>
+            <type>integer</type>	              
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
   </element>
-
+  <element>
+    <tag>editdate</tag>
+    <style>edit</style>
+    <position>760 95 70 20</position>
+    <text>Start Date</text>
+    <textposition>left</textposition>
+    <type>date</type>
+    <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).startDate</variable>
+    <tooltipstring>Start date for bathymetry data.</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).type</variable>
+            <type>string</type>	              
+            <value>kaartblad</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element>
+  <element>
+    <tag>editdays</tag>
+    <style>edit</style>
+    <position>760 70 70 20</position>
+    <text>Search Interval (days)</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).searchInterval</variable>
+    <tooltipstring>Search interval (relative to start date) for bathymetry data in days. Positive means looking forward in time, negative means looking backward.</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).type</variable>
+            <type>string</type>	              
+            <value>kaartblad</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element>
   <element>
     <tag>generatebathymetry</tag>
     <style>pushbutton</style>

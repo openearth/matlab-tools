@@ -112,4 +112,5 @@ handles.Toolbox(ii).Input.bathymetry.activeSelectedDataset=1;
 handles.Toolbox(ii).Input.bathymetry.selectedDatasetNames={''};
 handles.Toolbox(ii).Input.bathymetry.selectedDatasets=[];
 handles.Toolbox(ii).Input.bathymetry.nrSelectedDatasets=0;
+handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).type='unknown';
 

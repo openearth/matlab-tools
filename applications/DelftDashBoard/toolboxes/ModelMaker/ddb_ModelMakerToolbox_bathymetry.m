@@ -105,11 +105,15 @@ if usedd
     
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).number=handles.Toolbox(tb).Input.bathymetry.activeDataset;
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).name=handles.bathymetry.datasets{iac};
+    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).type=handles.bathymetry.dataset(iac).type;
 
     % Default values
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).zMax=1e4;
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).zMin=-1e4;
-    
+
+    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).startDate=floor(now);
+    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).searchInterval=-1e5;
+
     handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames{n}=handles.bathymetry.longNames{iac};
     
     handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=n;
@@ -129,6 +133,9 @@ if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
     handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames = removeFromCellArray(handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames, iac);
     handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets=handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets-1;
     handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=max(min(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset,handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets),1);
+    if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets==0
+        handles.Toolbox(tb).Input.bathymetry.selectedDatasets(1).type='unknown';
+    end    
     setHandles(handles);
     setUIElements('modelmakerpanel.bathymetry');
 %    setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
@@ -171,8 +178,11 @@ if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
     for i=1:handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets        
         nr=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).number;
         datasets{i}=handles.bathymetry.datasets{nr};
+        dates(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).startDate;
+        days(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).searchInterval;
+        zmin(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).zMin;
+        zmax(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).zMax;
     end
-%    handles = ddb_generateBathymetry(handles, id, 'datasets',handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames);
-    handles = ddb_generateBathymetry(handles, id, 'datasets',datasets);
+    handles = ddb_generateBathymetry(handles, id, 'datasets',datasets,'startdates',dates,'searchintervals',days,'zmin',zmin,'zmax',zmax);
     setHandles(handles);
 end
