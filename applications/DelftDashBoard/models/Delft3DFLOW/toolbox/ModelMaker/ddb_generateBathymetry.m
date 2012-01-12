@@ -71,6 +71,10 @@ end
 
 % Default (use background bathymetry)
 datasets{1}=handles.screenParameters.backgroundBathymetry;
+zmin=-100000;
+zmax=100000;
+startdates=floor(now);
+searchintervals=-1e5;
 
 if ~isempty(handles.Model(md).Input(id).grdFile)
     
@@ -79,6 +83,14 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
             switch lower(varargin{i})
                 case{'datasets'}
                     datasets=varargin{i+1};
+                case{'zmin'}
+                    zmin=varargin{i+1};
+                case{'zmax'}
+                    zmax=varargin{i+1};
+                case{'startdates'}
+                    startdates=varargin{i+1};
+                case{'searchintervals'}
+                    searchintervals=varargin{i+1};
             end
         end
     end
@@ -138,6 +150,10 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         % Loop through selected datasets
         
         bathyset=datasets{idata};
+        startdate=startdates(idata);
+        searchinterval=searchintervals(idata);
+        zmn=zmin(idata);
+        zmx=zmax(idata);
         
         % Convert grid to cs of background image
         coord=handles.screenParameters.coordinateSystem;
@@ -159,14 +175,18 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         yl(2)=yl(2)+dbuf;
         
         %    dmin=15000;
-        [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',bathyset,'maxcellsize',dmin);
+        [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',bathyset,'maxcellsize',dmin,'startdate',startdate,'searchinterval',searchinterval);
+        
+        % Remove values outside requested range
+        zz(zz<zmn)=NaN;
+        zz(zz>zmx)=NaN;
         
         xg(isnan(xg))=0;
         yg(isnan(yg))=0;
         
         %    zz=min(zz,5);
         isn=isnan(zz);
-        mmtb=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
+%         mmtb=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
         
 %        zz=min(zz,handles.Toolbox(mmtb).Input.zMax);
         zz(isn)=NaN;
