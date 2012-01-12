@@ -71,6 +71,8 @@ ok=0;
 zoomlev=0;
 
 bathy=handles.screenParameters.backgroundBathymetry;
+startdate=ceil(now);
+searchinterval=-1e5;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -81,8 +83,10 @@ for i=1:length(varargin)
                 bathy=varargin{i+1};
             case{'maxcellsize'}
                 maxcellsize=varargin{i+1}; % in metres!
-            case{'time'}
-                tm=varargin{i+1}; % in metres!
+            case{'startdate'}
+                startdate=varargin{i+1}; % in metres!
+            case{'searchinterval'}
+                searchinterval=varargin{i+1}; % in metres!
         end
     end
 end
@@ -557,29 +561,8 @@ switch lower(tp)
             ok=0;
         end
         
-    case{'vaklodingen'}
-        pol(1,1)=xl(1);
-        pol(2,1)=xl(2);
-        pol(3,1)=xl(2);
-        pol(4,1)=xl(1);
-        pol(5,1)=xl(1);
-        pol(1,2)=yl(1);
-        pol(2,2)=yl(1);
-        pol(3,2)=yl(2);
-        pol(4,2)=yl(2);
-        pol(5,2)=yl(1);
-        in=1;
-        [x,y,z,Ztemps,in] = getDataInPolygon('1',2007,0601,-10*12,10,pol,in);
-        
-        %     case{'arcinfo file'}
-        %         [xx,yy,z]=ReadArcInfo('sfo6_8261.asc');
-        %         [x,y]=meshgrid(xx,yy);
-        %         ithin=1;
-        %         x=x(1:ithin:end,1:ithin:end);
-        %         y=y(1:ithin:end,1:ithin:end);
-        %         z=z(1:ithin:end,1:ithin:end);
-
     case{'kaartblad'}
+
         pol(1,1)=xl(1);
         pol(2,1)=xl(2);
         pol(3,1)=xl(2);
@@ -595,13 +578,12 @@ switch lower(tp)
         [x, y, z, Ztime] = grid_orth_getDataInPolygon(...
             'dataset'       , dataset, ...
             'polygon'       , pol, ...
-            'starttime'     , datenum([2011 10 28]), ...
-            'searchinterval', 0, ...
+            'starttime'     , startdate, ...
+            'searchinterval', searchinterval, ...
             'plotresult', 0, ...
+            'plotoverview', 0, ...
             'datathinning'  , 1);
         ok=1;
-%         in=1;
-%         [x,y,z,Ztemps] = getDataInPolygon('1',2007,0601,-10*12,10,pol,in);
 
 end
 
