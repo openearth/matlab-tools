@@ -134,6 +134,14 @@ for i = 1:length({info.Dataset.Name})
     
     variables.data(c).dimensions = info.Dataset(i).Dimension;
     
+    for j = 1:length(start)
+        if start(j) ~= 0 || len(j) ~= info.Dataset(i).Size(j) || stride(j) ~= 1
+            % if not all data in a dimension is retreived
+            % store dims data in order to modify DIMS accordingly
+            DIMSid.([variables.data(c).dimensions{j} '_DATA']) = 1 + linspace(start(j), start(j) + (len(j)-1) * stride(j), len(j));
+        end
+    end
+    
     c = c+1;
 end
 
@@ -142,6 +150,13 @@ XBdims = xb_read_dims(fname);
 f = fieldnames(XBdims);
 for i = 1:length(f)
     xb = xb_set(xb, f{i}, XBdims.(f{i}));
+    if any(strcmp(f{i}, fieldnames(DIMSid)))
+        try
+            % reduce DIMS data in this dimension in correspondence with the
+            % actual data
+            xb = xb_set(xb, f{i}, XBdims.(f{i})(DIMSid.(f{i})));
+        end
+    end
 end
 variables = xb_set(variables, 'DIMS', xb);
 
