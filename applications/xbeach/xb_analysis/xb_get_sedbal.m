@@ -96,8 +96,12 @@ if xb_exist(d, 'DIMS')
     t   = xb_get(d, 'DIMS.globaltime_DATA');
     tm  = xb_get(d, 'DIMS.meantime_DATA');
     
-    t   = t(1:t_max);
-    tm  = tm(1:tm_max);
+    if ~isempty(t_max)
+        t   = t(1:t_max);
+    end
+    if ~isempty(tm_max)
+        tm  = tm(1:tm_max);
+    end
     
     t0  = t(1);
     t   = t(t<=OPT.t);
@@ -123,7 +127,8 @@ if xb_exist(xb, 'zb')
     
     if nt > size(zb,1)
         nt = size(zb,1);
-        [t tm] = deal(t(1:nt), tm(1:nt));
+%         [t tm] = deal(t(1:nt), tm(1:nt));
+        t = t(1:nt);
     end
     
     sed_DATA = (1-OPT.porosity)*squeeze(zb(nt,:,:)-zb(1,:,:)).*g.dsdnz';
@@ -136,6 +141,9 @@ if xb_exist(xb, 'zb')
     sed_DATA(:,[1:d+1 end-d+1:end])  = 0;
     ero_DATA([1:d+1 end-d+1:end],:)  = 0;
     ero_DATA(:,[1:d+1 end-d+1:end])  = 0;
+else
+    [sed_DATA ero_DATA] = deal(zeros(size(g.dsdnz')));
+    warning('"zb" not available. No closed balance will be found.')
 end
 
 % compute the volume change due to avalanching
@@ -146,6 +154,8 @@ if xb_exist(xb, 'dzav')
 %     therefore, in the following line a work-around is found by
 %     "-dzav(1,:,:)"
     av_DATA = (1-OPT.porosity)*squeeze(dzav(nt,:,:)-dzav(1,:,:)).*g.dsdnz';
+    av_DATA([1:d+1 end-d+1:end],:)  = 0;
+    av_DATA(:,[1:d+1 end-d+1:end])  = 0;
 else
     av_DATA = zeros(size(g.dsdnz'));
     warning('"dzav" not available. If run includes avalanching, the cell-balance will locally be non-zero.')
