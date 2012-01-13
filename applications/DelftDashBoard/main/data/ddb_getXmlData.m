@@ -79,6 +79,9 @@ if exist(file)==2
     end 
 else
     try
+        if ~isdir(localdir)
+           mkdir(localdir); 
+        end
         urlwrite(url,file);
         data=xml_load(file);
         % All data needs to be updated
@@ -87,7 +90,7 @@ else
             data(aa).(fld{1}).update = 1;
         end
     catch
-        warning(['xml file ''' xmlfile ''' not found!']);
+        warning(['Could not retrieve ''' xmlfile ''' from server']);
         return
     end
 end

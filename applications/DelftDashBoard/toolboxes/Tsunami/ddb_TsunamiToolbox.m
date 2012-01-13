@@ -67,7 +67,7 @@ if isempty(varargin)
     handles=getHandles;
     h=findobj(gca,'Tag','Plates');
     if isempty(h)
-        dr=handles.Toolbox(tb).miscDir;
+        dr=handles.Toolbox(tb).dataDir;
         load([dr 'plates.mat']);
         cs1=handles.screenParameters.coordinateSystem;
         if ~strcmpi(cs1.type,'geographic')

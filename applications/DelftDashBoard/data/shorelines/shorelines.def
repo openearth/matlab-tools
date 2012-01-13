@@ -1,8 +1,0 @@
-Shoreline "World Vector Shoreline"
-
-    Type "netCDFtiles"
-    Name "wvs"
-    URL "http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/shorelines/wvs"
-    useCache yes
-         
-EndShoreline

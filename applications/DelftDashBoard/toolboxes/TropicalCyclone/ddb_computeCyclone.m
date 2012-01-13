@@ -186,7 +186,7 @@ for iq=1:nq
     
     fclose(fid);
     
-    system(['"' handles.Toolbox(tb).miscDir 'wes.exe" ' name iqstr '.inp']);
+    system(['"' handles.Toolbox(tb).dataDir 'wes.exe" ' name iqstr '.inp']);
     
     if inp.deleteTemporaryFiles
         delete(['trackfile' iqstr '.trk']);
@@ -206,7 +206,7 @@ if strcmpi(inp.quadrantOption,'perquadrant')
     fprintf(fid,'%s\n',['SW QUADRANT         = ' name '_3.spw']);
     fprintf(fid,'%s\n',['NW QUADRANT         = ' name '_4.spw']);
     fclose(fid);
-    system(['"' handles.Toolbox(tb).miscDir 'merge_spw.exe" ' name '.inp']);
+    system(['"' handles.Toolbox(tb).dataDir 'merge_spw.exe" ' name '.inp']);
     movefile([name '_merge.spw'],[name '.spw']);
     
     if inp.deleteTemporaryFiles

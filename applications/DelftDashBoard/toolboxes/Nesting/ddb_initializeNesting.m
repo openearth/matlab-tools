@@ -63,6 +63,8 @@ function handles = ddb_initializeNesting(handles, varargin)
 %%
 ii=strmatch('Nesting',{handles.Toolbox(:).name},'exact');
 
+ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
+
 if nargin>1
     switch varargin{1}
         case{'test'}

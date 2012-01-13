@@ -154,21 +154,21 @@ for i=1:nt
         % Executable
         handles.Toolbox(i).dir=[dr filesep name{i} filesep];
         handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
-        handles.Toolbox(i).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
+%         handles.Toolbox(i).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
         handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
     else
         % From Matlab
         if strcmpi(tp{i},'standard')
             handles.Toolbox(i).dir=[dr filesep name{i} filesep];
             handles.Toolbox(i).xmlDir=[handles.Toolbox(i).dir 'xml' filesep];
-            handles.Toolbox(i).miscDir=[handles.Toolbox(i).dir 'misc' filesep];
+%             handles.Toolbox(i).miscDir=[handles.Toolbox(i).dir 'misc' filesep];
             handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
         else
             handles.Toolbox(i).dir=[dr2 filesep name{i} filesep];
             handles.Toolbox(i).xmlDir=[handles.Toolbox(i).dir 'xml' filesep];
-            handles.Toolbox(i).miscDir=[handles.Toolbox(i).dir 'misc' filesep];
-            handles.Toolbox(i).dataDir=[handles.Toolbox(i).dir 'data' filesep];
-%             handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
+%             handles.Toolbox(i).miscDir=[handles.Toolbox(i).dir 'misc' filesep];
+%             handles.Toolbox(i).dataDir=[handles.Toolbox(i).dir 'data' filesep];
+            handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
         end
     end
 end
