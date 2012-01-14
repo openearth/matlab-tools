@@ -66,13 +66,13 @@ function [x y z ok] = ddb_getBathy(handles, xl, yl, varargin)
 % $Keywords: $
 
 %%
-ok=0;
+ok              = 0;
 
-zoomlev=0;
+zoomlev         = 0;
 
-bathy=handles.screenParameters.backgroundBathymetry;
-startdate=ceil(now);
-searchinterval=-1e5;
+bathy           = handles.screenParameters.backgroundBathymetry;
+startdate       = ceil(now);
+searchinterval  = -1e5;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -91,17 +91,15 @@ for i=1:length(varargin)
     end
 end
 
-x=[];
-y=[];
-z=[];
+[x, y, z] = deal([]);
 
 tic
 disp('Getting bathymetry data ...');
 
-iac=strmatch(lower(bathy),lower(handles.bathymetry.datasets),'exact');
-xsz=xl(2)-xl(1);
+iac       = strmatch(lower(bathy),lower(handles.bathymetry.datasets),'exact');
+xsz       = xl(2)-xl(1);
 
-tp=handles.bathymetry.dataset(iac).type;
+tp        = handles.bathymetry.dataset(iac).type;
 
 switch lower(tp)
     
@@ -562,22 +560,10 @@ switch lower(tp)
         end
         
     case{'kaartblad'}
-
-        pol(1,1)=xl(1);
-        pol(2,1)=xl(2);
-        pol(3,1)=xl(2);
-        pol(4,1)=xl(1);
-        pol(5,1)=xl(1);
-        pol(1,2)=yl(1);
-        pol(2,2)=yl(1);
-        pol(3,2)=yl(2);
-        pol(4,2)=yl(2);
-        pol(5,2)=yl(1);
-
-        dataset = handles.bathymetry.dataset(iac).URL;
-        [x, y, z] = grid_orth_getDataInPolygon(...
-            'dataset'       , dataset, ...
-            'polygon'       , pol, ...
+        % retreive data from specified dataset with grid_orth_getDataInPolygon
+        [x, y, z]   = grid_orth_getDataInPolygon(...
+            'dataset'       , handles.bathymetry.dataset(iac).URL, ...
+            'polygon'       , [xl(1) xl(2) xl(2) xl(1) xl(1);yl(1) yl(1) yl(2) yl(2) yl(1)]', ...
             'starttime'     , startdate, ...
             'searchinterval', searchinterval, ...
             'plotresult'    , 0, ...
