@@ -193,6 +193,8 @@ end
 
 if isnan(duration); duration = OPT.maxduration; end;
 
+duration = roundoff(duration, 4);
+
 while any(duration>OPT.maxduration)
     i           = find(duration>OPT.maxduration,1,'first');
     n           = floor(duration(i)/OPT.maxduration);

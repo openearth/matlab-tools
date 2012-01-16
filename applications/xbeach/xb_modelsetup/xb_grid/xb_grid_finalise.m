@@ -268,18 +268,15 @@ function [x y z] = landward_extend(x, y, z, OPT)
     z = zn;
     
 function [xn yn zn] = seaward_extend(x, y, z, OPT)
+    z0 = max(z(:,1));
+    dx = x(1,2)-x(1,1);
+    dn = ceil(max(z0-OPT.zmin,0)/(OPT.slope*dx));
 
-z0 = max(z(:,1));
-dxoff = x(1,2)-x(1,1);
-dn = ceil(max(z0-OPT.zmin,0)/(OPT.slope*dxoff))+OPT.n;
-zt = NaN*zeros(size(x,1), size(x,2)+OPT.n);
-zt(:,1:OPT.n) = OPT.zmin;
-zt(:,OPT.n+1:end) = z; 
-% extended xbeach grid
-xn = [ x(1,1)+[-dn:1:-1]*dxoff x(1,:)]; 
-[xn,yn] = meshgrid(xn,y(:,1));
-% temporary xbeach grid
-xt = [xn(1,1:OPT.n) x(1,:)]; 
-[xt,yt] = meshgrid(xt,y(:,1));
-% interpolate
-zn = interp2(xt,yt,zt,xn,yn);
+    zt = nan(size(x,1), size(x,2)-dn+OPT.n);
+    zt(:,1:OPT.n)     = OPT.zmin;
+    zt(:,OPT.n+1:end) = z(:,dn+1:end); 
+    
+    [xt yt] = meshgrid([x(1,1)-[OPT.n:-1:1]*dx x(1,dn+1:end)] ,y(:,1));
+    [xn yn] = meshgrid([xt(1,1:OPT.n) x(1,:)]                 ,y(:,1));
+
+    zn = interp2(xt,yt,zt,xn,yn);

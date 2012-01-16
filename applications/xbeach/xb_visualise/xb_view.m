@@ -72,6 +72,10 @@ if ~exist('data', 'var')
     data = pwd;
 end
 
+if ~iscell(data)
+    data = {data};
+end
+
 %% make gui
 
 winsize = [OPT.width OPT.height];
@@ -83,7 +87,7 @@ fig = figure('Position', [winpos winsize], ...
     'Tag', 'xb_view', ...
     'Toolbar','figure',...
     'InvertHardcopy', 'off', ...
-    'UserData', struct('input', data), ...
+    'UserData', struct('input', {data}), ...
     'ResizeFcn', @ui_resize);
 
 if OPT.modal; set(fig, 'WindowStyle', 'modal'); end;
@@ -145,7 +149,6 @@ function ui_build(obj)
     
     uicontrol(pobj, 'Style', 'checkbox', 'Tag', 'ToggleCompare', ...
         'String', 'compare', ...
-        'Enable', 'off', ...
         'Callback', @ui_togglediff);
 
     uicontrol(pobj, 'Style', 'checkbox', 'Tag', 'ToggleSurf', ...
@@ -168,12 +171,16 @@ function ui_build(obj)
         'Enable', 'off', ...
         'Callback', @ui_settransect);
 
-    % reload button
+    % buttons
+    uicontrol(pobj, 'Style', 'pushbutton', 'Tag', 'ButtonAlign', ...
+        'String', 'Align', ...
+        'Enable', 'off', ...
+        'Callback', @ui_align);
+    
     uicontrol(pobj, 'Style', 'pushbutton', 'Tag', 'ButtonReload', ...
         'String', 'Reload', ...
         'Callback', @ui_reload);
     
-    % animate button
     uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleAnimate', ...
         'String', 'Animate', ...
         'Callback', @ui_animate);
@@ -182,20 +189,14 @@ function ui_build(obj)
     set(findobj(pobj, 'Type', 'uipanel'), 'BackgroundColor', [.8 .8 .8]);
     
     % set exceptions
-    if info.ndims == 1
-        set(findobj(pobj, 'Tag', 'ToggleCompare'), 'Enable', 'on');
-    end
-    
     if info.ndims == 2
-        set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'on');
-        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'on');
-        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'on');
+        set_enable(obj, '2d');
+    else
+        set_enable(obj, '1d');
     end
     
     if strcmpi(info.type, 'input')
-        set(findobj(pobj, 'Tag', 'ToggleDiff'), 'Enable', 'off');
-        set(findobj(pobj, 'Tag', 'Slider2'), 'Enable', 'off');
-        set(findobj(pobj, 'Tag', 'ToggleAnimate'), 'Enable', 'off');
+        set_enable(obj, 'input');
     end
     
     % reading indicator
@@ -244,6 +245,7 @@ function ui_resize(obj, event)
     set(findobj(obj, 'Tag', 'ToggleCAxisFix'), 'Position', [[.85 .45].*winsize [.1 .05].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleTransect'), 'Position', [[.85 .40].*winsize [.1 .05].*winsize]);
     set(findobj(obj, 'Tag', 'SliderTransect'), 'Position', [[.85 .375].*winsize [.1 .025].*winsize]);
+    set(findobj(obj, 'Tag', 'ButtonAlign'), 'Position', [[.85 .18].*winsize [.1 .035].*winsize]);
     set(findobj(obj, 'Tag', 'ButtonReload'), 'Position', [[.85 .125].*winsize [.1 .035].*winsize]);
     set(findobj(obj, 'Tag', 'ToggleAnimate'), 'Position', [[.85 .07].*winsize [.1 .035].*winsize]);
     set(findobj(obj, 'Tag', 'ReadIndicator'), 'Position', [[.85 .25].*winsize [.1 .025].*winsize]);
@@ -303,10 +305,8 @@ function ui_toggletransect(obj, event)
     
     info = get(pobj, 'userdata');
     if get(obj, 'Value')
-        set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'off');
-        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'off');
-        set(findobj(pobj, 'Tag', 'ToggleCompare'), 'Enable', 'on');
-        
+        set_enable(obj, '1d');
+        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'on');
         sobj = findobj(pobj, 'Tag', 'SliderTransect');
         set(sobj, 'Enable', 'on');
         
@@ -317,9 +317,8 @@ function ui_toggletransect(obj, event)
         
         info.transect = [y i];
     else
-        set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'on');
-        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'on');
-        set(findobj(pobj, 'Tag', 'ToggleCompare'), 'Enable', 'off');
+        set_enable(obj, '2d');
+        
         set(findobj(pobj, 'Tag', 'SliderTransect'), 'Enable', 'off');
         
         info.transect = [];
@@ -343,90 +342,107 @@ function ui_settransect(obj, event)
     ui_plot(obj, []);
 end
 
+function ui_align(obj, event)
+    ax = get_axis(obj);
+    
+    clim = get(ax, 'CLim');
+    
+    if iscell(clim)
+        clim = cell2mat(clim);
+        clim = [min(clim(:,1)) max(clim(:,2))];
+    end
+    
+    set(ax, 'CLim', clim);
+end
+
 function ui_read(obj)
     pobj = get_pobj(obj);
     info = get(pobj, 'userdata');
 
     if isfield(info, 'input')
-        if xb_check(info.input)
-            switch info.input.type
-                case 'input'
-                    info.type = 'input';
-                    
-                    % read variables
-                    info.vars = {'depfile.depfile'};
-                    
-                    info.t = [0 1];
-                    
-                    [info.x info.y] = xb_input2bathy(info.input);
-                case 'output'
-                    info.type = 'output_xb';
-                    
-                    % read dimensions
-                    info.dims = xb_get(info.input, 'DIMS');
-                    info.dims = cell2struct({info.dims.data.value}, {info.dims.data.name}, 2);
-                    
-                    % read variables
-                    info.vars = {info.input.data.name};
-                    info.vars = info.vars(~strcmpi(info.vars, 'DIMS'));
-                    
-                    % determine grid and time
-                    info.t = info.dims.globaltime_DATA;
-                    info.x = info.dims.globalx_DATA;
-                    info.y = info.dims.globaly_DATA;
-                case 'run'
-                    
-                    info.type = 'output_dir';
-                    info.fpath = xb_get(info.input, 'path');
+        
+        for i = 1:length(info.input)
+        
+            if xb_check(info.input{i})
+                switch info.input{i}.type
+                    case 'input'
+                        info.type = 'input';
 
-                    % read dimensions
-                    info.dims = xb_read_dims(info.fpath);
+                        % read variables
+                        info.vars = {'depfile.depfile'};
 
-                    % read variables
-                    info.vars = xb_get_vars(info.fpath);
+                        info.t = [0 1];
 
-                    % determine grid and time
-                    info.t = info.dims.globaltime_DATA;
-                    info.x = info.dims.globalx_DATA;
-                    info.y = info.dims.globaly_DATA;
-                otherwise
-                    error('Unsupported XBeach strucure supplied');
+                        [info.x info.y] = xb_input2bathy(info.input{i});
+                    case 'output'
+                        info.type = 'output_xb';
+
+                        % read dimensions
+                        info.dims = xb_get(info.input{i}, 'DIMS');
+                        info.dims = cell2struct({info.dims.data.value}, {info.dims.data.name}, 2);
+
+                        % read variables
+                        info.vars = {info.input{i}.data.name};
+                        info.vars = info.vars(~strcmpi(info.vars, 'DIMS'));
+
+                        % determine grid and time
+                        info.t = info.dims.globaltime_DATA;
+                        info.x = info.dims.globalx_DATA;
+                        info.y = info.dims.globaly_DATA;
+                    case 'run'
+
+                        info.type = 'output_dir';
+                        info.fpath{i} = xb_get(info.input{i}, 'path');
+
+                        % read dimensions
+                        info.dims = xb_read_dims(info.fpath{i});
+
+                        % read variables
+                        info.vars = xb_get_vars(info.fpath{i});
+
+                        % determine grid and time
+                        info.t = info.dims.globaltime_DATA;
+                        info.x = info.dims.globalx_DATA;
+                        info.y = info.dims.globaly_DATA;
+                    otherwise
+                        error('Unsupported XBeach strucure supplied');
+                end
+            elseif ischar(info.input{i}) && (exist(info.input{i}, 'dir') || exist(info.input{i}, 'file'))
+
+                info.type = 'output_dir';
+                info.fpath{i} = info.input{i};
+
+                % read dimensions
+                info.dims = xb_read_dims(info.fpath{i});
+
+                % read variables
+                info.vars = xb_get_vars(info.fpath{i});
+
+                % determine grid and time
+                info.t = info.dims.globaltime_DATA;
+                info.x = info.dims.globalx_DATA;
+                info.y = info.dims.globaly_DATA;
+            else
+                error('No valid data supplied');
             end
-        elseif ischar(info.input) && (exist(info.input, 'dir') || exist(info.input, 'file'))
-        
-            info.type = 'output_dir';
-            info.fpath = info.input;
 
-            % read dimensions
-            info.dims = xb_read_dims(info.fpath);
+            % generate var list
+            info.varlist = sprintf('|%s', info.vars{:});
+            info.varlist = info.varlist(2:end);
 
-            % read variables
-            info.vars = xb_get_vars(info.fpath);
+            % determine plot type
+            if min(size(info.x)) <= 3
+                info.ndims = 1;
+            else
+                info.ndims = 2;
+            end
 
-            % determine grid and time
-            info.t = info.dims.globaltime_DATA;
-            info.x = info.dims.globalx_DATA;
-            info.y = info.dims.globaly_DATA;
-        else
-            error('No valid data supplied');
+            info.diff = false;
+            info.compare = false;
+            info.surf = false;
+            info.caxis = [];
+            info.transect = [];
         end
-        
-        % generate var list
-        info.varlist = sprintf('|%s', info.vars{:});
-        info.varlist = info.varlist(2:end);
-        
-        % determine plot type
-        if min(size(info.x)) <= 3
-            info.ndims = 1;
-        else
-            info.ndims = 2;
-        end
-        
-        info.diff = false;
-        info.compare = false;
-        info.surf = false;
-        info.caxis = [];
-        info.transect = [];
         
         set(pobj, 'userdata', info);
     else
@@ -440,8 +456,11 @@ function data = ui_getdata(obj, info, vars, slider)
     iobj = findobj(pobj, 'Tag', 'ReadIndicator');
     set(iobj, 'Visible', 'on'); drawnow;
     
+    m = length(info.input);
+    n = length(vars);
+    
     data{1} = nan([1 size(info.x,1) size(info.x,2)]);
-    for i = 2:length(vars)
+    for i = 2:m*n
         data{i} = data{1};
     end
     
@@ -464,21 +483,23 @@ function data = ui_getdata(obj, info, vars, slider)
         rl = -1;
     end
     
-    switch info.type
-        case 'input'
-            for i = 1:length(vars)
-                data{i}(1,:,:) = xb_get(info.input, vars{:});
-                data{i} = data{i}(1,ri,:);
-            end
-        case 'output_xb'
-            for i = 1:length(vars)
-                d = xb_get(info.input, vars{i});
-                data{i}(1,:,:) = d(t,ri,:);
-            end
-        case 'output_dir'
-            [data{1:length(vars)}] = xb_get( ...
-                xb_read_output(info.fpath, 'vars', vars, 'start', [t-1 ri-1 0], ...
-                'length', [1 rl -1]), vars{:});
+    for j = 1:m
+        switch info.type
+            case 'input'
+                for i = 1:n
+                    data{i}(1,:,:) = xb_get(info.input{j}, vars{:});
+                    data{(j-1)*n+i} = data{i}(1,ri,:);
+                end
+            case 'output_xb'
+                for i = 1:n
+                    d = xb_get(info.input{j}, vars{i});
+                    data{(j-1)*n+i}(1,:,:) = d(t,ri,:);
+                end
+            case 'output_dir'
+                [data{(j-1)*n+[1:n]}] = xb_get( ...
+                    xb_read_output(info.fpath{j}, 'vars', vars, 'start', [t-1 ri-1 0], ...
+                    'length', [1 rl -1]), vars{:});
+        end
     end
     
     if info.diff && slider == 2
@@ -509,12 +530,12 @@ function ui_plot(obj, event)
     vars = selected_vars(obj);
     data = ui_getdata(obj, info, vars, 2);
     
+    if info.compare
+        data0 = ui_getdata(obj, info, vars, 1);
+        data = cat(2, data0, data);
+    end
+    
     if info.ndims == 1 || ~isempty(info.transect)
-        if info.compare
-            data0 = ui_getdata(obj, info, vars, 1);
-            data = cat(2, data, data0);
-        end
-
         plot_1d(obj, info, data, vars);
     else
         plot_2d(obj, info, data, vars);
@@ -559,23 +580,28 @@ function plot_1d(obj, info, data, vars)
     
     lines = flipud(findobj(ax, 'Type', 'line'));
     
-    n = ceil(length(data)/length(vars))-1;
+    n  = numel(data);
+    n2 = length(info.input);
+    n3 = length(vars);
+    n1 = ceil(n/n3/n2);
     
     type = '-:';
     color = 'rgbcymk';
-    for j = 0:n
-        for i = 1:length(vars)
-            ii = i+j*length(vars);
-            
-            if update
-                set(lines(ii),...
-                    'XData', info.x(1,:),...
-                    'YData', squeeze(data{ii}(:,1,:)));
-            else
-                plot(ax,...
-                    info.x(1,:), squeeze(data{ii}(:,1,:)), ...
-                    [type(1+j) color(mod(i-1,length(color))+1)], ...
-                    'DisplayName', strrep(vars{i}, '_', '\_'));
+    for i1 = 1:n1
+        for i2 = 1:n2
+            for i3 = 1:n3
+                ii = i3+(i2-1)*n3+(i1-1)*n2*n3;
+
+                if update
+                    set(lines(ii),...
+                        'XData', info.x(1,:),...
+                        'YData', squeeze(data{ii}(:,1,:)));
+                else
+                    plot(ax,...
+                        info.x(1,:), squeeze(data{ii}(:,1,:)), ...
+                        [type(n1-i1+1) color(mod(i3-1,length(color))+1)], 'LineWidth', i2, ...
+                        'DisplayName', strrep(get_name(obj, info, n, ii), '_', '\_'));
+                end
             end
         end
     end
@@ -601,41 +627,52 @@ function plot_2d(obj, info, data, vars)
     
     surface = flipud(findobj(ax, 'Type', 'surface'));
     
-    sx = ceil(sqrt(length(vars)));
-    sy = ceil(length(vars)/sx);
+    n  = numel(data);
+    n2 = length(info.input);
+    n3 = length(vars);
+    n1 = ceil(n/n3/n2);
     
-    sp = nan(size(vars));
-    for i = 1:length(vars)
-        sp(i) = subplot(sy, sx, i, 'Parent', findobj(pobj, 'Tag', 'PlotPanel'));
-        
-        data{i} = squeeze(data{i});
-        
-        if all(size(info.x) == size(data{i})) && all(size(info.y) == size(data{i}))
-            if update
-                set(surface(i), 'XData', info.x, 'YData', info.y, ...
-                    'ZData', data{i}, 'CData', data{i});
-            else
-                if info.surf
-                    surf(sp(i), info.x, info.y, data{i});
-                else
-                    pcolor(sp(i), info.x, info.y, data{i});
+    sx = ceil(sqrt(n));
+    sy = ceil(n/sx);
+    
+    sp = nan(1,n);
+    for i1 = 1:n1
+        for i2 = 1:n2
+            for i3 = 1:n3
+                ii = i3+(i2-1)*n3+(i1-1)*n2*n3;
+
+                sp(ii) = subplot(sy, sx, ii, 'Parent', findobj(pobj, 'Tag', 'PlotPanel'));
+
+                data{ii} = squeeze(data{ii});
+
+                if all(size(info.x) == size(data{ii})) && all(size(info.y) == size(data{ii}))
+                    if update
+                        set(surface(ii), 'XData', info.x, 'YData', info.y, ...
+                            'ZData', data{ii}, 'CData', data{ii});
+                    else
+                        if info.surf
+                            surf(sp(ii), info.x, info.y, data{ii});
+                        else
+                            pcolor(sp(ii), info.x, info.y, data{ii});
+                        end
+                    end
+
+                    shading flat; colorbar;
                 end
+
+                if iscell(info.caxis)
+                    info.caxis = info.caxis{min(ii, length(info.caxis))};
+                end
+
+                if ~isempty(info.caxis)
+                    set(sp(ii), 'CLim', info.caxis);
+                else
+                    set(sp(ii), 'CLimMode', 'auto');
+                end
+                
+                title(get_name(obj, info, n, ii), 'Interpreter', 'none');
             end
-        
-            shading flat; colorbar;
         end
-        
-        if iscell(info.caxis)
-            info.caxis = info.caxis{min(i, length(info.caxis))};
-        end
-        
-        if ~isempty(info.caxis)
-            set(sp(i), 'CLim', info.caxis);
-        else
-            set(sp(i), 'CLimMode', 'auto');
-        end
-        
-        title(vars{i}, 'Interpreter', 'none');
     end
     
     h = linkprop(sp, {'xlim' 'ylim' 'CameraPosition','CameraUpVector'});
@@ -659,5 +696,55 @@ function pobj = get_pobj(obj)
         pobj = obj;
     else
         pobj = get_pobj(get(obj, 'Parent'));
+    end
+end
+
+function name = get_name(obj, info, n, i)
+    pobj = get_pobj(obj);
+    
+    vars = selected_vars(obj);
+    
+    n2 = length(info.input);
+    n3 = length(vars);
+    n1 = ceil(n/n3/n2);
+    
+    i1 = floor((i-1)/n3/n2)+1;
+    i2 = floor((i-(i1-1)*n2*n3-1)/n3)+1;
+    i3 = floor( i-(i2-1)*n3-(i1-1)*n2*n3-1)+1;
+    
+    if n1 > 1 && i1 == 1
+        t = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'));
+    else
+        t = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'));
+    end
+    
+    name = sprintf('%s (file #%d, t = %d)', vars{i3}, i2, info.t(t));
+end
+
+function set_enable(obj, opt)
+    pobj = get_pobj(obj);
+
+    if ~iscell(opt)
+        opt = {opt};
+    end
+    
+    if ismember('1d', opt)
+        set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'ButtonAlign'), 'Enable', 'off');
+    end
+    
+    if ismember('2d', opt)
+        set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'on');
+        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'on');
+        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'on');
+        set(findobj(pobj, 'Tag', 'ButtonAlign'), 'Enable', 'on');
+    end
+    
+    if ismember('input', opt)
+        set(findobj(pobj, 'Tag', 'ToggleDiff'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'Slider2'), 'Enable', 'off');
+        set(findobj(pobj, 'Tag', 'ToggleAnimate'), 'Enable', 'off');
     end
 end
