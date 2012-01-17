@@ -167,7 +167,7 @@ function ui_build(obj)
         'Callback', @ui_toggletransect);
     
     uicontrol(pobj, 'Style', 'slider', 'Tag', 'SliderTransect', ...
-        'Min', 1, 'Max', size(info.y,1), 'Value', 1, 'SliderStep', [1 5]/(size(info.y,1)-1), ...
+        'Min', 1, 'Max', size(info.y,1), 'Value', 1, 'SliderStep', min(1,max(0,[1 5]/(size(info.y,1)-1))), ...
         'Enable', 'off', ...
         'Callback', @ui_settransect);
 
@@ -374,6 +374,15 @@ function ui_read(obj)
                         info.t = [0 1];
 
                         [info.x info.y] = xb_input2bathy(info.input{i});
+                        
+                        if isempty(info.x) || isempty(info.y)
+                            [nx ny dx dy] = xb_get(info.input{i}, 'nx', 'ny', 'dx', 'dy');
+                            
+                            dx = max([1 dx]);
+                            dy = max([1 dy]);
+                            
+                            [info.x info.y] = meshgrid(1:dx:dx*(nx+1), 1:dy:dy*(ny+1));
+                        end
                     case 'output'
                         info.type = 'output_xb';
 
@@ -480,7 +489,7 @@ function data = ui_getdata(obj, info, vars, slider)
         rl = 1;
     else
         ri = 1;
-        rl = -1;
+        rl = size(info.x,1);
     end
     
     for j = 1:m
@@ -488,12 +497,12 @@ function data = ui_getdata(obj, info, vars, slider)
             case 'input'
                 for i = 1:n
                     data{i}(1,:,:) = xb_get(info.input{j}, vars{:});
-                    data{(j-1)*n+i} = data{i}(1,ri,:);
+                    data{(j-1)*n+i} = data{i}(1,ri+[0:rl-1],:);
                 end
             case 'output_xb'
                 for i = 1:n
                     d = xb_get(info.input{j}, vars{i});
-                    data{(j-1)*n+i}(1,:,:) = d(t,ri,:);
+                    data{(j-1)*n+i}(1,:,:) = d(t,ri+[0:rl-1],:);
                 end
             case 'output_dir'
                 [data{(j-1)*n+[1:n]}] = xb_get( ...
