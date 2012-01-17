@@ -315,7 +315,7 @@ for ii=1:nn
         case 'latlon'
             coordinates = sprintf(' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n',lon(ii),lat(ii));
         case 'latlonz'
-            coordinates = sprintf(' <Point><coordinates>% 2.8f,% 2.8f, % 2.4f</coordinates></Point>\n',lon(ii),lat(ii),z(ii));
+            coordinates = sprintf(' <Point><altitudeMode>absolute</altitudeMode><coordinates>% 2.8f,% 2.8f, % 2.4f</coordinates></Point>\n',lon(ii),lat(ii),z(ii));
     end
     
     
