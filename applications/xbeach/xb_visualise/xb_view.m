@@ -361,7 +361,11 @@ function ui_read(obj)
 
     if isfield(info, 'input')
         
+        info.t = Inf;
+        
         for i = 1:length(info.input)
+            
+            t = min([Inf max(info.t)]);
         
             if xb_check(info.input{i})
                 switch info.input{i}.type
@@ -434,6 +438,8 @@ function ui_read(obj)
             else
                 error('No valid data supplied');
             end
+            
+            info.t = info.t(info.t<=t);
 
             % generate var list
             info.varlist = sprintf('|%s', info.vars{:});
