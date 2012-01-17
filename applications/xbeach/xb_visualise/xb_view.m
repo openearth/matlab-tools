@@ -361,11 +361,9 @@ function ui_read(obj)
 
     if isfield(info, 'input')
         
-        info.t = Inf;
-        
         for i = 1:length(info.input)
             
-            t = min([Inf max(info.t)]);
+            info0 = info;
         
             if xb_check(info.input{i})
                 switch info.input{i}.type
@@ -439,8 +437,27 @@ function ui_read(obj)
                 error('No valid data supplied');
             end
             
-            info.t = info.t(info.t<=t);
-
+            % check consistency
+            if isfield(info0, 't')
+                info.t = info.t(info.t<=max(info0.t));
+                if length(info.t) ~= length(info0.t);           error('Inconsistent time axes length');     end;
+                if ~all(info.t - info0.t == 0);                 error('Inconsistent time axes stepsize');   end;
+            end
+            
+            if isfield(info0, 'x')
+                if ~all(size(info.x) - size(info0.x) == 0);     error('Inconsistent x axes length');        end;
+                if ~all(all(info.x - info0.x == 0));            error('Inconsistent x coordinates');        end;
+            end
+            
+            if isfield(info0, 'y')
+                if ~all(size(info.y) - size(info0.y) == 0);     error('Inconsistent y axes length');        end;
+                if ~all(all(info.y - info0.y == 0));            error('Inconsistent y coordinates');        end;
+            end
+            
+            if isfield(info0, 'varlist')
+                info.varlist = intersect(info.vars, info0.vars);
+            end
+            
             % generate var list
             info.varlist = sprintf('|%s', info.vars{:});
             info.varlist = info.varlist(2:end);
