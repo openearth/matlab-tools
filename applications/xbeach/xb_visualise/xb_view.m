@@ -519,8 +519,9 @@ function data = ui_getdata(obj, info, vars, slider)
         switch info.type
             case 'input'
                 for i = 1:n
-                    data{i}(1,:,:) = xb_get(info.input{j}, vars{:});
-                    data{(j-1)*n+i} = data{i}(1,ri+[0:rl-1],:);
+                    idx = (j-1)*n+i;
+                    data{idx}(1,:,:) = xb_get(info.input{j}, vars{:});
+                    data{idx} = data{idx}(1,ri+[0:rl-1],:);
                 end
             case 'output_xb'
                 for i = 1:n
