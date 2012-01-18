@@ -15,14 +15,14 @@ function varargout = xb_release_toolbox(varargin)
 %   Example
 %   xb_release_toolbox
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
 %       Kees den Heijer
 %
-%       Kees.denHeijer@Deltares.nl	
+%       Kees.denHeijer@Deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -44,9 +44,9 @@ function varargout = xb_release_toolbox(varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -66,7 +66,7 @@ OPT = struct( ...
     'type', 'zip', ...
     'name', ['xbeach_release_' datestr(now, 'ddmmmyyyy')] ...
 );
- 
+
 OPT = setproperty(OPT, varargin);
 
 %% release
@@ -80,10 +80,10 @@ folders = [{'..\..\io\' '..\..\general\'} ffolders];
 for i = 1:length(folders); folders{i} = abspath(folders{i}); end;
 
 % select all files and oetsettings
-fffiles = dir(fdir);
-ffiles = {fffiles.name};
-ffiles = ffiles(~[fffiles.isdir]);
-files = [{'oetsettings' '..\SuperTrans\data\EPSG.mat'} ffiles];
+%fffiles = dir(fdir);
+%ffiles = {fffiles.name};
+%ffiles = ffiles(~[fffiles.isdir]);
+files = {'oetsettings'};
 
 % release toolbox
 switch OPT.type
@@ -93,42 +93,42 @@ switch OPT.type
             'zipfilename'   , fullfile('D:', [OPT.name '.zip']), ...
             'folders'       , folders, ...
             'files'         , files, ...
-            'omitdirs'      , {'svn' '_old' '_bak', 'rev3139'});
+            'omitdirs'      , {'svn' '_old' '_bak', 'old', '.old', 'xb_testbed'});
     case 'tag'
-        
+
         [r m] = system('svn ?');
-        
+
         if r > 0; error('Command-line Subversion client not found [svn]'); end;
-        
+
         system(sprintf('cd %s && svn update\n', oetroot));
-        
+
         files = oetrelease(...
             'folders'       , folders, ...
             'files'         , files, ...
-            'omitdirs'      , {'svn' '_old' '_bak', 'rev3139'}, ...
+            'omitdirs'      , {'svn' '_old' '_bak', 'old', '.old', 'xb_testbed'}, ...
             'copy'          , false );
-        
+
         rootdir = abspath(fullfile(oetroot, '..', '..'));
         tagsdir = abspath(fullfile(rootdir, 'tags'));
         tagdir = abspath(fullfile(tagsdir, OPT.name));
-        
+
         fid = fopen('maketag.bat','w');
-        
+
         if ~exist(tagsdir, 'dir')
             fprintf(fid, 'cd %s\n', rootdir);
             fprintf(fid, 'svn checkout --depth=empty %s/tags\n', OPT.url);
         end
-        
+
         fprintf(fid, 'cd %s\n', tagsdir);
         fprintf(fid, 'svn mkdir %s\n', OPT.name);
         fprintf(fid, 'cd %s\n', tagdir);
         fprintf(fid, 'svn mkdir _externals\n');
-        
+
         for i = 1:length(files)
             url_src = strrep(files{i}, [abspath(oetroot) filesep], oeturl);
             %url_dst = regexprep(oeturl, 'trunk\/.*$', ['tags/' OPT.name '/']);
             url_dst = regexprep(oetroot, 'trunk[\\\/].*$', ['tags/' OPT.name '/']);
-            
+
             if strfind(files{i}, fdir) == 1
                 url_dst = [url_dst strrep(files{i}, fdir, '')];
             elseif ~strcmpi(fileparts(oetroot), fileparts(files{i}))
@@ -136,31 +136,31 @@ switch OPT.type
             else
                 url_dst = strrep(url_src, oeturl, url_dst);
             end
-            
+
             url_src = strrep(url_src, '\', '/');
             url_dst = strrep(url_dst, '/', '\');
-            
+
             fprintf(fid, 'svn copy --parents %s %s\n', url_src, url_dst);
         end
-        
+
         fprintf(fid, 'cd ..\n');
         %fprintf(fid, 'svn commit -m "Added tag %s" %s\n', OPT.name, OPT.name);
-        
+
         fclose(fid);
-        
+
         fprintf('Creating tag "%s"...', OPT.name);
-        
+
         [r m] = system('maketag.bat');
-        
+
         if r > 0
             disp(m);
             error(['Creating tag failed']);
         else
             fprintf(' done');
         end
-        
+
         delete('maketag.bat');
-        
+
     otherwise
         error(['Unknown release type [' OPT.type ']']);
 end
