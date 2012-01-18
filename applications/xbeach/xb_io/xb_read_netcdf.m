@@ -116,6 +116,7 @@ variables = xb_set(variables, 'DIMS', xb);
 names = xb_get_vars(fname, 'vars', OPT.vars);
 
 c = 2;
+DIMSid = struct();
 for i = 1:length({info.Dataset.Name})
     if ~any(strcmpi(info.Dataset(i).Name, names)); continue; end;
     
