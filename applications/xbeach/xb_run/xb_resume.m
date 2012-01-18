@@ -103,6 +103,8 @@ xb      = xb_read_input(fpath);
 d       = xb_read_dims(fpath);
 [t i]   = closest(OPT.t, d.t);
 
+OPT.spinup = min([t OPT.spinup]);
+
 %% replace bathymetry
 
 xbo     = xb_read_output(fpath, 'vars', 'zb', 'start', i-1, 'length', 1);
@@ -129,7 +131,7 @@ end
 if xb_exist(xb, 'bcfile')
     bc = xb_get(xb, 'bcfile');
     tw = [0 cumsum(xb_get(bc, 'duration'))];
-    iw = interp1(tw, 1:length(tw), t);
+    iw = interp1(tw, 1:length(tw), t-OPT.spinup);
     
     idx = ~cellfun(@ischar, {bc.data.value});
     len =  cellfun(@length, {bc.data.value});
@@ -139,9 +141,9 @@ if xb_exist(xb, 'bcfile')
         k = bc.data(idx(i)).name;
         v = bc.data(idx(i)).value;
         
-        v = v(1:ceil(iw));
+        v = v(floor(iw):end);
         if strcmpi(k, 'duration')
-            v(1) = (1-iw-floor(iw))*v(1);
+            v(1) = (1-(iw-floor(iw)))*v(1);
         end
         
         bc.data(idx(i)).value = v;
@@ -154,17 +156,19 @@ end
 
 if xb_exist(xb, 'zs0file')
     zs0 = xb_get(xb, 'zs0file');
-    tt  = xb_get(zs0, 'time');
-    it  = interp1(tt, 1:length(tt), t);
+    t0  = xb_get(zs0, 'time');
+    it  = interp1(t0, 1:length(t0), t-OPT.spinup);
     
     z0  = xb_get(zs0, 'tide');
     z   = [];
     
-    for i = 1:size(z,1)
-        z(:,i) = [interp1(tt, z0, t) ; z0(ceil(it):end,i)];
+    for i = 1:size(z0,2)
+        z(:,i) = [interp1(t0, z0, t-OPT.spinup) ; z0(ceil(it):end,i)];
     end
     
-    zs0 = xb_set(zs0, 'time', [0 ; tt(ceil(it):end)-t]);
+    tt  = [0 ; t0(ceil(it):end)-t+OPT.spinup];
+    
+    zs0 = xb_set(zs0, 'time', tt);
     zs0 = xb_set(zs0, 'tide', z);
     
     xb = xb_set(xb, 'zs0file', zs0);
