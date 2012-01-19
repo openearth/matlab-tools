@@ -350,7 +350,7 @@ classdef MTestExplorer < handle
             this.JTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
             this.JTree.setCellRenderer(MTestTreeNodesRenderer());
             this.JTree.repaint;
-            set(this.JTree,'UserData',this);
+%            set(this.JTree,'UserData',this);
 
             % place tree in scrollpane
             this.JScrollPane = javax.swing.JScrollPane(this.JTree);
