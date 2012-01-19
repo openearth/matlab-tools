@@ -8,13 +8,11 @@ function varargout = KMLmarker(varargin)
 %   KMLmarker(lat,lon,'fileName',fname,<keyword,value>)
 %   KMLmarker(lat,lon,z,'fileName',fname,<keyword,value>)
 %
-%
-%
 % where lat can  be one scaler or an array of size(lon)
 % where - amongst others - the following <keyword,value> pairs have been implemented:
 %
-%  * filename               = []; % file name
-%  * kmlname                = []; % name that appears in Google Earth places list
+%  * fileName               = []; % file name
+%  * kmlName                = []; % name that appears in Google Earth places list
 %  * name                   = cellstr with name per point (shown when highlighted)
 %                             by default empty.
 %  * html                   = cellstr with text per point (shown when highlighted)

@@ -264,7 +264,13 @@ switch OPT.CS2.type
         end
 end
 
-% Vector correction
+%% force NaN to correct artefacts by e.g.
+% lon,lat]=convertCoordinates(nan,nan,'CS1.code',28992,'CS2.code',4326)
+mask = isnan(x1) | isnan(y1);
+x2(mask) = NaN;
+y2(mask) = NaN;
+
+%% Vector correction
 if vectorCorrection
     % Compute components of difference vector of CS1 and CS2 
     dx=x2v-x2;

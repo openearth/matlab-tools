@@ -64,16 +64,18 @@ function varargout = plotNet(varargin)
    OPT.cen = struct(... % KMLpatch3()
          'iconnormalState','http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png',...
         'colornormalState',[0 0 1],... % blue
-        'scalenormalState',0.2,... % less is not shonw in GE
-     'scalehighlightState',0); % no mouse-over
+        'scalenormalState',0.2,... % less is not shown in GE
+                 'kmlName','flow cells (centres)',...
+     'scalehighlightState',0.2); % no mouse-over
    OPT.cor  = struct(... % KMLpatch3()
          'iconnormalState','http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png',...
         'colornormalState',[1 1 0],... % yellow
-        'scalenormalState',0.2,... % less is not shonw in GE
-     'scalehighlightState',0); % no mouse-over
+        'scalenormalState',0.2,... % less is not shown in GE
+                 'kmlName','nodes (corners)',...
+     'scalehighlightState',0.2); % no mouse-over
    OPT.axis     = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
    OPT.fileName = [];
-   OPT.peri     = struct('lineWidth',1); % KMLline
+   OPT.peri     = struct('lineWidth',1,'kmlName','faces'); % KMLline
    OPT.epsg     = 28992;
    
    if nargin==0
@@ -88,6 +90,10 @@ function varargout = plotNet(varargin)
       ncfile   = G.file.name;
       end
       OPT = setProperty(OPT,varargin{2:end});
+   end
+   
+   if isempty(OPT.fileName)
+      OPT.fileName = [filepathstrname(ncfile),'.kml'];
    end
    
    if isnumeric(OPT.axis) & ~isempty(OPT.axis) % axis vector 2 polygon
@@ -184,4 +190,4 @@ function varargout = plotNet(varargin)
    
    end
    
-   KMLmerge_files('fileName',OPT.fileName,'sourceFiles',sourceFiles,'deleteSourceFiles',0)
+   KMLmerge_files('fileName',OPT.fileName,'sourceFiles',sourceFiles,'deleteSourceFiles',0,'distinctDocuments',1)

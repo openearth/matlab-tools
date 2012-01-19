@@ -89,7 +89,6 @@ elseif size(connectivity,2)>3
 end
 
 duo.done = duo.ends.*0;
-duo
 
 %% start with 1st full line segment
    
