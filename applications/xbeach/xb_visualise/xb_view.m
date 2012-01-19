@@ -1,21 +1,54 @@
 function xb_view(data, varargin)
-%XB_VIEW  One line description goes here.
+%XB_VIEW  Generic GUI to visualize XBeach input and output
 %
-%   More detailed description goes here.
+%   Graphical User Interface to visualize input and output. The viewer is
+%   *complementary* to the Delft3D QuickPlot (QP) viewer. Most options you
+%   find in this viewer are lacking in QP and vise versa.
+%
+%   This viewer accepts XBeach input, output and run structures or a path
+%   string to an XBeach output directory. In case no input is given, the
+%   current directory is assumed to contain XBeach output. It is also
+%   possible to provide a cell array with different datasources. These
+%   sources can be a mix of types (structures and paths), but need to have
+%   the same spatial grid and equal timestep.
+%
+%   The most important options are:
+%       * 1D, 2D and 3D plots
+%       * Multiple variable selection
+%       * Time sliders and animation
+%       * Time difference plots
+%       * Time comparison plots
+%       * Multiple datasource comparison plots
+%       * Transect view for 2D models with transect slider
+%       * Fixation and alignment of caxis
+%       * Measurement tool
 %
 %   Syntax:
-%   varargout = xb_view(varargin)
+%   xb_view(data, varargin)
 %
 %   Input:
-%   varargin  =
+%   data      = XBeach structure (input, output or run) or path to XBeach
+%               output directory or file
+%   varargin  = width:  Width of window at startup
+%               height: Height of window at startup
+%               model:  Boolean indicating modal state
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   xb_view
+%   xbi = xb_generate_model;
+%   xbr = xb_run(xbi, 'path', 'path/to/output/dir');
+%   xbo = xb_read_output('path/to/output/dir');
 %
-%   See also 
+%   xb_view;
+%   xb_view(xbi);
+%   xb_view(xbr);
+%   xb_view(xbo);
+%   xb_view('path/to/output/dir');
+%   xb_view(pwd, 'width', 1024, 'height', 768, 'modal', true);
+%   
+%   See also xb_plot_profile
 
 %% Copyright notice
 %   --------------------------------------------------------------------
