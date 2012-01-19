@@ -103,7 +103,7 @@ function ui_build(obj)
     
     % get info
     pobj = get_pobj(obj);
-    info = get(pobj, 'userdata');
+    info = get_info(obj);
     
     if length(info.t)<=1
         close(obj);
@@ -127,6 +127,11 @@ function ui_build(obj)
     uicontrol(pobj, 'Style', 'slider', 'Tag', 'Slider2', ...
         'Min', 1, 'Max', length(info.t), 'Value', length(info.t), 'SliderStep', sliderstep, ...
         'Callback', @ui_plot);
+    
+    uicontrol(pobj, 'Style', 'slider', 'Tag', 'SliderTransect', ...
+        'Min', 1, 'Max', size(info.y,1), 'Value', 1, 'SliderStep', min(1,max(0,[1 5]/(size(info.y,1)-1))), ...
+        'Enable', 'off', ...
+        'Callback', @ui_settransect);
 
     uicontrol(pobj, 'Style', 'text', 'Tag', 'TextSlider', ...
         'String', num2str(info.t(end)), 'HorizontalAlignment', 'center');
@@ -143,46 +148,57 @@ function ui_build(obj)
         'Callback', @ui_plot);
 
     % options
-    uicontrol(pobj, 'Style', 'checkbox', 'Tag', 'ToggleDiff', ...
+    uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleDiff', ...
         'String', 'diff', ...
         'Callback', @ui_togglediff);
     
-    uicontrol(pobj, 'Style', 'checkbox', 'Tag', 'ToggleCompare', ...
+    uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleCompare', ...
         'String', 'compare', ...
         'Callback', @ui_togglediff);
 
-    uicontrol(pobj, 'Style', 'checkbox', 'Tag', 'ToggleSurf', ...
+    uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleSurf', ...
         'String', 'surf', ...
         'Enable', 'off', ...
         'Callback', @ui_togglesurf);
     
-    uicontrol(pobj, 'Style', 'checkbox', 'Tag', 'ToggleCAxisFix', ...
+    uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleCAxisFix', ...
         'String', 'fix caxis', ...
         'Enable', 'off', ...
         'Callback', @ui_togglecaxis);
     
-    uicontrol(pobj, 'Style', 'checkbox', 'Tag', 'ToggleTransect', ...
+    uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleTransect', ...
         'String', 'transect', ...
         'Enable', 'off', ...
         'Callback', @ui_toggletransect);
     
-    uicontrol(pobj, 'Style', 'slider', 'Tag', 'SliderTransect', ...
-        'Min', 1, 'Max', size(info.y,1), 'Value', 1, 'SliderStep', min(1,max(0,[1 5]/(size(info.y,1)-1))), ...
-        'Enable', 'off', ...
-        'Callback', @ui_settransect);
-
-    % buttons
-    uicontrol(pobj, 'Style', 'pushbutton', 'Tag', 'ButtonAlign', ...
-        'String', 'Align', ...
+    uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleAuto', ...
+        'String', 'auto update', ...
+        'Value', 1);
+    
+    uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleMeasure', ...
+        'String', 'measure', ...
+        'Callback', @ui_togglemeasure);
+    
+    uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleEqual', ...
+        'String', 'equal axes', ...
+        'Callback', @ui_equal);
+    
+    uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleAlign', ...
+        'String', 'align caxis', ...
         'Enable', 'off', ...
         'Callback', @ui_align);
     
+    % buttons
+    uicontrol(pobj, 'Style', 'pushbutton', 'Tag', 'ButtonUpdate', ...
+        'String', 'update', ...
+        'Callback', @ui_plot);
+    
     uicontrol(pobj, 'Style', 'pushbutton', 'Tag', 'ButtonReload', ...
-        'String', 'Reload', ...
+        'String', 'reload', ...
         'Callback', @ui_reload);
     
     uicontrol(pobj, 'Style', 'togglebutton', 'Tag', 'ToggleAnimate', ...
-        'String', 'Animate', ...
+        'String', 'animate', ...
         'Callback', @ui_animate);
 
     set(findobj(pobj, 'Type', 'uicontrol'), 'BackgroundColor', [.8 .8 .8]);
@@ -199,10 +215,14 @@ function ui_build(obj)
         set_enable(obj, 'input');
     end
     
-    % reading indicator
+    % indicators
     uicontrol(pobj, 'Style', 'text', 'Tag', 'ReadIndicator', ...
         'String', 'READING', 'HorizontalAlignment', 'center', ...
         'BackgroundColor', 'red', 'FontWeight', 'bold', 'Visible', 'off');
+    
+    uicontrol(pobj, 'Style', 'text', 'Tag', 'MeasureIndicator', ...
+        'String', {'d=0.0' 'x=0.0' 'y=0.0'}, 'HorizontalAlignment', 'center', ...
+        'BackgroundColor', 'green', 'FontWeight', 'bold');
     
     ui_resize(pobj, []);
     
@@ -213,18 +233,17 @@ function ui_reload(obj, event)
     ui_read(obj);
     
     % get info
-    pobj = get_pobj(obj);
-    info = get(pobj, 'userdata');
+    info = get_info(obj);
     
     sliderstep = [1 5]/(length(info.t)-1);
     
     % sliders
-    set(findobj(pobj, 'Tag', 'Slider1'), 'Max', length(info.t), 'SliderStep', sliderstep)
-    set(findobj(pobj, 'Tag', 'Slider2'), 'Max', length(info.t), 'SliderStep', sliderstep, 'Value', length(info.t))
-    set(findobj(pobj, 'Tag', 'TextSlider1'), 'String', num2str(info.t(1)))
-    set(findobj(pobj, 'Tag', 'TextSlider2'), 'String', num2str(info.t(end)))
+    set(get_obj(obj, 'Slider1'), 'Max', length(info.t), 'SliderStep', sliderstep)
+    set(get_obj(obj, 'Slider2'), 'Max', length(info.t), 'SliderStep', sliderstep, 'Value', length(info.t))
+    set(get_obj(obj, 'TextSlider1'), 'String', num2str(info.t(1)))
+    set(get_obj(obj, 'TextSlider2'), 'String', num2str(info.t(end)))
     
-    ui_plot(pobj, []);
+    ui_plot(obj, []);
 end
 
 function ui_resize(obj, event)
@@ -232,54 +251,75 @@ function ui_resize(obj, event)
     pos = get(obj, 'Position');
     winsize = pos(3:4);
 
-    set(findobj(obj, 'Tag', 'PlotPanel'), 'Position', [[.075 .2].*winsize [.75 .75].*winsize]);
-    set(findobj(obj, 'Tag', 'Slider1'), 'Position', [[.1 .125].*winsize [.7 .025].*winsize]);
-    set(findobj(obj, 'Tag', 'Slider2'), 'Position', [[.1 .075].*winsize [.7 .025].*winsize]);
-    set(findobj(obj, 'Tag', 'TextSlider'), 'Position', [[.35 .025].*winsize [.2 .025].*winsize]);
-    set(findobj(obj, 'Tag', 'TextSlider1'), 'Position', [[.1 .025].*winsize [.2 .025].*winsize]);
-    set(findobj(obj, 'Tag', 'TextSlider2'), 'Position', [[.6 .025].*winsize [.2 .025].*winsize]);
-    set(findobj(obj, 'Tag', 'SelectVar'), 'Position', [[.85 .65].*winsize [.1 .25].*winsize]);
-    set(findobj(obj, 'Tag', 'ToggleDiff'), 'Position', [[.85 .6].*winsize [.1 .05].*winsize]);
-    set(findobj(obj, 'Tag', 'ToggleCompare'), 'Position', [[.85 .55].*winsize [.1 .05].*winsize]);
-    set(findobj(obj, 'Tag', 'ToggleSurf'), 'Position', [[.85 .5].*winsize [.1 .05].*winsize]);
-    set(findobj(obj, 'Tag', 'ToggleCAxisFix'), 'Position', [[.85 .45].*winsize [.1 .05].*winsize]);
-    set(findobj(obj, 'Tag', 'ToggleTransect'), 'Position', [[.85 .40].*winsize [.1 .05].*winsize]);
-    set(findobj(obj, 'Tag', 'SliderTransect'), 'Position', [[.85 .375].*winsize [.1 .025].*winsize]);
-    set(findobj(obj, 'Tag', 'ButtonAlign'), 'Position', [[.85 .18].*winsize [.1 .035].*winsize]);
-    set(findobj(obj, 'Tag', 'ButtonReload'), 'Position', [[.85 .125].*winsize [.1 .035].*winsize]);
-    set(findobj(obj, 'Tag', 'ToggleAnimate'), 'Position', [[.85 .07].*winsize [.1 .035].*winsize]);
-    set(findobj(obj, 'Tag', 'ReadIndicator'), 'Position', [[.85 .25].*winsize [.1 .025].*winsize]);
+    set(get_obj(obj, 'PlotPanel'), 'Position', [[.075 .2].*winsize [.75 .75].*winsize]);
+    
+    set(get_obj(obj, 'Slider1'), 'Position', [[.1 .125].*winsize [.7 .025].*winsize]);
+    set(get_obj(obj, 'Slider2'), 'Position', [[.1 .075].*winsize [.7 .025].*winsize]);
+    set(get_obj(obj, 'SliderTransect'), 'Position', [[.85 .91].*winsize [.1 .025].*winsize]);
+    
+    set(get_obj(obj, 'TextSlider'), 'Position', [[.35 .025].*winsize [.2 .025].*winsize]);
+    set(get_obj(obj, 'TextSlider1'), 'Position', [[.1 .025].*winsize [.2 .025].*winsize]);
+    set(get_obj(obj, 'TextSlider2'), 'Position', [[.6 .025].*winsize [.2 .025].*winsize]);
+    set(get_obj(obj, 'SelectVar'), 'Position', [[.85 .65].*winsize [.1 .25].*winsize]);
+    
+    set(get_obj(obj, 'ToggleDiff'), 'Position', [[.85 .6].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ToggleCompare'), 'Position', [[.85 .565].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ToggleSurf'), 'Position', [[.85 .53].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ToggleTransect'), 'Position', [[.85 .495].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ToggleMeasure'), 'Position', [[.85 .46].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ToggleCAxisFix'), 'Position', [[.85 .425].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ToggleAlign'), 'Position', [[.85 .39].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ToggleEqual'), 'Position', [[.85 .355].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ToggleAuto'), 'Position', [[.85 .32].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ButtonUpdate'), 'Position', [[.85 .285].*winsize [.1 .035].*winsize]);
+    
+    set(get_obj(obj, 'ButtonReload'), 'Position', [[.85 .125].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ToggleAnimate'), 'Position', [[.85 .07].*winsize [.1 .035].*winsize]);
+    set(get_obj(obj, 'ReadIndicator'), 'Position', [[.4 .955].*winsize [.1 .025].*winsize]);
+    set(get_obj(obj, 'MeasureIndicator'), 'Position', [[.85 .19].*winsize [.1 .075].*winsize]);
 end
 
 function ui_togglediff(obj, event)
-    pobj = get_pobj(obj);
-
+    
     % enable/disable secondary slider
     if get(obj, 'Value')
-        set(findobj(pobj, 'Tag', 'Slider1'), 'Enable', 'on');
+        set(get_obj(obj, 'Slider1'), 'Enable', 'on');
     else
-        set(findobj(pobj, 'Tag', 'Slider1'), 'Enable', 'off');
+        set(get_obj(obj, 'Slider1'), 'Enable', 'off');
     end
     
-    info = get(pobj, 'userdata');
-    info.(get(obj, 'String')) = get(obj, 'Value');
-    set(pobj, 'userdata', info);
+    info = get_info(obj);
+    
+    switch get(obj, 'Tag')
+        case 'ToggleDiff'
+            set(get_obj(obj, 'ToggleCompare'), 'Value', 0);
+            
+            info.update = info.update && ~info.compare;
+
+            info.diff = true;
+            info.compare = false;
+        case 'ToggleCompare'
+            set(get_obj(obj, 'ToggleDiff'), 'Value', 0);
+            
+            info.diff = false;
+            info.compare = true;
+    end
+    
+    set_info(obj, info);
 
     ui_plot(obj, []);
 end
 
 function ui_togglesurf(obj, event)
-    pobj = get_pobj(obj);
-    
-    info = get(pobj, 'userdata');
+    info = get_info(obj);
     if get(obj, 'Value')
-        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'off');
+        set(get_obj(obj, 'ToggleTransect'), 'Enable', 'off');
         info.surf = true;
     else
-        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'on');
+        set(get_obj(obj, 'ToggleTransect'), 'Enable', 'on');
         info.surf = false;
     end
-    set(pobj, 'userdata', info);
+    set_info(obj, info);
 
     cla(get_axis(obj));
 
@@ -287,31 +327,38 @@ function ui_togglesurf(obj, event)
 end
 
 function ui_togglecaxis(obj, event)
-    pobj = get_pobj(obj);
-    
-    info = get(pobj, 'userdata');
+    info = get_info(obj);
     if get(obj, 'Value')
-        info.caxis = get(get_axis(obj), 'CLim');
+        info.caxis = flipud(get(get_axis(obj), 'CLim'));
     else
         info.caxis = [];
     end
-    set(pobj, 'userdata', info);
+    set_info(obj, info);
+end
+
+function ui_togglemeasure(obj, event)
+    if get(obj, 'Value')
+        [x y] = ginput;
+        L{1} = sprintf('d=%2.1f', sum(sqrt(diff(x).^2+diff(y).^2)));
+        L{2} = sprintf('x=%2.1f', sum(abs(diff(x))));
+        L{3} = sprintf('y=%2.1f', sum(abs(diff(y))));
+        set(get_obj(obj, 'MeasureIndicator'), 'String', L);
+    end
     
-    ui_plot(obj, []);
+    set(obj, 'Value', 0);
 end
 
 function ui_toggletransect(obj, event)
-    pobj = get_pobj(obj);
-    
-    info = get(pobj, 'userdata');
+    info = get_info(obj);
     if get(obj, 'Value')
         set_enable(obj, '1d');
-        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'on');
-        sobj = findobj(pobj, 'Tag', 'SliderTransect');
+        set(get_obj(obj, 'ToggleTransect'), 'Enable', 'on');
+        sobj = get_obj(obj, 'SliderTransect');
         set(sobj, 'Enable', 'on');
         
         ax = get_axis(obj);
-        set(gcf,'CurrentAxes',ax(1)); [x y] = ginput(1);
+        set(gcf,'CurrentAxes',ax(1));
+        [x y] = ginput(1);
         [y i] = closest(y, info.y(:,1));
         set(sobj, 'Value', i);
         
@@ -319,11 +366,11 @@ function ui_toggletransect(obj, event)
     else
         set_enable(obj, '2d');
         
-        set(findobj(pobj, 'Tag', 'SliderTransect'), 'Enable', 'off');
+        set(get_obj(obj, 'SliderTransect'), 'Enable', 'off');
         
         info.transect = [];
     end
-    set(pobj, 'userdata', info);
+    set_info(obj, info);
     
     cla(get_axis(obj));
     
@@ -331,13 +378,12 @@ function ui_toggletransect(obj, event)
 end
 
 function ui_settransect(obj, event)
-    pobj = get_pobj(obj);
-    sobj = findobj(pobj, 'Tag', 'SliderTransect');
+    sobj = get_obj(obj, 'SliderTransect');
     
-    info = get(pobj, 'userdata');
+    info = get_info(obj);
     i = round(get(sobj, 'Value'));
     info.transect = [info.y(i,1) i];
-    set(pobj, 'userdata', info);
+    set_info(obj, info);
     
     ui_plot(obj, []);
 end
@@ -355,9 +401,18 @@ function ui_align(obj, event)
     set(ax, 'CLim', clim);
 end
 
+function ui_equal(obj, event)
+    ax = get_axis(obj);
+    
+    if get(obj, 'Value')
+        axis(ax, 'image');
+    else
+        axis(ax, 'normal');
+    end
+end
+
 function ui_read(obj)
-    pobj = get_pobj(obj);
-    info = get(pobj, 'userdata');
+    info = get_info(obj);
 
     if isfield(info, 'input')
         
@@ -469,23 +524,24 @@ function ui_read(obj)
                 info.ndims = 2;
             end
 
-            info.diff = false;
-            info.compare = false;
-            info.surf = false;
-            info.caxis = [];
-            info.transect = [];
+            if ~strcmpi(get(obj, 'Tag'), 'ButtonReload')
+                info.diff = false;
+                info.compare = false;
+                info.surf = false;
+                info.caxis = [];
+                info.transect = [];
+                info.update = false;
+            end
         end
         
-        set(pobj, 'userdata', info);
+        set_info(obj, info);
     else
         error('No data supplied');
     end
 end
 
 function data = ui_getdata(obj, info, vars, slider)
-    pobj = get_pobj(obj);
-    
-    iobj = findobj(pobj, 'Tag', 'ReadIndicator');
+    iobj = get_obj(obj, 'ReadIndicator');
     set(iobj, 'Visible', 'on'); drawnow;
     
     m = length(info.input);
@@ -496,8 +552,8 @@ function data = ui_getdata(obj, info, vars, slider)
         data{i} = data{1};
     end
     
-    t1 = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'));
-    t2 = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'));
+    t1 = round(get(get_obj(obj, 'Slider1'), 'Value'));
+    t2 = round(get(get_obj(obj, 'Slider2'), 'Value'));
     
     if exist('slider', 'var') && slider == 1
         slider = 1;
@@ -540,7 +596,7 @@ function data = ui_getdata(obj, info, vars, slider)
         data = cellfun(@minus, data, data0, 'UniformOutput', false);
     end
     
-    tobj = findobj(pobj, 'Tag', 'TextSlider');
+    tobj = get_obj(obj, 'TextSlider');
     if info.diff
         set(tobj, 'String', [num2str(info.t(t2)) ' - ' num2str(info.t(t1))]);
     elseif info.compare
@@ -553,62 +609,77 @@ function data = ui_getdata(obj, info, vars, slider)
 end
 
 function ui_plot(obj, event)
-    pobj = get_pobj(obj);
-    info = get(pobj, 'userdata');
+    info = get_info(obj);
     
     if ismember(get(obj, 'Tag'), {'SelectVar' 'ToggleSurf' 'ToggleCompare' 'ToggleTransect'})
-        delete(get_axis(obj));
+        info.update = false;
     end
     
-    vars = selected_vars(obj);
-    data = ui_getdata(obj, info, vars, 2);
-    
-    if info.compare
-        data0 = ui_getdata(obj, info, vars, 1);
-        data = cat(2, data0, data);
+    if get(get_obj(obj, 'ToggleAuto'), 'Value') || ismember(get(obj, 'Tag'), {'ToggleAnimate' 'ButtonUpdate' 'ToggleTransect', 'ButtonReload'})
+        
+        if ~info.update
+            delete(get_axis(obj));
+        end
+
+        vars = selected_vars(obj);
+        data = ui_getdata(obj, info, vars, 2);
+
+        if info.compare
+            data0 = ui_getdata(obj, info, vars, 1);
+            data = cat(2, data0, data);
+        end
+
+        if info.ndims == 1 || ~isempty(info.transect)
+            plot_1d(obj, info, data, vars);
+        else
+            plot_2d(obj, info, data, vars);
+        end
+        
+        if get(get_obj(obj, 'ToggleAlign'), 'Value')
+            ui_align(obj, event);
+        end
+        
+        if get(get_obj(obj, 'ToggleEqual'), 'Value')
+            ui_equal(obj, event);
+        end
+        
+        info.update = true;
+        
     end
     
-    if info.ndims == 1 || ~isempty(info.transect)
-        plot_1d(obj, info, data, vars);
-    else
-        plot_2d(obj, info, data, vars);
-    end
+    set_info(obj, info);
 end
 
 function ui_animate(obj, event)
-    pobj = get_pobj(obj);
-
+    
     % get minimum, maximum and current time
-    tmin = get(findobj(pobj, 'Tag', 'Slider2'), 'Min');
-    tmax = get(findobj(pobj, 'Tag', 'Slider2'), 'Max');
-    t = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'));
+    tmin = get(get_obj(obj, 'Slider2'), 'Min');
+    tmax = get(get_obj(obj, 'Slider2'), 'Max');
+    t = round(get(get_obj(obj, 'Slider2'), 'Value'));
 
     % update time
     t = min(tmax, ceil(t+(tmax-tmin)/20));
-    set(findobj(pobj, 'Tag', 'Slider2'), 'Value', t);
+    set(get_obj(obj, 'Slider2'), 'Value', t);
 
     % reload data
     ui_plot(obj, event); drawnow;
 
     % start new loop if maximum is not reached
     if t < tmax
-        if get(findobj(pobj, 'Tag', 'ToggleAnimate'), 'Value')
+        if get(get_obj(obj, 'ToggleAnimate'), 'Value')
             pause(.1)
             ui_animate(obj, event)
         end
     else
-        set(findobj(pobj, 'Tag', 'ToggleAnimate'), 'Value', 0);
+        set(get_obj(obj, 'ToggleAnimate'), 'Value', 0);
     end
 end
 
 function plot_1d(obj, info, data, vars)
-    pobj = get_pobj(obj);
-    
-    update = true;
     ax = get_axis(obj);
-    if isempty(ax)
-        update = false;
-        ax = axes('Parent', findobj(pobj, 'Tag', 'PlotPanel')); hold on;
+    
+    if ~info.update
+        ax = axes('Parent', get_obj(obj, 'PlotPanel')); hold on;
     end
     
     lines = flipud(findobj(ax, 'Type', 'line'));
@@ -625,7 +696,7 @@ function plot_1d(obj, info, data, vars)
             for i3 = 1:n3
                 ii = i3+(i2-1)*n3+(i1-1)*n2*n3;
 
-                if update
+                if info.update
                     set(lines(ii),...
                         'XData', info.x(1,:),...
                         'YData', squeeze(data{ii}(:,1,:)));
@@ -649,14 +720,7 @@ function plot_1d(obj, info, data, vars)
 end
 
 function plot_2d(obj, info, data, vars)
-    pobj = get_pobj(obj);
-    
     ax = get_axis(obj);
-    if isempty(ax)
-        update = false;
-    else
-        update = true;
-    end
     
     surface = flipud(findobj(ax, 'Type', 'surface'));
     
@@ -674,12 +738,12 @@ function plot_2d(obj, info, data, vars)
             for i3 = 1:n3
                 ii = i3+(i2-1)*n3+(i1-1)*n2*n3;
 
-                sp(ii) = subplot(sy, sx, ii, 'Parent', findobj(pobj, 'Tag', 'PlotPanel'));
+                sp(ii) = subplot(sy, sx, ii, 'Parent', get_obj(obj, 'PlotPanel'));
 
                 data{ii} = squeeze(data{ii});
 
                 if all(size(info.x) == size(data{ii})) && all(size(info.y) == size(data{ii}))
-                    if update
+                    if info.update
                         set(surface(ii), 'XData', info.x, 'YData', info.y, ...
                             'ZData', data{ii}, 'CData', data{ii});
                     else
@@ -694,11 +758,13 @@ function plot_2d(obj, info, data, vars)
                 end
 
                 if iscell(info.caxis)
-                    info.caxis = info.caxis{min(ii, length(info.caxis))};
+                    caxis = info.caxis{min(ii, length(info.caxis))};
+                else
+                    caxis = info.caxis;
                 end
-
-                if ~isempty(info.caxis)
-                    set(sp(ii), 'CLim', info.caxis);
+                
+                if ~isempty(caxis)
+                    set(sp(ii), 'CLim', caxis);
                 else
                     set(sp(ii), 'CLimMode', 'auto');
                 end
@@ -713,9 +779,8 @@ function plot_2d(obj, info, data, vars)
 end
 
 function vars = selected_vars(obj)
-    pobj = get_pobj(obj);
-    vars = get(findobj(pobj, 'Tag', 'SelectVar'), 'String');
-    vars = vars(get(findobj(pobj, 'Tag', 'SelectVar'), 'Value'),:);
+    vars = get(get_obj(obj, 'SelectVar'), 'String');
+    vars = vars(get(get_obj(obj, 'SelectVar'), 'Value'),:);
     vars = strtrim(num2cell(vars, 2));
 end
 
@@ -732,9 +797,22 @@ function pobj = get_pobj(obj)
     end
 end
 
-function name = get_name(obj, info, n, i)
+function obj = get_obj(obj, name)
     pobj = get_pobj(obj);
-    
+    obj = findobj(pobj, 'Tag', name);
+end
+
+function info = get_info(obj)
+    pobj = get_pobj(obj);
+    info = get(pobj, 'userdata');
+end
+
+function set_info(obj, info)
+    pobj = get_pobj(obj);
+    set(pobj, 'userdata', info);
+end
+
+function name = get_name(obj, info, n, i)
     vars = selected_vars(obj);
     
     n2 = length(info.input);
@@ -746,38 +824,36 @@ function name = get_name(obj, info, n, i)
     i3 = floor( i-(i2-1)*n3-(i1-1)*n2*n3-1)+1;
     
     if n1 > 1 && i1 == 1
-        t = round(get(findobj(pobj, 'Tag', 'Slider1'), 'Value'));
+        t = round(get(get_obj(obj, 'Slider1'), 'Value'));
     else
-        t = round(get(findobj(pobj, 'Tag', 'Slider2'), 'Value'));
+        t = round(get(get_obj(obj, 'Slider2'), 'Value'));
     end
     
     name = sprintf('%s (file #%d, t = %d)', vars{i3}, i2, info.t(t));
 end
 
 function set_enable(obj, opt)
-    pobj = get_pobj(obj);
-
     if ~iscell(opt)
         opt = {opt};
     end
     
     if ismember('1d', opt)
-        set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'off');
-        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'off');
-        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'off');
-        set(findobj(pobj, 'Tag', 'ButtonAlign'), 'Enable', 'off');
+        set(get_obj(obj, 'ToggleSurf'), 'Enable', 'off');
+        set(get_obj(obj, 'ToggleCAxisFix'), 'Enable', 'off');
+        set(get_obj(obj, 'ToggleTransect'), 'Enable', 'off');
+        set(get_obj(obj, 'ToggleAlign'), 'Enable', 'off');
     end
     
     if ismember('2d', opt)
-        set(findobj(pobj, 'Tag', 'ToggleSurf'), 'Enable', 'on');
-        set(findobj(pobj, 'Tag', 'ToggleCAxisFix'), 'Enable', 'on');
-        set(findobj(pobj, 'Tag', 'ToggleTransect'), 'Enable', 'on');
-        set(findobj(pobj, 'Tag', 'ButtonAlign'), 'Enable', 'on');
+        set(get_obj(obj, 'ToggleSurf'), 'Enable', 'on');
+        set(get_obj(obj, 'ToggleCAxisFix'), 'Enable', 'on');
+        set(get_obj(obj, 'ToggleTransect'), 'Enable', 'on');
+        set(get_obj(obj, 'ToggleAlign'), 'Enable', 'on');
     end
     
     if ismember('input', opt)
-        set(findobj(pobj, 'Tag', 'ToggleDiff'), 'Enable', 'off');
-        set(findobj(pobj, 'Tag', 'Slider2'), 'Enable', 'off');
-        set(findobj(pobj, 'Tag', 'ToggleAnimate'), 'Enable', 'off');
+        set(get_obj(obj, 'ToggleDiff'), 'Enable', 'off');
+        set(get_obj(obj, 'Slider2'), 'Enable', 'off');
+        set(get_obj(obj, 'ToggleAnimate'), 'Enable', 'off');
     end
 end
