@@ -196,7 +196,7 @@ function varargout = bct2bca(varargin)
 %% Return defaults
 
    if nargin==0
-      varargout = {H};
+      varargout = {OPT};
       return
    end
 
