@@ -432,7 +432,7 @@ BCA.DATA = [];
          %% Put in *.bca struct
          
             BCA.DATA(end+1).names = tidestruc.name        ;% [n x 2 char]
-            BCA.DATA(end).Label   = T.location;            % 'north_001A'
+            BCA.DATA(end).label   = T.location;            % 'north_001A'
             BCA.DATA(end).amp     = tidestruc.tidecon(:,1);% [0.0670 0.1085 0.0244 0.0292 0.0172 0.0252 0.0663 0.0723]
             BCA.DATA(end).phi     = tidestruc.tidecon(:,3);% [168.2587 106.2307 162.9063 81.0589 143.1680 -86.1792 -84.3035 119.0369]
 
@@ -470,7 +470,7 @@ BCA.DATA = [];
 
 %% Output
 
-   delft3d_io_bca('write',[OPT.bcafile],BCA,BND)
+   delft3d_io_bca('write',[OPT.bcafile],BCA)
 
    if nargout==1
       varargout = {BCA};
