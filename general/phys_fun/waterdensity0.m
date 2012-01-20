@@ -1,5 +1,5 @@
 function [rhow] = waterdensity0(S,T)
-% WATERDENSITY0(S,T) computes the density of sea water at atmospheric
+%WATERDENSITY0(S,T) computes the density of sea water at atmospheric
 % pressure using UNESCO 1983 (EOS 1980) polynomial.
 %
 % INPUT:  (all must have same dimensions)

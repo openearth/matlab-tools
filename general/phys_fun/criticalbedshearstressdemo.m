@@ -1,7 +1,5 @@
 function criticalbedshearstressdemo
-%UNTITLED  One line description goes here.
-%
-%   More detailed description goes here.
+%criticalbedshearstressdemo  demo criticalbedshearstress
 %
 %   Syntax:
 %   criticalbedshearstressdemo

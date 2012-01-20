@@ -1,5 +1,7 @@
 function K = waterseck(S,T,P)
-% WATERSECK computes the secant bulk modulus (K) of sea water using Equation 
+%WATERSECK secant bulk modulus (K) of sea water with Unesco Equation of state 1980
+%
+% computes the secant bulk modulus (K) of sea water using Equation 
 % of state 1980. UNESCO polynomial implementation.
 %
 % INPUT:  (all must have same dimensions)

@@ -1,5 +1,7 @@
 function [phihs] = hinderedsettlingfactor(c, cgel)
-%HINDEREDSETTLINGFACTOR(c, cgel) computes the reduction in settling velocity
+%HINDEREDSETTLINGFACTOR reduction in settling velocity due to gelling
+%
+%   [phihs] = hinderedsettlingfactor(c, cgel)
 %
 %   c: mass concentration (kg/m^3)
 %   cgel: gelling mass concentration (kg/m^3), between 130 and 1722 kg/m^3

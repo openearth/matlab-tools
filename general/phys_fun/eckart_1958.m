@@ -1,6 +1,8 @@
 function density = eckart_1958(varargin)
 %ECKART_1958 equation of state according to Eckart [1958]
 %
+%  density = eckart_1958(varargin)
+%
 % Calculates density from salinity and temperature.
 %
 %   - density     [kg/m3]    

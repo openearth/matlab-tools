@@ -1,6 +1,7 @@
 function [ws] = fallvelocity(D50, rhos, sal, temp)
-%FALLVELOCITY(D50, rhos, sal, temp) computes the sediment particle fall
-%velocity water in m/s
+%FALLVELOCITY(D50, rhos, sal, temp) computes the sediment particle fall velocity water in m/s
+%
+%   [ws] = fallvelocity(D50, rhos, sal, temp)
 %
 %   D50: median diameter of the sediment (m)
 %   rhos: sediment density (kg/m^3);

@@ -1,5 +1,8 @@
 function [phiflocs] = flocfactor(c, cgel, d50, sal, salmax)
 %FLOCFACTOR(c, cgel, d50, sal, salmax) computes the flocculation factor
+%
+%  [phiflocs] = flocfactor(c, cgel, d50, sal, salmax)
+%
 % The relation used here is published by Van Rijn (2007a,b)
 %
 % Input:

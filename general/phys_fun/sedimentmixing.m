@@ -1,5 +1,8 @@
 function epsilon = sedimentmixing(z_level, h, DeltaW, UstarCW, ws, ls)
 %SEDIMENTMIXING   computes the sediment diffusivity.
+%
+% epsilon = sedimentmixing(z_level, h, DeltaW, UstarCW, ws, ls)
+%
 % computes the sediment diffusivity epsilon to be applied in an advection-diffusion model
 % 
 %   z_level is the height above the bed at which epsilon is computed

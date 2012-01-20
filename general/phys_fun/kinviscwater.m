@@ -1,5 +1,7 @@
 function [visc] = kinviscwater(S, T, P)
-%KINVISCWATER computes the kinematic viscosity of sea-water.
+%KINVISCWATER kinematic viscosity of sea-water based on Dan Kelley's fit to Knauss's TABLE II-8
+%
+% computes the kinematic viscosity of sea-water.
 % based on Dan Kelley's fit to Knauss's TABLE II-8
 %
 % Input:  (all must have same dimensions)

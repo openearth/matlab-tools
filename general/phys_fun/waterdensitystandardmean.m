@@ -1,5 +1,7 @@
 function dens = waterdensitystandardmean(T)
-% WATERDENSITYSTANDARDMEAN(T) computes the density of standard mean ocean water 
+%WATERDENSITYSTANDARDMEAN(T) density of standard mean sea water (pure water) using EOS 1980
+%
+% computes the density of standard mean ocean water 
 %(pure water) using EOS 1980. 
 %
 % INPUT: 

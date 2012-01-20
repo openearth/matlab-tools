@@ -1,6 +1,5 @@
 function flocandhinderedsettlingfactordemo(varargin)
-%FLOCANDHINDEREDSETTLINGFACTORDEMO demonstrates the use of fallvelocity.m,
-% flocfactor.m and hinderedsettlingfactor.m
+%FLOCANDHINDEREDSETTLINGFACTORDEMO demonstrates fallvelocity, flocfactor, hinderedsettlingfactor
 %
 %   The functions are from Van Rijn (2007a,b)
 %

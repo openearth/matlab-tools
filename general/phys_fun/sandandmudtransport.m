@@ -1,6 +1,8 @@
 function [cmud, csand, z, qxmud1depthint, qymud1depthint, qxsand1depthint,...
     qysand1depthint] = sandandmudtransport(time,h,Ux,Uy,Hs,Tp, varargin)
-%SANDANDMUDTRANSPORT computes the variation of the depth-integrated sand 
+%SANDANDMUDTRANSPORT variation of the depth-integrated sand and mud transport
+%
+% computes the variation of the depth-integrated sand 
 % and mud transport. The suspended sand transport is included assuming 
 % that the sediment bed (pmud+psand=1) behaves as a cohesive mixture.
 %

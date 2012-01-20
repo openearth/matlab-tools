@@ -1,5 +1,8 @@
 function epsilon = sedimentmixingparabolic(epsmax, z_level, h)
 %SEDIMENTMIXINGPARABOLIC   computes the sediment diffusivity.
+%
+% epsilon = sedimentmixingparabolic(epsmax, z_level, h)
+% 
 % computes the sediment diffusivity epsilon to be applied in an advection-diffusion model
 % 
 %   epsmax = 0.1 * UstarCW * h is the maximum sediment mixing coefficient at z/h = 0.5 

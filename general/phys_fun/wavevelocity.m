@@ -1,21 +1,9 @@
 function [c cg n k] = wavevelocity(T, h, varargin)
-%WAVEVELOCITY  One line description goes here.
+%WAVEVELOCITY  dispersion relation of short surface waves
 %
-%   More detailed description goes here.
+%  [c cg n k] = wavevelocity(T, h)
 %
-%   Syntax:
-%   varargout = wavevelocity(varargin)
-%
-%   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
-%
-%   Example
-%   wavevelocity
-%
-%   See also
+%   See also: disper
 
 %% Copyright notice
 %   --------------------------------------------------------------------
