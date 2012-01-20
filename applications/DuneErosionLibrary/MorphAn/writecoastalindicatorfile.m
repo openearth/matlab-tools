@@ -65,31 +65,61 @@ along = indicators.rsplocatie;
 areacode = indicators.kustvaknummer;
 time = indicators.time;
 
+useMatlabLib = exist('verLessThan','file') == 2 && ~verLessThan('matlab','7.13.0');
+
 %% create empty file
-nc_create_empty(filename)
+if useMatlabLib
+    ncid = netcdf.create(filename,'CLOBBER');
+else
+    nc_create_empty(filename);
+end
+
 
 %% Add overall meta info
 %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventionindicators.html#description-of-file-contents
 %------------------
 
-nc_attput(filename, nc_global, 'title'         , 'coastal indicator');
-nc_attput(filename, nc_global, 'institution'   , 'Deltares');
-nc_attput(filename, nc_global, 'source'        , '');
-nc_attput(filename, nc_global, 'history'       , ['created on ', datestr(now)]);
-nc_attput(filename, nc_global, 'references'    , '');
-nc_attput(filename, nc_global, 'email'         , '');
-nc_attput(filename, nc_global, 'comment'       , '');
-nc_attput(filename, nc_global, 'version'       , '0.1');
-nc_attput(filename, nc_global, 'Conventions'   , 'CF-1.5');
-nc_attput(filename, nc_global, 'spatial_ref', 'COMPD_CS["Amersfoort / RD New + NAP",PROJCS["Amersfoort / RD New",GEOGCS["Amersfoort",DATUM["Amersfoort",SPHEROID["Bessel 1841",6377397.155,299.1528128,AUTHORITY["EPSG","7004"]],TOWGS84[565.04,49.91,465.84,-0.40939438743923684,-0.35970519561431136,1.868491000350572,0.8409828680306614],AUTHORITY["EPSG","6289"]],PRIMEM["Greenwich",0.0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.017453292519943295],AXIS["Geodetic latitude",NORTH],AXIS["Geodetic longitude",EAST],AUTHORITY["EPSG","4289"]],PROJECTION["Oblique Stereographic",AUTHORITY["EPSG","9809"]],PARAMETER["central_meridian",5.387638888888891],PARAMETER["latitude_of_origin",52.15616055555556],PARAMETER["scale_factor",0.9999079],PARAMETER["false_easting",155000.0],PARAMETER["false_northing",463000.0],UNIT["m",1.0],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","28992"]],VERT_CS["Normaal Amsterdams Peil",VERT_DATUM["Normaal Amsterdams Peil",2005,AUTHORITY["EPSG","5109"]],UNIT["m",1.0],AXIS["Gravity-related height",UP],AUTHORITY["EPSG","5709"]],AUTHORITY["EPSG","7415"]]');
-nc_attput(filename, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat');
-nc_attput(filename, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+if useMatlabLib
+    varIdGlobal = netcdf.getConstant('GLOBAL');
+    netcdf.putAtt(ncid,varIdGlobal,'title'         , 'coastal indicator');
+    netcdf.putAtt(ncid,varIdGlobal,'institution'   , 'Deltares');
+    netcdf.putAtt(ncid,varIdGlobal,'source'        , '');
+    netcdf.putAtt(ncid,varIdGlobal,'history'       , ['created on ', datestr(now)]);
+    netcdf.putAtt(ncid,varIdGlobal,'references'    , '');
+    netcdf.putAtt(ncid,varIdGlobal,'email'         , '');
+    netcdf.putAtt(ncid,varIdGlobal,'comment'       , '');
+    netcdf.putAtt(ncid,varIdGlobal,'version'       , '0.1');
+    netcdf.putAtt(ncid,varIdGlobal,'Conventions'   , 'CF-1.5');
+    netcdf.putAtt(ncid,varIdGlobal,'spatial_ref', 'COMPD_CS["Amersfoort / RD New + NAP",PROJCS["Amersfoort / RD New",GEOGCS["Amersfoort",DATUM["Amersfoort",SPHEROID["Bessel 1841",6377397.155,299.1528128,AUTHORITY["EPSG","7004"]],TOWGS84[565.04,49.91,465.84,-0.40939438743923684,-0.35970519561431136,1.868491000350572,0.8409828680306614],AUTHORITY["EPSG","6289"]],PRIMEM["Greenwich",0.0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.017453292519943295],AXIS["Geodetic latitude",NORTH],AXIS["Geodetic longitude",EAST],AUTHORITY["EPSG","4289"]],PROJECTION["Oblique Stereographic",AUTHORITY["EPSG","9809"]],PARAMETER["central_meridian",5.387638888888891],PARAMETER["latitude_of_origin",52.15616055555556],PARAMETER["scale_factor",0.9999079],PARAMETER["false_easting",155000.0],PARAMETER["false_northing",463000.0],UNIT["m",1.0],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","28992"]],VERT_CS["Normaal Amsterdams Peil",VERT_DATUM["Normaal Amsterdams Peil",2005,AUTHORITY["EPSG","5109"]],UNIT["m",1.0],AXIS["Gravity-related height",UP],AUTHORITY["EPSG","5709"]],AUTHORITY["EPSG","7415"]]');
+    netcdf.putAtt(ncid,varIdGlobal,'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat');
+    netcdf.putAtt(ncid,varIdGlobal,'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+else
+    nc_attput(filename, nc_global, 'title'         , 'coastal indicator');
+    nc_attput(filename, nc_global, 'institution'   , 'Deltares');
+    nc_attput(filename, nc_global, 'source'        , '');
+    nc_attput(filename, nc_global, 'history'       , ['created on ', datestr(now)]);
+    nc_attput(filename, nc_global, 'references'    , '');
+    nc_attput(filename, nc_global, 'email'         , '');
+    nc_attput(filename, nc_global, 'comment'       , '');
+    nc_attput(filename, nc_global, 'version'       , '0.1');
+    nc_attput(filename, nc_global, 'Conventions'   , 'CF-1.5');
+    nc_attput(filename, nc_global, 'spatial_ref', 'COMPD_CS["Amersfoort / RD New + NAP",PROJCS["Amersfoort / RD New",GEOGCS["Amersfoort",DATUM["Amersfoort",SPHEROID["Bessel 1841",6377397.155,299.1528128,AUTHORITY["EPSG","7004"]],TOWGS84[565.04,49.91,465.84,-0.40939438743923684,-0.35970519561431136,1.868491000350572,0.8409828680306614],AUTHORITY["EPSG","6289"]],PRIMEM["Greenwich",0.0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.017453292519943295],AXIS["Geodetic latitude",NORTH],AXIS["Geodetic longitude",EAST],AUTHORITY["EPSG","4289"]],PROJECTION["Oblique Stereographic",AUTHORITY["EPSG","9809"]],PARAMETER["central_meridian",5.387638888888891],PARAMETER["latitude_of_origin",52.15616055555556],PARAMETER["scale_factor",0.9999079],PARAMETER["false_easting",155000.0],PARAMETER["false_northing",463000.0],UNIT["m",1.0],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","28992"]],VERT_CS["Normaal Amsterdams Peil",VERT_DATUM["Normaal Amsterdams Peil",2005,AUTHORITY["EPSG","5109"]],UNIT["m",1.0],AXIS["Gravity-related height",UP],AUTHORITY["EPSG","5709"]],AUTHORITY["EPSG","7415"]]');
+    nc_attput(filename, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat');
+    nc_attput(filename, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+end
 
 %% create dimensions
 % add dimensions
-nc_adddim(filename, 'time', length(time)); % 0);
-nc_adddim(filename, 'alongshore', length(along));
-nc_adddim(filename, 'stringsize', 100);
+
+if useMatlabLib
+    dims = {'time',netcdf.defDim(ncid, 'time', length(time));...
+        'alongshore',netcdf.defDim(ncid, 'alongshore', length(along));...
+        'stringsize',netcdf.defDim(ncid, 'stringsize', 100)};
+else
+    nc_adddim(filename, 'time', length(time)); % 0);
+    nc_adddim(filename, 'alongshore', length(along));
+    nc_adddim(filename, 'stringsize', 100);
+end
 
 %%
 i = 0;
@@ -129,7 +159,11 @@ nc(i).Attribute(4) = struct('Name', 'comment'       ,'Value', 'measurement year'
 
 %% create variables with attributes
 for i = 1:length(nc)
-    nc_addvar(filename, nc(i));
+    if useMatlabLib
+        netcdf.defVar(ncid,nc(i).Name,nc(i).Nctype,[dims{ismember(dims(:,1),nc(i).Dimension),2}]);
+    else
+        nc_addvar(filename, nc(i));
+    end
 end
 
 for i = 1:length(indicators.indicatoren)
@@ -139,12 +173,36 @@ for i = 1:length(indicators.indicatoren)
     nc(end).Dimension    = {'alongshore','time'};
     nc(end).Attribute(1) = struct('Name', 'indicator_name','Value', indicators.indicatoren(i).name);
     nc(end).Attribute(2) = struct('Name', '_FillValue'    ,'Value', NaN);
-    nc_addvar(filename, nc(end));
-    nc_varput(filename, varname, indicators.indicatoren(i).values);
+    
+    if useMatlabLib
+        nd = zeros(1,length(nc(end).Dimension));
+        for id = 1:length(nc(end).Dimension)
+            nd(id) = dims{ismember(dims(:,1),nc(end).Dimension(id)),2};
+        end
+        varid = netcdf.defVar(ncid,nc(end).Name,nc(end).Nctype,fliplr(nd));
+        for iAtt = 1:length(nc(end).Attribute)
+            netcdf.putAtt(ncid,varid,nc(end).Attribute(iAtt).Name,nc(end).Attribute(iAtt).Value);
+        end
+        netcdf.endDef(ncid);
+        netcdf.putVar(ncid,varid,indicators.indicatoren(i).values);
+        netcdf.reDef(ncid);
+    else
+        nc_addvar(filename, nc(end));
+        nc_varput(filename, varname, indicators.indicatoren(i).values);
+    end
 end
 
 %% store variables
-nc_varput(filename, 'id'                      , areacode*1000000 + along);
-nc_varput(filename, 'areacode'                , areacode);
-nc_varput(filename, 'alongshore'              , along);
-nc_varput(filename, 'time'                    , (time-1970)*365);
+if  useMatlabLib
+    netcdf.endDef(ncid);
+    netcdf.putVar(ncid, netcdf.inqVarID(ncid,'id')         , areacode*1000000 + along);
+    netcdf.putVar(ncid, netcdf.inqVarID(ncid,'areacode')   , areacode);
+    netcdf.putVar(ncid, netcdf.inqVarID(ncid,'alongshore') , along);
+    netcdf.putVar(ncid, netcdf.inqVarID(ncid,'time')       , (time-1970)*365);
+    netcdf.close(ncid);
+else
+    nc_varput(filename, 'id'                      , areacode*1000000 + along);
+    nc_varput(filename, 'areacode'                , areacode);
+    nc_varput(filename, 'alongshore'              , along);
+    nc_varput(filename, 'time'                    , (time-1970)*365);
+end
