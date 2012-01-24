@@ -256,7 +256,7 @@ function r = integrate_transport(xb, var, g, t, tm, f)
 %         da      = .5*pi*(var(2)=='v');
         
         tint    = diff(t);
-        nt      = length(t) - 1; 
+        nt      = length(t) - meanvar; 
 
         v       = xb_get(xb, var);
         tint    = repmat(tint,[1 1 size(v,3) size(v,4)]);
