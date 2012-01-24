@@ -29,8 +29,8 @@ function xb_view(data, varargin)
 %   Input:
 %   data      = XBeach structure (input, output or run) or path to XBeach
 %               output directory or file
-%   varargin  = width:  Width of window at startup
-%               height: Height of window at startup
+%   varargin  = width:  Width of window at startup (inf = screensize)
+%               height: Height of window at startup (inf = screensize)
 %               model:  Boolean indicating modal state
 %
 %   Output:
@@ -94,8 +94,8 @@ function xb_view(data, varargin)
 %% read options
 
 OPT = struct( ...
-    'width',800,...
-    'height',600, ...
+    'width',inf,...
+    'height',inf, ...
     'modal', false ...
 );
 
@@ -111,10 +111,9 @@ end
 
 %% make gui
 
-winsize = [OPT.width OPT.height];
-
 sz = get(0, 'screenSize');
-winpos = (sz(3:4)-winsize)/2;
+winsize = [min(.9*sz(3), OPT.width) min(.9*sz(4), OPT.height)];
+winpos = (sz(3:4)-winsize)/2-[0 30];
 
 fig = figure('Position', [winpos winsize], ...
     'Tag', 'xb_view', ...
@@ -729,15 +728,18 @@ function plot_1d(obj, info, data, vars)
             for i3 = 1:n3
                 ii = i3+(i2-1)*n3+(i1-1)*n2*n3;
 
+                name = strrep(get_name(obj, info, n, ii), '_', '\_');
+                
                 if info.update
                     set(lines(ii),...
                         'XData', info.x(1,:),...
-                        'YData', squeeze(data{ii}(:,1,:)));
+                        'YData', squeeze(data{ii}(:,1,:)),...
+                        'DisplayName', name);
                 else
                     plot(ax,...
                         info.x(1,:), squeeze(data{ii}(:,1,:)), ...
                         [type(n1-i1+1) color(mod(i3-1,length(color))+1)], 'LineWidth', i2, ...
-                        'DisplayName', strrep(get_name(obj, info, n, ii), '_', '\_'));
+                        'DisplayName', name);
                 end
             end
         end

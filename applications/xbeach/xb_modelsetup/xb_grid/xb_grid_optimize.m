@@ -252,6 +252,18 @@ clear x_d x_w y_w z_w ne_w x_xb y_xb z_xb x_xb_w y_xb_w
 
 %% finalise grid
 
+% remove all-nan columns and rows
+idx1 = ~all(isnan(zgrid),2);
+idx2 = ~all(isnan(zgrid),1);
+
+xgrid = xgrid(idx1, idx2);
+ygrid = ygrid(idx1, idx2);
+zgrid = zgrid(idx1, idx2);
+
+if ~isempty(OPT.ne)
+    negrid = negrid(idx1, idx2);
+end
+
 % interpolate nan's
 if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise) && OPT.finalise)
     for i = 1:size(zgrid, 1)
