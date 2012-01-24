@@ -67,7 +67,8 @@ function xb = xb_set_start_time(xb, varargin)
 %%
 OPT = struct(...
     'vars2update', {{'tstart' 'morstart' 'tstop'}},...
-    'waterlevel', 0);
+    'waterlevel', 0,...
+    'g', 9.81);
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -107,7 +108,7 @@ wetid = x < min(xcr);
 h = OPT.waterlevel - z([false wetid(2:end)]);
 % find the minimal start time assuming a wave celerity of sqrt(gh) times
 % the morfac
-tstart_min = roundoff(sum(diff(x(wetid)) ./ sqrt(9.81*h)) * morfac, -1, 'ceil');
+tstart_min = roundoff(sum(diff(x(wetid)) ./ sqrt(OPT.g*h)) * morfac, -1, 'ceil');
 
 % update xb
 for var = OPT.vars2update
