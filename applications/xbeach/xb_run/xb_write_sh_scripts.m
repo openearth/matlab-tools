@@ -140,9 +140,11 @@ switch upper(OPT.mpitype)
         end
     case 'MPICH2'
         fprintf(fid,'#!/bin/sh\n');
-        fprintf(fid,'#$ -cwd\n');
-        fprintf(fid,'#$ -N %s\n', OPT.name);
-        fprintf(fid,'#$ -pe mpich2 %d\n', OPT.nodes);
+        if OPT.nodes > 1
+            fprintf(fid,'#$ -cwd\n');
+            fprintf(fid,'#$ -N %s\n', OPT.name);
+            fprintf(fid,'#$ -pe mpich2 %d\n', OPT.nodes);
+        end
         
         fprintf(fid,'. /opt/sge/InitSGE\n');
         fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib:$LD_LIBRARY_PATH\n');
