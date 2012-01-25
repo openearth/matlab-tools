@@ -432,10 +432,14 @@ BCA.DATA = [];
          %% Put in *.bca struct
          
             BCA.DATA(end+1).names = tidestruc.name        ;% [n x 2 char]
-            BCA.DATA(end).label   = T.location;            % 'north_001A'
+            BCA.DATA(end).label   = [T.location,'_',num2str(icol-1)];            % 'north_001A'
             BCA.DATA(end).amp     = tidestruc.tidecon(:,1);% [0.0670 0.1085 0.0244 0.0292 0.0172 0.0252 0.0663 0.0723]
             BCA.DATA(end).phi     = tidestruc.tidecon(:,3);% [168.2587 106.2307 162.9063 81.0589 143.1680 -86.1792 -84.3035 119.0369]
-
+            if icol==2
+                BND.DATA(itable).labelA = BCA.DATA(end).label;
+            else
+                BND.DATA(itable).labelB = BCA.DATA(end).label;
+            end
          end
 
          %% Make sure there are no transitions across the 360 boundary inside one boundary segment
@@ -471,6 +475,7 @@ BCA.DATA = [];
 %% Output
 
    delft3d_io_bca('write',[OPT.bcafile],BCA)
+   delft3d_io_bnd('write',[filepathstr(OPT.bndfile),filesep,filename(OPT.bndfile),'_from_bct2bca.bnd'],BND)
 
    if nargout==1
       varargout = {BCA};
