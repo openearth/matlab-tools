@@ -92,6 +92,11 @@ end
 
 if ~isempty(idx)
     t   = xb_get(xb, 'DIMS.meantime_DATA');
+    if isscalar(t)
+        tm = t;
+        t  = xb_get(xb, 'DIMS.globaltime_DATA');
+        t = [t(1) tm];
+    end
     dt  = min([mean(diff(t)) t(end)]);
 end
 
