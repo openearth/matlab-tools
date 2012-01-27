@@ -89,7 +89,7 @@ fprintf(fid,'%s\n',handles.Toolbox(tb).Input.admFile);
 fprintf(fid,'%s\n','ddtemp.obs');
 fclose(fid);
 
-system([handles.Toolbox(tb).dataDir 'nesthd1 < nesthd1.inp']);
+system(['"' handles.Toolbox(tb).dataDir 'nesthd1" < nesthd1.inp']);
 
 [name,m,n] = textread('ddtemp.obs','%21c%f%f');
 
