@@ -59,7 +59,7 @@ varargin = prob_checkinput(varargin{:});
 OPT = struct(...
     'stochast', struct(),... % stochast structure
     'x2zFunction', @x2z,...  % Function to transform x to z    
-    'x2zVariables', {{}},... % aditional variables to use in x2zFunction
+    'x2zVariables', {{}},... % additional variables to use in x2zFunction
     'method', 'matrix',...   % z-function method 'matrix' (default) or 'loop'
     'maxiter', 50,...        % maximum number of iterations
     'DerivativeSides', 1,... % 1 or 2 sided derivatives
