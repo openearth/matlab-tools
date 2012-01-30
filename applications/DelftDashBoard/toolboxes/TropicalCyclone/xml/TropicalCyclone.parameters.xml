@@ -155,6 +155,16 @@
     <tooltipstring>Save cyclone data (Delft Dashboard format)</tooltipstring>
   </element> 
   <element>
+    <tag>selectedtrackfile</tag>
+    <style>edit</style>
+    <position>625 60 120 20</position>
+    <variable>handles.Toolbox(tb).Input.TCTrackFile</variable>
+    <type>string</type>
+    <tooltipstring>The selected track file name</tooltipstring>
+    <text>Track File</text>
+    <textposition>left</textposition>
+  </element> 
+  <element>
     <tag>downloadtrack</tag>
     <style>pushbutton</style>
     <position>480 35 90 20</position>
@@ -220,5 +230,104 @@
     <text>Delete temporary files</text>
     <variable>handles.Toolbox(tb).Input.deleteTemporaryFiles</variable>
     <tooltipstring>Delete temporary files that are made while generating spiderweb file</tooltipstring> 
+  </element> 
+  <element>
+    <tag>basinpanel</tag>
+    <style>panel</style>
+    <position>750 40 250 95</position>
+    <text>TC Basin Display</text>
+  </element> 
+  <element>
+    <tag>radioallbasins</tag>
+    <style>radiobutton</style>
+    <position>760 80</position>
+    <text>All</text>
+    <variable>handles.Toolbox(tb).Input.whichTCBasinOption</variable>
+    <type>integer</type>
+    <value>1</value>
+    <onchange>ddb_TropicalCycloneToolbox_setParameters</onchange>
+    <option1>selectbasinoption</option1>
+    <dependencies>
+      <dependency>
+        <action>on</action>
+        <tags>
+          <tag>radionearbasin</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.whichTCBasinOption</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+    <tooltipstring>Select to display all known TC basins</tooltipstring>
+  </element> 
+  <element>
+    <tag>radionearbasin</tag>
+    <style>radiobutton</style>
+    <position>760 60</position>
+    <text>Nearest</text>
+    <variable>handles.Toolbox(tb).Input.whichTCBasinOption</variable>
+    <type>integer</type>
+    <value>0</value>
+    <onchange>ddb_TropicalCycloneToolbox_setParameters</onchange>
+    <option1>selectbasinoption</option1>
+    <dependencies>
+      <dependency>
+        <action>on</action>
+        <tags>
+          <tag>radioallbasins</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.whichTCBasinOption</variable>
+            <value>0</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+    <tooltipstring>Select to display the basin in which the grid lies</tooltipstring>
+  </element>
+  <element>
+    <tag>basinname</tag>
+    <style>edit</style>
+    <position>855 60 120 20</position>
+    <text>Name</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.TCBasinName</variable>
+    <type>string</type>
+    <tooltipstring>Name(s) of selected tropical cyclone basin(s)</tooltipstring>
+  </element> 
+  <element>
+    <tag>showbasins</tag>
+    <style>togglebutton</style>
+    <position>760 100 100 20</position>
+    <text>Show TC basins</text>
+    <variable>handles.Toolbox(tb).Input.showTCBasins</variable>
+    <tooltipstring>Show tropical cyclone basin boundaries (approximate)</tooltipstring> 
+    <onchange>ddb_TropicalCycloneToolbox_setParameters</onchange>
+    <option1>selectbasinoption</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>radioallbasins</tag>
+          <tag>radionearbasin</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.whichTCBasinOption</variable>
+            <value>0</value>
+            <operator>ge</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
   </element> 
 </root>

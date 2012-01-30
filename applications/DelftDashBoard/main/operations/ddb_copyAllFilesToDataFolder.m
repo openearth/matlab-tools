@@ -72,6 +72,13 @@ mkdir([ddbdir 'shorelines']);
 copyfiles([inipath 'data' filesep 'shorelines'],[ddbdir 'shorelines']);
 mkdir([ddbdir 'tidemodels']);
 copyfiles([inipath 'data' filesep 'tidemodels'],[ddbdir 'tidemodels']);
+
+%  Do the same for the tropical cyclone directory structure, but don't
+%  perform a copyfiles() call, as there should be no files to copy.
+mkdir([ddbdir 'tropicalcyclone']);
+mkdir([ddbdir 'tropicalcyclone' filesep 'JTWC']);  % JTWC warning files subdir.
+mkdir([ddbdir 'tropicalcyclone' filesep 'NHC']);   % NHC warning files subdir.
+
 mkdir([ddbdir 'toolboxes']);
 mkdir([ddbdir 'supertrans']);
 epf=which('EPSG.mat');

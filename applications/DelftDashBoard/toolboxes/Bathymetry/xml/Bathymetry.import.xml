@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>getbathyfile</tag>
+    <style>pushselectfile</style>
+    <position>195 110 150 20</position>
+    <text>Select Bathy</text>
+    <variable>handles.Toolbox(tb).Input.bathyFile</variable>
+    <onchange>ddb_BathymetryToolbox_import</onchange>
+    <option1>getbathyfile</option1>
+    <showfilename>yes</showfilename> 
+    <extension idx="1" type="cell" size="2 2">
+        <item idx="1" type="char" size="1 5">*.grd</item>
+        <item idx="2" type="char" size="1 5">*.xyz</item>
+        <item idx="3" type="char" size="1 18">Grid Files (*.grd)</item>
+        <item idx="4" type="char" size="1 17">XYZ files (*.xyz)</item>
+    </extension> <selectiontext>Select bathy file</selectiontext>
+    <tooltipstring>Select bathymetry file</tooltipstring> 
+  </element>
+  <element>
+    <tag>import</tag>
+    <style>pushbutton</style>
+    <position>195 80 150 20</position>
+    <text>Import Bathy</text>
+    <variable>handles.Toolbox(tb).Input.bathyFile</variable>
+    <callback>ddb_BathymetryToolbox_import</callback>
+    <option1>import</option1>
+    <showfilename>no</showfilename> 
+    <extension>*.nc</extension>
+    <selectiontext>Import Data</selectiontext>
+    <tooltipstring>Integrate new bathy into GUI</tooltipstring> 
+    
+  </element>
+  <element>
+      <tag>editOutputName</tag>
+      <style>edit</style>
+      <onchange>ddb_BathymetryToolbox_import</onchange>
+      <option1>editOutputName</option1>
+      <variable>handles.Toolbox(tb).Input.newbathyName</variable>
+      <type>string</type>
+      <position>350 80 150 20 </position>
+  </element>
+  <element>
+    <tag>selectpositivedirection</tag>
+    <style>popupmenu</style>
+    <text>Positive</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.activeDirection</variable>
+    <position>350 45 60 20</position>
+    <tooltipstring>Select positive up or down</tooltipstring>
+    <type>string</type>
+    <list>
+      <texts>
+        <text>up</text>
+        <text>down</text>
+      </texts>
+      <values>
+        <value>up</value>
+        <value>down</value>
+      </values>
+    </list>
+  </element>
+</root>

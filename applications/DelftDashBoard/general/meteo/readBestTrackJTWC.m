@@ -82,7 +82,9 @@ fclose(fid);
 
 k=0;
 for i=1:length(str)
-    if strcmpi(str{i},'WP')
+    switch str{i}
+        case{'WP','IO','SH','CP','EP','AL'}
+%    if strcmpi(str{i},'WP')
         % New line
         k=k+1;
         iline(k)=i;

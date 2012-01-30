@@ -128,12 +128,45 @@ handles.Toolbox(ii).Input.method=5;
 
 handles.Toolbox(ii).Input.deleteTemporaryFiles=1;
 
-handles.Toolbox(ii).Input.importFormat='JTWCBestTrack';
-handles.Toolbox(ii).Input.importFormats={'JTWCBestTrack','UnisysBestTrack'};
-handles.Toolbox(ii).Input.importFormatNames={'JTWC Best Track','Unisys Best Track'};
+%  Tropical cyclone (TC) widgets, parameters added by QNA/NRL:
+handles.Toolbox(ii).Input.showTCBasins=0;
+handles.Toolbox(ii).Input.whichTCBasinOption=0;     % Nearest (0 for nearest, 1 for All)
+handles.Toolbox(ii).Input.oldwhichTCBasinOption=2;  % Nearest (init. to 2)
+handles.Toolbox(ii).Input.TCBasinName='';
+handles.Toolbox(ii).Input.TCBasinNameAbbrev='';
+handles.Toolbox(ii).Input.TCBasinFileName='';
+handles.Toolbox(ii).Input.oldTCBasinName='';
+handles.Toolbox(ii).Input.TCStormName='';
+handles.Toolbox(ii).Input.oldTCStormName='';
+handles.Toolbox(ii).Input.TCTrackFile={'Current Track File'};
+handles.Toolbox(ii).Input.TCTrackFileStormName='';
+%  Lists of known TC basin names and abbreviations:
+handles.Toolbox(ii).Input.knownTCBasinName = {'Atlantic','Central Pacific','East Pacific','Southern Hemisphere','West Pacific'};
+handles.Toolbox(ii).Input.knownTCBasinNameAbbrev = {'at', 'cp', 'ep', 'sh', 'wp'};
 
-handles.Toolbox(ii).Input.downloadLocation='UnisysBestTracks';
-handles.Toolbox(ii).Input.downloadLocations={'UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones'};
-handles.Toolbox(ii).Input.downloadLocationNames={'UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones'};
+%  Check whether the TCBasinHandles list exists & is empty (may not be if
+%  File -> New was clicked).
+if (isfield(handles.Toolbox(ii).Input, 'TCBasinHandles') && ~isempty(handles.Toolbox(ii).Input.TCBasinHandles))
+    %  List is not empty, so delete any existing objects.
+    for i = 1:length(handles.Toolbox(tb).Input.TCBasinHandles)
+        %  Delete the current TC basin polygon handle.
+        if (ishandle(handles.Toolbox(tb).Input.TCBasinHandles(i)))
+            delete(handles.Toolbox(tb).Input.TCBasinHandles(i));
+        end
+    end
+end
+handles.Toolbox(ii).Input.TCBasinHandles=[];
+
+%  Define the directory in which TC basin polygon files reside, then store a listing of the .xy files.
+handles.Toolbox(ii).Input.tcBasinsDir = [fileparts(fileparts(handles.settingsDir)) filesep 'external' filesep 'data'];
+handles.Toolbox(ii).Input.tcBasinsFiles = dir([handles.Toolbox(ii).Input.tcBasinsDir filesep '*.xy']);
+
+handles.Toolbox(ii).Input.importFormat='JTWCCurrentTrack';
+handles.Toolbox(ii).Input.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack'};
+handles.Toolbox(ii).Input.importFormatNames={'JTWC Current Track...','NHC Current Track...','JTWC Best Track','Unisys Best Track'};
+
+handles.Toolbox(ii).Input.downloadLocation='JTWCCurrentTracks';
+handles.Toolbox(ii).Input.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones'};
+handles.Toolbox(ii).Input.downloadLocationNames={'JTWC Current Cyclones...','NHC Current Hurricanes...','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)'};
 
 

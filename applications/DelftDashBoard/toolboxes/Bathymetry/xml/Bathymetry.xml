@@ -16,6 +16,12 @@
           <callback>ddb_BathymetryToolbox_export</callback>
           <elements>Bathymetry.export.xml</elements>
         </tab>
+        <tab>
+          <tag>import</tag>
+          <tabstring>Import</tabstring>
+          <callback>ddb_BathymetryToolbox_import</callback>
+          <elements>Bathymetry.import.xml</elements>
+        </tab>
       </tabs>
     </element>
   </elements>

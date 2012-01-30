@@ -862,6 +862,9 @@ if pathname~=0
     
     if ~isempty(el.onChangeCallback)
         % Execute on-change callback
+        if isempty(el.option2)
+            el.option2 = filterindex;
+        end
         feval(el.onChangeCallback,el.option1,el.option2);
     end
     
@@ -901,6 +904,9 @@ if pathname~=0
     
     if ~isempty(el.onChangeCallback)
         % Execute on-change callback
+        if isempty(el.option2)
+            el.option2 = filterindex;
+        end
         feval(el.onChangeCallback,el.option1,el.option2);
     end
     

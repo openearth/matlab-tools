@@ -140,7 +140,33 @@ handles.additionalToolboxDir=additionalToolboxDir;
 handles.shorelineDir=[ddbdir 'shorelines' filesep];
 handles.satelliteDir=[ddbdir 'imagery' filesep];
 
-%if isdeployed
+%  Tropical Cyclone bulletin download directory (used by check_tc_files.pl):
+handles.tropicalCycloneDir = [ddbdir 'tropicalcyclone' filesep];
+%  Check whether the TC download directory exists; if not, create the
+%  structure now.
+if (~exist(handles.tropicalCycloneDir, 'dir'))
+    disp([10 ' NOTE: Creating the Tropical Cyclone directory structure in ' handles.tropicalCycloneDir 10]);
+    [isok, msg, msgid]  = mkdir(handles.tropicalCycloneDir);
+    if (~isok)
+        warning(msgid,['unable to create the TC directory structure: ' msg]);
+    end
+end
+%  Perform the same check for the JTWC subdirectory.
+if (~exist([handles.tropicalCycloneDir filesep 'JTWC'], 'dir'))
+    [isok, msg, msgid]  = mkdir([handles.tropicalCycloneDir filesep 'JTWC']);
+    if (~isok)
+        warning(msgid,['unable to create the JTWC subdirectory: ' msg]);
+    end
+end
+%  Perform the same check for the NHC subdirectory.
+if (~exist([handles.tropicalCycloneDir filesep 'NHC'], 'dir'))
+    [isok, msg, msgid]  = mkdir([handles.tropicalCycloneDir filesep 'NHC']);
+    if (~isok)
+        warning(msgid,['unable to create the NHC subdirectory: ' msg]);
+    end
+end
+
+if isdeployed
     handles.superTransDir=[ddbdir 'supertrans' filesep];
 %else
 %    dr=fileparts(which('EPSG.mat'));
