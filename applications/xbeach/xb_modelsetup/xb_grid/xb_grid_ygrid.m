@@ -23,7 +23,10 @@ function ygr = xb_grid_ygrid(yin, varargin)
 %                                       case of area_type range)
 %               transition_distance:    distance over which the grid
 %                                       cellsize is gradually changed from
-%                                       mimumum to maximum
+%                                       mimumum to maximum, a negative
+%                                       value means the distance may be
+%                                       adapted to limit the error made in
+%                                       the fit
 %
 %   Output:
 %   ygr       = generated grid in y_direction
@@ -81,10 +84,17 @@ OPT = struct( ...
     'dymax', 20, ...
     'area_type', 'center', ...
     'area_size', .4, ...
-    'transition_distance', .1 ...
+    'transition_distance', -.1, ...
+    'maxerror', .05 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
+
+retry = false;
+if OPT.transition_distance < 0
+    OPT.transition_distance = abs(OPT.transition_distance);
+    retry = true;
+end
 
 %% make grid
 
@@ -98,32 +108,45 @@ else
     else
         % variable, two-dimensional grid
         
-        dy = max(yin)-min(yin);
-        if all(OPT.transition_distance < 1)
-            OPT.transition_distance = OPT.transition_distance*dy;
+        err = Inf;
+        
+        while err>OPT.maxerror
+            
+            dy = max(yin)-min(yin);
+            if all(OPT.transition_distance < 1)
+                OPT.transition_distance = OPT.transition_distance*dy;
+            end
+
+            switch OPT.area_type
+                case 'center'
+                    if all(OPT.area_size < 1)
+                        OPT.area_size = OPT.area_size*dy;
+                    end
+
+                    ygr = mean(yin)-OPT.area_size/2:OPT.dymin:mean(yin)+OPT.area_size/2;
+                case 'range'
+                    if all(OPT.area_size < 1)
+                        OPT.area_size = min(ymin)+OPT.area_size*dy;
+                    end
+
+                    ygr = OPT.area_size(1):OPT.dymin:OPT.area_size(2);
+                otherwise
+                    % default center with length one
+                    ygr = mean(yin)+[-1 1]*OPT.dymin/2;
+            end
+        
+            % grid transition
+            [ff nf gridf err] = grid_transition(OPT.dymin, OPT.dymax, OPT.transition_distance);
+            ygr = [ygr(1)-fliplr(gridf) ygr ygr(end)+gridf];
+
+            if err>OPT.maxerror && retry
+                OPT.transition_distance = 1.1*OPT.transition_distance;
+            end
         end
         
-        switch OPT.area_type
-            case 'center'
-                if all(OPT.area_size < 1)
-                    OPT.area_size = OPT.area_size*dy;
-                end
-                
-                ygr = mean(yin)-OPT.area_size/2:OPT.dymin:mean(yin)+OPT.area_size/2;
-            case 'range'
-                if all(OPT.area_size < 1)
-                    OPT.area_size = min(ymin)+OPT.area_size*dy;
-                end
-                
-                ygr = OPT.area_size(1):OPT.dymin:OPT.area_size(2);
-            otherwise
-                % default center with length one
-                ygr = mean(yin)+[-1 1]*OPT.dymin/2;
+        if err>OPT.maxerror
+            warning(sprintf('Relative error in alongshore grid transition > %d%%',round(err*100)));
         end
-        
-        % grid transition
-        [ff nf gridf] = grid_transition(OPT.dymin, OPT.dymax, OPT.transition_distance);
-        ygr = [ygr(1)-fliplr(gridf) ygr ygr(end)+gridf];
         
         % extend till borders
         ygr = [fliplr(ygr(1)-OPT.dymax:-OPT.dymax:min(yin)) ygr ygr(end)+OPT.dymax:OPT.dymax:max(yin)];

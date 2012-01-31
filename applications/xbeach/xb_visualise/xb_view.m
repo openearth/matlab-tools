@@ -526,7 +526,9 @@ function ui_read(obj)
             
             % check consistency
             if isfield(info0, 't')
-                info.t = info.t(info.t<=max(info0.t));
+                tmax    = min(max(info0.t),max(info.t));
+                info0.t = info0.t(info0.t<=tmax);
+                info.t  = info.t(info.t<=tmax);
                 if length(info.t) ~= length(info0.t);           error('Inconsistent time axes length');     end;
                 if ~all(info.t - info0.t == 0);                 error('Inconsistent time axes stepsize');   end;
             end
@@ -545,25 +547,26 @@ function ui_read(obj)
                 info.varlist = intersect(info.vars, info0.vars);
             end
             
-            % generate var list
-            info.varlist = sprintf('|%s', info.vars{:});
-            info.varlist = info.varlist(2:end);
+        end
 
-            % determine plot type
-            if min(size(info.x)) <= 3
-                info.ndims = 1;
-            else
-                info.ndims = 2;
-            end
+        % generate var list
+        info.varlist = sprintf('|%s', info.vars{:});
+        info.varlist = info.varlist(2:end);
 
-            if ~strcmpi(get(obj, 'Tag'), 'ButtonReload')
-                info.diff = false;
-                info.compare = false;
-                info.surf = false;
-                info.caxis = [];
-                info.transect = [];
-                info.update = false;
-            end
+        % determine plot type
+        if min(size(info.x)) <= 3
+            info.ndims = 1;
+        else
+            info.ndims = 2;
+        end
+
+        if ~strcmpi(get(obj, 'Tag'), 'ButtonReload')
+            info.diff = false;
+            info.compare = false;
+            info.surf = false;
+            info.caxis = [];
+            info.transect = [];
+            info.update = false;
         end
         
         set_info(obj, info);

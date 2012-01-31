@@ -98,8 +98,8 @@ end
 
 %% transpose grid
 
-if mean(mean(diff(x,1,2))) > mean(mean(diff(x,1,1))) && ...
-        mean(mean(diff(y,1,1))) > mean(mean(diff(y,1,2)))
+if (mean(mean(diff(x,1,2))) > mean(mean(diff(x,1,1))) && ...
+        mean(mean(diff(y,1,1))) > mean(mean(diff(y,1,2)))) || size(x,1) == 1
     x = x';
     y = y';
 end
