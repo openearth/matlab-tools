@@ -10,14 +10,14 @@ if ischar(arg1) && ischar(arg2)
     [ncid,status ]=mexnc('open',ncfile,nc_nowrite_mode);
     if status ~= 0
         ncerr = mexnc('strerror', status);
-        error('SNCTOOLS:NC_VARGET:MEXNC:OPEN', ncerr);
+        error('snctools:getVarInfo:mexnc:open', ncerr);
     end
 
     [varid, status] = mexnc('INQ_VARID', ncid, varname);
     if ( status ~= 0 )
         ncerr = mexnc('strerror', status);
         mexnc('close',ncid);
-        error ('SNCTOOLS:NC_VARGET:MEXNC:INQ_VARID',ncerr);
+        error('snctools:getVarInfo:mexnc:inqVarID',ncerr);
     end
    
     Dataset = get_varinfo(ncid,varid);
@@ -34,7 +34,7 @@ elseif isnumeric(arg1) && isnumeric(arg2)
     Dataset = get_varinfo(ncid,varid);
 
 else
-    error ( 'SNCTOOLS:nc_getvarinfo:mexnc:badTypes', ...
+    error ( 'snctools:nc_getvarinfo:mexnc:badTypes', ...
             'Must have either both character inputs, or both numeric.' );
 end
 
@@ -51,7 +51,7 @@ preserve_fvd = nc_getpref('PRESERVE_FVD');
 if status ~= 0
    	ncerr = mexnc('strerror', status);
     mexnc('close',ncid);
-    error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_UNLIMDIM', ncerr );
+    error ( 'snctools:NC_VARGET:MEXNC:INQ_UNLIMDIM', ncerr );
 end
 
 
@@ -60,7 +60,7 @@ end
 if status ~= 0 
    	ncerr = mexnc('strerror', status);
     mexnc('close',ncid);
-    error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VAR', ncerr );
+    error ( 'snctools:NC_VARGET:MEXNC:INQ_VAR', ncerr );
 end
 
 
@@ -100,7 +100,7 @@ else
 		if ( status ~= 0 )
    			ncerr = mexnc('strerror', status);
 		    mexnc('close',ncid);
-		    error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_DIM', ncerr );
+		    error ( 'snctools:NC_VARGET:MEXNC:INQ_DIM', ncerr );
 		end
 	
 		Dataset.Dimension{j} = dimname; 
@@ -129,7 +129,7 @@ if v(1) == '4'
 	if ( status ~= 0 )
 	   	ncerr = mexnc('strerror', status);
 		mexnc('close',ncid);
-		error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VAR_DEFLATE', ncerr );
+		error ( 'snctools:NC_VARGET:MEXNC:INQ_VAR_DEFLATE', ncerr );
 	end
 	Dataset.Chunking = chunking;
 	
@@ -138,7 +138,7 @@ if v(1) == '4'
 	if ( status ~= 0 )
 	   	ncerr = mexnc('strerror', status);
 		mexnc('close',ncid);
-		error ( 'SNCTOOLS:NC_VARGET:MEXNC:INQ_VAR_DEFLATE', ncerr );
+		error ( 'snctools:NC_VARGET:MEXNC:INQ_VAR_DEFLATE', ncerr );
 	end
 	Dataset.Shuffle = shuffle;
 	Dataset.Deflate = deflate_level;

@@ -1,6 +1,7 @@
-function values = nc_varget_java(ncfile,varname,varargin)
+function [values,varinfo] = nc_varget_java(ncfile,varname,varargin)
 % NC_VARGET_JAVA:  Java backend for nc_varget.
 
+snc_turnoff_log4j;
 import ucar.nc2.dods.*     
 import ucar.nc2.*          
                            
@@ -19,12 +20,12 @@ elseif exist(ncfile,'file')
 	jncid = NetcdfFile.open(ncfile);
 else
 	try 
-		jncid = NetcdfFile.open ( ncfile );
+		jncid = NetcdfFile.open(ncfile);
 	catch %#ok<CTCH>
 		try
             jncid = snc_opendap_open(ncfile);
 		catch %#ok<CTCH>
-			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', ...
+			error ( 'snctools:nc_varget_java:fileOpenFailure', ...
 				'Could not open ''%s'' with java backend.' , ncfile);
 		end
 	end
@@ -54,62 +55,23 @@ if prod(var_size) == 0
 	return
 end
 
-
-read_method = determine_read_method(start,count,stride,varinfo);
-
-
-
-% Finally!  Read the freakin' data.
 try
-    switch ( read_method )
-        case 'GET_VAR1'
-            % Read a scalar
-            values = nc_var1_get_java ( jvarid, theDataTypeString );
     
-        case 'GET_VAR'    
-            % Read everything.
-            values = nc_var_get_java ( jvarid, theDataTypeString );
-    
-        case 'GET_VARA'       
-            % Read a contiguous subset
-            values = nc_vara_get_java(jvarid,theDataTypeString,start,count);
-    
-        case 'GET_VARS'
-        
-            % Read a contiguous subset
-            values = nc_vars_get_java(jvarid,theDataTypeString,start,count,stride);
-    
-        otherwise
-        
-            error ( 'SNCTOOLS_NC_VARGET:JAVA:badReadCase', ...
-			    'Unhandled case, don''t know which read method to use.');  
-        
+    if isempty(varinfo.Dimension)
+        values = read_singleton_var(jvarid,theDataTypeString);
+    else
+        values = read_var(jvarid,theDataTypeString,start,count,stride);
     end
     
 catch %#ok<CTCH>
-	if close_it
-    	close(jncid);
-	end
-    rethrow(lasterror); %#ok<LERR>
+    
+    if close_it
+        close(jncid);
+    end
+    rethrow(lasterror);
+    
 end
 
-values = post_process(jvarid,theDataType,var_size,values);
-
-% If we were passed a java file id, don't close it upon exit.
-if close_it
-	close ( jncid );
-end
-
-
-%--------------------------------------------------------------------------
-function values = post_process(jvarid,theDataType,var_size,values)
-
-values = handle_fill_value_java ( jvarid, theDataType, values );
-values = handle_missing_value_java ( jvarid, theDataType, values );
-values = handle_scaling_java ( jvarid, values );
-
-% remove any singleton dimensions.
-values = squeeze ( values );
 
 
 
@@ -126,6 +88,16 @@ else
         values = permute(values,pv);
     end
 end                                                                                   
+
+% And finally, remove any singleton dimensions.
+values = squeeze(values);
+
+
+
+% If we were passed an open java file id, don't close it upon exit.
+if close_it
+	close ( jncid );
+end
 
 
 return
@@ -146,44 +118,14 @@ import ucar.nc2.*
 theDimensions = jvarid.getDimensions();
 nDims = theDimensions.size();
 
-
-switch(numel(varargin))
-    case 0
-        start = zeros(1,nDims);
-        count = varinfo.Size;
-        stride = ones(1,nDims);
-    case 2
-        start = varargin{1};
-        count = varargin{2};
-        stride = ones(1,nDims);
-    case 3
-        start = varargin{1};
-        count = varargin{2};
-        stride = varargin{3};        
-    otherwise
-        error('SNCTOOLS:wrongNumberOfInputs','Wrong number of inputs.');
-end
-
 if isempty(varinfo.Dimension)
-    % It's a singleton variable.
-	start = 0;
-	count = 1;
-	return
+    % Singleton variable.
+    start = 0;
+    count = 1;
+    stride = 1;
+    return;
 end
-
-
-
-% If the user had set non-positive numbers (or inf) in "count", then
-% we replace them with what we need to get the
-% rest of the variable.
-negs = find((count<0) | isinf(count));
-if any(negs)
-if isempty(stride)
-    count(negs) =        varinfo.Size(negs) - start(negs);
-else
-    count(negs) = floor((varinfo.Size(negs) - start(negs))./stride(negs));
-end
-end
+[start,count,stride] = snc_get_indexing(nDims,varinfo.Size,varargin{:});
 
 
 % Java expects in C-style order.
@@ -198,24 +140,40 @@ end
 
 
 %--------------------------------------------------------------------------
-function values = nc_var1_get_java ( jvarid, theDataTypeString )
-% NC_VAR1_GET_JAVA:  reads a scalar.
+function value = read_singleton_var(jvarid,theDataTypeString)
+% reads a singleton
 
 switch ( theDataTypeString )
 
     case 'char'
-        values = jvarid.read();
-        values = char ( values.toString() );
+        value = jvarid.read();
+        value = char ( value.toString() );
 
     case 'String'
         jdata = jvarid.read();
-        values = snc_pp_strings(jvarid,jdata,1);
+        value = snc_pp_strings(jvarid,jdata,1);
         
-    case { 'double', 'float', 'int', 'short', 'byte' }
-        values = jvarid.readScalarDouble();
+    case 'double'
+        value = jvarid.readScalarDouble();
+
+    case 'float'
+        value = jvarid.readScalarFloat();
+        value = single(value);
+
+    case 'int'
+        value = jvarid.readScalarInt();
+        value = int32(value);
+
+    case 'short'
+        value = jvarid.readScalarShort();
+        value = int16(value);
+
+    case 'byte'
+        value = jvarid.readScalarByte();
+        value = int8(value);
 
     otherwise
-        error ('SNCTOOLS:nc_varget:var1:java:unhandledDatatype', ...
+        error ('snctools:nc_varget:var1:java:unhandledDatatype', ...
             'unhandled datatype ''%s''', theDataTypeString );
     
 end
@@ -225,73 +183,12 @@ return
 
 
 
-%--------------------------------------------------------------------------
-function values = nc_var_get_java ( jvarid, theDataTypeString )
-% NC_VAR_GET_JAVA:  reads the entire variable
-
-raw_data = jvarid.read();
-switch(theDataTypeString)
-    case 'String'
-        n = jvarid.getShape();
-        sz = double(n');
-        values = snc_pp_strings(jvarid,raw_data,sz);
-
-    otherwise
-        
-        values = copyToNDJavaArray(raw_data);
-        switch ( theDataTypeString )
-            case 'char'
-                %
-            case {'double','float','int','short','byte'}
-                values = double(values);
-                
-            otherwise
-                error ( 'SNCTOOLS:nc_varget:var:unhandledDatatype', ...
-                    'unhandled datatype ''%s''', theDataTypeString );
-                
-        end
-end
-return
-
-
-
-
-
-
-
-    
-
-%--------------------------------------------------------------------------
-function values = nc_vara_get_java(jvarid,theDataTypeString,start,count)
-% NC_VARA_GET_JAVA:  reads a contiguous subset
-
-jdata = jvarid.read(start, count);
-switch ( theDataTypeString )
-    case 'char'
-        values = copyToNDJavaArray(jdata);
-    case { 'double', 'float', 'int', 'short', 'byte' }
-        values = copyToNDJavaArray(jdata);
-        values = double ( values );
-    case 'String'
-        values = snc_pp_strings(jvarid,jdata,count);
-        
-    otherwise
-        error('SNCTOOLS:nc_varget:vara:java:unhandledDatatype', ...
-            'unhandled datatype ''%s''', theDataTypeString );
-        
-end
-return
-    
-
-
-
-
 
 
 
 %--------------------------------------------------------------------------
-function values = nc_vars_get_java(jvarid,theDataTypeString,start,count,stride)
-% NC_VARS_GET_JAVA:  reads a strided subset
+function values = read_var(jvarid,theDataTypeString,start,count,stride)
+% read netcdf-java variable with normal dimensions.
 
 % Have to use the method with the section selector.
 % "1:2,10,:,1:100:10"
@@ -312,179 +209,16 @@ switch ( theDataTypeString )
     case 'String'
         values = snc_pp_strings(jvarid,values,count);
         
-    case { 'double', 'float', 'int', 'short', 'byte' }
+    case { 'double', 'float', 'int', 'long', 'short', 'byte' }
         values = copyToNDJavaArray(values);
-        values = double ( values );
+
     otherwise
-        error ( 'SNCTOOLS:nc_varget:vars:java', ...
+        error ( 'snctools:nc_varget:vars:java', ...
             'unhandled datatype ''%s''', theDataTypeString );
     
 end
     
     
 return
-
-
-
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function read_method = determine_read_method(start,count,stride,varinfo)
-% Determine the read method that we will instruct java to use in order to
-% properly read in the netCDF data.
-
-% If a singleton, then use GET_VAR1.  This is only because some 
-% opendap-enabled mexnc clients have trouble using GET_VAR on 
-% singletons.  It is annoying to have to do this, but it works just as
-% well.
-if isempty(varinfo.Dimension)
-	read_method = 'GET_VAR1';
-	return
-end
-
-
-if isempty(start) && isempty(count) && isempty(stride)
-    read_method = 'GET_VAR';
-elseif ~isempty(start) && ~isempty(count) && isempty(stride)
-    read_method = 'GET_VARA';
-elseif ~isempty(start) && ~isempty(count) && ~isempty(stride)
-    read_method = 'GET_VARS';
-else
-    error ( 'SNCTOOLS:NC_VARGET:JAVA:undeterminedReadCase', ...
-            'Could not determine intended read method.' );
-end
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function values = handle_fill_value_java ( jvarid, var_type, values )
-%  If there is a fill value, then replace such values with NaN.
-
-% Handle the fill value, if any.  Change those values into NaN.
-fillvalue_att = jvarid.findAttribute ( '_FillValue' );
-if ~isempty(fillvalue_att)
-    att_dtype = fillvalue_att.getDataType();
-    if ~strcmp(char(att_dtype.toString()), char(var_type.toString()))
-        warning('SNCTOOLS:nc_varget:java:fillValueMismatch', ...
-            'The _FillValue attribute datatype is incorrect.  The _FillValue attribute will not be honored.');
-        return
-    end
-    
-    switch ( char ( var_type.toString() ) )
-        case 'char'
-            % For now, do nothing.  Does a fill value even make sense with char
-            % data?  If it does, please tell me so.
-            
-        case { 'double', 'float', 'long', 'short', 'byte' }
-            fill_value = fillvalue_att.getNumericValue().doubleValue();
-            values = double(values);
-            values(values==fill_value) = NaN;
-            
-    end
-end
-
-
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function values = handle_missing_value_java ( jvarid, theDataType, values )
-% If there is a missing value, then replace such values with NaN.
-
-% If there is a fill value attribute, then that had precedence.  Do nothing.
-fvatt = jvarid.findAttribute ( '_FillValue' );
-if ~isempty(fvatt)
-    return
-end
-
-%
-% Handle the missing value, if any.  Change those values into NaN.
-missing_value_att = jvarid.findAttribute ( 'missing_value' );
-if ~isempty(missing_value_att)
-    att_dtype = missing_value_att.getDataType();
-    if ~strcmp(char(att_dtype.toString()), char(theDataType.toString()))
-        warning('SNCTOOLS:nc_varget:java:missingValueMismatch', ...
-            'The missing_value attribute datatype is incorrect.  The missing_value attribute will not be honored.');
-        return
-    end
-    
-    values = double(values);
-    switch ( char ( theDataType.toString() ) )
-        case 'char'
-            % For now, do nothing.  Does a fill value even make sense with
-            % char data?  Matlab doesn't allow for NaNs in character arrays.
-            
-        case { 'double', 'float', 'long', 'short', 'byte' }
-            missing_value = missing_value_att.getNumericValue().doubleValue();
-            values(values==missing_value) = NaN;
-            
-    end
-end
-
-return
-
-
-
-
-
-
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function values = handle_scaling_java ( jvarid, values )
-% If there is a scale factor and/or  add_offset attribute, convert the data
-% to double precision and apply the scaling.
-
-% Handle the scale factor and add_offsets. 
-scale_factor_att = jvarid.findAttribute ( 'scale_factor' );
-add_offset_att = jvarid.findAttribute ( 'add_offset' );
-
-% Return early if we don't have either one.
-if isempty(scale_factor_att) && isempty(add_offset_att)
-    return
-end
-
-if ~isempty(scale_factor_att)
-    scale_factor = scale_factor_att.getNumericValue().doubleValue();
-else
-    scale_factor = 1.0;
-end
-
-if ~isempty(add_offset_att)
-    add_offset = add_offset_att.getNumericValue().doubleValue();
-else
-    add_offset = 0.0;
-end
-
-values = double(values) * scale_factor + add_offset;
-
-return
-
-
-
-
-
-
-
-
-
 
 

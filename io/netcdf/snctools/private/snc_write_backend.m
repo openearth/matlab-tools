@@ -42,6 +42,9 @@ switch(fmt)
                 backend = 'tmw_hdf4_2011b';
         end
         return
+        
+    otherwise
+        error('snctools:writeBackend:unknown', '%s is not a NetCDF file.', ncfile);
 
 end
 

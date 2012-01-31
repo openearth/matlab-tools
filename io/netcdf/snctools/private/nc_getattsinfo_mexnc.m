@@ -25,14 +25,14 @@ attribute = struct('Name','','Nctype',NaN,'Datatype','','Value',NaN);
 [attname, status] = mexnc('INQ_ATTNAME', cdfid, varid, attnum);
 if status < 0 
     ncerr = mexnc('strerror',status);
-	error ( 'SNCTOOLS:nc_getattsinfo:inq_attname', ncerr);
+	error ( 'snctools:nc_getattsinfo:inq_attname', ncerr);
 end
 attribute.Name = attname;
 
 [att_datatype, status] = mexnc('INQ_ATTTYPE', cdfid, varid, attname);
 if status < 0 
     ncerr = mexnc('strerror',status);
-	error ( 'SNCTOOLS:nc_getattsinfo:inq_atttype', ncerr);
+	error ( 'snctools:nc_getattsinfo:inq_atttype', ncerr);
 end
 
 attribute.Nctype = att_datatype;
@@ -61,12 +61,12 @@ switch att_datatype
     case { nc_double, nc_float, nc_int, nc_short, nc_byte }
         [attval, status]=mexnc('get_att_double',cdfid,varid,attname);
     otherwise
-        error ( 'SNCTOOLS:nc_getattsinfo:unhandledAttributeType', ...
+        error ( 'snctools:nc_getattsinfo:unhandledAttributeType', ...
             'Unhandled attribute type %d.', att_datatype );
 end
 if status < 0 
     ncerr = mexnc('strerror',status);
-	error ( 'SNCTOOLS:nc_getattsinfo:get_att', ncerr);
+	error ( 'snctools:nc_getattsinfo:get_att', ncerr);
 end
 
 % this puts the attribute into the variable structure

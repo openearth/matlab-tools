@@ -1,4 +1,4 @@
-function nc_varput_hdf4_2011b(hfile,varname,data,start,edges,stride)
+function nc_varput_hdf4_2011b(hfile,varname,data,varargin)
 % HDF4 handler for NC_VARPUT.
 
 import matlab.io.hdf4.*
@@ -15,6 +15,8 @@ try
     
     [~,sds_dimsizes,dtype_wr] = sd.getInfo(sds_id); 
     sds_rank = numel(sds_dimsizes);
+    [start,~,stride] = snc_get_varput_indexing(sds_rank,sds_dimsizes,size(data),varargin{:});
+
     
     
     % calibrate the data so as not to lose precision
@@ -43,7 +45,7 @@ try
                 attr_idx = sd.findAttr(sds_id,'missing_value');
             catch me
                 % No it is not.  Something is wrong.  Abort!  Abort!
-        	    error('SNCTOOLS:varput:hdf4:getfillvalueFailed', ...  
+        	    error('snctools:varput:hdf4:getfillvalueFailed', ...  
     		    	'The data has NaN values, but neither _FillValue nor missing_value is defined.');
             end
 
@@ -91,7 +93,7 @@ try
             data_wr = double(data);
     
         otherwise,
-        	error('SNCTOOLS:varput:hdf4:unhandledDatatype',...
+        	error('snctools:varput:hdf4:unhandledDatatype',...
                 'Unhandled datatype.');
     
     end

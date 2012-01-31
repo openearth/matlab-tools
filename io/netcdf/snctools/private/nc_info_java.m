@@ -1,4 +1,4 @@
-function fileinfo = nc_info_java ( ncfile )
+function fileinfo = nc_info_java(ncfile)
 %NC_INFO_JAVA java backend for nc_info
 %
 % This function returns the same metadata structure using the java 
@@ -25,13 +25,13 @@ else
 	try 
 		jncid = NetcdfFile.open ( ncfile );
     catch  %#ok<CTCH>
-%		try
+		try
             jncid = snc_opendap_open(ncfile);
-%        catch  %#ok<CTCH>
-%			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', ...
-%                'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ...
-%                ncfile );
-%		end
+        catch  %#ok<CTCH>
+			error ( 'snctools:nc_varget_java:fileOpenFailure', ...
+                'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ...
+                ncfile );
+		end
 	end
 end
 

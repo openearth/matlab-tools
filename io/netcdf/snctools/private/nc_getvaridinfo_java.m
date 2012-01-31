@@ -1,7 +1,7 @@
 function Dataset = nc_getvaridinfo_java(jvarid)
 % NC_GETVARIDINFO_JAVA:  returns metadata structure for a netcdf variable
 %
-% This function is private to SNCTOOLS.  It is called by nc_info and
+% This function is private to snctools.  It is called by nc_info and
 % nc_getvarinfo, and uses the java API.
 %
 % USAGE:   Dataset = nc_getvaridinfo_java(jvarid);
@@ -30,7 +30,7 @@ switch ( datatype )
     case 'float'
         Dataset.Nctype = nc_float;
         Dataset.Datatype = 'single';
-    case 'int'
+    case {'int','long'}
         Dataset.Nctype = nc_int;
         Dataset.Datatype = 'int32';
     case 'short'
@@ -49,7 +49,7 @@ switch ( datatype )
         Dataset.Nctype = nc_byte;
         Dataset.Datatype = 'int8';
     otherwise
-        error ( 'SNCTOOLS:varinfo:unhandledDatatype', ...
+        error ( 'snctools:varinfo:unhandledDatatype', ...
             '%s:  unhandled datatype ''%s''\n', datatype );
 end
 

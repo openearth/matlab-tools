@@ -8,7 +8,7 @@ else
 end
 
 if sd_id < 0
-    error('SNCTOOLS:addDim:hdf4:startFailed', ...
+    error('snctools:addDim:hdf4:startFailed', ...
         'START failed on %s.', hfile);
 end
 
@@ -16,7 +16,7 @@ try
     % Is there already a dataset with this name?
     idx = hdfsd('nametoindex',sd_id,dimname);
     if idx >=0
-        error('SNCTOOLS:addDim:hdf4:badName', ...
+        error('snctools:addDim:hdf4:badName', ...
             'There is already a dataset with this name, "%s".', dimname);
     end
     
@@ -28,20 +28,20 @@ try
     end
     sds_id = hdfsd('create',sd_id,dimname,class(dimlen),1,create_arg);
     if sds_id < 0
-        error('SNCTOOLS:addVar:hdf4:startFailed', ...
+        error('snctools:addVar:hdf4:startFailed', ...
             'CREATE failed on %s.', hfile);
     end
     
     % ok, now make it a dimension as well
     dimid = hdfsd('getdimid',sds_id,0);
     if dimid < 0
-        error('SNCTOOLS:addDim:hdf4:getdimidFailed', ...
+        error('snctools:addDim:hdf4:getdimidFailed', ...
             'GETDIMID failed on %s, %s.', dimname, hfile);
     end
     
     status = hdfsd('setdimname',dimid,dimname);
     if status < 0
-        error('SNCTOOLS:addDim:hdf4:setdimnameFailed', ...
+        error('snctools:addDim:hdf4:setdimnameFailed', ...
             'SETDIMNAME failed on %s.', hfile);
     end
 
@@ -57,13 +57,13 @@ end
 status = hdfsd('endaccess',sds_id);
 if status < 0
     hdfsd('end',sd_id);
-    error('SNCTOOLS:addDim:hdf4:endaccessFailed', ...
+    error('snctools:addDim:hdf4:endaccessFailed', ...
         'ENDACCESS failed on %s.', hfile);
 end
 
 status = hdfsd('end',sd_id);
 if status < 0
-    error('SNCTOOLS:addDim:hdf4:endFailed', ...
+    error('snctools:addDim:hdf4:endFailed', ...
         'END failed on %s, \"%s\".', hfile);
 end
 return

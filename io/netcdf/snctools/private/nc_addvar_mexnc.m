@@ -4,7 +4,7 @@ function nc_addvar_mexnc(ncfile,varstruct,preserve_fvd)
 [ncid, status] = mexnc ( 'open', ncfile, nc_write_mode );
 if ( status ~= 0 )
     ncerr = mexnc ( 'strerror', status );
-    error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:OPEN', ...
+    error ( 'snctools:addvar:mexnc:OPEN', ...
         'OPEN failed on %s, ''%s''', ncfile, ncerr);
 end
 
@@ -16,7 +16,7 @@ for j = 1:num_dims
     if ( status ~= 0 )
         mexnc ( 'close', ncid );
         ncerr = mexnc ( 'strerror', status );
-        error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:DIMID', ncerr );
+        error ( 'snctools:addvar:mexnc:DIMID', ncerr );
     end
 end
 
@@ -30,7 +30,7 @@ status = mexnc ( 'redef', ncid );
 if ( status ~= 0 )
     ncerr = mexnc ( 'strerror', status );
     mexnc ( 'close', ncid );
-    error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:REDEF', ncerr );
+    error ( 'snctools:addvar:mexnc:REDEF', ncerr );
 end
 
 % We prefer to use 'Datatype' instead of 'Nctype', but we'll try to be 
@@ -46,7 +46,7 @@ if ( status ~= 0 )
     ncerr = mexnc ( 'strerror', status );
     mexnc ( 'endef', ncid );
     mexnc ( 'close', ncid );
-    error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:DEF_VAR', ncerr );
+    error ( 'snctools:addvar:mexnc:DEF_VAR', ncerr );
 end
 
 
@@ -61,7 +61,7 @@ if ~isempty(varstruct.Chunking)
     if ( numel(chunking) ~= num_dims) 
         mexnc ( 'endef', ncid );
         mexnc ( 'close', ncid );
-        error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:defVarChunking', ...
+        error ( 'snctools:addvar:mexnc:defVarChunking', ...
            'Chunking size does not jive with number of dimensions.');
     end
 
@@ -70,7 +70,7 @@ if ~isempty(varstruct.Chunking)
         ncerr = mexnc ( 'strerror', status );
         mexnc ( 'endef', ncid );
         mexnc ( 'close', ncid );
-        error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:DEF_VAR_CHUNKING', ncerr );
+        error ( 'snctools:addvar:mexnc:DEF_VAR_CHUNKING', ncerr );
     end
 end
 
@@ -81,7 +81,7 @@ if (varstruct.Shuffle || varstruct.Deflate)
         ncerr = mexnc ( 'strerror', status );
         mexnc ( 'endef', ncid );
         mexnc ( 'close', ncid );
-        error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:DEF_VAR_DEFLATE', ncerr );
+        error ( 'snctools:addvar:mexnc:DEF_VAR_DEFLATE', ncerr );
     end
 end
 
@@ -91,13 +91,13 @@ status = mexnc ( 'enddef', ncid );
 if ( status ~= 0 )
     ncerr = mexnc ( 'strerror', status );
     mexnc ( 'close', ncid );
-    error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:ENDDEF', ncerr );
+    error ( 'snctools:addvar:mexnc:ENDDEF', ncerr );
 end
 
 status = mexnc ( 'close', ncid );
 if ( status ~= 0 )
     ncerr = mexnc ( 'strerror', status );
-    error ( 'SNCTOOLS:NC_ADDVAR:MEXNC:CLOSE', ncerr );
+    error ( 'snctools:addvar:mexnc:CLOSE', ncerr );
 end
 
 

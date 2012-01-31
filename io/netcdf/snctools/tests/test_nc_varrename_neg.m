@@ -1,13 +1,5 @@
 function test_nc_varrename_neg(mode)
 
-v = version('-release');
-switch(v)
-    case { '14','2006a','2006b','2007a'}
-        fprintf('No negative tests run on %s...\n',v);
-        return
-end
-test_backend_neutral;
-
 switch(mode)
 	case nc_clobber_mode
 		run_nc3_tests;
@@ -15,19 +7,9 @@ switch(mode)
 	case 'netcdf4-classic' 
 		run_nc4_tests;
 
-	case 'tmw_hdf4'
-		run_hdf4_tests;
-
 end
 
-%--------------------------------------------------------------------------
-function test_backend_neutral()
 
-ncfile = 'foo.nc';
-test_no_arguments;
-test_only_one_input ( ncfile );
-test_only_two_inputs ( ncfile );
-test_too_many_inputs ( ncfile );
 
 %--------------------------------------------------------------------------
 function run_nc3_tests()
@@ -60,27 +42,7 @@ return
 
 
 
-%--------------------------------------------------------------------------
-function run_hdf4_tests ( ncfile,mode )
-% Just test that we error out properly here.
 
-
-nc_create_empty ( ncfile,mode );
-nc_add_dimension ( ncfile, 't', 0 );
-clear varstruct;
-varstruct.Name = 'w';
-varstruct.Nctype = 'double';
-varstruct.Dimension = { 't' };
-nc_addvar ( ncfile, varstruct );
-
-try
-	nc_varrename ( ncfile, 't', 't2' );
-catch me
-    
-    return
-end
-
-error('failed');
 
 
 %--------------------------------------------------------------------------
@@ -102,19 +64,20 @@ nc_addvar ( ncfile, varstruct );
 try
 	nc_varrename ( ncfile, 't', 't2' );
 catch me
-    
-    return
+    switch(me.identifier)
+        case {'MATLAB:imagesci:netcdf:libraryFailure', ... % 2011b
+                'MATLAB:netcdf:renameVar:enameinuse:nameIsAlreadyInUse', ... % 2011a
+                'MATLAB:netcdf:renameVar:nameIsAlreadyInUse', ... % 2009b
+                'snctools:varrename:mexnc:RENAME_VAR' } % 2008a
+            return
+        otherwise
+            rethrow(me)
+    end
 end
 
+error('failed')
 
 
-v = nc_getvarinfo ( ncfile, 't2' );
-if ~strcmp ( v.Name, 't2' )
-	error('rename did not seem to work.');
-end
-
-
-return
 
 
 %--------------------------------------------------------------------------
@@ -125,7 +88,15 @@ nc_create_empty ( ncfile,mode );
 try
 	nc_varrename ( ncfile, 'x', 'y' );
 catch me
-    return
+    switch(me.identifier)
+        case {'MATLAB:imagesci:netcdf:libraryFailure', ... % 2011b
+                'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ... % 2011a
+                'MATLAB:netcdf:inqVarID:variableNotFound', ... % 2009b
+                'snctools:varrename:mexnc:INQ_VARID' } % 2008a
+            return
+        otherwise
+            rethrow(me)
+    end
 end
 error('succeeded when it should have failed');
 
@@ -149,9 +120,17 @@ varstruct.Dimension = { 't' };
 nc_addvar ( ncfile, varstruct );
 
 try
-	nc_varrename ( ncfile, 't2', 't3' );
+    nc_varrename ( ncfile, 't2', 't3' );
 catch me
-    return
+    switch(me.identifier)
+        case {'MATLAB:imagesci:netcdf:libraryFailure', ... % 2011b
+                'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ... % 2011a
+                'MATLAB:netcdf:inqVarID:variableNotFound', ... % 2009b
+                'snctools:varrename:mexnc:INQ_VARID' } % 2008a
+            return
+        otherwise
+            rethrow(me)
+    end
 end
 error('succeeded when it should have failed.');
 
@@ -181,77 +160,24 @@ nc_addvar ( ncfile, varstruct );
 try
 	nc_varrename ( ncfile, 'x', 1 );
 catch me
-    return
+    switch(me.identifier)
+        case {'MATLAB:imagesci:netcdf:libraryFailure', ... % 2011b
+                'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ... % 2011a
+                'MATLAB:netcdf:inqVarID:variableNotFound', ... % 2009b
+                'snctools:varrename:mexnc:INQ_VARID' } % 2008a
+            return
+        otherwise
+            rethrow(me)
+    end
 end
 error('succeeded when it should have failed');
 
 
 
-%--------------------------------------------------------------------------
-function test_no_arguments ( )
-try
-	nc_varrename;
-catch me
-    return
-end
-error('failed');
 
 
 
 
-
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function test_only_one_input ( ncfile )
-try
-	nc_varrename ( ncfile );
-catch me
-    return
-end
-
-error('failed');
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function test_only_two_inputs ( ncfile )
-
-
-try
-	nc_varrename ( ncfile, 'x' );
-catch me
-    return
-end
-
-error('failed');
-
-
-
-
-
-
-
-
-
-%--------------------------------------------------------------------------
-function test_too_many_inputs ( ncfile )
-
-try
-	nc_varrename ( ncfile, 'blah', 'blah2', 'blah3' );
-catch me
-    return
-end
-error('failed');
 
 
 

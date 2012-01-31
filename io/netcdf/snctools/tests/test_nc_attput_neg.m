@@ -4,17 +4,11 @@ if strcmp(mode,'hdf4')
     return
 end
 
-v = version('-release');
-switch(v)
-    case {'14','2006a','2006b','2007a','2007b'}
-        fprintf(' negative testing filtered out on %s ', v);
-    otherwise
-        test_bad_datatype(ncfile,mode);
-        test_write_var_not_there(ncfile,mode);
-		test_write_fill_value(ncfile,mode);
-end
 
-return;
+test_bad_datatype(ncfile,mode);
+test_write_var_not_there(ncfile,mode);
+test_write_fill_value(ncfile,mode);
+
 
 
 

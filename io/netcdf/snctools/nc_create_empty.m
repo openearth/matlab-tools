@@ -54,12 +54,12 @@ end
 if strcmp(mode,'hdf4')
     sd_id = hdfsd('start',ncfile,'create');
     if sd_id == -1
-        error('SNCTOOLS:NC_CREATE_EMPTY:hdf4:create', ...
+        error('snctools:createEmpty:hdf4:create', ...
               'Could not create HDF4 file %s.\n', ncfile);
     end
     status = hdfsd('end',sd_id);
     if status == -1
-        error('SNCTOOLS:NC_CREATE_EMPTY:hdf4:end', ...
+        error('snctools:createEmpty:hdf4:end', ...
               'Could not close HDF4 file %s.\n', ncfile);
     end
 elseif (isnumeric(mode) && (mode == 4352) && tmw_lt_r2010b)  || tmw_lt_r2008b
@@ -68,7 +68,7 @@ elseif (isnumeric(mode) && (mode == 4352) && tmw_lt_r2010b)  || tmw_lt_r2008b
     [ncid, status] = mexnc ( 'CREATE', ncfile, mode );
     if ( status ~= 0 )
         ncerr = mexnc ( 'STRERROR', status );
-        error ( 'SNCTOOLS:NC_CREATE_EMPTY:MEXNC:CREATE', ncerr );
+        error ( 'snctools:createEmpty:mexnc:create', ncerr );
     end
     mexnc('close',ncid);
 else

@@ -220,14 +220,11 @@ if strcmp(info.Format,'HDF4')
     if ~strcmp(class(x), 'uint8' )
         error('class of retrieved attribute was not uint8.' );
     end
-	if x ~= 130
+    if x ~= 130
         error('value of retrieved attribute was not correct.' );
-	end
+    end
 elseif  ~strcmp(class(x), 'int8' )
     error('class of retrieved attribute was not int8.' );
-	if x ~= -126
-        error('value of retrieved attribute was not correct.' );
-	end
 end
 
 

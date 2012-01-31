@@ -67,7 +67,7 @@ switch ( datatype )
         Attribute.Value = int64(values)';
         
     otherwise
-        error('SNCTOOLS:nc_attinfo_java:unhandledDatatype', ...
+        error('snctools:nc_attinfo_java:unhandledDatatype', ...
             'Unhandled attribute datatype ''%s''\n', datatype );
 end
     

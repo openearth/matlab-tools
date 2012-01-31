@@ -1,3 +1,52 @@
+* January 12 2012 John Evans <john.g.evans.ne@gmail.com> -r3958
+- No support for HDF4 on R14.
+- Updated the README for official HDF4 stance.
+
+* January 05 2012 John Evans <john.g.evans.ne@gmail.com> -r3953
+- Fixed catch-and-rethrow error situation on win64, 2008a, HDF4 layer.
+- Was not warning about bad missing value / fill value situations.
+- Fixed some bad testing situations with win64, 2008a configuration.
+
+* December 18 2011 John Evans <john.g.evans.ne@gmail.com> -r3939
+- Added NC_VARGETR, a 'raw' version of NC_VARGET.
+- Removed support for HDF4 STD SCALING preference.
+- Fixed bug that crept in NC_VARPUT, mexnc layer.
+
+* December 13 2011 John Evans <john.g.evans.ne@gmail.com> -r3925
+- Fixed testing directory issues (hopefully!)  Now we run the tests
+- from outside of the test directory.  Fixed additional tests for
+- NC_DUMP.
+
+* December 02 2011 John Evans <john.g.evans.ne@gmail.com> -r3916
+- mexnc NC_INFO backend made consistent with others on default "Group" name.
+- Fixed tabs/spaces NC_DUMP bug with enhanced datatypes.
+- Labeling unrecognized datatypes as 'UNRECOGNIZED'.
+- Some NC_DUMP testing improvements.
+
+* November 25 2011 John Evans <john.g.evans.ne@gmail.com> -r3900
+- Some improvements (hopefully) to NC_DUMP output readability.
+- Fixed NC_DUMP bug on HDF4 backend.
+- Refactored negative testing, removed some bad cases.
+
+* November 13 2011 John Evans <john.g.evans.ne@gmail.com> -r3860
+- Fixed bug in java layer where singleton dimensions were not being
+- properly squeezed out.
+- Major refactoring effort for NC_VARGET, NC_VARPUT
+- Qualified only on R2008a, R2009b, R2010b, R2011a, R2011b
+- Forcing double precision results for NC_VARGET where it makes sense.
+
+* November 10 2011 John Evans <john.g.evans.ne@gmail.com> -r3826
+- Fixed bug where column indices not gracefully handled.
+
+* November 08 2011 John Evans <john.g.evans.ne@gmail.com> -r3820
+- Added three argument syntax for NC_GETDIMINFO, NC_GETVARINFO.
+
+* November 06 2011 John Evans <john.g.evans.ne@gmail.com> -r3816
+- Requalified on R14 through 2011b both with and without java.
+
+* October 26 2011 John Evans <john.g.evans.ne@gmail.com> -r3808
+- Added some hdf5 support on 11a.
+
 * October 11 2011 John Evans <john.g.evans.ne@gmail.com> -r3801
 - Requalifying on all releases.
 

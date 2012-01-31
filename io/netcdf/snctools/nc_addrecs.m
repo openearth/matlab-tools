@@ -20,14 +20,14 @@ end
 
 % Check that we were given good inputs.
 if ~isstruct ( new_data )
-    err_id = 'SNCTOOLS:NC_ADD_RECS:badStruct';
+    err_id = 'snctools:addrecs:badStruct';
     error ( err_id, '2nd input argument must be a structure .\n' );
 end
 
 %
 % Check that each field of the structure has the same length.
 if isempty(new_data)
-    err_id = 'SNCTOOLS:NC_ADD_RECS:badRecord';
+    err_id = 'snctools:addrecs:badRecord';
     error ( err_id, 'data record cannot be empty' );
 end
 
@@ -37,7 +37,7 @@ for j = 1:numel(new_data)
     v = nc_getvarinfo(ncfile,new_data(j).Name);
 
     if ~v.Unlimited
-        error('SNCTOOLS:addRecs:notUnlimited', ...
+        error('snctools:addRecs:notUnlimited', ...
             'All variables must have an unlimited dimension.');
     end
     
@@ -76,7 +76,7 @@ for j = 1:numel(new_data)
     end
 end
 if any(diff(field_length))
-    err_id = 'SNCTOOLS:NC_ADD_RECS:badFieldLengths';
+    err_id = 'snctools:addrecs:badFieldLengths';
     error ( err_id, 'Some of the fields do not have the same length.\n' );
 end
 

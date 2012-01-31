@@ -39,7 +39,6 @@ return
 %--------------------------------------------------------------------------
 function run_all_tests(ncfile,mode)
 
-test_no_inputs;
 
 create_ncfile(ncfile,mode);
 
@@ -61,6 +60,7 @@ test_012(ncfile,mode);
 test_013(ncfile,mode)
 test_014(ncfile,mode);
 
+run_negative_tests(ncfile,mode);
 
 return
 
@@ -71,6 +71,19 @@ return
 
 
 
+%-------------------------------------------------------------------------------
+function run_negative_tests(ncfile,mode)
+
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b'}
+        fprintf('\tNo negative tests on %s.  ' , v);
+        return
+    otherwise
+        test_nc_addnewrecs_neg(ncfile,mode);
+end
+
+        
 %-------------------------------------------------------------------------------
 function create_ncfile ( ncfile, mode )
 
@@ -136,22 +149,6 @@ varstruct.Dimension = { 'x' };
 nc_addvar ( ncfile, varstruct );
 
 return
-
-
-
-
-
-%---------------------------------------------------------------------------
-function test_no_inputs (  )
-
-%
-% Try no inputs
-try
-    nc_addnewrecs;
-catch %#ok<CTCH>
-	return
-end
-error('test failure');
 
 
 

@@ -7,7 +7,7 @@ if ( status ~= 0 )
 end
 
 switch class(varname)
-    case { 'double' }
+    case 'double'
         varid = varname;
         
     case 'char'
@@ -80,7 +80,7 @@ return
 
 
 %--------------------------------------------------------------------------
-function varid = figure_out_varid ( ncid, varname )
+function varid = figure_out_varid(ncid,varname)
 % Did the user do something really stupid like say 'global' when they meant
 % NC_GLOBAL?
 if isempty(varname)
@@ -99,9 +99,9 @@ if ( strcmpi(varname,'global') )
     end
 end
 
-[varid, status] = mexnc ( 'inq_varid', ncid, varname );
+[varid, status] = mexnc('inq_varid',ncid,varname);
 if ( status ~= 0 )
     mexnc('close',ncid);
-    ncerror = mexnc ( 'strerror', status );
-    error ( 'snctools:attget:mexnc:inqVarID', ncerror );
+    ncerror = mexnc('strerror',status);
+    error('snctools:attget:mexnc:inqVarID',ncerror);
 end

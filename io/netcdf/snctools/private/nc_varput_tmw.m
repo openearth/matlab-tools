@@ -6,14 +6,22 @@ ncid = netcdf.open(ncfile,'WRITE');
 try
     varid = netcdf.inqVarID(ncid,varname);
     [dud,xtype,dims]=netcdf.inqVar(ncid,varid); %#ok<ASGLU>
+    ndims = numel(dims);
     
-    indexing = get_indexing(dims,data,preserve_fvd,varargin{:});
-    
+    info = nc_getvarinfo_tmw(ncid,varid);
+    [start,count,stride] = snc_get_varput_indexing(ndims,info.Size,size(data),varargin{:});
+    if ~preserve_fvd
+        start = fliplr(start); 
+        count = fliplr(count); 
+        stride = fliplr(stride);
+    end
     data = pre_process(ncid,varid,xtype,preserve_fvd,data);
 
-    ncargs = [indexing, {data}];
-    
-    netcdf.putVar(ncid,varid,ncargs{:});
+    if ndims == 0
+        netcdf.putVar(ncid,varid,data);
+    else
+        netcdf.putVar(ncid,varid,start,count,stride,data);
+    end
 
 catch myException
     netcdf.close(ncid);
@@ -23,28 +31,6 @@ end
 netcdf.close(ncid);
 return
 
-%--------------------------------------------------------------------------
-function indexing = get_indexing(dims,data,preserve_fvd,varargin)
-
-indexing = varargin;
-
-% no indexing arguments provided and NOT a singleton.
-if (numel(indexing) == 0) && ~isempty(dims)
-    start = zeros(1,numel(dims));
-    if numel(dims) == 1
-        count = numel(data);
-    else
-        count = size(data);
-    end
-    indexing = {start, count};
-end
-
-if ~preserve_fvd
-    for j = 1:numel(indexing)
-        indexing{j} = fliplr(indexing{j});
-    end
-end
-
 
 %--------------------------------------------------------------------------
 function data = pre_process(ncid,varid,xtype,preserve_fvd,data)
@@ -53,13 +39,13 @@ if ~preserve_fvd
     data = permute(data,fliplr(1:ndims(data)));
 end
 
-data = handle_scaling_tmw(ncid,varid,data);
-data = handle_fill_value_tmw(ncid,varid,data);
+data = handle_scaling(ncid,varid,data);
+data = handle_fill_value(ncid,varid,data);
 if ( xtype == nc_char ) && (~ischar(data))
     data = char(data);
 end
 %--------------------------------------------------------------------------
-function data = handle_scaling_tmw(ncid,varid,data)
+function data = handle_scaling(ncid,varid,data)
 % If there is a scale factor and/or  add_offset attribute, convert the data
 % to double precision and apply the scaling.
 
@@ -127,7 +113,7 @@ return
 
 
 %--------------------------------------------------------------------------
-function data = handle_fill_value_tmw(ncid,varid,data)
+function data = handle_fill_value(ncid,varid,data)
 % Handle the fill value.  We do this by changing any NaNs into
 % the _FillValue.  That way the netcdf library will recognize it.
 try

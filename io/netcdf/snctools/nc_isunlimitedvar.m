@@ -1,4 +1,4 @@
-function tf = nc_isunlimitedvar ( ncfile, varname )
+function tf = nc_isunlimitedvar(ncfile,varname)
 %NC_ISUNLIMITEDVAR determine if variable has unlimited dimension.
 %
 %   TF = NC_ISUNLIMITEDVAR(NCFILE,VARNAME) returns true if the netCDF
@@ -22,7 +22,7 @@ switch(backend)
 	case 'mexnc'
 		tf = nc_isunlimitedvar_mexnc(ncfile,varname);
 	otherwise
-		error('SNCTOOLS:unlimitedVar:unhandledBackend', ...
+		error('snctools:unlimitedVar:unhandledBackend', ...
 		      '%s is not a recognized backend.', backend );
 end
 

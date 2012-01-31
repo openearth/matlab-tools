@@ -52,15 +52,13 @@ else
     close_fid = 0;    
 end
 
-info = nc_info ( file_name );
+info = nc_info(file_name);
 
-fprintf (fid, '%s %s {\n', info.Format, info.Filename );
+fprintf (fid,'%s %s {\n',info.Format,info.Filename);
 
-if strcmp(info.Format,'NetCDF-4')
-    dump_group(info,true,location,fid);
-else
-    dump_group(info,false,location,fid);
-end
+dump_group(info,location,fid);
+
+fprintf(fid,'}\n');
 
 if close_fid
     fclose(fid);
@@ -69,17 +67,19 @@ end
 return;
 
 %--------------------------------------------------------------------------
-function dump_group(group,dump_group_name,restricted_variable,fid)
+function dump_group(group,restricted_variable,fid)
 
-if dump_group_name
-    fprintf(fid,'\nGroup ''%s'' {\n', group.Name);
+if strcmp(group.Name,'/') && isfield(group,'Format') && strcmp(group.Format,'NetCDF-4')
+    fprintf(fid,'\nGroup %s {\n', group.Name);
+elseif ~strcmp(group.Name,'/')
+    fprintf(fid,'\nGroup %s {\n', group.Name);
 end
 
 dump_dimension_metadata(group, fid );
-
 dump_datatype_metadata(group,fid);
 
 not_found = dump_variables(group.Dataset,restricted_variable,fid);
+
 if isempty(restricted_variable)
     if isfield(group,'Name') && ~strcmp(group.Name,'/')
         dump_group_attributes(group,fid,false);
@@ -93,15 +93,15 @@ if not_found || isempty(restricted_variable)
     
     if isfield(group,'Group') && numel(group.Group) > 0
         for j = 1:numel(group.Group)
-            dump_group(group.Group(j),dump_group_name,restricted_variable,fid);
+            dump_group(group.Group(j),restricted_variable,fid);
         end
     end
 end
 
-if dump_group_name
-    fprintf(fid,'} End Group ''%s''\n', group.Name);
-else
-    fprintf(fid,'}\n');
+if strcmp(group.Name,'/') && isfield(group,'Format') && strcmp(group.Format,'NetCDF-4')
+    fprintf(fid,'} End Group %s\n\n', group.Name);
+elseif ~strcmp(group.Name,'/')
+    fprintf(fid,'} End Group %s\n\n', group.Name);   
 end
 fprintf('\n');
 
@@ -117,7 +117,7 @@ end
 
 ndatatypes = numel(info.Datatype);
 
-fprintf(fid,'datatypes:\n');
+fprintf(fid,'  datatypes:\n');
 for j = 1:ndatatypes
     switch(info.Datatype(j).Class)
         case 'enum'
@@ -141,14 +141,14 @@ return
 %--------------------------------------------------------------------------
 function dump_opaque_datatype_metadata(info,fid)
 
-fprintf(fid,'\topaque(%d) ''%s''\n', info.Size, info.Name);
+fprintf(fid,'    opaque(%d) ''%s''\n', info.Size, info.Name);
 
 return
 
 %--------------------------------------------------------------------------
 function dump_vlen_datatype_metadata(info,fid)
 
-fprintf(fid,'\t%s vlen ''%s''\n', info.Type.Type, info.Name);
+fprintf(fid,'    %s vlen ''%s''\n', info.Type.Type, info.Name);
 
 
 return
@@ -157,9 +157,9 @@ return
 function dump_compound_datatype_metadata(info,fid)
 
 
-fprintf(fid,'\tcompound ''%s''\n', info.Name);
+fprintf(fid,'    compound ''%s''\n', info.Name);
 for j = 1:numel(info.Type.Member)
-    fprintf('\t\t%s %s\n', info.Type.Member(j).Datatype.Type, info.Type.Member(j).Name);
+    fprintf('      %s %s\n', info.Type.Member(j).Datatype.Type, info.Type.Member(j).Name);
 end
 
 return
@@ -168,9 +168,9 @@ return
 function dump_enum_datatype_metadata(info,fid)
 
 
-fprintf(fid,'\t%s enum ''%s''\n', info.Type.Type, info.Name);
+fprintf(fid,'    %s enum ''%s''\n', info.Type.Type, info.Name);
 for j = 1:numel(info.Type.Member)
-    fprintf('\t\t%s = %d\n', info.Type.Member(j).Name, info.Type.Member(j).Value);
+    fprintf('      %s = %d\n', info.Type.Member(j).Name, info.Type.Member(j).Value);
 end
 
 return
@@ -184,13 +184,13 @@ else
     num_dims = 0;
 end
 
-fprintf(fid,'\ndimensions:\n');
+fprintf(fid,'\n  dimensions:\n');
 for j = 1:num_dims
     if info.Dimension(j).Unlimited
-        fprintf(fid,'\t%s = UNLIMITED ; (%i currently)\n', ...
+        fprintf(fid,'    %s = UNLIMITED ; (%i currently)\n', ...
                  deblank(info.Dimension(j).Name), info.Dimension(j).Length );
     else
-        fprintf(fid, '\t%s = %i ;\n', info.Dimension(j).Name,info.Dimension(j).Length );
+        fprintf(fid, '    %s = %i ;\n', info.Dimension(j).Name,info.Dimension(j).Length );
     end
 end
 fprintf(fid,'\n');
@@ -218,14 +218,14 @@ end
 
 pfvd = nc_getpref('PRESERVE_FVD');
 
-fprintf (fid,'variables:\n' );
+fprintf (fid,'  variables:\n' );
 
 if pfvd == 0;
-   fprintf (fid,'\t// Preference ''PRESERVE_FVD'':  false,\n' );
-   fprintf (fid,'\t// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.\n' );
+   fprintf (fid,'    // Preference ''PRESERVE_FVD'':  false,\n' );
+   fprintf (fid,'    // dimensions consistent with ncBrowse, not with native MATLAB netcdf package.\n' );
 else
-   fprintf (fid,'\t// Preference ''PRESERVE_FVD'':  true,\n' );
-   fprintf (fid,'\t// dimensions consistent with native MATLAB netcdf package, not with ncBrowse.\n' );
+   fprintf (fid,'    // Preference ''PRESERVE_FVD'':  true,\n' );
+   fprintf (fid,'    // dimensions consistent with native MATLAB netcdf package, not with ncBrowse.\n' );
 end
 
 
@@ -250,7 +250,7 @@ function dump_single_variable ( var_metadata , fid )
 if isempty(var_metadata.Datatype)
     var_metadata.Datatype = 'ENHANCED MODEL DATATYPE';
 end
-fprintf(fid,'\t%s ', var_metadata.Datatype);
+fprintf(fid,'    %s ', var_metadata.Datatype);
 
 fprintf(fid,'%s', var_metadata.Name );
 
@@ -275,23 +275,24 @@ else
     fprintf (fid, ']');
 end
 
-fprintf (fid,'\n');
 
 if isfield(var_metadata, 'Chunking')
     if ~isempty(var_metadata.Chunking)
-        fprintf(fid,'\t\tChunking: [ ' );
-        fprintf(fid,'%d ', var_metadata.Chunking(1));
+        fprintf(fid,', Chunking = [' );
+        fprintf(fid,'%d', var_metadata.Chunking(1));
         for j = 2:numel(var_metadata.Chunking)
-            fprintf(fid,'%d ', var_metadata.Chunking(j));
+            fprintf(fid,' %d', var_metadata.Chunking(j));
         end
-        fprintf(fid,']\n');
+        fprintf(fid,']');
     end
 end
 
 if isfield(var_metadata,'Deflate') && ~isempty(var_metadata.Deflate) ...
         && isfield(var_metadata, 'Chunking') && ~isempty(var_metadata.Chunking)
-    fprintf(fid,'\t\tDeflate Level:  %d\n', var_metadata.Deflate);
+    fprintf(fid,', Deflate = %d', var_metadata.Deflate);
 end
+
+fprintf('\n');
 
 % Now do all attributes for each variable.
 num_atts = length(var_metadata.Attribute);
@@ -376,11 +377,11 @@ switch ( attribute.Datatype )
 end
 
 if ~exist('varname','var')
-    fprintf(fid, '\t\t:%s = %s%s\n', ...
+    fprintf(fid, '      :%s = %s%s\n', ...
          attribute.Name, att_val, att_type);
 else
-    fprintf(fid, '\t\t%s:%s = %s%s\n', ...
-         varname, attribute.Name, att_val, att_type);
+    fprintf(fid, '      :%s = %s%s\n', ...
+         attribute.Name, att_val, att_type);
 end
 
 return
@@ -419,7 +420,7 @@ function strval = vlenattval2str(vlen_val)
 if isnumeric(vlen_val)
     strval = sprintf('{ %s }', num2str(vlen_val'));
 else
-    warning('not handled');
+    strval = '{ UNHANDLED }';
 end
     
 %--------------------------------------------------------------------------
@@ -443,9 +444,9 @@ end
 
 if num_atts > 0
     if is_global
-        fprintf (fid, '//global Attributes:\n' );
+        fprintf (fid, '  //global Attributes:\n' );
     else 
-        fprintf(fid,'//group Attributes:\n');
+        fprintf(fid,'  //group Attributes:\n');
     end
 end
 

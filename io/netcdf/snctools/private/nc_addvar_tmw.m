@@ -1,5 +1,5 @@
 function nc_addvar_tmw(ncfile,varstruct,preserve_fvd)
-% TMW backend for NC_ADDVAR.
+% TMW backend for addvar.
 
 ncid = netcdf.open(ncfile, nc_write_mode );
 
@@ -51,7 +51,7 @@ if ~isempty(varstruct.Chunking)
         chunking = varstruct.Chunking;
     end
     if ( numel(chunking) ~= num_dims)
-        error ( 'SNCTOOLS:NC_ADDVAR:tmw:defVarChunking', ...
+        error ( 'snctools:addvar:tmw:defVarChunking', ...
             'Chunking size does not jive with number of dimensions.');
     end
     

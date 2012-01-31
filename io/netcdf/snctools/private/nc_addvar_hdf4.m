@@ -2,7 +2,7 @@ function nc_addvar_hdf4(hfile,varstruct,preserve_fvd)
 
 sd_id = hdfsd('start',hfile,'write');
 if sd_id < 0
-    error('SNCTOOLS:addVar:hdf4:startFailed', ...
+    error('snctools:addVar:hdf4:startFailed', ...
         'START failed on %s.', hfile);
 end
 
@@ -10,7 +10,7 @@ end
 idx = hdfsd('nametoindex',sd_id,varstruct.Name);
 if idx >= 0
     hdfsd('end',sd_id);
-    error('SNCTOOLS:nc_addvar:hdf4:variableAlreadyPresent', ...
+    error('snctools:nc_addvar:hdf4:variableAlreadyPresent', ...
         '%s is already present.', varstruct.Name);
 end
     
@@ -31,14 +31,14 @@ for j = 1:num_dims
     idx = hdfsd('nametoindex',sd_id,dim_names{j});
     if idx < 0
         hdfsd('end',sd_id);
-        error('SNCTOOLS:addVar:hdf4:nametoindexFailed', ...
+        error('snctools:addVar:hdf4:nametoindexFailed', ...
             'NAMETOINDEX failed on %s, \"%s\".', dim_names{j}, hfile);
     end
 
     dim_sds_id = hdfsd('select',sd_id,idx);
     if dim_sds_id < 0
         hdfsd('end',sd_id);
-        error('SNCTOOLS:addVar:hdf4:selectFailed', ...
+        error('snctools:addVar:hdf4:selectFailed', ...
             'SELECT failed on %s, \"%s\".', dim_names{j}, hfile);
     end
 
@@ -47,13 +47,13 @@ for j = 1:num_dims
     if status < 0
         hdfsd('endaccess',dim_sds_id);
         hdfsd('end',sd_id);
-        error('SNCTOOLS:addVar:hdf4:getinfoFailed', ...
+        error('snctools:addVar:hdf4:getinfoFailed', ...
             'GETINFO failed on %s, \"%s\".', dim_names{j}, hfile);
     end
 
     status = hdfsd('endaccess',dim_sds_id);
     if status < 0
-        error('SNCTOOLS:addVar:hdf4:endaccessFailed', ...
+        error('snctools:addVar:hdf4:endaccessFailed', ...
             'ENDACCESS failed on %s, \"%s\".', dim_names{j}, hfile);
     end
 
@@ -72,7 +72,7 @@ end
 sds_id = hdfsd('create',sd_id,varstruct.Name,dtype,num_dims,dim_sizes);
 if sds_id < 0
     hdfsd('end',sd_id);
-    error('SNCTOOLS:addVar:hdf4:createFailed', ...
+    error('snctools:addVar:hdf4:createFailed', ...
         'CREATE failed on %s, \"%s\".', varstruct.Name, hfile);
 end
 
@@ -82,7 +82,7 @@ for j = 1:num_dims
     if dimid < 0
         hdfsd('endaccess',sds_id);
         hdfsd('end',sd_id);
-        error('SNCTOOLS:addVar:getdimidFailed', ...
+        error('snctools:addVar:getdimidFailed', ...
             'GETDIMID failed.');
             
     end
@@ -91,20 +91,20 @@ for j = 1:num_dims
     if status < 0
         hdfsd('endaccess',sds_id);
         hdfsd('end',sd_id);
-        error('SNCTOOLS:addVar:hdf4:setdimFailed', ...
+        error('snctools:addVar:hdf4:setdimFailed', ...
             'SETDIM failed on %s, \"%s\".', varstruct.Name, hfile);
     end
 end
 
 status = hdfsd('endaccess',sds_id);
 if status < 0
-    error('SNCTOOLS:addVar:hdf4:endaccessFailed', ...
+    error('snctools:addVar:hdf4:endaccessFailed', ...
         'ENDACCESS failed on %s, \"%s\".', varstruct.Name, hfile);
 end
 
 status = hdfsd('end',sd_id);
 if status < 0
-    error('SNCTOOLS:addVar:hdf4:endFailed', ...
+    error('snctools:addVar:hdf4:endFailed', ...
         'END failed on %s, \"%s\".', hfile);
 end
 

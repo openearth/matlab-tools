@@ -126,7 +126,7 @@ end
 
 error('nc_varput succeeded when it should not have.');
 
-return
+
 
 
 
@@ -158,7 +158,7 @@ catch me
 end        
 
 
-return
+error('failed')
 
 
 
@@ -200,15 +200,12 @@ error('nc_varput succeeded when it should have failed.');
 %--------------------------------------------------------------------------
 function test_singleton_bad_start ( ncfile )
 
-global ignore_eids;
+
 input_data = 3.14159;
 try
     nc_varput ( ncfile, 'test_singleton', input_data, 4, 1 );
 catch me
 
-    if ignore_eids
-        return
-    end
     switch(me.identifier)
         case { 'SNCTOOLS:nc_varput:badIndexing' }
             return
@@ -218,7 +215,7 @@ catch me
 
 end
 
-
+error('failed')
 
 
 
@@ -226,14 +223,12 @@ end
 %--------------------------------------------------------------------------
 function test_singleton_bad_count ( ncfile )
 
-global ignore_eids;
+
 input_data = 3.14159;
 try
     nc_varput ( ncfile, 'test_singleton', input_data, 0, 2 );
 catch me
-    if ignore_eids
-        return
-    end
+
     switch(me.identifier)
         case { 'SNCTOOLS:nc_varput:badIndexing' }
             return
@@ -244,7 +239,7 @@ catch me
 end
 
 
-
+error('failed')
 
 
 
@@ -255,15 +250,11 @@ end
 %--------------------------------------------------------------------------
 function test_singleton_with_stride_which_is_bad ( ncfile )
 
-global ignore_eids;
-
 input_data = 3.14159;
 try
     nc_varput ( ncfile, 'test_singleton', input_data, 0, 1, 1 );
 catch me
-    if ignore_eids
-        return
-    end
+ 
     switch(me.identifier)
         case { 'SNCTOOLS:NC_VARPUT:badIndexing' }
             return
@@ -273,7 +264,7 @@ catch me
 
 end
 
-return
+error('failed')
 
 
 
@@ -294,7 +285,6 @@ return
 function test_write_2D_strided_bad_start ( ncfile )
 % write using put_vars with a bad offset
 
-global ignore_eids;
 
 sz = nc_varsize(ncfile,'test_2D');
 start = [2 1];
@@ -307,9 +297,7 @@ input_data = reshape(input_data,count);
 try
     nc_varput ( ncfile, 'test_2D', input_data, start, count, stride);
 catch me
-    if ignore_eids
-        return
-    end
+
     switch(me.identifier)
         case { 'SNCTOOLS:NC_VARPUT:writeOperationFailed', ...
                  'MATLAB:netcdf:putVars:einvalcoords:indexExceedsDimensionBound', ...
@@ -332,8 +320,6 @@ error('failed');
 function test_write_2D_chunk_bad_count ( ncfile )
 % vara with bad count
 
-global ignore_eids;
-
 sz = nc_varsize(ncfile,'test_2D');
 start = [0 0];
 count = sz+1;
@@ -343,9 +329,7 @@ input_data = reshape(input_data,count);
 try
     nc_varput ( ncfile, 'test_2D', input_data, start, count );
 catch me
-    if ignore_eids
-        return
-    end
+
     switch(me.identifier)
         case { 'SNCTOOLS:NC_VARPUT:writeOperationFailed', ...
                 'MATLAB:netcdf:putVara:startPlusCountExceedsDimensionBound', ...
@@ -367,8 +351,6 @@ error('failed');
 %--------------------------------------------------------------------------
 function test_write_2D_bad_stride ( ncfile )
 
-global ignore_eids;
-
 sz = nc_varsize(ncfile,'test_2D');
 start = [0 0];
 count = sz/2;
@@ -379,9 +361,7 @@ input_data = reshape(input_data,count);
 try
     nc_varput ( ncfile, 'test_2D', input_data, start, count, stride);
 catch me
-    if ignore_eids
-        return
-    end
+
     switch(me.identifier)
         case { 'SNCTOOLS:NC_VARPUT:writeOperationFailed', ...
                 'MATLAB:netcdf:putVars:indexExceedsDimensionBound', ...

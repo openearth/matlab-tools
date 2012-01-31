@@ -10,12 +10,10 @@ test_global_att_not_there_classic(ncfile);
 
 
 switch(v)
-    case {'2008b','2009a'}
-        %
-    otherwise
+    case {'2008b','2009a','2009b'}
         % problems exist in java interface
+    otherwise      
         test_group_att_not_there([testroot filesep 'testdata/enhanced.nc']);
-        ls([testroot filesep 'testdata/enhanced.nc'])
         test_group_not_there    ([testroot filesep 'testdata/enhanced.nc']);
         test_get_att_not_there_enhanced;
 end
@@ -33,16 +31,28 @@ end
 %--------------------------------------------------------------------------
 function test_get_att_not_there_enhanced()
 
+v = version('-release');
+if strcmp(v,'2008a')
+    return
+end
+
 ncfile = 'example.nc';
 
 try
 	nc_attget(ncfile,'z_double', 'test_double_att' );
 catch me
-    return;            
+    switch(me.identifier)
+        case { 'MATLAB:imagesci:netcdf:libraryFailure', ... % 2011b
+                'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ... % 2011a
+                'MATLAB:netcdf:inqVarID:variableNotFound' }            % 2010a
+            return
+        otherwise
+            rethrow(me);
+    end
+
 end
+
 error('failed');
-
-
 
 
 
@@ -65,7 +75,7 @@ catch me
             rethrow(me);
     end
 end
-return
+error('failed')
 
 
 
@@ -88,7 +98,7 @@ catch me
             rethrow(me);
     end
 end
-return
+error('failed');
 
 
 
@@ -111,7 +121,7 @@ catch me
             rethrow(me);
     end
 end
-return
+error('failed');
 
 
 
@@ -126,13 +136,14 @@ catch me
     switch(me.identifier)
         case {'MATLAB:imagesci:netcdf:libraryFailure', ...             % 2011b
                 'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ... % 2011a
+                'snctools:noNetcdfJava', ...                           % 2010a java
                 'snctools:attget:java:variableNotFound' }              % 2009b java
             return
         otherwise
             rethrow(me);
     end
 end
-return
+error('failed');
 
 
 
@@ -148,6 +159,7 @@ catch me
     switch(me.identifier)
         case {'MATLAB:imagesci:netcdf:libraryFailure',            ... % 2011b
                 'MATLAB:netcdf:inqAtt:enotatt:attributeNotFound', ... % 2011a
+                'snctools:noNetcdfJava',                          ... % 2010a java
                 'snctools:attget:java:attributeNotFound' }            % 2009b java
             return
         otherwise

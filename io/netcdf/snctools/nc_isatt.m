@@ -24,8 +24,8 @@ switch(retrieval_method)
 	case 'mexnc'
 		tf = nc_isatt_mexnc(ncfile,varname,attrname);
 	otherwise
-		error ( 'SNCTOOLS:NC_ISATT:unrecognizedCase', ...
-		        '%s is not recognized method for NC_ISATT.', retrieval_method );
+		error ( 'snctools:isatt:unrecognizedCase', ...
+		        '%s is not recognized backend for NC_ISATT.', retrieval_method );
 end
 
 
@@ -36,7 +36,7 @@ end
 function bool = nc_isatt_tmw_hdf4(hfile,varname,attrname)
 sd_id = hdfsd('start',hfile,'read');
 if sd_id < 0
-    error('SNCTOOLS:isatt:hdf4:start', 'START failed on %s.', hfile);
+    error('snctools:isatt:hdf4:start', 'START failed on %s.', hfile);
 end
 
 if isnumeric(varname);
@@ -45,13 +45,13 @@ else
     
     idx = hdfsd('nametoindex',sd_id,varname);
     if idx < 0
-        error('SNCTOOLS:isatt:hdf4:nametoindex', ...
+        error('snctools:isatt:hdf4:nametoindex', ...
             'NAMETOINDEX failed on %s, %s.', varname, hfile);
     end
     
     sds_id = hdfsd('select',sd_id,idx);
     if sds_id < 0
-        error('SNCTOOLS:isatt:hdf4:select', ...
+        error('snctools:isatt:hdf4:select', ...
             'SELECT failed on %s, %s.', varname, hfile);
     end
     
@@ -68,14 +68,14 @@ end
 if ischar(varname);
     status = hdfsd('endaccess',sds_id);
     if status < 0
-        error('SNCTOOLS:isatt:hdf4:endaccess', ...
+        error('snctools:isatt:hdf4:endaccess', ...
             'ENDACCESS failed on %s.', varname);
     end
 end
 
 status = hdfsd('end', sd_id);
 if status < 0
-    error('SNCTOOLS:isatt:hdf4:end', 'END failed on %s.', hfile);
+    error('snctools:isatt:hdf4:end', 'END failed on %s.', hfile);
 end
 
 return
@@ -147,7 +147,7 @@ function bool = nc_isatt_mexnc(ncfile,varname,attrname)
 [ncid,status] = mexnc('open',ncfile, nc_nowrite_mode );
 if status ~= 0
 	ncerr = mexnc ( 'STRERROR', status );
-	error ( 'SNCTOOLS:NC_ISATT:MEXNC:OPEN', ncerr );
+	error ( 'snctools:isatt:mexnc:open', ncerr );
 end
 
 if ischar(varname)
@@ -155,7 +155,7 @@ if ischar(varname)
 	if status ~= 0
 		mexnc('close',ncid);
 		ncerr = mexnc ( 'STRERROR', status );
-		error ( 'SNCTOOLS:NC_ISATT:MEXNC:inqVaridFailed', ncerr );
+		error ( 'snctools:isatt:mexnc:inqVaridFailed', ncerr );
 	end
 else
 	varid = varname;
@@ -172,7 +172,7 @@ end
 status = mexnc('close',ncid);
 if status ~= 0
 	ncerr = mexnc ( 'STRERROR', status );
-	error ( 'SNCTOOLS:NC_ISATT:MEXNC:closeFailed', ncerr );
+	error ( 'snctools:isatt:mexnc:closeFailed', ncerr );
 end
 return
 
@@ -209,7 +209,7 @@ else
 		try
 			jncid = DODSNetcdfFile(ncfile);
 		catch %#ok<CTCH>
-			error ( 'SNCTOOLS:IS_ATT:fileOpenFailure', ...
+			error ( 'snctools:isatt:fileOpenFailure', ...
                  'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ...
                  ncfile);
 		end
@@ -228,7 +228,7 @@ if ischar ( varname )
 		if close_it
 			close(jncid);
 		end
-    	error ( 'SNCTOOLS:isAtt:java:varNotFound', ...
+    	error ( 'snctools:isatt:java:varNotFound', ...
 			'Could not find attribute %s for variable %s in file %s.', ...
 			attrname, varname, ncfile);
 	end

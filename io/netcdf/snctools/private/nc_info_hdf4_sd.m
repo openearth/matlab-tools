@@ -2,6 +2,8 @@ function fileinfo = nc_info_hdf4_sd(hdf4file)
 % HDF4 SD package backend for NC_INFO
 import matlab.io.hdf4.*
 
+fileinfo.Name = '/';
+
 % Get the full path name.
 fid = fopen(hdf4file,'r');
 fullfile = fopen(fid);

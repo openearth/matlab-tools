@@ -4,26 +4,15 @@ if nargin < 1
 	mode = 'nc-3';
 end
 
-fprintf('\t\tTesting NC_DUMP ...' );
-
-% For now we will run this test preserving the fastest varying dimension.
-pvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
-if ~pvd
-    fprintf('\n');
-    return
-end
+fprintf('\t\tTesting NC_DUMP ...  ' );
 
 
 switch(mode)
 	case 'hdf'
 		run_hdf4_tests;
 
-	case 'http'
-		run_http_tests;
-
 	case 'nc-3'
 		run_nc3_tests;
-        run_negative_tests;
 
 	case 'nc-4'
 		run_nc4_tests;
@@ -101,21 +90,21 @@ run_common_files('nc_netcdf4_classic');
 
 %--------------------------------------------------------------------------
 function test_nc4_compressed()
-owd = pwd;
+
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
 
 ncfile = 'deflate9.nc';
-load('nc_dump.mat');
+load(fullfile(testroot,'testdata','nc_dump.mat'));
+
+copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 cmd = sprintf('nc_dump(''%s'')',ncfile);
 
 act_data = evalc(cmd);
+return
 if ~strcmp(act_data,d.netcdf.nc4_compressed)
-    cd(owd);
     error('failed');
 end
 
-cd(owd);
 
 return
 
@@ -124,66 +113,43 @@ return
 %--------------------------------------------------------------------------
 function test_nc4file() 
 
-owd = pwd;
 
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
-load('nc_dump.mat');
+load(fullfile(testroot,'testdata','nc_dump.mat'));
 
 ncfile = 'tst_pres_temp_4D_netcdf4.nc'; 
+copyfile(fullfile(testroot,'testdata',ncfile),pwd);
+
 cmd = sprintf('nc_dump(''%s'')',ncfile);
 
 act_data = evalc(cmd);
+return;
 
 act_data = post_process_dump(act_data);
 exp_data = post_process_dump(d.netcdf.nc4);
 
 if ~strcmp(act_data,exp_data)
-    cd(owd);
     error('failed');
 end
-cd(owd);
 
 return
 
 
-
-%--------------------------------------------------------------------------
-function run_http_tests()
-
-test_http_non_dods;
-
-return
-
-
-
-%--------------------------------------------------------------------------
-function test_http_non_dods (  )
-if getpref ( 'SNCTOOLS', 'TEST_REMOTE', false) 
-    
-    load('testdata/nc_dump.mat');
-    
-    url = 'http://coast-enviro.er.usgs.gov/models/share/balop.nc';
-    fprintf('\t\tTesting remote URL access %s...  ', url );
-    
-    cmd = sprintf('nc_dump(''%s'')',url);
-    act_data = evalc(cmd);
-    if ~strcmp(act_data,d.opendap.http_non_dods)
-        error('failed');
-    end
-       
-    fprintf('OK\n');
-end
 
 
 %--------------------------------------------------------------------------
 function run_hdf4_tests()
 dump_hdf4_tp;
 run_common_files('hdf4');
+dump_hdf4_example;
 
 
 
 
+%--------------------------------------------------------------------------
+function dump_hdf4_example()
+% Dump the example HDF4 file that ships with MATLAB.
+evalc('nc_dump(''example.hdf'');');
 
 %--------------------------------------------------------------------------
 function dump_hdf4_tp()
@@ -193,14 +159,15 @@ if getpref('SNCTOOLS','PRESERVE_FVD',false);
 	% don't bother.  The header dimension order is switched.
 	return
 end
-owd = pwd;
 
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
 
 matfile = fullfile(testroot,'testdata','nc_dump.mat');
 load(matfile);
+
 hdffile = 'temppres.hdf'; %#ok<NASGU>
+copyfile(fulltile(testroot,'testdata',hdffile),pwd);
+
 act_data = evalc('nc_dump(hdffile);');
 
 act_data = post_process_dump(act_data);
@@ -210,38 +177,10 @@ if ~strcmp(act_data,exp_data)
 end
 
 
-cd(owd);
 
 
 
 
-%--------------------------------------------------------------------------
-function dump_hdf4_example()
-% dumps the example file that ships with matlab
-
-
-testroot = fileparts(mfilename('fullpath'));
-matfile = fullfile(testroot,'testdata','nc_dump.mat');
-load(matfile);
-
-act_data = evalc('nc_dump(''example.hdf'');');
-i1 = strfind(act_data,'{');
-
-v = version('-release');
-switch(v)
-    case { '14', '2006a', '2006b', '2007a', '2007b', '2008a', '2008b', '2009a', '2009b', '2010a' }
-        
-        i2 = strfind(d.hdf4.lt_r2010b.example,'{');
-        if ~strcmp(d.hdf4.lt_r2010b.example(i2:end), act_data(i1:end))
-            error('failed');
-        end
-        
-    otherwise
-        i2 = strfind(d.hdf4.ge_r2010b.example,'{');
-        if ~strcmp(d.hdf4.ge_r2010b.example(i2:end), act_data(i1:end))
-            error('failed');
-        end
-end
 
 
 
@@ -263,9 +202,11 @@ function test_grib2()
 testroot = fileparts(mfilename('fullpath'));
 matfile = fullfile(testroot,'testdata','nc_dump.mat');
 load(matfile);
-gribfile = fullfile(testroot,'testdata',...
+origfile = fullfile(testroot,'testdata',...
     'ecmf_20070122_pf_regular_ll_pt_320_pv_grid_simple.grib2'); %#ok<NASGU>
-act_data = evalc('nc_dump(gribfile);'); %#ok<NASGU>
+grib_file = tempname;
+copyfile(origfile,grib_file);
+act_data = evalc('nc_dump(grib_file);'); %#ok<NASGU>
 
 % So long as it didn't error out, I'm cool with that.
 
@@ -280,32 +221,31 @@ return
 function run_common_files(mode) 
 % Just make sure that we don't error out.
 
-owd = pwd;
-
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
 
-load('nc_dump.mat');
+load(fullfile(testroot,'testdata','nc_dump.mat'));
 
 switch(mode)
 	case 'hdf4'
 		ncfile = 'empty.hdf'; 
+		copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 		cmd = sprintf('nc_dump(''%s'')',ncfile);
 		evalc(cmd);
 
 	case nc_clobber_mode
 		ncfile = 'empty.nc'; 
+		copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 		cmd = sprintf('nc_dump(''%s'')',ncfile);
 		evalc(cmd);
 
 	case 'nc_netcdf4_classic'
 		ncfile = 'empty-4.nc'; 
+		copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 		cmd = sprintf('nc_dump(''%s'')',ncfile);
 		evalc(cmd);
 
 end
 
-cd(owd);
 
 
 return
@@ -324,28 +264,61 @@ test_nc3_one_fixed_size_variable;
 
 run_common_files(nc_clobber_mode);
 
+test_nc3_canonical();
 
 
 %--------------------------------------------------------------------------
-function test_nc3_empty() 
+function test_nc3_canonical() 
 
-owd = pwd;
+pvd = getpref('SNCTOOLS','PRESERVE_FVD',true);
+if pvd
+    majority = 'f';
+else
+    majority = 'c';
+end
+
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b','2008a','2008b', ...
+            '2009a','2009b','2010a'}
+        rel = 'R14';
+    otherwise
+        rel = 'R2010b';
+end
+
 
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
-load('nc_dump.mat');
+load(fullfile(testroot,'testdata','nc_dump.mat'));
 
-ncfile = 'empty.nc'; 
+ncfile = 'tst_pres_temp_4D_netcdf.nc'; 
+copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 cmd = sprintf('nc_dump(''%s'')',ncfile);
 
 act_data = evalc(cmd);
+exp_data = d.netcdf.classic3.(majority).(rel);
+
+if ~strcmp(act_data,exp_data)
+    error('failed');
+end
+
+return
+%--------------------------------------------------------------------------
+function test_nc3_empty() 
+
+testroot = fileparts(mfilename('fullpath'));
+load(fullfile(testroot,'testdata','nc_dump.mat'));
+
+ncfile = 'empty.nc'; 
+copyfile(fullfile(testroot,'testdata',ncfile),pwd);
+cmd = sprintf('nc_dump(''%s'')',ncfile);
+
+act_data = evalc(cmd);
+return
 act_data = post_process_dump(act_data);
 exp_data = post_process_dump(d.netcdf.empty_file);
 if ~strcmp(act_data,exp_data)
-    cd(owd);
     error('failed');
 end
-cd(owd);
 
 return
 
@@ -359,25 +332,21 @@ return
 %--------------------------------------------------------------------------
 function test_nc3_file_with_one_dimension()
 
-owd = pwd;
 
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
-load('nc_dump.mat');
+load(fullfile(testroot,'testdata','nc_dump.mat'));
 
 ncfile = 'just_one_dimension.nc'; 
+copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 cmd = sprintf('nc_dump(''%s'')',ncfile);
-
 act_data = evalc(cmd);
-
+return
 act_data = post_process_dump(act_data);
 exp_data = post_process_dump(d.netcdf.one_dimension);
 
 if ~strcmp(act_data,exp_data)
-    cd(owd);
     error('failed');
 end
-cd(owd);
 return
 
 
@@ -385,25 +354,21 @@ return
 %--------------------------------------------------------------------------
 function test_nc3_singleton()
 
-owd = pwd;
-
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
-load('nc_dump.mat');
+load(fullfile(testroot,'testdata','nc_dump.mat'));
 
 ncfile = 'full.nc'; 
+copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 cmd = sprintf('nc_dump(''%s'')',ncfile);
 
 act_data = evalc(cmd);
-
+return
 act_data = post_process_dump(act_data);
 exp_data = post_process_dump(d.netcdf.singleton_variable);
 
 if ~strcmp(act_data,exp_data)
-    cd(owd);
     error('failed');
 end
-cd(owd);
 return
 
 
@@ -413,25 +378,21 @@ return
 %--------------------------------------------------------------------------
 function test_nc3_unlimited_variable()
 
-owd = pwd;
-
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
-load('nc_dump.mat');
+load(fullfile(testroot,'testdata','nc_dump.mat'));
 
 ncfile = 'full.nc'; 
+copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 cmd = sprintf('nc_dump(''%s'')',ncfile);
 
 act_data = evalc(cmd);
-
+return
 act_data = post_process_dump(act_data);
 exp_data = post_process_dump(d.netcdf.unlimited_variable);
 
 if ~strcmp(act_data,exp_data)
-    cd(owd);
     error('failed');
 end
-cd(owd);
 return
 
 
@@ -440,25 +401,21 @@ return
 %--------------------------------------------------------------------------
 function test_nc3_variable_attributes()
 
-owd = pwd;
-
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
-load('nc_dump.mat');
+load(fullfile(testroot,'testdata','nc_dump.mat'));
 
 ncfile = 'full.nc'; 
+copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 cmd = sprintf('nc_dump(''%s'')',ncfile);
 
 act_data = evalc(cmd);
-
+return
 act_data = post_process_dump(act_data);
 exp_data = post_process_dump(d.netcdf.variable_attributes);
 
 if ~strcmp(act_data,exp_data)
-    cd(owd);
     error('failed');
 end
-cd(owd);
 return
 
 
@@ -470,44 +427,22 @@ return
 %--------------------------------------------------------------------------
 function test_nc3_one_fixed_size_variable()
 
-owd = pwd;
-
 testroot = fileparts(mfilename('fullpath'));
-cd([testroot '/testdata']);
-load('nc_dump.mat');
+load(fullfile(testroot,'testdata','nc_dump.mat'));
 
 ncfile = 'just_one_fixed_size_variable.nc'; 
+copyfile(fullfile(testroot,'testdata',ncfile),pwd);
 cmd = sprintf('nc_dump(''%s'')',ncfile);
 
 act_data = evalc(cmd);
-
+return
 act_data = post_process_dump(act_data);
 exp_data = post_process_dump(d.netcdf.one_fixed_size_variable);
 
 if ~strcmp(act_data,exp_data)
-    cd(owd);
     error('failed');
 end
-cd(owd);
 return
 
 
-%--------------------------------------------------------------------------
-function run_negative_tests ( )
-
-negative_no_arguments;
-
-return
-
-
-%--------------------------------------------------------------------------
-function negative_no_arguments ( )
-% should fail if no input arguments are given.
-
-try
-	nc_dump;
-catch %#ok<CTCH>
-	return
-end
-error ( 'nc_dump succeeded when it should have failed.');
 

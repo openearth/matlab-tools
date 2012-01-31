@@ -1,4 +1,4 @@
-function nc_varput_mexnc( ncfile, varname, data, start,count,stride )
+function nc_varput_mexnc(ncfile,varname,data,varargin)
 % Handler for MEXNC backend for NC_VARPUT.
 
 preserve_fvd = nc_getpref('PRESERVE_FVD');
@@ -6,7 +6,7 @@ preserve_fvd = nc_getpref('PRESERVE_FVD');
 [ncid, status] = mexnc('open',ncfile,nc_write_mode);
 if (status ~= 0)
     ncerr = mexnc('strerror',status);
-    error('SNCTOOLS:NC_VARPUT:MEXNC:OPEN',ncerr);
+    error('snctools:varput:mexnc:OPEN',ncerr);
 end
 
 try
@@ -14,18 +14,18 @@ try
     [varid, status] = mexnc('INQ_VARID',ncid,varname);
     if ( status ~= 0 )
         ncerr = mexnc('strerror',status);
-        error('SNCTOOLS:NC_VARPUT:MEXNC:INQ_VARID',ncerr);
+        error('snctools:varput:mexnc:INQ_VARID',ncerr);
     end
     
-    v = nc_getvarinfo (ncfile,varname);
-	nvdims = numel(v.Dimension);
+    v = nc_getvarinfo_mexnc(ncid,varid);
+    nvdims = numel(v.Dimension);
+    [start,count,stride] = snc_get_varput_indexing(nvdims,v.Size,size(data),varargin{:});
+
     nc_count = v.Size;
-    
-    [start, count] = nc_varput_validate_indexing(nvdims,data,start,count,stride);
     
     % check that the length of the start argument matches the rank of the variable.
     if length(start) ~= length(nc_count)
-        error('SNCTOOLS:NC_VARPUT:badIndexing', ...
+        error('snctools:varput:badIndexing', ...
                 ['Length of START index (%d) does not make sense with a ' ...
                  'variable rank of %d.'], ...
                 length(start), length(nc_count) );
@@ -36,27 +36,27 @@ try
     if isempty(start) || (nvdims == 0)
         write_op = 'put_var';
         if (numel(data) ~= prod(v.Size))
-            error('SNCTOOLS:NC_VARPUT:MEXNC:varput:dataSizeMismatch', ...
+            error('snctools:varput:mexnc:varput:dataSizeMismatch', ...
     	        'Attempted to write wrong amount of data to %s.', v.Name );
         end
     elseif isempty(count)
         write_op = 'put_var1';
         if ( numel(data) ~= 1 )
-            error('SNCTOOLS:NC_VARPUT:MEXNC:putVara:dataSizeMismatch', ...
+            error('snctools:varput:mexnc:putVara:dataSizeMismatch', ...
     	        'Amount of data to be written to %s does not match up with count argument.', ...
                 v.Name );        
         end
     elseif isempty(stride)
         write_op = 'put_vara';
         if (numel(data) ~= prod(count))
-            error('SNCTOOLS:NC_VARPUT:MEXNC:putVara:dataSizeMismatch', ...
+            error('snctools:varput:mexnc:putVara:dataSizeMismatch', ...
     	        'Amount of data to be written to %s does not match up with count argument.', ...
                 v.Name );
         end
     else
         write_op = 'put_vars';
         if (numel(data) ~= prod(count))
-            error('SNCTOOLS:NC_VARPUT:MEXNC:putVars:dataSizeMismatch', ...
+            error('snctools:varput:mexnc:putVars:dataSizeMismatch', ...
     	        'Amount of data to be written to %s does not match up with count argument.', ...
                 v.Name );
         end    
@@ -82,7 +82,7 @@ end
 
 status = mexnc('close',ncid);
 if ( status ~= 0 )
-    error('SNCTOOLS:nc_varput:close',mexnc('STRERROR',status));
+    error('snctools:nc_varput:close',mexnc('STRERROR',status));
 end
 
 
@@ -121,7 +121,7 @@ if have_scale_factor
     [scale_factor, status] = mexnc('get_att_double',ncid,varid,'scale_factor');
     if ( status ~= 0 )
         ncerr = mexnc('strerror', status);
-        error ( 'SNCTOOLS:NC_VARPUT:MEXNC:GET_ATT_DOUBLE', ncerr );
+        error ( 'snctools:varput:mexnc:GET_ATT_DOUBLE', ncerr );
     end
 end
 
@@ -129,14 +129,14 @@ if have_add_offset
     [add_offset, status] = mexnc('get_att_double',ncid,varid,'add_offset');
     if ( status ~= 0 )
         ncerr = mexnc('strerror', status);
-        error ( 'SNCTOOLS:NC_VARPUT:MEXNC:GET_ATT_DOUBLE', ncerr );
+        error ( 'snctools:varput:mexnc:GET_ATT_DOUBLE', ncerr );
     end
 end
 
 [var_type,status]=mexnc('INQ_VARTYPE',ncid,varid);
 if status ~= 0 
     ncerr = mexnc('strerror', status);
-    error ( 'SNCTOOLS:NC_VARPUT:MEXNC:INQ_VARTYPE', ncerr );
+    error ( 'snctools:varput:mexnc:INQ_VARTYPE', ncerr );
 end
 
 data = (double(data) - add_offset) / scale_factor;
@@ -167,7 +167,7 @@ function data = handle_fill_value(ncid,varid,data)
 [vartype, status] = mexnc('INQ_VARTYPE', ncid, varid);
 if status ~= 0
     ncerr = mexnc('strerror', status);
-    error('SNCTOOLS:nc_varput:mexnc:inqVarTypeFailed', ncerr );
+    error('snctools:nc_varput:mexnc:inqVarTypeFailed', ncerr );
 end
 
 % Handle the fill value.  We do this by changing any NaNs into
@@ -176,7 +176,7 @@ end
 if ( status == 0 )
 
     if att_type ~= vartype
-        warning('SNCTOOLS:nc_varget:mexnc:missingValueMismatch', ...
+        warning('snctools:nc_varget:mexnc:missingValueMismatch', ...
             'The _FillValue datatype is wrong and will not be honored.');
         return
     end
@@ -197,7 +197,7 @@ if ( status == 0 )
         case 'char'
             funcstr = 'get_att_text';
         otherwise
-            error ( 'SNCTOOLS:NC_VARPUT:unhandledDatatype', ...
+            error ( 'snctools:varput:unhandledDatatype', ...
                 'Unhandled datatype for fill value, ''%s''.', ...
                 class(data) );
     end
@@ -205,7 +205,7 @@ if ( status == 0 )
     [fill_value, status] = mexnc(funcstr,ncid,varid,'_FillValue');
     if ( status ~= 0 )
         ncerr = mexnc('strerror', status);
-        err_id = [ 'SNCTOOLS:NC_VARPUT:MEXNC:' funcstr ];
+        err_id = [ 'snctools:varput:mexnc:' funcstr ];
         error ( err_id, ncerr );
     end
 
@@ -244,7 +244,7 @@ switch ( write_op )
             case 'char'
                 funcstr = 'put_var1_text';
             otherwise
-                error ( 'SNCTOOLS:NC_VARPUT:unhandledMatlabType', ...
+                error ( 'snctools:varput:unhandledMatlabType', ...
                     'unhandled data class %s\n', ...
                     class(pdata));
         end
@@ -267,7 +267,7 @@ switch ( write_op )
             case 'char'
                 funcstr = 'put_var_text';
             otherwise
-                error ( 'SNCTOOLS:NC_VARPUT:unhandledMatlabType', ...
+                error ( 'snctools:varput:unhandledMatlabType', ...
                     'unhandled data class %s\n', class(pdata)  );
         end
         status = mexnc (funcstr, ncid, varid, pdata );
@@ -289,7 +289,7 @@ switch ( write_op )
             case 'char'
                 funcstr = 'put_vara_text';
             otherwise
-                error ( 'SNCTOOLS:NC_VARPUT:unhandledMatlabType',...
+                error ( 'snctools:varput:unhandledMatlabType',...
                     'unhandled data class %s\n', class(pdata) );
         end
         status = mexnc (funcstr, ncid, varid, start, count, pdata );
@@ -311,20 +311,20 @@ switch ( write_op )
             case 'char'
                 funcstr = 'put_vars_text';
             otherwise
-                error ( 'SNCTOOLS:NC_VARPUT:unhandledMatlabType', ...
+                error ( 'snctools:varput:unhandledMatlabType', ...
                     'unhandled data class %s\n', class(pdata) );
         end
         status = mexnc(funcstr,ncid,varid,start,count,stride,pdata);
         
     otherwise
-        error ( 'SNCTOOLS:NC_VARPUT:unhandledWriteOp', ...
+        error ( 'snctools:varput:unhandledWriteOp', ...
             'unknown write operation''%s''.\n', write_op );
             
 end
 
 if ( status ~= 0 )
     ncerr = mexnc ( 'strerror', status );
-    error ( 'SNCTOOLS:NC_VARPUT:writeOperationFailed', ...
+    error ( 'snctools:varput:writeOperationFailed', ...
         'write operation ''%s'' failed with error ''%s''.', ...
         write_op, ncerr);
 end

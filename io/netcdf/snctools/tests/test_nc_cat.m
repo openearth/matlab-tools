@@ -211,7 +211,7 @@ nc_addvar(filename,v);
 nc_attput(filename,nc_global,'creation_date',datestr(now));
 %--------------------------------------------------------------------------
 function create_test_file(filename,mode)
-if exist(filename,'file')
+if exist([pwd filesep filename],'file')
     delete(filename);
 end
 

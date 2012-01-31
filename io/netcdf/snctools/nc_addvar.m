@@ -55,11 +55,11 @@ function nc_addvar(ncfile,varstruct)
 preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 if  ~ischar(ncfile) 
-    error ( 'SNCTOOLS:NC_ADDVAR:badInput', 'file argument must be character' );
+    error ( 'snctools:addvar:badInput', 'file argument must be character' );
 end
 
 if ( ~isstruct(varstruct) )
-    error ( 'SNCTOOLS:NC_ADDVAR:badInput', '2nd argument must be a structure' );
+    error ( 'snctools:addvar:badInput', '2nd argument must be a structure' );
 end
 
 varstruct = validate_varstruct ( varstruct );
@@ -84,7 +84,7 @@ function varstruct = validate_varstruct ( varstruct )
 % Check that required fields are there.
 % Must at least have a name.
 if ~isfield ( varstruct, 'Name' )
-    error ( 'SNCTOOLS:NC_ADDVAR:badInput', ...
+    error ( 'snctools:addvar:badInput', ...
             'structure argument must have at least the ''Name'' field.' );
 end
 
@@ -117,7 +117,7 @@ for j = 1:length(fnames)
         % them either.
 
     otherwise
-        warning('SNCTOOLS:nc_addvar:unrecognizedFieldName', ...
+        warning('snctools:addvar:unrecognizedFieldName', ...
             '%s:  unrecognized field name ''%s''.  Ignoring it...\n', mfilename, fname );
     end
 end
@@ -150,12 +150,12 @@ switch ( varstruct.Datatype )
         varstruct.Datatype = 'byte';
     
     case { 'uint16', 'uint32', 'int64', 'uint64' }
-        error('SNCTOOLS:NC_ADDVAR:notClassicDatatype', ...
+        error('snctools:addvar:notClassicDatatype', ...
             'Datatype ''%s'' is not a classic model datatype.', ...
             varstruct.Datatype);
         
     otherwise
-        error ( 'SNCTOOLS:NC_ADDVAR:unknownDatatype', 'unknown type ''%s''\n', mfilename, varstruct.Datatype );
+        error ( 'snctools:addvar:unknownDatatype', 'unknown type ''%s''\n', mfilename, varstruct.Datatype );
 end
 
 % Default Dimension is none.  Singleton scalar.

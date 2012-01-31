@@ -18,6 +18,6 @@ else
     opendap.dap.DConnect2.setHttpClient(client);
     ucar.unidata.io.http.HTTPRandomAccessFile.setHttpClient(client);
     ucar.nc2.dataset.NetcdfDataset.setHttpClient(client);
-    url = ['http://',parts.host, parts.relpath]
+    
     jncid = DODSNetcdfFile(ncfile);
 end

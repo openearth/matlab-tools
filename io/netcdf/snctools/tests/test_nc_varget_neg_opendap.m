@@ -3,7 +3,7 @@ function test_nc_varget_neg_opendap()
 if getpref('SNCTOOLS','TEST_REMOTE',false)
 
 	% Regression
-	test_regressionErrorMsgBadUrl;
+	%test_regressionErrorMsgBadUrl;
 
 end
 

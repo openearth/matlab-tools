@@ -40,14 +40,19 @@ testroot = fileparts(mfilename('fullpath'));
 ncfile = fullfile(testroot,'testdata/enhanced.nc');
 test_enhanced_group_and_var_have_same_name(ncfile);
 
+% Atomic datatypes.
+ncfile = fullfile(testroot,'testdata/netcdf4_atomic.nc');
+test_enhanced_atomic_datatypes(ncfile);
+
 v = version('-release');
 switch(v)
     case {'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a',...
-            '2009b','2010a','2010b','2011a'};
+            '2009b','2010a','2010b'};
         fprintf('\tfiltering out enhanced-model datatype tests on %s.\n', v);
         return;
 
 end
+
 
 % Strings
 ncfile = fullfile(testroot,'testdata/moons.nc');
@@ -77,6 +82,16 @@ test_1D_cmpd_var(ncfile);
 test_1D_cmpd_vara(ncfile);
 test_1D_cmpd_vars(ncfile);
 
+%--------------------------------------------------------------------------
+function test_enhanced_atomic_datatypes(ncfile)
+
+% int64 datatypes should NOT be scaled into double precision
+act_data = nc_varget(ncfile,'y');
+exp_data = int64([0:9]');
+
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
 
 %--------------------------------------------------------------------------
 function test_1D_cmpd_vara(ncfile)
@@ -348,24 +363,19 @@ end
 %--------------------------------------------------------------------------
 function test_bad_missing_value(testroot)
 
-warning('off','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
-warning('off','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
-warning('off','SNCTOOLS:nc_varget:java:missingValueMismatch');
+
+warning('off','SNCTOOLS:nc_varget:missingValueMismatch');
 nc_varget([testroot filesep 'testdata' filesep 'badfillvalue.nc'],'z');
-warning('on','SNCTOOLS:nc_varget:tmw:missingValueMismatch');
-warning('on','SNCTOOLS:nc_varget:mexnc:missingValueMismatch');
-warning('on','SNCTOOLS:nc_varget:java:missingValueMismatch');
+warning('on','SNCTOOLS:nc_varget:missingValueMismatch');
+
 
 %--------------------------------------------------------------------------
 function test_bad_fill_value(testroot)
 
-warning('off','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
-warning('off','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
-warning('off','SNCTOOLS:nc_varget:java:fillValueMismatch');
+warning('off','SNCTOOLS:nc_varget:fillValueMismatch');
 nc_varget([testroot filesep 'testdata' filesep 'badfillvalue.nc'],'y');
-warning('on','SNCTOOLS:nc_varget:tmw:fillValueMismatch');
-warning('on','SNCTOOLS:nc_varget:mexnc:fillValueMismatch');
-warning('on','SNCTOOLS:nc_varget:java:fillValueMismatch');
+warning('on','SNCTOOLS:nc_varget:fillValueMismatch');
+
 
 
 
@@ -394,7 +404,7 @@ end
 
 
 %--------------------------------------------------------------------------
-function test_readSingleValueFrom1dVariable ( ncfile )
+function test_read_single_value_from_1d_variable(ncfile)
 
 expData = 1.2;
 actData = nc_varget ( ncfile, 'test_1D', 1, 1 );
@@ -414,7 +424,7 @@ return
 
 
 %--------------------------------------------------------------------------
-function test_readSingleValueFrom2dVariable ( ncfile )
+function test_read_single_value_from_2d_variable(ncfile)
 
 expData = 1.5;
 actData = nc_varget ( ncfile, 'test_2D', [2 2], [1 1] );
@@ -430,19 +440,20 @@ return
 
 
 %--------------------------------------------------------------------------
-function test_read2x2hyperslabFrom2dVariable ( ncfile )
+function test_read3x2hyperslabFrom2dVariable ( ncfile )
 
-expData = [1.5 2.1; 1.6 2.2];
 if getpref('SNCTOOLS','PRESERVE_FVD',false)
-    expData = expData';
+    expData = [0.8 0.9; 1.4 1.5; 2.0 2.1];
+else
+    expData = [0.8 1.4; 0.9 1.5; 1.0 1.6];
 end
-actData = nc_varget ( ncfile, 'test_2D', [2 2], [2 2] );
+actData = nc_varget ( ncfile, 'test_2D', [1 1], [3 2] );
 
 if ndims(actData) ~= 2
     error ( 'rank of output data was not correct' );
 end
-if numel(actData) ~= 4
-    error ( 'rank of output data was not correct' );
+if numel(actData) ~= 6
+    error ( 'size of output data was not correct' );
 end
 ddiff = abs(expData(:) - actData(:));
 if any( find(ddiff > eps) )
@@ -517,11 +528,11 @@ return
 
 
 %--------------------------------------------------------------------
-function test_readFullSingletonVariable ( ncfile )
+function test_read_singleton_variable(ncfile)
 
 
 expData = 3.14159;
-actData = nc_varget ( ncfile, 'test_singleton' );
+actData = nc_varget(ncfile,'test_singleton');
 
 ddiff = abs(expData - actData);
 if any( find(ddiff > eps) )
@@ -606,13 +617,10 @@ function test_missing_value(ncfile)
 
 actData = nc_varget ( ncfile, 'sst_mv' );
 
-if ~isa(actData,'double')
-    warning ( 'short data was not converted to double');
-end
 
 if ~isnan( actData(end) )
-    nc_dump(ncfile, 'sst_mv' )
-    error ( 'missing value not converted to nan.\n'  );
+    nc_dump(ncfile, 'sst_mv' ) % show nc_dump to illustrate error
+    error ('failed');
 end
 
 return
@@ -623,12 +631,9 @@ function test_missing_value_nan(ncfile)
 
 actData = nc_varget ( ncfile, 'a' );
 
-if ~isa(actData,'double')
-    warning ( 'float data was not converted to double');
-end
 
 if ~isnan( actData(end) )
-    error ( 'missing value not returned as NaN' );
+    error ('failed');
 end
 
 return
@@ -646,9 +651,6 @@ switch(v)
         % go ahead
 end
 
-if exist('foo.nc')==2
-delete('foo.nc');
-end
 copyfile(ncfile,'foo.nc');
 ncfile = 'foo.nc';
 
@@ -689,12 +691,8 @@ function test_fill_value_nan(ncfile)
 
 actData = nc_varget ( ncfile, 'b' );
 
-if ~isa(actData,'double')
-    warning ( 'float data was not converted to double');
-end
-
 if ~isnan( actData(end) )
-    error ( 'fill value not returned as NaN' );
+    error('failed');
 end
 
 return
@@ -709,7 +707,7 @@ if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
     expData = expData';
 end
     
-actData = nc_varget ( ncfile, 'temp' );
+actData = nc_varget(ncfile,'temp');
 
 if ~isa(actData,'double')
     error ( 'short data was not converted to double');
@@ -721,6 +719,32 @@ end
 
 return
 
+%--------------------------------------------------------------------------
+function test_datatype ( ncfile )
+
+expData = -32767 * ones(4,6);
+
+
+if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
+    expData = expData';
+end
+    
+actData = nc_varget(ncfile,'test_2D_short');
+
+if ~isa(actData,'double')
+    error('failed');
+end
+ddiff = abs(expData - actData);
+if any( find(ddiff > eps) )
+    error('failed');
+end
+
+actData = nc_varget(ncfile,'test_2D_int',[0 0],[1 1]);
+if ~isnan(actData)
+    error('failed');
+end
+return
+
 
 
 
@@ -729,14 +753,87 @@ function run_grib2_tests()
 
 
 testroot = fileparts(mfilename('fullpath'));
-gribfile = fullfile(testroot,'testdata',...
+origfile = fullfile(testroot,'testdata',...
     'ecmf_20070122_pf_regular_ll_pt_320_pv_grid_simple.grib2');
-test_readFullDouble(gribfile);
+grib_file = tempname;
+copyfile(origfile,grib_file);
+test_read_grib_full_var_double_precision(grib_file);
+test_read_grib_unity_var(grib_file);
+test_read_grib_singleton_var(grib_file);
+test_read_grib_single_value(grib_file);
+test_read_grib_contiguous(grib_file);
+test_read_grib_strided_var(grib_file);
 
 return
-
 %--------------------------------------------------------------------------
-function test_readFullDouble(gribfile)
+function test_read_grib_strided_var(gribfile)
+
+start = [1 2 0 0 0]; count = [2 3 1 1 1]; stride = [2 2 1 1 1];
+
+% Close enough :-)
+expData = [7199 6645 237; 6075 5513 112];
+
+if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
+    start = fliplr(start); count = fliplr(count); stride = fliplr(stride);
+    expData = expData';
+end
+
+actData = nc_varget(gribfile,'Potential_vorticity',start,count,stride);
+actData = round(actData*1e9);
+
+if ~isequal(actData,expData)
+    error('failed');
+end
+return
+%--------------------------------------------------------------------------
+function test_read_grib_contiguous(gribfile)
+
+start = [1 2 0 0 0]; count = [2 3 1 1 1];
+
+% Close enough :-)
+expData = [7199 4388 6645; 3625 2257 6847];
+
+if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
+    start = fliplr(start); count = fliplr(count);
+    expData = expData';
+end
+
+actData = nc_varget(gribfile,'Potential_vorticity',start,count);
+actData = round(actData*1e9);
+
+if ~isequal(actData,expData)
+    error('failed');
+end
+return
+%--------------------------------------------------------------------------
+function test_read_grib_single_value(gribfile)
+
+actData = nc_varget(gribfile,'lat',1,1);
+expData = 80;
+if actData ~= expData
+    error('failed');
+end
+return
+%--------------------------------------------------------------------------
+function test_read_grib_singleton_var(gribfile)
+% 'latLonCoordSys' has no dimensions
+actData = nc_varget(gribfile,'latLonCoordSys');
+expData = '0';
+if actData ~= expData
+    error('failed');
+end
+return
+%--------------------------------------------------------------------------
+function test_read_grib_unity_var(gribfile)
+% 'isentrope' has just a single value
+actData = nc_varget(gribfile,'isentrope');
+expData = 320;
+if actData ~= expData
+    error('failed');
+end
+return
+%--------------------------------------------------------------------------
+function test_read_grib_full_var_double_precision(gribfile)
 actData = nc_varget(gribfile,'lon');
 expData = 10*(0:35)';
 if actData ~= expData
@@ -778,24 +875,8 @@ end
 function test_hdf4_scaling()
 testroot = fileparts(mfilename('fullpath'));
 
-oldpref = getpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
-
 hdffile = fullfile(testroot,'testdata','temppres.hdf');
 
-setpref('SNCTOOLS','USE_STD_HDF4_SCALING',true);
-act_data = nc_varget(hdffile,'temp',[0 0],[2 2]);
-exp_data = 1.8*([32 32; 33 33] - 32);
-
-if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
-    act_data = act_data';
-end
-
-if exp_data ~= act_data
-    error('failed');
-end
-
-
-setpref('SNCTOOLS','USE_STD_HDF4_SCALING',false);
 act_data = nc_varget(hdffile,'temp',[0 0],[2 2]);
 exp_data = 1.8*[32 32; 33 33] + 32;
 
@@ -808,22 +889,18 @@ if exp_data ~= act_data
 end
 
 
-setpref('SNCTOOLS','USE_STD_HDF4_SCALING',oldpref);
-
-
-
 
 %--------------------------------------------------------------------------
 function run_local_tests(ncfile,testroot)
 
 test_1D_variable ( ncfile );
-test_readSingleValueFrom1dVariable ( ncfile );
-test_readSingleValueFrom2dVariable ( ncfile );
-test_read2x2hyperslabFrom2dVariable ( ncfile );
+test_read_single_value_from_1d_variable(ncfile);
+test_read_single_value_from_2d_variable(ncfile);
+test_read3x2hyperslabFrom2dVariable ( ncfile );
 test_stride_with_negative_count ( ncfile );
 test_inf_count ( ncfile );
 
-test_readFullSingletonVariable ( ncfile );
+test_read_singleton_variable ( ncfile );
 test_readFullDoublePrecisionVariable ( ncfile );
 
 test_readStridedVariable ( ncfile );
@@ -832,7 +909,9 @@ test_missing_value(ncfile);
 test_missing_value_nan(ncfile);
 test_fill_value_nan(ncfile);
 test_fill_value_nan_extend(ncfile);
+test_datatype(ncfile);
 
+test_indices_are_cols(ncfile);
 regression_NegSize(ncfile);
 
 test_bad_fill_value(testroot);
@@ -855,6 +934,18 @@ return
 
 
 
+%--------------------------------------------------------------------------
+function test_indices_are_cols(ncfile)
+
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
+    exp_data = [32 50; 32 50];
+else
+    exp_data = [32 32; 50 50];
+end
+act_data = nc_varget(ncfile,'temp',[0 0],[2 2]');
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
 
 %--------------------------------------------------------------------------
 function run_opendap_tests()

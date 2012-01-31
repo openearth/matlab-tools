@@ -11,7 +11,7 @@ catch
 end
 if idx >= 0
     sd.close(sd_id);
-    error('SNCTOOLS:nc_addvar:hdf4:variableAlreadyPresent', ...
+    error('snctools:nc_addvar:hdf4:variableAlreadyPresent', ...
         '%s is already present.', varstruct.Name);
 end
     

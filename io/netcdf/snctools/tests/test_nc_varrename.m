@@ -17,10 +17,9 @@ switch(mode)
 
 end
 
-% Only test on 7b or higher
 v = version('-release');
 switch(v)
-	case {'14','2006a','2006b','2007a'}
+	case {'14','2006a','2006b','2007a','2007b'}
 	    %
 	otherwise
 		test_nc_varrename_neg(mode);

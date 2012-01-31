@@ -1,24 +1,25 @@
 function netcdf_settings(varargin)
-%netcdf_settings   set snctools, add java OPeNDAP support, fix legacies/bugs
+%NETCDF_SETTINGS   set netCDF snctools plus java OPeNDAP support, fix legacies/bugs
 %
-% Tested for the following releases (using NC_CF_GRID_TEST):
+% Tested for the following releases (using NETCDF_TEST):
 %
-% * 2006b mexnc_legacy added, default java for read-only (no write possible)
-% * 2007a mexnc_legacy added, default java for read-only (no write possible)
-% * 2007b mexnc_legacy added, default java for read-only (no write possible)
-% * 2008a mexnc_legacy added, default java for read-only (no write possible)
-% * 2008b add yourselves http://www.mathworks.com/support/bugreports/609383
-% * 2009a add yourselves http://www.mathworks.com/support/bugreports/609383
-% * 2009b add yourselves http://www.mathworks.com/support/bugreports/609383
+% * 2006b FAIL mexnc_legacy added, default java for read-only (no write possible)
+% * 2007a FAIL mexnc_legacy added, default java for read-only (no write possible)
+% * 2007b FAIL mexnc_legacy added, default java for read-only (no write possible)
+% * 2008a FAIL mexnc_legacy added, default java for read-only (no write possible)
+% * 2008b OK, add yourselves http://www.mathworks.com/support/bugreports/609383
+% * 2009a OK, add yourselves http://www.mathworks.com/support/bugreports/609383
+% * 2009b OK, add yourselves http://www.mathworks.com/support/bugreports/609383
 % * 2010a OK
 % * 2010b OK
 % * 2011a OK
+% * 2011b OK
 %
 % For reading large netCDF files with Java memory issues can arise, see:
 % http://www.mathworks.com/support/solutions/en/data/1-18I2C/
 % see also: java.lang.Runtime.getRuntime.gc
 %
-%See also: OETSETTINGS, NC_CF_GRID_TEST, NETCDF_TEST, javarmpath
+%See also: OETSETTINGS, NC_CF_GRID_TEST, NETCDF_TEST, JAVARMPATH
 
 %% Retrieve verbose state from input
 
@@ -92,8 +93,8 @@ function netcdf_settings(varargin)
       disp('Writing netcdf files does not work due to vanilla_mexnc issues, you need 2008b and higher to write netcdf files or solve vanilla_mexnc.')
       end
       
-      if     any(strcmpi(version('-release'),{'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a'}))
-      java2add         = path2os([ncroot,'netcdfAll-4.1.jar']); % 'toolsUI-4.1.jar' has same functionality but is bigger
+      if     any(strcmpi(version('-release'),{'14','2006a','2006b','2007a','2007b','2008a'}))
+      java2add         = path2os([ncroot,'netcdfAll-4.1.jar']); % 'toolsUI-4.1.jar' has same functionality but is bigger. It returns an old CF number for GRIB files.
       elseif strcmpi(version('-release'),'R14')
       java2add         = path2os([ncroot,'netcdf-2.2.20.jar']); %
       else % '2010b' and higher

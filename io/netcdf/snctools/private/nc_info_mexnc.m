@@ -1,12 +1,12 @@
 function fileinfo = nc_info_mexnc(ncfile)
 
-fileinfo = struct('Name','','Datatype',[],'Attribute',[],'Dimension',[],'Dataset',[],'Group',[]);
+fileinfo = struct('Name','/','Datatype',[],'Attribute',[],'Dimension',[],'Dataset',[],'Group',[]);
 fileinfo.Filename = ncfile;
 
 [ncid, status]=mexnc('open', ncfile, nc_nowrite_mode );
 if status ~= 0
     ncerr = mexnc('strerror', status);
-    error ( 'SNCTOOLS:NC_INFO:MEXNC:OPEN', ncerr );
+    error ( 'snctools:info:mexnc:OPEN', ncerr );
 end
 
 
@@ -15,7 +15,7 @@ end
 if status ~= 0
     ncerr = mexnc('strerror', status);
     mexnc('close',ncid);
-    error ( 'SNCTOOLS:NC_INFO:MEXNC:INQ', ncerr );
+    error ( 'snctools:info:mexnc:INQ', ncerr );
 end
 
 

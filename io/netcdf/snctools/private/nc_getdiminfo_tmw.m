@@ -6,7 +6,7 @@ if ischar(arg1) && ischar(arg2)
 elseif isnumeric ( arg1 ) && isnumeric ( arg2 )
 	dinfo = handle_numeric_nc_getdiminfo_tmw(arg1,arg2);
 else
-	error ( 'SNCTOOLS:NC_GETDIMINFO_TMW:badInputDatatypes', ...
+	error ( 'snctools:getdiminfo:tmw:badInputDatatypes', ...
 	        'Must supply either two character or two numeric arguments.' );
 end
 

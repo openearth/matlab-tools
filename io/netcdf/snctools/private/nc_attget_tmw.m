@@ -1,22 +1,36 @@
-function values = nc_attget_tmw(ncfile,varname,attrname)
+function attval = nc_attget_tmw(ncfile,varname,attrname)
 % Native netcdf package backend for NC_ATTGET.
+
+try
+    attval = get_att_nc(ncfile,varname,attrname);
+catch me
+    switch me.identifier
+        case 'snctools:backendSwitchToJava'
+            attval = nc_attget_java(ncfile,varname,attrname);
+
+        case 'snctools:backendSwitchToHDF5'
+            % Since the netcdf file handle is guaranteed to be closed here,
+            % it is save to try to retrieve as an HDF5 attribute (10b,
+            % 11a).
+            attval = nc_attget_hdf5(ncfile,varname,attrname);
+
+        otherwise
+            rethrow(me);
+    end
+end
+
+%--------------------------------------------------------------------------
+function attval = get_att_nc(ncfile,varname,attrname)
 
 ncid=netcdf.open(ncfile,'NOWRITE');
 
 try
-    values = get_att(ncid,varname,attrname);
+    % Encapsulate all the netcdf functionality here so we can reliably
+    % close the file if necessary.
+    attval = get_att(ncid,varname,attrname);
 catch me
     netcdf.close(ncid);
-    switch me.identifier
-        case 'snctools:backendSwitchToJava'
-            values = nc_attget_java(ncfile,varname,attrname);
-            return
-        case 'snctools:backendSwitchToHDF5'
-            values = nc_attget_hdf5(ncfile,varname,attrname);
-            return
-        otherwise
-            handle_error(me);
-    end
+    handle_error(me);
 end
 
 netcdf.close(ncid);
@@ -111,7 +125,7 @@ if isa(values,'cell')
 end
 
 %--------------------------------------------------------------------------
-function varid = figure_out_varid_tmw ( ncid, varname )
+function varid = figure_out_varid_tmw(ncid,varname)
 % Did the user do something really stupid like say 'global' when they meant
 % NC_GLOBAL?
 if isempty(varname)

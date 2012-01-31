@@ -19,6 +19,8 @@ switch(mode)
 		run_http_tests;
 	case 'opendap'
 		run_opendap_tests;
+    case 'grib'
+        run_grib_tests;
 end
 
 fprintf('OK\n');
@@ -44,7 +46,7 @@ testroot = fileparts(mfilename('fullpath'));
 v = version('-release');
 switch(v)
     case {'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a',...
-            '2009b','2010a','2010b','2011a'};
+            '2009b','2010a','2010b'};
         fprintf('\tfiltering out enhanced-model datatype tests on %s.\n', v);
         return;
 
@@ -72,28 +74,71 @@ test_root_group_opaque(ncfile);
 ncfile = [testroot '/testdata/tst_comp.nc'];
 test_root_group_compound(ncfile);
 
+% Nested compounds.
 ncfile = [testroot '/testdata/obs_cmpd_strings.nc'];
 test_root_group_compound_with_strings(ncfile);
 
+ncfile = [testroot '/testdata/tst_compounds2.nc'];
+test_nested_compounds(ncfile);
+
+%--------------------------------------------------------------------------
+function test_nested_compounds(ncfile)
+% Compounds within compounds really are not supported.
+
+warning('off','snctools:hdf5:unhandledCompoundClass');
+
+info = nc_info(ncfile);
+
+act_data = info.Datatype(2).Type.Member.Datatype.Type;
+exp_data = 'UNRECOGNIZED';
+
+if ~strcmp(act_data,exp_data)
+    error('failed');
+end
+
+warning('on','snctools:hdf5:unhandledCompoundClass');
+
 %--------------------------------------------------------------------------
 function test_root_group_compound_with_strings(ncfile)
+
+v = version('-release');
+switch(v)
+    case {'2011a'};
+        fprintf('\tfiltering out multiple compound datatype test on %s.\n', v);
+        return;
+
+end
 
 info = nc_info(ncfile);
 
 act_data = info.Datatype(1);
 
+switch(computer)
+    case {'PCWIN','GLNX86'}
+        sz = 16;
+    otherwise
+        sz = 32;
+end
 exp_data = struct('Name','observation_att', ...
     'Class','compound', ...
     'Type',[], ...
-    'Size',32);
+    'Size',sz);
+
+
+switch(computer)
+    case {'PCWIN','GLNX86'}
+        sz = 4;
+    otherwise
+        sz = 8;
+end
 dt(1) = struct('Name', 'time', 'Datatype', []);
-dt(1).Datatype = struct('Name','','Type','string','Size',8);
+dt(1).Datatype = struct('Name','','Type','string','Size',sz);
 dt(2) = struct('Name', 'tempMean', 'Datatype', []);
-dt(2).Datatype = struct('Name','','Type','string','Size',8);
+dt(2).Datatype = struct('Name','','Type','string','Size',sz);
 dt(3) = struct('Name', 'tempMin', 'Datatype', []);
-dt(3).Datatype = struct('Name','','Type','string','Size',8);
+dt(3).Datatype = struct('Name','','Type','string','Size',sz);
 dt(4) = struct('Name', 'tempMax', 'Datatype', []);
-dt(4).Datatype = struct('Name','','Type','string','Size',8);
+dt(4).Datatype = struct('Name','','Type','string','Size',sz);
 exp_data.Type.Member = dt;
 
 if ~isequal(act_data,exp_data);
@@ -218,11 +263,19 @@ info = nc_info(ncfile);
 
 act_data = info.Datatype;
 
+
 exp_data = struct('Name','row_of_floats', ...
     'Class','vlen', ...
     'Type',[], ...
     'Size',16);
+switch(computer)
+    % Difference in pointer size.
+    case {'GLNX86','PCWIN'}
+        exp_data.Size = 8;
+end
+
 exp_data.Type = struct('Type','single','Size',4);
+
 if ~isequal(act_data,exp_data);
     error('failed');
 end
@@ -553,14 +606,30 @@ function run_motherlode_test (  )
 if getpref('SNCTOOLS','TEST_REMOTE',false) && ...
         getpref ( 'SNCTOOLS', 'TEST_OPENDAP', false ) 
     
-    load('testdata/nc_info.mat');
+    testroot = fileparts(mfilename('fullpath'));
+    load([testroot filesep 'testdata/nc_info.mat']);
     % use data of today as the server has a clean up policy
     today = datestr(floor(now),'yyyymmdd');
     url = ['http://motherlode.ucar.edu:8080/thredds/dodsC/satellite/CTP/SUPER-NATIONAL_1km/current/SUPER-NATIONAL_1km_CTP_',today,'_0000.gini'];
-	fprintf('\t\tTesting remote DODS access %s...  ', url );
+	fprintf('\n\t\t\tTesting remote DODS access %s...  ', url );
     
     info = nc_info(url);
 
+    % R14 differs in the way it returns attributes.  Just get rid of the
+    % attributes in this case.
+    v = version('-release');
+    if strcmp(v,'14')
+        fprintf('\n\t\t\t\tNo attribute testing on R14.\n');
+        for j = 1:numel(info.Dataset)
+            info.Dataset(j).Attribute = [];
+            d.opendap.motherlode.Dataset(j).Attribute = [];
+        end
+        
+        % The 4th dataset is 'char' in R14, but 'string' otherwise.
+        info.Dataset(4).Nctype = 12;
+        info.Dataset(4).Datatype = 'string';
+    end
+    
     
     % Reverse the order of the Dimension and Size fields if using row major
     % order.
@@ -570,13 +639,11 @@ if getpref('SNCTOOLS','TEST_REMOTE',false) && ...
             info.Dataset(j).Dimension = fliplr(info.Dataset(j).Dimension);
         end
     end
-    
+
     if ~isequal(info.Dataset,d.opendap.motherlode.Dataset)
         error('failed');
     end
-    fprintf('OK\n');
-else
-	fprintf('Not testing NC_DUMP on OPeNDAP URLs.  Read the README for details.\n');	
+
 end
 return
 
@@ -604,3 +671,24 @@ return
 
 
 
+%--------------------------------------------------------------------------
+function run_grib_tests()
+
+testroot = fileparts(mfilename('fullpath'));
+
+ncfile = [testroot '/testdata/ecmf_20070122_pf_regular_ll_pt_320_pv_grid_simple.grib2'];
+test_simple_grib(ncfile);
+
+%--------------------------------------------------------------------------
+function test_simple_grib(ncfile)
+
+info = nc_info(ncfile);
+
+testroot = fileparts(mfilename('fullpath'));
+load([testroot '/testdata/nc_info.mat']);
+var2evalstr(d.grib.simple.Dataset(2))
+var2evalstr(info.Dataset(2))
+
+if ~isequal(d.grib.simple.Dataset(2), info.Dataset(2))
+    error('failed');
+end

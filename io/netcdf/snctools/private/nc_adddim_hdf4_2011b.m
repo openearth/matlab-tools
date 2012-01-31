@@ -17,7 +17,7 @@ catch me
 end
 if idx >=0
     sd.close(sd_id);
-    error('SNCTOOLS:addDim:hdf4:badName', ...
+    error('snctools:addDim:hdf4:badName', ...
         'There is already a dataset with this name, "%s".', dimname);
 end
     

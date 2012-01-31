@@ -6,7 +6,7 @@ preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 % HDF4 backend for nc_getvarinfo.
 if ~ischar(varname)
-    error('SNCTOOLS:nc_getvarinfo:hdf4:variableNotChar', ...
+    error('snctools:nc_getvarinfo:hdf4:variableNotChar', ...
         'The variable name must be a character string.');
 end
 

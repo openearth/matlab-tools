@@ -24,7 +24,7 @@ elseif isnumeric ( arg1 ) && isnumeric ( arg2 )
 	Dataset = get_varinfo(arg1,arg2);
 
 else
-    error ( 'SNCTOOLS:NC_GETVARINFO:tmw:badTypes', ...
+    error ( 'snctools:getvarinfo:tmw:badTypes', ...
             'Must have either both character inputs, or both numeric.' );
 end
 

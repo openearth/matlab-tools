@@ -762,7 +762,7 @@ function test_illegal_field_name (ncfile,mode)
 % Should produce a warning, which we want to suppress.  The varstruct
 % has an unrecognized field.
 
-warning('off','SNCTOOLS:nc_addvar:unrecognizedFieldName');
+warning('off','snctools:addvar:unrecognizedFieldName');
 nc_create_empty (ncfile,mode);
 nc_adddim ( ncfile, 'x', 5 );
 
@@ -772,7 +772,7 @@ varstruct.nnccttyyppee = { 'x' };
 varstruct.Dimension = { 'x' };
 nc_addvar ( ncfile, varstruct );
 
-warning('on','SNCTOOLS:nc_addvar:unrecognizedFieldName');
+warning('on','snctools:addvar:unrecognizedFieldName');
 
 
 

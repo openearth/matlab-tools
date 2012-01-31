@@ -42,7 +42,7 @@ record_variable = snc_find_record_variable(file1);
 
 % Verify that the record variable exists in file2.
 if ~nc_isvar(file2,record_variable)
-    error('SNCTOOLS:nc_cat:recordVariableNotThere', ...
+    error('snctools:cat:recordVariableNotThere', ...
         'The record variables must have the same name.  Could not find "%s" in %s.', ...
         record_variable, file2);
 end
@@ -52,7 +52,7 @@ info2 = nc_info(file2);
 for j = 1:numel(info2.Dataset)
     if info2.Dataset(j).Unlimited
         if ~nc_isvar(file1,info2.Dataset(j).Name)
-            error('SNCTOOLS:nc_cat:recordVariableMissing', ...
+            error('snctools:cat:recordVariableMissing', ...
                 'Could not find unlimited variable %s in %s.', ...
                 info2.Dataset(j).Name,file1);       
         end
@@ -101,19 +101,6 @@ function theBuffer = snc_getbuffer ( ncfile, varargin )
 
 preserve_fvd = nc_getpref('PRESERVE_FVD');
 
-% assume failure until success is known
-error(nargchk(1,4,nargin,'struct'));
-error(nargoutchk(1,1,nargout,'struct'));
-
-
-%
-% check that the first argument is a char
-if ~ischar ( ncfile )
-       error (  'SNCTOOLS:SNC_GETBUFFER:badInput', ...
-           'filename argument must be character.' );
-end
-
-
 [varlist,start,count] = parse_inputs ( varargin{:} );
 
 metadata = nc_info ( ncfile );
@@ -132,7 +119,7 @@ for j = 1:num_dims
     end
 end
 if record_length < 0
-       error (  'SNCTOOLS:NC_GETBUFFER:noUnlimitedDimension', ...
+       error('snctools:cat:noUnlimitedDimension', ...
              'An unlimited dimension is required.');
 end
 
@@ -146,7 +133,7 @@ if ~isempty(start) && ~isempty(count)
         count = record_length - start;
     end
     if (start < 0) && (count < 0)
-           error (  'SNCTOOLS:NC_GETBUFFER:badIndexing', ...
+           error ('snctools:cat:badIndexing', ...
                  'both start and count cannot be less than zero.');
     end
 end
@@ -212,26 +199,26 @@ case 1
     if iscell(varargin{1})
         varlist = varargin{1};
     else
-        error ( 'SNCTOOLS:NC_GETBUFFER:badInput', '2nd of two input arguments must be a cell array.' );
+        error ( 'snctools:cat:badInput', '2nd of two input arguments must be a cell array.' );
     end
 case 2
     if isnumeric(varargin{1}) && isnumeric(varargin{2})
         start = varargin{1};
         count = varargin{2};
     else
-        error ( 'SNCTOOLS:NC_GETBUFFER:badInput', '2nd and 3rd of three input arguments must be numeric.' );
+        error ( 'snctools:cat:badInput', '2nd and 3rd of three input arguments must be numeric.' );
     end
 case 3
     if iscell(varargin{1})
         varlist = varargin{1};
     else
-        error ( 'SNCTOOLS:NC_GETBUFFER:badInput', '2nd of four input arguments must be a cell array.' );
+        error ( 'snctools:cat:badInput', '2nd of four input arguments must be a cell array.' );
     end
     if isnumeric(varargin{2}) && isnumeric(varargin{3})
         start = varargin{2};
         count = varargin{3};
     else
-        error ( 'SNCTOOLS:SNC_GETBUFFER:badInput', '3rd and 4th of four input arguments must be numeric.' );
+        error ( 'snctools:cat:badInput', '3rd and 4th of four input arguments must be numeric.' );
     end
 end
 

@@ -45,27 +45,9 @@ switch(v)
             return
         end
 end
-ncfile= 'foo.nc';
-nc_create_empty(ncfile,nc_clobber_mode);
-len_x = 4; len_y = 6;
-nc_adddim( ncfile, 'x', len_x );
-nc_add_dimension ( ncfile, 'y', len_y );
 
-clear varstruct;
-varstruct.Name = 'z_double';
-varstruct.Nctype = 'double';
-varstruct.Dimension = { 'y', 'x' };
-nc_addvar ( ncfile, varstruct );
-
-
-
-
-input_data = 1:1:len_y*len_x;
-input_data = reshape ( input_data, len_y, len_x );
-
-nc_varput ( ncfile, 'z_double', input_data );
-
-
+testroot = fileparts(mfilename('fullpath'));
+ncfile = fullfile(testroot,'testdata/tst_pres_temp_4D_netcdf.nc');
 
 matfile_name = [ ncfile '.mat' ];
 snc2mat ( ncfile, matfile_name );
@@ -74,11 +56,14 @@ snc2mat ( ncfile, matfile_name );
 %
 % now check it
 d = load ( matfile_name );
-output_data = d.z_double.data;
+act_data = d.pressure.data;
+exp_data = nc_varget(ncfile,'pressure');
 
 
 
-d = max(abs(output_data-input_data))';
+ddiff = act_data-exp_data;
+d = ddiff(:);
+d = max(abs(d));
 if (any(d))
 	error ( 'failed' );
 end

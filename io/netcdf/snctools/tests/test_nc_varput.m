@@ -60,7 +60,7 @@ copyfile(input_ncfile,ncfile);
 test_put_vars ( ncfile );
 
 
-
+test_1D_all();
 test_write_1D_good_count ( ncfile );
 test_write_1D_good_stride ( ncfile );
 
@@ -195,20 +195,14 @@ return
 %--------------------------------------------------------------------------
 function test_write_1D_one_element ( ncfile )
 
-
-
 input_data = 3.14159;
-nc_varput ( ncfile, 'test_1D', input_data, 4 );
-
-
-
-
-
+nc_varput(ncfile,'test_1D',input_data,4);
 
 
 
 %--------------------------------------------------------------------------
 function test_write_1D_good_count ( ncfile )
+% Test that a one-dimensional contiguous write operation works.
 
 input_data = 3.14159;
 nc_varput ( ncfile, 'test_1D', input_data, 0, 1 );
@@ -226,13 +220,17 @@ return
 
 %--------------------------------------------------------------------------
 function test_write_1D_good_stride ( ncfile )
+% Test that one-dimensional strides work.
 
 input_data = [3.14159 2];
-nc_varput ( ncfile, 'test_1D', input_data, 0, 2, 2 );   
+nc_varput(ncfile,'test_1D',input_data,0,2,2);   
+output_data = nc_varget(ncfile,'test_1D',0,2,2);
 
 
-
-
+ddiff = abs(input_data(:) - output_data(:));
+if any( find(ddiff > eps) )
+    error('failed' );
+end
 
 
 
@@ -240,14 +238,15 @@ nc_varput ( ncfile, 'test_1D', input_data, 0, 2, 2 );
 
 
 %--------------------------------------------------------------------------
-function test_write_2D_all ( ncfile )
+function test_write_2D_all(ncfile)
+% Test that a full write operation works.
 
 input_data = 1:24;
 
 count = nc_varsize(ncfile,'test_2D');
 input_data = reshape(input_data,count);
-nc_varput ( ncfile, 'test_2D', input_data );
-output_data = nc_varget ( ncfile, 'test_2D' );
+nc_varput(ncfile,'test_2D',input_data);
+output_data = nc_varget(ncfile,'test_2D');
 
 ddiff = abs(input_data - output_data);
 if any( find(ddiff > eps) )
@@ -264,6 +263,7 @@ return
 
 %--------------------------------------------------------------------------
 function test_write_2D_contiguous_chunk ( ncfile )
+% Test that contiguous writes work.
 
 sz = nc_varsize(ncfile,'test_2D');
 start = [0 0];
@@ -288,6 +288,7 @@ return
 
 %--------------------------------------------------------------------------
 function test_write_2D_contiguous_chunk_offset ( ncfile )
+% Test that contiguous writes with a non-zero start work.
 
 sz = nc_varsize(ncfile,'test_2D');
 start = [1 1];
@@ -321,6 +322,8 @@ return
 %--------------------------------------------------------------------------
 function test_write_2D_strided ( ncfile )
 
+% Test that strided writes work.
+
 sz = nc_varsize(ncfile,'test_2D');
 start = [0 0];
 count = sz/2;
@@ -348,14 +351,14 @@ return
 
 %--------------------------------------------------------------------------
 function test_write_2D_too_little_with_putvar ( ncfile )
-
+return
 % This isn't a failure.  It assumes [0 0] and [count]
 sz = nc_varsize(ncfile,'test_2D');
 count = sz-1;
 
 input_data = 1:prod(count);
 input_data = reshape(input_data,count);
-nc_varput ( ncfile, 'test_2D', input_data );
+nc_varput ( ncfile, 'test_2D',input_data);
 
 
 
@@ -521,7 +524,7 @@ return
 function test_read_floating_point_scale_factor ( mode )
 
 if ischar(mode) && strcmp(mode,'hdf4')
-    fprintf('\tFiltering out floating point scale factor test on HDF4.\n');
+    fprintf('\tFiltering out floating point scale factor test on HDF4.  ');
     return
 end
 ncfile = 'foo.nc';
@@ -590,6 +593,13 @@ if ~isnan(output_data(1,1))
     error('failed');
 end
 return
+
+%--------------------------------------------------------------------------
+function test_1D_all()
+
+
+create_test_file('foo.nc',nc_clobber_mode);
+nc_varput('foo.nc','test_1D',zeros(6,1));
 
 
 %--------------------------------------------------------------------------

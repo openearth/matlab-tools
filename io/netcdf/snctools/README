@@ -8,26 +8,27 @@ backends for this:
     2) mexnc, the original open source mex-file
     3) netcdf-java from Unidata
 
-For most cases, support for various read/write configurations is 
-summarized in the table below.  
+For most cases, snctools <default> support for various read/write 
+configurations is summarized in the table below.  
 
 
-       |  netcdf-3   | netcdf-4     | netcdf-4      | netcdf-4 
-       | write  read | classic read | classic write | enhanced read
--------+------+------+--------------+---------------+-----------------
-R2011b |    tmw      | tmw          | tmw           | tmw,netcdf-java 4.2 
-R2011a |    tmw      | tmw          | tmw           | tmw,netcdf-java 4.2 
-R2010b |    tmw      | tmw          | tmw           | tmw,netcdf-java 4.2
-R2010a |    tmw      | netcdf-java  | x             | netcdf-java 
-R2009b |    tmw      | netcdf-java  | x             | netcdf-java 
-R2009a |    tmw      | netcdf-java  | x             | netcdf-java 
-R2008b |    tmw _____| netcdf-java  | x             | netcdf-java 
-R2008a | mexnc |       netcdf-java  | x             | netcdf-java 
-R2007b | mexnc |       netcdf-java  | x             | netcdf-java 
-R2007a | mexnc |       netcdf-java  | x             | netcdf-java 
-R2006b | mexnc |       netcdf-java  | x             | netcdf-java 
-R2006a | mexnc |       netcdf-java  | x             | netcdf-java 
-R14    | mexnc |       x            | x             | x 
+       | netcdf-3 | netcdf-3 | netcdf-4 | netcdf-4 | netcdf-4 | netcdf-4
+       | classic  | classic  | classic  | classic  | enhanced | enhanced
+       | read     | write    | read     | write    | read     | write
+-------+----------+----------+----------+----------+----------+----------
+R2011b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2011a | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2010b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2010a | tmw      | tmw      | java     | -        | java     | - 
+R2009b | tmw      | tmw      | java     | -        | java     | - 
+R2009a | tmw      | tmw      | java     | -        | java     | - 
+R2008b | tmw      | tmw      | java     | -        | java     | - 
+R2008a | java     | mexnc    | java     | -        | java     | - 
+R2007b | java     | mexnc    | java     | -        | java     | - 
+R2007a | java     | mexnc    | java     | -        | java     | - 
+R2006b | java     | mexnc    | java     | -        | java     | - 
+R2006a | java     | mexnc    | java     | -        | java     | - 
+R14    | java     | mexnc    | -        | -        | -        | - 
 
 
 There are two exceptions to note.  The mexnc backend is only required
@@ -88,14 +89,6 @@ PRESERVE_FVD
     internally as a persistent variable.  In order to change this
     preference, you therefore must invoke CLEAR ALL first.
 
-USE_STD_HDF4_SCALING 
-    The CF conventions differ from HDF4 in how scale factors are
-    to be applied; check their respective references for details.
-    By default, HDF4 datasets are scaled according to CF conventions,
-    but setting this preference to true forces NC_VARGET to use
-    standard HDF4 conventions.  This preference is only useful when
-	reading HDF4 data (obviously), it has no effect upon netCDF I/O.
-
 +-----------------------------------------------------------------------
 BUG Reports You Should Know About
 
@@ -132,6 +125,9 @@ BUG Reports You Should Know About
     netcdf package directly, not snctools users.  Please consult this URL.
 
     http://www.mathworks.com/support/bugreports/618322
+
+5)  HDF4 SD files are tentatively supported in read-only mode on R2006a
+    and more recent.
 
 +-----------------------------------------------------------------------
 Of all the routines in this m-file collection, the most useful (in my

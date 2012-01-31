@@ -1,7 +1,22 @@
-function fileinfo = nc_info_tmw ( ncfile )
+function fileinfo = nc_info_tmw(ncfile)
 % NC_INFO Backend for Mathworks package.
 
 ncid=netcdf.open(ncfile, nc_nowrite_mode );
+
+try
+    fileinfo = get_ncid_info(ncid);
+catch me
+    netcdf.close(ncid);
+    rethrow(me);
+end
+
+netcdf.close(ncid);
+
+fileinfo = pp_fileinfo(ncfile,fileinfo);
+fileinfo.Filename = ncfile;
+
+%--------------------------------------------------------------------------
+function fileinfo = get_ncid_info(ncid)
 
 fileinfo = get_group_info_tmw(ncid);
 
@@ -22,11 +37,6 @@ else
     fileinfo.Format = 'NetCDF';
 end
 
-netcdf.close(ncid);
-
-fileinfo = pp_fileinfo(ncfile,fileinfo);
-
-fileinfo.Filename = ncfile;
 
 %--------------------------------------------------------------------------
 function info = pp_fileinfo(ncfile,info)
@@ -93,7 +103,7 @@ for j = 1:numel(h5dtinfo)
         case 'H5T_COMPOUND'
             info(j) = pp_h5compound_datatype(h5dtinfo(j));
         otherwise
-            warning('snctools:unhandledHDF5class', ...
+            warning('snctools:hdf5:unhandledClass', ...
                     'HDF5 attribute class %s not handled, skipping...', ...
                     h5dtinfo(j).Class);
     end
@@ -134,34 +144,14 @@ ncinfo.Datatype = struct('Name','', ...
     'Size', h5info.Datatype.Size);
 
 if ischar(h5info.Datatype.Type)
-    switch(h5info.Datatype.Type)
-        case {'H5T_STD_U8LE','H5T_STD_U8BE'}
-            ncinfo.Datatype.Type = 'uint8';
-        case {'H5T_STD_U16LE','H5T_STD_U16BE'}
-            ncinfo.Datatype.Type = 'uint16';
-        case {'H5T_STD_U32LE','H5T_STD_U32BE'}
-            ncinfo.Datatype.Type = 'uint32';
-        case {'H5T_STD_U64LE','H5T_STD_U64BE'}
-            ncinfo.Datatype.Type = 'uint64';
-        case {'H5T_STD_I8LE','H5T_STD_I8BE'}
-            ncinfo.Datatype.Type = 'int8';
-        case {'H5T_STD_I16LE','H5T_STD_I16BE'}
-            ncinfo.Datatype.Type = 'int16';
-        case {'H5T_STD_I32LE','H5T_STD_I32BE'}
-            ncinfo.Datatype.Type = 'int32';
-        case {'H5T_STD_I64LE','H5T_STD_I64BE'}
-            ncinfo.Datatype.Type = 'int64';
-        case {'H5T_IEEE_F32LE','H5T_IEEE_F32BE'}
-            ncinfo.Datatype.Type = 'single';
-        case {'H5T_IEEE_F64LE','H5T_IEEE_F64BE'}
-            ncinfo.Datatype.Type = 'double';
-        otherwise
-            error('not handled');
-    end
+    ncinfo.Datatype.Type = h5datatype_to_nctype(h5info.Datatype.Type);
 elseif isstruct(h5info.Datatype) && strcmp(h5info.Datatype.Class,'H5T_STRING')
     ncinfo.Datatype.Type = 'string';
 else
-    warning('not handled');
+    warning('snctools:hdf5:unhandledCompoundClass',...
+            'Unhandled compound class (%s).', ...
+            class(h5info.Datatype.Type) );
+        ncinfo.Datatype.Type = 'UNRECOGNIZED';
 end
 
 
@@ -173,32 +163,10 @@ ncinfo = struct('Name','','Class','vlen','Type',[],'Size',h5info.Size);
 
 [filepath,name] = fileparts(h5info.Name);
 ncinfo.Name = name;
-
-switch(h5info.Type.Type)
-    case {'H5T_STD_U8LE','H5T_STD_U8BE'}
-        ncinfo.Type.Type = 'uint8';
-    case {'H5T_STD_U16LE','H5T_STD_U16BE'}
-        ncinfo.Type.Type = 'uint16';
-    case {'H5T_STD_U32LE','H5T_STD_U32BE'}
-        ncinfo.Type.Type = 'uint32';
-    case {'H5T_STD_U64LE','H5T_STD_U64BE'}
-        ncinfo.Type.Type = 'uint64';
-    case {'H5T_STD_I8LE','H5T_STD_I8BE'}
-        ncinfo.Type.Type = 'int8';
-    case {'H5T_STD_I16LE','H5T_STD_I16BE'}
-        ncinfo.Type.Type = 'int16';
-    case {'H5T_STD_I32LE','H5T_STD_I32BE'}
-        ncinfo.Type.Type = 'int32';
-    case {'H5T_STD_I64LE','H5T_STD_I64BE'}
-        ncinfo.Type.Type = 'int64';    
-    case {'H5T_IEEE_F32LE','H5T_IEEE_F32BE'}
-        ncinfo.Type.Type = 'single'; 
-    case {'H5T_IEEE_F64LE','H5T_IEEE_F64BE'}
-        ncinfo.Type.Type = 'double'; 
-    otherwise
-        error('not handled');
-end
+ncinfo.Type.Type = h5datatype_to_nctype(h5info.Type.Type);
 ncinfo.Type.Size = h5info.Type.Size;
+
+
 %--------------------------------------------------------------------------
 function ncinfo = pp_h5enum_datatype(h5info)
 % Turn an HDF5 H5T_ENUM datatype into a netcdf-centric info struct.
@@ -207,29 +175,43 @@ ncinfo = struct('Name','','Class','enum','Type',[],'Size',h5info.Size);
 
 [filepath,name] = fileparts(h5info.Name);
 ncinfo.Name = name;
-
-switch(h5info.Type.Type)
-    case {'H5T_STD_U8LE','H5T_STD_U8BE'}
-        ncinfo.Type.Type = 'uint8';
-    case {'H5T_STD_U16LE','H5T_STD_U16BE'}
-        ncinfo.Type.Type = 'uint16';
-    case {'H5T_STD_U32LE','H5T_STD_U32BE'}
-        ncinfo.Type.Type = 'uint32';
-    case {'H5T_STD_U64LE','H5T_STD_U64BE'}
-        ncinfo.Type.Type = 'uint64';
-    case {'H5T_STD_I8LE','H5T_STD_I8BE'}
-        ncinfo.Type.Type = 'int8';
-    case {'H5T_STD_I16LE','H5T_STD_I16BE'}
-        ncinfo.Type.Type = 'int16';
-    case {'H5T_STD_I32LE','H5T_STD_I32BE'}
-        ncinfo.Type.Type = 'int32';
-    case {'H5T_STD_I64LE','H5T_STD_I64BE'}
-        ncinfo.Type.Type = 'int64';        
-    otherwise
-        error('not handled');
-end
+ncinfo.Type.Type = h5datatype_to_nctype(h5info.Type.Type);
 ncinfo.Type.Member = h5info.Type.Member;
 
+
+%--------------------------------------------------------------------------
+function nctype = h5datatype_to_nctype(h5datatype)
+
+if isa(h5datatype,'struct')
+    nctype = 'UNRECOGNIZED';
+    return
+end
+
+switch(h5datatype)
+    case {'H5T_STD_U8LE','H5T_STD_U8BE'}
+        nctype = 'uint8';
+    case {'H5T_STD_U16LE','H5T_STD_U16BE'}
+        nctype = 'uint16';
+    case {'H5T_STD_U32LE','H5T_STD_U32BE'}
+        nctype = 'uint32';
+    case {'H5T_STD_U64LE','H5T_STD_U64BE'}
+        nctype = 'uint64';
+    case {'H5T_STD_I8LE','H5T_STD_I8BE'}
+        nctype = 'int8';
+    case {'H5T_STD_I16LE','H5T_STD_I16BE'}
+        nctype = 'int16';
+    case {'H5T_STD_I32LE','H5T_STD_I32BE'}
+        nctype = 'int32';
+    case {'H5T_STD_I64LE','H5T_STD_I64BE'}
+        nctype = 'int64';
+    case {'H5T_IEEE_F32LE','H5T_IEEE_F32BE'}
+        nctype = 'single';
+    case {'H5T_IEEE_F64LE','H5T_IEEE_F64BE'}
+        nctype = 'double';
+    otherwise
+        error('snctools:hdf5:unhandledDatatype', ...
+              'Unhandled datatype (%s)', h5datatype);
+end
 
 %--------------------------------------------------------------------------
 function ainfo = pp_attrinfo(ainfo, h5ginfo)
@@ -256,7 +238,7 @@ switch(h5ginfo.Attributes(idx).Datatype.Class)
         ainfo.Datatype = ['compound ' name];
         ainfo.Value = h5ginfo.Attributes(idx).Value;
     otherwise
-        error('snctools:unhandledHDF5datatype', ...
+        error('snctools:hdf5:unhandledHDF5datatype', ...
             'Unhandled HDF5 datatype ''%s''.', ...
             h5ginfo.Attributes(idx).Datatype.Class);
 end
@@ -295,7 +277,7 @@ switch(h5type.Class)
         [dud,name] = fileparts(h5type.Name);
         datatype = ['compound ' name];
     otherwise
-        warning('snctools:unhandledHDF5datatype', ...
+        warning('snctools:hdf5:unhandledHDF5datatype', ...
             'Unhandled HDF5 datatype ''%s''.', h5type.Class);
         datatype = '';
 end

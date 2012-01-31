@@ -15,6 +15,13 @@ function [retrieval_method,fmt] = snc_read_backend(ncfile)
 
 import ucar.nc2.dods.*    
 import ucar.nc2.*
+
+if exist('NetcdfFile','class')
+    have_java = true;
+    snc_turnoff_log4j;
+else
+    have_java = false;
+end
     
 retrieval_methods.java         = 'java';
 retrieval_methods.tmw_hdf4     = 'tmw_hdf4';
@@ -23,7 +30,6 @@ retrieval_methods.mexnc        = 'mexnc';
 retrieval_methods.tmw          = 'tmw';
 
 fmts = snc_format();
-fmt  = '';
 
 if nargin==0
    retrieval_method = retrieval_methods;
@@ -46,19 +52,20 @@ fmt = snc_format(ncfile);
 if strcmp(fmt,fmts.HDF4) 
     switch(mv)
         case {'14','2006a','2006b','2007a','2007b','2008a','2008b', ...
-              '2009a','2009b','2010a','2010b'} 
-              retrieval_method = retrieval_methods.tmw_hdf4;
+                '2009a','2009b','2010a','2010b'}
+            retrieval_method = retrieval_methods.tmw_hdf4;
         otherwise
-              retrieval_method = retrieval_methods.tmw_hdf4_2011a;
-        end
+            retrieval_method = retrieval_methods.tmw_hdf4_2011a;
+    end
 
     fmt = fmts.HDF4;
     return
 elseif (strcmp(fmt,fmts.GRIB) || strcmp(fmt,fmts.GRIB2) || strcmp(fmt,fmts.URL))
     % Always use netcdf-java for grib files or URLs (when java is enabled).
 
-    if ~exist('NetcdfFile','class')
-        error('Netcdf-java must be available to read this.');
+    if ~have_java
+        error('snctools:noNetcdfJava', ...
+            'netcdf-java must be available in order to read this.');
     end
     retrieval_method = retrieval_methods.java;
     fmt = fmts.netcdf_java;
@@ -75,19 +82,21 @@ switch ( mv )
         switch(fmt)
             case fmts.NetCDF
                 try
-                    v = mexnc('inq_libvers');
+                    mexnc('inq_libvers');
                     retrieval_method = retrieval_methods.mexnc;
-                catch
+                catch %#ok<CTCH>
                     if ~exist('NetcdfFile','class')
-                        error('Either netcdf-java or the mexnc mex-file must be available in order to read this.');
+                        error('snctools:noMexncNoNetcdfJava', ...
+                              'Either netcdf-java or the mexnc mex-file must be available in order to read this.');
                     end
                     retrieval_method = retrieval_methods.java;
                 end
                 fmt = fmts.NetCDF;
     
             case fmts.NetCDF4
-                if ~exist('NetcdfFile','class')
-                    error('Netcdf-java must be available to read this.');
+                if ~have_java
+                    error('snctools:noNetcdfJava', ...
+                        'netcdf-java must be available in order to read this.');
                 end
                 retrieval_method = retrieval_methods.java;
                 % Last chance is if it is some format that netcdf-java can handle.
@@ -107,12 +116,17 @@ switch ( mv )
     
             case fmts.NetCDF4
                 if ~exist('NetcdfFile','class') 
-                    error('Netcdf-java must be available to read this.');
+                    error('snctools:noNetcdfJava', ...
+                        'netcdf-java must be available in order to read this.');
                 end
                 retrieval_method = retrieval_methods.java;
                 fmt = fmts.NetCDF4;
 
             otherwise
+                if ~have_java
+                    error('snctools:noNetcdfJava', ...
+                        'File format is unknown and netcdf-java is not available.  Not sure how to read this file.');
+                end
                 % not netcdf-3 or netcdf-4
                 % Last chance is if it is some format that netcdf-java can handle.
                 retrieval_method = retrieval_methods.java;
@@ -127,10 +141,12 @@ switch ( mv )
                 fmt = fmts.NetCDF;
 
             otherwise
-                % Last chance is if it is some format that netcdf-java can handle.
-                if ~exist('NetcdfFile','class') 
-                    error('Netcdf-java must be available to read this.');
+                if ~have_java
+                    error('snctools:noNetcdfJava', ...
+                        'File format is unknown and netcdf-java is not available.  Not sure how to read this file.');
                 end
+                % Last chance is if it is some format that netcdf-java can
+                % handle.
                 fmt = fmts.netcdf_java;
         end
 
@@ -144,17 +160,18 @@ switch ( mv )
 
             otherwise
                 % Last chance is if it is some format that netcdf-java can handle.
-                if ~exist('NetcdfFile','class') 
-                    error('Netcdf-java must be available to read this.');
-                end
+                if ~have_java
+                    error('snctools:noNetcdfJava', ...
+                        'File format is unknown and netcdf-java is not available.  Not sure how to read this file.');
+                end                
                 fmt = fmts.netcdf_java;
         end
 
 end
 
 if isempty(retrieval_method)
-    error('SNCTOOLS:unknownBackendSituation', ...  
-          'Could not determine which backend to use with %s.  If the file format is not netCDF, the java backend must be enabled.', ...
+    error('snctools:unknownWriteBackendSituation', ...  
+          'Could not determine which backend to use with %s.', ...
        ncfile );
 end
 return

@@ -1,6 +1,6 @@
 function attval = nc_attget_java(ncfile, varname, attribute_name )
-% NC_ATTGET_JAVA:  This function retrieves an attribute using the java API
-        
+% attget_JAVA:  This function retrieves an attribute using the java API
+       
 [jncid,close_it] = open_data_source(ncfile);
 v = version('-release');
 switch(v)
@@ -62,7 +62,7 @@ else
 		try
             jncid = snc_opendap_open(ncfile);
 		catch %#ok<CTCH>
-			error ( 'SNCTOOLS:nc_varget_java:fileOpenFailure', ...
+			error ( 'snctools:nc_varget_java:fileOpenFailure', ...
                 'Could not open ''%s'' as either a local file, a regular URL, or as a DODS URL.', ...
                 ncfile);
 		end
@@ -71,18 +71,18 @@ end
 
 
 %--------------------------------------------------------------------------
-function values = attget ( jncid, varname, attribute_name )
+function values = attget(jncid,varname,attribute_name)
 
 root_group = jncid.getRootGroup();
 
 if ischar ( varname ) && (isempty(varname))
 
 	% The user passed in ''.  That means NC_GLOBAL.
-	warning ( 'SNCTOOLS:nc_attget:java:doNotUseGlobalString', ...
+	warning ( 'snctools:nc_attget:java:doNotUseGlobalString', ...
 	          'Please consider using the m-file NC_GLOBAL.M instead of the empty string.' );
-    jatt = root_group.findGlobalAttribute ( attribute_name );
+    jatt = root_group.findGlobalAttribute(attribute_name);
 
-elseif ischar ( varname ) && (strcmpi(varname,'global'))
+elseif ischar(varname) && (strcmpi(varname,'global'))
 
 	% The user passed in 'global'.   Is there a variable named 'global'?
     jvarid = root_group.findVariable(varname);
@@ -90,9 +90,9 @@ elseif ischar ( varname ) && (strcmpi(varname,'global'))
 		% No, it's a global attribute.
 		warning ( 'snctools:attget:java:doNotUseGlobalString', ...
 			'Please consider using ''NC_GLOBAL'' or -1 instead of the empty string.' );
-    	jatt = root_group.findAttribute ( attribute_name );
+    	jatt = root_group.findAttribute(attribute_name);
 	else
-    	jatt = root_group.findAttribute ( attribute_name );
+    	jatt = root_group.findAttribute(attribute_name);
 	end
 
 elseif ischar ( varname )
@@ -130,7 +130,7 @@ else
 
     % The user passed a numeric identifier for the variable.  
     % Assume that this means a global attribute.
-    jatt = root_group.findAttribute ( attribute_name );
+    jatt = root_group.findAttribute(attribute_name);
 end
 
 if isempty(jatt)
@@ -152,8 +152,8 @@ j_array = jatt.getValues();
 values = j_array.copyTo1DJavaArray();
 values = values';
 
-theDataTypeString = char ( jatt.getDataType.toString() ) ;
-switch ( theDataTypeString )
+theDataTypeString = char(jatt.getDataType.toString()) ;
+switch (theDataTypeString)
     case 'double'
         values = double(values);
     case 'float'
@@ -165,7 +165,7 @@ switch ( theDataTypeString )
     case 'byte'
         values = int8(values);
     otherwise
-        error ( 'SNCTOOLS:NC_ATTGET:badDatatype', ...
+        error ( 'snctools:attget:badDatatype', ...
             'Unhandled attribute type ''%s'' for attribute ''%s''', ...
             theDataTypeString, attribute_name );
 end

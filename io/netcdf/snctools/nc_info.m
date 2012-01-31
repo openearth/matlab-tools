@@ -60,7 +60,7 @@ switch(backend)
     case 'tmw_hdf4_2011a'
         fileinfo = nc_info_hdf4_sd(ncfile);
 	otherwise
-		error('SNCTOOLS:nc_info:unhandledBackend', ...
+		error('snctools:unhandledBackend', ...
 		      '%s is not a recognized backend.', backend );
 end
 
