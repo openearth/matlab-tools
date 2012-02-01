@@ -82,7 +82,9 @@ OPT = struct( ...
     'ne', [], ...
     'posdwn', false, ...
     'zdepth', 100, ...
-    'superfast', true ...
+    'superfast', true, ...
+    'xori',NaN, ...
+    'yori',NaN ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -93,6 +95,18 @@ xgrid = OPT.x;
 ygrid = OPT.y;
 zgrid = OPT.z;
 negrid = OPT.ne;
+
+%% determine origin
+if isnan(OPT.xori)
+    xori = min(min(xgrid));
+else
+    xori = OPT.xori;
+end
+if isnan(OPT.yori)
+    yori = min(min(ygrid));
+else
+    yori = OPT.yori;
+end
 
 %% determine size
 
@@ -109,10 +123,6 @@ end
 if OPT.posdwn
     zgrid = -zgrid;
 end
-
-% determine origin
-xori = min(min(xgrid));
-yori = min(min(ygrid));
 
 xgrid = xgrid - xori;
 ygrid = ygrid - yori;

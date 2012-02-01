@@ -1,4 +1,4 @@
-function [xgrid ygrid zgrid negrid alpha] = xb_grid_optimize(varargin)
+function [xgrid ygrid zgrid negrid alpha xori yori] = xb_grid_optimize(varargin)
 %XB_GRID_OPTIMIZE  Creates a model grid based on a given bathymetry
 %
 %   Creates a model grid in either one or two dimensions based on a given
@@ -135,12 +135,19 @@ alpha = 0;
 
 % rotate grid and determine alpha
 if OPT.rotate && ~isvector(z_w)
-    alpha = xb_grid_rotation(x_r, y_r, z_w);
-    
-    if abs(alpha) > 5
-        [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha, 'origin', [xori yori]);
+    if ~islogical(OPT.rotate) && ~ismember(OPT.rotate,[0 1])
+        alfa = OPT.rotate;
+        [x_r y_r] = xb_grid_rotate(x_r, y_r, alfa, 'origin', [xori yori]);
     else
-        alpha = 0;
+        alpha = xb_grid_rotation(x_r, y_r, z_w);
+        alfa = -alpha;
+        if abs(alpha) > 5
+%             [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha, 'origin', [xori yori]);
+            [x_r y_r] = xb_grid_rotate(x_r, y_r,alfa, 'origin', [xori yori]);
+        else
+            alpha = 0;
+            alfa = 0;
+        end
     end
 end
 
