@@ -349,6 +349,10 @@ for ifile=1:length(fnames)
          %D.data(istat).bepalingsgrenscode = 
          %D.data(istat).waarde             = 
           D.data(istat).units              = char(eenheid       (mask(1),:)); % assumed
+          if isempty(D.data(istat).units)
+          D.data(istat).units = waarnemingssoort2units(D.data(istat).waarnemingssoort);
+          end
+          
           D.data(istat).hoedanigheid       = hoedanigheid       (mask,:); 
           D.data(istat).anamet             = anamet             (mask,:);
           D.data(istat).ogi                = ogi                (mask,:);
@@ -508,6 +512,12 @@ for ifile=1:length(fnames)
                %D(nloc).data.bepalingsgrenscode     =         rec(dlm( 4)+1:dlm( 5)-1);
                                                                      % 5
                 D(nloc).data.units                  =         rec(dlm( 6)+1:dlm( 7)-1);
+
+                if isempty(D.data.units)
+                D.data.units = waarnemingssoort2units(D.data.waarnemingssoort);
+                end
+                
+                
                 D(nloc).data.what                   =         rec(dlm( 7)+1:dlm( 8)-1);
                 D(nloc).data.anamet                 =         rec(dlm( 8)+1:dlm( 9)-1);
                 D(nloc).data.ogi                    =         rec(dlm( 9)+1:dlm(10)-1);
@@ -750,3 +760,16 @@ if ~any(strcmpi(a,b));
 else   
    c = a;
 end
+
+function units = waarnemingssoort2units(waarnemingssoort) 
+% in live.waterbase.nl version 2 feb 2012 units column was suddenly gone, so we have to extract from name colum
+
+switch waarnemingssoort
+   case 'Zwevende stof in mg/l in oppervlaktewater'                           ,units='mg/l';
+   case 'Debiet in m3/s in oppervlaktewater'                                  ,units='m3/s';
+   case 'Waterhoogte in cm t.o.v. mean sea level in oppervlaktewater'         ,units='cm';
+   case 'Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater',units='cm';
+   otherwise, warning(['Units extraction not yet implemented for ',waarnemingssoort]);
+   units = '';
+end
+
