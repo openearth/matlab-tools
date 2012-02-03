@@ -40,7 +40,7 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
 % 2009 dec 28: adapted to new waterbase.nl html page [Gerben de Boer]
 % 2010 jun 24: inserted new url live.waterbase.nl [Gerben de Boer]
 
-   OPT.version  = 2; % 0 = local cache, 1 is before summer 2009, 2 is after mid dec 2009
+   OPT.version  = 3; % 0 = local cache, 1 is before summer 2009, 2 is after mid dec 2009, 3=needed on 3 feb 2012
    OPT.baseurl  = 'http://live.waterbase.nl';
 
 %% load url
@@ -51,14 +51,15 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
      url = [OPT.baseurl,'/getGML.cfm?wbwns=' sprintf('%d', Code)];
    elseif   OPT.version==2
      url = [OPT.baseurl,'/index.cfm?page=start.locaties&whichform=1&wbwns1=' sprintf('%s', CodeName) '&wbthemas=&search='];
+   elseif   OPT.version==3
+     url = [OPT.baseurl,'/waterbase_locaties.cfm?whichform=1&wbwns1=' sprintf('%s', CodeName) '&wbthemas=&search='];
    end
-
-%% load locations data file   
+   
+%% load locations data file
 
    [s status] = urlread(url);
    if (status == 0)
        warndlg([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
-       close(h);
        OutputName = [];
        return;
    end
@@ -71,9 +72,12 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
      sFullName    = regexp(s, exprFullName,'match');
      exprID       = '<property typeName="ID">[^<>]*</property>';
      sID = regexp(s, exprID,'match');
-   elseif OPT.version==2
+   elseif any(OPT.version==[2 3])
      exprFullName = '<option value="[^<>]*">[^<>]*</option>'; %'<property typeName="FullName">[^<>]*</property>';
      sFullName    = regexp(s, exprFullName,'match');
+     % <option value="ADLWG">Adelaarsweg (Hoge Vaart)</option> 
+     % ...
+     % <option value="ZWARTHN">Zwarte Haan</option>  
    end
    
    for iStation = 1:length(sFullName)
@@ -82,7 +86,7 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
          Station.FullName{iStation} = sTemp(31:end-11);
          sTemp                      = sID{iStation};
          Station.ID{iStation}       = sTemp(25:end-11);
-       elseif OPT.version==2
+       elseif any(OPT.version==[2 3])
          ind                        = strfind(sTemp,'"');
          Station.ID{iStation}       = sTemp(ind(1)+1:ind(2)-1);
          ind(1)                     = strfind(sTemp,'">');

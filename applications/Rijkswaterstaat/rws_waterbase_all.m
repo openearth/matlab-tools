@@ -19,8 +19,8 @@ function rws_waterbase_all
    OPT.make_kml       = 0; % processing all kml only takas about 4 hours
    OPT.baseurl        = 'http://live.waterbase.nl';
 
-   rawbase = 'D:\checkout\OpenEarthRawData';    % @ local
-    ncbase = 'D:\opendap.deltares.nl\thredds\'; % @ local
+   rawbase = 'E:\checkouts\OpenEarthRawData';    % @ local
+    ncbase = 'E:\opendap.deltares.nl\thredds\'; % @ local
    urlbase = 'http://opendap.deltares.nl:8080'; % production server (links)
    kmlbase = 'd:\kml.deltares.nl\';             % @ local, no links to other kml or images any more
 

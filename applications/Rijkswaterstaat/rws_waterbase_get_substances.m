@@ -82,9 +82,10 @@ function D = rws_waterbase_get_substances(varargin)
    OPT = setproperty(OPT,varargin{:});
    
    %% Get page
-   [s status]    = urlread([OPT.baseurl,'/index.cfm?page=start']);
+   url = [OPT.baseurl,'/waterbase_wns.cfm?taal=nl'];
+   [s status]    = urlread(url);
    if (status == 0)
-      fprintf(2,[OPT.baseurl,' may be offline or you are not connected to the internet: Online source not available']);
+      fprintf(2,[url,' may be offline or you are not connected to the internet: Online source not available']);
       OutputName = [];
       D = [];
       return;
