@@ -150,7 +150,7 @@ function  varargout = polyintersect(varargin)
                    (line(1).cen.a(imesh1) - line(2).cen.a(imesh2));
          local.y =  line(1).cen.a(imesh1).*local.x + ...
                     line(1).cen.b(imesh1);
-                    
+
          %% Remove crossings outside line-piece:
          %%                                       
          %%                                       
@@ -229,36 +229,36 @@ function  varargout = polyintersect(varargin)
          %% ---------------------
 
 %NEWCODE start (probably faster)
-
-            if        local.x < min(line(1).cor.x(imesh1 + [0 1])); %   *   + ----+
+            eps=1e-4;
+            if        local.x < min(line(1).cor.x(imesh1 + [0 1]))-eps; %   *   + ----+
                       local.x = NaN;
                       local.y = NaN;
             else %1
-             if       local.x > max(line(1).cor.x(imesh1 + [0 1])); %       + ----+   *
+             if       local.x > max(line(1).cor.x(imesh1 + [0 1]))+eps; %       + ----+   *
                       local.x = NaN;
                       local.y = NaN;
              else %2
-              if      local.y < min(line(1).cor.y(imesh1 + [0 1])); %   *   + ----+      @ 90 DEG
+              if      local.y < min(line(1).cor.y(imesh1 + [0 1]))-eps; %   *   + ----+      @ 90 DEG
                       local.x = NaN;
                       local.y = NaN;
               else %3
-               if     local.y > max(line(1).cor.y(imesh1 + [0 1])); %       + ----+   *  @ 90 DEG
+               if     local.y > max(line(1).cor.y(imesh1 + [0 1]))+eps; %       + ----+   *  @ 90 DEG
                       local.x = NaN;
                       local.y = NaN;
                else %4
-                if    local.x < min(line(2).cor.x(imesh2 + [0 1])); %   *   + ----+
+                if    local.x < min(line(2).cor.x(imesh2 + [0 1]))-eps; %   *   + ----+
                       local.x = NaN;
                       local.y = NaN;
                 else %5
-                 if   local.x > max(line(2).cor.x(imesh2 + [0 1])); %       + ----+   *
+                 if   local.x > max(line(2).cor.x(imesh2 + [0 1]))+eps; %       + ----+   *
                       local.x = NaN;
                       local.y = NaN;
                  else %6
-                  if  local.y < min(line(2).cor.y(imesh2 + [0 1])); %   *   + ----+      @ 90 DEG
+                  if  local.y < min(line(2).cor.y(imesh2 + [0 1]))-eps; %   *   + ----+      @ 90 DEG
                       local.x = NaN;
                       local.y = NaN;
                   else %7
-                   if local.y > max(line(2).cor.y(imesh2 + [0 1])); %       + ----+   *  @ 90 DEG
+                   if local.y > max(line(2).cor.y(imesh2 + [0 1]))+eps; %       + ----+   *  @ 90 DEG
                       local.x = NaN;
                       local.y = NaN;
                    else %8
