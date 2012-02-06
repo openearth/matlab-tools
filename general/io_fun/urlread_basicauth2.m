@@ -27,7 +27,7 @@ function [output,status] = urlread_basicauth2(urlChar,username,password,method,p
 %   See also URLWRITE.
 
 %   Matthew J. Simoneau, 13-Nov-2001
-%   Copyright 1984-2008 The MathWorks, Inc.
+%   Copyright 1984-2011 The MathWorks, Inc.
 %   $Revision$ $Date$
 
 % This function requires Java.
@@ -41,8 +41,8 @@ import com.mathworks.mlwidgets.io.InterruptibleStreamCopier;
 com.mathworks.mlwidgets.html.HTMLPrefs.setProxySettings
 
 % Check number of inputs and outputs.
-error(nargchk(3,5,nargin))
-error(nargoutchk(0,2,nargout))
+narginchk(3,5)
+nargoutchk(0,2)
 if ~ischar(urlChar)
     error('MATLAB:urlread:InvalidInput','The first input, the URL, must be a character array.');
 end
@@ -51,7 +51,7 @@ if (nargin > 3) && ~strcmpi(method,'get') && ~strcmpi(method,'post')
 end
 
 % Do we want to throw errors or catch them?
-if nargout == 2
+if nargout == 4
     catchErrors = true;
 else
     catchErrors = false;
@@ -82,7 +82,7 @@ if isempty(urlConnection)
     end
 end
 
-
+% add authorization
 encoder = sun.misc.BASE64Encoder;
 encodedPassword = encoder.encode(double([username ':' password]));
 myPwd = ['Basic ' encodedPassword.toCharArray'];
@@ -131,7 +131,7 @@ function [urlConnection,errorid,errormsg] = urlreadwrite(fcn,urlChar)
 %URLREADWRITE A helper function for URLREAD and URLWRITE.
 
 %   Matthew J. Simoneau, June 2005
-%   Copyright 1984-2009 The MathWorks, Inc.
+%   Copyright 1984-2011 The MathWorks, Inc.
 %   $Revision$ $Date$
 
 % Default output arguments.
@@ -173,11 +173,8 @@ catch exception %#ok
     return
 end
 
-% Get the proxy information using MathWorks facilities for unified proxy
-% preference settings.
-mwtcp = com.mathworks.net.transport.MWTransportClientPropertiesFactory.create();
-proxy = mwtcp.getProxy(); 
-
+% Get the proxy information using the MATLAB proxy API.
+proxy = com.mathworks.webproxy.WebproxyFactory.findProxyForURL(url); 
 
 % Open a connection to the URL.
 if isempty(proxy)
@@ -185,3 +182,9 @@ if isempty(proxy)
 else
     urlConnection = url.openConnection(proxy);
 end
+
+% build up the MATLAB User Agent
+mlUserAgent = ['MATLAB R' version('-release') ' '  version('-description')];
+
+% set User-Agent
+urlConnection.setRequestProperty('User-Agent', mlUserAgent);
