@@ -1,4 +1,4 @@
-function [err_message,x1,h1,xdynbound] = writePRO(x1,h1,h_dynamicboundary,Xid1,Yid1,Xid2,Yid2,filename,water_level)
+function [err_message,x1,h1,xdynbound] = ddb_writePRO(x1,h1,h_dynamicboundary,Xid1,Yid1,Xid2,Yid2,filename,water_level)
 %write PRO : Writes a unibest profile file (also computes location of shoreline, dynamic boundary and grid settings)
 %
 %   Syntax:

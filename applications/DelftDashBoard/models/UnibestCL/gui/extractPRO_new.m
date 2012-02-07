@@ -228,7 +228,7 @@ for ray_no = 1 : length(X1)
             Xid2        = X2(ray_no);
             Yid2        = Y2(ray_no);
             filename    = [path_out.pro,Rayname{ray_no},'.pro'];
-            [err_message,x1,z1,h1,x_dynbound] = writePRO(x1,h1,h_dynbound,Xid1,Yid1,Xid2,Yid2,filename,water_level);
+            [err_message,x1,z1,h1,x_dynbound] = ddb_writePRO(x1,h1,h_dynbound,Xid1,Yid1,Xid2,Yid2,filename,water_level);
             if ~isempty(err_message)
                 fprintf(fid2,'%s\n',err_message);
             end

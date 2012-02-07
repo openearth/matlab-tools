@@ -1,4 +1,4 @@
-function writeMDA2(mda_filename, reference_line, Y1, Y2, griddensity)
+function ddb_writeRAYloc(RAYlocfile,RAYlocdata)
 %write MDA : Writes a unibest mda-file (also computes cross-shore distance between reference line and shoreline)
 %
 %   Syntax:
@@ -67,40 +67,14 @@ function writeMDA2(mda_filename, reference_line, Y1, Y2, griddensity)
 % $Keywords: $
 
 
-%% Analyse data
-if isstr(reference_line) % load baseline
-    baseline=landboundary('read',reference_line);
-    X=baseline(:,1);
-    Y=baseline(:,2);
-else
-    X=reference_line(:,1);
-    Y=reference_line(:,2);
-end
-if nargin<3
-    Y1=zeros(length(X),1);
-end
-if nargin<4
-    Y2 = [];
-end
-if nargin<5
-    griddensity = ones(length(X),1);
-end
-
-%% Write data to mda-file
-fid=fopen(mda_filename,'wt');
-fprintf(fid,'%s\n',' BASISPOINTS');
-fprintf(fid,'%4.0f\n',length(X));
-fprintf(fid,'%s\n','     Xw             Yw             Y              N              Ray');
-for ii=1:length(X)
-    if ~isempty(Y2)
-        if ~isempty(Y2(ii)) && Y2(ii)~=Y1(ii) && ~isnan(Y2(ii))
-            fprintf(fid,'%13.2f   %13.2f %10.2f %10.0f %10.0f\n',X(ii),Y(ii),Y1(ii),griddensity(ii),ii);
-            fprintf(fid,'%40.2f\n',Y2(ii));
-        else
-            fprintf(fid,'%13.1f   %13.1f %10.2f %10.0f %10.0f\n',X(ii),Y(ii),Y1(ii),griddensity(ii),ii);
-        end
-    else
-        fprintf(fid,'%13.1f   %13.1f %10.2f %10.0f %10.0f\n',X(ii),Y(ii),Y1(ii),griddensity(ii),ii);
-    end
+%% Write data to pol-file
+fid=fopen(RAYlocfile,'wt');
+X1 = RAYlocdata.X1;
+Y1 = RAYlocdata.Y1;
+X2 = RAYlocdata.X2;
+Y2 = RAYlocdata.Y2;
+Ray = RAYlocdata.Ray;
+for ii=1:length(X1)
+    fprintf(fid,'%13.2f %13.2f %13.2f %13.2f ''%s''\n',X1(ii),Y1(ii),X2(ii),Y2(ii),Ray{ii});
 end
 fclose(fid);

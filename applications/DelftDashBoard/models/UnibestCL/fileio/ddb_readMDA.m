@@ -1,4 +1,4 @@
-function [MDAdata]=readMDA_new(MDAfilename)
+function [MDAdata]=ddb_readMDA(MDAfilename)
 %read MDA : Reads UNIBEST MDA-files
 %   
 %   Syntax:
@@ -79,27 +79,24 @@ line2 = fgetl(fid);
 numberoflines = str2num(line2);
 line3 = fgetl(fid);
 
-counter = 0;
 for nn=1:numberoflines
     line = fgetl(fid);
-    counter = counter+1;
-    countline = length(strread(line,'%f','delimiter',' '));
-    if  countline == 1
-        MDAdata.Y2(counter-1,1) = strread(line,'%f','delimiter',' ');
-        counter = counter-1;
-    else
-        [MDAdata.X(counter,1),MDAdata.Y(counter,1),MDAdata.Y1(counter,1),MDAdata.nrgridcells(counter,1),MDAdata.nr(counter,1)] = strread(line,'%f %f %f %f %f','delimiter',' ');
-        MDAdata.Y2(counter,1) = nan;
+    [MDAdata.X(nn,1),MDAdata.Y(nn,1),MDAdata.Y1(nn,1),MDAdata.nrgridcells(nn,1),MDAdata.nr(nn,1)] = strread(line,'%f %f %f %f %f','delimiter',' ');
+    if MDAdata.nrgridcells(nn)<0
+        line = fgetl(fid);
+        if ~isfield(MDAdata,'Y2')
+            MDAdata.Y2=nan(numberoflines,1);
+        end
+        MDAdata.Y2(nn)=str2num(line);
     end
 end
-    
 if ~isfield(MDAdata,'Y2')
     MDAdata.Y2=nan(numberoflines,1);
 end
 fclose(fid);
 
 %% Interpolate reference line
-dist = pathdistance(MDAdata.X,MDAdata.Y);
+dist = distXY(MDAdata.X,MDAdata.Y);
 dist2=[];
 for ii=2:length(MDAdata.nrgridcells)
     igr = MDAdata.nrgridcells(ii);

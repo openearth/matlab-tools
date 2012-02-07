@@ -15,7 +15,7 @@ end
 % Read MDA file
 if  isfield(handles.Model(md).Input,'MDAfile')
     filename = handles.Model(md).Input.MDAfile;
-    [MDAdata]=readMDA_new(filename);
+    [MDAdata]=ddb_readMDA_new(filename);
     handles.Model(md).Input.MDAdata = MDAdata;
     data = MDAdata;
 end

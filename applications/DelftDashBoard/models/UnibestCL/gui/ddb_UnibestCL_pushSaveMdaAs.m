@@ -15,5 +15,5 @@ if pathname~=0
 %             handles.Model(md).Input(ad).Runid=filename(1:ii-1);
     handles.Model(md).Input.MDAfile=filename;
     MDAfile = handles.Model(md).Input.MDAfile;
-    writeMDA2(MDAfile,reference_line,MDAdata.Y1,MDAdata.Y2,MDAdata.nrgridcells)
+    ddb_writeMDA2(MDAfile,reference_line,MDAdata.Y1,MDAdata.Y2,MDAdata.nrgridcells)
 end    

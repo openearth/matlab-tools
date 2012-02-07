@@ -16,7 +16,7 @@ if  ~isempty(AA)
 end
 
 filename=handles.Model(md).Input.RAYlocfile;
-[RAYlocdata]=readRAYloc(filename);
+[RAYlocdata]=ddb_readRayloc(filename);
 handles.Model(md).Input.RAYlocfile = filename;
 handles.Model(md).Input.RAYlocdata = RAYlocdata;
 handles.Model(md).Input.numberrays = length(RAYlocdata.X1);

@@ -1,4 +1,4 @@
-function [XYZdata]=readXYZ(XYZfilename)
+function [XYZdata]=ddb_readXYZ(XYZfilename)
 %read XYZ : Reads XYZ-files
 %   
 %   Syntax:

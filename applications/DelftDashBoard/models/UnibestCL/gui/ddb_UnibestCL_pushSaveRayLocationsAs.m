@@ -13,7 +13,7 @@ if pathname~=0
     end
     handles.Model(md).Input.RAYlocfile=filename;
     RAYlocfile = handles.Model(md).Input.RAYlocfile;
-    writeRAYloc(RAYlocfile,RAYlocdata);
+    ddb_writeRAYloc(RAYlocfile,RAYlocdata);
 end
 setHandles(handles);
 

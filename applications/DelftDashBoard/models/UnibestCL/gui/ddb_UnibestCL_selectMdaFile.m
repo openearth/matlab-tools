@@ -10,7 +10,7 @@ if  isfield(get(handles.Model(md).GUI.elements.tabs(2).elements.tabs.elements(en
 end
 
 filename=handles.Model(md).Input.MDAfile;
-[MDAdata]=readMDA_new(filename);
+[MDAdata]=ddb_readMDA_new(filename);
 handles.Model(md).Input.MDAfile = filename;
 handles.Model(md).Input.MDAdata = MDAdata;
 

@@ -1,4 +1,4 @@
-function writeLTR(filename, shoreline, locations, closure_depth, pro_file, cfs_file, cfe_file, sco_file, varargin)
+function ddb_writeLTR(filename, shoreline, locations, closure_depth, pro_file, cfs_file, cfe_file, sco_file, varargin)
 %write LTR : Writes a unibest lt-run specification file (automatically computing coast angle)
 %
 %   Syntax:

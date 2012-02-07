@@ -4,6 +4,6 @@ handles=getHandles;
 
 RAYlocfile = handles.Model(md).Input.RAYlocfile;
 RAYlocdata = handles.Model(md).Input.RAYlocdata;
-writeRAYloc(RAYlocfile,RAYlocdata);
+ddb_writeRAYloc(RAYlocfile,RAYlocdata);
 
 

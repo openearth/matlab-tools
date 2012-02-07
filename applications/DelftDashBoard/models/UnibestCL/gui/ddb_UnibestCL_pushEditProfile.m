@@ -227,7 +227,7 @@ Yid2        = handles.Model(md).Input.PROdata(pr).Y2;
 h_dynbound  = handles.Model(md).Input.PROdata(pr).zdynbound*(-1)+handles.Model(md).Input.PROdata(pr).waterlevel;%Convert bed level to water depth;
 water_level = handles.Model(md).Input.PROdata(pr).waterlevel;
 filename    = handles.Model(md).Input.PROdata(pr).filename;
-[err_message] = writePRO(x1,h1,h_dynbound,Xid1,Yid1,Xid2,Yid2,filename,water_level);
+[err_message] = ddb_writePRO(x1,h1,h_dynbound,Xid1,Yid1,Xid2,Yid2,filename,water_level);
 if ~isempty(err_message)
     fprintf(fid2,'%s\n',err_message);
 end

@@ -1,4 +1,4 @@
-function [MDAdata]=readMDA(MDAfilename)
+function [RAYlocdata]=ddb_readRAYloc(RAYlocfile)
 %read MDA : Reads UNIBEST MDA-files
 %   
 %   Syntax:
@@ -73,45 +73,23 @@ function [MDAdata]=readMDA(MDAfilename)
 
 %-----------read data from file--------------
 %-------------------------------------------
-fid=fopen(MDAfilename,'rt');
-line1 = fgetl(fid);
-line2 = fgetl(fid);
-numberoflines = str2num(line2);
-line3 = fgetl(fid);
+RAYlocdata = '';
+fid = fopen(RAYlocfile,'rt');
+tline = fgetl(fid);
+nn = 0;
 
-for nn=1:numberoflines
-    line = fgetl(fid);
-    [MDAdata.X(nn,1),MDAdata.Y(nn,1),MDAdata.Y1(nn,1),MDAdata.nrgridcells(nn,1),MDAdata.nr(nn,1)] = strread(line,'%f %f %f %f %f','delimiter',' ');
-    if MDAdata.nrgridcells(nn)<0
-        line = fgetl(fid);
-        if ~isfield(MDAdata,'Y2')
-            MDAdata.Y2=nan(numberoflines,1);
-        end
-        MDAdata.Y2(nn)=str2num(line);
-    end
+while ~isempty(tline) & length(tline)>1
+    nn = nn+1;
+    [RAYlocdata.X1(nn,1),RAYlocdata.Y1(nn,1),RAYlocdata.X2(nn,1),RAYlocdata.Y2(nn,1),RAYlocdata.Ray(nn,1)] = strread(tline,'  %f  %f  %f  %f  %s','delimiter',' ');
+    %Remove quotes
+    dummy = RAYlocdata.Ray{nn,1};
+    idquote = findstr(dummy,'''');
+    idstr = setdiff(1:length(dummy),idquote);
+    RAYlocdata.Ray(nn,1)={dummy(idstr)}; 
+    tline = fgetl(fid);
 end
-if ~isfield(MDAdata,'Y2')
-    MDAdata.Y2=nan(numberoflines,1);
+if  isempty(RAYlocdata)
+    fprintf('File contains no data.\n')
+    return
 end
 fclose(fid);
-
-%% Interpolate reference line
-dist = distXY(MDAdata.X,MDAdata.Y);
-dist2=[];
-for ii=2:length(MDAdata.nrgridcells)
-    igr = MDAdata.nrgridcells(ii);
-    dx2 = (dist(ii)-dist(ii-1))/igr;
-    dist2=[dist2;[dist(ii-1):dx2:dist(ii)-dx2]'];
-end
-MDAdata.Xi=interp1(dist,MDAdata.X,dist2,'spline');
-MDAdata.Yi=interp1(dist,MDAdata.Y,dist2,'spline');
-MDAdata.Y1i=interp1(dist,MDAdata.Y1,dist2,'spline');
-
-
-%% compute coastline
-dx = diff(MDAdata.Xi);dx=[dx(1);(dx(2:end)+dx(1:end-1))/2;dx(end)];
-dy = diff(MDAdata.Yi);dy=[dy(1);(dy(2:end)+dy(1:end-1))/2;dy(end)];
-MDAdata.Xcoast = MDAdata.Xi + MDAdata.Y1i.*-dy.*(dx.^2+dy.^2).^-0.5;
-MDAdata.Ycoast = MDAdata.Yi + MDAdata.Y1i.*dx.*(dx.^2+dy.^2).^-0.5;
-%figure;plot(MDAdata.Xi,MDAdata.Yi,'k');
-%hold on;plot(MDAdata.Xcoast,MDAdata.Ycoast,'b');

@@ -1,4 +1,4 @@
-function writeMDA(mda_filename, reference_line, varargin)
+function ddb_writeMDA(mda_filename, reference_line, varargin)
 %write MDA : Writes a unibest mda-file (also computes cross-shore distance between reference line and shoreline)
 %
 %   Syntax:
