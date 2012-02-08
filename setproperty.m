@@ -252,10 +252,10 @@ switch onClassChange
     case 'warn'
         warnOnClassChange  = true;
         errorOnClassChange = false;
-            case 'error'
+    case 'error'
         warnOnClassChange  = false;
         errorOnClassChange = true;
-            case 'ignore'
+    case 'ignore'
         warnOnClassChange  = false;
         errorOnClassChange = false;
 end
