@@ -4,10 +4,13 @@ function varargout = voxel(varargin)
 %   More detailed description goes here.
 %
 %   Syntax:
-%       handle           = voxel(p)    
+%       handle           = voxel(p)
 %       [faces,vertices] = voxel(x,y,z,p)
 %
-%       voxel(p)       where p is 3d logical object
+%       voxel(p)       where p is either a double or logical
+%                      if p is a logical, only the true boxes are plotted, all in the same color
+%                      if p is a double, all not-nan values are plotted,
+%                      coloured according to their value
 %       voxel(x,y,z,p) where x y and z are
 %                      1d vectors   will be internally meshgridded
 %                      3d of size p    (center coordinates)
@@ -18,19 +21,23 @@ function varargout = voxel(varargin)
 %
 %   Output:
 %   varargout = handle to patch object
-%               
+%
 %
 %   Example
 %
 %       nn = 10.5;
-%       [x,y,z] = deal(-nn:nn); 
+%       [x,y,z] = deal(-nn:nn);
 %       [x,y,z] = meshgrid(x,y,z);
 %       p = x.^2+y.^2+z.^2 < (nn-1)^2;
-%       h = voxel(p);
+%       h1 = voxel(p);
+%       p2 = nan(size(p));
+%       p2(p) = x(p)+y(p);
+%       h2 = voxel(2*x,y,z,p2);
+%       axis equal; 
 %
 %   See also
 %
-% TODO: make setproperty work, plot different colors
+% TODO: make setproperty work 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -77,15 +84,17 @@ function varargout = voxel(varargin)
 
 %%
 OPT.triangles    = false;
-OPT.plotSettings = {'facecolor','b'};
+OPT.plotSettings = {};
 % OPT = setproperty(OPT,varargin{:});
-% 
+%
 % if nargin==0;
 %     varargout = OPT;
 %     return;
 % end
 %% code
 
+
+%% input parsing
 switch nargin
     case 1
         p = varargin{1};
@@ -108,6 +117,15 @@ switch nargin
         error
 end
 
+if islogical(p)
+    % ok
+    color_faces = false;
+else
+    c = p;
+    p = ~isnan(p);
+    color_faces = true;
+end
+
 if all([isvector(x),isvector(y),isvector(z)])
     [x,y,z] = meshgrid(x,y,z);
 else
@@ -119,14 +137,10 @@ end
 if size(p) + 1 ==  size(x)
     % ok
 elseif size(p) == size(x)
-    z =  permute(z,[2,3,1]);
-    x = [2*x(:,1,:) -  x(:,2,:)  x  2*x(:,end,:) -  x(:,end-1,:)];
-    y = [2*y(1,:,:) -  y(2,:,:); y; 2*y(end,:,:) -  y(end-1,:,:)];
-    z = [2*z(:,1,:) -  z(:,2,:)  z 2*z(:,end,:)  -  z(:,end-1,:)];
-    x = (x(:,1:end-1,:) + x(:,2:end,:))/2;
-    y = (y(1:end-1,:,:) + y(2:end,:,:))/2; 
-    z = (z(:,1:end-1,:) + z(:,2:end,:))/2;
-    z =  permute(z,[3,1,2]);
+    % expand x, y and z in each direction
+    x = center2corner(x);
+    y = center2corner(y);
+    z = center2corner(z);
 else
     error;
 end
@@ -136,28 +150,49 @@ end
 
 
 % from here you need X,Y,Z which are all same size 3D. p is size(X,Y,Z) - 1
-% in all dimesnions.  
+% in all dimesnions.
 
-%% dim1
-faces = [];
-for dim = 1:3;
+%% determine what faces to plot per dimension
+faces  = [];
+colors = [];
+for dimension = 1:3;
     n = [0 0 0];
-    n(dim) = 1;
+    n(dimension) = 1;
     sides = false(size(p)+n);
-    switch dim
+    
+    % determine which sides to plot
+    switch dimension
         case 1
-            sides(2:end-1,:,:) = diff(p,1,dim) ~= 0;
+            sides(2:end-1,:,:) = diff(p,1,dimension) ~= 0;
             sides([1 end],:,:) = p([1 end],:,:);
         case 2
-            sides(:,2:end-1,:) = diff(p,1,dim) ~= 0;
+            sides(:,2:end-1,:) = diff(p,1,dimension) ~= 0;
             sides(:,[1 end],:) = p(:,[1 end],:);
         case 3
-            sides(:,:,2:end-1) = diff(p,1,dim) ~= 0;
+            sides(:,:,2:end-1) = diff(p,1,dimension) ~= 0;
             sides(:,:,[1 end]) = p(:,:,[1 end]);
     end
     
+    
+    % determine which color to plot them
+    if color_faces
+        switch dimension
+            case 1
+                c_temp_1 = c([1   1:end],:,:);
+                c_temp_2 = c([1:end end],:,:);
+            case 2
+                c_temp_1 = c(:,[1   1:end],:);
+                c_temp_2 = c(:,[1:end end],:);
+            case 3
+                c_temp_1 = c(:,:,[1   1:end]);
+                c_temp_2 = c(:,:,[1:end end]);
+        end
+        c_temp   = nanmean([c_temp_1(:) c_temp_2(:)],2);
+    end
+    
+    % determine connectivity matrix of all four corners
     [s1,s2,s3,s4] = deal(false(size(x)));
-    switch dim
+    switch dimension
         case 1
             s1(:,1:end-1,1:end-1) = sides;
             s2(:,1:end-1,2:end-0) = sides;
@@ -175,11 +210,20 @@ for dim = 1:3;
             s4(2:end-0,1:end-1,:) = sides;
     end
     
+    % append connectivity as squares or triangles
     if OPT.triangles
-        faces = [faces; [[find(s1) find(s2) find(s3)]; [find(s3) find(s4) find(s1)]]]; %#ok<AGROW>
+        faces  = [faces; [[find(s1) find(s2) find(s3)]; [find(s3) find(s4) find(s1)]]]; %#ok<AGROW>
+        if color_faces
+            colors = [colors; c_temp(sides); c_temp(sides)]; %#ok<AGROW>
+        end
     else
-        faces = [faces; [find(s1) find(s2) find(s3) find(s4)]];
+        faces = [faces; [find(s1) find(s2) find(s3) find(s4)]]; %#ok<AGROW>
+        if color_faces
+            colors = [colors; c_temp(sides)]; %#ok<AGROW>
+        end
     end
+    
+    
 end
 
 [iV,~,iF] = unique(faces);
@@ -190,9 +234,26 @@ switch nargout
     case 0
         patch('Faces',faces,'Vertices',verts,OPT.plotSettings{:});
     case 1
-        varargout{1} = patch('Faces',faces,'Vertices',verts,OPT.plotSettings{:});
+        if color_faces
+            varargout{1} = patch('Faces',faces,'Vertices',verts,'FaceVertexCData',colors,'FaceColor','flat',OPT.plotSettings{:});
+        else
+            varargout{1} = patch('Faces',faces,'Vertices',verts,'FaceVertexCData',0,'FaceColor','flat',OPT.plotSettings{:});
+        end
         view(3)
-    case 2
+    case {2,3}
         varargout{1} = faces;
         varargout{2} = verts;
+        varargout{3} = colors;
 end
+
+function v = center2corner(v)
+v = [2*v(1,:,:) -  v(2,:,:); v; 2*v(end,:,:) -  v(end-1,:,:)];
+v = (v(1:end-1,:,:) + v(2:end,:,:))/2;
+
+v = [2*v(:,1,:) -  v(:,2,:)  v  2*v(:,end,:) -  v(:,end-1,:)];
+v = (v(:,1:end-1,:) + v(:,2:end,:))/2;
+
+v =  permute(v,[2,3,1]);
+v = (v(:,1:end-1,:) + v(:,2:end,:))/2;
+v = [2*v(:,1,:) -  v(:,2,:)  v 2*v(:,end,:)  -  v(:,end-1,:)];
+v =  permute(v,[3,1,2]);
