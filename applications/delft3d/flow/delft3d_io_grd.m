@@ -8,7 +8,9 @@ function varargout = delft3d_io_grd(varargin)
 %
 %   G.cor  represents corner points without dummy row/col:          1:nmax-1 x 1:mmax-1
 %   G.cen  represents center points without dummy row/col:          2:nmax-1 x 2:mmax-1
-%   G.cend represents center points with extrapolted dummy row/col: 1:nmax   x 1:mmax
+%   G.cend represents center points with extrapolated dummy row/col: 1:nmax   x 1:mmax
+%
+%   for xy2mn: use the G.cend output
 %
 % Note that n is the first dimension, to be compatible 
 % with the vs_ functionality.
@@ -30,7 +32,7 @@ function varargout = delft3d_io_grd(varargin)
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
 %           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
 %           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
+%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, xy2mn
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-7 Delft University of Technology
@@ -147,6 +149,8 @@ end
 
       G.cend.x       = center2corner(G.cor.x);
       G.cend.y       = center2corner(G.cor.y);
+      
+      [G.cor.encx,G.cor.ency] = enclosure('coordinates',G.cor.x,G.cor.y);
 
       G.cend.comment = {'center points WITH dummy rows/columns (1:nmax  ) x (1:mmax  )',...
                         'values filled with mirroring',...
