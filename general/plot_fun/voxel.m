@@ -173,7 +173,6 @@ for dimension = 1:3;
             sides(:,:,[1 end]) = p(:,:,[1 end]);
     end
     
-    
     % determine which color to plot them
     if color_faces
         switch dimension
@@ -231,9 +230,7 @@ verts   = [x(iV) y(iV) z(iV)];
 faces   = reshape(iF,size(faces));
 
 switch nargout
-    case 0
-        patch('Faces',faces,'Vertices',verts,OPT.plotSettings{:});
-    case 1
+    case {0,1}
         if color_faces
             varargout{1} = patch('Faces',faces,'Vertices',verts,'FaceVertexCData',colors,'FaceColor','flat',OPT.plotSettings{:});
         else
