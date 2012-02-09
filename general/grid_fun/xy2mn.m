@@ -18,7 +18,11 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 % [m,n,mn,eps] = xy2mn(...)
 % where mn = the linear index, and eps the distance.
 %
-% See also: SUB2IND, IND2SUB, FIND, MIN, MAX, griddata_nearest
+% for Delft3D: use the G.cend output from delft3d_io_grd to get the center 
+% points of the grid with extrapolated dummy row/col: 1:nmax   x 1:mmax
+%
+% See also: SUB2IND, IND2SUB, FIND, MIN, MAX, griddata_nearest,
+% delft3d_io_grd
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -45,6 +49,17 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 09 Feb 2012
+% Created with Matlab version: 7.12.0.635 (R2011a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 OPT.Rmax  = Inf; % make this optionally same size as X and Y.
 
