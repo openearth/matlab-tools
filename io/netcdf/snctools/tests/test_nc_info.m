@@ -686,8 +686,6 @@ info = nc_info(ncfile);
 
 testroot = fileparts(mfilename('fullpath'));
 load([testroot '/testdata/nc_info.mat']);
-var2evalstr(d.grib.simple.Dataset(2))
-var2evalstr(info.Dataset(2))
 
 if ~isequal(d.grib.simple.Dataset(2), info.Dataset(2))
     error('failed');

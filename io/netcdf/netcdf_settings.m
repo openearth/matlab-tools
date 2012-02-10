@@ -93,7 +93,7 @@ function netcdf_settings(varargin)
       disp('Writing netcdf files does not work due to vanilla_mexnc issues, you need 2008b and higher to write netcdf files or solve vanilla_mexnc.')
       end
       
-      if     any(strcmpi(version('-release'),{'14','2006a','2006b','2007a','2007b','2008a'}))
+      if     any(strcmpi(version('-release'),{'14','2006a','2006b','2007a'}))
       java2add         = path2os([ncroot,'netcdfAll-4.1.jar']); % 'toolsUI-4.1.jar' has same functionality but is bigger. It returns an old CF number for GRIB files.
       elseif strcmpi(version('-release'),'R14')
       java2add         = path2os([ncroot,'netcdf-2.2.20.jar']); %

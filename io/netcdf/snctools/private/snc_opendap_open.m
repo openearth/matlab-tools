@@ -11,13 +11,25 @@ parts = regexp(ncfile,pat,'names');
 if numel(parts) == 0
     jncid = DODSNetcdfFile(ncfile);
 else
-    
     % SncCreds is a custom java class supplied with SNCTOOLS.
     credentials = SncCreds(parts.username,parts.password);
-    client = ucar.nc2.util.net.HttpClientManager.init(credentials,'snctools');
-    opendap.dap.DConnect2.setHttpClient(client);
-    ucar.unidata.io.http.HTTPRandomAccessFile.setHttpClient(client);
-    ucar.nc2.dataset.NetcdfDataset.setHttpClient(client);
-    
+
+    v = version('-release');
+    switch(v)
+        case {'14','2006a','2006b','2007a'}
+             client = ucar.nc2.util.net.HttpClientManager.init(credentials,'snctools');
+             opendap.dap.DConnect2.setHttpClient(client);
+             ucar.unidata.io.http.HTTPRandomAccessFile.setHttpClient(client);
+             ucar.nc2.dataset.NetcdfDataset.setHttpClient(client);
+
+        otherwise
+            ucar.nc2.util.net.HttpClientManager.init(credentials,'snctools');
+            
+            % The latest netcdf-java accepts http for https?
+            if strcmp(parts.protocol,'https')
+                ncfile = strrep(ncfile,'https','http');
+            end
+
+    end
     jncid = DODSNetcdfFile(ncfile);
 end

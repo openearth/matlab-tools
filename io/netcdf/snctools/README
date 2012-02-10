@@ -47,6 +47,15 @@ If you have R2011a and have never used SNCTOOLS, you may be interested
 to know that R2011a has new high-level netcdf support.  Please check
 that out before proceeding with SNCTOOLS.
 
+The exact version of the NetCDF java backend depends upon your version
+of MATLAB, as shown here.  
+
+MATLAB Version                   recommended netcdf-java version
+===============================  ===============================
+R2007b through current release:  4.2
+R2006a through R2007a:           4.1.1
+R14:                             2.2.20
+
 Please add this directory to your matlab path.  You must also have 
 mexnc on your path in order for snctools to work.
 

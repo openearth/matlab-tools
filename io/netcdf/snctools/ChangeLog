@@ -1,3 +1,7 @@
+* February 09 2012 John Evans <john.g.evans.ne@gmail.com> -r3963
+- Fixed snctools for change in netcdf-java authentication.
+- Updated README for clearer netcdf-java requirements.
+
 * January 12 2012 John Evans <john.g.evans.ne@gmail.com> -r3958
 - No support for HDF4 on R14.
 - Updated the README for official HDF4 stance.

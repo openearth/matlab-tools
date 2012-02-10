@@ -34,7 +34,17 @@ end
    disp('		For increasing java heap space see:')
    disp('		http://www.mathworks.com/support/solutions/en/data/1-18I2C/')
 
-%% was SLOW, but not any more after getpref updates !!
+%% was SLOW, but not any more after snctools getpref updates !!
 disp([mfilename,' test 4'])
 disp('		please be patient: testing 1000 times')
 test_local_system % load opendap vars, save as local netcdf3, load it again & compare
+
+%% test basic authentication (with pre-operational Rijkswaterstaat server, TA in OTAP (=DTAP <uk>))
+try
+   
+   [user,passwd]=matroos_user_password;
+   
+   nc_dump(['https://',user,':',passwd,'@opendap-matroos.deltares.nl/thredds/dodsC/maps/normal/test_adaguc/dcsm_v6_hirlam_201112270600.nc'])
+   nc_dump([ 'http://',user,':',passwd,'@opendap-matroos.deltares.nl/thredds/dodsC/maps/normal/test_adaguc/dcsm_v6_hirlam_201112270600.nc'])
+   
+end
