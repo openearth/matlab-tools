@@ -85,7 +85,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
       OPT.epsg           = 28992;
       OPT.type           = 'float'; %'double'; % the nefis file is by default single precision
       OPT.quiet          = 'quiet';
-      OPT.mode           = '64bit_offset' ;
+      OPT.mode           = '64bit_offset';
+      OPT.stride         = 1; % write chunks per layer in case of large 3D matrices
       
       if ~odd(nargin)
          ncfile   = varargin{1};
@@ -470,21 +471,36 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_varput(ncfile,'waterlevel',data);
       nc_attput(ncfile,'waterlevel','actual_range',[min(data(:)) max(data(:))]);
 
-      data = vs_let(F,'his-series','ZCURU',OPT.quiet);
-      nc_varput(ncfile,'u_x',data);
-      nc_attput(ncfile,'u_x','actual_range',[min(data(:)) max(data(:))]);
+      if OPT.stride
+          for k=1:G.kmax
+              data = vs_let(F,'his-series','ZCURU',{0 k},OPT.quiet);
+              nc_varput(ncfile,'u_x',data,[0 0 k-1],[size(data) 1]);
+              data = vs_let(F,'his-series','ZCURV',{0 k},OPT.quiet);
+              nc_varput(ncfile,'u_y',data,[0 0 k-1],[size(data) 1]);
+          end
+          for k=1:G.kmax+1
+              data = vs_let(F,'his-series','ZTUR',{0 k 1},OPT.quiet);
+              nc_varput(ncfile,'TKE',data,[0 0 k-1],[size(data) 1]);
+              data = vs_let(F,'his-series','ZTUR',{0 k 2},OPT.quiet);
+              nc_varput(ncfile,'eps',data,[0 0 k-1],[size(data) 1]);
+          end
+      else
+          data = vs_let(F,'his-series','ZCURU',OPT.quiet);
+          nc_varput(ncfile,'u_x',data);
+          nc_attput(ncfile,'u_x','actual_range',[min(data(:)) max(data(:))]);
 
-      data = vs_let(F,'his-series','ZCURV',OPT.quiet);
-      nc_varput(ncfile,'u_y',data);
-      nc_attput(ncfile,'u_y','actual_range',[min(data(:)) max(data(:))]);
+          data = vs_let(F,'his-series','ZCURV',OPT.quiet);
+          nc_varput(ncfile,'u_y',data);
+          nc_attput(ncfile,'u_y','actual_range',[min(data(:)) max(data(:))]);
 
-      data = vs_let(F,'his-series','ZTUR',{0 0 1},OPT.quiet);
-      nc_varput(ncfile,'TKE',data);
-      nc_attput(ncfile,'TKE','actual_range',[min(data(:)) max(data(:))]);
+          data = vs_let(F,'his-series','ZTUR',{0 0 1},OPT.quiet);
+          nc_varput(ncfile,'TKE',data);
+          nc_attput(ncfile,'TKE','actual_range',[min(data(:)) max(data(:))]);
 
-      data = vs_let(F,'his-series','ZTUR',{0 0 2},OPT.quiet);
-      nc_varput(ncfile,'eps',data);
-      nc_attput(ncfile,'eps','actual_range',[min(data(:)) max(data(:))]);
+          data = vs_let(F,'his-series','ZTUR',{0 0 2},OPT.quiet);
+          nc_varput(ncfile,'eps',data);
+          nc_attput(ncfile,'eps','actual_range',[min(data(:)) max(data(:))]);
+      end
 
      %data = vs_let(F,'his-series','ZTAUKS')
      %nc_varput(ncfile,'tau_x,data);
