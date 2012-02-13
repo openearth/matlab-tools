@@ -168,9 +168,9 @@ end
 
 if isdeployed
     handles.superTransDir=[ddbdir 'supertrans' filesep];
-%else
-%    dr=fileparts(which('EPSG.mat'));
-%    handles.superTransDir=[dr filesep];
+else
+    dr=fileparts(which('EPSG.mat'));
+    handles.superTransDir=[dr filesep];
 end
 
 
