@@ -1,43 +1,58 @@
 function varargout = voxel(varargin)
-%VOXEL  One line description goes here.
+%VOXEL  Plots volumetric data
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%       handle           = voxel(p)
-%       [faces,vertices] = voxel(x,y,z,p)
-%
-%       voxel(p)       where p is either a double or logical
-%                      if p is a logical, only the true boxes are plotted, all in the same color
-%                      if p is a double, all not-nan values are plotted,
-%                      coloured according to their value
-%       voxel(x,y,z,p) where x y and z are
-%                      1d vectors   will be internally meshgridded
-%                      3d of size p    (center coordinates)
-%                      3d of size(p+1) (corner coordinates)
+%       varargout = voxel(varargin)
 %
 %   Input:
-%   varargin  = voxel(p)
+%       varargin  = p,<keyword>,<value> 
+%       varargin  = x,y,z,p,<keyword>,<value>
+%
+%       p:
+%           either a double or logical
+%           if p is a logical, only the true boxes are plotted, all in the same color
+%           if p is a double, all not-nan values are plotted, coloured according to their value
+%           
+%       x,y,z: 
+%              1d vectors where: 
+%           size(p)   == [length(y),length(x),length(z)] (center coordinates)
+%              1d vectors where: 
+%           size(p)+1 == [length(y),length(x),length(z)] (corner coordinates)
+%              3d vectors where:
+%           size(p)   == size(x) == size(y) == size(z) (center coordinates)
+%              3d vectors where:
+%           size(p)+1 == size(x) == size(y) == size(z) (corner coordinates)
 %
 %   Output:
-%   varargout = handle to patch object
-%
+%       varargout = [handle to patch object]
+%       varargout = [faces,vertices]
 %
 %   Example
+%     % make some data
+%     nn          = 12;
+%     [x,y,z]     = deal(-nn:nn);
+%     [x,y,z]     = meshgrid(x,y,z);
+% 
+%     % define logical with all values within sphere set as true
+%     p           = x.^2+y.^2+z.^2 < (nn-0.9)^2;
+% 
+%     % plot the sphere
+%     h1          = voxel(p,'triangles',true);
+% 
+%     % define colored sphere with nan's where no data should be plotted
+%     colors      = nan(size(p));
+%     colors(p)   = x(p)+y(p);
+% 
+%     % plot the sphere with colors and mangled y and z 
+%     h2          = voxel(2*x,y-5+10*sin(x/-5),z+4*sin(x/-2),colors,'plotSettings',{'EdgeColor',[0 0.5 0]});
+% 
+%     % make nice plot
+%     axis equal; 
+%     view([-157 24])
 %
-%       nn = 10.5;
-%       [x,y,z] = deal(-nn:nn);
-%       [x,y,z] = meshgrid(x,y,z);
-%       p = x.^2+y.^2+z.^2 < (nn-1)^2;
-%       h1 = voxel(p);
-%       p2 = nan(size(p));
-%       p2(p) = x(p)+y(p);
-%       h2 = voxel(2*x,y,z,p2);
-%       axis equal; 
-%
-%   See also
-%
-% TODO: make setproperty work 
+%   See also: pcolor
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -82,20 +97,27 @@ function varargout = voxel(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% parse optional properties
 OPT.triangles    = false;
 OPT.plotSettings = {};
-% OPT = setproperty(OPT,varargin{:});
-%
-% if nargin==0;
-%     varargout = OPT;
-%     return;
-% end
-%% code
 
+if nargin==0;
+    varargout = OPT;
+    return;
+end
+
+if nargin > 1
+    if ischar(varargin{2})
+        OPT = setproperty(OPT,varargin(2:end));
+        varargin(2:end) = [];
+    elseif nargin > 4
+        OPT = setproperty(OPT,varargin(5:end));
+        varargin(5:end) = [];
+    end
+end
 
 %% input parsing
-switch nargin
+switch length(varargin)
     case 1
         p = varargin{1};
         if ndims(p) ~= 3
@@ -104,7 +126,6 @@ switch nargin
         x = 0:size(p,2);
         y = 0:size(p,1);
         z = 0:size(p,3);
-        [x,y,z] = meshgrid(x,y,z);
     case 4
         p = varargin{4};
         if ndims(p) ~= 3
@@ -127,25 +148,36 @@ else
 end
 
 if all([isvector(x),isvector(y),isvector(z)])
-    [x,y,z] = meshgrid(x,y,z);
+    vectorMode = true;
+    if  all(size(p) + 1 == [length(y) length(x) length(z)]) 
+        x = x(:);
+        y = y(:);
+        z = z(:);
+    elseif all(size(p) == [length(y) length(x) length(z)])
+        % expand x, y and z in each direction
+        x = center2corner1D(x(:));
+        y = center2corner1D(y(:));
+        z = center2corner1D(z(:));
+    else
+        error;
+    end
 else
+    vectorMode = false;
     if ~isequal(size(x),size(y),size(z))
         error
     end
+    % x,y and z are equal sizes
+    if all(size(p) + 1 ==  size(x))
+        % ok
+    elseif all(size(p) == size(x))
+        % expand x, y and z in each direction
+        x = center2corner3D(x);
+        y = center2corner3D(y);
+        z = center2corner3D(z);
+    else
+        error;
+    end
 end
-% x,y and z are equal zies
-if size(p) + 1 ==  size(x)
-    % ok
-elseif size(p) == size(x)
-    % expand x, y and z in each direction
-    x = center2corner(x);
-    y = center2corner(y);
-    z = center2corner(z);
-else
-    error;
-end
-
-
 
 
 
@@ -190,7 +222,7 @@ for dimension = 1:3;
     end
     
     % determine connectivity matrix of all four corners
-    [s1,s2,s3,s4] = deal(false(size(x)));
+    [s1,s2,s3,s4] = deal(false(size(p)+1));
     switch dimension
         case 1
             s1(:,1:end-1,1:end-1) = sides;
@@ -226,7 +258,12 @@ for dimension = 1:3;
 end
 
 [iV,~,iF] = unique(faces);
-verts   = [x(iV) y(iV) z(iV)];
+if vectorMode
+    [iVy,iVx,iVz] = ind2sub(size(p)+1,iV);
+    verts   = [x(iVx) y(iVy) z(iVz)];
+else
+    verts   = [x(iV) y(iV) z(iV)];
+end
 faces   = reshape(iF,size(faces));
 
 switch nargout
@@ -243,7 +280,7 @@ switch nargout
         varargout{3} = colors;
 end
 
-function v = center2corner(v)
+function v = center2corner3D(v)
 v = [2*v(1,:,:) -  v(2,:,:); v; 2*v(end,:,:) -  v(end-1,:,:)];
 v = (v(1:end-1,:,:) + v(2:end,:,:))/2;
 
@@ -254,3 +291,7 @@ v =  permute(v,[2,3,1]);
 v = (v(:,1:end-1,:) + v(:,2:end,:))/2;
 v = [2*v(:,1,:) -  v(:,2,:)  v 2*v(:,end,:)  -  v(:,end-1,:)];
 v =  permute(v,[3,1,2]);
+
+function v = center2corner1D(v)
+v = [2*v(1) -  v(2); v; 2*v(end) -  v(end-1)];
+v = (v(1:end-1) + v(2:end))/2;
