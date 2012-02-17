@@ -3,6 +3,8 @@ function OK = isurl(str)
 %
 % ok = isurl(string)
 %
+% What about https://?
+%
 % See also: urlread
 
 % $Id$
