@@ -130,9 +130,10 @@ else
     for i = 1:length(OPT.urls)
         waitbar(i/length(OPT.urls), wbh, 'Extracting map outlines from nc files ...')
 
-        OPT.x_ranges{i} = sort(nc_actual_range(OPT.urls{i}, varname_x));
-        OPT.y_ranges{i} = sort(nc_actual_range(OPT.urls{i}, varname_y));
-        
+        OPT.x_ranges{i} = nc_actual_range(OPT.urls{i}, varname_x);
+        OPT.y_ranges{i} = nc_actual_range(OPT.urls{i}, varname_y);
+        OPT.x_ranges{i} = sort(str2num(OPT.x_ranges{i}{1}));   % <-- string to numerical format, otherwise 'grid_orth_getDataInPolygon.m' will not work anymore
+        OPT.y_ranges{i} = sort(str2num(OPT.y_ranges{i}{1}));   % <-- string to numerical format, otherwise 'grid_orth_getDataInPolygon.m' will not work anymore
     end
     close(wbh)
 end
