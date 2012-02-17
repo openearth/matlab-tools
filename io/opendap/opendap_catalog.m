@@ -5,9 +5,13 @@ function varargout = opendap_catalog(varargin)
 %
 % crawls the urls of all datsets (netCDF files) that reside 
 % under the OPeNDAP catalog.xml located at the specified url,
-% as well as all catalogs that it links to. Onyl works for THREDDS, and 
-% sometimes for HYRAX. doe snot work for GrADS. Use nc_cf_opendap2catalog
-% to harvest meta-data from all these OPeNDAP urls.
+% as well as all catalogs that it links to. It only works for THREDDS, and 
+% sometimes for HYRAX, not for GrADS. Use nc_cf_opendap2catalog
+% to harvest meta-data from all these OPeNDAP urls, that uses
+% NC_CF_FILE2CATALOG to harvest meta-data from one single urls.
+%
+% Currently OPENDAP_CATALOG does not extract the meta-data from
+% the catalog.xml files, it only extracts the urls.
 %
 % When url does not start with 'http', the url is assumed
 % to be a local directory, and all netCDF files (*.nc) 
@@ -32,6 +36,8 @@ function varargout = opendap_catalog(varargin)
 %  * external : whether to include links to external catalogs (default 0)
 %  * log      : log progress, 0 = quiet, 1 = command line, nr>1 = fid passed to fprintf (default 0)
 %  * ...
+%
+%  [~,nc_folder_list] = opendap_catalog(...) also returns unique folders
 %
 % Tested succesfully with maxlevel=Inf for:
 %
@@ -138,7 +144,7 @@ function varargout = opendap_catalog(varargin)
 if length(OPT.url) < 11 | (~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-2:end),'xml'))
 
    if OPT.maxlevel > 1
-      fprintf(2,'opendap_catalog: maxlevel ignored because request concerns local file system.\n')
+      fprintf(2,'opendap_catalog: maxlevel set to Inf, because local file system cannot distuinguish between level depths.\n')
    end
    
    [nc_file_list,nc_folder_list] = findAllFiles(OPT.url,'pattern_incl','*.nc','recursive',OPT.maxlevel>1);
@@ -149,8 +155,9 @@ if length(OPT.url) < 11 | (~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end
    else
        OPT.url(end+1) = filesep;
    end
+
    % make sure we always return the full path
-   if ~(OPT.maxlevel>1) % paths has already been padded when OPT.maxlevel>1
+   if ~(OPT.maxlevel>1) & ~isempty(nc_file_list) % paths has already been padded when OPT.maxlevel>1
       nc_file_list   = path2os(cellstr(addrowcol(char(nc_file_list),0,-1,fliplr([OPT.url,filesep])))); % left-padd path
       nc_folder_list = OPT.url;
    end

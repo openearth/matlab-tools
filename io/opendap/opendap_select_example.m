@@ -1,7 +1,7 @@
 %OPENDAP_SELECT_EXAMPLE  example how to subset select data using catalog.nc
 %
 % How to benefit from a catalog.nc crawled/harvested 
-% with nc_cf_opendap2catalog to seelct a subset of netCDF files.
+% with nc_cf_opendap2catalog to select a subset of netCDF files.
 %
 %See also: opendap, polydraw, nc_cf_opendap2catalog
 

@@ -106,6 +106,7 @@ function varargout = opendap_catalog_dataset(D,OPT)
 
    urlPath     = {}; % for current level we cannot pre-allocate as some datasets may be a container with lots of urlPaths inside it
    urlPath2add = {}; % for just one dataset in current level
+% TO DO get TDS metadata    = {};
 
 %% DATASET
 %  * Can be container of 
@@ -181,6 +182,8 @@ end
                service.suffix = '';
                len            = length(access.urlPath);
                urlPath2add    = [OPT.serviceBaseURL access.urlPath service.suffix];
+               % TO DO get TDS metadata2add   = D.dataset(i);
+               % TO DO get TDS  %metadata2add   = rmfield(metadata2add,'ATTRIBUTE');
       
          %% INDIRECT dataset = container for datasets/catalog
          %  get deeper levels (recursive)
@@ -330,8 +333,6 @@ end
       
    end % if isfield(D,'catalogRef')
    
-  %whos urlPath
-  
 % TO DO   if nargout==1
              varargout = {urlPath};
 % TO DO   else
