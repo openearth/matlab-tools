@@ -88,7 +88,7 @@ OPT.nc.mapsizey            = 2500;      % size of fixed map in y-direction
 OPT.nc.gridsizey           = 2.5;       % y grid resolution
 OPT.nc.xoffset             = 1.25;      % zero point of x grid
 OPT.nc.yoffset             = 1.25;      % zero point of y grid
-OPT.nc.factor              = 1;         % scale z by this facto
+OPT.nc.zfactor              = 1;         % scale z by this facto
 
 %% NC SETTINGS, ADJUST AS NEEDED ------------------------------------------------------------------------------------------
 OPT.nc.zip                 = false;
