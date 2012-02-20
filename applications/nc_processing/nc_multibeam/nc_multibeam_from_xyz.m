@@ -48,62 +48,12 @@ function varargout = nc_multibeam_from_xyz(varargin)
 % $Keywords: $
 
 %%
-OPT.netcdfversion       = 3;
-OPT.block_size          = 5e6;
-OPT.make                = true;
-OPT.copy2server         = false;
-
-OPT.basepath_local      = '';
-OPT.basepath_network    = '';
-OPT.basepath_opendap    = '';
-OPT.raw_path            = '';
-OPT.raw_extension       = '*.asc';
-OPT.netcdf_path         = [];
-OPT.cache_path          = fullfile(tempdir,'nc_asc');
-OPT.zip                 = true;          % are the files zipped?
-OPT.zip_extension       = '*.zip';       % zip file extension
-
-OPT.format              = '%f%f%f';
-OPT.delimiter           = '\t';
-OPT.MultipleDelimsAsOne = false;
-OPT.headerlines         = 0;
-OPT.xid                 = 1;
-OPT.yid                 = 2;
-OPT.zid                 = 3;
-OPT.gridFcn             = @(X,Y,Z,XI,YI) griddata_remap(X,Y,Z,XI,YI,'errorCheck',true);
-
-OPT.datatype            = 'multibeam';
-OPT.EPSGcode            = [];
-OPT.dateFcn             = @(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy-mmm'); % how to extract the date from the filename
-
-OPT.mapsizex            = 5000;          % size of fixed map in x-direction
-OPT.mapsizey            = 5000;          % size of fixed map in y-direction
-OPT.gridsizex           = 5;             % x grid resolution
-OPT.gridsizey           = 5;             % y grid resolution
-OPT.xoffset             = 0;             % zero point of x grid
-OPT.yoffset             = 0;             % zero point of y grid
-OPT.zfactor             = 1;             % scale z by this facto
-
-OPT.Conventions         = 'CF-1.4';
-OPT.CF_featureType      = 'grid';
-OPT.title               = 'Multibeam';
-OPT.institution         = ' ';
-OPT.source              = 'Topography measured with multibeam on project survey vessel';
-OPT.history             = 'Created with: $Id$ $HeadURL$';
-OPT.references          = 'No reference material available';
-OPT.comment             = 'Data surveyed by survey department for ...';
-OPT.email               = 'e@mail.com';
-OPT.version             = 'Trial';
-OPT.terms_for_use       = 'These data is for internal use by ... staff only!';
-OPT.disclaimer          = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
-
-if nargin==0
-    varargout = {OPT};
-    return
-end
-
-OPT = setproperty(OPT, varargin{:});
-
+%% Kees Pruis
+set(0,'defaultFigureWindowStyle','normal')
+get_ncOptions = @(varargin) (nc_SetOptions(varargin{:})); % gather the options from nc_SetOptions
+OPT           = get_ncOptions();   
+OPT = OPT.nc;
+% ----------------------------------------------------------------------
 if OPT.make
     multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
     disp('generating nc files... ')
