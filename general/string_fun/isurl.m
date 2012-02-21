@@ -3,8 +3,6 @@ function OK = isurl(str)
 %
 % ok = isurl(string)
 %
-% What about https://?
-%
 % See also: urlread
 
 % $Id$
@@ -14,6 +12,8 @@ function OK = isurl(str)
 % $HeadURL$
 % $Keywords$
 
-OK = strcmpi(str(1:7),'http://');
+OK = strcmpi(str(1:7),'http://') | ...
+     strcmpi(str(1:8),'https://') | ...
+     strcmpi(str(1:6),'ftp://');
 
 %% EOF

@@ -1,8 +1,10 @@
 function [dens] = waterdensityp(S,T,P)
-%WATERDENSITYP of sea water under pressure P using UNESCO 1983 (EOS 80) polynomial.
+%WATERDENSITYP density sea water under pressure P using UNESCO 1983
 %
-% computes the density of sea water under pressure P using
-%UNESCO 1983 (EOS 80) polynomial.
+%  [dens] = waterdensityp(S,T,P)
+%
+% computes the density of sea water under pressure P 
+% using UNESCO 1983 (EOS 80) polynomial.
 %
 % INPUT:  (all must have same dimensions)
 %   S = salinity    [psu      (PSS-78)]

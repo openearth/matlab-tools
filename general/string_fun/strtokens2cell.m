@@ -1,22 +1,29 @@
-function S = datestrnan(varargin)
-%DATESTRNAN   datestr that doe snot crash on NaNs
+function C = strtokens2cell(STR,DELIM)
+%STRTOKENS2CELL   rewrites space delimitered keyword list to cell array
 %
-%    S = DATESTRNAN(...,FillSymbol) where FillSymbol 
-%    is the symbol returned in case of NaNs,
+% C = strtokens2cell(STR) rewrites space delimitered keyword 
+% list into cell array
 %
-%    S = DATESTRNAN(V) uses default FillSymbol =' '
+% C = strtokens2cell(STR,DELIM) rewrites space delimitered keyword 
+% list into cell array using first token in DELIM as delimiter
 %
-%    Example
-%    S = datestrnan([nan now],'yyyy','*')
+% example:
 %
-% See also: DATESTR
+%    C = strtokens2cell('a b')
+%
+% gives C{1}='a';C{2}='b'
+%
+%   C = 
+%  
+%      'a'    'b'
+%
+% See also: STRTOK
 
-%% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares for NMDC.eu
-%       Gerben J. de Boer
+%   Copyright (C) 2006 Deltares
+%       Gerben de Boer
 %
-%       gerben.deboer@Deltares.nl
+%       gerben.deboer@deltares.nl	
 %
 %       Deltares
 %       P.O. Box 177
@@ -37,26 +44,22 @@ function S = datestrnan(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: $
 
-   V          = varargin{1};
-   if nargin ==1
-   FillValue  = ' ';
-   else
-   FillValue  = varargin{end};
-   end
-   mask       = ~isnan(V);
-   S2         = datestr(V(mask),varargin{2:end-1});
-   sz         = size(S2); sz(1) = length(V);
-   S          = repmat(FillValue,sz);
-   index      = find(mask);
-   S(index,:) = S2;
-   
-   
-   
+rest_of_STR = STR;
+no_of_tok   = 0;
+if nargin==1
+    DELIM = ' ';
+end
+
+while ~(length(deblank(rest_of_STR))==0)
+   [tok, rest_of_STR]  = strtok(rest_of_STR,DELIM);
+   no_of_tok           = no_of_tok + 1;
+   C{no_of_tok}        = tok;
+end   
+
+%% EOF

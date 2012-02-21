@@ -236,6 +236,10 @@ function Factor=convert_units(InUnits,OutUnits);
    deg             = 1./RAD;                  % degree
    amin            = deg./60;                 % arcmin
    asec            = amin./60;                % arcsec
+   degrees_north   = deg;
+   degrees_east    = deg;
+   degree_north    = deg;
+   degree_east     = deg;
    
    %% Solid Angle units 
    % ---------------------

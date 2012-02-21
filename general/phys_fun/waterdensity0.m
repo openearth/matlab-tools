@@ -1,6 +1,10 @@
 function [rhow] = waterdensity0(S,T)
-%WATERDENSITY0(S,T) computes the density of sea water at atmospheric
-% pressure using UNESCO 1983 (EOS 1980) polynomial.
+%WATERDENSITY0 density sea water under atmospheric pressure using UNESCO 1983
+%
+%  [rhow] = waterdensity0(S,T)
+%
+% computes the density of sea water at atmospheric pressure
+% using UNESCO 1983 (EOS 1980) polynomial.
 %
 % INPUT:  (all must have same dimensions)
 %   S = salinity    [psu      (PSS-78)]
@@ -14,12 +18,13 @@ function [rhow] = waterdensity0(S,T)
 % (morgan@ml.csiro.au).
 %
 % REFERENCES:
-%     Unesco 1983. Algorithms for computation of fundamental properties of 
-%     seawater, 1983. _Unesco Tech. Pap. in Mar. Sci._, No. 44, 53 pp.
+%    Fofonoff, P. and Millard, R.C. Jr
+%    Unesco 1983. Algorithms for computation of fundamental properties of 
+%    seawater, 1983. _Unesco Tech. Pap. in Mar. Sci._, No. 44, 53 pp.
 %
-%     Millero, F.J. and  Poisson, A.
-%     International one-atmosphere equation of state of seawater.
-%     Deep-Sea Res. 1981. Vol28A(6) pp625-629.
+%    Millero, F.J. and  Poisson, A.
+%    International one-atmosphere equation of state of seawater.
+%    Deep-Sea Res. 1981. Vol28A(6) pp625-629.
 %
 % CALLEE: waterdensitystandardmean.m
 %
