@@ -36,11 +36,24 @@ else
     opt.bccTimeStep=30;
 end
 
+opt.cs=[];
+
+ii=strmatch('csname',fl,'exact');
+if ~isempty(ii)
+    opt.cs.name=x.(f{ii});
+end
+
+ii=strmatch('cstype',fl,'exact');
+if ~isempty(ii)
+    opt.cs.type=x.(f{ii});
+end
+
 opt=fillOpt(opt,x,'waterlevel');
 opt=fillOpt(opt,x,'current');
 opt=fillOpt(opt,x,'salinity');
 opt=fillOpt(opt,x,'temperature');
 
+%%
 function opt=fillOpt(opt,x,par)
 
 if strcmpi(par,'waterlevel')

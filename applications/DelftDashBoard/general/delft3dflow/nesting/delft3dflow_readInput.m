@@ -84,6 +84,8 @@ flow.MMax=MDF.mnkmax(1);
 flow.NMax=MDF.mnkmax(2);
 flow.KMax=MDF.mnkmax(3);
 
+flow.latitude=MDF.anglat;
+
 % Constituents
 if ~isempty(find(MDF.sub1=='S', 1));
     flow.salinity.include=1;    % Salinity will be included
