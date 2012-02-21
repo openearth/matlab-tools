@@ -1,27 +1,70 @@
-function cmap = colormap_cpt(cpt,varargin)
+function cmap = colormap_cpt(cpt,nSteps,varargin)
 % COLORMAP_CPT   builds a matlab colormap from a cpt file 
 %
-%    colormap_cpt(name,<nSteps>)
+%   Syntax:
+%       cmap = colormap_cpt(name)
+%       cmap = colormap_cpt(name, nSteps)
+%       cmap = colormap_cpt(name, nSteps, 'Smooth' , true)
 %
-% name   = the name of a colormap from the cpt-city website, see:
-%          <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/">http://soliton.vm.bytemark.co.uk/pub/cpt-city/</a>
-% nSteps = number of colorsteps (optional)
+% Input:
+%   name       = the name of a colormap from the cpt-city website, see:
+%              <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/">http://soliton.vm.bytemark.co.uk/pub/cpt-city/</a>
+%   nSteps     = number of colorsteps (optional)
+%   $varargin  =
+%
+%   where the following <keyword,value> pairs have been implemented (values indicated are the current default settings):
+%       'Smooth'     , [false]    = Flag to force a smooth color interpolation output
+%
+% Output:
+%   cmap       = RGB (n x 3) colormap matrix with n colors
 %
 % Note:
 %  make sure to have downloaded the cpt-city package from:
-%  <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/pkg/cpt-city-cpt-1.42.zip">http://soliton.vm.bytemark.co.uk/pub/cpt-city/pkg/cpt-city-cpt-1.42.zip</a>
-%  Unpack and add folder to the matlab search path
+%  <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/pkg/cpt-city-cpt-1.93.zip">http://soliton.vm.bytemark.co.uk/pub/cpt-city/pkg/cpt-city-cpt-1.93.zip</a>
+%  Unpack and add folder to the matlab search path. 
+% Remark: It can be that this file has been updated to a higher version.
+% 
+% Links to 'nice' colormaps are:
+%   <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/jjg/serrate/seq/index.html</a>
+%   <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/jjg/serrate/div/index.html</a>
+%   <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/jjg/cbcont/seq/index.html</a>
+%   <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/jjg/cbcont/div/index.html</a>
+%   <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/cb/seq/index.html</a>
+%   <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/cb/div/index.html</a>
+%   <a href="http://soliton.vm.bytemark.co.uk/pub/cpt-city/cb/qual/index.html</a>
+%
+% Some examples of nice colormaps are:
+%   'temperature' 
+%   'Spectral 11'
+%   'RdYlBu' 
+%   'RdBu 11'
+%   'RdBu' 
+%   'bathymetry_vaklodingen'  
+%   
 %
 % Example:
 %
-% cmap = colormap_cpt('temperature');
-% subplot(3,1,[1 2])
-%   colormap(cmap)
-%   [x,y,z] = cylinder(100:-1:10);surf(x,y,z);
-%   camlight(300,20); view([-60 32]); shading flat;
-%   material shiny; lighting gouraud; colorbar
-% subplot(3,1,3)
-%   plot(cmap); axis([1 size(cmap,1) -.01 1.01])
+%   figure
+%   cmap = colormap_cpt('temperature');
+%   subplot(3,1,[1 2])
+%       colormap(cmap)
+%       [x,y,z] = cylinder(100:-1:10);surf(x,y,z);
+%       camlight(300,20); view([-60 32]); shading flat;
+%       material shiny; lighting gouraud; colorbar
+%   subplot(3,1,3)
+%       plot(cmap); axis([1 size(cmap,1) -.01 1.01])
+%
+%   %The colormap 'temperature' is not continuous (it has 23 colorsteps)
+%   %Interpolating the map over more points doesn't give other results:
+%
+%       cmap = colormap_cpt('temperature',64);
+%
+%   %By forcing to create a smooth colormap, the function skips the
+%   %colorsteps and interpolates over the whole range:
+%
+%       cmap = colormap_cpt('temperature',100,'Smooth',true);
+%
+%   %For continuous colormaps, like 'RdBu', this exercise is not necessary. 
 %
 % See also: colormaps
 
@@ -63,6 +106,11 @@ function cmap = colormap_cpt(cpt,varargin)
 % $HeadURL$
 % $Keywords: $
 
+OPT.Smooth = false;
+
+% overrule default settings by property pairs, given in varargin
+OPT = setproperty(OPT, varargin,'onExtraField','silentIgnore');
+
 %% adjust of *.cpt filename so you can copy paste it from the website
 cpt = strrep(cpt,' ','_');
 if length(cpt) > 3
@@ -91,11 +139,13 @@ end
 fclose(fid);
 
 %% set nSteps
-if nargin == 2;
-    nSteps = varargin{1};
-else
+if nargin == 1;
     nSteps = size(cdata,2);
 end
+%Check nSteps
+if isempty(nSteps) || ischar(nSteps)
+    nSteps = size(cdata,2);
+end 
 
 %% adjust points to allow for interpolation without duplicate points
 cdata(5,1:end-1) = cdata(5,1:end-1)-abs(cdata(5,1:end-1)).*eps;
@@ -105,7 +155,12 @@ cdata(5,cdata(5,:)==0) = -eps;
 xi = linspace(cdata(1,1),cdata(5,end),nSteps);
 
 %% reshape cdata
-cdata = reshape(cdata,size(cdata).*[.5 2]);
+if OPT.Smooth
+    cdata = horzcat(cdata(1:4,:),cdata(5:8,end)) ;
+else
+    cdata = reshape(cdata,size(cdata).*[.5 2]);
+end
+
 
 %% interp RGB values
 R = interp1(cdata(1,:),cdata(2,:),xi);
