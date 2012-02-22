@@ -11,7 +11,7 @@ function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
        varargout = {OPT};
        return
    end
-   OPT = setproperty(OPT0, {OPT},'onExtraField','silentIgnore');
+   OPT = setproperty(OPT0, {OPT},'onExtraField','silentAppend');
 
 %% create empty outputfile
 %  indicate NetCDF outputfile name and create empty structure
@@ -52,6 +52,9 @@ function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
    netcdf.putAtt(NCid,globalID, 'version',         OPT.version);
    netcdf.putAtt(NCid,globalID, 'terms_for_use',   OPT.terms_for_use);
    netcdf.putAtt(NCid,globalID, 'disclaimer',      OPT.disclaimer);
+   if OPT.SetTime==1
+        netcdf.putAtt(NCid,globalID, 'note','No information about the survey date is available, the time is set to be the date of the creation of the NetCDF file');
+   end
 
 %% specify dimensions (time dimension is set to unlimited)
 if ~isempty(time)
