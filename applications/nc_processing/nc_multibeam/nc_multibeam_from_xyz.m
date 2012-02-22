@@ -132,7 +132,14 @@ if OPT.make
             %% read data
             
             % process time
-            time    = OPT.dateFcn(fns_unzipped(ii).name) - datenum(1970,1,1);
+            try
+                time    = OPT.dateFcn(fns_unzipped(ii).name) - datenum(1970,1,1);
+                OPT.SetTime = 0;
+            catch
+                time = now -datenum(1970,1,1);
+                disp('The date of the data is set to be NOW')
+                OPT.SetTime = 1;
+            end
             
             if OPT.zip
                 fid      = fopen(fullfile(OPT.cache_path,fns_unzipped(ii).name));
