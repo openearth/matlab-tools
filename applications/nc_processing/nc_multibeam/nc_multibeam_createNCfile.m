@@ -97,11 +97,7 @@ function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
    nc.Attribute    = S;
    netcdf_addvar(NCid, nc);
 
-if ~isempty(time)
- 
    nc_oe_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'time'}, 'oe_standard_name', {'time'},                    'dimension', {'time'}        ,'timezone', '+01:00');
-end
-
    nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lon'},  'cf_standard_name', {'longitude'},               'dimension', {'x','y'}       ,'deflate',deflatenc,'additionalAtts',{'grid_mapping'                             ;'WGS84'});
    nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'lat'},  'cf_standard_name', {'latitude'},                'dimension', {'x','y'}       ,'deflate',deflatenc,'additionalAtts',{'grid_mapping'                             ;'WGS84'});
    nc_cf_standard_names('ncid', NCid, 'nc_library', 'matlab', 'varname', {'x'},    'cf_standard_name', {'projection_x_coordinate'}, 'dimension', {'x'}                               ,'additionalAtts',{'grid_mapping','coordinates','actual_range';'EPSG','lon lat',actual_range.x});
