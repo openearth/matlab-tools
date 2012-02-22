@@ -14,7 +14,7 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
 %% process <keyword,value>
    % get colorbar options first
    OPT                    = KMLcolorbar();
-   OPT                     = mergestructs(OPT,KML_header());
+   OPT                    = mergestructs(OPT,KML_header());
    % rest of the options
    OPT.fileName           = '';
    OPT.lineWidth          = 1;
@@ -28,6 +28,7 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
    OPT.polyFill           = 1;
    OPT.zScaleFun          = @(z) (z+20)*5;
    OPT.colorbar           = 1;
+   OPT.minpow             = 4;
 
    if nargin==0
       varargout = {OPT};
@@ -115,9 +116,7 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
    fprintf(OPT.fid,output);
    output = repmat(char(1),1,1e6);
    kk = 1;
-   
-   OPT.minpow = 4;
-   
+
    for xx = 2.^(10:-1:1) % 1024, 512, 256, 128, 64, 32, 16,8, 4, 2, 1
    if xx > OPT.minpow
    %%%% disp(['debug: ',num2str(xx)])
@@ -130,7 +129,7 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
             lon2 = lon(mm(ii):mm(ii+1),nn(jj):nn(jj+1));
             z2   =   z(mm(ii):mm(ii+1),nn(jj):nn(jj+1));
             
-            whos lat2 lon2 z2
+%             whos lat2 lon2 z2
             
             %%%% whos; pausedisp
             if ~all(isnan(z2))
@@ -163,7 +162,7 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
                 if xx == OPT.minpow
                     maxLod = -1;
                 else
-                    maxLod = 50;
+                    maxLod = 75;
                 end
 
                 %mean(z3(cv))
