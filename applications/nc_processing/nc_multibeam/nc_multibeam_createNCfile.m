@@ -57,9 +57,7 @@ function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
    end
 
 %% specify dimensions (time dimension is set to unlimited)
-if ~isempty(time)
    netcdf.defDim(NCid,          'time',        netcdf.getConstant('NC_UNLIMITED'));
-end
 
    netcdf.defDim(NCid,          'y',           dimSizeY);
    netcdf.defDim(NCid,          'x',           dimSizeX);
