@@ -59,55 +59,10 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 % $Keywords: $
 
 %%
-
-OPT.make                    = true;
-OPT.copy2server             = false;
-
-OPT.ncpath                  = [];
-OPT.ncfile                  = '*.nc';
-OPT.var_name                = 'z';
-OPT.relativepath            = [];
-
-OPT.referencepath           = [];       % is provided, nc files with are expected here that define a reference plane which is to be subtracted from the data before plotting
-
-OPT.basepath_local          = [];
-OPT.basepath_network        = [];
-OPT.basepath_www            = [];
-OPT.serverURL               = [];       % if a KML file is intended to be placed on the server, the path must be hardcoded in the KML file
-
-OPT.make_kmz                = false;    % this packs the entire file tree to a sing kmz file, convenient for portability
-OPT.highestLevel            = 10;
-OPT.lowestLevel             = 15;       % integer; Detail level of the highest resultion png tiles to generate. Advised range 12 to 18;
-                                        % dimension of individual pixels in Lat and Lon can be calculated as follows:
-                                        % 360/(2^OPT.lowestLevel) / OPT.tiledim
-                                        % Note that the lowest level should be 22 or lower.
-OPT.tiledim                 = 256;      % dimension of tiles in pixels.
-
-OPT.filledInTime            = false;    % this makes tiles appear in GE for every date until there is a newer tile. If set to off, tiles are only shown on the date they have
-
-OPT.clim                    = [-50 25]; % limits of color scale
-OPT.colorMap                = @(m) colormap_cpt('bathymetry_vaklodingen',m);
-OPT.colorSteps              = 500;
-OPT.colorbar                = true;
-OPT.description             = [];
-OPT.descriptivename         = [];
-OPT.lightAdjust             = [];      % if set to true, the shading/lighting of the figure is scaled to be independant of OPT.lowestLevel.
-
-OPT.quiet                   = true;    % suppress some progress information
-OPT.calculate_latlon_local  = false;   % use if x and y data are provided to be converted to lat and lon
-OPT.EPSGcode                = [];      % code of coordinate system to convert x and y projection to Lat and Lon
-%OPT.dateFcn                 = @(time) (time); % use nc_cf_time so it works with any units
-OPT.stride                  = 1;
-
-% add colorbar defualt options
-OPT                         = mergestructs(OPT,KMLcolorbar);
-
-if nargin==0
-    varargout = {OPT};
-    return
-end
-
-OPT = setproperty(OPT,varargin{:});
+set(0,'defaultFigureWindowStyle','normal')
+get_ncOptions = @(varargin) (nc_SetOptions(varargin{:})); % gather the options from nc_SetOptions
+OPT           = get_ncOptions();
+OPT = OPT.kml;
 
 if OPT.make
     %% find nc files, and remove catalog.nc from the files if found
@@ -115,7 +70,7 @@ if OPT.make
     if OPT.opendap
         % opendap_catalog should in fact handle that itself
         if ~(strcmp(OPT.ncpath(end-10:end),'catalog.xml') || ...
-             strcmp(OPT.ncpath(end-11:end),'catalog.html'))
+                strcmp(OPT.ncpath(end-11:end),'catalog.html'))
             temp = opendap_catalog([OPT.ncpath '/catalog.xml']);
         else
             temp = opendap_catalog([OPT.ncpath]);
@@ -141,14 +96,14 @@ if OPT.make
     fns(jj) = [];
     
     disp('generating kml files... ')
- 
- %% initialize waitbars
+    
+    %% initialize waitbars
     multiWaitbar( 'CloseAll' );
-%     multiWaitbar('kml_print_all_tiles' ,'close')
-%     multiWaitbar('fig2png_print_tile'  ,'close')
-%     multiWaitbar('merge_all_tiles'     ,'close')
-%     multiWaitbar('fig2png_merge_tiles' ,'close')
-%     multiWaitbar('fig2png_write_kml'   ,'close')
+    %     multiWaitbar('kml_print_all_tiles' ,'close')
+    %     multiWaitbar('fig2png_print_tile'  ,'close')
+    %     multiWaitbar('merge_all_tiles'     ,'close')
+    %     multiWaitbar('fig2png_merge_tiles' ,'close')
+    %     multiWaitbar('fig2png_write_kml'   ,'close')
     
     multiWaitbar('kml_print_all_tiles' ,0,'label','Printing tiles: total'       ,'color',[0.0 0.3 0.6])
     multiWaitbar('fig2png_print_tile'  ,0,'label','Printing tiles: per file'    ,'color',[0.0 0.5 1.0])
@@ -160,7 +115,7 @@ if OPT.make
         OPT.lightAdjust = 2^(OPT.lowestLevel-16);
     end
     
-%% base figure (properties of which will be adjusted to print tiles)
+    %% base figure (properties of which will be adjusted to print tiles)
     
     figure('Visible','Off')
     x       = linspace(0,0.01,100);
@@ -171,14 +126,14 @@ if OPT.make
     axis tight;view(0,90);lightangle(hl,180,65);
     colormap(OPT.colorMap(OPT.colorSteps));clim(OPT.clim*OPT.lightAdjust);
     
-%% create kml directory if it does not yet exist
-
+    %% create kml directory if it does not yet exist
+    
     if ~isempty(OPT.relativepath)
-    if path2os(OPT.relativepath(end)) == filesep
-       OPT.relativepath = OPT.relativepath(1:end-1); % remove trailing slash, gives issues
+        if path2os(OPT.relativepath(end)) == filesep
+            OPT.relativepath = OPT.relativepath(1:end-1); % remove trailing slash, gives issues
+        end
     end
-    end
-
+    
     if exist(fullfile(OPT.basepath_local,OPT.relativepath),'dir')
         try
             rmdir(fullfile(OPT.basepath_local,OPT.relativepath), 's')
@@ -189,20 +144,25 @@ if OPT.make
     mkpath(fullfile(OPT.basepath_local,OPT.relativepath))
     
     
-%% get total file size
-
+    %% get total file size
+    
     WB.bytesToDo = 0;
     WB.bytesDone = 0;
     for ii = 1:length(fns)
-        WB.bytesToDo = WB.bytesToDo+fns(ii).bytes;
+        tmp = fns(ii).bytes;
+        if isempty(tmp)
+            tmp = 0;
+        end
+%         WB.bytesToDo = WB.bytesToDo+fns(ii).bytes;
+        WB.bytesToDo = WB.bytesToDo+tmp;
     end
     
-%% pre-allocate
-
+    %% pre-allocate
+    
     [minlat,minlon,maxlat,maxlon] = deal(nan);
     
-%% MAKE TILES in this loop
-
+    %% MAKE TILES in this loop
+    
     for ii = 1:length(fns);
         if OPT.opendap
             url = fns(ii).name; %#ok<*ASGLU>
@@ -262,8 +222,8 @@ if OPT.make
             end
             
         else
-            lon       = double(nc_varget(url, 'lon',[0 0],[-1 -1],[OPT.stride OPT.stride]));
-            lat       = double(nc_varget(url, 'lat',[0 0],[-1 -1],[OPT.stride OPT.stride]));
+                lon       = double(nc_varget(url, 'lon',[0 0],[-1 -1],[OPT.stride OPT.stride]));
+                lat       = double(nc_varget(url, 'lat',[0 0],[-1 -1],[OPT.stride OPT.stride]));
         end
         
         clear x y % save memory
@@ -303,7 +263,6 @@ if OPT.make
             else
                 z = z-z_reference;
             end
-            
             
             if sum(~isnan(z(:)))>=3
                 if ~OPT.quiet
@@ -373,8 +332,8 @@ if OPT.make
     multiWaitbar('fig2png_print_tile','close')
     multiWaitbar('kml_print_all_tiles',1,'label','Printing tiles')
     
-%% JOIN TILES
-
+    %% JOIN TILES
+    
     fns = dir(fullfile(OPT.basepath_local,OPT.relativepath));
     multiWaitbar('merge_all_tiles'     ,0,'label','Merging tiles: total')
     for ii = 3:length(fns)
@@ -400,8 +359,8 @@ if OPT.make
     multiWaitbar('fig2png_merge_tiles','close')
     multiWaitbar('merge_all_tiles',1,'label','Merging tiles')
     
-%% make kml files
-
+    %% make kml files
+    
     multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML - Getting unique png file names...','color',[0.9 0.4 0.1])
     mkdir(fullfile(OPT.basepath_local,OPT.relativepath,'KML'));
     dates               = dir2(fullfile(OPT.basepath_local,OPT.relativepath),'depth',0,'dir_excl','^KML$');
@@ -423,8 +382,8 @@ if OPT.make
     OPT2.lowestLevel    = max(sum(~isnan(allTileCodes),2));
     OPT2.highestLevel   = min(sum(~isnan(allTileCodes),2));
     
-%% MAKE KML
-
+    %% MAKE KML
+    
     multiWaitbar('fig2png_write_kml'   ,0,'label','Writing KML...','color',[0.9 0.4 0.1])
     for level = OPT2.highestLevel:OPT2.lowestLevel
         
@@ -585,7 +544,7 @@ if OPT.make
     
     output = [KML_header(OPT_header) output];
     
-%% COLORBAR
+    %% COLORBAR
     
     if OPT.colorbar
         clrbarstring = KMLcolorbar('CBcLim',OPT.clim,...
@@ -605,19 +564,19 @@ if OPT.make
         output = [output clrbarstring];
     end
     
-%% FOOTER
+    %% FOOTER
     
     output = [output KML_footer];
     fprintf(OPT2.fid,'%s',output);
     
-%% close KML
-
+    %% close KML
+    
     fclose(OPT2.fid);
     
     %% generate different versions of the KML
     copyfile(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),fullfile(OPT.basepath_local,path, [fname ext '_localmachine.kml']))
     copyfile(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),fullfile(OPT.basepath_local,path, [fname ext '_server.kml']))
-
+    
     strrep_in_files(fullfile(OPT.basepath_local,path, [fname ext '_server.kml']),...
         ['<href>' fname ext                                           filesep 'KML' filesep],...
         ['<href>' OPT.basepath_www  path2os(fullfile(filesep,OPT.relativepath,'KML',filesep),'/')],...
