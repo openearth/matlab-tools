@@ -68,14 +68,14 @@ function [varargout] = readnoaapc(varargin);
 %   Note 2: KNMI discontinued its NOAA service end 2005. 
 %
 %   There are a number of default 1x1 km2 mapping regions.
-%   Two are the most common are with boxes:
+%   Two are the most common with bounding boxes:
 %
 %    Entire North Sea
 %            lon     -3      12.718    9.4174   -2.2056      -3     deg E
 %            lat     60      59.321   49.483    49.958       60     deg N 
 %            with 1101x849 pixels
 %
-%    Southern Entire North Sea, noe that the 0.01 is not an exclusive indicator, the rest of lon is
+%    Southern Entire North Sea, note that the 0.01 is not an exclusive indicator, the rest of lon is
 %            lon     -0.01    8.1739   7.2137   -0.0088119   -0.01  deg E
 %            lat     55.3    54.966   50.669    50.957       55.3   deg N
 %            with 481x513 which are exactly pixel indices 
@@ -152,8 +152,7 @@ function [varargout] = readnoaapc(varargin);
 %   USA
 %   --------------------------------------------------------------------
 
-   % File name input
-   % -----------------------------
+%% File name input
    
    OPT.iostat            = 0;
    OPT.debugswitch       = 0;
@@ -162,9 +161,9 @@ function [varargout] = readnoaapc(varargin);
    OPT.cornercoordinates = 1;
    OPT.dummyheaderlines  = 1;
    
-   %% No file name specified if even number of arguments
-   %% i.e. 2 or 4 input parameters
-   %% -----------------------------
+%% No file name specified if even number of arguments
+%  i.e. 2 or 4 input parameters
+
    if mod(nargin,2)     == 0 
      [filename, pathname, filterindex] = uigetfile( ...
         {'*.sst;*.ref', 'sst & reflection (*.sst;*.ref)'; ...
@@ -186,15 +185,14 @@ function [varargout] = readnoaapc(varargin);
          OPT.iostat         = 1;
       end
 
-   %% No file name specified if odd number of arguments
-   %% -----------------------------
+%% No file name specified if odd number of arguments
+
    elseif mod(nargin,2) == 1 % i.e. 3 or 5 input parameters
       IMAGE.filename = varargin{1};
       OPT.iostat         = 1;
    end
    
-   %% Open file
-   %% -----------------------------
+%% Open file
       
    if OPT.iostat==1 %  0 when uigetfile was cancelled
                 % -1 when uigetfile failed
@@ -217,11 +215,10 @@ function [varargout] = readnoaapc(varargin);
    end
    
    if OPT.iostat %  0 when uigetfile was cancelled
-             % -1 when uigetfile/fopen failed
+                 % -1 when uigetfile/fopen failed
    try
       
-         %% Cloud and land mask values input
-         %% -----------------------------
+      %% Cloud and land mask values input
          
          %% Default values
          
@@ -262,11 +259,11 @@ function [varargout] = readnoaapc(varargin);
              i=i+1;
          end;
 
-         %% READ HEADER 
-         %% -----------------------------
-         %% 27 interger*2 bytes (swapped)
-         %% 54 interger*1 bytes
-         %% -----------------------------
+      %% READ HEADER 
+      %  -----------------------------
+      %  27 interger*2 bytes (swapped)
+      %  54 interger*1 bytes
+      %  -----------------------------
          
          %% 2 swapped integer*1 in one column(1:54)
          [header8,count]  = fread(fid, 54,'uint8');             
@@ -297,13 +294,15 @@ function [varargout] = readnoaapc(varargin);
                                                  IMAGE.hour  ,...    
                                                  IMAGE.minute,...  
                                                  0);
+         try
          IMAGE.yearday                =  yearday(IMAGE.datenum);                                    
+         end
          IMAGE.satnum                 =  header(6);  
          IMAGE.orbnum                 =  header(7);
          IMAGE.type                   =  header(8);
          IMAGE.ny                     =  header(9);
          IMAGE.nx                     =  header(10);
-         if odd(IMAGE.nx)
+         if mod(IMAGE.nx,2)==1 % odd
          IMAGE.nx_in_file             =  IMAGE.nx+1;
          else
          IMAGE.nx_in_file             =  IMAGE.nx;
@@ -327,6 +326,14 @@ function [varargout] = readnoaapc(varargin);
          IMAGE.norbits                =  header(25);
          IMAGE.mask                   =  header(26);
         %IMAGE.projection             =  header(27);% not right, should be 1 or 0 !
+        
+%% compliance with adaguc.knmi.nl
+
+%TODO         IMAGE.proj4 = ['+proj=stere +lat_0=',num2str(IMAGE.lat0),...
+%TODO                                   ' +lon_0=',num2str(IMAGE.lon0),...
+%TODO                       ' +k=1 +x_0=0 +y_0=0 +a=6371.00 +b=6371.00 +units=m +no_defs']; % elipsoid ??
+%TODO
+%TODO               +proj=stere +lon_0=0.0 +lat_0=90.0 +lat_ts=60.0 +a=6378.169 +b=6356.58383
 
         %% Hans Roozekrans told me that the projection keyword
         %% was introduced only later when the started to provide UTM
@@ -363,11 +370,10 @@ function [varargout] = readnoaapc(varargin);
        
    %-%try
          
-         %% Skip rest of header
-         %% -----------------------------
+      %% Skip rest of header
 
          if OPT.dummyheaderlines
-         if odd(IMAGE.nx)
+         if mod(IMAGE.nx,2)==1
          IMAGE.dummy                 = fread(fid,IMAGE.nx-54 +1,'uint8');
          else
          IMAGE.dummy                 = fread(fid,IMAGE.nx-54   ,'uint8');
@@ -396,15 +402,13 @@ function [varargout] = readnoaapc(varargin);
              
          end
             
-         
-         
-         %% READ DATA
-         %% -----------------------------
-         %% - called 'count' by KNMI
-         %% - 1 byte per pixel
-         %% - when odd number of pixels, on1 pixel is added
-         %%   so every row always has an even number of pixels
-         %% -----------------------------
+      %% READ DATA
+      %  -----------------------------
+      %  - called 'count' by KNMI
+      %  - 1 byte per pixel
+      %  - when odd number of pixels, one pixel is added
+      %    so every row always has an even number of pixels in the noaapc file
+      %  -----------------------------
          
          % IMAGE.count = flipud(fread(fid,[IMAGE.nx IMAGE.ny],'uint8')');
          [IMAGE.count,...
@@ -419,22 +423,20 @@ function [varargout] = readnoaapc(varargin);
          
          IMAGE.count = IMAGE.count';
          
-         %% FOR GEOPHYSICAL FIELD (if required)
-         %% a. Apply gain and offset
-         %% b. Count to physical value
-         %% c. Swap so (1,1) is at lower left corner (done above)
-         %% -----------------------------
+      %% FOR GEOPHYSICAL FIELD (if required)
+      %  a. Apply gain and offset
+      %  b. Count to physical value
+      %  c. Swap so (1,1) is at lower left corner (done above)
+
          if IMAGE.readdata == 1
          
             IMAGE.data  = IMAGE.gain.*(double(IMAGE.count)) - IMAGE.offset;
             
-            %% clouds
-            %% -----------------------------
+         %% clouds
             
             IMAGE.data(IMAGE.count==0) = IMAGE.cloudmask;
             
-            %% land
-            %% -----------------------------
+         %% land
             
             IMAGE.data(IMAGE.count==1) = IMAGE.landmask;
             
@@ -462,38 +464,37 @@ function [varargout] = readnoaapc(varargin);
          xulc =        0 + dx;
          yulc =        0 + dy;
 
-         %% Coordinates bounding box
-         %% -----------------------------
-         
-         %%      1        512     ix pixel row index [#]
-         %%    --+---------+-->
-         %%     500      511500   x  pixel center x-coordinate = (ix-0.5)*resolution [m]
-         %%    
-         %%   #-----+-~-+-----+   |
-         %%   |1    |   |    2|   |
-         %%   |  o  |   |  o  |   +1
-         %%   |     |   |     |   |
-         %%   +-----+-~-+-----+   |
-         %%   |     |   |     |   |
-         %%   ~     ~   ~     ~   |
-         %%   |     |   |     |   |
-         %%   +-----+-~-+-----+   |
-         %%   |     |   |     |   |
-         %%   |  o  |   |  o  |   +480
-         %%   |4    |   |    3|   |
-         %%   +-----+-~-+-----+   v
-         %%
-         %%
-         %%   LEGEND: #    the origin lies at (0,0)
-         %%           o    pixel center coordinate
-         %%           +    pixel corner coordinate
-         %%           |    pixel border
-         %%           -    pixel border
-         %%           ~    cut-out
+      %% Coordinates bounding box
+      %
+      %      1        512     ix pixel row index [#]
+      %    --+---------+-->
+      %     500      511500   x  pixel center x-coordinate = (ix-0.5)*resolution [m]
+      %    
+      %   #-----+-~-+-----+   |
+      %   |1    |   |    2|   |
+      %   |  o  |   |  o  |   +1
+      %   |     |   |     |   |
+      %   +-----+-~-+-----+   |
+      %   |     |   |     |   |
+      %   ~     ~   ~     ~   |
+      %   |     |   |     |   |
+      %   +-----+-~-+-----+   |
+      %   |     |   |     |   |
+      %   |  o  |   |  o  |   +480
+      %   |4    |   |    3|   |
+      %   +-----+-~-+-----+   v
+      %
+      %
+      %   LEGEND: #    the origin lies at (0,0)
+      %           o    pixel center coordinate
+      %           +    pixel corner coordinate
+      %           |    pixel border
+      %           -    pixel border
+      %           ~    cut-out
          
          IMAGE.xbox = [ 1-.5-.5  IMAGE.nx  IMAGE.nx    1-.5-.5  1-.5-.5].*IMAGE.resolution_km_p_pix.*1000 + dx;
          IMAGE.ybox = [ 1-.5-.5   1-.5-.5  IMAGE.ny   IMAGE.ny  1-.5-.5].*IMAGE.resolution_km_p_pix.*1000 + dy;
-                                       
+         
         [IMAGE.lonbox,...
          IMAGE.latbox] = xy_polarulc2lonlat(IMAGE.xbox ,...
                                             IMAGE.ybox ,...
@@ -503,8 +504,7 @@ function [varargout] = readnoaapc(varargin);
                                              yulc - IMAGE.yshift],...
                                              IMAGE.scale_in_m);
 
-         %% Coordinates of pixels
-         %% -----------------------------
+      %% Coordinates of pixels
 
          if OPT.centercoordinates
          
@@ -575,8 +575,7 @@ function [varargout] = readnoaapc(varargin);
          
          end
          
-         %% Close file
-         %% -----------------------------
+      %% Close file
          
          fid = fclose(fid);
          
@@ -606,29 +605,28 @@ function [varargout] = readnoaapc(varargin);
    end % if iostat
    
    
-   %% Function output
-   %% -----------------------------
+%% Function output
 
    IMAGE.iostat    = OPT.iostat;
    if nargout      ==0 | nargout==1
       varargout= {IMAGE};
-      %% Call matlab error: any script stops.
-      %% DO ERROR HANDLING AT HIGHER LEVEL PREFERABLY
-      %% AND ASK FOR IOSTAT.
+      %  Call matlab error: any script stops.
+      %  DO ERROR HANDLING AT HIGHER LEVEL PREFERABLY
+      %  AND ASK FOR IOSTAT.
       if OPT.iostat==-1
-         error(['Error in opening file: ',IMAGE.filename]);
-         IMAGE    = IMAGE.iostat;
+         %error(['Error in opening file: ',IMAGE.filename]);
+         %IMAGE    = IMAGE.iostat;
          varargout= {IMAGE};
       end
    elseif nargout==2
-      %% When user asks for an ouput status identifier,
-      %% the error is handled at a higher level: so here we only
-      %% display that an error has occured, while not calling
-      %% matlab error(...).
+      %  When user asks for an ouput status identifier,
+      %  the error is handled at a higher level: so here we only
+      %  display that an error has occured, while not calling
+      %  matlab error(...).
       varargout= {IMAGE, OPT.iostat};
       if OPT.iostat==-1
          disp (['Error in opening file: ',IMAGE.filename]);
-         IMAGE    = IMAGE.iostat;
+        %IMAGE    = IMAGE.iostat;
          varargout= {IMAGE, OPT.iostat};
       end
    end
@@ -676,7 +674,7 @@ function [lon, lat]= xy_polar2lonlat(xpol,ypol,varargin)
    
    %% Does not use degrees except for input and output
    %-----------------------------------------------
-
+   
    r    = sqrt(xpol.^2 + ypol.^2);
 
    lon  =             atan(xpol./ypol);
@@ -732,9 +730,7 @@ function [lon_pix, lat_pix]= xy_polarulc2lonlat(x_pix,  y_pix,varargin)
 %
 %See also: XY_POLAR2LONLAT, KNMI_NOAAPC_READ
 
-
-   %% Input
-   %-----------------------------------------------
+%% Input
 
    latlon0        = [-0.01 55.30];
    xy0            = [ 0     0   ];
@@ -750,8 +746,7 @@ function [lon_pix, lat_pix]= xy_polarulc2lonlat(x_pix,  y_pix,varargin)
       ps_scale   = varargin{3};
    end
    
-   %% Does not use degrees except for input and output
-   %-----------------------------------------------
+%% Does not use degrees except for input and output
    
    x0       = xy0(1);
    y0       = xy0(2);
@@ -767,6 +762,9 @@ function [lon_pix, lat_pix]= xy_polarulc2lonlat(x_pix,  y_pix,varargin)
    var_x    = x_pix + x_ulc + x0;
    var_y    = y_pix + y_ulc + y0;
    
+   %var_x([1 end],[1 end])
+   %var_y([1 end],[1 end])
+
    var_pix  = sqrt(var_x.^2 + var_y.^2);
 
    lon_pix  =             atan(var_x./var_y);

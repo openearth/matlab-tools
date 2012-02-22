@@ -12,19 +12,21 @@ function knmi_all
 
 %% Initialize
 
-   OPT.download       = 1; % get fresh downloads from rws and remove exisitng to sub dir old
+   OPT.download       = 0; % get fresh downloads from rws and remove exisitng to sub dir old
    OPT.make_nc        = 1;
    OPT.make_catalog   = 1; % otherwise lod existing one
    OPT.make_kml       = 1;
 
 
-   rawbase = 'F:\checkouts\OpenEarthRawData';   % @ local
-    ncbase = 'F:\opendap\thredds\';             % @ local
-   urlbase = 'http://opendap.deltares.nl:8080'; % production server (links)
-   kmlbase = 'F:\_KML\';                        % @ local, no links to other kml or images any more
+   rawbase = 'F:\checkouts\OpenEarthRawData';                % @ local
+    ncbase = 'F:\opendap.deltares.nl\thredds\dodsC\opendap'; % @ local
+   urlbase = 'http://opendap.deltares.nl:8080';              % production server (links)
+   kmlbase = 'F:\kml.deltares.nl\';                          % @ local, no links to other kml or images any more
 
-   subdirs  = {'potwind','etmgeg'}; % take 9 and 14 mins respectively
-   varnames = {'wind_speed','air_temperature_mean'};
+   subdirs     = {'potwind','etmgeg'}; % take 9 and 14 mins respectively
+   varnames    = {'wind_speed','air_temperature_mean'};
+   resolveUrls = {'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/',...
+                  'http://www.knmi.nl/klimatologie/daggegevens/download.html'};
    
    multiWaitbar(mfilename,0,'label','Looping substances.','color',[0.3 0.8 0.3])
 
@@ -103,6 +105,8 @@ n = n+1;
       OPT2.imName             = 'overheid.png';
       OPT2.logoName           = 'overheid4GE.png';
       OPT2.varPathFcn         = @(s) path2os(strrep(s,['http://opendap.deltares.nl/thredds/dodsC/opendap/'],ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
+      OPT2.resolveUrl         = cellfun(@(x) resolveUrls{ii},cellstr(CATALOG.station_name),'un',0);
+      OPT2.resolveName        = 'www.knmi.nl';
 
       nc_cf_stationtimeseries2kmloverview(CATALOG,OPT2); % inside urlPath is used to read netCDF data
 

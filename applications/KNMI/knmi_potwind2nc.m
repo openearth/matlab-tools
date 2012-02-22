@@ -41,8 +41,8 @@ function knmi_potwind2nc(varargin)
    
 %% File loop
 
-   OPT.directory_raw     = 'P:\mcdata\OpenEarthRawData\knmi\potwind\raw\'; % []; %
-   OPT.directory_nc      = 'P:\mcdata\opendap\knmi\potwind\';              % []; %
+   OPT.directory_raw     = 'F:\checkouts\OpenEarthRawData\knmi\potwind\raw\';            % []; %
+   OPT.directory_nc      = 'F:\opendap.deltares.nl\thredds\dodsC\opendap\knmi\potwind\'; % []; %
    OPT.mask              = 'potwind*';
    OPT.ext               = '';
 
