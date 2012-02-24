@@ -2,9 +2,31 @@
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
-    <tag>initialconditions</tag>
-    <style>text</style>
-    <position>45 50</position>
+    <tag>selectparameter</tag>
+    <style>popupmenu</style>
+    <position>40 100 100 20</position>
+    <variable>handles.Toolbox(tb).Input.initialConditions.activeParameter</variable>
+    <tooltipstring>Select parameter</tooltipstring>
+    <type>integer</type>
     <text></text>
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.initialConditions.parameterList</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>selectdatasource</tag>
+    <style>popupmenu</style>
+    <position>170 100 100 20</position>
+    <variable>handles.Toolbox(tb).Input.initialConditions.activeDataSource</variable>
+    <tooltipstring>Select data source</tooltipstring>
+    <type>integer</type>
+    <text></text>
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.initialConditions.dataSourceList</variable>
+      </texts>
+    </list>
   </element>
 </root>

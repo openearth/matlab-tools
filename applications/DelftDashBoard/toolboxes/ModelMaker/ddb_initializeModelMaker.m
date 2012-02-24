@@ -114,3 +114,11 @@ handles.Toolbox(ii).Input.bathymetry.selectedDatasets=[];
 handles.Toolbox(ii).Input.bathymetry.nrSelectedDatasets=0;
 handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).type='unknown';
 
+%% Initial conditions
+handles.Toolbox(ii).Input.initialConditions.parameterList={'Water Level','Current'};
+handles.Toolbox(ii).Input.initialConditions.activeParameter=1;
+handles.Toolbox(ii).Input.initialConditions.parameter='Water Level';
+
+handles.Toolbox(ii).Input.initialConditions.activeDataSource=1;
+handles.Toolbox(ii).Input.initialConditions.dataSourceList={'Constant'};
+handles.Toolbox(ii).Input.initialConditions.dataSource='Constant';

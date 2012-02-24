@@ -200,7 +200,7 @@ setUIElement('tropicalcyclonepanel.parameters.editname');
 setUIElement('tropicalcyclonepanel.parameters.editradius');
 setUIElement('tropicalcyclonepanel.parameters.editradialbins');
 setUIElement('tropicalcyclonepanel.parameters.editdirectionalbins');
-setUIElement('tropicalcyclonepanel.parameters.selectquadrant');
+%setUIElement('tropicalcyclonepanel.parameters.selectquadrant');
 setUIElement('tropicalcyclonepanel.parameters.radioperquadrant');
 setUIElement('tropicalcyclonepanel.parameters.radiouniform');
 

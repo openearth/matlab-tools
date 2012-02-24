@@ -1,4 +1,4 @@
-function ddb_ModelMaker_initialConditions(varargin)
+function ddb_ModelMakerToolbox_initialConditions(varargin)
 %DDB_MODELMAKERINITIALCONDITIONS  One line description goes here.
 %
 %   More detailed description goes here.
@@ -67,11 +67,64 @@ handles=getHandles;
 ddb_zoomOff;
 
 if isempty(varargin)
+
     % New tab selected
     ddb_refreshScreen;
-    setUIElements('modelmakerpanel.initialconditions');
+
+    handles.Toolbox(tb).Input.initialConditions.parameter=[];
+
+    % Update lists in popupmenus
+    str{1}='Water Level';
+    str{2}='Velocity';
+
+    handles.Toolbox(tb).Input.initialConditions.parameter(1).type='wl';
+    handles.Toolbox(tb).Input.initialConditions.parameter(2).type='cur';
+        
+    k=2;
+    
+    if handles.Model(md).Input(ad).salinity.include
+        k=k+1;
+        str{k}='Salinity';
+        handles.Toolbox(tb).Input.initialConditions.parameter(k).type='sal';
+    end
+    
+    if handles.Model(md).Input(ad).temperature.include
+        k=k+1;
+        str{k}='Temperature';
+        handles.Toolbox(tb).Input.initialConditions.parameter(k).type='tem';
+    end
+    
+    if handles.Model(md).Input(ad).sediments.include
+        for j=1:handles.Model(md).Input(ad).nrSediments
+            k=k+1;
+            str{k}=handles.Model(md).Input(ad).sediment(j).name;
+            handles.Toolbox(tb).Input.initialConditions.parameter(k).type='sediment';
+            handles.Toolbox(tb).Input.initialConditions.parameter(k).nr=j;
+        end
+    end
+    
+    if handles.Model(md).Input(ad).tracers
+        for j=1:handles.Model(md).Input(ad).nrTracers
+            k=k+1;
+            str{k}=handles.Model(md).Input(ad).tracer(j).name;
+            handles.Toolbox(tb).Input.initialConditions.parameter(k).type='tracer';
+            handles.Toolbox(tb).Input.initialConditions.parameter(k).nr=j;
+        end
+    end
+    
+    handles.Toolbox(tb).Input.initialConditions.parameterList=str;
+    
+    handles.Toolbox(tb).Input.initialConditions.activeParameter=1;
+    handles.Toolbox(tb).Input.initialConditions.parameter='Water Level';
+    handles.Toolbox(tb).Input.initialConditions.activeDataSource=1;
+    handles.Toolbox(tb).Input.initialConditions.dataSource='Constant';
+    
+    
     setHandles(handles);
-%    ddb_plotModelMaker('activate');
+
+    setUIElements('modelmakerpanel.initialconditions');
+
+    %    ddb_plotModelMaker('activate');
 %    if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
 %        setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
 %            'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
@@ -82,25 +135,51 @@ else
     
     opt=lower(varargin{1});
     
-%     switch opt
-%         case{'usedataset'}
-%             useDataset;
-%         case{'removedataset'}
-%             removeDataset;
-%         case{'datasetup'}
-%             datasetUp;
-%         case{'datasetdown'}
-%             datasetDown;
-%         case{'generatebathymetry'}
-%             generateBathymetry;
-%         case{'pickselecteddataset'}
-%             selectDataset;
-%     end
+    switch opt
+        case{'selectparameter'}
+            selectParameter;
+        case{'removedataset'}
+            removeDataset;
+        case{'datasetup'}
+            datasetUp;
+        case{'datasetdown'}
+            datasetDown;
+        case{'generatebathymetry'}
+            generateBathymetry;
+        case{'pickselecteddataset'}
+            selectDataset;
+    end
     
 end
 
+%%
+function selectParameter
 
+handles=getHandles;
 
+iac=handles.Toolbox(tb).Input.initialConditions.activeParameter;
+
+handles.Toolbox(tb).Input.initialConditions.activeDataSource=1;
+
+switch lower(handles.Toolbox(tb).Input.initialConditions.parameter(iac).type)
+    case{'wl'}
+        val=handles.Model(md).Input(ad).waterLevel.ICConst;
+        handles.Toolbox(tb).Input.initialConditions.dataSourceList={'Constant'};
+    case{'cur'}
+        val=handles.Model(md).Input(ad).velocity.ICConst;
+    case{'sal','tem','sediment','tracer'}
+        str{1}='Constant';
+        str{2}='Linear';
+        str{3}='Block';
+        str{4}='Per Layer';
+        handles.Toolbox(tb).Input.initialConditions.dataSourceList=str;
+end
+
+handles
+
+setHandles(handles);
+
+setUIElements('modelmakerpanel.initialconditions');
 
 % ddb_refreshScreen('Toolbox','Initial Conditions');
 % 

@@ -26,9 +26,9 @@
         <tab>
           <tag>initialconditions</tag>
           <tabstring>Initial Conditions</tabstring>
-          <callback>ddb_ModelMakerToolbox</callback>
+          <callback>ddb_ModelMakerToolbox_initialConditions</callback>
           <elements>ModelMaker.initialconditions.xml</elements>
-          <enable>0</enable>
+          <enable>1</enable>
         </tab>
         <tab>
           <tag>boundaryconditions</tag>

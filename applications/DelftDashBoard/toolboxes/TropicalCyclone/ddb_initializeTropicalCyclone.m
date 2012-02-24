@@ -74,6 +74,10 @@ if nargin>1
     end
 end
 
+if ~isdir(handles.Toolbox(ii).dataDir)
+    mkdir(handles.Toolbox(ii).dataDir);
+end
+
 handles.Toolbox(ii).Input.nrTrackPoints   = 0;
 handles.Toolbox(ii).Input.name      = '';
 handles.Toolbox(ii).Input.initSpeed = 0;
