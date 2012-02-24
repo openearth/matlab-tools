@@ -198,3 +198,12 @@ if ~isempty(ii)
 else
     opt.(par2).IC.constant=0;
 end
+
+ii=strmatch('polygons',fffl,'exact');
+if ~isempty(ii)
+    nrpol=length(xxx.(fff{ii}));
+    for ip=1:nrpol
+        opt.(par2).IC.polygons(ip).filename=xxx.(fff{ii})(ip).polygon.filename;
+        opt.(par2).IC.polygons(ip).value=str2double(xxx.(fff{ii})(ip).polygon.value);
+    end
+end

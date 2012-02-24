@@ -247,6 +247,22 @@ if isfield(opt,par)
                     data=m1*s1+m2*s2;
             end
     end
+        
+    % Overwrite initial conditions in polygons with user-specified data  
+    if isfield(opt.(par)(ii).IC,'polygons')
+        xz=flow.gridXZOri;
+        yz=flow.gridYZOri;
+        for ip=1:length(opt.(par)(ii).IC.polygons)
+            [xp,yp] = landboundary('read',opt.(par)(ii).IC.polygons(ip).filename);
+            inpol=inpolygon(xz,yz,xp,yp);
+            for k=1:flow.KMax
+                dd0=squeeze(data(1:end-1,1:end-1,k));
+                dd0(inpol)=opt.(par)(ii).IC.polygons(ip).value;
+                data(1:end-1,1:end-1,k)=dd0;
+            end            
+        end        
+    end
+    
 end
 
 if strcmpi(flow.vertCoord,'z')

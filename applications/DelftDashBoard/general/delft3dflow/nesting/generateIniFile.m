@@ -61,6 +61,9 @@ function generateIniFile(flow, opt, fname)
 % $HeadURL$
 % $Keywords: $
 
+flow.gridXZOri=flow.gridXZ;
+flow.gridYZOri=flow.gridYZ;
+
 %% Coordinate conversion
 if isfield(flow,'coordSysType')
     if ~strcmpi(flow.coordSysType,'geographic')
