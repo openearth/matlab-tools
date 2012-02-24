@@ -137,6 +137,7 @@ if isfield(xml,'elements')
                 s.elements(k).borderType       = getnodeval(elxml(k).element,'bordertype','etchedin','string');
                 s.elements(k).format           = getnodeval(elxml(k).element,'format','','string');
                 s.elements(k).enable           = getnodeval(elxml(k).element,'enable',1,'boolean');
+                s.elements(k).text             = getnodeval(elxml(k).element,'text','','string');
                 
                 if isfield(elxml(k).element,'list')
 
