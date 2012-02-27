@@ -141,6 +141,6 @@ else
     z_contour = contour_specs.value;
     xcr = findCrossings(x(:), z(:), x, repmat(z_contour, size(x)));
     if ~isempty(xcr)
-        x_contour = find(ones(size(xcr)), 1, contour_specs.ranking);
+        x_contour = x(find(ones(size(xcr)), 1, contour_specs.ranking));
     end
 end
