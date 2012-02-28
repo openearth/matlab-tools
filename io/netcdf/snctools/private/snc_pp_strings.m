@@ -21,3 +21,11 @@ end
 for j = 1:prod(shape)
     values{j} = jdata.getObject(j-1);
 end
+
+% If just a single string, then do not store it as a cell array.
+% netcdf-java treats nc_char as just a single-valued case of nc_string, 
+% but mexcdf cannot do this.
+if numel(values) == 1
+    values = values{1};
+end
+

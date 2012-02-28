@@ -350,9 +350,9 @@ switch ( attribute.Datatype )
         att_type = '';
     case 'string'
         att_type = '';
-        % If it's a single cellstr, then treat it like a char array.
-        if iscellstr(attribute.Value) && (numel(attribute.Value) == 1)
-            att_val = sprintf ('"%s" ', attribute.Value{1} );
+        % If it's a char value, then treat it like NC_CHAR.
+        if ischar(attribute.Value)
+            att_val = sprintf ('"%s" ', attribute.Value);
         elseif isempty(attribute.Value)
             att_val = '{}';
         else

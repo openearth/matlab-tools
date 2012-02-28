@@ -1,4 +1,8 @@
-* February 09 2012 John Evans <john.g.evans.ne@gmail.com> -r3963
+* February 22 2012 John Evans <john.g.evans.ne@gmail.com> -r3974
+- Backwards incompatibility.  NC_INFO no longer returns single cellstr
+- values for attributes.  They are instead returned as char arrays.  
+
+* February 12 2012 John Evans <john.g.evans.ne@gmail.com> -r3966
 - Fixed snctools for change in netcdf-java authentication.
 - Updated README for clearer netcdf-java requirements.
 

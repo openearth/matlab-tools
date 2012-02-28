@@ -56,6 +56,7 @@ end
 ncfile = [testroot '/testdata/moons.nc'];
 test_string_variable(ncfile);
 test_global_string_attribute(ncfile);
+test_single_string_attribute(ncfile);
 test_empty_string_attribute(ncfile);
 
 % Enums
@@ -398,6 +399,20 @@ exp_data = struct('Name','others', ...
 	'Value', []);
 exp_data.Value = {'Francisco', 'Caliban', 'Stephano', 'Trinculo', ...
         'Sycorax', 'Margaret', 'Prospero', 'Setebos', 'Ferdinand'}';
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+%--------------------------------------------------------------------------
+function test_single_string_attribute(ncfile)
+% If we have just one NC_STRING value, make it a char array instead of a 
+% cellstr.
+info = nc_info(ncfile);
+act_data = info.Group.Attribute;
+exp_data = struct('Name','Desdemona', ...
+    'Nctype', 12, ...
+    'Datatype', 'string', ...
+	'Value', 'Juliet');
 if ~isequal(act_data,exp_data)
     error('failed');
 end

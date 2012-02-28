@@ -219,8 +219,14 @@ function ainfo = pp_attrinfo(ainfo, h5ginfo)
 idx = strcmp(ainfo.Name,{h5ginfo.Attributes.Name});
 switch(h5ginfo.Attributes(idx).Datatype.Class)
     case 'H5T_STRING'
+        % Make a single cellstr look like NC_CHAR.
         ainfo.Datatype = 'string';
-        ainfo.Value = h5ginfo.Attributes(idx).Value;
+        string_att = h5ginfo.Attributes(idx).Value;
+        if numel(string_att) == 1
+            ainfo.Value = string_att{1};
+        else
+            ainfo.Value = string_att;
+        end
     case 'H5T_ENUM'
         [dud,name] = fileparts(h5ginfo.Attributes(idx).Datatype.Name);
         ainfo.Datatype = ['enum ' name];

@@ -69,10 +69,15 @@ function y = clean_strings(x)
 y = x;
 
 for j = 1:numel(y.Attribute)
-    if iscellstr(y.Attribute(j).Value) && (numel(y.Attribute(j).Value)==1)
-        y.Attribute(j).Value = y.Attribute(j).Value{1};
+    
+    % If any char arrays claim to be NC_STRING, force them to look like
+    % NC_CHAR.
+    if ischar(y.Attribute(j).Value) && ...
+            ((y.Attribute(j).Nctype == 12) || strcmp(y.Attribute(j).Datatype,'string'))
         y.Attribute(j).Nctype = 2;
-        y.Attribute(j).Datatype = 'char';
+        y.Attribute(j).Datatype = 'char';       
     end
+    
+
 end
 
