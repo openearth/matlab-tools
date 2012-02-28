@@ -1,0 +1,170 @@
+function nc_harvest2xml(xmlname,D,varargin)
+%NC_HARVEST2XML  write nc_harvest object to THREDDS catalog.xml
+%
+% nc_harvest2xml(xmlname,D)
+%
+% writes non-flat nc_harvest object D to THREDDS
+% catalog.xml file. This is a test!
+%
+%See also: nc_harvest2xml
+
+OPT.ID                      = 'rijkswaterstaat/vaklodingen_remapped';
+OPT.name                    = 'vaklodingen_remapped';
+
+OPT.creator.name            = 'OpenEarth';
+OPT.creator.contact.url     = 'http://www.openearth.eu';
+OPT.creator.contact.email   = 'gerben.deboer@deltares.nl';
+
+OPT.publisher.name          = 'Rijkswaterstaat';
+OPT.publisher.contact.url   = 'http://www.rws.nl';
+OPT.publisher.contact.email = 'info@helpdeskwater.nl';
+
+OPT.dataType                = 'Station'; % 'GRID'
+
+OPT.documentation.summary   = 'MWTL';
+OPT.documentation.url       = 'http://publicwiki.deltares.nl/display/OET/Dataset+documentation+MWTL';
+
+OPT = setproperty(OPT,varargin)
+
+fid = fopen(xmlname,'w');
+     
+output = fprintf(fid,'%s\n',['<?xml version="1.0" encoding="ISO-8859-1"?>']);
+output = fprintf(fid,'%s\n',['<catalog xmlns="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0.1">']);
+output = fprintf(fid,'%s\n',['  <service name="all"    serviceType="Compound"   base="">']);
+output = fprintf(fid,'%s\n',['    <service name="odap" serviceType="OPENDAP"    base="/thredds/dodsC/"/>']);
+output = fprintf(fid,'%s\n',['    <service name="http" serviceType="HTTPServer" base="/thredds/fileServer/"/>']);
+output = fprintf(fid,'%s\n',['  </service>']);
+output = fprintf(fid,'%s\n',['  <dataset name="',OPT.name,'" ID="varopendap/',OPT.ID,'">']);
+output = fprintf(fid,'%s\n',['    <metadata inherited="true">']);
+output = fprintf(fid,'%s\n',['      <serviceName>all</serviceName>']);
+output = fprintf(fid,'%s\n',['      <dataType>',OPT.dataType,'</dataType>']);
+output = fprintf(fid,'%s\n',['    </metadata>']);
+
+      for i=1:length(D)
+      
+        output = fprintf(fid,'%s\n',['']);
+        output = fprintf(fid,'%s\n',['    <dataset name   ="',filenameext(D(i).urlPath) '"']);
+        output = fprintf(fid,'%s\n',['             ID     ="varopendap/',OPT.ID,'/',filenameext(D(i).urlPath)]);
+        output = fprintf(fid,'%s\n',['             urlPath=   "opendap/',OPT.ID,'/',filenameext(D(i).urlPath),'">']);
+       %output = fprintf(fid,'%s\n',['      <date type="modified">2011-09-26 13:29:19Z</date>']);
+        output = fprintf(fid,'%s\n',['      <documentation xlink:href ="',OPT.documentation.url,'"']); 
+        output = fprintf(fid,'%s\n',['                     xlink:title="URL"/>']);
+        output = fprintf(fid,'%s\n',['      <documentation type="Summary">',OPT.documentation.summary,'</documentation>']);
+        output = fprintf(fid,'%s\n',['      <creator>']);
+        output = fprintf(fid,'%s\n',['        <name vocabulary="DIF">',OPT.creator.name,'</name>']);
+        output = fprintf(fid,'%s\n',['        <contact url="',OPT.creator.contact.url,'" email="',OPT.creator.contact.email,'"/>']);
+        output = fprintf(fid,'%s\n',['      </creator>']);
+        output = fprintf(fid,'%s\n',['      <publisher>']);
+        output = fprintf(fid,'%s\n',['        <name vocabulary="DIF">',OPT.publisher.name,'</name>']);
+        output = fprintf(fid,'%s\n',['        <contact url="',OPT.publisher.contact.url,'" email="',OPT.publisher.contact.email,'"/>']);
+        output = fprintf(fid,'%s\n',['      </publisher>']);
+
+        output = sprintf(['      <geospatialCoverage>\n'...
+                          '       <northsouth>\n%s'...
+                          '       </northsouth>\n'...
+                          '       <eastwest>\n%s'...
+                          '       </eastwest>\n'...
+                          '       <updown>\n%s'...
+                          '       </updown>\n'...
+                          '      </geospatialCoverage>\n'],...
+            opendap_spatialRange_write('start',D(i).geospatialCoverage.northsouth.start,'stop',D(i).geospatialCoverage.northsouth.end,'indent','        '),...
+            opendap_spatialRange_write('start',D(i).geospatialCoverage.eastwest.start  ,'stop',D(i).geospatialCoverage.eastwest.end  ,'indent','        '),...
+            opendap_spatialRange_write('start',D(i).geospatialCoverage.updown.start    ,'stop',D(i).geospatialCoverage.updown.end    ,'indent','        '));
+            
+            fprintf(fid,output);
+      
+      end
+      
+output = fprintf(fid,'%s\n',['    </dataset>']);
+output = fprintf(fid,'%s\n',['']);
+output = fprintf(fid,'%s\n',['  </dataset>']);
+output = fprintf(fid,'%s\n',['</catalog>']);
+fclose(fid)
+      
+function output = opendap_spatialRange_write(varargin);
+%OPENDAP_SPATIALRANGE_WRITE
+%
+%   string = opendap_spatialRange_write(<keyword,value>)
+%
+% where keywords are 
+% * 'start'/'stop'/'size'  2 our of 3 required or 'limits'
+% * 'limits'               required if not 'start'/'stop'/'size'
+% * 'resolution'           optional
+% * 'units'                required if not spherical degrees
+%
+% Example:
+% opendap_spatialRange_write('limits',[50 51])
+% opendap_spatialRange_write('start' ,50     ,'stop',51)
+% opendap_spatialRange_write('start' ,50     ,'size', 1)
+%
+%See also: OPENDAP
+
+%% geospatialCoverage Element
+% 
+% <xsd:element name="geospatialCoverage">
+%  <xsd:complexType>
+%   <xsd:sequence>
+%     <xsd:element name="northsouth" type="spatialRange" minOccurs="0" />
+%     <xsd:element name="eastwest" type="spatialRange" minOccurs="0" />
+%     <xsd:element name="updown" type="spatialRange" minOccurs="0" />
+%     <xsd:element name="name" type="controlledVocabulary" minOccurs="0" maxOccurs="unbounded"/>
+%   </xsd:sequence>
+%     
+%   <xsd:attribute name="zpositive" type="upOrDown" default="up"/>
+%  </xsd:complexType>
+% </xsd:element>
+% 
+% <xsd:complexType name="spatialRange">
+%  <xsd:sequence>
+%    <xsd:element name="start" type="xsd:double"  />
+%    <xsd:element name="size" type="xsd:double" />
+%    <xsd:element name="resolution" type="xsd:double" minOccurs="0" />
+%    <xsd:element name="units" type="xsd:string" minOccurs="0" />
+%  </xsd:sequence>
+% </xsd:complexType>
+% 
+% <xsd:simpleType name="upOrDown">
+%  <xsd:restriction base="xsd:token">
+%    <xsd:enumeration value="up"/>
+%    <xsd:enumeration value="down"/>
+%  </xsd:restriction>
+% </xsd:simpleType>
+
+OPT.start      = [];
+OPT.stop       = [];
+OPT.size       = [];
+OPT.limits     = [];
+OPT.resolution = [];
+OPT.units      = [];
+OPT.indent     = '';
+
+OPT = setproperty(OPT,varargin);
+
+if ~(isempty(OPT.limits) | isnan(OPT.limits))
+   OPT.start = OPT.limits(1);
+   OPT.size  = OPT.limits(2) - OPT.limits(1);
+end
+
+if isempty(OPT.size) & ~isempty(OPT.stop) & ~isempty(OPT.start)
+   OPT.size = OPT.stop - OPT.start;
+end
+
+if isempty(OPT.start) & ~isempty(OPT.stop) & ~isempty(OPT.size)
+   OPT.size = OPT.stop - OPT.size;
+end
+
+if ~isempty(OPT.resolution)
+    output = sprintf([...
+          '%s<start>%f</start>\n',...
+          '%s<size>%f</size>\n',...
+          '%s<resolution>%s</resolution>\n',...
+          '%s<units>%s</units>\n'],...
+        OPT.indent,OPT.start,OPT.indent,OPT.size,OPT.indent,OPT.resolution,OPT.indent,OPT.units);
+else        
+    output = sprintf([...
+          '%s<start>%f</start>\n',...
+          '%s<size>%f</size>\n',...
+          '%s<units>%s</units>\n'],...
+        OPT.indent,OPT.start,OPT.indent,OPT.size,OPT.indent,OPT.units);
+end
+

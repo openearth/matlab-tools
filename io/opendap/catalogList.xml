@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <catalog xmlns="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0" xmlns:xlink="http://www.w3.org/1999/xlink" name="List of THREDDS catalogs!" version="1.0.1">
   <catalogRef xlink:href="http://opendap.tudelft.nl/thredds/catalog.xml"              xlink:title="3TU"       name=""/>
-  <catalogRef xlink:href="http://opendap.deltares.nl/thredds/catalog.xml"             xlink:title="Deltares"  name=""/>l
+  <catalogRef xlink:href="http://opendap.deltares.nl/thredds/catalog.xml"             xlink:title="Deltares"  name=""/>
   <catalogRef xlink:href="http://gsics.eumetsat.int/thredds/catalog.xml"              xlink:title="EUMETSAT"  name=""/>
   <catalogRef xlink:href="http://michigan.glin.net/thredds/catalog.xml"               xlink:title="GLIN"      name=""/>
+  <catalogRef xlink:href="http://tds.hycom.org/thredds/catalog.xml"                   xlink:title="HYCOM"     name=""/>
   <catalogRef xlink:href="http://geoservices.knmi.nl/thredds/catalog.xml"             xlink:title="KNMI"      name=""/>
   <catalogRef xlink:href="http://thredds.met.no/thredds/catalog.xml"                  xlink:title="met.no"    name=""/>
+  <catalogRef xlink:href="http://myocean-ftp.acri.fr:8080/thredds/catalog.xml"        xlink:title="MyOcean ACRI" name=""/>
+  <catalogRef xlink:href="http://ourocean.jpl.nasa.gov:8080/thredds/catalog.xml"      xlink:title="NASA JPL" name=""/>
+  <catalogRef xlink:href="http://topaz.nersc.no/thredds/catalog.xml"                  xlink:title="Nansen centre" name=""/>
   <catalogRef xlink:href="http://data.nodc.noaa.gov/thredds/catalog.xml"              xlink:title="NOAA NODC" name=""/>
   <catalogRef xlink:href="http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.xml" xlink:title="NOAA NDBC" name=""/>
+  <catalogRef xlink:href="http://opendap-matroos.deltares.nl/thredds/catalog.xml"     xlink:title="Rijkswaterstaat (password protected)" name=""/>
   <catalogRef xlink:href="http://motherlode.ucar.edu/thredds/catalog.xml"             xlink:title="UCAR"      name=""/>
   <catalogRef xlink:href="http://coast-enviro.er.usgs.gov/thredds/catalog.xml"        xlink:title="USGS"      name=""/>
   <catalogRef xlink:href="http://geoport.whoi.edu/thredds/catalog.xml"                xlink:title="WHOI"      name=""/>

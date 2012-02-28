@@ -1,4 +1,4 @@
-function D = nc_harvest(ncfiles)
+function D = nc_harvest(ncfiles,varargin)
 %NC_HARVEST  extract CF + THREDDS meta-data from list of netCDF/OPeNDAP urls
 %
 %  struct = nc_harvest(ncfiles)
@@ -18,7 +18,9 @@ function D = nc_harvest(ncfiles)
 %See also: NC_INFO, nc_dump, NC_ACTUAL_RANGE, NC_HARVEST1, OPENDAP_CATALOG
 
    OPT.disp = ''; %'multiWaitbar';
-   OPT.flat = 1;
+   OPT.flat = 1; % flat is multi-layered struct, else struct with vectors
+   
+   OPT = setproperty(OPT,varargin);
    
    n       = length(ncfiles);
 
@@ -26,6 +28,8 @@ function D = nc_harvest(ncfiles)
       d  = nc_harvest1([]);
       D  = repmat(d,[1 n]);
    else
+
+        D.urlPath = ncfiles;
 
         D.geospatialCoverage_northsouth_start     = repmat(nan,[1 n]);
         D.geospatialCoverage_northsouth_size      = repmat(nan,[1 n]);
@@ -85,7 +89,6 @@ function D = nc_harvest(ncfiles)
          D(i) = nc_harvest1(ncfiles{i});
       else
          d    = nc_harvest1(ncfiles{i});
-      end
 
      % use flat storage for optimal memory management
       
@@ -115,24 +118,24 @@ function D = nc_harvest(ncfiles)
         D.timeCoverage_resolution                 (i) = d.timeCoverage.resolution;
         D.timeCoverage_end                        (i) = d.timeCoverage.end       ;
 
-        D.projectionEPSGcode{i} =     d.projectionEPSGcode;
-             D.standard_name{i} =          d.standard_name;
-                 D.long_name{i} =              d.long_name;
-                     D.title{i} =                  d.title;
-               D.institution{i} =            d.institution;
-                    D.source{i} =                 d.source;
-                   D.history{i} =                d.history;
-                D.references{i} =             d.references;
-                     D.email{i} =                  d.email;
-                   D.comment{i} =                d.comment;
-                   D.version{i} =                d.version;
-               D.Conventions{i} =            d.Conventions;
-             D.terms_for_use{i} =          d.terms_for_use;
-                D.disclaimer{i} =             d.disclaimer;
-                D.station_id{i} =             d.station_id;
-              D.station_name{i} =           d.station_name;
-    D.number_of_observations{i} = d.number_of_observations;
+          D.projectionEPSGcode{i} =     d.projectionEPSGcode;
+               D.standard_name{i} =          d.standard_name;
+                   D.long_name{i} =              d.long_name;
+                       D.title{i} =                  d.title;
+                 D.institution{i} =            d.institution;
+                      D.source{i} =                 d.source;
+                     D.history{i} =                d.history;
+                  D.references{i} =             d.references;
+                       D.email{i} =                  d.email;
+                     D.comment{i} =                d.comment;
+                     D.version{i} =                d.version;
+                 D.Conventions{i} =            d.Conventions;
+               D.terms_for_use{i} =          d.terms_for_use;
+                  D.disclaimer{i} =             d.disclaimer;
+                  D.station_id{i} =             d.station_id;
+                D.station_name{i} =           d.station_name;
+      D.number_of_observations{i} = d.number_of_observations;
 
-   % AUKPFM,430
+      end
 
    end
