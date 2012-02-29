@@ -87,7 +87,7 @@ if any(strcmpi(varargin, 'Parent'))
     idParent = [false strcmpi(varargin(1:end-1), 'Parent')];
     % Parent manually specified
     Parent = varargin{idParent};
-    varargin([idParent(2:end) true]) = [];
+    varargin([idParent(2:end) false] | idParent) = [];
 else
     % use current axes handle
     Parent = gca;
