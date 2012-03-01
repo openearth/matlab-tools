@@ -1,11 +1,11 @@
-function slp = jarkus_slope(transects, varargin)
+function [slp dz dx] = jarkus_slope(transects, varargin)
 %JARKUS_SLOPE  derive slope of jarkus profile
 %
 %   Function to derive the slope of jarkus profiles between specific
 %   contours and/or min or max altitude values. 
 %
 %   Syntax:
-%   slp = jarkus_slope(transects, varargin)
+%   [slp dz dx] = jarkus_slope(transects, varargin)
 %
 %   Input:
 %   transects = jarkus_transects structure
@@ -112,10 +112,10 @@ for ic = 1:size(c,1)
 end
 
 %% derive slopes
-dz = -diff(z,1,1);
-dx = diff(x,1,1);
+dz = squeeze(-diff(z,1,1));
+dx = squeeze(diff(x,1,1));
 
-slp = squeeze(dx ./ dz);
+slp = dx ./ dz;
 
 %%
 function [x_contour z_contour] = find_contour(x, z, contour_specs)
