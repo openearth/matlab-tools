@@ -52,18 +52,23 @@ function varargout = nc_multibeam_from_xyz(varargin)
 set(0,'defaultFigureWindowStyle','normal')
 get_ncOptions = @(varargin) (nc_SetOptions(varargin{:})); % gather the options from nc_SetOptions
 OPT           = get_ncOptions();   
+OPT.nc = setproperty(OPT.nc,varargin{:});
 OPT = OPT.nc;
+if nargin==0;
+    varargout = {OPT};
+    return;
+end
 % ----------------------------------------------------------------------
 if OPT.make
     multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
     disp('generating nc files... ')
     %% limited input check
-    if isempty(OPT.raw_path)
-        error %#ok<LTARG>
-    end
-    if isempty(OPT.netcdf_path)
-        error  %#ok<LTARG>
-    end
+%     if isempty(OPT.raw_path)
+%         error %#ok<LTARG>
+%     end
+%     if isempty(OPT.netcdf_path)
+%         error  %#ok<LTARG>
+%     end
     
     %%
     EPSG             = load('EPSG');
@@ -153,23 +158,40 @@ if OPT.make
             WB.bytesRead     = 0;
             
             headerlines      = OPT.headerlines;
+            %test which delimiter does the job
+             D_check1     = textscan(fid,OPT.format,10,...
+                                  'delimiter',OPT.delimiter,...
+                                'headerlines',headerlines,...
+                        'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
+                    
+%             D_check2     = textscan(fid,OPT.format,10,...
+%                       'delimiter',OPT.delimiter2,...
+%                     'headerlines',headerlines,...
+%             'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
+            
+%             if size(D_check1{1,1},1)<size(D_check2{1,3},1)
+%                 OPT.delimiter_used = OPT.delimiter2;
+%             elseif size(D_check1{1,1},1)>size(D_check2{1,3},1)
+%                 OPT.delimiter_used = OPT.delimiter;
+%             end
             while ~feof(fid)
                 multiWaitbar('Raw data to NetCDF',(WB.bytesDoneClosedFiles*2+WB.bytesRead+WB.bytesWritten)/WB.bytesToDo)
                 multiWaitbar('nc_reading',ftell(fid)/fns_unzipped(ii).bytes,'label',sprintf('Reading: %s...', (fns_unzipped(ii).name))) ;
                 WB.bytesDoneOfCurrentFile = ftell(fid);
-                D     = textscan(fid,OPT.format,OPT.block_size,...
-                              'delimiter',OPT.delimiter,...
-                            'headerlines',headerlines,...
-                    'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
                 
-                if numel(unique(cellfun(@numel,D))) ~= 1
-                    if OPT.zip
-                        n = fullfile(OPT.cache_path,fns_unzipped(ii).name);
-                    else
-                        n = fullfile(OPT.raw_path  ,fns_unzipped(ii).name);
+                    D     = textscan(fid,OPT.format,OPT.block_size,...
+                                  'delimiter',OPT.delimiter,...
+                                'headerlines',headerlines,...
+                        'MultipleDelimsAsOne',OPT.MultipleDelimsAsOne);
+                    
+                    if numel(unique(cellfun(@numel,D))) ~= 1
+                        if OPT.zip
+                            n = fullfile(OPT.cache_path,fns_unzipped(ii).name);
+                        else
+                            n = fullfile(OPT.raw_path  ,fns_unzipped(ii).name);
+                        end
+                        error('error reading file: %s',n);
                     end
-                    error('error reading file: %s',n);
-                end
                 headerlines     = 0; % only skip headerlines on first read
                 
                 % waitbar stuff
