@@ -66,8 +66,13 @@ data = data(mask,:);
 for i = 1 : size(data,1)
     try
         [xcr, zcr] = findCrossings(x1,z1,data(i,1:2)',data(i,3:4)','keeporiginalgrid');
-    catch
-        [xcr, zcr] = deal([]);
+    catch ME
+        if strcmp(ME.identifier, 'MATLAB:interp1:RepeatedValuesX')
+            % swap x and z values for vertical sections
+            [zcr, xcr] = findCrossings(z1,x1,data(i,3:4)',data(i,1:2)','keeporiginalgrid');
+        else
+            [xcr, zcr] = deal([]);
+        end
     end
     if ~isempty(xcr)
         xcr_store = [xcr_store xcr];
@@ -82,16 +87,23 @@ zcr = zcr_store';
 %% if dbstate on generate a plot to see end result
 if dbstate
     figure(1);clf;hold on;
-
-    ph(1)     = plot(x1,z1,'-or','markerfacecolor','r');
-    ph(2)     = plot(x2,z2,'-ob','markerfacecolor','b');
-    for i = 1:length(data)
-        ph(3) = plot(data(i,1:2),data(i,3:4),'-ok','markerfacecolor','k');
+    
+    ph(1)     = plot(x1,z1,'-or','markerfacecolor','r',...
+        'DisplayName', 'line');
+    ph(2)     = plot(x2,z2,'-ob','markerfacecolor','b',...
+        'DisplayName', 'polygon');
+    for i = 1:size(data,1)
+        ph(3) = plot(data(i,1:2),data(i,3:4),'-ok','markerfacecolor','k',...
+            'DisplayName', 'relevant poly-sections');
     end
-    ph(4)     = plot(xcr_store,zcr_store,'oy','markerfacecolor','y');
+    if ~isempty(xcr_store)
+        ph(4)     = plot(xcr_store,zcr_store,'oy','markerfacecolor','y',...
+            'DisplayName', 'crossing(s)');
+    end
 
     legendtxt = {'line','polygon','relevant poly-sections','crossing(s)'};
-    legend(ph,legendtxt,'FontWeight','bold','FontSize',8);
+    lh = legend('show');
+    set(lh,'FontWeight','bold','FontSize',8);
     legend('boxoff')
 
     axis equal; box on
