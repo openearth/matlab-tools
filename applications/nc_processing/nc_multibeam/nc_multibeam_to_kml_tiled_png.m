@@ -62,7 +62,14 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 set(0,'defaultFigureWindowStyle','normal')
 get_ncOptions = @(varargin) (nc_SetOptions(varargin{:})); % gather the options from nc_SetOptions
 OPT           = get_ncOptions();
+OPT.kml = setproperty(OPT.kml,varargin{:});
 OPT = OPT.kml;
+
+if nargin==0;
+    varargout = {OPT};
+    return;
+end
+
 
 if OPT.make
     %% find nc files, and remove catalog.nc from the files if found
@@ -512,66 +519,87 @@ if OPT.make
     
     OPT2.description = ['generated: ' datestr(now())];
     [path,fname,ext] = fileparts(OPT.relativepath);
-    output = sprintf([...
-        '<NetworkLink>'...
-        '<name>files</name>'...                                                                                             % name
-        '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'...                                     % link
-        '</NetworkLink>'],...
-        fullfile([fname ext], 'KML', [fileID '.kml'])); % TO DO: issue when OPT.lowestLevel too small
-    
-    OPT2.fid=fopen(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),'w');
-    
-    
-    OPT_header = struct(...
-        'kmlName',       OPT.descriptivename,...
-        'open',          0,...
-        'description',   OPT.description,...
-        'cameralon',    mean([maxlon minlon]),...
-        'cameralat',    mean([maxlat minlat]),...
-        'cameraz',      1e4);
-    
-    if length(datenums) == 1;
-        OPT_header.timeIn  = min(datenums);
-    elseif OPT.filledInTime
-        OPT_header.timeIn  = max(datenums);
-    elseif length(datenums) < 5
-        OPT_header.timeIn  = min(datenums);
-        OPT_header.timeOut = max(datenums);
-    else
-        OPT_header.timeIn  =  min(datenums(end-4:end));
-        OPT_header.timeOut =  max(datenums(end-4:end));
+    for k = 1:size(fileID,1)
+%         if size(fileID,1)>1
+%             fileID = fileID(k,:);
+%         end
+        tmpkml(k,:) = ['doc', num2str(k),'.kml'];
+        output = sprintf([...
+            '<NetworkLink>'...
+            '<name>files</name>'...                                                                                             % name
+            '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>'...                                     % link
+            '</NetworkLink>'],...
+            fullfile([fname ext], 'KML', [fileID(k,:) '.kml'])); % TO DO: issue when OPT.lowestLevel too small
+
+        OPT2.fid=fopen(fullfile(OPT.basepath_local,OPT.relativepath,tmpkml(k,:)),'w');
+
+        OPT_header = struct(...
+            'kmlName',       OPT.descriptivename,...
+            'open',          0,...
+            'description',   OPT.description,...
+            'cameralon',    mean([maxlon minlon]),...
+            'cameralat',    mean([maxlat minlat]),...
+            'cameraz',      1e4);
+
+        if length(datenums) == 1;
+            OPT_header.timeIn  = min(datenums);
+        elseif OPT.filledInTime
+            OPT_header.timeIn  = max(datenums);
+        elseif length(datenums) < 5
+            OPT_header.timeIn  = min(datenums);
+            OPT_header.timeOut = max(datenums);
+        else
+            OPT_header.timeIn  =  min(datenums(end-4:end));
+            OPT_header.timeOut =  max(datenums(end-4:end));
+        end
+
+        output = [KML_header(OPT_header) output];
+
+        %% COLORBAR
+
+        if OPT.colorbar
+            clrbarstring = KMLcolorbar('CBcLim',OPT.clim,...
+                'CBfileName',           fullfile(OPT.basepath_local,OPT.relativepath,'KML','colorbar') ,...
+                'CBcolorMap',           OPT.colorMap,...
+                'CBcolorSteps',         OPT.colorSteps,...
+                'CBcolorbarlocation',   OPT.CBcolorbarlocation,...
+                'CBcolorTick',          OPT.CBcolorTick,...
+                'CBfontrgb',            OPT.CBfontrgb,...
+                'CBbgcolor',            OPT.CBbgcolor,...
+                'CBcolorTitle',         OPT.CBcolorTitle,...
+                'CBframergb',           OPT.CBframergb,...
+                'CBalpha',              OPT.CBalpha,...
+                'CBtemplateHor',        OPT.CBtemplateHor,...
+                'CBtemplateVer',        OPT.CBtemplateVer);
+            clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [fname ext filesep 'KML' filesep 'colorbar'] '_']);
+            output = [output clrbarstring];
+        end
+
+        %% FOOTER
+
+        output = [output KML_footer];
+        fprintf(OPT2.fid,'%s',output);
+
+        %% close KML
+
+        fclose(OPT2.fid);
     end
     
-    output = [KML_header(OPT_header) output];
-    
-    %% COLORBAR
-    
-    if OPT.colorbar
-        clrbarstring = KMLcolorbar('CBcLim',OPT.clim,...
-            'CBfileName',           fullfile(OPT.basepath_local,OPT.relativepath,'KML','colorbar') ,...
-            'CBcolorMap',           OPT.colorMap,...
-            'CBcolorSteps',         OPT.colorSteps,...
-            'CBcolorbarlocation',   OPT.CBcolorbarlocation,...
-            'CBcolorTick',          OPT.CBcolorTick,...
-            'CBfontrgb',            OPT.CBfontrgb,...
-            'CBbgcolor',            OPT.CBbgcolor,...
-            'CBcolorTitle',         OPT.CBcolorTitle,...
-            'CBframergb',           OPT.CBframergb,...
-            'CBalpha',              OPT.CBalpha,...
-            'CBtemplateHor',        OPT.CBtemplateHor,...
-            'CBtemplateVer',        OPT.CBtemplateVer);
-        clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' [fname ext filesep 'KML' filesep 'colorbar'] '_']);
-        output = [output clrbarstring];
-    end
-    
-    %% FOOTER
-    
-    output = [output KML_footer];
-    fprintf(OPT2.fid,'%s',output);
-    
-    %% close KML
-    
-    fclose(OPT2.fid);
+   sfiles = dir([fullfile(OPT.basepath_local,OPT.relativepath,filesep),'*.kml']);
+   tmp = [];
+   for j = 1:size(sfiles,1)
+       tmp = [{[fullfile(OPT.basepath_local,OPT.relativepath,filesep,getfield(sfiles(j),'name'))]} , tmp];
+   end
+   if size(sfiles,1)>1
+        disp('additional merging of kml files is carried out to temporary solve the multiple fileIDs (CAT hor must agree)')
+        KMLmerge_files('fileName',fullfile(OPT.basepath_local,OPT.relativepath,filesep,'doc.kml'),'kmlName', OPT.descriptivename ,'sourceFiles',tmp,'deleteSourceFiles', true);
+   end
+%    OPT                   = KML_header();
+%    OPT.fileName          = '';
+%    OPT.sourceFiles       = {};
+%    OPT.foldernames       = {}; % TO DO check for existing folder names
+%    OPT.distinctDocuments = 0;  % avoids conflicts among styles (e.g. icon's and line's)
+%    OPT.deleteSourceFiles = false;
     
     %% generate different versions of the KML
     copyfile(fullfile(OPT.basepath_local,OPT.relativepath, 'doc.kml'),fullfile(OPT.basepath_local,path, [fname ext '_localmachine.kml']))
