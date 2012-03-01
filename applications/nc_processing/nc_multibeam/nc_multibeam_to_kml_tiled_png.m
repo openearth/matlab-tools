@@ -592,8 +592,9 @@ if OPT.make
    end
    if size(sfiles,1)>1
         disp('additional merging of kml files is carried out to temporary solve the multiple fileIDs (CAT hor must agree)')
-        KMLmerge_files('fileName',fullfile(OPT.basepath_local,OPT.relativepath,filesep,'doc.kml'),'kmlName', OPT.descriptivename ,'sourceFiles',tmp,'deleteSourceFiles', true);
    end
+   KMLmerge_files('fileName',fullfile(OPT.basepath_local,OPT.relativepath,filesep,'doc.kml'),'kmlName', OPT.descriptivename ,'sourceFiles',tmp,'deleteSourceFiles', true);
+
 %    OPT                   = KML_header();
 %    OPT.fileName          = '';
 %    OPT.sourceFiles       = {};
