@@ -92,16 +92,17 @@ if dbstate
         'DisplayName', 'line');
     ph(2)     = plot(x2,z2,'-ob','markerfacecolor','b',...
         'DisplayName', 'polygon');
-    for i = 1:size(data,1)
-        ph(3) = plot(data(i,1:2),data(i,3:4),'-ok','markerfacecolor','k',...
+    if ~isempty(data)
+        xs = reshape([data(:,1:2) NaN(size(data,1),1)]', size(data,1)*3, 1);
+        zs = reshape([data(:,3:4) NaN(size(data,1),1)]', size(data,1)*3, 1);
+        ph(3) = plot(xs,zs,'-ok','markerfacecolor','k',...
             'DisplayName', 'relevant poly-sections');
     end
     if ~isempty(xcr_store)
-        ph(4)     = plot(xcr_store,zcr_store,'oy','markerfacecolor','y',...
+        ph(4) = plot(xcr_store,zcr_store,'oy','markerfacecolor','y',...
             'DisplayName', 'crossing(s)');
     end
 
-    legendtxt = {'line','polygon','relevant poly-sections','crossing(s)'};
     lh = legend('show');
     set(lh,'FontWeight','bold','FontSize',8);
     legend('boxoff')
