@@ -137,9 +137,10 @@ if OPT.make
             %% read data
             
             % process time
-            OPT.SetTime = 0;
+            
             try
                 time    = OPT.dateFcn(fns_unzipped(ii).name) - datenum(1970,1,1);
+                OPT.SetTime = 0;
             catch
                 time = now -datenum(1970,1,1);
                 disp('The date of the data is set to be NOW')
