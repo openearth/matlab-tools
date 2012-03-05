@@ -7,6 +7,7 @@ function nc_multibeam_createNCfile(OPT,EPSG,ncfile,X,Y)
    OPT0                = nc_multibeam_from_asc;
    OPT0.num_bytes      = 20000; % pad header
    OPT0.netcdfversion  = 3;
+   OPT0.SetTime = 0;
    if nargin==0
        varargout = {OPT};
        return
