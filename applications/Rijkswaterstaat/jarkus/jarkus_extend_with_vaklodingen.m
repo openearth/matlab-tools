@@ -9,6 +9,12 @@ function transect = jarkus_extend_with_vaklodingen(jarkus_id, jarkus_year, varar
 %   Input:
 %   jarkus_id       = identifier of jarkus transect
 %   jarkus_year     = year of jarkus measurement
+%   varargin        = propertyname-propertyvalue pairs:
+%                   'jarkus_extend' - boolean to indicating whether the
+%                   transect should first be extended as much as possible
+%                   based on jarkus data of other years.
+%                   'debug' - boolean giving the opportunity to plot some
+%                   intermediate steps in order to check the process
 %
 %   Output:
 %   transect = jarkus transect structure, with a few additional fields
@@ -63,6 +69,7 @@ function transect = jarkus_extend_with_vaklodingen(jarkus_id, jarkus_year, varar
 
 %%
 OPT = struct(...
+    'jarkus_extend', false,...
     'debug', false);
 OPT = setproperty(OPT, varargin);
 
@@ -76,8 +83,29 @@ if ~isscalar(jarkus_year) && ~isinteger(jarkus_year)
 end
 
 %%
-tr = jarkus_transects('id', jarkus_id, 'year', jarkus_year);
-tr = jarkus_interpolatenans(tr);
+if ~OPT.jarkus_extend
+    tr = jarkus_transects('id', jarkus_id, 'year', jarkus_year);
+    tr = jarkus_interpolatenans(tr);
+else
+    % retreive transect for all available years
+    tr = jarkus_transects('id', jarkus_id);
+    % interpolate nans in cross-shore direction (default)
+    tr = jarkus_interpolatenans(tr);
+    % interpolate nans in time
+    tr = jarkus_interpolatenans(tr,...
+        'interp', 'time', ...
+        'dim', 1);
+    % extrapolate nans in time with nearest neighbour method
+    tr = jarkus_interpolatenans(tr,...
+        'interp', 'time', ...
+        'dim', 1,...
+        'method', 'nearest', ...
+        'extrap', true);
+    % delete data of other years
+    skipid = year(tr.time + datenum(1970,1,1)) ~= jarkus_year;
+    tr.time(skipid) = [];
+    tr.altitude(skipid,:,:) = [];
+end
 
 nnid = ~isnan(squeeze(tr.altitude));
 
@@ -198,11 +226,14 @@ end
 xe = x(1):dx:x_end;
 ye = y(1):dy:y_end;
 ze = interp2(X,Y,Z, xe, ye);
-nnide = ~isnan(ze);
-[xe ye ze] = deal(xe(nnide), ye(nnide), ze(nnide));
-cs0 = tr.cross_shore(find(nnid,1,'first'));
-dcs = mean(diff(tr.cross_shore));
-cross_shore = cs0:dcs:(cs0+(length(xe)-1)*dcs);
+id0 = tr.cross_shore == 0;
+ide0 = xe == tr.x(id0);
+% calculate distance to RSP
+cse = round(sqrt((xe - xe(ide0)).^2 + (ye - ye(ide0)).^2));
+% change sign of first (landward) part of vector
+cse(1:find(cse==0, 1, 'first')-1) = -cse(1:find(cse==0, 1, 'first')-1);
+cs = tr.cross_shore(nnid);
+cross_shore = unique([cse(:); cs(:)]');
 
 %% plot cross-shore profile
 if OPT.debug
@@ -218,11 +249,12 @@ end
 %% combine data to structure
 tr.x = xe;
 tr.y = ye;
-tr.altitude_jarkus = NaN(size(ze));
-tr.altitude_jarkus(1:sum(nnid)) = z;
-tr.altitude_vakloding = ze;
-tr.altitude = ze;
-tr.altitude(1:sum(nnid)) = z;
+tr.altitude_jarkus = NaN(size(cross_shore));
+tr.altitude_jarkus(ismember(cross_shore, cs)) = z;
+tr.altitude_vakloding = NaN(size(cross_shore));
+tr.altitude_vakloding(ismember(cross_shore, cse)) = ze; 
+tr.altitude = tr.altitude_vakloding;
+tr.altitude(ismember(cross_shore, cs)) = z;
 tr.cross_shore = cross_shore;
 
 transect = tr;
