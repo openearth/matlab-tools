@@ -228,6 +228,8 @@ ye = y(1):dy:y_end;
 ze = interp2(X,Y,Z, xe, ye);
 id0 = tr.cross_shore == 0;
 ide0 = xe == tr.x(id0);
+nnide = find(diff(~isnan([NaN ze NaN]))==1):find(diff(~isnan([NaN ze NaN]))==-1, 1, 'last')-1;
+[xe, ye, ze] = deal(xe(nnide), ye(nnide), ze(nnide));
 % calculate distance to RSP
 cse = round(sqrt((xe - xe(ide0)).^2 + (ye - ye(ide0)).^2));
 % change sign of first (landward) part of vector
@@ -240,7 +242,7 @@ if OPT.debug
     subplot(2,2,[3 4]);
     hold on
     
-    plot(cross_shore, ze, tr.cross_shore(nnid), z)
+    plot(cross_shore(ismember(cross_shore, cse)), ze, tr.cross_shore(nnid), z)
     if x_direction < 0
         set(gca, 'xdir', 'reverse')
     end
