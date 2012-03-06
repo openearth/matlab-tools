@@ -68,10 +68,10 @@ OPT.nc.disclaimer          = ['These data are made available in the hope that it
 
 % default directory properties
 OPT.nc.basepath_network    = '';
-OPT.nc.basepath_local      = '../SandEngine_nc';
+OPT.nc.basepath_local      = '../test_nc';
 OPT.nc.basepath_opendap    = '';
-OPT.nc.raw_path            = '../rawdata';
-OPT.nc.raw_extension       = '*.xyz';
+OPT.nc.raw_path            = '';
+OPT.nc.raw_extension       = '*.txt';
 OPT.nc.nr_fname            = '';                        % if not all rawdata files in directory needs to be transformed fill in the number of the file in the directory list which do need to be transformed.
 OPT.nc.netcdf_path         = 'netcdf';
 OPT.nc.cache_path          = fullfile(tempdir,'nc_asc');
@@ -93,8 +93,8 @@ OPT.nc.zfactor              = 1;         % scale z by this facto
 %% NC SETTINGS, ADJUST AS NEEDED ------------------------------------------------------------------------------------------
 OPT.nc.zip                 = false;
 OPT.nc.zip_extension       = '*.7z';
-OPT.nc.dateFcn             = @(s)datenum(s(17:22),'yymmdd');%@(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy-mmm'); % how to extract the date from the filename
-OPT.nc.gridFcn             = @(X,Y,Z,XI,YI) griddata_remap(X,Y,Z,XI,YI,'errorCheck',false);
+OPT.nc.dateFcn             = @(s)datenum(s(1:8),'yyyymmdd');%@(s) datenum(monthstr_mmm_dutch2eng(s(1:8)),'yyyy-mmm'); % how to extract the date from the filename
+OPT.nc.gridFcn             = @(x,y,z,X,Y)gridFcn(x,y,z,X,Y);
 OPT.nc.format              = '%f%f%f';
 OPT.nc.delimiter           = ',';
 OPT.nc.headerlines         = 0;
@@ -104,10 +104,9 @@ OPT.nc.zid                 = 3;
 OPT.nc.MultipleDelimsAsOne = false;
 OPT.nc.datatype            = 'multibeam';
 
-
 %% kml settings
 % directory settings
-OPT.kml.make                    = false;
+OPT.kml.make                    = true;
 OPT.kml.make_kmz                = false;    % this packs the entire file tree to a sing kmz file, convenient for portability
 OPT.kml.copy2server             = false;
 OPT.kml.basepath_local          = '_kml';
@@ -147,5 +146,9 @@ OPT.kml.stride                  = 1;
 OPT.kml                         = mergestructs(OPT.kml,KMLcolorbar);
 
 OPT = setPropertyInDeeperStruct(OPT,varargin{:});
+
+nc_multibeam_from_xyz(OPT.nc)
+nc_multibeam_to_kml_tiled_png(OPT.kml)
 varargout = {OPT};
+
 end
