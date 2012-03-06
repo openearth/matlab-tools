@@ -111,7 +111,7 @@ OPT.kml.make_kmz                = false;    % this packs the entire file tree to
 OPT.kml.copy2server             = false;
 OPT.kml.basepath_local          = '_kml';
 OPT.kml.basepath_network        = '';
-OPT.kml.basepath_www            = '';
+OPT.kml.basepath_www            = '1';
 OPT.kml.ncpath                  = fullfile(OPT.nc.basepath_local,OPT.nc.netcdf_path);
 OPT.kml.ncfile                  = '*.nc';
 OPT.kml.relativepath            = OPT.nc. netcdf_path;
@@ -147,8 +147,6 @@ OPT.kml                         = mergestructs(OPT.kml,KMLcolorbar);
 
 OPT = setPropertyInDeeperStruct(OPT,varargin{:});
 
-nc_multibeam_from_xyz(OPT.nc)
-nc_multibeam_to_kml_tiled_png(OPT.kml)
 varargout = {OPT};
 
 end
