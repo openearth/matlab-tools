@@ -47,6 +47,9 @@ function D = dir2(varargin)
 %                    in subfolders etc.
 %                    defaults to inf
 %
+%     * no_dirs      only list files, no directories, default is false
+%
+%
 %   Output:
 %   D        = a struct array with the following fields: 
 %       name     -- Filename
@@ -162,6 +165,7 @@ OPT.basepath         = pwd;      % indicate basedpath to start looking
 OPT.dir_excl         = '.svn$';  % pattern to exclude
 OPT.file_incl        = '.*';     % pattern to include
 OPT.depth            = inf;      % indicate recursion depth (0 is only this folder)
+OPT.no_dirs          = false;    % only list files, not directories
 
 if mod(nargin,2)==1
     OPT.basepath = varargin{1};
@@ -220,6 +224,10 @@ D(1).bytes    = sum([newD(~[newD.isdir]).bytes]);
 % concatenate D
 D = [D; newD];
 
+% remove directories from output
+if OPT.no_dirs
+    D([D.isdir]) = [];
+end
 %EOF
 
 function D = dir_in_subdir(basepath,dir_excl,file_incl,depth)
