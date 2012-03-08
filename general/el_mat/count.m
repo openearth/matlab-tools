@@ -1,12 +1,15 @@
-function varargout = count(x)
+function varargout = count(varargin)
 %COUNT   counts freqeuncy of unique values
 %
-% [number_of_occurence ]               = count(x)
-% [number_of_occurence, unique_values] = count(x)
+% [n_occurrences, c, ia, ic] = count(varargin)
+% where c, ia, ic is the output of unique(varargin)
+% varargin = the same as for unique
 %
-% where unique_values is the output of unique(x)
-%
-% Example: count([1 1 1 2 2 3]) gives [3 2 1]
+% Example: 
+%   count([1 1 1 2 2 3]) gives [3 2 1]
+% Also observe the differences in 
+%   [n_occurrences, c] = count(['bbcaaa';'aaabbc']);
+%   [n_occurrences, c] = count(['bbcaaa';'bbcaaa'],'rows');
 %
 %See also: HIST, MODE, ISMEMBER, UNIQUE, INTERSECT
 
@@ -44,24 +47,9 @@ function varargout = count(x)
 % $HeadURL$
 % $Keywords$
 
-values   = unique(x);
+[c,ia,ic]     = unique(varargin{:});
+n_occurrences = histc(int32(ic),int32(1:length(ia)));
+varargout     = {n_occurrences,c,ia,ic};
 
-numbers  = zeros(size(values));
-
-for ival = 1:length(values)
-
-   numbers(ival) = sum(x==values(ival));
-
-end
-
-if nargout < 2
-
-   varargout = {numbers};
-
-elseif nargout==2
-
-   varargout = {numbers, values};
-
-end
 
 %% EOF
