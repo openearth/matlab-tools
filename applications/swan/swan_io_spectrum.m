@@ -190,18 +190,32 @@ if iostat==1 %  0 when uigetfile was cancelled
    
             rec = fgetl_no_comment_line(fid,'$');
    
-%% Read TIME (optional)
+%% Read TIME encoding (optional)
 
             if strcmp(strtok(upper(rec)),'TIME')
    
                rec = fgetl_no_comment_line(fid,'$');
-               [DAT.time] = strread(rec,'%d');
+               [DAT.timecode] = strread(rec,'%d',1);
                if OPT.debug(1)
-                  OPT.disp;disp(['time ',num2str(DAT.time)])
+                  OPT.disp;disp(['time ',num2str(DAT.timecode)])
                end
                rec = fgetl_no_comment_line(fid,'$');
             else
-               DAT.time = 0;
+               DAT.timecode = 0;
+            end
+            %1 : ISO-notation 19870530.153000
+            %2 : (as in HP compiler) ’30?May?87 15:30:00’
+            %3 : (as in Lahey compiler) 05/30/87.15:30:00
+            %4 : 15:30:00
+            %5 : 87/05/30 15:30:00’
+            %6 : as in WAM 8705301530
+            
+            if     DAT.timecode==1, DAT.timefmt = 'yyyymmdd.HHMMSS';
+            elseif DAT.timecode==2, DAT.timefmt = 'dd-mmm-yy HH:MM:SS';
+            elseif DAT.timecode==3, DAT.timefmt = 'mm-dd-yy HH:MM:SS';
+            elseif DAT.timecode==4, DAT.timefmt = 'HH:MM:SS';
+            elseif DAT.timecode==5, DAT.timefmt = 'yy/mm/dd HH:MM:SS';
+            elseif DAT.timecode==6, DAT.timefmt = 'yymmddHHMM';
             end
    
 %% Read ITER (optional, for test output)
@@ -401,7 +415,10 @@ if iostat==1 %  0 when uigetfile was cancelled
             end
    
 %% CASE: read integrated test quantities S1D
-   
+            if DAT.timecode >0
+               rec = fgetl_no_comment_line(fid,'$');
+               DAT.time = datenum(strtok(rec),DAT.timefmt);
+            end
             if DAT.dimension_of_spectrum==0 &  ~isempty(DAT.iter)
             
                while ~feof(fid)
