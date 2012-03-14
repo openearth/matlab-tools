@@ -1,10 +1,10 @@
-function varargout = netica_write_case_file(fname, varargin)
+function txt = netica_write_case_file(fname, varargin)
 %NETICA_WRITE_CASE_FILE  write data to netica case file
 %
 %   Function to write data to a Netica case file.
 %
 %   Syntax:
-%   varargout = netica_write_case_file(fname, varargin)
+%   txt = netica_write_case_file(fname, varargin)
 %
 %   Input:
 %   fname     = filename of file to generate (put false to omit file
@@ -20,7 +20,7 @@ function varargout = netica_write_case_file(fname, varargin)
 %       variable values.
 %
 %   Output:
-%   varargout =
+%   txt = string of case file contents
 %
 %   Example
 %   netica_write_case_file
@@ -92,6 +92,7 @@ varnames = fieldnames(vars);
 nvars = length(varnames);
 
 %% convert variables to cell arrays
+strlength = ones(size(varnames));
 for ivar = 1:nvars
     switch class(vars.(varnames{ivar}))
         case 'double'
@@ -99,49 +100,46 @@ for ivar = 1:nvars
         case 'cell'
             vars.(varnames{ivar}) = vars.(varnames{ivar})(:);
         otherwise
-            error(sprintf('Variables of class "%s" are not yet supported', class(vars.(varnames{ivar}))))
+            error('Variables of class "%s" are not yet supported', class(vars.(varnames{ivar})))
     end
     if ischar(OPTn.NaN)
         nanid = strcmp('NaN', cellfun(@strtrim, vars.(varnames{ivar}), 'UniformOutput', false));
-        if any(nanid)
-            stringlength = max(cellfun(@length, vars.(varnames{ivar})));
-            nspaces = max(0, stringlength - length(OPTn.NaN));
-            vars.(varnames{ivar})(nanid) = {[blanks(nspaces) OPTn.NaN]};
-        end
+        vars.(varnames{ivar})(nanid) = {OPTn.NaN};
     end
+    strlength(ivar) = max([max(cellfun(@length, vars.(varnames{ivar}))) length(varnames{ivar})]);
 end
 
 %% create header
 txt = '';
 if OPT.comments
-    txt = sprintf('%s//%s\n', OPT.comments)
+    txt = sprintf('%s//%s\n', OPT.comments);
 end
 
 txt = sprintf('%s//Created at: %s\n//Created by: %s\n', txt, OPT.date, getenv('username'));
 
-headerformat = [repmat('%s\t', 1, nvars-1) '%s\n'];
-txt = sprintf(['%s\n' headerformat], txt, varnames{:});
+% create cell matrix containing the formats
+formats = [repmat({'%'}, size(varnames'));...
+    cellfun(@strtrim, cellstr(num2str(strlength))', 'UniformOutput', false);...
+    repmat({'s'}, size(varnames'));
+    repmat({'\t'}, size(varnames(1:end-1)')) {'\n'}];
+
+txt = sprintf(['%s\n' sprintf('%s', formats{:})], txt, varnames{:});
 
 %% add variable values
 for isample = 1:nsamples
     for ivar = 1:nvars
         if iscell(vars.(varnames{ivar}))
             if any(~cellfun(@ischar, vars.(varnames{ivar})))
-                error(['All elements in a cell array should be of type ''char'''])
+                error('All elements in a cell array should be of type ''char''')
             end
-            txt = sprintf('%s', txt, vars.(varnames{ivar}){isample})
-            if ivar < nvars
-                txt = sprintf('%s\t', txt)
-            else
-                txt = sprintf('%s\n', txt)
-            end
+            txt = sprintf(['%s' sprintf('%s', formats{:,ivar})], txt, vars.(varnames{ivar}){isample});
         end
     end
 end
 
 %% write to file
 if fname
-    fid = fopen(fname);
+    fid = fopen(fname, 'w');
     fprintf(fid, '%s', txt);
     fclose(fid);
 end
