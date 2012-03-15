@@ -20,9 +20,9 @@
 % This has the same syntax as the outdated, unsupported netcdf toolbox
 % in mexcdf (http://sourceforge.net/projects/mexcdf/)
 %
-%init                           - initialises     DINEOF setings
-%initread                       - reads file with DINEOF setings
-%initwrite                      - saves file with DINEOF setings
-%run                            - wrapper to call DINEOF via memory (without explicit file IO)
+% init                           - initialises     DINEOF setings
+% initread                       - reads file with DINEOF setings
+% initwrite                      - saves file with DINEOF setings
+% run                            - wrapper to call DINEOF via memory (without explicit file IO)
 %
 %See also: 

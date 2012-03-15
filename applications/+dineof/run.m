@@ -9,29 +9,31 @@ function varargout = run(data, time, mask, varargin)
 %
 % where optionally struct D with the mean, the spatial & temporal
 % EOF modes, the singular values and the exlained variance 
-% can be returned. All files are deleted afterwards, unless
-% keyword 'cleanup' is set to 0.
+% can be returned. All files are deleted afterwards and saved into
+% 1 netCDF file, unless keyword 'cleanup' is set to 0.
 %
 % Example:
 %
-%   nt      = 14;
+%   nt      = 14;time    = [1:nt];
 %   ny      = 20;
 %   nx      = 21;
 %  [y,x]    = meshgrid(linspace(-3,3,ny),linspace(-3,3,nx));
 %   z       = peaks(x,y);
-%   time    = [1:nt];
 %   mask    = rand(size(z)) < 1;
+%   mask(1:5,1:5) = 0; % land
 %
 %   for it=1:nt
 %     noise  = rand(size(z)).*z./100;
 %     clouds = double(rand(size(z)) < 0.95);
 %     clouds(clouds==0)=nan;
 %     data(:,:,it) =     z.*cos(2.*pi.*it./nt).*clouds + ...
-%                   abs(z).*cos(pi.*it./nt) + noise;
+%                   abs(z).*cos(pi.*it./nt) + ...
+%                           noise;
 %   end
 %   
-%   OPT.ncfile   = ['T.nc'];
-%   OPT.resfile  = ['T_filled.nc'];
+%   OPT.ncfile   = ['dineof_demo.nc'];
+%   OPT.resfile  = ['dineof_demo_filled.nc'];% here eof filled data will be written
+%   OPT.eoffile  = ['dineof_demo_eof.nc'];   % here eof modes will be written
 %   OPT.nev      = 5; % max # of modes
 %   OPT.plot     = 1;
 %   
@@ -53,19 +55,22 @@ function varargout = run(data, time, mask, varargin)
    OPT.cleanup = 1;
    OPT.debug   = 0;
    OPT.plot    = 1;
+
+% other keywords
+
+   OPT.dataname      = 'data';
+   OPT.maskname      = 'mask';
+   OPT.timename      = 'time';
+   OPT.ncfile        = ['dummy.nc'];
+   OPT.resfile       = ['dummy_filled.nc'];
+   OPT.eoffile       = ['dummy_eof.nc'];
+   OPT.units         = '';
+   OPT.standard_name = '';
    
    if nargin==0
       varargout = {OPT};
       return
    end
-
-% other keywords
-
-   OPT.dataname = 'data';
-   OPT.maskname = 'mask';
-   OPT.timename = 'time';
-   OPT.ncfile   = ['dummy.nc'];
-   OPT.resfile  = ['dummy_filled.nc'];
    
    OPT = setproperty(OPT,varargin);
     
@@ -99,8 +104,14 @@ function varargout = run(data, time, mask, varargin)
    netcdf.putAtt(NCid,varid.time,'standard_name','days since 1970-01-01');
    
    netcdf.putAtt(NCid,varid.data,'long_name'    ,'data');
-   netcdf.putAtt(NCid,varid.data,'missing_value',-999); % clouds
-   netcdf.putAtt(NCid,varid.data,'_FillValue'   ,-999); % clouds
+   netcdf.putAtt(NCid,varid.data,'missing_value',9999); % clouds
+   netcdf.putAtt(NCid,varid.data,'_FillValue'   ,9999); % clouds
+   if ~isempty(OPT.units)
+   netcdf.putAtt(NCid,varid.data,'units'        ,OPT.units);
+   end
+   if ~isempty(OPT.standard_name)
+   netcdf.putAtt(NCid,varid.data,'standard_name',OPT.standard_name);
+   end
    
    netcdf.putAtt(NCid,varid.mask,'long_name'    ,'mask');
    netcdf.putAtt(NCid,varid.mask,'flag_values'  ,[0 1]);
@@ -161,10 +172,10 @@ else
    dataf    = netcdf.getVar(NCid,varid);
    
    nodata   = netcdf.getAtt(NCid,varid,'_FillValue');
-   dataf(data==nodata)=NaN;
+   dataf(dataf==nodata)=NaN;
 
    nodata   = netcdf.getAtt(NCid,varid,'missing_value');
-   dataf(data==nodata)=NaN;
+   dataf(dataf==nodata)=NaN;
 
    netcdf.close (NCid)
 
@@ -175,7 +186,72 @@ else
   [S.varEx, S.varLab] = dineof_io_varEx(   'outputEof.varEx' );
    S.vlsng  =                      load(   'outputEof.vlsng' );
 
-  %% delete outpout
+  %% save results to netcdf
+
+   mode     = netcdf.getConstant('CLOBBER'); % do not overwrite existing files
+   NCid     = netcdf.create(OPT.eoffile,mode);
+   globalID = netcdf.getConstant('NC_GLOBAL');
+   
+   dimid.time     = netcdf.defDim(NCid,'time' ,size(data,3));
+   dimid.P        = netcdf.defDim(NCid,'P'    ,S.P);
+   for i=1:length(size(data))-1
+   dimname = ['space',num2str(i)];
+   dimid.space(i) = netcdf.defDim(NCid,dimname,size(data,i));
+   end
+   
+   varid.time   = netcdf.defVar(NCid,OPT.timename,'float' ,dimid.time); 
+   varid.mask   = netcdf.defVar(NCid,OPT.maskname,'short' ,dimid.space); 
+
+   varid.P      = netcdf.defVar(NCid,'P'     ,'float' ,[]); 
+   varid.mean   = netcdf.defVar(NCid,'mean'  ,'float' ,[]); 
+   varid.lftvec = netcdf.defVar(NCid,'lftvec','float' ,[dimid.P dimid.space]); 
+   varid.rghvec = netcdf.defVar(NCid,'rghvec','float' ,[dimid.P dimid.time]); 
+   varid.vlsng  = netcdf.defVar(NCid,'vlsng' ,'float' , dimid.P); 
+   varid.varEx  = netcdf.defVar(NCid,'varEx' ,'float' , dimid.P); 
+   
+   netcdf.putAtt(NCid,varid.P     ,'long_name'    ,'optimal number of EOF modes');
+   netcdf.putAtt(NCid,varid.mean  ,'long_name'    ,'spatiotemporal mean');
+   netcdf.putAtt(NCid,varid.lftvec,'long_name'    ,'spatial EOF modes');
+   netcdf.putAtt(NCid,varid.rghvec,'long_name'    ,'temporal EOF modes');
+   netcdf.putAtt(NCid,varid.vlsng ,'long_name'    ,'singular values');
+   netcdf.putAtt(NCid,varid.varEx ,'long_name'    ,'explained variance');
+
+   netcdf.putAtt(NCid,varid.time  ,'standard_name','time');
+   netcdf.putAtt(NCid,varid.time  ,'standard_name','days since 1970-01-01');
+
+   netcdf.putAtt(NCid,varid.mask  ,'long_name'    ,'mask');
+   netcdf.putAtt(NCid,varid.mask  ,'flag_values'  ,[0 1]);
+   netcdf.putAtt(NCid,varid.mask  ,'flag_meanings','land ocean');
+
+   netcdf.putAtt(NCid,varid.mean  ,'units'        , 0.01); % percent
+   if ~isempty(OPT.units)
+   netcdf.putAtt(NCid,varid.mean  ,'units'        ,OPT.units);
+   end
+   if ~isempty(OPT.standard_name)
+   netcdf.putAtt(NCid,varid.mean  ,'standard_name',OPT.standard_name);
+   end
+   
+   netcdf.putAtt(NCid,varid.varEx ,'units'        , 0.01); % percent
+
+   netcdf.endDef(NCid,20e3,4,0,4); 
+
+   netcdf.putVar(NCid,varid.time,time - datenum(1970,1,1));
+   netcdf.putVar(NCid,varid.mask,int8(mask));
+
+   netcdf.putVar(NCid,varid.P     ,S.P);
+   netcdf.putVar(NCid,varid.mean  ,S.mean);
+   netcdf.putVar(NCid,varid.lftvec,S.lftvec);
+   netcdf.putVar(NCid,varid.rghvec,S.rghvec);
+   netcdf.putVar(NCid,varid.vlsng ,S.vlsng);
+   netcdf.putVar(NCid,varid.varEx ,S.varEx);
+
+   netcdf.close (NCid)
+   
+   if OPT.debug
+      nc_dump(OPT.ncfile)
+   end
+
+  %% delete output
 
   if OPT.cleanup
      delete('meandata.val'    );
