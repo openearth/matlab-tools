@@ -1,37 +1,61 @@
 % Application-specific tools in <a href="http://www.OpenEarth.eu">OpenEarthTools</a>
 %
 % OpenEarthTools application-specific toolboxes.
-%   arcgis             - tools to read Arc ASCII Grid Format
-%   bzip               - bzip compression/decompression <a href="http://www.bzip.org">www.bzip.org</a>
+%
+% GUIS for model pre-and postprocessing
+%   DelftDashBoard     - DelftDashBoard
+%   muppet             - GUI for postprocessing of delft3d and other models
+%
+% Libraries for model pre-and postprocessing
 %   delft3d            - model: <a href="http://www.delft3d.nl">Delft3d</a>
-%   DuneErosionLibrary - general duen erosion library
-%   DUROS              - model: duros
-%   durosta            - model: durosta
-%   FEWS-World         - visualize <a href="http://vanbeek.geo.uu.nl/suppinfo/vanbeekbierkens2009.pdf">PCR-GLOBWB </a> hydrological climate scenarios
-%   googleearth        - viewer: <a href="http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=12954">Google Earth Toolbox</a>
-%   googlePlot         - viewer: Google Earth Toolbox, with options for curvi-linear grids
-%   grid_2D_orthogonal - library to work with tiled sets of orthogonal netCDF grids
-%   KNMI               - data:  <a href="http://www.knmi.nl">KNMI</a>
-%   m_map              - viewer: mapping toolbox <a href="http://www.eos.ubc.ca/~rich/map.html">m_map</a> from Rich Pawlowicz.
-%   mm                 - multimedia tools
-%   OceanDataView      - data: data format from <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a>, <a href="http://www.nodc.nl">www.nodc.nl</a>.
-%   oceancolor         - data:  tools for ocean color satellite images of <a href="http://modis.gsfc.nasa.gov/">MODIS</a>, <a href="http://oceancolor.gsfc.nasa.gov/SeaWiFS/">SeaWiFS</a>, <a href="http://envisat.esa.int/instruments/meris/">MERIS</a>
-%   pontos             - model: <a href="http://www.alkyon.nl/Tools/Pontos.htm">PonTos</a>
-%   probabilistic      - application
-%   Rijkswaterstaat    - data: <a href="http://www.Rijkswaterstaat.nl">Rijkswaterstaat</a>
-%   *  JarKus          - tools for Rijkswaterstaat <a href="http://www.watermarkt.nl/kustenzeebodem/">JarKus</a> coastal bathymetry dataset
-%   *  vaklodingen     - tools for Rijkswaterstaat <a href="http://www.watermarkt.nl/kustenzeebodem/">vaklodingen</a> coastal bathymetry dataset
-%   *  bathymetry      - tools for extracting JarKus and vaklodingen bahtymetries from OPeNDAP server
-%   *  MATROOS         - tools for extracting data from Rijkswaterstaat operational <a href="http://matroos.deltares.nl/">MATROOS</a> database
+%   delft3d_matlab     - external include of oficle Delft3D matlab toolbox (no write access allowed)
 %   sobek              - model: <a href="http://www.SOBEK.nl">SOBEK</a>
-%   SuperTrans         - global coordinate transformations for <a href="http://www.epsg-registry.org/">OGP EPSG</a> systems.
 %   SWAN               - model: <a href="http://www.SWAN.tudelft.nl">SWAN</a>  (see also: waves)
-%   TASS               - model: <a href="http://dredgingdays.org/content.asp?page=6&owner=3">Turbidity Assessment Software</a>
-%   textpad            - program: <a href="http://www.textpad.com">textpad</a>
-%   tide               - application
-%   UCIT               - application: Universal Coastal Intelligence Toolkit (OPeNDAP access)
-%   waves              - application: waves (see also: swan)
 %   xbeach             - model: <a href="http://XBeach.org">XBeach</a>
+%
+% Coastal morphology and sediment transport
+%   CoastalMorphologyModeling - exercises/examples from book of Prof. Roelvink.
+%   cmg                       - tools from Coastal Morphology Group of USGS
+%   cosmos                    - framework to run operational combinations of nested models
+%   detran                    - GUI for postprocessing of delft3d sediment transport
+%   DuneErosionLibrary        - general dune erosion library
+%   TASS                      - model: <a href="http://dredgingdays.org/content.asp?page=6&owner=3">Turbidity Assessment Software</a>
+%   DUROS                     - model: duros
+%   durosta                   - model: durosta
+%   pontos                    - model: <a href="http://www.alkyon.nl/Tools/Pontos.htm">PonTos</a>
+%
+% Data processing
+%   grid_2D_orthogonal - library to use    tiled sets of orthogonal netCDF grids
+%   nc_processing      - library to create tiled sets of orthogonal netCDF grids
+%   UCIT               - GUI     to use    tiled sets of orthogonal netCDF grids (Universal Coastal Intelligence Toolkit)
+%   KNMI               - download and parse datasets from <a href="http://www.knmi.nl">KNMI</a> 
+%   Rijkswaterstaat    - download and parse datasets from <a href="http://www.Rijkswaterstaat.nl">Rijkswaterstaat</a> 
+%   *  JarKus          - JarKus coastal profiles bathymetry dataset
+%   *  vaklodingen     - vaklodingen coastal bathymetry dataset
+%   *  MATROOS         - operational <a href="http://matroos.deltares.nl/">MATROOS</a> datasets
+%   OceanDataView      - library for working with datasets from <a href="http://www.SeaDataNet.org">www.SeaDataNet.org</a>, <a href="http://www.nodc.nl">www.nodc.nl</a>.
+%   oceancolor         - library for working with datasets from <a href="http://modis.gsfc.nasa.gov/">MODIS</a>, <a href="http://oceancolor.gsfc.nasa.gov/SeaWiFS/">SeaWiFS</a>, <a href="http://envisat.esa.int/instruments/meris/">MERIS</a>
+%
+% Dedicated toolboxes
+%   bzip               - bzip compression/decompression <a href="http://www.bzip.org">www.bzip.org</a>
+%   dineof             - tools to perform EOF analysis on time series of matrices
+%   FEWS-World         - visualize <a href="http://vanbeek.geo.uu.nl/suppinfo/vanbeekbierkens2009.pdf">PCR-GLOBWB </a> hydrological climate scenarios
+%   knowledgegraphs    - tool to make knowledgegraphs
+%   modelvalidation    - tools to make Taylor model performance diagrams
+%   probabilistic      - application
+%   statistic          - frequency of exceedance toolbox
+%   textpad            - program: <a href="http://www.textpad.com">textpad</a>
+%   tide               - t_tide and associated tools
+%   waves              - waves related functions (see also: swan)
+%
+% GIS & Google Earth
+%   arcgis             - tools to read Arc ASCII Grid Format
+%   ldbTool            - GUI to manipulate land boundaryes (coastlines, shapefiles)
+%   mm                 - multimedia tools
+%   m_map              - viewer: mapping toolbox <a href="http://www.eos.ubc.ca/~rich/map.html">m_map</a> from Rich Pawlowicz.
+%   googlePlot         - viewer: Google Earth Toolbox, with options for curvi-linear grids
+%   SuperTrans         - GUI     for global coordinate transformations
+%   convertcoordinates - library for global coordinate transformations
 %
 % See also: OpenEarthTools: general, io
 
