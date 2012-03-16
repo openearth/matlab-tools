@@ -3,10 +3,10 @@ function w = yearweek(datenums);
 %
 % w = yearweek(datenum) 
 %
-% returns the week number assuming Januari 1st to 7th
+% returns the week number assuming January 1st to 7th
 % as the first week.
 %
-% So this is not the week as applied in agendas.
+% Note: this is not the week as applied in agendas.
 %
 %See also: DATENUM, YEARDAY
 
