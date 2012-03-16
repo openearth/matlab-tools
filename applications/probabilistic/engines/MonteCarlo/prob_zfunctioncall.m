@@ -123,7 +123,7 @@ function inputargs = x2inputargs(fun, x, stochast)
 inputargs = {};
 
 for ivar = 1:length(stochast)
-    if isfield(stochast(ivar), 'Name') && isOETInputCompatible(fun)
+    if isfield(stochast(ivar), 'Name') && stochast(ivar).propertyName || isOETInputCompatible(fun)
         % propertyName is equal to Name in stochast structure
         inputargs = [inputargs {stochast(ivar).Name} {x(:,ivar)}];
     else
