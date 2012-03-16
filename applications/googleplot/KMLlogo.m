@@ -96,30 +96,24 @@ function varargout = KMLlogo(varargin)
 
 %% do image stuff: white image with transparancy ~ lack of white
 
-  [im,map] = imread([imName]);
+  [im,map,im4alpha0] = imread([imName]);
   
    if ~isempty(map)
    im = ind2rgb(im,map).*255;
    end
    
-   im4alpha = im(:,:,3);
-   
-   % Use exisitng alpha when present,
-   % otherwise calculate alpha by scaling image
-   if any(im4alpha(:) > 0)
-       %im4alpha = im4alpha./max(im4alpha(:)).*255
-       null = im4alpha==0
-       im4alpha = (.5 + im4alpha./max(im4alpha(:)))*255
-       im4alpha(null) = 0;
-       pcolor(double(im4alpha));colorbar
+   % make alpha sum of rgb values
+   if OPT.invertblackwhite
+   im4alpha =  sum(im,3)./255./3;
    else
-       % make alpha sum of rgb values
-       if OPT.invertblackwhite
-       im4alpha =  sum(im,3)./255./3;
-       else
-       im4alpha = 1-sum(im,3)./255./3;
-       end
-       im4alpha = im4alpha./max(im4alpha(:));% scale so lightest pixel is fully white
+   im4alpha = 1-sum(im,3)./255./3;
+   end
+   im4alpha = im4alpha./max(im4alpha(:));% scale so lightest pixel is fully white
+   
+   % Use exisitng alpha when present
+   % otherwise calculate alpha by scaling image
+   if any(im4alpha0(:) > 0)
+   im4alpha = double(im4alpha0)./255.*double(im4alpha);
    end
    
    if isempty(OPT.logoName)

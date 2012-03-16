@@ -114,8 +114,10 @@ function varargout = KML_colorbar(OPT)
       error('KMLcolorbar')
    end
    h.ax = gca;
+   % if only one color is available, expand color limits:
+   % add a relative amount: 0.01%, so it always works, also for very for big/small numbers
    if OPT.CBcLim(1)==OPT.CBcLim(2)
-      OPT.CBcLim = OPT.CBcLim + 1e3.*[-eps eps];
+      OPT.CBcLim = OPT.CBcLim + 1e-4.*[-1 1].*OPT.CBcLim;
    end
    h.c  = colorbarlegend(gca,[0 1],[0 1],OPT.CBcLim,...
             'ontop',0,...
