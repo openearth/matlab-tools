@@ -20,9 +20,14 @@
 % This has the same syntax as the outdated, unsupported netcdf toolbox
 % in mexcdf (http://sourceforge.net/projects/mexcdf/)
 %
-% init                           - initialises     DINEOF setings
-% initread                       - reads file with DINEOF setings
-% initwrite                      - saves file with DINEOF setings
-% run                            - wrapper to call DINEOF via memory (without explicit file IO)
+% high-level
+%   run                            - run DINEOF (via memory, without explicit file IO)
+%   inpect                         - inspect DINEOF results with plot
+%
+% low-level
+%   init                           - initialises     DINEOF setings
+%   initread                       - reads file with DINEOF setings
+%   initwrite                      - saves file with DINEOF setings
+%   unpack                         - explode vector to full matrix using and apply land mask
 %
 %See also: 

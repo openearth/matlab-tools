@@ -3,16 +3,19 @@ function varargout = run(data, time, mask, varargin)
 %
 %    dataf = dineof.run(data, time, mask, <keyword,value>)
 %
-% where dataf is the filled + smoothed data.
+% where dataf is the filled + smoothed data. The dimensions 
+% should be time(t), data(x,<y>,t), mask(x,<y>). Any missing 
+% y dimension is permuted before calling dineof.exe.
 %
 %    [dataf,D] = dineof.run(data, time, mask, <keyword,value>)
 %
 % where optionally struct D with the mean, the spatial & temporal
 % EOF modes, the singular values and the exlained variance 
-% can be returned. All files are deleted afterwards and saved into
-% 1 netCDF file, unless keyword 'cleanup' is set to 0.
+% can be returned. All temporary DINEOF files are deleted afterwards 
+% and saved into 1 netCDF file, unless keyword 'cleanup' is set to 0.
+% Note that the upcoming DINEOF release will save the EOFs to netCDF itself.
 %
-% Example:
+% Example 2D matrices:
 %
 %   nt      = 14;time    = [1:nt];
 %   ny      = 20;
@@ -31,20 +34,14 @@ function varargout = run(data, time, mask, varargin)
 %                           noise;
 %   end
 %   
-%   OPT.ncfile   = ['dineof_demo.nc'];
-%   OPT.resfile  = ['dineof_demo_filled.nc'];% here eof filled data will be written
-%   OPT.eoffile  = ['dineof_demo_eof.nc'];   % here eof modes will be written
-%   OPT.nev      = 5; % max # of modes
-%   OPT.plot     = 1;
-%   
-%   [dataf,eofs] = dineof.run(data, time, mask, OPT);
+%   [dataf,eofs] = dineof.run(data, time, mask, 'nev',5,'plot',1);
 %
 %See also: dineof, harmanal
 
 % DINEOF suggestions
 % - use ? instead of #, then the syntax is OPeNDAP
 % - also use [] for time string
-% - make keyword output fully small case
+% - make keyword 'output' fully small case
 
 % dineof keywords: order here is important as
 % it determines order in init file
@@ -84,16 +81,68 @@ function varargout = run(data, time, mask, varargin)
    
    dineof.initwrite(OPT,initfile);
 
+%% make data matrix [M x N] that DINEOF swallows, where M or 
+%  N can be 1, but DINEOF will swap dimensions internally in one case
+
+   sz0 = size(data);
+   sz  = size(data);
+   permuteback = [1 2 3];
+   
+   if length(sz0)==2
+   
+     data = permute(data,[1 3 2]);
+     mask = mask(:);
+     sz   = size(data);
+     dim  = 1;
+     permuteback = [1 3 2];
+     
+   elseif length(sz0)==3 & sz0(1)==1
+
+     data = permute(data,[2 1 3]);
+     mask = mask(:);
+     sz   = size(data);
+     dim  = 1;
+     permuteback = [2 1 3];
+
+   elseif length(sz0)==3 & sz0(2)==1
+
+     % data already OK
+     mask = mask(:);
+     sz   = size(data);
+     dim  = 1;
+
+   elseif length(sz0)>3
+   
+      error('only 1D vector and 2D matrix data implemented, no 3D cubes or higher yet.')
+      
+   else
+     dim = 2;
+  end
+   
+   
+
+%% check DINEOF requirements: time(t), data(x,y,t), mask(x,y)
+
+   if ~(sz(3)==length(time))
+      whos
+      error('data(x,y,:) should have length time')
+   end
+
+   if ~(isequal(sz(1:2),size(mask)))
+      whos
+      error('data(:,:,y) should have size mask')
+   end
+
 %% write input data
 
-   mode     = netcdf.getConstant('CLOBBER'); % do not overwrite existing files
+   mode     = netcdf.getConstant('CLOBBER'); % do overwrite existing files
    NCid     = netcdf.create(OPT.ncfile,mode);
    globalID = netcdf.getConstant('NC_GLOBAL');
    
-   dimid.time     = netcdf.defDim(NCid,'time' ,size(data,3));
-   for i=1:length(size(data))-1
+   dimid.time     = netcdf.defDim(NCid,'time' ,sz(end));
+   for i=1:length(sz)-1
    dimname = ['space',num2str(i)];
-   dimid.space(i) = netcdf.defDim(NCid,dimname,size(data,i));
+   dimid.space(i) = netcdf.defDim(NCid,dimname,sz(i));
    end
    
    varid.data = netcdf.defVar(NCid,OPT.dataname,'double',[dimid.space dimid.time]); 
@@ -168,27 +217,27 @@ else
 
    NCid     = netcdf.open(OPT.resfile,'NOWRITE');
    
-   varid    = netcdf.inqVarID(NCid,OPT.dataname);
-   dataf    = netcdf.getVar(NCid,varid);
+   varid.dataf = netcdf.inqVarID(NCid,OPT.dataname);
+   dataf       = netcdf.getVar(NCid,varid.dataf);
    
-   nodata   = netcdf.getAtt(NCid,varid,'_FillValue');
+   nodata   = netcdf.getAtt(NCid,varid.dataf,'_FillValue');
    dataf(dataf==nodata)=NaN;
 
-   nodata   = netcdf.getAtt(NCid,varid,'missing_value');
+   nodata   = netcdf.getAtt(NCid,varid.dataf,'missing_value');
    dataf(dataf==nodata)=NaN;
 
    netcdf.close (NCid)
 
    S.mean   =                      load(    'meandata.val'   );
    S.P      =                      load('neofretained.val'   );
-   S.lftvec =        dineof_unpack(load(   'outputEof.lftvec'),mask);
+   S.lftvec =        dineof.unpack(load(   'outputEof.lftvec'),mask);
    S.rghvec =                      load(   'outputEof.rghvec');
-  [S.varEx, S.varLab] = dineof_io_varEx(   'outputEof.varEx' );
+  [S.varEx, S.varLab] =           varEx(   'outputEof.varEx' );
    S.vlsng  =                      load(   'outputEof.vlsng' );
 
   %% save results to netcdf
 
-   mode     = netcdf.getConstant('CLOBBER'); % do not overwrite existing files
+   mode     = netcdf.getConstant('CLOBBER'); % do overwrite existing files
    NCid     = netcdf.create(OPT.eoffile,mode);
    globalID = netcdf.getConstant('NC_GLOBAL');
    
@@ -266,99 +315,42 @@ else
      delete(initfile);
      delete(logfile );
 
-     delete(OPT.resfile);
      delete(OPT.ncfile );
+     delete(OPT.resfile);
+     delete(OPT.eoffile );
   end
-  
 end   
 
-if OPT.plot
-   TMP = figure;
-   nt  = length(S.rghvec);
-   r   = [min(data(:)) max(data(:))];
+%% plot
 
-   %% spatial modes
-   subplot(1,4,3)
-   for im=1:S.P
-   surf(0.*S.lftvec(:,:,im)+im,S.lftvec(:,:,im))
-   hold on
+   if OPT.plot
+      TMP = figure;
+      dineof.inspect(data, time, mask, dataf, S);
+      pausedisp
+      try, close(TMP),end
    end
-   zlim([1 max(2,S.P)])
-   grid on
-   colorbarwithhtext('leftvec','horiz')
-   shading interp
-   zlabel('modes')  
-   set(gca,'zdir','reverse')
-    
-   %% 1st temporal modes
-   subplot(1,4,4)
-   for im=1:S.P
-   plot(S.rghvec(:,im),time,'.-','Color',repmat(interp1([S.P 0],[0.9 0],im),[1 3]),'DisplayName',S.varLab{im});
-   hold on
+
+%% out
+
+   dataf = permute(dataf,permuteback);
+
+   if nargout==1
+      varargout = {dataf};
+   else
+      varargout = {dataf,S};
    end
-   zlim([0 nt])
-   grid on
-   xlabel('rghvec')
-   ylabel('time')
-   legend show
-   
-   %% data
-   subplot(1,4,1)
-   caxis([min(data(:)) max(data(:))])
-   d = surf(data(:,:,1).*0,data(:,:,1));
-   hold on
-   zlim([0 nt])
-   grid on
-   zlabel('time')
-   shading interp
-   clim(r)
-   colorbarwithhtext('raw data','horiz')
-   view(-20,10)
 
-   %% data filled
-   subplot(1,4,2)
-   caxis([min(data(:)) max(data(:))])
-   df = surf(dataf(:,:,1).*0,dataf(:,:,1));
-   hold on
-   zlim([0 nt])
-   grid on
-   zlabel('time')
-   shading interp
-   clim(r)
-   colorbarwithhtext('filled data','horiz')
-   view(-20,10)
+function [varex,labels] = varEx(fname)
+%varEx read explained variance
+%
+% varex = dineof.varEx(fname)
+%
+%See also: dineof
 
-   for it=1:nt
-   
-      if nt > 20
-      
-         set(d,'zdata',data(:,:,1 ).*0+it)
-         set(d,'cdata',data(:,:,it))
+[labels]=textread(fname,'%s','whitespace','\n');
 
-         set(df,'zdata',dataf(:,:,1 ).*0+it)
-         set(df,'cdata',dataf(:,:,it))
-         pause(0.01)
-         
-      else
-      
-         subplot(1,4,1)
-         surf(dataf(:,:,1).*0+it,data(:,:,it));
-         shading interp
-      
-         subplot(1,4,2)
-         surf(dataf(:,:,1).*0+it,dataf(:,:,it));
-         shading interp
+[number,varex,~]=textread(fname,'Mode %d=%f %s');
 
-      end
-
-   end
-   
-   %try, close(TMP),end
-
-end
-
-if nargout==1
-   varargout = {dataf};
-else
-   varargout = {dataf,S};
+for i=1:length(varex)
+   labels{i} = ['Mode ',num2str(i,'%d'),' = ',num2str(varex(i),'%0.1f'),' %'];
 end
