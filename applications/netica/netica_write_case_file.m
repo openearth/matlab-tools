@@ -115,7 +115,9 @@ if OPT.comments
     txt = sprintf('%s//%s\n', OPT.comments);
 end
 
-txt = sprintf('%s//Created at: %s\n//Created by: %s\n', txt, OPT.date, getenv('username'));
+creator = sprintf('%s @ %s (%s)', getenv('USERNAME'), getenv('COMPUTERNAME'), getenv('USERDOMAIN'));
+
+txt = sprintf('%s// Created at: %s\n// Created by: %s\n', txt, OPT.date, creator);
 
 % create cell matrix containing the formats
 formats = [repmat({'%'}, size(varnames'));...
