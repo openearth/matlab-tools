@@ -163,12 +163,12 @@ for j=1:length(flist)
                         mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
                         copyfile([inipath 'toolboxes' filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
                     end
-                    try
-                        if isdir([inipath 'toolboxes' filesep toolbox filesep 'misc'])
-                            mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-                            copyfiles([inipath 'toolboxes' filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-                        end
-                    end
+%                     try
+%                         if isdir([inipath 'toolboxes' filesep toolbox filesep 'misc'])
+%                             mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+%                             copyfiles([inipath 'toolboxes' filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+%                         end
+%                     end
             end
         end
     end
@@ -178,8 +178,10 @@ end
 inifile=[inipath 'DelftDashBoard.ini'];
 try
     additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
+    DataDir=getINIValue(inifile,'DataDir'); 
 catch
     additionalToolboxDir=[];
+    DataDir=[];
 end
 if ~isempty(additionalToolboxDir)
     % Add toolboxes
@@ -203,12 +205,12 @@ if ~isempty(additionalToolboxDir)
                             mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
                             copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
                         end
-                        try
-                            if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
-                                mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-                                copyfiles([additionalToolboxDir filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-                            end
-                        end
+%                         try
+%                             if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
+%                                 mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+%                                 copyfiles([additionalToolboxDir filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
+%                             end
+%                         end
                 end
             end
         end
@@ -226,7 +228,7 @@ try
 end
 
 %% Generate data folder in exe folder
-ddb_copyAllFilesToDataFolder(inipath,[inipath filesep 'exe' filesep 'data' filesep],additionalToolboxDir);
+ddb_copyAllFilesToDataFolder(inipath,[inipath filesep 'exe' filesep 'data' filesep],additionalToolboxDir,DataDir);
 
 %mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
 mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\netcdfAll-4.2.jar -M earthicon.res

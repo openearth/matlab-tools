@@ -1,4 +1,4 @@
-function ddb_copyAllFilesToDataFolder(inipath, ddbdir, additionalToolboxDir)
+function ddb_copyAllFilesToDataFolder(inipath, ddbdir, additionalToolboxDir, DataDir)
 %DDB_COPYALLFILESTODATAFOLDER  One line description goes here.
 %
 %   More detailed description goes here.
@@ -66,12 +66,9 @@ function ddb_copyAllFilesToDataFolder(inipath, ddbdir, additionalToolboxDir)
 disp('Copying data file from repository ...');
 mkdir(ddbdir);
 mkdir([ddbdir 'bathymetry']);
-copyfiles([inipath 'data' filesep 'bathymetry'],[ddbdir 'bathymetry']);
 mkdir([ddbdir 'imagery']);
 mkdir([ddbdir 'shorelines']);
-copyfiles([inipath 'data' filesep 'shorelines'],[ddbdir 'shorelines']);
 mkdir([ddbdir 'tidemodels']);
-copyfiles([inipath 'data' filesep 'tidemodels'],[ddbdir 'tidemodels']);
 
 %  Do the same for the tropical cyclone directory structure, but don't
 %  perform a copyfiles() call, as there should be no files to copy.
@@ -81,14 +78,42 @@ mkdir([ddbdir 'tropicalcyclone' filesep 'NHC']);   % NHC warning files subdir.
 
 mkdir([ddbdir 'toolboxes']);
 mkdir([ddbdir 'supertrans']);
-epf=which('EPSG.mat');
-if ~isempty(epf)
-    copyfile(epf,[ddbdir 'supertrans']);
+if ~isempty(DataDir)
+    copyfiles([DataDir 'bathymetry'],[ddbdir 'bathymetry']);
+%     flist=dir([ddbdir 'bathymetry' filesep '*.xml']);
+%     for ii=1:length(flist)
+%         delete([ddbdir 'bathymetry' filesep flist(ii).name]);
+%     end
+    copyfiles([DataDir 'shorelines'],[ddbdir 'shorelines']);
+%     flist=dir([ddbdir 'shorelines' filesep '*.xml']);
+%     for ii=1:length(flist)
+%         delete([ddbdir 'shorelines' filesep flist(ii).name]);
+%     end
+    copyfiles([DataDir 'tidemodels'],[ddbdir 'tidemodels']);
+%     flist=dir([ddbdir 'tidemodels' filesep '*.xml']);
+%     for ii=1:length(flist)
+%         delete([ddbdir 'tidemodels' filesep flist(ii).name]);
+%     end
+    copyfiles([DataDir 'supertrans'],[ddbdir 'supertrans']);
+%     flist=dir([ddbdir 'supertrans' filesep '*.xml']);
+%     for ii=1:length(flist)
+%         delete([ddbdir 'supertrans' filesep flist(ii).name]);
+%     end
+else    
+    copyfiles([inipath 'data' filesep 'bathymetry'],[ddbdir 'bathymetry']);
+    copyfiles([inipath 'data' filesep 'shorelines'],[ddbdir 'shorelines']);
+    copyfiles([inipath 'data' filesep 'tidemodels'],[ddbdir 'tidemodels']);
+    copyfiles([inipath 'data' filesep 'supertrans'],[ddbdir 'supertrans']);
 end
-epf=which('EPSG_ud.mat');
-if ~isempty(epf)
-    copyfile(epf,[ddbdir 'supertrans']);
-end
+
+% epf=which('EPSG.mat');
+% if ~isempty(epf)
+%     copyfile(epf,[ddbdir 'supertrans']);
+% end
+% epf=which('EPSG_ud.mat');
+% if ~isempty(epf)
+%     copyfile(epf,[ddbdir 'supertrans']);
+% end
 
 % Find toolboxes and copy all files in data folders
 flist=dir([inipath 'toolboxes']);
@@ -97,9 +122,19 @@ for i=1:length(flist)
         switch lower(flist(i).name)
             case{'.','..','.svn'}
             otherwise
-                if isdir([inipath 'toolboxes' filesep flist(i).name filesep 'data'])
-                    mkdir([ddbdir 'toolboxes' filesep flist(i).name]);
-                    copyfiles([inipath 'toolboxes' filesep flist(i).name filesep 'data'],[ddbdir 'toolboxes' filesep flist(i).name]);
+%                 if isdir([inipath 'toolboxes' filesep flist(i).name filesep 'data'])
+%                     mkdir([ddbdir 'toolboxes' filesep flist(i).name]);
+%                     copyfiles([inipath 'toolboxes' filesep flist(i).name filesep 'data'],[ddbdir 'toolboxes' filesep flist(i).name]);
+%                 end
+                if isdir([DataDir 'toolboxes' filesep flist(i).name])
+                    if ~isdir([ddbdir 'toolboxes' filesep flist(i).name])
+                        mkdir([ddbdir 'toolboxes' filesep flist(i).name]);
+                    end
+                    copyfiles([DataDir 'toolboxes' filesep flist(i).name],[ddbdir 'toolboxes' filesep flist(i).name]);
+%                     flist2=dir([ddbdir 'toolboxes' filesep flist(i).name filesep '*.xml']);
+%                     for ii=1:length(flist2)
+%                         delete([ddbdir 'toolboxes' filesep flist(i).name filesep flist2(ii).name]);
+%                     end
                 end
         end
     end
@@ -113,10 +148,20 @@ if ~isempty(additionalToolboxDir)
             switch lower(flist(i).name)
                 case{'.','..','.svn'}
                 otherwise
-                    if isdir([additionalToolboxDir filesep flist(i).name filesep 'data'])
+%                     if isdir([additionalToolboxDir filesep flist(i).name filesep 'data'])
+%                         mkdir([ddbdir 'toolboxes' filesep flist(i).name]);
+%                         copyfiles([additionalToolboxDir filesep flist(i).name filesep 'data'],[ddbdir 'toolboxes' filesep flist(i).name]);
+%                     end
+                if isdir([DataDir 'toolboxes' filesep flist(i).name])
+                    if ~isdir([ddbdir 'toolboxes' filesep flist(i).name])
                         mkdir([ddbdir 'toolboxes' filesep flist(i).name]);
-                        copyfiles([additionalToolboxDir filesep flist(i).name filesep 'data'],[ddbdir 'toolboxes' filesep flist(i).name]);
                     end
+                    copyfiles([DataDir 'toolboxes' filesep flist(i).name],[ddbdir 'toolboxes' filesep flist(i).name]);
+%                     flist2=dir([ddbdir 'toolboxes' filesep flist(i).name filesep '*.xml']);
+%                     for ii=1:length(flist2)
+%                         delete([ddbdir 'toolboxes' filesep flist(i).name filesep flist2(ii).name]);
+%                     end
+                end                    
             end
         end
     end

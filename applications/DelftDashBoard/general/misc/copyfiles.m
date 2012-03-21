@@ -73,8 +73,14 @@ end
 
 flist=dir([inpdir filesep '*']);
 for i=1:length(flist)
-    if ~isdir([inpdir filesep flist(i).name])
-        copyfile([inpdir filesep flist(i).name],outdir);
+    switch lower(flist(i).name)
+        case{'.','..','.svn'}
+        otherwise
+        if ~isdir([inpdir filesep flist(i).name])
+            copyfile([inpdir filesep flist(i).name],outdir);
+        else
+            copyfile([inpdir filesep flist(i).name],[outdir filesep flist(i).name])
+        end
     end
 end
 
