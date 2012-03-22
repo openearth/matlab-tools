@@ -28,7 +28,7 @@ function [alpha a b dim dir] = xb_grid_rotation(x, y, z, varargin)
 %   Copyright (C) 2010 Deltares
 %       Bas Hoonhout
 %
-%       bas.hoonhout@deltares.nl	
+%       bas.hoonhout@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -48,9 +48,9 @@ function [alpha a b dim dir] = xb_grid_rotation(x, y, z, varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -87,7 +87,7 @@ if isempty(y); y = 0; end;
 
 alpha = 0;
 if ~isnan(b)
-    
+
     alpha = pi/2-atan(b);
 
     % correct
@@ -103,6 +103,7 @@ else
         alpha = pi;
     end
 end
+alpha = -alpha;
 
 % convert units
 if strcmpi(OPT.units, 'degrees')

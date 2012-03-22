@@ -300,6 +300,11 @@ function mergedata(obj, event)
                 x{i} = nc_varget(urls{idx}, 'x');
                 y{i} = nc_varget(urls{idx}, 'y');
                 zta  = nc_varget(urls{idx}, 'z');
+                
+                while ndims(zta)<3
+                    zta = reshape(zta,[1 size(zta)]);
+                end
+                
                 z{i} = squeeze(zta(end,:,:));
 
                 for t = size(zta,1):-1:1

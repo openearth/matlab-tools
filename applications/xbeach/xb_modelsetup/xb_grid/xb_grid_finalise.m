@@ -92,7 +92,7 @@ function [x y z] = xb_grid_finalise(x, y, z, varargin)
 %% read options
 
 OPT = struct( ...
-    'actions', {{'lateral_extend' 'seaward_flatten'}}, ...
+    'actions', {{'lateral_extend' 'seaward_flatten' 'seaward_extend'}}, ...
     'n', 3, ...
     'z0', 5, ...
     'zmin', -20, ...
@@ -268,12 +268,14 @@ function [x y z] = landward_extend(x, y, z, OPT)
     z = zn;
     
 function [xn yn zn] = seaward_extend(x, y, z, OPT)
+    zmin = min(min(z(:,1)),OPT.zmin);
+
     z0 = max(z(:,1));
     dx = x(1,2)-x(1,1);
-    dn = ceil(max(z0-OPT.zmin,0)/(OPT.slope*dx));
+    dn = ceil(max(z0-zmin,0)/(OPT.slope*dx));
 
     zt = nan(size(x,1), size(x,2)-dn+OPT.n);
-    zt(:,1:OPT.n)     = OPT.zmin;
+    zt(:,1:OPT.n)     = zmin;
     zt(:,OPT.n+1:end) = z(:,dn+1:end); 
     
     [xt yt] = meshgrid([x(1,1)-[OPT.n:-1:1]*dx x(1,dn+1:end)] ,y(:,1));

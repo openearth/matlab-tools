@@ -69,6 +69,7 @@ function [x y z info] = arc_asc_read(fname, varargin)
 OPT.header = 6;
 OPT.format = '%f';
 OPT.zscale = 1;
+OPT.type   = 'single';
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -104,7 +105,7 @@ if exist(fname, 'file')
 
             % create matrix
             if j == 1
-                z = nan([info.NROWS*info.NCOLS/length(zi) length(zi)]);
+                z = nan([info.NROWS*info.NCOLS/length(zi) length(zi)],OPT.type);
             end
 
             % fill matrix

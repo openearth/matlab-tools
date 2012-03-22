@@ -69,7 +69,7 @@ function varargout = xb_gui_crop(x,y,z,varargin)
 
 alfa = xb_grid_rotation(x,y,z);
 
-[xr yr] = xb_grid_rotate(x,y,-alfa);
+[xr yr] = xb_grid_rotate(x,y,alfa);
 
 %% crop grid
 
@@ -84,7 +84,7 @@ uicontrol('Style', 'pushbutton', 'String', 'CROP',...
           'Callback', @crop);
 
 set(pobj, 'UserData', {xr yr z});
-      
+
 xb_gui_dragselect(gca, 'fcn', @drawrect);
 
 uiwait(pobj);
@@ -99,9 +99,9 @@ end
 
 function drawrect(obj, event, aobj, polx, poly)
     robj = findobj(aobj, 'Tag', 'crop');
-    
+
     pos  = [min(polx) min(poly) max(polx)-min(polx) max(poly)-min(poly)];
-    
+
     if ~isempty(robj)
         set(robj, 'Position', pos);
     else
@@ -112,17 +112,17 @@ end
 function crop(obj, event)
     pobj = get(obj, 'Parent');
     aobj = findobj(pobj, 'Type', 'axes');
-    
+
     robj = findobj(aobj, 'Tag', 'crop');
-    
+
     ud = get(pobj, 'UserData');
     [xr yr z] = ud{:};
-    
+
     if ~isempty(robj)
         pos     = get(robj, 'Position');
-        
+
         [x1 x2 y1 y2 cellsize] = xb_grid_extent(xr, yr);
-        
+
         % maximize grid size
         dd      = xb_grid_resolution(1:cellsize:pos(3), 1:cellsize:pos(4));
 
@@ -132,7 +132,7 @@ function crop(obj, event)
         % interpolate grids to output grid
         zc      = xb_grid_interpolate(xr, yr, z, xc, yc);
     end
-    
+
     set(pobj, 'UserData', {xc yc zc});
 
     uiresume(pobj);

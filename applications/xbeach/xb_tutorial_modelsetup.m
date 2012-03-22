@@ -15,7 +15,7 @@ xbm = xb_generate_model;
 %%
 % The variable _xbm_ now contains an XBeach model setup. Such model setup
 % is basically a representation of the params.txt file that is ultimately
-% generated to be able to run the model (see the 
+% generated to be able to run the model (see the
 % <http://www.xbeach.org XBeach website> for more information on how the
 % XBeach model works). Moreover, all files referred to in the params.txt
 % file, like bathymetries and surge files, are included in the model setup.
@@ -126,7 +126,7 @@ yori = min(min(y));
 
 % determine rotation of grid and correct
 alpha = xb_grid_rotation(x, y, z);
-[xr yr] = xb_grid_rotate(x, y, -alpha, 'origin', [xori yori]);
+[xr yr] = xb_grid_rotate(x, y, alpha, 'origin', [xori yori]);
 
 % plot rotated grid
 pcolor(xr, yr, z); shading flat; axis equal; colorbar;
@@ -167,10 +167,10 @@ pcolor(xf, yf, zf); shading flat; axis equal; colorbar;
 
 % obtain ArcGIS data from AHN25
 [x1 y1 z1 info] = arc_asc_read('P:\1002266-xbeach\XBeachToolbox\data\petten\ahn25_petten.asc', 'zscale', 1);
- 
+
 % obtain ArcGIS data from AHN5 (higher resolution, smaller area)
 [x2 y2 z2 info] = arc_asc_read('P:\1002266-xbeach\XBeachToolbox\data\petten\ahn5_petten.asc', 'zscale', 100);
- 
+
 % obtain preprocessed Vaklodingen data
 S = load('P:\1002266-xbeach\XBeachToolbox\data\petten\vaklodingen_petten.mat');
 x3 = S.x; y3 = S.y; z3 = S.z;

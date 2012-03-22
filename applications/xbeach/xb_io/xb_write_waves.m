@@ -199,6 +199,7 @@ while any(duration>OPT.maxduration)
     i           = find(duration>OPT.maxduration,1,'first');
     n           = floor(duration(i)/OPT.maxduration);
     d           = [repmat(OPT.maxduration,1,n) mod(duration(i), OPT.maxduration)];
+    n           = n-sum(d==0);
     d(d==0)     = [];
     idx         = [1:i-1 repmat(i,1,length(d)) i+1:length(duration)];
     duration    = [duration(1:i-1) d duration(i+1:end)];

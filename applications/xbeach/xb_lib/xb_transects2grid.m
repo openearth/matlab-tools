@@ -71,7 +71,7 @@ xori = min(min(transects.x));
 yori = min(min(transects.y));
 [xr yr] = xb_grid_world2xb(transects.x, transects.y, xori, yori, -angle_m);
 [xr_n,yr_n] = meshgrid(min(min(xr)):5:max(max(xr)),min(min(yr)):100:max(max(yr)));
-zr_n = griddata(xr,yr,transects.altitude,xr_n,yr_n);
+zr_n = griddata(xr,yr,squeeze(transects.altitude),xr_n,yr_n);
 [x y] = xb_grid_xb2world(xr_n, yr_n, xori, yori, -angle_m);
 
 xJ = x;

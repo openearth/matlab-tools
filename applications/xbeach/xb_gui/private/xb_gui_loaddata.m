@@ -15,14 +15,14 @@ function xb_gui_loaddata(obj, event)
 %   Example
 %   xb_gui_loaddata
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
 %       Bas Hoonhout
 %
-%       bas.hoonhout@deltares.nl	
+%       bas.hoonhout@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -42,9 +42,9 @@ function xb_gui_loaddata(obj, event)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -71,7 +71,7 @@ if exist('obj', 'var')
             % create new model
             S.model = xb_generate_model;
             set(pobj, 'userdata', S);
-            
+
             xb_gui_loadmodel;
 
         case 'button_open'
@@ -81,7 +81,7 @@ if exist('obj', 'var')
                 S = load(fullfile(fpath, fname));
                 set(pobj, 'userdata', S);
             end
-            
+
         case 'button_load'
             [fname fpath] = uigetfile({'*.txt' 'XBeach parameter file (*.txt)'}, 'Load Model');
 
@@ -104,7 +104,7 @@ else
 end
 
 %% fill model setup tab
-    
+
 % empty setup tab
 cla(findobj(pobj, 'tag', 'ax_1'));
 cla(findobj(pobj, 'tag', 'ax_2'));
@@ -119,9 +119,9 @@ bathy = S.modelsetup.bathy;
 [x y z] = deal(bathy.x, bathy.y, bathy.z);
 if min(size(z)) <= 3
     plot(cobj, mean(x, 1), mean(z, 1), '-k');
-    
+
     set(cobj, 'xlim', [min(min(x)) max(max(x))], 'ylim', [min(min(z)) max(max(z))]);
-    
+
     set(findobj(pobj, 'tag', 'databutton_3'), 'value', false, 'enable', 'off');
 else
     if ~isfield(bathy, 'rotated') || isempty(bathy.rotated)
@@ -129,11 +129,11 @@ else
         yori = min(min(y));
 
         alpha = xb_grid_rotation(x-xori, y-yori, z);
-    
+
         if alpha ~= 0
-            [xr yr] = xb_grid_rotate(x, y, -alpha, 'origin', [xori yori]);
+            [xr yr] = xb_grid_rotate(x, y, alpha, 'origin', [xori yori]);
         end
-        
+
         bathy.xori = xori;
         bathy.yori = yori;
         bathy.alpha = alpha;
@@ -143,18 +143,18 @@ else
     else
         [xr yr] = deal(bathy.rotated.x, bathy.rotated.y);
     end
-    
+
     pcolor(cobj, xr, yr, z);
     shading(cobj, 'flat');
     colorbar('peer', cobj);
-    
+
     if ~isempty(bathy.crop)
         pos = bathy.crop;
-        
+
 %         if bathy.alpha ~= 0
 %             [pos(1) pos(2)] = xb_grid_rotate(pos(1), pos(2), -bathy.alpha, 'origin', [bathy.xori bathy.yori]);
 %         end
-        
+
         crop = findobj(cobj, 'tag', 'crop');
         if isempty(crop);
             rectangle('position', pos, 'tag', 'crop', 'parent', cobj);
@@ -162,9 +162,9 @@ else
             set(crop, 'position', pos);
         end
     end
-    
+
     set(cobj, 'xlim', [min(min(xr)) max(max(xr))], 'ylim', [min(min(yr)) max(max(yr))]);
-    
+
     set(findobj(pobj, 'tag', 'databutton_3'), 'enable', 'on');
 end
 
@@ -210,10 +210,10 @@ if ~isempty(surge) && ~isempty(surge.tide) && ~all(all(isnan(surge.tide)))
 
     time = surge.time;
     tide = surge.tide;
-    
+
     data = num2cell(time);
     data(2:size(tide,1)+1,:) = num2cell(tide);
-    
+
     set(cobj, 'data', data, 'columneditable', true(1,nt));
 
     % plot
@@ -235,7 +235,7 @@ if ~isempty(zs0)
     else
         data(2:3,:) = zs0;
     end
-    
+
     set(cobj, 'data', data, 'columneditable', true(1,nt));
 
     % plot
@@ -262,7 +262,7 @@ end
 
 if xb_check(S.model)
     [x y z] = xb_input2bathy(S.model);
-    
+
     cobj = findobj(pobj, 'tag', 'preview_bathy'); cla(cobj);
     if min(size(z)) <= 3
         plot(cobj, mean(x, 1), mean(z, 1), '-k');
@@ -271,7 +271,7 @@ if xb_check(S.model)
         shading(cobj, 'flat');
         colorbar('peer', cobj);
     end
-    
+
     set(cobj, 'xlim', [min(min(x)) max(max(x))], 'ylim', [min(min(y)) max(max(y))]);
 end
 
@@ -285,7 +285,7 @@ c = 1;
 for i = 1:length(S.runs)
     if xb_check(S.runs{i})
         r = S.runs{i};
-        
+
         data(c,:) = { ...
             xb_get(r, 'id'), ...
             r.date, ...
@@ -295,7 +295,7 @@ for i = 1:length(S.runs)
             xb_get(r, 'binary'), ...
             xb_exist(r, 'ssh')
         };
-    
+
         c = c + 1;
     end
 end

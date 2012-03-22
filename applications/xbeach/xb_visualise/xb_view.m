@@ -328,13 +328,13 @@ function ui_togglediff(obj, event)
             
             info.update = info.update && ~info.compare;
 
-            info.diff = true;
+            info.diff = get(obj, 'Value');
             info.compare = false;
         case 'ToggleCompare'
             set(get_obj(obj, 'ToggleDiff'), 'Value', 0);
             
             info.diff = false;
-            info.compare = true;
+            info.compare = get(obj, 'Value');
     end
     
     set_info(obj, info);
@@ -450,7 +450,9 @@ function ui_read(obj)
         
         for i = 1:length(info.input)
             
-            info0 = info;
+            if i > 1
+                info0 = info;
+            end
         
             if xb_check(info.input{i})
                 switch info.input{i}.type
@@ -460,7 +462,8 @@ function ui_read(obj)
                         % read variables
                         info.vars = {'depfile.depfile'};
 
-                        info.t = [0 1];
+                        info.tm = [0 1];
+                        info.t  = [0 1];
 
                         [info.x info.y] = xb_input2bathy(info.input{i});
                         
@@ -484,9 +487,10 @@ function ui_read(obj)
                         info.vars = info.vars(~strcmpi(info.vars, 'DIMS'));
 
                         % determine grid and time
-                        info.t = info.dims.globaltime_DATA;
-                        info.x = info.dims.globalx_DATA;
-                        info.y = info.dims.globaly_DATA;
+                        %info.tm = info.dims.meantime_DATA;
+                        info.t  = info.dims.globaltime_DATA;
+                        info.x  = info.dims.globalx_DATA;
+                        info.y  = info.dims.globaly_DATA;
                     case 'run'
 
                         info.type = 'output_dir';
@@ -499,9 +503,10 @@ function ui_read(obj)
                         info.vars = xb_get_vars(info.fpath{i});
 
                         % determine grid and time
-                        info.t = info.dims.globaltime_DATA;
-                        info.x = info.dims.globalx_DATA;
-                        info.y = info.dims.globaly_DATA;
+                        %info.tm = info.dims.meantime_DATA;
+                        info.t  = info.dims.globaltime_DATA;
+                        info.x  = info.dims.globalx_DATA;
+                        info.y  = info.dims.globaly_DATA;
                     otherwise
                         error('Unsupported XBeach strucure supplied');
                 end
@@ -517,34 +522,42 @@ function ui_read(obj)
                 info.vars = xb_get_vars(info.fpath{i});
 
                 % determine grid and time
-                info.t = info.dims.globaltime_DATA;
-                info.x = info.dims.globalx_DATA;
-                info.y = info.dims.globaly_DATA;
+                %info.tm = info.dims.meantime_DATA;
+                info.t  = info.dims.globaltime_DATA;
+                info.x  = info.dims.globalx_DATA;
+                info.y  = info.dims.globaly_DATA;
             else
                 error('No valid data supplied');
             end
             
             % check consistency
-            if isfield(info0, 't')
-                tmax    = min(max(info0.t),max(info.t));
-                info0.t = info0.t(info0.t<=tmax);
-                info.t  = info.t(info.t<=tmax);
-                if length(info.t) ~= length(info0.t);           error('Inconsistent time axes length');     end;
-                if ~all(info.t - info0.t == 0);                 error('Inconsistent time axes stepsize');   end;
-            end
-            
-            if isfield(info0, 'x')
-                if ~all(size(info.x) - size(info0.x) == 0);     error('Inconsistent x axes length');        end;
-                if ~all(all(info.x - info0.x == 0));            error('Inconsistent x coordinates');        end;
-            end
-            
-            if isfield(info0, 'y')
-                if ~all(size(info.y) - size(info0.y) == 0);     error('Inconsistent y axes length');        end;
-                if ~all(all(info.y - info0.y == 0));            error('Inconsistent y coordinates');        end;
-            end
-            
-            if isfield(info0, 'varlist')
-                info.varlist = intersect(info.vars, info0.vars);
+            if exist('info0','var')
+                if isfield(info0, 't')
+                    tmax    = min(max(info0.t),max(info.t));
+                    info0.t = info0.t(info0.t<=tmax);
+                    info.t  = info.t(info.t<=tmax);
+                    
+                    %tmmax   = min(max(info0.tm),max(info.tm));
+                    %info0.tm = info0.tm(info0.tm<=tmmax);
+                    %info.tm  = info.tm(info.tm<=tmmax);
+                    
+                    if length(info.t) ~= length(info0.t);           error('Inconsistent time axes length');     end;
+                    if ~all(info.t - info0.t == 0);                 error('Inconsistent time axes stepsize');   end;
+                end
+
+                if isfield(info0, 'x')
+                    if ~all(size(info.x) - size(info0.x) == 0);     error('Inconsistent x axes length');        end;
+                    if ~all(all(info.x - info0.x == 0));            error('Inconsistent x coordinates');        end;
+                end
+
+                if isfield(info0, 'y')
+                    if ~all(size(info.y) - size(info0.y) == 0);     error('Inconsistent y axes length');        end;
+                    if ~all(all(info.y - info0.y == 0));            error('Inconsistent y coordinates');        end;
+                end
+
+                if isfield(info0, 'varlist')
+                    info.varlist = intersect(info.vars, info0.vars);
+                end
             end
             
         end
@@ -600,6 +613,9 @@ function data = ui_getdata(obj, info, vars, slider)
     
     if ~isempty(info.transect)
         ri = info.transect(2);
+        rl = 1;
+    elseif info.ndims == 1
+        ri = round(size(info.x,1)/2);
         rl = 1;
     else
         ri = 1;

@@ -56,6 +56,8 @@ function res = stat_freqexc_get(t, x, varargin)
 %
 %                                           time:       time of maximum
 %                                           value:      level of maximum
+%                                           start:      start time of peak
+%                                           end:        end time of peak
 %                                           duration:   duration of peak
 %
 %   Example
@@ -193,10 +195,14 @@ for i = 1:length(g)
                 res.peaks(i).maxima(idx).value  = m;
             end
 
+            res.peaks(i).maxima(c).start        = min(res.peaks(i).maxima(idx).start, t(uc(j)));
+            res.peaks(i).maxima(c).end          = max(res.peaks(i).maxima(idx).end,   t(dc(j)));
             res.peaks(i).maxima(idx).duration   = res.peaks(i).maxima(idx).duration+(dc(j)-uc(j))*dt;
         else
             res.peaks(i).maxima(c).time         = t(tj(k));
             res.peaks(i).maxima(c).value        = m;
+            res.peaks(i).maxima(c).start        = t(uc(j));
+            res.peaks(i).maxima(c).end          = t(dc(j));
             res.peaks(i).maxima(c).duration     = (dc(j)-uc(j))*dt;
 
             c = c+1;

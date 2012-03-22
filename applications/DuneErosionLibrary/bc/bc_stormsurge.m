@@ -1,19 +1,38 @@
 function [to h dtwo Ho To] = bc_stormsurge(varargin)
 %BC_STORMSURGE  Generates storm surge hydrograph as described in Steetzel, 1993.
 %
-%   Generates storm surge hydrograph as described in Steetzel, 1993.
+%   Generates storm surge hydrograph as described in Steetzel, 1993. The
+%   hydrograph is composed out of a surge and a tide component. The wave
+%   parameters are discretizised in a few bins.
 %
 %   Syntax:
 %   [to h dtwo Ho To] = bc_stormsurge(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = name/value pairs:
+%               Tsurge:     duration of surge
+%               Ttide:      period of tide
+%               Tsim:       duration of output timeseries
+%               Tpeak:      moment of maximum surge
+%               h_max:      maximum water level (scales amplitudes of
+%                           individual components)
+%               h0:         still water level
+%               ha:         amplitude of tide
+%               hs:         amplitude of surge
+%               Hm0_max:    maximum significant wave height
+%               Tp_max:     maximum peak wave period
+%               nwaves:     number of bins in wave discretization
+%               plot:       boolean indicating whether to plot the results
 %
 %   Output:
-%   varargout =
+%   to        = time axes for water levels
+%   h         = timeseries for water levels
+%   dtwo      = time step durations for wave parameters
+%   Ho        = time series for wave heights
+%   To        = time series for wave periods
 %
 %   Example
-%   [to h dtwo Ho To] = bc_stormsurge
+%   [to h dtwo Ho To] = bc_stormsurge('h_max',5,'Hm0_max',7.6,'Tp_max',12)
 %
 %   See also bc_normstorm
 

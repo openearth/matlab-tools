@@ -136,17 +136,14 @@ alpha = 0;
 % rotate grid and determine alpha
 if OPT.rotate && ~isvector(z_w)
     if ~islogical(OPT.rotate) && ~ismember(OPT.rotate,[0 1])
-        alfa = OPT.rotate;
-        [x_r y_r] = xb_grid_rotate(x_r, y_r, alfa, 'origin', [xori yori]);
+        alpha = OPT.rotate;
+        [x_r y_r] = xb_grid_rotate(x_r, y_r, alpha, 'origin', [xori yori]);
     else
         alpha = xb_grid_rotation(x_r, y_r, z_w);
-        alfa = -alpha;
         if abs(alpha) > 5
-%             [x_r y_r] = xb_grid_rotate(x_r, y_r, -alpha, 'origin', [xori yori]);
-            [x_r y_r] = xb_grid_rotate(x_r, y_r,alfa, 'origin', [xori yori]);
+            [x_r y_r] = xb_grid_rotate(x_r, y_r, alpha, 'origin', [xori yori]);
         else
             alpha = 0;
-            alfa = 0;
         end
     end
 end
@@ -158,37 +155,37 @@ if isvector(z_w)
     x_d = x_r;
     y_d = [];
     z_d_cs = z_w;
-    
+
     % empty memory
     clear x_r y_r
 else
     % determine resolution and extent
     [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x_r, y_r);
-    
+
     % crop grid
     if ischar(OPT.crop) && strcmpi(OPT.crop, 'select')
         fh = figure;
         pcolor(x_r, y_r, z_w);
         shading flat; colorbar;
-        
+
         [xin yin] = ginput(2);
         OPT.crop = [min(xin) min(yin) abs(diff(xin)) abs(diff(yin))];
-        
+
         close(fh);
     end
-    
+
     if ~islogical(OPT.crop) && isvector(OPT.crop)
         [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w, 'crop', OPT.crop);
     elseif OPT.crop
         [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w);
     end
-    
+
     % empty memory
     clear x_r y_r
 
     % create dummy grid
-    x_d = linspace(xmin, xmax, ceil((xmax-xmin)/cellsize));
-    y_d = linspace(ymin, ymax, ceil((xmax-xmin)/cellsize));
+    x_d = linspace(xmin, xmax, max(2,ceil((xmax-xmin)/cellsize)));
+    y_d = linspace(ymin, ymax, max(2,ceil((xmax-xmin)/cellsize)));
 
     % rotate dummy grid to world coordinates
     [x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, alpha, 'origin', [xori yori]);
@@ -221,7 +218,7 @@ clear y_d z_d z_d_cs
 if isvector(z_w)
     % 1D grid
     zgrid = repmat(z_xb, length(y_xb), 1);
-    
+
     % interpolate non-erodable layers
     if ~isempty(OPT.ne)
         negrid = interp1(x_d, ne_w, x_xb);
@@ -235,13 +232,13 @@ if isvector(z_w)
     end
 else
     % 2D grid
-    
+
     % rotate xbeach grid to world coordinates
     [x_xb_w y_xb_w] = xb_grid_rotate(x_xb, y_xb, alpha, 'origin', [xori yori]);
-    
+
     % interpolate elevation data to xbeach grid
     zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
-    
+
     % interpolate non-erodable layers
     if ~isempty(OPT.ne)
         negrid = interp2(x_w, y_w, ne_w, x_xb_w, y_xb_w);
@@ -289,7 +286,7 @@ if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise
             zgrid(i,j+1:end) = zgrid(i,j);
         end
     end
-    
+
     if ~isempty(OPT.ne)
         notnan          = ~isnan(negrid);
         negrid(~notnan) = OPT.zdepth+zgrid(~notnan);
