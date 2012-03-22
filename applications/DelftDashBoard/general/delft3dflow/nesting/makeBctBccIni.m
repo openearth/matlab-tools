@@ -112,15 +112,11 @@ if isempty(flow)
     [flow,openBoundaries]=delft3dflow_readInput(inpdir,runid,varargin);
 end
 
-if ~isempty(opt.cs)
-    % Coordinate system is defined in xml file
-    flow.coordSysType=opt.cs.type;
-    flow.coordSysName=opt.cs.name;
-else
-    if ~isempty(cs)
-        % Coordinate system is input argument
-        flow.coordSysType=cs.type;
-        flow.coordSysName=cs.name;
+if isfield(opt,'cs')
+    if ~isempty(opt.cs)
+        % Coordinate system is defined in xml file
+        flow.coordSysType=opt.cs.type;
+        flow.coordSysName=opt.cs.name;
     end
 end
 
