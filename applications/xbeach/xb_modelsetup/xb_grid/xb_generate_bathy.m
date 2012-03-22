@@ -46,7 +46,7 @@ function xb = xb_generate_bathy(varargin)
 %   xb = xb_generate_bathy('x', x, 'y', y, 'z', z)
 %
 %   See also xb_grid_xgrid, xb_grid_ygrid, xb_generate_model
-% 
+%
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
@@ -135,4 +135,4 @@ else
         'xori',xori,'yori',yori);
 end
 
-xb = xb_set(xb, 'alfa', mod(360-alpha, 360));
+xb = xb_set(xb, 'alfa', mod(alpha, 360));
