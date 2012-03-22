@@ -14,7 +14,7 @@ handles=PrepareBar(handles,i,j);
 
 PrepareSubplot(handles,i,j,LeftAxis);
 
-for k=1:nodat
+for k=1:nodat    
     handles=PlotDataset(handles,i,j,k,'new');
 end
 

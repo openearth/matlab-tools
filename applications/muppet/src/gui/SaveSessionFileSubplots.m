@@ -427,10 +427,18 @@ if iLayout==0
             fprintf(fid,'%s\n',txt);
         end
 
-        if strcmpi(Axis.coordinateSystem.type,'geographic')
-            txt='      CoordinateSystemType  "geographic"';
+        if ~strcmpi(Axis.coordinateSystem.name,'unknown')
+            txt=['      CoordinateSystemName  "' Axis.coordinateSystem.name '"'];
             fprintf(fid,'%s\n',txt);
+            txt=['      CoordinateSystemType  "' Axis.coordinateSystem.type '"'];
+            fprintf(fid,'%s\n',txt);
+
         end
+        
+%         if strcmpi(Axis.coordinateSystem.type,'geographic')
+%             txt='      CoordinateSystemType  "geographic"';
+%             fprintf(fid,'%s\n',txt);
+%         end
 
         if Axis.PlotVectorLegend==1
 

@@ -13,6 +13,24 @@ else
     opt=1;
 end
 
+% Convert data to correct coordinate system
+if ~strcmpi(Ax.coordinateSystem.name,'unknown') && ~strcmpi(Data.coordinateSystem.name,'unknown')
+    if ~strcmpi(Ax.coordinateSystem.name,Data.coordinateSystem.name) && ...
+            ~strcmpi(Ax.coordinateSystem.type,Data.coordinateSystem.type)
+        switch lower(Data.Type)
+            case{'2dvector','2dscalar','polyline','grid'}
+                if ~isfield(handles,'EPSG')
+                    wb = waitbox('Reading coordinate conversion libraries ...');
+                    curdir=[handles.MuppetPath 'settings' filesep 'SuperTrans'];
+                    handles.EPSG=load([curdir filesep 'data' filesep 'EPSG.mat']);
+                    close(wb);
+                end
+                [Data.x,Data.y]=convertCoordinates(Data.x,Data.y,handles.EPSG,'CS1.name',Data.coordinateSystem.name,'CS1.type',Data.coordinateSystem.type, ...
+                    'CS2.name',Ax.coordinateSystem.name,'CS2.type',Ax.coordinateSystem.type);
+        end
+    end
+end
+
 switch lower(handles.Figure(i).Axis(j).Plot(k).PlotRoutine),
     case {'plottimeseries','plotxy','plotxyseries','plotline','plotspline'},
         handles=PlotLine(handles,i,j,k,mode);
@@ -21,9 +39,11 @@ switch lower(handles.Figure(i).Axis(j).Plot(k).PlotRoutine),
     case {'plotstackedarea'},
         handles=PlotStackedArea(handles,i,j,k,mode);
     case {'plotcontourmap','plotcontourmaplines','plotpatches','plotcontourlines','plotshadesmap'},
-        handles=Plot2DSurface(handles,i,j,k,mode);
-    case {'plotgrid'},
-        handles=PlotGrid(handles,i,j,k,mode);
+%         handles=Plot2DSurface(handles,i,j,k,mode);
+        mp_plot2DSurface(handles,Data,Plt,Ax);
+    case {'plotgrid'}
+%        handles=PlotGrid(handles,i,j,k,mode);
+        mp_plotGrid(Data,Plt);
     case {'plotannotation'},
         handles=PlotAnnotation(handles,i,j,k,mode);
     case {'plotcrosssections'},

@@ -675,7 +675,13 @@ if isstruct(h)
         if idef
             handles.DefaultSubplotProperties.(names{ii})=v;
         else
-            handles.Figure(i).Axis(j).(names{ii})=v;
+            if isstruct(v)
+                f=fieldnames(v);
+                f=f{1};
+                handles.Figure(i).Axis(j).(names{ii}).(f)=v.(f);
+            else
+                handles.Figure(i).Axis(j).(names{ii})=v;
+            end
         end
     end
 end

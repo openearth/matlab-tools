@@ -48,7 +48,11 @@ if pathname~=0
     [handles.DataProperties,handles.NrAvailableDatasets]=feval(fnc,'DataProperties',handles.DataProperties,'PathName',pathname,'FileName',filename,'Nr',handles.NrAvailableDatasets);
     if handles.NrAvailableDatasets>nr0
         NewDataset=1;
-        handles.DataProperties(handles.NrAvailableDatasets).TimeZone=0;
+        for inew=nr0+1:handles.NrAvailableDatasets
+            handles.DataProperties(inew).TimeZone=0;
+            handles.DataProperties(inew).coordinateSystem.name='unknown';
+            handles.DataProperties(inew).coordinateSystem.type='projected';
+        end
     end
     handles.FilePath=pathname;
 end

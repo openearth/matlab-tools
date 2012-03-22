@@ -516,6 +516,12 @@ for i=1:handles.NrAvailableDatasets
             fprintf(fid,'%s \n',txt);
         end
         
+        if ~strcmpi(handles.DataProperties(i).coordinateSystem.name,'unknown')
+            txt=['   CoordinateSystemName    "' handles.DataProperties(i).coordinateSystem.name '"'];
+            fprintf(fid,'%s \n',txt);
+            txt=['   CoordinateSystemType    "' handles.DataProperties(i).coordinateSystem.type '"'];
+            fprintf(fid,'%s \n',txt);
+        end
         
         txt='EndDataset';
         fprintf(fid,'%s \n',txt);

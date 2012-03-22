@@ -1,4 +1,4 @@
-function handles=PlotGrid(handles,i,j,k,mode);
+function handles=PlotGrid(handles,i,j,k,mode)
 
 Plt=handles.Figure(i).Axis(j).Plot(k);
 Data=handles.DataProperties(Plt.AvailableDatasetNr);

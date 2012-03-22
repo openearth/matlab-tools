@@ -77,6 +77,8 @@ while end_datasets==0
                 DataProperties(noset).Curvature=0;
                 DataProperties(noset).RefDate=floor(now);
                 DataProperties(noset).PressureType='mBar';
+                DataProperties(noset).coordinateSystemName='unknown';
+                DataProperties(noset).coordinateSystemType='projected';
  
             case {'filetype'},
                 DataProperties(noset).FileType=txt{i+1};
@@ -222,6 +224,10 @@ while end_datasets==0
                 DataProperties(noset).y(kk)=str2num(txt{i+2});
             case {'pressuretype'},
                 DataProperties(noset).PressureType=txt{i+1};
+            case {'coordinatesystemname'}
+                DataProperties(noset).coordinateSystem.name=txt{i+1};
+            case {'coordinatesystemtype'}
+                DataProperties(noset).coordinateSystem.type=txt{i+1};
         end
  
         end_dataset=strcmpi(txt{i},'enddataset');

@@ -4,6 +4,9 @@ if SubplotProperties.AxesEqual
     xlim(1)=SubplotProperties.XMin; xlim(2)=xlim(1)+0.01*SubplotProperties.Position(3)*SubplotProperties.Scale;
     ylim(1)=SubplotProperties.YMin; ylim(2)=ylim(1)+0.01*SubplotProperties.Position(4)*SubplotProperties.Scale;
     axis equal;
+elseif strcmpi(SubplotProperties.coordinateSystem.type,'geographic')
+    xlim(1)=SubplotProperties.XMin; xlim(2)=SubplotProperties.XMax;
+    ylim(1)=SubplotProperties.YMin; ylim(2)=ylim(1)+(xlim(2)-xlim(1))*cos(ylim(1)*pi/180)*SubplotProperties.Position(4)/SubplotProperties.Position(3);%^2;
 else
     xlim(1)=SubplotProperties.XMin; xlim(2)=SubplotProperties.XMax;
     ylim(1)=SubplotProperties.YMin; ylim(2)=SubplotProperties.YMax;
@@ -11,13 +14,13 @@ end
 
 view(2);
 
-if SubplotProperties.AxesEqual==0
-    VertScale=(SubplotProperties.YMax-SubplotProperties.YMin)/SubplotProperties.Position(4);
-    HoriScale=(SubplotProperties.XMax-SubplotProperties.XMin)/SubplotProperties.Position(3);
-    Multi=HoriScale/VertScale;
-else
-    Multi=1.0;
-end
+% if SubplotProperties.AxesEqual==0
+%     VertScale=(SubplotProperties.YMax-SubplotProperties.YMin)/SubplotProperties.Position(4);
+%     HoriScale=(SubplotProperties.XMax-SubplotProperties.XMin)/SubplotProperties.Position(3);
+%     Multi=HoriScale/VertScale;
+% else
+%     Multi=1.0;
+% end
 
 Multi=1;
 

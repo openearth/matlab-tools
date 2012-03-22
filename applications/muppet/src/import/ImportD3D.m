@@ -75,7 +75,12 @@ if strcmp(DataProperties(nr).SubField,'none')==0
     end
     switch FileInfo.SubType,
         case{'Delft3D-trim','Delft3D-trih'}
-            LSed=vs_get(FileInfo,ConstGroup,'LSED','quiet');
+            ised=vs_find(FileInfo,'LSED');
+            if isempty(ised)
+                LSed=0;
+            else
+                LSed=vs_get(FileInfo,ConstGroup,'LSED','quiet');
+            end
             if LSed>0
                 [Sediments0,Succes]=vs_get(FileInfo,ConstGroup,'NAMSED','quiet');
                 if Succes==0

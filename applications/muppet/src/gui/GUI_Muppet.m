@@ -3776,8 +3776,10 @@ function toggleGeographic_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of toggleGeographic
 if get(hObject,'Value')
+    handles.Figure(handles.ActiveFigure).Axis(handles.ActiveSubplot).coordinateSystem.name='WGS 84';
     handles.Figure(handles.ActiveFigure).Axis(handles.ActiveSubplot).coordinateSystem.type='geographic';
 else
+    handles.Figure(handles.ActiveFigure).Axis(handles.ActiveSubplot).coordinateSystem.name='unknown';
     handles.Figure(handles.ActiveFigure).Axis(handles.ActiveSubplot).coordinateSystem.type='projected';
 end
 guidata(hObject, handles);

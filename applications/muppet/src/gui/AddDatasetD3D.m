@@ -145,7 +145,13 @@ end
 
 switch handles.FileInfo.SubType,
     case{'Delft3D-trim','Delft3D-trih'}
-        handles.LSed=vs_get(handles.FileInfo,ConstGroup,'LSED','quiet');
+        % Check to see if sediments are available
+        ised=vs_find(handles.FileInfo,'LSED');
+        if isempty(ised)
+            handles.LSed=0;
+        else
+            handles.LSed=vs_get(handles.FileInfo,ConstGroup,'LSED','quiet');
+        end
         if handles.LSed>0
             [Sediments,Succes]=vs_get(handles.FileInfo,ConstGroup,'NAMSED','quiet');
             if Succes==0
