@@ -95,6 +95,9 @@ else
             error('Local data directory not found, check reference in ini-file!');
         end
         
+        if ~isdir([dirname filesep 'data']);
+            mkdir([dirname filesep 'data']);
+        end
         datadir=[dirname filesep 'data'];
         
         disp('Making delftdashboard.ini file ...');
