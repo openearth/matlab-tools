@@ -9,7 +9,7 @@ function varargout = KMLcontour(lat,lon,c,varargin)
 %
 % The most important keywords are 'fileName', 'levels' and 'labelInterval';
 %
-%    OPT = KMLcontour(lat,lon,z,'fileName','mycontour.kml','levels',N)
+%    KMLcontour(lat,lon,z,'fileName','mycontour.kml','levels',N)
 %
 % draws N contour lines when LENGTH(N)=1, or LENGTH(V) contour
 % lines at the values specified in vector V. Use [v v] to plot
