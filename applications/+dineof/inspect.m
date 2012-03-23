@@ -1,4 +1,4 @@
-function inspect(data, time, mask, dataf, S)
+function inspect(data, time, mask, dataf, S,varargin)
 %INSPECT  inspect DINEOF results for inspection via plot
 %
 %   dineof.inspect(data, time, mask, dataf, D)
@@ -51,7 +51,8 @@ if dim==1
    %% spatial modes
    axes(AX(6))
    for im=1:S.P
-   plot(S.lftvec(:,1,im),1:sz(1),'.-','Color',repmat(interp1([S.P 0],[0.9 0],im),[1 3]),'DisplayName',S.varLab{im});
+   plot(S.lftvec(:,1,im),1:sz(1),'.-','Color',repmat(interp1([S.P 0],[0.9 0],im),[1 3]),...
+                                  'linewidth',       interp1([S.P 0],[1 4],im),'DisplayName',S.varLab{im});
    hold on
    end   
    xlabel('EOF lftvec')
@@ -63,7 +64,8 @@ if dim==1
    %% temporal modes
    axes(AX(2))
    for im=1:S.P
-   plot(time,S.rghvec(:,im),'.-','Color',repmat(interp1([S.P 0],[0.9 0],im),[1 3]),'DisplayName',S.varLab{im});
+   plot(time,S.rghvec(:,im),'.-','Color',repmat(interp1([S.P 0],[0.9 0],im),[1 3]),...
+                             'linewidth',       interp1([S.P 0],[1 4],im),'DisplayName',S.varLab{im});
    hold on
    end   
    xlabel('time')
@@ -167,5 +169,5 @@ elseif dim==2
    end
    
    delete(AX([5:8]))
-
+   
 end

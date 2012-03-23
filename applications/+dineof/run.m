@@ -52,6 +52,7 @@ function varargout = run(data, time, mask, varargin)
    OPT.cleanup = 1;
    OPT.debug   = 0;
    OPT.plot    = 1;
+   OPT.export  = 1;
 
 % other keywords
 
@@ -61,6 +62,8 @@ function varargout = run(data, time, mask, varargin)
    OPT.ncfile        = ['dummy.nc'];
    OPT.resfile       = ['dummy_filled.nc'];
    OPT.eoffile       = ['dummy_eof.nc'];
+   OPT.initfile      = []; % will have same name as eoffile
+   OPT.logfile       = []; % will have same name as eoffile
    OPT.units         = '';
    OPT.standard_name = '';
    
@@ -76,10 +79,15 @@ function varargout = run(data, time, mask, varargin)
    OPT.time     = [ '''./',OPT.ncfile ,'#',OPT.timename,'''']; % no brackets !!
    OPT.results  = ['[''./',OPT.resfile,'#',OPT.dataname,''']'];
    
-   initfile     = [filepathstrname(OPT.resfile),'.init'];
-   logfile      = [filepathstrname(OPT.resfile),'.log'];
    
-   dineof.initwrite(OPT,initfile);
+   if isempty(OPT.initfile)
+   OPT.initfile = [filepathstrname(OPT.eoffile),'.init'];
+   end
+   if isempty(OPT.logfile)
+   OPT.logfile  = [filepathstrname(OPT.eoffile),'.log'];
+   end
+   
+   dineof.initwrite(OPT,OPT.initfile);
 
 %% make data matrix [M x N] that DINEOF swallows, where M or 
 %  N can be 1, but DINEOF will swap dimensions internally in one case
@@ -119,8 +127,6 @@ function varargout = run(data, time, mask, varargin)
      dim = 2;
   end
    
-   
-
 %% check DINEOF requirements: time(t), data(x,y,t), mask(x,y)
 
    if ~(sz(3)==length(time))
@@ -189,16 +195,51 @@ function varargout = run(data, time, mask, varargin)
    fprintf(2,'%s\n',ddir)
    error('DINEOF')
    end
+   
+   %% clean up any previous runs
+   if exist('meandata.val'    );delete('meandata.val'    );end
+   if exist('neofretained.val');delete('neofretained.val');end
+   if exist('outputEof.lftvec');delete('outputEof.lftvec');end
+   if exist('outputEof.rghvec');delete('outputEof.rghvec');end
+   if exist('outputEof.varEx' );delete('outputEof.varEx' );end
+   if exist('outputEof.vlsng' );delete('outputEof.vlsng' );end
+   if exist('valc.dat'        );delete('valc.dat'        );end
+   if exist('valosclast.dat'  );delete('valosclast.dat'  );end
+   
+   %% run
    disp('Running DINEOF, please wait ...')
-   cmd  = [ddir filesep 'dineof.exe ' initfile ' > ' logfile ];
+   cmd  = [ddir filesep 'dineof.exe ' OPT.initfile ' > ' OPT.logfile ];
 
-   system(cmd);
+   status = system(cmd);
    
    if OPT.debug
       nc_dump(OPT.resfile)
    end
 
-if nargout==0
+if status < 0
+
+   S.mean   = [];
+   S.P      = [];
+   S.lftvec = [];
+   S.rghvec = [];
+   S.varEx  = [];
+   S.varLab = [];
+   S.vlsng  = [];
+   dataf    = [];
+   
+   fprintf(2,'DINEOF failed, [] matrices returned \n')
+   dataf    = [];
+
+   if nargout==1
+      varargout = {dataf};
+   else
+      varargout = {dataf,S};
+   end       
+   return
+
+else
+
+ if nargout==0
 
   %% rename outpout
 
@@ -211,29 +252,30 @@ if nargout==0
    movefile('valc.dat'        ,[filepathstrname(OPT.resfile),'_valc.bin'      ]);
    movefile('valosclast.dat'  ,[filepathstrname(OPT.resfile),'_valosclast.bin']);
 
-else
+ else
 
   %% collect results
 
-   NCid     = netcdf.open(OPT.resfile,'NOWRITE');
-   
-   varid.dataf = netcdf.inqVarID(NCid,OPT.dataname);
-   dataf       = netcdf.getVar(NCid,varid.dataf);
-   
-   nodata   = netcdf.getAtt(NCid,varid.dataf,'_FillValue');
-   dataf(dataf==nodata)=NaN;
+    NCid     = netcdf.open(OPT.resfile,'NOWRITE');
 
-   nodata   = netcdf.getAtt(NCid,varid.dataf,'missing_value');
-   dataf(dataf==nodata)=NaN;
+    varid.dataf = netcdf.inqVarID(NCid,OPT.dataname);
+    dataf       = netcdf.getVar(NCid,varid.dataf);
 
-   netcdf.close (NCid)
+    nodata   = netcdf.getAtt(NCid,varid.dataf,'_FillValue');
+    dataf(dataf==nodata)=NaN;
 
-   S.mean   =                      load(    'meandata.val'   );
-   S.P      =                      load('neofretained.val'   );
-   S.lftvec =        dineof.unpack(load(   'outputEof.lftvec'),mask);
-   S.rghvec =                      load(   'outputEof.rghvec');
-  [S.varEx, S.varLab] =           varEx(   'outputEof.varEx' );
-   S.vlsng  =                      load(   'outputEof.vlsng' );
+    nodata   = netcdf.getAtt(NCid,varid.dataf,'missing_value');
+    dataf(dataf==nodata)=NaN;
+
+    netcdf.close (NCid)
+
+    S.mean   =                      load(    'meandata.val'   );
+    S.P      =                      load('neofretained.val'   );
+    S.lftvec =        dineof.unpack(load(   'outputEof.lftvec'),mask);
+    S.rghvec =                      load(   'outputEof.rghvec');
+   [S.varEx, S.varLab] =           varEx(   'outputEof.varEx' );
+    S.vlsng  =                      load(   'outputEof.vlsng' );
+       
 
   %% save results to netcdf
 
@@ -312,23 +354,28 @@ else
      delete('valc.dat'        );
      delete('valosclast.dat'  );
       
-     delete(initfile);
-     delete(logfile );
+     delete(OPT.initfile);
+     delete(OPT.logfile );
 
      delete(OPT.ncfile );
      delete(OPT.resfile);
      delete(OPT.eoffile );
   end
-end   
+ end   
 
-%% plot
+ %% plot
 
    if OPT.plot
       TMP = figure;
       dineof.inspect(data, time, mask, dataf, S);
+      if OPT.export
+         print2screensize(strrep(OPT.eoffile,'.nc','.png'))
+      end
       pausedisp
       try, close(TMP),end
    end
+   
+end % status
 
 %% out
 
@@ -348,9 +395,11 @@ function [varex,labels] = varEx(fname)
 %See also: dineof
 
 [labels]=textread(fname,'%s','whitespace','\n');
-
-[number,varex,~]=textread(fname,'Mode %d=%f %s');
-
-for i=1:length(varex)
-   labels{i} = ['Mode ',num2str(i,'%d'),' = ',num2str(varex(i),'%0.1f'),' %'];
+try
+  [number,varex,~]=textread(fname,'Mode %d=%f %s');
+  for i=1:length(varex)
+    labels{i} = ['Mode ',num2str(i,'%d'),' = ',num2str(varex(i),'%0.1f'),' %'];
+  end
+catch
+  varex(1:length(labels)) = nan; % in case of ***
 end

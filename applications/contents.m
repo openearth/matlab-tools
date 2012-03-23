@@ -44,6 +44,7 @@
 %   modelvalidation    - tools to make Taylor model performance diagrams
 %   probabilistic      - application
 %   statistic          - frequency of exceedance toolbox
+%   netica             - tools for Bayesian software <a href="http://www.norsys.com/">NETICA</a>
 %   textpad            - program: <a href="http://www.textpad.com">textpad</a>
 %   tide               - t_tide and associated tools
 %   waves              - waves related functions (see also: swan)
