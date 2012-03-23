@@ -154,22 +154,19 @@ else
         G   = varargin{2};
         S.x = nan.*S.m;
         S.y = nan.*S.m;
-        
         for i=1:S.NTables
-            
             m = S.m(1,i);
             n = S.n(1,i);
-            
             if     strcmpi(S.DATA(i).direction,'u')
                 
                 S.x(:,i) = [G.cor.x(n,m  ) G.cor.x(n-1  ,m  )];
                 S.y(:,i) = [G.cor.y(n,m  ) G.cor.y(n-1  ,m  )];
-                
+                S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
             elseif strcmpi(S.DATA(i).direction,'v')
                 
                 S.x(:,i) = [G.cor.x(n  ,m-1) G.cor.x(n  ,m  )];
                 S.y(:,i) = [G.cor.y(n  ,m-1) G.cor.y(n  ,m  )];
-                
+                S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
             end
             
         end
