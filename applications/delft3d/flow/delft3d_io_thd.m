@@ -1,4 +1,4 @@
-function varargout=delft3d_io_thd(cmd,varargin),
+function varargout=delft3d_io_thd(cmd,varargin)
 %DELFT3D_IO_THD   read/write thin dams <<beta version!>>
 %
 %  THD = delft3d_io_thd('read' ,filename);
@@ -160,13 +160,13 @@ else
         
         for i=1:S.NTables
             
-            m = S.m(i);
-            n = S.n(i);
+            m = S.m(1,i);
+            n = S.n(1,i);
             
             if     strcmpi(S.DATA(i).direction,'u')
                 
-                S.x(:,i) = [G.cor.x(n-1,m  ) G.cor.x(n  ,m  )];
-                S.y(:,i) = [G.cor.y(n-1,m  ) G.cor.y(n  ,m  )];
+                S.x(:,i) = [G.cor.x(n,m  ) G.cor.x(n-1  ,m  )];
+                S.y(:,i) = [G.cor.y(n,m  ) G.cor.y(n-1  ,m  )];
                 
             elseif strcmpi(S.DATA(i).direction,'v')
                 
