@@ -70,6 +70,9 @@ if isdeployed
     setenv('MCR_CACHE_SIZE','64M');
 end
 
+% Turn off annoying warnings
+warning('off','all');
+
 disp(['Delft DashBoard v' handles.delftDashBoardVersion]);
 disp(['Matlab v' version]);
 
