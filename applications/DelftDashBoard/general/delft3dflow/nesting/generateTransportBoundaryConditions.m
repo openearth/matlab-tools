@@ -75,7 +75,9 @@ switch opt.(par)(ii).BC.source
         pars=[0 opt.(par)(ii).BC.constant]';
     case 5
         % Profile
-        pars=opt.(par)(ii).BC.profile';
+%        pars=opt.(par)(ii).BC.profile';
+        pars=load(opt.(par)(ii).BC.profileFile);
+        pars=pars';
 end
 
 switch opt.(par)(ii).BC.source
