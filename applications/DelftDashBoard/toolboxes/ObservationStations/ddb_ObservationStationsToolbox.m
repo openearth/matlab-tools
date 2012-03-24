@@ -114,8 +114,8 @@ t1=handles.Toolbox(tb).Input.stopTime;
 iac=handles.Toolbox(tb).Input.activeDatabase;
 ii=handles.Toolbox(tb).Input.activeObservationStation;
 idcode=handles.Toolbox(tb).Input.database(iac).idCodes{ii};
-url=[handles.Toolbox(tb).Input.database(iac).URL idcode '/' idcode 't9999.nc'];
-url=[handles.Toolbox(tb).Input.database(iac).URL idcode '/' idcode 'h9999.nc'];
+% url=[handles.Toolbox(tb).Input.database(iac).URL idcode '/' idcode 't9999.nc'];
+% url=[handles.Toolbox(tb).Input.database(iac).URL idcode '/' idcode 'h9999.nc'];
 time=[];
 data=[];
 
@@ -123,8 +123,15 @@ wb = waitbox('Downloading data ...');
 
 try
     
-    [time,data]=getTimeSeriesFromNDBC(handles.Toolbox(tb).Input.database(iac).URL,t0,t1,idcode,'wave_height');
-    
+%    [time,data]=getTimeSeriesFromNDBC(handles.Toolbox(tb).Input.database(iac).URL,t0,t1,idcode,'wave_height');
+
+    switch lower(handles.Toolbox(tb).Input.database(iac).shortName)
+        case{'ndbc'}
+            [time,data]=getTimeSeriesFromNDBC(handles.Toolbox(tb).Input.database(iac).URL,t0,t1,idcode,'wave_height');
+        case{'co-ops'}
+            [time,data]=getWLFromCoops(idcode,t0,t1);
+    end
+
     %     time = nc_varget(url,'time');
     %     time=double(time);
     %     time=datenum(1970,1,1)+time/86400;
