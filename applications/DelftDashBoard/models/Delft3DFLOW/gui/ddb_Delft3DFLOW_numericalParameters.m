@@ -82,7 +82,7 @@ else
             y=handles.Model(md).Input(ad).gridY;
             depthZ=handles.Model(md).Input(ad).depthZ;
             kcs=handles.Model(md).Input(ad).kcs;
-            for ib=1:length(handles.Model(md).Input(ad).openBoundaries);
+            for ib=1:handles.Model(md).Input(ad).nrOpenBoundaries
                 [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(handles.Model(md).Input(ad).openBoundaries(ib),x,y,depthZ,kcs);
                 handles.Model(md).Input(ad).openBoundaries(ib).depth=zb;
             end
