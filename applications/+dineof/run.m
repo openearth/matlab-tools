@@ -218,17 +218,18 @@ function varargout = run(data, time, mask, varargin)
 
 if status < 0
 
-   S.mean   = [];
-   S.P      = [];
-   S.lftvec = [];
-   S.rghvec = [];
-   S.varEx  = [];
-   S.varLab = [];
-   S.vlsng  = [];
-   dataf    = [];
+   % make dummy matrices with expected size to allow automated plotting of results
    
-   fprintf(2,'DINEOF failed, [] matrices returned \n')
-   dataf    = [];
+   S.mean   = nan;
+   S.P      = 0;
+   S.lftvec = repmat(nan,[size(data,1) 1]);
+   S.rghvec = repmat(nan,[size(data,3) 1]);
+   S.varEx  = 0;
+   S.varLab = {};
+   S.vlsng  = 0;
+   dataf    = permute(nan.*data,permuteback);;
+   
+   fprintf(2,'DINEOF failed, dummy matrices returned \n')
 
    if nargout==1
       varargout = {dataf};
