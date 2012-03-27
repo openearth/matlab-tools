@@ -22,6 +22,12 @@
           <callback>ddb_BathymetryToolbox_import</callback>
           <elements>Bathymetry.import.xml</elements>
         </tab>
+        <tab>
+          <tag>merge</tag>
+          <tabstring>Merge</tabstring>
+          <callback>ddb_BathymetryToolbox_merge</callback>
+          <elements>Bathymetry.merge.xml</elements>
+        </tab>
       </tabs>
     </element>
   </elements>

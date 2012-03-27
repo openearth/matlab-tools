@@ -1,27 +1,29 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<!-- Written Feb-2012 by David Sitton -->
 <root>
   <element>
     <tag>getbathyfile</tag>
     <style>pushselectfile</style>
-    <position>195 110 150 20</position>
+    <position>30 110 150 20</position>
     <text>Select Bathy</text>
     <variable>handles.Toolbox(tb).Input.bathyFile</variable>
     <onchange>ddb_BathymetryToolbox_import</onchange>
     <option1>getbathyfile</option1>
     <showfilename>yes</showfilename> 
-    <extension idx="1" type="cell" size="2 2">
+    <extension idx="1" type="cell" size="3 2">
         <item idx="1" type="char" size="1 5">*.grd</item>
         <item idx="2" type="char" size="1 5">*.xyz</item>
-        <item idx="3" type="char" size="1 18">Grid Files (*.grd)</item>
-        <item idx="4" type="char" size="1 17">XYZ files (*.xyz)</item>
+        <item idx="3" type="char" size="1 4">*.nc</item>
+        <item idx="4" type="char" size="1 18">Grid Files (*.grd)</item>
+        <item idx="5" type="char" size="1 17">XYZ files (*.xyz)</item>
+        <item idx="6" type="char" size="1 19">NetCDF files (*.nc)</item>
     </extension> <selectiontext>Select bathy file</selectiontext>
     <tooltipstring>Select bathymetry file</tooltipstring> 
   </element>
   <element>
     <tag>import</tag>
     <style>pushbutton</style>
-    <position>195 80 150 20</position>
+    <position>30 80 150 20</position>
     <text>Import Bathy</text>
     <variable>handles.Toolbox(tb).Input.bathyFile</variable>
     <callback>ddb_BathymetryToolbox_import</callback>
@@ -39,7 +41,18 @@
       <option1>editOutputName</option1>
       <variable>handles.Toolbox(tb).Input.newbathyName</variable>
       <type>string</type>
-      <position>350 80 150 20 </position>
+      <position>195 80 150 20 </position>
+  </element>
+  <element>
+    <tag>setresolution</tag>
+    <style>edit</style>
+    <text>Resolution (sec)</text>
+   <onchange>ddb_BathymetryToolbox_import</onchange>
+      <option1>editresolution</option1>
+      <variable>handles.Toolbox(tb).Input.newbathyresolution</variable>
+      <type>double</type>
+      <position>195 45 75 20 </position>
+      <tooltipstring>Set the resolution (in seconds) of the grid.</tooltipstring> 
   </element>
   <element>
     <tag>selectpositivedirection</tag>
@@ -47,7 +60,7 @@
     <text>Positive</text>
     <textposition>left</textposition>
     <variable>handles.Toolbox(tb).Input.activeDirection</variable>
-    <position>350 45 60 20</position>
+    <position>400 45 60 20</position>
     <tooltipstring>Select positive up or down</tooltipstring>
     <type>string</type>
     <list>
@@ -61,4 +74,40 @@
       </values>
     </list>
   </element>
+  <element>
+    <tag>selectdatumtype</tag>
+    <style>popupmenu</style>
+    <text>Datum Type</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.datum_type</variable>
+    <position>550 80 150 20</position>
+    <tooltipstring>Select offset of the Bathy Data</tooltipstring>
+    <onchange>ddb_BathymetryToolbox_import</onchange>
+    <type>string</type>
+    <list>
+      <texts>
+        <text>Mean Sea Level</text>
+        <text>Low Water Level</text>
+        <text>High Water Level</text>
+      </texts>
+      <values>
+        <value>Mean Sea Level</value>
+        <value>Low Water Level</value>
+        <value>High Water Level</value>
+      </values>
+    </list>
+  </element>
+  <element>
+      <tag>offsetvalue</tag>
+      <style>edit</style>
+      <text>Offset Value</text>
+      <value>0</value>
+      <onchange>ddb_BathymetryToolbox_import</onchange>
+      <tooltipstring>Set the offset from mean sea level</tooltipstring>
+      <option1>offsetvalue</option1>
+      <variable>handles.Toolbox(tb).Input.offset_value</variable>
+      <type>string</type>
+      <position>550 45 50 20 </position>
+  </element>  
+  
 </root>

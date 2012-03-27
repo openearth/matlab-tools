@@ -209,13 +209,37 @@ while var_cnt < n_arg
     netcdf.reDef(f);
     
     netcdf.putAtt(f,cur_nc_var,'units',cur_var_units);
-    netcdf.putAtt(f,cur_nc_var,'_FillValue',0);
+    switch lower(cur_var_fmt)
+        case {'float','ncfloat','flt'}
+            netcdf.putAtt(f,cur_nc_var,'_FillValue',single(0));
+        case {'double','ncdouble','dbl'}
+            netcdf.putAtt(f,cur_nc_var,'_FillValue',double(0));
+        case {'short','ncshort','shrt'}
+            netcdf.putAtt(f,cur_nc_var,'_FillValue',int16(0));
+        case {'integer','int','int32','ncint'}
+            netcdf.putAtt(f,cur_nc_var,'_FillValue',int32(0));
+    end
+%     
     
     %f{cur_var_name}.units = cur_var_units;
     %f{cur_var_name}.FillValue = 0; % not sure what this does
     var_cnt=var_cnt+6;
     while var_cnt < n_arg && strcmpi(varargin{var_cnt},'-att')
-        netcdf.putAtt(f,cur_nc_var,varargin{var_cnt+1},varargin{var_cnt+2})
+        if strcmp(varargin{var_cnt+1},'_FillValue')
+            switch lower(cur_var_fmt)
+                case {'float','ncfloat','flt'}
+                    netcdf.putAtt(f,cur_nc_var,varargin{var_cnt+1},single(varargin{var_cnt+2}));
+                case {'double','ncdouble','dbl'}
+                    netcdf.putAtt(f,cur_nc_var,varargin{var_cnt+1},double(varargin{var_cnt+2}));
+                case {'short','ncshort','shrt'}
+                    netcdf.putAtt(f,cur_nc_var,varargin{var_cnt+1},int16(varargin{var_cnt+2}));
+                case {'integer','int','int32','ncint'}
+                    netcdf.putAtt(f,cur_nc_var,varargin{var_cnt+1},int32(varargin{var_cnt+2}));
+            end
+            
+        else
+            netcdf.putAtt(f,cur_nc_var,varargin{var_cnt+1},varargin{var_cnt+2})
+        end
         var_cnt=var_cnt+3;
     end
     netcdf.endDef(f);

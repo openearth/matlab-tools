@@ -53,11 +53,11 @@ function handles = ddb_initializeBathymetry(handles, varargin)
 % Created: 01 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %%
@@ -79,6 +79,9 @@ handles.Toolbox(ii).Input.exportTypes={'xyz'};
 handles.Toolbox(ii).Input.activeExportType='xyz';
 
 handles.Toolbox(ii).Input.activeDirection='up';
+
+handles.Toolbox(ii).Input.datum_type='Mean Sea Level';
+handles.Toolbox(ii).Input.offset_value=0;
 
 %handles.Bathymetry.activeDataset=1;
 
@@ -104,6 +107,11 @@ handles.Toolbox(ii).Input.newDataset.dx=0;
 handles.Toolbox(ii).Input.newDataset.ymin=0;
 handles.Toolbox(ii).Input.newDataset.ymax=0;
 handles.Toolbox(ii).Input.newDataset.dy=0;
+
+handles.Toolbox(ii).Input.num_merge = 0;
+handles.Toolbox(ii).Input.add_list = {};
+handles.Toolbox(ii).Input.bathy_to_cut = [];
+handles.Toolbox(ii).Input.add_list_idx = [];
 
 %handles.bathymetry.newDataset.autoLimits=1;
 

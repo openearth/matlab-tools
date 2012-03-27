@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>selectbathymetrytoadd</tag>
+    <style>listbox</style>
+    <text>Available Databases</text>
+    <textposition>above-center</textposition>
+    <variable>handles.Toolbox(tb).Input.activeDataset</variable>
+    <type>integer</type>
+    <position>10 10 150 105</position>
+    <tooltipstring>Select bathymetry databases to add</tooltipstring>
+    <onchange>ddb_BathymetryToolbox_merge</onchange>
+    <option1>selectdatasettoadd</option1>
+    <list>
+      <texts>
+        <variable>handles.bathymetry.datasets</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>addbathy</tag>
+    <style>pushbutton</style>
+    <position>180 95 110 20</position>
+    <text>Add to List</text>
+    <tooltipstring>Add highlighted bathy data to the merge list.</tooltipstring>
+    <callback>ddb_BathymetryToolbox_merge</callback>
+    <option1>addbathytolist</option1>
+  </element> 
+  <element>
+    <tag>deletefromlist</tag>
+    <style>pushbutton</style>
+    <position>180 70 110 20</position>
+    <text>Delete from List</text>
+    <tooltipstring>Remove highlighted bathy data from the merge list.</tooltipstring>
+    <callback>ddb_BathymetryToolbox_merge</callback>
+    <option1>deletefromlist</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listbathymetry</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.num_merge</variable>
+            <type>integer</type>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+          <check>
+              <variable>length(handles.Toolbox(tb).Input.bathy_to_cut)</variable>
+              <type>integer</type>
+              <value>0</value>
+              <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element> 
+  <element>
+    <tag>moveselection</tag>
+    <style>pushbutton</style>
+    <position>180 40 110 20</position>
+    <text>Move Data up a Layer</text>
+    <callback>ddb_BathymetryToolbox_merge</callback>
+    <option1>moveselection</option1>
+    <tooltipstring>Move the selected data up one layer.</tooltipstring> 
+  </element>
+  <element>
+  <tag>listbathymetry</tag>
+    <style>listbox</style>
+    <text>Data to Merge</text>
+    <textposition>above-center</textposition>
+    <variable>handles.Toolbox(tb).Input.bathy_to_cut</variable>
+    <mx>2</mx>
+    <type>integer</type>
+    <position>310 10 150 105</position>
+    <tooltipstring>Highlight to remove or reorder data.</tooltipstring>
+    <onchange>ddb_BathymetryToolbox_merge</onchange>
+    <option1>listbathymetry</option1>
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.add_list</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
+    <tag>mergedata</tag>
+    <style>pushsavefile</style>
+    <position>480 15 120 20</position>
+    <text>Merge Data</text>
+    <variable>handles.Toolbox(tb).Input.datasets</variable>
+    <callback>ddb_BathymetryToolbox_merge</callback>
+    <option1>mergedata</option1>
+    <showfilename>no</showfilename> 
+    <extension>*.nc</extension>
+    <selectiontext>Save bathy file</selectiontext>
+    <tooltipstring>Merge selected bathymetry data</tooltipstring> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>listbathymetry</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Toolbox(tb).Input.num_merge</variable>
+            <type>integer</type>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+</root>

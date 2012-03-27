@@ -5,20 +5,30 @@ out_flag = true;
 dx = 1/1200.0;
 
 if nargin > 2
-    dx = varargin{3};
+    % 3rd input is number of seconds:
+    dx = varargin{3}/3600;
 end
 
 file = varargin{1};
 % load data:
 
+if nargin > 3
+    datum_type = varargin{4};
+end
+if nargin > 4
+    msl_offset = varargin{5};
+end
 
+% update wait bar
 wb_h = waitbar(0,'Reading the adcirc data');
-[x,y,z,n1,n2,n3]=import_adcirc_fort14(file,wb_h,[0,1/3]);
+
+%import the triangular information from ADCIRC:
+[x,y,z,n1,n2,n3]=import_adcirc_fort14(file,wb_h,[0,1/6]);
 out_file = varargin{2};
 z=-z;
 
 
-
+% get the boundary of the data
 min_lat = min(y);
 max_lat = max(y);
 min_lon = min(x);
@@ -32,17 +42,23 @@ max_lon = max(x);
 % % fprintf('New Resolution: %f\n',dx)
 % create grid
 
-waitbar(1/3,wb_h,'Initializing Grid');
+waitbar(1/6,wb_h,'Initializing Grid');
 
 
+% create a gridding of the region
 [lon_grd,lat_grd]=meshgrid(min_lon:dx:max_lon,min_lat:dx:max_lat);
 
 % fill in the triangles method:
-z_grd = nan(size(lon_grd));
+% z_grd = nan(size(lon_grd));
 
-waitbar(1/3+1/12,wb_h,'Interpolating grid');
+% calculate the number of layers so that there are no more than two tiling
+% sections in the longitude direction
+n_layers = ceil(log2(max(size(lon_grd))/300))-1;
 
-match_idx=interp_tri2grid(x,y,z,n1,n2,n3,lon_grd,lat_grd,wb_h,[1/3+12,2/3]);
+waitbar(1/6+1/12,wb_h,'Interpolating grid');
+
+% interpolate the triangles onto the new vertical rectangular grid.
+match_idx=interp_tri2grid(x,y,z,n1,n2,n3,lon_grd,lat_grd,wb_h,[1/6+1/12,2/3]);
     
 
 
@@ -55,12 +71,13 @@ match_idx=interp_tri2grid(x,y,z,n1,n2,n3,lon_grd,lat_grd,wb_h,[1/3+12,2/3]);
 % plot grid
 if out_flag
     waitbar(2/3,wb_h,'Saving the new grid');
+    
+    % save the data to the D3D tiled format.
+    save_z_to_d3dgrid(out_file,match_idx',lat_grd',lon_grd',dx,dx,n_layers,wb_h,[2/3,1],datum_type,msl_offset);
 
-    save_z_to_d3dgrid(out_file,match_idx',lat_grd',lon_grd',dx,dx,5,wb_h,[2/3,1]);
-
-else
-    pcolor(lon_grd(1:30:end,1:30:end),lat_grd(1:30:end,1:30:end),match_idx(1:30:end,1:30:end))
-    shading flat
+% % else
+% %     pcolor(lon_grd(1:30:end,1:30:end),lat_grd(1:30:end,1:30:end),match_idx(1:30:end,1:30:end))
+% %     shading flat
 end
 
 close(wb_h)

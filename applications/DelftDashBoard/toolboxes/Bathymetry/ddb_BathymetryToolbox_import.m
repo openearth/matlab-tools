@@ -1,21 +1,20 @@
 function ddb_BathymetryToolbox_import(varargin)
-%DDB_BATHYMETRYTOOLBOX_EXPORT  One line description goes here.
+%DDB_BATHYMETRYTOOLBOX_IMPORT  IMPORT BATHY DATA INTO D3D Tiled format
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_BathymetryToolbox_export(varargin)
+%   ddb_BathymetryToolbox_import(varargin)
 %
 %   Input:
-%   varargin =
-%
+%   varargin = option1, option2
 %
 %
 %
 %   Example
-%   ddb_BathymetryToolbox_export
+%   ddb_BathymetryToolbox_import
 %
-%   See also
+%   See also ddb_BathymetryToolbox_export, ddb_BathymetryToolbox_merge
 
 % This addition to the DeltDashBoard GUI was designed by David Sitton
 %
@@ -33,35 +32,75 @@ function ddb_BathymetryToolbox_import(varargin)
 % $Author: Sitton, David
 
 %
+
 if isempty(varargin)
     % New tab selected
+    % show the new bathy import panel
+    
+    % turn off the zoom button (if necessary)
     ddb_zoomOff;
+    
+    % refresh the Screen so that the new panel is showing
     ddb_refreshScreen;
 %     selectDataset;
+
     setUIElements('bathymetrypanel.import');
     ddb_plotBathymetry('activate');
 else
     %Options selected
+    % to get here, a user interface control was selected or modified
+    % (uicontrol object)
+    
     opt=lower(varargin{1});
     switch opt
         case{'getbathyfile'}
-            getbathyfile;
+            % browse for bathy data
+            getbathyfile(varargin{2});
         case{'editoutputname'}
+            % modify the name of the new bathy data set
+            % this value will be appear in the Bathymetry uimenu once
+            % importing is complete
             editoutputname
+        
+        case{'editresolution'}
+            % set the resolution of the data to import.
+            setresolution
                 
         case{'import'}
+            % execute the actual importing of the data
             importData;
+        case{'preppctidesbathy'}
+            preppctidesbathy
     end
 end
 
 return
 
-function getbathyfile
+% browsse for a Bathy Data set
+%
+% Currently supports XYZ, ADCIRC, and NC data*
+%
+% NC data won't update the vertical datum type attribute!
+function getbathyfile(selection_idx)
+
+if nargin<1
+    selection_idx=0;
+end
+
+if selection_idx
+    % find the selection type
+end
 
 global handles
 
+tmp = get(gcbo,'Callback');
+
+exp_typ = regexprep(tmp{4}(1).fileExtension{selection_idx,1},'^.*\.','');
+
+tb_name = lower(handles.Toolbox(tb).name);
+
 % get the bathymetry toolbox structure:
-idx = find(strcmp({handles.Toolbox.name},'Bathymetry'));
+idx = strcmpi({handles.Toolbox.name},tb_name);
 % handles.Toolbox(idx)
 % handles.Toolbox(idx).GUI
 % handles.Toolbox(idx).GUI.elements
@@ -69,7 +108,9 @@ idx = find(strcmp({handles.Toolbox.name},'Bathymetry'));
 % handles.Toolbox(idx).GUI.elements.tabs.tabname
 
 % get the import bathymetry tab structure:
-tb_idx = (strcmp({handles.Toolbox(idx).GUI.elements.tabs.tabname},'import'));
+% tb_idx = (strcmp({handles.Toolbox(idx).GUI.elements.tabs.tabname},'import'));
+
+set(findobj('Tag',[tb_name,'panel.import.import']),'UserData',exp_typ);
 % handles.Toolbox(idx).GUI.elements.tabs.tabname(tb_idx)
 % handles.Toolbox(idx).GUI.elements.tabs(tb_idx)
 % handles.Toolbox(idx).GUI.elements.tabs(tb_idx).elements
@@ -77,7 +118,7 @@ tb_idx = (strcmp({handles.Toolbox(idx).GUI.elements.tabs.tabname},'import'));
 % handles.Toolbox(idx).GUI.elements.tabs(tb_idx).elements(3)
 % handles.Toolbox(idx).Input
 
-obj_idx = find(strcmp({handles.Toolbox(idx).GUI.elements.tabs(tb_idx).elements.tag},'bathymetrypanel.import.editoutputname'));
+% obj_idx = find(strcmp({handles.Toolbox(idx).GUI.elements.tabs(tb_idx).elements.tag},'bathymetrypanel.import.editoutputname'));
 
 % TAGS:
 % % % bathymetrypanel.import.getbathyfile
@@ -96,53 +137,105 @@ end
 
 output_name = regexprep(output_name,'\.[^\.]*$','');
 
-obj_hndl = findobj('Tag','bathymetrypanel.import.editoutputname');
+obj_hndl_name = findobj('Tag',[tb_name,'panel.import.editoutputname']);
+obj_hndl_res = findobj('Tag',[tb_name,'panel.import.setresolution']);
 
-handles.Toolbox(tb).Input.newbathyName = output_name;
-if ishandle(obj_hndl)
-    set(obj_hndl,'String',output_name)
+if isempty(obj_hndl_name)
+    obj_hndl_name = findobj('Tag',[tb_name,'panel.import.editoutputname']);
+    obj_hndl_res = findobj('Tag',[tb_name,'panel.import.setresolution']);
+    
 end
+
+% reset the resolution to 3 seconds.
+handles.Toolbox(tb).Input.newbathyName = output_name;
+handles.Toolbox(tb).Input.newbathyresolution = 3;
+if ishandle(obj_hndl_name)
+    set(obj_hndl_name,'String',output_name)
+    set(obj_hndl_res,'String',num2str(handles.Toolbox(tb).Input.newbathyresolution))
+end
+
+
 return
 
 % find the object where we will put the name:
 
 function editoutputname
+% no action required here
 
-global handles
-
-% get the bathymetry toolbox structure:
-idx = find(strcmp({handles.Toolbox.name},'Bathymetry'));
-
-
-% get the import bathymetry tab structure:
-tb_idx = (strcmp({handles.Toolbox(idx).GUI.elements.tabs.tabname},'import'));
-
-obj_idx = find(strcmp({handles.Toolbox(idx).GUI.elements.tabs(tb_idx).elements.tag},'bathymetrypanel.import.editoutputname'));
-
-
-% get the bathymetry file (just selected by user):
-file = handles.Toolbox(idx).Input.bathyFile;
-
-
-fprintf(1,'%s\n',handles.Toolbox(tb).Input.newbathyName)
-% if ishandle(obj_hndl)
-%     set(obj_hndl,'String',output_name)
-% end
-
-
+% % global handles
+% % 
+% % % get the bathymetry toolbox structure:
+% % idx = find(strcmp({handles.Toolbox.name},'Bathymetry'));
+% % 
+% % 
+% % % get the import bathymetry tab structure:
+% % tb_idx = (strcmp({handles.Toolbox(idx).GUI.elements.tabs.tabname},'import'));
+% % 
+% % obj_idx = find(strcmp({handles.Toolbox(idx).GUI.elements.tabs(tb_idx).elements.tag},'bathymetrypanel.import.editoutputname'));
+% % 
+% % 
+% % % get the bathymetry file (just selected by user):
+% % file = handles.Toolbox(idx).Input.bathyFile;
+% % 
+% % 
+% % fprintf(1,'%s\n',handles.Toolbox(tb).Input.newbathyName)
+% % % if ishandle(obj_hndl)
+% % %     set(obj_hndl,'String',output_name)
+% % % end
 
 return
 
+function setresolution
+% no action required here
+
+% % global handles
+
+% % obj_hndl_res = findobj('Tag','bathymetrypanel.import.setresolution');
+
+% handles.Toolbox(tb).Input.newbathyresolution;
+
+% % 
+% % % get the bathymetry toolbox structure:
+% % idx = find(strcmp({handles.Toolbox.name},'Bathymetry'));
+% % 
+% % 
+% % % get the import bathymetry tab structure:
+% % tb_idx = (strcmp({handles.Toolbox(idx).GUI.elements.tabs.tabname},'import'));
+% % 
+% % obj_idx = find(strcmp({handles.Toolbox(idx).GUI.elements.tabs(tb_idx).elements.tag},'bathymetrypanel.import.setresolution'));
+% % 
+% % 
+% % % get the bathymetry file (just selected by user):
+% % file = handles.Toolbox(idx).Input.bathyFile;
+% % 
+% % 
+% % fprintf(1,'%s\n',handles.Toolbox(tb).Input.newbathyName)
+% % % if ishandle(obj_hndl)
+% % %     set(obj_hndl,'String',output_name)
+% % % end
+
+return
+
+%
+% IMPORT THE DATA HERE:
+%
 function importData
 
 global handles
 
 % get the bathymetry toolbox structure:
-idx = find(strcmp({handles.Toolbox.name},'Bathymetry'));
+% idx = find(strcmp({handles.Toolbox.name},'Bathymetry'));
+idx = tb;
 
+% get the offet from MSL and the datum type
+msl_offset = handles.Toolbox(tb).Input.offset_value;
+datum_type = handles.Toolbox(tb).Input.datum_type;
+
+% get the extension of the data o be imported
+ext_typ = get(gcbo,'UserData');
 
 % get the import bathymetry tab structure:
-tb_idx = find(strcmp({handles.Toolbox(idx).GUI.elements.tabs.tabname},'import'));
+tb_idx = strcmp({handles.Toolbox(idx).GUI.elements.tabs.tabname},'import');
 
 obj_idx = find(strcmp({handles.Toolbox(idx).GUI.elements.tabs(tb_idx).elements.tag},'bathymetrypanel.import.editoutputname'));
 
@@ -152,15 +245,43 @@ file = handles.Toolbox(idx).Input.bathyFile;
 
 bathy_dir = handles.bathyDir;
 
-output_name = regexprep(handles.Toolbox(tb).Input.newbathyName,' ','_');
-output_dir = [bathy_dir,output_name,filesep];
 
+res_val = handles.Toolbox(tb).Input.newbathyresolution;
 
+switch ext_typ
+    case 'grd'
+        % adcirc data selected:
+        output_name = regexprep(handles.Toolbox(tb).Input.newbathyName,' ','_');
+        output_dir = [bathy_dir,output_name,filesep];
 
-out_file = [output_dir,output_name];
-
-fprintf(1,'trying to import grid data from ADCIRC\n');
-convert_adcirc2D3Dgrid(file,out_file);
+        out_file = [output_dir,output_name];
+        
+        % import the adcict data
+        fprintf(1,'trying to import grid data from ADCIRC\n');
+        convert_adcirc2D3Dgrid(file,out_file,res_val,datum_type,msl_offset);
+        
+    case 'nc'
+        % get the name of the NC tiles (already in the right format)
+        if ispc
+            output_dir = regexprep(file,'[^\\]*$','');
+            output_name = regexprep(file,'^.*\\','');
+        else
+            output_dir = regexprep(file,'[^/]*$','');
+            output_name = regexprep(file,'^.*/','');
+        end
+        output_name = regexprep(output_name,'\.nc','');
+        
+        disp('Adding bathy NC files to GUI')
+    case 'xyz'
+        % though I have software to do this, I haven't put it into function
+        % form and imported it into the GUI yet. I have misplaced the one
+        % xyz file I have for testing this. When I find it, I will
+        % implement this here.
+        return
+    otherwise
+        msgbox('Unknown Data format. You must edit %s subroutine "importData" to handle this format.')
+        return
+end
 
 % update initialization file
 
@@ -168,6 +289,9 @@ convert_adcirc2D3Dgrid(file,out_file);
 
 %bathymetrydataset
 
+% update the GUI
+
+% add a dataset to the Bathyemetry options:
 k=handles.bathymetry.nrDatasets+1;
 
 handles.bathymetry.nrDatasets=k;
@@ -188,6 +312,8 @@ end
 % usecache
 handles.bathymetry.dataset(k).useCache=0;
 
+% update the tile definition file so that the GUI will remember this data
+% next time:
 
 % update tiledbathymetry.def file (for future use in GUI)
 fid = fopen([handles.bathyDir,'tiledbathymetries.def'],'at+');
@@ -209,6 +335,7 @@ fclose(fid);
 % netcdftiles
             
             
+% save the data in the GUI to let it find the new bathy data
 % Local
 fname=[handles.bathymetry.dataset(k).URL filesep handles.bathymetry.dataset(k).name '.nc'];
 if exist(fname,'file')
@@ -231,6 +358,8 @@ if handles.bathymetry.dataset(k).isAvailable
     ntilesy=nc_varget(fname,'ntilesy');
     dx=nc_varget(fname,'grid_size_x');
     dy=nc_varget(fname,'grid_size_y');
+    iav = cell(1,length(x0));
+    jav = cell(1,length(x0));
     for nn=1:length(x0)
         iav{nn}=nc_varget(fname,['iavailable' num2str(nn)]);
         jav{nn}=nc_varget(fname,['javailable' num2str(nn)]);
@@ -247,13 +376,15 @@ if handles.bathymetry.dataset(k).isAvailable
     
     try
         handles.bathymetry.dataset(k).verticalCoordinateSystem.name=nc_attget(fname,'crs','vertical_reference_level');
-    catch
+    catch ME
+        fprintf('Warning: %s\n',ME);
         handles.bathymetry.dataset(k).verticalCoordinateSystem.name='unknown';
     end
     
     try
         handles.bathymetry.dataset(k).verticalCoordinateSystem.level=nc_attget(fname,'crs','difference_with_msl');
-    catch
+    catch ME
+        fprintf('Warning: %s\n',ME);
         handles.bathymetry.dataset(k).verticalCoordinateSystem.level=0;
     end
     
@@ -289,39 +420,63 @@ handles.GUIHandles.Menu.Bathymetry.(new_field) = uimenu(bathy_hndl,...
 
 
 
-% change to the new dataset:
+% change the display to have the new BATHY data as the selected source
 ddb_menuBathymetry(handles.GUIHandles.Menu.Bathymetry.(new_field))
 
 return
 
 
-%
-% function selectDataset
-% handles=getHandles;
-% handles.Toolbox(tb).Input.activeZoomLevel=1;
-% % handles=setResolutionText(handles);
-% handles.Toolbox(tb).Input.zoomLevelText=[];
-% for i=1:length(handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).zoomLevel)
-%     handles.Toolbox(tb).Input.zoomLevelText{i}=num2str(i);
-% end
-% setHandles(handles);
-% setUIElements('bathymetrypanel.import');
-% 
-% % function selectZoomLevel
-% handles=getHandles;
-% % handles=setResolutionText(handles);
-% setHandles(handles);
-% setUIElements('bathymetrypanel.import');
 
+% Prepare PC Tides Bathy
+function preppctidesbathy
 
-%
-% function handles=setResolutionText(handles)
-% 
-% cellSize=handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).zoomLevel(handles.Toolbox(tb).Input.activeZoomLevel).dx;
-% %     cellSize=dms2degrees([dg mn sc]);
-% if strcmpi(handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).horizontalCoordinateSystem.type,'Geographic')
-%     cellSize=cellSize*111111;
-%     handles.Toolbox(tb).Input.resolutionText=['Cell Size : ~ ' num2str(cellSize,'%10.0f') ' m'];
-% else
-%     handles.Toolbox(tb).Input.resolutionText=['Cell Size : ' num2str(cellSize,'%10.0f') ' m'];
-% end
+txt = {};
+nerror = 0;
+
+handles = getHandles();
+disp('  Prepping PCTides high-res. bathy....');
+disp(['Mode is now: ' int2str(handles.Model(md).Input(ad).enablePCTides)]);
+if (handles.Model(md).Input(ad).enablePCTides == 1)
+    if (~isfield(handles.Toolbox(tb).Input, 'bathyFile') || isempty(handles.Toolbox(tb).Input.bathyFile))
+        nerror = nerror + 1;
+        txt{nerror} = 'Enter a PCTides high-res. bathy grid file name.';
+    end
+    if (~isfield(handles.Toolbox(tb).Input, 'gridHiResName') || isempty(handles.Toolbox(tb).Input.gridHiResName))
+        nerror = nerror + 1;
+        txt{nerror} = 'Enter a PCTides high-res. bathy grid name.';
+    end
+    if (~isfield(handles.Toolbox(tb).Input, 'gridHiResSouthLat') || isempty(handles.Toolbox(tb).Input.gridHiResSouthLat))
+        nerror = nerror + 1;
+        txt{nerror} = 'Enter a PCTides high-res. bathy grid southern latitude.';
+    end
+    if (~isfield(handles.Toolbox(tb).Input, 'gridHiResNorthLat') || isempty(handles.Toolbox(tb).Input.gridHiResNorthLat))
+        nerror = nerror + 1;
+        txt{nerror} = 'Enter a PCTides high-res. bathy grid northern latitude.';
+    end
+    if (~isfield(handles.Toolbox(tb).Input, 'gridHiResNY') || isempty(handles.Toolbox(tb).Input.gridHiResNY))
+        nerror = nerror + 1;
+        txt{nerror} = 'Enter a PCTides high-res. bathy grid number of latitude grid points.';
+    end
+    if (~isfield(handles.Toolbox(tb).Input, 'gridHiResWestLon') || isempty(handles.Toolbox(tb).Input.gridHiResWestLon))
+        nerror = nerror + 1;
+        txt{nerror} = 'Enter a PCTides high-res. bathy grid western longitude.';
+    end
+    if (~isfield(handles.Toolbox(tb).Input, 'gridHiResEastLon') || isempty(handles.Toolbox(tb).Input.gridHiResEastLon))
+        nerror = nerror + 1;
+        txt{nerror} = 'Enter a PCTides high-res. bathy grid eastern longitude.';
+    end
+    if (~isfield(handles.Toolbox(tb).Input, 'gridHiResNX') || isempty(handles.Toolbox(tb).Input.gridHiResNX))
+        nerror = nerror + 1;
+        txt{nerror} = 'Enter a PCTides high-res. bathy grid number of longitude grid points.';
+    end
+    if (nerror == 0)
+        %  Create the prep file.
+    else
+        %txt = {'WARNING: One or more errors was found:'; txt};
+        warndlg(txt,'BATHY IMPORT ERROR','modal');
+    end
+else
+    GiveWarning('Warning','Please select the PCTides checkbox in the Init Mode tab.');
+end
+
+return;

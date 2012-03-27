@@ -51,7 +51,7 @@ M = A.*pt1_x + B.*pt1_y + C.*pt1_z;
 
 
 for c=1:n_t  % or n_t 
-    if rem(c,100) == 2
+    if rem(c,200) == 1
         wb_label = sprintf('Completed on %d triangles out of %d\n',c-1,n_t);
         pct_ratio = (c-1)/n_t;
         pct_v = pct_h(1) + pct_ratio*(diff(pct_h));
@@ -102,7 +102,7 @@ for c=1:n_t  % or n_t
     end
 end
 
-
+clear pt* y_* dir_* u* v* lat lon n* A B C M *_val cur_* x y z
 waitbar(pct_h(2),wb_h,'Completed interpolation of triangles onto the grid')
 
 
