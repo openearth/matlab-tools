@@ -180,7 +180,7 @@ if OPT.make
         if ~isempty(OPT.referencepath)
             url_reference = fullfile(OPT.referencepath,fns(ii).name); %#ok<*ASGLU>
             if exist(url_reference,'file')
-                z_reference = double(nc_varget(url_reference,OPT.var_name,[ 0, 0, 0],[-1,-1,-1])); % [OPT.stride ???]
+                z_reference = double(nc_varget(url_reference,OPT.var_name,[ 0, 0, 0],[1,-1,-1])); % [OPT.stride ???]
                 
                 % check if lat and lon are identical in the source and the
                 % reference plane
