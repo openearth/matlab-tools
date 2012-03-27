@@ -88,6 +88,8 @@ OPT.version             = 'Trial';
 OPT.terms_for_use       = 'These data is for internal use by ... staff only!';
 OPT.disclaimer          = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
 
+OPT.catalog = ''; % not yet implemented
+
 if nargin==0
     varargout = {OPT};
     return
