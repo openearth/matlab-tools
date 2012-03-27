@@ -78,10 +78,10 @@ if jj ~= length(time0) % then existing nc file already has data
         end
         if isequal(Z0(notnan),Z(notnan))
             % this is ok
-            fprintf(1,'in %s, WARNING: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan),datestr(date,'YYYYMMDD'))
+            fprintf(1,'in %s, WARNING: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(date,'YYYYMMDD'))
         else 
             % this is (most likely) not ok   
-            fprintf(2,'in %s, ERROR: %d values are overwritten by different values from a different source at %s \n',ncfile,sum(notnan),datestr(date,'YYYYMMDD'))
+            fprintf(2,'in %s, ERROR: %d values are overwritten by different values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(date,'YYYYMMDD'))
         end
     end
     Z0(Znotnan) = Z(Znotnan);
