@@ -81,7 +81,6 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 % 2008 Jul 13: return struct with empty fields rather than empty single arguments.
 
 %% Options defaults
-%-----------------------
 
    OPTIONS.sortfirst     = 0; % no need
    OPTIONS.tictoc        = 0;
@@ -102,7 +101,6 @@ function [varargout] = bin2(fx,fy,fz,varargin)
    end
 
 %% Input
-%-----------------------
 
    % f = fine grid
    % c = course grid
@@ -124,7 +122,6 @@ function [varargout] = bin2(fx,fy,fz,varargin)
    end
    
 %% Make curvi-linear grid of 1D vertices
-%-----------------------
 
    if min([size(cx,1) size(cx,2)])==1
    
@@ -134,7 +131,6 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 
    
    %% Options user options
-   %-----------------------
 
    while iargin<=nargin-3,
      if      ischar(varargin{iargin}),
@@ -156,7 +152,6 @@ function [varargout] = bin2(fx,fy,fz,varargin)
    end;   
 
 %% Pre processing
-%-----------------------
 
   %if OPTIONS.sortfirst
   %   fines = [fx(:) fy(:) fz(:)];

@@ -24,11 +24,16 @@ function [varargout]=colorbarwithxlabel(colorbartxt,varargin)
 %   Example:  
 %
 %      caxis([0 360])
-%      [ax, h]=colorbarwithxlabel('wind direction',[0:90:360]) 
+%      [ax, h]=colorbarwithxlabel('wind direction',[0:90:360],'horiz') 
 %      set(ax,'YTickLabel',{'E','N','W','S'})
 %
-%   See also: COLORBAR, SET(gca), GET(gca), COLORBARWITHxLABEL
-%             COLORBARWITHhTEXT, COLORBARWITHhTEXT, COLORBARWITHTITLE
+%      logticks = [1 2 5 10 20 50]
+%      clim(logticks([1 end]))
+%      [ax, h]=colorbarwithxlabel('SPM [mg/l]',logticks,'horiz');
+%      set(ax,'XTickLabel',logticks);
+%
+%   See also: COLORBAR, SET(gca), GET(gca), COLORBARWITHyLABEL
+%             COLORBARWITHhTEXT, COLORBARWITHvTEXT, COLORBARWITHTITLE
  
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology

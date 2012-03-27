@@ -16,9 +16,9 @@ function varargout = timeaxis(varargin)
 %            (e.g. for upper panel of 2 stacked timeplots).
 %  * nt      nt is the number if INTERVALS (default 6) applied when length(ttick)=2
 %  * ax      'x'(default) ,'y','z'
-%  * type    'datestr' (default)
-%              'tick'    (only Deltares)
-%              'text'    removes all ticklabels and draws tick as text,
+%  * type     'datestr'  (default)
+%             'tick'
+%             'text'     removes all ticklabels and draws tick as text,
 %                        NOTE 1: Text has fixed y position, so set ylim before timaxis.
 %                        If fmt is an array, every fmt option
 %                        is drawn as a separate text line.
@@ -33,10 +33,10 @@ function varargout = timeaxis(varargin)
 %               and skips first and last (only when type='text')
 %            -1 plots datetexts left aligned at the ticks
 %               and skips last ticks since that will not be 
-%               in tha axis range (only when type='text').
+%               in the axis range (only when type='text').
 %
 %              +--------+--------+--------+
-%              |may_6   |may_7   |may_8   |may_9    tick = -1
+%              |may_6   |may_7   |may_8   |         tick = -1
 %            may_6    may_7    may_8    may_9       tick =  0 
 %              |      may_7    may_8      |         tick = -2
 %              +--------+--------+--------+
@@ -183,12 +183,23 @@ function varargout = timeaxis(varargin)
              end
          end
          if strcmp(lower(OPT.ax),'x')
-         Handles(i) = text(ttick(i),ylim1(1),txt,'verticalalignment'  ,'top',...
-                                                'horizontalalignment',horizontalalignment);
+          if strcmp(get(gca,'xaxisLocation'),'top')
+          Handles(i) = text(ttick(i),ylim1(2),txt,'verticalalignment'  ,'bottom',...
+                                                 'horizontalalignment',horizontalalignment);
+          else
+          Handles(i) = text(ttick(i),ylim1(1),txt,'verticalalignment'  ,'top',...
+                                                 'horizontalalignment',horizontalalignment);
+          end
          elseif strcmp(lower(OPT.ax),'y')
-         Handles(i) = text(xlim1(1),ttick(i),txt,'verticalalignment'  ,'bottom',...
-                                                'horizontalalignment',horizontalalignment,...
-                                                'rotation'           ,90);
+          if strmcp(get(gca,'xaxisLocation'),'right')
+          Handles(i) = text(xlim1(1),ttick(i),txt,'verticalalignment'  ,'bottom',...
+                                                 'horizontalalignment',horizontalalignment,...
+                                                 'rotation'           ,90);
+          else
+          Handles(i) = text(xlim1(1),ttick(i),txt,'verticalalignment'  ,'bottom',...
+                                                 'horizontalalignment',horizontalalignment,...
+                                                 'rotation'           ,90);
+          end
          end
       end
       

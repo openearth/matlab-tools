@@ -50,7 +50,7 @@ function strout = mkhtml(strin);
 %   -------------------------------------------------------------------- 
 
    
-   OPT.symbols  = {'%',' ','|','/','<',',','(',')',''''};  % NOTE do '%' first, as all are replaced by %hex
+   OPT.symbols  = {'%',' ','|','/','<',',','(',')','''','>'};  % NOTE do '%' first, as all are replaced by %hex
 
    disp(['mkhtml: processed only following characters: ',char(OPT.symbols)']);
    
