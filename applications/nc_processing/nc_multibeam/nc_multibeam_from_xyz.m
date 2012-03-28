@@ -46,18 +46,23 @@ function varargout = nc_multibeam_from_xyz(varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+%
+% nc_SetOptions  can be used to collect the input parameters
+% Example
+% OPT = nc_SetOptions
+% nc_multibeam_to_kml_tiles_png(OPT.nc)
 
 %%
 %% Kees Pruis
 set(0,'defaultFigureWindowStyle','normal')
-get_ncOptions = @(varargin) (nc_SetOptions(varargin{:})); % gather the options from nc_SetOptions
-OPT           = get_ncOptions();   
-OPT.nc = setproperty(OPT.nc,varargin{:});
-OPT = OPT.nc;
-% if nargin==0;
-%     varargout = {OPT};
-%     return;
-% end
+
+if nargin==0
+    varargout = {'Input parameters are not given'};
+    return
+end
+
+OPT = setproperty(varargin{:});
+
 % ----------------------------------------------------------------------
 if OPT.make
     multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
@@ -290,6 +295,6 @@ else
     disp('generation of nc files skipped')
 end
 
-% OPT = nc_multibeam_copync2server(OPT);
+OPT = nc_multibeam_copync2server(OPT);
 
 varargout = {OPT};
