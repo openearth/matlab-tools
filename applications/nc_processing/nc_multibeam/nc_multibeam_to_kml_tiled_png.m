@@ -57,19 +57,21 @@ function varargout = nc_multibeam_to_kml_tiled_png(varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-
+%
+%       nc_SetOptions  can be used to collect the input parameters
+%       Example
+%       OPT = nc_SetOptions
+%       nc_multibeam_to_kml_tiles_png(OPT.kml)
+%
 %%
 set(0,'defaultFigureWindowStyle','normal')
-get_ncOptions = @(varargin) (nc_SetOptions(varargin{:})); % gather the options from nc_SetOptions
-OPT           = get_ncOptions();
-OPT.kml = setproperty(OPT.kml,varargin{:});
-OPT = OPT.kml;
 
-if nargin==0;
-    varargout = {OPT};
-    return;
+if nargin==0
+    varargout = {'Input parameters are not given'};
+    return
 end
 
+OPT = setproperty(varargin{:});
 
 if OPT.make
     %% find nc files, and remove catalog.nc from the files if found
