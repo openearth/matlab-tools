@@ -13,8 +13,9 @@ inputdir='';
 runid=[];
 t0=[];
 t1=[];
-isave=0;
+isave=1;
 cs='projected';
+zcor=0;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -81,7 +82,7 @@ nest=getNestSeries(hisfile,t0,t1,s,stride,opt);
 switch lower(opt)
     case{'hydro','both'}
         disp('Generating hydrodynamic boundary conditions ...');
-        openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,zcor);
+        openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,zcor,cs);
         if isave
             disp('Saving bct file');
             fname=[inputdir Flow.bctFile];
@@ -443,7 +444,7 @@ nest.z=z;
 
 
 %%
-function openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,zcor)
+function openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,zcor,cs)
 
 for i=1:length(openBoundaries)
     
@@ -614,7 +615,6 @@ for i=1:length(openBoundaries)
             openBoundaries(i).timeSeriesB=[0;0];
         case{'r'}
             openBoundaries(i).timeSeriesT=nest.t;
-%            calfac=0.6;
             calfac=1.0;
             acor1=-dps(1)/dp(1);
             acor1=max(min(acor1,2.0),0.5);
@@ -690,7 +690,12 @@ end
 if nbndneu>0 && nbndwl==1
     % Compute length of water level boundary (take the first boundary)
     bndwl=openBoundaries(ibndwl(1));
-    lngth=sqrt((bndwl.x(end)-bndwl.x(1)).^2 + (bndwl.y(end)-bndwl.y(1)).^2);
+    switch lower(cs)
+        case{'projected'}
+            lngth=sqrt((bndwl.x(end)-bndwl.x(1)).^2 + (bndwl.y(end)-bndwl.y(1)).^2);
+        otherwise
+            lngth=sqrt(111135.0*cos(0.5*(bndwl.y(1)+bndwl.y(end))*pi/180)*(bndwl.x(end)-bndwl.x(1)).^2 + 111323.7*(bndwl.y(end)-bndwl.y(1)).^2);
+    end
     % Determine grid direction
     if strcmpi(bndwl.orientation,'positive')
         idir=1;
