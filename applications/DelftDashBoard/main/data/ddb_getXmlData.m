@@ -62,6 +62,7 @@ function newdata = ddb_getXmlData(localdir,url,xmlfile)
 %% Check local xml-file else download from server
 file = [localdir filesep xmlfile];
 serverdata = [];
+newdata=[];
 
 if exist(file)==2
     data=xml_load(file);
