@@ -54,10 +54,10 @@ get_ncOptions = @(varargin) (nc_SetOptions(varargin{:})); % gather the options f
 OPT           = get_ncOptions();   
 OPT.nc = setproperty(OPT.nc,varargin{:});
 OPT = OPT.nc;
-if nargin==0;
-    varargout = {OPT};
-    return;
-end
+% if nargin==0;
+%     varargout = {OPT};
+%     return;
+% end
 % ----------------------------------------------------------------------
 if OPT.make
     multiWaitbar( 'Raw data to NetCDF',0,'Color',[0.2 0.6 0.2])
