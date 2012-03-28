@@ -84,7 +84,11 @@ flow.MMax=MDF.mnkmax(1);
 flow.NMax=MDF.mnkmax(2);
 flow.KMax=MDF.mnkmax(3);
 
-flow.latitude=MDF.anglat;
+if isfield(MDF,'anglat')
+    flow.latitude=MDF.anglat;
+else
+    flow.latitude=0;
+end
 
 % Constituents
 if ~isempty(find(MDF.sub1=='S', 1));
