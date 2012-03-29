@@ -4,19 +4,19 @@
   <element>
     <tag>hydropanel</tag>
     <style>panel</style>
-    <position>20 20 990 160</position>
+    <position>45 10 900 160</position>
     <title>Hydrodynamics</title>
   </element>
   <element>
     <tag>textselecthydro</tag>
     <style>text</style>
-    <position>40 145</position>
+    <position>65 145</position>
     <text>Select hydrodynamics results from Delft3D-FLOW</text>
   </element>
   <element>
     <tag>checkuseflowbedlevel</tag>
     <style>checkbox</style>
-    <position>40 120</position>
+    <position>65 120</position>
     <variable>
       <name>FlowBedLevel</name>
       <type>boolean</type>
@@ -27,7 +27,7 @@
   <element>
     <tag>checkuseflowwaterlevel</tag>
     <style>checkbox</style>
-    <position>40 100</position>
+    <position>65 95</position>
     <variable>
       <name>FlowWaterLevel</name>
       <type>boolean</type>
@@ -38,7 +38,7 @@
   <element>
     <tag>checkuseflowcurrent</tag>
     <style>checkbox</style>
-    <position>40 80</position>
+    <position>65 70</position>
     <variable>
       <name>FlowVelocity</name>
       <type>boolean</type>
@@ -49,7 +49,7 @@
   <element>
     <tag>checkuseflowwind</tag>
     <style>checkbox</style>
-    <position>40 60</position>
+    <position>65 45</position>
     <variable>
       <name>FlowWind</name>
       <type>boolean</type>
@@ -60,7 +60,7 @@
   <element>
     <tag>pushselectmdffile</tag>
     <style>pushselectfile</style>
-    <position>40 30 100 20</position>
+    <position>65 20 100 20</position>
     <tooltipstring>Select Delft3D-FLOW mdf file</tooltipstring>
     <text>Select FLOW file</text>
     <variable>

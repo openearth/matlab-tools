@@ -1,0 +1,617 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>obstaclespanel</tag>
+    <style>panel</style>
+    <position>45 10 600 160</position>
+    <text>Obstacles</text>
+  </element>
+  <element>
+    <tag>editobstacles</tag>
+    <style>listbox</style>
+    <position>55 20 160 130</position>
+    <tooltipstring>Edit obstacles</tooltipstring>
+    <variable>handles.Model(md).Input(ad).Obstacles</variable>
+    <type>string</type>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).Obstacles</variable>
+      </texts>
+    </list>
+    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
+    <option1>edit</option1>    
+  </element>
+  <element>
+    <tag>pushaddobstacle</tag>
+    <style>pushbutton</style>
+    <position>220 85 100 20</position>
+    <tooltipstring>Add obstacle</tooltipstring>
+    <text>Add</text>
+    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
+    <option1>add</option1>    
+  </element>
+  <element>
+    <tag>pushdeleteobstacle</tag>
+    <style>pushbutton</style>
+    <position>220 60 100 20</position>
+    <tooltipstring>Delete obstacle</tooltipstring>
+    <text>Delete</text>
+    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
+    <option1>delete</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushimportobstacle</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>  
+  <element>
+    <tag>pushimportobstacle</tag>
+    <style>pushbutton</style>
+    <position>220 35 100 20</position>
+    <tooltipstring>Import obstacles</tooltipstring>
+    <text>Import from file</text>
+    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
+    <option1>import</option1>    
+  </element>
+  <element>
+    <tag>textobstacletype</tag>
+    <style>text</style>
+    <position>400 140</position>
+    <text>Obstacle type : </text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>      
+  </element>
+  <element>
+    <tag>radiosheet</tag>
+    <style>radiobutton</style>
+    <position>480 140</position>
+    <text>Sheet</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+    <value>sheet</value>
+    <dependencies>
+        <dependency>
+          <action>enable</action>
+          <tags>
+            <tag>pushaddobstacle</tag>
+            <tag>pushdeleteobstacle</tag>
+            <tag>pushimportobstacle</tag>            
+          </tags>
+          <checkfor>any</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+              <value>0</value>
+              <operator>gt</operator>
+            </check>
+          </checks>
+        </dependency>    
+        <dependency>
+          <action>on</action>
+          <tags>
+            <tag>radiodam</tag>
+          </tags>
+          <checkfor>all</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+              <value>sheet</value>
+              <operator>eq</operator>
+            </check>
+          </checks>
+        </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>radiodam</tag>
+    <style>radiobutton</style>
+    <position>540 140</position>
+    <text>Dam</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+    <value>dam</value>
+    <dependencies>
+        <dependency>
+          <action>enable</action>
+          <tags>
+            <tag>pushaddobstacle</tag>
+            <tag>pushdeleteobstacle</tag>
+            <tag>pushimportobstacle</tag>            
+          </tags>
+          <checkfor>any</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+              <value>0</value>
+              <operator>gt</operator>
+            </check>
+          </checks>
+        </dependency>
+        <dependency>
+          <action>on</action>
+          <tags>
+            <tag>radiosheet</tag>
+          </tags>
+          <checkfor>all</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+              <value>dam</value>
+              <operator>eq</operator>
+            </check>
+          </checks>
+        </dependency>        
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editreflections</tag>
+    <style>popupmenu</style>
+    <position>480 115 110 20</position>
+    <text>Reflections : </text>
+    <type>string</type>
+    <variable>handles.Model(md).Input(ad).Reflectionsval</variable>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).Reflections</variable>
+      </texts>
+      <values>
+        <variable>handles.Model(md).Input(ad).Reflections</variable>
+      </values>      
+    </list>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>    
+    </dependencies>    
+  </element>  
+  <element>
+    <tag>editrefcoef</tag>
+    <style>edit</style>
+    <position>480 95 50 20</position>
+    <text>Reflection coefficient : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).Refcoef</variable>
+    <type>real</type>
+    <tooltipstring>Enter reflection coefficient</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+          <tag>editreflections</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).Reflectionsval</variable>
+            <value>No</value>
+            <operator>ne</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textrefcoefunit</tag>
+    <style>text</style>
+    <position>535 95</position>
+    <text>[-]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+	  <tag>pushdeleteobstacle</tag>
+	  <tag>pushimportobstacle</tag>            
+          <tag>editreflections</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).Reflectionsval</variable>
+            <value>No</value>
+            <operator>ne</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>edittransmcoef</tag>
+    <style>edit</style>
+    <position>480 75 50 20</position>
+    <text>Transmission coefficient : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).Transmcoef</variable>
+    <type>real</type>
+    <tooltipstring>Enter transmission coefficient</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+          <tag>radiosheet</tag>
+          <tag>radiodam</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <value>sheet</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>texttransmcoefunit</tag>
+    <style>text</style>
+    <position>535 75</position>
+    <text>[-]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+          <tag>radiosheet</tag>
+          <tag>radiodam</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <value>sheet</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editheight</tag>
+    <style>edit</style>
+    <position>480 55 50 20</position>
+    <text>Height : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).Height</variable>
+    <type>real</type>
+    <tooltipstring>Enter height</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+          <tag>radiosheet</tag>
+          <tag>radiodam</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <value>dam</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textheightunit</tag>
+    <style>text</style>
+    <position>535 55</position>
+    <text>[m]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+          <tag>radiosheet</tag>
+          <tag>radiodam</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <value>dam</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editalpha</tag>
+    <style>edit</style>
+    <position>480 35 50 20</position>
+    <text>Alpha : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).Alpha</variable>
+    <type>real</type>
+    <tooltipstring>Enter alpha</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+          <tag>radiosheet</tag>
+          <tag>radiodam</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <value>dam</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textalphaunit</tag>
+    <style>text</style>
+    <position>535 35</position>
+    <text>[-]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+          <tag>radiosheet</tag>
+          <tag>radiodam</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <value>dam</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editbeta</tag>
+    <style>edit</style>
+    <position>480 15 50 20</position>
+    <text>Beta : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).Beta</variable>
+    <type>real</type>
+    <tooltipstring>Enter beta</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+          <tag>radiosheet</tag>
+          <tag>radiodam</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <value>dam</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textbetaunit</tag>
+    <style>text</style>
+    <position>535 15</position>
+    <text>[-]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+          <tag>radiosheet</tag>
+          <tag>radiodam</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+          <check>
+            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <value>dam</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element> 
+  <element>
+    <tag>obstaclessegmentspanel</tag>
+    <style>panel</style>
+    <position>650 10 490 160</position>
+    <text>Obstacles segments</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>    
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editsegments</tag>
+    <style>listbox</style>
+    <position>660 20 160 130</position>
+    <tooltipstring>Edit segments</tooltipstring>
+    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Segments</variable>
+    <type>string</type>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Segments</variable>
+      </texts>
+    </list>
+    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
+    <option1>editsegments</option1> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>    
+    </dependencies>    
+  </element>  
+</root>
+
+
+handles.GUIHandles.PushAddSeg      = uicontrol(gcf,'Style','pushbutton',  'String','Add','Position',[700 120 100 20],'Tag','UIControl');
+
+handles.GUIHandles.PushDeleteSeg   = uicontrol(gcf,'Style','pushbutton',  'String','Delete','Position',[700 90 100 20],'Tag','UIControl');
+
+handles.GUIHandles.TextSegmentcoord  = uicontrol(gcf,'Style','text','String','Segment co-ordinates : ','Position',[810 150 150 15],'HorizontalAlignment','left','Tag','UIControl');
+
+handles.GUIHandles.TextXstart      = uicontrol(gcf,'Style','text','String','X-start : ','Position',[810 120 40 15],'HorizontalAlignment','left','Tag','UIControl');
+handles.GUIHandles.EditXstart      = uicontrol(gcf,'Style','edit', 'Position',[860 120 50 15],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.TextXstartUnit  = uicontrol(gcf,'Style','text','String','[m]','Position',[915 120 20 15],'HorizontalAlignment','left','Tag','UIControl');
+
+handles.GUIHandles.TextYstart        = uicontrol(gcf,'Style','text','String','Y-start : ','Position',[810 100 40 15],'HorizontalAlignment','left','Tag','UIControl');
+handles.GUIHandles.EditYstart        = uicontrol(gcf,'Style','edit', 'Position',[860 100 50 15],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.TextYstartUnit    = uicontrol(gcf,'Style','text','String','[m]','Position',[915 100 20 15],'HorizontalAlignment','left','Tag','UIControl');
+
+handles.GUIHandles.TextXend       = uicontrol(gcf,'Style','text','String','X-end : ','Position',[810 70 40 15],'HorizontalAlignment','left','Tag','UIControl');
+handles.GUIHandles.EditXend       = uicontrol(gcf,'Style','edit', 'Position',[860 70 50 15],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.TextXendUnit   = uicontrol(gcf,'Style','text','String','[m]','Position',[915 70 20 15],'HorizontalAlignment','left','Tag','UIControl');
+
+handles.GUIHandles.TextYend       = uicontrol(gcf,'Style','text','String','Y-end : ','Position',[810 50 40 15],'HorizontalAlignment','left','Tag','UIControl');
+handles.GUIHandles.EditYend       = uicontrol(gcf,'Style','edit', 'Position',[860 50 50 15],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.TextYendUnit   = uicontrol(gcf,'Style','text','String','[m]','Position',[915 50 20 15],'HorizontalAlignment','left','Tag','UIControl');

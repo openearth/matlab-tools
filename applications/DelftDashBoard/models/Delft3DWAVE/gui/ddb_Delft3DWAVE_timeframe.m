@@ -1,5 +1,30 @@
-function ddb_editDelft3DWAVETimeFrame
+function ddb_Delft3DWAVE_timeframe(varargin)
 
+if isempty(varargin)
+    ddb_zoomOff;
+    ddb_refreshScreen;
+    setUIElements('delft3dwave.timeframe');
+else
+    opt=varargin{1};
+    switch lower(opt)
+        case{'selectgrid'}
+            selectGrid;
+        case{'selectenclosure'}
+            selectEnclosure;
+        case{'generatelayers'}
+            generateLayers;
+        case{'editkmax'}
+            editKMax;
+        case{'changelayers'}
+            changeLayers;
+        case{'loadlayers'}
+            loadLayers;
+        case{'savelayers'}
+            saveLayers;
+    end
+end
+
+%{
 ddb_refreshScreen('Time Frame');
 handles=getHandles;
 
@@ -127,6 +152,7 @@ else
 end
 setHandles(handles);
 Refresh(handles);
+%}
 
 function EditFlowTimepoints_CallBack(hObject,eventdata)
 handles=getHandles;

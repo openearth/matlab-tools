@@ -33,12 +33,12 @@
         <tab>
           <tag>timeframe</tag>
           <tabstring>Time Frame</tabstring>
-          <callback>ddb_editDelft3DWAVETimeFrame</callback>
+          <elements>Delft3DWAVE.timeframe.xml</elements>
         </tab>
         <tab>
           <tag>boundaries</tag>
           <tabstring>Boundaries</tabstring>
-          <callback>ddb_editDelft3DWAVEBoundaries</callback>
+          <elements>Delft3DWAVE.boundaries.xml</elements>
         </tab>
         <tab>
           <tag>obstacles</tag>

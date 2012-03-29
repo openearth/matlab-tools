@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>panelgrids</tag>
+    <style>panel</style>
+    <text>Grids</text>
+    <position>5 5 890 130</position>
+  </element>
+  <element>
+    <tag>editcompgrids</tag>
+    <style>listbox</style>
+    <position>10 30 200 80</position>
+    <tooltipstring>Computational grids</tooltipstring>
+    <text>Computational grids :</text>
+    <textposition>above-center</textposition>
+    <variable>handles.Model(md).Input(ad).ActiveDomain</variable>
+    <type>integer</type>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).ComputationalGrids</variable>
+      </texts>
+    </list>
+    <onchange>ddb_Delft3DWAVE_nesting</onchange>
+    <option1>selectfromlist</option1>
+  </element>
+  <element>
+    <tag>textcs</tag>
+    <style>text</style>
+    <position>10 10</position>
+    <prefix>Co-ordinate System : </text>
+    <type>text</type>
+    <variable>handles.Model(md).Input(ad).Domain(awg).Coordsyst</variable>
+  </element>
+  <element>
+    <tag>panelgriddata</tag>
+    <style>panel</style>
+    <text>Grid data</text>
+    <position>440 10 450 120</position>  
+  </element> 
+  <element>
+    <tag>textgridname</tag>
+    <style>text</style>
+    <position>450 80</position>
+    <prefix>Grid filename : </text>
+    <type>text</type>
+    <variable>handles.Model(md).Input(ad).Domain(awg).NstFile</variable>
+  </element>  
+  <element>
+    <tag>textassosgrid</tag>
+    <style>text</style>
+    <position>450 60</position>
+    <prefix>Associated bathymetry grid : </text>
+    <type>text</type>
+    <variable>handles.Model(md).Input(ad).Domain(awg).GrdFile</variable>
+  </element>
+  <element>
+    <tag>textassosdep</tag>
+    <style>text</style>
+    <position>450 40</position>
+    <prefix>Associated bathymetry data : </text>
+    <type>text</type>
+    <variable>handles.Model(md).Input(ad).Domain(awg).DepFile</variable>
+  </element>
+  <element>
+    <tag>selectnestedin</tag>
+    <style>popupmenu</style>
+    <position>510 100 110 15</position>
+    <text>Nested in : </text>
+    <type>string</type>
+    <variable>handles.Model(md).Input(ad).Domain(awg).NestFile</variable>
+    <onchange>ddb_Delft3DWAVE_nesting</onchange>
+    <option1>selectnestgrid</option1>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).ComputationalGrids</variable>
+      </texts>
+      <values>
+        <variable>handles.Model(md).Input(ad).ComputationalGrids</variable>
+      </values>      
+    </list>     
+  </element>  
+</root>

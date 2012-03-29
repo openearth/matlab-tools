@@ -1,0 +1,367 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>boundariespanel</tag>
+    <style>panel</style>
+    <position>45 10 950 160</position>
+    <text>Boundaries</text>
+  </element>
+  <element>
+    <tag>editboundaries</tag>
+    <style>listbox</style>
+    <position>55 20 200 130</position>
+    <tooltipstring>Edit boundaries</tooltipstring>
+    <variable>handles.Model(md).Input(ad).Boundaries</variable>
+    <type>string</type>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).Boundaries</variable>
+      </texts>
+    </list>
+    <onchange>ddb_Delft3DWAVE_boundaries</onchange>
+    <option1>edit</option1>    
+  </element> 
+  <element>
+    <tag>pushaddboundary</tag>
+    <style>pushbutton</style>
+    <position>260 70 70 20</position>
+    <tooltipstring>Add boundary</tooltipstring>
+    <text>Add</text>
+    <onchange>ddb_Delft3DWAVE_boundaries</onchange>
+    <option1>add</option1>    
+  </element>
+  <element>
+    <tag>pushdeleteboundary</tag>
+    <style>pushbutton</style>
+    <position>260 45 70 20</position>
+    <tooltipstring>Delete boundary</tooltipstring>
+    <text>Delete</text>
+    <onchange>ddb_Delft3DWAVE_boundaries</onchange>
+    <option1>delete</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddboundary</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrBoundaries</variable>
+            <value>0</value>
+            <operator>ne</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>  
+  <element>
+    <tag>selectedboundarypanel</tag>
+    <style>panel</style>
+    <position>340 15 350 150</position>
+    <text>Data for selected boundary</text>
+  </element>
+  <element>
+    <tag>editbndname</tag>
+    <style>edit</style>
+    <position>470 130 150 20</position>
+    <text>Boundary name : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).BndName</variable>
+    <type>string</type>
+    <tooltipstring>Enter boundary name</tooltipstring>
+  </element>
+  <element>
+    <tag>editbnddefby</tag>
+    <style>popupmenu</style>
+    <position>470 105 150 20</position>
+    <text>Define boundary by : </text>
+    <type>string</type>
+    <variable>handles.Model(md).Input(ad).BndDefbyval</variable>
+    <onchange>ddb_Delft3DWAVE_boundaries</onchange>
+    <option1>bnddef</option1>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).BndDefby</variable>
+      </texts>
+      <values>
+        <variable>handles.Model(md).Input(ad).BndDefby</variable>
+      </values>      
+    </list>  
+  </element>
+  <element>
+    <tag>editbndorient</tag>
+    <style>popupmenu</style>
+    <position>470 80 150 20</position>
+    <text>Boundary orientation : </text>
+    <type>string</type>
+    <variable>handles.Model(md).Input(ad).BndOrientval</variable>
+    <onchange>ddb_Delft3DWAVE_boundaries</onchange>
+    <option1>bndorient</option1>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).BndOrient</variable>
+      </texts>
+      <values>
+        <variable>handles.Model(md).Input(ad).BndOrient</variable>
+      </values>      
+    </list>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editbnddefby</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).BndDefbyval</variable>
+            <value>Orientation</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editbndstart1</tag>
+    <style>edit</style>
+    <position>470 55 40 20</position>
+    <text>Boundary start : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).BndStart1</variable>
+    <type>string</type>
+    <tooltipstring>Enter start x (or m) coordinate</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editbnddefby</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).BndDefbyval</variable>
+            <value>Orientation</value>
+            <operator>ne</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editbndstart2</tag>
+    <style>edit</style>
+    <position>520 55 40 20</position>
+    <text>[m]</text>
+    <textposition>right</textposition>
+    <variable>handles.Model(md).Input(ad).BndStart2</variable>
+    <type>string</type>
+    <tooltipstring>Enter start y (or n) coordinate</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editbnddefby</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).BndDefbyval</variable>
+            <value>Orientation</value>
+            <operator>ne</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editbndend1</tag>
+    <style>edit</style>
+    <position>470 30 40 20</position>
+    <text>Boundary end : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).BndEnd1</variable>
+    <type>string</type>
+    <tooltipstring>Enter end x (or m) coordinate</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editbnddefby</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).BndDefbyval</variable>
+            <value>Orientation</value>
+            <operator>ne</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editbndend2</tag>
+    <style>edit</style>
+    <position>520 30 40 20</position>
+    <text>[m]</text>
+    <textposition>right</textposition>
+    <variable>handles.Model(md).Input(ad).BndEnd2</variable>
+    <type>string</type>
+    <tooltipstring>Enter end y (or n) coordinate</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editbnddefby</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).BndDefbyval</variable>
+            <value>Orientation</value>
+            <operator>ne</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>boundaryconditionspanel</tag>
+    <style>panel</style>
+    <position>700 15 290 150</position>
+    <text>Boundary conditions</text>
+  </element>
+  <element>
+    <tag>textcondbnd</tag>
+    <style>text</style>
+    <position>705 135</position>
+    <text>Conditions along boundary : </text>
+  </element>
+  <element>
+    <tag>radiouniform</tag>
+    <style>radiobutton</style>
+    <position>705 115</position>
+    <text>Uniform</text>
+    <type>integer</type>
+    <variable>handles.Model(md).Input(ad).Uniform</variable>
+    <value>1</value>
+    <dependencies>
+        <dependency>
+          <action>on</action>
+          <tags>
+            <tag>radiospacevarying</tag>
+          </tags>
+          <checkfor>all</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Model(md).Input(ad).Uniform</variable>
+              <value>1</value>
+              <operator>eq</operator>
+            </check>
+          </checks>
+        </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>radiospacevarying</tag>
+    <style>radiobutton</style>
+    <position>705 100</position>
+    <text>Space-varying</text>
+    <type>integer</type>
+    <variable>handles.Model(md).Input(ad).Uniform</variable>
+    <value>0</value>
+    <dependencies>
+        <dependency>
+          <action>on</action>
+          <tags>
+            <tag>radiouniform</tag>
+          </tags>
+          <checkfor>all</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Model(md).Input(ad).Uniform</variable>
+              <value>0</value>
+              <operator>eq</operator>
+            </check>
+          </checks>
+        </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textspecifyspec</tag>
+    <style>text</style>
+    <position>705 85</position>
+    <text>Specification of spectra : </text>
+  </element>
+  <element>
+    <tag>radioparametric</tag>
+    <style>radiobutton</style>
+    <position>705 65</position>
+    <text>Parametric</text>
+    <type>integer</type>
+    <variable>handles.Model(md).Input(ad).Parametric</variable>
+    <value>1</value>
+    <dependencies>
+        <dependency>
+          <action>on</action>
+          <tags>
+            <tag>radiofromfile</tag>
+          </tags>
+          <checkfor>all</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Model(md).Input(ad).FromFile</variable>
+              <value>0</value>
+              <operator>eq</operator>
+            </check>
+          </checks>
+        </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>radiofromfile</tag>
+    <style>radiobutton</style>
+    <position>705 50</position>
+    <text>From file</text>
+    <type>integer</type>
+    <variable>handles.Model(md).Input(ad).FromFile</variable>
+    <value>1</value>
+    <dependencies>
+        <dependency>
+          <action>on</action>
+          <tags>
+            <tag>radioparametric</tag>
+          </tags>
+          <checkfor>all</checkfor>
+          <checks>
+            <check>
+              <variable>handles.Model(md).Input(ad).Parametric</variable>
+              <value>0</value>
+              <operator>eq</operator>
+            </check>
+          </checks>
+        </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>pusheditconditions</tag>
+    <style>pushbutton</style>
+    <position>705 25 130 20</position>
+    <tooltipstring>Edit conditions</tooltipstring>
+    <text>Edit conditions</text>
+    <onchange>ddb_Delft3DWAVE_boundaries</onchange>
+    <option1>editconditions</option1>    
+  </element>
+  <element>
+    <tag>pusheditspectralspace</tag>
+    <style>pushbutton</style>
+    <position>840 25 130 20</position>
+    <tooltipstring>Edit spectral space</tooltipstring>
+    <text>Edit spectral space</text>
+    <onchange>ddb_Delft3DWAVE_boundaries</onchange>
+    <option1>editspectralspace</option1>    
+  </element>  
+</root>
