@@ -177,7 +177,11 @@ while NextIter
     x(Calc,:) = P2x(stochast, P(Calc,:));
     
     if any(any(~isfinite(x(Calc,:))))
-        error('FORM:xBecameNonFinite', 'One or more x-values became Inf or NaN')
+        % non-finite x-values will cause problems in z-function
+        % warn user in error message which variable(s) cause the problems
+        varnames = {stochast.Name};
+        nonfinitevars = varnames(any(~isfinite(x(Calc,:))));
+        error('FORM:xBecameNonFinite', 'x-values became Inf or NaN for variable(s):%s\n\tReconsider stochastic variable and z-function to solve the problem.', sprintf(' "%s"', nonfinitevars{:}))
     end
     
     % derive z based on x
@@ -216,7 +220,7 @@ while NextIter
         % warn user in error message which variable(s) cause the problems
         varnames = {stochast.Name};
         complexvars = varnames(imag(dzdu(Iter,:)) ~= 0);
-        error(sprintf('FORM: derivative dz/du becomes complex for variable(s):%s\n\tReconsider stochastic variable and z-function to solve the problem.', sprintf(' "%s"', complexvars{:})))
+        error('FORM:complexvariables', 'derivative dz/du becomes complex for variable(s):%s\n\tReconsider stochastic variable and z-function to solve the problem.', sprintf(' "%s"', complexvars{:}))
     end
     
     % linearise z-function in u:
