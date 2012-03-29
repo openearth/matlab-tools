@@ -71,10 +71,12 @@ if isempty(start);  start   = zeros(size(dims));    end;
 if isempty(len);    len     = -ones(size(dims));    end;
 if isempty(stride); stride  = ones(size(dims));     end;
 
-start(length(start)+1:length(dims))     = 0;
-len(length(len)+1:length(dims))         = -1;
+start (length(start) +1:length(dims))   = 0;
+len   (length(len)   +1:length(dims))   = -1;
 stride(length(stride)+1:length(dims))   = 1;
 
-start(start<0) = 0;
-len(len<0|len>dims) = max(1, dims(len<0|len>dims)-start(len<0|len>dims));
-stride(stride<1) = 1;
+start = max(0,start);
+start = min(dims-1,start);
+stride = max(1,stride);
+len(len<0) = dims(len<0);
+len = min(1+floor((dims-start)./stride),len);

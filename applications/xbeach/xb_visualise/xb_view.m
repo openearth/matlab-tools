@@ -561,6 +561,11 @@ function ui_read(obj)
             end
             
         end
+        
+        if isvector(info.x)
+            info.x = info.x(:)';
+            info.y = info.y(:)';
+        end
 
         % generate var list
         info.varlist = sprintf('|%s', info.vars{:});
