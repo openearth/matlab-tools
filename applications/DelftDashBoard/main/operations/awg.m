@@ -1,19 +1,19 @@
-function ddb_addModelTabPanels
-%DDB_ADDMODELTABPANELS  One line description goes here.
+function i = awg
+%AD  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_addModelTabPanels
+%   i = awd
 %
 %   Input:
 
 %
-%
-%
+%   Output:
+%   i =
 %
 %   Example
-%   ddb_addModelTabPanels
+%   ad
 %
 %   See also
 
@@ -60,23 +60,7 @@ function ddb_addModelTabPanels
 % $Keywords: $
 
 %%
-handles=getHandles;
+global handles
 
-% Model tabs
-for i=1:length(handles.Model)
-    handles.activeModel.nr = i;
-    setHandles(handles);
-    elements=handles.Model(i).GUI.elements;
-    if ~isempty(elements)
-        elements=addUIElements(gcf,elements,'getFcn',@getHandles,'setFcn',@setHandles);
-        set(elements(1).handle,'Visible','off');
-        handles.Model(i).GUI.elements=elements;
-    end
-end
-
-handles.activeModel.nr = 1;
-setHandles(handles);
-handles=ddb_addToolboxElements(handles);
-
-setHandles(handles);
+i=handles.activeWaveGrid;
 
