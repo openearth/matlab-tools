@@ -85,7 +85,7 @@ end
 
 switch upper(OPT.method)
     case 'MD5'
-        hashfun = @(filename) CalcMD5(filename,'File','hex');
+        hashfun = @(filename) uint8(CalcMD5(filename,'File','dec'));
     otherwise
         error('HASH_FILES:input','hash mathod %s not supported',OPT.method);
 end
@@ -98,18 +98,18 @@ if OPT.quiet
         end
     end
 else
-    small_file_correction_bytes = 2e6;
-    totalbytes   = sum([D(~[D.isdir]).bytes])+sum(~[D.isdir])*small_file_correction_bytes;
-    hashedbytes = 0;
+    WB.small_file_correction_bytes = 2e6;
+    WB.totalbytes   = sum([D(~[D.isdir]).bytes])+sum(~[D.isdir])*WB.small_file_correction_bytes;
+    WB.hashedbytes = 0;
     t = tic;
     for ii = 1:length(D)
         if ~D(ii).isdir
             D(ii).hash = hashfun([D(ii).pathname D(ii).name]);
-            hashedbytes = hashedbytes + D(ii).bytes + small_file_correction_bytes;
+            WB.hashedbytes = WB.hashedbytes + D(ii).bytes + WB.small_file_correction_bytes;
         end
         if toc(t)>0.2
             t = tic;
-            multiWaitbar('hashing files',hashedbytes/totalbytes)
+            multiWaitbar('hashing files',WB.hashedbytes/WB.totalbytes)
         end
     end
     multiWaitbar('hashing files','close')
