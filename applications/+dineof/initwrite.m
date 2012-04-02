@@ -21,6 +21,10 @@ OPT.comments = 0;
 
    fid = fopen(initfile,'w');
    
+   if fid <0
+       error(['Cannot write to "',initfile,'"'])
+   end
+   
    fprintf(fid,'! Created with $HeadURL$ $Id$ \n');
    
    for ifld=1:length(fields)

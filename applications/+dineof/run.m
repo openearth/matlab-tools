@@ -1,5 +1,5 @@
 function varargout = run(data, time, mask, varargin)
-%run wrapper to use DINEOF via memory (without explicit file IO)
+%RUN wrapper to use DINEOF via memory (without explicit file IO)
 %
 %    dataf = dineof.run(data, time, mask, <keyword,value>)
 %
@@ -56,16 +56,18 @@ function varargout = run(data, time, mask, varargin)
 
 % other keywords
 
-   OPT.dataname      = 'data';
-   OPT.maskname      = 'mask';
-   OPT.timename      = 'time';
-   OPT.ncfile        = ['dummy.nc'];
-   OPT.resfile       = ['dummy_filled.nc'];
-   OPT.eoffile       = ['dummy_eof.nc'];
-   OPT.initfile      = []; % will have same name as eoffile
-   OPT.logfile       = []; % will have same name as eoffile
-   OPT.units         = '';
-   OPT.standard_name = '';
+   OPT.dataname        = 'data';
+   OPT.maskname        = 'mask';
+   OPT.timename        = 'time';
+   OPT.ncfile          = ['dummy.nc'];
+   OPT.resfile         = ['dummy_filled.nc'];
+   OPT.eoffile         = ['dummy_eof.nc'];
+   OPT.initfile        = []; % will have same name as eoffile
+   OPT.logfile         = []; % will have same name as eoffile
+   OPT.units           = '';
+   OPT.standard_name   = '';
+   OPT.transformFun    = @(x) x;
+   OPT.transformFunInv = @(x) x;
    
    if nargin==0
       varargout = {OPT};
@@ -74,11 +76,18 @@ function varargout = run(data, time, mask, varargin)
    
    OPT = setproperty(OPT,varargin);
     
+   if ~(OPT.transformFun(OPT.transformFunInv(1))==1)
+      error('transformFunInv(x) is not the inverse of transformFun(x) for x=1')
+   end
+
    OPT.data     = ['[''./',OPT.ncfile ,'#',OPT.dataname,''']'];
    OPT.mask     = ['[''./',OPT.ncfile ,'#',OPT.maskname,''']'];
    OPT.time     = [ '''./',OPT.ncfile ,'#',OPT.timename,'''']; % no brackets !!
    OPT.results  = ['[''./',OPT.resfile,'#',OPT.dataname,''']'];
    
+   if sum(mask) < OPT.ncv
+       error(['Krylov subspace ncv (',num2str(OPT.ncv),') needs to be les than or equal to # active spatial cells (',num2str(sum(mask)),').'])
+   end
    
    if isempty(OPT.initfile)
    OPT.initfile = [filepathstrname(OPT.eoffile),'.init'];
@@ -126,17 +135,19 @@ function varargout = run(data, time, mask, varargin)
    else
      dim = 2;
   end
+  
+  data = OPT.transformFun(data);
    
 %% check DINEOF requirements: time(t), data(x,y,t), mask(x,y)
 
    if ~(sz(3)==length(time))
       whos
-      error('data(x,y,:) should have length time')
+      error('data(x,y,:) should have length as time')
    end
 
    if ~(isequal(sz(1:2),size(mask)))
       whos
-      error('data(:,:,y) should have size mask')
+      error('data(:,:,y) should have size as mask')
    end
 
 %% write input data
@@ -167,7 +178,8 @@ function varargout = run(data, time, mask, varargin)
    if ~isempty(OPT.standard_name)
    netcdf.putAtt(NCid,varid.data,'standard_name',OPT.standard_name);
    end
-   
+   netcdf.putAtt(NCid,varid.data,'transform_fun','CHECK');
+
    netcdf.putAtt(NCid,varid.mask,'long_name'    ,'mask');
    netcdf.putAtt(NCid,varid.mask,'flag_values'  ,[0 1]);
    netcdf.putAtt(NCid,varid.mask,'flag_meanings','land ocean');
@@ -208,7 +220,7 @@ function varargout = run(data, time, mask, varargin)
    
    %% run
    disp('Running DINEOF, please wait ...')
-   cmd  = [ddir filesep 'dineof.exe ' OPT.initfile ' > ' OPT.logfile ];
+   cmd  = [ddir filesep 'dineof.exe ' OPT.initfile ' > ' OPT.logfile];
 
    status = system(cmd);
    
@@ -268,7 +280,11 @@ else
     nodata   = netcdf.getAtt(NCid,varid.dataf,'missing_value');
     dataf(dataf==nodata)=NaN;
 
-    netcdf.close (NCid)
+    netcdf.close (NCid);
+    
+    data  = OPT.transformFunInv(data );
+    dataf = OPT.transformFunInv(dataf);
+
 
     S.mean   =                      load(    'meandata.val'   );
     S.P      =                      load('neofretained.val'   );
