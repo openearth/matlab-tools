@@ -69,16 +69,19 @@ function varargout = nc2struct(ncfile,varargin)
 % $Keywords: $
 
 % Behaviour should be as of nc_getall, but without the data being part of M, but in a separate struct D.
-% However, why does nc_getall currently not work with opendap libaries??
 % And what about global atts, part of D (NOOOOOOOOO!), or part of M(perhaps), or part of M.nc_global.?
 
 OPT.global2att   = 2; % 0=not at all, 1=as fields, 2=as subfields of nc_global
 OPT.time2datenum = 1; % time > datenum in extra variabkle datenum
+OPT.exclude      = {};
+%OPT.include      = {};
 
 if nargin==0
    varargout = {OPT};
    return
 end
+
+OPT = setproperty(OPT,varargin);
 
 %% Load file info
 
@@ -105,20 +108,25 @@ end
    ndat = length(fileinfo.Dataset);
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
-      D.(fldname) = nc_varget(fileinfo.Filename,fldname);
-      if OPT.time2datenum
-         if ~isempty(fileinfo.Dataset(idat).Attribute)
-         j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name});
-         if ~isempty(j)
-            if strcmpi(fileinfo.Dataset(idat).Attribute(j).Value,'time')
-            D.datenum = nc_cf_time(fileinfo.Filename,fldname);
-            disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+      if ~any(strmatch(fldname,OPT.exclude))
+         D.(fldname) = nc_varget(fileinfo.Filename,fldname);
+         if OPT.time2datenum
+            if ~isempty(fileinfo.Dataset(idat).Attribute)
+            j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name});
+            if ~isempty(j)
+               if strcmpi(fileinfo.Dataset(idat).Attribute(j).Value,'time')
+               D.datenum = nc_cf_time(fileinfo.Filename,fldname);
+               disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+               end
+            end
             end
          end
+         if ischar(D.(fldname))
+            if isvector(D.(fldname))
+               D.(fldname) = D.(fldname)(:)';
+            end
+            D.(fldname) = cellstr(D.(fldname));
          end
-      end
-      if ischar(D.(fldname))
-         D.(fldname) = cellstr(D.(fldname));
       end
    end
    
@@ -148,10 +156,12 @@ else
    
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
-      for iatt=1:length(fileinfo.Dataset(idat).Attribute);
-                   attname  = fileinfo.Dataset(idat).Attribute(iatt).Name;
-                   attname  = mkvar(attname); % ??? Invalid field name: '_FillValue'.
-      M.(fldname).(attname) = fileinfo.Dataset(idat).Attribute(iatt).Value;
+      if ~any(strmatch(fldname,OPT.exclude))
+         for iatt=1:length(fileinfo.Dataset(idat).Attribute);
+                      attname  = fileinfo.Dataset(idat).Attribute(iatt).Name;
+                      attname  = mkvar(attname); % ??? Invalid field name: '_FillValue'.
+         M.(fldname).(attname) = fileinfo.Dataset(idat).Attribute(iatt).Value;
+         end
       end
    end
    
