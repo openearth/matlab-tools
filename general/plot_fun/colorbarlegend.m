@@ -47,7 +47,7 @@ function varargout = colorbarlegend(varargin)
 % correctly to A4 paper when no automatic subplots and colorbars are present.
 %
 % Example:
-% colorbarlegend([.7 .8],[ .2 .8],[0 30],...
+% colorbarlegend([.7 .8],[ .2 .8],[0 30],... % ctick may be vector [0 x y x 30]
 %     'orientation','vertical',...
 %   'titleposition','vtext',...
 %           'title','quantity [units]',...
@@ -156,7 +156,7 @@ OPT = setproperty(OPT,varargin{argstart:end});
    
    L       = size(clrmap,1);
 
-   x       = linspace(OPT.clims(1),OPT.clims(2),L+1);
+   x       = linspace(OPT.clims(1),OPT.clims(end),L+1);
    x       = [x;x];
 
    y       = zeros(size(x));
@@ -166,7 +166,7 @@ OPT = setproperty(OPT,varargin{argstart:end});
    x       = x';
    y       = y';
 
-   c       = [linspace(OPT.clims(1),OPT.clims(2),L) nan];
+   c       = [linspace(OPT.clims(1),OPT.clims(end),L) nan];
    c       = [c;c]';
    z       = zeros(size(c)) + OPT.zposition;
 
@@ -187,7 +187,7 @@ OPT = setproperty(OPT,varargin{argstart:end});
 
 %% Fix color limits
 
-   caxis(OPT.clims);
+   caxis(OPT.clims([1 end]));
    
 %% Draw colorbar patch
 
@@ -195,12 +195,12 @@ OPT = setproperty(OPT,varargin{argstart:end});
 
       P  = surf(AX,x,y,z,c);
 
-      set(AX,'xlim',OPT.clims);
+      set(AX,'xlim',OPT.clims([1 end]));
       set(AX,'ylim',[min(y(:)) max(y(:))]);
 
          set(AX,'ytick',[])
       if isempty(OPT.ctick)
-         set(AX,'xtick',OPT.clims)
+         set(AX,'xtick',OPT.clims([1 end]))
       elseif isnan(OPT.ctick)
       else
          set(AX,'xtick',OPT.ctick)
@@ -214,11 +214,11 @@ OPT = setproperty(OPT,varargin{argstart:end});
       P  = surf(AX,y,x,z,c);
       
       set(AX,'xlim',[min(y(:)) max(y(:))]);
-      set(AX,'ylim',OPT.clims);
+      set(AX,'ylim',OPT.clims([1 end]));
 
          set(AX,'xtick',[])
       if isempty(OPT.ctick)
-         set(AX,'ytick',OPT.clims)
+         set(AX,'ytick',OPT.clims([1 end]))
       elseif isnan(OPT.ctick)
       else
          set(AX,'ytick',OPT.ctick)

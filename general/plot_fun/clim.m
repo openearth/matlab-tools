@@ -44,6 +44,6 @@ else
       set(ax,'climmode',val);
     end
     else
-    set(ax,'clim',val([1 end]));
+    set(ax,'clim',val([1 end])); % unlike xlim, choose 1st and last from vector
   end
 end
