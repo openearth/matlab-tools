@@ -118,6 +118,7 @@ end
 OPT.type = type;
 OPT.duration = 1800;
 OPT.timestep = 1;
+OPT.swtable = false;
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -154,7 +155,7 @@ if l == 1
 end
 
 % include swtable, if necessary
-if strcmpi(instat, 'jons')
+if strcmpi(instat, 'jons') && OPT.swtable
     swtable = xb_empty();
     fpath = fullfile(fileparts(which(mfilename)), 'RF_table.txt');
     if exist(fpath, 'file')
