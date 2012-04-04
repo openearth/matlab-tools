@@ -84,9 +84,9 @@ for i=1:length(varargin)
             case{'maxcellsize'}
                 maxcellsize=varargin{i+1}; % in metres!
             case{'startdate'}
-                startdate=varargin{i+1}; % in metres!
+                startdate=varargin{i+1};
             case{'searchinterval'}
-                searchinterval=varargin{i+1}; % in metres!
+                searchinterval=varargin{i+1};
         end
     end
 end
