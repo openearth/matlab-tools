@@ -15,7 +15,7 @@ function varstruct = nccreateVarstruct(varargin)
 %   Example
 %   nccreateVarstruct
 %
-%   See also
+%   See also: ncCreateSchema, nccreateDimstruct
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -60,7 +60,7 @@ function varstruct = nccreateVarstruct(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% defaults
 varstruct.Name         = '';
 varstruct.Dimensions   = {};        % list of dimension names
 varstruct.Size         = [];        % This is determined from Dimensions
@@ -72,13 +72,58 @@ varstruct.Shuffle      = false;     % leave at false
 varstruct.scale_factor = [];        % scale value (handy for storing integers)
 varstruct.add_offset   = [];        % offset value, applied after scaling
 
+%% parse varargin
 % first run without FillValue field and don't allow classchange
 varstruct = setproperty(varstruct,varargin,'onExtraField','silentIgnore','onClassChange','error');
 
 % allow classchange only for FillValue field, as the class depends on the
-% datatype' if left at auto, the default fill value will be used
+% datatype. If left at auto, the default fill value will be used
 varstruct.FillValue    = 'auto';
 varstruct = setproperty(varstruct,varargin,'onClassChange','ignore');
+
+%% do some input checking
+% datatype
+validdatatypenames = {
+    'char'     
+    'double' 
+    'float'  
+    'int8'   
+    'int16'   
+    'int32'    
+    'int64'   
+    'uint8'   
+    'uint16'  
+    'uint32' 
+    'uint64'  
+    };
+
+n = strcmpi(varstruct.Datatype,validdatatypenames);
+
+if ~any(n)
+    error('Datatype %s is not a valid type. Valid types are:\n%s',...
+        varstruct.Datatype,sprintf('    %s\n',validdatatypenames{:}));
+end
+
+% attributes
+if ~isempty(varstruct.Attributes)
+    if ~isvector(varstruct.Attributes)
+        error('Attributes must of size [1 n] or [n 1]');
+    end
+    if odd(numel(varstruct.Attributes))
+        error('There must be an even number of Attributes as they are name/value pairs');
+    end
+    if ~all(cellfun(@ischar,varstruct.Attributes(1:2:end)))
+        error('Attribute names must be strings');
+    end
+    if iscolumn(varstruct.Attributes)
+        varstruct.Attributes = varstruct.Attributes';
+    end
+    if length(varstruct.Attributes(1:2:end)) ~= ...
+            length(unique(varstruct.Attributes(1:2:end)))
+        error('Attribute names must be unique');
+    end        
+end
+
 
 % set files in same order matlab uses (only cosmetic)
 varstruct = orderfields(varstruct,[1:6 11 7:10]);

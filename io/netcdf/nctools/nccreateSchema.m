@@ -111,6 +111,13 @@ for ii = 1:length(dimstruct)
 end
 dimnames = {dimstruct.Name};
 
+% hack to deal with multiple unlimited dimensions
+if sum([dimstruct.Unlimited]) > 1
+    [dimstruct([dimstruct.Unlimited]).Length]    = deal(inf);
+    [dimstruct([dimstruct.Unlimited]).Unlimited] = deal(false);
+end
+% end of hack
+
 %% process varstruct
 % check input
 for ii = 1:length(varstruct)
@@ -183,23 +190,7 @@ if isequal(FillValue,'auto')
 end
 
 function Attributes = parseAttributes(Attributes,FillValue,scale_factor,add_offset)
-% error check attributes
-if isempty(Attributes)
-    % ok
-else
-    if ~isvector(Attributes)
-        error('Attributes must of size [1 n] or [n 1]');
-    end
-    if odd(numel(Attributes))
-        error('There must be an even number of Attributes as they are name/value pairs');
-    end
-    if ~all(cellfun(@ischar,Attributes(1:2:end)))
-        error('Attribute names must be strings');
-    end
-    if iscolumn(Attributes)
-        Attributes = Attributes';
-    end
-end
+
 if ~isempty(add_offset)
     Attributes = [{'add_offset' add_offset} Attributes];
 end

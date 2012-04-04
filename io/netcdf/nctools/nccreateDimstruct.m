@@ -15,7 +15,7 @@ function dimstruct = nccreateDimstruct(varargin)
 %   Example
 %   nccreateDimstruct
 %
-%   See also
+%   See also: ncCreateSchema, nccreateVarstruct
 
 %% Copyright notice
 %   --------------------------------------------------------------------
