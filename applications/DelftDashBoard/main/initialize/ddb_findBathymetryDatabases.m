@@ -200,9 +200,27 @@ for i=1:handles.bathymetry.nrDatasets
                 handles.bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
                 
             end
-        case{'kaartblad'}        
-            handles.bathymetry.dataset(i).horizontalCoordinateSystem.name='Amersfoort / RD New';
-            handles.bathymetry.dataset(i).horizontalCoordinateSystem.type='Cartesian';
+        case{'kaartblad'}
+            try
+                pth=fileparts(handles.bathymetry.dataset(i).URL);
+                firstfile=nc_varget(handles.bathymetry.dataset(i).URL,'urlPath');
+                firstfile=squeeze(firstfile(1,:));
+                firstfile=[pth '/' firstfile];
+%                epsgcode=nc_varget(handles.bathymetry.dataset(i).URL,'projectionEPSGcode',[0 0],[1 1]);
+                epsgcode=nc_attget(firstfile,'EPSG','epsg');
+                ii=find(handles.EPSG.coordinate_reference_system.coord_ref_sys_code==epsgcode);
+                name=handles.EPSG.coordinate_reference_system.coord_ref_sys_name{ii};
+                tp=handles.EPSG.coordinate_reference_system.coord_ref_sys_kind{ii};
+                switch lower(tp)
+                    case{'geographic 2d'}
+                        tp='geographic';
+                end
+                handles.bathymetry.dataset(i).horizontalCoordinateSystem.name=name;
+                handles.bathymetry.dataset(i).horizontalCoordinateSystem.type=tp;
+            catch
+                disp(['Bathymetry dataset ' handles.bathymetry.dataset(i).longName ' not available!']);
+                handles.bathymetry.dataset(i).isAvailable=0;
+            end
     end
 end
 
