@@ -1,6 +1,6 @@
 <standard_name_table xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cf-standard-name-table-1.1.xsd">
-   <version_number>17</version_number>
-   <last_modified>2011-03-24T11:54:30Z</last_modified>
+   <version_number>19</version_number>
+   <last_modified>2012-03-22T10:58:54Z</last_modified>
    <institution>Program for Climate Model Diagnosis and Intercomparison</institution>
    <contact>webmaster@pcmdi.llnl.gov</contact>
    <entry id="age_of_sea_ice">
@@ -649,6 +649,10 @@
       <canonical_units>kg m-2</canonical_units>
       <description>"Content" indicates a quantity per unit area.  The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used.  "Aerosol" means the suspended liquid or solid particles in air (except cloud droplets).  Aerosol takes up ambient water (a process known as hygroscopic growth) depending on the relative humidity and the composition of the aerosol. "Dry aerosol" means aerosol without water. "Secondary particulate organic matter " means particulate organic matter formed within the atmosphere from gaseous precursors. The sum of primary_particulate_organic_matter_dry_aerosol and secondary_particulate_organic_matter_dry_aerosol is particulate_organic_matter_dry_aerosol.</description>
    </entry>
+   <entry id="atmosphere_mass_content_of_sulfate">
+      <canonical_units>kg m-2</canonical_units>
+      <description>"Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used.</description>
+   </entry>
    <entry id="atmosphere_mass_content_of_sulfate_ambient_aerosol">
       <canonical_units>kg m-2</canonical_units>
       <amip>trsult</amip>
@@ -673,6 +677,10 @@
    <entry id="atmosphere_mass_content_of_toluene">
       <canonical_units>kg m-2</canonical_units>
       <description>"Content" indicates a quantity per unit area.  The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used.  The chemical formula for toluene is C6H5CH3.  Toluene has the same structure as benzene, except that one of the hydrogen atoms is replaced by a methyl group.  The systematic name for toluene is methylbenzene.</description>
+   </entry>
+   <entry id="atmosphere_mass_content_of_water">
+      <canonical_units>kg m-2</canonical_units>
+      <description>"Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. "Water" means water in all phases.</description>
    </entry>
    <entry id="atmosphere_mass_content_of_water_in_ambient_aerosol">
       <canonical_units>kg m-2</canonical_units>
@@ -700,7 +708,7 @@
       <canonical_units>kg m-2</canonical_units>
       <description>"X_area" means the horizontal area occupied by X within the grid cell.</description>
    </entry>
-   <entry id="atmosphere_moles_of_acetic_acid ">
+   <entry id="atmosphere_moles_of_acetic_acid">
       <canonical_units>mol</canonical_units>
       <description>The construction "atmosphere_moles_of_X" means the total number of moles of X in the entire atmosphere, i.e. summed over the atmospheric column and over the entire globe. The chemical formula for acetic_acid is CH3COOH. The IUPAC name for acetic acid is ethanoic acid.</description>
    </entry>
@@ -708,7 +716,7 @@
       <canonical_units>mol</canonical_units>
       <description>The construction "atmosphere_moles_of_X" means the total number of moles of X in the entire atmosphere, i.e. summed over the atmospheric column and over the entire globe. The chemical formula for aceto-nitrile is CH3CN. The IUPAC name for aceto-nitrile is ethanenitrile.</description>
    </entry>
-   <entry id="atmosphere_moles_of_alpha_hexachlorocyclohexane ">
+   <entry id="atmosphere_moles_of_alpha_hexachlorocyclohexane">
       <canonical_units>mol</canonical_units>
       <description>The construction "atmosphere_moles_of_X" means the total number of moles of X in the entire atmosphere, i.e. summed over the atmospheric column and over the entire globe. The chemical formula for alpha_hexachlorocyclohexane is C6H6Cl6.</description>
    </entry>
@@ -1120,6 +1128,10 @@
       <canonical_units>1</canonical_units>
       <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. The optical thickness is the integral along the path of radiation of a volume scattering/absorption/attenuation coefficient. The radiative flux is reduced by a factor exp(-optical_thickness) on traversing the path. The atmosphere optical thickness applies to radiation passing through the entire atmosphere. "Aerosol" means the suspended liquid or solid particles in air (except cloud droplets).  "Ambient aerosol" is aerosol that has taken up ambient water through hygroscopic growth.  The extent of hygroscopic growth depends on the relative humidity and the composition of the aerosol.</description>
    </entry>
+   <entry id="atmosphere_optical_thickness_due_to_dust_dry_aerosol">
+      <canonical_units>1</canonical_units>
+      <description>The optical thickness is the integral along the path of radiation of a volume scattering/absorption/attenuation coefficient. The radiative flux is reduced by a factor exp(-"optical_thickness") on traversing the path. The atmosphere optical thickness applies to radiation passing through the entire atmosphere. "Aerosol" means the suspended liquid or solid particles in air (except cloud droplets). Aerosol takes up ambient water (a process known as hygroscopic growth) depending on the relative humidity and the composition of the aerosol. "Dry aerosol" means aerosol without water. The specification of a physical process by the phrase "due_to_" process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase.</description>
+   </entry>
    <entry id="atmosphere_optical_thickness_due_to_particulate_organic_matter_ambient_aerosol">
       <canonical_units>1</canonical_units>
       <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. The optical thickness is the integral along the path of radiation of a volume scattering/absorption/attenuation coefficient. The radiative flux is reduced by a factor exp(-optical_thickness) on traversing the path. The atmosphere optical thickness applies to radiation passing through the entire atmosphere. "Aerosol" means the suspended liquid or solid particles in air (except cloud droplets).  "Ambient aerosol" is aerosol that has taken up ambient water through hygroscopic growth.  The extent of hygroscopic growth depends on the relative humidity and the composition of the aerosol.</description>
@@ -1169,17 +1181,9 @@
       <canonical_units>J kg-1</canonical_units>
       <description>"specific" means per unit mass. Potential energy is the sum of the gravitational potential energy relative to the geoid and the centripetal potential energy. (The geopotential is the specific potential energy.) Convective(ly) available potential energy is often abbreviated as "CAPE".</description>
    </entry>
-   <entry id="atmosphere_sulfate_content">
-      <canonical_units>kg m-2</canonical_units>
-      <description>"Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used.</description>
-   </entry>
    <entry id="atmosphere_updraft_convective_mass_flux">
       <canonical_units>kg m-2 s-1</canonical_units>
       <description>In accordance with common usage in geophysical disciplines, "flux" implies per unit area, called "flux density" in physics.  The atmosphere convective mass flux is the vertical transport of mass for a field of cumulus clouds or thermals, given by the product of air density and vertical velocity. For an area-average, cell_methods should specify whether the average is over all the area or the area of updrafts and/or downdrafts only.  "Updraft" means that the flux is  positive in the updward direction (negative downward).</description>
-   </entry>
-   <entry id="atmosphere_water_content">
-      <canonical_units>kg m-2</canonical_units>
-      <description>"Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. "Water" means water in all phases.</description>
    </entry>
    <entry id="backscattering_ratio">
       <canonical_units>1</canonical_units>
@@ -1257,9 +1261,21 @@
       <grib>118</grib>
       <description>The brightness temperature of a body is the temperature of a black body which radiates the same power per unit solid angle per unit area.</description>
    </entry>
+   <entry id="brightness_temperature_anomaly">
+      <canonical_units>K</canonical_units>
+      <description>The brightness temperature of a body is the temperature of a black body which radiates the same power per unit solid angle per unit area. "anomaly" means difference from climatology.</description>
+   </entry>
    <entry id="brunt_vaisala_frequency_in_air">
       <canonical_units>s-1</canonical_units>
       <description>Frequency is the number of oscillations of a wave per unit time.</description>
+   </entry>
+   <entry id="burned_area">
+      <canonical_units>m2</canonical_units>
+      <description>"X_area" means the horizontal area occupied by X within the grid cell. "Burned area" means the area of burned vegetation.</description>
+   </entry>
+   <entry id="burned_area_fraction">
+      <canonical_units>1</canonical_units>
+      <description>"X_area_fraction" means the fraction of horizontal area occupied by X. "X_area" means the horizontal area occupied by X within the grid cell. "Burned area" means the area of burned vegetation.</description>
    </entry>
    <entry id="canopy_and_surface_water_amount">
       <canonical_units>kg m-2</canonical_units>
@@ -1309,9 +1325,53 @@
       <canonical_units>J m-2</canonical_units>
       <description>The surface called "surface" means the lower boundary of the atmosphere. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "wrt" means with respect to. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well. See Appendix D of the CF convention for information about dimensionless vertical coordinates.</description>
    </entry>
-   <entry id="change_over_time_in_atmosphere_water_content_due_to_advection">
+   <entry id="change_over_time_in_atmosphere_mass_content_of_water_due_to_advection">
       <canonical_units>kg m-2</canonical_units>
-      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate.  "Content" indicates a quantity per unit area.  The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used.  "Water" means water in all phases.  The specification of a physical process by the phrase due_to_process means that the quantity named is a  single term in a sum of terms which together compose the general quantity  named by omitting the phrase.</description>
+      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate.  "Content" indicates a quantity per unit area.  The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used.  "Water" means water in all phases.  The specification of a physical process by the phrase due_to_process means that the quantity named is a  single term in a sum of terms which together compose the general quantity named by omitting the phrase.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_absolute_salinity">
+      <canonical_units>g kg-1</canonical_units>
+      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate. Absolute Salinity, S_A, is defined as part of the Thermodynamic Equation of Seawater 2010 (TEOS-10) which was adopted in 2010 by the Intergovernmental Oceanographic Commission (IOC). It is the mass fraction of dissolved material in sea water. Absolute Salinity incorporates the spatial variations in the composition of sea water. This type of Absolute Salinity is also called "Density Salinity". TEOS-10 estimates Absolute Salinity as the salinity variable that, when used with the TEOS-10 expression for density, yields the correct density of a sea water sample even when the sample is not of Reference Composition. In practice, Absolute Salinity is often calculated from Practical Salinity using a spatial lookup table of pre-defined values of the Absolute Salinity Anomaly. It is recommended that the version of (TEOS-10) software and the associated Absolute Salinity Anomaly climatology be specified within metadata by attaching a comment attribute to the data variable. Reference: www.teos-10.org; Millero et al., 2008 doi: 10.1016/j.dsr.2007.10.001. There are also standard names for the precisely defined salinity quantities sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 onwards), sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Salinity quantities that do not match any of the precise definitions should be given the more general standard name of sea_water_salinity.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_conservative_temperature">
+      <canonical_units>K</canonical_units>
+      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate. Conservative Temperature is defined as part of the Thermodynamic Equation of Seawater 2010 (TEOS-10) which was adopted in 2010 by the International Oceanographic Commission (IOC). Conservative Temperature is specific potential enthalpy (which has the standard name sea_water_specific_potential_enthalpy) divided by a fixed value divided by a fixed value of the specific heat capacity of sea water, namely cp_0 = 3991.86795711963 J kg-1 K-1. Conservative Temperature is a more accurate measure of the "heat content" of sea water, by a factor of one hundred, than is potential temperature. Because of this, it can be regarded as being proportional to the heat content of sea water per unit mass. Reference: www.teos-10.org; McDougall, 2003 doi: 10.1175/1520-0485(2003)033&lt;0945:PEACOV&gt;2.0.CO;2.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_density">
+      <canonical_units>kg m-3</canonical_units>
+      <description>Sea water density is the in-situ density (not the potential density). If 1000 kg m-3 is subtracted, the standard name "sea_water_sigma_t" should be chosen instead. "change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_neutral_density">
+      <canonical_units>kg m-3</canonical_units>
+      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate. "Neutral density" is a variable designed so that a surface of constant neutral density everywhere has a local slope that is close to the local slope of the neutral tangent plane. At the sea surface in the equatorial Pacific neutral density is very close to the potential density anomaly. At other locations, this is not the case. For example, along a neutral density surface there is a difference of up to 0.14 kg/m^3 in the potential density anomaly at the outcrops in the Southern and Northern hemispheres. Refer to Jackett &amp; McDougall (1997; Journal of Physical Oceanography, Vol 27, doi: 10.1175/1520-0485(1997)027&lt;0237:ANDVFT&gt;2.0.CO;2) for more information.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_potential_density">
+      <canonical_units>kg m-3</canonical_units>
+      <description>Potential density is the density a parcel of air or sea water would have if moved adiabatically to a reference pressure, by default assumed to be sea level pressure.  For sea water potential density, if 1000 kg m-3 is subtracted, the standard name "sea_water_sigma_theta" should be chosen instead. "change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_potential_temperature">
+      <canonical_units>K</canonical_units>
+      <description>Potential temperature is the temperature a parcel of air or sea water would have if moved adiabatically to sea level pressure. "change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_practical_salinity">
+      <canonical_units>1e-3</canonical_units>
+      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate. Practical Salinity, S_P, is defined on the Practical Salinity Scale of 1978 (PSS-78) and is calculated from the electrical conductivity of sea water (as well as temperature and pressure).  Officially S_P is dimensionless so that, while convenient, and while it is common practice, it is not officially sanctioned to say S_P = 35 psu. Often authors use PSS-78, as in S_P = 35 PSS-78. If salinity was measured using remote sensing techniques and not conductivity, then it is recommended that additional metadata (calibration/validation information) be described in the variable comment attribute. This name should be used to describe salinity observations made from 1978 onwards (Practical Salinity is the salinity quantity stored by national data centres for post-1978 observations). The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale.  There are also standard names for the precisely defined salinity quantities sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Salinity quantities that do not match any of the precise definitions should be given the more general standard name of sea_water_salinity.  Reference: www.teos-10.org; Lewis, 1980 doi: 10.1109/JOE.1980.1145448</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_preformed_salinity">
+      <canonical_units>g kg-1</canonical_units>
+      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate. Preformed Salinity, S*, is defined as part of the Thermodynamic Equation of Seawater 2010 (TEOS-10) which was adopted in 2010 by the Intergovernmental Oceanographic Commission (IOC). Preformed Salinity is a salinity variable that is designed to be as conservative as possible, by removing the estimated biogeochemical influences on the sea water composition. Preformed Salinity is Absolute Salinity, S_A (which has the standard name sea_water_absolute_salinity), minus all contributions to sea water composition from biogeochemical processes. Preformed Salinity is the mass fraction of dissolved material in sea water. Reference: www.teos-10.org; Pawlowicz et al., 2011 doi: 10.5194/os-7-363-2011; Wright et al., 2011 doi: 10.5194/os-7-1-2011. There are also standard names for the precisely defined salinity quantities sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 onwards), and sea_water_reference_salinity. Salinity quantities that do not match any of the precise definitions should be given the more general standard name of sea_water_salinity.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_salinity">
+      <canonical_units>1e-3</canonical_units>
+      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate. Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and the units attribute should normally be given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_specific_potential_enthalpy">
+      <canonical_units>J kg-1</canonical_units>
+      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate. The potential enthalpy of a sea water parcel is the specific enthalpy after an adiabatic and isohaline change in pressure from its in situ pressure to the sea pressure p = 0 dbar. "specific" means per unit mass. Reference: www.teos-10.org; McDougall, 2003 doi: 10.1175/1520-0485(2003)033&lt;0945:PEACOV&gt;2.0.CO;2.</description>
+   </entry>
+   <entry id="change_over_time_in_sea_water_temperature">
+      <canonical_units>K</canonical_units>
+      <description>"change_over_time_in_X" means change in a quantity X over a time-interval, which should be defined by the bounds of the time coordinate.Sea water temperature is the in situ temperature of the sea water. To specify the depth at which the temperature applies use a vertical coordinate variable or scalar coordinate variable. There are standard names for sea_surface_temperature, sea_surface_skin_temperature, sea_surface_subskin_temperature and sea_surface_foundation_temperature which can be used to describe data located at the specified surfaces. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.</description>
    </entry>
    <entry id="change_over_time_in_surface_snow_amount">
       <canonical_units>kg m-2</canonical_units>
@@ -1336,21 +1396,9 @@
       <canonical_units>m</canonical_units>
       <description>cloud_base refers to the base of the lowest cloud. Altitude is the (geometric) height above the geoid, which is the reference geopotential surface. The geoid is similar to mean sea level.</description>
    </entry>
-   <entry id="cloud_condensed_water_content_of_atmosphere_layer">
-      <canonical_units>kg m-2</canonical_units>
-      <description>"condensed_water" means liquid and ice. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
-   </entry>
-   <entry id="cloud_ice_content_of_atmosphere_layer">
-      <canonical_units>kg m-2</canonical_units>
-      <description>"Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
-   </entry>
    <entry id="cloud_ice_mixing_ratio">
       <canonical_units>1</canonical_units>
       <description>Cloud ice mixing ratio of a parcel of air is the ratio of the mass of ice to the mass of dry air.</description>
-   </entry>
-   <entry id="cloud_liquid_water_content_of_atmosphere_layer">
-      <canonical_units>kg m-2</canonical_units>
-      <description>"Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
    </entry>
    <entry id="cloud_liquid_water_mixing_ratio">
       <canonical_units>1</canonical_units>
@@ -1450,6 +1498,10 @@
    <entry id="depth_at_shallowest_local_minimum_in_vertical_profile_of_mole_concentration_of_dissolved_molecular_oxygen_in_sea_water">
       <canonical_units>m</canonical_units>
       <description>Depth is the vertical distance below the surface.   'Mole concentration' means number of moles per unit volume, also called "molarity", and is used in the construction mole_concentration_of_X_in_Y, where X is a material constituent of Y.  A chemical or biological species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. The concentration of any chemical species, whether particulate or dissolved, may vary with depth in the ocean.  A depth profile may go through one or more local minima in concentration. The  depth_at_shallowest_local_minimum_in_vertical_profile_of_mole_concentration_of_dissolved_molecular_oxygen_in_sea_water is the depth of the local minimum in the oxygen concentration that occurs closest to the sea surface.</description>
+   </entry>
+   <entry id="depth_below_geoid">
+      <canonical_units>m</canonical_units>
+      <description>The geoid is a surface of constant geopotential with which mean sea level would coincide if the ocean were at rest. (The volume enclosed between the geoid and the sea floor equals the mean volume of water in the ocean.) In an ocean GCM the geoid is the surface of zero depth, or the rigid lid if the model uses that approximation. "Depth_below_X" means the vertical distance below the named surface X.</description>
    </entry>
    <entry id="depth_of_isosurface_of_sea_water_potential_temperature">
       <canonical_units>m</canonical_units>
@@ -2008,7 +2060,7 @@
    </entry>
    <entry id="integral_of_sea_water_temperature_wrt_depth_in_ocean_layer">
       <canonical_units>K m</canonical_units>
-      <description>"integral_of_Y_wrt_X" means int Y dX. The data variable should have an axis for X specifying the limits of the integral as bounds. "wrt" means with respect to. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well. Depth is the vertical distance below the surface.</description>
+      <description>"integral_of_Y_wrt_X" means int Y dX. The data variable should have an axis for X specifying the limits of the integral as bounds. "wrt" means with respect to. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well. Depth is the vertical distance below the surface. Sea water temperature is the in situ temperature of the sea water. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.</description>
    </entry>
    <entry id="integral_of_surface_downward_eastward_stress_wrt_time">
       <canonical_units>Pa s</canonical_units>
@@ -2232,7 +2284,7 @@
       <canonical_units>m s-1</canonical_units>
       <description>Stratiform precipitation, whether liquid or frozen, is precipitation that formed in stratiform cloud.  "lwe" means liquid water equivalent.</description>
    </entry>
-   <entry id="lwe_thickness_of_atmosphere_water_vapor_content">
+   <entry id="lwe_thickness_of_atmosphere_mass_content_of_water_vapor">
       <canonical_units>m</canonical_units>
       <grib>E137</grib>
       <description>"lwe" means liquid water equivalent. The construction lwe_thickness_of_X_amount or _content means the vertical extent of a layer of liquid water having the same mass per unit area. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
@@ -2474,6 +2526,10 @@
    <entry id="mass_concentration_of_clox_expressed_as_chlorine_in_air">
       <canonical_units>kg m-3</canonical_units>
       <description>Mass concentration means mass per unit volume and is used in the construction mass_concentration_of_X_in_Y, where X is a material constituent of Y.  A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. "Clox" describes a family of chemical species consisting of inorganic chlorine compounds with the exception of  hydrogen chloride (HCl) and chlorine nitrate (ClONO2). "Clox" is the term used in standard names for all species belonging to the family that are represented within a given model. The list of individual species that are included in a quantity with a group chemical standard name can vary between models.  Where possible, the data variable should be accompanied by a complete description of the species represented, for example, by using a comment attribute. "Inorganic chlorine", sometimes referred to as Cly, describes a family of chemical species which result from the degradation of source gases containing chlorine (CFCs, HCFCs, VSLS) and natural inorganic chlorine sources such as seasalt and other aerosols.   Standard names that use the term "inorganic_chlorine" are used for quantities that contain all inorganic chlorine species including HCl and ClONO2. The phrase 'expressed_as' is used in the construction A_expressed_as_B, where B is a chemical constituent of A. It means that the quantity indicated by the standard name is calculated solely with respect to the B contained in A, neglecting all other chemical constituents of A.</description>
+   </entry>
+   <entry id="mass_concentration_of_coarse_mode_ambient_aerosol_in_air">
+      <canonical_units>kg m-3</canonical_units>
+      <description>Mass concentration means mass per unit volume and is used in the construction mass_concentration_of_X_in_Y, where X is a material constituent of Y. A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. "Aerosol" means the suspended liquid or solid particles in air (except cloud droplets). "Ambient aerosol" is aerosol that has taken up ambient water through hygroscopic growth. The extent of hygroscopic growth depends on the relative humidity and the composition of the aerosol. Coarse mode aerosol is aerosol having a diameter of more than 1 micrometer.</description>
    </entry>
    <entry id="mass_concentration_of_condensed_water_in_soil">
       <canonical_units>kg m-3</canonical_units>
@@ -2779,6 +2835,18 @@
       <canonical_units>kg m-3</canonical_units>
       <description>'Mass concentration' means mass per unit volume and is used in the construction mass_concentration_of_X_in_Y, where X is a material constituent of Y.  A chemical or biological species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. The phrase 'expressed_as' is used in the construction A_expressed_as_B, where B is a chemical constituent of A. It means that the quantity indicated by the standard name is calculated solely with respect to the B containedin A, neglecting all other chemical constituents of A. Chlorophyll is the green pigment found in most plants, algae and cyanobacteria.  The presence of chlorophyll is essential for photosynthesis to take place.  There are five different forms of chlorophyll that occur naturally.  All contain a chlorin ring (chemical formula C20H16N4) which gives the green pigment and a side chain whose structure varies.  The naturally occurring forms of chlorophyll contain between 35 and 55 carbon atoms. Picophytoplankton are phytoplankton of less than 2 micrometers in size. Phytoplankton are autotrophic prokaryotic or eukaryotic algae that live near the water surface where there is sufficient light to support photosynthesis.</description>
    </entry>
+   <entry id="mass_concentration_of_pm10_ambient_aerosol_in_air">
+      <canonical_units>kg m-3</canonical_units>
+      <description>Mass concentration means mass per unit volume and is used in the construction mass_concentration_of_X_in_Y, where X is a material constituent of Y. A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. "Aerosol" means the suspended liquid or solid particles in air (except cloud droplets). "Ambient aerosol" is aerosol that has taken up ambient water through hygroscopic growth. The extent of hygroscopic growth depends on the relative humidity and the composition of the aerosol. "Pm10 aerosol" is an air pollutant with an aerodynamic diameter of less than or equal to 10 micrometers. To specify the relative humidity and temperature at which the particle size applies, provide scalar coordinate variables with the standard names of, respectively, "relative_humidity" and "air_temperature."</description>
+   </entry>
+   <entry id="mass_concentration_of_pm1_ambient_aerosol_in_air">
+      <canonical_units>kg m-3</canonical_units>
+      <description>Mass concentration means mass per unit volume and is used in the construction mass_concentration_of_X_in_Y, where X is a material constituent of Y. A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. "Aerosol" means the suspended liquid or solid particles in air (except cloud droplets). "Ambient aerosol" is aerosol that has taken up ambient water through hygroscopic growth. The extent of hygroscopic growth depends on the relative humidity and the composition of the aerosol. "Pm1 aerosol" is an air pollutant with an aerodynamic diameter of less than or equal to 1 micrometer. To specify the relative humidity and temperature at which the particle size applies, provide scalar coordinate variables with the standard names of, respectively, "relative_humidity" and "air_temperature".</description>
+   </entry>
+   <entry id="mass_concentration_of_pm2p5_ambient_aerosol_in_air">
+      <canonical_units>kg m-3</canonical_units>
+      <description>Mass concentration means mass per unit volume and is used in the construction mass_concentration_of_X_in_Y, where X is a material constituent of Y. A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. "Aerosol" means the suspended liquid or solid particles in air (except cloud droplets). "Ambient aerosol" is aerosol that has taken up ambient water through hygroscopic growth. The extent of hygroscopic growth depends on the relative humidity and the composition of the aerosol. "Pm2p5 aerosol" is an air pollutant with an aerodynamic diameter of less than or equal to 2.5 micrometers. To specify the relative humidity and temperature at which the particle size applies, provide scalar coordinate variables with the standard names of, respectively, "relative_humidity" and "air_temperature."</description>
+   </entry>
    <entry id="mass_concentration_of_primary_particulate_organic_matter_dry_aerosol_in_air">
       <canonical_units>kg m-3</canonical_units>
       <description>Mass concentration means mass per unit volume and is used in the construction mass_concentration_of_X_in_Y, where X is a material constituent of Y.  A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. "Aerosol" means the suspended liquid or solid particles in air (except cloud droplets).  Aerosol takes up ambient water (a process known as hygroscopic growth) depending on the relative humidity and the composition of the aerosol. "Dry aerosol" means aerosol without water. "Primary particulate organic matter " means all organic matter emitted directly to the atmosphere as particles except black carbon. The sum of primary_particulate_organic_matter_dry_aerosol and secondary_particulate_organic_matter_dry_aerosol is particulate_organic_matter_dry_aerosol.</description>
@@ -2847,6 +2915,26 @@
    <entry id="mass_concentration_of_xylene_in_air">
       <canonical_units>kg m-3</canonical_units>
       <description>Mass concentration means mass per unit volume and is used in the construction mass_concentration_of_X_in_Y, where X is a material constituent of Y.  A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. The chemical formula for xylene is C6H4C2H6. In chemistry, xylene is a generic term for a group of three isomers of dimethylbenzene. The IUPAC names for the isomers are 1,2-dimethylbenzene, 1,3-dimethylbenzene and 1,4-dimethylbenzene. Xylene is an aromatic hydrocarbon. There are standard names that refer to aromatic_compounds as a group, as well as those for individual species.</description>
+   </entry>
+   <entry id="mass_content_of_cloud_condensed_water_in_atmosphere_layer">
+      <canonical_units>kg m-2</canonical_units>
+      <description>"condensed_water" means liquid and ice. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
+   </entry>
+   <entry id="mass_content_of_cloud_ice_in_atmosphere_layer">
+      <canonical_units>kg m-2</canonical_units>
+      <description>"Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
+   </entry>
+   <entry id="mass_content_of_cloud_liquid_water_in_atmosphere_layer">
+      <canonical_units>kg m-2</canonical_units>
+      <description>"Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
+   </entry>
+   <entry id="mass_content_of_water_in_atmosphere_layer">
+      <canonical_units>kg m-2</canonical_units>
+      <description>"Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well. "Water" means water in all phases.</description>
+   </entry>
+   <entry id="mass_content_of_water_vapor_in_atmosphere_layer">
+      <canonical_units>kg m-2</canonical_units>
+      <description>"Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
    </entry>
    <entry id="mass_fraction_of_acetic_acid_in_air">
       <canonical_units>1</canonical_units>
@@ -3945,6 +4033,14 @@
       <canonical_units>1</canonical_units>
       <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, whereX is a material constituent of Y.  A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. The chemicalformula for aceto-nitrile is CH3CN. The IUPAC name for aceto-nitrile is ethanenitrile.</description>
    </entry>
+   <entry id="mole_fraction_of_aldehydes_in_air">
+      <canonical_units>1</canonical_units>
+      <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, whereX is a material constituent of Y. A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. Aldehydes are organic compounds with a CHO group; "aldehydes" is the term used in standard names to describe the group of chemical species having this common structure that are represented within a given model. The list of individual species that are included in a quantity having a group chemical standard name can vary between models. Where possible, the data variable should be accompanied by a complete description of the species represented, for example, by using a comment attribute. Standard names exist for formaldehyde as the simplest member of the aldehydes group.</description>
+   </entry>
+   <entry id="mole_fraction_of_alkanes_in_air">
+      <canonical_units>1</canonical_units>
+      <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, where X is a material constituent of Y. A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. Alkanes are saturated hydrocarbons, i.e. they do not contain any chemical double bonds. Alkanes contain only hydrogen and carbon combined in the general proportions C(n)H(2n+2); "alkanes" is the term used in standard names to describe the group of chemical species having this common structure that are represented within a given model. The list of individual species that are included in a quantity having a group chemical standard name can vary between models. Where possible, the data variable should be accompanied by a complete description of the species represented, for example, by using a comment attribute. Standard names exist for some individual alkane species, e.g., methane and ethane.</description>
+   </entry>
    <entry id="mole_fraction_of_alpha_hexachlorocyclohexane_in_air">
       <canonical_units>1</canonical_units>
       <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, where X is a material constituent of Y.</description>
@@ -4057,6 +4153,10 @@
       <canonical_units>1</canonical_units>
       <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, whereX is a material constituent of Y.  A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. "Clox" describes a family of chemical species consisting of inorganic chlorine compounds withthe exception of  hydrogen chloride (HCl) and chlorine nitrate (ClONO2). "Clox" is the term used in standard names for all species belonging to the family that are represented within a given model. The list of individual species that are included in a quantity with a group chemical standard name can vary between models.  Where possible, the data variable should be accompanied by a complete description of the species represented, for example, by using a comment attribute. "Inorganic chlorine", sometimes referred to as Cly, describes a family of chemical species which result from the degradation of source gasescontaining chlorine (CFCs, HCFCs, VSLS) and natural inorganic chlorine sources such as seasalt and other aerosols.   Standard names that use the term "inorganic_chlorine" are used for quantities that contain all inorganic chlorine species including HCl and ClONO2. The phrase 'expressed_as' is used in the construction A_expressed_as_B, where B is a chemical constituent of A. It means that the quantity indicated by the standard name is calculated solely with respect to the B contained in A, neglecting all other chemical constituents of A.</description>
    </entry>
+   <entry id="mole_fraction_of_dichlorine_in_air">
+      <canonical_units>1</canonical_units>
+      <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, whereX is a material constituent of Y. A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. Dichlorine is the molecular form of elemental chlorine with the chemical formula Cl2.</description>
+   </entry>
    <entry id="mole_fraction_of_dichlorine_peroxide_in_air">
       <canonical_units>1</canonical_units>
       <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, where X is a material constituent of Y.   The chemical formula of dichlorine peroxide is Cl2O2.</description>
@@ -4157,6 +4257,10 @@
       <canonical_units>1</canonical_units>
       <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, where X is a material constituent of Y.  The chemical formula of hydrogen peroxide is H202.</description>
    </entry>
+   <entry id="mole_fraction_of_hydrogen_sulfide_in_air">
+      <canonical_units>1</canonical_units>
+      <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, where X is a material constituent of Y. A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. The chemical formula of hydrogen sulfide is H2S.</description>
+   </entry>
    <entry id="mole_fraction_of_hydroperoxyl_radical_in_air">
       <canonical_units>1</canonical_units>
       <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, where X is a material constituent of Y.  The chemical formula of hydroperoxyl radical is HO2.</description>
@@ -4196,6 +4300,10 @@
    <entry id="mole_fraction_of_methanol_in_air">
       <canonical_units>1</canonical_units>
       <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, whereX is a material constituent of Y.  A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. The chemicalformula for methanol is CH3OH.</description>
+   </entry>
+   <entry id="mole_fraction_of_methlyglyoxal_in_air">
+      <canonical_units>1</canonical_units>
+      <description>Mole fraction is used in the construction mole_fraction_of_X_in_Y, whereX is a material constituent of Y. A chemical species denoted by X may be described by a single term such as 'nitrogen' or a phrase such as 'nox_expressed_as_nitrogen'. Methylglyoxal is an organic molecule with the chemical formula CH3COCHO. It is also called pyruvaldehyde or 2-oxopropanal.</description>
    </entry>
    <entry id="mole_fraction_of_methyl_bromide_in_air">
       <canonical_units>1</canonical_units>
@@ -4619,6 +4727,9 @@
       <canonical_units>1</canonical_units>
       <description>Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)  The wind speed is the magnitude of the wind velocity.  A variable whose standard name has the form number_of_days_with_X_below|above_threshold is a count of the number of days on which the condition X_below|above_threshold is satisfied.  It must have a coordinate variable or scalar coordinate variable with the a standard name of X to supply the threshold(s). It must have a climatological time variable, and a cell_methods entry for within days which describes the processing of quantity X before the threshold is applied. A number_of_days is an extensive quantity in time, and the cell_methods entry for over days should be "sum".</description>
    </entry>
+   <entry id="number_of_icebergs_per_unit_area">
+      <canonical_units>m-2</canonical_units>
+   </entry>
    <entry id="ocean_barotropic_mass_streamfunction">
       <canonical_units>kg s-1</canonical_units>
       <description>The barotropic stream function with the dimensions of volume transport has the standard name ocean_barotropic_streamfunction.</description>
@@ -4653,7 +4764,7 @@
    </entry>
    <entry id="ocean_integral_of_sea_water_temperature_wrt_depth">
       <canonical_units>K m</canonical_units>
-      <description>"integral_of_Y_wrt_X" means int Y dX. The data variable should have an axis for X specifying the limits of the integral as bounds. "wrt" means with respect to. Depth is the vertical distance below the surface.</description>
+      <description>"integral_of_Y_wrt_X" means int Y dX. The data variable should have an axis for X specifying the limits of the integral as bounds. "wrt" means with respect to. Depth is the vertical distance below the surface. Sea water temperature is the in situ temperature of the sea water. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.</description>
    </entry>
    <entry id="ocean_isopycnal_layer_thickness_diffusivity">
       <canonical_units>m2 s-1</canonical_units>
@@ -4926,6 +5037,10 @@
       <canonical_units>degree s-1</canonical_units>
       <description>Standard names for platform describe the motion and orientation of the vehicle from which observations are made e.g. aeroplane or ship.</description>
    </entry>
+   <entry id="platform_zenith_angle">
+      <canonical_units>degree</canonical_units>
+      <description>Standard names for "platform" describe the motion and orientation of the vehicle from which observations are made e.g. aeroplane or ship. Platform zenith angle is the the angle between the line of sight to the platform and the local vertical.</description>
+   </entry>
    <entry id="potential_energy_content_of_atmosphere_layer">
       <canonical_units>J m-2</canonical_units>
       <description>"Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well. Potential energy is the sum of the gravitational potential energy relative to the geoid and the centripetal potential energy. (The geopotential is the specific potential energy.)</description>
@@ -4964,7 +5079,7 @@
    </entry>
    <entry id="product_of_eastward_sea_water_velocity_and_salinity">
       <canonical_units>m s-1</canonical_units>
-      <description>"product_of_X_and_Y" means X*Y. A velocity is a vector quantity. "Eastward" indicates a vector component which is positive when directed eastward (negative westward). The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 i.e. parts per thousand if salinity is in PSU.</description>
+      <description>"product_of_X_and_Y" means X*Y. A velocity is a vector quantity. "Eastward" indicates a vector component which is positive when directed eastward (negative westward). Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and normally given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="product_of_eastward_sea_water_velocity_and_temperature">
       <canonical_units>K m s-1</canonical_units>
@@ -5002,7 +5117,7 @@
    </entry>
    <entry id="product_of_northward_sea_water_velocity_and_salinity">
       <canonical_units>m s-1</canonical_units>
-      <description>"product_of_X_and_Y" means X*Y. A velocity is a vector quantity. "Northward" indicates a vector component which is positive when directed northward (negative southward). The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 i.e. parts per thousand if salinity is in PSU.</description>
+      <description>"product_of_X_and_Y" means X*Y. A velocity is a vector quantity. "Northward" indicates a vector component which is positive when directed northward (negative southward). Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and normally given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="product_of_northward_sea_water_velocity_and_temperature">
       <canonical_units>K m s-1</canonical_units>
@@ -5212,8 +5327,8 @@
       <canonical_units>kg</canonical_units>
    </entry>
    <entry id="sea_ice_salinity">
-      <canonical_units>psu</canonical_units>
-      <description>The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 i.e. parts per thousand if salinity is in PSU.</description>
+      <canonical_units>1e-3</canonical_units>
+      <description>Sea ice salinity is the salt content of sea ice, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and normally given as 1e-3 or 0.001 i.e. parts per thousand. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s.</description>
    </entry>
    <entry id="sea_ice_speed">
       <canonical_units>m s-1</canonical_units>
@@ -5318,7 +5433,7 @@
    </entry>
    <entry id="sea_surface_salinity">
       <canonical_units>1e-3</canonical_units>
-      <description>The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 i.e. parts per thousand if salinity is in PSU. Sea surface salinity is often abbreviated as "SSS". For the salinity of sea water at a particular depth or layer, a data variable of sea_water_salinity with a vertical coordinate axis should be used.</description>
+      <description>Sea surface salinity is the salt content of sea water close to the sea surface, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and the units attribute should normally be given as 1e-3 or 0.001 i.e. parts per thousand. Sea surface salinity is often abbreviated as "SSS". For the salinity of sea water at a particular depth or layer, a data variable of "sea_water_salinity" or one of the more precisely defined salinities should be used with a vertical coordinate axis. There are standard names for the precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="sea_surface_skin_temperature">
       <canonical_units>K</canonical_units>
@@ -5435,6 +5550,10 @@
       <canonical_units>s</canonical_units>
       <description>A period is an interval of time, or the time-period of an oscillation. The zero upcrossing period is defined as the time interval between consecutive occasions on which the surface height passes upward above the mean level. Wind waves are waves on the ocean surface. Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.)</description>
    </entry>
+   <entry id="sea_water_absolute_salinity">
+      <canonical_units>g kg-1</canonical_units>
+      <description>Absolute Salinity, S_A, is defined as part of the Thermodynamic Equation of Seawater 2010 (TEOS-10) which was adopted in 2010 by the Intergovernmental Oceanographic Commission (IOC). It is the mass fraction of dissolved material in sea water. Absolute Salinity incorporates the spatial variations in the composition of sea water. This type of Absolute Salinity is also called "Density Salinity". TEOS-10 estimates Absolute Salinity as the salinity variable that, when used with the TEOS-10 expression for density, yields the correct density of a sea water sample even when the sample is not of Reference Composition. In practice, Absolute Salinity is often calculated from Practical Salinity using a spatial lookup table of pre-defined values of the Absolute Salinity Anomaly. It is recommended that the version of (TEOS-10) software and the associated Absolute Salinity Anomaly climatology be specified within metadata by attaching a comment attribute to the data variable. Reference: www.teos-10.org; Millero et al., 2008 doi: 10.1016/j.dsr.2007.10.001. There are also standard names for the precisely defined salinity quantities sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 onwards), sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Salinity quantities that do not match any of the precise definitions should be given the more general standard name of sea_water_salinity.</description>
+   </entry>
    <entry id="sea_water_age_since_surface_contact">
       <canonical_units>year</canonical_units>
       <description>"Sea water age since surface contact" means the length of time elapsed since the sea water in a grid cell was last in the surface level of an ocean model.</description>
@@ -5443,12 +5562,24 @@
       <canonical_units>mol m-3</canonical_units>
       <description>'sea_water_alkalinity_expressed_as_mole_equivalent' is the total alkalinity equivalent concentration (including carbonate, nitrogen, silicate, and borate components).</description>
    </entry>
+   <entry id="sea_water_conservative_temperature">
+      <canonical_units>K</canonical_units>
+      <description>Conservative Temperature is defined as part of the Thermodynamic Equation of Seawater 2010 (TEOS-10) which was adopted in 2010 by the International Oceanographic Commission (IOC). Conservative Temperature is specific potential enthalpy (which has the standard name sea_water_specific_potential_enthalpy) divided by a fixed value divided by a fixed value of the specific heat capacity of sea water, namely cp_0 = 3991.86795711963 J kg-1 K-1. Conservative Temperature is a more accurate measure of the "heat content" of sea water, by a factor of one hundred, than is potential temperature. Because of this, it can be regarded as being proportional to the heat content of sea water per unit mass. Reference: www.teos-10.org; McDougall, 2003 doi: 10.1175/1520-0485(2003)033&lt;0945:PEACOV&gt;2.0.CO;2.</description>
+   </entry>
+   <entry id="sea_water_cox_salinity">
+      <canonical_units>1e-3</canonical_units>
+      <description>Cox Salinity, S_C, is defined unitless as a mass fraction per mil (0/00) or "parts per thousand". S_C was the standard salinity measure from 1967 until Practical Salinity, S_P, was established with PSS-78 (1978). Chlorinity, Cl, is calculated from the conductivity of a sea water sample and since the work of the Joint Panel for Oceanographic Tables and Standards (JPOTS; 1966) is converted into Cox Salinity using S_C = 1.80655Cl. This type of salinity was called simply "salinity" from 1967 to 1978. Cox Salinity was replaced by Practical Salinity in 1978. Cox Salinity is converted to Practical Salinity following S_P = S_C, however the accuracy of this is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of the Practical Salinity Scale 1978 (PSS-78). Reference: Cox et al., 1967 doi: 10.1016/0011-7471(67)90006-X; Lyman, 1969 doi: 10.4319/lo.1969.14.6.0928; Wooster et al., 1969 doi: 10.4319/lo.1969.14.3.0437. There are standard names for the precisely defined salinity quantities sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_practical_salinity, S_P, sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_* and sea_water_reference_salinity. Salinity quantities that do not match any of the precise definitions should be given the more general standard name of sea_water_salinity.</description>
+   </entry>
    <entry id="sea_water_density">
       <canonical_units>kg m-3</canonical_units>
       <description>Sea water density is the in-situ density (not the potential density). If 1000 kg m-3 is subtracted, the standard name sea_water_sigma_t should be chosen instead.</description>
    </entry>
    <entry id="sea_water_electrical_conductivity">
       <canonical_units>S m-1</canonical_units>
+   </entry>
+   <entry id="sea_water_knudsen_salinity">
+      <canonical_units>1e-3</canonical_units>
+      <description>Knudsen Salinity, S_K, is defined unitless as a mass fraction per mil (0/00) or "parts per thousand", and was calculated from the titration of inorganic salts from a sample of sea water after a commission to study the problem of determining salinity and density was initiated by the International Council for the Exploration of the Sea (ICES) in 1899. S_K was the standard salinity measure until S_C (Cox Salinity) was established in 1967. Since the work of Knudsen (1901), chlorinity is converted into Knudsen Salinity using S_K = 0.030 + 1.805 Cl. This type of salinity was called simply "salinity" from 1901 to 1966. From the 1960s on, electrical conductivity began to be used to estimate the Knudsen Salinity, rather than chemical titration. Knudsen Salinity was replaced by Cox Salinity in 1967 which was in turn replaced by Practical Salinity, S_P, in 1978. Conversion of Knudsen Salinity to Practical Salinity follows S_P = (S_K - 0.03) * (1.80655 / 1.805). Reference: Knudsen, 1901; Thomas et al., 1934 doi: 10.1093/icesjms/9.1.28; Lyman, 1969 doi: 10.4319/lo.1969.14.6.0928; Wooster et al., 1969 doi: 10.4319/lo.1969.14.3.0437; Lewis, 1980 doi: 10.1109/JOE.1980.1145448; Millero et al., 2008 doi: 10.1016/j.dsr.2007.10.001. There are standard names for the precisely defined salinity quantities sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P, sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_* and sea_water_reference_salinity. Salinity quantities that do not match any of the precise definitions should be given the more general standard name of sea_water_salinity.</description>
    </entry>
    <entry id="sea_water_mass">
       <canonical_units>kg</canonical_units>
@@ -5457,6 +5588,10 @@
    <entry id="sea_water_mass_per_unit_area">
       <canonical_units>kg m-2</canonical_units>
       <description>Sea_water_mass_per_unit_area is the mass per unit area of the sea water contained within each grid cell.</description>
+   </entry>
+   <entry id="sea_water_neutral_density">
+      <canonical_units>kg m-3</canonical_units>
+      <description>"Neutral density" is a variable designed so that a surface of constant neutral density everywhere has a local slope that is close to the local slope of the neutral tangent plane. At the sea surface in the equatorial Pacific neutral density is very close to the potential density anomaly. At other locations, this is not the case. For example, along a neutral density surface there is a difference of up to 0.14 kg/m^3 in the potential density anomaly at the outcrops in the Southern and Northern hemispheres. Refer to Jackett &amp; McDougall (1997; Journal of Physical Oceanography, Vol 27, doi: 10.1175/1520-0485(1997)027&lt;0237:ANDVFT&gt;2.0.CO;2) for more information.</description>
    </entry>
    <entry id="sea_water_ph_reported_on_total_scale">
       <canonical_units>1</canonical_units>
@@ -5470,6 +5605,14 @@
       <canonical_units>K</canonical_units>
       <description>Potential temperature is the temperature a parcel of air or sea water would have if moved adiabatically to sea level pressure.</description>
    </entry>
+   <entry id="sea_water_practical_salinity">
+      <canonical_units>1e-3</canonical_units>
+      <description>Practical Salinity, S_P, is defined on the Practical Salinity Scale of 1978 (PSS-78) and is calculated from the electrical conductivity of sea water (as well as temperature and pressure).  Officially S_P is dimensionless so that, while convenient, and while it is common practice, it is not officially sanctioned to say S_P = 35 psu. Often authors use PSS-78, as in S_P = 35 PSS-78. If salinity was measured using remote sensing techniques and not conductivity, then it is recommended that additional metadata (calibration/validation information) be described in the variable comment attribute. This name should be used to describe salinity observations made from 1978 onwards (Practical Salinity is the salinity quantity stored by national data centres for post-1978 observations). The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale.  There are also standard names for the precisely defined salinity quantities sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Salinity quantities that do not match any of the precise definitions should be given the more general standard name of sea_water_salinity.  Reference: www.teos-10.org; Lewis, 1980 doi:10.1109/JOE.1980.1145448</description>
+   </entry>
+   <entry id="sea_water_preformed_salinity">
+      <canonical_units>g kg-1</canonical_units>
+      <description>Preformed Salinity, S*, is defined as part of the Thermodynamic Equation of Seawater 2010 (TEOS-10) which was adopted in 2010 by the Intergovernmental Oceanographic Commission (IOC). Preformed Salinity is a salinity variable that is designed to be as conservative as possible, by removing the estimated biogeochemical influences on the sea water composition. Preformed Salinity is Absolute Salinity, S_A (which has the standard name sea_water_absolute_salinity), minus all contributions to sea water composition from biogeochemical processes. Preformed Salinity is the mass fraction of dissolved material in sea water. Reference: www.teos-10.org; Pawlowicz et al., 2011 doi: 10.5194/os-7-363-2011; Wright et al., 2011 doi: 10.5194/os-7-1-2011. There are also standard names for the precisely defined salinity quantities sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 onwards), and sea_water_reference_salinity. Salinity quantities that do not match any of the precise definitions should be given the more general standard name of sea_water_salinity.</description>
+   </entry>
    <entry id="sea_water_pressure">
       <canonical_units>dbar</canonical_units>
       <description>"Sea water pressure" is the pressure that exists in the mediumof sea water.  It includes the pressure due to overlying sea water, sea ice, air and any other medium that may be present.</description>
@@ -5482,11 +5625,15 @@
       <canonical_units>dbar</canonical_units>
       <description>The surface called "surface" means the lower boundary of the atmosphere.  "Sea water pressure" is the pressure that exists in the medium of sea water.  It includes the pressure due to overlying sea water, sea ice, air and any other medium that may be present.</description>
    </entry>
+   <entry id="sea_water_reference_salinity">
+      <canonical_units>g kg-1</canonical_units>
+      <description>If a sea water sample has the Reference Composition (defined in Millero et al., 2008), then its Reference Salinity is the best available estimate of its Absolute Salinity. For general purposes, Reference Salinity is (35.16504 g kg-1)/35 times Practical Salinity. Reference: www.teos-10.org; Millero et al., 2008 doi: 10.1016/j.dsr.2007.10.001. There are also standard names for the precisely defined salinity quantities sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity (used for salinity observations from 1978 onwards), sea_water_absolute_salinity, S_A, and sea_water_preformed_salinity, S_*. Salinity quantities that do not match any of the precise definitions should be given the more general standard name of sea_water_salinity.</description>
+   </entry>
    <entry id="sea_water_salinity">
       <canonical_units>1e-3</canonical_units>
       <grib>88</grib>
       <amip>so</amip>
-      <description>The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 i.e. parts per thousand if salinity is in PSU.</description>
+      <description>Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and the units attribute should normally be given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966),  sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="sea_water_sigma_t">
       <canonical_units>kg m-3</canonical_units>
@@ -5495,6 +5642,10 @@
    <entry id="sea_water_sigma_theta">
       <canonical_units>kg m-3</canonical_units>
       <description>Sigma-theta of sea water is the potential density (i.e. the density when moved adiabatically to a reference pressure) of water having the same temperature and salinity, minus 1000 kg m-3. Note that sea water sigma is not the same quantity as the dimensionless ocean sigma coordinate (see Appendix D of the CF convention), for which there is another standard name.</description>
+   </entry>
+   <entry id="sea_water_specific_potential_enthalpy">
+      <canonical_units>J kg-1</canonical_units>
+      <description>The potential enthalpy of a sea water parcel is the specific enthalpy after an adiabatic and isohaline change in pressure from its in situ pressure to the sea pressure p = 0 dbar. "specific" means per unit mass. Reference: www.teos-10.org; McDougall, 2003 doi: 10.1175/1520-0485(2003)033&lt;0945:PEACOV&gt;2.0.CO;2.</description>
    </entry>
    <entry id="sea_water_speed">
       <canonical_units>m s-1</canonical_units>
@@ -5505,6 +5656,7 @@
       <canonical_units>K</canonical_units>
       <grib>80</grib>
       <amip>to</amip>
+      <description>Sea water temperature is the in situ temperature of the sea water. To specify the depth at which the temperature applies use a vertical coordinate variable or scalar coordinate variable. There are standard names for sea_surface_temperature, sea_surface_skin_temperature, sea_surface_subskin_temperature and sea_surface_foundation_temperature which can be used to describe data located at the specified surfaces. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.</description>
    </entry>
    <entry id="sea_water_transport_across_line">
       <canonical_units>kg s-1</canonical_units>
@@ -6081,6 +6233,10 @@
       <canonical_units>m s-1</canonical_units>
       <description>The surface called "surface" means the lower boundary of the atmosphere. "Water" means water in all phases, including frozen i.e. ice and snow. A velocity is a vector quantity. "Eastward" indicates a vector component which is positive when directed eastward (negative westward).</description>
    </entry>
+   <entry id="surface_frozen_carbon_dioxide_amount">
+      <canonical_units>kg m-2</canonical_units>
+      <description>"Amount" means mass per unit area. The surface called "surface" means the lower boundary of the atmosphere. The chemical formula for carbon dioxide is CO2. Frozen carbon dioxide is found on the surface of Mars.</description>
+   </entry>
    <entry id="surface_geopotential">
       <canonical_units>m2 s-2</canonical_units>
       <description>The surface called "surface" means the lower boundary of the atmosphere. Geopotential is the sum of the specific gravitational potential energy relative to the geoid and the specific centripetal potential energy.</description>
@@ -6228,9 +6384,17 @@
       <amip>snw</amip>
       <description>The surface called "surface" means the lower boundary of the atmosphere. "Amount" means mass per unit area. Surface amount refers to the amount on the ground, excluding that on the plant or vegetation canopy.</description>
    </entry>
+   <entry id="surface_snow_and_ice_melt_flux">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>In accordance with common usage in geophysical disciplines, "flux" implies per unit area, called "flux density" in physics. The surface called "surface" means the lower boundary of the atmosphere. "Surface snow and ice melt flux" means the mass flux of all melting at the surface.</description>
+   </entry>
    <entry id="surface_snow_and_ice_melt_heat_flux">
       <canonical_units>W m-2</canonical_units>
       <description>The surface called "surface" means the lower boundary of the atmosphere. The snow and ice melt heat flux is the supply of latent heat which is melting snow and ice at freezing point. In accordance with common usage in geophysical disciplines, "flux" implies per unit area, called "flux density" in physics.</description>
+   </entry>
+   <entry id="surface_snow_and_ice_refreezing_flux">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>In accordance with common usage in geophysical disciplines, "flux" implies per unit area, called "flux density" in physics. The surface called "surface" means the lower boundary of the atmosphere. "Surface snow and ice refreezing flux" means the mass flux of surface  meltwater which refreezes within the snow or firn.</description>
    </entry>
    <entry id="surface_snow_and_ice_sublimation_flux">
       <canonical_units>kg m-2 s-1</canonical_units>
@@ -6866,7 +7030,7 @@
       <canonical_units>kg m-2 s-1</canonical_units>
       <description>"Content" indicates a quantity per unit area.  The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used.  The specification of a physical process by the phrase due_to_process means that the quantity named is a  single term in a sum of terms which together compose the general quantity  named by omitting the phrase.  "tendency_of_X" means derivative of X with respect to time.  "Emission" means emission from a primary source located anywhere within the atmosphere, including at the lower boundary (i.e. earth's surface). "Emission" is a process entirely distinct from "re-emission" which is used in some standard names. The chemical formula for nitrogen dioxide is NO2.</description>
    </entry>
-   <entry id="tendency_of_atmosphere_mass_content_of_nitrogen_monoxide_due_to_emission ">
+   <entry id="tendency_of_atmosphere_mass_content_of_nitrogen_monoxide_due_to_emission">
       <canonical_units>kg m-2 s-1</canonical_units>
       <description>"Content" indicates a quantity per unit area.  The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used.  The specification of a physical process by the phrase due_to_process means that the quantity named is a  single term in a sum of terms which together compose the general quantity  named by omitting the phrase.  "tendency_of_X" means derivative of X with respect to time.  "Emission" means emission from a primary source located anywhere within the atmosphere, including at the lower boundary (i.e. earth's surface). "Emission" is a process entirely distinct from "re-emission" which is used in some standard names. The chemical formula for nitrogen monoxide is NO.</description>
    </entry>
@@ -7021,6 +7185,30 @@
    <entry id="tendency_of_atmosphere_mass_content_of_toluene_due_to_emission">
       <canonical_units>kg m-2 s-1</canonical_units>
       <description>"Content" indicates a quantity per unit area.  The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used.  The specification of a physical process by the phrase due_to_process means that the quantity named is a  single term in a sum of terms which together compose the general quantity  named by omitting the phrase.  "tendency_of_X" means derivative of X with respect to time.  "Emission" means emission from a primary source located anywhere within the atmosphere, including at the lower boundary (i.e. earth's surface). "Emission" is a process entirely distinct from "re-emission" which is used in some standard names. The chemical formula for toluene is C6H5CH3.  Toluene has the same structure as benzene, except that one of the hydrogen atoms is replaced by a methyl group.  The systematic name for toluene is methylbenzene.</description>
+   </entry>
+   <entry id="tendency_of_atmosphere_mass_content_of_water_due_to_advection">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. "Water" means water in all phases.</description>
+   </entry>
+   <entry id="tendency_of_atmosphere_mass_content_of_water_vapor">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>"tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
+   </entry>
+   <entry id="tendency_of_atmosphere_mass_content_of_water_vapor_due_to_convection">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
+   </entry>
+   <entry id="tendency_of_atmosphere_mass_content_of_water_vapor_due_to_deep_convection">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
+   </entry>
+   <entry id="tendency_of_atmosphere_mass_content_of_water_vapor_due_to_shallow_convection">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
+   </entry>
+   <entry id="tendency_of_atmosphere_mass_content_of_water_vapor_due_to_turbulence">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
    </entry>
    <entry id="tendency_of_atmosphere_mass_content_of_xylene_due_to_emission">
       <canonical_units>kg m-2 s-1</canonical_units>
@@ -7418,34 +7606,6 @@
       <canonical_units>W m-2</canonical_units>
       <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Potential energy is the sum of the gravitational potential energy relative to the geoid and the centripetal potential energy. (The geopotential is the specific potential energy.)</description>
    </entry>
-   <entry id="tendency_of_atmosphere_water_content_due_to_advection">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. "Water" means water in all phases.</description>
-   </entry>
-   <entry id="tendency_of_atmosphere_water_vapor_content">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
-   </entry>
-   <entry id="tendency_of_atmosphere_water_vapor_content_due_to_advection">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
-   </entry>
-   <entry id="tendency_of_atmosphere_water_vapor_content_due_to_convection">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
-   </entry>
-   <entry id="tendency_of_atmosphere_water_vapor_content_due_to_deep_convection">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
-   </entry>
-   <entry id="tendency_of_atmosphere_water_vapor_content_due_to_shallow_convection">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
-   </entry>
-   <entry id="tendency_of_atmosphere_water_vapor_content_due_to_turbulence">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. The "atmosphere content" of a quantity refers to the vertical integral from the surface to the top of the atmosphere. For the content between specified levels in the atmosphere, standard names including content_of_atmosphere_layer are used. Atmosphere water vapor content is sometimes referred to as "precipitable water", although this term does not imply the water could all be precipitated.</description>
-   </entry>
    <entry id="tendency_of_bedrock_altitude">
       <canonical_units>m s-1</canonical_units>
       <description>"tendency_of_X" means derivative of X with respect to time. Altitude is the (geometric) height above the geoid, which is the reference geopotential surface. The geoid is similar to mean sea level. "Bedrock" is the solid Earth surface beneath land ice or ocean water.</description>
@@ -7508,6 +7668,26 @@
    <entry id="tendency_of_land_ice_thickness">
       <canonical_units>m s-1</canonical_units>
       <description>"tendency_of_X" means derivative of X with respect to time. "Land ice" means glaciers, ice-caps and ice-sheets resting on bedrock and also includes ice-shelves.  "Thickness" means the vertical extent of a layer..</description>
+   </entry>
+   <entry id="tendency_of_mass_content_of_water_vapor_in_atmosphere_layer">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>"tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
+   </entry>
+   <entry id="tendency_of_mass_content_of_water_vapor_in_atmosphere_layer_due_to_convection">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
+   </entry>
+   <entry id="tendency_of_mass_content_of_water_vapor_in_atmosphere_layer_due_to_deep_convection">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
+   </entry>
+   <entry id="tendency_of_mass_content_of_water_vapor_in_atmosphere_layer_due_to_shallow_convection">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
+   </entry>
+   <entry id="tendency_of_mass_content_of_water_vapor_in_atmosphere_layer_due_to_turbulence">
+      <canonical_units>kg m-2 s-1</canonical_units>
+      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary variable) as well.</description>
    </entry>
    <entry id="tendency_of_mass_fraction_of_cloud_condensed_water_in_air">
       <canonical_units>s-1</canonical_units>
@@ -7968,7 +8148,7 @@
       <canonical_units>W m-2</canonical_units>
       <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well. Potential energy is the sum of the gravitational potential energy relative to the geoid and the centripetal potential energy. (The geopotential is the specific potential energy.)</description>
    </entry>
-   <entry id="tendency_of_potential_energy_content_of_ocean_layer_due_to_diffusion ">
+   <entry id="tendency_of_potential_energy_content_of_ocean_layer_due_to_diffusion">
       <canonical_units>W m-2</canonical_units>
       <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well. Potential energy is the sum of the gravitational potential energy relative to the geoid and the centripetal potential energy. (The geopotential is the specific potential energy.)</description>
    </entry>
@@ -8023,47 +8203,47 @@
    </entry>
    <entry id="tendency_of_sea_water_salinity">
       <canonical_units>1e-3 s-1</canonical_units>
-      <description>The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 i.e. parts per thousand if salinity is in PSU.  "tendency_of_X" means derivative of X with respect to time.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and normally given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="tendency_of_sea_water_salinity_due_to_advection">
       <canonical_units>1e-3 s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time.  The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 (parts per thousand) s-1  if salinity is in PSU.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and normally given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="tendency_of_sea_water_salinity_due_to_bolus_advection">
       <canonical_units>1e-3 s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time.  The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 (parts per thousand) s-1  if salinity is in PSU.  Bolus advection in an ocean model means the part due to a scheme representing eddy-induced effects not included in the velocity field</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. Bolus advection in an ocean model means the part due to a scheme representing eddy-induced effects not included in the velocity field. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and normally given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="tendency_of_sea_water_salinity_due_to_horizontal_mixing">
       <canonical_units>1e-3 s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time.  The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 (parts per thousand) s-1  if salinity is in PSU.  "Horizontal mixing" means any horizontal transport other than by advection and bolus advection, usually represented as horizontal diffusion in ocean models.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. "Horizontal mixing" means any horizontal transport other than by advection and bolus advection, usually represented as horizontal diffusion in ocean models. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and normally given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="tendency_of_sea_water_salinity_due_to_sea_ice_thermodynamics">
       <canonical_units>1e-3 s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time.  The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 (parts per thousand) s-1  if salinity is in PSU.  "Sea ice thermodynamics" refers to the addition or subtraction of sea ice mass due to surface and basal fluxes.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. "Sea ice thermodynamics" refers to the addition or subtraction of sea ice mass due to surface and basal fluxes. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and normally given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="tendency_of_sea_water_salinity_due_to_vertical_mixing">
       <canonical_units>1e-3 s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time.  The unit of salinity is PSU, which is dimensionless. The units attribute should be given as 1e-3 or 0.001 (parts per thousand) s-1  if salinity is in PSU.  "Vertical mixing" means any vertical transport other than by advection and bolus advection, represented by a combination of vertical diffusion, turbulent mixing and convection in ocean models.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. "Vertical mixing" means any vertical transport other than by advection and bolus advection, represented by a combination of vertical diffusion, turbulent mixing and convection in ocean models. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. Sea water salinity is the salt content of sea water, often on the Practical Salinity Scale of 1978. However, the unqualified term 'salinity' is generic and does not necessarily imply any particular method of calculation. The units of salinity are dimensionless and normally given as 1e-3 or 0.001 i.e. parts per thousand. There are standard names for the more precisely defined salinity quantities: sea_water_knudsen_salinity, S_K (used for salinity observations between 1901 and 1966), sea_water_cox_salinity, S_C (used for salinity observations between 1967 and 1977), sea_water_practical_salinity, S_P (used for salinity observations from 1978 to the present day), sea_water_absolute_salinity, S_A, sea_water_preformed_salinity, S_*, and sea_water_reference_salinity. Practical Salinity is reported on the Practical Salinity Scale of 1978 (PSS-78), and is usually based on the electrical conductivity of sea water in observations since the 1960s. Conversion of data between the observed scales follows: S_P = (S_K - 0.03) * (1.80655 / 1.805) and S_P = S_C, however the accuracy of the latter is dependent on whether chlorinity or conductivity was used to determine the S_C value, with this inconsistency driving the development of PSS-78. The more precise standard names should be used where appropriate for both modelled and observed salinities. In particular, the use of sea_water_salinity to describe salinity observations made from 1978 onwards is now deprecated in favor of the term sea_water_practical_salinity which is the salinity quantity stored by national data centers for post-1978 observations. The only exception to this is where the observed salinities are definitely known not to be recorded on the Practical Salinity Scale. The unit "parts per thousand" was used for sea_water_knudsen_salinity and sea_water_cox_salinity.</description>
    </entry>
    <entry id="tendency_of_sea_water_temperature">
       <canonical_units>K s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. Sea water temperature is the in situ temperature of the sea water. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.</description>
    </entry>
    <entry id="tendency_of_sea_water_temperature_due_to_advection">
       <canonical_units>K s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. Sea water temperature is the in situ temperature of the sea water. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.</description>
    </entry>
    <entry id="tendency_of_sea_water_temperature_due_to_bolus_advection">
       <canonical_units>K s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time.  Bolus advection in an ocean model means the part due to a scheme representing eddy-induced effects not included in the velocity field.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time.  Bolus advection in an ocean model means the part due to a scheme representing eddy-induced effects not included in the velocity field. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. Sea water temperature is the in situ temperature of the sea water. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.</description>
    </entry>
    <entry id="tendency_of_sea_water_temperature_due_to_horizontal_mixing">
       <canonical_units>K s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time. "Horizontal mixing" means any horizontal transport other than by advection and bolus advection, usually represented as horizontal diffusion in ocean models.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. "Horizontal mixing" means any horizontal transport other than by advection and bolus advection, usually represented as horizontal diffusion in ocean models. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. Sea water temperature is the in situ temperature of the sea water. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.</description>
    </entry>
    <entry id="tendency_of_sea_water_temperature_due_to_vertical_mixing">
       <canonical_units>K s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time.  "Vertical mixing" means any vertical transport other than by advection and bolus advection, represented by a combination of vertical diffusion, turbulent mixing and convection in ocean models.</description>
+      <description>"tendency_of_X" means derivative of X with respect to time. "Vertical mixing" means any vertical transport other than by advection and bolus advection, represented by a combination of vertical diffusion, turbulent mixing and convection in ocean models. The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. Sea water temperature is the in situ temperature of the sea water. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.</description>
    </entry>
    <entry id="tendency_of_specific_humidity">
       <canonical_units>s-1</canonical_units>
@@ -8140,26 +8320,6 @@
       <canonical_units>m s-2</canonical_units>
       <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. A velocity is a vector quantity. "Upward" indicates a vector component which is positive when directed upward (negative downward). Upward air velocity is the vertical component of the 3D air velocity vector.</description>
    </entry>
-   <entry id="tendency_of_water_vapor_content_of_atmosphere_layer">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>"tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
-   </entry>
-   <entry id="tendency_of_water_vapor_content_of_atmosphere_layer_due_to_convection">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
-   </entry>
-   <entry id="tendency_of_water_vapor_content_of_atmosphere_layer_due_to_deep_convection">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
-   </entry>
-   <entry id="tendency_of_water_vapor_content_of_atmosphere_layer_due_to_shallow_convection">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
-   </entry>
-   <entry id="tendency_of_water_vapor_content_of_atmosphere_layer_due_to_turbulence">
-      <canonical_units>kg m-2 s-1</canonical_units>
-      <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. "Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary variable) as well.</description>
-   </entry>
    <entry id="tendency_of_wind_speed_due_to_convection">
       <canonical_units>m s-2</canonical_units>
       <description>The specification of a physical process by the phrase due_to_process means that the quantity named is a single term in a sum of terms which together compose the general quantity named by omitting the phrase. "tendency_of_X" means derivative of X with respect to time. Speed is the magnitude of velocity. Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. (Vertical motion in the atmosphere has the standard name upward_air_velocity.) The wind speed is the magnitude of the wind velocity.</description>
@@ -8179,6 +8339,10 @@
    <entry id="thickness_of_convective_snowfall_amount">
       <canonical_units>m</canonical_units>
       <description>"Amount" means mass per unit area. The construction thickness_of_[X_]snowfall_amount means the accumulated "depth" of snow which fell i.e. the thickness of the layer of snow at its own density. There are corresponding standard names for liquid water equivalent (lwe) thickness.</description>
+   </entry>
+   <entry id="thickness_of_liquid_water_cloud">
+      <canonical_units>m</canonical_units>
+      <description>"Thickness" means the vertical extent of a layer.</description>
    </entry>
    <entry id="thickness_of_rainfall_amount">
       <canonical_units>m</canonical_units>
@@ -8624,10 +8788,6 @@
       <canonical_units>m-1 sr-1</canonical_units>
       <description>Radiative flux is the sum of shortwave and longwave radiative fluxes. In accordance with common usage in geophysical disciplines, "flux" implies per unit area, called "flux density" in physics. Scattering of radiation is its deflection from its incident path without loss of energy. The volume scattering function is the fraction of incident radiative flux scattered into unit solid angle per unit path length. The (range of) direction(s) of scattering can be specified by a coordinate of scattering_angle.</description>
    </entry>
-   <entry id="water_content_of_atmosphere_layer">
-      <canonical_units>kg m-2</canonical_units>
-      <description>"Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well. "Water" means water in all phases.</description>
-   </entry>
    <entry id="water_evaporation_amount">
       <canonical_units>kg m-2</canonical_units>
       <grib>57</grib>
@@ -8714,10 +8874,6 @@
    <entry id="water_surface_reference_datum_altitude">
       <canonical_units>m</canonical_units>
       <description>Altitude is the (geometric) height above the geoid, which is the reference geopotential surface. The geoid is similar to mean sea level. 'Water surface reference datum altitude' means the altitude of the arbitrary datum referred to by a quantity with standard name 'water_surface_height_above_reference_datum'. The surface called "surface" means the lower boundary of the atmosphere.</description>
-   </entry>
-   <entry id="water_vapor_content_of_atmosphere_layer">
-      <canonical_units>kg m-2</canonical_units>
-      <description>"Content" indicates a quantity per unit area. "Layer" means any layer with upper and lower boundaries that have constant values in some vertical coordinate. There must be a vertical coordinate variable indicating the extent of the layer(s). If the layers are model layers, the vertical coordinate can be model_level_number, but it is recommended to specify a physical coordinate (in a scalar or auxiliary coordinate variable) as well.</description>
    </entry>
    <entry id="water_vapor_partial_pressure_in_air">
       <canonical_units>Pa</canonical_units>
@@ -8820,6 +8976,12 @@
    <alias id="atmosphere_convective_cloud_liquid_water_content">
       <entry_id>atmosphere_mass_content_of_convective_cloud_liquid_water</entry_id>
    </alias>
+   <alias id="atmosphere_so4_content">
+      <entry_id>atmosphere_mass_content_of_sulfate</entry_id>
+   </alias>
+   <alias id="atmosphere_sulfate_content">
+      <entry_id>atmosphere_mass_content_of_sulfate</entry_id>
+   </alias>
    <alias id="atmosphere_content_of_sulfate_aerosol">
       <entry_id>atmosphere_mass_content_of_sulfate_ambient_aerosol</entry_id>
    </alias>
@@ -8892,11 +9054,11 @@
    <alias id="specific_convective_available_potential_energy">
       <entry_id>atmosphere_specific_convective_available_potential_energy</entry_id>
    </alias>
-   <alias id="atmosphere_so4_content">
-      <entry_id>atmosphere_sulfate_content</entry_id>
-   </alias>
    <alias id="change_over_time_in_atmospheric_water_content_due_to_advection">
-      <entry_id>change_over_time_in_atmosphere_water_content_due_to_advection</entry_id>
+      <entry_id>change_over_time_in_atmosphere_mass_content_of_water_due_to_advection</entry_id>
+   </alias>
+   <alias id="change_over_time_in_atmosphere_water_content_due_to_advection">
+      <entry_id>change_over_time_in_atmosphere_mass_content_of_water_due_to_advection</entry_id>
    </alias>
    <alias id="eastward_transformed_eulerian_mean_velocity">
       <entry_id>eastward_transformed_eulerian_mean_air_velocity</entry_id>
@@ -8940,6 +9102,9 @@
    <alias id="lwe_large_scale_snowfall_rate">
       <entry_id>lwe_stratiform_snowfall_rate</entry_id>
    </alias>
+   <alias id="lwe_thickness_of_atmosphere_water_vapor_content">
+      <entry_id>lwe_thickness_of_atmosphere_mass_content_of_water_vapor</entry_id>
+   </alias>
    <alias id="lwe_thickness_of_large_scale_precipitation_amount">
       <entry_id>lwe_thickness_of_stratiform_precipitation_amount</entry_id>
    </alias>
@@ -8960,6 +9125,21 @@
    </alias>
    <alias id="concentration_of_suspended_matter_in_sea_water">
       <entry_id>mass_concentration_of_suspended_matter_in_sea_water</entry_id>
+   </alias>
+   <alias id="cloud_condensed_water_content_of_atmosphere_layer">
+      <entry_id>mass_content_of_cloud_condensed_water_in_atmosphere_layer</entry_id>
+   </alias>
+   <alias id="cloud_ice_content_of_atmosphere_layer">
+      <entry_id>mass_content_of_cloud_ice_in_atmosphere_layer</entry_id>
+   </alias>
+   <alias id="cloud_liquid_water_content_of_atmosphere_layer">
+      <entry_id>mass_content_of_cloud_liquid_water_in_atmosphere_layer</entry_id>
+   </alias>
+   <alias id="water_content_of_atmosphere_layer">
+      <entry_id>mass_content_of_water_in_atmosphere_layer</entry_id>
+   </alias>
+   <alias id="water_vapor_content_of_atmosphere_layer">
+      <entry_id>mass_content_of_water_vapor_in_atmosphere_layer</entry_id>
    </alias>
    <alias id="mass_fraction_of_convective_condensed_water_in_air">
       <entry_id>mass_fraction_of_convective_cloud_condensed_water_in_air</entry_id>
@@ -9204,6 +9384,24 @@
    <alias id="tendency_of_atmosphere_mass_content_of_sulfate_expressed_as_sulfur_dry_aerosol_due_to_wet_deposition">
       <entry_id>tendency_of_atmosphere_mass_content_of_sulfate_dry_aerosol_expressed_as_sulfur_due_to_wet_deposition</entry_id>
    </alias>
+   <alias id="tendency_of_atmosphere_water_content_due_to_advection">
+      <entry_id>tendency_of_atmosphere_mass_content_of_water_due_to_advection</entry_id>
+   </alias>
+   <alias id="tendency_of_atmosphere_water_vapor_content">
+      <entry_id>tendency_of_atmosphere_mass_content_of_water_vapor</entry_id>
+   </alias>
+   <alias id="tendency_of_atmosphere_water_vapor_content_due_to_convection">
+      <entry_id>tendency_of_atmosphere_mass_content_of_water_vapor_due_to_convection</entry_id>
+   </alias>
+   <alias id="tendency_of_atmosphere_water_vapor_content_due_to_deep_convection">
+      <entry_id>tendency_of_atmosphere_mass_content_of_water_vapor_due_to_deep_convection</entry_id>
+   </alias>
+   <alias id="tendency_of_atmosphere_water_vapor_content_due_to_shallow_convection">
+      <entry_id>tendency_of_atmosphere_mass_content_of_water_vapor_due_to_shallow_convection</entry_id>
+   </alias>
+   <alias id="tendency_of_atmosphere_water_vapor_content_due_to_turbulence">
+      <entry_id>tendency_of_atmosphere_mass_content_of_water_vapor_due_to_turbulence</entry_id>
+   </alias>
    <alias id="tendency_of_moles_of_carbon_monoxide_in_atmosphere">
       <entry_id>tendency_of_atmosphere_moles_of_carbon_monoxide</entry_id>
    </alias>
@@ -9257,6 +9455,21 @@
    </alias>
    <alias id="tendency_of_moles_of_nitrous_oxide_in_atmosphere">
       <entry_id>tendency_of_atmosphere_moles_of_nitrous_oxide</entry_id>
+   </alias>
+   <alias id="tendency_of_water_vapor_content_of_atmosphere_layer">
+      <entry_id>tendency_of_mass_content_of_water_vapor_in_atmosphere_layer</entry_id>
+   </alias>
+   <alias id="tendency_of_water_vapor_content_of_atmosphere_layer_due_to_convection">
+      <entry_id>tendency_of_mass_content_of_water_vapor_in_atmosphere_layer_due_to_convection</entry_id>
+   </alias>
+   <alias id="tendency_of_water_vapor_content_of_atmosphere_layer_due_to_deep_convection">
+      <entry_id>tendency_of_mass_content_of_water_vapor_in_atmosphere_layer_due_to_deep_convection</entry_id>
+   </alias>
+   <alias id="tendency_of_water_vapor_content_of_atmosphere_layer_due_to_shallow_convection">
+      <entry_id>tendency_of_mass_content_of_water_vapor_in_atmosphere_layer_due_to_shallow_convection</entry_id>
+   </alias>
+   <alias id="tendency_of_water_vapor_content_of_atmosphere_layer_due_to_turbulence">
+      <entry_id>tendency_of_mass_content_of_water_vapor_in_atmosphere_layer_due_to_turbulence</entry_id>
    </alias>
    <alias id="tendency_of_mass_fraction_of_stratiform_cloud_ice_in_air_due_to_heterogeneous_nucleation_from_cloud_liquid">
       <entry_id>tendency_of_mass_fraction_of_stratiform_cloud_ice_in_air_due_to_heterogeneous_nucleation_from_cloud_liquid_water</entry_id>
