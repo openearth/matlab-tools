@@ -82,7 +82,11 @@ if fid<=0
     floce(fid)
 end;
    
+   if ~isnan(sectionName)
    sectionString = ['[' sectionName ']'];
+   else
+   sectionString = ['['  ']'];
+   end
    sectionFound  = 0;
    rec           = fgetl_no_comment_line(fid,OPT.commentchar);
    
