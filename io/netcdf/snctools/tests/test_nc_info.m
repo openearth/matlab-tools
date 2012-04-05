@@ -618,48 +618,59 @@ run_motherlode_test;
 %--------------------------------------------------------------------------
 function run_motherlode_test (  )
 
-if getpref('SNCTOOLS','TEST_REMOTE',false) && ...
-        getpref ( 'SNCTOOLS', 'TEST_OPENDAP', false ) 
-    
-    testroot = fileparts(mfilename('fullpath'));
-    load([testroot filesep 'testdata/nc_info.mat']);
-    % use data of today as the server has a clean up policy
-    today = datestr(floor(now),'yyyymmdd');
-    url = ['http://motherlode.ucar.edu:8080/thredds/dodsC/satellite/CTP/SUPER-NATIONAL_1km/current/SUPER-NATIONAL_1km_CTP_',today,'_0000.gini'];
-	fprintf('\n\t\t\tTesting remote DODS access %s...  ', url );
-    
-    info = nc_info(url);
 
-    % R14 differs in the way it returns attributes.  Just get rid of the
-    % attributes in this case.
-    v = version('-release');
-    if strcmp(v,'14')
+testroot = fileparts(mfilename('fullpath'));
+load([testroot filesep 'testdata/nc_info.mat']);
+
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b','2008a','2008b', ...
+            '2009a','2009b','2010a','2010b','2011a','2011b'}
+        exp_data = d.opendap.motherlode;
+    otherwise
+        exp_data = d.opendap.motherlode_tmw;
+end
+
+
+% use data of today as the server has a clean up policy
+today = datestr(floor(now),'yyyymmdd');
+url = ['http://motherlode.ucar.edu:8080/thredds/dodsC/satellite/CTP/SUPER-NATIONAL_1km/current/SUPER-NATIONAL_1km_CTP_',today,'_0000.gini'];
+fprintf('\n\t\t\tTesting remote DODS access %s...  ', url );
+
+info = nc_info(url);
+
+% R14 differs in the way it returns attributes.  Just get rid of the
+% attributes in this case.
+switch(v)
+    case '14'
         fprintf('\n\t\t\t\tNo attribute testing on R14.\n');
         for j = 1:numel(info.Dataset)
             info.Dataset(j).Attribute = [];
-            d.opendap.motherlode.Dataset(j).Attribute = [];
+            exp_data.Dataset(j).Attribute = [];
         end
         
         % The 4th dataset is 'char' in R14, but 'string' otherwise.
         info.Dataset(4).Nctype = 12;
         info.Dataset(4).Datatype = 'string';
-    end
-    
-    
-    % Reverse the order of the Dimension and Size fields if using row major
-    % order.
-    if getpref('SNCTOOLS','PRESERVE_FVD',false) == false
-        for j = 1:numel(info.Dataset)
-            info.Dataset(j).Size = fliplr(info.Dataset(j).Size);
-            info.Dataset(j).Dimension = fliplr(info.Dataset(j).Dimension);
-        end
-    end
-
-    if ~isequal(info.Dataset,d.opendap.motherlode.Dataset)
-        error('failed');
-    end
-
+        
 end
+
+
+% Reverse the order of the Dimension and Size fields if using row major
+% order.
+if getpref('SNCTOOLS','PRESERVE_FVD',false) == false
+    for j = 1:numel(info.Dataset)
+        info.Dataset(j).Size = fliplr(info.Dataset(j).Size);
+        info.Dataset(j).Dimension = fliplr(info.Dataset(j).Dimension);
+    end
+end
+
+for j = 1:numel(info.Dataset)   
+    if ~isequal(info.Dataset(j),exp_data.Dataset(j))
+        error('Dataset %d failed validation', j);
+    end
+end
+
 return
 
 

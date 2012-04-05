@@ -88,7 +88,7 @@ v = version('-release');
 switch(v)
     case {'14','2006a','2006b','2007a','2007b','2008a'}
 		try
-		    v = mexnc('inq_libvers');
+		    mexnc('inq_libvers');
 			%  mexnc is available, so do not use java
             fprintf('\tjava netcdf-3 testing filtered out on ');
             fprintf('configurations where mexnc is available.\n ');
@@ -117,8 +117,16 @@ end
 
 
 run_http_tests;
-run_opendap_tests;
 run_grib_tests;
+
+% Don't use java for opendap tests on 2012a
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b', ...
+            '2010a','2010b','2011a','2011b'}
+        run_opendap_tests;
+    otherwise
+        fprintf('\tOPeNDAP tests not run via java on %s.\n', v);
+end
 
 %--------------------------------------------------------------------------
 function test_mexnc_backend()
@@ -188,6 +196,14 @@ switch(v)
         run_nc4_enhanced_read_tests;
 end
 
+% Run opendap tests on 2012a
+switch(v)
+    case {'2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b', ...
+            '2010a','2010b','2011a','2011b'}
+        fprintf('\tOPeNDAP tests not run via TMW backend on %s.\n', v);
+    otherwise
+        run_opendap_tests;
+end
 
 return
 %--------------------------------------------------------------------------
@@ -268,6 +284,13 @@ test_nc_dump('nc-4');
 %--------------------------------------------------------------------------
 function run_nc4_enhanced_read_tests()
 
+v = version('-release');
+switch(v)
+    case {'2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a','2010b','2011a'}
+        fprintf('\tfiltering out enhanced-model tests on %s.\n', v);
+        return;
+end
+
 mode = 'netcdf4-enhanced';
 fprintf('\tTesting %s...\n',mode);
 test_nc_varget(mode);
@@ -347,9 +370,13 @@ switch(v)
         fprintf('\n\t\tGRIB2 testing filtered out on %s.  Please read the README.\n', v);
         return
 
-	case {'2008b','2009a','2009b', '2010a'}
-        fprintf(2,'\n\t\tGRIB2 testing will fail on %s.  Java library simulates incorrect CF version.\n', v);
+end
 
+if any(cell2mat(strfind(javaclasspath,'4.1'))) | ...
+   any(cell2mat(strfind(javaclasspath,'2.2')))
+	case {'2008b','2009a','2009b', '2010a'}
+        fprintf(2,'\n\t\tGRIB testing fails with old netCDF JAVA library: Please update to 4.2 at http://www.unidata.ucar.edu/software/netcdf-java/\n', v);
+        return
 end
 
 import ucar.nc2.*
@@ -368,6 +395,7 @@ test_nc_varget('grib');
 
 %--------------------------------------------------------------------------
 function run_opendap_tests()
+
 fprintf('\tTesting OPeNDAP...\n');
 
 if ~(getpref('SNCTOOLS','TEST_REMOTE',false) && getpref('SNCTOOLS','TEST_OPENDAP',false))
@@ -376,19 +404,25 @@ if ~(getpref('SNCTOOLS','TEST_REMOTE',false) && getpref('SNCTOOLS','TEST_OPENDAP
     return
 end
 
-import ucar.nc2.*
-if ~exist('NetcdfFile','class')
-    fprintf('\t\tOPeNDAP testing filtered out when netcdf-java is not available.\n');
-    return
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b','2008a','2008b', ...
+        '2009a','2009b','2010a','2010b','2011a','2011b' }
+        import ucar.nc2.*
+        if ~exist('NetcdfFile','class')
+            fprintf('\t\tOPeNDAP testing filtered out when netcdf-java is not available.\n');
+            return
+        end
+    
+    otherwise
+        % 
 end
-
 
 test_nc_info('opendap');
 test_nc_varget('opendap');
 
 % If we are using mexnc or if the release is 8b or higher, run this
 % system-level test.
-v = version('-release');
 switch(v)
 	case { '14','2006a','2006b','2007a','2007b','2008a'}
 		;

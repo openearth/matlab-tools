@@ -1,3 +1,16 @@
+* March 23 2012 John Evans <john.g.evans.ne@gmail.com> -r3982
+- Fixed NC_DUMP's missing file ID on a few lines (thanks to Michael Morrin).
+
+* March 13 2012 John Evans <john.g.evans.ne@gmail.com> -r3981
+- Disabling enhanced testing below R2011b
+
+* March 01 2012 John Evans <john.g.evans.ne@gmail.com> -r3978
+- Updated for R2012 support.
+
+* February 28 2012 John Evans <john.g.evans.ne@gmail.com> -r3975
+- Private function snc_turnoff_log4j modified to run just once per
+- MATLAB session.
+
 * February 22 2012 John Evans <john.g.evans.ne@gmail.com> -r3974
 - Backwards incompatibility.  NC_INFO no longer returns single cellstr
 - values for attributes.  They are instead returned as char arrays.  

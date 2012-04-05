@@ -12,8 +12,11 @@ function nc_dump(file_name, varargin)
 %   NC_DUMP(NCFILE,LOCATION,<'fname'>) prints output to new file 'fname'.
 %
 %   If netcdf-java is on the java classpath, NC_DUMP can also display 
-%   metadata for GRIB2 files and OPeNDAP URLS files as if they were netCDF 
-%   files.
+%   metadata for GRIB2 files as if they were netCDF files.
+%
+%   NC_DUMP will display OPeNDAP metadata as if they were netCDF files.
+%   This is native to MATLAB in R2012a, but requires netcdf-java on earler
+%   releases.
 %
 %   Setting the preference 'PRESERVE_FVD' to true will compel MATLAB to 
 %   display the dimensions in the opposite order from what the C utility 
@@ -22,9 +25,14 @@ function nc_dump(file_name, varargin)
 %   Example:  This example file is shipped with R2008b.
 %       nc_dump('example.nc');
 %  
-%   Example:  Display metadata for an OPeNDAP URL.  This requires the
-%   netcdf-java backend.
-%       url = 'http://coast-enviro.er.usgs.gov/models/share/balop.nc';
+%   Example:  Display metadata for an OPeNDAP URL.  On releases prior to
+%   2012b, this requires the netcdf-java backend.  Because URLs can often
+%   be so long, it is broken across multiple lines here for formatting 
+%   purposes.
+%       today = datestr(floor(now),'yyyymmdd');
+%       server = 'http://motherlode.ucar.edu:8080';
+%       dir = '/thredds/dodsC/satellite/CTP/SUPER-NATIONAL_1km/current';
+%       url = sprintf('%s%s/SUPER-NATIONAL_1km_CTP_%s_0000.gini',server,dir,today);
 %       nc_dump(url);
 %
 %   See also nc_info.
@@ -103,7 +111,7 @@ if strcmp(group.Name,'/') && isfield(group,'Format') && strcmp(group.Format,'Net
 elseif ~strcmp(group.Name,'/')
     fprintf(fid,'} End Group %s\n\n', group.Name);   
 end
-fprintf('\n');
+fprintf(fid,'\n');
 
 return
 
@@ -159,7 +167,7 @@ function dump_compound_datatype_metadata(info,fid)
 
 fprintf(fid,'    compound ''%s''\n', info.Name);
 for j = 1:numel(info.Type.Member)
-    fprintf('      %s %s\n', info.Type.Member(j).Datatype.Type, info.Type.Member(j).Name);
+    fprintf(fid,'      %s %s\n', info.Type.Member(j).Datatype.Type, info.Type.Member(j).Name);
 end
 
 return
@@ -170,7 +178,7 @@ function dump_enum_datatype_metadata(info,fid)
 
 fprintf(fid,'    %s enum ''%s''\n', info.Type.Type, info.Name);
 for j = 1:numel(info.Type.Member)
-    fprintf('      %s = %d\n', info.Type.Member(j).Name, info.Type.Member(j).Value);
+    fprintf(fid,'      %s = %d\n', info.Type.Member(j).Name, info.Type.Member(j).Value);
 end
 
 return
@@ -292,7 +300,7 @@ if isfield(var_metadata,'Deflate') && ~isempty(var_metadata.Deflate) ...
     fprintf(fid,', Deflate = %d', var_metadata.Deflate);
 end
 
-fprintf('\n');
+fprintf(fid,'\n');
 
 % Now do all attributes for each variable.
 num_atts = length(var_metadata.Attribute);

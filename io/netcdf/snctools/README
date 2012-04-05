@@ -12,23 +12,25 @@ For most cases, snctools <default> support for various read/write
 configurations is summarized in the table below.  
 
 
-       | netcdf-3 | netcdf-3 | netcdf-4 | netcdf-4 | netcdf-4 | netcdf-4
-       | classic  | classic  | classic  | classic  | enhanced | enhanced
-       | read     | write    | read     | write    | read     | write
--------+----------+----------+----------+----------+----------+----------
-R2011b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
-R2011a | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
-R2010b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
-R2010a | tmw      | tmw      | java     | -        | java     | - 
-R2009b | tmw      | tmw      | java     | -        | java     | - 
-R2009a | tmw      | tmw      | java     | -        | java     | - 
-R2008b | tmw      | tmw      | java     | -        | java     | - 
-R2008a | java     | mexnc    | java     | -        | java     | - 
-R2007b | java     | mexnc    | java     | -        | java     | - 
-R2007a | java     | mexnc    | java     | -        | java     | - 
-R2006b | java     | mexnc    | java     | -        | java     | - 
-R2006a | java     | mexnc    | java     | -        | java     | - 
-R14    | java     | mexnc    | -        | -        | -        | - 
+       | netcdf-3 | netcdf-3 | netcdf-4 | netcdf-4 | netcdf-4 | netcdf-4 | opendap
+       | classic  | classic  | classic  | classic  | enhanced | enhanced | (SSL: 0=no, 
+       | read     | write    | read     | write    | read     | write 	 |  else netcdf-java 
+       |          |          |          |          |          |       	 |  version method)
+-------+----------+----------+----------+----------+----------+----------+----------
+R2012a | tmw      | tmw      | tmw      | tmw      | tmw,java | - 	 | java(4.2), tmw(0)
+R2011b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 	 | java(4.2) 
+R2011a | tmw      | tmw      | tmw      | tmw      | tmw,java | - 	 | java(4.2) 
+R2010b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 	 | java(4.2) 
+R2010a | tmw      | tmw      | java     | -        | java     | - 	 | java(4.2)     
+R2009b | tmw      | tmw      | java     | -        | java     | - 	 | java(4.2)     
+R2009a | tmw      | tmw      | java     | -        | java     | - 	 | java(4.2)     
+R2008b | tmw      | tmw      | java     | -        | java     | - 	 | java(4.2)     
+R2008a | java     | mexnc    | java     | -        | java     | - 	 | java(4.2)     
+R2007b | java     | mexnc    | java     | -        | java     | - 	 | java(4.2)     
+R2007a | java     | mexnc    | java     | -        | java     | - 	 | java(4.1)     
+R2006b | java     | mexnc    | java     | -        | java     | - 	 | java(4.1)     
+R2006a | java     | mexnc    | java     | -        | java     | - 	 | java(4.1)     
+R14    | java     | mexnc    | -        | -        | -        | - 	 | -        
 
 
 There are two exceptions to note.  The mexnc backend is only required
@@ -52,9 +54,14 @@ of MATLAB, as shown here.
 
 MATLAB Version                   recommended netcdf-java version
 ===============================  ===============================
-R2007b through current release:  4.2
+R2012a:                          4.2 (but not absolutely needed)
+R2007b through R2011b:           4.2
 R2006a through R2007a:           4.1.1
 R14:                             2.2.20
+
+On R2012a, MATLAB has OPeNDAP support, meaning that netcdf-java is no
+longer needed as the backend there.  You still need it if you wish
+to read GRIB files, though.
 
 Please add this directory to your matlab path.  You must also have 
 mexnc on your path in order for snctools to work.
@@ -63,10 +70,27 @@ SNCTOOLS is not supported at all on version R13 of MATLAB or earlier.
 
 
 +-----------------------------------------------------------------------
+SOME ISSUES TO BE AWARE OF
+
+SNCTOOLS returns all NC_CHAR attributes as MATLAB char arrays.  When 
+NetCDF-4 introduced, the SNCTOOLS idea for NC_STRING was to return them
+as cell arrays of char (cellstr).  But the netcdf-java backend does 
+not distinguish between NC_CHAR and NC_STRING, so there was an issue
+of how NC_CHAR attributes would be returned via NC_INFO/netcdf-java 
+from an OPeNDAP URL vs the very same NC_CHAR attribute on a local file.
+netcdf-java returnes them as a cellstr of length 1, whereas the mex-file
+(whether mexnc or MATLAB's) returns them as a 1D char array.
+
+The resolution as of r3971 is to return any single-valued cellstr as a 
+char array.  Yes, this is a backwards incompatibility.  
+
+
++-----------------------------------------------------------------------
 BASIC INSTALLATION AND USAGE
 
-In order to download SNCTOOLS, please refer to the website, 
+In order to download and install SNCTOOLS, please refer to the website, 
 http://mexcdf.sourceforge.net/
+
 
 +-----------------------------------------------------------------------
 SNCTOOLS PREFERENCES

@@ -161,7 +161,8 @@ try
 	nc_adddim ( ncfile, 't', 't' );
 catch me
     switch(me.identifier)
-        case {'MATLAB:imagesci:netcdf:badSizeArgumentDatatype', ... % 2011b
+        case {'MATLAB:imagesci:netcdf:badScalarArgument', ...       % 2012a
+                'MATLAB:imagesci:netcdf:badSizeArgumentDatatype', ... % 2011b
                 'MATLAB:netcdf:badSizeArgumentDatatype', ...        % 2010b
                 'MEXNC:checkNumericArgumentType:wasChar' }          % 2008a
             return
