@@ -79,10 +79,10 @@ fid = fopen('nccreateVarstruct_standardnames_cf_generate_template.m');
 template = fread(fid,'*char')';
 fclose(fid);
 
-template = strrep(template,'''standard_names''',[char(10) sprintf('    ''%s''\n',txt{:,3})]);
-template = strrep(template,'''long_names'''    ,[char(10) sprintf('    ''%s''\n',txt{:,4})]);
-template = strrep(template,'''units'''         ,[char(10) sprintf('    ''%s''\n',txt{:,5})]);
-template = strrep(template,'''definitions'''   ,[char(10) sprintf('    ''%s''\n',txt{:,7})]);
+template = strrep(template,'''$standard_names''',[char(10) sprintf('    ''%s''\n',txt{:,3})]);
+template = strrep(template,'''$long_names'''    ,[char(10) sprintf('    ''%s''\n',txt{:,4})]);
+template = strrep(template,'''$units'''         ,[char(10) sprintf('    ''%s''\n',txt{:,5})]);
+template = strrep(template,'''$definitions'''   ,[char(10) sprintf('    ''%s''\n',txt{:,7})]);
 
 fid = fopen(OPT.filename,'w');
 fwrite(fid,template);

@@ -6,7 +6,7 @@ OPT            = nccreateVarstruct();
 
 % set specifics for standard names
 OPT.long_name  = ''; 
-OPT.unit       = ''; 
+OPT.units      = ''; 
 OPT.definition = ''; 
 
 % parse varargin
@@ -27,29 +27,29 @@ if isempty(n)
 end
 
 if isempty(OPT.long_name);  OPT.long_name  = list.long_names{n};  end
-if isempty(OPT.unit);       OPT.unit       = list.units{n};       end
+if isempty(OPT.units);      OPT.units      = list.units{n};       end
 if isempty(OPT.definition); OPT.definition = list.definitions{n}; end
 
 % add attributes belonging to the standard name
 OPT.Attributes =  [{...
     'standard_name',standard_name,...
     'long_name',OPT.long_name,...
-    'unit',OPT.unit,...
+    'units',OPT.units,...
     'definition',OPT.definition}...
     OPT.Attributes];
 
-OPT = rmfield(OPT,{'long_name','unit','definition'});
+OPT = rmfield(OPT,{'long_name','units','definition'});
 
 % finally check is the varstruct is valid
 varstruct = nccreateVarstruct(OPT);
 
 function list = getList()
 % iput below is auto generated
-list.standard_names = {'standard_names'};
+list.standard_names = {'$standard_names'};
 
-list.long_names = {'long_names'};
+list.long_names = {'$long_names'};
 
-list.units = {'units'};
+list.units = {'$units'};
 
-list.definitions = {'definitions'};
+list.definitions = {'$definitions'};
     
