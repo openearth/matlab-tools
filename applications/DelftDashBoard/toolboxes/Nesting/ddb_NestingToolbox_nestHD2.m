@@ -93,17 +93,20 @@ end
 stride=1;
 
 if ~isempty(opt)
+    
     % Make structure info for nesthd2
     bnd=handles.Model(md).Input(ad).openBoundaries;
+    
     % Vertical grid info
     vertGrid.KMax=handles.Model(md).Input(ad).KMax;
     vertGrid.layerType=handles.Model(md).Input(ad).layerType;
     vertGrid.thick=handles.Model(md).Input(ad).thick;
     vertGrid.zTop=handles.Model(md).Input(ad).zTop;
     vertGrid.zBot=handles.Model(md).Input(ad).zBot;
-    % Consituent info
+
     % Run Nesthd2
-    bnd=nesthd2('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt);
+    cs=handles.screenParameters.coordinateSystem.type;
+    bnd=nesthd2('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs);
     
     zersunif=zeros(2,1);
     
