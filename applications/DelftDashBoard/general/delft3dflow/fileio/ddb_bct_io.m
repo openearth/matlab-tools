@@ -213,7 +213,7 @@ Str1=strrep(Str(1:(Q(i)-1)),[Quote Quote],Quote);
 remainder=Str((Q(i)+1):end);
 
 
-function OK=Local_write_bct(filename,Info),
+function OK=Local_write_bct(filename,Info)
 
 OK=0;
 fid=fopen(filename,'w');
@@ -238,7 +238,7 @@ for i=1:length(Info.Table),
     end;
     
     fprintf(fid,'records-in-table     %i\n',size(Info.Table(i).Data,1));
-    fprintf(fid,[repmat('%15f ',1,length(Info.Table(i).Parameter)) '\n'], ...
+    fprintf(fid,['%15f ' repmat('%13.5e ',1,length(Info.Table(i).Parameter)-1) '\n'], ...
         transpose(Info.Table(i).Data));
 end;
 fclose(fid);

@@ -64,7 +64,8 @@ end
 
 if ~isempty(runid)
     % First read data from mdf file
-    [Flow,openBoundaries]=delft3dflow_readInput(inputdir,runid,'coordinatesystem',cs);
+    [Flow,openBoundaries]=delft3dflow_readInput(inputdir,runid);
+    cs=Flow.cs;
     vertGrid.KMax=Flow.KMax;
     vertGrid.layerType=Flow.vertCoord;
     vertGrid.thick=Flow.thick;
@@ -670,8 +671,8 @@ for i=1:length(openBoundaries)
 
 end
 
-%% And now do the Neumann boundaries (this only works in case of one water
-%% level boundary and cartesian coordinates).
+%% And now do the Neumann boundaries (this only works correctly in case of ONE water
+%% level boundary!).
 % First check if there are N boundaries
 ibndneu=[];
 nbndneu=0;
@@ -691,10 +692,10 @@ if nbndneu>0 && nbndwl==1
     % Compute length of water level boundary (take the first boundary)
     bndwl=openBoundaries(ibndwl(1));
     switch lower(cs)
-        case{'projected'}
+        case{'projected','cartesian','xy'}
             lngth=sqrt((bndwl.x(end)-bndwl.x(1)).^2 + (bndwl.y(end)-bndwl.y(1)).^2);
         otherwise
-            lngth=sqrt(111135.0*cos(0.5*(bndwl.y(1)+bndwl.y(end))*pi/180)*(bndwl.x(end)-bndwl.x(1)).^2 + 111323.7*(bndwl.y(end)-bndwl.y(1)).^2);
+            lngth=sqrt((111135.0*cos(0.5*(bndwl.y(1)+bndwl.y(end))*pi/180)*(bndwl.x(end)-bndwl.x(1))).^2 + (111323.7*(bndwl.y(end)-bndwl.y(1))).^2);
     end
     % Determine grid direction
     if strcmpi(bndwl.orientation,'positive')

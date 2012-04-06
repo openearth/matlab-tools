@@ -45,7 +45,7 @@ switch lower(cmd)
       if nargout<=1
          varargout{1}=Grid;
       else
-         varargout={Grid.X Grid.Y Grid.Enclosure};
+         varargout={Grid.X Grid.Y Grid.Enclosure Grid.CoordinateSystem};
       end
    case {'w','wr','wri','writ','write'}
       Out=Local_write_grid('newrgf',varargin{:});

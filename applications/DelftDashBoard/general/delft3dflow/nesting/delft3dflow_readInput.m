@@ -64,19 +64,7 @@ function [flow openBoundaries] = delft3dflow_readInput(inpdir, runid, varargin)
 
 %% Returns flow structure with required Delft3D-FLOW input as well as boundary structure for nesting
 
-cs='projected';
-for i=1:length(varargin)
-    if ischar(varargin{i})
-        switch lower(varargin{i})
-            case{'coordinatesystem'}
-                % Coordiate system type (projected or geographic)
-                cs=varargin{i+1};
-        end
-    end
-end
-
 %% Read MDF file
-
 MDF=delft3dflow_readMDFText([inpdir runid '.mdf']);
 
 % Dimensions
@@ -199,15 +187,14 @@ flow.dpsOpt=MDF.dpsopt;
 
 
 %% Read grid
-[flow.gridX,flow.gridY,enc]=ddb_wlgrid('read',[inpdir flow.gridFile]);
+[flow.gridX,flow.gridY,enc,cs]=ddb_wlgrid('read',[inpdir flow.gridFile]);
 
-% if isfield(flow,'coordSysType')
-%     if ~strcmpi(flow.coordSysType,'geographic')
-%         % First convert grid to WGS 84
-%         [flow.gridX,flow.gridY]=convertCoordinates(flow.gridX,flow.gridY,'CS1.name',flow.coordSysName,'CS1.type','xy','CS2.name','WGS 84','CS2.type','geo');
-%     end
-%     flow.gridX=mod(flow.gridX,360);
-% end
+switch lower(cs)
+    case{'spherical'}
+        flow.cs='geographic';
+    otherwise
+        flow.cs='projected';
+end
 
 [flow.gridXZ,flow.gridYZ]=getXZYZ(flow.gridX,flow.gridY);
 mn=ddb_enclosure('read',[inpdir flow.encFile]);
@@ -239,8 +226,7 @@ if isfield(flow,'bndFile')
     
     % Initialize individual boundary sections
     for i=1:length(openBoundaries)
-        openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,i,t0,t1,nrsed,nrtrac,nrharmo,x,y,z,kcs,'coordinatesystem',cs);
+        openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,i,t0,t1,nrsed,nrtrac,nrharmo,x,y,z,kcs,'coordinatesystem',flow.cs);
     end
     
 end
-
