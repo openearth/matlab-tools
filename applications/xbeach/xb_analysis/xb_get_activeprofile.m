@@ -93,14 +93,18 @@ end
 
 dz  = zb(end,:)-zb(1,:);
 
+notnan = ~isnan(dz);
+x  = x(notnan);
+dz = dz(notnan);
+
 %% determine active profile
 
 % total profile change
 At = abs(trapz(x,abs(dz)));
 
 % maximum profile change
-i1 = find(dz==max(dz))-1;
-i2 = i1+2;
+i1 = max(find(dz==max(dz),1,'first')-1,1);
+i2 = min(i1+2,length(x));
 
 A = 0; n = 0;
 while A/At<OPT.dzfrac && length(x)>n

@@ -147,7 +147,7 @@ if OPT.BSS && ~isempty(OPT.measured)
     xm = OPT.measured(:,1);
     zm = OPT.measured(:,end);
     
-    c = get(gca, 'Children');
+    c = findobj(gca,'Type','line');
     for i = 1:length(c)
         name = get(c(i), 'DisplayName');
         if ~any(strcmpi(name, {'initial', 'measured', 'non-erodible'}))

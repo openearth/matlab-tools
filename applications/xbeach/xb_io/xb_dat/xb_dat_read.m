@@ -137,7 +137,7 @@ dims_out(end+1:5) = 1;
 
 %% determine read method
 
-nitems = prod(OPT.length./OPT.stride);
+nitems = prod(OPT.length);
 nreads = nitems/prod(sz);
 
 if isempty(OPT.force)
@@ -202,7 +202,7 @@ if exist(fname, 'file')
                     if isempty(OPT.index)
                         if OPT.start(i) > 0 || OPT.length(i) < dims_out(i) || OPT.stride(i) > 1
                             idx = num2cell(repmat(':',1,length(dims_out)));
-                            idx{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
+                            idx{i} = 1+OPT.start(i)+[0:OPT.length(i)-1]*OPT.stride(i);
                             dat = dat(idx{:});
                         end
                     else
@@ -217,11 +217,11 @@ if exist(fname, 'file')
                 loops = num2cell(ones(1,5));
                 
                 if isempty(OPT.index)
-                    dat = nan(floor(OPT.length./OPT.stride));
+                    dat = nan(OPT.length);
 
                     % build loop index
                     for i = 1:length(dims)
-                        loops{i} = 1+OPT.start(i)+[0:OPT.stride(i):OPT.length(i)-1];
+                        loops{i} = 1+OPT.start(i)+[0:OPT.length(i)-1]*OPT.stride(i);
                     end
                     
                     % determine dimensions to remove from loop and read at
