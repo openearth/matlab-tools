@@ -41,7 +41,7 @@ function [T0,E0] = init(cmd,initfile)
                           '          mask = [''seacoos2005.avhrr.mask'',''seacoos2005.chl.mask''].'};
    E0.time             = {'Name of file+variable of time variable in files.'};
    E0.alpha            = {'Parameter for smoothing, alpha=0 uses integers: time=1:nt.'};
-   E0.numit            = {'Parameter for number of iteratons.'};
+   E0.numit            = {'Parameter for number of iterations.'};
    E0.nev              = {'Parameter for setting the numerical variables for the computation of the required',...
                           'singular values and associated modes.Set it to the maximum number of modes you want to compute.'};
    E0.neini            = {'Parameter for the minimum  number of modes you want to compute.'};

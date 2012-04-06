@@ -23,6 +23,10 @@ function [T,E0] = initread(initfile)
      fld = fields{ifld};
      if ~ischar(T0.(fld))
        if isfield(T,fld)
+         comment_start = strfind(T.(fld),'!'); 
+         if ~isempty(comment_start)
+         T.(fld) = T.(fld)(1:comment_start-1);
+         end
          T.(fld) = str2num(T.(fld));
        end
      end

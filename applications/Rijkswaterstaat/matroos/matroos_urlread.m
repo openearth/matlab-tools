@@ -73,6 +73,8 @@ function s = matroos_urlread(urlChar);
    if(~isempty(loginPassword)),
       if(  strcmp(loginPassword.substring(0,7),'http://')  ),
           loginPassword=loginPassword.substring(7);
+      elseif(  strcmp(loginPassword.substring(0,8),'https://')  ),
+          loginPassword=loginPassword.substring(8);
       end;
       enc = sun.misc.BASE64Encoder();
       encodedPassword=['Basic ',char(enc.encode(loginPassword.getBytes()))];
