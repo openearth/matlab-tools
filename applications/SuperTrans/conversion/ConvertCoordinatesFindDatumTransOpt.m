@@ -48,9 +48,13 @@ function OPT = ConvertCoordinatesFindDatumTransOpt(OPT,STD)
 
 %% find the transformation options
 if OPT.CS1.geoRefSys.code == OPT.CS2.geoRefSys.code
-    OPT.datum_trans = 'no transformation required';
-%     OPT = rmfield(OPT,'datum_trans');
-else
+    OPT.datum_trans = 'no transformation required';%OPT = rmfield(OPT,'datum_trans');
+else % check for identical ellipse/datum yet with different name, such as [] = convertCoordinates(0,0,'CS1.code',31466,'CS2.code',28992)
+  if OPT.CS1.datum.code == OPT.CS2.datum.code
+    OPT.datum_trans = 'no transformation required';% OPT = rmfield(OPT,'datum_trans');
+  elseif OPT.CS1.ellips.code == OPT.CS2.ellips.code
+    OPT.datum_trans = 'no transformation required';% OPT = rmfield(OPT,'datum_trans');
+  else
     [ OPT,ind,direction,ind_alt,dir_alt,dep_alt] = findTransOptions(OPT,STD,OPT.CS1.geoRefSys.code,OPT.CS2.geoRefSys.code,'datum_trans');
     if ~isempty(ind)
         % set parameters, name and code for datum transformation
@@ -77,7 +81,7 @@ else
             OPT.datum_trans.alt_method_name{ii}   = STD.coordinate_operation_method.coord_op_method_name{STD.coordinate_operation_method.coord_op_method_code == OPT.datum_trans.alt_method_code(ii)};
         end
         %        end
-    else
+    else % ind
         % no direct transformation available, try via WGS 84
         OPT.datum_trans = 'no direct transformation available';
         % get ellips for WGS 84
@@ -130,8 +134,9 @@ else
             OPT.datum_trans_from_WGS84.ellips1     = 'WGS84';
             OPT.datum_trans_from_WGS84.ellips2     = 'CS2';
         end
-    end
-end
+    end  % ind
+  end % check ellipse/datum
+end % OPT.CS1.geoRefSys.code == OPT.CS2.geoRefSys.code
 
 % finally remove field OPT.datum_trans.code if it is empty
 if isfield(OPT.datum_trans_to_WGS84,'code')
@@ -148,7 +153,7 @@ function [ OPT,ind,direction,ind_alt,dir_alt,dep_alt] = findTransOptions(OPT,STD
 % find available transformation options
 
 ind0   = find(STD.coordinate_operation.source_crs_code == geogcrs_code1 &...
-    STD.coordinate_operation.target_crs_code == geogcrs_code2);
+              STD.coordinate_operation.target_crs_code == geogcrs_code2);
 
 % Check if coordinate operation type is transformation
 ind=[];

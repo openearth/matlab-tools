@@ -13,8 +13,8 @@ function [lat2,lon2] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,datum_tran
 %   OPT         = structure with input and output coordinate system and 
 %                 tranformation information.
 %   datum_trans = string specifying if the transformation goes via WGS84:
-%                 'datum_trans' : direct transformation
-%                 'datum_trans_to_WGS84' : transformation to WGS84
+%                 'datum_trans'            : direct transformation
+%                 'datum_trans_to_WGS84'   : transformation to WGS84
 %                 'datum_trans_from_WGS84' : transformation from WGS84
 %   STD         = structure with all EPSG codes
 %
@@ -59,18 +59,23 @@ switch OPT.(datum_trans).direction
     case 'normal',  inv =  1;
     case 'reverse', inv = -1;
 end
+
 param       = OPT.(datum_trans).params;
 method_name = OPT.(datum_trans).method_name;
 ell1        = OPT.(OPT.(datum_trans).ellips1).ellips;
 ell2        = OPT.(OPT.(datum_trans).ellips2).ellips;
 
 switch method_name
-    case {...
-            'Geocentric translations',                        'Geocentric translations (geog2D domain)',...
-            'Position Vector 7-param. transformation',        'Position Vector transformation (geog2D domain)',...
-            'Coordinate Frame rotation',                      'Coordinate Frame Rotation (geog2D domain)',...
-            'Molodensky-Badekas 10-parameter transformation', 'Molodensky-Badekas (geog2D domain)',...
-            'NADCON'}
+    case {  'Geocentric translations',...
+            'Geocentric translations (geog2D domain)',...
+            'Position Vector 7-param. transformation',...
+            'Position Vector transformation (geog2D domain)',...
+            'Coordinate Frame rotation',...
+            'Coordinate Frame Rotation (geog2D domain)',...
+            'Molodensky-Badekas 10-parameter transformation',...
+            'Molodensky-Badekas (geog2D domain)',...
+            'NADCON',...
+            'NTv2'}
         % convert geographic 2D coordinates to geographic 3D, by assuming
         % height is 0
         h    = zeros(size(lat1));
@@ -84,23 +89,26 @@ switch method_name
 
         switch method_name
 
-            case {'Geocentric translations','Geocentric translations (geog2D domain)'}
+            case {'Geocentric translations',...
+                  'Geocentric translations (geog2D domain)'}
 
                 dx = inv*getParamValue(param,'X-axis translation','metre',STD);
                 dy = inv*getParamValue(param,'Y-axis translation','metre',STD);
                 dz = inv*getParamValue(param,'Z-axis translation','metre',STD);
                 [x,y,z]=Helmert3(x,y,z,dx,dy,dz);
 
-            case {'Position Vector 7-param. transformation','Position Vector transformation (geog2D domain)',...
-                    'Coordinate Frame rotation','Coordinate Frame Rotation (geog2D domain)'}
+            case {'Position Vector 7-param. transformation',...
+                  'Position Vector transformation (geog2D domain)',...
+                  'Coordinate Frame rotation',...
+                  'Coordinate Frame Rotation (geog2D domain)'}
 
-                dx = inv*getParamValue(param,'X-axis translation','metre',STD);
-                dy = inv*getParamValue(param,'Y-axis translation','metre',STD);
-                dz = inv*getParamValue(param,'Z-axis translation','metre',STD);
-                rx = inv*getParamValue(param,'X-axis rotation','radian',STD);
-                ry = inv*getParamValue(param,'Y-axis rotation','radian',STD);
-                rz = inv*getParamValue(param,'Z-axis rotation','radian',STD);
-                ds = inv*getParamValue(param,'Scale difference','',STD);
+                dx = inv*getParamValue(param,'X-axis translation','metre' ,STD);
+                dy = inv*getParamValue(param,'Y-axis translation','metre' ,STD);
+                dz = inv*getParamValue(param,'Z-axis translation','metre' ,STD);
+                rx = inv*getParamValue(param,'X-axis rotation'   ,'radian',STD);
+                ry = inv*getParamValue(param,'Y-axis rotation'   ,'radian',STD);
+                rz = inv*getParamValue(param,'Z-axis rotation'   ,'radian',STD);
+                ds = inv*getParamValue(param,'Scale difference'  ,''      ,STD);
                 if any(strcmp(method_name,{'Coordinate Frame rotation','Coordinate Frame Rotation (geog2D domain)'}))
                     rx=rx*-1;
                     ry=ry*-1;
@@ -108,15 +116,16 @@ switch method_name
                 end
                 [x,y,z]=Helmert7(x,y,z,dx,dy,dz,rx,ry,rz,ds);
 
-            case {'Molodensky-Badekas 10-parameter transformation','Molodensky-Badekas (geog2D domain)'} 
+            case {'Molodensky-Badekas 10-parameter transformation',...
+                  'Molodensky-Badekas (geog2D domain)'} 
 
                 dx = inv*getParamValue(param,'X-axis translation','metre',STD);
                 dy = inv*getParamValue(param,'Y-axis translation','metre',STD);
                 dz = inv*getParamValue(param,'Z-axis translation','metre',STD);
-                rx = inv*getParamValue(param,'X-axis rotation','radian',STD);
-                ry = inv*getParamValue(param,'Y-axis rotation','radian',STD);
-                rz = inv*getParamValue(param,'Z-axis rotation','radian',STD);
-                ds = inv*getParamValue(param,'Scale difference','',STD);
+                rx = inv*getParamValue(param,'X-axis rotation'   ,'radian',STD);
+                ry = inv*getParamValue(param,'Y-axis rotation'   ,'radian',STD);
+                rz = inv*getParamValue(param,'Z-axis rotation'   ,'radian',STD);
+                ds = inv*getParamValue(param,'Scale difference'  ,''      ,STD);
                 xp =     getParamValue(param,'Ordinate 1 of evaluation point','',STD);
                 yp =     getParamValue(param,'Ordinate 2 of evaluation point','',STD);
                 zp =     getParamValue(param,'Ordinate 3 of evaluation point','',STD);
@@ -126,6 +135,16 @@ switch method_name
             case 'NADCON'
 %                [x,y,z]=NADCON(x,y,z);
         
+            case 'NTv2' % external mapping grid
+                % http://www.geod.nrcan.gc.ca/tools-outils/ntv2_e.php
+                % http://jgridshift.sourceforge.net/ntv2.html
+                
+                if any(OPT.CS1.code==[31466 31467 314668 31469])
+                   error('not implemented, please implement German DHDN: http://crs.bkg.bund.de/crseu/crs/descrtrans/BeTA/de_dhdn2etrs_beta.php')
+                else
+                   error(['Warning: Datum transformation method ''' method_name ''' not yet supported!']);
+                end
+                
         end
 
         % convert geocentric coordinates to geographic 3D coordinates 
