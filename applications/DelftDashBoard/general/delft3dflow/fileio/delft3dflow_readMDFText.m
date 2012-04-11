@@ -71,7 +71,7 @@ for i=1:1000
         % nn=length(v0);
         % concatenate strings containing =
         % still to be implemented
-        switch lower(v0{1}),
+        switch lower(deblank(v0{1}))
             case{'comment','commnt'}
             otherwise
                 if ~isnan(str2double(v0{1})) && length(v0)==1
@@ -92,7 +92,11 @@ for i=1:1000
                     end
                     val=MDF.(activeField);
                     strtmp=strread(v0{1},'%s','delimiter','#','whitespace','');
+                    try
                     val{n}=strtmp{2};
+                    catch
+                        shite=1
+                    end
                     MDF.(activeField)=val;
                 else
                     n=1;
