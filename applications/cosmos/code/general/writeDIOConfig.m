@@ -1,6 +1,6 @@
 function writeDIOConfig(dr)
 
-fid=fopen([dr 'dioconfig.ini'],'wt');
+fid=fopen([dr filesep 'dioconfig.ini'],'wt');
 
 fprintf(fid,'%s\n','[Settings]');
 fprintf(fid,'%s\n','#Delay=100');
