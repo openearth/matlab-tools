@@ -93,12 +93,13 @@ system(['"' handles.Toolbox(tb).dataDir 'nesthd1" < nesthd1.inp']);
 
 [name,m,n] = textread('ddtemp.obs','%21c%f%f');
 
-nr=handles.Model(md).Input(ad).nrObservationPoints;
-k=0;
+k=handles.Model(md).Input(ad).nrObservationPoints;
 for i=1:length(m)
+    % Check if observation point already exists
     nm=deblank(name(i,:));
     ii=strmatch(nm,handles.Model(md).Input(ad).observationPointNames,'exact');
     if isempty(ii)
+        % Observation point does not yet exist
         k=k+1;
         handles.Model(md).Input(ad).observationPoints(k).name=nm;
         handles.Model(md).Input(ad).observationPoints(k).M=m(i);
