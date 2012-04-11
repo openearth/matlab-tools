@@ -31,6 +31,11 @@ for i=1:length(varargin)
                 [inputdir,runid,ext]=fileparts(mdffile);
             case{'inputdir'}
                 inputdir=varargin{i+1};
+                if ~isempty(inputdir)
+                    if ~strcmpi(inputdir,filesep)
+                        inputdir=[inputdir filesep];
+                    end
+                end
             case{'runid'}
                 runid=varargin{i+1};
             case{'admfile'}

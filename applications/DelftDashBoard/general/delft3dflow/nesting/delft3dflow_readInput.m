@@ -64,7 +64,14 @@ function [flow openBoundaries] = delft3dflow_readInput(inpdir, runid, varargin)
 
 %% Returns flow structure with required Delft3D-FLOW input as well as boundary structure for nesting
 
+if ~isempty(inpdir)
+    if ~strcmpi(inpdir(end),filesep)
+        inpdir=[inpdir filesep];
+    end
+end
+
 %% Read MDF file
+
 MDF=delft3dflow_readMDFText([inpdir runid '.mdf']);
 
 % Dimensions
