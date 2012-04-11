@@ -83,6 +83,12 @@ mkdir('exe\bin');
 
 statspath='Y:\app\MATLAB2009b\toolbox\stats';
 rmpath(statspath);
+statspath='n:\Applications\Matlab\MATLAB2011b_64\toolbox\stats\stats';
+rmpath(statspath);
+statspath='n:\Applications\Matlab\MATLAB2011b_64\toolbox\stats\classreg';
+rmpath(statspath);
+statspath='n:\Applications\Matlab\MATLAB2011b_64\toolbox\stats\statsdemos';
+rmpath(statspath);
 
 delete('exe\*');
 
@@ -231,6 +237,7 @@ end
 ddb_copyAllFilesToDataFolder(inipath,[inipath filesep 'exe' filesep 'data' filesep],additionalToolboxDir,DataDir);
 
 %mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
+copyfile('settings\icons\earthicon.res','.\');
 mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\netcdfAll-4.2.jar -M earthicon.res
 
 % make about.txt file
