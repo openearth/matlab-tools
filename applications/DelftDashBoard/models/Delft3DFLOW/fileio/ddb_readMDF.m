@@ -357,9 +357,9 @@ end
 %% Wave online
 if isfield(MDF,'waveol')
     if strcmpi(MDF.waveol(1),'n')
-        handles.Model(md).Input(id).waveOnline=0;
+        handles.Model(md).Input(id).onlineWave=0;
     else
-        handles.Model(md).Input(id).waveOnline=1;
+        handles.Model(md).Input(id).onlineWave=1;
     end
 end
 

@@ -369,7 +369,7 @@ handles.Model(md).Input(id).sigmaCorrection=0;
 handles.Model(md).Input(id).traSol='Cyclic-method';
 handles.Model(md).Input(id).momSol='Cyclic';
 handles.Model(md).Input(id).onlineVisualisation=0;
-handles.Model(md).Input(id).waveOnline=0;
+handles.Model(md).Input(id).onlineWave=0;
 handles.Model(md).Input(id).nudge=0;
 
 % Heat model
