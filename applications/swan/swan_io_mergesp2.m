@@ -75,10 +75,11 @@ function swan_io_mergesp2(dr,fout,varargin)
 OPT.fexclude    = '';
 OPT.CS1 = struct;
 OPT.CS2 = struct;
+OPT.prefix = [];
 OPT = setproperty(OPT,varargin{:});
 
 if nargin==0;
-    disp('Please specify dr and fout')
+    disp('Please specify directory name of sp2 files and output file name')
     return;
 end
 %% code
@@ -89,7 +90,14 @@ if isfield(OPT.CS1,'code') && isfield(OPT.CS2,'code')
     convc =1;
 end
 
-lst=dir([dr '*.sp2']);
+% Add file separator to folder name
+if ~isempty(dr)
+    if ~strcmpi(dr(end),filesep)
+        dr=[dr filesep];
+    end
+end
+
+lst=dir([dr OPT.prefix '*.sp2']);
 n=length(lst);
 
 % Omit sp2-files (if set)
