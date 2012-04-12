@@ -15,6 +15,7 @@ function CS = ConvertCoordinatesFindCoordRefSys(CS,STD)
 %   CS = complete coordinate system structure
 %
 %   See also CONVERTCOORDINATES
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

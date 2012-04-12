@@ -15,6 +15,7 @@ function CS = ConvertCoordinatesCheckInput(CS,STD)
 %   CS = coordinate system structure
 %
 %   See also CONVERTCOORDINATES
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

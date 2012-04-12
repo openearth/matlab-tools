@@ -23,6 +23,7 @@ function [y1,x1] = ConvertCoordinatesProjectionConvert(x1,y1,CS,proj_conv,direct
 %   x1          = output coordinate (x or lon)
 %
 %   See also CONVERTCOORDINATES
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma

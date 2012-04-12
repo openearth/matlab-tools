@@ -16,6 +16,7 @@ function CS = ConvertCoordinatesFindCoordSys(CS,STD)
 %       'coordSys' with coordinate system information
 %
 %   See also CONVERTCOORDINATES
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
 %       Thijs Damsma
