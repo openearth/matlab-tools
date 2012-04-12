@@ -106,4 +106,9 @@ switch lower(meteosource)
         url='http://matroos.deltares.nl:8080/opendap/maps/normal/knmi_hirlam_maps/';
         ncfile=[datestr(cycledate+cyclehour/24,'yyyymmddHHMM') '.nc'];
         urlstr=[url ncfile];
+    case{'ncep_narr'}
+        ystr=num2str(year(cycledate));
+        mstr=num2str(month(cycledate),'%0.2i');
+        dr=[ystr mstr '/'];
+        urlstr=['http://nomads.ncdc.noaa.gov/dods/NCEP_NARR_DAILY/' dr datestr(cycledate,'yyyymmdd') '/narr-a_221_' datestr(cycledate,'yyyymmdd') '_' num2str(cyclehour,'%0.2i') '00_000'];
 end
