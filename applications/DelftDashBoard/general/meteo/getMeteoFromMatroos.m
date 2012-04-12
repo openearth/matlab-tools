@@ -70,7 +70,7 @@ err=[];
 
 try
     
-    url='http://matroos.deltares.nl:8080/opendap/maps/normal/knmi_hirlam_maps/';
+    url='http://opendap-matroos.deltares.nl/thredds/dodsC/maps/normal/knmi_hirlam_maps/;
     
     ncfile=[datestr(cycledate+cyclehour/24,'yyyymmddHHMM') '.nc'];
     
