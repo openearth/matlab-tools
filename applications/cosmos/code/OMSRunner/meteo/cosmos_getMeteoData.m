@@ -58,8 +58,8 @@ for i=1:hm.nrMeteoDatasets
             pr={'u','v','p'};
         end
 
-        cycleInterval=hm.meteo(i).cycleInterval;
-        dt=hm.meteo(i).timeStep;
+        cycleInterval=str2double(meteomodel.cycleInterval);
+        dt=str2double(meteomodel.dt);
         
 %        if inclh
         getMeteo(meteosource,meteoloc,t0,t1,xlim,ylim,outdir,cycleInterval,dt,parstr,pr,'tlastanalyzed',hm.meteo(i).tLastAnalyzed,'outputmeteoname',meteoname);
