@@ -131,7 +131,7 @@ for i = 1:length(varargin)
                 case 'logical'
                     evalstr = [evalstr logical2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'delimiter', delimiter)]; %#ok<AGROW>
                 case 'function_handle'
-                    tempvar = ['@' char(eval(['variable' idstr]))]; % change function handle to string being '@' followed by the function name
+                    tempvar = [char(eval(['variable' idstr]))]; % change function handle to string being '@' followed by the function name
                     tempvarstr = char2evalstr(tempvar, 'basevarname', [basevarname idstr], 'delimiter', delimiter); %#ok<NASGU>
                     tempvarstr = strrep(tempvarstr, '''', '');
                     evalstr = [evalstr tempvarstr]; %#ok<AGROW>
