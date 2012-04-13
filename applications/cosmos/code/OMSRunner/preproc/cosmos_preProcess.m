@@ -10,10 +10,14 @@ mdl=hm.models(m).name;
 lst=dir(tmpdir);
 for i=1:length(lst)
     if isdir([tmpdir lst(i).name])
-        [success,message,messageid]=rmdir([tmpdir lst(i).name],'s');
+        switch lst(i).name
+            case{'.','..'}
+            otherwise
+                [success,message,messageid]=rmdir([tmpdir lst(i).name],'s');
+        end
     end
 end
-    
+
 try
     delete([tmpdir '*']);
 end
