@@ -1,85 +1,87 @@
-function varargout = ncgen_mainFcn(readFcn,writeFcn,varargin)
+function varargout = ncgen_mainFcn(schemaFcn,readFcn,writeFcn,varargin)
 
-narginchk(2,inf)
-if isempty(readFcn);  readFcn   = @(~,~,~)struct('undefined',true); else  assert(isa(readFcn, 'function_handle'), 'readFcn must be a function handle'); end
-if isempty(writeFcn); writeFcn  = @(~,~,~)struct('undefined',true); else  assert(isa(writeFcn,'function_handle'),'writeFcn must be a function handle'); end
+narginchk(3,inf)
+if isempty(schemaFcn); schemaFcn = @(~)    struct('undefined',true); else  assert(isa(schemaFcn,'function_handle'),'schemaFcn must be a function handle'); end
+if isempty(readFcn);   readFcn   = @(~,~,~)struct('undefined',true); else  assert(isa(readFcn,  'function_handle'),  'readFcn must be a function handle'); end
+if isempty(writeFcn);  writeFcn  = @(~,~)  struct('undefined',true); else  assert(isa(writeFcn, 'function_handle'), 'writeFcn must be a function handle'); end
 %% list options
 
 % general settings
-OPT.main.zip            = 0; % specify if source files are compressed or not
-OPT.main.zip_regex      = '1x1\.xyz\.7z$';
+OPT.main.log            = 1;
+OPT.main.file_incl      = '.*';
+OPT.main.zip            = false; % specify if source files are compressed or not
+OPT.main.zip_file_incl  = '.*';
 OPT.main.unzip_with_gui = 1;
-OPT.main.regex          = 'xyz$';
 OPT.main.dateFcn        = @(s) datenum(s(1:6),'yymmdd'); % how to extract date from the filename
 OPT.main.defaultdate    = []; 
 
 % path settings
-OPT.main.path_src       = ''; % path to source data
-OPT.main.path_src_unz   = fullfile(tempdir,'ncgen)grid'); % path to unzipped source data, should be a tempdir
-OPT.main.path_ncf_loc   = 'D:\products\nc'; % local path to write ncdf files to
-OPT.main.path_ncf_net   = ''; % network path to copy nc files to once generation is completed 
-OPT.main.path_ncf_www   = ''; % path on which the nc filese are accesible, on e.g. the nc server
+OPT.main.path_source    = ''; % path to source data
+OPT.main.path_unzip_tmp = fullfile(tempdir,'ncgen'); % path to unzipped source data, should be a tempdir
+OPT.main.path_netcdf    = 'D:\products\nc'; % local path to write ncdf files to
 
+OPT.schema              = schemaFcn([]);
 OPT.read                = readFcn([],[],[]);
-OPT.write               = writeFcn([],[],[]);
+OPT.write               = writeFcn([],[]);
 
 processed_varargin      = setproperty(OPT,varargin);
 
-OPT.main                = setproperty(OPT.main, processed_varargin.main);
-OPT.read                = setproperty(OPT.read, processed_varargin.read);
-OPT.write               = setproperty(OPT.write,processed_varargin.write);
-% if nargin == 3
+% seperately check the properties for each of the functions
+OPT.main                = setproperty(OPT.main,  processed_varargin.main);
+OPT.schema              = setproperty(OPT.schema,processed_varargin.schema);
+OPT.read                = setproperty(OPT.read,  processed_varargin.read);
+OPT.write               = setproperty(OPT.write, processed_varargin.write);
+
+if nargin == 3
     varargout = {OPT};
     return
-% end
-
-
-% seperately check the properties for the dataype
-OPT.main.(datatype) = setproperty(processFcn(),OPT.main.(datatype));
+end
 
 
 %% input check
+assert(~isempty(OPT.main.path_source)            ,'No source directory was defined');
+assert(~isempty(OPT.main.path_netcdf)            ,'No netcdf directory to write to was defined');
+assert(logical(exist(OPT.main.path_source,'dir')),'Source directory ''%s'' does not exist',OPT.main.path_source);
 
-assert(~isempty(OPT.main.path_src),    'No source directory was defined');
-assert(~isempty(OPT.main.path_ncf_loc),'No nc directory to write to was defined');
-assert(logical(exist(OPT.main.path_src,'dir')),'Source directory ''%s'' does not exist',OPT.main.path_src);
-
-
+%% create schema
+if isempty(OPT.write.schema)
+    OPT.write.schema = schemaFcn(OPT);
+else
+    required_fields = {'Filename','Name','Dimensions','Variables','Attributes','Groups','Format'};
+    assert(all(ismember(required_fields,fieldnames(OPT.write.schema))),'User defined netcdf schema is not valid. Use schemaFcn to create a validschema');
+end
 
 %% other preparations
 % initialize waitbars
 multiWaitbar('Generating netcdf from source files...',          'reset', 'Color', [0.2 0.6 0.2])     % green
 % initialise cache dir and locate source files
 if OPT.main.zip
-    if ~exist(OPT.main.path_src_unz,'dir'); mkpath(OPT.main.path_src_unz); end
-    fns1 = dir2(OPT.main.path_src,'file_incl',OPT.main.zip_regex,'no_dirs',true);
+    if ~exist(OPT.main.path_unzip_tmp,'dir'); mkpath(OPT.main.path_unzip_tmp); end
+    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.zip_file_incl,'no_dirs',true);
 else
-    fns1 = dir2(OPT.main.path_src,'file_incl',OPT.main.regex,'no_dirs',true);
+    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.file_incl,'no_dirs',true);
     % get the timestamp from the file date
     fns1 = get_date_from_filename(OPT,fns1);
  end
 
 % check if files are found
 if isempty(fns1)
-     error('NCGEN_GRID:noSourcefiles','No source files were found in directory %s',OPT.main.path_src)
+     error('NCGEN_GRID:noSourcefiles','No source files were found in directory %s',OPT.main.path_source)
 end
 
 % generate md5 hashes of all source files
 fns1 = hash_files(fns1);
 
 
-%%
-% if a nc files exist in the destination directory, check the hashes and grid settings
-
-% initialise netcdf dir
-if exist(OPT.main.path_ncf_loc,'dir');
-    fns1 = check_existing_nc_files(fns1,OPT);
+%% if a nc files exist in the destination directory, check the hashes and grid settings
+if exist(OPT.main.path_netcdf,'dir');
+    fns1 = check_existing_nc_files(OPT,fns1);
 else
-    mkpath(OPT.main.path_ncf_loc);
+    mkpath(OPT.main.path_netcdf);
 end
 
 if isempty(fns1)
-    returnmessage(1,'Netcdf files were alreay up to date, no changes made\n')
+    returnmessage(OPT.main.log,'Netcdf files were alreay up to date, no changes made\n')
 end
     
 WB.bytesToDo         = sum([fns1.bytes]);
@@ -100,7 +102,7 @@ for jj = 1:length(fns1);
     
     for ii = length(fns2);
         % do function
-        readFcn(OPT);
+        readFcn(OPT,writeFcn,fns2(ii));
         
         % waitbar
         multiWaitbar('Generating netcdf from source files...',(WB.bytesDone + sum(fns2(1:ii).bytes)/WB.zipRatio)/WB.bytesToDo);
@@ -110,19 +112,19 @@ end
 multiWaitbar('Processing file','close');
 multiWaitbar('Generating netcdf from source files...',1);
 
-returnmessage(1,'Netcdf generation completed\n')
+returnmessage(OPT.main.log,'Netcdf generation completed\n')
 
 function fns2 = unzip_src_files(OPT,fns1)
 %delete files in cache
 
-delete(fullfile(OPT.main.path_src_unz,'*.*'))
+delete(fullfile(OPT.main.path_unzip_tmp,'*.*'))
 
 % uncompress files with a gui for progress indication
 uncompress(fullfile(fns1.pathname,fns1.name),...
-    'outpath',fullfile(OPT.main.path_src_unz),'gui',OPT.main.unzip_with_gui,'quiet',true);
+    'outpath',fullfile(OPT.main.path_unzip_tmp),'gui',OPT.main.unzip_with_gui,'quiet',true);
 
 % read the output of unpacked files
-fns2 = dir2(OPT.main.path_src_unz,'file_incl',OPT.main.regex,'no_dirs',true);
+fns2 = dir2(OPT.main.path_unzip_tmp,'file_incl',OPT.main.file_incl,'no_dirs',true);
 
 [fns2.hash] = deal(fns1.hash); % hash of zipped file is passed
 
@@ -145,25 +147,62 @@ else
     [fns1.date_from_filename] = deal(OPT.main.defaultdate);
 end
 
-function fns1 = check_existing_nc_files(fns1,OPT)
+function fns1 = check_existing_nc_files(OPT,fns1)
 
-nc_fns = dir2(OPT.main.path_ncf_loc,'file_incl','\.nc$','no_dirs',true);
+nc_fns = dir2(OPT.main.path_netcdf,'file_incl','\.nc$','no_dirs',true);
 outdated = false;
 ii=0;
 source_file_hash = [];
+tic
 while ~outdated && ii<length(nc_fns)
     ii = ii+1;
     ncfile = [nc_fns(ii).pathname nc_fns(ii).name];
+    % query nc schema to compare variables and dimensions
+    ncschema = ncinfo(ncfile);
     try
-        outdated = ~isequal(...
-            OPT.main.meta.history,...
-            ncreadatt(ncfile,'/','history'));
-        source_file_hash = [source_file_hash; ncread(ncfile,'source_file_hash')']; %#ok<AGROW>
+        % compare attributes (only compare the attributes to the user
+        % define attributes as additional attributes may be added by hthe
+        % netcdf write function as e.g. x_range
+        if ~isequal(ncschema.Attributes(1:length(OPT.write.schema.Attributes)),OPT.write.schema.Attributes)
+            outdated = true;
+            continue;
+        end
+        
+        % compare dimension names
+        if ~isequal([ncschema.Dimensions.Name],[OPT.write.schema.Dimensions.Name]);
+            outdated = true;
+            continue;
+        end
+        
+        % compare variables
+        if ...
+                ~isequal([ncschema.Variables.Name],        [OPT.write.schema.Variables.Name])     || ...
+                ~isequal([ncschema.Variables.Datatype],    [OPT.write.schema.Variables.Datatype]) || ...
+                ~isequal([ncschema.Variables.DeflateLevel],[OPT.write.schema.Variables.DeflateLevel]);
+            outdated = true;
+            continue;
+        end
+        
+        % compare dimension lengths
+        current_length = [ncschema.Dimensions.Length];
+        current_length([ncschema.Dimensions.Unlimited]) = nan;
+        new_length = [OPT.write.schema.Dimensions.Length];
+        new_length([OPT.write.schema.Dimensions.Length] == inf | [OPT.write.schema.Dimensions.Unlimited])= nan;
+        if ~isequalwithequalnans(current_length,new_length);
+            outdated = true;
+            continue;
+        end
+        
     catch  %#ok<CTCH>
+        % isf anything went wrong, assume netcdf is outdated
         outdated = true;
+        continue;
     end
+    
+    % collect source file hashes
+    source_file_hash = [source_file_hash; ncread(ncfile,'source_file_hash')']; %#ok<AGROW>
 end
-
+toc
 if ~outdated
     % check hashes
     source_file_hash = unique(source_file_hash,'rows');
@@ -172,8 +211,8 @@ if ~outdated
 end   
 
 if outdated
-    delete(fullfile(OPT.main.path_ncf_loc,'*.*'));
-    returnmessage(1,'netcdf output directory was outdated and therefore emptied\n')
+    delete(fullfile(OPT.main.path_netcdf,'*.*'));
+    returnmessage(OPT.main.log,'Netcdf output directory was outdated and therefore emptied\n')
 else
     % remove files already in nc from file name stucture  as they are
     % already in the nc file

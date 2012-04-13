@@ -4,53 +4,36 @@ function ncgen_mainFcn_test
 
 
 
-
+schemaFcn   = @(OPT)              ncgen_schemaFcn_surface  (OPT);
 readFcn     = @(OPT,writeFcn,fns) ncgen_readFcn_surface_xyz(OPT,writeFcn,fns);
-writeFcn    = @(OPT,data,meta)    ncgen_writeFcn_surface(OPT,data,meta);
-OPT         = ncgen_mainFcn(readFcn,writeFcn,'main.path_src',2);
+writeFcn    = @(OPT,data)         ncgen_writeFcn_surface   (OPT,data);
+OPT         = ncgen_mainFcn(schemaFcn,readFcn,writeFcn);
 
-dimstruct        = nccreateDimstruct('Name','x','Length',100);
-dimstruct(end+1) = nccreateDimstruct('Name','y','Length',100);
-dimstruct(end+1) = nccreateDimstruct('Name','time','Unlimited',true);
-dimstruct(end+1) = nccreateDimstruct('Name','dim16','Length',16);
-dimstruct(end+1) = nccreateDimstruct('Name','nSourcefiles','Unlimited',true,'Length',inf);
-varstruct        = nccreateVarstruct_standardnames_cf('projection_x_coordinate',...
-    'Name','x',...
-    'Dimensions',{'x'});
-varstruct(end+1) = nccreateVarstruct_standardnames_cf('projection_y_coordinate',...
-    'Name','y',...
-    'Dimensions',{'y'});
-varstruct(end+1) = nccreateVarstruct_standardnames_cf('altitude',...
-    'Name','z',...
-    'Dimensions',{'x','y','time'},...
-    'DeflateLevel',1,...
-    'Datatype','double',...
-    'scale_factor',[],...
-    'add_offset',[]);
-varstruct(end+1) = nccreateVarstruct_standardnames_cf('time',...
-    'Name','time',...
-    'Dimensions',{'time'},...
-    'add_offset',datenum('1970-01-01 00:00:00'),...
-    'Datatype','uint16',...
-    'units',sprintf('days since %s ',datestr(0,31)));
-varstruct(end+1) = nccreateVarstruct(...
-    'Name','source_file_hash',...
-    'Datatype','uint16',...
-    'Dimensions',{'dim16','nSourcefiles'},...
-    'Attributes',{'definition', 'MD5 hash of source files from which netcdf is generated'});
+if exist('D:\checkouts\vodata\projects\154302_ijmuiden_onderhoud\elevation_data\multibeam_top_of_mud\raw','dir')
+    OPT.main.path_source = 'D:\checkouts\vodata\projects\154302_ijmuiden_onderhoud\elevation_data\multibeam_top_of_mud\raw';
+else
+    OPT.main.path_source = '\\vnlhq1-apd\D\checkouts\vodata\projects\154302_ijmuiden_onderhoud\elevation_data\multibeam_top_of_mud\raw';
+end
+% filename = '110926_loding_IJmuidenBuitenhaven_1x1.xyz';
+OPT.main.dateFcn        = @(filename) datenum(filename(1:6),'yymmdd');
+OPT.main.path_netcdf    = 'F:\nc';
+OPT.main.path_unzip_tmp = 'F:\unzip';
+OPT.main.zip            = false;
+OPT.main.zip_file_incl  = '\.7z$';
+OPT.main.file_incl      = '\.xyz$';
 
+OPT.read.delimiter      = ' ';
+OPT.read.format         = '%f%f%f';
+OPT.read.headerlines    = 0;
 
-OPT.write.schema = nccreateSchema(dimstruct,varstruct);
-var2evalstr(OPT)
+OPT.schema.grid_spacing   = 1;
+OPT.schema.grid_tilesize  = 1000;
+OPT.schema.grid_offset    = 0.5;
+OPT.schema.z_datatype     = 'uint16';
+OPT.schema.z_scale_factor = -0.001;
+OPT.schema.z_add_offset   = 10;
 
-
-
-
-
-OPT         = ncgen_mainFcn(readFcn,writeFcn,kmlFcn,OPT);
+OPT.schema.meta           = struct('history','Version 1');
 %%
-OPT         = ncgen_mainFcn(readFcn,writeFcn,kmlFcn,'read.xid',2);
-
-var2evalstr(OPT)
-
-OPT.read.xis
+ ncgen_mainFcn(schemaFcn,readFcn,writeFcn,OPT);
+%%
