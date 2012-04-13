@@ -24,8 +24,17 @@ if ~exist(ncfile,'file')
     ncwriteschema(ncfile,OPT.write.schema);
     ncwrite(ncfile,'x',data.x);
     ncwrite(ncfile,'y',data.y);
+    [x,y] = meshgrid(data.x,data.y);
+    if ~isempty(OPT.schema.EPSGcode)
+        ncwrite(ncfile,'crs',OPT.schema.EPSGcode);
+        if OPT.schema.includeLatLon
+            [lon,lat] = convertCoordinates(x,y,'persistent','CS1.code',OPT.schema.EPSGcode,'CS2.code',4326);
+            ncwrite(ncfile,'lat',lat);
+            ncwrite(ncfile,'lon',lon);
+        end
+    end
 end
-    
+
 %% get already available timesteps in nc file
    timestamps_in_nc  = ncread(ncfile,'time');
 

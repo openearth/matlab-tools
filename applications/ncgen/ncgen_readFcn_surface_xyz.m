@@ -95,7 +95,7 @@ while ~feof(fid)
                 
                 % place xyz data on XY matrices
                 data.z = OPT.read.gridFcn(x,y,z,xi,yi);
-                
+
                 if any(~isnan(data.z(:))) % if a non trivial Z matrix is returned write the data to a nc file
                     % set the name for the nc file
                     data.time             = fns.date_from_filename;

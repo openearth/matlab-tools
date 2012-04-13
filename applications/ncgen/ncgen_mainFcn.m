@@ -73,15 +73,11 @@ end
 fns1 = hash_files(fns1);
 
 
-%% if a nc files exist in the destination directory, check the hashes and grid settings
+%% check the contents of the output directory
 if exist(OPT.main.path_netcdf,'dir');
     fns1 = check_existing_nc_files(OPT,fns1);
 else
     mkpath(OPT.main.path_netcdf);
-end
-
-if isempty(fns1)
-    returnmessage(OPT.main.log,'Netcdf files were alreay up to date, no changes made\n')
 end
     
 WB.bytesToDo         = sum([fns1.bytes]);
@@ -153,7 +149,6 @@ nc_fns = dir2(OPT.main.path_netcdf,'file_incl','\.nc$','no_dirs',true);
 outdated = false;
 ii=0;
 source_file_hash = [];
-tic
 while ~outdated && ii<length(nc_fns)
     ii = ii+1;
     ncfile = [nc_fns(ii).pathname nc_fns(ii).name];
@@ -202,7 +197,6 @@ while ~outdated && ii<length(nc_fns)
     % collect source file hashes
     source_file_hash = [source_file_hash; ncread(ncfile,'source_file_hash')']; %#ok<AGROW>
 end
-toc
 if ~outdated
     % check hashes
     source_file_hash = unique(source_file_hash,'rows');
@@ -212,9 +206,12 @@ end
 
 if outdated
     delete(fullfile(OPT.main.path_netcdf,'*.*'));
-    returnmessage(OPT.main.log,'Netcdf output directory was outdated and therefore emptied\n')
+    returnmessage(OPT.main.log,'Netcdf output directory was outdated and therefore emptied.\n')
 else
     % remove files already in nc from file name stucture  as they are
     % already in the nc file
+    a = length(fns1);
     fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
+    b = length(fns1);
+    returnmessage(OPT.main.log,'%d of %d source files where skipped as the where already processed.\n',a-b,a);
 end  
