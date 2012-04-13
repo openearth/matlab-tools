@@ -90,59 +90,52 @@ CR = char(13); % carriage return        (0D in hexadecimal) (windows oLFy)
 
 %% character array, all at once
 if ischar(str2D)
-   if strcmpi(lower(OS(1)),'w') | ...
-      strcmpi(lower(OS(1)),'d')
+   if strcmpi(OS(1),'w') || ...
+      strcmpi(OS(1),'d')
       %% add a CR (first) and a LF (second)
       str2D = pad(str2D,LF,size(str2D,2)+2);
       str2D(:,end-1) = CR; % first 0D (carriage return), then 0A (line feed)
-   elseif strcmpi(lower(OS(1)),'m')
+   elseif strcmpi(OS(1),'m')
       %% add a CR (only)
       str2D = pad(str2D,CR,size(str2D,2)+1);
-   elseif strcmpi(lower(OS(1)),'u') | ...
-          strcmpi(lower(OS(1)),'l')
+   elseif strcmpi(OS(1),'u') || ...
+          strcmpi(OS(1),'l')
       %% add a LF (only)
       str2D = pad(str2D,LF,size(str2D,2)+1);
-   elseif strcmpi(lower(OS(1)),'s')
+   elseif strcmpi(OS(1),'s')
          %% add symbol
       str2D = addrowcol(str2D,0,1,varargin{2});
    end
-   line1D = reshape(str2D',[1 prod(size(str2D))]);
+   line1D = reshape(str2D',[1 numel(str2D)]);
 else
 
-%% cell array, line by line
-   cell2D  = str2D;
-   line1D  = '';
-   
-   for ii=1:length(cell2D)
-      if strcmpi(lower(OS(1)),'w') | ...
-         strcmpi(lower(OS(1)),'d')
-         
-         line1D = [line1D(:)',char(cell2D{ii}),CR,LF]; % add a CR (first) and a LF (second), note later versions strcat remove all LF and CR
-         
-      elseif strcmpi(lower(OS(1)),'m')
-         
-         line1D = [line1D(:)',char(cell2D{ii}),CR   ]; % add a CR (only)
-         
-      elseif strcmpi(lower(OS(1)),'u') | ...
-             strcmpi(lower(OS(1)),'l')
-         
-         line1D = [line1D(:)',char(cell2D{ii}),LF   ]; % add a LF (only)
-         
-      elseif strcmpi(lower(OS(1)),'s')
-         try % in order not to crash on NaNs
-            line1D  = [strcat(line1D,char(cell2D{ii}),{varargin{2}})]; % %% add symbol, but keep also trailing spaces as symbol
-         catch
-            line1D = '';
-         end
-         
-      end
-   end
-
-      if strcmpi(lower(OS(1)),'s')
-         
-         line1D  = char(line1D);
-         
-      end
+    %% cell array, line by line
+    cell2D  = str2D;
+    line1D  = '';
+    
+    switch lower(OS(1))
+        case {'w','d'}
+            delimiter = [CR,LF];
+        case 'm'
+            delimiter = CR;
+        case {'u','l'}
+            delimiter = LF;
+        case 's'
+            delimiter = varargin{2};
+    end
+    if strcmpi(OS(1),'s')
+        for ii=1:length(cell2D)
+            line1D  = strcat(line1D,char(cell2D{ii}),{delimiter}); % %% add symbol, but keep also trailing spaces as symbol
+        end
+        if numel(line1D{end})>numel(delimiter)
+            % remove last delimiter
+            line1D{end} = line1D{end}(1:end-numel(delimiter));
+        end
+        line1D  = char(line1D);
+    else
+        for ii=1:length(cell2D)
+            line1D = [line1D(:)',char(cell2D{ii}),delimiter]; % add a CR (first) and a LF (second), note later versions strcat remove all LF and CR
+        end
+    end
 end
-
 %% EOF
