@@ -2,10 +2,6 @@ function hm=cosmos_readConfigFile
 
 hm.eMailOnError.send=0;
 
-% cms=which('cosmossettings');
-% dr=[fileparts(cms) filesep];
-% fname=[dr 'cosmos.ini'];
-% 
 fname='cosmos.ini';
 
 if ~exist(fname,'file')
