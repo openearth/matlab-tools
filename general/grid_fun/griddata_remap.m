@@ -74,7 +74,9 @@ x=X(:);
 y=Y(:);
 z=Z(:);
 
-nans = isnan(z+x+y);
+
+
+nans = isnan(x)|isnan(y)|isnan(z);
 
 x(nans) = [];
 y(nans) = [];
