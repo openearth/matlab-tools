@@ -104,8 +104,10 @@ OPT = struct( ...
 OPT = setproperty(OPT, varargin{:});
 
 % set preferences
-if isempty(OPT.path_local); OPT.path_local = xb_getprefdef('path_local', 'u:\'); end;
-if isempty(OPT.path_remote); OPT.path_remote = xb_getprefdef('path_remote', '~'); end;
+if ~ischar(xb)
+    if isempty(OPT.path_local); OPT.path_local = xb_getprefdef('path_local', 'u:\'); end;
+    if isempty(OPT.path_remote); OPT.path_remote = xb_getprefdef('path_remote', '~'); end;
+end
 
 % check whether we deal with path or XBeach stucture
 write = ~(ischar(xb) && (exist(xb, 'dir') || exist(xb, 'file')));
@@ -121,17 +123,26 @@ if ~write
     
     OPT.path_local = abspath(regexprep(xb, 'params.txt$', ''));
     
-    fpath = OPT.path_local;
+    if ischar(xb)
+        fpath = OPT.path_local;
+    else
+        fpath = xb;
+    end
+    
     rpath = OPT.path_remote;
     
+    if isempty(rpath)
+        rpath = guess_remote_path(fpath);
+    end
+    
 else
-    
+     
     fpath = fullfile(OPT.path_local, OPT.name);
-    
+
     if ~exist(fpath,'dir'); mkdir(fpath); end;
 
     xb_write_input(fullfile(fpath, 'params.txt'), xb);
-    
+
     rpath = [OPT.path_remote '/' OPT.name];
     
 end
@@ -211,3 +222,10 @@ xb = xb_meta(xb, mfilename, 'run', fpath);
 %% register job
 
 xb_run_register(xb);
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function rpath = guess_remote_path(lpath)
+
+    rpath = strrep(lpath,'\','/');
+    rpath = regexprep(rpath,'^(\w):','/$1');
