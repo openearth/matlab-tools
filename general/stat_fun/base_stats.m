@@ -1,11 +1,11 @@
 function xStats = base_stats(x,prc,bin,type)
-% STAT Determine basic statistics of a sample: 
+% BASE_STATS determines basic statistics of a sample: 
 % mean. variance, standard deviation, percentiles, max, min
 % mean of squares, roof of mean of squares, number of samples
 % histogram bins
 %
 %   Syntax:
-%   xStats = BASE_STAT(x,prc,bin,type) 
+%   xStats = BASE_STATS(x,prc,bin,type) 
 %
 %   Input:
 %   x   = data values (can be a matrix)
