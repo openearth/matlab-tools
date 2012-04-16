@@ -135,11 +135,14 @@ if OPT.make
     axis tight;view(0,90);lightangle(hl,180,65);
     colormap(OPT.colorMap(OPT.colorSteps));clim(OPT.clim*OPT.lightAdjust);
     
-    %% create kml directory if it does not yet exist
+
+%% create kml directory if it does not yet exist
     
-    if ~isempty(OPT.relativepath)
+    if isempty(OPT.relativepath)
+        OPT.relativepath = filesep;
+    else
         if path2os(OPT.relativepath(end)) == filesep
-            OPT.relativepath = OPT.relativepath(1:end-1); % remove trailing slash, gives issues
+           OPT.relativepath = OPT.relativepath(1:end-1); % remove trailing slash, gives issues
         end
     end
     
