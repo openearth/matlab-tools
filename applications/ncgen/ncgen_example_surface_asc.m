@@ -1,5 +1,5 @@
 % Example script for creating a netcdf from asc source data
-% 
+
 %% The basics:
 % Netcdf generation with the ncgen toolbox is done by the function
 % ncgen_mainFcn. This function does the basics and can be used for many
@@ -12,31 +12,16 @@
 %   ncgen_schemaFcn_surface; for timeseries, ncgen_schemaFcn_timeseries.
 %
 % * read function 
-%   Reads the raw data filetype. For a surface data, use
+%   Reads the raw data filetype. For ascii grid data, use
 %   ncgen_readFcn_surface_asc.
 %
 % * writeFcn, 
 %   Writes the data to the netcdf file. for surface data use 
 %   ncgen_writeFcn_surface.
 
-% %% ceate some dummy data
-% % We need some dummy data to write to netcdf. Two asc files are created
-% % with different timestamps and coverage;
-% dummy_file_location = fullfile(tempdir,'ncgen_example_surface_asc','raw');
-% mkpath(dummy_file_location)
-% [x,y] = meshgrid(67501:2:69499,446001:2:446999);
-% z = [peaks(500)*2 peaks(500)*10];
-% 
-% asc = [x(:) y(:) z(:)]';
-% fid = fopen(fullfile(dummy_file_location,'2012-01-01.asc'),'w');
-% fprintf(fid,'%0.0f,%0.0f,%0.1f\n',asc);
-% fclose(fid);
-% 
-% n = (1:1e5)';
-% asc = [x(n) y(n) z(n)+2]';
-% fid = fopen(fullfile(dummy_file_location,'2012-02-01.asc'),'w');
-% fprintf(fid,'%0.0f,%0.0f,%0.1f\n',asc);
-% fclose(fid);
+%% ceate some dummy data
+% We need some data to write to netcdf. We will use a vanoord kaartblad.
+
 
 %% Define schemaFcn, readFcn and writeFcn
 % Define appropriate functions dependant on the dataset as ex[plained
@@ -55,7 +40,7 @@ OPT         = ncgen_mainFcn(schemaFcn,readFcn,writeFcn);
 %% OPT.main
 % adjust the general settings which apply to every netcdf generation
 % define source location
-OPT.main.path_source      = 'D:\checkouts\oedata\rijkswaterstaat\vaklodingen\rawer';
+OPT.main.path_source      = 'D:\vaklodingen';
 OPT.main.file_incl        = '[0-9]{8}\.(asc|ASC)$';
 OPT.main.dateFcn          = @(filename) datenum(filename(end-11:end-4),'yyyymmdd');% specify method to extract a datenum from the filename
 OPT.main.path_netcdf      = 'F:\nc';%fullfile(tempdir,'ncgen_example_surface_asc','nc');% determine where to write to
@@ -100,33 +85,3 @@ OPT.read.zfactor = 0.01;
 %% call ncgen_mainFcn 
 % with the updated data
 ncgen_mainFcn(schemaFcn,readFcn,writeFcn,OPT);
-
-%% check results
-ncfile = fullfile('F:','nc','x0200010y0600010.nc');
-
-% check structure of one of the nc files created
-ncdisp(ncfile);
-
-% check time in the file
-datestr(nc_cf_time(ncfile))
-
-
-z = ncread(ncfile,'z');
-
-surf(max(z,[],3))
-hold on
-surf(min(z,[],3))
-shading flat
-camlight
-
-hold on
-%%
-surf(z(:,:,2))
-%%
-view(2)
-% plot z data for second timestep
-figure
-surf(    ncread(ncfile,'z',[1 1 2],[inf inf 1]));
-
-hold on
-
