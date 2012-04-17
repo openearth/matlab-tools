@@ -18,7 +18,7 @@ import ucar.nc2.*
 
 if exist('NetcdfFile','class')
     have_java = true;
-   %snc_turnoff_log4j; % very slow when called often, and leads to java error when called too often
+    snc_turnoff_log4j;
 else
     have_java = false;
 end

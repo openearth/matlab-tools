@@ -1,3 +1,7 @@
+* April 11 2012 John Evans <john.g.evans.ne@gmail.com> -r3985
+- Fixed bug where only first unlimited dimension in enhanced file was
+- being correctly labeled.
+
 * March 23 2012 John Evans <john.g.evans.ne@gmail.com> -r3982
 - Fixed NC_DUMP's missing file ID on a few lines (thanks to Michael Morrin).
 

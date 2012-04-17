@@ -43,6 +43,10 @@ function run_nc4_enhanced_tests()
 
 testroot = fileparts(mfilename('fullpath'));
 
+% Multiple unlimited dimensions.
+ncfile = [testroot '/testdata/multi_d_unlim.nc'];
+test_multiple_unlimited_dimensions(ncfile);
+
 v = version('-release');
 switch(v)
     case {'14','2006a','2006b','2007a','2007b','2008a','2008b','2009a',...
@@ -81,6 +85,25 @@ test_root_group_compound_with_strings(ncfile);
 
 ncfile = [testroot '/testdata/tst_compounds2.nc'];
 test_nested_compounds(ncfile);
+
+
+%--------------------------------------------------------------------------
+function test_multiple_unlimited_dimensions(ncfile)
+
+info = nc_info(ncfile);
+
+act_data = info.Dimension(2).Unlimited;
+exp_data = true;
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
+
+
+act_data = info.Dimension(3).Unlimited;
+exp_data = true;
+if ~isequal(act_data,exp_data)
+    error('failed');
+end
 
 %--------------------------------------------------------------------------
 function test_nested_compounds(ncfile)

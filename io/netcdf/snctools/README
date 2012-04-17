@@ -17,20 +17,20 @@ configurations is summarized in the table below.
        | read     | write    | read     | write    | read     | write 	 |  else netcdf-java 
        |          |          |          |          |          |       	 |  version method)
 -------+----------+----------+----------+----------+----------+----------+----------
-R2012a | tmw      | tmw      | tmw      | tmw      | tmw,java | - 	 | java(4.2), tmw(0)
-R2011b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 	 | java(4.2) 
-R2011a | tmw      | tmw      | tmw      | tmw      | tmw,java | - 	 | java(4.2) 
-R2010b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 	 | java(4.2) 
-R2010a | tmw      | tmw      | java     | -        | java     | - 	 | java(4.2)     
-R2009b | tmw      | tmw      | java     | -        | java     | - 	 | java(4.2)     
-R2009a | tmw      | tmw      | java     | -        | java     | - 	 | java(4.2)     
-R2008b | tmw      | tmw      | java     | -        | java     | - 	 | java(4.2)     
-R2008a | java     | mexnc    | java     | -        | java     | - 	 | java(4.2)     
-R2007b | java     | mexnc    | java     | -        | java     | - 	 | java(4.2)     
-R2007a | java     | mexnc    | java     | -        | java     | - 	 | java(4.1)     
-R2006b | java     | mexnc    | java     | -        | java     | - 	 | java(4.1)     
-R2006a | java     | mexnc    | java     | -        | java     | - 	 | java(4.1)     
-R14    | java     | mexnc    | -        | -        | -        | - 	 | -        
+R2012a | tmw      | tmw      | tmw      | tmw      | tmw,java | -        | java(4.2), tmw(0)
+R2011b | tmw      | tmw      | tmw      | tmw      | tmw,java | -        | java(4.2) 
+R2011a | tmw      | tmw      | tmw      | tmw      | tmw,java | -        | java(4.2) 
+R2010b | tmw      | tmw      | tmw      | tmw      | tmw,java | -        | java(4.2) 
+R2010a | tmw      | tmw      | java     | -        | java     | -        | java(4.2)     
+R2009b | tmw      | tmw      | java     | -        | java     | -        | java(4.2)     
+R2009a | tmw      | tmw      | java     | -        | java     | -        | java(4.2)     
+R2008b | tmw      | tmw      | java     | -        | java     | -        | java(4.2)     
+R2008a | java     | mexnc    | java     | -        | java     | -        | java(4.2)     
+R2007b | java     | mexnc    | java     | -        | java     | -        | java(4.2)     
+R2007a | java     | mexnc    | java     | -        | java     | -        | java(4.1)     
+R2006b | java     | mexnc    | java     | -        | java     | -        | java(4.1)     
+R2006a | java     | mexnc    | java     | -        | java     | -        | java(4.1)     
+R14    | java     | mexnc    | -        | -        | -        | -        | -        
 
 
 There are two exceptions to note.  The mexnc backend is only required

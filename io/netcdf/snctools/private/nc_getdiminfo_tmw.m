@@ -35,15 +35,27 @@ netcdf.close(ncid);
 %--------------------------------------------------------------------------
 function dinfo = handle_numeric_nc_getdiminfo_tmw ( ncid, dimid )
 
-[dud,dud,dud,unlimdim] = netcdf.inq(ncid ); %#ok<ASGLU>
 [dimname, dimlength] = netcdf.inqDim(ncid, dimid);
 dinfo.Name = dimname;
 dinfo.Length = dimlength;
 
-if dimid == unlimdim
-	dinfo.Unlimited = true;
+v = netcdf.inqLibVers();
+if v(1) == '3'
+    % there can only be one unlimited dimension in v3.
+    [dud,dud,dud,unlimdim] = netcdf.inq(ncid); %#ok<ASGLU>
+    if dimid == unlimdim
+    	dinfo.Unlimited = true;
+    else
+    	dinfo.Unlimited = false;
+    end
 else
-	dinfo.Unlimited = false;
+    % there can be many unlimited dimensions in v4.
+    unlimDimIDs = netcdf.inqUnlimDims(ncid);
+    if ismember(dimid,unlimDimIDs)
+        dinfo.Unlimited = true;
+    else
+        dinfo.Unlimited = false;
+    end
 end
 
 return
