@@ -213,5 +213,5 @@ else
     a = length(fns1);
     fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
     b = length(fns1);
-    returnmessage(OPT.main.log,'%d of %d source files where skipped as the where already processed.\n',a-b,a);
+    returnmessage(OPT.main.log,'%d of %d source files where skipped as they where already processed.\n',a-b,a);
 end  
