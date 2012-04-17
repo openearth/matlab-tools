@@ -16,10 +16,17 @@ function varargout = nc2struct(ncfile,varargin)
 % loading a catalog.nc for a THREDDS OPeNDAP server as an 
 % alternative to the difficult-to-parse catalog.xml.
 %
-% Example 2:
+% For NC2STUCT <keyword,value> options and defaults call
+% without arguments: nc2struct() . 
+% * exclude: cell array with variables NOT to load, e.g.: {'a','b'}
+% * rename : cell array describing how to rename variables in netCDF
+%            file to variables in struct, e.g.: {{'x','y'},{'x1','x2'}}
+%
+% Example:
 %
 %  [dat,atr] = nc2struct('file_created_with struct2nc.nc');
 %  [dat,atr] = nc2struct('catalog.nc');
+%  [dat,atr] = nc2struct('catalog.nc','exclude',{'x','y'});
 %
 % NOTE: do not use for VERY BIG! files, as your memory will be swamped.
 %
@@ -74,6 +81,7 @@ function varargout = nc2struct(ncfile,varargin)
 OPT.global2att   = 2; % 0=not at all, 1=as fields, 2=as subfields of nc_global
 OPT.time2datenum = 1; % time > datenum in extra variabkle datenum
 OPT.exclude      = {};
+OPT.rename       = {{},{}};
 %OPT.include      = {};
 
 if nargin==0
@@ -105,20 +113,32 @@ OPT = setproperty(OPT,varargin);
    
 %% Load all fields
 
+  D = [];
+
    ndat = length(fileinfo.Dataset);
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
       if ~any(strmatch(fldname,OPT.exclude))
-         D.(fldname) = nc_varget(fileinfo.Filename,fldname);
+         fldname_nc = fldname;
+         if any(strmatch(fldname,OPT.rename{1}))
+            j = strmatch(fldname,OPT.rename{1});
+            fldname = OPT.rename{2}{j};
+         end
+         D.(fldname) = nc_varget(fileinfo.Filename,fldname_nc);
          if OPT.time2datenum
-            if ~isempty(fileinfo.Dataset(idat).Attribute)
-            j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name});
-            if ~isempty(j)
+            if strcmp(fldname_nc,'time')
+               D.datenum = nc_cf_time(fileinfo.Filename,fldname);
+               disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+            else
+             if ~isempty(fileinfo.Dataset(idat).Attribute);
+             j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name});
+              if ~isempty(j)
                if strcmpi(fileinfo.Dataset(idat).Attribute(j).Value,'time')
                D.datenum = nc_cf_time(fileinfo.Filename,fldname);
                disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
                end
-            end
+              end
+             end
             end
          end
          if ischar(D.(fldname))
@@ -127,7 +147,7 @@ OPT = setproperty(OPT,varargin);
             end
             D.(fldname) = cellstr(D.(fldname));
          end
-      end
+      end % exclude
    end
    
 if nargout==1
@@ -157,12 +177,16 @@ else
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
       if ~any(strmatch(fldname,OPT.exclude))
+         if any(strmatch(fldname,OPT.rename{1}))
+            j = strmatch(fldname,OPT.rename{1});
+            fldname = OPT.rename{2}{j};
+         end
          for iatt=1:length(fileinfo.Dataset(idat).Attribute);
                       attname  = fileinfo.Dataset(idat).Attribute(iatt).Name;
                       attname  = mkvar(attname); % ??? Invalid field name: '_FillValue'.
          M.(fldname).(attname) = fileinfo.Dataset(idat).Attribute(iatt).Value;
          end
-      end
+      end % exclude
    end
    
    if nargout<2

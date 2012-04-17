@@ -74,6 +74,9 @@ function varargout = nc_cf_grid_mapping(epsg,varargin)
 % TO DO: fill proj4 with parameters automatically
 
 OPT.debug = 0;
+OPT.wkt   = 1;
+
+OPT = setProperty(OPT,varargin);
 
 %% EPSG: includes CF parameters
 
@@ -90,13 +93,15 @@ OPT.debug = 0;
       OPT.proj4_params = epsg_proj4(epsg);
 
 %% get WKT string via web service
-
-    try
-        OPT.wkt = epsg_wkt(epsg);
-    catch
-        OPT.wkt = 'epsg_wkt could not be retrieved';
-    end
-    
+   if OPT.wkt
+   try
+      OPT.wkt = epsg_wkt(epsg);
+   catch
+      OPT.wkt = 'epsg_wkt could not be retrieved';
+   end
+   else
+       OPT.wkt = '';
+   end    
 %% get human readable string
 
       switch epsg
