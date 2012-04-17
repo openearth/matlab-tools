@@ -1,25 +1,33 @@
-function varargout = ncgen_writeFcn_memory(OPT,data,varargin)
-% funtion meant to use ncgen functions to read datafiles to matlab (and not
+function varargout = ncgen_writeFcn_memory(method,data)
+% function meant to use ncgen functions to read datafiles to matlab (and not
 % write to nc)
 
 % Call this function as
-% writeFcn = @(OPT,data) memWriteFcn(OPT,data,'method','Append')
-
-OPT.method = 'Append'
+% writeFcn = @(OPT,data) memWriteFcn(OPT,data)
 
 
-if ~exist(DATA)
-    DATA= persistent
+if isstruct(method)
+    method = 'append';
 end
-varname = fieldnames(data);
-switch OPT.method
-    case 'Append'
-        for in= 1:numel(varname)
-        DATA.(varname{in}) = [DATA.(varname{in}) data.(varname{in})];
+
+persistent DATA
+
+switch method
+    case 'append'
+        if isempty(DATA)
+            DATA = data;
+        else
+            varname = fieldnames(data);
+            for in= 1:numel(varname)
+                DATA.(varname{in}) = [DATA.(varname{in}); data.(varname{in})];
+            end
         end
-    case 'ReturData'
-        varagout = DATA
+    case 'initialize'
         clear DATA
+    case 'return'
+        varargout = {DATA};
+        clear DATA
+    otherwise
+        error('Invalid method: %s',OPT.method);
 end
-    
-        
+

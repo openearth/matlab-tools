@@ -106,8 +106,7 @@ for jj = 1:length(fns1);
     WB.bytesDone = WB.bytesDone + fns1(jj).bytes;
 end
 multiWaitbar('Processing file','close');
-multiWaitbar('Generating netcdf from source files...',1);
-
+multiWaitbar('Generating netcdf from source files...','close');
 returnmessage(OPT.main.log,'Netcdf generation completed\n')
 
 function fns2 = unzip_src_files(OPT,fns1)
