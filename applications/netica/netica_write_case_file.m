@@ -131,9 +131,6 @@ txt = sprintf(['%s\n' sprintf('%s', formats{:})], txt, varnames{:});
 for isample = 1:nsamples
     for ivar = 1:nvars
         if iscell(vars.(varnames{ivar}))
-            if any(~cellfun(@ischar, vars.(varnames{ivar})))
-                error('All elements in a cell array should be of type ''char''')
-            end
             txt = sprintf(['%s' sprintf('%s', formats{:,ivar})], txt, vars.(varnames{ivar}){isample});
         end
     end
