@@ -58,16 +58,15 @@ if ~strcmpi(model.useMeteo,'none')
             par={'u','v','p'};
         end
         writeD3DMeteoFile4(meteodir,model.useMeteo,tmpdir,'meteo',model.xLim,model.yLim, ...
-            coordsys,coordsystype,model.refTime,model.tFlowStart-0.5,model.tStop, ...
+            coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
             'parameter',par,'dx',dx,'dy',dy);
 
     catch
 
         % Regular meteo failed
+        disp(['Meteo from ' model.useMeteo ' failed. Trying ' model.backupMeteo]);
 
         if ~strcmpi(model.backupMeteo,'none')
-        
-            ii=strmatch(model.backupMeteo,hm.meteoNames,'exact');
 
             coordsys=hm.models(m).coordinateSystem;
             coordsystype=hm.models(m).coordinateSystemType;
@@ -88,8 +87,8 @@ if ~strcmpi(model.useMeteo,'none')
                 par={'u','v','p'};
             end
             
-            writeD3DMeteoFile4(meteodir,model.useMeteo,tmpdir,'meteo',model.xLim,model.yLim, ...
-                coordsys,coordsystype,model.refTime,model.tFlowStart-0.5,model.tStop, ...
+            writeD3DMeteoFile4(meteodir,model.backupMeteo,tmpdir,'meteo',model.xLim,model.yLim, ...
+                coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
                 'parameter',par,'dx',dx,'dy',dy);
             
         else
