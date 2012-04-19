@@ -99,26 +99,26 @@ function varargout = harmanal_predict(t,varargin)
    end
 
 %% Add and reformat (optional) fieldnames
-
+   errtxt = (' give of one: period "T", (radial) frequency "freq" ("omega")');
    if isempty(OPT.omega);
       if     ~isempty(OPT.freq );OPT.omega = 2.*pi.*OPT.freq;
       elseif ~isempty(OPT.T    );OPT.omega = 2.*pi./OPT.T;
       else
-         error(' give either period, frequency or omega')
+         error(errtxt)
       end
    end
    if isempty(OPT.freq );
       if     ~isempty(OPT.omega);OPT.freq = OPT.omega./2./pi;
       elseif ~isempty(OPT.T    );OPT.freq = 1./OPT.T;
       else
-         error(' give either period, frequency or omega')
+         error(errtxt)
       end
    end
    if isempty(OPT.T    );
       if     ~isempty(OPT.omega);OPT.T    = 2.*pi./OPT.omega;
       elseif ~isempty(OPT.freq );OPT.T    = 1./OPT.freq     ;
       else
-         error(' give either period, frequency or omega')
+         error(errtxt)
       end
    end
    

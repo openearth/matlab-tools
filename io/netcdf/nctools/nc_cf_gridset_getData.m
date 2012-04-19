@@ -10,7 +10,7 @@ function varargout=nc_cf_gridset_getData(xi,yi,varargin)
 % [zi,ti             ] = nc_cf_gridset_getData(...)
 % [zi,ti,fi,fi_legend] = nc_cf_gridset_getData(...)
 %
-% where fi is the nc from which the data were interpolated.
+% where fi is the nc sequence nr from which the data were interpolated.
 %
 % Example: Slufter Texel using one file
 %
@@ -20,7 +20,7 @@ function varargout=nc_cf_gridset_getData(xi,yi,varargin)
 %
 %    nc_cf_gridset_getData(116e3,573e3,'bathy','http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html')
 %
-%See also: grid_orth_getDataFromNetCDFGrids, grid_orth_getDataOnLine
+%See also: grid_orth_getDataFromNetCDFGrids, grid_orth_getDataOnLine, nc_cf_gridset_getData_example
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
@@ -66,7 +66,7 @@ OPT.method      = 'linear'; % spatial
 OPT.ddatenummax = datenum(3,1,1); % temporal search window in years
 OPT.datenum     = datenum(1998,7,1); % ti
 OPT.order       = '{''backward'',''forward'',''|nearest|''}'; % RWS: Specifieke Operator Laatste/Dichtsbij/Prioriteit
-
+OPT.disp        = 0;
 OPT.debug       = 0;
 
 if nargin==0
@@ -107,12 +107,28 @@ OPT = setProperty(OPT,varargin{nextarg:end});
    
 %% fill holes with samples of nearest/latest/first time
 
+   xmin = min(xi(:));
+   xmax = max(xi(:));
+   ymin = min(yi(:));
+   ymax = max(yi(:));
+
    for ifile=1:length(list)
+       
+      if OPT.disp
+          fprintf(1,['Inquiring file ', num2str(ifile,'%0.4d'),' of ', num2str(length(list),'%0.4d')]);
+      end
    
       BB.X  = nc_actual_range(list{ifile},OPT.xname);BB.X = BB.X([1 2 2 1 1]);
+      if ~(BB.X(2) < xmin | BB.X(1) > xmax)
       BB.Y  = nc_actual_range(list{ifile},OPT.yname);BB.Y = BB.Y([1 1 2 2 1]);
+      if ~(BB.Y(2) < ymin | BB.Y(1) > ymax)
       bb_selection = inpolygon(xi,yi,BB.X,BB.Y);
-       
+
+      if any(bb_selection(:))
+
+      if OPT.disp
+          fprintf(1,[': ',filenameext(list{ifile})]);
+      end          
     %% find valid dates
        
        L.datenum  = nc_cf_time(list{ifile});
@@ -136,6 +152,10 @@ OPT = setProperty(OPT,varargin{nextarg:end});
        ind2go = find(isnan(dummy)); % nans are last in dummy
        if ~isempty(ind2go)
           ind = ind(1:ind2go(1)-1);
+          if OPT.disp
+          fprintf(1,[' # dates found: ' num2str(length(ind)),'\n']);
+          disp(datestr(L.datenum(ind)))
+          end
        end
       
     %% cycle valid dates
@@ -144,7 +164,7 @@ OPT = setProperty(OPT,varargin{nextarg:end});
 
           mask             = isnan(zi) & polygon_selection  & bb_selection; % only empty points
 
-          if any(mask) % only continue when there are still points to be done withoin the BB of this file
+          if any(mask(:)) % only continue when there are still points to be done withoin the BB of this file
 
           %% get source data for one timestep
 
@@ -154,7 +174,7 @@ OPT = setProperty(OPT,varargin{nextarg:end});
              end
              dzi = xi.*nan; % set increment to nan
              
-warning('TO DO: permute Z automacially into [t by y by x]')
+% warning('TO DO: permute Z automatically into [T x Y x X]')
 
 % nc_index.x = nc_varfind(list{ifile}, 'attributename','standard_name','attributevalue','projection_x_coordinate');
 % nc_index.y = nc_varfind(list{ifile}, 'attributename','standard_name','attributevalue','projection_y_coordinate');
@@ -212,6 +232,12 @@ warning('TO DO: permute Z automacially into [t by y by x]')
              end % plot
           end % any(mask)
        end % idt
+       end % bb_selection
+       end % Y
+       end % X
+       if OPT.disp
+       fprintf(1,['\n']);
+       end
        end % files
        
 varargout = {zi,ti,fi,list};

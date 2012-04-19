@@ -11,9 +11,10 @@
   <catalogRef xlink:href="http://ourocean.jpl.nasa.gov:8080/thredds/catalog.xml"      xlink:title="NASA JPL" name=""/>
   <catalogRef xlink:href="http://topaz.nersc.no/thredds/catalog.xml"                  xlink:title="Nansen centre" name=""/>
   <catalogRef xlink:href="http://data.nodc.noaa.gov/thredds/catalog.xml"              xlink:title="NOAA NODC" name=""/>
-  <catalogRef xlink:href="http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.xml" xlink:title="NOAA NDBC" name=""/>
+  <catalogRef xlink:href="http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.xml" xlink:title="NOAA National Buoy Data Center (NDBC)" name=""/>
   <catalogRef xlink:href="http://opendap-matroos.deltares.nl/thredds/catalog.xml"     xlink:title="Rijkswaterstaat (password protected)" name=""/>
   <catalogRef xlink:href="http://motherlode.ucar.edu/thredds/catalog.xml"             xlink:title="UCAR"      name=""/>
-  <catalogRef xlink:href="http://coast-enviro.er.usgs.gov/thredds/catalog.xml"        xlink:title="USGS"      name=""/>
+  <catalogRef xlink:href="http://coast-enviro.er.usgs.gov/thredds/catalog.xml"        xlink:title="USGS Coastal and marine sediment transport group" name=""/>
+  <catalogRef xlink:href="http://cida.usgs.gov/qa/thredds/catalog.xml"                xlink:title="USGS Center for Integrated Data Analytics (CIDA)" name=""/>
   <catalogRef xlink:href="http://geoport.whoi.edu/thredds/catalog.xml"                xlink:title="WHOI"      name=""/>
 </catalog>

@@ -22,16 +22,13 @@ function line1D = str2line(str2D,varargin)
 %
 %   >> l=str2line({'aap','noot','mies'},'s',char(10))
 %   
-%   l =
-%   
-%   aapnootmies
-%   
+%   l = "aap"  <enter>
+%       "noot" <enter>
+%       "mies"
 %   
 %   >> l=str2line({'aap','noot','mies'},'s','_')
 %   
-%   l =
-%   
-%   aap_noot_mies_
+%   l = "aap_noot_mies_"
 %
 %See also: LINE2STR, SPRINTF, STRCAT, STRVCAT, CELLSTR
 
@@ -74,17 +71,18 @@ function line1D = str2line(str2D,varargin)
 % TO DO add regular expression or c-format specifiers: \n \n\r
 % TO DO do irregular line wrap to cell in future
 % TO DO implement apple
-
+ 
+%% defaults use lower case !!
 %OS = 'windows';
  OS = 'unix';
 
 if nargin>1
-   OS = varargin{1};
+   OS = lower(varargin{1});
 end
 
 %% Define EOL
 LF = char(10); % LF line feed, new line (0A in hexadecimal)
-CR = char(13); % carriage return        (0D in hexadecimal) (windows oLFy)
+CR = char(13); % carriage return        (0D in hexadecimal) (windows only)
 % char(48)=0
 % char(65)=A
 
@@ -92,18 +90,18 @@ CR = char(13); % carriage return        (0D in hexadecimal) (windows oLFy)
 if ischar(str2D)
    if strcmpi(OS(1),'w') || ...
       strcmpi(OS(1),'d')
-      %% add a CR (first) and a LF (second)
+      % add a CR (first) and a LF (second)
       str2D = pad(str2D,LF,size(str2D,2)+2);
       str2D(:,end-1) = CR; % first 0D (carriage return), then 0A (line feed)
    elseif strcmpi(OS(1),'m')
-      %% add a CR (only)
+      % add a CR (only)
       str2D = pad(str2D,CR,size(str2D,2)+1);
    elseif strcmpi(OS(1),'u') || ...
           strcmpi(OS(1),'l')
-      %% add a LF (only)
+      % add a LF (only)
       str2D = pad(str2D,LF,size(str2D,2)+1);
    elseif strcmpi(OS(1),'s')
-         %% add symbol
+      % add symbol
       str2D = addrowcol(str2D,0,1,varargin{2});
    end
    line1D = reshape(str2D',[1 numel(str2D)]);

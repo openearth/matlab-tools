@@ -5,9 +5,11 @@ function varargout = csv2struct(fname,varargin)
 %
 % reads columns from fname into struct fields. The first line
 % is used to make the field names, the second line is used
-% for the units (if 'units' set to 1, default 0) as in
+% for the units (if 'units' set=1, but default 0) as in
 %
-%    [DATA,units] = csv2struct(fname,'units',1,,<keyword,value>)
+%    [DATA,units] = csv2struct(fname,'units',1,<keyword,value>)
+%
+% For other keywords + defaults call without arguments: csv2struct()
 %
 % e.g. D = csv2struct('somefile.csv','delimiter',';','CommentStyle','%')
 %
