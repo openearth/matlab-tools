@@ -45,6 +45,9 @@ function getMeteo(meteoname, meteoloc, t0, t1, xlim, ylim, outdir, cycleInterval
 %   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
+
+
+
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
 %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 %   GNU General Public License for more details.
@@ -136,7 +139,7 @@ else
             case{'nomads'}
                 getMeteoFromNomads3(meteoname,outputMeteoName,cycledate,cyclehour,tt,xlim,ylim,outdir,pars,pr);
             case{'matroos'}
-                getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
+%                getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
         end
         
         if tnext>tLastAnalyzed
