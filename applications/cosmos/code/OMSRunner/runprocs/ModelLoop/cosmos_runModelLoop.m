@@ -27,6 +27,47 @@ try
     
     hm=guidata(findobj('Tag','OMSMain'));
     
+    %%   Moving all finished model output to local directory
+    
+    % First check which simulations have been finished and are waiting to
+    % be moved to local main directory
+    [hm,FinishedList]=cosmos_checkForFinishedSimulations(hm);
+    
+    % If there are simulations ready ...
+    if ~isempty(FinishedList)
+        
+        n=length(FinishedList);
+        
+        % Move all waiting simulations
+        for i=1:n
+            
+            % Moving data
+            m=FinishedList(i);
+            
+            if ~strcmpi(hm.models(m).status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
+                mdl=hm.models(m).name;
+                set(hm.textModelLoopStatus,'String',['Status : moving ' mdl ' ...']);drawnow;
+                try
+                    WriteLogFile(['Moving data ' hm.models(m).name]);
+                    tic
+                    % Move the model results to local main directory
+                    cosmos_moveModelData(hm,m);
+                catch
+                    WriteErrorLogFile(hm,['Something went wrong moving data of ' hm.models(m).name]);
+                    hm.models(m).status='failed';
+                end
+                hm.models(m).moveDuration=toc;
+                
+                % Set model status to simulationfinished (if everything went okay)
+                % The model is now ready for further post-processing (extracting data, making figures, uploading to website)
+                if ~strcmpi(hm.models(m).status,'failed')
+                    hm.models(m).status='simulationfinished';
+                end
+                
+            end
+        end
+    end
+        
     %%   Pre-Processing
     
     % Check which models need to run next
@@ -82,49 +123,6 @@ try
             end
         end
     end
-    
-    %%   Moving all finished model output to local directory
-    
-    % First check which simulations have been finished and are waiting to
-    % be moved to local main directory
-    [hm,FinishedList]=cosmos_checkForFinishedSimulations(hm);
-    
-    % If there are simulations ready ...
-    if ~isempty(FinishedList)
-        
-        n=length(FinishedList);
-        
-        % Move all waiting simulations
-        for i=1:n
-            
-            % Moving data
-            m=FinishedList(i);
-            
-            if ~strcmpi(hm.models(m).status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
-                mdl=hm.models(m).name;
-                set(hm.textModelLoopStatus,'String',['Status : moving ' mdl ' ...']);drawnow;
-                try
-                    WriteLogFile(['Moving data ' hm.models(m).name]);
-                    tic
-                    % Move the model results to local main directory
-                    cosmos_moveModelData(hm,m);
-                catch
-                    WriteErrorLogFile(hm,['Something went wrong moving data of ' hm.models(m).name]);
-                    hm.models(m).status='failed';
-                end
-                hm.models(m).moveDuration=toc;
-                
-                % Set model status to simulationfinished (if everything went okay)
-                % The model is now ready for further post-processing (extracting data, making figures, uploading to website)
-                if ~strcmpi(hm.models(m).status,'failed')
-                    hm.models(m).status='simulationfinished';
-                end
-                
-            end
-        end
-    end
-    
-    %    end
     
     %%   Post-Processing
     
