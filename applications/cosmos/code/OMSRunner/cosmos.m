@@ -14,7 +14,7 @@ wb = waitbox('Loading observations database ...');
 hm=getObservationStations(hm);
 close(wb);
 
-hm.mainWindow=MakeNewWindow('OMSMain',[750 500]);
+hm.mainWindow=MakeNewWindow('CoSMoS',[750 500]);
 
 set(hm.mainWindow,'CloseRequestFcn',@closeOMS);
 set(hm.mainWindow,'Tag','OMSMain');
