@@ -82,12 +82,12 @@ for i=1:hm.nrModels
     end
 end
 
-%% Check which simulations inside the job dir have finished, so that
-%% model loop does not try to run them
-[hm,finishedList]=cosmos_checkForFinishedSimulations(hm);
-for i=1:length(finishedList)
-    hm.models(finishedList(i)).status='simulationfinished';
-end
+% %% Check which simulations inside the job dir have finished, so that
+% %% model loop does not try to run them
+% [hm,finishedList]=cosmos_checkForFinishedSimulations(hm);
+% for i=1:length(finishedList)
+%     hm.models(finishedList(i)).status='simulationfinished';
+% end
 
 %% Start and stop times
 disp('Getting start and stop times ...');
