@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<catalog xmlns="http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0" xmlns:xlink="http://www.w3.org/1999/xlink" name="List of THREDDS catalogs!" version="1.0.1">
+
+ <!--$Id$-->
+ <!--$Date$-->
+ <!--$Author$-->
+ <!--$Revision$-->
+ <!--$HeadURL$-->
+ <!--$Keywords: $-->
+
+<catalog xmlns       = "http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0" 
+         xmlns:xlink = "http://www.w3.org/1999/xlink" 
+         name        = "List of THREDDS catalogs!"
+         version     = "1.0.1">
   <catalogRef xlink:href="http://opendap.tudelft.nl/thredds/catalog.xml"              xlink:title="3TU"       name=""/>
   <catalogRef xlink:href="http://opendap.deltares.nl/thredds/catalog.xml"             xlink:title="Deltares"  name=""/>
   <catalogRef xlink:href="http://gsics.eumetsat.int/thredds/catalog.xml"              xlink:title="EUMETSAT"  name=""/>
@@ -16,5 +27,11 @@
   <catalogRef xlink:href="http://motherlode.ucar.edu/thredds/catalog.xml"             xlink:title="UCAR"      name=""/>
   <catalogRef xlink:href="http://coast-enviro.er.usgs.gov/thredds/catalog.xml"        xlink:title="USGS Coastal and marine sediment transport group" name=""/>
   <catalogRef xlink:href="http://cida.usgs.gov/qa/thredds/catalog.xml"                xlink:title="USGS Center for Integrated Data Analytics (CIDA)" name=""/>
-  <catalogRef xlink:href="http://geoport.whoi.edu/thredds/catalog.xml"                xlink:title="WHOI"      name=""/>
+  <catalogRef xlink:href="http://geoport.whoi.edu/thredds/catalog.xml"                xlink:title="WHOI"           name=""/>
+  <catalogRef xlink:href="http://opendap.aviso.oceanobs.com/thredds/catalog.xml"      xlink:title="CNES&CLS (AVISO)" name=""/>
+  <catalogRef xlink:href="http://opendap-tpac.arcs.org.au/thredds/catalog.xml"        xlink:title="Australian Research Collaboration Service (ARCS)" name=""/>
+  <catalogRef xlink:href="http://opendap.bom.gov.au:8080/thredds/catalog.xml"         xlink:title="Australian Bureau of Meteorology (BOM)" name=""/>
+  <catalogRef xlink:href="http://fe4.sic.rm.cnr.it:8080/thredds/catalog.xml"          xlink:title="CRN Italy" name=""/>
+  <catalogRef xlink:href="http://bmlsc.ucdavis.edu:8080/opendap/catalog.xml"          xlink:title="Bodega Ocean Observing Node UC Davis (BOON)" name=""/>
+
 </catalog>
