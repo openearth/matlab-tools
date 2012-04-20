@@ -41,6 +41,11 @@ function D = dir2(varargin)
 %                    that match the expression are included in the
 %                    results. 
 %                    defaults to '.*', include all files
+%
+%     * file_excl    string containing regular expression. All filenames
+%                    that match the expression are excluded from the
+%                    results. 
+%                    defaults to '', exclode no files
 % 
 %     * depth        maximum directory depth to search on. Set to 0 for a non 
 %                    recursive query, and to infinitie to search all subfolders
@@ -164,6 +169,7 @@ function D = dir2(varargin)
 OPT.basepath         = pwd;      % indicate basedpath to start looking
 OPT.dir_excl         = '.svn$';  % pattern to exclude
 OPT.file_incl        = '.*';     % pattern to include
+OPT.file_excl        = '';       % pattern to excldue
 OPT.depth            = inf;      % indicate recursion depth (0 is only this folder)
 OPT.no_dirs          = false;    % only list files, not directories
 
@@ -178,26 +184,33 @@ OPT.basepath = relativeToabsolutePath(OPT.basepath);
 
 %% overrule default settings by property pairs, given in varargin
 
+%% crop last fileseparator from the basepath
 OPT = setproperty(OPT, varargin{nextarg:end});
 
-if ~exist(OPT.basepath,'dir')
-    error(['directory ''',OPT.basepath,''' does not exist'])
-end
-
-%% crop last fileseparator from the basepath
 if strcmp(OPT.basepath(end),filesep)
     OPT.basepath(end) = [];
+end
+
+if exist(OPT.basepath,'dir') == 7
+    method = 'folder';
+else
+    if exist(OPT.basepath,'file')
+        method = 'file';
+    else
+        error(['directory ''',OPT.basepath,''' does not exist'])
+    end
 end
 
 %% find filenames
 %  pattern_excl is appended with two criteria that exclude '..' and '.' from
 %  the dir inquiry. See 'help regexp' for explanation.
-newD = dir_in_subdir(OPT.basepath,[OPT.dir_excl '|^\.{1,2}$'],OPT.file_incl,OPT.depth);
+newD = dir_in_subdir(OPT.basepath,[OPT.dir_excl '|^\.{1,2}$'],OPT.file_incl,OPT.file_excl,OPT.depth);
 if isempty(newD)
     % add the field pathname to the empty struct
     newD(1).pathname = '';
     newD(1) = [];
 end
+
 %% add basepath
 % split basepath in path and folder name
 [a,b,c] = fileparts(OPT.basepath);
@@ -205,12 +218,17 @@ if ~strcmp(a(end),filesep)
     a = [a filesep];
 end
 
-% query the folder
-D     = dir(a);
-
-% find the folder from the basepath
-D     = D([D.isdir]);
-D     = D(strcmpi({D.name},[b c]));
+switch method
+    case 'folder'
+        % query the folder
+        D     = dir(a);
+        
+        % find the folder from the basepath
+        D     = D([D.isdir]);
+        D     = D(strcmpi({D.name},[b c]));
+    case 'file'
+        D     = dir(OPT.basepath);
+end
 
 % add field datenum for old matlab versions
 if ~isfield(D,'datenum')
@@ -218,11 +236,15 @@ if ~isfield(D,'datenum')
 end
 
 D(1).pathname = a;
-D(1).isdir    = true;
-D(1).bytes    = sum([newD(~[newD.isdir]).bytes]);
-
-% concatenate D
-D = [D; newD];
+switch method
+    case 'folder'
+        D(1).isdir    = true;
+        D(1).bytes    = sum([newD(~[newD.isdir]).bytes]);
+        % concatenate D
+        D = [D; newD];
+    case 'file'
+        D(1).isdir    = false;
+end
 
 % remove directories from output
 if OPT.no_dirs
@@ -230,7 +252,7 @@ if OPT.no_dirs
 end
 %EOF
 
-function D = dir_in_subdir(basepath,dir_excl,file_incl,depth)
+function D = dir_in_subdir(basepath,dir_excl,file_incl,file_excl,depth)
 
 %% do a regular dir query
 D = dir([basepath filesep]);
@@ -255,9 +277,14 @@ D(dirs(dirs_to_exclude)) = [];
 
 %% include only files that match 'file_inc' from D
 files            = find(~[D.isdir]);
+
 files_to_include = false(size(files));
+files_to_exclude = false(size(files));
+
 files_to_include(~cellfun('isempty',regexp({D(files).name},file_incl,'once'))) = true;
-D(files(~files_to_include)) = [];
+files_to_exclude(~cellfun('isempty',regexp({D(files).name},file_excl,'once'))) = true;
+
+D(files(~files_to_include | files_to_exclude)) = [];
 
 %% return if D is empty
 if isempty(D)
