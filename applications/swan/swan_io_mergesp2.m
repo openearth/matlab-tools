@@ -16,6 +16,9 @@ function swan_io_mergesp2(dr,fout,varargin)
 %   dr                      = directory containing sp2-files to be merged
 %   fout                    = filename for merged sp2-file
 %   fexclude    (optional)  = string-array specifying sp2-files to be excluded in directory dr
+%   prefix      (optional)  = prefix of files to be merged (only sp2 files starting with prefix will be merged)
+%   firstpoint  (optional)  = first spectral output point to be merged
+%   lastpoint   (optional)  = last spectral output point to be merged
 %   CS1         (optional)  = structure with fields code and type of coordinates system 1
 %   CS2         (optional)  = structure with fields code and type of coordinates system 2
 %
@@ -24,6 +27,8 @@ function swan_io_mergesp2(dr,fout,varargin)
 %   swan_io_mergesp2('d:\test\','test.sp2','CS1',CS1,'CS2',CS2) 
 %       with CS1.code = 32631, CS1.type = 'xy', CS2.code = 4326, CS2.type = 'geo'
 %   swan_io_mergesp2('d:\test\','test.sp2','fexclude',{'nest_t1.sp2','nest_t2.sp2'}) 
+%   swan_io_mergesp2('d:\test\','test.sp2','prefix','csm'}) 
+%   swan_io_mergesp2('d:\test\','test.sp2','firstpoint',5,'lastpoint',10}) 
 %
 %   See also SWAN
 
@@ -76,6 +81,8 @@ OPT.fexclude    = '';
 OPT.CS1 = struct;
 OPT.CS2 = struct;
 OPT.prefix = [];
+OPT.firstpoint = [];
+OPT.lastpoint = [];
 OPT = setproperty(OPT,varargin{:});
 
 if nargin==0;
@@ -214,8 +221,18 @@ for i=1:n
         else
             fprintf(fi2,'%s\n','LONLAT                                  locations in spherical coordinates');
         end
-        fprintf(fi2,'%i\n',spec.nPoints);
-        for j=1:spec.nPoints
+        if isempty(OPT.firstpoint)
+            i1=1;
+        else
+            i1=OPT.firstpoint;
+        end
+        if isempty(OPT.lastpoint)
+            i2=spec.nPoints;
+        else
+            i2=OPT.lastpoint;
+        end
+        fprintf(fi2,'%i\n',i2-i1+1);
+        for j=i1:i2
             fprintf(fi2,'%15.6f %15.6f\n',spec.x(j),spec.y(j));
         end
         fprintf(fi2,'%s\n','AFREQ                                   absolute frequencies in Hz');
@@ -236,7 +253,7 @@ for i=1:n
     end
     
     fprintf(fi2,'%s\n',datestr(spec.time(it).time,'yyyymmdd.HHMMSS'));
-    for j=1:spec.nPoints
+    for j=i1:i2
         if spec.time(it).points(j).factor>0
             fprintf(fi2,'%s\n','FACTOR');
             fprintf(fi2,'%18.8e\n',spec.time(it).points(j).factor);
