@@ -70,10 +70,10 @@ function actual_range = nc_actual_range(ncfile,varname)
                 'projection_y_coordinate',...
                 'time',...
                 'z'},info.Attribute(ind).Value);
-         warning(['variable is not a CF coordinate variable and might not be contiguous: ',varname])
+         fprintf(1,['variable is not a CF coordinate variable and might not be contiguous: "%s"\n'],varname);
         end
       else
-         warning(['variable is not a CF coordinate variable and might not be contiguous: ',varname])
+         fprintf(1,['variable is not a CF coordinate variable and might not be contiguous: "%s"\n'],varname);
       end
 
 %% read attribute if present
@@ -90,7 +90,7 @@ function actual_range = nc_actual_range(ncfile,varname)
       end
       
    else
-      warning('variable is not a CF coordinate variable and might not be contiguous')
+      fprintf(1,['variable is not a CF coordinate variable and might not be contiguous: "%s"\n'],varname);
    end
    
 %% read data
