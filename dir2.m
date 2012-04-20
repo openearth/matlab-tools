@@ -185,7 +185,7 @@ OPT.basepath = relativeToabsolutePath(OPT.basepath);
 %% overrule default settings by property pairs, given in varargin
 
 %% crop last fileseparator from the basepath
-OPT = setproperty(OPT, varargin{nextarg:end});
+OPT = setproperty(OPT, varargin(nextarg:end));
 
 if strcmp(OPT.basepath(end),filesep)
     OPT.basepath(end) = [];
@@ -284,6 +284,7 @@ files_to_exclude = false(size(files));
 files_to_include(~cellfun('isempty',regexp({D(files).name},file_incl,'once'))) = true;
 files_to_exclude(~cellfun('isempty',regexp({D(files).name},file_excl,'once'))) = true;
 
+
 D(files(~files_to_include | files_to_exclude)) = [];
 
 %% return if D is empty
@@ -302,6 +303,7 @@ if depth>0
             [basepath filesep D(ii).name], ...   % basepath:  construct from basepath and directory name
             dir_excl,...                         % dir_excl:  keep as is
             file_incl,...                        % file_incl: keep as is
+            file_excl,...                        % file_excl: keep as is
             depth-1);                            % depth:     subtract 1
         if ~isempty(newD)
             D(ii).bytes = sum([newD(~[newD.isdir]).bytes]);
