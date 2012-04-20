@@ -132,8 +132,12 @@ else
 
         OPT.x_ranges{i} = nc_actual_range(OPT.urls{i}, varname_x);
         OPT.y_ranges{i} = nc_actual_range(OPT.urls{i}, varname_y);
-        OPT.x_ranges{i} = sort(str2num(OPT.x_ranges{i}{1}));   % <-- string to numerical format, otherwise 'grid_orth_getDataInPolygon.m' will not work anymore
-        OPT.y_ranges{i} = sort(str2num(OPT.y_ranges{i}{1}));   % <-- string to numerical format, otherwise 'grid_orth_getDataInPolygon.m' will not work anymore
+        if ~isnumeric(OPT.x_ranges{i}) % backwards compatibility stuff ??
+        OPT.x_ranges{i} = str2num(OPT.x_ranges{i}{1});   % <-- string to numerical format, otherwise 'grid_orth_getDataInPolygon.m' will not work anymore
+        OPT.y_ranges{i} = str2num(OPT.y_ranges{i}{1});   % <-- string to numerical format, otherwise 'grid_orth_getDataInPolygon.m' will not work anymore
+        end
+        OPT.x_ranges{i} = sort(OPT.x_ranges{i});
+        OPT.y_ranges{i} = sort(OPT.y_ranges{i});
     end
     close(wbh)
 end
