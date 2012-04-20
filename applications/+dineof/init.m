@@ -6,7 +6,39 @@ function [T0,E0] = init(cmd,initfile)
 %
 %See also: DINEOF
 
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011-2012 Deltares 4 Rijkswaterstaat: Resmon project
+%       Gerben de Boer
+%
+%       <g.j.deboer@deltares.nl>
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 %% initialize %  defaults
+
 %  whether field is char or num
 %  order corresponds to order in init file
 %  empty type ('' or []) corresponds to type (char or num) in init file
@@ -43,7 +75,7 @@ function [T0,E0] = init(cmd,initfile)
    E0.alpha            = {'Parameter for smoothing, alpha=0 uses integers: time=1:nt.'};
    E0.numit            = {'Parameter for number of iterations.'};
    E0.nev              = {'Parameter for setting the numerical variables for the computation of the required',...
-                          'singular values and associated modes.Set it to the maximum number of modes you want to compute.'};
+                          'singular values and associated modes. Set it to the maximum number of modes you want to compute.'};
    E0.neini            = {'Parameter for the minimum  number of modes you want to compute.'};
    E0.ncv              = {'Parameter for the maximal size for the Krylov subspace ',...
                           '(Do not change it as soon as ncv > nev+5) ',...

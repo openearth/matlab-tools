@@ -38,6 +38,38 @@ function varargout = run(data, time, mask, varargin)
 %
 %See also: dineof, harmanal
 
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011-2012 Deltares 4 Rijkswaterstaat: Resmon project
+%       Gerben de Boer
+%
+%       <g.j.deboer@deltares.nl>
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 % DINEOF suggestions
 % - use ? instead of #, then the syntax is OPeNDAP
 % - also use [] for time string
@@ -134,9 +166,9 @@ function varargout = run(data, time, mask, varargin)
       
    else
      dim = 2;
-  end
+   end
   
-  data = OPT.transformFun(data);
+   data = OPT.transformFun(data);
    
 %% check DINEOF requirements: time(t), data(x,y,t), mask(x,y)
 
@@ -147,8 +179,17 @@ function varargout = run(data, time, mask, varargin)
 
    if ~(isequal(sz(1:2),size(mask)))
       whos
-      error('data(:,:,y) should have size as mask')
+      error('data(:,:,t) should have size as mask')
    end
+
+%% Apply mask to data to avoid confusion later on
+
+   mask2 = double(mask);
+   mask2(~mask)=nan;
+   for it=1:length(time)
+       data(:,:,it) = data(:,:,it).*mask2;
+   end
+   clear mask2
 
 %% write input data
 
@@ -167,7 +208,7 @@ function varargout = run(data, time, mask, varargin)
    varid.mask = netcdf.defVar(NCid,OPT.maskname,'short' ,dimid.space); 
 
    netcdf.putAtt(NCid,varid.time,'standard_name','time');
-   netcdf.putAtt(NCid,varid.time,'standard_name','days since 1970-01-01');
+   netcdf.putAtt(NCid,varid.time,'units'        ,'days since 1970-01-01');
    
    netcdf.putAtt(NCid,varid.data,'long_name'    ,'data');
    netcdf.putAtt(NCid,varid.data,'missing_value',9999); % clouds
@@ -318,14 +359,14 @@ else
    varid.varEx  = netcdf.defVar(NCid,'varEx' ,'float' , dimid.P); 
    
    netcdf.putAtt(NCid,varid.P     ,'long_name'    ,'optimal number of EOF modes');
-   netcdf.putAtt(NCid,varid.mean  ,'long_name'    ,'spatiotemporal mean');
+   netcdf.putAtt(NCid,varid.mean  ,'long_name'    ,'spatio-temporal mean');
    netcdf.putAtt(NCid,varid.lftvec,'long_name'    ,'spatial EOF modes');
    netcdf.putAtt(NCid,varid.rghvec,'long_name'    ,'temporal EOF modes');
    netcdf.putAtt(NCid,varid.vlsng ,'long_name'    ,'singular values');
    netcdf.putAtt(NCid,varid.varEx ,'long_name'    ,'explained variance');
 
    netcdf.putAtt(NCid,varid.time  ,'standard_name','time');
-   netcdf.putAtt(NCid,varid.time  ,'standard_name','days since 1970-01-01');
+   netcdf.putAtt(NCid,varid.time  ,'units'        ,'days since 1970-01-01');
 
    netcdf.putAtt(NCid,varid.mask  ,'long_name'    ,'mask');
    netcdf.putAtt(NCid,varid.mask  ,'flag_values'  ,[0 1]);
@@ -385,11 +426,11 @@ else
    if OPT.plot
       TMP = figure;
       dineof.inspect(data, time, mask, dataf, S);
-      if OPT.export
-         print2screensize(strrep(OPT.eoffile,'.nc','.png'))
-      end
-      pausedisp
-      try, close(TMP),end
+      %if OPT.export
+      %   print2screensize(strrep(OPT.eoffile,'.nc','.png'))
+      %end
+      %pausedisp
+      %try, close(TMP),end
    end
    
 end % status

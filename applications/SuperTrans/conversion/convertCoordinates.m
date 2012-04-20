@@ -98,7 +98,7 @@ function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 % |  7415 | 'Amersfoort / RD New + NAP' | 'projected'     (x,y)     |  systems:
 % | 32631 | 'WGS 84 / UTM zone 31N'     | 'projected'     (x,y)     |  (name <=> code):
 % | 23031 | 'ED50 / UTM zone 31N'       | 'projected'     (x,y)     |  <a href="http://www.epsg-registry.org">www.epsg-registry.org</a>
-% +-------+-----------------------------+----------------------------+
+% +-------+-----------------------------+---------------------------+
 %
 % See also: SuperTrans, EPSG.mat
 

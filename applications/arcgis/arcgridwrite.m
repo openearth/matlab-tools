@@ -10,7 +10,7 @@ function arcgridwrite(fileName,X,Y,Z,varargin)
 %       fileName:  output filename including extension
 %       X:         X coordinates (m x n) 
 %       Y:         Y coordinates (m x n) 
-%       Z:         gridded data (m x n) 
+%       Z:         gridded data  (m x n) 
 %
 %   SYNTAX AND OPTIONS
 %       arcgridwrite('D:\tools\bathyGrid.asc',X,Y,Z)
@@ -33,8 +33,9 @@ function arcgridwrite(fileName,X,Y,Z,varargin)
 %   1) Because the Arc ASCII format has only one parameter for cell size,
 %   both X and Y must have the same, non-varying grid spacing.  
 %
-% A.Stevens @ USGS 7/18/2007
-% astevens@usgs.gov
+% A.Stevens @ USGS 7/18/2007, astevens@usgs.gov
+%
+% SEE ALSO: ARCGIS
 
 % Copyright (c) 2010, Andrew Stevens
 % All rights reserved.
