@@ -108,6 +108,8 @@ for ivar = 1:nvars
     end
     strlength(ivar) = max([max(cellfun(@length, vars.(varnames{ivar}))) length(varnames{ivar})]);
 end
+% convert vars-structure to cell array containing the data
+data = reshape(cells2cell(struct2cell(vars)), nsamples, nvars)';
 
 %% create header
 txt = '';
@@ -117,7 +119,7 @@ end
 
 creator = sprintf('%s @ %s (%s)', getenv('USERNAME'), getenv('COMPUTERNAME'), getenv('USERDOMAIN'));
 
-txt = sprintf('%s// Created at: %s\n// Created by: %s\n', txt, OPT.date, creator);
+txt = sprintf('%s// Created at: %s\n// Created by: %s\n\n', txt, OPT.date, creator);
 
 % create cell matrix containing the formats
 formats = [repmat({'%'}, size(varnames'));...
@@ -125,16 +127,8 @@ formats = [repmat({'%'}, size(varnames'));...
     repmat({'s'}, size(varnames'));
     repmat({'\t'}, size(varnames(1:end-1)')) {'\n'}];
 
-txt = sprintf(['%s\n' sprintf('%s', formats{:})], txt, varnames{:});
-
-%% add variable values
-for isample = 1:nsamples
-    for ivar = 1:nvars
-        if iscell(vars.(varnames{ivar}))
-            txt = sprintf(['%s' sprintf('%s', formats{:,ivar})], txt, vars.(varnames{ivar}){isample});
-        end
-    end
-end
+%% add column headers and variable values
+txt = sprintf(['%s'  repmat(sprintf('%s', formats{:}), 1, nsamples+1)], txt, varnames{:}, data{:});
 
 %% write to file
 if fname
