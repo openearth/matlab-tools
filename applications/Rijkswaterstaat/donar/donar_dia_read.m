@@ -1,0 +1,218 @@
+function D = donar_dia_read(fname, varargin)
+%DONAR_DIA_READ  Read DONAR DIA file into a struct
+%
+%   Read DONAR DIA file into a struct without interpretation of the result.
+%   This function is based on reversed engineering of several DONAR DIA
+%   files. It intends to split all data available in the ASCII file into a
+%   struct, without interpretating these results. It just reads meta data,
+%   if it sees some text and it reads true data if it only sees numbers.
+%   The file structure is based on headers and fieldnames and as much as
+%   possible preserved.
+%
+%   Syntax:
+%   D = donar_dia_read(fname, varargin)
+%
+%   Input:
+%   fname =     Filename of DONAR DIA file
+%   varargin =  from:       First block to read
+%               to:         Last block to read
+%               stride:     Blocks to skip after each read
+%               index:      Blocks to read (overwrites from, to and stride)
+%               nodata:     Read meta data only
+%               parse:      Parse structure afterwards
+%               verbose:    Show progress bar
+%
+%   Output:
+%   D     =     Resuting data structure
+%
+%   Example
+%   D = donar_dia_read('example.dia')
+%   D = donar_dia_read('example.dia','to',10)       % read first 10 blocks
+%   D = donar_dia_read('example.dia','stride',20)   % read every twentieth block
+%
+%   See also donar_dia_parse, donar_dia_view
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 Deltares
+%       Bas Hoonhout
+%
+%       bas.hoonhout@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 06 Apr 2012
+% Created with Matlab version: 7.12.0.635 (R2011a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% read options
+
+OPT = struct( ...
+    'from',     0,      ...
+    'stride',   1,      ...
+    'to',       Inf,    ...
+    'index',    [],     ...
+    'nodata',   false,  ...
+    'parse',    true,   ...
+    'verbose',  true        );
+
+OPT = setproperty(OPT, varargin{:});
+
+if OPT.verbose
+    wb = waitbar(0,'Please wait...');
+end
+
+%% read file
+
+fid = fopen(fname,'r');
+contents = fread(fid,'*char')';
+fclose(fid);
+
+D = struct();
+
+%% read sections
+
+% read all section headers
+ihdr = regexpi(contents,'\[(\w{3})\]\s*\n','start');
+shdr = regexpi(contents,'\[(\w{3})\]\s*\n','tokens');
+shdr = cellfun(@(x)x{1},shdr,'UniformOutput',false);
+
+% determine unique headers
+[uhdr i] = unique(shdr);
+[~,   i] = sort(i);
+uhdr     = uhdr(i);
+
+%% read fields
+
+% determine number of parts
+ipart = find(strcmpi(shdr,uhdr{1}));
+npart = length(ipart);
+
+i1 = max(OPT.from,1);
+i2 = min(OPT.to,npart);
+
+if isempty(OPT.index)
+    OPT.index = i1:OPT.stride:i2;
+else
+    i1 = min(OPT.index);
+    i2 = max(OPT.index);
+end
+
+% save header
+D.header = regexprep(contents(1:ihdr(1)-1),'\s','');
+
+D.data = struct();
+
+ii = 1;
+for i = OPT.index
+    
+    if OPT.verbose
+        waitbar((i-i1+1)/(i2-i1+1),wb,sprintf('Reading %d/%d...',i,npart));
+    end
+    
+    j1 = ipart(i);
+    
+    if i == npart
+        j2 = length(ipart);
+    else
+        j2 = ipart(i+1)-1;
+    end
+    
+    for j = j1:j2
+        
+        str = contents(ihdr(j)+6:ihdr(j+1)-1);
+        
+        % check if this is a meta or data block
+        if ~isempty(regexpi(str,'[a-zA-Z]{3}','start'))
+            % meta
+            
+            % split all lines
+            re = regexpi(str,'(\w{3});(.*?)\s*\n','tokens');
+            re = reshape([re{:}],2,length(re))';
+            
+            % make sure a uniqe identifier is constructed from the first
+            % few field values
+            val = cellfun(@(x)regexpi(x,';','split'),re(:,2),'UniformOutput',false);
+            while length(unique(re(:,1)))<length(re(:,1))
+                re(:,1) = cellfun(@(x1,x2)[x1 '_' x2{1}],re(:,1),val,'UniformOutput',false);
+                val     = cellfun(@(x)x(2:end),val,'UniformOutput',false);
+            end
+            
+            D.data(ii).(shdr{j}) = cell2struct(val,re(:,1));
+        else
+            % data
+            
+            if ~OPT.nodata
+            
+                % remove all line breaks
+                str = regexprep(str,'[\r\n]','');
+
+                % split primary axes steps (two intertwined, weirdo!)
+                re = regexpi(str,'/|:','split');
+
+                % split primary axes in secondary axes steps, if present (again
+                % two intertwined!)
+                s = {};
+                for k = 1:2
+                    s1 = cellfun(@(x)regexpi(x,'[;\\]+','split'),re(k:2:end),'UniformOutput',false)';
+                    s2 = cellfun(@str2double,s1,'UniformOutput',false);
+
+                    s{k} = cell2mat(s2);
+                    s{k}(abs(s{k})>1e6) = nan;
+                end
+
+                % store two primary axes separately
+                n = min(cellfun(@(x)size(x,1),s));
+
+                D.data(ii).(shdr{j}) = struct(   ...
+                    'data1',    s{1}(1:n,:),     ...
+                    'data2',    s{2}(1:n,:)         );
+            end
+        end
+    end
+    
+    ii = ii + 1;
+end
+
+%% parse fields
+
+if OPT.parse
+    if OPT.verbose
+        waitbar(1,wb,'Parsing data...');
+    end
+    
+    D = donar_dia_parse(D);
+end
+
+if OPT.verbose
+    close(wb);
+end

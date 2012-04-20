@@ -1,4 +1,4 @@
-function D = donar_dia_read(fname)
+function D = donar_dia_read2(fname)
 %DONAR_DIA_READ   read donar *.dia file into struct (BETA)
 %
 %   D = donar_dia_read('f:\R\DenHelderJaar2008Debietdia.dia');
@@ -19,9 +19,9 @@ function D = donar_dia_read(fname)
 % LOC = locatie
 % ANA = ?
 % BEM = bemonstering
-% BEW = bewerking ? 
-% VAT = vat? 
-% TYP = type? 
+% BEW = bewerking ?
+% VAT = vat?
+% TYP = type?
 % TYD = tijdsspanne ?
 % PLT = plaats ?
 % STA = statistiek ?
@@ -55,7 +55,7 @@ while ~strcmpi(rec(1:5),'[wrd]')
    end
 
    rec   = fgetl(fid);
-   
+
 end
 
 raw       = textscan(fid,'%f%f%s','delimiter',';:'); % ';' inside tuples and '/0:' between tuples
@@ -70,8 +70,8 @@ D.values  = str2num(char(D.values));
 fclose(fid);
 
 % [IDT;*DIF*;A;;20100716]
-% CMT;DONAR Interface Module                                      
-% CMT;Export vanuit iBever 3.7.105 om: 23:58:23 op 16-7-2010      
+% CMT;DONAR Interface Module
+% CMT;Export vanuit iBever 3.7.105 om: 23:58:23 op 16-7-2010
 % [W3H]
 % PAR;Q;Debiet
 % CPM;10;Oppervlaktewater
