@@ -1,5 +1,5 @@
-function y = nanvar(x,dim,flag)
-% FORMAT: Y = NANVAR(X,DIM,FLAG)
+function y = nanvar(x,flag,dim)
+% FORMAT: Y = NANVAR(X,FLAG,DIM)
 % 
 %    Variance ignoring NaNs
 %
@@ -7,14 +7,14 @@ function y = nanvar(x,dim,flag)
 %    the MATLAB Statistics Toolbox and is meant as a replacement (hence the
 %    identical name).  
 %
-%    NANVAR(X,DIM) calculates the standard deviation along any dimension of
+%    NANVAR(X,0,DIM) calculates the standard deviation along any dimension of
 %    the N-D array X ignoring NaNs.  
 %
-%    NANVAR(X,DIM,0) normalizes by (N-1) where N is SIZE(X,DIM).  This make
-%    NANVAR(X,DIM).^2 the best unbiased estimate of the variance if X is
+%    NANVAR(X,0,DIM) normalizes by (N-1) where N is SIZE(X,DIM).  This
+%    makes NANVAR(X,0,DIM).^2 the best unbiased estimate of the variance if X is
 %    a sample of a normal distribution. If omitted FLAG is set to zero.
 %    
-%    NANVAR(X,DIM,1) normalizes by N and produces second moment of the 
+%    NANVAR(X,1,DIM) normalizes by N and produces second moment of the 
 %    sample about the mean.
 %
 %    If DIM is omitted NANVAR calculates the standard deviation along first
@@ -23,7 +23,7 @@ function y = nanvar(x,dim,flag)
 %    Similar replacements exist for NANMEAN, NANMEDIAN, NANMIN, NANMAX, 
 %    NANSTD, and NANSUM which are all part of the NaN-suite.
 %
-%    See also STD
+%    See also STD, nanmean
 
 % -------------------------------------------------------------------------
 %    author:      Jan Gläscher
