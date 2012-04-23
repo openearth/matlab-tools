@@ -81,9 +81,10 @@ function varargout = harmanal_predict(t,varargin)
    OPT.freq             = []; 
    OPT.omega            = []; 
    OPT.T                = [];
-   OPT.mean             = [];
+   OPT.mean             = 0;
    OPT.hamplitudes      = [];
    OPT.hphases          = [];
+   OPT.screenoutput     = 0;
    OPT.transformFun     = @(x) x;% @(x) log10(x);
    OPT.transformFunInv  = @(x) x;% @(x) 10.^x;
    
@@ -91,7 +92,7 @@ function varargout = harmanal_predict(t,varargin)
        varargout = { OPT};
        return
    end
-
+   
    OPT = setproperty(OPT,varargin{:});
 
    if ~(OPT.transformFun(OPT.transformFunInv(1))==1)
@@ -99,26 +100,26 @@ function varargout = harmanal_predict(t,varargin)
    end
 
 %% Add and reformat (optional) fieldnames
-   errtxt = (' give of one: period "T", (radial) frequency "freq" ("omega")');
+   errtxt = ('warning, ONLY mean used, no period "T", (radial) frequency "freq" ("omega") given\n');
    if isempty(OPT.omega);
       if     ~isempty(OPT.freq );OPT.omega = 2.*pi.*OPT.freq;
       elseif ~isempty(OPT.T    );OPT.omega = 2.*pi./OPT.T;
       else
-         error(errtxt)
+         if OPT.screenoutput;fprintf(1,errtxt);end
       end
    end
    if isempty(OPT.freq );
       if     ~isempty(OPT.omega);OPT.freq = OPT.omega./2./pi;
       elseif ~isempty(OPT.T    );OPT.freq = 1./OPT.T;
       else
-         error(errtxt)
+         if OPT.screenoutput;fprintf(1,errtxt);end
       end
    end
    if isempty(OPT.T    );
       if     ~isempty(OPT.omega);OPT.T    = 2.*pi./OPT.omega;
       elseif ~isempty(OPT.freq );OPT.T    = 1./OPT.freq     ;
       else
-         error(errtxt)
+         if OPT.screenoutput;fprintf(1,errtxt);end
       end
    end
    

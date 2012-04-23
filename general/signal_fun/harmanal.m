@@ -44,6 +44,14 @@ function [varargout] = harmanal(t,h,varargin);
 % transposed. The resulting hfit is returned with the size of h 
 % (to be able to calculate h - hfit easily).
 %
+% Example: Extract the very same period T you impose:
+%
+%     t   = linspace(0,2*pi,100);
+%     T   = pi;
+%     FIT = harmanal(t,cos(2*pi*t./T),'T',T);
+%     FIT.hamplitudes
+%     FIT.hphases    
+%
 % See also: T_TIDE, FFT_ANAL, FFT_FILTER, HARMANAL_PREDICT
 
 %   --------------------------------------------------------------------
@@ -108,26 +116,26 @@ function [varargout] = harmanal(t,h,varargin);
    end
 
 %% Add and reformat (optional) fieldnames
-
+   errtxt = ('warning, ONLY mean used, no period "T", (radial) frequency "freq" ("omega") given\n');
    if isempty(OPT.omega);
       if     ~isempty(OPT.freq );OPT.omega = 2.*pi.*OPT.freq;
       elseif ~isempty(OPT.T    );OPT.omega = 2.*pi./OPT.T;
       else
-         error(' give either period, frequency or omega')
+         if OPT.screenoutput;fprintf(1,errtxt);end
       end
    end
    if isempty(OPT.freq );
       if     ~isempty(OPT.omega);OPT.freq = OPT.omega./2./pi;
       elseif ~isempty(OPT.T    );OPT.freq = 1./OPT.T;
       else
-         error(' give either period, frequency or omega')
+         if OPT.screenoutput;fprintf(1,errtxt);end
       end
    end
    if isempty(OPT.T    );
       if     ~isempty(OPT.omega);OPT.T    = 2.*pi./OPT.omega;
       elseif ~isempty(OPT.freq );OPT.T    = 1./OPT.freq     ;
       else
-         error(' give either period, frequency or omega')
+         if OPT.screenoutput;fprintf(1,errtxt);end
       end
    end
    
@@ -171,7 +179,7 @@ function [varargout] = harmanal(t,h,varargin);
    mask2keep = ~(isnan(t) | isnan(h));
    
 %% mean component
-      if sum(OPT.omega==0)==0
+   if sum(OPT.omega==0)==0
    %   OPT.omega     = [0       OPT.w];
    %   OPT.freq      = [0       OPT.f];
    %   OPT.T         = [realmax OPT.T];
@@ -180,7 +188,7 @@ function [varargout] = harmanal(t,h,varargin);
       error('Cannot include mean component (frequency==0)')
    elseif sum(OPT.omega==0)>1
       error('Mean component (frequency==0) added more than once')
-      end
+   end
    
 %% specify least square solution      
    
@@ -423,7 +431,11 @@ function [varargout] = harmanal(t,h,varargin);
       [dummy, closest_components] = min(abs(diff(OPT.freq)));
 
       if isempty(closest_components)
+          if nw==1
           T_rayleigh = 1/OPT.freq(1); % one component only
+          else
+          T_rayleigh = -Inf;
+          end
       else
           T_rayleigh = (1/(OPT.freq(closest_components+1)-OPT.freq(closest_components)));
       end
@@ -458,12 +470,13 @@ function [varargout] = harmanal(t,h,varargin);
       
 %% NYQUIST CHECK       
 
+      if  nw > 0
       if (1/2/min(diff(t))) > (max(OPT.freq))
-      if OPT.screenoutput==1
-      disp('Nyquist criterion: OK')
-      end
+          if OPT.screenoutput==1
+          disp('Nyquist criterion: OK')
+          end
       else
-      disp('Nyquist criterion: NOT OK')
+          disp('Nyquist criterion: NOT OK')
       end
       
       if OPT.screenoutput==1
@@ -471,6 +484,7 @@ function [varargout] = harmanal(t,h,varargin);
             num2str(1/2/min(diff(t))),' / ',...
             num2str(max(OPT.freq))]);
       disp(['----------',spaces1,'--------------------------------------------------------------------------------'])
+      end
       end
 
 %% RETURN VALUES
@@ -499,50 +513,20 @@ function [varargout] = harmanal(t,h,varargin);
    end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function r = ranknumber(X)
 %RANKNUMBER
 %
-% rankno = ranknumber(X) returns an array with the same
-% size as X, with each element containing the rank number
-% of the value of X at that position.
+% rankno = ranknumber(X) returns array with same size as X, with each 
+% element containing the rank number of the value of X at that position.
+%
+% See also:
 
-%   --------------------------------------------------------------------
-%   Copyright (C) 2004 Delft University of Technology
-%       Gerben J. de Boer
-%
-%       g.j.deboer@citg.tudelft.nl	
-%
-%       Fluid Mechanics Section
-%       Faculty of Civil Engineering and Geosciences
-%       PO Box 5048
-%       2600 GA Delft
-%       The Netherlands
-%
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
-%
-%   This library is distributed in the hope that it will be useful,
-%   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
-%
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   --------------------------------------------------------------------   
    [sortedX,I]= sort(X);
-   
+   r = []; % if X==[]
    for j = 1:length(X)
       r(I(j)) = j;
    end
-   
    r = length(X) - r + 1;
-
    % disp(num2str([(1:length(X))', X,ranknumber']));
    
