@@ -89,21 +89,22 @@ matfile = fullfile(fileparts(which('xb_get_params')), 'params.mat');
 
 [params params_array] = xb_get_params;
 
-if ~isempty(params_array) && ~OPT.skip_headers
-    parname = {params_array.name};
-    partype = {params_array.partype};
-    upartype = unique(partype);
-elseif exist(matfile, 'file') && ~OPT.skip_headers
-    load(matfile);
-    parname = {params_array.name};
-    partype = {params_array.partype};
-    upartype = unique(partype);
-else
+if OPT.skip_headers
     warning('OET:xbeach:headers', 'No XBeach parameter category definition found, skipping headers');
     parname = {xb.data.name};
     upartype = {'General'};
     partype = cell(size(parname));
-    [partype{:}] = deal(upartype{1});
+    partype(:) = deal(upartype);
+else
+    if isempty(params_array) && exist(matfile, 'file')
+        load(matfile);
+    end
+    parname = {params_array.name};
+    partype = {params_array.partype};
+    % add 'General' category for remaining variables (if present)
+    parname = [parname setdiff({xb.data.name}, parname)];
+    partype(end+1:length(parname)) = deal({'General'});
+    upartype = unique(partype);
 end
 
 % derive maximum stringsize of all variable names
