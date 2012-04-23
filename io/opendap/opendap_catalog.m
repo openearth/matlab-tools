@@ -56,6 +56,7 @@ function varargout = opendap_catalog(varargin)
 %   
 %See web:  http://www.unidata.ucar.edu/Projects/THREDDS/tech/catalog/v1.0.2/Primer.html
 %See also: OPENDAP_CATALOG_DATASET, NC_CF_OPENDAP2CATALOG, XML_READ, XMLREAD, FINDALLFILES, SNCTOOLS
+%          THREDDS_DUMP, THREDDS_INFO
 
 %% Copyright notice
 %   --------------------------------------------------------------------

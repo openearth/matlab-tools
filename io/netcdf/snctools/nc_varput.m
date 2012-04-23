@@ -19,8 +19,8 @@ function nc_varput(ncfile,varname,data,varargin)
 %   ncdump displays.  Writing large data becomes much more efficient in
 %   this case.
 %
-%   Any '_FillValue', 'missing_value', 'scale_factor', or 'add_offset'
-%   attributes of VARNAME will be honored if possible.
+%   The '_FillValue', 'missing_value', 'scale_factor', and 'add_offset'
+%   attributes of VARNAME will be honored.
 % 
 %   Example:
 %       nc_create_empty('myfile.nc');

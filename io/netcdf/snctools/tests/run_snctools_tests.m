@@ -253,6 +253,7 @@ test_nc_getvarinfo;
 test_nc_getbuffer;
 test_nc_info;
 test_nc_getdiminfo;
+test_nc_isdim;
 test_snc2mat;
 %test_nc_getall;
 test_nc_dump;
@@ -278,6 +279,7 @@ test_nc_getvarinfo(mode);
 test_nc_getbuffer(mode);
 test_nc_info(mode);
 test_nc_getdiminfo(mode);
+test_nc_isdim(mode);
 
 test_nc_dump('nc-4');
 

@@ -13,9 +13,12 @@ function D = nc_harvest(ncfiles,varargin)
 % Use OPENDAP_CATALOG to obtain a list of netCDF 
 % files to which you can apply NC_HARVEST.
 %
+% Save struct to THREDDS catalog.xml with NC_HARVEST2XML.
+%
 % This function will replace NC_CF_OPENDAP2CATALOG in the near future.
 %
-%See also: NC_INFO, nc_dump, NC_ACTUAL_RANGE, NC_HARVEST1, OPENDAP_CATALOG
+%See also: NC_INFO, nc_dump, NC_ACTUAL_RANGE, NC_HARVEST1, OPENDAP_CATALOG, 
+%          thredds_dump, thredds_info, nc_harvest2xml
 
    OPT.disp = ''; %'multiWaitbar';
    OPT.flat = 1; % flat is multi-layered struct, else struct with vectors

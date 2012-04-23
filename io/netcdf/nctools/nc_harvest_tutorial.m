@@ -3,13 +3,14 @@
 %See also: nc_harvest
 
    ncdir    = 'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html';
+   xmldir   = 'F:\opendap.deltares.nl\thredds\dodsC\opendap\rijkswaterstaat\kustlidar\';
 
    disp(['Crawling ...',last_subdir(ncdir,1)])
 
    ncfiles = opendap_catalog(ncdir);
    M       = nc_harvest(ncfiles,'flat',0);
-
-   nc_harvest2xml([ncdir    ,'rijkswaterstaat_kustlidar_catalog1.xml'],M,...
+   %%
+   nc_harvest2xml([xmldir   ,'rijkswaterstaat_kustlidar_catalog1.xml'],M,...
    'ID'                     ,'rijkswaterstaat/kustlidar',...
    'name'                   ,'kustlidar',...
    'publisher.name'         ,'Rijkswaterstaat',...
