@@ -33,6 +33,7 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 % [OPT Set Default] = setproperty(OPT, vararginOfCallingFunction)
 % [OPT Set Default] = setproperty(OPT, {'PropertyName', PropertyValue,...})
 % [OPT Set Default] = setproperty(OPT, {OPT2})
+% [OPT Set Default] = setproperty(OPT,  OPT2)
 % [OPT Set Default] = setproperty(OPT,  OPT2 ,<'PropertyName', PropertyValue)
 %
 %     Different methods for dealing with class changes of variables, or 
@@ -157,10 +158,10 @@ end
 % determine mode from class of the second argument
 switch(class(inputCell))
     case 'struct'
-        % legay syntax mode
-        % turn struct into <keyword,value> pairs and append rets of varargin
+        % legacy syntax mode
+        % turn struct into <keyword,value> pairs and append rest of varargin
+        inputCell = struct2arg(inputCell);
         if ~isempty(varargin)
-            inputCell = struct2arg(inputCell);
             inputCell = {inputCell{:},varargin{:}};
         end
     case 'char'
