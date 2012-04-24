@@ -71,4 +71,4 @@ OPT = setproperty(OPT, varargin{:});
 
 %% compute z-values
 
-z = R - S;
+z = OPT.R - OPT.S;

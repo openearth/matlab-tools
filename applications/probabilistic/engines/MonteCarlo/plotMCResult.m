@@ -91,7 +91,7 @@ function [result equivFORMResult] = plotMCResult(result, varargin)
 
 %% settings
 OPT = struct(...
-    'figureID', 1, ...
+    'figureID', [], ...
     'space', 'u', ...
     'plotDP', false, ...
     'printDP', false, ...
@@ -137,11 +137,13 @@ end
 
 %% create scatter plots
 
-%figure(OPT.figureID);
-
-% create full screen window
-fullscreen = get(0, 'ScreenSize');
-figure('OuterPosition', [0 0 fullscreen(3) fullscreen(4)]);
+if isempty(OPT.figureID)
+    % create full screen window
+    fullscreen = get(0, 'ScreenSize');
+    figure('OuterPosition', [0 0 fullscreen(3) fullscreen(4)]);
+else
+    figure(OPT.figureID);
+end
 
 % retrieve stochast names and indexes from result
 varIdxs = [1:length(result.Input)];
