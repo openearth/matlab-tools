@@ -103,8 +103,8 @@ x = x(idx);
 
 yc1 = interp1(log(f),x(fi),log(OPT.f(OPT.f>=OPT.split)),'linear','extrap');
 
-[f fi] = unique(res.fit.f);
-yc2 = interp1(log(f),res.fit.y(fi),log(OPT.f(OPT.f<OPT.split)),'linear','extrap');
+[f fi] = unique(log(res.fit.f));
+yc2 = interp1(f,res.fit.y(fi),log(OPT.f(OPT.f<OPT.split)),'linear','extrap');
 
 res.combined.f      = OPT.f(:)';
 res.combined.y      = [yc1(:);yc2(:)]';

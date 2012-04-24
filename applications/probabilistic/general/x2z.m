@@ -8,14 +8,14 @@ function z = x2z(varargin)
 %   z = x2z(varargin)
 %
 %   Input:
-%   varargin  = samples:    Set of random samples
-%               resistance: Resistance to be substracted
+%   varargin  = S:      Sollicitation
+%               R:      Resistance
 %
 %   Output:
 %   z         = List of failure indicators (z<0 = failed)
 %
 %   Example
-%   z = x2z('samples', x, 'resistance', 10)
+%   z = x2z('S', x, 'R', 10)
 %
 %   See also MC, P2x, x2z_DUROS, x2z_DUROSTA
 
@@ -63,23 +63,12 @@ function z = x2z(varargin)
 %% read options
 
 OPT = struct(                   ...
-    'resistance',   0           ...     % resistance value
+    'R',   0,                   ...     % resistance value
+    'S',   0                    ...     % sollicitation value
 );
-
-% extract variables
-idx = 2*find(~strcmpi(fieldnames(OPT),varargin(1:2:end)))-1;
-VAR = cell2struct(varargin(idx+1),varargin(idx),2);
-varargin([idx idx+1]) = [];
 
 OPT = setproperty(OPT, varargin{:});
 
 %% compute z-values
 
-f = fieldnames(VAR);
-
-z = 1;
-for i = 1:length(f)
-    z = z.*VAR.(f{i});
-end
-
-z = z - OPT.resistance;
+z = R - S;

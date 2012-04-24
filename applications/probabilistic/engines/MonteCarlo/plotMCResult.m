@@ -100,7 +100,8 @@ OPT = struct(...
     'thresholdDP', 0, ...
     'optimizeDP', '', ...
     'equivFORMResult', [], ...
-    'forceDP', false ...
+    'forceDP', false, ...
+    'no3D', false ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -171,81 +172,103 @@ else
     noFail = [result.Output.u(idxNoFail, :)];
 end
 
-% calculate combinations of stochasts
-varCombs = combnk(varIdxs(activeVars), 2);
-
-% calculate dimensions of plots
-dimPlots = ceil(sqrt(size(varCombs, 1)));
-
-dimPlots1 = dimPlots;
-dimPlots2 = ceil(size(varCombs, 1) / dimPlots);
+if sum(activeVars) == 3 && ~OPT.no3D
     
-for i = 1:size(varCombs, 1)
-    subplot(dimPlots2, dimPlots1, i);
-    
-    % get variable indexes
-    idxXVar = varCombs(i,1);
-    idxYVar = varCombs(i,2);
-    
-    % get variable names
-    nameXVar = varNames{idxXVar};
-    nameYVar = varNames{idxYVar};
-
     % plot scatter points
-    scatter(fail(:, idxXVar), fail(:, idxYVar),...
+    scatter3(fail(:, 1), fail(:, 2), fail(:, 3),...
         'SizeData', 9,...
         'MarkerFaceColor', [0 0 0],...
         'MarkerEdgeColor', [0 0 0],...
         'DisplayName', 'Failure');
     hold on;
-    scatter(noFail(:, idxXVar), noFail(:, idxYVar),...
+    scatter3(noFail(:, 1), noFail(:, 2), noFail(:, 3),...
         'SizeData', 9,...
         'MarkerFaceColor', [1 1 1],...
         'MarkerEdgeColor', [0 0 0],...
         'DisplayName', 'Non-failure');
     
-    % plot design point
-    if OPT.plotDP && strcmp(OPT.space, 'u')
-        
-        % plot design point according to FORM method
-        if ~isempty(OPT.equivFORMResult)
-            scatter(OPT.equivFORMResult.Output.designPoint.u(idxXVar), OPT.equivFORMResult.Output.designPoint.u(idxYVar),...
-                'SizeData', 25,...
-                'MarkerFaceColor', [0 1 0],...
-                'MarkerEdgeColor', [0 0 0],...
-                'DisplayName', 'FORM designpoint');
-            hold on;
-        end
-        
-        % plot first estimation of design point
-        if ~isempty(result.Output.designPoint.a) && ~isempty(result.Output.designPoint.c)
-            line([result.Output.designPoint.a(idxXVar) result.Output.designPoint.c(idxXVar)], [result.Output.designPoint.a(idxYVar) result.Output.designPoint.c(idxYVar)],...
-                'LineWidth', 1,...
-                'Color', [1 0 0]);
-            if ~isempty(result.Output.designPoint.u)
-                scatter(result.Output.designPoint.u(idxXVar), result.Output.designPoint.u(idxYVar),...
+    % style scatter plot
+    xlabel(varNames{1}); ylabel(varNames{2}); zlabel(varNames{3});
+    legend('toggle')
+    
+else
+    
+    % calculate combinations of stochasts
+    varCombs = combnk(varIdxs(activeVars), 2);
+
+    % calculate dimensions of plots
+    dimPlots = ceil(sqrt(size(varCombs, 1)));
+
+    dimPlots1 = dimPlots;
+    dimPlots2 = ceil(size(varCombs, 1) / dimPlots);
+
+    for i = 1:size(varCombs, 1)
+        subplot(dimPlots2, dimPlots1, i);
+
+        % get variable indexes
+        idxXVar = varCombs(i,1);
+        idxYVar = varCombs(i,2);
+
+        % get variable names
+        nameXVar = varNames{idxXVar};
+        nameYVar = varNames{idxYVar};
+
+        % plot scatter points
+        scatter(fail(:, idxXVar), fail(:, idxYVar),...
+            'SizeData', 9,...
+            'MarkerFaceColor', [0 0 0],...
+            'MarkerEdgeColor', [0 0 0],...
+            'DisplayName', 'Failure');
+        hold on;
+        scatter(noFail(:, idxXVar), noFail(:, idxYVar),...
+            'SizeData', 9,...
+            'MarkerFaceColor', [1 1 1],...
+            'MarkerEdgeColor', [0 0 0],...
+            'DisplayName', 'Non-failure');
+
+        % plot design point
+        if OPT.plotDP && strcmp(OPT.space, 'u')
+
+            % plot design point according to FORM method
+            if ~isempty(OPT.equivFORMResult)
+                scatter(OPT.equivFORMResult.Output.designPoint.u(idxXVar), OPT.equivFORMResult.Output.designPoint.u(idxYVar),...
                     'SizeData', 25,...
-                    'MarkerFaceColor', [1 0 0],...
+                    'MarkerFaceColor', [0 1 0],...
                     'MarkerEdgeColor', [0 0 0],...
-                    'DisplayName', 'Designpoint');
+                    'DisplayName', 'FORM designpoint');
+                hold on;
+            end
+
+            % plot first estimation of design point
+            if ~isempty(result.Output.designPoint.a) && ~isempty(result.Output.designPoint.c)
+                line([result.Output.designPoint.a(idxXVar) result.Output.designPoint.c(idxXVar)], [result.Output.designPoint.a(idxYVar) result.Output.designPoint.c(idxYVar)],...
+                    'LineWidth', 1,...
+                    'Color', [1 0 0]);
+                if ~isempty(result.Output.designPoint.u)
+                    scatter(result.Output.designPoint.u(idxXVar), result.Output.designPoint.u(idxYVar),...
+                        'SizeData', 25,...
+                        'MarkerFaceColor', [1 0 0],...
+                        'MarkerEdgeColor', [0 0 0],...
+                        'DisplayName', 'Designpoint');
+                    hold on;
+                end
+            end
+
+            % plot optimized design point
+            if isfield(result.Output, 'designPointOptimized') && ~isempty(result.Output.designPointOptimized.u)
+                scatter(result.Output.designPointOptimized.u(idxXVar), result.Output.designPointOptimized.u(idxYVar),...
+                    'SizeData', 25,...
+                    'MarkerFaceColor', [1 .5 0],...
+                    'MarkerEdgeColor', [0 0 0],...
+                    'DisplayName', 'Optimized designpoint');
                 hold on;
             end
         end
-        
-        % plot optimized design point
-        if isfield(result.Output, 'designPointOptimized') && ~isempty(result.Output.designPointOptimized.u)
-            scatter(result.Output.designPointOptimized.u(idxXVar), result.Output.designPointOptimized.u(idxYVar),...
-                'SizeData', 25,...
-                'MarkerFaceColor', [1 .5 0],...
-                'MarkerEdgeColor', [0 0 0],...
-                'DisplayName', 'Optimized designpoint');
-            hold on;
-        end
+
+        % style scatter plot
+        xlabel(nameXVar); ylabel(nameYVar);
+        legend('toggle')
     end
-    
-    % style scatter plot
-    xlabel(nameXVar); ylabel(nameYVar);
-    legend('toggle')
 end
 
 %% return variable

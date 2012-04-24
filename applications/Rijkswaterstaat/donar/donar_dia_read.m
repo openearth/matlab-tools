@@ -123,6 +123,7 @@ i2 = min(OPT.to,npart);
 if isempty(OPT.index)
     OPT.index = i1:OPT.stride:i2;
 else
+    OPT.index = sort(OPT.index);
     i1 = min(OPT.index);
     i2 = max(OPT.index);
 end
