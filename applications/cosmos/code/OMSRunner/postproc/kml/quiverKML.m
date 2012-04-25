@@ -173,7 +173,7 @@ for it=1:length(t)
     xp=zeros(5,length(uu));
     xp(xp==0)=NaN;
     yp=xp;
-    vel=zeros(length(uu));
+    vel=zeros(length(uu),1);
     
     for j=1:length(uu)
         if ~isnan(uu(j)) && ~isnan(vv(j))
