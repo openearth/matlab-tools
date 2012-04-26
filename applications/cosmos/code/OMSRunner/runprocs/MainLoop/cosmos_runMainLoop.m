@@ -10,7 +10,7 @@ fclose all;
 figs=findall(0,'Type','figure');
 for i=1:length(figs)
     name=get(figs(i),'Name');
-    if ~strcmpi(name,'OMSMain')
+    if ~strcmpi(name,'CoSMoS')
         close(figs(i));
     end
 end
