@@ -263,7 +263,7 @@ while NextIter
         % to make u = -alpha*beta, otherwise the final u solution is
         % not consistent with alpha and beta
         duIter = du;
-        du = zeros(size(stochast));
+        du = zeros(1,length(stochast));
         Relaxation = 1;
     else
         if OPT.dudistfactor == 0
