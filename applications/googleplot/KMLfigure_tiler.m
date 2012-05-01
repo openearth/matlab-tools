@@ -118,6 +118,7 @@ OPT.minLod             =     []; % minimum level of detail to keep a tile in vie
 OPT.minLod0            =     -1; % minimum level of detail to keep most detailed tile in view. Default is -1 (don't hide when zoomed in a lot)
 OPT.maxLod             =     [];
 OPT.maxLod0            =     -1;
+OPT.fixZlim            =   true; % sets z scaling equal to x/y scale 
 OPT.dWE                =     []; % determines how much extra data to tiles to be able
 OPT.dNS                =     []; % to generate them as fraction of size of smallest tile
 OPT.drawOrder          =      1;
@@ -152,8 +153,8 @@ else
    D.W   = min(D.lon(:));
    D.E   = max(D.lon(:));
 
-   OPT.basecode           = KML_figure_tiler_SmallestTileThatContainsAllData(D);
-   OPT.highestLevel       = length(OPT.basecode);
+   OPT.basecode           = '0'; %KML_figure_tiler_SmallestTileThatContainsAllData(D);
+   OPT.highestLevel          = 1; %length(OPT.basecode);
    OPT.lowestLevel        = OPT.highestLevel+4; % a guess
 end
 
@@ -207,7 +208,7 @@ end
 %% set maxLod and minLod defaults
 if isempty(OPT.minLod),                 OPT.minLod = round(  OPT.dim/1.5); end
 % Inserted by Hessel Winsemius to enable use of alpha as grid
-if size(OPT.alpha,1)==1 & size(OPT.alpha,2)==1
+if size(OPT.alpha,1)==1 && size(OPT.alpha,2)==1
     if isempty(OPT.maxLod)&&OPT.alpha  < 1, OPT.maxLod = round(2*OPT.dim/1.5); end % you see 1 layers always
     if isempty(OPT.maxLod)&&OPT.alpha == 1, OPT.maxLod = round(4*OPT.dim/1.5); end % you see 2 layers, except when fully zoomed in
 else
@@ -274,15 +275,15 @@ end
 
 %% figure settings
 if ishandle(OPT.h)
-% Some settings for the figure to make sure it is printed correctly
-OPT.ha  = get(OPT.h ,'Parent');
-OPT.hf  = get(OPT.ha,'Parent');
-daspect(OPT.ha,'auto') % repair effect of for instance axislat()
+    % Some settings for the figure to make sure it is printed correctly
+    OPT.ha  = get(OPT.h ,'Parent');
+    OPT.hf  = get(OPT.ha,'Parent');
+    daspect(OPT.ha,'auto') % repair effect of for instance axislat()
 
-set(OPT.ha,'Position',[0 0 1 1])
-set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
-[0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
-'color',OPT.bgcolor/255,'InvertHardcopy','off');
+    set(OPT.ha,'Position',[0 0 1 1])
+    set(OPT.hf,'PaperUnits', 'inches','PaperPosition',...
+    [0 0 OPT.dim+2*OPT.dimExt OPT.dim+2*OPT.dimExt],...
+    'color',OPT.bgcolor/255,'InvertHardcopy','off');
 end
 if ishandle(OPT.alphaChannel)
     OPT.ha_alpha = get(OPT.alphaChannel, 'Parent');
@@ -297,7 +298,7 @@ end
 
 %   --------------------------------------------------------------------
 % Generates tiles at most detailed level
-if OPT.printTiles & ishandle(OPT.h)
+if OPT.printTiles && ishandle(OPT.h)
     KML_figure_tiler_printTile(OPT.basecode,D,OPT)
 end
 
