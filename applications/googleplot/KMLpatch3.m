@@ -86,7 +86,7 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
     OPT.extrude            = true;
 
     OPT.cLim               = [];
-    OPT.zScaleFun          = @(z) (z+20).*5;
+    OPT.zScaleFun          = @(z) (z+0).*1;
     OPT.timeIn             = [];
     OPT.timeOut            = [];
     OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
@@ -109,23 +109,23 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
    end
 
    if ~odd(nargin) % x,y,z,c
-      if isstruct(varargin{1})
-      c = [];
-      [OPT, Set, Default] = setproperty(OPT, varargin{:});
-      else
-      c            = varargin{1};
-      OPT.colorbar = 1;
-      [OPT, Set, Default] = setproperty(OPT, varargin{2:end});
-      end
+       if isstruct(varargin{1})
+           c = [];
+           OPT = setproperty(OPT, varargin{:});
+       else
+           c            = varargin{1};
+           OPT.colorbar = 1;
+           OPT = setproperty(OPT, varargin{2:end});
+       end
    else % x,y,z
-      if isstruct(varargin{2})
-      c            = varargin{1};
-      OPT.colorbar = 1;
-     [OPT, Set, Default] = setproperty(OPT, varargin{2});
-      else
-      c = [];
-     [OPT, Set, Default] = setproperty(OPT, varargin{:});
-      end
+       if isstruct(varargin{2})
+           c            = varargin{1};
+           OPT.colorbar = 1;
+           OPT = setproperty(OPT, varargin{2});
+       else
+           c = [];
+           OPT = setproperty(OPT, varargin{:});
+       end
    end
    
 %% limited error check
@@ -137,6 +137,7 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
         if ~strcmp(z,'clampToGround')
             error('z and lon must be same size, or z must be a single level, or z must be clampToGround')
         end
+        z = {z};
         OPT.zScaleFun = @(z) z;
     else
         if ~isequal(size(z),size(lat));
@@ -158,7 +159,7 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
 %% set kmlName if it is not set yet
 
    if isempty(OPT.kmlName)
-      [ignore OPT.kmlName] = fileparts(OPT.fileName);
+      [~, OPT.kmlName] = fileparts(OPT.fileName);
    end
 
 
@@ -201,7 +202,7 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
    output = KML_header(OPT);
 
    if OPT.colorbar
-      clrbarstring = KMLcolorbar(OPT);
+      [clrbarstring,pngNames] = KMLcolorbar(OPT);
       output = [output clrbarstring];
    end
 
@@ -231,10 +232,10 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
    OPT_poly = struct(...
             'name',OPT.name,...
        'styleName',['style' num2str(1)],...
-          'timeIn',datestr(OPT.timeIn ,OPT.dateStrStyle),...
-         'timeOut',datestr(OPT.timeOut,OPT.dateStrStyle),...
       'visibility',1,...
          'extrude',OPT.extrude,...
+          'timeIn',datestr(OPT.timeIn (1),OPT.dateStrStyle),...
+         'timeOut',datestr(OPT.timeOut(1),OPT.dateStrStyle),...
       'tessellate',OPT.tessellate,...
       'precision' ,OPT.precision);
    
@@ -247,40 +248,51 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
        end
        
        if length(z)==1 % z can be constant for all patches: a value but not yet 'clampToGround'
-          zsize = 1;
+           zsize = 1;
        else
-          zsize = length(z);
+           zsize = length(z);
        end
-
-      % preallocate output
-
+       
+       % preallocate output
+       
        output = repmat(char(1),1,1e5);
        kk = 1;
-
+       
        disp(['creating patch with ' num2str(length(lat)) ' elements...'])
-      
-       for ii=1:length(lat)
-       iic = min(ii,csize); % for constant c and z
-       iiz = min(ii,zsize); % for constant c and z
-       OPT_poly.styleName = sprintf('style%d',c(iic));
-       %             if OPT.reversePoly
-       %                 LAT = LAT(end:-1:1);
-       %                 LON = LON(end:-1:1);
-       %                   Z =   Z(end:-1:1);
-       %             end
-% TO DO : deal with constant z, constant per patch or 'clampToGround';
-       newOutput = KML_poly(lat{ii},...
-                            lon{ii},... 
-                OPT.zScaleFun(z{iiz}),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
-      
-       output(kk:kk+length(newOutput)-1) = newOutput;
-       kk = kk+length(newOutput);
-       if kk>1e5
-           %then print and reset
-           fprintf(OPT.fid,output(1:kk-1));
-           kk = 1;
-           output = repmat(char(1),1,1e5);
+       if length(OPT.timeIn)>1
+           timeIn  = datestr(OPT.timeIn ,OPT.dateStrStyle);
+           timeOut = datestr(OPT.timeOut,OPT.dateStrStyle);
        end
+%                  'timeIn',datestr(OPT.timeIn ,OPT.dateStrStyle),...
+%          'timeOut',datestr(OPT.timeOut,OPT.dateStrStyle),...
+         
+     
+       for ii=1:length(lat)
+           iic = min(ii,csize); % for constant c and z
+           iiz = min(ii,zsize); % for constant c and z
+           OPT_poly.styleName = sprintf('style%d',c(iic));
+           if length(OPT.timeIn)>1
+               OPT_poly.timeIn  = timeIn(ii,:);
+               OPT_poly.timeOut = timeOut(ii,:);
+           end
+           %             if OPT.reversePoly
+           %                 LAT = LAT(end:-1:1);
+           %                 LON = LON(end:-1:1);
+           %                   Z =   Z(end:-1:1);
+           %             end
+           % TO DO : deal with constant z, constant per patch or 'clampToGround';
+           newOutput = KML_poly(lat{ii},...
+               lon{ii},...
+               OPT.zScaleFun(z{iiz}),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+           
+           output(kk:kk+length(newOutput)-1) = newOutput;
+           kk = kk+length(newOutput);
+           if kk>1e5
+               %then print and reset
+               fprintf(OPT.fid,output(1:kk-1));
+               kk = 1;
+               output = repmat(char(1),1,1e5);
+           end
        end
        fprintf(OPT.fid,output(1:kk-1)); % print output
        output = '';
@@ -326,9 +338,16 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
 
    if strcmpi  ( OPT.fileName(end-2:end),'kmz')
        movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-       zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+       if OPT.colorbar
+           files = [{[OPT.fileName(1:end-3) 'kml']},pngNames];
+       else
+           files = {OPT.fileName(1:end-3) 'kml'};
+       end
+       zip     ( OPT.fileName,files);
+       for ii = 1:length(files)
+           delete  (files{ii})
+       end
        movefile([OPT.fileName '.zip'],OPT.fileName)
-       delete  ([OPT.fileName(1:end-3) 'kml'])
    end
 
 %% openInGoogle?
