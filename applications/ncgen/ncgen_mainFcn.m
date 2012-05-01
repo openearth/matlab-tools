@@ -1,10 +1,76 @@
-function varargout = ncgen_mainFcn(schemaFcn,readFcn,writeFcn,varargin)
+function varargout = ncgen_mainFcn(schemaFcn, readFcn, writeFcn, varargin)
+%NCGEN_MAINFCN  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = ncgen_mainFcn(schemaFcn, readFcn, writeFcn, varargin)
+%
+%   Input:
+%   schemaFcn =
+%   readFcn   =
+%   writeFcn  =
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   ncgen_mainFcn
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 Van Oord
+%       Thijs Damsma
+%
+%       tda@vanoord.com
+%
+%       Watermanweg 64
+%       3067 GG
+%       Rotterdam
+%       Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 24 Apr 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% First basic input check
 narginchk(3,inf)
+
 if isempty(schemaFcn); schemaFcn = @(~)    struct('undefined',true); else  assert(isa(schemaFcn,'function_handle'),'schemaFcn must be a function handle'); end
 if isempty(readFcn);   readFcn   = @(~,~,~)struct('undefined',true); else  assert(isa(readFcn,  'function_handle'),  'readFcn must be a function handle'); end
 if isempty(writeFcn);  writeFcn  = @(~,~)  struct('undefined',true); else  assert(isa(writeFcn, 'function_handle'), 'writeFcn must be a function handle'); end
-%% list options
+
+%% Options
 
 % general settings
 OPT.main.log            = 1;
@@ -17,29 +83,30 @@ OPT.main.defaultdate    = [];
 OPT.main.dir_depth      = inf;
 
 % path settings
-OPT.main.path_source    = ''; % path to source data
+OPT.main.path_source    = ''; % path to source data. Can be a directory or a single file
 OPT.main.path_unzip_tmp = fullfile(tempdir,'ncgen'); % path to unzipped source data, should be a tempdir
 OPT.main.path_netcdf    = 'D:\products\nc'; % local path to write ncdf files to
 
+% settings from sub functions
 OPT.schema              = schemaFcn([]);
 OPT.read                = readFcn([],[],[]);
 OPT.write               = writeFcn([],[]);
 
-processed_varargin      = setproperty(OPT,varargin);
+% parse varargin in two steps to enforce the OPT.xxx structure
+parsed_varargin         = setproperty(OPT,varargin);
 
-% seperately check the properties for each of the functions
-OPT.main                = setproperty(OPT.main,  processed_varargin.main);
-OPT.schema              = setproperty(OPT.schema,processed_varargin.schema);
-OPT.read                = setproperty(OPT.read,  processed_varargin.read);
-OPT.write               = setproperty(OPT.write, processed_varargin.write);
+OPT.main                = setproperty(OPT.main,  parsed_varargin.main);
+OPT.schema              = setproperty(OPT.schema,parsed_varargin.schema);
+OPT.read                = setproperty(OPT.read,  parsed_varargin.read);
+OPT.write               = setproperty(OPT.write, parsed_varargin.write);
 
+% return OPT if only input is 
 if nargin == 3
     varargout = {OPT};
     return
 end
 
-
-%% input check
+%% Second input check
 assert(~isempty(OPT.main.path_source) ,'No source directory was defined');
 assert(~isempty(OPT.main.path_netcdf) ,'No netcdf directory to write to was defined');
 assert(exist(OPT.main.path_source,'dir') || exist(OPT.main.path_source,'file'),...
@@ -110,6 +177,9 @@ end
 multiWaitbar('Processing file','close');
 multiWaitbar('Generating netcdf from source files...','close');
 returnmessage(OPT.main.log,'Netcdf generation completed\n')
+
+%% return OPT
+varargout = {OPT};
 
 function fns2 = unzip_src_files(OPT,fns1)
 %delete files in cache
@@ -206,7 +276,7 @@ if ~outdated
 end   
 
 if outdated
-    delete(fullfile(OPT.main.path_netcdf,'*.*'));
+    delete(fullfile(OPT.main.path_netcdf,'*.nc'));
     returnmessage(OPT.main.log,'Netcdf output directory was outdated and therefore emptied.\n')
 else
     % remove files already in nc from file name stucture  as they are
