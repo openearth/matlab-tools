@@ -96,6 +96,9 @@ while abs(z(end))>OPT.epsZ || length(z) == l
         end
     end
 
+    b = real(b);
+    z = real(z);
+    
     if ~isfinite(z(end)) || length(z)>OPT.maxiter+1
         converged = false;
         break;

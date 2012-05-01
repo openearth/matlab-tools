@@ -1,4 +1,4 @@
-function X = deterministic(P, x)
+function X = deterministic(P, x, varargin)
 %DETERMINISTIC  deterministic "distribution function"
 %
 %   This funtion returns X = x for all values in P.

@@ -105,8 +105,13 @@ OPT = setproperty(OPT, varargin{:});
 
 % set preferences
 if ~ischar(xb)
-    if isempty(OPT.path_local); OPT.path_local = xb_getprefdef('path_local', 'u:\'); end;
-    if isempty(OPT.path_remote); OPT.path_remote = xb_getprefdef('path_remote', '~'); end;
+    if isempty(OPT.path_local)
+        OPT.path_local = xb_getprefdef('path_local', 'u:\');
+        OPT.path_remote = xb_getprefdef('path_remote', '~');
+    end
+    if isempty(OPT.path_remote)
+        OPT.path_remote = xb_getprefdef('path_remote', guess_remote_path(OPT.path_local));
+    end
 end
 
 % check whether we deal with path or XBeach stucture
