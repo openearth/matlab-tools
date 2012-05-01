@@ -4,10 +4,10 @@ function KML_figure_tiler_MergeTilesInTime(pathname)
 %See also:KMLfigure_tiler
 
 multiWaitbar('Merging',0,'color',[.2 .6 .4],'label','Inquiring number of files...');
-allfiles = findAllFiles(pathname,'pattern_incl','*.png');
+allfiles        = findAllFiles(pathname,'pattern_incl','*.png');
 allfilescropped = char(allfiles);
-token = strfind(allfilescropped(1,:),'_');
-token = token(end);
+token           = strfind(allfilescropped(1,:),'_');
+token           = token(end);
 allfilescropped = allfilescropped(:,token+1:end-4);
 allfilescropped = cellstr(allfilescropped);
 multiWaitbar('Merging',0,'label','Merging png files...');
