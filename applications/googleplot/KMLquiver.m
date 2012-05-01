@@ -189,11 +189,6 @@ lon         = lon(1:OPT.stride:end);
 u           =   u(1:OPT.stride:end);
 v           =   v(1:OPT.stride:end);
 
-if length(OPT.timeIn ) ==1;OPT.timeIn  = repmat(OPT.timeIn ,[1 length(lat(1,:))]);end
-if length(OPT.timeOut) ==1;OPT.timeOut = repmat(OPT.timeOut,[1 length(lat(1,:))]);end
-OPT.timeIn  = datestr(OPT.timeIn ,OPT.dateStrStyle);
-OPT.timeOut = datestr(OPT.timeOut,OPT.dateStrStyle);
-
 % remove nan values
 nans = isnan(lat+lon+u+v);
 lat(nans) = [];
@@ -250,6 +245,12 @@ OPT.fid=fopen(OPT.fileName,'w');
 
 %% HEADER
 output = KML_header(OPT);
+
+%% process timespan
+if length(OPT.timeIn ) ==1;OPT.timeIn  = repmat(OPT.timeIn ,[1 length(lat(1,:))]);end
+if length(OPT.timeOut) ==1;OPT.timeOut = repmat(OPT.timeOut,[1 length(lat(1,:))]);end
+OPT.timeIn  = datestr(OPT.timeIn ,OPT.dateStrStyle);
+OPT.timeOut = datestr(OPT.timeOut,OPT.dateStrStyle);
 
 %% LINESTYLE
 OPT_style = struct(...
