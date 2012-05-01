@@ -11,27 +11,48 @@
          xmlns:xlink = "http://www.w3.org/1999/xlink" 
          name        = "List of THREDDS catalogs!"
          version     = "1.0.1">
-  <catalogRef xlink:href="http://opendap.tudelft.nl/thredds/catalog.xml"               xlink:title="3TU"       name=""/>
-  <catalogRef xlink:href="http://opendap.deltares.nl/thredds/catalog.xml"              xlink:title="Deltares"  name=""/>
-  <catalogRef xlink:href="http://gsics.eumetsat.int/thredds/catalog.xml"               xlink:title="EUMETSAT"  name=""/>
-  <catalogRef xlink:href="http://michigan.glin.net/thredds/catalog.xml"                xlink:title="GLIN"      name=""/>
-  <catalogRef xlink:href="http://tds.hycom.org/thredds/catalog.xml"                    xlink:title="HYCOM"     name=""/>
-  <catalogRef xlink:href="http://geoservices.knmi.nl/thredds/catalog.xml"              xlink:title="KNMI"      name=""/>
-  <catalogRef xlink:href="http://thredds.met.no/thredds/catalog.xml"                   xlink:title="met.no"    name=""/>
-  <catalogRef xlink:href="http://myocean-ftp.acri.fr:8080/thredds/catalog.xml"         xlink:title="MyOcean ACRI" name=""/>
-  <catalogRef xlink:href="http://ourocean.jpl.nasa.gov:8080/thredds/catalog.xml"       xlink:title="NASA JPL" name=""/>
-  <catalogRef xlink:href="http://topaz.nersc.no/thredds/catalog.xml"                   xlink:title="Nansen centre" name=""/>
-  <catalogRef xlink:href="http://data.nodc.noaa.gov/thredds/catalog.xml"               xlink:title="NOAA NODC" name=""/>
-  <catalogRef xlink:href="http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.xml"  xlink:title="NOAA National Buoy Data Center (NDBC)" name=""/>
-  <catalogRef xlink:href="http://opendap-matroos.deltares.nl/thredds/catalog.xml"      xlink:title="Rijkswaterstaat (password protected)" name=""/>
-  <catalogRef xlink:href="http://motherlode.ucar.edu/thredds/catalog.xml"              xlink:title="UCAR"      name=""/>
-  <catalogRef xlink:href="http://coast-enviro.er.usgs.gov/thredds/catalog.xml"         xlink:title="USGS Coastal and marine sediment transport group" name=""/>
-  <catalogRef xlink:href="http://cida.usgs.gov/qa/thredds/catalog.xml"                 xlink:title="USGS Center for Integrated Data Analytics (CIDA)" name=""/>
-  <catalogRef xlink:href="http://geoport.whoi.edu/thredds/catalog.xml"                 xlink:title="WHOI"           name=""/>
-  <catalogRef xlink:href="http://opendap.aviso.oceanobs.com/thredds/catalog.xml"       xlink:title="CNES and CLS (AVISO)" name=""/>
-  <catalogRef xlink:href="http://opendap-tpac.arcs.org.au/thredds/catalog.xml"         xlink:title="Australian Research Collaboration Service (ARCS)" name=""/>
-  <catalogRef xlink:href="http://opendap.bom.gov.au:8080/thredds/catalog.xml"          xlink:title="Australian Bureau of Meteorology (BOM)" name=""/>
-  <catalogRef xlink:href="http://fe4.sic.rm.cnr.it:8080/thredds/catalog.xml"           xlink:title="CRN Italy" name=""/>
-  <catalogRef xlink:href="http://bmlsc.ucdavis.edu:8080/opendap/catalog.xml"           xlink:title="Bodega Ocean Observing Node UC Davis (BOON)" name=""/>
-  <catalogRef xlink:href="http://tashtego.marine.rutgers.edu:8080/thredds/catalog.xml" xlink:title="Rutgers" name=""/>
+  <catalogRef xlink:href="http://opendap.tudelft.nl/thredds/catalog.xml"               xlink:title="3TU (NL)"       name=""/>
+  <catalogRef xlink:href="http://opendap.deltares.nl/thredds/catalog.xml"              xlink:title="Deltares (NL)"  name=""/>
+  <catalogRef xlink:href="http://geoservices.knmi.nl/thredds/catalog.xml"              xlink:title="Royal Dutch met office (KNMI) (NL)"      name=""/>
+  <catalogRef xlink:href="http://opendap.nmdc.eu/knmi/thredds/catalog.xml"             xlink:title="Nationaal Modellen en Ddata Centrum (NMDC) (NL)"      name=""/>
+  <catalogRef xlink:href="http://opendap-matroos.deltares.nl/thredds/catalog.xml"      xlink:title="Rijkswaterstaat (password protected) (NL)" name=""/>
+  
+  <catalogRef xlink:href="http://gsics.eumetsat.int/thredds/catalog.xml"               xlink:title="EUMETSAT (EU)"  name=""/>
+  <catalogRef xlink:href="http://ensembles.ecmwf.int/thredds/catalog.xml"              xlink:title="ECMWF (EU)"  name=""/>
+
+  <catalogRef xlink:href="http://thredds.met.no/thredds/catalog.xml"                   xlink:title="met.no (NO)"    name=""/>
+  <catalogRef xlink:href="http://topaz.nersc.no/thredds/catalog.xml"                   xlink:title="Nansen centre (NO)" name=""/>
+
+  <catalogRef xlink:href="http://oceanwatch.pfeg.noaa.gov/thredds/catalog.xml"         xlink:title="Pacific Fisheries Environmental Laoboratory (PFEG) (US)" name=""/>
+  <catalogRef xlink:href="http://bmlsc.ucdavis.edu:8080/opendap/catalog.xml"           xlink:title="Bodega Ocean Observing Node UC Davis (BOON) (US)" name=""/>
+  <catalogRef xlink:href="http://tashtego.marine.rutgers.edu:8080/thredds/catalog.xml" xlink:title="Rutgers (US)" name=""/>
+  <catalogRef xlink:href="http://thredds.daac.ornl.gov/thredds/ornl_catalog/daac.xml"  xlink:title="ORNL (US)" name=""/>
+  <catalogRef xlink:href="http://michigan.glin.net/thredds/catalog.xml"                xlink:title="GLIN (US)"      name=""/>
+  <catalogRef xlink:href="http://tds.hycom.org/thredds/catalog.xml"                    xlink:title="HYCOM (US)"     name=""/>
+  <catalogRef xlink:href="http://ourocean.jpl.nasa.gov:8080/thredds/catalog.xml"       xlink:title="NASA JPL OurOcean PO.DAAC (US)" name=""/>
+  <catalogRef xlink:href="http://thredds.jpl.nasa.gov/thredds/catalog.xml"             xlink:title="NASA JPL (US)" name=""/>
+  <catalogRef xlink:href="http://megara.tamu.edu:8080/thredds/catalog.xml"             xlink:title="NASA TAMU ROMS output (US)" name=""/>
+  <catalogRef xlink:href="http://data.nodc.noaa.gov/thredds/catalog.xml"               xlink:title="NOAA NODC (US)" name=""/>
+  <catalogRef xlink:href="http://dods.ndbc.noaa.gov/thredds/catalog/data/catalog.xml"  xlink:title="NOAA National Buoy Data Center (NDBC) (US)" name=""/>
+  <catalogRef xlink:href="http://motherlode.ucar.edu/thredds/catalog.xml"              xlink:title="UCAR (US)"      name=""/>
+  <catalogRef xlink:href="http://hfrnet.ucsd.edu/thredds/catalog.xml"                  xlink:title="UCSD (US)"           name=""/>
+  <catalogRef xlink:href="http://coast-enviro.er.usgs.gov/thredds/catalog.xml"         xlink:title="USGS Coastal and marine sediment transport group (US)" name=""/>
+  <catalogRef xlink:href="http://cida.usgs.gov/qa/thredds/catalog.xml"                 xlink:title="USGS Center for Integrated Data Analytics (CIDA) (US)" name=""/>
+  <catalogRef xlink:href="http://geoport.whoi.edu/thredds/catalog.xml"                 xlink:title="WHOI (US)"           name=""/>
+  
+  
+  
+  <catalogRef xlink:href="http://opendap.aviso.oceanobs.com/thredds/catalog.xml"       xlink:title="CNES and CLS (AVISO) (FR)" name=""/>
+  <catalogRef xlink:href="http://myocean-ftp.acri.fr:8080/thredds/catalog.xml"         xlink:title="MyOcean ACRI (FR)" name=""/>
+  <catalogRef xlink:href="http://www.ifremer.fr/thredds/catalog.xml"                   xlink:title="Ifremer (FR)" name=""/>
+
+  <catalogRef xlink:href="http://fe4.sic.rm.cnr.it:8080/thredds/catalog.xml"           xlink:title="CRN Italy (IT)" name=""/>
+
+  <catalogRef xlink:href="http://opendap.bom.gov.au:8080/thredds/catalog.xml"          xlink:title="Australian Bureau of Meteorology (BOM) (AU)" name=""/>
+  <catalogRef xlink:href="http://opendap-tpac.arcs.org.au/thredds/catalog.xml"         xlink:title="Australian Research Collaboration Service (ARCS) (AU)" name=""/>
+  <catalogRef xlink:href="http://portal.sf.utas.edu.au/thredds/catalog.xml"            xlink:title="University of Tasmania (AU)" name=""/>
+
+
+
+  
 </catalog>
