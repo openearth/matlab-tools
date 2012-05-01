@@ -4,9 +4,9 @@ if nargin == 0 || isempty(OPT)
     % return OPT structure with options specific to this function
     OPT.schema.EPSGcode          = [];   
     OPT.schema.includeLatLon     = true;
-    OPT.schema.grid_spacing      = [];
-    OPT.schema.grid_offset       = [];
-    OPT.schema.grid_tilesize     = [];
+    OPT.schema.grid_spacing      = 1;
+    OPT.schema.grid_offset       = 0;
+    OPT.schema.grid_tilesize     = 500;
     
     OPT.schema.meta              = struct([]);
     
@@ -25,10 +25,8 @@ if nargin == 0 || isempty(OPT)
     OPT.schema.time_datatype     = 'double';
     OPT.schema.time_scale_factor = [];
     OPT.schema.time_add_offset   = [];
-    OPT.schema.time_units        = sprintf('days since %s ',datestr(0,31));
-    
-       
-    
+    OPT.schema.time_units        = sprintf('days since %s +00:00',datestr(0,31));
+   
     varargout                    = {OPT.schema};
     return
 else
