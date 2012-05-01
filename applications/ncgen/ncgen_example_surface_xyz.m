@@ -38,19 +38,8 @@ fid = fopen(fullfile(dummy_file_location,'2012-02-01.xyz'),'w');
 fprintf(fid,'%0.0f,%0.0f,%0.1f\n',xyz);
 fclose(fid);
 
-%% Define schemaFcn, readFcn and writeFcn
-% Define appropriate functions dependant on the dataset as ex[plained
-% above. Note that each function requires a fixed set of inputs. 
-schemaFcn   = @(OPT)              ncgen_schemaFcn_surface  (OPT);
-readFcn     = @(OPT,writeFcn,fns) ncgen_readFcn_surface_xyz(OPT,writeFcn,fns);
-writeFcn    = @(OPT,data)         ncgen_writeFcn_surface   (OPT,data);
-
-% by passing these functions to the main function, an OPT structure is
-% returned that can then be inspecdted to see which properties can be set.
-OPT         = ncgen_mainFcn(schemaFcn,readFcn,writeFcn);
-
-% all options available to set are now in OPT. type e.g. 'OPT.read.' and
-% press tab to see all read options.
+%% get default OPT
+OPT = ncgen_surface_xyz;
 
 %% OPT.main
 % adjust the general settings which apply to every netcdf generation
@@ -97,32 +86,11 @@ OPT.read.headerlines      = 0;
 %% OPT.write
 % the defaults are ok
 
-%% call ncgen_mainFcn 
-% with the updated data
-ncgen_mainFcn(schemaFcn,readFcn,writeFcn,OPT);
+ncgen_surface_xyz(OPT)
+
 
 %% check results
-ncfile = fullfile(tempdir,'ncgen_example_surface_xyz','nc','x0067501y0446501.nc');
 
-% check structure of one of the nc files created
+ncfile = fullfile(OPT.main.path_netcdf,'x0068001y0446501.nc');
 ncdisp(ncfile);
-
-% check time in the file
-datestr(nc_cf_time(ncfile))
-
-% plot z data for second timestep
-figure
-surf(...
-    ncread(ncfile,'lat'),...
-    ncread(ncfile,'lon'),...
-    ncread(ncfile,'z',[1 1 2],[inf inf 1]));
-
-hold on
-
-% add data from anothe file
-ncfile = fullfile(tempdir,'ncgen_example_surface_xyz','nc','x0067501y0446001.nc');
-surf(...
-    ncread(ncfile,'lat'),...
-    ncread(ncfile,'lon'),...
-    ncread(ncfile,'z',[1 1 1],[inf inf 1]));
-
+surf(ncread(ncfile,'z'))
