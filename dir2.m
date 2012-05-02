@@ -167,9 +167,11 @@ function D = dir2(varargin)
 %  defaults
 
 OPT.basepath         = pwd;      % indicate basedpath to start looking
-OPT.dir_excl         = '.svn$';  % pattern to exclude
-OPT.file_incl        = '.*';     % pattern to include
-OPT.file_excl        = '';       % pattern to excldue
+OPT.dir_incl         = '.*';     % regex style pattern to include
+OPT.dir_excl         = '.svn$';  % regex style pattern to exclude
+OPT.file_incl        = '.*';     % regex style pattern to include
+OPT.file_excl        = '';       % regex style pattern to excldue
+OPT.case_sensitive   = true;     % _incl and _excl functions can be set to case insensitive
 OPT.depth            = inf;      % indicate recursion depth (0 is only this folder)
 OPT.no_dirs          = false;    % only list files, not directories
 
@@ -183,10 +185,16 @@ end
 OPT.basepath = relativeToabsolutePath(OPT.basepath);
 
 %% overrule default settings by property pairs, given in varargin
-
-%% crop last fileseparator from the basepath
 OPT = setproperty(OPT, varargin(nextarg:end));
 
+%% set regexpFcn
+if OPT.case_sensitive
+    regexpFcn = @(varargin) regexp (varargin{:});
+else
+    regexpFcn = @(varargin) regexpi(varargin{:});
+end
+
+%% crop last fileseparator from the basepath
 if strcmp(OPT.basepath(end),filesep)
     OPT.basepath(end) = [];
 end
@@ -204,7 +212,12 @@ end
 %% find filenames
 %  pattern_excl is appended with two criteria that exclude '..' and '.' from
 %  the dir inquiry. See 'help regexp' for explanation.
-newD = dir_in_subdir(OPT.basepath,[OPT.dir_excl '|^\.{1,2}$'],OPT.file_incl,OPT.file_excl,OPT.depth);
+newD = dir_in_subdir(OPT.basepath,...
+    OPT.dir_incl,...
+    [OPT.dir_excl '|^\.{1,2}$'],...
+    OPT.file_incl,...
+    OPT.file_excl,...
+    OPT.depth,regexpFcn);
 if isempty(newD)
     % add the field pathname to the empty struct
     newD(1).pathname = '';
@@ -252,7 +265,7 @@ if OPT.no_dirs
 end
 %EOF
 
-function D = dir_in_subdir(basepath,dir_excl,file_incl,file_excl,depth)
+function D = dir_in_subdir(basepath,dir_incl,dir_excl,file_incl,file_excl,depth,regexpFcn)
 
 %% do a regular dir query
 D = dir([basepath filesep]);
@@ -269,21 +282,25 @@ end
 [D(cellfun('isempty',{D.isdir   })).isdir   ] = deal(false(1));
 [D(cellfun('isempty',{D.datenum })).datenum ] = deal(nan);
 
-%% exclude directories that match 'dir_excl' from D
+%% exclude directories that match 'dir_excl' or do not match 'dir_incl' from D
 dirs            = find([D.isdir]);
-dirs_to_exclude = false(size(dirs));
-dirs_to_exclude(~cellfun('isempty',regexp({D(dirs).name},dir_excl,'once'))) = true;
-D(dirs(dirs_to_exclude)) = [];
 
-%% include only files that match 'file_inc' from D
+dirs_to_include = false(size(dirs));
+dirs_to_exclude = false(size(dirs));
+
+dirs_to_include(~cellfun('isempty',regexpFcn({D(dirs).name},dir_incl,'once'))) = true;
+dirs_to_exclude(~cellfun('isempty',regexpFcn({D(dirs).name},dir_excl,'once'))) = true;
+
+D(dirs(~dirs_to_include | dirs_to_exclude)) = [];
+
+%% exclude files that match 'file_excl' or do not match 'file_incl' from D
 files            = find(~[D.isdir]);
 
 files_to_include = false(size(files));
 files_to_exclude = false(size(files));
 
-files_to_include(~cellfun('isempty',regexp({D(files).name},file_incl,'once'))) = true;
-files_to_exclude(~cellfun('isempty',regexp({D(files).name},file_excl,'once'))) = true;
-
+files_to_include(~cellfun('isempty',regexpFcn({D(files).name},file_incl,'once'))) = true;
+files_to_exclude(~cellfun('isempty',regexpFcn({D(files).name},file_excl,'once'))) = true;
 
 D(files(~files_to_include | files_to_exclude)) = [];
 
@@ -301,13 +318,15 @@ if depth>0
     for ii = find(dirs)
         newD = dir_in_subdir(...
             [basepath filesep D(ii).name], ...   % basepath:  construct from basepath and directory name
+            dir_incl,...                         % dir_incl:  keep as is
             dir_excl,...                         % dir_excl:  keep as is
             file_incl,...                        % file_incl: keep as is
             file_excl,...                        % file_excl: keep as is
-            depth-1);                            % depth:     subtract 1
+            depth-1,...                          % depth:     subtract 1
+            regexpFcn);                          % regexpFcn: keep as is
         if ~isempty(newD)
             D(ii).bytes = sum([newD(~[newD.isdir]).bytes]);
-            D = [D; newD];
+            D = [D; newD]; %#ok<AGROW>
         else
             D(ii).bytes = 0;
         end
