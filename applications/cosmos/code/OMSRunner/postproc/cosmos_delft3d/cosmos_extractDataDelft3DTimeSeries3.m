@@ -79,20 +79,6 @@ if exist(trihfile,'file')
                             nn=model.stations(i).n;
                             fid=qpfopen([outdir 'trim-' model.runid '.dat']);
                             data=qpread(fid,filpar,'data',0,mm,nn);
-                            if isfield(data,'XComp')
-                                % Vector data, needs to be converted to
-                                % magnitude
-                                filcomp=getParameterInfo(hm,par,'model',model.type,'datatype','timeseries','component');
-                                switch lower(filcomp)
-                                    case{'magnitude'}
-                                        data.Val=sqrt(data.XComp.^2 + data.YComp.^2);
-                                    case{'angle (degrees)'}
-                                        %                                ang=180*(atan2(data.YComp,data.XComp)-pi)/pi;
-                                        ang=180*(atan2(data.YComp,data.XComp))/pi;
-                                        ang=mod(ang,360);
-                                        data.Val=ang;
-                                end
-                            end
                         case{'sp2mat'}
                             if ~exist([archdir hm.cycStr filesep 'sp2' filesep 'sp2.' stName '.mat'],'file')
                                 
@@ -110,27 +96,42 @@ if exist(trihfile,'file')
                                 
                             end
                     end
+                    
+                    if isfield(data,'XComp')
+                        % Vector data, needs to be converted to
+                        % magnitude
+                        filcomp=getParameterInfo(hm,par,'model',model.type,'datatype','timeseries','component');
+                        switch filcomp
+                            case{'directionto'}
+                                data.Val=mod(180*atan2(data.YComp,data.XComp)/pi,360);
+                            case{'directionfrom'}
+                                data.Val=mod(180*atan2(data.YComp,data.XComp)/pi+180,360);
+                            case{'magnitude'}
+                                data.Val=sqrt(data.XComp.^2+data.YComp.^2);
+                        end
+                    end
+    
                 end
                 
                 if ~isempty(data)
+
+                    % Appended data
                     
                     n2=find(data.Time>=tstart);
                     n2=n2(1)+1;
                     s2.Time=data.Time(n2:end);
-                    s2.Val=data.Val(n2:end);
-                    
                     s.Time=[s.Time;s2.Time];
-                    s.Val=[s.Val;s2.Val];
-                    %                save(fname,'-struct','s','Name','Parameter','Time','Val');
-                    save(fname,'-struct','s','Parameter','Time','Val');
                     
+                    s2.Val=data.Val(n2:end);
+                    s.Val=[s.Val;s2.Val];
+                    save(fname,'-struct','s','Parameter','Time','Val');
+                                        
+                    % Just data from last run
                     s3.Parameter=parLongName;
                     s3.Time=data.Time;
                     s3.Val=data.Val;
                     
                     fname=[archdir hm.cycStr filesep 'timeseries' filesep par '.' stName '.mat'];
-                    
-                    %                save(fname,'-struct','s3','Name','Parameter','Time','Val');
                     save(fname,'-struct','s3','Parameter','Time','Val');
                     
                 end
