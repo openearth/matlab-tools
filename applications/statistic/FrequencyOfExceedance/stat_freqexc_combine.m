@@ -101,9 +101,10 @@ x = x(idx);
 [x xi] = sort(x,'ascend');
 [f fi] = unique(f(xi),'last');
 
-yc1 = interp1(log(f),x(fi),log(OPT.f(OPT.f>=OPT.split)),'linear','extrap');
+yc1 = interp1(log(f(f>0)),x(fi(f>0)),log(OPT.f(OPT.f>=OPT.split)),'linear','extrap');
 
-[f fi] = unique(log(res.fit.f));
+f = res.fit.f;
+[f fi] = unique(log(f(f>0)));
 yc2 = interp1(f,res.fit.y(fi),log(OPT.f(OPT.f<OPT.split)),'linear','extrap');
 
 res.combined.f      = OPT.f(:)';

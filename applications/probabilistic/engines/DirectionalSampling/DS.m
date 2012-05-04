@@ -316,8 +316,8 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             ze          = beta2z(OPT, un(idx,:), OPT.beta1);                % initialize z vector for exact results using evaluation of z-value with initial beta
         end
         
-        b               = [b0 ba be];                                       % initialize beta vector for all results using origin and first estimate
-        z               = [z0 za ze];                                       % initialize z vector for all results using origin and first estimate
+        b               = real([b0 ba be]);                                 % initialize beta vector for all results using origin and first estimate
+        z               = real([z0 za ze]);                                 % initialize z vector for all results using origin and first estimate
         
         ca              = false;                                            % initialize convergence flag for approximated results
         ce              = false;                                            % initialize convergence flag for exact results

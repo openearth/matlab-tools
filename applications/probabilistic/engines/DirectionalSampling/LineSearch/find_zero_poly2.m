@@ -160,12 +160,19 @@ OPT = struct(...
     'maxorder',         3,                  ...     % maximum order of polynom in line search
     'maxratio',         10,                 ...     % maximum ratio between interval boundaries
     'maxinfpow',        10,                 ...     % maximum power of z0 which is assumed to be infinite
-    'animate',          false               ...     % animate progress
+    'animate',          false,              ...     % animate progress
+    'verbose',          false               ...     % display verbose messages
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 %% initialise
+
+global history
+
+history = {};
+
+verbose(OPT,'Initializing line search...');
 
 n               = 0;
 z0              = 0;
@@ -181,6 +188,8 @@ startsearch     = true;
 % assume z-evaluation is exact, so not from ARS aproximation
 if ~converged && any(b==0)
     
+    verbose(OPT,'Origin handling...');
+    
     % store origin as scaling factor
     i0 = find(b==0,1,'first');
     z0 = z(i0);
@@ -188,6 +197,8 @@ if ~converged && any(b==0)
     if z(i0)<-OPT.epsZ
         % origin in failure area, abort
         startsearch = false;
+        
+        verbose(OPT,'    Origin in failure area. Abort.');
     end
     
     if abs(z(i0))<OPT.epsZ
@@ -197,6 +208,8 @@ if ~converged && any(b==0)
         zn          = z(i0);
         converged   = true;
         startsearch = false;
+        
+        verbose(OPT,'    Origin is limit state. Abort.');
     end
 end
 
@@ -204,6 +217,8 @@ end
 
 % check if beta value for which z=0 is already available
 if ~converged && any(abs(z)<OPT.epsZ)
+    
+    verbose(OPT,'Approximate results handling...');
     
     id = find(abs(z)<OPT.epsZ,1,'first');
     zi = feval(OPT.zFunction, un, b(id));
@@ -216,6 +231,8 @@ if ~converged && any(abs(z)<OPT.epsZ)
         % limit state already available, abort
         converged   = true;
         startsearch = false;
+        
+        verbose(OPT,'    Limit state already available. Abort.');
     end
 end
 
@@ -229,16 +246,21 @@ if startsearch && length(z)>1
     
     %% infinity approximation
     
-    % delete beta-z combinations for which z is extremely large
-    while any(abs(z)>abs(z0^OPT.maxinfpow))
+    % delete beta-z combinations for which z is extremely large or
+    % imaginary
+    while any(abs(z)>abs(z0^OPT.maxinfpow)|~isreal(z))
+        
+        verbose(OPT,'Infinity approximation...');
         
         % select largest value
-        ii        = abs(z)==max(abs(z));
+        ii        = abs(z)==max(abs(z))|~isreal(z);
 
         % only delete if more than 2 evaluations are available
-        if length(z)>2
+        if length(z)>sum(ii)+1
             b(ii) = [];
             z(ii) = [];
+            
+            verbose(OPT,'    Removed %d values',sum(ii));
             
         % otherwise, instead add another evaluation half way
         else
@@ -249,6 +271,8 @@ if startsearch && length(z)>1
             
             b(ii) = bn;
             z(ii) = zn;
+            
+            verbose(OPT,'    Sampled intermediate value at \beta=%3.2f',bn);
         end
     end
     
@@ -260,12 +284,14 @@ if startsearch && length(z)>1
     % a (relevant)crossing with the limit state.
     while isempty(zn) || abs(zn(end))>OPT.epsZ
         
+        verbose(OPT,'Line search...');
+        
         % add new samples from infinity approximation to initial
         % evaluations
         ii          = ~ismember(b,bn);
         
-        b           = [b(ii) bn];
-        z           = [z(ii) zn];
+        b           = real([b(ii) bn]);
+        z           = real([z(ii) zn]);
 
         % set model evaluations in order of absolute z-value
         order       = min(OPT.maxorder, length(z)-1);
@@ -276,6 +302,9 @@ if startsearch && length(z)>1
         % check if both positive and negative z-values are available. If
         % so, define finite search boundaries
         if any(z>0) && any(z<0)
+            
+            verbose(OPT,'    Preserved finite interval');
+            
             il      = ii(z(ii)>=0);
             iu      = ii(z(ii)<0);
             
@@ -298,6 +327,8 @@ if startsearch && length(z)>1
             if length(ii)>2
                 ii(end) = [];
                 
+                verbose(OPT,'    Removed outlier');
+                
             % otherwise, instead add another evaluation half way
             else
                 n       = n+1;
@@ -312,6 +343,8 @@ if startsearch && length(z)>1
 
                 ii      = [ii length(z)];
                 ii      = ii(isort(abs(z(ii))));
+                
+                verbose(OPT,'    Sampled intermediate value at \beta=%3.2f',bn(end));
 
                 break;
             end
@@ -321,6 +354,8 @@ if startsearch && length(z)>1
         
         % define the order of the polynome
         order       = min(OPT.maxorder, length(ii)-1);
+        
+        verbose(OPT,'    Set order to %d',order);
         
         % select same number of evaluations closest to z=0 as the order
         ii          = ii(1:order+1);
@@ -332,6 +367,8 @@ if startsearch && length(z)>1
         % root (z=0) is found
         b0          = -Inf;
         for o = order:-1:1
+            
+            verbose(OPT,'    Create polynome fit of order %d',o);
             
             % fit polynome
             p       = polyfit(bs(1:o+1),zs(1:o+1),o);
@@ -380,6 +417,8 @@ if startsearch && length(z)>1
     
         % stop procedure if z=0 is found for negative beta value
         if b0<0
+            verbose(OPT,'    Found negative beta value. Abort.');
+            
             break;
         else
             
@@ -387,13 +426,15 @@ if startsearch && length(z)>1
             
             % add new beta and z-value at the location of the new root
             % estimate
-            bn  = [bn b0];
-            zn  = [zn feval(OPT.zFunction, un, bn(end))];
+            bn  = real([bn b0]);
+            zn  = real([zn feval(OPT.zFunction, un, bn(end))]);
             
             % set z-value to infinity if z-value exceeds maximum allowed
             % value
             if abs(zn(end))>abs(z0^OPT.maxinfpow)
                 zn(end) = zn(end)*Inf;
+                
+                verbose(OPT,'    Set approximate infinite to Inf');
             end
             
         end
@@ -412,6 +453,8 @@ if startsearch && length(z)>1
             
             % loop while last z-value is still infinite
             while ~isfinite(zn(end))
+                
+                verbose(OPT,'Intial retry...');
 
                 bt  = [b bn];
                 zt  = [z zn];
@@ -424,16 +467,24 @@ if startsearch && length(z)>1
                     bn(end)     = mean(bt(end-1:end));
                     zn(end)     = feval(OPT.zFunction, un, bn(end));
                     
+                    verbose(OPT,'    Sampled intermediate value at \beta=%3.2f',bn(end));
+                    
                     % set z-value to infinity if z-value exceeds maximum
                     % allowed value
                     if abs(zn(end))>abs(z0^OPT.maxinfpow)
                         zn(end) = zn(end)*Inf;
+                        
+                        verbose(OPT,'    Set approximate infinite to Inf');
                     end
                 else
+                    verbose(OPT,'    Didn''t found enough points. Abort.');
+                    
                     break;
                 end
 
                 if length(zn)>=OPT.maxiter
+                    verbose(OPT,'    Reached maximum number of iterations. Abort.');
+                    
                     break;
                 end
             end
@@ -444,23 +495,47 @@ if startsearch && length(z)>1
         % give up in case infinity or maximum number of iterations is
         % reached
         if ~isfinite(zn(end)) || length(zn)>=OPT.maxiter
+            verbose(OPT,'Maximum number of iterations reached or infinite values found. Abort.');
+            
             break;
         end
         
         % give up in case new value is not closer to zero
         if any(abs(zn(end))>=abs(zs)) && length(z)>length(zs)
+            verbose(OPT,'Solution does not converge. Abort.');
+            
             break;
         end
     end
 
     % check for convergence
     if ~isempty(zn) && abs(zn(end))<OPT.epsZ
+        verbose(OPT,'Solution converged');
+        
         converged = true;
     end
     
 end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function verbose(OPT,varargin)
+    global history
+    
+    if OPT.verbose
+        
+        message = sprintf(varargin{:});
+
+        if message(1)~=' '
+            if ismember(message,history)
+                return;
+            else
+                history = [history{:} {message}];
+            end
+        end
+    
+        disp(message);
+    end
 
 function plot_progress(OPT,b0,b,z,bs,zs,bn,zn,p)
 
