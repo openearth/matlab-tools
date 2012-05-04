@@ -34,11 +34,11 @@ if isfield(model,'websites')
         hm.models(i).webSite(j).Location=[];
         hm.models(i).webSite(j).elevation=[];
         if isfield(model.websites(j).website,'locationx') && isfield(model.websites(j).website,'locationy')
-            hm.models(i).webSite(j).Location(1)=str2double(model.websites(j).website(1).locationx);
-            hm.models(i).webSite(j).Location(2)=str2double(model.websites(j).website(1).locationy);
+            hm.models(i).webSite(j).Location(1)=str2double(model.websites(j).website.locationx);
+            hm.models(i).webSite(j).Location(2)=str2double(model.websites(j).website.locationy);
         end
         if isfield(model.websites(j).website,'elevation')
-            hm.models(i).webSite(j).elevation=str2double(model.websites(j).website(1).elevation);
+            hm.models(i).webSite(j).elevation=str2double(model.websites(j).website.elevation);
         end
     end
 else
