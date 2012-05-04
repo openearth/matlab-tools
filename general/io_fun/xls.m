@@ -88,9 +88,7 @@ classdef xls < handle
             if nargin == 1
                 obj.setFile(filename);
             end
-            
             obj.data_written = false;
-            obj.open;
         end
         
         function delete(obj)
