@@ -77,6 +77,7 @@ OPT.main.log            = 1;
 OPT.main.file_incl      = '.*';
 OPT.main.zip            = false; % specify if source files are compressed or not
 OPT.main.zip_file_incl  = '.*';
+OPT.main.case_sensitive = false;
 OPT.main.unzip_with_gui = 1;
 OPT.main.dateFcn        = @(s) datenum(s(1:6),'yymmdd'); % how to extract date from the filename
 OPT.main.defaultdate    = []; 
@@ -126,9 +127,9 @@ multiWaitbar('Generating netcdf from source files...',          'reset', 'Color'
 % initialise cache dir and locate source files
 if OPT.main.zip
     if ~exist(OPT.main.path_unzip_tmp,'dir'); mkpath(OPT.main.path_unzip_tmp); end
-    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.zip_file_incl,'no_dirs',true,'depth',OPT.main.dir_depth);
+    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.zip_file_incl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
 else
-    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.file_incl,'no_dirs',true,'depth',OPT.main.dir_depth);
+    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.file_incl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
     % get the timestamp from the file date
     fns1 = get_date_from_filename(OPT,fns1);
  end
@@ -191,7 +192,7 @@ uncompress(fullfile(fns1.pathname,fns1.name),...
     'outpath',fullfile(OPT.main.path_unzip_tmp),'gui',OPT.main.unzip_with_gui,'quiet',true);
 
 % read the output of unpacked files
-fns2 = dir2(OPT.main.path_unzip_tmp,'file_incl',OPT.main.file_incl,'no_dirs',true,'depth',OPT.main.dir_depth);
+fns2 = dir2(OPT.main.path_unzip_tmp,'file_incl',OPT.main.file_incl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
 
 [fns2.hash] = deal(fns1.hash); % hash of zipped file is passed
 
@@ -216,7 +217,7 @@ end
 
 function fns1 = check_existing_nc_files(OPT,fns1)
 
-nc_fns = dir2(OPT.main.path_netcdf,'file_incl','\.nc$','no_dirs',true,'depth',OPT.main.dir_depth);
+nc_fns = dir2(OPT.main.path_netcdf,'file_incl','\.nc$','no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
 outdated = false;
 ii=0;
 source_file_hash = [];
