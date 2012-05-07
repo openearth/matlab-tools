@@ -169,7 +169,7 @@ else
     madd=1;
 end
 
-z1=GetDepthZ(z1,dpsopt);
+z1=getDepthZ(z1,dpsopt);
 
 if strcmpi(ddb.runid1,runid1) && strcmpi(ddb.runid2,runid2)
     % Coarse domain to the left/bottom of fine domain
