@@ -82,7 +82,6 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
     OPT.polyOutline        = false; % outlines the polygon, including extruded edges
     OPT.polyFill           = true;
     OPT.openInGE           = false;
-    OPT.reversePoly        = [];
     OPT.extrude            = true;
 
     OPT.cLim               = [];
@@ -275,11 +274,6 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
                OPT_poly.timeIn  = timeIn(ii,:);
                OPT_poly.timeOut = timeOut(ii,:);
            end
-           %             if OPT.reversePoly
-           %                 LAT = LAT(end:-1:1);
-           %                 LON = LON(end:-1:1);
-           %                   Z =   Z(end:-1:1);
-           %             end
            % TO DO : deal with constant z, constant per patch or 'clampToGround';
            newOutput = KML_poly(lat{ii},...
                lon{ii},...
