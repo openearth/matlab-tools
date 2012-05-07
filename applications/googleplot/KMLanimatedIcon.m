@@ -74,11 +74,14 @@ function varargout = KMLanimatedIcon(lat,lon,varargin)
    OPT.colorbartitle      = '';
 
    OPT.icon               = 'http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png';
+   OPT.iconHotspot         = ''; %<hotSpot x="0.5"  y="0.5" xunits="fraction" yunits="fraction"/>
    OPT.scale              = 1.0;
    OPT.timeIn             = [];
    OPT.timeOut            = [];
    OPT.dateStrStyle       = 29; % set to yyyy-mm-ddTHH:MM:SS for detailed times
-
+   
+   OPT.balloonStyle       = '';
+   
 if ~isempty(varargin)
     if ~ischar(varargin{1})
         c                  = varargin{1};
@@ -110,47 +113,51 @@ if isempty(OPT.kmlName)
     [ignore OPT.kmlName] = fileparts(OPT.fileName);
 end
 
+if ~isempty(OPT.balloonStyle)
+    OPT.balloonStyle = ['<BalloonStyle>' OPT.balloonStyle '</BalloonStyle>'];
+end
+
 %% if colordata is defined, color the icon
 if OPT.coloredIcon
     % set cLim
-
-   if isempty(OPT.cLim)
-       OPT.cLim         = [min(c(:)) max(c(:))];
-   end
-
-   if isnumeric(OPT.colorMap)
-      OPT.colorSteps = size(OPT.colorMap,1);
-   end   
-
-%% pre-process data
-%  make 1D and remove NaNs
-
-   if length(c)==1
-      c = repmat( c,size(lon));
-   elseif ~length(c)==length(lon)
-      error('c should have length 1 or have same size as lon')
-   end
-
-   lon    = lon(~isnan(c(:)));
-   lat    = lat(~isnan(c(:)));
-   c      =   c(~isnan(c(:)));
-
-   if isnumeric(OPT.colorMap)
-      OPT.colorSteps = size(OPT.colorMap,1);
-   end
-   
-   if isa(OPT.colorMap,'function_handle')
-     colorRGB           = OPT.colorMap(OPT.colorSteps);
-   elseif isnumeric(OPT.colorMap)
-     if size(OPT.colorMap,1)==1
-       colorRGB         = repmat(OPT.colorMap,[OPT.colorSteps 1]);
-     elseif size(OPT.colorMap,1)==OPT.colorSteps
-       colorRGB         = OPT.colorMap;
-     else
-       error(['size ''colorMap'' (=',num2str(size(OPT.colorMap,1)),') does not match ''colorSteps''  (=',num2str(OPT.colorSteps),')'])
-     end
-   end   
-
+    
+    if isempty(OPT.cLim)
+        OPT.cLim         = [min(c(:)) max(c(:))];
+    end
+    
+    if isnumeric(OPT.colorMap)
+        OPT.colorSteps = size(OPT.colorMap,1);
+    end
+    
+    %% pre-process data
+    %  make 1D and remove NaNs
+    
+    if length(c)==1
+        c = repmat( c,size(lon));
+    elseif ~length(c)==length(lon)
+        error('c should have length 1 or have same size as lon')
+    end
+    
+    lon    = lon(~isnan(c(:)));
+    lat    = lat(~isnan(c(:)));
+    c      =   c(~isnan(c(:)));
+    
+    if isnumeric(OPT.colorMap)
+        OPT.colorSteps = size(OPT.colorMap,1);
+    end
+    
+    if isa(OPT.colorMap,'function_handle')
+        colorRGB           = OPT.colorMap(OPT.colorSteps);
+    elseif isnumeric(OPT.colorMap)
+        if size(OPT.colorMap,1)==1
+            colorRGB         = repmat(OPT.colorMap,[OPT.colorSteps 1]);
+        elseif size(OPT.colorMap,1)==OPT.colorSteps
+            colorRGB         = OPT.colorMap;
+        else
+            error(['size ''colorMap'' (=',num2str(size(OPT.colorMap,1)),') does not match ''colorSteps''  (=',num2str(OPT.colorSteps),')'])
+        end
+    end
+    
 end
 %% start KML
 
@@ -177,16 +184,19 @@ if OPT.coloredIcon
 
     output = [output ...
         '<Style id="Marker_',num2str(ii,'%0.3d'),'">\n'...
+        OPT.balloonStyle...
         ' <IconStyle>\n'...
         ' <color>' markerColor '</color>\n'...
         ' <scale>' num2str(OPT.scale) '</scale>\n'...
         ' <Icon><href>' OPT.icon '</href></Icon>\n'...
+        OPT.iconHotspot...
         ' </IconStyle>\n'...
         ' </Style>\n'];
     end
 else
      output = [output ...
         '<Style id="Marker">\n'...
+        OPT.balloonStyle...
         ' <IconStyle>\n'...
         ' <scale>' num2str(OPT.scale) '</scale>\n'...
         ' <Icon><href>' OPT.icon '</href></Icon>\n'...
