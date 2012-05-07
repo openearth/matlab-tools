@@ -93,7 +93,7 @@ handles.Model(md).Input(ad).gridX=x;
 handles.Model(md).Input(ad).gridY=y;
 handles.Model(md).Input(ad).MMax=size(x,1)+1;
 handles.Model(md).Input(ad).NMax=size(x,2)+1;
-[handles.Model(md).Input(ad).gridXZ,handles.Model(md).Input(ad).gridYZ]=GetXZYZ(x,y);
+[handles.Model(md).Input(ad).gridXZ,handles.Model(md).Input(ad).gridYZ]=getXZYZ(x,y);
 handles.Model(md).Input(ad).kcs=determineKCS(handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
 nans=zeros(size(handles.Model(md).Input(ad).gridX));
 nans(nans==0)=NaN;
