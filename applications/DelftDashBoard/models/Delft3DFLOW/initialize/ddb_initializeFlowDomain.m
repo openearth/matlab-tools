@@ -150,6 +150,22 @@ handles.Model(md).Input(id).selectThinDam=0;
 handles.Model(md).Input(id).deleteThinDam=0;
 handles.Model(md).Input(id).changeThinDam=0;
 
+%% 2D weirs
+handles.Model(md).Input(id).nrWeirs2D=0;
+handles.Model(md).Input(id).weir2DNames={''};
+handles.Model(md).Input(id).activeWeir2D=1;
+handles.Model(md).Input(id).weirs2D(1).M1=[];
+handles.Model(md).Input(id).weirs2D(1).M2=[];
+handles.Model(md).Input(id).weirs2D(1).N1=[];
+handles.Model(md).Input(id).weirs2D(1).N2=[];
+handles.Model(md).Input(id).weirs2D(1).UV='U';
+handles.Model(md).Input(id).weirs2D(1).frictionCoefficient=1.0;
+handles.Model(md).Input(id).weirs2D(1).crestHeight=0.0;
+handles.Model(md).Input(id).addWeir2D=0;
+handles.Model(md).Input(id).selectWeir2D=0;
+handles.Model(md).Input(id).deleteWeir2D=0;
+handles.Model(md).Input(id).changeWeir2D=0;
+
 %% Open boundaries
 handles.Model(md).Input(id).nrOpenBoundaries=0;
 handles.Model(md).Input(id).openBoundaries=[];

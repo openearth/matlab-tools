@@ -79,6 +79,7 @@ MDF.Fmtdry= 'FR';
 %MDF.MNtd  = [ ] [ ] [ ] [ ] 'U';
 MDF.Filtd = '';
 MDF.Fmttd = 'FR';
+MDF.Fil2dw = '';
 %MDF.Nambar= '                    ';
 %MDF.MNbar = [ ] [ ] ' ';
 %MDF.MNwlos= [ ] [ ];
@@ -212,6 +213,7 @@ MDF.Filwc = '';
 MDF.Filwt = '';
 MDF.Wndgrd= 'A';
 MDF.MNmaxw= [0 0];
+MDF.Filweb = '';
 
 %% lower case
 fnames=fieldnames(MDF);

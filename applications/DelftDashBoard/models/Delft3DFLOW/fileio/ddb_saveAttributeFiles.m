@@ -197,6 +197,18 @@ if handles.Model(md).Input(id).nrThinDams>0
     ddb_saveThdFile(handles,id);
 end
 
+if handles.Model(md).Input(id).nrWeirs2D>0
+    if isempty(handles.Model(md).Input(id).w2dFile) || sall
+        [filename, pathname, filterindex] = uiputfile('*.2dw', ['Select 2D Weirs File - domain ' runid],'');
+        curdir=[lower(cd) '\'];
+        if ~strcmpi(curdir,pathname)
+            filename=[pathname filename];
+        end
+        handles.Model(md).Input(id).w2dFile=filename;
+    end
+    ddb_save2DWFile(handles,id);
+end
+
 if handles.Model(md).Input(id).nrDrogues>0
     if isempty(handles.Model(md).Input(id).droFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.dro', ['Select Drogues File - domain ' runid],'');

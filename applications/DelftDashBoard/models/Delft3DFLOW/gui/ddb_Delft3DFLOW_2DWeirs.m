@@ -1,10 +1,10 @@
-function ddb_Delft3DFLOW_thinDams(varargin)
-%DDB_DELFT3DFLOW_THINDAMS  One line description goes here.
+function ddb_Delft3DFLOW_2DWeirs(varargin)
+%DDB_DELFT3DFLOW_2DWeirs  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_Delft3DFLOW_thinDams(varargin)
+%   ddb_Delft3DFLOW_2DWeirs(varargin)
 %
 %   Input:
 %   varargin =
@@ -13,13 +13,13 @@ function ddb_Delft3DFLOW_thinDams(varargin)
 %
 %
 %   Example
-%   ddb_Delft3DFLOW_thinDams
+%   ddb_Delft3DFLOW_2DWeirs
 %
 %   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2012 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -94,7 +94,7 @@ else
             handles.Model(md).Input(ad).addThinDam=0;
             handles.Model(md).Input(ad).selectThinDam=0;
             handles.Model(md).Input(ad).changeThinDam=0;
-            ddb_clickObject('tag','thindam','callback',@deleteThinDamFromMap);
+            ddb_clickObject('tag','drypoint','callback',@deleteThinDamFromMap);
             setInstructions({'','','Select thin dam from map to delete'});
             if handles.Model(md).Input(ad).deleteThinDam
                 handles=deleteThinDam(handles);
@@ -105,7 +105,7 @@ else
             handles.Model(md).Input(ad).addThinDam=0;
             handles.Model(md).Input(ad).deleteThinDam=0;
             handles.Model(md).Input(ad).changeThinDam=0;
-            ddb_clickObject('tag','thindam','callback',@selectThinDamFromMap);
+            ddb_clickObject('tag','drypoint','callback',@selectThinDamFromMap);
             setHandles(handles);
             setInstructions({'','','Select thin dam from map'});
             
@@ -114,7 +114,7 @@ else
             handles.Model(md).Input(ad).selectThinDam=0;
             handles.Model(md).Input(ad).deleteThinDam=0;
             if handles.Model(md).Input(ad).changeThinDam
-                ddb_clickObject('tag','thindam','callback',@changeThinDamFromMap);
+                ddb_clickObject('tag','drypoint','callback',@changeThinDamFromMap);
                 setInstructions({'','','Select thin dam to change from map'});
             end
             setHandles(handles);

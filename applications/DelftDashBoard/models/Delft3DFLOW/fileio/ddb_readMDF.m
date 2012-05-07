@@ -78,6 +78,7 @@ handles.Model(md).Input(id).KMax=MDF.mnkmax(3);
 handles.Model(md).Input(id).thick=MDF.thick;
 handles.Model(md).Input(id).dryFile=MDF.fildry;
 handles.Model(md).Input(id).thdFile=MDF.filtd;
+handles.Model(md).Input(id).w2dFile=MDF.fil2dw;
 if isfield(MDF,'fildep')
     handles.Model(md).Input(id).depFile=MDF.fildep;
     handles.Model(md).Input(id).uniformDepth=10.0;
@@ -384,6 +385,11 @@ handles.Model(md).Input(id).MNmaxw=MDF.mnmaxw;
 handles.Model(md).Input(id).amtFile=MDF.filwt;
 handles.Model(md).Input(id).amcFile=MDF.filwc;
 handles.Model(md).Input(id).amrFile=MDF.filwr;
+
+handles.Model(md).Input(id).spwFile=MDF.filweb;
+if ~isempty(handles.Model(md).Input(id).spwFile)
+    handles.Model(md).Input(id).windType='spiderweb';
+end
 
 if ~isempty(handles.Model(md).Input(id).amuFile)
     handles.Model(md).Input(id).windType='equidistant';

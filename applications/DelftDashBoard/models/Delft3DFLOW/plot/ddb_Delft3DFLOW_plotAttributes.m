@@ -136,6 +136,14 @@ switch lower(att)
         colpas=[0.85 0.85 0.50];
         colact='r';
         tp='line';
+    case{'weirs2d'}
+        tag='weir2d';
+        attStruc=handles.Model(imd).Input(iad).weirs2D;
+        nr=handles.Model(imd).Input(iad).nrWeirs2D;
+        iac=handles.Model(imd).Input(iad).activeWeir2D(1);
+        colpas=[1 1 0];
+        colact='r';
+        tp='line';
     case{'discharges'}
         tag='discharge';
         attStruc=handles.Model(imd).Input(iad).discharges;
@@ -350,6 +358,8 @@ switch lower(att)
         handles.Model(imd).Input(iad).openBoundaries=attStruc;
     case{'thindams'}
         handles.Model(imd).Input(iad).thinDams=attStruc;
+    case{'weirs2d'}
+        handles.Model(imd).Input(iad).weirs2D=attStruc;
     case{'discharges'}
         handles.Model(imd).Input(iad).discharges=attStruc;
     case{'drogues'}
@@ -406,6 +416,27 @@ switch lower(att)
                 m=jj;
                 n=kk;
                 if strcmpi(handles.Model(imd).Input(id).thinDams(i).UV,'u')
+                    x{k}=[xg(m,n-1) xg(m,n)];
+                    y{k}=[yg(m,n-1) yg(m,n)];
+                else
+                    x{k}=[xg(m-1,n) xg(m,n)];
+                    y{k}=[yg(m-1,n) yg(m,n)];
+                end
+            end
+        end
+    case{'weirs2d'}
+        txt='';
+        m1=min(handles.Model(imd).Input(id).weirs2D(i).M1,handles.Model(imd).Input(id).weirs2D(i).M2);
+        n1=min(handles.Model(imd).Input(id).weirs2D(i).N1,handles.Model(imd).Input(id).weirs2D(i).N2);
+        m2=max(handles.Model(imd).Input(id).weirs2D(i).M1,handles.Model(imd).Input(id).weirs2D(i).M2);
+        n2=max(handles.Model(imd).Input(id).weirs2D(i).N1,handles.Model(imd).Input(id).weirs2D(i).N2);
+        k=0;
+        for jj=m1:m2
+            for kk=n1:n2
+                k=k+1;
+                m=jj;
+                n=kk;
+                if strcmpi(handles.Model(imd).Input(id).weirs2D(i).UV,'u')
                     x{k}=[xg(m,n-1) xg(m,n)];
                     y{k}=[yg(m,n-1) yg(m,n)];
                 else

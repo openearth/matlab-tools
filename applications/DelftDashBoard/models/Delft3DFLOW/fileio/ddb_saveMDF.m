@@ -97,6 +97,9 @@ if Flow.nrThinDams>0
     MDF.Filtd=Flow.thdFile;
     MDF.Fmttd='FR';
 end
+if Flow.nrWeirs2D>0
+    MDF.Fil2dw=Flow.w2dFile;
+end
 MDF.Itdate=D3DTimeString(Flow.itDate,'ItDateMDF');
 MDF.Tunit='M';
 tstart=(Flow.startTime-Flow.itDate)*1440.0;

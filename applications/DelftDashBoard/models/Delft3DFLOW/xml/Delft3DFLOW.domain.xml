@@ -31,6 +31,12 @@
         <elements>Delft3DFLOW.domain.thindams.xml</elements>
       </tab>
       <tab>
+        <tag>weirs2d</tag>
+        <tabstring>2D Weirs</tabstring>
+        <elements>Delft3DFLOW.domain.weirs2d.xml</elements>
+        <callback>ddb_Delft3DFLOW_weirs2D</callback>
+      </tab>
+      <tab>
         <tag>structures</tag>
         <tabstring>Structures</tabstring>
         <elements>Delft3DFLOW.domain.structures.xml</elements>

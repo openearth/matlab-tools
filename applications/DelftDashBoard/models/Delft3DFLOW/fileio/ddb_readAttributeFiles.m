@@ -132,6 +132,9 @@ end
 if ~isempty(handles.Model(md).Input(id).thdFile)
     handles=ddb_readThdFile(handles,id);
 end
+if ~isempty(handles.Model(md).Input(id).w2dFile)
+    handles=ddb_read2DWFile(handles,id);
+end
 if ~isempty(handles.Model(md).Input(id).wndFile)
     handles=ddb_readWndFile(handles,id);
 end

@@ -1,4 +1,4 @@
-function handles = ddb_generateGridDelft3DFLOW(handles, id, x, y, varargin)
+function handles = ddb_generateGridDelft3DFLOW(handles, id, x, y, z, varargin)
 %DDB_GENERATEGRIDDELFT3DFLOW  One line description goes here.
 %
 %   More detailed description goes here.

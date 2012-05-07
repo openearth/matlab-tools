@@ -137,7 +137,11 @@ for id=n1:n2
     if handles.Model(imd).Input(id).nrThinDams>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'thindams','domain',id,'visible',vis,'active',act);
     end
-    
+
+    if handles.Model(imd).Input(id).nrWeirs2D>0
+        handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'weirs2d','domain',id,'visible',vis,'active',act);
+    end
+
     if handles.Model(imd).Input(id).nrDischarges>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'discharges','domain',id,'visible',vis,'active',act);
     end
