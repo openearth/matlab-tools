@@ -212,6 +212,9 @@ for ii = 1:length(ncfiles);
         z = z(2:end-1,2:end-1);
         
         %% MAKE TILES
+        multiWaitbar('kml_print_all_tiles',(ii - (jj / size(date4GE,1)))/length(ncfiles),...
+            'label',sprintf('%s - %s',url,datestr(date(jj),29)))
+        
         KMLfigure_tiler(h,lat,lon,z,...
             'highestLevel'      ,OPT.highestLevel,...
             'lowestLevel'       ,OPT.lowestLevel,...
@@ -233,7 +236,6 @@ for ii = 1:length(ncfiles);
         maxlat = max(maxlat,max(lat(:)));
         maxlon = max(maxlon,max(lon(:)));
         
-        multiWaitbar('kml_print_all_tiles',(ii-1 + jj / size(date4GE,1))/length(ncfiles))
     end
 end
 multiWaitbar('kml_print_all_tiles',1);
@@ -276,10 +278,12 @@ subfolders = subfolders([subfolders.isdir]);
 subfolders = subfolders(2:end);
 
 timeDependant = false;
+previousSourcePaths = {};
 for ii = 1:length(subfolders)
     sourcePath = [subfolders(ii).pathname subfolders(ii).name];
     destPath = sourcePath;
-    write_kml_per_folder(OPT,sourcePath,destPath,timeDependant)
+    write_kml_per_folder(OPT,sourcePath,destPath,timeDependant,previousSourcePaths)
+    previousSourcePaths(end+1) = {sourcePath};
 end
 
 %%
@@ -443,7 +447,7 @@ fclose(fid);
 % 
 % varargout = {OPT};
 
-function write_kml_per_folder(OPT,sourcePath,destPath,timeDependant)
+function write_kml_per_folder(OPT,sourcePath,destPath,timeDependant,previousSourcePaths)
 tiles               = dir2(sourcePath,'file_incl','\.png$','no_dirs',1);
 underscorePos       = strfind(tiles(1).name,'_');
 
@@ -524,6 +528,41 @@ for level = OPT2.highestLevel:OPT2.lowestLevel
                             minLod,-1,...
                             B.N,B.S,B.W,B.E,...
                             kmlprefix,code)];
+                    else
+                        % for static kml files that are filled in time,
+                        % sometimes links to kml files from previous timesteps
+                        % should be linked.
+                        if OPT.filledInTime && ~timeDependant  && exist('previousSourcePaths','var')
+                            if ~isempty(previousSourcePaths)
+                                kmlname = [code '.kml'];
+                                % check if exists in KML dir
+                                if exist(fullfile(sourcePath,'..','KML',kmlname),'file')
+                                    % if so, then check if exists in previous
+                                    % files
+                                    
+                                    for kk = length(previousSourcePaths):-1:1
+                                        [~,prefix] = fileparts(previousSourcePaths{kk});
+                                        kmlname = fullfile('..',prefix,[prefix '_' code '.kml']);
+                                        if exist(fullfile(sourcePath,kmlname),'file')
+                                            output = [output sprintf([...
+                                                '<NetworkLink>\n'...
+                                                '<name>%s</name>\n'...name
+                                                '<Region>\n'...
+                                                '<Lod><minLodPixels>%d</minLodPixels><maxLodPixels>%d</maxLodPixels></Lod>\n'...minLod,maxLod
+                                                '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><west>%3.8f</west><east>%3.8f</east></LatLonAltBox>\n' ...N,S,W,E
+                                                '</Region>\n'...
+                                                '<Link><href>%s</href><viewRefreshMode>onRegion</viewRefreshMode></Link>\n'...kmlname
+                                                '</NetworkLink>\n'],...
+                                                code,...
+                                                minLod,-1,...
+                                                B.N,B.S,B.W,B.E,...
+                                                kmlname)];
+                                            break
+                                        end
+                                    end
+                                end
+                            end
+                        end
                     end
                 end
             end
