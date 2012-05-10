@@ -217,7 +217,7 @@ npmax=20000000;
 if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     f=str2func(['ddb_generateGrid' handles.Model(md).name]);
     try
-        handles=feval(f,handles,ad,0,0,'ddb_test');
+        handles=feval(f,handles,ad,0,0,0,'ddb_test');
     catch
         GiveWarning('text',['Grid generation not supported for ' handles.Model(md).longName]);
         return
@@ -234,7 +234,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     rot=pi*handles.Toolbox(tb).Input.rotation/180;
     zmax=handles.Toolbox(tb).Input.zMax;
     
-    % Find minimum grid resolution
+    % Find minimum grid resolution (in metres)
     dmin=min(dx,dy);
     if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         dmin=dmin*111111;
@@ -276,6 +276,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     % convert bathy grid to active coordinate system
     
     if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
+        dmin=min(dx,dy);
         [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
         [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
         zz=interp2(xx,yy,zz,xgb,ygb);
@@ -284,11 +285,11 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
         yg=yy;
     end
     
-    [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
+    [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
     
     close(wb);
     
-    handles=feval(f,handles,ad,x,y);
+    handles=feval(f,handles,ad,x,y,z);
     
     setHandles(handles);
     

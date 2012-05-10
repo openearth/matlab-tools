@@ -83,6 +83,7 @@ handles.Toolbox(ii).Input.lengthX=0.1;
 handles.Toolbox(ii).Input.lengthY=0.1;
 handles.Toolbox(ii).Input.rotation=0.0;
 handles.Toolbox(ii).Input.sectionLength=10;
+handles.Toolbox(ii).Input.sectionLengthMetres=50000;
 handles.Toolbox(ii).Input.zMax=0;
 handles.Toolbox(ii).Input.viewGridOutline=1;
 
