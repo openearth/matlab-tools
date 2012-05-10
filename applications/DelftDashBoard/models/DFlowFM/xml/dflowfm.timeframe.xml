@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>paneltimeframe</tag>
+    <style>panel</style>
+    <text>Time Frame</text>
+    <position>40 10 900 160</position>
+  </element>
+  <element>
+    <tag>editreferencedate</tag>
+    <style>edit</style>
+    <position>130 125 120 20</position>
+    <variable>handles.Model(md).Input(ad).refDate</variable>
+    <type>date</type>
+    <tooltipstring>Edit reference date</tooltipstring>
+    <text>Reference Date</text>
+    <textposition>left</textposition>
+  </element>
+  <element>
+    <tag>editstarttime</tag>
+    <style>edit</style>
+    <position>130 100 120 20</position>
+    <variable>handles.Model(md).Input(ad).tStart</variable>
+    <type>datetime</type>
+    <tooltipstring>Edit model start time</tooltipstring>
+    <text>Start Time</text>
+    <textposition>left</textposition>
+    <onchange>ddb_updateOutputTimes</onchange>
+  </element>
+  <element>
+    <tag>editstoptime</tag>
+    <style>edit</style>
+    <position>130 75 120 20</position>
+    <variable>handles.Model(md).Input(ad).tStop</variable>
+    <type>datetime</type>
+    <tooltipstring>Edit model stop time</tooltipstring>
+    <text>Stop Time</text>
+    <textposition>left</textposition>
+    <onchange>ddb_updateOutputTimes</onchange>
+  </element>
+</root>

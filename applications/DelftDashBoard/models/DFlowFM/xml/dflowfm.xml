@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <model>DFlowFM</model>
+  <longname>D-FLOW FM</longname>
+  <multipledomains>no</multipledomains>
+  <enable>0</enable>
+  <elements>
+    <element>
+      <style>tabpanel</style>
+      <tag>DFlowFM</tab>
+      <position>10 10 900 700</position> 
+      <tabs>
+        <tab>
+          <tag>toolbox</tag>
+          <tabstring>Toolbox</tabstring>
+        </tab>
+        <tab>
+          <tag>description</tag>
+          <tabstring>Description</tabstring>
+          <callback>ddb_DFlowFM_description</callback>
+          <elements>DFlowFM.description.xml</elements>
+        </tab>
+        <tab>
+          <tag>timeframe</tag>
+          <tabstring>Time Frame</tabstring>
+          <callback>ddb_DFlowFM_timeFrame</callback>
+          <elements>DFlowFM.timeframe.xml</elements>
+        </tab>
+      </tabs>
+    </element>
+  </elements>
+  <menu>
+    <menuopenfile>
+      <menuitem>
+        <string>Open MDU File</string>
+        <tag>openmdufilepresentdomain</tag>
+        <callback>ddb_openDFlowFM</callback>
+        <option>openpresent</option>
+      </menuitem>
+    </menuopenfile>
+    <menusavefile>
+      <menuitem>
+        <string>Save MDU File</string>
+        <tag>savemdu</tag>
+        <callback>ddb_saveDFlowFM</callback>
+        <option>save</option>
+      </menuitem>
+      <menuitem>
+        <string>Save MDU File As ...</string>
+        <tag>savemduas</tag>
+        <callback>ddb_saveDFlowFM</callback>
+        <option>saveas</option>
+      </menuitem>
+      <menuitem>
+        <string>Save All</string>
+        <tag>saveall</tag>
+        <callback>ddb_saveDFlowFM</callback>
+        <option>saveall</option>
+      </menuitem>
+      <menuitem>
+        <string>Save All As ...</string>
+        <tag>saveallas</tag>
+        <callback>ddb_saveDFlowFM</callback>
+        <option>saveallas</option>
+      </menuitem>
+    </menusavefile>
+    <menuview>
+    </menuview>
+  </menu>
+</root>
