@@ -96,6 +96,8 @@ switch lower(meteosource)
         urlstr=['http://nomads.ncdc.noaa.gov/dods/NCEP_NAM/' dr datestr(cycledate,'yyyymmdd') '/nam_218_' datestr(cycledate,'yyyymmdd') '_' num2str(cyclehour,'%0.2i') '00_fff'];
     case{'ncepncar_reanalysis'}
         urlstr='http://nomad3.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-1/6hr/grb2d/grb2d';
+    case{'ncepncar_reanalysis_2'}
+        urlstr='http://nomad3.ncep.noaa.gov:9090/dods/reanalyses/reanalysis-2/6hr/pgb/pgb';
     case{'ncep_nam_analysis'}
         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/Anl_Complete';
     case{'ncep_nam_analysis_precip'}

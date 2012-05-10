@@ -76,8 +76,14 @@ ntry=1;
 
 urlstr = getMeteoUrl(meteosource,cycledate,cyclehour);
 switch lower(meteosource)
-    case{'gfs1p0','gfs0p5','ncep_gfs_analysis','ncepncar_reanalysis','ncep_gfs_analysis_precip'}
+    case{'gfs1p0','gfs0p5','ncep_gfs_analysis','ncepncar_reanalysis','ncepncar_reanalysis_2','ncep_gfs_analysis_precip'}
         xlim=mod(xlim,360);
+end
+
+mslprs=1;
+switch lower(meteosource)
+    case{'ncepncar_reanalysis'}
+        mslprs=0;
 end
 
 try
@@ -177,6 +183,14 @@ try
                     % Probably Kelvin i.s.o. Celsius
                     d.(parstr{i})=d.(parstr{i})-273.15;
                 end
+        end
+
+        if ~mslprs
+            switch lower(parstr{i})
+                case{'pressfc'}
+                    lnd=nc_varget(urlstr,'landsfc',[it1-1 ilat1-1 ilon1-1],[it2-it1+1 ilat2-ilat1+1 ilon2-ilon1+1]);
+                    d.(parstr{i})(lnd==1)=NaN;
+            end
         end
         
         nlon=(ilon2-ilon1);
