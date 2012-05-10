@@ -202,6 +202,7 @@ for ipar=1:npar
         s=load([meteodir flist(it).name]);
         
         [val,lon,lat]=getMeteoMatrix(s.(parameter{ipar}),s.lon,s.lat,xlimg,ylimg);
+        val=internaldiffusion(val);
         
         if ~strcmpi(coordsystype,'geographic')
             val=interp2(lon,lat,val,xgeo,ygeo);
