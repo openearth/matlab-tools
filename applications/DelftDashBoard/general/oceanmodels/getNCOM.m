@@ -107,10 +107,10 @@ yl1=yl;
 
 lon1=mod(lon,360);
 
-imin=find(lon1>=xl1(1),1,'first');
-imax=find(lon1<=xl1(2),1,'last');
-jmin=find(lat>=yl1(1),1,'first');
-jmax=find(lat<=yl1(2),1,'last');
+imin=find(lon1<=xl1(1),1,'last');
+imax=find(lon1>=xl1(2),1,'first');
+jmin=find(lat<=yl1(1),1,'last');
+jmax=find(lat>=yl1(2),1,'first');
 
 id=imax-imin+1;
 jd=jmax-jmin+1;
