@@ -203,6 +203,8 @@ else
 end
 
 times = times(it1:stride:it2);
+
+times=datenum(round(datevec(times)));
 nt=length(times);
 
 vs_use(hisfile,'quiet');
