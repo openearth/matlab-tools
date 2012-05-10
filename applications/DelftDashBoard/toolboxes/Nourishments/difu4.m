@@ -20,7 +20,7 @@ hu=0.5*(h(grd.nm)+h(grd.nmu));
 hv=0.5*(h(grd.nm)+h(grd.num));
 
 % Equilibrium concentration ce
-ce=par.cE*(he./h).^par.nfac;
+ce=par.cE.*(he./h).^par.nfac;
 
 % fixfac=sedthick/0.1;
 % fixfac=max(0,min(fixfac,1));
@@ -201,9 +201,9 @@ c = m./h./grd.a;
 % end
 
 %% Erosion and deposition
-ffac=kfs.*par.dt*par.ws./h; % (-)
+ffac=kfs.*par.dt.*par.ws./h; % (-)
 % ffac=par.dt*par.ws./h; % (-)
-ffac=min(ffac,0.2); % Limit ffac to 1
+%ffac=min(ffac,1); % Limit ffac to 1
 srcsnk=kfs.*ffac.*(ce-c); % (kg/m3)
 %srcsnk(kfs==0)=0;
 %srcsnk(srcsnk>0 & sedthick<0.05) = 0;

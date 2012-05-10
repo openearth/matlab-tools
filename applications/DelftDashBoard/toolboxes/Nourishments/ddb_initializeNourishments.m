@@ -73,28 +73,47 @@ if nargin>1
     end
 end
 
+%% Domain
 handles.Toolbox(ii).Input.modelOutlineHandle=[];
 handles.Toolbox(ii).Input.xLim      = [0 0];
 handles.Toolbox(ii).Input.yLim      = [0 0];
 handles.Toolbox(ii).Input.dX        = 100;
-
-handles.Toolbox(ii).Input.polygonX=[];
-handles.Toolbox(ii).Input.polygonY=[];
-handles.Toolbox(ii).Input.polyLength=0;
 
 handles.Toolbox(ii).Input.currentsFile='';
 handles.Toolbox(ii).Input.currentSource='file';
 handles.Toolbox(ii).Input.currentU=0;
 handles.Toolbox(ii).Input.currentV=0;
 
-handles.Toolbox(ii).Input.nourishmentType='volume';
-handles.Toolbox(ii).Input.nourishmentVolume=1e6;
-handles.Toolbox(ii).Input.nourishmentThickness=1;
-handles.Toolbox(ii).Input.nourishmentHeight=1;
+%% Nourishments
+handles.Toolbox(ii).Input.nourishments(1).polygonX=[];
+handles.Toolbox(ii).Input.nourishments(1).polygonY=[];
+handles.Toolbox(ii).Input.nourishments(1).polyLength=0;
+handles.Toolbox(ii).Input.nourishments(1).type='volume';
+handles.Toolbox(ii).Input.nourishments(1).volume=1e6;
+handles.Toolbox(ii).Input.nourishments(1).thickness=1;
+handles.Toolbox(ii).Input.nourishments(1).height=1;
+handles.Toolbox(ii).Input.nourishments(1).area=0;
 
+handles.Toolbox(ii).Input.nrNourishments=0;
+handles.Toolbox(ii).Input.activeNourishment=1;
+handles.Toolbox(ii).Input.nourishmentNames={''};
+
+%% Concentration areas
+handles.Toolbox(ii).Input.concentrationPolygons(1).polygonX=[];
+handles.Toolbox(ii).Input.concentrationPolygons(1).polygonY=[];
+handles.Toolbox(ii).Input.concentrationPolygons(1).polyLength=0;
+handles.Toolbox(ii).Input.concentrationPolygons(1).concentration=0.02;
+
+handles.Toolbox(ii).Input.nrConcentrationPolygons=0;
+handles.Toolbox(ii).Input.activeConcentrationPolygon=1;
+handles.Toolbox(ii).Input.concentrationNames={''};
+
+%% Runtime
 handles.Toolbox(ii).Input.nrYears=5;
 handles.Toolbox(ii).Input.outputInterval=1;
 
+%% Parameters
+handles.Toolbox(ii).Input.equilibriumConcentration=0.02;
 handles.Toolbox(ii).Input.diffusionCoefficient=10;
 handles.Toolbox(ii).Input.settlingVelocity=0.02;
 

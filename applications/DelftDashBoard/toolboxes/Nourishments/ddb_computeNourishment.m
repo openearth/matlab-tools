@@ -1,32 +1,30 @@
-function ddb_NourishmentsToolbox(varargin)
-%DDB_GEOIMAGETOOLBOX  One line description goes here.
+function varargout = ddb_computeNourishment(varargin)
+%COMPUTENOURISHMENT  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_GeoImageToolbox(varargin)
+%   varargout = computeNourishment(varargin)
 %
 %   Input:
-%   varargin =
+%   varargin  =
 %
-%
-%
+%   Output:
+%   varargout =
 %
 %   Example
-%   ddb_GeoImageToolbox
+%   computeNourishment
 %
-%   See also
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
-%       Maarten van Ormondt
+%   Copyright (C) 2012 <COMPANY>
+%       ormondt
 %
-%       Maarten.vanOrmondt@deltares.nl
+%       <EMAIL>	
 %
-%       P.O. Box 177
-%       2600 MH Delft
-%       The Netherlands
+%       <ADDRESS>
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -43,14 +41,14 @@ function ddb_NourishmentsToolbox(varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and
+% OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute
+% Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 01 Dec 2011
-% Created with Matlab version: 7.11.0.584 (R2010b)
+% Created: 11 May 2012
+% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -60,140 +58,13 @@ function ddb_NourishmentsToolbox(varargin)
 % $Keywords: $
 
 %%
-if isempty(varargin)
-    % New tab selected
-    ddb_zoomOff;
-    ddb_refreshScreen;
-    ddb_plotNourishments('activate');
-    handles=getHandles;
-    clearInstructions;
-    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
-else
-    %Options selected
-    handles=getHandles;
-    opt=lower(varargin{1});
-    switch opt
-        case{'drawrectangle'}
-            setInstructions({'','','Use mouse to draw model outline on map'});
-            UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','ModelOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeModelOnMap,'onstart',@deleteModel);
-        case{'drawpolygon'}
-            drawPolygon;
-        case{'computenourishment'}
-            computeNourishment;
-        case{'editoutline'}
-            editOutline;
-        case{'loadcurrents'}
-            loadCurrents;
-    end
-end
-
-%%
-function changeModelOnMap(x0,y0,dx,dy,rotation,h)
-
-setInstructions({'','Left-click and drag markers to change corner points','Right-click and drag yellow marker to move entire box'});
-
-handles=getHandles;
-handles.Toolbox(tb).Input.modelOutlineHandle=h;
-handles.Toolbox(tb).Input.xLim(1)=x0;
-handles.Toolbox(tb).Input.yLim(1)=y0;
-handles.Toolbox(tb).Input.xLim(2)=x0+dx;
-handles.Toolbox(tb).Input.yLim(2)=y0+dy;
-
-% cs=handles.screenParameters.coordinateSystem;
-% dataCoord.name='WGS 84';
-% dataCoord.type='geographic';
-% 
-% % Find bounding box for data
-% if ~strcmpi(cs.name,'wgs 84') || ~strcmpi(cs.type,'geographic')
-%     ddx=dx/10;
-%     ddy=dy/10;
-%     [xtmp,ytmp]=meshgrid(x0-ddx:ddx:x0+dx+ddx,y0-ddy:ddy:y0+dy+ddy);
-%     [xtmp2,ytmp2]=ddb_coordConvert(xtmp,ytmp,cs,dataCoord);
-%     dx=max(max(xtmp2))-min(min(xtmp2));
-% end
-% 
-% npix=handles.Toolbox(tb).Input.nPix;
-% zmlev=round(log2(npix*3/(dx)));
-% zmlev=max(zmlev,4);
-% zmlev=min(zmlev,23);
-% 
-% handles.Toolbox(tb).Input.zoomLevelStrings{1}=['auto (' num2str(zmlev) ')'];
-% 
-setHandles(handles);
-setUIElement('editxmin');
-setUIElement('editxmax');
-setUIElement('editymin');
-setUIElement('editymax');
-
-%%
-function editOutline
-handles=getHandles;
-if ~isempty(handles.Toolbox(tb).Input.imageOutlineHandle)
-    try
-        delete(handles.Toolbox(tb).Input.imageOutlineHandle);
-    end
-end
-x0=handles.Toolbox(tb).Input.xLim(1);
-y0=handles.Toolbox(tb).Input.yLim(1);
-dx=handles.Toolbox(tb).Input.xLim(2)-x0;
-dy=handles.Toolbox(tb).Input.yLim(2)-y0;
-
-h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','ImageOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeGeoImageOnMap, ...
-    'onstart',@deleteImageOutline,'x0',x0,'y0',y0,'dx',dx,'dy',dy);
-handles.Toolbox(tb).Input.imageOutlineHandle=h;
-setHandles(handles);
-
-%%
-function deleteModel
-handles=getHandles;
-if ~isempty(handles.Toolbox(tb).Input.modelOutlineHandle)
-    try
-        delete(handles.Toolbox(tb).Input.modelOutlineHandle);
-    end
-end
-
-%%
-function drawPolygon
-handles=getHandles;
-ddb_zoomOff;
-h=findobj(gcf,'Tag','NourishmentOutline');
-if ~isempty(h)
-    delete(h);
-end
-UIPolyline(gca,'draw','Tag','NourishmentOutline','Marker','o','Callback',@changePolygon,'closed',1);
-setHandles(handles);
-%setUIElement('bathymetrypanel.export.savepolygon');
-
-%%
-function changePolygon(x,y,varargin)
-handles=getHandles;
-handles.Toolbox(tb).Input.polygonX=x;
-handles.Toolbox(tb).Input.polygonY=y;
-handles.Toolbox(tb).Input.polyLength=length(x);
-setHandles(handles);
-% setUIElement('bathymetrypanel.export.exportbathy');
-% setUIElement('bathymetrypanel.export.savepolygon');
-
-%%
-function loadCurrents
-handles=getHandles;
-s=load(handles.Toolbox(tb).Input.currentsFile);
-h=findobj(gcf,'Tag','ResidualCurrents');
-if ~isempty(h)
-    delete(h);
-end
-q=quiver(s.x,s.y,s.u,s.v,'k');
-set(q,'Tag','ResidualCurrents');
-
-%%
-function computeNourishment
 
 handles=getHandles;
 
 %% Parameters
 
 % Numerical and physical parameters
-par.cE=0.02;
+par.cE=handles.Toolbox(tb).Input.equilibriumConcentration;
 par.nfac=2;
 par.d=handles.Toolbox(tb).Input.diffusionCoefficient; % Diffusion
 par.ws=handles.Toolbox(tb).Input.settlingVelocity; % Diffusion
@@ -230,24 +101,40 @@ zz=interp2(xb,yb,zb,xg,yg);
 
 [grd,dps]=getgridinfo('gridx',xg,'gridy',yg,'depth',zz);
 
-%% Nourishment
-nourdep=zeros(size(dps));
-xpol=handles.Toolbox(tb).Input.polygonX;
-ypol=handles.Toolbox(tb).Input.polygonY;
-inpol=inpolygon(grd.xg,grd.yg,xpol,ypol);
-polarea=polyarea(xpol,ypol);
+%% Apply nourishments
 
-switch handles.Toolbox(tb).Input.nourishmentType
-    case{'volume'}
-        nourhgt=handles.Toolbox(tb).Input.nourishmentVolume/polarea;
-        nourdep(inpol)=nourhgt;
-    case{'height'}
-        nourdep(inpol)=handles.Toolbox(tb).Input.nourishmentHeight-dps(inpol);
-    case{'thickness'}
-        nourdep(inpol)=handles.Toolbox(tb).Input.nourishmentThickness;
+nourdep=zeros(size(dps));
+
+for ipol=1:handles.Toolbox(tb).Input.nrNourishments
+    
+    xpol=handles.Toolbox(tb).Input.nourishments(ipol).polygonX;
+    ypol=handles.Toolbox(tb).Input.nourishments(ipol).polygonY;
+    inpol=inpolygon(grd.xg,grd.yg,xpol,ypol);
+    polarea=polyarea(xpol,ypol);
+    
+    switch handles.Toolbox(tb).Input.nourishments(ipol).type
+        case{'volume'}
+            nourhgt=handles.Toolbox(tb).Input.nourishments(ipol).volume/polarea;
+            nourdep(inpol)=nourhgt;
+        case{'height'}
+            nourdep(inpol)=handles.Toolbox(tb).Input.nourishments(ipol).height-dps(inpol);
+        case{'thickness'}
+            nourdep(inpol)=handles.Toolbox(tb).Input.nourishments(ipol).thickness;
+    end
+    
 end
 
 sedthick=nourdep;
+
+%% Equilibrium concetration
+par.cE=zeros(size(grd.xg))+par.cE;
+for ipol=1:handles.Toolbox(tb).Input.nrNourishments
+    xpol=handles.Toolbox(tb).Input.concentrationPolygons(ipol).polygonX;
+    ypol=handles.Toolbox(tb).Input.concentrationPolygons(ipol).polygonY;
+    inpol=inpolygon(grd.xg,grd.yg,xpol,ypol);
+    par.cE(inpol)=handles.Toolbox(tb).Input.concentrationPolygons(ipol).concentration;    
+end
+ceplot=par.cE; % Only used for plotting
 
 %% Residual currents
 
@@ -287,7 +174,8 @@ grd.dy=reshape(grd.dy,[1 np]);
 grd.a=reshape(grd.a,[1 np]);
 nourdep=reshape(nourdep,[1 np]);
 wl=zeros(size(c))+0;
-ce=zeros(size(c))+par.cE;
+
+par.cE=reshape(par.cE,[1 np]);
 
 %% Initial equilibrium water depth
 
@@ -328,8 +216,6 @@ for it=1:nt
     
     [c,dps,sedthick,srcsnk]=difu4(c,wl,dps,sedthick,he,u,v,grd,par,updbed);
 
-    polz=zeros(size(handles.Toolbox(tb).Input.polygonX))+1000;
-
     if it==1 || round(it/ntout)==it/ntout || it==nt
     
         figure(999)
@@ -352,17 +238,18 @@ for it=1:nt
         srcsnk1=reshape(srcsnk,[grd.ny grd.nx]);
         
         tyear=round(t(it)*par.morfac/86400/365);
-        
-        
+                
         subplot(2,2,1)        
         pcolor(grd.xg,grd.yg,dps2-dps0);shading flat;axis equal;clim([-mxthick mxthick]);colorbar;
         hold on;
         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
-        pol=plot(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,'r');
-        set(pol,'LineWidth',2);
+        for ipol=1:handles.Toolbox(tb).Input.nrNourishments
+            pol=plot(handles.Toolbox(tb).Input.nourishments(ipol).polygonX,handles.Toolbox(tb).Input.nourishments(ipol).polygonY,'r');
+            set(pol,'LineWidth',2);
+        end
         axis equal;
         set(gca,'xlim',xl,'ylim',yl);
-        title(['sedero - ' num2str(tyear,'%i') ' years']);
+        title(['Sedimentation / erosion - ' num2str(tyear,'%i') ' years']);
 %        drawnow;
         
 %         subplot(2,2,2)        
@@ -375,25 +262,44 @@ for it=1:nt
 %         set(gca,'xlim',xl,'ylim',yl);
 %         title(['concentration - ' num2str(tyear,'%i') ' years']);
         
-        subplot(2,2,3)        
+        subplot(2,2,2)        
         pcolor(grd.xg,grd.yg,sedthick2);shading flat;axis equal;clim([0 mxthick]);colorbar;
         hold on;
         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
-        pol=plot(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,'r');
-        set(pol,'LineWidth',2);
+        for ipol=1:handles.Toolbox(tb).Input.nrNourishments
+            pol=plot(handles.Toolbox(tb).Input.nourishments(ipol).polygonX,handles.Toolbox(tb).Input.nourishments(ipol).polygonY,'r');
+            set(pol,'LineWidth',2);
+        end
         axis equal;
         set(gca,'xlim',xl,'ylim',yl);
-        title(['sediment thickness - ' num2str(tyear,'%i') ' years']);
+        title(['Nourishment thickness - ' num2str(tyear,'%i') ' years']);
 
-        subplot(2,2,4)
-        pcolor(grd.xg,grd.yg,dps2);shading flat;axis equal;clim([-5 mxdep]);colorbar;
+        subplot(2,2,3)
+        pcolor(grd.xg,grd.yg,dps2);shading flat;axis equal;clim([-5 2]);colorbar;
         hold on;
         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
-        pol=plot(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,'r');
-        set(pol,'LineWidth',2);
+        for ipol=1:handles.Toolbox(tb).Input.nrNourishments
+            pol=plot(handles.Toolbox(tb).Input.nourishments(ipol).polygonX,handles.Toolbox(tb).Input.nourishments(ipol).polygonY,'r');
+            set(pol,'LineWidth',2);
+        end
         axis equal;
         set(gca,'xlim',xl,'ylim',yl);
-        title(['bed level - ' num2str(tyear,'%i') ' years']);
+        title(['Bed level - ' num2str(tyear,'%i') ' years']);
+
+        subplot(2,2,4)        
+        pcolor(grd.xg,grd.yg,ceplot);shading flat;axis equal;clim([0 0.05]);colorbar;
+        hold on;
+        quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
+        for ipol=1:handles.Toolbox(tb).Input.nrNourishments
+            pol=plot(handles.Toolbox(tb).Input.nourishments(ipol).polygonX,handles.Toolbox(tb).Input.nourishments(ipol).polygonY,'r');
+            set(pol,'LineWidth',2);
+        end
+        axis equal;
+        set(gca,'xlim',xl,'ylim',yl);
+        title('Equilibrium concentration');
+        
+        
+        
         drawnow;
     end
 end
