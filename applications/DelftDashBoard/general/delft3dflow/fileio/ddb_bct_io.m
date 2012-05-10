@@ -238,7 +238,7 @@ for i=1:length(Info.Table),
     end;
     
     fprintf(fid,'records-in-table     %i\n',size(Info.Table(i).Data,1));
-    fprintf(fid,['%15f ' repmat('%13.5e ',1,length(Info.Table(i).Parameter)-1) '\n'], ...
+    fprintf(fid,['%15.2f ' repmat('%13.5e ',1,length(Info.Table(i).Parameter)-1) '\n'], ...
         transpose(Info.Table(i).Data));
 end;
 fclose(fid);
