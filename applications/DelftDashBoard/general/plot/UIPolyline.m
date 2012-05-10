@@ -170,6 +170,7 @@ switch lower(opt)
         setappdata(h,'closed',closed);
         setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
         setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);
+        set(h,'UserData',userdata);
         
         set(gcf, 'windowbuttondownfcn',   {@clickNextPoint,h});
         set(gcf, 'windowbuttonmotionfcn', {@moveMouse,h});
@@ -271,6 +272,7 @@ if ~isempty(x)
     setappdata(h,'closed',closed);
     setappdata(h,'windowbuttonupdownfcn',windowbuttonupdownfcn);
     setappdata(h,'windowbuttonmotionfcn',windowbuttonmotionfcn);
+    setappdata(h,'type','polygon');
     
     for i=1:length(x)
         mh(i)=plot3(x(i),y(i),200,['r' marker]);
@@ -279,6 +281,8 @@ if ~isempty(x)
         set(mh(i),'Tag',tag);
         setappdata(mh(i),'parent',h);
         setappdata(mh(i),'number',i);
+        setappdata(mh(i),'type','vertex');
+        set(mh(i),'UserData',userdata);
     end
     setappdata(h,'children',mh);
     
