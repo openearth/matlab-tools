@@ -72,6 +72,29 @@ end
 
 % And now add the new elements
 toolboxElements=handles.Toolbox(tb).GUI.elements;
+
+% Check if toolbox has tabs
+% If so, find tabs that are model specific
+if length(toolboxElements)==1
+    if strcmpi(toolboxElements.style,'tabpanel')
+        toolboxElements0=toolboxElements;
+        toolboxElements0.tabs=[];
+        ntabs=0;
+        for itab=1:length(toolboxElements.tabs)
+            if isempty(toolboxElements.tabs(itab).model) || ...
+                    strcmpi(toolboxElements.tabs(itab).model,handles.Model(md).name)
+                % Tab specific to active model
+                ntabs=ntabs+1;
+                fldnames=fieldnames(toolboxElements.tabs(itab));
+                for ifld=1:length(fldnames)
+                    toolboxElements0.tabs(ntabs).(fldnames{ifld})=toolboxElements.tabs(itab).(fldnames{ifld});
+                end
+            end
+        end
+        toolboxElements=toolboxElements0;
+    end
+end
+
 handles.Model(md).GUI.elements.tabs(1).elements=toolboxElements;
 handles.Model(md).GUI.elements.tabs(1).elements=addUIElements(gcf,toolboxElements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);
 setHandles(handles);

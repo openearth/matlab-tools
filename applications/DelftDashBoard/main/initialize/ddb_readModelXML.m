@@ -70,7 +70,7 @@ fname=[handles.Model(j).name '.xml'];
 %xmldir=[handles.settingsDir filesep 'models' filesep handles.Model(j).name filesep 'xml' filesep ];
 xmldir= handles.Model(j).xmlDir;
 
-if exist(fname,'file')
+if exist([xmldir fname],'file')
     
     handles.Model(j).useXML=1;
     xml=xml_load([xmldir fname]);

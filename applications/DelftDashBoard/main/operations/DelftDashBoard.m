@@ -93,9 +93,11 @@ ddb_initialize('startup');
 
 handles=getHandles;
 
-screenSize=get(0,'ScreenSize');
-pos=[1 29 screenSize(3) screenSize(4)-95];
-set(handles.GUIHandles.mainWindow,'Position',pos,'Visible','off');
+% screenSize=get(0,'ScreenSize');
+% pos=[1 29 screenSize(3) screenSize(4)-95];
+% set(handles.GUIHandles.mainWindow,'Position',pos,'Visible','off');
+
+set(handles.GUIHandles.mainWindow,'Visible','on');
 
 set(gcf,'Renderer','zbuffer');
 
