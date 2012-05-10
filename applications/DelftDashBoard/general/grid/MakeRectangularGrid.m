@@ -1,4 +1,4 @@
-function [x y] = MakeRectangularGrid(xori, yori, nx, ny, dx, dy, rot, zmax, xb, yb, zb)
+function [x y z] = MakeRectangularGrid(xori, yori, nx, ny, dx, dy, rot, zmax, xb, yb, zb)
 %MAKERECTANGULARGRID  One line description goes here.
 %
 %   More detailed description goes here.
@@ -152,7 +152,7 @@ for i=1:nx
     end
 end
 
-clear z
+% clear z
 
 m1=0;
 m2=nx+1;
