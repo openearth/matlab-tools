@@ -83,4 +83,19 @@ handles.Toolbox(ii).Input.polygonY=[];
 handles.Toolbox(ii).Input.polyLength=0;
 
 handles.Toolbox(ii).Input.currentsFile='';
+handles.Toolbox(ii).Input.currentSource='file';
+handles.Toolbox(ii).Input.currentU=0;
+handles.Toolbox(ii).Input.currentV=0;
+
+handles.Toolbox(ii).Input.nourishmentType='volume';
 handles.Toolbox(ii).Input.nourishmentVolume=1e6;
+handles.Toolbox(ii).Input.nourishmentThickness=1;
+handles.Toolbox(ii).Input.nourishmentHeight=1;
+
+handles.Toolbox(ii).Input.nrYears=5;
+handles.Toolbox(ii).Input.outputInterval=1;
+
+handles.Toolbox(ii).Input.diffusionCoefficient=10;
+handles.Toolbox(ii).Input.settlingVelocity=0.02;
+
+

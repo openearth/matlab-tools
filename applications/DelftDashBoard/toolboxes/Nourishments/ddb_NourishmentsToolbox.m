@@ -195,14 +195,14 @@ handles=getHandles;
 % Numerical and physical parameters
 par.cE=0.02;
 par.nfac=2;
-par.d=10; % Diffusion
-par.ws=0.02;
+par.d=handles.Toolbox(tb).Input.diffusionCoefficient; % Diffusion
+par.ws=handles.Toolbox(tb).Input.settlingVelocity; % Diffusion
 par.morfac=1000;
 par.cdryb=1600;
 
 % Time parameters
-nyear=2;
-toutp=1; % years
+nyear=handles.Toolbox(tb).Input.nrYears;
+toutp=handles.Toolbox(tb).Input.outputInterval; % years
 t0=0;
 t1=nyear*365*86400/par.morfac;
 
@@ -210,36 +210,67 @@ tmorph=0;
 dt=60; % seconds
 t=t0:dt:t1;
 nt=length(t);
-itmorph=tmorph/dt;
 par.dt=dt;
 
 ntout=round(toutp*365*86400/dt/par.morfac);
 
 %% Grid and bathymetry
-% File names
-grdfile='oos.grd';
-depfile='oos.dep';
-[grd,dps]=getgridinfo(grdfile,depfile);
+
+xlim=handles.Toolbox(tb).Input.xLim;
+ylim=handles.Toolbox(tb).Input.yLim;
+dx=handles.Toolbox(tb).Input.dX;
+dy=handles.Toolbox(tb).Input.dX;
+xx=xlim(1):dx:xlim(2);
+yy=ylim(1):dy:ylim(2);
+[xg,yg]=meshgrid(xx,yy);
+
+[xb,yb,zb,ok]=ddb_getBathy(handles,xlim,ylim,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dx);
+
+zz=interp2(xb,yb,zb,xg,yg);
+
+[grd,dps]=getgridinfo('gridx',xg,'gridy',yg,'depth',zz);
 
 %% Nourishment
-polyfile='test.pol';
 nourdep=zeros(size(dps));
-nourdep(15:20,50:55)=2;
+xpol=handles.Toolbox(tb).Input.polygonX;
+ypol=handles.Toolbox(tb).Input.polygonY;
+inpol=inpolygon(grd.xg,grd.yg,xpol,ypol);
+polarea=polyarea(xpol,ypol);
+
+switch handles.Toolbox(tb).Input.nourishmentType
+    case{'volume'}
+        nourhgt=handles.Toolbox(tb).Input.nourishmentVolume/polarea;
+        nourdep(inpol)=nourhgt;
+    case{'height'}
+        nourdep(inpol)=handles.Toolbox(tb).Input.nourishmentHeight-dps(inpol);
+    case{'thickness'}
+        nourdep(inpol)=handles.Toolbox(tb).Input.nourishmentThickness;
+end
+
 sedthick=nourdep;
 
 %% Residual currents
-% Interpolate onto grid
-s=load('oosterschelde.mat');
-xx=s.x(~isnan(s.x));
-yy=s.y(~isnan(s.y));
-uu=s.u(~isnan(s.u));
-vv=s.v(~isnan(s.v));
-u=griddata(xx,yy,uu,grd.xg,grd.yg);
-v=griddata(xx,yy,uu,grd.xg,grd.yg);
-u(isnan(u))=0;
-v(isnan(v))=0;
-% u=zeros(size(grd.xg))+0.0;
-% v=zeros(size(grd.xg))+0.0;
+
+switch lower(handles.Toolbox(tb).Input.currentSource)
+    case{'file'}
+        % Load mat file with currents
+        s=load(handles.Toolbox(tb).Input.currentsFile);        
+        xx=s.x(~isnan(s.x));
+        yy=s.y(~isnan(s.y));
+        uu=s.u(~isnan(s.u));
+        vv=s.v(~isnan(s.v));
+        % Interpolate onto grid
+        u=griddata(xx,yy,uu,grd.xg,grd.yg);
+        v=griddata(xx,yy,vv,grd.xg,grd.yg);
+        u(isnan(u))=0;
+        v(isnan(v))=0;        
+    otherwise
+        u=zeros(size(grd.xg))+handles.Toolbox(tb).Input.currentU;
+        v=zeros(size(grd.xg))+handles.Toolbox(tb).Input.currentV;        
+end
+
+ug=u;
+vg=v;
 
 %% Initial conditions
 c=zeros(size(grd.xg))+par.cE;
@@ -254,10 +285,6 @@ sedthick=reshape(sedthick,[1 np]);
 grd.dx=reshape(grd.dx,[1 np]);
 grd.dy=reshape(grd.dy,[1 np]);
 grd.a=reshape(grd.a,[1 np]);
-% volum1=reshape(volum1,[1 np]);
-% kfu=reshape(kfu,[1 np]);
-% kfv=reshape(kfv,[1 np]);
-% kcs=reshape(kcs,[1 np]);
 nourdep=reshape(nourdep,[1 np]);
 wl=zeros(size(c))+0;
 ce=zeros(size(c))+par.cE;
@@ -271,14 +298,23 @@ he=max(he,0.01);
 
 dps=dps+nourdep;
 
-dps0=dps;
+
 sedthick0=sedthick;
 
-xl=[min(min(grd.xg)) max(max(grd.xg))];
-yl=[min(min(grd.yg)) max(max(grd.yg))];
+xl=[min(min(grd.xg))+handles.Toolbox(tb).Input.dX max(max(grd.xg))];
+yl=[min(min(grd.yg))+handles.Toolbox(tb).Input.dX max(max(grd.yg))];
+
+
+figure(999)
+clf;
+
+mxthick=ceil(max(max(nourdep)));
+mndep=floor(min(min(dps)));
+mxdep=ceil(max(max(dps)));
+
 %% Start of computational code
 for it=1:nt
-    disp([num2str(it) ' of ' num2str(nt)])
+%    disp([num2str(it) ' of ' num2str(nt)])
     t(it)=(it-1)*dt;
     updbed=0;
     if t(it)>=tmorph
@@ -286,16 +322,27 @@ for it=1:nt
     end
     if t(it)==tmorph
         cmorphstart=c;
-        sedvol0=10000*nansum(sedthick)+par.morfac*nansum(c.*-dps)*10000/par.cdryb
-        thckvol0=10000*nansum(sedthick)
+        sedvol0=10000*nansum(sedthick)+par.morfac*nansum(c.*-dps)*10000/par.cdryb;
+        thckvol0=10000*nansum(sedthick);
     end
     
     [c,dps,sedthick,srcsnk]=difu4(c,wl,dps,sedthick,he,u,v,grd,par,updbed);
-    
+
+    polz=zeros(size(handles.Toolbox(tb).Input.polygonX))+1000;
+
     if it==1 || round(it/ntout)==it/ntout || it==nt
+    
+        figure(999)
+        
         c1=reshape(c,[grd.ny grd.nx]);
         dps1=reshape(dps,[grd.ny grd.nx])+2;
         dps2=dps-par.morfac*c.*-dps/par.cdryb;
+        
+        if it==1
+            dps0=dps2;
+            dps0=reshape(dps0,[grd.ny grd.nx])+2;
+        end
+        
         dps2=reshape(dps2,[grd.ny grd.nx])+2;
         
         sedthick1=reshape(sedthick,[grd.ny grd.nx]);
@@ -306,28 +353,47 @@ for it=1:nt
         
         tyear=round(t(it)*par.morfac/86400/365);
         
-        figure(1)
+        
         subplot(2,2,1)        
-        pcolor(grd.xg,grd.yg,srcsnk1);shading flat;axis equal;colorbar;
+        pcolor(grd.xg,grd.yg,dps2-dps0);shading flat;axis equal;clim([-mxthick mxthick]);colorbar;
         hold on;
-        quiver(s.x,s.y,s.u,s.v,'k');
-        set(gca,'xlim',xl);
-        title([num2str(tyear,'%i') 'years']);
-        subplot(2,2,2)        
-        pcolor(grd.xg,grd.yg,c1);shading flat;axis equal;clim([0 1]);colorbar;
-        hold on;
-        quiver(s.x,s.y,s.u,s.v,'k');
-        set(gca,'xlim',xl);
+        quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
+        pol=plot(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,'r');
+        set(pol,'LineWidth',2);
+        axis equal;
+        set(gca,'xlim',xl,'ylim',yl);
+        title(['sedero - ' num2str(tyear,'%i') ' years']);
+%        drawnow;
+        
+%         subplot(2,2,2)        
+%         pcolor(grd.xg,grd.yg,c1);shading flat;axis equal;clim([0 1]);colorbar;
+%         hold on;
+%         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
+%         pol=plot(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,'r');
+%         set(pol,'LineWidth',2);
+%         axis equal;
+%         set(gca,'xlim',xl,'ylim',yl);
+%         title(['concentration - ' num2str(tyear,'%i') ' years']);
+        
         subplot(2,2,3)        
-        pcolor(grd.xg,grd.yg,sedthick2);shading flat;axis equal;clim([0 1]);colorbar;
+        pcolor(grd.xg,grd.yg,sedthick2);shading flat;axis equal;clim([0 mxthick]);colorbar;
         hold on;
-        quiver(s.x,s.y,s.u,s.v,'k');
-        set(gca,'xlim',xl);
+        quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
+        pol=plot(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,'r');
+        set(pol,'LineWidth',2);
+        axis equal;
+        set(gca,'xlim',xl,'ylim',yl);
+        title(['sediment thickness - ' num2str(tyear,'%i') ' years']);
+
         subplot(2,2,4)
-        pcolor(grd.xg,grd.yg,dps2);shading flat;axis equal;clim([-20 2]);colorbar;
+        pcolor(grd.xg,grd.yg,dps2);shading flat;axis equal;clim([-5 mxdep]);colorbar;
         hold on;
-        quiver(s.x,s.y,s.u,s.v,'k');
-        set(gca,'xlim',xl);
+        quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
+        pol=plot(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,'r');
+        set(pol,'LineWidth',2);
+        axis equal;
+        set(gca,'xlim',xl,'ylim',yl);
+        title(['bed level - ' num2str(tyear,'%i') ' years']);
         drawnow;
     end
 end
