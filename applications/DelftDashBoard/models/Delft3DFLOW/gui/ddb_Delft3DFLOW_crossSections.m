@@ -150,7 +150,7 @@ else
             setHandles(handles);
             
         case{'openfile'}
-            handles=ddb_readCrsFile(handles);
+            handles=ddb_readCrsFile(handles,ad);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','crosssections');
             setHandles(handles);
             
