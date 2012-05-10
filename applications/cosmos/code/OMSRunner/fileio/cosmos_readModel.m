@@ -33,6 +33,7 @@ if isfield(model,'websites')
         hm.models(i).webSite(j).name=model.websites(j).website.name;
         hm.models(i).webSite(j).Location=[];
         hm.models(i).webSite(j).elevation=[];
+        hm.models(i).webSite(j).overlayFile=[];
         if isfield(model.websites(j).website,'locationx') && isfield(model.websites(j).website,'locationy')
             hm.models(i).webSite(j).Location(1)=str2double(model.websites(j).website.locationx);
             hm.models(i).webSite(j).Location(2)=str2double(model.websites(j).website.locationy);
@@ -40,11 +41,15 @@ if isfield(model,'websites')
         if isfield(model.websites(j).website,'elevation')
             hm.models(i).webSite(j).elevation=str2double(model.websites(j).website.elevation);
         end
+        if isfield(model.websites(j).website,'overlay')
+            hm.models(i).webSite(j).overlayFile=model.websites(j).website.overlay;
+        end
     end
 else
     hm.models(i).webSite(1).name=model.website;
     hm.models(i).webSite(1).Location(1)=str2double(model.locationx);
     hm.models(i).webSite(1).Location(2)=str2double(model.locationy);
+    hm.models(i).webSite(1).overlayFile=[];
 end
 
 hm.models(i).archiveDir=[hm.archiveDir model.continent filesep model.name filesep 'archive' filesep];

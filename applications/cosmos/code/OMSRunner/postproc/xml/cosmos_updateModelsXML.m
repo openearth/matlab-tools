@@ -60,6 +60,12 @@ for iw=1:length(model.webSite)
     mdl.latitude.value=lat;
     mdl.latitude.type='real';
     
+    %% Overlay
+    if ~isempty(model.webSite(iw).overlayFile)
+        mdl.overlay.value=model.webSite(iw).overlayFile;
+        mdl.overlay.type='char';
+    end
+    
     %% Elevation
 
     % First try to determine distance between corner points of model limits
