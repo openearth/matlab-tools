@@ -82,10 +82,12 @@ if exist('tmpavi.png','file')
 end
 clear a
 
-if ~strcmpi(AnimationSettings.FileName(end-2:end),'gif')
-    AviHandle = writeavi('initialize');
-    AviHandle = writeavi('open', AviHandle,AnimationSettings.FileName);
-    AviHandle = writeavi('addvideo', AviHandle, AnimationSettings.FrameRate, sz(1),sz(2), 24, AviOps);
+if ~isempty(AnimationSettings.FileName)
+    if ~strcmpi(AnimationSettings.FileName(end-2:end),'gif')
+        AviHandle = writeavi('initialize');
+        AviHandle = writeavi('open', AviHandle,AnimationSettings.FileName);
+        AviHandle = writeavi('addvideo', AviHandle, AnimationSettings.FrameRate, sz(1),sz(2), 24, AviOps);
+    end
 end
 
 wb = awaitbar(0,'Generating AVI...');
@@ -240,10 +242,10 @@ for iblock=1:nrFrames
         end
         for m=1:nrc
             ic=nrn+m;
-            Data=Combine(Data,CombinedDatasetProperties,ic,m);
+            Data=mp_combineDataset(Data,CombinedDatasetProperties,ic,m);
             if n2>1
                 if iblock<AnimationSettings.LastStep
-                    Data2=Combine(Data2,CombinedDatasetProperties,ic,m);
+                    Data2=mp_combineDataset(Data2,CombinedDatasetProperties,ic,m);
                 end
             end
         end
@@ -300,20 +302,23 @@ for iblock=1:nrFrames
 
     ExportFigure(handles,ifig,'export');
 
-    a = imread(figname,'png');
+    if  ~isempty(AnimationSettings.FileName)
 
-    if ~strcmpi(AnimationSettings.FileName(end-2:end),'gif')
-        aaa=uint8(a(1:sz(1),1:sz(2),:));
-        AviHandle = writeavi('addframe', AviHandle, aaa, iblock);
-    else
-        nf = nf+1;
-        if nf==1
-            [im,map] = rgb2ind(a,256,'nodither');
-            itransp=find(sum(map,2)==3);
+        a = imread(figname,'png');
+        
+        if ~strcmpi(AnimationSettings.FileName(end-2:end),'gif')
+            aaa=uint8(a(1:sz(1),1:sz(2),:));
+            AviHandle = writeavi('addframe', AviHandle, aaa, iblock);
+        else
+            nf = nf+1;
+            if nf==1
+                [im,map] = rgb2ind(a,256,'nodither');
+                itransp=find(sum(map,2)==3);
+            end
+            im(:,:,1,nf) = rgb2ind(a,map,'nodither');
         end
-        im(:,:,1,nf) = rgb2ind(a,map,'nodither');
     end
-
+    
     clear a aa
 
     if AnimationSettings.makeKMZ
@@ -374,11 +379,13 @@ if ~isempty(hh)
     close(wb);
 end
 
-if ~strcmpi(AnimationSettings.FileName(end-2:end),'gif')
-    AviHandle = writeavi('close', AviHandle);
-else
-    %    imwrite(im,map,'test.gif','DelayTime',1/AnimationSettings.FrameRate,'LoopCount',inf) %g443800
-    imwrite(im,map,'test.gif','DelayTime',1/AnimationSettings.FrameRate,'LoopCount',inf,'TransparentColor',itransp-1,'DisposalMethod','restoreBG');
+if ~isempty(AnimationSettings.FileName)
+    if ~strcmpi(AnimationSettings.FileName(end-2:end),'gif')
+        AviHandle = writeavi('close', AviHandle);
+    else
+        %    imwrite(im,map,'test.gif','DelayTime',1/AnimationSettings.FrameRate,'LoopCount',inf) %g443800
+        imwrite(im,map,'test.gif','DelayTime',1/AnimationSettings.FrameRate,'LoopCount',inf,'TransparentColor',itransp-1,'DisposalMethod','restoreBG');
+    end
 end
 
 delete('curvecpos.*.dat');
