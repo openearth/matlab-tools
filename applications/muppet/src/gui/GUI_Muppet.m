@@ -3046,9 +3046,13 @@ n2=handles.Figure(ifig).PaperSize(2)/2.5;
 
 nopix=res*res*n1*n2;
 
-fid=fopen(handles.AnimationSettings.FileName,'w');
-if fid~=-1
-    fclose(fid);
+if ~isempty(handles.AnimationSettings.FileName)
+    fid=fopen(handles.AnimationSettings.FileName,'w');
+    if fid~=-1
+        fclose(fid);
+    end
+else
+    fid=0;
 end
 
 if nopix>2500000
@@ -3069,7 +3073,7 @@ function PushAnimationSettings_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Try to determine start and stop times
-if isempty(handles.AnimationSettings.startTime)
+if isempty(handles.AnimationSettings.startTime) && ~isempty(handles.DataProperties)
     tmin=1e9;
     tmax=-1e9;
     dt=1e9;
