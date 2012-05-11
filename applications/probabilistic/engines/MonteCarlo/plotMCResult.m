@@ -196,7 +196,7 @@ if sum(activeVars) == 3 && ~OPT.no3D
 else
     
     % calculate combinations of stochasts
-    varCombs = combnk(varIdxs(activeVars), 2);
+    varCombs = combnk_p(varIdxs(activeVars));
 
     % calculate dimensions of plots
     dimPlots = ceil(sqrt(size(varCombs, 1)));
@@ -275,3 +275,17 @@ end
 
 %% return variable
 equivFORMResult = OPT.equivFORMResult;
+
+function c = combnk_p(vec)
+
+c = [];
+
+n = length(vec);
+
+for i = 1:n
+    for j = i+1:n
+        c = [c;i j];
+    end
+end
+
+c = vec(c);
