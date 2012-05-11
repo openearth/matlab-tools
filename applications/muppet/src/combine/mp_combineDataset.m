@@ -23,7 +23,10 @@ switch lower(DataProperties(k1).Type),
     case{'2dscalar','3dcrosssectionscalar'}
         DataProperties(nr).x=DataProperties(k1).x;
         DataProperties(nr).y=DataProperties(k1).y;
+
         if m==0
+            
+            % Combine with other dataset
 
             data1z=DataProperties(k1).z;
             data2z=DataProperties(k2).z;
@@ -57,9 +60,24 @@ switch lower(DataProperties(k1).Type),
                 case{'min'}
                     DataProperties(nr).z=min(a1*data1z,a2*data2z);
                     DataProperties(nr).zz=min(a1*data1zz,a2*data2zz);
+                case{'isnan(a<b)'}
+                    DataProperties(nr).z=a1*data1z;
+                    DataProperties(nr).zz=a1*data1zz;
+%                     Test for Jakarta flood animation
+%                     DataProperties(nr).z(data1z<0.05 & data2z<3.0)=NaN;
+%                     DataProperties(nr).zz(data1zz<0.05 & data2zz<3.0)=NaN;
+                    DataProperties(nr).z(data1z<data2z)=NaN;
+                    DataProperties(nr).zz(data1zz<data2zz)=NaN;
+                case{'isnan(a>b)'}
+                    DataProperties(nr).z=a1*data1z;
+                    DataProperties(nr).zz=a1*data1zz;
+                    DataProperties(nr).z(data1z>data2z)=NaN;
+                    DataProperties(nr).zz(data1zz>data2zz)=NaN;
             end
 
         else
+
+            % Combine with uniform value
 
             switch lower(operation),
                 case{'add'}
