@@ -126,9 +126,9 @@ end
 
 sedthick=nourdep;
 
-%% Equilibrium concetration
+%% Equilibrium concentration
 par.cE=zeros(size(grd.xg))+par.cE;
-for ipol=1:handles.Toolbox(tb).Input.nrNourishments
+for ipol=1:handles.Toolbox(tb).Input.nrConcentrationPolygons
     xpol=handles.Toolbox(tb).Input.concentrationPolygons(ipol).polygonX;
     ypol=handles.Toolbox(tb).Input.concentrationPolygons(ipol).polygonY;
     inpol=inpolygon(grd.xg,grd.yg,xpol,ypol);
@@ -223,6 +223,7 @@ for it=1:nt
         c1=reshape(c,[grd.ny grd.nx]);
         dps1=reshape(dps,[grd.ny grd.nx])+2;
         dps2=dps-par.morfac*c.*-dps/par.cdryb;
+        dps2=dps;
         
         if it==1
             dps0=dps2;
@@ -230,6 +231,7 @@ for it=1:nt
         end
         
         dps2=reshape(dps2,[grd.ny grd.nx])+2;
+%        dps2=reshape(dps2,[grd.ny grd.nx]);
         
         sedthick1=reshape(sedthick,[grd.ny grd.nx]);
         
