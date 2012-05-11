@@ -55,6 +55,8 @@ if isfield(xml,'elements')
                     s.elements(k).tabs(j).tag = [s.elements(k).tag '.' tg];
                     s.elements(k).tabs(j).tabname = tg;
                     s.elements(k).tabs(j).tabstring   = elxml(k).element.tabs(j).tab.tabstring;
+                    mdl = lower(getnodeval(elxml(k).element.tabs(j).tab,'model',[],'string'));
+                    s.elements(k).tabs(j).model = mdl;
                     if isfield(elxml(k).element.tabs(j).tab,'enable')
                         s.elements(k).tabs(j).enable      = str2double(elxml(k).element.tabs(j).tab.enable);
                     else
