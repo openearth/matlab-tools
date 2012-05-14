@@ -204,7 +204,7 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
          error(sprintf('Invalid string argument: %s.',varargin{i}));
        end
      end;
-     iargin=iargin+1
+     iargin=iargin+1;
    end;
    
    G.comment      = 'The array dimensions are [n x m]';
