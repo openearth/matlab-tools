@@ -93,6 +93,8 @@ if ~isnan(OPT.threshold)
     [n ni] = closest(OPT.threshold,[res.peaks.threshold]);
 elseif isfield(res, 'threshold')
     [n ni] = closest(res.threshold,[res.peaks.threshold]);
+else
+    [n ni] = max([res.peaks.nmax]);
 end
 
 th = res.peaks(ni).threshold;

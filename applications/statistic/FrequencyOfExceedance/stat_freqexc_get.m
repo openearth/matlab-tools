@@ -32,6 +32,8 @@ function res = stat_freqexc_get(t, x, varargin)
 %               horizon:    horizon in days in which multiple maxima are
 %                           considered to be a single maximum
 %               margin:     safety margin used in threshold determination
+%               method:     analysis method Peaks-over-Threshold (PoT) or
+%                           Annual Maxima (AM) (default: PoT)
 %
 %   Output:
 %   res       = result structure with exceedance information:
@@ -120,7 +122,8 @@ function res = stat_freqexc_get(t, x, varargin)
 OPT = struct( ...
     'dx', .01, ...
     'horizon', 15, ...
-    'margin', .05 ...
+    'margin', .05, ...
+    'method', 'PoT' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -142,11 +145,21 @@ years           = res.duration/365.2425;
 
 %% find maxima
 
-% create computational grid
-mn = min(round(x(isfinite(x))/OPT.dx)*OPT.dx);
-mx = max(round(x(isfinite(x))/OPT.dx)*OPT.dx);
+switch upper(OPT.method)
+	case 'POT'
+            
+        % create computational grid
+        mn = min(round(x(isfinite(x))/OPT.dx)*OPT.dx);
+        mx = max(round(x(isfinite(x))/OPT.dx)*OPT.dx);
 
-g  = mn:OPT.dx:mx;
+        g  = mn:OPT.dx:mx;
+        
+    case 'AM'
+        
+        g  = nan;
+        
+        OPT.horizon = -Inf;
+end
 
 for i = 1:length(g)
 
@@ -155,27 +168,35 @@ for i = 1:length(g)
     res.peaks(i).maxima     = struct('time', {}, 'value', {}, 'duration', {});
 
     % determine up- and down crossings
-    uc = find((x(1:end-1)<=g(i)|isnan(x(1:end-1)))&x(2:end)>g(i));
-    dc = find((x(2:end)<=g(i)|isnan(x(2:end)))&x(1:end-1)>g(i));
+    switch upper(OPT.method)
+        case 'POT'
+            uc = find((x(1:end-1)<=g(i)|isnan(x(1:end-1)))&x(2:end)>g(i));
+            dc = find((x(2:end)<=g(i)|isnan(x(2:end)))&x(1:end-1)>g(i));
 
-    startidx = 1;
+            startidx = 1;
 
-    if isempty(uc) && isempty(dc)
-        if x(1) >= g(i)
-            uc = startidx;
-            dc = length(x);
-        end
-    elseif isempty(uc)
-        uc = startidx;
-    elseif isempty(dc)
-        dc = length(x);
-    else
-        if uc(1) > dc(1)
-            uc = [startidx;uc(:)];
-        end
-        if uc(end) > dc(end)
-            dc = [dc(:);length(x)];
-        end
+            if isempty(uc) && isempty(dc)
+                if x(1) >= g(i)
+                    uc = startidx;
+                    dc = length(x);
+                end
+            elseif isempty(uc)
+                uc = startidx;
+            elseif isempty(dc)
+                dc = length(x);
+            else
+                if uc(1) > dc(1)
+                    uc = [startidx;uc(:)];
+                end
+                if uc(end) > dc(end)
+                    dc = [dc(:);length(x)];
+                end
+            end
+        case 'AM'
+            y  = str2num(datestr(t,'yyyy'));
+            
+            uc = [1 find(y(1:end-1)~=y(2:end))'+1];
+            dc = [uc(2:end)-1 length(y)];
     end
 
     % determine wave maxima
@@ -216,50 +237,54 @@ for i = 1:length(g)
     res.peaks(i).duration_pp    = res.peaks(i).duration./res.peaks(i).frequency;
     
     % GPD fit
-    if exist('gpfit')
-        data                    = [res.peaks(i).maxima.value];
-        mu                      = min(data)-eps;
-        
-        if length(data)>1
-            fit                 = gpfit(data-mu);
-        else
-            fit                 = nan(1,2);
-        end
+    if strcmpi(OPT.method,'POT')
+        if exist('gpfit')
+            data                    = [res.peaks(i).maxima.value];
+            mu                      = min(data)-eps;
 
-        res.peaks(i).GPD        = struct(           ...
-            'mu',                 mu,               ...
-            'xi',                 fit(1),           ...
-            'sigma',              fit(2));
+            if length(data)>1
+                fit                 = gpfit(data-mu);
+            else
+                fit                 = nan(1,2);
+            end
+
+            res.peaks(i).GPD        = struct(           ...
+                'mu',                 mu,               ...
+                'xi',                 fit(1),           ...
+                'sigma',              fit(2));
+        end
     end
 end
 
 %% determine threshold
 
-if isfield(res.peaks, 'GPD')
-    
-    GPD          = [res.peaks.GPD];
-    
-    sigma        = [GPD.sigma];
-    sigma_var    = nan(size(sigma));
-    
-    sigma(isnan(sigma)) = 0;
-    
-    for i = length(sigma):-1:1
-        sigma_var(i) = var(sigma    (i:end));
-    end
-    
-    dsigma_var = diff(sigma_var);
-    dsigma_var(abs(dsigma_var)<eps) = [];
-    
-    n = length(dsigma_var);
-    
-    idx = find(dsigma_var==max(dsigma_var(1:round(.5*n)))>0,1,'first');
-    
-    if length(idx) == 1
-        res.threshold = (1+OPT.margin)*res.peaks(idx).threshold;
-    end
-end
+if strcmpi(OPT.method,'POT')
+    if isfield(res.peaks, 'GPD')
 
-if ~isfield(res, 'threshold')
-    res.threshold = (1+OPT.margin)*max(cellfun(@length,{res.peaks.maxima}));
+        GPD          = [res.peaks.GPD];
+
+        sigma        = [GPD.sigma];
+        sigma_var    = nan(size(sigma));
+
+        sigma(isnan(sigma)) = 0;
+
+        for i = length(sigma):-1:1
+            sigma_var(i) = var(sigma    (i:end));
+        end
+
+        dsigma_var = diff(sigma_var);
+        dsigma_var(abs(dsigma_var)<eps) = [];
+
+        n = length(dsigma_var);
+
+        idx = find(dsigma_var==max(dsigma_var(1:round(.5*n)))>0,1,'first');
+
+        if length(idx) == 1
+            res.threshold = (1+OPT.margin)*res.peaks(idx).threshold;
+        end
+    end
+
+    if ~isfield(res, 'threshold')
+        res.threshold = (1+OPT.margin)*max(cellfun(@length,{res.peaks.maxima}));
+    end
 end
