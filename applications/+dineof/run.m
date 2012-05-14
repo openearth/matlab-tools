@@ -91,6 +91,8 @@ function varargout = run(data, time, mask, varargin)
    OPT.dataname        = 'data';
    OPT.maskname        = 'mask';
    OPT.timename        = 'time';
+   OPT.lonname         = 'lon';
+   OPT.latname         = 'lat';
    OPT.ncfile          = ['dummy.nc'];
    OPT.resfile         = ['dummy_filled.nc'];
    OPT.eoffile         = ['dummy_eof.nc'];
@@ -100,6 +102,8 @@ function varargout = run(data, time, mask, varargin)
    OPT.standard_name   = '';
    OPT.transformFun    = @(x) x;
    OPT.transformFunInv = @(x) x;
+   OPT.lon             = [];
+   OPT.lat             = [];
    
    if nargin==0
       varargout = {OPT};
@@ -224,14 +228,32 @@ function varargout = run(data, time, mask, varargin)
    netcdf.putAtt(NCid,varid.mask,'long_name'    ,'mask');
    netcdf.putAtt(NCid,varid.mask,'flag_values'  ,[0 1]);
    netcdf.putAtt(NCid,varid.mask,'flag_meanings','land ocean');
+   
+   if ~isempty(OPT.lon) & ~isempty(OPT.lat)
+   varid.lon = netcdf.defVar(NCid,OPT.lonname,'double' ,dimid.space); 
+   varid.lat = netcdf.defVar(NCid,OPT.latname,'double' ,dimid.space); 
+
+   netcdf.putAtt(NCid,varid.lat,'long_name'    ,'longitude');
+   netcdf.putAtt(NCid,varid.lon,'standard_name','longitude');
+   netcdf.putAtt(NCid,varid.lon,'units'        ,'degrees_east');
+
+   netcdf.putAtt(NCid,varid.lat,'long_name'    ,'latitude');
+   netcdf.putAtt(NCid,varid.lat,'standard_name','latitude');
+   netcdf.putAtt(NCid,varid.lat,'units'        ,'degrees_north');
+   end   
 
    netcdf.endDef(NCid,20e3,4,0,4); 
 
    netcdf.putVar(NCid,varid.data,data);
    netcdf.putVar(NCid,varid.time,time - datenum(1970,1,1));
    netcdf.putVar(NCid,varid.mask,int8(mask));
-
-   netcdf.close (NCid)
+   
+   if ~isempty(OPT.lon) & ~isempty(OPT.lat)
+   netcdf.putVar(NCid,varid.lon,OPT.lon);
+   netcdf.putVar(NCid,varid.lat,OPT.lat);
+   end   
+   
+   netcdf.close(NCid)
    
    if OPT.debug
       nc_dump(OPT.ncfile)
@@ -321,7 +343,7 @@ else
     nodata   = netcdf.getAtt(NCid,varid.dataf,'missing_value');
     dataf(dataf==nodata)=NaN;
 
-    netcdf.close (NCid);
+    netcdf.close(NCid);
     
     data  = OPT.transformFunInv(data );
     dataf = OPT.transformFunInv(dataf);
@@ -382,6 +404,19 @@ else
    
    netcdf.putAtt(NCid,varid.varEx ,'units'        , 0.01); % percent
 
+   if ~isempty(OPT.lon) & ~isempty(OPT.lat)
+   varid.lon = netcdf.defVar(NCid,OPT.lonname,'double' ,dimid.space); 
+   varid.lat = netcdf.defVar(NCid,OPT.latname,'double' ,dimid.space); 
+
+   netcdf.putAtt(NCid,varid.lat,'long_name'    ,'longitude');
+   netcdf.putAtt(NCid,varid.lon,'standard_name','longitude');
+   netcdf.putAtt(NCid,varid.lon,'units'        ,'degrees_east');
+
+   netcdf.putAtt(NCid,varid.lat,'long_name'    ,'latitude');
+   netcdf.putAtt(NCid,varid.lat,'standard_name','latitude');
+   netcdf.putAtt(NCid,varid.lat,'units'        ,'degrees_north');
+   end   
+
    netcdf.endDef(NCid,20e3,4,0,4); 
 
    netcdf.putVar(NCid,varid.time,time - datenum(1970,1,1));
@@ -394,7 +429,12 @@ else
    netcdf.putVar(NCid,varid.vlsng ,S.vlsng);
    netcdf.putVar(NCid,varid.varEx ,S.varEx);
 
-   netcdf.close (NCid)
+   if ~isempty(OPT.lon) & ~isempty(OPT.lat)
+   netcdf.putVar(NCid,varid.lon,OPT.lon);
+   netcdf.putVar(NCid,varid.lat,OPT.lat);
+   end   
+
+   netcdf.close(NCid)
    
    if OPT.debug
       nc_dump(OPT.ncfile)
