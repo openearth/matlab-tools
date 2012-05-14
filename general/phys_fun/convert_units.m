@@ -213,9 +213,9 @@ function Factor=convert_units(InUnits,OutUnits);
    
    %% Mass units 
    % ---------------------
-   ug               = 1e-6;                   % ug
-   mg               = 1e-6;                   % ug
-   mgr              = 1e-6;                   % ug
+   ug               = 1e-9;                   % ug
+   mg               = 1e-6;                   % mg
+   mgr              = mg;                     % mg
 
    gr               = 1e-3;                   % grams
    grs              = gr;                     % grams

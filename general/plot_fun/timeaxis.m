@@ -122,7 +122,7 @@ function varargout = timeaxis(varargin)
    if strcmp(OPT.type,'tick')
    
       tick(gca,OPT.ax,ttick,'date',OPT.fmt);
-      Handles = [];
+      Handles = gca;
    
    elseif strcmp(OPT.type,'datestr')
    
@@ -134,7 +134,7 @@ function varargout = timeaxis(varargin)
       else
       set(gca,[OPT.ax,'ticklabel'],repmat({''},1,length(ttick)));
       end
-      Handles = [];
+      Handles = gca;
    
    elseif strcmp(OPT.type,'text')
    

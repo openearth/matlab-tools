@@ -22,8 +22,8 @@ function varargout = harmanal_predict(t,varargin)
 % The following <keyword,value> pairs are implemented, 
 % of which one of [T,omega,freq<ency>] is required:
 %     * mean            b0
-%     * hampltitudes'   [sqrt(A1^2 + B1^2) ... sqrt(An^2 + Bn^2)], see harmanal
-%     * hphases'        [atan(B1/A1)       ... atan(Bn/An)      ] in radians, , see harmanal
+%     * hampltitudes    [sqrt(A1^2 + B1^2) ... sqrt(An^2 + Bn^2)], see harmanal
+%     * hphases         [atan(B1/A1)       ... atan(Bn/An)      ] in radians, , see harmanal
 %
 %     * omega           angular velocity         (one of 3 is required)
 %     * T               period                   (one of 3 is ,,)
