@@ -89,6 +89,10 @@ if ~isfield(res, 'fit')
     error('No fit made, please use stat_freqexc_fit first');
 end
 
+if isnan(res.filter.threshold)
+    error('No empircial distribution found, please use PoT method');
+end
+
 %% combine data and fit
 
 f = [res.peaks.frequency]./res.fraction;
