@@ -118,10 +118,10 @@ OPT = setproperty(OPT,varargin);
    ndat = length(fileinfo.Dataset);
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
-      if ~any(strmatch(fldname,OPT.exclude))
+      if ~any(strmatch(fldname,OPT.exclude, 'exact'))
          fldname_nc = fldname;
-         if any(strmatch(fldname,OPT.rename{1}))
-            j = strmatch(fldname,OPT.rename{1});
+         if any(strmatch(fldname,OPT.rename{1}, 'exact'))
+            j = strmatch(fldname,OPT.rename{1}, 'exact');
             fldname = OPT.rename{2}{j};
          end
          D.(fldname) = nc_varget(fileinfo.Filename,fldname_nc);
@@ -131,7 +131,7 @@ OPT = setproperty(OPT,varargin);
                disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
             else
              if ~isempty(fileinfo.Dataset(idat).Attribute);
-             j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name});
+             j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name}, 'exact');
               if ~isempty(j)
                if strcmpi(fileinfo.Dataset(idat).Attribute(j).Value,'time')
                D.datenum = nc_cf_time(fileinfo.Filename,fldname);
@@ -176,9 +176,9 @@ else
    
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
-      if ~any(strmatch(fldname,OPT.exclude))
-         if any(strmatch(fldname,OPT.rename{1}))
-            j = strmatch(fldname,OPT.rename{1});
+      if ~any(strmatch(fldname,OPT.exclude, 'exact'))
+         if any(strmatch(fldname,OPT.rename{1}, 'exact'))
+            j = strmatch(fldname,OPT.rename{1}, 'exact');
             fldname = OPT.rename{2}{j};
          end
          for iatt=1:length(fileinfo.Dataset(idat).Attribute);
