@@ -108,10 +108,24 @@ n = 1;
 for i = 1:length(OPT.fcnfit)
     if isa(OPT.fcnfit{i}, 'function_handle')
         try
+            p   = [];
+            ci  = [];
+            
+            switch nargout(OPT.fcnfit{i})
+                case 1
+                    f        = feval(OPT.fcnfit{i},data,OPT.y(:));
+                case 2
+                    [f p]    = feval(OPT.fcnfit{i},data,OPT.y(:));
+                case 3
+                    [f p ci] = feval(OPT.fcnfit{i},data,OPT.y(:));
+            end
+            
             res.fit.fits(n) = struct(   ...
                 'fcn',  OPT.fcnfit{i},  ...
-                'y',    OPT.y(:),          ...
-                'f',    feval(OPT.fcnfit{i},data,OPT.y(:)));
+                'y',    OPT.y(:),       ...
+                'f',    f,              ...
+                'pars', p,              ...
+                'ci',   ci                  );
 
             n = n+1;
         catch

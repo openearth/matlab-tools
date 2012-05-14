@@ -1,4 +1,4 @@
-function f = stat_fit_gev(data,y,varargin)
+function [f p ci] = stat_fit_gev(data,y,varargin)
 %STAT_FIT_GEV  Fits a GEV distribution through a dataset
 %
 %   Fits a Generalized Extreme Value distribution through a dataset and
@@ -66,5 +66,5 @@ function f = stat_fit_gev(data,y,varargin)
 
 %% fit gev
 
-phat    = gev_fit(data);
-f       = 1-gevcdf(y,phat(1),phat(2),phat(3));
+[p ci]  = gev_fit(data);
+f       = 1-gevcdf(y,p(1),p(2),p(3));
