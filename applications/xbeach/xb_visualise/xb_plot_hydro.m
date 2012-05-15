@@ -80,7 +80,7 @@ function xb_plot_hydro(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'handles',          [], ...
@@ -119,8 +119,8 @@ end
 %% plot
 
 % determine dimensions
-x = xb_get(xb, 'DIMS.globalx_DATA');
-j = ceil(xb_get(xb, 'DIMS.globaly')/2);
+x = xs_get(xb, 'DIMS.globalx_DATA');
+j = ceil(xs_get(xb, 'DIMS.globaly')/2);
 x = squeeze(x(j,:));
 
 % determine available data
@@ -129,9 +129,9 @@ has_waves_m     = ~isempty(OPT.Hrms_hf) || ~isempty(OPT.Hrms_lf) || ~isempty(OPT
 has_flow_m      = ~isempty(OPT.urms_hf) || ~isempty(OPT.urms_lf) || ~isempty(OPT.urms_t) || ~isempty(OPT.umean) || ~isempty(OPT.vmean);
 has_m           = has_bathy_m || has_waves_m || has_flow_m;
 
-has_bathy_c     = xb_exist(xb, 'zb_*');
-has_waves_c     = xb_exist(xb, 'Hrms_*') || xb_exist(xb, 's');
-has_flow_c      = xb_exist(xb, 'urms_*') || xb_exist(xb, 'umean') || xb_exist(xb, 'vmean');
+has_bathy_c     = xs_exist(xb, 'zb_*');
+has_waves_c     = xs_exist(xb, 'Hrms_*') || xs_exist(xb, 's');
+has_flow_c      = xs_exist(xb, 'urms_*') || xs_exist(xb, 'umean') || xs_exist(xb, 'vmean');
 
 if OPT.showall; has_m = false; end;
 
@@ -161,16 +161,16 @@ if sp(1)
     if ~isempty(OPT.s);                 addplot(OPT.s(:,1),         OPT.s(:,2),             'o',    'k',    'setup (measured)'                  );  end;
 
     % plot bathymetry
-    if ~has_m || ~isempty(OPT.zb);      addplot(x,                  xb_get(xb, 'zb_i'),     ':',    'k',    'bathymetry (initial)'              );  end;
-    if ~has_m || ~isempty(OPT.zb);      addplot(x,                  xb_get(xb, 'zb_f'),     '-',    'k',    'bathymetry (final)'                );  end;
+    if ~has_m || ~isempty(OPT.zb);      addplot(x,                  xs_get(xb, 'zb_i'),     ':',    'k',    'bathymetry (initial)'              );  end;
+    if ~has_m || ~isempty(OPT.zb);      addplot(x,                  xs_get(xb, 'zb_f'),     '-',    'k',    'bathymetry (final)'                );  end;
 
     % plot waves
-    if ~has_m || ~isempty(OPT.Hrms_hf); addplot(x,                  xb_get(xb, 'Hrms_hf'),  '--',   'r',    'wave height (HF)'                  );  end;
-    if ~has_m || ~isempty(OPT.Hrms_lf); addplot(x,                  xb_get(xb, 'Hrms_lf'),  ':',    'r',    'wave height (LF)'                  );  end;
-    if ~has_m || ~isempty(OPT.Hrms_t);  addplot(x,                  xb_get(xb, 'Hrms_t'),   '-',    'r',    'wave height'                       );  end;
+    if ~has_m || ~isempty(OPT.Hrms_hf); addplot(x,                  xs_get(xb, 'Hrms_hf'),  '--',   'r',    'wave height (HF)'                  );  end;
+    if ~has_m || ~isempty(OPT.Hrms_lf); addplot(x,                  xs_get(xb, 'Hrms_lf'),  ':',    'r',    'wave height (LF)'                  );  end;
+    if ~has_m || ~isempty(OPT.Hrms_t);  addplot(x,                  xs_get(xb, 'Hrms_t'),   '-',    'r',    'wave height'                       );  end;
     
     % plot setup
-    if ~has_m || ~isempty(OPT.s);       addplot(x,                  xb_get(xb, 's'),        '-.',   'b',    'setup'                             );  end;
+    if ~has_m || ~isempty(OPT.s);       addplot(x,                  xs_get(xb, 's'),        '-.',   'b',    'setup'                             );  end;
 end
 
 % subplot 2
@@ -189,13 +189,13 @@ if sp(2)
     if ~isempty(OPT.vmean);             addplot(OPT.vmean(:,1),     OPT.vmean(:,2),         '.',    'k',    'flow velocity (v,mean,measured)'   );  end;
     
     % plot orbital velocity
-    if ~has_m || ~isempty(OPT.urms_hf); addplot(x,                  xb_get(xb, 'urms_hf'),  '--',  'g',    'flow velocity (RMS,HF)'             );  end;
-    if ~has_m || ~isempty(OPT.urms_lf); addplot(x,                  xb_get(xb, 'urms_lf'),  ':',   'g',    'flow velocity (RMS,LF)'             );  end;
-    if ~has_m || ~isempty(OPT.urms_t);  addplot(x,                  xb_get(xb, 'urms_t'),   '-',   'g',    'flow velocity (RMS)'                );  end;
+    if ~has_m || ~isempty(OPT.urms_hf); addplot(x,                  xs_get(xb, 'urms_hf'),  '--',  'g',    'flow velocity (RMS,HF)'             );  end;
+    if ~has_m || ~isempty(OPT.urms_lf); addplot(x,                  xs_get(xb, 'urms_lf'),  ':',   'g',    'flow velocity (RMS,LF)'             );  end;
+    if ~has_m || ~isempty(OPT.urms_t);  addplot(x,                  xs_get(xb, 'urms_t'),   '-',   'g',    'flow velocity (RMS)'                );  end;
     
     % plot mean velocity
-    if ~has_m || ~isempty(OPT.umean);   addplot(x,                  xb_get(xb, 'umean'),    '-.',  'g',    'flow velocity (u,mean)'             );  end;
-    if ~has_m || ~isempty(OPT.vmean);   addplot(x,                  xb_get(xb, 'vmean'),    '-.',  'b',    'flow velocity (v,mean)'             );  end;
+    if ~has_m || ~isempty(OPT.umean);   addplot(x,                  xs_get(xb, 'umean'),    '-.',  'g',    'flow velocity (u,mean)'             );  end;
+    if ~has_m || ~isempty(OPT.vmean);   addplot(x,                  xs_get(xb, 'vmean'),    '-.',  'b',    'flow velocity (v,mean)'             );  end;
 end
 
 % add labels

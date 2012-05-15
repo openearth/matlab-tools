@@ -63,8 +63,8 @@ function varargout = xb_check_stagger(xb, varargin)
 
 %%
 % derive grid properties based on xb_stagger
-x   = xb_get(xb, 'DIMS.globalx_DATA');
-y   = xb_get(xb, 'DIMS.globaly_DATA');
+x   = xs_get(xb, 'DIMS.globalx_DATA');
+y   = xs_get(xb, 'DIMS.globaly_DATA');
 g = xb_stagger(x, y);
 
 vars = fieldnames(g);
@@ -72,12 +72,12 @@ vars = fieldnames(g);
 for ivar = 1:length(vars)
     
     % read variable from xb
-    value_xbeach = xb_get(xb, vars{ivar});
+    value_xbeach = xs_get(xb, vars{ivar});
     
     if isempty(value_xbeach)
         % if variable appears to be empty, try to read the inverse by
         % adding the suffix i (dsdnzi, dsdnvi, dsdnui)
-        ivalue_xbeach = xb_get(xb, [vars{ivar} 'i']);
+        ivalue_xbeach = xs_get(xb, [vars{ivar} 'i']);
         
         if ~isempty(ivalue_xbeach)
             % take the inverse of the inverse, if not empty

@@ -65,7 +65,7 @@ function xb_write_input(filename, xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'write_files', true ...
@@ -102,7 +102,7 @@ if OPT.write_files
                     try
                         xb.data(i).value = [xb.data(i).name '.txt'];
                         fname = fullfile(fdir, xb.data(i).value);
-                        data = xb_get(sub, 'data');
+                        data = xs_get(sub, 'data');
                         if isnumeric(data)
                             save(fname, '-ascii', 'data');
                         elseif iscell(data)

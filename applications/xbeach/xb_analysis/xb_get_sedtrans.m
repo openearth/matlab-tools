@@ -66,7 +66,7 @@ function xbo = xb_get_sedtrans(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'Trep', 12, ...
@@ -80,8 +80,8 @@ OPT = setproperty(OPT, varargin{:});
 
 xb      = xb_get_transect(xb);
 
-t       = xb_get(xb, 'DIMS.globaltime_DATA');
-x       = xb_get(xb, 'DIMS.globalx_DATA');
+t       = xs_get(xb, 'DIMS.globaltime_DATA');
+x       = xs_get(xb, 'DIMS.globalx_DATA');
 x       = squeeze(x(1,:));
 dx      = diff(x); dx = dx([1 1:end]);
 
@@ -102,82 +102,82 @@ S_as        = 0;
 %% compute sediment transport characteristics
 
 % sediment concentration
-if xb_exist(xb, 'ccg')
-    c = OPT.rho.*mean(xb_get(xb, 'ccg'), 1);
+if xs_exist(xb, 'ccg')
+    c = OPT.rho.*mean(xs_get(xb, 'ccg'), 1);
 end
 
 % turbulence
-if xb_exist(xb, 'DR')
-    k_wavg = mean((xb_get(xb, 'DR')/OPT.rho).^(2/3),1);
-    if xb_exist(xb, 'Tbore')
-        k_bavg = mean((xb_get(xb, 'DR')/OPT.rho).^(2/3).*OPT.Trep./xb_get(xb, 'Tbore'),1);
+if xs_exist(xb, 'DR')
+    k_wavg = mean((xs_get(xb, 'DR')/OPT.rho).^(2/3),1);
+    if xs_exist(xb, 'Tbore')
+        k_bavg = mean((xs_get(xb, 'DR')/OPT.rho).^(2/3).*OPT.Trep./xs_get(xb, 'Tbore'),1);
     end
 end
 
-if xb_exist(xb, 'kb')
-    k_bavg_nb = mean(xb_get(xb, 'kb'),1);
+if xs_exist(xb, 'kb')
+    k_bavg_nb = mean(xs_get(xb, 'kb'),1);
 end
 
 % sediment transports
-if xb_exist(xb, 'zb')
-    zb = xb_get(xb, 'zb');
+if xs_exist(xb, 'zb')
+    zb = xs_get(xb, 'zb');
     dz = squeeze(zb(end,:)-zb(1,:));
     dz = dz(:);
     S_dz = (1-OPT.por)*flipud(cumsum(flipud(dz))).*dx'./range(t);
 end
 
-if xb_exist(xb, 'dzav')
-    dzav = xb_get(xb, 'dzav');
+if xs_exist(xb, 'dzav')
+    dzav = xs_get(xb, 'dzav');
     dzav = squeeze(dzav(end,:,:));
     S_av = (1-OPT.por)*flipud(cumsum(flipud(dzav))).*dx'./range(t);
 end
 
-if xb_exist(xb, 'Susg')
-    Susg = xb_get(xb, 'Susg');
+if xs_exist(xb, 'Susg')
+    Susg = xs_get(xb, 'Susg');
     Szsg = Susg;
     Szsg(:,2:end) = 0.5*(Susg(:,:,1:end-1)+Susg(:,:,2:end));
     S_s = mean(Szsg,1);
 end
 
-if xb_exist(xb, 'Subg')
-    Subg = xb_get(xb, 'Subg');
+if xs_exist(xb, 'Subg')
+    Subg = xs_get(xb, 'Subg');
     Szbg = Subg;
     Szbg(:,2:end) = 0.5*(Subg(:,:,1:end-1)+Subg(:,:,2:end));
     S_b = mean(Szbg,1);
 end
 
-if xb_exist(xb, 'zs', 'zb', 'ccg') == 3
-    h = xb_get(xb, 'zs') - xb_get(xb, 'zb');
-    if xb_exist(xb, 'u')
-        S_lf = mean(xb_get(xb, 'u').*xb_get(xb, 'ccg').*h,1);
-        if xb_exist(xb, 'ue')
-            S_ut = mean((xb_get(xb, 'ue')-xb_get(xb, 'u')).*xb_get(xb, 'ccg').*h,1);
+if xs_exist(xb, 'zs', 'zb', 'ccg') == 3
+    h = xs_get(xb, 'zs') - xs_get(xb, 'zb');
+    if xs_exist(xb, 'u')
+        S_lf = mean(xs_get(xb, 'u').*xs_get(xb, 'ccg').*h,1);
+        if xs_exist(xb, 'ue')
+            S_ut = mean((xs_get(xb, 'ue')-xs_get(xb, 'u')).*xs_get(xb, 'ccg').*h,1);
         end
     end
     
-    if xb_exist(xb, 'ua')
-        S_as = mean(xb_get(xb, 'ua').*xb_get(xb, 'ccg').*h,1);
+    if xs_exist(xb, 'ua')
+        S_as = mean(xs_get(xb, 'ua').*xs_get(xb, 'ccg').*h,1);
     end
 end
 
 %% create xbeach structure
 
-xbo = xb_empty();
+xbo = xs_empty();
 
-xbo = xb_set(xbo, 'SETTINGS', xb_set([]));
+xbo = xs_set(xbo, 'SETTINGS', xs_set([]));
 
-xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
+xbo = xs_set(xbo, 'DIMS', xs_get(xb, 'DIMS'));
 
-if ~isscalar(c);        xbo = xb_set(xbo, 'c',          squeeze(c));        end;
-if ~isscalar(k_wavg);   xbo = xb_set(xbo, 'k_wavg',     squeeze(k_wavg));   end;
-if ~isscalar(k_bavg);   xbo = xb_set(xbo, 'k_bavg',     squeeze(k_bavg));   end;
-if ~isscalar(k_bavg_nb);xbo = xb_set(xbo, 'k_bavg_nb',  squeeze(k_bavg_nb));end;
-if ~isscalar(S_dz);     xbo = xb_set(xbo, 'S_dz',       squeeze(S_dz));     end;
-if ~isscalar(S_av);     xbo = xb_set(xbo, 'S_av',       squeeze(S_av));     end;
-if ~isscalar(S_s);      xbo = xb_set(xbo, 'S_s',        squeeze(S_s));      end;
-if ~isscalar(S_b);      xbo = xb_set(xbo, 'S_b',        squeeze(S_b));      end;
-if ~isscalar(S_lf);     xbo = xb_set(xbo, 'S_lf',       squeeze(S_lf));     end;
-if ~isscalar(S_ut);     xbo = xb_set(xbo, 'S_ut',       squeeze(S_ut));     end;
-if ~isscalar(S_as);     xbo = xb_set(xbo, 'S_as',       squeeze(S_as));     end;
+if ~isscalar(c);        xbo = xs_set(xbo, 'c',          squeeze(c));        end;
+if ~isscalar(k_wavg);   xbo = xs_set(xbo, 'k_wavg',     squeeze(k_wavg));   end;
+if ~isscalar(k_bavg);   xbo = xs_set(xbo, 'k_bavg',     squeeze(k_bavg));   end;
+if ~isscalar(k_bavg_nb);xbo = xs_set(xbo, 'k_bavg_nb',  squeeze(k_bavg_nb));end;
+if ~isscalar(S_dz);     xbo = xs_set(xbo, 'S_dz',       squeeze(S_dz));     end;
+if ~isscalar(S_av);     xbo = xs_set(xbo, 'S_av',       squeeze(S_av));     end;
+if ~isscalar(S_s);      xbo = xs_set(xbo, 'S_s',        squeeze(S_s));      end;
+if ~isscalar(S_b);      xbo = xs_set(xbo, 'S_b',        squeeze(S_b));      end;
+if ~isscalar(S_lf);     xbo = xs_set(xbo, 'S_lf',       squeeze(S_lf));     end;
+if ~isscalar(S_ut);     xbo = xs_set(xbo, 'S_ut',       squeeze(S_ut));     end;
+if ~isscalar(S_as);     xbo = xs_set(xbo, 'S_as',       squeeze(S_as));     end;
 
-xbo = xb_meta(xbo, mfilename, 'sedimenttransport');
+xbo = xs_meta(xbo, mfilename, 'sedimenttransport');

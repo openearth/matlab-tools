@@ -65,13 +65,13 @@ function xb_plot(xb, varargin)
 
 warning('OET:xbeach:deprecated', 'The features of the xb_plot function are also part of the xb_view function. However, xb_view is actively maintained, while this function is not. Please consider switching to xb_view.')
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
-if ~xb_exist(xb, 'DIMS')
+if ~xs_exist(xb, 'DIMS')
     % input struct
     for i = 1:length(xb.data)
-        if xb_check(xb.data(i).value)
-            xb = xb_join(xb, xb.data(i).value);
+        if xs_check(xb.data(i).value)
+            xb = xs_join(xb, xb.data(i).value);
         end
     end
 end
@@ -107,8 +107,8 @@ function info = get_info(xb)
 info = struct();
 
 % get time
-if xb_exist(xb, 'DIMS')
-    info.t = xb_get(xb,'DIMS.globaltime_DATA');
+if xs_exist(xb, 'DIMS')
+    info.t = xs_get(xb,'DIMS.globaltime_DATA');
 end
 
 if ~isfield(info, 't') || info.t(1) >= info.t(end)
@@ -238,7 +238,7 @@ hold off;
 
 for i = 1:size(vars,1)
     var = strtrim(vars(i,:));
-    data = xb_get(xb, var);
+    data = xs_get(xb, var);
     
     if numel(data) > 1 || ~isnan(data)
         
@@ -275,12 +275,12 @@ for i = 1:size(vars,1)
         end
         
         % get grid
-        x = xb_get(xb, 'DIMS.globalx_DATA');
-        y = xb_get(xb, 'DIMS.globaly_DATA');
+        x = xs_get(xb, 'DIMS.globalx_DATA');
+        y = xs_get(xb, 'DIMS.globaly_DATA');
         [y x] = meshgrid(y, x);
         
-        if isnan(x); x = xb_get(xb, 'xfile'); end;
-        if isnan(y); y = xb_get(xb, 'yfile'); end;
+        if isnan(x); x = xs_get(xb, 'xfile'); end;
+        if isnan(y); y = xs_get(xb, 'yfile'); end;
         
         has_grid = false;
         if size(x,1) == size(data,1) && size(x,2) == size(data,2) && ...

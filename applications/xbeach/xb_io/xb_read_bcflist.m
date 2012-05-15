@@ -110,9 +110,9 @@ fclose(fid);
 
 %% create xbeach struct
 
-xb = xb_empty();
-xb = xb_set(xb, '-units', 'time', {bcendtime 's'}, 'duration', {rt 's'}, ...
+xb = xs_empty();
+xb = xs_set(xb, '-units', 'time', {bcendtime 's'}, 'duration', {rt 's'}, ...
     'timestep', {dt 's'}, 'Trep', {trep 's'}, 'main_angle', {mainang 'degrees'}, ...
     'data', {data 'J/m^2'});
-xb = xb_consolidate(xb);
-xb = xb_meta(xb, mfilename, 'boundaryconditions', [{filename} filenames]);
+xb = xs_consolidate(xb);
+xb = xs_meta(xb, mfilename, 'boundaryconditions', [{filename} filenames]);

@@ -86,7 +86,7 @@ function filename = xb_write_waves(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'path', pwd, ...
@@ -102,7 +102,7 @@ OPT = setproperty(OPT, varargin{:});
 
 %% check input
 
-type = xb_get(xb, 'type');
+type = xs_get(xb, 'type');
 
 % check parameter dimensions
 switch type
@@ -121,7 +121,7 @@ switch type
         % determine length of time series
         tlength = get_time_length(xb, vars);
 
-        [freqs dirs vardens] = xb_get(xb, 'freqs', 'dirs', 'vardens');
+        [freqs dirs vardens] = xs_get(xb, 'freqs', 'dirs', 'vardens');
         if length(freqs) ~= size(vardens, 2) || ...
                 length(dirs) ~= size(vardens, 1)
             error('Dimensions of variance density matrix do not match');
@@ -145,7 +145,7 @@ switch type
         end
 
         tlength = 1;
-        xb = xb_set(xb, 'duration', 0, 'timestep', 0);
+        xb = xs_set(xb, 'duration', 0, 'timestep', 0);
     case {'unknown'}
         vars = {'contents' 'duration' 'timestep'};
 
@@ -158,38 +158,38 @@ switch type
 end
 
 % set variable alternatives
-if xb_exist(xb, 'Tp') && ~xb_exist(xb, 'fp')
-    xb = xb_set(xb, 'fp', 1./xb_get(xb, 'Tp'));
+if xs_exist(xb, 'Tp') && ~xs_exist(xb, 'fp')
+    xb = xs_set(xb, 'fp', 1./xs_get(xb, 'Tp'));
 end
 
-if xb_exist(xb, 'fp') && ~xb_exist(xb, 'Tp')
-    xb = xb_set(xb, 'Tp', 1./xb_get(xb, 'fp'));
+if xs_exist(xb, 'fp') && ~xs_exist(xb, 'Tp')
+    xb = xs_set(xb, 'Tp', 1./xs_get(xb, 'fp'));
 end
 
-if xb_exist(xb, 'mainang') && ~xb_exist(xb, 'dir')
-    xb = xb_set(xb, 'dir', xb_get(xb, 'mainang'));
+if xs_exist(xb, 'mainang') && ~xs_exist(xb, 'dir')
+    xb = xs_set(xb, 'dir', xs_get(xb, 'mainang'));
 end
 
-if xb_exist(xb, 'dir') && ~xb_exist(xb, 'mainang')
-    xb = xb_set(xb, 'mainang', xb_get(xb, 'dir'));
+if xs_exist(xb, 'dir') && ~xs_exist(xb, 'mainang')
+    xb = xs_set(xb, 'mainang', xs_get(xb, 'dir'));
 end
 
 % extend constant parameters to length of time series
 for i = 1:length(vars)
     if strcmpi(vars{i}, 'contents'); continue; end;
 
-    var = xb_get(xb, vars{i});
+    var = xs_get(xb, vars{i});
     switch length(var)
         case 0
-            xb = xb_set(xb, vars{i}, nan*ones(1,tlength));
+            xb = xs_set(xb, vars{i}, nan*ones(1,tlength));
         case 1
-            xb = xb_set(xb, vars{i}, var*ones(1,tlength));
+            xb = xs_set(xb, vars{i}, var*ones(1,tlength));
     end
 end
 
 %% set maximum duration
 
-[duration timestep] = xb_get(xb, 'duration', 'timestep');
+[duration timestep] = xs_get(xb, 'duration', 'timestep');
 
 if isnan(duration); duration = OPT.maxduration; end;
 
@@ -206,18 +206,18 @@ while any(duration>OPT.maxduration)
     for j = 1:length(vars)
         if strcmpi(vars{j}, 'duration'); continue; end;
 
-        data    = xb_get(xb, vars{j});
-        xb      = xb_set(xb, vars{j}, data(idx));
+        data    = xs_get(xb, vars{j});
+        xb      = xs_set(xb, vars{j}, data(idx));
     end
     tlength     = tlength+n;
 end
 
-xb = xb_set(xb, 'duration', ceil(duration));
+xb = xs_set(xb, 'duration', ceil(duration));
 
 %% create file list
 
 % create file list file, if necessary
-[duration timestep] = xb_get(xb, 'duration', 'timestep');
+[duration timestep] = xs_get(xb, 'duration', 'timestep');
 if length(duration) > 1 && ~(strcmpi(type, 'jonswap') && OPT.omit_filelist) && ~strcmpi(type, 'jonswap_mtx')
     filename = [OPT.filelist_file '.txt'];
     fid = fopen(fullfile(OPT.path, filename), 'w');
@@ -271,7 +271,7 @@ end
 function t = get_time_length(xb, vars)
 t = 1;
 for i = 1:length(vars)
-    var = xb_get(xb, vars{i});
+    var = xs_get(xb, vars{i});
     if t > 1 && length(var) > 1 && t ~= length(var)
         error('Time dimensions do not match');
     end
@@ -285,7 +285,7 @@ vars = {'Hm0' 'fp' 'mainang' 'gammajsp' 's' 'fnyq'};
 
 fid = fopen(fname, 'w');
 for i = 1:length(vars)
-    var = xb_get(xb, vars{i});
+    var = xs_get(xb, vars{i});
     if ~isnan(var(idx))
         fprintf(fid, '%-10s = %10.4f\n', vars{i}, var(idx));
     end
@@ -299,7 +299,7 @@ vars = {'Hm0' 'Tp' 'mainang' 'gammajsp' 's' 'duration' 'timestep'};
 fid = fopen(fname, 'w');
 for i = 1:tlength
     for j = 1:length(vars)
-        var = xb_get(xb, vars{j});
+        var = xs_get(xb, vars{j});
         fprintf(fid, '%10.4f', var(i));
     end
     fprintf(fid, '\n');
@@ -308,7 +308,7 @@ fclose(fid);
 
 % write single variance density spectrum file
 function write_vardens_file(fname, idx, xb)
-[freqs dirs vardens] = xb_get(xb, 'freqs', 'dirs', 'vardens');
+[freqs dirs vardens] = xs_get(xb, 'freqs', 'dirs', 'vardens');
 
 fid = fopen(fname, 'w');
 fprintf(fid, '%10.4f\n', length(freqs));
@@ -329,7 +329,7 @@ fclose(fid);
 
 % write unknown formatted wave file
 function write_unknown_file(fname, tlength, xb)
-contents = xb_get(xb, 'contents');
+contents = xs_get(xb, 'contents');
 
 fid = fopen(fname, 'w');
 if iscell(contents)

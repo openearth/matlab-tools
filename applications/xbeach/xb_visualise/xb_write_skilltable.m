@@ -85,14 +85,14 @@ if isempty(OPT.vars); OPT.vars = {xb.data(2:end).name}; end;
 skills = [];
 labels = {};
 
-j = ceil(xb_get(xb, 'DIMS.globaly')/2);
+j = ceil(xs_get(xb, 'DIMS.globaly')/2);
 
 n = 1;
 for i = 1:length(measured)
     if length(OPT.vars) > i-1
-        x = xb_get(xb, 'DIMS.globalx_DATA');
-        t = xb_get(xb, 'DIMS.globaltime_DATA');
-        y = xb_get(xb, OPT.vars{i});
+        x = xs_get(xb, 'DIMS.globalx_DATA');
+        t = xs_get(xb, 'DIMS.globaltime_DATA');
+        y = xs_get(xb, OPT.vars{i});
         
         if isempty(y); continue; end;
         

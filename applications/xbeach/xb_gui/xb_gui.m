@@ -88,7 +88,7 @@ function xb_gui(varargin)
         warndlg('This functionality is under construction. Only a few basic tools from the XBeach toolbox are available via the GUI at this moment. Please use the command-line functions for full access to the toolbox','Under construction')
         
         % load model from varargin
-        if ~isempty(varargin) && xb_check(varargin{1})
+        if ~isempty(varargin) && xs_check(varargin{1})
             S = xb_gui_struct;  S.model = varargin{1};
             set(fig, 'userdata', S);
             xb_gui_loadmodel;

@@ -119,7 +119,8 @@ function ui_set_block(obj, event)
     info.block     = get_selected(obj,'SelectBlock');
     info.block     = str2double(regexprep(info.block{1},'\D',''));
     
-    dat            = fieldnames(info.input.data(info.block).WRD);
+    WRD            = xs_get(info.input.data(info.block).value,'WRD');
+    dat            = {WRD.data.name};
     info.datalist  = sprintf('|%s', dat{:});
     info.datalist  = info.datalist(2:end);
     
@@ -127,14 +128,18 @@ function ui_set_block(obj, event)
     
     set(get_obj(obj,'SelectData'),'String',info.datalist);
     
-    d              = info.input.data(info.block).W3H;
-    f              = fieldnames(d);
-    n              = max(cellfun(@(x)length(d.(x)),f));
+    W3H            = xs_get(info.input.data(info.block).value,'W3H');
+    f              = {W3H.data.name};
+    v              = {W3H.data.value};
+    idx            = ~cellfun(@iscell,v);
+    v(idx)         = cellfun(@(x){x},v(idx),'UniformOutput',false);
+    l              = cellfun(@(x)length(x),v);
+    n              = max(l);
     
     dat            = cell(length(f),n);
     
     for i = 1:length(f)
-        dat(i,1:length(d.(f{i}))) = d.(f{i});
+        dat(i,1:l(i)) = v{i};
     end
     
     set(get_obj(obj,'TableMeta'),'Data',dat,'RowName',f,'ColumnWidth',{150});
@@ -171,21 +176,26 @@ end
 function ui_plot(obj)
     
     info    = get_info(obj);
-    dat     = info.input.data(info.block).WRD.(info.data);
+    
+    WRD     = xs_get(info.input.data(info.block).value,'WRD');
+    dat     = xs_get(WRD,info.data);
     ax      = get_axis(obj);
     
-    if isfield(info.input.data(info.block),'axes')
+    if xs_exist(info.input.data(info.block).value,'axes')
         % axes info available
         
-        axs     = info.input.data(info.block).axes;
+        axs     = xs_get(info.input.data(info.block).value,'axes');
     
+        t = xs_get(axs,'time');
+        f = xs_get(axs,'frequency');
+        
         if size(dat,2)>1
-            surf(ax,axs.time,axs.frequency,dat'); shading flat;
+            surf(ax,t,f,dat'); shading flat;
             ylabel('frequency [Hz]');
-            set(gca,'XLim',minmax(axs.time),'YLim',minmax(axs.frequency));
+            set(gca,'XLim',minmax(t),'YLim',minmax(f));
         else
-            plot(ax,axs.time,dat);
-            set(gca,'XLim',minmax(axs.time));
+            plot(ax,t,dat);
+            set(gca,'XLim',minmax(t));
         end
     
         set(ax,'XTickLabel',datestr(get(ax,'XTick'),'dd-mmm-yyyy'));
@@ -204,7 +214,13 @@ function ui_plot(obj)
     end
     
     try
-        title(info.input.data(info.block).W3H.LOC{1});
+        loc = xs_get(info.input.data(info.block).value,'W3H.LOC');
+        
+        if iscell(loc)
+            loc = loc{1};
+        end
+        
+        title(loc);
     end
     
 end

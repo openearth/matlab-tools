@@ -20,7 +20,7 @@ function xbo = xb_get_sedbal(xb, varargin)
 %
 %   Example
 %   xbo = xb_get_sedbal(xb);
-%   xb_show(xbo);
+%   xs_show(xbo);
 %
 %   See also xb_read_output
 
@@ -77,8 +77,8 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-if xb_check(xb)
-    [d xb] = xb_split(xb, 'DIMS', '*');
+if xs_check(xb)
+    [d xb] = xs_split(xb, 'DIMS', '*');
     
     filter = '/.*_(mean|min|max|var)';
     
@@ -90,11 +90,11 @@ else
     error('Invalid XBeach structure');
 end
 
-if xb_exist(d, 'DIMS')
-    x   = xb_get(d, 'DIMS.globalx_DATA');
-    y   = xb_get(d, 'DIMS.globaly_DATA');
-    t   = xb_get(d, 'DIMS.globaltime_DATA');
-    tm  = xb_get(d, 'DIMS.meantime_DATA');
+if xs_exist(d, 'DIMS')
+    x   = xs_get(d, 'DIMS.globalx_DATA');
+    y   = xs_get(d, 'DIMS.globaly_DATA');
+    t   = xs_get(d, 'DIMS.globaltime_DATA');
+    tm  = xs_get(d, 'DIMS.meantime_DATA');
     
     if ~isempty(t_max)
         t   = t(1:t_max);
@@ -122,8 +122,8 @@ else
 end
 
 %% compute sedimentation and erosion
-if xb_exist(xb, 'zb')
-    zb = xb_get(xb, 'zb');
+if xs_exist(xb, 'zb')
+    zb = xs_get(xb, 'zb');
     
     if nt > size(zb,1)
         nt = size(zb,1);
@@ -147,8 +147,8 @@ else
 end
 
 % compute the volume change due to avalanching
-if xb_exist(xb, 'dzav')
-    dzav = xb_get(xb, 'dzav');
+if xs_exist(xb, 'dzav')
+    dzav = xs_get(xb, 'dzav');
 %     av_DATA = (1-OPT.porosity)*squeeze(dzav(nt,:,:)).*g.dsdnz';
 %     % for (sofar) unknown reasons, the dzav is not everywhere zero at t0;
 %     therefore, in the following line a work-around is found by
@@ -200,11 +200,11 @@ bal_cell  = sed_DATA-ero_DATA-S_cell - av_DATA;
 
 %% create xbeach structure
 
-xbo = xb_empty();
+xbo = xs_empty();
 
-xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
+xbo = xs_set(xbo, 'DIMS', xs_get(xb, 'DIMS'));
 
-xbo = xb_set(xbo,               ...
+xbo = xs_set(xbo,               ...
     'tstart',       t0,         ...
     'time',         t(nt),      ...
     'surface',      A, ...
@@ -213,14 +213,14 @@ xbo = xb_set(xbo,               ...
     'sed',          sed,        ...
     'ero',          ero,        ...
     'trans',        trans,      ...
-    'bal_DATA', xb_set([],      ...
+    'bal_DATA', xs_set([],      ...
         'total',    bal,        ...
         'cell',     bal_cell,   ...
         'sedero',   sed-ero),   ...
     'sed_DATA',     sed_DATA,   ...
     'ero_DATA',     ero_DATA,   ...
     'av_DATA',      av_DATA,    ...
-    'trans_DATA', xb_set([],    ...
+    'trans_DATA', xs_set([],    ...
         'cell',     S_cell,     ...
         's',        S_s,        ...
         'n',        S_n,        ...
@@ -230,7 +230,7 @@ xbo = xb_set(xbo,               ...
         'left',     S.left)     ...
 );
 
-xbo = xb_meta(xbo, mfilename, 'sedimentbalance');
+xbo = xs_meta(xbo, mfilename, 'sedimentbalance');
 
 end
 
@@ -241,8 +241,8 @@ function r = integrate_transport(xb, var, g, t, tm, f)
     r       = struct('s', [], 'n', []);
     
     % check availability of mean variable resp. instantaneous variable 
-    meanvar = xb_exist(xb, [var '_mean']);
-    instvar = xb_exist(xb, var);
+    meanvar = xs_exist(xb, [var '_mean']);
+    instvar = xs_exist(xb, var);
     
     if meanvar
         var = [var '_mean'];
@@ -251,14 +251,14 @@ function r = integrate_transport(xb, var, g, t, tm, f)
         warning('Using instantaneous transports, which can deviate from the time-averaged transports considerably!');
     end
     
-    if xb_exist(xb, var)
+    if xs_exist(xb, var)
         
 %         da      = .5*pi*(var(2)=='v');
         
         tint    = diff(t);
         nt      = length(t) - meanvar; 
 
-        v       = xb_get(xb, var);
+        v       = xs_get(xb, var);
         tint    = repmat(tint,[1 1 size(v,3) size(v,4)]);
         v       = squeeze(sum(sum(v(1:nt,:,:,:),2).*tint,1));
 

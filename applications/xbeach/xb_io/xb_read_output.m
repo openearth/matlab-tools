@@ -76,8 +76,8 @@ if ~exist('fname', 'var')
 end
 
 % extract path, if xbeach structure is supplied
-if xb_check(fname)
-    fname = xb_get(fname, 'path');
+if xs_check(fname)
+    fname = xs_get(fname, 'path');
     if ~isdir(fname)
         fname = fileparts(fname);
     end
@@ -105,5 +105,5 @@ else
 end
 
 % set meta data
-variables = xb_meta(variables, mfilename, 'output', fname);
+variables = xs_meta(variables, mfilename, 'output', fname);
 

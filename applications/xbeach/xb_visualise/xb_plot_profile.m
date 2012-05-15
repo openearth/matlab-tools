@@ -116,8 +116,8 @@ end
 axes(ax); hold on;
 
 % read data
-x = xb_get(xb, 'DIMS.globalx_DATA');
-z = xb_get(xb, 'zb');
+x = xs_get(xb, 'DIMS.globalx_DATA');
+z = xs_get(xb, 'zb');
 j = ceil(size(x,1)/2);
 
 z0  = squeeze(z(1,j,:));

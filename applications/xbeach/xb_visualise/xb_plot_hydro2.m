@@ -85,7 +85,7 @@ function xb_plot_hydro2(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'handles',          [], ...
@@ -111,8 +111,8 @@ OPT = setproperty(OPT, varargin{:});
 %% plot
 
 % determine dimensions
-x = xb_get(xb, 'DIMS.globalx_DATA');
-j = ceil(xb_get(xb, 'DIMS.globaly')/2);
+x = xs_get(xb, 'DIMS.globalx_DATA');
+j = ceil(xs_get(xb, 'DIMS.globaly')/2);
 x = squeeze(x(j,:));
 
 % determine available data
@@ -122,10 +122,10 @@ has_waveshape2_m = ~isempty(OPT.B) || ~isempty(OPT.beta);
 has_flow_m      = ~isempty(OPT.urms_hf) || ~isempty(OPT.urms_lf) || ~isempty(OPT.urms_t) || ~isempty(OPT.uavg);
 has_m           = has_corr_m || has_waveshape_m || has_waveshape2_m || has_flow_m;
 
-has_corr_c      = xb_exist(xb, 'rho');
-has_waveshape_c = xb_exist(xb, 'SK') || xb_exist(xb, 'AS');
-has_waveshape2_c = xb_exist(xb, 'B') || xb_exist(xb, 'beta');
-has_flow_c      = xb_exist(xb, 'urms_*') || xb_exist(xb, 'uavg');
+has_corr_c      = xs_exist(xb, 'rho');
+has_waveshape_c = xs_exist(xb, 'SK') || xs_exist(xb, 'AS');
+has_waveshape2_c = xs_exist(xb, 'B') || xs_exist(xb, 'beta');
+has_flow_c      = xs_exist(xb, 'urms_*') || xs_exist(xb, 'uavg');
 
 if OPT.showall; has_m = false; end;
 
@@ -153,7 +153,7 @@ if sp(1)
     if ~isempty(OPT.rho);               addplot(OPT.rho(:,1),   OPT.rho(:,2),           's',    'k',    'correlation HF variance/LF elevation (measured)'   );  end;
     
     % plot correlation
-    if ~has_m || ~isempty(OPT.rho);     addplot(x,              xb_get(xb, 'rho'),      '-',    'k',    'correlation HF variance/LF elevation'              );  end;
+    if ~has_m || ~isempty(OPT.rho);     addplot(x,              xs_get(xb, 'rho'),      '-',    'k',    'correlation HF variance/LF elevation'              );  end;
 end
 
 % subplot 2
@@ -169,8 +169,8 @@ if sp(2)
     if ~isempty(OPT.AS);            addplot(OPT.AS(:,1),    OPT.AS(:,2),       'v',     'k',    'wave asymmetry (measured)' );  end;
     
     % plot computations
-    if ~has_m || ~isempty(OPT.SK);  addplot(x,              xb_get(xb, 'SK'),  '-',     'r',    'wave skewness'             );  end;
-    if ~has_m || ~isempty(OPT.AS);  addplot(x,              xb_get(xb, 'AS'),  '--',    'r',    'wave asymmetry'            );  end;
+    if ~has_m || ~isempty(OPT.SK);  addplot(x,              xs_get(xb, 'SK'),  '-',     'r',    'wave skewness'             );  end;
+    if ~has_m || ~isempty(OPT.AS);  addplot(x,              xs_get(xb, 'AS'),  '--',    'r',    'wave asymmetry'            );  end;
     
 end
 
@@ -187,8 +187,8 @@ if sp(3)
     if ~isempty(OPT.beta);              addplot(OPT.beta(:,1),  OPT.beta(:,2),      'v',     'k',    'wave phase (measured)'        );  end;
     
     % plot computations
-    if ~has_m || ~isempty(OPT.B);       addplot(x,              xb_get(xb, 'B'),    '-',     'g',    'wave nonlinearity'            );  end;
-    if ~has_m || ~isempty(OPT.beta);    addplot(x,              xb_get(xb, 'beta'), '--',    'g',    'wave phase'                   );  end;
+    if ~has_m || ~isempty(OPT.B);       addplot(x,              xs_get(xb, 'B'),    '-',     'g',    'wave nonlinearity'            );  end;
+    if ~has_m || ~isempty(OPT.beta);    addplot(x,              xs_get(xb, 'beta'), '--',    'g',    'wave phase'                   );  end;
     
 end
 
@@ -207,12 +207,12 @@ if sp(4)
     if ~isempty(OPT.uavg);              addplot(OPT.uavg(:,1),      OPT.uavg(:,2),          'o',    'k',    'undertow velocity (measured)'      );  end;
     
     % plot orbital velocity
-    if ~has_m || ~isempty(OPT.urms_hf); addplot(x,                  xb_get(xb, 'urms_hf'),  '--',  'b',    'flow velocity (RMS,HF)'             );  end;
-    if ~has_m || ~isempty(OPT.urms_lf); addplot(x,                  xb_get(xb, 'urms_lf'),  ':',   'b',    'flow velocity (RMS,LF)'             );  end;
-    if ~has_m || ~isempty(OPT.urms_t);  addplot(x,                  xb_get(xb, 'urms_t'),   '-',   'b',    'flow velocity (RMS)'                );  end;
+    if ~has_m || ~isempty(OPT.urms_hf); addplot(x,                  xs_get(xb, 'urms_hf'),  '--',  'b',    'flow velocity (RMS,HF)'             );  end;
+    if ~has_m || ~isempty(OPT.urms_lf); addplot(x,                  xs_get(xb, 'urms_lf'),  ':',   'b',    'flow velocity (RMS,LF)'             );  end;
+    if ~has_m || ~isempty(OPT.urms_t);  addplot(x,                  xs_get(xb, 'urms_t'),   '-',   'b',    'flow velocity (RMS)'                );  end;
     
     % plot undertow
-    if ~has_m || ~isempty(OPT.uavg);    addplot(x,                  xb_get(xb, 'uavg'),     '-.',  'b',    'undertow velocity'                  );  end;
+    if ~has_m || ~isempty(OPT.uavg);    addplot(x,                  xs_get(xb, 'uavg'),     '-.',  'b',    'undertow velocity'                  );  end;
     
 end
 

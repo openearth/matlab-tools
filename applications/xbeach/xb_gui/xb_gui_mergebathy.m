@@ -317,7 +317,7 @@ function mergedata(obj, event)
             case 'XBeach grid files'
                 files = regexp(tdata{i,2}, '\|', 'split');
                 xb = xb_read_bathy('xfile', files{1}, 'yfile', files{2}, 'depfile', files{3});
-                [x{i} y{i} z{i}] = xb_get(xb, 'xfile', 'yfile', 'depfile');
+                [x{i} y{i} z{i}] = xs_get(xb, 'xfile', 'yfile', 'depfile');
         end
 
         waitbar(i/size(tdata, 1), wb);

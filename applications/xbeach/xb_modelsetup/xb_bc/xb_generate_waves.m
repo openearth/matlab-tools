@@ -137,33 +137,33 @@ end
 
 %% generate waves
 
-xb = xb_empty();
+xb = xs_empty();
 
 % create waves file
-waves = xb_empty();
+waves = xs_empty();
 f = fieldnames(OPT);
 for i = 1:length(f)
-    waves = xb_set(waves, f{i}, OPT.(f{i}));
+    waves = xs_set(waves, f{i}, OPT.(f{i}));
 end
-waves = xb_meta(waves, mfilename, 'waves');
+waves = xs_meta(waves, mfilename, 'waves');
 
-xb = xb_set(xb, 'instat', instat, 'bcfile', waves);
+xb = xs_set(xb, 'instat', instat, 'bcfile', waves);
 
 % put timestep info in params.txt if no filelist is generated
 if l == 1
-    xb = xb_set(xb, 'rt', OPT.duration, 'dtbc', OPT.timestep);
+    xb = xs_set(xb, 'rt', OPT.duration, 'dtbc', OPT.timestep);
 end
 
 % include swtable, if necessary
 if strcmpi(instat, 'jons') && OPT.swtable
-    swtable = xb_empty();
+    swtable = xs_empty();
     fpath = fullfile(fileparts(which(mfilename)), 'RF_table.txt');
     if exist(fpath, 'file')
-        swtable = xb_set(swtable, 'data', load(fpath));
-        swtable = xb_meta(swtable, mfilename, 'swtable', fpath);
+        swtable = xs_set(swtable, 'data', load(fpath));
+        swtable = xs_meta(swtable, mfilename, 'swtable', fpath);
     end
     
-    xb = xb_set(xb, 'swtable', swtable);
+    xb = xs_set(xb, 'swtable', swtable);
 end
 
-xb = xb_meta(xb, mfilename, 'input');
+xb = xs_meta(xb, mfilename, 'input');

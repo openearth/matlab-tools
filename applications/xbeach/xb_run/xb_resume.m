@@ -81,10 +81,10 @@ OPT = setproperty(OPT, varargin{:});
 
 %% parse input
 
-if xb_check(xb)
+if xs_check(xb)
     switch xb.type
         case 'run'
-            fpath = xb_get(xb, 'fpath');
+            fpath = xs_get(xb, 'fpath');
         otherwise
             error('Invalid XBeach structure')
     end
@@ -109,18 +109,18 @@ OPT.spinup = min([t OPT.spinup]);
 
 xbo     = xb_read_output(fpath, 'vars', 'zb', 'start', i-1, 'length', 1);
 
-if xb_exist(xbo, 'zb')
+if xs_exist(xbo, 'zb')
     
-    nx      = xb_get(xbo, 'DIMS.nx');
-    ny      = xb_get(xbo, 'DIMS.ny');
-    zb      = reshape(xb_get(xbo, 'zb'), ny+1, nx+1);
+    nx      = xs_get(xbo, 'DIMS.nx');
+    ny      = xs_get(xbo, 'DIMS.ny');
+    zb      = reshape(xs_get(xbo, 'zb'), ny+1, nx+1);
 
-    if xb_exist(xb, 'gridform')
-        xb = xb_del(xb, 'xyfile');
-        xb = xb_set(xb, 'gridform', 'xbeach');
+    if xs_exist(xb, 'gridform')
+        xb = xs_del(xb, 'xyfile');
+        xb = xs_set(xb, 'gridform', 'xbeach');
     end
 
-    xb = xb_set(xb, 'depfile.depfile', zb);
+    xb = xs_set(xb, 'depfile.depfile', zb);
     
 else
     error('No bathymetry found in output');
@@ -128,9 +128,9 @@ end
 
 %% crop wave timeseries
 
-if xb_exist(xb, 'bcfile')
-    bc = xb_get(xb, 'bcfile');
-    tw = [0 cumsum(xb_get(bc, 'duration'))];
+if xs_exist(xb, 'bcfile')
+    bc = xs_get(xb, 'bcfile');
+    tw = [0 cumsum(xs_get(bc, 'duration'))];
     iw = interp1(tw, 1:length(tw), t-OPT.spinup);
     
     idx = ~cellfun(@ischar, {bc.data.value});
@@ -149,17 +149,17 @@ if xb_exist(xb, 'bcfile')
         bc.data(idx(i)).value = v;
     end
     
-    xb = xb_set(xb, 'bcfile', bc);
+    xb = xs_set(xb, 'bcfile', bc);
 end
 
 %% crop tide timeseries
 
-if xb_exist(xb, 'zs0file')
-    zs0 = xb_get(xb, 'zs0file');
-    t0  = xb_get(zs0, 'time');
+if xs_exist(xb, 'zs0file')
+    zs0 = xs_get(xb, 'zs0file');
+    t0  = xs_get(zs0, 'time');
     it  = interp1(t0, 1:length(t0), t-OPT.spinup);
     
-    z0  = xb_get(zs0, 'tide');
+    z0  = xs_get(zs0, 'tide');
     z   = [];
     
     for i = 1:size(z0,2)
@@ -168,16 +168,16 @@ if xb_exist(xb, 'zs0file')
     
     tt  = [0 ; t0(ceil(it):end)-t+OPT.spinup];
     
-    zs0 = xb_set(zs0, 'time', tt);
-    zs0 = xb_set(zs0, 'tide', z);
+    zs0 = xs_set(zs0, 'time', tt);
+    zs0 = xs_set(zs0, 'tide', z);
     
-    xb = xb_set(xb, 'zs0file', zs0);
+    xb = xs_set(xb, 'zs0file', zs0);
 end
 
 %% adjust times
 
-xb = xb_set(xb, 'tstart', OPT.spinup, 'tstop', xb_get(xb, 'tstop') - t + OPT.spinup);
+xb = xs_set(xb, 'tstart', OPT.spinup, 'tstop', xs_get(xb, 'tstop') - t + OPT.spinup);
 
 %% set meta data
 
-xb = xb_meta(xb, mfilename, 'input', fpath);
+xb = xs_meta(xb, mfilename, 'input', fpath);

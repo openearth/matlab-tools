@@ -62,18 +62,18 @@ function Tp = xb_bc_extracttp(xb)
 
 Tp = 12;
 
-if xb_exist(xb, 'bcfile')
-    bcfile = xb_get(xb, 'bcfile');
-    switch xb_get(bcfile, 'type')
+if xs_exist(xb, 'bcfile')
+    bcfile = xs_get(xb, 'bcfile');
+    switch xs_get(bcfile, 'type')
         case {'jonswap' 'jonswap_mtx'}
-            Tp = max(xb_get(bcfile, 'Tp'));
+            Tp = max(xs_get(bcfile, 'Tp'));
         case 'vardens'
-            [vardens freqs] = xb_get(bcfile, 'vardens', 'freqs');
+            [vardens freqs] = xs_get(bcfile, 'vardens', 'freqs');
             
             [m i] = max(sum(vardens,1));
             
             Tp = 1/freqs(i);
     end
-elseif xb_exist(xb, 'Tp')
-    Tp = xb_get(xb, 'Tp');
+elseif xs_exist(xb, 'Tp')
+    Tp = xs_get(xb, 'Tp');
 end

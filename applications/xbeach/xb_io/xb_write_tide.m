@@ -65,7 +65,7 @@ function filename = xb_write_tide(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'path', pwd, ...
@@ -79,8 +79,8 @@ OPT = setproperty(OPT, varargin{:});
 filename = OPT.filename;
 
 try
-    time = xb_get(xb, 'time');
-    tide = xb_get(xb, 'tide');
+    time = xs_get(xb, 'time');
+    tide = xs_get(xb, 'tide');
     
     A = [time tide];
     

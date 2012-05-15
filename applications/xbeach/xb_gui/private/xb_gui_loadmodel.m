@@ -63,16 +63,16 @@ function xb_gui_loadmodel(obj, event)
 pobj = findobj('tag', 'xb_gui');
 S = get(pobj, 'userdata');
 
-if xb_check(S.model)
+if xs_check(S.model)
     [x y z] = xb_input2bathy(S.model);
     S.modelsetup.bathy.x = x;
     S.modelsetup.bathy.y = y;
     S.modelsetup.bathy.z = z;
 
-    waves = xb_get(S.model, 'bcfile');
+    waves = xs_get(S.model, 'bcfile');
     S.modelsetup.hydro.waves = cell2struct({waves.data.value}, {waves.data.name}, 2);
 
-    [time tide zs0] = xb_get(S.model, 'zs0file.time', 'zs0file.tide', 'zs0');
+    [time tide zs0] = xs_get(S.model, 'zs0file.time', 'zs0file.tide', 'zs0');
     S.modelsetup.hydro.surge = cell2struct({time' tide' zs0}, {'time' 'tide' 'zs0'}, 2);
 
     fields = {S.model.data.name};

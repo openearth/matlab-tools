@@ -122,29 +122,29 @@ l = max([2 length(OPT.time) size(OPT.front, 1) size(OPT.back, 1)]);
 
 zs0file = get_tide_file(OPT.time, OPT.front, OPT.back, type);
 
-xb = xb_empty();
+xb = xs_empty();
 
 switch type
     case 0
-        xb = xb_set(xb, 'zs0', OPT.front);
+        xb = xs_set(xb, 'zs0', OPT.front);
     case 1
-        xb = xb_set(xb, 'zs0', OPT.back, 'zs0file', zs0file, ...
+        xb = xs_set(xb, 'zs0', OPT.back, 'zs0file', zs0file, ...
             'tideloc', 1, 'tidelen', l);
     case 2
-        xb = xb_set(xb, 'zs0file', zs0file, ...
+        xb = xs_set(xb, 'zs0file', zs0file, ...
             'tideloc', 2, 'tidelen', l);
     case 4
-        xb = xb_set(xb, 'zs0file', zs0file, ...
+        xb = xs_set(xb, 'zs0file', zs0file, ...
             'tideloc', 4, 'tidelen', l);
 end
 
-xb = xb_meta(xb, mfilename, 'input');
+xb = xs_meta(xb, mfilename, 'input');
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function xb = get_tide_file(t, front, back, type)
 
-xb = xb_empty();
+xb = xs_empty();
 
 l = max([2 length(t) size(front, 1) size(back, 1)]);
 
@@ -164,5 +164,5 @@ switch type
         tide(1:length(back),3:4) = back;
 end
 
-xb = xb_set(xb, 'time', time, 'tide', tide);
-xb = xb_meta(xb, mfilename, 'tide');
+xb = xs_set(xb, 'time', time, 'tide', tide);
+xb = xs_meta(xb, mfilename, 'tide');

@@ -97,7 +97,7 @@ S = get(pobj, 'userdata');
 
 %% enable gui
 
-if xb_check(S.model)
+if xs_check(S.model)
     xb_gui_enable(pobj);
 else
     return;
@@ -260,7 +260,7 @@ end
 
 %% fill model tab
 
-if xb_check(S.model)
+if xs_check(S.model)
     [x y z] = xb_input2bathy(S.model);
 
     cobj = findobj(pobj, 'tag', 'preview_bathy'); cla(cobj);
@@ -283,17 +283,17 @@ data = {};
 
 c = 1;
 for i = 1:length(S.runs)
-    if xb_check(S.runs{i})
+    if xs_check(S.runs{i})
         r = S.runs{i};
 
         data(c,:) = { ...
-            xb_get(r, 'id'), ...
+            xs_get(r, 'id'), ...
             r.date, ...
-            xb_get(r, 'name'), ...
-            xb_get(r, 'path'), ...
-            xb_get(r, 'nodes'), ...
-            xb_get(r, 'binary'), ...
-            xb_exist(r, 'ssh')
+            xs_get(r, 'name'), ...
+            xs_get(r, 'path'), ...
+            xs_get(r, 'nodes'), ...
+            xs_get(r, 'binary'), ...
+            xs_exist(r, 'ssh')
         };
 
         c = c + 1;

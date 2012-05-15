@@ -97,8 +97,6 @@ fid = fopen(fname,'r');
 contents = fread(fid,'*char')';
 fclose(fid);
 
-D = struct();
-
 %% read sections
 
 % read all section headers
@@ -128,10 +126,10 @@ else
     i2 = max(OPT.index);
 end
 
+D = xs_empty();
+
 % save header
 D.header = regexprep(contents(1:ihdr(1)-1),'\s','');
-
-D.data = struct();
 
 ii = 1;
 for i = OPT.index
@@ -148,9 +146,13 @@ for i = OPT.index
         j2 = ipart(i+1)-1;
     end
     
+    Ds = xs_empty();
+    
     for j = j1:j2
         
         str = contents(ihdr(j)+6:ihdr(j+1)-1);
+        
+        Dss = xs_empty();
         
         % check if this is a meta or data block
         if ~isempty(regexpi(str,'[a-zA-Z]{3}','start'))
@@ -160,15 +162,19 @@ for i = OPT.index
             re = regexpi(str,'(\w{3});(.*?)\s*\n','tokens');
             re = reshape([re{:}],2,length(re))';
             
-            % make sure a uniqe identifier is constructed from the first
-            % few field values
             val = cellfun(@(x)regexpi(x,';','split'),re(:,2),'UniformOutput',false);
+            
+            % uniquefy names
             while length(unique(re(:,1)))<length(re(:,1))
                 re(:,1) = cellfun(@(x1,x2)[x1 '_' x2{1}],re(:,1),val,'UniformOutput',false);
                 val     = cellfun(@(x)x(2:end),val,'UniformOutput',false);
             end
             
-            D.data(ii).(shdr{j}) = cell2struct(val,re(:,1));
+            % unpack single valued cell arrays
+            idx = cellfun(@length,val)==1;
+            val(idx) = cellfun(@(x)x{1},val(idx),'UniformOutput',false);
+            
+            Dss.data = struct('name',re(:,1),'value',val);
         else
             % data
             
@@ -194,15 +200,21 @@ for i = OPT.index
                 % store two primary axes separately
                 n = min(cellfun(@(x)size(x,1),s));
 
-                D.data(ii).(shdr{j}) = struct(   ...
-                    'data1',    s{1}(1:n,:),     ...
-                    'data2',    s{2}(1:n,:)         );
+                Dss.data = struct('name',{'data1' 'data2'},'value',{s{1}(1:n,:) s{2}(1:n,:)});
             end
         end
+        
+        Dss = xs_meta(Dss, mfilename, 'donar_block_item');
+        Ds = xs_set(Ds,shdr{j},Dss);
     end
+    
+    Ds = xs_meta(Ds, mfilename, 'donar_block');
+    D = xs_set(D,sprintf('block%03d',ii),Ds);
     
     ii = ii + 1;
 end
+
+D = xs_meta(D, mfilename, 'donar', abspath(fname));
 
 %% parse fields
 

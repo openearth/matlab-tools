@@ -28,7 +28,7 @@ xbo = xb_read_output('example');
 % results. There are two visualisation functions for the hydrodynamics. The
 % first function is the basic version, the second is the advanced function.
 
-xbh = xb_get_hydro(xbo, 'Trep', xb_get(xbm, 'bcfile.Tp'));
+xbh = xb_get_hydro(xbo, 'Trep', xs_get(xbm, 'bcfile.Tp'));
 
 xb_plot_hydro(xbh);     % basic
 xb_plot_hydro2(xbh);    % advanced
@@ -44,7 +44,7 @@ xb_plot_hydro2(xbh);    % advanced
 % Derive sediment transport characteristics from the output and visualize the
 % results.
 
-xbs = xb_get_sedtrans(xbo, 'Trep', xb_get(xbm, 'bcfile.Tp'));
+xbs = xb_get_sedtrans(xbo, 'Trep', xs_get(xbm, 'bcfile.Tp'));
 
 xb_plot_sedtrans(xbs);
 
@@ -53,7 +53,7 @@ xb_plot_sedtrans(xbs);
 % Derive morphodynamic characteristics from the output and visualize the
 % results.
 
-xbm = xb_get_morpho(xbo, 'level', xb_get(xbm, 'zs0'));
+xbm = xb_get_morpho(xbo, 'level', xs_get(xbm, 'zs0'));
 
 xb_plot_morpho(xbm);
 
@@ -62,7 +62,7 @@ xb_plot_morpho(xbm);
 % Create spectra from the output and visualize the results. Select four
 % locations and the entire time series to do so.
 
-t = xb_get(xbo, 'zs');
+t = xs_get(xbo, 'zs');
 
 xbsp = xb_get_spectrum(squeeze(t(:,1,[1 50 100 200])));
 

@@ -90,71 +90,71 @@ if exist(errfile, 'file')
     fclose(fid);
 end
 
-xb = xb_set(xb, 'error', err);
+xb = xs_set(xb, 'error', err);
 
 %% parse log
 
-xb = xb_set(xb, 'progress', 0);
-xb = xb_set(xb, 'starttime', -1);
-xb = xb_set(xb, 'remtime', -1);
-xb = xb_set(xb, 'duration', -1);
-xb = xb_set(xb, 'timestep', 0);
-xb = xb_set(xb, 'finished', false);
-xb = xb_set(xb, 'lines', '');
+xb = xs_set(xb, 'progress', 0);
+xb = xs_set(xb, 'starttime', -1);
+xb = xs_set(xb, 'remtime', -1);
+xb = xs_set(xb, 'duration', -1);
+xb = xs_set(xb, 'timestep', 0);
+xb = xs_set(xb, 'finished', false);
+xb = xs_set(xb, 'lines', '');
 
 if exist(logfile, 'file')
     lines = tail(logfile, 'n', OPT.n);
     
-    xb = xb_set(xb, 'lines', lines);
+    xb = xs_set(xb, 'lines', lines);
 	
     for i = size(lines,1):-1:1
         
         re = regexpi(lines(i,:), 'Simulation \s*([\d\.]+)\s* percent complete', 'tokens');
-        if xb_get(xb, 'progress') == 0 && ~isempty(re)
-            xb = xb_set(xb, 'progress', str2double(re{1}{1}));
+        if xs_get(xb, 'progress') == 0 && ~isempty(re)
+            xb = xs_set(xb, 'progress', str2double(re{1}{1}));
         end
         
         % starttime
         re = regexpi(lines(i,:), 'Simulation started: YYYYMMDD\s+hh:mm:ss\s+time zone (UTC)');
-        if xb_get(xb, 'starttime') == -1 && ~isempty(re)
+        if xs_get(xb, 'starttime') == -1 && ~isempty(re)
             re = regexpi(lines(i+1,:), '(\d{8})\s+(\d{2}:\d{2}:\d{2})', 'tokens');
-            xb = xb_set(xb, 'starttime', datenum([re{1}{1} ' ' re{1}{2}]));
+            xb = xs_set(xb, 'starttime', datenum([re{1}{1} ' ' re{1}{2}]));
         end
         
         % endtime
         re = regexpi(lines(i,:), 'Time remaining \s*(.+)\s*', 'tokens');
-        if xb_get(xb, 'remtime') == -1 && ~isempty(re)
-            xb = xb_set(xb, 'remtime', eta2datenum(re{1}{1}));
+        if xs_get(xb, 'remtime') == -1 && ~isempty(re)
+            xb = xs_set(xb, 'remtime', eta2datenum(re{1}{1}));
         end
         
         % timestep
         re = regexpi(lines(i,:), 'Average dt :?\s*(.+)\s*', 'tokens');
-        if xb_get(xb, 'timestep') == 0 && ~isempty(re)
-            xb = xb_set(xb, 'timestep', eta2datenum(re{1}{1}));
+        if xs_get(xb, 'timestep') == 0 && ~isempty(re)
+            xb = xs_set(xb, 'timestep', eta2datenum(re{1}{1}));
         end
         
         % duration
         re = regexpi(lines(i,:), 'Total calculation time:\s*(.+)\s*', 'tokens');
         if ~isempty(re)
-            xb = xb_set(xb, 'duration', eta2datenum(re{1}{1}));
+            xb = xs_set(xb, 'duration', eta2datenum(re{1}{1}));
         end
         
         re = regexpi(lines(i,:), 'Duration\s*:\s*(.+)\s*', 'tokens');
         if ~isempty(re)
-            xb = xb_set(xb, 'duration', eta2datenum(re{1}{1}));
+            xb = xs_set(xb, 'duration', eta2datenum(re{1}{1}));
         end
         
         % finished
         re = regexpi(lines(i,:), 'End of program xbeach');
         if ~isempty(re)
-            xb = xb_set(xb, 'progress', 100);
-            xb = xb_set(xb, 'remtime', 0);
-            xb = xb_set(xb, 'finished', true);
+            xb = xs_set(xb, 'progress', 100);
+            xb = xs_set(xb, 'remtime', 0);
+            xb = xs_set(xb, 'finished', true);
         end
     end
 end
 
-xb = xb_meta(xb, mfilename, 'log', {logfile errfile});
+xb = xs_meta(xb, mfilename, 'log', {logfile errfile});
 
 end
 

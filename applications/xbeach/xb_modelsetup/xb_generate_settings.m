@@ -79,11 +79,11 @@ end
 
 %% generate settings
 
-xb = xb_empty();
+xb = xs_empty();
 
 f = fieldnames(OPT);
 for i = 1:length(f)
-    xb = xb_set(xb, f{i}, OPT.(f{i}));
+    xb = xs_set(xb, f{i}, OPT.(f{i}));
 end
 
-xb = xb_meta(xb, mfilename, 'input');
+xb = xs_meta(xb, mfilename, 'input');

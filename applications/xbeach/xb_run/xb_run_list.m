@@ -82,7 +82,7 @@ if ~isempty(runs) && iscell(runs)
     % remove doubles, non-existing and outdated
     fpaths = {};
     for i = 1:length(runs)
-        fpath = xb_get(runs{i}, 'path');
+        fpath = xs_get(runs{i}, 'path');
         if ~isdir(fpath); fpath = fileparts(fpath); end;
         if ~exist(fpath, 'dir') || now-datenum(runs{i}.date) > 3
             fpath = ' ';
@@ -95,7 +95,7 @@ if ~isempty(runs) && iscell(runs)
     runs(strcmpi(' ', fpaths)) = [];
     
     for i = min([OPT.n length(runs)]):-1:1
-        xb = xb_peel(runs{end-i+1});
+        xb = xs_peel(runs{end-i+1});
         
         if isdir(xb.path)
             fpath = xb.path;
@@ -107,15 +107,15 @@ if ~isempty(runs) && iscell(runs)
         log = xb_run_parselog(fpath);
 
         fprintf(formatstr, num2str(xb.id), 'Name',   xb.name,                     'Date',               runs{i}.date);
-        fprintf(formatstr, ' ',            'Path',   shortdisp(fpath,30),         'Time remaining',     datestr(xb_get(log, 'remtime'), 'HH:MM:SS'));
-        fprintf(formatstr, ' ',            'Binary', shortdisp(xb.binary,30),     'Total run duration', datestr(xb_get(log, 'duration'), 'HH:MM:SS'));
-        fprintf(formatstr, ' ',            'Nodes',  num2str(xb.nodes),           'Average timestep',   datestr(xb_get(log, 'timestep'), 'SS.FFF'));
-        fprintf(formatstr, ' ',            'Remote', num2str(isfield(xb, 'ssh')), 'Finished',           num2str(xb_get(log, 'finished')));
-        fprintf(formatstr, ' ',            'Netcdf', num2str(xb.netcdf),          'Error',              xb_get(log', 'error'));
+        fprintf(formatstr, ' ',            'Path',   shortdisp(fpath,30),         'Time remaining',     datestr(xs_get(log, 'remtime'), 'HH:MM:SS'));
+        fprintf(formatstr, ' ',            'Binary', shortdisp(xb.binary,30),     'Total run duration', datestr(xs_get(log, 'duration'), 'HH:MM:SS'));
+        fprintf(formatstr, ' ',            'Nodes',  num2str(xb.nodes),           'Average timestep',   datestr(xs_get(log, 'timestep'), 'SS.FFF'));
+        fprintf(formatstr, ' ',            'Remote', num2str(isfield(xb, 'ssh')), 'Finished',           num2str(xs_get(log, 'finished')));
+        fprintf(formatstr, ' ',            'Netcdf', num2str(xb.netcdf),          'Error',              xs_get(log', 'error'));
 
         disp(' ');
 
-        p = xb_get(log, 'progress');
+        p = xs_get(log, 'progress');
         fprintf(['         [' repmat('>',1,round(p)) repmat(' ',1,round(100-p)) '] %2.1f%%\n'], p);
 
         disp(' ');
@@ -123,7 +123,8 @@ if ~isempty(runs) && iscell(runs)
         fprintf('         ');
         fprintf('<a href="matlab:xb_run_unregister(''%s''); xb_run_list;">delete</a> | ', num2str(xb.id))
         fprintf('<a href="matlab:xb_view(''%s'');">view</a> | ', fpath)
-        fprintf('<a href="matlab:cd(''%s'');">cd</a>', fpath)
+        fprintf('<a href="matlab:cd(''%s'');">cd</a> | ', fpath)
+        fprintf('<a href="matlab:runs{%d}">get</a>', length(runs)-i+1)
         fprintf('\n');
 
         disp(' ');

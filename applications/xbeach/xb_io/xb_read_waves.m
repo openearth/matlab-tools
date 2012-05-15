@@ -75,7 +75,7 @@ if ~exist(filename, 'file')
     error(['File does not exist [' filename ']'])
 end
 
-xb = xb_empty();
+xb = xs_empty();
 
 filetype = xb_get_wavefiletype(filename);
 
@@ -95,16 +95,16 @@ switch filetype
         [names values] = read_unknown(filename);
 end
 
-xb = xb_set(xb, 'type', filetype);
+xb = xs_set(xb, 'type', filetype);
 
 for i = 1:length(names)
-    xb = xb_set(xb, names{i}, values{i});
+    xb = xs_set(xb, names{i}, values{i});
 end
 
-xb = xb_consolidate(xb);
+xb = xs_consolidate(xb);
 
 % set meta data
-xb = xb_meta(xb, mfilename, 'waves', filenames);
+xb = xs_meta(xb, mfilename, 'waves', filenames);
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

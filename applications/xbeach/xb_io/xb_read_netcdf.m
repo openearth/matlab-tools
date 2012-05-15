@@ -102,15 +102,15 @@ if ~exist(fname, 'file')
 	error(['File does not exist [' fname ']'])
 end
 
-variables = xb_empty();
+variables = xs_empty();
 
 info = nc_info(fname);
 
 % allocate dims in xbeach struct
-xb = xb_empty();
-xb = xb_set(xb, 'START', OPT.start, 'LENGTH', OPT.length, 'STRIDE', OPT.stride, 'INDEX', OPT.index);
-xb = xb_meta(xb, mfilename, 'dimensions', fname);
-variables = xb_set(variables, 'DIMS', xb);
+xb = xs_empty();
+xb = xs_set(xb, 'START', OPT.start, 'LENGTH', OPT.length, 'STRIDE', OPT.stride, 'INDEX', OPT.index);
+xb = xs_meta(xb, mfilename, 'dimensions', fname);
+variables = xs_set(variables, 'DIMS', xb);
 
 % read all variables that match filters
 names = xb_get_vars(fname, 'vars', OPT.vars);
@@ -150,17 +150,17 @@ end
 XBdims = xb_read_dims(fname);
 f = fieldnames(XBdims);
 for i = 1:length(f)
-    xb = xb_set(xb, f{i}, XBdims.(f{i}));
+    xb = xs_set(xb, f{i}, XBdims.(f{i}));
     if any(strcmp(f{i}, fieldnames(DIMSid)))
         try
             % reduce DIMS data in this dimension in correspondence with the
             % actual data
-            xb = xb_set(xb, f{i}, XBdims.(f{i})(DIMSid.(f{i})));
+            xb = xs_set(xb, f{i}, XBdims.(f{i})(DIMSid.(f{i})));
         end
     end
 end
-variables = xb_set(variables, 'DIMS', xb);
+variables = xs_set(variables, 'DIMS', xb);
 
 % set meta data
-variables = xb_meta(variables, mfilename, 'output', fname);
+variables = xs_meta(variables, mfilename, 'output', fname);
 

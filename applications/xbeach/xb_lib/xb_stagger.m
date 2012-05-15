@@ -90,9 +90,9 @@ function g = xb_stagger(x, y)
 
 %% read xbeach structure
 
-if xb_check(x)
-    if xb_exist(x,'DIMS')
-        [x y] = xb_get(x, 'DIMS.globalx_DATA', 'DIMS.globaly_DATA');
+if xs_check(x)
+    if xs_exist(x,'DIMS')
+        [x y] = xs_get(x, 'DIMS.globalx_DATA', 'DIMS.globaly_DATA');
     end
 end
 

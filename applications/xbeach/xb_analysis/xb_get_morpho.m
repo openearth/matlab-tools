@@ -65,7 +65,7 @@ function xbo = xb_get_morpho(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'level',            5 ...
@@ -77,12 +77,12 @@ OPT = setproperty(OPT, varargin{:});
 
 xb      = xb_get_transect(xb);
 
-x       = xb_get(xb, 'DIMS.globalx_DATA');
+x       = xs_get(xb, 'DIMS.globalx_DATA');
 x       = squeeze(x(1,:));
 
 % determine bathymetry
-if xb_exist(xb, 'zb')
-    zb      = xb_get(xb,'zb');
+if xs_exist(xb, 'zb')
+    zb      = xs_get(xb,'zb');
     zb      = squeeze(zb(:,1,:));
 else
     error('No bathymetry data found');
@@ -94,18 +94,18 @@ end
 
 %% create xbeach structure
 
-xbo = xb_empty();
+xbo = xs_empty();
 
-xbo = xb_set(xbo, 'SETTINGS', xb_set([], ...
+xbo = xs_set(xbo, 'SETTINGS', xs_set([], ...
     'level',  OPT.level                         ));
 
-xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
+xbo = xs_set(xbo, 'DIMS', xs_get(xb, 'DIMS'));
 
-xbo = xb_set(xbo, 'R',      R'      );
-xbo = xb_set(xbo, 'Q',      Q'      );
-xbo = xb_set(xbo, 'P',      P'      );
-xbo = xb_set(xbo, 'sed',    sed'    );
-xbo = xb_set(xbo, 'ero',    ero'    );
-xbo = xb_set(xbo, 'dz',     dz      );
+xbo = xs_set(xbo, 'R',      R'      );
+xbo = xs_set(xbo, 'Q',      Q'      );
+xbo = xs_set(xbo, 'P',      P'      );
+xbo = xs_set(xbo, 'sed',    sed'    );
+xbo = xs_set(xbo, 'ero',    ero'    );
+xbo = xs_set(xbo, 'dz',     dz      );
 
-xbo = xb_meta(xbo, mfilename, 'morphology');
+xbo = xs_meta(xbo, mfilename, 'morphology');

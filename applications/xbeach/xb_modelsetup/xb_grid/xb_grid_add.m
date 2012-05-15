@@ -136,8 +136,8 @@ vardx = ~isscalar(dx)||(~isempty(dy)&&~isscalar(dy));
 
 %% create xbeach structures
 
-xb = xb_empty();
-xb = xb_set(xb, 'nx', nx, 'ny', ny, 'xori', xori, 'yori', yori, ...
+xb = xs_empty();
+xb = xs_set(xb, 'nx', nx, 'ny', ny, 'xori', xori, 'yori', yori, ...
     'vardx', vardx, 'posdwn', OPT.posdwn);
 
 if ~vardx
@@ -145,17 +145,17 @@ if ~vardx
     ygrid = [];
     
     if ~isempty(dy)
-        xb = xb_set(xb, 'dx', dx, 'dy', dy);
+        xb = xs_set(xb, 'dx', dx, 'dy', dy);
     else
-        xb = xb_set(xb, 'dx', dx);
+        xb = xs_set(xb, 'dx', dx);
     end
 end
 
 if ~isempty(OPT.ne)
     xb = xb_bathy2input(xb, xgrid, ygrid, zgrid, negrid);
-    xb = xb_set(xb, 'struct', 1);
+    xb = xs_set(xb, 'struct', 1);
 else
     xb = xb_bathy2input(xb, xgrid, ygrid, zgrid);
 end
 
-xb = xb_meta(xb, mfilename, 'input');
+xb = xs_meta(xb, mfilename, 'input');

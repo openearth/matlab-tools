@@ -66,7 +66,7 @@ function xbo = xb_get_hydro(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'Trep',            12       ...
@@ -78,8 +78,8 @@ OPT = setproperty(OPT, varargin{:});
 
 xb      = xb_get_transect(xb);
 
-nx      = xb_get(xb, 'DIMS.globalx');
-t       = xb_get(xb, 'DIMS.globaltime_DATA');
+nx      = xs_get(xb, 'DIMS.globalx');
+t       = xs_get(xb, 'DIMS.globaltime_DATA');
 dt      = min([mean(diff(t)) t(end)]);
 
 f       = {xb.data.name};
@@ -87,14 +87,14 @@ re      = regexp(f,'^(.+)_mean$','tokens');
 idx     = find(~cellfun(@isempty, re));
 
 for i = idx
-    xb  = xb_rename(xb, f{i}, re{i}{1}{1});
+    xb  = xs_rename(xb, f{i}, re{i}{1}{1});
 end
 
 if ~isempty(idx)
-    t   = xb_get(xb, 'DIMS.meantime_DATA');
+    t   = xs_get(xb, 'DIMS.meantime_DATA');
     if isscalar(t)
         tm = t;
-        t  = xb_get(xb, 'DIMS.globaltime_DATA');
+        t  = xs_get(xb, 'DIMS.globaltime_DATA');
         t = [t(1) tm];
     end
     dt  = min([mean(diff(t)) t(end)]);
@@ -125,22 +125,22 @@ uavg    = 0;
 %% compute wave transformation characteristics
 
 % determine bathymetry
-if xb_exist(xb, 'zb')
-    zb      = xb_get(xb,'zb');
+if xs_exist(xb, 'zb')
+    zb      = xs_get(xb,'zb');
     zb_i    = zb(1,1,:);
     zb_f    = zb(end,1,:);
 end
 
 % split HF and LF waves
-if xb_exist(xb, 'hh_var')
-    hh = mean(xb_get(xb,'hh_var'),1);
+if xs_exist(xb, 'hh_var')
+    hh = mean(xs_get(xb,'hh_var'),1);
 
     Hrms_lf = sqrt(8*abs(hh));
-elseif xb_exist(xb, 'zs')
-    zs      = xb_get(xb,'zs');
+elseif xs_exist(xb, 'zs')
+    zs      = xs_get(xb,'zs');
 
-    if xb_exist(xb, 'zb')
-        h       = zs-xb_get(xb,'zb');
+    if xs_exist(xb, 'zb')
+        h       = zs-xs_get(xb,'zb');
         hm      = nan(size(h));
 
         windowSize = ceil(40*OPT.Trep/dt);
@@ -153,20 +153,20 @@ elseif xb_exist(xb, 'zs')
 
     Hrms_lf = sqrt(8).*std(zs,0,1);
 end
-if xb_exist(xb, 'u')
-    u       = xb_get(xb,'u');
+if xs_exist(xb, 'u')
+    u       = xs_get(xb,'u');
     urms_lf = std(u,0,1);
 end
 
 % compute HF waves
-if xb_exist(xb, 'H')
-    Hrms_hf = sqrt(mean(xb_get(xb,'H').^2,1)+Hrms_hf.^2);                  % high frequency component from low frequency waves is
+if xs_exist(xb, 'H')
+    Hrms_hf = sqrt(mean(xs_get(xb,'H').^2,1)+Hrms_hf.^2);                  % high frequency component from low frequency waves is
                                                                            % added to the high frequency waves here. the component
                                                                            % is set to zero until consensus is reached about
                                                                            % whether this is useful or not.
-    if xb_exist(xb, 'zs')
-        zs = xb_get(xb,'zs');
-        H = xb_get(xb,'H');
+    if xs_exist(xb, 'zs')
+        zs = xs_get(xb,'zs');
+        H = xs_get(xb,'H');
 
         rho = zeros(nx,1);
         for i = 1:nx
@@ -180,15 +180,15 @@ end
 Hrms_t = sqrt(Hrms_lf.^2+Hrms_hf.^2);
 
 % compute setup
-if xb_exist(xb, 'zs')
-    if xb_exist(xb, 'zb') || xb_exist(xb, 'u')
-        zs = xb_get(xb,'zs');
+if xs_exist(xb, 'zs')
+    if xs_exist(xb, 'zb') || xs_exist(xb, 'u')
+        zs = xs_get(xb,'zs');
 
-        if xb_exist(xb, 'zb')
-            zb = xb_get(xb,'zb');
+        if xs_exist(xb, 'zb')
+            zb = xs_get(xb,'zb');
             k = zs-zb>0.0001;
-        elseif xb_exist(xb, 'u')
-            u = xb_get(xb,'u');
+        elseif xs_exist(xb, 'u')
+            u = xs_get(xb,'u');
             k = abs(u)>0.0001;
         end
 
@@ -199,34 +199,34 @@ if xb_exist(xb, 'zs')
 end
 
 % compute HF orbital velocity
-if xb_exist(xb, 'urms')
-    urms_hf = sqrt(mean(xb_get(xb,'urms').^2,1)+urms_hf.^2);
+if xs_exist(xb, 'urms')
+    urms_hf = sqrt(mean(xs_get(xb,'urms').^2,1)+urms_hf.^2);
 end
 
 % compute total orbital velocity
 urms_t = sqrt(urms_lf.^2+urms_hf.^2);
 
 % compute mean velocity
-if xb_exist(xb, 'ue')
-    umean = mean(xb_get(xb,'ue'),1);
+if xs_exist(xb, 'ue')
+    umean = mean(xs_get(xb,'ue'),1);
 end
 
-if xb_exist(xb, 'ua')
-    uavg = mean(xb_get(xb,'ua'),1);
+if xs_exist(xb, 'ua')
+    uavg = mean(xs_get(xb,'ua'),1);
 end
 
-if xb_exist(xb, 've')
-    vmean = mean(xb_get(xb,'ve'),1);
+if xs_exist(xb, 've')
+    vmean = mean(xs_get(xb,'ve'),1);
 end
 
 % skewness and asymmetry
-if xb_exist(xb, 'Sk')
-    SK = mean(xb_get(xb,'Sk'),1);
+if xs_exist(xb, 'Sk')
+    SK = mean(xs_get(xb,'Sk'),1);
 end
 
-if xb_exist(xb, 'As')
-    AS = mean(xb_get(xb,'As'),1);
-    if xb_exist(xb, 'Sk')
+if xs_exist(xb, 'As')
+    AS = mean(xs_get(xb,'As'),1);
+    if xs_exist(xb, 'Sk')
         beta    = atan(AS./SK);
         B       = sqrt(AS.^2+SK.^2);
     end
@@ -234,31 +234,31 @@ end
 
 %% create xbeach structure
 
-xbo = xb_empty();
+xbo = xs_empty();
 
-xbo = xb_set(xbo, 'SETTINGS', xb_set([], ...
+xbo = xs_set(xbo, 'SETTINGS', xs_set([], ...
     'Trep',  OPT.Trep                       ));
 
-xbo = xb_set(xbo, 'DIMS', xb_get(xb, 'DIMS'));
+xbo = xs_set(xbo, 'DIMS', xs_get(xb, 'DIMS'));
 
-if ~isscalar(zb_i);     xbo = xb_set(xbo, 'zb_i',       squeeze(zb_i));      end;
-if ~isscalar(zb_f);     xbo = xb_set(xbo, 'zb_f',       squeeze(zb_f));      end;
-if ~isscalar(Hrms_hf);  xbo = xb_set(xbo, 'Hrms_hf',    squeeze(Hrms_hf));   end;
-if ~isscalar(Hrms_lf);  xbo = xb_set(xbo, 'Hrms_lf',    squeeze(Hrms_lf));   end;
-if ~isscalar(Hrms_t);   xbo = xb_set(xbo, 'Hrms_t',     squeeze(Hrms_t));    end;
-if ~isscalar(s);        xbo = xb_set(xbo, 's',          squeeze(s));         end;
-if ~isscalar(urms_hf);  xbo = xb_set(xbo, 'urms_hf',    squeeze(urms_hf));   end;
-if ~isscalar(urms_lf);  xbo = xb_set(xbo, 'urms_lf',    squeeze(urms_lf));   end;
-if ~isscalar(urms_t);   xbo = xb_set(xbo, 'urms_t',     squeeze(urms_t));    end;
-if ~isscalar(umean);    xbo = xb_set(xbo, 'umean',      squeeze(umean));     end;
-if ~isscalar(vmean);    xbo = xb_set(xbo, 'vmean',      squeeze(vmean));     end;
+if ~isscalar(zb_i);     xbo = xs_set(xbo, 'zb_i',       squeeze(zb_i));      end;
+if ~isscalar(zb_f);     xbo = xs_set(xbo, 'zb_f',       squeeze(zb_f));      end;
+if ~isscalar(Hrms_hf);  xbo = xs_set(xbo, 'Hrms_hf',    squeeze(Hrms_hf));   end;
+if ~isscalar(Hrms_lf);  xbo = xs_set(xbo, 'Hrms_lf',    squeeze(Hrms_lf));   end;
+if ~isscalar(Hrms_t);   xbo = xs_set(xbo, 'Hrms_t',     squeeze(Hrms_t));    end;
+if ~isscalar(s);        xbo = xs_set(xbo, 's',          squeeze(s));         end;
+if ~isscalar(urms_hf);  xbo = xs_set(xbo, 'urms_hf',    squeeze(urms_hf));   end;
+if ~isscalar(urms_lf);  xbo = xs_set(xbo, 'urms_lf',    squeeze(urms_lf));   end;
+if ~isscalar(urms_t);   xbo = xs_set(xbo, 'urms_t',     squeeze(urms_t));    end;
+if ~isscalar(umean);    xbo = xs_set(xbo, 'umean',      squeeze(umean));     end;
+if ~isscalar(vmean);    xbo = xs_set(xbo, 'vmean',      squeeze(vmean));     end;
 
 % advanced
-if ~isscalar(rho);      xbo = xb_set(xbo, 'rho',        squeeze(rho));       end;
-if ~isscalar(SK);       xbo = xb_set(xbo, 'SK',         squeeze(SK));        end;
-if ~isscalar(AS);       xbo = xb_set(xbo, 'AS',         squeeze(AS));        end;
-if ~isscalar(B);        xbo = xb_set(xbo, 'B',          squeeze(B));         end;
-if ~isscalar(beta);     xbo = xb_set(xbo, 'beta',       squeeze(beta));      end;
-if ~isscalar(uavg);     xbo = xb_set(xbo, 'uavg',       squeeze(uavg));      end;
+if ~isscalar(rho);      xbo = xs_set(xbo, 'rho',        squeeze(rho));       end;
+if ~isscalar(SK);       xbo = xs_set(xbo, 'SK',         squeeze(SK));        end;
+if ~isscalar(AS);       xbo = xs_set(xbo, 'AS',         squeeze(AS));        end;
+if ~isscalar(B);        xbo = xs_set(xbo, 'B',          squeeze(B));         end;
+if ~isscalar(beta);     xbo = xs_set(xbo, 'beta',       squeeze(beta));      end;
+if ~isscalar(uavg);     xbo = xs_set(xbo, 'uavg',       squeeze(uavg));      end;
 
-xbo = xb_meta(xbo, mfilename, 'hydrodynamics');
+xbo = xs_meta(xbo, mfilename, 'hydrodynamics');

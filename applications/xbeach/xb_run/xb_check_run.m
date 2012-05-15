@@ -89,11 +89,11 @@ OPT.interval = xb_getprefdef('interval', OPT.interval);
 
 runs = false;
 
-if xb_exist(xb, 'ssh')
+if xs_exist(xb, 'ssh')
     % remote job
     exe_path = fullfile(fileparts(which(mfilename)), 'plink.exe');
     
-    [host user pass id messages] = xb_get(xb, 'ssh.host', 'ssh.user', 'ssh.pass', 'id', 'messages');
+    [host user pass id messages] = xs_get(xb, 'ssh.host', 'ssh.user', 'ssh.pass', 'id', 'messages');
 
     cmd = sprintf('%s %s@%s -pw %s -batch ". /opt/sge/InitSGE && qstat -u %s"', ...
             exe_path, user, host, pass, user);
@@ -103,10 +103,10 @@ if xb_exist(xb, 'ssh')
     if ~isempty(regexp(messages, ['(^|\n)\s*' num2str(id) '\s'], 'once'))
         runs = true;
     end
-elseif xb_exist(xb, 'id')
+elseif xs_exist(xb, 'id')
     % local job
     
-    id = xb_get(xb, 'id');
+    id = xs_get(xb, 'id');
     
     % get current running xbeach instances
     [r tasklist] = system('tasklist /FI "IMAGENAME eq xbeach.exe"');
@@ -135,7 +135,7 @@ if ~xb_check_run(xb)
     stop(obj); delete(obj);
     
     if OPT.display
-        disp([upper(mfilename) ': Job ' xb_get(xb, 'name') ' (' num2str(xb_get(xb, 'id')) ') finished']);
+        disp([upper(mfilename) ': Job ' xs_get(xb, 'name') ' (' num2str(xs_get(xb, 'id')) ') finished']);
     end
     
     % halleluja

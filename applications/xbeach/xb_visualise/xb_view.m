@@ -454,7 +454,7 @@ function ui_read(obj)
                 info0 = info;
             end
         
-            if xb_check(info.input{i})
+            if xs_check(info.input{i})
                 switch info.input{i}.type
                     case 'input'
                         info.type = 'input';
@@ -468,7 +468,7 @@ function ui_read(obj)
                         [info.x info.y] = xb_input2bathy(info.input{i});
                         
                         if isempty(info.x) || isempty(info.y)
-                            [nx ny dx dy] = xb_get(info.input{i}, 'nx', 'ny', 'dx', 'dy');
+                            [nx ny dx dy] = xs_get(info.input{i}, 'nx', 'ny', 'dx', 'dy');
                             
                             dx = max([1 dx]);
                             dy = max([1 dy]);
@@ -479,7 +479,7 @@ function ui_read(obj)
                         info.type = 'output_xb';
 
                         % read dimensions
-                        info.dims = xb_get(info.input{i}, 'DIMS');
+                        info.dims = xs_get(info.input{i}, 'DIMS');
                         info.dims = cell2struct({info.dims.data.value}, {info.dims.data.name}, 2);
 
                         % read variables
@@ -494,7 +494,7 @@ function ui_read(obj)
                     case 'run'
 
                         info.type = 'output_dir';
-                        info.fpath{i} = xb_get(info.input{i}, 'path');
+                        info.fpath{i} = xs_get(info.input{i}, 'path');
 
                         % read dimensions
                         info.dims = xb_read_dims(info.fpath{i});
@@ -632,16 +632,16 @@ function data = ui_getdata(obj, info, vars, slider)
             case 'input'
                 for i = 1:n
                     idx = (j-1)*n+i;
-                    data{idx}(1,:,:) = xb_get(info.input{j}, vars{:});
+                    data{idx}(1,:,:) = xs_get(info.input{j}, vars{:});
                     data{idx} = data{idx}(1,ri+[0:rl-1],:);
                 end
             case 'output_xb'
                 for i = 1:n
-                    d = xb_get(info.input{j}, vars{i});
+                    d = xs_get(info.input{j}, vars{i});
                     data{(j-1)*n+i}(1,:,:) = d(t,ri+[0:rl-1],:);
                 end
             case 'output_dir'
-                [data{(j-1)*n+[1:n]}] = xb_get( ...
+                [data{(j-1)*n+[1:n]}] = xs_get( ...
                     xb_read_output(info.fpath{j}, 'vars', vars, 'start', [t-1 ri-1 0], ...
                     'length', [1 rl -1]), vars{:});
         end

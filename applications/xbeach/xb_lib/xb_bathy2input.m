@@ -64,28 +64,28 @@ function xb = xb_bathy2input(xb, varargin)
 
 %% convert bathy to input
 
-if ~xb_check(xb)
-    xb = xb_empty();
+if ~xs_check(xb)
+    xb = xs_empty();
 end
 
 if length(varargin) > 0 && ~isempty(varargin{1})
-    xb = xb_set(xb, 'xfile', xb_set([], 'xfile', varargin{1}));
-    xb = xb_set(xb, 'nx', size(varargin{1},2)-1);
-    xb = xb_set(xb, 'ny', size(varargin{1},1)-1);
+    xb = xs_set(xb, 'xfile', xs_set([], 'xfile', varargin{1}));
+    xb = xs_set(xb, 'nx', size(varargin{1},2)-1);
+    xb = xs_set(xb, 'ny', size(varargin{1},1)-1);
 end
 
 if length(varargin) > 1 && ~isempty(varargin{2})
-    xb = xb_set(xb, 'yfile', xb_set([], 'yfile', varargin{2}));
-    xb = xb_set(xb, 'nx', size(varargin{2},2)-1);
-    xb = xb_set(xb, 'ny', size(varargin{2},1)-1);
+    xb = xs_set(xb, 'yfile', xs_set([], 'yfile', varargin{2}));
+    xb = xs_set(xb, 'nx', size(varargin{2},2)-1);
+    xb = xs_set(xb, 'ny', size(varargin{2},1)-1);
 end
 
 if length(varargin) > 2 && ~isempty(varargin{3})
-    xb = xb_set(xb, 'depfile', xb_set([], 'depfile', varargin{3}));
-    xb = xb_set(xb, 'nx', size(varargin{3},2)-1);
-    xb = xb_set(xb, 'ny', size(varargin{3},1)-1);
+    xb = xs_set(xb, 'depfile', xs_set([], 'depfile', varargin{3}));
+    xb = xs_set(xb, 'nx', size(varargin{3},2)-1);
+    xb = xs_set(xb, 'ny', size(varargin{3},1)-1);
 end
 
 if length(varargin) > 3 && ~isempty(varargin{4})
-    xb = xb_set(xb, 'ne_layer', xb_set([], 'ne_layer', varargin{4}));
+    xb = xs_set(xb, 'ne_layer', xs_set([], 'ne_layer', varargin{4}));
 end

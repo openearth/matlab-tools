@@ -131,13 +131,13 @@ end
 values = values(idx);
 
 % convert parameter cells to xbeach setting structure
-xb = xb_empty();
+xb = xs_empty();
 
 for i = 1:length(names)
     if ~ismember(names{i}(1), {'%' '#' '$'})
-        xb = xb_set(xb, names{i}, values{i});
+        xb = xs_set(xb, names{i}, values{i});
     end
 end
 
 % set meta data
-xb = xb_meta(xb, mfilename, 'params', filename);
+xb = xs_meta(xb, mfilename, 'params', filename);

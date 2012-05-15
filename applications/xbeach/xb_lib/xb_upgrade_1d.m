@@ -75,7 +75,7 @@ OPT = setproperty(OPT, varargin{:});
 
 fname = '';
 
-if ~xb_check(xb)
+if ~xs_check(xb)
     fname = xb;
     xb = xb_read_input(fname);
 end
@@ -100,8 +100,8 @@ end
 
 %% modify params
 
-xb = xb_set(xb, 'ny', 0);
-xb = xb_del(xb, 'yfile');
+xb = xs_set(xb, 'ny', 0);
+xb = xs_del(xb, 'yfile');
 
 %% write model
 

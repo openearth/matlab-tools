@@ -78,7 +78,7 @@ function xb_plot_morpho(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'handles',          [], ...
@@ -100,9 +100,9 @@ OPT = setproperty(OPT, varargin{:});
 %% plot
 
 % determine dimensions
-x = xb_get(xb, 'DIMS.globalx_DATA');
-t = xb_get(xb, 'DIMS.globaltime_DATA')/3600;
-j = ceil(xb_get(xb, 'DIMS.globaly')/2);
+x = xs_get(xb, 'DIMS.globalx_DATA');
+t = xs_get(xb, 'DIMS.globaltime_DATA')/3600;
+j = ceil(xs_get(xb, 'DIMS.globaly')/2);
 x = squeeze(x(j,:));
 
 % determine available data
@@ -112,9 +112,9 @@ if OPT.showall; has_m = false; end;
 
 % compute number of subplots
 sp = [0 0 0];
-if (has_m && ~isempty(OPT.dz)) || (~has_m && xb_exist(xb, 'dz'));   sp(1) = 1;  end;
-if (has_m && ~isempty(OPT.ero)) || (~has_m && xb_exist(xb, 'ero')); sp(2) = 1;  end;
-if (has_m && ~isempty(OPT.R)) || (~has_m && xb_exist(xb, 'R'));     sp(3) = 1;  end;
+if (has_m && ~isempty(OPT.dz)) || (~has_m && xs_exist(xb, 'dz'));   sp(1) = 1;  end;
+if (has_m && ~isempty(OPT.ero)) || (~has_m && xs_exist(xb, 'ero')); sp(2) = 1;  end;
+if (has_m && ~isempty(OPT.R)) || (~has_m && xs_exist(xb, 'R'));     sp(3) = 1;  end;
 
 % create handles
 n   = sum(sp);
@@ -134,7 +134,7 @@ if sp(1)
     if ~isempty(OPT.dz);                addplot(OPT.dz(:,1),        OPT.dz(:,2),            'o',    'k',    'measured'  );  end;
 
     % plot computation
-    dz = xb_get(xb, 'dz');
+    dz = xs_get(xb, 'dz');
     if ~has_m || ~isempty(OPT.dz);      addplot(x,                  dz(end,:)',             '-',    'r',    'computed'  );  end;
     
     legend('show', 'Location', 'SouthWest');
@@ -153,7 +153,7 @@ if sp(2)
     if ~isempty(OPT.ero);               addplot(OPT.ero(:,1),       OPT.ero(:,2),           'o',    'k',    'measured'  );  end;
 
     % plot computation
-    if ~has_m || ~isempty(OPT.ero);     addplot(t,                  xb_get(xb, 'ero'),      '-',    'g',    'computed'  );  end;
+    if ~has_m || ~isempty(OPT.ero);     addplot(t,                  xs_get(xb, 'ero'),      '-',    'g',    'computed'  );  end;
     
     legend('show', 'Location', 'SouthEast');
 end
@@ -171,7 +171,7 @@ if sp(3)
     if ~isempty(OPT.R);                 addplot(OPT.R(:,1),         OPT.R(:,2),             'o',    'k',    'measured'  );  end;
 
     % plot computation
-    R   = xb_get(xb, 'R');
+    R   = xs_get(xb, 'R');
     R1  = R(find(~isnan(R),1,'first'));
     if ~has_m || ~isempty(OPT.R);       addplot(t,                  R-R1,                   '-',    'b',    'computed'  );  end;
     

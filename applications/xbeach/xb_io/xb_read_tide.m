@@ -75,15 +75,15 @@ if ~exist(filename, 'file')
     error(['File does not exist [' filename ']'])
 end
 
-xb = xb_empty();
-xb = xb_set(xb, 'time', [], 'tide', []);
+xb = xs_empty();
+xb = xs_set(xb, 'time', [], 'tide', []);
 
 try
     A = load(filename);
-    xb = xb_set(xb, '-units', 'time', {A(:,1) 's'}, 'tide', {A(:,2:end) 'm'});
+    xb = xs_set(xb, '-units', 'time', {A(:,1) 's'}, 'tide', {A(:,2:end) 'm'});
 catch
     error(['Tide definition file incorrectly formatted [' filename ']']);
 end
 
 % set meta data
-xb = xb_meta(xb, mfilename, 'tide', filename);
+xb = xs_meta(xb, mfilename, 'tide', filename);

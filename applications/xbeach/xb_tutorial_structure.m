@@ -63,7 +63,7 @@ xbo.data(1).value
 %%
 %  We can check if this really is a XBeach structure as follows:
 
-xb_check(xbo.data(1).value)
+xs_check(xbo.data(1).value)
 
 %%
 % Also the XBeach structure obtained from the _xb_generate_model_ function
@@ -86,7 +86,7 @@ xbm.data(12).value
 % the previous section: it reveals the contents of an XBeach structure and
 % works like the _whos_ function in MATLAB.
 
-xb_show(xbo);
+xs_show(xbo);
 
 %%
 % We see the meta data of the XBeach structure on top and a list of
@@ -95,7 +95,7 @@ xb_show(xbo);
 % contents. We can access nested XBeach structures, be requesting their
 % specific name:
 
-xb_show(xbo, 'DIMS');
+xs_show(xbo, 'DIMS');
 
 %%
 % It is also possible to filter the list of variables in a similar manner
@@ -103,17 +103,17 @@ xb_show(xbo, 'DIMS');
 % <xb_readresults_tutorial.html 3. Reading your model results>).
 
 % this list is too long
-xb_show(xbm);
+xs_show(xbm);
 
 %%
 
 % only display the variables starting with a _z_
-xb_show(xbm, 'z*');
+xs_show(xbm, 'z*');
 
 %%
 
 % or having exactly four characters
-xb_show(xbm, '/^.{4}$');
+xs_show(xbm, '/^.{4}$');
 
 %%
 % Now we can easily examine the contents of an XBeach structure, we also
@@ -121,29 +121,29 @@ xb_show(xbm, '/^.{4}$');
 % function is available.
 
 % retrieve bathymetry from XBeach output structure
-zb = xb_get(xbo, 'zb');
+zb = xs_get(xbo, 'zb');
 
 % retrieve multiple variables at once
-[zb zs u v] = xb_get(xbo, 'zb', 'zs', 'u', 'v');
+[zb zs u v] = xs_get(xbo, 'zb', 'zs', 'u', 'v');
 
 % retrieve a nested structure
-dims = xb_get(xbo, 'DIMS');
+dims = xs_get(xbo, 'DIMS');
 
 %%
 % Accessing variables in a nested structure can be done directly using the
 % dot symbol:
 
-[nx ny] = xb_get(xbo, 'DIMS.globalx', 'DIMS.globaly');
+[nx ny] = xs_get(xbo, 'DIMS.globalx', 'DIMS.globaly');
 
 %%
 % If a requested variable does not exist, an empty vector is returned. The
 % existance of a variable can be checked using _xb_exist_ which returns the
 % number of variables that exist from the given selection.
 
-xb_exist(xbo, 'zb');
-xb_exist(xbo, 'zb', 'zs');
-xb_exist(xbo, 'zb', 'xb');
-xb_exist(xbo, 'xb');
+xs_exist(xbo, 'zb');
+xs_exist(xbo, 'zb', 'zs');
+xs_exist(xbo, 'zb', 'xb');
+xs_exist(xbo, 'xb');
 
 %% Modifying the XBeach structure
 %
@@ -151,46 +151,46 @@ xb_exist(xbo, 'xb');
 % function. This function works similar to the _xb_get_ function. If a
 % variable does not exist, it is created.
 
-xbm = xb_set(xbm, 'dtheta', 10);
-xbm = xb_set(xbm, 'thetamin', -45, 'thetamax', 45, 'dtheta', 10);
-xbm = xb_set(xbm, 'bcfile.Hm0', 9);
+xbm = xs_set(xbm, 'dtheta', 10);
+xbm = xs_set(xbm, 'thetamin', -45, 'thetamax', 45, 'dtheta', 10);
+xbm = xs_set(xbm, 'bcfile.Hm0', 9);
 
 %%
 % Variables can be deleted and renamed:
 
-xbm2 = xb_del(xbm, 'dtheta');
-xbm2 = xb_rename(xbm2, 'instat', 'instat_old');
+xbm2 = xs_del(xbm, 'dtheta');
+xbm2 = xs_rename(xbm2, 'instat', 'instat_old');
 
 %%
 % Multiple XBeach structures can be joined and splitted. The meta data from
 % the left-most structure is used and it's variables are overwritten in
 % order from left to right.
 
-xbm3 = xb_join(xbm, xbm2);
-[xbm4 xbm5] = xb_split(xbm3, {'thetamin', 'thetamax'}, {'instat', 'instat_old'});
+xbm3 = xs_join(xbm, xbm2);
+[xbm4 xbm5] = xs_split(xbm3, {'thetamin', 'thetamax'}, {'instat', 'instat_old'});
 
-xb_show(xbm5);
+xs_show(xbm5);
 
 %%
 % Setting meta data in your XBeach structure and consolidating the data
 % goes like this:
 
 % create XBeach structure
-xb = xb_meta(xb_empty, mfilename, 'dummy', 'some_file_name');
+xb = xs_meta(xb_empty, mfilename, 'dummy', 'some_file_name');
 
 % put some data in it
-xb = xb_set(xb, 'a', [1 2 3 4 5], 'b', [2 2 2 2 2], 'c', [5 5 5 5 6]);
+xb = xs_set(xb, 'a', [1 2 3 4 5], 'b', [2 2 2 2 2], 'c', [5 5 5 5 6]);
 
 % show it
-xb_show(xb);
+xs_show(xb);
 
 %%
 
 % consolidate it
-xb = xb_consolidate(xb);
+xb = xs_consolidate(xb);
 
 % show it again
-xb_show(xb);
+xs_show(xb);
 
 %%
 % The links in the _xb_show_ result enable you to interactively modify and

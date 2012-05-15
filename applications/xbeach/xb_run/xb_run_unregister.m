@@ -64,8 +64,8 @@ runs = xb_getpref('runs');
 
 if ~isempty(runs) && iscell(runs)
     for i = 1:length(runs)
-        if xb_check(runs{i})
-            if ismember(xb_get(runs{i}, 'id'), str2double(id))
+        if xs_check(runs{i})
+            if ismember(xs_get(runs{i}, 'id'), str2double(id))
                 runs(i) = [];
                 break;
             end

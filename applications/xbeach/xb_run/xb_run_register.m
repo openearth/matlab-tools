@@ -62,7 +62,7 @@ function xb_run_register(xb, varargin)
 
 %% register run
 
-if xb_check(xb)
+if xs_check(xb)
     runs = xb_getpref('runs');
 
     if isempty(runs) || ~iscell(runs); runs = {}; end;

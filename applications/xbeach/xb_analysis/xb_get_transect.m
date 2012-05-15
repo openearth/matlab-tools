@@ -61,7 +61,7 @@ function xb = xb_get_transect(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'transect',     [], ...
@@ -73,8 +73,8 @@ OPT = setproperty(OPT, varargin{:});
 %% determine transect
 
 if isempty(OPT.transect)
-    if xb_exist(xb, 'DIMS.globaly')
-        t = ceil(xb_get(xb, 'DIMS.globaly')/2);
+    if xs_exist(xb, 'DIMS.globaly')
+        t = ceil(xs_get(xb, 'DIMS.globaly')/2);
     else
         t = 1;
     end

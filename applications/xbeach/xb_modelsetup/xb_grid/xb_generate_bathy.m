@@ -135,4 +135,4 @@ else
         'xori',xori,'yori',yori);
 end
 
-xb = xb_set(xb, 'alfa', mod(alpha, 360));
+xb = xs_set(xb, 'alfa', mod(alpha, 360));

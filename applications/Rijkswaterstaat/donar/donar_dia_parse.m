@@ -70,33 +70,41 @@ function D = donar_dia_parse(D, varargin)
 
 for i = 1:length(D.data)
 
-    d = D.data(i);
+    d = D.data(i).value;
 
     % parse time
     try
         
         % convert time strings to date numbers
-        D.data(i).time.time_from    = datenum([d.RKS.TYD{1:2}],'yyyymmddhhMM');
-        D.data(i).time.time_to      = datenum([d.RKS.TYD{3:4}],'yyyymmddhhMM');
-
-        switch d.RKS.TYD{6}
+        TYD = xs_get(d,'RKS.TYD');
+        
+        switch TYD{6}
             case 'sec'
                 f = 60*60*24;
             case 'min'
                 f = 60*24;
         end
-
-        D.data(i).time.dt           = str2double(d.RKS.TYD{5})/f;
+        
+        xst = xs_set([],'time_from',datenum([TYD{1:2}],'yyyymmddhhMM'), ...
+                        'time_to',  datenum([TYD{3:4}],'yyyymmddhhMM'), ...
+                        'dt',       str2double(TYD{5})/f);
+                    
+        xst = xs_meta(xst,mfilename,'donar_time');
+        
+        D.data(i).value = xs_set(D.data(i).value,'time',xst);
     end
     
     % parse axes
     try
-        t = D.data(i).time;
+        xst = xs_get(D.data(i).value,'time');
         
         % build time axes
-        D.data(i).axes.time         = t.time_from:t.dt:t.time_to;
+        xsa = xs_set([],'time',xs_get(xst,'time_from'):xs_get(xst,'dt'):xs_get(xst,'time_to'));
+        xsa = xs_meta(xsa,mfilename,'donar_axes');
         
-        sz = size(D.data(i).WRD.data2,2);
+        D.data(i).value = xs_set(D.data(i).value,'axes',xsa);
+        
+        sz = size(xs_get(D.data(i).value,'WRD.data2'),2);
         
         if sz > 1
             
@@ -114,14 +122,10 @@ for i = 1:length(D.data)
                     s = [0 1];
             end
 
-            D.data(i) = split_frequency_data(D.data(i),f,s);
+            D.data(i).value = split_frequency_data(D.data(i).value,f,s);
         end
     end
 end
-
-%% create a look-up index based on W3H meta data
-
-D.parameters = read_block(D,'W3H');
 
 end
 
@@ -130,48 +134,16 @@ end
 function D = split_frequency_data(D,f,s)
     n = length(f);
                 
-    D.axes.frequency    = f;
+    D = xs_set(D,'axes.frequency',f);
+    
+    data2 = xs_get(D,'WRD.data2');
     
     c = 0;
-    W = struct('data1',D.WRD.data1);
     for i = 1:length(s)
         if s(i) == 0; s(i) = n; end;
         
-        W.(sprintf('data%d',i+1)) = D.WRD.data2(:,c+[1:s(i)]);
+        D = xs_set(D,sprintf('WRD.data%d',i+1),data2(:,c+[1:s(i)]));
         
         c = c+s(i);
-    end
-    
-    D.WRD = W;
-end
-
-function v = read_block(D,block)
-    s = cellfun(@fieldnames,{D.data.(block)},'UniformOutput',false)';
-    s = unique(cat(1,s{:}));
-
-    v = struct();
-    for i = 1:length(s)
-        try
-            v.(s{i}) = read_parameter(D,s{i});
-        end
-    end
-end
-
-function v = read_parameter(D,par)
-    [u,~,j] = unique(cellfun(@(x)read_existsing_fields(x,par),{D.data.W3H},'UniformOutput',false));
-    
-    val = genvarname(cellfun(@(x)regexprep(x,'\W','_'),u,'UniformOutput',false));
-    ind = cellfun(@(x)find(j==x),num2cell(unique(j)),'UniformOutput',false);
-    
-    v = struct( ...
-        'values',   {u},    ...
-        'indices',  {j},    ...
-        'combined', cell2struct(ind,val,2));
-end
-
-function v = read_existsing_fields(x,field)
-    v = 'UNKNOWN';
-    if isfield(x,field)
-        v = [x.(field){1}];
     end
 end

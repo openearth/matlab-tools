@@ -69,7 +69,7 @@ function xb = xb_swap(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'order', 'tyx', ...
@@ -80,10 +80,10 @@ OPT = setproperty(OPT, varargin{:});
 
 %% determine dimensions
 
-if xb_exist(xb, 'DIMS')
-    nx = max([0 xb_get(xb, 'DIMS.globalx')]);
-    ny = max([0 xb_get(xb, 'DIMS.globaly')]);
-    nt = max([0 xb_get(xb, 'DIMS.globaltime')]);
+if xs_exist(xb, 'DIMS')
+    nx = max([0 xs_get(xb, 'DIMS.globalx')]);
+    ny = max([0 xs_get(xb, 'DIMS.globaly')]);
+    nt = max([0 xs_get(xb, 'DIMS.globaltime')]);
 end
 
 %% swap matrices

@@ -67,7 +67,7 @@ function varargout = xb_write_bathy(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'path', pwd, ...
@@ -87,9 +87,9 @@ varargout = {};
 
 c = 1;
 for i = 1:length(f)
-    if xb_exist(xb, f{i})
+    if xs_exist(xb, f{i})
         varargout{c} = OPT.(f{i});
-        data = xb_get(xb, f{i});
+        data = xs_get(xb, f{i});
         fname = fullfile(OPT.path, OPT.(f{i}));
         if isnumeric(data)
             save(fname, '-ascii', 'data');

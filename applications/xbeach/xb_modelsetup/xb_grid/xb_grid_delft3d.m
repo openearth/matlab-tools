@@ -78,34 +78,34 @@ if ~isempty(varargin)
     if ischar(varargin{1}) && (exist(varargin{1}, 'dir') ||  exist(varargin{1}, 'file'))
         write = true;
         xb = xb_read_input(varargin{1});
-    elseif xb_check(varargin{1})
+    elseif xs_check(varargin{1})
         xb = varargin{1};
     else
         return;
     end
     
-    if xb_check(xb)
-        if xb_exist(xb, 'xyfile')
-            [xy z ne]   = xb_get(xb, 'xyfile.data', 'depfile.depfile', 'ne_layer.ne_layer');
+    if xs_check(xb)
+        if xs_exist(xb, 'xyfile')
+            [xy z ne]   = xs_get(xb, 'xyfile.data', 'depfile.depfile', 'ne_layer.ne_layer');
             
-            xb = xb_del(xb, 'xyfile');
-            xb = xb_set(xb, 'gridform', 'xbeach');
+            xb = xs_del(xb, 'xyfile');
+            xb = xs_set(xb, 'gridform', 'xbeach');
             
             [x_xb y_xb] = xb_delft3d_wlgrid2xb(xy);
             
-            xb = xb_set(xb, 'xfile', xb_set([], 'xfile', x_xb), 'yfile', xb_set([], 'yfile', y_xb));
+            xb = xs_set(xb, 'xfile', xs_set([], 'xfile', x_xb), 'yfile', xs_set([], 'yfile', y_xb));
             
-            xb = xb_set(xb, 'depfile.depfile', xb_delft3d_wldep2xb(z, size(x_xb)));
+            xb = xs_set(xb, 'depfile.depfile', xb_delft3d_wldep2xb(z, size(x_xb)));
             
             if ~isempty(ne)
-                xb = xb_set(xb, 'ne_layer.ne_layer', xb_delft3d_wldep2xb(ne, size(x_xb)));
+                xb = xs_set(xb, 'ne_layer.ne_layer', xb_delft3d_wldep2xb(ne, size(x_xb)));
             end
         else
             [x y z ne]  = xb_input2bathy(xb);
-            [xori yori] = xb_get(xb, 'xori', 'yori');
+            [xori yori] = xs_get(xb, 'xori', 'yori');
             
-            xb = xb_del(xb, 'xfile', 'yfile', 'xori', 'yori');
-            xb = xb_set(xb, 'gridform', 'delft3d');
+            xb = xs_del(xb, 'xfile', 'yfile', 'xori', 'yori');
+            xb = xs_set(xb, 'gridform', 'delft3d');
             
             if ~isempty(xori) && ~isempty(yori)
                 x_d3d = x+xori;
@@ -115,12 +115,12 @@ if ~isempty(varargin)
                 y_d3d = y;
             end
             
-            xb = xb_set(xb, 'xyfile', xb_set([], 'data', xb_delft3d_xb2wlgrid(x_d3d,y_d3d)));
+            xb = xs_set(xb, 'xyfile', xs_set([], 'data', xb_delft3d_xb2wlgrid(x_d3d,y_d3d)));
 
-            xb      = xb_set(xb, 'depfile.depfile', xb_delft3d_xb2wldep(z));
+            xb      = xs_set(xb, 'depfile.depfile', xb_delft3d_xb2wldep(z));
             
             if ~isempty(ne)
-                xb      = xb_set(xb, 'ne_layer.ne_layer', xb_delft3d_xb2wldep(ne));
+                xb      = xs_set(xb, 'ne_layer.ne_layer', xb_delft3d_xb2wldep(ne));
             end
         end
         

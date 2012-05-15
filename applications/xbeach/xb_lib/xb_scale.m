@@ -65,7 +65,7 @@ function xb = xb_scale(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'depthscale', 1, ...
@@ -85,7 +85,7 @@ nl = nd*OPT.contraction;
 nt = sqrt(nd);
 nw = nd^2.5/nl^2;
 
-xb = xb_set(xb, 'depthscale', nd);
+xb = xs_set(xb, 'depthscale', nd);
 
 %% scale bathymetry
 
@@ -101,7 +101,7 @@ xb = xb_bathy2input(xb, x, y, z+dz);
 
 %% scale waves
 
-switch xb_get(xb, 'instat')
+switch xs_get(xb, 'instat')
     case {'stat' 'bichrom' 0 1}
         xb = set_scale(xb,'Hrms',nd);
         xb = set_scale(xb,'Trep',nt);
@@ -113,7 +113,7 @@ switch xb_get(xb, 'instat')
         xb = set_scale(xb,'bcfile.freqs',1/nt);
         xb = set_scale(xb,'bcfile.vardens',nd,'RMSI');
     otherwise
-        warning('OET:xbeach:scale', ['Cannot scale instat, unsupported value [' xb_get(xb, 'instat') ']']);
+        warning('OET:xbeach:scale', ['Cannot scale instat, unsupported value [' xs_get(xb, 'instat') ']']);
 end
 
 %% scale tide
@@ -126,7 +126,7 @@ xb = set_offset(xb,'zs0file.tide',dz);
 
 %% scale sediment
 
-if xb_exist(xb,'D50')
+if xs_exist(xb,'D50')
     xb = set_scale(xb,'D50',sqrt(nw));
     xb = set_scale(xb,'D90',sqrt(nw));
 else
@@ -135,7 +135,7 @@ end
 
 %% scale time
 
-if xb_exist(xb,'tstop') && xb_exist(xb,'tint','tintg','tintm','tintp','tsglobal','tsmean','tspoint')>0
+if xs_exist(xb,'tstop') && xs_exist(xb,'tint','tintg','tintm','tintp','tsglobal','tsmean','tspoint')>0
     xb = set_scale(xb,'tstart',nt);
     xb = set_scale(xb,'tstop',nt);
     xb = set_scale(xb,'tint',nt);
@@ -151,27 +151,27 @@ end
 
 %% set meta data
 
-xb = xb_meta(xb, mfilename, 'input');
+xb = xs_meta(xb, mfilename, 'input');
 
 %% pricate functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function xb = set_scale(xb, var, scale, varargin)
 
-if xb_exist(xb,var)
+if xs_exist(xb,var)
     if ~isempty(varargin)
         switch varargin{1}
             case 'RMS'
-                xb = xb_set(xb,var,sqrt(xb_get(xb,var).^2/scale));
+                xb = xs_set(xb,var,sqrt(xs_get(xb,var).^2/scale));
             case 'RMSI'
-                xb = xb_set(xb,var,(sqrt(xb_get(xb,var))/scale).^2);
+                xb = xs_set(xb,var,(sqrt(xs_get(xb,var))/scale).^2);
         end
     else
-        xb = xb_set(xb,var,xb_get(xb,var)/scale);
+        xb = xs_set(xb,var,xs_get(xb,var)/scale);
     end
 end
 
 function xb = set_offset(xb, var, offset)
 
-if xb_exist(xb,var)
-	xb = xb_set(xb,var,xb_get(xb,var)+offset);
+if xs_exist(xb,var)
+	xb = xs_set(xb,var,xs_get(xb,var)+offset);
 end

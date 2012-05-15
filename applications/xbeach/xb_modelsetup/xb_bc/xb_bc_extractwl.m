@@ -62,14 +62,14 @@ function wl = xb_bc_extractwl(xb)
 
 wl = 0;
 
-if xb_exist(xb, 'zs0file')
-    tide = xb_get(xb, 'zs0file.tide');
+if xs_exist(xb, 'zs0file')
+    tide = xs_get(xb, 'zs0file.tide');
     switch size(tide, 2)
         case 4
             wl = max(mean(tide(:,1:2),2));
         otherwise
             wl = max(tide(:,1));
     end
-elseif xb_exist(xb, 'zs0')
-    wl = xb_get(xb, 'zs0');
+elseif xs_exist(xb, 'zs0')
+    wl = xs_get(xb, 'zs0');
 end

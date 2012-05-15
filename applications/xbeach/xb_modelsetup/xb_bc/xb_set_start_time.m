@@ -73,26 +73,26 @@ OPT = struct(...
 OPT = setproperty(OPT, varargin{:});
 
 %%
-[tstart morstart] = xb_get(xb, 'tstart', 'morstart');
+[tstart morstart] = xs_get(xb, 'tstart', 'morstart');
 if isempty(tstart)
     tstart = 0;
 end
 if isempty(morstart)
     morstart = 0;
 end
-[tstop morfac] = xb_get(xb, 'tstop', 'morfac');
+[tstop morfac] = xs_get(xb, 'tstop', 'morfac');
 if isempty(morfac)
     % if morfac is not in the xb structure, set it to one
     morfac = 1;
 end
-[x z] = xb_get(xb, 'xfile.xfile', 'depfile.depfile');
+[x z] = xs_get(xb, 'xfile.xfile', 'depfile.depfile');
 % derive duration
 duration = tstop - max(morstart, tstart);
 
 % reduce x and z to vectors
 if isempty(x)
     % equidistant grid: vardx = 0
-    dx = xb_get(xb, 'dx');
+    dx = xs_get(xb, 'dx');
     x = 0:dx:(size(z,2)-1)*dx;
 else
     % variable grid: vardx = 1
@@ -114,25 +114,25 @@ tstart_min = roundoff(sum(diff(x(wetid)) ./ sqrt(OPT.g*h)) * morfac, -1, 'ceil')
 for var = OPT.vars2update
     switch var{1}
         case 'tstart'
-            xb = xb_set(xb, 'tstart', tstart_min);
+            xb = xs_set(xb, 'tstart', tstart_min);
         case 'morstart'
-            xb = xb_set(xb, 'morstart', tstart_min);
+            xb = xs_set(xb, 'morstart', tstart_min);
         case 'tstop'
-            xb = xb_set(xb, 'tstop', tstart_min + duration);
+            xb = xs_set(xb, 'tstop', tstart_min + duration);
     end
 end
 
-if xb_exist(xb, 'bcfile.duration')
-    data    = xb_get(xb, 'bcfile.duration');
-    dt      = xb_get(xb, 'tstop')-sum(data);
+if xs_exist(xb, 'bcfile.duration')
+    data    = xs_get(xb, 'bcfile.duration');
+    dt      = xs_get(xb, 'tstop')-sum(data);
     data(end) = data(end) + dt + 1;
-    xb      = xb_set(xb, 'bcfile.duration', data);
+    xb      = xs_set(xb, 'bcfile.duration', data);
 end
 
-if xb_exist(xb, 'zs0file.time')
-    data    = xb_get(xb, 'zs0file.time');
-    dt      = xb_get(xb, 'tstop')-data(end);
+if xs_exist(xb, 'zs0file.time')
+    data    = xs_get(xb, 'zs0file.time');
+    dt      = xs_get(xb, 'tstop')-data(end);
     data(end) = data(end) + dt + 1;
-    xb      = xb_set(xb, 'zs0file.time', data);
+    xb      = xs_set(xb, 'zs0file.time', data);
 end
 

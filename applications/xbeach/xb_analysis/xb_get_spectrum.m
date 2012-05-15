@@ -181,20 +181,20 @@ Snn(f==0,:) = 0;
 
 %% create xbeach structure
 
-xbo = xb_empty();
+xbo = xs_empty();
 
 settings = [];
 fn       = fieldnames(OPT);
 for i = 1:length(fn)
-    settings  = xb_set(settings, fn{i}, OPT.(fn{i}));
+    settings  = xs_set(settings, fn{i}, OPT.(fn{i}));
 end
-xbo = xb_set(xbo, 'SETTINGS', settings);
+xbo = xs_set(xbo, 'SETTINGS', settings);
 
-xbo = xb_set(xbo, 'timeseries', ts      );
-xbo = xb_set(xbo, 'f',          f       );
-xbo = xb_set(xbo, 'Snn',        Snn     );
-xbo = xb_set(xbo, 'Hrms_hf',    hrmshi  );
-xbo = xb_set(xbo, 'Hrms_lf',    hrmslo  );
-xbo = xb_set(xbo, 'Hrms_t',     hrms    );
+xbo = xs_set(xbo, 'timeseries', ts      );
+xbo = xs_set(xbo, 'f',          f       );
+xbo = xs_set(xbo, 'Snn',        Snn     );
+xbo = xs_set(xbo, 'Hrms_hf',    hrmshi  );
+xbo = xs_set(xbo, 'Hrms_lf',    hrmslo  );
+xbo = xs_set(xbo, 'Hrms_t',     hrms    );
 
-xbo = xb_meta(xbo, mfilename, 'spectrum');
+xbo = xs_meta(xbo, mfilename, 'spectrum');

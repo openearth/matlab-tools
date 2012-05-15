@@ -66,7 +66,7 @@ function varargout = xb_axes(xb, var, varargin)
 
 idx = strcmpi(var, {xb.data.name});
 
-[start len stride index] = xb_get(xb, 'DIMS.START', 'DIMS.LENGTH', 'DIMS.STRIDE', 'DIMS.INDEX');
+[start len stride index] = xs_get(xb, 'DIMS.START', 'DIMS.LENGTH', 'DIMS.STRIDE', 'DIMS.INDEX');
 
 [start len stride] = xb_index(size(xb.data(idx).value), start, len, stride);
 
@@ -77,7 +77,7 @@ varargout = {};
 dims = xb.data(idx).dimensions;
 
 for i = 1:length(dims)
-    dim = xb_get(xb, ['DIMS.' dims{i} '_DATA']);
+    dim = xs_get(xb, ['DIMS.' dims{i} '_DATA']);
     
     if iscell(index)
         if length(index) >= i

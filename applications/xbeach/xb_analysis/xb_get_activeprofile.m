@@ -78,12 +78,12 @@ OPT = setproperty(OPT, varargin{:});
 
 xb      = xb_get_transect(xb);
 
-x       = xb_get(xb, 'DIMS.globalx_DATA');
+x       = xs_get(xb, 'DIMS.globalx_DATA');
 x       = squeeze(x(1,:));
 
 % determine bathymetry
-if xb_exist(xb, 'zb')
-    zb      = xb_get(xb,'zb');
+if xs_exist(xb, 'zb')
+    zb      = xs_get(xb,'zb');
     zb      = squeeze(zb(:,1,:));
 else
     error('No bathymetry data found');

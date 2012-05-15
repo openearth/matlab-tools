@@ -65,7 +65,7 @@ function xb = xb_read_bathy(varargin)
 
 %% create xbeach struct
 
-xb = xb_empty();
+xb = xs_empty();
 
 % odd elements should be variable names
 vars = varargin(1:2:end);
@@ -74,7 +74,7 @@ files = varargin(2:2:end);
 
 for ivar = 1:length(vars)
     if exist(files{ivar}, 'file')
-        xb = xb_set(xb, vars{ivar}, []);
+        xb = xs_set(xb, vars{ivar}, []);
         try
             A = load(files{ivar});
         catch
@@ -87,11 +87,11 @@ for ivar = 1:length(vars)
             end
         end
         
-        xb = xb_set(xb, '-units', vars{ivar}, {A 'm'});
+        xb = xs_set(xb, '-units', vars{ivar}, {A 'm'});
     else
         error(['Bathymetry definition file does not exist [' files{ivar} ']'])
     end
 end
 
 % set meta data
-xb = xb_meta(xb, mfilename, 'bathymetry', files);
+xb = xs_meta(xb, mfilename, 'bathymetry', files);

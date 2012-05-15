@@ -18,13 +18,13 @@ function xb = xb_generate_wavedirgrid(xb,varargin)
 %   Example
 %   % 
 %   waves = xb_generate_waves
-%   xb = xb_join(xb, waves);
+%   xb = xs_join(xb, waves);
 %   exmaple 1
-%   xb = xb_empty(); xb = xb_set(xb,'alpha',0,'dir',[270],'s',[5]); xb = xb_generate_wavedirgrid(xb);
+%   xb = xs_empty(); xb = xs_set(xb,'alpha',0,'dir',[270],'s',[5]); xb = xb_generate_wavedirgrid(xb);
 %   example 2
-%   xb = xb_empty(); xb = xb_set(xb,'alpha',-33,'dir',[273],'s',[5]); xb = xb_generate_wavedirgrid(xb);
+%   xb = xs_empty(); xb = xs_set(xb,'alpha',-33,'dir',[273],'s',[5]); xb = xb_generate_wavedirgrid(xb);
 %   example 3
-%   xb = xb_empty(); xb = xb_set(xb,'alpha',-33,'dir',[231 241 258 273],'s',[2 10 2 5]); xb = xb_generate_wavedirgrid(xb);
+%   xb = xs_empty(); xb = xs_set(xb,'alpha',-33,'dir',[231 241 258 273],'s',[2 10 2 5]); xb = xb_generate_wavedirgrid(xb);
 %
 %   See also 
 
@@ -83,7 +83,7 @@ OPT = struct( ...
         
 OPT = setproperty(OPT, varargin{:});
 
-if ismember(xb_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
+if ismember(xs_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
 
     % find mean wave direction, minimum wave direction and maximum wave
     % direction in wave bc time series
@@ -91,13 +91,13 @@ if ismember(xb_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
     % bas: this should be alfa instead of alpha, right?
     %      this parameter is not available at this location
     %      is it necessary anyway? thetabins should be defined in world coordinates
-    alpha = 0; %xb_get(xb,'alpha');             % get coastline / grid orientation alpha
+    alpha = 0; %xs_get(xb,'alpha');             % get coastline / grid orientation alpha
     
-    phi0t = xb_get(xb,'bcfile.mainang');    % get wave directions (nautical)
+    phi0t = xs_get(xb,'bcfile.mainang');    % get wave directions (nautical)
     phi0 = mean(phi0t);                     % compute mean wave direction
     theta_min = phi0;           
     theta_max = phi0;
-    st = xb_get(xb,'bcfile.s');             % use max s to setup wavedir grid
+    st = xs_get(xb,'bcfile.s');             % use max s to setup wavedir grid
 
     % make directional distribution as proposed by Longuet_Higgins et al.
     % (1963)
@@ -151,7 +151,7 @@ if ismember(xb_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
     thetagr = [theta_min:dtheta:theta_max];
 
     % get what we need as output
-    xb = xb_set(xb,'thetamin',theta_min,'thetamax',theta_max','dtheta',dtheta,'thetanaut',1);
+    xb = xs_set(xb,'thetamin',theta_min,'thetamax',theta_max','dtheta',dtheta,'thetanaut',1);
 
     % plot(thetagr,zeros(1,length(thetagr)),'g-s'); grid on;
 

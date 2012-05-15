@@ -64,7 +64,7 @@ function fh = xb_plot_spectrum(xb, varargin)
 
 %% read options
 
-if ~xb_check(xb); error('Invalid XBeach structure'); end;
+if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'measured',         [], ...
@@ -74,7 +74,7 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-if ~xb_exist(xb, 'Snn*') || ~xb_exist(xb, 'f')
+if ~xs_exist(xb, 'Snn*') || ~xs_exist(xb, 'f')
     error('No spectrum data found');
 end
 
@@ -82,9 +82,9 @@ end
 
 fh = figure; hold on;
 
-f   = xb_get(xb,'f');
-S   = xb_get(xb,'Snn');
-S_f = xb_get(xb,'Snn_f');
+f   = xs_get(xb,'f');
+S   = xs_get(xb,'Snn');
+S_f = xs_get(xb,'Snn_f');
 
 l   = max([size(S,2) size(S_f,2)]);
 n   = ceil(sqrt(l));
@@ -104,8 +104,8 @@ for i = 1:l
     ylabel(['S_{\eta\eta} [' OPT.units2 ']']);
     legend show;
     
-    if xb_exist(xb, 'SETTINGS.fsplit')
-        fsplit = xb_get(xb, 'SETTINGS.fsplit');
+    if xs_exist(xb, 'SETTINGS.fsplit')
+        fsplit = xs_get(xb, 'SETTINGS.fsplit');
         plot([fsplit fsplit],[0 max(yl)],'--k');
         set(gca, 'YLim', yl);
     end

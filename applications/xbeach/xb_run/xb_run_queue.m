@@ -73,7 +73,7 @@ function xb_run_queue(varargin)
 %% read options
 
 if ~isempty(varargin)
-    if xb_check(varargin{1})
+    if xs_check(varargin{1})
         xb = varargin{1};
         if length(varargin) > 1 && ~isempty(get_optval('action', varargin(2:end)))
             varargin = varargin(2:end);

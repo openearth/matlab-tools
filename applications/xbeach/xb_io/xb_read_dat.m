@@ -100,7 +100,7 @@ if ~exist(fname, 'file')
     error(['File does not exist [' fname ']'])
 end
 
-xb = xb_empty();
+xb = xs_empty();
 
 % get filelist
 if length(fname) > 3 && strcmpi(fname(end-3:end), '.dat')
@@ -114,10 +114,10 @@ end
 if isempty(fdir); fdir = fullfile('.', ''); end;
 
 % allocate dims in xbeach struct
-d = xb_empty();
-d = xb_set(d, 'START', OPT.start, 'LENGTH', OPT.length, 'STRIDE', OPT.stride, 'INDEX', OPT.index);
-d = xb_meta(d, mfilename, 'dimensions', fdir);
-xb = xb_set(xb, 'DIMS', d);
+d = xs_empty();
+d = xs_set(d, 'START', OPT.start, 'LENGTH', OPT.length, 'STRIDE', OPT.stride, 'INDEX', OPT.index);
+d = xs_meta(d, mfilename, 'dimensions', fdir);
+xb = xs_set(xb, 'DIMS', d);
 
 % read dat files one-by-one
 for i = 1:length(names)
@@ -145,7 +145,7 @@ for i = 1:length(names)
         dat = xb_dat_read(fpath, dims, ...
             'start', OPT.start, 'length', OPT.length, 'stride', OPT.stride, 'index', OPT.index);
 
-        xb = xb_set(xb, varname, dat);
+        xb = xs_set(xb, varname, dat);
         
         % add dimensions
         [nc_dims dims idx_dims] = xb_dims2nc(dims);
@@ -160,9 +160,9 @@ end
 dims = xb_read_dims(fdir);
 f = fieldnames(dims);
 for i = 1:length(f)
-    d = xb_set(d, f{i}, dims.(f{i}));
+    d = xs_set(d, f{i}, dims.(f{i}));
 end
-xb = xb_set(xb, 'DIMS', d);
+xb = xs_set(xb, 'DIMS', d);
 
 % set meta data
-xb = xb_meta(xb, mfilename, 'output', fname);
+xb = xs_meta(xb, mfilename, 'output', fname);
