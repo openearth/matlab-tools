@@ -17,7 +17,7 @@ function reg = readreg(regpath)
 %   Example
 %   reg = readreg('HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Uninstall\')
 %
-%   See also xb_show, get_app_list
+%   See also xs_show, get_app_list
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -78,7 +78,7 @@ re = regexp(fcontents, ['\[' strrep(regpath, '\', '\\') '.*?\]'], 'split');
 re = regexp(re, '\s*"([^\r\n]*?)"\s*=\s*"?([^\r\n]*?)"?\s*\r\n', 'tokens');
 re(cellfun('isempty',re)) = [];
 
-reg = xb_empty;
+reg = xs_empty;
 for i = 1:length(re)
     settings = [re{i}{:}];
     
@@ -90,12 +90,12 @@ for i = 1:length(re)
         idx = false(size(settings));
         idx(n:n+1) = true;
         
-        sub = xb_empty;
+        sub = xs_empty;
         sub.data = struct('name', settings(1:2:end), 'value', settings(2:2:end));
-        sub = xb_meta(sub, mfilename, 'registry', ['::\' regpath]);
+        sub = xs_meta(sub, mfilename, 'registry', ['::\' regpath]);
         
-        reg = xb_set(reg, fname, sub);
+        reg = xs_set(reg, fname, sub);
     end
 end
 
-reg = xb_meta(reg, mfilename, 'registry', ['::\' regpath]);
+reg = xs_meta(reg, mfilename, 'registry', ['::\' regpath]);
