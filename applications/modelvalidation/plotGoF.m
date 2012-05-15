@@ -8,7 +8,7 @@ function varargout = plotGoF(STATS, varargin)
 %    plotGoF(STATS)
 %
 % where STATS is the result of GoFStats:
-% STATS = GoFStats(D3DTimePoints, D3DValues, NetCDFTime, NetCDFValues, Info);
+% STATS = GoFStats(ModelTimePoints, ModelValues, ObsTime, ObsValues, Info);
 %
 % Example:
 % plotGoF(STATS, 'figure', 2);
