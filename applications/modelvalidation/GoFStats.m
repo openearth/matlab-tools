@@ -1,5 +1,5 @@
-function STATS = GoFStats(D3DTimePoints, D3DValues, ...
-    NetCDFTime, NetCDFValues, varargin)
+function STATS = GoFStats(ModelTimePoints, ModelValues, ...
+    ObsTime, ObsValues, varargin)
 %GoFStats computes 'Goodness of Fit' scores and plots target diagram 
 %as explained in Jolliff et al., 2009 [Summary diagrams for coupled
 %hydrodynamic-ecosystem model skill assessment, Jason K. Jolliff et al., 
@@ -13,14 +13,17 @@ function STATS = GoFStats(D3DTimePoints, D3DValues, ...
 % 'station' with a cellstring of station names
 % 'subset' 0 or 1  (default = 1)
 % 'geomean' 0 or 1 (default = 0)
-%
-% If option 'subset' is deactivated, computes statistics on the whole model 
-% timeseries (default is option subset activated).
-%
-% If option 'geomean' is activated, geometric means are used to compute biases (for skewed
-% distributions). NB!remove negative values in
-% the timeseries if relevant i.e. newData.model(newData.model<0)=NaN;
+% 'mode' 0, 1, 2 (default = 0)
 
+% If 'subset' is active (=1), compute statistics on the matching samples of both timeseries only; 
+% If 'subset'is deactivated, compute statistics on original combined w. interpolated series (default: 'subset' is active).
+%
+% If 'geomean' =1 , geometric means are used to compute biases (for skewed distributions). 
+% NB!remove negative values in the timeseries if relevant i.e. newData.model(newData.model<0)=NaN;
+%
+% If option 'mode'=1, the mode is estimated using log transformation
+% If option 'mode'=2, the mode is estimated using histogram w. 100 bins
+% Default 'mode'is inactive (0)
 
 % Example:
 % STATS = GoFStats(model_times, model_values, obs_times, obs_values);
@@ -40,93 +43,125 @@ function STATS = GoFStats(D3DTimePoints, D3DValues, ...
 
 %
 OPT.geomean= 0;
+OPT.mode= 0;
 OPT.station = '';
 OPT.subset = 1;
 OPT = setProperty(OPT, varargin{:});
 
 %% combine timeseries:
-%   - missing observations are replaced by NaNs  
+%   - missing observations are replaced by NaNs 
+%     !NB! NANs affect interp1: so best do interp1 on sets without NaNs 
 %   - negative model values are replaced by NaNs
-%   - missing model values are interpolated in time
+%   - missing model values are interpolated (linearly) in time to obs. times
 
-tmpTime = cat(1, squeeze(D3DTimePoints), squeeze(NetCDFTime));
+tmpTime = cat(1, squeeze(ModelTimePoints), squeeze(ObsTime));
 [STATS.datenum, idx] = sort(tmpTime);
-newData.model = interp1(squeeze(D3DTimePoints), ...
-    squeeze(D3DValues), squeeze(NetCDFTime));
-newData.obs = NaN + zeros(size(squeeze(D3DTimePoints)));
-tmpData.model = cat(1, squeeze(D3DValues), squeeze(newData.model));
-tmpData.obs = cat(1, squeeze(newData.obs), squeeze(NetCDFValues));
-combined_all.D3DTimePoints = tmpTime(idx);
-combined_all.NetCDFTime = tmpTime(idx);
-combined_all.D3DValues = tmpData.model(idx);
-combined_all.NetCDFValues = tmpData.obs(idx);
 
-%% Keep only (model) points that have an equivalent in the observations
-%% and compute the statistics on this subset
+newData.model = interp1(squeeze(ModelTimePoints), ...
+    squeeze(ModelValues), squeeze(ObsTime));       
+newData.obs = NaN + zeros(size(squeeze(ModelTimePoints)));
+tmpData.model = cat(1, squeeze(ModelValues), squeeze(newData.model));
+tmpData.obs = cat(1, squeeze(newData.obs), squeeze(ObsValues));
+combined_all.ModelTimePoints = tmpTime(idx);
+combined_all.ObsTime = tmpTime(idx);
+combined_all.ModelValues = tmpData.model(idx);
+combined_all.ObsValues = tmpData.obs(idx);
+
+%% Option: keep only samples that have an matchup between model and observations
+% and compute the statistics on this subset
  if (OPT.subset)
-    msk = find(~isnan(combined_all.NetCDFValues));
-    combined.D3DTimePoints = combined_all.D3DTimePoints(msk);
-    combined.NetCDFTime = combined_all.NetCDFTime(msk);
-    combined.D3DValues = combined_all.D3DValues(msk);
-    combined.NetCDFValues = combined_all.NetCDFValues(msk);
-else
-    combined.D3DTimePoints = combined_all.D3DTimePoints;
-    combined.NetCDFTime = combined_all.NetCDFTime;
-    combined.D3DValues = combined_all.D3DValues;
-    combined.NetCDFValues = combined_all.NetCDFValues;
+    msk = find(~isnan(combined_all.ObsValues.*combined_all.ModelValues));
+    combined.ObsValues = combined_all.ObsValues(msk);
+    combined.ObsTime = combined_all.ObsTime(msk);
+    combined.ModelTimePoints = combined_all.ModelTimePoints(msk);
+    combined.ModelValues = combined_all.ModelValues(msk);
+ else
+ % compute statistics on all samples of both sets: i.e. for the model the original AND interpolated ones
+    combined.ModelTimePoints = combined_all.ModelTimePoints;
+    combined.ObsTime = combined_all.ObsTime;
+    combined.ModelValues = combined_all.ModelValues;
+    combined.ObsValues = combined_all.ObsValues;
 end
 
-STATS.model_comb = combined.D3DValues;
-STATS.obs_comb = combined.NetCDFValues;
+STATS.model_combval = combined.ModelValues;
+STATS.model_combtim = combined.ModelTimePoints;
+STATS.obs_combval = combined.ObsValues;
+STATS.obs_combtim = combined.ObsTime;
 
 %% compute means and stddev of normal distributions
 if OPT.geomean
-    STATS.model_mean = 10^nanmean(log10(combined.D3DValues)); %geometric mean; can also use 'geomean'
+    STATS.model_mean = 10^nanmean(log10(combined.ModelValues)); %geometric mean; can also use 'geomean'
     STATS.model_mean = real(STATS.model_mean);
-    %STATS.model_geo = geomean(combined.D3DValues+1)-1;
-    STATS.obs_mean = 10^nanmean(log10(combined.NetCDFValues)); 
-else
-STATS.model_mean = nanmean(combined.D3DValues);
-STATS.obs_mean = nanmean(combined.NetCDFValues);
+    STATS.obs_mean = 10^nanmean(log10(combined.ObsValues)); 
+    STATS.obs_mean = real(STATS.obs_mean);
+
+% elseif OPT.mode==1
+%     STATS.model_mean = mode(combined.ModelValues); 
+%     STATS.obs_mean   = mode(combined.ObsValues); 
+elseif OPT.mode==1
+    STATS.model_mean = 10^nanmean(nanmean(log10(combined.ModelValues))- nanvar(log10(combined.ModelValues))); 
+    STATS.obs_mean = 10^nanmean(nanmean(log10(combined.ObsValues))- nanvar(log10(combined.ObsValues))); 
+elseif OPT.mode==2
+    [nbin bin] = hist(combined.ModelValues,100);
+    STATS.model_mean = nanmean(bin(find(nbin==max(nbin)))); 
+    [nbin bin] = hist(combined.ObsValues,100);
+    STATS.obs_mean = nanmean(bin(find(nbin==max(nbin)))); 
+else   
+    STATS.model_mean = nanmean(combined.ModelValues);
+    STATS.obs_mean = nanmean(combined.ObsValues);
 end
 
-STATS.model_stddev = nanstd(combined.D3DValues);
-STATS.obs_stddev = nanstd(combined.NetCDFValues);
-%% compute residus of normal distributions
-STATS.model_res = combined.D3DValues - STATS.model_mean;
-STATS.obs_res = combined.NetCDFValues - STATS.obs_mean;
-%% compute various statistics
+STATS.model_stddev = nanstd(combined.ModelValues);
+STATS.obs_stddev = nanstd(combined.ObsValues);
+%% compute residuals w.r.t. selected mean
+STATS.model_res = combined.ModelValues - STATS.model_mean;
+STATS.obs_res = combined.ObsValues - STATS.obs_mean;
+%% compute various statistics & cost functions
+
 % number of records
-STATS.n = length(combined.D3DValues); 
+STATS.n = length(combined.ModelValues); 
+
 % correlation coefficient
 STATS.R = nanmean(STATS.model_res.*STATS.obs_res)/ ...
     (STATS.model_stddev.*STATS.obs_stddev);
+
 % normalized standard deviation
 STATS.normalized_stddev = STATS.model_stddev/STATS.obs_stddev; 
+
 % total RMS difference
-%STATS.RMSD = sqrt(nanmean((combined.D3DValues - combined.NetCDFValues).^2));
-STATS.RMSD = sqrt(nanmean((STATS.model_comb-STATS.obs_comb).^2));
+STATS.RMSD = sqrt(nanmean((STATS.model_combval-STATS.obs_combval).^2));
+
 % bias
 STATS.bias = STATS.model_mean - STATS.obs_mean;
+
 % unbiased RMS difference
-%STATS.unbiased_RMSD = sqrt(STATS.RMSD^2 - STATS.bias^2);
-STATS.unbiased_RMSD = sqrt(nanmean((STATS.model_res-STATS.obs_res).^2));
+STATS.unbiased_RMSD = sqrt(STATS.RMSD^2 - STATS.bias^2);
+% STATS.unbiased_RMSD =sqrt(nanmean((STATS.model_res-STATS.obs_res).^2)) 
+% Both are equivalent for arith.mean, but first version is less skewed/more robust for geomean & mode;
+
 % normalized bias
-STATS.normalized_bias = (STATS.model_mean - STATS.obs_mean)/ ...
-    STATS.obs_stddev;
+STATS.normalized_bias = STATS.bias/STATS.obs_stddev;
+
 % normalized unbiased RMS difference
 %STATS.normalized_unbiased_RMSD = sqrt(1. + ...
 %    STATS.normalized_stddev^2 - 2.*STATS.normalized_stddev*STATS.R);
 STATS.normalized_unbiased_RMSD = STATS.unbiased_RMSD/STATS.obs_stddev;
-% model efficiency
+
+% (normalized) unbiased absolute difference
+STATS.unbiased_ABSD = nanmean(abs(STATS.model_res-STATS.obs_res));
+STATS.normalized_unbiased_ABSD = STATS.unbiased_ABSD/STATS.obs_stddev;
+
+% Nash Sutcliffe model efficiency
 STATS.model_efficiency = 1.0 - ...
-    nansum((combined.D3DValues-combined.NetCDFValues).^2)/ ...
+    nansum((combined.ModelValues-combined.ObsValues).^2)/ ...
     nansum(STATS.model_res.^2);
-% skill score
+
+% Taylor skill score
 STATS.skill_score = 1.0 - ((1.0+STATS.R)/2.)* ...
     exp(-(STATS.normalized_stddev-1)^2/0.18);
 
-STATS.CF = nanmean(abs(combined.D3DValues - combined.NetCDFValues))./ ...
+%OSPAR cost function (normalized mean abs error)
+STATS.CF = nanmean(abs(combined.ModelValues - combined.ObsValues))./ ...
     STATS.model_stddev;
 
 %% Compute coordinates for the target diagrams
