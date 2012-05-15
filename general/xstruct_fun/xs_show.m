@@ -80,11 +80,17 @@ function xs_show(xs, varargin)
 
 if ~xs_check(xs); error('Invalid XStruct'); end;
 
-is_interactive = xb_getpref('interactive');
+% determine namespace
+namespace = regexp(xs.function,'^(.+?)_','tokens');
+namespace = namespace{1}{1};
+
+idx = strcmpi('-passive',varargin);
+is_interactive = ~any(idx);
+varargin = varargin(~idx);
 
 % determine variables to be showed, show xs_show for specifically requested
 % XSstruct sub-structures
-if nargin > 1
+if ~isempty(varargin)
     vars = {};
     for i = 1:length(varargin)
         if xs_exist(xs, varargin{i}) == 1
@@ -251,18 +257,10 @@ if ~isempty(vars)
             menu = [menu{:} {['<a href="' cmd '">parent</a>']}];
         end
 
-        cmd = sprintf('matlab:xb_view(%s);', path.obj);
-        menu = [menu{:} {['<a href="' cmd '">view</a>']}];
-
-        if strcmpi(xs.type, 'input')
-            cmd = sprintf('matlab:xb_write_input(''params.txt'', %s);', path.obj);
-            menu = [menu{:} {['<a href="' cmd '">write</a>']}];
-
-            cmd = sprintf('matlab:xb_run(%s);', path.obj);
-            menu = [menu{:} {['<a href="' cmd '">run</a>']}];
-
-            cmd = sprintf('matlab:xb_run_remote(%s, ''ssh_prompt'', true);', path.obj);
-            menu = [menu{:} {['<a href="' cmd '">run remote</a>']}];
+        % add custom menu options
+        fname = sprintf('xs_options_%s',namespace);
+        if exist(fname,'file')
+            menu = [menu feval(fname,xs,path)];
         end
 
         if ~isempty(menu)
