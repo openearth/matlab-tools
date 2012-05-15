@@ -32,7 +32,7 @@ function STATS = GoFStats(ModelTimePoints, ModelValues, ...
 %   * <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a> (full definition)
 %   * <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788">http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788</a> (simple)
 %
-%See also: GOFTIMESERIES
+%See also: GOFTIMESERIES; GOFPLOT
 
 % $Id$
 % $Date$
