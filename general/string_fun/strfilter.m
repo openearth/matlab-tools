@@ -78,7 +78,7 @@ if ~iscell(filters); filters = {filters}; end;
 
 %% search matches
 
-if isempty(filters)
+if isempty(filters) || all(cellfun(@isempty,filters))
     matches = true(size(vars));
 else
     matches = false(size(vars));

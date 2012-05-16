@@ -98,8 +98,9 @@ mn = num2cell(m);
 for i = 1:length(xs.data)
 
     % create breadcrumb
-    b = sprintf('%s.',xs.path{2:end});
-    b = sprintf('<a href="matlab:xs_show(%s, ''%s'');">%s</a>', xs.path{1}, b(1:end-1), b(1:end-1));
+    b1 = sprintf('%s.',xs.path{1:end});
+    b2 = sprintf('%s.',xs.path{2:end});
+    b  = sprintf('<a href="matlab:xs_show(%s, ''%s'');">%s</a>', xs.path{1}, b2(1:end-1), b1(1:end-1));
 
     % read name/value pair for current field
     n = xs.data(i).name;
