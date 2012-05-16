@@ -186,7 +186,7 @@
     <tag>editvicoww</tag>
     <style>edit</style>
     <position>590 90 60 20</position>
-    <text>Vertical Eddy Diffusivity (m^2/s)</text>
+    <text>Vertical Eddy Viscosity (m^2/s)</text>
     <textposition>left</textposition>
     <variable>handles.Model(md).Input(ad).dicoWW</variable>
     <type>real</type>
@@ -209,30 +209,7 @@
     </dependencies>
   </element>
   <element>
-    <tag>editdicoww</tag>
-    <style>edit</style>
-    <position>590 60 60 20</position>
-    <text>Vertical Eddy Diffusivity (m^2/s)</text>
-    <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).dicoWW</variable>
-    <type>real</type>
-    <tooltipstring>Enter vertical eddy diffusivity</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).KMax</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element>
-  <element>
-    <tag>editdicoww</tag>
+    <tag>editxlo</tag>
     <style>edit</style>
     <position>590 30 60 20</position>
     <text>Ozmidov Length Scale (m)</text>
