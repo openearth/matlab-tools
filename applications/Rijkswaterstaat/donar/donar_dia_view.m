@@ -119,30 +119,36 @@ function ui_set_block(obj, event)
     info.block     = get_selected(obj,'SelectBlock');
     info.block     = str2double(regexprep(info.block{1},'\D',''));
     
-    WRD            = xs_get(info.input.data(info.block).value,'WRD');
-    dat            = {WRD.data.name};
-    info.datalist  = sprintf('|%s', dat{:});
-    info.datalist  = info.datalist(2:end);
-    
-    set_info(obj,info);
-    
-    set(get_obj(obj,'SelectData'),'String',info.datalist);
-    
-    W3H            = xs_get(info.input.data(info.block).value,'W3H');
-    f              = {W3H.data.name};
-    v              = {W3H.data.value};
-    idx            = ~cellfun(@iscell,v);
-    v(idx)         = cellfun(@(x){x},v(idx),'UniformOutput',false);
-    l              = cellfun(@(x)length(x),v);
-    n              = max(l);
-    
-    dat            = cell(length(f),n);
-    
-    for i = 1:length(f)
-        dat(i,1:l(i)) = v{i};
+    block = info.input.data(info.block).value;
+
+    if xs_exist(block,'WRD')
+        WRD            = xs_get(block,'WRD');
+        dat            = {WRD.data.name};
+        info.datalist  = sprintf('|%s', dat{:});
+        info.datalist  = info.datalist(2:end);
+
+        set(get_obj(obj,'SelectData'),'String',info.datalist);
     end
-    
-    set(get_obj(obj,'TableMeta'),'Data',dat,'RowName',f,'ColumnWidth',{150});
+
+    set_info(obj,info);
+
+    if xs_exist(block,'W3H')
+        W3H            = xs_get(block,'W3H');
+        f              = {W3H.data.name};
+        v              = {W3H.data.value};
+        idx            = ~cellfun(@iscell,v);
+        v(idx)         = cellfun(@(x){x},v(idx),'UniformOutput',false);
+        l              = cellfun(@(x)length(x),v);
+        n              = max(l);
+
+        dat            = cell(length(f),n);
+
+        for i = 1:length(f)
+            dat(i,1:l(i)) = v{i};
+        end
+
+        set(get_obj(obj,'TableMeta'),'Data',dat,'RowName',f,'ColumnWidth',{150});
+    end
     
     ui_set_data(obj);
 end
@@ -151,7 +157,10 @@ function ui_set_data(obj, event)
     
     info           = get_info(obj);
     info.data      = get_selected(obj,'SelectData');
-    info.data      = info.data{1};
+
+    if iscell(info.data)
+        info.data  = info.data{1};
+    end
     
     set_info(obj,info);
     
@@ -177,50 +186,57 @@ function ui_plot(obj)
     
     info    = get_info(obj);
     
-    WRD     = xs_get(info.input.data(info.block).value,'WRD');
-    dat     = xs_get(WRD,info.data);
-    ax      = get_axis(obj);
-    
-    if xs_exist(info.input.data(info.block).value,'axes')
-        % axes info available
+    if isfield(info,'block') && info.block>0
         
-        axs     = xs_get(info.input.data(info.block).value,'axes');
-    
-        t = xs_get(axs,'time');
-        f = xs_get(axs,'frequency');
-        
-        if size(dat,2)>1
-            surf(ax,t,f,dat'); shading flat;
-            ylabel('frequency [Hz]');
-            set(gca,'XLim',minmax(t),'YLim',minmax(f));
-        else
-            plot(ax,t,dat);
-            set(gca,'XLim',minmax(t));
+        block = info.input.data(info.block).value;
+
+        if xs_exist(block,'WRD')
+            WRD     = xs_get(block,'WRD');
+            dat     = xs_get(WRD,info.data);
+            ax      = get_axis(obj);
+
+            if xs_exist(block,'axes')
+                % axes info available
+
+                axs     = xs_get(block,'axes');
+
+                t = xs_get(axs,'time');
+                f = xs_get(axs,'frequency');
+
+                if size(dat,2)>1
+                    surf(ax,t,f,dat'); shading flat;
+                    ylabel('frequency [Hz]');
+                    set(gca,'XLim',minmax(t),'YLim',minmax(f));
+                else
+                    plot(ax,t,dat);
+                    set(gca,'XLim',minmax(t));
+                end
+
+                set(ax,'XTickLabel',datestr(get(ax,'XTick'),'dd-mmm-yyyy'));
+
+                xlabel('time');
+            else
+                % no axes info available
+
+                if size(dat,2)>1
+                    surf(ax,dat'); shading flat;
+                    set(gca,'XLim',[1 size(dat,1)],'YLim',[1 size(dat,2)]);
+                else
+                    plot(ax,dat);
+                    set(gca,'XLim',[1 size(dat,1)]);
+                end
+            end
+
+            try
+                loc = xs_get(block,'W3H.LOC');
+
+                if iscell(loc)
+                    loc = loc{1};
+                end
+
+                title(loc);
+            end
         end
-    
-        set(ax,'XTickLabel',datestr(get(ax,'XTick'),'dd-mmm-yyyy'));
-    
-        xlabel('time');
-    else
-        % no axes info available
-        
-        if size(dat,2)>1
-            surf(ax,dat'); shading flat;
-            set(gca,'XLim',[1 size(dat,1)],'YLim',[1 size(dat,2)]);
-        else
-            plot(ax,dat);
-            set(gca,'XLim',[1 size(dat,1)]);
-        end
-    end
-    
-    try
-        loc = xs_get(info.input.data(info.block).value,'W3H.LOC');
-        
-        if iscell(loc)
-            loc = loc{1};
-        end
-        
-        title(loc);
     end
     
 end
@@ -231,8 +247,10 @@ function vars = get_selected(obj,name)
     
     set(get_obj(obj, name), 'Value', idx);
     
-    vars = vars(idx,:);
-    vars = strtrim(num2cell(vars, 2));
+    if ~isempty(idx) && any(idx>0)
+        vars = vars(idx,:);
+        vars = strtrim(num2cell(vars, 2));
+    end
 end
 
 function ax = get_axis(obj)
