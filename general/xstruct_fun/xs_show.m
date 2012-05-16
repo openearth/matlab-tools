@@ -18,13 +18,6 @@ function xs_show(xs, varargin)
 %   Output:
 %   none
 %
-%   Preferences:
-%   interactive     = Boolean to enable/disable interactive mode
-%
-%               Preferences overwrite default options (not explicitly
-%               defined options) and can be set and retrieved using the
-%               xs_setpref and xs_getpref functions.
-%
 %   Example
 %   xs_show(xs)
 %   xs_show(xs, 'zb', 'zs')

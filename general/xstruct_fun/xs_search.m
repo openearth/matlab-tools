@@ -1,0 +1,149 @@
+function [xsf m mn] = xs_search(xs,varargin)
+%XS_SEARCH  Simple search routine for XStructs
+%
+%   Searches names and values in an XStruct for certain patterns. Uses
+%   strfilter for the pattern matching, so supports plain text matching,
+%   asterix matching and regular expressions. Displays an interactive list
+%   with matches and returns matched indices and a filtered version of the
+%   original XStruct.
+%
+%   Syntax:
+%   [xsf m mn] = xs_search(xs,varargin)
+%
+%   Input:
+%   xs        = XStruct to be searched
+%   varargin  = filters according to the strfilter specifications
+%
+%   Output:
+%   xsf       = Filtered XStruct with only matching fields
+%   m         = Top-level variable indexes of original XStruct containing
+%               matches. This is an array containing booleans indicating if
+%               top-level fields matches.
+%   mn        = Nested variable indexes of original XStruct containing
+%               matches. This is a cell array containing booleans
+%               indicating if a field matches or other cell arrays
+%               indicating substructures matches.
+%
+%   Example
+%   xs_search(xs,'1234')
+%   xs_search(xs,'*test*')
+%   xs_search(xs,'/[A-Z].*[0-9]')
+%   xs_search(xs,'*test*','1234')
+% 
+%   xsf = xs_search(xs,'*test*')
+%   xs_show(xsf)
+%
+%   [xsf m mn] = xs_search(xs,'*test*')
+%   {xs.data(m).name}
+%
+%   See also xs_set, xs_show, strfilter
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 Deltares
+%       Bas Hoonhout
+%
+%       bas.hoonhout@deltares.nl
+%
+%       Rotterdamseweg 185
+%       2629HD Delft
+%       Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 16 May 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% read options
+
+if ~xs_check(xs); error('Invalid XStruct'); end;
+
+xsf = xs;
+
+if ~isfield(xs,'path'); xs.path = {inputname(1)}; end;
+
+%% search XStruct
+
+% intialize index vectors
+m  = false(1,length(xs.data));
+mn = num2cell(m);
+
+% loop through fields
+for i = 1:length(xs.data)
+
+    % create breadcrumb
+    b = sprintf('%s.',xs.path{2:end});
+    b = sprintf('<a href="matlab:xs_show(%s, ''%s'');">%s</a>', xs.path{1}, b(1:end-1), b(1:end-1));
+
+    % read name/value pair for current field
+    n = xs.data(i).name;
+    v = xs.data(i).value;
+
+    % match field name
+    if strfilter(n,varargin)
+        fprintf('%-20s: %s\n',[b '.' n],n);
+        mn{i} = true;
+    end
+
+    % search substructure, if available
+    if xs_check(v)
+        v.path     = [xs.path{:} {n}];
+        [xsf.data(i).value idx idxn] = xs_search(v,varargin{:});
+        if any(idx)
+            mn{i}  = idxn;
+        end
+    else
+
+        % determine variable class and convert to string representation
+        switch class(v)
+            case {'logical' 'single' 'double' 'int8' 'int16' 'int32' 'int64'}
+                v = num2str(v(:)');
+            case 'char'
+                % do nothing
+            case 'cell'
+                v = sprintf('%s ',v{:});
+            otherwise
+                v = [];
+        end
+
+        % if variable class is supported, search for matches
+        if ~isempty(v)
+            if strfilter(v,varargin)
+                fprintf('%-20s: %s\n',[b '.' n],v);
+                mn{i} = true;
+            end
+        end
+    end
+end
+
+% convert nested indices to top-level indices
+m = cellfun(@(x)~islogical(x)||x,mn);
+
+% finalize filtered structure
+xsf.data = xsf.data(m);
