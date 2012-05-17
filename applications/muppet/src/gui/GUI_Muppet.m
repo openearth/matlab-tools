@@ -3063,7 +3063,8 @@ elseif fid==-1
     GiveWarning('WarningText',txt);
 else
 %    MakeAnimation(handles,ifig);
-    MakeAnimation2(handles,ifig);
+%    MakeAnimation2(handles,ifig);
+    mp_makeAnimation(handles,ifig);
 end
 
 % --- Executes on button press in PushAnimationSettings.
