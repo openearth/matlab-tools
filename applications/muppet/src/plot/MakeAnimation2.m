@@ -200,7 +200,7 @@ for iblock=1:nrFrames
                 if Data(m).TC=='t'
                     % First see if available times exactly match current
                     % time
-                    iTime=find(handles.Figure(ifig).Axis(j).dataset(k).availableTimes==t, 1);
+                    iTime=find(abs(handles.Figure(ifig).Axis(j).dataset(k).availableTimes-t)<1/864000, 1, 'first');
                     if ~isempty(iTime)
                         Data(m).DateTime=Data(m).AvailableTimes(iTime);
                         Data=UpdateDatasets(Data,0,iTime,m);
@@ -229,13 +229,15 @@ for iblock=1:nrFrames
         % Update all datasets
         nrd=NrAvailableDatasets; % All datasets
         nrc=NrCombinedDatasets;  % Combined datasets
-        nrn=nrd-nrc; % 'Normal' datasets
+        nrn=nrd-nrc; % 'Normal' datasets        
         for m=1:nrn
+            % First update all normal datasets
             if Data(m).TC=='t'
-                Data=UpdateDatasets(Data,0,iblock,m);
+                iblck=find(abs(Data(m).AvailableTimes-t)<1/86400);
+                Data=UpdateDatasets(Data,0,iblck,m);
                 if n2>1
-                    if iblock<AnimationSettings.LastStep
-                        Data2=UpdateDatasets(Data2,0,iblock+1,m);
+                    if iblck<AnimationSettings.LastStep
+                        Data2=UpdateDatasets(Data2,0,iblck+1,m);
                     end
                 end
             end
@@ -347,7 +349,6 @@ for iblock=1:nrFrames
         fgname{iblock}=figname;
 
     end
-
 
     if AnimationSettings.KeepFigures==0 && ~AnimationSettings.makeKMZ
         delete(figname);
