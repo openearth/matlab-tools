@@ -37,6 +37,9 @@ if isfield(model,'websites')
         if isfield(model.websites(j).website,'locationx') && isfield(model.websites(j).website,'locationy')
             hm.models(i).webSite(j).Location(1)=str2double(model.websites(j).website.locationx);
             hm.models(i).webSite(j).Location(2)=str2double(model.websites(j).website.locationy);
+        else isfield(model.websites(j).website,'longitude') && isfield(model.websites(j).website,'latitude')
+            hm.models(i).webSite(j).Location(1)=str2double(model.websites(j).website.longitude);
+            hm.models(i).webSite(j).Location(2)=str2double(model.websites(j).website.latitude);
         end
         if isfield(model.websites(j).website,'elevation')
             hm.models(i).webSite(j).elevation=str2double(model.websites(j).website.elevation);
