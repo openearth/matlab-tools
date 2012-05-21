@@ -19,6 +19,7 @@ function [result equivFORMResult] = plotMCResult(result, varargin)
 %                                       (default: 1)
 %                 'space'           = variable space in which data is
 %                                       plotted (u or x, default: u)
+%                 'vars'            = variables to be plotted
 %                 'plotDP'          = determines whether Design Point is
 %                                       plotted and, if necessary,
 %                                       approximated (true or false,
@@ -93,6 +94,7 @@ function [result equivFORMResult] = plotMCResult(result, varargin)
 OPT = struct(...
     'figureID', [], ...
     'space', 'u', ...
+    'vars', {{}}, ...
     'plotDP', false, ...
     'printDP', false, ...
     'precisionDP', 0, ...
@@ -157,6 +159,11 @@ for i = 1:length(distributions)
     end
 end
 activeVars = ~cellfun(@isempty, distributions);
+
+% determine which stochasts are enabled
+if ~isempty(OPT.vars)
+    activeVars = ismember(varNames,OPT.vars) & activeVars;
+end
 
 % determine indexes failure and non-failure points
 idxFail = find(result.Output.idFail==1);
