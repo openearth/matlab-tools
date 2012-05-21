@@ -114,7 +114,7 @@ try
     for i=1:nb
         if strcmpi(handles.Model(md).Input(id).openBoundaries(i).forcing,'A')
             switch lower(handles.Model(md).Input(id).openBoundaries(i).type)
-                case{'r','z'}
+                case{'r','z','n'}
                     igetwl=1;
             end
         end
@@ -287,7 +287,7 @@ try
                 handles.Model(md).Input(id).astronomicComponentSets(k).component{i}=upper(Constituents(i).name);
                 
                 switch lower(handles.Model(md).Input(id).openBoundaries(n).type)
-                    case{'z'}
+                    case{'z','n'}
                         handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(i)=ampaz(i,n);
                         handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phaseaz(i,n);
                     case{'c'}
@@ -334,7 +334,7 @@ try
                 handles.Model(md).Input(id).astronomicComponentSets(k).component{i}=upper(Constituents(i).name);
                 
                 switch lower(handles.Model(md).Input(id).openBoundaries(n).type)
-                    case{'z'}
+                    case{'z','n'}
                         handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(i)=ampbz(i,n);
                         handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phasebz(i,n);
                     case{'c'}
