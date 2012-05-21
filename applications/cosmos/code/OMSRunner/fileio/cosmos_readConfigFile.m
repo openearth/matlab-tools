@@ -50,6 +50,8 @@ txt=ReadTextFile(fname);
 
 n=length(txt);
 hm.nrProfilesPerJob=50;
+hm.clusterNode=[];
+
 for i=1:n
     switch lower(txt{i}),
         case {'rundirectory'}
@@ -76,6 +78,8 @@ for i=1:n
             hm.h4.path=txt{i+1};
         case {'nrprofilesperjob'}
             hm.nrProfilesPerJob=str2double(txt{i+1});
+        case {'clusternode'}
+            hm.clusterNode=txt{i+1};
     end
 end
 
