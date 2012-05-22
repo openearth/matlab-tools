@@ -129,6 +129,7 @@ ii=handles.Toolbox(tb).Input.activeTideStation;
 
 latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
 wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude);
+wl=wl+handles.Toolbox(tb).Input.verticalOffset;
 
 stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
 ddb_plotTimeSeries(tim,wl,stationName);
@@ -146,6 +147,7 @@ ii=handles.Toolbox(tb).Input.activeTideStation;
 latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
 wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude, ...
     'timezone',handles.Toolbox(tb).Input.timeZone);
+wl=wl+handles.Toolbox(tb).Input.verticalOffset;
 
 stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
 shortName=handles.Toolbox(tb).Input.database(iac).stationShortNames{ii};
