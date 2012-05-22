@@ -183,7 +183,7 @@ for jj = 1:length(fns1);
 end
 multiWaitbar('Processing file','close');
 multiWaitbar('Generating netcdf from source files...','close');
-returnmessage(OPT.main.log,'Netcdf generation completed\n')
+fprintf(OPT.main.log,'Netcdf generation completed\n')
 
 %% return OPT
 varargout = {OPT};
@@ -273,7 +273,10 @@ while ~outdated && ii<length(nc_fns)
     end
     
     % collect source file hashes
-    source_file_hash = [source_file_hash; ncread(ncfile,'source_file_hash')']; %#ok<AGROW>
+    source_file_hash_info = ncinfo(ncfile,'source_file_hash');
+    if source_file_hash_info.Size(2) > 0
+        source_file_hash = [source_file_hash; ncread(ncfile,'source_file_hash')']; %#ok<AGROW>
+    end
 end
 if ~outdated
     % check hashes
