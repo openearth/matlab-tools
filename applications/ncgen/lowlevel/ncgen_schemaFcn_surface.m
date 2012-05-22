@@ -30,7 +30,13 @@ if nargin == 0 || isempty(OPT)
     varargout                    = {OPT.schema};
     return
 else
-    narginchk(1,1)
+    if datenum(version('-date'), 'mmmm dd, yyyy') < 734729
+        % version 2011a and older
+        error(nargchk(1,1,nargin))
+    else
+        % version 2011b and newer
+        narginchk(1,1)
+    end
 end
 
 

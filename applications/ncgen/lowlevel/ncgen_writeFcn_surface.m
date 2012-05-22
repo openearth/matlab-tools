@@ -8,7 +8,13 @@ if nargin == 0 || isempty(OPT)
     varargout               = {OPT.write};
     return
 else
-    narginchk(2,2)
+    if datenum(version('-date'), 'mmmm dd, yyyy') < 734729
+        % version 2011a and older
+        error(nargchk(2,2,nargin))
+    else
+        % version 2011b and newer
+        narginchk(2,2)
+    end
 end
 
 

@@ -64,7 +64,13 @@ function varargout = ncgen_mainFcn(schemaFcn, readFcn, writeFcn, varargin)
 % $Keywords: $
 
 %% First basic input check
-narginchk(3,inf)
+if datenum(version('-date'), 'mmmm dd, yyyy') < 734729
+    % version 2011a and older
+    error(nargchk(3,inf,nargin))
+else
+    % version 2011b and newer
+    narginchk(3,inf)
+end
 
 if isempty(schemaFcn); schemaFcn = @(~)    struct('undefined',true); else  assert(isa(schemaFcn,'function_handle'),'schemaFcn must be a function handle'); end
 if isempty(readFcn);   readFcn   = @(~,~,~)struct('undefined',true); else  assert(isa(readFcn,  'function_handle'),  'readFcn must be a function handle'); end
@@ -285,5 +291,5 @@ else
     a = length(fns1);
     fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
     b = length(fns1);
-    returnmessage(OPT.main.log,'%d of %d source files where skipped as they where already processed.\n',a-b,a);
+    fprintf(OPT.main.log,'%d of %d source files where skipped as they where already processed.\n',a-b,a);
 end  
