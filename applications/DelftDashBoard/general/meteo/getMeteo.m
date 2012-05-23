@@ -135,12 +135,12 @@ else
         
         tt(2)=min(tt(2),t1);
         
-        switch lower(meteoloc)
-            case{'nomads'}
+%        switch lower(meteoloc)
+%            case{'nomads'}
                 getMeteoFromNomads3(meteoname,outputMeteoName,cycledate,cyclehour,tt,xlim,ylim,outdir,pars,pr);
-            case{'matroos'}
+%            case{'matroos'}
 %                getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
-        end
+%        end
         
         if tnext>tLastAnalyzed
             break;

@@ -88,19 +88,33 @@ end
 
 try
     
-    tminstr=nc_attget(urlstr,'time','minimum');
-    tmaxstr=nc_attget(urlstr,'time','maximum');
-    tminstr=deblank(strrep(tminstr,'z',''));
-    tmaxstr=deblank(strrep(tmaxstr,'z',''));
-    for i=1:10
-        try
-            tmin=datenum(tminstr(3:end),'ddmmmyyyy')+str2double(tminstr(1:2))/24;
-            tmax=datenum(tmaxstr(3:end),'ddmmmyyyy')+str2double(tmaxstr(1:2))/24;
-            break
-        catch
-            pause(0.1);
-        end
+    switch lower(meteosource)
+        case{'hirlam'}
+            tms=nc_varget(urlstr,'time');
+            tmin=datenum(1970,1,1)+tms(1)/1440;
+            tmax=datenum(1970,1,1)+tms(end)/1440;
+            lonstr='x';
+            latstr='y';
+            missvalstr=[];
+        otherwise
+            tminstr=nc_attget(urlstr,'time','minimum');
+            tmaxstr=nc_attget(urlstr,'time','maximum');
+            tminstr=deblank(strrep(tminstr,'z',''));
+            tmaxstr=deblank(strrep(tmaxstr,'z',''));
+            for i=1:10
+                try
+                    tmin=datenum(tminstr(3:end),'ddmmmyyyy')+str2double(tminstr(1:2))/24;
+                    tmax=datenum(tmaxstr(3:end),'ddmmmyyyy')+str2double(tmaxstr(1:2))/24;
+                    break
+                catch
+                    pause(0.1);
+                end
+            end
+            lonstr='lon';
+            latstr='lat';
+            missvalstr='missing_value';
     end
+    
     timdim=nc_getdiminfo(urlstr,'time');
     nt=timdim.Length;
     
@@ -115,7 +129,7 @@ try
     end
     
     %% Longitude
-    lon=nc_varget(urlstr,'lon');
+    lon=nc_varget(urlstr,lonstr);
     if ~isempty(xlim)
         ilon1=find(lon<=xlim(1), 1, 'last' );
         ilon2=find(lon>=xlim(2), 1 );
@@ -131,7 +145,7 @@ try
     end
     
     %% Latitude
-    lat=nc_varget(urlstr,'lat');
+    lat=nc_varget(urlstr,latstr);
     if ~isempty(ylim)
         ilat1=find(lat<=ylim(1), 1, 'last' );
         ilat2=find(lat>=ylim(2), 1 );
@@ -172,9 +186,11 @@ try
         end
         
         d.(parstr{i})=data;
-        nanval1=nc_attget(urlstr,parstr{i},'missing_value');
         
-        d.(parstr{i})(d.(parstr{i})==nanval1)=NaN;
+        if ~isempty(missvalstr)
+            nanval1=nc_attget(urlstr,parstr{i},'missing_value');
+            d.(parstr{i})(d.(parstr{i})==nanval1)=NaN;
+        end
         
         switch lower(parstr{i})
             case{'tmp2m'}

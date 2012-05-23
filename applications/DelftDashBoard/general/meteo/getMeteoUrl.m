@@ -67,6 +67,8 @@ function urlstr = getMeteoUrl(meteosource,cycledate,cyclehour,varargin)
 % end
 %% code
 switch lower(meteosource)
+    case{'hirlam'}
+        urlstr=['http://opendap-matroos.deltares.nl/thredds/dodsC/maps/normal/knmi_hirlam_maps/' datestr(cycledate+cyclehour/24,'yyyymmddHHMM') '.nc'];
     case{'ncep_gfs_analysis'}
         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_GFS_ANALYSIS/analysis_complete';
     case{'ncep_gfs'}
