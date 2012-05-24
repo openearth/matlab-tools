@@ -85,7 +85,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       OPT.epsg           = 28992;
       OPT.type           = 'float'; %'double'; % the nefis file is by default single precision
       OPT.quiet          = 'quiet';
-      OPT.mode           = '64bit_offset';
+      OPT.mode           = 'clobber'; %'64bit_offset' creates a netcdf-3 file with 64-bit offset that cannot be used with Ncbrowse 
       OPT.stride         = 1; % write chunks per layer in case of large 3D matrices
       
       if ~odd(nargin)
@@ -151,8 +151,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
       %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
    
       if ~isempty(OPT.epsg)
-     [G.lon,G.lat] = convertcoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-     [G.lon,G.lat] = convertcoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+     [G.lon,G.lat] = convertCoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+     [G.lon,G.lat] = convertCoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
 
       nc_attput(ncfile, nc_global, 'geospatial_lat_min'  , min(G.lon(:)));
       nc_attput(ncfile, nc_global, 'geospatial_lat_max'  , max(G.lon(:)));
@@ -393,41 +393,97 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Dimension', {{'time','Station','Layer'}}, ...
           'Attribute', attr);
       
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'specific_kinetic_energy_of_sea_water');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'k');       % not in NEFIS file
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2 s-2');  % not in NEFIS file 
+% (a) i need bottom stresses (variable copied from ZWL)      
+      ifld     = ifld + 1;clear attr; d3d_name = 'ZTAUKS';
+      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'N m-2');
       if isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZTUR');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'TKE', ...
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bed shear stresses are in real world directions x and y');
+      nc(ifld) = struct('Name', 'tau_x', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','LayerInterf'}}, ...
-          'Attribute', attr);
-      
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_kinetic_energy_dissipation_per_unit_area_due_to_vertical_friction');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'eps');    % not in NEFIS file
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'W m-2');  % not in NEFIS file
+          'Dimension', {{'time', 'Station'}}, ...
+          'Attribute', attr);      
+    
+      ifld     = ifld + 1;clear attr; d3d_name = 'ZTAUET';
+      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'N m-2');
       if isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZTUR');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'eps', ...
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bed shear stresses are in real world directions x and y');
+      nc(ifld) = struct('Name', 'tau_y', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','LayerInterf'}}, ...
-          'Attribute', attr);
+          'Dimension', {{'time', 'Station'}}, ...
+          'Attribute', attr); 
       
-%% 4 Create variables with attibutes
+ % (b) and i need salinity (variable copied from ZCURU)
+      ifld     = ifld + 1;clear attr;d3d_name = 'GRO';
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_salinity');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'psu');
+      if isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      else
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      end
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      nc(ifld) = struct('Name', 'salinity', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'time','Station','Layer'}}, ...
+          'Attribute', attr);
+   
+% (c) but i don't need this   
+%       ifld     = ifld + 1;clear attr
+%       attr(    1)  = struct('Name', 'standard_name', 'Value', 'specific_kinetic_energy_of_sea_water');
+%       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'k');       % not in NEFIS file
+%       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2 s-2');  % not in NEFIS file 
+%       if isempty(OPT.epsg)
+%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+%       else
+%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+%       end
+%       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZTUR');
+%       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
+%       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+%       nc(ifld) = struct('Name', 'TKE', ...
+%           'Nctype'   , OPT.type, ...
+%           'Dimension', {{'time','Station','LayerInterf'}}, ...
+%           'Attribute', attr);
+%       
+%       ifld     = ifld + 1;clear attr
+%       attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_kinetic_energy_dissipation_per_unit_area_due_to_vertical_friction');
+%       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'eps');    % not in NEFIS file
+%       attr(end+1)  = struct('Name', 'units'        , 'Value', 'W m-2');  % not in NEFIS file
+%       if isempty(OPT.epsg)
+%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+%       else
+%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+%       end
+%       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZTUR');
+%       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
+%       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+%       nc(ifld) = struct('Name', 'eps', ...
+%           'Nctype'   , OPT.type, ...
+%           'Dimension', {{'time','Station','LayerInterf'}}, ...
+%           'Attribute', attr);
+      
+%% 4 Create variables with attributes
    
       for ifld=1:length(nc)
          if OPT.debug
@@ -478,12 +534,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
               data = vs_let(F,'his-series','ZCURV',{0 k},OPT.quiet);
               nc_varput(ncfile,'u_y',data,[0 0 k-1],[size(data) 1]);
           end
-          for k=1:G.kmax+1
-              data = vs_let(F,'his-series','ZTUR',{0 k 1},OPT.quiet);
-              nc_varput(ncfile,'TKE',data,[0 0 k-1],[size(data) 1]);
-              data = vs_let(F,'his-series','ZTUR',{0 k 2},OPT.quiet);
-              nc_varput(ncfile,'eps',data,[0 0 k-1],[size(data) 1]);
-          end
+% i don't need this         
+%           for k=1:G.kmax+1
+%               data = vs_let(F,'his-series','ZTUR',{0 k 1},OPT.quiet);
+%               nc_varput(ncfile,'TKE',data,[0 0 k-1],[size(data) 1]);
+%               data = vs_let(F,'his-series','ZTUR',{0 k 2},OPT.quiet);
+%               nc_varput(ncfile,'eps',data,[0 0 k-1],[size(data) 1]);
+%           end
       else
           data = vs_let(F,'his-series','ZCURU',OPT.quiet);
           nc_varput(ncfile,'u_x',data);
@@ -492,23 +549,23 @@ function varargout = vs_trih2nc(vsfile,varargin)
           data = vs_let(F,'his-series','ZCURV',OPT.quiet);
           nc_varput(ncfile,'u_y',data);
           nc_attput(ncfile,'u_y','actual_range',[min(data(:)) max(data(:))]);
-
-          data = vs_let(F,'his-series','ZTUR',{0 0 1},OPT.quiet);
-          nc_varput(ncfile,'TKE',data);
-          nc_attput(ncfile,'TKE','actual_range',[min(data(:)) max(data(:))]);
-
-          data = vs_let(F,'his-series','ZTUR',{0 0 2},OPT.quiet);
-          nc_varput(ncfile,'eps',data);
-          nc_attput(ncfile,'eps','actual_range',[min(data(:)) max(data(:))]);
+% i don't need this
+%           data = vs_let(F,'his-series','ZTUR',{0 0 1},OPT.quiet);
+%           nc_varput(ncfile,'TKE',data);
+%           nc_attput(ncfile,'TKE','actual_range',[min(data(:)) max(data(:))]);
+% 
+%           data = vs_let(F,'his-series','ZTUR',{0 0 2},OPT.quiet);
+%           nc_varput(ncfile,'eps',data);
+%           nc_attput(ncfile,'eps','actual_range',[min(data(:)) max(data(:))]);
       end
 
-     %data = vs_let(F,'his-series','ZTAUKS')
-     %nc_varput(ncfile,'tau_x,data);
-     %nc_attput(ncfile,'tau_x','actual_range',data)
+     data = vs_let(F,'his-series','ZTAUKS')
+     nc_varput(ncfile,'tau_x',data);
+     nc_attput(ncfile,'tau_x','actual_range',data)
 
-     %data = vs_let(F,'his-series','ZTAUET')
-     %nc_varput(ncfile,'tau_y',data);
-     %nc_attput(ncfile,'tau_y','actual_range',data)
+     data = vs_let(F,'his-series','ZTAUET')
+     nc_varput(ncfile,'tau_y',data);
+     nc_attput(ncfile,'tau_y','actual_range',data)
 
      %data = vs_let(F,'his-series','FLTR')
      %nc_varput(ncfile,'cumQ',data);
@@ -518,7 +575,17 @@ function varargout = vs_trih2nc(vsfile,varargin)
      %nc_varput(ncfile,'Q',data);
      %nc_attput(ncfile,'Q','actual_range',data)
 
-      if isfield(I,'salinity')
+      if isfield(I,'salinity')  
+      if OPT.stride
+          for k=1:G.kmax
+              data = vs_let(F,'his-series','GRO',{0,[ k ],[ 1 ]},OPT.quiet);
+              nc_varput(ncfile,'salinity',data,[0 0 k-1],[size(data) 1]);
+          end
+      else
+          data = vs_let(F,I.salinity.groupname,I.salinity.elementname,{0,0,[ I.salinity.index ]},OPT.quiet);
+          nc_varput(ncfile,'salinity',data);
+          nc_attput(ncfile,'salinity','actual_range',[min(data(:)) max(data(:))]);
+      end   
       end
       if isfield(I,'temperature')
       end
