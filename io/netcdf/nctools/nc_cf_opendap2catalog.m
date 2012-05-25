@@ -209,7 +209,7 @@ for entry=1:length(OPT.files)
    urlPath            = OPT.urlPathFcn(OPT.filename);
    ATT.urlPath{entry} = urlPath;
    
-   ATT1 = nc_cf_file2catalog(OPT.filename);
+   ATT1 = nc_harvest1(OPT.filename);
    
    ATT.projectionEPSGcode{entry}            = ATT1.projectionEPSGcode;
    ATT.geospatialCoverage_northsouth{entry} = [ATT1.geospatialCoverage.northsouth.start ATT1.geospatialCoverage.northsouth.end];
@@ -219,8 +219,8 @@ for entry=1:length(OPT.files)
    ATT.projectionCoverage_y{entry}          = [ATT1.geospatialCoverage.y.start          ATT1.geospatialCoverage.y.end         ];
    ATT.datenum{entry}                       = [ATT1.timeCoverage.start                  ATT1.timeCoverage.end                 ];
 
-   ATT.standard_names{entry}                = ATT1.standard_names;
-   ATT.long_names    {entry}                = ATT1.long_names;
+   ATT.standard_names{entry}                = ATT1.standard_name;
+   ATT.long_names    {entry}                = ATT1.long_name;
     
 %% include variables
 
