@@ -73,20 +73,19 @@ end
 %% turn fun into a function handle
 [fun fl] = checkfhandle(fun);
 
-if ~fl
-   error('GETVARIABLES:NotExistingFile',['File ', fun, ' does not exist']);
-end
-
 %% read relevant part of caller function
 
 str = getFunctionCall(fun);
+
+if ~fl && isempty(str)
+   error('GETVARIABLES:NotExistingFile',['File ', fun, ' does not exist']);
+end
 
 if isempty(str)
     inputVariables = 'varargin';
     return
 end
 
-ids = [strfind(str, '(')+1 strfind(str, ')')-1];
-        
 %% read input variables from string
-inputVariables = strread(strrep(str(min(ids):max(ids)), ',', ' '), '%s');
+inputVariables = cellfun(@strtrim, regexp(str, '(?<=(\(|,))[^,=\[\]]*(?=(\)|,))', 'match'),...
+    'UniformOutput', false);

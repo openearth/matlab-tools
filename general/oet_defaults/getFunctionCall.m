@@ -68,6 +68,8 @@ if fl
     if strcmp(funinfo.file, 'MATLAB built-in function')
         warning([fname ' is a MATLAB built-in function, ' mfilename ' is not able to get the function call.'])
         str = '';
+    elseif strcmp(funinfo.type, 'anonymous')
+        str = funinfo.function;
     elseif isempty(funinfo.file)
         str = '';
     else

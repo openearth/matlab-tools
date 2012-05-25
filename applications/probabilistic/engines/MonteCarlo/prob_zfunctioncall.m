@@ -122,12 +122,29 @@ function inputargs = x2inputargs(fun, x, stochast)
 
 inputargs = {};
 
-for ivar = 1:length(stochast)
-    if isfield(stochast(ivar), 'Name') && isOETInputCompatible(fun) || (all(isfield(stochast(ivar), {'Name' 'propertyName'})) && stochast(ivar).propertyName)
-        % propertyName is equal to Name in stochast structure
-        inputargs = [inputargs {stochast(ivar).Name} {x(:,ivar)}];
+inputvars = getInputVariables(fun);
+
+if all(strcmp(inputvars, 'varargin'))
+    inputvars = {};
+end
+
+% make sure that the propertyName field is available
+if ~isfield(stochast, 'propertyName')
+    if isOETInputCompatible(fun)
+        propertyName = true;
     else
-        % no propertyName is defined
-        inputargs = [inputargs {x(:,ivar)}];
+        propertyName = false;
+    end
+    for ivar = 1:numel(stochast)
+        stochast(ivar).propertyName = propertyName;
     end
 end
+
+[tf loc] = ismember(inputvars, {stochast([stochast.propertyName] == false).Name});
+
+singleargs = num2cell(x(:,[stochast.propertyName] == false),1);
+singleargs = singleargs(loc(tf));
+
+pvargs = [{stochast([stochast.propertyName] == true).Name}; num2cell(x(:,[stochast.propertyName] == true),1)];
+
+inputargs = [singleargs(:); pvargs(:)]';

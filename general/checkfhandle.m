@@ -47,6 +47,9 @@ function [fhandle fl fname] = checkfhandle(fhandle)
 
 %%
 fl = true;
+if ischar(fhandle) && isvector(fhandle) && strcmp(fhandle(1), '@')
+    fhandle = str2func(fhandle);
+end
 if ~isa(fhandle, 'function_handle')
     [path fname] = fileparts(fhandle);
     exid = exist(fhandle);
