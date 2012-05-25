@@ -4,18 +4,20 @@ function D = nc_harvest(ncfiles,varargin)
 %  struct = nc_harvest(ncfiles)
 %
 % harvests (extracts) <a href="http://cf-pcmdi.llnl.gov/">CF meta-data</a> + <a href="http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/index.html">THREDDS catalog</a>
-% meta-data from list of ncfiles (netCDF file/OPeNDAP url)
+% meta-data from cell list of ncfiles (netCDF file/OPeNDAP url)
 % into an array of multi-layered structs.
 %
 % NC_HARVEST is a simple loop around NC_HARVEST1 
 % that extracts only one ncfile (netCDF file/OPeNDAP url).
 %
 % Use OPENDAP_CATALOG to obtain a list of netCDF 
-% files to which you can apply NC_HARVEST.
+% files to which you can apply NC_HARVEST or call
+%
+%  struct = nc_harvest(opendap_url)
 %
 % Save struct to THREDDS catalog.xml with NC_HARVEST2XML.
 %
-% This function will replace NC_CF_OPENDAP2CATALOG in the near future.
+% NB This function will replace NC_CF_OPENDAP2CATALOG in the near future.
 %
 %See also: NC_INFO, nc_dump, NC_ACTUAL_RANGE, NC_HARVEST1, OPENDAP_CATALOG, 
 %          thredds_dump, thredds_info, nc_harvest2xml
@@ -25,6 +27,11 @@ function D = nc_harvest(ncfiles,varargin)
    
    OPT = setproperty(OPT,varargin);
    
+   if ~iscell(ncfiles)
+   url     = ncfiles;
+   ncfiles = opendap_catalog(url);
+   end
+
    n       = length(ncfiles);
 
    if ~(OPT.flat)

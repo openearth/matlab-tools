@@ -21,7 +21,6 @@ function nc_cf_grid_test
     ncfile  = fullfile(fileparts(mfilename('fullpath')),['tests',filesep,'nc_cf_grid_write_test_',num2str(getpref('SNCTOOLS','PRESERVE_FVD')),'_',version('-release'),  '.nc']);
    cdlfile  = fullfile(fileparts(mfilename('fullpath')),['tests',filesep,'nc_cf_grid_write_test_',num2str(getpref('SNCTOOLS','PRESERVE_FVD')),'_',version('-release'),  '.cdl']);
    pngfile2 = fullfile(fileparts(mfilename('fullpath')),['tests',filesep,'nc_cf_grid_write_test_',num2str(getpref('SNCTOOLS','PRESERVE_FVD')),'_',version('-release'),'rw.png']);
-   
 
    if getpref('SNCTOOLS','PRESERVE_FVD')==0
       nc_cf_grid_write(ncfile,...

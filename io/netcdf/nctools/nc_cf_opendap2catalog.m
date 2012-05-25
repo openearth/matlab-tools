@@ -1,27 +1,31 @@
 function varargout = nc_cf_opendap2catalog(varargin)
 %NC_CF_OPENDAP2CATALOG   harvester for netCDF-CF in THREDDS OPeNDAP catalogues: returns meta-data
 %
+% NB We are praring to replace nc_cf_opendap2catalog with nc_harvest.
+%
 %   ATT = nc_cf_opendap2catalog(<baseurl>,<keyword,value>)
 %   ATT = nc_cf_opendap2catalog(<files>  ,<keyword,value>)
 %
 % Extracts meta-data from all netCDF files in <baseurl>, which can 
 % be either an OPeNDAP catalog or a local directory. It is a harvester 
 % on top of the crawler OPENDAP_CATALOG. Each node is harvested with 
-% nc_cf_file2catalog. The full catalof is written to file nc2struct:
+% nc_cf_file2catalog. The full catalog is written to file nc2struct:
 %
-%  +--------------------------+
-%  |nc_cf_opendap2catalog     |
-%  |   +----------------------+
-%  |   |crawler:              |
-%  |   |OPENDAP_CATALOG       |
-%  |   +----------------------+
-%  |   |for each node:        |
-%  |   |   +------------------+
-%  |   |   |harvester:        |
-%  |   |   |nc_cf_file2catalog|
-%  |   +---+------------------+
-%  |   |nc2struct             |
-%  +---+----------------------+
+%  +-----------------------------------+
+%  |Loop:                              |
+%  |NC_CF_OPENDAP2CATALOG > NC_HARVEST |
+%  |   +-------------------------------+
+%  |   |crawler:                       |
+%  |   |OPENDAP_CATALOG                |
+%  |   +-------------------------------+
+%  |   |for each dataset node:         |
+%  |   |   +---------------------------+
+%  |   |   |harvester:                 |
+%  |   |   |NC_HARVEST1                |
+%  |   +---+---------------------------+
+%  |   |Store meta-data in cache:      |
+%  |   |NC2STRUCT                      |
+%  +---+-------------------------------+
 %
 % Set 'maxlevel' to crawl deeper (default 1). When you query a local directory, 
 % and you want the resulting catalog.nc to work on a server, use keyword
