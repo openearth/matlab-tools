@@ -13,6 +13,11 @@
         <elements>Delft3DFLOW.output.storage.xml</elements>
       </tab>
       <tab>
+        <tag>waqinput</tag>
+        <tabstring>WAQ Input</tabstring>
+        <elements>Delft3DFLOW.output.waqinput.xml</elements>
+      </tab> 
+      <tab>
         <tag>print</tag>
         <tabstring>Print</tabstring>
         <callback>ddb_Delft3DFLOW_print</callback>
@@ -31,7 +36,7 @@
         <tabstring>Fourier Analysis</tabstring>
         <callback>ddb_Delft3DFLOW_fourier</callback>
         <elements>Delft3DFLOW.output.fourier.xml</elements>
-      </tab>
+      </tab>     
     </tabs>
   </element>
 </root>

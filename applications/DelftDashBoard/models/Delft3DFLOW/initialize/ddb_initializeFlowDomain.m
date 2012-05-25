@@ -502,4 +502,11 @@ handles.Model(md).Input(id).thickTop=2;
 handles.Model(md).Input(id).thickBot=2;
 handles.Model(md).Input(id).layerOption=1;
 
+%% WAQ input
+handles.Model(md).Input(id).WAQcomStartTime=handles.Model(md).Input(id).startTime;
+handles.Model(md).Input(id).WAQcomStopTime=handles.Model(md).Input(id).startTime;
+handles.Model(md).Input(id).WAQcomInterval=0;
+handles.Model(md).Input(id).ilAggr = {'1'};
+handles.Model(md).Input(id).WaqAgg= 'active only';
+
 

@@ -475,6 +475,15 @@ tstop=(Flow.comStopTime-Flow.itDate)*1440.0;
 tint=Flow.comInterval;
 MDF.Flpp =[tstart tint tstop];
 MDF.Flrst=Flow.rstInterval;
+% WAQ input
+if Flow.WAQcomInterval>0
+    tstart=(Flow.WAQcomStartTime-Flow.itDate)*1440.0;
+    tstop=(Flow.WAQcomStopTime-Flow.itDate)*1440.0;
+    tint=Flow.WAQcomInterval;
+    MDF.Flwq =[tstart tint tstop];
+    MDF.ilAggr = str2num(Flow.ilAggr{1});
+    MDF.WaqAgg = Flow.WaqAgg;
+end
 
 if Flow.airOut
     MDF.AirOut='Y';
@@ -552,7 +561,7 @@ for i=1:length(Names)
                 str=['        #' deblank(Runtxt(j,:)) repmat(' ',1,30-length(deblank(Runtxt(j,:)))) '#'];
                 fprintf(fid,'%s\n',str);
             end
-        case{'mnkmax','tzone','ktemp','irov','iter','hturnd','mnmaxw'}
+        case{'mnkmax','tzone','ktemp','irov','iter','hturnd','mnmaxw','ilaggr'}
             % integers
             n=length(getfield(MDF,Names{i}));
             fmt=[repmat(' %3i',1,n)];
