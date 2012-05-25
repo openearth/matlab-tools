@@ -24,14 +24,18 @@ function result = MC(varargin)
 %            and input is stored in the 'settings' field. The 'Output'
 %            field contains the following information:
 %               P_f :    probability of failure
-%               Beta :   ??
+%               Beta :   beta representation of probability of failure
+%               Calc :   number of calculations made
+%               nFail :  number of calculations leading to failure
 %               P_exc :  probability of exceedance for each individual
 %                        realisation
 %               P_corr : correction factor (only plays a role in importance
 %                        sampling applications)
-%               Calc :   number of calculations (equal to 'NrSamples' in
-%                        settings-field)
 %               idFail : boolean indicating which calculations failed
+%               Acy :    accuracy of probability of failure within
+%                        requested confidence interval (default: 95%)
+%               Acy_rel: relative accuracy with respect to probability of
+%                        failure (=Acy/P_f)
 %               u :      values in the normally distributed spaces (for each
 %                        sample and each variable)
 %               P :      probabilities of non-exceedance for each of the
@@ -97,7 +101,10 @@ OPT = struct(...
     'IS',           struct(),   ...     % sampling structure
     'P2xFunction',  @P2x,       ...     % function to transform P to x
     'seed',         NaN,        ...     % seed for random generator
+    'confidence',   .95,        ...     % confidence interval for computation of accuracy
+    'accuracy',     [],         ...     % required accuracy (negative value indicates relative to Pf)
     'result',       struct(),   ...     % input existing result structure to re-calculate existing samples
+    'verbose',      false,      ...     % display convergence
     ...
     ... deprecated importance sampling parameters
     ...
@@ -124,6 +131,19 @@ if result_as_input
     OPT = newOPT;
 end
 
+%% initialize accuracy measures
+
+Acy_abs = Inf;
+Acy_rel = Inf;
+
+if ~isempty(OPT.accuracy) && OPT.accuracy~=0
+    minAccuracy = abs(OPT.accuracy);
+    relAccuracy = OPT.accuracy<0;
+else
+    minAccuracy = Inf;
+    relAccuracy = false;
+end
+
 %% start monte carlo routine
 
 stochast    = OPT.stochast;
@@ -133,37 +153,59 @@ IS          = OPT.IS;
 active      = ~cellfun(@isempty, {stochast.Distr}) &     ...
               ~strcmp('deterministic', cellfun(@func2str, {stochast.Distr}, 'UniformOutput', false));
 
-if result_as_input
-    P       = OPT.result.Output.P;
-    P_corr  = OPT.result.Output.P_corr;
-    P_exc   = OPT.result.Output.P_exc;
-    x       = OPT.result.Output.x;
-else
-    if ~isnan(OPT.seed)
-        rand('seed', OPT.seed)
+n = 1;
+while ~isfinite(Acy_abs) || ~isfinite(Acy_rel) || ...
+    (relAccuracy && Acy_rel > minAccuracy) || (~relAccuracy && Acy_abs > minAccuracy)
+
+    idx = [(n-1)*OPT.NrSamples+1:n*OPT.NrSamples]';
+          
+    if result_as_input
+        P(idx,:)        = OPT.result.Output.P;
+        P_corr(idx,:)   = OPT.result.Output.P_corr;
+        P_exc(idx,1)    = OPT.result.Output.P_exc;
+        x(idx,:)        = OPT.result.Output.x;
+    else
+        if ~isnan(OPT.seed)
+            rand('seed', OPT.seed)
+        end
+
+        % draw random numbers
+        P(idx, active)              = rand(OPT.NrSamples, sum(active));
+        P(idx,~active)              = .5;
+
+        % perform importance sampling
+        [P(idx,:) P_corr(idx,:)]    = prob_is(stochast, IS, P(idx,:));
+
+        % determine probability of exceedance
+        P_exc(idx,1)                = prod(1-P(idx,active).*repmat(P_corr(idx,:),1,sum(active)),2);
+
+        % transform P to x
+        x(idx,:)                    = feval(OPT.P2xFunction, stochast, P(idx,:));
+    end
+
+    % determine failures
+    z(idx,1)    = prob_zfunctioncall(OPT, stochast, x(idx,:));
+    idFail(idx,1) = z(idx) < 0;
+
+    % determine probability of failure
+    P_z         = cumsum(idFail.*P_corr)./[1:n*OPT.NrSamples]';
+    P_f         = P_z(end);
+
+    % compute accuracy
+    COV  = sqrt(mean((P_z-P_f).^2))/P_f;
+    Acy_abs = norm_inv((OPT.confidence+1)/2,0,1)*COV*P_f;
+    Acy_rel = Acy_abs/P_f;
+    
+    P_z(P_z==0) = NaN;
+    P_f(P_z==0) = NaN;
+    
+    if OPT.verbose
+        fprintf('%04d: P_f = %3.2e, Acy = %3.2e (%3.2f%%)\n', n, P_f, Acy_abs, Acy_rel*100);
     end
     
-    % draw random numbers
-    P(:, active)    = rand(OPT.NrSamples, sum(active));
-    P(:,~active)    = .5;
-    
-    % perform importance sampling
-    [P P_corr]      = prob_is(stochast, IS, P);
-    
-    % determine probability of exceedance
-	P_exc           = prod(1-P(:,active).*repmat(P_corr,1,sum(active)),2);
-    
-    % transform P to x
-    x               = feval(OPT.P2xFunction, stochast, P);
+    n = n + 1;
+
 end
-
-% determine failures
-z           = prob_zfunctioncall(OPT, stochast, x);
-idFail      = z < 0;
-
-% determine probability of failure
-P_f         = sum(idFail.*P_corr)/OPT.NrSamples;
-P_f(P_f==0) = NaN;
 
 %% create result structure
 
@@ -174,9 +216,12 @@ result = struct(...
                         'P_f',      P_f,                    ...
                         'Beta',     norm_inv(1-P_f, 0, 1),  ...
                         'Calc',     size(z,1),              ...
+                        'nFail',    sum(idFail),            ...
                         'P_exc',    P_exc,                  ...
                         'P_corr',   P_corr,                 ...
                         'idFail',   idFail,                 ...
+                        'Acy',      Acy_abs,                ...
+                        'Acy_rel',  Acy_rel,                ...
                         'u',        norm_inv(P, 0, 1),      ...
                         'P',        P,                      ...
                         'x',        x,                      ...
