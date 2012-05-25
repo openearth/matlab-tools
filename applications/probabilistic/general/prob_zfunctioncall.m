@@ -120,8 +120,6 @@ function inputargs = x2inputargs(fun, x, stochast)
 % create cell array of input arguments in same order as defined in
 % the stochast structure
 
-inputargs = {};
-
 inputvars = getInputVariables(fun);
 
 if all(strcmp(inputvars, 'varargin'))
@@ -130,21 +128,16 @@ end
 
 % make sure that the propertyName field is available
 if ~isfield(stochast, 'propertyName')
-    if isOETInputCompatible(fun)
-        propertyName = true;
-    else
-        propertyName = false;
-    end
-    for ivar = 1:numel(stochast)
-        stochast(ivar).propertyName = propertyName;
-    end
+    [stochast.propertyName] = deal(isOETInputCompatible(fun));
 end
 
-[tf loc] = ismember(inputvars, {stochast([stochast.propertyName] == false).Name});
+idx = [stochast.propertyName];
 
-singleargs = num2cell(x(:,[stochast.propertyName] == false),1);
+[tf loc] = ismember(inputvars, {stochast(~idx).Name});
+
+singleargs = num2cell(x(:,~idx),1);
 singleargs = singleargs(loc(tf));
 
-pvargs = [{stochast([stochast.propertyName] == true).Name}; num2cell(x(:,[stochast.propertyName] == true),1)];
+pvargs = [{stochast(idx).Name}; num2cell(x(:,idx),1)];
 
 inputargs = [singleargs(:); pvargs(:)]';
