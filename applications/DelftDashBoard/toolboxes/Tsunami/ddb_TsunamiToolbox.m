@@ -87,72 +87,219 @@ else
     %Options selected
     opt=lower(varargin{1});
     switch opt
-        case{'editdepth'}
-            editQuakeParameters;
-        case{'selecttidedatabase'}
-            selectTideDatabase;
-        case{'selecttidestation'}
-            selectTideStation;
-        case{'viewtidesignal'}
-            viewTideSignal;
-        case{'exporttidesignal'}
-            exportTideSignal;
-        case{'exportalltidesignals'}
-            exportAllTideSignals;
+        case{'editmw'}
+            editMw;
         case{'drawfaultline'}
             drawFaultLine;
         case{'computewaterlevel'}
             computeWaterLevel;
+        case{'loaddata'}
+            loadTableData;
+        case{'savedata'}
+            saveTableData;
     end
 end
 
 %%
-function editQuakeParameters
+function editMw
 
 handles=getHandles;
-%updateQuakeParameters;
+
+handles=updateTsunamiValues(handles,'mw');
+
 if handles.Toolbox(tb).Input.updateTable
-    updateTable;
+    handles=updateTableValues(handles);
 end
 
+setHandles(handles);
+
+setUIElement('editwidth');
+setUIElement('edittheoreticallength');
+setUIElement('editslip');
+setUIElement('tsunamitable');
+
 %%
-function drawFaultLine
+function loadTableData
+
 handles=getHandles;
+
+[filename, pathname, filterindex] = uigetfile('*.xml', 'Select Tsunami File','');
+
+if filename==0
+    return
+end
+
+filename=[pathname filename];
+handles.Toolbox(tb).Input.tsunameTableFile=[pathname filename];
+handles=ddb_loadTsunamiTableFile(handles,filename);
+handles=convertFaultCoordinates(handles,'latlon2xy');
+handles=computeLengthAndStrike(handles);
+
+% Update 'bulk' parameters
+handles=updateTsunamiValues(handles,'length');
+
+handles.Toolbox(tb).Input.newFaultLine=0;
+
+setHandles(handles);
+
+setUIElement('editmw');
+setUIElement('editwidth');
+setUIElement('edittheoreticallength');
+setUIElement('editlength');
+setUIElement('editslip');
+setUIElement('tsunamitable');
+
+plotFaultLine;
+
+%%
+function plotFaultLine
+
+handles=getHandles;
+
 ddb_zoomOff;
 h=findobj(gcf,'Tag','tsunamiFault');
 if ~isempty(h)
     delete(h);
 end
-UIPolyline(gca,'draw','Tag','tsunamiFault','Marker','o','Callback',@changeFaultLine,'closed',0);
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    x=handles.Toolbox(tb).Input.segmentLon;
+    y=handles.Toolbox(tb).Input.segmentLat;
+else
+    x=handles.Toolbox(tb).Input.segmentX;
+    y=handles.Toolbox(tb).Input.segmentY;
+end
+
+UIPolyline(gca,'plot','x',x,'y',y,'Tag','tsunamiFault','Marker','o','Callback',@changeFaultLine);
+
+%%
+function saveTableData
+handles=getHandles;
+
+[filename, pathname, filterindex] = uiputfile('*.xml', 'Select Tsunami XML File','');
+if filename==0
+    return
+end
+filename=[pathname filename];
+handles.Toolbox(tb).Input.tsunameTableFile=filename;
 setHandles(handles);
-%setUIElement('bathymetrypanel.export.savepolygon');
+ddb_saveTsunamiTableFile(handles,filename);
+
+
+%%
+function drawFaultLine
+handles=getHandles;
+
+[handles,ok]=ddb_getInitialTsunamiParameters(handles);
+
+if ok
+    ddb_zoomOff;
+    h=findobj(gcf,'Tag','tsunamiFault');
+    if ~isempty(h)
+        delete(h);
+    end
+    UIPolyline(gca,'draw','Tag','tsunamiFault','Marker','o','Callback',@changeFaultLine,'closed',0);
+    handles.Toolbox(tb).Input.newFaultLine=1;
+    setHandles(handles);
+end
+
+%%
+function handles=computeLengthAndStrike(handles)
+% Compute new length
+x = handles.Toolbox(tb).Input.segmentX;
+y = handles.Toolbox(tb).Input.segmentY;
+pd=pathdistance(x,y);
+handles.Toolbox(tb).Input.length=pd(end)/1000;
+
+% Compute new strike
+handles.Toolbox(tb).Input.segmentStrike=[];
+handles.Toolbox(tb).Input.segmentStrike(1)=90-180*atan2(y(2)-y(1),x(2)-x(1))/pi;
+for i=2:length(x)
+    handles.Toolbox(tb).Input.segmentStrike(i)=90-180*atan2(y(i)-y(i-1),x(i)-x(i-1))/pi;
+end
 
 %%
 function changeFaultLine(x,y,varargin)
 
 handles=getHandles;
 
-
-%% Convert coordinate system
-cs0=handles.screenParameters.coordinateSystem;
-if strcmpi(cs0.type,'geographic')
-    % Convert x and y to lat-lon
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
     handles.Toolbox(tb).Input.segmentLon=x;
     handles.Toolbox(tb).Input.segmentLat=y;
-    utmz = fix( ( x(1) / 6 ) + 31);
-    if y(1)>0
-        handles.Toolbox(tb).Input.utmZone=['WGS 84 / UTM zone ' num2str(utmz) 'N'];
-    else
-        handles.Toolbox(tb).Input.utmZone=['WGS 84 / UTM zone ' num2str(utmz) 'S'];
-    end
-    cs1.name=handles.Toolbox(tb).Input.utmZone;
-    cs1.type='projected';
-    [x,y]=ddb_coordConvert(x,y,cs0,cs1);
-    handles.Toolbox(tb).Input.segmentX=x;
-    handles.Toolbox(tb).Input.segmentY=y;
+    handles=convertFaultCoordinates(handles,'latlon2xy');
 else
     handles.Toolbox(tb).Input.segmentX=x;
     handles.Toolbox(tb).Input.segmentY=y;
+    handles=convertFaultCoordinates(handles,'xy2latlon');
+end
+
+handles=computeLengthAndStrike(handles);
+
+% Update theoretical parameters
+if handles.Toolbox(tb).Input.updateParameters
+    handles=updateTsunamiValues(handles,'length');
+end
+
+% Update segment values
+if handles.Toolbox(tb).Input.updateTable || handles.Toolbox(tb).Input.newFaultLine
+    handles.Toolbox(tb).Input.segmentDepth=[];
+    handles.Toolbox(tb).Input.segmentDip=[];
+    handles.Toolbox(tb).Input.segmentSlipRake=[];
+    for i=1:length(x)
+        handles.Toolbox(tb).Input.segmentDepth(i)=handles.Toolbox(tb).Input.depth;
+        handles.Toolbox(tb).Input.segmentDip(i)=handles.Toolbox(tb).Input.dip;
+        handles.Toolbox(tb).Input.segmentSlipRake(i)=handles.Toolbox(tb).Input.slipRake;
+    end
+    handles=updateTableValues(handles);
+end
+
+handles.Toolbox(tb).Input.newFaultLine=0;
+
+setHandles(handles);
+
+setUIElement('editmw');
+setUIElement('editwidth');
+setUIElement('edittheoreticallength');
+setUIElement('editlength');
+setUIElement('editslip');
+setUIElement('tsunamitable');
+
+%%
+function handles=convertFaultCoordinates(handles,opt)
+
+% Computes x and y or lat and lon values of fault line
+
+switch lower(opt)
+    case{'latlon2xy'}
+    % Convert x and y to lat-lon
+    x=handles.Toolbox(tb).Input.segmentLon;
+    y=handles.Toolbox(tb).Input.segmentLat;
+    switch lower(handles.screenParameters.coordinateSystem.type)
+        case{'projected','cartesian'}
+            % Horizontal coordinate system already projected
+            cs0.name='WGS 84';
+            cs0.type='geographic';
+            cs1=handles.screenParameters.coordinateSystem;
+        otherwise
+            % Horizontal coordinate system is geographic, so find matching
+            % UTM system
+            cs0=handles.screenParameters.coordinateSystem;
+            utmz = fix( ( x(1) / 6 ) + 31);
+            if y(1)>0
+                utmZone=['WGS 84 / UTM zone ' num2str(utmz) 'N'];
+            else
+                utmZone=['WGS 84 / UTM zone ' num2str(utmz) 'S'];
+            end
+            cs1.name=utmZone;
+            cs1.type='projected';
+    end
+    [x,y]=ddb_coordConvert(x,y,cs0,cs1);
+    handles.Toolbox(tb).Input.segmentX=x;
+    handles.Toolbox(tb).Input.segmentY=y;
+case{'xy2latlon'}
+    % Only used if screen coordinate system is projected
+    x=handles.Toolbox(tb).Input.segmentX;
+    y=handles.Toolbox(tb).Input.segmentY;
+    cs0=handles.screenParameters.coordinateSystem;
     cs1.name='WGS 84';
     cs1.type='geographic';
     [lon,lat]=ddb_coordConvert(x,y,cs0,cs1);
@@ -160,19 +307,21 @@ else
     handles.Toolbox(tb).Input.segmentLat=lat;
 end
 
+%%
+function handles=updateTsunamiValues(handles,opt)
 
-pd=pathdistance(x,y);
-handles.Toolbox(tb).Input.length=pd(end)/1000;
 
-% Compute magnitude
-if (handles.Toolbox(tb).Input.length > 0)
-    Mw = (log10(handles.Toolbox(tb).Input.length) + 2.44) / 0.59;
-    handles.Toolbox(tb).Input.Mw = Mw ;
+switch opt
+    case{'mw'}
+        Mw=handles.Toolbox(tb).Input.Mw;
+    case{'length'}
+        % Compute magnitude based on length
+        if (handles.Toolbox(tb).Input.length > 0)
+            Mw = (log10(handles.Toolbox(tb).Input.length) + 2.44) / 0.59;
+            handles.Toolbox(tb).Input.Mw = Mw ;
+        end
 end
 
-% Compute slip
-
-%totflength=handles.Toolbox(tb).Input.faultLength;
 mu=30.0e9;
 Areaeq=4;
 
@@ -183,6 +332,11 @@ Areaeq=4;
 %         3 = average (Jef);
 %         4 = Max. Length and Max width from options 1 & 2
 %
+
+fwidth=0;
+totflength=0;
+disloc=0;
+
 if (Mw > 5)
     Mo = 10.0^(1.5*Mw+9.05);
     disloc = 0.02*10.0^(0.5*Mw-1.8); % dslip in meters
@@ -223,39 +377,31 @@ end
 
 handles.Toolbox(tb).Input.width=fwidth;
 handles.Toolbox(tb).Input.slip=disloc;
+handles.Toolbox(tb).Input.theoreticalFaultLength=totflength;
 
-% Clear variables
-handles.Toolbox(tb).Input.segmentStrike=[];
+
+
+%%
+function handles=updateTableValues(handles)
+
 handles.Toolbox(tb).Input.segmentWidth=[];
-handles.Toolbox(tb).Input.segmentDepth=[];
-handles.Toolbox(tb).Input.segmentDip=[];
-handles.Toolbox(tb).Input.segmentSlipRake=[];
 handles.Toolbox(tb).Input.segmentSlip=[];
 
-% First the strike
-handles.Toolbox(tb).Input.segmentStrike(1)=90-180*atan2(y(2)-y(1),x(2)-x(1))/pi;
-for i=2:length(x)
-    handles.Toolbox(tb).Input.segmentStrike(i)=90-180*atan2(y(i)-y(i-1),x(i)-x(i-1))/pi;
+for i=1:length(handles.Toolbox(tb).Input.segmentLon)
+    handles.Toolbox(tb).Input.segmentWidth(i)=handles.Toolbox(tb).Input.width;
+    handles.Toolbox(tb).Input.segmentSlip(i)=handles.Toolbox(tb).Input.slip;
 end
-
-for i=1:length(x)
-    handles.Toolbox(tb).Input.segmentWidth(i)=fwidth;
-    handles.Toolbox(tb).Input.segmentDepth(i)=20;
-    handles.Toolbox(tb).Input.segmentDip(i)=10;
-    handles.Toolbox(tb).Input.segmentSlipRake(i)=90;
-    handles.Toolbox(tb).Input.segmentSlip(i)=disloc;
-end
-
-setHandles(handles);
-
-setUIElement('editmw');
-setUIElement('editwidth');
-setUIElement('editlength');
-setUIElement('editslip');
-setUIElement('tsunamitable');
 
 %%
 function computeWaterLevel
+
+handles=getHandles;
+
+% First check to see if a grid was loaded
+if isempty(handles.Model(md).Input(ad).gridX)
+    giveWarning('text','Please first create or load model grid!');
+    return
+end
 
 [filename, pathname, filterindex] = uiputfile('*.ini', 'Select Initial Conditions File','');
 
@@ -264,9 +410,7 @@ if ~isempty(pathname)
     wb = waitbox('Generating initial tsunami wave ...');
     
     try
-        
-        handles=getHandles;
-        
+                
         xs=handles.Toolbox(tb).Input.segmentX;
         ys=handles.Toolbox(tb).Input.segmentY;
         wdts=handles.Toolbox(tb).Input.segmentWidth;
@@ -338,20 +482,38 @@ if ~isempty(pathname)
         
         % Reset all boundary conditions to Riemann in order to avoid
         % reflections at the boundaries.
-        ButtonName = questdlg('Reset all boundaries to Riemann in order to avoid boundary reflections?','','No', 'Yes', 'Yes');
-        switch ButtonName,
-            case 'Yes'
-                for id=1:handles.Model(md).nrDomains
-                    for nb=1:handles.Model(md).Input(id).nrOpenBoundaries
-                        handles.Model(md).Input(id).openBoundaries(nb).type='R';
-                        handles.Model(md).Input(id).openBoundaries(nb).forcing='T';
-                        t0=handles.Model(md).Input(id).startTime;
-                        t1=handles.Model(md).Input(id).stopTime;
-                        handles.Model(md).Input(id).openBoundaries(nb).timeSeriesT=[t0 t1];
-                        handles.Model(md).Input(id).openBoundaries(nb).timeSeriesA=[0.0 0.0];
-                        handles.Model(md).Input(id).openBoundaries(nb).timeSeriesB=[0.0 0.0];
-                    end
+        
+        % First check whether other boundary types are there
+        bndr=1;
+        for id=1:handles.Model(md).nrDomains
+            for nb=1:handles.Model(md).Input(id).nrOpenBoundaries
+                switch lower(handles.Model(md).Input(id).openBoundaries(nb).type)
+                    case{'r'}
+                    otherwise
+                        bndr=0;
                 end
+            end
+        end
+        if ~bndr
+            ButtonName = questdlg('Reset all boundaries to Riemann in order to avoid boundary reflections?','','No', 'Yes', 'Yes');
+            switch ButtonName,
+                case 'Yes'
+                    for id=1:handles.Model(md).nrDomains
+                        for nb=1:handles.Model(md).Input(id).nrOpenBoundaries
+                            switch lower(handles.Model(md).Input(id).openBoundaries(nb).type)
+                                case{'r'}
+                                otherwise                                    
+                                    handles.Model(md).Input(id).openBoundaries(nb).type='R';
+                                    handles.Model(md).Input(id).openBoundaries(nb).forcing='T';
+                                    t0=handles.Model(md).Input(id).startTime;
+                                    t1=handles.Model(md).Input(id).stopTime;
+                                    handles.Model(md).Input(id).openBoundaries(nb).timeSeriesT=[t0 t1];
+                                    handles.Model(md).Input(id).openBoundaries(nb).timeSeriesA=[0.0 0.0];
+                                    handles.Model(md).Input(id).openBoundaries(nb).timeSeriesB=[0.0 0.0];
+                            end
+                        end
+                    end
+            end
         end
         
         setHandles(handles);

@@ -96,16 +96,19 @@ handles.Toolbox(ii).Input.nrSegments=0;
 
 % Overall info
 handles.Toolbox(ii).Input.relatedToEpicentre=0;
-handles.Toolbox(ii).Input.updateTable=0;
+handles.Toolbox(ii).Input.updateTable=1;
+handles.Toolbox(ii).Input.updateParameters=1;
 
 % Earthquake info
 handles.Toolbox(ii).Input.Mw=0.0;
-handles.Toolbox(ii).Input.depth=0.0;
+handles.Toolbox(ii).Input.depth=20.0;
 handles.Toolbox(ii).Input.length=0.0;
+handles.Toolbox(ii).Input.theoreticalFaultLength=0.0;
 handles.Toolbox(ii).Input.width=0.0;
 handles.Toolbox(ii).Input.slip=0.0;
 handles.Toolbox(ii).Input.strike=0.0;
-handles.Toolbox(ii).Input.slipRake=0.0;
+handles.Toolbox(ii).Input.dip=10.0;
+handles.Toolbox(ii).Input.slipRake=90.0;
 handles.Toolbox(ii).Input.lonEpicentre=0.0;
 handles.Toolbox(ii).Input.latEpicentre=0.0;
 

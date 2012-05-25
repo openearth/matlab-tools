@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <title>Earthquake Parameters</title>
+  <width>240</width>
+  <height>120</height>
+  <tag>tsunamiparameters</tag>
+  <elements>
+  <element>
+    <tag>editdepth</tag>
+    <style>edit</style>
+    <position>180 90 50 20</position>
+    <variable>handles.Toolbox(tb).Input.depth</variable>
+    <type>real</type>
+    <text>Depth (km)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit earthquake depth (km)</tooltipstring> 
+  </element>
+  <element>
+    <tag>editdip</tag>
+    <style>edit</style>
+    <position>180 65 50 20</position>
+    <variable>handles.Toolbox(tb).Input.dip</variable>
+    <type>real</type>
+    <text>Dip (deg)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit earthquake dip (degrees)</tooltipstring> 
+  </element>
+  <element>
+    <tag>editsliprake</tag>
+    <style>edit</style>
+    <position>180 40 50 20</position>
+    <variable>handles.Toolbox(tb).Input.slipRake</variable>
+    <type>real</type>
+    <text>Slip/rake (deg)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit earthquake slip/rake (degrees)</tooltipstring> 
+  </element>
+  <element>
+    <tag>pushok</tag>
+    <style>pushbutton</style>
+    <position>180 10 50 20</position>
+    <text>OK</text>
+    <callback>ddb_getInitialCycloneTrackParameters</callback>
+    <option1>pushok</option1>
+  </element>  
+  <element>
+    <tag>pushcancel</tag>
+    <style>pushbutton</style>
+    <position>120 10 50 20</position>
+    <text>Cancel</text>
+    <callback>ddb_getInitialCycloneTrackParameters</callback>
+    <option1>pushcancel</option1>
+  </element>  
+  </elements>
+</root>
