@@ -31,6 +31,8 @@ if ~exist(ncfile,'file')
     ncwrite(ncfile,'x',data.x);
     ncwrite(ncfile,'y',data.y);
     [x,y] = meshgrid(data.x,data.y);
+    % transpose x and y to comply with the size of z
+    [x y] = deal(x', y');
     if ~isempty(OPT.schema.EPSGcode)
         ncwrite(ncfile,'crs',OPT.schema.EPSGcode);
         if OPT.schema.includeLatLon

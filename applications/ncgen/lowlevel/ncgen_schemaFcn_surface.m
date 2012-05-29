@@ -40,8 +40,8 @@ else
 end
 
 
-dimstruct        = nccreateDimstruct('Name','x','Length',OPT.schema.grid_tilesize);
-dimstruct(end+1) = nccreateDimstruct('Name','y','Length',OPT.schema.grid_tilesize);
+dimstruct        = nccreateDimstruct('Name','x','Length',OPT.schema.grid_tilesize(1));
+dimstruct(end+1) = nccreateDimstruct('Name','y','Length',OPT.schema.grid_tilesize(end));
 dimstruct(end+1) = nccreateDimstruct('Name','time','Unlimited',true);
 dimstruct(end+1) = nccreateDimstruct('Name','dim16','Length',16);
 dimstruct(end+1) = nccreateDimstruct('Name','nSourcefiles','Unlimited',true,'Length',inf);
