@@ -183,7 +183,7 @@ for jj = 1:length(fns1);
 end
 multiWaitbar('Processing file','close');
 multiWaitbar('Generating netcdf from source files...','close');
-fprintf(OPT.main.log,'Netcdf generation completed\n')
+returnmessage(OPT.main.log,'Netcdf generation completed\n')
 
 %% return OPT
 varargout = {OPT};
