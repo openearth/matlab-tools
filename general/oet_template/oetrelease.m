@@ -74,14 +74,20 @@ OPT = struct(...
     'folders'       , cd,...
     'files'         , 'oetsettings',...
     'omitextensions', {{'.asv' '.m~'}},...
+    'omitfiles'     , {{}},...
     'omitdirs'      , {{'svn'}},...
-    'copy'          , true);
+    'copy'          , true,...
+    'log'           , true);
  
 if odd(nargin)
    OPT = setproperty(OPT, varargin{2:end});
    OPT.folders = varargin{1};
 else
    OPT = setproperty(OPT, varargin);
+end
+
+if ischar(OPT.omitextensions)
+   OPT.omitextensions = {OPT.omitextensions};
 end
 
 %% gather all files of the selected (sub) folders
@@ -93,6 +99,7 @@ end
    files = {};
    for i = 1:length(OPT.folders)
        [dirs dircont tempfiles] = dirlisting(OPT.folders{i}, OPT.omitdirs);
+       tempfiles(strfilter(tempfiles,OPT.omitfiles)) = [];
        files(end+1:end+length(tempfiles)) = tempfiles;
    end
 
@@ -110,26 +117,66 @@ end
    
 %% gather all related files (dependencies in entire active path)
 
-   i = 0;
-   while i < length(files)
-       i = i + 1;
-       [pathstr filename fileext] = fileparts(files{i});
-       if strcmp(fileext, '.m')
-           tempfiles = getCalls(files{i}, oetroot, 'quiet');
-           tempid = ~ismember(tempfiles, files);
-           files(end+1:end+sum(tempid)) = tempfiles(tempid);
-       end
-   end
+    if OPT.log
+        mkpath(OPT.targetdir);
+        fid = fopen(fullfile(OPT.targetdir,'xb_release_toolbox.log'),'w');
+    end
 
-%% filter for omit-extensions
+    i = 0;
+    ind = 0;
+    while i < length(files)
+        i = i + 1;
+        l = length(ind)-1;
+        [pathstr filename fileext] = fileparts(files{i});
+        if strcmp(fileext, '.m')
+            
+            tempfiles = getCalls(files{i}, oetroot, 'quiet');
+            
+            if ~isempty(tempfiles)
+                
+                % filter omit-extensions, files and directories
+                m1 = cellfun(@(x)strfind(tempfiles,x),OPT.omitextensions,'UniformOutput',false);
+                m1 = any(~cellfun(@isempty,reshape([m1{:}],length(tempfiles),length(OPT.omitextensions))),2);
+                m2 = strfilter(tempfiles,OPT.omitfiles);
+                m3 = false(size(tempfiles));
+                for j = 1:length(OPT.omitdirs)
+                    m3 = m3|~cellfun(@isempty,strfind(tempfiles,OPT.omitdirs{j}));
+                end
+                tempfiles(m1|m2|m3) = [];
 
-   if ischar(OPT.omitextensions)
-       OPT.omitextensions = {OPT.omitextensions};
-   end
-   for i = 1:length(OPT.omitextensions)
-       omitid = ~cellfun(@isempty, strfind(files, OPT.omitextensions{i}));
-       files(omitid) = [];
-   end
+                % filter duplicates
+                tempid = ~ismember(tempfiles, files);
+            end
+            
+            % add log lines
+            if OPT.log
+                fprintf(fid,'%02d: %s%s\r\n',l,repmat('  ',1,l),files{i});
+                if length(tempfiles)-sum(tempid)-1>0
+                    idx = find(~tempid);
+                    for j = 1:length(idx)
+                        if ~strcmpi(files{i},tempfiles{idx(j)})
+                            fprintf(fid,'%02d: %s%s <\r\n',l+1,repmat('  ',1,l+1),tempfiles{idx(j)});
+                        end
+                    end
+                end
+
+                ind(end) = max(0,ind(end)-1);
+
+                if sum(tempid)>0
+                    ind = [ind sum(tempid)];
+                else
+                    while ind(end)==0 && length(ind)>1
+                        ind(end) = [];
+                    end
+                end
+            end
+            
+            % add dependencies
+            files = [files(1:i) tempfiles(tempid)' files(i+1:end)];
+        end
+    end
+
+    fclose(fid);
 
 %% copy all selected files to separate folder
 
@@ -151,7 +198,7 @@ end
 %% create zipfile of newly created folder
 
     if OPT.copy
-       mkdir(OPT.targetdir)
+       mkpath(OPT.targetdir)
        zip(OPT.zipfilename, OPT.targetdir, oetroot)
     end
 

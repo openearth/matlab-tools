@@ -155,15 +155,15 @@ if l == 1
 end
 
 % include swtable, if necessary
-if strcmpi(instat, 'jons') && OPT.swtable
-    swtable = xs_empty();
-    fpath = fullfile(fileparts(which(mfilename)), 'RF_table.txt');
-    if exist(fpath, 'file')
-        swtable = xs_set(swtable, 'data', load(fpath));
-        swtable = xs_meta(swtable, mfilename, 'swtable', fpath);
-    end
-    
-    xb = xs_set(xb, 'swtable', swtable);
-end
+% if strcmpi(instat, 'jons') && OPT.swtable
+%     swtable = xs_empty();
+%     fpath = fullfile(fileparts(which(mfilename)), 'RF_table.txt');
+%     if exist(fpath, 'file')
+%         swtable = xs_set(swtable, 'data', load(fpath));
+%         swtable = xs_meta(swtable, mfilename, 'swtable', fpath);
+%     end
+%     
+%     xb = xs_set(xb, 'swtable', swtable);
+% end
 
 xb = xs_meta(xb, mfilename, 'input');

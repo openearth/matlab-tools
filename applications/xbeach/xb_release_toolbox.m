@@ -73,10 +73,13 @@ OPT = setproperty(OPT, varargin);
 
 % select xb_* diretories only
 fdir = [fileparts(which(mfilename)) filesep];
-fdirs = dir(fullfile(fdir, 'xb_*'));
-ffolders = {fdirs.name};
-ffolders = ffolders([fdirs.isdir]);
-folders = [{'..\..\io\' '..\..\general\'} ffolders];
+cd(fdir);
+
+%fdirs = dir(fullfile(fdir, 'xb_*'));
+%ffolders = {fdirs.name};
+%ffolders = ffolders([fdirs.isdir]);
+%folders = [{'..\..\io\' '..\..\general\'} ffolders];
+folders = [{'..\..\io\opendap\' '..\..\io\netcdf\snctools\' '..\..\io\netcdf\mexnc\' '..\..\general\xstruct_fun' '..\..\general\oet_defaults\' '..\..\general\oet_template\'} fdir];
 for i = 1:length(folders); folders{i} = abspath(folders{i}); end;
 
 % select all files and oetsettings
@@ -93,7 +96,8 @@ switch OPT.type
             'zipfilename'   , fullfile('D:', [OPT.name '.zip']), ...
             'folders'       , folders, ...
             'files'         , files, ...
-            'omitdirs'      , {'svn' '_old' '_bak', 'old', '.old', 'xb_testbed'});
+            'omitfiles'     , {'*xb_tutorial_*','*xb_release_*','*xb_addpath_old.m','*h4xb.m','*xb_get_profilespecs.m','*xb_scale.m'},...
+            'omitdirs'      , {'svn' '_old' '_bak', 'old', '.old', 'xb_testbed','xb_human', 'xb_nesting', 'xb_gui', 'debug_fun', 'maintenance', 'tests'});
     case 'tag'
 
         [r m] = system('svn ?');
