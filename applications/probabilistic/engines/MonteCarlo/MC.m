@@ -139,9 +139,11 @@ Acy_rel = Inf;
 if ~isempty(OPT.accuracy) && OPT.accuracy~=0
     minAccuracy = abs(OPT.accuracy);
     relAccuracy = OPT.accuracy<0;
+    useAccuracy = true;
 else
     minAccuracy = Inf;
     relAccuracy = false;
+    useAccuracy = false;
 end
 
 %% start monte carlo routine
@@ -154,8 +156,10 @@ active      = ~cellfun(@isempty, {stochast.Distr}) &     ...
               ~strcmp('deterministic', cellfun(@func2str, {stochast.Distr}, 'UniformOutput', false));
 
 n = 1;
-while ~isfinite(Acy_abs) || ~isfinite(Acy_rel) || ...
-    (relAccuracy && Acy_rel > minAccuracy) || (~relAccuracy && Acy_abs > minAccuracy)
+while (~useAccuracy && n==1) || (useAccuracy && ( ...
+        ~isfinite(Acy_abs) || ~isfinite(Acy_rel)    || ...
+        (relAccuracy && Acy_rel > minAccuracy)      || ...
+        (~relAccuracy && Acy_abs > minAccuracy)))
 
     idx = [(n-1)*OPT.NrSamples+1:n*OPT.NrSamples]';
           
