@@ -520,11 +520,34 @@ end
 %% Stations
 if isfield(model,'stations')
     j=0;
+    switch lower(model.type)
+        case{'delft3dflow','delft3dflowwave'}
+            GRID = wlgrid('read', [hm.models(i).dir 'input' filesep hm.models(i).name '.grd']);
+            GRID.Z = -10*zeros(size(GRID.X));
+    end
     for istat=1:length(model.stations)
         iac=1;
         if isfield(model.stations(istat).station,'active')
             iac=str2double(model.stations(istat).station.active);
         end
+
+
+        if iac
+            switch lower(model.type)
+                case{'delft3dflow','delft3dflowwave'}
+                    if ~isfield(model.stations(istat).station,'locationm')
+                        [m n iindex] = ddb_findStations(str2double(model.stations(istat).station.locationx),...
+                            str2double(model.stations(istat).station.locationy),GRID.X,GRID.Y,GRID.Z);         
+                       if isempty(m)
+                           iac=0;
+                       else
+                           model.stations(istat).station.locationm=num2str(m);
+                           model.stations(istat).station.locationn=num2str(n);
+                       end
+                   end
+            end
+        end
+        
         if iac
 
             j=j+1;
@@ -588,6 +611,7 @@ if isfield(model,'stations')
                 end
             end
         end
+        
     end
 end
 
