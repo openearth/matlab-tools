@@ -87,12 +87,13 @@ end
    ncwrite(ncfile,'z',data.z,[1 1 iTimestamp]);
 
 %% add source file path and hash
-source_file_hash = [];
-source_file_hash_info = ncinfo(ncfile,'source_file_hash');
-if source_file_hash_info.Size(2) > 0
-    source_file_hash = ncread(ncfile,'source_file_hash')';
+if OPT.main.hash_source
+    source_file_hash = [];
+    source_file_hash_info = ncinfo(ncfile,'source_file_hash');
+    if source_file_hash_info.Size(2) > 0
+        source_file_hash = ncread(ncfile,'source_file_hash')';
+    end
+    source_file_hash = unique([source_file_hash; data.source_file_hash],'rows');
+    ncwrite(ncfile,'source_file_hash',source_file_hash');
 end
-source_file_hash = unique([source_file_hash; data.source_file_hash],'rows');
-ncwrite(ncfile,'source_file_hash',source_file_hash');
-
 

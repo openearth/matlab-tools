@@ -1,10 +1,10 @@
 function OPT = ncgen_surface_asc(varargin)
-%NCGEN_SURFACE_ASC  One line description goes here.
+%NCGEN_SURFACE_XYZ  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   OPT = ncgen_surface_asc(varargin)
+%   OPT = ncgen_surface_xyz(varargin)
 %
 %   Input:
 %   varargin =
@@ -13,7 +13,7 @@ function OPT = ncgen_surface_asc(varargin)
 %   OPT      =
 %
 %   Example
-%   ncgen_surface_asc
+%   ncgen_surface_xyz
 %
 %   See also
 

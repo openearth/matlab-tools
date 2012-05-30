@@ -88,6 +88,7 @@ OPT.main.unzip_with_gui = 1;
 OPT.main.dateFcn        = @(s) datenum(s(1:6),'yymmdd'); % how to extract date from the filename
 OPT.main.defaultdate    = []; 
 OPT.main.dir_depth      = inf;
+OPT.main.hash_source    = true;
 
 % path settings
 OPT.main.path_source    = ''; % path to source data. Can be a directory or a single file
@@ -146,8 +147,11 @@ if isempty(fns1)
 end
 
 % generate md5 hashes of all source files
-fns1 = hash_files(fns1);
-
+if OPT.main.hash_source
+    fns1 = hash_files(fns1);
+else
+    [fns1.hash] = deal([]);
+end
 
 %% check the contents of the output directory
 if exist(OPT.main.path_netcdf,'dir');
@@ -223,6 +227,12 @@ end
 
 function fns1 = check_existing_nc_files(OPT,fns1)
 
+if OPT.main.hash_source
+    delete(fullfile(OPT.main.path_netcdf,'*.nc'));
+    returnmessage(OPT.main.log,'Netcdf output directory emptied.\n')
+    return
+end
+    
 nc_fns = dir2(OPT.main.path_netcdf,'file_incl','\.nc$','no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
 outdated = false;
 ii=0;
@@ -294,5 +304,5 @@ else
     a = length(fns1);
     fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
     b = length(fns1);
-    fprintf(OPT.main.log,'%d of %d source files where skipped as they where already processed.\n',a-b,a);
+    fprintf(OPT.main.log,'%d of %d source files were skipped as they where already processed.\n',a-b,a);
 end  
