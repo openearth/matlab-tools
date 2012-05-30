@@ -185,7 +185,19 @@ for ipar=1:npar
     
     it0=find(t>tstart-0.001&t<tstart+0.001,1,'first');
     it1=find(t>tstop-0.001&t<tstop+0.001,1,'first');
-    
+
+%     if isempty(it0)
+%         % find nearest
+%         dt=abs(t-tstart);        
+%         it0=find(dt==min(dt),1,'first');
+%     end
+% 
+%     if isempty(it1)
+%         % find nearest
+%         dt=abs(t-tstop);
+%         it1=find(dt==min(dt),1,'first');
+%     end
+
     if isempty(it0)
         error(['First time ' datestr(tstart) ' not found in ' meteoname '!']);
     end
@@ -195,6 +207,8 @@ for ipar=1:npar
     end
     
     n=0;
+    s2.time=[];
+    
     for it=it0:it1
         
         n=n+1;
