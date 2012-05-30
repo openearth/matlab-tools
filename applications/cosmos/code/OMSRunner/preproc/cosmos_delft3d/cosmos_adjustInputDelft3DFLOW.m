@@ -17,9 +17,10 @@ if isempty(model.flowRstFile) && model.makeIniFile
     curbndfile=[model.name '.current.bnd'];
     curbcafile=[model.name '.current.bca'];
     wlconst=model.zLevel;
-    writeNestXML([tmpdir 'nest.xml'],tmpdir,model.runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst);
     cs.name=model.coordinateSystem;
     cs.type=model.coordinateSystemType;
+    writeNestXML([tmpdir 'nest.xml'],tmpdir,model.runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs);
+    disp('Making ini file ...');
     makeBctBccIni('ini','nestxml',[tmpdir 'nest.xml'],'inpdir',tmpdir,'runid',model.runid,'workdir',tmpdir,'cs',cs);
     delete([tmpdir 'nest.xml']);
 end

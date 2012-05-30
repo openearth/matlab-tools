@@ -1,9 +1,11 @@
-function writeNestXML(fname,inpdir,runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst)
+function writeNestXML(fname,inpdir,runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs)
 
 opt.bctTimeStep=10;
 opt.bccTimeStep=30;
 opt.inputFolder=inpdir;
 opt.runid=runid;
+opt.csname=cs.name;
+opt.cstype=cs.type;
 
 opt.waterLevel.bc.source='file+astro';
 opt.waterLevel.bc.dataFolder=datafolder;
