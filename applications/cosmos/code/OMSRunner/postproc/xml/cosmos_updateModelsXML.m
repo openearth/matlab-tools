@@ -159,6 +159,15 @@ for iw=1:length(model.webSite)
     mdl.lastupdate.value=[datestr(now,0) ' (CET)'];
     mdl.lastupdate.type='char';
 
+    if ~isempty(model.timeZone)
+        mdl.timezone.value=model.timeZone;
+        mdl.timezone.type='char';
+%     else
+%         mdl.timezone.value='UTC';
+%         mdl.timezone.type='char';
+    end
+    mdl.timezone.type='char';
+
     %% Profiles
 
     if cluster
