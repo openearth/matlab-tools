@@ -95,6 +95,9 @@ set(hm.textModelLoopStatus,'String','Status : Getting start and stop times ...')
 hm=cosmos_getStartStopTimes(hm);
 disp('Finished getting start and stop times');
 
+%% Determine time zones
+hm=cosmos_determineTimeZones(hm);
+
 %% Update, commit and upload scenarios.xml
 if hm.makeWebsite
     cosmos_updateScenariosDotXML(hm);
