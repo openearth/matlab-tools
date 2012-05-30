@@ -1,7 +1,10 @@
 function ph = jarkus_plot_locations_on_map(varargin)
 %JARKUS_PLOT_LOCATIONS_ON_MAP  shows locations of selected jarkus transects on map
 %
-%   More detailed description goes here.
+%   Function to plot a map of the Dutch coast with the locations of
+%   selected jarkus transects indicated. The transects can be provided as
+%   jarkus_transect structure or by directly providing jarkus_transects
+%   input arguments to the current function.
 %
 %   Syntax:
 %   ph = jarkus_plot_locations_on_map(varargin)
@@ -9,12 +12,16 @@ function ph = jarkus_plot_locations_on_map(varargin)
 %   Input:
 %   varargin  = either propertyname-propertyvalue pairs as expected by
 %               jarkus_transects or a structure obtained from jarkus_transects
+%       'projection'   either 'lonlat' (default) or 'xy'
+%       'marker'       marker (default 'o') for the transect locations
+%       'location'     legend location (default 'NorthWest')
 %
 %   Output:
 %   ph = plot handles
 %
 %   Example
-%   jarkus_plot_locations_on_map
+%    jarkus_plot_locations_on_map('id', [4001740 7001503 7003775])
+%    jarkus_plot_locations_on_map('id', [4001740 7001503 7003775], 'projection', 'xy')
 %
 %   See also jarkus_transects
 
@@ -66,15 +73,36 @@ function ph = jarkus_plot_locations_on_map(varargin)
 error(nargchk(1, Inf, nargin))
 
 OPT = struct(...
-    'projection', 'lonlat');
+    'projection', 'lonlat',...
+    'marker', 'o',...
+    'location', 'NorthWest');
 
+% identify varargin elements that relate to OPT
+OPTid = cellfun(@(x) ischar(x) && any(strcmp(x, fieldnames(OPT))), varargin);
+OPTid = OPTid | [false OPTid(1:end-1)];
+
+% set properties
+OPT = setproperty(OPT, varargin{OPTid});
+varargin(OPTid) = [];
+
+projection = reshape(OPT.projection', length(OPT.projection)/2, 2)';
+[projectionx projectiony] = deal(projection(1,:), projection(2,:));
+[rsp_x rsp_y] = deal(['rsp_' projectionx], ['rsp_' projectiony]);
+
+requiredfields = {'id' rsp_x rsp_y};
 if isscalar(varargin) && isstruct(varargin{1})
     % structure input argument is assumed to be created by jarkus_transects
     tr = varargin{1};
+    % check validity of tr structure
+    [valid message] = jarkus_check(tr, requiredfields{:});
+    if ~valid
+        % pass error message
+        error(message{1})
+    end
 else
     % transect structure is obtained by jarkus_transects
     try
-        tr = jarkus_transects(varargin{:}, 'output', {'id' 'rsp_x' 'rsp_y'});
+        tr = jarkus_transects(varargin{:}, 'output', requiredfields);
     catch E
         if strcmp(E.identifier, 'MATLAB:Java:GenericException')
             error('Memory problems occured, confine your selection by specifying "id" and "year".')
@@ -86,40 +114,29 @@ end
 url = 'http://opendap.tudelft.nl/thredds/dodsC/data2/deltares/deltares/landboundaries/holland.nc';
 
 %% obtain data
-xid = 1:length(OPT.projection)/2;
-yid = max(xid)+1:length(OPT.projection);
-x = nc_varget(url, OPT.projection(xid));
-y = nc_varget(url, OPT.projection(yid));
+x = nc_varget(url, projectionx);
+y = nc_varget(url, projectiony);
 
-xytr = [mat2cell(tr.(['rsp_' OPT.projection(xid)]), 1, ones(1,13));
-    mat2cell(tr.(['rsp_' OPT.projection(yid)]), 1, ones(1,13))];
+xytr = num2cell([tr.(rsp_x); tr.(rsp_y)]);
 
 %% plot
 ph = plot(x, y, xytr{:});
 
-%% set displaynames
+%% set displaynames and markers
 lh = findobj(ph, 'XData', x, 'YData', y);
 set(lh, 'DisplayName', 'Coastline')
 th = ph(ph~=lh);
-set(th, 'marker', 'o',...
+set(th,...
+    'marker', OPT.marker,...
     'linestyle', 'none');
-for ith = 1:length(th)
-    xt = get(th(ith), 'XData');
-    yt = get(th(ith), 'YData');
-    id = tr.id(xt == tr.(['rsp_' OPT.projection(xid)]) &...
-        yt == tr.(['rsp_' OPT.projection(yid)]));
-    set(th(ith), 'DisplayName', sprintf('%i', id))
-end
+cellfun(@(xt,yt,thh) set(thh, 'DisplayName', sprintf('%i', tr.id(xt == tr.(rsp_x) & yt == tr.(rsp_y)))), get(th, 'XData'), get(th, 'YData'), num2cell(th))
+legh = legend('show');
+set(legh,...
+    'location', OPT.location)
 
 %% set x and y labels
-if strcmp(OPT.projection(xid), 'lon')
-    xlabel('Longitude [degrees east]')
-elseif strcmp(OPT.projection(xid), 'x')
-    xlabel('x coordinate [m]')
-end
+projections = {'lat' 'lon' 'x' 'y'};
+labels = {'Latitude [degrees north]' 'Longitude [degrees east]' 'x-coordinate [m]' 'y-coordinate [m]'};
 
-if strcmp(OPT.projection(yid), 'lat')
-    ylabel('Latitude [degrees north]')
-elseif strcmp(OPT.projection(yid), 'y')
-    ylabel('y coordinate [m]')
-end
+xlabel(labels(ismember(projections, projectionx)))
+ylabel(labels(ismember(projections, projectiony)))
