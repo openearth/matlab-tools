@@ -40,11 +40,14 @@ for i=1:length(hm.oceanModels)
                 MakeDir(hm.scenarioDir,'oceanmodels',oceanname);
                 t0=floor(t0);
                 t1=ceil(t1);
-                getHYCOM(url,outname,outdir,'waterlevel',xlim,ylim,0.1,0.1,[t0 t1],s);
-                getHYCOM(url,outname,outdir,'current_u',xlim,ylim,0.1,0.1,[t0 t1],s);
-                getHYCOM(url,outname,outdir,'current_v',xlim,ylim,0.1,0.1,[t0 t1],s);
-                getHYCOM(url,outname,outdir,'salinity',xlim,ylim,0.1,0.1,[t0 t1],s);
-                getHYCOM(url,outname,outdir,'temperature',xlim,ylim,0.1,0.1,[t0 t1],s);
+                
+                daynum=nc_varget(url,'MT');
+
+                getHYCOM(url,outname,outdir,'waterlevel',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+                getHYCOM(url,outname,outdir,'current_u',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+                getHYCOM(url,outname,outdir,'current_v',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+                getHYCOM(url,outname,outdir,'salinity',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+                getHYCOM(url,outname,outdir,'temperature',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
         end
 
     end
