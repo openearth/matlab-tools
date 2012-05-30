@@ -1,4 +1,4 @@
-function MD5 = CalcMD5(Data, InClass, OutClass)  %#ok<STOUT,INUSD>
+function MD5 = CalcMD5(varargin)  %#ok<STOUT,INUSD>
 % 128 bit MD5 checksum: file, string, byte stream [MEX]
 %
 % Downloaded from the mathworks file exchange on 8-3-2012 
@@ -95,9 +95,44 @@ function MD5 = CalcMD5(Data, InClass, OutClass)  %#ok<STOUT,INUSD>
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 % POSSIBILITY OF SUCH DAMAGE.
 
-error(['JSim:', mfilename, ':NoMex'], 'Cannot find MEX script.');
 
-  
+% due to issues I do not understand, differen computers require different
+% compiled versions of this function. The first time this function is
+% called, all available methods are tested
+persistent method;
+
+% vs10: compiled with visual studio 10
+% lcc: compiled with matlab lcc compiler
+if isempty(method)
+    try
+        MD5 = CalcMD5_vs10('test','Char','hex');
+        assert(strcmp(MD5,'098f6bcd4621d373cade4e832627b4f6'));
+        method = 1;
+    catch %#ok<*CTCH>
+        try
+            MD5 = CalcMD5_lcc_1('test','Char','dec');
+            assert(strcmp(MD5,'098f6bcd4621d373cade4e832627b4f6'));
+            method = 2;
+        catch
+            try
+                MD5 = CalcMD5_lcc_2('test','Char','dec');
+                assert(strcmp(MD5,'098f6bcd4621d373cade4e832627b4f6'));
+                method = 3;
+            catch
+                error(['JSim:', mfilename, ':NoMex'], 'Cannot find MEX script.');
+            end
+        end
+    end
+end
+
+switch method
+    case 1
+        MD5 = CalcMD5_vs10 (varargin{:});
+    case 2
+        MD5 = CalcMD5_lcc_1(varargin{:});
+    case 3
+        MD5 = CalcMD5_lcc_2(varargin{:});
+end
   
   
 
