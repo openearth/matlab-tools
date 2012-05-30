@@ -61,6 +61,13 @@ hm.models(i).coordinateSystem=model.coordsys;
 hm.models(i).coordinateSystemType=model.coordsystype;
 hm.models(i).runid=model.runid;
 
+%% Time zone
+if isfield(model,'timezone')
+    hm.models(i).timeZone=model.timezone;
+else
+    hm.models(i).timeZone=[];
+end
+
 if isfield(model,'runenv')
     hm.models(i).runEnv=model.runenv;
 else
@@ -563,6 +570,13 @@ if isfield(model,'stations')
             end
             hm.models(i).stations(j).type=model.stations(istat).station.type;
 
+            if isfield(model.stations(istat).station,'timezone')
+                % Use time zone specified in station
+                hm.models(i).stations(j).timeZone=model.stations(istat).station.timezone;
+            else
+                % Use model time
+                hm.models(i).stations(j).timeZone=hm.models(i).timeZone;
+            end
             
             %% Time-series datasets
             hm.models(i).stations(j).nrDatasets=0;
