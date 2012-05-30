@@ -110,12 +110,12 @@ if isempty(method)
         method = 1;
     catch %#ok<*CTCH>
         try
-            MD5 = CalcMD5_lcc_1('test','Char','dec');
+            MD5 = CalcMD5_lcc_1('test','Char','hex');
             assert(strcmp(MD5,'098f6bcd4621d373cade4e832627b4f6'));
             method = 2;
         catch
             try
-                MD5 = CalcMD5_lcc_2('test','Char','dec');
+                MD5 = CalcMD5_lcc_2('test','Char','hex');
                 assert(strcmp(MD5,'098f6bcd4621d373cade4e832627b4f6'));
                 method = 3;
             catch

@@ -13,7 +13,7 @@ function varargout = hash_files(D,varargin)
 %   varargout =
 %
 %   Example
-%   hash_files
+%   D = hash_files(dir2('no_dirs',1))
 %
 %   See also
 
