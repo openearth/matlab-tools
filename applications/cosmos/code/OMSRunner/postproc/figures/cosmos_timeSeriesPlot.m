@@ -1,5 +1,6 @@
 function cosmos_timeSeriesPlot(fname,data,varargin)
 
+timelabel=[];
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
@@ -15,6 +16,8 @@ for i=1:length(varargin)
                 tlim=varargin{i+1};
             case{'ylim'}
                 ylim=varargin{i+1};
+            case{'timelabel'}
+                timelabel=varargin{i+1};
         end
     end
 end
@@ -48,6 +51,7 @@ set(gca,'YTick',yticks);
 
 datetick(gca,'x',15,'keepticks');
 
+
 dy=ylim(2)-ylim(1);
 roundticks=find(round(xticks)==xticks);
 for it=1:length(roundticks)
@@ -55,6 +59,13 @@ for it=1:length(roundticks)
     tx=text(xticks(itt),ylim(1)-0.15*dy,datestr(xticks(itt),'yyyy/mm/dd'));
     set(tx,'FontSize',5,'HorizontalAlignment','center');
 end
+
+if ~isempty(timelabel)
+    tx=text(0.5*(tlim(1)+tlim(2)),ylim(1)-0.22*dy,timelabel);
+    set(tx,'FontSize',5,'HorizontalAlignment','center');
+end
+
+set(gca,'XLim',tlim,'YLim',ylim);
 
 % Legend
 for i=1:length(data)
@@ -70,7 +81,7 @@ title(gca,ttl);
 tt=get(ax,'Title');
 set(tt,'FontSize',7);
 
-set(ax,'Position',[1.0 0.8 9.3 3.2]);
+set(ax,'Position',[1.0 0.85 9.3 3.2]);
 
 print(h,'-dpng',fname);
 

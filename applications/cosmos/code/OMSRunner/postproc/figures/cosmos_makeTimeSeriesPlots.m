@@ -14,12 +14,15 @@ try
             tstart=model.tOutputStart;
         end
         tstop=model.tStop;
-        
+                
         for i=1:nn
-            
+
             clear pars
             
             station=model.stations(i).name;
+
+            % Time shift
+            timeShift=model.stations(i).timeShift/24;
             
             ifg=0;
             
@@ -70,7 +73,7 @@ try
                         if isempty(it1)
                             it1=1;
                         end
-                        tms(nd).x=data.Time(it1:end);
+                        tms(nd).x=data.Time(it1:end)+timeShift;
                         tms(nd).y=data.Val(it1:end);
                         ymin=min(ymin,min(tms(nd).y));
                         ymax=max(ymax,max(tms(nd).y));
@@ -92,13 +95,15 @@ try
                 
                 % Check if there is any data in structure tms
                 if ~isempty(tms)
-                    
+
                     % X Axis properties
-                    tlim=[tstart tstop];
+
+                    tlim=[tstart tstop]+timeShift;
+
                     if tstop-tstart>8
-                        xticks=tstart:1:tstop;
+                        xticks=floor(tstart+timeShift):1:ceil(tstop+timeShift);
                     else
-                        xticks=tstart:0.5:tstop;
+                        xticks=floor(tstart+timeShift):0.5:ceil(tstop+timeShift);
                     end
                     
                     % Y Axis properties
@@ -158,7 +163,7 @@ try
                     
                     % And export the figure
                     figname=[model.dir 'lastrun' filesep 'figures' filesep par '.' station '.png'];
-                    cosmos_timeSeriesPlot(figname,tms,'ylabel',ylab,'title',ttl,'xlim',tlim,'ylim',ylim,'xticks',xticks,'yticks',yticks);
+                    cosmos_timeSeriesPlot(figname,tms,'ylabel',ylab,'title',ttl,'xlim',tlim,'ylim',ylim,'xticks',xticks,'yticks',yticks,'timelabel',model.stations(i).timeZoneString);
                     
                     % Cell array for html code
                     ifg=ifg+1;
