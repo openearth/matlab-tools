@@ -245,6 +245,8 @@ tDP = tic;
 
     % calculate probability of failure
     designPoint.P = 1 - norm_cdf(sqrt(sum((designPoint.u).^2)), 0, 1);
+    designPoint.beta = sqrt(sum(designPoint.u.^2));
+    designPoint.alpha = designPoint.u./designPoint.beta;
 
 designPoint.time = toc(tDP);
 
