@@ -1,4 +1,3 @@
-function G = readNet(varargin)
 %D-Flow FM    toolbox for handling Deltares D-Flow Flexible Mesh (FM) netCDF files
 %
 % D-Flow FM (Flexible Mesh) is the new (1D, 2D, 3D) unstructured  
