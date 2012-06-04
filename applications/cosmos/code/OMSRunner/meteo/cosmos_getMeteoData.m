@@ -43,6 +43,9 @@ for i=1:hm.nrMeteoDatasets
             end
         end
         
+        parstr=[];
+        pr=[];
+        
         if inclh
             parstr{1}=meteomodel.uwindstr;
             parstr{2}=meteomodel.vwindstr;
@@ -61,9 +64,7 @@ for i=1:hm.nrMeteoDatasets
         cycleInterval=str2double(meteomodel.cycleInterval);
         dt=str2double(meteomodel.dt);
         
-%        if inclh
         getMeteo(meteosource,meteoloc,t0,t1,xlim,ylim,outdir,cycleInterval,dt,parstr,pr,'tlastanalyzed',hm.meteo(i).tLastAnalyzed,'outputmeteoname',meteoname);
-%        end
         
         fid=fopen([outdir 'tlastanalyzed.txt'],'wt');
         fprintf(fid,'%s\n',datestr(hm.meteo(i).tLastAnalyzed,'yyyymmdd HHMMSS'));
