@@ -130,10 +130,16 @@ if length(c)==1
 elseif ~length(c)==length(lon)
     error('c should have length 1 or have same size as lon')
 end
-
-lon    = lon(~isnan(c(:)));
-lat    = lat(~isnan(c(:)));
-c      =   c(~isnan(c(:)));
+mask   = find(~isnan(c(:)));
+lon    = lon(mask);
+lat    = lat(mask);
+c      =   c(mask);
+if ~isempty(OPT.name)
+OPT.name = {OPT.name{mask}};
+end
+if ~isempty(OPT.html)
+OPT.html = {OPT.html{mask}};
+end
 
 if isnumeric(OPT.CBcolorMap)
     OPT.CBcolorSteps = size(OPT.CBcolorMap,1);
