@@ -1,9 +1,19 @@
 function varargout = vs_mask(varargin);
-%VS_AREA   Read INCORRECT cell areas from com-file.
+%VS_AREA   Read cell areas from com or trim -file.
 %
-%   area = vs_area(comfile);
+%   area = vs_area(nefisfile);
 %
-% See also: VS_USE, VS_GET, VS_LET, GETAREACURVILINEARGRID
+% Note that the area used internally for mass-consaervation
+% in Delft3D, 'GSQS' is not identical to the area
+% spanned by the four corner points of each grid cell.
+% 'GSQS' is determined by the Jacobian of the curvi-linear 
+% transformsation. Only the com file contains this variable,
+% for the trim file the area is calculated by GRID_AREA to be the 
+% exact area spanned by the four corner points. This can NOT be 
+% used to assess mass conservation of delft3d outpout (water, 
+% constituents as sediments) when your grid is curvi-linear.
+%
+% See also: VS_USE, VS_GET, VS_LET, grid_area
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2007 Delft University of Technology
@@ -17,9 +27,9 @@ function varargout = vs_mask(varargin);
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -28,9 +38,7 @@ function varargout = vs_mask(varargin);
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % $Id$
@@ -39,10 +47,9 @@ function varargout = vs_mask(varargin);
 % $Revision$
 % $HeadURL$
 
-% C is the NFS struct handle as returned by C = vs_use(...)
+   OPT.method = 'grid_area';%'GSQS';
 
    %% Input
-   %% --------------------
 
    if ~odd(nargin)
      NFStruct=vs_use('lastread');
@@ -52,38 +59,37 @@ function varargout = vs_mask(varargin);
      else % filename
         NFStruct = vs_use(varargin{1});
      end
+     if nargin > 1
+     varargin = varargin{2:end};
+     else
+     varargin = {};
+     end
    end
    
+   OPT = setproperty(OPT,varargin);
+   
    %% Test
-   %% --------------------
 
    switch vs_type(NFStruct),
-      case 'Delft3D-com',
-      otherwise
-      error('Areas only in comfile.')
+    case {'Delft3D-com','Delft3D-tram','Delft3D-botm'},
+      if strcmpi(OPT.method,'GSQS')
+      area = squeeze(vs_let(NFStruct,'GRID','GSQS'));
+      else
+      xcor = vs_get(NFStruct,'GRID','XCOR');
+      ycor = vs_get(NFStruct,'GRID','YCOR');
+      area = grid_area(xcor,ycor);
+      warning('area spanned by corner points not identical to area used internally for mass-conservation!')
+      end
+    case 'Delft3D-trim',
+      xcor = vs_get(NFStruct,'map-const','XCOR');
+      ycor = vs_get(NFStruct,'map-const','YCOR');
+      area = grid_area(xcor,ycor);
+      warning('area spanned by corner points not identical to area used internally for mass-conservation!')
+   otherwise
+      error(['NEFIS type not implemented:',vs_type(h)])
    end;
-   iargin = 1; % argument counter
-   
-   %  %% Input
-   %  %% --------------------
-   %  value = 'real';
-   %  while iargin<=nargin-2,
-   %    if ischar(varargin{iargin}),
-   %      switch lower(varargin{iargin})
-   %      case 'keyword'   ;iargin=iargin+1;value    = varargin{i};
-   %      otherwise
-   %         error(sprintf('Invalid string argument: %s.',varargin{i}));
-   %      end
-   %    end;
-   %    iargin=iargin+1;
-   %  end;   
 
-   area_wrong = squeeze(vs_let(NFStruct,'GRID','GSQS'));
-
-if nargout==1
-   varargout = {area_wrong};
-%elseif narout==2
-%   area_correct = getareacurvilineargrid()
-%   varargout = {area_wrong,area_correct};
+if nargout<2
+   varargout = {area};
 end
    

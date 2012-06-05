@@ -73,7 +73,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       OPT.debug          = 0;
       OPT.var_cf         = {'time','m','n','Layer','LayerInterf','longitude','latitude'};
       OPT.var_primary    = {'grid_m','grid_n','x','y','grid_x','grid_y','grid_longitude','grid_latitude','k','grid_depth','depth','zactive','waterlevel','salinity','temperature','u','v','w','density','tke','eps'};
-      OPT.var_derived    = {'pea'};
+      OPT.var_derived    = {'pea','area'};
       OPT.var            = {OPT.var_cf{:},OPT.var_primary{:}};
       OPT.var_all        = {OPT.var_cf{:},OPT.var_primary{:},OPT.var_derived{:}};
 
@@ -138,8 +138,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
    
       if ~isempty(OPT.epsg)
-     [G.cen.lon,G.cen.lat] = convertcoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-     [G.cor.lon,G.cor.lat] = convertcoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+     [G.cen.lon,G.cen.lat] = convertCoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+     [G.cor.lon,G.cor.lat] = convertCoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
 
       nc_attput(ncfile, nc_global, 'geospatial_lat_min'  , min(G.cor.lat(:)));
       nc_attput(ncfile, nc_global, 'geospatial_lat_max'  , max(G.cor.lat(:)));
@@ -187,7 +187,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell centers');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m = 1 and m = mmax removed.');
-      attr(end+1)  = struct('Name', 'bounds4'      , 'Value', 'grid_m');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_m');
       nc(ifld) = struct('Name', 'm', ...
           'Nctype'   , 'int', ...
           'Dimension', {{'m'}}, ...
@@ -197,7 +197,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of cell centers');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ n = 1 and n = nmax removed.');
-      attr(end+1)  = struct('Name', 'bounds4'      , 'Value', 'grid_n');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_n');
       nc(ifld) = struct('Name', 'n', ...
           'Nctype'   , 'int', ...
           'Dimension', {{'n'}}, ...
@@ -236,7 +236,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and m/n = m/nmax removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.x(:)) max(G.cen.x(:))]);
       if any(strcmp('grid_x',OPT.var))
-      attr(end+1)  = struct('Name', 'bounds4'      , 'Value', 'grid_x');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x');
       end
       nc(ifld) = struct('Name', 'x', ...
           'Nctype'   , OPT.type, ...
@@ -255,7 +255,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and m/n = m/nmax removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.y(:)) max(G.cen.y(:))]);
       if any(strcmp('grid_y',OPT.var))
-      attr(end+1)  = struct('Name', 'bounds4'      , 'Value', 'grid_y');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_y');
       end
       nc(ifld) = struct('Name', 'y', ...
           'Nctype'   , OPT.type, ...
@@ -309,7 +309,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and n = m/nmax removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lon(:)) max(G.cen.lon(:))]);
       if any(strcmp('grid_longitude',OPT.var))
-      attr(end+1)  = struct('Name', 'bounds4'      , 'Value', 'grid_longitude');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_longitude');
       end
       nc(ifld) = struct('Name', 'longitude', ...
           'Nctype'   , OPT.type, ...
@@ -328,7 +328,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and n = m/nmax removed.');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lat(:)) max(G.cen.lat(:))]);
       if any(strcmp('grid_latitude',OPT.var))
-      attr(end+1)  = struct('Name', 'bounds4'      , 'Value', 'grid_latitude');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_latitude');
       end
       nc(ifld) = struct('Name', 'latitude', ...
           'Nctype'   , OPT.type, ...
@@ -414,11 +414,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:DP map-const:DP0 map-const:DPS map-const:DRYFLP');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'sea_floor_depth');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'grid_x grid_y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'grid_latitude grid_longitude');
-      end
+      % NB for values at corners there is no bounds matrix
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
       nc(ifld) = struct('Name', 'grid_depth', ...
           'Nctype'   , OPT.type, ...
@@ -458,6 +454,25 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'zactive', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'n', 'm'}}, ...
+          'Attribute', attr);
+      end
+      
+      if any(strcmp('area',OPT.var))
+      ifld     = ifld + 1;clear attr
+      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'area of grid cells');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2');
+      if isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
+      else
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
+      end
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The exact area spanned geometrically by the 4 corner points is not identical to area GSQS used internally in Delft3D for mass-conservation!');
+      nc(ifld) = struct('Name', 'area', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'n', 'm'}}, ...
           'Attribute', attr);
@@ -628,7 +643,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent kinetic energy');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', '');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s2');
       if isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
@@ -649,7 +664,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent energy dissipation');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', '');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s3');
       if isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
       else
@@ -681,7 +696,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
       nc_varput(ncfile, 'n'             , [2:G.nmax-1  ]');
       nc_varput(ncfile, 'grid_m'        , nc_cf_cor2bounds([1:G.mmax-1  ]'));
       nc_varput(ncfile, 'grid_n'        , nc_cf_cor2bounds([1:G.nmax-1  ]'));
-
 
       data = vs_let(F,'map-const','THICK','quiet');
      [sigma,sigmaInterf] = d3d_sigma(data); % [0 .. 1]
@@ -735,22 +749,27 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
       if     any(strcmp('k',OPT.var))
-      nc_varput(ncfile, 'k'             ,1:G.kmax);
+      nc_varput(ncfile, 'k'          ,1:G.kmax);
       end
 
-      if     any(strcmp('depth',OPT.var))
-      nc_varput(ncfile, 'depth'         ,-G.cen.dep); % positive down !
-      nc_attput(ncfile, 'depth'         ,'actual_range',[min(-G.cen.dep(:)) max(-G.cen.dep(:))]);
-      end      
-
       if     any(strcmp('grid_depth',OPT.var))
-      nc_varput(ncfile, 'grid_depth'    ,-G.cor.dep); % positive down !
-      nc_attput(ncfile, 'grid_depth'    ,'actual_range',[min(-G.cor.dep(:)) max(-G.cor.dep(:))]);
+      nc_varput(ncfile, 'grid_depth',-G.cor.dep); % positive down !
+      nc_attput(ncfile, 'grid_depth','actual_range',[min(-G.cor.dep(:)) max(-G.cor.dep(:))]);
       end      
 
-      if     any(strcmp('zactive',OPT.var))
-      nc_varput(ncfile, 'zactive'       ,G.cen.mask);
-      nc_attput(ncfile, 'zactive'       ,'actual_range',[0 1]);
+      if     any(strcmp('depth'     ,OPT.var))
+      nc_varput(ncfile, 'depth'     ,-G.cen.dep); % positive down !
+      nc_attput(ncfile, 'depth'     ,'actual_range',[min(-G.cen.dep(:)) max(-G.cen.dep(:))]);
+      end      
+
+      if     any(strcmp('zactive'   ,OPT.var))
+      nc_varput(ncfile, 'zactive'   ,G.cen.mask);
+      nc_attput(ncfile, 'zactive'   ,'actual_range',[0 1]);
+      end      
+
+      if     any(strcmp('area'      ,OPT.var))
+      nc_varput(ncfile, 'area'      ,G.cen.area);
+      nc_attput(ncfile, 'area'      ,'actual_range',[0 1]);
       end      
 
       i = 0;
