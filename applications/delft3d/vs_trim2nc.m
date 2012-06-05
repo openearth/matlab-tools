@@ -587,6 +587,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
       end
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-series:S1');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -782,6 +783,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('pea'        ,OPT.var));R.pea         = [Inf -Inf];end
       if any(strcmp('salinity'   ,OPT.var));R.salinity    = [Inf -Inf];end
       if any(strcmp('temperature',OPT.var));R.temperature = [Inf -Inf];end
+      if any(strcmp('tke'        ,OPT.var));R.tke         = [Inf -Inf];end
+      if any(strcmp('eps'        ,OPT.var));R.eps         = [Inf -Inf];end
 
       for it = OPT.time
       
@@ -849,6 +852,22 @@ function varargout = vs_trim2nc(vsfile,varargin)
           data3d = vs_let_scalar    (F,'map-series' ,{it},'R1'       , {0 0 0 I.temperature.index},'quiet');
           nc_varput(ncfile,'temperature', shiftdim(data3d  ,2),[i-1, 0  0  0], [1, size(shiftdim(data3d,2))]); % go from y, x, z to z, y, x
           R.temperature = [min(R.temperature(1),min(data3d(:))) max(R.temperature(2),max(data3d(:)))];
+          end
+          end
+          
+          if any(strcmp('tke',OPT.var))
+          if isfield(I,'turbulent_energy')
+          data3d = vs_let_scalar    (F,'map-series' ,{it},'RTUR1'       , {0 0 0 I.turbulent_energy.index},'quiet');
+          nc_varput(ncfile,'tke', shiftdim(data3d  ,2),[i-1, 0  0  0], [1, size(shiftdim(data3d,2))]); % go from y, x, z to z, y, x
+          R.tke = [min(R.tke(1),min(data3d(:))) max(R.tke(2),max(data3d(:)))];
+          end
+          end
+          
+          if any(strcmp('eps',OPT.var))
+          if isfield(I,'energy_dissipation')
+          data3d = vs_let_scalar    (F,'map-series' ,{it},'RTUR1'       , {0 0 0 I.energy_dissipation.index},'quiet');
+          nc_varput(ncfile,'eps', shiftdim(data3d  ,2),[i-1, 0  0  0], [1, size(shiftdim(data3d,2))]); % go from y, x, z to z, y, x
+          R.eps = [min(R.eps(1),min(data3d(:))) max(R.eps(2),max(data3d(:)))];
           end
           end
 

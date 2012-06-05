@@ -3,15 +3,16 @@ function varargout = vs_mask(varargin);
 %
 %   area = vs_area(nefisfile);
 %
-% Note that the area used internally for mass-consaervation
+% Note that the area used internally for mass-conservation
 % in Delft3D, 'GSQS' is not identical to the area
 % spanned by the four corner points of each grid cell.
 % 'GSQS' is determined by the Jacobian of the curvi-linear 
-% transformsation. Only the com file contains this variable,
-% for the trim file the area is calculated by GRID_AREA to be the 
-% exact area spanned by the four corner points. This can NOT be 
+% transformsation. This function returns GSQS, which is different 
+% from the one calculated by GRID_AREA to be the 
+% exact area spanned by the four corner points. GRID_AREA can NOT be 
 % used to assess mass conservation of delft3d outpout (water, 
-% constituents as sediments) when your grid is curvi-linear.
+% constituents as sediments) when your grid is curvi-linear,
+% only GSQS as returned by this function can.
 %
 % See also: VS_USE, VS_GET, VS_LET, grid_area
 
@@ -47,7 +48,7 @@ function varargout = vs_mask(varargin);
 % $Revision$
 % $HeadURL$
 
-   OPT.method = 'grid_area';%'GSQS';
+   OPT.method = 'GSQS'; %'grid_area';%'GSQS';
 
    %% Input
 
@@ -81,10 +82,14 @@ function varargout = vs_mask(varargin);
       warning('area spanned by corner points not identical to area used internally for mass-conservation!')
       end
     case 'Delft3D-trim',
+      if strcmpi(OPT.method,'GSQS')
+      area = squeeze(vs_let(NFStruct,'map-const','GSQS'));
+      else
       xcor = vs_get(NFStruct,'map-const','XCOR');
       ycor = vs_get(NFStruct,'map-const','YCOR');
       area = grid_area(xcor,ycor);
       warning('area spanned by corner points not identical to area used internally for mass-conservation!')
+      end
    otherwise
       error(['NEFIS type not implemented:',vs_type(h)])
    end;
