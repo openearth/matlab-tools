@@ -388,7 +388,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer midpoints');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: sigma eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: Layer eta: waterlevel depth: depth'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
       nc(ifld) = struct('Name', 'Layer', ...
           'Nctype'   , OPT.type, ...
@@ -399,7 +399,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer interfaces');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: sigmaInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: LayerInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
       nc(ifld) = struct('Name', 'LayerInterf', ...
           'Nctype'   , OPT.type, ...
