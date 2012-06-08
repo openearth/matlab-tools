@@ -86,7 +86,7 @@ for i = 1:length(folders); folders{i} = abspath(folders{i}); end;
 %fffiles = dir(fdir);
 %ffiles = {fffiles.name};
 %ffiles = ffiles(~[fffiles.isdir]);
-files = {'oetsettings'};
+files = {'oetsettings' 'wlgrid' 'wldep'};
 
 % release toolbox
 switch OPT.type

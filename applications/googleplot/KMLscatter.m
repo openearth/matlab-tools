@@ -180,6 +180,8 @@ if OPT.colorbar
     %OPT.CBkmlName = 'colorbar';
     OPT.CBvisible = OPT.visible;
     [clrbarstring,pngNames] = KMLcolorbar(OPT);
+else
+    clrbarstring = '';
 end
 
 output = [output '<!--############################-->' eol];
