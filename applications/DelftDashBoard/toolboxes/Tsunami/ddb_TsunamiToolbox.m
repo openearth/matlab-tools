@@ -289,6 +289,7 @@ switch lower(opt)
             else
                 utmZone=['WGS 84 / UTM zone ' num2str(utmz) 'S'];
             end
+            handles.Toolbox(tb).Input.utmZone=utmZone;
             cs1.name=utmZone;
             cs1.type='projected';
     end
