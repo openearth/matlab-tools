@@ -1,0 +1,75 @@
+function S=ITHK_distrsupp_to_kml(S,ii)
+
+
+%% Get info from structure
+% General info
+output = S.output;
+duration = S.duration;
+implementation = S.implementation;
+t0 = S.kml.t0;
+% Measure info
+lat = S.distrsupp(ii).lat;
+lon = S.distrsupp(ii).lon;
+mag = S.distrsupp(ii).magnitude;
+% MDA info
+MDAdata_NEW = S.MDAdata_NEW;
+x0 = S.kml.x0;
+y0 = S.kml.y0;
+s0 = S.kml.s0;
+% Grid info
+sgridRough = S.kml.sgridRough; 
+dxFine = S.kml.dxFine;
+sVectorLength = S.kml.sVectorLength;
+idplotrough = S.kml.idplotrough;
+
+%% preparation
+x = S.kml.x0(1:307);
+y = S.kml.y0(1:307);
+
+% width suppletion
+width               = (abs(x(1)-x(end))^2+abs(y(1)-y(end))^2)^0.5;
+
+% project suppletion location on coast line
+% for jj=1:length(x)
+%     dist2           = ((x0-x(jj)).^2 + (y0-y(jj)).^2).^0.5;  % distance to coast line
+%     idNEAREST       = find(dist2==min(dist2),1,'first');
+%     x1(jj)          = x0(idNEAREST);
+%     y1(jj)          = y0(idNEAREST);
+%     s1(jj)          = s0(idNEAREST);
+%     clear dist2 idNEAREST
+% end
+
+
+%% suppletion to KML
+h = mag/width;
+for jj=1:length(x)-1
+    alpha = atan((y(jj+1)-y(jj))/(x(jj+1)-x(jj)));
+    if alpha>0
+        x2(jj)     = x(jj)+0.5*S.kml.sVectorLength*h*cos(alpha+pi()/2);
+        y2(jj)     = y(jj)+0.5*S.kml.sVectorLength*h*sin(alpha+pi()/2);
+    elseif alpha<=0
+        x2(jj)     = x(jj)+0.5*S.kml.sVectorLength*h*cos(alpha-pi()/2);
+        y2(jj)     = y(jj)+0.5*S.kml.sVectorLength*h*sin(alpha-pi()/2);
+    end
+end
+x2 = x2'; y2 = y2';
+xpoly=[x; flipud(x2); x(1)];
+ypoly=[y; flipud(y2); y(1)];
+
+% convert coordinates
+EPSG                = load('EPSG.mat');
+[lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+
+% yellow triangle
+output = [output KML_stylePoly('name','default','fillColor',[1 1 0],'lineColor',[0 0 0],'lineWidth',0,'fillAlpha',0.7)];
+% polygon to KML
+output = [output KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+implementation,1,1),'timeOut',datenum(t0+duration,1,1)+364,'styleName','default')];
+clear lonpoly latpoly
+
+%% Save info fine and rough grids for plotting bars
+S.kml.idplotrough = idplotrough;
+S.output = output;
+
+
+
+

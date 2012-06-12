@@ -1,0 +1,68 @@
+function S=ITHK_beachext_to_kml(S,ii)
+
+%% Get info from structure
+% General info
+output = S.output;
+duration = S.duration;
+implementation = S.implementation;
+t0 = S.kml.t0;
+% Measure info
+lat = S.beachextension(ii).lat;
+lon = S.beachextension(ii).lon;
+% MDA info
+MDAdata_NEW = S.MDAdata_NEW;
+x0 = S.kml.x0;
+y0 = S.kml.y0;
+s0 = S.kml.s0;
+% Grid info
+sgridRough = S.kml.sgridRough; 
+dxFine = S.kml.dxFine;
+sVectorLength = S.kml.sVectorLength;
+idplotrough = S.kml.idplotrough;
+
+%% preparation
+EPSG                = load('EPSG.mat');
+[x,y]               = convertCoordinates(lon,lat,EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+% dist2 = ((MDAdata_NEW.Xcoast-x0).^2 + (MDAdata_NEW.Ycoast-y0).^2).^0.5;
+% x1 = x0(dist2>1);x2 = MDAdata_NEW.Xcoast(dist2>1);
+% y1 = y0(dist2>1);y2 = MDAdata_NEW.Ycoast(dist2>1);
+% s1 = s0(dist2>1);
+
+for jj=1:length(x)
+    dist1 = ((MDAdata_NEW.Xcoast-x(jj)).^2 + (MDAdata_NEW.Ycoast-y(jj)).^2).^0.5;
+    x1(jj) = x0(dist1==min(dist1));x2(jj) = MDAdata_NEW.Xcoast(dist1==min(dist1));
+    y1(jj) = y0(dist1==min(dist1));y2(jj) = MDAdata_NEW.Ycoast(dist1==min(dist1));
+    s1(jj) = s0(dist1==min(dist1));
+    clear dist1
+end
+xpoly=[x1(1:end) x2(end:-1:1) x1(1)];
+ypoly=[y1(1:end) y2(end:-1:1) y1(1)];
+
+% convert coordinates
+[lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+lonpoly     = lonpoly';
+latpoly     = latpoly';
+
+% yellow plane
+output = [output KML_stylePoly('name','default','fillColor',[1 1 0],'lineColor',[0 0 0],'lineWidth',0,'fillAlpha',0.7)];
+% polygon to KML
+output = [output KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+implementation,1,1),'timeOut',datenum(t0+implementation+1,1,1)+364,'styleName','default')];
+clear lonpoly latpoly
+
+% Ids for barplots
+if s1(1)<s1(end) 
+    sfine(1)        = s1(1)-dxFine;
+    sfine(2)        = s1(end)+dxFine;
+else
+    sfine(1)        = s1(end)-dxFine;
+    sfine(2)        = s1(1)+dxFine;
+end
+for ii=1:length(sfine)
+    dist{ii} = abs(sgridRough-sfine(ii));
+    idrough(ii) = find(dist{ii} == min(dist{ii}),1,'first');
+end
+%idplotrough(idrough(1):idrough(end)) = 0;
+
+%% Save info fine and rough grids for plotting bars
+S.kml.idplotrough = idplotrough;
+S.output = output;

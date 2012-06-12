@@ -1,0 +1,26 @@
+*
+* species 1
+* species name:  polychaetes
+*
+	r                        = 3
+	k_s                      = 100
+	p0                       = 100
+	k_beach_nourishment      = 50
+	k_foreshore_nourishment  = 80
+	k_mega_nourishment       = 95
+	k_revetment              = 5
+	k_groyne                 = 10
+	k_others                 = 10
+*
+* species 2
+* species name:  bivalves
+*
+	r                        = 1
+	k_s                      = 100
+	p0                       = 100
+	k_beach_nourishment      = 30
+	k_foreshore_nourishment  = 80
+	k_mega_nourishment       = 99
+	k_revetment              = 0
+	k_groyne                 = 0
+	k_others                 = 10
