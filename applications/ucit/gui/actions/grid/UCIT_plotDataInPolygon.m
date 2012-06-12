@@ -94,9 +94,14 @@ if ~all(all(isnan(Z)))
     d.X = X; d.Y = Y; d.Z = Z; d.Ztime = Ztime; 
     d.datatypeinfo = UCIT_getInfoFromPopup('GridsDatatype');
     set(gcf,'userdata',d);
+    
+    % derive x and y limits to be applied to the axes
+    xlim = [min(d.X(1,[1 end])) max(d.X(1,[1 end]))];
+    ylim = [min(d.Y([1 end],1)) max(d.Y([1 end],1))];
 
-    set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
-    set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+    set(gca,...
+        'Xlim', xlim,...
+        'Ylim', ylim);
     tickmap('xy');
 
     if ~isempty(findobj('tag','tempsWindow'))
@@ -111,8 +116,9 @@ if ~all(all(isnan(Z)))
         % reset the tag of the original figure (needed for get cross section)
         set(findobj('tag','tempTag'),'tag',tempTag);
 
-        set(gca,'Xlim',[d.X(1,1) d.X(1,end)]);
-        set(gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+        set(gca,...
+            'Xlim', xlim,...
+            'Ylim', ylim);
         tickmap('xy');
     end
 
