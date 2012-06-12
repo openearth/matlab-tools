@@ -54,7 +54,7 @@ function nc_cf_gridset_get_list(varargin)
    OPT.fid     = 1;
    OPT.bbfmt   = '%+09.1f';
    
-   OPT = setProperty(OPT,varargin{firstarg:end});
+   OPT = setproperty(OPT,varargin{firstarg:end});
    
    if ischar(OPT.fid)
       delete(OPT.fid);

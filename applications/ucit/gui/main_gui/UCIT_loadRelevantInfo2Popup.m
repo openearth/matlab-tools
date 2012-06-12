@@ -292,7 +292,7 @@ elseif type==2&&PopupNR==4
    % make overview plot
    mapW = findobj('tag','gridOverview');
    if isempty(mapW)
-       ucit_plotgridoverview
+       UCIT_plotGridOverview
    end
     
 end
