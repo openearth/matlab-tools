@@ -112,12 +112,13 @@ morphAnInput.D50 = D50;
 morphAnInput.SignificantWaveHeight = Hsig_t;
 morphAnInput.PeakPeriod = Tp_t;
 morphAnInput.MaximumStormSurgeLevel = WL_t;
-morphAnInput.CoastalBend = DuneErosionSettings('get','Bend');
+morphAnInput.G0 = getG0(DuneErosionSettings('get','Bend'));
+morphAnInput.DurosMethod = DeltaShell.Plugins.MorphAn.TRDA.Calculators.DurosMethod.DurosPlus;
 morphAnInput.InputProfile = DeltaShell.Plugins.MorphAn.Domain.Transect(...
     NET.convertArray(xInitial, 'System.Double'),...
     NET.convertArray(zInitial, 'System.Double'));
 
-morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfileAccordingTo2006Rules(morphAnInput);
+morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfile(morphAnInput);
 
 %% Step 1
 result = fillresultwithprofile(createEmptyDUROSResult,...
@@ -140,7 +141,7 @@ result.info.input = struct(...
     'WL_t', morphAnInput.MaximumStormSurgeLevel,...
     'Hsig_t', morphAnInput.SignificantWaveHeight,...
     'Tp_t', morphAnInput.PeakPeriod,...
-    'Bend', morphAnInput.CoastalBend);
+    'Bend', []); % morphAnInput.G0
 
 %% Step 2 (Erosion above storm surge level)
 result(end+1) = fillresultwithprofile(createEmptyDUROSResult,...
@@ -212,9 +213,7 @@ result.zSea = zInitial(xInitial > max(result.xActive));
 end
 
 function profile = crossshoreprofile2matlabprofile(morphAnProfile)
-xArray = DeltaShell.Plugins.MorphAn.Domain.Utils.TransectExtensions.XValues(morphAnProfile);
-zArray = DeltaShell.Plugins.MorphAn.Domain.Utils.TransectExtensions.ZValues(morphAnProfile);
-x = double(xArray)';
-z = double(zArray)';
+x = double(morphAnProfile.XCoordinates)';
+z = double(morphAnProfile.ZCoordinates)';
 profile = [x,z];
 end

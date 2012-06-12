@@ -22,17 +22,7 @@ function G = getG(TargetVolume, Hsig_t, w, Bend)
 % --------------------------------------------------------------------------
 
 %% derive G0
-if Bend <= 6
-    G0 = 0;
-elseif Bend <= 12
-    G0 = 50;
-elseif Bend <= 18
-    G0 = 75;
-elseif Bend <= 24
-    G0 = 100;
-else
-    G0 = [];
-end
+G0 = getG0(Bend);
 
 if ~isempty(G0)
     % TODO('This forlmulation lacks Tp_t and d. It should be adapted I guess??');

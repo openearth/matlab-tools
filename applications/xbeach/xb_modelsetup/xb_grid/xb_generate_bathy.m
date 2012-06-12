@@ -1,5 +1,5 @@
 function xb = xb_generate_bathy(varargin)
-%XB_GENERATE_BATHY  Creates a model bathymetry
+% XB_GENERATE_BATHY  Creates a model bathymetry
 %
 %   Creates a model bathymetry in either one or two dimensions based on a
 %   given bathymetry. The result is a XBeach input structure containing
