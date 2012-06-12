@@ -13,85 +13,89 @@ for addCode = ['0','1','2','3']
     
     % stop if tile is out of bounds
     if ~((D.E>B.W&&D.W<B.E)&&(D.N>B.S&&D.S<B.N))
-        if OPT.debug; fprintf('%-20s %-20s Reason: %s\n',code,'ABORTED','tile out of bounds'); end
+        returnmessage(OPT.debug,'%-20s %-20s Reason: %s\n',code,'ABORTED','tile out of bounds');
+        continue
+    end
+    
+    R   = D.lon>=(B.W - OPT.dWE) & D.lon<=B.E + OPT.dWE &...
+        D.lat>=(B.S - OPT.dNS) & D.lat<=B.N + OPT.dNS;
+    R2  = D.lon>=(B.W          ) & D.lon<=B.E           &...
+        D.lat>=(B.S          ) & D.lat<=B.N          ;
+    
+    if length(code) == OPT.lowestLevel
+        % update waitbar
+        multiWaitbar('fig2png_print_tile','increment',sum(sum(~isnan(D.z(R2(1:end-1,1:end-1)))))/OPT.WBtodo,'label',sprintf('Printing tile %s',code));  % D.z(R2(1:end-1,1:end-1) should be D.z(corner2center(R2))
+    end
+    
+    % stop if no data is present in tile
+    if ~any(R2(:))
+        returnmessage(OPT.debug,'%-20s %-20s Reason: %s\n',code,'ABORTED','no data in tile');
+        continue
+    end
+    
+    % attempt to handle shading flat cases,
+    % still does not work correctly though.
+    % For curvi-linear grids with nan holes corner2center requires
+    % a continuous piece of matrix, we we need to get
+    % rid of all intermediate exclusions that works fine with shading interp.
+    % In this sketch attempt of a U-shaped curvi-linear grid think of the upper left part:
+    %
+    %    __
+    %   /  \
+    %  |  +--\-----+ GE tile
+    %   \ |    \   |
+    %     \      \ |
+    %     | \      \
+    %     |   \    | \ a U-shaped curvi-linear grid line
+    %     +-----\--+
+    %             \
+    
+    mask1 = any(R'); % can be 0 0 0 1 1 1 0 0 0 1 1 1 in curvi-linear grids, so set all intermediate 0 to 1.
+    mask2 = any(R) ;
+    ind   = find(mask1==1);if ~isempty(ind);mask1(ind(1):ind(end)) = 1;end
+    ind   = find(mask2==1);if ~isempty(ind);mask2(ind(1):ind(end)) = 1;end
+    
+    if isequal(size(R) - size(D.z),[0 0])
+        D2.z  = D.z  (mask1,mask2);
+        if isfield(D,'alpha'), D2.alpha = D.alpha(mask1,mask2);end
+        
+        
+    elseif isequal(size(R) - size(D.z),[1 1])
+        %                 Rc     =  ceil(corner2center(R));
+        mask1c = floor(corner2center1(mask1))==1;
+        mask2c = floor(corner2center1(mask2))==1;
+        indc   = find(mask1c==1);if ~isempty(indc);mask1c(indc(1):indc(end)) = 1;end
+        indc   = find(mask2c==1);if ~isempty(indc);mask2c(indc(1):indc(end)) = 1;end
+        D2.z   =  D.z(mask1c,mask2c); % keep one smaller, do not add until plot
+        if isfield(D,'alpha'), D2.alpha = D.alpha(mask1c,mask2c);end
     else
-        
-        R   = D.lon>=(B.W - OPT.dWE) & D.lon<=B.E + OPT.dWE &...
-            D.lat>=(B.S - OPT.dNS) & D.lat<=B.N + OPT.dNS;
-        R2  = D.lon>=(B.W          ) & D.lon<=B.E           &...
-            D.lat>=(B.S          ) & D.lat<=B.N          ;
-        
-        if length(code) == OPT.lowestLevel
-            % update waitbar
-            multiWaitbar('fig2png_print_tile','increment',sum(sum(~isnan(D.z(R2(1:end-1,1:end-1)))))/OPT.WBtodo,'label',sprintf('Printing tile %s',code));  % D.z(R2(1:end-1,1:end-1) should be D.z(corner2center(R2))
-        end
-        
+        error('we did not imagine this could happen')
+    end
+    
+    if all(isnan(D2.z(:)))
         % stop if no data is present in tile
-        if ~any(R2(:))
-            if OPT.debug;fprintf('%-20s %-20s Reason: %s\n',code,'ABORTED','no data in tile');end
-        else
-            
-            % attempt to handle shading flat cases,
-            % still does not work correctly though.
-            % For curvi-linear grids with nan holes corner2center requires
-            % a continuous piece of matrix, we we need to get
-            % rid of all intermediate exclusions that works fine with shading interp.
-            % In this sketch attempt of a U-shaped curvi-linear grid think of the upper left part:
-            %
-            %    __
-            %   /  \
-            %  |  +--\-----+ GE tile
-            %   \ |    \   |
-            %     \      \ |
-            %     | \      \
-            %     |   \    | \ a U-shaped curvi-linear grid line
-            %     +-----\--+
-            %             \
-            
-            mask1 = any(R'); % can be 0 0 0 1 1 1 0 0 0 1 1 1 in curvi-linear grids, so set all intermediate 0 to 1.
-            mask2 = any(R) ;
-            ind   = find(mask1==1);if ~isempty(ind);mask1(ind(1):ind(end)) = 1;end
-            ind   = find(mask2==1);if ~isempty(ind);mask2(ind(1):ind(end)) = 1;end
-            
-            if isequal(size(R) - size(D.z),[0 0])
-                D2.z  = D.z  (mask1,mask2);
-                if isfield(D,'alpha'), D2.alpha = D.alpha(mask1,mask2);end
-                
-                
-            elseif isequal(size(R) - size(D.z),[1 1])
-                %                 Rc     =  ceil(corner2center(R));
-                mask1c = floor(corner2center1(mask1))==1;
-                mask2c = floor(corner2center1(mask2))==1;
-                indc   = find(mask1c==1);if ~isempty(indc);mask1c(indc(1):indc(end)) = 1;end
-                indc   = find(mask2c==1);if ~isempty(indc);mask2c(indc(1):indc(end)) = 1;end
-                D2.z   =  D.z(mask1c,mask2c); % keep one smaller, do not add until plot
-                if isfield(D,'alpha'), D2.alpha = D.alpha(mask1c,mask2c);end
-            else
-                error('we did not imagine this could happen')
-            end
-            
-            if all(isnan(D2.z(:)))
-                if OPT.debug;fprintf('%-20s %-20s Reason: %s\n',code,'ABORTED','only NAN''s in tile');end
-            else
-                D2.lat = D.lat(mask1,mask2);
-                D2.lon = D.lon(mask1,mask2);
-                D2.N   = max(D.lat(:));
-                D2.S   = min(D.lat(:));
-                D2.W   = min(D.lon(:));
-                D2.E   = max(D.lon(:));
-                % stop if no data is present in tile
-                
-                if length(code) < OPT.lowestLevel
-                    if OPT.debug;fprintf('%-20s %-20s\n',code,'CONTINUING');end
-                    KML_figure_tiler_printTile(code,D2,OPT)
-                else
-                    if OPT.debug;fprintf('%-20s %-20s',code,'PRINTING TILE');end
-                    printTile(OPT,code,D,D2,R,B)
-                end
-            end
-        end
+        returnmessage(OPT.debug,'%-20s %-20s Reason: %s\n',code,'ABORTED','only NAN''s in tile');
+        continue
+    end
+    
+    %  assign a subset of data structure D to a new data structure D2
+    D2.lat = D.lat(mask1,mask2);
+    D2.lon = D.lon(mask1,mask2);
+    D2.N   = max(D.lat(:));
+    D2.S   = min(D.lat(:));
+    D2.W   = min(D.lon(:));
+    D2.E   = max(D.lon(:));
+    
+    if length(code) < OPT.lowestLevel
+        returnmessage(OPT.debug,'%-20s %-20s\n',code,'CONTINUING');
+        KML_figure_tiler_printTile(code,D2,OPT)
+    else
+        returnmessage(OPT.debug,'%-20s %-20s',code,'PRINTING TILE');
+        printTile(OPT,code,D,D2,R,B)
     end
 end
+multiWaitbar('fig2png_print_tile',1);
+
 
 function printTile(OPT,code,D,D2,R,B)
 dNS = OPT.dimExt/OPT.dim*(B.N - B.S);
@@ -168,9 +172,9 @@ end
 % return if no data is present in tile
 if all(mask(:))
     delete(PNGfileName)
-    if OPT.debug;fprintf('...TILE DELETED, no data in tile\n');end
+    returnmessage(OPT.debug,'...TILE DELETED, no data in tile\n');
 else
-    if OPT.debug;fprintf('\n');end
+    returnmessage(OPT.debug,'\n');
     % now move image around to color transparent pixels with the value of the
     % nearest neighbour.
     im2       = im;
