@@ -20,7 +20,7 @@ function varargout = ncgen_readFcn_surface_asc(OPT,writeFcn,fns)
 if nargin==0 || isempty(OPT)
     % return OPT structure with options specific to this function
     OPT.block_size          = 1e6;
-    OPT.zfactor             = 1; %scale factor of z values to metres altitude
+    OPT.z_scalefactor       = 1; %scale factor of z values to metres altitude
     varargout = {OPT};
     return
 end
@@ -117,7 +117,7 @@ for x0      = minx : mapsizex : maxx
         z = nan(length(iy),length(ix));
         for iD = unique(y(iy,2))'
             if ~(numel(D{iD}{1})==1&&isnan(D{iD}{1}(1)))
-                z(y(iy,2)==iD,:) = D{iD}{1}(y(iy(y(iy,2)==iD),3),ix)*OPT.read.zfactor;
+                z(y(iy,2)==iD,:) = D{iD}{1}(y(iy(y(iy,2)==iD),3),ix)*OPT.read.z_scalefactor;
             end
         end
         
