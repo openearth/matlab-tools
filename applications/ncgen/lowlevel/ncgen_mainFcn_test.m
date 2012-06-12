@@ -26,7 +26,7 @@ OPT.read.delimiter      = ' ';
 OPT.read.format         = '%f%f%f';
 OPT.read.headerlines    = 0;
 
-OPT.schema.grid_spacing   = 1;
+OPT.schema.grid_cellsize   = 1;
 OPT.schema.grid_tilesize  = 1000;
 OPT.schema.grid_offset    = 0.5;
 OPT.schema.z_datatype     = 'uint16';

@@ -72,7 +72,7 @@ while ~feof(fid)
     miny    = min(D{OPT.read.yid});
     maxx    = max(D{OPT.read.xid});
     maxy    = max(D{OPT.read.yid});
-    mapsize = OPT.schema.grid_spacing * OPT.schema.grid_tilesize;
+    mapsize = OPT.schema.grid_cellsize * OPT.schema.grid_tilesize;
     minx    = floor(minx/mapsize)*mapsize + OPT.schema.grid_offset;
     miny    = floor(miny/mapsize)*mapsize + OPT.schema.grid_offset;
     
@@ -82,11 +82,11 @@ while ~feof(fid)
     WB.done  = WB.done + WB.read;
     multiWaitbar('Processing file',WB.done/WB.todo,'label',sprintf('Processing %s; writing data', fns.name));
     for x0      = minx : mapsize : maxx
-        xrange      = [x0-OPT.schema.grid_spacing x0+mapsize];
+        xrange      = [x0-OPT.schema.grid_cellsize x0+mapsize];
         ids_x_range = find(D{OPT.read.xid}>min(xrange) & D{OPT.read.xid}<max(xrange));
         
         for y0  = miny : mapsize : maxy
-            yrange       = [y0-OPT.schema.grid_spacing y0+mapsize];
+            yrange       = [y0-OPT.schema.grid_cellsize y0+mapsize];
             ids_xy_range = ids_x_range(D{OPT.read.yid}(ids_x_range)>min(yrange) & D{OPT.read.yid}(ids_x_range)<max(yrange));
 
             if ~isempty(ids_xy_range)>0
@@ -95,8 +95,8 @@ while ~feof(fid)
                 z = D{OPT.read.zid}(ids_xy_range)*OPT.read.zfactor;
                 
                 % generate X,Y,Z
-                data.x  =        x0 + (0:(OPT.schema.grid_tilesize)-1) * OPT.schema.grid_spacing;
-                data.y  = fliplr(y0 + (0:(OPT.schema.grid_tilesize)-1) * OPT.schema.grid_spacing);
+                data.x  =        x0 + (0:(OPT.schema.grid_tilesize)-1) * OPT.schema.grid_cellsize;
+                data.y  = fliplr(y0 + (0:(OPT.schema.grid_tilesize)-1) * OPT.schema.grid_cellsize);
                 [xi,yi] = meshgrid(data.x,data.y);
                 
                 % place xyz data on XY matrices

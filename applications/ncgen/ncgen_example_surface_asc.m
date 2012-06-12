@@ -50,7 +50,7 @@ OPT.main.path_netcdf      = 'F:\nc';%fullfile(tempdir,'ncgen_example_surface_asc
 % To correctly process the test files, define the following:
 OPT.schema.EPSGcode       = 28992; % epsg code for Rijksdriehoek
 OPT.schema.includeLatLon  = false;
-OPT.schema.grid_spacing   = 20;     % x and y coordinates are spaced 2m apart, only on uneven numbers
+OPT.schema.grid_cellsize   = 20;     % x and y coordinates are spaced 2m apart, only on uneven numbers
 OPT.schema.grid_offset    = 10;     
 OPT.schema.grid_tilesize  = 1000; % put 250 by 250 z points in one nc file
 

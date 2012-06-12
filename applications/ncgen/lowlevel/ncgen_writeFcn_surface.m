@@ -28,17 +28,38 @@ assert(all(ismember(required_fields,fieldnames(data))),'data input must contain 
 ncfile = fullfile(OPT.main.path_netcdf,OPT.write.filenameFcn(data.x,data.y));
 if ~exist(ncfile,'file')
     ncwriteschema(ncfile,OPT.write.schema);
-    ncwrite(ncfile,'x',data.x);
-    ncwrite(ncfile,'y',data.y);
-    [x,y] = meshgrid(data.x,data.y);
-    % transpose x and y to comply with the size of z
-    [x y] = deal(x', y');
+    
+    % update actual range
+    ncwrite(ncfile,'x',data.x)
+    ncwrite(ncfile,'y',data.y)
+    
+    % update actual range
+    ncwriteatt(ncfile,'x','actual_range',[min(data.x) max(data.x)])
+    ncwriteatt(ncfile,'y','actual_range',[min(data.y) max(data.y)])
+    
+    % update geospatial attributes
+    ncwriteatt(ncfile,'/','projectionCoverage_x',[min(data.x) max(data.x)] + [-.5 .5]*OPT.schema.grid_cellsize(1))
+    ncwriteatt(ncfile,'/','projectionCoverage_y',[min(data.y) max(data.y)] + [-.5 .5]*OPT.schema.grid_cellsize(end))
+    
+    [y,x] = meshgrid(data.y,data.x); % reverse y and x to keep dimension order x,y
     if ~isempty(OPT.schema.EPSGcode)
         ncwrite(ncfile,'crs',OPT.schema.EPSGcode);
         if OPT.schema.includeLatLon
+            % calculate lat and lon
             [lon,lat] = convertCoordinates(x,y,'persistent','CS1.code',OPT.schema.EPSGcode,'CS2.code',4326);
+            
+            % write variables
             ncwrite(ncfile,'lat',lat);
             ncwrite(ncfile,'lon',lon);
+            
+            % write attributes
+            %  first calculate coordinates of corner points of bounding box (half cell size larger than min/max coordinates)
+            [x_bounds,y_bounds]     = meshgrid(ncreadatt(ncfile,'/','projectionCoverage_x'),ncreadatt(ncfile,'/','projectionCoverage_y'));
+            [lon_bounds,lat_bounds] = convertCoordinates(x_bounds,y_bounds,'persistent','CS1.code',OPT.schema.EPSGcode,'CS2.code',4326);
+            
+            % write attributes
+            ncwriteatt(ncfile,'/','geospatialCoverage_northsouth',[min(lat_bounds(:)) max(lat_bounds(:))]);
+            ncwriteatt(ncfile,'/','geospatialCoverage_eastwest'  ,[min(lon_bounds(:)) max(lon_bounds(:))]);
         end
     end
 end
@@ -58,6 +79,15 @@ end
        iTimestamp = length(timestamps_in_nc)+1;
        ncwrite(ncfile,'time',data.time,iTimestamp);
        existing_z = false;
+       
+       % update actual range of time
+       ncwriteatt(ncfile,'time','actual_range',[min([data.time; timestamps_in_nc]) max([data.time; timestamps_in_nc])])
+        
+       % write timeCoverage in yyyy-mm-ddTHH:MM:SS Timezone 
+       [dates,zone] = nc_cf_time(ncfile,'time');
+       ncwriteatt(ncfile,'/','timeCoverage',sprintf('%s%s - %s%s',...
+           datestr(min(dates),'yyyy-mm-ddTHH:MM:SS'),zone{1},...
+           datestr(min(dates),'yyyy-mm-ddTHH:MM:SS'),zone{1}));
    end
 
 %% Merge Z data with existing data if it exists
@@ -68,15 +98,13 @@ if existing_z % then existing nc file already has data
     z0Notnan = ~isnan(z0);
     notnan   = zNotnan&z0Notnan;
     % check if data will be overwritten
-    if any(notnan) % values are not nan in both existing and new data
+    if any(notnan) % some values are not nan in both existing and new data
         if isequal(z0(notnan),data.z(notnan))
             % this is ok
-%             error
-            %fprintf(1,'in %s, WARNING: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(date,'YYYYMMDD'))
+            returnmessage(1,'in %s, NOTICE: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(date,'YYYYMMDD'))
         else 
             % this is (most likely) not ok   
-%             error
-            % fprintf(2,'in %s, ERROR: %d values are overwritten by different values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(date,'YYYYMMDD'))
+            returnmessage(2,'in %s, WARNING: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(date,'YYYYMMDD'))
         end
     end
     z0(zNotnan) = data.z(zNotnan);

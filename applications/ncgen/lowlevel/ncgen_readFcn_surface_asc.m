@@ -65,8 +65,8 @@ while ~feof(fid)
     end
 end
 fclose(fid);
-if ~(cellsize == OPT.schema.grid_spacing) % gridsizey==gridsizey already checked above
-    error('cellsize ~= OPT.schema.grid_spacing')
+if ~(cellsize == OPT.schema.grid_cellsize) % gridsizey==gridsizey already checked above
+    error('cellsize ~= OPT.schema.grid_cellsize')
 end
 
 if ~(mod(xllcorner,cellsize)==0)
@@ -93,7 +93,7 @@ maxy    = yllcorner + cellsize.*(nrows-1);
 % grid_spacing, grid_tilesize and grid_offset can be either scalars or
 % 2-element vectors indicating equal respectively seperately specified x
 % and y direction values.
-[grid_spacingx grid_spacingy] = deal(OPT.schema.grid_spacing(1), OPT.schema.grid_spacing(end));
+[grid_spacingx grid_spacingy] = deal(OPT.schema.grid_cellsize(1), OPT.schema.grid_cellsize(end));
 [grid_tilesizex grid_tilesizey] = deal(OPT.schema.grid_tilesize(1), OPT.schema.grid_tilesize(end));
 mapsizex = grid_spacingx * grid_tilesizex;
 mapsizey = grid_spacingy * grid_tilesizey;

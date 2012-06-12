@@ -227,9 +227,9 @@ end
 
 function fns1 = check_existing_nc_files(OPT,fns1)
 
-if OPT.main.hash_source
+if ~OPT.main.hash_source
     delete(fullfile(OPT.main.path_netcdf,'*.nc'));
-    returnmessage(OPT.main.log,'Netcdf output directory emptied.\n')
+    returnmessage(OPT.main.log,'Netcdf output directory emptied because no hash was computed.\n')
     return
 end
     
@@ -243,16 +243,28 @@ while ~outdated && ii<length(nc_fns)
     % query nc schema to compare variables and dimensions
     ncschema = ncinfo(ncfile);
     try
-        % compare attributes (only compare the attributes to the user
-        % define attributes as additional attributes may be added by hthe
-        % netcdf write function as e.g. x_range
-        if ~isequal(ncschema.Attributes(1:length(OPT.write.schema.Attributes)),OPT.write.schema.Attributes)
+        % compare history attribute only
+        
+        
+        
+        try
+            if ~isequal(...
+                    ncschema.Attributes(strcmp({ncschema.Attributes.Name},'history')).Value,...
+                    OPT.write.schema.Attributes(strcmp({OPT.write.schema.Attributes.Name},'history')).Value)
+                reason = 'Difference found in history attributes';
+                outdated = true;
+                continue;
+            end
+        catch ME
+            reason = ['Failed to compare history attributes: ' ME.message];
             outdated = true;
             continue;
         end
         
+        
         % compare dimension names
         if ~isequal([ncschema.Dimensions.Name],[OPT.write.schema.Dimensions.Name]);
+            reason = 'Difference found in dimensions';
             outdated = true;
             continue;
         end
@@ -262,6 +274,7 @@ while ~outdated && ii<length(nc_fns)
                 ~isequal([ncschema.Variables.Name],        [OPT.write.schema.Variables.Name])     || ...
                 ~isequal([ncschema.Variables.Datatype],    [OPT.write.schema.Variables.Datatype]) || ...
                 ~isequal([ncschema.Variables.DeflateLevel],[OPT.write.schema.Variables.DeflateLevel]);
+            reason = 'Difference found in variables';
             outdated = true;
             continue;
         end
@@ -272,12 +285,14 @@ while ~outdated && ii<length(nc_fns)
         new_length = [OPT.write.schema.Dimensions.Length];
         new_length([OPT.write.schema.Dimensions.Length] == inf | [OPT.write.schema.Dimensions.Unlimited])= nan;
         if ~isequalwithequalnans(current_length,new_length);
+            reason = 'Difference found in dimension lengths';
             outdated = true;
             continue;
         end
         
-    catch  %#ok<CTCH>
+    catch  ME
         % isf anything went wrong, assume netcdf is outdated
+        reason   = ['Error when comparing netcdf files: ' ME.message];
         outdated = true;
         continue;
     end
@@ -293,11 +308,14 @@ if ~outdated
     source_file_hash = unique(source_file_hash,'rows');
     % all hashes in nc structure must be in files.
     outdated = ~all(ismember(source_file_hash,vertcat(fns1.hash),'rows'));
+    if outdated
+        reason = 'Difference found in hashes of source files';
+    end
 end   
 
 if outdated
     delete(fullfile(OPT.main.path_netcdf,'*.nc'));
-    returnmessage(OPT.main.log,'Netcdf output directory was outdated and therefore emptied.\n')
+    returnmessage(OPT.main.log,'Netcdf output directory was outdated and therefore emptied.\n  Reason:\n  %s\n',reason)
 else
     % remove files already in nc from file name stucture  as they are
     % already in the nc file
