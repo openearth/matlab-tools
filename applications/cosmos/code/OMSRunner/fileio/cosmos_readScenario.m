@@ -17,6 +17,11 @@ end
 hm.scenarioLongName=scn.longname;
 hm.scenarioShortName=scn.shortname;
 
+hm.scenarioType='historicalscenario';
+if isfield(scn,'type')
+    hm.scenarioType=scn.type;
+end
+
 if ~strcmpi(hm.scenario,'forecasts')
     hm.cycle=datenum(scn.cycle,'yyyymmdd HHMMSS');
 end
