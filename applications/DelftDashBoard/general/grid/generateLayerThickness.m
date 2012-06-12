@@ -118,7 +118,7 @@ if tp=='s'
     elseif isempty(thtop) && ~isempty(thbot)
         % Refine at the bottom
         totalthick=100;
-        thick=getlayers(kmax,totalthick,thtop);
+        thick=getlayers(kmax,totalthick,thbot);
         thick=flipud(thick);
     elseif ~isempty(thtop) && ~isempty(thbot)
         % Refine at top and bottom
