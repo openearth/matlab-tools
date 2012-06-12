@@ -10,7 +10,7 @@ stochast(1).Params = {.5 1};
 % wave height
 stochast(2).Name   = 'H';
 stochast(2).Distr  = @norm_inv;
-stochast(2).Params = {3 2};
+stochast(2).Params = {3 1};
 
 % wave period
 stochast(3).Name   = 'T';

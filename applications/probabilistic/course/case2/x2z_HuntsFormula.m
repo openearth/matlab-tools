@@ -3,6 +3,9 @@ function Z = x2z_HuntsFormula(varargin)
 % load sample values
 samples = struct(varargin{:});
 
+samples.H = max(0,samples.H);
+samples.T = max(0,samples.T);
+
 % gravitational accaleration
 g = 9.81;
 
