@@ -77,7 +77,7 @@ OPT.schema.meta           = struct(...
 
 %% OPT.read
 % read settings for the file, we define the following:
-OPT.read.zfactor = 0.01;
+OPT.read.z_scalefactor = 0.01;
 
 %% OPT.write
 % the defaults are ok

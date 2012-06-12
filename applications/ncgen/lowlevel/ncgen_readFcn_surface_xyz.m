@@ -29,7 +29,7 @@ if nargin == 0 || isempty(OPT)
     OPT.read.multipleDelimsAsOne = true;
     OPT.read.block_size          = 1e6;
     OPT.read.gridFcn             = @(x,y,z,xi,yi) griddata_remap(x,y,z,xi,yi);
-    OPT.read.zfactor             = 1; %scale factor of z values to metres altitude
+    OPT.read.z_scalefactor       = 1; %scale factor of z values to metres altitude
         
     varargout               = {OPT.read};
     return
