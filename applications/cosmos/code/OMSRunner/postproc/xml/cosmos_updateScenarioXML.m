@@ -19,9 +19,6 @@ for iw=1:length(hm.models(m).webSite)
     
     scenario.type.value=hm.scenarioType;
     scenario.type.type='char';
-
-    scenario.type.value=hm.scenarioType;
-    scenario.type.type='char';
     
     t0=hm.cycle;
     t1=hm.cycle+hm.runTime/24;
