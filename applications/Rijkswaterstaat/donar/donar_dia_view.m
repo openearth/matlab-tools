@@ -117,9 +117,9 @@ function ui_set_block(obj, event)
     
     info           = get_info(obj);
     info.block     = get_selected(obj,'SelectBlock');
-    info.block     = str2double(regexprep(info.block{1},'\D',''));
+    info.blockn    = find(strcmpi(info.block{1},info.blocklistc));
     
-    block = info.input.data(info.block).value;
+    block = info.input.data(info.blockn).value;
 
     if xs_exist(block,'WRD')
         WRD            = xs_get(block,'WRD');
@@ -175,8 +175,10 @@ function ui_read(obj)
         D = info.input;
     	
         % generate block list
-        info.blocklist = sprintf('|Block #%d', 1:length(D.data));
+        info.blocklist = sprintf('|%s', D.data.name);
         info.blocklist = info.blocklist(2:end);
+        
+        info.blocklistc = regexp(info.blocklist,'\|','split');
     end
     
     set_info(obj,info);
@@ -186,9 +188,9 @@ function ui_plot(obj)
     
     info    = get_info(obj);
     
-    if isfield(info,'block') && info.block>0
+    if isfield(info,'block') && info.blockn>0
         
-        block = info.input.data(info.block).value;
+        block = info.input.data(info.blockn).value;
 
         if xs_exist(block,'WRD')
             WRD     = xs_get(block,'WRD');

@@ -85,6 +85,7 @@ function [xsf m mn] = xs_search(xs,varargin)
 if ~xs_check(xs); error('Invalid XStruct'); end;
 
 xsf = xs;
+dbs = dbstack;
 
 if ~isfield(xs,'path'); xs.path = {inputname(1)}; end;
 
@@ -147,4 +148,6 @@ end
 m = cellfun(@(x)~islogical(x)||x,mn);
 
 % finalize filtered structure
-xsf.data = xsf.data(m);
+if length(dbs)<=1 || ~strcmpi(dbs(end-1).name, mfilename)
+    xsf.data = xsf.data(m);
+end
