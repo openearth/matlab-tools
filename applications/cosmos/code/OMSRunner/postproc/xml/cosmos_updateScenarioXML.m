@@ -16,6 +16,9 @@ for iw=1:length(hm.models(m).webSite)
 
     scenario.longname.value=hm.scenarioLongName;
     scenario.longname.type='char';
+    
+    scenario.type.value=hm.scenarioType;
+    scenario.type.type='char';
 
     scenario.type.value=hm.scenarioType;
     scenario.type.type='char';
