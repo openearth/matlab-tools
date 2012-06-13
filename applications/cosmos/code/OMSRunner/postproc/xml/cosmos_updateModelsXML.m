@@ -166,6 +166,7 @@ for iw=1:length(model.webSite)
 %         mdl.timezone.value='UTC';
 %         mdl.timezone.type='char';
     end
+%     mdl.timezone.type='char';
 
     %% Profiles
 
