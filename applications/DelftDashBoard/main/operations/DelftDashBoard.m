@@ -53,6 +53,7 @@ function DelftDashBoard
 % cd(fileparts(which('ddsettings.m')));
 
 % get revision number
+warning('off','all')
 Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
