@@ -1,4 +1,4 @@
-function tightenfigure(fhandle)
+function tightenfigure(fhandle, varargin)
 % TIGHTENFIGURE routine to maximise a figure within its window
 %
 % Routine to maximise a figure by reducing the margins to a minimum
@@ -8,14 +8,16 @@ function tightenfigure(fhandle)
 %
 % Input:
 % fhandle = figure handle
-%
-% Output:
+% varargin = propertyname-propertyvalue pairs:
+%       'insetfactor' :  factor (default = 1) to multiply by the tightinset 
+%                        in order to manipulate the margins, either a
+%                        scalar or a [left bottom right top] vector.
 %
 % See also:
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
-%       C.(Kees) den Heijer
+%       Kees den Heijer
 %
 %       C.denHeijer@TUDelft.nl	
 %
@@ -41,13 +43,22 @@ function tightenfigure(fhandle)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
-% $Id$ 
+% $Id$
 % $Date$
 % $Author$
 % $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %% get defaults
-getdefaults('fhandle', gcf, 0)
+if nargin == 0
+    fhandle = gcf;
+end
+
+OPT = struct(...
+    'insetfactor', 1);
+
+OPT = setproperty(OPT, varargin);
 
 %% find axes handles and save current state
 Axeshandles = findobj(fhandle,...
@@ -59,63 +70,39 @@ if isempty(Axeshandles)
     return
 end
 
-% keep current warning state and turn of all warnings
-state.warning = warning;
-warning off %#ok<WNOFF>
+%% make sure that units are normalized
+set(Axeshandles,...
+    'Units', 'normalized');
 
-% obtain current property settings
-state.Axes = get(Axeshandles);
+%% obtain current property settings
+state.units = get(Axeshandles, {'units'});
+state.position = get(Axeshandles, {'position'});
+state.tightinset = get(Axeshandles, {'tightinset'});
+state.visible = get(Axeshandles, {'visible'});
 
-% reset original warning state
-warning(state.warning);
-
-if length(Axeshandles)>1 && ...
-        ~all(all(diff(cell2mat(get(Axeshandles, 'Position')))==0))
+if ~isscalar(Axeshandles) && ...
+        ~isequal(state.position{:})
     % multiple panels in one figure
-%     set(Axeshandles,...
-%         'Units', 'normalized');
-%     OuterPosition = cell2mat(get(Axeshandles, 'OuterPosition'));
-%     Subplotsize = max(round(1./OuterPosition(:,3:4)));
     % currently, tightenfigure is not suitable for figures with multiple
     % panels
+    
+    % reset units to original state
+    set(Axeshandles, {'Units'}, state.units)
     return
 end
 
+%% derive maximum tightinset for visible axes
+id_visible = strcmp(state.visible, 'on');
 
-%% reset outerposition and set units to centimeters
-set(Axeshandles,...
-    'Units', 'normalized',...       % first normalize
-    'OuterPosition', [0 0 1 1],...  % then reset
-    'Units', 'centimeters')         % then units in centimeters
+TightInset = max(cell2mat(state.tightinset(id_visible)), [], 1) .* OPT.insetfactor;
 
-%% get tightinset and outerposition
-TightInset = get(Axeshandles, 'TightInset');
-OuterPosition = get(Axeshandles, 'OuterPosition');
+%% derive and set new position
+[left bottom] = deal(TightInset(1), TightInset(2));
+width = 1 - sum(TightInset([1 3]));
+height = 1 - sum(TightInset([2 4]));
 
-if iscell(TightInset)
-    % is cell in case of multiple axes
-    TightInset = cell2mat(TightInset);
-    OuterPosition = cell2mat(OuterPosition);
-end
-
-id_notvisible = strcmp(get(Axeshandles, 'Visible'), 'off');
-if any(id_notvisible)
-    % set tightinset of non-visible axes to zero
-    TightInset(id_notvisible, :) = zeros(1,4);
-end
-% preserve maximum tightinset for each margin
-TightInset = max(TightInset,[],1);
-% preserve minimum outerposition (they should be equal)
-OuterPosition = min(OuterPosition,[],1);
-
-%% derive new width and height
-Width = OuterPosition(3) - sum(TightInset([1 3]));
-Height = OuterPosition(4) - sum(TightInset([2 4]));
-
-%% fit figure tight in window
-set(Axeshandles, 'Position', [TightInset(1:2) Width Height]);
+set(Axeshandles(id_visible),...
+    'Position', [left bottom width height]);
 
 %% reset units to original state
-for id = 1:length(Axeshandles)
-    set(Axeshandles(id), 'Units', state.Axes(id).Units)
-end
+set(Axeshandles, {'Units'}, state.units)
