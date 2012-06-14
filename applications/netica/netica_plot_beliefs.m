@@ -63,6 +63,8 @@ function varargout = netica_plot_beliefs(filename, node, varargin)
 %%
 OPT = struct(...
     'netica_password', '',...
+    'color', struct('apriori', [0 166 214]/255, 'aposteriori', [166 0 88]/255, 'selected', [173 198 16]/255),...
+    'alpha', struct('apriori', .1, 'aposteriori', .4, 'selected', .6),...
     'format', '%g',...
     'figure', @figure,...
     'axes', @gca);
@@ -86,7 +88,7 @@ if isnumeric(node)
     else
         net.finalize();
         env.finalize();
-        error('node should be integer between 0 and %s', nnodes-1)
+        error('node should be integer between 0 and %i', nnodes-1)
     end
 elseif ischar(node)
     names = cellfun(@(x) char(nodes.getNode(x).getLabel), num2cell((1:nodes.size())-1), 'uniformoutput', false);
@@ -95,8 +97,13 @@ elseif ischar(node)
 end
 
 if ~isempty(nodeid)
-    beliefs = nodes.getNode(nodeid).getBeliefs;
+    beliefs(:,2) = nodes.getNode(nodeid).getBeliefs;
+    net.retractFindings()
+    beliefs(:,1) = nodes.getNode(nodeid).getBeliefs;
     levels = nodes.getNode(nodeid).getLevels;
+    if all(diff(beliefs, 1, 2) == 0)
+        beliefs = beliefs(:,1);
+    end
 else
     error('node "%s" invalid', nodename)
 end
@@ -108,8 +115,10 @@ infids = abs(levels) > 1e308;
 if any(infids)
     levels(infids) = sign(levels(infids)) * inf;
 end
-x = .5:length(levels)-1;
-yticklabel = cellfun(@(x,y) sprintf([OPT.format ' to ' OPT.format], x, y), num2cell(levels(1:end-1)), num2cell(levels(2:end)), 'uniformoutput', false);
+% x = 0.5:length(levels)-1;
+% yticklabel = cellfun(@(x,y) sprintf([OPT.format ' to ' OPT.format], x, y), num2cell(levels(1:end-1)), num2cell(levels(2:end)), 'uniformoutput', false);
+x = 0:length(levels)-1;
+yticklabel = cellfun(@(x) sprintf(OPT.format, x), num2cell(levels), 'uniformoutput', false);
 
 try
     fh = feval(OPT.figure);
@@ -123,14 +132,35 @@ catch
     ah = OPT.axes;
 end
 
-ph = barh(x, beliefs,...
-    'parent', ah);
+ph = barh(...
+    x(1:end-1)+.5, beliefs(:,1),...
+    'parent', ah,...
+    'edgecolor', 'none',...
+    'facecolor', OPT.color.apriori);
+if size(beliefs,2) == 2
+    hold on
+    ph(end+1) = barh(...
+        x(1:end-1)+.5, beliefs(:,2),...
+        'parent', ah,...
+        'edgecolor', 'none',...
+        'facecolor', OPT.color.aposteriori);
+    set(cell2mat(get(ph, 'children')),...
+        {'facealpha'}, {OPT.alpha.apriori; OPT.alpha.aposteriori})
+%     set(ph(1), 'facecolor', [.5 .5 .5])
+    if any(beliefs(:,2) == 1)
+        set(ph(2), 'facecolor', OPT.color.selected)
+        set(get(ph(2), 'children'),...
+            'facealpha', OPT.alpha.selected);
+    end
+end
+
+
 title(nodename);
 set(ah,...
     'ydir', 'reverse',...
     'ytick', x,...
     'yticklabel', yticklabel,...
-    'xlim', [0 1],...
+    'xlim', [0 min([max(beliefs(:))*1.5 1])],...
     'ylim', [0 length(levels)-1])
 % alternatively remove ticks and add ticklabels as text
 % set(gca, 'ydir', 'reverse', 'ytick', []);
