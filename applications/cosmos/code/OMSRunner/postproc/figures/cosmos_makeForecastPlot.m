@@ -27,7 +27,7 @@ try
         s(2).data=load(fname);
         fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'waterdepth.mat'];
         s(3).data=load(fname);
-        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'wl.zandmotorNoord.mat'];
+        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'wl.' model.forecastplot.wlstation '.mat'];
         s(4).data=load(fname);
         
         s(1).data.U(isnan(s(1).data.U)) = 0;
@@ -48,7 +48,7 @@ try
         
         tel = 0; 
         
-        for it=1:n3:nt
+        for it=1:n3:5%nt
             
             input.scrsz= get(0, 'ScreenSize');               % Set plot figure on full screen
             figure('Visible','Off','Position', [input.scrsz]);
@@ -72,14 +72,16 @@ try
 
             remID = ~(velXComp == 0 & velYComp == 0);
      
-            quiver(velX(remID),velY(remID),scal*(velXComp(remID)),scal*(velYComp(remID)),0,'color',[0 0 0])
+            quiver(velX(remID),velY(remID),scal*(velXComp(remID)),scal*(velYComp(remID)),0,'color',[1 1 1])
             
             pcolor(s(3).data.X,s(3).data.Y,squeeze(s(3).data.Val(it,:,:)));shading interp;axis equal
 
-            filledLDB(ldb,[1 1 0.8],[1 1 0.8],10,0)
+            try
+                filledLDB(ldb,[1 1 0.8],[1 1 0.8],10,0);
+            end
             
-            [cb,h] = contour(s(2).data.X,s(2).data.Y,squeeze(s(2).data.Val),[-16:2:2])
-            set(h,'linecolor',[0.8 0.8 0.8])
+            [cb,h] = contour(s(2).data.X,s(2).data.Y,squeeze(s(2).data.Val),[-16:2:2]);
+            set(h,'linecolor',[0.8 0.8 0.8]);
  
             clim([-0.1 1.5])
             colormap([1 1 0.8; jet])    
@@ -91,7 +93,7 @@ try
             kmaxis(gca,settings.kmaxis)
             
             % axes 2
-            ax2 = axes('position',[0.68 0.30 0.12 0.1])
+            ax2 = axes('position',[0.68 0.30 0.12 0.1]);
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
             text(0.1,0.8,'Wind','fontsize',7,'fontweight','bold')
@@ -100,7 +102,7 @@ try
             text(0.1,0.2,'Kracht: 4 bft','fontsize',7)
             
             % axes 2a
-            ax2a = axes('position',[0.763 0.309 0.0314 0.0439])
+            ax2a = axes('position',[0.763 0.309 0.0314 0.0439]);
             axis equal;
             set(gca,'xtick',[]);set(gca,'ytick',[])
             arrow([0 0],[0.93 1],'Width',1,'LineWidth',1.5,'length',15,'faceColor','b','edgecolor','b')
@@ -109,7 +111,7 @@ try
             set(gca,'ycolor','w')
             
             % axes 3
-            ax3 = axes('position',[0.80 0.30 0.12 0.1])
+            ax3 = axes('position',[0.80 0.30 0.12 0.1]);
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
             text(0.2,0.6,strrep(strrep(datestr(timnow,1),'-',' '),'May','Mei'),'fontsize',12)
@@ -125,7 +127,7 @@ try
             text(0.1,0.2,'Bewolking: geen','fontsize',7)
             
             % axes 4a
-            ax2a = axes('position',[0.763 0.209 0.0314 0.0439])
+            ax2a = axes('position',[0.763 0.209 0.0314 0.0439]);
             axis equal;
             %             image(im1)
             set(gca,'xtick',[]);set(gca,'ytick',[])
@@ -134,7 +136,7 @@ try
             set(gca,'ycolor','w')
             
             % axes 5
-            ax5 = axes('position',[0.80 0.20 0.12 0.1])
+            ax5 = axes('position',[0.80 0.20 0.12 0.1]);
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
             text(0.1,0.8,'Golven','fontsize',7,'fontweight','bold')
@@ -143,7 +145,7 @@ try
             text(0.1,0.2,'Periode: 5s','fontsize',7)
             
             % axes 5a
-            ax2a = axes('position',[0.883 0.209 0.0314 0.0439])
+            ax2a = axes('position',[0.883 0.209 0.0314 0.0439]);
             axis equal;
             set(gca,'xtick',[]);set(gca,'ytick',[])
             arrow([0 0],[1 1],'Width',1,'LineWidth',1.5,'length',15,'faceColor','g','edgecolor','g')
@@ -152,7 +154,7 @@ try
             set(gca,'ycolor','w')
             
             % axes 6
-            ax6 = axes('position',[0.68 0.09 0.24 0.11])
+            ax6 = axes('position',[0.68 0.09 0.24 0.11]);
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
             
@@ -160,7 +162,7 @@ try
             ax7 = axes('position',[0.695 0.12 0.21 0.07]);hold on;
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
-            plot(s(3).data.Time,s(3).data.Val,'linewidth',0.7);
+            plot(s(4).data.Time,s(4).data.Val,'linewidth',0.7);
             set(gca,'xlim',[floor(timnow)-1 floor(timnow)+2])
             set(gca,'xtick',[floor(timnow)-1:0.5:floor(timnow)+2])
             datetick('x','keeplimits','keepticks')
@@ -202,7 +204,7 @@ try
             
             fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnow,'dd mmm HH:MM'),'May','mei'),'Mar','Mrt'),'Oct','Okt'));
             fc.timepoints(tel).timepoint.timestr.type  = 'char';
-            fc.timepoints(tel).timepoint.png.vale      = [name '_' datestr(timnow,'yyyymmddHH') '.png'];
+            fc.timepoints(tel).timepoint.png.value      = [name '_' datestr(timnow,'yyyymmddHH') '.png'];
             fc.timepoints(tel).timepoint.png.type      = 'char';
             fc.timepoints(tel).timepoint.id.value      = datestr(timnow,'yyyymmddHH');
             fc.timepoints(tel).timepoint.id.type       = 'int';
