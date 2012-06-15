@@ -48,7 +48,7 @@ try
         
         tel = 0; 
         
-        for it=1:n3:5%nt
+        for it=1:n3:nt
             
             input.scrsz= get(0, 'ScreenSize');               % Set plot figure on full screen
             figure('Visible','Off','Position', [input.scrsz]);
