@@ -8,6 +8,12 @@ delete(dr);
 disp('Making time series plots ...');
 cosmos_makeTimeSeriesPlots(hm,m);
 
+%% ForecastPlot
+switch lower(hm.models(m).type)
+    case{'delft3dflowwave','delft3dflow'}
+        disp('Making forecast plots ...');
+        cosmos_makeForecastPlot(hm,m);
+end
 %% Maps
 switch lower(hm.models(m).type)
     case{'delft3dflowwave','delft3dflow'}
