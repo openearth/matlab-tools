@@ -86,6 +86,15 @@ if ~isscalar(Axeshandles) && ...
     % currently, tightenfigure is not suitable for figures with multiple
     % panels
     
+    % express all position elements relative to left bottom corner of
+    % figure
+    pos2 = cell2mat(state.position);
+    pos2 = [pos2(:,1:2) pos2(:,1:2)+pos2(:,3:4)];
+    
+    % retreive subplot rows and columns
+    [~, icol] = sort(unique(pos2(:,1)));
+    [~, irow] = sort(unique(pos2(:,2)), 'descend');
+    
     % reset units to original state
     set(Axeshandles, {'Units'}, state.units)
     return
