@@ -52,6 +52,7 @@ for iw=1:length(wb)
         % Write scenarios.xml
         scenarios(ii).scenario=[];
         scenarios(ii).scenario.name=hm.scenarioShortName;
+        scenarios(ii).scenario.type=hm.scenarioType;
         xml_save(fname,scenarios,'off');
         
         % Commit scenarios.xml
