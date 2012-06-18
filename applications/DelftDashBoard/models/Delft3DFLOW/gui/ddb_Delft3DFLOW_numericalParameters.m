@@ -74,7 +74,7 @@ else
             handles=getHandles;
             
             % Depth in cell centres
-            handles.Model(md).Input(ad).depthZ=GetDepthZ(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).dpsOpt);
+            handles.Model(md).Input(ad).depthZ=getDepthZ(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).dpsOpt);
             handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','visible',1,'domain',ad);
             
             % Boundary depths
