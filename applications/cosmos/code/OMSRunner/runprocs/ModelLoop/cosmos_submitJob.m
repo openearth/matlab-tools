@@ -67,7 +67,11 @@ switch model.runEnv
         
         % H4 cluster
         
-        
+        if ~isempty(hm.clusterNode)
+            clusterstr=[' -q ' hm.clusterNode];
+        else
+            clusterstr='';
+        end
         
         fid=fopen('run_h4.sh','wt');
         
@@ -84,11 +88,11 @@ switch model.runEnv
                 njobs=ceil(model.nrProfiles/nprfperjob);
                 for j=1:njobs
                     fprintf(fid,'%s\n',['dos2unix run' num2str(j) '.sh']);
-                    fprintf(fid,'%s\n',['qsub -V -N ' model.runid '_' num2str(j) ' run' num2str(j) '.sh']);
+                    fprintf(fid,'%s\n',['qsub -V -N ' model.runid '_' num2str(j) clusterstr ' run' num2str(j) '.sh']);
                 end
             otherwise
                 fprintf(fid,'%s\n','dos2unix run.sh');
-                fprintf(fid,'%s\n',['qsub -V -N ' model.name ' run.sh']);
+                fprintf(fid,'%s\n',['qsub -V -N ' model.name clusterstr ' run.sh']);
         end
         fprintf(fid,'%s\n','qstat -u $USER ');
         fprintf(fid,'%s\n','');
@@ -99,7 +103,6 @@ switch model.runEnv
         system([hm.exeDir 'dos2unix run_h4.sh']);
         
         [success,message,messageid]=movefile('run_h4.sh','u:\','f');
-
         system([hm.exeDir 'plink ' hm.h4.userName '@h4 -pw ' hm.h4.password ' ~/run_h4.sh']);
 
 end
