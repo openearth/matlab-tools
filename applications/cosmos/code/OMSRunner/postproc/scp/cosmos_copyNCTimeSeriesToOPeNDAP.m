@@ -1,5 +1,7 @@
 function cosmos_copyNCTimeSeriesToOPeNDAP(hm,m)
 
+hm.exeDir='F:\OpenEarthTools\data\cosmos\exe\';    
+
 model=hm.models(m);
 archdir = model.archiveDir;
 
@@ -17,10 +19,22 @@ for istat=1:model.nrStations
             
             if exist(ncfile,'file')
                 try
-                    system('net use \\opendap\opendap 0rm0ndt /user:ormondt');
-                    url=['\\opendap\opendap\deltares\cosmos\' hm.scenario '\' model.continent '\' model.name '\'];
-                    copyfile(ncfile,url);
-                    system('net use \\opendap\opendap /delete');
+                    fid=fopen('scp.txt','wt');
+                    fprintf(fid,'%s\n','option batch on');
+                    fprintf(fid,'%s\n','option confirm off');
+                    fprintf(fid,'%s\n','open ormondt:Lido2000@opendap.deltares.nl -timeout=15 -hostkey="ssh-rsa 2048 40:80:49:83:e3:e8:06:7c:49:ba:67:18:20:2e:bf:69"');
+                    fprintf(fid,'%s\n',['cd /p/opendap/data/deltares/cosmos']);
+                    fprintf(fid,'%s\n',['mkdir ' hm.scenario]);
+                    fprintf(fid,'%s\n',['mkdir ' hm.scenario '/' model.name]);
+                    fprintf(fid,'%s\n',['cd ' hm.scenario '/' model.name]);
+                    
+                    %     % Upload scenario xml
+                    fprintf(fid,'%s\n',['put ' ncfile]);  
+                    fprintf(fid,'%s\n','close');
+                    fprintf(fid,'%s\n','exit');
+                    fclose(fid);
+                    system([hm.exeDir 'winscp.exe /console /script=scp.txt']);
+                    delete('scp.txt');
                 catch
                     disp('Could not copy to OPeNDAP server!');
                 end
@@ -29,3 +43,6 @@ for istat=1:model.nrStations
     end
     
 end
+
+
+
