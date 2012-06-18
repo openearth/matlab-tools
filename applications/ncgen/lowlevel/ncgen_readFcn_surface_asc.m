@@ -1,9 +1,5 @@
 function varargout = ncgen_readFcn_surface_asc(OPT,writeFcn,fns)
 % OPT is a struct with fields
-%     nc.tilesize
-%     nc.offset
-%     nc.gridspacing
-%     path_ncf_loc
 %
 % fns is a struct with the following fields:
 %     name
@@ -23,6 +19,14 @@ if nargin==0 || isempty(OPT)
     OPT.z_scalefactor       = 1; %scale factor of z values to metres altitude
     varargout = {OPT};
     return
+else
+    if datenum(version('-date'), 'mmmm dd, yyyy') < 734729
+        % version 2011a and older
+        error(nargchk(3,3,nargin))
+    else
+        % version 2011b and newer
+        narginchk(3,3)
+    end
 end
 
 multiWaitbar('Processing file','reset','label',sprintf('Processing %s', fns.name))
@@ -93,7 +97,7 @@ maxy    = yllcorner + cellsize.*(nrows-1);
 % grid_spacing, grid_tilesize and grid_offset can be either scalars or
 % 2-element vectors indicating equal respectively seperately specified x
 % and y direction values.
-[grid_spacingx grid_spacingy] = deal(OPT.schema.grid_cellsize(1), OPT.schema.grid_cellsize(end));
+[grid_spacingx  grid_spacingy ] = deal(OPT.schema.grid_cellsize(1), OPT.schema.grid_cellsize(end));
 [grid_tilesizex grid_tilesizey] = deal(OPT.schema.grid_tilesize(1), OPT.schema.grid_tilesize(end));
 mapsizex = grid_spacingx * grid_tilesizex;
 mapsizey = grid_spacingy * grid_tilesizey;

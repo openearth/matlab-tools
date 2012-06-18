@@ -1,10 +1,5 @@
 function varargout = ncgen_readFcn_surface_xyz(OPT,writeFcn,fns)
-% OPT are properties specific to this function
-% OPT2 are properties copied from the calling function
-%     nc.grid_tilesize
-%     nc.grid_offset  
-%     nc.grid_spacing
-%     path_ncf_loc
+% OPT is a struct with fields
 %
 % fns is a struct with the following fields:
 %     name
@@ -31,7 +26,7 @@ if nargin == 0 || isempty(OPT)
     OPT.read.gridFcn             = @(x,y,z,xi,yi) griddata_remap(x,y,z,xi,yi);
     OPT.read.z_scalefactor       = 1; %scale factor of z values to metres altitude
         
-    varargout               = {OPT.read};
+    varargout                    = {OPT.read};
     return
 else
     if datenum(version('-date'), 'mmmm dd, yyyy') < 734729
@@ -72,35 +67,42 @@ while ~feof(fid)
     miny    = min(D{OPT.read.yid});
     maxx    = max(D{OPT.read.xid});
     maxy    = max(D{OPT.read.yid});
-    mapsize = OPT.schema.grid_cellsize * OPT.schema.grid_tilesize;
-    minx    = floor(minx/mapsize)*mapsize + OPT.schema.grid_offset;
-    miny    = floor(miny/mapsize)*mapsize + OPT.schema.grid_offset;
+    % grid_spacing, grid_tilesize and grid_offset can be either scalars or
+    % 2-element vectors indicating equal respectively seperately specified x
+    % and y direction values.
+    [grid_spacingx  grid_spacingy ] = deal(OPT.schema.grid_cellsize(1), OPT.schema.grid_cellsize(end));
+    [grid_tilesizex grid_tilesizey] = deal(OPT.schema.grid_tilesize(1), OPT.schema.grid_tilesize(end));
+    mapsizex = grid_spacingx * grid_tilesizex;
+    mapsizey = grid_spacingy * grid_tilesizey;
+    minx    = floor(minx/mapsizex)*mapsizex + OPT.schema.grid_offset(1);
+    miny    = floor(miny/mapsizey)*mapsizey + OPT.schema.grid_offset(end);
     
     % determine steps for waitbar
-    WB.steps = numel(minx : mapsize : maxx) * numel(miny : mapsize : maxy);
+    WB.steps = numel(minx : mapsizex : maxx) * numel(miny : mapsizey : maxy);
     WB.read  = ftell(fid) - WB.read;
     WB.done  = WB.done + WB.read;
     multiWaitbar('Processing file',WB.done/WB.todo,'label',sprintf('Processing %s; writing data', fns.name));
-    for x0      = minx : mapsize : maxx
-        xrange      = [x0-OPT.schema.grid_cellsize x0+mapsize];
+    for x0      = minx : mapsizex : maxx
+        xrange      = [x0-OPT.schema.grid_cellsize(1) x0+mapsizex];
         ids_x_range = find(D{OPT.read.xid}>min(xrange) & D{OPT.read.xid}<max(xrange));
         
-        for y0  = miny : mapsize : maxy
-            yrange       = [y0-OPT.schema.grid_cellsize y0+mapsize];
+        for y0  = miny : mapsizey : maxy
+            yrange       = [y0-OPT.schema.grid_cellsize(end) y0+mapsizey];
             ids_xy_range = ids_x_range(D{OPT.read.yid}(ids_x_range)>min(yrange) & D{OPT.read.yid}(ids_x_range)<max(yrange));
 
             if ~isempty(ids_xy_range)>0
                 x = D{OPT.read.xid}(ids_xy_range);
                 y = D{OPT.read.yid}(ids_xy_range);
-                z = D{OPT.read.zid}(ids_xy_range)*OPT.read.z_scalefactor; %OPT.read.zfactor;
+                z = D{OPT.read.zid}(ids_xy_range)*OPT.read.z_scalefactor;
                 
                 % generate X,Y,Z
-                data.x  =        x0 + (0:(OPT.schema.grid_tilesize)-1) * OPT.schema.grid_cellsize;
-                data.y  = fliplr(y0 + (0:(OPT.schema.grid_tilesize)-1) * OPT.schema.grid_cellsize);
+                data.x  = x0 + (0:(OPT.schema.grid_tilesize(1  ))-1) * OPT.schema.grid_cellsize(1  );
+                data.y  = y0 + (0:(OPT.schema.grid_tilesize(end))-1) * OPT.schema.grid_cellsize(end);
                 [xi,yi] = meshgrid(data.x,data.y);
                 
                 % place xyz data on XY matrices
-                data.z = OPT.read.gridFcn(x,y,z,xi,yi);
+                % z is transposed to set the dimension order to x,y
+                data.z = OPT.read.gridFcn(x,y,z,xi,yi)';
 
                 if any(~isnan(data.z(:))) % if a non trivial Z matrix is returned write the data to a nc file
                     % set the name for the nc file

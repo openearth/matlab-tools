@@ -60,14 +60,14 @@ function varargout = ncgentools_fill_and_sort_along_dimension(source,destination
 % $HeadURL$
 % $Keywords: $
 
-%% sort variable
+%% settings
+% sort variable
 OPT.dimension_name = 'time';
 % must be a dimension variable (both the name of a dimension and a variable
 % with only that dimension)
 
 % variable to fill
 OPT.fill_variable_name = 'z';
-
 
 OPT = setproperty(OPT,varargin);
 
@@ -81,8 +81,6 @@ mkpath(destination);
 delete2(dir2(destination,'no_dirs',1));
 D = dir2(source,'depth',0,'no_dirs',1,'file_incl','\.nc$','file_excl','catalog');
 
-
-
 multiWaitbar('processing...','reset')
 for ii = 1:length(D);
     source_file      = [D(ii).pathname D(ii).name];
@@ -94,6 +92,10 @@ for ii = 1:length(D);
     % determine new order
     c                = ncread(source_file,OPT.dimension_name);
     [~,new_order]    = sort(c);
+    
+    if isempty(c)
+        continue
+    end
     
     for iVariable = 1:length(variable_names)
         % read variable
@@ -115,6 +117,7 @@ for ii = 1:length(D);
             index     = repmat({':'},ndims(c),1);
             index(n)  = {1};
             c_current = c(index{:});
+
             for jj = 2:length(new_order)
                 c_previous  = c_current;
                 

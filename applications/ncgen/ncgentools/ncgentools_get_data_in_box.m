@@ -10,19 +10,15 @@ function [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index, va
 %   netcdf_index  = netcdf netcdf_index structire, or a path
 %   varargin =
 %
-%
-%
-%
 %   Example
 %   ncgentools_get_data_in_box
-%
 %
 %   [data, netcdf_index, OPT] = ncgentools_get_data_in_box('D:\products\nc\rijkswaterstaat\vaklodingen\combined');
 %   
 %   [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index,...
-%          'x_range',[125000 135000],...
+%       'x_range',[125000 135000],...
 %       'y_range',[565000 612500],...
-%          'x_stride',15,...
+%       'x_stride',15,...
 %       'y_stride',15);
 %   
 %   surf(data.x,data.y,data.z)
@@ -75,11 +71,12 @@ function [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index, va
 % $Keywords: $
 
 %%
-OPT.x_range    = [235000 245000];
-OPT.y_range    = [602000 616000];
+OPT.x_range    = [0     1000];
+OPT.y_range    = [0     1000];
+OPT.t_range    = [-inf   now];
+OPT.t_method   = 'last_in_range';
 OPT.x_stride   = 1;
 OPT.y_stride   = 1;
-OPT.t_stride   = 1;
     
 OPT = setproperty(OPT,varargin{:});
 
@@ -91,7 +88,7 @@ end
 
 
 if ischar(netcdf_index)
-    netcdf_index = generate_Dataset(netcdf_index);
+    netcdf_index = generate_netcdf_index(netcdf_index);
 end
 
 
@@ -109,12 +106,30 @@ y(y<min(OPT.y_range)) = [];
 
 data.z = nan(length(y),length(x));
 
+
+% last before
+% linear interpolated
+% merged in range 
+
 for ii = files_to_search
     ncfile   = netcdf_index.urlPath{ii};
    
-    x_nc     = ncread(ncfile,netcdf_index.var_x);
-    y_nc     = ncread(ncfile,netcdf_index.var_y);
-    t_nc     = ncread(ncfile,netcdf_index.var_t);
+    x_nc     = ncread    (ncfile,netcdf_index.var_x);
+    y_nc     = ncread    (ncfile,netcdf_index.var_y);
+    t_nc     = nc_cf_time(ncfile,netcdf_index.var_t);
+    
+    % determine     t_start;
+    t_sorted = issorted(t_nc);
+    
+    switch OPT.t_method
+        case 'last_in_range'
+            t_start = find(t_nc == max(t_nc(t_nc<=OPT.t_range(2))));
+            t_count = 1;
+        case 'linear_interpolated'
+            assert(t_sorted)
+        case 'merged_in_range'
+            assert(t_sorted)
+    end
     
     flip_x   = x_nc(1)>x_nc(end);
     flip_y   = y_nc(1)>y_nc(end);
@@ -128,7 +143,9 @@ for ii = files_to_search
         ix(2)    = find(x <= x_nc(end),1, 'last');
         iy(1)    = find(y >= y_nc(1  ),1,'first');
         iy(2)    = find(y <= y_nc(end),1, 'last');
-    catch
+    catch %#ok<CTCH>
+        % this is when the is no relevant data in the nc file, even though
+        % it seemed so from the projectionCoverage
         continue
     end
     
@@ -152,32 +169,27 @@ for ii = files_to_search
     % set start
     start(netcdf_index.dim_x) = ix_nc(1);
     start(netcdf_index.dim_y) = iy_nc(1);
-    start(netcdf_index.dim_t) = length(t_nc);
+    start(netcdf_index.dim_t) = t_start;
     
     % calculate count and stride
     count(netcdf_index.dim_x) = ix_nc(2) - start(netcdf_index.dim_x);
     count(netcdf_index.dim_y) = iy_nc(2) - start(netcdf_index.dim_y);
-    count(netcdf_index.dim_t) = 0;
+    count(netcdf_index.dim_t) = t_count;
     
     stride(netcdf_index.dim_x) = OPT.x_stride;
     stride(netcdf_index.dim_y) = OPT.y_stride;
-    stride(netcdf_index.dim_t) = OPT.t_stride;
+    stride(netcdf_index.dim_t) = 1;
     
     % correct flipped dimensions for start and count
     if flip_x; start(netcdf_index.dim_x) = length(x_nc) + 1 - start(netcdf_index.dim_x) - count(netcdf_index.dim_x); end
     if flip_y; start(netcdf_index.dim_y) = length(y_nc) + 1 - start(netcdf_index.dim_y) - count(netcdf_index.dim_y); end
     
     count = count ./ stride + 1;
+    count(netcdf_index.dim_t) = t_count;
     
     % read data from nc file
     z_tmp = ncread(ncfile,netcdf_index.var_z,start,count,stride);
 
-%       z_tmp = ncread(ncfile,netcdf_index.var_z,start,count,[1 1 1]);  
-%     ncread(ncfile,netcdf_index.var_y,start(netcdf_index.dim_y),count(netcdf_index.dim_y),stride(netcdf_index.dim_y))
-%     ncread(ncfile,netcdf_index.var_x,start(netcdf_index.dim_x),count(netcdf_index.dim_x),stride(netcdf_index.dim_x))
-%     ncread(ncfile,netcdf_index.var_t,start(netcdf_index.dim_t),count(netcdf_index.dim_t),stride(netcdf_index.dim_t))
-%     ncdisp(ncfile,netcdf_index.var_z)
-    
     % permute data in correct order
     z_tmp = permute(z_tmp,[netcdf_index.dim_y,netcdf_index.dim_x,netcdf_index.dim_t]);
    
@@ -190,7 +202,7 @@ end
 
 [data.x,data.y] = meshgrid(x,y);
 
-function netcdf_index = generate_Dataset(netcdf_path)
+function netcdf_index = generate_netcdf_index(netcdf_path)
 
 netcdf_index.urlPath = opendap_catalog(netcdf_path);
 for ii = length(netcdf_index.urlPath):-1:1
@@ -218,11 +230,11 @@ for ii = 1:length(info(1).Variables)
     end
 end
 
+%%
 dimensions = {info(1).Variables(strcmp(netcdf_index.var_z,{info(1).Variables.Name})).Dimensions.Name};
 netcdf_index.dim_x      = find(strcmp(dimensions,netcdf_index.var_x));
 netcdf_index.dim_y      = find(strcmp(dimensions,netcdf_index.var_y));
 netcdf_index.dim_t      = find(strcmp(dimensions,netcdf_index.var_t));
-
 
 att_names  = cellfun(@(s) {s.Name},{info.Attributes},'UniformOutput',false);
 att_names  = vertcat(att_names {:});

@@ -1,5 +1,10 @@
 function varargout = ncgen_writeFcn_surface(OPT,data)
 
+% input must be a data structure with fields x,y and z.
+% x and y are one dimensional
+% z is two dimensional, with dimension order x,y (matlab default
+% dimensionorder is y,x)
+
 if nargin == 0 || isempty(OPT)
     % return OPT structure with options specific to this function
     OPT.write.schema        = struct([]); %nccreateSchema(dimstruct,varstruct);
