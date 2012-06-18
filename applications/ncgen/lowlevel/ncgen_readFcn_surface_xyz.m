@@ -92,7 +92,7 @@ while ~feof(fid)
             if ~isempty(ids_xy_range)>0
                 x = D{OPT.read.xid}(ids_xy_range);
                 y = D{OPT.read.yid}(ids_xy_range);
-                z = D{OPT.read.zid}(ids_xy_range)*OPT.read.zfactor;
+                z = D{OPT.read.zid}(ids_xy_range)*OPT.read.z_scalefactor; %OPT.read.zfactor;
                 
                 % generate X,Y,Z
                 data.x  =        x0 + (0:(OPT.schema.grid_tilesize)-1) * OPT.schema.grid_cellsize;
