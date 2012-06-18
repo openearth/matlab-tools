@@ -14,7 +14,7 @@
     <position>200 120 60 20</position>
     <type>string</type>
     <variable>handles.Model(md).Input(ad).dpsOpt</variable>
-    <onchange>ddb_Delft3DFLOW_numericalparameters</onchange>
+    <onchange>ddb_Delft3DFLOW_numericalParameters</onchange>
     <option1>selectdps</option1>
     <list>
       <texts>
