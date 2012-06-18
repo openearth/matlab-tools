@@ -36,22 +36,24 @@ plotMCResult(M);
 figure;
 
 s = [];
+xlim = [-10 15];
+x = linspace(xlim(1), xlim(2), round(diff(xlim)*1.5));
 
 % plot R
 s(1) = subplot(3,1,1);
-hist(M.Output.x(:,1), 30);
+hist(M.Output.x(:,1), x);
 title(M.Input(1).Name);
 
 % plot S
 s(2) = subplot(3,1,2);
-hist(M.Output.x(:,2), 30);
+hist(M.Output.x(:,2), x);
 title(M.Input(2).Name);
 
 % plot Z (= R - S)
 s(3) = subplot(3,1,3);
-hist(M.Output.z, 30);
+hist(M.Output.z, x);
 title('Z');
 
 % align x-axes
 linkaxes(s, 'x')
-set(s,'XLim',[-10 15]);
+set(s,'XLim',xlim);

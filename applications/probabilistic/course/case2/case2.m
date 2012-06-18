@@ -4,7 +4,7 @@ stochast = struct();
 
 % water level
 stochast(1).Name   = 'MWL';
-stochast(1).Distr  = @norm_inv;
+stochast(1).Distr  = @exp_inv;
 stochast(1).Params = {.5 1};
 
 % wave height

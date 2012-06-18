@@ -4,7 +4,7 @@ stochast = struct();
 
 % water level
 stochast(1).Name   = 'MWL';
-stochast(1).Distr  = @norm_inv;
+stochast(1).Distr  = @exp_inv;
 stochast(1).Params = {.5 1};
 
 % wave height
@@ -28,7 +28,7 @@ stochast(5).Distr  = @deterministic;
 stochast(5).Params = {1/3};
 
 % critical water level for geotechnical stability
-stochast(6).Name   = 'MWL_critical';
+stochast(6).Name   = 'h_critical';
 stochast(6).Distr  = @norm_inv;
 stochast(6).Params = {1 .1};
 
