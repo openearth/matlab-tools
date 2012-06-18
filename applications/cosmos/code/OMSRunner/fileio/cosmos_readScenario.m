@@ -17,14 +17,15 @@ end
 hm.scenarioLongName=scn.longname;
 hm.scenarioShortName=scn.shortname;
 
-hm.scenarioType='historicalscenario';
+hm.scenarioType='hindcast';
 if isfield(scn,'type')
     hm.scenarioType=scn.type;
 end
 
-if ~strcmpi(hm.scenario,'forecasts')
+if isfield(scn,'cycle')
     hm.cycle=datenum(scn.cycle,'yyyymmdd HHMMSS');
 end
+
 hm.runInterval=str2double(scn.runinterval);
 hm.runTime=str2double(scn.runtime);
 hm.cycleMode=scn.cyclemode;
