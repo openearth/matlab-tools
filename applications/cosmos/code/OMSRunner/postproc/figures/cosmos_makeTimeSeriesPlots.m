@@ -8,7 +8,7 @@ try
         
         nn=model.nrStations;
         
-        if strcmpi(hm.scenario,'forecasts')
+        if strcmpi(hm.scenarioType,'forecast')
             tstart=model.tOutputStart-5;
         else
             tstart=model.tOutputStart;
