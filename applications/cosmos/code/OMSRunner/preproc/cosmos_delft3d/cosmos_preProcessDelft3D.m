@@ -175,10 +175,11 @@ switch lower(model.type)
                 end
                 [success,message,messageid]=copyfile([hm.exeDir 'linux' filesep fname],[tmpdir 'swan.sh'],'f');
                 
-                fid=fopen([tmpdir 'run.sh'],'wt');
+                fid=fopen([tmpdir 'run_' model.name '.sh'],'wt');
                 fprintf(fid,'%s\n','#!/bin/sh');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','# Start with: qsub -V -N runname run.sh');
+%                 fprintf(fid,'%s\n','# Start with: qsub -V -N runname run.sh');        % old handle
+                fprintf(fid,'%s\n','# Start with: qsub -q zandmotor run_***.sh');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','# for SWAN on h3/devux:');
                 fprintf(fid,'%s\n','. /opt/intel/cc/9.0/bin/iccvars.sh');
