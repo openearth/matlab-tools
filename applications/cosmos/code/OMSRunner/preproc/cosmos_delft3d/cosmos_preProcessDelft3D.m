@@ -94,7 +94,7 @@ switch lower(model.type)
                 fid=fopen([tmpdir 'run.sh'],'wt');
                 fprintf(fid,'%s\n','#!/bin/sh');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','# Start with: qsub -V -N runname run.sh');
+                fprintf(fid,'%s\n','# Start with:   qsub -V -N runname run.sh');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','# for SWAN on h3/devux:');
                 fprintf(fid,'%s\n','. /opt/intel/cc/9.0/bin/iccvars.sh');
