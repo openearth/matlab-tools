@@ -117,6 +117,26 @@
     <tooltipstring>Edit vertical coordinate system (e.g. MSL, NAP or NAVD88)</tooltipstring>
   </element> 
   <element>
+    <tag>selectverticalunits</tag>
+    <style>popupmenu</style>
+    <position>500 35 60 20</position>
+    <text>Unit</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.bathymetry.vertUnits</variable>
+    <type>string</type>
+    <tooltipstring>Select units of vertical data</tooltipstring>
+    <list>
+      <texts>
+        <text>metres</text>
+        <text>feet</text>
+      </texts>
+      <values>
+        <value>m</value>
+        <value>ft</value>
+      </values>
+    </list>
+  </element>  
+  <element>
     <tag>editvertcslevel</tag>
     <style>edit</style>
     <position>270 10 60 20</position>
@@ -130,7 +150,7 @@
   <element>
     <tag>selectpositiveupdown</tag>
     <style>popupmenu</style>
-    <position>500 10 50 20</position>
+    <position>500 10 60 20</position>
     <text>Positive</text>
     <textposition>left</textposition>
     <variable>handles.Toolbox(tb).Input.bathymetry.positiveUp</variable>

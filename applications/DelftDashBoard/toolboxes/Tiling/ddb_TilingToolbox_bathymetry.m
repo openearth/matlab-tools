@@ -165,6 +165,7 @@ OPT.EPSGname                     = handles.Toolbox(tb).Input.bathymetry.EPSGname
 OPT.EPSGtype                     = handles.Toolbox(tb).Input.bathymetry.EPSGtype;
 OPT.VertCoordName                = handles.Toolbox(tb).Input.bathymetry.vertCoordName;
 OPT.VertCoordLevel               = handles.Toolbox(tb).Input.bathymetry.vertCoordLevel;
+OPT.VertUnits                    = handles.Toolbox(tb).Input.bathymetry.vertUnits;
 OPT.nc_library                   = handles.Toolbox(tb).Input.bathymetry.nc_library;
 OPT.tp                           = handles.Toolbox(tb).Input.bathymetry.type;
 OPT.positiveup                   = handles.Toolbox(tb).Input.bathymetry.positiveUp;

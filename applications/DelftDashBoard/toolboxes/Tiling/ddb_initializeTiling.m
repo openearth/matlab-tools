@@ -89,6 +89,7 @@ handles.Toolbox(ii).Input.bathymetry.EPSGname                     = 'WGS 84';
 handles.Toolbox(ii).Input.bathymetry.EPSGtype                     = 'geographic';
 handles.Toolbox(ii).Input.bathymetry.vertCoordName                = 'MSL';
 handles.Toolbox(ii).Input.bathymetry.vertCoordLevel               = 0.0;
+handles.Toolbox(ii).Input.bathymetry.vertUnits                    = 'm';
 handles.Toolbox(ii).Input.bathymetry.nc_library                   = 'matlab';
 handles.Toolbox(ii).Input.bathymetry.type                         = 'float';
 handles.Toolbox(ii).Input.bathymetry.positiveUp                   = 1;

@@ -70,7 +70,7 @@ function makeNCBathyTiles(fname1, dr, dataname, nrzoom, nx, ny, OPT)
 
 pbyp=0;
 
-if ncols*nrows>25000000
+if ncols*nrows>250000000000
     % Too large, read piece by piece...
     pbyp=1;
 else
@@ -156,13 +156,17 @@ if imaketiles
                     end
                     
                     %                    zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));
-                    zz=single(zz);
-                    zz=zz';
-                    fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
-                    
-                    OPT.fillValue=-999;
-
-                    nc_grid_createNCfile2(fname,xx,yy,zz,OPT);
+                    % Only save files that contain at least some valid
+                    % values
+                    if ~isnan(nanmax(nanmax(zz)))
+                        zz=single(zz);
+                        zz=zz';
+                        fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                        
+                        OPT.fillValue=-999;
+                        
+                        nc_grid_createNCfile2(fname,xx,yy,zz,OPT);
+                    end
                     
                 end
             end

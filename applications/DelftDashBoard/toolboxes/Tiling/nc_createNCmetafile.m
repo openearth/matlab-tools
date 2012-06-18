@@ -98,6 +98,7 @@ netcdf.reDef(NCid);
 netcdf.putAtt(NCid,varid,'coord_ref_sys_name',OPT.EPSGname);
 netcdf.putAtt(NCid,varid,'coord_ref_sys_kind',OPT.EPSGtype);
 netcdf.putAtt(NCid,varid,'vertical_reference_level',OPT.VertCoordName);
+netcdf.putAtt(NCid,varid,'vertical_units',OPT.VertUnits);
 netcdf.putAtt(NCid,varid,'difference_with_msl',OPT.VertCoordLevel);
 
 % specify dimensions (time dimension is set to unlimited)
