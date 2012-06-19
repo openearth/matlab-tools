@@ -50,7 +50,8 @@
     <eco>
       <function>ITHK_ecorules2</function>
       <plottype>barplot</plottype>
-      <offset>-17000</offset>
+      <offset1>7000</offset1>
+      <offset2>2500</offset2>
     </eco>    
   </indicators>  
   <plotting>
@@ -60,6 +61,7 @@
       <dsfine>500</dsfine>
       <widthfine>5000</widthfine>
       <barscalevector>8</barscalevector>
+      <barscalevector_eco>12</barscalevector_eco>
     </barplot>
   </plotting>
   <postprocessing>
