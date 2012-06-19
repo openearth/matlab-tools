@@ -1,20 +1,20 @@
-function ITHK_add_groyne(ss,phase,NGRO,sens)
+function ITHK_add_groyne2(ss,phase,NGRO,sens)
 
 global S
 
 %% get info from struct
 lat = S.userinput.groyne(ss).lat;
 lon = S.userinput.groyne(ss).lon;
-mag = S.userinput.groyne(ss).magnitude;
 
-cstupdate = str2double(S.settings.groyne.coastlineupdate);
-updatewidth = str2double(S.settings.groyne.updatewidth);
-angleA = str2double(S.settings.groyne.angleshiftclimateA);
-angleB = str2double(S.settings.groyne.angleshiftclimateB);
+% GRO settings
+cstupdate = str2double(S.settings.measures.groyne.coastlineupdate);
+updatewidth = str2double(S.settings.measures.groyne.updatewidth);
+angleA = str2double(S.settings.measures.groyne.angleshiftclimateA);
+angleB = str2double(S.settings.measures.groyne.angleshiftclimateB);
 
 %% convert coordinates
-EPSG                = load('EPSG.mat');
-[x,y]               = convertCoordinates(lon,lat,EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+%EPSG                = load('EPSG.mat');
+[x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
 
 %% read files
 [MDAdata]=ITHK_readMDA('BASIS.MDA');
@@ -24,97 +24,71 @@ if phase==1 || NGRO>1
 else
     [GROdata]=ITHK_readGRO([S.settings.outputdir S.userinput.phase(phase-1).GROfile]);
 end
-%[GROdata]=ITHK_readGRO('BRIJN90A.GRO');
 
 %% Find groyne location on initial coastline
-% groyne points
-XYgroyne = [x' y'];
-Length = sqrt((x(1)-x(end))^2+(y(1)-y(end))^2);
-S.UB.input(sens).groyne(ss).length = Length;
+[idNEAREST,idRANGE]=findGRIDinrange(MDAdata_ORIG.Xcoast,MDAdata_ORIG.Ycoast,x,y,updatewidth*S.userinput.groyne(ss).length);
+S.userinput.groyne(ss).idNEAREST = idNEAREST;
 
-% initial coast line
-x0              = MDAdata_ORIG.Xcoast; 
-y0              = MDAdata_ORIG.Ycoast; 
-s0              = distXY(MDAdata_ORIG.Xcoast,MDAdata_ORIG.Ycoast);
-
-% Groyne location 
-for ii=1:length(XYgroyne)    
-    dist{ii} = sqrt((XYgroyne(ii,1)-x0).^2+(XYgroyne(ii,2)-y0).^2);
-    min_dist(ii) = min(dist{ii});
-    id_coast(ii) = find(dist{ii}==min(dist{ii}),1,'first');
-end
-id_gro_cst = id_coast(find(min_dist==min(min_dist),1,'first'));
-Xw = x0(id_gro_cst);
-Yw = y0(id_gro_cst);
-s1 = s0(id_gro_cst);
+% Groyne points
+S.UB.input(sens).groyne(ss).length = S.userinput.groyne(ss).length;
+Xw = MDAdata_ORIG.Xcoast(idNEAREST);
+Yw = MDAdata_ORIG.Ycoast(idNEAREST);
+s0 = distXY(MDAdata_ORIG.Xcoast,MDAdata_ORIG.Ycoast);
+s1 = s0(idNEAREST);
 
 %% Update initial coastline around groyne (in MDA)
-% Beach extension south of groyne (3 groyne length)
-if cstupdate == 1
-    dist_sth        = abs(s1-updatewidth*Length-s0);
-    idsouth       = find(dist_sth==min(dist_sth));
-    Xws             = x0(idsouth);
-    Yws             = y0(idsouth);
-    ss              = s0(idsouth);
-    if length(idsouth:id_gro_cst)>1
-        Y1south = interp1([Xws Xw],[0 0.5*Length],x0(idsouth:id_gro_cst));
+if cstupdate == 1   
+    % Beach extension south of groyne (0.5 GRO length)
+    if length(idRANGE(1):idNEAREST)>1
+        Y1south = interp1([MDAdata_ORIG.Xcoast(idRANGE(1)) MDAdata_ORIG.Xcoast(idNEAREST)],[0 0.5*S.userinput.groyne(ss).length],MDAdata_ORIG.Xcoast(idRANGE(1):idNEAREST));
     end
     Y1_new = MDAdata.Y1i;
-    Y1_new(idsouth:id_gro_cst) = MDAdata.Y1i(idsouth:id_gro_cst)+Y1south;
-
-    % Beach extension nord of groyne (3 groyne length)
-    dist_nrd        = abs(s1+updatewidth*Length-s0);
-    idnorth         = find(dist_nrd==min(dist_nrd));
-    Xwn             = x0(idnorth);
-    Ywn             = y0(idnorth);
-    sn              = s0(idnorth);
-    if length(id_gro_cst+1:idnorth)>1
-        Y1north = interp1([Xw Xwn],[0.5*Length 0],x0(id_gro_cst+1:idnorth));
+    Y1_new(idRANGE(1):idNEAREST) = MDAdata.Y1i(idRANGE(1):idNEAREST)+Y1south;
+    
+    % Beach extension nord of groyne  (0.5 GRO length)
+    if length(idNEAREST+1:idRANGE(end))>1
+        Y1north = interp1([MDAdata_ORIG.Xcoast(idNEAREST) MDAdata_ORIG.Xcoast(idRANGE(end))],[0.5*S.userinput.groyne(ss).length 0],x0(idNEAREST+1:idRANGE(end)));
     end
-    Y1_new(id_gro_cst+1:idnorth) = MDAdata.Y1i(id_gro_cst+1:idnorth)+Y1north;
-
+    Y1_new(idNEAREST+1:idRANGE(end)) = MDAdata.Y1i(idNEAREST+1:idRANGE(end))+Y1north;
+    
     % Refine grid cells around groyne
     MDAdata.nrgridcells=MDAdata.Xi.*0+1;MDAdata.nrgridcells(1)=0;
-    MDAdata.nrgridcells(id_gro_cst:id_gro_cst+1)=8;
+    MDAdata.nrgridcells(idNEAREST:idNEAREST+1)=8;
     ITHK_writeMDA2('BASIS.MDA',[MDAdata.Xi MDAdata.Yi],Y1_new,[],MDAdata.nrgridcells);
 
     % For post-processing (same number of points)
     MDAdata_ORIG.nrgridcells=MDAdata_ORIG.Xi.*0+1;MDAdata_ORIG.nrgridcells(1)=0;
-    MDAdata_ORIG.nrgridcells(id_gro_cst:id_gro_cst+1)=8;
-    ITHK_writeMDA2('BASIS_ORIG.MDA',[MDAdata_ORIG.Xi MDAdata_ORIG.Yi],MDAdata_ORIG.Y1i,[],MDAdata_ORIG.nrgridcells);
+    MDAdata_ORIG.nrgridcells(idNEAREST:idNEAREST+1)=8;
+    ITHK_writeMDA2('BASIS_ORIG.MDA',[MDAdata_ORIG.Xi MDAdata_ORIG.Yi],MDAdata_ORIG.Y1i,[],MDAdata_ORIG.nrgridcells);    
 end
 
 %% Add local climates & adjust GROfile
 % Updated coastline
-[MDAdatanew]=ITHK_readMDA('BASIS.MDA');
-xnew = MDAdatanew.Xcoast; 
-ynew = MDAdatanew.Ycoast; 
-snew = distXY(MDAdatanew.Xcoast,MDAdatanew.Ycoast);
+MDAdatanew=ITHK_readMDA('BASIS.MDA');
 
 % Find closest ray in GKL
 [xGKL,yGKL,rayfiles]=ITHK_readGKL('locations5magrof2.GKL');
-for ii=1:length(XYgroyne)    
-    distray{ii} = sqrt((XYgroyne(ii,1)-xGKL).^2+(XYgroyne(ii,2)-yGKL).^2);
-    min_distray(ii) = min(distray{ii});
-    id_ray(ii) = find(distray{ii}==min(distray{ii}),1,'first');
-end
-idNEAREST = id_ray(find(min_distray==min(min_distray),1,'first'));
+idRAY=findGRIDinrange(xGKL,yGKL,x,y,0);
 
 % Info local climates
-RAYfilename = rayfiles(idNEAREST);
+% Ray at GRO
+RAYfilename = rayfiles(idRAY);
 RAY = ITHK_readRAY([RAYfilename{1}(2:end-1) '.ray']);
 equiA = mod(RAY.equi-angleA,360);
-XA = xnew(id_gro_cst+8);
-YA = ynew(id_gro_cst+8);
-distC = abs(s1+2*Length-snew);
+XA = MDAdatanew.Xcoast(idNEAREST+8);
+YA = MDAdatanew.Ycoast(idNEAREST+8);
+% Ray 2 GRO lengths from GRO
+distC = abs(s1+2*S.userinput.groyne(ss).length-distXY(MDAdatanew.Xcoast,MDAdatanew.Ycoast));
 idC = find(distC==min(distC));
-XC = xnew(idC);
-YC = ynew(idC);
+XC = MDAdatanew.Xcoast(idC);
+YC = MDAdatanew.Ycoast(idC);
+% Ray 1 GRO length from GRO
 equiB = mod(RAY.equi-angleB,360);
-distB = abs(s1+Length-snew);
+distB = abs(s1+S.userinput.groyne(ss).length-distXY(MDAdatanew.Xcoast,MDAdatanew.Ycoast));
 idB = find(distB==min(distB));
-XB = xnew(idB);
-YB = ynew(idB);
+XB = MDAdatanew.Xcoast(idB);
+YB = MDAdatanew.Ycoast(idB);
+% Summarize
 XY = [XA YA; XB YB; XC YC];
 nameA = [RAYfilename{1}(2:end-1) 'A.RAY'];
 nameB = [RAYfilename{1}(2:end-1) 'B.RAY'];
@@ -136,7 +110,7 @@ ITHK_writeRAY(RAY);
 Ngroynes = length(GROdata);
 GROdata(Ngroynes+1).Xw = Xw;
 GROdata(Ngroynes+1).Yw = Yw;
-GROdata(Ngroynes+1).Length = Length;%0.2*Length; %Because length is not accurately represented in UNIBEST
+GROdata(Ngroynes+1).Length = S.userinput.groyne(ss).length;%0.2*Length; %Because length is not accurately represented in UNIBEST
 GROdata(Ngroynes+1).BlockPerc = 100;
 GROdata(Ngroynes+1).Yreference = 0;
 GROdata(Ngroynes+1).option = 'right';
@@ -146,6 +120,14 @@ GROdata(Ngroynes+1).xyr = XY;
 GROdata(Ngroynes+1).ray_file2 = names;
 ITHK_writeGRO([S.settings.outputdir S.userinput.groyne(ss).filename],GROdata);
 S.UB.input(sens).groyne(ss).GROdata = GROdata;
-%ITHK_writeGRO(['BRIJN90A' num2str(ss) '.GRO'],GROdata);
-%S.groyne(ss).filename = ['BRIJN90A' num2str(ss) '.GRO'];
+S.UB.input(sens).groyne(ss).Ngroynes = length(GROdata)-4;
 S.UB.input(sens).groyne(ss).rayfiles = {nameA,nameB,nameC};
+
+%% Function find grid in range
+function [idNEAREST,idRANGE]=findGRIDinrange(Xcoast,Ycoast,x,y,radius)
+    dist2 = ((Xcoast-x).^2 + (Ycoast-y).^2).^0.5;
+    idNEAREST  = find(dist2==min(dist2));
+    dist3 = ((Xcoast-Xcoast(idNEAREST)).^2 + (Ycoast-Ycoast(idNEAREST)).^2).^0.5;
+    idRANGE  = find(dist3<radius);
+end
+end

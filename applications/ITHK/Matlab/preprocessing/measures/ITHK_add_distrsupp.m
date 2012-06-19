@@ -1,20 +1,20 @@
-function S=ITHK_add_distrsupp(S,ii)
+function S=ITHK_add_distrsupp2(S,ii)
 
 %% Get info from struct
 lat = S.distrsupp(ii).lat;
 lon = S.distrsupp(ii).lon;
-mag = S.distrsupp(ii).magnitude;
+%mag = S.distrsupp(ii).magnitude;
 
 %% convert coordinates
-EPSG                = load('EPSG.mat');
-[x,y]               = convertCoordinates(lon,lat,EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+%EPSG                = load('EPSG.mat');
+[x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
 
 %% read files
 [MDAdata]=ITHK_readMDA('BASIS.MDA');
 [SOSdata0]=ITHK_readSOS('1HOTSPOTS1IT.SOS');
 
 %% calculate suppletion information
-volumes             = mag;
+volumes             = S.distrsupp(ii).volume;
 
     SOSdata=struct;
     SOSdata.headerline='';
