@@ -77,7 +77,7 @@ lon = S.beachextension(ii).lon;
 % Obtain new Y1 values and write to MDAfile (be sure that BASIS.MDA and BASIS_ORIG.MDA have same number of gridcells)
 XYref = [MDAdata.Xcoast MDAdata.Ycoast];
 XYcoast = [x' y'];
-[Y1,idY1,Xcoast_new,Ycoast_new,Xcoast_old,Ycoast_old] = fitCoastlineOnReferenceline(XYref,XYcoast);
+[Y1,idY1,Xcoast_new,Ycoast_new,Xcoast_old,Ycoast_old] = ITHK_fitCoastlineOnReferenceline(XYref,XYcoast);
 Y1_new = MDAdata.Y1i;
 Y1_new(idY1) = MDAdata.Y1i(idY1)+Y1;
 MDAdata.nrgridcells=MDAdata.Xi.*0+1;MDAdata.nrgridcells(1)=0;
