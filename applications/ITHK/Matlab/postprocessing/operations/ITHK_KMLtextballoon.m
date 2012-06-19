@@ -1,4 +1,4 @@
-function varargout = ITHK_KML_textballoon(lon,lat,varargin)
+function varargout = ITHK_KMLtextballoon(lon,lat,varargin)
 
 %% keyword,value
 OPT.name = ''; 

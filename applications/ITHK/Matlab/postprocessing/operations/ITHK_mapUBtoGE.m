@@ -1,101 +1,191 @@
 function ITHK_mapUBtoGE(sens)
+% function ITHK_mapUBtoGE(sens)
+%
+% MAPS the id's of the measures that are applied on the coast
+% 
+% INPUT:
+%      sens   number of sensisitivity run
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .userinput.phases
+%              .userinput.phase(jj).SOSfile
+%              .userinput.phase(jj).REVfile
+%              .userinput.phase(jj).GROfile
+%              .userinput.phase(jj).supids
+%              .userinput.phase(jj).revids
+%              .userinput.phase(jj).groids
+%              .userinput.suppletion(ss).lat
+%              .userinput.suppletion(ss).lon
+%              .userinput.suppletion(ss).start
+%              .userinput.suppletion(ss).stop
+%              .userinput.suppletion(ss).idRANGE
+%              .userinput.suppletion(ss).volperm
+%              .userinput.suppletion(ss).width
+%              .userinput.revetment(ss).length
+%              .userinput.groyne(ss).length
+%              .UB(sens).results.PRNdata
+%              .PP(sens).settings.tvec 
+%              .PP(sens).coast.x0gridRough
+%              .PP(sens).coast.y0gridRough
+%              .settings.measures.groyne.updatewidth
+%              .EPSG
+%
+% OUTPUT:
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .PP(sens).UBmapping.supp_beach
+%              .PP(sens).UBmapping.supp_foreshore
+%              .PP(sens).UBmapping.supp_mega
+%              .PP(sens).UBmapping.rev
+%              .PP(sens).UBmapping.gro
+%              .PP(sens).GEmapping.supp_beach
+%              .PP(sens).GEmapping.supp_foreshore
+%              .PP(sens).GEmapping.supp_mega
+%              .PP(sens).GEmapping.rev
+%              .PP(sens).GEmapping.gro
+%
+%
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 <COMPANY>
+%       ir. Bas Huisman
+%
+%       <EMAIL>	
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Jun 2012
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% code
+
+fprintf('ITHK postprocessing : Remapping data to output grids\n');
 
 global S
 
-%% General PP settings
-% Extract MDAdata for original and updated coastline
-[S.PP.settings.MDAdata_ORIG_OLD]=readMDA('BASIS_ORIG_OLD.MDA');
-[S.PP.settings.MDAdata_ORIG]=readMDA('BASIS_ORIG.MDA');
-[S.PP.settings.MDAdata_NEW]=readMDA('BASIS.MDA');
+NRgridcells   = length(S.UB(sens).results.PRNdata.xSLR(:,1));
+NRtimesteps   = length(S.PP(sens).settings.tvec);
+NRmappedcells = length(S.PP(sens).coast.x0gridRough);
 
-% time settings
-S.PP.settings.tvec = S.UB(sens).results.PRNdata.year;
-S.PP.settings.t0 = 2005;
-
-% initial coast line
-S.PP.settings.x0              = S.PP.settings.MDAdata_ORIG.Xcoast; 
-S.PP.settings.y0              = S.PP.settings.MDAdata_ORIG.Ycoast; 
-S.PP.settings.s0              = distXY(S.PP.settings.MDAdata_ORIG.Xcoast,S.PP.settings.MDAdata_ORIG.Ycoast);
-
-% settings
-S.PP.settings.dsRough         = str2double(S.settings.plotting.barplot.dsrough); % grid size rough grid
-S.PP.settings.dsFine          = str2double(S.settings.plotting.barplot.dsfine);  % grid size fine grid
-S.PP.settings.dxFine          = str2double(S.settings.plotting.barplot.widthfine); % distance from suppletion location where fine grid is used
-S.PP.settings.sVectorLength   = str2double(S.settings.plotting.barplot.barscalevector);   % scaling factor for vector length
-
-% Rough & fine grids
-S.PP.settings.sgridRough      = S.PP.settings.s0(1):S.PP.settings.dsRough:S.PP.settings.s0(end);
-S.PP.settings.sgridFine       = S.PP.settings.s0(1):S.PP.settings.dsFine:S.PP.settings.s0(end);
-S.PP.settings.idplotrough     = ones(length(S.PP.settings.sgridRough),1);
-S.PP.settings.widthRough      = max(mean(diff(S.UB(sens).results.PRNdata.xdist)),S.PP.settings.dsRough/2);
-S.PP.settings.widthFine       = max(mean(diff(S.UB(sens).results.PRNdata.xdist)),S.PP.settings.dsFine/2);
-
-% Find ids of fine grid corresponding to rough grid
-for ii=1:length(S.PP.settings.sgridRough)
-    distFR{ii} = abs(S.PP.settings.sgridFine-S.PP.settings.sgridRough(ii));
-    S.PP.settings.idFR(ii) = find(distFR{ii} == min(distFR{ii}),1,'first');
-end
-
-%% Map UB coastline to GE grid
-for jj = 1:length(S.PP.settings.tvec)
-    %% Original coastline data (for comparing to reference)
-    x0 = S.PP.settings.MDAdata_ORIG_OLD.Xcoast;
-    y0 = S.PP.settings.MDAdata_ORIG_OLD.Ycoast;
-    s0 = distXY(S.PP.settings.MDAdata_ORIG_OLD.Xcoast,S.PP.settings.MDAdata_ORIG_OLD.Ycoast);
-
-    %% Interpolate PRN data to original UB grid
-    xcoast = S.UB(sens).results.PRNdata.x(:,jj);      % x-position of coast line
-    ycoast = S.UB(sens).results.PRNdata.y(:,jj);      % y-position of coast line
-
-    % coast line change relative to reference coast line at t=tvec(jj)
-    % omit double x-entries in interpolation
-    [AA,ids1]=unique(xcoast);
-    [BB,ids2]=unique(S.UB(sens).data_ref.PRNdata.x(:,jj));  
-
-    % coastline changes relative to t0
-    zPRN = S.UB(sens).results.PRNdata.z(sort(ids1),jj);
-    zPRN1 = S.UB(sens).results.PRNdata.z(sort(ids1),1);
-    z = zPRN-zPRN1;
-
-    % Interpolate to original grid (now interpolation in 2 steps, because direct interpolation gave unstable results) 
-    if  length(z)~=length(s0)
-        z=interp1(xcoast(sort(ids1)),z,x0); 
-    end
-
-    %% Interpolate PRN data to GE grid
-    zgridRough = interp1(s0,z,S.PP.settings.sgridRough);
-    x0gridRough = interp1(s0,x0,S.PP.settings.sgridRough);
-    y0gridRough = interp1(s0,y0,S.PP.settings.sgridRough);
-    S.PP.GEmapping.zminz0(jj,:) = zgridRough; 
-    S.PP.GEmapping.x0(jj,:) = x0gridRough;
-    S.PP.GEmapping.y0(jj,:) = y0gridRough;
-end
-
-%% Initialize measures
-% Pas op dit is gebaseerd op gehele kustlijn, nu nog op GE grid rough!!!
-S.PP.GEmapping.supp_beach = zeros(length(S.PP.settings.tvec),length(x0));
-S.PP.GEmapping.supp_foreshore = zeros(length(S.PP.settings.tvec),length(x0));
-S.PP.GEmapping.supp_mega = zeros(length(S.PP.settings.tvec),length(x0));
-S.PP.GEmapping.rev = zeros(length(S.PP.settings.tvec),length(x0));
-S.PP.GEmapping.gro= zeros(length(S.PP.settings.tvec),length(x0));
+%% Initialize measures for UB mapping
+% Total coastline
+S.PP(sens).UBmapping.supp_beach = zeros(NRtimesteps,NRgridcells);
+S.PP(sens).UBmapping.supp_foreshore = zeros(NRtimesteps,NRgridcells);
+S.PP(sens).UBmapping.supp_mega = zeros(NRtimesteps,NRgridcells);
+S.PP(sens).UBmapping.rev = zeros(NRtimesteps,NRgridcells);
+S.PP(sens).UBmapping.gro = zeros(NRtimesteps,NRgridcells);
 
 for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
         for ii = 1:length(S.userinput.phase(jj).supids)
             ss = S.userinput.phase(jj).supids(ii); 
-            if S.userinput.suppletion(ss).volperm < 400
-                S.PP.GEmapping.supp_beach(S.userinput.suppletion(ss).start+1:S.userinput.suppletion(ss).stop,S.userinput.suppletion(ss).idRANGE) = 1;
-            elseif  S.userinput.suppletion(ss).volperm > 1000
-                S.PP.GEmapping.supp_mega(S.userinput.suppletion(ss).start+1:S.userinput.suppletion(ss).stop,S.userinput.suppletion(ss).idRANGE) = 1;
+            startid      = S.userinput.suppletion(ss).start;
+            stopid       = S.userinput.suppletion(ss).stop;
+            idrange      = S.userinput.suppletion(ss).idRANGE;
+            volperm      = S.userinput.suppletion(ss).volume/S.userinput.suppletion(ss).width;
+            thrforeshore = 500;
+            thrmega      = 5000;
+            if volperm <= thrforeshore
+                S.PP(sens).UBmapping.supp_beach(startid+1:stopid,idrange) = 1;
+            elseif  volperm > thrmega
+                S.PP(sens).UBmapping.supp_mega(startid+1:stopid,idrange) = 1;
             else
-                S.PP.GEmapping.supp_foreshore(S.userinput.suppletion(ss).start+1:S.userinput.suppletion(ss).stop,S.userinput.suppletion(ss).idRANGE) = 1;
+                S.PP(sens).UBmapping.supp_foreshore(startid+1:stopid,idrange) = 1;
             end
         end
     end
     if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
         for ii = 1:length(S.userinput.phase(jj).revids)
             ss = S.userinput.phase(jj).revids(ii); 
-            S.PP.GEmapping.revetment(S.userinput.revetment(ss).start+1:S.userinput.revetment(ss).stop,S.userinput.revetment(ss).idRANGE) = 1;
+            S.PP(sens).UBmapping.rev(S.userinput.revetment(ss).start+1:S.userinput.revetment(ss).stop,S.userinput.revetment(ss).idRANGE) = 1;
         end
-    end    
+    end
+    if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
+        for ii = 1:length(S.userinput.phase(jj).groids)
+            ss = S.userinput.phase(jj).groids(ii); 
+            S.PP(sens).UBmapping.gro(S.userinput.groyne(ss).start+1:S.userinput.groyne(ss).stop,S.userinput.groyne(ss).idNEAREST) = 1;
+        end
+    end
+end
+
+%% Initialize measures for GE mapping
+% Mapping on rough grid (for plotting in GE)
+S.PP(sens).GEmapping.supp_beach = zeros(NRtimesteps,NRmappedcells);
+S.PP(sens).GEmapping.supp_foreshore = zeros(NRtimesteps,NRmappedcells);
+S.PP(sens).GEmapping.supp_mega = zeros(NRtimesteps,NRmappedcells);
+S.PP(sens).GEmapping.rev = zeros(NRtimesteps,NRmappedcells);
+S.PP(sens).GEmapping.gro= zeros(NRtimesteps,NRmappedcells);
+
+for jj = 1:length(S.userinput.phases)
+    if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
+        for ii = 1:length(S.userinput.phase(jj).supids)
+            ss = S.userinput.phase(jj).supids(ii); 
+            [x,y] = convertCoordinates(S.userinput.suppletion(ss).lon,S.userinput.suppletion(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+            [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,0.5*S.userinput.suppletion(ss).width);
+            startid      = S.userinput.suppletion(ss).start;
+            stopid       = S.userinput.suppletion(ss).stop;
+            volperm      = S.userinput.suppletion(ss).volume/S.userinput.suppletion(ss).width;
+            thrforeshore = 500;
+            thrmega      = 5000;
+            if volperm < thrforeshore
+                S.PP(sens).GEmapping.supp_beach(startid+1:stopid,idRANGE) = 1;
+            elseif  volperm > thrmega
+                S.PP(sens).GEmapping.supp_mega(startid+1:stopid,idRANGE) = 1;
+            else
+                S.PP(sens).GEmapping.supp_foreshore(startid+1:stopid,idRANGE) = 1;
+            end
+        end
+    end
+    if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
+        for ii = 1:length(S.userinput.phase(jj).revids)
+            ss = S.userinput.phase(jj).revids(ii); 
+            [x,y] = convertCoordinates(S.userinput.revetment(ss).lon,S.userinput.revetment(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+            [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,0.5*S.userinput.revetment(ss).length);
+            S.PP(sens).GEmapping.rev(S.userinput.revetment(ss).start+1:S.userinput.revetment(ss).stop,idRANGE) = 1;
+        end
+    end
+    if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
+        for ii = 1:length(S.userinput.phase(jj).groids)
+            ss = S.userinput.phase(jj).groids(ii);
+            [x,y] = convertCoordinates(S.userinput.groyne(ss).lon,S.userinput.groyne(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+            [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,str2double(S.settings.measures.groyne.updatewidth)*S.userinput.groyne(ss).length); 
+            S.PP(sens).GEmapping.gro(S.userinput.groyne(ss).start+1:S.userinput.groyne(ss).stop,idNEAREST) = 1;
+        end
+    end
+end
+
+%% Function find grid in range
+function [idNEAREST,idRANGE]=findGRIDinrange(Xcoast,Ycoast,x,y,radius)
+    dist2 = ((Xcoast-x).^2 + (Ycoast-y).^2).^0.5;
+    idNEAREST  = find(dist2==min(dist2));
+    dist3 = ((Xcoast-Xcoast(idNEAREST)).^2 + (Ycoast-Ycoast(idNEAREST)).^2).^0.5;
+    idRANGE  = find(dist3<radius);
+end
 end
