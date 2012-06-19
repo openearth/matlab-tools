@@ -188,11 +188,11 @@ while (~useAccuracy && n==1) || (useAccuracy && ( ...
     end
 
     % determine failures
-    z(idx,1)    = prob_zfunctioncall(OPT, stochast, x(idx,:));
-    idFail(idx,1) = z(idx) < 0;
+    z(idx,:)    = prob_zfunctioncall(OPT, stochast, x(idx,:));
+    idFail(idx,:) = z(idx,:) < 0;
 
     % determine probability of failure
-    P_z         = cumsum(idFail.*P_corr)./[1:n*OPT.NrSamples]';
+    P_z         = cumsum(mean(idFail,2).*P_corr)./[1:n*OPT.NrSamples]';
     P_f         = P_z(end);
 
     % compute accuracy

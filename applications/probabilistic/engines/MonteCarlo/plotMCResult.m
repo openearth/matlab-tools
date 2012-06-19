@@ -103,7 +103,7 @@ OPT = struct(...
     'optimizeDP', '', ...
     'equivFORMResult', [], ...
     'forceDP', false, ...
-    'no3D', false ...
+    'no3D', true ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -166,19 +166,25 @@ if ~isempty(OPT.vars)
 end
 
 % determine indexes failure and non-failure points
-idxFail = find(result.Output.idFail==1);
-idxNoFail = find(result.Output.idFail==0);
+idxFail = find(all(result.Output.idFail,2));
+idxNoFail = find(~any(result.Output.idFail,2));
+idxPartialFail = setdiff((1:length(result.Output.x))' , union(idxFail,idxNoFail));
+
 
 % split failure and non-failure data points
 fail = [];
 noFail = [];
+PartialFail = [];
 
 if strcmp(OPT.space, 'x')
     fail = [result.Output.x(idxFail, :)];
     noFail = [result.Output.x(idxNoFail, :)];
+    PartialFail = [result.Output.x(idxPartialFail, :)];
 else
     fail = [result.Output.u(idxFail, :)];
     noFail = [result.Output.u(idxNoFail, :)];
+    PartialFail = [result.Output.u(idxPartialFail, :)];
+
 end
 
 if sum(activeVars) == 3 && ~OPT.no3D
@@ -195,6 +201,12 @@ if sum(activeVars) == 3 && ~OPT.no3D
         'MarkerFaceColor', [1 1 1],...
         'MarkerEdgeColor', [0 0 0],...
         'DisplayName', 'Non-failure');
+    
+    scatter3(PartialFail(:, 1), PartialFail(:, 2), PartialFail(:, 3),...
+        'SizeData', 9,...
+        'MarkerFaceColor', 'g',...
+        'MarkerEdgeColor', [0 0 0],...
+        'DisplayName', 'Partial-failure');
     
     % style scatter plot
     xlabel(varNames{1}); ylabel(varNames{2}); zlabel(varNames{3});
@@ -234,6 +246,14 @@ else
             'MarkerFaceColor', [1 1 1],...
             'MarkerEdgeColor', [0 0 0],...
             'DisplayName', 'Non-failure');
+        
+       scatter(PartialFail(:, idxXVar), PartialFail(:, idxYVar),...
+        'SizeData', 9,...
+        'MarkerFaceColor', 'g',...
+        'MarkerEdgeColor', [0 0 0],...
+        'DisplayName', 'Partial-failure');
+
+        
 
         % plot design point
         if OPT.plotDP && strcmp(OPT.space, 'u')
