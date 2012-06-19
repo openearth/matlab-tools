@@ -166,8 +166,8 @@ for ii=1:1%length(sensitivities)
 
     %% Extract UB (PRN) results for current & reference scenario
     PRNfileName = [S.userinput.name,'.PRN']; 
-    S.UB(ii).results.PRNdata = ITHK_readPRN([S.settings.outputdir PRNfileName]);
-    S.UB(ii).data_ref.PRNdata = ITHK_readPRN([S.settings.outputdir 'Natural_development.PRN']);%REFERENCE_IT.PRN
+    S.UB(ii).results.PRNdata = ITHK_io_readPRN([S.settings.outputdir PRNfileName]);
+    S.UB(ii).data_ref.PRNdata = ITHK_io_readPRN([S.settings.outputdir 'Natural_development.PRN']);%REFERENCE_IT.PRN
 
     %% Postprocessing Unibest Interactive Tool
     ITHK_postprocessing(ii);
