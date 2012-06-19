@@ -84,6 +84,7 @@ end
 %% Add indicators
 if S.userinput.indicators.dunes == 1
     ITHK_dunerules2(sens);                 %dunes
+    ITHK_dunes_habitatrichness;
 end
 % if str2double(S.settings.dunes.on)==1
 %     settings.CSTorient = 'BASIS_ORIG.MDA'; 

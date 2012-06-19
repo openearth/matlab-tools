@@ -1,11 +1,11 @@
 function ITHK_dunerules2(sens,varargin)
 
-% dunerules_23mrt12.m
+% dunerules_19apr12.m
 
 % -------------------------------------------------------------------
 % Alma de Groot
 % Ecoshape, WUR
-% 23 mrt 2011
+% 19 apr 2012
 
 % Calculates potential for dune formation based on Unibest outcomes.
 % Post-processing tool based on UNIBEST outcomes

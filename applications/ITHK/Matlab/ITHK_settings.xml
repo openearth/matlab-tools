@@ -17,6 +17,18 @@
       <plottype>barplot</plottype>
       <offset>0</offset>
     </coast>
+    <habitatrichness>
+      <plottype>icons</plottype>
+      <icons>
+        <class>1</class>
+        <url>http://127.0.0.1:5000/images/flowers_yellow.png</url>
+        <class>2</class>
+        <url>http://127.0.0.1:5000/images/flowers_light_green.png</url>
+        <class>3</class>
+        <url>http://127.0.0.1:5000/images/flowers_dark_green.png</url>
+      </icons>
+      <offset>20000</offset> 
+    </habitatrichness>
     <dunes>
       <plottype>icons</plottype>
       <icons>
