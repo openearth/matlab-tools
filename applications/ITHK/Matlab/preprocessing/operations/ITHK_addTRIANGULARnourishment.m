@@ -10,7 +10,7 @@ SOSdata.Qs=[];
 SOSdata.COLUMN=1;
 SOSdata2=SOSdata;
 if exist(SOSfilename)
-    SOSdata=ITHK_readSOS(SOSfilename); 
+    SOSdata=ITHK_io_readSOS(SOSfilename); 
 end
 
 for ii=1:length(suppletion.x)
@@ -56,7 +56,7 @@ end
 SOSdata2.CODE=abs(SOSdata2.Qs*0);
 SOSdata2.COLUMN=abs(SOSdata2.Qs*0)+1;
 SOSdata2.nrsourcesandsinks=length(SOSdata2.XW);
-ITHK_writeSOS(SOSfilename,SOSdata2);
+ITHK_io_writeSOS(SOSfilename,SOSdata2);
 end
 
 %% function to find nearest point on coastline

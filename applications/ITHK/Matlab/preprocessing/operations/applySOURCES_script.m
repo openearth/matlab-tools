@@ -1,11 +1,11 @@
 
-ldb1 = readldb('3hotspots_locs.pol',999.999);
-ldb2 = readldb('6hotspots_locs.pol',999.999);
+ldb1      = ITHK_io_readldb('3hotspots_locs.pol',999.999);
+ldb2      = ITHK_io_readldb('6hotspots_locs.pol',999.999);
 
 %% read MDA file  &  get transport points (instead of coastline points)
-ldb=readldb('HollandCoast_RD.ldb',999.999);
-[MDAdata]=readMDA('BASIS.mda');
-[GROdata]=readGRO('BRIJN90A.GRO');
+ldb       = ITHK_io_readldb('HollandCoast_RD.ldb',999.999);
+[MDAdata] = ITHK_io_readMDA('BASIS.mda');
+[GROdata] = ITHK_io_readGRO('BRIJN90A.GRO');
 
 %% Suppletion information
 suppletion=struct;
@@ -60,8 +60,8 @@ for nn=1:length(volumes)
     elseif ii==2
     SOSfilename = ['6HOTSPOTS',num2str(nn),'.sos'];
     end
-    SOSdata0=readSOS('SANDBYPASS.SOS');
-    writeSOS(SOSfilename,SOSdata0);
+    SOSdata0=ITHK_io_readSOS('SANDBYPASS.SOS');
+    ITHK_io_writeSOS(SOSfilename,SOSdata0);
     suppletion(ii).volume = volumes(nn);
     suppletion(ii).width  = width(nn);
     addTRIANGULARnourishment(MDAdata,suppletion(ii),SOSfilename);
@@ -81,7 +81,7 @@ for nn=1:length(volumes)
     SOSdata.COLUMN=1;
     SOSdata2=SOSdata;
     
-    SOSdata(1)=readSOS('SANDBYPASS.SOS');
+    SOSdata(1)=ITHK_io_readSOS('SANDBYPASS.SOS');
     %SOSfilename = ['UNIFORM_',num2str(volumes(nn)/1e6,'%02.0f'),'Mm3.sos'];
     SOSfilename = ['DISTRIBUTED',num2str(nn),'.sos'];
     
@@ -139,5 +139,5 @@ for nn=1:length(volumes)
     SOSdata2.CODE=SOSdata2.Qs*0;
     SOSdata2.COLUMN=SOSdata2.Qs*0+1;
     SOSdata2.nrsourcesandsinks=length(SOSdata2.XW);
-    writeSOS(SOSfilename,SOSdata2);
+    ITHK_io_writeSOS(SOSfilename,SOSdata2);
 end

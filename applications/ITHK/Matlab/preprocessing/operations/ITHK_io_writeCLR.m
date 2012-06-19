@@ -1,8 +1,8 @@
-function ITHK_writeCLR(filename, time, phaseunit, timesteps, output_step, CL_filenames, varargin)
+function ITHK_io_writeCLR(filename, time, phaseunit, timesteps, output_step, CL_filenames, varargin)
 %write CLR : Writes a unibest cl-run specification file
 %
 %   Syntax:
-%     function ITHK_writeCLR(filename, time, phases, timesteps, output_step, CL_filenames)
+%     function ITHK_io_writeCLR(filename, time, phases, timesteps, output_step, CL_filenames)
 % 
 %   Input:
 %     time                 time in number of phases ([Nx1] matrix)
@@ -15,7 +15,7 @@ function ITHK_writeCLR(filename, time, phaseunit, timesteps, output_step, CL_fil
 %     .clr file
 %
 %   Example:
-%     ITHK_writeCLR('test.clr', [0:2:4], 'year', 52, 26, {'abc','def','NULL','NULL','NULL','NULL','NULL'})
+%     ITHK_io_writeCLR('test.clr', [0:2:4], 'year', 52, 26, {'abc','def','NULL','NULL','NULL','NULL','NULL'})
 %
 %   See also 
 

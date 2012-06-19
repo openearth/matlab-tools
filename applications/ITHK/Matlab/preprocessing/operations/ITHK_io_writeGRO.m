@@ -1,8 +1,8 @@
-function writeGRO(filename,GROdata,varargin)
+function ITHK_io_writeGRO(filename,GROdata,varargin)
 %write GRO : Writes a unibest groyne file
 %
 %   Syntax:
-%     function writeGRO(filename, xy, Ycross, BlockPerc, Yreference, option, xyl, ray_file1, xyr, ray_file2)
+%     function ITHK_io_writeGRO(filename, xy, Ycross, BlockPerc, Yreference, option, xyl, ray_file1, xyr, ray_file2)
 % 
 %   Input:
 %     filename             string with output filename
@@ -17,8 +17,8 @@ function writeGRO(filename,GROdata,varargin)
 %     .gro file
 %
 %   Example:
-%     writeGRO('test.gro', [32000,56000] , 55, 3.5, 0, 1)
-%     writeGRO('test.gro', [32,56] , 55, 3.5, 2, {[31,55]},'a1',[33,57],'a2')
+%     ITHK_io_writeGRO('test.gro', [32000,56000] , 55, 3.5, 0, 1)
+%     ITHK_io_writeGRO('test.gro', [32,56] , 55, 3.5, 2, {[31,55]},'a1',[33,57],'a2')
 %
 %   See also 
 

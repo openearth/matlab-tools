@@ -1,8 +1,8 @@
-function writeMDA(mda_filename, reference_line, varargin)
+function ITHK_io_writeMDA(mda_filename, reference_line, varargin)
 %write MDA : Writes a unibest mda-file (also computes cross-shore distance between reference line and shoreline)
 %
 %   Syntax:
-%     function writeMDA(filename, reference_line, resolution, shoreline, dx)
+%     function ITHK_io_writeMDA(filename, reference_line, resolution, shoreline, dx)
 % 
 %   Input:
 %     mda_filename        string with output filename of mda-file
@@ -17,8 +17,8 @@ function writeMDA(mda_filename, reference_line, varargin)
 %   Example:
 %     x = [1:10:1000]';
 %     y = x.^1.2;
-%     writeMDA('test.mda', [x,y]);
-%     writeMDA('test.mda', [x,y], [x+20,y]);
+%     ITHK_io_writeMDA('test.mda', [x,y]);
+%     ITHK_io_writeMDA('test.mda', [x,y], [x+20,y]);
 %
 %   See also 
 
