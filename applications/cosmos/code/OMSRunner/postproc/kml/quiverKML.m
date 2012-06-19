@@ -13,6 +13,7 @@ anim=0;
 thinning=1;
 thinningX=[];
 thinningY=[];
+scalefactor=1;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -130,10 +131,24 @@ if ~isempty(overlayfile)
     fprintf(fid,'%s\n','</ScreenOverlay>');
 end
 
-x=reshape(x,[1 size(x,1)*size(y,2)]);
-y=reshape(y,[1 size(y,1)*size(y,2)]);
+x=reshape(x,[size(x,1)*size(y,2) 1]);
+y=reshape(y,[size(y,1)*size(y,2) 1]);
 
 y=merc(y);
+
+xp00(1)=0;
+yp00(1)=0;
+xp00(2)=1;
+yp00(2)=0;
+xp00(3)=0.7;
+yp00(3)=0.2;
+xp00(4)=1;
+yp00(4)=0;
+xp00(5)=0.7;
+yp00(5)=-0.2;
+ang00=atan2(yp00,xp00);
+dst00=sqrt(xp00.^2+yp00.^2);
+dst00=dst00*scalefactor;
 
 for it=1:length(t)
     
@@ -152,82 +167,67 @@ for it=1:length(t)
     uu=squeeze(u(it,:,:));
     vv=squeeze(v(it,:,:));
     
-    uu=reshape(uu,[1 size(uu,1)*size(uu,2)]);
-    vv=reshape(vv,[1 size(vv,1)*size(vv,2)]);
-    
-    xp00(1)=0;
-    yp00(1)=0;
-    xp00(2)=1;
-    yp00(2)=0;
-    xp00(3)=0.7;
-    yp00(3)=0.2;
-    xp00(4)=1;
-    yp00(4)=0;
-    xp00(5)=0.7;
-    yp00(5)=-0.2;
-    
-    ang00=atan2(yp00,xp00);
-    dst00=sqrt(xp00.^2+yp00.^2);
-    dst00=dst00*scalefactor;
-    
-    xp=zeros(5,length(uu));
-    xp(xp==0)=NaN;
-    yp=xp;
-    vel=zeros(length(uu),1);
-    
-    for j=1:length(uu)
-        if ~isnan(uu(j)) && ~isnan(vv(j))
-            vel(j)=sqrt(uu(j).^2+vv(j).^2);
-            % Scale
-            dst0=dst00*vel(j);
-            % Rotate
-            ang=atan2(vv(j),uu(j));
-            xp0=dst0.*cos(ang00+ang);
-            yp0=dst0.*sin(ang00+ang);
-            % Translate
-            xp0=xp0+x(j);
-            yp0=yp0+y(j);
-            xp(:,j)=xp0;
-            yp(:,j)=yp0;
-        end
-    end
+    uu=reshape(uu,[size(uu,1)*size(uu,2) 1]);
+    vv=reshape(vv,[size(vv,1)*size(vv,2) 1]);
 
-    yp=invmerc(yp);
-    
-    innerisland=[];
-    outerisland=[];
-    for j=1:size(xp,2)
-        outerisland{j}.x=squeeze(xp(:,j));
-        outerisland{j}.y=squeeze(yp(:,j));
-        innerisland{j}=[];
-    end
-    
-    for i=1:length(outerisland)
+    % Get rid of NaNs and zero velocities
+    xx=x;
+    yy=y;
 
-        if max(isnan(outerisland{i}.x))==0 && max(isnan(outerisland{i}.y))==0
-            
-            st=styleName{end};
-            for k=1:length(levs)
-                if vel(i)<=levs(k)
-                    st=styleName{k};
-                    break
-                end
-            end           
-            
-            fprintf(fid,'%s\n','<Placemark>');
-            fprintf(fid,'%s\n',['<styleUrl>#' st '</styleUrl>']);
-            fprintf(fid,'%s\n','<LineString>');
-            fprintf(fid,'%s\n','<coordinates>');
-            zer=zeros(size(outerisland{i}.x))+0;
-            vals=[outerisland{i}.x outerisland{i}.y zer]';
-            %        fprintf(fid,'%3.3f,%3.3f,%i\n',vals);
-            fprintf(fid,'%5.5f,%5.5f,%i\n',vals);
-            fprintf(fid,'%s\n','</coordinates>');
-            fprintf(fid,'%s\n','</LineString>');
-            fprintf(fid,'%s\n','</Placemark>');
-            
-        end
+    vel=sqrt(uu.^2+vv.^2);    
+    uu(vel==0)=NaN;
+    vv(vel==0)=NaN;        
+    xx(isnan(uu))=NaN;
+    yy(isnan(uu))=NaN;
+    xx=xx(~isnan(xx));
+    yy=yy(~isnan(yy));
+    uu=uu(~isnan(uu));
+    vv=vv(~isnan(vv));
+
+    nvec=length(uu);
+
+    % Compute velocity magnitude and angle of each vector
+    vel=sqrt(uu.^2+vv.^2);    
+    ang=atan2(vv,uu);
+
+    % Multiply unit vector with velocity magnitude
+    dst0=vel*dst00;
+
+    % Rotate vector with velocity angle
+    ang=repmat(ang,1,5);
+    ang=ang+repmat(ang00,nvec,1);    
+    xp=dst0.*cos(ang);
+    yp=dst0.*sin(ang);
+
+    % Translate vector
+    xp=xp+repmat(xx,1,5);
+    yp=yp+repmat(yy,1,5);
+
+    yp=invmerc(yp);       
+
+    % Now sort by level
+    for k=1:length(levs)-1
+
+        inlev=find(vel>=levs(k) & vel<levs(k+1));
         
+        if ~isempty(inlev)
+        
+            xp1=xp(inlev,:);
+            yp1=yp(inlev,:);
+            fprintf(fid,'%s\n','<Placemark>');
+            fprintf(fid,'%s\n',['<styleUrl>#' styleName{k} '</styleUrl>']);
+            fprintf(fid,'%s\n','<MultiGeometry>');
+            for j=1:size(xp1,1)
+                fprintf(fid,'%s\n','<LineString>');
+                fprintf(fid,'%s\n','<coordinates>');
+                vals=[xp1(j,:);yp1(j,:);zeros(1,5)];
+                fprintf(fid,'%5.5f,%5.5f,%i\n',vals);
+                fprintf(fid,'%s\n','</coordinates>');
+                fprintf(fid,'%s\n','</LineString>');
+            end
+            fprintf(fid,'%s\n','</MultiGeometry>');
+            fprintf(fid,'%s\n','</Placemark>');
+        end                                    
     end
     fprintf(fid,'%s\n','</Folder>');
 end
