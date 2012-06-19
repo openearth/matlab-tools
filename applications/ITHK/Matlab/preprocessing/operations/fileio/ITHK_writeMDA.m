@@ -1,15 +1,15 @@
-function ITHK_writeMDA(mda_filename, reference_line, varargin)
+function ITHK_writeMDA2(mda_filename, reference_line, Y1, Y2, griddensity)
 %write MDA : Writes a unibest mda-file (also computes cross-shore distance between reference line and shoreline)
 %
 %   Syntax:
-%     function ITHK_writeMDA(filename, reference_line, resolution, shoreline, dx)
+%     function ITHK_writeMDA2(mda_filename, reference_line, Y1, Y2, griddensity)
 % 
 %   Input:
 %     mda_filename        string with output filename of mda-file
 %     reference_line      string with filename of polygon of reference line  OR  X,Y coordinates of ref.line [Nx2]
-%     resolution          (optional) specify max. distance between two supporting points [m](default = 10 m)
-%     shoreline           (optional) string with filename of polygon of shoreline (default : reference_line = shoreline)
-%     dx                  (optional) resolution to cut up baseline (default = 0.05)
+%     Y1                  (optional) array with Y1 values (set to Y1=0 if not specified)
+%     Y2                  (optional) array with Y2 values (not set if not specified / or leave empty)
+%     griddensity         (optional) array with grid density (set to 1 gridcell per reference point if not set)
 % 
 %   Output:
 %     .mda file
@@ -17,8 +17,8 @@ function ITHK_writeMDA(mda_filename, reference_line, varargin)
 %   Example:
 %     x = [1:10:1000]';
 %     y = x.^1.2;
-%     ITHK_writeMDA('test.mda', [x,y]);
-%     ITHK_writeMDA('test.mda', [x,y], [x+20,y]);
+%     ITHK_writeMDA2('test.mda', [x,y]);
+%     ITHK_writeMDA2('test.mda', [x,y], [x*0+20], [x*0]);
 %
 %   See also 
 
@@ -66,72 +66,42 @@ function ITHK_writeMDA(mda_filename, reference_line, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%---------------Initialise------------------
-%-------------------------------------------
-if nargin == 2
-    resolution = 10;
-    shoreline  = reference_line;
-    dx         = 0.05;
-elseif nargin == 3
-    resolution = varargin{1};
-    shoreline  = reference_line;
-    dx         = 0.05;
-elseif nargin == 4
-    resolution = varargin{1};
-    shoreline  = varargin{2};
-    dx         = 0.05;
-elseif nargin == 5
-    resolution = varargin{1};
-    shoreline  = varargin{2};
-    dx         = varargin{3};
-end
 
-%--------------Analyse data-----------------
-%-------------------------------------------
-% load baseline
-if isstr(reference_line)
+%% Analyse data
+if isstr(reference_line) % load baseline
     baseline=landboundary('read',reference_line);
+    X=baseline(:,1);
+    Y=baseline(:,2);
 else
-    baseline=reference_line;
+    X=reference_line(:,1);
+    Y=reference_line(:,2);
 end
-% make it two colums
-baseline=baseline(:,1:2);
-% remove nans
-baseline(find(isnan(baseline(:,1))),:)=[];
-
-% load real coastline
-%coast=flipud(landboundary('read','walcheren_RD.ldb'));
-if isstr(shoreline)
-    coast=landboundary('read',shoreline);
-else
-    coast=shoreline;
+if nargin<3
+    Y1=zeros(length(X),1);
 end
-coast(find(isnan(coast(:,1))),:)=[];
-
-% specify resolution to cut up baseline
-% cut up baseline
-baselineFine=add_equidist_points(dx,baseline);
-
-% loop through points of coastline and find for each point the nearest point of the baseline
-for ii=1:length(coast)
-    dist=sqrt((baselineFine(:,1)-coast(ii,1)).^2+(baselineFine(:,2)-coast(ii,2)).^2);
-    [Y(ii),id]=min(dist);
-    baselineNew(ii,:)=baselineFine(id,:);
+if nargin<4
+    Y2 = [];
 end
+if nargin<5
+    griddensity = ones(length(X),1);
+end
+griddensity(1)=0;
 
-%specify minimal number of comp. points between two supporting points of baseline
-N=[0; ceil(diff(pathdistance(baselineNew(:,1),baselineNew(:,2)))/resolution)];
-N=min(99,N);
-N(N==0)=1;N(1)=0;
-Ray=[1:length(N)]';
-
-
-%-----------Write data to file--------------
-%-------------------------------------------
-% print to mda-file
+%% Write data to mda-file
 fid=fopen(mda_filename,'wt');
 fprintf(fid,'%s\n',' BASISPOINTS');
-fprintf(fid,'%4.0f\n',length(N));
+fprintf(fid,'%4.0f\n',length(X));
 fprintf(fid,'%s\n','     Xw             Yw             Y              N              Ray');
-fprintf(fid,'%13.1f   %13.1f %11.0f%11.0f%11.0f\n',[baselineNew Y' N Ray]');
+for ii=1:length(X)
+    if ~isempty(Y2)
+        if ~isempty(Y2(ii)) && Y2(ii)~=Y1(ii) && ~isnan(Y2(ii))
+            fprintf(fid,'%13.2f   %13.2f %10.2f %10.0f %10.0f\n',X(ii),Y(ii),Y1(ii),griddensity(ii),ii);
+            fprintf(fid,'%40.2f\n',Y2(ii));
+        else
+            fprintf(fid,'%13.1f   %13.1f %10.2f %10.0f %10.0f\n',X(ii),Y(ii),Y1(ii),griddensity(ii),ii);
+        end
+    else
+        fprintf(fid,'%13.1f   %13.1f %10.2f %10.0f %10.0f\n',X(ii),Y(ii),Y1(ii),griddensity(ii),ii);
+    end
+end
 fclose(fid);
