@@ -38,8 +38,7 @@ for jj = 1:length(S.userinput.phases)
         NGRO = 0;
         for ii = 1:length(S.userinput.phase(jj).groids)    
             NGRO = NGRO+1;
-            %ITHK_add_groyne(S.userinput.phase(jj).groids(ii),jj,NGRO,sens);
-            ITHK_add_groyne2(S.userinput.phase(jj).groids(ii),jj,NGRO,sens);
+            ITHK_add_groyne(S.userinput.phase(jj).groids(ii),jj,NGRO,sens);
         end
     end
     % If SOS-file in phase differs from 'basis', add suppletion
@@ -57,8 +56,7 @@ for jj = 1:length(S.userinput.phases)
 %            copyfile([S.settings.inputdir '1HOTSPOTS1IT.SOS'],[S.settings.outputdir S.userinput.phase(jj).SOSfile]);
 %         end
         for ii = 1:length(S.userinput.phase(jj).supids)
-            %ITHK_add_suppletion(S.userinput.phase(jj).supids(ii),jj,sens);
-            ITHK_add_suppletion2(ii,jj,sens);
+            ITHK_add_suppletion(ii,jj,sens);
         end
     end
     % If REV-file in phase differs from 'basis', add revetment
@@ -76,8 +74,7 @@ for jj = 1:length(S.userinput.phases)
         NREV = 0;
         for ii = 1:length(S.userinput.phase(jj).revids)
             NREV = NREV+1;
-            %ITHK_add_revetment(S.userinput.phase(jj).revids(ii),jj,NREV,sens);
-            ITHK_add_revetment2(S.userinput.phase(jj).revids(ii),jj,NREV,sens);
+            ITHK_add_revetment(S.userinput.phase(jj).revids(ii),jj,NREV,sens);
         end
     end
 end
