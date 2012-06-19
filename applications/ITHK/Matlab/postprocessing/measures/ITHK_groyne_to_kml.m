@@ -1,122 +1,146 @@
-function ITHK_groyne_to_kml(ss,NGRO)
+function ITHK_groyne_to_kml(sens)
+%function ITHK_groyne_to_kml(sens)
+%
+% Adds groynes to the KML file
+%
+% INPUT:
+%      sens   number of sensisitivity run
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .EPSG
+%              .settings.outputdir
+%              .userinput.phases
+%              .userinput.phase(idphase).GROfile
+%              .userinput.phase(idphase).groids
+%              .userinput.groyne(ids).start
+%              .userinput.groyne(ids).stop
+%              .userinput.groyne(ids).filename
+%              .UB.input(sens).groyne(ids).Ngroynes
+%              .PP(sens).settings.t0
+%              .PP(sens).settings.x0
+%              .PP(sens).settings.y0
+%              .PP(sens).settings.s0
+%              .PP(sens).output.kml
+%
+% OUTPUT:
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .PP(sens).output.kml
+%
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 <COMPANY>
+%       ir. Bas Huisman
+%
+%       <EMAIL>	
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Jun 2012
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% code
+
+fprintf('ITHK postprocessing : Adding groynes to KML\n');
 
 global S
 
-%% Get info from structure
-% General info
-t0 = S.PP.settings.t0;
-% MDA info
-x0 = S.PP.settings.x0;
-y0 = S.PP.settings.y0;
-s0 = S.PP.settings.s0;
-% Grid info
-sgridRough = S.PP.settings.sgridRough; 
-dxFine = S.PP.settings.dxFine;
-% idplotrough = S.PP.settings.idplotrough;
-% GRO data
-GROdata = ITHK_readGRO([S.settings.outputdir S.userinput.groyne(ss).filename]);
-% GROdata = ITHK_readGRO('BRIJN90A.GRO');
-Xw = GROdata(4+NGRO).Xw;  %because of existing groynes in GRO file
-Yw = GROdata(4+NGRO).Yw;  %because of existing groynes in GRO file
-Length = GROdata(4+NGRO).Length;
+S.PP(sens).output.kml_groyne=[];
 
-%% preparation
-% convert coordinates suppletion to RD new
-EPSG                = load('EPSG.mat');
+for jj = 1:length(S.userinput.phases)
+    if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
+    for ii = 1:length(S.userinput.phase(jj).groids)
+        ids      = S.userinput.phase(jj).groids(ii);
+        Ngroynes = S.UB.input(sens).groyne(ids).Ngroynes;
+        for kk = 1:Ngroynes
+            ss   = S.userinput.phase(jj).groids(ii);
+            NGRO = kk;
 
-% Find groyne location
-%dist1 = ((MDAdata_NEW.Xcoast-x0).^2 + (MDAdata_NEW.Ycoast-y0).^2).^0.5;
-dist2 = ((x0-Xw).^2 + (y0-Yw).^2).^0.5;
-idNEAREST = find(dist2==min(dist2),1,'first');
-s1 = s0(idNEAREST);
-% clear idNEAREST
-xgroyne1 = x0(idNEAREST);
-ygroyne1 = y0(idNEAREST);
+            %% Get info from structure
+            % General info
+            t0 = S.PP(sens).settings.t0;
+            % MDA info
+            x0 = S.PP(sens).settings.x0;
+            y0 = S.PP(sens).settings.y0;
+            s0 = S.PP(sens).settings.s0;
+            % % Grid info
+            % sgridRough = S.PP(sens).settings.sgridRough; 
+            % dxFine = S.PP(sens).settings.dxFine;
+            % GRO data
+            GROdata = readGRO([S.settings.outputdir S.userinput.groyne(ss).filename]);
+            Xw = GROdata(4+NGRO).Xw;  %because of existing groynes in GRO file
+            Yw = GROdata(4+NGRO).Yw;  %because of existing groynes in GRO file
+            Length = GROdata(4+NGRO).Length;
 
-% Soutern vertex
-%dist3           = abs(s1-100-s0);%100 refers to distance south of groyne
-% idNEAREST       = find(dist3==min(dist3));
-% xs1             = x0(idNEAREST);
-% ys1             = y0(idNEAREST);
-% ss1             = s0(idNEAREST);
-% clear dist3 idNEAREST
-xs1             = x0(idNEAREST-1);
-ys1             = y0(idNEAREST-1);
-ss1             = s0(idNEAREST-1);
+            %% preparation
+            % Find groyne location
+            dist2 = ((x0-Xw).^2 + (y0-Yw).^2).^0.5;
+            idNEAREST = find(dist2==min(dist2),1,'first');
+            s1 = s0(idNEAREST);
+            xgroyne1 = x0(idNEAREST);
+            ygroyne1 = y0(idNEAREST);
 
-% Northern vertex
-%dist3           = abs(s1+100-s0);%100 refers to distance north of groyne
-% idNEAREST       = find(dist3==min(dist3));
-% xn1             = x0(idNEAREST);
-% yn1             = y0(idNEAREST);
-% sn1             = s0(idNEAREST);
-% clear dist3 idNEAREST
-xn1             = x0(idNEAREST+1);
-yn1             = y0(idNEAREST+1);
-sn1             = s0(idNEAREST+1);
+            % Soutern coastal point
+            xs1             = x0(idNEAREST-1);
+            ys1             = y0(idNEAREST-1);
 
+            % Northern coastal point
+            xn1             = x0(idNEAREST+1);
+            yn1             = y0(idNEAREST+1);
 
-% Polygon (5*length, since length in groyne file represents only 0.2 of actual length)
-alpha    = atan((yn1-ys1)/(xn1-xs1));
-if alpha>0
-%     xs2     = xs1+5*Length*cos(alpha+pi()/2);
-%     ys2     = ys1+5*Length*sin(alpha+pi()/2);
-%     xn2     = xn1+5*Length*cos(alpha+pi()/2);
-%     yn2     = yn1+5*Length*sin(alpha+pi()/2);
-    xgroyne2 = xgroyne1+5*Length*cos(alpha+pi()/2);
-    ygroyne2 = ygroyne1+5*Length*sin(alpha+pi()/2);
-elseif alpha<=0
-%     xs2     = xs1+5*Length*cos(alpha-pi()/2);
-%     ys2     = ys1+5*Length*sin(alpha-pi()/2);
-%     xn2     = xn1+5*Length*cos(alpha-pi()/2);
-%     yn2     = yn1+5*Length*sin(alpha-pi()/2);
-    xgroyne2 = xgroyne1+5*Length*cos(alpha-pi()/2);
-    ygroyne2 = ygroyne1+5*Length*sin(alpha-pi()/2);
+            % Polygon (5*length, since length in groyne file represents only 0.2 of actual length)
+            alpha    = atan((yn1-ys1)/(xn1-xs1));
+            if alpha>0
+                xgroyne2 = xgroyne1+5*Length*cos(alpha+pi()/2);
+                ygroyne2 = ygroyne1+5*Length*sin(alpha+pi()/2);
+            elseif alpha<=0
+                xgroyne2 = xgroyne1+5*Length*cos(alpha-pi()/2);
+                ygroyne2 = ygroyne1+5*Length*sin(alpha-pi()/2);
+            end
+
+            xpoly = [xgroyne1 xgroyne2];
+            ypoly = [ygroyne1 ygroyne2];
+
+            % convert coordinates
+            [lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+            lonpoly     = lonpoly';
+            latpoly     = latpoly';
+
+            % black rectangle
+            S.PP(sens).output.kml_groyne = KML_stylePoly('name','default','fillColor',[0 0 0],'lineColor',[0 0 0],'lineWidth',4,'fillAlpha',0.7);
+
+            % polygon to KML
+            S.PP(sens).output.kml_groyne = [S.PP(sens).output.kml_groyne KML_line(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.groyne(ss).start,1,1),'timeOut',datenum(t0+S.userinput.groyne(ss).stop,1,1)+364,'styleName','default')];
+            clear lonpoly latpoly
+
+        end
+    end
+    end
 end
-% xpoly=[xs1 xs2 xn2 xn1 xs1];
-% ypoly=[ys1 ys2 yn2 yn1 ys1];
-
-xpoly = [xgroyne1 xgroyne2];
-ypoly = [ygroyne1 ygroyne2];
-
-% convert coordinates
-[lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
-lonpoly     = lonpoly';
-latpoly     = latpoly';
-
-% black rectangle
-
-% output = [output KML_stylePoly('name','default','fillColor',[0 0 0],'lineColor',[0 0 0],'lineWidth',0,'fillAlpha',0.7)];
-S.PP.output.kml = [S.PP.output.kml KML_stylePoly('name','default','fillColor',[0 0 0],'lineColor',[0 0 0],'lineWidth',4,'fillAlpha',0.7)];
-
-% polygon to KML
-
-% % output = [output KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+implementation,1,1),'timeOut',datenum(t0+duration,1,1)+364,'styleName','default')];
-% % clear lonpoly latpoly
-% output = [output KML_line(latpoly ,lonpoly ,'timeIn',datenum(t0+implementation,1,1),'timeOut',datenum(t0+duration,1,1)+364,'styleName','default')];
-% clear lonpoly latpoly
-S.PP.output.kml = [S.PP.output.kml KML_line(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.groyne(ss).start,1,1),'timeOut',datenum(t0+S.userinput.groyne(ss).stop,1,1)+364,'styleName','default')];
-clear lonpoly latpoly
-
-
-% ids for barplot
-sfine(1)        = s1(1)-dxFine;
-sfine(2)        = s1(1)+dxFine;
-
-for ii=1:length(sfine)
-    dist{ii} = abs(sgridRough-sfine(ii));
-    idrough(ii) = find(dist{ii} == min(dist{ii}),1,'first');
-end
-%idplotrough(idrough(1):idrough(end)) = 0;
-
-dist2           = abs(s1 - sgridRough);
-idNEAREST       = find(dist2==min(dist2));
-idgro           = idNEAREST;
-clear dist2 idNEAREST
-
-S.PP.GEmapping.gro(S.userinput.groyne(ss).start:S.userinput.groyne(ss).stop,idgro) = 1;
-
-
-% %% Save info fine and rough grids for plotting bars
-% S.kml.idplotrough = idplotrough;
-% S.output = output;

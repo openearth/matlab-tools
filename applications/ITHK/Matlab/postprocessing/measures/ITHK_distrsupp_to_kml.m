@@ -1,5 +1,79 @@
-function S=ITHK_distrsupp_to_kml(S,ii)
+function ITHK_distrsupp_to_kml(ii,sens)
+%function ITHK_distrsupp_to_kml(ii,sens)
+%
+% Adds distributed nourishment to the KML file
+%
+% INPUT:
+%      ii     number of distributed nourishment
+%      sens   number of sensisitivity run
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .EPSG
+%              .output
+%              .duration
+%              .implementation
+%              .distrsupp(ii).lat
+%              .distrsupp(ii).lon
+%              .distrsupp(ii).magnitude
+%              .MDAdata_NEW.Xcoast
+%              .MDAdata_NEW.Ycoast
+%              .kml.t0
+%              .kml.s0
+%              .kml.x0
+%              .kml.y0
+%              .kml.sgridRough
+%              .kml.dxFine
+%              .kml.sVectorLength
+%              .kml.idplotrough
+%
+% OUTPUT:
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .kml.idplotrough
+%              .output
+%
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 <COMPANY>
+%       ir. Bas Huisman
+%
+%       <EMAIL>	
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Jun 2012
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% code
+
+global S
 
 %% Get info from structure
 % General info
@@ -57,8 +131,7 @@ xpoly=[x; flipud(x2); x(1)];
 ypoly=[y; flipud(y2); y(1)];
 
 % convert coordinates
-EPSG                = load('EPSG.mat');
-[lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+[lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
 
 % yellow triangle
 output = [output KML_stylePoly('name','default','fillColor',[1 1 0],'lineColor',[0 0 0],'lineWidth',0,'fillAlpha',0.7)];

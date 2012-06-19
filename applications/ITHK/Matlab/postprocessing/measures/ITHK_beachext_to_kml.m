@@ -1,4 +1,76 @@
-function S=ITHK_beachext_to_kml(S,ii)
+function ITHK_beachext_to_kml(ii,sens)
+%function ITHK_beachext_to_kml(ii,sens)
+%
+% Adds seaward beach extension to the KML file
+%
+% INPUT:
+%      ii     number of beach extension
+%      sens   number of sensisitivity run
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .EPSG
+%              .output
+%              .duration
+%              .implementation
+%              .beachextension(ii).lat
+%              .beachextension(ii).lon
+%              .MDAdata_NEW.Xcoast
+%              .MDAdata_NEW.Ycoast
+%              .kml.t0
+%              .kml.s0
+%              .kml.x0
+%              .kml.y0
+%              .kml.sgridRough
+%              .kml.dxFine
+%              .kml.sVectorLength
+%              .kml.idplotrough
+%
+% OUTPUT:
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .kml.idplotrough
+%              .output
+%
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 <COMPANY>
+%       ir. Bas Huisman
+%
+%       <EMAIL>	
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Jun 2012
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% code
 
 %% Get info from structure
 % General info
@@ -21,8 +93,7 @@ sVectorLength = S.kml.sVectorLength;
 idplotrough = S.kml.idplotrough;
 
 %% preparation
-EPSG                = load('EPSG.mat');
-[x,y]               = convertCoordinates(lon,lat,EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+[x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
 % dist2 = ((MDAdata_NEW.Xcoast-x0).^2 + (MDAdata_NEW.Ycoast-y0).^2).^0.5;
 % x1 = x0(dist2>1);x2 = MDAdata_NEW.Xcoast(dist2>1);
 % y1 = y0(dist2>1);y2 = MDAdata_NEW.Ycoast(dist2>1);
