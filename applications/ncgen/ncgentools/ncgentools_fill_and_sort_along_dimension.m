@@ -1,6 +1,8 @@
 function varargout = ncgentools_fill_and_sort_along_dimension(source,destination,varargin)
 %NCGENTOOLS_FILL_AND_SORT_ALONG_DIMENSION  One line description goes here.
 %
+% TODO: Create posibility for source and destination are the same.
+%
 %   More detailed description goes here.
 %
 %   Syntax:
