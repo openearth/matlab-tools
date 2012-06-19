@@ -106,14 +106,19 @@ else % shading flat case
     set(OPT.h ,'CDATA',addrowcol(D2.z,1,1,-Inf),'ZDATA',addrowcol(D2.z,1,1,-Inf),'YDATA',D2.lat,'XDATA',D2.lon); % also CDATA for pcolor objects
 end
 if OPT.fixZlim
-    set(OPT.ha,'zlim',[B.W - dWE B.E + dWE]);
+    % set(OPT.ha,'zlim',[B.W - dWE B.E + dWE] + nanmean(D2.z(:)));
+    set(OPT.ha,'zlim',get(OPT.ha,'clim'))
+    set(OPT.ha,'DataAspectRatio',[1 1 1]);
 end
 set(OPT.ha,'YLim',[B.S - dNS B.N + dNS]);
 set(OPT.ha,'XLim',[B.W - dWE B.E + dWE]);
+
 if ishandle(OPT.alphaChannel)
     set(OPT.ha_alpha,'YLim',[B.S - dNS B.N + dNS]);
     set(OPT.ha_alpha,'XLim',[B.W - dWE B.E + dWE]);
 end
+
+
 
 PNGfileName = fullfile(OPT.Path,OPT.Name,[OPT.Name '_' code '.png']);
 
