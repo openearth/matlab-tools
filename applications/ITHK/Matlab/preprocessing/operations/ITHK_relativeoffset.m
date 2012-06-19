@@ -1,8 +1,8 @@
-function [xyNew, yOffset, coastAngle] = relativeoffset(xy1,xy2,dx)
+function [xyNew, yOffset, coastAngle] = ITHK_relativeoffset(xy1,xy2,dx)
 %relativeoffset : Function to determine nearest points perpendicular to a reference line (also includes distance, side and coast angle)
 %
 %   Syntax:
-%     function [xyNew, yOffset, coastAngle] = relativeoffset(xy1,xy2,dx)
+%     function [xyNew, yOffset, coastAngle] = ITHK_relativeoffset(xy1,xy2,dx)
 % 
 %   Input:
 %     xy1              reference line
@@ -18,9 +18,9 @@ function [xyNew, yOffset, coastAngle] = relativeoffset(xy1,xy2,dx)
 %     dx = 10;                         % resolution of sampling
 %     xy1 = [0,1; 50,6; 100,-2];       % (i.e. shoreline)
 %     xy2 = [0,-2; 50,7; 75,8;100,-2]; % (i.e. xy2ent)
-%     [xyNew, yOffset, coastAngle] = relativeoffset(xy1,xy2,dx)
-%     [xyNew, yOffset] = relativeoffset(xy1,xy2,dx)                 % determine the closest points of xy2 on xy1 and their distance and side from the reference line
-%     [xyNew] = relativeoffset(xy1,xy2,dx)                          % determine only the closest points of xy2 on xy1
+%     [xyNew, yOffset, coastAngle] = ITHK_relativeoffset(xy1,xy2,dx)
+%     [xyNew, yOffset] = ITHK_relativeoffset(xy1,xy2,dx)                 % determine the closest points of xy2 on xy1 and their distance and side from the reference line
+%     [xyNew] = ITHK_relativeoffset(xy1,xy2,dx)                          % determine only the closest points of xy2 on xy1
 %     
 %   See also 
 
