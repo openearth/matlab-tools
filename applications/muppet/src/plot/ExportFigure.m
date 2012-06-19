@@ -21,7 +21,7 @@ try
             end
             if fid==-1
                 txt=strvcat(['The file ' handles.Figure(ifig).FileName ' cannot be opened'],'Remove write protection');
-                GiveWarning('WarningText',txt);
+                mp_giveWarning('WarningText',txt);
             else
                 % Export figure
                 if strcmpi(handles.Figure(ifig).Orientation,'l')

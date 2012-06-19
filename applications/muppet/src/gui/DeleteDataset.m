@@ -13,7 +13,7 @@ if handles.NrAvailableDatasets>0
         NameActive=handles.DataProperties(iactive).Name;
         if strcmp(NameActive,NameA) || strcmp(NameActive,NameB)
             txt='Dataset is used in combined dataset!';
-            GiveWarning('WarningText',txt);
+            mp_giveWarning('WarningText',txt);
             return
         end
     end

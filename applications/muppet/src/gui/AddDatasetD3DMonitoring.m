@@ -81,7 +81,7 @@ else
 end    
 
 if handles.NrStat(1)==0 & handles.NrStat(2)==0
-    GiveWarning('No stations or cross sections in file!');
+    mp_giveWarning('No stations or cross sections in file!');
     handles.output=handles.DataProperties;
     handles.second_output=handles.NrAvailableDatasets;
     guidata(hObject, handles);
@@ -158,7 +158,7 @@ if NewDatasetName(handles.DataProperties,handles.NrAvailableDatasets,name)
             handles.DataProperties(nr).Type='Annotation';
         else
             handles.DataProperties(nr).Type='CrossSections';
-            GiveWarning('WarningText','This Muppet version has a problem with cross-section coordinates!');
+            mp_giveWarning('WarningText','This Muppet version has a problem with cross-section coordinates!');
         end
         
         handles.DataProperties(nr).FileType='D3DMonitoring';
@@ -176,7 +176,7 @@ if NewDatasetName(handles.DataProperties,handles.NrAvailableDatasets,name)
  
 else
     txt='Dataset name already exists!';
-    GiveWarning('WarningText',txt);
+    mp_giveWarning('WarningText',txt);
 end
  
 guidata(hObject, handles);

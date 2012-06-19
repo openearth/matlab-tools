@@ -361,7 +361,7 @@ if NewDatasetName(handles.DataProperties,handles.NrAvailableDatasets,Name)
     if ((handles.T2>handles.T1 | handles.T1==0) & (handles.M2>handles.M1 | handles.M1==0)) | ((handles.T2==handles.T1 & handles.T1>0) & (handles.M2==handles.M1 & handles.M1>0))
 
         txt='These dimensions are not possible!';
-        GiveWarning('WarningText',txt);
+        mp_giveWarning('WarningText',txt);
 
     else
 
@@ -403,7 +403,7 @@ if NewDatasetName(handles.DataProperties,handles.NrAvailableDatasets,Name)
     end
 else
     txt='Dataset name already exists!';
-    GiveWarning('WarningText',txt);
+    mp_giveWarning('WarningText',txt);
 end
 
 guidata(hObject, handles);

@@ -3075,10 +3075,10 @@ end
 
 if nopix>2500000
     txt='Reduce Output Resolution';
-    GiveWarning('WarningText',txt);
+    mp_giveWarning('WarningText',txt);
 elseif fid==-1
     txt=strvcat(['The file ' handles.AnimationSettings.aviFileName ' cannot be opened'],'Remove write protection');
-    GiveWarning('WarningText',txt);
+    mp_giveWarning('WarningText',txt);
 else
 %    MakeAnimation(handles,ifig);
 %    MakeAnimation2(handles,ifig);

@@ -232,7 +232,7 @@ i=get(handles.SelectParameter,'Value');
 str=get(handles.SelectParameter,'String');
 if get(handles.ToggleTimeSeries,'Value')==1 & strcmp(lower(str{i}),'coast line')
     txt='Cannot make time series of coast line!';
-    GiveWarning('WarningText',txt);
+    mp_giveWarning('WarningText',txt);
 else
     if NewDatasetName(handles.DataProperties,handles.NrAvailableDatasets,name)
 
@@ -283,7 +283,7 @@ else
 
     else
         txt='Dataset name already exists!';
-        GiveWarning('WarningText',txt);
+        mp_giveWarning('WarningText',txt);
     end
 end
 

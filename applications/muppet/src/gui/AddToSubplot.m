@@ -92,7 +92,7 @@ if handles.NrAvailableDatasets>0 && handles.ActiveSubplot>0
         
     else
         txt=['This dataset can not be added to ' lower(handles.Figure(ifig).Axis(handles.ActiveSubplot).PlotType) ' subplot!'];
-        GiveWarning('txt',txt);
+        mp_giveWarning('txt',txt);
     end
     
 end

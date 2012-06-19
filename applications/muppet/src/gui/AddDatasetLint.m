@@ -153,12 +153,12 @@ if NewDatasetName(handles.DataProperties,handles.NrAvailableDatasets,name)
  
     else
         txt='First select polyline file!';
-        GiveWarning('WarningText',txt);
+        mp_giveWarning('WarningText',txt);
     end
  
 else
     txt='Dataset name already exists!';
-    GiveWarning('WarningText',txt);
+    mp_giveWarning('WarningText',txt);
 end
  
 guidata(hObject, handles);

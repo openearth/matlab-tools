@@ -268,7 +268,7 @@ try
 catch
     AviHandle=writeavi('close', AviHandle);
     close(wb);
-    GiveWarning('text','Something went wrong while generating avi file');
+    mp_giveWarning('text','Something went wrong while generating avi file');
 end
 %%
 function makeKMZ(fname,xl1,xl2,yl1,yl2,fignames,tms,dt,colorbarfile)
