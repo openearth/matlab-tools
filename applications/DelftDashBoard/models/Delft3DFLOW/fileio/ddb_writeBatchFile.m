@@ -94,6 +94,26 @@ else
         fprintf(fid,'%s\n','set argfile=delft3d-flow_args.txt');
         fprintf(fid,'%s\n','echo -r %runid% >%argfile%');
         fprintf(fid,'%s\n','%exedir%\delftflow.exe %argfile% dummy delft3d');
+    else
+
+        % Assume new open source version sits in c:\delft3d\w32\flow\bin\
+        fprintf(fid,'%s\n','@ echo off');
+        fprintf(fid,'%s\n','set argfile=config_flow2d3d.ini');
+        fprintf(fid,'%s\n',['set exedir=c:\delft3d\w32\flow\bin\']);
+        fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+        fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
+        
+        % Write config file
+        fini=fopen('config_flow2d3d.ini','w');
+        fprintf(fini,'%s\n','[FileInformation]');
+        fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
+        fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
+        fprintf(fini,'%s\n','   FileVersion      = 00.01');
+        fprintf(fini,'%s\n','[Component]');
+        fprintf(fini,'%s\n','   Name                = flow2d3d');
+        fprintf(fini,'%s\n',['   MDFfile             = ' runid]);
+        fclose(fini);
+        
     end
 end
 
