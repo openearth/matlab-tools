@@ -1,39 +1,38 @@
-function ITHK_writeREV(rev_filename, revetment, varargin)
+function ITHK_writeREV_new(REVdata,varargin)
 %write REV : Writes a unibest rev-file (can also compute cross-shore distance between reference line and revetment)
 %
 %   Syntax:
-%     function ITHK_writeREV(filename, revetment, revtype, reference_line, dx)
-%     OR
-%     function ITHK_writeREV(filename, revetment, revtype, y_offset)
+%     function ITHK_writeREV_new(REVdata)
 % 
-%   Input option 1: (specify y_offset):
-%     rev_filename        string with output filename of rev-file
-%     revetment           cellstring with filename of polygon of revetment
-%     revtype             (optional) revetment type (relative to shoreline =0 or relative to reference line =1) (default =0)
-%     y_offset            (optional) cellstring with values or matrix for each revetment (if not specified, y_offset = 0)
-%
-%   Input option 2: (specify two landboundaries, i.e. for the revetment and for the shoreline/referenceline):
-%     rev_filename        string with output filename of rev-file
-%     revetment           cellstring with filename of polygon of revetment
-%     revtype             (optional) revetment type (relative to shoreline =0 or relative to reference line =1) (default =0)
-%     reference_line      (optional) cellstring with filename(s) of polygon(s) of referenceline(s)
-%     dx                  (optional) resolution to cut up baseline (default = 0.05)
+%   Input:
+%     REVdata               structure with the following fields
+%                           - filename:     name of REV-file
+%                           - Xw:           x-coordinates of the revetment
+%                           - Yw:           y-coordinates of the revetment
+%                           - Top:          offset of the revetment with respect to specified reference (specified in option), 
+%                                           if this field is left empty MDAdata will be used to calculate the offset
+%                           - Option:       (0) revetment relative to shoreline
+%                                           (1) revetment relative to reference line
+%                                           (2) landfill with revetment relative to shoreline
+%                                           (3) landfill with revetment relative to reference line
+%   Optional:
+%     MDAdata               (optional) structure with MDAdata, used to calculate offset between revetment and reference line, when no offset is indicated
+%     dx                    (optional) resolution to cut up baseline (default = 0.05)
 %
 %   Output:
-%     .rev files
+%     .rev file
 % 
 %   Example:
-%     ITHK_writeREV('default.rev', 'revetment.pol', 1, 'D:\reference_line.ldb')             % option 1
-%     ITHK_writeREV('default.rev', 'revetment.pol', 1, 'D:\reference_line.ldb', 0.05)       % option 2
+%     ITHK_writeREV(REVdata,MDAdata,dx)             
 %
 %   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Deltares
-%       Bas Huisman
+%   Copyright (C) 2011 Deltares
+%       Wiebe de Boer
 %
-%       bas.huisman@deltares.nl	
+%       wiebe.deboer@deltares.nl	
 %
 %       Deltares
 %       Rotterdamseweg 185
@@ -62,8 +61,8 @@ function ITHK_writeREV(rev_filename, revetment, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 16 Sep 2010
-% Created with Matlab version: 7.9.0.529 (R2009b)
+% Created: 13 Sep 2011
+% Created with Matlab version: 7.11.0 (R2010b)
 
 % $Id$
 % $Date$
@@ -74,116 +73,54 @@ function ITHK_writeREV(rev_filename, revetment, varargin)
 
 %---------------Initialise------------------
 %-------------------------------------------
-dx        = 0.05;
-option    = 0;
-y_offset  = 0;
-y_offset2 = {};
-if nargin == 3
-    option          = varargin{1};
-elseif nargin == 4
-    option          = varargin{1};
-    option2         = 1;
-    y_offset        = varargin{2};
-elseif nargin == 5
-    option          = varargin{1};
-    option2         = 2;
-    reference_line  = varargin{2};
-    dx              = varargin{3};
+if length(varargin)==2
+    dx = varargin{2};
+else
+    dx = 0.05;
 end
-
 %--------------Analyse data-----------------
 %-------------------------------------------
 %% READ revetment data
-if isstr(revetment)
-    revetm={revetment};
-end
-number_of_revetments = length(revetment);
-if iscell(revetment)
-    if isstr(revetment{1})
-        for ii=1:number_of_revetments
-            ldb=readldb(revetment{ii});
-            revetm{ii}=[ldb.x,ldb.y];
+number_of_revetments = length(REVdata);
+for ii=1:length(REVdata)
+    Npoints = length(REVdata(ii).Xw);
+    if isempty(REVdata(ii).Top)
+        if isempty(varargin)
+            disp('Please specify MDAdata')
+            return
         end
+        MDAdata = varargin{1};
+        opt = REVdata(ii).Option;
+        switch opt
+            case 0
+                xy=[MDAdata.Xcoast,MDAdata.Ycoast];
+            case 1
+                xy=[MDAdata.Xi,MDAdata.Yi];
+            case 2
+                xy=[MDAdata.Xcoast,MDAdata.Ycoast];
+            case 3
+                xy=[MDAdata.Xi,MDAdata.Yi];
+        end
+        [xyNew0{ii}, y_offset{ii}] = ITHK_relativeoffset(xy,[REVdata(ii).Xw',REVdata(ii).Yw'],dx);
     else
-        revetm=revetment;
+        xyNew0{ii} = [REVdata(ii).Xw',REVdata(ii).Yw'];
+        y_offset{ii} = REVdata(ii).Top;
     end
 end
-
-%% READ reference line data
-if exist('reference_line','var')
-    if isstr(reference_line)
-        reference_line={reference_line};
-    end
-end
-
-
-
-%% OUTPUT
-jj=0;
-if option2==1
-    for ii=1:number_of_revetments
-        id=find(revetm{ii}(:,1)~=999.999);
-        revetm{ii}=[revetm{ii}(id,1),revetm{ii}(id,2)];
-        number_of_points = size(revetm{ii},1);
-        revetm_parts = ceil((number_of_points-20)/19+1);
-        for iii=1:revetm_parts
-            jj=jj+1;
-            id1 = (iii-1)*19+1;
-            id2 = min(number_of_points,iii*19+1);
-            xyNew{jj}    = revetm{ii}(id1:id2,:);
-            y_offset2{jj} = repmat(y_offset,[id2-id1+1,1]);
-            if isnumeric(y_offset{ii})
-                if size(y_offset{ii},1)==1
-                    y_offset2{jj} = repmat(y_offset{ii},[id2-id1+1,1]);
-                else
-                    y_offset2{jj} = y_offset{ii}(id1:id2);
-                end
-            end
-        end
-    end
-elseif option2==2
-    for ii=1:number_of_revetments
-        xyNew0=[];y_offset=[];
-
-        % load baseline
-        xy=readldb(reference_line{ii});
- 
-        % make it two colums
-        id=find(xy.x~=999.999);
-        xy=[xy.x(id),xy.y(id)];
-
-        % load real revetment line
-        %revetm{ii}=flipud(landboundary('read','walcheren_RD.ldb'));
-        revetm{ii}=readldb(revetment{ii});
-        id=find(revetm{ii}(:,1)~=999.999);
-        revetm{ii}=[revetm{ii}(id,1),revetm{ii}(id,2)];
-
-        [xyNew0, y_offset] = ITHK_relativeoffset(xy,revetm{ii},dx);
-        
-        number_of_points = size(xyNew0,1);
-        revetm_parts = ceil((number_of_points-20)/19+1);
-        for iii=1:revetm_parts
-            jj=jj+1;
-            id1 = (iii-1)*19+1;
-            id2 = min(number_of_points,iii*19+1);
-            xyNew{jj}     = xyNew0(id1:id2,:);
-            y_offset2{jj} = y_offset(id1:id2)';
-        end
-    end
-end
-number_of_revetments = length(y_offset);
 
 %-----------Write data to file--------------
 %-------------------------------------------
-fid=fopen(rev_filename,'wt');
-fprintf(fid,'%s\n','revetment groups');
-fprintf(fid,'%11.0f\n',length(y_offset2));
+fid=fopen(REVdata(ii).filename,'wt');
+fprintf(fid,'%s\n','NUMBER OF REVETMENT SECTIONS');
+fprintf(fid,' %1.0f\n',number_of_revetments);
 
-for ii=1:length(y_offset2)
-    number_of_points = length(y_offset2{ii});
-    fprintf(fid,'%s\n','Number   Key_ar');
-    fprintf(fid,' %3.0f %3.0f\n',number_of_points,option);
-    fprintf(fid,'%s\n','         Xw             Yw             Top');
-    fprintf(fid,'% 10.2f  %10.2f  %10.1f\n',[xyNew{ii} y_offset2{ii}]');
+for ii=1:number_of_revetments
+    number_of_points = length(REVdata(ii).Xw);
+    fprintf(fid,'%s\n','NUMBER      KEY_ARR');
+    fprintf(fid,' %1.0f %7.0f\n',number_of_points,REVdata(ii).Option);
+    fprintf(fid,'%s\n','Xw      Yw      Top');
+    for jj=1:number_of_points
+        fprintf(fid,'%6.2f      %6.2f      %1.2f\n',[xyNew0{ii}(jj,1) xyNew0{ii}(jj,2) y_offset{ii}(jj)']);
+    end
 end
 fclose(fid);
