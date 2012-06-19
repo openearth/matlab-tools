@@ -87,6 +87,8 @@ function varargout = rws_waterbase_read(fnames,varargin)
 % 2009 may 03 : updated commetns to reflect matlab code-cells
 % 2009 may 03 : used setproperty now (for which I ahd to delete scale keyword)
 % 2010 jun 29 : made method automatic based on file size
+% 2012 jun 19:  D(nloc).data.units = waarnemingssoort2units(D(nloc).data.waarnemingssoort) 
+%               when rec(dlm( 6)+1:dlm( 7)-1) is empty
 
 % TO DO perhaps regexp is faster in fgetl approach, ot textscan chunks
 % TO DO read associated *.url and return that in struct, so it can be put in netcdf
@@ -350,7 +352,7 @@ for ifile=1:length(fnames)
          %D.data(istat).waarde             = 
           D.data(istat).units              = char(eenheid       (mask(1),:)); % assumed
           if isempty(D.data(istat).units)
-          D.data(istat).units = waarnemingssoort2units(D.data(istat).waarnemingssoort);
+              D.data(istat).units = waarnemingssoort2units(D.data(istat).waarnemingssoort);
           end
           
           D.data(istat).hoedanigheid       = hoedanigheid       (mask,:); 
@@ -514,7 +516,7 @@ for ifile=1:length(fnames)
                 D(nloc).data.units                  =         rec(dlm( 6)+1:dlm( 7)-1);
 
                 if isempty(D.data.units)
-                D.data.units = waarnemingssoort2units(D.data.waarnemingssoort);
+                    D.data.units = waarnemingssoort2units(D.data.waarnemingssoort);
                 end
                 
                 
@@ -546,8 +548,11 @@ for ifile=1:length(fnames)
                                                                                                 ,       % 2
                                                                                                 ,       % 3
                %D(nloc).data.bepalingsgrenscode     = rws_expand(D(nloc).data.bepalingsgrenscode,rec(dlm( 4)+1:dlm( 5)-1));
-                                                                                                ,       % 5
-                D(nloc).data.units                  = rws_expand(D(nloc).data.units             ,rec(dlm( 6)+1:dlm( 7)-1));
+                if ~isempty(rec(dlm( 6)+1:dlm( 7)-1))                                                                             ,       % 5
+                    D(nloc).data.units                  = rws_expand(D(nloc).data.units             ,rec(dlm( 6)+1:dlm( 7)-1));
+                else
+                    D(nloc).data.units = waarnemingssoort2units(D(nloc).data.waarnemingssoort);
+                end
                 D(nloc).data.what                   = rws_expand(D(nloc).data.what              ,rec(dlm( 7)+1:dlm( 8)-1));
                 D(nloc).data.anamet                 = rws_expand(D(nloc).data.anamet            ,rec(dlm( 8)+1:dlm( 9)-1));
                 D(nloc).data.ogi                    = rws_expand(D(nloc).data.ogi               ,rec(dlm( 9)+1:dlm(10)-1));
