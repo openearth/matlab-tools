@@ -1,100 +1,112 @@
-function ITHK_postprocessing2(sens)
+function ITHK_postprocessing(sens)
+% function ITHK_postprocessing(sens)
+%
+% Postprocessing of the Unibest model results from the ITHK.
+% The following post-processing is performed:
+%      - Setting grid settings used for postprocessing (ITHK_PPsettings)
+%      - Add effect SLR to PRN info (ITHK_add_SLR)
+%      - Add coastline to KML (ITHK_PRN_to_kml & ITHK_KMLbarplot)
+%      - Add measures to KML (ITHK_groyne_to_kml & ITHK_nourishment_to_kml & ITHK_revetment_to_kml)
+%      - Map UB results to GE (ITHK_mapUBtoGE)
+%      - Compute values for indicators (ITHK_ind_benthos & ITHK_ind_juvenilefish & ITHK_ind_dunetypes etc)
+%      - write data to KML file
+%
+% INPUT:
+%      S      structure with ITHK data (global variable that is automatically used)
+% 
 
-%% Postprocessing Unibest Interactive Tool
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 <COMPANY>
+%       ir. Bas Huisman
+%
+%       <EMAIL>	
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Jun 2012
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% code
+
 global S
 
-%% General PP settings
-% Extract MDAdata for original and updated coastline
-[S.PP.settings.MDAdata_ORIG_OLD]=ITHK_readMDA('BASIS_ORIG_OLD.MDA');
-[S.PP.settings.MDAdata_ORIG]=ITHK_readMDA('BASIS_ORIG.MDA');
-[S.PP.settings.MDAdata_NEW]=ITHK_readMDA('BASIS.MDA');
+%% BASIC PARAMETERS
+    % Grid settings used for postprocessing
+    ITHK_PPsettings(sens);
 
-% time settings
-S.PP.settings.tvec = S.UB(sens).results.PRNdata.year;
-S.PP.settings.t0 = 2005;
-
-% settings
-S.PP.settings.dsRough         = str2double(S.settings.plotting.barplot.dsrough); % grid size rough grid
-S.PP.settings.dsFine          = str2double(S.settings.plotting.barplot.dsfine);  % grid size fine grid
-S.PP.settings.dxFine          = str2double(S.settings.plotting.barplot.widthfine); % distance from suppletion location where fine grid is used
-S.PP.settings.sVectorLength   = str2double(S.settings.plotting.barplot.barscalevector);   % scaling factor for vector length
-
-% initial coast line
-S.PP.settings.x0              = S.PP.settings.MDAdata_ORIG.Xcoast; 
-S.PP.settings.y0              = S.PP.settings.MDAdata_ORIG.Ycoast; 
-S.PP.settings.s0              = distXY(S.PP.settings.MDAdata_ORIG.Xcoast,S.PP.settings.MDAdata_ORIG.Ycoast);
-
-% Rough & fine grids
-S.PP.settings.sgridRough      = S.PP.settings.s0(1):S.PP.settings.dsRough:S.PP.settings.s0(end);
-S.PP.settings.sgridFine       = S.PP.settings.s0(1):S.PP.settings.dsFine:S.PP.settings.s0(end);
-S.PP.settings.idplotrough     = ones(length(S.PP.settings.sgridRough),1);
-S.PP.settings.widthRough      = max(mean(diff(S.UB(sens).results.PRNdata.xdist)),S.PP.settings.dsRough/2);
-S.PP.settings.widthFine       = max(mean(diff(S.UB(sens).results.PRNdata.xdist)),S.PP.settings.dsFine/2);
-
-% Find ids of fine grid corresponding to rough grid
-for ii=1:length(S.PP.settings.sgridRough)
-    distFR{ii} = abs(S.PP.settings.sgridFine-S.PP.settings.sgridRough(ii));
-    S.PP.settings.idFR(ii) = find(distFR{ii} == min(distFR{ii}),1,'first');
-end
-
-%% Make KML
-S.PP.output.kmlFileName     = [S.settings.outputdir filesep 'output' filesep S.userinput.name filesep S.userinput.name,'.kml'];
-KMLmapName      = S.userinput.name;
-nam             = S.userinput.name;
-
-%% KML header
-fid     = fopen(S.PP.output.kmlFileName,'w');
-kml  = [];
-S.PP.output.kml  = [kml KML_header('kmlName',nam)];
-
-%% Add effect SLR to PRN info
-if S.userinput.indicators.slr == 1
+    % Add effect SLR to PRN info
     ITHK_add_SLR(sens);
-end
+    
+    % Add coastline to KML
+    ITHK_PRN_to_kml(sens);
+    
+    % Add measures to KML
+    ITHK_groyne_to_kml(sens);
+    ITHK_nourishment_to_kml(sens);
+    ITHK_revetment_to_kml(sens);
 
-%% Map UB results to GE
-ITHK_mapUBtoGE2(sens);
+    % Map UB results to GE
+    ITHK_mapUBtoGE(sens);
 
-% % Add PRN info
-% if S.userinput.indicators.coast == 1
-%     ITHK_PRN_to_kml(sens);
-% end
 
-%% Add measures
-for jj = 1:length(S.userinput.phases)
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
-        for ii = 1:length(S.userinput.phase(jj).groids)
-            for kk = 1:S.UB.input(sens).groyne(S.userinput.phase(jj).groids(ii)).Ngroynes
-                ITHK_groyne_to_kml2(S.userinput.phase(jj).groids(ii),kk);
-            end
-        end
-    end
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
-        for ii = 1:length(S.userinput.phase(jj).supids)
-            ITHK_suppletion_to_kml2(S.userinput.phase(jj).supids(ii));
-        end
-    end
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
-        for ii = 1:length(S.userinput.phase(jj).revids)
-            ITHK_revetment_to_kml2(S.userinput.phase(jj).revids(ii));
-        end
-    end
-end
- 
-%% Add indicators
-if S.userinput.indicators.dunes == 1
-    ITHK_dunerules2(sens);                 %dunes
+%% INDICATORS
+    ITHK_ind_ecology_benthos(sens);
+    ITHK_ind_ecology_juvenilefish(sens);
+    ITHK_ind_ecology_dunetypes(sens);
+    ITHK_dunerules2(sens);
     ITHK_dunes_habitatrichness;
-end
-% if str2double(S.settings.dunes.on)==1
-%     settings.CSTorient = 'BASIS_ORIG.MDA'; 
-%     settings.yposinitial = str2double(S.settings.dunes.yposinitial)+S.MDAdata_NEW.Y1i-S.MDAdata_ORIG.Y1i;
-%     S.dunes = postprocessDUNEGROWTH(PRNfileName,settings);
-% end
-%S=ITHK_calculate_costs(S);    %budget
-if S.userinput.indicators.eco == 1
-   eval(S.settings.indicators.eco.function);%ITHK_ecorules2;
-end
+
+%    indicatorfields    = {'safety_dykering' ...                      % 
+%                          'safety_structures' ...                    % 
+%                          'safety_buffer' ...                        % 
+%                          'economy_dinkingwater' ...                 % 
+%                          'economy_fishery' ...                      % 
+%                          'residential_groundwater' ...              % 
+%                          'residential_realestate' ...               % 
+%                          'recreation_beaches' ...                   % 
+%                          'recreation_dunearea' ...                 % 
+%                          'ecology_nourishmentimpactlength' ...      % 
+%                          'ecology_juvenilefish' ...                 % 
+%                          'ecology_benthos' ...                      % 
+%                          'ecology_dunetypes' ...                    % 
+%                          'ecology_dunedynamics' ...                 % 
+%                          'ecology_co2emissions' ...                 % 
+%                          'policy_flexibility' ...                   % 
+%                          'policy_phaseddevelopment' ...             % 
+%                          'policy_publicacceptance' ...              % 
+%                          'costs_investment' ...                     % 
+%                          'costs_maintenance' ...                    % 
+%                          'costs_upgradability'};                    % 
+
 
 %% Add disclaimer
 if isfield(S.settings.postprocessing,'disclaimer') 
@@ -102,7 +114,49 @@ if isfield(S.settings.postprocessing,'disclaimer')
     S.PP.output.kml = [S.PP.output.kml disclaimer];
 end
 
-%% KML footer
-S.PP.output.kml = [S.PP.output.kml KML_footer];
-fprintf(fid,S.PP.output.kml);
+%% WRITE KML
+S.PP(sens).output.kmlFileName  = ['d:\Projects\1200893_BwN\Report_Coastal functions\figures_HollandCoast\data2\katwijk_05Mm3_95yr_new\',S.userinput.name,'.kml'];  % KML filename settings
+KMLmapName               = S.userinput.name;
+fid                      = fopen(S.PP.output.kmlFileName,'w');
+fprintf(fid,[KML_header('kmlName',KMLmapName), ...
+            S.PP.output.kml, ...
+            S.PP(sens).output.kml_groyne, ...
+            S.PP(sens).output.kml_nourishment, ...
+            S.PP(sens).output.kml_revetment, ...
+            S.PP(sens).output.kml_eco_benthos{1}, ...
+            S.PP(sens).output.kml_eco_benthos{2}, ...
+            KML_footer]);
 fclose(fid);
+% KML2
+KMLmapName               = S.userinput.name;
+fid                      = fopen(S.PP.output.kmlFileName,'w');
+fprintf(fid,[KML_header('kmlName',KMLmapName), ...
+             S.PP.output.kml, ...
+             KML_footer]);
+fclose(fid);
+% KML3
+KMLmapName               = S.userinput.name;
+fid                      = fopen(S.PP.output.kmlFileName,'w');
+fprintf(fid,[KML_header('kmlName',KMLmapName), ...
+             S.PP(sens).output.kml_eco_benthos{1}, ...
+             S.PP(sens).output.kml_eco_benthos{2}, ...
+             KML_footer]);
+fclose(fid);
+
+% % Indicator : Dune Types
+% if S.userinput.indicators.dunes == 1
+%     dunerules(sens);                 %dunes
+% end
+% 
+% % Indicator : Dune Growth
+% if S.userinput.indicators.dunesABS == 1
+%     settings = S.settings.dunes;
+%     S.dunes = postprocessDUNEGROWTH(PRNfileName,settings);
+% end
+% 
+% % Indicator : Direct Impact On Benthic Population
+% if S.userinput.indicators.eco == 1
+%     ecorules2;
+% end
+% % Indicator : Costs
+% %S=ITHK_calculate_costs(S);    %budget
