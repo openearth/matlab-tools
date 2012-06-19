@@ -1,4 +1,73 @@
-function ITHK_add_revetment2(ii,phase,NREV,sens)
+function ITHK_add_revetment(ii,phase,NREV,sens)
+%function ITHK_add_revetment(ii,phase,NREV,sens)
+%
+% Adds revetments to the REV file
+%
+% INPUT:
+%      ii     number of beach extension
+%      phase  phase number (of CL-model)
+%      NREV   number of revetments
+%      sens   number of sensisitivity run
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .EPSG
+%              .settings.outputdir
+%              .userinput.revetment(ii).lat
+%              .userinput.revetment(ii).lon
+%              .userinput.revetment(ii).length
+%              .userinput.revetment(ii).filename
+%              .userinput.phase(phase-1).REVfile
+%              .userinput.revetment(ii).fill
+%      MDAfile  'BASIC.MDA'
+%      REVfile  file with already defined revetments
+%
+% OUTPUT:
+%      REVfile  file with new and old revetments
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .UB.input(sens).revetment(ii).REVdata
+%              .userinput.revetment(ii).idRANGE
+%
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 <COMPANY>
+%       ir. Bas Huisman
+%
+%       <EMAIL>	
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Jun 2012
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% code
 
 global S
 
@@ -7,15 +76,14 @@ lat = S.userinput.revetment(ii).lat;
 lon = S.userinput.revetment(ii).lon;
 
 %% convert coordinates
-%EPSG                = load('EPSG.mat');
 [x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
 
 %% read files
-[MDAdata]=ITHK_readMDA('BASIS.MDA');
+[MDAdata]=ITHK_io_readMDA('BASIS.MDA');
 if phase==1 || NREV>1
-    [REVdata]=ITHK_readREV([S.settings.outputdir S.userinput.revetment(ii).filename]);
+    [REVdata]=ITHK_io_readREV([S.settings.outputdir S.userinput.revetment(ii).filename]);
 else
-    [REVdata]=ITHK_readREV([S.settings.outputdir S.userinput.phase(phase-1).REVfile]);
+    [REVdata]=ITHK_io_readREV([S.settings.outputdir S.userinput.phase(phase-1).REVfile]);
 end
 
 %% process input and add to file
@@ -32,9 +100,10 @@ if  S.userinput.revetment(ii).fill==0
 else
     REVdata(Nrev+1).Option = 2;
 end
-ITHK_writeREV_new(REVdata,MDAdata,0.1)
+ITHK_io_writeREV(REVdata,MDAdata,0.1)
 S.UB.input(sens).revetment(ii).REVdata = REVdata;
 S.userinput.revetment(ii).idRANGE = idRANGE;
+
 
 %% Function find grid in range
 function [idNEAREST,idRANGE]=findGRIDinrange(Xcoast,Ycoast,x,y,radius)

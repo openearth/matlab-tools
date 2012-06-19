@@ -1,4 +1,66 @@
-function S=ITHK_add_distrsupp2(S,ii)
+function ITHK_add_distrsupp(ii,sens)
+%function ITHK_add_distrsupp(ii,sens)
+%
+% Adds distributed nourishments to the SOS file
+%
+% INPUT:
+%      ii     number of beach extension
+%      sens   number of sensisitivity run
+%      S      structure with ITHK data (global variable that is automatically used)
+%              .EPSG
+%              .distrsupp(ii).lat
+%              .distrsupp(ii).lon
+%              .distrsupp(ii).volume
+%      MDAfile  'BASIC.MDA'
+%      SOSfile  '1HOTSPOTS1IT.SOS'
+%
+% OUTPUT:
+%      SOSfile  '1HOTSPOTS1IT.SOS' updated
+%
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 <COMPANY>
+%       ir. Bas Huisman
+%
+%       <EMAIL>	
+%
+%       <ADDRESS>
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Jun 2012
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% code
+
+global S
 
 %% Get info from struct
 lat = S.distrsupp(ii).lat;
@@ -6,12 +68,11 @@ lon = S.distrsupp(ii).lon;
 %mag = S.distrsupp(ii).magnitude;
 
 %% convert coordinates
-%EPSG                = load('EPSG.mat');
 [x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
 
 %% read files
-[MDAdata]=ITHK_readMDA('BASIS.MDA');
-[SOSdata0]=ITHK_readSOS('1HOTSPOTS1IT.SOS');
+[MDAdata]=ITHK_io_readMDA('BASIS.MDA');
+[SOSdata0]=ITHK_io_readSOS('1HOTSPOTS1IT.SOS');
 
 %% calculate suppletion information
 volumes             = S.distrsupp(ii).volume;
@@ -71,4 +132,4 @@ volumes             = S.distrsupp(ii).volume;
     SOSdata2.CODE=SOSdata2.Qs*0;
     SOSdata2.COLUMN=SOSdata2.Qs*0+1;
     SOSdata2.nrsourcesandsinks=length(SOSdata2.XW);
-    ITHK_writeSOS(SOSfilename,SOSdata2);
+    ITHK_io_writeSOS(SOSfilename,SOSdata2);
