@@ -58,6 +58,12 @@ handles.MuppetVersion=varargin{2};
 handles.MuppetPath=varargin{3};
 handles.Muppet=hObject;
 
+if isdeployed
+    handles.xmlDir=[ctfroot filesep 'xml' filesep];
+else
+    handles.xmlDir=[fileparts(which('muppet')) filesep 'xml' filesep];
+end
+
 set(handles.output,'Tag','MainWindow');
 
 mppath=handles.MuppetPath;
@@ -172,24 +178,36 @@ handles.ActiveAvailableDataset=0;
 handles.ActiveSubplot=0;
 handles.ActiveFigure=1;
 
-handles.AnimationSettings.FrameRate=5;
+handles.AnimationSettings.frameRate=5;
 handles.AnimationSettings.FirstStep=1;
 handles.AnimationSettings.Increment=1;
 handles.AnimationSettings.LastStep=1;
-handles.AnimationSettings.NBits=24;
-handles.AnimationSettings.KeepFigures=0;
+handles.AnimationSettings.selectBits=24;
+handles.AnimationSettings.keepFigures=0;
 handles.AnimationSettings.makeKMZ=0;
-handles.AnimationSettings.FileName='anim.avi';
-handles.AnimationSettings.Prefix='anim';
+handles.AnimationSettings.aviFileName='anim.avi';
+handles.AnimationSettings.prefix='anim';
 handles.AnimationSettings.startTime=[];
 handles.AnimationSettings.stopTime=[];
 handles.AnimationSettings.timeStep=[];
 
-handles.AnimationSettings.fccHandler=1684633187;
-handles.AnimationSettings.KeyFrames=0;
-handles.AnimationSettings.Quality=10000;
-handles.AnimationSettings.BytesPerSec=300;
-handles.AnimationSettings.Parameters=[99 111 108 114];
+archstr = computer('arch');
+switch lower(archstr)
+    case{'w32','win32'}
+        % win 32
+        handles.AnimationSettings.aviOptions.fccHandler=1684633187;
+        handles.AnimationSettings.aviOptions.KeyFrames=0;
+        handles.AnimationSettings.aviOptions.Quality=10000;
+        handles.AnimationSettings.aviOptions.BytesPerSec=300;
+        handles.AnimationSettings.aviOptions.Parameters=[99 111 108 114];
+    case{'w64','win64'}
+        % win 64 - MSVC1
+        handles.AnimationSettings.aviOptions.fccHandler=1668707181;
+        handles.AnimationSettings.aviOptions.KeyFrames=15;
+        handles.AnimationSettings.aviOptions.Quality=7500;
+        handles.AnimationSettings.aviOptions.BytesPerSec=300;
+        handles.AnimationSettings.aviOptions.Parameters=[75 0 0 0];
+end
 
 handles.AddSubplotAnnotations=0;
 
@@ -3046,8 +3064,8 @@ n2=handles.Figure(ifig).PaperSize(2)/2.5;
 
 nopix=res*res*n1*n2;
 
-if ~isempty(handles.AnimationSettings.FileName)
-    fid=fopen(handles.AnimationSettings.FileName,'w');
+if ~isempty(handles.AnimationSettings.aviFileName)
+    fid=fopen(handles.AnimationSettings.aviFileName,'w');
     if fid~=-1
         fclose(fid);
     end
@@ -3059,7 +3077,7 @@ if nopix>2500000
     txt='Reduce Output Resolution';
     GiveWarning('WarningText',txt);
 elseif fid==-1
-    txt=strvcat(['The file ' handles.AnimationSettings.FileName ' cannot be opened'],'Remove write protection');
+    txt=strvcat(['The file ' handles.AnimationSettings.aviFileName ' cannot be opened'],'Remove write protection');
     GiveWarning('WarningText',txt);
 else
 %    MakeAnimation(handles,ifig);
@@ -3073,31 +3091,36 @@ function PushAnimationSettings_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Try to determine start and stop times
-if isempty(handles.AnimationSettings.startTime) && ~isempty(handles.DataProperties)
-    tmin=1e9;
-    tmax=-1e9;
-    dt=1e9;
-    for i=1:length(handles.DataProperties)
-        if strcmpi(handles.DataProperties(i).TC,'t')
-            tmin=min(tmin,handles.DataProperties(i).AvailableTimes(1));
-            tmax=max(tmax,handles.DataProperties(i).AvailableTimes(end));
-            dt1=0;
-            if length(handles.DataProperties(i).AvailableTimes)>1
-                dt1=86400*(handles.DataProperties(i).AvailableTimes(2)-handles.DataProperties(i).AvailableTimes(1));
-            end     
-            dt=min(dt1,dt);
+if handles.NrAvailableDatasets>0
+    if isempty(handles.AnimationSettings.startTime)
+        % Try to determine start and stop times
+        tmin=floor(now)+1000000;
+        tmax=floor(now)-1000000;
+        dt=1;
+        for i=1:length(handles.DataProperties)
+            if strcmpi(handles.DataProperties(i).TC,'t')
+                tmin=min(tmin,handles.DataProperties(i).AvailableTimes(1));
+                tmax=max(tmax,handles.DataProperties(i).AvailableTimes(end));
+                dt1=0;
+                if length(handles.DataProperties(i).AvailableTimes)>1
+                    dt1=86400*(handles.DataProperties(i).AvailableTimes(2)-handles.DataProperties(i).AvailableTimes(1));
+                end
+                dt=max(dt1,dt);
+            end
         end
+        handles.AnimationSettings.startTime=tmin;
+        handles.AnimationSettings.stopTime=tmax;
+        handles.AnimationSettings.timeStep=dt;
     end
-    handles.AnimationSettings.startTime=tmin;
-    handles.AnimationSettings.stopTime=tmax;
-    handles.AnimationSettings.timeStep=dt;
+    
+    %handles.AnimationSettings=EditAnimationSettings2('Settings',handles.AnimationSettings);
+    
+    xmlfile='animationsettings.xml';
+    [handles.AnimationSettings,ok]=newGUI2(handles.AnimationSettings,handles.xmlDir,xmlfile);
+    
+    guidata(hObject, handles);
+    
 end
-
-handles.AnimationSettings=EditAnimationSettings2('Settings',handles.AnimationSettings);
-
-guidata(hObject, handles);
-
 
 % --- Executes on button press in ToggleTextBox.
 function ToggleTextBox_Callback(hObject, eventdata, handles)

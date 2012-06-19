@@ -29,7 +29,7 @@ switch(lower(Plt.PlotRoutine)),
         end
     case{'plotcontourlines'}
         if strcmpi(Plt.ContourType,'limits')
-            col=[Plt.CMin:Plt.CStep:Plt.CMax];
+            col=Plt.CMin:Plt.CStep:Plt.CMax;
         else
             col=Plt.Contours;
         end
@@ -74,11 +74,11 @@ switch(lower(Plt.PlotRoutine)),
         z(isnan(Data.z))=NaN;
         x=Data.x;
         y=Data.y;
-        xmean=mean(x(isfinite(x)));
-        ymean=mean(y(isfinite(y)));
-        z(isnan(x))=NaN;
-        x(isnan(x))=xmean;
-        y(isnan(y))=ymean;
+%         xmean=mean(x(isfinite(x)));
+%         ymean=mean(y(isfinite(y)));
+%         z(isnan(x))=NaN;
+%         x(isnan(x))=xmean;
+%         y(isnan(y))=ymean;
 end
 
 

@@ -1,9 +1,10 @@
-function [c0,h,wp]=contourf_mvo(x0,y0,z0,col,clmap);
+function [c0,h,wp]=contourf_mvo(x0,y0,z0,col,clmap)
 
-ver=0;
-%if ver==0
-    colormap(clmap);
-%end
+c0=[];
+h=[];
+wp=[];
+
+colormap(clmap);
 
 nocol=size(col,2)-1;
  
@@ -12,7 +13,7 @@ z0min=min(min(z0));
  
 if z0max==z0min
     for i=1:nocol
-        if z0max>=col(i) & z0max<col(i+1)
+        if z0max>=col(i) && z0max<col(i+1)
             unicol=i;
         end
     end
@@ -30,19 +31,20 @@ if z0max==z0min
     z0=z0+0.01*r;
 end
 
-[c0,h]=mp_contourfcorr(x0,y0,z0,col);hold on;
+%[c0,h]=mp_contourfcorr(x0,y0,z0,col);hold on;
+[c0,h]=contourf(x0,y0,z0,col);hold on;
 cvbb=get(h);
-
-sz=size(cvbb,1);
-for i=1:sz
-    set(h(i),'EdgeColor','none');
-    val(i)=get(h(i),'CData');
-    for j=1:nocol
-        if val(i)==col(j)
-            set(h(i),'FaceColor',clmap(max(1,j),:));
-        end
-    end
-end
+set(h,'EdgeColor','none');
+% sz=size(cvbb,1);
+% for i=1:sz
+%     set(h(i),'EdgeColor','none');
+%     val(i)=get(h(i),'CData');
+%     for j=1:nocol
+%         if val(i)==col(j)
+%              set(h(i),'FaceColor',clmap(max(1,j),:));
+%         end
+%     end
+% end
 
 clear x1;
 clear y1;
@@ -67,7 +69,7 @@ for i=2:mmax-1
             fac=0.2;
             z1=zeros(5);
             if k<8;
-                if k(8) & k(2) & ~k(1)
+                if k(8) && k(2) && ~k(1)
                     x1(1)=x0(i-1,j  );
                     x1(3)=x0(i  ,j+1);
                     x1(4)=x0(i  ,j  );
@@ -83,7 +85,7 @@ for i=2:mmax-1
                     wp(jj)=patch(x1,y1,z1,[1 1 1],'LineStyle','none');
                     jj=jj+1;
                 end
-                if k(2) & k(4) & ~k(3)
+                if k(2) && k(4) && ~k(3)
                     x1(1)=x0(i  ,j+1);
                     x1(3)=x0(i+1,j  );
                     x1(4)=x0(i  ,j  );
@@ -99,7 +101,7 @@ for i=2:mmax-1
                     wp(jj)=patch(x1,y1,z1,[1 1 1],'LineStyle','none');
                     jj=jj+1;
                 end
-                if k(4) & k(6) & ~k(5)
+                if k(4) && k(6) && ~k(5)
                     x1(1)=x0(i+1,j  );
                     x1(3)=x0(i  ,j-1);
                     x1(4)=x0(i  ,j  );
@@ -115,7 +117,7 @@ for i=2:mmax-1
                     wp(jj)=patch(x1,y1,z1,[1 1 1],'LineStyle','none');
                     jj=jj+1;
                 end
-                if k(6) & k(8) & ~k(7)
+                if k(6) && k(8) && ~k(7)
                     x1(1)=x0(i-1,j  );
                     x1(3)=x0(i  ,j-1);
                     x1(4)=x0(i  ,j  );

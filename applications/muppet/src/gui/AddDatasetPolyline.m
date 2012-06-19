@@ -135,6 +135,8 @@ if NewDatasetName(handles.DataProperties,handles.NrAvailableDatasets,name)
         handles.DataProperties(nr).DateTime=0;
         handles.DataProperties(nr).Parameter='Polyline';
         handles.DataProperties(nr).Block=0;
+
+        handles.DataProperties(nr).TC='C';
  
         handles.output=handles.DataProperties;
         handles.second_output=handles.NrAvailableDatasets;
