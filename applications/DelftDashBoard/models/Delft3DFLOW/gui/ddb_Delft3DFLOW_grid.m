@@ -112,6 +112,8 @@ handles=getHandles;
 mn=ddb_enclosure('read',handles.Model(md).Input(ad).encFile);
 [handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY]=ddb_enclosure('apply',mn,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
 [handles.Model(md).Input(ad).gridXZ,handles.Model(md).Input(ad).gridYZ]=GetXZYZ(handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+handles.Model(md).Input(ad).kcs=determineKCS(handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+handles=ddb_Delft3DFLOW_plotGrid(handles,'plot');
 setHandles(handles);
 
 %%
