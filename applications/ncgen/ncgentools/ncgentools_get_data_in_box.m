@@ -13,14 +13,13 @@ function [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index, va
 %   Example
 %   ncgentools_get_data_in_box
 %
-%   [data, netcdf_index, OPT] = ncgentools_get_data_in_box('D:\products\nc\rijkswaterstaat\vaklodingen\combined');
-%   
-%   [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index,...
-%       'x_range',[125000 135000],...
-%       'y_range',[565000 612500],...
-%       'x_stride',15,...
-%       'y_stride',15);
-%   
+%     netcdf_index = ncgentools_get_data_in_box('D:\products\nc\rijkswaterstaat\vaklodingen\combined');
+%     [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index,...
+%         'x_range',[-inf inf],...
+%         'y_range',[-inf inf],...
+%         't_range',[-inf inf],...
+%         'x_stride',20,...
+%         'y_stride',20);
 %   surf(data.x,data.y,data.z)
 %   view(2)
 %   shading flat
@@ -71,9 +70,9 @@ function [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index, va
 % $Keywords: $
 
 %%
-OPT.x_range    = [0     1000];
-OPT.y_range    = [0     1000];
-OPT.t_range    = [-inf   now];
+OPT.x_range    = [];
+OPT.y_range    = [];
+OPT.t_range    = [];
 OPT.t_method   = 'last_in_range';
 OPT.x_stride   = 1;
 OPT.y_stride   = 1;
@@ -81,18 +80,33 @@ OPT.y_stride   = 1;
 OPT = setproperty(OPT,varargin{:});
 
 if nargin==0;
-    varargout = OPT;
+    data = OPT;
     return;
 end
-%% code
+%% error check and initialization
 
-
-if ischar(netcdf_index)
-    netcdf_index = generate_netcdf_index(netcdf_index);
+if nargin>1;
+    % exit function when the ranges are not specified
+    assert(numel(OPT.x_range) == 2 &&  numel(OPT.y_range) == 2 && numel(OPT.t_range) == 2,'x,y and t range must all be specified as two element vectors')
 end
 
+% build index if a path is specified
+if ischar(netcdf_index)
+    netcdf_index = generate_netcdf_index(netcdf_index);
+    % if the fnction is called with a single argument, return the netcdf_index
+    if nargin == 1
+        data = netcdf_index;
+        return
+    end
+end
 
-%
+% replace -inf / +inf ranges in x and y with smalles/largest actual range
+if isinf(OPT.x_range(1)); OPT.x_range(1) = min(netcdf_index.projectionCoverage_x(:)); end
+if isinf(OPT.x_range(2)); OPT.x_range(2) = max(netcdf_index.projectionCoverage_x(:)); end
+if isinf(OPT.y_range(1)); OPT.y_range(1) = min(netcdf_index.projectionCoverage_y(:)); end
+if isinf(OPT.y_range(2)); OPT.y_range(2) = max(netcdf_index.projectionCoverage_y(:)); end
+
+%% search data
 files_to_search = find(...
 netcdf_index.projectionCoverage_x(:,1) <= OPT.x_range(2) & ...
 netcdf_index.projectionCoverage_x(:,2) >= OPT.x_range(1) & ...
@@ -204,6 +218,7 @@ end
 
 function netcdf_index = generate_netcdf_index(netcdf_path)
 
+%% run ncinfo command on all files and store in stricture info.
 netcdf_index.urlPath = opendap_catalog(netcdf_path);
 for ii = length(netcdf_index.urlPath):-1:1
     info(ii) = ncinfo(netcdf_index.urlPath{ii});
@@ -211,7 +226,7 @@ for ii = length(netcdf_index.urlPath):-1:1
 end
 multiWaitbar('Building catalog','close');
 
-%% 
+%% collect attributes of interest from the structure
 for ii = 1:length(info(1).Variables)
     var_att_names   = {info(1).Variables(ii).Attributes.Name};
     var_att_values  = {info(1).Variables(ii).Attributes.Value};
@@ -230,7 +245,7 @@ for ii = 1:length(info(1).Variables)
     end
 end
 
-%%
+%
 dimensions = {info(1).Variables(strcmp(netcdf_index.var_z,{info(1).Variables.Name})).Dimensions.Name};
 netcdf_index.dim_x      = find(strcmp(dimensions,netcdf_index.var_x));
 netcdf_index.dim_y      = find(strcmp(dimensions,netcdf_index.var_y));
@@ -246,3 +261,6 @@ netcdf_index.projectionCoverage_x = vertcat(netcdf_index.projectionCoverage_x{:}
 
 netcdf_index.projectionCoverage_y = att_values(strcmp(att_names,'projectionCoverage_y'));
 netcdf_index.projectionCoverage_y = vertcat(netcdf_index.projectionCoverage_y{:});
+
+netcdf_index.timeCoverage         = att_values(strcmp(att_names,'timeCoverage'));
+

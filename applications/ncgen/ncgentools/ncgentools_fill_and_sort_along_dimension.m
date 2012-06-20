@@ -1,6 +1,8 @@
 function varargout = ncgentools_fill_and_sort_along_dimension(source,destination,varargin)
 %NCGENTOOLS_FILL_AND_SORT_ALONG_DIMENSION  One line description goes here.
 %
+% If this function fails, this is probabluy due to a known matlab bug in ncwriteschema. A fix for theis bug can be found here:
+%   http://www.mathworks.com/support/bugreports/819646
 % TODO: Create posibility for source and destination are the same.
 %
 %   More detailed description goes here.
