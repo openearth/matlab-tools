@@ -97,7 +97,7 @@ Pf = result.Output.P_f;
 x = [1:n]';
 y = cumsum(result.Output.idFail.*result.Output.P_corr)./x;
 
-p = round(linspace(1,n,OPT.naccuracy));
+p = round(logspace(0,log10(n),OPT.naccuracy));
 a = nan(size(p))';
 for i = 1:length(a)
     ii   = p(i);
@@ -127,6 +127,7 @@ legend({ ...
     sprintf('%1.0f%% confidence interval', OPT.confidence*100)},'Location','SouthEast');
 
 grid on;
+set(gca,'XScale','log');
 
 title(sprintf('P_f = %2.1e ; Accuracy = %2.1e (%2.1f%%) ; N = %d ; N_f = %d', ...
         Pf, Acy, Acy_rel, n, nf));
