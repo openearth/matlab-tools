@@ -67,7 +67,7 @@
       <name>MDFFile</name>
       <type>string</type>
     </variable>
-    <extension>*.mdw</extension>
+    <extension>*.mdf</extension>
     <selectiontext>Select MDF File</selectiontext>
     <onchange>ddb_Delft3DWAVE_selectMDFfile</onchange>
     <dependencies>

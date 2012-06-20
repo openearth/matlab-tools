@@ -8,15 +8,13 @@
     <tooltipstring>Computational grids</tooltipstring>
     <text>Computational grids :</text>
     <textposition>above-center</textposition>
-    <variable>handles.Model(md).Input(ad).ActiveDomain</variable>
+    <variable>handles.activeWaveGrid</variable>
     <type>integer</type>
     <list>
       <texts>
         <variable>handles.Model(md).Input(ad).ComputationalGrids</variable>
       </texts>
     </list>
-    <onchange>ddb_Delft3DWAVE_nesting</onchange>
-    <option1>selectfromlist</option1>
   </element>
   <element>
     <tag>pushaddgrid</tag>
@@ -24,10 +22,10 @@
     <position>220 90 70 20</position>
     <tooltipstring>Add grid file</tooltipstring>
     <text>Add</text>
-    <variable>handles.Model(md).Input(ad).Domain(awg).grdFile</variable>
+    <variable>handles.Model(md).Input(ad).newGrd</variable>
     <extension>*.grd</extension>
     <selectiontext>Select grid File</selectiontext>
-    <onchange>ddb_Delft3DWAVE_nesting</onchange>
+    <onchange>ddb_Delft3DWAVE_grid</onchange>
     <option1>add</option1>
   </element>
   <element>
@@ -36,7 +34,7 @@
     <position>220 60 70 20</position>
     <tooltipstring>Delete grid file</tooltipstring>
     <text>Delete</text>
-    <onchange>ddb_Delft3DWAVE_nesting</onchange>
+    <callback>ddb_Delft3DWAVE_grid</callback>
     <option1>delete</option1>
   </element>
   <element>

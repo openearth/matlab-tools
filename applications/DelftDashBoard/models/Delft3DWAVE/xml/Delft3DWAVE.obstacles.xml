@@ -195,7 +195,7 @@
           <tag>pushdeleteobstacle</tag>
           <tag>pushimportobstacle</tag>            
         </tags>
-        <checkfor>any</checkfor>
+        <checkfor>all</checkfor>
         <checks>
           <check>
             <variable>handles.Model(md).Input(ad).NrObstacles</variable>
@@ -533,30 +533,12 @@
         </checks>
       </dependency>
     </dependencies>    
-  </element> 
+  </element>
   <element>
     <tag>obstaclessegmentspanel</tag>
     <style>panel</style>
     <position>650 10 490 160</position>
     <text>Obstacles segments</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>    
-    </dependencies>    
   </element>
   <element>
     <tag>editsegments</tag>
@@ -590,28 +572,291 @@
         </checks>
       </dependency>    
     </dependencies>    
+  </element>
+  <element>
+    <tag>pushaddsegment</tag>
+    <style>pushbutton</style>
+    <position>825 120 100 20</position>
+    <tooltipstring>Add segment</tooltipstring>
+    <text>Add</text>
+    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
+    <option1>add</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>pushdeletesegment</tag>
+    <style>pushbutton</style>
+    <position>825 90 100 20</position>
+    <tooltipstring>Delete segment</tooltipstring>
+    <text>Delete</text>
+    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
+    <option1>delete</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textsegmentcoord</tag>
+    <style>text</style>
+    <position>930 140</position>
+    <text>Segment co-ordinates : </text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>      
+  </element>
+  <element>
+    <tag>editxstart</tag>
+    <style>edit</style>
+    <position>980 115 50 20</position>
+    <text>X-start : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(ii).Input(id).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Xstart</variable>
+    <type>real</type>
+    <tooltipstring>Enter start x coordinate</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textxstartunit</tag>
+    <style>text</style>
+    <position>1035 115</position>
+    <text>[m]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editystart</tag>
+    <style>edit</style>
+    <position>980 90 50 20</position>
+    <text>Y-start : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(ii).Input(id).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Ystart</variable>
+    <type>real</type>
+    <tooltipstring>Enter start y coordinate</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textystartunit</tag>
+    <style>text</style>
+    <position>1035 90</position>
+    <text>[m]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>editxend</tag>
+    <style>edit</style>
+    <position>980 65 50 20</position>
+    <text>X-start : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(ii).Input(id).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Xend</variable>
+    <type>real</type>
+    <tooltipstring>Enter end x coordinate</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textxendunit</tag>
+    <style>text</style>
+    <position>1035 65</position>
+    <text>[m]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>edityend</tag>
+    <style>edit</style>
+    <position>980 40 50 20</position>
+    <text>Y-end : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(ii).Input(id).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Yend</variable>
+    <type>real</type>
+    <tooltipstring>Enter end y coordinate</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textyendunit</tag>
+    <style>text</style>
+    <position>1035 40</position>
+    <text>[m]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>pushaddobstacle</tag>
+          <tag>pushdeleteobstacle</tag>
+          <tag>pushimportobstacle</tag>            
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
   </element>  
 </root>
-
-
-handles.GUIHandles.PushAddSeg      = uicontrol(gcf,'Style','pushbutton',  'String','Add','Position',[700 120 100 20],'Tag','UIControl');
-
-handles.GUIHandles.PushDeleteSeg   = uicontrol(gcf,'Style','pushbutton',  'String','Delete','Position',[700 90 100 20],'Tag','UIControl');
-
-handles.GUIHandles.TextSegmentcoord  = uicontrol(gcf,'Style','text','String','Segment co-ordinates : ','Position',[810 150 150 15],'HorizontalAlignment','left','Tag','UIControl');
-
-handles.GUIHandles.TextXstart      = uicontrol(gcf,'Style','text','String','X-start : ','Position',[810 120 40 15],'HorizontalAlignment','left','Tag','UIControl');
-handles.GUIHandles.EditXstart      = uicontrol(gcf,'Style','edit', 'Position',[860 120 50 15],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.TextXstartUnit  = uicontrol(gcf,'Style','text','String','[m]','Position',[915 120 20 15],'HorizontalAlignment','left','Tag','UIControl');
-
-handles.GUIHandles.TextYstart        = uicontrol(gcf,'Style','text','String','Y-start : ','Position',[810 100 40 15],'HorizontalAlignment','left','Tag','UIControl');
-handles.GUIHandles.EditYstart        = uicontrol(gcf,'Style','edit', 'Position',[860 100 50 15],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.TextYstartUnit    = uicontrol(gcf,'Style','text','String','[m]','Position',[915 100 20 15],'HorizontalAlignment','left','Tag','UIControl');
-
-handles.GUIHandles.TextXend       = uicontrol(gcf,'Style','text','String','X-end : ','Position',[810 70 40 15],'HorizontalAlignment','left','Tag','UIControl');
-handles.GUIHandles.EditXend       = uicontrol(gcf,'Style','edit', 'Position',[860 70 50 15],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.TextXendUnit   = uicontrol(gcf,'Style','text','String','[m]','Position',[915 70 20 15],'HorizontalAlignment','left','Tag','UIControl');
-
-handles.GUIHandles.TextYend       = uicontrol(gcf,'Style','text','String','Y-end : ','Position',[810 50 40 15],'HorizontalAlignment','left','Tag','UIControl');
-handles.GUIHandles.EditYend       = uicontrol(gcf,'Style','edit', 'Position',[860 50 50 15],'HorizontalAlignment','left','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.TextYendUnit   = uicontrol(gcf,'Style','text','String','[m]','Position',[915 50 20 15],'HorizontalAlignment','left','Tag','UIControl');

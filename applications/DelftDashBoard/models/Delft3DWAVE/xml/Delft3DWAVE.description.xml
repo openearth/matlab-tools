@@ -3,13 +3,13 @@
 <root>
     <element>
       <style>panel</style>
-      <position>20 20 990 160</position>
+      <position>45 10 900 160</position>
       <title>Description</title>
     </element>
     <element>
       <tag>editprojectname</tag>
       <style>edit</style>
-      <position>30 140 200 20</position>
+      <position>50 140 200 20</position>
       <variable>
         <name>ProjectName</name>
         <type>string</type>
@@ -21,7 +21,7 @@
     <element>
       <tag>editprojectnumber</tag>
       <style>edit</style>
-      <position>30 110 100 20</position>
+      <position>50 110 100 20</position>
       <variable>
         <name>ProjectNumber</name>
         <type>string</type>
@@ -33,7 +33,7 @@
     <element>
       <tag>editdescription</tag>
       <style>edit</style>
-      <position>30 30 500 50</position>
+      <position>50 30 500 50</position>
       <variable>
         <name>Description</name>
         <type>string</type>

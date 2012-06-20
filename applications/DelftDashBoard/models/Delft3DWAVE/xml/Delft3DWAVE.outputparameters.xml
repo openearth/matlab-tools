@@ -1,0 +1,371 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>outputparameterspanel</tag>
+    <style>panel</style>
+    <position>45 10 1300 160</position>
+    <text>Output Parameters</text>
+  </element>
+  <element>
+    <tag>edittestoutput</tag>
+    <style>edit</style>
+    <position>190 130 50 20</position>
+    <text>Level of ddb_test output : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).TestOutput</variable>
+    <type>real</type>
+    <tooltipstring>Enter level of ddb test output</tooltipstring>
+  </element>
+  <element>
+    <tag>editdebug</tag>
+    <style>edit</style>
+    <position>190 105 50 20</position>
+    <text>Debug level : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).Debug</variable>
+    <type>real</type>
+    <tooltipstring>Enter debug level</tooltipstring>
+  </element>
+  <element>
+    <tag>textmode</tag>
+    <style>text</style>
+    <position>260 130</position>
+    <text>Computational mode :</text>    
+  </element>
+  <element>
+    <tag>editmode</tag>
+    <style>popupmenu</style>
+    <position>260 105 110 20</position>
+    <variable>handles.Model(md).Input(ad).ModeIval</variable>
+    <type>string</type>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input(ad).Mode</variable>
+      </texts>
+      <values>
+        <variable>handles.Model(md).Input(ad).Mode</variable>
+      </values>      
+    </list>
+  </element>
+  <element>
+    <tag>editcoupling</tag>
+    <style>edit</style>
+    <position>310 80 50 20</position>
+    <text>Coupling : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).Interval</variable>
+    <type>real</type>
+    <tooltipstring>Enter coupling interval</tooltipstring>
+  </element>
+  <element>
+    <tag>textcouplingunit</tag>
+    <style>text</style>
+    <position>380 80</position>
+    <text>[min]</text>    
+  </element>
+  <element>
+    <tag>edittimestepoutput</tag>
+    <style>edit</style>
+    <position>310 55 50 20</position>
+    <text>Time step : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).TimeStepOutput</variable>
+    <type>real</type>
+    <tooltipstring>Enter output time step</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editmode</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).ModeIval</variable>
+            <value>non-stationary</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>texttimestepoutputunit</tag>
+    <style>text</style>
+    <position>380 55</position>
+    <text>[-]</text>    
+  </element>
+  <element>
+    <tag>checkhotstart</tag>
+    <style>checkbox</style>
+    <position>440 130</position>
+    <text>Write and use hot start file</text>
+    <variable>handles.Model(md).Input(ad).Hotstart</variable>
+  </element>
+  <element>
+    <tag>checkverify</tag>
+    <style>checkbox</style>
+    <position>440 105</position>
+    <text>Only verify input files</text>
+    <variable>handles.Model(md).Input(ad).Verify</variable>
+  </element>
+  <element>
+    <tag>checkoutputflowgrid</tag>
+    <style>checkbox</style>
+    <position>440 80</position>
+    <text>Output for FLOW grid</text>
+    <variable>handles.Model(md).Input(ad).OutputFlowGrid</variable>
+  </element>
+  <element>
+    <tag>pushselectgridfile</tag>
+    <style>pushselectfile</style>
+    <position>440 55 150 20</position>
+    <tooltipstring>Select flow grid file</tooltipstring>
+    <text>Select grid file</text>
+    <variable>handles.Model(md).Input(ad).OutputFlowGridFile</variable>
+    <extension>*.grd</extension>
+    <selectiontext>Select FLOW grid file</selectiontext>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>checkoutputflowgrid</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).OutputFlowGrid</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textcomputationalgrids</tag>
+    <style>text</style>
+    <position>690 130</position>
+    <text>Output for computational grids : </text>    
+  </element>  
+  <element>
+    <tag>editinterval</tag>
+    <style>edit</style>
+    <position>740 105 50 20</position>
+    <text>Interval : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input(ad).Interval</variable>
+    <type>real</type>
+    <tooltipstring>Enter output interval</tooltipstring>
+  </element>
+  <element>
+    <tag>textintervalunit</tag>
+    <style>text</style>
+    <position>800 105</position>
+    <text>[min]</text>    
+  </element>
+  <element>
+    <tag>checkcompgrid1</tag>
+    <style>checkbox</style>
+    <position>690 80</position>
+    <text>
+      <variable>handles.Model(md).Input(ad).Domain(1).GrdFile</variable>
+    </text>
+    <variable>handles.Model(md).Input(ad).Domain(1).Active</variable>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrComputationalGrids</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>checkcompgrid2</tag>
+    <style>checkbox</style>
+    <position>810 80</position>
+    <text>Comp grid 2</text>
+    <variable>handles.Model(md).Input(ad).Domain(2).Active</variable>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrComputationalGrids</variable>
+            <value>1</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>checkcompgrid3</tag>
+    <style>checkbox</style>
+    <position>930 80</position>
+    <text>Comp grid 3</text>
+    <variable>handles.Model(md).Input(ad).Domain(3).Active</variable>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrComputationalGrids</variable>
+            <value>2</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>  
+  </element>
+  <element>
+    <tag>checkcompgrid4</tag>
+    <style>checkbox</style>
+    <position>1050 80</position>
+    <text>Comp grid 4</text>
+    <variable>handles.Model(md).Input(ad).Domain(4).Active</variable>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrComputationalGrids</variable>
+            <value>3</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>checkcompgrid5</tag>
+    <style>checkbox</style>
+    <position>1170 80</position>
+    <text>Comp grid 5</text>
+    <variable>handles.Model(md).Input(ad).Domain(5).Active</variable>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).NrComputationalGrids</variable>
+            <value>4</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>  
+  </element>
+  <element>
+    <tag>checkoutputlocations</tag>
+    <style>checkbox</style>
+    <position>690 30</position>
+    <text>Output for specific locations</text>
+    <variable>handles.Model(md).Input(ad).OutputSpecific</variable>
+  </element>
+  <element>
+    <tag>checktable</tag>
+    <style>checkbox</style>
+    <position>870 45</position>
+    <text>table</text>
+    <variable>handles.Model(md).Input(ad).Table</variable>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>checkoutputlocations</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).OutputSpecific</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>check1dspectra</tag>
+    <style>checkbox</style>
+    <position>870 30</position>
+    <text>1D spectra</text>
+    <variable>handles.Model(md).Input(ad).oneDspectra</variable>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>checkoutputlocations</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).OutputSpecific</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>check2dspectra</tag>
+    <style>checkbox</style>
+    <position>870 15</position>
+    <text>2D spectra</text>
+    <variable>handles.Model(md).Input(ad).twoDspectra</variable>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>checkoutputlocations</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).OutputSpecific</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>pusheditlocations</tag>
+    <style>pushbutton</style>
+    <position>960 30 80 20</position>
+    <tooltipstring>Edit locations</tooltipstring>
+    <text>Edit locations</text>
+    <callback>ddb_Delft3DWAVE_outputparameters</callback>
+    <option1>editlocations</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>checkoutputlocations</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).OutputSpecific</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>  
+</root>
