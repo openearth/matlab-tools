@@ -141,7 +141,11 @@ colormap(OPT.colorMap(OPT.colorSteps));
 for ii = 1:length(ncfiles);
     url  = ncfiles{ii};
     date = nc_cf_time(url,'time');
-
+    
+    if isempty(date)
+        continue
+    end
+    
     lon       = ncread(url, 'lon');
     lat       = ncread(url, 'lat');
     
@@ -449,6 +453,10 @@ fclose(fid);
 
 function write_kml_per_folder(OPT,sourcePath,destPath,timeDependant,previousSourcePaths)
 tiles               = dir2(sourcePath,'file_incl','\.png$','no_dirs',1);
+if isempty(tiles)
+    return
+end
+
 underscorePos       = strfind(tiles(1).name,'_');
 
 allTileCodes   = nan(length(tiles),50);
