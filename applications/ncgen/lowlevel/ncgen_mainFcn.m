@@ -66,7 +66,7 @@ function varargout = ncgen_mainFcn(schemaFcn, readFcn, writeFcn, varargin)
 %% First basic input check
 if datenum(version('-date'), 'mmmm dd, yyyy') < 734729
     % version 2011a and older
-    error(nargchk(3,inf,nargin))
+    error(nargchk(3,inf,nargin)) %#ok<NCHKN>
 else
     % version 2011b and newer
     narginchk(3,inf)
@@ -89,6 +89,7 @@ OPT.main.dateFcn        = @(s) datenum(s(1:6),'yymmdd'); % how to extract date f
 OPT.main.defaultdate    = []; 
 OPT.main.dir_depth      = inf;
 OPT.main.hash_source    = true;
+OPT.main.store_hash     = false;
 
 % path settings
 OPT.main.path_source    = ''; % path to source data. Can be a directory or a single file
@@ -139,7 +140,7 @@ else
     fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.file_incl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
     % get the timestamp from the file date
     fns1 = get_date_from_filename(OPT,fns1);
- end
+end
 
 % check if files are found
 if isempty(fns1)
@@ -148,7 +149,7 @@ end
 
 % generate md5 hashes of all source files
 if OPT.main.hash_source
-    fns1 = hash_files(fns1);
+    fns1 = hash_files(fns1,'store_hash',OPT.main.store_hash);
 else
     [fns1.hash] = deal([]);
 end
@@ -159,7 +160,10 @@ if exist(OPT.main.path_netcdf,'dir');
 else
     mkpath(OPT.main.path_netcdf);
 end
-    
+
+% lock the output directory
+fclose(fopen(fullfile(OPT.main.path_netcdf,'ncgen.lock'),'w'));
+
 WB.bytesToDo         = sum([fns1.bytes]);
 WB.bytesDone         = 0;
 WB.zipRatio          = 1;
@@ -188,6 +192,9 @@ end
 multiWaitbar('Processing file','close');
 multiWaitbar('Generating netcdf from source files...','close');
 returnmessage(OPT.main.log,'Netcdf generation completed\n')
+
+% remove lock file
+delete(fullfile(OPT.main.path_netcdf,'ncgen.lock'));
 
 %% return OPT
 varargout = {OPT};
@@ -227,74 +234,72 @@ end
 
 function fns1 = check_existing_nc_files(OPT,fns1)
 
+if exist(fullfile(OPT.main.path_netcdf,'ncgen.lock'),'file')
+    delete(fullfile(OPT.main.path_netcdf,'*.nc'));
+    delete(fullfile(OPT.main.path_netcdf,'ncgen.lock'));
+    returnmessage(OPT.main.log,'Netcdf output directory emptied because a previous run of ncgen was not completed.\n')
+    return
+end
+    
 if ~OPT.main.hash_source
     delete(fullfile(OPT.main.path_netcdf,'*.nc'));
     returnmessage(OPT.main.log,'Netcdf output directory emptied because no hash was computed.\n')
     return
 end
     
-nc_fns = dir2(OPT.main.path_netcdf,'file_incl','\.nc$','no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
-outdated = false;
-ii=0;
+nc_fns = dir2(OPT.main.path_netcdf,...
+    'file_incl','\.nc$',...
+    'file_excl','^catalog\.nc$',...
+    'no_dirs',true,...
+    'depth',0,...
+    'case_sensitive',OPT.main.case_sensitive);
+
+outdated         = false;
 source_file_hash = [];
-while ~outdated && ii<length(nc_fns)
-    ii = ii+1;
+for ii = length(nc_fns):-1:1
     ncfile = [nc_fns(ii).pathname nc_fns(ii).name];
     % query nc schema to compare variables and dimensions
-    ncschema = ncinfo(ncfile);
+    info(ii) = ncinfo(ncfile);
     try
-        % compare history attribute only
+        % compare history attribute 
+        %  - removed
         
-        
-        
-        try
-            if ~isequal(...
-                    ncschema.Attributes(strcmp({ncschema.Attributes.Name},'history')).Value,...
-                    OPT.write.schema.Attributes(strcmp({OPT.write.schema.Attributes.Name},'history')).Value)
-                reason = 'Difference found in history attributes';
-                outdated = true;
-                continue;
-            end
-        catch ME
-            reason = ['Failed to compare history attributes: ' ME.message];
-            outdated = true;
-            continue;
-        end
+        % compare if all attributes in the schema are defined
         
         
         % compare dimension names
-        if ~isequal([ncschema.Dimensions.Name],[OPT.write.schema.Dimensions.Name]);
+        if ~isequal([info(ii).Dimensions.Name],[OPT.write.schema.Dimensions.Name]);
             reason = 'Difference found in dimensions';
             outdated = true;
-            continue;
+            break;
         end
         
         % compare variables
         if ...
-                ~isequal([ncschema.Variables.Name],        [OPT.write.schema.Variables.Name])     || ...
-                ~isequal([ncschema.Variables.Datatype],    [OPT.write.schema.Variables.Datatype]) || ...
-                ~isequal([ncschema.Variables.DeflateLevel],[OPT.write.schema.Variables.DeflateLevel]);
+                ~isequal([info(ii).Variables.Name],        [OPT.write.schema.Variables.Name])     || ...
+                ~isequal([info(ii).Variables.Datatype],    [OPT.write.schema.Variables.Datatype]) || ...
+                ~isequal([info(ii).Variables.DeflateLevel],[OPT.write.schema.Variables.DeflateLevel]);
             reason = 'Difference found in variables';
             outdated = true;
-            continue;
+            break;
         end
         
         % compare dimension lengths
-        current_length = [ncschema.Dimensions.Length];
-        current_length([ncschema.Dimensions.Unlimited]) = nan;
+        current_length = [info(ii).Dimensions.Length];
+        current_length([info(ii).Dimensions.Unlimited]) = nan;
         new_length = [OPT.write.schema.Dimensions.Length];
         new_length([OPT.write.schema.Dimensions.Length] == inf | [OPT.write.schema.Dimensions.Unlimited])= nan;
         if ~isequalwithequalnans(current_length,new_length);
             reason = 'Difference found in dimension lengths';
             outdated = true;
-            continue;
+            break;
         end
         
     catch  ME
         % isf anything went wrong, assume netcdf is outdated
         reason   = ['Error when comparing netcdf files: ' ME.message];
         outdated = true;
-        continue;
+        break;
     end
     
     % collect source file hashes
@@ -303,6 +308,7 @@ while ~outdated && ii<length(nc_fns)
         source_file_hash = [source_file_hash; ncread(ncfile,'source_file_hash')']; %#ok<AGROW>
     end
 end
+
 if ~outdated
     % check hashes
     source_file_hash = unique(source_file_hash,'rows');
@@ -316,11 +322,27 @@ end
 if outdated
     delete(fullfile(OPT.main.path_netcdf,'*.nc'));
     returnmessage(OPT.main.log,'Netcdf output directory was outdated and therefore emptied.\n  Reason:\n  %s\n',reason)
-else
-    % remove files already in nc from file name stucture  as they are
-    % already in the nc file
-    a = length(fns1);
-    fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
-    b = length(fns1);
-    fprintf(OPT.main.log,'%d of %d source files were skipped as they where already processed.\n',a-b,a);
-end  
+    return;
+end
+    
+% remove files already in nc from file name stucture  as they are
+% already in the nc file
+a = length(fns1);
+fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
+b = length(fns1);
+fprintf(OPT.main.log,'%d of %d source files were skipped as they where already processed.\n',a-b,a);
+
+% append history attribute
+for ii = 1:length(nc_fns)
+    % read current history attribute
+    current_history_att = info(ii).Attributes(strcmp({info(ii).Attributes.Name},'history')).Value;
+    new_history_att     = OPT.write.schema.Attributes(strcmp({OPT.write.schema.Attributes.Name},'history')).Value;
+    temp                =  strfind(current_history_att,new_history_att);
+    
+    % if the new history attribute is not already in the netcdf files,
+    % append it.
+    if isempty(temp)
+        ncwriteatt([nc_fns(ii).pathname nc_fns(ii).name],'/',...
+            'history',[current_history_att char(10) new_history_att])
+    end
+end
