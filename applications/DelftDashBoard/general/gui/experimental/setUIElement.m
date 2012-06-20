@@ -72,6 +72,20 @@ switch lower(el.style)
     case{'checkbox'}
         val=getSubFieldValue(s,el.variable);
         set(el.handle,'Value',val);
+        % Set text
+        if ~isempty(el.text)
+            if isfield(el.text,'variable')
+                val=getSubFieldValue(s,el.text.variable);
+                % Text
+                set(el.handle,'String',val);
+                % Length of string is known
+                pos=get(el.handle,'Position');
+                ext=get(el.handle,'Extent');
+                pos(3)=ext(3)+20;
+                pos(4)=20;                
+                set(el.handle,'Position',pos);
+            end
+        end
 
     case{'togglebutton'}
         val=getSubFieldValue(s,el.variable);

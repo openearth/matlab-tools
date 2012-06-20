@@ -148,7 +148,7 @@ for i=1:length(elements)
                     pos(4)=20;                
                     set(elements(i).handle,'Position',pos);
                 else
-                    elements(i).handle=uicontrol(figh,'Style','check','String',' ','Position',[pos 20],'BackgroundColor',bgc);
+                    elements(i).handle=uicontrol(figh,'Style','check','String',' ','Position',[pos 20 20],'BackgroundColor',bgc);
                 end
                 
                 if ~isempty(elements(i).toolTipString)
