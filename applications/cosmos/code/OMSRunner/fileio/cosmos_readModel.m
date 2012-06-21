@@ -986,3 +986,64 @@ if isfield(model,'profiles')
         end
     end
 end
+%% Forecast plots
+if isfield(model,'forecastplot')
+    
+    hm.models(i).forecastplot.timeStep=[];
+    if isfield(model.forecastplot,'timestep')
+        hm.models(i).forecastplot.timeStep=str2double(model.forecastplot.timestep);
+    end
+    
+    if isfield(model.forecastplot,'xlims')
+        hm.models(i).forecastplot.xlims=str2num(model.forecastplot.xlims);
+    end
+    
+    if isfield(model.forecastplot,'ylims')
+        hm.models(i).forecastplot.ylims=str2num(model.forecastplot.ylims);
+    end
+    
+    if isfield(model.forecastplot,'clims')
+        hm.models(i).forecastplot.clims=str2num(model.forecastplot.clims);
+    end
+    
+    if isfield(model.forecastplot,'scalefactor')
+        hm.models(i).forecastplot.scalefactor=str2num(model.forecastplot.scalefactor);
+    end
+    
+    if isfield(model.forecastplot,'thinning')
+        hm.models(i).forecastplot.thinning=str2num(model.forecastplot.thinning);
+    end
+    
+    if isfield(model.forecastplot,'ldb')
+        hm.models(i).forecastplot.ldb=model.forecastplot.ldb;
+    end
+    
+    if isfield(model.forecastplot,'name')
+        hm.models(i).forecastplot.name=model.forecastplot.name;
+    end
+    
+    if isfield(model.forecastplot,'wlstation')
+        hm.models(i).forecastplot.wlstation=model.forecastplot.wlstation;
+    end
+    
+    if isfield(model.forecastplot,'weatherstation')
+        hm.models(i).forecastplot.weatherstation=model.forecastplot.weatherstation;
+    end
+    
+    if isfield(model.forecastplot,'windstation')
+        hm.models(i).forecastplot.windstation=num2str(model.forecastplot.windstation);
+    end
+    
+    if isfield(model.forecastplot,'wavestation')
+        hm.models(i).forecastplot.wavestation=model.forecastplot.wavestation;
+    end
+    
+    if isfield(model.forecastplot,'kmaxis')
+        hm.models(i).forecastplot.kmaxis=str2num(model.forecastplot.kmaxis);
+    end
+    
+    hm.models(i).forecastplot.plot=1;
+    if isfield(model.forecastplot,'plot')
+        hm.models(i).forecastplot.plot=str2double(model.forecastplot.plot);
+    end
+end
