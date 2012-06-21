@@ -153,7 +153,7 @@ end
 %% Add to kml
 if S.userinput.indicators.coast == 1
     % bars to KML
-    KMLdata = ITHK_kmlbarplot(S.PP(sens).coast.x0gridRough,S.PP(sens).coast.y0gridRough,S.PP(sens).coast.zgridRough,S.settings.indicators.coast.offset,sens);
+    KMLdata = ITHK_KMLbarplot(S.PP(sens).coast.x0gridRough,S.PP(sens).coast.y0gridRough,S.PP(sens).coast.zgridRough,S.settings.indicators.coast.offset,sens);
     S.PP(sens).output.kml = KMLdata;
     % coast line to KML
     for jj = 1:NRtimesteps
