@@ -52,7 +52,7 @@ function LDB = ITHK_io_readldb(filename,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
-   FileInfo=tekal('open',filename);
+   FileInfo=ITHK_tekal('open',filename);
    
    if strcmp(FileInfo.Check,'OK')
       for i=1:length(FileInfo.Field)

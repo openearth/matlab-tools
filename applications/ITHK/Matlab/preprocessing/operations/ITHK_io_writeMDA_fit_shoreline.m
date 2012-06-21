@@ -110,7 +110,7 @@ coast(find(isnan(coast(:,1))),:)=[];
 
 % specify resolution to cut up baseline
 % cut up baseline
-baselineFine=add_equidist_points(dx,baseline);
+baselineFine=ITHK_add_equidist_points(dx,baseline);
 
 % loop through points of coastline and find for each point the nearest point of the baseline
 for ii=1:length(coast)

@@ -72,7 +72,7 @@ jj=0;xyNew=[];yOffset=[];
 number_of_points = size(xy2,1);
 
 % cut up xy
-xyFine=add_equidist_points(dx,xy1);
+xyFine=ITHK_add_equidist_points(dx,xy1);
 if xyFine(end-1,1)~=xy1(end,1)
     xyFine = [xyFine(1:end-1,:); xy1(end,:) ;xyFine(end,:)];
 end
