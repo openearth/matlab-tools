@@ -59,6 +59,8 @@ function ITHK_postprocessing(sens)
 
 global S
 
+fprintf('ITHK postprocessing\n');
+
 %% BASIC PARAMETERS
     % Grid settings used for postprocessing
     ITHK_PPsettings(sens);
@@ -80,10 +82,10 @@ global S
 
 %% INDICATORS
     ITHK_ind_ecology_benthos(sens);
-    ITHK_ind_ecology_juvenilefish(sens);
-    ITHK_ind_ecology_dunetypes(sens);
-    ITHK_dunerules2(sens);
-    ITHK_dunes_habitatrichness;
+%     ITHK_ind_ecology_juvenilefish(sens);
+%     ITHK_ind_ecology_dunetypes(sens);
+%     ITHK_dunerules2(sens);
+%     ITHK_dunes_habitatrichness;
 
 %    indicatorfields    = {'safety_dykering' ...                      % 
 %                          'safety_structures' ...                    % 
@@ -115,9 +117,9 @@ if isfield(S.settings.postprocessing,'disclaimer')
 end
 
 %% WRITE KML
-S.PP(sens).output.kmlFileName  = ['d:\Projects\1200893_BwN\Report_Coastal functions\figures_HollandCoast\data2\katwijk_05Mm3_95yr_new\',S.userinput.name,'.kml'];  % KML filename settings
-KMLmapName               = S.userinput.name;
-fid                      = fopen(S.PP.output.kmlFileName,'w');
+S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name '.kml'];  % KML filename settings
+KMLmapName                     = S.userinput.name;
+fid                            = fopen(S.PP.output.kmlFileName,'w');
 fprintf(fid,[KML_header('kmlName',KMLmapName), ...
             S.PP.output.kml, ...
             S.PP(sens).output.kml_groyne, ...
@@ -128,6 +130,7 @@ fprintf(fid,[KML_header('kmlName',KMLmapName), ...
             KML_footer]);
 fclose(fid);
 % KML2
+S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name '_CL.kml'];  % KML filename settings
 KMLmapName               = S.userinput.name;
 fid                      = fopen(S.PP.output.kmlFileName,'w');
 fprintf(fid,[KML_header('kmlName',KMLmapName), ...
@@ -135,6 +138,7 @@ fprintf(fid,[KML_header('kmlName',KMLmapName), ...
              KML_footer]);
 fclose(fid);
 % KML3
+S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name '_benthos.kml'];  % KML filename settings
 KMLmapName               = S.userinput.name;
 fid                      = fopen(S.PP.output.kmlFileName,'w');
 fprintf(fid,[KML_header('kmlName',KMLmapName), ...
