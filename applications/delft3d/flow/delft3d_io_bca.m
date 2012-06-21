@@ -282,7 +282,7 @@ if fid > 0
             amp       =      BCA.DATA(ibnd).amp  (icomp);
             phase     =      BCA.DATA(ibnd).phi  (icomp);
    	 
-            fprintf(fid,'%8s %15.7e %f7',pad(component,8,' '),amp,phase); % 15 = enough decimals to get sufficient decimals for Neumann boundary
+            fprintf(fid,'%8s %15.7e %15.7f',pad(component,8,' '),amp,phase); % 15 = enough decimals to get sufficient decimals for Neumann boundary
             fprintf(fid,'\n');
             
          end % for icmp=1:length(BCA.components)
