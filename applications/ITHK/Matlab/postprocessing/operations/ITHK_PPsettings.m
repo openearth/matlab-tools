@@ -109,7 +109,7 @@ end
 % settings
 S.PP(sens).settings.dsRough         = str2double(S.settings.plotting.barplot.dsrough); % grid size rough grid
 S.PP(sens).settings.dsFine          = str2double(S.settings.plotting.barplot.dsfine);  % grid size fine grid
-S.PP(sens).settings.dxFine          = str2double(S.settings.plotting.barplot.widthfine); % distance from suppletion location where fine grid is used
+S.PP(sens).settings.dxFine          = str2double(S.settings.plotting.barplot.widthfine); % distance from nourishment location where fine grid is used
 S.PP(sens).settings.sVectorLength   = str2double(S.settings.plotting.barplot.barscalevector);   % scaling factor for vector length
 
 % initial coast line

@@ -41,11 +41,11 @@ for jj = 1:length(S.userinput.phases)
             ITHK_add_groyne(S.userinput.phase(jj).groids(ii),jj,NGRO,sens);
         end
     end
-    % If SOS-file in phase differs from 'basis', add suppletion
+    % If SOS-file in phase differs from 'basis', add nourishment
     if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
-        disp('Adding suppletion(s)')
-        % If continuous suppletion exist, use continuous suppletions as base. 
-        % Else use template file to add suppletion
+        disp('Adding nourishment(s)')
+        % If continuous nourishment exist, use continuous nourishments as base. 
+        % Else use template file to add nourishment
         if exist([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],'file') &&  ~strcmp([S.settings.outputdir S.userinput.phase(jj).SOSfile],[S.settings.outputdir '1HOTSPOTSIT_cont.sos'])
            copyfile([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],[S.settings.outputdir S.userinput.phase(jj).SOSfile]); 
         elseif ~exist([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],'file')
@@ -56,7 +56,7 @@ for jj = 1:length(S.userinput.phases)
 %            copyfile([S.settings.inputdir '1HOTSPOTS1IT.SOS'],[S.settings.outputdir S.userinput.phase(jj).SOSfile]);
 %         end
         for ii = 1:length(S.userinput.phase(jj).supids)
-            ITHK_add_suppletion(ii,jj,sens);
+            ITHK_add_nourishment(ii,jj,sens);
         end
     end
     % If REV-file in phase differs from 'basis', add revetment

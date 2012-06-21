@@ -10,13 +10,13 @@ function ITHK_nourishment_to_kml(sens)
 %              .userinput.phases
 %              .userinput.phase(idphase).SOSfile
 %              .userinput.phase(idphase).supids
-%              .userinput.suppletion(ids).volume
-%              .userinput.suppletion(ids).idNEAREST
-%              .userinput.suppletion(ids).idRANGE
-%              .userinput.suppletion(ids).width
-%              .userinput.suppletion(ids).category
-%              .userinput.suppletion(ids).start
-%              .userinput.suppletion(ids).stop
+%              .userinput.nourishment(ids).volume
+%              .userinput.nourishment(ids).idNEAREST
+%              .userinput.nourishment(ids).idRANGE
+%              .userinput.nourishment(ids).width
+%              .userinput.nourishment(ids).category
+%              .userinput.nourishment(ids).start
+%              .userinput.nourishment(ids).stop
 %              .PP(sens).settings.sVectorLength
 %              .PP(sens).settings.t0
 %              .PP(sens).settings.x0
@@ -83,9 +83,9 @@ for jj = 1:length(S.userinput.phases)
 
         %% Get info from structure
         t0 = S.PP(sens).settings.t0;
-        % lat = S.userinput.suppletion(ss).lat;
-        % lon = S.userinput.suppletion(ss).lon;
-        mag = S.userinput.suppletion(ss).volume;
+        % lat = S.userinput.nourishment(ss).lat;
+        % lon = S.userinput.nourishment(ss).lon;
+        mag = S.userinput.nourishment(ss).volume;
         % MDA info
         x0 = S.PP(sens).settings.x0;
         y0 = S.PP(sens).settings.y0;
@@ -97,16 +97,16 @@ for jj = 1:length(S.userinput.phases)
         % idplotrough = S.PP(sens).settings.idplotrough;
         
         %% preparation
-        idNEAREST = S.userinput.suppletion(ss).idNEAREST;
-        idRANGE = S.userinput.suppletion(ss).idRANGE;
-        width = S.userinput.suppletion(ss).width;
+        idNEAREST = S.userinput.nourishment(ss).idNEAREST;
+        idRANGE = S.userinput.nourishment(ss).idRANGE;
+        width = S.userinput.nourishment(ss).width;
         
-        %% suppletion to KML
+        %% nourishment to KML
         h = mag/width;
-        %Only plot suppletion if extent is bigger than resolution
-        if S.userinput.suppletion(ss).idRANGE(1)~=S.userinput.suppletion(ss).idRANGE(end)%x2~=x4 
+        %Only plot nourishment if extent is bigger than resolution
+        if S.userinput.nourishment(ss).idRANGE(1)~=S.userinput.nourishment(ss).idRANGE(end)%x2~=x4 
             % For single or cont, plot triangle
-            if ~strcmp(S.userinput.suppletion(ss).category,'distr')
+            if ~strcmp(S.userinput.nourishment(ss).category,'distr')
                 alpha = atan((y0(idRANGE(end))-y0(idRANGE(1)))/(x0(idRANGE(end))-x0(idRANGE(1))));%alpha = atan((y4-y2)/(x4-x2));
                 if alpha>0
                     x3     = x0(idNEAREST)+0.5*sVectorLength*h*cos(alpha+pi()/2);%x1+0.5*sVectorLength*h*cos(alpha+pi()/2);
@@ -142,7 +142,7 @@ for jj = 1:length(S.userinput.phases)
             % yellow triangle/rectangle
             S.PP(sens).output.kml_nourishment = KML_stylePoly('name','default','fillColor',[1 1 0],'lineColor',[0 0 0],'lineWidth',0,'fillAlpha',0.7);
             % polygon to KML
-            S.PP(sens).output.kml_nourishment = [S.PP(sens).output.kml_nourishment KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.suppletion(ss).start,1,1),'timeOut',datenum(t0+S.userinput.suppletion(ss).stop,1,1)+364,'styleName','default')];
+            S.PP(sens).output.kml_nourishment = [S.PP(sens).output.kml_nourishment KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.nourishment(ss).start,1,1),'timeOut',datenum(t0+S.userinput.nourishment(ss).stop,1,1)+364,'styleName','default')];
             clear lonpoly latpoly
         end
     end

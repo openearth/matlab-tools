@@ -21,7 +21,7 @@ Yw = GROdata(4+NGRO).Yw;  %because of existing groynes in GRO file
 Length = GROdata(4+NGRO).Length;
 
 %% preparation
-% convert coordinates suppletion to RD new
+% convert coordinates nourishment to RD new
 EPSG                = load('EPSG.mat');
 
 % Find groyne location

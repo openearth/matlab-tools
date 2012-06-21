@@ -9,8 +9,8 @@ zgridrough = S.result.zgridRough;
 budget(1) = 40*10^6;   %budget
 C_GRO = 6000;       %costs per m groyne
 C_REV = 5000;       %costs per m revetment
-C_MEGA = 2;         %costs per m^3 mega suppletion
-C_SUPP = 4;          %costs per m^3 'normal' suppletion
+C_MEGA = 2;         %costs per m^3 mega nourishment
+C_SUPP = 4;          %costs per m^3 'normal' nourishment
 
 C_EXTENSION = 1000;%10000;     %revenues per m coastline extension per grid cell (w.r.t. initial coastline)
 C_EROSION = 10000;       %costs per m coastline erosion per grid cell (w.r.t. initial coastline)
@@ -123,17 +123,17 @@ budgettextstring = [budgettextstring sprintf([...
 for ii=1:length(tvec)-1
     time    = datenum((ii+t0),1,1);
     timeSpan = KML_timespan('timeIn',time,'timeOut',time+364);
-    if  isfield(S,'suppletion')
-        for jj = 1:length(S.suppletion)
-            if  strcmp(S.suppletion(jj).category,'mega')==1
+    if  isfield(S,'nourishment')
+        for jj = 1:length(S.nourishment)
+            if  strcmp(S.nourishment(jj).category,'mega')==1
                 if  tvec(ii)==S.implementation
-                    T_supp(jj) = C_MEGA*S.suppletion(jj).magnitude;
+                    T_supp(jj) = C_MEGA*S.nourishment(jj).magnitude;
                 else
                     T_supp(jj) = 0;
                 end
             else
                 if  tvec(ii)>=S.implementation
-                    T_supp(jj) = C_SUPP*S.suppletion(jj).magnitude;
+                    T_supp(jj) = C_SUPP*S.nourishment(jj).magnitude;
                 else
                     T_supp(jj) = 0;
                 end

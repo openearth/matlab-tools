@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <settings>
-  <basedir>d:\oetools_oss\applications\ITHK\</basedir>
+  <basedir>d:\Projects\1200893_BwN\Report_Coastal functions\ITHK\</basedir>
   <measures>
-    <suppletion></suppletion>
+    <nourishment></nourishment>
     <beachextension></beachextension>
     <groyne>
       <coastlineupdate>0</coastlineupdate>
@@ -48,7 +48,7 @@
       <yposinitial>80</yposinitial>
     </dunes>
     <eco>
-      <function>ITHK_ecorules2</function>
+      <function>ITHK_ecology_benthos</function>
       <plottype>barplot</plottype>
       <offset1>7000</offset1>
       <offset2>2500</offset2>

@@ -27,19 +27,19 @@ if ~isempty(measure)
             aa=aa+1;
             su = su+1;
             bb=0; % lat/lon counter for measure
-            S.suppletion(su).start = implementation(ii);
-            S.suppletion(su).magnitude = mag(ii);
+            S.nourishment(su).start = implementation(ii);
+            S.nourishment(su).magnitude = mag(ii);
             if ismember(ii,id_contsupp)
-                S.suppletion(su).category = 'cont';
-                S.suppletion(su).stop = S.duration;
+                S.nourishment(su).category = 'cont';
+                S.nourishment(su).stop = S.duration;
             else
-                S.suppletion(su).category = 'single';
-                S.suppletion(su).stop = implementation(ii)+1;
+                S.nourishment(su).category = 'single';
+                S.nourishment(su).stop = implementation(ii)+1;
             end
             while aa<id_lat(ii)
                 bb = bb+1;
-                S.suppletion(su).lat(bb) = lat(aa);
-                S.suppletion(su).lon(bb) = lon(aa);
+                S.nourishment(su).lat(bb) = lat(aa);
+                S.nourishment(su).lon(bb) = lon(aa);
                 aa = aa+1;
            end
         end
@@ -102,10 +102,10 @@ if ~isempty(measure)
 end
 % Number of phases
 yrstop = [];
-if  isfield(S,'suppletion')
-    for jj = 1:length(S.suppletion)
-        if  strcmp(S.suppletion(jj).category,'single')==1
-            yrstop = [yrstop S.suppletion(jj).stop];
+if  isfield(S,'nourishment')
+    for jj = 1:length(S.nourishment)
+        if  strcmp(S.nourishment(jj).category,'single')==1
+            yrstop = [yrstop S.nourishment(jj).stop];
         end
     end
 end
@@ -114,9 +114,9 @@ if length(implementation(:,1))>1
 end
 S.phases = unique([0 implementation yrstop]);
 supstart = []; revstart = []; grostart = [];
-if  isfield(S,'suppletion')
-    for ii=1:length(S.suppletion)
-        supstart(ii) = S.suppletion(ii).start; 
+if  isfield(S,'nourishment')
+    for ii=1:length(S.nourishment)
+        supstart(ii) = S.nourishment(ii).start; 
     end
 end
 if  isfield(S,'groyne')
@@ -138,7 +138,7 @@ for ii = 1:length(S.phases)
         S.phase(ii).SOSfile = ['1HOTSPOTS',num2str(ii),'IT.sos'];
         S.phase(ii).supids = idssup;
         for jj=1:length(idssup)
-            S.suppletion(idssup(jj)).filename = ['1HOTSPOTS',num2str(ii),'IT.sos'];
+            S.nourishment(idssup(jj)).filename = ['1HOTSPOTS',num2str(ii),'IT.sos'];
         end
     else
         S.phase(ii).SOSfile = ['BASIS.sos'];

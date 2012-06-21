@@ -13,13 +13,13 @@ function ITHK_mapUBtoGE(sens)
 %              .userinput.phase(jj).supids
 %              .userinput.phase(jj).revids
 %              .userinput.phase(jj).groids
-%              .userinput.suppletion(ss).lat
-%              .userinput.suppletion(ss).lon
-%              .userinput.suppletion(ss).start
-%              .userinput.suppletion(ss).stop
-%              .userinput.suppletion(ss).idRANGE
-%              .userinput.suppletion(ss).volperm
-%              .userinput.suppletion(ss).width
+%              .userinput.nourishment(ss).lat
+%              .userinput.nourishment(ss).lon
+%              .userinput.nourishment(ss).start
+%              .userinput.nourishment(ss).stop
+%              .userinput.nourishment(ss).idRANGE
+%              .userinput.nourishment(ss).volperm
+%              .userinput.nourishment(ss).width
 %              .userinput.revetment(ss).length
 %              .userinput.groyne(ss).length
 %              .UB(sens).results.PRNdata
@@ -106,10 +106,10 @@ for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
         for ii = 1:length(S.userinput.phase(jj).supids)
             ss = S.userinput.phase(jj).supids(ii); 
-            startid      = S.userinput.suppletion(ss).start;
-            stopid       = S.userinput.suppletion(ss).stop;
-            idrange      = S.userinput.suppletion(ss).idRANGE;
-            volperm      = S.userinput.suppletion(ss).volume/S.userinput.suppletion(ss).width;
+            startid      = S.userinput.nourishment(ss).start;
+            stopid       = S.userinput.nourishment(ss).stop;
+            idrange      = S.userinput.nourishment(ss).idRANGE;
+            volperm      = S.userinput.nourishment(ss).volume/S.userinput.nourishment(ss).width;
             thrforeshore = 500;
             thrmega      = 5000;
             if volperm <= thrforeshore
@@ -147,11 +147,11 @@ for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
         for ii = 1:length(S.userinput.phase(jj).supids)
             ss = S.userinput.phase(jj).supids(ii); 
-            [x,y] = convertCoordinates(S.userinput.suppletion(ss).lon,S.userinput.suppletion(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
-            [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,0.5*S.userinput.suppletion(ss).width);
-            startid      = S.userinput.suppletion(ss).start;
-            stopid       = S.userinput.suppletion(ss).stop;
-            volperm      = S.userinput.suppletion(ss).volume/S.userinput.suppletion(ss).width;
+            [x,y] = convertCoordinates(S.userinput.nourishment(ss).lon,S.userinput.nourishment(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+            [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,0.5*S.userinput.nourishment(ss).width);
+            startid      = S.userinput.nourishment(ss).start;
+            stopid       = S.userinput.nourishment(ss).stop;
+            volperm      = S.userinput.nourishment(ss).volume/S.userinput.nourishment(ss).width;
             thrforeshore = 500;
             thrmega      = 5000;
             if volperm < thrforeshore

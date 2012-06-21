@@ -138,7 +138,7 @@ for pp = 2:2
                 FLDsupps = {'supp_beach','supp_foreshore','supp_mega','rev','gro'};  % Type of nourishemnt that is used! (isoort = 1=beach, 2=foreshore, 3=mega)
                 for jj=1:length(FLDsupps)
                     supp2 = ppmapping.(FLDsupps{jj});
-                    if  supp2(tt,ii)==1                                             % t==S.userinput.suppletion.start+1 && i>=idsth && i<=idnrth
+                    if  supp2(tt,ii)==1                                             % t==S.userinput.nourishment.start+1 && i>=idsth && i<=idnrth
                         P0red = ECO(kk).(FLDname_measures{jj});                % reduction in pop. size after nourishment is 1%
                         K0red = ECO(kk).(FLDname_measures{jj});                % reduction in CC after nourishment (e.g. mega: back to 5%, beach/shoreface back to 50%)
                         P(ii,tt) = P(ii,tt)*(100-P0red)/100;

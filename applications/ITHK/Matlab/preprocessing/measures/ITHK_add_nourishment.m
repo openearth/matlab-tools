@@ -1,5 +1,5 @@
-function ITHK_add_suppletion(index,phase,sens)
-%function ITHK_add_suppletion(index,phase,sens)
+function ITHK_add_nourishment(index,phase,sens)
+%function ITHK_add_nourishment(index,phase,sens)
 %
 % Adds nourishments to the SOS file
 %
@@ -10,23 +10,23 @@ function ITHK_add_suppletion(index,phase,sens)
 %      S      structure with ITHK data (global variable that is automatically used)
 %              .EPSG
 %              .settings.outputdir
-%              .userinput.suppletion(ss).lat
-%              .userinput.suppletion(ss).lon
-%              .userinput.suppletion(ss).volume
-%              .userinput.suppletion(ss).width
+%              .userinput.nourishment(ss).lat
+%              .userinput.nourishment(ss).lon
+%              .userinput.nourishment(ss).volume
+%              .userinput.nourishment(ss).width
+%              .userinput.nourishment(ss).category
 %              .userinput.phase(phase).SOSfile
 %              .userinput.phase(phase).supids
 %              .userinput.phase(phase).supcat
-%              .userinput.suppletion(ss).category
 %      MDAfile  'BASIC.MDA'
 %      SOSfile  'hotspots1locIT.SOS' file with already defined nourishments
 %
 % OUTPUT:
 %      SOSfile  'hotspots1locIT_cont.SOS' file with already defined and new nourishments
 %      S      structure with ITHK data (global variable that is automatically used)
-%              .UB.input(sens).suppletion(ss).SOSdata
-%              .userinput.suppletion(ss).idRANGE
-%              .userinput.suppletion(ss).idNEAREST
+%              .UB.input(sens).nourishment(ss).SOSdata
+%              .userinput.nourishment(ss).idRANGE
+%              .userinput.nourishment(ss).idNEAREST
 %
 
 %% Copyright notice
@@ -75,8 +75,8 @@ global S
 
 %% Get info from struct
 ss = S.userinput.phase(phase).supids(index);
-lat = S.userinput.suppletion(ss).lat;
-lon = S.userinput.suppletion(ss).lon;
+lat = S.userinput.nourishment(ss).lat;
+lon = S.userinput.nourishment(ss).lon;
 
 %% convert coordinates
 [x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
@@ -93,34 +93,34 @@ if strcmp(S.userinput.phase(phase).supcat{index},'cont') || strcmp(S.userinput.p
     end
 end
 
-%% calculate suppletion information
-suppletion          = struct;
-suppletion.name     = 'hotspots1locIT';
-suppletion.x        = x;
-suppletion.y        = y;
-suppletion.volume   = S.userinput.suppletion(ss).volume;
-suppletion.width    = 0.5*S.userinput.suppletion(ss).width;
+%% calculate nourishment information
+nourishment          = struct;
+nourishment.name     = 'hotspots1locIT';
+nourishment.x        = x;
+nourishment.y        = y;
+nourishment.volume   = S.userinput.nourishment(ss).volume;
+nourishment.width    = 0.5*S.userinput.nourishment(ss).width;
 
 %% write a SOS file (sources and sinks)
 SOSfilename = [S.settings.outputdir S.userinput.phase(phase).SOSfile];
 ITHK_io_writeSOS(SOSfilename,SOSdata0);
-%suppletion.volume = volumes;
-%suppletion.width  = 0.5*width;%must be radius
-if strcmp(S.userinput.suppletion(ss).category,'distr')
-    [SOSdata2,idNEAREST,idRANGE] = ITHK_addUNIFORMLYDISTRIBUTEDnourishment(MDAdata,suppletion,SOSfilename);
+%nourishment.volume = volumes;
+%nourishment.width  = 0.5*width;%must be radius
+if strcmp(S.userinput.nourishment(ss).category,'distr')
+    [SOSdata2,idNEAREST,idRANGE] = ITHK_addUNIFORMLYDISTRIBUTEDnourishment(MDAdata,nourishment,SOSfilename);
 else
-    [SOSdata2,idNEAREST,idRANGE] = ITHK_addTRIANGULARnourishment(MDAdata,suppletion,SOSfilename);
+    [SOSdata2,idNEAREST,idRANGE] = ITHK_addTRIANGULARnourishment(MDAdata,nourishment,SOSfilename);
 end
 
-S.UB.input(sens).suppletion(ss).SOSdata = suppletion;
-S.userinput.suppletion(ss).idRANGE = idRANGE;
-S.userinput.suppletion(ss).idNEAREST = idNEAREST;
+S.UB.input(sens).nourishment(ss).SOSdata = nourishment;
+S.userinput.nourishment(ss).idRANGE = idRANGE;
+S.userinput.nourishment(ss).idNEAREST = idNEAREST;
 
-% Update cont suppletion file
+% Update cont nourishment file
 if strcmp(S.userinput.phase(phase).supcat{index},'cont') 
-    [SOSdata_cont2,idNEAREST,idRANGE] = ITHK_addTRIANGULARnourishment(MDAdata,suppletion,[S.settings.outputdir '1HOTSPOTSIT_cont.sos']);
+    [SOSdata_cont2,idNEAREST,idRANGE] = ITHK_addTRIANGULARnourishment(MDAdata,nourishment,[S.settings.outputdir '1HOTSPOTSIT_cont.sos']);
 elseif strcmp(S.userinput.phase(phase).supcat{index},'distr')
-    [SOSdata_cont2,idNEAREST,idRANGE] = ITHK_addUNIFORMLYDISTRIBUTEDnourishment(MDAdata,suppletion,[S.settings.outputdir '1HOTSPOTSIT_cont.sos']);
+    [SOSdata_cont2,idNEAREST,idRANGE] = ITHK_addUNIFORMLYDISTRIBUTEDnourishment(MDAdata,nourishment,[S.settings.outputdir '1HOTSPOTSIT_cont.sos']);
 end
 
 %if strcmp(S.userinput.phase(phase).supcat{index},'cont') || strcmp(S.userinput.phase(phase).supcat{index},'distr')

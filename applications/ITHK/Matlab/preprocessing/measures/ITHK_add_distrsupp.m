@@ -74,7 +74,7 @@ lon = S.distrsupp(ii).lon;
 [MDAdata]=ITHK_io_readMDA('BASIS.MDA');
 [SOSdata0]=ITHK_io_readSOS('1HOTSPOTS1IT.SOS');
 
-%% calculate suppletion information
+%% calculate nourishment information
 volumes             = S.distrsupp(ii).volume;
 
     SOSdata=struct;
@@ -90,7 +90,7 @@ volumes             = S.distrsupp(ii).volume;
     SOSdata(1)= SOSdata0;
     SOSfilename = '1HOTSPOTS1IT.sos';
     
-    %% find gridcells inside range of suppletion
+    %% find gridcells inside range of nourishment
     distance        = distXY(MDAdata.Xi(1:307),MDAdata.Yi(1:307));
     gridcellwidth   = diff(distance);
     gridcellwidth   = [gridcellwidth(1:3:end-2)+gridcellwidth(2:3:end-1)+gridcellwidth(3:3:end)];
@@ -110,7 +110,7 @@ volumes             = S.distrsupp(ii).volume;
     ids=[];
     for ii=1:length(SOSdata)
         for jj=1:length(SOSdata(ii).XW)
-%             dist3           = ((MDAdata.Xcoast-suppletion.x(jj)).^2 + (MDAdata.Ycoast-suppletion.y(jj)).^2).^0.5;  % distance to coast line
+%             dist3           = ((MDAdata.Xcoast-nourishment.x(jj)).^2 + (MDAdata.Ycoast-nourishment.y(jj)).^2).^0.5;  % distance to coast line
 %             idNEAREST       = find(dist3==min(dist3));
             
             dist2 = ((MDAdata.QpointsX-SOSdata(ii).XW(jj)).^2 + (MDAdata.QpointsY-SOSdata(ii).YW(jj)).^2).^0.5;

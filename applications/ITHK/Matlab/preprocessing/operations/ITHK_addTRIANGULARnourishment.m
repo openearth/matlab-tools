@@ -1,4 +1,4 @@
-function [SOSdata2,idNEAREST,idRANGE] = addTRIANGULARnourishment(MDAdata,suppletion,SOSfilename)
+function [SOSdata2,idNEAREST,idRANGE] = addTRIANGULARnourishment(MDAdata,nourishment,SOSfilename)
 
 SOSdata=struct;
 SOSdata.headerline='';
@@ -13,9 +13,9 @@ if exist(SOSfilename)
     SOSdata=ITHK_io_readSOS(SOSfilename); 
 end
 
-for ii=1:length(suppletion.x)
-    %% find gridcells inside range of suppletion
-    [idNEAREST,idRANGE]=findGRIDinrange(MDAdata.QpointsX,MDAdata.QpointsY,suppletion.x(ii),suppletion.y(ii),suppletion.width);
+for ii=1:length(nourishment.x)
+    %% find gridcells inside range of nourishment
+    [idNEAREST,idRANGE]=findGRIDinrange(MDAdata.QpointsX,MDAdata.QpointsY,nourishment.x(ii),nourishment.y(ii),nourishment.width);
 
     %% determine distances and location of gridcells
     distance        = distXY(MDAdata.Xi(1:end),MDAdata.Yi(1:end));
@@ -27,10 +27,10 @@ for ii=1:length(suppletion.x)
     SOSdata(ii+1).YW=MDAdata.QpointsY(idRANGE);
 
     %% determine magnitude for each grid cell (based on length of grid cells)
-    distrfactor1 = 1-spreadingwidth/suppletion.width;
+    distrfactor1 = 1-spreadingwidth/nourishment.width;
     distrfactor2 = distrfactor1/sum(distrfactor1);        % influence of differences in width of cells
     
-    volumepernourishment = suppletion.volume/length(suppletion.x);
+    volumepernourishment = nourishment.volume/length(nourishment.x);
     volumepercell  = distrfactor2*volumepernourishment;
     SOSdata(ii+1).CODE   = zeros(length(idRANGE),1) ;
     SOSdata(ii+1).Qs     = volumepercell;

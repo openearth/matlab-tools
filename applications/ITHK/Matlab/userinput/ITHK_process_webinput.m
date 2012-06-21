@@ -20,22 +20,22 @@ if ~isempty(measure)
     for ii = 1:length(measure)
         if ismember(ii,id_contsupp)||ismember(ii,id_singlesupp)||ismember(ii,id_distrsupp)
             su = su+1;
-            S.suppletion(su).start = implementation(ii);
-            S.suppletion(su).volume = vol(ii);
-            S.suppletion(su).width = len(ii);
-            S.suppletion(su).volperm = vol(ii)/len(ii);
+            S.nourishment(su).start = implementation(ii);
+            S.nourishment(su).volume = vol(ii);
+            S.nourishment(su).width = len(ii);
+            S.nourishment(su).volperm = vol(ii)/len(ii);
             if ismember(ii,id_contsupp)
-                S.suppletion(su).category = 'cont';
-                S.suppletion(su).stop = S.duration;
+                S.nourishment(su).category = 'cont';
+                S.nourishment(su).stop = S.duration;
             elseif ismember(ii,id_singlesupp)
-                S.suppletion(su).category = 'single';
-                S.suppletion(su).stop = implementation(ii)+1;
+                S.nourishment(su).category = 'single';
+                S.nourishment(su).stop = implementation(ii)+1;
             else
-                S.suppletion(su).category = 'distr';
-                S.suppletion(su).stop = S.duration;
+                S.nourishment(su).category = 'distr';
+                S.nourishment(su).stop = S.duration;
             end
-            S.suppletion(su).lat = lat(ii);
-            S.suppletion(su).lon = lon(ii);
+            S.nourishment(su).lat = lat(ii);
+            S.nourishment(su).lon = lon(ii);
         end
 %         if ismember(ii,id_beach)
 %             aa=aa+1;
@@ -81,12 +81,12 @@ end
 
 %% Number of phases
 % Number of phases is based on implementation of measures and type of
-% suppletions
+% nourishments
 yrstop = [];
-if  isfield(S,'suppletion')
-    for jj = 1:length(S.suppletion)
-        if  strcmp(S.suppletion(jj).category,'single')==1
-            yrstop = [yrstop S.suppletion(jj).stop];
+if  isfield(S,'nourishment')
+    for jj = 1:length(S.nourishment)
+        if  strcmp(S.nourishment(jj).category,'single')==1
+            yrstop = [yrstop S.nourishment(jj).stop];
         end
     end
 end
@@ -102,9 +102,9 @@ end
 %% Add measures per phase
 % Get start times
 supstart = []; revstart = []; grostart = [];
-if  isfield(S,'suppletion')
-    for ii=1:length(S.suppletion)
-        supstart(ii) = S.suppletion(ii).start; 
+if  isfield(S,'nourishment')
+    for ii=1:length(S.nourishment)
+        supstart(ii) = S.nourishment(ii).start; 
     end
 end
 if  isfield(S,'groyne')
@@ -129,17 +129,17 @@ for ii = 1:length(S.phases)
     idsrev = find(ismember(revstart,S.phases(ii)));
     if ~isempty(idssup)
         for jj=1:length(idssup)
-            if strcmp(S.suppletion(idssup(jj)).category,'single')                
+            if strcmp(S.nourishment(idssup(jj)).category,'single')                
                 S.phase(ii).supcat{jj} = 'single';
-            elseif strcmp(S.suppletion(idssup(jj)).category,'distr')
-                % If suppletion is continuous, suppletion should be taken
+            elseif strcmp(S.nourishment(idssup(jj)).category,'distr')
+                % If nourishment is continuous, nourishment should be taken
                 % into account in every phase after implementation
                 for kk=ii:length(S.phases)
                     S.phase(kk).SOSfilecont = '1HOTSPOTSIT_cont.sos';
                 end
                 S.phase(ii).supcat{jj} = 'distr';
             else
-                % If suppletion is continuous, suppletion should be taken
+                % If nourishment is continuous, nourishment should be taken
                 % into account in every phase after implementation
                 for kk=ii:length(S.phases)
                     S.phase(kk).SOSfilecont = '1HOTSPOTSIT_cont.sos';
@@ -148,7 +148,7 @@ for ii = 1:length(S.phases)
             end 
             S.phase(ii).SOSfile = ['1HOTSPOTS',num2str(ii),'IT.sos'];
             S.phase(ii).supids = idssup;
-            %S.suppletion(idssup(jj)).filename = ['1HOTSPOTS',num2str(ii),'IT.sos'];
+            %S.nourishment(idssup(jj)).filename = ['1HOTSPOTS',num2str(ii),'IT.sos'];
         end
     elseif isfield(S.phase(ii),'SOSfilecont')
            S.phase(ii).SOSfile ='1HOTSPOTSIT_cont.sos';

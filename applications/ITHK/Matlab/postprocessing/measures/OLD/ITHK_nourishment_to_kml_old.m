@@ -1,13 +1,13 @@
-function ITHK_suppletion_to_kml(ss)
+function ITHK_nourishment_to_kml(ss)
 
 global S
 
 %% Get info from structure
 % General info
 t0 = S.PP.settings.t0;
-lat = S.userinput.suppletion(ss).lat;
-lon = S.userinput.suppletion(ss).lon;
-mag = S.userinput.suppletion(ss).magnitude;
+lat = S.userinput.nourishment(ss).lat;
+lon = S.userinput.nourishment(ss).lon;
+mag = S.userinput.nourishment(ss).magnitude;
 % MDA info
 x0 = S.PP.settings.x0;
 y0 = S.PP.settings.y0;
@@ -19,14 +19,14 @@ sVectorLength = S.PP.settings.sVectorLength;
 % idplotrough = S.PP.settings.idplotrough;
 
 %% preparation
-% convert coordinates suppletion to RD new
+% convert coordinates nourishment to RD new
 EPSG                = load('EPSG.mat');
 [x,y]               = convertCoordinates(lon,lat,EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
 
-% width suppletion
+% width nourishment
 width               = (abs(x(1)-x(end))^2+abs(y(1)-y(end))^2)^0.5;
 
-% project suppletion location on coast line
+% project nourishment location on coast line
 dist2           = ((x0-mean(x)).^2 + (y0-mean(y)).^2).^0.5;  % distance to coast line
 idNEAREST       = find(dist2==min(dist2));
 x1              = x0(idNEAREST);
@@ -81,9 +81,9 @@ idNEAREST       = find(dist2==min(dist2));
 idnrth          = idNEAREST;
 clear dist2 idNEAREST
 
-S.PP.GEmapping.supp(S.userinput.suppletion(ss).start:S.userinput.suppletion(ss).stop,idsth:idnrth) = 1;
+S.PP.GEmapping.supp(S.userinput.nourishment(ss).start:S.userinput.nourishment(ss).stop,idsth:idnrth) = 1;
 
-%% suppletion to KML
+%% nourishment to KML
 h = mag/width;
 alpha = atan((y4-y2)/(x4-x2));
 if alpha>0
@@ -112,12 +112,12 @@ S.PP.output.kml = [S.PP.output.kml KML_stylePoly('name','default','fillColor',[1
 
 % implementation = [1 21 41 61 81];
 % % implementation = [1 6 11 16 21 26 31 36 41 46 51 56 61 66 71 76 81 86 91];
-% if  strcmp(S.suppletion(ss).category,'single')==1
+% if  strcmp(S.nourishment(ss).category,'single')==1
 %     output = [output KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+implementation(ss),1,1),'timeOut',datenum(t0+implementation(ss)+1,1,1)+364,'styleName','default')];
 % else
 %     output = [output KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+implementation,1,1),'timeOut',datenum(t0+duration,1,1)+364,'styleName','default')];
 % end
-S.PP.output.kml = [S.PP.output.kml KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.suppletion(ss).start,1,1),'timeOut',datenum(t0+S.userinput.suppletion(ss).stop,1,1)+364,'styleName','default')];
+S.PP.output.kml = [S.PP.output.kml KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.nourishment(ss).start,1,1),'timeOut',datenum(t0+S.userinput.nourishment(ss).stop,1,1)+364,'styleName','default')];
 clear lonpoly latpoly
 
 % %% Save info fine and rough grids for plotting bars

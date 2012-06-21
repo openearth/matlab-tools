@@ -8,13 +8,13 @@ ldb       = ITHK_io_readldb('HollandCoast_RD.ldb',999.999);
 [GROdata] = ITHK_io_readGRO('BRIJN90A.GRO');
 
 %% Suppletion information
-suppletion=struct;
-suppletion(1).name    = 'hotspots_3locs';
-suppletion(2).name    = 'hotspots_6locs';
-suppletion(1).x       = ldb1.x;
-suppletion(2).x       = ldb2.x;
-suppletion(1).y       = ldb1.y;
-suppletion(2).y       = ldb2.y;
+nourishment=struct;
+nourishment(1).name    = 'hotspots_3locs';
+nourishment(2).name    = 'hotspots_6locs';
+nourishment(1).x       = ldb1.x;
+nourishment(2).x       = ldb2.x;
+nourishment(1).y       = ldb1.y;
+nourishment(2).y       = ldb2.y;
 volumes = [3e6, 6e6, 9e6, 12e6];
 width   = [2000, 2000, 2000, 2000];
 
@@ -38,23 +38,23 @@ for jj=1:length(ldb2.x)
 end
 fprintf('%f %f %f\n',[x2',y2',dist2']')
 
-%% Plot the coastline and suppletions
-for nn=1:length(suppletion)
+%% Plot the coastline and nourishments
+for nn=1:length(nourishment)
     figure;
-    title(suppletion(nn).name);
+    title(nourishment(nn).name);
     plot(MDAdata.X,MDAdata.Y);
     hold on;plot(MDAdata.X,MDAdata.Y,'b-'); %'MDA reference line'
     hold on;plot(MDAdata.Xcoast,MDAdata.Ycoast,'r.-'); %'MDA coastline'
     plot(MDAdata.QpointsX,MDAdata.QpointsY,'c+');     %'MDA transport points'
-    plot(suppletion(nn).x,suppletion(nn).y,'g*');           %zandmotor locations
+    plot(nourishment(nn).x,nourishment(nn).y,'g*');           %zandmotor locations
     legend({'MDA reference line','MDA coastline','MDA transport points','zandmotor locations'},'Location','NorthWest')
     axis equal
 end
 
 %% 3 mega nourishments
-for ii=1:length(suppletion)
+for ii=1:length(nourishment)
 for nn=1:length(volumes)
-    %SOSfilename = [suppletion(ii).name,'_',num2str(volumes(nn)/1e6,'%02.0f'),'Mm3.sos'];
+    %SOSfilename = [nourishment(ii).name,'_',num2str(volumes(nn)/1e6,'%02.0f'),'Mm3.sos'];
     if ii==1
     SOSfilename = ['3HOTSPOTS',num2str(nn),'_test.sos'];
     elseif ii==2
@@ -62,9 +62,9 @@ for nn=1:length(volumes)
     end
     SOSdata0=ITHK_io_readSOS('SANDBYPASS.SOS');
     ITHK_io_writeSOS(SOSfilename,SOSdata0);
-    suppletion(ii).volume = volumes(nn);
-    suppletion(ii).width  = width(nn);
-    addTRIANGULARnourishment(MDAdata,suppletion(ii),SOSfilename);
+    nourishment(ii).volume = volumes(nn);
+    nourishment(ii).width  = width(nn);
+    addTRIANGULARnourishment(MDAdata,nourishment(ii),SOSfilename);
 end
 end
 
@@ -85,7 +85,7 @@ for nn=1:length(volumes)
     %SOSfilename = ['UNIFORM_',num2str(volumes(nn)/1e6,'%02.0f'),'Mm3.sos'];
     SOSfilename = ['DISTRIBUTED',num2str(nn),'.sos'];
     
-    %% find gridcells inside range of suppletion
+    %% find gridcells inside range of nourishment
     distance        = distXY(MDAdata.Xi(1:end),MDAdata.Yi(1:end));
     fid=fopen('xy.txt','wt');fprintf(fid,'%f %f\n',[MDAdata.Xi,MDAdata.Yi]');
     gridcellwidth   = diff(distance);

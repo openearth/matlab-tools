@@ -8,7 +8,7 @@ function ITHK_writeTAB(filename, TABdata)
 %     filename             string with output filename
 %     TABdata              strcuture with the following fields:
 %         .time            array [Nx1] with time fields
-%         .qsblock         array [NxM] with suppletion rate (m3/yr) for each time field.
+%         .qsblock         array [NxM] with nourishment rate (m3/yr) for each time field.
 %                          Each column contains the data for a seperate source.
 %  
 %   Output:

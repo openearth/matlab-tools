@@ -100,10 +100,10 @@ idplotrough = S.kml.idplotrough;
 x = S.kml.x0(1:307);
 y = S.kml.y0(1:307);
 
-% width suppletion
+% width nourishment
 width               = (abs(x(1)-x(end))^2+abs(y(1)-y(end))^2)^0.5;
 
-% project suppletion location on coast line
+% project nourishment location on coast line
 % for jj=1:length(x)
 %     dist2           = ((x0-x(jj)).^2 + (y0-y(jj)).^2).^0.5;  % distance to coast line
 %     idNEAREST       = find(dist2==min(dist2),1,'first');
@@ -114,7 +114,7 @@ width               = (abs(x(1)-x(end))^2+abs(y(1)-y(end))^2)^0.5;
 % end
 
 
-%% suppletion to KML
+%% nourishment to KML
 h = mag/width;
 for jj=1:length(x)-1
     alpha = atan((y(jj+1)-y(jj))/(x(jj+1)-x(jj)));
