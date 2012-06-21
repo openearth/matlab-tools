@@ -1,31 +1,17 @@
-function setUIElement(th,varargin)
-
-return
-
-dependencyUpdate=1;
-
-for i=1:length(varargin)
-    if ischar(lower(varargin{i}))
-        switch lower(varargin{i})
-            case{'dependencyupdate'}
-                dependencyUpdate=varargin{i+1};
-        end
-    end
-end
+function gui_setElement(h)
+% Sets correct value for GUI element
 
 % Check whether input is handle or tag
-if ischar(th)
-    h=findobj(gcf,'Tag',th);
-else
-    h=th;
+if ischar(h)
+    h=findobj(gcf,'Tag',h);
 end
 
-getFcn=getappdata(h,'getFcn');
+if isempty(h)
+    warning(['Error setting element ' h]);
+    return
+end
 
 el=getappdata(h,'element');
-
-s=feval(getFcn);
-
 
 switch lower(el.style)
     
@@ -33,12 +19,12 @@ switch lower(el.style)
     
     case{'edit'}
 
-        val=getSubFieldValue(s,el.variable);
-        if ~isempty(el.type)
+        val=gui_getValue(el,el.variable);
+%         if ~isempty(el.type)
             tp=lower(el.type);
-        else
-            tp=lower(el.variable.type);
-        end
+%         else
+%             tp=lower(el.variable.type);
+%         end
         switch tp
             case{'string'}
             case{'datetime'}
@@ -57,50 +43,35 @@ switch lower(el.style)
                         val=num2str(val);
                     end
                 end
-        end
-        
+        end        
         set(el.handle,'String',val);
 
         % Set text
         if ~isempty(el.text)
             if isfield(el.text,'variable')
-                val=getSubFieldValue(s,el.text.variable);
+                val=gui_getValue(el,el.text.variable);
                 % Text
-                set(el.textHandle,'String',val);
-                setTextPosition(el.textHandle,el.position,el.textPosition);
+                set(el.texthandle,'String',val);
+                setTextPosition(el.texthandle,el.position,el.textposition);
             end
         end
         
     case{'checkbox'}
-        val=getSubFieldValue(s,el.variable);
+        val=gui_getValue(el,el.variable);
         set(el.handle,'Value',val);
-        % Set text
-        if ~isempty(el.text)
-            if isfield(el.text,'variable')
-                val=getSubFieldValue(s,el.text.variable);
-                % Text
-                set(el.handle,'String',val);
-                % Length of string is known
-                pos=get(el.handle,'Position');
-                ext=get(el.handle,'Extent');
-                pos(3)=ext(3)+20;
-                pos(4)=20;                
-                set(el.handle,'Position',pos);
-            end
-        end
 
     case{'togglebutton'}
-        val=getSubFieldValue(s,el.variable);
+        val=gui_getValue(el,el.variable);
         set(el.handle,'Value',val);
 
     case{'radiobutton'}
-        val=getSubFieldValue(s,el.variable);
+        val=gui_getValue(el,el.variable);
         
-        if ~isempty(el.type)
+%         if ~isempty(el.type)
             tp=lower(el.type);
-        else
-            tp=lower(el.variable.type);
-        end
+%         else
+%             tp=lower(el.variable.type);
+%         end
 
         switch lower(tp)
             case{'string'}
@@ -118,23 +89,26 @@ switch lower(el.style)
         end
         
         if isfield(el.text,'variable')
-            val=getSubFieldValue(s,el.text.variable);
+            val=gui_getValue(el,el.text.variable);
             % Text
             set(el.handle,'String',val);
         end
 
     case{'listbox','popupmenu'}
 
-        if isfield(el.list.text,'variable')
-            stringList=getSubFieldValue(s,el.list.text.variable);
+        % Texts
+        if isfield(el.list.texts,'variable')
+            stringlist=gui_getValue(el,el.list.texts.variable);
         else
-            stringList=el.list.text;
+            for jj=1:length(el.list.texts)
+                stringlist{jj}=el.list.texts(jj).text;
+            end
         end
         
         ii=1;
-        if isempty(stringList)
+        if isempty(stringlist)
             ii=1;
-        elseif isempty(stringList{1})
+        elseif isempty(stringlist{1})
             ii=1;
         else           
             if ~isempty(el.type)
@@ -143,56 +117,75 @@ switch lower(el.style)
                 tp=lower(el.variable.type);
             end
             switch tp
-                case{'string'}
-                    if ~isempty(el.variable)
-                        str=getSubFieldValue(s,el.variable);
-                        %                    if isfield(el.list.value,'variable')
-                        if isfield(el.list,'value')
-                            if isfield(el.list.value,'variable')
-                                values=getSubFieldValue(s,el.list.value.variable);
-                            else
-                                values=el.list.value;
-                            end
-                            ii=strmatch(lower(str),lower(values),'exact');
+                case{'string'}                    
+
+                    % Values
+                    if ~isempty(el.list.values)
+                        % Values prescribed in xml file
+                        if isfield(el.list.values,'variable')
+                            values=gui_getValue(el,el.list.values.variable);
                         else
-                            ii=strmatch(lower(str),lower(stringList),'exact');
+                            for jj=1:length(el.list.values)
+                                values{jj}=el.list.values(jj).value;
+                            end
                         end
+                    else
+                        % Values are the same as the string list
+                        values=stringlist;
+                    end
+                    
+                    if ~isempty(el.variable)
+                        str=gui_getValue(el,el.variable);
+                        ii=strmatch(lower(str),lower(values),'exact');
                     end
                 otherwise
-%                    ii=getSubFieldValue(s,el.variable);
+                    
                     if ~isempty(el.multivariable)
-                        ii=getSubFieldValue(s,el.multivariable);
+                        % Not sure anymore what this multivariable is
+                        % supposed to do ...
+                        ii=gui_getValue(el,el.multivariable);
                     else
-                        if isfield(el.list,'value')
-                            if isfield(el.list.value,'variable')
-                                values=getSubFieldValue(s,el.list.value.variable);
+                        
+                        % Values
+                        if ~isempty(el.list.values)
+                            % Values prescribed in xml file
+                            if isfield(el.list.values,'variable')
+                                values=gui_getValue(el,el.list.values.variable);
                             else
-                                values=el.list.value;
+                                for jj=1:length(el.list.values)
+                                    values(jj)=str2double(el.list.values(jj).value);
+                                end
                             end
-                            for jj=1:length(values)
-                                vnum(jj)=str2double(values{jj});
-                            end
-                            val=getSubFieldValue(s,el.variable);
-                            ii=find(vnum==val);
                         else
-                            ii=getSubFieldValue(s,el.variable);
+                            % Values 1 to length of stringlist
+                            values=1:length(stringlist);
+                        end
+                        
+                        if isfield(el.list,'values')
+                            val=gui_getValue(el,el.variable);
+                            ii=find(values==val,1,'first');
+                        else
+                            ii=gui_getValue(el);
                         end
                     end
             end
         end
         set(el.handle,'Value',ii);
-        set(el.handle,'String',stringList);
+        set(el.handle,'String',stringlist);
                 
     case{'text'}
+        
         if isfield(el,'variable')
-            if ~isempty(el.variable)
-                val=getSubFieldValue(s,el.variable);
 
-                if ~isempty(el.type)
+            if ~isempty(el.variable)
+            
+                val=gui_getValue(el,el.variable);
+
+%                 if ~isempty(el.type)
                     tp=lower(el.type);
-                else
-                    tp=lower(el.variable.type);
-                end
+%                 else
+%                     tp=lower(el.variable.type);
+%                 end
 
                 switch tp
                     case{'string'}
@@ -213,32 +206,32 @@ switch lower(el.style)
         %% Custom elements
         
     case{'pushselectfile'}
-        if el.showFileName
-           val=getSubFieldValue(s,el.variable);
-           set(el.textHandle,'enable','on','String',['File : ' val]);
-           pos=get(el.textHandle,'position');
-           ext=get(el.textHandle,'Extent');
+        if el.showfilename
+           val=gui_getValue(el,el.variable);
+           set(el.texthandle,'enable','on','String',['File : ' val]);
+           pos=get(el.texthandle,'position');
+           ext=get(el.texthandle,'Extent');
            pos(3)=ext(3);
            pos(4)=15;
-           set(el.textHandle,'Position',pos);
+           set(el.texthandle,'Position',pos);
         end
                       
     case{'pushsavefile'}
-        if el.showFileName
-            val=getSubFieldValue(s,el.variable);
-            set(el.textHandle,'enable','on','String',['File : ' val]);
-            pos=get(el.textHandle,'position');
-            ext=get(el.textHandle,'Extent');
+        if el.showfilename
+            val=gui_getValue(el,el.variable);
+            set(el.texthandle,'enable','on','String',['File : ' val]);
+            pos=get(el.texthandle,'position');
+            ext=get(el.texthandle,'Extent');
             pos(3)=ext(3);
             pos(4)=15;
-            set(el.textHandle,'Position',pos);
+            set(el.texthandle,'Position',pos);
         end
 
     case{'table'}
         % Determine number of rows in table
         for j=1:length(el.columns)
-            val=getSubFieldValue(s,el.columns(j).variable);
-            switch lower(el.columns(j).style)
+            val=gui_getValue(el,el.columns(j).column.variable);
+            switch lower(el.columns(j).column.style)
                 case{'editreal','checkbox','edittime'}
                     % Reals must be a vector
                     sz=size(val);
@@ -253,18 +246,18 @@ switch lower(el.style)
         ipopup=0;
         for j=1:length(el.columns)
             popupText{j}={' '};
-            switch lower(el.columns(j).style)
+            switch lower(el.columns(j).column.style)
                 case{'popupmenu'}
                     ipopup=1;
-                    popupText{j}=getSubFieldValue(s,el.columns(j).list.text.variable);
+                    popupText{j}=gui_getValue(el,el.columns(j).column.list.texts.variable);
             end
         end
         
         % Now set the data
         for j=1:length(el.columns)
-            val=getSubFieldValue(s,el.columns(j).variable);
+            val=gui_getValue(el,el.columns(j).column.variable);
             for k=1:nrrows
-                switch lower(el.columns(j).style)
+                switch lower(el.columns(j).column.style)
                     case{'editreal'}
                         data{k,j}=val(k);
                     case{'edittime'}
@@ -289,13 +282,6 @@ switch lower(el.style)
         table(el.handle,'setdata',data);
 end
 
-if dependencyUpdate
-    switch lower(el.style)
-        case{'tabpanel'}
-            for j=1:length(el.tabs)
-                updateUIDependency(el.tabs(j),0,getFcn);
-            end
-        otherwise
-            updateUIDependency(el,0,getFcn);
-    end
-end
+% And now update the dependency of this element
+gui_updateDependency(h);
+

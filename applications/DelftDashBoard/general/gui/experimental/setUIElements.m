@@ -1,5 +1,7 @@
 function setUIElements(elements)
 
+return
+
 if ischar(elements)
     h=findobj(gcf,'Tag',elements);
     if isempty(h)
@@ -25,10 +27,10 @@ for i=1:length(elements)
             end
             
         else
-            disp(['Warning : no handle for ' elements(i).tag ' !']);
+            disp(['Warning : no handle for ' elements(i).element.tag ' !']);
         end
     else
-        disp(['Warning : no handle for ' elements(i).tag ' !']);
+        disp(['Warning : no handle for ' elements(i).element.tag ' !']);
     end
     
 end

@@ -93,9 +93,6 @@ yd=d.lat;
 x(isnan(x))=1e9;
 y(isnan(y))=1e9;
 
-
-vals=zeros(size(x,1),size(x,2),nlevels);
-
 if kmax>1
     % 3D
     for k=1:nlevels
@@ -107,14 +104,7 @@ if kmax>1
             otherwise
                 vald=internaldiffusion(vald,'nst',10);
         end
-        v=interp2(xd,yd,vald,x,y);
-        if max(max(x))>max(max(xd)) || min(min(x))<min(min(xd)) || ...
-                max(max(y))>max(max(yd)) || min(min(y))<min(min(yd))
-            % Do extra internal diffusion of target grid because source grid
-            % does not completely cover target grid
-            v=internaldiffusion(v,'nst',10);
-        end
-        vals(:,:,k)=v;
+        vals(:,:,k)=interp2(xd,yd,vald,x,y);
         vals(isnan(vals))=-9999;
     end
 else
@@ -131,15 +121,7 @@ else
     end
     vals=dptavg(squeeze(vals),levels);
     vals=interp2(xd,yd,vals,x,y);
-    if max(max(x))>max(max(xd)) || min(min(x))<min(min(xd)) || ...
-            max(max(y))>max(max(yd)) || min(min(y))<min(min(yd))
-        % Do extra internal diffusion of target grid because source grid
-        % does not completely cover target grid
-        vals=internaldiffusion(vals,'nst',10);
-    end    
 end
-
-s=zeros(size(vals,1),size(vals,2),kmax);
 
 if kmax>1
     % 3D

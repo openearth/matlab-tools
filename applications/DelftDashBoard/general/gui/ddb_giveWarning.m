@@ -1,4 +1,4 @@
-function giveWarning(varargin)
+function ddb_giveWarning(varargin)
 
 h=getHandles;
 fig = MakeNewWindow('Warning',[260 272],'modal',[h.settingsDir '\icons\deltares.gif']);

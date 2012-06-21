@@ -1,41 +1,25 @@
-function val=getSubFieldValue(s,v)
+function val=getSubFieldValue(s,el)
+
+% s is global handles structure
+% el is element structure
+
 val=[];
-if ischar(v)
-    try
-        v=strrep(v,'handles','s');
-        val=eval(v);
-    end
+
+% Variable name
+if ~isempty(el.variableprefix)
+    varstring=[el.variableprefix '.' el.variable];
 else
+    varstring=el.variable;
+end
+
+% Dashboard adaptation
+if length(el.variable)>=7
+    if strcmpi(el.variable(1:7),'handles')
+        varstring=el.variable;
+        varstring=strrep(varstring,'handles','s');
+    end
+end
 
 try
-    hh=s;
-catch
-    shite=8
-end
-
-for i=1:length(v.subFields)
-    name=v.subFields(i).subField.name;
-    indx=v.subFields(i).subField.index;
-    if isstruct(indx)
-        indx=getSubFieldValue(s,indx);
-    end
-    if isa(indx,'function_handle')
-        indx=feval(indx);
-    end
-    try
-    hh=hh.(name)(indx);
-    catch
-%        shite=1;
-    end
-end
-varname=v.name;
-try
-val=hh.(varname);
-catch
-%    shite=5;
-end
-% if ~exist(val)
-%     shite=9;
-% end
-
+    val=eval(v);
 end

@@ -119,7 +119,8 @@ if isempty(tabnames) && ~isempty(strings)
 end
 
 if isempty(handle)
-    handle=findobj(fig,'Tag',lower(tag),'Type','uipanel');
+%    handle=findobj(fig,'Tag',lower(tag),'Type','uipanel');
+    handle=findobj(fig,'Tag',tag,'Type','uipanel');
 end
 
 switch lower(fcn)
@@ -134,12 +135,24 @@ switch lower(fcn)
     case{'select'}
         panel=get(handle,'UserData');
         tabnames=panel.tabNames;
-        iac=strmatch(tabname,tabnames,'exact');
+        iac=strmatch(lower(tabname),lower(tabnames),'exact');
         select(handle,iac,callbackopt);
+    case{'disabletab'}
+        panel=get(handle,'UserData');
+        tabnames=panel.tabNames;
+        iac=strmatch(lower(tabname),lower(tabnames),'exact');
+        set(panel.tabTextHandles(iac),'Enable','off');
+    case{'enabletab'}
+        panel=get(handle,'UserData');
+        tabnames=panel.tabNames;
+        iac=strmatch(lower(tag),lower(tabnames),'exact');
+        set(panel.tabTextHandles(iac),'Enable','on');
     case{'delete'}
         deleteTabPanel(handle);
     case{'resize'}
         resizeTabPanel(handle,pos);
+    case{'update'}
+        updateTabElements(handle);
 end
 
 %%
@@ -343,7 +356,7 @@ panel=get(h,'UserData');
 %         drawnow;
 %     end
 % end
-drawnow;
+%drawnow;
 
 set(panel.largeTabHandles(panel.activeTab),'Visible','off');
 %drawnow('expose');
@@ -359,7 +372,7 @@ set(h,'UserData',panel);
 try
     el=getappdata(h,'element');
 end
-el.activeTabNr=iac;
+el.activetabnr=iac;
 setappdata(h,'element',el);
 
 % All tabs
@@ -374,14 +387,70 @@ set(panel.tabTextHandles(iac),'BackgroundColor',panel.foregroundColor);
 set(panel.tabTextHandles(iac),'FontWeight','bold');
 set(panel.blankTextHandles(iac),'Visible','on');
 
-if strcmpi(opt,'withcallback') && ~isempty(panel.callbacks{iac})
-    % Execute callback
-    if isempty(panel.inputArguments{iac})
-        feval(panel.callbacks{iac});
-    else
-        feval(panel.callbacks{iac},panel.inputArguments{iac});
+
+
+% % Callback
+% if strcmpi(opt,'withcallback') && ~isempty(panel.callbacks{iac})
+%     % Execute callback
+%     if isempty(panel.inputArguments{iac})
+%         feval(panel.callbacks{iac});
+%     else
+%         feval(panel.callbacks{iac},panel.inputArguments{iac});
+%     end
+% end
+
+
+
+% Find handle of tab panel and get tab info
+% h=findobj(gcf,'Tag',tag,'Type','uipanel');
+% el=getappdata(h,'element');
+% tab=el.tabs(tabnr).tab;
+
+activetabhandle=panel.largeTabHandles(iac);
+setappdata(gcf,'activetabhandle',activetabhandle);
+
+if strcmpi(opt,'withcallback')
+    
+    % Elements is structure of elements inside selected tab
+    elements=el.tabs(iac).tab.elements;
+    
+    callback=el.tabs(iac).tab.callback;
+    elementstoupdate=elements;
+    % Now look for tab panels within this tab, and execute callback associated
+    % with active tabs
+    for k=1:length(elements)
+        if strcmpi(elements(k).element.style,'tabpanel')
+%             % Update tabs (some may have to be disabled or enabled)
+            for itab=1:length(elements(k).element.tabs)
+                htab=elements(k).element.tabs(itab).tab.handle;
+                gui_updateDependency(htab);
+            end
+            % Find active tab
+            hh=elements(k).element.handle;
+            el=getappdata(hh,'element');
+            iac=el.activetabnr;
+            callback=el.tabs(iac).tab.callback;
+            elementstoupdate=el.tabs(iac).tab.elements;
+            activetabhandle=el.tabs(iac).tab.handle;
+            break
+        end
     end
+    
+    if ~isempty(elementstoupdate)
+        gui_setElements(elementstoupdate);
+    end
+    
+    setappdata(gcf,'activetabhandle',activetabhandle);
+    
+    if ~isempty(callback)
+        feval(callback);
+    end
+    
 end
+
+
+% Check if there are any tab panels inside this tab
+
 
 %%
 function deleteTabPanel(h)
