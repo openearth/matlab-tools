@@ -17,6 +17,19 @@ catch
     disp(['Something went wrong with copying to local website - ' hm.models(m).name]);
 end
 
+if model.forecastplot.plot
+    try
+        dir1=[dr 'lastrun' filesep 'figures' filesep 'forecast' filesep '*.*'];
+        MakeDir([hm.webDir 'zandmotor' filesep 'forecast' filesep],'results',hm.models(m).forecastplot.name);
+        dir2=[hm.webDir 'zandmotor' filesep 'forecast' filesep 'results' filesep hm.models(m).forecastplot.name];
+        delete([dir2 filesep '*.xml']);
+        delete([dir2 filesep '*.png']);
+        [status,message,messageid]=copyfile(dir1,dir2,'f');
+    catch
+        disp(['Something went wrong with copying forecast plots to local website - ' hm.models(m).name]);
+    end
+end
+
 % Model overlays for each website
 for iw=1:length(model.webSite)
     if ~isempty(model.webSite(iw).overlayFile)
@@ -24,5 +37,5 @@ for iw=1:length(model.webSite)
             f1=[dr 'data' filesep model.webSite(iw).overlayFile];
             [status,message,messageid]=copyfile(f1,dir2,'f');
         end
-    end    
+    end
 end
