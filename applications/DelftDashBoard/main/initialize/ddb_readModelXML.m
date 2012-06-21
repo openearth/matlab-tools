@@ -63,45 +63,22 @@ function handles = ddb_readModelXML(handles, j)
 %%
 fname=[handles.Model(j).name '.xml'];
 
-%s.elements=[];
-
-%xmldir=[handles.settingsDir filesep 'xml' filesep 'models' filesep handles.Model(j).name filesep];
-%xmldir=[handles.settingsDir filesep 'xml' filesep 'models' filesep handles.Model(j).name filesep];
-%xmldir=[handles.settingsDir filesep 'models' filesep handles.Model(j).name filesep 'xml' filesep ];
 xmldir= handles.Model(j).xmlDir;
 
 if exist([xmldir fname],'file')
     
     handles.Model(j).useXML=1;
-    xml=xml_load([xmldir fname]);
     
-    handles.Model(j).longName=xml.longname;
+    xml=gui_readXMLfile(fname,xmldir,'variableprefix','Model(md).Input(ad)');
     
-    handles.Model(j).supportsMultipleDomains=0;
-    if isfield(xml,'multipledomains')
-        switch lower(xml.multipledomains(1))
-            case{'1','y'}
-                handles.Model(j).supportsMultipleDomains=1;
-        end
-    end
-    
-    handles.Model(j).enable=1;
-    if isfield(xml,'enable')
-        switch lower(xml.enable(1))
-            case{'0','n'}
-                handles.Model(j).enable=0;
-        end
-    end
-    
-    tag = '';
-    subFields={'Model','Input'};
-    %    subIndices={j,'ad'};
-    subIndices={j,@ad};
-    s=readUIElementsXML(xml,xmldir,tag,subFields,subIndices);
+    handles.Model(j).longName=xml.longname;    
+    handles.Model(j).supportsMultipleDomains=xml.multipledomains;    
+    handles.Model(j).enable=xml.enable;
+    handles.Model(j).elements=xml.elements;
     
 end
 
-handles.Model(j).GUI.elements=s.elements;
+handles.Model(j).GUI.elements=xml.elements;
 
 %% Menu File
 if isfield(xml.menu,'menuopenfile')

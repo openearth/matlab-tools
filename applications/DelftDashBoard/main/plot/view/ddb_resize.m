@@ -78,7 +78,7 @@ end
 
 % First change size of model tab panels
 for i=1:length(handles.Model)
-    tabpanel('resize','tag',lower(handles.Model(i).name),'resize','position',[9 6 sz(3)-10 sz(4)-30]);
+    tabpanel('resize','tag',handles.Model(i).name,'resize','position',[9 6 sz(3)-10 sz(4)-30]);
 end
 
 % Now change size of map panel

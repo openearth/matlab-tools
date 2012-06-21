@@ -106,8 +106,8 @@ switch lower(varargin{1}),
         disp('Initializing screen ...');
         ddb_makeMapPanel;
         
-        disp('Updating data in screen ...');
-        ddb_updateDataInScreen;
+%         disp('Updating data in screen ...');
+%         ddb_updateDataInScreen;
         
         % Toolbox is selected in ddb_selectModel
         ddb_selectModel('Delft3DFLOW');

@@ -109,6 +109,9 @@ set(handles.GUIHandles.mainWindow,'Visible','on');
 
 maximizeWindow('Delft Dashboard');
 
+pause(1);
+
+ddb_updateDataInScreen;
 
 % Maximize Figure
 %maximize(handles.GUIHandles.MainWindow);

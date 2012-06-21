@@ -68,15 +68,16 @@ for i=1:length(handles.Model)
     setHandles(handles);
     elements=handles.Model(i).GUI.elements;
     if ~isempty(elements)
-        elements=addUIElements(gcf,elements,'getFcn',@getHandles,'setFcn',@setHandles);
-        set(elements(1).handle,'Visible','off');
+        elements=gui_addElements(gcf,elements,'getFcn',@getHandles,'setFcn',@setHandles);
+        set(elements(1).element.handle,'Visible','off');
         handles.Model(i).GUI.elements=elements;
     end
 end
 
 handles.activeModel.nr = 1;
 setHandles(handles);
-handles=ddb_addToolboxElements(handles);
 
 setHandles(handles);
+
+% ddb_selectToolbox;
 

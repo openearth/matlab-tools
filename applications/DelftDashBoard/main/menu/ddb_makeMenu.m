@@ -176,7 +176,7 @@ handles=ddb_addMenuItem(handles,'Help','About Delft Dashboard',  'Callback',{@dd
 %% Debug
 if ~isdeployed
     uimenu('Label','Debug','Tag','menuDebug');
-    handles=ddb_addMenuItem(handles,'Debug','Debug Mode','Callback',{@ddb_menuDebug},'Checked','off');
+    handles=ddb_addMenuItem(handles,'Debug','Reload XML','Callback',{@ddb_menuDebug},'Checked','off');
 end
 
 

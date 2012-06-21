@@ -1,21 +1,11 @@
 function ddb_selectToolbox
-%DDB_SELECTTOOLBOX  One line description goes here.
+%DDB_SELECTTOOLBOX  This function is called to change the toolbox in Delft
+%Dashboard
 %
 %   More detailed description goes here.
 %
 %   Syntax:
 %   ddb_selectToolbox
-%
-%   Input:
-
-%
-%
-%
-%
-%   Example
-%   ddb_selectToolbox
-%
-%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -59,83 +49,52 @@ function ddb_selectToolbox
 % $HeadURL: $
 % $Keywords: $
 
-%% This function is called to change the toolbox
-
 handles=getHandles;
 
-% Delete existing toolbox elements
-parent=handles.Model(md).GUI.elements.tabs(1).handle;
+%% Delete existing toolbox elements
+parent=handles.Model(md).GUI.elements(1).element.tabs(1).tab.handle;
 ch=get(parent,'Children');
 if ~isempty(ch)
     delete(ch);
 end
 
-% And now add the new elements
+% if handles.debugMode
+%     % Read toolbox xml file again
+%     handles=ddb_readToolboxXML(handles,tb);
+% end
+
+%% And now add the new elements
 toolboxElements=handles.Toolbox(tb).GUI.elements;
 
 % Check if toolbox has tabs
 % If so, find tabs that are model specific
 if length(toolboxElements)==1
-    if strcmpi(toolboxElements.style,'tabpanel')
+    if strcmpi(toolboxElements(1).element.style,'tabpanel')
         toolboxElements0=toolboxElements;
-        toolboxElements0.tabs=[];
+        toolboxElements0.element.tabs=[];
         ntabs=0;
-        for itab=1:length(toolboxElements.tabs)
-            if isempty(toolboxElements.tabs(itab).model) || ...
-                    strcmpi(toolboxElements.tabs(itab).model,handles.Model(md).name)
-                % Tab specific to active model
+        for itab=1:length(toolboxElements(1).element.tabs)
+            if isempty(toolboxElements(1).element.tabs(itab).tab.formodel) || ...
+                    strcmpi(toolboxElements(1).element.tabs(itab).tab.formodel,handles.Model(md).name)
+                % Tab specific to active model                
                 ntabs=ntabs+1;
-                fldnames=fieldnames(toolboxElements.tabs(itab));
-                for ifld=1:length(fldnames)
-                    toolboxElements0.tabs(ntabs).(fldnames{ifld})=toolboxElements.tabs(itab).(fldnames{ifld});
-                end
+                toolboxElements0(1).element.tabs(ntabs).tab=toolboxElements(1).element.tabs(itab).tab;
             end
         end
         toolboxElements=toolboxElements0;
     end
 end
 
-handles.Model(md).GUI.elements.tabs(1).elements=toolboxElements;
-handles.Model(md).GUI.elements.tabs(1).elements=addUIElements(gcf,toolboxElements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);
+% Add elements to GUI
+handles.Model(md).GUI.elements(1).element.tabs(1).tab.elements=gui_addElements(gcf,toolboxElements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);
 setHandles(handles);
 
 % Find handle of tab panel and get tab info
-el=getappdata(handles.Model(md).GUI.elements.handle,'element');
-el.tabs(1).elements=handles.Model(md).GUI.elements.tabs(1).elements;
-setappdata(handles.Model(md).GUI.elements.handle,'element',el);
+el=getappdata(handles.Model(md).GUI.elements(1).element.handle,'element');
+el.tabs(1).tab.elements=handles.Model(md).GUI.elements(1).element.tabs(1).tab.elements;
+% Set callback to tab
+el.tabs(1).tab.callback=handles.Toolbox(tb).callFcn;
+setappdata(handles.Model(md).GUI.elements(1).element.handle,'element',el);
 
-% Select toolbox tab.
-tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox','runcallback',0);
-
-% Check to see if there is a tab panel under this tab
-elements=handles.Model(md).GUI.elements.tabs(1).elements;
-itab=0;
-for k=1:length(elements)
-    if strcmpi(elements(k).style,'tabpanel')
-        itab=1;
-    end
-end
-
-% Set callback for the next time the toolbox tab is clicked
-panel=get(handles.Model(md).GUI.elements.handle,'UserData');
-callbacks=panel.callbacks;
-inputArguments=panel.inputArguments;
-if itab
-    % Default callback
-    callbacks{1}=@defaultTabCallback;
-    inputArguments{1}={'tag',lower(handles.Model(md).name),'tabnr',1};
-else
-    callbacks{1}=handles.Toolbox(tb).callFcn;
-    inputArguments{1}=[];
-end
-panel.callbacks=callbacks;
-panel.inputArguments=inputArguments;
-set(handles.Model(md).GUI.elements.handle,'UserData',panel);
-
-% And now execute the callback
-if isempty(inputArguments{1})
-    feval(callbacks{1});
-else
-    feval(callbacks{1},inputArguments{1});
-end
-
+% And finally select the toolbox tab
+tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox');

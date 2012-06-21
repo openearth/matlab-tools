@@ -190,4 +190,5 @@ end
 %%
 function menuViewSettings_Callback(hObject, eventdata)
 
+ddb_zoomOff;
 ddb_editViewSettings;

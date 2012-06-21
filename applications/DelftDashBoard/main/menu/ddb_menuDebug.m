@@ -65,7 +65,7 @@ function ddb_menuDebug(hObject, eventdata, handles)
 tg=get(hObject,'Tag');
 
 switch tg,
-    case{'menuDebugDebugMode'}
+    case{'menuDebugReloadXML'}
         menuDebugMode_Callback(hObject,eventdata);
 end
 
@@ -74,15 +74,47 @@ function menuDebugMode_Callback(hObject, eventdata)
 
 handles=getHandles;
 
-checked=get(hObject,'Checked');
+ddb_zoomOff;
 
-if strcmp(checked,'off')
-    handles.debugMode=1;
-    set(hObject,'Checked','on');
-else
-    handles.debugMode=0;
-    set(hObject,'Checked','off');
+set(gcf,'Pointer','watch');
+pause(0.01);
+
+% Delete existing model tab panel
+for ii=2:length(handles.Model(md).GUI.elements.element.tabs)
+    parent=handles.Model(md).GUI.elements(1).element.tabs(ii).tab.handle;
+    ch=get(parent,'Children');
+    if ~isempty(ch)
+        delete(ch);
+    end
 end
 
+originalElements=handles.Model(md).GUI.elements;
+
+% Re-read xml files
+handles=ddb_readModelXML(handles,md);
+handles=ddb_readToolboxXML(handles,tb);
+
+handles.Model(md).GUI.elements.element.handle=originalElements.element.handle;    
+el=getappdata(originalElements.element.handle,'element');
+
+% And add tab elements
+for ii=2:length(handles.Model(md).GUI.elements.element.tabs)
+    elements=handles.Model(md).GUI.elements.element.tabs(ii).tab.elements;
+    parent=originalElements.element.tabs(ii).tab.handle;
+    elements=gui_addElements(gcf,elements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);    
+    handles.Model(md).GUI.elements.element.tabs(ii).tab.elements=elements;
+    handles.Model(md).GUI.elements.element.tabs(ii).tab.handle=originalElements.element.tabs(ii).tab.handle;
+    setappdata(handles.Model(md).GUI.elements.element.tabs(ii).tab.handle,'elements',elements);
+    el.tabs(ii).tab.elements=elements;
+end
+handles.Model(md).GUI.elements.element.tabs(1).tab.handle=originalElements.element.tabs(1).tab.handle;    
+setappdata(originalElements.element.handle,'element',el);
+
 setHandles(handles);
+
+ddb_selectToolbox;
+
+drawnow;
+
+set(gcf,'Pointer','arrow');
 

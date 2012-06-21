@@ -61,7 +61,6 @@ function handles = ddb_readToolboxXML(handles, j)
 % $Keywords: $
 
 %%
-s.elements=[];
 
 fname=[handles.Toolbox(j).name '.xml'];
 
@@ -74,19 +73,13 @@ handles.Toolbox(j).enable=0;
 if exist([xmldir fname],'file')>0
     
     handles.Toolbox(j).useXML=1;
-    xml=xml_load([xmldir fname]);
+    
+    xml=gui_readXMLfile(fname,xmldir,'variableprefix','Toolbox(tb).Input');
     
     handles.Toolbox(j).longName=xml.longname;
-    
-    tag = '';
-    subFields={'Toolbox','Input'};
-    subIndices={j,1};
-    s=readUIElementsXML(xml,xmldir,tag,subFields,subIndices);
-    if isfield(xml,'enable')
-        handles.Toolbox(j).enable=str2double(xml.enable);
-    end
+    handles.Toolbox(j).enable=xml.enable;
     
 end
 
-handles.Toolbox(j).GUI.elements=s.elements;
+handles.Toolbox(j).GUI.elements=xml.elements;
 
