@@ -1,4 +1,4 @@
-function [data]=ITHK_io_readPRN(varargin)
+function [PRNdata]=ITHK_io_readPRN(varargin)
 %read PRN : Reads PRN-files and puts data into a struct
 %   
 %   Syntax:
