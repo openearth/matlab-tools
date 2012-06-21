@@ -14,6 +14,7 @@ if model.extractData
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'sp2');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'forecasts');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
                 cosmos_extractDataDelft3D(hm,m);
@@ -139,6 +140,9 @@ if model.uploadFTP
         tic
         %        PostFTP(hm,m);
         cosmos_postFigures(hm,m);
+        if hm.models(m).forecastplot.plot
+            cosmos_postFiguresForecast(hm,m);
+        end
     catch
         WriteErrorLogFile(hm,['Something went wrong while upload to SCP server for ' model.name]);
         %         hm.models(m).status='failed';
