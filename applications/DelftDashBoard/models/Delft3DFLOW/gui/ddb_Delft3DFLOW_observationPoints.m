@@ -71,9 +71,7 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeObservationPoint=0;
     handles.Model(md).Input(ad).deleteObservationPoint=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','observationpoints');
-    setUIElements('delft3dflow.monitoring.monitoringpanel.observationpoints');
-    setHandles(handles);
-    
+    setHandles(handles);    
 else
     
     opt=varargin{1};
@@ -170,7 +168,6 @@ else
             
     end
 end
-
 
 refreshObservationPoints;
 
@@ -272,12 +269,4 @@ setInstructions({'','','Click new position of observation point'});
 
 %%
 function refreshObservationPoints
-setUIElement('delft3dflow.monitoring.monitoringpanel.observationpoints.listobservationpoints');
-setUIElement('delft3dflow.monitoring.monitoringpanel.observationpoints.editobsm');
-setUIElement('delft3dflow.monitoring.monitoringpanel.observationpoints.editobsn');
-setUIElement('delft3dflow.monitoring.monitoringpanel.observationpoints.editobsname');
-setUIElement('delft3dflow.monitoring.monitoringpanel.observationpoints.toggleaddobservationpoint');
-setUIElement('delft3dflow.monitoring.monitoringpanel.observationpoints.toggleselectobservationpoint');
-setUIElement('delft3dflow.monitoring.monitoringpanel.observationpoints.togglechangeobservationpoint');
-
-
+gui_updateActiveTab;

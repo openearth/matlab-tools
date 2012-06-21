@@ -9,7 +9,7 @@
     <element>
       <style>tabpanel</style>
       <tag>Delft3DFLOW</tab>
-      <position>10 10 900 700</position> 
+      <position>10 10 900 400</position> 
       <tabs>
         <tab>
           <tag>toolbox</tag>

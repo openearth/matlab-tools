@@ -72,8 +72,6 @@ if isempty(varargin)
     handles.Model(md).Input(ad).deleteDryPoint=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drypoints');
     setHandles(handles);
-    setUIElements('delft3dflow.domain.domainpanel.drypoints');
-    
 else
     
     opt=varargin{1};
@@ -272,13 +270,4 @@ setInstructions({'','','Click new position of dry point'});
 
 %%
 function refreshDryPoints
-setUIElement('delft3dflow.domain.domainpanel.drypoints.listdrypoints');
-setUIElement('delft3dflow.domain.domainpanel.drypoints.editdrym1');
-setUIElement('delft3dflow.domain.domainpanel.drypoints.editdrym2');
-setUIElement('delft3dflow.domain.domainpanel.drypoints.editdryn1');
-setUIElement('delft3dflow.domain.domainpanel.drypoints.editdryn2');
-setUIElement('delft3dflow.domain.domainpanel.drypoints.toggleadddrypoint');
-setUIElement('delft3dflow.domain.domainpanel.drypoints.toggleselectdrypoint');
-setUIElement('delft3dflow.domain.domainpanel.drypoints.togglechangedrypoint');
-
-
+gui_updateActiveTab;

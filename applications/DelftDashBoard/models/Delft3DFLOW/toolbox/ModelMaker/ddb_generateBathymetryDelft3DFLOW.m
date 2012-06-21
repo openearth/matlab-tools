@@ -1,4 +1,4 @@
-function handles = ddb_generateBathymetryDelft3DFLOW(handles, id, varargin)
+function handles = ddb_generateBathymetryDelft3DFLOW(handles, id, filename)
 %DDB_GENERATEBATHYMETRYDELFT3DFLOW  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,14 +61,6 @@ function handles = ddb_generateBathymetryDelft3DFLOW(handles, id, varargin)
 % $HeadURL: $
 % $Keywords: $
 
-%%
-if ~isempty(varargin)
-    % Check if routine exists
-    if strcmpi(varargin{1},'ddb_test')
-        return
-    end
-end
-
 if ~isempty(handles.Model(md).Input(id).grdFile)
     
     dpori=handles.Model(md).Input(id).depth;
@@ -95,7 +87,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     
     wb = waitbox('Generating bathymetry ...');
     
-    attName=handles.Model(md).Input(id).attName;
+    attName=filename(1:end-4);
     
     % Generate bathymetry
     
@@ -167,17 +159,13 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     ddb_wldep('write',[attName '.dep'],z);
     
     handles.Model(md).Input(id).depFile=[attName '.dep'];
-    
-    
-    %    setHandles(handles);
+    handles.Model(md).Input(ad).depthSource='file';
     
     try
         close(wb);
     end
     
     handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',id);
-    
-    %    ddb_plotFlowBathymetry(handles,'plot',id);
     
 else
     GiveWarning('Warning','First generate or load a grid');

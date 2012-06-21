@@ -1,4 +1,4 @@
-function handles = ddb_generateGridDelft3DFLOW(handles, id, x, y, z, varargin)
+function handles = ddb_generateGridDelft3DFLOW(handles, id, x, y, z, filename, varargin)
 %DDB_GENERATEGRIDDELFT3DFLOW  One line description goes here.
 %
 %   More detailed description goes here.
@@ -76,10 +76,8 @@ handles=ddb_initializeFlowDomain(handles,'griddependentinput',id,handles.Model(m
 
 set(gcf,'Pointer','arrow');
 
-attName=handles.Model(md).Input(id).attName;
-
 enc=ddb_enclosure('extract',x,y);
-grd=[attName '.grd'];
+attName=filename(1:end-4);
 
 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
     coord='Spherical';
@@ -87,9 +85,9 @@ else
     coord='Cartesian';
 end
 
-ddb_wlgrid('write','FileName',grd,'X',x,'Y',y,'Enclosure',enc,'CoordinateSystem',coord);
+ddb_wlgrid('write','FileName',[attName '.grd'],'X',x,'Y',y,'Enclosure',enc,'CoordinateSystem',coord);
 
-handles.Model(md).Input(id).grdFile=grd;
+handles.Model(md).Input(id).grdFile=[attName '.grd'];
 handles.Model(md).Input(id).encFile=[attName '.enc'];
 
 handles.Model(md).Input(id).gridX=x;

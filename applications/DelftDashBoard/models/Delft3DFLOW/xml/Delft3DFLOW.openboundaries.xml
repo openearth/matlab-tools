@@ -412,10 +412,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>constituents</name>
-              <type>integer</type>
-            </variable>
+            <variable>handles.Model(md).Input(ad).constituents</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>

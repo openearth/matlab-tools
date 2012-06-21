@@ -63,7 +63,7 @@ function ddb_Delft3DFLOW_grid(varargin)
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('delft3dflow.domain.domainpanel.grid');
+    % setUIElements('delft3dflow.domain.domainpanel.grid');
 else
     opt=varargin{1};
     switch lower(opt)
@@ -100,8 +100,8 @@ nans(nans==0)=NaN;
 handles.Model(md).Input(ad).depth=nans;
 handles.Model(md).Input(ad).depthZ=nans;
 setHandles(handles);
-setUIElement('delft3dflow.domain.domainpanel.grid.textgridm');
-setUIElement('delft3dflow.domain.domainpanel.grid.textgridn');
+% setUIElement('delft3dflow.domain.domainpanel.grid.textgridm');
+% setUIElement('delft3dflow.domain.domainpanel.grid.textgridn');
 handles=getHandles;
 handles=ddb_Delft3DFLOW_plotGrid(handles,'plot');
 setHandles(handles);
@@ -125,7 +125,7 @@ function changeLayers
 handles=getHandles;
 handles.Model(md).Input(ad).sumLayers=sum(handles.Model(md).Input(ad).thick);
 setHandles(handles);
-setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
+% gui_updateActiveTab;
 
 %%
 function loadLayers
@@ -139,9 +139,9 @@ if ~isempty(pathname)
         handles.Model(md).Input(ad).sumLayers=100;
         handles.Model(md).Input(ad).KMax=length(lyrs);
         setHandles(handles);
-        setUIElement('delft3dflow.domain.domainpanel.grid.editkmax');
-        setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
-        setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
+        % setUIElement('delft3dflow.domain.domainpanel.grid.editkmax');
+        % setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
+        % setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
     else
         GiveWarning('Text','Sum of layers does not equal 100%');
     end
@@ -179,9 +179,5 @@ if kmax~=kmax0
     end
     setHandles(handles);
     handles.Model(md).Input(ad).sumLayers=sum(handles.Model(md).Input(ad).thick);
-    setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
-    setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
-    setUIElement('delft3dflow.domain.domainpanel.grid.pushgeneratelayers');
+%     gui_updateActiveTab;
 end
-
-

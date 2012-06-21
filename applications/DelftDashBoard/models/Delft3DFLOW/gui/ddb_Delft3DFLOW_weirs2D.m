@@ -72,7 +72,6 @@ if isempty(varargin)
     handles.Model(md).Input(ad).deleteWeir2D=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','weirs2d');
     setHandles(handles);
-    setUIElements('delft3dflow.domain.domainpanel.weirs2d');
 else
     opt=varargin{1};
     switch(lower(opt))
@@ -302,16 +301,5 @@ setInstructions({'','','Drag line for new position of 2D weir'});
 
 %%
 function refreshWeirs2D
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.listweirs2d');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.editweirm1');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.editweirm2');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.editweirn1');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.editweirn2');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.radiou');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.radiov');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.editweirheight');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.editfriction');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.toggleaddweir2d');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.toggleselectweir2d');
-setUIElement('delft3dflow.domain.domainpanel.weirs2d.togglechangeweir2d');
+gui_updateActiveTab;
 

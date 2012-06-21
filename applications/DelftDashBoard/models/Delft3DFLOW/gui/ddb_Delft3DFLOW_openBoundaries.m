@@ -70,7 +70,6 @@ if isempty(varargin)
     ddb_refreshScreen;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','openboundaries');
     setHandles(handles);
-    setUIElements('delft3dflow.openboundaries');
 else
     opt=varargin{1};
     if length(varargin)>1
@@ -174,7 +173,7 @@ else
             handles.Model(md).Input(ad).openBoundaryNames{n}=handles.Model(md).Input(ad).openBoundaries(n).name;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
             setHandles(handles);
-            setUIElement('delft3dflow.openboundaries.listopenboundaries');
+            % setUIElement('delft3dflow.openboundaries.listopenboundaries');
             clearInstructions;
             refreshOpenBoundaries;
             
@@ -577,44 +576,13 @@ end
 
 setHandles(handles);
 
-setUIElement('delft3dflow.openboundaries.listopenboundaries');
-setUIElement('delft3dflow.openboundaries.editbndname');
-setUIElement('delft3dflow.openboundaries.editbndm1');
-setUIElement('delft3dflow.openboundaries.editbndm2');
-setUIElement('delft3dflow.openboundaries.editbndn1');
-setUIElement('delft3dflow.openboundaries.editbndn2');
-setUIElement('delft3dflow.openboundaries.selecttype');
-setUIElement('delft3dflow.openboundaries.selectforcing');
-setUIElement('delft3dflow.openboundaries.selectprofile');
-setUIElement('delft3dflow.openboundaries.editalpha');
-setUIElement('delft3dflow.openboundaries.toggleaddopenboundary');
-setUIElement('delft3dflow.openboundaries.toggleselectopenboundary');
-setUIElement('delft3dflow.openboundaries.togglechangeopenboundary');
-setUIElement('delft3dflow.openboundaries.pushflowconditions');
-setUIElement('delft3dflow.openboundaries.pushtransportconditions');
+gui_updateActiveTab;
 
 refreshOpenBoundaryFiles;
 
 %%
 function refreshOpenBoundaryFiles
-setUIElement('delft3dflow.openboundaries.openbnd');
-setUIElement('delft3dflow.openboundaries.openbca');
-setUIElement('delft3dflow.openboundaries.opencor');
-setUIElement('delft3dflow.openboundaries.openbch');
-setUIElement('delft3dflow.openboundaries.openbct');
-setUIElement('delft3dflow.openboundaries.openbcc');
-setUIElement('delft3dflow.openboundaries.savebnd');
-setUIElement('delft3dflow.openboundaries.savebca');
-setUIElement('delft3dflow.openboundaries.savecor');
-setUIElement('delft3dflow.openboundaries.savebch');
-setUIElement('delft3dflow.openboundaries.savebct');
-setUIElement('delft3dflow.openboundaries.savebcc');
-setUIElement('delft3dflow.openboundaries.txtbndfile');
-setUIElement('delft3dflow.openboundaries.txtbcafile');
-setUIElement('delft3dflow.openboundaries.txtcorfile');
-setUIElement('delft3dflow.openboundaries.txtbchfile');
-setUIElement('delft3dflow.openboundaries.txtbctfile');
-setUIElement('delft3dflow.openboundaries.txtbccfile');
+gui_updateActiveTab;
 
 %%
 function [m1,n1,m2,n2,ok]=checkBoundaryPoints(m1,n1,m2,n2,icp)

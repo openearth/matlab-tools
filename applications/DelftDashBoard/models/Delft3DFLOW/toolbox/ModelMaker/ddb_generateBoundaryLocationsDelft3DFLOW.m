@@ -1,4 +1,4 @@
-function handles = ddb_generateBoundaryLocationsDelft3DFLOW(handles, id, varargin)
+function handles = ddb_generateBoundaryLocationsDelft3DFLOW(handles, id, filename)
 %DDB_GENERATEBOUNDARYLOCATIONSDELFT3DFLOW  One line description goes here.
 %
 %   More detailed description goes here.
@@ -62,12 +62,6 @@ function handles = ddb_generateBoundaryLocationsDelft3DFLOW(handles, id, varargi
 % $Keywords: $
 
 %%
-if ~isempty(varargin)
-    % Check if routine exists
-    if strcmpi(varargin{1},'ddb_test')
-        return
-    end
-end
 
 if ~isempty(handles.Model(md).Input(id).grdFile)
     if ~isempty(handles.Model(md).Input(id).depFile)
@@ -75,7 +69,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         d=handles.Toolbox(tb).Input.sectionLength;
         zmax=handles.Toolbox(tb).Input.zMax;
         
-        attName=handles.Model(md).Input(id).attName;
+        attName=filename(1:end-4);
         
         handles.Model(md).Input(id).bndFile=[attName '.bnd'];
         

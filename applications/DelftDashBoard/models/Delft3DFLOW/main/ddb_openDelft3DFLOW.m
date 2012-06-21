@@ -139,7 +139,7 @@ end
 
 elements=handles.Model(md).GUI.elements;
 if ~isempty(elements)
-    setUIElements(elements);
+    % setUIElements(elements);
 end
 
 ddb_refreshDomainMenu;

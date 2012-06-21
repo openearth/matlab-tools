@@ -89,33 +89,35 @@ for i=1:length(varargin)
 end
 
 if idomain==0
+    % Update all domains
     n1=1;
     n2=handles.Model(imd).nrDomains;
 else
+    % Update one domain
     n1=idomain;
     n2=n1;
 end
 
 handles=ddb_Delft3DFLOW_plotDD(handles,option,'visible',vis);
 
+if idomain==0 && ~act
+    vis=0;
+end
+    
 for id=n1:n2
     
-    %     % Exception for grid, make bathy invisible if it's not the active grid
-    %     if id~=ad
-    %         bvis=0;
-    %     else
-    %         bvis=vis;
-    %     end
-    %     handles=ddb_Delft3DFLOW_plotBathy(handles,option,'domain',id,'visible',bvis);
     handles=ddb_Delft3DFLOW_plotBathy(handles,option,'domain',id,'visible',vis);
     
     % Exception for grid, make grid grey if it's not the active grid
-    if id~=ad
+    % or if all domains are selected and not active
+    if id~=ad || (idomain==0 && ~act)
         col=[0.7 0.7 0.7];
     else
         col=[0.35 0.35 0.35];
     end
-    handles=ddb_Delft3DFLOW_plotGrid(handles,option,'domain',id,'color',col,'visible',vis);
+    
+    % Always plot grid (even is vis is 0)
+    handles=ddb_Delft3DFLOW_plotGrid(handles,option,'domain',id,'color',col,'visible',1);
     
     
     if handles.Model(imd).Input(id).nrObservationPoints>0

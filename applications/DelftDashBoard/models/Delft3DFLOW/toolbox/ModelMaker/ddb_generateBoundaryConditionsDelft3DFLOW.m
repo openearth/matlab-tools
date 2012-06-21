@@ -1,4 +1,4 @@
-function [handles err] = ddb_generateBoundaryConditionsDelft3DFLOW(handles, id, varargin)
+function [handles err] = ddb_generateBoundaryConditionsDelft3DFLOW(handles, id, filename)
 %DDB_GENERATEBOUNDARYCONDITIONSDELFT3DFLOW  One line description goes here.
 %
 %   More detailed description goes here.
@@ -66,13 +66,6 @@ function [handles err] = ddb_generateBoundaryConditionsDelft3DFLOW(handles, id, 
 err='';
 
 % model=handles.Model(md).Input(id);
-
-if ~isempty(varargin)
-    % Check if routine exists
-    if strcmpi(varargin{1},'ddb_test')
-        return
-    end
-end
 
 if handles.Model(md).Input(id).nrOpenBoundaries==0
     err='First generate or load open boundaries';
@@ -372,7 +365,7 @@ try
     end
     handles.Model(md).Input(id).nrAstronomicComponentSets=k;
     
-    attName=handles.Model(md).Input(id).attName;
+    attName=filename(1:end-4);
     handles.Model(md).Input(id).bcaFile=[attName '.bca'];
     
 %     handles.Model(md).Input(id)=model;

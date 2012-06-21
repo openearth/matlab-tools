@@ -63,7 +63,7 @@ function ddb_Delft3DFLOW_bathymetry(varargin)
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('delft3dflow.domain.domainpanel.bathymetry');
+    % setUIElements('delft3dflow.domain.domainpanel.bathymetry');
 else
     opt=varargin{1};
     switch lower(opt)

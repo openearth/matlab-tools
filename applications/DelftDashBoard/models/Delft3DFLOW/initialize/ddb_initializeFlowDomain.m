@@ -86,6 +86,7 @@ handles.Model(md).Input(id).nrObservationPoints=0;
 handles.Model(md).Input(id).activeObservationPoint=1;
 handles.Model(md).Input(id).observationPointNames={''};
 handles.Model(md).Input(id).activeObservationPoint=1;
+handles.Model(md).Input(id).observationPoints(1).name='';
 handles.Model(md).Input(id).observationPoints(1).M=[];
 handles.Model(md).Input(id).observationPoints(1).N=[];
 handles.Model(md).Input(id).addObservationPoint=0;
@@ -97,6 +98,7 @@ handles.Model(md).Input(id).changeObservationPoint=0;
 handles.Model(md).Input(id).nrDischarges=0;
 handles.Model(md).Input(id).activeDischarge=1;
 handles.Model(md).Input(id).dischargeNames={''};
+handles.Model(md).Input(id).discharges(1).name='';
 handles.Model(md).Input(id).discharges(1).M=[];
 handles.Model(md).Input(id).discharges(1).N=[];
 handles.Model(md).Input(id).discharges(1).K=[];
@@ -114,6 +116,7 @@ handles.Model(md).Input(id).changeDischarge=0;
 handles.Model(md).Input(id).nrCrossSections=0;
 handles.Model(md).Input(id).crossSectionNames={''};
 handles.Model(md).Input(id).activeCrossSection=1;
+handles.Model(md).Input(id).crossSections(1).name='';
 handles.Model(md).Input(id).crossSections(1).M1=[];
 handles.Model(md).Input(id).crossSections(1).M2=[];
 handles.Model(md).Input(id).crossSections(1).N1=[];
@@ -198,6 +201,7 @@ handles.Model(md).Input(id).nrDrogues=0;
 handles.Model(md).Input(id).activeDrogue=1;
 handles.Model(md).Input(id).drogueNames={''};
 handles.Model(md).Input(id).activeDrogue=1;
+handles.Model(md).Input(id).drogues(1).name='';
 handles.Model(md).Input(id).drogues(1).M=[];
 handles.Model(md).Input(id).drogues(1).N=[];
 handles.Model(md).Input(id).drogues(1).releaseTime=floor(now);
@@ -276,6 +280,7 @@ handles.Model(md).Input(id).ampFile='';
 handles.Model(md).Input(id).amtFile='';
 handles.Model(md).Input(id).amcFile='';
 handles.Model(md).Input(id).amrFile='';
+handles.Model(md).Input(id).w2dFile='';
 handles.Model(md).Input(id).wndgrd='';
 handles.Model(md).Input(id).MNmaxw=[];
 
@@ -423,8 +428,10 @@ handles=ddb_initializeSalinity(handles,id);
 handles=ddb_initializeTemperature(handles,id);
 
 handles.Model(md).Input(id).tracer=[];
-for i=1:handles.Model(md).Input(id).nrTracers
-    handles=ddb_initializeTracer(handles,id,i);
+%for i=1:handles.Model(md).Input(id).nrTracers
+for ii=1:5
+    handles.Model(md).Input(id).tracer(ii).name=['Tracer ' num2str(ii)];
+    handles=ddb_initializeTracer(handles,id,ii);
 end
 handles.Model(md).Input(id).cstBnd=0;
 
@@ -434,15 +441,19 @@ handles=ddb_Delft3DFLOW_initializeMorphology(handles,id);
 %% Sediments
 handles.Model(md).Input(id).nrSediments=0;
 handles.Model(md).Input(id).sediment=[];
-handles.Model(md).Input(id).sediment(1).name='Sediment sand';
-handles.Model(md).Input(id).sediment(1).type='non-cohesive';
+% handles.Model(md).Input(id).sediment(1).name='Sediment sand';
+% handles.Model(md).Input(id).sediment(1).type='non-cohesive';
 handles.Model(md).Input(id).sediments=[];
 handles.Model(md).Input(id).sediments.include=0;
 handles.Model(md).Input(id).sediments.cRef=1600;
 handles.Model(md).Input(id).sediments.iOpSus=0;
 handles.Model(md).Input(id).sediments.sedimentNames={''};
 handles.Model(md).Input(id).sediments.activeSediment=1;
-handles=ddb_initializeSediment(handles,id,1);
+for ii=1:5
+    handles.Model(md).Input(id).sediment(ii).name=['Sediment ' num2str(ii)];
+    handles.Model(md).Input(id).sediment(ii).type='non-cohesive';
+    handles=ddb_initializeSediment(handles,id,ii);
+end
 
 %% Roller Model
 handles.Model(md).Input(id).roller.snellius=0;

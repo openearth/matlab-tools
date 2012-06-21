@@ -72,7 +72,7 @@ if isempty(varargin)
     handles.Model(md).Input(ad).deleteThinDam=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','thindams');
     setHandles(handles);
-    setUIElements('delft3dflow.domain.domainpanel.thindams');
+    % setUIElements('delft3dflow.domain.domainpanel.thindams');
 else
     opt=varargin{1};
     switch(lower(opt))
@@ -298,14 +298,14 @@ setInstructions({'','','Drag line for new position of thin dam'});
 
 %%
 function refreshThinDams
-setUIElement('delft3dflow.domain.domainpanel.thindams.listthindams');
-setUIElement('delft3dflow.domain.domainpanel.thindams.editthinm1');
-setUIElement('delft3dflow.domain.domainpanel.thindams.editthinm2');
-setUIElement('delft3dflow.domain.domainpanel.thindams.editthinn1');
-setUIElement('delft3dflow.domain.domainpanel.thindams.editthinn2');
-setUIElement('delft3dflow.domain.domainpanel.thindams.radiou');
-setUIElement('delft3dflow.domain.domainpanel.thindams.radiov');
-setUIElement('delft3dflow.domain.domainpanel.thindams.toggleaddthindam');
-setUIElement('delft3dflow.domain.domainpanel.thindams.toggleselectthindam');
-setUIElement('delft3dflow.domain.domainpanel.thindams.togglechangethindam');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.listthindams');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.editthinm1');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.editthinm2');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.editthinn1');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.editthinn2');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.radiou');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.radiov');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.toggleaddthindam');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.toggleselectthindam');
+% setUIElement('delft3dflow.domain.domainpanel.thindams.togglechangethindam');
 

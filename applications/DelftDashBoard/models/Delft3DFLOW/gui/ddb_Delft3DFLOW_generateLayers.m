@@ -75,10 +75,10 @@ if isempty(varargin)
     [handles,ok]=newGUI(xmldir,xmlfile,handles,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
     if ok
         setHandles(handles);
-        setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
-        setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
+        % setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
+        % setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
     end
-    setUIElements('delft3dflow.domain.domainpanel.grid');
+    % setUIElements('delft3dflow.domain.domainpanel.grid');
 else
     opt=varargin{1};
     switch lower(opt)
@@ -132,7 +132,7 @@ end
 
 setTempHandles(handles);
 
-setUIElement('testje.listlayers');
+% setUIElement('testje.listlayers');
 
 
 

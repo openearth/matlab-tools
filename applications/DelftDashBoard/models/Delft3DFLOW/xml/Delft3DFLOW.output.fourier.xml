@@ -95,7 +95,7 @@
     <includebuttons>yes</includebuttons>
     <onchange>ddb_Delft3DFLOW_fourier</onchange>
     <option1>changetable1</option1>
-    <parent>delft3dflow.output.outputpanel.fourier.editpanel</parent>
+    <parent>editpanel</parent>
     <columns>
       <column>
         <style>popupmenu</style>
@@ -199,7 +199,7 @@
     <includebuttons>yes</includebuttons>
     <onchange>ddb_Delft3DFLOW_fourier</onchange>
     <option1>changetable2</option1>
-    <parent>delft3dflow.output.outputpanel.fourier.generatepanel</parent>
+    <parent>generatepanel</parent>
     <columns>
       <column>
         <style>popupmenu</style>
@@ -271,7 +271,7 @@
     <text>Generate</text>
     <callback>ddb_Delft3DFLOW_fourier</callback>
     <option1>generateinput</option1>
-    <parent>delft3dflow.output.outputpanel.fourier.generatepanel</parent>
+    <parent>generatepanel</parent>
   </element>
 
   <element>
@@ -281,7 +281,7 @@
     <text>Fill Table</text>
     <callback>ddb_Delft3DFLOW_fourier</callback>
     <option1>maketable</option1>
-    <parent>delft3dflow.output.outputpanel.fourier.generatepanel</parent>
+    <parent>generatepanel</parent>
   </element>
 
   <element>
@@ -289,7 +289,7 @@
     <style>edit</style>
     <position>550 55 70 20</position>
     <text>Spin-up time (min)</text>
-    <parent>delft3dflow.output.outputpanel.fourier.generatepanel</parent>
+    <parent>generatepanel</parent>
     <variable>handles.Model(md).Input(ad).fourier.spinUpTime</variable>
     <type>real</type>
   </element>

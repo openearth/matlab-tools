@@ -71,9 +71,7 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeCrossSection=0;
     handles.Model(md).Input(ad).deleteCrossSection=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','crosssections');
-    setUIElements('delft3dflow.monitoring.monitoringpanel.crosssections');
-    setHandles(handles);
-    
+    setHandles(handles);    
 else
     opt=varargin{1};
     switch(lower(opt))
@@ -288,13 +286,4 @@ setInstructions({'','','Drag line for new position of cross section'});
 
 %%
 function refreshCrossSections
-setUIElement('delft3dflow.monitoring.monitoringpanel.crosssections.listcrosssections');
-setUIElement('delft3dflow.monitoring.monitoringpanel.crosssections.editcrsm1');
-setUIElement('delft3dflow.monitoring.monitoringpanel.crosssections.editcrsm2');
-setUIElement('delft3dflow.monitoring.monitoringpanel.crosssections.editcrsn1');
-setUIElement('delft3dflow.monitoring.monitoringpanel.crosssections.editcrsn2');
-setUIElement('delft3dflow.monitoring.monitoringpanel.crosssections.editname');
-setUIElement('delft3dflow.monitoring.monitoringpanel.crosssections.toggleaddcrosssection');
-setUIElement('delft3dflow.monitoring.monitoringpanel.crosssections.toggleselectcrosssection');
-setUIElement('delft3dflow.monitoring.monitoringpanel.crosssections.togglechangecrosssection');
-
+gui_updateActiveTab;

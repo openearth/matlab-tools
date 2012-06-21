@@ -71,9 +71,7 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeDrogue=0;
     handles.Model(md).Input(ad).deleteDrogue=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drogues');
-    setHandles(handles);
-    setUIElements('delft3dflow.monitoring.monitoringpanel.drogues');
-    
+    setHandles(handles);    
 else
     
     opt=varargin{1};
@@ -274,14 +272,4 @@ setInstructions({'','','Click new position of drogue'});
 
 %%
 function refreshDrogues
-setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.listdrogues');
-setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.editdrom');
-setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.editdron');
-setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.editdroreleasetime');
-setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.editdrorecoverytime');
-setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.editdroname');
-setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.toggleadddrogue');
-setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.toggleselectdrogue');
-setUIElement('delft3dflow.monitoring.monitoringpanel.drogues.togglechangedrogue');
-
-
+gui_updateActiveTab;

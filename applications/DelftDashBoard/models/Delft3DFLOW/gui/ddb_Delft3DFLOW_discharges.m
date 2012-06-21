@@ -71,7 +71,6 @@ if isempty(varargin)
     handles.Model(md).Input(ad).changeDischarge=0;
     handles.Model(md).Input(ad).deleteDischarge=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','discharges');
-    setUIElements('delft3dflow.discharges');
     setHandles(handles);
 else
     
@@ -292,19 +291,5 @@ setInstructions({'','','Click new position of discharge'});
 
 %%
 function refreshDischarges
-setUIElement('delft3dflow.discharges.listdischarges');
-setUIElement('delft3dflow.discharges.editdism');
-setUIElement('delft3dflow.discharges.editdisn');
-setUIElement('delft3dflow.discharges.editdisname');
-setUIElement('delft3dflow.discharges.radiolinear');
-setUIElement('delft3dflow.discharges.radioblock');
-setUIElement('delft3dflow.discharges.selecttype');
-setUIElement('delft3dflow.discharges.textinterpolation');
-setUIElement('delft3dflow.discharges.toggleadddischarge');
-setUIElement('delft3dflow.discharges.toggleselectdischarge');
-setUIElement('delft3dflow.discharges.togglechangedischarge');
-setUIElement('delft3dflow.discharges.editoutfallm');
-setUIElement('delft3dflow.discharges.editoutfalln');
-setUIElement('delft3dflow.discharges.editoutfallk');
-
+gui_updateActiveTab;
 

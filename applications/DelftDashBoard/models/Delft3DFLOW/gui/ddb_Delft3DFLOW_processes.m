@@ -63,7 +63,7 @@ function ddb_Delft3DFLOW_processes(varargin)
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('delft3dflow.processes');
+    % setUIElements('delft3dflow.processes');
 else
     
     opt=varargin{1};
@@ -72,14 +72,14 @@ else
         
         case{'edittracers'}
             ddb_Delft3DFLOW_editTracers;
-            setUIElement('delft3dflow.processes.checktracers');
-            setUIElement('delft3dflow.processes.pushedittracers');
+            % setUIElement('delft3dflow.processes.checktracers');
+            % setUIElement('delft3dflow.processes.pushedittracers');
             
             
         case{'editsediments'}
             ddb_Delft3DFLOW_editSediments;
-            setUIElement('delft3dflow.processes.checksediments');
-            setUIElement('delft3dflow.processes.pusheditsediments');
+            % setUIElement('delft3dflow.processes.checksediments');
+            % setUIElement('delft3dflow.processes.pusheditsediments');
             
         case{'checkconstituents'}
             

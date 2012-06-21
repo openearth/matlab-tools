@@ -64,7 +64,7 @@ ddb_zoomOff;
 
 if isempty(varargin)
     ddb_refreshScreen;
-    setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.wind');
+    % setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.wind');
 else
     handles=getHandles;
     opt=varargin{1};
@@ -72,7 +72,7 @@ else
         case{'openwndfile'}
             handles=ddb_readWndFile(handles,ad);
             setHandles(handles);
-            setUIElement('delft3dflow.physicalparameters.physicalparameterspanel.wind.timeseriestable');
+            % setUIElement('delft3dflow.physicalparameters.physicalparameterspanel.wind.timeseriestable');
         case{'savewndfile'}
             ddb_saveWndFile(handles,ad);
         case{'changewinddrag'}
@@ -85,7 +85,7 @@ else
             % %                 handles.Model(md).Input(ad).windStress=[coef(1) spds(1) coef(2) spds(2) coef(3) spds(3)];
             % %             end
             %             setHandles(handles);
-            %             setUIElement('delft3dflow.physicalparameters.physicalparameterspanel.wind.dragcoeftable');
+            %             % setUIElement('delft3dflow.physicalparameters.physicalparameterspanel.wind.dragcoeftable');
         case{'changenrbreakpoints'}
             nrp=handles.Model(md).Input(ad).nrWindStressBreakpoints;
             if nrp==2
@@ -96,7 +96,7 @@ else
                 handles.Model(md).Input(ad).windStressSpeeds(3)=handles.Model(md).Input(ad).windStressSpeeds(2);
             end
             setHandles(handles);
-            setUIElement('delft3dflow.physicalparameters.physicalparameterspanel.wind.dragcoeftable');
+            % setUIElement('delft3dflow.physicalparameters.physicalparameterspanel.wind.dragcoeftable');
     end
 end
 

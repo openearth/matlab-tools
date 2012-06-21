@@ -65,7 +65,7 @@ ddb_zoomOff;
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.morphology');
+    % setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.morphology');
 else
     opt=varargin{1};
     switch lower(opt)
@@ -73,11 +73,11 @@ else
             handles=getHandles;
             handles=ddb_readMorFile(handles,ad);
             setHandles(handles);
-            setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.morphology');
+            % setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.morphology');
         case{'savemorfile'}
             handles=getHandles;
             ddb_saveMorFile(handles,ad);
-            setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.morphology');
+            % setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.morphology');
     end
 end
 
