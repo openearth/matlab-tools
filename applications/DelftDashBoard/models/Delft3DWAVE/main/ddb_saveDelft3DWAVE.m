@@ -2,7 +2,7 @@ function ddb_saveDelft3DWAVE(opt)
 
 handles=getHandles;
 
-id=handles.ActiveDomain;
+id=1;
 
 switch lower(opt)
     case{'save'}
