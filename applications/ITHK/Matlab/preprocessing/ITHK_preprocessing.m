@@ -3,9 +3,12 @@ function ITHK_preprocessing(sens)
 
 global S
 
+fprintf('ITHK preprocessing\n');
+
 %% Preprocessing Unibest Interactive Tool
 
 %% Copy input files to output directory
+fprintf('ITHK preprocessing : Copy default UNIBEST model files\n');
 copyfile([S.settings.inputdir 'BASIS.MDA'],S.settings.outputdir);
 copyfile([S.settings.inputdir 'BASIS_ORIG.MDA'],S.settings.outputdir);
 copyfile([S.settings.inputdir 'BASIS_ORIG_OLD.MDA'],S.settings.outputdir);
@@ -21,6 +24,7 @@ copyfile([S.settings.inputdir 'NULL.OBW'],S.settings.outputdir);
 copyfile([S.settings.inputdir 'locations5magrof2.GKL'],S.settings.outputdir);
 
 %% Prepare input Unibest CL for different measures
+fprintf('ITHK preprocessing : Preparing UNIBEST structures amd nourishments\n');
 % IMPORTANT: first add groynes, since MDA might be updated --> increase in number of coastline points
 for jj = 1:length(S.userinput.phases)
     % If GRO-file in phase differs from 'basis', add groyne
