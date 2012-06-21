@@ -565,22 +565,22 @@ if ~isempty(str{1})
 
     switch tp
         case{'string'}
-            if isfield(el.list,'value')
-                if isfield(el.list.value,'variable')
-                    values=getSubFieldValue(s,el.list.value.variable);
+            if isfield(el.list,'values')
+                if isfield(el.list.values,'variable')
+                    values=gui_getValue(el,el.list.values.variable);
                 else
-                    values=el.list.value;
+                    values=el.list.values;
                 end
                 v=values{ii};
             else
                 v=str{ii};
             end
         otherwise
-            if isfield(el.list,'value')
-                if isfield(el.list.value,'variable')
-                    values=getSubFieldValue(s,el.list.value.variable);
+            if isfield(el.list,'values')
+                if isfield(el.list.values,'variable')
+                    values=gui_getValue(s,el.list.values.variable);
                 else
-                    values=el.list.value;
+                    values=el.list.values;
                 end
                 for jj=1:length(values)
                     vnum(jj)=str2double(values{jj});
