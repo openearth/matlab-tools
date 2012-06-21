@@ -12,6 +12,7 @@ imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
 vis=1;
 act=0;
 idomain=0;
+dact=0;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -20,8 +21,10 @@ for i=1:length(varargin)
                 act=varargin{i+1};
             case{'visible'}
                 vis=varargin{i+1};
-            case{'domain'}
+            case{'wavedomain'}
                 idomain=varargin{i+1};
+            case{'deactivate'}
+                dact=varargin{i+1};                
         end
     end
 end
@@ -44,17 +47,22 @@ for id=n1:n2
     
     % Exception for grid, make grid grey if it's not the active grid
     % or if all domains are selected and not active
-    if id~=awg || ~act
+    if dact==1
+        col=[0.7 0.7 0.7];
+    elseif id~=awg
         col=[0.7 0.7 0.7];
     else
         col=[0.35 0.35 0.35];
     end
     
     % Always plot grid (even is vis is 0)
-    handles=ddb_Delft3DWAVE_plotGrid(handles,option,'domain',id,'color',col,'visible',1);
+    handles=ddb_Delft3DWAVE_plotGrid(handles,option,'wavedomain',id,'color',col,'visible',1);
            
 end
-
+% Plot active grid on top
+try
+    uistack(handles.Model(imd).Input.Domain(awg).grid.plotHandles,'top');
+end
 setHandles(handles);
 
 

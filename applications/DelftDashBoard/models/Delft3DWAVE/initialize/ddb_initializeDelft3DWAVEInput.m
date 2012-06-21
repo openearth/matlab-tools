@@ -24,7 +24,8 @@ handles.Model(ii).Input(id).MDFFile            = '';
 handles.Model(ii).Input(id).AvailableFlowTimes = '';
 handles.Model(ii).Input(id).NrAvailableFlowTimes = 0;
 
-handles.Model(ii).Input(id).newGrd = '';
+handles.Model(ii).Input(id).newGrid = '';
+handles.Model(ii).Input(id).NestGrids = {''};
 handles.Model(ii).Input(id).ComputationalGrids={''};
 handles.Model(ii).Input(id).NrComputationalGrids=0;
 

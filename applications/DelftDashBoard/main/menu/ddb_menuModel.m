@@ -66,7 +66,7 @@ mdl=get(hObject,'Tag');
 handles=getHandles;
 
 % Deactivate current model
-feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',0);
+feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',0,'wavedomain',0,'deactivate',1);
 
 mdl=mdl(10:end);
 

@@ -24,9 +24,10 @@
     <position>220 90 70 20</position>
     <tooltipstring>Add grid file</tooltipstring>
     <text>Add</text>
-    <variable>handles.Model(md).Input(ad).newGrd</variable>
+    <variable>handles.Model(md).Input(ad).newGrid</variable>
     <extension>*.grd</extension>
     <selectiontext>Select grid File</selectiontext>
+    <showfilename>0</showfilename>
     <onchange>ddb_Delft3DWAVE_grid</onchange>
     <option1>add</option1>
   </element>
@@ -53,7 +54,7 @@
     <position>360 50</position>
     <prefix>Associated bathymetry grid : </text>
     <type>text</type>
-    <variable>handles.Model(md).Input(ad).Domain(awg).GrdFile</variable>
+    <variable>handles.Model(md).Input(ad).Domain(awg).GridFile</variable>
   </element>
   <element>
     <tag>textbathydep</tag>
@@ -69,7 +70,7 @@
     <position>360 10</position>
     <prefix>Nested in : </text>
     <type>text</type>
-    <variable>handles.Model(md).Input(ad).Domain(awg).NstFile</variable>
+    <variable>handles.Model(md).Input(ad).Domain(awg).NestGrid</variable>
   </element> 
   <element>
     <tag>textmmax</tag>

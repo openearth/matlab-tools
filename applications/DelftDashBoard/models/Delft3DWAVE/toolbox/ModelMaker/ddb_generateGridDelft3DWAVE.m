@@ -1,4 +1,4 @@
-function handles = ddb_generateGridDelft3DWAVE(handles, id, x, y, z, filename, varargin)
+function handles = ddb_generateGridDelft3DWAVE(handles,id,OPT,varargin)% x, y, z, filename, varargin)
 %DDB_GENERATEGRIDDELFT3DWAVE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -46,19 +46,25 @@ function handles = ddb_generateGridDelft3DWAVE(handles, id, x, y, z, filename, v
 % $HeadURL$
 % $Keywords: $
 
-set(gcf,'Pointer','arrow');
+attName=OPT.filename(1:end-4);
 
-attName=filename(1:end-4);
-
-if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-    coord='Spherical';
-else
-    coord='Cartesian';
+switch OPT.option
+    case{'read'}
+        [x,y,enc,coord]=ddb_wlgrid('read',OPT.filename);
+    case{'write'}
+        set(gcf,'Pointer','arrow');
+        if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+            coord='Spherical';
+        else
+            coord='Cartesian';
+        end
+        x=OPT.x; y=OPT.y;
+        ddb_wlgrid('write','FileName',[attName '.grd'],'X',x,'Y',y,'CoordinateSystem',coord);
 end
 
-ddb_wlgrid('write','FileName',[attName '.grd'],'X',x,'Y',y,'CoordinateSystem',coord);
-
-handles.Model(md).Input.Domain(id).GrdFile=[attName '.grd'];
+handles.Model(md).Input.Domain(id).Coordsyst = coord;
+handles.Model(md).Input.Domain(id).GridFile=[attName '.grd'];
+handles.Model(md).Input.Domain(id).GridName=attName;
 
 handles.Model(md).Input.Domain(id).grid.x=x;
 handles.Model(md).Input.Domain(id).grid.y=y;

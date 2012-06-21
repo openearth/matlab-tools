@@ -14,15 +14,15 @@
     <tooltipstring>Computational grids</tooltipstring>
     <text>Computational grids :</text>
     <textposition>above-center</textposition>
-    <variable>handles.Model(md).Input(ad).ActiveDomain</variable>
+    <variable>handles.activeWaveGrid</variable>
     <type>integer</type>
+    <callback>ddb_Delft3DWAVE_grid</callback>
+    <option1>selectgrid</option1>
     <list>
       <texts>
         <variable>handles.Model(md).Input(ad).ComputationalGrids</variable>
       </texts>
     </list>
-    <onchange>ddb_Delft3DWAVE_nesting</onchange>
-    <option1>selectfromlist</option1>
   </element>
   <element>
     <tag>textcs</tag>
@@ -41,23 +41,23 @@
   <element>
     <tag>textgridname</tag>
     <style>text</style>
-    <position>450 80</position>
+    <position>450 75</position>
     <prefix>Grid filename : </text>
     <type>text</type>
-    <variable>handles.Model(md).Input(ad).Domain(awg).NstFile</variable>
+    <variable>handles.Model(md).Input(ad).Domain(awg).GridName</variable>
   </element>  
   <element>
     <tag>textassosgrid</tag>
     <style>text</style>
-    <position>450 60</position>
+    <position>450 50</position>
     <prefix>Associated bathymetry grid : </text>
     <type>text</type>
-    <variable>handles.Model(md).Input(ad).Domain(awg).GrdFile</variable>
+    <variable>handles.Model(md).Input(ad).Domain(awg).GridFile</variable>
   </element>
   <element>
     <tag>textassosdep</tag>
     <style>text</style>
-    <position>450 40</position>
+    <position>450 25</position>
     <prefix>Associated bathymetry data : </text>
     <type>text</type>
     <variable>handles.Model(md).Input(ad).Domain(awg).DepFile</variable>
@@ -68,16 +68,11 @@
     <position>510 100 110 15</position>
     <text>Nested in : </text>
     <type>string</type>
-    <variable>handles.Model(md).Input(ad).Domain(awg).NestFile</variable>
-    <onchange>ddb_Delft3DWAVE_nesting</onchange>
-    <option1>selectnestgrid</option1>
+    <variable>handles.Model(md).Input(ad).Domain(awg).NestGrid</variable>
     <list>
       <texts>
-        <variable>handles.Model(md).Input(ad).ComputationalGrids</variable>
+        <variable>handles.Model(md).Input(ad).NestGrids</variable>
       </texts>
-      <values>
-        <variable>handles.Model(md).Input(ad).ComputationalGrids</variable>
-      </values>      
     </list>     
   </element>  
 </root>

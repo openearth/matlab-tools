@@ -90,7 +90,7 @@ try
     
 %     for j=1:length(handles.Model)
         f=handles.Model(md).plotFcn;
-        feval(f,'update','active',0,'domain',ad,'visible',1);
+        feval(f,'update','active',0,'domain',ad,'visible',1,'wavedomain',awg);
 %     end
     
     for j=1:length(handles.Toolbox)

@@ -66,7 +66,7 @@ imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
 
 col=[0.35 0.35 0.35];
 vis=1;
-id=ad;
+id=awg;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -75,7 +75,7 @@ for i=1:length(varargin)
                 col=varargin{i+1};
             case{'visible'}
                 vis=varargin{i+1};
-            case{'domain'}
+            case{'wavedomain'}
                 id=varargin{i+1};
         end
     end

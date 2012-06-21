@@ -20,39 +20,68 @@ end
 function addGrid
 
 handles=getHandles;
-tmp = handles.Model(md).Input(ad).NrComputationalGrids+1;
-handles=ddb_initializeDelft3DWAVEDomain(handles,md,ad,tmp);
-[pathstr,name,ext] = fileparts(handles.Model(md).Input(ad).newGrd);
-handles.Model(md).Input(ad).ComputationalGrids{tmp} = name;
-handles.Model(md).Input(ad).Domain(tmp).GrdFile = handles.Model(md).Input(ad).newGrd;
-handles.Model(md).Input(ad).NrComputationalGrids = tmp;
-fid = fopen(handles.Model(md).Input(ad).Domain(tmp).GrdFile,'r');
-[Temp,Rest] = strtok(fgetl(fid),'=');
-fclose(fid);
-handles.Model(md).Input(ad).Domain(tmp).Coordsyst = Rest(3:end);
-handles.Model(md).Input(ad).Domain(tmp).EncFile   = [name '.enc'];
+nrgrids = handles.Model(md).Input(ad).NrComputationalGrids+1;
+filename = handles.Model(md).Input(ad).newGrid;
+[pathstr,name,ext] = fileparts(filename);
+% Set grid values in handles
+handles.Model(md).Input(ad).NrComputationalGrids = nrgrids;
+handles=ddb_initializeDelft3DWAVEDomain(handles,md,ad,nrgrids);
+handles.Model(md).Input.ComputationalGrids{nrgrids}=name;
+handles.activeWaveGrid=nrgrids;
+OPT.option = 'read'; OPT.filename = filename;
+handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
+% Set NestGrids
+if handles.Model(md).Input(ad).NrComputationalGrids>1
+   handles.Model(md).Input.Domain(nrgrids).NestGrid=handles.Model(md).Input(ad).ComputationalGrids{1};
+else
+    handles.Model(md).Input.Domain(nrgrids).NestGrid='';
+end
+handles = ddb_setNestGridsDelft3DWAVE(handles);
+% Plot new domain
+handles=ddb_Delft3DWAVE_plotGrid(handles,'plot','wavedomain',nrgrids,'active',1);
 setHandles(handles);
+% Refresh all domains
+ddb_plotDelft3DWAVE('update','wavedomain',0,'active',1);
 
 %%
 function deleteGrid
 
 handles=getHandles;
-handles.Model(md).Input(ad).Domain = removeFromStruc(handles.Model(md).Input(ad).Domain, awg);
-handles.Model(md).Input(ad).NrComputationalGrids=length(handles.Model(md).Input(ad).Domain);
-handles.Model(md).Input(ad).ComputationalGrids={''};
-for jj=1:length(handles.Model(md).Input(ad).Domain)
-    [pathstr,name,ext] = fileparts(handles.Model(md).Input(ad).Domain(jj).GrdFile);
-    handles.Model(md).Input(ad).ComputationalGrids{jj}=name;
+for ii=1:handles.Model(md).Input(ad).NrComputationalGrids
+    nestGrids{ii} = handles.Model(md).Input(ad).Domain(ii).NestGrid;
 end
-handles.activeWaveGrid=min(handles.Model(md).Input(ad).NrComputationalGrids,awg);
-if isempty(handles.Model(md).Input(ad).Domain)
-    handles.Model(md).Input(ad).NrComputationalGrids = 0;
-    handles.activeWaveGrid=1;
+if ~isempty(strmatch(handles.Model(md).Input(ad).Domain(awg).GridName,nestGrids,'exact'))
+    ddb_giveWarning('text','Cannot delete grid because other grid is nested in it')
+    return
+else
+    % Delete domain from map
+    handles=ddb_Delft3DWAVE_plotGrid(handles,'delete','wavedomain',awg,'active',1);
+    % Delete domain from struct
+    handles.Model(md).Input(ad).Domain = removeFromStruc(handles.Model(md).Input(ad).Domain, awg);
+    handles.Model(md).Input(ad).NrComputationalGrids=length(handles.Model(md).Input(ad).Domain);
     handles.Model(md).Input(ad).ComputationalGrids={''};
-    handles=ddb_initializeDelft3DWAVEDomain(handles,md,ad,1);
+    for jj=1:length(handles.Model(md).Input(ad).Domain)
+        [pathstr,name,ext] = fileparts(handles.Model(md).Input(ad).Domain(jj).GridFile);
+        handles.Model(md).Input(ad).ComputationalGrids{jj}=name;
+    end
+    handles.activeWaveGrid=min(handles.Model(md).Input(ad).NrComputationalGrids,awg);
+    % Initialize Domain if isempty
+    if isempty(handles.Model(md).Input(ad).Domain)
+        handles.Model(md).Input(ad).NrComputationalGrids = 0;
+        handles.activeWaveGrid=1;
+        handles.Model(md).Input(ad).ComputationalGrids={''};
+        handles=ddb_initializeDelft3DWAVEDomain(handles,md,ad,1);
+    end
+    % Set NestGrids    
+    handles = ddb_setNestGridsDelft3DWAVE(handles);    
+    setHandles(handles);
+    % Refresh all domains
+    ddb_plotDelft3DWAVE('update','wavedomain',0,'active',1);
 end
-setHandles(handles);
-
 %%
 function selectGrid
-ddb_plotDelft3DWAVE('update','domain',0,'active',1);
+% Set NestGrids
+handles = getHandles;
+handles = ddb_setNestGridsDelft3DWAVE(handles);
+setHandles(handles);
+ddb_plotDelft3DWAVE('update','wavedomain',0,'active',1);

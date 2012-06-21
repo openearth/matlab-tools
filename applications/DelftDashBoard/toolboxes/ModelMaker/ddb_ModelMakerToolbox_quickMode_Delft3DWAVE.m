@@ -259,19 +259,20 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
         nrgrids=handles.Model(md).Input.NrComputationalGrids;
         handles.Model(md).Input.ComputationalGrids{nrgrids}=filename(1:end-4);
         handles=ddb_initializeDelft3DWAVEDomain(handles,md,ad,nrgrids);
-        handles.activeWaveGrid=nrgrids;        
-        handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,x,y,z,filename);
+        handles.activeWaveGrid=nrgrids;
+        OPT.option = 'write'; OPT.x = x; OPT.y = y; OPT.z = z; OPT.filename = filename;
+        handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
 
 %         % Delete existing domain
 %         ddb_plotDelft3DWAVE('delete','domain',nrgrids);
 
         % Plot new domain
-        handles=ddb_Delft3DWAVE_plotGrid(handles,'plot','domain',nrgrids,'active',1);
+        handles=ddb_Delft3DWAVE_plotGrid(handles,'plot','wavedomain',nrgrids,'active',1);
 
         setHandles(handles);
 
         % Refresh all domains
-        ddb_plotDelft3DWAVE('update','domain',0,'active',1);
+        ddb_plotDelft3DWAVE('update','wavedomain',0,'active',1);
 
     end
     
