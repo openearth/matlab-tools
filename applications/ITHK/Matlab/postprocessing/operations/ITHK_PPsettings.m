@@ -83,9 +83,11 @@ fprintf('ITHK postprocessing : Initialising settings\n');
 global S
 
 %% Basic ITHK directories and settings
+warning off
 S.settings                     = xml_load('ITHK_settings.xml');
 S.settings.inputdir            = [S.settings.basedir 'Matlab\preprocessing\input\'];
 S.settings.outputdir           = [S.settings.basedir 'UB model\'];
+warning on
 
 %% Load EPSG if necessary
 if ~isfield(S,'EPSG')
