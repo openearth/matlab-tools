@@ -17,10 +17,7 @@
     <tag>checkuseflowbedlevel</tag>
     <style>checkbox</style>
     <position>65 120</position>
-    <variable>
-      <name>FlowBedLevel</name>
-      <type>boolean</type>
-    </variable>
+    <variable>FlowBedLevel</variable>
     <tooltipstring>Use bed level from Delft3D-FLOW (overrides bed level from depth file in Delft3D-WAVE)</tooltipstring>
     <text>Bathymetry</text>
   </element>
@@ -28,10 +25,7 @@
     <tag>checkuseflowwaterlevel</tag>
     <style>checkbox</style>
     <position>65 95</position>
-    <variable>
-      <name>FlowWaterLevel</name>
-      <type>boolean</type>
-    </variable>
+    <variable>FlowWaterLevel</variable>
     <tooltipstring>Use water level from Delft3D-FLOW (overrides water level specified in MDW file)</tooltipstring>
     <text>Water level</text>
   </element>
@@ -39,10 +33,7 @@
     <tag>checkuseflowcurrent</tag>
     <style>checkbox</style>
     <position>65 70</position>
-    <variable>
-      <name>FlowVelocity</name>
-      <type>boolean</type>
-    </variable>
+    <variable>FlowVelocity</variable>
     <tooltipstring>Use velocities from Delft3D-FLOW (overrides velocity specified in MDW file)</tooltipstring>
     <text>Current</text>
   </element>
@@ -50,10 +41,7 @@
     <tag>checkuseflowwind</tag>
     <style>checkbox</style>
     <position>65 45</position>
-    <variable>
-      <name>FlowWind</name>
-      <type>boolean</type>
-    </variable>
+    <variable>FlowWind</variable>
     <tooltipstring>Use wind from Delft3D-FLOW (overrides wind specified in MDW file)</tooltipstring>
     <text>Wind</text>
   </element>
@@ -63,53 +51,32 @@
     <position>65 20 100 20</position>
     <tooltipstring>Select Delft3D-FLOW mdf file</tooltipstring>
     <text>Select FLOW file</text>
-    <variable>
-      <name>MDFFile</name>
-      <type>string</type>
-    </variable>
+    <variable>MDFFile</variable>
     <extension>*.mdf</extension>
     <selectiontext>Select MDF File</selectiontext>
     <onchange>ddb_Delft3DWAVE_selectMDFfile</onchange>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-            <tag>checkuseflowbedlevel</tag>
-            <tag>checkuseflowwaterlevel</tag>
-            <tag>checkuseflowcurrent</tag>
-            <tag>checkuseflowwind</tag>
-        </tag>
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>
-              <name>FlowBedLevel</name>
-              <type>boolean</type>
-            </variable>
+            <variable>FlowBedLevel</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>
-              <name>FlowWaterLevel</name>
-              <type>boolean</type>
-            </variable>
+            <variable>FlowWaterLevel</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>
-              <name>FlowVelocity</name>
-              <type>boolean</type>
-            </variable>
+            <variable>FlowVelocity</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>
-              <name>FlowWind</name>
-              <type>boolean</type>
-            </variable>
+            <variable>FlowWind</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>

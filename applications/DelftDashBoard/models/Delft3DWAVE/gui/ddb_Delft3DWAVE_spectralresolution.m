@@ -3,7 +3,7 @@ function ddb_Delft3DWAVE_spectralresolution(varargin)
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('delft3dwave.grids.gridpanel.spectralresolution');
+    % setUIElements('delft3dwave.grids.gridpanel.spectralresolution');
 else
     opt=varargin{1};
     switch lower(opt)

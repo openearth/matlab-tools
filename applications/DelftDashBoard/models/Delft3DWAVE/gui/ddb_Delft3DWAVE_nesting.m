@@ -3,7 +3,7 @@ function ddb_Delft3DWAVE_nesting(varargin)
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('delft3dwave.grids.gridpanel.nesting');
+    % setUIElements('delft3dwave.grids.gridpanel.nesting');
 else
     opt=varargin{1};
     switch lower(opt)

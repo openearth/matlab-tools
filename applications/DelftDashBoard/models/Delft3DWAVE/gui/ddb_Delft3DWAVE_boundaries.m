@@ -5,7 +5,7 @@ handles=getHandles;
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('delft3dwave.boundaries');
+    % setUIElements('delft3dwave.boundaries');
 else
     opt=varargin{1};
     switch lower(opt)

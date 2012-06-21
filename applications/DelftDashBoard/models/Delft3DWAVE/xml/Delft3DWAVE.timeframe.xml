@@ -13,7 +13,7 @@
     <position>175 130 50 20</position>
     <text>Water level correction : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).WaterlevelCor</variable>
+    <variable>handles.Model(md).Input(ad).WaterlevelCor</variable>
     <type>real</type>
     <tooltipstring>Enter water level correction</tooltipstring>
   </element>
@@ -31,9 +31,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>flowtimepointspanel</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -62,9 +59,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>editflowtimepoints</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -87,10 +81,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>editflowtimepoints</tag>
-          <tag>edittimepoints</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -113,10 +103,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>editflowtimepoints</tag>
-          <tag>edittimepoints</tag>          
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -193,15 +179,15 @@
     <position>580 110 105 20</position>
     <text>Time : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).Time</variable>
-    <type>string</type>
+    <variable>handles.Model(md).Input(ad).Time</variable>
+    <type>datetime</type>
     <tooltipstring>Enter time</tooltipstring>
   </element>
   <element>
     <tag>texttimeunit</tag>
     <style>text</style>
     <position>690 110</position>
-    <text>[yyyy-mm-dd hh:mm:ss]</text>
+    <text>yyyy mm dd HH MM SS</text>
   </element>
   <element>
     <tag>editwaterlevel</tag>
@@ -209,7 +195,7 @@
     <position>580 85 105 20</position>
     <text>Water level : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).WaterLevel</variable>
+    <variable>handles.Model(md).Input(ad).WaterLevel</variable>
     <type>real</type>
     <tooltipstring>Enter water level</tooltipstring>
   </element>
@@ -225,7 +211,7 @@
     <position>580 60 105 20</position>
     <text>X-velocity : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).Xvelocity</variable>
+    <variable>handles.Model(md).Input(ad).Xvelocity</variable>
     <type>real</type>
     <tooltipstring>Enter velocity in x direction</tooltipstring>
   </element>
@@ -241,7 +227,7 @@
     <position>580 35 105 20</position>
     <text>Y-velocity : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).Yvelocity</variable>
+    <variable>handles.Model(md).Input(ad).Yvelocity</variable>
     <type>real</type>
     <tooltipstring>Enter velocity in y direction</tooltipstring>
   </element>

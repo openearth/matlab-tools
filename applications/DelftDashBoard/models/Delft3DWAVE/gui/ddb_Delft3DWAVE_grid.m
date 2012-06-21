@@ -4,7 +4,7 @@ function ddb_Delft3DWAVE_grid(varargin)
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('delft3dwave.grids.gridpanel.grid');
+    % setUIElements('delft3dwave.grids.gridpanel.grid');
 else
     opt=varargin{1};
     switch lower(opt)
@@ -12,6 +12,8 @@ else
             addGrid;
         case{'delete'}
             deleteGrid;
+        case{'selectgrid'}
+            selectGrid;
     end
 end
 
@@ -31,7 +33,6 @@ fclose(fid);
 handles.Model(md).Input(ad).Domain(tmp).Coordsyst = Rest(3:end);
 handles.Model(md).Input(ad).Domain(tmp).EncFile   = [name '.enc'];
 setHandles(handles);
-setUIElements('delft3dwave.grids.gridpanel.grid'); 
 
 %%
 function deleteGrid
@@ -50,4 +51,7 @@ if isempty(handles.Model(md).Input(ad).Domain)
     handles=ddb_initializeDelft3DWAVEDomain(handles,md,ad,1);
 end
 setHandles(handles);
-setUIElements('delft3dwave.grids.gridpanel.grid');
+
+%%
+function selectGrid
+ddb_plotDelft3DWAVE('update','domain',0,'active',1);

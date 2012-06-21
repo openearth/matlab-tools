@@ -42,10 +42,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushimportobstacle</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -74,11 +70,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -101,11 +92,6 @@
     <dependencies>
         <dependency>
           <action>enable</action>
-          <tags>
-            <tag>pushaddobstacle</tag>
-            <tag>pushdeleteobstacle</tag>
-            <tag>pushimportobstacle</tag>            
-          </tags>
           <checkfor>any</checkfor>
           <checks>
             <check>
@@ -115,20 +101,6 @@
             </check>
           </checks>
         </dependency>    
-        <dependency>
-          <action>on</action>
-          <tags>
-            <tag>radiodam</tag>
-          </tags>
-          <checkfor>all</checkfor>
-          <checks>
-            <check>
-              <variable>handles.Model(md).Input(ad).ObstacleType</variable>
-              <value>sheet</value>
-              <operator>eq</operator>
-            </check>
-          </checks>
-        </dependency>
     </dependencies>    
   </element>
   <element>
@@ -142,11 +114,6 @@
     <dependencies>
         <dependency>
           <action>enable</action>
-          <tags>
-            <tag>pushaddobstacle</tag>
-            <tag>pushdeleteobstacle</tag>
-            <tag>pushimportobstacle</tag>            
-          </tags>
           <checkfor>any</checkfor>
           <checks>
             <check>
@@ -156,20 +123,6 @@
             </check>
           </checks>
         </dependency>
-        <dependency>
-          <action>on</action>
-          <tags>
-            <tag>radiosheet</tag>
-          </tags>
-          <checkfor>all</checkfor>
-          <checks>
-            <check>
-              <variable>handles.Model(md).Input(ad).ObstacleType</variable>
-              <value>dam</value>
-              <operator>eq</operator>
-            </check>
-          </checks>
-        </dependency>        
     </dependencies>    
   </element>
   <element>
@@ -190,11 +143,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -218,12 +166,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-          <tag>editreflections</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -248,12 +190,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-	  <tag>pushdeleteobstacle</tag>
-	  <tag>pushimportobstacle</tag>            
-          <tag>editreflections</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -282,13 +218,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-          <tag>radiosheet</tag>
-          <tag>radiodam</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -313,13 +242,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-          <tag>radiosheet</tag>
-          <tag>radiodam</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -348,13 +270,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-          <tag>radiosheet</tag>
-          <tag>radiodam</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -379,13 +294,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-          <tag>radiosheet</tag>
-          <tag>radiodam</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -414,13 +322,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-          <tag>radiosheet</tag>
-          <tag>radiodam</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -445,13 +346,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-          <tag>radiosheet</tag>
-          <tag>radiodam</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -480,13 +374,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-          <tag>radiosheet</tag>
-          <tag>radiodam</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -511,13 +398,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-          <tag>radiosheet</tag>
-          <tag>radiodam</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -557,11 +437,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>any</checkfor>
         <checks>
           <check>
@@ -584,11 +459,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -611,11 +481,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -635,11 +500,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -657,17 +517,12 @@
     <position>980 115 50 20</position>
     <text>X-start : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Xstart</variable>
+    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Xstart</variable>
     <type>real</type>
     <tooltipstring>Enter start x coordinate</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -687,11 +542,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -709,17 +559,12 @@
     <position>980 90 50 20</position>
     <text>Y-start : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Ystart</variable>
+    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Ystart</variable>
     <type>real</type>
     <tooltipstring>Enter start y coordinate</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -739,11 +584,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -761,17 +601,12 @@
     <position>980 65 50 20</position>
     <text>X-start : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Xend</variable>
+    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Xend</variable>
     <type>real</type>
     <tooltipstring>Enter end x coordinate</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -791,11 +626,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -813,17 +643,12 @@
     <position>980 40 50 20</position>
     <text>Y-end : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Yend</variable>
+    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Yend</variable>
     <type>real</type>
     <tooltipstring>Enter end y coordinate</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -843,11 +668,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushaddobstacle</tag>
-          <tag>pushdeleteobstacle</tag>
-          <tag>pushimportobstacle</tag>            
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>

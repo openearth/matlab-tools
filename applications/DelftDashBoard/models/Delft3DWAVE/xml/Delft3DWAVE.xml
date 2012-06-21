@@ -53,12 +53,12 @@
         <tab>
           <tag>numericalparameters</tag>
           <tabstring>Numerical Parameters</tabstring>
-          <elements>Delft3DWAVE.physicalparameters.xml</elements>          
+          <elements>Delft3DWAVE.numericalparameters.xml</elements>          
         </tab>
         <tab>
           <tag>outputcurves</tag>
           <tabstring>Output Curves</tabstring>
-          <callback>ddb_editDelft3DWAVEOutputCurves</callback>
+          <elements>Delft3DWAVE.outputcurves.xml</elements>          
         </tab>
         <tab>
           <tag>outputparameters</tag>

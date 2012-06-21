@@ -12,9 +12,6 @@
     <dependencies>
       <dependency>
         <action>on</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -37,9 +34,6 @@
     <dependencies>
       <dependency>
         <action>on</action>
-        <tags>
-          <tag>radiouniformw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -57,16 +51,12 @@
     <position>70 65 50 20</position>
     <text>Speed : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).SpeedW</variable>
+    <variable>handles.Model(md).Input(ad).SpeedW</variable>
     <type>real</type>
     <tooltipstring>Enter wind speed</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -86,10 +76,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -107,16 +93,12 @@
     <position>70 40 50 20</position>
     <text>Direction : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).DirectionW</variable>
+    <variable>handles.Model(md).Input(ad).DirectionW</variable>
     <type>real</type>
     <tooltipstring>Enter wind direction</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -136,10 +118,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -165,10 +143,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiouniformw</tag>
-          <tag>radiospacevaryingw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -188,10 +162,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiouniformw</tag>
-          <tag>radiospacevaryingw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -214,29 +184,11 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiouniformw</tag>
-          <tag>radiospacevaryingw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
             <variable>handles.Model(md).Input(ad).Wind</variable>
             <value>Spacevarying</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiotospecify</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).WindGrid</variable>
-            <value>Asbathy</value>
             <operator>eq</operator>
           </check>
         </checks>
@@ -254,10 +206,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiouniformw</tag>
-          <tag>radiospacevaryingw</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -291,12 +239,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-          <tag>radiotospecify</tag>
-          <tag>radioasbathy</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -319,18 +261,12 @@
     <position>580 85 50 20</position>
     <text>X-origin : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).XoriginW</variable>
+    <variable>handles.Model(md).Input(ad).XoriginW</variable>
     <type>real</type>
     <tooltipstring>Enter x origin</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-          <tag>radiotospecify</tag>
-          <tag>radioasbathy</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -353,18 +289,12 @@
     <position>580 60 50 20</position>
     <text>Y-origin : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).YoriginW</variable>
+    <variable>handles.Model(md).Input(ad).YoriginW</variable>
     <type>real</type>
     <tooltipstring>Enter y origin</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-          <tag>radiotospecify</tag>
-          <tag>radioasbathy</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -387,18 +317,12 @@
     <position>580 35 50 20</position>
     <text>Angle : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).Angle</variable>
+    <variable>handles.Model(md).Input(ad).AngleW</variable>
     <type>real</type>
     <tooltipstring>Enter grid angle</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-          <tag>radiotospecify</tag>
-          <tag>radioasbathy</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -421,18 +345,12 @@
     <position>780 110 50 20</position>
     <text>Number of X-cells : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).XcellsW</variable>
+    <variable>handles.Model(md).Input(ad).XcellsW</variable>
     <type>integer</type>
     <tooltipstring>Enter number of cells in x direction</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-          <tag>radiotospecify</tag>
-          <tag>radioasbathy</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -455,18 +373,12 @@
     <position>780 85 50 20</position>
     <text>Number of Y-cells : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).YcellsW</variable>
+    <variable>handles.Model(md).Input(ad).YcellsW</variable>
     <type>integer</type>
     <tooltipstring>Enter number of cells in y direction</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-          <tag>radiotospecify</tag>
-          <tag>radioasbathy</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -489,18 +401,12 @@
     <position>780 60 50 20</position>
     <text>X-grid size : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).XsizeW</variable>
+    <variable>handles.Model(md).Input(ad).XsizeW</variable>
     <type>real</type>
     <tooltipstring>Enter cell size in x direction</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-          <tag>radiotospecify</tag>
-          <tag>radioasbathy</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -523,18 +429,12 @@
     <position>780 35 50 20</position>
     <text>Y-grid size : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(ii).Input(id).YsizeW</variable>
+    <variable>handles.Model(md).Input(ad).YsizeW</variable>
     <type>real</type>
     <tooltipstring>Enter cell size in y direction</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiospacevaryingw</tag>
-          <tag>radiouniformw</tag>
-          <tag>radiotospecify</tag>
-          <tag>radioasbathy</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>

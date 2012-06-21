@@ -10,6 +10,8 @@
     <textposition>above-center</textposition>
     <variable>handles.activeWaveGrid</variable>
     <type>integer</type>
+    <callback>ddb_Delft3DWAVE_grid</callback>
+    <option1>selectgrid</option1>
     <list>
       <texts>
         <variable>handles.Model(md).Input(ad).ComputationalGrids</variable>

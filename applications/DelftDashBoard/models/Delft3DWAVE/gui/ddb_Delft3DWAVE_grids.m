@@ -3,7 +3,7 @@ function ddb_Delft3DWAVE_grids(varargin)
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('delft3dwave.grids');
+    % setUIElements('delft3dwave.grids');
 else
     opt=varargin{1};
     switch lower(opt)
