@@ -5,9 +5,12 @@ function result=ITHK_runUB(outputDir)
 
 global S
 
+fprintf('ITHK running UNIBEST simulation\n');
+
 %% run Unibest-CL
 curdir=cd;
 cd(S.settings.outputdir);
 batchfileName='computeClrIT.bat';
-[status,result] = system(batchfileName,'-echo');
+[status,result] = system(batchfileName);
+%[status,result] = system(batchfileName,'-echo');
 cd(curdir);
