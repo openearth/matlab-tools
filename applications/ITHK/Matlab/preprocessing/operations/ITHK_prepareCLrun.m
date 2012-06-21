@@ -2,6 +2,8 @@ function ITHK_prepareCLrun
 
 global S
 
+fprintf('ITHK preprocessing : Preparing phasing of UNIBEST in time\n');
+
 %% write a Unibest CL-run specification file
 CLRfileName      = [S.settings.outputdir S.userinput.name,'.CLR'];
 time             =  [2005+S.userinput.phases 2005+S.userinput.duration];
