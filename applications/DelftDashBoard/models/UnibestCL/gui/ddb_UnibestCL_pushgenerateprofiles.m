@@ -11,7 +11,7 @@ handles.Model(md).Input.PROdata = PROdata;
 setHandles(handles);
 
 %GUI updates
-setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements)
+% setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements)
 handles.Model(md).Input.profilesgenerated=1;
 if  handles.Model(md).Input.profilesgenerated==1
     elements = handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements;    

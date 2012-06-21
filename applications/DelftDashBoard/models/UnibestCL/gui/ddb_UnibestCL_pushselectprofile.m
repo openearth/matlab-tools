@@ -27,5 +27,5 @@ if  pr>0
     AA = find(A==1);
     set(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements(AA).handle,'Enable','on');
 end
-setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements)
+% setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements)
 setHandles(handles);

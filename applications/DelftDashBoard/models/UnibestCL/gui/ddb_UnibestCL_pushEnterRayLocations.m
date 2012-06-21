@@ -41,7 +41,7 @@ handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements(end+1).handle =
 handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements(end).style = {'table'};
 handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements(end).tag = {'createrayloctable'};
 setHandles(handles);
-% setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements);
+% % setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements);
 
 function editRAYloctable(hObject,eventdata)
 handles=getHandles;

@@ -18,7 +18,7 @@ end
 setHandles(handles);
 
 %GUI updates
-setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements)
+% setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements)
 handles.Model(md).Input.RAYlocfileselected=1;
 if  handles.Model(md).Input.XYZfileselected==1 && handles.Model(md).Input.RAYlocfileselected==1
     elements = handles.Model(md).GUI.elements.tabs(3).elements.tabs(3).elements;    

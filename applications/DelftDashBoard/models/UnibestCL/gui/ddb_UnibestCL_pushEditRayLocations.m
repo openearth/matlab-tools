@@ -43,7 +43,7 @@ if ~isempty(data)
     handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements(end).tag = {'filerayloctable'};
 end
 setHandles(handles);
-% setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements);
+% % setUIElements(handles.Model(md).GUI.elements.tabs(3).elements.tabs(2).elements);
 
 function editRAYloctable(hObject,eventdata)
 handles=getHandles;
