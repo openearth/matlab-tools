@@ -41,10 +41,10 @@ for cc=1:length(ldbCell)
     outCell{cc}=out;
 end
 
-out=rebuildLDB(outCell);
+out=rebuildLdb(outCell);
 
 if ~isstruct(ldb)
-    outLDB=rebuildLDB(outCell);
+    outLDB=rebuildLdb(outCell);
 else
     outLDB.ldbCell=outCell;
     outLDB.ldbBegin=ldbBegin;
