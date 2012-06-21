@@ -12,6 +12,8 @@ try
     dr=model.dir;
     if model.forecastplot.plot
         
+        [weather] = url_readWeather(model.forecastplot.weatherstation);
+        
         settings.thin = model.forecastplot.thinning;
         settings.scal = model.forecastplot.scalefactor;
         settings.xlim = model.forecastplot.xlims;
@@ -30,12 +32,22 @@ try
         fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'wl.' model.forecastplot.wlstation '.mat'];
         s(4).data=load(fname);
         
+        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'hs.' model.forecastplot.wavestation '.mat'];
+        wav(1).data=load(fname);
+        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'tp.' model.forecastplot.wavestation '.mat'];
+        wav(2).data=load(fname);
+        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'wavdir.' model.forecastplot.wavestation '.mat'];
+        wav(3).data=load(fname);
+        
+        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'windvel.mat'];
+        wnd(1).data=load(fname);
+        
         s(1).data.U(isnan(s(1).data.U)) = 0;
         s(1).data.V(isnan(s(1).data.V)) = 0;
-
+        
         s(3).data.Val(s(3).data.Val>0.2) = NaN;
         s(3).data.Val(s(3).data.Val<=0.2) = -0.1;
-
+        
         if exist([dr 'data' filesep model.forecastplot.ldb '.ldb'],'file')
             ldb=landboundary('read',[dr 'data' filesep model.forecastplot.ldb '.ldb']);
         end
@@ -46,7 +58,7 @@ try
         n3=max(n3,1);
         nt=length(s(1).data.Time);
         
-        tel = 0; 
+        tel = 0;
         
         for it=1:n3:nt
             
@@ -60,6 +72,114 @@ try
             
             timnow = s(1).data.Time(it);
             
+            try %get wave forecast
+                id = find(round(timnow*24*60)==round(wav(1).data.Time*24*60));
+                hsnow = num2str(wav(1).data.Val(id),'%2.1f');
+                tpnow = num2str(wav(2).data.Val(id),'%2.0f');
+                wavdirnow = num2str(wav(3).data.Val(id),'%3.0f');
+                
+                wavdir = str2num(wavdirnow);
+                
+                if wavdir >= 0 && wavdir < 22.5
+                    wavid = 3;
+                elseif wavdir >= 22.5 && wavdir < 67.5
+                    wavid = 7;
+                elseif wavdir >= 67.5 && wavdir < 112.5
+                    wavid = 4;
+                elseif wavdir >= 112.5 && wavdir < 157.5
+                    wavid = 8;
+                elseif wavdir >= 157.5 && wavdir < 202.5
+                    wavid = 1;
+                elseif wavdir >= 202.5 && wavdir < 247.5
+                    wavid = 5;
+                elseif wavdir >= 247.5 && wavdir < 292.5
+                    wavid = 2;
+                elseif wavdir >= 292.5 && wavdir < 337.5
+                    wavid = 6;
+                elseif wavdir >= 337.5 && wavdir <= 360
+                    wavid = 3;
+                end
+                
+                wavIconFile = [hm.dataDir 'icons' filesep 'wind' filesep 'wind-arrows\wind-dart-white\256x256\wind-dart-white-' num2str(wavid) '.png'];
+                try
+                    imWave = imread(wavIconFile,'png','BackgroundColor',[1 1 1]);
+                end
+                
+                
+            catch
+                hsnow = 'n/a';
+                tpnow = 'n/a';
+                wavdirnow = 'n/a';
+            end
+            
+            try %get wind forecast
+                id = round(rand(1) * 9) + 1;%find(round(timnow*24)==round(wnd(1).data.Time*24));
+                wndUnow = wnd(1).data.U(id,model.forecastplot.windstation(1),model.forecastplot.windstation(2));
+                wndVnow = wnd(1).data.V(id,model.forecastplot.windstation(1),model.forecastplot.windstation(2));
+                windnow = num2str(sqrt(wndUnow.^2 + wndVnow.^2),'%2.0f');
+                winddirnow = num2str(mod(270 - rad2deg(atan2(wndVnow,wndUnow)),360),'%2.0f');
+                winddir = str2num(winddirnow);
+                
+                if winddir >= 0 && winddir < 22.5
+                    windid = 3;
+                elseif winddir >= 22.5 && winddir < 67.5
+                    windid = 7;
+                elseif winddir >= 67.5 && winddir < 112.5
+                    windid = 4;
+                elseif winddir >= 112.5 && winddir < 157.5
+                    windid = 8;
+                elseif winddir >= 157.5 && winddir < 202.5
+                    windid = 1;
+                elseif winddir >= 202.5 && winddir < 247.5
+                    windid = 5;
+                elseif winddir >= 247.5 && winddir < 292.5
+                    windid = 2;
+                elseif winddir >= 292.5 && winddir < 337.5
+                    windid = 6;
+                elseif winddir >= 337.5 && winddir <= 360
+                    windid = 3;
+                end
+                
+                bftscal = [0,1,2,3,4,5,6,7,8,9,10,11,12;
+                    0,0.2,1.5,3.3,5.4,7.9,10.7,13.8,17.1,20.7,24.4,28.4,32.6]';
+                
+                windbft = num2str(floor(interp1(bftscal(:,2),bftscal(:,1),str2num(windnow))));
+                
+                windIconFile = [hm.dataDir 'icons' filesep 'wind' filesep 'wind-arrows\wind-disc-transparent-background\256x256\wind-disc1-trans-' num2str(windid) '_w.png'];
+                try
+                    imWind = imread(windIconFile,'png','BackgroundColor',[1 1 1]);
+                end
+                
+            catch
+                windnow = 'n/a';
+                winddirnow = 'n/a';
+            end
+            
+            try %get water temperature
+                wtempnow = 'n/a';
+            catch
+                wtempnow = 'n/a';
+            end
+            
+            try %get weather forecast
+                weatherIds = find(timnow>=weather(:,1));
+                
+                if isempty(weatherIds)
+                    weatherId = round(rand(1)*8)+1;
+                else
+                    weatherId = weatherIds(end);
+                end
+                
+                try
+                    atempnow = num2str(weather(weatherId,2),'%2.0f');
+                catch
+                    atempnow = 'n/a';
+                end
+                
+                try
+                    imWthr = imread([hm.dataDir 'icons' filesep 'weather' filesep num2str(weather(weatherId,3),'%2.2d') '.png'],'png','BackgroundColor',[1 1 1]);
+                end
+            end
             % model plot
             
             ax1 = gca; hold on;
@@ -69,25 +189,25 @@ try
             velY = s(1).data.Y(1:thin:end,1:thin:end);
             velXComp = squeeze(s(1).data.U(it,1:thin:end,1:thin:end));
             velYComp = squeeze(s(1).data.V(it,1:thin:end,1:thin:end));
-
+            
             remID = ~(velXComp == 0 & velYComp == 0);
-     
+            
             quiver(velX(remID),velY(remID),scal*(velXComp(remID)),scal*(velYComp(remID)),0,'color',[1 1 1])
             
             pcolor(s(3).data.X,s(3).data.Y,squeeze(s(3).data.Val(it,:,:)));shading interp;axis equal
-
+            
             try
                 filledLDB(ldb,[1 1 0.8],[1 1 0.8],10,0);
             end
             
             [cb,h] = contour(s(2).data.X,s(2).data.Y,squeeze(s(2).data.Val),[-16:2:2]);
             set(h,'linecolor',[0.8 0.8 0.8]);
- 
+            
             clim([-0.1 1.5])
-            colormap([1 1 0.8; jet])    
+            colormap([1 1 0.8; jet])
             cb = colorbar;
             set(cb,'ylim',[0 1.5]);
-           
+            
             set(gca,'xlim',settings.xlim)
             set(gca,'ylim',settings.ylim)
             kmaxis(gca,settings.kmaxis)
@@ -97,39 +217,44 @@ try
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
             text(0.1,0.8,'Wind','fontsize',7,'fontweight','bold')
-            text(0.1,0.6,'Richting: ZW, 221^oN','fontsize',7)
-            text(0.1,0.4,'Snelheid: 10 m/s','fontsize',7)
-            text(0.1,0.2,'Kracht: 4 bft','fontsize',7)
+            text(0.1,0.6,['Richting: ' winddirnow '^oN'],'fontsize',7)
+            text(0.1,0.4,['Snelheid: ' windnow 'm/s'],'fontsize',7)
+            %            text(0.1,0.2,'Kracht: 4 bft','fontsize',7)
             
             % axes 2a
-            ax2a = axes('position',[0.763 0.309 0.0314 0.0439]);
+            ax2a = axes('position',[ 0.7611 0.2995  0.0424268  0.06719]);
+            %             ax2a = axes('position',[0.763 0.309 0.0334 0.0489]);
             axis equal;
             set(gca,'xtick',[]);set(gca,'ytick',[])
-            arrow([0 0],[0.93 1],'Width',1,'LineWidth',1.5,'length',15,'faceColor','b','edgecolor','b')
+            %             arrow([0 0],[0.93 1],'Width',1,'LineWidth',1.5,'length',15,'faceColor','b','edgecolor','b')
+            image(imWind)
+            text( mean(get(gca,'xlim')),mean(get(gca,'ylim')),windbft,'fontsize',9,'horizontalAlignment','center','fontweight','bold')
             box off;
             set(gca,'xcolor','w')
             set(gca,'ycolor','w')
+            set(gca,'ytick',[])
+            set(gca,'xtick',[])
             
             % axes 3
             ax3 = axes('position',[0.80 0.30 0.12 0.1]);
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
-            text(0.2,0.6,strrep(strrep(datestr(timnow,1),'-',' '),'May','Mei'),'fontsize',12)
-            text(0.25,0.4,datestr(timnow,16),'fontsize',12)
+            text(0.5,0.6,strrep(strrep(datestr(timnow,1),'-',' '),'May','Mei'),'fontsize',12,'HorizontalAlignment','center')
+            text(0.5,0.4,[datestr(timnow,15) 'u'],'fontsize',12,'HorizontalAlignment','center')
             
             % axes 4
             ax4 = axes('position',[0.68 0.20 0.12 0.1]); hold on;
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
             text(0.1,0.8,'Weer','fontsize',7,'fontweight','bold')
-            text(0.1,0.6,'Luchttemp.: 19^o','fontsize',7)
-            text(0.1,0.4,'Watertemp.: 12^o','fontsize',7)
-            text(0.1,0.2,'Bewolking: geen','fontsize',7)
+            text(0.1,0.6,['Luchttemp.: ' atempnow '^o'],'fontsize',7)
+            text(0.1,0.4,['Watertemp.: ' wtempnow '^o'],'fontsize',7)
+            %             text(0.1,0.2,'Bewolking: geen','fontsize',7)
             
             % axes 4a
             ax2a = axes('position',[0.763 0.209 0.0314 0.0439]);
             axis equal;
-            %             image(im1)
+            image(imWthr)
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box off;
             set(gca,'xcolor','w')
@@ -140,39 +265,45 @@ try
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
             text(0.1,0.8,'Golven','fontsize',7,'fontweight','bold')
-            text(0.1,0.6,'Richting: ZW, 225^oN','fontsize',7)
-            text(0.1,0.4,'Hoogte: 1.2m','fontsize',7)
-            text(0.1,0.2,'Periode: 5s','fontsize',7)
+            text(0.1,0.6,['Richting: ' wavdirnow '^oN'],'fontsize',7)
+            text(0.1,0.4,['Hoogte: ' hsnow 'm'],'fontsize',7)
+            text(0.1,0.2,['Periode: ' tpnow 's'],'fontsize',7)
             
             % axes 5a
-            ax2a = axes('position',[0.883 0.209 0.0314 0.0439]);
+            ax5a = axes('position',[0.87380   0.209        0.04059     0.05647]);
+            %             ax5a = axes('position',[0.7611 0.2995  0.0424268  0.06719]);
             axis equal;
             set(gca,'xtick',[]);set(gca,'ytick',[])
-            arrow([0 0],[1 1],'Width',1,'LineWidth',1.5,'length',15,'faceColor','g','edgecolor','g')
-            box on;
+            %             arrow([0 0],[1 1],'Width',1,'LineWidth',1.5,'length',15,'faceColor','g','edgecolor','g')
+            image(imWave)
+            box off;
             set(gca,'xcolor','w')
             set(gca,'ycolor','w')
+            set(gca,'ytick',[])
+            set(gca,'xtick',[])
             
             % axes 6
-            ax6 = axes('position',[0.68 0.09 0.24 0.11]);
+            ax6 = axes('position',[0.68 0.075 0.24 0.125]);
             set(gca,'xtick',[]);set(gca,'ytick',[])
+            text(0.05,0.85,'Waterstand','fontsize',7,'fontweight','bold')
             box on;
             
             % axes 7
-            ax7 = axes('position',[0.695 0.12 0.21 0.07]);hold on;
+            ax7 = axes('position',[0.695 0.10 0.21 0.07]);hold on;
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
             plot(s(4).data.Time,s(4).data.Val,'linewidth',0.7);
-            set(gca,'xlim',[floor(timnow)-1 floor(timnow)+2])
-            set(gca,'xtick',[floor(timnow)-1:0.5:floor(timnow)+2])
+            set(gca,'xlim',[min(s(4).data.Time) max(s(4).data.Time)])
+            set(gca,'xtick',[min(s(4).data.Time):0.5:max(s(4).data.Time)])
             datetick('x','keeplimits','keepticks')
             tcks = get(gca,'xticklabel');
             tcks(2:2:end,:) = ' ';
             set(gca,'xticklabel',tcks);
             ylim([-1.5 1.5]);
             set(gca,'ytick',[-1 0 1])
-	        grid on
+            grid on
             plot([timnow timnow],get(gca,'ylim'),'r','linewidth',1)
+            
             
             set(cb,'position',[0.8887    0.4515    0.0159    0.2847])
             set(get(cb,'title'),'string','Stroomsnelheid (m/s)','fontsize',7)
@@ -185,11 +316,11 @@ try
             set(ax1,'position',[0.0104    0.0382    0.9882    0.9558])
             set(gcf,'paperSize',[29.68 18.58])
             set(gcf,'paperPosition',[ 0.5  0.28 29 17.8])
-            set(gcf,'color','w') 
+            set(gcf,'color','w')
             set(gcf,'renderer','zbuf')
             
             figname=[dr 'lastrun' filesep 'figures' filesep name '_' datestr(timnow,'yyyymmddHH') '.png'];
-            print(gcf,'-dpng','-r300',figname);
+            print(gcf,'-dpng','-r400',figname);
             
             close(gcf)
             
@@ -202,7 +333,7 @@ try
             fc.interval.value    = model.forecastplot.timeStep;
             fc.interval.type     = 'int';
             
-            fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnow,'dd mmm HH:MM'),'May','mei'),'Mar','Mrt'),'Oct','Okt'));
+            fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnow,'dd mmm HH:MM'),'May','Mei'),'Mar','Mrt'),'Oct','Okt'));
             fc.timepoints(tel).timepoint.timestr.type  = 'char';
             fc.timepoints(tel).timepoint.png.value      = [name '_' datestr(timnow,'yyyymmddHH') '.png'];
             fc.timepoints(tel).timepoint.png.type      = 'char';
