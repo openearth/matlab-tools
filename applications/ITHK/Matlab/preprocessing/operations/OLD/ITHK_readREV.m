@@ -68,6 +68,11 @@ function REVdata = ITHK_readREV(filename)
 REVdata=struct;
 REVdata.filename = filename;
 fid = fopen(filename,'rt');
+if fid==-1
+    %fprintf('-- Warning: Revetment file not present in folder! --\n');
+    REVdata=[];
+    return;
+end
 line = fgetl(fid);
 line = fgetl(fid);
 number_of_revetments = str2double(line);
