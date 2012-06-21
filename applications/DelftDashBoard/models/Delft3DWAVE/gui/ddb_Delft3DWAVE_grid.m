@@ -45,8 +45,10 @@ for jj=1:length(handles.Model(md).Input(ad).Domain)
     [pathstr,name,ext] = fileparts(handles.Model(md).Input(ad).Domain(jj).GrdFile);
     handles.Model(md).Input(ad).ComputationalGrids{jj}=name;
 end
+handles.activeWaveGrid=min(handles.Model(md).Input(ad).NrComputationalGrids,awg);
 if isempty(handles.Model(md).Input(ad).Domain)
     handles.Model(md).Input(ad).NrComputationalGrids = 0;
+    handles.activeWaveGrid=1;
     handles.Model(md).Input(ad).ComputationalGrids={''};
     handles=ddb_initializeDelft3DWAVEDomain(handles,md,ad,1);
 end
