@@ -122,7 +122,7 @@ if isempty(varargin)
     
     setHandles(handles);
 
-    setUIElements('modelmakerpanel.initialconditions');
+    % setUIElements('modelmakerpanel.initialconditions');
 
     %    ddb_plotModelMaker('activate');
 %    if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
@@ -179,7 +179,7 @@ handles
 
 setHandles(handles);
 
-setUIElements('modelmakerpanel.initialconditions');
+% setUIElements('modelmakerpanel.initialconditions');
 
 % ddb_refreshScreen('Toolbox','Initial Conditions');
 % 

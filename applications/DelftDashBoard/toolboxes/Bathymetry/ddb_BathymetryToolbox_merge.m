@@ -36,7 +36,7 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     
-    setUIElements('bathymetrypanel.merge');
+    % setUIElements('bathymetrypanel.merge');
     ddb_plotBathymetry('activate');
 else
     %Options selected
@@ -82,7 +82,7 @@ if ~isempty(val)
         handles.Toolbox(tb).Input.add_list{nf} = selected_file;
         handles.Toolbox(tb).Input.add_list_idx(nf) = val;
         setHandles(handles);
-        setUIElements('bathymetrypanel.merge');
+        % setUIElements('bathymetrypanel.merge');
     end
 end
 return
@@ -106,7 +106,7 @@ if ~isempty(val)
     handles.Toolbox(tb).Input.bathy_to_cut = [];
     
     setHandles(handles);
-    setUIElements('bathymetrypanel.merge');
+    % setUIElements('bathymetrypanel.merge');
 end
 return
 function handles=moveselection
@@ -132,7 +132,7 @@ if ~isempty(val)
         handles.Toolbox(tb).Input.bathy_to_cut = val-1;
         
         setHandles(handles);
-        setUIElements('bathymetrypanel.merge');
+        % setUIElements('bathymetrypanel.merge');
     end
 end
 return

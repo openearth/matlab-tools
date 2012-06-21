@@ -67,7 +67,7 @@ if isempty(varargin)
     ddb_plotNourishments('activate');
     handles=getHandles;
     clearInstructions;
-    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+%     % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 else
     %Options selected
     opt=lower(varargin{1});
@@ -151,5 +151,5 @@ end
 
 %%
 function refresh
-setUIElement('nourishmentspanel.equilibriumconcentration.listpolygons');
-setUIElement('nourishmentspanel.equilibriumconcentration.editconcentration');
+% setUIElement('nourishmentspanel.equilibriumconcentration.listpolygons');
+% setUIElement('nourishmentspanel.equilibriumconcentration.editconcentration');

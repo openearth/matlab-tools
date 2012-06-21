@@ -31,7 +31,7 @@
       <textposition>left</textposition>
       <onchange>ddb_DDToolbox</onchange>
       <option1>editnewdomain</option1>
-      <variable>handles.Toolbox(tb).Input.newRunid</variable>
+      <variable>newRunid</variable>
       <type>string</type>
       <tooltipstring>Edit runid for new domain</tooltipstring>
     </element> 
@@ -43,7 +43,7 @@
       <textposition>left</textposition>
       <onchange>ddb_DDToolbox</onchange>
       <option1>editattributename</option1>
-      <variable>handles.Toolbox(tb).Input.attributeName</variable>
+      <variable>attributeName</variable>
       <type>string</type>
       <tooltipstring>Edit filename of attribute files of new domain</tooltipstring>
     </element> 
@@ -73,7 +73,7 @@
       <textposition>left</textposition>
       <onchange>ddb_DDToolbox</onchange>
       <option1>editrefinement</option1>
-      <variable>handles.Toolbox(tb).Input.mRefinement</variable>
+      <variable>mRefinement</variable>
       <type>integer</type>
       <tooltipstring>Edit M refinement factor</tooltipstring>
     </element> 
@@ -85,7 +85,7 @@
       <textposition>left</textposition>
       <onchange>ddb_DDToolbox</onchange>
       <option1>editm1</option1>
-      <variable>handles.Toolbox(tb).Input.firstCornerPointM</variable>
+      <variable>firstCornerPointM</variable>
       <type>integer</type>
       <tooltipstring>Edit first corner point M1</tooltipstring>
       <dependencies>
@@ -94,7 +94,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.firstCornerPointM</variable>
+              <variable>firstCornerPointM</variable>
               <type>integer</type>	              
               <value>NaN</value>
               <operator>ne</operator>
@@ -111,7 +111,7 @@
       <textposition>left</textposition>
       <onchange>ddb_DDToolbox</onchange>
       <option1>editm2</option1>
-      <variable>handles.Toolbox(tb).Input.secondCornerPointM</variable>
+      <variable>secondCornerPointM</variable>
       <type>integer</type>
       <tooltipstring>Edit second corner point M2</tooltipstring>
       <dependencies>
@@ -120,7 +120,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.secondCornerPointM</variable>
+              <variable>secondCornerPointM</variable>
               <type>integer</type>	              
               <value>NaN</value>
               <operator>ne</operator>
@@ -137,7 +137,7 @@
       <textposition>left</textposition>
       <onchange>ddb_DDToolbox</onchange>
       <option1>editrefinement</option1>
-      <variable>handles.Toolbox(tb).Input.nRefinement</variable>
+      <variable>nRefinement</variable>
       <type>integer</type>
       <tooltipstring>Edit N refinement factor</tooltipstring>
     </element> 
@@ -149,7 +149,7 @@
       <textposition>left</textposition>
       <onchange>ddb_DDToolbox</onchange>
       <option1>editn1</option1>
-      <variable>handles.Toolbox(tb).Input.firstCornerPointN</variable>
+      <variable>firstCornerPointN</variable>
       <type>integer</type>
       <tooltipstring>Edit first corner point N1</tooltipstring>
       <dependencies>
@@ -158,7 +158,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.firstCornerPointN</variable>
+              <variable>firstCornerPointN</variable>
               <type>integer</type>	              
               <value>NaN</value>
               <operator>ne</operator>
@@ -175,7 +175,7 @@
       <textposition>left</textposition>
       <onchange>ddb_DDToolbox</onchange>
       <option1>editn2</option1>
-      <variable>handles.Toolbox(tb).Input.secondCornerPointN</variable>
+      <variable>secondCornerPointN</variable>
       <type>integer</type>
       <tooltipstring>Edit second corner point N2</tooltipstring>
       <dependencies>
@@ -184,7 +184,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.secondCornerPointN</variable>
+              <variable>secondCornerPointN</variable>
               <type>integer</type>	              
               <value>NaN</value>
               <operator>ne</operator>
@@ -214,7 +214,7 @@
       <style>checkbox</style>
       <text>Adjust Bathymetry</text>
       <position>440 80</position>
-      <variable>handles.Toolbox(tb).Input.adjustBathymetry</variable>
+      <variable>adjustBathymetry</variable>
       <tooltipstring>Automatically adjust bathymetry along boundaries of high-res domains</tooltipstring>
     </element>
 

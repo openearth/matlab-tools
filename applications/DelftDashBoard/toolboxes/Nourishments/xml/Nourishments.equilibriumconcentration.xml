@@ -7,7 +7,7 @@
     <position>10 110 60 20</position>
     <text>Background Concentration (g/l)</text>
     <textposition>right</textposition>
-    <variable>handles.Toolbox(tb).Input.equilibriumConcentration</variable>
+    <variable>equilibriumConcentration</variable>
     <type>real</type>
     <tooltipstring>Edit background equilibrium concentration (will be used outside polygons)</tooltipstring>
   </element> 
@@ -35,13 +35,13 @@
     <position>340 10 90 120</position>
     <tooltipstring>Select concentration polygon</tooltipstring>
     <textposition>above-center</textposition>
-    <variable>handles.Toolbox(tb).Input.activeConcentrationPolygon</variable>
+    <variable>activeConcentrationPolygon</variable>
     <type>integer</type>              
     <onchange>ddb_NourishmentsToolbox_equilibriumConcentration</onchange>
     <option1>selectpolygon</option1>
     <list>
       <texts>
-        <variable>handles.Toolbox(tb).Input.concentrationNames</variable>
+        <variable>concentrationNames</variable>
       </texts>
     </list>
   </element>
@@ -63,7 +63,7 @@
     <position>840 10 40 20</position>
     <text>Run Time (years)</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.nrYears</variable>
+    <variable>nrYears</variable>
     <type>real</type>
     <tooltipstring>Edit run time (years)</tooltipstring>
   </element> 

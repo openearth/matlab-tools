@@ -84,26 +84,72 @@ for i=1:length(amplitudes)
         cmp=cmp(1:4);
     end
     name=[cmp repmat(' ',1,4-length(cmp))];
-    ju=strmatch(name,const.name);
+    ju=strmatch(name,const.name,'exact');
     if isempty(ju)
         disp(['Could not find ' name ' - Component skipped.']);
     else
         %         switch lower(cmp)
         %             case{'m2','s2','k2','n2','k1','o1','p1','q1','mf','mm','m4','ms4','mn4'}
-        k=k+1;
-        names(k,:)=name;
-        freq(k,1)=const.freq(ju);
-        tidecon(k,1)=amplitudes(i);
-        tidecon(k,2)=0;
-        % convert time zone
-        if timeZone~=0
-            phases(i)=phases(i)+360*timeZone*const.freq(ju);
-            phases(i)=mod(phases(i),360);
-        end
-        tidecon(k,3)=phases(i);
-        tidecon(k,4)=0;
+%         switch lower(cmp)
+%             case{'sa','ssa'}
+%             otherwise
+                k=k+1;
+                names(k,:)=name;
+                freq(k,1)=const.freq(ju);
+                tidecon(k,1)=amplitudes(i);
+                tidecon(k,2)=0;
+                % convert time zone
+                if timeZone~=0
+                    phases(i)=phases(i)+360*timeZone*const.freq(ju);
+                    phases(i)=mod(phases(i),360);
+                end
+                tidecon(k,3)=phases(i);
+                tidecon(k,4)=0;
+%         end
     end
     %     end
 end
 wl=t_predic(tim,names,freq,tidecon,latitude);
+%wl=t_predic(tim,names,freq,tidecon);
+info=t_xtide('santa barbara',tim,'units','metres','format','info');
+wl=t_xtide('santa barbara',tim+info.timezone/24,'units','metres');
+wl=wl-info.datum;
+
+% wl1=t_predic(datenum(2010,1,1):1/24:datenum(2010,2,1),names,freq,tidecon,33)
+% 
+% try
+% close(20)
+% end
+% try
+% close(21)
+% end
+% 
+% figure(20)
+% plot(wl1,'b');hold on;
+% 
+% wl2=t_xtide('La Jolla',(datenum(2010,1,1):1/24:datenum(2010,2,1))+info.timezone/24,'units','metres')-info.datum
+% plot(wl2,'r');hold on;
+% 
+% figure(21)
+% plot(wl2-wl1)
+% shite=0
+% for ii=1:size(info.freq,1)
+%     freqstr{ii}=deblank(info.freq(ii,:));
+% end
+% format short
+% for j=1:size(names,1)
+%     ff=deblank(names(j,:));
+%     disp(ff)
+%     imtch=strmatch(ff,freqstr,'exact');
+%     if ~isempty(imtch)
+%         disp([tidecon(j,1) info.A(imtch)]);
+%         disp([tidecon(j,3) info.kappa(imtch)]);
+%     end
+% end
+% %[wl,tdummy]=delftPredict2007(components,squeeze(tidecon(:,1)),squeeze(tidecon(:,3)),tim(1),tim(end),1);
+% 
+% % wl2=t_predic(tim,names,freq,tidecon);
+% % df=wl-wl2;
+% % figure(20)
+% % plot(df)
 

@@ -10,7 +10,7 @@
       <style>listbox</style>
       <text>Available Databases</text>
       <textposition>above-center</textposition>
-      <variable>handles.Toolbox(tb).Input.activeDatabase</variable>
+      <variable>activeDatabase</variable>
       <type>integer</type>
       <position>40 10 150 140</position>
       <tooltipstring>Select chart database</tooltipstring>
@@ -18,7 +18,7 @@
       <option1>selectdatabase</option1>
       <list>
         <texts>
-          <variable>handles.Toolbox(tb).Input.databases</variable>
+          <variable>databases</variable>
         </texts>
       </list>
     </element>
@@ -36,7 +36,7 @@
       <style>text</style>
       <type>string</type> 
       <position>200 10</position>
-      <variable>handles.Toolbox(tb).Input.activeChartName</variable> 
+      <variable>activeChartName</variable> 
     </element> 
     <element>
       <tag>exportshoreline</tag>
@@ -52,7 +52,7 @@
       <style>checkbox</style>
       <text>Show Shoreline</text>
       <position>480 130</position>
-      <variable>handles.Toolbox(tb).Input.showShoreline</variable>
+      <variable>showShoreline</variable>
       <onchange>ddb_NavigationChartsToolbox</onchange>
       <option1>toggleshoreline</option1>
       <tooltipstring>Show shorelines</tooltipstring>
@@ -71,7 +71,7 @@
       <style>checkbox</style>
       <text>Show Contours</text>
       <position>480 105</position>
-      <variable>handles.Toolbox(tb).Input.showContours</variable>
+      <variable>showContours</variable>
       <onchange>ddb_NavigationChartsToolbox</onchange>
       <option1>togglecontours</option1>
       <tooltipstring>Show depth contours</tooltipstring>
@@ -90,7 +90,7 @@
       <style>checkbox</style>
       <text>Show Soundings</text>
       <position>480 80</position>
-      <variable>handles.Toolbox(tb).Input.showSoundings</variable>
+      <variable>showSoundings</variable>
       <onchange>ddb_NavigationChartsToolbox</onchange>
       <option1>togglesoundings</option1>
       <tooltipstring>Show depth soundings</tooltipstring>

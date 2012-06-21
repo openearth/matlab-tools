@@ -71,6 +71,10 @@ handles.Toolbox(ii).Input.activeDataset=1;
 handles.Toolbox(ii).Input.polyLength=0;
 handles.Toolbox(ii).Input.polygonFile='';
 
+handles.Toolbox(ii).Input.bathyFile='';
+handles.Toolbox(ii).Input.newbathyName='';
+handles.Toolbox(ii).Input.newbathyresolution=0;
+
 handles.Toolbox(ii).Input.activeZoomLevel=1;
 handles.Toolbox(ii).Input.zoomLevelText={'1'};
 handles.Toolbox(ii).Input.resolutionText='1';

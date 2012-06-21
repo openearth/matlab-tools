@@ -16,7 +16,7 @@
       <position>50 20 250 130</position>
       <style>listbox</style>
       <type>integer</type>
-      <variable>handles.Toolbox(tb).Input.activeTideStation</variable>
+      <variable>activeTideStation</variable>
       <onchange>ddb_TideStationsToolbox</onchange>
       <option1>selecttidestation</option1>
       <tooltipstring>Select tide station</tooltipstring> 
@@ -67,13 +67,13 @@
       <position>320 30 130 20</position>
       <style>popupmenu</style>
       <type>integer</type>
-      <variable>handles.Toolbox(tb).Input.activeDatabase</variable>
+      <variable>activeDatabase</variable>
       <onchange>ddb_TideStationsToolbox</onchange>
       <option1>selecttidedatabase</option1>
       <tooltipstring>Select a tide station database</tooltipstring> 
       <list>
         <texts>
-          <variable>handles.Toolbox(tb).Input.databases</variable>
+          <variable>databases</variable>
         </texts>
       </list>
     </element>
@@ -81,7 +81,7 @@
       <tag>editstarttime</tag>
       <style>edit</style>
       <position>550 130 110 20</position>
-      <variable>handles.Toolbox(tb).Input.startTime</variable>
+      <variable>startTime</variable>
       <type>datetime</type>
       <text>Start Time</text>
       <textposition>left</textposition>
@@ -91,7 +91,7 @@
       <tag>editstoptime</tag>
       <style>edit</style>
       <position>550 105 110 20</position>
-      <variable>handles.Toolbox(tb).Input.stopTime</variable>
+      <variable>stopTime</variable>
       <type>datetime</type>
       <text>Stop Time</text>
       <textposition>left</textposition>
@@ -101,7 +101,7 @@
       <tag>edittimestep</tag>
       <style>edit</style>
       <position>550 80 110 20</position>
-      <variable>handles.Toolbox(tb).Input.timeStep</variable>
+      <variable>timeStep</variable>
       <type>real</type>
       <text>Time Step (min)</text>
       <textposition>left</textposition>
@@ -111,7 +111,7 @@
       <tag>edittimezone</tag>
       <style>edit</style>
       <position>550 55 110 20</position>
-      <variable>handles.Toolbox(tb).Input.timeZone</variable>
+      <variable>timeZone</variable>
       <type>real</type>
       <text>Time Zone (h)</text>
       <textposition>left</textposition>
@@ -121,7 +121,7 @@
       <tag>editverticaloffset</tag>
       <style>edit</style>
       <position>550 30 110 20</position>
-      <variable>handles.Toolbox(tb).Input.verticalOffset</variable>
+      <variable>verticalOffset</variable>
       <type>real</type>
       <text>Vertical Offset (m)</text>
       <textposition>left</textposition>
@@ -138,7 +138,7 @@
         <column>
           <style>text</style>
           <width>60</width>
-          <variable>handles.Toolbox(tb).Input.components</variable>
+          <variable>components</variable>
           <text> </text>
         </column>
         <column>
@@ -146,14 +146,14 @@
           <width>80</width>
           <text>Amplitude (m)</text>
           <enable>0</enable>
-          <variable>handles.Toolbox(tb).Input.amplitudes</variable>
+          <variable>amplitudes</variable>
         </column>
         <column>
           <style>editreal</style>
           <width>80</width>
           <text>Phase (deg)</text>
           <enable>0</enable>
-          <variable>handles.Toolbox(tb).Input.phases</variable>
+          <variable>phases</variable>
         </column>
       </columns>
     </element>

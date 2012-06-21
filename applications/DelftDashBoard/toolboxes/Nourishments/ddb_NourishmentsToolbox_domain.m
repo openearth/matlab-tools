@@ -67,7 +67,7 @@ if isempty(varargin)
     ddb_plotNourishments('activate');
     handles=getHandles;
     clearInstructions;
-    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+%     % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 else
     %Options selected
     handles=getHandles;
@@ -129,10 +129,10 @@ handles.Toolbox(tb).Input.yLim(2)=y0+dy;
 % handles.Toolbox(tb).Input.zoomLevelStrings{1}=['auto (' num2str(zmlev) ')'];
 % 
 setHandles(handles);
-setUIElement('nourishmentspanel.domain.editxmin');
-setUIElement('nourishmentspanel.domain.editxmax');
-setUIElement('nourishmentspanel.domain.editymin');
-setUIElement('nourishmentspanel.domain.editymax');
+% setUIElement('nourishmentspanel.domain.editxmin');
+% setUIElement('nourishmentspanel.domain.editxmax');
+% setUIElement('nourishmentspanel.domain.editymin');
+% setUIElement('nourishmentspanel.domain.editymax');
 
 %%
 function editOutline
@@ -260,12 +260,12 @@ setHandles(handles);
 
 %%
 function refresh
-setUIElement('nourishmentspanel.domain.listpolygons');
-setUIElement('nourishmentspanel.domain.selecttype');
-setUIElement('nourishmentspanel.domain.editvolume');
-setUIElement('nourishmentspanel.domain.editthickness');
-setUIElement('nourishmentspanel.domain.editheight');
-setUIElement('nourishmentspanel.domain.editarea');
+% setUIElement('nourishmentspanel.domain.listpolygons');
+% setUIElement('nourishmentspanel.domain.selecttype');
+% setUIElement('nourishmentspanel.domain.editvolume');
+% setUIElement('nourishmentspanel.domain.editthickness');
+% setUIElement('nourishmentspanel.domain.editheight');
+% setUIElement('nourishmentspanel.domain.editarea');
 
 %%
 function selectType

@@ -69,7 +69,7 @@ ddb_zoomOff;
 if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
-    setUIElements('modelmakerpanel.initialconditions');
+    % setUIElements('modelmakerpanel.initialconditions');
     setHandles(handles);
 %    ddb_plotModelMaker('activate');
 %    if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)

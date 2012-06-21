@@ -64,7 +64,7 @@ if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('nestpanel.nesthd2');
+    % setUIElements('nestpanel.nesthd2');
 else
     %Options selected
     opt=lower(varargin{1});

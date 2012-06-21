@@ -66,7 +66,7 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     selectDatabase;
-    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+    % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     h=findobj(gca,'Tag','BBoxENC');
     if isempty(h)
         handles=plotChartOutlines(handles);
@@ -108,7 +108,7 @@ handles.Toolbox(tb).Input.activeChart=1;
 handles.Toolbox(tb).Input.activeChartName='';
 handles=plotChartOutlines(handles);
 setHandles(handles);
-setUIElement('textchartname');
+% setUIElement('textchartname');
 
 %%
 function pushSelectChart
@@ -216,7 +216,7 @@ if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)
     
     setHandles(handles);
     
-    setUIElement('textchartname');
+    % setUIElement('textchartname');
     
 end
 
@@ -268,7 +268,7 @@ end
 
 setHandles(handles);
 
-setUIElement('textchartname');
+% setUIElement('textchartname');
 
 ddb_setWindowButtonUpDownFcn;
 ddb_setWindowButtonMotionFcn;

@@ -6,7 +6,7 @@
     <style>listbox</style>
     <text>Available Tide Models</text>
     <textposition>above-center</textposition>
-    <variable>handles.Toolbox(tb).Input.activeModel</variable>
+    <variable>activeModel</variable>
     <type>integer</type>
     <position>10 10 200 105</position>
     <tooltipstring>Select tide model</tooltipstring>
@@ -23,7 +23,7 @@
     <style>pushselectfile</style>
     <position>250 60 130 20</position>
     <text>Select Fourier File</text>
-    <variable>handles.Toolbox(tb).Input.fourierFile</variable>
+    <variable>fourierFile</variable>
     <onchange>ddb_TideDatabaseToolbox_calibrate</onchange>
     <option1>selectfourierfile</option1>
     <showfilename>yes</showfilename> 
@@ -36,7 +36,7 @@
     <style>pushsavefile</style>
     <position>250 35 130 20</position>
     <text>Save Fourier File</text>
-    <variable>handles.Toolbox(tb).Input.fourierOutFile</variable>
+    <variable>fourierOutFile</variable>
     <onchange>ddb_TideDatabaseToolbox_calibrate</onchange>
     <option1>savenewfourierfile</option1>
     <showfilename>no</showfilename> 

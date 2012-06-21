@@ -52,7 +52,7 @@ ddb_zoomOff;
 if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
-    setUIElements('modelmakerpanel.bathymetry');
+    % setUIElements('modelmakerpanel.bathymetry');
     setHandles(handles);
 %    ddb_plotModelMaker('activate');
 %    if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
@@ -68,6 +68,8 @@ else
     switch opt
         case{'usedataset'}
             useDataset;
+        case{'showinfo'}
+            showInfo;
         case{'removedataset'}
             removeDataset;
         case{'datasetup'}
@@ -84,7 +86,13 @@ end
 
 %%
 function selectDataset
-setUIElements('modelmakerpanel.bathymetry');
+% setUIElements('modelmakerpanel.bathymetry');
+
+%%
+function showInfo
+handles=getHandles;
+iac=handles.Toolbox(tb).Input.bathymetry.activeDataset;
+ddb_showBathyInfo(handles,iac);
 
 %%
 function useDataset
@@ -119,8 +127,8 @@ if usedd
     handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=n;
     
     setHandles(handles);
-    setUIElements('modelmakerpanel.bathymetry');
-%    setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
+    % setUIElements('modelmakerpanel.bathymetry');
+%    % setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
 end
 
 %%
@@ -137,8 +145,8 @@ if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
         handles.Toolbox(tb).Input.bathymetry.selectedDatasets(1).type='unknown';
     end    
     setHandles(handles);
-    setUIElements('modelmakerpanel.bathymetry');
-%    setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
+    % setUIElements('modelmakerpanel.bathymetry');
+%    % setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
 end
 
 %%
@@ -151,8 +159,8 @@ if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
     [handles.Toolbox(tb).Input.bathymetry.selectedDatasets,iac,nr] = UpDownDeleteStruc(handles.Toolbox(tb).Input.bathymetry.selectedDatasets, iac, 'up');
     handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=iac;
     setHandles(handles);
-    setUIElements('modelmakerpanel.bathymetry');
-%    setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
+    % setUIElements('modelmakerpanel.bathymetry');
+%    % setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
 end
 
 %%
@@ -166,8 +174,8 @@ if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
     [handles.Toolbox(tb).Input.bathymetry.selectedDatasets,iac,nr] = UpDownDeleteStruc(handles.Toolbox(tb).Input.bathymetry.selectedDatasets, iac, 'down');
     handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=iac;
     setHandles(handles);
-    setUIElements('modelmakerpanel.bathymetry');
-%    setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
+    % setUIElements('modelmakerpanel.bathymetry');
+%    % setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
 end
 
 %% 

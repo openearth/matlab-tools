@@ -11,7 +11,7 @@
     <style>edit</style>
     <enable>0</enable>
     <position>90 295 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackT(handles.Toolbox(tb).Input.activeCyclonePoint)</variable>
+    <variable>trackT(activeCyclonePoint)</variable>
     <type>datetime</type>
     <text>Time</text>
     <textposition>left</textposition>
@@ -23,7 +23,7 @@
     <text>Quadrant</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.activeQuadrant</variable>
+    <variable>activeQuadrant</variable>
     <type>integer</type>
     <tooltipstring>Select quadrant</tooltipstring>
     <list>
@@ -40,7 +40,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.quadrantOption</variable>
+            <variable>quadrantOption</variable>
             <value>perquadrant</value>
             <operator>eq</operator>
           </check>
@@ -52,7 +52,7 @@
     <tag>editvmax</tag>
     <style>edit</style>
     <position>90 245 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackVMax(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <variable>trackVMax(activeCyclonePoint,activeQuadrant)</variable>
     <type>real</type>
     <text>Vmax (kts)</text>
     <textposition>left</textposition>
@@ -63,37 +63,37 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>3</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>4</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>5</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>6</value>
             <operator>eq</operator>
@@ -112,7 +112,7 @@
     <tag>editrmax</tag>
     <style>edit</style>
     <position>90 220 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackRMax(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <variable>trackRMax(activeCyclonePoint,activeQuadrant)</variable>
     <type>real</type>
     <text>Rmax (NM)</text>
     <textposition>left</textposition>
@@ -123,13 +123,13 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>3</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>5</value>
             <operator>eq</operator>
@@ -148,7 +148,7 @@
     <tag>editpdrop</tag>
     <style>edit</style>
     <position>90 195 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackPDrop(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <variable>trackPDrop(activeCyclonePoint,activeQuadrant)</variable>
     <type>real</type>
     <text>Pdrop (Pa)</text>
     <textposition>left</textposition>
@@ -159,13 +159,13 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>3</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>4</value>
             <operator>eq</operator>
@@ -184,7 +184,7 @@
     <tag>editb</tag>
     <style>edit</style>
     <position>90 170 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackB(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <variable>trackB(activeCyclonePoint,activeQuadrant)</variable>
     <type>real</type>
     <text>Holland B</text>
     <textposition>left</textposition>
@@ -195,7 +195,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>eq</operator>
@@ -214,7 +214,7 @@
     <tag>edita</tag>
     <style>edit</style>
     <position>90 145 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackA(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <variable>trackA(activeCyclonePoint,activeQuadrant)</variable>
     <type>real</type>
     <text>Holland A</text>
     <textposition>left</textposition>
@@ -225,7 +225,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>eq</operator>
@@ -244,7 +244,7 @@
     <tag>editr35</tag>
     <style>edit</style>
     <position>90 120 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackR35(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <variable>trackR35(activeCyclonePoint,activeQuadrant)</variable>
     <type>real</type>
     <text>R35 (NM)</text>
     <textposition>left</textposition>
@@ -255,7 +255,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>
@@ -274,7 +274,7 @@
     <tag>editr50</tag>
     <style>edit</style>
     <position>90 95 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackR50(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <variable>trackR50(activeCyclonePoint,activeQuadrant)</variable>
     <type>real</type>
     <text>R50 (NM)</text>
     <textposition>left</textposition>
@@ -285,7 +285,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>
@@ -304,7 +304,7 @@
     <tag>editr65</tag>
     <style>edit</style>
     <position>90 70 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackR65(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <variable>trackR65(activeCyclonePoint,activeQuadrant)</variable>
     <type>real</type>
     <text>R65 (NM)</text>
     <textposition>left</textposition>
@@ -315,7 +315,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>
@@ -334,7 +334,7 @@
     <tag>editr100</tag>
     <style>edit</style>
     <position>90 45 110 20</position>
-    <variable>handles.Toolbox(tb).Input.trackR100(handles.Toolbox(tb).Input.activeCyclonePoint,handles.Toolbox(tb).Input.activeQuadrant)</variable>
+    <variable>trackR100(activeCyclonePoint,activeQuadrant)</variable>
     <type>real</type>
     <text>R100 (NM)</text>
     <textposition>left</textposition>
@@ -345,7 +345,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>

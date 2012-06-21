@@ -100,6 +100,13 @@ handles.Toolbox(ii).Input.depthRelCoast=5;
 handles.Toolbox(ii).Input.activeTideModelBC=1;
 handles.Toolbox(ii).Input.activeTideModelIC=1;
 
+% Make TPXO72 the default tide model
+jj=strmatch('tpxo72',handles.tideModels.names,'exact');
+if ~isempty(jj)
+    handles.Toolbox(ii).Input.activeTideModelBC=jj;
+    handles.Toolbox(ii).Input.activeTideModelIC=jj;
+end
+
 handles.Toolbox(ii).Input.gridOutlineHandle=[];
 
 if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
@@ -114,6 +121,10 @@ handles.Toolbox(ii).Input.bathymetry.selectedDatasetNames={''};
 handles.Toolbox(ii).Input.bathymetry.selectedDatasets=[];
 handles.Toolbox(ii).Input.bathymetry.nrSelectedDatasets=0;
 handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).type='unknown';
+handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).zMax=10000;
+handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).zMin=-10000;
+handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).startDate=datenum(2000,1,1);
+handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).searchInterval=5;
 
 %% Initial conditions
 handles.Toolbox(ii).Input.initialConditions.parameterList={'Water Level','Current'};

@@ -113,6 +113,16 @@ handles.Toolbox(ii).Input.bathymetry.attributes.disclaimer                   = '
 
 %% Shoreline
 
+handles.Toolbox(ii).Input.shoreline.x0=0;
+handles.Toolbox(ii).Input.shoreline.y0=0;
+
+handles.Toolbox(ii).Input.shoreline.nrCellsX=0;
+handles.Toolbox(ii).Input.shoreline.nrCellsY=0;
+
+handles.Toolbox(ii).Input.shoreline.dataFile='';
+handles.Toolbox(ii).Input.shoreline.dataName='';
+handles.Toolbox(ii).Input.shoreline.dataDir=[handles.bathyDir];
+
 handles.Toolbox(ii).Input.shoreline.EPSGcode                     = 4326;
 handles.Toolbox(ii).Input.shoreline.EPSGname                     = 'WGS 84';
 handles.Toolbox(ii).Input.shoreline.EPSGtype                     = 'geographic';

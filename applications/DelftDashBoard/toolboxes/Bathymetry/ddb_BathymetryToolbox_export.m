@@ -65,7 +65,7 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     selectDataset;
-    setUIElements('bathymetrypanel.export');
+    % setUIElements('bathymetrypanel.export');
     ddb_plotBathymetry('activate');
 else
     %Options selected
@@ -98,14 +98,14 @@ for i=1:length(handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDatase
     handles.Toolbox(tb).Input.zoomLevelText{i}=num2str(i);
 end
 setHandles(handles);
-setUIElements('bathymetrypanel.export');
+% setUIElements('bathymetrypanel.export');
 
 %%
 function selectZoomLevel
 handles=getHandles;
 handles=setResolutionText(handles);
 setHandles(handles);
-setUIElements('bathymetrypanel.export');
+% setUIElements('bathymetrypanel.export');
 
 %%
 function handles=setResolutionText(handles)
@@ -199,7 +199,7 @@ if ~isempty(h)
 end
 UIPolyline(gca,'draw','Tag','BathymetryPolygon','Marker','o','Callback',@changePolygon,'closed',1);
 setHandles(handles);
-setUIElement('bathymetrypanel.export.savepolygon');
+% setUIElement('bathymetrypanel.export.savepolygon');
 
 %%
 function deletePolygon
@@ -212,8 +212,8 @@ if ~isempty(h)
     delete(h);
 end
 setHandles(handles);
-setUIElement('bathymetrypanel.export.exportbathy');
-setUIElement('bathymetrypanel.export.savepolygon');
+% setUIElement('bathymetrypanel.export.exportbathy');
+% setUIElement('bathymetrypanel.export.savepolygon');
 
 %%
 function changePolygon(x,y,varargin)
@@ -222,8 +222,8 @@ handles.Toolbox(tb).Input.polygonX=x;
 handles.Toolbox(tb).Input.polygonY=y;
 handles.Toolbox(tb).Input.polyLength=length(x);
 setHandles(handles);
-setUIElement('bathymetrypanel.export.exportbathy');
-setUIElement('bathymetrypanel.export.savepolygon');
+% setUIElement('bathymetrypanel.export.exportbathy');
+% setUIElement('bathymetrypanel.export.savepolygon');
 
 %%
 function loadPolygon
@@ -236,8 +236,8 @@ h=findobj(gca,'Tag','BathymetryPolygon');
 delete(h);
 UIPolyline(gca,'plot','Tag','BathymetryPolygon','Marker','o','Callback',@changePolygon,'closed',1,'x',x,'y',y);
 setHandles(handles);
-setUIElement('bathymetrypanel.export.exportbathy');
-setUIElement('bathymetrypanel.export.savepolygon');
+% setUIElement('bathymetrypanel.export.exportbathy');
+% setUIElement('bathymetrypanel.export.savepolygon');
 
 %%
 function savePolygon

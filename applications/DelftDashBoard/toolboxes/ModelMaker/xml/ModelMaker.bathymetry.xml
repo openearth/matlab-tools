@@ -6,7 +6,7 @@
     <style>listbox</style>
     <text>Available Datasets</text>
     <textposition>above-center</textposition>
-    <variable>handles.Toolbox(tb).Input.bathymetry.activeDataset</variable>
+    <variable>bathymetry.activeDataset</variable>
     <type>integer</type>
     <position>10 10 180 105</position>
     <tooltipstring>Available bathymetry datasets</tooltipstring>
@@ -28,11 +28,20 @@
     <tooltipstring>Use selected dataset (from list on the left)</tooltipstring>
   </element> 
   <element>
+    <tag>showdatasetinfo</tag>
+    <style>pushbutton</style>
+    <position>195 70 80 20</position>
+    <text>Info</text>
+    <callback>ddb_ModelMakerToolbox_bathymetry</callback>
+    <option1>showinfo</option1>
+    <tooltipstring>Show meta data of selected dataset</tooltipstring>
+  </element> 
+  <element>
     <tag>selecteddatasets</tag>
     <style>listbox</style>
     <text>Selection</text>
     <textposition>above-center</textposition>
-    <variable>handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset</variable>
+    <variable>bathymetry.activeSelectedDataset</variable>
     <type>integer</type>
     <position>280 10 150 105</position>
     <tooltipstring>Selected datasets. Datasets should be ordered from high resolution (will be used first) to low resolution.</tooltipstring>
@@ -40,7 +49,7 @@
     <option1>pickselecteddataset</option1>
     <list>
       <texts>
-        <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames</variable>
+        <variable>bathymetry.selectedDatasetNames</variable>
       </texts>
     </list>
   </element>
@@ -83,7 +92,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets</variable>
+            <variable>bathymetry.nrSelectedDatasets</variable>
             <type>integer</type>	              
             <value>0</value>
             <operator>gt</operator>
@@ -107,7 +116,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets</variable>
+            <variable>bathymetry.nrSelectedDatasets</variable>
             <type>integer</type>	              
             <value>0</value>
             <operator>gt</operator>

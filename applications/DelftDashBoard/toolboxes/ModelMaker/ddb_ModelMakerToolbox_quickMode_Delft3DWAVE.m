@@ -1,25 +1,14 @@
-function ddb_ModelMakerToolbox_quickMode(varargin)
-%DDB_MODELMAKERTOOLBOX_QUICKMODE  One line description goes here.
+function ddb_ModelMakerToolbox_quickMode_Delft3DWAVE(varargin)
+%DDB_MODELMAKERTOOLBOX_QUICKMODE_DELFT3DWAVE  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_ModelMakerToolbox_quickMode(varargin)
-%
-%   Input:
-%   varargin =
-%
-%
-%
-%
-%   Example
-%   ddb_ModelMakerToolbox_quickMode
-%
-%   See also
+%   ddb_ModelMakerToolbox_quickMode_Delft3DWAVE(varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2012 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -88,12 +77,6 @@ else
             generateGrid;
         case{'generatebathymetry'}
             generateBathymetry;
-        case{'generateopenboundaries'}
-            generateOpenBoundaries;
-        case{'generateboundaryconditions'}
-            generateBoundaryConditions;
-        case{'generateinitialconditions'}
-            generateInitialConditions;
     end
     
 end
@@ -202,7 +185,7 @@ npmax=20000000;
 
 if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     
-    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input(ad).attName '.grd']);
+    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input.attName '.grd']);
     
     if pathname~=0
         
@@ -272,9 +255,24 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
         
         close(wb);
         
-        handles = ddb_generateGridDelft3DFLOW(handles,ad,x,y,z,filename);
-        
+        handles.Model(md).Input.NrComputationalGrids=handles.Model(md).Input.NrComputationalGrids+1;
+        nrgrids=handles.Model(md).Input.NrComputationalGrids;
+        handles.Model(md).Input.ComputationalGrids{nrgrids}=filename(1:end-4);
+        handles=ddb_initializeDelft3DWAVEDomain(handles,md,ad,nrgrids);
+        handles.activeWaveGrid=nrgrids;        
+        handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,x,y,z,filename);
+
+%         % Delete existing domain
+%         ddb_plotDelft3DWAVE('delete','domain',nrgrids);
+
+        % Plot new domain
+        handles=ddb_Delft3DWAVE_plotGrid(handles,'plot','domain',nrgrids,'active',1);
+
         setHandles(handles);
+
+        % Refresh all domains
+        ddb_plotDelft3DWAVE('update','domain',0,'active',1);
+
     end
     
 else

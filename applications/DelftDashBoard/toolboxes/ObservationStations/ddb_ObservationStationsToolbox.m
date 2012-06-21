@@ -65,7 +65,8 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     handles=getHandles;
-    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+%    gui_updateActiveTab;
+%    % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     h=handles.Toolbox(tb).Input.observationStationHandle;
     if isempty(h)
         plotObservationStations;
@@ -147,9 +148,7 @@ try
         stationName=handles.Toolbox(tb).Input.database(iac).stationNames{ii};
         ddb_plotTimeSeries(time,data,stationName);
     end
-    
-    close(wb);
-    
+        
 catch
     
     close(wb);
@@ -226,7 +225,7 @@ if strcmp(get(h,'Tag'),'ObservationStations')
     
     selectObservationStation;
     
-    setUIElement('selectobservationstation');
+    % setUIElement('selectobservationstation');
     
 end
 
@@ -280,7 +279,7 @@ handles.Toolbox(tb).Input.activeObservationStationHandle=[];
 
 setHandles(handles);
 
-setUIElement('selectobservationstation');
+% setUIElement('selectobservationstation');
 
 plotObservationStations;
 
@@ -350,7 +349,7 @@ setHandles(handles);
 for j=1:14
     iradio=num2str(j,'%0.2i');
     tg=['radio' iradio];
-    setUIElement(tg);
+    % setUIElement(tg);
 end
 
 
@@ -376,7 +375,7 @@ setHandles(handles);
 for j=1:14
     iradio=num2str(j,'%0.2i');
     tg=['radio' iradio];
-    setUIElement(tg);
+    % setUIElement(tg);
 end
 
 

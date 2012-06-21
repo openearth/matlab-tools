@@ -65,7 +65,7 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     selectDataset;
-    setUIElements('shorelinepanel.export');
+    % setUIElements('shorelinepanel.export');
     ddb_plotShoreline('activate');
 else
     %Options selected
@@ -99,7 +99,7 @@ for i=1:length(scl)
     handles.Toolbox(tb).Input.scaleText{i}=['1 : ' num2str(scl(i),'%20.0f')];
 end
 setHandles(handles);
-setUIElements('shorelinepanel.export');
+% setUIElements('shorelinepanel.export');
 
 %%
 function exportData
@@ -152,7 +152,7 @@ if ~isempty(h)
 end
 UIPolyline(gca,'draw','Tag','ShorelinePolygon','Marker','o','Callback',@changePolygon,'closed',1);
 setHandles(handles);
-setUIElement('shorelinepanel.export.savepolygon');
+% setUIElement('shorelinepanel.export.savepolygon');
 
 %%
 function deletePolygon
@@ -165,8 +165,8 @@ if ~isempty(h)
     delete(h);
 end
 setHandles(handles);
-setUIElement('shorelinepanel.export.exportshoreline');
-setUIElement('shorelinepanel.export.savepolygon');
+% setUIElement('shorelinepanel.export.exportshoreline');
+% setUIElement('shorelinepanel.export.savepolygon');
 
 %%
 function changePolygon(x,y,varargin)
@@ -175,8 +175,8 @@ handles.Toolbox(tb).Input.polygonX=x;
 handles.Toolbox(tb).Input.polygonY=y;
 handles.Toolbox(tb).Input.polyLength=length(x);
 setHandles(handles);
-setUIElement('shorelinepanel.export.exportshoreline');
-setUIElement('shorelinepanel.export.savepolygon');
+% setUIElement('shorelinepanel.export.exportshoreline');
+% setUIElement('shorelinepanel.export.savepolygon');
 
 %%
 function loadPolygon
@@ -189,8 +189,8 @@ h=findobj(gca,'Tag','ShorelinePolygon');
 delete(h);
 UIPolyline(gca,'plot','Tag','ShorelinePolygon','Marker','o','Callback',@changePolygon,'closed',1,'x',x,'y',y);
 setHandles(handles);
-setUIElement('shorelinepanel.export.exportshoreline');
-setUIElement('shorelinepanel.export.savepolygon');
+% setUIElement('shorelinepanel.export.exportshoreline');
+% setUIElement('shorelinepanel.export.savepolygon');
 
 %%
 function savePolygon

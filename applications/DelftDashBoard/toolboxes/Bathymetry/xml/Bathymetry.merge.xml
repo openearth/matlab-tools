@@ -6,7 +6,7 @@
     <style>listbox</style>
     <text>Available Databases</text>
     <textposition>above-center</textposition>
-    <variable>handles.Toolbox(tb).Input.activeDataset</variable>
+    <variable>activeDataset</variable>
     <type>integer</type>
     <position>10 10 150 105</position>
     <tooltipstring>Select bathymetry databases to add</tooltipstring>
@@ -44,13 +44,13 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.num_merge</variable>
+            <variable>num_merge</variable>
             <type>integer</type>
             <value>0</value>
             <operator>gt</operator>
           </check>
           <check>
-              <variable>length(handles.Toolbox(tb).Input.bathy_to_cut)</variable>
+              <variable>length(bathy_to_cut)</variable>
               <type>integer</type>
               <value>0</value>
               <operator>gt</operator>
@@ -73,7 +73,7 @@
     <style>listbox</style>
     <text>Data to Merge</text>
     <textposition>above-center</textposition>
-    <variable>handles.Toolbox(tb).Input.bathy_to_cut</variable>
+    <variable>bathy_to_cut</variable>
     <mx>2</mx>
     <type>integer</type>
     <position>310 10 150 105</position>
@@ -82,7 +82,7 @@
     <option1>listbathymetry</option1>
     <list>
       <texts>
-        <variable>handles.Toolbox(tb).Input.add_list</variable>
+        <variable>add_list</variable>
       </texts>
     </list>
   </element>
@@ -91,7 +91,7 @@
     <style>pushsavefile</style>
     <position>480 15 120 20</position>
     <text>Merge Data</text>
-    <variable>handles.Toolbox(tb).Input.datasets</variable>
+    <variable>datasets</variable>
     <callback>ddb_BathymetryToolbox_merge</callback>
     <option1>mergedata</option1>
     <showfilename>no</showfilename> 
@@ -107,7 +107,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.num_merge</variable>
+            <variable>num_merge</variable>
             <type>integer</type>
             <value>0</value>
             <operator>gt</operator>

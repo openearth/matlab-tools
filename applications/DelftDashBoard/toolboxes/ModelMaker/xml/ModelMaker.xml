@@ -12,21 +12,28 @@
       <tabs>
         <tab>
           <tag>quickmode</tag>
-          <model>delft3dflow</model>
+          <formodel>delft3dflow</formodel>
           <tabstring>Quick Mode</tabstring>
           <callback>ddb_ModelMakerToolbox_quickMode</callback>
           <elements>ModelMaker.quickmode.xml</elements>
         </tab>
         <tab>
           <tag>quickmode.dflowfm</tag>
-          <model>dflowfm</model>
+          <formodel>dflowfm</formodel>
           <tabstring>Quick Mode</tabstring>
           <callback>ddb_ModelMakerToolbox_quickMode_DFlowFM</callback>
           <elements>modelmaker.quickmode.dflowfm.xml</elements>
         </tab>
         <tab>
+          <tag>quickmode.delft3dwave</tag>
+          <formodel>delft3dwave</formodel>
+          <tabstring>Quick Mode</tabstring>
+          <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
+          <elements>modelmaker.quickmode.delft3dwave.xml</elements>
+        </tab>
+        <tab>
           <tag>bathymetry</tag>
-          <model>delft3dflow</model>
+          <formodel>delft3dflow</formodel>
           <tabstring>Bathymetry</tabstring>
           <callback>ddb_ModelMakerToolbox_bathymetry</callback>
           <elements>ModelMaker.bathymetry.xml</elements>
@@ -34,7 +41,7 @@
         </tab>
         <tab>
           <tag>initialconditions</tag>
-          <model>delft3dflow</model>
+          <formodel>delft3dflow</formodel>
           <tabstring>Initial Conditions</tabstring>
           <callback>ddb_ModelMakerToolbox_initialConditions</callback>
           <elements>ModelMaker.initialconditions.xml</elements>
@@ -42,7 +49,7 @@
         </tab>
         <tab>
           <tag>boundaryconditions</tag>
-          <model>delft3dflow</model>
+          <formodel>delft3dflow</formodel>
           <tabstring>Boundary Conditions</tabstring>
           <callback>ddb_ModelMakerToolbox</callback>
           <elements>ModelMaker.boundaryconditions.xml</elements>

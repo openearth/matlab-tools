@@ -44,7 +44,7 @@ if isempty(varargin)
     ddb_refreshScreen;
 %     selectDataset;
 
-    setUIElements('bathymetrypanel.import');
+    % setUIElements('bathymetrypanel.import');
     ddb_plotBathymetry('activate');
 else
     %Options selected

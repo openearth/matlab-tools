@@ -65,9 +65,6 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     ddb_plotGeoImage('activate');
-    handles=getHandles;
-    clearInstructions;
-    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 else
     %Options selected
     handles=getHandles;
@@ -116,11 +113,11 @@ zmlev=min(zmlev,23);
 handles.Toolbox(tb).Input.zoomLevelStrings{1}=['auto (' num2str(zmlev) ')'];
 
 setHandles(handles);
-setUIElement('editxmin');
-setUIElement('editxmax');
-setUIElement('editymin');
-setUIElement('editymax');
-setUIElement('selectzoomlevel');
+% setUIElement('editxmin');
+% setUIElement('editxmax');
+% setUIElement('editymin');
+% setUIElement('editymax');
+% setUIElement('selectzoomlevel');
 
 %%
 function editOutline

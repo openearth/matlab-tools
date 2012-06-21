@@ -11,7 +11,7 @@
     <onchange>ddb_ModelMakerToolbox_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>real</type>
-    <variable>handles.Toolbox(tb).Input.xOri</variable>
+    <variable>xOri</variable>
   </element>
   <element>
     <tag>editmmax</tag>
@@ -23,7 +23,7 @@
     <onchange>ddb_ModelMakerToolbox_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>integer</type>
-    <variable>handles.Toolbox(tb).Input.nX</variable>
+    <variable>nX</variable>
   </element>
   <element>
     <tag>editdx</tag>
@@ -35,7 +35,7 @@
     <onchange>ddb_ModelMakerToolbox_quickMode</onchange>
     <option1>editresolution</option1>
     <type>real</type>
-    <variable>handles.Toolbox(tb).Input.dX</variable>
+    <variable>dX</variable>
   </element>
   <element>
     <tag>editrotation</tag>
@@ -47,7 +47,7 @@
     <onchange>ddb_ModelMakerToolbox_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>real</type>
-    <variable>handles.Toolbox(tb).Input.rotation</variable>
+    <variable>rotation</variable>
   </element>
   <element>
     <tag>edity0</tag>
@@ -59,7 +59,7 @@
     <onchange>ddb_ModelMakerToolbox_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>real</type>
-    <variable>handles.Toolbox(tb).Input.yOri</variable>
+    <variable>yOri</variable>
   </element>
   <element>
     <tag>editnmax</tag>
@@ -71,7 +71,7 @@
     <onchange>ddb_ModelMakerToolbox_quickMode</onchange>
     <option1>editgridoutline</option1>
     <type>integer</type>
-    <variable>handles.Toolbox(tb).Input.nY</variable>
+    <variable>nY</variable>
   </element>
   <element>
     <tag>editdy</tag>
@@ -83,7 +83,7 @@
     <onchange>ddb_ModelMakerToolbox_quickMode</onchange>
     <option1>editresolution</option1>
     <type>real</type>
-    <variable>handles.Toolbox(tb).Input.dY</variable>
+    <variable>dY</variable>
   </element>
   <element>
     <tag>pushdrawgridoutline</tag>
@@ -147,7 +147,7 @@
     <text>Z Max (m)</text>
     <textposition>right</textposition>
     <type>real</type>
-    <variable>handles.Toolbox(tb).Input.zMax</variable>
+    <variable>zMax</variable>
   </element>
   <element>
     <tag>editsectionlength</tag>
@@ -157,14 +157,14 @@
     <text>Cells per Section</text>
     <textposition>right</textposition>
     <type>integer</type>
-    <variable>handles.Toolbox(tb).Input.sectionLength</variable>
+    <variable>sectionLength</variable>
   </element>
   <element>
     <tag>selectbnddatabase</tag>
     <style>popupmenu</style>
     <position>470 35 100 20</position>
     <tooltipstring>Select tide database for boundary conditions</tooltipstring>
-    <variable>handles.Toolbox(tb).Input.activeTideModelBC</variable>
+    <variable>activeTideModelBC</variable>
     <type>integer</type>
     <list>
       <texts>
@@ -177,7 +177,7 @@
     <style>popupmenu</style>
     <position>470 10 100 20</position>
     <tooltipstring>Select tide database for initial conditions</tooltipstring>
-    <variable>handles.Toolbox(tb).Input.activeTideModelIC</variable>
+    <variable>activeTideModelIC</variable>
     <type>integer</type>
     <list>
       <texts>

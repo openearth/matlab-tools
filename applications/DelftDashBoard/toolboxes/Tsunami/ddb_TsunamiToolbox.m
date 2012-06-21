@@ -113,11 +113,6 @@ end
 
 setHandles(handles);
 
-setUIElement('editwidth');
-setUIElement('edittheoreticallength');
-setUIElement('editslip');
-setUIElement('tsunamitable');
-
 %%
 function loadTableData
 
@@ -141,13 +136,6 @@ handles=updateTsunamiValues(handles,'length');
 handles.Toolbox(tb).Input.newFaultLine=0;
 
 setHandles(handles);
-
-setUIElement('editmw');
-setUIElement('editwidth');
-setUIElement('edittheoreticallength');
-setUIElement('editlength');
-setUIElement('editslip');
-setUIElement('tsunamitable');
 
 plotFaultLine;
 
@@ -256,12 +244,7 @@ handles.Toolbox(tb).Input.newFaultLine=0;
 
 setHandles(handles);
 
-setUIElement('editmw');
-setUIElement('editwidth');
-setUIElement('edittheoreticallength');
-setUIElement('editlength');
-setUIElement('editslip');
-setUIElement('tsunamitable');
+gui_updateActiveTab;
 
 %%
 function handles=convertFaultCoordinates(handles,opt)

@@ -5,13 +5,13 @@
     <tag>selectparameter</tag>
     <style>popupmenu</style>
     <position>40 100 100 20</position>
-    <variable>handles.Toolbox(tb).Input.initialConditions.activeParameter</variable>
+    <variable>initialConditions.activeParameter</variable>
     <tooltipstring>Select parameter</tooltipstring>
     <type>integer</type>
     <text></text>
     <list>
       <texts>
-        <variable>handles.Toolbox(tb).Input.initialConditions.parameterList</variable>
+        <variable>initialConditions.parameterList</variable>
       </texts>
     </list>
   </element>
@@ -19,13 +19,13 @@
     <tag>selectdatasource</tag>
     <style>popupmenu</style>
     <position>170 100 100 20</position>
-    <variable>handles.Toolbox(tb).Input.initialConditions.activeDataSource</variable>
+    <variable>initialConditions.activeDataSource</variable>
     <tooltipstring>Select data source</tooltipstring>
     <type>integer</type>
     <text></text>
     <list>
       <texts>
-        <variable>handles.Toolbox(tb).Input.initialConditions.dataSourceList</variable>
+        <variable>initialConditions.dataSourceList</variable>
       </texts>
     </list>
   </element>

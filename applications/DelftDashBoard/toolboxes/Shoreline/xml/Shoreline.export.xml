@@ -6,7 +6,7 @@
     <style>listbox</style>
     <text>Available Databases</text>
     <textposition>above-center</textposition>
-    <variable>handles.Toolbox(tb).Input.activeDataset</variable>
+    <variable>activeDataset</variable>
     <type>integer</type>
     <position>10 10 150 105</position>
     <tooltipstring>Select shoreline database</tooltipstring>
@@ -39,7 +39,7 @@
     <style>pushselectfile</style>
     <position>170 40 80 20</position>
     <text>Load Polygon</text>
-    <variable>handles.Toolbox(tb).Input.polygonFile</variable>
+    <variable>polygonFile</variable>
     <onchange>ddb_ShorelineToolbox_export</onchange>
     <option1>loadpolygon</option1>
     <showfilename>no</showfilename> 
@@ -52,7 +52,7 @@
     <style>pushsavefile</style>
     <position>170 15 80 20</position>
     <text>Save Polygon</text>
-    <variable>handles.Toolbox(tb).Input.polygonFile</variable>
+    <variable>polygonFile</variable>
     <onchange>ddb_ShorelineToolbox_export</onchange>
     <option1>savepolygon</option1>
     <showfilename>no</showfilename> 
@@ -69,7 +69,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.polyLength</variable>
+            <variable>polyLength</variable>
             <type>integer</type>	              
             <value>0</value>
             <operator>gt</operator>
@@ -83,20 +83,20 @@
     <style>popupmenu</style>
     <text>Scale</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.activeScale</variable>
+    <variable>activeScale</variable>
     <type>integer</type>
     <position>350 95 100 20</position>
     <tooltipstring>Select scale</tooltipstring>
     <list>
       <texts>
-        <variable>handles.Toolbox(tb).Input.scaleText</variable>
+        <variable>scaleText</variable>
       </texts>
     </list>
   </element>
   <element>
     <tag>textresolution</tag>
     <style>text</style>
-    <variable>handles.Toolbox(tb).Input.resolutionText</variable>
+    <variable>resolutionText</variable>
     <type>string</type>
     <position>420 96</position>
   </element>
@@ -105,13 +105,13 @@
     <style>popupmenu</style>
     <text>Export Type</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.activeExportType</variable>
+    <variable>activeExportType</variable>
     <position>350 70 60 20</position>
     <tooltipstring>Select zoom level</tooltipstring>
     <type>string</type>
     <list>
       <texts>
-        <variable>handles.Toolbox(tb).Input.exportTypes</variable>
+        <variable>exportTypes</variable>
       </texts>
     </list>
   </element>
@@ -120,7 +120,7 @@
     <style>pushsavefile</style>
     <position>290 15 120 20</position>
     <text>Export</text>
-    <variable>handles.Toolbox(tb).Input.shorelineFile</variable>
+    <variable>shorelineFile</variable>
     <onchange>ddb_ShorelineToolbox_export</onchange>
     <option1>export</option1>
     <showfilename>no</showfilename> 
@@ -136,7 +136,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.polyLength</variable>
+            <variable>polyLength</variable>
             <type>integer</type>	              
             <value>0</value>
             <operator>gt</operator>

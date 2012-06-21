@@ -6,7 +6,7 @@
     <style>pushselectfile</style>
     <position>60 110 80 20</position>
     <text>Select File</text>
-    <variable>handles.Toolbox(tb).Input.bathymetry.dataFile</variable>
+    <variable>bathymetry.dataFile</variable>
     <onchange>ddb_TilingToolbox_bathymetry</onchange>
     <option1>selectdataset</option1>
     <showfilename>yes</showfilename> 
@@ -21,7 +21,7 @@
     <text>X0</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.bathymetry.x0</variable>
+    <variable>bathymetry.x0</variable>
     <type>real</type>
     <tooltipstring>Edit x origin of tiling system (lower left corner of lower left tile)</tooltipstring>
   </element> 
@@ -32,7 +32,7 @@
     <text>Y0</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.bathymetry.y0</variable>
+    <variable>bathymetry.y0</variable>
     <type>real</type>
     <tooltipstring>Edit y origin of tiling system (lower left corner of lower left tile)</tooltipstring>
   </element> 
@@ -43,7 +43,7 @@
     <text>Nr X</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.bathymetry.nx</variable>
+    <variable>bathymetry.nx</variable>
     <type>integer</type>
     <tooltipstring>Edit number of grid cells per tile in x direction</tooltipstring>
   </element> 
@@ -54,7 +54,7 @@
     <text>Nr Y</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.bathymetry.ny</variable>
+    <variable>bathymetry.ny</variable>
     <type>integer</type>
     <tooltipstring>Edit number of grid cells per tile in y direction</tooltipstring>
   </element> 
@@ -65,7 +65,7 @@
     <text>Nr Zoom</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.bathymetry.nrZoom</variable>
+    <variable>bathymetry.nrZoom</variable>
     <type>integer</type>
     <tooltipstring>Edit number of zoom levels for tiling system</tooltipstring>
   </element> 
@@ -82,14 +82,14 @@
     <tag>cstext</tag>
     <style>text</style>
     <position>375 80</position>
-    <variable>handles.Toolbox(tb).Input.bathymetry.EPSGname</variable>
+    <variable>bathymetry.EPSGname</variable>
     <type>string</type>
   </element> 
   <element>
     <tag>radiogeo</tag>
     <style>radiobutton</style>
     <position>270 60</position>
-    <variable>handles.Toolbox(tb).Input.bathymetry.radioGeo</variable>
+    <variable>bathymetry.radioGeo</variable>
     <text>Geographic</text>
     <type>integer</type>
     <value>1</value>
@@ -99,7 +99,7 @@
     <tag>radioproj</tag>
     <style>radiobutton</style>
     <position>360 60</position>
-    <variable>handles.Toolbox(tb).Input.bathymetry.radioProj</variable>
+    <variable>bathymetry.radioProj</variable>
     <text>Projected</text>
     <type>integer</type>
     <value>1</value>
@@ -112,7 +112,7 @@
     <text>Vertical Coord Sys</text>
     <textposition>right</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.bathymetry.vertCoordName</variable>
+    <variable>bathymetry.vertCoordName</variable>
     <type>string</type>
     <tooltipstring>Edit vertical coordinate system (e.g. MSL, NAP or NAVD88)</tooltipstring>
   </element> 
@@ -143,7 +143,7 @@
     <text>Vertical Level</text>
     <textposition>right</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.bathymetry.vertCoordLevel</variable>
+    <variable>bathymetry.vertCoordLevel</variable>
     <type>real</type>
     <tooltipstring>Edit vertical level w.r.t. Mean Sea Level</tooltipstring>
   </element> 
@@ -153,7 +153,7 @@
     <position>500 10 60 20</position>
     <text>Positive</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.bathymetry.positiveUp</variable>
+    <variable>bathymetry.positiveUp</variable>
     <type>integer</type>
     <tooltipstring>Select positive direction in data file</tooltipstring>
     <list>
@@ -173,7 +173,7 @@
     <position>830 95 100 20</position>
     <text>Precision</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.bathymetry.type</variable>
+    <variable>bathymetry.type</variable>
     <type>string</type>
     <tooltipstring>Select precision of data stored in netCDF tiles.</tooltipstring>
     <list>
@@ -196,7 +196,7 @@
     <text>Data Name</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.bathymetry.dataName</variable>
+    <variable>bathymetry.dataName</variable>
     <type>string</type>
     <tooltipstring>Edit short name of data files (no spaces)</tooltipstring>
   </element> 

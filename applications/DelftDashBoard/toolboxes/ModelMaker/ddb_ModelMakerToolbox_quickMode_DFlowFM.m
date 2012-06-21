@@ -66,7 +66,7 @@ ddb_zoomOff;
 if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
-    setUIElements('modelmakerpanel.quickmode');
+    % setUIElements('modelmakerpanel.quickmode');
     setHandles(handles);
     ddb_plotModelMaker('activate');
     if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
@@ -127,13 +127,13 @@ handles.Toolbox(tb).Input.lengthY=dy;
 
 setHandles(handles);
 
-setUIElement('modelmakerpanel.quickmode.editx0');
-setUIElement('modelmakerpanel.quickmode.edity0');
-setUIElement('modelmakerpanel.quickmode.editmmax');
-setUIElement('modelmakerpanel.quickmode.editnmax');
-setUIElement('modelmakerpanel.quickmode.editdx');
-setUIElement('modelmakerpanel.quickmode.editdy');
-setUIElement('modelmakerpanel.quickmode.editrotation');
+% setUIElement('modelmakerpanel.quickmode.editx0');
+% setUIElement('modelmakerpanel.quickmode.edity0');
+% setUIElement('modelmakerpanel.quickmode.editmmax');
+% setUIElement('modelmakerpanel.quickmode.editnmax');
+% setUIElement('modelmakerpanel.quickmode.editdx');
+% setUIElement('modelmakerpanel.quickmode.editdy');
+% setUIElement('modelmakerpanel.quickmode.editrotation');
 
 %%
 function deleteGridOutline
@@ -204,8 +204,8 @@ handles.Toolbox(tb).Input.gridOutlineHandle=h;
 
 setHandles(handles);
 
-setUIElement('modelmakerpanel.quickmode.editmmax');
-setUIElement('modelmakerpanel.quickmode.editnmax');
+% setUIElement('modelmakerpanel.quickmode.editmmax');
+% setUIElement('modelmakerpanel.quickmode.editnmax');
 
 %%
 function generateGrid
@@ -292,16 +292,12 @@ end
 
 %%
 function generateBathymetry
-handles=getHandles;
-f=str2func(['ddb_generateBathymetry' handles.Model(md).name]);
-try
-    handles=feval(f,handles,ad,'ddb_test');
-catch
-    GiveWarning('text',['Bathymetry generation not supported for ' handles.Model(md).longName]);
-    return
-end
-handles=feval(f,handles,ad);
-setHandles(handles);
+% handles=getHandles;
+% [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input(ad).attName '.dep']);
+% if pathname~=0
+%     handles=ddb_generateBathymetryDFlowFM(handles,ad,filename);
+% end
+% setHandles(handles);
 
 %%
 function generateOpenBoundaries

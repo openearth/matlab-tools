@@ -12,7 +12,7 @@
     <style>pushselectfile</style>
     <position>20 100 120 20</position>
     <text>Select Grid File</text>
-    <variable>handles.Toolbox(tb).Input.grdFile</variable>
+    <variable>grdFile</variable>
     <onchange>ddb_NestingToolbox_nestHD1</onchange>
     <option1>selectgridfile</option1>
     <showfilename>yes</showfilename> 
@@ -25,7 +25,7 @@
     <style>pushselectfile</style>
     <position>20 75 120 20</position>
     <text>Select Enc File</text>
-    <variable>handles.Toolbox(tb).Input.encFile</variable>
+    <variable>encFile</variable>
     <onchange>ddb_NestingToolbox_nestHD1</onchange>
     <option1>selectencfile</option1>
     <showfilename>yes</showfilename> 
@@ -38,7 +38,7 @@
     <style>pushselectfile</style>
     <position>20 50 120 20</position>
     <text>Select Bnd File</text>
-    <variable>handles.Toolbox(tb).Input.bndFile</variable>
+    <variable>bndFile</variable>
     <onchange>ddb_NestingToolbox_nestHD1</onchange>
     <option1>selectbndfile</option1>
     <showfilename>yes</showfilename> 
@@ -51,7 +51,7 @@
     <style>edit</style>
     <position>600 40 150 20</position>
     <text>Admin File</text>
-    <variable>handles.Toolbox(tb).Input.admFile</variable>
+    <variable>admFile</variable>
     <type>string</type>
     <tooltipstring>Edit nesting administration file (*.adm)</tooltipstring> 
   </element>

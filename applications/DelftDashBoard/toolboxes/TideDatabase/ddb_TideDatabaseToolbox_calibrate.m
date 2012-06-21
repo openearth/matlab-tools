@@ -64,7 +64,7 @@ if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('tidedatabasepanel.calibrate');
+    % setUIElements('tidedatabasepanel.calibrate');
 else
     %Options selected
     opt=lower(varargin{1});

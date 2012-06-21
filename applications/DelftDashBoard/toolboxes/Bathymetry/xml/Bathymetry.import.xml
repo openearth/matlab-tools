@@ -6,7 +6,7 @@
     <style>pushselectfile</style>
     <position>30 110 150 20</position>
     <text>Select Bathy</text>
-    <variable>handles.Toolbox(tb).Input.bathyFile</variable>
+    <variable>bathyFile</variable>
     <onchange>ddb_BathymetryToolbox_import</onchange>
     <option1>getbathyfile</option1>
     <showfilename>yes</showfilename> 
@@ -25,21 +25,20 @@
     <style>pushbutton</style>
     <position>30 80 150 20</position>
     <text>Import Bathy</text>
-    <variable>handles.Toolbox(tb).Input.bathyFile</variable>
+    <variable>bathyFile</variable>
     <callback>ddb_BathymetryToolbox_import</callback>
     <option1>import</option1>
     <showfilename>no</showfilename> 
     <extension>*.nc</extension>
     <selectiontext>Import Data</selectiontext>
-    <tooltipstring>Integrate new bathy into GUI</tooltipstring> 
-    
+    <tooltipstring>Integrate new bathy into GUI</tooltipstring>     
   </element>
   <element>
       <tag>editOutputName</tag>
       <style>edit</style>
       <onchange>ddb_BathymetryToolbox_import</onchange>
       <option1>editOutputName</option1>
-      <variable>handles.Toolbox(tb).Input.newbathyName</variable>
+      <variable>newbathyName</variable>
       <type>string</type>
       <position>195 80 150 20 </position>
   </element>
@@ -49,7 +48,7 @@
     <text>Resolution (sec)</text>
    <onchange>ddb_BathymetryToolbox_import</onchange>
       <option1>editresolution</option1>
-      <variable>handles.Toolbox(tb).Input.newbathyresolution</variable>
+      <variable>newbathyresolution</variable>
       <type>double</type>
       <position>195 45 75 20 </position>
       <tooltipstring>Set the resolution (in seconds) of the grid.</tooltipstring> 
@@ -59,7 +58,7 @@
     <style>popupmenu</style>
     <text>Positive</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.activeDirection</variable>
+    <variable>activeDirection</variable>
     <position>400 45 60 20</position>
     <tooltipstring>Select positive up or down</tooltipstring>
     <type>string</type>
@@ -79,7 +78,7 @@
     <style>popupmenu</style>
     <text>Datum Type</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.datum_type</variable>
+    <variable>datum_type</variable>
     <position>550 80 150 20</position>
     <tooltipstring>Select offset of the Bathy Data</tooltipstring>
     <onchange>ddb_BathymetryToolbox_import</onchange>
@@ -105,7 +104,7 @@
       <onchange>ddb_BathymetryToolbox_import</onchange>
       <tooltipstring>Set the offset from mean sea level</tooltipstring>
       <option1>offsetvalue</option1>
-      <variable>handles.Toolbox(tb).Input.offset_value</variable>
+      <variable>offset_value</variable>
       <type>string</type>
       <position>550 45 50 20 </position>
   </element>  

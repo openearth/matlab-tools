@@ -64,7 +64,7 @@ if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
     ddb_refreshScreen;
-    setUIElements('bathymetrypanel.export');
+    % setUIElements('bathymetrypanel.export');
 %    ddb_plotBathymetry('activate');
 else
     %Options selected
@@ -111,11 +111,11 @@ end
 
 setHandles(handles);
 
-setUIElement('tilingpanel.bathymetry.editnx');
-setUIElement('tilingpanel.bathymetry.editny');
-setUIElement('tilingpanel.bathymetry.editnrzoom');
-setUIElement('tilingpanel.bathymetry.editx0');
-setUIElement('tilingpanel.bathymetry.edity0');
+% setUIElement('tilingpanel.bathymetry.editnx');
+% setUIElement('tilingpanel.bathymetry.editny');
+% setUIElement('tilingpanel.bathymetry.editnrzoom');
+% setUIElement('tilingpanel.bathymetry.editx0');
+% setUIElement('tilingpanel.bathymetry.edity0');
 
 %%
 function selectCS
@@ -141,9 +141,9 @@ if ok
     end
     setHandles(handles);
     
-    setUIElement('tilingpanel.bathymetry.radiogeo');
-    setUIElement('tilingpanel.bathymetry.radioproj');
-    setUIElement('tilingpanel.bathymetry.cstext');
+    % setUIElement('tilingpanel.bathymetry.radiogeo');
+    % setUIElement('tilingpanel.bathymetry.radioproj');
+    % setUIElement('tilingpanel.bathymetry.cstext');
     
 end
 

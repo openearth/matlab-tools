@@ -16,7 +16,7 @@
       <position>50 20 250 130</position>
       <style>listbox</style>
       <type>integer</type>
-      <variable>handles.Toolbox(tb).Input.activeObservationStation</variable>
+      <variable>activeObservationStation</variable>
       <onchange>ddb_ObservationStationsToolbox</onchange>
       <option1>selectobservationstation</option1>
       <tooltipstring>Select observation station</tooltipstring> 
@@ -58,13 +58,13 @@
       <position>310 25 130 20</position>
       <style>popupmenu</style>
       <type>integer</type>
-      <variable>handles.Toolbox(tb).Input.activeDatabase</variable>
+      <variable>activeDatabase</variable>
       <onchange>ddb_ObservationStationsToolbox</onchange>
       <option1>selectobservationdatabase</option1>
       <tooltipstring>Select an observation stations database</tooltipstring> 
       <list>
         <texts>
-          <variable>handles.Toolbox(tb).Input.databases</variable>
+          <variable>databases</variable>
         </texts>
       </list>
     </element>
@@ -72,7 +72,7 @@
       <tag>editstarttime</tag>
       <style>edit</style>
       <position>510 130 110 20</position>
-      <variable>handles.Toolbox(tb).Input.startTime</variable>
+      <variable>startTime</variable>
       <type>datetime</type>
       <text>Start Time</text>
       <textposition>left</textposition>
@@ -82,7 +82,7 @@
       <tag>editstoptime</tag>
       <style>edit</style>
       <position>510 105 110 20</position>
-      <variable>handles.Toolbox(tb).Input.stopTime</variable>
+      <variable>stopTime</variable>
       <type>datetime</type>
       <text>Stop Time</text>
       <textposition>left</textposition>
@@ -94,9 +94,9 @@
       <tag>radio01</tag>
       <style>radiobutton</style>
       <position>630 135 130</position>
-      <variable>handles.Toolbox(tb).Input.radio01.value</variable>
+      <variable>radio01.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio01.text</variable>
+        <variable>radio01.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -109,7 +109,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio01.value</variable>
+              <variable>radio01.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -121,7 +121,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio01.enable</variable>
+              <variable>radio01.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -134,9 +134,9 @@
       <tag>radio02</tag>
       <style>radiobutton</style>
       <position>630 115 130</position>
-      <variable>handles.Toolbox(tb).Input.radio02.value</variable>
+      <variable>radio02.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio02.text</variable>
+        <variable>radio02.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -149,7 +149,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio02.value</variable>
+              <variable>radio02.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -161,7 +161,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio02.enable</variable>
+              <variable>radio02.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -174,9 +174,9 @@
       <tag>radio03</tag>
       <style>radiobutton</style>
       <position>630 95 130</position>
-      <variable>handles.Toolbox(tb).Input.radio03.value</variable>
+      <variable>radio03.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio03.text</variable>
+        <variable>radio03.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -189,7 +189,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio03.value</variable>
+              <variable>radio03.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -201,7 +201,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio03.enable</variable>
+              <variable>radio03.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -214,9 +214,9 @@
       <tag>radio04</tag>
       <style>radiobutton</style>
       <position>630 75 130</position>
-      <variable>handles.Toolbox(tb).Input.radio04.value</variable>
+      <variable>radio04.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio04.text</variable>
+        <variable>radio04.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -229,7 +229,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio04.value</variable>
+              <variable>radio04.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -241,7 +241,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio04.enable</variable>
+              <variable>radio04.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -254,9 +254,9 @@
       <tag>radio05</tag>
       <style>radiobutton</style>
       <position>630 55 130</position>
-      <variable>handles.Toolbox(tb).Input.radio05.value</variable>
+      <variable>radio05.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio05.text</variable>
+        <variable>radio05.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -269,7 +269,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio05.value</variable>
+              <variable>radio05.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -281,7 +281,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio05.enable</variable>
+              <variable>radio05.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -294,9 +294,9 @@
       <tag>radio06</tag>
       <style>radiobutton</style>
       <position>630 35 130</position>
-      <variable>handles.Toolbox(tb).Input.radio06.value</variable>
+      <variable>radio06.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio06.text</variable>
+        <variable>radio06.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -309,7 +309,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio06.value</variable>
+              <variable>radio06.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -321,7 +321,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio06.enable</variable>
+              <variable>radio06.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -334,9 +334,9 @@
       <tag>radio07</tag>
       <style>radiobutton</style>
       <position>630 15 130</position>
-      <variable>handles.Toolbox(tb).Input.radio07.value</variable>
+      <variable>radio07.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio07.text</variable>
+        <variable>radio07.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -349,7 +349,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio07.value</variable>
+              <variable>radio07.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -361,7 +361,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio07.enable</variable>
+              <variable>radio07.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -374,9 +374,9 @@
       <tag>radio08</tag>
       <style>radiobutton</style>
       <position>770 135 130</position>
-      <variable>handles.Toolbox(tb).Input.radio08.value</variable>
+      <variable>radio08.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio08.text</variable>
+        <variable>radio08.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -389,7 +389,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio08.value</variable>
+              <variable>radio08.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -401,7 +401,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio08.enable</variable>
+              <variable>radio08.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -414,9 +414,9 @@
       <tag>radio09</tag>
       <style>radiobutton</style>
       <position>770 115 130</position>
-      <variable>handles.Toolbox(tb).Input.radio09.value</variable>
+      <variable>radio09.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio09.text</variable>
+        <variable>radio09.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -429,7 +429,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio09.value</variable>
+              <variable>radio09.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -441,7 +441,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio09.enable</variable>
+              <variable>radio09.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -454,9 +454,9 @@
       <tag>radio10</tag>
       <style>radiobutton</style>
       <position>770 95 130</position>
-      <variable>handles.Toolbox(tb).Input.radio10.value</variable>
+      <variable>radio10.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio10.text</variable>
+        <variable>radio10.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -469,7 +469,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio10.value</variable>
+              <variable>radio10.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -481,7 +481,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio10.enable</variable>
+              <variable>radio10.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -494,9 +494,9 @@
       <tag>radio11</tag>
       <style>radiobutton</style>
       <position>770 75 130</position>
-      <variable>handles.Toolbox(tb).Input.radio11.value</variable>
+      <variable>radio11.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio11.text</variable>
+        <variable>radio11.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -509,7 +509,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio11.value</variable>
+              <variable>radio11.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -521,7 +521,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio11.enable</variable>
+              <variable>radio11.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -534,9 +534,9 @@
       <tag>radio12</tag>
       <style>radiobutton</style>
       <position>770 55 130</position>
-      <variable>handles.Toolbox(tb).Input.radio12.value</variable>
+      <variable>radio12.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio12.text</variable>
+        <variable>radio12.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -549,7 +549,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio12.value</variable>
+              <variable>radio12.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -561,7 +561,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio12.enable</variable>
+              <variable>radio12.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -574,9 +574,9 @@
       <tag>radio13</tag>
       <style>radiobutton</style>
       <position>770 35 130</position>
-      <variable>handles.Toolbox(tb).Input.radio13.value</variable>
+      <variable>radio13.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio13.text</variable>
+        <variable>radio13.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -589,7 +589,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio13.value</variable>
+              <variable>radio13.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -601,7 +601,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio13.enable</variable>
+              <variable>radio13.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>
@@ -614,9 +614,9 @@
       <tag>radio14</tag>
       <style>radiobutton</style>
       <position>770 15 130</position>
-      <variable>handles.Toolbox(tb).Input.radio14.value</variable>
+      <variable>radio14.value</variable>
       <text>
-        <variable>handles.Toolbox(tb).Input.radio14.text</variable>
+        <variable>radio14.text</variable>
       </text>
       <type>integer</type>
       <value>1</value>
@@ -629,7 +629,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio14.value</variable>
+              <variable>radio14.value</variable>
               <type>integer</type>	              
               <value>-1</value>
               <operator>gt</operator>
@@ -641,7 +641,7 @@
           <checkfor>all</checkfor>
           <checks>
             <check>
-              <variable>handles.Toolbox(tb).Input.radio14.enable</variable>
+              <variable>radio14.enable</variable>
               <type>integer</type>	              
               <value>1</value>
               <operator>eq</operator>

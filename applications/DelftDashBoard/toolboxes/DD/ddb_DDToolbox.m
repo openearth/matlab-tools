@@ -90,8 +90,8 @@ if isempty(varargin)
     end
     
     clearInstructions;
-    %    setUIElements(handles.Toolbox(tb).GUI.elements);
-    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+    %    % setUIElements(handles.Toolbox(tb).GUI.elements);
+%    % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     
 else
     %Options selected
@@ -138,7 +138,7 @@ if ii<1
 end
 
 setHandles(handles);
-setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -157,7 +157,7 @@ if ii<1
 end
 
 setHandles(handles);
-setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -176,7 +176,7 @@ if ii<1
 end
 
 setHandles(handles);
-setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -195,7 +195,7 @@ if ii<1
 end
 
 setHandles(handles);
-setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -361,7 +361,7 @@ if ~isnan(m)
     ddb_clickPoint('cornerpoint','grid',xg,yg,'callback',@clickSecondCornerPoint,'single');
 end
 
-setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 %%
 function clickSecondCornerPoint(m,n)
@@ -376,7 +376,7 @@ if ~isnan(m)
     plotCornerPoints('plot');
     plotTemporaryDDGrid('plot');
     ddb_setWindowButtonMotionFcn;
-    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+    % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 end
 
 %%

@@ -20,7 +20,7 @@
       <onchange>ddb_TsunamiToolbox</onchange>
       <option1>editmw</option1>
       <format>%12.2f</format>
-      <variable>handles.Toolbox(tb).Input.Mw</variable>
+      <variable>Mw</variable>
       <type>real</type>
       <tooltipstring>Edit magnitude (Mw)</tooltipstring>
     </element> 
@@ -34,7 +34,7 @@
       <option1>editlength</option1>
       <enable>0</enable>
       <format>%12.1f</format>
-      <variable>handles.Toolbox(tb).Input.theoreticalFaultLength</variable>
+      <variable>theoreticalFaultLength</variable>
       <type>real</type>
       <tooltipstring>Edit fault length (km)</tooltipstring>
     </element> 
@@ -48,7 +48,7 @@
       <option1>editwidth</option1>
       <enable>0</enable>
       <format>%12.1f</format>
-      <variable>handles.Toolbox(tb).Input.width</variable>
+      <variable>width</variable>
       <type>real</type>
       <tooltipstring>Edit fault width (km)</tooltipstring>
     </element> 
@@ -62,7 +62,7 @@
       <option1>editslip</option1>
       <enable>0</enable>
       <format>%12.1f</format>
-      <variable>handles.Toolbox(tb).Input.slip</variable>
+      <variable>slip</variable>
       <type>real</type>
       <tooltipstring>Edit slip (m)</tooltipstring>
     </element> 
@@ -71,7 +71,7 @@
       <style>checkbox</style>
       <position>190 130</position>
       <text>Auto Update Table</text>
-      <variable>handles.Toolbox(tb).Input.updateTable</variable>
+      <variable>updateTable</variable>
       <tooltipstring>Automatically update fault area table when value for Mw or fault line is changed manually</tooltipstring>
     </element> 
     <element>
@@ -79,7 +79,7 @@
       <style>checkbox</style>
       <position>190 110</position>
       <text>Auto Update Parameters</text>
-      <variable>handles.Toolbox(tb).Input.updateParameters</variable>
+      <variable>updateParameters</variable>
       <tooltipstring>Automatically update earthquake parameters when fault line is changed manually</tooltipstring>
     </element> 
     <element>
@@ -101,42 +101,42 @@
           <width>80</width>
           <text>Strike (deg)</text>
           <enable>0</enable>
-          <variable>handles.Toolbox(tb).Input.segmentStrike</variable>
+          <variable>segmentStrike</variable>
         </column>
         <column>
           <style>editreal</style>
           <width>80</width>
           <text>Width (km)</text>
           <enable>1</enable>
-          <variable>handles.Toolbox(tb).Input.segmentWidth</variable>
+          <variable>segmentWidth</variable>
         </column>
         <column>
           <style>editreal</style>
           <width>80</width>
           <text>Depth (km)</text>
           <enable>1</enable>
-          <variable>handles.Toolbox(tb).Input.segmentDepth</variable>
+          <variable>segmentDepth</variable>
         </column>
         <column>
           <style>editreal</style>
           <width>80</width>
           <text>Dip (deg)</text>
           <enable>1</enable>
-          <variable>handles.Toolbox(tb).Input.segmentDip</variable>
+          <variable>segmentDip</variable>
         </column>
         <column>
           <style>editreal</style>
           <width>80</width>
           <text>Slip/Rake (deg)</text>
           <enable>1</enable>
-          <variable>handles.Toolbox(tb).Input.segmentSlipRake</variable>
+          <variable>segmentSlipRake</variable>
         </column>
         <column>
           <style>editreal</style>
           <width>80</width>
           <text>Slip (m)</text>
           <enable>1</enable>
-          <variable>handles.Toolbox(tb).Input.segmentSlip</variable>
+          <variable>segmentSlip</variable>
         </column>
       </columns>
     </element>
@@ -150,7 +150,7 @@
       <option1>editlength</option1>
       <enable>0</enable>
       <format>%12.1f</format>
-      <variable>handles.Toolbox(tb).Input.length</variable>
+      <variable>length</variable>
       <type>real</type>
       <tooltipstring>Edit fault length (km)</tooltipstring>
     </element> 

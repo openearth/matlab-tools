@@ -65,7 +65,6 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     handles=getHandles;
-    setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     h=handles.Toolbox(tb).Input.tideStationHandle;
     if isempty(h)
         plotTideStations;
@@ -94,26 +93,29 @@ end
 
 %%
 function addObservationPoints
-
 handles=getHandles;
-fstr=['ddb_' handles.Model(md).name '_addTideStations.m'];
-if exist(fstr)
-    feval(str2func(fstr(1:end-2)));
-else
-    GiveWarning('text',['Adding tide stations as observation points not supported for ' handles.Model(md).longName]);
-    return
+switch lower(handles.Model(md).name)
+    case{'delft3dflow'}
+        [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.Model(md).Input(ad).attName '.obs']);
+        if pathname~=0
+            ddb_Delft3DFLOW_addTideStations;
+            handles=getHandles;
+            handles.Model(md).Input(ad).obsFile=filename;
+            ddb_saveObsFile(handles,ad);
+            setHandles(handles);
+        end
+    otherwise
+        ddb_giveWarning('text',['Sorry, generation of observation points from tide stations is not supported for ' handles.Model(md).longName ' ...']);
 end
 
 %%
 function exportAllTideSignals
-
 handles=getHandles;
-fstr=['ddb_' handles.Model(md).name '_exportTideSignals.m'];
-if exist(fstr)
-    feval(str2func(fstr(1:end-2)));
-else
-    GiveWarning('text',['Exporting tide data within grid not supported for ' handles.Model(md).longName]);
-    return
+switch lower(handles.Model(md).name)
+    case{'delft3dflow'}
+        ddb_Delft3DFLOW_exportTideSignals;
+    otherwise
+        ddb_giveWarning('text',['Exporting tide data within grid not supported for ' handles.Model(md).longName]);
 end
 
 %%
@@ -177,9 +179,7 @@ if strcmp(get(h,'Tag'),'TideStations')
     setHandles(handles);
     
     selectTideStation;
-    
-    setUIElement('selecttidestation');
-    
+
 end
 
 %%
@@ -222,8 +222,6 @@ handles.Toolbox(tb).Input.tideStationHandle=[];
 handles.Toolbox(tb).Input.activeTideStationHandle=[];
 
 setHandles(handles);
-
-setUIElement('selecttidestation');
 
 plotTideStations;
 
@@ -303,6 +301,4 @@ end
 
 setHandles(handles);
 
-setUIElement('tidetable');
-
-
+gui_updateActiveTab;

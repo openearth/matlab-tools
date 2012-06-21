@@ -66,7 +66,7 @@ if isempty(varargin)
     ddb_refreshScreen;
     ddb_plotTropicalCyclone('activate');
     handles=getHandles;
-    setUIElements('tropicalcyclonepanel.parameters');
+    % setUIElements('tropicalcyclonepanel.parameters');
     if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
         giveWarning('text','The Tropical Cyclone Toolbox currently only works for geographic coordinate systems!');
     end
@@ -166,10 +166,10 @@ else
 end
 
 %  Update the TC widgets within the GUI.
-setUIElement('tropicalcyclonepanel.parameters.radioallbasins');
-setUIElement('tropicalcyclonepanel.parameters.radionearbasin');
-setUIElement('tropicalcyclonepanel.parameters.showbasins');
-setUIElement('tropicalcyclonepanel.parameters.basinname');
+% setUIElement('tropicalcyclonepanel.parameters.radioallbasins');
+% setUIElement('tropicalcyclonepanel.parameters.radionearbasin');
+% setUIElement('tropicalcyclonepanel.parameters.showbasins');
+% setUIElement('tropicalcyclonepanel.parameters.basinname');
 
 %  Store the current handles data structure.
 setHandles(handles);
@@ -196,13 +196,13 @@ setHandles(handles);
 
 %     ddb_updateTrackTables;
 
-setUIElement('tropicalcyclonepanel.parameters.editname');
-setUIElement('tropicalcyclonepanel.parameters.editradius');
-setUIElement('tropicalcyclonepanel.parameters.editradialbins');
-setUIElement('tropicalcyclonepanel.parameters.editdirectionalbins');
-%setUIElement('tropicalcyclonepanel.parameters.selectquadrant');
-setUIElement('tropicalcyclonepanel.parameters.radioperquadrant');
-setUIElement('tropicalcyclonepanel.parameters.radiouniform');
+% setUIElement('tropicalcyclonepanel.parameters.editname');
+% setUIElement('tropicalcyclonepanel.parameters.editradius');
+% setUIElement('tropicalcyclonepanel.parameters.editradialbins');
+% setUIElement('tropicalcyclonepanel.parameters.editdirectionalbins');
+%% setUIElement('tropicalcyclonepanel.parameters.selectquadrant');
+% setUIElement('tropicalcyclonepanel.parameters.radioperquadrant');
+% setUIElement('tropicalcyclonepanel.parameters.radiouniform');
 
 ddb_plotCycloneTrack;
 
@@ -479,7 +479,7 @@ switch lower(handles.Toolbox(tb).Input.importFormat)
                         handles.Toolbox(tb).Input.TCTrackFile = fname{indx};  % Store the file name.
                         %  Update the data structure & the text box
                         setHandles(handles);
-                        setUIElement('tropicalcyclonepanel.parameters.selectedtrackfile');
+                        % setUIElement('tropicalcyclonepanel.parameters.selectedtrackfile');
                     end
                 else
                     %  No files for the given storm name were found; issue a
@@ -507,7 +507,7 @@ else
     %  Update the data structure.
     setHandles(handles);
     %  Update the text box.
-	setUIElement('tropicalcyclonepanel.parameters.selectedtrackfile');
+	% setUIElement('tropicalcyclonepanel.parameters.selectedtrackfile');
 end
 
 %  Format type flag.
@@ -645,10 +645,10 @@ try
         
         setHandles(handles);
         
-        setUIElement('tropicalcyclonepanel.parameters.editname');
-        setUIElement('tropicalcyclonepanel.parameters.radioperquadrant');
-        setUIElement('tropicalcyclonepanel.parameters.radiouniform');
-        setUIElement('tropicalcyclonepanel.parameters.selectmethod');
+        % setUIElement('tropicalcyclonepanel.parameters.editname');
+        % setUIElement('tropicalcyclonepanel.parameters.radioperquadrant');
+        % setUIElement('tropicalcyclonepanel.parameters.radiouniform');
+        % setUIElement('tropicalcyclonepanel.parameters.selectmethod');
         
         ddb_plotCycloneTrack;
         

@@ -70,6 +70,8 @@ handles.Toolbox(ii).Input.polygonFile='';
 handles.Toolbox(ii).Input.activeScale=1;
 handles.Toolbox(ii).Input.scaleText={'1'};
 
+handles.Toolbox(ii).Input.resolutionText='';
+
 handles.Toolbox(ii).Input.exportTypes={'ldb'};
 handles.Toolbox(ii).Input.activeExportType='ldb';
 

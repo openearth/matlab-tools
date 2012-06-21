@@ -65,7 +65,7 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     ddb_plotTropicalCyclone('activate');
-    setUIElements('tropicalcyclonepanel.tracktable');
+    % setUIElements('tropicalcyclonepanel.tracktable');
     handles=getHandles;
     if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
         giveWarning('text','The Tropical Cyclone Toolbox currently only works for geographic coordinate systems!');

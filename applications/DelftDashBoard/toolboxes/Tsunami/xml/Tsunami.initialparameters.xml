@@ -10,7 +10,7 @@
     <tag>editdepth</tag>
     <style>edit</style>
     <position>180 90 50 20</position>
-    <variable>handles.Toolbox(tb).Input.depth</variable>
+    <variable>depth</variable>
     <type>real</type>
     <text>Depth (km)</text>
     <textposition>left</textposition>
@@ -20,7 +20,7 @@
     <tag>editdip</tag>
     <style>edit</style>
     <position>180 65 50 20</position>
-    <variable>handles.Toolbox(tb).Input.dip</variable>
+    <variable>dip</variable>
     <type>real</type>
     <text>Dip (deg)</text>
     <textposition>left</textposition>
@@ -30,7 +30,7 @@
     <tag>editsliprake</tag>
     <style>edit</style>
     <position>180 40 50 20</position>
-    <variable>handles.Toolbox(tb).Input.slipRake</variable>
+    <variable>slipRake</variable>
     <type>real</type>
     <text>Slip/rake (deg)</text>
     <textposition>left</textposition>

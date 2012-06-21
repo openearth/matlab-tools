@@ -10,7 +10,7 @@
     <tag>edittstart</tag>
     <style>edit</style>
     <position>90 295 110 20</position>
-    <variable>handles.Toolbox(tb).Input.startTime</variable>
+    <variable>startTime</variable>
     <type>datetime</type>
     <text>Start Time</text>
     <textposition>left</textposition>
@@ -20,7 +20,7 @@
     <tag>edittimestep</tag>
     <style>edit</style>
     <position>90 270 110 20</position>
-    <variable>handles.Toolbox(tb).Input.timeStep</variable>
+    <variable>timeStep</variable>
     <type>real</type>
     <text>Time Step (hrs)</text>
     <textposition>left</textposition>
@@ -30,7 +30,7 @@
     <tag>editvmax</tag>
     <style>edit</style>
     <position>90 245 110 20</position>
-    <variable>handles.Toolbox(tb).Input.vMax</variable>
+    <variable>vMax</variable>
     <type>real</type>
     <text>Vmax (kts)</text>
     <textposition>left</textposition>
@@ -41,37 +41,37 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>3</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>4</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>5</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>6</value>
             <operator>eq</operator>
@@ -84,7 +84,7 @@
     <tag>editrmax</tag>
     <style>edit</style>
     <position>90 220 110 20</position>
-    <variable>handles.Toolbox(tb).Input.rMax</variable>
+    <variable>rMax</variable>
     <type>real</type>
     <text>Rmax (NM)</text>
     <textposition>left</textposition>
@@ -95,13 +95,13 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>3</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>5</value>
             <operator>eq</operator>
@@ -114,7 +114,7 @@
     <tag>editpdrop</tag>
     <style>edit</style>
     <position>90 195 110 20</position>
-    <variable>handles.Toolbox(tb).Input.pDrop</variable>
+    <variable>pDrop</variable>
     <type>real</type>
     <text>Pdrop (Pa)</text>
     <textposition>left</textposition>
@@ -125,13 +125,13 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>3</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>4</value>
             <operator>eq</operator>
@@ -144,7 +144,7 @@
     <tag>editb</tag>
     <style>edit</style>
     <position>90 170 110 20</position>
-    <variable>handles.Toolbox(tb).Input.parB</variable>
+    <variable>parB</variable>
     <type>real</type>
     <text>Holland B</text>
     <textposition>left</textposition>
@@ -155,7 +155,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>eq</operator>
@@ -168,7 +168,7 @@
     <tag>edita</tag>
     <style>edit</style>
     <position>90 145 110 20</position>
-    <variable>handles.Toolbox(tb).Input.parA</variable>
+    <variable>parA</variable>
     <type>real</type>
     <text>Holland A</text>
     <textposition>left</textposition>
@@ -179,7 +179,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>eq</operator>
@@ -192,7 +192,7 @@
     <tag>editr35</tag>
     <style>edit</style>
     <position>90 120 110 20</position>
-    <variable>handles.Toolbox(tb).Input.r35</variable>
+    <variable>r35</variable>
     <type>real</type>
     <text>R35 (NM)</text>
     <textposition>left</textposition>
@@ -203,7 +203,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>
@@ -216,7 +216,7 @@
     <tag>editr50</tag>
     <style>edit</style>
     <position>90 95 110 20</position>
-    <variable>handles.Toolbox(tb).Input.r50</variable>
+    <variable>r50</variable>
     <type>real</type>
     <text>R50 (NM)</text>
     <textposition>left</textposition>
@@ -227,7 +227,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>
@@ -240,7 +240,7 @@
     <tag>editr65</tag>
     <style>edit</style>
     <position>90 70 110 20</position>
-    <variable>handles.Toolbox(tb).Input.r65</variable>
+    <variable>r65</variable>
     <type>real</type>
     <text>R65 (NM)</text>
     <textposition>left</textposition>
@@ -251,7 +251,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>
@@ -264,7 +264,7 @@
     <tag>editr100</tag>
     <style>edit</style>
     <position>90 45 110 20</position>
-    <variable>handles.Toolbox(tb).Input.r100</variable>
+    <variable>r100</variable>
     <type>real</type>
     <text>R100 (NM)</text>
     <textposition>left</textposition>
@@ -275,7 +275,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>

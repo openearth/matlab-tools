@@ -105,35 +105,8 @@ handles.Toolbox(ii).Input.activeObservationStationHandle=[];
 
 handles.Toolbox(tb).Input.activeParameter=1;
 
-handles.Toolbox(ii).Input.radio01.value=0;
-handles.Toolbox(ii).Input.radio02.value=0;
-handles.Toolbox(ii).Input.radio03.value=0;
-handles.Toolbox(ii).Input.radio04.value=0;
-handles.Toolbox(ii).Input.radio05.value=0;
-handles.Toolbox(ii).Input.radio06.value=0;
-handles.Toolbox(ii).Input.radio07.value=0;
-handles.Toolbox(ii).Input.radio08.value=0;
-handles.Toolbox(ii).Input.radio09.value=0;
-handles.Toolbox(ii).Input.radio10.value=0;
-handles.Toolbox(ii).Input.radio11.value=0;
-handles.Toolbox(ii).Input.radio12.value=0;
-handles.Toolbox(ii).Input.radio13.value=0;
-handles.Toolbox(ii).Input.radio14.value=0;
-handles.Toolbox(ii).Input.radio15.value=0;
-
-handles.Toolbox(ii).Input.radio01.text='';
-handles.Toolbox(ii).Input.radio02.text='';
-handles.Toolbox(ii).Input.radio03.text='';
-handles.Toolbox(ii).Input.radio04.text='';
-handles.Toolbox(ii).Input.radio05.text='';
-handles.Toolbox(ii).Input.radio06.text='';
-handles.Toolbox(ii).Input.radio07.text='';
-handles.Toolbox(ii).Input.radio08.text='';
-handles.Toolbox(ii).Input.radio09.text='';
-handles.Toolbox(ii).Input.radio10.text='';
-handles.Toolbox(ii).Input.radio11.text='';
-handles.Toolbox(ii).Input.radio12.text='';
-handles.Toolbox(ii).Input.radio13.text='';
-handles.Toolbox(ii).Input.radio14.text='';
-handles.Toolbox(ii).Input.radio15.text='';
-
+for jj=1:15
+    handles.Toolbox(ii).Input.(['radio' num2str(jj,'%0.2i')]).value=0;
+    handles.Toolbox(ii).Input.(['radio' num2str(jj,'%0.2i')]).enable=0;
+    handles.Toolbox(ii).Input.(['radio' num2str(jj,'%0.2i')]).text='';
+end

@@ -7,7 +7,7 @@
     <position>10 90 80 20</position>
     <text>Quadrant</text>
     <textposition>above-left</textposition>
-    <variable>handles.Toolbox(tb).Input.quadrant</variable>
+    <variable>quadrant</variable>
     <type>integer</type>
     <tooltipstring>Select quadrant</tooltipstring>
     <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
@@ -30,7 +30,7 @@
         </tags> 
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.quadrantOption</variable>
+            <variable>quadrantOption</variable>
             <value>perquadrant</value>
             <operator>eq</operator>
           </check>
@@ -53,42 +53,42 @@
         <width>110</width>
         <text>Date and time</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackT</variable>
+        <variable>trackT</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>80</width>
         <text>Lon (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackX</variable>
+        <variable>trackX</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>80</width>
         <text>Lat (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackY</variable>
+        <variable>trackY</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Vmax (kts)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableVMax</variable>
+        <variable>tableVMax</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>50</width>
         <text>B</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableB</variable>
+        <variable>tableB</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>50</width>
         <text>A</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableA</variable>
+        <variable>tableA</variable>
       </column>
     </columns>
     <dependencies>
@@ -97,7 +97,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.nrTrackPoints</variable>
+            <variable>nrTrackPoints</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>gt</operator>
@@ -112,7 +112,7 @@
         </tags> 
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>eq</operator>
@@ -138,56 +138,56 @@
         <width>110</width>
         <text>Date and time</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackT</variable>
+        <variable>trackT</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lon (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackX</variable>
+        <variable>trackX</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lat (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackY</variable>
+        <variable>trackY</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Vmax (kts)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableVMax</variable>
+        <variable>tableVMax</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>55</width>
         <text>R35 (NM)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableR35</variable>
+        <variable>tableR35</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>55</width>
         <text>R50 (NM)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableR50</variable>
+        <variable>tableR50</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>55</width>
         <text>R65 (NM)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableR65</variable>
+        <variable>tableR65</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>55</width>
         <text>R100 (NM)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableR100</variable>
+        <variable>tableR100</variable>
       </column>
     </columns>
     <dependencies>
@@ -196,7 +196,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.nrTrackPoints</variable>
+            <variable>nrTrackPoints</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>gt</operator>
@@ -211,7 +211,7 @@
         </tags> 
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>2</value>
             <operator>eq</operator>
@@ -236,42 +236,42 @@
         <width>110</width>
         <text>Date and time</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackT</variable>
+        <variable>trackT</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lon (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackX</variable>
+        <variable>trackX</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lat (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackY</variable>
+        <variable>trackY</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Vmax (kts)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableVMax</variable>
+        <variable>tableVMax</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Rmax (NM)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableRMax</variable>
+        <variable>tableRMax</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Pd (Pa)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tablePDrop</variable>
+        <variable>tablePDrop</variable>
       </column>
     </columns>
     <dependencies>
@@ -280,7 +280,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.nrTrackPoints</variable>
+            <variable>nrTrackPoints</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>gt</operator>
@@ -295,7 +295,7 @@
         </tags> 
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>3</value>
             <operator>eq</operator>
@@ -320,35 +320,35 @@
         <width>110</width>
         <text>Date and time</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackT</variable>
+        <variable>trackT</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lon (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackX</variable>
+        <variable>trackX</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lat (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackY</variable>
+        <variable>trackY</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Vmax (kts)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableVMax</variable>
+        <variable>tableVMax</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Pd (Pa)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tablePDrop</variable>
+        <variable>tablePDrop</variable>
       </column>
     </columns>
     <dependencies>
@@ -357,7 +357,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.nrTrackPoints</variable>
+            <variable>nrTrackPoints</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>gt</operator>
@@ -372,7 +372,7 @@
         </tags> 
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>4</value>
             <operator>eq</operator>
@@ -397,35 +397,35 @@
         <width>110</width>
         <text>Date and time</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackT</variable>
+        <variable>trackT</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lon (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackX</variable>
+        <variable>trackX</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lat (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackY</variable>
+        <variable>trackY</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Vmax (kts)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableVMax</variable>
+        <variable>tableVMax</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Rmax (NM)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableRMax</variable>
+        <variable>tableRMax</variable>
       </column>
     </columns>
     <dependencies>
@@ -434,7 +434,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.nrTrackPoints</variable>
+            <variable>nrTrackPoints</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>gt</operator>
@@ -449,7 +449,7 @@
         </tags> 
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>5</value>
             <operator>eq</operator>
@@ -474,28 +474,28 @@
         <width>110</width>
         <text>Date and time</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackT</variable>
+        <variable>trackT</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lon (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackX</variable>
+        <variable>trackX</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Lat (deg)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.trackY</variable>
+        <variable>trackY</variable>
       </column>
       <column>
         <style>editreal</style>
         <width>60</width>
         <text>Vmax (kts)</text>
         <enable>1</enable>
-        <variable>handles.Toolbox(tb).Input.tableVMax</variable>
+        <variable>tableVMax</variable>
       </column>
     </columns>
     <dependencies>
@@ -504,7 +504,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.nrTrackPoints</variable>
+            <variable>nrTrackPoints</variable>
             <type>integer</type>	              
             <value>1</value>
             <operator>gt</operator>
@@ -519,7 +519,7 @@
         </tags> 
         <checks>
           <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
+            <variable>method</variable>
             <type>integer</type>	              
             <value>6</value>
             <operator>eq</operator>
