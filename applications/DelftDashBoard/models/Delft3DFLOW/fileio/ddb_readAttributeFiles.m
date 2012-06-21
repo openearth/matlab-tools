@@ -66,11 +66,11 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     handles.Model(md).Input(id).gridX=x;
     handles.Model(md).Input(id).gridY=y;
     [handles.Model(md).Input(id).gridXZ,handles.Model(md).Input(id).gridYZ]=getXZYZ(x,y);
-    handles.Model(md).Input(id).kcs=determineKCS(handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
     if ~isempty(handles.Model(md).Input(id).encFile)
         mn=ddb_enclosure('read',[handles.Model(md).Input(id).encFile]);
         [handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY]=ddb_enclosure('apply',mn,handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
     end
+    handles.Model(md).Input(id).kcs=determineKCS(handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
     nans=zeros(size(handles.Model(md).Input(id).gridX));
     nans(nans==0)=NaN;
     handles.Model(md).Input(id).depth=nans;
