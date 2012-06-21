@@ -187,10 +187,11 @@ colour       = {[0.6 0.2 0.2],[0.2 0.6 0.2]};
 fillalpha    = 0.7;
 for kk = 1: length(ECO)
     vectorlength = S.settings.plotting.barplot.barscalevector_eco;
-    offset       = S.settings.indicators.eco.offset1 + S.settings.indicators.eco.offset2*kk;
+    offset       = str2double(S.settings.indicators.eco.offset1) + str2double(S.settings.indicators.eco.offset2)*kk;
     popuptxt     = {['Benthos ',num2str(kk)]};
     popuptxt{2}  = ['Direct impact of nourishments on benthos population for species nr. ',num2str(kk)];
-    KMLdata = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).GEmapping.eco(kk).P,offset,sens,colour,fillalpha,vectorlength,popuptxt);
+    outlineVAL   = ppmapping.eco(kk).Ks;
+    KMLdata      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).GEmapping.eco(kk).P,offset,sens,colour,fillalpha,vectorlength,popuptxt,outlineVAL);
     S.PP(sens).output.kml_eco_benthos{kk} = KMLdata;
 end
 

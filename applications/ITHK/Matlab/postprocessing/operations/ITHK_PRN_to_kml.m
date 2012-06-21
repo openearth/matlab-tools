@@ -83,17 +83,17 @@ fprintf('ITHK postprocessing : Processing coastline information + Adding it to K
 
 global S
 
-NRtimesteps   = length(S.PP(sens).settings.tvec);
+NRtimesteps  = length(S.PP(sens).settings.tvec);
 
 %% initial coast line
-t0 = S.PP(sens).settings.t0;
-x0 = S.PP(sens).settings.MDAdata_ORIG.Xcoast; x0_ref = S.PP(sens).settings.MDAdata_ORIG.X;
-y0 = S.PP(sens).settings.MDAdata_ORIG.Ycoast; y0_ref = S.PP(sens).settings.MDAdata_ORIG.Y;
-s0 = distXY(S.PP(sens).settings.MDAdata_ORIG.Xcoast,S.PP(sens).settings.MDAdata_ORIG.Ycoast);
-s0_ref = distXY(S.PP(sens).settings.MDAdata_ORIG.X,S.PP(sens).settings.MDAdata_ORIG.Y);
+t0           = S.PP(sens).settings.t0;
+x0           = S.PP(sens).settings.MDAdata_ORIG.Xcoast; x0_ref = S.PP(sens).settings.MDAdata_ORIG.X;
+y0           = S.PP(sens).settings.MDAdata_ORIG.Ycoast; y0_ref = S.PP(sens).settings.MDAdata_ORIG.Y;
+s0           = distXY(S.PP(sens).settings.MDAdata_ORIG.Xcoast,S.PP(sens).settings.MDAdata_ORIG.Ycoast);
+s0_ref       = distXY(S.PP(sens).settings.MDAdata_ORIG.X,S.PP(sens).settings.MDAdata_ORIG.Y);
 
-reference       = S.settings.plotting.reference;
-%reference       = 'relative'; %'natural';
+reference    = S.settings.plotting.reference;
+%reference   = 'relative'; %'natural';
 
 %% Map UB coastline to GE grid
 S.PP(sens).coast.x0gridRough = interp1(s0,x0,S.PP(sens).settings.sgridRough); S.PP(sens).coast.x0_refgridRough = interp1(s0_ref,x0_ref,S.PP(sens).settings.sgridRough);
@@ -103,51 +103,61 @@ if ~isfield(S.settings,'indicators')
 S.settings.indicators.coast.offset='0';
 end
 
+%% Coastline data from PRN file
+xcoast       = S.UB(sens).results.PRNdata.xSLR;   % x-position of coast line
+ycoast       = S.UB(sens).results.PRNdata.ySLR;   % y-position of coast line
+zcoast       = S.UB(sens).results.PRNdata.zSLR;   % z-position of coast line
+xcoastref    = S.UB(sens).data_ref.PRNdata.x;
+zcoastref    = S.UB(sens).data_ref.PRNdata.z;
+
+z            = [];
 for jj = 1:NRtimesteps
-    %% grid data
-    % coast line at t=tvec(j)
-    xcoast(:,jj) = S.UB(sens).results.PRNdata.xSLR(:,jj);   % x-position of coast line
-    ycoast(:,jj) = S.UB(sens).results.PRNdata.ySLR(:,jj);   % y-position of coast line
-    zcoast(:,jj) = S.UB(sens).results.PRNdata.zSLR(:,jj);   % z-position of coast line
-    
     %% coast line change relative to reference coast line at t=tvec(j)
     %% omit double x-entries in interpolation
     [AA,ids1]=unique(xcoast(:,jj));
     
     if strcmp(reference,'natural') || strcmp(reference,'relative')
         % Relative to autonomous situation 
-        [BB,ids2]=unique(S.UB(sens).data_ref.PRNdata.x(:,jj));
+        [BB,ids2]=unique(xcoastref(:,jj));
     
         % interpolate data to shortest dataset
         if  length(ids1)==length(ids2)  
             zPRN = zcoast(sort(ids1),jj);
-            zref = S.UB(sens).data_ref.PRNdata.z(sort(ids2),jj);
+            zPRNref = zcoastref(sort(ids2),jj);
         else
-            zPRN = interp1(xcoast(sort(ids1),jj),zcoast(sort(ids1),jj),S.UB(sens).data_ref.PRNdata.x(sort(ids2),jj));
-            zref = S.UB(sens).data_ref.PRNdata.z(sort(ids2),jj);  
+            zPRN = interp1(xcoast(sort(ids1),jj),zcoast(sort(ids1),jj),xcoastref(sort(ids2),jj));
+            zPRNref = zcoastref(sort(ids2),jj);  
         end
-        z(:,jj) = zPRN-zref;
-        % if x is longer than x0, interpolate to x0 (now interpolation in 2 steps, because direct interpolation gave unstable results) 
-        if  length(z)~=length(s0)
-            z(:,jj)=interp1(S.UB(sens).data_ref.PRNdata.x(sort(ids2),jj),z(:,jj),x0);
+        % check if length of zPRN and zPRNref is equal to length of coast (x0),
+        % otherwise interpolate to grid x0.
+        if length(zPRN)~=length(s0)
+            zPRN = interp1(xcoast(sort(ids1),jj),zPRN,x0);
         end
+        if length(zPRNref)~=length(s0)
+            zPRNref = interp1(xcoastref(sort(ids2),jj),zPRNref,x0);
+        end
+        % compute difference between model result (zPRN) and autonomous situation (zPRNref)
+        z(:,jj)=zPRN-zPRNref;
+        
     else
         % Relative to t0-situation
         zPRN = zcoast(sort(ids1),jj);
         zPRN1 = zcoast(sort(ids1),1);
-        z(:,jj) = zPRN-zPRN1;
+        ztemp = zPRN-zPRN1;
         
         % if x is longer than x0, interpolate to x0 (now interpolation in 2 steps, because direct interpolation gave unstable results) 
-        if  length(z)~=length(s0)
-            z(:,jj)=interp1(xcoast(sort(ids1),jj),z(:,jj),x0); 
+        if  length(ztemp)~=length(s0)
+            z(:,jj)=interp1(xcoast(sort(ids1),jj),ztemp,x0); 
+        else
+            z(:,jj)=ztemp;
         end
     end
 
     %% Save rough grid to structure
     S.PP(sens).coast.zgridRough(:,jj) = interp1(s0,z(:,jj),S.PP(sens).settings.sgridRough);
-    S.PP(sens).coast.xcoast(:,jj) = xcoast(:,jj);
-    S.PP(sens).coast.ycoast(:,jj) = ycoast(:,jj);
-    S.PP(sens).coast.zcoast(:,jj) = z(:,jj);
+    S.PP(sens).coast.xcoast(:,jj)     = xcoast(:,jj);
+    S.PP(sens).coast.ycoast(:,jj)     = ycoast(:,jj);
+    S.PP(sens).coast.zcoast(:,jj)     = z(:,jj);
 end
 
 %% Add to kml

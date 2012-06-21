@@ -48,19 +48,26 @@
       <yposinitial>80</yposinitial>
     </dunes>
     <eco>
-      <function>ITHK_ecology_benthos</function>
+      <function>ITHK_ind_ecology_benthos</function>
       <plottype>barplot</plottype>
       <offset1>7000</offset1>
       <offset2>2500</offset2>
-    </eco>    
-  </indicators>  
+    </eco>
+    <foreshore>
+      <function>ITHK_ind_foreshore_juvenilefish</function>
+      <ShoreWidth>10000</ShoreWidth>
+      <PLOTscale1>2000</PLOTscale1>
+      <PLOTscale2>0.0</PLOTscale2>
+      <PLOToffset>14500</PLOToffset>
+    </foreshore>
+  </indicators>
   <plotting>
     <reference>initial</reference>
     <barplot>
       <dsrough>2000</dsrough>
       <dsfine>500</dsfine>
       <widthfine>5000</widthfine>
-      <barscalevector>8</barscalevector>
+      <barscalevector>3</barscalevector>
       <barscalevector_eco>12</barscalevector_eco>
     </barplot>
   </plotting>

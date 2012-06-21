@@ -73,27 +73,29 @@ global S
 
 
 %% Set values for shorewidth formulation
-zminz0      = S.PP.coast.zminz0;                                           % change of coastline since t0
-zminz0Rough = S.PP.coast.zminz0Rough;                                      % change of coastline since t0
-ShoreWidth = str2double(S.settings.indicators.foreshore.ShoreWidth);         % Default initial shoreface width can be replaced by setting in ITHK_settings.xml
+zminz0      = S.PP(sens).coast.zcoast;                                     % change of coastline since t0 (UBmapping)
+zminz0Rough = S.PP(sens).coast.zgridRough;                                 % change of coastline since t0 (GEmapping)
+ShoreWidth = str2double(S.settings.indicators.foreshore.ShoreWidth);       % Default initial shoreface width can be replaced by setting in ITHK_settings.xml
 
 %% Compute actual shorewidth
-S.PP.UBmapping.foreshore.ShoreWidthFact = (ShoreWidth-(zminz0>0))./ShoreWidth;
-S.PP.GEmapping.foreshore.ShoreWidthFact = (ShoreWidth-(zminz0Rough>0))./ShoreWidth;  % if zminz0 >0, then the shoreface width decrease, then K and P of the species will descrease in a portion.
+S.PP(sens).UBmapping.foreshore.ShoreWidthFact = (ShoreWidth-(zminz0))./ShoreWidth;
+S.PP(sens).GEmapping.foreshore.ShoreWidthFact = (ShoreWidth-(zminz0Rough))./ShoreWidth;  
+%S.PP(sens).UBmapping.foreshore.ShoreWidthFact = (ShoreWidth-(zminz0>0))./ShoreWidth;
+%S.PP(sens).GEmapping.foreshore.ShoreWidthFact = (ShoreWidth-(zminz0Rough>0))./ShoreWidth;  % if zminz0 >0, then the shoreface width decrease, then K and P of the species will descrease in a portion.
 
 
 %% Settings for writing to KMLtext
-PLOTscale1   = str2double(S.settings.indicators.foreshore.PLOTscale1);   % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
-PLOTscale2   = str2double(S.settings.indicators.foreshore.PLOTscale2);   % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
-PLOToffset   = str2double(S.settings.indicators.foreshore.PLOToffset);   % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
-colour       = {[0.3 0.2 0.8]};
+PLOTscale1   = str2double(S.settings.indicators.foreshore.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTscale2   = str2double(S.settings.indicators.foreshore.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
+PLOToffset   = str2double(S.settings.indicators.foreshore.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
+colour       = {[0.1 0.1 0.8],[0.2 0.2 0.8]};
 fillalpha    = 0.7;
 popuptxt     = {'Nursery area for fish','Indirect impact of coastline changes on nursery area for juvenile fish.'};
 
 %% Write to kml
 KMLdata      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                              (S.PP(sens).GEmapping.foreshore.ShoreWidthFact-PLOTscale2*ShoreWidth)*PLOTscale1, ...
-                              PLOToffset,sens,colour,fillalpha,vectorlength,popuptxt);
+                              (S.PP(sens).GEmapping.foreshore.ShoreWidthFact-PLOTscale2), ...
+                              PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
 S.PP(sens).output.kml_foreshore_juvenilefish = KMLdata;
 
 

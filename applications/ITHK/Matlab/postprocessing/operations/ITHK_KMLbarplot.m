@@ -1,4 +1,4 @@
-function [KMLdata]=ITHK_KMLbarplot(x,y,z,offset,sens,colour,fillalpha,vectorscale,popuptxt)
+function [KMLdata]=ITHK_KMLbarplot(x,y,z,offset,sens,colour,fillalpha,vectorscale,popuptxt,outlineVAL)
 % function ITHK_KMLbarplot(x,y,z,offset,sens)
 %
 % Creates a datafield for barplots that is later on used to generate the KML file
@@ -14,6 +14,7 @@ function [KMLdata]=ITHK_KMLbarplot(x,y,z,offset,sens,colour,fillalpha,vectorscal
 %      vectorscale  scaling factor for length of vector (default = S.settings.plotting.barplot.barscalevector)
 %      popuptxt     cell string with name of indicator and text for pop-up 
 %                   at start of line (e.g. popuptxt = {'inidcator name', 'Description of indicator ...'})
+%      outlineVAL   Value at which outline is plotted (outline not used if not specified)
 %      S            structure with ITHK data (global variable that is automatically used)
 %                    .PP(sens).settings.tvec
 %                    .PP(sens).settings.t0
@@ -86,13 +87,18 @@ end
 if nargin<9
 popuptxt = {'Coastline','Coastline development in time.'};
 end
+if nargin<10
+outlineVAL=[];
+end
 
 % initial values, constants and standard KML-textblocks
 KMLdata    = [];
-if ischar(S.settings.indicators.coast.offset);S.settings.indicators.coast.offset = str2double(S.settings.indicators.coast.offset);end
+if ischar(offset);offset = str2double(offset);end
 if ischar(vectorscale);vectorscale=str2double(vectorscale);end
 barstyle1  = KML_stylePoly('name','default','fillColor',colour{1},'lineColor',[0 0 0],'lineWidth',1,'fillAlpha',fillalpha); % red bar style
 barstyle2  = KML_stylePoly('name','default','fillColor',colour{2},'lineColor',[0 0 0],'lineWidth',1,'fillAlpha',fillalpha); % green bar style
+barstyle3  = KML_stylePoly('name','default','lineColor',[0.5 0.5 0.5],'lineWidth',0.5,'polyFill',0); % outline of area of bar
+
 
 %% get smoothed orientation of the coast
 dx         = x(2:end)-x(1:end-1);
@@ -114,24 +120,23 @@ y1ref           = interp1(dist,y1,distref,'pchip','extrap');
 KMLdata         = [KMLdata ITHK_KMLline(latref,lonref,'timeIn',time1,'timeOut',time2,'lineColor',[0.3 0.3 0.3],'lineWidth',3,'lineAlpha',.8,'writefile',0)];
 fprintf('#');
 
+%% add empty outline of bar as a reference (if wanted)
+if ~isempty(outlineVAL)
+    [latpoly,lonpoly]=getLatLon(x1,y1,repmat(outlineVAL,size(x1)),vectorscale,alpha,S.PP(sens).settings.widthRough,S.EPSG);
+    for ii=1:length(x1) 
+        KMLdata = [KMLdata,barstyle3];
+        KMLdata = [KMLdata KMLpolytext(time1,time2,latpoly(:,ii),lonpoly(:,ii))];
+    end
+end
+
 %% loop over time
 for jj = 1:length(S.PP(sens).settings.tvec)
     time         = datenum((S.PP(sens).settings.tvec(jj)+S.PP(sens).settings.t0),1,1);
 
     % get x,y coordinates of base point of bars (x1,y1) and z-value in xy coordinates (xtip,ytip)
-    xtip         = x1-z(:,jj).*vectorscale.*sin(alpha);
-    ytip         = y1+z(:,jj).*vectorscale.*cos(alpha);
-       
-    %% construct x,y coordinates of bars on the basis of x1, xtip and barwidth (five coordinates specifying a rectangle for each bar)
-    dxbar        = 0.5*S.PP(sens).settings.widthRough*cos(alpha);
-    dybar        = 0.5*S.PP(sens).settings.widthRough*sin(alpha);
-    xpoly        = [x1+dxbar, xtip+dxbar, xtip-dxbar, x1-dxbar, x1+dxbar];
-    ypoly        = [y1+dybar, ytip+dybar, ytip-dybar, y1-dybar, y1+dybar];
-    
-    %% convert coordinates to lat-lon
-    [lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
-    lonpoly      = lonpoly';
-    latpoly      = latpoly';
+    % construct x,y coordinates of bars on the basis of x1, xtip and barwidth (five coordinates specifying a rectangle for each bar)
+    % convert coordinates to lat-lon
+    [latpoly,lonpoly]=getLatLon(x1,y1,z(:,jj),vectorscale,alpha,S.PP(sens).settings.widthRough,S.EPSG);
 
     %% add pop-up window
     KMLdata2     = [];
@@ -152,14 +157,33 @@ for jj = 1:length(S.PP(sens).settings.tvec)
         KMLdata2 = [KMLdata2 KMLpolytext(time,time+364,latpoly(:,IDpos(ii)),lonpoly(:,IDpos(ii)))];
     end
     KMLdata = [KMLdata KMLdata2];
+
     if mod(jj,round(length(S.PP(sens).settings.tvec)/10))==0
     fprintf('#');
-    end
+    end  
 end
 fprintf(']\n');
 end
 
-%% function which generates KML code for each polygon
+%% sub-function
+function [latpoly,lonpoly]=getLatLon(x1,y1,zval,vectorscale,alpha,widthRough,EPSG)
+% get x,y coordinates of base point of bars (x1,y1) and z-value in xy coordinates (xtip,ytip)
+    xtip         = x1-zval.*vectorscale.*sin(alpha);
+    ytip         = y1+zval.*vectorscale.*cos(alpha);
+       
+    %% construct x,y coordinates of bars on the basis of x1, xtip and barwidth (five coordinates specifying a rectangle for each bar)
+    dxbar        = 0.5*widthRough*cos(alpha);
+    dybar        = 0.5*widthRough*sin(alpha);
+    xpoly        = [x1+dxbar, xtip+dxbar, xtip-dxbar, x1-dxbar, x1+dxbar];
+    ypoly        = [y1+dybar, ytip+dybar, ytip-dybar, y1-dybar, y1+dybar];
+    
+    %% convert coordinates to lat-lon
+    [lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+    lonpoly      = lonpoly';
+    latpoly      = latpoly';
+end
+
+%% sub-function which generates KML code for each polygon
 function [kmltxt]=KMLpolytext(time1,time2,lat,lon)
 % <Placemark>
 % <TimeSpan><begin>2005-01-01T00:00:00</begin><end>2005-12-31T00:00:00</end></TimeSpan><name>poly</name>
@@ -184,7 +208,9 @@ function [kmltxt]=KMLpolytext(time1,time2,lat,lon)
     kmltxt   = ['<Placemark>' char(13) '<TimeSpan><begin>',timetxt1,'</begin><end>',timetxt2,'</end></TimeSpan><name>poly</name>' char(13) ...
                '<styleUrl>#default</styleUrl>' char(13) '<Polygon>' char(13) '<altitudeMode>clampToGround</altitudeMode>' char(13) ...
                '<outerBoundaryIs>' char(13) '<LinearRing>' char(13) '<coordinates>' char(13)];
-    kmltxt   = [kmltxt reshape([num2str(lon,'%10.8f') repmat(',',[5 1]) num2str(lat,'%11.8f') repmat([',0.000' char(13)],[5 1]) ]',[1 29*5])];  % this sentence replace the loop over the points ii below (which is much slower)
+    latlon   = [num2str(lon,'%10.8f') repmat(',',[5 1]) num2str(lat,'%11.8f') repmat([',0.000' char(13)],[5 1]) ]';
+    S        = size(latlon);
+    kmltxt   = [kmltxt reshape(latlon,[1 S(1)*S(2)])];  % this sentence replace the loop over the points ii below (which is much slower)
 %     for ii=1:length(lon)
 %         kmltxt = [kmltxt num2str(lon(ii),'%10.8f') ',' num2str(lat(ii),'%11.8f') ',0.000' char(13)];
 %     end

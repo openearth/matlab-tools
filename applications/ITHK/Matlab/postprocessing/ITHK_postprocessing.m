@@ -82,8 +82,8 @@ fprintf('ITHK postprocessing\n');
 
 %% INDICATORS
     ITHK_ind_ecology_benthos(sens);
-%     ITHK_ind_ecology_juvenilefish(sens);
-%     ITHK_ind_ecology_dunetypes(sens);
+    ITHK_ind_foreshore_juvenilefish(sens);
+%    ITHK_ind_ecology_dunetypes(sens);
 %     ITHK_dunerules2(sens);
 %     ITHK_dunes_habitatrichness;
 
@@ -111,10 +111,10 @@ fprintf('ITHK postprocessing\n');
 
 
 %% Add disclaimer
-if isfield(S.settings.postprocessing,'disclaimer') 
-    disclaimer = ITHK_kmldisclaimer;
-    S.PP.output.kml = [S.PP.output.kml disclaimer];
-end
+% if isfield(S.settings.postprocessing,'disclaimer') 
+%     disclaimer = ITHK_kmldisclaimer;
+%     S.PP.output.kml = [S.PP.output.kml disclaimer];
+% end
 
 %% WRITE KML
 S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name '.kml'];  % KML filename settings
@@ -127,6 +127,7 @@ fprintf(fid,[KML_header('kmlName',KMLmapName), ...
             S.PP(sens).output.kml_revetment, ...
             S.PP(sens).output.kml_eco_benthos{1}, ...
             S.PP(sens).output.kml_eco_benthos{2}, ...
+            S.PP(sens).output.kml_foreshore_juvenilefish, ...
             KML_footer]);
 fclose(fid);
 % KML2
@@ -144,6 +145,14 @@ fid                      = fopen(S.PP.output.kmlFileName,'w');
 fprintf(fid,[KML_header('kmlName',KMLmapName), ...
              S.PP(sens).output.kml_eco_benthos{1}, ...
              S.PP(sens).output.kml_eco_benthos{2}, ...
+             KML_footer]);
+fclose(fid);
+
+S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name '_foreshore.kml'];  % KML filename settings
+KMLmapName               = S.userinput.name;
+fid                      = fopen(S.PP.output.kmlFileName,'w');
+fprintf(fid,[KML_header('kmlName',KMLmapName), ...
+            S.PP(sens).output.kml_foreshore_juvenilefish, ...
              KML_footer]);
 fclose(fid);
 
