@@ -6,7 +6,7 @@ function varargout = delft3d_io_bca(cmd,varargin)
 %
 % BCA = delft3d_io_bca('read' ,bcafile,BND)
 %
-% where the BND struct comes from BND = delft3d_bnd_io(...)
+% where the BND struct comes from BND = delft3d_io_bnd(...)
 % and the BCA struct looks like this, with subfields 
 % amp [m] and phi [deg]:
 %
