@@ -12,7 +12,7 @@ try
     dr=model.dir;
     if model.forecastplot.plot
         
-        [weather] = url_readWeather(model.forecastplot.weatherstation);
+        [weather] = cosmos_urlReadWeather(model.forecastplot.weatherstation);
         
         settings.thin = model.forecastplot.thinning;
         settings.scal = model.forecastplot.scalefactor;
@@ -319,7 +319,10 @@ try
             set(gcf,'color','w')
             set(gcf,'renderer','zbuf')
             
-            figname=[dr 'lastrun' filesep 'figures' filesep name '_' datestr(timnow,'yyyymmddHH') '.png'];
+            if ~exist([dr 'lastrun' filesep 'figures' filesep 'forecast'],'dir')
+               mkdir([dr 'lastrun' filesep 'figures'],'forecast')
+            end
+            figname=[dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '_' datestr(timnow,'yyyymmddHH') '.png'];
             print(gcf,'-dpng','-r400',figname);
             
             close(gcf)
@@ -341,7 +344,7 @@ try
             fc.timepoints(tel).timepoint.id.type       = 'int';
         end
         
-        struct2xml([dr 'lastrun' filesep 'figures' filesep name '.xml'],fc);
+        struct2xml([dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '.xml'],fc);
     end
     
 catch
