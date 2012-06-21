@@ -8,6 +8,8 @@ handles.Model(md).Input(id).attName=runid;
 %% Model
 handles.Model(md).Input(id).autoStart=0;
 
+handles.Model(md).Input(id).description={''};
+
 %% Geometry
 handles.Model(md).Input(id).netFile             = '';
 handles.Model(md).Input(id).bathymetryFile      = '';

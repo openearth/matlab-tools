@@ -91,16 +91,20 @@ end
 id=1;
         
 % Exception for grid, make grid grey if it's not the active grid
-if id~=ad
+% or if all domains are selected and not active
+if id~=ad || (idomain==0 && ~act)
     col=[0.7 0.7 0.7];
 else
     col=[0.35 0.35 0.35];
 end
 handles=ddb_DFlowFM_plotGrid(handles,option,'domain',id,'color',col,'visible',vis);
 
+if idomain==0 && ~act
+    vis=0;
+end
+
 if ~isempty(handles.Model(imd).Input.boundarySections)
-    handles=ddb_DFlowFM_plotBoundarySections(handles,option);
+    handles=ddb_DFlowFM_plotBoundarySections(handles,option,'visible',vis,'active',act);
 end
 
 setHandles(handles);
-

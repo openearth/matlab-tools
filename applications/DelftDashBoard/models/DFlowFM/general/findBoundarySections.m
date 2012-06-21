@@ -91,7 +91,7 @@ end
 for ipol=1:npol
     ifirst=iPol1(ipol);
     ilast=iPol2(ipol);
-    pathdist=pathdistance(xx,yy);
+    pathdist=pathdistance(xx,yy,'geographic');
     pathang=pathangle(xx,yy,'geographic');
     i1=ifirst;
     np=1;

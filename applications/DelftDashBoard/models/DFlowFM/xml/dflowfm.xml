@@ -4,7 +4,7 @@
   <model>DFlowFM</model>
   <longname>D-FLOW FM</longname>
   <multipledomains>no</multipledomains>
-  <enable>0</enable>
+  <enable>1</enable>
   <elements>
     <element>
       <style>tabpanel</style>

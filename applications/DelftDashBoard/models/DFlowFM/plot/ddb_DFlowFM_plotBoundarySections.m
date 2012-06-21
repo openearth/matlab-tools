@@ -15,7 +15,7 @@ function handles = ddb_DFlowFM_plotBoundarySections(handles, opt, varargin)
 %   handles  =
 %
 %   Example
-%   ddb_DFlowFM_plotGrid
+%   ddb_DFlowFM_plotGridop
 %
 %   See also
 
