@@ -14,7 +14,6 @@ if model.extractData
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'sp2');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'forecasts');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
                 MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
                 cosmos_extractDataDelft3D(hm,m);
@@ -65,14 +64,14 @@ if model.DetermineHazards
         set(hm.textModelLoopStatus,'String',['Status : determining hazards - ' mdl ' ...']);drawnow;
         switch lower(model.type)
             case{'delft3dflow','delft3dflowwave'}
-%                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
-%                 cosmos_determineHazardsDelft3D(hm,m);
+                %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
+                %                 cosmos_determineHazardsDelft3D(hm,m);
             case{'xbeach'}
-%                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
-%                 determineHazardsXBeach(hm,m);
+                %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
+                %                 determineHazardsXBeach(hm,m);
             case{'ww3'}
-%                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
-%                 determineHazardsWW3(hm,m);
+                %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
+                %                 determineHazardsWW3(hm,m);
             case{'xbeachcluster'}
                 makeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
                 determineHazardsXBeachCluster(hm,m);
@@ -93,8 +92,8 @@ if model.runPost
         cosmos_makeModelFigures(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong with making figures for ' model.name]);
-%         hm.models(m).status='failed';
-%         return;
+        %         hm.models(m).status='failed';
+        %         return;
     end
     hm.models(m).plotDuration=toc;
 end
@@ -118,8 +117,8 @@ if model.makeWebsite
         cosmos_copyFiguresToLocalWebsite(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong while copying figures to local website of ' model.name]);
-%         hm.models(m).status='failed';
-%         return;
+        %         hm.models(m).status='failed';
+        %         return;
     end
     %%
     disp('Updating xml files on local website ...');
@@ -128,8 +127,8 @@ if model.makeWebsite
         cosmos_updateScenarioXML(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong while updating models.xml on local website for ' hm.models(m).name]);
-%         hm.models(m).status='failed';
-%         return;
+        %         hm.models(m).status='failed';
+        %         return;
     end
 end
 
@@ -161,3 +160,10 @@ if model.uploadFTP
         end
     end
 end
+
+%%
+if hm.models(m).forecastplot.plot && hm.models(m).forecastplot.archive
+    MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'forecasts');
+    cosmos_archiveForecastPlots(hm,m);
+end
+
