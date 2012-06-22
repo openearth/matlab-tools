@@ -111,7 +111,6 @@ setHandles(handles);
 function handles=setResolutionText(handles)
 
 cellSize=handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).zoomLevel(handles.Toolbox(tb).Input.activeZoomLevel).dx;
-%     cellSize=dms2degrees([dg mn sc]);
 if strcmpi(handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).horizontalCoordinateSystem.type,'Geographic')
     cellSize=cellSize*111111;
     handles.Toolbox(tb).Input.resolutionText=['Cell Size : ~ ' num2str(cellSize,'%10.0f') ' m'];
