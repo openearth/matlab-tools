@@ -72,67 +72,56 @@ if isempty(varargin)
     for k=1:handles.Model(md).Input(ad).KMax
         handles.Model(md).Input(ad).layerStrings{k}=num2str(handles.Model(md).Input(ad).thick(k),'%8.3f');
     end
-    [handles,ok]=newGUI(xmldir,xmlfile,handles,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
+    
+    h=handles.Model(md).Input(ad);
+
+    [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
+
     if ok
+        handles.Model(md).Input(ad)=h;
         setHandles(handles);
-        % setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
-        % setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
+        gui_updateActiveTab;
     end
-    % setUIElements('delft3dflow.domain.domainpanel.grid');
+    
 else
     opt=varargin{1};
     switch lower(opt)
         case{'generatelayers'}
             generateLayers;
-        case{'pushok'}
-            handles=getTempHandles;
-            handles.ok=1;
-            setTempHandles(handles);
-            close(gcf);
-        case{'pushcancel'}
-            handles=getTempHandles;
-            handles.ok=0;
-            setTempHandles(handles);
-            close(gcf);
     end
 end
 
 %%
 function generateLayers
 
-handles=getTempHandles;
+handles=gui_getUserData;
 
-switch handles.Model(md).Input(ad).layerOption
+switch handles.layerOption
     case 1
         % Increasing from surface
-        thick=generateLayerThickness('kmax',handles.Model(md).Input(ad).KMax,'type',handles.Model(md).Input(ad).layerType, ...
-            'zbot',handles.Model(md).Input(ad).zBot,'ztop',handles.Model(md).Input(ad).zTop, ...
-            'thicktop',handles.Model(md).Input(ad).thickTop);
+        thick=generateLayerThickness('kmax',handles.KMax,'type',handles.layerType, ...
+            'zbot',handles.zBot,'ztop',handles.zTop, ...
+            'thicktop',handles.thickTop);
     case 2
         % Increasing from bottom
-        thick=generateLayerThickness('kmax',handles.Model(md).Input(ad).KMax,'type',handles.Model(md).Input(ad).layerType, ...
-            'zbot',handles.Model(md).Input(ad).zBot,'ztop',handles.Model(md).Input(ad).zTop, ...
-            'thickbot',handles.Model(md).Input(ad).thickBot);
-    case 2
+        thick=generateLayerThickness('kmax',handles.KMax,'type',handles.layerType, ...
+            'zbot',handles.zBot,'ztop',handles.zTop, ...
+            'thickbot',handles.thickBot);
+    case 3
         % Increasing from top and bottom
-        thick=generateLayerThickness('kmax',handles.Model(md).Input(ad).KMax,'type',handles.Model(md).Input(ad).layerType, ...
-            'zbot',handles.Model(md).Input(ad).zBot,'ztop',handles.Model(md).Input(ad).zTop, ...
-            'thicktop',handles.Model(md).Input(ad).thickTop,'thickbot',handles.Model(md).Input(ad).thickBot);
+        thick=generateLayerThickness('kmax',handles.KMax,'type',handles.layerType, ...
+            'zbot',handles.zBot,'ztop',handles.zTop, ...
+            'thicktop',handles.thickTop,'thickbot',handles.thickBot);
     case 4
         % Equidistant
-        thick=generateLayerThickness('kmax',handles.Model(md).Input(ad).KMax,'type',handles.Model(md).Input(ad).layerType, ...
-            'zbot',handles.Model(md).Input(ad).zBot,'ztop',handles.Model(md).Input(ad).zTop);
+        thick=generateLayerThickness('kmax',handles.KMax,'type',handles.layerType, ...
+            'zbot',handles.zBot,'ztop',handles.zTop);
 end
 
-handles.Model(md).Input(ad).thick=thick';
+handles.thick=thick';
 
-for k=1:handles.Model(md).Input(ad).KMax
-    handles.Model(md).Input(ad).layerStrings{k}=num2str(handles.Model(md).Input(ad).thick(k),'%8.3f');
+for k=1:handles.KMax
+    handles.layerStrings{k}=num2str(handles.thick(k),'%8.3f');
 end
 
-setTempHandles(handles);
-
-% setUIElement('testje.listlayers');
-
-
-
+gui_setUserData(handles);
