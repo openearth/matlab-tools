@@ -185,7 +185,14 @@ npmax=20000000;
 
 if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     
-    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input.attName '.grd']);
+    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input.attname '.grd']);
+    
+    for ii=1:handles.Model(md).Input.nrgrids
+        if strcmpi(filename(1:end-4),handles.Model(md).Input.domains(ii).gridname)
+            ddb_giveWarning('text','A domain with this name already exists. Try again.');
+            return
+        end
+    end
     
     if pathname~=0
         
@@ -255,16 +262,18 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
         
         close(wb);
         
-        handles.Model(md).Input.NrComputationalGrids=handles.Model(md).Input.NrComputationalGrids+1;
-        nrgrids=handles.Model(md).Input.NrComputationalGrids;
-        handles.Model(md).Input.ComputationalGrids{nrgrids}=filename(1:end-4);
-        handles=ddb_initializeDelft3DWAVEDomain(handles,md,ad,nrgrids);
+        handles.Model(md).Input.nrgrids=handles.Model(md).Input.nrgrids+1;
+        nrgrids=handles.Model(md).Input.nrgrids;
+        handles.Model(md).Input.gridnames{nrgrids}=filename(1:end-4);
+        handles.Model(md).Input.domains=ddb_initializeDelft3DWAVEDomain(handles.Model(md).Input.domains,nrgrids);
         handles.activeWaveGrid=nrgrids;
         OPT.option = 'write'; OPT.x = x; OPT.y = y; OPT.z = z; OPT.filename = filename;
         handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
-
-%         % Delete existing domain
-%         ddb_plotDelft3DWAVE('delete','domain',nrgrids);
+        if nrgrids>1
+            handles.Model(md).Input.domains(nrgrids).nestgrid=handles.Model(md).Input.domains(1).gridname;
+        else
+            handles.Model(md).Input.domains(nrgrids).nestgrid='';
+        end
 
         % Plot new domain
         handles=ddb_Delft3DWAVE_plotGrid(handles,'plot','wavedomain',nrgrids,'active',1);
@@ -288,43 +297,3 @@ if pathname~=0
     handles=ddb_generateBathymetryDelft3DFLOW(handles,ad,filename);
 end
 setHandles(handles);
-
-%%
-function generateOpenBoundaries
-handles=getHandles;
-[filename, pathname, filterindex] = uiputfile('*.bnd', 'Boundary File Name',[handles.Model(md).Input(ad).attName '.bnd']);
-if pathname~=0    
-    handles=ddb_generateBoundaryLocationsDelft3DFLOW(handles,ad,filename);
-    setHandles(handles);
-end
-
-%%
-function generateBoundaryConditions
-handles=getHandles;
-[filename, pathname, filterindex] = uiputfile('*.bca', 'Boundary Conditions File Name',[handles.Model(md).Input(ad).attName '.bca']);
-if pathname~=0    
-    handles=ddb_generateBoundaryConditionsDelft3DFLOW(handles,ad,filename);
-    setHandles(handles);
-end
-
-%%
-function generateInitialConditions
-handles=getHandles;
-f=str2func(['ddb_generateInitialConditions' handles.Model(md).name]);
-try
-    handles=feval(f,handles,ad,'ddb_test','ddb_test');
-catch
-    GiveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).longName]);
-    return
-end
-if ~isempty(handles.Model(md).Input(ad).grdFile)
-    attName=handles.Model(md).Input(ad).attName;
-    handles.Model(md).Input(ad).iniFile=[attName '.ini'];
-    handles.Model(md).Input(ad).initialConditions='ini';
-    handles.Model(md).Input(ad).smoothingTime=0.0;
-    handles=feval(f,handles,ad,handles.Model(md).Input(ad).iniFile);
-else
-    GiveWarning('Warning','First generate or load a grid');
-end
-setHandles(handles);
-

@@ -134,7 +134,7 @@
     <tooltipstring>Edit run ID</tooltipstring>
     <text>Run ID</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Runid</variable>
+    <variable>handles.Model(md).Input(ad).runid</variable>
     <type>string</type>
   </element>
   <element>
@@ -144,7 +144,7 @@
     <tooltipstring>Edit name of attribute files</tooltipstring>
     <text>Attr Name</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).attName</variable>
+    <variable>handles.Model(md).Input(ad).attname</variable>
     <type>string</type>
   </element>
   <element>
@@ -155,6 +155,6 @@
     <text>Reference Date</text>
     <textposition>left</textposition>
     <type>date</type>
-    <variable>handles.Model(md).Input(ad).ItDate</variable>
+    <variable>handles.Model(md).Input(ad).referencedate</variable>
   </element>
 </root>
