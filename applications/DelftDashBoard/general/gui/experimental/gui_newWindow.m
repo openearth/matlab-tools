@@ -73,15 +73,15 @@ end
 
 set(figh,'Tag',tag);
 
-setUserData(hin);
+gui_setUserData(hin);
 
-gui_addElements(figh,elements,'getfcn',@getUserData,'setfcn',@setUserData);
+gui_addElements(figh,elements,'getfcn',@gui_getUserData,'setfcn',@gui_setUserData);
 
 set(figh,'CloseRequestFcn',@closefig);
 
 uiwait;
 
-hnew=getUserData;
+hnew=gui_getUserData;
 
 if hnew.ok
     % Ok, using new user data for output
@@ -103,7 +103,7 @@ end
 
 function closefig(hObject,eventdata)
 % Same as Cancel
-h=getUserData;
+h=gui_getUserData;
 h.ok=0;
-setUserData(h);
+gui_setUserData(h);
 uiresume;
