@@ -93,8 +93,8 @@ end
 
 [x, y, z] = deal([]);
 
-tic
-disp('Getting bathymetry data ...');
+% tic
+% disp('Getting bathymetry data ...');
 
 iac       = strmatch(lower(bathy),lower(handles.bathymetry.datasets),'exact');
 xsz       = xl(2)-xl(1);
@@ -206,6 +206,8 @@ switch lower(tp)
         ny=handles.bathymetry.dataset(iac).zoomLevel(ilev).ny;
         nnx=handles.bathymetry.dataset(iac).zoomLevel(ilev).ntilesx;
         nny=handles.bathymetry.dataset(iac).zoomLevel(ilev).ntilesy;
+        vertunits=handles.bathymetry.dataset(iac).verticalCoordinateSystem.units;
+        
         tilesizex=dx*nx;
         tilesizey=dy*ny;
         
@@ -369,6 +371,13 @@ switch lower(tp)
         x=x(iy1:iy2,ix1:ix2);
         y=y(iy1:iy2,ix1:ix2);
         z=z(iy1:iy2,ix1:ix2);
+        
+        % Convert to metres
+        switch lower(vertunits)
+            case{'m'}
+            case{'ft'}
+                z=z*0.3048;
+        end
         
     case{'tiles'}
         
@@ -573,5 +582,5 @@ switch lower(tp)
 
 end
 
-toc
+% toc
 
