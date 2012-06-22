@@ -63,7 +63,7 @@ try
         for it=1:n3:nt
             
             timnow = s(1).data.Time(it);
-                        
+            
             input.scrsz= get(0, 'ScreenSize');               % Set plot figure on full screen
             figure('Visible','Off','Position', [input.scrsz]);
             hold on; set(gcf,'defaultaxesfontsize',8)
@@ -104,17 +104,18 @@ try
                 try
                     imWave = imread(wavIconFile,'png','BackgroundColor',[1 1 1]);
                 catch
-                    imWave = [];   
+                    imWave = [];
                 end
                 
             catch
                 hsnow = 'n/a';
                 tpnow = 'n/a';
                 wavdirnow = 'n/a';
+                imWave = [];
             end
             
             try %get wind forecast
-                id = round(rand(1) * 9) + 1;%find(round(timnow*24)==round(wnd(1).data.Time*24));
+                id = find(round(timnow*24)==round(wnd(1).data.Time*24));
                 wndUnow = wnd(1).data.U(id,model.forecastplot.windstation(1),model.forecastplot.windstation(2));
                 wndVnow = wnd(1).data.V(id,model.forecastplot.windstation(1),model.forecastplot.windstation(2));
                 windnow = num2str(sqrt(wndUnow.^2 + wndVnow.^2),'%2.0f');
@@ -149,13 +150,14 @@ try
                 windIconFile = [hm.dataDir 'icons' filesep 'wind' filesep 'wind-arrows\wind-disc-transparent-background\256x256\wind-disc1-trans-' num2str(windid) '_w.png'];
                 try
                     imWind = imread(windIconFile,'png','BackgroundColor',[1 1 1]);
-                catch 
-                    imWind = [];   
+                catch
+                    imWind = [];
                 end
                 
             catch
                 windnow = 'n/a';
                 winddirnow = 'n/a';
+                imWind = [];
             end
             
             try %get water temperature
@@ -169,25 +171,19 @@ try
             
             try %get weather forecast
                 weatherIds = find(timnow>=weather(:,1));
-                
-                if isempty(weatherIds)
-                    weatherId = round(rand(1)*8)+1;
-                else
-                    weatherId = weatherIds(end);
-                end
-                
-                try
-                    atempnow = num2str(weather(weatherId,2),'%2.0f');
-                catch
-                    atempnow = 'n/a';
-                end
+                weatherId = weatherIds(end);
+                atempnow = num2str(weather(weatherId,2),'%2.0f');
                 
                 try
                     imWthr = imread([hm.dataDir 'icons' filesep 'weather' filesep num2str(weather(weatherId,3),'%2.2d') '.png'],'png','BackgroundColor',[1 1 1]);
                 catch
                     imWthr = [];
                 end
+            catch
+                atempnow = 'n/a';
+                imWthr = [];
             end
+            
             % model plot
             
             ax1 = gca; hold on;
