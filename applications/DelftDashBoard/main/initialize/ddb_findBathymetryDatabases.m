@@ -180,7 +180,13 @@ for i=1:handles.bathymetry.nrDatasets
                 catch
                     handles.bathymetry.dataset(i).verticalCoordinateSystem.level=0;
                 end
-                
+
+                try
+                    handles.bathymetry.dataset(i).verticalCoordinateSystem.units=nc_attget(fname,'crs','vertical_units');
+                catch
+                    handles.bathymetry.dataset(i).verticalCoordinateSystem.units='m';
+                end
+
                 handles.bathymetry.dataset(i).refinementFactor=round(dx(2)/dx(1));
                 
                 handles.bathymetry.dataset(i).nrZoomLevels=length(x0);
