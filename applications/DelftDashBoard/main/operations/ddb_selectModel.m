@@ -57,6 +57,9 @@ handles=getHandles;
 % Making previous model invisible
 set(handles.Model(md).GUI.elements(1).element.handle,'Visible','off');
 
+% Deactivate current model
+feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',0,'wavedomain',0,'deactivate',1);
+
 % Remove all elements from toolbox tab
 parent=handles.Model(md).GUI.elements(1).element.tabs(1).tab.handle;
 ch=get(parent,'Children');
