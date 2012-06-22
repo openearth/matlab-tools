@@ -63,6 +63,8 @@ function handles = ddb_initializeNavigationCharts(handles, varargin)
 %%
 ii=strmatch('NavigationCharts',{handles.Toolbox(:).name},'exact');
 
+ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
+
 handles.Toolbox(ii).longName='Navigation Charts';
 handles.Toolbox(ii).databases=[];
 handles.Toolbox(ii).Input.charts=[];
