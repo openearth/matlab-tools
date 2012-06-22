@@ -124,7 +124,15 @@ for n=1:nr
                 Info.Table(k).Parameter(3).Name=[quant 'End B uniform'];
                 Info.Table(k).Parameter(3).Unit=unit;
                 Info.Table(k).Data(:,2)=openBoundaries(n).timeSeriesA;
-                Info.Table(k).Data(:,3)=openBoundaries(n).timeSeriesB;
+                Info.Table(k).Data(:,3)=openBoundaries(n).timeSeriesB;                
+                if ~isempty(quant2)
+                    Info.Table(k).Parameter(4).Name=[quant2 'End A layer uniform'];
+                    Info.Table(k).Parameter(4).Unit=unit2;
+                    Info.Table(k).Parameter(5).Name=[quant2 'End B layer uniform'];
+                    Info.Table(k).Parameter(5).Unit=unit2;
+                    Info.Table(k).Data(:,4)=openBoundaries(n).timeSeriesAV;
+                    Info.Table(k).Data(:,5)=openBoundaries(n).timeSeriesBV;
+                end
             case{'3d-profile'}
                 j=1;
                 for kk=1:kmax
