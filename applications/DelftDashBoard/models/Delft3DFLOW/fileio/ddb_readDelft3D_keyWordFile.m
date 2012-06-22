@@ -69,43 +69,56 @@ while 1
         break
     end
     str=deblank(str);
-    if str(1)=='[' && str(end)==']';
-        % New field
-        fld=lower(str(2:end-1));
-        if isfield(s,fld)
-            % Field already exist
-            ifld=ifld+1;
-        else
-            ifld=1;
-        end
-    else
-        isf=find(str=='=');
-        keyword=str(1:isf-1);
-        keyword=strrep(keyword,' ','');
-        keyword=lower(keyword);
-        v=str(isf+1:end);
-        v=deblank2(v);
-        val = strread(v,'%s','delimiter',' ');
-        if strcmpi(val{1}(1),'#')
-            val = strread(v,'%s','delimiter','#');
-            val=val{2};
-        else
-            val=val{1};
-        end
-        if ~isnan(str2double(val))
-            % It's a number
-            val=str2double(val);
-        else
-            % It's a string
-            % Check if it's a boolean
-            switch lower(val)
-                case{'true'}
-                    val=1;
-                case{'false'}
-                    val=0;
+    if ~isempty(str)
+        if str(1)=='[' && str(end)==']';
+            % New field
+            fld=lower(str(2:end-1));
+            if isfield(s,fld)
+                % Field already exist
+                ifld=ifld+1;
+            else
+                ifld=1;
             end
+        else
+            isf=find(str=='=');
+            keyword=str(1:isf-1);
+            keyword=strrep(keyword,' ','');
+            keyword=lower(keyword);
+            v=str(isf+1:end);
+            v=deblank2(v);
+            if isempty(v)
+                val=[];
+            else
+                val = strread(v,'%s','delimiter',' ');
+                if strcmpi(val{1}(1),'#')
+                    val = strread(v,'%s','delimiter','#');
+                    val=val{2};
+                else
+                    ish=find(v=='#', 1);
+                    if isempty(ish)
+                        % No comments at end of line
+                        val=deblank(v);
+                    else
+                        val=deblank(v(1:ish-1));
+                    end                   
+%                    val=val{1};
+                end
+                if ~isnan(str2double(val))
+                    % It's a number
+                    val=str2double(val);
+                else
+                    % It's a string
+                    % Check if it's a boolean
+                    switch lower(val)
+                        case{'true'}
+                            val=1;
+                        case{'false'}
+                            val=0;
+                    end
+                end
+            end
+            s.(fld)(ifld).(keyword)=val;
         end
-        s.(fld)(ifld).(keyword)=val;
     end
 end
 fclose(fid);
