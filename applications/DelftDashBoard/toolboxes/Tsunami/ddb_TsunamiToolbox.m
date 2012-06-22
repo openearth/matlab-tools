@@ -175,11 +175,20 @@ ddb_saveTsunamiTableFile(handles,filename);
 
 %%
 function drawFaultLine
+
 handles=getHandles;
 
-[handles,ok]=ddb_getInitialTsunamiParameters(handles);
+xmldir=handles.Toolbox(tb).xmlDir;
+xmlfile='Tsunami.initialparameters.xml';
+
+h=handles.Toolbox(tb).Input;
+
+[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
 
 if ok
+    
+    handles.Toolbox(tb).Input=h;
+    
     ddb_zoomOff;
     h=findobj(gcf,'Tag','tsunamiFault');
     if ~isempty(h)

@@ -38,19 +38,13 @@
   </element>
   <element>
     <tag>pushok</tag>
-    <style>pushbutton</style>
+    <style>pushok</style>
     <position>180 10 50 20</position>
-    <text>OK</text>
-    <callback>ddb_getInitialCycloneTrackParameters</callback>
-    <option1>pushok</option1>
   </element>  
   <element>
     <tag>pushcancel</tag>
-    <style>pushbutton</style>
+    <style>pushcancel</style>
     <position>120 10 50 20</position>
-    <text>Cancel</text>
-    <callback>ddb_getInitialCycloneTrackParameters</callback>
-    <option1>pushcancel</option1>
   </element>  
   </elements>
 </root>
