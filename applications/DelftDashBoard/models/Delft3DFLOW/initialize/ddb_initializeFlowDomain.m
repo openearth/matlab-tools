@@ -235,6 +235,7 @@ handles.Model(md).Input(id).rghFile='';
 handles.Model(md).Input(id).edyFile='';
 handles.Model(md).Input(id).srcFile='';
 handles.Model(md).Input(id).disFile='';
+handles.Model(md).Input(id).w2dFile='';
 
 handles.Model(md).Input(id).MMax=0;
 handles.Model(md).Input(id).NMax=0;
