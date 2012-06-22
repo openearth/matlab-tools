@@ -203,7 +203,7 @@ for i=1:ndomains
 end
 
 %% Boundaries
-for i=1:length(Wave.nrBoundaries)
+for i=1:Wave.nrBoundaries
     
     MDW.Boundary(i).Name.value           = Wave.boundaries(i).name;
     MDW.Boundary(i).Definition.value     = Wave.boundaries(i).definition;

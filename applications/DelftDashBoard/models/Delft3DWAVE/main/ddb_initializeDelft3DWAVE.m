@@ -14,6 +14,4 @@ handles.Model(ii).Input=[];
 
 runid='tst';
 
-handles=ddb_initializeDelft3DWAVEInput(handles,1,runid);
-
-%set(handles.GUIHandles.Menu.Model.Delft3DWAVE,'Enable','off');
+handles=ddb_initializeDelft3DWAVEInput(handles,runid);

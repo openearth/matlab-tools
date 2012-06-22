@@ -13,24 +13,8 @@
     <position>55 110</position>
     <text>(SWAN 40.01/Second-order 40.11)</text>
     <type>string</type>
-    <variable>handles.Model(md).Input(ad).Order</variable>
+    <variable>handles.Model(md).Input.order</variable>
     <value>First</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiothird</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).Order</variable>
-            <value>First</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
   </element>
   <element>  
     <tag>radiothird</tag>
@@ -38,24 +22,9 @@
     <position>55 55</position>
     <text>Third-order (not yet operational)</text>
     <type>string</type>
-    <variable>handles.Model(md).Input(ad).Order</variable>
+    <variable>handles.Model(md).Input.order</variable>
     <value>Third</value>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiofirst</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).Order</variable>
-            <value>First</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <enable>0</enable>
   </element>
   <element>
     <tag>spectralspacepanel</tag>
@@ -69,7 +38,7 @@
     <position>360 110 50 20</position>
     <text>CDD : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).CDD</variable>
+    <variable>handles.Model(md).Input.dirspacecdd</variable>
     <type>real</type>
     <tooltipstring>Enter directional space</tooltipstring>
   </element>
@@ -85,7 +54,7 @@
     <position>360 85 50 20</position>
     <text>CSS : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).CSS</variable>
+    <variable>handles.Model(md).Input.freqspacecss</variable>
     <type>real</type>
     <tooltipstring>Enter spectral space</tooltipstring>
   </element>
@@ -125,7 +94,7 @@
     <position>640 105 50 20</position>
     <text>HS-Tm01 : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).HSTM01</variable>
+    <variable>handles.Model(md).Input.rchhstm01</variable>
     <type>real</type>
     <tooltipstring>Enter HS-Tm01</tooltipstring>
   </element>
@@ -147,7 +116,7 @@
     <position>640 55 50 20</position>
     <text>Hs : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).HSchange</variable>
+    <variable>handles.Model(md).Input.rchmeanhs</variable>
     <type>real</type>
     <tooltipstring>Enter change in significant wave height</tooltipstring>
   </element>
@@ -163,7 +132,7 @@
     <position>640 30 50 20</position>
     <text>Tm01 : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).TM01</variable>
+    <variable>handles.Model(md).Input.rchmeantm01</variable>
     <type>real</type>
     <tooltipstring>Enter tm01</tooltipstring>
   </element>
@@ -185,7 +154,7 @@
     <position>800 105 50 20</position>
     <text>[%]</text>
     <textposition>right</textposition>
-    <variable>handles.Model(md).Input(ad).HSTM01</variable>
+    <variable>handles.Model(md).Input.percwet</variable>
     <type>real</type>
     <tooltipstring>Enter HS-Tm01</tooltipstring>
   </element>
@@ -199,7 +168,7 @@
     <tag>editmaxiter</tag>
     <style>edit</style>
     <position>800 55 50 20</position>
-    <variable>handles.Model(md).Input(ad).MaxIter</variable>
+    <variable>handles.Model(md).Input.maxiter</variable>
     <type>integer</type>
     <tooltipstring>Enter maximum number of iterations</tooltipstring>
   </element>

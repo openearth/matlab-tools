@@ -17,7 +17,7 @@
     <tag>checkuseflowbedlevel</tag>
     <style>checkbox</style>
     <position>65 120</position>
-    <variable>FlowBedLevel</variable>
+    <variable>flowbedlevel</variable>
     <tooltipstring>Use bed level from Delft3D-FLOW (overrides bed level from depth file in Delft3D-WAVE)</tooltipstring>
     <text>Bathymetry</text>
   </element>
@@ -25,7 +25,7 @@
     <tag>checkuseflowwaterlevel</tag>
     <style>checkbox</style>
     <position>65 95</position>
-    <variable>FlowWaterLevel</variable>
+    <variable>flowwaterlevel</variable>
     <tooltipstring>Use water level from Delft3D-FLOW (overrides water level specified in MDW file)</tooltipstring>
     <text>Water level</text>
   </element>
@@ -33,7 +33,7 @@
     <tag>checkuseflowcurrent</tag>
     <style>checkbox</style>
     <position>65 70</position>
-    <variable>FlowVelocity</variable>
+    <variable>flowvelocity</variable>
     <tooltipstring>Use velocities from Delft3D-FLOW (overrides velocity specified in MDW file)</tooltipstring>
     <text>Current</text>
   </element>
@@ -41,7 +41,7 @@
     <tag>checkuseflowwind</tag>
     <style>checkbox</style>
     <position>65 45</position>
-    <variable>FlowWind</variable>
+    <variable>flowwind</variable>
     <tooltipstring>Use wind from Delft3D-FLOW (overrides wind specified in MDW file)</tooltipstring>
     <text>Wind</text>
   </element>
@@ -51,32 +51,32 @@
     <position>65 20 100 20</position>
     <tooltipstring>Select Delft3D-FLOW mdf file</tooltipstring>
     <text>Select FLOW file</text>
-    <variable>MDFFile</variable>
+    <variable>mdffile</variable>
     <extension>*.mdf</extension>
     <selectiontext>Select MDF File</selectiontext>
-    <onchange>ddb_Delft3DWAVE_selectMDFfile</onchange>
+    <callback>ddb_Delft3DWAVE_selectMDFfile</callback>
     <dependencies>
       <dependency>
         <action>enable</action>
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>FlowBedLevel</variable>
+            <variable>flowbedlevel</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>FlowWaterLevel</variable>
+            <variable>flowwaterlevel</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>FlowVelocity</variable>
+            <variable>flowvelocity</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>FlowWind</variable>
+            <variable>flowwind</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>

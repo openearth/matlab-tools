@@ -12,7 +12,7 @@
     <style>listbox</style>
     <position>10 30 200 80</position>
     <tooltipstring>Computational grids</tooltipstring>
-    <text>Computational grids :</text>
+    <text>Computational Grids</text>
     <textposition>above-center</textposition>
     <variable>handles.activeWaveGrid</variable>
     <type>integer</type>
@@ -20,7 +20,7 @@
     <option1>selectgrid</option1>
     <list>
       <texts>
-        <variable>handles.Model(md).Input(ad).ComputationalGrids</variable>
+        <variable>handles.Model(md).Input.gridnames</variable>
       </texts>
     </list>
   </element>
@@ -30,7 +30,7 @@
     <position>10 10</position>
     <prefix>Co-ordinate System : </text>
     <type>text</type>
-    <variable>handles.Model(md).Input(ad).Domain(awg).Coordsyst</variable>
+    <variable>handles.Model(md).Input.domains(awg).coordsyst</variable>
   </element>
   <element>
     <tag>panelgriddata</tag>
@@ -50,24 +50,8 @@
     <position>310 60</position>
     <text>Circle</text>
     <type>string</type>
-    <variable>handles.Model(md).Input(ad).Domain(awg).DirType</variable>
+    <variable>handles.Model(md).Input.domains(awg).dirspace</variable>
     <value>circle</value>
-    <dependencies>
-        <dependency>
-          <action>on</action>
-          <tags>
-            <tag>radiosector</tag>
-          </tags>
-          <checkfor>all</checkfor>
-          <checks>
-            <check>
-              <variable>handles.Model(md).Input(ad).Domain(awg).DirType</variable>
-              <value>circle</value>
-              <operator>eq</operator>
-            </check>
-          </checks>
-        </dependency>
-    </dependencies>    
   </element>
   <element>
     <tag>radiosector</tag>
@@ -75,24 +59,8 @@
     <position>310 40</position>
     <text>Sector</text>
     <type>string</type>
-    <variable>handles.Model(md).Input(ad).Domain(awg).DirType</variable>
+    <variable>handles.Model(md).Input.domains(awg).dirspace</variable>
     <value>sector</value>
-    <dependencies>
-        <dependency>
-          <action>on</action>
-          <tags>
-            <tag>radiocircle</tag>
-          </tags>
-          <checkfor>all</checkfor>
-          <checks>
-            <check>
-              <variable>handles.Model(md).Input(ad).Domain(awg).DirType</variable>
-              <value>sector</value>
-              <operator>eq</operator>
-            </check>
-          </checks>
-        </dependency>
-    </dependencies>    
   </element>
   <element>
     <tag>editstartdir</tag>
@@ -100,20 +68,16 @@
     <position>460 60 50 20</position>
     <text>Start direction : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).StartDir</variable>
+    <variable>handles.Model(md).Input.domains(awg).startdir</variable>
     <type>integer</type>
     <tooltipstring>Enter start direction</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>  
-          <tag>radiocircle</tag>
-          <tag>radiosector</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).Domain(awg).DirType</variable>
+            <variable>handles.Model(md).Input.domains(awg).dirspace</variable>
             <value>sector</value>
             <operator>eq</operator>
           </check>
@@ -127,20 +91,16 @@
     <position>460 40 50 20</position>
     <text>Start direction : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).EndDir</variable>
+    <variable>handles.Model(md).Input.domains(awg).enddir</variable>
     <type>integer</type>
     <tooltipstring>Enter end direction</tooltipstring>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiocircle</tag>
-          <tag>radiosector</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).Domain(awg).DirType</variable>
+            <variable>handles.Model(md).Input.domains(awg).dirspace</variable>
             <value>sector</value>
             <operator>eq</operator>
           </check>
@@ -166,7 +126,7 @@
     <position>460 20 50 20</position>
     <text>Number of directions : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).NumberDir</variable>
+    <variable>handles.Model(md).Input.domains(awg).ndir</variable>
     <type>integer</type>
     <tooltipstring>Enter number of directions</tooltipstring>
   </element>
@@ -182,7 +142,7 @@
     <position>780 60 50 20</position>
     <text>Lowest frequency : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).LowFreq</variable>
+    <variable>handles.Model(md).Input.domains(awg).freqmin</variable>
     <type>real</type>
     <tooltipstring>Enter lowest frequency</tooltipstring>
   </element>
@@ -192,7 +152,7 @@
     <position>780 40 50 20</position>
     <text>Highest frequency : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).HighFreq</variable>
+    <variable>handles.Model(md).Input.domains(awg).freqmax</variable>
     <type>real</type>
     <tooltipstring>Enter highest frequency</tooltipstring>
   </element>
@@ -214,7 +174,7 @@
     <position>780 20 50 20</position>
     <text>Number of directions : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Domain(awg).NumberFreq</variable>
+    <variable>handles.Model(md).Input.domains(awg).nfreq</variable>
     <type>integer</type>
     <tooltipstring>Enter number of frequencies</tooltipstring>
   </element>  

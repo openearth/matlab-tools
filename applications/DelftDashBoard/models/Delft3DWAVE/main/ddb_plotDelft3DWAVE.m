@@ -32,7 +32,7 @@ end
 if idomain==0
     % Update all domains
     n1=1;
-    n2=handles.Model(imd).Input.NrComputationalGrids;
+    n2=handles.Model(imd).Input.nrgrids;
 else
     % Update one domain
     n1=idomain;
@@ -61,7 +61,7 @@ for id=n1:n2
 end
 % Plot active grid on top
 try
-    uistack(handles.Model(imd).Input.Domain(awg).grid.plotHandles,'top');
+    uistack(handles.Model(imd).Input.domains(awg).gridplot.plothandles,'top');
 end
 setHandles(handles);
 

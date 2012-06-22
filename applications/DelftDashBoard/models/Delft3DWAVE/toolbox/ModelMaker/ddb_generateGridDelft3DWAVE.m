@@ -62,19 +62,19 @@ switch OPT.option
         ddb_wlgrid('write','FileName',[attName '.grd'],'X',x,'Y',y,'CoordinateSystem',coord);
 end
 
-handles.Model(md).Input.Domain(id).Coordsyst = coord;
-handles.Model(md).Input.Domain(id).GridFile=[attName '.grd'];
-handles.Model(md).Input.Domain(id).GridName=attName;
+handles.Model(md).Input.domains(id).coordsyst = coord;
+handles.Model(md).Input.domains(id).grid=[attName '.grd'];
+handles.Model(md).Input.domains(id).gridname=attName;
 
-handles.Model(md).Input.Domain(id).grid.x=x;
-handles.Model(md).Input.Domain(id).grid.y=y;
+handles.Model(md).Input.domains(id).gridx=x;
+handles.Model(md).Input.domains(id).gridy=y;
 
-[handles.Model(md).Input.Domain(id).grid.xz,handles.Model(md).Input.Domain(id).grid.yz]=getXZYZ(x,y);
+[handles.Model(md).Input.domains(id).gridxz,handles.Model(md).Input.domains(id).gridyz]=getXZYZ(x,y);
 
 nans=zeros(size(x));
 nans(nans==0)=NaN;
-handles.Model(md).Input.Domain(id).depth=nans;
-handles.Model(md).Input.Domain(id).depthZ=nans;
+handles.Model(md).Input.domains(id).depth=nans;
+handles.Model(md).Input.domains(id).depthz=nans;
 
-handles.Model(md).Input.Domain(id).MMax=size(x,1)+1;
-handles.Model(md).Input.Domain(id).NMax=size(x,2)+1;
+handles.Model(md).Input.domains(id).mmax=size(x,1)+1;
+handles.Model(md).Input.domains(id).nmax=size(x,2)+1;

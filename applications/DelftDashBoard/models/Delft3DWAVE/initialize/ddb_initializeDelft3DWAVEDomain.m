@@ -1,37 +1,31 @@
-function handles=ddb_initializeDelft3DWAVEDomain(handles,ii,id,kk,varargin)
+function domains=ddb_initializeDelft3DWAVEDomain(domains,id)
 
-handles.Model(ii).Input(id).Domain(kk).grid.x=[];
-handles.Model(ii).Input(id).Domain(kk).grid.y=[];
-
-handles.Model(ii).Input(id).Domain(kk).Active = 0;
-handles.Model(ii).Input(id).Domain(kk).PathnameComputationalGrids='';
-handles.Model(ii).Input(id).Domain(kk).Coordsyst = '';
-handles.Model(ii).Input(id).Domain(kk).GridName   = '';
-handles.Model(ii).Input(id).Domain(kk).GridFile   = '';
-%handles.Model(ii).Input(id).Domain(kk).EncFile   = '';
-handles.Model(ii).Input(id).Domain(kk).DepFile   = '';
-%handles.Model(ii).Input(id).Domain(kk).NstFile   = '';
-handles.Model(ii).Input(id).Domain(kk).MMax      = 0;
-handles.Model(ii).Input(id).Domain(kk).NMax      = 0;
-%% grid
-handles.Model(ii).Input(id).Domain(kk).Bathymetry.CompGrid  = '';
-handles.Model(ii).Input(id).Domain(kk).Bathymetry.OtherGrid = '';
-handles.Model(ii).Input(id).Domain(kk).Bathymetry.CompDep   = '';
-handles.Model(ii).Input(id).Domain(kk).Bathymetry.Xorig     = 0;
-handles.Model(ii).Input(id).Domain(kk).Bathymetry.Yorig     = 0;
-handles.Model(ii).Input(id).Domain(kk).Bathymetry.Xgridsize = 0;
-handles.Model(ii).Input(id).Domain(kk).Bathymetry.Ygridsize = 0;
-%% fre + dir
-handles.Model(ii).Input(id).Domain(kk).DirType    = 'circle';
-handles.Model(ii).Input(id).Domain(kk).Circle     = 1;
-handles.Model(ii).Input(id).Domain(kk).Sector     = 0;    
-handles.Model(ii).Input(id).Domain(kk).StartDir   = 0;
-handles.Model(ii).Input(id).Domain(kk).EndDir     = 360;
-handles.Model(ii).Input(id).Domain(kk).NumberDir  = 36;
-handles.Model(ii).Input(id).Domain(kk).LowFreq    = 0.05;
-handles.Model(ii).Input(id).Domain(kk).HighFreq   = 1;
-handles.Model(ii).Input(id).Domain(kk).NumberFreq = 24;
-
-handles.Model(ii).Input(id).Domain(kk).NestGrid   = '';
-%handles.Model(ii).Input(id).Domain(kk).GridNested = '';
-%handles.Model(ii).Input(id).Domain(kk).NestedValue= '';
+domains(id).grid='';
+domains(id).bedlevelgrid='';
+domains(id).bedlevel='';
+domains(id).dirspace='circle';
+domains(id).ndir=36;
+domains(id).startdir=0;
+domains(id).enddir=360;
+domains(id).nfreq=24;  
+domains(id).freqmin=0.05;  
+domains(id).freqmax=1.0;  
+domains(id).nestedindomain=[];
+domains(id).flowbedlevel=1;
+domains(id).flowwaterlevel=1;
+domains(id).flowvelocity=1;
+domains(id).flowwind=1;
+domains(id).output=1;
+domains(id).vegetation=0;
+domains(id).vegetationmap='';
+domains(id).vegheight=1; 
+domains(id).vegdiamtr=0.01;
+domains(id).vegnstems=100; 
+domains(id).vegdrag=1;
+ 
+domains(id).gridname   = '';
+domains(id).gridplot   = [];
+domains(id).nestgrid   = '';
+domains(id).coordsyst  = '';
+domains(id).mmax       = 0;
+domains(id).nmax       = 0;

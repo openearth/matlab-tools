@@ -13,7 +13,7 @@
     <position>175 130 50 20</position>
     <text>Water level correction : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).WaterlevelCor</variable>
+    <variable>waterlevel</variable>
     <type>real</type>
     <tooltipstring>Enter water level correction</tooltipstring>
   </element>
@@ -34,7 +34,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrAvailableFlowTimes</variable>
+            <variable>nravailableflowtimes</variable>
             <value>0</value>
             <operator>eq</operator>
           </check>
@@ -47,11 +47,11 @@
     <style>listbox</style>
     <position>55 20 200 80</position>
     <tooltipstring>Edit timepoints for wave computation</tooltipstring>
-    <variable>handles.Model(md).Input(ad).Timepoints</variable>
-    <type>string</type>
+    <variable>activetimepoint</variable>
+    <type>integer</type>
     <list>
       <texts>
-        <variable>handles.Model(md).Input(ad).Timepoints</variable>
+        <variable>listtimes</variable>
       </texts>
     </list>
     <onchange>ddb_Delft3DWAVE_timeframe</onchange>
@@ -62,7 +62,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrAvailableFlowTimes</variable>
+            <variable>nravailableflowtimes</variable>
             <value>0</value>
             <operator>eq</operator>
           </check>
@@ -84,7 +84,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrAvailableFlowTimes</variable>
+            <variable>nravailableflowtimes</variable>
             <value>0</value>
             <operator>eq</operator>
           </check>
@@ -106,7 +106,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrAvailableFlowTimes</variable>
+            <variable>nravailableflowtimes</variable>
             <value>0</value>
             <operator>ne</operator>
           </check>
@@ -122,13 +122,10 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>timepointspanel</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrAvailableFlowTimes</variable>
+            <variable>nravailableflowtimes</variable>
             <value>0</value>
             <operator>ne</operator>
           </check>
@@ -141,11 +138,11 @@
     <style>listbox</style>
     <position>55 20 200 80</position>
     <tooltipstring>Flow timepoints</tooltipstring>
-    <variable>handles.Model(md).Input(ad).Timepoints</variable>
+    <variable>activetimepoint</variable>
     <type>string</type>
     <list>
       <texts>
-        <variable>handles.Model(md).Input(ad).AvailableFlowTimes</variable>
+        <variable>listflowtimes</variable>
       </texts>
     </list>
     <onchange>ddb_Delft3DWAVE_timeframe</onchange>
@@ -153,13 +150,10 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>edittimepoints</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrAvailableFlowTimes</variable>
+            <variable>nravailableflowtimes</variable>
             <value>0</value>
             <operator>ne</operator>
           </check>
@@ -179,7 +173,7 @@
     <position>580 110 105 20</position>
     <text>Time : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Time</variable>
+    <variable>selectedtime</variable>
     <type>datetime</type>
     <tooltipstring>Enter time</tooltipstring>
   </element>
@@ -195,7 +189,7 @@
     <position>580 85 105 20</position>
     <text>Water level : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).WaterLevel</variable>
+    <variable>waterlevelatselectedtime</variable>
     <type>real</type>
     <tooltipstring>Enter water level</tooltipstring>
   </element>
@@ -211,7 +205,7 @@
     <position>580 60 105 20</position>
     <text>X-velocity : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Xvelocity</variable>
+    <variable>xvelocityatselectedtime</variable>
     <type>real</type>
     <tooltipstring>Enter velocity in x direction</tooltipstring>
   </element>
@@ -227,7 +221,7 @@
     <position>580 35 105 20</position>
     <text>Y-velocity : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Yvelocity</variable>
+    <variable>yvelocityatselectedtime</variable>
     <type>real</type>
     <tooltipstring>Enter velocity in y direction</tooltipstring>
   </element>

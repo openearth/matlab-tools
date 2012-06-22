@@ -86,44 +86,44 @@ switch lower(opt)
     case{'plot'}
         
         % First delete old grid
-        if isfield(handles.Model(imd).Input.Domain(id).grid,'plotHandles')
-            if ~isempty(handles.Model(imd).Input.Domain(id).grid.plotHandles)
+        if isfield(handles.Model(imd).Input.domains(id).gridplot,'plothandles')
+            if ~isempty(handles.Model(imd).Input.domains(id).gridplot.plothandles)
                 try
-                    delete(handles.Model(imd).Input.Domain(id).grid.plotHandles);
+                    delete(handles.Model(imd).Input.domains(id).gridplot.plothandles);
                 end
             end
         end
         
         % Now plot new grid
-        x=handles.Model(imd).Input.Domain(id).grid.x;
-        y=handles.Model(imd).Input.Domain(id).grid.y;
-        handles.Model(imd).Input.Domain(id).grid.plotHandles=ddb_plotCurvilinearGrid(x,y,'color',col);
+        x=handles.Model(imd).Input.domains(id).gridx;
+        y=handles.Model(imd).Input.domains(id).gridy;
+        handles.Model(imd).Input.domains(id).gridplot.plothandles=ddb_plotCurvilinearGrid(x,y,'color',col);
         if vis
-            set(handles.Model(imd).Input.Domain(id).grid.plotHandles,'Color',col,'Visible','on');
+            set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col,'Visible','on');
         else
-            set(handles.Model(imd).Input.Domain(id).grid.plotHandles,'Color',col,'Visible','off');
+            set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col,'Visible','off');
         end
         
     case{'delete'}
         
         % Delete old grid
-        if isfield(handles.Model(imd).Input.Domain(id).grid,'plotHandles')
-            if ~isempty(handles.Model(imd).Input.Domain(id).grid.plotHandles)
+        if isfield(handles.Model(imd).Input.domains(id).gridplot,'plothandles')
+            if ~isempty(handles.Model(imd).Input.domains(id).gridplot.plothandles)
                 try
-                    delete(handles.Model(imd).Input.Domain(id).grid.plotHandles);
+                    delete(handles.Model(imd).Input.domains(id).gridplot.plothandles);
                 end
             end
         end
         
     case{'update'}
-        if isfield(handles.Model(imd).Input.Domain(id).grid,'plotHandles')
-            if ~isempty(handles.Model(imd).Input.Domain(id).grid.plotHandles)
+        if isfield(handles.Model(imd).Input.domains(id).gridplot,'plothandles')
+            if ~isempty(handles.Model(imd).Input.domains(id).gridplot.plothandles)
                 try
-                    set(handles.Model(imd).Input.Domain(id).grid.plotHandles,'Color',col);
+                    set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col);
                     if vis
-                        set(handles.Model(imd).Input.Domain(id).grid.plotHandles,'Color',col,'Visible','on');
+                        set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col,'Visible','on');
                     else
-                        set(handles.Model(imd).Input.Domain(id).grid.plotHandles,'Color',col,'Visible','off');
+                        set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col,'Visible','off');
                     end
                 end
             end

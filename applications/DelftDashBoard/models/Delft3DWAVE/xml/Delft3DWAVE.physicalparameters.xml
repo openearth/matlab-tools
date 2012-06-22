@@ -15,19 +15,16 @@
       <tab>
         <tag>wind</tag>
         <tabstring>Wind</tabstring>
-        <callback>ddb_Delft3DWAVE_wind</callback>
         <elements>Delft3DWAVE.physicalparameters.wind.xml</elements>
       </tab>
       <tab>
         <tag>processes</tag>
         <tabstring>Processes</tabstring>
-        <callback>ddb_Delft3DWAVE_processes</callback>
         <elements>Delft3DWAVE.physicalparameters.processes.xml</elements>
       </tab>
       <tab>
         <tag>various</tag>
         <tabstring>Various</tabstring>
-        <callback>ddb_Delft3DWAVE_various</callback>
         <elements>Delft3DWAVE.physicalparameters.various.xml</elements>
       </tab>      
     </tabs>

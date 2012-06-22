@@ -8,321 +8,70 @@
     <text>Processes activated</text>
   </element>
   <element>
-    <tag>textwindgrowth</tag>
-    <style>text</style>
-    <position>10 100</position>
-    <text>Wind growth : </text>
-  </element>  
-  <element>
-    <tag>radiowindactivate</tag>
-    <style>radiobutton</style>
+    <tag>checkwind</tag>
+    <style>checkbox</style>
     <position>10 80</position>
-    <text>Activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).WindGrowth</variable>
-    <value>Activated</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiowinddeactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).WindGrowth</variable>
-            <value>Activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <text>Wind Growth</text>
+    <type>integer</type>
+    <variable>handles.Model(md).Input(ad).windgrowth</variable>
+    <callback>ddb_Delft3DWAVE_physicalParameters</callback>
   </element>
   <element>
-    <tag>radiowinddeactivate</tag>
-    <style>radiobutton</style>
-    <position>10 60</position>
-    <text>De-activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).WindGrowth</variable>
-    <value>De-activated</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiowindactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).WindGrowth</variable>
-            <value>De-activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>textwhitecap</tag>
-    <style>text</style>
-    <position>150 100</position>
-    <text>Whitecapping : </text>
-  </element>  
-  <element>
-    <tag>radiowhitecapactivate</tag>
-    <style>radiobutton</style>
-    <position>150 80</position>
-    <text>Activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).Whitecapping</variable>
-    <value>Activated</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiowhitecapdeactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).Whitecapping</variable>
-            <value>Activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>radiowhitecapdeactivate</tag>
-    <style>radiobutton</style>
-    <position>150 60</position>
-    <text>De-activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).Whitecapping</variable>
-    <value>De-activated</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiowhitecapactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).Whitecapping</variable>
-            <value>De-activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>textquadruplets</tag>
-    <style>text</style>
-    <position>280 100</position>
-    <text>Quadruplets : </text>
-  </element>  
-  <element>
-    <tag>radioquadrupactivate</tag>
-    <style>radiobutton</style>
-    <position>280 80</position>
-    <text>Activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).Quadruplets</variable>
-    <value>Activated</value>
+    <tag>checkwhitecapping</tag>
+    <style>checkbox</style>
+    <position>10 50</position>
+    <text>Whitecapping</text>
+    <type>integer</type>
+    <variable>handles.Model(md).Input(ad).whitecapping</variable>
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>radiowindactivate</tag>
-          <tag>radiowinddeactivate</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).WindGrowth</variable>
-            <value>Activated</value>
+            <variable>handles.Model(md).Input(ad).windgrowth</variable>
+            <value>1</value>
             <operator>eq</operator>
           </check>
         </checks>
       </dependency>    
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiowindactivate</tag>
-          <tag>radiowinddeactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).WindGrowth</variable>
-            <value>Activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>radioquadrupdeactivate</tag>
-    <style>radiobutton</style>
-    <position>280 60</position>
-    <text>De-activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).Quadruplets</variable>
-    <value>De-activated</value>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiowindactivate</tag>
-          <tag>radiowinddeactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).WindGrowth</variable>
-            <value>De-activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>    
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiowindactivate</tag>
-          <tag>radiowinddeactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).WindGrowth</variable>
-            <value>De-activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
     </dependencies>
-  </element>  
-  <element>
-    <tag>waveproppanel</tag>
-    <style>panel</style>
-    <position>455 20 440 120</position>
-    <text>Wave propagation in spectral space</text>
   </element>
   <element>
-    <tag>textrefraction</tag>
-    <style>text</style>
-    <position>460 100</position>
-    <text>Refraction : </text>
-  </element>  
-  <element>
-    <tag>radiorefracactivate</tag>
-    <style>radiobutton</style>
-    <position>460 80</position>
-    <text>Activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).Refraction</variable>
-    <value>Activated</value>
+    <tag>checkquadruplets</tag>
+    <style>checkbox</style>
+    <position>10 50</position>
+    <text>Quadruplets</text>
+    <type>integer</type>
+    <variable>handles.Model(md).Input(ad).quadruplets</variable>
     <dependencies>
       <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiorefracdeactivate</tag>
-        </tags>
+        <action>enable</action>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).Refraction</variable>
-            <value>Activated</value>
+            <variable>handles.Model(md).Input(ad).windgrowth</variable>
+            <value>1</value>
             <operator>eq</operator>
           </check>
         </checks>
-      </dependency>
-    </dependencies>    
+      </dependency>    
+    </dependencies>
   </element>
   <element>
-    <tag>radiorefracdeactivate</tag>
-    <style>radiobutton</style>
-    <position>460 60</position>
-    <text>De-activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).Refraction</variable>
-    <value>De-activated</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiowindactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).Refraction</variable>
-            <value>De-activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>textfreqshift</tag>
-    <style>text</style>
+    <tag>checkrefraction</tag>
+    <style>checkbox</style>
     <position>600 100</position>
-    <text>Frequency shift : </text>
-  </element>  
-  <element>
-    <tag>radiofreqshiftactivate</tag>
-    <style>radiobutton</style>
-    <position>600 80</position>
-    <text>Activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).Freqshift</variable>
-    <value>Activated</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiofreqshiftdeactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).Freqshift</variable>
-            <value>Activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <text>Refraction</text>
+    <type>integer</type>
+    <variable>handles.Model(md).Input(ad).refraction</variable>
   </element>
   <element>
-    <tag>radiofreqshiftdeactivate</tag>
-    <style>radiobutton</style>
-    <position>600 60</position>
-    <text>De-activated</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input(ad).Freqshift</variable>
-    <value>De-activated</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiofreqshiftactivate</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).Freqshift</variable>
-            <value>De-activated</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <tag>checkfreqshiftactivate</tag>
+    <style>checkbox</style>
+    <position>600 75</position>
+    <text>Frequency Shift</text>
+    <type>integer</type>
+    <variable>handles.Model(md).Input(ad).freqshift</variable>
   </element>
 </root>
