@@ -10,7 +10,7 @@
     <tag>selectlayeroptionsigma</tag>
     <style>popupmenu</style>
     <position>50 295 200 20</position>
-    <variable>handles.Model(md).Input(ad).layerOption</variable>
+    <variable>layerOption</variable>
     <type>integer</type>
     <text>Option</text>
     <textposition>left</textposition>
@@ -35,7 +35,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
+            <variable>layerType</variable>
             <value>Sigma</value>
             <operator>eq</operator>
           </check>
@@ -43,12 +43,11 @@
       </dependency>
     </dependencies>
   </element>
-
   <element>
     <tag>selectlayeroptionz</tag>
     <style>popupmenu</style>
     <position>50 295 200 20</position>
-    <variable>handles.Model(md).Input(ad).layerOption</variable>
+    <variable>layerOption</variable>
     <type>integer</type>
     <text>Option</text>
     <textposition>left</textposition>
@@ -69,7 +68,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
+            <variable>layerType</variable>
             <value>Z</value>
             <operator>eq</operator>
           </check>
@@ -81,7 +80,7 @@
     <tag>editthicktopsigma</tag>
     <style>edit</style>
     <position>200 270 50 20</position>
-    <variable>handles.Model(md).Input(ad).thickTop</variable>
+    <variable>thickTop</variable>
     <type>real</type>
     <text>Thickness Top (%)</text>
     <textposition>left</textposition>
@@ -95,13 +94,13 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).layerOption</variable>
+            <variable>layerOption</variable>
             <type>integer</type>
             <value>1</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Model(md).Input(ad).layerOption</variable>
+            <variable>layerOption</variable>
             <type>integer</type>
             <value>3</value>
             <operator>eq</operator>
@@ -113,7 +112,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
+            <variable>layerType</variable>
             <value>Sigma</value>
             <operator>eq</operator>
           </check>
@@ -125,7 +124,7 @@
     <tag>editthicktopz</tag>
     <style>edit</style>
     <position>200 270 50 20</position>
-    <variable>handles.Model(md).Input(ad).thickTop</variable>
+    <variable>thickTop</variable>
     <type>real</type>
     <text>Thickness Top (m)</text>
     <textposition>left</textposition>
@@ -139,7 +138,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).layerOption</variable>
+            <variable>layerOption</variable>
             <type>integer</type>
             <value>1</value>
             <operator>eq</operator>
@@ -151,7 +150,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
+            <variable>layerType</variable>
             <value>Z</value>
             <operator>eq</operator>
           </check>
@@ -163,7 +162,7 @@
     <tag>editthickbotsigma</tag>
     <style>edit</style>
     <position>200 245 50 20</position>
-    <variable>handles.Model(md).Input(ad).thickBot</variable>
+    <variable>thickBot</variable>
     <type>real</type>
     <text>Thickness Bottom (%)</text>
     <textposition>left</textposition>
@@ -177,13 +176,13 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).layerOption</variable>
+            <variable>layerOption</variable>
             <type>integer</type>
             <value>2</value>
             <operator>eq</operator>
           </check>
           <check>
-            <variable>handles.Model(md).Input(ad).layerOption</variable>
+            <variable>layerOption</variable>
             <type>integer</type>
             <value>3</value>
             <operator>eq</operator>
@@ -195,7 +194,7 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
+            <variable>layerType</variable>
             <value>Sigma</value>
             <operator>eq</operator>
           </check>
@@ -210,7 +209,7 @@
     <type>string</type>
     <list>
       <texts>
-        <variable>handles.Model(md).Input(ad).layerStrings</variable>
+        <variable>layerStrings</variable>
       </texts>
     </list> 
   </element>  
@@ -224,19 +223,13 @@
   </element>  
   <element>
     <tag>pushok</tag>
-    <style>pushbutton</style>
+    <style>pushok</style>
     <position>200 10 50 20</position>
-    <text>OK</text>
-    <callback>ddb_Delft3DFLOW_generateLayers</callback>
-    <option1>pushok</option1>
   </element>  
   <element>
     <tag>pushcancel</tag>
-    <style>pushbutton</style>
+    <style>pushcancel</style>
     <position>140 10 50 20</position>
-    <text>Cancel</text>
-    <callback>ddb_Delft3DFLOW_generateLayers</callback>
-    <option1>pushcancel</option1>
   </element>  
   </elements>
 </root>
