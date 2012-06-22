@@ -110,14 +110,14 @@ switch backgroundImageType
             if ~strcmpi(coord.name,bathyCoord.name) || ~strcmpi(coord.type,bathyCoord.type)
                 % Interpolate on rectangular grid
                 [x11,y11]=meshgrid(xl(1)-dx:res:xl(2)+dx,yl(1)-dy:res:yl(2)+dy);
-                tic
-                disp('Converting coordinates ...');
+%                 tic
+%                 disp('Converting coordinates ...');
                 [x2,y2]=ddb_coordConvert(x11,y11,coord,bathyCoord);
-                toc
-                tic
-                disp('Interpolating data ...');
+%                 toc
+%                 tic
+%                 disp('Interpolating data ...');
                 z11=interp2(x0,y0,z,x2,y2);
-                toc
+%                 toc
             else
                 x11=x0;
                 y11=y0;

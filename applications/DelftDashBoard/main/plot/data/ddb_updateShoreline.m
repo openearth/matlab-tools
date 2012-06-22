@@ -60,9 +60,9 @@ function ddb_updateShoreline(handles)
 % $Keywords: $
 
 %%
-tic
-
-disp('Getting World Vector Shoreline ...');
+% tic
+% 
+% disp('Getting World Vector Shoreline ...');
 
 iac=strmatch(lower(handles.screenParameters.shoreline),lower(handles.shorelines.names),'exact');
 
@@ -109,5 +109,5 @@ z=zeros(size(x))+500;
 h=findobj(handles.GUIHandles.mainWindow,'Tag','shoreline');
 set(h,'XData',x,'YData',y,'ZData',z);
 
-toc
+% toc
 

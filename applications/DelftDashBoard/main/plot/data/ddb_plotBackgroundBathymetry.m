@@ -117,12 +117,12 @@ end
 
 if length(earthx)>1
     
-    tic
-    disp('Interpolating color map ...');
+%     tic
+%     disp('Interpolating color map ...');
     r=interp1(earthx,earthy(:,1),zz);
     g=interp1(earthx,earthy(:,2),zz);
     b=interp1(earthx,earthy(:,3),zz);
-    toc
+%     toc
     r(isnan(zz))=1;
     g(isnan(zz))=1;
     b(isnan(zz))=1;
@@ -150,7 +150,7 @@ if length(earthx)>1
     ddb_colorBar('update',earth);
     
     set(gca,'CLim',[mnz mxz]);
-    disp('Plotting Image ...')
+%     disp('Plotting Image ...')
     
 end
 

@@ -118,14 +118,20 @@ switch handles.GUIData.backgroundImageType
             if ~strcmpi(coord.name,dataCoord.name) || ~strcmpi(coord.type,dataCoord.type)
                 % Interpolate on rectangular grid
                 [x11,y11]=meshgrid(xl(1):res:xl(2),yl(1):res:yl(2));
-                tic
-                disp('Converting coordinates ...');
+%                 tic
+%                 disp('Converting coordinates ...');
                 [x2,y2]=ddb_coordConvert(x11,y11,coord,dataCoord);
-                toc
-                tic
-                disp('Interpolating data ...');
+%                 toc
+%                 tic
+%                 disp('Interpolating data ...');
+                try
                 z11=interp2(x0,y0,z,x2,y2);
-                toc
+                catch
+                    disp('Did not get any data!');
+                    z11=zeros(size(x2));
+                    z11(z11==0)=NaN;                  
+                end
+%                 toc
                 x11=xl(1):res:xl(2);
                 y11=yl(1):res:yl(2);
             else
@@ -144,22 +150,22 @@ switch handles.GUIData.backgroundImageType
         
     case{'satellite'}
         % Get the data
-        tic
-        disp('Getting image data ...');
+%         tic
+%         disp('Getting image data ...');
         [xx,yy,cdata]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',0,'npix',1200,'whatKind',lower(handles.screenParameters.satelliteImageType),'cache',handles.satelliteDir);
-        toc
+%         toc
         
         % Now convert to current coordinate system
         if ~strcmpi(coord.name,dataCoord.name) || ~strcmpi(coord.type,dataCoord.type)
             % Interpolate on rectangular grid
             res=(xl(2)-xl(1))/(pos(3)/imageQuality);
             [x11,y11]=meshgrid(xl(1):res:xl(2),yl(1):res:yl(2));
-            tic
-            disp('Converting coordinates ...');
+%             tic
+%             disp('Converting coordinates ...');
             [x2,y2]=ddb_coordConvert(x11,y11,coord,dataCoord);
-            toc
-            tic
-            disp('Interpolating data ...');
+%             toc
+%             tic
+%             disp('Interpolating data ...');
             cdata=double(cdata);
             r1=interp2(xx,yy,cdata(:,:,1),x2,y2);
             g1=interp2(xx,yy,cdata(:,:,2),x2,y2);
@@ -171,16 +177,16 @@ switch handles.GUIData.backgroundImageType
             cdata=uint8(cdata);
             x11=xl(1):res:xl(2);
             y11=yl(1):res:yl(2);
-            toc
+%             toc
         else
             x11=xx;
             y11=yy;
         end
         
-        tic
-        disp('Plotting image data ...');
+%         tic
+%         disp('Plotting image data ...');
         handles=ddb_plotBackgroundSatelliteImage(handles,x11,y11,cdata);
-        toc
+%         toc
         
 end
 
