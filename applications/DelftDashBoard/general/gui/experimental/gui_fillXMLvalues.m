@@ -38,6 +38,8 @@ for ii=1:length(fldnames)
             if ~isempty(xml.onchange)
                 xml.callback=str2func(xml.onchange);
             end
+        case{'extension'}
+            xml.fileextension=xml.extension;
     end
 end
 
