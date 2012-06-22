@@ -62,6 +62,9 @@ try
         
         for it=1:n3:nt
             
+            timnow = s(1).data.Time(it);
+            
+            
             input.scrsz= get(0, 'ScreenSize');               % Set plot figure on full screen
             figure('Visible','Off','Position', [input.scrsz]);
             hold on; set(gcf,'defaultaxesfontsize',8)
@@ -69,8 +72,6 @@ try
             thin = settings.thin;
             scal = settings.scal;
             mag  = squeeze((s(1).data.U(it,:,:).^2 + s(1).data.V(it,:,:).^2).^0.5);
-            
-            timnow = s(1).data.Time(it);
             
             try %get wave forecast
                 id = find(round(timnow*24*60)==round(wav(1).data.Time*24*60));
@@ -312,36 +313,40 @@ try
             set(ax1,'fontsize',7)
             set(ax7,'fontsize',7)
             
-            set(gcf,'paperOrientation','landscape')
+            %             set(gcf,'paperOrientation','landscape')
             set(ax1,'position',[0.0104    0.0382    0.9882    0.9558])
-            set(gcf,'paperSize',[29.68 18.58])
-            set(gcf,'paperPosition',[ 0.5  0.28 29 17.8])
+            set(gcf,'paperSize',[29.68  18.58 ])
+            %             set(gcf,'paperPosition',[ 0.5  0.28 17.8 29 ])
+            set(gcf,'paperPosition',[0.6345    0.6345   28.4110   17.3110])
             set(gcf,'color','w')
             set(gcf,'renderer','zbuf')
             
             if ~exist([dr 'lastrun' filesep 'figures' filesep 'forecast'],'dir')
-               mkdir([dr 'lastrun' filesep 'figures'],'forecast')
+                mkdir([dr 'lastrun' filesep 'figures'],'forecast')
             end
             figname=[dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '_' datestr(timnow,'yyyymmddHH') '.png'];
             print(gcf,'-dpng','-r400',figname);
             
             close(gcf)
             
-            tel = tel + 1;
-            
-            fc.name.value        = name;
-            fc.name.type         = 'char';
-            fc.numoffields.value = tel;
-            fc.numoffields.type  = 'int';
-            fc.interval.value    = model.forecastplot.timeStep;
-            fc.interval.type     = 'int';
-            
-            fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnow,'dd mmm HH:MM'),'May','Mei'),'Mar','Mrt'),'Oct','Okt'));
-            fc.timepoints(tel).timepoint.timestr.type  = 'char';
-            fc.timepoints(tel).timepoint.png.value      = [name '_' datestr(timnow,'yyyymmddHH') '.png'];
-            fc.timepoints(tel).timepoint.png.type      = 'char';
-            fc.timepoints(tel).timepoint.id.value      = datestr(timnow,'yyyymmddHH');
-            fc.timepoints(tel).timepoint.id.type       = 'int';
+            if (timnow-floor(timnow)) >= 0.25 && (timnow-floor(timnow)) <= 20/24 % only hours between 6am and 8pm on website
+                
+                tel = tel + 1;
+                
+                fc.name.value        = name;
+                fc.name.type         = 'char';
+                fc.numoffields.value = tel;
+                fc.numoffields.type  = 'int';
+                fc.interval.value    = model.forecastplot.timeStep;
+                fc.interval.type     = 'int';
+                
+                fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnow,'dd mmm HH:MM'),'May','Mei'),'Mar','Mrt'),'Oct','Okt'));
+                fc.timepoints(tel).timepoint.timestr.type  = 'char';
+                fc.timepoints(tel).timepoint.png.value      = [name '/' name '_' datestr(timnow,'yyyymmddHH') '.png'];
+                fc.timepoints(tel).timepoint.png.type      = 'char';
+                fc.timepoints(tel).timepoint.id.value      = datestr(timnow,'yyyymmddHH');
+                fc.timepoints(tel).timepoint.id.type       = 'int';
+            end
         end
         
         struct2xml([dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '.xml'],fc);
