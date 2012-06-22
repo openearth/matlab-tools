@@ -31,5 +31,5 @@ end
 try
     val=eval(varstring);
 catch
-    disp(varstring)
+%    disp(varstring)
 end
