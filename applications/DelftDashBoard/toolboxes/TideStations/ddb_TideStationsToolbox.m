@@ -156,6 +156,17 @@ shortName=handles.Toolbox(tb).Input.database(iac).stationShortNames{ii};
 fname=[shortName '.tek'];
 exportTEK(wl',tim',fname,stationName);
 
+% Make bar file
+components={'M2','S2','N2','K2','K1','O1','P1','Q1'};
+fid=fopen([shortName '_components.bar'],'wt');
+for ii=1:length(components)
+    icmp=strmatch(components{ii},handles.Toolbox(tb).Input.components,'exact');
+    amp=handles.Toolbox(tb).Input.amplitudes(icmp);
+    phi=handles.Toolbox(tb).Input.phases(icmp);
+    fprintf(fid,'%s %f %f\n',components{ii},amp,phi);
+end
+fclose(fid);
+
 %%
 function selectTideStationFromMap(imagefig, varargins)
 
