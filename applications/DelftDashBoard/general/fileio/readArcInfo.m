@@ -144,6 +144,7 @@ else
 
     fid=fopen(fname,'r');
     
+    nheaderlines=0;
     for i=1:7
         str=fgets(fid);
         c=textscan(str,'%s %s');
@@ -152,46 +153,35 @@ else
         switch lower(a{1})
             case{'ncols'}
                 ncols=str2double(a{2});
+                headerlines=nheaderlines+1;
             case{'nrows'}
                 nrows=str2double(a{2});
+                headerlines=nheaderlines+1;
             case{'xllcorner'}
                 xll=str2double(a{2});
+                headerlines=nheaderlines+1;
             case{'yllcorner'}
                 yll=str2double(a{2});
+                headerlines=nheaderlines+1;
             case{'cellsize'}
                 cellsz=str2double(a{2});
+                headerlines=nheaderlines+1;
             case{'cellvalue'}
                 cellvalue=str2double(a{2});
+                headerlines=nheaderlines+1;
             case{'nodata_value'}
                 noval=str2double(a{2});
+                headerlines=nheaderlines+1;
         end
     end
-    
-%     str=fgets(fid);
-%     ncols=str2double(str(6:end));
-%     str=fgets(fid);
-%     nrows=str2double(str(6:end));
-%     str=fgets(fid);
-%     xll=str2double(str(10:end));
-%     str=fgets(fid);
-%     yll=str2double(str(10:end));
-%     str=fgets(fid);
-%     cellsz=str2double(str(9:end));
-%     str=fgets(fid);
-%     cellvalue=str2double(str(10:end));
-%     str=fgets(fid);
-%     noval=str2double(str(13:end));
+    frewind(fid);
     
     if ~isempty(irows) || ~isempty(icols)
-        frewind(fid);
+
         nr=irows(2)-irows(1)+1;
         tic
-        ztmp = textscan(fid,'',nr,'HeaderLines',irows(1)-1+6);
+        ztmp = textscan(fid,'',nr,'HeaderLines',nheaderlines);
         toc
-%         for i=1:irows(2)-irows(1)+1
-%             str  = fgetl(fid);
-%             ztmp(i,:) = str2num(str);
-%         end
         ztmp=ztmp(:,icols(1):icols(2));
         for i=1:icols(2)-icols(1)+1
             z(:,i)=ztmp{i};
@@ -205,15 +195,13 @@ else
 
     elseif ~isempty(xx) || ~isempty(yy)
 
-        frewind(fid);
-
         x=xll:cellsz:(xll+(ncols-1)*cellsz);
         y=(yll+(nrows-1)*cellsz):-cellsz:yll;
         
-        i1=find(y>=yy(2),1,'last');
+        i1=find(y>=yy(end),1,'last');
         i2=find(y<=yy(1),1,'first');
-        j1=find(x<=xx(1),1,'last');
-        j2=find(x>=xx(2),1,'first');
+        j1=find(x>=xx(1),1,'first');
+        j2=find(x<=xx(end),1,'last');
 
 
         
@@ -223,7 +211,7 @@ else
 %         f=dlmread()
         nr=i2-i1+1;
         tic
-        ztmp = textscan(fid,'',nr,'HeaderLines',i1-1+6);
+        ztmp = textscan(fid,'',nr,'HeaderLines',nheaderlines);
         toc
 %         for i=1:irows(2)-irows(1)+1
 %             str  = fgetl(fid);
@@ -241,7 +229,7 @@ else
         y=y(i1:i2);
         y=fliplr(y);
     else
-        z0 = textscan(fid,'%f');
+        z0 = textscan(fid,'%f','HeaderLines',nheaderlines);
         z=reshape(z0{1},ncols,nrows);
         z=z';
         z(z==noval)=NaN;
