@@ -63,8 +63,7 @@ try
         for it=1:n3:nt
             
             timnow = s(1).data.Time(it);
-            
-            
+                        
             input.scrsz= get(0, 'ScreenSize');               % Set plot figure on full screen
             figure('Visible','Off','Position', [input.scrsz]);
             hold on; set(gcf,'defaultaxesfontsize',8)
@@ -104,8 +103,9 @@ try
                 wavIconFile = [hm.dataDir 'icons' filesep 'wind' filesep 'wind-arrows\wind-dart-white\256x256\wind-dart-white-' num2str(wavid) '.png'];
                 try
                     imWave = imread(wavIconFile,'png','BackgroundColor',[1 1 1]);
+                catch
+                    imWave = [];   
                 end
-                
                 
             catch
                 hsnow = 'n/a';
@@ -149,6 +149,8 @@ try
                 windIconFile = [hm.dataDir 'icons' filesep 'wind' filesep 'wind-arrows\wind-disc-transparent-background\256x256\wind-disc1-trans-' num2str(windid) '_w.png'];
                 try
                     imWind = imread(windIconFile,'png','BackgroundColor',[1 1 1]);
+                catch 
+                    imWind = [];   
                 end
                 
             catch
@@ -157,7 +159,10 @@ try
             end
             
             try %get water temperature
-                wtempnow = 'n/a';
+                startT = datestr(round((now-1)*24*6)/24/6,'yyyymmddHHMM');
+                endT = datestr(round((now)*24*6)/24/6,'yyyymmddHHMM');
+                [t, dat] = GetMatroosSeries('water_temperature','observed',model.forecastplot.waterstation,startT,endT);
+                wtempnow = num2str(mean(dat),'%2.0f');
             catch
                 wtempnow = 'n/a';
             end
@@ -179,6 +184,8 @@ try
                 
                 try
                     imWthr = imread([hm.dataDir 'icons' filesep 'weather' filesep num2str(weather(weatherId,3),'%2.2d') '.png'],'png','BackgroundColor',[1 1 1]);
+                catch
+                    imWthr = [];
                 end
             end
             % model plot
