@@ -131,8 +131,8 @@ try
     for i=1:length(amp)
         
         [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xb,'y',yb,'constituent',comp{i});
-        ampz=squeeze(ampz);
-        phasez=squeeze(phasez);
+        ampz=squeeze(ampz(i,:,:));
+        phasez=squeeze(phasez(i,:,:));
         
         for ib=1:length(bnd)
             

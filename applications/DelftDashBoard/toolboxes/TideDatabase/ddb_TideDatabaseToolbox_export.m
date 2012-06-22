@@ -130,14 +130,38 @@ try
     
     xx=handles.Toolbox(tb).Input.xLim;
     yy=handles.Toolbox(tb).Input.yLim;
+
+    if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+        xg=xx(1):(xx(2)-xx(1))/10:xx(2);
+        yg=yy(1):(yy(2)-yy(1))/10:yy(2);
+        [xg,yg]=meshgrid(xg,yg);
+        cs.name='WGS 84';
+        cs.type='geographic';
+        [xg,yg]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
+        xx(1)=min(min(xg))-1;
+        yy(1)=min(min(yg))-1;
+        xx(2)=max(max(xg))+1;
+        yy(2)=max(max(yg))+1;
+    end
     
     [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent','all');
     
-    [xg,yg]=meshgrid(lon,lat);
-    
     for i=1:length(conList)
-        amp{i}=squeeze(ampz(:,:,i));
-        phi{i}=squeeze(phasez(:,:,i));
+        if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+            xx=handles.Toolbox(tb).Input.xLim;
+            yy=handles.Toolbox(tb).Input.yLim;
+            xg=xx(1):10000:xx(2);
+            yg=yy(1):10000:yy(2);
+            [xg,yg]=meshgrid(xg,yg);
+            [xglo,ygla]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
+            [lo,la]=meshgrid(lon,lat);
+            amp{i}=interp2(lo,la,squeeze(ampz(:,:,i)),xglo,ygla);
+            phi{i}=interp2(lo,la,squeeze(phasez(:,:,i)),xglo,ygla);            
+        else
+            [xg,yg]=meshgrid(lon,lat);
+            amp{i}=squeeze(ampz(:,:,i));
+            phi{i}=squeeze(phasez(:,:,i));
+        end
     end
     
     ddb_saveAstroMapFile(filename,xg,yg,conList,amp,phi);
