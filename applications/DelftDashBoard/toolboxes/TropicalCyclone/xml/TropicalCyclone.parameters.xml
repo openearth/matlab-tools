@@ -234,7 +234,7 @@
   <element>
     <tag>basinpanel</tag>
     <style>panel</style>
-    <position>750 40 250 95</position>
+    <position>750 40 240 95</position>
     <text>TC Basin Display</text>
   </element> 
   <element>

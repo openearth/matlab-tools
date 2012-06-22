@@ -99,9 +99,15 @@ end
 function drawTrack
 handles=getHandles;
 
-[handles,ok]=ddb_getInitialCycloneTrackParameters(handles);
+xmldir=handles.Toolbox(tb).xmlDir;
+xmlfile='TropicalCyclone.initialtrackparameters.xml';
+
+h=handles.Toolbox(tb).Input;
+[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
 
 if ok
+    
+    handles.Toolbox(tb).Input=h;
     
     setInstructions({'','Click on map to draw cyclone track','Use right-click to end cyclone track'});
     
