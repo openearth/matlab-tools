@@ -200,7 +200,59 @@ mxthick=ceil(max(max(nourdep)));
 mndep=floor(min(min(dps)));
 mxdep=ceil(max(max(dps)));
 
+output.time=[];
+output.bedlevel=[];
+output.concentration=[];
+output.concentration=[];
+
+output.datasets(1).name='bed level';
+output.datasets(1).unit='m';
+output.datasets(1).location='cellcentres';
+output.datasets(1).data.x=grd.xg;
+output.datasets(1).data.y=grd.yg;
+output.datasets(1).data.val=[];
+output.datasets(1).data.time=[];
+
+output.datasets(2).name='concentration';
+output.datasets(2).unit='g/l';
+output.datasets(2).location='cellcentres';
+output.datasets(2).data.x=grd.xg;
+output.datasets(2).data.y=grd.yg;
+output.datasets(2).data.val=[];
+output.datasets(2).data.time=[];
+
+output.datasets(3).name='nourishment thickness';
+output.datasets(3).unit='m';
+output.datasets(3).location='cellcentres';
+output.datasets(3).data.x=grd.xg;
+output.datasets(3).data.y=grd.yg;
+output.datasets(3).data.val=[];
+output.datasets(3).data.time=[];
+
+output.datasets(4).name='sedimentation/erosion';
+output.datasets(4).unit='m';
+output.datasets(4).location='cellcentres';
+output.datasets(4).data.x=grd.xg;
+output.datasets(4).data.y=grd.yg;
+output.datasets(4).data.val=[];
+output.datasets(4).data.time=[];
+
+output.datasets(5).name='residual currents';
+output.datasets(5).unit='m/s';
+output.datasets(5).location='cellcorners';
+output.datasets(5).data.x=grd.xg;
+output.datasets(5).data.y=grd.yg;
+output.datasets(5).data.u=ug;
+output.datasets(5).data.v=vg;
+output.datasets(5).data.time=[];
+
 %% Start of computational code
+
+itout=0;
+
+tref=datenum(2012,1,1);
+refvec=datevec(tref);
+
 for it=1:nt
 %    disp([num2str(it) ' of ' num2str(nt)])
     t(it)=(it-1)*dt;
@@ -217,6 +269,8 @@ for it=1:nt
     [c,dps,sedthick,srcsnk]=difu4(c,wl,dps,sedthick,he,u,v,grd,par,updbed);
 
     if it==1 || round(it/ntout)==it/ntout || it==nt
+        
+        itout=itout+1;
     
         figure(999)
         
@@ -299,12 +353,30 @@ for it=1:nt
         axis equal;
         set(gca,'xlim',xl,'ylim',yl);
         title('Equilibrium concentration');
-        
-        
-        
+                
         drawnow;
+
+        tvec=refvec;
+        tvec(1)=tvec(1)+tyear;
+
+        output.datasets(1).data.val(itout,:,:)=dps2;
+        output.datasets(1).data.time(itout)=datenum(tvec);
+        
+        output.datasets(2).data.val(itout,:,:)=ceplot;
+        output.datasets(2).data.time(itout)=datenum(tvec);
+
+        output.datasets(3).data.val(itout,:,:)=sedthick2;
+        output.datasets(3).data.time(itout)=datenum(tvec);
+
+        output.datasets(4).data.val(itout,:,:)=dps2-dps0;
+        output.datasets(4).data.time(itout)=datenum(tvec);
+
     end
 end
+
+fname='nour.mat';
+save(fname,'-struct','output');
+
 sedvol1=10000*nansum(sedthick)+par.morfac*nansum(c.*-dps)*10000/par.cdryb
 thckvol1=10000*nansum(sedthick)
 dvol=10000*nansum(sedthick-sedthick0)+nansum((c-cmorphstart).*-dps)*par.morfac*10000/par.cdryb

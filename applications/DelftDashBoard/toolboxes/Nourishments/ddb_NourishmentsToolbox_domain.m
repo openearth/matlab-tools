@@ -282,4 +282,5 @@ if ~isempty(h)
 end
 q=quiver(s.x,s.y,s.u,s.v,'k');
 set(q,'Tag','ResidualCurrents');
+set(q,'HitTest','off');
 
