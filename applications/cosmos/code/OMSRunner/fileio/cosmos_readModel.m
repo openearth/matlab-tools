@@ -1042,6 +1042,12 @@ if isfield(model,'forecastplot')
         hm.models(i).forecastplot.kmaxis=str2num(model.forecastplot.kmaxis);
     end
     
+    if isfield(model.forecastplot,'archive')
+        hm.models(i).forecastplot.archive=str2double(model.forecastplot.archive);
+    else
+        hm.models(i).forecastplot.archive=0;
+    end
+    
     hm.models(i).forecastplot.plot=1;
     if isfield(model.forecastplot,'plot')
         hm.models(i).forecastplot.plot=str2double(model.forecastplot.plot);
