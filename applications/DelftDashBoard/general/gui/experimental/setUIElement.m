@@ -182,7 +182,51 @@ switch lower(el.style)
         end
         set(el.handle,'Value',ii);
         set(el.handle,'String',stringList);
-                
+
+    case{'selectcolor'}
+
+        if isfield(el,'includenone')
+            includenone=el.includenone;
+        else
+            includenone=0;
+        end
+        stringList=colorlist('getlist','includenone',includenone);      
+        if ~isempty(el.variable)
+            str=getSubFieldValue(s,el.variable);
+            ii=strmatch(lower(str),lower(stringList),'exact');
+        else
+            ii=1;
+        end
+        
+        set(el.handle,'Value',ii);
+        set(el.handle,'String',stringList);
+
+    case{'selectmarker'}
+
+        stringList={'o','x','d','none'};      
+        if ~isempty(el.variable)
+            str=getSubFieldValue(s,el.variable);
+            ii=strmatch(lower(str),lower(stringList),'exact');
+        else
+            ii=1;
+        end
+        
+        set(el.handle,'Value',ii);
+        set(el.handle,'String',stringList);
+
+    case{'selectlinestyle'}
+
+        stringList={'-','--','.-','.'};      
+        if ~isempty(el.variable)
+            str=getSubFieldValue(s,el.variable);
+            ii=strmatch(lower(str),lower(stringList),'exact');
+        else
+            ii=1;
+        end
+        
+        set(el.handle,'Value',ii);
+        set(el.handle,'String',stringList);
+        
     case{'text'}
         if isfield(el,'variable')
             if ~isempty(el.variable)

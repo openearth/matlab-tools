@@ -137,12 +137,14 @@ for jj=1:length(el.list.texts)
         el.list.texts(jj).text=[];
     end
 end
-if ~isfield(el.list,'values')
-    el.list.values=[];
-end
-for jj=1:length(el.list.values)
-    if ~isfield(el.list.values,'value')
-        el.list.values(jj).value=[];
+% if ~isfield(el.list,'values')
+%     el.list.values=[];
+% end
+if isfield(el.list,'values')
+    for jj=1:length(el.list.values)
+        if ~isfield(el.list.values,'value')
+            el.list.values(jj).value=[];
+        end
     end
 end
 

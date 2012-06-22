@@ -112,6 +112,14 @@ for i=1:length(elements)
                 % Push button
                 
                 elements(i).element.handle=uicontrol(figh,'Style','pushbutton','String',elements(i).element.text,'Position',pos);
+
+            case{'pushok'}
+
+                elements(i).element.handle=uicontrol(figh,'Style','pushbutton','String','OK','Position',pos);
+
+            case{'pushcancel'}
+
+                elements(i).element.handle=uicontrol(figh,'Style','pushbutton','String','Cancel','Position',pos);
                 
             case{'togglebutton'}
                 
@@ -361,6 +369,12 @@ for i=1:length(elements)
             case{'pushbutton'}
                 set(elements(i).element.handle,'Callback',{@pushbutton_Callback,elements,i});
 
+             case{'pushok'}
+                set(elements(i).element.handle,'Callback',{@pushOK_Callback,elements,i});
+
+            case{'pushcancel'}
+                set(elements(i).element.handle,'Callback',{@pushCancel_Callback,elements,i});
+
             case{'togglebutton'}
                 set(elements(i).element.handle,'Callback',{@togglebutton_Callback,getFcn,setFcn,elements,i});
                 
@@ -496,54 +510,77 @@ function listbox_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
 str=get(hObject,'String');
 % Check if listbox is not empty
 if ~isempty(str{1})
-        
+    
     el=elements(i).element;
     
-    ii=get(hObject,'Value');
-    
-    if ~isempty(el.type)
-        tp=lower(el.type);
-    else
-        tp=lower(el.variable.type);
-    end
-
-    switch tp
-        case{'string'}
-            if isfield(el.list.value)
-                str=el.list.value;
-            end
-            if length(ii)>1
-                % multi
-                gui_setValue(el,el.variable,str{ii(1)}); 
-                if ~isempty(el.multivariable)
-                    for j=1:length(ii)
-                        v{j}=str{ii(j)};
-                    end
-                    gui_setValue(el,el.multivariable,v); 
-                end
-            else
-                gui_setValue(el,el.variable,str{ii}); 
-                if ~isempty(el.multivariable)
-                    gui_setValue(el,el.multivariable,str{ii}); 
-                end
-            end
-        otherwise
-            if length(ii)>1
-                % multi
-                gui_setValue(el,el.variable,ii(1)); 
-                if ~isempty(el.multivariable)
-                    gui_setValue(el,el.multivariable,ii); 
-                end
-            else
-                gui_setValue(el,el.variable,ii); 
-                if ~isempty(el.multivariable)
-                    gui_setValue(el,el.multivariable,ii);
-                end
-            end
-    end
+    if isfield(el,'variable')
         
-    finishCallback(elements,i);
-
+        ii=get(hObject,'Value');
+        
+        if ~isempty(el.type)
+            tp=lower(el.type);
+        else
+            tp=lower(el.variable.type);
+        end
+        
+        switch tp
+            case{'string'}                
+                if isfield(el.list,'values')
+                    % Values must be cell array of strings
+                    if isfield(el.list.values,'variable')
+                        values=gui_getValue(el,el.list.values.variable);
+                    else
+                        for jj=1:length(el.list.values)
+                            values{jj}=el.list.values(jj).value;
+                        end
+                    end
+                else
+                    values=str;
+                end
+                if length(ii)>1
+                    % multiple points selected
+                    gui_setValue(el,el.variable,values{ii});
+                    if ~isempty(el.multivariable)
+                        for j=1:length(ii)
+                            v{j}=values{ii};
+                        end
+                        gui_setValue(el,el.multivariable,v);
+                    end
+                else
+                    gui_setValue(el,el.variable,values{ii});
+                    if ~isempty(el.multivariable)
+                        gui_setValue(el,el.multivariable,values{ii});
+                    end
+                end
+            otherwise
+                % Integer
+                if isfield(el.list,'values')
+                    % Values must be cell array of strings
+                    if isfield(el.list.values,'variable')
+                        values=gui_getValue(el,el.list.values.variable);
+                    else
+                        values=1:length(el.list.values);
+                    end
+                else
+                    values=1:length(str);
+                end
+                if length(ii)>1
+                    % multi
+                    gui_setValue(el,el.variable,values(ii(1)));
+                    if ~isempty(el.multivariable)
+                        gui_setValue(el,el.multivariable,values(ii));
+                    end
+                else
+                    gui_setValue(el,el.variable,values(ii));
+                    if ~isempty(el.multivariable)
+                        gui_setValue(el,el.multivariable,values(ii));
+                    end
+                end
+        end
+        
+        finishCallback(elements,i);
+    end
+    
 end
 
 %%
@@ -566,32 +603,32 @@ if ~isempty(str{1})
     switch tp
         case{'string'}
             if isfield(el.list,'values')
+                % Values must be cell array of strings
                 if isfield(el.list.values,'variable')
                     values=gui_getValue(el,el.list.values.variable);
                 else
-                    values=el.list.values;
+                    for jj=1:length(el.list.values)
+                        values{jj}=el.list.values(jj).value;
+                    end
                 end
-                v=values{ii};
             else
-                v=str{ii};
+                values=str{ii};
             end
+            gui_setValue(el,el.variable,values{ii});
         otherwise
             if isfield(el.list,'values')
                 if isfield(el.list.values,'variable')
-                    values=gui_getValue(s,el.list.values.variable);
+                    values=gui_getValue(el,el.list.values.variable);
                 else
-                    values=el.list.values;
+                    for jj=1:length(el.list.values)
+                        values(jj)=str2double(el.list.values(jj).value);
+                    end
                 end
-                for jj=1:length(values)
-                    vnum(jj)=str2double(values{jj});
-                end
-                v=vnum(ii);
             else
-                v=ii;
+                values=1:length(str);
             end
+            gui_setValue(el,el.variable,values(ii));
     end
-    
-    gui_setValue(el,el.variable,v);
         
     finishCallback(elements,i);
 
@@ -672,7 +709,7 @@ for j=1:length(el.columns)
     v=[];
     
     for k=1:size(data,1)
-        switch lower(el.columns(j).style)
+        switch lower(el.columns(j).column.style)
             case{'editreal'}
                 v(k)=data{k,j};
             case{'edittime'}
@@ -690,7 +727,7 @@ for j=1:length(el.columns)
         end
     end
     
-    gui_setValue(el,el.columns(j).variable,v);
+    gui_setValue(el,el.columns(j).column.variable,v);
 
 end
 
@@ -700,6 +737,28 @@ finishCallback(elements,i);
 function pushbutton_Callback(hObject,eventdata,elements,i)
 
 finishCallback(elements,i);
+
+%%
+function pushOK_Callback(hObject,eventdata,elements,i)
+
+el=elements(i).element;
+getFcn=getappdata(el.handle,'getFcn');
+setFcn=getappdata(el.handle,'setFcn');
+s=feval(getFcn);
+s.ok=1;
+feval(setFcn,s);
+uiresume;
+
+%%
+function pushCancel_Callback(hObject,eventdata,elements,i)
+
+el=elements(i).element;
+getFcn=getappdata(el.handle,'getFcn');
+setFcn=getappdata(el.handle,'setFcn');
+s=feval(getFcn);
+s.ok=0;
+feval(setFcn,s);
+uiresume;
 
 %%
 function finishCallback(elements,i)

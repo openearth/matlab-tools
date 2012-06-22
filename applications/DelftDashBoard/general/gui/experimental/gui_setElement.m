@@ -120,7 +120,8 @@ switch lower(el.style)
                 case{'string'}                    
 
                     % Values
-                    if ~isempty(el.list.values)
+%                    if ~isempty(el.list.values)
+                    if isfield(el.list,'values')
                         % Values prescribed in xml file
                         if isfield(el.list.values,'variable')
                             values=gui_getValue(el,el.list.values.variable);
@@ -134,20 +135,23 @@ switch lower(el.style)
                         values=stringlist;
                     end
                     
-                    if ~isempty(el.variable)
-                        str=gui_getValue(el,el.variable);
-                        ii=strmatch(lower(str),lower(values),'exact');
+                    if isfield(el,'variable')
+                        if ~isempty(el.variable)
+                            str=gui_getValue(el,el.variable);
+                            ii=strmatch(lower(str),lower(values),'exact');
+                        end
                     end
+                    
                 otherwise
                     
                     if ~isempty(el.multivariable)
                         % Not sure anymore what this multivariable is
                         % supposed to do ...
                         ii=gui_getValue(el,el.multivariable);
-                    else
-                        
+                    else                        
                         % Values
-                        if ~isempty(el.list.values)
+%                        if ~isempty(el.list.values)
+                        if isfield(el.list,'values')
                             % Values prescribed in xml file
                             if isfield(el.list.values,'variable')
                                 values=gui_getValue(el,el.list.values.variable);
@@ -165,7 +169,7 @@ switch lower(el.style)
                             val=gui_getValue(el,el.variable);
                             ii=find(values==val,1,'first');
                         else
-                            ii=gui_getValue(el);
+                            ii=gui_getValue(el,el.variable);
                         end
                     end
             end

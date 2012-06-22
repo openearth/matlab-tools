@@ -32,12 +32,28 @@ if isfield(xml,'elements')
         
         % Variable
         if isfield(elxml(k).element,'variable')
-            s.elements(k).variable=readVariableXML(elxml(k).element.variable,subFields,subIndices);
+            s.elements(k).variable=elxml(k).element.variable;
+%            s.elements(k).variable=readVariableXML(elxml(k).element.variable,subFields,subIndices);
         end
         if isfield(elxml(k).element,'multivariable')
-            s.elements(k).multivariable=readVariableXML(elxml(k).element.multivariable,subFields,subIndices);
+            s.elements(k).multivariable=elxml(k).element.multivariable;
+%            s.elements(k).multivariable=readVariableXML(elxml(k).element.multivariable,subFields,subIndices);
         end
-
+        
+%         if isfield(elxml(k).element,'variable')
+%             if ~isempty(variablePrefix)
+%                 varPrf=[variablePrefix '.'];
+%             end
+%             s.elements(k).variable=[varPrf elxml(k).element.variable];
+%         end
+%         
+%         if isfield(elxml(k).element,'multivariable')
+%             if ~isempty(variablePrefix)
+%                 varPrf=[variablePrefix '.'];
+%             end
+%             s.elements(k).multivariable=[varPrf elxml(k).element.multivariable];
+%         end
+        
         tags{k}=s.elements(k).tag;
         
         tg = lower(getnodeval(elxml(k).element,'tag',[],'string'));
@@ -140,6 +156,8 @@ if isfield(xml,'elements')
                 s.elements(k).format           = getnodeval(elxml(k).element,'format','','string');
                 s.elements(k).enable           = getnodeval(elxml(k).element,'enable',1,'boolean');
                 s.elements(k).text             = getnodeval(elxml(k).element,'text','','string');
+                
+                s.elements(k).list=[];
                 
                 if isfield(elxml(k).element,'list')
 
@@ -340,7 +358,11 @@ if isfield(elxml,nodename)
             end            
         otherwise
             try
-            val=str2num(elxml.(nodename));
+                if isnumeric(elxml.(nodename))
+                    val=elxml.(nodename);
+                else
+                    val=str2num(elxml.(nodename));
+                end
             catch
                 shite=1;
             end

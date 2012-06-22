@@ -27,8 +27,6 @@ for i=1:length(elements)
         elements(i).textHandle=[];
         position=elements(i).position;
         
-        
-        
         switch lower(elements(i).style)
             
             %% Standard elements
@@ -181,7 +179,29 @@ for i=1:length(elements)
                 if elements(i).enable==0
                     set(elements(i).handle,'Enable','off');
                 end
-                
+
+            case{'pushok'}
+                elements(i).handle=uicontrol(figh,'Style','pushbutton','String','OK','Position',position);
+                set(elements(i).handle,'Parent',parent);
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end                
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
+
+            case{'pushcancel'}
+                elements(i).handle=uicontrol(figh,'Style','pushbutton','String','Cancel','Position',position);
+                set(elements(i).handle,'Parent',parent);
+                if ~isempty(elements(i).parent)
+                    hh=findobj(gcf,'Tag',elements(i).parent);
+                    set(elements(i).handle,'Parent',hh);
+                end                
+                if elements(i).enable==0
+                    set(elements(i).handle,'Enable','off');
+                end
+
             case{'togglebutton'}
                 elements(i).handle=uicontrol(figh,'Style','togglebutton','String',elements(i).text,'Position',position);
                 set(elements(i).handle,'Parent',parent);
@@ -230,7 +250,7 @@ for i=1:length(elements)
                     set(elements(i).handle,'Enable','off');
                 end
                 
-            case{'popupmenu'}
+            case{'popupmenu','selectcolor','selectmarker'}
 
                 % Pop-up menu
                 elements(i).handle=uicontrol(figh,'Parent',parent,'Style','popupmenu','String','','Position',position,'BackgroundColor',[1 1 1]);
@@ -512,6 +532,12 @@ for i=1:length(elements)
             case{'pushbutton'}
                 set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
 
+            case{'pushok'}
+                set(elements(i).handle,'Callback',{@pushOK_Callback,getFcn,setFcn});
+
+            case{'pushcancel'}
+                set(elements(i).handle,'Callback',{@pushCancel_Callback,getFcn,setFcn});
+
             case{'togglebutton'}
                 if ~isempty(elements(i).customCallback)
                     set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
@@ -543,7 +569,7 @@ for i=1:length(elements)
                     set(elements(i).handle,'Callback',{@listbox_Callback,getFcn,setFcn,elements,i});
                 end
 
-            case{'popupmenu'}
+            case{'popupmenu','selectcolor','selectmarker'}
                 if ~isempty(elements(i).customCallback)
                     set(elements(i).handle,'Callback',{@custom_Callback,elements(i).customCallback,elements(i).option1,elements(i).option2});
                 else
@@ -847,7 +873,7 @@ if pathname~=0
         filename=[pathname filename];
     end
     v=filename;
-    s=setSubFieldValue(s,el.variable,v);
+%    s=setSubFieldValue2(s,el.variable,v);
     
     if el.showFileName
         set(el.textHandle,'enable','on','String',['File : ' v]);
@@ -858,6 +884,7 @@ if pathname~=0
         set(el.textHandle,'Position',pos);
     end
         
+    s=setSubFieldValue(s,el.variable,v);
     feval(setFcn,s);
     
     if ~isempty(el.onChangeCallback)
@@ -959,6 +986,19 @@ if ~isempty(el.onChangeCallback)
 end
 
 %%
+function pushOK_Callback(hObject,eventdata,getFcn,setFcn)
+s=feval(getFcn);
+s.ok=1;
+feval(setFcn,s);
+uiresume;
+
+%%
+function pushCancel_Callback(hObject,eventdata,getFcn,setFcn)
+s=feval(getFcn);
+s.ok=0;
+feval(setFcn,s);
+uiresume;
+
+%%
 function custom_Callback(hObject,eventdata,callback,option1,option2)
 feval(callback,option1,option2);
-

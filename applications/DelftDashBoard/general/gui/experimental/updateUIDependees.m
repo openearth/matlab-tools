@@ -5,3 +5,7 @@ for i=1:length(elements(iac).dependees)
     idep=elements(iac).dependees(i).dependencyNr;
     updateUIDependency(elements(jac),idep,getFcn);
 end
+
+% for i=1:length(elements)
+%     updateUIDependency(elements(i),0,getFcn);
+% end
