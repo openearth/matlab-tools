@@ -4,48 +4,50 @@
   <element>
     <tag>obstaclespanel</tag>
     <style>panel</style>
-    <position>45 10 600 160</position>
+    <position>45 10 675 160</position>
     <text>Obstacles</text>
   </element>
   <element>
-    <tag>editobstacles</tag>
+    <tag>listobstacles</tag>
     <style>listbox</style>
     <position>55 20 160 130</position>
-    <tooltipstring>Edit obstacles</tooltipstring>
-    <variable>handles.Model(md).Input(ad).Obstacles</variable>
-    <type>string</type>
+    <tooltipstring>Select obstacle</tooltipstring>
+    <variable>activeobstacle</variable>
+    <multivariable>activeobstacles</multivariable>
+    <max>1000</max>
+    <type>integer</type>    
     <list>
       <texts>
-        <variable>handles.Model(md).Input(ad).Obstacles</variable>
+        <variable>obstaclenames</variable>
       </texts>
     </list>
-    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
-    <option1>edit</option1>    
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>selectobstacle</option1>    
   </element>
   <element>
     <tag>pushaddobstacle</tag>
     <style>pushbutton</style>
-    <position>220 85 100 20</position>
+    <position>220 130 100 20</position>
     <tooltipstring>Add obstacle</tooltipstring>
     <text>Add</text>
-    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
-    <option1>add</option1>    
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>addobstacle</option1>    
   </element>
   <element>
     <tag>pushdeleteobstacle</tag>
     <style>pushbutton</style>
-    <position>220 60 100 20</position>
+    <position>220 105 100 20</position>
     <tooltipstring>Delete obstacle</tooltipstring>
     <text>Delete</text>
-    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
-    <option1>delete</option1>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>deleteobstacle</option1>
     <dependencies>
       <dependency>
         <action>enable</action>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -56,24 +58,127 @@
   <element>
     <tag>pushimportobstacle</tag>
     <style>pushbutton</style>
-    <position>220 35 100 20</position>
+    <position>220 80 100 20</position>
     <tooltipstring>Import obstacles</tooltipstring>
-    <text>Import from file</text>
-    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
+    <text>Copy from FLOW</text>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>import</option1>    
   </element>
   <element>
-    <tag>textobstacletype</tag>
+    <tag>textpolyline</tag>
     <style>text</style>
-    <position>400 140</position>
-    <text>Obstacle type : </text>
+    <horal>right</right>
+    <position>265 40</position>
+    <text>Polyline</text>
+  </element>
+  <element>
+    <tag>pushopenobstaclepolylinesfile</tag>
+    <style>pushselectfile</style>
+    <position>270 40 50 20</position>
+    <tooltipstring>Load obstacle polylines file</tooltipstring>
+    <showfilename>no</showfilename>
+    <text>Open</text>
+    <variable>handles.Model(md).Input.obstaclepolylinesfile</variable>
+    <extension>*.pli</extension>
+    <selectiontext>Select obstacle polylines file</selectiontext>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>loadpolylinesfile</option1>
+  </element>
+  <element>
+    <tag>pushsaveobstaclepolylinesfile</tag>
+    <style>pushsavefile</style>
+    <position>325 40 50 20</position>
+    <tooltipstring>Save obstacle polylines file</tooltipstring>
+    <text>Save</text>
+    <variable>handles.Model(md).Input.obstaclepolylinesfile</variable>
+    <extension>*.pli</extension>
+    <selectiontext>Select obstacle polylines file</selectiontext>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>savepolylinesfile</option1>
     <dependencies>
       <dependency>
         <action>enable</action>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textpolyline</tag>
+    <style>text</style>
+    <horal>right</right>
+    <position>265 15</position>
+    <text>Obstacle</text>
+  </element>
+  <element>
+    <tag>pushloadobstaclefile</tag>
+    <style>pushselectfile</style>
+    <position>270 15 50 20</position>
+    <tooltipstring>Load obstacle file</tooltipstring>
+    <text>Open</text>
+    <showfilename>no</showfilename>
+    <variable>handles.Model(md).Input.obstaclefile</variable>
+    <extension>*.obs</extension>
+    <selectiontext>Select obstacle file</selectiontext>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>loadobsfile</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>nrobstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>pushsaveobstaclefile</tag>
+    <style>pushsavefile</style>
+    <position>325 15 50 20</position>
+    <tooltipstring>Save obstacle file</tooltipstring>
+    <text>Save</text>
+    <variable>handles.Model(md).Input.obstaclefile</variable>
+    <extension>*.obs</extension>
+    <selectiontext>Select obstacle file</selectiontext>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>saveobsfile</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>nrobstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>        
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textobstacletype</tag>
+    <style>text</style>
+    <position>530 140</position>
+    <text>Obstacle type</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -84,60 +189,60 @@
   <element>
     <tag>radiosheet</tag>
     <style>radiobutton</style>
-    <position>480 140</position>
+    <position>610 140</position>
     <text>Sheet</text>
     <type>string</type>
-    <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+    <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
     <value>sheet</value>
     <dependencies>
-        <dependency>
-          <action>enable</action>
-          <checkfor>any</checkfor>
-          <checks>
-            <check>
-              <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-              <value>0</value>
-              <operator>gt</operator>
-            </check>
-          </checks>
-        </dependency>    
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>nrobstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
     </dependencies>    
   </element>
   <element>
     <tag>radiodam</tag>
     <style>radiobutton</style>
-    <position>540 140</position>
+    <position>670 140</position>
     <text>Dam</text>
     <type>string</type>
-    <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+    <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
     <value>dam</value>
     <dependencies>
-        <dependency>
-          <action>enable</action>
-          <checkfor>any</checkfor>
-          <checks>
-            <check>
-              <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-              <value>0</value>
-              <operator>gt</operator>
-            </check>
-          </checks>
-        </dependency>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>nrobstacles</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
     </dependencies>    
   </element>
   <element>
     <tag>editreflections</tag>
     <style>popupmenu</style>
-    <position>480 115 110 20</position>
-    <text>Reflections : </text>
+    <position>610 115 90 20</position>
+    <text>Reflections</text>
     <type>string</type>
-    <variable>handles.Model(md).Input(ad).Reflectionsval</variable>
+    <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections</variable>
     <list>
       <texts>
-        <variable>handles.Model(md).Input(ad).Reflections</variable>
+        <variable>obstaclereflectiontypestext</variable>
       </texts>
       <values>
-        <variable>handles.Model(md).Input(ad).Reflections</variable>
+        <variable>obstaclereflectiontypes</variable>
       </values>      
     </list>
     <dependencies>
@@ -146,7 +251,7 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>
@@ -157,10 +262,10 @@
   <element>
     <tag>editrefcoef</tag>
     <style>edit</style>
-    <position>480 95 50 20</position>
-    <text>Reflection coefficient : </text>
+    <position>610 90 50 20</position>
+    <text>Reflection coefficient</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Refcoef</variable>
+    <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).refleccoef</variable>
     <type>real</type>
     <tooltipstring>Enter reflection coefficient</tooltipstring>
     <dependencies>
@@ -169,13 +274,13 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
           <check>
-            <variable>handles.Model(md).Input(ad).Reflectionsval</variable>
-            <value>No</value>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections</variable>
+            <value>no</value>
             <operator>ne</operator>
           </check>
         </checks>
@@ -185,7 +290,7 @@
   <element>
     <tag>textrefcoefunit</tag>
     <style>text</style>
-    <position>535 95</position>
+    <position>665 90</position>
     <text>[-]</text>
     <dependencies>
       <dependency>
@@ -193,13 +298,13 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
           <check>
-            <variable>handles.Model(md).Input(ad).Reflectionsval</variable>
-            <value>No</value>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections</variable>
+            <value>no</value>
             <operator>ne</operator>
           </check>
         </checks>
@@ -209,10 +314,10 @@
   <element>
     <tag>edittransmcoef</tag>
     <style>edit</style>
-    <position>480 75 50 20</position>
-    <text>Transmission coefficient : </text>
+    <position>610 65 50 20</position>
+    <text>Transmission coefficient</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Transmcoef</variable>
+    <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).transmcoef</variable>
     <type>real</type>
     <tooltipstring>Enter transmission coefficient</tooltipstring>
     <dependencies>
@@ -221,12 +326,18 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
+        </checks>
+      </dependency>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
             <value>sheet</value>
             <operator>eq</operator>
           </check>
@@ -237,7 +348,7 @@
   <element>
     <tag>texttransmcoefunit</tag>
     <style>text</style>
-    <position>535 75</position>
+    <position>665 65</position>
     <text>[-]</text>
     <dependencies>
       <dependency>
@@ -245,12 +356,18 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
+        </checks>
+      </dependency>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
             <value>sheet</value>
             <operator>eq</operator>
           </check>
@@ -261,10 +378,10 @@
   <element>
     <tag>editheight</tag>
     <style>edit</style>
-    <position>480 55 50 20</position>
-    <text>Height : </text>
+    <position>610 65 50 20</position>
+    <text>Height</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Height</variable>
+    <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).height</variable>
     <type>real</type>
     <tooltipstring>Enter height</tooltipstring>
     <dependencies>
@@ -273,12 +390,18 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
+        </checks>
+      </dependency>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
             <value>dam</value>
             <operator>eq</operator>
           </check>
@@ -289,7 +412,7 @@
   <element>
     <tag>textheightunit</tag>
     <style>text</style>
-    <position>535 55</position>
+    <position>665 65</position>
     <text>[m]</text>
     <dependencies>
       <dependency>
@@ -297,12 +420,18 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
+        </checks>
+      </dependency>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
             <value>dam</value>
             <operator>eq</operator>
           </check>
@@ -313,10 +442,10 @@
   <element>
     <tag>editalpha</tag>
     <style>edit</style>
-    <position>480 35 50 20</position>
-    <text>Alpha : </text>
+    <position>610 40 50 20</position>
+    <text>Alpha</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Alpha</variable>
+    <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).alpha</variable>
     <type>real</type>
     <tooltipstring>Enter alpha</tooltipstring>
     <dependencies>
@@ -325,12 +454,18 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
+        </checks>
+      </dependency>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
             <value>dam</value>
             <operator>eq</operator>
           </check>
@@ -341,7 +476,7 @@
   <element>
     <tag>textalphaunit</tag>
     <style>text</style>
-    <position>535 35</position>
+    <position>665 40</position>
     <text>[-]</text>
     <dependencies>
       <dependency>
@@ -349,12 +484,18 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
+        </checks>
+      </dependency>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
             <value>dam</value>
             <operator>eq</operator>
           </check>
@@ -365,10 +506,10 @@
   <element>
     <tag>editbeta</tag>
     <style>edit</style>
-    <position>480 15 50 20</position>
-    <text>Beta : </text>
+    <position>610 15 50 20</position>
+    <text>Beta</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).Beta</variable>
+    <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).beta</variable>
     <type>real</type>
     <tooltipstring>Enter beta</tooltipstring>
     <dependencies>
@@ -377,12 +518,18 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
+        </checks>
+      </dependency>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
             <value>dam</value>
             <operator>eq</operator>
           </check>
@@ -393,7 +540,7 @@
   <element>
     <tag>textbetaunit</tag>
     <style>text</style>
-    <position>535 15</position>
+    <position>665 15</position>
     <text>[-]</text>
     <dependencies>
       <dependency>
@@ -401,12 +548,18 @@
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
+        </checks>
+      </dependency>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).ObstacleType</variable>
+            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
             <value>dam</value>
             <operator>eq</operator>
           </check>
@@ -417,116 +570,39 @@
   <element>
     <tag>obstaclessegmentspanel</tag>
     <style>panel</style>
-    <position>650 10 490 160</position>
-    <text>Obstacles segments</text>
+    <position>730 10 260 160</position>
+    <text>Coordinates</text>
   </element>
   <element>
-    <tag>editsegments</tag>
-    <style>listbox</style>
-    <position>660 20 160 130</position>
-    <tooltipstring>Edit segments</tooltipstring>
-    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Segments</variable>
-    <type>string</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Segments</variable>
-      </texts>
-    </list>
+    <tag>obstacletable</tag>
+    <style>table</style>
+    <position>750 15</position>
+    <nrrows>6</nrrows>
+    <includenumbers>yes</includenumbers>
+    <includebuttons>yes</includebuttons>
     <onchange>ddb_Delft3DWAVE_obstacles</onchange>
-    <option1>editsegments</option1> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>    
-    </dependencies>    
-  </element>
-  <element>
-    <tag>pushaddsegment</tag>
-    <style>pushbutton</style>
-    <position>825 120 100 20</position>
-    <tooltipstring>Add segment</tooltipstring>
-    <text>Add</text>
-    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
-    <option1>add</option1>
+    <option1>editobstacletable</option1>
+    <columns>
+      <column>
+        <style>editreal</style>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).x</variable>
+        <width>60</width>
+        <text>X</text>
+      </column>
+      <column>
+        <style>editreal</style>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).y</variable>
+        <width>60</width>
+        <text>Y</text>
+      </column>
+    </columns>
     <dependencies>
       <dependency>
         <action>enable</action>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>pushdeletesegment</tag>
-    <style>pushbutton</style>
-    <position>825 90 100 20</position>
-    <tooltipstring>Delete segment</tooltipstring>
-    <text>Delete</text>
-    <onchange>ddb_Delft3DWAVE_obstacles</onchange>
-    <option1>delete</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>textsegmentcoord</tag>
-    <style>text</style>
-    <position>930 140</position>
-    <text>Segment co-ordinates : </text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>      
-  </element>
-  <element>
-    <tag>editxstart</tag>
-    <style>edit</style>
-    <position>980 115 50 20</position>
-    <text>X-start : </text>
-    <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Xstart</variable>
-    <type>real</type>
-    <tooltipstring>Enter start x coordinate</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
+            <variable>nrobstacles</variable>
             <value>0</value>
             <operator>gt</operator>
           </check>        
@@ -534,149 +610,4 @@
       </dependency>
     </dependencies>    
   </element>
-  <element>
-    <tag>textxstartunit</tag>
-    <style>text</style>
-    <position>1035 115</position>
-    <text>[m]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>editystart</tag>
-    <style>edit</style>
-    <position>980 90 50 20</position>
-    <text>Y-start : </text>
-    <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Ystart</variable>
-    <type>real</type>
-    <tooltipstring>Enter start y coordinate</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>textystartunit</tag>
-    <style>text</style>
-    <position>1035 90</position>
-    <text>[m]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>editxend</tag>
-    <style>edit</style>
-    <position>980 65 50 20</position>
-    <text>X-start : </text>
-    <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Xend</variable>
-    <type>real</type>
-    <tooltipstring>Enter end x coordinate</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>textxendunit</tag>
-    <style>text</style>
-    <position>1035 65</position>
-    <text>[m]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>edityend</tag>
-    <style>edit</style>
-    <position>980 40 50 20</position>
-    <text>Y-end : </text>
-    <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).ObstaclesNb(handles.Model(md).Input.ObstaclesIval).Yend</variable>
-    <type>real</type>
-    <tooltipstring>Enter end y coordinate</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>textyendunit</tag>
-    <style>text</style>
-    <position>1035 40</position>
-    <text>[m]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).NrObstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>  
 </root>

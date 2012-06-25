@@ -148,26 +148,21 @@ input.boundaryspshapetypestext={'JONSWAP','Pierson-Moskowitz','Gauss'};
 input.boundaryperiodtypes={'peak','mean'};
 input.boundarydirspreadtypes={'power','degrees'};
 
+%% Obstacles
+input.nrobstacles=0;
+input.obstaclenames={''};
+input.obstaclepolylinesfile='';
+input.activeobstacle=1;
+input.activeobstacles=1;
+input.activeobstaclevertex=1;
+input.obstacles=[];
 
-% input.Obstacles={''};%'';
-% input.NrObstacles=0;%1
-% input.ObstaclesIval=1;%'';
-% input.ObstacleType='dam';
-% input.Sheet=1;
-% input.Dam=0;
-% input.Reflections={'No';'Specular';'Diffuse'};
-% input.Reflectionsval='No';%1;
-% input.Refcoef=0;
-% input.Transmcoef=1;
-% input.Height=0;
-% input.Alpha=2.6;
-% input.Beta=0.15;
-% input.ObstaclesNb(1).Segments={};%'';
-% input.ObstaclesNb(1).SegmentsIval=1;%'';%
-% input.ObstaclesNb(1).Xstart=0;
-% input.ObstaclesNb(1).Ystart=0;
-% input.ObstaclesNb(1).Xend=0;
-% input.ObstaclesNb(1).Yend=0;
-% input.PolFile='';
+input.obstacles=ddb_initializeDelft3DWAVEObstacle(input.obstacles,1);
+
+input.obstacletypes={'dam','sheet'};
+input.obstacletypestext={'Dam','Sheet'};
+
+input.obstaclereflectiontypes={'no','specular','diffuse'};
+input.obstaclereflectiontypestext={'No','Specular','Diffuse'};
 
 handles.Model(ii).Input=input;

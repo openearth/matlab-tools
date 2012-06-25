@@ -1,4 +1,4 @@
-function varargout = UIPolyline(h, opt, varargin)
+function varargout = gui_polyline(varargin)
 %UIPOLYLINE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -63,13 +63,11 @@ function varargout = UIPolyline(h, opt, varargin)
 
 %%
 
-try
-    tp=get(h,'Type');
-    if strcmpi(tp,'axes')
-        ax=h;
-    end
-catch
-    return
+if ischar(varargin{1})
+    opt=varargin{1};
+else
+    h=varargin{1};
+    opt=varargin{2};
 end
 
 % Default values
@@ -81,11 +79,17 @@ markerFaceColor='r';
 markerSize=4;
 maxPoints=10000;
 txt=[];
-callback=[];
-argin=[];
+createcallback=[];
+createinput=[];
+changecallback=[];
+changeinput=[];
 doubleclickcallback=[];
+doubleclickinput=[];
+rightclickcallback=[];
+rightclickinput=[];
 closed=0;
 userdata=[];
+ax=gca;
 
 % Not generic yet! DDB specific.
 windowbuttonupdownfcn=@ddb_setWindowButtonUpDownFcn;
@@ -104,7 +108,7 @@ for i=1:length(varargin)
                 markerEdgeColor=varargin{i+1};
             case{'markerfacecolor'}
                 markerFaceColor=varargin{i+1};
-            case{'markerfacesize'}
+            case{'markersize'}
                 markerSize=varargin{i+1};
             case{'max'}
                 maxPoints=varargin{i+1};
@@ -112,10 +116,22 @@ for i=1:length(varargin)
                 txt=varargin{i+1};
             case{'tag'}
                 tag=varargin{i+1};
-            case{'callback'}
-                callback=varargin{i+1};
-            case{'argin'}
-                argin=varargin{i+1};
+            case{'createcallback'}
+                createcallback=varargin{i+1};
+            case{'createinput'}
+                createinput=varargin{i+1};
+            case{'changecallback'}
+                changecallback=varargin{i+1};
+            case{'changeinput'}
+                changeinput=varargin{i+1};
+            case{'doubleclickcallback'}
+                doubleclickcallback=varargin{i+1};
+            case{'doubleclickinput'}
+                doubleclickinput=varargin{i+1};
+            case{'rightclickcallback'}
+                rightclickcallback=varargin{i+1};
+            case{'rightclickinput'}
+                rightclickinput=varargin{i+1};
             case{'userdata'}
                 userdata=varargin{i+1};
             case{'x'}
@@ -128,8 +144,8 @@ for i=1:length(varargin)
                 windowbuttonupdownfcn=varargin{i+1};
             case{'windowbuttonmotionfcn'}
                 windowbuttonmotionfcn=varargin{i+1};
-            case{'doubleclickcallback'}
-                doubleclickcallback=varargin{i+1};
+            case{'axis'}
+                ax=varargin{i+1};
         end
     end
 end
@@ -159,9 +175,14 @@ switch lower(opt)
         setappdata(h,'y',[]);
         setappdata(h,'axes',ax);
         setappdata(h,'closed',closed);
-        setappdata(h,'callback',callback);
-        setappdata(h,'argin',argin);
+        setappdata(h,'createcallback',createcallback);
+        setappdata(h,'createinput',createinput);
+        setappdata(h,'changecallback',changecallback);
+        setappdata(h,'changeinput',changeinput);
         setappdata(h,'doubleclickcallback',doubleclickcallback);
+        setappdata(h,'doubleclickinput',doubleclickinput);
+        setappdata(h,'rightclickcallback',rightclickcallback);
+        setappdata(h,'rightclickinput',rightclickinput);
         setappdata(h,'tag',tag);
         setappdata(h,'color',lineColor);
         setappdata(h,'width',lineWidth);
@@ -181,8 +202,14 @@ switch lower(opt)
         
     case{'plot'}
         h=plot3(0,0,9000);
-        setappdata(h,'callback',callback);
+        setappdata(h,'createcallback',createcallback);
+        setappdata(h,'createinput',createinput);
+        setappdata(h,'changecallback',changecallback);
+        setappdata(h,'changeinput',changeinput);
         setappdata(h,'doubleclickcallback',doubleclickcallback);
+        setappdata(h,'doubleclickinput',doubleclickinput);
+        setappdata(h,'rightclickcallback',rightclickcallback);
+        setappdata(h,'rightclickinput',rightclickinput);
         set(h,'userdata',userdata);
         setappdata(h,'tag',tag);
         setappdata(h,'x',x);
@@ -206,7 +233,27 @@ switch lower(opt)
             delete(h);
             delete(ch);
         end
+
+    case{'change'}
         
+        for i=1:length(varargin)
+            if ischar(varargin{i})
+                switch lower(varargin{i})
+                    case{'color'}
+                        set(h,'Color',varargin{i+1});
+                    case{'markeredgecolor'}
+                        ch=getappdata(h,'children');
+                        set(ch,'markeredgecolor',varargin{i+1});
+                    case{'markerfacecolor'}
+                        ch=getappdata(h,'children');
+                        set(ch,'markerfacecolor',varargin{i+1});
+                    case{'markersize'}
+                        ch=getappdata(h,'children');
+                        set(ch,'markersize',varargin{i+1});
+                end
+            end
+        end
+
 end
 
 if nargout==1
@@ -220,6 +267,7 @@ end
 
 %%
 function h=drawPolyline(h,varargin)
+% called to plot the polyline
 
 opt='withcallback';
 if ~isempty(varargin)
@@ -238,15 +286,21 @@ markerFaceColor=getappdata(h,'markerfacecolor');
 markerSize=getappdata(h,'markersize');
 maxPoints=getappdata(h,'maxpoints');
 txt=getappdata(h,'text');
-callback=getappdata(h,'callback');
-argin=getappdata(h,'argin');
+createcallback=getappdata(h,'createcallback');
+createinput=getappdata(h,'createinput');
+changecallback=getappdata(h,'changecallback');
+changeinput=getappdata(h,'changeinput');
 doubleclickcallback=getappdata(h,'doubleclickcallback');
+doubleclickinput=getappdata(h,'doubleclickinput');
+rightclickcallback=getappdata(h,'rightclickcallback');
+rightclickinput=getappdata(h,'rightclickinput');
 ax=getappdata(h,'axes');
 closed=getappdata(h,'closed');
 userdata=get(h,'userdata');
 windowbuttonupdownfcn=getappdata(h,'windowbuttonupdownfcn');
 windowbuttonmotionfcn=getappdata(h,'windowbuttonmotionfcn');
 
+% Delete temporary polyline
 ch=getappdata(h,'children');
 delete(h);
 delete(ch);
@@ -257,8 +311,7 @@ if ~isempty(x)
     set(h,'Color',lineColor);
     set(h,'LineWidth',lineWidth);
     set(h,'HitTest','off');
-    
-    
+        
     setappdata(h,'color',lineColor);
     setappdata(h,'width',lineWidth);
     setappdata(h,'marker',marker);
@@ -268,9 +321,14 @@ if ~isempty(x)
     setappdata(h,'maxpoints',maxPoints);
     setappdata(h,'text',txt);
     set(h,'userdata',userdata);
-    setappdata(h,'callback',callback);
-    setappdata(h,'argin',argin);
+    setappdata(h,'createcallback',createcallback);
+    setappdata(h,'createinput',createinput);
+    setappdata(h,'changecallback',changecallback);
+    setappdata(h,'changeinput',changeinput);
     setappdata(h,'doubleclickcallback',doubleclickcallback);
+    setappdata(h,'doubleclickinput',doubleclickinput);
+    setappdata(h,'rightclickcallback',rightclickcallback);
+    setappdata(h,'rightclickinput',rightclickinput);
     setappdata(h,'x',x);
     setappdata(h,'y',y);
     setappdata(h,'tag',tag);
@@ -303,8 +361,12 @@ if ~isempty(x)
     end
     setappdata(h,'texthandles',tx);
     
-    if ~isempty(callback) && strcmpi(opt,'withcallback')
-        feval(callback,x,y,h);
+    if ~isempty(createcallback) && strcmpi(opt,'withcallback')
+        if isempty(createinput)
+            feval(createcallback,h,x,y);
+        else
+            feval(createcallback,createinput,h,x,y);
+        end
     end
 end
 
@@ -319,6 +381,7 @@ buttonUpDownFcn=getappdata(h,'windowbuttonupdownfcn');
 buttonMotionFcn=getappdata(h,'windowbuttonmotionfcn');
 
 if strcmp(mouseclick,'normal')
+    % Left click
     
     pos=get(ax, 'CurrentPoint');
     posx=pos(1,1);
@@ -354,6 +417,7 @@ if strcmp(mouseclick,'normal')
     end
     
 else
+    % Right click
     closed=getappdata(h,'closed');
     if closed
         % Add last point
@@ -406,12 +470,21 @@ switch mouseclick
         set(gcf, 'windowbuttonmotionfcn', {@followTrack});
         set(gcf, 'windowbuttonupfcn',     {@stopTrack});
     case{'alt'}
+        % double click
         h=get(gcf,'CurrentObject');
         p=getappdata(h,'parent');
-        callback=getappdata(p,'doubleclickcallback');
-        if ~isempty(callback)
-            feval(callback,h);
-        end
+        x=getappdata(h,'x');
+        y=getappdata(h,'y');
+        nr=getappdata(p,'number');
+        doubleclickcallback=getappdata(p,'doubleclickcallback');
+        doubleclickinput=getappdata(p,'doubleclickinput');
+        if ~isempty(doubleclickcallback)
+            if ~isempty(doubleclickinput)
+                feval(doubleclickcallback,doubleclickinput,h,x,y,nr);
+            else
+                feval(doubleclickcallback,h,x,y,nr);
+            end
+        end        
 end
 
 %%
@@ -491,12 +564,12 @@ if ~isempty(tx)
     set(tx(nr),'Position',[x(nr) y(nr)]);
 end
 
-callback=getappdata(p,'callback');
-argin=getappdata(p,'argin');
-if ~isempty(callback)
-    if isempty(argin)
-        feval(callback,x,y,h);
+changecallback=getappdata(p,'changecallback');
+changeinput=getappdata(p,'changeinput');
+if ~isempty(changecallback)
+    if isempty(changeinput)
+        feval(changecallback,p,x,y,nr);
     else
-        feval(callback,argin,x,y,h);
+        feval(changecallback,changeinput,p,x,y,nr);
     end
 end

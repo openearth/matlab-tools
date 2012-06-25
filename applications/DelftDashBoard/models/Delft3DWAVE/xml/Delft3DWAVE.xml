@@ -44,6 +44,7 @@
           <tag>obstacles</tag>
           <tabstring>Obstacles</tabstring>
           <elements>Delft3DWAVE.obstacles.xml</elements>
+          <callback>ddb_Delft3DWAVE_obstacles</callback>
         </tab>
         <tab>
           <tag>physicalparameters</tag>

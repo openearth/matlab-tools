@@ -57,12 +57,14 @@ for id=n1:n2
     
     % Always plot grid (even is vis is 0)
     handles=ddb_Delft3DWAVE_plotGrid(handles,option,'wavedomain',id,'color',col,'visible',1);
-           
+
 end
+
 % Plot active grid on top
 try
     uistack(handles.Model(imd).Input.domains(awg).gridplot.plothandles,'top');
 end
+    
+handles=ddb_Delft3DWAVE_plotObstacles(handles,option,'visible',vis,'active',act);
+           
 setHandles(handles);
-
-
