@@ -187,7 +187,11 @@ for i=1:handles.bathymetry.nrDatasets
                     handles.bathymetry.dataset(i).verticalCoordinateSystem.units='m';
                 end
 
-                handles.bathymetry.dataset(i).refinementFactor=round(dx(2)/dx(1));
+                if length(dx)>1
+                    handles.bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
+                else
+                    handles.bathymetry.dataset(i).refinementFactor=1;
+                end
                 
                 handles.bathymetry.dataset(i).nrZoomLevels=length(x0);
                 for k=1:handles.bathymetry.dataset(i).nrZoomLevels
@@ -203,7 +207,6 @@ for i=1:handles.bathymetry.nrDatasets
                     handles.bathymetry.dataset(i).zoomLevel(k).jAvailable=double(jav{k});
                 end
                 
-                handles.bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
                 
             end
         case{'kaartblad'}
