@@ -64,8 +64,6 @@ if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
     ddb_refreshScreen;
-    % setUIElements('bathymetrypanel.export');
-%    ddb_plotBathymetry('activate');
 else
     %Options selected
     opt=lower(varargin{1});    
@@ -111,12 +109,6 @@ end
 
 setHandles(handles);
 
-% setUIElement('tilingpanel.bathymetry.editnx');
-% setUIElement('tilingpanel.bathymetry.editny');
-% setUIElement('tilingpanel.bathymetry.editnrzoom');
-% setUIElement('tilingpanel.bathymetry.editx0');
-% setUIElement('tilingpanel.bathymetry.edity0');
-
 %%
 function selectCS
 
@@ -140,11 +132,7 @@ if ok
             handles.Toolbox(tb).Input.bathymetry.radioProj=1;
     end
     setHandles(handles);
-    
-    % setUIElement('tilingpanel.bathymetry.radiogeo');
-    % setUIElement('tilingpanel.bathymetry.radioproj');
-    % setUIElement('tilingpanel.bathymetry.cstext');
-    
+
 end
 
 %%
@@ -178,11 +166,71 @@ end
 
 fname=handles.Toolbox(tb).Input.bathymetry.dataFile;
 dr=[handles.Toolbox(tb).Input.bathymetry.dataDir filesep handles.Toolbox(tb).Input.bathymetry.dataName filesep];
-dataname=handles.Toolbox(tb).Input.bathymetry.dataName;
+dataname=deblank(handles.Toolbox(tb).Input.bathymetry.dataName);
 nrzoom=handles.Toolbox(tb).Input.bathymetry.nrZoom;
 nx=handles.Toolbox(tb).Input.bathymetry.nx;
 ny=handles.Toolbox(tb).Input.bathymetry.ny;
 
+% Check data name
+if isempty(dataname)
+    ddb_giveWarning('text','Please first enter a data name.');
+    return;
+end
+if ~isempty(find(dataname==' ', 1))
+    ddb_giveWarning('text','Data name cannot have spaces in it.');
+    return;
+end
+if strcmpi(handles.Toolbox(tb).Input.bathymetry.attributes.title,'Name of data set')
+    ddb_giveWarning('text','Please enter proper title of dataset in attributes.');
+    return;
+end
+if exist(dr,'dir')
+    ddb_giveWarning('text','A dataset with this name already exists. Please remove it first.');
+    return;
+end
+if ~isempty(strmatch(handles.Toolbox(tb).Input.bathymetry.attributes.title,handles.bathymetry.longNames))
+    ddb_giveWarning('text','A dataset with this title already exists. Please change the title in attributes.');
+    return;
+end
+
+
 wb = waitbox('Generating Tiles ...'); 
 makeNCBathyTiles(fname,dr,dataname,nrzoom,nx,ny,OPT);
 close(wb);
+
+% Now add data to data xml
+fname = [handles.bathyDir 'bathymetry.xml'];
+xmldata = xml_load(fname);
+nd=length(xmldata)+1;
+xmldata(nd).dataset.name=dataname;
+xmldata(nd).dataset.longName=handles.Toolbox(tb).Input.bathymetry.attributes.title;
+xmldata(nd).dataset.version='1';
+xmldata(nd).dataset.type='netCDFtiles';
+xmldata(nd).dataset.edit='0';
+xmldata(nd).dataset.URL=[handles.Toolbox(tb).Input.bathymetry.dataDir handles.Toolbox(tb).Input.bathymetry.dataName];
+xmldata(nd).dataset.useCache='1';
+xml_save(fname,xmldata,'off');
+
+% And finally add it to the menu
+ddb_findBathymetryDatabases;
+handles=getHandles;
+% Clear existing menu
+h=findobj(gcf,'Tag','menuBathymetry');
+ch=get(h,'Children');
+delete(ch);
+for ii=1:handles.bathymetry.nrDatasets
+    if strcmpi(handles.bathymetry.datasets{ii},handles.screenParameters.backgroundBathymetry)
+        if handles.bathymetry.dataset(ii).isAvailable
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{ii},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','on');
+        else
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{ii},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','off');
+        end
+    else
+        if handles.bathymetry.dataset(ii).isAvailable
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{ii},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','on');
+        else
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{ii},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','off');
+        end
+    end
+end
+setHandles(handles);

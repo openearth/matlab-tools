@@ -84,10 +84,10 @@ end
 imaketiles=1;
 imakemeta=1;
 
-if nrzoom==1
-    nx=ncols;
-    ny=nrows;
-end
+% if nrzoom==1
+%     nx=ncols;
+%     ny=nrows;
+% end
 
 x0(1)=x00;
 y0(1)=y00;
