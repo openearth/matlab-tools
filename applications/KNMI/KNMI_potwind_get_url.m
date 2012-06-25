@@ -14,6 +14,15 @@ function varargout = KNMI_potwind_get_url(varargin)
 % * opendap  : switch whether to put netCDF files on OPeNDAP server (default 0)
 % * url      : base url from where to download (default 
 %              http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/)
+% Example:
+%   OPT.download = 1;
+%   OPT.directory_raw = 'c:\Data\wind_from_knmi\raw\';
+%   OPT.directory_nc = 'c:\Data\wind_from_knmi\nc\';
+%   OPT.make_nc = 1;
+%   KNMI_potwind_get_url        ('download'       , OPT.download,...
+%                                'directory_raw'  , OPT.directory_raw,...
+%                                'directory_nc'   , OPT.directory_nc,...
+%                                'nc'             , OPT.make_nc)
 %
 %See also: KNMI_POTWIND, KNMI_ETMGEG, KNMI_ETMGEG_GET_URL
 
@@ -28,24 +37,36 @@ function varargout = KNMI_potwind_get_url(varargin)
 %       2600 MH Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   USA or 
-%   http://www.gnu.org/licenses/licenses.html,
-%   http://www.gnu.org/, http://www.fsf.org/
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 25 Jun 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
    if nargin < 1
       error('syntax: KNMI_potwind_get_url(basepath)')
