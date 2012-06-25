@@ -103,8 +103,8 @@ end
 x            = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_x_coordinate')); 
 y            = nc_varget(mapurls{1}, nc_varfind(mapurls{1}, 'attributename', 'standard_name', 'attributevalue', 'projection_y_coordinate')); 
 dx = unique(diff(x));
-dy = unique(diff(x));
-if dx==dy
+dy = unique(diff(y));
+if abs(dx)==abs(dy)
    OPT.cellsize = dx;
 else
    error(['dx ',num2str(dx),' is not equal to dy ',num2str(dx)])
@@ -128,9 +128,17 @@ x         = minx : OPT.dx  : maxx;
 x         = roundoff(x,2); maxx =  roundoff(maxx,2);
 if x(end)~= maxx; x = [x maxx];end % make sure maxx is included as a point
 
-y         = maxy : -OPT.dy : miny; % thinning runs from the lower left corner upward and right
-y         = roundoff(y,2); miny =  roundoff(miny,2);
-if y(end)~=miny; y = [y miny];end % make sure miny is included as a point
+if dy < 0
+    % define y from max to min according to old style
+    y         = maxy : -OPT.dy : miny; % thinning runs from the lower left corner upward and right
+    y         = roundoff(y,2); miny =  roundoff(miny,2);
+    if y(end)~=miny; y = [y miny];end % make sure miny is included as a point
+else
+    % regular y from min to max
+    y         = miny : OPT.dy : maxy; % thinning runs from the lower left corner upward and right
+    y         = roundoff(y,2); maxy =  roundoff(maxy,2);
+    if y(end)~=maxy; y = [y maxy];end % make sure maxy is included as a point
+end
 
 nrcols    = max(size(x));
 nrofrows  = max(size(y));
