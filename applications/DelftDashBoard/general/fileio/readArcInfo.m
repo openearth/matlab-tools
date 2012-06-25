@@ -153,25 +153,25 @@ else
         switch lower(a{1})
             case{'ncols'}
                 ncols=str2double(a{2});
-                headerlines=nheaderlines+1;
+                nheaderlines=nheaderlines+1;
             case{'nrows'}
                 nrows=str2double(a{2});
-                headerlines=nheaderlines+1;
+                nheaderlines=nheaderlines+1;
             case{'xllcorner'}
                 xll=str2double(a{2});
-                headerlines=nheaderlines+1;
+                nheaderlines=nheaderlines+1;
             case{'yllcorner'}
                 yll=str2double(a{2});
-                headerlines=nheaderlines+1;
+                nheaderlines=nheaderlines+1;
             case{'cellsize'}
                 cellsz=str2double(a{2});
-                headerlines=nheaderlines+1;
+                nheaderlines=nheaderlines+1;
             case{'cellvalue'}
                 cellvalue=str2double(a{2});
-                headerlines=nheaderlines+1;
+                nheaderlines=nheaderlines+1;
             case{'nodata_value'}
                 noval=str2double(a{2});
-                headerlines=nheaderlines+1;
+                nheaderlines=nheaderlines+1;
         end
     end
     frewind(fid);
