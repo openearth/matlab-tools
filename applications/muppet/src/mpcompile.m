@@ -23,7 +23,7 @@ fclose(fid);
 % fclose(fid);
 
 % mcc -m -d c:\work\checkouts\OpenEarthTools\trunk\matlab\applications\muppet\bin muppet.m -B complist
-mcc -m -d d:\checkouts\OpenEarthTools\trunk\matlab\applications\muppet\bin muppet.m -B complist -a xml
+mcc -m -d d:\checkouts\OpenEarthTools\applications\muppet\bin muppet.m -B complist -a xml
 
 delete('complist');
 %delete('addlist');
