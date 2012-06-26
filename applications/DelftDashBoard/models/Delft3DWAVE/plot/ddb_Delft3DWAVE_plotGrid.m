@@ -97,7 +97,7 @@ switch lower(opt)
         % Now plot new grid
         x=handles.Model(imd).Input.domains(id).gridx;
         y=handles.Model(imd).Input.domains(id).gridy;
-        handles.Model(imd).Input.domains(id).gridplot.plothandles=ddb_plotCurvilinearGrid(x,y,'color',col);
+        handles.Model(imd).Input.domains(id).gridplot.plothandles=ddb_plotCurvilinearGrid(x,y,'color',col,'tag','delft3dwavegrid');
         if vis
             set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col,'Visible','on');
         else
@@ -112,6 +112,12 @@ switch lower(opt)
                 try
                     delete(handles.Model(imd).Input.domains(id).gridplot.plothandles);
                 end
+            end
+        end
+        hh=findobj(gcf,'tag','delft3dwavegrid');
+        if ~isempty(hh)
+            try
+                delete(hh);
             end
         end
         

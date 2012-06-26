@@ -14,7 +14,7 @@ switch lower(opt)
             handles.activeWaveGrid                      = 1;
             handles.Toolbox(tb).Input.Domains           = [];
             handles.Toolbox(tb).Input.DDBoundaries      = [];
-            handles  = ddb_initializeDelft3DWAVEInput(handles,1,runid);
+            handles  = ddb_initializeDelft3DWAVEInput(handles,runid);
             filename =[runid '.mdw'];
             handles  = ddb_readMDW(handles,[pathname filename]);
             handles  = ddb_readDelft3DWAVEAttributeFiles(handles);
