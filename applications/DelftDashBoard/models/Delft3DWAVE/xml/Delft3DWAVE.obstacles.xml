@@ -194,6 +194,8 @@
     <type>string</type>
     <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
     <value>sheet</value>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>selecttype</option1>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -216,6 +218,8 @@
     <type>string</type>
     <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
     <value>dam</value>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>selecttype</option1>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -237,6 +241,8 @@
     <text>Reflections</text>
     <type>string</type>
     <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections</variable>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>selectreflections</option1>
     <list>
       <texts>
         <variable>obstaclereflectiontypestext</variable>
@@ -268,6 +274,8 @@
     <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).refleccoef</variable>
     <type>real</type>
     <tooltipstring>Enter reflection coefficient</tooltipstring>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>selectreflectioncoefficient</option1>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -320,6 +328,8 @@
     <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).transmcoef</variable>
     <type>real</type>
     <tooltipstring>Enter transmission coefficient</tooltipstring>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>selecttransmissioncoefficient</option1>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -384,6 +394,8 @@
     <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).height</variable>
     <type>real</type>
     <tooltipstring>Enter height</tooltipstring>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>selectheight</option1>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -448,6 +460,8 @@
     <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).alpha</variable>
     <type>real</type>
     <tooltipstring>Enter alpha</tooltipstring>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>selectalpha</option1>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -512,6 +526,8 @@
     <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).beta</variable>
     <type>real</type>
     <tooltipstring>Enter beta</tooltipstring>
+    <callback>ddb_Delft3DWAVE_obstacles</callback>
+    <option1>selectbeta</option1>
     <dependencies>
       <dependency>
         <action>enable</action>

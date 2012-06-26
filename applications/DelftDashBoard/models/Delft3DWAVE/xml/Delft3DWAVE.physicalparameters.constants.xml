@@ -5,7 +5,7 @@
     <tag>editgravity</tag>
     <style>edit</style>
     <position>130 110 50 20</position>
-    <text>Gravity : </text>
+    <text>Gravity</text>
     <textposition>left</textposition>
     <variable>handles.Model(md).Input.gravity</variable>
     <type>real</type>
@@ -21,7 +21,7 @@
     <tag>editwaterdensity</tag>
     <style>edit</style>
     <position>130 85 50 20</position>
-    <text>Water density : </text>
+    <text>Water density</text>
     <textposition>left</textposition>
     <variable>handles.Model(md).Input.waterdensity</variable>
     <type>real</type>
@@ -37,7 +37,7 @@
     <tag>editnorthwaxis</tag>
     <style>edit</style>
     <position>130 60 50 20</position>
-    <text>North w.r.t. x-axis : </text>
+    <text>North w.r.t. x-axis</text>
     <textposition>left</textposition>
     <variable>handles.Model(md).Input.northdir</variable>
     <type>real</type>
@@ -53,7 +53,7 @@
     <tag>editminimumdepth</tag>
     <style>edit</style>
     <position>130 35 50 20</position>
-    <text>Minimum depth : </text>
+    <text>Minimum depth</text>
     <textposition>left</textposition>
     <variable>handles.Model(md).Input.minimumdepth</variable>
     <type>real</type>
@@ -68,8 +68,8 @@
   <element>
     <tag>textconventions</tag>
     <style>text</style>
-    <position>260 110</position>
-    <text>Conventions : </text>    
+    <position>270 110</position>
+    <text>Conventions</text>    
   </element>
   <element>
     <tag>radionautical</tag>
@@ -90,15 +90,9 @@
     <value>cartesian</value>
   </element>
   <element>
-    <tag>textwavesetup</tag>
-    <style>text</style>
-    <position>260 70</position>
-    <text>Wave setup : </text>    
-  </element>
-  <element>
     <tag>checksetup</tag>
     <style>checkbox</style>
-    <position>340 70</position>
+    <position>340 60</position>
     <text>Wave Set-up</text>
     <type>integer</type>
     <variable>handles.Model(md).Input.wavesetup</variable>
@@ -106,8 +100,8 @@
   <element>
     <tag>textforces</tag>
     <style>text</style>
-    <position>460 110</position>
-    <text>Forces : </text>    
+    <position>470 110</position>
+    <text>Forces</text>    
   </element>
   <element>
     <tag>radiowaveenergy</tag>

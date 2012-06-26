@@ -120,6 +120,10 @@ switch lower(opt)
                 end
             end
         end
+        hh=findobj(gcf,'tag','delft3dwaveobstacle');
+        if ~isempty(hh)
+            delete(hh);
+        end
         
     case{'update'}
 
