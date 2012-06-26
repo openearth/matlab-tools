@@ -106,10 +106,10 @@ if existing_z % then existing nc file already has data
     if any(notnan) % some values are not nan in both existing and new data
         if isequal(z0(notnan),data.z(notnan))
             % this is ok
-            returnmessage(1,'in %s, NOTICE: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(date,'YYYYMMDD'))
+            returnmessage(1,'in %s, NOTICE: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(data.time,'yyyymmdd'))
         else 
             % this is (most likely) not ok   
-            returnmessage(2,'in %s, WARNING: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(date,'YYYYMMDD'))
+            returnmessage(2,'in %s, WARNING: %d values are overwritten by different values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(data.time,'yyyymmdd'))
         end
     end
     z0(zNotnan) = data.z(zNotnan);
