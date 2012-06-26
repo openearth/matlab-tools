@@ -148,7 +148,7 @@ f=str2func(['ddb_generateTransportBoundaryConditions' handles.Model(md).Name]);
 try
     handles=feval(f,handles,ad,'all','ddb_test');
 catch
-    GiveWarning('text',['Transport boundary condition generation not supported for ' handles.Model(md).LongName]);
+    ddb_giveWarning('text',['Transport boundary condition generation not supported for ' handles.Model(md).LongName]);
     return
 end
 

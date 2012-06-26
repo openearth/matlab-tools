@@ -132,7 +132,7 @@ fclose(fid);
 % fprintf(fid,'%s \n',txt);
 %
 % if handles.Toolbox(tb).Input.Date(1)<handles.Model(md).Input(ad).ItDate
-%     GiveWarning('Warning','First time hurricane data is smaller than Delft3D reference time!');
+%     ddb_giveWarning('Warning','First time hurricane data is smaller than Delft3D reference time!');
 % %     for ii=handles.Toolbox(tb).Input.NrPoint+1:2
 % %         handles.Toolbox(tb).Input.Date(ii)=handles.Toolbox(tb).Input.Date(ii-1);
 % %         handles.Toolbox(tb).Input.TrX(ii)=handles.Toolbox(tb).Input.TrX(ii-1);
@@ -149,7 +149,7 @@ fclose(fid);
 % end
 %
 % if handles.Toolbox(tb).Input.Date(end)<handles.Model(md).Input(ad).StopTime
-%     GiveWarning('Warning','Last time hurricane data is smaller than Delft3D stop time!');
+%     ddb_giveWarning('Warning','Last time hurricane data is smaller than Delft3D stop time!');
 % %     n=handles.Toolbox(tb).Input.NrPoint;
 % %     handles.Toolbox(tb).Input.Date(n+1)=handles.Model(md).Input(ad).StopTime;
 % %     handles.Toolbox(tb).Input.TrX(n+1)=handles.Toolbox(tb).Input.TrX(n);

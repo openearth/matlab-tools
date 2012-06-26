@@ -177,7 +177,7 @@ f=str2func(['GenerateGrid' handles.Model(md).Name]);
 try
     handles=feval(f,handles,ad,0,0,'ddb_test');
 catch
-    GiveWarning('text',['Grid generation not supported for ' handles.Model(md).LongName]);
+    ddb_giveWarning('text',['Grid generation not supported for ' handles.Model(md).LongName]);
     return
 end
 

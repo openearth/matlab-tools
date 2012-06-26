@@ -192,7 +192,7 @@ try
     c2=c2(jj1:jj2,ii1:ii2,:);
 catch
     close(wb);
-    GiveWarning('Warning','Something went wrong while generating image. Try reducing zoom level or resolution.');
+    ddb_giveWarning('Warning','Something went wrong while generating image. Try reducing zoom level or resolution.');
     return
 end
 
@@ -280,7 +280,7 @@ if ~isempty(c2) && max(max(max(c2)))~=200
     end
     
 else
-    GiveWarning('Warning','Reduce zoom level or resolution');
+    ddb_giveWarning('Warning','Reduce zoom level or resolution');
 end
 
 

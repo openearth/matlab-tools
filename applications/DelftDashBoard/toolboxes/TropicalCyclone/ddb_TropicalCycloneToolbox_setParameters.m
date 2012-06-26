@@ -306,7 +306,7 @@ switch lower(handles.Toolbox(tb).Input.downloadLocation)
             if (isempty(prog))
                 %  Script was not found, so issue a warning message and
                 %  return to calling routine.
-                GiveWarning('text',['ERROR: Cannot find the TC file conversion script ' sname '.']);
+                ddb_giveWarning('text',['ERROR: Cannot find the TC file conversion script ' sname '.']);
                 return;
             end
             
@@ -343,7 +343,7 @@ switch lower(handles.Toolbox(tb).Input.downloadLocation)
         else
             %  The download command was unsuccessful, so issue a warning
             %  message.
-            GiveWarning('text', ['ERROR: The TC warning file download command failed: ' result]);
+            ddb_giveWarning('text', ['ERROR: The TC warning file download command failed: ' result]);
         end  % if (status....
 %end  % switch lower(handles....
 
@@ -403,11 +403,11 @@ switch lower(handles.Toolbox(tb).Input.importFormat)
                 
             %  Check whether the file find & format conversion scripts were located.
             if (isempty(prog))
-                GiveWarning('text',['ERROR: Cannot find the TC storm name script ' sname1 '.']);
+                ddb_giveWarning('text',['ERROR: Cannot find the TC storm name script ' sname1 '.']);
                 return;
             end
             if (isempty(cprog))
-                GiveWarning('text',['ERROR: Cannot find the TC format conversion script ' sname '.']);
+                ddb_giveWarning('text',['ERROR: Cannot find the TC format conversion script ' sname '.']);
                 return;
             end
             
@@ -661,7 +661,7 @@ try
     end
     
 catch
-    GiveWarning('text','An error occured while reading cyclone data');
+    ddb_giveWarning('text','An error occured while reading cyclone data');
 end
 
 %%

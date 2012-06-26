@@ -221,7 +221,7 @@ if ~isempty(handles.Toolbox(tb).Input.windData)
     try
         handles=feval(f,handles,handles.ActiveDomain,0,'ddb_test');
     catch
-        GiveWarning('text',['Use of downloaded wind data not supported for ' handles.Model(handles.ActiveModel.Nr).LongName]);
+        ddb_giveWarning('text',['Use of downloaded wind data not supported for ' handles.Model(handles.ActiveModel.Nr).LongName]);
         return
     end
     handles=feval(f,handles,id,handles.Toolbox(tb).Input.windData(:,1:3));
@@ -276,7 +276,7 @@ f=str2func(['UseWindData' handles.Model(handles.ActiveModel.Nr).Name]);
 try
     handles=feval(f,handles,handles.ActiveDomain,0,'ddb_test');
 catch
-    GiveWarning('text',['Use of downloaded wind data not supported for ' handles.Model(handles.ActiveModel.Nr).LongName]);
+    ddb_giveWarning('text',['Use of downloaded wind data not supported for ' handles.Model(handles.ActiveModel.Nr).LongName]);
     return
 end
 handles=feval(f,handles,id,windData);

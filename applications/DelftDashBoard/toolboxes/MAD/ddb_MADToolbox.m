@@ -256,7 +256,7 @@ catch
     try
         close(wb);
     end
-    GiveWarning('Warning','Sorry, could not connect to server!');
+    ddb_giveWarning('Warning','Sorry, could not connect to server!');
 end
 
 %%

@@ -113,7 +113,7 @@ set(plt,'userdata',usd);
 function SelectObject(imagefig, varargins)
 
 if strcmp(get(gcf,'SelectionType'),'open')
-    %    GiveWarning('txt','Isn''t this fun?!');
+    %    ddb_giveWarning('txt','Isn''t this fun?!');
 else
     if strcmp(get(gco,'Tag'),'SelectionHighlight')
         ud=get(gco,'userdata');

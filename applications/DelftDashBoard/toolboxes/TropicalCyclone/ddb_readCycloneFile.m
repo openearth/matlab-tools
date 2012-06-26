@@ -251,6 +251,6 @@ try
     handles.Toolbox(tb).Input=inp;
     
 catch
-    GiveWarning('text','An error occured while loading cyclone file! Please check the input.')
+    ddb_giveWarning('text','An error occured while loading cyclone file! Please check the input.')
 end
 

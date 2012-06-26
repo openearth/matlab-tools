@@ -95,7 +95,7 @@ if ok==0
         %        ddb_plotSpiderweb(filename,handles.GUIData.x,handles.GUIData.y,handles.GUIData.z,handles.GUIData.WorldCoastLine5000000(:,1),handles.GUIData.WorldCoastLine5000000(:,2),handles);
     end
 else
-    GiveWarning('Warning','An error occured during execution of WES model');
+    ddb_giveWarning('Warning','An error occured during execution of WES model');
 end
 
 % try
@@ -119,13 +119,13 @@ function ok=SaveWesOldTrackFile(handles,filename2)
 ok=1;
 
 if handles.Toolbox(tb).Input.date(1)<handles.Model(md).Input(ad).itDate
-    GiveWarning('Warning','First time hurricane data is smaller than Delft3D reference time!');
+    ddb_giveWarning('Warning','First time hurricane data is smaller than Delft3D reference time!');
     ok=0;
     return
 end
 
 if handles.Toolbox(tb).Input.date(end)<handles.Model(md).Input(ad).stopTime
-    GiveWarning('Warning','Last time hurricane data is smaller than Delft3D stop time!');
+    ddb_giveWarning('Warning','Last time hurricane data is smaller than Delft3D stop time!');
     ok=0;
     return
 end

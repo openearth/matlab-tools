@@ -278,7 +278,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     end
     
 else
-    GiveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
+    ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
 end
 
 %%
@@ -315,7 +315,7 @@ f=str2func(['ddb_generateInitialConditions' handles.Model(md).name]);
 try
     handles=feval(f,handles,ad,'ddb_test','ddb_test');
 catch
-    GiveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).longName]);
+    ddb_giveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).longName]);
     return
 end
 if ~isempty(handles.Model(md).Input(ad).grdFile)
@@ -325,7 +325,7 @@ if ~isempty(handles.Model(md).Input(ad).grdFile)
     handles.Model(md).Input(ad).smoothingTime=0.0;
     handles=feval(f,handles,ad,handles.Model(md).Input(ad).iniFile);
 else
-    GiveWarning('Warning','First generate or load a grid');
+    ddb_giveWarning('Warning','First generate or load a grid');
 end
 setHandles(handles);
 

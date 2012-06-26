@@ -102,7 +102,7 @@ fstr=['ddb_' handles.Model(md).name '_addObservationStations.m'];
 if exist(fstr)
     feval(str2func(fstr(1:end-2)));
 else
-    GiveWarning('text',['Adding observation stations as observation points not supported for ' handles.Model(md).longName]);
+    ddb_giveWarning('text',['Adding observation stations as observation points not supported for ' handles.Model(md).longName]);
     return
 end
 

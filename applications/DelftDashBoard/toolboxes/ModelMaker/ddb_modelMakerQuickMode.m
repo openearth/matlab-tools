@@ -334,7 +334,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=2000000
     try
         handles=feval(f,handles,ad,0,0,'ddb_test');
     catch
-        GiveWarning('text',['Grid generation not supported for ' handles.Model(md).LongName]);
+        ddb_giveWarning('text',['Grid generation not supported for ' handles.Model(md).LongName]);
         return
     end
     
@@ -357,7 +357,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=2000000
     setHandles(handles);
     
 else
-    GiveWarning('Warning','Maximum number of grid points (2,000,000) exceeded ! Please reduce grid resolution.');
+    ddb_giveWarning('Warning','Maximum number of grid points (2,000,000) exceeded ! Please reduce grid resolution.');
 end
 
 %%
@@ -369,7 +369,7 @@ f=str2func(['ddb_generateBathymetry' handles.Model(md).Name]);
 try
     handles=feval(f,handles,ad,'ddb_test');
 catch
-    GiveWarning('text',['Bathymetry generation not supported for ' handles.Model(md).LongName]);
+    ddb_giveWarning('text',['Bathymetry generation not supported for ' handles.Model(md).LongName]);
     return
 end
 
@@ -416,7 +416,7 @@ f=str2func(['ddb_generateBoundaryLocations' handles.Model(md).Name]);
 try
     handles=feval(f,handles,ad,'ddb_test');
 catch
-    GiveWarning('text',['Boundary generation not supported for ' handles.Model(md).LongName]);
+    ddb_giveWarning('text',['Boundary generation not supported for ' handles.Model(md).LongName]);
     return
 end
 
@@ -437,7 +437,7 @@ f=str2func(['ddb_generateInitialConditions' handles.Model(md).Name]);
 try
     handles=feval(f,handles,ad,'ddb_test','ddb_test');
 catch
-    GiveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).LongName]);
+    ddb_giveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).LongName]);
     return
 end
 
@@ -448,7 +448,7 @@ if ~isempty(handles.Model(md).Input(ad).GrdFile)
     handles.Model(md).Input(ad).SmoothingTime=0.0;
     handles=feval(f,handles,ad,handles.Model(md).Input(ad).IniFile);
 else
-    GiveWarning('Warning','First generate or load a grid');
+    ddb_giveWarning('Warning','First generate or load a grid');
 end
 setHandles(handles);
 
@@ -461,7 +461,7 @@ f=str2func(['ddb_generateBoundaryConditions' handles.Model(md).Name]);
 try
     handles=feval(f,handles,ad,'ddb_test');
 catch
-    GiveWarning('text',['Boundary condition generation not supported for ' handles.Model(md).LongName]);
+    ddb_giveWarning('text',['Boundary condition generation not supported for ' handles.Model(md).LongName]);
     return
 end
 

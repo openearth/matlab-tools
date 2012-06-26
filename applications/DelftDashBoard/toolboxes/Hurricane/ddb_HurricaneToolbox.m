@@ -142,7 +142,7 @@ handles=getHandles;
 
 ispeed = str2double(get(hObject,'String'));
 if ispeed > 25
-    GiveWarning('text','Usually the storm centre moves slower than 25 kts. Are you sure?');
+    ddb_giveWarning('text','Usually the storm centre moves slower than 25 kts. Are you sure?');
 end
 handles.Toolbox(tb).Input.initSpeed=ispeed;
 handles=RefreshAllHurricane(handles);
@@ -156,10 +156,10 @@ handles=getHandles;
 idir = str2double(get(hObject,'String'));
 if idir < 0
     idir = idir + 360.;
-    GiveWarning('text','Adjusting the value between 0 and 360 degrees');
+    ddb_giveWarning('text','Adjusting the value between 0 and 360 degrees');
 elseif idir > 360.
     idir = rem(idir,360.);
-    GiveWarning('text','Adjusting the value between 0 and 360 degrees');
+    ddb_giveWarning('text','Adjusting the value between 0 and 360 degrees');
 end
 handles.Toolbox(tb).Input.initDir=idir;
 handles=RefreshAllHurricane(handles);

@@ -286,13 +286,13 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     end
     
 else
-    GiveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
+    ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
 end
 
 %%
 function generateBathymetry
 handles=getHandles;
-[filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input(ad).attName '.dep']);
+[filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input(ad).attname '.dep']);
 if pathname~=0
     handles=ddb_generateBathymetryDelft3DFLOW(handles,ad,filename);
 end

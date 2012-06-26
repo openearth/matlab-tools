@@ -241,7 +241,7 @@ hpatch = [];   % Handles to polygon patch(es)
 
 %  Check whether valid coordinates were passed.
 if (isempty(x) || isempty(y))
-    GiveWarning('Warning',['No grid coordinates were provided; has a grid been loaded or generated?  Function: ' mfilename '.m']);
+    ddb_giveWarning('Warning',['No grid coordinates were provided; has a grid been loaded or generated?  Function: ' mfilename '.m']);
     return;
 end
 

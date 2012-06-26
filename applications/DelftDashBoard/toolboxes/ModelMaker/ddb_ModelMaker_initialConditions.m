@@ -180,7 +180,7 @@ end
 % try
 %     handles=feval(f,handles,ad,'ddb_test','ddb_test');
 % catch
-%     GiveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).LongName]);
+%     ddb_giveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).LongName]);
 %     return
 % end
 % 

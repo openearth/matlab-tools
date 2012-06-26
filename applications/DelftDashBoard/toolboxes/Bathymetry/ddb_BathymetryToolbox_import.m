@@ -476,7 +476,7 @@ if (handles.Model(md).Input(ad).enablePCTides == 1)
         warndlg(txt,'BATHY IMPORT ERROR','modal');
     end
 else
-    GiveWarning('Warning','Please select the PCTides checkbox in the Init Mode tab.');
+    ddb_giveWarning('Warning','Please select the PCTides checkbox in the Init Mode tab.');
 end
 
 return;

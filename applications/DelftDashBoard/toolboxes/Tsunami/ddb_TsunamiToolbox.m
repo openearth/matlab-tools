@@ -516,7 +516,7 @@ if ~isempty(pathname)
         
     catch
         close(wb);
-        GiveWarning('txt','Some went wrong while generating tsunami wave.');
+        ddb_giveWarning('txt','Some went wrong while generating tsunami wave.');
     end
 end
 
