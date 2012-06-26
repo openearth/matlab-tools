@@ -228,6 +228,8 @@ if ~isempty(ii)
     ddb_giveWarning('Warning',['A domain with runid "' handles.Toolbox(tb).Input.newRunid '" already exists!']);
     
 elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
+
+    ddb_giveWarning('txt','The overall grid has changed! Please select file name of new overall grid.');
     
     [filename, pathname, filterindex] = uiputfile('*.grd', 'Select new overall grid file',handles.Model(md).Input(ad).grdFile);
     
