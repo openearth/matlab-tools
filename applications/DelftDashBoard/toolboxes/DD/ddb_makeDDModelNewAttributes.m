@@ -94,44 +94,13 @@ else
     
     handles.Model(md).Input(id2).nrThinDams=0;
     handles.Model(md).Input(id2).thinDams=[];
-    
+
+    handles.Model(md).Input(id2).depFile=[runid2 '.dep'];
+
     % Bathymetry
-    if isfield(handles.Model(md).Input(id1),'depth') && size(handles.Model(md).Input(id1).depth,1)>1
-        
+    if isfield(handles.Model(md).Input(id1),'depth') && size(handles.Model(md).Input(id1).depth,1)>1        
         f=str2func(['ddb_generateBathymetry' handles.Model(md).name]);
-        handles=feval(f,handles,id2);
-        
-        %         xx=handles.GUIData.x;
-        %         yy=handles.GUIData.y;
-        %         zz=handles.GUIData.z;
-        %
-        %         dpsopt=handles.Model(md).Input(id2).dpsOpt;
-        %
-        %         switch lower(dpsopt)
-        %             case{'dp'}
-        %                 x2=handles.Model(md).Input(id2).gridXZ;
-        %                 y2=handles.Model(md).Input(id2).gridYZ;
-        %             otherwise
-        %                 x2=handles.Model(md).Input(id2).gridX;
-        %                 y2=handles.Model(md).Input(id2).gridY;
-        %         end
-        %
-        %         x2(isnan(x2))=0;
-        %         y2(isnan(y2))=0;
-        %
-        %         z=interp2(xx,yy,zz,x2,y2);
-        %         handles.Model(md).Input(id2).depth=z;
-        %
-        % %         % Make sure depths along boundaries in both domains are the same
-        % %
-        % %         z=ddb_matchDDDepths(handles,z,id1,runid1,runid2);
-        % %
-        % %         handles.Model(md).Input(id2).depth=z;
-        %          handles.Model(md).Input(id2).depthZ=GetDepthZ(z,handles.Model(md).Input(id2).dpsOpt);
-        % %
-        % %         ddb_wldep('write',[runid2 '.dep'],z);
-        %          handles.Model(md).Input(id2).depFile=[runid2 '.dep'];
-        
+        handles=feval(f,handles,id2,handles.Model(md).Input(id2).depFile);
     end
     
     %     if exist(handles.Toolbox(tb).Input.originalDomain.obsFile)

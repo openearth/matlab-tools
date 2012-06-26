@@ -90,8 +90,6 @@ if isempty(varargin)
     end
     
     clearInstructions;
-    %    % setUIElements(handles.Toolbox(tb).GUI.elements);
-%    % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     
 else
     %Options selected
@@ -121,7 +119,7 @@ function editRefinement
 plotTemporaryDDGrid('plot');
 handles=getHandles;
 if ~odd(handles.Toolbox(tb).Input.mRefinement) || ~odd(handles.Toolbox(tb).Input.nRefinement)
-    GiveWarning('text','Refinement by an even number is not recommended!');
+    ddb_giveWarning('text','Refinement by an even number is not recommended!');
 end
 
 %%
@@ -138,7 +136,6 @@ if ii<1
 end
 
 setHandles(handles);
-% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -157,7 +154,6 @@ if ii<1
 end
 
 setHandles(handles);
-% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -176,7 +172,6 @@ if ii<1
 end
 
 setHandles(handles);
-% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -195,7 +190,6 @@ if ii<1
 end
 
 setHandles(handles);
-% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 
 plotCornerPoints('plot');
 plotTemporaryDDGrid('plot');
@@ -231,11 +225,11 @@ ii=strmatch(lower(handles.Toolbox(tb).Input.newRunid),handles.Toolbox(tb).Input.
 
 if ~isempty(ii)
     
-    GiveWarning('Warning',['A domain with runid "' handles.Toolbox(tb).Input.newRunid '" already exists!']);
+    ddb_giveWarning('Warning',['A domain with runid "' handles.Toolbox(tb).Input.newRunid '" already exists!']);
     
 elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
     
-    [filename, pathname, filterindex] = uiputfile('*.grd', 'New Overall Grid File',handles.Model(md).Input(ad).grdFile);
+    [filename, pathname, filterindex] = uiputfile('*.grd', 'Select new overall grid file',handles.Model(md).Input(ad).grdFile);
     
     if pathname~=0
         
@@ -310,11 +304,11 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         
         
         % Now replot all domains
-        for i=1:handles.Model(md).nrDomains
-            if i==ad
-                ddb_plotDelft3DFLOW('plot','active',1,'visible',1,'domain',i);
+        for id=1:handles.Model(md).nrDomains
+            if id==ad
+                ddb_plotDelft3DFLOW('plot','active',1,'visible',1,'domain',id);
             else
-                ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',i);
+                ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',id);
             end
         end
         
@@ -325,11 +319,11 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         
         switch lower(handles.Model(md).Input(ad).initialConditions)
             case{'ini','trim','rst'}
-                GiveWarning('text',['The domain ' runid1 ' uses an initial conditions file. Please consider generating an initial conditions file for the domain ' runid2 ' as well.']);
+                ddb_giveWarning('text',['The domain ' runid1 ' uses an initial conditions file. Please consider generating an initial conditions file for the domain ' runid2 ' as well.']);
         end
         
     else
-        GiveWarning('Warning','First select corner points!');
+        ddb_giveWarning('Warning','First select corner points!');
     end
     
 end
@@ -361,7 +355,7 @@ if ~isnan(m)
     ddb_clickPoint('cornerpoint','grid',xg,yg,'callback',@clickSecondCornerPoint,'single');
 end
 
-% setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+gui_updateActiveTab;
 
 %%
 function clickSecondCornerPoint(m,n)
@@ -376,7 +370,7 @@ if ~isnan(m)
     plotCornerPoints('plot');
     plotTemporaryDDGrid('plot');
     ddb_setWindowButtonMotionFcn;
-    % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
+    gui_updateActiveTab;
 end
 
 %%
@@ -499,10 +493,10 @@ if ~isempty(ddbound)
             end
         end
         % And save all dep files
-        for i=1:handles.Model(md).nrDomains
-            handles.Model(md).Input(i).depthZ=getDepthZ(handles.Model(md).Input(i).depth,handles.Model(md).Input(i).dpsOpt);
+        for id=1:handles.Model(md).nrDomains
+            handles.Model(md).Input(i).depthZ=getDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
             % TODO make sure dep file has a name
-            ddb_wldep('write',handles.Model(md).Input(i).depFile,handles.Model(md).Input(i).depth);
+            ddb_wldep('write',handles.Model(md).Input(id).depFile,handles.Model(md).Input(id).depth);
         end
     end
 end
@@ -517,4 +511,3 @@ setHandles(handles);
 ddb_saveDDBoundFile(ddbound,handles.Model(md).ddFile);
 
 ddb_writeDDBatchFile(handles.Model(md).ddFile);
-
