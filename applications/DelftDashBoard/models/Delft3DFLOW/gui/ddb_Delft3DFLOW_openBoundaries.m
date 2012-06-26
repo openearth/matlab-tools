@@ -464,8 +464,6 @@ if ok==1
 end
 setHandles(handles);
 refreshOpenBoundaries;
-%refreshOpenBoundaryFiles;
-
 
 %%
 function deleteOpenBoundaries
