@@ -396,8 +396,11 @@ if isempty(handles.Model(md).Input(ad).gridX)
     return
 end
 
-[filename, pathname, filterindex] = uiputfile('*.ini', 'Select Initial Conditions File','');
-
+for id=1:handles.Model(md).nrDomains
+    [filename, pathname, filterindex] = uiputfile('*.ini', ['Select Initial Conditions File for Domain ' handles.Model(md).Input(id).runid],'');
+    filenames{id}=filename;
+end
+        
 if ~isempty(pathname)
     
     wb = waitbox('Generating initial tsunami wave ...');
@@ -431,10 +434,10 @@ if ~isempty(pathname)
         ddb_plotInitialTsunami(handles,xx1,yy1,zz);
         
         % Interpolate initial tsunami wave onto model grid(s)
-        for i=1:handles.Model(md).nrDomains
+        for id=1:handles.Model(md).nrDomains
             
-            xz=handles.Model(md).Input(i).gridXZ;
-            yz=handles.Model(md).Input(i).gridYZ;
+            xz=handles.Model(md).Input(id).gridXZ;
+            yz=handles.Model(md).Input(id).gridYZ;
             mmax=size(xz,1);
             nmax=size(xz,2);
             
@@ -460,14 +463,14 @@ if ~isempty(pathname)
             iniwl(1:end-1,1:end-1)=iniwl0;
             iniwl(isnan(iniwl))=0;
             
-            if exist(filename,'file')
-                delete(filename);
+            if exist(filenames{id},'file')
+                delete(filenames{id});
             end
-            handles.Model(md).Input(ad).iniFile=filename;
-            handles.Model(md).Input(ad).initialConditions='ini';
-            ddb_wldep('append',filename,iniwl,'negate','n','bndopt','n');
-            ddb_wldep('append',filename,u,'negate','n','bndopt','n');
-            ddb_wldep('append',filename,u,'negate','n','bndopt','n');
+            handles.Model(md).Input(id).iniFile=filenames{id};
+            handles.Model(md).Input(id).initialConditions='ini';
+            ddb_wldep('append',filenames{id},iniwl,'negate','n','bndopt','n');
+            ddb_wldep('append',filenames{id},u,'negate','n','bndopt','n');
+            ddb_wldep('append',filenames{id},u,'negate','n','bndopt','n');
             
         end
         
