@@ -1058,5 +1058,6 @@ if isfield(model,'forecastplot')
     end
 else
     hm.models(i).forecastplot.plot=[];
+    hm.models(m).forecastplot.archive=[];
 end
 
