@@ -1057,7 +1057,7 @@ if isfield(model,'forecastplot')
         hm.models(i).forecastplot.plot=str2double(model.forecastplot.plot);
     end
 else
-    hm.models(i).forecastplot.plot=[];
-    hm.models(i).forecastplot.archive=[];
+    hm.models(i).forecastplot.plot=0;
+    hm.models(i).forecastplot.archive=0;
 end
 
