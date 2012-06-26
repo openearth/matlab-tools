@@ -517,11 +517,15 @@ for i=1:handles.NrAvailableDatasets
         end
         
         if isfield(handles.DataProperties(i),'coordinateSystem')
-            if ~strcmpi(handles.DataProperties(i).coordinateSystem.name,'unknown')
-                txt=['   CoordinateSystemName    "' handles.DataProperties(i).coordinateSystem.name '"'];
-                fprintf(fid,'%s \n',txt);
-                txt=['   CoordinateSystemType    "' handles.DataProperties(i).coordinateSystem.type '"'];
-                fprintf(fid,'%s \n',txt);
+            if isfield(handles.DataProperties(i).coordinateSystem,'name')
+                if ~isempty(handles.DataProperties(i).coordinateSystem.name)
+                    if ~strcmpi(handles.DataProperties(i).coordinateSystem.name,'unknown')
+                        txt=['   CoordinateSystemName    "' handles.DataProperties(i).coordinateSystem.name '"'];
+                        fprintf(fid,'%s \n',txt);
+                        txt=['   CoordinateSystemType    "' handles.DataProperties(i).coordinateSystem.type '"'];
+                        fprintf(fid,'%s \n',txt);
+                    end
+                end
             end
         end
         
