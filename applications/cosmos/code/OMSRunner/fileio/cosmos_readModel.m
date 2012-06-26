@@ -1056,4 +1056,7 @@ if isfield(model,'forecastplot')
     if isfield(model.forecastplot,'plot')
         hm.models(i).forecastplot.plot=str2double(model.forecastplot.plot);
     end
+else
+    hm.models(i).forecastplot.plot=[];
 end
+
