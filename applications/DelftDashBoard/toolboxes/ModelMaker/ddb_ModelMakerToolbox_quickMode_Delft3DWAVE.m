@@ -271,6 +271,9 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
         handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
         if nrgrids>1
             handles.Model(md).Input.domains(nrgrids).nestgrid=handles.Model(md).Input.domains(1).gridname;
+            for ii=1:handles.activeWaveGrid-1
+                handles.Model(md).Input.nestgrids{ii}=handles.Model(md).Input.domains(ii).gridname;
+            end
         else
             handles.Model(md).Input.domains(nrgrids).nestgrid='';
         end
