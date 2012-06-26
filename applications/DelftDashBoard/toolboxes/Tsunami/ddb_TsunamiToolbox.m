@@ -397,7 +397,7 @@ if isempty(handles.Model(md).Input(ad).gridX)
 end
 
 for id=1:handles.Model(md).nrDomains
-    [filename, pathname, filterindex] = uiputfile('*.ini', ['Select Initial Conditions File for Domain ' handles.Model(md).Input(id).runid],'');
+    [filename, pathname, filterindex] = uiputfile('*.ini', ['Select initial conditions file for domain ' upper(handles.Model(md).Input(id).runid)],'');
     filenames{id}=filename;
 end
         
