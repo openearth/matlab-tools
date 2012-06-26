@@ -496,7 +496,7 @@ if ~isempty(ddbound)
         end
         % And save all dep files
         for id=1:handles.Model(md).nrDomains
-            handles.Model(md).Input(i).depthZ=getDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
+            handles.Model(md).Input(id).depthZ=getDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
             % TODO make sure dep file has a name
             ddb_wldep('write',handles.Model(md).Input(id).depFile,handles.Model(md).Input(id).depth);
         end
