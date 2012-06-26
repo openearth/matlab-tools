@@ -63,6 +63,7 @@ function grd = ddb_plotCurvilinearGrid(x, y, varargin)
 
 %%
 col=[0 0 0];
+tag=[];
 
 % Read input arguments
 for i=1:length(varargin)
@@ -70,6 +71,8 @@ for i=1:length(varargin)
         switch(lower(varargin{i}))
             case{'color'}
                 col=varargin{i+1};
+            case{'tag'}
+                tag=varargin{i+1};
         end
     end
 end
@@ -81,4 +84,9 @@ grd2=plot(x',y','k');
 set(grd2,'Color',col);
 set(grd2,'HitTest','off');
 grd=[grd1;grd2];
+
+if ~isempty(tag)
+    set(grd1,'Tag',tag);
+    set(grd2,'Tag',tag);
+end
 
