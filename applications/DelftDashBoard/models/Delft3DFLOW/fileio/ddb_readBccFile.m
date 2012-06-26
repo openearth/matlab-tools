@@ -221,7 +221,7 @@ for i=1:Info.NTables
     end
 end
 % if ifound==0
-%     GiveWarning('text',['Error reading bcc file for boundary ' bndname ' parameter: ' par]);
+%     ddb_giveWarning('text',['Error reading bcc file for boundary ' bndname ' parameter: ' par]);
 % end
 
 

@@ -70,5 +70,5 @@ if ~isempty(handles.GUIHandles.XBeachInput(id).xfile)
     ddb_plotXBeachBathymetry(handles,'plot',id);
 
 else
-    GiveWarning('Warning','First generate or load a grid');
+    ddb_giveWarning('Warning','First generate or load a grid');
 end

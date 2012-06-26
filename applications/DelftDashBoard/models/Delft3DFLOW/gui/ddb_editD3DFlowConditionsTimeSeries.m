@@ -168,7 +168,7 @@ handles=guidata(gcf);
 if ok
     table(handles.GUIHandles.table,'setdata',data);
 else
-    GiveWarning('Warning','Error importing xls file');
+    ddb_giveWarning('Warning','Error importing xls file');
 end
 
 %%
@@ -186,7 +186,7 @@ try
     end
     table(handles.GUIHandles.table,'setdata',data);
 catch
-    GiveWarning('Warning','Could not copy selection');
+    ddb_giveWarning('Warning','Could not copy selection');
 end
 
 %%

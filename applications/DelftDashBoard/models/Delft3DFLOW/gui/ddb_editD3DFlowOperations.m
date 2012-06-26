@@ -98,7 +98,7 @@ if ~isempty(handles.Model(md).Input(ad).GrdFile)
         %        PlotFlowDischarges(handles,ad);
     end
 else
-    GiveWarning('Warning','First load a grid file');
+    ddb_giveWarning('Warning','First load a grid file');
 end
 
 %%

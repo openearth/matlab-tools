@@ -106,6 +106,8 @@ if ~isempty(handles.Model(md).Input(id).corFile)
     handles=ddb_readCorFile(handles,id);
 end
 if ~isempty(handles.Model(md).Input(id).bctFile)
+%     % Don't load bct file
+%     handles.Model(md).Input(id).bctFileLoaded=0;
     handles=ddb_readBctFile(handles,id);
 end
 if ~isempty(handles.Model(md).Input(id).bchFile)

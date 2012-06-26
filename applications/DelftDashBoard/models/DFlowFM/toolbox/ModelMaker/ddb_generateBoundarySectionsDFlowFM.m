@@ -235,9 +235,9 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         ddb_saveBndFile(handles,id);
         
     else
-        GiveWarning('Warning','First generate or load a bathymetry');
+        ddb_giveWarning('Warning','First generate or load a bathymetry');
     end
 else
-    GiveWarning('Warning','First generate or load a grid');
+    ddb_giveWarning('Warning','First generate or load a grid');
 end
 

@@ -115,7 +115,7 @@ if ~isempty(handles.Model(md).Input(ad).GrdFile)
         ddb_plotFlowBathymetry(handles,'plot',ad);
     end
 else
-    GiveWarning('Warning','First load a grid file');
+    ddb_giveWarning('Warning','First load a grid file');
 end
 
 %%

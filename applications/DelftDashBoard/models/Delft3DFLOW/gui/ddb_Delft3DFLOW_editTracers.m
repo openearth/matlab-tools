@@ -122,13 +122,13 @@ if ~isempty(name)
         
         switch lower(handles.Model(md).Input(ad).initialConditions)
             case{'ini'}
-                GiveWarning('text',['The initial conditions file (*.ini) may not contain values for ' name '! If it does not, regenerate it with the Model Maker toolbox.']);
+                ddb_giveWarning('text',['The initial conditions file (*.ini) may not contain values for ' name '! If it does not, regenerate it with the Model Maker toolbox.']);
             case{'trim','rst'}
-                GiveWarning('text',['The initial conditions file may not contain values for ' name '!']);
+                ddb_giveWarning('text',['The initial conditions file may not contain values for ' name '!']);
         end
         
     else
-        GiveWarning('text','A constituent with this name already exists!')
+        ddb_giveWarning('text','A constituent with this name already exists!')
     end
 end
 

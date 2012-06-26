@@ -195,7 +195,7 @@ ii=strmatch(handles.openBoundaries(iac).compA,handles.componentSets,'exact');
 if ~isempty(ii)
     set(handles.GUIHandles.SelectBoundarySectionA,'Value',ii);
 else
-    GiveWarning('Warning',[handles.openBoundaries(iac).compA ' does not exist!']);
+    ddb_giveWarning('Warning',[handles.openBoundaries(iac).compA ' does not exist!']);
     return
 end
 
@@ -205,7 +205,7 @@ ii=strmatch(handles.openBoundaries(iac).compB,handles.componentSets,'exact');
 if ~isempty(ii)
     set(handles.GUIHandles.SelectBoundarySectionB,'Value',ii);
 else
-    GiveWarning('Warning',[handles.openBoundaries(iac).compA ' does not exist!']);
+    ddb_giveWarning('Warning',[handles.openBoundaries(iac).compA ' does not exist!']);
     return
 end
 
@@ -407,7 +407,7 @@ for i=1:size(data,1)
     for j=i:size(data,1)
         if strcmp(data{i,1},data{j,1}) && i~=j
             ok=0;
-            GiveWarning('Warning',['Component ' data{i,1} ' found more than once!']);
+            ddb_giveWarning('Warning',['Component ' data{i,1} ' found more than once!']);
             return;
         end
     end

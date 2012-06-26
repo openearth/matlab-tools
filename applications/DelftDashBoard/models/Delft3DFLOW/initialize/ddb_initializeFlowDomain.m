@@ -191,6 +191,8 @@ handles.Model(md).Input(id).selectOpenBoundary=0;
 handles.Model(md).Input(id).deleteOpenBoundary=0;
 handles.Model(md).Input(id).changeOpenBoundary=0;
 
+% handles.Model(md).Input(id).bctFileLoaded=1;
+
 handles.Model(md).Input(id).nrAstro=0;
 handles.Model(md).Input(id).nrHarmo=0;
 handles.Model(md).Input(id).nrTime=0;

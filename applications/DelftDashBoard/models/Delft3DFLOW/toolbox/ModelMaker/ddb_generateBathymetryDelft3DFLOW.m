@@ -168,6 +168,6 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',id);
     
 else
-    GiveWarning('Warning','First generate or load a grid');
+    ddb_giveWarning('Warning','First generate or load a grid');
 end
 

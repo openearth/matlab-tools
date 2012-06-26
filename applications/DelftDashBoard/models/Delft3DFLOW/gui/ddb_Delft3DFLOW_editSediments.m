@@ -139,22 +139,22 @@ if length(name)>8
                 
                 switch lower(handles.Model(md).Input(ad).initialConditions)
                     case{'ini'}
-                        GiveWarning('text',['The initial conditions file (*.ini) may not contain values for ' name '! If it does not, regenerate it with the Model Maker toolbox.']);
+                        ddb_giveWarning('text',['The initial conditions file (*.ini) may not contain values for ' name '! If it does not, regenerate it with the Model Maker toolbox.']);
                     case{'trim','rst'}
-                        GiveWarning('text',['The initial conditions file may not contain values for ' name '!']);
+                        ddb_giveWarning('text',['The initial conditions file may not contain values for ' name '!']);
                 end
                 
             else
-                GiveWarning('text','A constituent with this name already exists!')
+                ddb_giveWarning('text','A constituent with this name already exists!')
             end
         end
     else
         set(handles.GUIHandles.EditSedimentName,'String','Sediment');
-        GiveWarning('text','Name must start with "Sediment"!')
+        ddb_giveWarning('text','Name must start with "Sediment"!')
     end
 else
     set(handles.GUIHandles.EditSedimentName,'String','Sediment');
-    GiveWarning('text','Name must start with "Sediment"!')
+    ddb_giveWarning('text','Name must start with "Sediment"!')
 end
 
 %%
@@ -175,11 +175,11 @@ if length(name)>8
         end
     else
         set(handles.GUIHandles.EditSedimentName,'String',handles.Model(md).Input(ad).sediment(ii).name);
-        GiveWarning('text','Name must start with "Sediment"!')
+        ddb_giveWarning('text','Name must start with "Sediment"!')
     end
 else
     set(handles.GUIHandles.EditSedimentName,'String',handles.Model(md).Input(ad).sediment(ii).name);
-    GiveWarning('text','Name must start with "Sediment"!')
+    ddb_giveWarning('text','Name must start with "Sediment"!')
 end
 
 %%

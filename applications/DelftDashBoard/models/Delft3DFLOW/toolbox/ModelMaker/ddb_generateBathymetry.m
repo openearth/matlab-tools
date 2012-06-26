@@ -230,6 +230,6 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     %    ddb_plotFlowBathymetry(handles,'plot',id);
     
 else
-    GiveWarning('Warning','First generate or load a grid');
+    ddb_giveWarning('Warning','First generate or load a grid');
 end
 

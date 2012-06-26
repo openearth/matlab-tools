@@ -143,7 +143,7 @@ if ~isempty(pathname)
         % setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
         % setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
     else
-        GiveWarning('Text','Sum of layers does not equal 100%');
+        ddb_giveWarning('Text','Sum of layers does not equal 100%');
     end
 end
 

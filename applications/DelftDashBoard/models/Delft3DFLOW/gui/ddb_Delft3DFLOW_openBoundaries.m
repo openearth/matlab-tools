@@ -269,6 +269,10 @@ else
                 case{'H'}
                     ddb_editD3DFlowConditionsHarmonic;
                 case{'T'}
+%                     if ~handles.Model(md).Input(ad).bctFileLoaded
+%                         handles=ddb_readBctFile(handles,ad);
+%                         setHandles(handles);
+%                     end
                     ddb_editD3DFlowConditionsTimeSeries;
                 case{'Q'}
                     EditD3DFlowConditionsQHRelation;

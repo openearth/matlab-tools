@@ -105,7 +105,7 @@ if ~strcmpi(handles.Model(md).Input(id).waterLevel.ICOpt,'constant')
         % Limitation in delftPredict.mexw32
         disp('Too many grid points (>100000)! Cannot continue operation.');
         close(wb);
-        GiveWarning('Warning','Number of grid points exceeds 100000! Cannot continue this operation.');
+        ddb_giveWarning('Warning','Number of grid points exceeds 100000! Cannot continue this operation.');
         return
     end
     
