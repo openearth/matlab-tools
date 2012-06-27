@@ -73,10 +73,14 @@ else
             editGridOutline;
         case{'editresolution'}
             editResolution;
-        case{'generategrid'}
-            generateGrid;
+        case{'generatenewgrid'}
+            generateGrid('new');
+        case{'generateexistinggrid'}
+            generateGrid('existing');
         case{'generatebathymetry'}
             generateBathymetry;
+        case{'copyfromflow'}
+            copyFromFlow;
     end
     
 end
@@ -177,7 +181,7 @@ handles.Toolbox(tb).Input.gridOutlineHandle=h;
 setHandles(handles);
 
 %%
-function generateGrid
+function generateGrid(opt)
 
 handles=getHandles;
 
@@ -187,11 +191,14 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     
     [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input.attname '.grd']);
     
-    for ii=1:handles.Model(md).Input.nrgrids
-        if strcmpi(filename(1:end-4),handles.Model(md).Input.domains(ii).gridname)
-            ddb_giveWarning('text','A domain with this name already exists. Try again.');
-            return
-        end
+    switch opt
+        case{'new'}
+            for ii=1:handles.Model(md).Input.nrgrids
+                if strcmpi(filename(1:end-4),handles.Model(md).Input.domains(ii).gridname)
+                    ddb_giveWarning('text','A domain with this name already exists. Try again.');
+                    return
+                end
+            end
     end
     
     if pathname~=0
@@ -261,21 +268,29 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
         [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
         
         close(wb);
-        
-        handles.Model(md).Input.nrgrids=handles.Model(md).Input.nrgrids+1;
-        nrgrids=handles.Model(md).Input.nrgrids;
-        handles.Model(md).Input.gridnames{nrgrids}=filename(1:end-4);
-        handles.Model(md).Input.domains=ddb_initializeDelft3DWAVEDomain(handles.Model(md).Input.domains,nrgrids);
-        handles.activeWaveGrid=nrgrids;
-        OPT.option = 'write'; OPT.x = x; OPT.y = y; OPT.z = z; OPT.filename = filename;
-        handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
-        if nrgrids>1
-            handles.Model(md).Input.domains(nrgrids).nestgrid=handles.Model(md).Input.domains(1).gridname;
-            for ii=1:handles.activeWaveGrid-1
-                handles.Model(md).Input.nestgrids{ii}=handles.Model(md).Input.domains(ii).gridname;
-            end
-        else
-            handles.Model(md).Input.domains(nrgrids).nestgrid='';
+
+        switch opt
+            case{'new'}                
+                handles.Model(md).Input.nrgrids=handles.Model(md).Input.nrgrids+1;
+                nrgrids=handles.Model(md).Input.nrgrids;
+                handles.Model(md).Input.gridnames{nrgrids}=filename(1:end-4);
+                handles.Model(md).Input.domains=ddb_initializeDelft3DWAVEDomain(handles.Model(md).Input.domains,nrgrids);
+                handles.activeWaveGrid=nrgrids;
+                OPT.option = 'write'; OPT.x = x; OPT.y = y; OPT.z = z; OPT.filename = filename;
+                handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
+                if nrgrids>1
+                    handles.Model(md).Input.domains(nrgrids).nestgrid=handles.Model(md).Input.domains(1).gridname;
+                    for ii=1:handles.activeWaveGrid-1
+                        handles.Model(md).Input.nestgrids{ii}=handles.Model(md).Input.domains(ii).gridname;
+                    end
+                else
+                    handles.Model(md).Input.domains(nrgrids).nestgrid='';
+                end
+            case{'existing'}
+                nrgrids=handles.Model(md).Input.nrgrids;
+                handles.Model(md).Input.gridnames{nrgrids}=filename(1:end-4);
+                OPT.option = 'write'; OPT.x = x; OPT.y = y; OPT.z = z; OPT.filename = filename;
+                handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
         end
 
         % Plot new domain
@@ -295,8 +310,76 @@ end
 %%
 function generateBathymetry
 handles=getHandles;
-[filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input(ad).attname '.dep']);
+[filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input.attname '.dep']);
 if pathname~=0
-    handles=ddb_generateBathymetryDelft3DFLOW(handles,ad,filename);
+    handles=ddb_generateBathymetryDelft3DWAVE(handles,filename,awg);
 end
 setHandles(handles);
+
+%%
+function copyFromFlow
+
+handles=getHandles;
+grdfile=handles.Model(1).Input(1).grdFile;
+depfile=handles.Model(1).Input(1).depFile;
+
+if isempty(grdfile)
+    ddb_giveWarning('text','No grid file has been specified in Delft3D-FLOW model!');
+    return
+end
+
+if isempty(depfile)
+    ddb_giveWarning('text','No depth file has been specified in Delft3D-FLOW model!');
+    return
+end
+
+ButtonName = questdlg('Couple with Delft3D-FLOW model?', ...
+    'Couple with flow', ...
+    'Cancel', 'No', 'Yes', 'Yes');
+switch ButtonName,
+    case 'Cancel',
+        return;
+    case 'No',
+        couplewithflow=0;
+    case 'Yes',
+        couplewithflow=1;
+end
+
+ddb_plotDelft3DWAVE('delete');
+
+if handles.Model(1).Input(1).comInterval==0 || handles.Model(1).Input(1).comStartTime==handles.Model(1).Input(1).comStopTime
+    ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
+end
+
+handles.Model(md).Input.domains=[];
+handles.Model(md).Input.nrgrids=1;
+handles.Model(md).Input.gridnames=[];
+handles.Model(md).Input.gridnames{1}=grdfile(1:end-4);
+handles.Model(md).Input.domains=[];
+handles.Model(md).Input.domains=ddb_initializeDelft3DWAVEDomain(handles.Model(md).Input.domains,1);
+handles.activeWaveGrid=1;
+handles.Model(md).Input.domains(1).gridx=handles.Model(1).Input(1).gridX;
+handles.Model(md).Input.domains(1).gridy=handles.Model(1).Input(1).gridY;
+handles.Model(md).Input.domains(1).depth=handles.Model(1).Input(1).depth;
+handles.Model(md).Input.domains(1).grid=grdfile;
+handles.Model(md).Input.domains(1).bedlevelgrid=grdfile;
+handles.Model(md).Input.domains(1).bedlevel=depfile;
+% TODO : change coordsyst
+handles.Model(md).Input.domains(1).coordsyst = handles.screenParameters.coordinateSystem.type;
+handles.Model(md).Input.domains(1).mmax=size(handles.Model(md).Input.domains(1).gridx,1);
+handles.Model(md).Input.domains(1).nmax=size(handles.Model(md).Input.domains(1).gridx,2);
+handles.Model(md).Input.domains(1).nestgrid='';
+
+if couplewithflow
+    handles.Model(md).Input.referencedate=handles.Model(1).Input(1).itDate;
+    handles.Model(md).Input.mapwriteinterval=handles.Model(1).Input(1).mapInterval;
+    handles.Model(md).Input.comwriteinterval=handles.Model(1).Input(1).comInterval;
+    handles.Model(md).Input.writecom=1;
+    handles.Model(md).Input.coupledwithflow=1;
+    handles.Model(1).Input(1).waves=1;
+    handles.Model(1).Input(1).onlineWave=1;
+end
+
+setHandles(handles);
+
+ddb_plotDelft3DWAVE('plot');

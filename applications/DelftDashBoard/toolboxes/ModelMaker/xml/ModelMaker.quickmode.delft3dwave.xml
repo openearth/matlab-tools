@@ -95,22 +95,53 @@
     <option1>drawgridoutline</option1>
   </element>
   <element>
-    <tag>pushgenerategrid</tag>
+    <tag>pushgeneratenewgrid</tag>
     <style>pushbutton</style>
     <position>320 110 140 20</position>
-    <tooltipstring>Push to generate model grid</tooltipstring>
-    <text>Make Rectangular Grid</text>
+    <tooltipstring>Push to generate new model grid</tooltipstring>
+    <text>Make New Grid</text>
     <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
-    <option1>generategrid</option1>
+    <option1>generatenewgrid</option1>
+  </element>
+  <element>
+    <tag>pushgenerateexistinggrid</tag>
+    <style>pushbutton</style>
+    <position>320 85 140 20</position>
+    <tooltipstring>Push to change existing active model grid</tooltipstring>
+    <text>Change Grid</text>
+    <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
+    <option1>generateexistinggrid</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.nrgrids</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
   </element>
   <element>
     <tag>pushgeneratebathymetry</tag>
     <style>pushbutton</style>
-    <position>320 85 140 20</position>
-    <tooltipstring>Push to generate model bathymetry</tooltipstring>
+    <position>320 60 140 20</position>
+    <tooltipstring>Push to generate model bathymetry for active grid</tooltipstring>
     <text>Make Bathymetry</text>
     <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
     <option1>generatebathymetry</option1>
+  </element>
+  <element>
+    <tag>pushcopyfromflow</tag>
+    <style>pushbutton</style>
+    <position>320 35 140 20</position>
+    <tooltipstring>Push to copy grid and bathymetry from Delft3D-FLOW</tooltipstring>
+    <text>Copy from FLOW</text>
+    <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
+    <option1>copyfromflow</option1>
   </element>
   <element>
     <tag>editzmax</tag>
