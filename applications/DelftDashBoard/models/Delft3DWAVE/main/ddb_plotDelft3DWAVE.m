@@ -29,19 +29,19 @@ for i=1:length(varargin)
     end
 end
 
-if idomain==0
+% if idomain==0
     % Update all domains
     n1=1;
     n2=handles.Model(imd).Input.nrgrids;
-else
-    % Update one domain
-    n1=idomain;
-    n2=n1;
-end
+% else
+%     % Update one domain
+%     n1=idomain;
+%     n2=n1;
+% end
 
-if idomain==0 && ~act
-    vis=0;
-end
+% if idomain==0 && ~act
+%     vis=0;
+% end
     
 for id=n1:n2
     
@@ -56,7 +56,7 @@ for id=n1:n2
     end
     
     % Always plot grid (even is vis is 0)
-    handles=ddb_Delft3DWAVE_plotGrid(handles,option,'wavedomain',id,'color',col,'visible',1);
+    handles=ddb_Delft3DWAVE_plotGrid(handles,option,'wavedomain',id,'color',col,'visible',vis);
 
 end
 
@@ -64,7 +64,9 @@ end
 try
     uistack(handles.Model(imd).Input.domains(awg).gridplot.plothandles,'top');
 end
-    
+
+handles=ddb_Delft3DWAVE_plotBathy(handles,option,'visible',vis,'active',act);
+
 handles=ddb_Delft3DWAVE_plotObstacles(handles,option,'visible',vis,'active',act);
            
 setHandles(handles);

@@ -25,6 +25,7 @@ domains(id).vegdrag=1;
  
 domains(id).gridname   = '';
 domains(id).gridplot   = [];
+domains(id).bathyplot   = [];
 domains(id).nestgrid   = '';
 domains(id).coordsyst  = '';
 domains(id).mmax       = 0;

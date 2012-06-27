@@ -41,6 +41,7 @@ input.flowbedlevel=1;
 input.flowwaterlevel=1;
 input.flowvelocity=1;
 input.flowwind=1;
+input.coupledwithflow=0;
 
 input.mdffile            = '';
 input.availableflowtimes = [];
@@ -105,7 +106,7 @@ input.order             = 'First';
 %% Output
 input.testoutputlevel   = 0;    
 input.tracecalls        = 0;
-input.usehotfile        = 0;
+input.usehotfile        = 1;
 input.mapwriteinterval  = 60.0;   
 input.writecom          = 0;
 input.comwriteinterval  = 10.0;   

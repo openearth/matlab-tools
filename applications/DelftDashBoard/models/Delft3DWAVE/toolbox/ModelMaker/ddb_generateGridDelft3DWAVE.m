@@ -64,17 +64,15 @@ end
 
 handles.Model(md).Input.domains(id).coordsyst = coord;
 handles.Model(md).Input.domains(id).grid=[attName '.grd'];
+handles.Model(md).Input.domains(id).bedlevelgrid=[attName '.grd'];
 handles.Model(md).Input.domains(id).gridname=attName;
 
 handles.Model(md).Input.domains(id).gridx=x;
 handles.Model(md).Input.domains(id).gridy=y;
 
-[handles.Model(md).Input.domains(id).gridxz,handles.Model(md).Input.domains(id).gridyz]=getXZYZ(x,y);
-
 nans=zeros(size(x));
 nans(nans==0)=NaN;
 handles.Model(md).Input.domains(id).depth=nans;
-handles.Model(md).Input.domains(id).depthz=nans;
 
-handles.Model(md).Input.domains(id).mmax=size(x,1)+1;
-handles.Model(md).Input.domains(id).nmax=size(x,2)+1;
+handles.Model(md).Input.domains(id).mmax=size(x,1);
+handles.Model(md).Input.domains(id).nmax=size(x,2);

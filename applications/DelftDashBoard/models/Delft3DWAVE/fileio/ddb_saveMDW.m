@@ -1,4 +1,4 @@
-function handles=ddb_saveMDW(handles,id)
+function handles=ddb_saveMDW(handles)
 
 wave=handles.Model(md).Input;
 
@@ -120,8 +120,8 @@ if wave.diffraction
 end
 MDW.Processes.WindGrowth.value     = wave.windgrowth;
 MDW.Processes.WindGrowth.type      = 'boolean';
-MDW.Processes.WhiteCapping.value   = wave.whitecapping;
-MDW.Processes.WhiteCapping.type    = 'boolean';
+%MDW.Processes.WhiteCapping.value   = wave.whitecapping;
+MDW.Processes.WhiteCapping.value   = 'Komen';
 MDW.Processes.Quadruplets.value    = wave.quadruplets;
 MDW.Processes.Quadruplets.type     = 'boolean';
 MDW.Processes.Refraction.value     = wave.refraction;
@@ -164,14 +164,17 @@ MDW.Output.Int2KeepHotfile.type   = 'real';
 MDW.Output.AppendCOM.value        = wave.appendcom;
 MDW.Output.AppendCOM.type         = 'boolean';
 for ii=1:length(wave.locationfile)
-    MDW.Output.LocationFile(ii).value     = wave.locationfile{ii};
+    if ~isempty(wave.locationfile{ii})
+        MDW.Output.(['LocationFile' num2str(ii)]).value     = wave.locationfile{ii};
+        MDW.Output.(['LocationFile' num2str(ii)]).keyword   = 'LocationFile';
+    end
 end
 MDW.Output.WriteTable.value       = wave.writetable;
-MDW.Output.WriteTable.type         = 'boolean';
+MDW.Output.WriteTable.type        = 'boolean';
 MDW.Output.WriteSpec1D.value      = wave.writespec1d;
-MDW.Output.WriteSpec1D.type         = 'boolean';
+MDW.Output.WriteSpec1D.type       = 'boolean';
 MDW.Output.WriteSpec2D.value      = wave.writespec2d;
-MDW.Output.WriteSpec2D.type         = 'boolean';
+MDW.Output.WriteSpec2D.type       = 'boolean';
 
 %% Domains
 for i=1:ndomains
@@ -243,6 +246,7 @@ for i=1:wave.nrboundaries
             MDW.Boundary(i).EndCoordY.type       = 'real';
     end
     
+    MDW.Boundary(i).SpectrumSpec.value   = wave.boundaries(i).spectrumspec;
     switch lower(wave.boundaries(i).spectrumspec)
         case{'parametric'}
             MDW.Boundary(i).SpShapeType.value   = wave.boundaries(i).spshapetype;
@@ -268,13 +272,23 @@ for i=1:wave.nrboundaries
                     MDW.Boundary(i).DirSpreading.value   = wave.boundaries(i).dirspreading;
                     MDW.Boundary(i).DirSpreading.type    = 'real';
                 otherwise
-                    %                                 for k=1:size(wave.Sections,2)
-                    %                 MDW.Boundary(i).List(k).CondSpecAtDist = wave.SpacevaryingParam(i).Dist{k};
-                    %                 MDW.Boundary(i).List(k).WaveHeight     = wave.SpacevaryingParam(i).Hs{k};
-                    %                 MDW.Boundary(i).List(k).Period         = wave.SpacevaryingParam(i).Tp{k};
-                    %                 MDW.Boundary(i).List(k).Direction      = wave.SpacevaryingParam(i).Dir{k};
-                    %                 MDW.Boundary(i).List(k).DirSpreading   = wave.SpacevaryingParam(i).Spread{k};
-                    %             end
+                    for k=1:length(wave.boundaries(i).segments)
+                        MDW.Boundary(i).(['CondSpecAtDist' num2str(k)]).value       = wave.boundaries(i).segments(k).condspecatdist;
+                        MDW.Boundary(i).(['CondSpecAtDist' num2str(k)]).type        = 'real';
+                        MDW.Boundary(i).(['CondSpecAtDist' num2str(k)]).keyword     = 'CondSpecAtDist';
+                        MDW.Boundary(i).(['WaveHeight' num2str(k)]).value     = wave.boundaries(i).segments(k).waveheight;
+                        MDW.Boundary(i).(['WaveHeight' num2str(k)]).type      = 'real';
+                        MDW.Boundary(i).(['WaveHeight' num2str(k)]).keyword   = 'WaveHeight';
+                        MDW.Boundary(i).(['Period' num2str(k)]).value         = wave.boundaries(i).segments(k).period;
+                        MDW.Boundary(i).(['Period' num2str(k)]).type          = 'real';
+                        MDW.Boundary(i).(['Period' num2str(k)]).keyword       = 'Period';
+                        MDW.Boundary(i).(['Direction' num2str(k)]).value      = wave.boundaries(i).segments(k).direction;
+                        MDW.Boundary(i).(['Direction' num2str(k)]).type       = 'real';
+                        MDW.Boundary(i).(['Direction' num2str(k)]).keyword    = 'Direction';
+                        MDW.Boundary(i).(['DirSpreading' num2str(k)]).value   = wave.boundaries(i).segments(k).dirspreading;
+                        MDW.Boundary(i).(['DirSpreading' num2str(k)]).type    = 'real';
+                        MDW.Boundary(i).(['DirSpreading' num2str(k)]).keyword = 'DirSpreading';
+                    end
             end
             
         otherwise
@@ -283,6 +297,6 @@ for i=1:wave.nrboundaries
     end
 end
 
-fname=[handles.Model(md).Input(id).runid '.mdw'];
+fname=[handles.Model(md).Input.mdwfile];
 
 ddb_saveDelft3D_keyWordFile(fname, MDW);
