@@ -27,7 +27,7 @@
         <class>3</class>
         <url>http://127.0.0.1:5000/images/flowers_dark_green.png</url>
       </icons>
-      <offset>20000</offset> 
+      <offset>-10000</offset> 
     </habitatrichness>
     <dunes>
       <plottype>icons</plottype>
@@ -43,7 +43,7 @@
         <class>5</class>
 	<url>http://viewer.openearth.nl/images/dunes_dark_green.png</url>	
       </icons>
-      <offset>17000</offset>
+      <offset>-12000</offset>
       <on>0</on>
       <yposinitial>80</yposinitial>
     </dunes>

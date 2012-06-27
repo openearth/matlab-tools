@@ -12,6 +12,8 @@ function ITHK_dunerules2(sens,varargin)
 % used in Interactive Design Tool
 % -------------------------------------------------------------------
 
+fprintf('ITHK postprocessing : Indicator for dune class identification\n');
+
 %% Housekeeping
 global S
 
@@ -115,4 +117,5 @@ for jj = 1:length(S.PP(sens).settings.tvec)
     S.PP(sens).dunes.duneclassRough(:,jj) = interp1(S.PP(sens).settings.s0,duneclass(:,jj),S.PP(sens).settings.sgridRough,'nearest');
 end
 
-ITHK_kmlicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).dunes.duneclassRough,S.settings.indicators.dunes.icons,str2double(S.settings.indicators.dunes.offset))
+[KMLdata]=ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).dunes.duneclassRough,S.settings.indicators.dunes.icons,str2double(S.settings.indicators.dunes.offset));
+S.PP(sens).output.kml_dunes_duneclasses = KMLdata;

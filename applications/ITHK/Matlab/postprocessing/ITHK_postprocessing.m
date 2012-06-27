@@ -84,13 +84,9 @@ fprintf('ITHK postprocessing\n');
     ITHK_ind_ecology_benthos(sens);
     ITHK_ind_foreshore_juvenilefish(sens);
     ITHK_ind_costs_direct(sens);
-    %ITHK_ind_dunes_dunetypes(sens);
-    %ITHK_ind_dunes_habitatrichness(sens);
+    ITHK_ind_dunes_duneclasses(sens);
+    ITHK_ind_dunes_habitatrichness(sens);
 %     ITHK_dunerules2(sens);
-
-
-
-
 
 %% Add disclaimer
 % if isfield(S.settings.postprocessing,'disclaimer') 
@@ -102,7 +98,8 @@ kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, ...
           S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
           S.PP(sens).output.kml_eco_benthos{1}, S.PP(sens).output.kml_eco_benthos{2}, ...
           S.PP(sens).output.kml_foreshore_juvenilefish,S.PP(sens).output.kml_costs_direct1,...
-          S.PP(sens).output.kml_costs_direct2,S.PP(sens).output.kml_costs_direct3];
+          S.PP(sens).output.kml_costs_direct2,S.PP(sens).output.kml_costs_direct3,...
+          S.PP(sens).output.kml_dunes_duneclasses,S.PP(sens).output.kml_dunes_habitatrichness];
 addtxt = '';
 ITHK_io_writeKML(kmltxt,addtxt,sens);
 
@@ -122,7 +119,9 @@ kmltxt = [S.PP(sens).output.kml_costs_direct1,S.PP(sens).output.kml_costs_direct
 addtxt = '_costs';
 ITHK_io_writeKML(kmltxt,addtxt,sens);
 
-
+kmltxt = [S.PP(sens).output.kml_dunes_duneclasses,S.PP(sens).output.kml_dunes_habitatrichness];
+addtxt = '_dunes';
+ITHK_io_writeKML(kmltxt,addtxt,sens);
 
 
 

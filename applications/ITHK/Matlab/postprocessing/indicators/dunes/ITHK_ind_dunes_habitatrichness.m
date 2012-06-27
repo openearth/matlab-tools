@@ -12,6 +12,8 @@ function ITHK_dunes_habitatrichness(sens)
 % used in Interactive Design Tool
 % -------------------------------------------------------------------
 
+fprintf('ITHK postprocessing : Indicator for dune habitat richness\n');
+
 %% Housekeeping
 global S
 
@@ -49,4 +51,5 @@ end
 % 2 = intermediate
 % 3 = rich
 
-ITHK_kmlicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).dunes.richnessRough,S.settings.indicators.habitatrichness.icons,str2double(S.settings.indicators.habitatrichness.offset))
+[KMLdata]=ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).dunes.richnessRough,S.settings.indicators.habitatrichness.icons,str2double(S.settings.indicators.habitatrichness.offset));
+S.PP(sens).output.kml_dunes_habitatrichness = KMLdata;
