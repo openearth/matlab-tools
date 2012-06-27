@@ -1,4 +1,4 @@
-function ITHK_KMLicons(x,y,class,icons,offset,sens)
+function [KMLdata]=ITHK_KMLicons(x,y,class,icons,offset,sens)
 % ITHK_KMLicons(x,y,class,icons,offset,sens)
 %
 % creates kml-txt for a pop-up at the specified x,y location.
@@ -54,13 +54,16 @@ for kk=1:length(icons)
     iconclass(kk) = str2double(icons(kk).class);
 end
 
-for jj = 1:length(S.PP(sens).settings.tvec)
-    time    = datenum((S.PP(sens).settings.tvec(jj)+S.PP(sens).settings.t0),1,1);
-    for ii=2:length(x)-1
+KMLdata=[];
+for ii=2:length(x)-1
+    [lon,lat] = convertCoordinates(x(ii)+offset,y(ii),S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+    KMLdata2=[];
+    for jj = 1:length(S.PP(sens).settings.tvec)
+        time    = datenum((S.PP(sens).settings.tvec(jj)+S.PP(sens).settings.t0),1,1);
         % dunes to KML  
-        [lon,lat] = convertCoordinates(x(ii)+offset,y(ii),S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
         id = find(iconclass==class(ii,jj));
         OPT.icon = icons(id).url;
-        S.PP(sens).output.kml = [S.PP(sens).output.kml ITHK_KMLtextballoon(lon,lat,'icon',OPT.icon,'timeIn',time,'timeOut',time+364)];
+        KMLdata2 = [KMLdata2 ITHK_KMLtextballoon(lon,lat,'icon',OPT.icon,'timeIn',time,'timeOut',time+364)];
     end
+    KMLdata = [KMLdata KMLdata2];
 end

@@ -38,6 +38,8 @@ function ITHK_io_writeKML(kmltxt,addtxt,sens)
 
 global S
 
+fprintf(['ITHK postprocessing : Writing KML-file ''',S.userinput.name,addtxt,'.kml''\n']);
+
 %% WRITE KML
 S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name addtxt '.kml'];  % KML filename settings
 KMLmapName                     = S.userinput.name;
