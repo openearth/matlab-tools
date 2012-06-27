@@ -605,5 +605,9 @@ for i=1:length(Names)
 end
 fclose(fid);
 
-ddb_writeBatchFile(runid);
-
+if handles.Model(id).Input.waves && handles.Model(id).Input.onlineWave
+    imd=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
+    ddb_writeBatchFile(runid,'mdwfile',handles.Model(imd).Input.mdwfile);
+else
+    ddb_writeBatchFile(runid);
+end

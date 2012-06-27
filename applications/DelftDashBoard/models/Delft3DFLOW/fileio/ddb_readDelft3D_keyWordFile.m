@@ -117,7 +117,32 @@ while 1
                     end
                 end
             end
-            s.(fld)(ifld).(keyword)=val;
+            inormal=1;
+            if ~isempty(s)
+                if isfield(s,fld)
+                    if ifld<=length(s.(fld))
+                        if isfield(s.(fld)(ifld),keyword)
+                            if ~isempty(s.(fld)(ifld).(keyword))
+                                % Field already exists
+                                if length(s.(fld)(ifld).(keyword))==1
+                                    % Make this a cell array
+                                    vvv=s.(fld)(ifld).(keyword);
+                                    s.(fld)(ifld).(keyword)=[];
+                                    s.(fld)(ifld).(keyword){1}=vvv;
+                                    s.(fld)(ifld).(keyword){2}=val;
+                                else
+                                    nnn=length(s.(fld)(ifld).(keyword));
+                                    s.(fld)(ifld).(keyword){nnn+1}=val;
+                                end
+                                inormal=0;
+                            end
+                        end
+                    end
+                end
+            end
+            if inormal
+                s.(fld)(ifld).(keyword)=val;
+            end
         end
     end
 end

@@ -93,8 +93,13 @@ for i=1:length(fldnames)
                 if ~isempty(s.(fldname)(j).(keyw))
                     
                     if ~strcmpi(keyw,'fieldlongname')
-                        
-                        keywstr=[keyw repmat(' ',1,17-length(keyw))];
+
+                        if isfield(s.(fldname)(j).(keyw),'keyword')
+                            keywstr=s.(fldname)(j).(keyw).keyword;
+                            keywstr=[keywstr repmat(' ',1,17-length(keywstr))];
+                        else
+                            keywstr=[keyw repmat(' ',1,17-length(keyw))];
+                        end
                         
                         % Value
                         if isfield(s.(fldname)(j).(keyw),'type')

@@ -63,6 +63,18 @@ function ddb_Delft3DFLOW_storage(varargin)
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    % setUIElements('delft3dflow.output.outputpanel.storage');
+else
+    opt=varargin{1};
+    switch lower(opt)
+        case{'editcominterval'}
+            handles=getHandles;
+            imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
+            if handles.Model(md).Input(ad).waves==1 && handles.Model(md).Input(ad).onlineWave==1
+                if handles.Model(imd).Input.coupledwithflow
+                    handles.Model(imd).Input.comwriteinterval=handles.Model(md).Input(ad).comInterval;
+                end
+            end
+            setHandles(handles);
+    end
 end
 

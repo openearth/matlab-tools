@@ -159,7 +159,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     ddb_wldep('write',[attName '.dep'],z);
     
     handles.Model(md).Input(id).depFile=[attName '.dep'];
-    handles.Model(md).Input(ad).depthSource='file';
+    handles.Model(md).Input(id).depthSource='file';
     
     try
         close(wb);
