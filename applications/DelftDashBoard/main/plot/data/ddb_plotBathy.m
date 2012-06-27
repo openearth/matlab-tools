@@ -1,4 +1,4 @@
-function bathy = ddb_plotBathy(x, y, z)
+function bathy = ddb_plotBathy(x, y, z, varargin)
 %DDB_PLOTBATHY  One line description goes here.
 %
 %   More detailed description goes here.
@@ -64,6 +64,17 @@ function bathy = ddb_plotBathy(x, y, z)
 %%
 handles=getHandles;
 
+tag=[];
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'tag'}
+                tag=varargin{ii+1};
+        end
+    end
+end
+
 clims=get(gca,'CLim');
 zmin=clims(1);
 zmax=clims(2);
@@ -77,4 +88,8 @@ set(bathy,'HitTest','off');
 set(bathy,'Tag','Bathymetry');
 set(bathy,'EdgeColor','none');
 set(bathy,'ZData',z0);
+if ~isempty(tag)
+    set(bathy,'Tag',tag);
+end
+
 
