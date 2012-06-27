@@ -161,6 +161,8 @@ for jj = 1:length(S.userinput.phases)
             else
                 S.PP(sens).GEmapping.supp_foreshore(startid+1:stopid,idRANGE) = 1;
             end
+            S.userinput.nourishment(ss).idNEAREST2 = idNEAREST;
+            S.userinput.nourishment(ss).idRANGE2   = idRANGE;
         end
     end
     if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
@@ -169,6 +171,8 @@ for jj = 1:length(S.userinput.phases)
             [x,y] = convertCoordinates(S.userinput.revetment(ss).lon,S.userinput.revetment(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
             [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,0.5*S.userinput.revetment(ss).length);
             S.PP(sens).GEmapping.rev(S.userinput.revetment(ss).start+1:S.userinput.revetment(ss).stop,idRANGE) = 1;
+            S.userinput.revetment(ss).idNEAREST2 = idNEAREST;
+            S.userinput.revetment(ss).idRANGE2   = idRANGE;
         end
     end
     if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
@@ -177,6 +181,8 @@ for jj = 1:length(S.userinput.phases)
             [x,y] = convertCoordinates(S.userinput.groyne(ss).lon,S.userinput.groyne(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
             [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,str2double(S.settings.measures.groyne.updatewidth)*S.userinput.groyne(ss).length); 
             S.PP(sens).GEmapping.gro(S.userinput.groyne(ss).start+1:S.userinput.groyne(ss).stop,idNEAREST) = 1;
+            S.userinput.groyne(ss).idNEAREST2 = idNEAREST;
+            S.userinput.groyne(ss).idRANGE2   = idRANGE;
         end
     end
 end

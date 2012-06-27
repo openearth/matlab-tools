@@ -3,9 +3,9 @@ function ITHK_cleanup(sens)
 global S
 
 %% Move files to directory
-for ii=1:length(S.PP.output.CL_fullfilenames)
-    for jj = 1:length(S.PP.output.CL_fullfilenames{ii})
-        movefile([S.settings.outputdir S.PP.output.CL_fullfilenames{ii}{jj}],[S.settings.outputdir 'output\' S.userinput.name '\'])
+for ii=1:length(S.PP(sens).output.CL_fullfilenames)
+    for jj = 1:length(S.PP(sens).output.CL_fullfilenames{ii})
+        movefile([S.settings.outputdir S.PP(sens).output.CL_fullfilenames{ii}{jj}],[S.settings.outputdir 'output\' S.userinput.name '\'])
         % movefile(['input_' S.name '.mat'],['output\' S.name '\']);
         % Ray files nog toevoegen
     end

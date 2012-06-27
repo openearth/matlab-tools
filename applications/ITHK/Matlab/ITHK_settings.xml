@@ -60,6 +60,13 @@
       <PLOTscale2>0.0</PLOTscale2>
       <PLOToffset>14500</PLOToffset>
     </foreshore>
+    <costs>
+      <header>Transport distance in kilometers</header>
+      <transportdistance>10</transportdistance>
+      <PLOTscale1>0.00003</PLOTscale1>
+      <PLOTscale2>0.0</PLOTscale2>
+      <PLOToffset>17500</PLOToffset>
+    </costs>
   </indicators>
   <plotting>
     <reference>initial</reference>

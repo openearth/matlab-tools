@@ -27,7 +27,7 @@ else
 end
 stored = PRNdata.stored;
 if S.userinput.indicators.slr == 1
-    for jj=1:length(S.PP.settings.tvec)
+    for jj=1:length(S.PP(sens).settings.tvec)
         zminz0(:,jj) = PRNdata.zSLR(:,jj)-PRNdata.zSLR(:,1);
     end    
 else
@@ -88,16 +88,16 @@ for q = 2:size(stored,2) % not for year 1
 end
 
 if reference==0
-    S.PP.dunes.duneclass = duneclass;
+    S.PP(sens).dunes.duneclass = duneclass;
 else
-    S.PP.dunes.duneclassref = duneclass;
+    S.PP(sens).dunes.duneclassref = duneclass;
 end
 
-for jj = 1:length(S.PP.settings.tvec)
-    S.PP.dunes.duneclassRough(:,jj) = interp1(S.PP.settings.s0,duneclass(:,jj),S.PP.settings.sgridRough,'nearest');
+for jj = 1:length(S.PP(sens).settings.tvec)
+    S.PP(sens).dunes.duneclassRough(:,jj) = interp1(S.PP(sens).settings.s0,duneclass(:,jj),S.PP(sens).settings.sgridRough,'nearest');
 end
 
-ITHK_kmlicons(S.PP.coast.x0_refgridRough,S.PP.coast.y0_refgridRough,S.PP.dunes.duneclassRough,S.settings.indicators.dunes.icons,str2double(S.settings.indicators.dunes.offset))
+ITHK_kmlicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).dunes.duneclassRough,S.settings.indicators.dunes.icons,str2double(S.settings.indicators.dunes.offset))
 
 %{
 % plot beach changes

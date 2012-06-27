@@ -13,17 +13,17 @@ function ITHK_ind_foreshore_juvenilefish(sens)
 % INPUT:
 %      sens   sensitivity run number
 %      S      structure with ITHK data (global variable that is automatically used)
-%              .PP.coast.zminz0
-%              .PP.coast.zminz0Rough
-%              .PP.coast.x0_refgridRough
-%              .PP.coast.y0_refgridRough
-%              .PP.GEmapping.fish.ShoreWidthFact
+%              .PP(sens).coast.zminz0
+%              .PP(sens).coast.zminz0Rough
+%              .PP(sens).coast.x0_refgridRough
+%              .PP(sens).coast.y0_refgridRough
+%              .PP(sens).GEmapping.fish.ShoreWidthFact
 %              .settings.indicators.foreshore.ShoreWidth
 %
 % OUTPUT:
 %      S      structure with ITHK data (global variable that is automatically used)
-%              .PP.UBmapping.fish.ShoreWidthFact
-%              .PP.GEmapping.fish.ShoreWidthFact
+%              .PP(sens).UBmapping.fish.ShoreWidthFact
+%              .PP(sens).GEmapping.fish.ShoreWidthFact
 
 %% Copyright notice
 %   --------------------------------------------------------------------

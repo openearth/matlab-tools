@@ -1,4 +1,4 @@
-function ITHK_dunes_habitatrichness
+function ITHK_dunes_habitatrichness(sens)
 
 % dunerules_19apr12.m
 
@@ -15,7 +15,12 @@ function ITHK_dunes_habitatrichness
 %% Housekeeping
 global S
 
-if ~isfield(S.PP,'dunes')
+if nargin<1
+sens=1
+end
+
+
+if ~isfield(S.PP(sens),'dunes')
     return
 end
 
@@ -28,20 +33,20 @@ end
 % H2190 (green beach)
 % grey dunes not taken into account
 
-duneclass = S.PP.dunes.duneclass;
+duneclass = S.PP(sens).dunes.duneclass;
 richness = duneclass.*0;
 richness (duneclass == 1) = 1;  
 richness (duneclass == 2) = 1;
 richness (duneclass == 3) = 2;
 richness (duneclass == 4) = 2;  
 richness (duneclass == 5) = 3;
-S.PP.dunes.richness = richness;
+S.PP(sens).dunes.richness = richness;
 
-for jj = 1:length(S.PP.settings.tvec)
-    S.PP.dunes.richnessRough(:,jj) = interp1(S.PP.settings.s0,richness(:,jj),S.PP.settings.sgridRough,'nearest');
+for jj = 1:length(S.PP(sens).settings.tvec)
+    S.PP(sens).dunes.richnessRough(:,jj) = interp1(S.PP(sens).settings.s0,richness(:,jj),S.PP(sens).settings.sgridRough,'nearest');
 end
 % 1 = low/normal (low is the standard for the current coast)
 % 2 = intermediate
 % 3 = rich
 
-ITHK_kmlicons(S.PP.coast.x0_refgridRough,S.PP.coast.y0_refgridRough,S.PP.dunes.richnessRough,S.settings.indicators.habitatrichness.icons,str2double(S.settings.indicators.habitatrichness.offset))
+ITHK_kmlicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).dunes.richnessRough,S.settings.indicators.habitatrichness.icons,str2double(S.settings.indicators.habitatrichness.offset))

@@ -1,6 +1,47 @@
-function disclaimer = ITHK_kmldisclaimer
+function disclaimer = ITHK_KMLdisclaimer(sens)
+% ITHK_KMLdisclaimer(sens)
+%
+% creates kml-txt for a disclaimer
+% 
+% The kml code (without header/footer) is written to the S structure 
+
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 Deltares for Building with Nature
+%       Bas Huisman
+%
+%       Bas.Huisman@deltares.nl	
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 global S
+
+if nargin<1
+sens=1;
+end
 
 disclaimer1 = S.settings.postprocessing.disclaimer.string1;
 disclaimer2 = S.settings.postprocessing.disclaimer.string2;
@@ -24,8 +65,8 @@ delete('plot1.png')
 
 figtexturl{1} = ['http://127.0.0.1:5000/images/disclaimer.png'];
 disclaimer = '';
-timeIn    = datenum((S.PP.settings.tvec(1)+S.PP.settings.t0),1,1);
-timeOut   = datenum((S.PP.settings.tvec(end)+S.PP.settings.t0),1,1)+364;
+timeIn    = datenum((S.PP(sens).settings.tvec(1)+S.PP(sens).settings.t0),1,1);
+timeOut   = datenum((S.PP(sens).settings.tvec(end)+S.PP(sens).settings.t0),1,1)+364;
 timeSpan = KML_timespan('timeIn',timeIn,'timeOut',timeOut);
 
 disclaimer = [disclaimer sprintf([...

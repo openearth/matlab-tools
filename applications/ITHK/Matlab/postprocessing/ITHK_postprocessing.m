@@ -83,9 +83,48 @@ fprintf('ITHK postprocessing\n');
 %% INDICATORS
     ITHK_ind_ecology_benthos(sens);
     ITHK_ind_foreshore_juvenilefish(sens);
-%    ITHK_ind_ecology_dunetypes(sens);
+    ITHK_ind_costs_direct(sens);
+    %ITHK_ind_dunes_dunetypes(sens);
+    %ITHK_ind_dunes_habitatrichness(sens);
 %     ITHK_dunerules2(sens);
-%     ITHK_dunes_habitatrichness;
+
+
+
+
+
+%% Add disclaimer
+% if isfield(S.settings.postprocessing,'disclaimer') 
+%     disclaimer = ITHK_kmldisclaimer;
+%     S.PP(sens).output.kml = [S.PP(sens).output.kml disclaimer];
+% end
+
+kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, ...
+          S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
+          S.PP(sens).output.kml_eco_benthos{1}, S.PP(sens).output.kml_eco_benthos{2}, ...
+          S.PP(sens).output.kml_foreshore_juvenilefish,S.PP(sens).output.kml_costs_direct1,...
+          S.PP(sens).output.kml_costs_direct2,S.PP(sens).output.kml_costs_direct3];
+addtxt = '';
+ITHK_io_writeKML(kmltxt,addtxt,sens);
+
+kmltxt = [S.PP(sens).output.kml];
+addtxt = '_CL';
+ITHK_io_writeKML(kmltxt,addtxt,sens);
+
+kmltxt = [S.PP(sens).output.kml_eco_benthos{1},S.PP(sens).output.kml_eco_benthos{2}];
+addtxt = '_benthos';
+ITHK_io_writeKML(kmltxt,addtxt,sens);
+
+kmltxt = [S.PP(sens).output.kml_foreshore_juvenilefish];
+addtxt = '_foreshore';
+ITHK_io_writeKML(kmltxt,addtxt,sens);
+
+kmltxt = [S.PP(sens).output.kml_costs_direct1,S.PP(sens).output.kml_costs_direct2,S.PP(sens).output.kml_costs_direct3];
+addtxt = '_costs';
+ITHK_io_writeKML(kmltxt,addtxt,sens);
+
+
+
+
 
 %    indicatorfields    = {'safety_dykering' ...                      % 
 %                          'safety_structures' ...                    % 
@@ -108,54 +147,8 @@ fprintf('ITHK postprocessing\n');
 %                          'costs_investment' ...                     % 
 %                          'costs_maintenance' ...                    % 
 %                          'costs_upgradability'};                    % 
-
-
-%% Add disclaimer
-% if isfield(S.settings.postprocessing,'disclaimer') 
-%     disclaimer = ITHK_kmldisclaimer;
-%     S.PP.output.kml = [S.PP.output.kml disclaimer];
-% end
-
-%% WRITE KML
-S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name '.kml'];  % KML filename settings
-KMLmapName                     = S.userinput.name;
-fid                            = fopen(S.PP.output.kmlFileName,'w');
-fprintf(fid,[KML_header('kmlName',KMLmapName), ...
-            S.PP.output.kml, ...
-            S.PP(sens).output.kml_groyne, ...
-            S.PP(sens).output.kml_nourishment, ...
-            S.PP(sens).output.kml_revetment, ...
-            S.PP(sens).output.kml_eco_benthos{1}, ...
-            S.PP(sens).output.kml_eco_benthos{2}, ...
-            S.PP(sens).output.kml_foreshore_juvenilefish, ...
-            KML_footer]);
-fclose(fid);
-% KML2
-S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name '_CL.kml'];  % KML filename settings
-KMLmapName               = S.userinput.name;
-fid                      = fopen(S.PP.output.kmlFileName,'w');
-fprintf(fid,[KML_header('kmlName',KMLmapName), ...
-             S.PP.output.kml, ...
-             KML_footer]);
-fclose(fid);
-% KML3
-S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name '_benthos.kml'];  % KML filename settings
-KMLmapName               = S.userinput.name;
-fid                      = fopen(S.PP.output.kmlFileName,'w');
-fprintf(fid,[KML_header('kmlName',KMLmapName), ...
-             S.PP(sens).output.kml_eco_benthos{1}, ...
-             S.PP(sens).output.kml_eco_benthos{2}, ...
-             KML_footer]);
-fclose(fid);
-
-S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name '_foreshore.kml'];  % KML filename settings
-KMLmapName               = S.userinput.name;
-fid                      = fopen(S.PP.output.kmlFileName,'w');
-fprintf(fid,[KML_header('kmlName',KMLmapName), ...
-            S.PP(sens).output.kml_foreshore_juvenilefish, ...
-             KML_footer]);
-fclose(fid);
-
+%
+%
 % % Indicator : Dune Types
 % if S.userinput.indicators.dunes == 1
 %     dunerules(sens);                 %dunes

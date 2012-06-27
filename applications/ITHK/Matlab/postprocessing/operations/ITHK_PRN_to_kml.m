@@ -147,7 +147,10 @@ for jj = 1:NRtimesteps
         
         % if x is longer than x0, interpolate to x0 (now interpolation in 2 steps, because direct interpolation gave unstable results) 
         if  length(ztemp)~=length(s0)
-            z(:,jj)=interp1(xcoast(sort(ids1),jj),ztemp,x0); 
+            xtemp = xcoast(sort(ids1),jj);
+            xtemp2 = [xtemp(1)-50*xtemp(2)-1;xtemp;50*xtemp(end)-xtemp(end-1)+1];
+            ztemp2 = [ztemp(1);ztemp;ztemp(end)];
+            z(:,jj)=interp1(xtemp2,ztemp2,x0);
         else
             z(:,jj)=ztemp;
         end
@@ -167,9 +170,14 @@ if S.userinput.indicators.coast == 1
     S.PP(sens).output.kml = KMLdata;
     % coast line to KML
     for jj = 1:NRtimesteps
-        time    = datenum((S.PP(sens).settings.tvec(jj)+S.PP(sens).settings.t0),1,1);
+        time        = datenum((S.PP(sens).settings.tvec(jj)+S.PP(sens).settings.t0),1,1);
+        if jj==NRtimesteps
+           time2    = datenum(round((S.PP(sens).settings.tvec(end)*2-S.PP(sens).settings.tvec(end-1)+S.PP(sens).settings.t0))-1/365/24/60/60,1,1);
+        else
+           time2    = datenum((S.PP(sens).settings.tvec(jj+1)+S.PP(sens).settings.t0),1,1)-0.5;
+        end
         [lon2,lat2] = convertCoordinates(S.PP(sens).coast.xcoast(:,jj),S.PP(sens).coast.ycoast(:,jj),S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
-        KMLdata     = ITHK_KMLline(lat2,lon2,'timeIn',time,'timeOut',time+364,'lineColor',[1 1 0],'lineWidth',4,'lineAlpha',.7,'writefile',0);
+        KMLdata     = ITHK_KMLline(lat2,lon2,'timeIn',time,'timeOut',time2,'lineColor',[1 1 0],'lineWidth',4,'lineAlpha',.7,'writefile',0);
         S.PP(sens).output.kml = [S.PP(sens).output.kml KMLdata];
     end
 end

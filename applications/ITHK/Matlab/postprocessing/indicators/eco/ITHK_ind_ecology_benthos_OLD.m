@@ -21,13 +21,17 @@ function ecorules
 
 global S
 
+if ~exist('sens','var')
+sens=1;
+end
+
 %load PRNdata
 
-x0         = S.PP.GEmapping.x0;
-y0         = S.PP.GEmapping.y0;
-zminz0     = S.PP.GEmapping.zminz0;                                           % change of coastline since t0
-nryears    = size(S.PP.GEmapping.zminz0,1);                                   % dirty way to get the time length (tend - t0)
-nrsections = size(S.PP.GEmapping.zminz0,2);                                   % dirty way to get the nr. of coastline sections (i.e. grid cells) along the Holland coast
+x0         = S.PP(sens).GEmapping.x0;
+y0         = S.PP(sens).GEmapping.y0;
+zminz0     = S.PP(sens).GEmapping.zminz0;                                           % change of coastline since t0
+nryears    = size(S.PP(sens).GEmapping.zminz0,1);                                   % dirty way to get the time length (tend - t0)
+nrsections = size(S.PP(sens).GEmapping.zminz0,2);                                   % dirty way to get the nr. of coastline sections (i.e. grid cells) along the Holland coast
 isoort     = 3;
 
 % ShoreWidth = 10000.0;                                                      % initial shoreface width, i.e. 10km.
@@ -36,8 +40,8 @@ isoort     = 3;
 
 
 
-%S.PP.GEmapping.supp(2:12,10:12) = 0;                                          % temperarily overruling the mapping nourishment.
-%S.PP.GEmapping.supp(14:nryears,10:12) = 0;                                    % temperarily overruling the mapping nourishment.
+%S.PP(sens).GEmapping.supp(2:12,10:12) = 0;                                          % temperarily overruling the mapping nourishment.
+%S.PP(sens).GEmapping.supp(14:nryears,10:12) = 0;                                    % temperarily overruling the mapping nourishment.
 % S.GEmapping.supp(2:nryears,10:12) = 0;                                   % temperarily overruling the mapping nourishment.
 
 %% INPUT VARIABLES from a file....
@@ -64,7 +68,7 @@ for i = 1: nrsections                                                      % nr.
             P0red = 0.;
             % check if there is a nourishment or anaything else 
             % that reduces the population :
-            if (S.PP.GEmapping.supp(t,i)==1)
+            if (S.PP(sens).GEmapping.supp(t,i)==1)
                 isoort=1; 
                 P0red = ECO(k).k_beach_nourishment;                        % reduction in pop. size after nourishment is 1%
                 K0red = ECO(k).k_beach_nourishment;                        % reduction in CC after nourishment. mega: back to 1%, beach/shoreface back to 50%              
@@ -72,7 +76,7 @@ for i = 1: nrsections                                                      % nr.
                 K0(t,i) = K0(t,i)*(100-K0red)/100;
                 tsub = t-1;
             end
-            if (S.PP.GEmapping.rev(t,i) ==1)
+            if (S.PP(sens).GEmapping.rev(t,i) ==1)
                 isoort=2; 
                 P0red = ECO(k).k_revetment;                                % reduction in pop. size after nourishment is 1%
                 K0red = ECO(k).k_revetment;                                % reduction CC after nourishment. mega: back to 1%, beach/shoreface back to 50%   
@@ -108,7 +112,7 @@ for i = 1: nrsections                                                      % nr.
 %     P = P(k);
 end
 
-S.PP.eco.P = P;
+S.PP(sens).eco.P = P;
 %Ps = the standard, fixed (not time-varying) logistic function for pop. size
 %Ps = (Ks*P0*exp(r*t))./(Ks+P0*(exp(r*t)-1));
 

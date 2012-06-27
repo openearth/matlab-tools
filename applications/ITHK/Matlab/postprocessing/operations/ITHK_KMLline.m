@@ -1,8 +1,8 @@
 function varargout = ITHK_KMLline(lat,lon,varargin)
-% KMLLINE Just like line (and that's just like plot)
+% ITHK_KMLline Just like line (and that's just like plot)
 %
-%    kmlline(lat,lon,    <keyword,value>)
-%    kmlline(lat,lon,<z>,<keyword,value>)
+%    ITHK_KMLline(lat,lon,    <keyword,value>)
+%    ITHK_KMLline(lat,lon,<z>,<keyword,value>)
 %
 % creates a kml file fname with lines at the Earth surface or optionally 
 % at <z> connecting the coordinates defined in (lat,lon). As in plot, 
@@ -20,7 +20,7 @@ function varargout = ITHK_KMLline(lat,lon,varargin)
 % The kml code (without header/footer) that is written to file 
 % 'fileName' can optionally be returned as argument.
 %
-%    kmlcode = kmlline(lat,lon,<keyword,value>)
+%    kmlcode = ITHK_KMLline(lat,lon,<keyword,value>)
 %
 % Some <keyword,value> pairs are described here:
 %  'fileName'       name of output file, Can be either a *.kml or *.kmz
@@ -41,7 +41,7 @@ function varargout = ITHK_KMLline(lat,lon,varargin)
 %
 % Example 1: draw a spiral around the earth
 %   lat = linspace(-90,90,1000)'; lon = linspace(0,5*360,1000)';
-%   KMLline(lat,lon)
+%   ITHK_KMLline(lat,lon)
 %
 % Example 2: draw the mean low water line of the netherlands as a function 
 %            of time
@@ -60,7 +60,7 @@ function varargout = ITHK_KMLline(lat,lon,varargin)
 %       lon(splits(ii),:) = nan;
 %   end
 %   % draw the lines
-%   KMLline(lat,lon,'timeIn',time,'timeOut',time+364,...
+%   ITHK_KMLline(lat,lon,'timeIn',time,'timeOut',time+364,...
 %       'lineWidth',4,'lineColor',jet(length(time)),'lineAlpha',.7);
 %
 % See also: googlePlot, plot, line

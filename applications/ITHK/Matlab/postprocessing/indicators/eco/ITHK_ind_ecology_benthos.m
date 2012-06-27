@@ -112,46 +112,50 @@ ECO=ITHK_ind_ecology_benthos_read(ecosettingsfile);
 
 %% COMPUTE IMPACT ON POPULATION (for species 1:kk and coastal section 1:nrsections in time 1:nryears)
 pptype = {'UBmapping','GEmapping'};
-for pp = 2:2
+for pp = 2:length(pptype)                                                  % <---- CURRENTLY ONLY GEMAPPING!!!
     ppmapping  = S.PP(sens).(pptype{pp});
-    nryears    = S.userinput.duration+1;                                   % dirty way to get the time length (tend - t0)
-    nrsections = size(ppmapping.supp_beach,2);                                   % dirty way to get the nr. of coastline sections (i.e. grid cells) along the Holland coast
-    P = [];K0 = [];
-    for kk = 1: length(ECO)                                                    % nr. of species.
-        Ks     = ECO(kk).k_s;                                                  % default carrying capacity (CC) of the system
-        P0     = ECO(kk).p0;                                                   % in initial population (used as reference only)
-        r      = ECO(kk).r;                                                    % logistic growth rate benthic community (polychaetes: r = 4, bivalves r = 2).
-        e      = [2 , 1 , 0.5, 1, 1, 1]; epsval=2;                             % epsilon determines recovery time of CC. Beach e = 2, shoreface e = 1, mega e = 0.5.
-        s      = 1.;                                                           % sigma, where sigma = s = 1 
-        for ii = 1: nrsections                                                 % nr. of coastline sections (i.e. grid cells) along the Holland coast
-            K0(ii,1) = Ks;                                                     % set initial carrying capacity (CC0)
-            P(ii,1)  = P0;                                                     % set initial population (P0)
-            tsub     = 0;
-            ttsub    = 1;
-            dt       = 1;
-            time     = [0:dt:nryears];
+    nryears    = S.userinput.duration;                                     % get the time length (tend - t0)
+    nrsections = size(ppmapping.supp_beach,2);                             % nr. of coastline sections (i.e. grid cells) along the Holland coast
+    
+    for kk = 1: length(ECO)                                                % nr. of species.
+        Ks     = ECO(kk).k_s;                                              % default carrying capacity (CC) of the system
+        P0     = ECO(kk).p0;                                               % in initial population (used as reference only)
+        r      = ECO(kk).r;                                                % logistic growth rate benthic community (polychaetes: r = 4, bivalves r = 2).
+        e      = [2 , 1 , 0.5, 1, 1, 1];epsval=2;                          % epsilon determines recovery time of CC. Beach e = 2, shoreface e = 1, mega e = 0.5.
+        s      = 1.;                                                       % sigma, where sigma = s = 1 
+        dt     = 1;
+        time   = [0:dt:nryears];                                           % timeframe of simulation
+        K0     = zeros(nrsections,nryears+1);
+        P      = zeros(nrsections,length(time));
+ 
+        for ii = 1: nrsections                                             % nr. of coastline sections (i.e. grid cells) along the Holland coast
+            K0(ii,1) = Ks;                                                 % set initial carrying capacity (CC0)
+            P(ii,1)  = P0;                                                 % set initial population (P0)
+%             tsub     = 0;
+%             ttsub    = 1;
 
-            for tt = 1:length(time)-1                                                 % timeframe of simulation
+            for tt = 1:length(time)-1                                                 
                 % check if there is a nourishment (or construction)
                 % which reduces the population and carrying capacity
                 FLDname_measures = {'k_beach_nourishment','k_foreshore_nourishment','k_mega_nourishment','k_revetment','k_groyne','k_others'};
                 FLDsupps = {'supp_beach','supp_foreshore','supp_mega','rev','gro'};  % Type of nourishemnt that is used! (isoort = 1=beach, 2=foreshore, 3=mega)
                 for jj=1:length(FLDsupps)
                     supp2 = ppmapping.(FLDsupps{jj});
-                    if  supp2(tt,ii)==1                                             % t==S.userinput.nourishment.start+1 && i>=idsth && i<=idnrth
-                        P0red = ECO(kk).(FLDname_measures{jj});                % reduction in pop. size after nourishment is 1%
-                        K0red = ECO(kk).(FLDname_measures{jj});                % reduction in CC after nourishment (e.g. mega: back to 5%, beach/shoreface back to 50%)
+                    if  supp2(tt,ii)==1                                    % t==S.userinput.nourishment.start+1 && i>=idsth && i<=idnrth
+                        P0red = ECO(kk).(FLDname_measures{jj});            % reduction in pop. size after nourishment is 1%
+                        K0red = ECO(kk).(FLDname_measures{jj});            % reduction in CC after nourishment (e.g. mega: back to 5%, beach/shoreface back to 50%)
                         P(ii,tt) = P(ii,tt)*(100-P0red)/100;
                         K0(ii,tt) = K0(ii,tt)*(100-K0red)/100;
-                        tsub          = time(tt);
-                        ttsub         = tt;
+%                         tsub          = time(tt);
+%                         ttsub         = tt;
                         epsval = min(epsval,e(jj));
+                        epsval = min(epsval,r/2);                          % make sure that epsilon never is larger than 50% of growth rate
                     end
                 end
 
                 % Equation 17 in Shepard & Stojkov, 2007: 
-                K = Ks/(1+((Ks/K0(ii,ttsub))^s-1)*exp(-s*epsval*(time(tt+1)-tsub))).^(1/s);% compute carrying capacity in next timestep
-
+                %Kold = Ks/(1+((Ks/K0(ii,ttsub))^s-1)*exp(-s*epsval*(time(tt+1)-tsub))).^(1/s);% compute carrying capacity in next timestep
+                K = Ks/(1+((Ks/K0(ii,tt))^s-1)*exp(-s*epsval*dt)).^(1/s);
                 % Equation 18 of Shepard & Stojkov, 2007:
                 %    a = alpha in Eq. 18
                 %    b = beta in Eq. 18
