@@ -102,9 +102,17 @@ end
 X0        = nc_varget(OPT.ncfile, nc_index.x);
 Y0        = nc_varget(OPT.ncfile, nc_index.y);
 
+y_descending = unique(diff(Y0)) < 0;
+
 % sort X and Y. NB: Y is ussumed to descend! This may not be the case for AHN - need to check!
 X1 = sort(X0,'ascend');
-Y1 = sort(Y0,'descend');
+% check whether Y is ascending, this is also relevant for the start and
+% count later on
+if y_descending
+    Y1 = sort(Y0,'descend');
+else
+    Y1 = sort(Y0,'ascend');
+end
 
 if ~isempty(OPT.polygon)
     % determine the extent of the polygon
@@ -117,8 +125,13 @@ if ~isempty(OPT.polygon)
     % NB: these are indexes, should be reduced with one for netCDF call as nc files start counting at 0
     xstart  = find(X1>minx, 1, 'first');
     xcount  = find(X1<maxx, 1, 'last');
-    ystart  = find(Y1<maxy, 1, 'first');
-    ycount  = find(Y1>miny, 1, 'last');
+    if y_descending
+        ystart  = find(Y1<maxy, 1, 'first');
+        ycount  = find(Y1>miny, 1, 'last');
+    else
+        ystart  = find(Y1>miny, 1, 'first');
+        ycount  = find(Y1<maxy, 1, 'last');
+    end
     
 else
     xstart  = 1;
