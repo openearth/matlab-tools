@@ -20,11 +20,8 @@ switch lower(el.style)
     case{'edit'}
 
         val=gui_getValue(el,el.variable);
-%         if ~isempty(el.type)
-            tp=lower(el.type);
-%         else
-%             tp=lower(el.variable.type);
-%         end
+        tp=lower(el.type);
+
         switch tp
             case{'string'}
             case{'datetime'}
@@ -43,7 +40,7 @@ switch lower(el.style)
                         val=num2str(val);
                     end
                 end
-        end        
+        end
         set(el.handle,'String',val);
 
         % Set text
@@ -57,21 +54,19 @@ switch lower(el.style)
         end
         
     case{'checkbox'}
+
         val=gui_getValue(el,el.variable);
         set(el.handle,'Value',val);
 
     case{'togglebutton'}
+
         val=gui_getValue(el,el.variable);
         set(el.handle,'Value',val);
 
     case{'radiobutton'}
-        val=gui_getValue(el,el.variable);
-        
-%         if ~isempty(el.type)
-            tp=lower(el.type);
-%         else
-%             tp=lower(el.variable.type);
-%         end
+
+        val=gui_getValue(el,el.variable);        
+        tp=lower(el.type);
 
         switch lower(tp)
             case{'string'}
@@ -185,11 +180,7 @@ switch lower(el.style)
             
                 val=gui_getValue(el,el.variable);
 
-%                 if ~isempty(el.type)
-                    tp=lower(el.type);
-%                 else
-%                     tp=lower(el.variable.type);
-%                 end
+                tp=lower(el.type);
 
                 switch tp
                     case{'string'}
