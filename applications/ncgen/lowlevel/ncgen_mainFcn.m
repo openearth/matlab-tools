@@ -140,6 +140,9 @@ else
     fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.file_incl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
     % get the timestamp from the file date
     fns1 = get_date_from_filename(OPT,fns1);
+    % sort with ascending data date
+    [~, ix] = sort([fns1.date_from_filename]);
+    fns1 = fns1(ix);
 end
 
 % check if files are found
