@@ -90,9 +90,16 @@ for ii = 1:length(D);
     source_file      = [D(ii).pathname D(ii).name];
     destination_file = fullfile(destination,D(ii).name);
     ncschema         = ncinfo(source_file);
-    ncwriteschema(destination_file,ncschema);
-    variable_names   = {ncschema.Variables.Name};
+
+    % work around for bug http://www.mathworks.com/support/bugreports/819646
+    [ncschema.Dimensions([ncschema.Dimensions.Unlimited]).Length] = deal(inf);
+    [ncschema.Dimensions([ncschema.Dimensions.Unlimited]).Unlimited] = deal(false);
     
+    % write schema
+    ncwriteschema(destination_file,ncschema);
+    
+    variable_names   = {ncschema.Variables.Name};
+        
     % determine new order
     c                = ncread(source_file,OPT.dimension_name);
     [~,new_order]    = sort(c);
