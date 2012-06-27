@@ -86,9 +86,9 @@ end
 
 if model.runPost
     disp('Making figures ...');
-    set(hm.textModelLoopStatus,'String',['Status : making figures - ' mdl ' ...']);drawnow;
     try
         tic
+        set(hm.textModelLoopStatus,'String',['Status : making figures - ' mdl ' ...']);drawnow;
         cosmos_makeModelFigures(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong with making figures for ' model.name]);
@@ -112,8 +112,8 @@ end
 
 if model.makeWebsite
     disp('Copying figures to local website ...');
-    set(hm.textModelLoopStatus,'String',['Status : copying to local website - ' mdl ' ...']);drawnow;
     try
+        set(hm.textModelLoopStatus,'String',['Status : copying to local website - ' mdl ' ...']);drawnow;
         cosmos_copyFiguresToLocalWebsite(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong while copying figures to local website of ' model.name]);
@@ -133,10 +133,10 @@ if model.makeWebsite
 end
 
 if model.uploadFTP
-    set(hm.textModelLoopStatus,'String',['Status : uploading to SCP server - ' mdl ' ...']);drawnow;
     disp('Uploading figures to web server ...');
     try
         tic
+        set(hm.textModelLoopStatus,'String',['Status : uploading to SCP server - ' mdl ' ...']);drawnow;
         %        PostFTP(hm,m);
         cosmos_postFigures(hm,m);
         if hm.models(m).forecastplot.plot
