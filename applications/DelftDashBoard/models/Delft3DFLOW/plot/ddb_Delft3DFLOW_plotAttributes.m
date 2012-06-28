@@ -297,6 +297,10 @@ switch lower(opt)
                 attStruc(i).plotHandles=[];
                 attStruc(i).textHandles=[];
             end
+            hh=findobj(gcf,'Tag',tag);
+            if ~isempty(hh)
+                delete(hh);
+            end
         end
         
     case{'update'}
