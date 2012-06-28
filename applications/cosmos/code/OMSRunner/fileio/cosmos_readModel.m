@@ -1031,7 +1031,7 @@ if isfield(model,'forecastplot')
     end
     
     if isfield(model.forecastplot,'windstation')
-        hm.models(i).forecastplot.windstation=num2str(model.forecastplot.windstation);
+        hm.models(i).forecastplot.windstation=str2num(model.forecastplot.windstation);
     end
     
     if isfield(model.forecastplot,'wavestation')
