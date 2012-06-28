@@ -51,6 +51,7 @@ txt=ReadTextFile(fname);
 n=length(txt);
 hm.nrProfilesPerJob=50;
 hm.clusterNode=[];
+hm.exedirflow=[];
 
 for i=1:n
     switch lower(txt{i}),
@@ -80,6 +81,8 @@ for i=1:n
             hm.nrProfilesPerJob=str2double(txt{i+1});
         case {'clusternode'}
             hm.clusterNode=txt{i+1};
+        case {'exedirflow'}
+            hm.exedirflow=txt{i+1};
     end
 end
 
@@ -91,3 +94,6 @@ hm.archiveDir=hm.modelDir;
 hm.tempDir=[hm.runDir 'temp' filesep];
 hm.exeDir=[hm.dataDir 'exe' filesep];
 MakeDir(hm.tempDir);
+if isempty(hm.exedirflow)
+    hm.exedirflow='/u/ormondt/d3d_versions/delftflow_trunk2/bin/';
+end
