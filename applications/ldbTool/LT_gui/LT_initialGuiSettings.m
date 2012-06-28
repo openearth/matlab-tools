@@ -51,7 +51,7 @@ for ij=1:length(hBox)
     set(hBox(ij),'enable','on');
 end
 
-set(findobj(fig,'tag','LT_plotWindow'),'XLim',[min(data(5).oriLDB(:,1)) max(data(5).oriLDB(:,1))],'YLim',[min(data(5).oriLDB(:,2)) max(data(5).oriLDB(:,2))]);
+% set(findobj(fig,'tag','LT_plotWindow'),'XLim',[min(data(5).oriLDB(:,1)) max(data(5).oriLDB(:,1))],'YLim',[min(data(5).oriLDB(:,2)) max(data(5).oriLDB(:,2))]);
 set(findobj(fig,'tag','LT_saveMenu'),'enable','on');
 set(findobj(fig,'tag','LT_save2Menu'),'enable','on');
 set(findobj(fig,'tag','LT_resetMenu'),'enable','on');

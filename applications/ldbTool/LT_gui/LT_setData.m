@@ -48,8 +48,8 @@ end
 numOfLayers=max(size(data,1)-1,1); % -1, because first layer is reserved for polygon
 curLayer=curLayer+1; % +1, because first layer is reserved for polygon
 
-data=orderFields(data);
-dataIn=orderFields(dataIn);
+data=orderfields(data);
+dataIn=orderfields(dataIn);
 
 data(curLayer,:)=dataIn;
 

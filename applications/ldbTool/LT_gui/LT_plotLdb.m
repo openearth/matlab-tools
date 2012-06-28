@@ -85,7 +85,7 @@ end
 
 if get(findobj(fig,'tag','LT_filledBox'),'value')==1%filled??
     col=0.7*[1 1 1]+0.3*get(plotHandles{curLayer-1},'color');
-    plotHandles{numOfLayers+2}=filledldb(data(curLayer).ldb,col,col,[],[1]);
+    plotHandles{numOfLayers+2}=filledLDB(data(curLayer).ldb,col,col,[],[1]);
 else
     plotHandles{numOfLayers+2}=[];
 end

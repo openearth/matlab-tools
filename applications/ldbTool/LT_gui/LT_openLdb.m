@@ -44,7 +44,8 @@ if isempty(oriLDB)
     return
 end
 
-data=LT_fillStructure(oriLDB,1);
+% data=LT_fillStructure(oriLDB,1);
+data=LT_fillStructure(oriLDB,0);
 
 LT_setData(data);
 
@@ -53,5 +54,5 @@ LT_initialGuiSettings;
 LT_plotLdb;
 
 axes(findobj(fig,'tag','LT_plotWindow'));
-% set(gca,'DataAspectRatioMode','manual','DataAspectRatio',[1 1 1]);
-% axis fill;
+set(gca,'DataAspectRatioMode','manual','DataAspectRatio',[1 1 1]);
+axis fill;

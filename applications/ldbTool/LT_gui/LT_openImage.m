@@ -79,7 +79,7 @@ origAxesXlim=get(curAx,'Xlim');
 origAxesYlim=get(curAx,'Ylim');
 
 try
-    h=geoshow(I,r,reso);
+    h=geoShow(I,r,reso);
 catch
     if strcmp(questdlg('It is not possible to geoshow this image, because the selected resolution is to high. It is also possible to show the image in image coordinates, which works better for large images. In that case, the landboundary must be converted to image coordinates by using the image world file (see menu "coordinate conversion"). Do you want to proceed?','Out of memory','Yes','No','Yes'),'Yes');
         h=image(I);

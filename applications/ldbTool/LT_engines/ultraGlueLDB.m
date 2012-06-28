@@ -63,9 +63,9 @@ hW=cwaitbar([0 0],{'Progress of total process','Progress of current pass'},{'r',
 for iii=1:length(ldbDis)
     switch s
         case 0
-            ldb=glueLdb(ldbDis(iii),inLdb,hW);
+            ldb=glueLDB(ldbDis(iii),inLdb,hW);
         case 1
-            ldb=superglueLdb(ldbDis(iii),inLdb,hW);
+            ldb=superGlueLDB(ldbDis(iii),inLdb,hW);
     end
     inLdb=ldb;
     cwaitbar([1 iii/length(ldbDis)]);
