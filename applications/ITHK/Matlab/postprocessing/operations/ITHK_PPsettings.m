@@ -131,6 +131,11 @@ for ii=1:length(S.PP(sens).settings.sgridRough)
     distFR{ii} = abs(S.PP(sens).settings.sgridFine-S.PP(sens).settings.sgridRough(ii));
     S.PP(sens).settings.idFR(ii) = find(distFR{ii} == min(distFR{ii}),1,'first');
 end
+% Find ids of UNIBEST grid corresponding to rough grid
+for ii=1:length(S.PP(sens).settings.sgridRough)
+    distUR{ii} = abs(S.PP(sens).settings.s0-S.PP(sens).settings.sgridRough(ii));
+    S.PP(sens).settings.idUR(ii) = find(distUR{ii} == min(distUR{ii}),1,'first');
+end
 
 % settings for 'postprocessDUNEGROWTH'
 S.settings.dunes.CSTorient   = 'BASIS_ORIG.MDA'; 

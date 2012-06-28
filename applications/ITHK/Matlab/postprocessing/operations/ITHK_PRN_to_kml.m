@@ -20,13 +20,6 @@ function ITHK_PRN_to_kml(sens)
 %              .PP(sens).settings.MDAdata_ORIG.Xcoast
 %              .PP(sens).settings.MDAdata_ORIG.Ycoast
 %              .PP(sens).settings.sgridRough
-%              .PP(sens).coast.x0gridRough
-%              .PP(sens).coast.y0gridRough
-%              .PP(sens).coast.zgridRough
-%              .PP(sens).coast.x0_refgridRough
-%              .PP(sens).coast.y0_refgridRough
-%              .PP(sens).coast.xcoast
-%              .PP(sens).coast.ycoast
 %              .PP(sens).output.kmlFileName
 %              .settings.postprocessing.reference
 %              .settings.indicators.coast.offset
@@ -35,6 +28,14 @@ function ITHK_PRN_to_kml(sens)
 % OUTPUT:
 %      S      structure with ITHK data (global variable that is automatically used)
 %              .PP(sens).output.kml
+%              .PP(sens).coast.x0gridRough
+%              .PP(sens).coast.y0gridRough
+%              .PP(sens).coast.x0_refgridRough
+%              .PP(sens).coast.y0_refgridRough
+%              .PP(sens).coast.zgridRough
+%              .PP(sens).coast.xcoast
+%              .PP(sens).coast.ycoast
+%              .PP(sens).coast.zcoast
 %
 
 %% Copyright notice
@@ -96,8 +97,10 @@ reference    = S.settings.plotting.reference;
 %reference   = 'relative'; %'natural';
 
 %% Map UB coastline to GE grid
-S.PP(sens).coast.x0gridRough = interp1(s0,x0,S.PP(sens).settings.sgridRough); S.PP(sens).coast.x0_refgridRough = interp1(s0_ref,x0_ref,S.PP(sens).settings.sgridRough);
-S.PP(sens).coast.y0gridRough = interp1(s0,y0,S.PP(sens).settings.sgridRough); S.PP(sens).coast.y0_refgridRough = interp1(s0_ref,y0_ref,S.PP(sens).settings.sgridRough);
+S.PP(sens).coast.x0gridRough = interp1(s0,x0,S.PP(sens).settings.sgridRough);
+S.PP(sens).coast.y0gridRough = interp1(s0,y0,S.PP(sens).settings.sgridRough);
+S.PP(sens).coast.x0_refgridRough = interp1(s0_ref,x0_ref,S.PP(sens).settings.sgridRough);
+S.PP(sens).coast.y0_refgridRough = interp1(s0_ref,y0_ref,S.PP(sens).settings.sgridRough);
 
 if ~isfield(S.settings,'indicators')
 S.settings.indicators.coast.offset='0';

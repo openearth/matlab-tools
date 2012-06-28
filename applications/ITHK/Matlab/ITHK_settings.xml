@@ -67,6 +67,12 @@
       <PLOTscale2>0.0</PLOTscale2>
       <PLOToffset>17500</PLOToffset>
     </costs>
+    <recreation>
+      <header>Reacreation beach width</header>
+      <PLOTscale1>2</PLOTscale1>
+      <PLOTscale2>0.0</PLOTscale2>
+      <PLOToffset>20000</PLOToffset>
+    </recreation>
   </indicators>
   <plotting>
     <reference>initial</reference>
