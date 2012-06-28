@@ -94,32 +94,44 @@ function dragLine(src,eventdata,callback,input,method,xg,yg)
 pos = get(gca, 'CurrentPoint');
 posx=pos(1,1);
 posy=pos(1,2);
-m1=[];
-n1=[];
 
-if strcmpi(method,'alonggridline')
-    [m1,n1]=FindCornerPoint(posx,posy,xg,yg);
-    posx=xg(m1,n1);
-    posy=yg(m1,n1);
+xax=get(gca,'XLim');
+yax=get(gca,'YLim');
+
+if posx>xax(1) && posx<xax(2) && posy>yax(1) && posy<yax(2)
+    
+    m1=[];
+    n1=[];
+    
+    if strcmpi(method,'alonggridline')
+        [m1,n1]=FindCornerPoint(posx,posy,xg,yg);
+        posx=xg(m1,n1);
+        posy=yg(m1,n1);
+    end
+    
+    h=plot([posx posx],[posy posy]);
+    set(h,'Color','g');
+    set(h,'LineWidth',2);
+    set(h,'LineStyle','-');
+    
+    setappdata(h,'callback',callback);
+    setappdata(h,'input',input);
+    setappdata(h,'method',method);
+    setappdata(h,'xg',xg);
+    setappdata(h,'yg',yg);
+    setappdata(h,'x',[posx posx]);
+    setappdata(h,'y',[posy posy]);
+    setappdata(h,'m1',m1);
+    setappdata(h,'n1',n1);
+    
+    set(gcf, 'windowbuttonmotionfcn', {@followTrack,h});
+    set(gcf, 'windowbuttonupfcn',     {@stopTrack,h});
+    
+else
+    set(gcf, 'windowbuttondownfcn',[]);
+    set(gcf, 'windowbuttonmotionfcn',[]);
+    set(gcf, 'windowbuttonupfcn',[]);
 end
-
-h=plot([posx posx],[posy posy]);
-set(h,'Color','g');
-set(h,'LineWidth',2);
-set(h,'LineStyle','-');
-
-setappdata(h,'callback',callback);
-setappdata(h,'input',input);
-setappdata(h,'method',method);
-setappdata(h,'xg',xg);
-setappdata(h,'yg',yg);
-setappdata(h,'x',[posx posx]);
-setappdata(h,'y',[posy posy]);
-setappdata(h,'m1',m1);
-setappdata(h,'n1',n1);
-
-set(gcf, 'windowbuttonmotionfcn', {@followTrack,h});
-set(gcf, 'windowbuttonupfcn',     {@stopTrack,h});
 
 %%
 function followTrack(imagefig, varargins, h)
