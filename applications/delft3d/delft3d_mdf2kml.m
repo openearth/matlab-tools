@@ -330,8 +330,12 @@ disp('Converting the grid...')
    end
 
    if OPT.kmz
-       zip     ([name,'.kmz'],{[name,'.kml']}) % ,[filename(MDF.keywords.filcco),'_2D_ver_lft.png']
-       copyfile([name,'.kmz.zip'],[name,'.kmz'])
+       if OPT.colorbar
+           zip([name,'.kmz'],{[name,'.kml'],[filename(MDF.keywords.filcco),'_2D_ver_lft.png']});
+       else
+           zip([name,'.kmz'],{[name,'.kml']});
+       end
+       copyfile([name,'.kmz.zip'],[name,'.kmz']);
        delete  ([name,'.kmz.zip']);
        delete  ([name,'.kml']);
        delete  ([filename(MDF.keywords.filcco),'_2D_ver_lft.png']);
