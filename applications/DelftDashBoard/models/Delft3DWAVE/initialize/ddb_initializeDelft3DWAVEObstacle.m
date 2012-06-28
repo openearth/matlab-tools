@@ -10,3 +10,5 @@ obstacles(iob).transmcoef=0;
 obstacles(iob).refleccoef=0;
 obstacles(iob).x=0;
 obstacles(iob).y=0;
+
+obstacles(iob).plothandle=[];

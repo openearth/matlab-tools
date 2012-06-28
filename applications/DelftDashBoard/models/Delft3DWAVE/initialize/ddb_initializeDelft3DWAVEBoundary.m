@@ -37,3 +37,4 @@ boundaries(ib).segments(1).waveheight=0;
 boundaries(ib).segments(1).period=0;
 boundaries(ib).segments(1).direction=0;
 boundaries(ib).segments(1).dirspreading=10;
+boundaries(ib).plothandle=[];

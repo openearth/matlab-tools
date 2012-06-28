@@ -209,6 +209,28 @@
     </dependencies>    
   </element>
   <element>
+    <tag>pushdrawxyboundary</tag>
+    <style>pushbutton</style>
+    <position>570 70 50 20</position>
+    <tooltipstring>Draw</tooltipstring>
+    <text>Draw</text>
+    <callback>ddb_Delft3DWAVE_boundaries</callback>
+    <option1>drawxyboundary</option1>    
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+            <value>grid-coordinates</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
     <tag>editbndstartx</tag>
     <style>edit</style>
     <position>470 70 40 20</position>
@@ -217,6 +239,8 @@
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).startcoordx</variable>
     <type>int</type>
     <tooltipstring>Enter start X coordinate</tooltipstring>
+    <callback>ddb_Delft3DWAVE_boundaries</callback>
+    <option1>editxycoordinates</option1>
     <dependencies>
       <dependency>
         <action>visible</action>
@@ -238,6 +262,8 @@
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).startcoordy</variable>
     <type>int</type>
     <tooltipstring>Enter start Y coordinate</tooltipstring>
+    <callback>ddb_Delft3DWAVE_boundaries</callback>
+    <option1>editxycoordinates</option1>
     <dependencies>
       <dependency>
         <action>visible</action>
@@ -261,6 +287,8 @@
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).endcoordx</variable>
     <type>int</type>
     <tooltipstring>Enter end X coordinate</tooltipstring>
+    <callback>ddb_Delft3DWAVE_boundaries</callback>
+    <option1>editxycoordinates</option1>
     <dependencies>
       <dependency>
         <action>visible</action>
@@ -282,6 +310,8 @@
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).endcoordy</variable>
     <type>int</type>
     <tooltipstring>Enter end Y coordinate</tooltipstring>
+    <callback>ddb_Delft3DWAVE_boundaries</callback>
+    <option1>editxycoordinates</option1>
     <dependencies>
       <dependency>
         <action>visible</action>
