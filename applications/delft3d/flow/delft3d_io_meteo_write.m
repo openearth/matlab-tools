@@ -77,7 +77,7 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 OPT.header           = {[]};
 
 OPT.filetype         = 'meteo_on_curvilinear_grid';
-OPT.nodata_value     = nan;
+OPT.nodata_value     = -999;
 OPT.grid_file        = ['temp.grd'];
 OPT.writegrd         = true;
 OPT.quantity         = 'x_wind';
@@ -197,7 +197,7 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
             fprinteol(fid,OPT.OS);
         end
         
-        fprintf  (fid,'FileVersion      = 1.02')                     ;%# Version of meteo input file, to check if the newest file format is used
+        fprintf  (fid,'FileVersion      = 1.03')                     ;%# Version of meteo input file, to check if the newest file format is used
         fprinteol(fid,OPT.OS)
         fprintf  (fid,'filetype         = meteo_on_curvilinear_grid');%# Type of meteo input file: meteo_on_flow_grid, meteo_on_equidistant_grid, meteo_on_curvilinear_grid or meteo_on_spiderweb_grid
         fprinteol(fid,OPT.OS)
