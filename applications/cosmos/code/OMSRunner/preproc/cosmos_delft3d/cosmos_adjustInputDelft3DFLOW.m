@@ -1,5 +1,7 @@
 function cosmos_adjustInputDelft3DFLOW(hm,m)
 
+hm.models(m).exedirflow=hm.exedirflow;
+
 model=hm.models(m);
 
 tmpdir=hm.tempDir;
@@ -60,7 +62,7 @@ if ~strcmpi(model.useMeteo,'none')
         end
         writeD3DMeteoFile4(meteodir,model.useMeteo,tmpdir,'meteo',model.xLim,model.yLim, ...
             coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-            'parameter',par,'dx',dx,'dy',dy);
+            'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
 
     catch
 
@@ -90,7 +92,7 @@ if ~strcmpi(model.useMeteo,'none')
             
             writeD3DMeteoFile4(meteodir,model.backupMeteo,tmpdir,'meteo',model.xLim,model.yLim, ...
                 coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-                'parameter',par,'dx',dx,'dy',dy);
+                'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
             
         else
             error('No backup meteo specified!');            
