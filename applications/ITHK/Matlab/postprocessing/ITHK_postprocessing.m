@@ -145,6 +145,7 @@ ITHK_io_writeKML(kmltxt,addtxt,sens);
 %                          'economy_fishery' ...                      % 
 %                          'residential_groundwater' ...              % 
 %                          'residential_realestate' ...               % 
+%                          'recreation_beaches' ...                   % 
 %                          'recreation_dunearea' ...                 % 
 %                          'ecology_nourishmentimpactlength' ...      % 
 %                          'ecology_juvenilefish' ...                 % 
