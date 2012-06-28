@@ -55,7 +55,7 @@ for i=1:nobs
     
     disp(['Generating water level prediction for ' idcode ' from ' db ' ...']);
     
-    if strcmpi(hm.scenario,'forecasts')
+    if strcmpi(hm.scenarioType,'forecast')
         t0=floor(hm.cycle-6);
     else
         t0=hm.cycle;
