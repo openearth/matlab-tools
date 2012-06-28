@@ -20,7 +20,10 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 %    refdatenum       = default, datenum(1970,1,1);
 %    timezone         = default, '+00:00';
 %    OS               = end of line type, default, 'unix';
-%    newgrid          = whetehr to write header block, default, 0;
+%    newgrid          = whether to write header block, default, 0;
+%    writegrd         = whether to write grd, default true; can be set to
+%                       false if grd was already written in first time step
+%                       and all time steps have the same grd
 %    CoordinateSystem = to be passed to WLGRID, 'Cartesian' or 'Spherical';
 %    fmt              = '%7g';
 %
@@ -76,6 +79,7 @@ OPT.header           = {[]};
 OPT.filetype         = 'meteo_on_curvilinear_grid';
 OPT.nodata_value     = nan;
 OPT.grid_file        = ['temp.grd'];
+OPT.writegrd         = true;
 OPT.quantity         = 'x_wind';
 OPT.unit             = 'm s-1';
 
@@ -211,9 +215,10 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
         if isempty(fileparts(OPT.grid_file))
             OPT.grid_file = fullfile(fileparts(filehandle),OPT.grid_file);
         end
-        wlgrid('write','filename',OPT.grid_file,'X',x,'Y',y,'CoordinateSystem',OPT.CoordinateSystem,'Format','NewRGF')
-        
-        disp(['written grid file: ',OPT.grid_file]);
+        if OPT.writegrd
+            wlgrid('write','filename',OPT.grid_file,'X',x,'Y',y,'CoordinateSystem',OPT.CoordinateSystem,'Format','NewRGF')
+            disp(['written grid file: ',OPT.grid_file]);
+        end
         
         fprinteol(fid,OPT.OS)
         fprintf  (fid,'first_data_value = grid_llcorner')            ;%# Options: grid_llcorner, grid_ul_corner, grid_lrcorner or grid_urcorner
