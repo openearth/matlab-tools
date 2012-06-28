@@ -120,8 +120,7 @@ if wave.diffraction
 end
 MDW.Processes.WindGrowth.value     = wave.windgrowth;
 MDW.Processes.WindGrowth.type      = 'boolean';
-%MDW.Processes.WhiteCapping.value   = wave.whitecapping;
-MDW.Processes.WhiteCapping.value   = 'Komen';
+MDW.Processes.WhiteCapping.value   = wave.whitecapping;
 MDW.Processes.Quadruplets.value    = wave.quadruplets;
 MDW.Processes.Quadruplets.type     = 'boolean';
 MDW.Processes.Refraction.value     = wave.refraction;

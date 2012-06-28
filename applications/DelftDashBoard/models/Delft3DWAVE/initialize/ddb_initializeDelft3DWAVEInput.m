@@ -42,7 +42,8 @@ input.flowwaterlevel=1;
 input.flowvelocity=1;
 input.flowwind=1;
 input.coupledwithflow=0;
-
+input.useflowtexts={'No','Yes','Yes, and extend'};
+input.useflowvalues=[0 1 2];
 input.mdffile            = '';
 input.availableflowtimes = [];
 input.nravailableflowtimes = 0;
@@ -79,7 +80,7 @@ input.diffraccoef       = 0.2;
 input.diffracsteps      = 5;                                          
 input.diffracprop       = 1;                                          
 input.windgrowth        = 1;                                      
-input.whitecapping      = 1;                                          
+input.whitecapping      = 'komen';                                          
 input.quadruplets       = 0;                                      
 input.refraction        = 1;                                       
 input.freqshift         = 1;                                       
@@ -90,7 +91,9 @@ input.bedfriccoefjonswap= 0.067;
 input.bedfriccoefcollins= 0.015;                             
 input.bedfriccoefmadsen = 0.05;                             
 input.bedfrictiontypestext={'JONSWAP','Collins','Madsen et al.'};
-input.bedfrictiontypes={'jonswap','collins','madsen'};
+input.bedfrictiontypes={'jonswap','collins','madsen et al.'};
+input.whitecappingtypes={'none','Komen','Westhuysen'};
+input.whitecappingtypestext={'None','Komen','Westhuysen'};
 
 %% Numerics
 input.dirspacecdd       = 0.5;
@@ -128,6 +131,7 @@ input.domains=ddb_initializeDelft3DWAVEDomain(input.domains,1);
 input.gridnames={''};
 input.nrgrids=0;
 input.nestgrids = {''};
+input.activegrids=[];
 
 %% Boundaries
 input.nrboundaries=0;

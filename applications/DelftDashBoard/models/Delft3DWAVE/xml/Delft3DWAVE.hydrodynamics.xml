@@ -8,47 +8,110 @@
     <title>Hydrodynamics</title>
   </element>
   <element>
+    <tag>editcompgrids</tag>
+    <style>listbox</style>
+    <position>55 20 185 120</position>
+    <text>Computational grids</text>
+    <textposition>above-center</textposition>
+    <variable>handles.activeWaveGrid</variable>
+    <type>integer</type>
+    <tooltipstring>Select one or more computational grids</tooltipstring>
+    <multivariable>activegrids</multivariable>
+    <max>1000</max>
+    <callback>ddb_Delft3DWAVE_grid</callback>
+    <option1>selectgrid</option1>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input.gridnames</variable>
+      </texts>
+    </list>
+  </element>
+  <element>
     <tag>textselecthydro</tag>
     <style>text</style>
-    <position>65 145</position>
+    <position>320 145</position>
     <text>Select hydrodynamics results from Delft3D-FLOW</text>
   </element>
   <element>
     <tag>checkuseflowbedlevel</tag>
-    <style>checkbox</style>
-    <position>65 120</position>
-    <variable>flowbedlevel</variable>
+    <style>popupmenu</style>
+    <position>320 125 130 20</position>
+    <variable>handles.Model(md).Input.domains(awg).flowbedlevel</variable>
+    <type>integer</type>
     <tooltipstring>Use bed level from Delft3D-FLOW (overrides bed level from depth file in Delft3D-WAVE)</tooltipstring>
     <text>Bathymetry</text>
+    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+    <option1>checkbedlevel</option1>
+    <list>
+      <texts>
+        <variable>useflowtexts</variable>
+      </texts>
+      <values>
+        <variable>useflowvalues</variable>
+      </values>
+    </list>     
   </element>
   <element>
     <tag>checkuseflowwaterlevel</tag>
-    <style>checkbox</style>
-    <position>65 95</position>
-    <variable>flowwaterlevel</variable>
+    <style>popupmenu</style>
+    <position>320 100 130 20</position>
+    <variable>handles.Model(md).Input.domains(awg).flowwaterlevel</variable>
+    <type>integer</type>
     <tooltipstring>Use water level from Delft3D-FLOW (overrides water level specified in MDW file)</tooltipstring>
     <text>Water level</text>
+    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+    <option1>checkwaterlevel</option1>
+    <list>
+      <texts>
+        <variable>useflowtexts</variable>
+      </texts>
+      <values>
+        <variable>useflowvalues</variable>
+      </values>
+    </list>     
   </element>
   <element>
     <tag>checkuseflowcurrent</tag>
-    <style>checkbox</style>
-    <position>65 70</position>
-    <variable>flowvelocity</variable>
+    <style>popupmenu</style>
+    <position>320 75 130 20</position>
+    <variable>handles.Model(md).Input.domains(awg).flowvelocity</variable>
+    <type>integer</type>
     <tooltipstring>Use velocities from Delft3D-FLOW (overrides velocity specified in MDW file)</tooltipstring>
     <text>Current</text>
+    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+    <option1>checkcurrent</option1>
+    <list>
+      <texts>
+        <variable>useflowtexts</variable>
+      </texts>
+      <values>
+        <variable>useflowvalues</variable>
+      </values>
+    </list>     
   </element>
   <element>
     <tag>checkuseflowwind</tag>
-    <style>checkbox</style>
-    <position>65 45</position>
-    <variable>flowwind</variable>
+    <style>popupmenu</style>
+    <position>320 50 130 20</position>
+    <variable>handles.Model(md).Input.domains(awg).flowwind</variable>
+    <type>integer</type>
     <tooltipstring>Use wind from Delft3D-FLOW (overrides wind specified in MDW file)</tooltipstring>
     <text>Wind</text>
+    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+    <option1>checkwind</option1>
+    <list>
+      <texts>
+        <variable>useflowtexts</variable>
+      </texts>
+      <values>
+        <variable>useflowvalues</variable>
+      </values>
+    </list>     
   </element>
   <element>
     <tag>pushselectmdffile</tag>
     <style>pushselectfile</style>
-    <position>65 20 100 20</position>
+    <position>320 20 100 20</position>
     <tooltipstring>Select Delft3D-FLOW mdf file</tooltipstring>
     <text>Select FLOW file</text>
     <variable>mdffile</variable>
@@ -61,23 +124,8 @@
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>flowbedlevel</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>flowwaterlevel</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>flowvelocity</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>flowwind</variable>
-            <value>1</value>
+            <variable>handles.Model(md).Input.coupledwithflow</variable>
+            <value>0</value>
             <operator>eq</operator>
           </check>
         </checks>

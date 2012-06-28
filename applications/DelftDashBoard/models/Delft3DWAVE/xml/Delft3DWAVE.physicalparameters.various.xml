@@ -13,23 +13,23 @@
     <position>10 80</position>
     <text>Wind Growth</text>
     <type>integer</type>
-    <variable>handles.Model(md).Input(ad).windgrowth</variable>
+    <variable>windgrowth</variable>
     <callback>ddb_Delft3DWAVE_physicalParameters</callback>
   </element>
   <element>
-    <tag>checkwhitecapping</tag>
+    <tag>checkquadruplets</tag>
     <style>checkbox</style>
     <position>10 50</position>
-    <text>Whitecapping</text>
+    <text>Quadruplets</text>
     <type>integer</type>
-    <variable>handles.Model(md).Input(ad).whitecapping</variable>
+    <variable>quadruplets</variable>
     <dependencies>
       <dependency>
         <action>enable</action>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).windgrowth</variable>
+            <variable>windgrowth</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>
@@ -38,19 +38,27 @@
     </dependencies>
   </element>
   <element>
-    <tag>checkquadruplets</tag>
-    <style>checkbox</style>
-    <position>10 50</position>
-    <text>Quadruplets</text>
-    <type>integer</type>
-    <variable>handles.Model(md).Input(ad).quadruplets</variable>
+    <tag>selectwhitecapping</tag>
+    <style>popupmenu</style>
+    <position>200 80 100 20</position>
+    <text>Whitecapping</text>
+    <type>string</type>
+    <variable>whitecapping</variable>
+    <list>
+      <texts>
+        <variable>whitecappingtypestext</variable>
+      </texts>
+      <values>
+        <variable>whitecappingtypes</variable>
+      </values>
+    </list>     
     <dependencies>
       <dependency>
         <action>enable</action>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input(ad).windgrowth</variable>
+            <variable>windgrowth</variable>
             <value>1</value>
             <operator>eq</operator>
           </check>
@@ -64,7 +72,7 @@
     <position>600 100</position>
     <text>Refraction</text>
     <type>integer</type>
-    <variable>handles.Model(md).Input(ad).refraction</variable>
+    <variable>refraction</variable>
   </element>
   <element>
     <tag>checkfreqshiftactivate</tag>
@@ -72,6 +80,6 @@
     <position>600 75</position>
     <text>Frequency Shift</text>
     <type>integer</type>
-    <variable>handles.Model(md).Input(ad).freqshift</variable>
+    <variable>freqshift</variable>
   </element>
 </root>

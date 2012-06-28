@@ -235,7 +235,6 @@
       </dependency>
     </dependencies>    
   </element>  
-
   <element>
     <tag>editcoefficientjonswap</tag>
     <style>edit</style>
@@ -270,7 +269,6 @@
       </dependency>
     </dependencies>        
   </element>
-
   <element>
     <tag>editcoefficientjonswap</tag>
     <style>edit</style>
@@ -305,7 +303,6 @@
       </dependency>
     </dependencies>        
   </element>
-
   <element>
     <tag>editcoefficientjonswap</tag>
     <style>edit</style>
@@ -340,7 +337,6 @@
       </dependency>
     </dependencies>        
   </element>
-
   <element>
     <tag>checkdiffraction</tag>
     <style>checkbox</style>

@@ -24,6 +24,7 @@
           <tag>hydrodynamics</tag>
           <tabstring>Hydrodynamics</tabstring>
           <elements>Delft3DWAVE.hydrodynamics.xml</elements>
+          <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
         </tab>
         <tab>
           <tag>grids</tag>
@@ -39,6 +40,7 @@
           <tag>boundaries</tag>
           <tabstring>Boundaries</tabstring>
           <elements>Delft3DWAVE.boundaries.xml</elements>
+          <callback>ddb_Delft3DWAVE_boundaries</callback>
         </tab>
         <tab>
           <tag>obstacles</tag>
