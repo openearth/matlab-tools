@@ -87,6 +87,8 @@ for i=1:length(varargin)
                 dx=varargin{i+1};
             case{'dy'}
                 dy=varargin{i+1};
+            case{'exedirflow'}
+                exedirflow=varargin{i+1};
         end
     end
 end
@@ -248,7 +250,7 @@ for ipar=1:npar
     end
     
 %    writeD3DmeteoPart([rundir fname '.' extstr],s2,parameter{ipar},meteostr,unitstr,unit,reftime);
-    writeD3Dmeteo([rundir fname '.' extstr],s2,parameter{ipar},meteostr,unitstr,unit,reftime);
+    writeD3Dmeteo([rundir fname '.' extstr],s2,parameter{ipar},meteostr,unitstr,unit,reftime,exedirflow);
     
 end
 
