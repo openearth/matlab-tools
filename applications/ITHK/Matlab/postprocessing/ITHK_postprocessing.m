@@ -67,6 +67,9 @@ fprintf('ITHK postprocessing\n');
 
     % Add effect SLR to PRN info
     ITHK_add_SLR(sens);
+
+    % Add impact of coastline on dunes (no feedback from dunes to the coastline!)
+    ITHK_postprocessDUNEGROWTH(sens);
     
     % Add coastline to KML
     ITHK_PRN_to_kml(sens);
@@ -145,22 +148,3 @@ ITHK_io_writeKML(kmltxt,addtxt,sens);
 %                          'costs_investment' ...                     % 
 %                          'costs_maintenance' ...                    % 
 %                          'costs_upgradability'};                    % 
-%
-%
-% % Indicator : Dune Types
-% if S.userinput.indicators.dunes == 1
-%     dunerules(sens);                 %dunes
-% end
-% 
-% % Indicator : Dune Growth
-% if S.userinput.indicators.dunesABS == 1
-%     settings = S.settings.dunes;
-%     S.dunes = postprocessDUNEGROWTH(PRNfileName,settings);
-% end
-% 
-% % Indicator : Direct Impact On Benthic Population
-% if S.userinput.indicators.eco == 1
-%     ecorules2;
-% end
-% % Indicator : Costs
-% %S=ITHK_calculate_costs(S);    %budget
