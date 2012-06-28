@@ -44,6 +44,8 @@ function [KMLdata]=ITHK_KMLicons(x,y,class,icons,offset,sens)
 % $HeadURL$
 % $Keywords: $
 
+fprintf('ITHK postprocessing : Generating KMLicons [');
+
 global S
 
 if nargin<6
@@ -54,16 +56,37 @@ for kk=1:length(icons)
     iconclass(kk) = str2double(icons(kk).class);
 end
 
+%% time related parameters
+tvec            = S.PP(sens).settings.tvec;
+tvec(length(tvec)+1)=round(2*tvec(end)-tvec(end-1));
+t0              = S.PP(sens).settings.t0;
+
+%% get smoothed orientation of the coast + smoothed offset of coastline
+dx         = x(2:end)-x(1:end-1);
+dy         = y(2:end)-y(1:end-1);
+alpha      = atan2(dy,dx)'; %*180/pi()
+alpha      = [alpha(1);(alpha(1:end-1)+alpha(2:end))/2;alpha(end)];
+[alpha]    = ITHK_smoothvariable(alpha,100);
+x1         = x'-offset*sin(alpha);           %*cos(alpha-pi()/2);  
+y1         = y'+offset*cos(alpha);           %+offset*sin(alpha-pi()/2);
+
+%% get KML text string
+IDii = round([1:(length(x1)-1)/9:length(x1)]);
 KMLdata=[];
-for ii=2:length(x)-1
-    [lon,lat] = convertCoordinates(x(ii)+offset,y(ii),S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+for ii=1:length(x1)
+    [lon,lat] = convertCoordinates(x1(ii),y1(ii),S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
     KMLdata2=[];
     for jj = 1:length(S.PP(sens).settings.tvec)
-        time    = datenum((S.PP(sens).settings.tvec(jj)+S.PP(sens).settings.t0),1,1);
+        time1         = datenum(tvec(jj)+t0,1,1);
+        time2         = datenum(tvec(jj+1)+t0-1/365/24/60/60,1,1);
         % dunes to KML  
-        id = find(iconclass==class(ii,jj));
-        OPT.icon = icons(id).url;
-        KMLdata2 = [KMLdata2 ITHK_KMLtextballoon(lon,lat,'icon',OPT.icon,'timeIn',time,'timeOut',time+364)];
+        OPT.icon = icons(iconclass==class(ii,jj)).url; %id = find(iconclass==class(ii,jj));OPT.icon = icons(id).url; fprintf('%s  =  %s\n',icons(id).url(end-20:end),OPT.icon(end-20:end))
+        KMLdata2 = [KMLdata2 ITHK_KMLtextballoon(lon,lat,'icon',OPT.icon,'timeIn',time1,'timeOut',time2)];
     end
     KMLdata = [KMLdata KMLdata2];
+
+    if max(IDii==ii)==1
+    fprintf('#');
+    end
 end
+fprintf(']\n');

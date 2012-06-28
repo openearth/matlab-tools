@@ -27,7 +27,7 @@
         <class>3</class>
         <url>http://127.0.0.1:5000/images/flowers_dark_green.png</url>
       </icons>
-      <offset>-10000</offset> 
+      <offset>-8000</offset> 
     </habitatrichness>
     <dunes>
       <plottype>icons</plottype>

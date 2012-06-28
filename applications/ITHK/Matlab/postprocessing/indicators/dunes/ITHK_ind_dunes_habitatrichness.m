@@ -18,7 +18,7 @@ fprintf('ITHK postprocessing : Indicator for dune habitat richness\n');
 global S
 
 if nargin<1
-sens=1
+sens=1;
 end
 
 

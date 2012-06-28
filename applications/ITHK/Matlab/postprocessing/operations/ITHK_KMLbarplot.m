@@ -102,7 +102,14 @@ barstyle1  = KML_stylePoly('name','default','fillColor',colour{1},'lineColor',[0
 barstyle2  = KML_stylePoly('name','default','fillColor',colour{2},'lineColor',[0 0 0],'lineWidth',0.5,'fillAlpha',fillalpha); % green bar style
 barstyle3  = KML_stylePoly('name','default','lineColor',[0.8 0.8 0.8],'lineWidth',0.5,'polyFill',0); % outline of area of bar
 
-%% get smoothed orientation of the coast
+%% time related parameters
+tvec            = S.PP(sens).settings.tvec;
+tvec(length(tvec)+1)=round(2*tvec(end)-tvec(end-1));
+t0              = S.PP(sens).settings.t0;
+time1           = datenum(tvec(1)+t0,1,1);
+time2           = datenum(tvec(end)+t0-1/365/24/60/60,1,1);
+
+%% get smoothed orientation of the coast + smoothed offset of coastline
 dx         = x(2:end)-x(1:end-1);
 dy         = y(2:end)-y(1:end-1);
 alpha      = atan2(dy,dx)'; %*180/pi()
@@ -112,24 +119,18 @@ x1         = x'-offset*sin(alpha);           %*cos(alpha-pi()/2);
 y1         = y'+offset*cos(alpha);           %+offset*sin(alpha-pi()/2);
 
 %% add reference line at 'offset' value
-time1           = datenum((S.PP(sens).settings.tvec(1)+S.PP(sens).settings.t0),1,1);
-time2           = datenum(round((S.PP(sens).settings.tvec(end)*2-S.PP(sens).settings.tvec(end-1)+S.PP(sens).settings.t0))-1/365/24/60/60,1,1);
 dist            = distXY(x1,y1);
 distref         = [dist(1):min(diff(dist))/5:dist(end)];
 x1ref           = interp1(dist,x1,distref,'pchip','extrap');
 y1ref           = interp1(dist,y1,distref,'pchip','extrap');
 [lonref,latref] = convertCoordinates(x1ref,y1ref,S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
 KMLdata         = [KMLdata ITHK_KMLline(latref,lonref,'timeIn',time1,'timeOut',time2,'lineColor',[0.3 0.3 0.3],'lineWidth',3,'lineAlpha',.8,'writefile',0)];
-fprintf('#');
 
 %% loop over time
+IDjj = round([1:(length(tvec)-2)/9:length(tvec)-1]);
 for jj = 1:length(S.PP(sens).settings.tvec)
-    time         = datenum((S.PP(sens).settings.tvec(jj)+S.PP(sens).settings.t0),1,1);
-    if jj==length(S.PP(sens).settings.tvec)
-        time2    = datenum(round((S.PP(sens).settings.tvec(end)*2-S.PP(sens).settings.tvec(end-1)+S.PP(sens).settings.t0))-1/365/24/60/60,1,1);
-    else
-        time2    = datenum((S.PP(sens).settings.tvec(jj+1)+S.PP(sens).settings.t0)-1/365/24/60/60,1,1);
-    end
+    time1         = datenum(tvec(jj)+t0,1,1);
+    time2         = datenum(tvec(jj+1)+t0-1/365/24/60/60,1,1);
 
     % get x,y coordinates of base point of bars (x1,y1) and z-value in xy coordinates (xtip,ytip)
     % construct x,y coordinates of bars on the basis of x1, xtip and barwidth (five coordinates specifying a rectangle for each bar)
@@ -148,15 +149,15 @@ for jj = 1:length(S.PP(sens).settings.tvec)
     IDpos        = find(z(:,jj)>=0);
     for ii=1:length(IDneg) %length(S.PP(sens).settings.sgridRough)
         KMLdata2 = [KMLdata2,barstyle1];
-        KMLdata2 = [KMLdata2 KMLpolytext(time,time2,latpoly(:,IDneg(ii)),lonpoly(:,IDneg(ii)))];
+        KMLdata2 = [KMLdata2 KMLpolytext(time1,time2,latpoly(:,IDneg(ii)),lonpoly(:,IDneg(ii)))];
     end
     for ii=1:length(IDpos) %length(S.PP(sens).settings.sgridRough)
         KMLdata2 = [KMLdata2,barstyle2];
-        KMLdata2 = [KMLdata2 KMLpolytext(time,time2,latpoly(:,IDpos(ii)),lonpoly(:,IDpos(ii)))];
+        KMLdata2 = [KMLdata2 KMLpolytext(time1,time2,latpoly(:,IDpos(ii)),lonpoly(:,IDpos(ii)))];
     end
     KMLdata = [KMLdata KMLdata2];
 
-    if mod(jj,round(length(S.PP(sens).settings.tvec)/10))==0
+    if max(IDjj==jj)==1
     fprintf('#');
     end
 end
@@ -164,6 +165,7 @@ end
 %% add empty outline of bar as a reference (if wanted)
 if ~isempty(outlineVAL)
     [latpoly,lonpoly]=getLatLon(x1,y1,repmat(outlineVAL,size(x1)),vectorscale,alpha,S.PP(sens).settings.widthRough,S.EPSG);
+    time1           = datenum(tvec(1)+t0,1,1);
     for ii=1:length(x1) 
         KMLdata = [KMLdata,barstyle3];
         KMLdata = [KMLdata KMLpolytext(time1,time2,latpoly(:,ii),lonpoly(:,ii))];

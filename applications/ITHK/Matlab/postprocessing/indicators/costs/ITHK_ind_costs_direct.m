@@ -113,8 +113,8 @@ for jj=1:length(fldname)
             idt                            = 1;
             R.idRANGE                      = S.userinput.(fldname{jj})(ii).idRANGE(:);
             R.idRANGE2                     = S.userinput.(fldname{jj})(ii).idRANGE2(:);
-            costsUB(idRANGE,idt)           = costsUB(idRANGE,idt) + costs.(fldname{jj}).costs(ii)/length(R.idRANGE)/length(idt);
-            costsGE(idRANGE2,idt)          = costsGE(idRANGE2,idt) + costs.(fldname{jj}).costs(ii)/length(R.idRANGE2)/length(idt);
+            costsUB(R.idRANGE,idt)           = costsUB(R.idRANGE,idt) + costs.(fldname{jj}).costs(ii)/length(R.idRANGE)/length(idt);
+            costsGE(R.idRANGE2,idt)          = costsGE(R.idRANGE2,idt) + costs.(fldname{jj}).costs(ii)/length(R.idRANGE2)/length(idt);
             
             if jj==1
                 addtxt  = sprintf('Revetment with length %1.0fm. ',R.length);
@@ -185,7 +185,7 @@ for ii=1:length(S.userinput.nourishment)
     %% add pop-up window
     addtxt  = sprintf(['This nourishment is characterised by a volume of %2.2f million m^3 and a width of %1.0f m which is placed in the year %1.0f. ',...
                        'The costprices are about %2.2f to %2.2f euro/m^3 for the dredging and nourishing, about %2.2f euro/m^3/km for the transport and %2.2f to %2.2f euro/m^3 for indirect costs.'], ...
-                       N.VOL/10^6,N.WIDTH,N.tstart,min(costs_nourish(ii,:)),max(costs_nourish(ii,:)),costs_transport(ii),min(costs_indirect(ii,:)),max(costs_indirect(ii,:)));
+                       N.VOL/10^6,N.WIDTH,N.tstart+S.PP(sens).settings.t0,min(costs_nourish(ii,:)),max(costs_nourish(ii,:)),costs_transport(ii),min(costs_indirect(ii,:)),max(costs_indirect(ii,:)));
     KMLdata1 = [KMLdata1,KMLcosts(S,'nourishment',costs.nourishments.costs(ii,:),ii,N.lon,N.lat,addtxt)];
 end
 end
@@ -214,14 +214,14 @@ S.PP(sens).output.kml_costs_direct1 = KMLdata1;
 S.PP(sens).output.kml_costs_direct2 = KMLdata2;
 S.PP(sens).output.kml_costs_direct3 = KMLdata3;
 
-addtxt = '_costs1';
-ITHK_io_writeKML(KMLdata1,addtxt,sens);
-
-addtxt = '_costs2';
-ITHK_io_writeKML(KMLdata2,addtxt,sens);
-
-addtxt = '_costs3';
-ITHK_io_writeKML(KMLdata3,addtxt,sens);
+% addtxt = '_costs1';
+% ITHK_io_writeKML(KMLdata1,addtxt,sens);
+% 
+% addtxt = '_costs2';
+% ITHK_io_writeKML(KMLdata2,addtxt,sens);
+% 
+% addtxt = '_costs3';
+% ITHK_io_writeKML(KMLdata3,addtxt,sens);
 
 end
 

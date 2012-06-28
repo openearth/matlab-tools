@@ -86,7 +86,6 @@ fprintf('ITHK postprocessing\n');
     ITHK_ind_costs_direct(sens);
     ITHK_ind_dunes_duneclasses(sens);
     ITHK_ind_dunes_habitatrichness(sens);
-%     ITHK_dunerules2(sens);
 
 %% Add disclaimer
 % if isfield(S.settings.postprocessing,'disclaimer') 
