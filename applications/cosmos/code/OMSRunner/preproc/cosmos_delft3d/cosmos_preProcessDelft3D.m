@@ -115,7 +115,7 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','# === local    executables:');
                 fprintf(fid,'%s\n','#D3D_HOME=/u/mourits/delft3d');
-                fprintf(fid,'%s\n','exedir=/u/ormondt/d3d_versions/delftflow_trunk2/bin');
+                fprintf(fid,'%s\n',['exedir=' hm.exedirflow]);   %old handle: fprintf(fid,'%s\n','exedir=/u/ormondt/d3d_versions/delftflow_trunk2/bin');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','export D3D_HOME=/opt/delft3d');
                 fprintf(fid,'%s\n','');
@@ -201,7 +201,7 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','# === local    executables:');
                 fprintf(fid,'%s\n','#D3D_HOME=/u/mourits/delft3d');
-                fprintf(fid,'%s\n','exedir=/u/ormondt/d3d_versions/delftflow_trunk2/bin');
+                fprintf(fid,'%s\n',['exedir=' hm.exedirflow]);   %old handle: fprintf(fid,'%s\n','exedir=/u/ormondt/d3d_versions/delftflow_trunk2/bin');
                 fprintf(fid,'%s\n','exedirwave=/u/ormondt/d3d_versions/delftflow_trunk/bin');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','export D3D_HOME=/opt/delft3d');
