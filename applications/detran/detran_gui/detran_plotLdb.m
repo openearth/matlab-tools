@@ -56,7 +56,7 @@ if get(findobj(fig,'tag','detran_plotLdbBox'),'Value')==1
 %         l(ii)=fill(ldbCell{ii}(:,1),ldbCell{ii}(:,2),[0 0.5 0]);
 %     end
 %     set(l,'FaceVertexCData',[0 0.5 0],'tag','ldb'); % dit is blijkbaar nodig om de volgende warning te voorkomen: Warning: Patch FaceVertexCData of size 0 cannot be used with Flat shading.
-    l=filledldb(data.ldb,[0 0 0],[0 0.5 0],[],1000);
+    l=filledLDB(data.ldb,[0 0 0],[0 0.5 0],[],1000);
     set(l,'tag','ldb');
 end
 
