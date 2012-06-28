@@ -338,7 +338,7 @@ try
             
             fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnow,'dd mmm HH:MM'),'May','Mei'),'Mar','Mrt'),'Oct','Okt'));
             fc.timepoints(tel).timepoint.timestr.type  = 'char';
-            fc.timepoints(tel).timepoint.png.value      = [name '_' datestr(timnow,'yyyymmddHH') '.png'];
+            fc.timepoints(tel).timepoint.png.value      = [name '/' name '_' datestr(timnow,'yyyymmddHH') '.png'];
             fc.timepoints(tel).timepoint.png.type      = 'char';
             fc.timepoints(tel).timepoint.id.value      = datestr(timnow,'yyyymmddHH');
             fc.timepoints(tel).timepoint.id.type       = 'int';
