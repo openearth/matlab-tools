@@ -269,6 +269,3 @@ set(element.handle,'Value',1);
 function turnOff(element)
 set(element.handle,'Value',0);
 
-%%
-function update(element)
-setUIElement(element.handle);

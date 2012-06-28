@@ -612,7 +612,7 @@ if ~isempty(str{1})
                     end
                 end
             else
-                values=str{ii};
+                values=str;
             end
             gui_setValue(el,el.variable,values{ii});
         otherwise

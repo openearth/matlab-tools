@@ -119,7 +119,6 @@ if isempty(tabnames) && ~isempty(strings)
 end
 
 if isempty(handle)
-%    handle=findobj(fig,'Tag',lower(tag),'Type','uipanel');
     handle=findobj(fig,'Tag',tag,'Type','uipanel');
 end
 
@@ -145,8 +144,8 @@ switch lower(fcn)
     case{'enabletab'}
         panel=get(handle,'UserData');
         tabnames=panel.tabNames;
-        iac=strmatch(lower(tag),lower(tabnames),'exact');
-        set(panel.tabTextHandles(iac),'Enable','on');
+        iac=strmatch(lower(tabname),lower(tabnames),'exact');
+        set(panel.tabTextHandles(iac),'Enable','inactive');
     case{'delete'}
         deleteTabPanel(handle);
     case{'resize'}
@@ -254,9 +253,6 @@ largeTabs=panel.largeTabHandles;
 set(tabs(1:ntabs),'Visible','on');
 set(tabText(1:ntabs),'Visible','on');
 set(blankText(1:ntabs),'Visible','on');
-% set(tabs(ntabs+1:20),'Visible','off');
-% set(tabText(ntabs+1:20),'Visible','off');
-% set(blankText(ntabs+1:20),'Visible','off');
 
 foregroundColor=panel.foregroundColor;
 backgroundColor=panel.backgroundColor;
