@@ -20,6 +20,7 @@ end
 if model.forecastplot.plot
     try
         dir1=[dr 'lastrun' filesep 'figures' filesep 'forecast' filesep '*.*'];
+        MakeDir([hm.webDir 'zandmotor' filesep 'forecast' filesep],'results');
         MakeDir([hm.webDir 'zandmotor' filesep 'forecast' filesep],'results',hm.models(m).forecastplot.name);
         dir2=[hm.webDir 'zandmotor' filesep 'forecast' filesep 'results' filesep hm.models(m).forecastplot.name];
         delete([dir2 filesep '*.xml']);
