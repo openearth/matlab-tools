@@ -16,7 +16,15 @@ function ITHK_ind_costs_direct(sens)
 %
 % OUTPUT:
 %      S      structure with ITHK data (global variable that is automatically used)
-%
+%              .PP(sens).NNmapping.costs
+%              .PP(sens).GEmapping.costs
+%              .PP(sens).GEmapping.costscum
+%              .PP(sens).UBmapping.costs
+%              .PP(sens).TTmapping.costs
+%              .PP(sens).TTmapping.costscum
+%              .PP(sens).output.kml_costs_direct1
+%              .PP(sens).output.kml_costs_direct2
+%              .PP(sens).output.kml_costs_direct3
 
 %% Copyright notice
 %   --------------------------------------------------------------------

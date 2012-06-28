@@ -14,8 +14,9 @@ function ITHK_ind_recreation_beachwidth(sens)
 %
 % OUTPUT:
 %      S      structure with ITHK data (global variable that is automatically used)
-%              .PP(sens).UBmapping.fish.ShoreWidthFact
-%              .PP(sens).GEmapping.fish.ShoreWidthFact
+%              .PP(sens).UBmapping.recreation.beachwidth
+%              .PP(sens).GEmapping.recreation.beachwidth
+%              .PP(sens).output.kml_recreation_beachwidth
 
 %% Copyright notice
 %   --------------------------------------------------------------------

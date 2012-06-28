@@ -46,7 +46,10 @@ KMLmapName                     = S.userinput.name;
 fid                            = fopen(S.PP(sens).output.kmlFileName,'w');
 kmltxt                         = strrep(kmltxt,'\','\\');
 kmltxt                         = strrep(kmltxt,'%','\%');
-fprintf(fid,[KML_header('kmlName',KMLmapName), ...
-            kmltxt, ...
-            KML_footer],'interpreter','off');
+ids                            = int32([0:length(kmltxt)/9:length(kmltxt)-length(kmltxt)/9,length(kmltxt)]);
+fprintf(fid,[KML_header('kmlName',KMLmapName)],'interpreter','off');
+for ii=1:length(ids)-1
+    fprintf(fid,[kmltxt(ids(ii)+1:ids(ii+1))],'interpreter','off');
+end
+fprintf(fid,[KML_footer],'interpreter','off');
 fclose(fid);

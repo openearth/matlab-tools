@@ -90,7 +90,9 @@ fprintf('ITHK postprocessing\n');
     ITHK_ind_dunes_duneclasses(sens);
     ITHK_ind_dunes_habitatrichness(sens);
     ITHK_ind_recreation_beachwidth(sens);
-
+    ITHK_ind_drinkwater_dunearea(sens);
+    ITHK_ind_recreation_dunearea(sens);
+    
 %% Add disclaimer
 % if isfield(S.settings.postprocessing,'disclaimer') 
 %     disclaimer = ITHK_kmldisclaimer;
@@ -103,7 +105,8 @@ kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, ...
           S.PP(sens).output.kml_foreshore_juvenilefish,S.PP(sens).output.kml_costs_direct1,...
           S.PP(sens).output.kml_costs_direct2,S.PP(sens).output.kml_costs_direct3,...
           S.PP(sens).output.kml_dunes_duneclasses,S.PP(sens).output.kml_dunes_habitatrichness,...
-          S.PP(sens).output.kml_recreation_beachwidth];
+          S.PP(sens).output.kml_recreation_beachwidth,S.PP(sens).output.kml_recreation_dunearea,...
+          S.PP(sens).output.kml_drinkwater_dunearea];
 addtxt = '';
 ITHK_io_writeKML(kmltxt,addtxt,sens);
 
@@ -127,7 +130,13 @@ kmltxt = [S.PP(sens).output.kml_dunes_duneclasses,S.PP(sens).output.kml_dunes_ha
 addtxt = '_dunes';
 ITHK_io_writeKML(kmltxt,addtxt,sens);
 
+kmltxt = [S.PP(sens).output.kml_recreation_beachwidth,S.PP(sens).output.kml_recreation_dunearea];
+addtxt = '_recreation';
+ITHK_io_writeKML(kmltxt,addtxt,sens);
 
+kmltxt = [S.PP(sens).output.kml_drinkwater_dunearea];
+addtxt = '_drinkingwater';
+ITHK_io_writeKML(kmltxt,addtxt,sens);
 
 %    indicatorfields    = {'safety_dykering' ...                      % 
 %                          'safety_structures' ...                    % 
@@ -136,7 +145,6 @@ ITHK_io_writeKML(kmltxt,addtxt,sens);
 %                          'economy_fishery' ...                      % 
 %                          'residential_groundwater' ...              % 
 %                          'residential_realestate' ...               % 
-%                          'recreation_beaches' ...                   % 
 %                          'recreation_dunearea' ...                 % 
 %                          'ecology_nourishmentimpactlength' ...      % 
 %                          'ecology_juvenilefish' ...                 % 
