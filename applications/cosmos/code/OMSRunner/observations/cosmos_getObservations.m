@@ -65,7 +65,7 @@ for i=1:nobs
     
     url=hm.observationStations{idb}.URL;
     
-    if strcmpi(hm.scenario,'forecasts')
+    if strcmpi(hm.scenarioType,'forecast')
         t0=floor(hm.cycle-8);
     else
         t0=hm.cycle;
