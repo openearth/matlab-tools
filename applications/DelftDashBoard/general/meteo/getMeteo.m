@@ -135,8 +135,6 @@ else
 %        switch lower(meteoloc)
 %            case{'nomads'}
                 getMeteoFromNomads3(meteoname,outputMeteoName,cycledate,cyclehour,tt,xlim,ylim,outdir,pars,pr);
-%            case{'matroos'}
-                getMeteoFromMatroos(meteoname,cycledate,cyclehour,tt,[],[],outdir);
 %        end
         
         if tnext>tLastAnalyzed
