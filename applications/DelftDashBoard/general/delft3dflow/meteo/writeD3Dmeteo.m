@@ -1,4 +1,4 @@
-function writeD3Dmeteo(fname, s, par, quantity, unit, gridunit, reftime)
+function writeD3Dmeteo(fname, s, par, quantity, unit, gridunit, reftime,exedirflow)
 %WRITED3DMETEO  One line description goes here.
 %
 %   More detailed description goes here.
@@ -74,7 +74,11 @@ nrows=length(s.y);
 fid=fopen(fname,'wt');
 fprintf(fid,'%s\n','### All text on a line behind the first # is parsed as commentary');
 fprintf(fid,'%s\n','### Additional commments');
-fprintf(fid,'%s\n','FileVersion      =    1.03                                               # Version of meteo input file, to check if the newest file format is used');
+if strcmpi(exedirflow, '/u/hoekstra/bin/Delft3D') || strcmpi(exedirflow, '/u/hoekstra/bin/Delft3D/')
+    fprintf(fid,'%s\n','FileVersion      =    1.02                                               # Version of meteo input file, to check if the newest file format is used');
+else
+    fprintf(fid,'%s\n','FileVersion      =    1.03                                               # Version of meteo input file, to check if the newest file format is used');
+end
 fprintf(fid,'%s\n','filetype         =    meteo_on_equidistant_grid                          # Type of meteo input file: meteo_on_flow_grid, meteo_on_equidistant_grid, meteo_on_curvilinear_grid or meteo_on_spiderweb_grid');
 fprintf(fid,'%s\n','NODATA_value     =    -999                                               # Value used for undefined or missing data');
 fprintf(fid,'%s\n',['n_cols           =    ' num2str(ncols) '                                                # Number of columns used for wind datafield']);
@@ -82,7 +86,9 @@ fprintf(fid,'%s\n',['n_rows           =    ' num2str(nrows) '                   
 fprintf(fid,'%s\n',['grid_unit        =    ' gridunit]);
 fprintf(fid,'%s\n',['x_llcorner       =   ' num2str(min(s.x))]);
 fprintf(fid,'%s\n',['y_llcorner       =   ' num2str(min(s.y))]);
-%fprintf(fid,'%s\n','value_pos        =    corner');
+if strcmpi(exedirflow, '/u/hoekstra/bin/Delft3D') || strcmpi(exedirflow, '/u/hoekstra/bin/Delft3D/')
+    fprintf(fid,'%s\n','value_pos        =    corner');
+end
 fprintf(fid,'%s\n',['dx               =   ' num2str(min(s.dx))]);
 fprintf(fid,'%s\n',['dy               =   ' num2str(min(s.dy))]);
 fprintf(fid,'%s\n','n_quantity       =    1                                                  # Number of quantities prescribed in the file');
