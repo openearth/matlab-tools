@@ -169,7 +169,11 @@ else
     fprintf(fid,'%s\n',['Ccofu = ' num2str(model.ccofu)]);
     fprintf(fid,'%s\n',['Ccofv = ' num2str(model.ccofu)]);
 end
-fprintf(fid,'%s\n',['Vicouv= ' num2str(model.VicoUV)]);
+if isfield(model,'filedy')
+    fprintf(fid,'%s\n',['Filedy= ' model.filedy]);
+else
+    fprintf(fid,'%s\n',['Vicouv= ' num2str(model.VicoUV)]);
+end
 fprintf(fid,'%s\n','Dicouv= 1.0000000e+000');
 fprintf(fid,'%s\n','Htur2d= #N#');
 fprintf(fid,'%s\n','Irov  = 0');
