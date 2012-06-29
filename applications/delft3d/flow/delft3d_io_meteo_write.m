@@ -253,7 +253,8 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
     %  dim2 = columns, so loop over dim2 (see data_row = grid_row above)
     % (dim1=0, dim2=0) is lower left corner, so loop dim in reverse, to have LL as first value (see first_data_value = grid_llcorner above)
     
-    for m=size(data,2):-1:1
+%     for m=size(data,2):-1:1 (WRONG???)
+    for m=1:size(data,2);        
         fprintf  (fid,[OPT.fmt,' '],data(:,m));
         fprinteol(fid,OPT.OS);
     end
