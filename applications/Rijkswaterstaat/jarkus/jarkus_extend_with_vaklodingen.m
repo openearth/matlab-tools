@@ -199,15 +199,18 @@ end
 for i = find(rect_select)'
     ncfile = ['http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingen' ids(i,:) '.nc'];
     
+    info = nc_info(ncfile);
+    
     xvl{i} = nc_varget(ncfile, 'x');
     yvl{i} = nc_varget(ncfile, 'y');
-    zta  = nc_varget(ncfile, 'z');
-    % start with latest measurement
-    zvl{i} = squeeze(zta(end,:,:));
+    % derive length of time dimension
+    nt = info.Dimension(strcmp({info.Dimension.Name}, 'time')).Length;
+    % initially load latest measurement
+    zvl{i}  = nc_varget(ncfile, 'z', [nt-1 0 0], [1 -1 -1]);
     % fill NaN's with older measurements
-    for t = size(zta,1):-1:1
+    for t = fliplr(1:nt)
         ii = isnan(zvl{i});
-        zt = squeeze(zta(t,:,:));
+        zt = nc_varget(ncfile, 'z', [t-1 0 0], [1 -1 -1]);
         zvl{i}(ii) = zt(ii);
     end
 end
