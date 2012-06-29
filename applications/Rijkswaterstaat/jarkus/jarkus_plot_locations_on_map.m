@@ -73,6 +73,7 @@ function ph = jarkus_plot_locations_on_map(varargin)
 error(nargchk(1, Inf, nargin))
 
 OPT = struct(...
+    'parent', [],...
     'projection', 'lonlat',...
     'marker', 'o',...
     'location', 'NorthWest');
@@ -120,7 +121,14 @@ y = nc_varget(url, projectiony);
 xytr = num2cell([tr.(rsp_x); tr.(rsp_y)]);
 
 %% plot
-ph = plot(x, y, xytr{:});
+if isempty(OPT.parent)
+    figure
+    parent = gca;
+else
+    parent = OPT.parent;
+end
+ph = plot(x, y, xytr{:},...
+    'parent', parent);
 
 %% set displaynames and markers
 lh = findobj(ph, 'XData', x, 'YData', y);

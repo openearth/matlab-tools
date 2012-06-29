@@ -1,7 +1,10 @@
 function [x z] = jarkus_combine_profiles(x1, z1, x2, z2, varargin)
-%JARKUS_COMBINE_PROFILES  One line description goes here.
+%JARKUS_COMBINE_PROFILES  combine two jarkus profiles
 %
-%   More detailed description goes here.
+%   Connect the landward part of profile 1 (x1, z1) with the seaward part o
+%   profile 2 (x2, z2). The connection is made at a predefined contour. For
+%   both profiles the most landward ('first') or most seaward ('last')
+%   crossing with the connection contour can be selected.
 %
 %   Syntax:
 %   varargout = jarkus_combine_profiles(varargin)
