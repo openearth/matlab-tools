@@ -65,19 +65,36 @@ function figaligntogrid(varargin)
 % $Keywords: $
 
 %%
-narginchk(0, 3)
+OPT = struct(...
+    'monitor', 'primary',...
+    'screensize', 0,...
+    'bottommargin', .04,...
+    'rightmargin', 0,...
+    'leftmargin', 0);
+
+error(nargchk(0, 3+length(fieldnames(OPT))*2, nargin))
+
+pnid = find(ismember(cellfun(@class, varargin, 'UniformOutput', false), 'char'), 1, 'first');
+OPT = setproperty(OPT, varargin{pnid:end});
+varargin(pnid:end) = [];
+
+if ~ismember(lower(OPT.monitor), {'primary' 'secondary' 'both'})
+    error('Unknown monitor option "%s"', OPT.monitor)
+end
+
+%%
 lowermargin = .04; % normalized value
 
 fh = sort(findall(0, 'type', 'figure'));
 [nrow mcolumn] = deal([]);
-if ismember(nargin, [1 3])
+if ismember(length(varargin), [1 3])
     fh = varargin{1}(ishandle(varargin{1}));
     if isempty(fh)
         return
     end
     fh = fh(:);
 end
-if ismember(nargin, 2:3)
+if ismember(length(varargin), 2:3)
     [nrow mcolumn] = deal(varargin{end-1:end});
 end
 
@@ -85,6 +102,21 @@ nfig = length(fh);
 if isempty(nrow)
     nrow = floor(sqrt(nfig));
     mcolumn = ceil(nfig / nrow);
+end
+
+if ~strcmpi(OPT.monitor, 'primary')
+    if size(get(0, 'MonitorPositions'), 1) == 1
+        error('No secondary monitor found')
+    end
+    if ispc
+        units = get(0, 'units');
+        set(0, 'units', 'normalized')
+        MonitorPositions = get(0, 'MonitorPositions');
+        set(0, 'units', units)
+    else
+        todo(sprintf('Monitor option "%s" not yet implemented for this platform', OPT.monitor));
+    end
+    return
 end
 
 units = get(fh, 'units');
