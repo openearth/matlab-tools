@@ -117,8 +117,7 @@ names = xb_get_vars(fname, 'vars', OPT.vars);
 
 c = 2;
 DIMSid = struct();
-for i = 1:length({info.Dataset.Name})
-    if ~any(strcmpi(info.Dataset(i).Name, names)); continue; end;
+for i = find(ismember({info.Dataset.Name}, names))
     
     [start len stride] = xb_index(info.Dataset(i).Size, OPT.start, OPT.length, OPT.stride);
     
