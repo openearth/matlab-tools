@@ -218,7 +218,7 @@ switch OPT.method
         % transects assuming that all transects are perpendicular to the
         % shoreline
         curvatures = relativeAngle ./ abs(distances) .* 1000;
-        radii = 180 ./ pi ./ curvatures;
+        radii = 1000 * 180 ./ pi ./ curvatures;
     case 'circle'
         d = [0:0.1:2*pi];
         radii = [];
