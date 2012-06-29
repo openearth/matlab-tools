@@ -170,11 +170,8 @@ while NextIter
     % define identifier of series of calculations to perform at once
     Calc = Calc(end)+1 : size(u,1);
     
-    % transform u to P
-    P(Calc,:) = norm_cdf(u(Calc,:), 0, 1);
-    
-    % transform P to x
-    x(Calc,:) = P2x(stochast, P(Calc,:));
+    % convert u to P and x
+    [P(Calc,:) x(Calc,:)] = u2Px(stochast, u(Calc,:));
     
     if any(any(~isfinite(x(Calc,:))))
         % non-finite x-values will cause problems in z-function
