@@ -201,6 +201,9 @@ if isfield(model,'vicouv')
 else
     hm.models(i).VicoUV=1;
 end
+if isfield(model,'filedy')
+    hm.models(i).Filedy=model.filedy;
+end
 if isfield(model,'momsol')
     hm.models(i).momSol=model.momsol;
 else
