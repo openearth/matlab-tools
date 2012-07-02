@@ -75,13 +75,7 @@ try
         handles.screenParameters.activeSecondTab=varargin{2};
     end
     setHandles(handles);
-    
-    h=findobj(gcf,'Tag','UIControl');
-    if ~isempty(h)
-        delete(h);
-    end
-    %drawnow;
-    
+        
     ddb_setWindowButtonUpDownFcn;
     ddb_setWindowButtonMotionFcn;
     set(gcf, 'KeyPressFcn',[]);
