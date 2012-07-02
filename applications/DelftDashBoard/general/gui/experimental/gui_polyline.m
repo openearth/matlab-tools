@@ -295,10 +295,11 @@ if ~isempty(x)
     setappdata(hg,'linehandle',h);
     setappdata(hg,'x',x);
     setappdata(hg,'y',y);
-            
+    
+    
     for i=1:length(x)
         mh(i)=plot(x(i),y(i),['r' options.marker]);
-        set(mh(i),'MarkerEdgeColor',options.markeredgecolor,'MarkerFaceColor',options.markerfacecolor,'MarkerSize',options.markersize);
+        set(mh(i),'MarkerEdgeColor',options.markeredgecolor,'MarkerFaceColor',options.markerfacecolor,'MarkerSize',options.markersize,'LineStyle','none');
         set(mh(i),'ButtonDownFcn',{@moveVertex});
         setappdata(mh(i),'parent',h);
         setappdata(mh(i),'number',i);
@@ -306,7 +307,7 @@ if ~isempty(x)
         set(mh(i),'Parent',hg);
     end
     setappdata(hg,'markerhandles',mh);
-    
+
     tx=[];
     if ~isempty(options.text)
         for i=1:length(x)
@@ -326,6 +327,7 @@ if ~isempty(x)
             feval(options.createcallback,options.createinput,hg,x,y);
         end
     end
+    
 end
 
 %%

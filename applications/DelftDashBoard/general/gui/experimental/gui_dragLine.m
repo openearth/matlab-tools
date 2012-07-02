@@ -163,7 +163,7 @@ input=getappdata(h,'input');
 method=getappdata(h,'method');
 
 ddb_setWindowButtonMotionFcn;
-set(gcf, 'windowbuttonupfcn',[]);
+ddb_setWindowButtonUpDownFcn;
 
 delete(h);
 
