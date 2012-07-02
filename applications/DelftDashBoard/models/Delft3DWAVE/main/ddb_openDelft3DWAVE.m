@@ -16,7 +16,7 @@ switch lower(opt)
             handles  = ddb_initializeDelft3DWAVEInput(handles,runid);
             filename =[runid '.mdw'];
             handles  = ddb_readMDW(handles,[pathname filename]);
-            handles  = ddb_readDelft3DWAVEAttributeFiles(handles);
+            handles  = ddb_Delft3DWAVE_readAttributeFiles(handles);
             setHandles(handles);
             ddb_plotDelft3DWAVE('plot','active',0,'visible',1,'wavedomain',awg);
             gui_updateActiveTab;

@@ -62,22 +62,15 @@
     <tooltipstring>Import obstacles</tooltipstring>
     <text>Copy from FLOW</text>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
-    <option1>import</option1>    
-  </element>
-  <element>
-    <tag>textpolyline</tag>
-    <style>text</style>
-    <horal>right</right>
-    <position>265 40</position>
-    <text>Polyline</text>
+    <option1>copyfromflow</option1>    
   </element>
   <element>
     <tag>pushopenobstaclepolylinesfile</tag>
     <style>pushselectfile</style>
-    <position>270 40 50 20</position>
-    <tooltipstring>Load obstacle polylines file</tooltipstring>
+    <position>220 55 100 20</position>
+    <tooltipstring>Import obstacle polylines file</tooltipstring>
     <showfilename>no</showfilename>
-    <text>Open</text>
+    <text>Import</text>
     <variable>handles.Model(md).Input.obstaclepolylinesfile</variable>
     <extension>*.pli</extension>
     <selectiontext>Select obstacle polylines file</selectiontext>
@@ -85,41 +78,9 @@
     <option1>loadpolylinesfile</option1>
   </element>
   <element>
-    <tag>pushsaveobstaclepolylinesfile</tag>
-    <style>pushsavefile</style>
-    <position>325 40 50 20</position>
-    <tooltipstring>Save obstacle polylines file</tooltipstring>
-    <text>Save</text>
-    <variable>handles.Model(md).Input.obstaclepolylinesfile</variable>
-    <extension>*.pli</extension>
-    <selectiontext>Select obstacle polylines file</selectiontext>
-    <callback>ddb_Delft3DWAVE_obstacles</callback>
-    <option1>savepolylinesfile</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>textpolyline</tag>
-    <style>text</style>
-    <horal>right</right>
-    <position>265 15</position>
-    <text>Obstacle</text>
-  </element>
-  <element>
     <tag>pushloadobstaclefile</tag>
     <style>pushselectfile</style>
-    <position>270 15 50 20</position>
+    <position>220 15 50 20</position>
     <tooltipstring>Load obstacle file</tooltipstring>
     <text>Open</text>
     <showfilename>no</showfilename>
@@ -128,24 +89,11 @@
     <selectiontext>Select obstacle file</selectiontext>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>loadobsfile</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
   </element>
   <element>
     <tag>pushsaveobstaclefile</tag>
     <style>pushsavefile</style>
-    <position>325 15 50 20</position>
+    <position>280 15 50 20</position>
     <tooltipstring>Save obstacle file</tooltipstring>
     <text>Save</text>
     <variable>handles.Model(md).Input.obstaclefile</variable>

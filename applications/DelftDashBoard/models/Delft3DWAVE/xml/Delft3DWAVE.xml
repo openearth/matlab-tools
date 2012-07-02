@@ -19,6 +19,7 @@
           <tag>description</tag>
           <tabstring>Description</tabstring>
           <elements>Delft3DWAVE.description.xml</elements>
+          <callback>ddb_Delft3DWAVE_description</callback>
         </tab>
         <tab>
           <tag>hydrodynamics</tag>
@@ -35,6 +36,7 @@
           <tag>timeframe</tag>
           <tabstring>Time Frame</tabstring>
           <elements>Delft3DWAVE.timeframe.xml</elements>
+          <callback>ddb_Delft3DWAVE_timeFrame</callback>
         </tab>
         <tab>
           <tag>boundaries</tag>
@@ -57,16 +59,19 @@
           <tag>numericalparameters</tag>
           <tabstring>Numerical Parameters</tabstring>
           <elements>Delft3DWAVE.numericalparameters.xml</elements>          
+          <callback>ddb_Delft3DWAVE_numericalParameters</callback>
         </tab>
         <tab>
           <tag>outputcurves</tag>
           <tabstring>Output Curves</tabstring>
           <elements>Delft3DWAVE.outputcurves.xml</elements>          
+          <callback>ddb_Delft3DWAVE_outputCurves</callback>
         </tab>
         <tab>
-          <tag>outputparameters</tag>
-          <tabstring>Output Parameters</tabstring>
+          <tag>output</tag>
+          <tabstring>Output</tabstring>
           <elements>Delft3DWAVE.outputparameters.xml</elements>
+          <callback>ddb_Delft3DWAVE_output</callback>
         </tab>
       </tabs>
     </element>
@@ -94,11 +99,6 @@
           <string>Save All</string>
           <callback>ddb_saveDelft3DWAVE</callback>
           <option>saveall</option>
-        </menuitem>
-        <menuitem>
-          <string>Save All As ...</string>
-          <callback>ddb_saveDelft3DWAVE</callback>
-          <option>saveallas</option>
         </menuitem>
       </menusavefile>
       <menuview>

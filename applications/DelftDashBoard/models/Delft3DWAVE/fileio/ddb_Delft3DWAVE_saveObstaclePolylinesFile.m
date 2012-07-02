@@ -1,4 +1,4 @@
-function ddb_saveDelft3DWAVEObstaclePolylineFile(handles)
+function ddb_Delft3DWAVE_saveObstaclePolylinesFile(handles)
 
 ii=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
 

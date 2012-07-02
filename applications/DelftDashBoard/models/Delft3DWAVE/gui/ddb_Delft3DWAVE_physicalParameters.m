@@ -16,7 +16,7 @@ function toggleWind
 
 handles=getHandles;
 if ~handles.Model(md).Input.windgrowth
-    handles.Model(md).Input.whitecapping=0;
+    handles.Model(md).Input.whitecapping='None';
     handles.Model(md).Input.quadruplets=0;
 end
 setHandles(handles);

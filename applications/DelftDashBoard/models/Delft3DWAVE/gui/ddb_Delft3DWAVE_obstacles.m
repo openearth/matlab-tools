@@ -44,6 +44,8 @@ else
             selectAlpha;
         case{'selectbeta'}
             selectBeta;
+        case{'copyfromflow'}
+            copyFromFlow;
     end
 end
 
@@ -180,9 +182,9 @@ function deleteObstacle
 handles=getHandles;
 if handles.Model(md).Input.nrobstacles>0
     iac=handles.Model(md).Input.activeobstacle;
-    ch=getappdata(handles.Model(md).Input.obstacles(iac).handle,'children');
-    delete(handles.Model(md).Input.obstacles(iac).handle);
-    delete(ch);
+    try
+        delete(handles.Model(md).Input.obstacles(iac).handle);
+    end
     handles.Model(md).Input.obstacles=removeFromStruc(handles.Model(md).Input.obstacles,iac);
     handles.Model(md).Input.obstaclenames=removeFromCellArray(handles.Model(md).Input.obstaclenames,iac);
     handles.Model(md).Input.nrobstacles=handles.Model(md).Input.nrobstacles-1;
@@ -203,19 +205,7 @@ handles=getHandles;
 handles=ddb_Delft3DWAVE_plotObstacles(handles,'plot');
 setHandles(handles);
 
-%%
-function loadObstaclesFile
-handles=getHandles;
-obs=handles.Model(md).Input.obstacles;
-obs=ddb_readDelft3DWAVEObstacleFile(obs,handles.Model(md).Input.obstaclefile);
-handles.Model(md).Input.obstacles=obs;
-setHandles(handles);
-gui_updateActiveTab;
 
-%%
-function saveObstaclesFile
-handles=getHandles;
-ddb_saveDelft3DWAVEObstacleFile(handles);
 
 %%
 function loadObstaclePolylinesFile
@@ -237,7 +227,7 @@ if nrobs>0
 end
 
 obs=[];
-obs=ddb_readDelft3DWAVEObstaclePolylineFile(obs,handles.Model(md).Input.obstaclepolylinesfile);
+obs=ddb_Delft3DWAVE_readObstaclePolylineFile(obs,handles.Model(md).Input.obstaclepolylinesfile);
 handles.Model(md).Input.nrobstacles=nrobs+length(obs);
 if nrobs==0
     handles.Model(md).Input.obstacles=[];
@@ -256,6 +246,80 @@ handles=ddb_Delft3DWAVE_plotObstacles(handles,'plot');
 setHandles(handles);
 
 %%
-function saveObstaclePolylinesFile
+function loadObstaclesFile
+
 handles=getHandles;
-ddb_saveDelft3DWAVEObstaclePolylineFile(handles);
+
+obs=[];
+[obs,plifile]=ddb_Delft3DWAVE_readObstacleFile(obs,handles.Model(md).Input.obstaclefile);
+handles.Model(md).Input.obstaclepolylinesfile=plifile;
+handles.Model(md).Input.obstacles=obs;
+handles.Model(md).Input.nrobstacles=length(obs);
+handles.Model(md).Input.activeobstacle=1;
+for ii=1:length(obs)
+    handles.Model(md).Input.obstaclenames{ii}=obs(ii).name;
+end
+handles=ddb_Delft3DWAVE_plotObstacles(handles,'plot');
+
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function saveObstaclesFile
+handles=getHandles;
+[filename, pathname, filterindex] = uiputfile('*.pli','Select Obstacles Polylines File',handles.Model(md).Input.obstaclepolylinesfile);
+if pathname~=0
+    curdir=[lower(cd) '\'];
+    if ~strcmpi(curdir,pathname)
+        filename=[pathname filename];
+    end
+    handles.Model(md).Input.obstaclepolylinesfile=filename;
+    setHandles(handles);
+else
+    return
+end
+ddb_Delft3DWAVE_saveObstacleFile(handles);
+
+%%
+function copyFromFlow
+
+handles=getHandles;
+
+if length(handles.Model(1).Input(1).thinDams)>0
+
+    xg=handles.Model(1).Input(1).gridX;
+    yg=handles.Model(1).Input(1).gridY;
+    for ii=1:length(handles.Model(1).Input(1).thinDams)
+        
+        m1=handles.Model(1).Input(1).thinDams(ii).M1;
+        m2=handles.Model(1).Input(1).thinDams(ii).M2;
+        n1=handles.Model(1).Input(1).thinDams(ii).N1;
+        n2=handles.Model(1).Input(1).thinDams(ii).N2;
+        x(1)=xg(m1,n1);
+        x(2)=xg(m2,n2);
+        y(1)=yg(m1,n1);
+        y(2)=yg(m2,n2);
+        
+        nrobs=handles.Model(md).Input.nrobstacles;
+        handles.Model(md).Input.nrobstacles=nrobs+1;
+        if nrobs==0
+            handles.Model(md).Input.obstacles=[];
+            handles.Model(md).Input.obstaclenames={''};
+        end
+        handles.Model(md).Input.activeobstacle=1;
+        handles.Model(md).Input.activeobstacles=1;
+        
+        handles.Model(md).Input.obstacles=ddb_initializeDelft3DWAVEObstacle(handles.Model(md).Input.obstacles,nrobs+1);
+        handles.Model(md).Input.obstacles(nrobs+1).name=['Obstacle from FLOW ' num2str(ii)];
+        handles.Model(md).Input.obstacles(nrobs+1).x=x;
+        handles.Model(md).Input.obstacles(nrobs+1).y=y;
+        handles.Model(md).Input.obstaclenames{nrobs+1}=handles.Model(md).Input.obstacles(nrobs+1).name;
+        
+    end
+    
+    handles=ddb_Delft3DWAVE_plotObstacles(handles,'plot');
+    
+    setHandles(handles);
+
+end
+

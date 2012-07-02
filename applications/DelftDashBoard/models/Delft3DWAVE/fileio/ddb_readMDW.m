@@ -63,29 +63,34 @@ for id=1:ndomains
 end
 
 %% Boundaries
-nbnd=length(MDW.boundary);
-handles.Model(md).Input.nrboundaries=nbnd;
+handles.Model(md).Input.nrboundaries=0;
 handles.Model(md).Input.boundaries=[];
-for ib=1:nbnd
-    handles.Model(md).Input.boundaries=ddb_initializeDelft3DWAVEBoundary(handles.Model(md).Input.boundaries,ib);
-    fldnames=fieldnames(MDW.boundary(ib));
-    for ii=1:length(fldnames)
-        if ~iscell(MDW.boundary(ib).(fldnames{ii}))
-            handles.Model(md).Input.boundaries(ib).(fldnames{ii})=MDW.boundary(ib).(fldnames{ii});
+
+if isfield(MDW,'boundary')
+    nbnd=length(MDW.boundary);
+    handles.Model(md).Input.nrboundaries=nbnd;
+    handles.Model(md).Input.boundaries=[];
+    for ib=1:nbnd
+        handles.Model(md).Input.boundaries=ddb_initializeDelft3DWAVEBoundary(handles.Model(md).Input.boundaries,ib);
+        fldnames=fieldnames(MDW.boundary(ib));
+        for ii=1:length(fldnames)
+            if ~iscell(MDW.boundary(ib).(fldnames{ii}))
+                handles.Model(md).Input.boundaries(ib).(fldnames{ii})=MDW.boundary(ib).(fldnames{ii});
+            end
         end
-    end
-    handles.Model(md).Input.boundarynames{ib}=handles.Model(md).Input.boundaries(ib).name;
-    if isfield(MDW.boundary(ib),'waveheight')
-        if iscell(MDW.boundary(ib).waveheight)
-            handles.Model(md).Input.boundaries(ib).alongboundary='varying';
-            handles.Model(md).Input.boundaries(ib).nrsegments=length(MDW.boundary(ib).waveheight);
-            for iseg=1:handles.Model(md).Input.boundaries(ib).nrsegments
-                handles.Model(md).Input.boundaries(ib).segmentnames{iseg}=['Segment ' num2str(iseg)];
-                handles.Model(md).Input.boundaries(ib).segments(iseg).waveheight=MDW.boundary(ib).waveheight{iseg};
-                handles.Model(md).Input.boundaries(ib).segments(iseg).condspecatdist=MDW.boundary(ib).condspecatdist{iseg};
-                handles.Model(md).Input.boundaries(ib).segments(iseg).period=MDW.boundary(ib).period{iseg};
-                handles.Model(md).Input.boundaries(ib).segments(iseg).direction=MDW.boundary(ib).direction{iseg};
-                handles.Model(md).Input.boundaries(ib).segments(iseg).dirspreading=MDW.boundary(ib).dirspreading{iseg};
+        handles.Model(md).Input.boundarynames{ib}=handles.Model(md).Input.boundaries(ib).name;
+        if isfield(MDW.boundary(ib),'waveheight')
+            if iscell(MDW.boundary(ib).waveheight)
+                handles.Model(md).Input.boundaries(ib).alongboundary='varying';
+                handles.Model(md).Input.boundaries(ib).nrsegments=length(MDW.boundary(ib).waveheight);
+                for iseg=1:handles.Model(md).Input.boundaries(ib).nrsegments
+                    handles.Model(md).Input.boundaries(ib).segmentnames{iseg}=['Segment ' num2str(iseg)];
+                    handles.Model(md).Input.boundaries(ib).segments(iseg).waveheight=MDW.boundary(ib).waveheight{iseg};
+                    handles.Model(md).Input.boundaries(ib).segments(iseg).condspecatdist=MDW.boundary(ib).condspecatdist{iseg};
+                    handles.Model(md).Input.boundaries(ib).segments(iseg).period=MDW.boundary(ib).period{iseg};
+                    handles.Model(md).Input.boundaries(ib).segments(iseg).direction=MDW.boundary(ib).direction{iseg};
+                    handles.Model(md).Input.boundaries(ib).segments(iseg).dirspreading=MDW.boundary(ib).dirspreading{iseg};
+                end
             end
         end
     end

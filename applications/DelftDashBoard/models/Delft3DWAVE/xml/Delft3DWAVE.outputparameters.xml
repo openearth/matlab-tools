@@ -11,7 +11,7 @@
     <tag>edittestoutput</tag>
     <style>edit</style>
     <position>190 130 50 20</position>
-    <text>Level of ddb_test output : </text>
+    <text>Level of test output</text>
     <textposition>left</textposition>
     <variable>handles.Model(md).Input.testoutputlevel</variable>
     <type>integer</type>
@@ -21,7 +21,7 @@
     <tag>editdebug</tag>
     <style>edit</style>
     <position>190 105 50 20</position>
-    <text>Debug level : </text>
+    <text>Debug level</text>
     <textposition>left</textposition>
     <variable>handles.Model(md).Input.tracecalls</variable>
     <type>integer</type>
@@ -188,7 +188,9 @@
     <tag>checkcompgrid2</tag>
     <style>checkbox</style>
     <position>810 80</position>
-    <text>Comp grid 2</text>
+    <text>
+      <variable>handles.Model(md).Input.domains(2).gridname</variable>
+    </text>
     <variable>handles.Model(md).Input.domains(2).output</variable>
     <dependencies>
       <dependency>

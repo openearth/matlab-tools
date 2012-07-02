@@ -15,6 +15,7 @@
     <type>integer</type>
     <variable>windgrowth</variable>
     <callback>ddb_Delft3DWAVE_physicalParameters</callback>
+    <option1>togglewind</option1>
   </element>
   <element>
     <tag>checkquadruplets</tag>

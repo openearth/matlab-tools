@@ -1,27 +1,9 @@
 function handles = ddb_Delft3DWAVE_plotObstacles(handles, opt, varargin)
-%DDB_DELFT3DFLOW_PLOTGRID  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   handles = ddb_Delft3DFLOW_plotGrid(handles, opt, varargin)
-%
-%   Input:
-%   handles  =
-%   opt      =
-%   varargin =
-%
-%   Output:
-%   handles  =
-%
-%   Example
-%   ddb_Delft3DFLOW_plotGrid
-%
-%   See also
+%DDB_DELFT3DFLOW_PLOTBOUNDARIES  One line description goes here.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2012 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -85,38 +67,51 @@ switch lower(opt)
     case{'plot'}
         
         % First delete old obstacles
-        for ii=1:handles.Model(imd).Input.nrobstacles
+        for ii=1:handles.Model(imd).Input.nrboundaries
             try
-                h=handles.Model(imd).Input.obstacles(ii).handle;
+                h=handles.Model(imd).Input.boundaries(ii).plothandle;
                 delete(h);
             end
         end
         
         % Now plot new obstacles
-        for ii=1:handles.Model(imd).Input.nrobstacles
-            x=handles.Model(imd).Input.obstacles(ii).x;
-            y=handles.Model(imd).Input.obstacles(ii).y;
-            h=gui_polyline('plot','x',x,'y',y,'Tag','delft3dwaveobstacle','Marker','o', ...
-                'changecallback',@ddb_Delft3DWAVE_obstacles,'changeinput','changeobstacle','closed',0, ...
-                'color','g','markeredgecolor','g','markerfacecolor','g');
-            if active && ii==handles.Model(imd).Input.activeobstacle
-                gui_polyline(h,'change','color','r','markeredgecolor','r','markerfacecolor','r');        
+        for ii=1:handles.Model(imd).Input.nrboundaries
+            switch lower(handles.Model(imd).Input.boundaries(ii).definition)
+                case{'xy-coordinates'}
+                    x=[handles.Model(imd).Input.boundaries(ii).startcoordx handles.Model(imd).Input.boundaries(ii).endcoordx];
+                    y=[handles.Model(imd).Input.boundaries(ii).startcoordy handles.Model(imd).Input.boundaries(ii).endcoordy];
+                    h=gui_polyline('plot','x',x,'y',y,'Tag','delft3dwaveobstacle','Marker','o', ...
+                        'changecallback',@ddb_Delft3DWAVE_boundaries,'changeinput','changexyboundary','closed',0, ...
+                        'color','g','markeredgecolor','g','markerfacecolor','g');
+                    if active && ii==handles.Model(imd).Input.activeboundary
+                        gui_polyline(h,'change','color','r','markeredgecolor','r','markerfacecolor','r');
+                    end
+                    handles.Model(imd).Input.obstacles(ii).plothandle=h;
+                case{'grid-coordinates'}
+                    x=[handles.Model(imd).Input.boundaries(ii).startcoordx handles.Model(imd).Input.boundaries(ii).endcoordx];
+                    y=[handles.Model(imd).Input.boundaries(ii).startcoordy handles.Model(imd).Input.boundaries(ii).endcoordy];
+                    h=gui_polyline('plot','x',x,'y',y,'Tag','delft3dwaveobstacle','Marker','o', ...
+                        'changecallback',@ddb_Delft3DWAVE_boundaries,'changeinput','changexyboundary','closed',0, ...
+                        'color','g','markeredgecolor','g','markerfacecolor','g');
+                    if active && ii==handles.Model(imd).Input.activeboundary
+                        gui_polyline(h,'change','color','r','markeredgecolor','r','markerfacecolor','r');
+                    end
+                    handles.Model(imd).Input.obstacles(ii).plothandle=h;
             end
-            handles.Model(imd).Input.obstacles(ii).handle=h;
         end
         
     case{'delete'}
         
         % Delete old obstacles
-        for ii=1:handles.Model(imd).Input.nrobstacles
+        for ii=1:handles.Model(imd).Input.nrboundaries
             try
-                h=handles.Model(imd).Input.obstacles(ii).handle;
+                h=handles.Model(imd).Input.boundaries(ii).plothandle;
                 if ishandle(h)
-                    delete(handles.Model(imd).Input.obstacles(ii).handle);
+                    delete(handles.Model(imd).Input.obstacles(ii).plothandle);
                 end
             end
         end
-        hh=findobj(gcf,'tag','delft3dwaveobstacle');
+        hh=findobj(gcf,'tag','delft3dwaveboundary');
         if ~isempty(hh)
             delete(hh);
         end
@@ -124,10 +119,10 @@ switch lower(opt)
     case{'update'}
 
         try
-            for ii=1:handles.Model(imd).Input.nrobstacles
-                h=handles.Model(imd).Input.obstacles(ii).handle;
+            for ii=1:handles.Model(imd).Input.nrboundaries
+                h=handles.Model(imd).Input.boundaries(ii).plothandle;
                 if ishandle(h)
-                    if ii==handles.Model(imd).Input.activeobstacle && active
+                    if ii==handles.Model(imd).Input.activeboundary && active
                         gui_polyline(h,'change','color','r','markeredgecolor','r','markerfacecolor','r');
                     else
                         gui_polyline(h,'change','color','g','markeredgecolor','g','markerfacecolor','g');
@@ -143,12 +138,13 @@ switch lower(opt)
                     else
                         set(mh,'HitTest','off');
                     end
-                    try
-                        uistack(h,'top');
-                    end
-
                 end
+                try
+                    uistack(h,'top');
+                end
+
             end
+            
         end
 end
 

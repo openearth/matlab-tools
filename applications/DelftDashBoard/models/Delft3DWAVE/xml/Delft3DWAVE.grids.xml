@@ -16,11 +16,13 @@
         <tag>spectralresolution</tag>
         <tabstring>Spectral resolution</tabstring>
         <elements>Delft3DWAVE.grids.spectralresolution.xml</elements>
+        <callback>ddb_Delft3DWAVE_grid</callback>
       </tab>      
       <tab>
         <tag>nesting</tag>
         <tabstring>Nesting</tabstring>
         <elements>Delft3DWAVE.grids.nesting.xml</elements>
+        <callback>ddb_Delft3DWAVE_grid</callback>
       </tab>
     </tabs>
   </element>

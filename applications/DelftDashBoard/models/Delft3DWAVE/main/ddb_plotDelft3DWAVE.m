@@ -11,7 +11,6 @@ imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
 
 vis=1;
 act=0;
-idomain=0;
 dact=0;
 
 for i=1:length(varargin)
@@ -21,27 +20,18 @@ for i=1:length(varargin)
                 act=varargin{i+1};
             case{'visible'}
                 vis=varargin{i+1};
-            case{'wavedomain'}
-                idomain=varargin{i+1};
             case{'deactivate'}
                 dact=varargin{i+1};                
         end
     end
 end
 
-% if idomain==0
-    % Update all domains
-    n1=1;
-    n2=handles.Model(imd).Input.nrgrids;
-% else
-%     % Update one domain
-%     n1=idomain;
-%     n2=n1;
-% end
+if dact
+    vis=0;
+end
 
-% if idomain==0 && ~act
-%     vis=0;
-% end
+n1=1;
+n2=handles.Model(imd).Input.nrgrids;
     
 for id=n1:n2
     
@@ -66,6 +56,8 @@ try
 end
 
 handles=ddb_Delft3DWAVE_plotBathy(handles,option,'visible',vis,'active',act);
+
+handles=ddb_Delft3DWAVE_plotBoundaries(handles,option,'visible',vis,'active',act);
 
 handles=ddb_Delft3DWAVE_plotObstacles(handles,option,'visible',vis,'active',act);
            

@@ -1,11 +1,16 @@
 function ddb_Delft3DWAVE_boundaries(varargin)
 
+handles=getHandles;
+
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
+    ddb_Delft3DWAVE_plotBoundaries(handles,'update');
 else
     opt=varargin{1};
     switch lower(opt)
+        case{'selectboundary'}
+            ddb_Delft3DWAVE_plotBoundaries(handles,'update');
         case{'add'}
             addBoundary;
         case{'delete'}
@@ -14,8 +19,18 @@ else
             editBoundaryConditions;
         case{'drawxyboundary'}
             drawXYBoundary;
+        case{'changexyboundary'}
+            h=varargin{2};
+            x=varargin{3};
+            y=varargin{4};
+            nr=varargin{5};
+            changeXYBoundary(h,x,y,nr);
         case{'editxycoordinates'}
             editXYCoordinates;
+        case{'editmncoordinates'}
+            editMNCoordinates;
+        case{'selectdefinition'}
+            selectDefinition;
     end
 end
 
@@ -28,16 +43,24 @@ nr=nr+1;
 handles.Model(md).Input.boundaries=ddb_initializeDelft3DWAVEBoundary(handles.Model(md).Input.boundaries,nr);
 handles.Model(md).Input.boundaries(nr).name=['Boundary ' num2str(nr)];
 handles.Model(md).Input.boundarynames{nr}=['Boundary ' num2str(nr)];
+if nr>1
+    % Copy from existing boundary
+    handles.Model(md).Input.boundaries(nr).definition=handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition;
+end
 handles.Model(md).Input.nrboundaries=nr;
 handles.Model(md).Input.activeboundary=nr;
 setHandles(handles);
+
+ddb_Delft3DWAVE_plotBoundaries(handles,'update');
 
 %%
 function deleteBoundary
 handles=getHandles;
 if handles.Model(md).Input.nrboundaries>0
     iac=handles.Model(md).Input.activeboundary;
-    delete(handles.Model(md).Input.boundaries(iac).plothandle);
+    try
+        delete(handles.Model(md).Input.boundaries(iac).plothandle);
+    end
     handles.Model(md).Input.boundaries=removeFromStruc(handles.Model(md).Input.boundaries,iac);
     handles.Model(md).Input.boundarynames=removeFromCellArray(handles.Model(md).Input.boundarynames,iac);
     handles.Model(md).Input.nrboundaries=handles.Model(md).Input.nrboundaries-1;
@@ -48,7 +71,7 @@ if handles.Model(md).Input.nrboundaries>0
     end
     setHandles(handles);
     gui_updateActiveTab;
-%    ddb_Delft3DWAVE_plotBoundaries(handles,'update');
+    ddb_Delft3DWAVE_plotBoundaries(handles,'update');
 end
 
 %%
@@ -104,6 +127,7 @@ handles=getHandles;
 h=gui_polyline('plot','x',x,'y',y,'tag','delft3dwaveboundary','Marker','o','changecallback',@changeXYBoundary,'closed',0, ...
     'color','r','markeredgecolor','r','markerfacecolor','r');
 iac=handles.Model(md).Input.activeboundary;
+% Delete existing plot handle
 if isfield(handles.Model(md).Input.boundaries(iac),'plothandle')
     if ~isempty(handles.Model(md).Input.boundaries(iac).plothandle)
         try
@@ -123,22 +147,52 @@ handles.Model(md).Input.boundaries(iac).startcoordn=n(1)-1;
 handles.Model(md).Input.boundaries(iac).endcoordn=n(2)-1;
 setHandles(handles);
 
+ddb_Delft3DWAVE_plotBoundaries(handles,'update');
+
 gui_updateActiveTab;
 
 %%
 function changeXYBoundary(h,x,y,nr)
 handles=getHandles;
+% First find boundary that was changed 
 for ii=1:handles.Model(md).Input.nrboundaries
     if handles.Model(md).Input.boundaries(ii).plothandle==h
-        handles.Model(md).Input.boundaries(ii).startcoordx=x(1);
-        handles.Model(md).Input.boundaries(ii).endcoordx=x(2);
-        handles.Model(md).Input.boundaries(ii).startcoordy=y(1);
-        handles.Model(md).Input.boundaries(ii).endcoordy=y(2);
+        
+        % Find nearest grid points
+        xg=handles.Model(md).Input.domains(1).gridx;
+        yg=handles.Model(md).Input.domains(1).gridy;
+        [m1,n1]=FindCornerPoint(x(1),y(1),xg,yg);
+        [m2,n2]=FindCornerPoint(x(2),y(2),xg,yg);
+        if strcmpi(handles.Model(md).Input.boundaries(ii).definition,'grid-coordinates')
+            handles.Model(md).Input.boundaries(ii).startcoordx=xg(m1,n1);
+            handles.Model(md).Input.boundaries(ii).endcoordx=xg(m2,n2);
+            handles.Model(md).Input.boundaries(ii).startcoordy=yg(m1,n1);
+            handles.Model(md).Input.boundaries(ii).endcoordy=yg(m2,n2);
+            
+            x(1)=handles.Model(md).Input.boundaries(ii).startcoordx;
+            x(2)=handles.Model(md).Input.boundaries(ii).endcoordx;
+            y(1)=handles.Model(md).Input.boundaries(ii).startcoordy;
+            y(2)=handles.Model(md).Input.boundaries(ii).endcoordy;
+            h=handles.Model(md).Input.boundaries(ii).plothandle;
+            gui_polyline(h,'change','x',x,'y',y);
+
+        else
+            handles.Model(md).Input.boundaries(ii).startcoordx=x(1);
+            handles.Model(md).Input.boundaries(ii).endcoordx=x(2);
+            handles.Model(md).Input.boundaries(ii).startcoordy=y(1);
+            handles.Model(md).Input.boundaries(ii).endcoordy=y(2);
+        end
+        handles.Model(md).Input.boundaries(ii).startcoordm=m1-1;
+        handles.Model(md).Input.boundaries(ii).endcoordm=m2-1;
+        handles.Model(md).Input.boundaries(ii).startcoordn=n1-1;
+        handles.Model(md).Input.boundaries(ii).endcoordn=n2-1;
+
         handles.Model(md).Input.activeboundary=ii;
         break
     end
 end
 setHandles(handles);
+ddb_Delft3DWAVE_plotBoundaries(handles,'update');
 gui_updateActiveTab;
 
 %%
@@ -151,3 +205,54 @@ x(2)=handles.Model(md).Input.boundaries(iac).endcoordx;
 y(1)=handles.Model(md).Input.boundaries(iac).startcoordy;
 y(2)=handles.Model(md).Input.boundaries(iac).endcoordy;
 gui_polyline(h,'change','x',x,'y',y);
+
+%%
+function editMNCoordinates
+
+handles=getHandles;
+
+iac=handles.Model(md).Input.activeboundary;
+xg=handles.Model(md).Input.domains(1).gridx;
+yg=handles.Model(md).Input.domains(1).gridy;
+m1=handles.Model(md).Input.boundaries(iac).startcoordm;
+m2=handles.Model(md).Input.boundaries(iac).endcoordm;
+n1=handles.Model(md).Input.boundaries(iac).startcoordn;
+n2=handles.Model(md).Input.boundaries(iac).endcoordn;
+
+x(1)=xg(m1+1,n1+1);
+x(2)=xg(m2+1,n2+1);
+y(1)=yg(m1+1,n1+1);
+y(2)=yg(m2+1,n2+1);
+
+handles.Model(md).Input.boundaries(iac).startcoordx=x(1);
+handles.Model(md).Input.boundaries(iac).endcoordx=x(2);
+handles.Model(md).Input.boundaries(iac).startcoordy=y(1);
+handles.Model(md).Input.boundaries(iac).endcoordy=y(2);
+
+h=handles.Model(md).Input.boundaries(iac).plothandle;
+gui_polyline(h,'change','x',x,'y',y);
+
+setHandles(handles);
+
+%%
+function selectDefinition
+handles=getHandles;
+iac=handles.Model(md).Input.activeboundary;
+% Delete existing plot handles
+if ~isempty(handles.Model(md).Input.boundaries(iac).plothandle)
+    if ishandle(handles.Model(md).Input.boundaries(iac).plothandle)
+        delete(handles.Model(md).Input.boundaries(iac).plothandle);
+        handles.Model(md).Input.boundaries(iac).plothandle=[];
+    end
+end
+switch handles.Model(md).Input.boundaries(iac).definition
+    case{'xy-coordinates','grid-coordinates'}
+        x(1)=handles.Model(md).Input.boundaries(iac).startcoordx;
+        x(2)=handles.Model(md).Input.boundaries(iac).endcoordx;
+        y(1)=handles.Model(md).Input.boundaries(iac).startcoordy;
+        y(2)=handles.Model(md).Input.boundaries(iac).endcoordy;        
+        h=gui_polyline('plot','x',x,'y',y,'tag','delft3dwaveboundary','Marker','o','changecallback',@changeXYBoundary,'closed',0, ...
+            'color','r','markeredgecolor','r','markerfacecolor','r');
+        handles.Model(md).Input.boundaries(iac).plothandle=h;        
+end
+setHandles(handles);

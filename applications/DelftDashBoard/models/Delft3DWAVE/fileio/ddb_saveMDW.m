@@ -1,4 +1,4 @@
-function handles=ddb_saveMDW(handles)
+function ddb_saveMDW(handles)
 
 wave=handles.Model(md).Input;
 
@@ -299,3 +299,8 @@ end
 fname=[handles.Model(md).Input.mdwfile];
 
 ddb_saveDelft3D_keyWordFile(fname, MDW);
+
+if ~wave.coupledwithflow
+    % Write WAVE only batch file
+    ddb_Delft3DWAVE_writeBatchFile(wave.mdwfile);
+end

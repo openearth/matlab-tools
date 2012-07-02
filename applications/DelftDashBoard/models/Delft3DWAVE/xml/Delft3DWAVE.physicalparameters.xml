@@ -9,22 +9,25 @@
       <tab>
         <tag>constants</tag>
         <tabstring>Constants</tabstring>
-        <callback>ddb_Delft3DWAVE_constants</callback>
+        <callback>ddb_Delft3DWAVE_physicalParameters</callback>
         <elements>Delft3DWAVE.physicalparameters.constants.xml</elements>
       </tab>
       <tab>
         <tag>wind</tag>
         <tabstring>Wind</tabstring>
+        <callback>ddb_Delft3DWAVE_physicalParameters</callback>
         <elements>Delft3DWAVE.physicalparameters.wind.xml</elements>
       </tab>
       <tab>
         <tag>processes</tag>
         <tabstring>Processes</tabstring>
+        <callback>ddb_Delft3DWAVE_physicalParameters</callback>
         <elements>Delft3DWAVE.physicalparameters.processes.xml</elements>
       </tab>
       <tab>
         <tag>various</tag>
         <tabstring>Various</tabstring>
+        <callback>ddb_Delft3DWAVE_physicalParameters</callback>
         <elements>Delft3DWAVE.physicalparameters.various.xml</elements>
       </tab>      
     </tabs>
