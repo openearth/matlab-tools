@@ -118,6 +118,7 @@ end
 %-----------------------------
 
 if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
+    error('meteo_on_equidistant_grid not implemented yet, complete the code yourselves?')
     if OPT.newgrid
         n_cols = size(data,3);
         n_rows = size(data,2);
