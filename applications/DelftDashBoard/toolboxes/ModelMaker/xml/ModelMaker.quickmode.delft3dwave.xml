@@ -107,7 +107,7 @@
     <tag>pushgenerateexistinggrid</tag>
     <style>pushbutton</style>
     <position>320 85 140 20</position>
-    <tooltipstring>Push to change existing active model grid</tooltipstring>
+    <tooltipstring>Push to create model grid. This grid will replace the existing active model grid!</tooltipstring>
     <text>Change Grid</text>
     <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
     <option1>generateexistinggrid</option1>
