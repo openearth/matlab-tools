@@ -169,8 +169,8 @@ else
     fprintf(fid,'%s\n',['Ccofu = ' num2str(model.ccofu)]);
     fprintf(fid,'%s\n',['Ccofv = ' num2str(model.ccofu)]);
 end
-if isfield(model,'filedy')
-    fprintf(fid,'%s\n',['Filedy= ' model.filedy]);
+if ~isempty(model.Filedy)
+    fprintf(fid,'%s\n',['Filedy= #' model.Filedy '#']);
 else
     fprintf(fid,'%s\n',['Vicouv= ' num2str(model.VicoUV)]);
 end
