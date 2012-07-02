@@ -129,7 +129,6 @@ switch lower(el.style)
                 case{'string'}                    
 
                     % Values
-%                    if ~isempty(el.list.values)
                     if isfield(el.list,'values')
                         % Values prescribed in xml file
                         if isfield(el.list.values,'variable')
