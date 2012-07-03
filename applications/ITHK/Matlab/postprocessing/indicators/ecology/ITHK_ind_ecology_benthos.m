@@ -190,8 +190,8 @@ end
 colour       = {[0.6 0.2 0.2],[0.2 0.6 0.2]};
 fillalpha    = 0.7;
 for kk = 1: length(ECO)
-    vectorlength = S.settings.plotting.barplot.barscalevector_eco;
-    offset       = str2double(S.settings.indicators.eco.offset1) + str2double(S.settings.indicators.eco.offset2)*kk;
+    vectorlength = str2double(S.settings.indicators.ecology.benthos.PLOTscale1);
+    offset       = str2double(S.settings.indicators.ecology.benthos.PLOToffset) + str2double(S.settings.indicators.ecology.benthos.PLOToffsetDX)*kk;
     popuptxt     = {['Benthos ',num2str(kk)]};
     popuptxt{2}  = ['Direct impact of nourishments on benthos population for species nr. ',num2str(kk)];
     outlineVAL   = ppmapping.eco(kk).Ks;
