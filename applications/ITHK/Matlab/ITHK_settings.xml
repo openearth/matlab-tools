@@ -17,71 +17,231 @@
       <plottype>barplot</plottype>
       <offset>0</offset>
     </coast>
-    <habitatrichness>
-      <plottype>icons</plottype>
-      <icons>
-        <class>1</class>
-        <url>http://127.0.0.1:5000/images/flowers_yellow.png</url>
-        <class>2</class>
-        <url>http://127.0.0.1:5000/images/flowers_light_green.png</url>
-        <class>3</class>
-        <url>http://127.0.0.1:5000/images/flowers_dark_green.png</url>
-      </icons>
-      <offset>-5000</offset> 
-    </habitatrichness>
     <dunes>
-      <plottype>icons</plottype>
-      <icons>
-        <class>1</class>
-        <url>http://viewer.openearth.nl/images/dunes_red.png</url>
-        <class>2</class>
-	<url>http://viewer.openearth.nl/images/dunes_grey.png</url>
-        <class>3</class>
-	<url>http://viewer.openearth.nl/images/dunes_white.png</url>
-        <class>4</class>
-	<url>http://viewer.openearth.nl/images/dunes_green.png</url>
-        <class>5</class>
-	<url>http://viewer.openearth.nl/images/dunes_dark_green.png</url>	
-      </icons>
-      <offset>-8000</offset>
-      <on>0</on>
       <yposinitial>80</yposinitial>
+      <duneclasses>
+        <PLOToffset>       -5500     </PLOToffset>
+        <on>               0         </on>
+        <plottype>         icons     </plottype>
+        <icons>
+          <class>          1               </class>
+          <url> dunes_red.png              </url>
+          <class>          2               </class>
+          <url> dunes_grey.png             </url>
+          <class>          3               </class>
+          <url> dunes_white.png            </url>
+          <class>          4               </class>
+          <url> dunes_green.png            </url>
+          <class>          5               </class>
+          <url> dunes_dark_green.png       </url>    
+        </icons>
+      </duneclasses>
+      <habitatrichness>
+        <PLOToffset>       -6500     </PLOToffset>
+        <plottype>         icons     </plottype>
+        <icons>
+          <class>          1               </class>
+          <url> flowers_yellow.png         </url>
+          <class>          2               </class>
+          <url> flowers_light_green.png      </url>
+          <class>          3               </class>
+          <url> flowers_dark_green.png      </url>
+        </icons>
+      </habitatrichness>
+      <dunedynamics>
+        <PLOTscale1>       100       </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       -9000     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> dunedynamics_no.png        </url>
+          <class>          2               </class>
+          <url> dunedynamics_low.png       </url>
+          <class>          3               </class>
+          <url> dunedynamics_moderate.png  </url>
+          <class>          4               </class>
+          <url> dunedynamics_high.png      </url>
+        </icons>
+      </dunedynamics>
     </dunes>
-    <eco>
-      <function>ITHK_ind_ecology_benthos</function>
-      <plottype>barplot</plottype>
-      <offset1>7000</offset1>
-      <offset2>2500</offset2>
-    </eco>
-    <foreshore>
-      <function>ITHK_ind_foreshore_juvenilefish</function>
-      <ShoreWidth>10000</ShoreWidth>
-      <PLOTscale1>2000</PLOTscale1>
-      <PLOTscale2>0.0</PLOTscale2>
-      <PLOToffset>14500</PLOToffset>
-    </foreshore>
+    <ecology>
+      <benthos>
+        <function>ITHK_ind_ecology_benthos</function>
+        <plottype>barplot</plottype>
+        <PLOToffset>       7000      </PLOToffset>
+        <PLOToffsetDX>     2500      </PLOToffsetDX>
+        <icons>
+          <class>          1               </class>
+          <url> benthos_no.png             </url>
+          <class>          2               </class>
+          <url> benthos_low.png            </url>
+          <class>          3               </class>
+          <url> benthos_moderate.png       </url>
+          <class>          4               </class>
+          <url> benthos_high.png           </url>
+        </icons>
+      </benthos>
+      <juvenilefish>
+        <function>ITHK_ind_ecology_juvenilefish</function>
+        <ShoreWidth>10000</ShoreWidth>
+        <PLOTscale1>       2000      </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       14500     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> juvenilefish_no.png        </url>
+          <class>          2               </class>
+          <url> juvenilefish_low.png       </url>
+          <class>          3               </class>
+          <url> juvenilefish_moderate.png  </url>
+          <class>          4               </class>
+          <url> juvenilefish_high.png      </url>
+        </icons>
+      </juvenilefish>
+    </ecology>
     <costs>
-      <header>Transport distance in kilometers</header>
-      <transportdistance>10</transportdistance>
-      <PLOTscale1>0.000016</PLOTscale1>
-      <PLOTscale2>0.0</PLOTscale2>
-      <PLOToffset>17500</PLOToffset>
+      <direct>
+        <header>Transport distance in kilometers</header>
+        <transportdistance>10</transportdistance>
+        <PLOTscale1>       0.000016  </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       17500     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> directcosts_no.png         </url>
+          <class>          2               </class>
+          <url> directcosts_low.png        </url>
+          <class>          3               </class>
+          <url> directcosts_moderate.png   </url>
+          <class>          4               </class>
+          <url> directcosts_high.png       </url>
+        </icons>
+      </direct>
     </costs>
     <recreation>
-      <header>Recreation beach width</header>
-      <PLOTscale1>1</PLOTscale1>
-      <PLOTscale2>0.0</PLOTscale2>
-      <PLOToffset>20000</PLOToffset>
-      <PLOTscale1B>4</PLOTscale1B>
-      <PLOTscale2B>0.0</PLOTscale2B>
-      <PLOToffsetB>22500</PLOToffsetB>
+      <beachwidth>
+        <header>Recreation beach width</header>
+        <PLOTscale1>       1         </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       20000     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> beachwidth_no.png          </url>
+          <class>          2               </class>
+          <url> beachwidth_low.png         </url>
+          <class>          3               </class>
+          <url> beachwidth_moderate.png    </url>
+          <class>          4               </class>
+          <url> beachwidth_high.png        </url>
+        </icons>
+      </beachwidth>
+      <dunearea>
+        <header>Recreation dune width</header>
+        <PLOTscale1>       4         </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       22500     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> dunearea_no.png            </url>
+          <class>          2               </class>
+          <url> dunearea_low.png           </url>
+          <class>          3               </class>
+          <url> dunearea_moderate.png      </url>
+          <class>          4               </class>
+          <url> dunearea_high.png          </url>
+        </icons>
+      </dunearea>
     </recreation>
-    <drinkwater>
-      <header>Drinking water with dune area change as proxy</header>
-      <PLOTscale1>4</PLOTscale1>
-      <PLOTscale2>0.0</PLOTscale2>
-      <PLOToffset>25000</PLOToffset>
-    </drinkwater>
+    <economy>
+      <drinkwater>
+        <header>Drinking water with dune area change as proxy</header>
+        <PLOTscale1>       4         </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       25000     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> drinkwater_no.png          </url>
+          <class>          2               </class>
+          <url> drinkwater_low.png         </url>
+          <class>          3               </class>
+          <url> drinkwater_moderate.png    </url>
+          <class>          4               </class>
+          <url> drinkwater_high.png        </url>
+        </icons>
+      </drinkwater>
+    </economy>
+    <residential>
+      <groundwater>
+        <header>Ground water with dune area change as proxy, uses a threshold dune position change (Ythr)</header>
+        <Ythr>30</Ythr>
+        <PLOTscale1>       500       </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       -3500     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> groundwater_no.png         </url>
+          <class>          2               </class>
+          <url> groundwater_low.png        </url>
+          <class>          3               </class>
+          <url> groundwater_moderate.png   </url>
+          <class>          4               </class>
+          <url> groundwater_high.png       </url>
+        </icons>
+      </groundwater>  
+      <realestate>  
+        <header>Dune area change as proxy for real estate value, uses a threshold dune position change (Ythr)</header>
+        <Ythr>50</Ythr>
+        <PLOTscale1>       500       </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       -4500     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> realestate_no.png          </url>
+          <class>          2               </class>
+          <url> realestate_low.png         </url>
+          <class>          3               </class>
+          <url> realestate_moderate.png    </url>
+          <class>          4               </class>
+          <url> realestate_high.png        </url>
+        </icons>
+      </realestate>  
+    </residential>
+    <safety>
+      <dykering>
+        <header>Indicator for dyke ring safety, using coastline as a proxy (threshold value above Ythr)</header>
+        <Ythr>30</Ythr>
+        <PLOTscale1>       500       </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       -5500     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> dykering_no.png            </url>
+          <class>          2               </class>
+          <url> dykering_low.png           </url>
+          <class>          3               </class>
+          <url> dykering_moderate.png      </url>
+          <class>          4               </class>
+          <url> dykering_high.png          </url>
+        </icons>
+      </dykering>  
+      <structures>  
+        <header>Indicator for safety of structures outside the dyke ring, using coastline as a proxy (threshold value above Ythr)</header>
+        <Ythr>30</Ythr>
+        <PLOTscale1>       500       </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       -6500     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> structure_no.png           </url>
+          <class>          2               </class>
+          <url> structure_low.png          </url>
+          <class>          3               </class>
+          <url> structure_moderate.png     </url>
+          <class>          4               </class>
+          <url> structure_high.png         </url>
+        </icons>
+      </structures>  
+    </safety>
   </indicators>
   <plotting>
     <reference>initial</reference>
