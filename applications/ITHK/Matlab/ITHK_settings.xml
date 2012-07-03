@@ -15,7 +15,7 @@
   <indicators>
     <coast>
       <plottype>barplot</plottype>
-      <offset>0</offset>
+      <PLOToffset>0</PLOToffset>
     </coast>
     <dunes>
       <yposinitial>80</yposinitial>
@@ -68,6 +68,7 @@
       <benthos>
         <function>ITHK_ind_ecology_benthos</function>
         <plottype>barplot</plottype>
+        <PLOTscale1>       12        </PLOTscale1>
         <PLOToffset>       7000      </PLOToffset>
         <PLOToffsetDX>     2500      </PLOToffsetDX>
         <icons>
@@ -103,6 +104,8 @@
       <direct>
         <header>Transport distance in kilometers</header>
         <transportdistance>10</transportdistance>
+        <header2>Type of location of nourishments 1= foreshore; 2= predominantly beach</header2>
+        <locationtype>     2         </locationtype>
         <PLOTscale1>       0.000016  </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
         <PLOToffset>       17500     </PLOToffset>
@@ -250,7 +253,6 @@
       <dsfine>500</dsfine>
       <widthfine>5000</widthfine>
       <barscalevector>3</barscalevector>
-      <barscalevector_eco>12</barscalevector_eco>
     </barplot>
   </plotting>
   <postprocessing>
