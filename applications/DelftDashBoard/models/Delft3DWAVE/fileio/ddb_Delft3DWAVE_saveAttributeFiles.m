@@ -58,7 +58,7 @@ if handles.Model(md).Input.nrobstacles>0
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input.obstacleolylinesfile=filename;
+            handles.Model(md).Input.obstaclepolylinesfile=filename;
         else
             return
         end
