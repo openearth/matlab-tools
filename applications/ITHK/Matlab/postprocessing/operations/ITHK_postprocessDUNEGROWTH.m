@@ -172,6 +172,7 @@ global S
     S.PP(sens).dunes.position.y          = DUNES.y;     % Y-coordinate of dune face
     S.PP(sens).dunes.position.ypos       = DUNES.ypos;  % The cross-shore position of the dune face relative to the reference line (compare to PRNdata.z)
     S.PP(sens).dunes.position.beachwidth = DUNES.B;     % The beach width along the coast in time
+    S.PP(sens).dunes.position.yposREL    = S.PP(sens).dunes.position.ypos-repmat(S.PP(sens).dunes.position.ypos(:,1),[1,size(S.PP(sens).dunes.position.ypos,2)]);
 end
 
 %% Sub-function 1 : SMOOTH FUNCTION
