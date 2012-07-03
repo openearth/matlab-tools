@@ -59,7 +59,7 @@ end
 iconfiles = struct;
 for kk=1:length(icons)
     iconclass(kk)      = str2double(icons(kk).class);
-    iconfiles(kk).url  = which(icons(kk).url);
+    iconfiles(kk).url  = which(strtrim(icons(kk).url));
 end
 
 %% time related parameters
