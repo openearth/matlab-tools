@@ -1,16 +1,38 @@
 function ITHK_ind_dunes_duneclasses(sens,varargin)
 
-% dunerules_19apr12.m
-
 % -------------------------------------------------------------------
 % Alma de Groot
-% Ecoshape, WUR
-% 19 apr 2012
-% Modified by B.J.A. Huisman (Deltares, July 2012)
-
-% Calculates potential for dune formation based on Unibest outcomes.
-% Post-processing tool based on UNIBEST outcomes
-% used in Interactive Design Tool
+% Ecoshape, WUR (Wageningen University and IMARES)
+% funded by Ecoshape and Knowledge for Climate
+% 12 June 2012
+%
+% This code is used in the Interactive Design Tool
+% in de Building with Nature program
+% It calculates potential for dune formation based on Unibest outcomes,
+% in a post-processing mode.
+%
+% INPUT
+%   UNIBEST output read from ...
+%   time                Timeframe
+%   stored              total volume of sediment stored in a cell due to accretion or erosion (Stored volume in each cell [10^6 m3]
+%   xdist               alongshore distance
+%   neticaJarkusLUT     a lookuptable that gives volume changes of parts of
+%   the profile as function of total volume change, based on a Bayesian
+%   network model of JARKUS data of the Holland Coast. Read from
+%   neticaJarkusLUT.mat
+%   
+%
+% OUTPUT 
+%   cumdunes    cumulatieve dune volume compared to initial situation
+%   duneclass   type of dunes that develop as a result of volume changes
+%   richness    expected ecological richness of foredune area
+%   dynamic     whether or not dunes are dynamic
+%
+%  Additional information can be found in the accompanying report
+%  "Long-term dune development in the Interactive Design Tool"
+%  by Alma de Groot 
+%  available through the Building with Nature online wiki
+%
 % -------------------------------------------------------------------
 
 fprintf('ITHK postprocessing : Indicator for dune class identification\n');
@@ -29,19 +51,9 @@ else
     PRNdata = S.UB(sens).results.PRNdata;
 end
 stored = PRNdata.stored;
-if S.userinput.indicators.slr == 1
-    for jj=1:length(S.PP(sens).settings.tvec)
-        zminz0(:,jj) = PRNdata.zSLR(:,jj)-PRNdata.zSLR(:,1);
-    end    
-else
-    zminz0 = PRNdata.zminz0;
-end
-% duneclasstemp = ones(size(stored(1),1));  % initialise matrix for calculations
-% these matrices normally have rows = transects, columns = years.
 
 % -------------------------------------------------------------------
 %% STEP 1 DISTRIBUTE THE TOTAL VOLUME OVER THE BEACH, DUNES AND UNDERWATER
-% WITH SIMPLIFIED CODE!
 
 % calculate values per year
 cellwidth = round(PRNdata.xdist(2) - PRNdata.xdist(1)) ;
@@ -50,17 +62,19 @@ volumeyear (:,1) = stored(:,1).*1e+006./cellwidth;               % correct for t
 
 
 % calculate volume changes per profile section per year
-% obtain values from Netica
-% [underwateryear, beachyear, dunesyear] = neticaread(volumeyear);  % FUL VERSION, STILL NEEDS TO BE MADE! WAIT FOR NETICA READ FILES FROM USGS/DIRK
-[underwateryear, beachyear, dunesyear] = neticareadklad(volumeyear); 
+% obtain values from Netica lookuptable (LUT)
+[offshoreyear, beach2year, beach1year, dunesyear] = neticareadLUT(volumeyear);
 
-% calculate cumulative values with respect to begin situation
+
+% calculate cumulative values with respect to initial situation
 cumdunes = dunesyear;
-cumbeach = beachyear;
-cumunderwater = underwateryear;
+cumbeach1 = beach1year;
+cumbeach2 = beach2year;
+cumunderwater = offshoreyear;
 for p = 2:size(cumdunes,2)
     cumdunes(:,p) = cumdunes(:,p) + cumdunes(:,p-1) ;
-    cumbeach(:,p) = cumbeach(:,p) + cumbeach(:,p-1) ;
+    cumbeach1(:,p) = cumbeach1(:,p) + cumbeach1(:,p-1) ;
+    cumbeach2(:,p) = cumbeach2(:,p) + cumbeach2(:,p-1) ;
     cumunderwater(:,p) = cumunderwater(:,p) + cumunderwater(:,p-1) ;
 end
 
@@ -87,7 +101,7 @@ b1 = -30;                % from neutral to erosive (cumulative m3/m)
 b2 = 100;                % upper boundary of stable situation 
 b3 = 400;                % upper boundary for slightly prograding situation 
 
-
+% assign classes
 duneclass = ones(size(cumdunes));
 duneclass (cumdunes < b1)                     = 1;    % erosive
 duneclass((cumdunes >= b1) & (cumdunes < b2)) = 2;    % stable
@@ -107,6 +121,7 @@ for q = thresholdyear+1 : size(duneclass,2)
     duneclass_q(thresholdcrossed) = 5;
     duneclass(:,q) = duneclass_q;
 end
+
 
 if reference==0
     S.PP(sens).dunes.duneclass = duneclass;
