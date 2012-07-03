@@ -80,6 +80,11 @@ function nestHD2
 
 handles=getHandles;
 
+if isempty(handles.Toolbox(tb).Input.trihFile)
+    ddb_giveWarning('text','Please first load history file of overall model!');
+    return
+end
+
 hisfile=handles.Toolbox(tb).Input.trihFile;
 nestadm=handles.Toolbox(tb).Input.admFile;
 z0=handles.Toolbox(tb).Input.zCor;

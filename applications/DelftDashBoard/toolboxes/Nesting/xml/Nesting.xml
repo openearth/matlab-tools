@@ -27,8 +27,8 @@
         <tab>
           <tag>nestingwave</tag>
           <tabstring>Nesting</tabstring>
-          <callback>ddb_dummyTabCallback</callback>
-          <elements>nesting.delft3dwave.xml</elements>
+          <callback>ddb_NestingToolbox_Delft3DWAVE_nest1</callback>
+          <elements>nesting.delft3dwave.nest1.xml</elements>
           <formodel>delft3dwave</formodel>
         </tab>
         <tab>

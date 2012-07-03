@@ -83,6 +83,7 @@ end
 handles.Toolbox(ii).Input.grdFile       = '';
 handles.Toolbox(ii).Input.encFile       = '';
 handles.Toolbox(ii).Input.bndFile       = '';
+handles.Toolbox(ii).Input.depFile       = '';
 
 handles.Toolbox(ii).Input.admFile       = 'nesting.adm';
 handles.Toolbox(ii).Input.trihFile      = '';

@@ -80,6 +80,26 @@ function nestHD1
 
 handles=getHandles;
 
+if isempty(handles.Toolbox(tb).Input.grdFile)
+    ddb_giveWarning('text','Please first load grid file of nested model!');
+    return
+end
+
+if isempty(handles.Toolbox(tb).Input.encFile)
+    ddb_giveWarning('text','Please first load enclosure file of nested model!');
+    return
+end
+
+if isempty(handles.Toolbox(tb).Input.bndFile)
+    ddb_giveWarning('text','Please first load boundary file of nested model!');
+    return
+end
+
+if isempty(handles.Model(md).Input(ad).gridX)
+    ddb_giveWarning('text','Please first load or create model grid!');
+    return    
+end
+
 fid=fopen('nesthd1.inp','wt');
 fprintf(fid,'%s\n',handles.Model(md).Input(ad).grdFile);
 fprintf(fid,'%s\n',handles.Model(md).Input(ad).encFile);
