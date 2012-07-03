@@ -107,10 +107,10 @@ function varargout = findAllFiles(varargin)
        end
        
    else
-       disp('Not supported yet for this operating system')
+       [a b] = system(['find ' OPT.basepath ' -iname ' OPT.pattern_incl]);
    end
 
-if strcmpi(strtrim(b),'File Not Found') % NB b(end) = char(10)
+if strcmpi(strtrim(b),'File Not Found') || isempty(strtrim(b)) % NB b(end) = char(10) % empty for unix/osx
 
    s = [];
    
