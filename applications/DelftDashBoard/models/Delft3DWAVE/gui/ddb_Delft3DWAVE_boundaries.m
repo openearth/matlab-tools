@@ -38,6 +38,7 @@ end
 
 %%
 function addBoundary
+clearInstructions;
 
 handles=getHandles;
 nr=handles.Model(md).Input.nrboundaries;
@@ -57,6 +58,7 @@ ddb_Delft3DWAVE_plotBoundaries(handles,'update');
 
 %%
 function deleteBoundary
+clearInstructions;
 handles=getHandles;
 if handles.Model(md).Input.nrboundaries>0
     iac=handles.Model(md).Input.activeboundary;
@@ -78,6 +80,7 @@ end
 
 %%
 function editBoundaryConditions
+clearInstructions;
 
 ddb_zoomOff;
 handles=getHandles;
@@ -117,26 +120,13 @@ end
 
 %% 
 function editSpectralSpace
+clearInstructions;
 
 ddb_zoomOff;
 handles=getHandles;
 
 % Make new GUI
 h=handles;
-
-iac=handles.Model(md).Input.activeboundary;
-% switch lower(handles.Model(md).Input.boundaries(iac).periodtype)
-%     case{'peak'}
-%         h.Model(md).Input.periodtext='Wave Period Tp (s)';
-%     case{'mean'}
-%         h.Model(md).Input.periodtext='Wave Period Tm (s)';
-% end
-% switch lower(handles.Model(md).Input.boundaries(iac).dirspreadtype)
-%     case{'power'}
-%         h.Model(md).Input.dirspreadtext='Directional Spreading (-)';
-%     case{'degrees'}
-%         h.Model(md).Input.dirspreadtext='Directional Spreading (degrees)';
-% end
 
 xmldir=handles.Model(md).xmlDir;
 % switch lower(handles.Model(md).Input.boundaries(iac).alongboundary)
@@ -155,6 +145,7 @@ end
 
 %%
 function drawXYBoundary
+setInstructions({'','','Draw boundary section on grid'});
 ddb_zoomOff;
 handles=getHandles;
 xg=handles.Model(md).Input.domains(1).gridx;
@@ -163,6 +154,7 @@ gui_dragLine('callback',@addXYBoundary,'method','alonggridline','gridx',xg,'grid
 
 %%
 function addXYBoundary(x,y,m,n)
+clearInstructions;
 handles=getHandles;
 h=gui_polyline('plot','x',x,'y',y,'tag','delft3dwaveboundary','Marker','o','changecallback',@changeXYBoundary,'closed',0, ...
     'color','r','markeredgecolor','r','markerfacecolor','r');
@@ -193,6 +185,7 @@ gui_updateActiveTab;
 
 %%
 function changeXYBoundary(h,x,y,nr)
+clearInstructions;
 handles=getHandles;
 % First find boundary that was changed 
 for ii=1:handles.Model(md).Input.nrboundaries
@@ -237,6 +230,7 @@ gui_updateActiveTab;
 
 %%
 function editXYCoordinates
+clearInstructions;
 handles=getHandles;
 iac=handles.Model(md).Input.activeboundary;
 h=handles.Model(md).Input.boundaries(iac).plothandle;
@@ -248,6 +242,7 @@ gui_polyline(h,'change','x',x,'y',y);
 
 %%
 function editMNCoordinates
+clearInstructions;
 
 handles=getHandles;
 
@@ -276,6 +271,7 @@ setHandles(handles);
 
 %%
 function selectDefinition
+clearInstructions;
 handles=getHandles;
 iac=handles.Model(md).Input.activeboundary;
 % Delete existing plot handles

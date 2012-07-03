@@ -86,7 +86,7 @@ switch lower(opt)
                     if active && ii==handles.Model(imd).Input.activeboundary
                         gui_polyline(h,'change','color','r','markeredgecolor','r','markerfacecolor','r');
                     end
-                    handles.Model(imd).Input.obstacles(ii).plothandle=h;
+                    handles.Model(imd).Input.boundaries(ii).plothandle=h;
                 case{'grid-coordinates'}
                     x=[handles.Model(imd).Input.boundaries(ii).startcoordx handles.Model(imd).Input.boundaries(ii).endcoordx];
                     y=[handles.Model(imd).Input.boundaries(ii).startcoordy handles.Model(imd).Input.boundaries(ii).endcoordy];
@@ -96,7 +96,7 @@ switch lower(opt)
                     if active && ii==handles.Model(imd).Input.activeboundary
                         gui_polyline(h,'change','color','r','markeredgecolor','r','markerfacecolor','r');
                     end
-                    handles.Model(imd).Input.obstacles(ii).plothandle=h;
+                    handles.Model(imd).Input.boundaries(ii).plothandle=h;
             end
         end
         

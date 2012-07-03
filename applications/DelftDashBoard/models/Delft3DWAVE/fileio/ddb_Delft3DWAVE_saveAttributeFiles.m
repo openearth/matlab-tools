@@ -76,6 +76,6 @@ if handles.Model(md).Input.nrobstacles>0
             return
         end
     end    
-    ddb_saveDelft3DWAVEObstacleFile(handles);
+    ddb_Delft3DWAVE_saveObstacleFile(handles);
 
 end

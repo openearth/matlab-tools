@@ -6,6 +6,9 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     ddb_Delft3DWAVE_plotObstacles(handles,'update');
+    if handles.Model(md).Input.nrobstacles>0
+        setInstructions({'','','Drag obstacle vertices to change its location'});
+    end
 else
     opt=varargin{1};
     switch lower(opt)
@@ -130,11 +133,16 @@ setHandles(handles);
 function drawObstacle
 
 ddb_zoomOff;
+
+setInstructions({'','','Draw obstacle on grid'});
+
 gui_polyline('draw','tag','delft3dwaveobstacle','Marker','o','createcallback',@addObstacle,'changecallback',@changeObstacle,'closed',0, ...
     'color','r','markeredgecolor','r','markerfacecolor','r');
 
 %%
 function addObstacle(h,x,y,nr)
+
+setInstructions({'','','Drag obstacle vertices to change the obstacle location'});
 
 handles=getHandles;
 handles.Model(md).Input.nrobstacles=handles.Model(md).Input.nrobstacles+1;
