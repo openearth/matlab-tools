@@ -1,4 +1,4 @@
-function S = process_webinput(measure,lat,lon,implementation,len,vol,fill,time,name,coast,eco,dunes,slr)
+function S = ITHK_process_webinput(measure,lat,lon,implementation,len,vol,fill,time,name,coast,eco,dunes,slr)
 
 %% Process input from Viewer
 %% Scenario information
