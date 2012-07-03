@@ -670,6 +670,11 @@
             <value>0</value>
             <operator>ne</operator>
           </check>
+          <check>
+            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spectrumspec</variable>
+            <value>parametric</value>
+            <operator>eq</operator>
+          </check>          
         </checks>
       </dependency>
     </dependencies>    
