@@ -64,7 +64,7 @@ function ITHK_ind_residential_groundwater(sens)
 
 %% code
 
-fprintf('ITHK postprocessing : Indicator for the potential problems with groundwater in residential areas, using dune position as a proxy\n');
+fprintf('ITHK postprocessing : Indicator for the groundwater in residential areas, using dune position as a proxy\n');
 
 global S
 
@@ -72,27 +72,19 @@ global S
 Ythr                     = str2double(S.settings.indicators.residential.groundwater.Ythr);
 sRough                   = S.PP(sens).settings.sgridRough;
 dS                       = S.PP(sens).settings.dsRough;
-zonedata                 = load('ITHK_ind_residential_groundwater.txt');  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
-ID_residential           = [];
-for ii=1:size(zonedata,1)
-    X0zone               = zonedata(ii,1);                                                          % x-position of center of coastal zone
-    X1zone               = zonedata(ii,1)-zonedata(ii,2)/2-dS/2;                                    % x-position of southern edge of coastal zone
-    X2zone               = zonedata(ii,1)+zonedata(ii,2)/2+dS/2;                                    % x-position of northern edge of coastal zone
-    ID_residential       = [ID_residential,find(sRough>=X1zone & sRough<=X2zone)];                % find grid points within the zone
-    ID_residential       = [ID_residential,find(abs(sRough-X0zone)==min(abs(sRough-X0zone)))];    % use at least the grid point nearest to the center of a zone (in case the zone is smaller dan dS)
-end
-ID_residential           = unique(ID_residential);                                                % throw away double id's
-ID_notresidential        = setdiff([1:length(sRough)],ID_residential);
+zonefile                 = 'ITHK_ind_residential_groundwater.txt';  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
+[ID_inside,ID_outside]   = loadregions(sRough,dS,zonefile);
 
 %% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)
 idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
 groundwater              = S.PP(sens).dunes.position.yposREL(idUR,:);
-groundwaterclasses       = groundwater;
+%groundwater             = S.PP(sens).coast.zcoast(idUR,:);    %realestate==S.PP(sens).dunes.position.yposREL(idUR,:);   %realestate=S.PP(sens).coast.zgridRough;
+groundwaterclasses       = ones(size(groundwater));
 groundwaterclasses(groundwater<Ythr)                          = 2;
 groundwaterclasses(groundwater>=Ythr & groundwater<2*Ythr)    = 3;
 groundwaterclasses(groundwater>=2*Ythr)                       = 4;
-groundwaterclasses(ID_notresidential,:)                       = 1;
-groundwater(ID_notresidential,:)                              = 0;
+groundwaterclasses(ID_outside,:)                              = 1;
+groundwater(ID_outside,:)                                     = 0;
 S.PP(sens).GEmapping.residential.groundwater  = groundwater;
 S.PP(sens).GEmapping.residential.groundwater2 = groundwaterclasses;
 
@@ -113,5 +105,22 @@ popuptxt     = {'Groundwater','Dune area as a proxy for groundwater problems in 
                              S.PP(sens).GEmapping.residential.groundwater2,PLOTicons,PLOToffset,sens,popuptxt);
 S.PP(sens).output.kml_residential_groundwater  = KMLdata1;
 S.PP(sens).output.kml_residential_groundwater2 = KMLdata2;
+end
+
+
+%% SUB-function loads file with zones with the considered function and finds IDs of coastline points that are inside or outside this zone
+function [ID_inside,ID_outside]=loadregions(sRough,dS,zonefile)
+  zonedata                 = load(zonefile);  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
+  ID_inside                = [];
+  for ii=1:size(zonedata,1)
+      X0zone               = zonedata(ii,1);                                                          % x-position of center of coastal zone
+      X1zone               = zonedata(ii,1)-zonedata(ii,2)/2-dS/2;                                    % x-position of southern edge of coastal zone
+      X2zone               = zonedata(ii,1)+zonedata(ii,2)/2+dS/2;                                    % x-position of northern edge of coastal zone
+      ID_inside            = [ID_inside,find(sRough>=X1zone & sRough<=X2zone)];                % find grid points within the zone
+      ID_inside            = [ID_inside,find(abs(sRough-X0zone)==min(abs(sRough-X0zone)))];    % use at least the grid point nearest to the center of a zone (in case the zone is smaller dan dS)
+  end
+  ID_inside                = unique(ID_inside);                                                % throw away double id's
+  ID_outside             = setdiff([1:length(sRough)],ID_inside);
+end
 
 

@@ -64,30 +64,30 @@ fprintf('ITHK postprocessing : Indicator for the recreation in the dunes, using 
 global S
 
 %% Determine specific longshore IDs of zone with drinking water fucntion (on the basis of on settings file 'ITHK_ind_recreation_dunearea.txt').
+Ythr                     = str2double(S.settings.indicators.recreation.dunearea.Ythr);
 sRough                   = S.PP(sens).settings.sgridRough;
 dS                       = S.PP(sens).settings.dsRough;
-zonedata                 = load('ITHK_ind_recreation_dunearea.txt');  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
-ID_recr                  = [];
-for ii=1:size(zonedata,1)
-    X0zone               = zonedata(ii,1);                                                          % x-position of center of coastal zone
-    X1zone               = zonedata(ii,1)-zonedata(ii,2)/2-dS/2;                                    % x-position of southern edge of coastal zone
-    X2zone               = zonedata(ii,1)+zonedata(ii,2)/2+dS/2;                                    % x-position of northern edge of coastal zone
-    ID_recr              = [ID_recr,find(sRough>=X1zone & sRough<=X2zone)];                % find grid points within the zone
-    ID_recr              = [ID_recr,find(abs(sRough-X0zone)==min(abs(sRough-X0zone)))];    % use at least the grid point nearest to the center of a zone (in case the zone is smaller dan dS)
-end
-ID_recr                  = unique(ID_recr);                                                % throw away double id's
-ID_notrecr               = setdiff([1:length(sRough)],ID_recr);
+zonefile                 = 'ITHK_ind_recreation_dunearea.txt';  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
+[ID_inside,ID_outside]   = loadregions(sRough,dS,zonefile);
 
 %% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)
 idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
 dunearea                 = S.PP(sens).dunes.position.yposREL(idUR,:);
-if ~isempty(ID_notrecr); dunearea(ID_notrecr,:)=0; end
+duneareaclasses          = ones(size(dunearea));
+duneareaclasses(dunearea<Ythr)                      = 2;
+duneareaclasses(dunearea>=Ythr & dunearea<2*Ythr)   = 3;
+duneareaclasses(dunearea>=2*Ythr)                   = 4;
+duneareaclasses(ID_outside,:)                       = 1;
+dunearea(ID_outside,:)                              = 0;
 S.PP(sens).GEmapping.recreation.dunearea  = dunearea;
+S.PP(sens).GEmapping.recreation.dunearea2 = duneareaclasses;
+
 
 %% Settings for writing to KMLtext
 PLOTscale1   = str2double(S.settings.indicators.recreation.dunearea.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
 PLOTscale2   = str2double(S.settings.indicators.recreation.dunearea.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
 PLOToffset   = str2double(S.settings.indicators.recreation.dunearea.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTicons    = S.settings.indicators.recreation.dunearea.icons;
 colour       = {[0 0.6 0.0],[0.8 0.0 0.0]};
 fillalpha    = 0.7;
 popuptxt     = {'Recreation dune area','Dune area as a proxy for recreation'};
@@ -100,3 +100,20 @@ popuptxt     = {'Recreation dune area','Dune area as a proxy for recreation'};
                              S.PP(sens).GEmapping.recreation.dunearea2,PLOTicons,PLOToffset,sens,popuptxt);
 S.PP(sens).output.kml_recreation_dunearea  = KMLdata1;
 S.PP(sens).output.kml_recreation_dunearea2 = KMLdata2;
+end
+
+
+%% SUB-function loads file with zones with the considered function and finds IDs of coastline points that are inside or outside this zone
+function [ID_inside,ID_outside]=loadregions(sRough,dS,zonefile)
+  zonedata                 = load(zonefile);  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
+  ID_inside                = [];
+  for ii=1:size(zonedata,1)
+      X0zone               = zonedata(ii,1);                                                          % x-position of center of coastal zone
+      X1zone               = zonedata(ii,1)-zonedata(ii,2)/2-dS/2;                                    % x-position of southern edge of coastal zone
+      X2zone               = zonedata(ii,1)+zonedata(ii,2)/2+dS/2;                                    % x-position of northern edge of coastal zone
+      ID_inside            = [ID_inside,find(sRough>=X1zone & sRough<=X2zone)];                % find grid points within the zone
+      ID_inside            = [ID_inside,find(abs(sRough-X0zone)==min(abs(sRough-X0zone)))];    % use at least the grid point nearest to the center of a zone (in case the zone is smaller dan dS)
+  end
+  ID_inside                = unique(ID_inside);                                                % throw away double id's
+  ID_outside             = setdiff([1:length(sRough)],ID_inside);
+end

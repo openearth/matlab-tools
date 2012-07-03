@@ -95,16 +95,20 @@ costs.indirectratio.beachtype            = str2num(costs.indirectratio.beachtype
 costs.indirectratio.foreshoretype        = str2num(costs.indirectratio.foreshoretype);
 
 %% COMPUTE
-distance      = str2double(S.settings.indicators.costs.direct.transportdistance);
-idTYPE        = str2double(S.settings.indicators.costs.direct.locationtype);   % 1= foreshore; 2= predominantly beach
-costsUB.total = zeros(size(S.PP(sens).coast.zcoast));                      % initialise empty UBmapping of costs
-costsGE.total = zeros(size(S.PP(sens).coast.zgridRough));                  % initialise empty GEmapping of costs
-%xcoast       = S.PP(sens).coast.xcoast;                                   % change of coastline since t0 (UBmapping)
-%ycoast       = S.PP(sens).coast.ycoast;                                   % change of coastline since t0 (UBmapping)
-zminz0        = S.PP(sens).coast.zcoast;                                   % change of coastline since t0 (UBmapping)
-zminz0Rough   = S.PP(sens).coast.zgridRough;                               % change of coastline since t0 (GEmapping)
+distance           = str2double(S.settings.indicators.costs.direct.transportdistance);
+idTYPE             = str2double(S.settings.indicators.costs.direct.locationtype);   % 1= foreshore; 2= predominantly beach
+costsUB.total      = zeros(size(S.PP(sens).coast.zcoast));                      % initialise empty UBmapping of costs
+costsGE.total      = zeros(size(S.PP(sens).coast.zgridRough));                  % initialise empty GEmapping of costs
+costsGE.structures = zeros(size(S.PP(sens).coast.zgridRough));                  % initialise empty GEmapping of costs
+costsGE.nourish    = zeros(size(S.PP(sens).coast.zgridRough));                  % initialise empty GEmapping of costs
+costsGE.transport  = zeros(size(S.PP(sens).coast.zgridRough));                  % initialise empty GEmapping of costs
+costsGE.indirect   = zeros(size(S.PP(sens).coast.zgridRough));                  % initialise empty GEmapping of costs
+%xcoast            = S.PP(sens).coast.xcoast;                                   % change of coastline since t0 (UBmapping)
+%ycoast            = S.PP(sens).coast.ycoast;                                   % change of coastline since t0 (UBmapping)
+zminz0             = S.PP(sens).coast.zcoast;                                   % change of coastline since t0 (UBmapping)
+zminz0Rough        = S.PP(sens).coast.zgridRough;                               % change of coastline since t0 (GEmapping)
 
-KMLdata1      = [];
+KMLdata2      = [];
 
 %% EVALUATE STRUCTURES
 fldname  = {'revetment','groyne'};
@@ -130,7 +134,7 @@ for jj=1:length(fldname)
             else
                 addtxt  = sprintf('Groyne with length %1.0fm. ',R.length);
             end
-            KMLdata1 = [KMLdata1,KMLcosts(S,fldname{jj},costs.(fldname{jj}).costs(ii),ii,R.lon,R.lat,addtxt)];
+            KMLdata2 = [KMLdata2,KMLcosts(S,fldname{jj},costs.(fldname{jj}).costs(ii),ii,R.lon,R.lat,addtxt)];
         end
     else
         costs.(fldname{jj}).costs  = 0;
@@ -148,9 +152,9 @@ for ii=1:length(S.userinput.nourishment)
     N.VOL        =   S.userinput.nourishment(ii).volume;
     N.WIDTH      =   S.userinput.nourishment(ii).width;
     N.volperm    =   N.VOL/N.WIDTH;
-    N.id    =   S.userinput.nourishment(ii).idRANGE(:);
+    N.id         =   S.userinput.nourishment(ii).idRANGE(:);
     N.idNEAREST  =   S.userinput.nourishment(ii).idNEAREST(:);
-    N.id2   =   S.userinput.nourishment(ii).idRANGE2(:);
+    N.id2        =   S.userinput.nourishment(ii).idRANGE2(:);
     N.idNEAREST2 =   S.userinput.nourishment(ii).idNEAREST2(:);
     N.distance   =   distance;
     costs.nourishments.props(ii) = N;
@@ -189,7 +193,7 @@ for ii=1:length(S.userinput.nourishment)
     costsUB.total(N.id,idt)       = costsUB.total(N.id,idt)      + costs_total(ii,idTYPE) * N.VOL/length(N.id)/length(idt);
     costsGE.total(N.id2,idt)      = costsGE.total(N.id2,idt)     + costs_total(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
     costsGE.nourish(N.id2,idt)    = costsGE.nourish(N.id2,idt)   + costs_nourish(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
-    costsGE.transport(N.id2,idt)  = costsGE.transport(N.id2,idt) + costs_transport(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
+    costsGE.transport(N.id2,idt)  = costsGE.transport(N.id2,idt) + costs_transport(ii) * N.VOL/length(N.id2)/length(idt);
     costsGE.indirect(N.id2,idt)   = costsGE.indirect(N.id2,idt)  + costs_indirect(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
     
     %% Make KML with direct costs for each of the noursihment locations
@@ -197,7 +201,7 @@ for ii=1:length(S.userinput.nourishment)
     addtxt  = sprintf(['This nourishment is characterised by a volume of %2.2f million m^3 and a width of %1.0f m which is placed in the year %1.0f. ',...
                        'The costprices are about %2.2f to %2.2f euro/m^3 for the dredging and nourishing, about %2.2f euro/m^3/km for the transport and %2.2f to %2.2f euro/m^3 for indirect costs.'], ...
                        N.VOL/10^6,N.WIDTH,N.tstart+S.PP(sens).settings.t0,min(costs_nourish(ii,:)),max(costs_nourish(ii,:)),costs_transport(ii),min(costs_indirect(ii,:)),max(costs_indirect(ii,:)));
-    KMLdata1 = [KMLdata1,KMLcosts(S,'nourishment',costs.nourishments.costs(ii,:),ii,N.lon,N.lat,addtxt)];
+    KMLdata2 = [KMLdata2,KMLcosts(S,'nourishment',costs.nourishments.costs(ii,:),ii,N.lon,N.lat,addtxt)];
 end
 end
 
@@ -223,12 +227,12 @@ colour       = {[0.7 0.0 0.7],[0.4 0.0 0.4]};
 fillalpha    = 0.7;
 popuptxt     = {'Direct costs','Direct costs of nourishments on the coast'};
 %% Write to kml
-KMLdata2      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+KMLdata1      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
                               (S.PP(sens).GEmapping.costs.direct.costs_total-PLOTscale2), ...
                               PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
 KMLdata3      = ITHK_KMLcostsbar(sens);
 
-S.PP(sens).output.kml_costs_direct1 = KMLdata1;
+S.PP(sens).output.kml_costs_direct  = KMLdata1;
 S.PP(sens).output.kml_costs_direct2 = KMLdata2;
 S.PP(sens).output.kml_costs_direct3 = KMLdata3;
 
@@ -240,11 +244,10 @@ S.PP(sens).output.kml_costs_direct3 = KMLdata3;
 % 
 % addtxt = '_costs3';
 % ITHK_io_writeKML(KMLdata3,addtxt,sens);
-
 end
 
 
-%% SUB-FUNCTION
+%% SUB-FUNCTION KMLcosts
 function KMLdata=KMLcosts(S,measuretype,directcosts,ii,lon,lat,addtxt)
     iconlink      = [S.settings.basedir,'Matlab\postprocessing\indicators\costs\icons\euro-icon32x32.ico'];
     if length(directcosts)==1
