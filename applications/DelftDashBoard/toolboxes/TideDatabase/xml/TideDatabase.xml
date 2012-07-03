@@ -21,6 +21,8 @@
           <tabstring>Calibrate</tabstring>
           <callback>ddb_TideDatabaseToolbox_calibrate</callback>
           <elements>TideDatabase.calibrate.xml</elements>
+          <enable>off</enable> 
+          <formodel>delft3dflow</formodel> 
         </tab>
       </tabs>
     </element>

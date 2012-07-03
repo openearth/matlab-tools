@@ -15,12 +15,28 @@
           <tabstring>Parameters</tabstring>
           <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
           <elements>TropicalCyclone.parameters.xml</elements>
+          <formodel>delft3dflow</formodel>
         </tab>
         <tab>
           <tag>tracktable</tag>
           <tabstring>Track</tabstring>
           <callback>ddb_TropicalCycloneToolbox_editTrackTable</callback>
           <elements>TropicalCyclone.tracktable.xml</elements>
+          <formodel>delft3dflow</formodel>
+        </tab>
+        <tab>
+          <tag>tropicalcyclone_delft3dwave</tag>
+          <tabstring>Tropical Cyclone</tabstring>
+          <callback>ddb_dummyTabCallback</callback>
+          <elements>TropicalCyclone.delft3dwave.xml</elements>
+          <formodel>delft3dwave</formodel>
+        </tab>
+        <tab>
+          <tag>tropicalcyclone_delft3dwave</tag>
+          <tabstring>Tropical Cyclone</tabstring>
+          <callback>ddb_dummyTabCallback</callback>
+          <elements>TropicalCyclone.dflowfm.xml</elements>
+          <formodel>dflowfm</formodel>
         </tab>
       </tabs>
     </element>

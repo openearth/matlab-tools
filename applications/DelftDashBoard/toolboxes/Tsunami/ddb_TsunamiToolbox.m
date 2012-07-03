@@ -390,6 +390,13 @@ function computeWaterLevel
 
 handles=getHandles;
 
+switch lower(handles.Model(md).name)
+    case{'delft3dflow'}
+    otherwise
+        ddb_giveWarning('text',['Sorry, the tsunami toolbox does not support ' handles.Model(md).longName ' ...']);
+        return
+end
+
 % First check to see if a grid was loaded
 if isempty(handles.Model(md).Input(ad).gridX)
     giveWarning('text','Please first create or load model grid!');

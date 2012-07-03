@@ -27,14 +27,14 @@
         <tab>
           <tag>nestingwave</tag>
           <tabstring>Nesting</tabstring>
-          <callback>ddb_NestingToolbox_nestHD1</callback>
+          <callback>ddb_dummyTabCallback</callback>
           <elements>nesting.delft3dwave.xml</elements>
           <formodel>delft3dwave</formodel>
         </tab>
         <tab>
           <tag>nestingdflowfm</tag>
           <tabstring>Nesting</tabstring>
-          <callback>ddb_NestingToolbox_nestHD1</callback>
+          <callback>ddb_dummyTabCallback</callback>
           <elements>nesting.dflowfm.xml</elements>
           <formodel>dflowfm</formodel>
         </tab>

@@ -64,7 +64,8 @@ if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
     ddb_refreshScreen;
-    % setUIElements('nestpanel.nesthd2');
+    setInstructions({'Click Run Nesting in order to generate boundary conditions for the nested model', ...
+        'The overall model simulation must be finished and a history file must be present','The nested model domain must be selected!'});
 else
     %Options selected
     opt=lower(varargin{1});

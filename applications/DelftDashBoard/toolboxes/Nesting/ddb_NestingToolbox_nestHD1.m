@@ -64,7 +64,8 @@ if isempty(varargin)
     % New tab selected
     ddb_zoomOff;
     ddb_refreshScreen;
-    % setUIElements('nestingpanel.nesthd1');
+    setInstructions({'','Click Make Observation Points in order to generate observation points in the overall grid', ...
+                'The overall model domain must be selected!'});
 else
     %Options selected
     opt=lower(varargin{1});

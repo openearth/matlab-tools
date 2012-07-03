@@ -196,10 +196,19 @@ plotTemporaryDDGrid('plot');
 
 %%
 function selectCornerPoints
+
+handles=getHandles;
+
+switch lower(handles.Model(md).name)
+    case{'delft3dflow'}
+    otherwise
+        ddb_giveWarning('text',['Sorry, the Domain Decomposition toolbox does not support ' handles.Model(md).longName ' ...']);
+        return
+end
+
 ddb_zoomOff;
 ddb_setWindowButtonUpDownFcn;
 setInstructions({'','','Click grid point on active grid for first corner point'});
-handles=getHandles;
 xg=handles.Model(md).Input(handles.activeDomain).gridX;
 yg=handles.Model(md).Input(handles.activeDomain).gridY;
 if ~isempty(xg)
@@ -211,6 +220,13 @@ end
 function makeNewDomain
 
 handles=getHandles;
+
+switch lower(handles.Model(md).name)
+    case{'delft3dflow'}
+    otherwise
+        ddb_giveWarning('text',['Sorry, the Domain Decomposition toolbox does not support ' handles.Model(md).longName ' ...']);
+        return
+end
 
 % Check indices
 m1=handles.Toolbox(tb).Input.firstCornerPointM;
@@ -464,6 +480,13 @@ end
 function generateDD
 
 handles=getHandles;
+
+switch lower(handles.Model(md).name)
+    case{'delft3dflow'}
+    otherwise
+        ddb_giveWarning('text',['Sorry, the Domain Decomposition toolbox does not support ' handles.Model(md).longName ' ...']);
+        return
+end
 
 % Find DD boundaries
 ddbound=[];

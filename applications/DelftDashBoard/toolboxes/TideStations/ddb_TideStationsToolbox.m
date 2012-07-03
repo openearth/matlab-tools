@@ -94,6 +94,7 @@ end
 %%
 function addObservationPoints
 handles=getHandles;
+
 switch lower(handles.Model(md).name)
     case{'delft3dflow'}
         [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.Model(md).Input(ad).attName '.obs']);

@@ -98,6 +98,14 @@ end
 function addObservationPoints
 
 handles=getHandles;
+
+switch lower(handles.Model(md).name)
+    case{'delft3dflow'}
+    otherwise
+        ddb_giveWarning('text',['Sorry, this action is not supported for ' handles.Model(md).longName ' ...']);
+        return
+end
+
 fstr=['ddb_' handles.Model(md).name '_addObservationStations.m'];
 if exist(fstr)
     feval(str2func(fstr(1:end-2)));
