@@ -132,4 +132,20 @@
       </dependency>
     </dependencies>
   </element>
+  <element>
+    <tag>editwaterlevelcor</tag>
+    <style>edit</style>
+    <position>600 100 50 20</position>
+    <text>Water level correction : </text>
+    <textposition>left</textposition>
+    <variable>waterlevel</variable>
+    <type>real</type>
+    <tooltipstring>Enter water level correction</tooltipstring>
+  </element>
+  <element>
+    <tag>textwaterlevelcorunit</tag>
+    <style>text</style>
+    <position>650 100</position>
+    <text>[m]</text>
+  </element>  
 </root>

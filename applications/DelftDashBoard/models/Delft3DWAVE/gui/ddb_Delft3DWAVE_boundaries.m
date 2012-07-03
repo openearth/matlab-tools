@@ -17,6 +17,8 @@ else
             deleteBoundary;
         case{'editboundaryconditions'}
             editBoundaryConditions;
+        case{'editspectralspace'};
+            editSpectralSpace;
         case{'drawxyboundary'}
             drawXYBoundary;
         case{'changexyboundary'}
@@ -107,6 +109,44 @@ switch lower(handles.Model(md).Input.boundaries(iac).alongboundary)
         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif'],'modal',0);
 end
 
+
+if ok
+    handles=h;
+    setHandles(handles);
+end
+
+%% 
+function editSpectralSpace
+
+ddb_zoomOff;
+handles=getHandles;
+
+% Make new GUI
+h=handles;
+
+iac=handles.Model(md).Input.activeboundary;
+% switch lower(handles.Model(md).Input.boundaries(iac).periodtype)
+%     case{'peak'}
+%         h.Model(md).Input.periodtext='Wave Period Tp (s)';
+%     case{'mean'}
+%         h.Model(md).Input.periodtext='Wave Period Tm (s)';
+% end
+% switch lower(handles.Model(md).Input.boundaries(iac).dirspreadtype)
+%     case{'power'}
+%         h.Model(md).Input.dirspreadtext='Directional Spreading (-)';
+%     case{'degrees'}
+%         h.Model(md).Input.dirspreadtext='Directional Spreading (degrees)';
+% end
+
+xmldir=handles.Model(md).xmlDir;
+% switch lower(handles.Model(md).Input.boundaries(iac).alongboundary)
+%     case{'uniform'}
+        xmlfile='Delft3DWAVE.editspectralspace.xml';
+        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
+%     case{'varying'}
+%         xmlfile='Delft3DWAVE.editboundaryconditionsvarying.xml';
+%         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif'],'modal',0);
+% end
 
 if ok
     handles=h;

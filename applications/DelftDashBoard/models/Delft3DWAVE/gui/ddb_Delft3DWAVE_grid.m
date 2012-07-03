@@ -25,7 +25,7 @@ filename = handles.Model(md).Input.newgrid;
 [pathstr,name,ext] = fileparts(filename);
 % Set grid values in handles
 handles.Model(md).Input.nrgrids = nrgrids;
-handles.Model(md).Input.domains=ddb_initializeDelft3DWAVEDomain(handles.Model(md).Input.domainss,nrgrids);
+handles.Model(md).Input.domains=ddb_initializeDelft3DWAVEDomain(handles.Model(md).Input.domains,nrgrids);
 handles.Model(md).Input.gridnames{nrgrids}=name;
 handles.activeWaveGrid=nrgrids;
 OPT.option = 'read'; OPT.filename = filename;

@@ -6,27 +6,11 @@
     <style>panel</style>
     <position>45 10 900 160</position>
     <text>Time Frame</text>
-  </element>
-  <element>
-    <tag>editwaterlevelcor</tag>
-    <style>edit</style>
-    <position>175 130 50 20</position>
-    <text>Water level correction : </text>
-    <textposition>left</textposition>
-    <variable>waterlevel</variable>
-    <type>real</type>
-    <tooltipstring>Enter water level correction</tooltipstring>
-  </element>
-  <element>
-    <tag>textwaterlevelcorunit</tag>
-    <style>text</style>
-    <position>225 130</position>
-    <text>[m]</text>
   </element>  
   <element>
     <tag>timepointspanel</tag>
     <style>panel</style>
-    <position>50 15 445 105</position>
+    <position>50 15 445 135</position>
     <text>Time points for WAVE computation</text>
     <dependencies>
       <dependency>
@@ -45,7 +29,7 @@
   <element>
     <tag>edittimepoints</tag>
     <style>listbox</style>
-    <position>55 20 200 80</position>
+    <position>55 20 200 100</position>
     <tooltipstring>Edit timepoints for wave computation</tooltipstring>
     <variable>activetimepoint</variable>
     <type>integer</type>
@@ -73,7 +57,7 @@
   <element>
     <tag>pushaddtimepoint</tag>
     <style>pushbutton</style>
-    <position>260 60 70 20</position>
+    <position>260 80 70 20</position>
     <tooltipstring>Add time point</tooltipstring>
     <text>Add</text>
     <onchange>ddb_Delft3DWAVE_timeframe</onchange>

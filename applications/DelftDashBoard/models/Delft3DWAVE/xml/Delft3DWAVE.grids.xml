@@ -13,6 +13,11 @@
         <elements>Delft3DWAVE.grids.grid.xml</elements>
       </tab>
       <tab>
+        <tag>bathymetry</tag>
+        <tabstring>Bathymetry</tabstring>
+        <elements>Delft3DWAVE.grids.bathymetry.xml</elements>
+      </tab>      
+      <tab>
         <tag>spectralresolution</tag>
         <tabstring>Spectral resolution</tabstring>
         <elements>Delft3DWAVE.grids.spectralresolution.xml</elements>
