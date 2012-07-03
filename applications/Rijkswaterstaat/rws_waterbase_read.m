@@ -774,7 +774,7 @@ switch waarnemingssoort
    case 'Debiet in m3/s in oppervlaktewater'                                  ,units='m3/s';
    case 'Waterhoogte in cm t.o.v. mean sea level in oppervlaktewater'         ,units='cm';
    case 'Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater',units='cm';
-   case 'Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater', units='m';
+   case 'Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater', units='cm';
    otherwise, warning(['Units extraction not yet implemented for ',waarnemingssoort]);
    units = '';
 end
