@@ -85,13 +85,19 @@ fprintf('ITHK postprocessing\n');
 
 %% INDICATORS
     ITHK_ind_ecology_benthos(sens);
-    ITHK_ind_foreshore_juvenilefish(sens);
+    ITHK_ind_ecology_juvenilefish(sens);
     ITHK_ind_costs_direct(sens);
     ITHK_ind_dunes_duneclasses(sens);
     ITHK_ind_dunes_habitatrichness(sens);
+    %ITHK_ind_dunes_dunedynamics(sens);
+    ITHK_ind_economy_drinkwater(sens);
     ITHK_ind_recreation_beachwidth(sens);
-    ITHK_ind_drinkwater_dunearea(sens);
     ITHK_ind_recreation_dunearea(sens);
+    ITHK_ind_residential_groundwater(sens);
+    ITHK_ind_residential_realestate(sens);
+    ITHK_ind_safety_dykering(sens);
+    ITHK_ind_saefty_structures(sens);
+
     
 %% Add disclaimer
 % if isfield(S.settings.postprocessing,'disclaimer') 
@@ -102,11 +108,11 @@ fprintf('ITHK postprocessing\n');
 kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, ...
           S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
           S.PP(sens).output.kml_eco_benthos{1}, S.PP(sens).output.kml_eco_benthos{2}, ...
-          S.PP(sens).output.kml_foreshore_juvenilefish,S.PP(sens).output.kml_costs_direct1,...
+          S.PP(sens).output.kml_ecology_juvenilefish,S.PP(sens).output.kml_costs_direct1,...
           S.PP(sens).output.kml_costs_direct2,S.PP(sens).output.kml_costs_direct3,...
           S.PP(sens).output.kml_dunes_duneclasses,S.PP(sens).output.kml_dunes_habitatrichness,...
           S.PP(sens).output.kml_recreation_beachwidth,S.PP(sens).output.kml_recreation_dunearea,...
-          S.PP(sens).output.kml_drinkwater_dunearea];
+          S.PP(sens).output.kml_economy_drinkwater,S.PP(sens).output.kml_residential_groundwater2];
 addtxt = '';
 ITHK_io_writeKML(kmltxt,addtxt,sens);
 
@@ -118,7 +124,7 @@ kmltxt = [S.PP(sens).output.kml_eco_benthos{1},S.PP(sens).output.kml_eco_benthos
 addtxt = '_benthos';
 ITHK_io_writeKML(kmltxt,addtxt,sens);
 
-kmltxt = [S.PP(sens).output.kml_foreshore_juvenilefish];
+kmltxt = [S.PP(sens).output.kml_ecology_juvenilefish];
 addtxt = '_foreshore';
 ITHK_io_writeKML(kmltxt,addtxt,sens);
 
@@ -134,9 +140,14 @@ kmltxt = [S.PP(sens).output.kml_recreation_beachwidth,S.PP(sens).output.kml_recr
 addtxt = '_recreation';
 ITHK_io_writeKML(kmltxt,addtxt,sens);
 
-kmltxt = [S.PP(sens).output.kml_drinkwater_dunearea];
+kmltxt = [S.PP(sens).output.kml_economy_drinkwater];
 addtxt = '_drinkingwater';
 ITHK_io_writeKML(kmltxt,addtxt,sens);
+
+kmltxt = [S.PP(sens).output.kml_residential_groundwater];
+addtxt = '_groundwater';
+ITHK_io_writeKML(kmltxt,addtxt,sens);
+
 
 %    indicatorfields    = {'safety_dykering' ...                      % 
 %                          'safety_structures' ...                    % 
