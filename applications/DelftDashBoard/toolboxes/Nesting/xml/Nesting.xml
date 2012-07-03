@@ -15,12 +15,28 @@
           <tabstring>Nesting - 1</tabstring>
           <callback>ddb_NestingToolbox_nestHD1</callback>
           <elements>nesting.nesthd1.xml</elements>
+          <formodel>delft3dflow</formodel>
         </tab>
         <tab>
           <tag>nesthd2</tag>
           <tabstring>Nesting - 2</tabstring>
           <callback>ddb_NestingToolbox_nestHD2</callback>
           <elements>nesting.nesthd2.xml</elements>
+          <formodel>delft3dflow</formodel>
+        </tab>
+        <tab>
+          <tag>nestingwave</tag>
+          <tabstring>Nesting</tabstring>
+          <callback>ddb_NestingToolbox_nestHD1</callback>
+          <elements>nesting.delft3dwave.xml</elements>
+          <formodel>delft3dwave</formodel>
+        </tab>
+        <tab>
+          <tag>nestingdflowfm</tag>
+          <tabstring>Nesting</tabstring>
+          <callback>ddb_NestingToolbox_nestHD1</callback>
+          <elements>nesting.dflowfm.xml</elements>
+          <formodel>dflowfm</formodel>
         </tab>
       </tabs>
     </element>
