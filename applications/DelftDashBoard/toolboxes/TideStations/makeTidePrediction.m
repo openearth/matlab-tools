@@ -111,9 +111,9 @@ for i=1:length(amplitudes)
 end
 wl=t_predic(tim,names,freq,tidecon,latitude);
 %wl=t_predic(tim,names,freq,tidecon);
-info=t_xtide('santa barbara',tim,'units','metres','format','info');
-wl=t_xtide('santa barbara',tim+info.timezone/24,'units','metres');
-wl=wl-info.datum;
+%info=t_xtide('santa barbara',tim,'units','metres','format','info');
+%wl=t_xtide('santa barbara',tim+info.timezone/24,'units','metres');
+%wl=wl-info.datum;
 
 % wl1=t_predic(datenum(2010,1,1):1/24:datenum(2010,2,1),names,freq,tidecon,33)
 % 
