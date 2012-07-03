@@ -38,6 +38,7 @@ for ii=1:length(fldnames)
     handles.Model(md).Input.(fldnames{ii})=MDW.output.(fldnames{ii});
 end
 
+
 %% Domains
 ndomains=length(MDW.domain);
 handles.Model(md).Input.gridnames={''};

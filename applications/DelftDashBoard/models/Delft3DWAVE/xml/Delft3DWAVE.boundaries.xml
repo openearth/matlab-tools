@@ -114,6 +114,43 @@
     </dependencies>    
   </element>
   <element>
+    <tag>selectsp2file</tag>
+    <style>pushselectfile</style>
+    <position>470 70 70 20</position>
+    <tooltipstring>Select SP2 file</tooltipstring>
+    <text>SP2 File</text>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spectrum</variable>
+    <extension>*.sp2</extension>
+    <selectiontext>Select SP2 File</selectiontext>
+    <showfilename>1</showfilename>
+    <onchange>ddb_Delft3DWAVE_boundaries</onchange>
+    <option1>selectsp2file</option1>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+            <value>fromsp2file</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.nrboundaries</variable>
+            <value>0</value>
+            <operator>ne</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
     <tag>editbndorient</tag>
     <style>popupmenu</style>
     <position>470 70 150 20</position>

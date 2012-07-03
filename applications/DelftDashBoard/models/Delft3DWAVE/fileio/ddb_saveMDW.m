@@ -243,57 +243,64 @@ for i=1:wave.nrboundaries
             MDW.Boundary(i).StartCoordY.type     = 'real';
             MDW.Boundary(i).EndCoordY.value      = wave.boundaries(i).endcoordy;
             MDW.Boundary(i).EndCoordY.type       = 'real';
+        case{'fromsp2file'}
+            MDW.Boundary(i).OverallSpecFile.value = wave.boundaries(i).overallspecfile;
     end
     
-    MDW.Boundary(i).SpectrumSpec.value   = wave.boundaries(i).spectrumspec;
-    switch lower(wave.boundaries(i).spectrumspec)
-        case{'parametric'}
-            MDW.Boundary(i).SpShapeType.value   = wave.boundaries(i).spshapetype;
-            switch lower(wave.boundaries(i).spshapetype)
-                case{'jonswap'}
-                    MDW.Boundary(i).PeakEnhancFac.value = wave.boundaries(i).peakenhancfac;
-                    MDW.Boundary(i).PeakEnhancFac.type  = 'real';
-                case{'pierson-moskowitz'}
-                case{'gauss'}
-                    MDW.Boundary(i).GaussSpread.value = wave.boundaries(i).gaussspread;
-                    MDW.Boundary(i).GaussSpread.type  = 'real';
-            end
-            MDW.Boundary(i).PeriodType.value    = wave.boundaries(i).periodtype;
-            MDW.Boundary(i).DirSpreadType.value = wave.boundaries(i).dirspreadtype;
-            switch lower(wave.boundaries(i).alongboundary)
-                case{'uniform'}
-                    MDW.Boundary(i).WaveHeight.value     = wave.boundaries(i).waveheight;
-                    MDW.Boundary(i).WaveHeight.type      = 'real';
-                    MDW.Boundary(i).Period.value         = wave.boundaries(i).period;
-                    MDW.Boundary(i).Period.type          = 'real';
-                    MDW.Boundary(i).Direction.value      = wave.boundaries(i).direction;
-                    MDW.Boundary(i).Direction.type       = 'real';
-                    MDW.Boundary(i).DirSpreading.value   = wave.boundaries(i).dirspreading;
-                    MDW.Boundary(i).DirSpreading.type    = 'real';
-                otherwise
-                    for k=1:length(wave.boundaries(i).segments)
-                        MDW.Boundary(i).(['CondSpecAtDist' num2str(k)]).value       = wave.boundaries(i).segments(k).condspecatdist;
-                        MDW.Boundary(i).(['CondSpecAtDist' num2str(k)]).type        = 'real';
-                        MDW.Boundary(i).(['CondSpecAtDist' num2str(k)]).keyword     = 'CondSpecAtDist';
-                        MDW.Boundary(i).(['WaveHeight' num2str(k)]).value     = wave.boundaries(i).segments(k).waveheight;
-                        MDW.Boundary(i).(['WaveHeight' num2str(k)]).type      = 'real';
-                        MDW.Boundary(i).(['WaveHeight' num2str(k)]).keyword   = 'WaveHeight';
-                        MDW.Boundary(i).(['Period' num2str(k)]).value         = wave.boundaries(i).segments(k).period;
-                        MDW.Boundary(i).(['Period' num2str(k)]).type          = 'real';
-                        MDW.Boundary(i).(['Period' num2str(k)]).keyword       = 'Period';
-                        MDW.Boundary(i).(['Direction' num2str(k)]).value      = wave.boundaries(i).segments(k).direction;
-                        MDW.Boundary(i).(['Direction' num2str(k)]).type       = 'real';
-                        MDW.Boundary(i).(['Direction' num2str(k)]).keyword    = 'Direction';
-                        MDW.Boundary(i).(['DirSpreading' num2str(k)]).value   = wave.boundaries(i).segments(k).dirspreading;
-                        MDW.Boundary(i).(['DirSpreading' num2str(k)]).type    = 'real';
-                        MDW.Boundary(i).(['DirSpreading' num2str(k)]).keyword = 'DirSpreading';
-                    end
-            end
+    switch lower(wave.boundaries(i).definition)
+        case{'orientation','grid-coordinates','xy-coordinates'}
             
-        otherwise
-            MDW.Boundary(i).SpectrumSpec.value      = 'from file';
-            MDW.Boundary(i).Spectrum.value          = wave.boundaries(i).spectrumfile;
+            MDW.Boundary(i).SpectrumSpec.value   = wave.boundaries(i).spectrumspec;
+            switch lower(wave.boundaries(i).spectrumspec)
+                case{'parametric'}
+                    MDW.Boundary(i).SpShapeType.value   = wave.boundaries(i).spshapetype;
+                    switch lower(wave.boundaries(i).spshapetype)
+                        case{'jonswap'}
+                            MDW.Boundary(i).PeakEnhancFac.value = wave.boundaries(i).peakenhancfac;
+                            MDW.Boundary(i).PeakEnhancFac.type  = 'real';
+                        case{'pierson-moskowitz'}
+                        case{'gauss'}
+                            MDW.Boundary(i).GaussSpread.value = wave.boundaries(i).gaussspread;
+                            MDW.Boundary(i).GaussSpread.type  = 'real';
+                    end
+                    MDW.Boundary(i).PeriodType.value    = wave.boundaries(i).periodtype;
+                    MDW.Boundary(i).DirSpreadType.value = wave.boundaries(i).dirspreadtype;
+                    switch lower(wave.boundaries(i).alongboundary)
+                        case{'uniform'}
+                            MDW.Boundary(i).WaveHeight.value     = wave.boundaries(i).waveheight;
+                            MDW.Boundary(i).WaveHeight.type      = 'real';
+                            MDW.Boundary(i).Period.value         = wave.boundaries(i).period;
+                            MDW.Boundary(i).Period.type          = 'real';
+                            MDW.Boundary(i).Direction.value      = wave.boundaries(i).direction;
+                            MDW.Boundary(i).Direction.type       = 'real';
+                            MDW.Boundary(i).DirSpreading.value   = wave.boundaries(i).dirspreading;
+                            MDW.Boundary(i).DirSpreading.type    = 'real';
+                        otherwise
+                            for k=1:length(wave.boundaries(i).segments)
+                                MDW.Boundary(i).(['CondSpecAtDist' num2str(k)]).value       = wave.boundaries(i).segments(k).condspecatdist;
+                                MDW.Boundary(i).(['CondSpecAtDist' num2str(k)]).type        = 'real';
+                                MDW.Boundary(i).(['CondSpecAtDist' num2str(k)]).keyword     = 'CondSpecAtDist';
+                                MDW.Boundary(i).(['WaveHeight' num2str(k)]).value     = wave.boundaries(i).segments(k).waveheight;
+                                MDW.Boundary(i).(['WaveHeight' num2str(k)]).type      = 'real';
+                                MDW.Boundary(i).(['WaveHeight' num2str(k)]).keyword   = 'WaveHeight';
+                                MDW.Boundary(i).(['Period' num2str(k)]).value         = wave.boundaries(i).segments(k).period;
+                                MDW.Boundary(i).(['Period' num2str(k)]).type          = 'real';
+                                MDW.Boundary(i).(['Period' num2str(k)]).keyword       = 'Period';
+                                MDW.Boundary(i).(['Direction' num2str(k)]).value      = wave.boundaries(i).segments(k).direction;
+                                MDW.Boundary(i).(['Direction' num2str(k)]).type       = 'real';
+                                MDW.Boundary(i).(['Direction' num2str(k)]).keyword    = 'Direction';
+                                MDW.Boundary(i).(['DirSpreading' num2str(k)]).value   = wave.boundaries(i).segments(k).dirspreading;
+                                MDW.Boundary(i).(['DirSpreading' num2str(k)]).type    = 'real';
+                                MDW.Boundary(i).(['DirSpreading' num2str(k)]).keyword = 'DirSpreading';
+                            end
+                    end
+                    
+                otherwise
+                    MDW.Boundary(i).SpectrumSpec.value      = 'from file';
+                    MDW.Boundary(i).Spectrum.value          = wave.boundaries(i).spectrumfile;
+            end
     end
+    
 end
 
 fname=[handles.Model(md).Input.mdwfile];
