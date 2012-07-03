@@ -96,7 +96,7 @@ fprintf('ITHK postprocessing\n');
     ITHK_ind_residential_groundwater(sens);
     ITHK_ind_residential_realestate(sens);
     ITHK_ind_safety_dykering(sens);
-    ITHK_ind_saefty_structures(sens);
+    ITHK_ind_safety_structures(sens);
 
     
 %% Add disclaimer

@@ -94,11 +94,11 @@ costs.distribution.foreshoretype.beach   = str2num(costs.distribution.foreshoret
 costs.indirectratio.beachtype            = str2num(costs.indirectratio.beachtype);
 costs.indirectratio.foreshoretype        = str2num(costs.indirectratio.foreshoretype);
 
-
 %% COMPUTE
 distance      = str2double(S.settings.indicators.costs.direct.transportdistance);
-costsUB       = zeros(size(S.PP(sens).coast.zcoast));                      % initialise empty UBmapping of costs
-costsGE       = zeros(size(S.PP(sens).coast.zgridRough));                  % initialise empty GEmapping of costs
+idTYPE        = str2double(S.settings.indicators.costs.direct.locationtype);   % 1= foreshore; 2= predominantly beach
+costsUB.total = zeros(size(S.PP(sens).coast.zcoast));                      % initialise empty UBmapping of costs
+costsGE.total = zeros(size(S.PP(sens).coast.zgridRough));                  % initialise empty GEmapping of costs
 %xcoast       = S.PP(sens).coast.xcoast;                                   % change of coastline since t0 (UBmapping)
 %ycoast       = S.PP(sens).coast.ycoast;                                   % change of coastline since t0 (UBmapping)
 zminz0        = S.PP(sens).coast.zcoast;                                   % change of coastline since t0 (UBmapping)
@@ -119,10 +119,11 @@ for jj=1:length(fldname)
             
             %% Put costs on grid
             idt                            = 1;
-            R.idRANGE                      = S.userinput.(fldname{jj})(ii).idRANGE(:);
-            R.idRANGE2                     = S.userinput.(fldname{jj})(ii).idRANGE2(:);
-            costsUB(R.idRANGE,idt)           = costsUB(R.idRANGE,idt) + costs.(fldname{jj}).costs(ii)/length(R.idRANGE)/length(idt);
-            costsGE(R.idRANGE2,idt)          = costsGE(R.idRANGE2,idt) + costs.(fldname{jj}).costs(ii)/length(R.idRANGE2)/length(idt);
+            R.id                           = S.userinput.(fldname{jj})(ii).idRANGE(:);
+            R.id2                          = S.userinput.(fldname{jj})(ii).idRANGE2(:);
+            costsUB.total(R.id,idt)        = costsUB.total(R.id,idt) + costs.(fldname{jj}).costs(ii)/length(R.id)/length(idt);
+            costsGE.total(R.id2,idt)       = costsGE.total(R.id2,idt) + costs.(fldname{jj}).costs(ii)/length(R.id2)/length(idt);
+            costsGE.structures(R.id2,idt)  = costsGE.structures(R.id2,idt) + costs.(fldname{jj}).costs(ii)/length(R.id2)/length(idt);
             
             if jj==1
                 addtxt  = sprintf('Revetment with length %1.0fm. ',R.length);
@@ -147,9 +148,9 @@ for ii=1:length(S.userinput.nourishment)
     N.VOL        =   S.userinput.nourishment(ii).volume;
     N.WIDTH      =   S.userinput.nourishment(ii).width;
     N.volperm    =   N.VOL/N.WIDTH;
-    N.idRANGE    =   S.userinput.nourishment(ii).idRANGE(:);
+    N.id    =   S.userinput.nourishment(ii).idRANGE(:);
     N.idNEAREST  =   S.userinput.nourishment(ii).idNEAREST(:);
-    N.idRANGE2   =   S.userinput.nourishment(ii).idRANGE2(:);
+    N.id2   =   S.userinput.nourishment(ii).idRANGE2(:);
     N.idNEAREST2 =   S.userinput.nourishment(ii).idNEAREST2(:);
     N.distance   =   distance;
     costs.nourishments.props(ii) = N;
@@ -184,10 +185,12 @@ for ii=1:length(S.userinput.nourishment)
     costs.nourishments.costs(ii,:)      = sort(costs_total(ii,:)) * N.VOL;
     
     %% Put costs on grid
-    idt                    = [N.tstart:N.tstop-1];
-    idTYPE                 = 2; % 1= foreshore; 2= predominantly beach
-    costsUB(N.idRANGE,idt)  = costsUB(N.idRANGE,idt) + costs.nourishments.costs(ii,idTYPE)/length(N.idRANGE)/length(idt);
-    costsGE(N.idRANGE2,idt) = costsGE(N.idRANGE2,idt) + costs.nourishments.costs(ii,idTYPE)/length(N.idRANGE2)/length(idt);
+    idt                           = [N.tstart:N.tstop-1];
+    costsUB.total(N.id,idt)       = costsUB.total(N.id,idt)      + costs_total(ii,idTYPE) * N.VOL/length(N.id)/length(idt);
+    costsGE.total(N.id2,idt)      = costsGE.total(N.id2,idt)     + costs_total(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
+    costsGE.nourish(N.id2,idt)    = costsGE.nourish(N.id2,idt)   + costs_nourish(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
+    costsGE.transport(N.id2,idt)  = costsGE.transport(N.id2,idt) + costs_transport(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
+    costsGE.indirect(N.id2,idt)   = costsGE.indirect(N.id2,idt)  + costs_indirect(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
     
     %% Make KML with direct costs for each of the noursihment locations
     %% add pop-up window
@@ -199,11 +202,18 @@ end
 end
 
 %% Set output of costs indicator in fields of S-structure
-S.PP(sens).GEmapping.costs.directdata = costs;
-S.PP(sens).GEmapping.costs.direct = cumsum(costsGE,2);
-S.PP(sens).UBmapping.costs.direct = cumsum(costsUB,2);
-S.PP(sens).TTmapping.costs.direct = sum(cumsum(costsGE,2),1);           %S.PP(sens).TTmapping.costs = sum(costsGE,1);
-
+S.PP(sens).UBmapping.costs.direct.costs_total      = cumsum(costsUB.total,2);
+S.PP(sens).GEmapping.costs.direct.data             = costs;
+S.PP(sens).GEmapping.costs.direct.costs_total      = cumsum(costsGE.total,2);
+S.PP(sens).GEmapping.costs.direct.costs_nourish    = cumsum(costsGE.nourish,2);
+S.PP(sens).GEmapping.costs.direct.costs_transport  = cumsum(costsGE.transport,2);
+S.PP(sens).GEmapping.costs.direct.costs_indirect   = cumsum(costsGE.indirect,2);
+S.PP(sens).GEmapping.costs.direct.costs_structures = cumsum(costsGE.structures,2);
+S.PP(sens).TTmapping.costs.direct.costs_total      = sum(cumsum(costsGE.total,2),1);           %S.PP(sens).TTmapping.costs = sum(costsGE.total,1);
+S.PP(sens).TTmapping.costs.direct.costs_nourish    = sum(cumsum(costsGE.nourish,2),1);
+S.PP(sens).TTmapping.costs.direct.costs_transport  = sum(cumsum(costsGE.transport,2),1);
+S.PP(sens).TTmapping.costs.direct.costs_indirect   = sum(cumsum(costsGE.indirect,2),1);
+S.PP(sens).TTmapping.costs.direct.costs_structures = sum(cumsum(costsGE.structures,2),1);
 
 %% Settings for writing to KMLtext
 PLOTscale1   = str2double(S.settings.indicators.costs.direct.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
@@ -214,7 +224,7 @@ fillalpha    = 0.7;
 popuptxt     = {'Direct costs','Direct costs of nourishments on the coast'};
 %% Write to kml
 KMLdata2      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                              (S.PP(sens).GEmapping.costs.direct-PLOTscale2), ...
+                              (S.PP(sens).GEmapping.costs.direct.costs_total-PLOTscale2), ...
                               PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
 KMLdata3      = ITHK_KMLcostsbar(sens);
 

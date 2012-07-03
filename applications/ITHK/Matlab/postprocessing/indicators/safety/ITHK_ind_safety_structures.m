@@ -1,7 +1,7 @@
 function ITHK_ind_safety_structures(sens)
 % function ITHK_ind_safety_structures(sens)
 %
-% Computes the indicator for dyke ring safety, using coastline position as a proxy
+% Computes the indicator for safety of structures outside the primary water defenses
 %
 % INPUT:
 %      sens   sensitivity run number
@@ -59,11 +59,12 @@ function ITHK_ind_safety_structures(sens)
 
 %% code
 
-fprintf('ITHK postprocessing : Indicator for dyke ring safety, using coastline position as a proxy\n');
+fprintf('ITHK postprocessing : Indicator for safety of structures outside the primary water defenses, using coastline position as a proxy\n');
 
 global S
 
 %% Determine specific longshore IDs of zone with drinking water fucntion (on the basis of on settings file 'ITHK_ind_safety_structures.txt').
+Ythr                     = str2double(S.settings.indicators.safety.structures.Ythr);
 sRough                   = S.PP(sens).settings.sgridRough;
 dS                       = S.PP(sens).settings.dsRough;
 zonedata                 = load('ITHK_ind_safety_structures.txt');  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
@@ -86,26 +87,25 @@ structuresclasses          = structures;
 structuresclasses(structures<Ythr)                           = 2;
 structuresclasses(structures>=Ythr & structures<2*Ythr)      = 3;
 structuresclasses(structures>=2*Ythr)                        = 4;
-structuresclasses(ID_notresidential,:)                       = 1;
-S.PP(sens).GEmapping.safety.structures  = structureseclasses;
-%S.PP(sens).GEmapping.safety.structures2 = structures;
+structuresclasses(ID_notsafety,:)                            = 1;
+structures(ID_notsafety,:)                                   = 0;
+S.PP(sens).GEmapping.safety.structures   = structures;
+S.PP(sens).GEmapping.safety.structures2  = structuresclasses;
 
 %% Settings for writing to KMLtext
 PLOTscale1   = str2double(S.settings.indicators.safety.structures.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
 PLOTscale2   = str2double(S.settings.indicators.safety.structures.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
 PLOToffset   = str2double(S.settings.indicators.safety.structures.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTicons    = S.settings.indicators.safety.structures.icons;
 colour       = {[0 0.6 0.0],[0.8 0.0 0.0]};
 fillalpha    = 0.7;
-popuptxt     = {'safety dyke ring','Dyke ring safety, using coastline position as a proxy'};
+popuptxt     = {'Safety structures','Safety of structures outside the primary water defenses, using coastline position as a proxy'};
 
-
-%% Write to kml ICONS
-[KMLdata]    = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                             S.PP(sens).GEmapping.safety.structures,PLOTicons,PLOToffset,sens,popuptxt);
-S.PP(sens).output.kml_safety_structures = KMLdata;
-
-%% Write to kml
-KMLdata      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+%% Write to kml BAR PLOTS / ICONS
+[KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
                               (S.PP(sens).GEmapping.safety.structures-PLOTscale2), ...
                               PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
-S.PP(sens).output.kml_safety_structures2 = KMLdata;
+[KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                             S.PP(sens).GEmapping.safety.structures2,PLOTicons,PLOToffset,sens,popuptxt);
+S.PP(sens).output.kml_safety_structures  = KMLdata1;
+S.PP(sens).output.kml_safety_structures2 = KMLdata2;

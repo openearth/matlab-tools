@@ -92,8 +92,11 @@ colour       = {[0 0.6 0.0],[0.8 0.0 0.0]};
 fillalpha    = 0.7;
 popuptxt     = {'Recreation dune area','Dune area as a proxy for recreation'};
 
-%% Write to kml
-KMLdata      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+%% Write to kml BAR PLOTS / ICONS
+[KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
                               (S.PP(sens).GEmapping.recreation.dunearea-PLOTscale2), ...
                               PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
-S.PP(sens).output.kml_recreation_dunearea = KMLdata;
+[KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                             S.PP(sens).GEmapping.recreation.dunearea2,PLOTicons,PLOToffset,sens,popuptxt);
+S.PP(sens).output.kml_recreation_dunearea  = KMLdata1;
+S.PP(sens).output.kml_recreation_dunearea2 = KMLdata2;

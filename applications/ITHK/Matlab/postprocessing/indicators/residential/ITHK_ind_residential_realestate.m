@@ -103,13 +103,11 @@ colour       = {[1 1 0.0],[1 1 0.4]};
 fillalpha    = 0.7;
 popuptxt     = {'realestate','Dune area as a proxy for realestate problems in residential areas'};
 
-%% Write to kml ICONS
-[KMLdata]    = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                             S.PP(sens).GEmapping.residential.realestate,PLOTicons,PLOToffset,sens,popuptxt);
-S.PP(sens).output.kml_residential_realestate = KMLdata;
-
-%% Write to kml BAR PLOTS
-KMLdata      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+%% Write to kml BAR PLOTS / ICONS
+[KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
                               (S.PP(sens).GEmapping.residential.realestate-PLOTscale2), ...
                               PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
-S.PP(sens).output.kml_residential_realestate2 = KMLdata;
+[KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                             S.PP(sens).GEmapping.residential.realestate,PLOTicons,PLOToffset,sens,popuptxt);
+S.PP(sens).output.kml_residential_realestate  = KMLdata1;
+S.PP(sens).output.kml_residential_realestate2 = KMLdata2;
