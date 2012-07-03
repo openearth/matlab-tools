@@ -71,9 +71,9 @@ S.PP(sens).GEmapping.recreation.beachwidth = S.PP(sens).dunes.position.beachwidt
 %S.PP(sens).GEmapping.recreation.beachwidth = interp1(S.PP(sens).settings.s0,S.PP(sens).dunes.position.beachwidth,S.PP(sens).settings.sgridRough);  
 
 %% Settings for writing to KMLtext
-PLOTscale1   = str2double(S.settings.indicators.recreation.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
-PLOTscale2   = str2double(S.settings.indicators.recreation.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
-PLOToffset   = str2double(S.settings.indicators.recreation.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTscale1   = str2double(S.settings.indicators.recreation.beachwidth.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTscale2   = str2double(S.settings.indicators.recreation.beachwidth.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
+PLOToffset   = str2double(S.settings.indicators.recreation.beachwidth.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
 colour       = {[1 1 0],[0.95 0.95 0.4]};
 fillalpha    = 0.7;
 popuptxt     = {'Beach recreation','Beach width as a proxy for beach recreation'};

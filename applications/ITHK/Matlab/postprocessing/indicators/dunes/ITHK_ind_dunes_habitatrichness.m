@@ -1,4 +1,4 @@
-function ITHK_dunes_habitatrichness(sens)
+function ITHK_ind_dunes_habitatrichness(sens)
 
 % dunerules_19apr12.m
 
@@ -6,6 +6,7 @@ function ITHK_dunes_habitatrichness(sens)
 % Alma de Groot
 % Ecoshape, WUR
 % 19 apr 2012
+% Modified by B.J.A. Huisman (Deltares, July 2012)
 
 % Calculates potential for dune formation based on Unibest outcomes.
 % Post-processing tool based on UNIBEST outcomes
@@ -51,5 +52,8 @@ end
 % 2 = intermediate
 % 3 = rich
 
-[KMLdata]=ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).dunes.richnessRough,S.settings.indicators.habitatrichness.icons,str2double(S.settings.indicators.habitatrichness.offset));
+popuptxt={'Dune class',{'This indicator provides information on the expected habitat richness of the coast. These classes are:','',...
+                        ' - class  1 = low/normal (=default for current coast)',' - class 2 = intermediate',' - class 3 = rich'}};
+
+[KMLdata]=ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).dunes.richnessRough,S.settings.indicators.dunes.habitatrichness.icons,str2double(S.settings.indicators.dunes.habitatrichness.PLOToffset),sens,popuptxt);
 S.PP(sens).output.kml_dunes_habitatrichness = KMLdata;

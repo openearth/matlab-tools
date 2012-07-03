@@ -1,4 +1,4 @@
-function ITHK_dunerules2(sens,varargin)
+function ITHK_ind_dunes_duneclasses(sens,varargin)
 
 % dunerules_19apr12.m
 
@@ -6,6 +6,7 @@ function ITHK_dunerules2(sens,varargin)
 % Alma de Groot
 % Ecoshape, WUR
 % 19 apr 2012
+% Modified by B.J.A. Huisman (Deltares, July 2012)
 
 % Calculates potential for dune formation based on Unibest outcomes.
 % Post-processing tool based on UNIBEST outcomes
@@ -117,5 +118,11 @@ for jj = 1:length(S.PP(sens).settings.tvec)
     S.PP(sens).dunes.duneclassRough(:,jj) = interp1(S.PP(sens).settings.s0,duneclass(:,jj),S.PP(sens).settings.sgridRough,'nearest');
 end
 
-[KMLdata]=ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough,S.PP(sens).dunes.duneclassRough,S.settings.indicators.dunes.icons,str2double(S.settings.indicators.dunes.offset));
+popuptxt={'Dune class',{'This indicator provides information on the expected dune classes of the coast. These classes are:','',...
+                        ' - class 1 = erosive',' - class 2 = normal and slight progradation',' - class 3 = wide beach with potential for new dunes ',...
+                        '             at the foot of the olddune',' - class 4 = extremely wide beach with potential','             for new dunes',...
+                        ' - class 5 = extremely wide beach with potential','             for new dunes including green beach'}};
+[KMLdata]=ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough, S.PP(sens).coast.y0_refgridRough, ... 
+                        S.PP(sens).dunes.duneclassRough, S.settings.indicators.dunes.duneclasses.icons, ...
+                        str2double(S.settings.indicators.dunes.duneclasses.PLOToffset),sens,popuptxt);
 S.PP(sens).output.kml_dunes_duneclasses = KMLdata;

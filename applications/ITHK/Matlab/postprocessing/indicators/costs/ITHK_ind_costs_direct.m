@@ -73,7 +73,7 @@ fprintf('ITHK postprocessing : Indicator for the direct costs due to dredging, t
 global S
 
 %% LOAD SETTINGS
-costs                                    = xml_load('ITHK_costsettings.xml');
+costs                                    = xml_load('ITHK_ind_costs_direct.xml');
 costs.classdefinition.small              = str2num(costs.classdefinition.small);
 costs.classdefinition.medium             = str2num(costs.classdefinition.medium);
 costs.classdefinition.large              = str2num(costs.classdefinition.large);
@@ -96,7 +96,7 @@ costs.indirectratio.foreshoretype        = str2num(costs.indirectratio.foreshore
 
 
 %% COMPUTE
-distance      = str2double(S.settings.indicators.costs.transportdistance);
+distance      = str2double(S.settings.indicators.costs.direct.transportdistance);
 costsUB       = zeros(size(S.PP(sens).coast.zcoast));                      % initialise empty UBmapping of costs
 costsGE       = zeros(size(S.PP(sens).coast.zgridRough));                  % initialise empty GEmapping of costs
 %xcoast       = S.PP(sens).coast.xcoast;                                   % change of coastline since t0 (UBmapping)
@@ -198,23 +198,23 @@ for ii=1:length(S.userinput.nourishment)
 end
 end
 
-S.PP(sens).NNmapping.costs = costs;
-S.PP(sens).GEmapping.costs = costsGE;
-S.PP(sens).GEmapping.costscum = cumsum(S.PP(sens).GEmapping.costs,2);
-S.PP(sens).UBmapping.costs = costsUB;
-S.PP(sens).TTmapping.costs = sum(costsGE,1);
-S.PP(sens).TTmapping.costscum = sum(cumsum(costsGE,2),1);
+%% Set output of costs indicator in fields of S-structure
+S.PP(sens).GEmapping.costs.directdata = costs;
+S.PP(sens).GEmapping.costs.direct = cumsum(costsGE,2);
+S.PP(sens).UBmapping.costs.direct = cumsum(costsUB,2);
+S.PP(sens).TTmapping.costs.direct = sum(cumsum(costsGE,2),1);           %S.PP(sens).TTmapping.costs = sum(costsGE,1);
+
 
 %% Settings for writing to KMLtext
-PLOTscale1   = str2double(S.settings.indicators.costs.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
-PLOTscale2   = str2double(S.settings.indicators.costs.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
-PLOToffset   = str2double(S.settings.indicators.costs.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTscale1   = str2double(S.settings.indicators.costs.direct.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTscale2   = str2double(S.settings.indicators.costs.direct.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
+PLOToffset   = str2double(S.settings.indicators.costs.direct.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
 colour       = {[0.7 0.0 0.7],[0.4 0.0 0.4]};
 fillalpha    = 0.7;
 popuptxt     = {'Direct costs','Direct costs of nourishments on the coast'};
 %% Write to kml
 KMLdata2      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                              (S.PP(sens).GEmapping.costscum-PLOTscale2), ...
+                              (S.PP(sens).GEmapping.costs.direct-PLOTscale2), ...
                               PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
 KMLdata3      = ITHK_KMLcostsbar(sens);
 
