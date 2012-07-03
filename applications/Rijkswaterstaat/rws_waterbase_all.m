@@ -5,8 +5,6 @@ function rws_waterbase_all
 %          NC_CF_STATIONTIMESERIES2META, NC_CF_DIRECTORY2CATALOG, NC_CF_STATIONTIMESERIES2KMLOVERVIEW
 
 
-   clear all
-   close all
    
 % TO DO: merge kmls for al substances
 % TO DO: move only identical DONAR ID to old
@@ -14,15 +12,18 @@ function rws_waterbase_all
 %% Initialize
 
    OPT.download       = 0; % get fresh downloads from rws and move exisitng to sub dir old
-   OPT.make_nc        = 0; % makes also temporary mat files, moves exisiting nc to old subdir
-   OPT.make_catalog   = 0; % otherwise load existing one
-   OPT.make_kml       = 0; % processing all kml only takas about 4 hours
+   OPT.make_nc        = 1; % makes also temporary mat files, moves exisiting nc to old subdir
+   OPT.make_catalog   = 1; % otherwise load existing one
+   OPT.make_kml       = 1; % processing all kml only takas about 4 hours
    OPT.baseurl        = 'http://live.waterbase.nl';
 
-   rawbase = 'E:\checkouts\OpenEarthRawData';    % @ local
+   %rawbase = '/Users/fedorbaart/Downloads/rws/raw/';    % @ local, change this for your own computer
+    %ncbase = '/Users/fedorbaart/Downloads/rws/nc/'; % @ local, change this for your own computer
+   rawbase = 'E:\checkouts\OpenEarthRawData\';    % @ local
     ncbase = 'E:\opendap.deltares.nl\thredds\'; % @ local
    urlbase = 'http://opendap.deltares.nl:8080'; % production server (links)
-   kmlbase = 'd:\kml.deltares.nl\';             % @ local, no links to other kml or images any more
+   %kmlbase = '/Users/fedorbaart/Downloads/rws/kml/'; % @ local, change this... no links to other kml or images any more
+   kmlbase = 'd:\kml.deltares.nl\';
 
 %% Parameter choice
 
@@ -31,9 +32,10 @@ function rws_waterbase_all
                     332  346  347  360  363  ... % KjN   N   N  O2 PO4
                     364  380  491  492  493  ... %   P P04 NH4 N02 N03
                     541  560 1083    1  377 ];   % DSe  Si DOC zwl  pH (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
-                
+   % donar_wnsnum = [22, 24] % Use this if you want only an update of
+   % specific parameters.
 % DO 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
-
+   mfilename('fullpath')
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
 
    if  donar_wnsnum==0
@@ -59,9 +61,9 @@ function rws_waterbase_all
        OPT.name              = DONAR.name{index};          % needed for directory
 
       subdir                = OPT.name;
-      OPT.directory_nc      = [ ncbase,'\rijkswaterstaat\waterbase\'      ,filesep,subdir,filesep];
-      OPT.directory_kml     = [kmlbase,'\rijkswaterstaat\waterbase\'      ,filesep,];
-      OPT.directory_raw     = [rawbase,'\rijkswaterstaat\waterbase\cache\',filesep,subdir,filesep];
+      OPT.directory_nc      = [ ncbase,fullfile('rijkswaterstaat','waterbase'), filesep,subdir,filesep];
+      OPT.directory_kml     = [kmlbase,fullfile('rijkswaterstaat','waterbase'), filesep,];
+      OPT.directory_raw     = [rawbase,fullfile('rijkswaterstaat','waterbase', 'cache') ,filesep,subdir,filesep];
       
       multiWaitbar(mfilename,n/length(donar_wnsnum),'label',['Processing substance: ',OPT.donar_parcode,' (',num2str(ivar),')'])
 
