@@ -130,14 +130,27 @@ else
 end
 
 for jj = 1:length(S.PP(sens).settings.tvec)
-    S.PP(sens).dunes.duneclassRough(:,jj) = interp1(S.PP(sens).settings.s0,duneclass(:,jj),S.PP(sens).settings.sgridRough,'nearest');
+    S.PP(sens).GEmapping.dunes.duneclasses(:,jj) = interp1(S.PP(sens).settings.s0,duneclass(:,jj),S.PP(sens).settings.sgridRough,'nearest');
 end
 
+
+%% Settings for writing to KMLtext
+PLOTscale1   = str2double(S.settings.indicators.dunes.duneclasses.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTscale2   = str2double(S.settings.indicators.dunes.duneclasses.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
+PLOToffset   = str2double(S.settings.indicators.dunes.duneclasses.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTicons    = S.settings.indicators.dunes.duneclasses.icons;
+colour       = {[0 0.9 0.0],[0.9 0.0 0.0]};
+fillalpha    = 0.7;
 popuptxt={'Dune class',{'This indicator provides information on the expected dune classes of the coast. These classes are:','',...
                         ' - class 1 = erosive',' - class 2 = normal and slight progradation',' - class 3 = wide beach with potential for new dunes ',...
                         '             at the foot of the olddune',' - class 4 = extremely wide beach with potential','             for new dunes',...
                         ' - class 5 = extremely wide beach with potential','             for new dunes including green beach'}};
-[KMLdata]=ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough, S.PP(sens).coast.y0_refgridRough, ... 
-                        S.PP(sens).dunes.duneclassRough, S.settings.indicators.dunes.duneclasses.icons, ...
-                        str2double(S.settings.indicators.dunes.duneclasses.PLOToffset),sens,popuptxt);
-S.PP(sens).output.kml_dunes_duneclasses = KMLdata;
+
+%% Write to kml BAR PLOTS / ICONS
+[KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                              (S.PP(sens).GEmapping.dunes.duneclasses-PLOTscale2), ...
+                              PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
+[KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                             S.PP(sens).GEmapping.dunes.duneclasses,PLOTicons,PLOToffset,sens,popuptxt);
+S.PP(sens).output.kml_dunes_duneclasses  = KMLdata1;
+S.PP(sens).output.kml_dunes_duneclasses2 = KMLdata2;
