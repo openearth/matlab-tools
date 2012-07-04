@@ -329,5 +329,6 @@ if handles.Model(1).Input(1).nrThinDams>0
     
     setHandles(handles);
 
+else
+    ddb_giveWarning('text','There are no thin dams in current flow model');
 end
-
