@@ -93,7 +93,7 @@ PLOTscale1   = str2double(S.settings.indicators.residential.groundwater.PLOTscal
 PLOTscale2   = str2double(S.settings.indicators.residential.groundwater.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
 PLOToffset   = str2double(S.settings.indicators.residential.groundwater.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
 PLOTicons    = S.settings.indicators.residential.groundwater.icons;
-colour       = {[1 1 0.0],[1 1 0.4]};
+colour       = {[1 1 0.0],[1 0.6 0.1]};
 fillalpha    = 0.7;
 popuptxt     = {'Groundwater','Dune area as a proxy for groundwater problems in residential areas'};
 
@@ -120,7 +120,7 @@ function [ID_inside,ID_outside]=loadregions(sRough,dS,zonefile)
       ID_inside            = [ID_inside,find(abs(sRough-X0zone)==min(abs(sRough-X0zone)))];    % use at least the grid point nearest to the center of a zone (in case the zone is smaller dan dS)
   end
   ID_inside                = unique(ID_inside);                                                % throw away double id's
-  ID_outside             = setdiff([1:length(sRough)],ID_inside);
+  ID_outside               = setdiff([1:length(sRough)],ID_inside);
 end
 
 

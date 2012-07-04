@@ -201,7 +201,7 @@ for kk = 1: length(ECO)
     PLOToffset   = str2double(S.settings.indicators.ecology.benthos.PLOToffset) + str2double(S.settings.indicators.ecology.benthos.PLOToffsetDX)*kk;     % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
     PLOTicons    = S.settings.indicators.ecology.benthos.icons;
     outlineVAL   = ppmapping.ecology.benthos(kk).Ks;
-    colour       = {[0.6 0.2 0.2],[0.2 0.6 0.2]};
+    colour       = {[0.6 0.2 0.2],[1 0.6 0.2]};
     fillalpha    = 0.7;
     popuptxt     = {['Benthos ',num2str(kk)],['Direct impact of nourishments on benthos population for species nr. ',num2str(kk)]};
     

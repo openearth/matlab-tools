@@ -118,13 +118,13 @@ for jj=1:length(fldname)
             R.lon                          = S.userinput.(fldname{jj})(ii).length;
             R.lat                          = S.userinput.(fldname{jj})(ii).length;
             R.length                       = S.userinput.(fldname{jj})(ii).length;
+            R.id                           = S.userinput.(fldname{jj})(ii).idRANGE(:);
+            R.id2                          = S.userinput.(fldname{jj})(ii).idRANGE2(:);
             costs.(fldname{jj}).props(ii)  = R;
             costs.(fldname{jj}).costs(ii)  = costs.costprices.(fldname{jj}) * R.length;
             
             %% Put costs on grid
             idt                            = 1;
-            R.id                           = S.userinput.(fldname{jj})(ii).idRANGE(:);
-            R.id2                          = S.userinput.(fldname{jj})(ii).idRANGE2(:);
             costsUB.total(R.id,idt)        = costsUB.total(R.id,idt) + costs.(fldname{jj}).costs(ii)/length(R.id)/length(idt);
             costsGE.total(R.id2,idt)       = costsGE.total(R.id2,idt) + costs.(fldname{jj}).costs(ii)/length(R.id2)/length(idt);
             costsGE.structures(R.id2,idt)  = costsGE.structures(R.id2,idt) + costs.(fldname{jj}).costs(ii)/length(R.id2)/length(idt);
@@ -153,9 +153,7 @@ for ii=1:length(S.userinput.nourishment)
     N.WIDTH      =   S.userinput.nourishment(ii).width;
     N.volperm    =   N.VOL/N.WIDTH;
     N.id         =   S.userinput.nourishment(ii).idRANGE(:);
-    N.idNEAREST  =   S.userinput.nourishment(ii).idNEAREST(:);
     N.id2        =   S.userinput.nourishment(ii).idRANGE2(:);
-    N.idNEAREST2 =   S.userinput.nourishment(ii).idNEAREST2(:);
     N.distance   =   distance;
     costs.nourishments.props(ii) = N;
     
@@ -223,7 +221,7 @@ S.PP(sens).TTmapping.costs.direct.costs_structures = sum(cumsum(costsGE.structur
 PLOTscale1   = str2double(S.settings.indicators.costs.direct.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
 PLOTscale2   = str2double(S.settings.indicators.costs.direct.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
 PLOToffset   = str2double(S.settings.indicators.costs.direct.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
-colour       = {[0.7 0.0 0.7],[0.4 0.0 0.4]};
+colour       = {[0.7 0.9 0.7],[0.95 0.0 0.4]};
 fillalpha    = 0.7;
 popuptxt     = {'Direct costs','Direct costs of nourishments on the coast'};
 %% Write to kml

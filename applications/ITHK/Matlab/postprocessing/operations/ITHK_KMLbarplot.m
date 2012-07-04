@@ -76,7 +76,7 @@ fprintf('ITHK postprocessing : Generating KMLbarplots [');
 global S
 
 if nargin<6
-colour={[1 0 0],[0 1 0]};
+colour={[0 1 0],[1 0 0]};
 end
 if nargin<7
 fillalpha=0.7;
@@ -147,13 +147,13 @@ for jj = 1:length(S.PP(sens).settings.tvec)
     %% construct KMLdata
     IDneg            = find(z(:,jj)<0); % red
     IDpos            = find(z(:,jj)>=0);
-    for ii=1:length(IDneg) %length(S.PP(sens).settings.sgridRough)
-        KMLdata2     = [KMLdata2,barstyle1];
-        KMLdata2     = [KMLdata2 KMLpolytext(time1,time2,latpoly(:,IDneg(ii)),lonpoly(:,IDneg(ii)))];
-    end
     for ii=1:length(IDpos) %length(S.PP(sens).settings.sgridRough)
-        KMLdata2     = [KMLdata2,barstyle2];
+        KMLdata2     = [KMLdata2,barstyle1];
         KMLdata2     = [KMLdata2 KMLpolytext(time1,time2,latpoly(:,IDpos(ii)),lonpoly(:,IDpos(ii)))];
+    end
+    for ii=1:length(IDneg) %length(S.PP(sens).settings.sgridRough)
+        KMLdata2     = [KMLdata2,barstyle2];
+        KMLdata2     = [KMLdata2 KMLpolytext(time1,time2,latpoly(:,IDneg(ii)),lonpoly(:,IDneg(ii)))];
     end
     KMLdata = [KMLdata KMLdata2];
 

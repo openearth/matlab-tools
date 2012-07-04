@@ -141,10 +141,10 @@ for jj = 1:length(S.userinput.phases)
         
             % yellow triangle/rectangle
             if jj==1 && ii==1
-            S.PP(sens).output.kml_nourishment = KML_stylePoly('name','default','fillColor',[1 1 0],'lineColor',[0 0 0],'lineWidth',0,'fillAlpha',0.7);
+            S.PP(sens).output.kml_nourishment = KML_stylePoly('name','nourishment','fillColor',[1 1 0],'lineColor',[0 0 0],'lineWidth',0,'fillAlpha',0.7);
             end
             % polygon to KML
-            S.PP(sens).output.kml_nourishment = [S.PP(sens).output.kml_nourishment KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.nourishment(ss).start,1,1),'timeOut',datenum(t0+S.userinput.nourishment(ss).stop,1,1)+364,'styleName','default')];
+            S.PP(sens).output.kml_nourishment = [S.PP(sens).output.kml_nourishment KML_poly(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.nourishment(ss).start,1,1),'timeOut',datenum(t0+S.userinput.nourishment(ss).stop,1,1)+364,'styleName','nourishment')];
             clear lonpoly latpoly
         end
     end

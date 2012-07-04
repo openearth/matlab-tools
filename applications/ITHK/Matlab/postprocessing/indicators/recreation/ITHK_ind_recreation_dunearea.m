@@ -88,7 +88,7 @@ PLOTscale1   = str2double(S.settings.indicators.recreation.dunearea.PLOTscale1);
 PLOTscale2   = str2double(S.settings.indicators.recreation.dunearea.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
 PLOToffset   = str2double(S.settings.indicators.recreation.dunearea.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
 PLOTicons    = S.settings.indicators.recreation.dunearea.icons;
-colour       = {[0 0.6 0.0],[0.8 0.0 0.0]};
+colour       = {[0 0.6 0.0],[0.95 0.0 0.0]};
 fillalpha    = 0.7;
 popuptxt     = {'Recreation dune area','Dune area as a proxy for recreation'};
 
