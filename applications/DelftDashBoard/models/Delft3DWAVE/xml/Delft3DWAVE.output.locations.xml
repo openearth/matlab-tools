@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>txt</tag>
+    <style>text</style>
+    <position>50 70</position>
+    <text>Sorry, this feature has not yet been implemented in Delft Dashboard ...</text>
+  </element>
+</root>

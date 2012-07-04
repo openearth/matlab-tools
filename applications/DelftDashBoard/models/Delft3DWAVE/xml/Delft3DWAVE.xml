@@ -70,7 +70,7 @@
         <tab>
           <tag>output</tag>
           <tabstring>Output</tabstring>
-          <elements>Delft3DWAVE.outputparameters.xml</elements>
+          <elements>Delft3DWAVE.output.xml</elements>
           <callback>ddb_Delft3DWAVE_output</callback>
         </tab>
       </tabs>

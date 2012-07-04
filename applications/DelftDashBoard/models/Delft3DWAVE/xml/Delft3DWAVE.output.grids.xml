@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <tag>listcompgrids</tag>
+    <style>listbox</style>
+    <position>10 30 200 80</position>
+    <tooltipstring>Select grid</tooltipstring>
+    <variable>handles.activeWaveGrid</variable>
+    <max>1000</max>
+    <type>integer</type>    
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input.gridnames</variable>
+      </texts>
+    </list>
+    <callback>ddb_Delft3DWAVE_output</callback>
+    <option1>selectgrid</option1>  
+  </element>
+</root>

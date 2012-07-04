@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
+<root>
+  <element>
+    <position>45 10 900 140</position>
+    <style>tabpanel</style>
+    <tag>outputpanel</tag>
+    <tabs>
+      <tab>
+        <tag>general</tag>
+        <tabstring>General</tabstring>
+        <elements>Delft3DWAVE.output.general.xml</elements>
+      </tab>    
+      <tab>
+        <tag>grids</tag>
+        <tabstring>Grids</tabstring>
+        <elements>Delft3DWAVE.output.grids.xml</elements>
+      </tab>
+      <tab>
+        <tag>locations</tag>
+        <tabstring>Locations</tabstring>
+        <elements>Delft3DWAVE.output.locations.xml</elements>
+      </tab>      
+      <tab>
+        <tag>debug</tag>
+        <tabstring>Debug</tabstring>
+        <elements>Delft3DWAVE.output.debug.xml</elements>
+      </tab>      
+    </tabs>
+  </element>
+</root>
