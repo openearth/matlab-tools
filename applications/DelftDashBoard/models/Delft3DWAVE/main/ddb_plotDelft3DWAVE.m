@@ -60,5 +60,7 @@ handles=ddb_Delft3DWAVE_plotBathy(handles,option,'visible',vis,'active',act);
 handles=ddb_Delft3DWAVE_plotBoundaries(handles,option,'visible',vis,'active',act);
 
 handles=ddb_Delft3DWAVE_plotObstacles(handles,option,'visible',vis,'active',act);
-           
+
+handles=ddb_Delft3DWAVE_plotOutputLocations(handles,option,'visible',vis,'active',act);
+
 setHandles(handles);

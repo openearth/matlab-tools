@@ -164,8 +164,10 @@ MDW.Output.AppendCOM.value        = wave.appendcom;
 MDW.Output.AppendCOM.type         = 'boolean';
 for ii=1:length(wave.locationfile)
     if ~isempty(wave.locationfile{ii})
-        MDW.Output.(['LocationFile' num2str(ii)]).value     = wave.locationfile{ii};
-        MDW.Output.(['LocationFile' num2str(ii)]).keyword   = 'LocationFile';
+        if wave.locationsets(ii).nrpoints>0
+            MDW.Output.(['LocationFile' num2str(ii)]).value     = wave.locationfile{ii};
+            MDW.Output.(['LocationFile' num2str(ii)]).keyword   = 'LocationFile';
+        end
     end
 end
 MDW.Output.WriteTable.value       = wave.writetable;

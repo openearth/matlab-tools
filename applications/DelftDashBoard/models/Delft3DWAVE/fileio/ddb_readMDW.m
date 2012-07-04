@@ -37,6 +37,13 @@ fldnames=fieldnames(MDW.output);
 for ii=1:length(fldnames)
     handles.Model(md).Input.(fldnames{ii})=MDW.output.(fldnames{ii});
 end
+if ~iscell(handles.Model(md).Input.locationfile)
+    v=handles.Model(md).Input.locationfile;
+    if ~isempty(v)
+        handles.Model(md).Input.locationfile=[];
+        handles.Model(md).Input.locationfile{1}=v;
+    end
+end
 
 
 %% Domains
@@ -64,9 +71,6 @@ for id=1:ndomains
 end
 
 %% Boundaries
-handles.Model(md).Input.nrboundaries=0;
-handles.Model(md).Input.boundaries=[];
-
 if isfield(MDW,'boundary')
     nbnd=length(MDW.boundary);
     handles.Model(md).Input.nrboundaries=nbnd;

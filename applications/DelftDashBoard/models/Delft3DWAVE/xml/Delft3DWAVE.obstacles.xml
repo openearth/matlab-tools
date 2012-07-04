@@ -11,7 +11,7 @@
     <tag>listobstacles</tag>
     <style>listbox</style>
     <position>55 20 160 130</position>
-    <tooltipstring>Select obstacle</tooltipstring>
+    <tooltipstring>Select one or more obstacles</tooltipstring>
     <variable>activeobstacle</variable>
     <multivariable>activeobstacles</multivariable>
     <max>1000</max>

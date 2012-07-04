@@ -293,7 +293,7 @@ function copyFromFlow
 
 handles=getHandles;
 
-if length(handles.Model(1).Input(1).thinDams)>0
+if handles.Model(1).Input(1).nrThinDams>0
 
     xg=handles.Model(1).Input(1).gridX;
     yg=handles.Model(1).Input(1).gridY;

@@ -79,3 +79,10 @@ if handles.Model(md).Input.nrobstacles>0
     ddb_Delft3DWAVE_saveObstacleFile(handles);
 
 end
+
+% Location files
+for ii=1:handles.Model(md).Input.nrlocationsets
+    if handles.Model(md).Input.locationsets(ii).nrpoints>0
+       ddb_Delft3DWAVE_saveLocationFile(handles.Model(md).Input.locationfile{ii},handles.Model(md).Input.locationsets(ii));
+    end
+end

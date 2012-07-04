@@ -114,12 +114,12 @@ switch lower(opt)
                 end
             end
         end
-        hh=findobj(gcf,'tag','delft3dwavegrid');
-        if ~isempty(hh)
-            try
-                delete(hh);
-            end
-        end
+%        hh=findobj(gcf,'tag','delft3dwavegrid');
+%        if ~isempty(hh)
+%            try
+%                delete(hh);
+%            end
+%        end
         
     case{'update'}
         if isfield(handles.Model(imd).Input.domains(id).gridplot,'plothandles')

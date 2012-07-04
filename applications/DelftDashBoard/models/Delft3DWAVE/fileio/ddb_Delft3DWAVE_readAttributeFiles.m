@@ -21,3 +21,18 @@ if ~isempty(handles.Model(md).Input.obstaclefile)
     handles.Model(md).Input.obstacles=obs;
     handles.Model(md).Input.nrobstacles=length(obs);    
 end
+
+if ~isempty(handles.Model(md).Input.locationfile)
+    for ii=1:length(handles.Model(md).Input.locationfile)
+        xy=load(handles.Model(md).Input.locationfile{ii});
+        handles.Model(md).Input.locationsets(ii).x=xy(:,1)';
+        handles.Model(md).Input.locationsets(ii).y=xy(:,2)';
+        handles.Model(md).Input.locationsets(ii).nrpoints=length(handles.Model(md).Input.locationsets(ii).x);
+        handles.Model(md).Input.locationsets(ii).activepoint=1;
+        for jj=1:handles.Model(md).Input.locationsets(ii).nrpoints
+            handles.Model(md).Input.locationsets(ii).pointtext{jj}=num2str(jj);
+        end
+    end
+    handles.Model(md).Input.activelocationset=1;
+    handles.Model(md).Input.nrlocationsets=length(handles.Model(md).Input.locationfile);
+end
