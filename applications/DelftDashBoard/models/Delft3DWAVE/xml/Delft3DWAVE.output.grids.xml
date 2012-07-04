@@ -1,12 +1,15 @@
 <?xml version="1.0"?>
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
-  <element>
+  <element> 
     <tag>listcompgrids</tag>
     <style>listbox</style>
     <position>10 30 200 80</position>
     <tooltipstring>Select grid</tooltipstring>
+    <text>Computational grids :</text>
+    <textposition>above-center</textposition>
     <variable>handles.activeWaveGrid</variable>
+    <multivariable>activegrids</multivariable>
     <max>1000</max>
     <type>integer</type>    
     <list>
@@ -17,4 +20,34 @@
     <callback>ddb_Delft3DWAVE_output</callback>
     <option1>selectgrid</option1>  
   </element>
+  <element>
+    <tag>textcs</tag>
+    <style>text</style>
+    <position>10 10</position>
+    <prefix>Co-ordinate System : </text>
+    <type>text</type>
+    <variable>handles.Model(md).Input.domains(awg).coordsyst</variable>
+  </element>  
+  <element>
+    <tag>checkoutputgrid</tag>
+    <style>checkbox</style>
+    <position>220 90</position>
+    <text>Write output for grid</text>
+    <variable>handles.Model(md).Input.domains(awg).output</variable>
+    <callback>ddb_Delft3DWAVE_output</callback>
+    <option1>checkoutput</option1>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.nrgrids</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>  
 </root>
