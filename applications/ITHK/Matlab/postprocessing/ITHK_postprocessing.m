@@ -146,8 +146,10 @@ addtxt = '_foreshore';ITHK_io_writeKML(kmltxt,addtxt,sens);
 kmltxt = [S.PP(sens).output.kml_ecology_juvenilefish2];
 addtxt = '_foreshore2';ITHK_io_writeKML(kmltxt,addtxt,sens);
 
-kmltxt = [S.PP(sens).output.kml_costs_direct,S.PP(sens).output.kml_costs_direct2,S.PP(sens).output.kml_costs_direct3];
+kmltxt = [S.PP(sens).output.kml_costs_direct];
 addtxt = '_costs';ITHK_io_writeKML(kmltxt,addtxt,sens);
+kmltxt = [S.PP(sens).output.kml_costs_direct2,S.PP(sens).output.kml_costs_direct3];
+addtxt = '_costs2';ITHK_io_writeKML(kmltxt,addtxt,sens);
 
 kmltxt = [S.PP(sens).output.kml_dunes_duneclasses,S.PP(sens).output.kml_dunes_habitatrichness];
 addtxt = '_dunes';ITHK_io_writeKML(kmltxt,addtxt,sens);

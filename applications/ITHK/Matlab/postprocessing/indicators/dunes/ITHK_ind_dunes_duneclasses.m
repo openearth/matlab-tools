@@ -139,7 +139,7 @@ PLOTscale1   = str2double(S.settings.indicators.dunes.duneclasses.PLOTscale1);  
 PLOTscale2   = str2double(S.settings.indicators.dunes.duneclasses.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
 PLOToffset   = str2double(S.settings.indicators.dunes.duneclasses.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
 PLOTicons    = S.settings.indicators.dunes.duneclasses.icons;
-colour       = {[0 0.9 0.0],[0.9 0.0 0.0]};
+colour       = {[1 1 0.0],[0.9 0.0 0.0]};
 fillalpha    = 0.7;
 popuptxt={'Dune class',{'This indicator provides information on the expected dune classes of the coast. These classes are:','',...
                         ' - class 1 = erosive',' - class 2 = normal and slight progradation',' - class 3 = wide beach with potential for new dunes ',...

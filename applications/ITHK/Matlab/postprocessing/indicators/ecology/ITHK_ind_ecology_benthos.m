@@ -197,11 +197,11 @@ end
 for kk = 1: length(ECO)
     %% Settings for writing to KMLtext
     PLOTscale1   = str2double(S.settings.indicators.ecology.benthos.PLOTscale1) / ECO(kk).k_s;     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
-    PLOTscale2   = str2double(S.settings.indicators.ecology.benthos.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOTscale2   = str2double(S.settings.indicators.ecology.benthos.PLOTscale2) / ECO(kk).k_s;     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
     PLOToffset   = str2double(S.settings.indicators.ecology.benthos.PLOToffset) + str2double(S.settings.indicators.ecology.benthos.PLOToffsetDX)*kk;     % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
     PLOTicons    = S.settings.indicators.ecology.benthos.icons;
     outlineVAL   = ppmapping.ecology.benthos(kk).Ks;
-    colour       = {[0.6 0.2 0.2],[1 0.6 0.2]};
+    colour       = {[0.2 0.6 0.2],[0.9 0.2 0.2]};
     fillalpha    = 0.7;
     popuptxt     = {['Benthos ',num2str(kk)],['Direct impact of nourishments on benthos population for species nr. ',num2str(kk)]};
     

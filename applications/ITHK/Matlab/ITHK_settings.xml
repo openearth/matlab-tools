@@ -41,8 +41,8 @@
       </duneclasses>
       <habitatrichness>
         <Ythr>0.5</Ythr>
-        <PLOTscale1>       200       </PLOTscale1>
-        <PLOTscale2>       0         </PLOTscale2>
+        <PLOTscale1>       300       </PLOTscale1>
+        <PLOTscale2>       -1        </PLOTscale2>
         <PLOToffset>       -12000    </PLOToffset>
         <plottype>         icons     </plottype>
         <icons>
@@ -77,8 +77,8 @@
         <function>ITHK_ind_ecology_benthos</function>
         <plottype>barplot</plottype>
         <Ythr>0.3</Ythr>
-        <PLOTscale1>       100       </PLOTscale1>
-        <PLOTscale2>       -1        </PLOTscale2>
+        <PLOTscale1>       2000      </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
         <PLOToffset>       7000      </PLOToffset>
         <PLOToffsetDX>     2500      </PLOToffsetDX>
         <icons>
