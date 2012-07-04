@@ -110,8 +110,7 @@ else
     return
 end
 
-handles.Model(md).Input.locationsets(nlocsets).x=[];
-handles.Model(md).Input.locationsets(nlocsets).y=[];
+handles.Model(md).Input.locationsets=ddb_initializeDelft3DWAVELocationSet(handles.Model(md).Input.locationsets,nlocsets);
 
 np=0;
 for ibnd=1:1:nbnd
@@ -127,8 +126,13 @@ for ibnd=1:1:nbnd
     end
 end
 
-handles.Model(md).Input.nrlocationsets=nlocsets;
+handles.Model(md).Input.locationsets(nlocsets).nrpoints=np;
+for ii=1:np
+    handles.Model(md).Input.locationsets(nlocsets).pointtext{ii}=num2str(ii);
+end
 
+handles.Model(md).Input.nrlocationsets=nlocsets;
+handles.Model(md).Input.activelocationset=nlocsets;
 
 % Save locations file
 fid=fopen(filename,'wt');
@@ -139,4 +143,7 @@ fclose(fid);
 
 handles.Model(md).Input.writespec2d=1;
 
+handles=ddb_Delft3DWAVE_plotOutputLocations(handles,'plot','visible',1,'active',0);
+
 setHandles(handles);
+
