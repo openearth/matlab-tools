@@ -69,6 +69,7 @@ for iw=1:length(model.webSite)
     %% Elevation
 
     % First try to determine distance between corner points of model limits
+    
     if ~cluster
         % Get value from xml
         xlim=model.xLim;
@@ -83,20 +84,25 @@ for iw=1:length(model.webSite)
         xlim(2)=max(xloc);
         ylim(1)=min(yloc);
         ylim(2)=max(yloc);
-    end    
+    end
     if ~strcmpi(model.coordinateSystem,'wgs 84')
         [xlim,ylim]=convertCoordinates(xlim,ylim,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
     end
     dstx=111111*(xlim(2)-xlim(1))*cos(mean(ylim)*pi/180);
-    dsty=111111*(ylim(2)-ylim(1));    
+    dsty=111111*(ylim(2)-ylim(1));
     dst=sqrt(dstx^2+dsty^2);
-
+    
     % Elevation is distance times 2
     dst=dst*2;
     dst=min(dst,10000000);
-
-    mdl.elevation.value=dst;
-    mdl.elevation.type='real';
+    
+    if ~isfield(model.webSite(iw),'elevation')
+        mdl.elevation.value=dst;
+        mdl.elevation.type='real';
+    else isfield(model.webSite(iw),'elevation')
+        mdl.elevation.value=min(hm.models(m).webSite(iw).elevation,10000000);
+        mdl.elevation.type='real';
+    end
 
     %% Types and size
 
