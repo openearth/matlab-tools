@@ -204,11 +204,11 @@ if ~isempty(opt)
                     
                     if isfield(bnd(i),'sediment')
                         if length(bnd(i).sediment)<=j
-                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).nrTimeSeries=length(bnd(i).tracer(j).timeSeriesT);
-                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).timeSeriesT=bnd(i).tracer(j).timeSeriesT;
-                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).timeSeriesA=bnd(i).tracer(j).timeSeriesA;
-                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).timeSeriesB=bnd(i).tracer(j).timeSeriesB;
-                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).profile=bnd(i).tracer(j).profile;
+                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).nrTimeSeries=length(bnd(i).sediment(j).timeSeriesT);
+                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).timeSeriesT=bnd(i).sediment(j).timeSeriesT;
+                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).timeSeriesA=bnd(i).sediment(j).timeSeriesA;
+                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).timeSeriesB=bnd(i).sediment(j).timeSeriesB;
+                            handles.Model(md).Input(ad).openBoundaries(i).sediment(j).profile=bnd(i).sediment(j).profile;
                         end
                     end
                 end
