@@ -4,13 +4,130 @@
   <element>
     <tag>timepanel</tag>
     <style>panel</style>
-    <position>45 10 900 160</position>
+    <position>45 10 1100 160</position>
     <text>Time Frame</text>
+  </element> 
+  <element>
+    <tag>textmode</tag>
+    <style>text</style>
+    <position>55 130</position>
+    <text>Computational mode :</text>    
+  </element>
+  <element>
+    <tag>editmode</tag>
+    <style>popupmenu</style>
+    <position>55 105 110 20</position>
+    <variable>handles.Model(md).Input.simmode</variable>
+    <type>string</type>
+    <list>
+      <texts>
+        <variable>handles.Model(md).Input.simmodes</variable>
+      </texts>
+      <values>
+        <variable>handles.Model(md).Input.simmodes</variable>
+      </values>
+    </list>
+  </element>
+  <element>
+    <tag>editcoupling</tag>
+    <style>edit</style>
+    <position>120 80 50 20</position>
+    <text>Coupling : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input.comwriteinterval</variable>
+    <type>real</type>
+    <tooltipstring>Enter coupling interval</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editmode</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.coupledwithflow</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textcouplingunit</tag>
+    <style>text</style>
+    <position>190 80</position>
+    <text>[min]</text> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editmode</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.coupledwithflow</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>edittimestepoutput</tag>
+    <style>edit</style>
+    <position>120 55 50 20</position>
+    <text>Time step : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input.mapwriteinterval</variable>
+    <type>real</type>
+    <tooltipstring>Enter output time step</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editmode</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.simmode</variable>
+            <value>non-stationary</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>texttimestepoutputunit</tag>
+    <style>text</style>
+    <position>190 55</position>
+    <text>[min]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editmode</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.simmode</variable>
+            <value>non-stationary</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>    
   </element>  
   <element>
     <tag>timepointspanel</tag>
     <style>panel</style>
-    <position>50 15 445 135</position>
+    <position>250 15 445 135</position>
     <text>Time points for WAVE computation</text>
     <dependencies>
       <dependency>
@@ -29,7 +146,7 @@
   <element>
     <tag>edittimepoints</tag>
     <style>listbox</style>
-    <position>55 20 200 100</position>
+    <position>255 20 200 100</position>
     <tooltipstring>Edit timepoints for wave computation</tooltipstring>
     <variable>activetimepoint</variable>
     <type>integer</type>
@@ -55,53 +172,9 @@
     </dependencies>    
   </element> 
   <element>
-    <tag>pushaddtimepoint</tag>
-    <style>pushbutton</style>
-    <position>260 80 70 20</position>
-    <tooltipstring>Add time point</tooltipstring>
-    <text>Add</text>
-    <onchange>ddb_Delft3DWAVE_timeframe</onchange>
-    <option1>add</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nravailableflowtimes</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
-    <tag>pushdeletetimepoint</tag>
-    <style>pushbutton</style>
-    <position>260 35 70 20</position>
-    <tooltipstring>Delete time point</tooltipstring>
-    <text>Delete</text>
-    <onchange>ddb_Delft3DWAVE_timeframe</onchange>
-    <option1>delete</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nravailableflowtimes</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>
-  <element>
     <tag>flowtimepointspanel</tag>
     <style>panel</style>
-    <position>50 15 445 105</position>
+    <position>250 15 445 105</position>
     <text>Flow times</text>
     <dependencies>
       <dependency>
@@ -120,7 +193,7 @@
   <element>
     <tag>editflowtimepoints</tag>
     <style>listbox</style>
-    <position>55 20 200 80</position>
+    <position>255 20 200 80</position>
     <tooltipstring>Flow timepoints</tooltipstring>
     <variable>activetimepoint</variable>
     <type>string</type>
@@ -148,13 +221,13 @@
   <element>
     <tag>timepointspanel</tag>
     <style>panel</style>
-    <position>500 15 440 135</position>
+    <position>700 15 440 135</position>
     <text>Default hydrodynamic data for selected time period</text>
   </element>
   <element>
     <tag>edittime</tag>
     <style>edit</style>
-    <position>580 110 105 20</position>
+    <position>780 110 105 20</position>
     <text>Time : </text>
     <textposition>left</textposition>
     <variable>selectedtime</variable>
@@ -164,13 +237,13 @@
   <element>
     <tag>texttimeunit</tag>
     <style>text</style>
-    <position>690 110</position>
+    <position>890 110</position>
     <text>yyyy mm dd HH MM SS</text>
   </element>
   <element>
     <tag>editwaterlevel</tag>
     <style>edit</style>
-    <position>580 85 105 20</position>
+    <position>780 85 105 20</position>
     <text>Water level : </text>
     <textposition>left</textposition>
     <variable>waterlevelatselectedtime</variable>
@@ -180,13 +253,13 @@
   <element>
     <tag>textwaterlevelunit</tag>
     <style>text</style>
-    <position>690 85</position>
+    <position>890 85</position>
     <text>[m]</text>
   </element>
   <element>
     <tag>editxvelocity</tag>
     <style>edit</style>
-    <position>580 60 105 20</position>
+    <position>780 60 105 20</position>
     <text>X-velocity : </text>
     <textposition>left</textposition>
     <variable>xvelocityatselectedtime</variable>
@@ -196,13 +269,13 @@
   <element>
     <tag>textxvelocityunit</tag>
     <style>text</style>
-    <position>690 60</position>
+    <position>890 60</position>
     <text>[m/s]</text>
   </element>
   <element>
     <tag>edityvelocity</tag>
     <style>edit</style>
-    <position>580 35 105 20</position>
+    <position>780 35 105 20</position>
     <text>Y-velocity : </text>
     <textposition>left</textposition>
     <variable>yvelocityatselectedtime</variable>
@@ -212,7 +285,7 @@
   <element>
     <tag>textyvelocityunit</tag>
     <style>text</style>
-    <position>690 35</position>
+    <position>890 35</position>
     <text>[m/s]</text>
   </element>  
 </root>

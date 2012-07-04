@@ -45,4 +45,20 @@
       </dependency>
     </dependencies>    
   </element>
+  <element>
+    <tag>editinterval</tag>
+    <style>edit</style>
+    <position>300 110 50 20</position>
+    <text>Output interval : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input.comwriteinterval</variable>
+    <type>real</type>
+    <tooltipstring>Enter output interval</tooltipstring>
+  </element>
+  <element>
+    <tag>textintervalunit</tag>
+    <style>text</style>
+    <position>360 110</position>
+    <text>[min]</text>    
+  </element>  
 </root>
