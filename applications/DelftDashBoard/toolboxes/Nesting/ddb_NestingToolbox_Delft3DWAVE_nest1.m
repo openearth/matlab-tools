@@ -135,11 +135,7 @@ handles.Model(md).Input.nrlocationsets=nlocsets;
 handles.Model(md).Input.activelocationset=nlocsets;
 
 % Save locations file
-fid=fopen(filename,'wt');
-for ii=1:length(handles.Model(md).Input.locationsets(nlocsets).x)
-    fprintf(fid,'%15.7e %15.7e\n',handles.Model(md).Input.locationsets(nlocsets).x(ii),handles.Model(md).Input.locationsets(nlocsets).y(ii));
-end
-fclose(fid);
+ddb_Delft3DWAVE_saveLocationFile(handles.Model(md).Input.locationfile{nlocsets},handles.Model(md).Input.locationsets(nlocsets));
 
 handles.Model(md).Input.writespec2d=1;
 
