@@ -4,19 +4,19 @@
   <element>
     <tag>timepanel</tag>
     <style>panel</style>
-    <position>45 10 1100 160</position>
+    <position>45 10 975 160</position>
     <text>Time Frame</text>
   </element> 
   <element>
     <tag>textmode</tag>
     <style>text</style>
-    <position>55 130</position>
+    <position>65 135</position>
     <text>Computational mode :</text>    
   </element>
   <element>
     <tag>editmode</tag>
     <style>popupmenu</style>
-    <position>55 105 110 20</position>
+    <position>65 110 110 20</position>
     <variable>handles.Model(md).Input.simmode</variable>
     <type>string</type>
     <list>
@@ -279,7 +279,7 @@
   <element>
     <tag>timepointspanel</tag>
     <style>panel</style>
-    <position>700 15 440 135</position>
+    <position>700 15 310 135</position>
     <text>Default hydrodynamic data for selected time period</text>
   </element>
   <element>
