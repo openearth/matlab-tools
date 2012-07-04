@@ -124,7 +124,7 @@ while 1
                         if isfield(s.(fld)(ifld),keyword)
                             if ~isempty(s.(fld)(ifld).(keyword))
                                 % Field already exists
-                                if length(s.(fld)(ifld).(keyword))==1
+                                if ~iscell(s.(fld)(ifld).(keyword))
                                     % Make this a cell array
                                     vvv=s.(fld)(ifld).(keyword);
                                     s.(fld)(ifld).(keyword)=[];
