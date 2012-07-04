@@ -21,9 +21,9 @@
       <yposinitial>80</yposinitial>
       <duneclasses>
         <Ythr>0.5</Ythr>
-        <PLOTscale1>       400       </PLOTscale1>
+        <PLOTscale1>       200       </PLOTscale1>
         <PLOTscale2>       -2        </PLOTscale2>
-        <PLOToffset>       -7500     </PLOToffset>
+        <PLOToffset>       -10000     </PLOToffset>
         <on>               0         </on>
         <plottype>         icons     </plottype>
         <icons>
@@ -41,9 +41,9 @@
       </duneclasses>
       <habitatrichness>
         <Ythr>0.5</Ythr>
-        <PLOTscale1>       400       </PLOTscale1>
+        <PLOTscale1>       200       </PLOTscale1>
         <PLOTscale2>       0         </PLOTscale2>
-        <PLOToffset>       -8500     </PLOToffset>
+        <PLOToffset>       -12000    </PLOToffset>
         <plottype>         icons     </plottype>
         <icons>
           <class>          1               </class>
@@ -56,9 +56,9 @@
       </habitatrichness>
       <dunedynamics>
         <Ythr>0.5</Ythr>
-        <PLOTscale1>       400       </PLOTscale1>
+        <PLOTscale1>       200       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       -9500     </PLOToffset>
+        <PLOToffset>       -14000    </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> dunedynamics_no.png        </url>
@@ -77,7 +77,7 @@
         <function>ITHK_ind_ecology_benthos</function>
         <plottype>barplot</plottype>
         <Ythr>0.3</Ythr>
-        <PLOTscale1>       1200      </PLOTscale1>
+        <PLOTscale1>       100       </PLOTscale1>
         <PLOTscale2>       -1        </PLOTscale2>
         <PLOToffset>       7000      </PLOToffset>
         <PLOToffsetDX>     2500      </PLOToffsetDX>
@@ -192,9 +192,9 @@
       <groundwater>
         <header>Ground water with dune area change as proxy, uses a threshold dune position change (Ythr)</header>
         <Ythr>30</Ythr>
-        <PLOTscale1>       5         </PLOTscale1>
+        <PLOTscale1>       4         </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       -3500     </PLOToffset>
+        <PLOToffset>       -2000     </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> groundwater_no.png         </url>
@@ -209,9 +209,9 @@
       <realestate>  
         <header>Dune area change as proxy for real estate value, uses a threshold dune position change (Ythr)</header>
         <Ythr>50</Ythr>
-        <PLOTscale1>       5         </PLOTscale1>
+        <PLOTscale1>       4         </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       -4500     </PLOToffset>
+        <PLOToffset>       -4000     </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> realestate_no.png          </url>
@@ -228,9 +228,9 @@
       <dykering>
         <header>Indicator for dyke ring safety, using coastline as a proxy (threshold value above Ythr)</header>
         <Ythr>30</Ythr>
-        <PLOTscale1>       5         </PLOTscale1>
+        <PLOTscale1>       0.8       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       -5500     </PLOToffset>
+        <PLOToffset>       -6000     </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> dykering_no.png            </url>
@@ -245,9 +245,9 @@
       <structures>  
         <header>Indicator for safety of structures outside the dyke ring, using coastline as a proxy (threshold value above Ythr)</header>
         <Ythr>30</Ythr>
-        <PLOTscale1>       5         </PLOTscale1>
+        <PLOTscale1>       0.8       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       -6500     </PLOToffset>
+        <PLOToffset>       -8000     </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> structure_no.png           </url>
@@ -267,7 +267,7 @@
       <dsrough>2000</dsrough>
       <dsfine>500</dsfine>
       <widthfine>5000</widthfine>
-      <barscalevector>3</barscalevector>
+      <barscalevector>2.5</barscalevector>
     </barplot>
   </plotting>
   <postprocessing>
