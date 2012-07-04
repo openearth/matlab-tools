@@ -4,7 +4,7 @@
   <element>
     <tag>hydropanel</tag>
     <style>panel</style>
-    <position>45 10 900 160</position>
+    <position>45 10 1100 160</position>
     <title>Hydrodynamics</title>
   </element>
   <element>
@@ -27,52 +27,44 @@
     </list>
   </element>
   <element>
-    <tag>checkhydroflow</tag>
-    <style>checkbox</style>
-    <position>250 125</position>
-    <text>Use hydrodynamics from FLOW</text>
-    <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
-    <option1>sethydrodynamics</option1>    
+    <tag>textselectcoupling</tag>
+    <style>text</style>
+    <position>260 145</position>
+    <text>Select coupling type : </text>
   </element>
   <element>
-    <tag>radioddbflow</tag>
+    <tag>radiouncoupled</tag>
     <style>radiobutton</style>
-    <position>250 100</position>
-    <text>DDB FLOW model</text>
+    <position>260 125</position>
+    <text>Uncoupled</text>
     <type>string</type>
-    <variable>handles.Model(md).Input.flowtype</variable>
-    <value>ddb</value>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>   
+    <variable>handles.Model(md).Input.coupling</variable>
+    <value>uncoupled</value>
+  </element>  
+  <element>
+    <tag>radioddbonline</tag>
+    <style>radiobutton</style>
+    <position>260 100</position>
+    <text>Online DDB FLOW model</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.coupling</variable>
+    <value>ddbonline</value>   
   </element>
   <element>
-    <tag>radiootherflow</tag>
-    <style>radiobutton</style>
-    <position>250 75</position>
-    <text>Other FLOW model</text>
-    <type>string</type>
-    <variable>handles.Model(md).Input.flowtype</variable>
-    <value>other</value>
+    <tag>textddbflowfile</tag>
+    <style>text</style>
+    <position>450 100</position>
+    <prefix>File : </text>
+    <type>text</type>
+    <variable>handles.Model(1).Input(1).mdfFile</variable>
     <dependencies>
       <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
+        <action>visible</action>
+        <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>ddbonline</value>
             <operator>eq</operator>
           </check>
         </checks>
@@ -80,9 +72,18 @@
     </dependencies>    
   </element>  
   <element>
-    <tag>pushselectmdffile</tag>
+    <tag>radiootheronline</tag>
+    <style>radiobutton</style>
+    <position>260 75</position>
+    <text>Online other FLOW model</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.coupling</variable>
+    <value>otheronline</value>
+  </element>
+  <element>
+    <tag>pushselectotherfile</tag>
     <style>pushselectfile</style>
-    <position>270 50 100 20</position>
+    <position>450 75 100 20</position>
     <tooltipstring>Select Delft3D-FLOW mdf file</tooltipstring>
     <text>Select FLOW file</text>
     <variable>handles.Model(md).Input.mdffile</variable>
@@ -92,37 +93,66 @@
     <option1>sethydrodynamics</option1>        
     <dependencies>
       <dependency>
-        <action>enable</action>
+        <action>visible</action>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input.flowtype</variable>
-            <value>other</value>
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>otheronline</value>
             <operator>eq</operator>
           </check>
-          <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>          
         </checks>
       </dependency>
-    </dependencies>
+    </dependencies>  
+  </element>  
+  <element>
+    <tag>radiootheroffline</tag>
+    <style>radiobutton</style>
+    <position>260 50</position>
+    <text>Offline other FLOW model</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.coupling</variable>
+    <value>otheroffline</value>
+  </element>  
+  <element>
+    <tag>pushselectotherfile</tag>
+    <style>pushselectfile</style>
+    <position>450 50 100 20</position>
+    <tooltipstring>Select Delft3D-FLOW mdf file</tooltipstring>
+    <text>Select FLOW file</text>
+    <variable>handles.Model(md).Input.mdffile</variable>
+    <extension>*.mdf</extension>
+    <selectiontext>Select other MDF File</selectiontext>
+    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+    <option1>sethydrodynamics</option1>        
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>otheroffline</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>  
   </element>  
   <element>
     <tag>textselecthydro</tag>
     <style>text</style>
-    <position>500 145</position>
+    <position>700 145</position>
     <text>Select hydrodynamics results from Delft3D-FLOW</text>
     <dependencies>
       <dependency>
-        <action>enable</action>
+        <action>visible</action>
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
-            <operator>eq</operator>
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>uncoupled</value>
+            <operator>ne</operator>
           </check>
         </checks>
       </dependency>
@@ -131,7 +161,7 @@
   <element>
     <tag>checkuseflowbedlevel</tag>
     <style>popupmenu</style>
-    <position>500 125 130 20</position>
+    <position>740 125 130 20</position>
     <variable>handles.Model(md).Input.domains(awg).flowbedlevel</variable>
     <type>integer</type>
     <tooltipstring>Use bed level from Delft3D-FLOW (overrides bed level from depth file in Delft3D-WAVE)</tooltipstring>
@@ -148,14 +178,14 @@
     </list>
     <dependencies>
       <dependency>
-        <action>enable</action>
+        <action>visible</action>
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>uncoupled</value>
+            <operator>ne</operator>
+          </check>          
         </checks>
       </dependency>
     </dependencies>    
@@ -163,7 +193,7 @@
   <element>
     <tag>checkuseflowwaterlevel</tag>
     <style>popupmenu</style>
-    <position>500 100 130 20</position>
+    <position>740 100 130 20</position>
     <variable>handles.Model(md).Input.domains(awg).flowwaterlevel</variable>
     <type>integer</type>
     <tooltipstring>Use water level from Delft3D-FLOW (overrides water level specified in MDW file)</tooltipstring>
@@ -180,13 +210,13 @@
     </list>
     <dependencies>
       <dependency>
-        <action>enable</action>
+        <action>visible</action>
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
-            <operator>eq</operator>
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>uncoupled</value>
+            <operator>ne</operator>
           </check>
         </checks>
       </dependency>
@@ -195,7 +225,7 @@
   <element>
     <tag>checkuseflowcurrent</tag>
     <style>popupmenu</style>
-    <position>500 75 130 20</position>
+    <position>740 75 130 20</position>
     <variable>handles.Model(md).Input.domains(awg).flowvelocity</variable>
     <type>integer</type>
     <tooltipstring>Use velocities from Delft3D-FLOW (overrides velocity specified in MDW file)</tooltipstring>
@@ -212,13 +242,13 @@
     </list>
     <dependencies>
       <dependency>
-        <action>enable</action>
+        <action>visible</action>
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
-            <operator>eq</operator>
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>uncoupled</value>
+            <operator>ne</operator>
           </check>
         </checks>
       </dependency>
@@ -227,7 +257,7 @@
   <element>
     <tag>checkuseflowwind</tag>
     <style>popupmenu</style>
-    <position>500 50 130 20</position>
+    <position>740 50 130 20</position>
     <variable>handles.Model(md).Input.domains(awg).flowwind</variable>
     <type>integer</type>
     <tooltipstring>Use wind from Delft3D-FLOW (overrides wind specified in MDW file)</tooltipstring>
@@ -244,13 +274,13 @@
     </list>
     <dependencies>
       <dependency>
-        <action>enable</action>
+        <action>visible</action>
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
-            <operator>eq</operator>
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>uncoupled</value>
+            <operator>ne</operator>
           </check>
         </checks>
       </dependency>
@@ -259,7 +289,7 @@
   <element>
     <tag>editwaterlevelcor</tag>
     <style>edit</style>
-    <position>780 100 50 20</position>
+    <position>1020 100 50 20</position>
     <text>Water level correction : </text>
     <textposition>left</textposition>
     <variable>waterlevel</variable>
@@ -267,14 +297,14 @@
     <tooltipstring>Enter water level correction</tooltipstring>
     <dependencies>
       <dependency>
-        <action>enable</action>
+        <action>visible</action>
         <checkfor>any</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>uncoupled</value>
+            <operator>ne</operator>
+          </check>          
         </checks>
       </dependency>
     </dependencies>    
@@ -282,18 +312,18 @@
   <element>
     <tag>textwaterlevelcorunit</tag>
     <style>text</style>
-    <position>830 100</position>
+    <position>1070 100</position>
     <text>[m]</text>
     <dependencies>
       <dependency>
-        <action>enable</action>
+        <action>visible</action>
         <checkfor>all</checkfor>
         <checks>
           <check>
-            <variable>handles.Model(md).Input.hydrodynamicsflow</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>          
+            <variable>handles.Model(md).Input.coupling</variable>
+            <value>uncoupled</value>
+            <operator>ne</operator>
+          </check>
         </checks>
       </dependency>
     </dependencies>    

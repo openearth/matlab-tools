@@ -31,7 +31,7 @@
   <element>
     <tag>editcoupling</tag>
     <style>edit</style>
-    <position>120 80 50 20</position>
+    <position>130 80 50 20</position>
     <text>Coupling : </text>
     <textposition>left</textposition>
     <variable>handles.Model(md).Input.comwriteinterval</variable>
@@ -47,7 +47,7 @@
         <checks>
           <check>
             <variable>handles.Model(md).Input.coupledwithflow</variable>
-            <value>1</value>
+            <value>2</value>
             <operator>eq</operator>
           </check>
         </checks>
@@ -57,7 +57,7 @@
   <element>
     <tag>textcouplingunit</tag>
     <style>text</style>
-    <position>190 80</position>
+    <position>200 80</position>
     <text>[min]</text> 
     <dependencies>
       <dependency>
@@ -69,7 +69,7 @@
         <checks>
           <check>
             <variable>handles.Model(md).Input.coupledwithflow</variable>
-            <value>1</value>
+            <value>2</value>
             <operator>eq</operator>
           </check>
         </checks>
@@ -77,12 +77,70 @@
     </dependencies>    
   </element>
   <element>
-    <tag>edittimestepoutput</tag>
+    <tag>edittimeinterval</tag>
     <style>edit</style>
-    <position>120 55 50 20</position>
+    <position>130 55 50 20</position>
+    <text>Time interval : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input.comwriteinterval</variable>
+    <type>real</type>
+    <tooltipstring>Enter time interval for non-stationary mode</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editmode</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.simmode</variable>
+            <value>non-stationary</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input.coupledwithflow</variable>
+            <value>0</value>
+            <operator>eq</operator>
+          </check>          
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textintervalunit</tag>
+    <style>text</style>
+    <position>200 55</position>
+    <text>[min]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <tags>
+          <tag>editmode</tag>
+        </tags>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.simmode</variable>
+            <value>non-stationary</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input.coupledwithflow</variable>
+            <value>0</value>
+            <operator>eq</operator>
+          </check>                    
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>edittimestep</tag>
+    <style>edit</style>
+    <position>130 30 50 20</position>
     <text>Time step : </text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input.mapwriteinterval</variable>
+    <variable>handles.Model(md).Input.timestep</variable>
     <type>real</type>
     <tooltipstring>Enter output time step</tooltipstring>
     <dependencies>
@@ -103,9 +161,9 @@
     </dependencies>    
   </element>
   <element>
-    <tag>texttimestepoutputunit</tag>
+    <tag>texttimestepunit</tag>
     <style>text</style>
-    <position>190 55</position>
+    <position>200 30</position>
     <text>[min]</text>
     <dependencies>
       <dependency>

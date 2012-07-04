@@ -49,5 +49,57 @@
         </checks>
       </dependency>
     </dependencies>    
+  </element>
+  <element>
+    <tag>editinterval</tag>
+    <style>edit</style>
+    <position>300 65 50 20</position>
+    <text>Output interval : </text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).Input.mapwriteinterval</variable>
+    <type>real</type>
+    <tooltipstring>Enter output interval</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.nrgrids</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input.domains(awg).output</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>          
+        </checks>
+      </dependency>
+    </dependencies>    
+  </element>
+  <element>
+    <tag>textintervalunit</tag>
+    <style>text</style>
+    <position>360 65</position>
+    <text>[min]</text>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input.nrgrids</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+          <check>
+            <variable>handles.Model(md).Input.domains(awg).output</variable>
+            <value>1</value>
+            <operator>eq</operator>
+          </check>          
+        </checks>
+      </dependency>
+    </dependencies>    
   </element>  
 </root>
