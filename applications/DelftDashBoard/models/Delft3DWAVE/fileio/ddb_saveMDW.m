@@ -309,7 +309,7 @@ fname=[handles.Model(md).Input.mdwfile];
 
 ddb_saveDelft3D_keyWordFile(fname, MDW);
 
-if ~wave.coupledwithflow
-    % Write WAVE only batch file
+if strcmpi(wave.coupling,'uncoupled')
+    % Uncoupled model, write WAVE only batch file
     ddb_Delft3DWAVE_writeBatchFile(wave.mdwfile);
 end

@@ -16,8 +16,34 @@ else
             checkCurrent;
         case{'checkwind'}
             checkWind;
+        case{'useddbflow'}
+            useDDBFlow;
     end
 end
+
+%%
+function useDDBFlow
+handles=getHandles;
+handles.Model(md).Input.referencedate=handles.Model(1).Input(1).itDate;
+handles.Model(md).Input.mapwriteinterval=handles.Model(1).Input(1).mapInterval;
+handles.Model(md).Input.comwriteinterval=handles.Model(1).Input(1).comInterval;
+handles.Model(md).Input.writecom=1;
+handles.Model(md).Input.coupling='ddbonline';
+handles.Model(md).Input.mdffile=handles.Model(1).Input(1).mdfFile;
+handles.Model(md).Input.domains(1).flowbedlevel=1;
+handles.Model(md).Input.domains(1).flowwaterlevel=1;
+handles.Model(md).Input.domains(1).flowvelocity=1;
+if handles.Model(1).Input(1).wind
+    handles.Model(md).Input.domains(1).flowwind=1;
+else
+    handles.Model(md).Input.domains(1).flowwind=0;
+end
+handles.Model(1).Input(1).waves=1;
+handles.Model(1).Input(1).onlineWave=1;
+if handles.Model(1).Input(1).comInterval==0 || handles.Model(1).Input(1).comStartTime==handles.Model(1).Input(1).comStopTime
+    ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
+end
+setHandles(handles);
 
 %%
 function setHydrodynamics
@@ -40,7 +66,7 @@ if couplewithflow == 1
    if handles.Model(1).Input(1).comInterval==0 || handles.Model(1).Input(1).comStartTime==handles.Model(1).Input(1).comStopTime
       ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!'); 
    end
-   handles.Model(md).Input.coupledwithflow=1;
+%   handles.Model(md).Input.coupledwithflow=1;
    handles.Model(1).Input(1).waves=1;
    handles.Model(1).Input(1).onlineWave=1;
 end

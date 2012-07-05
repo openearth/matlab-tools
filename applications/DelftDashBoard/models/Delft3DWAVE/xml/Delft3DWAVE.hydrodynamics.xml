@@ -26,10 +26,12 @@
     <tag>radioddbonline</tag>
     <style>radiobutton</style>
     <position>55 100</position>
-    <text>Online Dashboard FLOW model</text>
+    <text>Online with Dashboard FLOW model</text>
     <type>string</type>
     <variable>handles.Model(md).Input.coupling</variable>
     <value>ddbonline</value>   
+    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+    <option1>useddbflow</option1>        
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -47,7 +49,7 @@
   <element>
     <tag>textddbflowfile</tag>
     <style>text</style>
-    <position>230 100</position>
+    <position>260 100</position>
     <prefix>File : </text>
     <type>text</type>
     <variable>handles.Model(1).Input(1).mdfFile</variable>
@@ -69,7 +71,7 @@
     <tag>radiootheronline</tag>
     <style>radiobutton</style>
     <position>55 75</position>
-    <text>Online other FLOW model</text>
+    <text>Online with other FLOW model</text>
     <type>string</type>
     <variable>handles.Model(md).Input.coupling</variable>
     <value>otheronline</value>
@@ -77,7 +79,7 @@
   <element>
     <tag>pushselectotherfile</tag>
     <style>pushselectfile</style>
-    <position>230 75 100 20</position>
+    <position>260 75 100 20</position>
     <tooltipstring>Select Delft3D-FLOW mdf file</tooltipstring>
     <text>Select FLOW file</text>
     <variable>handles.Model(md).Input.mdffile</variable>
@@ -103,7 +105,7 @@
     <tag>radiootheroffline</tag>
     <style>radiobutton</style>
     <position>55 50</position>
-    <text>Offline other FLOW model</text>
+    <text>Offline with other FLOW model</text>
     <type>string</type>
     <variable>handles.Model(md).Input.coupling</variable>
     <value>otheroffline</value>
@@ -111,7 +113,7 @@
   <element>
     <tag>pushselectotherfile</tag>
     <style>pushselectfile</style>
-    <position>230 50 100 20</position>
+    <position>260 50 100 20</position>
     <tooltipstring>Select Delft3D-FLOW mdf file</tooltipstring>
     <text>Select FLOW file</text>
     <variable>handles.Model(md).Input.mdffile</variable>
