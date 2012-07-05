@@ -278,7 +278,7 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
 %% Reorient local (U,V) to global (U,V), using work arrays (u,v)
 
    for it=1:size(u.UKSI,1)
-    if dimension==3
+   %-%if dimension==3
      for ik=1:size(u.UKSI,4)
    
       cen.u = permute(cen.U(it,:,:,ik),[2 3 1 4]); % copy (local) U to 2D array (per layer) , and then transform to (global) U
@@ -289,18 +289,18 @@ function varargout=VS_LET_VECTOR_CEN(NFStruct,GroupName,GroupIndex,ElementNames,
       cen.V(it,:,:,ik) = cen.u.*sin(cen.alfa(:,:)) + ...
                          cen.v.*cos(cen.alfa(:,:));
                      
-    end
-   else
-
-      cen.u = permute(cen.U(it,:,:,ik),[2 3 1]); % copy (local) U to 2D array (per layer) , and then transform to (global) U
-      cen.v = permute(cen.V(it,:,:,ik),[2 3 1]); % Note that (global) U and V calculatation both requires (local) U and V, so make a temporary copy of the local U and V.
-      
-      cen.U(it,:,:) = cen.u.*cos(cen.alfa(:,:)) - ...
-                      cen.v.*sin(cen.alfa(:,:));
-      cen.V(it,:,:) = cen.u.*sin(cen.alfa(:,:)) + ...
-                      cen.v.*cos(cen.alfa(:,:));
-
-   end
+     end
+   %-%else
+   %-%
+   %-%   cen.u = permute(cen.U(it,:,:,ik),[2 3 1]); % copy (local) U to 2D array (per layer) , and then transform to (global) U
+   %-%   cen.v = permute(cen.V(it,:,:,ik),[2 3 1]); % Note that (global) U and V calculatation both requires (local) U and V, so make a temporary copy of the local U and V.
+   %-%   
+   %-%   cen.U(it,:,:) = cen.u.*cos(cen.alfa(:,:)) - ...
+   %-%                   cen.v.*sin(cen.alfa(:,:));
+   %-%   cen.V(it,:,:) = cen.u.*sin(cen.alfa(:,:)) + ...
+   %-%                   cen.v.*cos(cen.alfa(:,:));
+   %-%
+   %-%end
   end
    
 %% Output

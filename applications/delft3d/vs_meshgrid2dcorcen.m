@@ -13,21 +13,21 @@ function varargout=vs_meshgrid2dcorcen(varargin),
 % CENTER points. The corner array is larger in two dimensions,
 % the face arrays are larger in one dimension.
 %
-%
+%        ^ eta(~y)
 %               ---+---o---+---o---+---o      
 %         n+1          |       |       |      
 %                  x   +   x   +   x   +      
 %        - - -         |       |       |      
-%               ---+---Q%%%#%%%Q---+---o      
-%         n            %:::::::%    :::|      
-%                  x   #:::@:::#   x:::+      
-%        - - -         %:::::::%    :::|      
-%               ---+---Q%%%#%%%Q---+---o      
+%               ---+---Q%%%#%%%Q---+---o . . . . . Q  GVV  Q  
+%         n            %:::::::%    :::|           G:::::::G  
+%                  x   #:::@:::#   x:::+           U:::@:::U  
+%        - - -         %:::::::%    :::|           U:::::::U  
+%               ---+---Q%%%#%%%Q---+---o . . . . . Q  GVV  Q  
 %         n-1          |       |       |      
 %                  x   +   x   +   x   +      
 %        - - -         |       |       |      
 %                .       .       .      
-%                .  m-1  .  m    .  m+1  
+%                .  m-1  .  m    .  m+1  > ksi (~x)
 %                .       .       .      
 %                                                                        
 %         LEGEND:                                                      
@@ -55,7 +55,7 @@ function varargout=vs_meshgrid2dcorcen(varargin),
 % Option, value pairs are:
 %
 %  * 'geometry' to read grid distances as well (default off)
-%               guu and gvv calculated form trim file data are NaN at boundaries
+%               guu and gvv calculated from trim file data are NaN at boundaries
 %               while the comfile contains 'mirrored' values here.
 %  * 'face'     to grid face positions as well (default off)
 %  * 'area'     grid cell areas (where cen.area is area between corners)
@@ -327,7 +327,7 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
      
   if DPS0
      G.cen.dep     = -vs_get(NFSstruct,'map-const','DPS0' ,{nz  ,mz  },'quiet');%'
-  if strcmpi(deblank(G.dryflp),'DP')
+  if strcmpi(strtrim(G.dryflp),'DP')
      G.cor.dep     = center2corner(G.cen.dep,'nearest');
      disp('trim-file: Depth at corners; extrapolated from centers by VS_MESHGRID2DCORCEN from trim*')
      G.cen.dep_comment = 'positive up';
@@ -559,8 +559,7 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
       %% trimfile, wavm file
       case {'Delft3D-trim','Delft3D-hwgxy'}
       
-         [G.v.guv,G.u.gvu,...
-          G.u.guu,G.v.gvv] = grid_corner2perimeter(G.cor.(x),G.cor.(y));
+         [~,~,G.v.guv,G.u.gvu,G.u.guu,G.v.gvv] = grid_corner2perimeter(G.cor.x,G.cor.y);
 
          %% At the boundary the comfile gives realistic boundary-perpendicular distances
          %  while with this method they are undefined (NaN).

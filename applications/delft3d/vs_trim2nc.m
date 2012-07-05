@@ -1,30 +1,47 @@
 function varargout = vs_trim2nc(vsfile,varargin)
-%VS_TRIM2NC  Convert part of a Delft3D trim file to netCDF (BETA)
+%VS_TRIM2NC  Convert entire or part of a Delft3D trim NEFIS file to netCDF-CF
 %
 %   vs_trim2nc(NEFISfile,<'keyword',value>)
 %   vs_trim2nc(NEFISfile,<netCDFfile>,<'keyword',value>)
 %
-% converts Delft3D trim file (NEFIS file) to a netCDF file in 
-% the same directory with extension replaced by nc.
+% converts Delft3D trim file (NEFIS file) to a netCDF-CF file in 
+% the same directory, with extension replaced by nc, with all
+% implemented paramters. x/y grids are converted to lat/lon based
+% on keyword 'epsg' to obtain a CF compliant netCDF file. Corner
+% coordinates are added via the CF-1.6 bounds convention [bounds m n].
 %
 % Example:
 %
-%   vs_trim2nc('P:\aproject\trim-n15.dat','epsg',28992,'time',5)
+%   vs_trim2nc('P:\aproject\trim-n15.dat','epsg',28992,'time',5,'var,{'velocity','tke'})
 %
-% By default is converts all native delft3d output variables, 
-% but you can also select a subset with keyword 'var'.Call 
-% VS_TRIM2NC() without argument to find out which ones are 
-% available in 'var_cf', 'var_primary' and 'var_derived'.
+% By default it converts all native delft3d output variables, but 
+% you can also select only a subset with keyword 'var'. Call VS_TRIM2NC() 
+% without argument to find out which CF required, primary and derived 
+% variables are available in 'var_cf', 'var_primary' and 'var_derived'.
+% You can also pass the NEFIS names shown by vs_disp and 'var_nefis', e.g.:
 %
-%See also: snctools, vs_use, delft3d2nc
+%   vs_trim2nc('P:\aproject\trim-n15.dat','var',{'S1'})
+%
+% Note: Works only with Matlab R2011a and higher due use of to NCWRITESCHEMA.
+% Note: when using 'epsg' to project to (lat,lon), vectors are still defined in 
+%       projected coordinates, so the coordinates attribute is still "x y". Vectors
+%       are not reoriented to lat-lon coordinate system. This is reflected in 
+%       different standard names for velocities and stresses (and transports):
+%       '<east|north>ward_sea_water_velocity'      vs 'sea_water_<x|y>_velocity'
+%       'surface_downward_<east|north>ward_stress' vs 'surface_downward<x|y>_stress'
+%
+%See also: VS_USE, DELFT3D2NC, NCWRITESCHEMA, NCWRITE, SNCTOOLS, NETCDF
 
-% TO DO better check consistency with delft3d_to_netcdf.exe of Bert Jagers
-% TO DO add sediment etc
+% TO DO keep consistency up-to-date with delft3d_to_netcdf.exe of Bert Jagers
+% TO DO add bedload en avg sediment
+% TO DO check against sigma interperation with d3d_qp
+% TO DO allow to extract (m,n) subset
+% TO DO add raw U V velocities at U V points for later processing
 
 %%  --------------------------------------------------------------------
-%   Copyright (C) 2009 Deltares for Building with Nature
+%   Copyright (C) 2012 Deltares for Building with Nature
 %
-%       Gerben de Boer / Fedor Baart / Kees den Heijer
+%       Gerben de Boer
 %
 %       gerben.deboer@deltares.nl	
 %
@@ -63,823 +80,1309 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
 %% keywords
 
-      OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wrong dates in ncbrowse due to different calendars. Must use doubles here.
-      OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
-      OPT.institution    = '';
-      OPT.timezone       = timezone_code2iso('GMT');
-      OPT.time           = 0;
-      OPT.epsg           = [];
-      OPT.type           = 'float'; %'double'; % the nefis file is by default single precision
-      OPT.debug          = 0;
-      OPT.var_cf         = {'time','m','n','Layer','LayerInterf','longitude','latitude'};
-      OPT.var_primary    = {'grid_m','grid_n','x','y','grid_x','grid_y','grid_longitude','grid_latitude','k','grid_depth','depth','zactive','waterlevel','salinity','temperature','u','v','w','density','tke','eps'};
-      OPT.var_derived    = {'pea','area'};
-      OPT.var            = {OPT.var_cf{:},OPT.var_primary{:}};
-      OPT.var_all        = {OPT.var_cf{:},OPT.var_primary{:},OPT.var_derived{:}};
+   OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wrong dates in ncbrowse due to different calendars. Must use doubles here.
+   OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
+   OPT.institution    = '';
+   OPT.timezone       = timezone_code2iso('GMT');
+   OPT.time           = 0;
+   OPT.epsg           = [];
+   OPT.type           = 'single'; %'double'; % the nefis file is by default single precision, se better isn't useful
+   OPT.debug          = 0;
+   OPT.var_cf         = {'time','m','n','Layer','LayerInterf','longitude','latitude'};
+   OPT.var_primary    = {'grid_m','grid_n','x','y','grid_x','grid_y','grid_longitude','grid_latitude','k',...
+                         'grid_depth','depth','zactive','waterlevel','area',...
+                         'velocity','velocity_z','velocity_omega',...
+                         'tke','eps','tau',...
+                         'salinity','temperature','density',...
+                         'sediment',...
+                         'viscosity_z','diffusivity_z','Ri'};
+   OPT.var_derived    = {'pea','dpeadt'};
+   OPT.var_nefis      = {'XZ','YZ','XWAT','YWAT','XCOR','YCOR','DP','DP0','DPS','DPSO','KCS','S1','U1','V1','WPHY','TAUKSI','TAUETA','RTUR1','R1','RHO'};
+   OPT.var            = {OPT.var_cf{:},OPT.var_primary{:}};
+   OPT.var_all        = {OPT.var_cf{:},OPT.var_primary{:},OPT.var_derived{:}};
 
-      if nargin==0
-         varargout = {OPT};
-         return
-      end
-      
-      if ~odd(nargin)
-         ncfile   = varargin{1};
-         varargin = {varargin{2:end}};
-      else
-         ncfile   = fullfile(fileparts(vsfile),[filename(vsfile) '.nc']);
-      end
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
+   
+   if verLessThan('matlab','7.12.0.635')
+      error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
+   end
+   
+   if ~odd(nargin)
+      ncfile   = varargin{1};
+      varargin = {varargin{2:end}};
+   else
+      ncfile   = fullfile(fileparts(vsfile),[filename(vsfile) '.nc']);
+   end
 
-      OPT      = setproperty(OPT,varargin{:});
+   OPT      = setproperty(OPT,varargin{:});
+
+%% map NEFIS names to sensible netCDF names
+%  when adding new ones, update OPT.var_nefis, to allow for introspection
+   
+
+   if any(strcmp('XZ',    OPT.var)) | any(strcmp('XWAT',OPT.var))
+                                    OPT.x              = 1;end
+   if any(strcmp('YZ',    OPT.var)) | any(strcmp('YWAT',OPT.var))
+                                    OPT.y              = 1;end
+   if any(strcmp('XCOR',  OPT.var));OPT.grid_x         = 1;end
+   if any(strcmp('YCOR',  OPT.var));OPT.grid_y         = 1;end
+   if any(strcmp('DP',    OPT.var)) | any(strcmp('DP0',OPT.var)) | any(strcmp('DPS',OPT.var))
+                                    OPT.grid_depth     = 1;
+   end
+   if any(strcmp('DPS0',  OPT.var));OPT.depth          = 1;end
+   if any(strcmp('KCS',   OPT.var));OPT.zactive        = 1;end
+   if any(strcmp('S1',    OPT.var));OPT.waterlevel     = 1;end
+   
+   if any(strcmp('U1',    OPT.var)) | any(strcmp('V1',OPT.var))
+                                    OPT.velocity       = 1;end
+   
+   if any(strcmp('W',     OPT.var));OPT.velocity_omega = 1;end
+   if any(strcmp('WPHY'  ,OPT.var));OPT.velocity_z     = 1;end
+   
+   if any(strcmp('TAUKSI',OPT.var)) | any(strcmp('TAUETA',OPT.var))
+                                    OPT.tau            = 1;end
+   if any(strcmp('RTUR1', OPT.var));OPT.eps            = 1;
+                                    OPT.tke            = 1;end
+   if any(strcmp('R1',    OPT.var));OPT.temperature    = 1;
+                                    OPT.salinity       = 1;
+                                    OPT.sediment       = 1;end
+   if any(strcmp('RHO',   OPT.var));OPT.density        = 1;end
+   if any(strcmp('VICWW', OPT.var));OPT.viscosity_z    = 1;end
+   if any(strcmp('DICWW', OPT.var));OPT.diffusivity_z  = 1;end
+   if any(strcmp('RICH',  OPT.var));OPT.Ri             = 1;end
 
 %% 0 Read raw data
 
-      F = vs_use(vsfile);
-      G = vs_meshgrid2dcorcen(F);
+      F = vs_use(vsfile,'quiet');
       
       T = vs_time(F,OPT.time);
       if OPT.time==0
       OPT.time = 1:length(T.datenum);
       end
-      I = vs_get_constituent_index(F);
-      M.datestr     = datestr(datenum(vs_get(F,'map-version','FLOW-SIMDAT' ),'yyyymmdd  HHMMSS'),31);
-      M.version     = ['Delft3D-FLOW version : ',strtrim(vs_get(F,'map-version','FLOW-SYSTXT' )),', file version: ',strtrim(vs_get(F,'map-version','FILE-VERSION'))];
-      M.description = vs_get(F,'map-version','FLOW-RUNTXT');
+      
+      I             = vs_get_constituent_index(F);
+     [LSED,OK]      = vs_let(F,'map-const','LSED'  ,'quiet'); if OK==0;LSED=0  ;end
+     [LSEDBL,OK]    = vs_let(F,'map-const','LSEDBL','quiet'); if OK==0;LSEDBL=0;end
+      M.datestr     = datestr(datenum(vs_get(F,'map-version','FLOW-SIMDAT' ,'quiet'),'yyyymmdd  HHMMSS'),31);
+      M.version     =        [strtrim(vs_get(F,'map-version','FLOW-SYSTXT' ,'quiet')),', file version: ',...
+                              strtrim(vs_get(F,'map-version','FILE-VERSION','quiet'))];
+      M.description = vs_get(F,'map-version','FLOW-RUNTXT','quiet');
       
 %% 1a Create file (add all NEFIS 'map-version' group info)
-
-      nc_create_empty (ncfile)
 
       %% Add overall meta info
       %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    
-      nc_attput(ncfile, nc_global, 'title'         , '');
-      nc_attput(ncfile, nc_global, 'institution'   , OPT.institution);
-      nc_attput(ncfile, nc_global, 'source'        , 'Delft3D trim file');
-      nc_attput(ncfile, nc_global, 'history'       ,['Original filename: ',vsfile,...
-                                                     ', version: ' ,M.version,...
-                                                     ', file date:',M.datestr,...
-                                                     ', tranformation to netCDF: $HeadURL$']);
-      nc_attput(ncfile, nc_global, 'references'    , '');
-      nc_attput(ncfile, nc_global, 'email'         , '');
-   
-      nc_attput(ncfile, nc_global, 'comment'       , '');
-      nc_attput(ncfile, nc_global, 'version'       , M.version);
-   						   
-      nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.4');
-      nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
-   
-      nc_attput(ncfile, nc_global, 'terms_for_use' ,['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution]);
-      nc_attput(ncfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
-   
-      nc_attput(ncfile, nc_global, 'description'   , str2line(M.description));
+      nc = struct('Name','/','Format','classic');
+      nc.Attributes(    1) = struct('Name','title'              ,'Value',  '');
+      nc.Attributes(end+1) = struct('Name','institution'        ,'Value',  OPT.institution);
+      nc.Attributes(end+1) = struct('Name','source'             ,'Value',  'Delft3D trim file');
+      nc.Attributes(end+1) = struct('Name','history'            ,'Value', ['Original filename: ',filenameext(vsfile),...
+					                        	   ', ' ,M.version,...
+					                        	   ', file date:',M.datestr,...
+					                        	   ', transformation to netCDF: $HeadURL$ $Id$']);
+      nc.Attributes(end+1) = struct('Name','references'         ,'Value',  'http://svn.oss.deltares.nl');
+      nc.Attributes(end+1) = struct('Name','email'              ,'Value',  '');
+								
+      nc.Attributes(end+1) = struct('Name','comment'            ,'Value',  '');
+      nc.Attributes(end+1) = struct('Name','version'            ,'Value',  M.version);
+							        
+      nc.Attributes(end+1) = struct('Name','Conventions'        ,'Value',  'CF-1.6');
+								
+      nc.Attributes(end+1) = struct('Name','terms_for_use'      ,'Value', ['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution]);
+      nc.Attributes(end+1) = struct('Name','disclaimer'         ,'Value',  'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+								
+      nc.Attributes(end+1) = struct('Name','delft3d_description','Value',  str2line(M.description));
 
-%% Add discovery information (test):
-
+%% Coordinate system
+%
+% G.coordinates    | CART   | SPHE   |
+%                  +--------+--------+
+% OPT.epsg = []    |1       | 3      | 
+% OPT.epsg = value |2       | 4      |
+%                  +--------+--------+
+% 1. (x,y) in file                                            , coords = x y
+% 2. (x,y) in file, (lon,lat) in file (convertcoordinates). Yet,coords = x y to indicate 
+%    * coriolis isn't spatially varying, 
+%    * velocities/stresses aren't zonally reoriented
+% 3.                (lon,lat) in file                         , coords = latitude longitude
+% 4.                (lon,lat) in file                         , coords = latitude longitude
       %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
-   
+      
+      G.mmax        =                 vs_let(F,'map-const','MMAX'       ,'quiet');
+      G.nmax        =                 vs_let(F,'map-const','NMAX'       ,'quiet');
+      G.kmax        =                 vs_let(F,'map-const','KMAX'       ,'quiet');
+      G.coordinates = strtrim(permute(vs_let(F,'map-const','COORDINATES','quiet'),[1 3 2]));
+      
+      G.cen.mask =  vs_let_scalar(F,'map-const','KCS'   ,'quiet'); G.cen.mask(~G.cen.mask==1) = NaN; % -1/0/1/2 Non-active/Non-active/Active/Boundary water level point (fixed)
+      G.cen.x    =  vs_let_scalar(F,'map-const','XZ'    ,'quiet').*G.cen.mask;%G.cen.x = vs_let_scalar(F,'TEMPOUT','XWAT','quiet');
+      G.cen.y    =  vs_let_scalar(F,'map-const','YZ'    ,'quiet').*G.cen.mask;%G.cen.y = vs_let_scalar(F,'TEMPOUT','YWAT','quiet');
+      if vs_get_elm_size(F,'DPS0') > 0
+      G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DPS0'  ,'quiet').*G.cen.mask; % depth is positive down
+      else % legacy
+      G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DP0'   ,'quiet').*G.cen.mask; % depth is positive down
+      end
+      G.cor.x    = permute(vs_let(F,'map-const','XCOR'  ,'quiet'),[2 3 1]);G.cor.x = G.cor.x(1:end-1,1:end-1);
+      G.cor.y    = permute(vs_let(F,'map-const','YCOR'  ,'quiet'),[2 3 1]);G.cor.y = G.cor.y(1:end-1,1:end-1);
+      G.dryflp   = strtrim(vs_get(F,'map-const','DRYFLP','quiet'));
+      if strcmpi(strtrim(G.dryflp),'DP')
+      G.cor.dep  = nan.*G.cor.x; % never specified, non-existent
+      else
+      if vs_get_elm_size(F,'DP') > 0 % legacy
+      G.cor.dep  = permute(vs_let(F,'map-const','DP'    ,'quiet'),[2 3 1]);
+      end
+      end
+      
+      if vs_get_elm_size(F,'GSQS') > 0
+      G.cen.area =  vs_let_scalar(F,'map-const','GSQS'  ,'quiet').*G.cen.mask;
+      G.cen.areatext = 'The area GSQS used internally in Delft3D for mass-conservation. This is not identical to the exact area spanned geometrically by the 4 corner points!';
+      else
+      G.cen.area =  grid_area(G.cor.x,G.cor.y).*G.cen.mask;
+      G.cen.areatext = 'The exact area spanned geometrically by the 4 corner points. This is not identical to the area GSQS used internally in Delft3D for mass-conservation!';
+      end
+
+      if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old bug)
+         coordinates  = 'x y';
+      else
+         coordinates  = 'latitude longitude';
+      end
+      
+      if any(strfind(G.coordinates,'CART')) | ~isempty(OPT.epsg) % CARTESIAN, CARTHESIAN (old bug)
       if ~isempty(OPT.epsg)
      [G.cen.lon,G.cen.lat] = convertCoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
      [G.cor.lon,G.cor.lat] = convertCoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-
-      nc_attput(ncfile, nc_global, 'geospatial_lat_min'  , min(G.cor.lat(:)));
-      nc_attput(ncfile, nc_global, 'geospatial_lat_max'  , max(G.cor.lat(:)));
-      nc_attput(ncfile, nc_global, 'geospatial_lon_min'  , min(G.cor.lon(:)));
-      nc_attput(ncfile, nc_global, 'geospatial_lon_max'  , max(G.cor.lon(:)));
-      nc_attput(ncfile, nc_global, 'geospatial_lat_units', 'degrees_north');
-      nc_attput(ncfile, nc_global, 'geospatial_lon_units', 'degrees_east' );
       end
+      end
+      
+      dy = diff(G.cen.x,[],1);
+      dx = diff(G.cen.y,[],2);
 
-      nc_attput(ncfile, nc_global, 'time_coverage_start' , datestr(T.datenum(  1),'yyyy-mm-ddPHH:MM:SS'));
-      nc_attput(ncfile, nc_global, 'time_coverage_end'   , datestr(T.datenum(end),'yyyy-mm-ddPHH:MM:SS'));
+      % orthogonal with x = f(m) and y = f(n)
+      % not necesarriyl equidistant
+      if (all(dx(:)==0 | isnan(dx(:)))) & ...
+         (all(dy(:)==0 | isnan(dy(:))))
+         G.orthogonal = 1;
+         cen.x = unique(G.cen.x ,'rows') ;cen.x = cen.x(1,:); % The UNIQUE call is needed 
+         cen.y = unique(G.cen.y','rows')';cen.y = cen.y(:,1); % because some cells may be NaN
+         cor.x = unique(G.cor.x ,'rows') ;cor.x = cor.x(1,:); % for instance due to islands
+         cor.y = unique(G.cor.y','rows')';cor.y = cor.y(:,1); % represented by permanantly dry cells.
+      else
+         G.orthogonal = 0;
+      end
+      G.sigma_dz      =  vs_let(F,'map-const','THICK','quiet');   
+     [G.sigma_cent,...
+      G.sigma_intf]   = d3d_sigma(G.sigma_dz);
 
 %% 2 Create dimensions
 
-      nc_add_dimension(ncfile, 'time'             , length(T.datenum));
-      nc_add_dimension(ncfile, 'm'                , G.mmax-2); % we remove dummy rows/cols
-      nc_add_dimension(ncfile, 'n'                , G.nmax-2);
-      nc_add_dimension(ncfile, 'Layer'            , G.kmax  );
-      nc_add_dimension(ncfile, 'LayerInterf'      , G.kmax+1);
-      nc_add_dimension(ncfile, 'bounds2'          , 2); % for corner (grid_*) indices
-      nc_add_dimension(ncfile, 'bounds4'          , 4); % for corner (grid_*) coordinates
+      ncdimlen.time        = length(T.datenum);
+      ncdimlen.m           = G.mmax; % we keep dummy rows/cols, but apply NaN mask
+      ncdimlen.n           = G.nmax;
+      ncdimlen.Layer       = G.kmax  ;
+      ncdimlen.LayerInterf = G.kmax+1;
+      ncdimlen.bounds2     = 2       ; % for corner (grid_*) indices
+      ncdimlen.bounds4     = 4       ; % for corner (grid_*) coordinates
 
-      if any(strcmp('grid_depth',OPT.var))
-      nc_add_dimension(ncfile, 'grid_m'           , G.mmax-1);
-      nc_add_dimension(ncfile, 'grid_n'           , G.nmax-1);
+      nc.Dimensions(    1) = struct('Name','time'               ,'Length',ncdimlen.time       );
+      nc.Dimensions(end+1) = struct('Name','m'                  ,'Length',ncdimlen.m          );
+      nc.Dimensions(end+1) = struct('Name','n'                  ,'Length',ncdimlen.n          );
+      nc.Dimensions(end+1) = struct('Name','Layer'              ,'Length',ncdimlen.Layer      );
+      nc.Dimensions(end+1) = struct('Name','LayerInterf'        ,'Length',ncdimlen.LayerInterf);
+      nc.Dimensions(end+1) = struct('Name','bounds2'            ,'Length',ncdimlen.bounds2    );
+      nc.Dimensions(end+1) = struct('Name','bounds4'            ,'Length',ncdimlen.bounds4    );
+      							        
+      if any(strcmp('grid_depth',OPT.var))		        
+      nc.Dimensions(end+1) = struct('Name','grid_m'             ,'Length',G.mmax+1);
+      nc.Dimensions(end+1) = struct('Name','grid_n'             ,'Length',G.nmax+1);
+      ncdimlen.grid_m      = G.mmax+1;
+      ncdimlen.grid_n      = G.nmax+1;
+      end						        
+      							        
+      if any(strcmp('sediment',OPT.var)) && LSED > 0	        
+      nc.Dimensions(end+1) = struct('Name','SuspSedimentFrac'   ,'Length',LSED);
+      nc.Dimensions(end+1) = struct('Name','CHAR20'             ,'Length',20);
+      ncdimlen.SuspSedimentFrac = LSED;
+      ncdimlen.CHAR20           = 20;
+						        
+      NAMSED = permute(vs_let(F,'map-const','NAMSED'  ,'quiet'),[2 3 1]);
       end
 
-      ifld = 0;
+%% 2 Create dimension combinations
+% TO DO: why is field 'Length' needed, ncwriteschema should be able to find this out itself
+
+   % 1D
+       time.dims(1) = struct('Name', 'time'            ,'Length',ncdimlen.time);
+          m.dims(1) = struct('Name', 'm'               ,'Length',ncdimlen.m);
+          n.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+          k.dims(1) = struct('Name', 'Layer'           ,'Length',ncdimlen.Layer);
+         ki.dims(1) = struct('Name', 'LayerInterf'     ,'Length',ncdimlen.LayerInterf);
+						       
+   % 2D						       
+       mcor.dims(1) = struct('Name', 'm'               ,'Length',ncdimlen.m);
+       mcor.dims(2) = struct('Name', 'bounds2'         ,'Length',ncdimlen.bounds2);
+       						       
+       ncor.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+       ncor.dims(2) = struct('Name', 'bounds2'         ,'Length',ncdimlen.bounds2);
+         					       
+         nm.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+         nm.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
+						       
+   % 3D						       
+      nmcor.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+      nmcor.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
+      nmcor.dims(3) = struct('Name', 'bounds4'         ,'Length',ncdimlen.bounds4);
+        					       
+        nmt.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+        nmt.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
+        nmt.dims(3) = struct('Name', 'time'            ,'Length',ncdimlen.time);
+						       
+   % 4D						       
+       nmkt.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+       nmkt.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
+       nmkt.dims(3) = struct('Name', 'Layer'           ,'Length',ncdimlen.Layer);
+       nmkt.dims(4) = struct('Name', 'time'            ,'Length',ncdimlen.time);
+      						       
+      nmkit.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+      nmkit.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
+      nmkit.dims(3) = struct('Name', 'LayerInterf'     ,'Length',ncdimlen.LayerInterf);
+      nmkit.dims(4) = struct('Name', 'time'            ,'Length',ncdimlen.time);
+
+   % 5D
+      if isfield(ncdimlen,'SuspSedimentFrac')
+      nmkst.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+      nmkst.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
+      nmkst.dims(3) = struct('Name', 'Layer'           ,'Length',ncdimlen.Layer);
+      nmkst.dims(4) = struct('Name', 'SuspSedimentFrac','Length',ncdimlen.SuspSedimentFrac);
+      nmkst.dims(5) = struct('Name', 'time'            ,'Length',ncdimlen.time);
+      end
 
 %% time
      
-      ifld     = ifld + 1;clear attr
+      ifld     = 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'time');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
       attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
-      nc(ifld) = struct('Name', 'time', ...
-          'Nctype'   , 'double', ...
-          'Dimension', {{'time'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-info-series:ITMAPC map-const:ITDATE map-const:DT map-const:TUNIT');
+      nc.Variables(ifld) = struct('Name'      , 'time', ...
+                                  'Datatype'  , 'double', ...
+                                  'Dimensions', time.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
-%% add values of dimensions
+%% add values of dimensions (1/3)
+%  dimensions are indices into matrix space when grid is curvi-linear
 
-      ifld     = ifld + 1;clear attr
+      ifld     = 2;clear attr dims
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell centers');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m = 1 and m = mmax removed.');
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_m');
-      nc(ifld) = struct('Name', 'm', ...
-          'Nctype'   , 'int', ...
-          'Dimension', {{'m'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:MMAX');
+      nc.Variables(ifld) = struct('Name'      , 'm', ...
+                                  'Datatype'  , 'int32', ...
+                                  'Dimensions', m.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
-      ifld     = ifld + 1;clear attr
+      ifld     = 3;clear attr dims
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of cell centers');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ n = 1 and n = nmax removed.');
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_n');
-      nc(ifld) = struct('Name', 'n', ...
-          'Nctype'   , 'int', ...
-          'Dimension', {{'n'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:NMAX');
+      nc.Variables(ifld) = struct('Name'      , 'n', ...
+                                  'Datatype'  , 'int32', ...
+                                  'Dimensions', n.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
-      ifld     = ifld + 1;clear attr
+      ifld     = 4;clear attr dims
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell corners');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m = 1 removed.');
-      nc(ifld) = struct('Name', 'grid_m', ...
-          'Nctype'   , 'int', ...
-          'Dimension', {{'m','bounds2'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:MMAX');
+      nc.Variables(ifld) = struct('Name'      , 'grid_m', ...
+                                  'Datatype'  , 'int32', ...
+                                  'Dimensions', mcor.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
-      ifld     = ifld + 1;clear attr
+      ifld     = 5;clear attr dims
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of cell corners');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ n = 1 removed.');
-      nc(ifld) = struct('Name', 'grid_n', ...
-          'Nctype'   , 'int', ...
-          'Dimension', {{'n','bounds2'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:NMAX');
+      nc.Variables(ifld) = struct('Name'      , 'grid_n', ...
+                                  'Datatype'  , 'int32', ...
+                                  'Dimensions', ncor.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
 %% horizontal coordinates: (x,y) and (lon,lat), on centres and corners
 
    if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old bug)
    
-      if any(strcmp('x',OPT.var))
-      ifld     = ifld + 1;clear attr
+      if ~isempty(OPT.epsg)
+      ifld     = ifld + 1;clear attr dims
+      attr = nc_cf_grid_mapping(OPT.epsg);
+      nc.Variables(ifld) = struct('Name'       , 'CRS', ...
+                                  'Datatype'   , 'int32', ...
+                                  'Dimensions' , [], ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      end
+
+      if any(strcmp('x',OPT.var)) & any(strcmp('y',OPT.var))
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centres, x-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:XWAT');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and m/n = m/nmax removed.');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.x(:)) max(G.cen.x(:))]);
+      if ~isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
+      end
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT TEMPOUT:CODW map-const:COORDINATES');
       if any(strcmp('grid_x',OPT.var))
       attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x');
       end
-      nc(ifld) = struct('Name', 'x', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'n', 'm'}}, ...
-          'Attribute', attr);
-      end
-      
-      if any(strcmp('y',OPT.var))
-      ifld     = ifld + 1;clear attr
+      nc.Variables(ifld) = struct('Name'       , 'x', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nm.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centres, y-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:YWAT');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and m/n = m/nmax removed.');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36;
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.y(:)) max(G.cen.y(:))]);
+      if ~isempty(OPT.epsg)
+      attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
+      end
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS TEMPOUT:YWAT TEMPOUT:CODW map-const:COORDINATES');
       if any(strcmp('grid_y',OPT.var))
       attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_y');
       end
-      nc(ifld) = struct('Name', 'y', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'n', 'm'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'       , 'y', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nm.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is curvi-linear
+      if G.orthogonal
+      nc.Variables(2) = nc.Variables(ifld-1);
+      nc.Variables(2).Name                  = 'm';
+      nc.Variables(2).Dimensions            = m.dims;
+
+      nc.Variables(3) = nc.Variables(ifld  );
+      nc.Variables(3).Name                  = 'n';
+      nc.Variables(3).Dimensions            = n.dims;
+      end
       end
 
-      if any(strcmp('grid_x',OPT.var))
-      ifld     = ifld + 1;clear attr
+      if any(strcmp('grid_x',OPT.var)) & any(strcmp('grid_y',OPT.var))
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, x-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XCOR');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 removed.');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.x(:)) max(G.cor.x(:))]);
-      nc(ifld) = struct('Name', 'grid_x', ...
-          'Nctype'   , 'double', ...
-          'Dimension', {{'n', 'm','bounds4'}}, ...
-          'Attribute', attr);
-      end
-      
-      if any(strcmp('grid_y',OPT.var))
-      ifld     = ifld + 1;clear attr
+      attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XCOR TEMPOUT:CODB map-const:COORDINATES');
+      nc.Variables(ifld) = struct('Name'       , 'grid_x', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmcor.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, y-coordinate');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YCOR');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 removed.');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.y(:)) max(G.cor.y(:))]);
-      nc(ifld) = struct('Name', 'grid_y', ...
-          'Nctype'   , 'double', ...
-          'Dimension', {{'n', 'm','bounds4'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YCOR TEMPOUT:CODB map-const:COORDINATES');
+      nc.Variables(ifld) = struct('Name'       , 'grid_y', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmcor.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is curvi-linear
+      if G.orthogonal
+      nc.Variables(4) = nc.Variables(ifld-1);
+      nc.Variables(4).Name                  = 'grid_m';
+      nc.Variables(4).Dimensions            = mcor.dims;
+
+      nc.Variables(5) = nc.Variables(ifld  );
+      nc.Variables(5).Name                  = 'grid_n';
+      nc.Variables(5).Dimensions            = ncor.dims;
+      end
       end
 
-   end
+   end % cartesian
 
    if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
 
       if any(strcmp('longitude',OPT.var))
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centers, longitude-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:XWAT');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and n = m/nmax removed.');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lon(:)) max(G.cen.lon(:))]);
-      if any(strcmp('grid_longitude',OPT.var))
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT map-const:CODW map-const:COORDINATES');
+      if any(strcmp('grid_longitude',OPT.var))	     
       attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_longitude');
       end
-      nc(ifld) = struct('Name', 'longitude', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'n', 'm'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'       , 'longitude', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nm.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
       
       if any(strcmp('latitude',OPT.var))
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centers, latitude-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:YWAT');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 and n = m/nmax removed.');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lat(:)) max(G.cen.lat(:))]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS map-const:YWAT map-const:CODW map-const:COORDINATES');
       if any(strcmp('grid_latitude',OPT.var))
       attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_latitude');
       end
-      nc(ifld) = struct('Name', 'latitude', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'n', 'm'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'       , 'latitude', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nm.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is curvi-linear
+      if G.orthogonal & ~any(strfind(G.coordinates,'CART'))
+      nc.Variables(2) = nc.Variables(ifld-1);
+      nc.Variables(2).Name                  = 'm';
+      nc.Variables(2).Dimensions            = m.dims;
+
+      nc.Variables(3) = nc.Variables(ifld  );
+      nc.Variables(3).Name                  = 'n';
+      nc.Variables(3).Dimensions            = n.dims;
+      end
+
       end
 
       if any(strcmp('grid_longitude',OPT.var))
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'longitude of cell corners');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XCOR');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 removed.');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lon(:)) max(G.cor.lon(:))]);
-      nc(ifld) = struct('Name', 'grid_longitude', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'n', 'm','bounds4'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XCOR map-const:CODB map-const:COORDINATES');
+      nc.Variables(ifld) = struct('Name'       , 'grid_longitude', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmcor.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
       
       if any(strcmp('grid_latitude',OPT.var))
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'latitude of cell corners');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YCOR');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'dummy matrix space @ m/n = 1 removed.');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lat(:)) max(G.cor.lat(:))]);
-      nc(ifld) = struct('Name', 'grid_latitude', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'n', 'm','bounds4'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YCOR map-const:CODB map-const:COORDINATES');
+      nc.Variables(ifld) = struct('Name'       , 'grid_latitude', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmcor.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is curvi-linear
+      if G.orthogonal
+      nc.Variables(4) = nc.Variables(ifld-1);
+      nc.Variables(4).Name                  = 'grid_m';
+      nc.Variables(4).Dimensions            = mcor.dims;
+
+      nc.Variables(5) = nc.Variables(ifld  );
+      nc.Variables(5).Name                  = 'grid_n';
+      nc.Variables(5).Dimensions            = ncor.dims;
       end
-   end
+      end
+      
+   end % lat,lon present
 
 %% vertical coordinates
 
       if any(strcmp('k',OPT.var))
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'layer index');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
-      nc(ifld) = struct('Name', 'k', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'Layer'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KMAX map-const:LAYER_MODEL');
+      nc.Variables(ifld) = struct('Name'       , 'k', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , k.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
 
-      ifld     = ifld + 1;clear attr;
+      ifld     = ifld + 1;clear attr dims;
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer midpoints');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
       attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: Layer eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
-      nc(ifld) = struct('Name', 'Layer', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'Layer'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KMAX map-const:LAYER_MODEL map-const:THICK');
+      nc.Variables(ifld) = struct('Name'       , 'Layer', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , k.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
           
-      ifld     = ifld + 1;clear attr;
+      ifld     = ifld + 1;clear attr dims;
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer interfaces');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
       attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: LayerInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
-      nc(ifld) = struct('Name', 'LayerInterf', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'LayerInterf'}}, ...
-          'Attribute', attr);
-          
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KMAX map-const:LAYER_MODEL map-const:THICK');
+      nc.Variables(ifld) = struct('Name'       , 'LayerInterf', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , ki.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
 %% bathymetry
 
       if any(strcmp('grid_depth',OPT.var))
-      ifld     = ifld + 1;clear attr;
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centers, depth');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:DP map-const:DP0 map-const:DPS map-const:DRYFLP');
-      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'sea_floor_depth');
+      ifld     = ifld + 1;clear attr dims;
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_floor_depth_below_sea_level'); % sea_floor_depth
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'depth of cell corners');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
-      % NB for values at corners there is no bounds matrix
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:DP map-const:DP0 map-const:DPS map-const:DRYFLP');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
-      nc(ifld) = struct('Name', 'grid_depth', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'grid_n', 'grid_m'}}, ...
-          'Attribute', attr);
+      % NB for values at corners there is no bounds matrix
+      attr(end+1)  = struct('Name', 'comment'      ,  'Value', '');
+      dims(1)  = struct('Name', 'grid_n'   ,'Length',ncdimlen.grid_n);
+      dims(2)  = struct('Name', 'grid_m'   ,'Length',ncdimlen.grid_m);
+      nc.Variables(ifld) = struct('Name'       , 'grid_depth', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , dims, ... % special case
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
           
       if any(strcmp('depth',OPT.var))
-      ifld     = ifld + 1;clear attr;
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'depth of cell corners');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'DPS0');
-      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'sea_floor_depth');
+      ifld     = ifld + 1;clear attr dims;
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_floor_depth_below_sea_level'); % sea_floor_depth
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'depth of cell centers');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:DPS0 map-const:KCS');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
-      nc(ifld) = struct('Name', 'depth', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'n', 'm'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'       , 'depth', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nm.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
 
       if any(strcmp('zactive',OPT.var))
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'KCS');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Non-active/active in cell centre');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'KCS');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'active water-level point');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'zactive', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'zactive', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nm.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
       
       if any(strcmp('area',OPT.var))
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'area of grid cells');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The exact area spanned geometrically by the 4 corner points is not identical to area GSQS used internally in Delft3D for mass-conservation!');
-      nc(ifld) = struct('Name', 'area', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:GSQS map-const:KCS');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', G.cen.areatext);
+      nc.Variables(ifld) = struct('Name', 'area', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nm.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
 
 %% 3 Create variables: momentum and mass conservation
 
       if any(strcmp('waterlevel',OPT.var))
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_surface_elevation');
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_surface_height'); % sea_surface_elevation
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'water level');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:S1');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'waterlevel', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:S1 map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'waterlevel', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
 
-      if any(strcmp('u',OPT.var)) | any(strcmp('v',OPT.var))
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_x_velocity');
+      if any(strcmp('velocity',OPT.var))
+      ifld     = ifld + 1;clear attr dims
+      if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'eastward_sea_water_velocity'); % surface_geostrophic_sea_water_x_velocity_assuming_sea_level_for_geoid
+      else					     
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_x_velocity'); % surface_geostrophic_sea_water_x_velocity_assuming_sea_level_for_geoid
+      end					     
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, x-component');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:U1 map-series:V1 map-const:ALFAS');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'u', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:U1 map-series:V1 map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'velocity_x', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_y_velocity');
+      ifld     = ifld + 1;clear attr dims
+      if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'northward_sea_water_velocity'); % surface_geostrophic_sea_water_y_velocity_assuming_sea_level_for_geoid
+      else					     
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_y_velocity'); % surface_geostrophic_sea_water_y_velocity_assuming_sea_level_for_geoid
+      end					     
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, y-component');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:U1 map-series:V1 map-const:ALFAS');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'v', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:U1 map-series:V1 map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'velocity_y', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
       
-      if any(strcmp('w',OPT.var))
-      ifld     = ifld + 1;clear attr
+      if any(strcmp('velocity_omega',OPT.var))
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'upward_sea_water_velocity');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'vertical velocity');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'relative sigma-layer velocity, z-component');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:WPHY');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'w', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:W map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'velocity_omega', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkit.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      end
+      
+      if any(strcmp('velocity_z',OPT.var))
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'upward_sea_water_velocity');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, z-component');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:WPHY map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'velocity_z', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      end
+
+      if any(strcmp('tau',OPT.var))
+      ifld     = ifld + 1;clear attr dims
+      if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'surface_downward_northward_stress');
+      else
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'surface_downward_x_stress');
+      end
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'bed shear stress, x-component');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'N/m2');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:TAUKSI map-const:TAUETA map-const:ALFAS map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'tau_x', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      
+      ifld     = ifld + 1;clear attr dims
+      if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'surface_downward_eastward_stress');
+      else
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'surface_downward_y_stress');
+      end
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'bed shear stress, y-component');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'N/m2');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:TAUKSI map-const:TAUETA map-const:ALFAS map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'tau_y', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
       
 %% 3 Create variables: scalars
 
       if any(strcmp('density',OPT.var))
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_density');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'density');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'kg/m3');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'density', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'density', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
       
       if any(strcmp('pea',OPT.var))
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Potential Energy Anomaly (PEA)');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-series:S1');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-series:S1 map-const:KCS');
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
-      nc(ifld) = struct('Name', 'pea', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'n', 'm'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'       , 'pea', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      end
+
+      if any(strcmp('dpeadt',OPT.var))
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'time rate of change of Potential Energy Anomaly (dPEA/dt)');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-series:S1 map-const:KCS');
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'dpeadt', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
 
       if any(strcmp('salinity',OPT.var))
       if isfield(I,'salinity')
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'salinity');
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_salinity');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'salinity');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'ppt');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'salinity', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'salinity', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
       end
 
       if any(strcmp('temperature',OPT.var))
       if isfield(I,'temperature')
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'temperature');
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_temperature');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'temperature');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degree_Celsius');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'temperature', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Layer', 'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'temperature', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
       end
 
       if any(strcmp('tke',OPT.var))
       if isfield(I,'turbulent_energy')
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent kinetic energy');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s2');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'tke', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'LayerInterf', 'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'tke', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkit.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
       end
 
       if any(strcmp('eps',OPT.var))
       if isfield(I,'energy_dissipation')
-      ifld     = ifld + 1;clear attr
+      ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent energy dissipation');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s3');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1');
-      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'eps', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'LayerInterf', 'n', 'm'}}, ...
-          'Attribute', attr);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'eps', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkit.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
+      end
+      
+      if any(strcmp('viscosity_z',OPT.var))
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy viscosity-3D');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:VICWW map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'viscosity_z', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkit.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      end
+      
+      if any(strcmp('diffusivity_z',OPT.var))
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy diffusivity-3D');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:DICWW map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'diffusivity_z', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkit.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      end
+      
+      if any(strcmp('Ri',OPT.var))
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Richardson number');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RICH map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'Ri', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkit.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
       end
 
-%% 4 Create variables with attibutes
+% TO DO
+%-------------------------------------------------------------------------------
+%[Delft3D-trim:Virtual:spiralflow]
+%[Delft3D-trim:Element:UMNLDF]
+%[Delft3D-trim:Element:VMNLDF]
+%[Delft3D-trim:Element:VICUV]
+%[Delft3D-trim:Element:VORTIC]
+%[Delft3D-trim:Element:ENSTRO]
+%[Delft3D-trim:Element:HYDPRES]
+%-------------------------------------------------------------------------------
+
+%% sediments
+
+   if any(strcmp('sediment',OPT.var)) && LSED > 0	        
    
-      for ifld=1:length(nc)
-         if OPT.debug
-            disp(var2evalstr(nc(ifld)))
-         end
-         nc_addvar(ncfile, nc(ifld));   
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'suspended sediment fraction names');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:NAMCON map-const:NAMSED');
+      dims(1)  = struct('Name', 'CHAR20'          ,'Length',ncdimlen.CHAR20);
+      dims(2)  = struct('Name', 'SuspSedimentFrac','Length',ncdimlen.SuspSedimentFrac);
+      nc.Variables(ifld) = struct('Name'       , 'SuspSedimentFrac', ...
+                                  'Datatype'   , 'char', ...
+                                  'Dimensions' , dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'concentration_of_suspended_matter_in_sea_water'); % mass_concentration_of_suspended_matter_in_sea_water
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'suspended sediment concentration');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'mg/l');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'suspsedconc', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkst.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+   end % isfield
+
+% TO DO: 
+%-------------------------------------------------------------------------------
+% [Delft3D-trim:Group:map-infsed-serie]
+% [Delft3D-trim:Group:map-sed-series]
+% [Delft3D-trim:Group:map-infavg-serie]
+% [Delft3D-trim:Group:map-avg-series]
+%-------------------------------------------------------------------------------
+
+%% 4 Create netCDF file
+
+      if OPT.debug
+      ls(ncfile)
+      var2evalstr(nc)
       end
 
-%% 5 Fill variables (always)
+      delete(ncfile);
+      ncwriteschema(ncfile, nc);			        
 
-      nc_varput(ncfile, 'time'          , T.datenum - OPT.refdatenum);
-      nc_varput(ncfile, 'm'             , [2:G.mmax-1  ]');
-      nc_varput(ncfile, 'n'             , [2:G.nmax-1  ]');
-      nc_varput(ncfile, 'grid_m'        , nc_cf_cor2bounds([1:G.mmax-1  ]'));
-      nc_varput(ncfile, 'grid_n'        , nc_cf_cor2bounds([1:G.nmax-1  ]'));
+      if OPT.debug
+      fid = fopen([filepathstrname(ncfile),'.cdl'],'w');
+      nc_dump(ncfile,fid);
+      fclose(fid);
+      end
+      
+%% 5 Fill variables (always)
+%    Data is initialized as NaN due to attribute '_FillValue' in ncwriteschema.
+%    This means can just fill only the active Delft3D cells m=[2:end-1] & n=[2:end-1]
+%    and leave the inactive dummy cells at =[1 end] & n=[1 end]
+
+      ncwrite   (ncfile,'time'          , T.datenum - OPT.refdatenum);
+      if ~G.orthogonal
+      ncwrite   (ncfile,'m'             , [1:G.mmax    ]');
+      ncwrite   (ncfile,'n'             , [1:G.nmax    ]');
+      ncwrite   (ncfile,'grid_m'        , nc_cf_cor2bounds([0:G.mmax    ]'));
+      ncwrite   (ncfile,'grid_n'        , nc_cf_cor2bounds([0:G.nmax    ]'));
+      else
+      ncwrite   (ncfile,'m'             , [nan    ; cen.x(:)              ;nan    ]);
+      ncwrite   (ncfile,'n'             , [nan    ; cen.y(:)              ;nan    ]);
+      warning('leading and trailing nan values make ncbrowse crash')
+      ncwrite   (ncfile,'grid_m'        , [nan nan;nc_cf_cor2bounds(cor.x)';nan nan]); % [2 6]
+      ncwrite   (ncfile,'grid_n'        , [nan nan;nc_cf_cor2bounds(cor.y) ;nan nan]); % [2 5]
+      end
 
       data = vs_let(F,'map-const','THICK','quiet');
      [sigma,sigmaInterf] = d3d_sigma(data); % [0 .. 1]
 
-      nc_varput(ncfile, 'Layer'         ,sigma-1);
-      nc_attput(ncfile, 'Layer'         ,'actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
-      nc_varput(ncfile, 'LayerInterf'   ,sigmaInterf-1);
-      nc_attput(ncfile, 'LayerInterf'   ,'actual_range',[min(sigmaInterf(:)-1) max(sigmaInterf(:)-1)]); % [-1 0]
+      ncwrite   (ncfile,'Layer'         ,sigma-1);
+      ncwriteatt(ncfile,'Layer'         ,'actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
+      
+      ncwrite   (ncfile,'LayerInterf'   ,sigmaInterf-1);
+      ncwriteatt(ncfile,'LayerInterf'   ,'actual_range',[min(sigmaInterf(:)-1) max(sigmaInterf(:)-1)]); % [-1 0]
 
 %% 5 Fill variables (optional)
 
       if     any(strcmp('x',OPT.var))
-      nc_varput(ncfile, 'x'             ,    G.cen.x);
-      nc_attput(ncfile, 'x'             ,'actual_range',[min(G.cen.x(:)) max(G.cen.x(:))]);
+      ncwrite   (ncfile,'x'             ,    G.cen.x,[2 2]);
+      ncwriteatt(ncfile,'x'             ,'actual_range',[min(G.cen.x(:)) max(G.cen.x(:))]);
+      if ~isempty(OPT.epsg)
+      ncwrite   (ncfile,'CRS'           ,    OPT.epsg);
+      end
       end
       
       if     any(strcmp('y',OPT.var))
-      nc_varput(ncfile, 'y'             ,    G.cen.y);
-      nc_attput(ncfile, 'y'             ,'actual_range',[min(G.cen.y(:)) max(G.cen.y(:))]);
+      ncwrite   (ncfile,'y'             ,    G.cen.y,[2 2]);
+      ncwriteatt(ncfile,'y'             ,'actual_range',[min(G.cen.y(:)) max(G.cen.y(:))]);
       end
 
       if     any(strcmp('grid_x',OPT.var))
-      nc_varput(ncfile, 'grid_x'        ,    nc_cf_cor2bounds(G.cor.x));
-      nc_attput(ncfile, 'grid_x'        ,'actual_range',[min(G.cor.x(:)) max(G.cor.x(:))]);
+      ncwrite   (ncfile,'grid_x'        ,    nc_cf_cor2bounds(G.cor.x),[2 2 1]);
+      ncwriteatt(ncfile,'grid_x'        ,'actual_range',[min(G.cor.x(:)) max(G.cor.x(:))]);
       end
 
       if     any(strcmp('grid_y',OPT.var))
-      nc_varput(ncfile, 'grid_y'        ,    nc_cf_cor2bounds(G.cor.y));
-      nc_attput(ncfile, 'grid_y'        ,'actual_range',[min(G.cor.y(:)) max(G.cor.y(:))]);
+      ncwrite   (ncfile,'grid_y'        ,    nc_cf_cor2bounds(G.cor.y),[2 2 1]);
+      ncwriteatt(ncfile,'grid_y'        ,'actual_range',[min(G.cor.y(:)) max(G.cor.y(:))]);
       end
 
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
       if     any(strcmp('longitude',OPT.var))
-      nc_varput(ncfile, 'longitude'     ,G.cen.lon);
-      nc_attput(ncfile, 'longitude'     ,'actual_range',[min(G.cen.lon(:)) max(G.cen.lon(:))]);
+      ncwrite   (ncfile,'longitude'     ,G.cen.lon,[2 2]);
+      ncwriteatt(ncfile,'longitude'     ,'actual_range',[min(G.cen.lon(:)) max(G.cen.lon(:))]);
       end
       if     any(strcmp('latitude',OPT.var))
-      nc_varput(ncfile, 'latitude'      ,G.cen.lat);
-      nc_attput(ncfile, 'latitude'      ,'actual_range',[min(G.cen.lat(:)) max(G.cen.lat(:))]);
+      ncwrite   (ncfile,'latitude'      ,G.cen.lat,[2 2]);
+      ncwriteatt(ncfile,'latitude'      ,'actual_range',[min(G.cen.lat(:)) max(G.cen.lat(:))]);
       end
 
       if     any(strcmp('grid_longitude',OPT.var))
-      nc_varput(ncfile, 'grid_longitude',nc_cf_cor2bounds(G.cor.lon));
-      nc_attput(ncfile, 'grid_longitude','actual_range',[min(G.cor.lon(:)) max(G.cor.lon(:))]);
+      ncwrite   (ncfile,'grid_longitude',nc_cf_cor2bounds(G.cor.lon),[2 2 1]);
+      ncwriteatt(ncfile,'grid_longitude','actual_range',[min(G.cor.lon(:)) max(G.cor.lon(:))]);
       end      
 
       if     any(strcmp('grid_latitude',OPT.var))
-      nc_varput(ncfile, 'grid_latitude' ,nc_cf_cor2bounds(G.cor.lat));
-      nc_attput(ncfile, 'grid_latitude' ,'actual_range',[min(G.cor.lat(:)) max(G.cor.lat(:))]);
+      ncwrite   (ncfile,'grid_latitude' ,nc_cf_cor2bounds(G.cor.lat),[2 2 1]);
+      ncwriteatt(ncfile,'grid_latitude' ,'actual_range',[min(G.cor.lat(:)) max(G.cor.lat(:))]);
       end      
       end
 
       if     any(strcmp('k',OPT.var))
-      nc_varput(ncfile, 'k'          ,1:G.kmax);
+      ncwrite   (ncfile,'k'          ,1:G.kmax);
       end
 
-      if     any(strcmp('grid_depth',OPT.var))
-      nc_varput(ncfile, 'grid_depth',-G.cor.dep); % positive down !
-      nc_attput(ncfile, 'grid_depth','actual_range',[min(-G.cor.dep(:)) max(-G.cor.dep(:))]);
+      if     any(strcmp('depth'     ,OPT.var))
+      ncwrite   (ncfile,'depth'     ,G.cen.dep,[2 2]); % positive down !
+      ncwriteatt(ncfile,'depth'     ,'actual_range',[min(-G.cen.dep(:)) max(-G.cen.dep(:))]);
       end      
 
-      if     any(strcmp('depth'     ,OPT.var))
-      nc_varput(ncfile, 'depth'     ,-G.cen.dep); % positive down !
-      nc_attput(ncfile, 'depth'     ,'actual_range',[min(-G.cen.dep(:)) max(-G.cen.dep(:))]);
+      if     any(strcmp('grid_depth',OPT.var))
+      ncwrite   (ncfile,'grid_depth',G.cor.dep,[2 2]); % positive down !
+      ncwriteatt(ncfile,'grid_depth','actual_range',[min(-G.cor.dep(:)) max(-G.cor.dep(:))]);
       end      
 
       if     any(strcmp('zactive'   ,OPT.var))
-      nc_varput(ncfile, 'zactive'   ,G.cen.mask);
-      nc_attput(ncfile, 'zactive'   ,'actual_range',[0 1]);
+      ncwrite   (ncfile,'zactive'   ,G.cen.mask,[2 2]);
+      ncwriteatt(ncfile,'zactive'   ,'actual_range',[0 1]);
       end      
 
       if     any(strcmp('area'      ,OPT.var))
-      nc_varput(ncfile, 'area'      ,G.cen.area);
-      nc_attput(ncfile, 'area'      ,'actual_range',[0 1]);
+      ncwrite   (ncfile,'area'      ,G.cen.area,[2 2]);
+      ncwriteatt(ncfile,'area'      ,'actual_range',[nanmin(G.cen.area(:)) nanmax(G.cen.area(:))]);
       end      
+
+      if any(strcmp('sediment',OPT.var)) && LSED > 0	        
+      ncwrite   (ncfile, 'SuspSedimentFrac',NAMSED');
+      end
 
       i = 0;
       
-      if any(strcmp('waterlevel' ,OPT.var));R.waterlevel  = [Inf -Inf];end
-      if any(strcmp('u'          ,OPT.var));R.u           = [Inf -Inf];end
-      if any(strcmp('v'          ,OPT.var));R.v           = [Inf -Inf];end
-      if any(strcmp('w'          ,OPT.var));R.w           = [Inf -Inf];end
-      if any(strcmp('density'    ,OPT.var));R.density     = [Inf -Inf];end
-      if any(strcmp('pea'        ,OPT.var));R.pea         = [Inf -Inf];end
-      if any(strcmp('salinity'   ,OPT.var));R.salinity    = [Inf -Inf];end
-      if any(strcmp('temperature',OPT.var));R.temperature = [Inf -Inf];end
-      if any(strcmp('tke'        ,OPT.var));R.tke         = [Inf -Inf];end
-      if any(strcmp('eps'        ,OPT.var));R.eps         = [Inf -Inf];end
+      if any(strcmp('waterlevel'    ,OPT.var));R.waterlevel      = [Inf -Inf];end
+      if any(strcmp('velocity'      ,OPT.var));R.velocity_x      = [Inf -Inf];
+                                               R.velocity_y      = [Inf -Inf];end
+      if any(strcmp('velocity_omega',OPT.var));R.velocity_omega  = [Inf -Inf];end
+      if any(strcmp('velocity_z'    ,OPT.var));R.velocity_z      = [Inf -Inf];end
+      if any(strcmp('tau'           ,OPT.var));R.tau_x           = [Inf -Inf];
+                                               R.tau_y           = [Inf -Inf];end
+      if any(strcmp('density'       ,OPT.var));R.density         = [Inf -Inf];end
+      if any(strcmp('pea'           ,OPT.var));R.pea             = [Inf -Inf];end
+      if any(strcmp('salinity'      ,OPT.var));R.salinity        = [Inf -Inf];end
+      if any(strcmp('temperature'   ,OPT.var));R.temperature     = [Inf -Inf];end
+      if any(strcmp('tke'           ,OPT.var));R.tke             = [Inf -Inf];end
+      if any(strcmp('eps'           ,OPT.var));R.eps             = [Inf -Inf];end
+      if any(strcmp('sediment'      ,OPT.var));R.suspsedconc     = [Inf -Inf];end
+      if any(strcmp('viscosity_z'   ,OPT.var));R.viscosity_z     = [Inf -Inf];end
+      if any(strcmp('diffusivity_z' ,OPT.var));R.diffusivity_z   = [Inf -Inf];end
+      if any(strcmp('Ri'            ,OPT.var));R.Ri              = [Inf -Inf];end
 
-      for it = OPT.time
+      for it = OPT.time % it is index in NEFIS file
+      i = i + 1;        % i  is index in netCDF file
       
-      i = i + 1;
-      
-      disp(['processing timestep ',num2str(i),' of ',num2str(length(OPT.time)),' (# ',num2str(it),')'])
+         disp(['processing timestep ',num2str(i),' of ',num2str(length(OPT.time)),' (# ',num2str(it),')'])
           
-          %% update grid, incl waterlevel which determines z grid spacing
-          %  apply masks
-          %  write matrices
-          
-          G = vs_meshgrid3dcorcen(F, it, G);
-          
-          if any(strcmp('waterlevel',OPT.var))
-          G.cen.zwl = G.cen.zwl.*G.cen.mask;
-          nc_varput(ncfile,'waterlevel'     , G.cen.zwl,[i-1, 0, 0   ],[1, size(G.cen.zwl   )]);
-          R.waterlevel = [min(R.waterlevel(1),min(G.cen.zwl(:))) max(R.waterlevel(2),max(G.cen.zwl(:)))];
-          end
-          
-          if any(strcmp('u',OPT.var)) | any(strcmp('v',OPT.var))
-         [D.u,D.v] = vs_let_vector_cen(F, 'map-series',{it},{'U1','V1'}, {0,0,0},'quiet');
-          D.u      = permute(D.u,[4 2 3 1]); % z y x
-          D.v      = permute(D.v,[4 2 3 1]); % z y x
-          for k=1:size(D.u,1)
-              D.u(k,:,:) = D.u(k,:,:).*permute(G.cen.mask,[3 1 2]);
-              D.v(k,:,:) = D.v(k,:,:).*permute(G.cen.mask,[3 1 2]);
-              %           D.w(k,:,:) = D.w(k,:,:).*permute(G.cen.mask,[3 1 2]);
-          end
-          nc_varput(ncfile,'u'       , D.u      ,[i-1, 0, 0, 0],[1, size(D.u         )]);
-          nc_varput(ncfile,'v'       , D.v      ,[i-1, 0, 0, 0],[1, size(D.v         )]);
-          R.u   = [min(R.u  (1),min(D.u      (:))) max(R.u  (2),max(D.u      (:)))];  
-          R.v   = [min(R.v  (1),min(D.v      (:))) max(R.v  (2),max(D.v      (:)))];  
-          end
+         if any(strcmp('waterlevel',OPT.var)) | any(strcmp('pea',OPT.var))
+         G.cen.zwl = apply_mask(vs_let_scalar(F,'map-series' ,{it},'S1'      , {0 0},'quiet'),G.cen.mask);
+         end
          
-          if any(strcmp('w',OPT.var))
-          D.w      = vs_let_scalar    (F, 'map-series',{it},'WPHY'     , {0,0,0},'quiet');
-          D.w      = permute(D.w,[3 1 2]);   % z y x
-          nc_varput(ncfile,'w'       , D.w      ,[i-1, 0, 0, 0],[1, size(D.w         )]);
-          R.w   = [min(R.w  (1),min(D.w      (:))) max(R.w  (2),max(D.w      (:)))];
-          end
+         if any(strcmp('waterlevel',OPT.var))
+         ncwrite   (ncfile,'waterlevel'     , G.cen.zwl.*G.cen.mask,[2,2,i],[1 1 1]); % 1-based, size(D.u) =   [y x], shape(waterlevel) = [t x y]
+         R.waterlevel = [min(R.waterlevel(1),min(G.cen.zwl(:))) max(R.waterlevel(2),max(G.cen.zwl(:)))];
+         end
           
-          if any(strcmp('density',OPT.var)) | any(strcmp('pea',OPT.var))
-          data3d = vs_let_scalar    (F,'map-series' ,{it},'RHO'      , {0 0 0},'quiet');
-          if any(strcmp('density',OPT.var))
-          nc_varput(ncfile,'density', shiftdim(data3d,2),[i-1, 0  0  0], [1, size(shiftdim(data3d,2))]); % go from y, x, z to z, y, x
-          R.density = [min(R.density(1),min(data3d(:))) max(R.density(2),max(data3d(:)))];
-          end
-          if any(strcmp('pea',OPT.var))
-          data2d = pea_simpson_et_al_1990(G.cen.intf.z,data3d,3,'weights',G.sigma_dz);
-          nc_varput(ncfile,'pea'     , data2d,[i-1, 0, 0   ],[1, size(data2d   )]);
-          R.pea = [min(R.pea(1),min(data2d(:))) max(R.pea(2),max(data2d(:)))];
-          end
-          end
-          
-          if any(strcmp('salinity',OPT.var))
-          if isfield(I,'salinity')
-          data3d    = vs_let_scalar    (F,'map-series' ,{it},'R1'       , {0 0 0 I.salinity.index   },'quiet');
-          nc_varput(ncfile,'salinity'   , shiftdim(data3d  ,2),[i-1, 0  0  0], [1, size(shiftdim(data3d,2))]); % go from y, x, z to z, y, x
-          R.salinity = [min(R.salinity(1),min(data3d(:))) max(R.salinity(2),max(data3d(:)))];
-          end
-          end
-          
-          if any(strcmp('temperature',OPT.var))
-          if isfield(I,'temperature')
-          data3d = vs_let_scalar    (F,'map-series' ,{it},'R1'       , {0 0 0 I.temperature.index},'quiet');
-          nc_varput(ncfile,'temperature', shiftdim(data3d  ,2),[i-1, 0  0  0], [1, size(shiftdim(data3d,2))]); % go from y, x, z to z, y, x
-          R.temperature = [min(R.temperature(1),min(data3d(:))) max(R.temperature(2),max(data3d(:)))];
-          end
-          end
-          
-          if any(strcmp('tke',OPT.var))
-          if isfield(I,'turbulent_energy')
-          data3d = vs_let_scalar    (F,'map-series' ,{it},'RTUR1'       , {0 0 0 I.turbulent_energy.index},'quiet');
-          nc_varput(ncfile,'tke', shiftdim(data3d  ,2),[i-1, 0  0  0], [1, size(shiftdim(data3d,2))]); % go from y, x, z to z, y, x
-          R.tke = [min(R.tke(1),min(data3d(:))) max(R.tke(2),max(data3d(:)))];
-          end
-          end
-          
-          if any(strcmp('eps',OPT.var))
-          if isfield(I,'energy_dissipation')
-          data3d = vs_let_scalar    (F,'map-series' ,{it},'RTUR1'       , {0 0 0 I.energy_dissipation.index},'quiet');
-          nc_varput(ncfile,'eps', shiftdim(data3d  ,2),[i-1, 0  0  0], [1, size(shiftdim(data3d,2))]); % go from y, x, z to z, y, x
-          R.eps = [min(R.eps(1),min(data3d(:))) max(R.eps(2),max(data3d(:)))];
-          end
-          end
+         if any(strcmp('velocity',OPT.var))
+        [D.u,D.v] = vs_let_vector_cen(F, 'map-series',{it},{'U1','V1'}, {0,0,0},'quiet');
+         D.u      = apply_mask(permute(D.u,[2 3 4 1]),G.cen.mask); % y x z
+         D.v      = apply_mask(permute(D.v,[2 3 4 1]),G.cen.mask); % y x z
+         ncwrite   (ncfile,'velocity_x',D.u,[2,2,1,i]); % 1-based, size(D.u)         =   [y x k]
+         ncwrite   (ncfile,'velocity_y',D.v,[2,2,1,i]); % 1-based, shape(velocity_*) = [t k x y]
+         R.velocity_x   = [min(R.velocity_x(1),min(D.u(:))) max(R.velocity_x (2),max(D.u(:)))];  
+         R.velocity_y   = [min(R.velocity_y(1),min(D.v(:))) max(R.velocity_y (2),max(D.v(:)))];  
+         end
+         
+         if any(strcmp('velocity_omega',OPT.var))
+         matrix      = apply_mask(vs_let_scalar(F, 'map-series',{it},'W'     , {0,0,0},'quiet'),G.cen.mask);
+         ncwrite   (ncfile,'velocity_omega', matrix,[2,2,1,i]); % 1-based
+         R.velocity_z   = [min(R.velocity_omega(1),min(matrix(:))) max(R.velocity_omega(2),max(matrix(:)))];
+         end
+         
+         if any(strcmp('velocity_z',OPT.var))
+         matrix      = apply_mask(vs_let_scalar(F, 'map-series',{it},'WPHY'     , {0,0,0},'quiet'),G.cen.mask);
+         ncwrite   (ncfile,'velocity_z', matrix,[2,2,1,i]); % 1-based
+         R.velocity_z   = [min(R.velocity_z(1),min(matrix(:))) max(R.velocity_z(2),max(matrix(:)))];
+         end
+         
+         if any(strcmp('tau',OPT.var))
+        [D.tau_x,D.tau_y] = vs_let_vector_cen(F, 'map-series',{it},{'TAUKSI','TAUETA'}, {0,0,0},'quiet');
+         D.tau_x = permute(D.tau_x,[2 3 1]).*G.cen.mask;
+         D.tau_y = permute(D.tau_y,[2 3 1]).*G.cen.mask;
+         ncwrite   (ncfile,'tau_x'       , D.tau_x      ,[2,2,i]);
+         ncwrite   (ncfile,'tau_y'       , D.tau_y      ,[2,2,i]);
+         R.tau_x   = [min(R.tau_x  (1),min(D.tau_x(:))) max(R.tau_x(2),max(D.tau_x(:)))];  
+         R.tau_y   = [min(R.tau_y  (1),min(D.tau_y(:))) max(R.tau_y(2),max(D.tau_y(:)))];  
+         end
+
+         if any(strcmp('density',OPT.var)) | any(strcmp('pea',OPT.var))
+         matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RHO'      , {0 0 0},'quiet'),G.cen.mask);
+         if any(strcmp('density',OPT.var))
+         ncwrite   (ncfile,'density', matrix,[2,2,1,i]); % 1-based
+         R.density = [min(R.density(1),min(matrix(:))) max(R.density(2),max(matrix(:)))];
+         end
+
+         if any(strcmp('pea',OPT.var))
+         G.cen.intf.z  = zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);
+         for k = 1:G.kmax+1
+            G.cen.intf.z(:,:,k) = G.sigma_intf(k).*(G.cen.zwl + G.cen.dep) - G.cen.dep; % dep is positive down
+         end
+         matrix = pea_simpson_et_al_1990(G.cen.intf.z,matrix,3,'weights',G.sigma_dz);
+         ncwrite   (ncfile,'pea', matrix,[2,2,i]); % 1-based
+         R.pea = [min(R.pea(1),min(matrix(:))) max(R.pea(2),max(matrix(:)))];
+         end
+         end
+         
+         if any(strcmp('salinity',OPT.var))
+         if isfield(I,'salinity')
+         matrix    = apply_mask(vs_let_scalar(F,'map-series' ,{it},'R1'       , {0 0 0 I.salinity.index   },'quiet'),G.cen.mask);
+         ncwrite   (ncfile,'salinity'   , matrix,[2,2,1,i]); % 1-based
+         R.salinity = [min(R.salinity(1),min(matrix(:))) max(R.salinity(2),max(matrix(:)))];
+         end
+         end
+         
+         if any(strcmp('temperature',OPT.var))
+         if isfield(I,'temperature')
+         matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'R1'       , {0 0 0 I.temperature.index},'quiet'),G.cen.mask);
+         ncwrite   (ncfile,'temperature', matrix,[2,2,1,i]); % 1-based
+         R.temperature = [min(R.temperature(1),min(matrix(:))) max(R.temperature(2),max(matrix(:)))];
+         end
+         end
+         
+         if any(strcmp('tke',OPT.var))
+         if isfield(I,'turbulent_energy')
+         matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RTUR1', {0 0 0 I.turbulent_energy.index},'quiet'),G.cen.mask);
+         ncwrite   (ncfile,'tke', matrix,[2,2,1,i]);
+         R.tke = [min(R.tke(1),min(matrix(:))) max(R.tke(2),max(matrix(:)))];
+         end
+         end
+         
+         if any(strcmp('eps',OPT.var))
+         if isfield(I,'energy_dissipation')
+         matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RTUR1', {0 0 0 I.energy_dissipation.index},'quiet'),G.cen.mask);
+         ncwrite   (ncfile,'eps', matrix,[2,2,1,i]);
+         R.eps = [min(R.eps(1),min(matrix(:))) max(R.eps(2),max(matrix(:)))];
+         end
+         end
+
+         if any(strcmp('sediment',OPT.var)) && LSED > 0
+         
+         sednames = fieldnames(I);
+         pointers = strmatch('sed',sednames);
+         
+         for ised = 1:length(pointers)
+          sedname = sednames{pointers(ised)};
+          matrix  = apply_mask(vs_let_scalar(F,'map-series' ,{it},'R1', {0 0 0 I.(sedname).index},'quiet'),G.cen.mask);
+          ncwrite   (ncfile,'suspsedconc', matrix,[2,2,1,ised,i]);
+          R.suspsedconc = [min(R.suspsedconc(1),min(matrix(:))) max(R.suspsedconc(2),max(matrix(:)))];
+         end
+         end
+         
+         if any(strcmp('viscosity_z',OPT.var))
+         matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'VICWW','quiet'),G.cen.mask);
+         ncwrite   (ncfile,'viscosity_z', matrix,[2,2,1,i]);
+         R.viscosity_z = [min(R.viscosity_z(1),min(matrix(:))) max(R.viscosity_z(2),max(matrix(:)))];
+         end
+         
+         if any(strcmp('diffusivity_z',OPT.var))
+         matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'DICWW','quiet'),G.cen.mask);
+         ncwrite   (ncfile,'diffusivity_z', matrix,[2,2,1,i]);
+         R.diffusivity_z = [min(R.diffusivity_z(1),min(matrix(:))) max(R.diffusivity_z(2),max(matrix(:)))];
+         end
+         
+         if any(strcmp('Ri',OPT.var))
+         matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RICH','quiet'),G.cen.mask);
+         ncwrite   (ncfile,'Ri', matrix,[2,2,1,i]);
+         R.Ri = [min(R.Ri(1),min(matrix(:))) max(R.Ri(2),max(matrix(:)))];
+         end
 
       end
       
-%% add actual ranges
+%% update data
+%  dpeadt central difference in time
+
+      if any(strcmp('dpeadt',OPT.var))
+      R.dpeadt = [Inf -Inf];
+      for i = 2:(time.dims.Length-1)
+      
+         disp(['processing timestep ',num2str(i),' of ',num2str(length(time.dims.Length)),' dpeadt']);
+         matrix = ncread(ncfile,'pea', [1,1,i-1],[Inf Inf 2],[1 1 2]); % 1-based
+         dt     = (T.datenum(i+1) - T.datenum(i-1)); % = 2*dt_flow, calculate dt inside time loop allow for non-equidistant times
+         matrix = diff(matrix,1,3)./dt./24./3600; % over 2 time steps including already in dt
+         R.dpeadt = [min(R.dpeadt(1),min(matrix(:))) max(R.dpeadt(2),max(matrix(:)))];
+         ncwrite   (ncfile,'dpeadt', matrix,[1,1,i]); % 1-based
+         ncwriteatt(ncfile,'dpeadt','actual_range',R.dpeadt);
+         
+      end         
+      end         
+      
+%% update actual ranges
 
       varnames = fieldnames(R);
 
       for ivar=1:length(varnames)
       varname = varnames{ivar};
-      nc_attput(ncfile,varname  ,'actual_range',R.(varname));
+      ncwriteatt(ncfile,varname  ,'actual_range',R.(varname));
       end
       
       if OPT.debug
@@ -887,3 +1390,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
 %% EOF      
+
+function matrix = apply_mask(matrix,mask)
+
+   for k=1:size(matrix,3)
+      matrix(:,:,k) = matrix(:,:,k).*mask;
+   end
+

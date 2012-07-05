@@ -11,6 +11,8 @@ function Sz = vs_get_grp_size(NFSstruct,GrpName,varargin)
 % Not case sensitive, neither for GrpName, not
 % for strings in NFSstruct.
 %
+% Example: vs_get_grp_size(NFSstruct,'map-avg-series')
+%
 % See also: VS_GET_ELM_SIZE, VS_*
 
 %   --------------------------------------------------------------------
@@ -47,9 +49,9 @@ function Sz = vs_get_grp_size(NFSstruct,GrpName,varargin)
 % $Revision$
 % $HeadURL$
 
+   Sz = 0;
    for i=1:length(NFSstruct.GrpDat)
-      if strcmp(upper(NFSstruct.GrpDat(i).Name),...
-                                 upper(GrpName))
+      if strcmpi(NFSstruct.GrpDat(i).Name,GrpName)
       Sz = NFSstruct.GrpDat(i).SizeDim;
       end
    end

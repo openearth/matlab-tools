@@ -118,10 +118,10 @@ end
       constituent_elementname = 'R1';
       turbulence_elementname  = 'RTUR1';
 
-     %no_constituents         = vs_get_elm_size(NFSstruct,constituent_elementname,4)
      %no_turbulent_quantities = vs_get_elm_size(NFSstruct,turbulence_elementname ,4)
 
       no_constituents         = vs_let(NFSstruct,'map-const','LSTCI','quiet');
+      no_sediment_constituents= vs_let(NFSstruct,'map-const','LSED','quiet');
       no_turbulent_quantities = vs_let(NFSstruct,'map-const','LTUR' ,'quiet');
 
    elseif strcmp(NFSstruct.SubType,'Delft3D-trih')

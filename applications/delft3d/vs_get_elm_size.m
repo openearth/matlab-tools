@@ -11,6 +11,8 @@ function Sz = vs_get_elm_size(NFSstruct,ElmName,varargin)
 % Not case sensitive, neither for ElmName, not
 % for strings in NFSstruct.
 %
+% Example: vs_get_elm_size(NFSstruct,'map-const','GSQS')
+%
 % See also: vs_get_elm_def, vs_get_grp_size
 
 %   --------------------------------------------------------------------
@@ -47,10 +49,9 @@ function Sz = vs_get_elm_size(NFSstruct,ElmName,varargin)
 % $Revision$
 % $HeadURL$
 
-   Sz = [];
+   Sz = 0;
    for i=1:length(NFSstruct.ElmDef)
-      if strcmp(upper(NFSstruct.ElmDef(i).Name),...
-                                 upper(ElmName))
+      if strcmpi(NFSstruct.ElmDef(i).Name,ElmName)
       Sz = NFSstruct.ElmDef(i).Size;
       end
    end

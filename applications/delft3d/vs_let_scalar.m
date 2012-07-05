@@ -48,6 +48,10 @@ function scalar = vs_let_scalar(varargin)
 % $Revision$
 % $HeadURL$
 
+if ischar(varargin{1})
+   varargin{1} = vs_use(varargin{1});
+end
+
 scalar = vs_let(varargin{:});
 dims   = size(scalar);
 
