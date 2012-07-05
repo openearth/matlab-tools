@@ -16,83 +16,78 @@ else
             checkCurrent;
         case{'checkwind'}
             checkWind;
-        case{'useddbflow'}
-            useDDBFlow;
     end
 end
-
-%%
-function useDDBFlow
-handles=getHandles;
-handles.Model(md).Input.referencedate=handles.Model(1).Input(1).itDate;
-handles.Model(md).Input.mapwriteinterval=handles.Model(1).Input(1).mapInterval;
-handles.Model(md).Input.comwriteinterval=handles.Model(1).Input(1).comInterval;
-handles.Model(md).Input.writecom=1;
-handles.Model(md).Input.coupling='ddbonline';
-handles.Model(md).Input.mdffile=handles.Model(1).Input(1).mdfFile;
-handles.Model(md).Input.domains(1).flowbedlevel=1;
-handles.Model(md).Input.domains(1).flowwaterlevel=1;
-handles.Model(md).Input.domains(1).flowvelocity=1;
-if handles.Model(1).Input(1).wind
-    handles.Model(md).Input.domains(1).flowwind=1;
-else
-    handles.Model(md).Input.domains(1).flowwind=0;
-end
-handles.Model(1).Input(1).waves=1;
-handles.Model(1).Input(1).onlineWave=1;
-if handles.Model(1).Input(1).comInterval==0 || handles.Model(1).Input(1).comStartTime==handles.Model(1).Input(1).comStopTime
-    ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
-end
-setHandles(handles);
 
 %%
 function setHydrodynamics
 
 handles=getHandles;
+if strcmp(handles.Model(md).Input.coupling,'uncoupled')
 
-ButtonName = questdlg('Couple with Delft3D-FLOW model?', ...
-    'Couple with flow', ...
-    'Cancel', 'No', 'Yes', 'Yes');
-switch ButtonName,
-    case 'Cancel',
-        return;
-    case 'No',
-        couplewithflow=0;
-    case 'Yes',
-        couplewithflow=1;
-end
+   handles.Model(md).Input.mdffile = '';
+   handles.Model(md).Input.coupledwithflow=0;
+   handles.Model(md).Input.writecom = 0;
 
-if couplewithflow == 1
+elseif strcmp(handles.Model(md).Input.coupling,'ddbonline')
+
    if handles.Model(1).Input(1).comInterval==0 || handles.Model(1).Input(1).comStartTime==handles.Model(1).Input(1).comStopTime
-      ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!'); 
+      ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
    end
-%   handles.Model(md).Input.coupledwithflow=1;
+
+   handles.Model(md).Input.referencedate=handles.Model(1).Input(1).itDate;
+   handles.Model(md).Input.mapwriteinterval=handles.Model(1).Input(1).mapInterval;
+   handles.Model(md).Input.comwriteinterval=handles.Model(1).Input(1).comInterval;
+   handles.Model(md).Input.writecom=1;
+   handles.Model(md).Input.coupledwithflow=1;
+   handles.Model(md).Input.mdffile=handles.Model(1).Input(1).mdfFile;
+   handles.Model(md).Input.domains(1).flowbedlevel=1;
+   handles.Model(md).Input.domains(1).flowwaterlevel=1;
+   handles.Model(md).Input.domains(1).flowvelocity=1;
+   if handles.Model(1).Input(1).wind
+       handles.Model(md).Input.domains(1).flowwind=1;
+   else
+       handles.Model(md).Input.domains(1).flowwind=0;
+   end
    handles.Model(1).Input(1).waves=1;
    handles.Model(1).Input(1).onlineWave=1;
-end
 
-% TODO : change coordsyst
-if strcmp(handles.Model(md).Input.flowtype,'ddb')
-    handles.Model(md).Input.referencedate=handles.Model(1).Input(1).itDate;
-    handles.Model(md).Input.mapwriteinterval=handles.Model(1).Input(1).mapInterval;
-    handles.Model(md).Input.comwriteinterval=handles.Model(1).Input(1).comInterval;
-    handles.Model(md).Input.writecom=1;
-    handles.Model(md).Input.mdffile=handles.Model(1).Input(1).mdfFile;
 else
-    MDF=ddb_readMDFText(handles.Model(md).Input.mdffile);
-    handles.Model(md).Input.referencedate=datenum(MDF.itdate,'yyyy-mm-dd');
-    handles.Model(md).Input.mapwriteinterval=MDF.flmap(2);
-    handles.Model(md).Input.comwriteinterval=MDF.flpp(2);
-    handles.Model(md).Input.writecom=1;
+   
+   if isempty(handles.Model(md).Input.mdffile) || strcmp(handles.Model(md).Input.mdffile,handles.Model(1).Input(1).mdfFile) 
+      try 
+          [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF File');
+          if pathname~=0
+             curdir=[lower(cd) '\'];
+             if ~strcmpi(curdir,pathname)
+                filename=[pathname filename];
+             end
+             %ii=findstr(filename,'.mdf');
+             handles.Model(md).Input.mdffile=filename;%filename(1:ii-1);
+          end
+      catch
+      end
+   end
+   
+   MDF=ddb_readMDFText(handles.Model(md).Input.mdffile);
+   handles.Model(md).Input.referencedate=datenum(MDF.itdate,'yyyy-mm-dd');
+   handles.Model(md).Input.mapwriteinterval=MDF.flmap(2);
+   handles.Model(md).Input.comwriteinterval=MDF.flpp(2);
+   handles.Model(md).Input.writecom=1;
+   handles.Model(md).Input.coupledwithflow=1;
+   
+   if strcmp(handles.Model(md).Input.coupling,'otheronline')
+      if ~strcmp(MDF.waveol,'Y')
+         ddb_giveWarning('text','Please make sure to tick the option ''Online Delft3D WAVE'' in Delft3D-FLOW model!');
+      end
+      if MDF.flpp(2)==0 || MDF.flpp(1)==MDF.flpp(3)
+         ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
+      end
+   end
+    
 end
-
-%startTime=handles.Model(md).Input.referencedate+MDF.tstart/1440.0;
-%stopTime=handles.Model(md).Input.referencedate+MDF.tstop/1440.0;
-%timeStep=MDF.dt;
-%timeZone=MDF.tzone;
 
 setHandles(handles);
-
 
 %%
 function checkWaterLevel

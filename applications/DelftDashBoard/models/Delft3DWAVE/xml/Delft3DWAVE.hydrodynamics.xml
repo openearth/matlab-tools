@@ -21,6 +21,8 @@
     <type>string</type>
     <variable>handles.Model(md).Input.coupling</variable>
     <value>uncoupled</value>
+    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+    <option1>sethydrodynamics</option1>    
   </element>  
   <element>
     <tag>radioddbonline</tag>
@@ -29,9 +31,9 @@
     <text>Online with Dashboard FLOW model</text>
     <type>string</type>
     <variable>handles.Model(md).Input.coupling</variable>
-    <value>ddbonline</value>   
+    <value>ddbonline</value>
     <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
-    <option1>useddbflow</option1>        
+    <option1>sethydrodynamics</option1>
     <dependencies>
       <dependency>
         <action>enable</action>
@@ -75,6 +77,8 @@
     <type>string</type>
     <variable>handles.Model(md).Input.coupling</variable>
     <value>otheronline</value>
+    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+    <option1>sethydrodynamics</option1>
   </element>
   <element>
     <tag>pushselectotherfile</tag>
@@ -109,6 +113,8 @@
     <type>string</type>
     <variable>handles.Model(md).Input.coupling</variable>
     <value>otheroffline</value>
+    <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+    <option1>sethydrodynamics</option1>
   </element>  
   <element>
     <tag>pushselectotherfile</tag>

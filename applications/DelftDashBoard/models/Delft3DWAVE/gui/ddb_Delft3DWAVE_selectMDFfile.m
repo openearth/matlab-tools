@@ -9,6 +9,6 @@ ComStartTime=ItDate+MDF.flpp(1)/1440;
 ComInterval=MDF.flpp(2)/1440;
 ComStopTime=ItDate+MDF.flpp(3)/1440;
 handles.Model(md).Input.referencedate=ItDate;
-handles.Model(md).Input.availableflowtimes=ComStartTime:ComInterval:ComStopTime;
+handles.Model(md).Input.availableflowtimes=datestr(ComStartTime:ComInterval:ComStopTime);
 
 setHandles(handles);
