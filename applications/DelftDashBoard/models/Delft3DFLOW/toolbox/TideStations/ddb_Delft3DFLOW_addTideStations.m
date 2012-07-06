@@ -96,7 +96,7 @@ end
 % Find stations within grid
 nrp=0;
 if ~isempty(posx)
-    [m,n]=FindGridCell(posx,posy,xg,yg);
+    [m,n]=findgridcell(posx,posy,xg,yg);
     [m,n]=CheckDepth(m,n,handles.Model(md).Input(ad).depthZ);
     for i=1:length(m)
         if m(i)>0

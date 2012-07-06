@@ -88,6 +88,7 @@ switch opt
             handles.activeDomain=1;
             setHandles(handles);
             ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',0);
+            gui_updateActiveTab;
         end
     case {'openpresent'}
         % One Domain
@@ -109,7 +110,8 @@ switch opt
             handles=ddb_readMDF(handles,filename,id);
             handles=ddb_readAttributeFiles(handles,id);
             setHandles(handles);
-            ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',0);
+            ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',ad);
+            gui_updateActiveTab;
         end
     case {'opennew'}
         % One Domain
@@ -134,13 +136,8 @@ switch opt
             handles=ddb_readAttributeFiles(handles,id);
             setHandles(handles);
             ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',0);
+            gui_updateActiveTab;
         end
 end
 
-elements=handles.Model(md).GUI.elements;
-if ~isempty(elements)
-    % setUIElements(elements);
-end
-
 ddb_refreshDomainMenu;
-

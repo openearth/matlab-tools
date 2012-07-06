@@ -123,13 +123,13 @@
         <option>saveas</option>
       </menuitem>
       <menuitem>
-        <string>Save All</string>
+        <string>Save All Delft3D-FLOW Files</string>
         <tag>saveall</tag>
         <callback>ddb_saveDelft3DFLOW</callback>
         <option>saveall</option>
       </menuitem>
       <menuitem>
-        <string>Save All As ...</string>
+        <string>Save All Delft3D-FLOW Files As ...</string>
         <tag>saveallas</tag>
         <callback>ddb_saveDelft3DFLOW</callback>
         <option>saveallas</option>

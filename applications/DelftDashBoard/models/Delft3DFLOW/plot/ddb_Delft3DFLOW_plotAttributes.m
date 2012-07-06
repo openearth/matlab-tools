@@ -200,8 +200,7 @@ switch lower(opt)
                     for j=1:length(x)
                         x1=x{j};
                         y1=y{j};
-                        z=zeros(size(x1))+6000;
-                        plt=plot3(x1,y1,z);hold on;
+                        plt=plot(x1,y1);hold on;
                         set(plt,'Color',c);
                         set(plt,'LineWidth',2);
                         set(plt,'Tag',tag);
@@ -209,7 +208,7 @@ switch lower(opt)
                         attStruc(i).plotHandles(j)=plt;
                     end
                     if ~isempty(txt)
-                        tx=text(xtxt,ytxt,6500,txt);
+                        tx=text(xtxt,ytxt,txt);
                         set(tx,'Tag',tag,'Clipping','on','HitTest','off');
                         set(tx,'UserData',i);
                         attStruc(i).textHandles=tx;
@@ -228,8 +227,7 @@ switch lower(opt)
                     % Patch
                     x1=x{1};
                     y1=y{1};
-                    z=zeros(size(x1))+6000;
-                    plt=patch(x1,y1,z);hold on;
+                    plt=patch(x1,y1,'r');hold on;
                     set(plt,'FaceColor',c);
                     set(plt,'EdgeColor','none');
                     set(plt,'Tag',tag);
@@ -286,12 +284,10 @@ switch lower(opt)
         try
             if ~isempty(allPlotHandles)
                 delete(allPlotHandles);
-                %            drawnow;
             end
             
             if ~isempty(allTextHandles)
                 delete(allTextHandles);
-                %            drawnow;
             end
             for i=1:nr
                 attStruc(i).plotHandles=[];
@@ -312,11 +308,13 @@ switch lower(opt)
                     set(allPlotHandles,'Color',colpas);
                     if act
                         set(attStruc(iac).plotHandles,'Color',colact);
+                        uistack(allPlotHandles,'top');
                     end
                 else
                     set(allPlotHandles,'FaceColor',colpas);
                     if act
                         set(attStruc(iac).plotHandles,'FaceColor',colact);
+                        uistack(allPlotHandles,'top');
                     end
                 end
             end
@@ -341,6 +339,7 @@ switch lower(opt)
                 if vis
                     if act
                         set(allTextHandles,'Visible','on');
+                        uistack(allTextHandles,'top');
                     else
                         set(allTextHandles,'Visible','off');
                     end

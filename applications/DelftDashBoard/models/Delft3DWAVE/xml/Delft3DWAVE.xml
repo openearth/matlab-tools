@@ -90,7 +90,7 @@
           <option>saveas</option>
         </menuitem>
         <menuitem>
-          <string>Save All</string>
+          <string>Save All Delft3D-WAVE Files</string>
           <callback>ddb_saveDelft3DWAVE</callback>
           <option>saveall</option>
         </menuitem>

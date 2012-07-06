@@ -407,8 +407,8 @@ x1=x(1);x2=x(2);
 y1=y(1);y2=y(2);
 handles=getHandles;
 id=ad;
-[m1,n1]=FindCornerPoint(x1,y1,handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
-[m2,n2]=FindCornerPoint(x2,y2,handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
+[m1,n1]=findcornerpoint(x1,y1,handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
+[m2,n2]=findcornerpoint(x2,y2,handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
 [m1,n1,m2,n2,ok]=checkBoundaryPoints(m1,n1,m2,n2,1);
 
 if ok==1

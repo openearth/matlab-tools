@@ -177,8 +177,8 @@ y1=y(1);y2=y(2);
 
 handles=getHandles;
 % Find grid indices of start and end point of line
-[m1,n1]=findGridCell(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
-[m2,n2]=findGridCell(x2,y2,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+[m1,n1]=findgridcell(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+[m2,n2]=findgridcell(x2,y2,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
 % Check if start and end are in one grid line
 if m1>0 && (m1==m2 || n1==n2)
     if handles.Model(md).Input(ad).changeDryPoint

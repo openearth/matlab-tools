@@ -172,12 +172,12 @@ y1=y(1);y2=y(2);
 handles=getHandles;
 
 if x1==x2 && y1==y2
-    [m1,n1,uv]=FindGridLine(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+    [m1,n1,uv]=findgridline(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
     m2=m1;
     n2=n1;
 else
-    [m1,n1]=FindCornerPoint(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
-    [m2,n2]=FindCornerPoint(x2,y2,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+    [m1,n1]=findcornerpoint(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+    [m2,n2]=findcornerpoint(x2,y2,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
 end
 if m1>0 && (m1==m2 || n1==n2)
     

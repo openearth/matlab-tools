@@ -199,7 +199,7 @@ y1=y(1);
 
 handles=getHandles;
 % Find grid indices
-[m1,n1]=findGridCell(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+[m1,n1]=findgridcell(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
 % Check if start and end are in one grid line
 if ~isempty(m1)
     if m1>0

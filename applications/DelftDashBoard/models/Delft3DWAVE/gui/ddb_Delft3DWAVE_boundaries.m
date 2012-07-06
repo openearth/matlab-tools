@@ -194,8 +194,8 @@ for ii=1:handles.Model(md).Input.nrboundaries
         % Find nearest grid points
         xg=handles.Model(md).Input.domains(1).gridx;
         yg=handles.Model(md).Input.domains(1).gridy;
-        [m1,n1]=FindCornerPoint(x(1),y(1),xg,yg);
-        [m2,n2]=FindCornerPoint(x(2),y(2),xg,yg);
+        [m1,n1]=findcornerpoint(x(1),y(1),xg,yg);
+        [m2,n2]=findcornerpoint(x(2),y(2),xg,yg);
         if strcmpi(handles.Model(md).Input.boundaries(ii).definition,'grid-coordinates')
             handles.Model(md).Input.boundaries(ii).startcoordx=xg(m1,n1);
             handles.Model(md).Input.boundaries(ii).endcoordx=xg(m2,n2);

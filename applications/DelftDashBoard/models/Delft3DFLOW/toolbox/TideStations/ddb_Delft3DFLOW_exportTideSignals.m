@@ -98,7 +98,7 @@ end
 % Find stations within grid
 nrp=0;
 if ~isempty(posx)
-    [m,n]=findGridCell(posx,posy,xg,yg);
+    [m,n]=findgridcell(posx,posy,xg,yg);
     for i=1:length(m)
         if m(i)>0
             nrp=nrp+1;

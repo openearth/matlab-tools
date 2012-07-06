@@ -129,23 +129,10 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     
     attName=handles.Model(md).Input(id).attName;
     
-    % Generate bathymetry
-    
-    %     xx=handles.GUIData.x;
-    %     yy=handles.GUIData.y;
-    %     zz=handles.GUIData.z;
-    
+    % Generate bathymetry    
     
     for idata=1:length(datasets)
 
-        switch lower(handles.Model(md).Input(id).dpsOpt)
-            case{'dp'}
-                xg=handles.Model(md).Input(id).gridXZ;
-                yg=handles.Model(md).Input(id).gridYZ;
-            otherwise
-                xg=handles.Model(md).Input(id).gridX;
-                yg=handles.Model(md).Input(id).gridY;
-        end
 
         % Loop through selected datasets
         
@@ -174,8 +161,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         yl(1)=yl(1)-dbuf;
         yl(2)=yl(2)+dbuf;
         
-        %    dmin=15000;
-        [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',bathyset,'maxcellsize',dmin,'startdate',startdate,'searchinterval',searchinterval);
+        [xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xl,yl,'bathymetry',bathyset,'maxcellsize',dmin,'startdate',startdate,'searchinterval',searchinterval);
         
         % Remove values outside requested range
         zz(zz<zmn)=NaN;
