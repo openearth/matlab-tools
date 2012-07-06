@@ -17,70 +17,16 @@
       <plottype>barplot</plottype>
       <PLOToffset>0</PLOToffset>
     </coast>
-    <dunes>
-      <yposinitial>80</yposinitial>
-      <duneclasses>
-        <Ythr>0.5</Ythr>
-        <PLOTscale1>       200       </PLOTscale1>
-        <PLOTscale2>       -2        </PLOTscale2>
-        <PLOToffset>       -10000     </PLOToffset>
-        <on>               0         </on>
-        <plottype>         icons     </plottype>
-        <icons>
-          <class>          1               </class>
-          <url> dunes_red.png              </url>
-          <class>          2               </class>
-          <url> dunes_grey.png             </url>
-          <class>          3               </class>
-          <url> dunes_white.png            </url>
-          <class>          4               </class>
-          <url> dunes_green.png            </url>
-          <class>          5               </class>
-          <url> dunes_dark_green.png       </url>    
-        </icons>
-      </duneclasses>
-      <habitatrichness>
-        <Ythr>0.5</Ythr>
-        <PLOTscale1>       300       </PLOTscale1>
-        <PLOTscale2>       -1        </PLOTscale2>
-        <PLOToffset>       -12000    </PLOToffset>
-        <plottype>         icons     </plottype>
-        <icons>
-          <class>          1               </class>
-          <url> flowers_yellow.png         </url>
-          <class>          2               </class>
-          <url> flowers_light_green.png      </url>
-          <class>          3               </class>
-          <url> flowers_dark_green.png      </url>
-        </icons>
-      </habitatrichness>
-      <dunedynamics>
-        <Ythr>0.5</Ythr>
-        <PLOTscale1>       200       </PLOTscale1>
-        <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       -14000    </PLOToffset>
-        <icons>
-          <class>          1               </class>
-          <url> dunedynamics_no.png        </url>
-          <class>          2               </class>
-          <url> dunedynamics_low.png       </url>
-          <class>          3               </class>
-          <url> dunedynamics_moderate.png  </url>
-          <class>          4               </class>
-          <url> dunedynamics_high.png      </url>
-        </icons>
-      </dunedynamics>
-    </dunes>
     <ecology>
       <benthos>
         <header>Computes population change of benthos at location of nourishment (with classes ranging from Ks*[1, 1-Ythr, 1-2*Ythr, 0]))</header>
         <function>ITHK_ind_ecology_benthos</function>
         <plottype>barplot</plottype>
         <Ythr>0.3</Ythr>
-        <PLOTscale1>       2000      </PLOTscale1>
+        <PLOTscale1>       1650      </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
         <PLOToffset>       7000      </PLOToffset>
-        <PLOToffsetDX>     2500      </PLOToffsetDX>
+        <PLOToffsetDX>     2000      </PLOToffsetDX>
         <icons>
           <class>          1               </class>
           <url> benthos_no.png             </url>
@@ -97,9 +43,9 @@
         <function>ITHK_ind_ecology_juvenilefish</function>
         <Ythr>0.2</Ythr>
         <ShoreWidth>10000</ShoreWidth>
-        <PLOTscale1>       2000      </PLOTscale1>
+        <PLOTscale1>       1600      </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       17000     </PLOToffset>
+        <PLOToffset>       15000     </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> juvenilefish_positive.png  </url>
@@ -115,12 +61,12 @@
     <costs>
       <direct>
         <header>Transport distance in kilometers</header>
-        <transportdistance>10</transportdistance>
+        <transportdistance>12</transportdistance>
         <header2>Type of location of nourishments 1= predominantly beach; 2= foreshore</header2>
         <locationtype>     1         </locationtype>
-        <PLOTscale1>       0.000016  </PLOTscale1>
+        <PLOTscale1>       0.000014  </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       20000     </PLOToffset>
+        <PLOToffset>       17000     </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> directcosts_no.png         </url>
@@ -137,9 +83,9 @@
       <beachwidth>
         <header>Recreation beach width</header>
         <Ythr>50</Ythr>
-        <PLOTscale1>       1         </PLOTscale1>
+        <PLOTscale1>       0.8       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       23000     </PLOToffset>
+        <PLOToffset>       19000     </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> beachwidth_no.png          </url>
@@ -154,9 +100,9 @@
       <dunearea>
         <header>Recreation dune width</header>
         <Ythr>50</Ythr>
-        <PLOTscale1>       4         </PLOTscale1>
+        <PLOTscale1>       3.5       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       26000     </PLOToffset>
+        <PLOToffset>       21000     </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> dunearea_no.png            </url>
@@ -173,9 +119,9 @@
       <drinkwater>
         <header>Drinking water with dune area change as proxy</header>
         <Ythr>50</Ythr>
-        <PLOTscale1>       4         </PLOTscale1>
+        <PLOTscale1>       3.5       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
-        <PLOToffset>       29000     </PLOToffset>
+        <PLOToffset>       23000     </PLOToffset>
         <icons>
           <class>          1               </class>
           <url> drinkwater_no.png          </url>
@@ -260,6 +206,60 @@
         </icons>
       </structures>  
     </safety>
+    <dunes>
+      <yposinitial>80</yposinitial>
+      <duneclasses>
+        <Ythr>0.5</Ythr>
+        <PLOTscale1>       200       </PLOTscale1>
+        <PLOTscale2>       -2        </PLOTscale2>
+        <PLOToffset>       -10000     </PLOToffset>
+        <on>               0         </on>
+        <plottype>         icons     </plottype>
+        <icons>
+          <class>          1               </class>
+          <url> dunes_red.png              </url>
+          <class>          2               </class>
+          <url> dunes_grey.png             </url>
+          <class>          3               </class>
+          <url> dunes_white.png            </url>
+          <class>          4               </class>
+          <url> dunes_green.png            </url>
+          <class>          5               </class>
+          <url> dunes_dark_green.png       </url>    
+        </icons>
+      </duneclasses>
+      <habitatrichness>
+        <Ythr>0.5</Ythr>
+        <PLOTscale1>       300       </PLOTscale1>
+        <PLOTscale2>       -1        </PLOTscale2>
+        <PLOToffset>       -12000    </PLOToffset>
+        <plottype>         icons     </plottype>
+        <icons>
+          <class>          1               </class>
+          <url> flowers_yellow.png         </url>
+          <class>          2               </class>
+          <url> flowers_light_green.png      </url>
+          <class>          3               </class>
+          <url> flowers_dark_green.png      </url>
+        </icons>
+      </habitatrichness>
+      <dunedynamics>
+        <Ythr>0.5</Ythr>
+        <PLOTscale1>       200       </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       -14000    </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> dunedynamics_no.png        </url>
+          <class>          2               </class>
+          <url> dunedynamics_low.png       </url>
+          <class>          3               </class>
+          <url> dunedynamics_moderate.png  </url>
+          <class>          4               </class>
+          <url> dunedynamics_high.png      </url>
+        </icons>
+      </dunedynamics>
+    </dunes>
   </indicators>
   <plotting>
     <reference>initial</reference>
