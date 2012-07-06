@@ -134,7 +134,7 @@ for jj=1:length(fldname)
             else
                 addtxt  = sprintf('Groyne with length %1.0fm. ',R.length);
             end
-            KMLdata2 = [KMLdata2,KMLcosts(S,fldname{jj},costs.(fldname{jj}).costs(ii),ii,R.lon,R.lat,addtxt)];
+            KMLdata2 = [KMLdata2,ITHK_KMLcostsicons(S,fldname{jj},costs.(fldname{jj}).costs(ii),ii,R.lon,R.lat,addtxt)];
         end
     else
         costs.(fldname{jj}).costs  = 0;
@@ -143,64 +143,72 @@ end
 
 %% EVALUATE NOURISHMENTS
 if isfield(S.userinput,'nourishment');
-for ii=1:length(S.userinput.nourishment)
-    N=struct;
-    N.tstart     =   S.userinput.nourishment(ii).start;
-    N.tstop      =   S.userinput.nourishment(ii).stop;
-    N.lat        =   S.userinput.nourishment(ii).lat;
-    N.lon        =   S.userinput.nourishment(ii).lon;
-    N.VOL        =   S.userinput.nourishment(ii).volume;
-    N.WIDTH      =   S.userinput.nourishment(ii).width;
-    N.volperm    =   N.VOL/N.WIDTH;
-    N.id         =   S.userinput.nourishment(ii).idRANGE(:);
-    N.id2        =   S.userinput.nourishment(ii).idRANGE2(:);
-    N.distance   =   distance;
-    costs.nourishments.props(ii) = N;
-    
-    %% Distinguish the nourishment type (nTYPE), the ratio for indirect costs, the distribution over the types of nourishment methods (beach, rainbow, release)
-    if N.volperm < costs.classdefinition.small(2)
-        nTYPE=1;
-    elseif N.volperm < costs.classdefinition.medium(2)
-        nTYPE=2;
-    else
-        nTYPE=3;
+    for ii=1:length(S.userinput.nourishment)
+        N=struct;
+        N.tstart     =   S.userinput.nourishment(ii).start;
+        N.tstop      =   S.userinput.nourishment(ii).stop;
+        N.lat        =   S.userinput.nourishment(ii).lat;
+        N.lon        =   S.userinput.nourishment(ii).lon;
+        N.VOL        =   S.userinput.nourishment(ii).volume;
+        N.WIDTH      =   S.userinput.nourishment(ii).width;
+        N.volperm    =   N.VOL/N.WIDTH;
+        N.id         =   S.userinput.nourishment(ii).idRANGE(:);
+        N.id2        =   S.userinput.nourishment(ii).idRANGE2(:);
+        N.distance   =   distance;
+        costs.nourishment.props(ii) = N;
+        %% Distinguish the nourishment type (nTYPE), the ratio for indirect costs, the distribution over the types of nourishment methods (beach, rainbow, release)
+        if N.volperm < costs.classdefinition.small(2)
+            nTYPE=1;
+        elseif N.volperm < costs.classdefinition.medium(2)
+            nTYPE=2;
+        else
+            nTYPE=3;
+        end
+        indirectratio(1) = costs.indirectratio.beachtype(nTYPE);
+        indirectratio(2) = costs.indirectratio.foreshoretype(nTYPE);
+        PRCTbeach    = [costs.distribution.beachtype.beach(nTYPE) costs.distribution.foreshoretype.beach(nTYPE)];
+        PRCTrainbow  = [costs.distribution.beachtype.rainbow(nTYPE) costs.distribution.foreshoretype.rainbow(nTYPE)];
+        PRCTrelease  = [costs.distribution.beachtype.release(nTYPE) costs.distribution.foreshoretype.release(nTYPE)];
+
+        %% Compute costs per m3
+        costs_nbeach           = (costs.costprices.take_up(nTYPE)+costs.costprices.nourish_beach(nTYPE)+costs.costprices.pipes(nTYPE)).*PRCTbeach/100;
+        costs_nrainbow         = (costs.costprices.take_up(nTYPE)+costs.costprices.nourish_rainbow(nTYPE)).*PRCTrainbow/100;
+        costs_nforeshore       = (costs.costprices.take_up(nTYPE)+costs.costprices.nourish_foreshore(nTYPE)).*PRCTrelease/100;
+
+        costs_nourish(ii,:)    = costs_nbeach + costs_nrainbow + costs_nforeshore;
+        costs_transport(ii)    = N.distance * costs.costprices.transport(nTYPE);
+        costs_direct(ii,:)     = costs_nourish(ii,:) + costs_transport(ii);  % + costs.structures;
+        costs_indirect(ii,:)   = costs_direct(ii,:).*(indirectratio/100.);
+        costs_total(ii,:)      = costs_direct(ii,:) + costs_indirect(ii,:);
+
+        %% Compute costs of whole nourishment
+        costs.nourishment.time(ii)         = (N.tstart + N.tstop)/2;
+        costs.nourishment.duration         = (N.tstop-N.tstart);
+        costs.nourishment.costs(ii,:)      = sort(costs_total(ii,:)) * N.VOL * (N.tstop-N.tstart);
+
+        %% Put costs on grid
+        idt                           = [N.tstart:N.tstop-1];
+        costsUB.total(N.id,idt)       = costsUB.total(N.id,idt)      + costs_total(ii,idTYPE) * N.VOL * (N.tstop-N.tstart)/length(N.id)/length(idt);
+        costsGE.total(N.id2,idt)      = costsGE.total(N.id2,idt)     + costs_total(ii,idTYPE) * N.VOL * (N.tstop-N.tstart)/length(N.id2)/length(idt);
+        costsGE.nourish(N.id2,idt)    = costsGE.nourish(N.id2,idt)   + costs_nourish(ii,idTYPE) * N.VOL * (N.tstop-N.tstart)/length(N.id2)/length(idt);
+        costsGE.transport(N.id2,idt)  = costsGE.transport(N.id2,idt) + costs_transport(ii) * N.VOL * (N.tstop-N.tstart)/length(N.id2)/length(idt);
+        costsGE.indirect(N.id2,idt)   = costsGE.indirect(N.id2,idt)  + costs_indirect(ii,idTYPE) * N.VOL * (N.tstop-N.tstart)/length(N.id2)/length(idt);
+
+        %% Make KML with direct costs for each of the noursihment locations
+        %% add pop-up window
+        if N.tstart==N.tstop
+            addtxt  = sprintf(['This nourishment is characterised by a volume of %2.2f million m^3 over a width of %1.0f m which is placed in the year %1.0f. ',...
+                               'The costprices are about %2.2f to %2.2f euro/m^3 for the dredging and nourishing, about %2.2f euro/m^3/km for the transport and %2.2f to %2.2f euro/m^3 for indirect costs.'], ...
+                               N.VOL/10^6,N.WIDTH,N.tstart+S.PP(sens).settings.t0,min(costs_nourish(ii,:)),max(costs_nourish(ii,:)),costs_transport(ii),min(costs_indirect(ii,:)),max(costs_indirect(ii,:)));
+        else
+            addtxt  = sprintf(['This nourishment is characterised by a volume of %2.2f million m^3/yr over a width of %1.0f m which is placed between the year %1.0f and %1.0f. ',...
+                               'The costprices are about %2.2f to %2.2f euro/m^3 for the dredging and nourishing, about %2.2f euro/m^3/km for the transport and %2.2f to %2.2f euro/m^3 for indirect costs.'], ...
+                               N.VOL/10^6,N.WIDTH,N.tstart+S.PP(sens).settings.t0,N.tstop+S.PP(sens).settings.t0,min(costs_nourish(ii,:)),max(costs_nourish(ii,:)),costs_transport(ii),min(costs_indirect(ii,:)),max(costs_indirect(ii,:)));
+        end
+        KMLdata2 = [KMLdata2,ITHK_KMLcostsicons(S,'nourishment',costs.nourishment.costs(ii,:),ii,N.lon,N.lat,addtxt)];
     end
-    indirectratio(1) = costs.indirectratio.beachtype(nTYPE);
-    indirectratio(2) = costs.indirectratio.foreshoretype(nTYPE);
-    PRCTbeach    = [costs.distribution.beachtype.beach(nTYPE) costs.distribution.foreshoretype.beach(nTYPE)];
-    PRCTrainbow  = [costs.distribution.beachtype.rainbow(nTYPE) costs.distribution.foreshoretype.rainbow(nTYPE)];
-    PRCTrelease  = [costs.distribution.beachtype.release(nTYPE) costs.distribution.foreshoretype.release(nTYPE)];
-    
-    %% Compute costs per m3
-    costs_nbeach           = (costs.costprices.take_up(nTYPE)+costs.costprices.nourish_beach(nTYPE)+costs.costprices.pipes(nTYPE)).*PRCTbeach/100;
-    costs_nrainbow         = (costs.costprices.take_up(nTYPE)+costs.costprices.nourish_rainbow(nTYPE)).*PRCTrainbow/100;
-    costs_nforeshore       = (costs.costprices.take_up(nTYPE)+costs.costprices.nourish_foreshore(nTYPE)).*PRCTrelease/100;
-    
-    costs_nourish(ii,:)    = costs_nbeach + costs_nrainbow + costs_nforeshore;
-    costs_transport(ii)    = N.distance * costs.costprices.transport(nTYPE);
-    costs_direct(ii,:)     = costs_nourish(ii,:) + costs_transport(ii);  % + costs.structures;
-    costs_indirect(ii,:)   = costs_direct(ii,:).*(indirectratio/100.);
-    costs_total(ii,:)      = costs_direct(ii,:) + costs_indirect(ii,:);
-    
-    %% Compute costs of whole nourishment
-    costs.nourishments.time(ii)         = (N.tstart + N.tstop)/2;
-    costs.nourishments.costs(ii,:)      = sort(costs_total(ii,:)) * N.VOL;
-    
-    %% Put costs on grid
-    idt                           = [N.tstart:N.tstop-1];
-    costsUB.total(N.id,idt)       = costsUB.total(N.id,idt)      + costs_total(ii,idTYPE) * N.VOL/length(N.id)/length(idt);
-    costsGE.total(N.id2,idt)      = costsGE.total(N.id2,idt)     + costs_total(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
-    costsGE.nourish(N.id2,idt)    = costsGE.nourish(N.id2,idt)   + costs_nourish(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
-    costsGE.transport(N.id2,idt)  = costsGE.transport(N.id2,idt) + costs_transport(ii) * N.VOL/length(N.id2)/length(idt);
-    costsGE.indirect(N.id2,idt)   = costsGE.indirect(N.id2,idt)  + costs_indirect(ii,idTYPE) * N.VOL/length(N.id2)/length(idt);
-    
-    %% Make KML with direct costs for each of the noursihment locations
-    %% add pop-up window
-    addtxt  = sprintf(['This nourishment is characterised by a volume of %2.2f million m^3 and a width of %1.0f m which is placed in the year %1.0f. ',...
-                       'The costprices are about %2.2f to %2.2f euro/m^3 for the dredging and nourishing, about %2.2f euro/m^3/km for the transport and %2.2f to %2.2f euro/m^3 for indirect costs.'], ...
-                       N.VOL/10^6,N.WIDTH,N.tstart+S.PP(sens).settings.t0,min(costs_nourish(ii,:)),max(costs_nourish(ii,:)),costs_transport(ii),min(costs_indirect(ii,:)),max(costs_indirect(ii,:)));
-    KMLdata2 = [KMLdata2,KMLcosts(S,'nourishment',costs.nourishments.costs(ii,:),ii,N.lon,N.lat,addtxt)];
-end
+else
+    costs.nourishment.costs  = 0;
 end
 
 %% Set output of costs indicator in fields of S-structure
@@ -245,8 +253,8 @@ S.PP(sens).output.kml_costs_direct3 = KMLdata3;
 end
 
 
-%% SUB-FUNCTION KMLcosts
-function KMLdata=KMLcosts(S,measuretype,directcosts,ii,lon,lat,addtxt)
+%% SUB-FUNCTION ITHK_KMLcostsicons
+function KMLdata=ITHK_KMLcostsicons(S,measuretype,directcosts,ii,lon,lat,addtxt)
     iconlink      = [S.settings.basedir,'Matlab\postprocessing\indicators\costs\icons\euro-icon32x32.ico'];
     if length(directcosts)==1
         popuptxt  = {[measuretype,' ',num2str(ii)], ...

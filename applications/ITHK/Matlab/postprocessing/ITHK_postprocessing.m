@@ -98,18 +98,12 @@ fprintf('ITHK postprocessing\n');
     ITHK_ind_safety_dykering(sens);
     ITHK_ind_safety_structures(sens);
 
-    
 %% Add disclaimer
 % if isfield(S.settings.postprocessing,'disclaimer') 
 %     disclaimer = ITHK_kmldisclaimer;
 %     S.PP(sens).output.kml = [S.PP(sens).output.kml disclaimer];
 % end
 
-%kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, ...
-%          S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
-%          S.PP(sens).output.kml_eco_benthos{1}, S.PP(sens).output.kml_eco_benthos{2}, ...
-%          S.PP(sens).output.kml_eco_benthos{3}, S.PP(sens).output.kml_ecology_juvenilefish, ...
-%          S.PP(sens).output.kml_dunes_duneclasses,S.PP(sens).output.kml_dunes_habitatrichness];
 kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, ...
           S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
           S.PP(sens).output.kml_ecology_benthos{1}, S.PP(sens).output.kml_ecology_benthos{2}, ...
@@ -132,6 +126,13 @@ kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, ...
           S.PP(sens).output.kml_residential_groundwater2,S.PP(sens).output.kml_residential_realestate2, ...
           S.PP(sens).output.kml_safety_dykering2,S.PP(sens).output.kml_safety_structures2];
 addtxt = '_ICONS';ITHK_io_writeKML(kmltxt,addtxt,sens);
+
+kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, ...
+         S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
+         S.PP(sens).output.kml_ecology_benthos{1}, S.PP(sens).output.kml_ecology_benthos{2}, ...
+         S.PP(sens).output.kml_ecology_benthos{3}, S.PP(sens).output.kml_ecology_juvenilefish, ...
+         S.PP(sens).output.kml_dunes_duneclasses2,S.PP(sens).output.kml_dunes_habitatrichness2];
+addtxt = '_coast+benthos+foreshore+dunes';ITHK_io_writeKML(kmltxt,addtxt,sens);
 
 kmltxt = [S.PP(sens).output.kml];
 addtxt = '_CL';ITHK_io_writeKML(kmltxt,addtxt,sens);
@@ -181,6 +182,28 @@ addtxt = '_safety';ITHK_io_writeKML(kmltxt,addtxt,sens);
 kmltxt = [S.PP(sens).output.kml_safety_dykering2,S.PP(sens).output.kml_safety_structures2];
 addtxt = '_safety2';ITHK_io_writeKML(kmltxt,addtxt,sens);
 
+% S.settings.indicators.costs.direct.PLOToffset='10000';
+% S.settings.indicators.costs.direct.locationtype='1';
+% ITHK_ind_costs_direct(sens);
+% kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
+%           S.PP(sens).output.kml_costs_direct, S.PP(sens).output.kml_costs_direct2, S.PP(sens).output.kml_costs_direct3];
+% addtxt = '_coast+costs (on beach)';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% S.settings.indicators.costs.direct.locationtype='2';
+% ITHK_ind_costs_direct(sens);
+% kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
+%           S.PP(sens).output.kml_costs_direct, S.PP(sens).output.kml_costs_direct2, S.PP(sens).output.kml_costs_direct3];
+% addtxt = '_coast+costs (on foreshore)';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% S.settings.indicators.costs.direct.locationtype='2';
+% S.settings.indicators.costs.direct.transportdistance='20';
+% ITHK_ind_costs_direct(sens);
+% kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
+%           S.PP(sens).output.kml_costs_direct, S.PP(sens).output.kml_costs_direct2, S.PP(sens).output.kml_costs_direct3];
+% addtxt = '_coast+costs (on foreshore+transport20km)';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% S.settings.indicators.costs.direct.locationtype='1';
+% ITHK_ind_costs_direct(sens);
+% kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
+%           S.PP(sens).output.kml_costs_direct, S.PP(sens).output.kml_costs_direct2, S.PP(sens).output.kml_costs_direct3];
+% addtxt = '_coast+costs (on beach+transport20km)';ITHK_io_writeKML(kmltxt,addtxt,sens);
 
 %    indicatorfields    = {'safety_dykering' ...                      % 
 %                          'safety_structures' ...                    % 

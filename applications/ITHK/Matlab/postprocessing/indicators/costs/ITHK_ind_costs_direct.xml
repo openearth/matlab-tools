@@ -4,21 +4,21 @@
     <description>Definition of classes for small, medium and large nourishment</description>
     <header> lowerbound (m3/m), Upperbound (m3/m)</header>
     <small>  0      500    </small>
-    <medium> 500    3000   </medium>
-    <large>  3000   100000 </large>
+    <medium> 500    1500   </medium>
+    <large>  1500   100000 </large>
   </classdefinition>
   <costprices>
     <description>Cost prices in euro/m3 or euro/km (for transport)</description>
     <header> small (less than 2.5Mm3), medium (2.5 to 7.5Mm3) and large (larger than 7.5Mm3) </header>
     <take_up>            0.5400    0.3900    0.3600        </take_up>
-    <transport>          0.0700    0.0500    0.0500        </transport>
+    <transport>          0.0690    0.0500    0.0460        </transport>
     <nourish_foreshore>  0.0900    0.0800    0.0700        </nourish_foreshore>
     <nourish_rainbow>    0.5000    0.3700    0.3600        </nourish_rainbow>
     <nourish_beach>      0.6800    0.4900    0.4500        </nourish_beach>
     <pipes>              0.1700    0.1700    0.1700        </pipes>
     <description2>Cost prices in euro/m length of these structures</description2>
-    <revetment>          5000         </revetment>
-    <groyne>             5000         </groyne>
+    <revetment>         20000         </revetment>
+    <groyne>            20000         </groyne>
   </costprices>
   <distribution>
     <description>Distribution of sediment over beach and foreshore. User should select whether nourishments are placed either predominantly on the beach or on the foreshore.</description>

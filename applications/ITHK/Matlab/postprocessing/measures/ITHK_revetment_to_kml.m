@@ -93,7 +93,7 @@ for jj = 1:length(S.userinput.phases)
         
         % orange line
         if jj==1 && ii==1
-        S.PP(sens).output.kml_revetment = KML_stylePoly('name','revetment','lineColor',[238/255 118/255 0],'lineWidth',7);
+        S.PP(sens).output.kml_revetment = KML_stylePoly('name','revetment','lineColor',[238/255 118/255 0],'lineWidth',10);
         end
         % polygon to KML
         S.PP(sens).output.kml_revetment = [S.PP(sens).output.kml_revetment KML_line(latpoly2 ,lonpoly2 ,'timeIn',datenum(t0+S.userinput.revetment(ss).start,1,1),'timeOut',datenum(t0+S.userinput.revetment(ss).stop,1,1)+364,'styleName','revetment')];

@@ -135,7 +135,7 @@ for jj = 1:length(S.userinput.phases)
 
             % black rectangle
             if jj==1 && ii==1
-            S.PP(sens).output.kml_groyne = KML_stylePoly('name','groyne','fillColor',[0 0 0],'lineColor',[0 0 0],'lineWidth',4,'fillAlpha',0.7);
+            S.PP(sens).output.kml_groyne = KML_stylePoly('name','groyne','fillColor',[0 0 0],'lineColor',[0 0 0],'lineWidth',8,'fillAlpha',1);
             end
             % polygon to KML
             S.PP(sens).output.kml_groyne = [S.PP(sens).output.kml_groyne KML_line(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.groyne(ss).start,1,1),'timeOut',datenum(t0+S.userinput.groyne(ss).stop,1,1)+364,'styleName','groyne')];
