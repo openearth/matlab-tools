@@ -53,9 +53,9 @@ global S
     %% DEFAULT VALUES
     DUNES                = struct;
     settings             = struct;
-    settings.Cmax        = 35;
+    settings.Cmax        = 80;  %35;
     settings.Bthr        = 80;
-    settings.Bhalf       = 50;
+    settings.Bhalf       = 150; %50;
     settings.yposinitial = 80;  % Intial dune face position at 80 meters landward of coastline position
     settings.Hactdunes   = 15;  % Active height of the dunes (default=15m)
     %settings.Hactcoast   = 10;  % Active height of the coast (default=10m) <- relevant if feedback from dunes to coast is considered in the future
