@@ -89,12 +89,15 @@ end
 handles.Model(md).GUI.elements(1).element.tabs(1).tab.elements=gui_addElements(gcf,toolboxElements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);
 setHandles(handles);
 
+drawnow;
+
 % Find handle of tab panel and get tab info
 el=getappdata(handles.Model(md).GUI.elements(1).element.handle,'element');
 el.tabs(1).tab.elements=handles.Model(md).GUI.elements(1).element.tabs(1).tab.elements;
 % Set callback to tab
 el.tabs(1).tab.callback=handles.Toolbox(tb).callFcn;
 setappdata(handles.Model(md).GUI.elements(1).element.handle,'element',el);
+
 
 % And finally select the toolbox tab
 tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox');

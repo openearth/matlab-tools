@@ -70,14 +70,15 @@ for i=1:handles.shorelines.nrShorelines
     
     switch lower(handles.shorelines.shoreline(i).type)
         case{'netcdftiles'}
-            if handles.shorelines.shoreline(i).update == 1
-            
+            localdir = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep];
+            % Check if data needs to be updated, because there is a new
+            % version, or because the metadata file does not exist
+            if handles.shorelines.shoreline(i).update == 1 || ~exist([localdir handles.shorelines.shoreline(i).name '.nc'],'file')            
                 if strcmpi(handles.shorelines.shoreline(i).URL(1:4),'http')
                     % OpenDAP
                     fname=[handles.shorelines.shoreline(i).URL '/' handles.shorelines.shoreline(i).name '.nc'];
                     if handles.shorelines.shoreline(i).useCache
                         % First copy meta data file to local cache
-                        localdir = [handles.shorelineDir handles.shorelines.shoreline(i).name filesep];
                         if exist([localdir 'temp.nc'],'file')
                             try
                                 delete([localdir 'temp.nc']);
@@ -176,7 +177,6 @@ for i=1:handles.shorelines.nrShorelines
     end
 end
 
-disp([num2str(handles.shorelines.nrShorelines) ' shoreline found!']);
+disp([num2str(handles.shorelines.nrShorelines) ' shorelines found!']);
 
 setHandles(handles);
-

@@ -81,4 +81,7 @@ if ~strcmpi(handles.activeToolbox.name,tbname)
 end
 
 % Select toolbox
+set(gcf,'Pointer','watch');
 ddb_selectToolbox;
+set(gcf,'Pointer','arrow');
+

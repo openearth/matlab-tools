@@ -1,4 +1,4 @@
-function ddcompile3
+function ddb_compile
 %DDCOMPILE3  One line description goes here.
 %
 %   More detailed description goes here.
@@ -63,15 +63,25 @@ function ddcompile3
 
 matlabfolder='n:\Applications\Matlab\Matlab2012a_64\';
 compilefolder='d:\delftdashboardsetup\';
+ddbsettingsdir='d:\ddbsettings\';
 
-
-if ~exist(compilefolder,'dir')
-    mkdir(compilefolder);
+% Throw away compilefolder
+if exist(compilefolder,'dir')
+   rmdir(compilefolder,'s');
 end
-rmdir([compilefolder 'data']);
-rmdir([compilefolder 'bin']);
+
+if exist(ddbsettingsdir,'dir')
+   rmdir(ddbsettingsdir,'s');
+end
+
+% Make new compile folder
+mkdir(compilefolder);
 mkdir([compilefolder 'data']);
 mkdir([compilefolder 'bin']);
+exedir=[compilefolder 'bin'];
+compiledatadir=[compilefolder 'data'];
+
+mkdir(ddbsettingsdir);
 
 inipath=[fileparts(fileparts(fileparts(which('DelftDashBoard')))) filesep];
 
@@ -92,19 +102,15 @@ fprintf(fid,'%s\n','-a');
 fprintf(fid,'%s\n','DelftDashBoard.m');
 
 % Make directory for compiled settings
-mkdir([inipath 'ddbsettings']);
 flist=dir([inipath 'settings']);
 for i=1:length(flist)
     switch flist(i).name
         case{'.','..','.svn'}
         otherwise
-            mkdir([inipath 'ddbsettings' filesep flist(i).name]);
-            copyfiles([inipath 'settings' filesep flist(i).name],[inipath 'ddbsettings' filesep flist(i).name]);
+            mkdir([ddbsettingsdir filesep flist(i).name]);
+            copyfiles([inipath 'settings' filesep flist(i).name],[ddbsettingsdir filesep flist(i).name]);
     end
 end
-
-mkdir([inipath 'ddbsettings' filesep 'models' filesep 'xml']);
-mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep 'xml']);
 
 % Add models
 flist=dir([inipath 'models']);
@@ -123,16 +129,10 @@ for j=1:length(flist)
                     for i=1:length(files)
                         fprintf(fid,'%s\n',files{i});
                     end
-                    % Copy xml files and misc files
+                    % Copy xml files
                     try
-                        mkdir([inipath 'ddbsettings' filesep 'models' filesep model filesep 'xml']);
-                        copyfile([inipath 'models' filesep model filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'models' filesep model filesep 'xml']);
-                    end
-                    try
-                        if isdir([inipath 'models' filesep model filesep 'misc'])
-                            mkdir([inipath 'ddbsettings' filesep 'models' filesep model filesep 'misc']);
-                            copyfiles([inipath 'models' filesep model filesep 'misc'],[inipath 'ddbsettings' filesep 'models' filesep model filesep 'misc']);
-                        end
+                        mkdir([ddbsettingsdir filesep 'models' filesep model filesep 'xml']);
+                        copyfile([inipath 'models' filesep model filesep 'xml' filesep '*.xml'],[ddbsettingsdir filesep 'models' filesep model filesep 'xml']);
                     end
             end
         end
@@ -150,35 +150,28 @@ for j=1:length(flist)
             xml=xml_load(xmlfile);
             switch lower(xml.enable)
                 case{'1','y','yes'}
-                    % Model is enabled
+                    % Toolbox is enabled
                     files=ddb_findAllFiles([inipath 'toolboxes' filesep toolbox],'*.m');
                     for i=1:length(files)
                         fprintf(fid,'%s\n',files{i});
                     end
-                    % Copy xml files and misc files
+                    % Copy xml files
                     try
-                        mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
-                        copyfile([inipath 'toolboxes' filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                        mkdir([ddbsettingsdir filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                        copyfile([inipath 'toolboxes' filesep toolbox filesep 'xml' filesep '*.xml'],[ddbsettingsdir filesep 'toolboxes' filesep toolbox filesep 'xml']);
                     end
-%                     try
-%                         if isdir([inipath 'toolboxes' filesep toolbox filesep 'misc'])
-%                             mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-%                             copyfiles([inipath 'toolboxes' filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-%                         end
-%                     end
             end
         end
     end
 end
 
 % Add additional toolboxes
-inifile=[inipath 'DelftDashBoard.ini'];
+inifile=[inipath 'DelftDashboard.ini'];
+DataDir=getINIValue(inifile,'DataDir');
 try
     additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
-    DataDir=getINIValue(inifile,'DataDir'); 
 catch
     additionalToolboxDir=[];
-    DataDir=[];
 end
 if ~isempty(additionalToolboxDir)
     % Add toolboxes
@@ -197,17 +190,11 @@ if ~isempty(additionalToolboxDir)
                         for i=1:length(files)
                             fprintf(fid,'%s\n',files{i});
                         end
-                        % Copy xml files and misc files
+                        % Copy xml files
                         try
-                            mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
-                            copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                            mkdir([ddbsettingsdir filesep 'toolboxes' filesep toolbox filesep 'xml']);
+                            copyfile([additionalToolboxDir filesep toolbox filesep 'xml' filesep '*.xml'],[ddbsettingsdir filesep 'toolboxes' filesep toolbox filesep 'xml']);
                         end
-%                         try
-%                             if isdir([additionalToolboxDir filesep toolbox filesep 'misc'])
-%                                 mkdir([inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-%                                 copyfiles([additionalToolboxDir filesep toolbox filesep 'misc'],[inipath 'ddbsettings' filesep 'toolboxes' filesep toolbox filesep 'misc']);
-%                             end
-%                         end
                 end
             end
         end
@@ -225,11 +212,20 @@ try
 end
 
 %% Generate data folder in exe folder
-% ddb_copyAllFilesToDataFolder(inipath,[inipath filesep 'exe' filesep 'data' filesep],additionalToolboxDir,DataDir);
+ddb_copyAllFilesToDataFolder(inipath,compiledatadir,additionalToolboxDir,DataDir);
 
 %mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
 copyfile('settings\icons\earthicon.res','.\');
-mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\netcdfAll-4.2.jar -M earthicon.res
+
+%mcc -m -v -d exe2 DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\netcdfAll-4.2.jar -M earthicon.res
+%mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir,'-a','..\..\io\netcdf\netcdfAll-4.2.jar','-M','earthicon.res');
+
+disp('Start compiling ...');
+
+mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir,'-a','..\..\io\netcdf\netcdfAll-4.2.jar');
+
+% copyfile('exe2\delftdashboard.exe',exedir);
+% rmdir('exe','s');
 
 % make about.txt file
 Revision = '$Revision$';
@@ -242,5 +238,4 @@ delete('complist');
 delete('earthicon.rc');
 delete('earthicon.res');
 
-rmdir('ddbsettings','s');
-
+rmdir(ddbsettingsdir,'s');

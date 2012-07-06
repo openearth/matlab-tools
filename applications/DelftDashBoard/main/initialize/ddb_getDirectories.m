@@ -72,20 +72,23 @@ if isdeployed
     
     [status, result] = system('path');
     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
-    ddbdir=[fileparts(exeDir) filesep 'data' filesep];
+    datadir=[fileparts(exeDir) filesep 'data' filesep];
     additionalToolboxDir=[];
     
 else
     
-    inipath=[fileparts(fileparts(fileparts(which('DelftDashBoard')))) filesep];
+    inipath=fileparts(fileparts(fileparts(which('DelftDashBoard'))));
     
-    % check existence of ini file DelftDashBoard.ini
-    inifile=[inipath 'DelftDashBoard.ini'];
+    % Check existence of ini file DelftDashBoard.ini
+    
+    inifile=[inipath filesep 'DelftDashBoard.ini'];
     
     if ~exist(inifile,'file')
         
+        % Ini file does not exist, so ask for name of delftdashboard folder
+        
         txt='Select folder (preferably named "delftdashboard") for data storage (e.g. d:\delftdashboard). You may need to create a new folder. Folder must be outside OET repository!';
-        dirname = uigetdir(inipath,txt);
+        dirname = uigetdir(filedrive(inipath),txt);
         
         if isnumeric(dirname)
             dirname='';
@@ -95,28 +98,21 @@ else
             error('Local data directory not found, check reference in ini-file!');
         end
         
-        if ~isdir([dirname filesep 'data']);
-            mkdir([dirname filesep 'data']);
-        end
         datadir=[dirname filesep 'data'];
         
+        % Create ini file
         disp('Making delftdashboard.ini file ...');
-        
-        fid=fopen([inipath 'delftdashboard.ini'],'wt');
+        fid=fopen([inipath filesep 'delftdashboard.ini'],'wt');
         fprintf(fid,'%s\n','% Data directories');
         fprintf(fid,'%s\n',['DataDir=' datadir filesep]);
         fclose(fid);
         
     end
     
-    handles.settingsDir=[inipath 'settings' filesep];
-    ddbdir=getINIValue(inifile,'DataDir');
-    if exist(ddbdir)==7 % absolute path
-        ddbdir = [cd(cd(ddbdir)) filesep];
-    elseif exist([fileparts(inifile) filesep ddbdir])==7 % relative path
-        ddbdir = [cd(cd([fileparts(inifile) filesep ddbdir])) filesep];
-    else
-        %         error(['Local data directory ''' ddbdir ''' not found, check reference in ini-file!']);
+    handles.settingsDir=[inipath filesep 'settings' filesep];
+    datadir=getINIValue(inifile,'DataDir');
+    if ~strcmpi(datadir(end),filesep)
+        datadir=[datadir filesep];
     end
     
     try
@@ -125,26 +121,25 @@ else
         additionalToolboxDir=[];
     end
     
-    if ~isdir(ddbdir)
-        
+    if ~isdir(datadir)
         % Usually done the first time ddb is run. Files are copied from
-        % repository to DDB data folder
-        
-        ddb_copyAllFilesToDataFolder(inipath,ddbdir,additionalToolboxDir);
-        
+        % repository to Delft Dashboard data folder
+        mkdir(datadir);        
+        ddb_copyAllFilesToDataFolder(inipath,datadir,additionalToolboxDir);        
     end
     
 end
 
-handles.bathyDir=[ddbdir 'bathymetry' filesep];
-handles.tideDir=[ddbdir 'tidemodels' filesep];
-handles.toolBoxDir=[ddbdir 'toolboxes' filesep];
+handles.bathyDir=[datadir 'bathymetry' filesep];
+handles.tideDir=[datadir 'tidemodels' filesep];
+handles.toolBoxDir=[datadir 'toolboxes' filesep];
 handles.additionalToolboxDir=additionalToolboxDir;
-handles.shorelineDir=[ddbdir 'shorelines' filesep];
-handles.satelliteDir=[ddbdir 'imagery' filesep];
+handles.shorelineDir=[datadir 'shorelines' filesep];
+handles.satelliteDir=[datadir 'imagery' filesep];
+handles.superTransDir=[datadir 'supertrans' filesep];
 
 %  Tropical Cyclone bulletin download directory (used by check_tc_files.pl):
-handles.tropicalCycloneDir = [ddbdir 'tropicalcyclone' filesep];
+handles.tropicalCycloneDir = [datadir 'tropicalcyclone' filesep];
 %  Check whether the TC download directory exists; if not, create the
 %  structure now.
 if (~exist(handles.tropicalCycloneDir, 'dir'))
@@ -168,12 +163,4 @@ if (~exist([handles.tropicalCycloneDir filesep 'NHC'], 'dir'))
         warning(msgid,['unable to create the NHC subdirectory: ' msg]);
     end
 end
-
-if isdeployed
-    handles.superTransDir=[ddbdir 'supertrans' filesep];
-else
-    dr=fileparts(which('EPSG.mat'));
-    handles.superTransDir=[dr filesep];
-end
-
 

@@ -1,27 +1,9 @@
-function ddb_menuBathymetry(hObject, eventdata, handles)
-%DDB_MENUBATHYMETRY  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   ddb_menuBathymetry(hObject, eventdata, handles)
-%
-%   Input:
-%   hObject   =
-%   eventdata =
-%   handles   =
-%
-%
-%
-%
-%   Example
-%   ddb_menuBathymetry
-%
-%   See also
+function ddb_saveAllModelFiles
+%ddb_saveAllModelFiles  Saves all files and attributes
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2012 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -54,40 +36,38 @@ function ddb_menuBathymetry(hObject, eventdata, handles)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %%
-
 handles=getHandles;
 
-lbl=get(hObject,'Label');
-
-h=get(hObject,'Parent');
-hp=get(h,'Parent');
-if hp~=1
-    h=hp;
-end
-ch=get(h,'Children');
-set(ch,'Checked','off');
-for ii=1:length(ch)
-    chc=get(ch(ii),'children');
-    if ~isempty(chc)
-        set(chc,'Checked','off');
+activeModel=md;
+for im=1:length(handles.Model)
+    switch lower(handles.Model(im).name)
+        case{'delft3dflow'}
+            if handles.Model(im).Input(1).MMax>0
+                handles=getHandles;
+                handles.activeModel.nr=im;
+                setHandles(handles);
+                ddb_saveDelft3DFLOW('saveall');
+                handles=getHandles;
+                handles.activeModel.nr=activeModel;
+                setHandles(handles);
+            end
+        case{'delft3dwave'}
+            if handles.Model(im).Input.domains(1).mmax>0
+                handles=getHandles;
+                handles.activeModel.nr=im;
+                setHandles(handles);
+                ddb_saveDelft3DWAVE('saveall');
+                handles=getHandles;
+                handles.activeModel.nr=activeModel;
+                setHandles(handles);
+            end
     end
 end
-
-set(hObject,'Checked','on');
-iac=strmatch(lbl,handles.bathymetry.longNames,'exact');
-
-if ~strcmpi(handles.screenParameters.backgroundBathymetry,handles.bathymetry.datasets{iac})
-    handles.screenParameters.backgroundBathymetry=handles.bathymetry.datasets{iac};
-    set(handles.GUIHandles.textBathymetry,'String',['Bathymetry : ' handles.bathymetry.longNames{iac} '   -   Datum : ' handles.bathymetry.dataset(iac).verticalCoordinateSystem.name]);
-    setHandles(handles);
-    ddb_updateDataInScreen;
-end
-

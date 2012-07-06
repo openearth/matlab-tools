@@ -68,14 +68,16 @@ for i=1:handles.bathymetry.nrDatasets
     handles.bathymetry.dataset(i).isAvailable=1;
     switch lower(handles.bathymetry.dataset(i).type)
         case{'netcdftiles'}
-            if handles.bathymetry.dataset(i).update == 1
-            
+            localdir = [handles.bathyDir handles.bathymetry.dataset(i).name filesep];
+            % Check if data needs to be updated, because there is a new
+            % version, or because the metadata file does not exist
+            if handles.bathymetry.dataset(i).update || ~exist([localdir handles.bathymetry.dataset(i).name '.nc'],'file')
+                % Data sits on OPeNDAP server
                 if strcmpi(handles.bathymetry.dataset(i).URL(1:4),'http')
                     % OpenDAP
                     fname=[handles.bathymetry.dataset(i).URL '/' handles.bathymetry.dataset(i).name '.nc'];
                     if handles.bathymetry.dataset(i).useCache
                         % First copy meta data file to local cache
-                        localdir = [handles.bathyDir handles.bathymetry.dataset(i).name filesep];
                         % Try to delete old crap
                         if exist([localdir 'temp.nc'],'file')
                             try
@@ -230,6 +232,9 @@ for i=1:handles.bathymetry.nrDatasets
                 disp(['Bathymetry dataset ' handles.bathymetry.dataset(i).longName ' not available!']);
                 handles.bathymetry.dataset(i).isAvailable=0;
             end
+    end
+    if ~isfield(handles.bathymetry.dataset(i),'source')
+        handles.bathymetry.dataset(i).source=[];
     end
 end
 

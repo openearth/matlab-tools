@@ -137,7 +137,10 @@ end
 
 %% Convert data to DDB structure format (~= xml format)
 for cc=1:length(data)
-    newdata.(fld{1})(cc) = data(cc).(fld{1});
+    fldnames=fieldnames(data(cc).(fld{1}));
+    for ifld=1:length(fldnames)
+        newdata.(fld{1})(cc).(fldnames{ifld}) = data(cc).(fld{1}).(fldnames{ifld});
+    end
 end
 
 %% Update local xml-file (without update field)

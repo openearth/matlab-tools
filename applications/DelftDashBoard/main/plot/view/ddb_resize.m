@@ -105,6 +105,7 @@ set(handles.GUIHandles.colorBar,'Position',pos);
 set(handles.GUIHandles.textXCoordinate,'Position',[350 posp(4)-25 80 15]);
 set(handles.GUIHandles.textYCoordinate,'Position',[440 posp(4)-25 80 15]);
 set(handles.GUIHandles.textCoordinateSystem,'Position',[90 posp(4)-25 200 15]);
+set(handles.GUIHandles.textBathymetry,'Position',[580 posp(4)-25 400 15]);
 
 xl=get(handles.GUIHandles.mapAxis,'XLim');
 yl=get(handles.GUIHandles.mapAxis,'YLim');

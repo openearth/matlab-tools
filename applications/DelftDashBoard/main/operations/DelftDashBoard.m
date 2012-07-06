@@ -98,20 +98,21 @@ handles=getHandles;
 % pos=[1 29 screenSize(3) screenSize(4)-95];
 % set(handles.GUIHandles.mainWindow,'Position',pos,'Visible','off');
 
-set(handles.GUIHandles.mainWindow,'Visible','on');
+%set(handles.GUIHandles.mainWindow,'Visible','on');
 
 set(gcf,'Renderer','zbuffer');
 
 % Make Figure Visible
 drawnow;
 
-set(handles.GUIHandles.mainWindow,'Visible','on');
 
-maximizeWindow('Delft Dashboard');
+%maximizeWindow('Delft Dashboard');
 
 pause(1);
 
 ddb_updateDataInScreen;
+
+set(handles.GUIHandles.mainWindow,'Visible','on');
 
 % Maximize Figure
 %maximize(handles.GUIHandles.MainWindow);

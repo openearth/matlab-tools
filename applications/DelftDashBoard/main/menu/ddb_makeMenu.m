@@ -102,19 +102,42 @@ handles=ddb_addMenuItem(handles,'Domain','tst',                 'Callback',{@ddb
 
 %% Bathymetry
 uimenu('Label','Bathymetry','Tag','menuBathymetry');
+% First datasets without source
 for i=1:handles.bathymetry.nrDatasets
-    if strcmpi(handles.bathymetry.datasets{i},handles.screenParameters.backgroundBathymetry)
+    if isempty(handles.bathymetry.dataset(i).source)
         if handles.bathymetry.dataset(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','on');
+            enab='on';
         else
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','off');
+            enab='off';
         end
-    else
-        if handles.bathymetry.dataset(i).isAvailable
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','on');
+        if strcmpi(handles.bathymetry.datasets{i},handles.screenParameters.backgroundBathymetry)
+            checked='on';
         else
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','off');
+            checked='off';
         end
+        handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked',checked,'Enable',enab);        
+    end
+end
+
+% Find sources
+sources={''};
+nsource=0;
+for i=1:handles.bathymetry.nrDatasets
+    if ~isempty(handles.bathymetry.dataset(i).source)
+        ii=strmatch(handles.bathymetry.dataset(i).source,sources);
+        if isempty(ii)
+            % New source
+            nsource=nsource+1;
+            sources{nsource}=handles.bathymetry.dataset(i).source;
+            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.dataset(i).source,'Enable','on');
+        end
+    end
+end
+
+for i=1:handles.bathymetry.nrDatasets
+    if ~isempty(handles.bathymetry.dataset(i).source)
+        ii=strmatch(handles.bathymetry.dataset(i).source,sources);
+        handles=ddb_addMenuItem(handles,['Bathymetry' sources{ii}],handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable',enab);
     end
 end
 

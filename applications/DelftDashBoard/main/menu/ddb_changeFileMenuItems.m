@@ -110,11 +110,11 @@ for i=1:length(handles.Model(md).GUI.menu.saveFile)
     end
 end
 
-% Shoreline
+% Save all models
 argin=[];
 argin{1}='Callback';
-argin{2}=@ddb_menuFileOpenShoreline;
-% handles=ddb_addMenuItem(handles,'File','Open Shoreline',          'Callback',{@ddb_menuSelect},'argin',argin,'Separator','on');
+argin{2}=@ddb_saveAllModelFiles;
+handles=ddb_addMenuItem(handles,'File','Save All Model Files','Callback',@ddb_menuSelect,'argin',argin,'Separator','on');
 
 % Working directory
 argin=[];
