@@ -78,15 +78,18 @@ y1         = y'+offset*cos(alpha);           %+offset*sin(alpha-pi()/2);
 
 %% get KML text string
 IDii = round([1:(length(x1)-1)/9:length(x1)]);
-KMLdata=[];
+KMLdata=[];lookAt=1;
 for ii=1:length(x1)
     [lon,lat] = convertCoordinates(x1(ii),y1(ii),S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
     KMLdata2=[];
     
     %% add pop-up text with name of indicator
     if ~isempty(popuptxt) && ii==1
+        time1         = datenum(tvec(1)+t0,1,1);
+        time2         = datenum(tvec(end)+t0-1/365/24/60/60,1,1);
         if isstr(popuptxt{2});popuptxt{2}={popuptxt{2}};end
-        KMLdata2     = [KMLdata2,ITHK_KMLtextballoon(lon,lat,'name',popuptxt{1},'text_array',popuptxt{2},'logo','')];
+        KMLdata2     = [KMLdata2,ITHK_KMLtextballoon(lon,lat,'name',popuptxt{1},'text_array',popuptxt{2},'logo','','timeIn',time1,'timeOut',time2,'lookAt',lookAt)];
+        lookAt=0;
     end
     
     %% add indicator icons in time and space
@@ -95,7 +98,7 @@ for ii=1:length(x1)
         time2         = datenum(tvec(jj+1)+t0-1/365/24/60/60,1,1);
         % dunes to KML  
         OPT.icon = iconfiles(iconclass==class(ii,jj)).url; %id = find(iconclass==class(ii,jj));OPT.icon = icons(id).url; fprintf('%s  =  %s\n',icons(id).url(end-20:end),OPT.icon(end-20:end))
-        KMLdata2 = [KMLdata2 ITHK_KMLtextballoon(lon,lat,'icon',OPT.icon,'timeIn',time1,'timeOut',time2)];
+        KMLdata2 = [KMLdata2 ITHK_KMLtextballoon(lon,lat,'icon',OPT.icon,'timeIn',time1,'timeOut',time2,'lookAt',lookAt)];
     end
     KMLdata = [KMLdata KMLdata2];
 

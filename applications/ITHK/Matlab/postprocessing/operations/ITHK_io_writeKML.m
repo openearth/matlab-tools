@@ -40,6 +40,17 @@ global S
 
 fprintf(['ITHK postprocessing : Writing KML-file ''',S.userinput.name,addtxt,'.kml''\n']);
 
+tvec            = S.PP(sens).settings.tvec;
+tvec(length(tvec)+1)=round(2*tvec(end)-tvec(end-1));
+t0              = S.PP(sens).settings.t0;
+timeStamp      = datestr(datenum(tvec(end)+t0-1/365/24/60/60,1,1),'yyyy-mm-ddTHH:MM:SSZ');
+LookAtLon      = 4.238448851166381;
+LookAtLat      = 52.05719214488921;
+LookAtAltitude = 0;
+LookAtrange    = 50000;
+LookAtheading  = 0;
+LookAttilt     = 0;
+
 %% WRITE KML
 S.PP(sens).output.kmlFileName  = [S.settings.outputdir S.userinput.name addtxt '.kml'];  % KML filename settings
 KMLmapName                     = S.userinput.name;
@@ -47,9 +58,18 @@ fid                            = fopen(S.PP(sens).output.kmlFileName,'w');
 kmltxt                         = strrep(kmltxt,'\','\\');
 kmltxt                         = strrep(kmltxt,'%','\%');
 ids                            = int32([0:length(kmltxt)/9:length(kmltxt)-length(kmltxt)/9,length(kmltxt)]);
-fprintf(fid,[KML_header('kmlName',KMLmapName)],'interpreter','off');
+fprintf(fid,[KML_header('kmlName',KMLmapName,'timeStamp',timeStamp,'LookAtLon',LookAtLon,...
+                        'LookAtLat',LookAtLat,'LookAtAltitude',LookAtAltitude,...
+                        'LookAtrange',LookAtrange,'LookAttile',LookAttilt,...
+                        'LookAtheading',LookAtheading)],'interpreter','off');
 for ii=1:length(ids)-1
     fprintf(fid,[kmltxt(ids(ii)+1:ids(ii+1))],'interpreter','off');
 end
 fprintf(fid,[KML_footer],'interpreter','off');
 fclose(fid);
+end
+
+
+
+
+
