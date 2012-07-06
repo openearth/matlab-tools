@@ -117,7 +117,7 @@
     </recreation>
     <economy>
       <drinkwater>
-        <header>Drinking water with dune area change as proxy</header>
+        <header>Drinking water</header>
         <Ythr>50</Ythr>
         <PLOTscale1>       3.5       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
@@ -133,6 +133,25 @@
           <url> drinkwater_high.png        </url>
         </icons>
       </drinkwater>
+      <fishery>
+        <header>Computes impact on fishery using relative change of foreshore area as a proxy (with classes ranging from [1+Ythr : Ythr : 1-2*Ythr]))</header>
+        <header>Fishery</header>
+        <Ythr>0.2</Ythr>
+        <ShoreWidth>10000</ShoreWidth>
+        <PLOTscale1>      1600       </PLOTscale1>
+        <PLOTscale2>       0.0       </PLOTscale2>
+        <PLOToffset>       25000     </PLOToffset>
+        <icons>
+          <class>          1               </class>
+          <url> fishery_positive.png       </url>
+          <class>          2               </class>
+          <url> fishery_similar.png        </url>
+          <class>          3               </class>
+          <url> fishery_negative1.png      </url>
+          <class>          4               </class>
+          <url> fishery_negative2.png      </url>
+        </icons>
+      </fishery>
     </economy>
     <residential>
       <groundwater>
