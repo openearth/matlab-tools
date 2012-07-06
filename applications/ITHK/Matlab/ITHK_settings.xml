@@ -116,8 +116,8 @@
       <direct>
         <header>Transport distance in kilometers</header>
         <transportdistance>10</transportdistance>
-        <header2>Type of location of nourishments 1= foreshore; 2= predominantly beach</header2>
-        <locationtype>     2         </locationtype>
+        <header2>Type of location of nourishments 1= predominantly beach; 2= foreshore</header2>
+        <locationtype>     1         </locationtype>
         <PLOTscale1>       0.000016  </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
         <PLOToffset>       20000     </PLOToffset>
@@ -216,11 +216,11 @@
           <class>          1               </class>
           <url> realestate_no.png          </url>
           <class>          2               </class>
-          <url> realestate_low.png         </url>
+          <url> realestate_lower.png       </url>
           <class>          3               </class>
-          <url> realestate_moderate.png    </url>
+          <url> realestate_similar.png     </url>
           <class>          4               </class>
-          <url> realestate_high.png        </url>
+          <url> realestate_higher.png      </url>
         </icons>
       </realestate>  
     </residential>
@@ -235,11 +235,11 @@
           <class>          1               </class>
           <url> dykering_no.png            </url>
           <class>          2               </class>
-          <url> dykering_low.png           </url>
+          <url> dykering_lower.png         </url>
           <class>          3               </class>
-          <url> dykering_moderate.png      </url>
+          <url> dykering_similar.png       </url>
           <class>          4               </class>
-          <url> dykering_high.png          </url>
+          <url> dykering_higher.png        </url>
         </icons>
       </dykering>  
       <structures>  
@@ -252,11 +252,11 @@
           <class>          1               </class>
           <url> structure_no.png           </url>
           <class>          2               </class>
-          <url> structure_low.png          </url>
+          <url> structure_lower.png        </url>
           <class>          3               </class>
-          <url> structure_moderate.png     </url>
+          <url> structure_similar.png      </url>
           <class>          4               </class>
-          <url> structure_high.png         </url>
+          <url> structure_higher.png       </url>
         </icons>
       </structures>  
     </safety>
