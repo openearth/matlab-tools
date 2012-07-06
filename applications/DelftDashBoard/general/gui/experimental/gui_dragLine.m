@@ -104,7 +104,7 @@ if posx>xax(1) && posx<xax(2) && posy>yax(1) && posy<yax(2)
     n1=[];
     
     if strcmpi(method,'alonggridline')
-        [m1,n1]=FindCornerPoint(posx,posy,xg,yg);
+        [m1,n1]=findcornerpoint(posx,posy,xg,yg);
         posx=xg(m1,n1);
         posy=yg(m1,n1);
     end
@@ -174,7 +174,7 @@ if x(1)>xax(1) && x(1)<xax(2) && x(2)>xax(1) && x(2)<xax(2) && y(1)>yax(1) && y(
     
     if strcmpi(method,'alonggridline')
         % Make sure second point is on same grid line
-        [m2,n2]=FindCornerPoint(x(2),y(2),xg,yg);
+        [m2,n2]=findcornerpoint(x(2),y(2),xg,yg);
         if m2==m1 || n2==n1
             % Second point on same grid line
             xx(1)=xg(m1,n1);

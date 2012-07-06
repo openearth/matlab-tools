@@ -1,10 +1,10 @@
-function [m,n]=findGridCell(posx0,posy0,x,y)
-%FINDGRIDCELL  One line description goes here.
+function [m,n]=findgridcell(posx0,posy0,x,y)
+%findgridcell  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = FindGridCell(varargin)
+%   varargout = findgridcell(varargin)
 %
 %   Input:
 %   varargin  =
@@ -13,7 +13,7 @@ function [m,n]=findGridCell(posx0,posy0,x,y)
 %   varargout =
 %
 %   Example
-%   FindGridCell
+%   findgridcell
 %
 %   See also
 

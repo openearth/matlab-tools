@@ -66,11 +66,14 @@ for i=1:length(elements)
                     else
                         str=' ';
                     end
+                    switch elements(i).element.textposition
+                        case{'left'}
+                            str=[str ' '];
+                    end
                     % Text
                     elements(i).element.texthandle=uicontrol(figh,'Parent',parenthandle,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
                     setTextPosition(elements(i).element.texthandle,pos,elements(i).element.textposition);
                 end
-
                                 
             case{'panel'}
                 
@@ -286,10 +289,8 @@ for i=1:length(elements)
                         end
                     end
                 end
-                
                 elements(i).element.handle=table(gcf,'create','tag',tag,'data',data,'position',pos,'nrrows',nrrows,'columntypes',cltp,'width',width,'callbacks',callbacks, ...
                     'includebuttons',inclb,'includenumbers',incln,'format',format,'enable',enable,'columntext',txt,'popuptext',popuptext);
-
         end
     catch
         disp(['Something went wrong with generating element ' elements(i).element.tag]);

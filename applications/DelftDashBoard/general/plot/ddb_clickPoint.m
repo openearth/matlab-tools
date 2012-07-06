@@ -113,13 +113,13 @@ if strcmpi(mouseclick,'normal')
                 x=x0;
                 y=y0;
             case{'cell'}
-                [x,y]=FindGridCell(x0,y0,xg,yg);
+                [x,y]=findgridcell(x0,y0,xg,yg);
                 if x==0 || y==0
                     x=NaN;
                     y=NaN;
                 end
             case{'cornerpoint'}
-                [x,y]=FindCornerPoint(x0,y0,xg,yg);
+                [x,y]=findcornerpoint(x0,y0,xg,yg);
                 if x==0 || y==0
                     x=NaN;
                     y=NaN;

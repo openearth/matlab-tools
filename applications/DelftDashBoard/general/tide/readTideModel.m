@@ -185,9 +185,16 @@ end
 dy=(ymax-ymin)/10;
 
 iy1=find(y<=ymin-dy,1,'last');
+if isempty(iy1)
+    iy1=1;
+end
 iy2=find(y>=ymax+dy,1,'first');
+if isempty(iy2)
+    iy2=length(y);
+end
 
 dx=(xmax-xmin)/10;
+dx=0;
 
 iok=0;
 % Assuming global dataset
@@ -259,13 +266,21 @@ for i=1:length(gt)
     
     if ~iok
         % Pasting needed
-        ampleft  = nc_varget(fname,gt(i).ampstr,[ix1left-1 iy1-1 ic1-1],[ix2left-ix1left+1 iy2-iy1+1 ic2]);
-        phileft  = nc_varget(fname,gt(i).phistr,[ix1left-1 iy1-1 ic1-1],[ix2left-ix1left+1 iy2-iy1+1 ic2]);
+        for icnst=1:nrcons
+            ampleft(:,:,icnst)   = nc_varget(fname,gt(i).ampstr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
+            phileft(:,:,icnst)   = nc_varget(fname,gt(i).phistr,[ix1left-1 iy1-1 icnst-1],[ix2left-ix1left+1 iy2-iy1+1 1]);
+        end
+%         ampleft  = nc_varget(fname,gt(i).ampstr,[ix1left-1 iy1-1 ic1-1],[ix2left-ix1left+1 iy2-iy1+1 ic2]);
+%         phileft  = nc_varget(fname,gt(i).phistr,[ix1left-1 iy1-1 ic1-1],[ix2left-ix1left+1 iy2-iy1+1 ic2]);
         if getd
             dpleft   = nc_varget(fname,'depth',[ix1left-1 iy1-1],[ix2left-ix1left+1 iy2-iy1+1]);
         end
-        ampright = nc_varget(fname,gt(i).ampstr,[ix1right-1 iy1-1 ic1-1],[ix2right-ix1right+1 iy2-iy1+1 ic2]);
-        phiright = nc_varget(fname,gt(i).phistr,[ix1right-1 iy1-1 ic1-1],[ix2right-ix1right+1 iy2-iy1+1 ic2]);
+        for icnst=1:nrcons
+            ampright(:,:,icnst)   = nc_varget(fname,gt(i).ampstr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
+            phiright(:,:,icnst)   = nc_varget(fname,gt(i).phistr,[ix1right-1 iy1-1 icnst-1],[ix2right-ix1right+1 iy2-iy1+1 1]);
+        end
+%         ampright = nc_varget(fname,gt(i).ampstr,[ix1right-1 iy1-1 ic1-1],[ix2right-ix1right+1 iy2-iy1+1 ic2]);
+%         phiright = nc_varget(fname,gt(i).phistr,[ix1right-1 iy1-1 ic1-1],[ix2right-ix1right+1 iy2-iy1+1 ic2]);
         if getd
             dpright  = nc_varget(fname,'depth',[ix1right-1 iy1-1],[ix2right-ix1right+1 iy2-iy1+1]);
         end
@@ -292,8 +307,12 @@ for i=1:length(gt)
         latv=yv(iy1:iy2);
         
     else
-        gt(i).amp   = nc_varget(fname,gt(i).ampstr,[ix1-1 iy1-1 ic1-1],[ix2-ix1+1 iy2-iy1+1 ic2]);
-        gt(i).phi   = nc_varget(fname,gt(i).phistr,[ix1-1 iy1-1 ic1-1],[ix2-ix1+1 iy2-iy1+1 ic2]);
+        for icnst=1:nrcons
+            gt(i).amp(:,:,icnst)   = nc_varget(fname,gt(i).ampstr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
+            gt(i).phi(:,:,icnst)   = nc_varget(fname,gt(i).phistr,[ix1-1 iy1-1 icnst-1],[ix2-ix1+1 iy2-iy1+1 1]);
+        end
+%         gt(i).amp   = nc_varget(fname,gt(i).ampstr,[ix1-1 iy1-1 ic1-1],[ix2-ix1+1 iy2-iy1+1 ic2]);
+%         gt(i).phi   = nc_varget(fname,gt(i).phistr,[ix1-1 iy1-1 ic1-1],[ix2-ix1+1 iy2-iy1+1 ic2]);
         if getd
             depth = nc_varget(fname,'depth',[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
             depth = depth';
@@ -326,7 +345,7 @@ switch opt
                 case{'tidal_amplitude_u','tidal_amplitude_U'}
                     lon=lonu;
                     lat=latu;
-                case{'tidal_amplitude_v','tidal_amplitude_v'}
+                case{'tidal_amplitude_v','tidal_amplitude_V'}
                     lon=lonv;
                     lat=latv;
             end

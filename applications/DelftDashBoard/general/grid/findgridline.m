@@ -1,10 +1,10 @@
-function [m n uv] = FindGridLine(posx, posy, x, y)
-%FINDGRIDLINE  One line description goes here.
+function [m n uv] = findgridline(posx, posy, x, y)
+%findgridline  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   [m n uv] = FindGridLine(posx, posy, x, y)
+%   [m n uv] = findgridline(posx, posy, x, y)
 %
 %   Input:
 %   posx =
@@ -18,7 +18,7 @@ function [m n uv] = FindGridLine(posx, posy, x, y)
 %   uv   =
 %
 %   Example
-%   FindGridLine
+%   findgridline
 %
 %   See also
 

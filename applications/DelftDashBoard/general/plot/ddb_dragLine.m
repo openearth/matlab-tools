@@ -93,7 +93,7 @@ posx=pos(1,1);
 posy=pos(1,2);
 
 if strcmp(method,'alonggridline')
-    [m1,n1]=FindCornerPoint(posx,posy,xg,yg);
+    [m1,n1]=findcornerpoint(posx,posy,xg,yg);
     posx=xg(m1,n1);
     posy=yg(m1,n1);
 end

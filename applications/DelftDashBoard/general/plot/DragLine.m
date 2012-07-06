@@ -74,7 +74,7 @@ posx=pos(1,1);
 posy=pos(1,2);
 
 if strcmp(opt,'gridline')
-    [m1,n1]=FindCornerPoint(posx,posy,handles.Model(handles.ActiveModel.Nr).Input(id).GridX,handles.Model(handles.ActiveModel.Nr).Input(id).GridY);
+    [m1,n1]=findcornerpoint(posx,posy,handles.Model(handles.ActiveModel.Nr).Input(id).GridX,handles.Model(handles.ActiveModel.Nr).Input(id).GridY);
     posx=handles.Model(handles.ActiveModel.Nr).Input(id).GridX(m1,n1);
     posy=handles.Model(handles.ActiveModel.Nr).Input(id).GridY(m1,n1);
 end

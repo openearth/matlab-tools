@@ -1,10 +1,10 @@
-function [m n] = FindCornerPoint(posx, posy, x, y, varargin)
-%FINDCORNERPOINT  One line description goes here.
+function [m n] = findcornerpoint(posx, posy, x, y, varargin)
+%findcornerpoint  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   [m n] = FindCornerPoint(posx, posy, x, y, varargin)
+%   [m n] = findcornerpoint(posx, posy, x, y, varargin)
 %
 %   Input:
 %   posx     =
@@ -18,7 +18,7 @@ function [m n] = FindCornerPoint(posx, posy, x, y, varargin)
 %   n        =
 %
 %   Example
-%   FindCornerPoint
+%   findcornerpoint
 %
 %   See also
 

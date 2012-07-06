@@ -104,7 +104,7 @@ end
 wb = waitbox('Finding Stations ...');
 
 if ~isempty(posx)
-    [m0,n0]=FindGridCell(posx,posy,xg,yg);
+    [m0,n0]=findgridcell(posx,posy,xg,yg);
     [m0,n0]=CheckDepth(m0,n0,zz);
     nobs=0;
     %     Names{1}='';
