@@ -168,6 +168,11 @@ addtxt = '_drinkingwater';ITHK_io_writeKML(kmltxt,addtxt,sens);
 kmltxt = [S.PP(sens).output.kml_economy_drinkwater2];
 addtxt = '_drinkingwater2';ITHK_io_writeKML(kmltxt,addtxt,sens);
 
+kmltxt = [S.PP(sens).output.kml_economy_fishery];
+addtxt = '_fishery';ITHK_io_writeKML(kmltxt,addtxt,sens);
+kmltxt = [S.PP(sens).output.kml_economy_fishery2];
+addtxt = '_fishery2';ITHK_io_writeKML(kmltxt,addtxt,sens);
+
 kmltxt = [S.PP(sens).output.kml_residential_groundwater];
 addtxt = '_groundwater';ITHK_io_writeKML(kmltxt,addtxt,sens);
 kmltxt = [S.PP(sens).output.kml_residential_groundwater2];

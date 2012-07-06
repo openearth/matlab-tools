@@ -58,6 +58,14 @@ fid                            = fopen(S.PP(sens).output.kmlFileName,'w');
 kmltxt                         = strrep(kmltxt,'\','\\');
 kmltxt                         = strrep(kmltxt,'%','\%');
 ids                            = int32([0:length(kmltxt)/9:length(kmltxt)-length(kmltxt)/9,length(kmltxt)]);
+for ii=2:length(ids)-1
+   if strcmp(kmltxt(ids(ii)+1),'\') || strcmp(kmltxt(ids(ii)+1),'%')
+       ids(ii)=min(ids(ii)+2,max(ids)-1);
+       if strcmp(kmltxt(ids(ii)+1),'\') || strcmp(kmltxt(ids(ii)+1),'%')
+         ids(ii)=min(ids(ii)+1,max(ids)-1);
+       end
+   end
+end
 fprintf(fid,[KML_header('kmlName',KMLmapName,'timeStamp',timeStamp,'LookAtLon',LookAtLon,...
                         'LookAtLat',LookAtLat,'LookAtAltitude',LookAtAltitude,...
                         'LookAtrange',LookAtrange,'LookAttile',LookAttilt,...

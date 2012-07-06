@@ -98,7 +98,9 @@ for ii=1:length(x1)
         time2         = datenum(tvec(jj+1)+t0-1/365/24/60/60,1,1);
         % dunes to KML  
         OPT.icon = iconfiles(iconclass==class(ii,jj)).url; %id = find(iconclass==class(ii,jj));OPT.icon = icons(id).url; fprintf('%s  =  %s\n',icons(id).url(end-20:end),OPT.icon(end-20:end))
+        if isempty(strfind('OPT.icon','_no.png'))
         KMLdata2 = [KMLdata2 ITHK_KMLtextballoon(lon,lat,'icon',OPT.icon,'timeIn',time1,'timeOut',time2,'lookAt',lookAt)];
+        end
     end
     KMLdata = [KMLdata KMLdata2];
 
