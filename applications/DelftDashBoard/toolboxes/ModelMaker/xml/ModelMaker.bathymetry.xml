@@ -35,6 +35,7 @@
     <callback>ddb_ModelMakerToolbox_bathymetry</callback>
     <option1>showinfo</option1>
     <tooltipstring>Show meta data of selected dataset</tooltipstring>
+    <enable>0</enable>
   </element> 
   <element>
     <tag>selecteddatasets</tag>
@@ -125,6 +126,55 @@
       </dependency>
     </dependencies> 
   </element>
+
+  <element>
+    <tag>editvertlevel</tag>
+    <style>edit</style>
+    <position>580 45 50 20</position>
+    <text>Offset</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).verticalLevel</variable>
+    <tooltipstring>Offset in metres between vertical datum of this dataset and Mean Sea Level (positive value indicates that vertical datum lies above MSL)</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>bathymetry.nrSelectedDatasets</variable>
+            <type>integer</type>	              
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element>
+
+  <element>
+    <tag>textdatum</tag>
+    <style>text</style>
+    <position>640 45 100 20</position>
+    <prefix>Datum : </prefix>
+    <variable>handles.Toolbox(tb).Input.bathymetry.selectedDatasets(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset).verticalDatum</variable>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>bathymetry.nrSelectedDatasets</variable>
+            <type>integer</type>	              
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element>
+
+
   <element>
     <tag>editdate</tag>
     <style>edit</style>
@@ -174,6 +224,16 @@
     </dependencies> 
   </element>
   <element>
+    <tag>editvertlevelmodel</tag>
+    <style>edit</style>
+    <position>910 35 50 20</position>
+    <text>Model Offset</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.Toolbox(tb).Input.bathymetry.verticalDatum</variable>
+    <tooltipstring>Offset in metres between vertical datum of model and Mean Sea Level (positive value indicates that vertical datum lies above MSL)</tooltipstring>
+  </element>
+  <element>
     <tag>generatebathymetry</tag>
     <style>pushbutton</style>
     <position>910 10 80 20</position>
@@ -181,5 +241,19 @@
     <callback>ddb_ModelMakerToolbox_bathymetry</callback>
     <option1>generatebathymetry</option1>
     <tooltipstring>Generate model bathymetry</tooltipstring>
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>any</checkfor>
+        <checks>
+          <check>
+            <variable>bathymetry.nrSelectedDatasets</variable>
+            <type>integer</type>	              
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
   </element> 
 </root>

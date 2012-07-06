@@ -22,6 +22,18 @@
     </list> 
     <dependencies>
       <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>nrTrackPoints</variable>
+            <type>integer</type>	              
+            <value>1</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+      <dependency>
         <action>visible</action>
         <checkfor>all</checkfor>
         <tags>

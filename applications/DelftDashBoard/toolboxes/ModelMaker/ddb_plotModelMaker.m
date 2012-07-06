@@ -75,20 +75,22 @@ switch lower(option)
         h=findobj(gca,'Tag','GridOutline');
         if ~isempty(h)
             set(h,'Visible','on');
+            uistack(h,'top');
         end
         h=findobj(gca,'Tag','CoastSpline');
         if ~isempty(h)
             set(h,'Visible','on');
+            uistack(h,'top');
         end
     case{'deactivate'}
         h=findobj(gca,'Tag','GridOutline');
         if ~isempty(h)
             set(h,'Visible','off');
+            uistack(h,'bottom');
         end
         h=findobj(gca,'Tag','CoastSpline');
         if ~isempty(h)
             set(h,'Visible','off');
+            uistack(h,'bottom');
         end
 end
-
-

@@ -32,8 +32,16 @@
           <elements>modelmaker.quickmode.delft3dwave.xml</elements>
         </tab>
         <tab>
-          <tag>bathymetry</tag>
+          <tag>bathymetry.delft3dflow</tag>
           <formodel>delft3dflow</formodel>
+          <tabstring>Bathymetry</tabstring>
+          <callback>ddb_ModelMakerToolbox_bathymetry</callback>
+          <elements>ModelMaker.bathymetry.xml</elements>
+          <enable>1</enable>
+        </tab>
+        <tab>
+          <tag>bathymetry.delft3dwave</tag>
+          <formodel>delft3dwave</formodel>
           <tabstring>Bathymetry</tabstring>
           <callback>ddb_ModelMakerToolbox_bathymetry</callback>
           <elements>ModelMaker.bathymetry.xml</elements>

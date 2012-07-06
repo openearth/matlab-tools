@@ -147,7 +147,7 @@ else
         case{'generatebathymetry'}
             generateBathymetry;
         case{'pickselecteddataset'}
-            selectDataset;
+%             selectDataset;
     end
     
 end

@@ -86,7 +86,7 @@ for i=1:length(amplitudes)
     name=[cmp repmat(' ',1,4-length(cmp))];
     ju=strmatch(name,const.name,'exact');
     if isempty(ju)
-        disp(['Could not find ' name ' - Component skipped.']);
+%        disp(['Could not find ' name ' - Component skipped.']);
     else
         %         switch lower(cmp)
         %             case{'m2','s2','k2','n2','k1','o1','p1','q1','mf','mm','m4','ms4','mn4'}

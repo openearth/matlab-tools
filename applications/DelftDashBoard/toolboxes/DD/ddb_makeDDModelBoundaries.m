@@ -116,7 +116,7 @@ while i2<=size(x2,1)
         y2a=y2(i2,j2);
         dx=GetDX(x2,y2,i2,j2);
         dx=0.1*dx;
-        [ma,na]=FindCornerPoint(x2a,y2a,x1,y1,dx);
+        [ma,na]=findcornerpoint(x2a,y2a,x1,y1,dx);
         if ~isempty(ma)
             % Matching Point found
             % Find next matching point
@@ -129,7 +129,7 @@ while i2<=size(x2,1)
                     y2b=y2(ii,j2);
                     dx=GetDX(x2,y2,ii,j2);
                     dx=0.1*dx;
-                    [mb,nb]=FindCornerPoint(x2b,y2b,x1,y1,dx);
+                    [mb,nb]=findcornerpoint(x2b,y2b,x1,y1,dx);
                     if ~isempty(mb)
                         % Check to see if grid points overall grid are on
                         % the same regel

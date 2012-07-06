@@ -52,13 +52,7 @@ ddb_zoomOff;
 if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
-    % setUIElements('modelmakerpanel.bathymetry');
     setHandles(handles);
-%    ddb_plotModelMaker('activate');
-%    if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
-%        setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
-%            'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
-%    end
 else
     
     %Options selected
@@ -83,10 +77,6 @@ else
     end
     
 end
-
-%%
-function selectDataset
-% setUIElements('modelmakerpanel.bathymetry');
 
 %%
 function showInfo
@@ -114,6 +104,8 @@ if usedd
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).number=handles.Toolbox(tb).Input.bathymetry.activeDataset;
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).name=handles.bathymetry.datasets{iac};
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).type=handles.bathymetry.dataset(iac).type;
+    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).verticalDatum=handles.bathymetry.dataset(iac).verticalCoordinateSystem.name;
+    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).verticalLevel=handles.bathymetry.dataset(iac).verticalCoordinateSystem.level;
 
     % Default values
     handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).zMax=1e4;
@@ -127,8 +119,6 @@ if usedd
     handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=n;
     
     setHandles(handles);
-    % setUIElements('modelmakerpanel.bathymetry');
-%    % setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
 end
 
 %%
@@ -145,8 +135,6 @@ if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
         handles.Toolbox(tb).Input.bathymetry.selectedDatasets(1).type='unknown';
     end    
     setHandles(handles);
-    % setUIElements('modelmakerpanel.bathymetry');
-%    % setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
 end
 
 %%
@@ -159,8 +147,6 @@ if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
     [handles.Toolbox(tb).Input.bathymetry.selectedDatasets,iac,nr] = UpDownDeleteStruc(handles.Toolbox(tb).Input.bathymetry.selectedDatasets, iac, 'up');
     handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=iac;
     setHandles(handles);
-    % setUIElements('modelmakerpanel.bathymetry');
-%    % setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
 end
 
 %%
@@ -174,23 +160,30 @@ if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
     [handles.Toolbox(tb).Input.bathymetry.selectedDatasets,iac,nr] = UpDownDeleteStruc(handles.Toolbox(tb).Input.bathymetry.selectedDatasets, iac, 'down');
     handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=iac;
     setHandles(handles);
-    % setUIElements('modelmakerpanel.bathymetry');
-%    % setUIElement('modelmakerpanel.bathymetry.selecteddatasets');
 end
 
 %% 
 function generateBathymetry
+
 handles=getHandles;
-if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
-    id=handles.activeDomain;
-    for i=1:handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets        
-        nr=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).number;
-        datasets{i}=handles.bathymetry.datasets{nr};
-        dates(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).startDate;
-        days(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).searchInterval;
-        zmin(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).zMin;
-        zmax(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).zMax;
-    end
-    handles = ddb_generateBathymetry(handles, id, 'datasets',datasets,'startdates',dates,'searchintervals',days,'zmin',zmin,'zmax',zmax);
-    setHandles(handles);
+for i=1:handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets
+    nr=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).number;
+    datasets{i}=handles.bathymetry.datasets{nr};
+    startdates(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).startDate;
+    searchintervals(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).searchInterval;
+    zmin(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).zMin;
+    zmax(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).zMax;
+    verticaloffsets(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).verticalLevel;
 end
+verticaloffset=handles.Toolbox(tb).Input.bathymetry.verticalDatum;
+
+switch lower(handles.Model(md).name)
+    case{'delft3dflow'}
+        handles=ddb_generateBathymetry_Delft3DFLOW(handles,ad,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
+            'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset);
+    case{'delft3dwave'}
+        handles=ddb_generateBathymetry_Delft3DWAVE(handles,awg,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
+            'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset);
+end
+
+setHandles(handles);

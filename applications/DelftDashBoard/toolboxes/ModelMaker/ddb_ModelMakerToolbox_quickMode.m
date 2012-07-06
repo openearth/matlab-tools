@@ -284,10 +284,8 @@ end
 %%
 function generateBathymetry
 handles=getHandles;
-[filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input(ad).attName '.dep']);
-if pathname~=0
-    handles=ddb_generateBathymetryDelft3DFLOW(handles,ad,filename);
-end
+datasets{1}=handles.screenParameters.backgroundBathymetry;
+handles=ddb_generateBathymetry_Delft3DFLOW(handles,ad,'datasets',datasets);
 setHandles(handles);
 
 %%

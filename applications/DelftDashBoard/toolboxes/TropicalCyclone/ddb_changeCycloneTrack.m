@@ -62,9 +62,18 @@ function ddb_changeCycloneTrack(x, y, varargin)
 % $Keywords: $
 
 %%
-setInstructions({'','Left-click and drag track vertices to change track position','Right-click track vertices to change cyclone parameters'});
 
 handles=getHandles;
+
+setInstructions({'','Left-click and drag track vertices to change track position','Right-click track vertices to change cyclone parameters'});
+
+if handles.Toolbox(tb).Input.trackT(1)>handles.Model(md).Input(ad).startTime
+    ddb_giveWarning('text','Start time cyclone is greater than simulation start time!');
+end
+
+if handles.Toolbox(tb).Input.trackT(end)<handles.Model(md).Input(ad).stopTime
+    ddb_giveWarning('text','Stop time cyclone is smaller than simulation stop time!');
+end
 
 handles.Toolbox(tb).Input.nrTrackPoints=length(x);
 handles.Toolbox(tb).Input.trackX=x;
@@ -94,4 +103,3 @@ setHandles(handles);
 
 ddb_plotCycloneTrack;
 ddb_updateTrackTables;
-

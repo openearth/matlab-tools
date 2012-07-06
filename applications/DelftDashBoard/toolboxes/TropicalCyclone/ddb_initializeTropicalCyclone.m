@@ -128,7 +128,7 @@ handles.Toolbox(ii).Input.name='TC Deepak';
 handles.Toolbox(ii).Input.radius=1000;
 handles.Toolbox(ii).Input.nrRadialBins=500;
 handles.Toolbox(ii).Input.nrDirectionalBins=36;
-handles.Toolbox(ii).Input.method=5;
+handles.Toolbox(ii).Input.method=4;
 
 handles.Toolbox(ii).Input.deleteTemporaryFiles=1;
 

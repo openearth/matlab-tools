@@ -310,10 +310,8 @@ end
 %%
 function generateBathymetry
 handles=getHandles;
-[filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input.attname '.dep']);
-if pathname~=0
-    handles=ddb_generateBathymetryDelft3DWAVE(handles,filename,awg);
-end
+datasets{1}=handles.screenParameters.backgroundBathymetry;
+handles=ddb_generateBathymetry_Delft3DWAVE(handles,awg,'datasets',datasets);
 setHandles(handles);
 
 %%
