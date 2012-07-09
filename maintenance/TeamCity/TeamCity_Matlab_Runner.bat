@@ -7,11 +7,19 @@ rem Start matlab
 rem -----------------------------------
 
 echo 'map matlab drive'
+echo %map_matlab%
 %map_matlab%
 
 echo 'map network drive'
+echo %map_network_drive%
 %map_network_drive%
 
+echo 'Starting matlab in path'
+echo %matlab_path
+echo 'With command'
+echo %matlab_command%
+echo 'In working dir'
+echo %teamcity.build.workingDir%
 %matlab_path%matlab.exe -nosplash -nodesktop -minimize -r "%matlab_command%" -logfile mlogfile.log -sd "%teamcity.build.workingDir%"
 
 :loopmatlabbusy
