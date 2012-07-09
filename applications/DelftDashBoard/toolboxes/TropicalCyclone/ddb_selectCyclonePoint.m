@@ -65,13 +65,14 @@ i=getappdata(h,'number');
 handles=getHandles;
 handles.Toolbox(tb).Input.activeCyclonePoint=i;
 handles.Toolbox(tb).Input.activeQuadrant=1;
-setHandles(handles);
 
-[handles,ok]=ddb_changeCycloneValue(handles);
-
+xmldir=handles.Toolbox(tb).xmlDir;
+xmlfile='TropicalCyclone.PointTrackParameters.xml';
+h=handles;
+[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile);
 if ok
+    handles=h;
     handles=ddb_setTrackTableValues(handles);
     setHandles(handles);
     ddb_updateTrackTables;
 end
-
