@@ -64,10 +64,12 @@ fprintf('ITHK postprocessing : Indicator for recreation beachwidth\n');
 
 global S
 
+yposinitial    =  str2double(S.settings.indicators.dunes.yposinitial);
+
 %% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)
 Ythr                     = str2double(S.settings.indicators.recreation.beachwidth.Ythr);
 idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
-beachwidth               = S.PP(sens).dunes.position.beachwidth(idUR,:);
+beachwidth               = S.PP(sens).dunes.position.beachwidth(idUR,:)-yposinitial;
 beachwidthclasses        = ones(size(beachwidth));
 beachwidthclasses(beachwidth<Ythr)                       = 2;
 beachwidthclasses(beachwidth>=Ythr & beachwidth<2*Ythr)  = 3;

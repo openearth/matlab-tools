@@ -83,7 +83,7 @@
     <recreation>
       <beachwidth>
         <header>Recreation beach width</header>
-        <Ythr>50</Ythr>
+        <Ythr>40</Ythr>
         <PLOTscale1>       0.8       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
         <PLOToffset>       19000     </PLOToffset>
@@ -91,16 +91,16 @@
           <class>          1               </class>
           <url> beachwidth_no.png          </url>
           <class>          2               </class>
-          <url> beachwidth_low.png         </url>
-          <class>          3               </class>
           <url> beachwidth_moderate.png    </url>
+          <class>          3               </class>
+          <url> beachwidth_higher1.png     </url>
           <class>          4               </class>
-          <url> beachwidth_high.png        </url>
+          <url> beachwidth_higher2.png     </url>
         </icons>
       </beachwidth>
       <dunearea>
         <header>Recreation dune width</header>
-        <Ythr>50</Ythr>
+        <Ythr>100</Ythr>
         <PLOTscale1>       3.5       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
         <PLOToffset>       21000     </PLOToffset>
@@ -108,11 +108,11 @@
           <class>          1               </class>
           <url> dunearea_no.png            </url>
           <class>          2               </class>
-          <url> dunearea_low.png           </url>
+          <url> dunearea_lower.png         </url>
           <class>          3               </class>
-          <url> dunearea_moderate.png      </url>
+          <url> dunearea_similar.png       </url>
           <class>          4               </class>
-          <url> dunearea_high.png          </url>
+          <url> dunearea_higher.png        </url>
         </icons>
       </dunearea>
     </recreation>
@@ -263,6 +263,7 @@
         </icons>
       </habitatrichness>
       <dunedynamics>
+        <header>Dynamic of the dunes, threshold value for icons Ythr in meters per year</header>
         <Ythr>0.5</Ythr>
         <PLOTscale1>       200       </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
