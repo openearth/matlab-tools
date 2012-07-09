@@ -170,7 +170,7 @@ try
     
 catch
     close(wb);
-    giveWarning('text','An error occured while generating tide data!');
+    ddb_giveWarning('text','An error occured while generating tide data!');
 end
 
 %%

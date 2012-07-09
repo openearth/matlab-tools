@@ -223,7 +223,7 @@ try
     
 catch
     close(wb);
-    giveWarning('text','An error occured while calibrating!');
+    ddb_giveWarning('text','An error occured while calibrating!');
 end
 
 

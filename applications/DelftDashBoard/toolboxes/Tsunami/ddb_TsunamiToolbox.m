@@ -399,7 +399,7 @@ end
 
 % First check to see if a grid was loaded
 if isempty(handles.Model(md).Input(ad).gridX)
-    giveWarning('text','Please first create or load model grid!');
+    ddb_giveWarning('text','Please first create or load model grid!');
     return
 end
 
