@@ -64,6 +64,4 @@ ddb_zoomOff;
 
 if isempty(varargin)
     ddb_refreshScreen;
-    % setUIElements('delft3dflow.initialconditions');
 end
-

@@ -31,24 +31,67 @@
   </element>
   <element>
     <tag>pushselectinifile</tag>
-    <style>pushbutton</style>
+    <style>pushselectfile</style>
     <position>280 120 50 20</position>
-    <tooltipstring>Select file</tooltipstring>
+    <tooltipstring>Select initial conditions file</tooltipstring>
     <text>File</text>
+    <extension>ini</extension>
     <callback>ddb_Delft3DFLOW_initialConditions</callback>
-    <option1>selectfile</option1>    
+    <option1>selectfile</option1>
+    <variable>handles.Model(md).Input(ad).iniFile</variable>
     <dependencies>
       <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
+        <action>visible</action>
         <checkfor>all</checkfor>
         <checks>
           <check>
             <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>ne</operator>
+            <value>ini</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editrstid</tag>
+    <style>edit</style>
+    <position>330 120 50 20</position>
+    <text>Restart ID</text>
+    <tooltipstring>Edit restart ID</tooltipstring>
+    <variable>handles.Model(md).Input(ad).rstId</variable>
+    <type>string</type>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).initialConditions</variable>
+            <value>rst</value>
+            <operator>eq</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies>
+  </element>
+  <element>
+    <tag>editmapid</tag>
+    <style>edit</style>
+    <position>330 120 50 20</position>
+    <text>Trim ID</text>
+    <tooltipstring>Edit trim ID</tooltipstring>
+    <variable>handles.Model(md).Input(ad).trimId</variable>
+    <type>string</type>
+    <dependencies>
+      <dependency>
+        <action>visible</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>handles.Model(md).Input(ad).initialConditions</variable>
+            <value>trim</value>
+            <operator>eq</operator>
           </check>
         </checks>
       </dependency>
@@ -65,9 +108,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -90,9 +130,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -104,9 +141,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -129,9 +163,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -143,9 +174,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -165,9 +193,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -184,9 +209,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -211,9 +233,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -230,9 +249,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -258,9 +274,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -277,9 +290,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -305,9 +315,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -324,9 +331,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -352,9 +356,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -399,9 +400,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -418,9 +416,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -440,9 +435,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -459,9 +451,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -487,9 +476,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -506,9 +492,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -534,9 +517,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -553,9 +533,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -581,9 +558,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -600,9 +574,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -628,9 +599,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -647,9 +615,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -675,9 +640,6 @@
     <dependencies>
       <dependency>
         <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -694,9 +656,6 @@
       </dependency>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>

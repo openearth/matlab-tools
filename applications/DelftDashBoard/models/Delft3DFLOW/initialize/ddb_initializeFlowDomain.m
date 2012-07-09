@@ -254,6 +254,7 @@ handles.Model(md).Input(id).zBot=0;
 handles.Model(md).Input(id).zTop=0;
 
 handles.Model(md).Input(id).initialConditions='unif';
+handles.Model(md).Input(id).initialConditionsFile='';
 
 %%
 function handles=ddb_initializeOtherInput(handles,id,runid)
