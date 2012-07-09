@@ -1,0 +1,141 @@
+<?xml version="1.0"?>
+<!-- Written on 09-Jul-2012 17:13:22 using the XML Toolbox for Matlab -->
+<root>
+  <dataset>
+    <name>gebco08</name>
+    <longName>GEBCO 08</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco_08</URL>
+    <useCache>1</useCache>
+  </dataset>
+  <dataset>
+    <name>hawaii</name>
+    <longName>Hawaii</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/hawaii</URL>
+    <useCache>1</useCache>
+    <source>USGS</source>
+  </dataset>
+  <dataset>
+    <name>sfbay</name>
+    <longName>San Francisco Bay</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/sfbay</URL>
+    <useCache>1</useCache>
+    <source>USGS</source>
+  </dataset>
+  <dataset>
+    <name>ngdc_crm</name>
+    <longName>NGDC Coastal Relief Model</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ngdc_crm</URL>
+    <useCache>1</useCache>
+  </dataset>
+  <dataset>
+    <name>usgs_socal</name>
+    <longName>USGS Southern California</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/usgs_socal</URL>
+    <useCache>1</useCache>
+    <source>USGS</source>
+  </dataset>
+  <dataset>
+    <name>rws_vaklodingen</name>
+    <longName>RWS Vaklodingen</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/rws_vaklodingen</URL>
+    <useCache>1</useCache>
+    <source>Rijkswaterstaat</source>
+  </dataset>
+  <dataset>
+    <name>srtm41</name>
+    <longName>SRTM 4.1</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/srtm41</URL>
+    <useCache>1</useCache>
+  </dataset>
+  <dataset>
+    <name>gulf_of_mexico</name>
+    <longName>Gulf of Mexico (SURA)</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gulf_of_mexico</URL>
+    <useCache>1</useCache>
+    <source>SURA</source>
+  </dataset>
+  <dataset>
+    <name>emodnet_adriatic_ionian_centralmediterranean</name>
+    <longName>Adriatic Sea - Ionian Sea - Central Mediterranean</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_adriatic_ionian_centralmediterranean</URL>
+    <useCache>1</useCache>
+    <source>EMODnet</source>
+  </dataset>
+  <dataset>
+    <name>emodnet_aegean_sea_levantine_sea</name>
+    <longName>Aegean Sea - Levantine Sea</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_aegean_sea_levantine_sea</URL>
+    <useCache>1</useCache>
+    <source>EMODnet</source>
+  </dataset>
+  <dataset>
+    <name>emodnet_bay_of_biscay_iberian_coast</name>
+    <longName>Bay of Biscay - Iberian Coast</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_bay_of_biscay_iberian_coast</URL>
+    <useCache>1</useCache>
+    <source>EMODnet</source>
+  </dataset>
+  <dataset>
+    <name>emodnet_celtic_seas</name>
+    <longName>Celtic Seas</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_celtic_seas</URL>
+    <useCache>1</useCache>
+    <source>EMODnet</source>
+  </dataset>
+  <dataset>
+    <name>emodnet_greater_north_sea</name>
+    <longName>Greater North Sea</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_greater_north_sea</URL>
+    <useCache>1</useCache>
+    <source>EMODnet</source>
+  </dataset>
+  <dataset>
+    <name>emodnet_western_mediterranean</name>
+    <longName>Western Mediterranean</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <edit>0</edit>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/emodnet_western_mediterranean</URL>
+    <useCache>1</useCache>
+    <source>EMODnet</source>
+  </dataset>
+</root>

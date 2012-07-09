@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!-- Written on 06-Jul-2012 11:07:39 using the XML Toolbox for Matlab -->
+<root>
+  <shoreline>
+    <name>wvs</name>
+    <longName>World Vector Shoreline</longName>
+    <version>1</version>
+    <type>netCDFtiles</type>
+    <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/shorelines/wvs</URL>
+    <useCache>1</useCache>
+  </shoreline>
+</root>
