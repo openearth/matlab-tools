@@ -19,7 +19,7 @@ echo With command: %matlab_command%
 echo In working dir %teamcity.build.workingDir%
 echo Listing directory %matlab_path%
 echo Listing directory Y:\
-dir y:\app\who_is_using_matlab
+type y:\app\who_is_using_matlab\who_is_using_matlab_current_users_is_verplaatst-has_been_moved_READ.txt
 
 %matlab_path%matlab -nosplash -nodesktop -minimize -r "%matlab_command%" -logfile mlogfile.log -sd "%teamcity.build.workingDir%"
 
