@@ -673,7 +673,7 @@ el=elements(i).element;
 
 fnameori=gui_getValue(el,el.variable);
 
-[filename, pathname, filterindex] = uiputfile(el.fileextension,el.selectiontext,fnameori);
+[filename, pathname, filterindex] = uiputfile(el.extension,el.selectiontext,fnameori);
 
 if pathname~=0
     
