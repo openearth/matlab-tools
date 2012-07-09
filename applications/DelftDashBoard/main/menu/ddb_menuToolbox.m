@@ -78,10 +78,10 @@ if ~strcmpi(handles.activeToolbox.name,tbname)
     handles.activeToolbox.nr=strmatch(tbname,{handles.Toolbox(:).name},'exact');
     % Now add the new GUI elements to toolbox tab
     setHandles(handles);
+    % Select toolbox
+    set(gcf,'Pointer','watch');
+    ddb_selectToolbox;
+    set(gcf,'Pointer','arrow');
 end
 
-% Select toolbox
-set(gcf,'Pointer','watch');
-ddb_selectToolbox;
-set(gcf,'Pointer','arrow');
 

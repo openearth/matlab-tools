@@ -167,7 +167,7 @@ end
 
 % Add additional toolboxes
 inifile=[inipath 'DelftDashboard.ini'];
-DataDir=getINIValue(inifile,'DataDir');
+%DataDir=getINIValue(inifile,'DataDir');
 try
     additionalToolboxDir=getINIValue(inifile,'AdditionalToolboxDir');
 catch
@@ -204,18 +204,18 @@ end
 fclose(fid);
 
 %% Include icon
-try
-    fid=fopen('earthicon.rc','wt');
-    fprintf(fid,'%s\n','ConApp ICON settings\icons\Earth-icon32x32.ico');
-    fclose(fid);
-    system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
-end
+% try
+%     fid=fopen('earthicon.rc','wt');
+%     fprintf(fid,'%s\n','ConApp ICON settings\icons\Earth-icon32x32.ico');
+%     fclose(fid);
+%     system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
+% end
 
 %% Generate data folder in exe folder
-ddb_copyAllFilesToDataFolder(inipath,compiledatadir,additionalToolboxDir,DataDir);
+ddb_copyAllFilesToDataFolder(inipath,compiledatadir,additionalToolboxDir);
 
 %mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
-copyfile('settings\icons\earthicon.res','.\');
+% copyfile('settings\icons\earthicon.res','.\');
 
 %mcc -m -v -d exe2 DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\netcdfAll-4.2.jar -M earthicon.res
 %mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir,'-a','..\..\io\netcdf\netcdfAll-4.2.jar','-M','earthicon.res');
@@ -235,7 +235,7 @@ dos(['copy ' fileparts(which('ddsettings')) '\main\menu\ddb_aboutDelftDashBoard.
 strrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.txt'),'$revision',num2str(Revision));
 
 delete('complist');
-delete('earthicon.rc');
-delete('earthicon.res');
+% delete('earthicon.rc');
+% delete('earthicon.res');
 
 rmdir(ddbsettingsdir,'s');

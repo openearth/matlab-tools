@@ -98,10 +98,15 @@ end
 
 %% If local data already existed and update could be retrieved from server, check which data is in need for update
 if ~isempty(serverdata)
+    
     fld = fieldnames(data);
     for aa=1:length(data)
         names{aa} = data(aa).(fld{1}).name;
-        versions(aa) = str2double(data(aa).(fld{1}).version);
+        if isfield(data(aa).(fld{1}),'version')
+            versions(aa) = str2double(data(aa).(fld{1}).version);
+        else
+            versions(aa)=0;
+        end
         data(aa).(fld{1}).update = 0;
     end
     
@@ -111,25 +116,26 @@ if ~isempty(serverdata)
             llength = length(data);
             data(llength+1) = serverdata(bb);
             data(llength+1).(fld{1}).update = 1;
-        % Check for version updates on server
         else
+            % Check for version updates on server
             [AA,id] = ismember(serverdata(bb).(fld{1}).name,names);
-            if versions(id) ~= str2double(serverdata(bb).(fld{1}).version);
-                Qupdate = questdlg(['There is an update for ' serverdata(bb).(fld{1}).name... 
-                    ', would you like to delete the old cache and update?'], ...
-                         'Update?', ...
-                         'Yes', 'No', 'Yes');
-                switch Qupdate,
-                case 'Yes',
-                    data(id) = serverdata(bb);
-                    data(id).(fld{1}).update = 1;
-                    if isdir([localdir filesep serverdata(bb).(fld{1}).name])
-                        rmdir([localdir filesep serverdata(bb).(fld{1}).name],'s');
+            if isfield(serverdata(bb).(fld{1}),'version')
+                if versions(id) ~= str2double(serverdata(bb).(fld{1}).version);
+                    Qupdate = questdlg(['There is an update for ' serverdata(bb).(fld{1}).name...
+                        ', would you like to delete the old cache and update?'], ...
+                        'Update?', ...
+                        'Yes', 'No', 'Yes');
+                    switch Qupdate,
+                        case 'Yes',
+                            data(id) = serverdata(bb);
+                            data(id).(fld{1}).update = 1;
+                            if isdir([localdir filesep serverdata(bb).(fld{1}).name])
+                                rmdir([localdir filesep serverdata(bb).(fld{1}).name],'s');
+                            end
+                        case 'No',
+                            data(id).(fld{1}).update = 0;
                     end
-                case 'No',
-                    data(id).(fld{1}).update = 0;
-                end 
-
+                end
             end
         end
     end

@@ -167,7 +167,7 @@ handles=ddb_addMenuItem(handles,'View','Hybrid',               'Callback',{@ddb_
 handles=ddb_addMenuItem(handles,'View','Roads',                'Callback',{@ddb_menuView},'Checked','off','Enable','on','longname','Map');
 handles=ddb_addMenuItem(handles,'View','Shoreline',            'Callback',{@ddb_menuView},'Checked','on','longname','Shoreline','Separator','on');
 handles=ddb_addMenuItem(handles,'View','Cities',               'Callback',{@ddb_menuView});
-handles=ddb_addMenuItem(handles,'View','Model',                'longname','Model specific items','Separator','on');
+% handles=ddb_addMenuItem(handles,'View','Model',                'longname','Model specific items','Separator','on');
 handles=ddb_addMenuItem(handles,'View','Settings',             'Callback',{@ddb_menuView},'Separator','on');
 
 %% Coordinate System

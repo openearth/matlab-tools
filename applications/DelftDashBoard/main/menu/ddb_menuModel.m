@@ -70,4 +70,7 @@ ch=get(h,'Children');
 set(ch,'Checked','off');
 set(hObject,'Checked','on');
 
-ddb_selectModel(mdl);
+handles=getHandles;
+if ~strcmpi(mdl,handles.Model(md).name)    
+    ddb_selectModel(mdl);
+end

@@ -76,19 +76,13 @@ for i=1:length(flist)
         switch lower(flist(i).name)
             case{'.','..','.svn'}
             otherwise
-                if isdeployed
-                    %All models are by definition enabled
-                    k=k+1;
-                    name{k}=flist(i).name;
-                else
-                    fname=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
-                    if exist(fname,'file')
-                        xml=xml_load(fname);
-                        switch lower(xml.enable)
-                            case{'1','y','yes'}
-                                k=k+1;
-                                name{k}=flist(i).name;
-                        end
+                xmlfile=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                if exist(xmlfile,'file')
+                    xml=xml_load(xmlfile);
+                    switch lower(xml.enable)
+                        case{'1','y','yes'}
+                            k=k+1;
+                            name{k}=flist(i).name;
                     end
                 end
         end
@@ -126,12 +120,6 @@ for i=1:length(handles.Model)
         handles.Model(k)=tt(i);
     end
 end
-
-% No longer necessary with XML files
-% for i=1:nt
-%     f=handles.Model(i).iniFcn;
-%     handles=f(handles,'veryfirst');
-% end
 
 % Read xml files
 for i=1:nt

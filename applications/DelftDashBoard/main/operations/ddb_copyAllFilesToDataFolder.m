@@ -1,5 +1,5 @@
 function ddb_copyAllFilesToDataFolder(inipath,datadir,additionalToolboxDir)
-%DDB_COPYALLFILESTODATAFOLDER  One line description goes here.
+%DDB_COPYALLFILESTODATAFOLDER  Copies file to data folder (function is called during compilation and first time Dashboard is called from Matlab)
 %
 %   More detailed description goes here.
 %
@@ -120,17 +120,25 @@ copyfile([repodatadir 'supertrans\supertrans.xml'],[datadir 'supertrans']);
 % Find toolboxes and copy xml files to data folders
 flist=dir([inipath 'toolboxes']);
 for i=1:length(flist)
-    if isdir([inipath 'toolboxes' filesep flist(i).name])
-        switch lower(flist(i).name)
+    toolbox=flist(i).name;
+    if isdir([inipath 'toolboxes' filesep toolbox])
+        switch lower(toolbox)
             case{'.','..','.svn'}
             otherwise
-                % Check if there is a data folder in directory of this
-                % toolbox
-                if isdir([inipath 'toolboxes' filesep flist(i).name filesep 'data'])
-                    if ~isdir([datadir 'toolboxes' filesep flist(i).name])
-                        mkdir([datadir 'toolboxes' filesep flist(i).name]);
+                xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep toolbox '.xml'];
+                if exist(xmlfile,'file')
+                    xml=xml_load(xmlfile);
+                    switch lower(xml.enable)
+                        case{'1','y','yes'}                            
+                            % Check if there is a data folder in directory of this
+                            % toolbox
+                            if isdir([inipath 'toolboxes' filesep toolbox filesep 'data'])
+                                if ~isdir([datadir 'toolboxes' filesep toolbox])
+                                    mkdir([datadir 'toolboxes' filesep toolbox]);
+                                end
+                                copyfile([inipath 'toolboxes' filesep toolbox filesep 'data' filesep '*'],[datadir 'toolboxes' filesep toolbox]);
+                            end
                     end
-                    copyfile([inipath 'toolboxes' filesep flist(i).name filesep 'data' filesep '*'],[datadir 'toolboxes' filesep flist(i).name]);
                 end
         end
     end
@@ -140,16 +148,26 @@ end
 if ~isempty(additionalToolboxDir)
     flist=dir(additionalToolboxDir);
     for i=1:length(flist)
-        if isdir([additionalToolboxDir filesep flist(i).name])
-            switch lower(flist(i).name)
+        toolbox=flist(i).name;
+        if isdir([additionalToolboxDir filesep toolbox])
+            switch lower(toolbox)
                 case{'.','..','.svn'}
                 otherwise
-                if isdir([additionalToolboxDir flist(i).name filesep 'data'])
-                    if ~isdir([datadir 'toolboxes' filesep flist(i).name])
-                        mkdir([datadir 'toolboxes' filesep flist(i).name]);
+                    xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep toolbox '.xml'];
+                    if exist(xmlfile,'file')
+                        xml=xml_load(xmlfile);
+                        switch lower(xml.enable)
+                            case{'1','y','yes'}
+                                % Check if there is a data folder in directory of this
+                                % toolbox
+                                if isdir([additionalToolboxDir filesep toolbox filesep 'data'])
+                                    if ~isdir([datadir 'toolboxes' filesep toolbox])
+                                        mkdir([datadir 'toolboxes' filesep toolbox]);
+                                    end
+                                    copyfile([additionalToolboxDir filesep toolbox filesep 'data' filesep '*'],[datadir 'toolboxes' filesep toolbox]);
+                                end
+                        end
                     end
-                    copyfile([additionalToolboxDir flist(i).name filesep 'data' filesep '*'],[datadir 'toolboxes' filesep flist(i).name]);
-                end                    
             end
         end
     end
