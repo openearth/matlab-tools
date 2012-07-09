@@ -15,7 +15,7 @@ echo %map_network_drive%
 %map_network_drive%
 
 echo 'Starting matlab in path'
-echo %matlab_path
+echo %matlab_path%
 echo 'With command'
 echo %matlab_command%
 echo 'In working dir'
