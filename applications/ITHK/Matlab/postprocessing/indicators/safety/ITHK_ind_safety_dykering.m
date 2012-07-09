@@ -75,9 +75,9 @@ zonefile                 = 'ITHK_ind_safety_dykering.txt';  % loads a list [Nx2]
 %dykering                = S.PP(sens).coast.zcoast(idUR,:);    %S.PP(sens).dunes.position.yposREL(idUR,:);
 dykering                 = S.PP(sens).coast.zgridRough;
 dykeringclasses          = ones(size(dykering));
-dykeringclasses(dykering<Ythr)                           = 2;
-dykeringclasses(dykering>=Ythr & dykering<2*Ythr)        = 3;
-dykeringclasses(dykering>=2*Ythr)                        = 4;
+dykeringclasses(dykering<-Ythr)                          = 2;
+dykeringclasses(dykering>=-Ythr & dykering<Ythr)         = 3;
+dykeringclasses(dykering>=Ythr)                          = 4;
 dykeringclasses(ID_outside,:)                            = 1;
 dykering(ID_outside,:)                                   = 0;
 S.PP(sens).GEmapping.safety.dykering   = dykering;

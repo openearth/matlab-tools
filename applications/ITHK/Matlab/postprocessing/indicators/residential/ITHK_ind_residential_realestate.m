@@ -80,9 +80,9 @@ idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTg
 realestate               = S.PP(sens).dunes.position.yposREL(idUR,:);
 %realestate              = S.PP(sens).coast.zcoast(idUR,:);    %realestate==S.PP(sens).dunes.position.yposREL(idUR,:);   %realestate=S.PP(sens).coast.zgridRough;
 realestateclasses        = ones(size(realestate));
-realestateclasses(realestate<Ythr)                           = 2;
-realestateclasses(realestate>=Ythr & realestate<2*Ythr)      = 3;
-realestateclasses(realestate>=2*Ythr)                        = 4;
+realestateclasses(realestate<-Ythr)                          = 2;
+realestateclasses(realestate>=-Ythr & realestate<Ythr)       = 3;
+realestateclasses(realestate>=Ythr)                          = 4;
 realestateclasses(ID_outside,:)                              = 1;
 realestate(ID_outside,:)                                     = 0;
 S.PP(sens).GEmapping.residential.realestate  = realestate;

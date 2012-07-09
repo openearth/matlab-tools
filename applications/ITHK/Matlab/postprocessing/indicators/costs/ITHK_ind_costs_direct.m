@@ -95,6 +95,7 @@ costs.indirectratio.beachtype            = str2num(costs.indirectratio.beachtype
 costs.indirectratio.foreshoretype        = str2num(costs.indirectratio.foreshoretype);
 
 %% COMPUTE
+Ythr               = str2double(S.settings.indicators.costs.direct.Ythr)*10^6;  % Ythr = threshold for costs icons (in 10^6 euro)
 distance           = str2double(S.settings.indicators.costs.direct.transportdistance);
 idTYPE             = str2double(S.settings.indicators.costs.direct.locationtype);   % 1= foreshore; 2= predominantly beach
 costsUB.total      = zeros(size(S.PP(sens).coast.zcoast));                      % initialise empty UBmapping of costs
@@ -108,7 +109,7 @@ costsGE.indirect   = zeros(size(S.PP(sens).coast.zgridRough));                  
 zminz0             = S.PP(sens).coast.zcoast;                                   % change of coastline since t0 (UBmapping)
 zminz0Rough        = S.PP(sens).coast.zgridRough;                               % change of coastline since t0 (GEmapping)
 
-KMLdata2      = [];
+KMLdata0      = [];
 
 %% EVALUATE STRUCTURES
 fldname  = {'revetment','groyne'};
@@ -134,7 +135,7 @@ for jj=1:length(fldname)
             else
                 addtxt  = sprintf('Groyne with length %1.0fm. ',R.length);
             end
-            KMLdata2 = [KMLdata2,ITHK_KMLcostsicons(S,fldname{jj},costs.(fldname{jj}).costs(ii),ii,R.lon,R.lat,addtxt)];
+            KMLdata0 = [KMLdata0,ITHK_KMLcostsicons(S,fldname{jj},costs.(fldname{jj}).costs(ii),ii,R.lon,R.lat,addtxt)];
         end
     else
         costs.(fldname{jj}).costs  = 0;
@@ -205,30 +206,39 @@ if isfield(S.userinput,'nourishment');
                                'The costprices are about %2.2f to %2.2f euro/m^3 for the dredging and nourishing, about %2.2f euro/m^3/km for the transport and %2.2f to %2.2f euro/m^3 for indirect costs.'], ...
                                N.VOL/10^6,N.WIDTH,N.tstart+S.PP(sens).settings.t0,N.tstop+S.PP(sens).settings.t0,min(costs_nourish(ii,:)),max(costs_nourish(ii,:)),costs_transport(ii),min(costs_indirect(ii,:)),max(costs_indirect(ii,:)));
         end
-        KMLdata2 = [KMLdata2,ITHK_KMLcostsicons(S,'nourishment',costs.nourishment.costs(ii,:),ii,N.lon,N.lat,addtxt)];
+        KMLdata0 = [KMLdata0,ITHK_KMLcostsicons(S,'nourishment',costs.nourishment.costs(ii,:),ii,N.lon,N.lat,addtxt)];
     end
 else
     costs.nourishment.costs  = 0;
 end
 
+%% Classification of costs along the coast
+coststot                  = cumsum(costsGE.total,2);
+coststot_classes          = ones(size(coststot));
+coststot_classes(coststot>0 & coststot<=Ythr)         = 2;
+coststot_classes(coststot>Ythr & coststot<=2*Ythr)    = 3;
+coststot_classes(coststot>2*Ythr)                     = 4;
+
 %% Set output of costs indicator in fields of S-structure
-S.PP(sens).UBmapping.costs.direct.costs_total      = cumsum(costsUB.total,2);
-S.PP(sens).GEmapping.costs.direct.data             = costs;
-S.PP(sens).GEmapping.costs.direct.costs_total      = cumsum(costsGE.total,2);
-S.PP(sens).GEmapping.costs.direct.costs_nourish    = cumsum(costsGE.nourish,2);
-S.PP(sens).GEmapping.costs.direct.costs_transport  = cumsum(costsGE.transport,2);
-S.PP(sens).GEmapping.costs.direct.costs_indirect   = cumsum(costsGE.indirect,2);
-S.PP(sens).GEmapping.costs.direct.costs_structures = cumsum(costsGE.structures,2);
-S.PP(sens).TTmapping.costs.direct.costs_total      = sum(cumsum(costsGE.total,2),1);           %S.PP(sens).TTmapping.costs = sum(costsGE.total,1);
-S.PP(sens).TTmapping.costs.direct.costs_nourish    = sum(cumsum(costsGE.nourish,2),1);
-S.PP(sens).TTmapping.costs.direct.costs_transport  = sum(cumsum(costsGE.transport,2),1);
-S.PP(sens).TTmapping.costs.direct.costs_indirect   = sum(cumsum(costsGE.indirect,2),1);
-S.PP(sens).TTmapping.costs.direct.costs_structures = sum(cumsum(costsGE.structures,2),1);
+S.PP(sens).UBmapping.costs.direct.costs_total         = cumsum(costsUB.total,2);
+S.PP(sens).GEmapping.costs.direct.data                = costs;
+S.PP(sens).GEmapping.costs.direct.costs_total         = cumsum(costsGE.total,2);
+S.PP(sens).GEmapping.costs.direct.costs_nourish       = cumsum(costsGE.nourish,2);
+S.PP(sens).GEmapping.costs.direct.costs_transport     = cumsum(costsGE.transport,2);
+S.PP(sens).GEmapping.costs.direct.costs_indirect      = cumsum(costsGE.indirect,2);
+S.PP(sens).GEmapping.costs.direct.costs_structures    = cumsum(costsGE.structures,2);
+S.PP(sens).TTmapping.costs.direct.costs_total         = sum(cumsum(costsGE.total,2),1);           %S.PP(sens).TTmapping.costs = sum(costsGE.total,1);
+S.PP(sens).TTmapping.costs.direct.costs_nourish       = sum(cumsum(costsGE.nourish,2),1);
+S.PP(sens).TTmapping.costs.direct.costs_transport     = sum(cumsum(costsGE.transport,2),1);
+S.PP(sens).TTmapping.costs.direct.costs_indirect      = sum(cumsum(costsGE.indirect,2),1);
+S.PP(sens).TTmapping.costs.direct.costs_structures    = sum(cumsum(costsGE.structures,2),1);
+S.PP(sens).GEmapping.costs.direct.costs_total_classes = coststot_classes;
 
 %% Settings for writing to KMLtext
 PLOTscale1   = str2double(S.settings.indicators.costs.direct.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
 PLOTscale2   = str2double(S.settings.indicators.costs.direct.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
 PLOToffset   = str2double(S.settings.indicators.costs.direct.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
+PLOTicons    = S.settings.indicators.indicators.costs.icons;
 colour       = {[0.7 0.0 0.7],[0.3 1 0.3]};
 fillalpha    = 0.7;
 popuptxt     = {'Direct costs','Direct costs of nourishments on the coast'};
@@ -236,9 +246,12 @@ popuptxt     = {'Direct costs','Direct costs of nourishments on the coast'};
 KMLdata1      = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
                               (S.PP(sens).GEmapping.costs.direct.costs_total-PLOTscale2), ...
                               PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
+KMLdata2      = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                             S.PP(sens).GEmapping.costs.direct.costs_total_classes,PLOTicons,PLOToffset,sens,popuptxt);
 KMLdata3      = ITHK_KMLcostsbar(sens);
 
-S.PP(sens).output.kml_costs_direct  = KMLdata1;
+S.PP(sens).output.kml_costs_direct0 = KMLdata0;
+S.PP(sens).output.kml_costs_direct1 = KMLdata1;
 S.PP(sens).output.kml_costs_direct2 = KMLdata2;
 S.PP(sens).output.kml_costs_direct3 = KMLdata3;
 

@@ -76,9 +76,9 @@ zonefile                 = 'ITHK_ind_safety_structures.txt';  % loads a list [Nx
 %structures              = S.PP(sens).coast.zcoast(idUR,:); %S.PP(sens).dunes.position.yposREL(idUR,:);
 structures               = S.PP(sens).coast.zgridRough;
 structuresclasses        = ones(size(structures));
-structuresclasses(structures<Ythr)                           = 2;
-structuresclasses(structures>=Ythr & structures<2*Ythr)      = 3;
-structuresclasses(structures>=2*Ythr)                        = 4;
+structuresclasses(structures<-Ythr)                          = 2;
+structuresclasses(structures>=-Ythr & structures<Ythr)       = 3;
+structuresclasses(structures>=Ythr)                          = 4;
 structuresclasses(ID_outside,:)                              = 1;
 structures(ID_outside,:)                                     = 0;
 S.PP(sens).GEmapping.safety.structures   = structures;

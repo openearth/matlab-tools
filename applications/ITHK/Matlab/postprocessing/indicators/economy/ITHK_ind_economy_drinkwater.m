@@ -74,9 +74,9 @@ zonefile                 = 'ITHK_ind_economy_drinkwater.txt';  % loads a list [N
 idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
 drinkwater               = S.PP(sens).dunes.position.yposREL(idUR,:); %drinkwater=S.PP(sens).dunes.position.beachwidth(idUR,:);  %drinkwater=S.PP(sens).coast.zcoast(idUR,:);
 drinkwaterclasses        = ones(size(drinkwater));
-drinkwaterclasses(drinkwater<Ythr)                       = 2;
-drinkwaterclasses(drinkwater>=Ythr & drinkwater<2*Ythr)  = 3;
-drinkwaterclasses(drinkwater>=2*Ythr)                    = 4;
+drinkwaterclasses(drinkwater<-Ythr)                      = 2;
+drinkwaterclasses(drinkwater>=-Ythr & drinkwater<Ythr)   = 3;
+drinkwaterclasses(drinkwater>=Ythr)                      = 4;
 drinkwaterclasses(ID_outside,:)                          = 1;
 drinkwater(ID_outside,:)                                 = 0;
 S.PP(sens).GEmapping.economy.drinkwater  = drinkwater;
