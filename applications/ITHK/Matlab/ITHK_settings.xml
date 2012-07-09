@@ -29,13 +29,13 @@
         <PLOToffsetDX>     2000      </PLOToffsetDX>
         <icons>
           <class>          1               </class>
-          <url> benthos_no.png             </url>
+          <url> benthos_similar.png        </url>
           <class>          2               </class>
-          <url> benthos_low.png            </url>
+          <url> benthos_negative1.png      </url>
           <class>          3               </class>
-          <url> benthos_moderate.png       </url>
+          <url> benthos_negative2.png      </url>
           <class>          4               </class>
-          <url> benthos_high.png           </url>
+          <url> benthos_negative3.png      </url>
         </icons>
       </benthos>
       <juvenilefish>
@@ -50,11 +50,11 @@
           <class>          1               </class>
           <url> juvenilefish_positive.png  </url>
           <class>          2               </class>
-          <url> juvenilefish_no.png        </url>
+          <url> juvenilefish_similar.png   </url>
           <class>          3               </class>
-          <url> juvenilefish_moderate.png  </url>
+          <url> juvenilefish_negative1.png </url>
           <class>          4               </class>
-          <url> juvenilefish_high.png      </url>
+          <url> juvenilefish_negative2.png </url>
         </icons>
       </juvenilefish>
     </ecology>
@@ -64,6 +64,7 @@
         <transportdistance>12</transportdistance>
         <header2>Type of location of nourishments 1= predominantly beach; 2= foreshore</header2>
         <locationtype>     1         </locationtype>
+        <Ythr>20</Ythr>
         <PLOTscale1>       0.000014  </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
         <PLOToffset>       17000     </PLOToffset>
@@ -126,16 +127,15 @@
           <class>          1               </class>
           <url> drinkwater_no.png          </url>
           <class>          2               </class>
-          <url> drinkwater_low.png         </url>
+          <url> drinkwater_lower.png       </url>
           <class>          3               </class>
-          <url> drinkwater_moderate.png    </url>
+          <url> drinkwater_similar.png     </url>
           <class>          4               </class>
-          <url> drinkwater_high.png        </url>
+          <url> drinkwater_higher.png      </url>
         </icons>
       </drinkwater>
       <fishery>
         <header>Computes impact on fishery using relative change of foreshore area as a proxy (with classes ranging from [1+Ythr : Ythr : 1-2*Ythr]))</header>
-        <header>Fishery</header>
         <Ythr>0.2</Ythr>
         <ShoreWidth>10000</ShoreWidth>
         <PLOTscale1>      1600       </PLOTscale1>
@@ -162,7 +162,7 @@
         <PLOToffset>       -2000     </PLOToffset>
         <icons>
           <class>          1               </class>
-          <url> groundwater_no.png         </url>
+          <url> groundwater_nocity.png     </url>
           <class>          2               </class>
           <url> groundwater_low.png        </url>
           <class>          3               </class>
