@@ -79,5 +79,5 @@ try
         end
     end
 catch
-    disp(['Could not retreive data from server for ' name ' toolbox']);
+    disp(['Could not retrieve data from server for ' name ' toolbox']);
 end
