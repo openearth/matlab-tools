@@ -774,7 +774,30 @@ switch waarnemingssoort
    case 'Debiet in m3/s in oppervlaktewater'                                  ,units='m3/s';
    case 'Waterhoogte in cm t.o.v. mean sea level in oppervlaktewater'         ,units='cm';
    case 'Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater',units='cm';
-   case 'Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater', units='cm';
+   case 'Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater',units='cm';
+   case 'Gemiddelde richting uit golfrichtingsspectrum van 30-500 mhz in graad t.o.v. kaart noorden in oppervlaktewater',units ='°';
+   case 'Gem. golfperiode uit spectrale momenten m0+m2 van 30-500 mhz in s in oppervlaktewater',units ='s';
+   case 'Saliniteit in oppervlaktewater'                                     ,units='ppt';
+   case 'Temperatuur in oC in oppervlaktewater'                              ,units='°C';
+   case 'Chlorofyl-a in ug/l in oppervlaktewater'                            ,units='ug/l';
+   case 'Percentage zuurstof in % in oppervlaktewater'                       ,units='%';
+   case 'Kjeldahl stikstof in mg/l uitgedrukt in stikstof in oppervlaktewater',units='mg/l';
+   case 'Stikstof in mg/l in oppervlaktewater'                               ,units='mg/l';
+   case 'Stikstof in mg/l na filtratie in oppervlaktewater'                  ,units='mg/l';
+   case 'Zuurstof in mg/l in oppervlaktewater'                               ,units='mg/l';
+   case 'Totaal fosfaat in mg/l in oppervlaktewater'                         ,units='mg/l';
+   case 'Totaal fosfaat in mg/l na filtratie in oppervlaktewater'            ,units='mg/l';
+   case 'Orthofosfaat in mg/l uitgedrukt in fosfor / na filtratie in oppervlaktewater', units='mg/l';
+   case 'Ammonium in mg/l uitgedrukt in stikstof / na filtratie in oppervlaktewater', units='mg/l';
+   case 'Nitriet in mg/l uitgedrukt in stikstof / na filtratie in oppervlaktewater', units='mg/l';
+   case 'Nitraat in mg/l uitgedrukt in stikstof / na filtratie in oppervlaktewater', units='mg/l';
+   case 'Doorzicht in dm in oppervlaktewater'                                ,units='m';
+   case 'Silicaat in mg/l uitgedrukt in silicium / na filtratie in oppervlaktewater', units='mg/l';
+   case 'Zuurgraad in oppervlaktewater'                                      ,units='pH';
+   case 'Opgelost organisch koolstof in mg/l na filtratie in oppervlaktewater',units='mg/l';
+   case 'Som nitraat en nitriet in mg/l uitgedrukt in stikstof / na filtratie in oppervlaktewater',units='mg/l';
+   case 'Extinctiecoefficient in /m in oppervlaktewater'                     ,units='/m';
+
    otherwise, warning(['Units extraction not yet implemented for ',waarnemingssoort]);
    units = '';
 end
