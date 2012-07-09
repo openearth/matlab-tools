@@ -1,5 +1,5 @@
-function [KMLcosts]=ITHK_KMLcostsbar(sens)
-%function [KMLcosts]=ITHK_KMLcostsbar(sens)
+function [KMLcosts]=ITHK_KMLcostsbar(sens,directcosts)
+%function [KMLcosts]=ITHK_KMLcostsbar(sens,directcosts)
 %
 % ITHK_KMLcostsbar creates the kmltext for the costsbar
 %
@@ -10,7 +10,7 @@ tvec            = S.PP(sens).settings.tvec;
 tvec(length(tvec)+1)=round(2*tvec(end)-tvec(end-1));
 t0              = S.PP(sens).settings.t0;
 zgridrough      = S.PP(sens).coast.zgridRough;
-directcosts     = -S.PP(sens).TTmapping.costs.direct.costs_total;
+%directcosts     = -S.PP(sens).TTmapping.costs.direct.costs_total;
 SCR             = get(0,'ScreenSize');
 rotval          = [0,0];%[0,180];
 KMLcostsbar     = [];

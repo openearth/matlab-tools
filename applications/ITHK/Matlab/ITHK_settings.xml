@@ -64,7 +64,8 @@
         <transportdistance>12</transportdistance>
         <header2>Type of location of nourishments 1= predominantly beach; 2= foreshore</header2>
         <locationtype>     1         </locationtype>
-        <Ythr>20</Ythr>
+        <header3>Ythr = Threshold for costs classes (euro/m along the coast)</header2>
+        <Ythr>30000</Ythr>
         <PLOTscale1>       0.000014  </PLOTscale1>
         <PLOTscale2>       0.0       </PLOTscale2>
         <PLOToffset>       17000     </PLOToffset>
