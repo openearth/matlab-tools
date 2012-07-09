@@ -76,7 +76,13 @@ for i=1:length(flist)
         switch lower(flist(i).name)
             case{'.','..','.svn'}
             otherwise
-                xmlfile=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                if isdeployed
+                    % xml file in settings dir
+                    xmlfile=[handles.settingsDir filesep 'models' filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                else
+                    % xml file in model code dir
+                    xmlfile=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                end
                 if exist(xmlfile,'file')
                     xml=xml_load(xmlfile);
                     switch lower(xml.enable)
