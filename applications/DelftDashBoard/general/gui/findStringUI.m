@@ -1,4 +1,4 @@
-function varargout = findStringUI(varargin)
+function foundStringNr = findStringUI(strs)
 %FINDSTRINGUI  One line description goes here.
 %
 %   More detailed description goes here.

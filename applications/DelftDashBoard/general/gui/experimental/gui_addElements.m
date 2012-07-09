@@ -155,8 +155,19 @@ for i=1:length(elements)
                 
                 % Set text
                 if ~isempty(elements(i).element.text)
+
+                    if ~isfield(elements(i).element.text,'variable')
+                        str=elements(i).element.text;
+                    else
+                        str=' ';
+                    end
+                    switch elements(i).element.textposition
+                        case{'left'}
+                            str=[str ' '];
+                    end
+                    
                     % Text
-                    elements(i).element.texthandle=uicontrol(figh,'Style','text','String',elements(i).element.text,'Position',pos,'BackgroundColor',bgc);
+                    elements(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
                     setTextPosition(elements(i).element.texthandle,pos,elements(i).element.textposition);
                 end
                 
