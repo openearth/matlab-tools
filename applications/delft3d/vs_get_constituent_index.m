@@ -71,6 +71,10 @@ function varargout = vs_get_constituent_index(NFSstruct,varargin)
 % $HeadURL$
 % 2009 sep 28: added implementation of WAQ ada/hda files [Yann Friocourt]
 
+   if ischar(NFSstruct)
+      NFSstruct = vs_use(NFSstruct);
+   end
+
 if (~(strcmp(NFSstruct.SubType,'Delft3D-waq-map') || ...
            strcmp(NFSstruct.SubType,'Delft3D-waq-history')))
    [m,n,k] = vs_mnk(NFSstruct);

@@ -49,6 +49,10 @@ function Sz = vs_get_grp_size(NFSstruct,GrpName,varargin)
 % $Revision$
 % $HeadURL$
 
+   if ischar(NFSstruct)
+      NFSstruct = vs_use(NFSstruct);
+   end
+
    Sz = 0;
    for i=1:length(NFSstruct.GrpDat)
       if strcmpi(NFSstruct.GrpDat(i).Name,GrpName)

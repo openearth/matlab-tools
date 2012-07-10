@@ -49,6 +49,10 @@ function Sz = vs_get_elm_size(NFSstruct,ElmName,varargin)
 % $Revision$
 % $HeadURL$
 
+   if ischar(NFSstruct)
+      NFSstruct = vs_use(NFSstruct);
+   end
+
    Sz = 0;
    for i=1:length(NFSstruct.ElmDef)
       if strcmpi(NFSstruct.ElmDef(i).Name,ElmName)
