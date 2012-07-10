@@ -144,6 +144,7 @@ for ii = files_to_search
         case 'merged_in_range'
             assert(t_sorted)
     end
+    if isempty(t_start); continue; end
     
     flip_x   = x_nc(1)>x_nc(end);
     flip_y   = y_nc(1)>y_nc(end);
