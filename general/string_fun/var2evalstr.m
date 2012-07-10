@@ -18,7 +18,7 @@ function evalstr = var2evalstr(varargin)
 %   example:
 %
 %
-%   See also double2evalstr char2evalstr logical2evalstr
+%   See also DOUBLE2EVALSTR SINGLE2EVALSTR CHAR2EVALSTR LOGICAL2EVALSTR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -126,6 +126,8 @@ for i = 1:length(varargin)
             switch class(variable)
                 case 'double'
                     evalstr = [evalstr double2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'precision', prec, 'delimiter', delimiter)]; %#ok<AGROW>
+                case 'single'
+                    evalstr = [evalstr single2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'precision', prec, 'delimiter', delimiter)]; %#ok<AGROW>
                 case 'char'
                     evalstr = [evalstr char2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'delimiter', delimiter)]; %#ok<AGROW>
                 case 'logical'
@@ -142,6 +144,8 @@ for i = 1:length(varargin)
                     end
                 case 'cell'
                     evalstr = [evalstr cell2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'precision', prec, 'delimiter', delimiter)]; %#ok<AGROW>
+                otherwise
+                    error('field type not implemented: ',class(aaa))
             end
         end
     end

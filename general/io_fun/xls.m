@@ -25,7 +25,7 @@ classdef xls < handle
 %     % clearing the sheet also closes the xls server
 %     clear excelsheet
 %
-%   See also: xls read
+%   See also: xlsread
     
 %% Copyright notice
 %   --------------------------------------------------------------------

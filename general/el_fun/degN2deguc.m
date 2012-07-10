@@ -3,4 +3,4 @@ function degUC = degN2deguc(degN)
 %
 %See also: DEGN2DEGUNITCIRCLE
 
-degUC = degn2degunitcircle(degN);
+degUC = degN2degunitcircle(degN);

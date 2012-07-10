@@ -24,11 +24,7 @@ function varargout=contour2(xcen,ycen,ccen,values,varargin)
 %
 % The isolines are positioned at a height of 1e12 (so they are on top).
 %
-% © G.J. de Boer, Delft Univserity of Technology (g.j.deboer@tudelft.nl)
-%
 % See also: PCOLORCORCEN, CONTOUR, QUIVER2
-
-%1-12-2006
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -72,7 +68,6 @@ U.zposition = 1e12;
    end
    
    %% Replicate 1D arrays
-   %% --------------------
    
    szx = size(xcen);
    szy = size(ycen);
@@ -96,7 +91,6 @@ U.zposition = 1e12;
    end
 
    %% Split levels into pos/0/neg
-   %% -----------------------------
 
       if length(values) > 1 
          
@@ -120,7 +114,6 @@ U.zposition = 1e12;
       end
 
    %% Define line styles
-   %% -----------------------------
 
        L.pos.LineStyle  = '-';
       L.zero.LineStyle  = ':';
@@ -135,9 +128,13 @@ U.zposition = 1e12;
        L.neg.color      = color;
 
    %% Return arguments
-   %% -----------------------------
+
       release = version('-release');
-      if strcmp(release(1:2),'20') % linestyle property is passed to children of contour property but has no effect.
+      if (strcmp(version('-release'),'14'   )|...
+          strcmp(version('-release'),'2006a')|...
+          strcmp(version('-release'),'2006b')|...
+          strcmp(version('-release'),'2007a')|...
+          strcmp(version('-release'),'2007b')) % linestyle property is passed to children of contour property but has no effect.
          if ~isempty(levels.pos )
             [cp,hp]=contour('v6',xcen,ycen,ccen,levels.pos ,'r');
          else
@@ -178,7 +175,26 @@ U.zposition = 1e12;
             hn = [];
          end
       else
-         error('contour2 only works for matlab versions R13, R14, 2006a, 2006b, 2007a (to fix bug in these versions)')
+        %error('contour2 only works for matlab versions R13, R14, 2006a, 2006b, 2007a (to fix bug in these versions)')
+         if ~isempty(levels.pos )
+            [cp,hp]=contour(     xcen,ycen,ccen,levels.pos) ;
+         else
+            cp = [];
+            hp = [];
+         end
+         hold on	        
+         if ~isempty(levels.zero)
+            [c0,h0]=contour(     xcen,ycen,ccen,levels.zero);
+         else
+            c0 = [];
+            h0 = [];
+         end
+         if ~isempty(levels.neg )
+            [cn,hn]=contour(     xcen,ycen,ccen,levels.neg );
+         else
+            cn = [];
+            hn = [];
+         end
       end
       
       setlineprop(hp,L.pos );
@@ -186,7 +202,6 @@ U.zposition = 1e12;
       setlineprop(hn,L.neg );
       
    %% Remember to set color twice as workaround for bug in matlab R14
-   %% -----------------------------
    
    %[maxpos,maxindex] = max(ccen)
    %[minpos,minindex] = min(ccen)
@@ -199,21 +214,18 @@ U.zposition = 1e12;
 
    %% Remember to set color twice as workaround for bug in matlab R14
    %% Fixed in r2006b
-   %% -----------------------------
    
        %setlineprop(hp,L.pos );
        %setlineprop(h0,L.zero);
        %setlineprop(hn,L.neg );
 
    %% Merge handles
-   %% -----------------------------
 
       h = cat(2,hp(:)',h0(:)',hn(:)');
       c = cat(2,cp    ,c0    ,cn    );
       
    %% Position contour high to prevent them to dissapear 
-   %% below a pcolor object.
-   %% -----------------------------
+   %  below a pcolor object.
 
       for ih = 1:length(h)
          zdata = U.zposition + 0.*get(h(ih),'xdata');
@@ -221,7 +233,6 @@ U.zposition = 1e12;
       end
 
    %% Return arguments
-   %% -----------------------------
 
       if nargout==2
          varargout = {c,h};

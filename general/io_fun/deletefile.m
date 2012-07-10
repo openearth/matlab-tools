@@ -1,5 +1,5 @@
 function deletefile(varargin)
-%DELETEFILE   vectorized version of of delete file
+%DELETEFILE   vectorized version of delete file
 %
 %    deletefile(one_file,<other_files,<other_files,<...>>>)
 %

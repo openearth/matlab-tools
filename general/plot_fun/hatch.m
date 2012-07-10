@@ -6,7 +6,13 @@ function  varargout = hatch(obj,angle,color,style,step,width)
 %     The boundary line(s) must be created prior to this command
 %     and its handle(s) specified by OBJ argument.
 %   HATCH(OBJ) Hatchs the domain bounded by the Xdata and Ydata
-%     properties of the OBJ (can be line or patch type).
+%     properties of the OBJ (can be line or patch type). For
+%     a contour(...) object (NOT 'v6' option), use:
+%        h = contour(...);
+%        if ~isempty(get(h,'Children'))
+%          ch = get(h,'Children');
+%          for i=1:length(ch);hatch(ch(i),...);end
+%        end
 %   HATCH by itself takes as OBJ the last object created in the 
 %     current axes.
 %   HATCH(OBJ,ANGLE,COLOR,STYLE,STEP,WIDTH) Specifies additional
@@ -37,7 +43,7 @@ function  varargout = hatch(obj,angle,color,style,step,width)
 %
 %	Type HATCH('demo') to see all the macro effects available
 %
-%     See also FILL, LINE, PATCH
+%See also FILL, LINE, PATCH
 
 %  Kirill K. Pankratov,  kirill@plume.mit.edu
 %  April 27 1994
@@ -46,7 +52,7 @@ function  varargout = hatch(obj,angle,color,style,step,width)
 %  May 10, 2001
 
 % 2007 sep 02: modified for handles to be returned [Gerben J. de Boer]
-% 2009 feb 13: applied soem code alignment and %% subheadings [Gerben J. de Boer]
+% 2009 feb 13: applied some code alignment and %% subheadings [Gerben J. de Boer]
 
 % TO DO: make sure it alsow orks when hatchinh objects with a vertical or horizontal line segment
 

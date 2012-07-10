@@ -1,9 +1,9 @@
-function varargout = quiverarrow2(x,y,u,v,scaling,varargin)
-%QUIVERARROW2   Wrapper around ARROW to allow for syntax like QUIVER. 
+function varargout = quiverarrow(x,y,u,v,scaling,varargin)
+%QUIVERARROW   Wrapper around ARROW to allow for syntax like QUIVER. 
 %
-%    <handles> = quiverarrow2(x,y,u,v,scaling,...)
+%    <handles> = quiverarrow(x,y,u,v,scaling,...)
 %
-% QUIVERARROW is an interface to ARROW from the matlab fiel exchange
+% QUIVERARROW is an interface to ARROW from the matlab file exchange
 % <http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=1430>
 % to make it behave like Matlab's QUIVER.
 %
@@ -24,9 +24,9 @@ function varargout = quiverarrow2(x,y,u,v,scaling,varargin)
 % case an additional scaling vector equal to the
 % current axes' dataaspectratio is applied. So make
 % sure the axis' settings are fixed before calling
-% quiverarrow2.
+% quiverarrow.
 %
-%    quiverarrow2(x,y,u,v,scaling,'distort',...)
+%    quiverarrow(x,y,u,v,scaling,'distort',...)
 %
 % For description of the options see the arrow3 help file.
 %
@@ -90,7 +90,7 @@ function varargout = quiverarrow2(x,y,u,v,scaling,varargin)
    if length(scaling)==1
       scaling = [scaling scaling];
    elseif ~(length(scaling)==2)
-      error('syntax: quiverarrow2(x,y,u,v,scaling) where scaling should either have 1 or 2 elements')
+      error('syntax: quiverarrow(x,y,u,v,scaling) where scaling should either have 1 or 2 elements')
    end
    
    %% Optional distortion

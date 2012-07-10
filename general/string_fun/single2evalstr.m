@@ -1,12 +1,12 @@
-function evalstr = double2evalstr(varargin)
-%DOUBLE2EVALSTR  routine to create an evaluation string resulting in variable
+function evalstr = single2evalstr(varargin)
+%SINGLE2EVALSTR  routine to create an evaluation string resulting in variable
 %
 %   Routine to create a string which after evaluation result in the
 %   original variable. Can be useful for creating a stand alone testfile
 %   with extensive arrays as fixed input.
 %
 %   Syntax:
-%   evalstr = double2evalstr(varargin)
+%   evalstr = single2evalstr(varargin)
 %
 %   Input:
 %   varargin = one or more string variables
@@ -19,13 +19,15 @@ function evalstr = double2evalstr(varargin)
 %           'precision' - precision as defined in fprintf; precision can
 %           also be defined as cell array with multiple precisions, in that
 %           case the shortest string with maximum precision will be used
-%       variable        =   double array
+%       variable        =   single array
 %
 %   Output:
 %   evalstr  =
 %
 %   Example
-%   double2evalstr
+%   single2evalstr
+%
+%   NB: TO DO: NaN does not becomes nan('single')
 %
 %   See also VAR2EVALSTR
 
@@ -127,7 +129,7 @@ for j = 1:length(variables)
         % make sure that an empty variable has a size of 0x0
         variable = [];
     end
-    if strcmp(class(variable), 'double')
+    if strcmp(class(variable), 'single')
         [m n] = size(variable);
 
         %% create string
