@@ -43,10 +43,10 @@ function varargout = TRIQUAT(x,y,varargin)
 % [...] = triquat(x,y,<keyword,value>) 
 %
 % where the following <keyword,value> pairs have been implemented.
-% * active: if 1 only cells with 4 non-NaN corners are considered (default 0)
-%           very useful for triangulating curvi-linear grids. When using
-%           DELAUNAY with not-NaN vertices, holes are filled, whereas TRIQUAT
-%           leaves holes open.
+% * active: if 1, only cells with 4 non-NaN corners are considered. Default 0:
+%           also returns nan values. Meant for triangulating plaid curvi-linear 
+%           grids. When using DELAUNAY with not-NaN vertices, holes are filled, 
+%           whereas TRIQUAT with active=0 leaves holes open.
 %
 % Example:
 %                                                          
@@ -109,7 +109,7 @@ function varargout = TRIQUAT(x,y,varargin)
 
 %% set properties
 
-   OPT.active = 1; % onle return triangles of active quadrangles
+   OPT.active = 1; % only return triangles of active quadrangles
 
    [OPT, Set, Default] = setproperty(OPT, varargin{:});
 

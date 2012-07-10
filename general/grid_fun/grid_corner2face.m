@@ -17,12 +17,12 @@ function varargout = grid_corner2face(varargin)
 %         eta              |               |                      
 %            ^             |               |                      
 %            |             o-------+-------o                      
-%     y^     |    (xcorner,     (xyface,     (xcorner,            
+% n ~ y^     |    (xcorner,     (xyface,     (xcorner,            
 %      |     |     ycorner)      yvface)      ycorner)            
 %      |     |                                                    
 %      |     0-------> ksi
 %      |
-%      0-------> x
+%      0-------> m ~ x
 %
 %   Use:
 %
@@ -48,6 +48,8 @@ function varargout = grid_corner2face(varargin)
 %    xcorner and ycorner of course.
 %
 % Make sure the first dimension is m, the 2nd is n
+%
+%See also: CORNER2CENTER, CENTER2CORNER, GRID_CORNER2PERIMETER
 
 %   --------------------------------------------------------------------
 %    G.J.deboer@citg.tudelft.nl (gerben.deboer@wldelft.nl)
@@ -82,7 +84,6 @@ function varargout = grid_corner2face(varargin)
 
 
 %% INPUT
-%% ------------------------------------------
 
    samesize=0;
 
@@ -102,7 +103,6 @@ function varargout = grid_corner2face(varargin)
    end
    
 %% FACES
-%% ------------------------------------------
 
    x1face                   = (G.xcorner( :     ,1:end-1)+...
                                G.xcorner( :     ,2:end  ))./2;
@@ -131,7 +131,6 @@ elseif mdimension==2
 end
                               
 %% MAKE ARRAY SAME SIZE AS CORNER ARRAYS
-%% ------------------------------------------
 
    if samesize
    
@@ -156,7 +155,6 @@ end
                               
 
 %% OUTPUT 
-%% ------------------------------------------
 
    if nargout==1
       G.xuface  = xuface ;

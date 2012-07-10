@@ -21,7 +21,7 @@ function evalstr = char2evalstr(varargin)
 %   Example
 %   char2evalstr
 %
-%   See also var2evalstr double2evalstr logical2evalstr
+%   See also VAR2EVALSTR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology

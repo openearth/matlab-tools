@@ -5,10 +5,10 @@ function varargout = gradient2(varargin)
 %
 %   calculates gradient dz/dx and dz/dy (in global co-ordinates)
 %   for data on curvilinear grid (x,y) (unlike GRADIENT, wich only
-%   calculates gradients in matrix-space).
+%   calculates gradients in orthogonal matrix-space).
 %
 %    out    = GRADIENT2(...) returns a struct with fields fx and fy
-%   [fx,fy] = GRADIENT2(...) returns 2 matrices fx and fy
+%   [fx,fy] = GRADIENT2(...) returns 2 matrices with vector components (fx,fy)
 %
 %   Note that by default fx and fy are given at the centers of the grid (x,y)
 %   The size of fx and fy is therefore 1 element smaller in both
@@ -23,7 +23,7 @@ function varargout = gradient2(varargin)
 %   out    = GRADIENT2(x,y,z,<'keyword',value>) where the following options 
 %   are implemented:
 %
-%  * 'average': GRADIENT2(x,y,z,'average',value) with value 'min', 'max' or 'mean.
+%  * 'average': GRADIENT2(x,y,z,'average',value) with value 'min','max','mean' or 'rand'.
 %
 %      The input grid is triangulated. For each triangle the 
 %      gradient is determined by fitting a plane through the 3 corner
@@ -33,9 +33,10 @@ function varargout = gradient2(varargin)
 %      argument can be provided to choose between 'min', 'max, and 'mean'. This 
 %      can be used for example to check the accuracy for example. Note that the 
 %      direction of the gradient might be a bit off when triangulation is 
-%      performed oddly. Example:
+%      performed oddly.
 %
-%  * 'discretisation': GRADIENT2(x,y,z,'discretisation',value) with value 'upwind', or 'central'.
+%  * 'discretisation': GRADIENT2(x,y,z,'discretisation',value) with 
+%     value 'upwind', or 'central' or 'fast'. 
 %
 %      By default an upwind gradient method is used, where the results is 
 %      staggered with respect to the input co-ordinates (x,y).
@@ -44,6 +45,8 @@ function varargout = gradient2(varargin)
 %      the input co-ordinates (x,y). The 'upwind' method is vectorized, 
 %      the 'central' method not yet. For the borders no lower order discretisation
 %      is used, but simply NaN are returned.
+%
+%      'discretisation' = 'fast' does technicaly not allow for an 'average' option (YET).
 %                                                                            
 %      |       |       |       |           |       |       |       |         
 %      +   x   +   x   +   x   +   x       +   x   +   x   +   x   +   x     
@@ -115,12 +118,12 @@ function varargout = gradient2(varargin)
    sy = size(y);
    sz = size(z);
    
-   if ~ all(size(sx)==size(sy))
+   if ~isequal(sx,sy)
       error('x and y do not have same size')
    end
    
-   if ~ all(size(sx)==size(sx))
-      error('x and z do not have same size')
+   if ~isequal(sx,sz(1:2))
+      error('x and z(1:2) do not have same size')
    end
    
    szcor  = size(x);
@@ -136,48 +139,32 @@ function varargout = gradient2(varargin)
    OPT.discretisation = 'upwind';
    OPT.average        = 'mean';
 
-%% Cycle keywords in input argument list
-%  to overwrite default values.
-%  Align code lines as much as possible
-%  to allow for block editing in textpad.
-   
-   if nargin>3
-   iargin = 4;
-   while iargin<=nargin,
-     if ischar(varargin{iargin}),
-       switch lower(varargin{iargin})
-       case 'discretisation';iargin=iargin+1;OPT.discretisation  = varargin{iargin};
-       case 'average'       ;iargin=iargin+1;OPT.average         = varargin{iargin};
-       otherwise
-          error(['Invalid string argument: %s.',varargin{iargin}]);
-       end
-     end;
-     iargin=iargin+1;
-   end; 
-   end; 
-   
+   OPT = setproperty(OPT,varargin{4:end});
+
    if strcmp(OPT.discretisation,'upwind')
 
 %% Triangulate curvi-linear grid
 %  and calculate gradients in all separate triangles.
       
-         map     = triquat(x,y,'active',0); % we want to put data  back into the full matrix, so we also want holes back here !
+      map     = triquat(x,y,'active',0); % we want to put data back into the full matrix, so we also want holes back here: 'active',0
          
 %% replaces below 3 calls becuase it's faster, 
 %  becuase we know the structure of the data,
 %  while delaunay considers the co-ordinates 
 %  randomly distributed.
          
-         % map.quat = quat(x,y);
-         % tri      = delaunay(x,y);
-         % map      = tri2quat(tri,quat);
+      % map.quat = quat(x,y);
+      % tri      = delaunay(x,y);
+      % map      = tri2quat(tri,quat);
       
 %% Calculate gradient per triangle
 
-         [tri.fx,tri.fy] = tri_grad(x,y,z,map.tri);
+      fx =  zeros([sz1cen,sz2cen,size(z,3)]);
+      fy =  zeros([sz1cen,sz2cen,size(z,3)]);
+      
+      for k=1:size(z,3)
          
-         fx =  zeros([sz1cen,sz2cen]);
-         fy =  zeros([sz1cen,sz2cen]);
+         [tri.fx,tri.fy] = tri_grad(x,y,z(:,:,k),map.tri);
          
 %% Map value at centres of trangles to centers
 %  of quadrangles using mapper provided by triquat.
@@ -185,33 +172,38 @@ function varargout = gradient2(varargin)
       % 1ST traingle per quadrangle : tri_per_quat(:,1)
       % 2ND traingle per quadrangle : tri_per_quat(:,2)
       
-             if strcmp(OPT.average,'min')
-            fx(:) = min( tri.fx(map.tri_per_quat(:,1)),...
-                         tri.fx(map.tri_per_quat(:,2)));
-            fy(:) = min( tri.fy(map.tri_per_quat(:,1)),...
-                         tri.fy(map.tri_per_quat(:,2)));
+         if     strcmp(OPT.average,'min')
+            fx(:,:,k) = reshape(min( tri.fx(map.tri_per_quat(:,1)),...
+                                     tri.fx(map.tri_per_quat(:,2))),[sz1cen,sz2cen]);
+            fy(:,:,k) = reshape(min( tri.fy(map.tri_per_quat(:,1)),...
+                                     tri.fy(map.tri_per_quat(:,2))),[sz1cen,sz2cen]);
          elseif strcmp(OPT.average,'mean')
-            fx(:) =     (tri.fx(map.tri_per_quat(:,1))+...
-                         tri.fx(map.tri_per_quat(:,2)))./2;
-            fy(:) =     (tri.fy(map.tri_per_quat(:,1))+...
-                         tri.fy(map.tri_per_quat(:,2)))./2;
+            fx(:,:,k) = reshape(    (tri.fx(map.tri_per_quat(:,1))+...
+                                     tri.fx(map.tri_per_quat(:,2)))./2,[sz1cen,sz2cen]);
+            fy(:,:,k) = reshape(    (tri.fy(map.tri_per_quat(:,1))+...
+                                     tri.fy(map.tri_per_quat(:,2)))./2,[sz1cen,sz2cen]);
          elseif strcmp(OPT.average,'max')
-            fx(:) = max( tri.fx(map.tri_per_quat(:,1)),...
-                         tri.fx(map.tri_per_quat(:,2)));
-            fy(:) = max( tri.fy(map.tri_per_quat(:,1)),...
-                         tri.fy(map.tri_per_quat(:,2)));
+            fx(:,:,k) = reshape(max( tri.fx(map.tri_per_quat(:,1)),...
+                                     tri.fx(map.tri_per_quat(:,2))),[sz1cen,sz2cen]);
+            fy(:,:,k) = reshape(max( tri.fy(map.tri_per_quat(:,1)),...
+                                     tri.fy(map.tri_per_quat(:,2))),[sz1cen,sz2cen]);
+         elseif strcmp(OPT.average,'rand')
+            fx(:,:,k) = reshape(     tri.fx(map.tri_per_quat(:,1)),[sz1cen,sz2cen]);
+            fy(:,:,k) = reshape(     tri.fy(map.tri_per_quat(:,1)),[sz1cen,sz2cen]);
          else
-            error(['gradient2: averaging method unknown: either ''min'', ''max'' or ''mean'', not: ''',OPT.average,''''])
+            error(['gradient2: averaging method unknown: either ''min'', ''max'', ''mean'' or ''rand'', not: ''',OPT.average,''''])
          end
+         
+      end % k
    
    elseif strcmp(OPT.discretisation,'central')
    
-         fx  =  nan.*zeros(szcor);
-         fy  =  nan.*zeros(szcor);   
-         fxA =  nan.*zeros(szcor);
-         fyA =  nan.*zeros(szcor);   
-         fxB =  nan.*zeros(szcor);
-         fyB =  nan.*zeros(szcor);   
+         fx  =  nan.*zeros([szcor size(z,3)]);
+         fy  =  nan.*zeros([szcor size(z,3)]);   
+         fxA =  nan.*zeros( szcor);
+         fyA =  nan.*zeros( szcor);   
+         fxB =  nan.*zeros( szcor);
+         fyB =  nan.*zeros( szcor);   
          
 %% Calculations
 
@@ -238,25 +230,26 @@ function varargout = gradient2(varargin)
    triA     = zeros(n_triangles,3);
    triB     = zeros(n_triangles,3);
   
-   for ind1=2:szcor(1)-1
-   for ind2=2:szcor(2)-1
+     for k=1:size(z,3)
+       for ind1=2:szcor(1)-1
+       for ind2=2:szcor(2)-1
 
-      triA(:,1) = sub2ind(szcor,ind1-1,ind2  ); % 1st corner point AB1
-      triA(:,2) = sub2ind(szcor,ind1+1,ind2  ); % 2nd corner point AB2
-      triA(:,3) = sub2ind(szcor,ind1  ,ind2-1); % 3rd corner point A 3
-      
-      triB(:,1) = sub2ind(szcor,ind1-1,ind2  ); % 1st corner point AB1
-      triB(:,2) = sub2ind(szcor,ind1+1,ind2  ); % 2nd corner point AB2
-      triB(:,3) = sub2ind(szcor,ind1  ,ind2+1); % 3rd corner point  B3
-      
-      [fxA(ind1,ind2),...
-       fyA(ind1,ind2)] = tri_grad(x,y,z,triA);
-      
-      [fxB(ind1,ind2),...
-       fyB(ind1,ind2)] = tri_grad(x,y,z,triB);
-   
-   end
-   end
+          triA(:,1) = sub2ind(szcor,ind1-1,ind2  ); % 1st corner point AB1
+          triA(:,2) = sub2ind(szcor,ind1+1,ind2  ); % 2nd corner point AB2
+          triA(:,3) = sub2ind(szcor,ind1  ,ind2-1); % 3rd corner point A 3
+          
+          triB(:,1) = sub2ind(szcor,ind1-1,ind2  ); % 1st corner point AB1
+          triB(:,2) = sub2ind(szcor,ind1+1,ind2  ); % 2nd corner point AB2
+          triB(:,3) = sub2ind(szcor,ind1  ,ind2+1); % 3rd corner point  B3
+          
+          [fxA(ind1,ind2),...
+           fyA(ind1,ind2)] = tri_grad(x,y,z(:,:,k),triA);
+          
+          [fxB(ind1,ind2),...
+           fyB(ind1,ind2)] = tri_grad(x,y,z(:,:,k),triB);
+       
+       end
+       end
    
 %% Vectorized attempt
   
@@ -288,19 +281,59 @@ function varargout = gradient2(varargin)
 
 %% Average
 
-      if     strcmp(OPT.average,'min')
-         fx  = min(fxA, fxB);  
-         fy  = min(fyA, fyB);  
-      elseif strcmp(OPT.average,'mean')
-         fx  = (fxA + fxB)./2;  
-         fy  = (fyA + fyB)./2;  
-      elseif strcmp(OPT.average,'max')
-         fx  = max(fxA, fxB);  
-         fy  = max(fyA, fyB);  
-      else
-         error(['gradient2: averaging method unknown: either ''min'', ''max'' or ''mean'', not: ''',OPT.average,''''])
-      end
+       if     strcmp(OPT.average,'min')
+          fx(:,:,k)  = min(fxA, fxB);  
+          fy(:,:,k)  = min(fyA, fyB);  
+       elseif strcmp(OPT.average,'mean')
+          fx(:,:,k)  = (fxA + fxB)./2;  
+          fy(:,:,k)  = (fyA + fyB)./2;  
+       elseif strcmp(OPT.average,'max')
+          fx(:,:,k)  = max(fxA, fxB);  
+          fy(:,:,k)  = max(fyA, fyB);  
+       else
+          error(['gradient2: averaging method unknown: either ''min'', ''max'' or ''mean'', not: ''',OPT.average,''''])
+       end
+     end % k
    
+   elseif strcmp(OPT.discretisation,'fast')
+
+       fx  = repmat(nan,[szcor size(z,3)]);
+       fy  = repmat(nan,[szcor size(z,3)]);   
+       dx  = repmat(nan,size(x));
+       dy  = repmat(nan,size(x));
+       dm  = repmat(nan,size(x));
+       dn  = repmat(nan,size(x));
+       ang = repmat(nan,size(x));
+       dzm = repmat(nan,size(x));
+       dzn = repmat(nan,size(x));
+
+       dx  = x(:,3:end) -  x(:,1:end-2);
+       dy  = y(:,3:end) -  y(:,1:end-2);
+       dm  = sqrt(dx.^2 + dy.^2);
+
+       ang(2:end-1,2:end-1) = atan2(dy(2:end-1,:),dx(2:end-1,:)); % can also take angle in other direction, average keyword not applicable.
+
+       dx  = x(3:end,:) -  x(1:end-2,:);
+       dy  = y(3:end,:) -  y(1:end-2,:);
+       dn  = sqrt(dx.^2 + dy.^2);
+       
+       % TO DO take gradient with two different ang sets, and then calculate 
+       % min, mean and max.
+
+      %ang(2:end-1,2:end-1) = atan2(dy(:,2:end-1),dx(:,2:end-1)); % can also take angle in other direction, average keyword not applicable.
+
+       for k = 1:size(z,3)
+       
+          dzm(:,2:end-1) = (z( :     ,3:end  ,k) - ...
+                            z( :     ,1:end-2,k))./dm;
+          dzn(2:end-1,:) = (z(3:end  , :     ,k) - ...
+                            z(1:end-2, :     ,k))./dn;
+          fx(:,:,k)     =  dzm.*cos(ang) - ...
+                           dzn.*sin(ang);
+          fy(:,:,k)     =  dzm.*sin(ang) + ...
+                           dzn.*cos(ang);
+       end
+
    else
    
       error(['gradient2: discretisation method unknown: either ''upwind'' or ''central'', not: ''',OPT.discretisation,''''])

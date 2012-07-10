@@ -1,5 +1,5 @@
 function varargout = tri_grad(x,y,z,varargin)
-%TRI_GRAD   Gradient vector triangulated mesh.
+%TRI_GRAD   Gradient vector of triangulated mesh.
 %
 %    f= tri_grad(x,y,z)
 %
@@ -13,13 +13,12 @@ function varargout = tri_grad(x,y,z,varargin)
 %
 %    f = tri_grad(x,y,z,p) 
 %
-% can be used
-% to specificy which elements of x,y,z 
-% when these have more than three elements
-% as returned by tri(...).
+% can be used to specificy which elements 
+% of x,y,z when these have more than three 
+% elementsas returned by tri(...).
 % By default p = [1 2 3];
 %
-% (This also automatically sets the order
+% (This also automatically sets the order,
 %  which is irrelevant for the solution though).
 % 
 % f = tri_grad(x,y,z) returns an array where the 
@@ -65,7 +64,7 @@ function varargout = tri_grad(x,y,z,varargin)
 %   -------------------------------------------------------------------- 
 
    %% Set order in which triangles are to be used
-   %--------------------------------
+
    if nargin==4
       p = varargin{1};
    else

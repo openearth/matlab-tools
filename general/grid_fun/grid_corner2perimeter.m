@@ -7,13 +7,13 @@ function varargout = grid_corner2perimeter(varargin)
 %                           | G.v.ddim1                                     
 %                     <---- |-GVV--->                        
 %                    o-------+-------o^                     
-%                    |      |        ||    G.u.ddim1
-%                    |      |        ||    GVU
-%                    |      v <----- |----->                
+%                    |      |        ||    
+%                    |      |        ||     G.u.ddim1
+%                    |      v <----- |----->GVU                
 %        G.u.ddim2   +       +       +|    
 %        = GUU       |<------------->||    
-%                    |     cen.ddim1 || G.u.ddim2   
-%      ^             |               || GUU                                 
+%                    |     cen.ddim1 ||G.u.ddim2   
+%      ^             |               ||GUU                                 
 %  dim |             o-------+-------oV                     
 %  2   |                   G.v.ddim1                                 
 %  v   |                   = GVV                            
@@ -25,16 +25,16 @@ function varargout = grid_corner2perimeter(varargin)
 % where the main field refers to the position, and the 
 % second subfield refers to the direction.
 %
-% [cen.ddim1,cen.ddim2] = grid_corner2perimeter(G)
+% [cen.ddim1,cen.ddim2] = grid_corner2perimeter(cor.x,cor.y)
 % [cen.ddim1,cen.ddim2,...
-%    u.ddim1,  v.ddim2] = grid_corner2perimeter(G)
+%    u.ddim1,  v.ddim2] = grid_corner2perimeter(cor.x,cor.y)
 % [cen.ddim1,cen.ddim2,...
 %    u.ddim1,  v.ddim2,...
-%    v.ddim1,  u.ddim2] = grid_corner2perimeter(G)
+%    v.ddim1,  u.ddim2] = grid_corner2perimeter(cor.x,cor.y)
 %
 % [.............] = grid_corner2perimeter(cor.x,cor.y)
 %
-%See also: CORNER2CENTER, CENTER2CORNER
+%See also: CORNER2CENTER, CENTER2CORNER, GRID_CORNER2FACE
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2007 Delft University of Technology
@@ -66,7 +66,6 @@ function varargout = grid_corner2perimeter(varargin)
 %   -------------------------------------------------------------------- 
 
 %% INPUT
-%% ------------------------------------------
 
    if isstruct(varargin{1})
       G       = varargin{1};
@@ -76,7 +75,6 @@ function varargout = grid_corner2perimeter(varargin)
    end
 
 %% FACE LENGTHs
-%% ------------------------------------------
    
    % length of face GUU
    G.u.ddim2   = sqrt( diff(G.cor.x,1,2).^2 + ...
@@ -109,7 +107,6 @@ function varargout = grid_corner2perimeter(varargin)
    G.cen.ddim2 = (G.u.ddim2(1:end-1,:      ) + G.u.ddim2(2:end  ,:      ))./2;
    
 %% OUTPUT 
-%% ------------------------------------------
 
    if nargout==1
       varargout={G};

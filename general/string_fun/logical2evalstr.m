@@ -17,7 +17,7 @@ function evalstr = logical2evalstr(varargin)
 %   example:
 %
 %
-%   See also struct2evalstr, double2evalstr
+%   See also VAR2EVALSTR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
