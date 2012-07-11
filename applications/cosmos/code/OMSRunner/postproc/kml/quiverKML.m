@@ -206,9 +206,15 @@ for it=1:length(t)
     yp=invmerc(yp);       
 
     % Now sort by level
-    for k=1:length(levs)-1
-
-        inlev=find(vel>=levs(k) & vel<levs(k+1));
+    for k=1:length(levs)
+        
+        if k==1
+            inlev=find(vel<levs(k+1));
+        elseif k<length(levs)
+            inlev=find(vel>=levs(k) & vel<levs(k+1));
+        else
+            inlev=find(vel>=levs(k));
+        end
         
         if ~isempty(inlev)
         
