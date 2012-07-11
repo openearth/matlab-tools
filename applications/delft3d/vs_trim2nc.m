@@ -402,26 +402,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Attributes' , attr,...
                                   'FillValue'  , []);
 
-      ifld     = 4;clear attr dims
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of cell corners');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:MMAX');
-      nc.Variables(ifld) = struct('Name'      , 'grid_m', ...
-                                  'Datatype'  , 'int32', ...
-                                  'Dimensions', mcor.dims, ...
-                                  'Attributes' , attr,...
-                                  'FillValue'  , []);
-
-      ifld     = 5;clear attr dims
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of cell corners');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:NMAX');
-      nc.Variables(ifld) = struct('Name'      , 'grid_n', ...
-                                  'Datatype'  , 'int32', ...
-                                  'Dimensions', ncor.dims, ...
-                                  'Attributes' , attr,...
-                                  'FillValue'  , []);
-
 %% horizontal coordinates: (x,y) and (lon,lat), on centres and corners
 
    if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old bug)
@@ -448,8 +428,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       end
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT TEMPOUT:CODW map-const:COORDINATES');
-      if any(strcmp('grid_x',OPT.var))
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x');
+      if any(strcmp('grid_x',OPT.var)) & any(strcmp('grid_y',OPT.var))
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x grid_y');
       end
       nc.Variables(ifld) = struct('Name'       , 'x', ...
                                   'Datatype'   , OPT.type, ...
@@ -468,8 +448,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       end
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS TEMPOUT:YWAT TEMPOUT:CODW map-const:COORDINATES');
-      if any(strcmp('grid_y',OPT.var))
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_y');
+      if any(strcmp('grid_x',OPT.var)) & any(strcmp('grid_y',OPT.var))
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x grid_y');
       end
       nc.Variables(ifld) = struct('Name'       , 'y', ...
                                   'Datatype'   , OPT.type, ...
@@ -481,10 +461,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       nc.Variables(2) = nc.Variables(ifld-1);
       nc.Variables(2).Name                  = 'm';
       nc.Variables(2).Dimensions            = m.dims;
+      nc.Variables(2).Attributes(end)       = []; % remove bounds
 
       nc.Variables(3) = nc.Variables(ifld  );
       nc.Variables(3).Name                  = 'n';
       nc.Variables(3).Dimensions            = n.dims;
+      nc.Variables(3).Attributes(end)       = []; % remove bounds
       end
       end
 
@@ -517,17 +499,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmcor.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
-
-      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is curvi-linear
-      if G.orthogonal
-      nc.Variables(4) = nc.Variables(ifld-1);
-      nc.Variables(4).Name                  = 'grid_m';
-      nc.Variables(4).Dimensions            = mcor.dims;
-
-      nc.Variables(5) = nc.Variables(ifld  );
-      nc.Variables(5).Name                  = 'grid_n';
-      nc.Variables(5).Dimensions            = ncor.dims;
-      end
       end
 
    end % cartesian
@@ -543,8 +514,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lon(:)) max(G.cen.lon(:))]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT map-const:CODW map-const:COORDINATES');
-      if any(strcmp('grid_longitude',OPT.var))	     
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_longitude');
+      if any(strcmp('grid_longitude',OPT.var)) & any(strcmp('grid_latitude',OPT.var))   
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_longitude grid_latitude');
       end
       nc.Variables(ifld) = struct('Name'       , 'longitude', ...
                                   'Datatype'   , OPT.type, ...
@@ -562,8 +533,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lat(:)) max(G.cen.lat(:))]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS map-const:YWAT map-const:CODW map-const:COORDINATES');
-      if any(strcmp('grid_latitude',OPT.var))
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_latitude');
+      if any(strcmp('grid_longitude',OPT.var)) & any(strcmp('grid_latitude',OPT.var))   
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_longitude grid_latitude');
       end
       nc.Variables(ifld) = struct('Name'       , 'latitude', ...
                                   'Datatype'   , OPT.type, ...
@@ -576,10 +547,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       nc.Variables(2) = nc.Variables(ifld-1);
       nc.Variables(2).Name                  = 'm';
       nc.Variables(2).Dimensions            = m.dims;
+      nc.Variables(2).Attributes(end)       = []; % remove bounds
 
       nc.Variables(3) = nc.Variables(ifld  );
       nc.Variables(3).Name                  = 'n';
       nc.Variables(3).Dimensions            = n.dims;
+      nc.Variables(3).Attributes(end)       = []; % remove bounds
       end
 
       end
@@ -614,16 +587,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmcor.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
-      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is curvi-linear
-      if G.orthogonal
-      nc.Variables(4) = nc.Variables(ifld-1);
-      nc.Variables(4).Name                  = 'grid_m';
-      nc.Variables(4).Dimensions            = mcor.dims;
-
-      nc.Variables(5) = nc.Variables(ifld  );
-      nc.Variables(5).Name                  = 'grid_n';
-      nc.Variables(5).Dimensions            = ncor.dims;
-      end
       end
       
    end % lat,lon present
@@ -680,7 +643,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'depth of cell corners');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:DP map-const:DP0 map-const:DPS map-const:DRYFLP');
@@ -1067,7 +1029,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:NAMCON map-const:NAMSED');
       dims(1)  = struct('Name', 'CHAR20'          ,'Length',ncdimlen.CHAR20);
       dims(2)  = struct('Name', 'SuspSedimentFrac','Length',ncdimlen.SuspSedimentFrac);
-      nc.Variables(ifld) = struct('Name'       , 'SuspSedimentFrac', ...
+      nc.Variables(ifld) = struct('Name'       , 'SuspSedimentFracNames', ...
                                   'Datatype'   , 'char', ...
                                   'Dimensions' , dims, ...
                                   'Attributes' , attr,...
@@ -1124,14 +1086,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if ~G.orthogonal
       ncwrite   (ncfile,'m'             , [1:G.mmax    ]');
       ncwrite   (ncfile,'n'             , [1:G.nmax    ]');
-      ncwrite   (ncfile,'grid_m'        , nc_cf_cor2bounds([0:G.mmax    ]'));
-      ncwrite   (ncfile,'grid_n'        , nc_cf_cor2bounds([0:G.nmax    ]'));
       else
       ncwrite   (ncfile,'m'             , [nan    ; cen.x(:)              ;nan    ]);
       ncwrite   (ncfile,'n'             , [nan    ; cen.y(:)              ;nan    ]);
       warning('leading and trailing nan values make ncbrowse crash')
-      ncwrite   (ncfile,'grid_m'        , [nan nan;nc_cf_cor2bounds(cor.x)';nan nan]); % [2 6]
-      ncwrite   (ncfile,'grid_n'        , [nan nan;nc_cf_cor2bounds(cor.y) ;nan nan]); % [2 5]
       end
 
       data = vs_let(F,'map-const','THICK','quiet');
@@ -1214,7 +1172,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end      
 
       if any(strcmp('sediment',OPT.var)) && LSED > 0	        
-      ncwrite   (ncfile, 'SuspSedimentFrac',NAMSED');
+      ncwrite   (ncfile, 'SuspSedimentFracNames',NAMSED');
       end
 
       i = 0;
