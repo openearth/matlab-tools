@@ -578,6 +578,11 @@ if isfield(model,'stations')
                 hm.models(i).stations(j).n=str2double(model.stations(istat).station.locationn);
             end
             hm.models(i).stations(j).type=model.stations(istat).station.type;
+            if isfield(model.stations(istat).station,'toopendap')
+                hm.models(i).stations(j).toOPeNDAP=str2double(model.stations(istat).station.toopendap);
+            else
+                hm.models(i).stations(j).toOPeNDAP=0;
+            end
             
             if isfield(model.stations(istat).station,'toOPeNDAP')
                 hm.models(i).stations(j).toOPeNDAP=str2double(model.stations(istat).station.toOPeNDAP);
