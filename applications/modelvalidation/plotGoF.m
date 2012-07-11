@@ -43,7 +43,7 @@ if nargin==0
    varargout = {OPT};
    return
 end
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% Plot statistics
 figure(OPT.figure);
