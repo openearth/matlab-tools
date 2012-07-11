@@ -96,7 +96,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
                          'salinity','temperature','density',...
                          'sediment',...
                          'viscosity_z','diffusivity_z','Ri'};
-   OPT.var_derived    = {'pea','dpeadt'};
+   OPT.var_derived    = {'pea','dpeadt','dpeads'};
    OPT.var_nefis      = {'XZ','YZ','XWAT','YWAT','XCOR','YCOR','DP','DP0','DPS','DPSO','KCS','S1','U1','V1','WPHY','TAUKSI','TAUETA','RTUR1','R1','RHO'};
    OPT.var            = {OPT.var_cf{:},OPT.var_primary{:}};
    OPT.var_all        = {OPT.var_cf{:},OPT.var_primary{:},OPT.var_derived{:}};
@@ -888,6 +888,139 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'FillValue'  , []); % this doesn't do anything
       end
 
+      if any(strcmp('dpeads',OPT.var))
+      
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Ax term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Ax', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Ay term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Ay', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Sx term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Sx', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Sy term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Sy', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Cx term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Cx', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Cy term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Cy', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Nx term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Nx', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Ny term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Ny', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Wz term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Wz', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'RHS Mz term of spatial gradient of verticaly integrated Potential Energy Anomaly');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
+      nc.Variables(ifld) = struct('Name'       , 'Mz', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      end
+
       if any(strcmp('salinity',OPT.var))
       if isfield(I,'salinity')
       ifld     = ifld + 1;clear attr dims
@@ -1194,6 +1327,16 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('viscosity_z'   ,OPT.var));R.viscosity_z     = [Inf -Inf];end
       if any(strcmp('diffusivity_z' ,OPT.var));R.diffusivity_z   = [Inf -Inf];end
       if any(strcmp('Ri'            ,OPT.var));R.Ri              = [Inf -Inf];end
+      if any(strcmp('dpeads'        ,OPT.var));R.Ax              = [Inf -Inf];
+                                               R.Ay              = [Inf -Inf];
+                                               R.Sx              = [Inf -Inf];
+                                               R.Sy              = [Inf -Inf];
+                                               R.Cx              = [Inf -Inf];
+                                               R.Cy              = [Inf -Inf];
+                                               R.Nx              = [Inf -Inf];
+                                               R.Ny              = [Inf -Inf];
+                                               R.Wz              = [Inf -Inf];
+                                               R.Mz              = [Inf -Inf];end
 
       for it = OPT.time % it is index in NEFIS file
       i = i + 1;        % i  is index in netCDF file
@@ -1320,6 +1463,20 @@ function varargout = vs_trim2nc(vsfile,varargin)
          matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RICH','quiet'),G.cen.mask);
          ncwrite   (ncfile,'Ri', matrix,[2,2,1,i]);
          R.Ri = [min(R.Ri(1),min(matrix(:))) max(R.Ri(2),max(matrix(:)))];
+         end
+
+         if any(strcmp('dpeads',OPT.var))
+         tmp = vs_dpeads(F,it);
+         ncwrite   (ncfile,'Ax', tmp.Ax,[2,2,i]);R.Ax = [min(R.Ax(1),min(tmp.Ax(:))) max(R.Ax(2),max(tmp.Ax(:)))];
+         ncwrite   (ncfile,'Ay', tmp.Ay,[2,2,i]);R.Ay = [min(R.Ay(1),min(tmp.Ay(:))) max(R.Ay(2),max(tmp.Ay(:)))];
+         ncwrite   (ncfile,'Sx', tmp.Sx,[2,2,i]);R.Sx = [min(R.Sx(1),min(tmp.Sx(:))) max(R.Sx(2),max(tmp.Sx(:)))];
+         ncwrite   (ncfile,'Sy', tmp.Sy,[2,2,i]);R.Sy = [min(R.Sy(1),min(tmp.Sy(:))) max(R.Sy(2),max(tmp.Sy(:)))];
+         ncwrite   (ncfile,'Cx', tmp.Cx,[2,2,i]);R.Cx = [min(R.Cx(1),min(tmp.Cx(:))) max(R.Cx(2),max(tmp.Cx(:)))];
+         ncwrite   (ncfile,'Cy', tmp.Cy,[2,2,i]);R.Cy = [min(R.Cy(1),min(tmp.Cy(:))) max(R.Cy(2),max(tmp.Cy(:)))];
+         ncwrite   (ncfile,'Nx', tmp.Nx,[2,2,i]);R.Nx = [min(R.Nx(1),min(tmp.Nx(:))) max(R.Nx(2),max(tmp.Nx(:)))];
+         ncwrite   (ncfile,'Ny', tmp.Ny,[2,2,i]);R.Ny = [min(R.Ny(1),min(tmp.Ny(:))) max(R.Ny(2),max(tmp.Ny(:)))];
+         ncwrite   (ncfile,'Wz', tmp.Wz,[2,2,i]);R.Wz = [min(R.Wz(1),min(tmp.Wz(:))) max(R.Wz(2),max(tmp.Wz(:)))];
+         ncwrite   (ncfile,'Mz', tmp.Mz,[2,2,i]);R.Mz = [min(R.Mz(1),min(tmp.Mz(:))) max(R.Mz(2),max(tmp.Mz(:)))];
          end
 
       end
