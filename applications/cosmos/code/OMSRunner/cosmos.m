@@ -27,6 +27,7 @@ hm.makeWebsite=1;
 hm.uploadFTP=1;
 hm.archiveInput=1;
 hm.getOceanModel=1;
+hm.catchUp=0;
 
 hm.NCyc=0;
 
