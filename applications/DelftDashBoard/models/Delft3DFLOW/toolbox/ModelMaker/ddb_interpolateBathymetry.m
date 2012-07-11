@@ -61,8 +61,6 @@ function z = ddb_interpolateBathymetry(handles,x,y,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
-
 % Default (use background bathymetry)
 datasets{1}=handles.screenParameters.backgroundBathymetry;
 zmin=-100000;
@@ -147,8 +145,13 @@ for idata=1:length(datasets)
     zz(zz<zmn)=NaN;
     zz(zz>zmx)=NaN;        
     
+    isn=isnan(xg);
+    xg(isn)=0;
+    yg(isn)=0;    
     % Copy new values (that are not NaN) to new bathymetry
-    z0=interp2(xx,yy,zz,xg,yg);
+    z0=interp2(xx,yy,zz,xg,yg);    
+    z0(isn)=NaN;
+    
     z(~isnan(z0))=z0(~isnan(z0));
         
 end
