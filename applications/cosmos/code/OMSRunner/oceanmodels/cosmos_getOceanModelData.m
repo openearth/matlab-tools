@@ -31,24 +31,30 @@ for i=1:length(hm.oceanModels)
 
         outdir=[hm.scenarioDir 'oceanmodels' filesep oceanname filesep];
         
-        switch lower(hm.oceanModel(i).type)
-            case{'hycom'}
-                url=hm.oceanModel(i).URL;
-                outname=hm.oceanModel(i).name;
-                s=load([hm.dataDir 'oceanmodels' filesep 'hycom_sp.mat']);
-                s=s.s;
-                MakeDir(hm.scenarioDir,'oceanmodels',oceanname);
-                t0=floor(t0);
-                t1=ceil(t1);
-                
-                daynum=nc_varget(url,'MT');
-
-                getHYCOM(url,outname,outdir,'waterlevel',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
-                getHYCOM(url,outname,outdir,'current_u',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
-                getHYCOM(url,outname,outdir,'current_v',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
-                getHYCOM(url,outname,outdir,'salinity',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
-                getHYCOM(url,outname,outdir,'temperature',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+        try
+            
+            switch lower(hm.oceanModel(i).type)
+                case{'hycom'}
+                    url=hm.oceanModel(i).URL;
+                    outname=hm.oceanModel(i).name;
+                    s=load([hm.dataDir 'oceanmodels' filesep 'hycom_sp.mat']);
+                    s=s.s;
+                    MakeDir(hm.scenarioDir,'oceanmodels',oceanname);
+                    t0=floor(t0);
+                    t1=ceil(t1);
+                    
+                    daynum=nc_varget(url,'MT');
+                    
+                    getHYCOM(url,outname,outdir,'waterlevel',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+                    getHYCOM(url,outname,outdir,'current_u',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+                    getHYCOM(url,outname,outdir,'current_v',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+                    getHYCOM(url,outname,outdir,'salinity',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+                    getHYCOM(url,outname,outdir,'temperature',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+            end
+            
+        catch
+            disp(['An error occured while downloading data for ocean model ' hm.oceanModel(i).name]);
         end
-
+        
     end
 end
