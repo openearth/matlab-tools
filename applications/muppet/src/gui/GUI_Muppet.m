@@ -3057,6 +3057,38 @@ function MakeAnimation_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% check to see if there are time dependent datasets
+icontinue=0;
+for i=1:length(handles.DataProperties)
+    if strcmpi(handles.DataProperties(i).TC,'t')
+        icontinue=1;
+    end
+end
+if ~icontinue
+    return
+end
+
+if isempty(handles.AnimationSettings.startTime)
+    % Try to determine start and stop times
+    tmin=floor(now)+1000000;
+    tmax=floor(now)-1000000;
+    dt=1;
+    for i=1:length(handles.DataProperties)
+        if strcmpi(handles.DataProperties(i).TC,'t')
+            tmin=min(tmin,handles.DataProperties(i).AvailableTimes(1));
+            tmax=max(tmax,handles.DataProperties(i).AvailableTimes(end));
+            dt1=0;
+            if length(handles.DataProperties(i).AvailableTimes)>1
+                dt1=86400*(handles.DataProperties(i).AvailableTimes(2)-handles.DataProperties(i).AvailableTimes(1));
+            end
+            dt=max(dt1,dt);
+        end
+    end
+    handles.AnimationSettings.startTime=tmin;
+    handles.AnimationSettings.stopTime=tmax;
+    handles.AnimationSettings.timeStep=dt;
+end
+
 ifig=handles.ActiveFigure;
 res=handles.Figure(ifig).Resolution;
 n1=handles.Figure(ifig).PaperSize(1)/2.5;
@@ -3080,8 +3112,6 @@ elseif fid==-1
     txt=strvcat(['The file ' handles.AnimationSettings.aviFileName ' cannot be opened'],'Remove write protection');
     mp_giveWarning('WarningText',txt);
 else
-%    MakeAnimation(handles,ifig);
-%    MakeAnimation2(handles,ifig);
     mp_makeAnimation(handles,ifig);
 end
 
@@ -3092,6 +3122,18 @@ function PushAnimationSettings_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if handles.NrAvailableDatasets>0
+    
+    % check to see if there are time dependent datasets
+    icontinue=0;
+    for i=1:length(handles.DataProperties)
+        if strcmpi(handles.DataProperties(i).TC,'t')
+            icontinue=1;
+        end
+    end
+    if ~icontinue
+        return
+    end
+
     if isempty(handles.AnimationSettings.startTime)
         % Try to determine start and stop times
         tmin=floor(now)+1000000;
@@ -3116,7 +3158,8 @@ if handles.NrAvailableDatasets>0
     %handles.AnimationSettings=EditAnimationSettings2('Settings',handles.AnimationSettings);
     
     xmlfile='animationsettings.xml';
-    [handles.AnimationSettings,ok]=newGUI2(handles.AnimationSettings,handles.xmlDir,xmlfile);
+    
+    [handles.AnimationSettings,ok]=gui_newWindow(handles.AnimationSettings,'xmldir',handles.xmlDir,'xmlfile',xmlfile);
     
     guidata(hObject, handles);
     

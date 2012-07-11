@@ -1,4 +1,4 @@
-function [DataProperties,NrAvailableDatasets,CombinedDatasetProperties]=mp_combineDatasets(DataProperties,NrAvailableDatasets,CombinedDatasetProperties,NrCombinedDatasets);
+function [DataProperties,NrAvailableDatasets,CombinedDatasetProperties]=mp_combineDatasets(DataProperties,NrAvailableDatasets,CombinedDatasetProperties,NrCombinedDatasets)
  
 for i=1:NrCombinedDatasets
     NrAvailableDatasets=NrAvailableDatasets+1;

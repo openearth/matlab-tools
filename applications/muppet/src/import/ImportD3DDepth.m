@@ -8,7 +8,7 @@ DataProperties(i).y=grd.Y;
 DataProperties(i).z=z(1:end-1,1:end-1);
 DataProperties(i).z(DataProperties(i).z==-999.0)=NaN;
 DataProperties(i).z(DataProperties(i).z==999.999)=NaN;
-DataProperties(i).zz=z;
+DataProperties(i).zz=z(1:end-1,1:end-1);
 DataProperties(i).zz(DataProperties(i).zz==-999.0)=NaN;
 DataProperties(i).zz(DataProperties(i).zz==999.999)=NaN;
 

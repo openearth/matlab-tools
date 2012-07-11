@@ -18,7 +18,7 @@ for i=1:size(DataProperties,2)
     end
 end
 
-switch lower(DataProperties(k1).Type),
+switch lower(DataProperties(k1).Type)
  
     case{'2dscalar','3dcrosssectionscalar'}
         DataProperties(nr).x=DataProperties(k1).x;

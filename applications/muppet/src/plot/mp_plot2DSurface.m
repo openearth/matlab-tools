@@ -1,10 +1,5 @@
 function mp_plot2DSurface(handles,Data,Plt,Ax)
 
-% DeleteObject(i,j,k);
-% 
-% Ax=handles.Figure(i).Axis(j);
-% Plt=handles.Figure(i).Axis(j).Plot(k);
-% Data=handles.DataProperties(Plt.AvailableDatasetNr);
 Data.x=Data.x(1:Plt.FieldThinningFactor1:end,1:Plt.FieldThinningFactor1:end);
 Data.y=Data.y(1:Plt.FieldThinningFactor1:end,1:Plt.FieldThinningFactor1:end);
 Data.z=Data.z(1:Plt.FieldThinningFactor1:end,1:Plt.FieldThinningFactor1:end);
@@ -74,11 +69,11 @@ switch(lower(Plt.PlotRoutine)),
         z(isnan(Data.z))=NaN;
         x=Data.x;
         y=Data.y;
-%         xmean=mean(x(isfinite(x)));
-%         ymean=mean(y(isfinite(y)));
-%         z(isnan(x))=NaN;
-%         x(isnan(x))=xmean;
-%         y(isnan(y))=ymean;
+        xmean=mean(x(isfinite(x)));
+        ymean=mean(y(isfinite(y)));
+        z(isnan(x))=NaN;
+        x(isnan(x))=xmean;
+        y(isnan(y))=ymean;
 end
 
 
@@ -92,7 +87,6 @@ switch(lower(Plt.PlotRoutine)),
         ncol=size(col,2)-1;
         clmap=GetColors(handles.ColorMaps,Ax.ColMap,ncol);
         [c,h,wp]=contourf_mvo(x,y,z,col,clmap);
-%         SetObjectData(wp,i,j,k,'2dsurface');
         if length(col)>3
             caxis([col(2) col(end-1)]);
         end        
@@ -111,7 +105,6 @@ switch(lower(Plt.PlotRoutine)),
         set(h,'LineStyle',Plt.LineStyle);
         set(h,'LineWidth',Plt.LineWidth);
 end
-% SetObjectData(h,i,j,k,'2dsurface');
 
 hold on;
 
@@ -124,20 +117,17 @@ if strcmpi(Plt.PlotRoutine,'plotcontourmaplines')
     end
     set(h,'LineStyle',Plt.LineStyle);
     set(h,'LineWidth',Plt.LineWidth);
-%     SetObjectData(h,i,j,k,'2dsurface');
 end
 
 if strcmpi(Plt.PlotRoutine,'plotcontourmap') && Plt.ContourLabels
     [c,h]=contour(x,y,z,col);
     set(h,'LineStyle','none');
-%     SetObjectData(h,i,j,k,'2dsurface');
 end
 
 if Plt.ContourLabels==1
     hh=clabel(c,h,'FontSize',Plt.FontSize,'LabelSpacing',Plt.LabelSpacing);
     set(hh,'FontSize',Plt.FontSize);
     set(hh,'Color',FindColor(Plt.FontColor));
-%     SetObjectData(hh,i,j,k,'2dsurface');
 end
 
 clear x;

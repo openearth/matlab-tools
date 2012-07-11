@@ -15,15 +15,18 @@ end
 
 %%
 function editAviOptions
-h=getUserData;
+h=gui_getUserData;
 aviops=writeavi('getoptions', h.selectBits);
 h.aviOptions=aviops;
-setUserData(h);
+gui_setUserData(h);
 
 %%
 function saveSettings
-h=getUserData;
+
+h=gui_getUserData;
+
 [filename pathname]=uiputfile('*.ani');
+
 if pathname~=0
     fid = fopen([pathname filename],'w');
     datestring=datestr(datenum(clock),31);
@@ -90,7 +93,9 @@ function loadSettings
 [filename pathname]=uigetfile('*.ani');
 if pathname~=0
     h=mp_readAnimationSettings([pathname filename]);
+else
+    return
 end
-setUserData(h);
+gui_setUserData(h);
 elements=getappdata(gcf,'elements');
-setUIElements(elements);
+gui_setElements(elements);

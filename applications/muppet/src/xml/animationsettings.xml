@@ -93,7 +93,7 @@
       <position>64 129 121 22</position>
       <text>Codec Options</text>
       <tooltipstring>Edit codec options</tooltipstring> 
-      <callback>mp_animationsettings</callback>
+      <callback>mp_animationSettings</callback>
       <option1>avioptions</option1>
     </element>
     <element>
@@ -102,7 +102,7 @@
       <position>64 99 121 22</position>
       <text>Load Settings</text>
       <tooltipstring>Load animation settings</tooltipstring> 
-      <callback>mp_animationsettings</callback>
+      <callback>mp_animationSettings</callback>
       <option1>loadsettings</option1>
     </element>
     <element>
@@ -111,7 +111,7 @@
       <position>64 69 121 22</position>
       <text>Save Settings</text>
       <tooltipstring>Save animation settings</tooltipstring> 
-      <callback>mp_animationsettings</callback>
+      <callback>mp_animationSettings</callback>
       <option1>savesettings</option1>
     </element>
     <element>

@@ -21,7 +21,7 @@ end
 
 % Check for position changes in subplots
 for i=1:nrsub
-    if ~strcmp(lower(handles.Figure(ifig).Axis(i).PlotType),'image') & ~strcmp(lower(handles.Figure(ifig).Axis(i).PlotType),'rose')
+    if ~strcmpi(handles.Figure(ifig).Axis(i).PlotType,'image') && ~strcmpi(handles.Figure(ifig).Axis(i).PlotType,'rose')
         pos0=handles.Figure(ifig).Axis(i).Position;
         ax=findobj(gcf,'Tag','axis','UserData',[ifig,i]);
         posn=get(ax,'Position')/handles.Figure(ifig).cm2pix;
@@ -44,7 +44,7 @@ for i=1:nrsub
     ylimn=get(ax,'YLim');
     dif(1)=abs(ylim0(1)-ylimn(1))/abs(ylim0(2)-ylim0(1));
     dif(2)=abs(ylim0(2)-ylimn(2))/abs(ylim0(2)-ylim0(1));
-    if ~strcmp(lower(handles.Figure(ifig).Axis(i).PlotType),'timeseries')
+    if ~strcmpi(handles.Figure(ifig).Axis(i).PlotType,'timeseries')
         dif(3)=abs(xlim0(1)-xlimn(1))/abs(xlim0(2)-xlim0(1));
         dif(4)=abs(xlim0(2)-xlimn(2))/abs(xlim0(2)-xlim0(1));
     end
@@ -59,7 +59,7 @@ end
 for i=1:nrsub
     if handles.Figure(ifig).Axis(i).PlotColorBar
         h=findobj(gcf,'Tag','colorbar','UserData',[ifig,i]);
-        if length(h)>0
+        if ~isempty(h)
             pos0=handles.Figure(ifig).Axis(i).ColorBarPosition;
             posn=get(h,'Position')/handles.Figure(ifig).cm2pix;
             pos0=round(100*pos0)/100;
@@ -78,7 +78,7 @@ for i=1:nrsub
     for k=1:handles.Figure(ifig).Axis(i).Nr
         if handles.Figure(ifig).Axis(i).Plot(k).PlotColorBar
             h=findobj(gcf,'Tag','colorbar','UserData',[ifig,i,k]);
-            if length(h)>0
+            if ~isempty(h)
                 pos0=handles.Figure(ifig).Axis(i).Plot(k).ColorBarPosition;
                 posn=get(h,'Position')/handles.Figure(ifig).cm2pix;
                 pos0=round(100*pos0)/100;
@@ -103,8 +103,7 @@ for i=1:nrsub
         hh=findobj(gcf,'Tag','legend');
         for ii=1:length(hh)
             d=getappdata(hh(ii));
-            legdat=d.LegendData;
-            if d.LegendData.i==ifig & d.LegendData.j==i
+            if d.LegendData.i==ifig && d.LegendData.j==i
                 h=hh(ii);
             end
         end
@@ -184,7 +183,7 @@ for k=1:length(ch0)
     tg=get(ch0(k),'Tag');
     str={'line','arrow','doublearrow','textbox','ellipse','rectangle'};
     ii=strmatch(tg,str,'exact');
-    if length(ii)>0
+    if ~isempty(ii)
         nann=nann+1;
         ch(nann)=ch0(k);
     end
