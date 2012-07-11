@@ -103,3 +103,5 @@ setHandles(handles);
 
 ddb_plotCycloneTrack;
 ddb_updateTrackTables;
+
+gui_updateActiveTab;

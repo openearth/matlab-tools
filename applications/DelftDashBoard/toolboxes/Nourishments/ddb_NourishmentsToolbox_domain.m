@@ -260,12 +260,7 @@ setHandles(handles);
 
 %%
 function refresh
-% setUIElement('nourishmentspanel.domain.listpolygons');
-% setUIElement('nourishmentspanel.domain.selecttype');
-% setUIElement('nourishmentspanel.domain.editvolume');
-% setUIElement('nourishmentspanel.domain.editthickness');
-% setUIElement('nourishmentspanel.domain.editheight');
-% setUIElement('nourishmentspanel.domain.editarea');
+gui_updateActiveTab;
 
 %%
 function selectType
