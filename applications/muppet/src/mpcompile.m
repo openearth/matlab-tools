@@ -3,6 +3,12 @@ delete('bin\*');
 statspath='Y:\app\MATLAB2009b\toolbox\stats';
 statspath='n:\Applications\Matlab\MATLAB2012a_64\toolbox\stats';
 rmpath(statspath);
+statspath='n:\Applications\Matlab\MATLAB2012a_64\toolbox\stats\classreg';
+rmpath(statspath);
+statspath='n:\Applications\Matlab\MATLAB2012a_64\toolbox\stats\stats';
+rmpath(statspath);
+statspath='n:\Applications\Matlab\MATLAB2012a_64\toolbox\stats\statsdemos';
+rmpath(statspath);
 
 fid=fopen('complist','wt');
 
