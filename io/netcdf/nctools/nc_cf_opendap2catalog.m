@@ -1,7 +1,7 @@
 function varargout = nc_cf_opendap2catalog(varargin)
 %NC_CF_OPENDAP2CATALOG   harvester for netCDF-CF in THREDDS OPeNDAP catalogues: returns meta-data
 %
-% NB We are praring to replace nc_cf_opendap2catalog with nc_harvest.
+% NB We are preparing to replace nc_cf_opendap2catalog with nc_harvest.
 %
 %   ATT = nc_cf_opendap2catalog(<baseurl>,<keyword,value>)
 %   ATT = nc_cf_opendap2catalog(<files>  ,<keyword,value>)
@@ -12,8 +12,8 @@ function varargout = nc_cf_opendap2catalog(varargin)
 % nc_cf_file2catalog. The full catalog is written to file nc2struct:
 %
 %  +-----------------------------------+
-%  |Loop:                              |
-%  |NC_CF_OPENDAP2CATALOG > NC_HARVEST |
+%  |Harvest loop:                      |
+%  |nc_cf_opendap2catalog (NC_HARVEST) |
 %  |   +-------------------------------+
 %  |   |crawler:                       |
 %  |   |OPENDAP_CATALOG                |
@@ -22,9 +22,12 @@ function varargout = nc_cf_opendap2catalog(varargin)
 %  |   |   +---------------------------+
 %  |   |   |harvester:                 |
 %  |   |   |NC_HARVEST1                |
-%  |   +---+---------------------------+
-%  |   |Store meta-data in cache:      |
-%  |   |NC2STRUCT                      |
+%  |.. +---+---------------------------+
+%  |   :Store meta-data in cache:      |
+%  |   :NC_CF_OPENDAP2CATALOG2nc       |
+%  |   :+---STRUCT2NC                  |
+%  |   :NC_CF_OPENDAP2CATALOG2xls      |
+%  |   :+---STRUCT2XLS                 |
 %  +---+-------------------------------+
 %
 % Set 'maxlevel' to crawl deeper (default 1). When you query a local directory, 
@@ -84,9 +87,9 @@ function varargout = nc_cf_opendap2catalog(varargin)
 %
 % For the stationtimeseries some extra information is loaded.
 %
-%See also: NC_CF_FILE2CATALOG,
-%          NC_INFO, NC_ACTUAL_RANGE, 
+%SEE ALSO: NC_HARVEST1,NC_HARVEST, NC_INFO, NC_ACTUAL_RANGE, 
 %          STRUCT2NC, NC2STRUCT, OPENDAP_CATALOG, SNCTOOLS
+%          NC_CF_OPENDAP2CATALOG2NC, NC_CF_OPENDAP2CATALOG2XLS, NC_CF_OPENDAP2CATALOG2KML
 
 % TO DO: standard_name_vocabulary
 
@@ -205,17 +208,17 @@ OPT.varname        = {}; % could be {'x','y','time'}
     
 for entry=1:length(OPT.files)
 
- OPT.filename = OPT.files{entry};
- if strcmpi(OPT.disp,'multiWaitbar')
-    multiWaitbar(mfilename,entry/length(OPT.files),'label',['Adding ',filename(OPT.filename) ' to catalog'])
- end
+   OPT.filename = OPT.files{entry};
+   if strcmpi(OPT.disp,'multiWaitbar')
+      multiWaitbar(mfilename,entry/length(OPT.files),'label',['Adding ',filename(OPT.filename) ' to catalog'])
+   end
    
    urlPath            = OPT.urlPathFcn(OPT.filename);
    ATT.urlPath{entry} = urlPath;
    
    ATT1 = nc_harvest1(OPT.filename);
    
-   ATT.projectionEPSGcode{entry}            = ATT1.projectionEPSGcode;
+   ATT.projectionEPSGcode{entry}            =  ATT1.projectionEPSGcode;
    ATT.geospatialCoverage_northsouth{entry} = [ATT1.geospatialCoverage.northsouth.start ATT1.geospatialCoverage.northsouth.end];
    ATT.geospatialCoverage_eastwest{entry}   = [ATT1.geospatialCoverage.eastwest.start   ATT1.geospatialCoverage.eastwest.end  ];
    ATT.geospatialCoverage_updown{entry}     = [ATT1.geospatialCoverage.updown.start     ATT1.geospatialCoverage.updown.end    ];
@@ -223,8 +226,14 @@ for entry=1:length(OPT.files)
    ATT.projectionCoverage_y{entry}          = [ATT1.geospatialCoverage.y.start          ATT1.geospatialCoverage.y.end         ];
    ATT.datenum{entry}                       = [ATT1.timeCoverage.start                  ATT1.timeCoverage.end                 ];
 
-   ATT.standard_names{entry}                = ATT1.standard_name;
-   ATT.long_names    {entry}                = ATT1.long_name;
+   ATT.standard_names{entry}                =  ATT1.standard_name;
+   ATT.long_names    {entry}                =  ATT1.long_name;
+   
+   if strcmpi(OPT.datatype,'stationtimeseries')
+   ATT.station_id{entry}              = ATT1.station_id;            
+   ATT.station_name{entry}            = ATT1.station_name;          
+   ATT.number_of_observations{entry}  = ATT1.number_of_observations;
+   end
     
 %% include variables
 
@@ -266,8 +275,8 @@ ATT.timeCoverage  = cellfun(@(x) datestrnan(x),ATT.datenum, 'UniformOutput', fal
 
    if OPT.save
    
-      nc_cf_opendap2catalog2nc (fullfile(OPT.catalog_dir, [OPT.catalog_name,'.nc' ]));
-      nc_cf_opendap2catalog2xls(fullfile(OPT.catalog_dir, [OPT.catalog_name,'.xls']));
+      nc_cf_opendap2catalog2nc (fullfile(OPT.catalog_dir, [OPT.catalog_name,'.nc' ]),ATT,'datatype',OPT.datatype);
+      nc_cf_opendap2catalog2xls(fullfile(OPT.catalog_dir, [OPT.catalog_name,'.xls']),ATT,'datatype',OPT.datatype);
 
    elseif nargout==0
        

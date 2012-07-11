@@ -42,7 +42,7 @@ function varargout = nc_harvest1(varargin)
    ATT.timeCoverage                  = timeCoverage_initialize();
    ATT.geospatialCoverage.x          = geospatialCoverage_initialize();
    ATT.geospatialCoverage.y          = geospatialCoverage_initialize();
-   ATT.projectionEPSGcode            = [];
+   ATT.projectionEPSGcode            =[]; % NB does not allow use of cell2mat later on
 
    ATT.standard_name = '';
    ATT.long_name     = '';
@@ -209,10 +209,15 @@ function varargout = nc_harvest1(varargin)
            
                   if strcmpi(Value,'station_id')
                       ATT.station_id  = nc_varget(ncfile, fileinfo.Dataset(idat).Name);
+                      if isnumeric(ATT.station_id)
+                      ATT.station_id = num2str(ATT.station_id);
+                      end
+                      ATT.station_id = ATT.station_id(:)';
                   end
            
                   if strcmpi(Value,'station_name')
                       ATT.station_name = nc_varget(ncfile, fileinfo.Dataset(idat).Name);
+                      ATT.station_name = ATT.station_name(:)';
                   end
            
               end

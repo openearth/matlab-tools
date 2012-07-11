@@ -3,13 +3,17 @@ function varid = netcdf_addvar ( ncid, varstruct )
 %
 %    NOTE: almost same as private snctools function NC_ADDVAR_TMW
 % 
-% USAGE:  netcdf_addvar ( ncfile, varstruct );
+% USAGE:  netcdf_addvar ( ncid, varstruct );
+%
+% This function exist because NC_ADDVAR_TMW closes the netcdf file
+% after each variable, resulting in sub-optimal files. netcdf_addvar
+% does not create file until all variables to be added are knwom
+% resuling in optimimization of netCDF file.
 %
 % PARAMETERS:
 % Input
-%    ncfile:
-%    varstruct:
-%        This is a structure with four fields:
+%    ncid      = handle returned by netcdf.open
+%    varstruct = This is a structure with four fields:
 %
 %        Name
 %        Nctype
@@ -33,9 +37,11 @@ function varid = netcdf_addvar ( ncid, varstruct )
 % Output: 
 %     None.  In case of an error, an exception is thrown.
 %
-%See also: nc_addvar, nctools, snctools
+%See also: nc_addvar, nctools, snctools, NCwrite, NCWRITESCHEMA
 
-%Checks on the input
+warning([mfilename ' is not up-to-date any more with nc_addvar, it does not handle empty dimensions correctly.'])
+
+% Checks on the input
 if  ischar(ncid) 
 	disp( 'NETCDF_ADDVAR:badInput', 'ncid argument id number' );
 end
@@ -137,23 +143,30 @@ end
 % Check that required fields are there.
 % Default Dimension is none.  Singleton scalar.
 
-if ~isfield ( varstruct, 'dimid' )
-    for ii = 1:length(varstruct.Dimension)
-        varstruct.dimid{ii} = netcdf.inqDimID(ncid,varstruct.Dimension{ii});
-    end
-end
+if ~isfield ( varstruct, 'Dimension' )
+
+    varstruct.Dimension = [];
     
-if ~isfield ( varstruct, 'dimid' )
-    varstruct.dimid = 1;
 else
-    if iscell(varstruct.dimid)
-        varstruct.dimid = [varstruct.dimid{:,:}] ;
-    end
-end
 
-% Check that required fields are there.
-% Default Attributes are none
-if ~isfield ( varstruct, 'Attribute' )
-	varstruct.Attribute = [];
-end
+   if ~isfield ( varstruct, 'dimid' )
+       for ii = 1:length(varstruct.Dimension)
+           varstruct.dimid{ii} = netcdf.inqDimID(ncid,varstruct.Dimension{ii});
+       end
+   end
+       
+   if ~isfield ( varstruct, 'dimid' )
+       varstruct.dimid = 1;
+   else
+       if iscell(varstruct.dimid)
+           varstruct.dimid = [varstruct.dimid{:,:}] ;
+       end
+   end
+   
+   % Check that required fields are there.
+   % Default Attributes are none
+   if ~isfield ( varstruct, 'Attribute' )
+   	varstruct.Attribute = [];
+   end
 
+end

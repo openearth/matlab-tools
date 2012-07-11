@@ -25,7 +25,7 @@ function txt = netica_write_case_file(fname, varargin)
 %   Example
 %   netica_write_case_file
 %
-%   See also 
+%   See also netica
 
 %% Copyright notice
 %   --------------------------------------------------------------------

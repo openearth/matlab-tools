@@ -15,7 +15,7 @@ function varargout = netica_plot_beliefs(filename, node, varargin)
 %   Example
 %   netica_plot_beliefs
 %
-%   See also
+%   See also netica
 
 %% Copyright notice
 %   --------------------------------------------------------------------

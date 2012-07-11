@@ -17,13 +17,15 @@ function rws_waterbase_all
    OPT.make_kml       = 1; % processing all kml only takas about 4 hours
    OPT.baseurl        = 'http://live.waterbase.nl';
 
-   %rawbase = '/Users/fedorbaart/Downloads/rws/raw/';    % @ local, change this for your own computer
+   %rawbase = '/Users/fedorbaart/Downloads/rws/raw/';% @ local, change this for your own computer
     %ncbase = '/Users/fedorbaart/Downloads/rws/nc/'; % @ local, change this for your own computer
-   rawbase = 'E:\checkouts\OpenEarthRawData\';    % @ local
-    ncbase = 'E:\opendap.deltares.nl\thredds\'; % @ local
+   %kmlbase = '/Users/fedorbaart/Downloads/rws/kml/';% @ local, change this... no links to other kml or images any more
+
+   rawbase = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';    % @ local
+    ncbase = 'F:\opendap.deltares.nl\thredds\dodsC\opendap\'; % @ local
+   kmlbase = 'D:\kml.deltares.nl\';
+
    urlbase = 'http://opendap.deltares.nl:8080'; % production server (links)
-   %kmlbase = '/Users/fedorbaart/Downloads/rws/kml/'; % @ local, change this... no links to other kml or images any more
-   kmlbase = 'd:\kml.deltares.nl\';
 
 %% Parameter choice
 
@@ -32,9 +34,9 @@ function rws_waterbase_all
                     332  346  347  360  363  ... % KjN   N   N  O2 PO4
                     364  380  491  492  493  ... %   P P04 NH4 N02 N03
                     541  560 1083    1  377 ];   % DSe  Si DOC zwl  pH (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
-   % donar_wnsnum = [22, 24] % Use this if you want only an update of
-   % specific parameters.
-% DO 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
+   donar_wnsnum = [410] % Use this if you want only an update of one some specific parameter.
+   % DO get 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
+   
    mfilename('fullpath')
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
 
@@ -81,7 +83,7 @@ function rws_waterbase_all
    
    if OPT.make_nc
    
-      if any(OPT.code==[1 54 29 22 23 24]) % physical paramters have long time series: waterlevels(1 54), Q(29) or waves(22 23 24)
+      if any(OPT.code==[1 54 29 22 23 24]) % physical parameters have long time series: waterlevels(1 54), Q(29) or waves(22 23 24)
          OPT.method='fgetl';
       else
          OPT.method='textread';
@@ -113,7 +115,7 @@ function rws_waterbase_all
                          'save',1,...
                    'urlPathFcn',@(s) path2os(strrep(s,ncbase,['http://opendap.deltares.nl/thredds/dodsC/opendap/']),'h'),... % dir where to LINK to for netCDF
                       'varname','',...
-                         'disp',[]);
+                         'disp','multiWaitbar');
    else
    CATALOG = nc2struct([OPT.directory_nc,'catalog.nc']);
    end
@@ -130,7 +132,7 @@ function rws_waterbase_all
 
       OPT2.description        = {['data: Rijkswaterstaat (http://www.rws.nl) via (',OPT.baseurl,'), presentation: http://www.OpenEarth.eu']};
       
-      OPT2.description        = ['<![CDATA[<hr> This is a proof-of-concept demo of how time series of the MWTL monitoring '...
+      OPT2.description        = ['<hr> This is a proof-of-concept demo of how time series of the MWTL monitoring '...
                                  'data from Rijkswaterstaat could be presented in Google Earth for easy navigation in time space. '...
                                  'The data in this proof-of-concept demo is a cache that is updated a few times per year. For up-to-date'...
                                  'data and meta-data please visit the original source provided by Rijkswaterstaat: <a href="http://live.waterbase.nl">waterbase</a>.'....
@@ -140,7 +142,7 @@ function rws_waterbase_all
 	                             '<tr><td    bgcolor="#FFFFFF">data source url </td><td bgcolor="#FFFFFF">http://www.rws.nl</td></tr>',...
 	                             '<tr><td    bgcolor="#FFFFFF">data provider   </td><td bgcolor="#FFFFFF">',OPT.baseurl,'</td>',...
 	                             '<tr><td    bgcolor="#FFFFFF">data distributor</td><td bgcolor="#FFFFFF">http://www.OpenEarth.eu</td>',...
-	                             '</tr></tbody></table><hr>]]>'];
+	                             '</tr></tbody></table><hr>'];
       
       OPT2.name               = OPT.name;
       
@@ -151,8 +153,8 @@ function rws_waterbase_all
       
       OPT2.logokmlName        = {'Rijkswaterstaat logo','OpenEarth logo'};
       OPT2.overlayXY          = {[.5 1],[0 0.00]};
-      OPT2.screenXY           = {[.5 1],[0 0.04]};
-      OPT2.imName             = {'overheid.png',[fileparts(oetlogo),filesep,'oet4GE.png'];};
+      OPT2.screenXY           = {[.5 1],[0 0.03]};
+      OPT2.imName             = {'overheid.png',[fileparts(oetlogo),filesep,'OpenEarth-logo-blurred-white-background4kml.png'];};
       OPT2.logoName           = {'overheid4GE.png','oet4GE.png'};
       
       OPT2.varPathFcn         = @(s) path2os(strrep(s,['http://opendap.deltares.nl/thredds/dodsC/opendap/'],ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
@@ -161,7 +163,7 @@ function rws_waterbase_all
       OPT2.credit             = ' data: www.rws.nl plot: www.OpenEarth.eu';
       OPT2.preview            = 1;
       
-      nc_cf_stationtimeseries2kmloverview(CATALOG,OPT2); % inside urlPath is used to read netCDF data
+      nc_cf_opendap2catalog2kml(CATALOG,OPT2); % inside urlPath is used to read netCDF data for plotting previews
       
       close all
       
