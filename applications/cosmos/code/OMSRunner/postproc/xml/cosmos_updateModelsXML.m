@@ -174,6 +174,14 @@ for iw=1:length(model.webSite)
     end
 %     mdl.timezone.type='char';
 
+%    if model.timeShift~=0
+        mdl.timeshift.value=model.timeShift;
+        mdl.timeshift.type='int';
+%     else
+%         mdl.timezone.value='UTC';
+%         mdl.timezone.type='char';
+%    end
+
     %% Profiles
 
     if cluster
@@ -290,10 +298,12 @@ for iw=1:length(model.webSite)
             mdl.maps(k).map.type.value      = 'kmz';
             mdl.maps(k).map.type.type       = 'char';
 
-            mdl.maps(k).map.starttime.value = hm.cycle+model.timeShift/24;
+%            mdl.maps(k).map.starttime.value = hm.cycle+model.timeShift/24;
+            mdl.maps(k).map.starttime.value = hm.cycle;
             mdl.maps(k).map.starttime.type  = 'date';
 
-            mdl.maps(k).map.stoptime.value  = hm.cycle+model.runTime/1440+model.timeShift/24;
+%            mdl.maps(k).map.stoptime.value  = hm.cycle+model.runTime/1440+model.timeShift/24;
+            mdl.maps(k).map.stoptime.value  = hm.cycle+model.runTime/1440;
             mdl.maps(k).map.stoptime.type   = 'date';
 
             mdl.maps(k).map.nrsteps.value   = (model.runTime)/(model.mapPlots(j).timeStep/60)+1;
