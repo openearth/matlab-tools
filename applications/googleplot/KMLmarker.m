@@ -188,7 +188,7 @@ OPT.fid=fopen(OPT.fileName,'w');
 header = KML_header(OPT);
 
 fprintf(OPT.fid,'%s\n',header);
-
+%fprintf(OPT.fid,'<Folder>');
 
 %% STYLE
 
@@ -360,6 +360,7 @@ fprintf(OPT.fid,'%s',output(1:kk-1));
 %% FOOTER
 
 output = KML_footer;
+%fprintf(OPT.fid,'</Folder>');
 fprintf(OPT.fid,output);
 
 %% close KML
