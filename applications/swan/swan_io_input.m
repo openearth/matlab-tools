@@ -51,7 +51,7 @@ function varargout = swan_io_input(varargin)
 % $Revision$
 % $HeadURL$
 
-%uses: mergestructs, iscommentline, fieldname, deblankstart, expressionsfromstring
+%uses: mergestructs, iscommentline, fieldname, expressionsfromstring
 
 % 2009 Jun 05: add fullfilename to spec field
 % 2009 Jun 04: use new matlab code-cells syntax to divide code into 'chapters'
