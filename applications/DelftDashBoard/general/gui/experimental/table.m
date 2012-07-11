@@ -244,7 +244,7 @@ function changeTable(tb,data)
 usd=get(tb,'UserData');
 
 sliderRefresh=0;
-if size(data)~=size(usd.data)
+if size(data,1)~=size(usd.data,1) || size(data,2)~=size(usd.data,2)
     sliderRefresh=1;
 end
 
