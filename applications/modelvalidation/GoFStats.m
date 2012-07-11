@@ -46,7 +46,7 @@ OPT.geomean= 0;
 OPT.mode= 0;
 OPT.station = '';
 OPT.subset = 1;
-OPT = setProperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin{:});
 
 %% combine timeseries:
 %   - missing observations are replaced by NaNs 
