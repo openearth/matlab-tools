@@ -217,7 +217,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       G.kmax        =                 vs_let(F,'map-const','KMAX'       ,'quiet');
       G.coordinates = strtrim(permute(vs_let(F,'map-const','COORDINATES','quiet'),[1 3 2]));
       
-      G.cen.mask =  vs_let_scalar(F,'map-const','KCS'   ,'quiet'); G.cen.mask(~G.cen.mask==1) = NaN; % -1/0/1/2 Non-active/Non-active/Active/Boundary water level point (fixed)
+      G.cen.mask =  vs_let_scalar(F,'map-const','KCS'   ,'quiet'); G.cen.mask(G.cen.mask~=1) = NaN; % -1/0/1/2 Non-active/Non-active/Active/Boundary water level point (fixed)
       G.cen.x    =  vs_let_scalar(F,'map-const','XZ'    ,'quiet').*G.cen.mask;%G.cen.x = vs_let_scalar(F,'TEMPOUT','XWAT','quiet');
       G.cen.y    =  vs_let_scalar(F,'map-const','YZ'    ,'quiet').*G.cen.mask;%G.cen.y = vs_let_scalar(F,'TEMPOUT','YWAT','quiet');
       if vs_get_elm_size(F,'DPS0') > 0
@@ -225,8 +225,11 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else % legacy
       G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DP0'   ,'quiet').*G.cen.mask; % depth is positive down
       end
-      G.cor.x    = permute(vs_let(F,'map-const','XCOR'  ,'quiet'),[2 3 1]);G.cor.x = G.cor.x(1:end-1,1:end-1);
-      G.cor.y    = permute(vs_let(F,'map-const','YCOR'  ,'quiet'),[2 3 1]);G.cor.y = G.cor.y(1:end-1,1:end-1);
+      G.cor.mask = permute(vs_let(F,'TEMPOUT'  ,'CODB'  ,'quiet'),[2 3 1]); G.cor.mask(G.cor.mask~=1) = NaN;
+      G.cor.x    = permute(vs_let(F,'map-const','XCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
+      G.cor.y    = permute(vs_let(F,'map-const','YCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
+      G.cor.x = G.cor.x(1:end-1,1:end-1);
+      G.cor.y = G.cor.y(1:end-1,1:end-1);
       G.dryflp   = strtrim(vs_get(F,'map-const','DRYFLP','quiet'));
       if strcmpi(strtrim(G.dryflp),'DP')
       G.cor.dep  = nan.*G.cor.x; % never specified, non-existent
@@ -331,9 +334,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
          nm.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
 						       
    % 3D						       
-      nmcor.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
-      nmcor.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
-      nmcor.dims(3) = struct('Name', 'bounds4'         ,'Length',ncdimlen.bounds4);
+      nmcor.dims(1) = struct('Name', 'bounds4'         ,'Length',ncdimlen.bounds4);
+      nmcor.dims(2) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+      nmcor.dims(3) = struct('Name', 'm'               ,'Length',ncdimlen.m);
         					       
         nmt.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
         nmt.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
@@ -367,11 +370,14 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-info-series:ITMAPC map-const:ITDATE map-const:DT map-const:TUNIT');
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc.Variables(ifld) = struct('Name'      , 'time', ...
                                   'Datatype'  , 'double', ...
                                   'Dimensions', time.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []);
+                                  
+      R.time = [min(T.datenum)  max(T.datenum)]- OPT.refdatenum; % this intializes R
 
 %% add values of dimensions (1/3)
 %  dimensions are indices into matrix space when grid is curvi-linear
@@ -1099,7 +1105,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
       delete(ncfile);
+      disp(['NCWRITESCHEMA: creating netCDF file: ',ncfile])
       ncwriteschema(ncfile, nc);			        
+      disp(['NCWRITESCHEMA: filling  netCDF file: ',ncfile])
 
       if OPT.debug
       fid = fopen([filepathstrname(ncfile),'.cdl'],'w');
@@ -1151,12 +1159,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
       if     any(strcmp('grid_x',OPT.var))
-      ncwrite   (ncfile,'grid_x'        ,    nc_cf_cor2bounds(G.cor.x),[2 2 1]);
+      ncwrite   (ncfile,'grid_x'        , permute(nc_cf_cor2bounds(addrowcol(G.cor.x,[-1 1],[-1 1],nan)'),[3 2 1])); % [1 2 3]
       ncwriteatt(ncfile,'grid_x'        ,'actual_range',[min(G.cor.x(:)) max(G.cor.x(:))]);
       end
 
       if     any(strcmp('grid_y',OPT.var))
-      ncwrite   (ncfile,'grid_y'        ,    nc_cf_cor2bounds(G.cor.y),[2 2 1]);
+      ncwrite   (ncfile,'grid_y'        , permute(nc_cf_cor2bounds(addrowcol(G.cor.y,[-1 1],[-1 1],nan)'),[3 2 1])); % [1 2 3]
       ncwriteatt(ncfile,'grid_y'        ,'actual_range',[min(G.cor.y(:)) max(G.cor.y(:))]);
       end
 
@@ -1378,15 +1386,17 @@ function varargout = vs_trim2nc(vsfile,varargin)
       
 %% update actual ranges
 
-      varnames = fieldnames(R);
-
-      for ivar=1:length(varnames)
-      varname = varnames{ivar};
-      ncwriteatt(ncfile,varname  ,'actual_range',R.(varname));
-      end
-      
-      if OPT.debug
-      nc_dump(ncfile)
+      if exist('R','var')
+        varnames = fieldnames(R);
+        
+        for ivar=1:length(varnames)
+        varname = varnames{ivar};
+        ncwriteatt(ncfile,varname  ,'actual_range',R.(varname));
+        end
+        end
+        
+        if OPT.debug
+        nc_dump(ncfile)
       end
 
 %% EOF      
