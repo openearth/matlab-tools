@@ -77,22 +77,7 @@ function varargout = hdfvload_sds2struct(finfo,file_name,hdftree,varargin)
    
 %% Cycle keywords in input argument list to overwrite default values.
 
-   iargin = 1;
-   
-   while iargin<=nargin-3,
-     if isstruct(varargin{iargin})
-        OPT = mergestructs('overwrite',OPT,varargin{iargin});
-     elseif ischar(varargin{iargin}),
-       switch lower(varargin{iargin})
-       case 'debug'       ;iargin=iargin+1;OPT.debug        = varargin{iargin};
-       case 'sdsselection';iargin=iargin+1;OPT.sdsselection = varargin{iargin};
-       otherwise
-          error(['Invalid string argument: ''',varargin{iargin},'''']);
-       end
-     end;
-     iargin=iargin+1;
-   end; 
-   
+   OPT = setproperty(OPT,varargin);   
 %% Initialize
 
    DATA       = [];

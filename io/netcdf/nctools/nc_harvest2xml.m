@@ -1,12 +1,13 @@
 function nc_harvest2xml(xmlname,D,varargin)
 %NC_HARVEST2XML  write nc_harvest object to THREDDS catalog.xml
 %
-% nc_harvest2xml(xmlname,D)
+% D = nc_harvest    (opendap_url)
+%     nc_harvest2xml(xmlname,D)
 %
 % writes non-flat nc_harvest object D to THREDDS
 % catalog.xml file.
 %
-%See also: nc_harvest2xml, thredds_dump, thredds_info
+%See also: nc_harvest, nc_harvest2xml, thredds_dump, thredds_info
 
 OPT.ID                      = 'rijkswaterstaat/vaklodingen_remapped';
 OPT.name                    = 'vaklodingen_remapped';
@@ -113,10 +114,10 @@ function output = opendap_spatialRange_write(varargin);
 % <xsd:element name="geospatialCoverage">
 %  <xsd:complexType>
 %   <xsd:sequence>
-%     <xsd:element name="northsouth" type="spatialRange" minOccurs="0" />
-%     <xsd:element name="eastwest" type="spatialRange" minOccurs="0" />
-%     <xsd:element name="updown" type="spatialRange" minOccurs="0" />
-%     <xsd:element name="name" type="controlledVocabulary" minOccurs="0" maxOccurs="unbounded"/>
+%     <xsd:element name="northsouth" type="spatialRange"         minOccurs="0" />
+%     <xsd:element name="eastwest"   type="spatialRange"         minOccurs="0" />
+%     <xsd:element name="updown"     type="spatialRange"         minOccurs="0" />
+%     <xsd:element name="name"       type="controlledVocabulary" minOccurs="0" maxOccurs="unbounded"/>
 %   </xsd:sequence>
 %     
 %   <xsd:attribute name="zpositive" type="upOrDown" default="up"/>
@@ -125,10 +126,10 @@ function output = opendap_spatialRange_write(varargin);
 % 
 % <xsd:complexType name="spatialRange">
 %  <xsd:sequence>
-%    <xsd:element name="start" type="xsd:double"  />
-%    <xsd:element name="size" type="xsd:double" />
+%    <xsd:element name="start"      type="xsd:double" />
+%    <xsd:element name="size"       type="xsd:double" />
 %    <xsd:element name="resolution" type="xsd:double" minOccurs="0" />
-%    <xsd:element name="units" type="xsd:string" minOccurs="0" />
+%    <xsd:element name="units"      type="xsd:string" minOccurs="0" />
 %  </xsd:sequence>
 % </xsd:complexType>
 % 

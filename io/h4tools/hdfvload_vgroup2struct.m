@@ -1,9 +1,9 @@
-function varargout = hdfvload_vgroup2struct(finfo,file_name,hdftree)
+function varargout = hdfvload_vgroup2struct(finfo,file_name,hdftree,varargin)
 %HDFVLOAD_VGROUP2STRUCT   load vgroup into matlab struct
 %
-%    [DATA                  ] = hdfvload_vgroup2struct(finfo)
-%    [DATA,ATTRIBUTES       ] = hdfvload_vgroup2struct(finfo)
-%    [DATA,ATTRIBUTES,status] = hdfvload_vgroup2struct(finfo)
+%    [DATA                  ] = hdfvload_vgroup2struct(finfo,file_name,hdftree)
+%    [DATA,ATTRIBUTES       ] = hdfvload_vgroup2struct(finfo,file_name,hdftree)
+%    [DATA,ATTRIBUTES,status] = hdfvload_vgroup2struct(finfo,file_name,hdftree)
 %
 % Note: do not use HDFVLOAD_VGROUP2STRUCT directly, use through HDFVLOAD.
 %
@@ -47,17 +47,19 @@ function varargout = hdfvload_vgroup2struct(finfo,file_name,hdftree)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-OPT.fldname                = [];%'mkvar'; or 'dim';
-OPT.debug                  = 1;
-OPT.multidimensionalstruct = 0;
+   OPT.fldname                = [];%'mkvar'; or 'dim';
+   OPT.debug                  = 1;
+   OPT.multidimensionalstruct = 0;
 
-if OPT.debug
-   disp(['loading Vgroup : ',hdftree])
-end
+   OPT = setproperty(OPT,varargin);
 
-   [DATA ,ATTRIBUTES,status] = hdfvload_vdatas2struct (finfo,file_name,hdftree);
+   if OPT.debug
+      disp(['loading Vgroup : ',hdftree]);
+   end
 
-   [DATA1,ATTRIBUTES,status] = hdfvload_sds2struct    (finfo,file_name,hdftree);
+   [DATA ,ATTRIBUTES,status] = hdfvload_vdatas2struct (finfo,file_name,hdftree,'debug',OPT.debug);
+
+   [DATA1,ATTRIBUTES,status] = hdfvload_sds2struct    (finfo,file_name,hdftree,'debug',OPT.debug);
    
    if isempty(DATA)
       DATA = DATA1; % is empty when DATA1 is empty

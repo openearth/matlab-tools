@@ -3,9 +3,9 @@ function B = nc_cf_cor2bounds(C)
 %
 %   bounds = nc_cf_cor2bounds(cor)
 %
-%   where bounds = [m-1 x 2      ] if C = [m 1] col vectors
-%         bounds = [2   x n-1    ] if C = [1 n] row vectors
-%         bounds = [m-1 x n-1 x 4] if C = [m n] for 2D matrices
+%   where bounds = [m-1 x 2      ] if cor = [m 1] col vectors
+%         bounds = [2   x n-1    ] if cor = [1 n] row vectors
+%         bounds = [m-1 x n-1 x 4] if cor = [m n] for 2D matrices
 %
 %   For documentation of the CF bounds standard see:
 %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventions.html#cell-boundaries

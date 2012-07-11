@@ -83,7 +83,7 @@
   <catalogRef xlink:href="http://regclim.coas.oregonstate.edu:8080/thredds/catalog.xml"   xlink:title="USGS Oregon State Warner College of Natural Resources (US)"       name=""/>
 
   <catalogRef xlink:href="http://opendap.aviso.oceanobs.com/thredds/catalog.xml"          xlink:title="CNES and CLS (AVISO) (FR)" name=""/>
-  <catalogRef xlink:href="http://myocean-ftp.acri.fr:8080/thredds/catalog.xml"            xlink:title="MyOcean ACRI (FR)" name=""/>
+  <catalogRef xlink:href="http://myocean-ftp.acri.fr:8080/thredds/catalog.xml"            xlink:title="ACRI MyOcean (FR)" name=""/>
   <catalogRef xlink:href="http://www.ifremer.fr/thredds/catalog.xml"                      xlink:title="Ifremer (FR)" name=""/>
   <catalogRef xlink:href="http://tds1.ifremer.fr/thredds/catalog.xml"                     xlink:title="Ifremer development server (FR)"       name=""/>
   <catalogRef xlink:href="http://thredds.ird.nc:8080/thredds/catalog.xml"                 xlink:title="IRD Legos Nouvelle-Calédonie (FR)" name=""/>
@@ -101,7 +101,7 @@
   <catalogRef xlink:href="http://siss2.anu.edu.au/thredds/catalog.xml"                    xlink:title="Australian National University (AU)"       name=""/>
   <catalogRef xlink:href="http://aodaac2-cbr.act.csiro.au:8080/thredds/auscover/awap/catalog.xml"                    xlink:title="CSIRO CMAR (AU)"       name=""/>
   <catalogRef xlink:href="http://c3dmm2-data.ivec.org/thredds/catalog.xml"                xlink:title="iVEC (AU)" name=""/>
-  <catalogRef xlink:href="http://tern-auscover.science.uq.edu.au/thredds/catalog.xml"     xlink:title="Univseristy of Queensland (AU)" name=""/>
+  <catalogRef xlink:href="http://tern-auscover.science.uq.edu.au/thredds/catalog.xml"     xlink:title="University of Queensland (AU)" name=""/>
   
   <catalogRef xlink:href="http://cod.ciimar.up.pt/thredds/catalog.xml"                    xlink:title="CIMAR (PT)" name=""/>
   <catalogRef xlink:href="http://opendap.mohid.com:8080/thredds/catalog.xml"              xlink:title="MOHID University of Lisbon (PT)"       name=""/>
@@ -121,7 +121,7 @@
   <catalogRef xlink:href="http://rsg.pml.ac.uk/thredds/catalog.xml"                       xlink:title="PML Remote Sensing Group (UK)"       name=""/>
 
   <catalogRef xlink:href="http://aeolus.wdcb.ru:8080/thredds/catalog.xml"                 xlink:title="International Council for Science (ICSU) World Data Centres (WDC) in Russia and Ukraine (RU)"       name=""/>
-  <catalogRef xlink:href="http://mis.myocean.org.ua:8080/thredds/catalog.xml"             xlink:title="My Ocean Black Sea (UA) "       name=""/>
+  <catalogRef xlink:href="http://mis.myocean.org.ua:8080/thredds/catalog.xml"             xlink:title="MyOcean Black Sea (UA) "       name=""/>
 
   <catalogRef xlink:href="http://odc.scsio.ac.cn:8080/thredds/enhancedCatalog.xml"        xlink:title="South China Sea Ocean Data Centter (SSCIO) test server (CN)"       name=""/>
   <catalogRef xlink:href="http://ds1.iap.ac.cn:9090/thredds/catalog.xml"                  xlink:title="Institute for Atmospheric Physics, Chinese Academy of Sciences (CN)"       name=""/>

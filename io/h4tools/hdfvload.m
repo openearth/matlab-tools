@@ -155,32 +155,13 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
    OPT.load_main_data = 1;
    OPT.attr2data      = 0; % goes wrong when file attribute filename as added by hdfvsave
                            % overwrites a vdata field filename
-   OPT.debug          = 1; % also for function at lower level.
+   OPT.debug          = 0; % also for function at lower level.
    OPT.sdsselection   = [];
    OPT.vdataselection = [];
 
 %% Cycle keywords in input argument list to overwrite default values.
 
-   if nargin>1
-       
-      iargin = 2;
-
-      %% remaining number of arguments is always even now
-      while iargin<=nargin,
-          switch lower ( varargin{iargin})
-          % all keywords lower case
-          case 'vgroup_name'           ;iargin=iargin+1;OPT.vgroup_name            = varargin{iargin};
-          case 'load_main_data'        ;iargin=iargin+1;OPT.load_main_data         = varargin{iargin};
-          case 'attr2data'             ;iargin=iargin+1;OPT.attr2data              = varargin{iargin};
-          case 'debug'                 ;iargin=iargin+1;OPT.debug                  = varargin{iargin};
-          case 'sdsselection'          ;iargin=iargin+1;OPT.sdsselection           = varargin{iargin};
-          case 'vdataselection'        ;iargin=iargin+1;OPT.vdataselection         = varargin{iargin};
-          otherwise
-            error(['Invalid string argument (caps?): ''',varargin{iargin},'''']);
-          end
-          iargin=iargin+1;
-      end
-   end
+   OPT = setproperty(OPT,varargin{2:end});
    
 %% Return default aguments (with 0 as arg, because 0 args => input GUI)
 
@@ -267,7 +248,7 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
                   
                   [NEWDATA,...
                    NEWATTRIBUTES,...
-                   status] = hdfvload_vgroup2struct(finfo.Vgroup(iVgroup),file_name,[hdftree,filesep,'(',num2str(iVgroup),')']);
+                   status] = hdfvload_vgroup2struct(finfo.Vgroup(iVgroup),file_name,[hdftree,filesep,'(',num2str(iVgroup),')'],'debug',OPT.debug);
                    
                    if iVgroup==1
                    DATA          = NEWDATA;
@@ -299,7 +280,7 @@ function [DATA,ATTRIBUTES,iostat] = hdfvload(varargin)
                   
                      [NEWDATA,...
                       ATTRIBUTES.(fldname),...
-                      status] = hdfvload_vgroup2struct(finfo.Vgroup(iVgroup),file_name,[hdftree,filesep,fldname]);
+                      status] = hdfvload_vgroup2struct(finfo.Vgroup(iVgroup),file_name,[hdftree,filesep,fldname],'debug',OPT.debug);
                    
                      if isfield(DATA,fldname)
                         L = length(DATA.(fldname)(:))

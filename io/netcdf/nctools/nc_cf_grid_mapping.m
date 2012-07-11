@@ -74,7 +74,7 @@ function varargout = nc_cf_grid_mapping(epsg,varargin)
 % TO DO: fill proj4 with parameters automatically
 
 OPT.debug = 0;
-OPT.wkt   = 1;
+OPT.wkt   = 0; % the char symbols ("'[]) make some THREDDS OPeNDAP server versions crash, so we switch off by default
 
 OPT = setProperty(OPT,varargin);
 

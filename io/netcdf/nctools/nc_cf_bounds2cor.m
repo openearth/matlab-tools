@@ -1,9 +1,9 @@
-function C = nc_cf_bounds2cor(B)
+ \function C = nc_cf_bounds2cor(B)
 %nc_cf_bounds2cor  rewrite 3D CF bounds matrix to 2D matrix of corners
 %
 %   cor = nc_cf_bounds2cor(bounds)
 %
-%   where C = [m n] if bounds = [m-1 x n-1 x 4]
+%   where cor = [m n] if bounds = [m-1 x n-1 x 4]
 %
 %   It is an error if the cells are not contiguous.
 %
@@ -12,7 +12,7 @@ function C = nc_cf_bounds2cor(B)
 %
 %   Note: bounds==nc_cf_bounds2cor(nc_cf_cor2bounds(bounds))
 %
-%   See also nc_cf_cor2bounds, 
+%   See also nc_cf_cor2bounds
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -52,7 +52,7 @@ if length(size(B))==2
       sz = size(B);
       
       if all(sz==2)
-         error('[2 x 2] CF bounds matrix undetermined, <dim> not inmplemented')
+         error('[2 x 2] CF bounds matrix undetermined, <dim> not implemented')
       end
       
       dim = find(sz==2);
