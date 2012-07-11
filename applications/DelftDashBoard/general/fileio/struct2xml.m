@@ -125,7 +125,12 @@ switch lower(tp)
     case{'int'}
         str2=num2str(v);
     case{'real'}
-        str2=num2str(v);
+        if length(v)>1
+            str2=num2str(v,'%0.3f,');
+            str2=str2(1:end-1);
+        else            
+            str2=num2str(v);
+        end
     case{'date'}
         str2=datestr(v,'yyyymmdd HHMMSS');
 end

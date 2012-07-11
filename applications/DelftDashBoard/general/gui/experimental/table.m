@@ -242,13 +242,25 @@ refreshTable(tableHandle,{'enable',enab});
 function changeTable(tb,data)
 
 usd=get(tb,'UserData');
-usd.data=data;
+
+sliderRefresh=0;
+if size(data)~=size(usd.data)
+    sliderRefresh=1;
+end
+
 if usd.activeRow>size(data,1)
     usd.activeRow=1;
 end
+
+usd.data=data;
+
 set(tb,'UserData',usd);
-refreshVerticalSlider(tb);
+
 refreshTable(tb);
+
+if sliderRefresh
+    refreshVerticalSlider(tb);
+end
 
 %%
 function verticalSlider_Callback(hObject,eventdata)
@@ -465,32 +477,11 @@ ipopup=0;
 for i=1:length(varg)
     if ischar(varg{i})
         switch(lower(varg{i})),
-%             case{'position'}
-%                 position=varargin{i+1};
-%             case{'nrrows'}
-%                 nrrows=varargin{i+1};
-%             case{'columntypes'}
-%                 columntypes=varargin{i+1};
-%             case{'width'}
-%                 width=varargin{i+1};
-%             case{'data'}
-%                 data=varargin{i+1};
             case{'popuptext'}
                 popuptext=varg{i+1};
                 ipopup=1;
-                
-%             case{'pushtext'}
-%                 pushtext=varargin{i+1};
             case{'enable'}
                 enab=varg{i+1};
-%             case{'format'}
-%                 fmt=varargin{i+1};
-%             case{'Callbacks'}
-%                 Callbacks=varargin{i+1};
-%             case{'includebuttons'}
-%                 includebuttons=1;
-%             case{'includenumbers'}
-%                 includenumbers=1;
         end
     end
 end            
@@ -510,7 +501,7 @@ end
 
 enabperm=usd.enable;
 if size(enab,1)>=size(enabperm,1)
-enab=min(enab,enabperm);
+    enab=min(enab,enabperm);
 end
 
 vslider=usd.verticalSlider;
