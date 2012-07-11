@@ -28,23 +28,26 @@ else
     set(hm.toggleRunOnce,'Value',1);
 end
 
+hm.toggleCatchup = uicontrol(gcf,'Style','checkbox','Position',[30  310 180  25],'String','Catch Up','BackgroundColor',[0.8 0.8 0.8]);
+set(hm.toggleCatchup,'Value',hm.catchUp);
 
-hm.toggleGetMeteo = uicontrol(gcf,'Style','checkbox','Position',[30  300 180  25],'String','Get Meteo Data','BackgroundColor',[0.8 0.8 0.8]);
+hm.toggleGetMeteo = uicontrol(gcf,'Style','checkbox','Position',[30  260 180  25],'String','Get Meteo Data','BackgroundColor',[0.8 0.8 0.8]);
 set(hm.toggleGetMeteo,'Value',hm.getMeteo);
 
-hm.toggleGetObservations = uicontrol(gcf,'Style','checkbox','Position',[30  275 180  25],'String','Get Observations','BackgroundColor',[0.8 0.8 0.8]);
+hm.toggleGetObservations = uicontrol(gcf,'Style','checkbox','Position',[30  235 180  25],'String','Get Observations','BackgroundColor',[0.8 0.8 0.8]);
 set(hm.toggleGetObservations,'Value',hm.getObservations);
 
-hm.toggleGetOceanModelData = uicontrol(gcf,'Style','checkbox','Position',[30  250 180  25],'String','Get Ocean Model Data','BackgroundColor',[0.8 0.8 0.8]);
+hm.toggleGetOceanModelData = uicontrol(gcf,'Style','checkbox','Position',[30  210 180  25],'String','Get Ocean Model Data','BackgroundColor',[0.8 0.8 0.8]);
 set(hm.toggleGetOceanModelData,'Value',hm.getOceanModel);
 
-hm.textMainLoopStatus = uicontrol(gcf,'Style','text','Position',[30  225  180  20],'String','Status : inactive','HorizontalAlignment','left','BackgroundColor',[0.8 0.8 0.8]);
+hm.textMainLoopStatus = uicontrol(gcf,'Style','text','Position',[30  185  180  20],'String','Status : inactive','HorizontalAlignment','left','BackgroundColor',[0.8 0.8 0.8]);
 
 set(hm.toggleRunOnce,'CallBack',{@ToggleRunOnce_Callback});
 set(hm.toggleRunCont,'CallBack',{@ToggleRunCont_Callback});
 
 set(hm.pushStartMainLoop,    'CallBack',{@PushStartMainLoop_Callback});
 set(hm.pushStopMainLoop,     'CallBack',{@PushStopMainLoop_Callback});
+set(hm.toggleCatchup,       'CallBack',{@ToggleCatchup_Callback});
 set(hm.toggleGetMeteo,       'CallBack',{@ToggleGetMeteo_Callback});
 set(hm.toggleGetObservations,'CallBack',{@ToggleGetObservations_Callback});
 set(hm.toggleGetOceanModelData ,'CallBack',{@ToggleGetOceanModelData_Callback});
@@ -94,6 +97,13 @@ if get(hObject,'Value')==1
 else
     set(hObject,'Value',0);
 end
+
+%%
+function ToggleCatchup_Callback(hObject,eventdata)
+hm=guidata(findobj('Tag','OMSMain'));
+ii=get(hObject,'Value');
+hm.catchUp=ii;
+guidata(findobj('Tag','OMSMain'),hm);
 
 %%
 function ToggleGetObservations_Callback(hObject,eventdata)

@@ -192,7 +192,13 @@ try
         % If cycle mode is continuous, start new MainLoop
         if strcmpi(hm.cycleMode,'continuous')
             disp(['Finished cycle ' datestr(hm.cycle,'yyyymmdd.HHMMSS')]);
-            hm.cycle=hm.cycle+hm.runInterval/24;
+            if hm.catchUp
+                hm.cycle=hm.catchupCycle+hm.runInterval/24;
+            else
+                hm.cycle=hm.cycle+hm.runInterval/24;
+            end
+            set(hm.toggleCatchup,'Value',0);
+            hm.catchUp=0;            
             disp(['Starting cycle ' datestr(hm.cycle,'yyyymmdd.HHMMSS')]);
             set(hm.editCycle,'String',datestr(hm.cycle,'yyyymmdd HHMMSS'));
             set(hm.textModelLoopStatus,'String','Status : waiting');drawnow;

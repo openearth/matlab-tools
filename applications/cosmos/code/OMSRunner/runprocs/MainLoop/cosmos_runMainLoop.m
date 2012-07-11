@@ -19,6 +19,16 @@ hm=guidata(findobj('Tag','OMSMain'));
 
 disp('Start main loop ...');
 
+%% Check if we're playing catch-up
+if hm.catchUp
+    nh=24*(now-floor(now));
+    if nh>12
+        hm.catchupCycle=floor(now)+0.5;
+    else
+        hm.catchupCycle=floor(now);
+    end
+end
+
 %% Reading data
 disp('Reading models ...');
 set(hm.textMainLoopStatus,'String','Status : Reading models ...');drawnow;
@@ -127,8 +137,8 @@ end
 %% Restart times (times to generate restart files)
 hm=cosmos_getRestartTimes(hm);
 
-%% Run model loop
-starttime=now+1/86400;
+%% Run model loop (start in 5 seconds)
+starttime=now+5/86400;
 t = timer;
 set(t,'ExecutionMode','fixedRate','BusyMode','drop','period',5);
 set(t,'TimerFcn',{@cosmos_runModelLoop},'Tag','ModelLoop');

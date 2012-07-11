@@ -16,7 +16,11 @@ for i=1:hm.nrModels
     trst=-1e9;
     trst=max(trst,hm.models(i).tWaveOkay); % Model must be spun-up
     trst=max(trst,hm.models(i).tFlowOkay); % Model must be spun-up
-    trst=max(trst,hm.cycle+hm.runInterval/24); % Start time of next cycle
+    if hm.catchUp
+        trst=max(trst,hm.catchupCycle+hm.runInterval/24); % Start time of next cycle
+    else
+        trst=max(trst,hm.cycle+hm.runInterval/24); % Start time of next cycle
+    end
     trst=min(trst,tana); % Restart time no later than last analyzed time in meteo fields
     hm.models(i).restartTime=trst;
 

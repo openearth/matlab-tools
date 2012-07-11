@@ -11,6 +11,7 @@ for i=1:hm.nrModels
     t0(i)=hm.cycle;
 end
 
+    
 
 for i=1:hm.nrModels
     hm.models(i).tFlowStart=t0(i)+hm.models(i).startTime/24;
@@ -21,7 +22,11 @@ for i=1:hm.nrModels
     else
         hm.models(i).runTime=min(hm.models(i).runTime*60,hm.runTime*60);
     end
-    hm.models(i).tStop=hm.cycle+hm.models(i).startTime/24+hm.models(i).runTime/1440;
+    if hm.catchUp
+        hm.models(i).tStop=hm.catchupCycle+hm.models(i).startTime/24+hm.models(i).runTime/1440;
+    else
+        hm.models(i).tStop=hm.cycle+hm.models(i).startTime/24+hm.models(i).runTime/1440;
+    end
     hm.models(i).refTime=hm.refTime;
     hm.models(i).rstInterval=hm.runInterval*60;
     hm.models(i).flowRstFile=[];
