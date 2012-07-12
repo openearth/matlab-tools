@@ -226,7 +226,7 @@ try
             %            text(0.1,0.2,'Kracht: 4 bft','fontsize',7)
             
             % axes 2a
-            ax2a = axes('position',[ 0.7611 0.2995  0.0424268  0.06719]);
+            ax2a = axes('position',[ 0.7511 0.2995  0.0424268  0.06719]);
             %             ax2a = axes('position',[0.763 0.309 0.0334 0.0489]);
             axis equal;
             set(gca,'xtick',[]);set(gca,'ytick',[])
@@ -297,8 +297,8 @@ try
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
             plot(s(4).data.Time,s(4).data.Val,'linewidth',0.7);
-            set(gca,'xlim',[min(s(4).data.Time) max(s(4).data.Time)])
-            set(gca,'xtick',[min(s(4).data.Time):0.5:max(s(4).data.Time)])
+            set(gca,'xlim',[min(s(1).data.Time) max(s(1).data.Time)])
+            set(gca,'xtick',[min(s(1).data.Time):0.5:max(s(1).data.Time)])
             datetick('x','keeplimits','keepticks')
             tcks = get(gca,'xticklabel');
             tcks(2:2:end,:) = ' ';
@@ -331,22 +331,24 @@ try
             close(gcf)
             
             if (timnow-floor(timnow)) >= 0.25 && (timnow-floor(timnow)) <= 20/24 % only hours between 6am and 8pm on website
-                
-                tel = tel + 1;
-                
-                fc.name.value        = name;
-                fc.name.type         = 'char';
-                fc.numoffields.value = tel;
-                fc.numoffields.type  = 'int';
-                fc.interval.value    = model.forecastplot.timeStep;
-                fc.interval.type     = 'int';
-                
-                fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnow,'dd mmm HH:MM'),'May','Mei'),'Mar','Mrt'),'Oct','Okt'));
-                fc.timepoints(tel).timepoint.timestr.type  = 'char';
-                fc.timepoints(tel).timepoint.png.value      = [name '/' name '_' datestr(timnow,'yyyymmddHH') '.png'];
-                fc.timepoints(tel).timepoint.png.type      = 'char';
-                fc.timepoints(tel).timepoint.id.value      = datestr(timnow,'yyyymmddHH');
-                fc.timepoints(tel).timepoint.id.type       = 'int';
+                if (timnow-now) >= -0.25 % no past forecasts on website
+                    
+                    tel = tel + 1;
+                    
+                    fc.name.value        = name;
+                    fc.name.type         = 'char';
+                    fc.numoffields.value = tel;
+                    fc.numoffields.type  = 'int';
+                    fc.interval.value    = model.forecastplot.timeStep;
+                    fc.interval.type     = 'int';
+                    
+                    fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnow,'dd mmm HH:MM'),'May','Mei'),'Mar','Mrt'),'Oct','Okt'));
+                    fc.timepoints(tel).timepoint.timestr.type  = 'char';
+                    fc.timepoints(tel).timepoint.png.value      = [name '/' name '_' datestr(timnow,'yyyymmddHH') '.png'];
+                    fc.timepoints(tel).timepoint.png.type      = 'char';
+                    fc.timepoints(tel).timepoint.id.value      = datestr(timnow,'yyyymmddHH');
+                    fc.timepoints(tel).timepoint.id.type       = 'int';
+                end
             end
         end
         
