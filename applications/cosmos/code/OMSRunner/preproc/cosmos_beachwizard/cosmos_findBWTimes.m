@@ -1,6 +1,5 @@
 function t=cosmos_findBWTimes(bwmodel)
 
-clear variables;close all;
 s=urlread(['http://opendap.deltares.nl/thredds/catalog/opendap/deltares/beachwizard/output/' bwmodel '/catalog.html']); 
 imatch=regexp(s,'<tt>.{1,100}\.nc</tt>','match');
 for j=1:length(imatch)
