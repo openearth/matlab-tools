@@ -69,7 +69,7 @@ supertransdata = ddb_getXmlData(localdir,url,xmlfile);
 
 if ~isempty(supertransdata)
     for ii=1:length(supertransdata.file)
-        if supertransdata.file(ii).update == 1
+        if supertransdata.file(ii).update == 1 || ~exist([handles.superTransDir filesep supertransdata.file(ii).name],'file')
             urlwrite(supertransdata.file(ii).URL,[handles.superTransDir filesep supertransdata.file(ii).name]);
         end
     end
