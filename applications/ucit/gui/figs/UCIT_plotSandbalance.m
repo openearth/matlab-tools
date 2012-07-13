@@ -71,8 +71,15 @@ axis   equal
 set   (gca,'fontsize', 8 );
 ylabel('Northing [m]');
 xlabel('Easting [m]');
-set   (gca,'Xlim',[d.X(1,1) d.X(1,end)]);
-set   (gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
+% derive x and y limits to be applied to the axes
+xlim = [min(d.X(1,[1 end])) max(d.X(1,[1 end]))];
+ylim = [min(d.Y([1 end],1)) max(d.Y([1 end],1))];
+
+set(gca,...
+    'Xlim', xlim,...
+    'Ylim', ylim);
+% set   (gca,'Xlim',[d.X(1,1) d.X(1,end)]);
+% set   (gca,'Ylim',[d.Y(end,1) d.Y(1,1)]);
 tickmap('xy');
 
 % save figure
