@@ -25,10 +25,17 @@
           <formodel>delft3dflow</formodel>
         </tab>
         <tab>
-          <tag>nestingwave</tag>
-          <tabstring>Nesting</tabstring>
+          <tag>nestingwave1</tag>
+          <tabstring>Nesting - 1</tabstring>
           <callback>ddb_NestingToolbox_Delft3DWAVE_nest1</callback>
           <elements>nesting.delft3dwave.nest1.xml</elements>
+          <formodel>delft3dwave</formodel>
+        </tab>
+        <tab>
+          <tag>nestingwave2</tag>
+          <tabstring>Nesting - 2</tabstring>
+          <callback>ddb_NestingToolbox_Delft3DWAVE_nest2</callback>
+          <elements>nesting.delft3dwave.nest2.xml</elements>
           <formodel>delft3dwave</formodel>
         </tab>
         <tab>

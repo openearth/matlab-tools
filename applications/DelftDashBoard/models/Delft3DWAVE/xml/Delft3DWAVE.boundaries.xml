@@ -119,7 +119,7 @@
     <position>470 70 70 20</position>
     <tooltipstring>Select SP2 file</tooltipstring>
     <text>SP2 File</text>
-    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spectrum</variable>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).overallspecfile</variable>
     <extension>*.sp2</extension>
     <selectiontext>Select SP2 File</selectiontext>
     <showfilename>1</showfilename>

@@ -93,7 +93,7 @@ input.bedfriccoefcollins= 0.015;
 input.bedfriccoefmadsen = 0.05;                             
 input.bedfrictiontypestext={'JONSWAP','Collins','Madsen et al.'};
 input.bedfrictiontypes={'jonswap','collins','madsen et al.'};
-input.whitecappingtypes={'none','Komen','Westhuysen'};
+input.whitecappingtypes={'off','Komen','Westhuysen'};
 input.whitecappingtypestext={'None','Komen','Westhuysen'};
 
 %% Numerics

@@ -201,6 +201,9 @@ if ~isempty(additionalToolboxDir)
     end
 end
 
+%% dummy tab callback
+fprintf(fid,'%s\n',which('ddb_dummyTabCallback'));
+
 fclose(fid);
 
 %% Include icon

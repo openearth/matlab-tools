@@ -1,4 +1,4 @@
-function handles = ddb_Delft3DWAVE_plotObstacles(handles, opt, varargin)
+function handles = ddb_Delft3DWAVE_plotBoundaries(handles, opt, varargin)
 %DDB_DELFT3DFLOW_PLOTBOUNDARIES  One line description goes here.
 
 %% Copyright notice
@@ -107,7 +107,7 @@ switch lower(opt)
             try
                 h=handles.Model(imd).Input.boundaries(ii).plothandle;
                 if ishandle(h)
-                    delete(handles.Model(imd).Input.obstacles(ii).plothandle);
+                    delete(handles.Model(imd).Input.boundaries(ii).plothandle);
                 end
             end
         end
