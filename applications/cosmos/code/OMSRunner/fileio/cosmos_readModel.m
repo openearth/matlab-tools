@@ -203,6 +203,8 @@ else
 end
 if isfield(model,'filedy')
     hm.models(i).Filedy=model.filedy;
+else
+    hm.models(i).Filedy=[];    
 end
 if isfield(model,'momsol')
     hm.models(i).momSol=model.momsol;
@@ -732,7 +734,12 @@ if isfield(model,'mapplots')
         if isfield(model.mapplots(j).mapplot,'plot')
             hm.models(i).mapPlots(j).plot=str2double(model.mapplots(j).mapplot.plot);
         end
-        
+
+        hm.models(i).mapPlots(j).type='kmz';
+        if isfield(model.mapplots(j).mapplot,'type')
+            hm.models(i).mapPlots(j).type=model.mapplots(j).mapplot.type;
+        end
+
         if isfield(model.mapplots(j).mapplot,'datasets')
             
             hm.models(i).mapPlots(j).nrDatasets=length(model.mapplots(j).mapplot.datasets);
