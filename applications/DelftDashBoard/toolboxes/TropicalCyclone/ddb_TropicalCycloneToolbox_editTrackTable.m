@@ -102,5 +102,9 @@ handles.Toolbox(tb).Input.trackB(:,iq)=handles.Toolbox(tb).Input.tableB;
 
 setHandles(handles);
 
-ddb_plotCycloneTrack;
+try
+    delete(handles.Toolbox(tb).Input.trackhandle);
+end
+handles.Toolbox(tb).Input.trackhandle=[];
 
+ddb_plotCycloneTrack;
