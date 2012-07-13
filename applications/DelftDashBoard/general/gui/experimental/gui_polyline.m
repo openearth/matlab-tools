@@ -311,8 +311,8 @@ if ~isempty(x)
     tx=[];
     if ~isempty(options.text)
         for i=1:length(x)
-            tx(i)=text(x(i),y(i),txt{i});
-            set(tx(i),'Tag',optionstag,'HitTest','off','Clipping','on');
+            tx(i)=text(x(i),y(i),options.text{i});
+            set(tx(i),'Tag',options.tag,'HitTest','off','Clipping','on');
             setappdata(tx(i),'number',i);
             set(tx(i),'Tag',options.tag);
             set(tx(i),'Parent',hg);
@@ -418,12 +418,28 @@ ddb_updateCoordinateText('crosshair');
 function moveVertex(imagefig, varargins)
 
 mouseclick=get(gcf,'SelectionType');
+
 switch mouseclick
     case{'normal'}
         set(gcf, 'windowbuttonmotionfcn', {@followTrack});
         set(gcf, 'windowbuttonupfcn',     {@stopTrack});
     case{'alt'}
-        % double click
+        % right click
+        mh=get(gcf,'CurrentObject');
+        hg=get(mh,'parent');
+        options=getappdata(hg,'options');
+        x=getappdata(hg,'x');
+        y=getappdata(hg,'y');
+        nr=getappdata(mh,'number');
+        if ~isempty(options.rightclickcallback)
+            if ~isempty(options.rightclickinput)
+                feval(options.rightclickcallback,options.rightclickinput,hg,x,y,nr);
+            else
+                feval(options.rightclickcallback,hg,x,y,nr);
+            end
+        end        
+    case{'open'}
+        % right click
         mh=get(gcf,'CurrentObject');
         hg=get(mh,'parent');
         options=getappdata(hg,'options');
