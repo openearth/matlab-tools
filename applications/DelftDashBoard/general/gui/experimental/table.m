@@ -583,6 +583,8 @@ usd=get(tb,'UserData');
 data=usd.data;
 nrrows=usd.nrRows;
 vslider=usd.verticalSlider;
+usd.firstRow=1;
+set(tb,'UserData',usd);
 nr=size(data,1);
 if nr<=nrrows
     set(vslider,'Min',0);
