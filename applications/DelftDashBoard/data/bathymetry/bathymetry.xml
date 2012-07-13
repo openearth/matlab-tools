@@ -9,6 +9,7 @@
     <edit>0</edit>
     <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/gebco_08</URL>
     <useCache>1</useCache>
+    <source></source>
   </dataset>
   <dataset>
     <name>hawaii</name>
@@ -38,6 +39,7 @@
     <edit>0</edit>
     <URL>http://opendap.deltares.nl/thredds/fileServer/opendap/deltares/delftdashboard/bathymetry/ngdc_crm</URL>
     <useCache>1</useCache>
+    <source></source>
   </dataset>
   <dataset>
     <name>usgs_socal</name>
