@@ -92,7 +92,7 @@ if ~strcmpi(model.useMeteo,'none')
             
             writeD3DMeteoFile4(meteodir,model.backupMeteo,tmpdir,'meteo',model.xLim,model.yLim, ...
                 coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-                'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
+                'parameter',par,'dx',dx,'dy',dy,'version',hm.meteoVersion);
             
         else
             error('No backup meteo specified!');            
