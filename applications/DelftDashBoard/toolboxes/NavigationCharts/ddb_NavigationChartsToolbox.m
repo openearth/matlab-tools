@@ -66,7 +66,6 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     selectDatabase;
-    % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
     h=findobj(gca,'Tag','BBoxENC');
     if isempty(h)
         handles=plotChartOutlines(handles);

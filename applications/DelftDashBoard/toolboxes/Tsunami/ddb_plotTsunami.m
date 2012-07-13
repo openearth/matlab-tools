@@ -75,7 +75,7 @@ switch lower(option)
         if ~isempty(h)
             delete(h);
         end
-        h=findobj(gca,'Tag','tsunamiFault');
+        h=findobj(gca,'Tag','tsunamifault');
         if ~isempty(h)
             delete(h);
         end
@@ -96,7 +96,7 @@ switch lower(option)
         if ~isempty(h)
             set(h,'Visible','on');
         end
-        h=findobj(gca,'Tag','tsunamiFault');
+        h=findobj(gca,'Tag','tsunamifault');
         if ~isempty(h)
             set(h,'Visible','on');
         end
@@ -117,7 +117,7 @@ switch lower(option)
         if ~isempty(h)
             set(h,'Visible','off');
         end
-        h=findobj(gca,'Tag','tsunamiFault');
+        h=findobj(gca,'Tag','tsunamifault');
         if ~isempty(h)
             set(h,'Visible','off');
         end

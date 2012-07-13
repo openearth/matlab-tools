@@ -100,10 +100,9 @@ handles.Toolbox(ii).Input.timeStep=10.0;
 handles.Toolbox(ii).Input.activeDatabase=1;
 handles.Toolbox(ii).Input.activeObservationStation=1;
 
-handles.Toolbox(ii).Input.observationStationHandle=[];
-handles.Toolbox(ii).Input.activeObservationStationHandle=[];
+handles.Toolbox(ii).Input.observationstationshandle=[];
 
-handles.Toolbox(tb).Input.activeParameter=1;
+handles.Toolbox(ii).Input.activeParameter=1;
 
 for jj=1:15
     handles.Toolbox(ii).Input.(['radio' num2str(jj,'%0.2i')]).value=0;

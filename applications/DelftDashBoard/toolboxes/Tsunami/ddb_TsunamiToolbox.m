@@ -133,8 +133,6 @@ handles=computeLengthAndStrike(handles);
 % Update 'bulk' parameters
 handles=updateTsunamiValues(handles,'length');
 
-handles.Toolbox(tb).Input.newFaultLine=0;
-
 setHandles(handles);
 
 plotFaultLine;
@@ -145,10 +143,7 @@ function plotFaultLine
 handles=getHandles;
 
 ddb_zoomOff;
-h=findobj(gcf,'Tag','tsunamiFault');
-if ~isempty(h)
-    delete(h);
-end
+
 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
     x=handles.Toolbox(tb).Input.segmentLon;
     y=handles.Toolbox(tb).Input.segmentLat;
@@ -157,10 +152,15 @@ else
     y=handles.Toolbox(tb).Input.segmentY;
 end
 
-UIPolyline(gca,'plot','x',x,'y',y,'Tag','tsunamiFault','Marker','o','Callback',@changeFaultLine);
+handles=deleteFaultLine(handles);
+h=gui_polyline('plot','x',x,'y',y,'tag','tsunamifault','marker','o','changecallback',@changeFaultLine);
+handles.Toolbox(tb).Input.faulthandle=h;
+
+setHandles(handles);
 
 %%
 function saveTableData
+
 handles=getHandles;
 
 [filename, pathname, filterindex] = uiputfile('*.xml', 'Select Tsunami XML File','');
@@ -190,13 +190,15 @@ if ok
     handles.Toolbox(tb).Input=h;
     
     ddb_zoomOff;
-    h=findobj(gcf,'Tag','tsunamiFault');
-    if ~isempty(h)
-        delete(h);
-    end
-    UIPolyline(gca,'draw','Tag','tsunamiFault','Marker','o','Callback',@changeFaultLine,'closed',0);
+
+    handles=deleteFaultLine(handles);
+
+    gui_polyline('draw','Tag','tsunamifault','Marker','o','createcallback',@createFaultLine,'changecallback',@changeFaultLine,'closed',0);
+
     handles.Toolbox(tb).Input.newFaultLine=1;
+
     setHandles(handles);
+
 end
 
 %%
@@ -215,7 +217,46 @@ for i=2:length(x)
 end
 
 %%
-function changeFaultLine(x,y,varargin)
+function createFaultLine(h,x,y,nr)
+
+handles=getHandles;
+
+handles.Toolbox(tb).Input.faulthandle=h;
+
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    handles.Toolbox(tb).Input.segmentLon=x;
+    handles.Toolbox(tb).Input.segmentLat=y;
+    handles=convertFaultCoordinates(handles,'latlon2xy');
+else
+    handles.Toolbox(tb).Input.segmentX=x;
+    handles.Toolbox(tb).Input.segmentY=y;
+    handles=convertFaultCoordinates(handles,'xy2latlon');
+end
+
+handles=computeLengthAndStrike(handles);
+
+% Update theoretical parameters
+if handles.Toolbox(tb).Input.updateParameters
+    handles=updateTsunamiValues(handles,'length');
+end
+
+% Update segment values
+handles.Toolbox(tb).Input.segmentDepth=[];
+handles.Toolbox(tb).Input.segmentDip=[];
+handles.Toolbox(tb).Input.segmentSlipRake=[];
+for i=1:length(x)
+    handles.Toolbox(tb).Input.segmentDepth(i)=handles.Toolbox(tb).Input.depth;
+    handles.Toolbox(tb).Input.segmentDip(i)=handles.Toolbox(tb).Input.dip;
+    handles.Toolbox(tb).Input.segmentSlipRake(i)=handles.Toolbox(tb).Input.slipRake;
+end
+handles=updateTableValues(handles);
+
+setHandles(handles);
+
+gui_updateActiveTab;
+
+%%
+function changeFaultLine(h,x,y,nr)
 
 handles=getHandles;
 
@@ -237,7 +278,7 @@ if handles.Toolbox(tb).Input.updateParameters
 end
 
 % Update segment values
-if handles.Toolbox(tb).Input.updateTable || handles.Toolbox(tb).Input.newFaultLine
+if handles.Toolbox(tb).Input.updateTable
     handles.Toolbox(tb).Input.segmentDepth=[];
     handles.Toolbox(tb).Input.segmentDip=[];
     handles.Toolbox(tb).Input.segmentSlipRake=[];
@@ -248,8 +289,6 @@ if handles.Toolbox(tb).Input.updateTable || handles.Toolbox(tb).Input.newFaultLi
     end
     handles=updateTableValues(handles);
 end
-
-handles.Toolbox(tb).Input.newFaultLine=0;
 
 setHandles(handles);
 
@@ -527,4 +566,9 @@ if ~isempty(pathname)
     end
 end
 
-
+%%
+function handles=deleteFaultLine(handles)
+try
+    delete(handles.Toolbox(tb).Input.faulthandle);
+end
+handles.Toolbox(tb).Input.faulthandle=[];

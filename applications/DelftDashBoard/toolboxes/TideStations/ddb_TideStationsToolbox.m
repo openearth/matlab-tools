@@ -65,12 +65,12 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     handles=getHandles;
-    h=handles.Toolbox(tb).Input.tideStationHandle;
+    h=handles.Toolbox(tb).Input.tidestationshandle;
+    ddb_plotTideStations('activate');
     if isempty(h)
+        % First time to plot tide stations
         plotTideStations;
-        selectTideStation
-    else
-        ddb_plotTideStations('activate');
+        refreshComponentSet;
     end
 else
     %Options selected
@@ -158,87 +158,41 @@ fname=[shortName '.tek'];
 exportTEK(wl',tim',fname,stationName);
 
 % Make bar file
-components={'M2','S2','N2','K2','K1','O1','P1','Q1'};
-fid=fopen([shortName '_components.bar'],'wt');
-for ii=1:length(components)
-    icmp=strmatch(components{ii},handles.Toolbox(tb).Input.components,'exact');
-    amp=handles.Toolbox(tb).Input.amplitudes(icmp);
-    phi=handles.Toolbox(tb).Input.phases(icmp);
-    fprintf(fid,'%s %f %f\n',components{ii},amp,phi);
-end
-fclose(fid);
+% components={'M2','S2','N2','K2','K1','O1','P1','Q1'};
+% fid=fopen([shortName '_components.bar'],'wt');
+% for ii=1:length(components)
+%     icmp=strmatch(components{ii},handles.Toolbox(tb).Input.components,'exact');
+%     amp=handles.Toolbox(tb).Input.amplitudes(icmp);
+%     phi=handles.Toolbox(tb).Input.phases(icmp);
+%     fprintf(fid,'%s %f %f\n',components{ii},amp,phi);
+% end
+% fclose(fid);
 
 %%
-function selectTideStationFromMap(imagefig, varargins)
-
-h=gco;
-
-if strcmp(get(h,'Tag'),'TideStations')
-    
-    handles=getHandles;
-    
-    % Find the nearest tide station n
-    pos = get(handles.GUIHandles.mapAxis, 'CurrentPoint');
-    iac=handles.Toolbox(tb).Input.activeDatabase;
-    posx=pos(1,1);
-    posy=pos(1,2);
-    dxsq=(handles.Toolbox(tb).Input.database(iac).xLocLocal-posx).^2;
-    dysq=(handles.Toolbox(tb).Input.database(iac).yLocLocal-posy).^2;
-    dist=(dxsq+dysq).^0.5;
-    [y,n]=min(dist);
-    handles.Toolbox(tb).Input.activeTideStation=n;
-    
-    setHandles(handles);
-    
-    selectTideStation;
-
-end
+function selectTideStationFromMap(h,nr)
+handles=getHandles;
+handles.Toolbox(tb).Input.activeTideStation=nr;
+setHandles(handles);
+selectTideStation;
 
 %%
 function selectTideStation
-
 handles=getHandles;
-
-% Delete active station marker
-try
-    delete(handles.Toolbox(tb).Input.activeTideStationHandle);
-end
-handles.Toolbox(tb).Input.activeTideStationHandle=[];
-
-% Plot new active station
-n=handles.Toolbox(tb).Input.activeTideStation;
-iac=handles.Toolbox(tb).Input.activeDatabase;
-plt=plot3(handles.Toolbox(tb).Input.database(iac).xLocLocal(n),handles.Toolbox(tb).Input.database(iac).yLocLocal(n),1000,'o');
-set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveTideStation');
-handles.Toolbox(tb).Input.activeTideStationHandle=plt;
-
-setHandles(handles);
-
+gui_pointcloud(handles.Toolbox(tb).Input.tidestationshandle,'change','activepoint',handles.Toolbox(tb).Input.activeTideStation);
 refreshComponentSet;
 
 %%
 function selectTideDatabase
-
 handles=getHandles;
-
 handles.Toolbox(tb).Input.activeTideStation=1;
-
 % First delete existing stations
 try
-    delete(handles.Toolbox(tb).Input.activeTideStationHandle);
+    delete(handles.Toolbox(tb).Input.tidestationshandle);
 end
-try
-    delete(handles.Toolbox(tb).Input.tideStationHandle);
-end
-handles.Toolbox(tb).Input.tideStationHandle=[];
-handles.Toolbox(tb).Input.activeTideStationHandle=[];
-
+handles.Toolbox(tb).Input.tidestationshandle=[];
 setHandles(handles);
-
 plotTideStations;
-
 selectTideStation;
-
 
 %%
 function plotTideStations
@@ -247,27 +201,26 @@ handles=getHandles;
 
 iac=handles.Toolbox(tb).Input.activeDatabase;
 
+% x and y in original coordinate system of database
 x=handles.Toolbox(tb).Input.database(iac).xLoc;
 y=handles.Toolbox(tb).Input.database(iac).yLoc;
-z=zeros(size(x))+500;
 
 cs0.name=handles.Toolbox(tb).Input.database(iac).coordinateSystem;
 cs0.type=handles.Toolbox(tb).Input.database(iac).coordinateSystemType;
+% x and y in active coordinate system
 [x,y]=ddb_coordConvert(x,y,cs0,handles.screenParameters.coordinateSystem);
 
 handles.Toolbox(tb).Input.database(iac).xLocLocal=x;
 handles.Toolbox(tb).Input.database(iac).yLocLocal=y;
 
-plt=plot3(x,y,z,'o');hold on;
-set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','y');
-set(plt,'Tag','TideStations');
-set(plt,'ButtonDownFcn',{@selectTideStationFromMap});
-handles.Toolbox(tb).Input.tideStationHandle=plt;
+xy=[x y];
 
-n=handles.Toolbox(tb).Input.activeTideStation;
-plt=plot3(x(n),y(n),1000,'o');
-set(plt,'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','r','Tag','ActiveTideStation','HitTest','off');
-handles.Toolbox(tb).Input.activeTideStationHandle=plt;
+h=gui_pointcloud('plot','xy',xy,'selectcallback',@selectTideStationFromMap,'tag','tidestations', ...
+    'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','y', ...
+    'ActiveMarkerSize',6,'ActiveMarkerEdgeColor','k','ActiveMarkerFaceColor','r', ...
+    'activepoint',handles.Toolbox(tb).Input.activeTideStation);
+
+handles.Toolbox(tb).Input.tidestationshandle=h;
 
 setHandles(handles);
 
