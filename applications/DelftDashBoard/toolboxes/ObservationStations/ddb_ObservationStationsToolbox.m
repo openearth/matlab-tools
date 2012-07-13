@@ -233,7 +233,7 @@ if strcmp(get(h,'Tag'),'ObservationStations')
     
     selectObservationStation;
     
-    % setUIElement('selectobservationstation');
+    gui_updateActiveTab;
     
 end
 
