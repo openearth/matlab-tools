@@ -74,6 +74,7 @@ function writeD3DMeteoFile4(meteodir, meteoname, rundir, fname, xlim, ylim, coor
 %% and cloud cover.
 
 parameter={'u','v','p'};
+vsn='1.03';
 
 dx=100000;
 dy=100000;
@@ -87,8 +88,8 @@ for i=1:length(varargin)
                 dx=varargin{i+1};
             case{'dy'}
                 dy=varargin{i+1};
-            case{'exedirflow'}
-                exedirflow=varargin{i+1};
+            case{'version'}
+                vsn=varargin{i+1};
         end
     end
 end
@@ -250,7 +251,7 @@ for ipar=1:npar
     end
     
 %    writeD3DmeteoPart([rundir fname '.' extstr],s2,parameter{ipar},meteostr,unitstr,unit,reftime);
-    writeD3Dmeteo([rundir fname '.' extstr],s2,parameter{ipar},meteostr,unitstr,unit,reftime,exedirflow);
+    writeD3Dmeteo([rundir fname '.' extstr],s2,parameter{ipar},meteostr,unitstr,unit,reftime,'version',vsn);
     
 end
 

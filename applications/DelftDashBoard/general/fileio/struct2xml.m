@@ -113,8 +113,10 @@ v=s.(fldname).value;
 fldnames=fieldnames(s.(fldname));
 attstr='';
 for j=1:length(fldnames)
-    if ~strcmpi(fldnames{j},'value')
-        attstr=[attstr ' ' fldnames{j} '="' s.(fldname).(fldnames{j}) '"'];
+    switch lower(fldnames{j})
+        case{'value','format'}
+        otherwise
+            attstr=[attstr ' ' fldnames{j} '="' s.(fldname).(fldnames{j}) '"'];
     end
 end
 tp=s.(fldname).type;
@@ -126,8 +128,15 @@ switch lower(tp)
         str2=num2str(v);
     case{'real'}
         if length(v)>1
-            str2=num2str(v,'%0.3f,');
+            % Vector
+            if isfield(s.(fldname),'format')
+                fmt=s.(fldname).format;
+            else
+                fmt='%0.3f';
+            end
+            str2=num2str(v,[fmt ',']);
             str2=str2(1:end-1);
+            str2=strrep(str2,' ','');
         else            
             str2=num2str(v);
         end
