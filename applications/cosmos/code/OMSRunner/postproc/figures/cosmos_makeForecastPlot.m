@@ -45,8 +45,8 @@ try
         s(1).data.U(isnan(s(1).data.U)) = 0;
         s(1).data.V(isnan(s(1).data.V)) = 0;
         
-        s(3).data.Val(s(3).data.Val>0.2) = NaN;
-        s(3).data.Val(s(3).data.Val<=0.2) = -0.1;
+        s(3).data.Val(s(3).data.Val>0.1) = NaN;
+        s(3).data.Val(s(3).data.Val<=0.1) = -0.1;
         
         if exist([dr 'data' filesep model.forecastplot.ldb '.ldb'],'file')
             ldb=landboundary('read',[dr 'data' filesep model.forecastplot.ldb '.ldb']);
@@ -115,7 +115,9 @@ try
             end
             
             try %get wind forecast
-                id = find(round(timnow*24)==round(wnd(1).data.Time*24));
+                windIds = find(timnow>=wnd(1).data.Time);
+                %                 id = find(round(timnow*24)==round(wnd(1).data.Time*24));
+                id = windIds(end);
                 wndUnow = wnd(1).data.U(id,model.forecastplot.windstation(1),model.forecastplot.windstation(2));
                 wndVnow = wnd(1).data.V(id,model.forecastplot.windstation(1),model.forecastplot.windstation(2));
                 windnow = num2str(sqrt(wndUnow.^2 + wndVnow.^2),'%2.0f');
@@ -157,16 +159,19 @@ try
             catch
                 windnow = 'n/a';
                 winddirnow = 'n/a';
+                windbft = 'n/a';
                 imWind = [];
             end
             
-            try %get water temperature
-                startT = datestr(round((now-1)*24*6)/24/6,'yyyymmddHHMM');
-                endT = datestr(round((now)*24*6)/24/6,'yyyymmddHHMM');
-                [t, dat] = GetMatroosSeries('water_temperature','observed',model.forecastplot.waterstation,startT,endT);
-                wtempnow = num2str(mean(dat),'%2.0f');
-            catch
-                wtempnow = 'n/a';
+            if ~exist('wtempnow','var')
+                try %get water temperature
+                    startT = datestr(round((now-1)*24*6)/24/6,'yyyymmddHHMM');
+                    endT = datestr(round((now)*24*6)/24/6,'yyyymmddHHMM');
+                    [t, dat] = GetMatroosSeries('water_temperature','observed',model.forecastplot.waterstation,startT,endT);
+                    wtempnow = num2str(mean(dat),'%2.0f');
+                catch
+                    wtempnow = 'n/a';
+                end
             end
             
             try %get weather forecast
@@ -198,7 +203,8 @@ try
             
             quiver(velX(remID),velY(remID),scal*(velXComp(remID)),scal*(velYComp(remID)),0,'color',[1 1 1])
             
-            pcolor(s(3).data.X,s(3).data.Y,squeeze(s(3).data.Val(it,:,:)));shading interp;axis equal
+%             pcolor(s(3).data.X,s(3).data.Y,squeeze(s(3).data.Val(it,:,:)));shading interp;axis equal
+           contourf(s(3).data.X,s(3).data.Y,squeeze(s(3).data.Val(it,:,:)));axis equal
             
             try
                 filledLDB(ldb,[1 1 0.8],[1 1 0.8],10,0);
@@ -226,7 +232,7 @@ try
             %            text(0.1,0.2,'Kracht: 4 bft','fontsize',7)
             
             % axes 2a
-            ax2a = axes('position',[ 0.7511 0.2995  0.0424268  0.06719]);
+            ax2a = axes('position',[ 0.7561 0.2995  0.0424268  0.06719]);
             %             ax2a = axes('position',[0.763 0.309 0.0334 0.0489]);
             axis equal;
             set(gca,'xtick',[]);set(gca,'ytick',[])
