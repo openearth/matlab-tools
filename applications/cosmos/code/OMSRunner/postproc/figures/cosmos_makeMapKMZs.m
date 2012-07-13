@@ -128,6 +128,44 @@ try
                     if exist([fdr name '.colorbar.png'],'file')
                         delete([fdr name '.colorbar.png']);
                     end
+
+                case{'vectorxml'}
+                    % Quiver KML
+                    clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
+                    cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
+                    xx=s(1).data.X;
+                    yy=s(1).data.Y;
+                    tim=s(id).data.Time(1:n3:end);
+                    uu=s(1).data.U(1:n3:end,:,:);
+                    vv=s(1).data.V(1:n3:end,:,:);
+                    fdr=[dr 'lastrun' filesep 'figures' filesep];
+                    thin=model.mapPlots(im).datasets.thinning;
+                    thinX=model.mapPlots(im).datasets.thinningX;
+                    thinY=model.mapPlots(im).datasets.thinningY;
+                    if thin>thinX 
+                        thinX=thin;
+                    end
+                    if thin>thinY
+                        thinY=thin;
+                    end
+                    if ~isempty(model.mapPlots(im).datasets(1).polygon)
+                        polxy=load([model.dir 'data' filesep model.mapPlots(im).datasets(1).polygon]);
+                        if ~strcmpi(model.coordinateSystemType,'geographic')
+                            xp=squeeze(polxy(:,1));
+                            yp=squeeze(polxy(:,2));
+                            [xp,yp]=convertCoordinates(xp,yp,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType, ...
+                                'CS2.name','WGS 84','CS2.type','geographic');
+                            polxy(:,1)=xp;
+                            polxy(:,2)=yp;
+                        end
+                    else
+                        polxy=[];
+                    end
+                    
+                    vectorXML([name '.' model.name '.xml'],xx,yy,uu,vv,'time',tim,'levels',clim(1):clim(2):clim(3), ...
+                        'directory',fdr,'screenoverlay',[name '.colorbar.png'],'thinningx',thinX, ...
+                        'thinningy',thinY,'polygon',polxy,'scalefactor',model.mapPlots(im).datasets.scaleFactor, ...
+                        'screenoverlay',[name '.colorbar.png'],'colormap',jet(64),'levels',clim(1):clim(2):clim(3));
                     
                 case{'coloredcurvyarrows','coloredcurvylines'}
                     % Curvec KML

@@ -46,20 +46,22 @@ for iw=1:length(hm.models(m).webSite)
         end
     end
     
-    iorder=[];
-    for i=1:hm.nrModels
-        if hm.models(i).webSite(iw).positionToDisplay>=0
-            iorder(end+1)=hm.models(i).webSite(iw).positionToDisplay;
-        else
-            iorder(end+1)=i;
-        end
-    end
+%     iorder=[];
+%     for i=1:hm.nrModels
+%         if hm.models(i).webSite(iw).positionToDisplay>=0
+%             iorder(end+1)=hm.models(i).webSite(iw).positionToDisplay;
+%         else
+%             iorder(end+1)=i;
+%         end
+%     end
 
     scenario.models=[];
     im=0;
-    for ii=1:length(find(iorder~=0))
-        i=find(iorder==ii);
-        
+%     for ii=1:length(find(iorder~=0))
+%         i=find(iorder==ii);
+
+    for i=1:hm.nrModels
+
         model=hm.models(i);
         
         % Check if model should be included in website
@@ -72,8 +74,11 @@ for iw=1:length(hm.models(m).webSite)
         end
 
         if hm.models(i).run && incl
-            im=im+1;
-            
+            if hm.models(i).webSite(iw).positionToDisplay>=0
+                im=hm.models(i).webSite(iw).positionToDisplay;
+            else
+                im=im+1;            
+            end
             scenario.models(im).model.shortname.value=model.name;
             scenario.models(im).model.shortname.type='char';
         end

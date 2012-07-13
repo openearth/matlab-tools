@@ -9,7 +9,7 @@ for iw=1:length(model.webSite)
     wbdir=model.webSite(iw).name;
 
     dr=[hm.webDir wbdir filesep 'scenarios' filesep hm.scenario filesep];
-%    dr=[hm.webDir wbdir filesep 'scenarios' filesep hm.scenario filesep model.continent filesep model.name filesep];
+
     if ~exist(dr,'dir')
         mkdir(dr);
     end
@@ -96,7 +96,7 @@ for iw=1:length(model.webSite)
     dst=dst*2;
     dst=min(dst,10000000);
     
-    if ~isfield(model.webSite(iw),'elevation')
+    if isempty(model.webSite(iw).elevation)
         mdl.elevation.value=dst;
         mdl.elevation.type='real';
     else isfield(model.webSite(iw),'elevation')
@@ -279,8 +279,17 @@ for iw=1:length(model.webSite)
     k=0;
     for j=1:model.nrMapPlots
         if model.mapPlots(j).plot
+            
             k=k+1;
-            mdl.maps(k).map.filename.value     = [model.mapPlots(j).name '.' model.name '.kmz'];
+            
+            switch lower(model.mapPlots(j).type)
+                case{'kmz'}
+                    mapfilename=[model.mapPlots(j).name '.' model.name '.kmz'];
+                case{'vectorxml'}
+                    mapfilename=[model.mapPlots(j).name '.' model.name '.xml'];
+            end
+            
+            mdl.maps(k).map.filename.value     = mapfilename;
             mdl.maps(k).map.filename.type      = 'char';
 
             mdl.maps(k).map.parameter.value    = model.mapPlots(j).name;
@@ -295,7 +304,7 @@ for iw=1:length(model.webSite)
 %            mdl.maps(k).map.unit.value          = model.mapPlots(j).Unit;
 %            mdl.maps(k).map.unit.type     = 'char';
 
-            mdl.maps(k).map.type.value      = 'kmz';
+            mdl.maps(k).map.type.value      = model.mapPlots(j).type;
             mdl.maps(k).map.type.type       = 'char';
 
 %            mdl.maps(k).map.starttime.value = hm.cycle+model.timeShift/24;
