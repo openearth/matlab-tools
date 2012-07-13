@@ -1,19 +1,19 @@
-function ddb_selectCyclonePoint(h,x,y,nr)
-%DDB_SELECTCYCLONEPOINT  One line description goes here.
+function ddb_updateTrackTables
+%DDB_UPDATETRACKTABLES  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_selectCyclonePoint(h)
+%   ddb_updateTrackTables
 %
 %   Input:
-%   h =
+
 %
 %
 %
 %
 %   Example
-%   ddb_selectCyclonePoint
+%   ddb_updateTrackTables
 %
 %   See also
 
@@ -59,20 +59,5 @@ function ddb_selectCyclonePoint(h,x,y,nr)
 % $HeadURL$
 % $Keywords: $
 
-%% DDB - Call GUI to change values in cyclone track file for individual
-% points. Called when double-clicking on cyclone track.
-handles=getHandles;
-
-handles.Toolbox(tb).Input.activeCyclonePoint=nr;
-handles.Toolbox(tb).Input.activeQuadrant=1;
-
-xmldir=handles.Toolbox(tb).xmlDir;
-xmlfile='TropicalCyclone.PointTrackParameters.xml';
-h=handles;
-[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile);
-if ok
-    handles=h;
-    handles=ddb_setTrackTableValues(handles);
-    setHandles(handles);
-    ddb_updateTrackTables;
-end
+%%
+gui_updateActiveTab;

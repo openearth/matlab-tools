@@ -1,4 +1,4 @@
-function ddb_changeCycloneTrack(x, y, varargin)
+function ddb_changeCycloneTrack(varargin)
 %DDB_CHANGECYCLONETRACK  One line description goes here.
 %
 %   More detailed description goes here.
@@ -65,14 +65,38 @@ function ddb_changeCycloneTrack(x, y, varargin)
 
 handles=getHandles;
 
+h=varargin{1};
+x=varargin{2};
+y=varargin{3};
+nr=[];
+
+if nargin==4
+    nr=varargin{4};
+end
+
 setInstructions({'','Left-click and drag track vertices to change track position','Right-click track vertices to change cyclone parameters'});
+
+if handles.Toolbox(tb).Input.trackT(1)>handles.Model(md).Input(ad).startTime
+    ddb_giveWarning('text','Start time cyclone is greater than simulation start time!');
+end
+
+if handles.Toolbox(tb).Input.trackT(end)<handles.Model(md).Input(ad).stopTime
+    ddb_giveWarning('text','Stop time cyclone is smaller than simulation stop time!');
+end
 
 handles.Toolbox(tb).Input.nrTrackPoints=length(x);
 handles.Toolbox(tb).Input.trackX=x;
 handles.Toolbox(tb).Input.trackY=y;
 
-if handles.Toolbox(tb).Input.newTrack
-    
+if isempty(nr)
+
+    % New track
+
+    % Delete existing track
+    try
+        delete(h);
+    end
+
     handles.Toolbox(tb).Input.trackT=handles.Toolbox(tb).Input.startTime:handles.Toolbox(tb).Input.timeStep/24:handles.Toolbox(tb).Input.startTime+(length(x)-1)*handles.Toolbox(tb).Input.timeStep/24;
     zers=zeros(length(x),4);
     handles.Toolbox(tb).Input.trackVMax=zers+handles.Toolbox(tb).Input.vMax;
@@ -87,20 +111,12 @@ if handles.Toolbox(tb).Input.newTrack
     
     handles=ddb_setTrackTableValues(handles);
     
+    setHandles(handles);
+    
+    ddb_plotCycloneTrack;
+
+else
+    setHandles(handles);
 end
-
-if handles.Toolbox(tb).Input.trackT(1)>handles.Model(md).Input(ad).startTime
-    ddb_giveWarning('text','Start time cyclone is greater than simulation start time!');
-end
-
-if handles.Toolbox(tb).Input.trackT(end)<handles.Model(md).Input(ad).stopTime
-    ddb_giveWarning('text','Stop time cyclone is smaller than simulation stop time!');
-end
-
-handles.Toolbox(tb).Input.newTrack=0;
-
-setHandles(handles);
-
-ddb_plotCycloneTrack;
 
 gui_updateActiveTab;

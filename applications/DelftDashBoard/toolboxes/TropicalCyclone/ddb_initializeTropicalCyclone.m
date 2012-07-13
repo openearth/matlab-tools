@@ -132,6 +132,8 @@ handles.Toolbox(ii).Input.method=4;
 
 handles.Toolbox(ii).Input.deleteTemporaryFiles=1;
 
+handles.Toolbox(ii).Input.trackhandle=[];
+
 %  Tropical cyclone (TC) widgets, parameters added by QNA/NRL:
 handles.Toolbox(ii).Input.showTCBasins=0;
 handles.Toolbox(ii).Input.whichTCBasinOption=0;     % Nearest (0 for nearest, 1 for All)

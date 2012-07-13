@@ -111,14 +111,12 @@ if ok
     
     setInstructions({'','Click on map to draw cyclone track','Use right-click to end cyclone track'});
     
-    h=findobj(gcf,'Tag','cycloneTrack');
-    if ~isempty(h)
-        delete(h);
-    end
+    handles=deleteCycloneTrack(handles);
     
     ddb_zoomOff;
-    UIPolyline(gca,'draw','Tag','cycloneTrack','Marker','o','Callback',@ddb_changeCycloneTrack,'DoubleClickCallback',@ddb_selectCyclonePoint,'closed',0);
-    handles.Toolbox(tb).Input.newTrack=1;
+    
+    gui_polyline('draw','Tag','cyclonetrack','Marker','o','createcallback',@ddb_changeCycloneTrack,'changecallback',@ddb_changeCycloneTrack, ...
+        'rightclickcallback',@ddb_selectCyclonePoint,'closed',0);
     
     setHandles(handles);
     
@@ -172,10 +170,6 @@ else
 end
 
 %  Update the TC widgets within the GUI.
-% setUIElement('tropicalcyclonepanel.parameters.radioallbasins');
-% setUIElement('tropicalcyclonepanel.parameters.radionearbasin');
-% setUIElement('tropicalcyclonepanel.parameters.showbasins');
-% setUIElement('tropicalcyclonepanel.parameters.basinname');
 
 %  Store the current handles data structure.
 setHandles(handles);
@@ -188,9 +182,10 @@ handles=getHandles;
 
 if filename==0
     return
-end
+end;
 
 filename=[pathname filename];
+
 handles.Toolbox(tb).Input.cycloneFile=[pathname filename];
 handles=ddb_readCycloneFile(handles,filename);
 
@@ -198,17 +193,9 @@ handles.Toolbox(tb).Input.quadrant=1;
 
 handles=ddb_setTrackTableValues(handles);
 
+handles=deleteCycloneTrack(handles);
+
 setHandles(handles);
-
-%     ddb_updateTrackTables;
-
-% setUIElement('tropicalcyclonepanel.parameters.editname');
-% setUIElement('tropicalcyclonepanel.parameters.editradius');
-% setUIElement('tropicalcyclonepanel.parameters.editradialbins');
-% setUIElement('tropicalcyclonepanel.parameters.editdirectionalbins');
-%% setUIElement('tropicalcyclonepanel.parameters.selectquadrant');
-% setUIElement('tropicalcyclonepanel.parameters.radioperquadrant');
-% setUIElement('tropicalcyclonepanel.parameters.radiouniform');
 
 ddb_plotCycloneTrack;
 
@@ -651,11 +638,6 @@ try
         
         setHandles(handles);
         
-        % setUIElement('tropicalcyclonepanel.parameters.editname');
-        % setUIElement('tropicalcyclonepanel.parameters.radioperquadrant');
-        % setUIElement('tropicalcyclonepanel.parameters.radiouniform');
-        % setUIElement('tropicalcyclonepanel.parameters.selectmethod');
-        
         ddb_plotCycloneTrack;
         
     end
@@ -684,6 +666,14 @@ else
     end
 end
 
+%%
+function handles=deleteCycloneTrack(handles)
+try
+    delete(handles.Toolbox(tb).Input.trackhandle);
+end
+handles.Toolbox(tb).Input.trackhandle=[];
+
+%%
 function storm_name = get_user_storm_name(iflag,current_name,region_code,tc_dir)
 %*******************************************************************************
 %
