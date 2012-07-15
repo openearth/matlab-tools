@@ -46,9 +46,9 @@ mhhw=1.6; % mean high high water for Socal, used for back beach estimate
 % d=xc(:,1);
 
 % Generate the time variables from netcdf output of julian day and seconds
-x2=double(nc_varget(fname,'x'))';
-y2=double(nc_varget(fname,'y'))';
-d=double(nc_varget(fname,'xc'))';
+x2=double(nc_varget(fname,'x'));
+y2=double(nc_varget(fname,'y'));
+d=double(nc_varget(fname,'xc'));
 
 dtglobal=nc_varget(fname,'tsglobal');
 dtmean=nc_varget(fname,'tsmean');
@@ -73,6 +73,8 @@ alfa=mod(alfa,360);
 %CALCS FROM XBEACH OUTPUT
 % Find the pre and post MHW contour (1.38 m) and compare to look at
 % shoreline change along the profile
+% zbstart=zb(1,:,1)';
+% zbend=zb(end,:,1)';
 zbstart=zb(1,:,1)';
 zbend=zb(end,:,1)';
 [out,change] = shoreline_change(x2,y2,zbstart,zbend,d,mhw);

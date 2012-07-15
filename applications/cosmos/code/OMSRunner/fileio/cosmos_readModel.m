@@ -85,11 +85,12 @@ else
     hm.models(i).numCores=hm.numCores;
 end
 
-% if ~isempty(hm.models(i).webSite)
-%     hm.models(i).figureURL=['http://dtvirt5.deltares.nl/~ormondt/' hm.models(i).webSite '/scenarios/' hm.scenario '/' hm.models(i).continent '/' hm.models(i).name '/figures/'];
-% else
-%     hm.models(i).figureURL='';
-% end
+%% BeachWizard
+hm.models(i).beachWizard=[];
+if isfield(model,'beachwizard')
+    hm.models(i).beachWizard=model.beachwizard;
+end
+
 hm.models(i).figureURL='';
 
 %% Domain

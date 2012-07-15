@@ -294,5 +294,26 @@ for i=1:hm.nrModels
     end
 end
 
+%% BeachWizard
+if ~isempty(model.beachWizard)
+    bwtimes=cosmos_findBWTimes(model.beachWizard);
+    it=find(bwtimes<=hm.cycle,1,'last');
+    url=['http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/beachwizard/output/' model.beachWizard '/' ...
+        model.beachWizard '.' datestr(bwtimes(it),'yyyymmdd.HHMMSS') '.nc'];    
+    x=nc_varget(url,'x');
+    y=nc_varget(url,'y');
+    z=nc_varget(url,'z');
+    grd=wlgrid('read',[tmpdir model.name '.grd']);
+    mmax=size(grd.X,1)+1;
+    nmax=size(grd.X,2)+1;
+    dep=wldep('read',[tmpdir model.name '.dep'],[mmax nmax]);
+    zbw0=griddata(x,y,z,grd.X,grd.Y);
+    zbw=zeros(size(dep));
+    zbw(zbw==0)=NaN;
+    zbw(1:end-1,1:end-1)=-zbw0; % Positive down!
+    dep(~isnan(zbw))=zbw(~isnan(zbw));
+    wldep('write',[tmpdir model.name '.dep'],dep);    
+end
+
 fclose(fid);
 

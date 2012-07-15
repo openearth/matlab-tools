@@ -96,10 +96,15 @@ try
             end
             
             AvailableTimes=s(1).data.Time;
-            dt=86400*(AvailableTimes(2)-AvailableTimes(1));
-            n3=round(model.mapPlots(im).timeStep/dt);
-            n3=max(n3,1);
-
+            if nt>1
+                dt=86400*(AvailableTimes(2)-AvailableTimes(1));
+                n3=round(model.mapPlots(im).timeStep/dt);
+                n3=max(n3,1);
+            else
+                dt=1;
+                n3=1;
+            end
+            it1=find(AvailableTimes>=hm.catchupCycle-0.001,1,'first');
             switch lower(plotRoutine)
 
                 case{'coloredvectors'}
@@ -108,9 +113,9 @@ try
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                     xx=s(1).data.X;
                     yy=s(1).data.Y;
-                    tim=s(id).data.Time(1:n3:end);
-                    uu=s(1).data.U(1:n3:end,:,:);
-                    vv=s(1).data.V(1:n3:end,:,:);
+                    tim=s(id).data.Time(it1:n3:end);
+                    uu=s(1).data.U(it1:n3:end,:,:);
+                    vv=s(1).data.V(it1:n3:end,:,:);
                     fdr=[dr 'lastrun' filesep 'figures' filesep];
                     thin=model.mapPlots(im).datasets.thinning;
                     thinX=model.mapPlots(im).datasets.thinningX;
@@ -135,9 +140,9 @@ try
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                     xx=s(1).data.X;
                     yy=s(1).data.Y;
-                    tim=s(id).data.Time(1:n3:end);
-                    uu=s(1).data.U(1:n3:end,:,:);
-                    vv=s(1).data.V(1:n3:end,:,:);
+                    tim=s(id).data.Time(it1:n3:end);
+                    uu=s(1).data.U(it1:n3:end,:,:);
+                    vv=s(1).data.V(it1:n3:end,:,:);
                     fdr=[dr 'lastrun' filesep 'figures' filesep];
                     thin=model.mapPlots(im).datasets.thinning;
                     thinX=model.mapPlots(im).datasets.thinningX;
@@ -176,9 +181,9 @@ try
                     if size(s(1).data.X,1)==1 || size(s(1).data.X,2)==1
                         [xx,yy]=meshgrid(xx,yy);
                     end
-                    tim=s(id).data.Time(1:n3:end);
-                    uu=s(1).data.U(1:n3:end,:,:);
-                    vv=s(1).data.V(1:n3:end,:,:);
+                    tim=s(id).data.Time(it1:n3:end);
+                    uu=s(1).data.U(it1:n3:end,:,:);
+                    vv=s(1).data.V(it1:n3:end,:,:);
                     fdr=[dr 'lastrun' filesep 'figures' filesep];
                     if ~isempty(model.mapPlots(im).datasets(1).polygon)
                         polxy=load([model.dir 'data' filesep model.mapPlots(im).datasets(1).polygon]);
@@ -212,15 +217,19 @@ try
                 case{'patches'}
                     % Patches
                     if ~isempty(s)
-                        n2=round(dt/(model.mapPlots(im).timeStep));
+                        
+                        if ~isempty(model.mapPlots(im).timeStep)
+                            n2=round(dt/(model.mapPlots(im).timeStep));
+                        else
+                            n2=1;
+                        end
                         it2=0;
                         t2=[];
-                        for it=1:n3:nt
-                            
-                            if it==1
-                                clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
-                                cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
-                            end
+                        
+                        clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
+                        cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
+
+                        for it=it1:n3:nt
                             
                             if it<nt
                                 ninterm=max(1,n2);

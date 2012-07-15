@@ -12,21 +12,43 @@ for i=1:length(figs)
     name=get(figs(i),'Name');
     if ~strcmpi(name,'CoSMoS')
         close(figs(i));
-    end
+    end 
 end
 
 hm=guidata(findobj('Tag','OMSMain'));
 
 disp('Start main loop ...');
 
-%% Check if we're playing catch-up
-if hm.catchUp
-    nh=24*(now-floor(now));
-    if nh>12
-        hm.catchupCycle=floor(now)+0.5;
+hm.cycStr=[datestr(hm.cycle,'yyyymmdd') '_' datestr(hm.cycle,'HH') 'z'];
+
+%% Read cycle info
+cycledir=[hm.scenarioDir 'cyclelist' filesep];
+if ~exist(cycledir,'dir')
+    mkdir(cycledir);
+end
+cyclefile=[cycledir hm.cycStr '.txt'];
+if exist(cyclefile,'file')
+    % This cycle has already been started before
+    % Read cycle text file to determine catchup cycle and next cycle
+    fid=fopen(cyclefile,'r');
+    hm.catchupCycle=datenum(fgetl(fid),'yyyymmdd HHMMSS');
+    hm.nextCycle=datenum(fgetl(fid),'yyyymmdd HHMMSS');
+    fclose(fid);
+
+else
+    % First time this cycle is run
+    % Determine catchup cycle and next cycle and write to file
+    % Check if we're playing catch-up
+    if hm.catchUp
+        hm.catchupCycle=rounddown(now-hm.delay/24,hm.runInterval/24);
     else
-        hm.catchupCycle=floor(now);
+        hm.catchupCycle=hm.cycle;
     end
+    hm.nextCycle=hm.catchupCycle+hm.runInterval/24;
+    fid=fopen(cyclefile,'wt');
+    fprintf(fid,'%s\n',datestr(hm.catchupCycle,'yyyymmdd HHMMSS'));
+    fprintf(fid,'%s\n',datestr(hm.nextCycle,'yyyymmdd HHMMSS'));
+    fclose(fid);
 end
 
 %% Reading data
@@ -41,8 +63,6 @@ hm=cosmos_readModels(hm);
 
 %% Time Management
 hm.NCyc=hm.NCyc+1;
-
-hm.cycStr=[datestr(hm.cycle,'yyyymmdd') '_' datestr(hm.cycle,'HH') 'z'];
 
 set(hm.editCycle,'String',datestr(hm.cycle,'yyyymmdd HHMMSS'));
 

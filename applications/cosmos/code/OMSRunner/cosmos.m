@@ -25,7 +25,7 @@ hm.DetermineHazards=1;
 hm.runPost=1;
 hm.makeWebsite=1;
 hm.uploadFTP=1;
-hm.archiveInput=1;
+hm.archiveInput=0;
 hm.getOceanModel=1;
 hm.catchUp=0;
 

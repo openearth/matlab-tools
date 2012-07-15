@@ -5,10 +5,11 @@ dr=model.dir;
 tmpdir=hm.tempDir;
 
 %% Get restart file
-fname=[dr 'restart' filesep model.waveRstFile '.zip'];
-if exist(fname,'file')
-    unzip(fname,tmpdir);
-    [success,message,messageid]=movefile([tmpdir model.waveRstFile],[tmpdir 'restart.ww3'],'f');
+trst1=[];
+zipfilename=[dr 'restart' filesep model.waveRstFile '.zip'];
+if exist(zipfilename,'file')
+    trst1=model.tWaveStart;
+    [success,message,messageid]=copyfile(zipfilename,tmpdir,'f');
 end
 
 %% Get nest file
@@ -93,5 +94,5 @@ switch lower(model.runEnv)
         [success,message,messageid]=copyfile([hm.exeDir 'gx_outf.exe'],tmpdir,'f');
         writeWW3batchWin32([tmpdir 'run.bat'],nestnames,datestr(model.tWaveStart,'yymmddHH'));
     case{'h4'}
-        writeWW3batchH4([tmpdir 'run.sh'],nestnames,datestr(model.tWaveStart,'yymmddHH'));
+        writeWW3batchH4([tmpdir 'run.sh'],nestnames,datestr(model.tWaveStart,'yymmddHH'),trst1,trststart);
 end

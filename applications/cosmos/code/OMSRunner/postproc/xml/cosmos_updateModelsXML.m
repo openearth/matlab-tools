@@ -219,6 +219,9 @@ for iw=1:length(model.webSite)
             mdl.stations(j).station.type.value          = 'profile';
             mdl.stations(j).station.type.type           = 'char';
 
+            mdl.stations(j).station.html.value          = [model.profile(j).name '.html'];
+            mdl.stations(j).station.html.type           = 'char';
+
 %            fnamexml=[model.archiveDir hm.cycStr filesep 'hazards' filesep model.profile(j).name filesep model.profile(j).name '.xml'];
 %            if exist(fnamexml,'file')
 %                h=xml_load(fnamexml);
@@ -315,11 +318,15 @@ for iw=1:length(model.webSite)
             mdl.maps(k).map.stoptime.value  = hm.cycle+model.runTime/1440;
             mdl.maps(k).map.stoptime.type   = 'date';
 
-            mdl.maps(k).map.nrsteps.value   = (model.runTime)/(model.mapPlots(j).timeStep/60)+1;
-            mdl.maps(k).map.nrsteps.type    = 'int';
-
-            mdl.maps(k).map.timestep.value  = model.mapPlots(j).timeStep/3600;
-            mdl.maps(k).map.timestep.type   = 'real';
+            if ~isempty(model.mapPlots(j).timeStep)
+                mdl.maps(k).map.nrsteps.value   = (model.runTime)/(model.mapPlots(j).timeStep/60)+1;
+                mdl.maps(k).map.nrsteps.type    = 'int';                
+                mdl.maps(k).map.timestep.value  = model.mapPlots(j).timeStep/3600;
+                mdl.maps(k).map.timestep.type   = 'real';
+            else
+                mdl.maps(k).map.nrsteps.value   = 1;
+                mdl.maps(k).map.nrsteps.type    = 'int';
+            end
 
         end
     end

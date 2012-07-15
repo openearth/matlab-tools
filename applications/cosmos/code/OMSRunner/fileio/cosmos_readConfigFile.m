@@ -54,6 +54,7 @@ hm.nrProfilesPerJob=50;
 hm.clusterNode=[];
 hm.exedirflow='/u/ormondt/d3d_versions/delftflow_trunk2/bin/';
 hm.meteoVersion='1.03';
+hm.delay=8; % Delay in hours
 
 for i=1:n
     switch lower(txt{i}),
@@ -87,6 +88,8 @@ for i=1:n
             hm.exedirflow=txt{i+1};
         case {'meteoversion'}
             hm.meteoversion=txt{i+1};
+        case {'delay'}
+            hm.delay=str2double(txt{i+1});
     end
 end
 

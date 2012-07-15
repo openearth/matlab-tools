@@ -38,7 +38,7 @@ for i=1:n
     if convc
         if ~strcmpi(hm.models(m1).coordinateSystem,hm.models(m2).coordinateSystem) || ~strcmpi(hm.models(m1).coordinateSystemType,hm.models(m2).coordinateSystemType)
             % Convert coordinates
-            [spec.x,spec.y]=ConvertCoordinates(spec.x,spec.y,'persistent','CS1.name',hm.models(m1).coordinateSystem,'CS1.type',hm.models(m1).coordinateSystemType,'CS2.name',hm.models(m2).coordinateSystem,'CS2.type',hm.models(m2).coordinateSystemType);
+            [spec.x,spec.y]=convertCoordinates(spec.x,spec.y,'persistent','CS1.name',hm.models(m1).coordinateSystem,'CS1.type',hm.models(m1).coordinateSystemType,'CS2.name',hm.models(m2).coordinateSystem,'CS2.type',hm.models(m2).coordinateSystemType);
         end
     end
 

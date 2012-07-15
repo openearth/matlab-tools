@@ -1,6 +1,6 @@
 function cosmos_startMainLoop(hm)
 
-delay=8;
+delay=hm.delay;
 
 if now>hm.cycle+delay/24
     starttime=now+1/86400;
