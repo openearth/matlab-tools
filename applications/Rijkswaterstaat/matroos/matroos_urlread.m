@@ -1,10 +1,12 @@
 function s = matroos_urlread(urlChar);
 %MATROOS_URLREAD   urlread with username:password authentication
 %
-%    cell = matroos_urlread
+%    data_stream = matroos_urlread
 %
 % get content of a matroos url url as a cell array of strings
-% example: data = geturl('user:password@http://matroos.deltares.nl........')
+% example:
+% data = matroos_urlread ('http://user:password@matroos.deltares.nl........')
+% data = matroos_urlread('https://user:password@matroos.deltares.nl........')
 %
 % Note that regular urlread cannot handle the required authentication, see:
 % http://www.mathworks.com/support/solutions/en/data/1-4EO8VK/index.html?solution=1-4EO8VK
@@ -77,7 +79,7 @@ function s = matroos_urlread(urlChar);
           loginPassword=loginPassword.substring(8);
       end;
       enc = sun.misc.BASE64Encoder();
-      encodedPassword=['Basic ',char(enc.encode(loginPassword.getBytes()))];
+      encodedPassword=['Basic ',char(enc.encode(loginPassword.getBytes())),'='];
       fprintf('Detected > encoded username:password "%s" > "%s" \n',char(loginPassword),encodedPassword);
       con.setRequestProperty('Authorization',encodedPassword);
    end;

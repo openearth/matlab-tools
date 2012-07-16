@@ -7,7 +7,7 @@ function varargout = noos_read(varargin)
 %  [time, values, headerlines], are cells. 
 %
 % The headerlines can be interpreted with MATROOS_NOOS_HEADER2META 
-% if the NOOS file file originates from the matroos service: GET_SERIES. 
+% if the <a href="http://www.noos.cc/">NOOS</a> file file originates from the matroos service: GET_SERIES. 
 %
 % The headerlines can also contain non-standard header information
 % as in the the matroos service: GET_MAP2SERIES. 
@@ -21,6 +21,7 @@ function varargout = noos_read(varargin)
 %See also: MATROOS_NOOS_HEADER2META
 
 %% TO DO: parse a file with only concatenated comment blocks (in case of no data)
+%% TO DO: take missing value into account
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Rijkswaterstaat
@@ -150,7 +151,6 @@ function varargout = noos_read(varargin)
 % 201108030010    0.78763                                           
 % 201108030020    0.73298                                           
 % 201108030030    0.67331                                           
-
 
    % find all comment lines.
    % we assume contiguous blocks with # exist in between between contiguous data blocks

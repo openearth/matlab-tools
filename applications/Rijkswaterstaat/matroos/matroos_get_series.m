@@ -1,7 +1,7 @@
 function varargout = matroos_get_series(varargin);
 %MATROOS_GET_SERIES  retrieve timeseries from Rijkswaterstaat MATROOS database
 %
-% matlab wrapper for matroos url call /direct/get_series.php
+% matlab wrapper for <a href="http://matroos.deltares.nl">MATROOS</a> url call /direct/get_series.php
 % on http://matroos.deltares.nl. You need a free password for this.
 %
 %  struct                 = matroos_get_series(<keyword,value>);
