@@ -44,7 +44,11 @@ function days = timezone_code2iso(isostring)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-   
-   days = datenum(isostring)- datenum(year(now),1,1);
+
+   if isempty(char(isostring)); % when empty, resort to default UTC/GMT
+       days = 0;
+   else
+      days = datenum(isostring)- datenum(year(now),1,1);
+   end
    
 %% EOF   
