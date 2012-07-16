@@ -100,11 +100,14 @@ try
                 dt=86400*(AvailableTimes(2)-AvailableTimes(1));
                 n3=round(model.mapPlots(im).timeStep/dt);
                 n3=max(n3,1);
+                it1=find(AvailableTimes>=hm.catchupCycle-0.001,1,'first');
             else
                 dt=1;
                 n3=1;
+                it1=1;
             end
-            it1=find(AvailableTimes>=hm.catchupCycle-0.001,1,'first');
+            
+
             switch lower(plotRoutine)
 
                 case{'coloredvectors'}
