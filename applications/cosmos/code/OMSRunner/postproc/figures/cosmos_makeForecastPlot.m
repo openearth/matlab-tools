@@ -45,8 +45,8 @@ try
         s(1).data.U(isnan(s(1).data.U)) = 0;
         s(1).data.V(isnan(s(1).data.V)) = 0;
         
-        s(3).data.Val(s(3).data.Val>0.1) = NaN;
-        s(3).data.Val(s(3).data.Val<=0.1) = -0.1;
+        s(3).data.Val(s(3).data.Val>0.2) = NaN;
+        s(3).data.Val(s(3).data.Val<=0.2) = -0.1;
         
         if exist([dr 'data' filesep model.forecastplot.ldb '.ldb'],'file')
             ldb=landboundary('read',[dr 'data' filesep model.forecastplot.ldb '.ldb']);
@@ -58,11 +58,15 @@ try
         n3=max(n3,1);
         nt=length(s(1).data.Time);
         
+        % Time shift
+        timeShift=model.timeShift/24;
+
         tel = 0;
         
         for it=1:n3:nt
             
             timnow = s(1).data.Time(it);
+            timnowCET = timnow + timeShift;
             
             input.scrsz= get(0, 'ScreenSize');               % Set plot figure on full screen
             figure('Visible','Off','Position', [input.scrsz]);
@@ -175,7 +179,7 @@ try
             end
             
             try %get weather forecast
-                weatherIds = find(timnow>=weather(:,1));
+                weatherIds = find(timnowCET>=weather(:,1));
                 weatherId = weatherIds(end);
                 atempnow = num2str(weather(weatherId,2),'%2.0f');
                 
@@ -203,8 +207,9 @@ try
             
             quiver(velX(remID),velY(remID),scal*(velXComp(remID)),scal*(velYComp(remID)),0,'color',[1 1 1])
             
-%             pcolor(s(3).data.X,s(3).data.Y,squeeze(s(3).data.Val(it,:,:)));shading interp;axis equal
-           contourf(s(3).data.X,s(3).data.Y,squeeze(s(3).data.Val(it,:,:)));axis equal
+            blank = squeeze(s(3).data.Val(it,:,:));
+            blank(mag>0.1) = NaN;
+            pcolor(s(3).data.X,s(3).data.Y,blank);shading interp;axis equal
             
             try
                 filledLDB(ldb,[1 1 0.8],[1 1 0.8],10,0);
@@ -214,7 +219,7 @@ try
             set(h,'linecolor',[0.8 0.8 0.8]);
             
             clim([-0.1 settings.clim(2)])
-            colormap([1 1 0.8; jet])
+            colormap([repmat([1 1 0.8],floor(0.1/(settings.clim(2)/length(jet))),1); jet])
             cb = colorbar;
             set(cb,'ylim',[0 settings.clim(2)]);
             
@@ -249,8 +254,8 @@ try
             ax3 = axes('position',[0.80 0.30 0.12 0.1]);
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
-            text(0.5,0.6,strrep(strrep(datestr(timnow,1),'-',' '),'May','Mei'),'fontsize',12,'HorizontalAlignment','center')
-            text(0.5,0.4,[datestr(timnow,15) 'u'],'fontsize',12,'HorizontalAlignment','center')
+            text(0.5,0.6,strrep(strrep(datestr(timnowCET,1),'-',' '),'May','Mei'),'fontsize',12,'HorizontalAlignment','center')
+            text(0.5,0.4,[datestr(timnowCET,15) 'u'],'fontsize',12,'HorizontalAlignment','center')
             
             % axes 4
             ax4 = axes('position',[0.68 0.20 0.12 0.1]); hold on;
@@ -302,8 +307,8 @@ try
             ax7 = axes('position',[0.695 0.10 0.21 0.07]);hold on;
             set(gca,'xtick',[]);set(gca,'ytick',[])
             box on;
-            plot(s(4).data.Time,s(4).data.Val,'linewidth',0.7);
-            set(gca,'xlim',[min(s(1).data.Time) max(s(1).data.Time)])
+            plot(s(4).data.Time+timeShift,s(4).data.Val,'linewidth',0.7);
+            set(gca,'xlim',[min(s(1).data.Time+timeShift) max(s(1).data.Time+timeShift)])
             set(gca,'xtick',[min(s(1).data.Time):0.5:max(s(1).data.Time)])
             datetick('x','keeplimits','keepticks')
             tcks = get(gca,'xticklabel');
@@ -312,7 +317,7 @@ try
             ylim([-1.5 1.5]);
             set(gca,'ytick',[-1 0 1])
             grid on
-            plot([timnow timnow],get(gca,'ylim'),'r','linewidth',1)
+            plot([timnowCET timnowCET],get(gca,'ylim'),'r','linewidth',1)
             
             
             set(cb,'position',[0.8887    0.4515    0.0159    0.2847])
@@ -331,13 +336,13 @@ try
             if ~exist([dr 'lastrun' filesep 'figures' filesep 'forecast'],'dir')
                 mkdir([dr 'lastrun' filesep 'figures'],'forecast')
             end
-            figname=[dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '_' datestr(timnow,'yyyymmddHH') '.png'];
+            figname=[dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '_' datestr(timnowCET,'yyyymmddHH') '.png'];
             print(gcf,'-dpng','-r400',figname);
             
             close(gcf)
             
-            if (timnow-floor(timnow)) >= 0.25 && (timnow-floor(timnow)) <= 20/24 % only hours between 6am and 8pm on website
-                if (timnow-now) >= -0.25 % no past forecasts on website
+            if (timnowCET-floor(timnowCET)) >= 0.25 && (timnowCET-floor(timnowCET)) <= 20/24 % only hours between 6am and 8pm on website
+                if (timnowCET-now) >= -0.25 % no past forecasts on website
                     
                     tel = tel + 1;
                     
@@ -348,11 +353,11 @@ try
                     fc.interval.value    = model.forecastplot.timeStep;
                     fc.interval.type     = 'int';
                     
-                    fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnow,'dd mmm HH:MM'),'May','Mei'),'Mar','Mrt'),'Oct','Okt'));
+                    fc.timepoints(tel).timepoint.timestr.value = lower(strrep(strrep(strrep(datestr(timnowCET,'dd mmm HH:MM'),'May','Mei'),'Mar','Mrt'),'Oct','Okt'));
                     fc.timepoints(tel).timepoint.timestr.type  = 'char';
-                    fc.timepoints(tel).timepoint.png.value      = [name '/' name '_' datestr(timnow,'yyyymmddHH') '.png'];
+                    fc.timepoints(tel).timepoint.png.value      = [name '/' name '_' datestr(timnowCET,'yyyymmddHH') '.png'];
                     fc.timepoints(tel).timepoint.png.type      = 'char';
-                    fc.timepoints(tel).timepoint.id.value      = datestr(timnow,'yyyymmddHH');
+                    fc.timepoints(tel).timepoint.id.value      = datestr(timnowCET,'yyyymmddHH');
                     fc.timepoints(tel).timepoint.id.type       = 'int';
                 end
             end
