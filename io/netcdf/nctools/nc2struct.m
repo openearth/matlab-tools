@@ -181,7 +181,7 @@ else
    
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
-      if ~any(strmatch(fldname,OPT.exclude, 'exact'))
+      if ~any(strmatch(fldname,OPT.exclude, 'exact')) & ...
           any(strmatch(fldname,OPT.include, 'exact'))
          if any(strmatch(fldname,OPT.rename{1}, 'exact'))
             j = strmatch(fldname,OPT.rename{1}, 'exact');
