@@ -18,7 +18,7 @@ end;
 
 u = u(:);
 v = v(:);
-dir = zeros(length(u));
+dir = zeros(size(u));
 
 if strcmpi(convention,'cartesian')
     dir = mod(atan2(u,v)*180/pi,360);
