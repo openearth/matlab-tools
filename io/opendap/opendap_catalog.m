@@ -195,6 +195,10 @@ else
    %% load xml
    
       pref.KeepNS = 0; % hyrax has thredds namespace, while thredds itself has not
+      
+      if strfind(OPT.url,'@')
+         error('basic authentication not YET supported: https://user:password@....')
+      end
    
    try
       
@@ -215,6 +219,7 @@ else
       end
    
    %% DATASET and CATALOGREF
+
       nc_file_list   = opendap_catalog_dataset(D,OPT);
       nc_folder_list = []; % TO DO
 

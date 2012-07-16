@@ -93,12 +93,14 @@ function varargout = opendap_catalog_dataset(D,OPT)
       
    end % isfield(D,'service')
    
-   if strcmpi(OPT.url(1:7),'http://')
-   ind                = strfind(OPT.url,'/');
-   OPT.serviceBaseURL = [OPT.url(1:ind(3)-1) OPT.serviceBase];
+%% get absolute web- or absolute/relative local- baseURL from catalog file name
+
+   if strcmpi(OPT.url(1:7),'http://') | ...
+      strcmpi(OPT.url(1:8),'https://')
+      ind                = strfind(OPT.url,'/');
+      OPT.serviceBaseURL = [OPT.url(1:ind(3)-1) OPT.serviceBase];
    else
-   ind                = strfind(OPT.url,'catalog.xml');
-   OPT.serviceBaseURL = [OPT.url(1:ind-1)];
+      OPT.serviceBaseURL = fileparts(OPT.url);
    end
    urlFolder   = OPT.serviceBaseURL;
    
