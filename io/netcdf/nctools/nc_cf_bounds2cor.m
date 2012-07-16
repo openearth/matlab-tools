@@ -1,4 +1,4 @@
- \function C = nc_cf_bounds2cor(B)
+ function C = nc_cf_bounds2cor(B)
 %nc_cf_bounds2cor  rewrite 3D CF bounds matrix to 2D matrix of corners
 %
 %   cor = nc_cf_bounds2cor(bounds)

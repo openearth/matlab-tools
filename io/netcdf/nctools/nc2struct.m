@@ -8,30 +8,28 @@ function varargout = nc2struct(ncfile,varargin)
 %   dat    - structure of 1D arrays of numeric/character data
 %   atr    - optional structure of file and variable attributes
 %
-% Note that this function has limited applicability only
-% because it does the naming of dimensions based on size only
-% and not on the actual meaning of the dimension.
+% For NC2STUCT <keyword,value> options and defaults call
+% without arguments: nc2struct() . 
+% * exclude: cell array with subset of variables NOT to load, e.g.: {'a','b'}
+% * include: cell array with subset of variables ONLY to load, e.g.: {'lon','lat'}
+% * rename : cell array describing how to rename variables in netCDF
+%            file to variables in struct, e.g.: {{'x','y'},{'x1','x2'}}
 %
 % NC2STRUCT can be used to facilitate an experimental development: 
 % loading a catalog.nc for a THREDDS OPeNDAP server as an 
 % alternative to the difficult-to-parse catalog.xml.
-%
-% For NC2STUCT <keyword,value> options and defaults call
-% without arguments: nc2struct() . 
-% * exclude: cell array with variables NOT to load, e.g.: {'a','b'}
-% * rename : cell array describing how to rename variables in netCDF
-%            file to variables in struct, e.g.: {{'x','y'},{'x1','x2'}}
 %
 % Example:
 %
 %  [dat,atr] = nc2struct('file_created_with struct2nc.nc');
 %  [dat,atr] = nc2struct('catalog.nc');
 %  [dat,atr] = nc2struct('catalog.nc','exclude',{'x','y'});
+%  [dat,atr] = nc2struct('catalog.nc','include',{'lon','lat'});
 %
 % NOTE: do not use for VERY BIG! files, as your memory will be swamped.
 %
-%See also: XLS2STRUCT, CSV2STRUCT, LOAD & SAVE('-struct',...)
-%          STRUCT2NC, STRUCT2XLS, SDSAVE_CHAR, SDLOAD_CHAR, STRUCT2NC, NC_GETALL
+%See also: STRUCT2NC, XLS2STRUCT, CSV2STRUCT, SDLOAD_CHAR, LOAD & SAVE('-struct',...)
+%          NC_DUMP,   STRUCT2XLS, CSV2STRUCT, SDSAVE_CHAR, NC_GETALL, 
 
 % TO DO: pass global attributes as <keyword,value> or as part of M.
 
@@ -82,7 +80,7 @@ OPT.global2att   = 2; % 0=not at all, 1=as fields, 2=as subfields of nc_global
 OPT.time2datenum = 1; % time > datenum in extra variabkle datenum
 OPT.exclude      = {};
 OPT.rename       = {{},{}};
-%OPT.include      = {};
+OPT.include      = {};
 
 if nargin==0
    varargout = {OPT};
@@ -100,6 +98,12 @@ OPT = setproperty(OPT,varargin);
       fileinfo = nc_info(ncfile);
    end
    
+%% get all variable names
+
+if isempty(OPT.include)
+   OPT.include = {fileinfo.Dataset.Name};
+end
+
 %% deal with name change in scntools: DataSet > Dataset
 
    if     isfield(fileinfo,'Dataset'); % new
@@ -118,7 +122,8 @@ OPT = setproperty(OPT,varargin);
    ndat = length(fileinfo.Dataset);
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
-      if ~any(strmatch(fldname,OPT.exclude, 'exact'))
+      if ~any(strmatch(fldname,OPT.exclude, 'exact')) & ...
+          any(strmatch(fldname,OPT.include, 'exact'))
          fldname_nc = fldname;
          if any(strmatch(fldname,OPT.rename{1}, 'exact'))
             j = strmatch(fldname,OPT.rename{1}, 'exact');
@@ -147,7 +152,7 @@ OPT = setproperty(OPT,varargin);
             end
             D.(fldname) = cellstr(D.(fldname));
          end
-      end % exclude
+      end % exclude/include
    end
    
 if nargout==1
@@ -177,6 +182,7 @@ else
    for idat=1:ndat
       fldname     = fileinfo.Dataset(idat).Name;
       if ~any(strmatch(fldname,OPT.exclude, 'exact'))
+          any(strmatch(fldname,OPT.include, 'exact'))
          if any(strmatch(fldname,OPT.rename{1}, 'exact'))
             j = strmatch(fldname,OPT.rename{1}, 'exact');
             fldname = OPT.rename{2}{j};
@@ -186,7 +192,7 @@ else
                       attname  = mkvar(attname); % ??? Invalid field name: '_FillValue'.
          M.(fldname).(attname) = fileinfo.Dataset(idat).Attribute(iatt).Value;
          end
-      end % exclude
+      end % exclude/include
    end
    
    if nargout<2

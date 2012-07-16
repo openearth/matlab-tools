@@ -12,6 +12,18 @@ function varargout=delft3d_io_bnd(cmd,varargin),
 %
 % writes boundary struct to *.bnd file format.
 %
+% Example:
+%  LBD = nc2struct('http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc','include',{'x','y'})
+%  GRD = delft3d_io_grd('read','wadden4.grd');
+%  BND = delft3d_io_bnd('read','wadden2005.bnd',GRD);
+%  pcolorcorcen(GRD.cor.x,GRD.cor.y,nan.*GRD.cen.x,[.5 .5 .5])
+%  axis equal
+%  tickmap('xy')
+%  hold on
+%  plot(BND.x',BND.y','k.-')
+%  axis(axis)
+%  plot(LBD.x,LBD.y)
+%
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd,
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva,
 %           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf,

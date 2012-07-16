@@ -8,17 +8,19 @@ function varargout = vs_trim2nc(vsfile,varargin)
 % the same directory, with extension replaced by nc, with all
 % implemented paramters. x/y grids are converted to lat/lon based
 % on keyword 'epsg' to obtain a CF compliant netCDF file. Corner
-% coordinates are added via the CF-1.6 bounds convention [bounds m n].
+% coordinates are added via the CF-1.6 bounds convention [m n bounds].
 %
 % Example:
 %
-%   vs_trim2nc('P:\aproject\trim-n15.dat','epsg',28992,'time',5,'var,{'velocity','tke'})
+%   vs_trim2nc('P:\aproject\trim-n15.dat','epsg',28992,'time',5,'var,{'waterlevel','velocity','x','y'})
+%
+%   vs_trim2nc(vsfile,ncfile,'var',{'waterlevel','pea','dpeadt','dpeads','x','y','grid_x','grid_y'});
 %
 % By default it converts all native delft3d output variables, but 
 % you can also select only a subset with keyword 'var'. Call VS_TRIM2NC() 
-% without argument to find out which CF required, primary and derived 
-% variables are available in 'var_cf', 'var_primary' and 'var_derived'.
-% You can also pass the NEFIS names shown by vs_disp and 'var_nefis', e.g.:
+% without argument to find out which CF-required, primary and derived 
+% variables are available in resp. 'var_cf', 'var_primary' and 'var_derived'.
+% You can also pass the NEFIS names shown by vs_disp() and 'var_nefis', e.g.:
 %
 %   vs_trim2nc('P:\aproject\trim-n15.dat','var',{'S1'})
 %
@@ -206,8 +208,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
 %                  +--------+--------+
 % 1. (x,y) in file                                            , coords = x y
 % 2. (x,y) in file, (lon,lat) in file (convertcoordinates). Yet,coords = x y to indicate 
-%    * coriolis isn't spatially varying, 
-%    * velocities/stresses aren't zonally reoriented
+%                                                               * coriolis isn't spatially varying, 
+%                                                               * velocities/stresses aren't zonally reoriented
 % 3.                (lon,lat) in file                         , coords = latitude longitude
 % 4.                (lon,lat) in file                         , coords = latitude longitude
       %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
@@ -221,9 +223,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       G.cen.x    =  vs_let_scalar(F,'map-const','XZ'    ,'quiet').*G.cen.mask;%G.cen.x = vs_let_scalar(F,'TEMPOUT','XWAT','quiet');
       G.cen.y    =  vs_let_scalar(F,'map-const','YZ'    ,'quiet').*G.cen.mask;%G.cen.y = vs_let_scalar(F,'TEMPOUT','YWAT','quiet');
       if vs_get_elm_size(F,'DPS0') > 0
-      G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DPS0'  ,'quiet').*G.cen.mask; % depth is positive down
+      G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DPS0' ,'quiet').*G.cen.mask; % depth is positive down
       else % legacy
-      G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DP0'   ,'quiet').*G.cen.mask; % depth is positive down
+      G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DP0'  ,'quiet').*G.cen.mask; % depth is positive down
       end
       G.cor.mask = permute(vs_let(F,'TEMPOUT'  ,'CODB'  ,'quiet'),[2 3 1]); G.cor.mask(G.cor.mask~=1) = NaN;
       G.cor.x    = permute(vs_let(F,'map-const','XCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
@@ -241,10 +243,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
       
       if vs_get_elm_size(F,'GSQS') > 0
       G.cen.area =  vs_let_scalar(F,'map-const','GSQS'  ,'quiet').*G.cen.mask;
-      G.cen.areatext = 'The area GSQS used internally in Delft3D for mass-conservation. This is not identical to the exact area spanned geometrically by the 4 corner points!';
+      G.cen.areatext = 'The is the area GSQS used internally in Delft3D for mass-conservation. This is not identical to the exact area spanned geometrically by the 4 corner points!';
       else
       G.cen.area =  grid_area(G.cor.x,G.cor.y).*G.cen.mask;
-      G.cen.areatext = 'The exact area spanned geometrically by the 4 corner points. This is not identical to the area GSQS used internally in Delft3D for mass-conservation!';
+      G.cen.areatext = 'The is the exact area spanned geometrically by the 4 corner points. This is not identical to the area GSQS used internally in Delft3D for mass-conservation!';
       end
 
       if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old bug)
@@ -289,24 +291,24 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ncdimlen.bounds2     = 2       ; % for corner (grid_*) indices
       ncdimlen.bounds4     = 4       ; % for corner (grid_*) coordinates
 
-      nc.Dimensions(    1) = struct('Name','time'               ,'Length',ncdimlen.time       );
-      nc.Dimensions(end+1) = struct('Name','m'                  ,'Length',ncdimlen.m          );
-      nc.Dimensions(end+1) = struct('Name','n'                  ,'Length',ncdimlen.n          );
-      nc.Dimensions(end+1) = struct('Name','Layer'              ,'Length',ncdimlen.Layer      );
-      nc.Dimensions(end+1) = struct('Name','LayerInterf'        ,'Length',ncdimlen.LayerInterf);
-      nc.Dimensions(end+1) = struct('Name','bounds2'            ,'Length',ncdimlen.bounds2    );
-      nc.Dimensions(end+1) = struct('Name','bounds4'            ,'Length',ncdimlen.bounds4    );
-      							        
-      if any(strcmp('grid_depth',OPT.var))		        
-      nc.Dimensions(end+1) = struct('Name','grid_m'             ,'Length',G.mmax+1);
-      nc.Dimensions(end+1) = struct('Name','grid_n'             ,'Length',G.nmax+1);
+      nc.Dimensions(    1) = struct('Name','time'            ,'Length',ncdimlen.time       );
+      nc.Dimensions(end+1) = struct('Name','m'               ,'Length',ncdimlen.m          );
+      nc.Dimensions(end+1) = struct('Name','n'               ,'Length',ncdimlen.n          );
+      nc.Dimensions(end+1) = struct('Name','Layer'           ,'Length',ncdimlen.Layer      );
+      nc.Dimensions(end+1) = struct('Name','LayerInterf'     ,'Length',ncdimlen.LayerInterf);
+      nc.Dimensions(end+1) = struct('Name','bounds2'         ,'Length',ncdimlen.bounds2    );
+      nc.Dimensions(end+1) = struct('Name','bounds4'         ,'Length',ncdimlen.bounds4    );
+      							     
+      if any(strcmp('grid_depth',OPT.var))		     
+      nc.Dimensions(end+1) = struct('Name','grid_m'          ,'Length',G.mmax+1);
+      nc.Dimensions(end+1) = struct('Name','grid_n'          ,'Length',G.nmax+1);
       ncdimlen.grid_m      = G.mmax+1;
       ncdimlen.grid_n      = G.nmax+1;
-      end						        
-      							        
-      if any(strcmp('sediment',OPT.var)) && LSED > 0	        
-      nc.Dimensions(end+1) = struct('Name','SuspSedimentFrac'   ,'Length',LSED);
-      nc.Dimensions(end+1) = struct('Name','CHAR20'             ,'Length',20);
+      end						     
+      							     
+      if any(strcmp('sediment',OPT.var)) && LSED > 0	     
+      nc.Dimensions(end+1) = struct('Name','SuspSedimentFrac','Length',LSED);
+      nc.Dimensions(end+1) = struct('Name','CHAR20'          ,'Length',20);
       ncdimlen.SuspSedimentFrac = LSED;
       ncdimlen.CHAR20           = 20;
 						        
@@ -314,7 +316,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
 %% 2 Create dimension combinations
-% TO DO: why is field 'Length' needed, ncwriteschema should be able to find this out itself
+% TO DO: why is field 'Length' needed, NCWRITESCHEMA should be able to find this out itself
 
    % 1D
        time.dims(1) = struct('Name', 'time'            ,'Length',ncdimlen.time);
@@ -456,17 +458,17 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nm.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
-      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is curvi-linear
+      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is orthogonal
       if G.orthogonal
       nc.Variables(2) = nc.Variables(ifld-1);
       nc.Variables(2).Name                  = 'm';
       nc.Variables(2).Dimensions            = m.dims;
-      nc.Variables(2).Attributes(end)       = []; % remove bounds
+      nc.Variables(2).Attributes(end)       = []; % remove 2D bounds, TO DO: add 1D bounds
 
       nc.Variables(3) = nc.Variables(ifld  );
       nc.Variables(3).Name                  = 'n';
       nc.Variables(3).Dimensions            = n.dims;
-      nc.Variables(3).Attributes(end)       = []; % remove bounds
+      nc.Variables(3).Attributes(end)       = []; % remove 2D bounds, TO DO: add 1D bounds
       end
       end
 
@@ -542,17 +544,17 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
 
-      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is curvi-linear
+      %% add values of dimensions (2/3): dimensions are reduced vectors of (x,y) matrices when grid is orthogonal
       if G.orthogonal & ~any(strfind(G.coordinates,'CART'))
       nc.Variables(2) = nc.Variables(ifld-1);
       nc.Variables(2).Name                  = 'm';
       nc.Variables(2).Dimensions            = m.dims;
-      nc.Variables(2).Attributes(end)       = []; % remove bounds
+      nc.Variables(2).Attributes(end)       = []; % remove 2D bounds, TO DO: add 1D bounds
 
       nc.Variables(3) = nc.Variables(ifld  );
       nc.Variables(3).Name                  = 'n';
       nc.Variables(3).Dimensions            = n.dims;
-      nc.Variables(3).Attributes(end)       = []; % remove bounds
+      nc.Variables(3).Attributes(end)       = []; % remove 2D bounds, TO DO: add 1D bounds
       end
 
       end
@@ -1030,7 +1032,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:LSTCI');
       nc.Variables(ifld) = struct('Name'       , 'salinity', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmkt.dims, ...
@@ -1048,7 +1050,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:LSTCI');
       nc.Variables(ifld) = struct('Name'       , 'temperature', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmkt.dims, ...
@@ -1066,7 +1068,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS map-const:NAMCON map-const:LSTCI map-const:LTUR');
       nc.Variables(ifld) = struct('Name'       , 'tke', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmkit.dims, ...
@@ -1084,7 +1086,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS map-const:NAMCON map-const:LSTCI map-const:LTUR');
       nc.Variables(ifld) = struct('Name'       , 'eps', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmkit.dims, ...
@@ -1175,7 +1177,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:NAMSED map-const:LSTCI map-const:LSED');
       nc.Variables(ifld) = struct('Name'       , 'suspsedconc', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmkst.dims, ...
@@ -1200,9 +1202,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
       delete(ncfile);
-      disp(['NCWRITESCHEMA: creating netCDF file: ',ncfile])
+      disp(['vs_trim2nc: NCWRITESCHEMA: creating netCDF file: ',ncfile])
       ncwriteschema(ncfile, nc);			        
-      disp(['NCWRITESCHEMA: filling  netCDF file: ',ncfile])
+      disp(['vs_trim2nc: NCWRITE: filling  netCDF file: ',ncfile])
 
       if OPT.debug
       fid = fopen([filepathstrname(ncfile),'.cdl'],'w');
@@ -1250,12 +1252,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
       if     any(strcmp('grid_x',OPT.var))
-      ncwrite   (ncfile,'grid_x'        , permute(nc_cf_cor2bounds(addrowcol(G.cor.x,[-1 1],[-1 1],nan)'),[3 2 1])); % [1 2 3]
+      ncwrite   (ncfile,'grid_x'        , permute(nc_cf_cor2bounds(addrowcol(G.cor.x,[-1 1],[-1 1],nan)'),[3 2 1])); % addrowcol makes sure nc_cf_bounds2cor is inverse of nc_cf_cor2bounds
       ncwriteatt(ncfile,'grid_x'        ,'actual_range',[min(G.cor.x(:)) max(G.cor.x(:))]);
       end
 
       if     any(strcmp('grid_y',OPT.var))
-      ncwrite   (ncfile,'grid_y'        , permute(nc_cf_cor2bounds(addrowcol(G.cor.y,[-1 1],[-1 1],nan)'),[3 2 1])); % [1 2 3]
+      ncwrite   (ncfile,'grid_y'        , permute(nc_cf_cor2bounds(addrowcol(G.cor.y,[-1 1],[-1 1],nan)'),[3 2 1])); % addrowcol makes sure nc_cf_bounds2cor is inverse of nc_cf_cor2bounds
       ncwriteatt(ncfile,'grid_y'        ,'actual_range',[min(G.cor.y(:)) max(G.cor.y(:))]);
       end
 
@@ -1295,7 +1297,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end      
 
       if     any(strcmp('zactive'   ,OPT.var))
-      ncwrite   (ncfile,'zactive'   ,G.cen.mask,[2 2]);
+      ncwrite   (ncfile,'zactive'   ,G.cen.mask,[2 2]); % already applied to all variables before writing to netCDF
       ncwriteatt(ncfile,'zactive'   ,'actual_range',[0 1]);
       end      
 
@@ -1310,6 +1312,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
       i = 0;
       
+%% initialize [min,max] ranges
+
       if any(strcmp('waterlevel'    ,OPT.var));R.waterlevel      = [Inf -Inf];end
       if any(strcmp('velocity'      ,OPT.var));R.velocity_x      = [Inf -Inf];
                                                R.velocity_y      = [Inf -Inf];end
