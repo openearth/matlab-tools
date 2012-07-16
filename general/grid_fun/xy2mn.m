@@ -1,7 +1,7 @@
 function varargout = xy2mn(x,y,xv,yv,varargin)
 %XY2MN  get indices of random (x,y) points in curvilinear grid
 %
-%   [m,n] = xy2mn(x,y,xv,yv,<Rmax>) 
+%   [m,n] = xy2mn(x,y,xv,yv,<keyword,value>) 
 %
 % returns indices (m,n) of the curvilinear (x,y) 
 % grid of points closest to the random points 
@@ -9,7 +9,7 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 % 2nd dimension of x and y. If multiple points are 
 % equally near, one (m,n) combi is arbitrarily chosen.
 %
-% Rmax is the maximal distance taken into consideration.
+% keyword 'Rmax' is the maximal distance taken into consideration.
 % Default Inf, when empty, it is the max(sqrt) of all cells.
 %
 % Alternatives:
@@ -21,8 +21,26 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 % for Delft3D: use the G.cend output from delft3d_io_grd to get the center 
 % points of the grid with extrapolated dummy row/col: 1:nmax   x 1:mmax
 %
-% See also: SUB2IND, IND2SUB, FIND, MIN, MAX, griddata_nearest,
-% delft3d_io_grd
+% Example:
+%   [x,y,z] = peaks;
+%   nv = 100;
+%   xv = -4+8*rand(nv,1);
+%   yv = -4+8*rand(nv,1);
+%   [m,n] = xy2mn(x,y,xv,yv,'Rmax',.5);
+%   pcolor(x,y,z)
+%   hold on
+%   for i=1:length(m)
+%      if isnan(m(i))
+%      h(i) = plot(xv(i),yv(i),'x','markersize',20);
+%      else
+%      h(i) = scatter( xv(i),       yv(i),      100,z(m(i),n(i)),'filled');
+%      plot([x(m(i),n(i)) xv(i)],[y(m(i),n(i)) yv(i)],'k.-')
+%      end
+%   end
+%   set(h,'MarkerEdgeColor','k')
+%   axis auto
+%
+% See also: SUB2IND, IND2SUB, FIND, MIN, MAX, GRIDDATA_NEAREST, delft3d_io_grd
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
