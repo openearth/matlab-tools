@@ -11,11 +11,12 @@ function varargout = udunits2datenum(varargin)
 %                                                         'days since 0000-0-0 00:00:00 +01:00'})
 %    [datenum,<zone>] = udunits2datenum({'602218           days since 0000-0-0 00:00:00 +01:00',...
 %                                        '648857           days since 0000-0-0 00:00:00 +01:00'})
+%    [~      ,<zone>] = udunits2datenum(                  'days since 0000-0-0 00:00:00 +01:00')
 %
 % where <zone> is optional and has the length of isounits.
 %
 %See web: <a href="http://www.unidata.ucar.edu/software/udunits/">http://www.unidata.ucar.edu/software/udunits/</a>
-%See also: DATENUM, DATESTR, ISO2DATENUM, TIME2DATENUM, XLSDATE2DATENUM
+%See also: NC_CF_time, DATENUM, DATESTR, ISO2DATENUM, TIME2DATENUM, XLSDATE2DATENUM
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,8 +62,14 @@ function varargout = udunits2datenum(varargin)
       end
 
       for irow=1:length(celltime)
-     [time{irow},...
-      isounits{irow}] = strtok(celltime{irow});
+      ind = strfind(celltime{irow},'since');
+     [a,b] = strtok(celltime{irow}(1:ind-1)); % a can be missing
+      if isempty(strtrim(b))
+         b = a;
+         a = '';
+      end
+      time{irow}     = a;
+      isounits{irow} = [b ' ' celltime{irow}(ind:end)];
       end
       time = str2num(char(time));
       time = time(:)';
