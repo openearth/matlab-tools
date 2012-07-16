@@ -213,10 +213,10 @@ try
             [cb,h] = contour(s(2).data.X,s(2).data.Y,squeeze(s(2).data.Val),[-16:2:2]);
             set(h,'linecolor',[0.8 0.8 0.8]);
             
-            clim([-0.1 1.5])
+            clim([-0.1 settings.clim(2)])
             colormap([1 1 0.8; jet])
             cb = colorbar;
-            set(cb,'ylim',[0 1.5]);
+            set(cb,'ylim',[0 settings.clim(2)]);
             
             set(gca,'xlim',settings.xlim)
             set(gca,'ylim',settings.ylim)
