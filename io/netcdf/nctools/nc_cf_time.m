@@ -67,23 +67,8 @@ function varargout = nc_cf_time(ncfile,varargin)
 
 %% get info from ncfile
 
-   if isstruct(ncfile)
-      fileinfo = ncfile;
-   else
-      fileinfo = nc_info(ncfile);
-   end
-   
 %% deal with name change in scntools: DataSet > Dataset
 
-   if     isfield(fileinfo,'Dataset'); % new
-     fileinfo.DataSet = fileinfo.Dataset;
-   elseif isfield(fileinfo,'DataSet'); % old
-     fileinfo.Dataset = fileinfo.DataSet;
-     disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
-   else
-      error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
-   end
-   
 %% cycle Dimensions
 
    % index = [];
@@ -93,7 +78,29 @@ function varargout = nc_cf_time(ncfile,varargin)
    %    end
    % end
    
+   if isstruct(ncfile)
+      fileinfo = ncfile;
+   else
+      fileinfo.Filename = ncfile;
+   end
+
    if nargin==1
+
+      if isstruct(ncfile)
+         fileinfo = ncfile;
+      else
+         fileinfo = nc_info(ncfile);
+      end
+   
+      if     isfield(fileinfo,'Dataset'); % new
+        fileinfo.DataSet = fileinfo.Dataset;
+      elseif isfield(fileinfo,'DataSet'); % old
+        fileinfo.Dataset = fileinfo.DataSet;
+        disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
+      else
+         error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
+      end
+
       %% cycle Datasets
       %  all time datasets must have an associated time Dimension
       index = [];
@@ -119,19 +126,19 @@ function varargout = nc_cf_time(ncfile,varargin)
          end
       end
    else
-         if ischar(varargin{1})
-            varname  = varargin{1};
-            varargin = varargin(2:end);
-         end
-         try
-         M.datenum.units   = nc_attget(fileinfo.Filename,varname,'units');
-         D.datenum         = nc_varget(fileinfo.Filename,varname,varargin{:});
-        [D.datenum,D.zone] = udunits2datenum(double(D.datenum),M.datenum.units); % prevent integers from generating stairs in larger units
-         catch
-             error(['variable ',fileinfo.Filename,':',varname,' has no units'])
-             D.datenum = [];
-         end         
-         index = 1;
+      if ischar(varargin{1})
+         varname  = varargin{1};
+         varargin = varargin(2:end);
+      end
+      try
+      M.datenum.units   = nc_attget(fileinfo.Filename,varname,'units');
+      D.datenum         = nc_varget(fileinfo.Filename,varname,varargin{:});
+     [D.datenum,D.zone] = udunits2datenum(double(D.datenum),M.datenum.units); % prevent integers from generating stairs in larger units
+      catch
+          error(['variable ',fileinfo.Filename,':',varname,' has no units'])
+          D.datenum = [];
+      end         
+      index = 1;
    end
    
 %% output
