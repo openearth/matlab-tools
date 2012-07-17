@@ -18,7 +18,7 @@ function varargout = noos_read(varargin)
 %
 % where D has fields datenum, value and headers.
 %
-%See also: MATROOS_NOOS_HEADER2META
+%See also: NOOS_WRITE, MATROOS_NOOS_HEADER2META
 
 %% TO DO: parse a file with only concatenated comment blocks (in case of no data)
 %% TO DO: take missing value into account

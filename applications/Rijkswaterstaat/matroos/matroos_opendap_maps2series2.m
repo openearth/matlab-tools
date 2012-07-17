@@ -1,13 +1,15 @@
-function [time,value,ind] = matroos_opendap_maps2series2
+function [time,value,OPT] = matroos_opendap_maps2series2
 %MATROOS_OPENDAP_MAPS2SERIES2  extract series from OPeNDAP maps using meta-data cache (TEST!!!)
 %
 %   [time,value,ind] = matroos_opendap_maps2series2('datenum',<...>,'source',<...>,'x',<...>,'y',<...>)
+%
+% where ind contains the indices requested from the OPeNDAP server.
 %
 % This client side function has the same functionality as the server side
 % matroos.deltares.nl/direct/get_map2series.php? functionality. This client
 % side function is slower the 1st time because it needs to gather meta-data,
 % but it can be much faster any subsequent time because it can cache some 
-% part of the 'state' of the 'request', for instance the [m,n] mappin.
+% part of the 'state' of the request, for instance the [m,n] mapping.
 %
 %See also: MATROOS_OPENDAP_MAPS2SERIES1, nc_harvest, matroos_get_series, 
 
@@ -57,13 +59,14 @@ warning('very preliminary test version')
 
    OPT.basePath = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml
    OPT.source   = 'hmcn_kustfijn';
-   OPT.datenum  = datenum([2010 2010],[11 11],[1 5]);
+   OPT.datenum  = datenum([2010 2010],[11 12],[1 1]);
    OPT.x        = [];
    OPT.y        = [];
-   OPT.debug    = 1;
+   OPT.debug    = 0;
    OPT.Rmax     = 1e3; % max 1 km off by default
    OPT.test     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-TEXNZE.nc';
-   OPT.test     = 'F:\opendap.deltares.nl\thredds\dodsC\opendap\rijkswaterstaat\waterbase\sea_surface_height\id1-HOEKVHLD.nc';
+   OPT.test     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-HOEKVHLD.nc';
+   OPT.filename = '';
    
 %% load cached meta-data
 
@@ -81,23 +84,30 @@ if OPT.debug
 end
 
 %% get indices
+%  add 2 extra ones due to small mismatch (few hour) filenames and time content in GMT
 
-   [ind.m,ind.n] = xy2mn(D.x,D.y,OPT.x,OPT.y,'Rmax',OPT.Rmax);
+   [OPT.m,OPT.n] = xy2mn(D.x,D.y,OPT.x,OPT.y,'Rmax',OPT.Rmax);
    
-   if isnan(ind.m)
+   if isnan(OPT.m)
    error(['Requested location (',num2str(OPT.x),',',num2str(OPT.y),') outside "',OPT.source,'" domain'])
    end
-   ind.t = find(D.datenum >= OPT.datenum(1) & D.datenum <= OPT.datenum(end)); % approximate
+   OPT.t = find(D.datenum >= OPT.datenum(1) & D.datenum <= OPT.datenum(end)); % approximate
+   
+   if OPT.t(  1) > 1                ;OPT.t = [(OPT.t(1)-1);   OPT.t];end
+   if OPT.t(end) < length(D.urlPath);OPT.t = [OPT.t; (OPT.t(end)+1)];end
 
 %% get data
    time  = [];
    value =  [];
   [user,passwd]  = matroos_user_password;
-   for j=1:length(ind.t)
-     disp([num2str(j,'%0.4d'),' / ',num2str(length(ind.t),'%0.4d')])
-    [dtime,zone] = nc_cf_time(['https://',user,':',passwd,'@',D.urlPath{ind.t(j)}(8:end)]);
-     time  = [time   dtime];
-     value = [value  nc_varget(['https://',user,':',passwd,'@',D.urlPath{ind.t(j)}(8:end)],'SEP',[1 ind.m ind.n]-1,[Inf 1 1])];
+   for j=1:length(OPT.t)
+     disp([num2str(j,'%0.4d'),' / ',num2str(length(OPT.t),'%0.4d')])
+    [dtime,zone] = nc_cf_time(['https://',user,':',passwd,'@',D.urlPath{OPT.t(j)}(8:end)],'time');
+     dval = nc_varget(['https://',user,':',passwd,'@',D.urlPath{OPT.t(j)}(8:end)],'SEP',[1 OPT.m OPT.n]-1,[Inf 1 1]);
+     time  = [time(:)'  dtime(:)'];
+     value = [value(:)'  dval(:)'];
+     % TO DO : do smart preallocation
+     % TO DO : get entire grid line
    end
   
 %% plot test data 
@@ -115,3 +125,27 @@ if OPT.debug
    print2screensize([OPT.source,'_',datestr(OPT.datenum(1),'yyyy-dd-mm'),'_',datestr(OPT.datenum(end),'yyyy-dd-mm'),'_',num2str(OPT.x),'_',num2str(OPT.y)]);
 end
 
+%% save
+if ~isempty(OPT.filename)
+headerlines = {'# ----------------------------------------------------------------',...
+               '# ',...
+              ['# Timeseries created at ',datestr(now),' by $HeadURL$ $Id$'],...
+               '# Values retrieved from mapdata interpolated with nearest neigherbor in space',...
+               '# ',...
+              ['# Source           : ',OPT.source],...
+               '# Analysis time    : ????????????',...
+               '# Time zone        : GMT',...
+               '# Coordinate system: RD',...
+              ['# x-coordinate     : ',num2str(OPT.x),' # requested, but de facto ',num2str(D.x(OPT.m,OPT.n)),' in ',OPT.source,' grid.'],...
+              ['# y-coordinate     : ',num2str(OPT.y),' # requested, but de facto ',num2str(D.y(OPT.m,OPT.n)),' in ',OPT.source,' grid.'],...
+               '# ',...
+               '# ---------------------------------------------------------------',...
+               '# ',...
+               '# Variable     : sep',...
+               '# long_name    : waterlevel',...
+               '# units        : m',...
+               '# missing value: NaN',...
+               '#'};
+           
+noos_write(time,value,'filename',OPT.filename,'headerlines',headerlines)           
+end
