@@ -46,7 +46,7 @@ dt=hm.meteo(ii).timeStep;
 meteoname=model.useMeteo;
 meteodir=[hm.scenarioDir 'meteo' filesep meteoname filesep];
 
-[lon,lat]=writeMeteoFileWW3(meteodir,meteoname,tmpdir,model.xLim,model.yLim,model.tWaveStart,model.tStop,dt,model.useDtAirSea);
+[lon,lat]=WriteMeteoFileWW3(meteodir,meteoname,tmpdir,model.xLim,model.yLim,model.tWaveStart,model.tStop,dt,model.useDtAirSea);
 writeWW3_prepWind([tmpdir 'ww3_prep.inp'],lon,lat);
 
 %% Pre and post-processing input files
