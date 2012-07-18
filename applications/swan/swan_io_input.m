@@ -1,5 +1,5 @@
 function varargout = swan_io_input(varargin)
-%SWAN_IO_INPUT            read SWAN input file into struct    (BETA VERSION).
+%SWAN_IO_INPUT            read SWAN input file into struct.
 %
 %    DAT = swan_io_input(fname)
 %    DAT = swan_io_input        %launches load GUI.

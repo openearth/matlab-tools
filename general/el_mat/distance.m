@@ -1,5 +1,5 @@
 function s = distance(x,y,varargin);
-%DISTANCE   calculate disctance along polygon
+%DISTANCE   calculate distance along polygon
 %
 % s = distance(x,y) calculates distance along line. 
 %
@@ -8,17 +8,15 @@ function s = distance(x,y,varargin);
 %
 % s = distance(x,y,dim)
 %
-% Presence of nans leads to nan in distance.
-% Distance between nan-seperated coordinates is assumed 0.
+% Presence of NaN leads to NaN in distance.
+% Distance between NaN-seperated coordinates is assumed 0.
 %
 % Example:
 %
 % distance([0 1 nan 1 3],[0 1 nan 1 3],1) = 0    1.4142       NaN    1.4142    4.2426
 % distance([0 1 nan 2 3],[0 1 nan 2 3],1) = 0    1.4142       NaN    1.4142    4.2426
 %
-% Copyright, G.J. de Boer, Dec 2004
-%
-%See also: poly_fun
+%See also: poly_fun, pathdistance
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology

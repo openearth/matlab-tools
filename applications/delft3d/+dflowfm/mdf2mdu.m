@@ -177,7 +177,7 @@ for ipli = 1:length(pli.names)
          disp([fil ' - ' num2str(ind),' - ',BCT.Table(ind).Name])
          
          dat =  BCT.Table(ind).Data(:,[1 (j+1)]);
-         dat(:,1) = dat(:,1);% minutes
+        %dat(:,1) = dat(:,1);% minutes
          
          % The *.tim files contain two koloms: minutes <whitespace> waterlevel.
          % E.g.:

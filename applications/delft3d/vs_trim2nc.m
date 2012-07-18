@@ -232,7 +232,11 @@ function varargout = vs_trim2nc(vsfile,varargin)
       G.cor.y    = permute(vs_let(F,'map-const','YCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
       G.cor.x = G.cor.x(1:end-1,1:end-1);
       G.cor.y = G.cor.y(1:end-1,1:end-1);
-      G.dryflp   = strtrim(vs_get(F,'map-const','DRYFLP','quiet'));
+      G.layer_model = strtrim(permute(vs_let(F,'map-const','LAYER_MODEL','quiet'),[1 3 2]));
+      if strmatch('Z-MODEL', G.layer_model)
+      warning('Z-MODEL has not yet been tested. It does not yet work.')
+      end
+      G.dryflp      = strtrim(vs_get(F,'map-const','DRYFLP'     ,'quiet'));
       if strcmpi(strtrim(G.dryflp),'DP')
       G.cor.dep  = nan.*G.cor.x; % never specified, non-existent
       else
