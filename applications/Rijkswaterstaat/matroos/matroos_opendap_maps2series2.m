@@ -11,7 +11,8 @@ function [time,value,OPT] = matroos_opendap_maps2series2
 % but it can be much faster any subsequent time because it can cache some 
 % part of the 'state' of the request, for instance the [m,n] mapping.
 %
-%See also: MATROOS_OPENDAP_MAPS2SERIES1, nc_harvest, matroos_get_series, 
+%See also: MATROOS_OPENDAP_MAPS2SERIES1, MATROOS_OPENDAP_MAPS2SERIES2MN, nc_harvest, 
+%          matroos_get_series, matroos.deltares.nl/direct/get_map2series.php?
 
 warning('very preliminary test version')
 
@@ -62,13 +63,15 @@ warning('very preliminary test version')
    OPT.datenum  = datenum([2010 2010],[11 12],[1 1]);
    OPT.x        = [];
    OPT.y        = [];
-   OPT.debug    = 0;
    OPT.Rmax     = 1e3; % max 1 km off by default
+   OPT.var      = 'SEP';
+   OPT.filename = 'matroos_opendap_maps2series2.tim';
+
+   OPT.debug    = 0;
    OPT.test     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-TEXNZE.nc';
    OPT.test     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-HOEKVHLD.nc';
-   OPT.filename = '';
    
-%% load cached meta-data
+%% load cached meta-data from matroos_opendap_maps2series1
 
    if ~(exist([OPT.source,'.mat'],'file')==2)
       matroos_opendap_maps2series1('source',OPT.source,'basePath',OPT.basePath)
@@ -83,27 +86,31 @@ if OPT.debug
    OPT.y       = T.y;
 end
 
-%% get indices
+%% process temporal OPeNDAP slice indices
 %  add 2 extra ones due to small mismatch (few hour) filenames and time content in GMT
+
+   OPT.t = find(D.datenum >= OPT.datenum(1) & D.datenum <= OPT.datenum(end)); % approximate
+   
+   if OPT.t(  1) > 1                ;OPT.t = [(OPT.t(1)-1);   OPT.t];end
+   if OPT.t(end) < length(D.urlPath);OPT.t = [OPT.t; (OPT.t(end)+1)];end
+
+%% process spatial OPeNDAP slice indices
 
    [OPT.m,OPT.n] = xy2mn(D.x,D.y,OPT.x,OPT.y,'Rmax',OPT.Rmax);
    
    if isnan(OPT.m)
    error(['Requested location (',num2str(OPT.x),',',num2str(OPT.y),') outside "',OPT.source,'" domain'])
    end
-   OPT.t = find(D.datenum >= OPT.datenum(1) & D.datenum <= OPT.datenum(end)); % approximate
-   
-   if OPT.t(  1) > 1                ;OPT.t = [(OPT.t(1)-1);   OPT.t];end
-   if OPT.t(end) < length(D.urlPath);OPT.t = [OPT.t; (OPT.t(end)+1)];end
 
-%% get data
+%% request data slices
+
    time  = [];
    value =  [];
   [user,passwd]  = matroos_user_password;
    for j=1:length(OPT.t)
      disp([num2str(j,'%0.4d'),' / ',num2str(length(OPT.t),'%0.4d')])
     [dtime,zone] = nc_cf_time(['https://',user,':',passwd,'@',D.urlPath{OPT.t(j)}(8:end)],'time');
-     dval = nc_varget(['https://',user,':',passwd,'@',D.urlPath{OPT.t(j)}(8:end)],'SEP',[1 OPT.m OPT.n]-1,[Inf 1 1]);
+     dval = nc_varget(['https://',user,':',passwd,'@',D.urlPath{OPT.t(j)}(8:end)],OPT.var,[1 OPT.m OPT.n]-1,[Inf 1 1]);
      time  = [time(:)'  dtime(:)'];
      value = [value(:)'  dval(:)'];
      % TO DO : do smart preallocation

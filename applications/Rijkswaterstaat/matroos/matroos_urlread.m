@@ -1,4 +1,4 @@
-function s = matroos_urlread(urlChar);
+function s = matroos_urlread(urlChar,varargin);
 %MATROOS_URLREAD   urlread with username:password authentication
 %
 %    data_stream = matroos_urlread
@@ -58,6 +58,8 @@ function s = matroos_urlread(urlChar);
   import java.io.*;
   
   OPT.debug = 0;
+  
+  OPT = setproperty(OPT,varargin);  
 
 %% check for pasword
 
@@ -87,6 +89,7 @@ function s = matroos_urlread(urlChar);
 %% now start reading
 
    content = con.getInputStream();
+   disp(['Reading url now, please be patient : ',urlChar])
    in = java.io.BufferedReader(java.io.InputStreamReader(content));
    
    i=1;
@@ -96,7 +99,7 @@ function s = matroos_urlread(urlChar);
        line=char(javaLine);
        if (strcmp(line,'')==1), break;end;
        if OPT.debug
-       fprintf('>> %s \n',line);
+          fprintf('>> %s \n',line);
        end
        s{i}=line;
        i=i+1;
