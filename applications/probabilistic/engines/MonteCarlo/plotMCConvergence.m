@@ -95,7 +95,9 @@ n = result.Output.Calc;
 Pf = result.Output.P_f;
 
 x = [1:n]';
-y = cumsum(result.Output.idFail.*result.Output.P_corr)./x;
+%y = cumsum(result.Output.idFail.*result.Output.P_corr)./x;
+y=cumsum(mean(result.Output.idFail,2).*result.Output.P_corr)./x;
+
 
 p = round(logspace(0,log10(n),OPT.naccuracy));
 a = nan(size(p))';
@@ -121,6 +123,7 @@ plot(p,y(p)-a,'-g');
 xlabel('Number of samples [-]');
 ylabel('Probability [-]');
 
+
 legend({ ...
     'Convergence of probability of failure' ...
     'Estimated probability of failure' ...
@@ -128,6 +131,7 @@ legend({ ...
 
 grid on;
 set(gca,'XScale','log');
+set(gca,'YScale','log');
 
 title(sprintf('P_f = %2.1e ; Accuracy = %2.1e (%2.1f%%) ; N = %d ; N_f = %d', ...
         Pf, Acy, Acy_rel, n, nf));
