@@ -87,9 +87,9 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
    OPT.var      = 'SEP';
    OPT.debug    = 0;
    OPT.path     = '';
-   OPT.timpath  = 'tim';
-   OPT.RefDate  = datenum(2009,1,1); % if not 'NOOS' or datenum(), else ISO8601 'yyyy-mm-dd HH:MM:SS'
-   OPT.nc       = 1;% store 2D array before splitting into ascii files
+   OPT.timrelpath = 'tim';
+   OPT.RefDate    = datenum(2009,12,1); % if not 'NOOS' or datenum(), else ISO8601 'yyyy-mm-dd HH:MM:SS'
+   OPT.nc         = 1;% store 2D array before splitting into ascii files
    
    OPT = setproperty(OPT,varargin);
 
@@ -186,20 +186,30 @@ end
 R.datenum = time;clear time
 R.data    = data;clear data
 
-%% name for overall data
+%% name for overall data and extract pivot corner indices
 
    if OPT.f(1)==-1; 
    mnstr = [num2str(OPT.m{1}(1)) ',' num2str(OPT.n{1}(1))];
+   R.mcor = [OPT.m{1}(1)];
+   R.ncor = [OPT.n{1}(1)];
    else
    mnstr = [num2str(OPT.m{1}(end)) ',' num2str(OPT.n{1}(end))];
+   R.mcor = [OPT.m{1}(end)];
+   R.ncor = [OPT.n{1}(end)];
    end
    for j=1:length(OPT.m) 
        if OPT.f(1)==-1; 
        mnstr = [mnstr '_' num2str(OPT.m{j}(end)) ',' num2str(OPT.n{j}(end))];
+       R.mcor = [R.mcor OPT.m{j}(end)];
+       R.ncor = [R.ncor OPT.n{j}(end)];
        else
        mnstr = [mnstr '_' num2str(OPT.m{j}(1)) ',' num2str(OPT.n{j}(1))];
+       R.mcor = [R.mcor OPT.m{j}(1)];
+       R.ncor = [R.ncor OPT.n{j}(1)];
        end
    end
+   
+   R.pathdistance = distance(R.x,R.y);
    
    if ~isempty(OPT.path)
       OPT.path = path2os([OPT.path,filesep]);
@@ -220,70 +230,19 @@ R.data    = data;clear data
    %%
    close
    it=':';
-   R.s = distance(R.x,R.y);
-   pcolorcorcen(R.datenum(it),R.s,R.data(1:597,it)); %,[.5 .5 .5])
+   pcolorcorcen(R.datenum(it),R.pathdistance,R.data(1:597,it)); %,[.5 .5 .5])
    datetick('x')
    tickmap('y')
-   hline(R.s(find(diff(R.ind))),'k'); % corners
-   hline(R.s(43),'k--') % interface N'Sea and W'zee 
+   hline(R.pathdistance(find(diff(R.ind))),'k'); % corners
+   hline(R.pathdistance(43),'k--') % interface N'Sea and W'zee 
    ylabel('distance along polygon')
    xlabel([datestr(xlim1(1),'yyyy-mmm-dd HH:MM') '  \rightarrow  ', datestr(xlim1(1),'yyyy-mmm-dd HH:MM')])
    print2screensize('matroos_opendap_maps2series3')
    end
 
-%% split 2D array into polygon (*.pli) with ascii time series at corners (*.tim)
+%%%%% split 2D array into polygon (*.pli) with ascii time series at corners (*.tim)
 
-   %% write *.pli and *.tim
-   clc
-   fid = fopen([OPT.path,OPT.source,'_',mnstr,'.pli'],'w');
-   fprintf(fid,'# basePath=%s\n',R.basePath);
-   fprintf(fid,'# source=%s\n',R.source);
-   fprintf(fid,'# created at %s\n',datestr(now));
-   fprintf(fid,'# created by %s\n','$Id');
-   fprintf(fid,'%s\n','BLOCK');
-   fprintf(fid,'%d %d\n',length(R.x),2);
-   
-   nr = 0;
-   for j=43:length(R.x)
-       nr = nr + 1;
-       timname = ['(',num2str(R.m(j),'%0.3d'),',',num2str(R.n(j),'%0.3d'),')_',num2str(nr,'%0.3d'),'.tim'];
-       if any(isnan(R.data(j,:)))
-           warning([timname,' contains NaN ',num2str(j)])
-       else
-           disp(['Confirm: ',timname,' is OK ',num2str(j)])
-       end
-       fprintf(fid,'%f %f %s\n',R.x(j),R.y(j),['''',timname,'''']); % x,y, <yet unused name of associated data file>
-       fid2 = fopen([OPT.path,OPT.timpath,filesep,timname],'w');
-       fprintf(fid2,'# basePath=%s\n',R.basePath);
-       fprintf(fid2,'# source=%s\n',R.source);
-       fprintf(fid2,'# created at %s\n',datestr(now));
-       fprintf(fid2,'# created by %s\n','$Id');
-       fprintf(fid2,'# m=%g\n',R.m(j));
-       fprintf(fid2,'# n=%g\n',R.n(j));
-       fprintf(fid2,'# x=%f\n',R.x(j));
-       fprintf(fid2,'# y=%f\n',R.y(j));
-       if strcmpi(OPT.RefDate,'NOOS')
-       fprintf(fid2,'# RefDate=%s\n','NOOS');
-       fprintf(fid2,'# Tunit=%s\n','yyyymmddHHMM');
-       elseif isnumeric(OPT.RefDate)
-       fprintf(fid2,'# RefDate=%s\n',datestr(OPT.RefDate,'yyyy-mm-dd HH:MM:SS'));
-       fprintf(fid2,'# Tunit=%s\n','minute');
-       else
-       fprintf(fid2,'# RefDate=%s\n','ISO8601');
-       end
-       
-       for it=1:length(R.datenum)
-          if strcmpi(OPT.RefDate,'NOOS')
-          fprintf(fid2,'%s %f\n',datestr(R.datenum(it),'yyyymmddHHMM'),R.data(j,it));
-          elseif isnumeric(OPT.RefDate)
-          % Tunit            = S                   # Time units in MDU (H, M or S)
-          % make minutes
-          fprintf(fid2,'%g %f\n',(R.datenum(it) - OPT.RefDate)*24*60,R.data(j,it));
-          else % ISO
-          fprintf(fid2,'%s %f\n',datestr(R.datenum(it),'yyyy-mm-dd HH:MM:SS'),R.data(j,it));
-          end
-       end    
-       fclose(fid2);
-   end
-   fclose(fid);
-toc   
+   matroos_opendap_maps2series2mn2ascii(R,'filename',[OPT.path,OPT.source,'_',mnstr,'.pli'],...
+                                              'path',OPT.path,...
+                                        'timrelpath',OPT.timrelpath,...
+                                           'RefDate',OPT.RefDate);
