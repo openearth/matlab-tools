@@ -94,14 +94,8 @@ end
 n = result.Output.Calc;
 Pf = result.Output.P_f;
 
-<<<<<<< .mine
 x = (1:n)';
-y = cumsum(mean(result.Output.idFail,2).*result.Output.P_corr)./x;
-=======
-x = [1:n]';
-%y = cumsum(result.Output.idFail.*result.Output.P_corr)./x;
 y=cumsum(mean(result.Output.idFail,2).*result.Output.P_corr)./x;
->>>>>>> .r6956
 
 
 p = round(logspace(0,log10(n),OPT.naccuracy));
