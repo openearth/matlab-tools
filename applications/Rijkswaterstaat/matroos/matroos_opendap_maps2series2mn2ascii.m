@@ -1,4 +1,4 @@
-function matroos_opendap_maps2series2mn2ascii(R,varargin)
+function varargout = matroos_opendap_maps2series2mn2ascii(R,varargin)
 %MATROOS_OPENDAP_MAPS2SERIES2MN2ASCII subsidiary of matroos_opendap_maps2series2mn
 %
 % You can reload the netCDF file written by MATROOS_OPENDAP_MAPS2SERIES2MN
@@ -6,10 +6,11 @@ function matroos_opendap_maps2series2mn2ascii(R,varargin)
 %
 % fname = 'hmcn_kustfijn_m1,n1_m2,n2_m3,n3.nc';
 % R = nc2struct(fname)
-% % R.data = interp2(R.data,'nearest'); % optionally fill NaN gaps
-% matroos_opendap_maps2series2mn2ascii(R,'filename',fname)
+% matroos_opendap_maps2series2mn2ascii(R,'filename','hmcn_kustfijn',...
+%                                       'timselect',[5:10:552 552],...
+%                                       'timrelpath','tim')
 %
-%See also: matroos_opendap_maps2series2mn
+%See also: MATROOS_OPENDAP_MAPS2SERIES2MN, DFLOWFM, NOOS_WRITE
 
 warning('very preliminary test version')
 
@@ -59,22 +60,34 @@ warning('very preliminary test version')
    OPT.path        = '';
    OPT.header      = 0; % not sure whether can Dflow-FM handle comments ....
    OPT.only_future = 1; % chop all dates before RefDate (no negative times), not sure whether can Dflow-FM handle negs ....
+   OPT.timselect   = ':';
+   
+   if nargin==0
+      varargout = {OPT};return
+   end
 
-   OPT = setproperty(OPT,varargin);
+   OPT = setproperty(OPT,varargin)
    
    if ~isempty(OPT.path)
       OPT.path = path2os([OPT.path,filesep]);
-   end   
+   else
+      OPT.path = [pwd,filesep];
+   end
    
    if isempty(OPT.filename)
       error('filename is a required keyword')
    else
       OPT.filename = [filename(OPT.filename),'.pli'];
    end
+   
+   if strcmpi(OPT.timselect,':')
+      OPT.timselect = 1:length(R.x);
+   else
+      OPT.timselect(isinf(OPT.timselect)) = length(R.x);
+   end
 
 %% split 2D array into polygon (*.pli) with ascii time series at corners (*.tim)
 
-   %% write *.pli and *.tim
    fid = fopen([OPT.path,OPT.filename],'w');
    fprintf(fid,'* basePath=%s\n',char(R.basePath));
    fprintf(fid,'* source=%s\n',char(R.source));
@@ -88,52 +101,59 @@ warning('very preliminary test version')
    nr = 0;
    for j=1:length(R.x)
 
-       nr = nr + 1;
-       timname = [filepathstrname(OPT.filename),'_',num2str(nr,'%0.4d'),'.tim'];
+      timname = [filepathstrname(OPT.filename),'_',num2str(j,'%0.4d'),'.tim'];
       
-       if any(isnan(R.data(j,:)))
-           disp(['Warning: ',timname,' contains NaN ',num2str(j)])
-       else
-           disp(['Confirm: ',timname,' is OK ',num2str(j)])
-       end
-       fprintf(fid,'%f %f %s\n',R.x(j),R.y(j),['''',timname,'''']); % x,y, <yet unused name of associated data file>
-       fid2 = fopen([OPT.path,OPT.timrelpath,filesep,timname],'w');
-       if OPT.header
-          fprintf(fid2,'# basePath=%s\n',char(R.basePath));
-          fprintf(fid2,'# source=%s\n',char(R.source));
-          fprintf(fid2,'# created at %s\n',datestr(now));
-          fprintf(fid2,'# created by %s\n','$Id');
-          fprintf(fid2,'# m=%g\n',R.m(j));
-          fprintf(fid2,'# n=%g\n',R.n(j));
-          fprintf(fid2,'# x=%f\n',R.x(j));
-          fprintf(fid2,'# y=%f\n',R.y(j));
-          if strcmpi(OPT.RefDate,'NOOS')
-            fprintf(fid2,'# RefDate=%s\n','NOOS');
-            fprintf(fid2,'# Tunit=%s\n','yyyymmddHHMM');
-          elseif isnumeric(OPT.RefDate)
-            fprintf(fid2,'# RefDate=%s\n',datestr(OPT.RefDate,'yyyy-mm-dd HH:MM:SS'));
-            fprintf(fid2,'# Tunit=%s\n','minute');
-          else
-            fprintf(fid2,'# RefDate=%s\n','ISO8601');
-          end
-       end
-       
-       for it=1:length(R.datenum)
-          if strcmpi(OPT.RefDate,'NOOS')
-          fprintf(fid2,'%s %f\n',datestr(R.datenum(it),'yyyymmddHHMM'),R.data(j,it));
-          elseif isnumeric(OPT.RefDate)
-          % Tunit            = S                   # Time units in MDU (H, M or S)
-          % make minutes
-          minutes = (R.datenum(it) - OPT.RefDate)*24*60;
-          if minutes >= 0 & OPT.only_future
-          fprintf(fid2,'%g %f\n',minutes,R.data(j,it));
-          else
-          end
-          else % ISO
-          fprintf(fid2,'%s %f\n',datestr(R.datenum(it),'yyyy-mm-dd HH:MM:SS'),R.data(j,it));
-          end
-       end    
-       fclose(fid2);
+      if ~any(intersect(j,OPT.timselect))
+         fprintf(fid,'%f %f\n',R.x(j),R.y(j)); % x,y
+      else
+         fprintf(fid,'%f %f %s\n',R.x(j),R.y(j),['''',timname,'''']); % x,y, <yet unused name of associated data file>
+
+         if any(isnan(R.data(j,:)))
+            disp(['Warning: ',timname,' contains NaN ',num2str(j)])
+         else
+            disp(['Confirm: ',timname,' is OK ',num2str(j)])
+         end
+
+         nr = nr + 1;
+         mkpath([OPT.path,OPT.timrelpath])
+         fid2 = fopen([OPT.path,OPT.timrelpath,filesep,timname],'w');
+         if OPT.header
+            fprintf(fid2,'# basePath=%s\n',char(R.basePath));
+            fprintf(fid2,'# source=%s\n',char(R.source));
+            fprintf(fid2,'# created at %s\n',datestr(now));
+            fprintf(fid2,'# created by %s\n','$Id');
+            fprintf(fid2,'# m=%g\n',R.m(j));
+            fprintf(fid2,'# n=%g\n',R.n(j));
+            fprintf(fid2,'# x=%f\n',R.x(j));
+            fprintf(fid2,'# y=%f\n',R.y(j));
+            if strcmpi(OPT.RefDate,'NOOS')
+              fprintf(fid2,'# RefDate=%s\n','NOOS');
+              fprintf(fid2,'# Tunit=%s\n','yyyymmddHHMM');
+            elseif isnumeric(OPT.RefDate)
+              fprintf(fid2,'# RefDate=%s\n',datestr(OPT.RefDate,'yyyy-mm-dd HH:MM:SS'));
+              fprintf(fid2,'# Tunit=%s\n','minute');
+            else
+              fprintf(fid2,'# RefDate=%s\n','ISO8601');
+            end
+         end
+         
+         for it=1:length(R.datenum)
+            if strcmpi(OPT.RefDate,'NOOS')
+            fprintf(fid2,'%s %f\n',datestr(R.datenum(it),'yyyymmddHHMM'),R.data(j,it));
+            elseif isnumeric(OPT.RefDate)
+            % Tunit            = S                   # Time units in MDU (H, M or S)
+            % make minutes
+            minutes = (R.datenum(it) - OPT.RefDate)*24*60;
+            if ~(minutes > 0 & OPT.only_future)
+            fprintf(fid2,'%g %f\n',minutes,R.data(j,it));
+            else
+            end
+            else % ISO
+            fprintf(fid2,'%s %f\n',datestr(R.datenum(it),'yyyy-mm-dd HH:MM:SS'),R.data(j,it));
+            end
+         end    
+         fclose(fid2);
+      end
    end
    fclose(fid);
-toc   
+   

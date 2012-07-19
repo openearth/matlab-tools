@@ -1,4 +1,4 @@
-function R = matroos_opendap_maps2series2mn(varargin)
+function varargout = matroos_opendap_maps2series2mn(varargin)
 %MATROOS_OPENDAP_MAPS2SERIES2MN  extract series from OPeNDAP maps using meta-data cache (TEST!!!)
 %
 %   data = matroos_opendap_maps2series2('datenum',<...>,'source',<...>,'m',<...>,'n',<...>)
@@ -81,16 +81,21 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
    OPT.basePath = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml
    OPT.source   = 'hmcn_kustfijn';
    OPT.datenum  = datenum([2009 2009],[12 12],[1 2]);
-   OPT.m        = {[4:109],[      4],[4:70]}; % to main land
+  %OPT.m        = {[4:109],[      4],[4:70]}; % to main land
+   OPT.m        = {[4: 66],      [4],[4:70]}; % to interface N'Sea & W'Sea
    OPT.n        = {[  122],[122:545],[ 545]};
    OPT.f        = [-1,1,1];
    OPT.var      = 'SEP';
    OPT.debug    = 0;
-   OPT.path     = '';
+   OPT.path     = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc_kinda_dd\';
    OPT.timrelpath = 'tim';
    OPT.RefDate    = datenum(2009,12,1); % if not 'NOOS' or datenum(), else ISO8601 'yyyy-mm-dd HH:MM:SS'
    OPT.nc         = 1;% store 2D array before splitting into ascii files
    
+   if nargin==0
+      varargout = {OPT};return
+   end
+
    OPT = setproperty(OPT,varargin);
 
 %% load cached meta-data from matroos_opendap_maps2series1
@@ -210,6 +215,7 @@ R.data    = data;clear data
    end
    
    R.pathdistance = distance(R.x,R.y);
+   R.history      = ['Timeseries created at ',datestr(now),' by $HeadURL$ $Id$'];
    
    if ~isempty(OPT.path)
       OPT.path = path2os([OPT.path,filesep]);
@@ -246,3 +252,5 @@ R.data    = data;clear data
                                               'path',OPT.path,...
                                         'timrelpath',OPT.timrelpath,...
                                            'RefDate',OPT.RefDate);
+                                           
+   varargout = {R};                                           

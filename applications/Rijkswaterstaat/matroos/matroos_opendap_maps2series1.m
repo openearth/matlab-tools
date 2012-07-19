@@ -1,4 +1,4 @@
-function D = matroos_opendap_maps2series1(varargin)
+function varargout = matroos_opendap_maps2series1(varargin)
 %MATROOS_OPENDAP_MAPS2SERIES1  get meta-data cache to extract series from OPeNDAP maps (TEST!!!)
 %
 %   D = matroos_opendap_maps2series1('source',<...>,'basePath',<...>)
@@ -59,6 +59,10 @@ warning('very preliminary test version')
    OPT.basePath = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml
    OPT.source   = 'hmcn_kustfijn';
    
+   if nargin==0
+      varargout = {OPT};return
+   end
+
    OPT = setproperty(OPT,varargin);
 
 %% get file names
@@ -90,6 +94,8 @@ warning('very preliminary test version')
    end
 
    save(OPT.source,'-struct','D')
+   
+   varargout = {D};
 
 %% TO DO get exact times from subet of times
 %  TO DO check time zone differences
