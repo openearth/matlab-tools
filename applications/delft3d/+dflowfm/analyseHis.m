@@ -81,19 +81,19 @@ function varargout = analyseHis(varargin)
 % $HeadURL$
 % $Keywords: $
 
-   OPT.nc          = '';
-   OPT.datelim     = [];
-   OPT.datestr     = 'mmm'; % for timeaxis
-   OPT.datefmt     = 'yyyy-mm-dd'; %  make empty if you do not want date in filename
-   OPT.t_tide      = 1;
-   OPT.label       = '';
-   OPT.names       = {}; % id names of stations to include
-   OPT.units       = [];
-   OPT.timezone    = '+00:00'; % common time zone for data and modle comparison in plots
-   OPT.model_timezone    = '+01:00'; % time zone of model is not present in model output (model not time zone aware)
+   OPT.nc             = '';
+   OPT.datelim        = [];
+   OPT.datestr        = 'mmm'; % for timeaxis
+   OPT.datefmt        = 'yyyy-mm-dd'; %  make empty if you do not want date in filename
+   OPT.t_tide         = 1;
+   OPT.label          = '';
+   OPT.names          = {}; % id names of stations to include
+   OPT.units          = [];
+   OPT.timezone       = '+00:00'; % common time zone for data and model comparison in plots
+   OPT.model_timezone = '+01:00'; % time zone of model is not present in model output (model is not time zone aware)
 
-   OPT.pause       = 0;
-   OPT.standard_name = 'sea_surface_height';
+   OPT.pause          = 0;
+   OPT.standard_name  = 'sea_surface_height';
    
 switch OPT.standard_name
 case 'sea_surface_height'
@@ -219,6 +219,11 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
                    ['model: ',filename(OPT.nc),' & data:',OPT.ncbase]}); % ,' @ ',datestr(now,'yyyy-mmm-dd')
    
 %%  process only if observational data is present
+    
+D.title = [OPT.label,char(D.station_name(:)'),' (',...
+                      char(D.station_id(:)'),') [',...
+                      num2str(D.lon),'\circ E, ',...
+                      num2str(D.lat),'\circ N]'];
 
  if ~isempty(D.datenum)
    
@@ -227,11 +232,6 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
     DM.(OPT.varname) = interp1(M.datenum,M.(OPT.varname)(:,ist),D.datenum)';  % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
     
     DM.(OPT.varname) = reshape(DM.(OPT.varname),size(D.(OPT.varname)));
-    
-    D.title = [OPT.label,char(D.station_name(:)'),' (',...
-                          char(D.station_id(:)'),') [',...
-                          num2str(D.lon),'\circ E, ',...
-                          num2str(D.lat),'\circ N]'];
     
 %% plot timeseries difference
 
@@ -312,13 +312,10 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
     nc_t_tide_data  = [fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist})                     ,'_t_tide.nc'];
     nc_t_tide_model = [fileparts(OPT.nc),filesep,'t_tide'     ,filesep,filename(OPT.nc),'_',mkvar(M.name{ist}),'_t_tide.nc'];
 
- if ~isempty(D.datenum)
-        
-    % remember stations for which model and data are present for tidal comparison
-    nc_t_tide_datas {end+1} = nc_t_tide_data ;
-    nc_t_tide_models{end+1} = nc_t_tide_model;
-
-    nc_t_tide(D.datenum,D.(OPT.varname),... % add period and midpoint
+ if isempty(D.datenum)
+     t_tide_msg = [];
+ else
+    t_tide_msg = nc_t_tide(D.datenum,D.(OPT.varname),... % add period and midpoint
       'station_id',D.station_id,...
     'station_name',D.station_name,...
           'period',OPT.datelim, ... % D.datenum([1 end]),... % use OPT.datelim
@@ -328,7 +325,6 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
          'ascfile',[fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist}),'_t_tide.t_tide'],...
           'ncfile',nc_t_tide_data);
     clear D
-
  end %   if ~isempty(D.datenum)
  
     nc_t_tide(M.datenum,M.(OPT.varname)(:,ist),...% add period and midpoint
@@ -342,6 +338,13 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
           'ncfile',nc_t_tide_model);
      
     if OPT.pause;pausedisp;end
+
+    % if t_tide succesful, remember stations 
+    % for which model and data are present for tidal comparison
+    if  ~isempty(t_tide_msg)
+       nc_t_tide_datas {end+1} = nc_t_tide_data ;
+       nc_t_tide_models{end+1} = nc_t_tide_model;
+    end
     
    end % OPT.t_tide
     
@@ -352,7 +355,6 @@ end;end % station loop
 %%  plot tidal analysis
 
    if OPT.t_tide
-
    %-% make sure these match pairwise
    %-% nc_t_tide_model              = sort(opendap_catalog(fileparts(OPT.nc),filesep,'t_tide'));
    %-% nc_t_tide_data               = sort(opendap_catalog(fileparts(OPT.nc),filesep,'t_tide_data');
