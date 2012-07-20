@@ -777,7 +777,7 @@ switch waarnemingssoort
    case 'Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater',units='cm';
    case 'Gemiddelde richting uit golfrichtingsspectrum van 30-500 mhz in graad t.o.v. kaart noorden in oppervlaktewater',units ='°';
    case 'Gem. golfperiode uit spectrale momenten m0+m2 van 30-500 mhz in s in oppervlaktewater',units ='s';
-   case 'Saliniteit in oppervlaktewater'                                     ,units='ppt';
+   case 'Saliniteit in oppervlaktewater'                                     ,units='psu';
    case 'Temperatuur in oC in oppervlaktewater'                              ,units='°C';
    case 'Chlorofyl-a in ug/l in oppervlaktewater'                            ,units='ug/l';
    case 'Percentage zuurstof in % in oppervlaktewater'                       ,units='%';

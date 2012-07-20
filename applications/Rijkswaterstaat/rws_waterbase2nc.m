@@ -197,6 +197,10 @@ for ivar=[OPT.donar_wnsnum]
              else
                 error(['no conversion defined for data units:',D.data.units])
              end
+          elseif strcmpi(D.data.units,'psu')
+             if strcmpi(OPT.units,'psu')
+                D.data.units       = 'psu';
+             end             
           elseif strcmpi(D.data.units,'cm t.o.v. NAP')
              D.data.units           = 'cm';
              D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
