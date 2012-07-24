@@ -63,12 +63,16 @@ function varargout = arc_info_binary(varargin)
 %                 tiles in the w001001.adf raster file.
 % * metadata.xml: contains log of process that created the file
 %
-% If you get out of memory errors, set the 'collectoutput' option to false.
+% If you get out of memory errors, set the 'output_mode' option.
 % This prevents matlab from allocating a lot of memory for empty tiles.
-% Interpret output like this example:
+% You can for instance only query the meta-data:
+% 
+%    M = arc_info_binary(name,'output_mode','metadata')
 %
-% Example Collect Output
-%     [x,y,Z,D] = arc_info_binary('base','testfile','collectoutput',false,'output_mode','nansparse');
+% Or you can set it to 'struct' or 'nansparse' as in this example 
+% for collecting sparse output:
+%
+%     [x,y,Z,D] = arc_info_binary('base','testfile','output_mode','nansparse');
 %     for t = 1:D.nTiles
 %         if numel(Z{t})>1
 %             % calculate x y coordinates of points
@@ -694,6 +698,8 @@ if OPT.data
                 end
             end
             Data = nansparse(xyz(:,1),xyz(:,2),xyz(:,3),D.nColumns,D.nRows)';
+        case 'metadata'
+            Data = D;
         case 'struct'
             if D.nRows<D.nRowsTile
                 nn = floor(D.nRows/D.HTileYSize);
