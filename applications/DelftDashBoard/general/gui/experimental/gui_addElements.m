@@ -651,7 +651,19 @@ function pushSelectFile_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
 
 el=elements(i).element;
 
-[filename, pathname, filterindex] = uigetfile(el.extension,el.selectiontext);
+if isfield(el.selectiontext,'variable')
+    selectiontext=gui_getValue(el,el.selectiontext.variable);
+else
+    selectiontext=el.selectiontext;
+end
+
+if isfield(el.extension,'variable')
+    extension=gui_getValue(el,el.extension.variable);
+else
+    extension=el.extension;
+end
+
+[filename, pathname, filterindex] = uigetfile(extension,selectiontext);
 
 if pathname~=0
     
@@ -684,7 +696,19 @@ el=elements(i).element;
 
 fnameori=gui_getValue(el,el.variable);
 
-[filename, pathname, filterindex] = uiputfile(el.extension,el.selectiontext,fnameori);
+if isfield(el.selectiontext,'variable')
+    selectiontext=gui_getValue(el,el.selectiontext.variable);
+else
+    selectiontext=el.selectiontext;
+end
+
+if isfield(el.extension,'variable')
+    extension=gui_getValue(el,el.extension.variable);
+else
+    extension=el.extension;
+end
+
+[filename, pathname, filterindex] = uiputfile(extension,selectiontext,fnameori);
 
 if pathname~=0
     

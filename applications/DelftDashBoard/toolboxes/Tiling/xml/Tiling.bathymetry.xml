@@ -2,17 +2,41 @@
 <!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
+    <tag>selectrawdataformmat</tag>
+    <style>popupmenu</style>
+    <position>60 110 130 20</position>
+    <text>Format</text>
+    <textposition>left</textposition>
+    <variable>handles.Toolbox(tb).Input.bathymetry.rawDataType</variable>
+    <type>string</type>
+    <tooltipstring>Select file format of raw data</tooltipstring>
+    <callback>ddb_TilingToolbox_bathymetry</callback>
+    <option1>selectrawdatatype</option1>    
+    <list>
+      <texts>
+        <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypesText</variable>
+      </texts>
+      <values>
+        <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypes</variable>
+      </values>
+    </list>
+  </element>  
+  <element>
     <tag>selectbathydatafile</tag>
     <style>pushselectfile</style>
-    <position>60 110 80 20</position>
+    <position>200 110 80 20</position>
     <text>Select File</text>
     <variable>bathymetry.dataFile</variable>
     <onchange>ddb_TilingToolbox_bathymetry</onchange>
     <option1>selectdataset</option1>
     <showfilename>yes</showfilename> 
-    <extension>*.asc</extension>
-    <selectiontext>Select data file (ArcInfo format)</selectiontext>
-    <tooltipstring>Select data file (ArcInfo format)</tooltipstring> 
+    <extension>
+      <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypeExtension</variable>
+    </extension>    
+    <selectiontext>
+      <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypeSelectionText</variable>
+    </selectiontext>
+    <tooltipstring>Select data file</tooltipstring> 
   </element> 
   <element>
     <tag>editx0</tag>

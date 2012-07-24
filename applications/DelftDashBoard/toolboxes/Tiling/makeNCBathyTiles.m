@@ -1,4 +1,4 @@
-function makeNCBathyTiles(fname1, dr, dataname, nrzoom, nx, ny, OPT)
+function makeNCBathyTiles(fname1, dr, dataname, rawdatatype, nrzoom, nx, ny, OPT)
 %MAKENCBATHYTILES  One line description goes here.
 %
 %   More detailed description goes here.
@@ -66,7 +66,20 @@ function makeNCBathyTiles(fname1, dr, dataname, nrzoom, nx, ny, OPT)
 % $Keywords: $
 
 %%
-[ncols,nrows,x00,y00,dx0]=readArcInfo(fname1,'info');
+
+switch lower(rawdatatype)
+    case{'arcinfogrid'}
+        [ncols,nrows,x00,y00,dx0]=readArcInfo(fname1,'info');
+    case{'arcbinarygrid'}
+        [x,y,z,m] = arc_info_binary([fileparts(fname1) filesep]);
+        z=flipud(z);
+        y=fliplr(y);
+        x00=m.X(1);
+        y00=m.Y(end);
+        dx0=m.X(2)-m.X(1);
+        ncols=m.nColumns;
+        nrows=m.nRows;
+end
 
 pbyp=0;
 
@@ -75,7 +88,10 @@ if ncols*nrows>250000000000
     pbyp=1;
 else
     % Read in one go!
-    [x,y,z]=readArcInfo(fname1);
+    switch lower(rawdatatype)
+        case{'arcinfogrid'}
+            [x,y,z]=readArcInfo(fname1);
+    end
 end
 if ~OPT.positiveup
     z=z*-1;
@@ -83,11 +99,6 @@ end
 
 imaketiles=1;
 imakemeta=1;
-
-% if nrzoom==1
-%     nx=ncols;
-%     ny=nrows;
-% end
 
 x0(1)=x00;
 y0(1)=y00;

@@ -76,15 +76,37 @@ else
             editAttributes;
         case{'generatetiles'}
             generateTiles;
+        case{'selectrawdatatype'}
+            selectRawDataType;
     end    
 end
+
+
+%%
+function selectRawDataType
+
+handles=getHandles;
+ii=strmatch(handles.Toolbox(tb).Input.bathymetry.rawDataType,handles.Toolbox(tb).Input.bathymetry.rawDataTypes,'exact');
+handles.Toolbox(tb).Input.bathymetry.rawDataTypeExtension=handles.Toolbox(tb).Input.bathymetry.rawDataTypeExtensions{ii};
+handles.Toolbox(tb).Input.bathymetry.rawDataTypeSelectionText=['Select Data File (' handles.Toolbox(tb).Input.bathymetry.rawDataTypesText{ii} ')'];
+setHandles(handles);
 
 %%
 function selectDataset
 
 handles=getHandles;
 
-[ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.Toolbox(tb).Input.bathymetry.dataFile,'info');
+switch lower(handles.Toolbox(tb).Input.bathymetry.rawDataType)
+    case{'arcinfogrid'}
+        [ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.Toolbox(tb).Input.bathymetry.dataFile,'info');
+    case{'arcbinarygrid'}
+        [x,y,z,m] = arc_info_binary([fileparts(handles.Toolbox(tb).Input.bathymetry.dataFile) filesep]);
+        clear x y z
+        x0=m.X(1);
+        y0=m.Y(end);
+        ncols=m.nColumns;
+        nrows=m.nRows;
+end
 
 % Determine default values for this dataset
 
@@ -167,6 +189,7 @@ end
 fname=handles.Toolbox(tb).Input.bathymetry.dataFile;
 dr=[handles.Toolbox(tb).Input.bathymetry.dataDir filesep handles.Toolbox(tb).Input.bathymetry.dataName filesep];
 dataname=deblank(handles.Toolbox(tb).Input.bathymetry.dataName);
+datatype=handles.Toolbox(tb).Input.bathymetry.rawDataType;
 nrzoom=handles.Toolbox(tb).Input.bathymetry.nrZoom;
 nx=handles.Toolbox(tb).Input.bathymetry.nx;
 ny=handles.Toolbox(tb).Input.bathymetry.ny;
@@ -195,7 +218,7 @@ end
 
 
 wb = waitbox('Generating Tiles ...'); 
-makeNCBathyTiles(fname,dr,dataname,nrzoom,nx,ny,OPT);
+makeNCBathyTiles(fname,dr,dataname,datatype,nrzoom,nx,ny,OPT);
 close(wb);
 
 % Now add data to data xml

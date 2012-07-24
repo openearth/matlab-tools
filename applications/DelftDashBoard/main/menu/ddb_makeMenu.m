@@ -137,7 +137,7 @@ end
 for i=1:handles.bathymetry.nrDatasets
     if ~isempty(handles.bathymetry.dataset(i).source)
         ii=strmatch(handles.bathymetry.dataset(i).source,sources);
-        handles=ddb_addMenuItem(handles,['Bathymetry' sources{ii}],handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable',enab);
+        handles=ddb_addMenuItem(handles,['Bathymetry' strrep(sources{ii},' ','')],handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable',enab);
     end
 end
 
