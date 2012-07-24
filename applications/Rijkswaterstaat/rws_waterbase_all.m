@@ -34,7 +34,7 @@ function rws_waterbase_all
                     332  346  347  360  363  ... % KjN   N   N  O2 PO4
                     364  380  491  492  493  ... %   P P04 NH4 N02 N03
                     541  560 1083    1  377 ];   % DSe  Si DOC zwl  pH (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
-   donar_wnsnum = [410] % Use this if you want only an update of one some specific parameter.
+   % donar_wnsnum = [410] % Use this if you want only an update of one some specific parameter.
    % DO get 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
    
    mfilename('fullpath')
