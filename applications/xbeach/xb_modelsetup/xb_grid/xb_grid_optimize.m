@@ -164,6 +164,8 @@ if OPT.rotate && ~isvector(z_w)
             xb_verbose(2,'alpha',alpha);
         else
             alpha = 0;
+            
+            xb_verbose(1,'Rotation is small, do not rotate');
         end
     end
 end

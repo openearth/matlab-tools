@@ -111,6 +111,34 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+%% adjust grid to xbeach standards
+
+if size(OPT.z,1) == length(OPT.x) && ...
+   size(OPT.z,2) == max(1,length(OPT.y)) && ...
+   size(OPT.z,1) ~= size(OPT.z,2)
+
+    OPT.z = OPT.z';
+    
+    xb_verbose(0,'Swap grid dimensions to be y,x');
+end
+
+if size(OPT.z,1) == 1
+    n = round(size(OPT.z,2)/2);
+    
+    if OPT.x(1) ~= min(OPT.x)
+        OPT.x = -OPT.x;
+        
+        xb_verbose(0,'Negate x-values to start with the lowest value');
+    end
+    
+    if mean(OPT.z(1:n)) > mean(OPT.x(n:end))
+        OPT.x = -fliplr(OPT.x);
+        OPT.z =  fliplr(OPT.z);
+        
+        xb_verbose(0,'Flip x-dimension to start with the most offshore point');
+    end
+end
+
 %% generate grid
 
 if OPT.optimize
