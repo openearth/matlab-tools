@@ -73,8 +73,7 @@ try %#ok<TRYNC>
     try
         TeamCity.postmessage('message', 'text', ['Run ' ...
                             'waterbase']);
-        rws_waterbase_all('download', 1, 'make_nc', 1, ...
-                          'make_catalog', 1, 'make_kml', 1)
+        rws_waterbase_all
         TeamCity.postmessage('message', 'text', ['Finished ' ...
                                 'running waterbase '])
     catch me
