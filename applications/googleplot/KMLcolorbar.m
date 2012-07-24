@@ -91,6 +91,7 @@ OPT.CBhorizonalalignment = [];
 OPT.CBopen               = 0; % KML_header 
 OPT.CBvisible            = 1; % KML_header
 OPT.CBdescription        = ''; % KML_header
+OPT.CBinterpreter        = 'tex';
 
 if nargin==0
     varargout = {OPT};

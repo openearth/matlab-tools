@@ -111,6 +111,7 @@ function varargout = KMLline(lat,lon,varargin)
    OPT.tessellate    = ~OPT.is3D;
    OPT.zScaleFun     = @(z) (z+0)*1;
    OPT.fid           = -1;
+   OPT.name          = '';
    
    if nargin==0
       varargout = {OPT};
@@ -269,7 +270,7 @@ output = '';
 % line properties
 
    OPT_line = struct(...
-       'name','',...
+       'name',{OPT.name},...
        'styleName',['line_style' num2str(OPT.line_nr(1))],...
        'tessellate',OPT.tessellate,...
        'visibility',OPT.visible);
@@ -301,6 +302,15 @@ output = '';
              OPT_fill.styleName = ['fill_style' num2str(OPT.fill_nr(ii))];
              if length(OPT.timeIn )>1, OPT_fill.timeIn = datestr(OPT.timeIn (ii),OPT.dateStrStyle);end
              if length(OPT.timeOut)>1,OPT_fill.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle);end
+         end
+         
+         % set line label
+         if iscell(OPT.name)
+             if length(OPT.name) >= ii
+                OPT_line.name = OPT.name{ii};
+             else
+                OPT_line.name = '';
+             end
          end
          
          % write the line

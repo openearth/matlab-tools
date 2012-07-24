@@ -152,7 +152,7 @@ for ii = 1:size(coords_index,1)
         
     % generate output
     output = [output sprintf([...
-        '<Placemark>\n'...
+        '<Placemark id="%s">\n'...      % OPT.name
         '%s'...                         % visibility
         '%s'...                         % timeSpan
         '<name>%s</name>\n'...,         % OPT.name
@@ -166,7 +166,7 @@ for ii = 1:size(coords_index,1)
         '</coordinates>\n',...
         '</LineString>\n'...
         '</Placemark>\n'],...
-        visibility,timeSpan,OPT.name,OPT.styleName,extrude,tessellate,altitudeMode,coordinateString)];
+        OPT.name,visibility,timeSpan,OPT.name,OPT.styleName,extrude,tessellate,altitudeMode,coordinateString)];
 end
 
 varargout = {output};

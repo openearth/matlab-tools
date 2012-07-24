@@ -87,6 +87,7 @@ OPT.CBcolorMap          =  @(m) jet(m);
 OPT.CBcolorSteps        =  20;
 OPT.CBcLim              =  [];
 OPT.colorbar            =  1;
+OPT.CBinterpreter       =  'tex';
 
 eol = char(10);
 

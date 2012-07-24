@@ -45,6 +45,7 @@ function varargout = KML_colorbar(OPT)
 
    OPT.template  = ~isempty(OPT.CBtemplateHor) | ~isempty(OPT.CBtemplateVer);
    OPT.halo      = 1; % when OPT.template
+   
 %   if ~OPT.template & OPT.halo
 %   OPT.CBbgcolor = [255 255 255]; % halo should be white
 %   end
@@ -126,15 +127,15 @@ function varargout = KML_colorbar(OPT)
 
    if OPT.template
         if     strcmpi(OPT.CBorientation      ,'vertical') 
-           text(-2.1,0.1,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle');
+           text(-2.1,0.1,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle','interpreter',OPT.CBinterpreter);
         elseif strcmpi(OPT.CBorientation      ,'horizontal')
-           text( 0.0,2.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','bottom');
+           text( 0.0,2.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','bottom','interpreter',OPT.CBinterpreter);
         end        
    else
       if     strcmpi(OPT.CBorientation      ,'vertical') 
-         text(0.5,0.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle');
+         text(0.5,0.0,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation',90,'verticalalignment','middle','interpreter',OPT.CBinterpreter);
       elseif strcmpi(OPT.CBorientation      ,'horizontal')
-         text(0.0,0.5,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','middle');
+         text(0.0,0.5,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','middle','interpreter',OPT.CBinterpreter);
       end
    set   (h.c,'FontWeight'   ,'bold'); % we need bold for both halo and normal irregular background
    end
