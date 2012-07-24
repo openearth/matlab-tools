@@ -84,6 +84,9 @@ OPT = struct( ...
 OPT = setproperty(OPT, varargin{:});
 
 if ismember(xs_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
+    
+    xb_verbose(0,'---');
+    xb_verbose(0,'Determine wave directional grid');
 
     % find mean wave direction, minimum wave direction and maximum wave
     % direction in wave bc time series
@@ -155,7 +158,8 @@ if ismember(xs_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
 
     % plot(thetagr,zeros(1,length(thetagr)),'g-s'); grid on;
 
-
+    xb_verbose(1,'Settings');
+    xb_verbose(2,{'thetamin','thetamax','dtheta','thetanaut'},{theta_min,theta_max',dtheta,1});
     %
 end
 

@@ -60,6 +60,7 @@ function xb_defpref()
 
 %% general
 setpref('xbeach', 'version', 1.0);
+setpref('xbeach', 'verbose', false);
 
 %% xb_io
 setpref('xbeach', 'dat_method', '');

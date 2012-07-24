@@ -92,6 +92,9 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+xb_verbose(0,'---');
+xb_verbose(0,'Start generation of XBeach model structure');
+
 %% create settings
 
 settings = xb_generate_settings(OPT.settings{:});
@@ -103,9 +106,15 @@ tide = xb_generate_tide(OPT.tide{:});
 
 %% create grid
 
+xb_verbose(0,'---');
+xb_verbose(0,'Determine representative hydraulic conditions');
+
 % couple hydraulics and bathymetry
 tp = xb_bc_extracttp(waves);
 wl = xb_bc_extractwl(tide);
+
+xb_verbose(1,'Water level',wl);
+xb_verbose(1,'Peak wave period',tp);
 
 xgrid = get_optval('xgrid', OPT.bathy);
 if isempty(get_optval('Tm', xgrid))
@@ -141,5 +150,13 @@ xb = xs_meta(xb, mfilename, 'input');
 if OPT.write
     fpath = fullfile(OPT.path, 'params.txt');
     xb_write_input(fpath, xb);
+    
+    xb_verbose(0,'---');
+    xb_verbose(0,'Write model to disk');
+    xb_verbose(1,'File',fpath);
 end
+
+%% end verbose
+
+xb_verbose(0,'---');
 

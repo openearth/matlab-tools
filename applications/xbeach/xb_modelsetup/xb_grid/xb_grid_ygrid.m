@@ -79,6 +79,8 @@ function ygr = xb_grid_ygrid(yin, varargin)
 
 %% read options
 
+xb_verbose(1,'Optimize alongshore grid');
+
 OPT = struct( ...
     'dymin', 5, ...
     'dymax', 20, ...
@@ -94,6 +96,8 @@ retry = false;
 if OPT.transition_distance < 0
     OPT.transition_distance = abs(OPT.transition_distance);
     retry = true;
+    
+    xb_verbose(2,'Enable optimization of transition distance');
 end
 
 %% make grid
@@ -101,14 +105,21 @@ end
 if length(yin) <= 1
     % one-dimensional model
     ygr = [0:2]*OPT.dymin;
+    
+    xb_verbose(2,'Stop optimization of one-dimensional model');
 else
     if OPT.dymin == OPT.dymax
         % equidistant grid
         ygr = min(yin):OPT.dymin:max(yin);
+        
+        xb_verbose(2,'Create equidistant alongshore grid');
+        xb_verbose(2,'Grid size',dymin);
     else
         % variable, two-dimensional grid
         
         err = Inf;
+        
+        xb_verbose(2,'Area type',OPT.area_type);
         
         while err>OPT.maxerror
             
@@ -116,6 +127,8 @@ else
             if all(OPT.transition_distance < 1)
                 OPT.transition_distance = OPT.transition_distance*dy;
             end
+            
+            xb_verbose(2,'Transition',OPT.transition_distance);
 
             switch OPT.area_type
                 case 'center'
@@ -139,9 +152,15 @@ else
             [ff nf gridf err] = grid_transition(OPT.dymin, OPT.dymax, OPT.transition_distance);
             ygr = [ygr(1)-fliplr(gridf) ygr ygr(end)+gridf];
 
-            if err>OPT.maxerror && retry
-                OPT.transition_distance = 1.1*OPT.transition_distance;
+            if retry
+                if err>OPT.maxerror
+                    OPT.transition_distance = 1.1*OPT.transition_distance;
+                end
+            else
+                break
             end
+            
+            xb_verbose(2,'Error',err);
         end
         
         if err>OPT.maxerror

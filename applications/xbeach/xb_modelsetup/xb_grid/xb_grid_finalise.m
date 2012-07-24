@@ -91,6 +91,8 @@ function [x y z] = xb_grid_finalise(x, y, z, varargin)
 
 %% read options
 
+xb_verbose(1,'Performing finalizing actions');
+
 OPT = struct( ...
     'actions', {{'lateral_extend' 'seaward_flatten' 'seaward_extend'}}, ...
     'n', 3, ...
@@ -129,6 +131,9 @@ function [x y z] = lateral_extend(x, y, z, OPT)
         x = [ones(n,1)*x(1,:) ; x ; ones(n,1)*x(end,:)];
         y = [(y(1,1)-[n*dy1:-dy1:dy1])'*ones(1,size(y,2)) ; y ; (y(end,1)+[dy2:dy2:n*dy2])'*ones(1,size(y,2))];
         z = [ones(n,1)*z(1,:) ; z ; ones(n,1)*z(end,:)];
+        
+        xb_verbose(2,'Extend in lateral direction');
+        xb_verbose(3,'Cells',n);
     end
     
 function [x y z] = lateral_extend_curvi(x, y, z, OPT)
@@ -221,6 +226,9 @@ function [x y z] = lateral_extend_curvi(x, y, z, OPT)
     y = [y1_ext y y2_ext];
     z = [z1_ext z z2_ext];
     
+    xb_verbose(2,'Extend in lateral direction (curvilinear)');
+    xb_verbose(3,'Cells',n);
+    
 %     figure; pcolor(x,y,z); hold on; axis image;
 %     plot([x2a;x2b],[y2a;y2b])
 %     plot([x1a;x1b],[y1a;y1b])
@@ -243,6 +251,10 @@ function [x y z] = lateral_sandwalls(x, y, z, OPT)
                 z(end-n+1:end,i) = interp1(y([end end-n],i),[z2 z(end-n,i)],y(end-n+1:end,i));
             end
         end
+        
+        xb_verbose(2,'Add sand walls to lateral boundaries');
+        xb_verbose(3,'Cells',n);
+        xb_verbose(3,'Height',z0);
     end
 
 function [x y z] = seaward_flatten(x, y, z, OPT)
@@ -254,6 +266,10 @@ function [x y z] = seaward_flatten(x, y, z, OPT)
     for i = 1:size(z,1)
         z(i,2:n) = interp1(x(i,[1 n+1]),[z0 z(i,n+1)],x(i,2:n));
     end
+    
+    xb_verbose(2,'Flatten offshore boundaries');
+    xb_verbose(3,'Cells',n);
+    xb_verbose(3,'Level',z0);
 
 function [x y z] = landward_extend(x, y, z, OPT)
     n = OPT.n;
@@ -266,6 +282,10 @@ function [x y z] = landward_extend(x, y, z, OPT)
     x = xn;
     y = yn;
     z = zn;
+    
+    xb_verbose(2,'Extand in landward direction until given level');
+    xb_verbose(3,'Cells',n);
+    xb_verbose(3,'Level',OPT.z0);
     
 function [xn yn zn] = seaward_extend(x, y, z, OPT)
     zmin = min(min(z(:,1)),OPT.zmin);
@@ -282,3 +302,7 @@ function [xn yn zn] = seaward_extend(x, y, z, OPT)
     [xn yn] = meshgrid([xt(1,1:OPT.n) x(1,:)]                 ,y(:,1));
 
     zn = interp2(xt,yt,zt,xn,yn);
+    
+    xb_verbose(2,'Extand in seaward direction until given level');
+    xb_verbose(3,'Cells',OPT.n);
+    xb_verbose(3,'Level',zmin);

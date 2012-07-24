@@ -117,11 +117,16 @@ if OPT.vardx == 0
     xgr = (xin(1):OPT.dxmin:xin(end));
     zgr = interp1(xin, zin, xgr);
     
+    xb_verbose(1,'Create equidistant cross-shore grid');
+    xb_verbose(2,'Grid size',dxmin);
+    
 elseif OPT.vardx == 1 && ~isempty(OPT.xgrid)
     
     % predefined xgrid
     xgr = OPT.xgrid;
     zgr = interp1(xin, zin, xgr);
+    
+    xb_verbose(1,'Use pre-defined cross-shore grid');
     
 elseif OPT.vardx == 1
     
@@ -163,6 +168,9 @@ elseif OPT.vardx == 1
         zgr(ii) = interp1(xin,zin,xtemp);
         xlast=xgr(ii);
     end
+    
+    xb_verbose(1,'Optimize cross-shore grid using CFL condition');
+    
 else
     error('Nope, this is not going to work; vardx = [0 1]');
 end
@@ -172,3 +180,5 @@ if xlast > xend
     xgr = xgr(1:end-1);
     zgr = zgr(1:end-1);
 end
+
+xb_verbose(2,'Grid cells',length(xgr));

@@ -91,6 +91,8 @@ function xb = xb_generate_bathy(varargin)
 
 %% read options
 
+xb_verbose(0,'---');
+
 OPT = struct( ...
     'x', [0 2550 2724.9 2775 2805 3030.6], ...
     'y', [], ...
@@ -124,15 +126,23 @@ end
 %% add bathy
 
 if any(any(isnan(ne)))
+    xb_verbose(0,'Add bathymetry');
+    
     xb = xb_grid_add('x', x, 'y', y, 'z', z, ...
         'posdwn', OPT.posdwn, ...
         'zdepth', OPT.zdepth, 'superfast', OPT.superfast, ...
         'xori',xori,'yori',yori);
 else
+    xb_verbose(0,'Add bathymetry and non-erodible layers');
+    
     xb = xb_grid_add('x', x, 'y', y, 'z', z, 'ne', ne, ...
         'posdwn', OPT.posdwn, ...
         'zdepth', OPT.zdepth, 'superfast', OPT.superfast, ...
         'xori',xori,'yori',yori);
 end
 
-xb = xs_set(xb, 'alfa', mod(alpha, 360));
+alpha = mod(alpha, 360);
+xb = xs_set(xb, 'alfa', alpha);
+
+xb_verbose(0,'Store grid rotation as settings');
+xb_verbose(1,'Alfa',alpha);

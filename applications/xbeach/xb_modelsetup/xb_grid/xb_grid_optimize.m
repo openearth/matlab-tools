@@ -85,6 +85,8 @@ function [xgrid ygrid zgrid negrid alpha xori yori] = xb_grid_optimize(varargin)
 
 %% read options
 
+xb_verbose(0,'Optimize bathymetry');
+
 OPT = struct( ...
     'x', [0 2550 2724.9 2775 2805 3030.6], ...
     'y', [], ...
@@ -116,11 +118,15 @@ OPT = rmfield(OPT, {'x' 'y' 'z'});
 % make sure coordinates are matrices
 if isvector(x_w) && isvector(y_w)
     [x_w y_w] = meshgrid(x_w, y_w);
+    
+    xb_verbose(1,'Create grid from vectors');
 end
 
 % set vertical positive direction
 if OPT.posdwn
     z_w = -z_w;
+    
+    xb_verbose(1,'Invert vertical dimension');
 end
 
 %% convert from world to xbeach coordinates
@@ -131,6 +137,10 @@ end
 xori = min(min(x_w));
 yori = min(min(y_w));
 
+xb_verbose(1,'Determine origin');
+xb_verbose(2,'X',xori);
+xb_verbose(2,'Y',yori);
+
 alpha = 0;
 
 % rotate grid and determine alpha
@@ -138,10 +148,20 @@ if OPT.rotate && ~isvector(z_w)
     if ~islogical(OPT.rotate) && ~ismember(OPT.rotate,[0 1])
         alpha = OPT.rotate;
         [x_r y_r] = xb_grid_rotate(x_r, y_r, alpha, 'origin', [xori yori]);
+        
+        xb_verbose(1,'Rotate grid around origin');
+        xb_verbose(2,'alpha',alpha);
     else
         alpha = xb_grid_rotation(x_r, y_r, z_w);
+        
+        xb_verbose(1,'Determine grid rotation');
+        xb_verbose(2,'alpha',alpha);
+        
         if abs(alpha) > 5
             [x_r y_r] = xb_grid_rotate(x_r, y_r, alpha, 'origin', [xori yori]);
+            
+            xb_verbose(1,'Rotate grid around origin');
+            xb_verbose(2,'alpha',alpha);
         else
             alpha = 0;
         end
@@ -161,9 +181,14 @@ if isvector(z_w)
 else
     % determine resolution and extent
     [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x_r, y_r);
+    
+    xb_verbose(1,'Determine grid resolution and extent');
+    xb_verbose(2,{'cellsize' 'xmin' 'xmax' 'ymin' 'ymax'},{cellsize xmin xmax ymin ymax});
 
     % crop grid
     if ischar(OPT.crop) && strcmpi(OPT.crop, 'select')
+        xb_verbose(1,'Enable user to crop grid visually');
+        
         fh = figure;
         pcolor(x_r, y_r, z_w);
         shading flat; colorbar;
@@ -176,8 +201,14 @@ else
 
     if ~islogical(OPT.crop) && isvector(OPT.crop)
         [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w, 'crop', OPT.crop);
+        
+        xb_verbose(1,'Cropping grid as requested');
+        xb_verbose(2,{'xmin' 'xmax' 'ymin' 'ymax'},{xmin xmax ymin ymax});
     elseif OPT.crop
         [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w);
+        
+        xb_verbose(1,'Cropping grid automatically');
+        xb_verbose(2,{'xmin' 'xmax' 'ymin' 'ymax'},{xmin xmax ymin ymax});
     end
 
     % empty memory
@@ -186,21 +217,33 @@ else
     % create dummy grid
     x_d = linspace(xmin, xmax, max(2,ceil((xmax-xmin)/cellsize)));
     y_d = linspace(ymin, ymax, max(2,ceil((xmax-xmin)/cellsize)));
+    
+    xb_verbose(1,'Determine maximum interpolation grid in XBeach coordinates');
 
     % rotate dummy grid to world coordinates
     [x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, alpha, 'origin', [xori yori]);
+    
+    xb_verbose(1,'Rotate interpolation grid to world coordinates');
 
     % interpolate elevation data to dummy grid
     z_d = interp2(x_w, y_w, z_w, x_d_w, y_d_w);
+    
+    xb_verbose(1,'Interpolate bathymetry to interpolation grid');
 
     % determine representative cross-section
     z_d_cs = max(z_d, [], 1);
+    
+    xb_verbose(1,'Determine representative cross-shore profile');
 end
 
 % remove nan's
 notnan = ~isnan(z_d_cs);
 x_d = x_d(notnan);
 z_d_cs = z_d_cs(notnan);
+
+xb_verbose(1,'Remove NaN''s from representative cross shore profile');
+xb_verbose(2,'Grid cells',length(notnan));
+xb_verbose(2,'NaN''s',sum(~notnan));
 
 % clear memory
 clear x_d_w y_d_w
@@ -214,19 +257,31 @@ clear y_d z_d z_d_cs
 
 [xgrid ygrid] = meshgrid(x_xb, y_xb);
 
+xb_verbose(1,'Combine alongshore and cross-shore grid');
+
 % interpolate bathymetry on grid, if necessary
 if isvector(z_w)
     % 1D grid
     zgrid = repmat(z_xb, length(y_xb), 1);
+    
+    xb_verbose(1,'Multiply cross-shore bathymetry in longsore direction');
+    xb_verbose(2,'Times',length(y_xb));
 
     % interpolate non-erodable layers
     if ~isempty(OPT.ne)
+        
+        xb_verbose(1,'Add non-erodible layer');
+        
         negrid = interp1(x_d, ne_w, x_xb);
         if islogical(OPT.ne)
             negrid(isnan(negrid)) = 0;
             idx = ~logical(round(negrid));
             negrid(idx) = OPT.zdepth+zgrid(idx);
             negrid(~idx) = 0;
+            
+            xb_verbose(2,'Depth',OPT.zdepth);
+        else
+            xb_verbose(2,'Depth','<variable>');
         end
         negrid = repmat(negrid, length(y_xb), 1);
     end
@@ -235,18 +290,29 @@ else
 
     % rotate xbeach grid to world coordinates
     [x_xb_w y_xb_w] = xb_grid_rotate(x_xb, y_xb, alpha, 'origin', [xori yori]);
+    
+    xb_verbose(1,'Rotate combined grid to world coordinates');
 
     % interpolate elevation data to xbeach grid
     zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
+    
+    xb_verbose(1,'Interpolate bathymetry to combined grid');
 
     % interpolate non-erodable layers
     if ~isempty(OPT.ne)
+        
+        xb_verbose(1,'Add non-erodible layer');
+        
         negrid = interp2(x_w, y_w, ne_w, x_xb_w, y_xb_w);
         if islogical(OPT.ne)
             negrid(isnan(negrid)) = 0;
             idx = ~logical(round(negrid));
             negrid(idx) = OPT.zdepth+zgrid(idx);
             negrid(~idx) = 0;
+            
+            xb_verbose(2,'Depth',OPT.zdepth);
+        else
+            xb_verbose(2,'Depth','<variable>');
         end
     end
 end
@@ -260,6 +326,12 @@ clear x_d x_w y_w z_w ne_w x_xb y_xb z_xb x_xb_w y_xb_w
 idx1 = ~all(isnan(zgrid),2);
 idx2 = ~all(isnan(zgrid),1);
 
+xb_verbose(1,'Remove rows and columns with only NaN''s');
+xb_verbose(2,'Rows',size(zgrid,1));
+xb_verbose(2,'Nan''s',sum(~idx1));
+xb_verbose(2,'Columns',size(zgrid,2));
+xb_verbose(2,'Nan''s',sum(~idx2));
+
 xgrid = xgrid(idx1, idx2);
 ygrid = ygrid(idx1, idx2);
 zgrid = zgrid(idx1, idx2);
@@ -270,6 +342,11 @@ end
 
 % interpolate nan's
 if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise) && OPT.finalise)
+    
+    xb_verbose(1,'Interpolate grid cells with NaN''s');
+    xb_verbose(2,'Grid cells',numel(zgrid));
+    xb_verbose(2,'Nan''s',sum(isnan(zgrid(:))));
+
     for i = 1:size(zgrid, 1)
         notnan = ~isnan(zgrid(i,:));
         if any(~notnan) && sum(notnan) > 1
@@ -317,6 +394,8 @@ if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise
         elseif d2 > 0
             negrid = [repmat(negrid(:,1), 1, d21) negrid repmat(negrid(:,end), 1, d22)];
         end
+        
+        xb_verbose(1,'Extend non-erodible layers to finalized grids');
     end
 end
 
@@ -324,4 +403,6 @@ end
 
 if isempty(OPT.ne)
     negrid = nan(size(zgrid));
+    
+    xb_verbose(1,'Add dummy for non-erodible layers');
 end

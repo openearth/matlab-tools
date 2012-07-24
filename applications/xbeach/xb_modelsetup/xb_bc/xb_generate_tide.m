@@ -72,6 +72,9 @@ function xb = xb_generate_tide(varargin)
 
 %% read options
 
+xb_verbose(0,'---');
+xb_verbose(0,'Generating surge timeseries');
+
 OPT = struct( ...
     'time', 0, ...
     'front', 5, ...
@@ -88,39 +91,48 @@ if isscalar(OPT.front)
     if isempty(OPT.back) || OPT.front == OPT.back
         % constant water level
         type = 0;
+        xb_verbose(1,'Type','Constant water level (0)');
     elseif isscalar(OPT.back)
         % constant water level, but different in front and back
         type = 1;
+        xb_verbose(1,'Type','Constant water level, but different in front and back (1)');
     else
         warning('OET:xbeach:tide', 'Invalid tide definition, using front water level in back');
         OPT.back = OPT.front;
         type = 0;
+        xb_verbose(1,'Type','Constant water level (0)');
     end
 elseif isvector(OPT.front)
     if isscalar(OPT.back)
         % varying water level in front, constant in back
         type = 1;
+        xb_verbose(1,'Type','Varying water level in front, constant in back (1)');
     elseif isvector(OPT.back)
         % varying water level in front and back
         type = 2;
+        xb_verbose(1,'Type','Varying water level in front and back (2)');
     else
         warning('OET:xbeach:tide', 'Invalid tide definition, using front water level in back');
         OPT.back = OPT.front;
         type = 2;
+        xb_verbose(1,'Type','Varying water level in front and back (2)');
     end
 elseif ndims(OPT.front) == 2 && ndims(OPT.back) == 2 && ...
         size(OPT.front, 2) == 2 && size(OPT.back, 2) == 2
     % varying water level in four corners
     type = 4;
+    xb_verbose(1,'Type','Varying water level in four corners (4)');
 else
     error('Invalid tide definition');
 end
 
 %% generate tide
 
-l = max([2 length(OPT.time) size(OPT.front, 1) size(OPT.back, 1)]);
+[zs0file l] = get_tide_file(OPT.time, OPT.front, OPT.back, type);
 
-zs0file = get_tide_file(OPT.time, OPT.front, OPT.back, type);
+xb_verbose(1,'Length',l);
+xb_verbose(1,'Settings');
+xb_verbose(2,fieldnames(OPT),struct2cell(OPT));
 
 xb = xs_empty();
 
@@ -142,7 +154,7 @@ xb = xs_meta(xb, mfilename, 'input');
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function xb = get_tide_file(t, front, back, type)
+function [xb l] = get_tide_file(t, front, back, type)
 
 xb = xs_empty();
 

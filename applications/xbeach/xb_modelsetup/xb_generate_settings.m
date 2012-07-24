@@ -77,7 +77,14 @@ for i = 1:length(values)
 	OPT.(names{i}) = values{i};
 end
 
+names = fieldnames(OPT);
+values = struct2cell(OPT);
+
 %% generate settings
+
+xb_verbose(0,'---');
+xb_verbose(0,'Generating settings');
+xb_verbose(1,names,values);
 
 xb = xs_empty();
 

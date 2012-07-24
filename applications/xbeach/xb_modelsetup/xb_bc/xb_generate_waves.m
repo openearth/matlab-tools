@@ -84,6 +84,9 @@ function xb = xb_generate_waves(varargin)
 
 %% read options
 
+xb_verbose(0,'---');
+xb_verbose(0,'Generating wave timeseries');
+
 type = 'jonswap';
 
 idx = strcmpi('type', varargin(1:2:end));
@@ -104,6 +107,8 @@ switch type
         );
     
         instat = 'jons';
+        
+        xb_verbose(1,'Type','JONSWAP');
     case 'vardens'
         OPT = struct( ...
             'type', type, ...
@@ -113,6 +118,8 @@ switch type
         );
     
         instat = 'vardens';
+        
+        xb_verbose(1,'Type','Variance density');
 end
 
 OPT.type = type;
@@ -135,7 +142,11 @@ for i = 1:length(f)
     end
 end
 
+xb_verbose(1,'Timesteps',l);
+
 %% generate waves
+
+xb_verbose(1,'Settings');
 
 xb = xs_empty();
 
@@ -149,9 +160,15 @@ waves = xs_meta(waves, mfilename, 'waves');
 
 xb = xs_set(xb, 'instat', instat, 'bcfile', waves);
 
+xb_verbose(2,f,struct2cell(OPT));
+
 % put timestep info in params.txt if no filelist is generated
 if l == 1
     xb = xs_set(xb, 'rt', OPT.duration, 'dtbc', OPT.timestep);
+    
+    xb_verbose(0,'Store duration as settings');
+    xb_verbose(1,'Duration',OPT.duration);
+    xb_verbose(1,'Timestep',OPT.timestep);
 end
 
 % include swtable, if necessary
