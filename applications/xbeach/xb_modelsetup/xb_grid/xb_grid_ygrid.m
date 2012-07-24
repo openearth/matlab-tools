@@ -153,7 +153,7 @@ else
             ygr = [ygr(1)-fliplr(gridf) ygr ygr(end)+gridf];
 
             if retry
-                if err>OPT.maxerror
+                if err>OPT.maxerror && retry
                     OPT.transition_distance = 1.1*OPT.transition_distance;
                 end
             else
@@ -164,10 +164,12 @@ else
         end
         
         if err>OPT.maxerror
-            warning(sprintf('Relative error in alongshore grid transition > %d%%',round(err*100)));
+            warning(sprintf('Relative error in alongshore grid transition > %d%%',floor(err*100)));
         end
         
         % extend till borders
         ygr = [fliplr(ygr(1)-OPT.dymax:-OPT.dymax:min(yin)) ygr ygr(end)+OPT.dymax:OPT.dymax:max(yin)];
+        
+        xb_verbose(2,'Grid cells',length(ygr));
     end
 end

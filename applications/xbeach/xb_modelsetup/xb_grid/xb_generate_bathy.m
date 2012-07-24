@@ -126,14 +126,14 @@ end
 %% add bathy
 
 if any(any(isnan(ne)))
-    xb_verbose(0,'Add bathymetry');
+    xb_verbose(0,'Store bathymetry as settings');
     
     xb = xb_grid_add('x', x, 'y', y, 'z', z, ...
         'posdwn', OPT.posdwn, ...
         'zdepth', OPT.zdepth, 'superfast', OPT.superfast, ...
         'xori',xori,'yori',yori);
 else
-    xb_verbose(0,'Add bathymetry and non-erodible layers');
+    xb_verbose(0,'Store bathymetry and non-erodible layers as settings');
     
     xb = xb_grid_add('x', x, 'y', y, 'z', z, 'ne', ne, ...
         'posdwn', OPT.posdwn, ...

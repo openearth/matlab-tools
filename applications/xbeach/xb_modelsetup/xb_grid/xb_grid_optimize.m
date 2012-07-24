@@ -219,11 +219,14 @@ else
     y_d = linspace(ymin, ymax, max(2,ceil((xmax-xmin)/cellsize)));
     
     xb_verbose(1,'Determine maximum interpolation grid in XBeach coordinates');
+    xb_verbose(2,'Cells X',length(x_d));
+    xb_verbose(2,'Cells Y',length(y_d));
 
     % rotate dummy grid to world coordinates
     [x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, alpha, 'origin', [xori yori]);
     
     xb_verbose(1,'Rotate interpolation grid to world coordinates');
+    xb_verbose(2,'Alpha',alpha);
 
     % interpolate elevation data to dummy grid
     z_d = interp2(x_w, y_w, z_w, x_d_w, y_d_w);
