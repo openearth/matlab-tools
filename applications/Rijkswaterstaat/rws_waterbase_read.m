@@ -775,10 +775,10 @@ switch waarnemingssoort
    case 'Waterhoogte in cm t.o.v. mean sea level in oppervlaktewater'         ,units='cm';
    case 'Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater',units='cm';
    case 'Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater',units='cm';
-   case 'Gemiddelde richting uit golfrichtingsspectrum van 30-500 mhz in graad t.o.v. kaart noorden in oppervlaktewater',units ='°';
+   case 'Gemiddelde richting uit golfrichtingsspectrum van 30-500 mhz in graad t.o.v. kaart noorden in oppervlaktewater',units ='?';
    case 'Gem. golfperiode uit spectrale momenten m0+m2 van 30-500 mhz in s in oppervlaktewater',units ='s';
    case 'Saliniteit in oppervlaktewater'                                     ,units='psu';
-   case 'Temperatuur in oC in oppervlaktewater'                              ,units='°C';
+   case 'Temperatuur in oC in oppervlaktewater'                              ,units='degrees_C';
    case 'Chlorofyl-a in ug/l in oppervlaktewater'                            ,units='ug/l';
    case 'Percentage zuurstof in % in oppervlaktewater'                       ,units='%';
    case 'Kjeldahl stikstof in mg/l uitgedrukt in stikstof in oppervlaktewater',units='mg/l';
@@ -798,6 +798,7 @@ switch waarnemingssoort
    case 'Som nitraat en nitriet in mg/l uitgedrukt in stikstof / na filtratie in oppervlaktewater',units='mg/l';
    case 'Extinctiecoefficient in /m in oppervlaktewater'                     ,units='/m';
 
+   case 'Gem. golfperiode uit spectrale momenten m0+m2 van 30-500 mhz in s in oppervlaktewater', units='s';    
    otherwise, warning(['Units extraction not yet implemented for ',waarnemingssoort]);
    units = '';
 end
