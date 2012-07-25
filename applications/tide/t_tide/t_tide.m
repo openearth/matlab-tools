@@ -15,6 +15,13 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 % These properties are:
 %
 %       'interval'       Sampling interval (hours), default = 1. 
+%                        Interval can either be a scalar or a vector with 
+%                        length (length(XIN)-1). An irregularly-spaced time
+%                        vector 'time' in Matlab datenumbers (as often encounted 
+%                        with ADCP data) can be analyzed as follows. Note this
+%                        is a non-canonical t_tide extension only in OpenEarthTools.
+%
+%                        T_TIDE(XIN,'int',diff(time).*24,'start',time(1),...)
 %          
 %   The next two are required if nodal corrections are to be computed,
 %   otherwise not necessary. If they are not included then the reported
@@ -79,7 +86,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                        Matrix of strings - names of constituents to
 %                                   use (useful for testing purposes).
 %  
-%   Calculation of confidence limits.
+%   Calculation of confidence limits (Boostrap not possible with non-equidistant time)
 %       'error'          'wboot'  - Boostrapped confidence intervals 
 %                                   based on a correlated bivariate 
 %                                   white-noise model.
@@ -142,11 +149,10 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %
 % Pawlowicz, R., B. Beardsley, and S. Lentz, "Classical Tidal 
 %   "Harmonic Analysis Including Error Estimates in MATLAB 
-%    using T_TIDE", Computers and Geosciences, 28, 929-937 (2002).
+%    using T_TIDE", <a href="http://www.eos.ubc.ca/~rich/#T_Tide">Computers and Geosciences, 28, 929-937 (2002)</a>.
 %
 % (citation of this article would be appreciated if you find the
 %  toolbox useful).
-
 
 % R. Pawlowicz 11/8/99 - Completely rewritten from the transliterated-
 %                        to-matlab IOS/Foreman fortran code by S. Lentz
@@ -170,6 +176,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                       isfinite for finite.
 %              23/3/11 - Corrected my conversion from psd to pwelch, thanks
 %                       to Dan Codiga and (especially) Evan Haug!
+%              25/7/12 - Gerben J. de Boer added support for non-equidistant time vector.
 
 %
 % Version 1.3
@@ -178,21 +185,21 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 
 % ----------------------Parse inputs-----------------------------------
 
-ray=1;
-dt=1;
-fid=1;
-stime=[];
-lat=[];
-corr_fs=[0 1e6];
-corr_fac=[1  1];
-secular='mean';
-inf.iname=[];
-inf.irefname=[];
-shallownames=[];
-constitnames=[];
-errcalc='cboot';
-synth=2;
-lsq='best';
+ray          = 1;
+dt           = 1;
+fid          = 1;
+stime        = [];
+lat          = [];
+corr_fs      = [0 1e6];
+corr_fac     = [1  1];
+secular      = 'mean';
+inf.iname    = [];
+inf.irefname = [];
+shallownames = [];
+constitnames = [];
+errcalc      = 'cboot';
+synth        = 2;
+lsq          = 'best';
 
 k=1;
 while length(varargin)>0,
@@ -282,16 +289,34 @@ if strcmp(lsq(1:3),'bes'),  % Set matrix method if auto-choice.
  end;
 end;
  
-if nobs*dt> 18.6*365.25*24,  % Long time series
-  longseries=1; ltype='full';
-else
-  longseries=0; ltype='nodal';
-end;
-        		
 nobsu=nobs-rem(nobs-1,2);% makes series odd to give a center point
 
-t=dt*([1:nobs]'-ceil(nobsu/2));  % Time vector for entire time series,
-                                 % centered at series midpoint. 
+if prod(length(dt)) >1
+   if ~(length(dt)==(nobs-1))
+      error('time vector should have same length as XIN')
+   end
+   t  = [0;cumsum(dt(:))];   % construct time vector
+   t  = t - t(end)/2;     % Time vector for entire time series,
+                          % centered at series midpoint. 
+
+   % check whether full time series is equidistant at machine precision
+   % so we can perform the bootstrap error analysis after all
+   if max(abs(diff(dt))) > eps('single')
+      dt0 = dt;
+   end
+   dt = (t(end) - t(1))./(nobs-1); % average dt to ensure results for equidistant vector match scaler dt
+   
+   if rem(nobs-1,2)==1
+       t = t + dt./2;
+   end
+   
+else
+   
+   t=dt*([1:nobs]'-ceil(nobsu/2));  % Time vector for entire time series,
+                                    % centered at series midpoint. 
+end
+
+t(:)'
 
 if ~isempty(stime),
   centraltime=stime+floor(nobsu./2)./24.0*dt;
@@ -299,6 +324,12 @@ else
   centraltime=[];
 end;
 
+if nobs*dt> 18.6*365.25*24,  % Long time series
+  longseries=1; ltype='full';
+else
+  longseries=0; ltype='nodal';
+end;
+        		
 % -------Get the frequencies to use in the harmonic analysis-----------
 
 [nameu,fu,ju,namei,fi,jinf,jref]=constituents(ray/(dt*nobsu),constitnames,...
@@ -494,6 +525,7 @@ if ii,
   nameu=[nameu;namei(ii,:)];
 end;
 
+
 % --------------Error Bar Calculations---------------------------------
 %
 % Error bar calcs involve two steps:
@@ -516,8 +548,10 @@ end;
 xr=fixgaps(xres); % Fill in "internal" NaNs with linearly interpolated
                   % values so we can fft things.
 nreal=1;
-
-if strmatch(errcalc(2:end),'boot'),
+if any(strmatch(errcalc(2:end),'boot')) && exist('dt0','var')
+   % non-equidistant time series do not allow for fft
+   error(['When ''dt'' is a non-equidistant vector, error estimate with ''',errcalc,''' not possible, only ''lin''.'])
+elseif any(strmatch(errcalc(2:end),'boot')) && ~exist('dt0','var')
   fprintf('   Using nonlinear bootstrapped error estimates\n');
   
   % "noise" matrices are created with the right covariance structure
@@ -538,7 +572,7 @@ if strmatch(errcalc(2:end),'boot'),
   epsm=angle(AM)*180/pi;
   ap=abs(AP);
   am=abs(AM);
-elseif strmatch(errcalc,'linear'),
+elseif any(strmatch(errcalc,'linear')) | exist('dt0','var') % non-equidistant time series do not allow for fft
   fprintf('   Using linearized error estimates\n');
   %
   % Uncertainties in analyzed amplitudes are computed in different
@@ -1026,9 +1060,11 @@ Pxi=Pxi/2/dt;
 Pxc=Pxc/2/dt;
 
 df=fx(3)-fx(2);
+if length(fu) <= length(fx) % prevent issue with low-res series as t=0:2:24 [for unit tests]
 Pxr(round(fu./df)+1)=NaN ; % Sets Px=NaN in bins close to analyzed frequencies
 Pxi(round(fu./df)+1)=NaN ; % (to prevent leakage problems?).
 Pxc(round(fu./df)+1)=NaN ; 
+end
 
 Pxrave=zeros(nfband,1);
 Pxiave=zeros(nfband,1);
