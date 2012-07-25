@@ -138,6 +138,7 @@
     <text>Make Initial Conditions</text>
     <callback>ddb_ModelMakerToolbox_quickMode</callback>
     <option1>generateinitialconditions</option1>
+    <enable>0</enable>
   </element>
   <element>
     <tag>editzmax</tag>
@@ -179,6 +180,7 @@
     <tooltipstring>Select tide database for initial conditions</tooltipstring>
     <variable>activeTideModelIC</variable>
     <type>integer</type>
+    <enable>0</enable>
     <list>
       <texts>
         <variable>handles.tideModels.longNames</variable>
