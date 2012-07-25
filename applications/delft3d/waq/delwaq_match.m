@@ -1,5 +1,5 @@
 function StructOut = delwaq_match(StructIn,SubstanceNames, SegmentNames,Time,binTime)
-%DELWAQ_MATCH  Gives back Delwaq files intersection characteristics
+%DELWAQ_INTERSECT Gives back Delwaq files intersection characteristics
 %
 %   STRUCTOUT = DELWAQ_INTERSECT(STRUCTIN,SUBSTANCENAMES,SEGMENTNAMES,TIME)
 %   STRUCTIN  = DELWAQ_INTERSECT(File1,File2,...,FileN)
@@ -12,19 +12,14 @@ function StructOut = delwaq_match(StructIn,SubstanceNames, SegmentNames,Time,bin
 %   BINTIME = 1 If the vector TIME should be used as time intervals
 %
 %   See also: DELWAQ, DELWAQ_INTERSECT, DELWAQ_CONC, DELWAQ_DIFF, DELWAQ_RES
-%             DELWAQ_TIME, DELWAQ_STAT, WAQ
+%             DELWAQ_TIME, DELWAQ_STAT
 
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-11 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
-
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+%--------------------------------------------------------------------------
 
 StructOut = StructIn;
 

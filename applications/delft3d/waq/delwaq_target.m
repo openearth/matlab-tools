@@ -1,7 +1,7 @@
-function structOut = delwaq_target(File1,File2,File2Save,SubstanceNames,SegmentsNames,Type)
+function structOut = delwaq_target(File1,File2,SubstanceName,Type,Tinter)
 %DELWAQ_TARGET Read Delwaq files and write a Difference file.
 %
-%   STRUCTOUT = DELWAQ_TARGET(FILE1,FILE2,FILE2SAVE,SUBSTANCENAMES,TYPE)
+%   STRUCTOUT = DELWAQ_TARGET(FILE1,FILE2,FILE2SAVE,SUBSTANCENAME,SUBSTANCENAME,TYPE)
 %   Reads FILE1 and FILE2, find the matchig fields:
 %   substances/segments/stations in both files and write the statistics to
 %   plot a target diagram
@@ -12,62 +12,41 @@ function structOut = delwaq_target(File1,File2,File2Save,SubstanceNames,Segments
 %   STRUCTOUT = DELWAQ_TARGET(...,TYPE) specifies alternate methods.  
 %   The default is 'none'.  Available methods are:
 %  
-%       'none' - Difference: File1-File2
-%       'log'  - stat of natural logarithm: log(File1)-log(File2)
-%       'log10'- Difference of base 10 logarithm: log10(File1)-log10(File2)
+%       'none'    - Difference: File1-File2
+%       'log'     - stat of natural logarithm: log(File1)-log(File2)
+%       'log10'   - Difference of base 10 logarithm: log10(File1)-log10(File2)
+%       'log_a'   - stat of natural logarithm: log(File1)-log(File2)
+%       'log10_a' - Difference of base 10 logarithm: log10(File1)-log10(File2)
 %       'fwf'  - For Salinity: Fresh water fraccion
 
 % 
 %   See also: DELWAQ, DELWAQ_CONC, DELWAQ_RES, DELWAQ_TIME, DELWAQ_STAT, 
-%             DELWAQ_INTERSECT, WAQ
+%             DELWAQ_INTERSECT
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
+%--------------------------------------------------------------------------
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
-
-if nargin<6
+if nargin<4
     Type = 'none';
 end
-if nargin<4
-   SubstanceNames = 0;
-end
 if nargin<5
-   SegmentsNames = 0;
+    Tinter = 0;
 end
-
-[~, name1, ext1] = fileparts(File1);
-[~, name2, ext2] = fileparts(File2);
-
-if strcmp(Type,'none')
-   fileFlag = 'TARGET';
-   headerFlag = 'Target:';
-elseif strcmp(Type,'log')
-   fileFlag = 'TARGETLOG';
-   headerFlag = 'Target: (log)';
-elseif strcmp(Type,'log10')
-   fileFlag = 'TARGETLOG10';
-   headerFlag = 'Target: (log10)';
-elseif strcmp(Type,'fwf')
-   fileFlag = 'TARGETFWF';
-   headerFlag = 'Target: (fwf)';
-
+if nargin<3
+   error('The name of the substance is not provided');
+elseif nargin>=3 && iscell(SubstanceName) && length(SubstanceName)>1
+   SubstanceName = SubstanceName{1};
+   warning('Too many substances, only the first substance will be used') %#ok<*WNTAG>
 end
-
-if nargin<3 ||(nargin>=3 && isempty(File2Save))
-    File2Save = [fileFlag '(' name1 '-' name2 ')' ext1];
-end
+SegmentsNames = 0;
 
 S = delwaq_intersect(File1,File2);
 
 % Matching SubsName and SegmentsNames
-S = delwaq_match(S,SubstanceNames,SegmentsNames);
+S = delwaq_match(S,SubstanceName,SegmentsNames);
 
 
 if isempty(S.Subs)
@@ -80,31 +59,11 @@ if isempty(S.Segm)
    return 
 end
 
-% Header
-Header = {headerFlag; ['(' name1 ext1 ') - (' name2 ext2 ')']};
-Header = char(Header);
 
 % Opening Files
 struct1 = delwaq('open',File1);
 struct2 = delwaq('open',File2);
-
-% Setting time reference
-T0 = S.T0;
-refTime =  [T0 1];
-
-        
-% New substance name
-stat = target_stat([1 2 3], [0 0 0], [1 2 3], [0 0 0],'none');
-nameStat = fieldnames(stat);
-k = 1;
-for iname = 1:length(nameStat)
-    for isub = 1:length(S.Subs)
-        SubsName2{k} = [S.Subs{isub} '.' nameStat{iname}]; %#ok<*AGROW>
-        k = k+1;
-    end
-end
-
-data = nan(length(SubsName2),S.nSubs);
+k = 0;
 
 switch S.extId
     case 'map'
@@ -115,22 +74,41 @@ switch S.extId
     for iseg = 1:S.nSegm
         disp(['delwaq_target progress: ' num2str(iseg) '/' num2str(S.nSegm)])
 
-        for isub = 1:S.nSubs
-            [time1 data1] = delwaq('read',struct1,S.iSubs{1}(isub),S.iSegm{1}(iseg),0);
-            [time2,data2] = delwaq('read',struct2,S.iSubs{2}(isub),S.iSegm{2}(iseg),0);        
+        [time1, data1] = delwaq('read',struct1,S.iSubs{1}(1),S.iSegm{1}(iseg),0);
+        [time2, data2] = delwaq('read',struct2,S.iSubs{2}(1),S.iSegm{2}(iseg),0);
+        inot1 = isnan(data1);
+        time1(inot1) = [];
+        data1(inot1) = [];
+           
+        inot2 = isnan(data2);
+        time2(inot2) = [];
+        data2(inot2) = [];
             
-            % Target diagram information
-            stat = target_stat(time1, data1, time2, data2, Type);
-            localdata = cell2mat(struct2cell(stat));
-            jsub = 1+(size(localdata,1)*(isub-1)):size(localdata,1)*isub;
-            data(jsub,iseg) = localdata;
+        if Tinter~=0
+           [it1 it2]  = time_near(time1,time2,Tinter);
+           time1 = time1(it1);
+           time2 = time1;
+           data1 = data1(it1);
+           data2 = data2(it2);
         end
-        
+            
+        % Target diagram information
+        if length(time1)>2
+           k = k+1;
+           structOut(k).subsName = S.Subs{1};
+           structOut(k).obs_name = S.Segm{iseg};            
+           TS = target_stat(time1, data1, time2, data2, Type); %#ok<*AGROW>
+           tnames = fieldnames(TS);
+           for j = 1:length(tnames)
+               structOut(k).(tnames{j}) = TS.(tnames{j});
+           end
+        end 
     end
     
-   % Writing a File
-   structOut = delwaq('write',File2Save,Header,SubsName2,S.Segm,refTime,time1(end),data);
-    
+end
+
+if ~exist('structOut','var')
+   structOut = [];
 end
 
 function S = target_stat(modelTime, modelValues, obsTime, obsValues, Type)
@@ -178,6 +156,21 @@ switch Type
         obsValues(obsValues<=0) = nan;
         modelValues = log10(modelValues);
         obsValues   = log10(obsValues);
+    case 'loga'        
+        modelValues(modelValues<=0) = nan;
+        obsValues(obsValues<=0) = nan;
+        modelValues = log(modelValues+1);
+        obsValues   = log(obsValues+1);
+    case 'log10a'        
+        modelValues(modelValues<=0) = nan;
+        obsValues(obsValues<=0) = nan;
+        modelValues = log10(modelValues+1);
+        obsValues   = log10(obsValues+1);
+    case 'log10b'        
+        modelValues(modelValues<=0) = nan;
+        obsValues(obsValues<=0) = nan;
+        modelValues = log10(modelValues);
+        obsValues   = log10(obsValues);
     case 'fwf'        
         modelValues(modelValues<=0) = nan;
         obsValues(obsValues<=0) = nan;
@@ -220,6 +213,8 @@ end
 
 S.model_comb = combined.modelValues;
 S.obs_comb = combined.obsValues;
+S.model_datenum = combined.modelTime;
+S.obs_datenum = combined.obsTime;
 
 %% compute means and stddev of normal distributions
 S.model_mean = nanmean(combined.modelValues);
@@ -244,7 +239,11 @@ S.RMSD = sqrt(nanmean((S.model_comb-S.obs_comb).^2));
 S.bias = S.model_mean - S.obs_mean;
 % unbiased RMS difference
 %S.unbiased_RMSD = sqrt(S.RMSD^2 - S.bias^2);
-S.unbiased_RMSD = sqrt(nanmean((S.model_res-S.obs_res).^2));
+if strcmpi(Type,'log10b')
+   S.unbiased_RMSD = sqrt(nanmean(((10.^S.model_res)-(10.^S.obs_res)).^2));
+else
+   S.unbiased_RMSD = sqrt(nanmean((S.model_res-S.obs_res).^2));
+end
 % normalized bias
 S.normalized_bias = (S.model_mean - S.obs_mean)/ ...
     S.obs_stddev;
@@ -270,5 +269,5 @@ S.xTarget = sign(S.model_stddev-S.obs_stddev)*...
     S.normalized_unbiased_RMSD;
 S.yTarget = S.normalized_bias;
 
-S = rmfield(S, {'datenum' 'model_comb' 'obs_comb' 'model_res' 'obs_res'});
+% S = rmfield(S, {'datenum' 'model_comb' 'obs_comb' 'model_res' 'obs_res'});
 

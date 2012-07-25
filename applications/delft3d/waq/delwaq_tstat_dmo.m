@@ -1,4 +1,4 @@
-function structOut = delwaq_stat(File,File2Save,SubstanceNames,IntervalTime,Type)
+function structOut = delwaq_tstat_dmo(File,File2Save,SubstanceNames,dmoFile,IntervalTime,Type)
 %DELWAQ_STAT Read Delwaq files values and write a statistics file.
 %
 %   STRUCTOUT = DELWAQ_STAT(FILE,FILE2SAVE,SUBSTANCENAMES,INTERVALTIME,TYPE)
@@ -29,7 +29,7 @@ function structOut = delwaq_stat(File,File2Save,SubstanceNames,IntervalTime,Type
 %   email: sandra.gaytan@deltares.com
 %--------------------------------------------------------------------------
 
-if nargin<5
+if nargin<6
     Type = 'none';
 end
 
@@ -47,9 +47,9 @@ end
 struct1 = delwaq('open',File);
 
 if strcmp(Type,'none')
-   headerFlag = 'Statistics:';
+   headerFlag = 'Difference:';
 else
-   headerFlag = ['Statistics: (' Type ')'];   
+   headerFlag = ['Difference: (' Type ')'];   
 end
 
 if nargin<3
@@ -60,12 +60,13 @@ elseif (nargin>=3 && isnumeric(SubstanceNames))
     end
 end
 
-if nargin<4
+[SegName SegNr] = delwaq_dmo(dmoFile);
+
+if nargin<5
     IntervalTime(1) = delwaq('read',struct1,1,1,1);
     IntervalTime(2) = delwaq('read',struct1,1,1,struct1.NTimes);
 elseif(nargin>=4 && isscalar(IntervalTime) && IntervalTime==0)
-    IntervalTime(1) = delwaq('read',struct1,1,1,1);
-    IntervalTime(2) = delwaq('read',struct1,1,1,struct1.NTimes);
+    IntervalTime = delwaq_datenum(struct1);
 end
 if nargin<2
    Type = 'none';
@@ -116,38 +117,35 @@ for iname = 1:length(nameStat)
         k = k+1;
     end
 end
-dataNaN = nan(length(SubsName2),struct1.NumSegm);
+dataNaN = nan(length(SubsName2),length(SegName));
 
-
-% Map file
-if strcmp(extId,'map')    
-   structOut = delwaq('write',File2Save,Header,SubsName2,refTime,Times(1),dataNaN);
 % His file
-elseif strcmp(extId,'his')
-    structOut = delwaq('write',File2Save,Header,SubsName2,struct1.SegmentName,refTime,Times(1),dataNaN);
-end
+structOut = delwaq('write',File2Save,Header,SubsName2,SegName,refTime,Times(1),dataNaN);
 
 
 for it = 2:Ntimes
     data = dataNaN;
-   fprintf('delwaq_stat progress:%1.0f/%1.0f(period) \n', it-1, Ntimes-1)
+   fprintf('delwaq_tstat_dmo progress:%1.0f/%1.0f(period) \n', it-1, Ntimes-1)
 
     if ~isempty(itime1{it-1})
-       for iseg = 1:struct1.NumSegm
-           %iseg
-           [~, dataseg] = delwaq('read',struct1,isub1,iseg,itime1{it-1});    
-           dataseg = squeeze(dataseg);
-           if Nsub==1
-              dataseg = dataseg(:)';
-           end
-               
-           %-999
-           dataseg(dataseg==-999) = nan;
-           if any(~isnan(dataseg))
-              stat = getStatistics(dataseg,2,statId,Type);
-              data(:,iseg) = cell2mat(struct2cell(stat));
-           end
-        end %iseg
+       [~, dataseg] = delwaq('read',struct1,isub1,0,itime1{it-1});    
+
+        for kseg = 1:length(SegName)
+            iseg = SegNr{kseg}';
+            localdata = dataseg(:,iseg,:);
+            
+            localdata = squeeze(localdata);
+            if Nsub==1
+               localdata = localdata(:)';
+            end
+        
+            %-999
+            localdata(localdata==-999) = nan;
+            if any(~isnan(localdata))
+               stat = getStatistics(localdata,0,statId,Type);
+               data(:,kseg) = cell2mat(struct2cell(stat));
+            end
+        end
         structOut = delwaq('write',structOut,Times(it),data);
     end
 end%it
@@ -173,7 +171,7 @@ end
 
 k = 0;
 for i = 1:length(name2)
-    isub1 = find(strcmpi(name1,name2{i}));
+    isub1 = find(strcmp(name1,name2{i}));
     if ~isempty(isub1)
        k = k+1;
        iname1(k) = isub1; %#ok<*AGROW>
@@ -187,7 +185,6 @@ end
 %--------------------------------------------------------------------------
 function [tinterval, itime1 itime2] = match_times(struct1,tinterval)
 
-% Time1 = delwaq_time(struct1,'datenum',1);
 Time1 = delwaq_datenum(struct1);
 
 for it = 1:length(tinterval)-1

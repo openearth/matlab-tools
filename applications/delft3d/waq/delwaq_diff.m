@@ -1,7 +1,6 @@
-function structOut = delwaq_diff(File1,File2,File2Save,SubstanceNames,Type)
 %DELWAQ_DIFF Read Delwaq files and write a Difference file.
 %
-%   STRUCTOUT = DELWAQ_DIFF(FILE1,FILE2,FILE2SAVE,SUBSTANCENAMES,TYPE)
+%   STRUCTOUT = DELWAQ_DIFF(FILE1,FILE2,FILE2SAVE,SUBSTANCENAMES,SEGMENTS,TYPE)
 %   Reads FILE1 and FILE2, find the matchig fields:
 %   substances/segments/stations/times in both files and write the
 %   differences in FILE2SAVE map file.
@@ -12,24 +11,25 @@ function structOut = delwaq_diff(File1,File2,File2Save,SubstanceNames,Type)
 %   STRUCTOUT = DELWAQ_DIFF(...,TYPE) specifies alternate methods.  
 %   The default is 'none'.  Available methods are:
 %  
-%       'none' - Difference: File1-File2
-%       'perc' - Percentage difference: (File1-File2)/File1
-%       'log'  - Difference of natural logarithm: log(File1)-log(File2)
-%       'log10'- Difference of base 10 logarithm: log10(File1)-log10(File2)
-% 
+%       'none'    - Difference: File1-File2
+%       'abs'     - Difference: abs(File1-File2)
+%       'perc'    - Percentage difference: (File1-File2)/File1
+%       'log'     - Difference of natural logarithm: log(File1)-log(File2)
+%       'log10'   - Difference of base 10 logarithm: log10(File1)-log10(File2)
+%       'absperc' - Absolute Percentage difference: abs(File1-File2)/File1
+%       'abslog'  - Absolute Difference of natural logarithm:
+%                   abs(log(File1)-log(File2))
+%       'abslog10'- Absolute Difference of base 10 logarithm:
+%                 abs(log10(File1)-log10(File2))
 %   See also: DELWAQ, DELWAQ_CONC, DELWAQ_RES, DELWAQ_TIME, DELWAQ_STAT, 
-%             DELWAQ_INTERSECT, WAQ
+%             DELWAQ_INTERSECT
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
-
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+%--------------------------------------------------------------------------
+function structOut = delwaq_diff(File1,File2,File2Save,SubstanceNames,Segments,Type)
 
 if nargin<5
     Type = 'none';
@@ -42,24 +42,12 @@ end
 [~, name2, ext2] = fileparts(File2);
 
 if strcmp(Type,'none')
-   fileFlag = 'DIFF';
    headerFlag = 'Difference:';
-elseif strcmp(Type,'perc')
-   fileFlag = 'DIFFPERC';
-   headerFlag = 'Difference: (Percentage)';       
-elseif strcmp(Type,'log')
-   fileFlag = 'DIFFLOG';
-   headerFlag = 'Difference: (log)';
-elseif strcmp(Type,'log10')
-   fileFlag = 'DIFFLOG10';
-   headerFlag = 'Difference: (log10)';
+else
+   headerFlag = ['Difference: (' Type ')'];   
 end
 
-if nargin<3 ||(nargin>=3 && isempty(File2Save))
-    File2Save = [fileFlag '(' name1 '-' name2 ')' ext1];
-end
-
-S = delwaq_intersect(File1,File2);
+S = delwaq_intersect(File1,File2,'all');
 
 % Matching SubsName
 [S.Subs isub] = match_names(S.Subs,SubstanceNames);
@@ -90,6 +78,10 @@ if isempty(S.Subs)
    disp('There is no match in the substance');
    return 
 end
+
+S.Segm = Segments;
+S.iSegm{1} = Segments;
+S.iSegm{2} = Segments;
 
 % Matching Segm
 if isempty(S.Segm)
@@ -176,7 +168,7 @@ end
 
 k = 0;
 for i = 1:length(name2)
-    isub1 = find(strcmp(name1,name2{i}));
+    isub1 = find(strcmpi(name1,name2{i}));
     if ~isempty(isub1)
        k = k+1;
        iname1(k) = isub1; %#ok<*AGROW>
@@ -196,6 +188,8 @@ data2(data2==-999) = nan;
 switch Type
     case 'none'
         data = data1-data2;
+    case 'abs'
+        data = abs(data1-data2);
     case 'perc'        
         data1(data1<=0) = nan;
         data2(data2<=0) = nan;
@@ -214,6 +208,25 @@ switch Type
         data1 = log10(data1);
         data2 = log10(data2);
         data = data1-data2;
+    case 'absperc'        
+        data1(data1<=0) = nan;
+        data2(data2<=0) = nan;
+        data1 = log10(data1);
+        data2 = log10(data2);
+        data = abs(data1-data2)./data1;
+    case 'abslog'        
+        data1(data1<=0) = nan;
+        data2(data2<=0) = nan;
+        data1 = log(data1);
+        data2 = log(data2);
+        data = abs(data1-data2);
+    case 'abslog10'        
+        data1(data1<=0) = nan;
+        data2(data2<=0) = nan;
+        data1 = log10(data1);
+        data2 = log10(data2);
+        data = abs(data1-data2);
+
 end
 
 

@@ -9,18 +9,13 @@ function segnr = delwaq_xy2segnr(lgaFile,x,y,type)
 %   If TYPE is not provided then TYPE = 'XY'
 %
 %   See also: DELWAQ, DELWAQ_CONC, DELWAQ_RES, DELWAQ_TIME, DELWAQ_STAT, 
-%             DELWAQ_INTERSECT, WAQ
+%             DELWAQ_INTERSECT
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
-
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+%--------------------------------------------------------------------------
 
 x = x(:);
 y = y(:);
@@ -29,13 +24,12 @@ if nargin<4
 end
     
 if strcmp(type,'LL')
-  [x  y] = ctransdv(x,y,'LL','PAR'); 
+  [x, y] =  convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
 end
 
 gridStruct = delwaq('open',lgaFile);
 [Xcen Ycen] = corner2center(gridStruct.X,gridStruct.Y);
- segnr  = naninterp2(Xcen,Ycen,gridStruct.Index(1:end-1,1:end-1,1),x,y,'nearest');
-% segnr  = naninterp2(gridStruct.X,gridStruct.Y,gridStruct.Index(:,:,1),x,y,'nearest');
+segnr  = naninterp(Xcen,Ycen,gridStruct.Index(2:end,2:end,1),x,y,'nearest');
 
 inot = (segnr<=0);
 segnr(inot) = nan;

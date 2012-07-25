@@ -27,7 +27,6 @@ function structOut = delwaq_stat(File,File2Save,SubstanceNames,IntervalTime,Type
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
-%--------------------------------------------------------------------------
 
 if nargin<5
     Type = 'none';
@@ -47,9 +46,24 @@ end
 struct1 = delwaq('open',File);
 
 if strcmp(Type,'none')
-   headerFlag = 'Statistics:';
-else
-   headerFlag = ['Statistics: (' Type ')'];   
+   fileFlag = 'STAT';
+   headerFlag = 'Statistics: ';
+elseif strcmp(Type,'log')
+   fileFlag = 'STATLOG';
+   headerFlag = 'Statistics: (log)';
+elseif strcmp(Type,'log10')
+   fileFlag = 'STATLOG10';
+   headerFlag = 'Statistics: (log10)';
+elseif strcmp(Type,'exp')
+   fileFlag = 'STATEXP';
+   headerFlag = 'Statistics: (exp)';
+elseif strcmp(Type,'exp10')
+   fileFlag = 'STATEXP10';
+   headerFlag = 'Statistics: (exp10)';
+end
+
+if nargin<2 ||(nargin>=2 && isempty(File2Save))
+    File2Save = [fileFlag '(' name1 ')' ext1];
 end
 
 if nargin<3
@@ -130,12 +144,14 @@ end
 
 for it = 2:Ntimes
     data = dataNaN;
-   fprintf('delwaq_stat progress:%1.0f/%1.0f(period) \n', it-1, Ntimes-1)
+%    fprintf('delwaq_stat progress:%1.0f/%1.0f(period) \n', it-1, Ntimes-1)
 
     if ~isempty(itime1{it-1})
-       for iseg = 1:struct1.NumSegm
+       for iseg = 1:struct1.NumSegm/12
+           fprintf('delwaq_stat progress:%1.0f/%1.0f(period) \n', iseg, struct1.NumSegm/12)
+
            %iseg
-           [~, dataseg] = delwaq('read',struct1,isub1,iseg,itime1{it-1});    
+           [~, dataseg] = delwaq('read',struct1,isub1,iseg,itime1{it-1}(5:8:60));    
            dataseg = squeeze(dataseg);
            if Nsub==1
               dataseg = dataseg(:)';
@@ -173,7 +189,7 @@ end
 
 k = 0;
 for i = 1:length(name2)
-    isub1 = find(strcmpi(name1,name2{i}));
+    isub1 = find(strcmp(name1,name2{i}));
     if ~isempty(isub1)
        k = k+1;
        iname1(k) = isub1; %#ok<*AGROW>
@@ -220,10 +236,10 @@ function xStats = statistics(x,statId,Type)
 
 switch Type
     case 'log'        
-        x(x<=0) = nan;
+        x(x<=0) = 0.0001;
         x = log(x);
     case 'log10'        
-        x(x<=0) = nan;
+        x(x<=0) = 0.0001;
         x = log10(x);
     case 'exp'        
         x = exp(x);

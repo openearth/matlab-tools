@@ -29,22 +29,28 @@ function StructOut = delwaq_intersect(varargin)
 %   StructOut.UTime(1) = File(StructOut.iUfile(1)).Time(StructOut.iUTime(1))
 %
 %   See also: DELWAQ, DELWAQ_CONC, DELWAQ_DIFF, DELWAQ_RES
-%             DELWAQ_TIME, DELWAQ_STAT, WAQ
+%             DELWAQ_TIME, DELWAQ_STAT
 
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-11 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
+%--------------------------------------------------------------------------
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+if ischar(varargin{end})
+   if any(strcmpi(varargin{end},{'first','last','all'}))
+      type = varargin{end};
+      varargin = {varargin{1:end-1}}; %#ok<CCAT1>
+      Nnargin = nargin-1;
+    else
+      type = 'last';
+      Nnargin = nargin;
+   end
+end 
 
-IdFile(1:nargin) = 0;
-for inar = 1:nargin
+IdFile(1:Nnargin) = 0;
+for inar = 1:Nnargin
     if isstruct(varargin{inar})
        IdFile(inar) = exist(varargin{inar}.FileName,'file')==2;
        structInfo(inar) = varargin{inar}; %#ok<*AGROW>
@@ -59,13 +65,13 @@ end
 if ~all(IdFile)
     error('One of the files does not exist')
 else
-    ext1(1:nargin) = {[]};
-    for ifile = 1:nargin
+    ext1(1:Nnargin) = {[]};
+    for ifile = 1:Nnargin
         [~, ~, ext1{ifile}] = fileparts(varargin{ifile});
     end
-    if all(strcmp(ext1,'.map'))
+    if all(strcmpi(ext1,'.map'))
         extId = 'map';
-    elseif all(strcmp(ext1,'.his'))
+    elseif all(strcmpi(ext1,'.his'))
         extId = 'his';
     else
         error('The files must have the same extension')
@@ -74,7 +80,7 @@ end
 
 
 % Opening Files
-for ifile = 1:nargin
+for ifile = 1:Nnargin
     if onStruct
         structInfo(ifile) = delwaq('open',varargin{ifile});
     end
@@ -86,7 +92,7 @@ for ifile = 1:nargin
 end
 
 % Matching substances name
-[StructOut.Subs StructOut.iSubs{1:nargin}] = match_names(structInfo(:).SubsName);
+[StructOut.Subs StructOut.iSubs{1:Nnargin}] = match_names(structInfo(:).SubsName);
 StructOut.nSubs = length(StructOut.Subs);
 
 % Matching segments name
@@ -95,18 +101,17 @@ if strcmp(extId,'map')
       error('The number of segments does not match in the files');
    end
    StructOut.Segm = 1:structInfo(1).NumSegm;
-   StructOut.iSegm(1:nargin) = {0};
+   StructOut.iSegm(1:Nnargin) = {0};
 
 elseif strcmp(extId,'his')
-   [StructOut.Segm StructOut.iSegm{1:nargin}] = match_names(structInfo(:).SegmentName);
+   [StructOut.Segm StructOut.iSegm{1:Nnargin}] = match_names(structInfo(:).SegmentName);
 end
 StructOut.nSegm = length(StructOut.Segm);
 
 % Matching times
-[StructOut.Time StructOut.iTime StructOut.UTime  StructOut.iUTime StructOut.iUFile] = match_times(structInfo(:));
+[StructOut.Time StructOut.iTime StructOut.UTime  StructOut.iUTime StructOut.iUFile] = match_times(structInfo(:),type);
 StructOut.nTime = length(StructOut.Time);
 StructOut.nUTime = length(StructOut.UTime);
-
 StructOut.extId = extId;
 StructOut.T0 = T0;
 
@@ -136,12 +141,17 @@ end
 %--------------------------------------------------------------------------
 % Match times
 %--------------------------------------------------------------------------
-function [utime, utimeIndex, times, timeIndex, timeFile] = match_times(structIn)
+function [utime, utimeIndex, times, timeIndex, timeFile] = match_times(structIn,type)
+
+if nargin==1
+   type = 'last';
+end 
+
 
 nfile = length(structIn);
 
 for i = 1:nfile
-    times{i,1} = delwaqtime(structIn(i));
+    times{i,1} = delwaq_datenum(structIn(i));
     timeFile{i,1} = ones(length(times{i}),1)*i; 
     timeIndex{i,1} = (1:length(times{i}))';    
 end
@@ -162,6 +172,24 @@ for i = 1:nfile
     utimeIndex{i} = utimeIndex{i}(it);
 end
 
+% all times
+fnr = 1;
+for i = 1:nfile
+    mtimeIndex{i} = find(ismember(times{i},utime));
+    if i>1
+        if length(mtimeIndex{i})>length(mtimeIndex{fnr})
+           fnr = i;
+        end
+    end
+end
+
+mtime = times{fnr}(mtimeIndex{fnr});
+if strcmpi(type,'all')
+   utime = mtime;
+   for i = 1:nfile
+       [~, utimeIndex{i}] = ismember(utime,times{i});
+   end
+end
 
 times = cell2mat(times);
 timeFile = cell2mat(timeFile);
@@ -171,31 +199,8 @@ timeIndex = cell2mat(timeIndex);
 timeFile = timeFile(index);
 timeIndex = timeIndex(index);
 
-[times, index] = unique(times, 'last');
-timeFile = timeFile(index);
-timeIndex = timeIndex(index);
-
-function Time = delwaqtime(varargin)
-%DELWAQ_TIME Reads the time in Delwaq files
-%
-%   Time = DELWAQ_TIME(File)
-%   Gives back the records time in <File>
-%
-%   Time = DELWAQ_TIME(Struct)
-%   Gives back the records time in <Struct>
-%   Where Struct is the output of
-%   Struct = DELWAQ('open','FileName')
-
-%   Copyright 2011 Deltares, the Netherlands
-%   http://www.delftsoftware.com
-%   2011-Jul-12 Created by Gaytan-Aguilar
-%   email: sandra.gaytan@deltares.com
-
-if isstruct(varargin{1})
-   S = varargin{1};    
-else
-  if exist(varargin{1},'file')==2;
-     S = delwaq('open',varargin{1});
-  end
+if any(strcmpi(type,{'first','last'}))
+   [times, index] = unique(times,type);
+   timeFile = timeFile(index);
+   timeIndex = timeIndex(index);
 end
-Time = delwaq('read',S,1,1,0);

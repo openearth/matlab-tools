@@ -15,19 +15,12 @@ function structOut = delwaq_res_noise(structIn,Substance, Segment, estd, type)
 %              where pestd is a percentage of the current value
 %              pestd = x.estd.
 %              'perc' add a percentage of the current value perc[0 1]
-%
-%See also: WAQ
                      
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
-
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+%--------------------------------------------------------------------------
 
 if nargin <5
    type = 'std';

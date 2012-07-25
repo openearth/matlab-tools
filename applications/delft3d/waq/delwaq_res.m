@@ -18,21 +18,14 @@ function Out = delwaq_res(cmd,varargin)
 %   Struct = DELWAQ_RES('write','FileName',Struct)
 %   writes the data to a Delwaq RES file. 
 %   Struct is the output of Struct = DELWAQ_RES('read','...)
-%
-%   See also: WAQ
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-12 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
+%--------------------------------------------------------------------------
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
 switch cmd
-
     case 'read'
         Out = delwaq_res_read(varargin{:});
     case 'write'

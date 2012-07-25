@@ -1,4 +1,3 @@
-function structOut = delwaq_conc(varargin)
 %DELWAQ_CONC Concatenate different Delwaq files and write one file.
 %
 %   Struct = DELWAQ_CONC(FileName,File1,File2,...,FileN)
@@ -7,22 +6,16 @@ function structOut = delwaq_conc(varargin)
 %   storage. 
 %   FileName is empty then the name will be CONCATENATE.(MAP/HIS)
 %
-%   NOTE: The Concatenation in <FileName> only will be for the matching of
+%   NOTE: The Concatenation in <FileName> only will be for the matchig of
 %   substances/segments/stations/times in all files. If double exist a
 %   double record then only the last record will be taked into account
-%
-%   See also: DELWAQ, WAQ
 
 %   Copyright 2011 Deltares, the Netherlands
 %   http://www.delftsoftware.com
 %   2011-Jul-11 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
-
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+%--------------------------------------------------------------------------
+function structOut = delwaq_conc(varargin)
 
 Files = {varargin{2:end}};
 nfile = nargin-1;

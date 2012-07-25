@@ -1,4 +1,4 @@
-function structOut = delwaq_stat(File,File2Save,SubstanceNames,IntervalTime,Type)
+function nout = delwaq_thist(File,nbins,SubstanceNames,Segments,IntervalTime,Type)
 %DELWAQ_STAT Read Delwaq files values and write a statistics file.
 %
 %   STRUCTOUT = DELWAQ_STAT(FILE,FILE2SAVE,SUBSTANCENAMES,INTERVALTIME,TYPE)
@@ -23,13 +23,13 @@ function structOut = delwaq_stat(File,File2Save,SubstanceNames,IntervalTime,Type
 %   See also: DELWAQ, DELWAQ_CONC, DELWAQ_RES, DELWAQ_TIME, DELWAQ_DIFF, 
 %             DELWAQ_INTERSECT
 
-%   Copyright 2011 Deltares, the Netherlands
+%   Copyright 2012 Deltares, the Netherlands
 %   http://www.delftsoftware.com
-%   2011-Jul-12 Created by Gaytan-Aguilar
+%   2012-Feb-17 Created by Gaytan-Aguilar
 %   email: sandra.gaytan@deltares.com
 %--------------------------------------------------------------------------
 
-if nargin<5
+if nargin<6
     Type = 'none';
 end
 
@@ -47,10 +47,25 @@ end
 struct1 = delwaq('open',File);
 
 if strcmp(Type,'none')
-   headerFlag = 'Statistics:';
-else
-   headerFlag = ['Statistics: (' Type ')'];   
+   fileFlag = 'STAT';
+   headerFlag = 'Statistics: ';
+elseif strcmp(Type,'log')
+   fileFlag = 'STATLOG';
+   headerFlag = 'Statistics: (log)';
+elseif strcmp(Type,'log10')
+   fileFlag = 'STATLOG10';
+   headerFlag = 'Statistics: (log10)';
+elseif strcmp(Type,'exp')
+   fileFlag = 'STATEXP';
+   headerFlag = 'Statistics: (exp)';
+elseif strcmp(Type,'exp10')
+   fileFlag = 'STATEXP10';
+   headerFlag = 'Statistics: (exp10)';
 end
+
+% if nargin<2 ||(nargin>=2 && isempty(File2Save))
+%     File2Save = [fileFlag '(' name1 ')' ext1];
+% end
 
 if nargin<3
     SubstanceNames = struct1.SubsName;
@@ -59,15 +74,23 @@ elseif (nargin>=3 && isnumeric(SubstanceNames))
        SubstanceNames = struct1.SubsName;
     end
 end
-
 if nargin<4
+    iseg = 1:struct1.NumSegm;
+elseif (nargin>=3 && isnumeric(Segments))
+    if Segments==0
+       iseg = 1:struct1.NumSegm;
+    else
+       iseg = Segments;
+    end
+end
+if nargin<5
     IntervalTime(1) = delwaq('read',struct1,1,1,1);
     IntervalTime(2) = delwaq('read',struct1,1,1,struct1.NTimes);
 elseif(nargin>=4 && isscalar(IntervalTime) && IntervalTime==0)
     IntervalTime(1) = delwaq('read',struct1,1,1,1);
     IntervalTime(2) = delwaq('read',struct1,1,1,struct1.NTimes);
 end
-if nargin<2
+if nargin<6
    Type = 'none';
 end
 
@@ -100,55 +123,52 @@ if isempty(Times)
    disp('There is any match in the times');
    return 
 end
-Ntimes = length(Times);
+Ntimes = 1;
 Nsub   = length(SubsName);
 
 % S = delwaq_intersect(File);
 % S = delwaq_match(S,SubstanceNames,0, IntervalTime,1);
 
 % New substance name
-stat = getStatistics(nan,0,statId,Type);
-nameStat = fieldnames(stat);
-k = 1;
-for iname = 1:length(nameStat)
-    for isub = 1:length(SubsName)
-        SubsName2{k} = [SubsName{isub} '_' nameStat{iname}];
-        k = k+1;
-    end
-end
-dataNaN = nan(length(SubsName2),struct1.NumSegm);
+% stat = getStatistics(nan,0,statId,Type);
+% n = getbin(x,nbins,Type);
+% nameStat = fieldnames(stat);
+% k = 1;
+% for iname = 1:length(nameStat)
+%     for isub = 1:length(SubsName)
+%         SubsName2{k} = [SubsName{isub} '_' nameStat{iname}];
+%         k = k+1;
+%     end
+% end
+nout = nan(length(Segments),length(nbins));
+% SegName = ['seg(' num2str(min(iseg)) ':' num2str(max(iseg)) ')'];
+
+% % Map file
+% if strcmp(extId,'map')    
+%    structOut = delwaq('write',File2Save,Header,SubsName2,SegName,refTime,Times(1),dataNaN);
+% % His file
+% elseif strcmp(extId,'his')
+%     structOut = delwaq('write',File2Save,Header,SubsName2,SegName,refTime,Times(1),dataNaN);
+% end
 
 
-% Map file
-if strcmp(extId,'map')    
-   structOut = delwaq('write',File2Save,Header,SubsName2,refTime,Times(1),dataNaN);
-% His file
-elseif strcmp(extId,'his')
-    structOut = delwaq('write',File2Save,Header,SubsName2,struct1.SegmentName,refTime,Times(1),dataNaN);
-end
+for it = 1:Ntimes
+%    fprintf('delwaq_stat progress:%1.0f/%1.0f(period) \n', it-1, Ntimes-1)
 
-
-for it = 2:Ntimes
-    data = dataNaN;
-   fprintf('delwaq_stat progress:%1.0f/%1.0f(period) \n', it-1, Ntimes-1)
-
-    if ~isempty(itime1{it-1})
-       for iseg = 1:struct1.NumSegm
-           %iseg
-           [~, dataseg] = delwaq('read',struct1,isub1,iseg,itime1{it-1});    
-           dataseg = squeeze(dataseg);
-           if Nsub==1
-              dataseg = dataseg(:)';
-           end
+    if ~isempty(itime1{it})
+        [~, dataseg] = delwaq('read',struct1,isub1,iseg,itime1{it});    
+        dataseg = squeeze(dataseg);
+         if Nsub==1
+            dataseg = dataseg(:)';
+         end
                
-           %-999
-           dataseg(dataseg==-999) = nan;
-           if any(~isnan(dataseg))
-              stat = getStatistics(dataseg,2,statId,Type);
-              data(:,iseg) = cell2mat(struct2cell(stat));
-           end
-        end %iseg
-        structOut = delwaq('write',structOut,Times(it),data);
+        %-999
+        dataseg(dataseg==-999) = nan;
+        if any(~isnan(dataseg))
+           n = getbin(dataseg,nbins,Type);
+           nout = n;
+        end
+%         structOut = delwaq('write',structOut,Times(it),data);
     end
 end%it
 
@@ -203,24 +223,11 @@ end
 %--------------------------------------------------------------------------
 % Statistics
 %--------------------------------------------------------------------------
-function xStats = getStatistics(x,dim,statId,Type)
-
-if dim == 0
-   x = x(:); 
-elseif dim == 2
-   x = x';    
-end
-
-xStats = statistics(x,statId,Type);
-
-%--------------------------------------------------------------------------
-% Local Statistics
-%--------------------------------------------------------------------------
-function xStats = statistics(x,statId,Type)
+function n = getbin(x,nbins,Type)
 
 switch Type
     case 'log'        
-        x(x<=0) = nan;
+        x(x<=0.002) = nan;
         x = log(x);
     case 'log10'        
         x(x<=0) = nan;
@@ -230,41 +237,10 @@ switch Type
     case 'exp10'        
         x = 10.^x;
 end
-
-
-xStats.min = nanmin(x);
-xStats.max = nanmax(x);
-xStats.n = sum(~isnan(x));
-P = perctile(x,[5 50 95]);
-xStats.prc05 = P(1,:);
-xStats.prc50 = P(2,:);
-xStats.prc95 = P(3,:);
-xStats.mean  = nanmean(x);
-xStats.var   = nanvar(x);
-xStats.std   = nanstd(x);
-
-if strcmp(statId,'error');
-   xStats.mse  = nanmean(x.^2);
-   xStats.rmse = nansqrt(xStats.mse);
+for i = 1:size(x,1)
+    xlocal = x(i,:);
+    xlocal = xlocal(:);
+    xlocal(isnan(xlocal)) = [];
+    n(i,:) = hist(xlocal,nbins);
 end
-%--------------------------------------------------------------------------
-% Percentile
-%--------------------------------------------------------------------------
-function Xperc = perctile(x,prc)
 
-Xperc = nan(length(prc),size(x,2));
-
-for i = 1:size(x,2)
-    xl = x(:,i);
-    xl = xl(:);
-    xl(isnan(xl)) = [];
-    xl = sort(xl);
-    n = length(xl);
-    xperc = nan(length(prc),1);
-    if n==1
-        xperc(:) = xl;
-    elseif n>=2
-        xperc = interp1((1:n)/n,xl,(prc/100),'nearest','extrap');    
-    end
-    Xperc(:,i) = xperc;
-end
