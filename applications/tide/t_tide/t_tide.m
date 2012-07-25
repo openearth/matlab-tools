@@ -17,9 +17,9 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %       'interval'       Sampling interval (hours), default = 1. 
 %                        Interval can either be a scalar or a vector with 
 %                        length (length(XIN)-1). An irregularly-spaced time
-%                        vector 'time' in Matlab datenumbers (as often encounted 
+%                        vector 'time' in Matlab datenumbers (as often encountered 
 %                        with ADCP data) can be analyzed as follows. Note this
-%                        is a non-canonical t_tide extension only in OpenEarthTools.
+%                        is a non-canonical t_tide extension by OpenEarthTools.
 %
 %                        T_TIDE(XIN,'int',diff(time).*24,'start',time(1),...)
 %          
