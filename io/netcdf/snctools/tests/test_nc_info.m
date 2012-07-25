@@ -651,7 +651,11 @@ switch(v)
             '2009a','2009b','2010a','2010b','2011a','2011b'}
         exp_data = d.opendap.motherlode;
     otherwise
-        exp_data = d.opendap.motherlode_tmw;
+        if getpref('SNCTOOLS','USE_NETCDF_JAVA',false)
+            exp_data = d.opendap.motherlode;
+        else
+            exp_data = d.opendap.motherlode_tmw;
+        end
 end
 
 

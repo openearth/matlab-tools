@@ -23,11 +23,11 @@ else
     have_java = false;
 end
     
-retrieval_methods.java         = 'java';
-retrieval_methods.tmw_hdf4     = 'tmw_hdf4';
+retrieval_methods.java           = 'java';
+retrieval_methods.tmw_hdf4       = 'tmw_hdf4';
 retrieval_methods.tmw_hdf4_2011a = 'tmw_hdf4_2011a';
-retrieval_methods.mexnc        = 'mexnc';
-retrieval_methods.tmw          = 'tmw';
+retrieval_methods.mexnc          = 'mexnc';
+retrieval_methods.tmw            = 'tmw';
 
 fmts = snc_format();
 
@@ -74,8 +74,20 @@ elseif strcmp(fmt,fmts.URL)
             retrieval_method = retrieval_methods.java; 
             fmt = fmts.netcdf_java;
         otherwise
-            retrieval_method = retrieval_methods.tmw;
-            fmt = fmts.NetCDF;
+            % 12a and above has native matlab support for opendap.
+            if strcmpi(ncfile(1:5),'https')
+                % Still, use netcdf-java for SSL.
+                retrieval_method = retrieval_methods.java; 
+                fmt = fmts.netcdf_java;
+            elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false)
+                % Force the use of netcdf-java if the user
+                % really want it.
+                retrieval_method = retrieval_methods.java; 
+                fmt = fmts.netcdf_java;
+            else
+                retrieval_method = retrieval_methods.tmw;
+                fmt = fmts.NetCDF;
+            end
     end
 
 elseif ( strcmp(fmt,fmts.GRIB) || strcmp(fmt,fmts.GRIB2) )
@@ -173,8 +185,12 @@ switch ( mv )
         switch(fmt)
 
             case {fmts.NetCDF, fmts.NetCDF4}
-                retrieval_method = retrieval_methods.tmw;
                 fmt = fmts.NetCDF;
+                if ~strcmpi(ncfile(1:5),'https')
+                retrieval_method = retrieval_methods.tmw;
+                else
+                retrieval_method = retrieval_methods.java;
+                end
 
             otherwise
                 % Last chance is if it is some format that netcdf-java can handle.

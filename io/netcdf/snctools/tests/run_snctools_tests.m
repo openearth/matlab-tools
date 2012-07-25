@@ -125,7 +125,11 @@ switch(v)
             '2010a','2010b','2011a','2011b'}
         run_opendap_tests;
     otherwise
-        fprintf('\tOPeNDAP tests not run via java on %s.\n', v);
+        if getpref('SNCTOOLS','USE_NETCDF_JAVA',false)
+            run_opendap_tests;
+        else
+            fprintf('\tOPeNDAP tests not run via java on %s when USE_NETCDF_PREFERENCE is false.\n', v);
+        end
 end
 
 %--------------------------------------------------------------------------
@@ -388,6 +392,11 @@ if ~exist('NetcdfFile','class')
 end
 
 
+if ~getpref('SNCTOOLS','TEST_GRIB2',false)
+	fprintf('\n\t\tjava GRIB testing filtered out when SNCTOOLS preferences ');
+	fprintf('\n\t\t''TEST_GRIB2'' is false.\n');
+	return
+end
 fprintf('\n');
 test_nc_attget('grib');
 test_nc_info  ('grib');

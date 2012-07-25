@@ -1,3 +1,10 @@
+* July 19 2012 John Evans <john.g.evans.ne@gmail.com> -r4000
+- Added USE_NETCDF_JAVA preference to allow forced use of netcdf-java on 
+- R2012a
+
+* May 28 2012 John Evans <john.g.evans.ne@gmail.com> -r3998
+- Fixed testing issue with GRIB setup.
+
 * April 19 2012 John Evans <john.g.evans.ne@gmail.com> -r3996
 - Added THREDDS_INFO, THREDDS_DUMP in examples folder
 - Added NC_ISDIM (thanks to Gerben de Boer)

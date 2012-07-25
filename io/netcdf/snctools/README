@@ -122,6 +122,16 @@ PRESERVE_FVD
     internally as a persistent variable.  In order to change this
     preference, you therefore must invoke CLEAR ALL first.
 
+USE_NETCDF_JAVA
+    In R2012a, opendap support is built into MATLAB, but it does not support 
+    all possible opendap configurations, such as servers with SSL.  If you
+    have trouble with the MATLAB's native opendap software, you can force
+    SNCTOOLS to use netcdf-java on R2012a with the following
+
+        >> setpref('SNCTOOLS','USE_NETCDF_JAVA',true);
+
+    This will have no effect on versions of MATLAB earlier than R2012a.
+
 +-----------------------------------------------------------------------
 BUG Reports You Should Know About
 

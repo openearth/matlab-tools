@@ -75,7 +75,7 @@ end
 nvdims = numel(dimids);
 var_size = get_varsize(gid,varid,preserve_fvd);
 if any(var_size==0)
-    values = [];
+    values = zeros(var_size); % values = [];
     return
 else
 
