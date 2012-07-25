@@ -16,6 +16,8 @@ function varargout = nc_t_tide(varargin)
 %
 %See also: T_TIDE, NC_T_TIDE_COMPARE
 
+% TO DO: start using native matlab ncwritschema
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
 %       Gerben J. de Boer

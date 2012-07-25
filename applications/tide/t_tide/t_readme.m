@@ -1,10 +1,10 @@
-% t_readme readme
+% t_readme.m
 %
 %                    Tidal Analysis Toolbox
 %                              by        
 %               R. Pawlowicz, R. Beardsley, S. Lentz
 %
-%                 Version 1.1   December 1, 2001
+%                 Version 1.3b   December 1, 2010
 %
 % The tidal analysis toolbox uses harmonic analysis to estimate 
 % tidal consitutents and their uncertainities in scalar and vector 
@@ -30,7 +30,7 @@
 % This package began as an attempt to translate a FORTRAN package 
 % developed by M. G. G. Foreman and coworkers at the Institute of Ocean 
 % Sciences (IOS). (The IOS tidal package and user manuals are available 
-% from Foreman at http://www.ios.bc.ca/ios/iap/pages/tidpack.htm.). 
+% from Foreman at http://www.pac.dfo-mpo.gc.ca/sci/osap/projects/tidpack/tidpack_e.htm)
 % S. Lentz and R. Beardsley (WHOI) began translating the code into 
 % MATLAB, and wrote a linear error estimation algorithm using MATLAB 
 % spectrum code.  R. Pawlowicz (UBC) then completely rewrote it all, 
@@ -58,7 +58,7 @@
 % T_GETCONSTS):
 %
 %   CONST=t_getconsts;
-%   CONST.name(finite(CONST.ishallow))
+%   CONST.name(isfinite(CONST.ishallow))
 % 
 % Note that T_TIDE has options for pretty much anything you could 
 % possibly want to do -  type 'help t_tide' for more info (also look 
@@ -66,10 +66,11 @@
 %
 %----------------------------------------------------------------------
 %
-% PSD and CSD: Currently the functions psd.m and csd.m from the SIGNAL 
+% PWELCH and CPSD: Currently the functions pwelch.m and cpsd.m from the SIGNAL 
 % PROCESSING toolbox are called when the default confidence interval 
 % calculation is used. If you don't have these functions, you can still
-% do things by specifying another algorithm, e.g.,
+% do things by specifying another algorithm that doesn't use the spectral
+% estimators, e.g.,
 %
 %    [...]=t_tide(...'error','wboot')
 %
@@ -131,7 +132,7 @@
 % 
 %
 % Questions or comments to:
-% R. Pawlowicz (rich@ocgy.ubc.ca) 12/1/01
-% Version 1.1
+% R. Pawlowicz (rich@eos.ubc.ca) 12/1/01
+% Version 1.3b
 
 help t_readme

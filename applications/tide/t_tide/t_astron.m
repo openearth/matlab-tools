@@ -6,7 +6,7 @@ function [astro,ader] = t_astron(jd)
 %            ADER=[dtau,ds,dh,dp,dnp,dpp] (cycles/day) 
 %  at the matlab time JD (UTC, but see code for details) where
 %
-%  tau = lunar time
+%	tau = lunar time
 %	s = mean longitude of the moon
 %	h = mean longitude of the sun
 %	p = mean longitude of the lunar perigee 

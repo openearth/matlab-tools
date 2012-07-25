@@ -164,7 +164,7 @@ end;
 if nargin==1 & ~isempty(ctime), % If no time, just take the "standard" frequencies,
                                 % otherwise compute them from derivatives of astro
  [astro,ader]=t_astron(ctime);  % parameters. This is probably a real overkill - the
- ii=isfinite(const.ishallow);     % diffs are in the 10th decimal place (9th sig fig).??? Error using ==> finite FINITE is obsolete. Use ISFINITE instead %Geert Keetels Deltares 28-8-2009
+ ii=isfinite(const.ishallow);     % diffs are in the 10th decimal place (9th sig fig).
  const.freq(~ii) = (const.doodson(~ii,:)*ader)/(24);
  for k=find(ii)',
    ik=const.ishallow(k)+[0:const.nshallow(k)-1];

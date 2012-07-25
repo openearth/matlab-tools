@@ -13,15 +13,22 @@ function [name,freq,amp]=t_equilib(lat);
 % Version 1.0
 
 
-const=t_getconsts;
+const=t_get18consts;
 
 g=9.81;            % m/s^2;
 erad=6365;         % km
 earthmoond=3.84e5; % km
 Mmoon=7.38e22;     % kg
 Mearth=5.977e24;   % kg
+Gravconst=6.658e-11;  % m^3/kg/s^2
 
-G=3/4*Mmoon^2*(erad/earthmoond)^3/Mearth;
+% There appears to be a typo in Godin's text, and this
+% should likely be checked against Doodson's original.
+% This is what I *think* it should be.
+G=3/4*Mmoon*(erad*1e3)^3/(earthmoond*1e3)^2/Mearth;
+
+% The 4/3 is to correct for the 3/4 in G
+gfac=Gravconst*Mearth/(erad*1e3)^2*(4/3);
 
 jk=finite(const.doodsonamp);
 
@@ -45,12 +52,20 @@ G1(3+2,:)=        G*clat.^2;
 G1(3+3,:)=        G*clat.^3;
 
 	
-amp=abs(const.doodsonamp(jk,ones(1,length(clat)))/g.*G1(const.doodsonspecies(jk)+3,:));
+amp=abs(const.doodsonamp(jk,ones(1,length(clat)))/gfac.*G1(const.doodsonspecies(jk)+3,:));
  
-
+ 
 if nargout==0,
 
- plot(24*[freq,freq]',[0;1]*amp');
+ cols=[1 0 0;
+       0 1 0;
+       0 0 1;
+       .5 0 0;
+       0 .5 0;
+       0 0 .5];
+       
+ set(gcf,'defaultaxescolororder',cols(const.doodsonspecies(jk)+3,:));
+ semilogy(24*[freq,freq]',[repmat(min(amp),length(amp),1) amp]');
  
  cnam=cellstr(name);
  for k=1:length(cnam),
@@ -59,10 +74,10 @@ if nargout==0,
    cnam{k}=[ cnam{k}(1:ff-1) '_{' cnam{k}(ff:end) '}'];
  end;
  text(freq*24,amp,cnam,'vertical','bottom','horiz','center','fontangle','italic','fontweight','bold',...
-       'clip','on');
+       'clip','on','fontsize',9);
  xlabel('Frequency (cpd)');
- ylabel('Potential');
- set(gca,'tickdir','out');
+ ylabel('Potential (m)');
+ set(gca,'tickdir','out','ylim',[min(amp) max(amp)*2]);
  
 end;
 

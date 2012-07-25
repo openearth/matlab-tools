@@ -6,6 +6,9 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 % [TIDESTRUC,XOUT]=T_TIDE(XIN) returns the analysis information in
 % a structure formed of NAME, FREQ, and TIDECON.
 %
+% XIN can be scalar (e.g. for elevations), or complex ( =U+sqrt(-1)*V
+% for eastward velocity U and northward velocity V.
+%
 % Further inputs are optional, and are specified as property/value pairs
 % [...]=T_TIDE(XIN,property,value,property,value,...,etc.)
 %      
@@ -16,6 +19,11 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %   The next two are required if nodal corrections are to be computed,
 %   otherwise not necessary. If they are not included then the reported
 %   phases are raw constituent phases at the central time. 
+%
+%   If your time series is longer than 18.6 years then nodal corrections
+%   are not made -instead we fit directly to all satellites (start time
+%   is then just used to generate Greenwich phases).
+%
 %       'start time'     [year,month,day,hour,min,sec]
 %                        - min,sec are optional OR 
 %                        decimal day (matlab DATENUM scalar)
@@ -57,6 +65,9 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                        (for scalar time series) and Nx2 for vector 
 %                        time series (column 1 is for + frequencies and
 %                        column 2 for - frequencies).
+%                        NB - you can only infer ONE unknown constituent
+%                        per known constituent (i.e. REFERENCE must not 
+%                        contain multiple instances of the same name).
 %
 %   Shallow water constituents
 %       'shallow'        NAME
@@ -88,8 +99,16 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                              <0 - return result of least-squares fit 
 %                                   (should be the same as using '0', 
 %                                   except that NaN-holes in original 
-%                                   time series will remain).
+%                                   time series will remain and mean/trend
+%                                   are included).
 %
+%   Least squares soln computational efficiency parameter
+%	'lsq'		'direct'  - use A\x fit
+%			'normal'  - use (A'A)\(A'x) (may be necessary
+%				    for very large input vectors since
+%                                   A'A is much smaller than A)
+%			'best'	  - automatically choose based on
+%				    length of series (default).
 %
 %       It is possible to call t_tide without using property names,
 %       in which case the assumed calling sequence is
@@ -123,7 +142,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %
 % Pawlowicz, R., B. Beardsley, and S. Lentz, "Classical Tidal 
 %   "Harmonic Analysis Including Error Estimates in MATLAB 
-%    using T_TIDE", Computers and Geosciences, 2002.
+%    using T_TIDE", Computers and Geosciences, 28, 929-937 (2002).
 %
 % (citation of this article would be appreciated if you find the
 %  toolbox useful).
@@ -143,27 +162,37 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %              9/28/01 - made sure you can't choose Z0 as constituent.
 %              6/12/01 - better explanation for variance calcs, fixed
 %                        bug in typed output (thanks Mike Cook).
+%              8/2/03 - Added block processing for long time series (thanks
+%                       to Derek Goring).
+%              9/2/03 - Beta version of 18.6 year series handling
+%              12/2/03 - Bug (x should be xin) fixed thanks to Mike Cook (again!)
+%              4/3/11 - Changed (old) psd to (new) pwelch calls, also
+%                       isfinite for finite.
+%              23/3/11 - Corrected my conversion from psd to pwelch, thanks
+%                       to Dan Codiga and (especially) Evan Haug!
+
 %
-% Version 1.02
+% Version 1.3
 
 
 
 % ----------------------Parse inputs-----------------------------------
 
-ray          = 1;
-dt           = 1;
-fid          = 1;
-stime        = [];
-lat          = [];
-corr_fs      = [0 1e6];
-corr_fac     = [1  1];
-secular      = 'mean';
-inf.iname    = [];
-inf.irefname = [];
-shallownames = [];
-constitnames = [];
-errcalc      = 'cboot';
-synth        = 2;
+ray=1;
+dt=1;
+fid=1;
+stime=[];
+lat=[];
+corr_fs=[0 1e6];
+corr_fac=[1  1];
+secular='mean';
+inf.iname=[];
+inf.irefname=[];
+shallownames=[];
+constitnames=[];
+errcalc='cboot';
+synth=2;
+lsq='best';
 
 k=1;
 while length(varargin)>0,
@@ -173,35 +202,33 @@ while length(varargin)>0,
         dt=varargin{2};
       case 'sta',
         stime=varargin{2};
-	    if length(stime)>1, 
-	      stime=[stime(:)' zeros(1,6-length(stime))]; 
-	      stime=datenum(stime(1),stime(2),stime(3),stime(4),stime(5),stime(6));
-	    end;
+	if length(stime)>1, 
+	  stime=[stime(:)' zeros(1,6-length(stime))]; 
+	  stime=datenum(stime(1),stime(2),stime(3),stime(4),stime(5),stime(6));
+	end;
       case 'lat',
          lat=varargin{2};
       case 'out',
          filen=varargin{2};
-	     switch filen,
-	       case 'none',
-	         fid=-1;
-	       case 'screen',
-	         fid=1;
-           otherwise
-	         [fid,mesg]=fopen(filen,'w');
-	         if fid==-1, error(msg); end;
-	       end;
+	 switch filen,
+	   case 'none',
+	     fid=-1;
+	   case 'screen',
+	     fid=1;
+	   otherwise
+	     [fid,mesg]=fopen(filen,'w');
+	     if fid==-1, error(msg); end;
+	  end;
       case 'ray',
          if isnumeric(varargin{2}),
            ray=varargin{2};
-         else
-	       constitnames=varargin{2};
-	       if iscellstr(constitnames), 
-               constitnames=char(constitnames); 
-           end;
-	     end;
-      case 'pre',
+	 else
+	   constitnames=varargin{2};
+	   if iscellstr(constitnames), constitnames=char(constitnames); end;
+	 end;
+       case 'pre',
          corr_fs=varargin{2};
-	     corr_fac=varargin{3};
+	 corr_fac=varargin{3};
          varargin(1)=[];
       case 'sec',
          secular=varargin{2};
@@ -217,6 +244,8 @@ while length(varargin)>0,
          errcalc=varargin{2};
       case 'syn',
          synth=varargin{2};
+      case 'lsq',
+         lsq=varargin{2};	 
       otherwise,
          error(['Can''t understand property:' varargin{1}]);
     end;
@@ -245,6 +274,20 @@ if ~(inn==1 | inm==1), error('Input time series is not a vector'); end;
 xin=xin(:); % makes xin a column vector
 nobs=length(xin);
 
+if strcmp(lsq(1:3),'bes'),  % Set matrix method if auto-choice.
+ if nobs>10000,
+    lsq='normal';
+ else
+    lsq='direct';
+ end;
+end;
+ 
+if nobs*dt> 18.6*365.25*24,  % Long time series
+  longseries=1; ltype='full';
+else
+  longseries=0; ltype='nodal';
+end;
+        		
 nobsu=nobs-rem(nobs-1,2);% makes series odd to give a center point
 
 t=dt*([1:nobs]'-ceil(nobsu/2));  % Time vector for entire time series,
@@ -272,36 +315,102 @@ ngood=length(gd);
 fprintf('   Points used: %d of %d\n',ngood,nobs)
 
 
+
 %----------------------------------------------------------------------
 % Now solve for the secular trend plus the analysis. Instead of solving
 % for + and - frequencies using exp(i*f*t), I use sines and cosines to 
 % keep tc real.  If the input series is real, than this will 
-% automatically use real-only computation. However, for the analysis, 
+% automatically use real-only computation (faster). However, for the analysis, 
 % it's handy to get the + and - frequencies ('ap' and 'am'), and so 
 % that's what we do afterwards.
 
-if secular(1:3)=='lin',
-  tc=[ones(length(t),1) t*(2/dt/nobsu) cos((2*pi)*t*fu') sin((2*pi)*t*fu') ];
+% The basic code solves the matrix problem Ac=x+errors where the functions to
+% use in the fit fill up the A matrix, which is of size (number points)x(number
+% constituents). This can get very, very large for long time series, and
+% for this the more complex block processing algorithm was added. It should
+% give identical results (up to roundoff error)
 
-  coef=tc(gd,:)\xin(gd);
+if strcmp(lsq(1:3),'dir'),
 
-  z0=coef(1);dz0=coef(2);
-  ap=(coef(3:mu+2)-i*coef(mu+3:end))/2;  % a+ amplitudes
-  am=(coef(3:mu+2)+i*coef(mu+3:end))/2;  % a- amplitudes
-else
-  tc=[ones(length(t),1) cos((2*pi)*t*fu') sin((2*pi)*t*fu') ];
+  if secular(1:3)=='lin',
+    tc=[ones(length(t),1) cos((2*pi)*t*fu') sin((2*pi)*t*fu') t*(2/dt/nobsu)];
+  else
+    tc=[ones(length(t),1) cos((2*pi)*t*fu') sin((2*pi)*t*fu') ];
+  end;
   
   coef=tc(gd,:)\xin(gd);
 
-  z0=coef(1);dz0=0;
-  ap=(coef(2:mu+1)-i*coef(mu+2:end))/2;  % a+ amplitudes
-  am=(coef(2:mu+1)+i*coef(mu+2:end))/2;  % a- amplitudes
+  z0=coef(1);
+  ap=(coef(2:(1+mu))-i*coef((2+mu):(1+2*mu)))/2;  % a+ amplitudes
+  am=(coef(2:(1+mu))+i*coef((2+mu):(1+2*mu)))/2;  % a- amplitudes
+  if secular(1:3)=='lin',
+    dz0=coef(end);
+  else
+    dz0=0;
+  end;    
+  xout=tc*coef;  % This is the time series synthesized from the analysis
+
+else  % More complicated code required for long time series when memory may be
+      % a problem. Modified from code submitted by Derek Goring (NIWA Chrischurch)
+      
+      % Basically the normal equations are formed (rather than using Matlab's \
+      % algorithm for least squares); this can be done by adding up subblocks
+      % of data. Notice how the code is messier, and we have to recalculate everything
+      % to get the original fit.
+
+  nsub=5000;  % Block length - doesn't matter really but should be small enough to
+              % get allocated quickly	      
+  if secular(1:3)=='lin',
+    lhs=zeros(mu*2+2,mu*2+2); rhs=zeros(mu*2+2,1);
+    for j1=1:nsub:ngood
+      j2=min(j1 + nsub - 1,ngood);
+      E=[ones(j2-j1+1,1) cos((2*pi)*t(gd(j1:j2))*fu') sin((2*pi)*t(gd(j1:j2))*fu') t(gd(j1:j2))*(2/dt/nobsu)];
+      rhs=rhs + E'*xin(gd(j1:j2));
+      lhs=lhs + E'*E;
+    end;
+  else  
+    lhs=zeros(mu*2+1,mu*2+1); rhs=zeros(mu*2+1,1);
+    for j1=1:nsub:ngood
+      j2=min(j1 + nsub - 1,ngood);
+      E=[ones(j2-j1+1,1) cos((2*pi)*t(gd(j1:j2))*fu') sin((2*pi)*t(gd(j1:j2))*fu')];
+      rhs=rhs + E'*xin(gd(j1:j2));
+      lhs=lhs + E'*E;
+    end;
+  end;
+    
+  coef=lhs\rhs;
+  
+  z0=coef(1);
+  ap=(coef(2:(1+mu))-i*coef((2+mu):(1+2*mu)))/2;  % a+ amplitudes
+  am=(coef(2:(1+mu))+i*coef((2+mu):(1+2*mu)))/2;  % a- amplitudes
+  if secular(1:3)=='lin',
+    dz0=coef(end);
+  else
+    dz0=0;
+  end; 
+  
+  xout=xin; % Copies over NaN   
+  if secular(1:3)=='lin',
+    for j1=1:nsub:nobs
+      j2=min(j1 + nsub - 1,nobs);
+      E=[ones(j2-j1+1,1) cos((2*pi)*t(j1:j2)*fu') sin((2*pi)*t(j1:j2)*fu') t(j1:j2)*(2/dt/nobsu)];
+      xout(j1:j2)=E*coef;
+    end;
+  else  
+    for j1=1:nsub:nobs
+      j2=min(j1 + nsub - 1,nobs);
+      E=[ones(j2-j1+1,1) cos((2*pi)*t(j1:j2)*fu') sin((2*pi)*t(j1:j2)*fu')];
+      xout(j1:j2)=E*coef;
+    end;
+  end;
+
 end;
 
+   
+ 
 %----------------------------------------------------------------------
 % Check variance explained (but do this with the original fit).
 
-xout=tc*coef;  % This is the time series synthesized from the analysis
 xres=xin-xout; % and the residuals!
 
 if isreal(xin),    % Real time series
@@ -325,31 +434,31 @@ corrfac(corrfac>100 | corrfac <.01 | isnan(corrfac))=1;
 ap=ap.*corrfac;
 am=am.*conj(corrfac);
 
+%---------------Nodal Corrections-------------------------------------- 						   
+% Generate nodal corrections and calculate phase relative to Greenwich. 						   
+% Note that this is a slightly weird way to do the nodal corrections,							   
+% but is 'traditional'.  The "right" way would be to change the basis							   
+% functions used in the least-squares fit above.									   
 
-%---------------Nodal Corrections--------------------------------------
-% Generate nodal corrections and calculate phase relative to Greenwich.
-% Note that this is a slightly weird way to do the nodal corrections,
-% but is 'traditional'.  The "right" way would be to change the basis 
-% functions used in the least-squares fit above.
+if ~isempty(lat) & ~isempty(stime),   % Time and latitude								   
 
-if ~isempty(lat) & ~isempty(stime),   % Time and latitude
-    
-  % Get nodal corrections at midpoint time.
-  [v,u,f]=t_vuf(centraltime,[ju;jinf],lat);
-  
-  vu=(v+u)*360; % total phase correction (degrees)
-  nodcor=['Greenwich phase computed with nodal corrections applied to amplitude \n and phase relative to center time'];  
-elseif ~isempty(stime),    % Time only
-  % Get nodal corrections at midpoint time
-  [v,u,f]=t_vuf(centraltime,[ju;jinf]);
-  vu=(v+u)*360; % total phase correction (degrees)
-  nodcor=['Greenwich phase computed, no nodal corrections'];  
-else   % No time, no latitude
-  vu=zeros(length(ju)+length(jinf),1);
-  f=ones(length(ju)+length(jinf),1);
-   nodcor=['Phases at central time'];  
-end
-fprintf(['   ',nodcor,'\n']);
+  % Get nodal corrections at midpoint time.										   
+  [v,u,f]=t_vuf(ltype,centraltime,[ju;jinf],lat);									   
+
+  vu=(v+u)*360; % total phase correction (degrees)									   
+  nodcor=['Greenwich phase computed with nodal corrections applied to amplitude \n and phase relative to center time'];    
+elseif ~isempty(stime),    % Time only  										   
+  % Get nodal corrections at midpoint time										   
+  [v,u,f]=t_vuf(ltype,centraltime,[ju;jinf]);										   
+  vu=(v+u)*360; % total phase correction (degrees)									   
+  nodcor=['Greenwich phase computed, no nodal corrections'];								   
+else   % No time, no latitude												   
+  vu=zeros(length(ju)+length(jinf),1);  										   
+  f=ones(length(ju)+length(jinf),1);											   
+   nodcor=['Phases at central time'];											   
+end															   
+fprintf(['   ',nodcor,'\n']);												   
+
 
 %---------------Inference Corrections----------------------------------
 % Once again, the "right" way to do this would be to change the basis
@@ -527,13 +636,13 @@ xoutOLD=xout;
 if synth>=0,
  if ~isempty(lat) & ~isempty(stime),
    fprintf('   Generating prediction with nodal corrections, SNR is %f\n',synth);
-   xout=t_predic(stime+[0:nobs-1]*dt/24.0,nameu,fu,tidecon,'lat',lat,'synth',synth);
+   xout=t_predic(stime+[0:nobs-1]*dt/24.0,nameu,fu,tidecon,'lat',lat,'synth',synth,'anal',ltype);
  elseif ~isempty(stime), 
    fprintf('   Generating prediction without nodal corrections, SNR is %f\n',synth);
-   xout=t_predic(stime+[0:nobs-1]*dt/24.0,nameu,fu,tidecon,'synth',synth);
+   xout=t_predic(stime+[0:nobs-1]*dt/24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype);
  else
    fprintf('   Generating prediction without nodal corrections, SNR is %f\n',synth);
-   xout=t_predic(t/24.0,nameu,fu,tidecon,'synth',synth);
+   xout=t_predic(t/24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype);
  end;
 else
  fprintf('   Returning fitted prediction\n');
@@ -560,7 +669,7 @@ end;
 %-----------------Output results---------------------------------------
 
 if fid>1,
- fprintf(fid,'\n%s\n',['file name: ',filenameext(filen)]);
+ fprintf(fid,'\n%s\n',['file name: ',filen]);
 elseif fid==1,
  fprintf(fid,'-----------------------------------\n');
 end
@@ -609,11 +718,10 @@ end;
 xout=reshape(xout,inn,inm);
 switch nargout,
   case {0,3,4}
- case {1}
-   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon);
+  case {1}
+   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype);
   case {2}   
-   xout=reshape(xout,inn,inm);
-   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon);
+   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype);
    fu=xout;
 end;
    
@@ -637,11 +745,27 @@ function [nameu,fu,ju,namei,fi,jinf,jref]=constituents(minres,constit,...
 
 % Compute frequencies from astronomical considerations.
 
-[const,sat,cshallow]=t_getconsts(centraltime);
-
-if isempty(constit),
+if minres>1/(18.6*365.25*24),                       % Choose only resolveable pairs for short
+  [const,sat,cshallow]=t_getconsts(centraltime);    % Time series   
   ju=find(const.df>=minres);
-else
+else                                                % Choose them all if > 18.6 years.
+  [const,sat,cshallow]=t_get18consts(centraltime);
+  ju=[2:length(const.freq)]';  % Skip Z0
+  for ff=1:2,                  % loop twice to make sure of neightbouring pairs
+    jck=find(diff(const.freq(ju))<minres);
+    if (length(jck)>0)
+       jrm=jck;
+       jrm=jrm+(abs(const.doodsonamp(ju(jck+1)))<abs(const.doodsonamp(ju(jck))));
+       disp(['  Warning! Following constituent pairs violate Rayleigh criterion']);
+       for ick=1:length(jck);
+	 disp(['     ',const.name(ju(jck(ick)),:),' vs ',const.name(ju(jck(ick)+1),:) ' - not using ',const.name(ju(jrm(ick)),:)]);
+       end;
+       ju(jrm)=[];
+    end
+  end;
+end;
+  
+if ~isempty(constit),     % Selected if constituents are specified in input.
   ju=[];
   for k=1:size(constit,1),
    j1=strmatch(constit(k,:),const.name);
@@ -662,7 +786,7 @@ end;
 
 disp(['   number of standard constituents used: ',int2str(length(ju))])
 
-if ~isempty(shallow),
+if ~isempty(shallow),          % Add explictly selected shallow water constituents.
  for k=1:size(shallow,1),
    j1=strmatch(shallow(k,:),const.name);
    if isempty(j1),
@@ -878,13 +1002,28 @@ nx=length(xres);
 
 % Spectral estimate (takes real time series only).
 
-warningstate = warning;
-warning off
-[Pxr,fx]=psd(real(xres),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme. If you have an error here you are probably missing this toolbox
-[Pxi,fx]=psd(imag(xres),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme.
-[Pxc,fx]=csd(real(xres),imag(xres),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme.
-warning(warningstate)
 
+% Matlab has changed their spectral estimator functions
+% To match the old code, I have to divide by 2*dt. This is because
+% 
+%  PSD*dt  is two-sided spectrum in units of power per hertz.
+%
+%  PWELCH is the one-sided spectrum in power per hertz
+%
+%  So PWELCH/2 = PSD*dt
+
+
+%[Pxr,fx]=psd(real(xres),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme. If you have an error here you are probably missing this toolbox
+%[Pxi,fx]=psd(imag(xres),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme.
+%[Pxc,fx]=csd(real(xres),imag(xres),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme.
+
+
+[Pxr,fx]=pwelch(real(xres),hanning(nx),ceil(nx/2),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme. If you have an error here you are probably missing this toolbox
+Pxr=Pxr/2/dt;
+[Pxi,fx]=pwelch(imag(xres),hanning(nx),ceil(nx/2),nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme.
+Pxi=Pxi/2/dt;
+[Pxc,fx]=cpsd(real(xres),imag(xres),[],[],nx,1/dt); % Call to SIGNAL PROCESSING TOOLBOX - see note in t_readme.
+Pxc=Pxc/2/dt;
 
 df=fx(3)-fx(2);
 Pxr(round(fu./df)+1)=NaN ; % Sets Px=NaN in bins close to analyzed frequencies
@@ -912,8 +1051,7 @@ for k=nfband:-1:1,
      Pxcave(k)=Pxcave(k+1);   
    end;
 end
-
-
+ 
 
 %----------------------------------------------------------------------
 function [emaj,emin,einc,epha]=errell(cxi,sxi,ercx,ersx,ercy,ersy)

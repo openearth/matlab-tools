@@ -128,9 +128,9 @@ if nargin>0,
       elseif length(ista)==0,  
         error('Could not match station');
       end;    
-      varargin(1)=[];
      end;
-  
+     varargin(1)=[];
+
    else   % Lat/long?
       [dist,hdg]=t_gcdist(xharm.latitude,xharm.longitude,varargin{2},varargin{1});
       [mind,ista]=min(dist);
@@ -153,6 +153,7 @@ if nargin>0,
 
   if length(varargin)>0 & ~isstr(varargin{1}),
     tim=varargin{1};
+    tim=tim(:)';
     varargin(1)=[];
     if length(tim)==1,
       if tim<1000,
@@ -166,8 +167,8 @@ if nargin>0,
     dat=clock;
     tim=datenum(dat(1),dat(2),dat(3))+[0:.25:48]/24;
   end;
-   
-  % Parse properties
+ 
+   % Parse properties
 
   format='raw';
   unt='original';

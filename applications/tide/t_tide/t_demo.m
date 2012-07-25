@@ -26,7 +26,7 @@ echo on
        'latitude',69+27/60,...               % Latitude of obs
        'inference',infername,inferfrom,infamp,infphase,...
        'shallow','M10',...                   % Add a shallow-water constituent 
-       'error','cboot',...                   % coloured boostrap CI
+       'error','linear',...                   % coloured boostrap CI
        'synthesis',1);                       % Use SNR=1 for synthesis. 
 
 
@@ -81,11 +81,17 @@ bd=isnan(ysig);
 gd=find(~bd);
 bd([1:(min(gd)-1) (max(gd)+1):end])=0;
 ysig(bd)=interp1(gd,ysig(gd),find(bd)); 
-[Pxs,F]=psd(ysig(isfinite(ysig)),nfft,1,[],ceil(nfft/2));
-%[Pxs,F]=pmtm(ysig(finite(ysig)),4,4096,1);
+%[Pxs,F]=psd(ysig(isfinite(ysig)),nfft,1,[],ceil(nfft/2));
+[Pxs,F]=pwelch(ysig(isfinite(ysig)),hanning(nfft),ceil(nfft/2),nfft,1);
+Pxs=Pxs/2;
+%%[Pxso,Fo]=psd(ysig(isfinite(ysig)),nfft,1,[],ceil(nfft/2));
+
+%[Pxs,F]=pmtm(ysig(isfinite(ysig)),4,4096,1);
 yerr(bd)=interp1(gd,yerr(gd),find(bd)); 
-[Pxe,F]=psd(yerr(isfinite(ysig)),nfft,1,[],ceil(nfft/2));
-%[Pxe,F]=pmtm(yerr(finite(ysig)),4,4096,1);
+%[Pxe,F]=psd(yerr(isfinite(ysig)),nfft,1,[],ceil(nfft/2));
+[Pxe,F]=pwelch(yerr(isfinite(ysig)),hanning(nfft),ceil(nfft/2),nfft,1);
+Pxe=Pxe/2;
+%[Pxe,F]=pmtm(yerr(isfinite(ysig)),4,4096,1);
 
 semilogy(F,Pxs);
 line(F,Pxe,'color','r');
