@@ -276,6 +276,15 @@ if ~isempty(model.tracer)
     end
 end
 
+if model.roller
+    fprintf(fid,'%s\n','Roller= #yes#');
+    fprintf(fid,'%s\n','Gamdis= 0.7');
+    fprintf(fid,'%s\n','betaro= 0.05');
+    fprintf(fid,'%s\n','alfaro= 1.0');
+    fprintf(fid,'%s\n','F_lam = -2');
+    fprintf(fid,'%s\n','Thr   = 0.01');
+end
+
 % %% WAQ output
 % switch(lower(model.type))
 %     case{'delft3dflowpart','delft3dflowwavepart'}

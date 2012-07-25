@@ -67,6 +67,12 @@ hm.models(i).coordinateSystem=model.coordsys;
 hm.models(i).coordinateSystemType=model.coordsystype;
 hm.models(i).runid=model.runid;
 
+%% Roller model
+hm.models(i).roller=0;
+if isfield(model,'roller')
+    hm.models(i).roller=str2double(model.roller);
+end
+
 %% Time zone
 if isfield(model,'timezone')
     hm.models(i).timeZone=model.timezone;
