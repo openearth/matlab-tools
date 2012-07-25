@@ -81,7 +81,12 @@ function varargout = analyseHis(varargin)
 % $HeadURL$
 % $Keywords: $
 
-   OPT.nc             = '';
+   OPT.nc             = ''; % model netcdf file
+   if odd(nargin)
+      OPT.nc   = varargin{1};
+      varargin = {varargin{2:end}};
+   end
+   OPT.ncbase         = ''; % data netcdf files
    OPT.datelim        = [];
    OPT.datestr        = 'mmm'; % for timeaxis
    OPT.datefmt        = 'yyyy-mm-dd'; %  make empty if you do not want date in filename
@@ -94,49 +99,49 @@ function varargout = analyseHis(varargin)
 
    OPT.pause          = 0;
    OPT.standard_name  = 'sea_surface_height';
-   
-switch OPT.standard_name
-case 'sea_surface_height'
-   OPT.ncbase      = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_surface_height';
-   OPT.ylim        = [-2 2.5];
-   OPT.varname     = 'sea_surface_height';
-   OPT.hisname     = 'waterlevel';
-   OPT.hisnamename = 'station_name';
-   OPT.hislatname  = nan;
-   OPT.hislonname  = nan;
-
-case 'water_volume_transport_into_sea_water_from_rivers'
-   OPT.ncbase      = '';
-   OPT.ylim        = [-2 2].*1e5;
-   OPT.varname     = 'Q';
-   OPT.hisname     = 'cross_section_discharge';
-   OPT.hisnamename = 'cross_section_name';
-   OPT.hislatname  = nan;
-   OPT.hislonname  = nan;
-end
-
-   % for nc_t_tide_compare
+   OPT.tex_name       = '\eta';
    
    OPT.axis    = [4.6000    6.4000   52.7000   53.6000];
    OPT.vc      = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
    OPT.vc      = 'http://opendap.deltares.nl/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
+   
+   OPT = setProperty(OPT,varargin);
+   
+switch OPT.standard_name
+case 'sea_surface_height'
+   OPT.ncbase         = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_surface_height';
+   OPT.ylim           = [-2 2.5];
+   OPT.varname        = 'sea_surface_height'; % name of data in data and in internal struct
+   OPT.hisname        = 'waterlevel';         % name of data in model output
+   OPT.hisnamename    = 'station_name';	   % name of stationnames in model output
+   OPT.hislatname     = nan;
+   OPT.hislonname     = nan;
+   OPT.tex_name       = '\eta';
+
+case 'water_volume_transport_into_sea_water_from_rivers'
+   OPT.ncbase         = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/water_volume_transport_into_sea_water_from_rivers';
+   OPT.ylim           = [-2 2].*1e5;
+   OPT.varname        = 'Q'; % name of data in data and in internal struct
+   OPT.hisname        = 'cross_section_discharge';                           % name of data in model output
+   OPT.hisnamename    = 'cross_section_name';	                              % name of stationnames in model output
+   OPT.hislatname     = nan;
+   OPT.hislonname     = nan;
+   OPT.tex_name       = 'Q';
+end
+
+   % for nc_t_tide_compare
    
    if nargin==0
       varargout = {OPT};
       return
    end
    
-   if odd(nargin)
-      OPT.nc   = varargin{1};
-      varargin = {varargin{2:end}};
-   end
-
    OPT = setProperty(OPT,varargin{:});
    
-%% add full path to be able to save in its ssubfolders
+%% add full path to be able to save in its subfolders
 
    if isempty(fileparts(OPT.nc))
-      OPT.nc = fullfile(pwd,OPT.nc)
+      OPT.nc = fullfile(pwd,OPT.nc);
    end
 
 %% load model data
@@ -169,22 +174,28 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
 %%  find and load associated observational data
    % TODO replace (i) by more intelligent query based on location, or 
    %             (ii) full netCDF url as name of observation point for direct retrieval
-     [bool,ind] = strfindb(dataurls,upper(M.name{ist}));
-      dataurl   = dataurls{bool};
-     [D,Dmeta]   = nc_cf_stationTimeSeries(dataurl,OPT.varname,'period',OPT.datelim([1 end])); % returns lon and lat
 
+     [bool,ind] = strfindb(upper(dataurls),upper(strtok(M.name{ist})));
+     if all(bool==0)
+        error(['No matching data found in ',OPT.ncbase]);
+     end
+     dataurl   = dataurls{bool};
+     [D,Dmeta] = nc_cf_stationTimeSeries(dataurl,OPT.varname,'period',OPT.datelim([1 end])); % returns lon and lat too
+
+     unitsfac = 1;           
      if ~isequal(Mmeta.(OPT.varname).units, Dmeta.(OPT.varname).units)
-     error(['units of model and data differ, model: "',...
+     disp(['units of model and data differ, model: "',...
                char(Mmeta.(OPT.varname).units),'"   - data: "',...
                char(Dmeta.(OPT.varname).units),'"'])
-     OPT.units
+     disp(['converted to model units: ',char(Dmeta.(OPT.varname).units)]);
+     unitsfac = convert_units(char(Dmeta.(OPT.varname).units),char(Mmeta.(OPT.varname).units))
      end
      
      if ~isequal(Mmeta.datenum.timezone,Dmeta.datenum.timezone)
      disp(['time zones of model and data differ, model: "',...
                char(Mmeta.datenum.timezone),'"   - data: "',...
                char(Dmeta.datenum.timezone),'"'])
-     disp(['converted to common timezone ',OPT.timezone]);
+     disp(['converted to common timezone: ',OPT.timezone]);
      
      if isempty(char(Mmeta.datenum.timezone))
          Mmeta.datenum.timezone = OPT.model_timezone;
@@ -220,10 +231,10 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
    
 %%  process only if observational data is present
     
-D.title = [OPT.label,char(D.station_name(:)'),' (',...
+D.title = {OPT.label,[char(D.station_name(:)'),' (',...
                       char(D.station_id(:)'),') [',...
                       num2str(D.lon),'\circ E, ',...
-                      num2str(D.lat),'\circ N]'];
+                      num2str(D.lat),'\circ N]']};
 
  if ~isempty(D.datenum)
    
@@ -237,12 +248,13 @@ D.title = [OPT.label,char(D.station_name(:)'),' (',...
 
     figure(FIG(1));subplot_meshgrid(1,1,.05,.05);clf
     
-    plot    (D.datenum,DM.(OPT.varname) - D.(OPT.varname),'g','DisplayName','model - data')
+    plot    (D.datenum,DM.(OPT.varname) - D.(OPT.varname).*unitsfac,'g','DisplayName','model - data')
     legend  ('Location','NorthEast')
     title   (D.title)
     grid on
     ylim    (OPT.ylim)
-    ylabel  (['\eta [',Dmeta.(OPT.varname).units,']']);
+    xlabel  ({'',['timezone: ',OPT.timezone]})
+    ylabel  ([OPT.tex_name,' [',Dmeta.(OPT.varname).units,']']);
     timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
     text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
     
@@ -265,16 +277,16 @@ D.title = [OPT.label,char(D.station_name(:)'),' (',...
             [' \epsilon_{min}  = ',num2str(mine,fmte)],...
             [' \epsilon_{max}  = ',num2str(maxe,fmte)]};
 
-    plot    (D.(OPT.varname),DM.(OPT.varname),'k.','DisplayName','model vs. data') % model on y-axis: 'model to high' visible as higher results
+    plot    (D.(OPT.varname).*unitsfac,DM.(OPT.varname),'k.','DisplayName','model vs. data') % model on y-axis: 'model to high' visible as higher results
     hold on
     title   (D.title)
     text    (0,1,txte,'units','normalized','verticalalignment','top','FontName','fixedwidth')
     grid on
     axis equal
     ylim  (OPT.ylim)
-    ylabel(['\color{blue}\eta [',Dmeta.(OPT.varname).units,'] (model)'])
+    ylabel(['\color{blue}',OPT.tex_name,' [',Dmeta.(OPT.varname).units,'] (model)'])
     xlim  (OPT.ylim)
-    xlabel(['\color{red}\eta [',Dmeta.(OPT.varname).units,'] (data)'])
+    xlabel(['\color{red}',OPT.tex_name,' [',Dmeta.(OPT.varname).units,'] (data)'])
     plot  (xlim,ylim,'k--','linewidth',1)
     for deta = [.25 .5]
     plot  (xlim+deta,ylim-deta,'k:')
@@ -293,12 +305,13 @@ D.title = [OPT.label,char(D.station_name(:)'),' (',...
     plot    (M.datenum,M.(OPT.varname)(:,ist),'b','DisplayName','model')
     hold on
     if ~isempty(OPT.ncbase)    
-    plot    (D.datenum,D.(OPT.varname),'r','DisplayName','data')
+    plot    (D.datenum,D.(OPT.varname).*unitsfac,'r','DisplayName','data')
     end
     legend  ('Location','NorthEast')
     title   (D.title)
     grid on
     ylim    (OPT.ylim)
+    xlabel  ({'',['timezone: ',OPT.timezone]})
     ylabel  (['\eta [',Dmeta.(OPT.varname).units,']']);
     timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
     text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
@@ -315,7 +328,7 @@ D.title = [OPT.label,char(D.station_name(:)'),' (',...
  if isempty(D.datenum)
      t_tide_msg = [];
  else
-    t_tide_msg = nc_t_tide(D.datenum,D.(OPT.varname),... % add period and midpoint
+    t_tide_msg = nc_t_tide(D.datenum,D.(OPT.varname).*unitsfac,... % add period and midpoint
       'station_id',D.station_id,...
     'station_name',D.station_name,...
           'period',OPT.datelim, ... % D.datenum([1 end]),... % use OPT.datelim

@@ -1,5 +1,5 @@
 function delft3d_wnd_from_nc(varargin)
-%delft3d_wnd_from_nc transforms netCDf wind file to delft3d *.wnd file
+%DELFT3D_WND_FROM_NC transforms netCDf wind file to delft3d *.wnd file
 %
 %  delft3d_wnd_from_nc(<keyword,value>)
 %
@@ -10,6 +10,8 @@ function delft3d_wnd_from_nc(varargin)
 % * period:     2 datenums
 % * dir   :     directory where to save *.wnd
 % * nc    :     name or opendap url of netCDF file with wind data
+%
+% Example:
 %
 %See also: KNMI_POTWIND, DELFT3D_IO_WND, delft3d_wnd_from_knmi_potwind
 
@@ -61,7 +63,7 @@ function delft3d_wnd_from_nc(varargin)
    OPT.dir        = pwd;
    OPT.refdatenum = []; %datenum(1998,1,1); % offset from delftd *.mdf
    
-   OPT = setproperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin);
 
    if ischar(OPT.refdatenum)
       mdf            = delft3d_io_mdf('read',OPT.refdatenum);

@@ -1,15 +1,15 @@
 function  varargout= t_tide_name2freq(varargin)
 %T_TIDE_NAME2FREQ  Returns frequencies from the T_TIDE component names
 %
-%    frequencies              = tidal_getomega(tides)
-%   [frequencies,names,index] = tidal_getomega(tides)
+%    frequencies              = t_tide_name2freq(tides)
+%   [frequencies,names,index] = t_tide_name2freq(tides)
 %
 % where tides is a cell character array with the names
 % of the 146 tidal components in the file t_constituents.mat
 % that originates form t_tide (www.ocgy.ubc.ca/~rich/).
 % Index is the index into the t_constituents.mat database.
 %
-%   [omega,names,index] = tidal_getomega(tides,'unit' ,value)
+%   [omega,names,index] = t_tide_name2freq(tides,'unit' ,value)
 %   where value is the units of the output frequencies, default: 'rad/s':
 %
 %         per|  day      | hour     | sec          |
@@ -58,7 +58,6 @@ function  varargout= t_tide_name2freq(varargin)
 %   --------------------------------------------------------------------
 
 %% Defaults
-%  -----------------------------------
 
    OPT.unit = 'rad/s'; 
    tidenames    = varargin{1};
@@ -75,14 +74,12 @@ function  varargout= t_tide_name2freq(varargin)
    end
 
 %% Load
-%  -----------------------------------
 
    load           t_constituents;   % [cyc/hr] const.freq 
    freq          = const.freq/3600; % [cyc/s ] = [Hz]
    cnames        = cellstr(const.name);
 
 %% Search 
-%  -----------------------------------
 
    index=[];
    if length(tidenames) ==0
@@ -99,7 +96,6 @@ function  varargout= t_tide_name2freq(varargin)
    omega  = 2*pi*freq(index)';    
 
 %% Units
-%  -----------------------------------
 
    OPT.unit   = strrep(OPT.unit,'\','/');
    
@@ -123,7 +119,6 @@ function  varargout= t_tide_name2freq(varargin)
    end;
 
 %% Output
-%  -----------------------------------
 
    if     nargout<2 
         varargout{1}   = omega;

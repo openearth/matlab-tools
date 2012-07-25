@@ -1,20 +1,20 @@
 function varargout = plotNet(varargin)
 %plotNetkml  Plot a D-Flow FM unstructured net in Google Earth
 %
-%     G  = dflowfm.readNetkml(ncfile) 
-%    <h> = dflowfm.plotNetkml(G     ,<keyword,value>) 
-%          % or 
-%    <h> = dflowfm.plotNetkml(ncfile,<keyword,value>) 
+%     G  = dflowfm.readNet(ncfile) 
+%          dflowfm.plotNetkml(G     ,<keyword,value>) % or 
+%          dflowfm.plotNetkml(ncfile,<keyword,value>) 
 %
 %   plots a D-Flow FM unstructured net (centers, corners, contours),
-%   as kml file.
+%   as kml file. Note that G only when G is a *_map.nc file it will contain
+%   the node links, otherwise (*_net.nc) only the nodes (corner dots).
 %
 %   The following optional <keyword,value> pairs have been implemented:
 %    * axis: only grid inside axis is plotted, use [] for while grid.
 %            for axis to be be a polygon, supply a struct axis.x, axis.y.
 %   Struct with KML properties, if [] they are not plotted.
-%    * cor: a struct with KMLmarker properties for corners
-%    * cen: a struct with KMLmarker properties for centers (bug still: cor overrules cen in Google Earth)
+%    * cor:  a struct with KMLmarker properties for corners
+%    * cen:  a struct with KMLmarker properties for centers (bug still: cor overrules cen in Google Earth)
 %    * peri: a struct with KMLline properties for connection line
 %   Defaults values can be requested with OPT = dflowfm.plotNet().
 %
@@ -177,17 +177,21 @@ function varargout = plotNet(varargin)
      %  end
      
      %% NEW method, FAST in GE, but slower to generate
+     sourceFiles{end+1} = [tmpname,'_peri.kml'];
+     OPT.peri.fileName = sourceFiles{end};
      
     [peri.x peri.y]=tri2poly(G.cor.Link',G.cor.x,G.cor.y,'log',2);
      
     % TO DO check whether x and y are not already spherical 
     [peri.lon,peri.lat] = convertCoordinates(peri.x,peri.y,'CS1.code',OPT.epsg,'CS2.code',4326);
      
-     sourceFiles{end+1} = [tmpname,'_peri.kml'];
-     OPT.peri.fileName = sourceFiles{end};
      disp('plotting KMLline segments, please wait ...')
-     h = KMLline(peri.lat,peri.lon,OPT.peri);   
+     h = KMLline(peri.lat,peri.lon,OPT.peri);
    
+   elseif ~isempty(OPT.peri)
+      disp('Cell boundaries (peri) not present in file, not plotted.')
    end
    
    KMLmerge_files('fileName',OPT.fileName,'sourceFiles',sourceFiles,'deleteSourceFiles',0,'distinctDocuments',1)
+
+   varargout = {0};

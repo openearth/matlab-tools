@@ -172,8 +172,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
          axis equal
          grid on
-         xlabel('data amplitude [m]')
-         ylabel('model amplitude [m]')
+         xlabel([ 'data amplitude [',Da.amplitude.units,']'],'Interpreter','none')
+         ylabel(['model amplitude [',Da.amplitude.units,']'],'Interpreter','none')
          xlim(xlims)
          ylim(ylims)
          plot(xlims       ,ylims + 0.01,'-','color',[.5 .5 .5])
@@ -195,7 +195,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          end
          axis equal
          grid on
-         xlabel('data phase [deg]')
+         xlabel( 'data phase [deg]')
          ylabel('model phase [deg]')
          xlim(xlims)
          ylim(ylims)
@@ -335,7 +335,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          set(gca,'yscale','log')
 
          grid on
-         ylabel(['Amplitude [',Da.amplitude.units ,']'],'Interpreter','none')
+         ylabel(['Amplitude [',Da.amplitude.units,']'],'Interpreter','none')
 
          legend('model','data')
 
@@ -349,7 +349,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
 
          grid on
          xlabel(['Frequency [',Da.frequency.units,']'],'Interpreter','none')
-         ylabel(['Phase [',Da.phase.units ,']'],'Interpreter','none')
+         ylabel(    ['Phase [',Da.phase.units    ,']'],'Interpreter','none')
          
          if OPT.export
          text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
@@ -468,9 +468,16 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
          if OPT.export
          text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
-         basename = [OPT.directory,filesep,'planview',filesep,filename(ncmodel{ifile})];
+         % extract unique basename
+         ind = find(prod(diff(filename(ncmodel),[],1),1)>0);
+         if isempty(ind) | (ind==1)
+            basename = mfilename;
+         else
+            basename = filename(ncmodel{1});
+            basename = basename(1:ind(1)-1);
+         end
+         basename = [OPT.directory,filesep,'planview',filesep,basename];
          print2screensizeoverwrite([basename,'_plan_',OPT.names2planview{icomp},'.png'])
-        %print2screensizeeps      ([basename,'_plan_',OPT.names2planview{icomp},'.eps'])
          end
          
       end
