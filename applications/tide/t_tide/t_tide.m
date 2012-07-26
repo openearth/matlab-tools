@@ -43,6 +43,10 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                        'screen'  (to screen) - default
 %                        FILENAME   (to a file)
 %
+%   How to sort the component dimension in tables
+%       'sort'          '<->fre<q>' (default), '<->amp<litude>','<->snr,
+%                       '<->pha<se>' where prefix <-> means descending
+%
 %   Correction factor for prefiltering.
 %       'prefilt'        FS,CORR
 %                        If the time series has been passed through
@@ -154,6 +158,8 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %
 % (citation of this article would be appreciated if you find the
 %  toolbox useful).
+%
+%See also: UTide
 
 % R. Pawlowicz 11/8/99 - Completely rewritten from the transliterated-
 %                        to-matlab IOS/Foreman fortran code by S. Lentz
@@ -179,8 +185,9 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                       to Dan Codiga and (especially) Evan Haug!
 %              25/7/12 - Gerben J. de Boer added support for non-equidistant time vector.
 
-%
 % Version 1.3
+% $Id$
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/tide/nc_t_tide
 
 
 
@@ -189,6 +196,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 ray          = 1;
 dt           = 1;
 fid          = 1;
+sor          = 'freq';
 stime        = [];
 lat          = [];
 corr_fs      = [0 1e6];
@@ -254,6 +262,8 @@ while length(varargin)>0,
          synth=varargin{2};
       case 'lsq',
          lsq=varargin{2};	 
+      case 'sor',
+         sor=varargin{2};	 
       otherwise,
          error(['Can''t understand property:' varargin{1}]);
     end;
@@ -713,7 +723,23 @@ else               % Complex time series
   fprintf('   percent of Y var residual after synthesis/var original: %5.2f %%\n',100*(varyr/vary));
 end;
 
+%-----------------Sort   results---------------------------------------
+if     strcmp(sor(1:3), 'fre'); % default
+elseif strcmp(sor(1:4),'-fre');[dummy,index]=sort(fu          ,1,'descend');   
+elseif strcmp(sor(1:3), 'amp');[dummy,index]=sort(tidecon(:,1),1,'ascend' );
+elseif strcmp(sor(1:4),'-amp');[dummy,index]=sort(tidecon(:,1),1,'descend');
+elseif strcmp(sor(1:3), 'pha');[dummy,index]=sort(tidecon(:,3),1,'ascend' );
+elseif strcmp(sor(1:4),'-pha');[dummy,index]=sort(tidecon(:,3),1,'descend');
+elseif strcmp(sor(1:3), 'snr');[dummy,index]=sort(snr         ,1,'ascend' );
+elseif strcmp(sor(1:4),'-snr');[dummy,index]=sort(snr         ,1,'descend');
+end
 
+if ~strcmp(sor(1:3),'fre')
+   nameu   = nameu(index,:);
+   fu      = fu(index);
+   tidecon = tidecon(index,:);
+   snr     = snr(index);
+end
 %-----------------Output results---------------------------------------
 
 if fid>1,

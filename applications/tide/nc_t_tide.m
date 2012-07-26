@@ -14,7 +14,7 @@ function varargout = nc_t_tide(varargin)
 %
 % For list of <keyword,value> call nc_t_tide()
 %
-%See also: T_TIDE, NC_T_TIDE_COMPARE
+%See also: T_TIDE, NC_T_TIDE_COMPARE, UTide
 
 % TO DO: start using native matlab ncwritschema
 
@@ -72,6 +72,7 @@ function varargout = nc_t_tide(varargin)
    OPT.ncfile       = '';
    OPT.ddatenumeps  = 1e-8;
    OPT.synth        = 2;
+   OPT.sort         = 'freq';
    
    OPT.title        = ' ';
    OPT.institution  = ' ';
@@ -106,8 +107,9 @@ else
    
       OPT = setProperty(OPT,varargin{3:end});
    
-      dt = diff(t).*24; % hour
-   
+      mask = ( t >= OPT.period(1)) & (t <= OPT.period(2));
+      dt = diff(t(mask)).*24; % hour
+
       if length(unique([dt])) > 1
 % Not any more with OET t_tide extension
 %          if (max(dt) - min(dt)) > OPT.ddatenumeps
@@ -122,12 +124,14 @@ else
       end
       
       mkdir(fileparts(OPT.ascfile));
-      [tidestruc,pout]=t_tide(var,...
+      
+      [tidestruc,pout]=t_tide(var(mask),...
                  'latitude'  ,OPT.lat,... % required for nodal corrections
-                 'start'     ,t(1),...
+                 'start'     ,t(mask(1)),...
                  'interval'  ,dt,... % in hours
                  'output'    ,[OPT.ascfile],...
                  'error'     ,t_tide_err,...
+                 'sort'      ,OPT.sort,...
                  'synth'     ,OPT.synth);
 
    %% Collect relevant data in struct, as if returned by D = nc2struct()                 
@@ -190,7 +194,7 @@ end
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_name');
    nc_addvar         (OPT.ncfile,nc);
    nc_varput         (OPT.ncfile,nc.Name,D.station_name(:)');clear nc
-
+if ~(isempty(D.longitude) | isempty(D.latitude))
    nc.Name = 'longitude';
    nc.Datatype     = 'double';
    nc.Dimension    = {};
@@ -208,7 +212,7 @@ end
    nc.Attribute(3) = struct('Name', 'units'          ,'Value', 'degrees_north');
    nc_addvar         (OPT.ncfile,nc);
    nc_varput         (OPT.ncfile,nc.Name,D.latitude);clear nc
-
+end
    % TO DO: connect time to amp/phase
 
    nc.Name = 'time';

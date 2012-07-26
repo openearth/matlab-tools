@@ -5,10 +5,10 @@
 % GUIS for model pre-and postprocessing
 %   DelftDashBoard     - DelftDashBoard
 %   muppet             - GUI for postprocessing of delft3d and other models
+%   d3d_qp             - Official GUI for <a href="http://www.delft3d.nl">Delft3d</a> and many other models/datafiles.
 %
 % Libraries for model pre-and postprocessing
 %   delft3d            - model: <a href="http://www.delft3d.nl">Delft3d</a>
-%   d3d_qp             - Official GUI for <a href="http://www.delft3d.nl">Delft3d</a> and many other models/datafiles.
 %   delft3d_matlab     - external include of official <a href="https://svn.oss.deltares.nl/repos/delft3d/trunk/src/tools_lgpl/matlab/quickplot/progsrc">Delft3D matlab toolbox</a> (no write access allowed)
 %   sobek              - model: <a href="http://www.SOBEK.nl">SOBEK</a>
 %   SWAN               - model: <a href="http://www.SWAN.tudelft.nl">SWAN</a>  (see also: waves)
@@ -27,7 +27,7 @@
 %
 % Data processing
 %   grid_2D_orthogonal - library to use    tiled sets of orthogonal netCDF grids
-%   nc_processing      - library to create tiled sets of orthogonal netCDF grids, generation 1: to be phaed out
+%   nc_processing      - library to create tiled sets of orthogonal netCDF grids, generation 1: to be phased out
 %   nc_gen             - library to create tiled sets of orthogonal netCDF grids, generation 2: recommended
 %   UCIT               - GUI     to use    tiled sets of orthogonal netCDF grids (Universal Coastal Intelligence Toolkit)
 %   KNMI               - download and parse datasets from <a href="http://www.knmi.nl">KNMI</a> 
@@ -48,7 +48,9 @@
 %   statistic          - frequency of exceedance toolbox
 %   netica             - tools for Bayesian software <a href="http://www.norsys.com/">NETICA</a>
 %   textpad            - program: <a href="http://www.textpad.com">textpad</a>
-%   tide               - <a href="http://www.eos.ubc.ca/~rich/#T_Tide">t_tide</a>, <a href="http://www.po.gso.uri.edu/~codiga/utide/utide.htm">UTtide</a> and associated tools
+%   tide               - tidal analysis and associated tools incl.
+%    t_tide            - <a href="http://www.eos.ubc.ca/~rich/#T_Tide">t_tide</a>
+%    UTide             - <a href="http://www.po.gso.uri.edu/~codiga/utide/utide.htm">UTtide</a>
 %   waves              - waves related functions (see also: swan)
 %
 % GIS & Google Earth

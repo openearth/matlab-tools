@@ -55,9 +55,14 @@ function yout=t_predic(tim,varargin);
 % R. Pawlowicz 11/8/99
 % Version 1.0
 
-% 8/2/03 - Added block processing to generate prediction (to
-%          avoid memory overflows for long time series).
+%  8/2/03 - Added block processing to generate prediction (to
+%           avoid memory overflows for long time series).
 % 29/9/04 - small bug with undefined ltype fixed
+% 25/7/12 - added stime to allow switching off nodal corrections
+
+% Version 1.3
+% $Id$
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/tide/nc_t_tide
            
 if nargin<2,  % Not enough
   error('Not enough input arguments');
@@ -67,9 +72,9 @@ longseries=0;
 ltype='nodal';
 
 if isstruct(varargin{1}),
-  names=varargin{1}.name;
-  freq=varargin{1}.freq;
-  tidecon=varargin{1}.tidecon;
+  names   = varargin{1}.name;
+  freq    = varargin{1}.freq;
+  tidecon = varargin{1}.tidecon;
   if isfield(varargin{1},'ltype') & strcmp(varargin{1}.ltyp(1:3),'ful'),
     longseries=1;
   end;  
@@ -78,14 +83,14 @@ else
   if length(varargin)<3,
     error('Not enough input arguments');
   end;
-  names=varargin{1};
-  freq=varargin{2};
-  tidecon=varargin{3};
+  names   = varargin{1};
+  freq    = varargin{2};
+  tidecon = varargin{3};
   varargin(1:3)=[];
 end;
 
-lat=[];
-synth=0;
+lat   = [];
+synth = 0;
 stime = 0; % stime=[] would have meant that no nodal corrections are taken into account, but by default we want to, so we use stime=0
 
 k=1;

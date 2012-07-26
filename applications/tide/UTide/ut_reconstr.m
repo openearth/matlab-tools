@@ -99,6 +99,8 @@ function [u,v] = ut_reconstr(tin,coef,varargin)
 %       2011Codiga-UTide-Report.pdf
 %
 % UTide v1p0 9/2011 d.codiga@gso.uri.edu
+%
+%See also: t_tide
 
 if isequal(size(coef.g,2),1) % single record
     [u,v] = ut_reconstr1(tin,coef,varargin{:});
