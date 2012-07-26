@@ -1,4 +1,4 @@
-function structOut = delwaq_map2his_w(FileName,File2Save,SegmentNr,SegmentNames,SubstanceNames,TimeIndex)
+function structOut = delwaq_map2his(FileName,File2Save,SegmentNr,SegmentNames,SubstanceNames,TimeIndex)
 %DELWAQ_MAP2HIS Read Delwaq MAP file a write a Delwaq HIS file.
 %
 %   STRUCTOUT = DELWAQ_MAP2HIS(FILENAME,SEGEMENTNR,SEGMENTNAMES,FILE2SAVE)
@@ -29,10 +29,11 @@ if nargin<4
    File2Save = [path1 '\' name1 '.his'];
 end
 
-inot = isnan(SegmentNr);
-SegmentNr = SegmentNr(~inot);
-SegmentNames = {SegmentNames{~inot}}; %#ok<CCAT1>
-
+if isnumeric(SegmentNr)
+    inot = isnan(SegmentNr);
+    SegmentNr = SegmentNr(~inot);
+    SegmentNames = {SegmentNames{~inot}}; %#ok<CCAT1>
+end
 
 % Opening Files
 struct1 = delwaq('open',FileName);
