@@ -13,9 +13,16 @@ function yout=t_predic(tim,varargin);
 %    corrections, and thus neither will the prediction. If nodal 
 %    corrections were used in the analysis, then it is likely we will
 %    want to use them in the prediction too and these are computed 
-%    using the latitude, if given.
+%    using the latitude, if given. Set 'start time' to empty if
+%    nodal corrections are NOT to be taken into account. By default
+%    t_predic does take nodal corrections into account if only latitude 
+%    is specified (because default 'start time' is 0).
 %
-%     'latitude'        decimal degrees (+north) (default: none)
+%       'start time'     [year,month,day,hour,min,sec]
+%                        - min,sec are optional OR decimal day (matlab 
+%                        DATENUM scalar), When [], no nodal corrections are 
+%                        used (default: 0, unlike t_tide).
+%       'latitude'       decimal degrees (+north) (default: none).
 %
 %    If the original analysis was >18.6 years satellites are
 %    not included and we force that here:
@@ -79,7 +86,7 @@ end;
 
 lat=[];
 synth=0;
-
+stime = 0; % stime=[] would have meant that no nodal corrections are taken into account, but by default we want to, so we use stime=0
 
 k=1;
 while length(varargin)>0,
@@ -89,6 +96,8 @@ while length(varargin)>0,
          lat=varargin{2};
       case 'syn',
          synth=varargin{2};
+      case 'sta',
+        stime=varargin{2};
       case 'ana',
          if isstr(varargin{2}),
 	   ltype=varargin{2};
@@ -140,7 +149,13 @@ end;
 
 % Mean at central point (get rid of one point at end to take mean of
 % odd number of points if necessary).
-jdmid=mean(tim(1:2*fix((length(tim)-1)/2)+1));
+if ~isempty(stime)
+   centraltime=mean(tim(1:2*fix((length(tim)-1)/2)+1));
+else
+   centraltime=[];
+end
+%check consistency with t_tide's centraltime
+fprintf('   t_predic centraltime =  %f\n',centraltime);
 
 if longseries,
   const=t_get18consts;
@@ -170,10 +185,10 @@ else
 end;
 
 % Get the astronical argument with or without nodal corrections.  
-if ~isempty(lat) & abs(jdmid)>1,				  
-  [v,u,f]=t_vuf(ltype,jdmid,ju,lat);				  
-elseif abs(jdmid)>1, % a real date				  
-  [v,u,f]=t_vuf(ltype,jdmid,ju);				  
+if ~isempty(lat) & ~isempty(centraltime),				  
+  [v,u,f]=t_vuf(ltype,centraltime,ju,lat);				  
+elseif ~isempty(centraltime), % keep consistent with t_tide variable dt implementation
+  [v,u,f]=t_vuf(ltype,centraltime,ju);				  
 else								  
    v=zeros(length(ju),1);					  
    u=v; 							  
@@ -184,8 +199,9 @@ end;
 ap=ap.*f.*exp(+i*2*pi*(u+v));
 am=am.*f.*exp(-i*2*pi*(u+v));
 
-
-tim=tim-jdmid;
+if ~isempty(centraltime)
+tim=tim-centraltime;
+end
 
 [n,m]=size(tim);
 tim=tim(:)';

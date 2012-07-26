@@ -32,8 +32,9 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %   is then just used to generate Greenwich phases).
 %
 %       'start time'     [year,month,day,hour,min,sec]
-%                        - min,sec are optional OR 
-%                        decimal day (matlab DATENUM scalar)
+%                        - min,sec are optional OR decimal day (matlab 
+%                        DATENUM scalar), When [], no nodal corrections are 
+%                        used (default: [], unlike t_predic).
 %       'latitude'       decimal degrees (+north) (default: none).
 %
 %   Where to send the output.
@@ -296,33 +297,46 @@ if prod(length(dt)) >1
       error('time vector should have same length as XIN')
    end
    t  = [0;cumsum(dt(:))];   % construct time vector
-   t  = t - t(end)/2;     % Time vector for entire time series,
-                          % centered at series midpoint. 
+   
+   tmean=mean(t(1:2*fix((length(t)-1)/2)+1));   
+
+   t  = t - tmean;     % Time vector for entire time series,
+                       % centered at series midpoint. 
 
    % check whether full time series is equidistant at machine precision
    % so we can perform the bootstrap error analysis after all
    if max(abs(diff(dt))) > eps('single')
       dt0 = dt;
    end
-   dt = (t(end) - t(1))./(nobs-1); % average dt to ensure results for equidistant vector match scaler dt
-   
-   if rem(nobs-1,2)==1
-       t = t + dt./2;
-   end
+   dt = (t(end) - t(1))./(nobs-1); % average dt to ensure results for equidistant vector match scalar dt
+
+   % Make sure centraltime matches 'centraltime' (jdmid) in t_predic that has
+   % always been capable of handling non-equidistant time series
+   if ~isempty(stime),
+     centraltime=stime+tmean./24;
+   else
+     centraltime=[];
+     if (rem(nobs-1,2)) % even
+         t = t -dt/2;
+     end
+   end;
    
 else
    
    t=dt*([1:nobs]'-ceil(nobsu/2));  % Time vector for entire time series,
                                     % centered at series midpoint. 
+   if ~isempty(stime),
+     centraltime=stime+floor(nobsu./2)./24.0*dt;
+   else
+     centraltime=[];
+     if (rem(nobs-1,2)) % even
+         t = t -dt/2;
+     end     
+   end;
 end
 
-t(:)'
-
-if ~isempty(stime),
-  centraltime=stime+floor(nobsu./2)./24.0*dt;
-else
-  centraltime=[];
-end;
+%check consistency with t_predic's centraltime
+fprintf('   t_tide   centraltime =  %f\n',centraltime);
 
 if nobs*dt> 18.6*365.25*24,  % Long time series
   longseries=1; ltype='full';
@@ -670,13 +684,13 @@ xoutOLD=xout;
 if synth>=0,
  if ~isempty(lat) & ~isempty(stime),
    fprintf('   Generating prediction with nodal corrections, SNR is %f\n',synth);
-   xout=t_predic(stime+[0:nobs-1]*dt/24.0,nameu,fu,tidecon,'lat',lat,'synth',synth,'anal',ltype);
- elseif ~isempty(stime), 
+   xout=t_predic(stime+(t(:)'-t(1))./24.0,nameu,fu,tidecon,'lat',lat,'synth',synth,'anal',ltype);
+ elseif ~isempty(stime),
    fprintf('   Generating prediction without nodal corrections, SNR is %f\n',synth);
-   xout=t_predic(stime+[0:nobs-1]*dt/24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype);
+   xout=t_predic(stime+(t(:)'-t(1))./24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype);
  else
    fprintf('   Generating prediction without nodal corrections, SNR is %f\n',synth);
-   xout=t_predic(t/24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype);
+   xout=t_predic(t/24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype,'start',stime);
  end;
 else
  fprintf('   Returning fitted prediction\n');
