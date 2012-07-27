@@ -100,12 +100,15 @@ function varargout = analyseHis(varargin)
    OPT.pause          = 0;
    OPT.standard_name  = 'sea_surface_height';
    OPT.tex_name       = '\eta';
+   OPT.plot.planview  = 1;
+   OPT.plot.scatter   = 1;
+   OPT.plot.planview  = 1;
    
-   OPT.axis    = [4.6000    6.4000   52.7000   53.6000];
+   OPT.axis    = [4.4000    6.4000   52.7000   53.6000];
    OPT.vc      = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
    OPT.vc      = 'http://opendap.deltares.nl/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
    
-   OPT = setProperty(OPT,varargin);
+   OPT = setproperty(OPT,varargin);
    
 switch OPT.standard_name
 case 'sea_surface_height'
@@ -136,7 +139,7 @@ end
       return
    end
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
 %% add full path to be able to save in its subfolders
 
@@ -186,16 +189,16 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
      if ~isequal(Mmeta.(OPT.varname).units, Dmeta.(OPT.varname).units)
      disp(['units of model and data differ, model: "',...
                char(Mmeta.(OPT.varname).units),'"   - data: "',...
-               char(Dmeta.(OPT.varname).units),'"'])
-     disp(['converted to model units: ',char(Dmeta.(OPT.varname).units)]);
-     unitsfac = convert_units(char(Dmeta.(OPT.varname).units),char(Mmeta.(OPT.varname).units))
+               char(Dmeta.(OPT.varname).units),'": ',...
+               'converted to model units: ',char(Dmeta.(OPT.varname).units)]);
+     unitsfac = convert_units(char(Dmeta.(OPT.varname).units),char(Mmeta.(OPT.varname).units));
      end
      
      if ~isequal(Mmeta.datenum.timezone,Dmeta.datenum.timezone)
      disp(['time zones of model and data differ, model: "',...
                char(Mmeta.datenum.timezone),'"   - data: "',...
-               char(Dmeta.datenum.timezone),'"'])
-     disp(['converted to common timezone: ',OPT.timezone]);
+               char(Dmeta.datenum.timezone),'":',...
+               'converted to common timezone: ',OPT.timezone]);
      
      if isempty(char(Mmeta.datenum.timezone))
          Mmeta.datenum.timezone = OPT.model_timezone;
@@ -229,7 +232,7 @@ for ist=1:length(M.name); if ismember(M.name{ist},OPT.names) | isempty(OPT.names
   OPT.txt = mktex({['Created with OpenEarthTools <www.OpenEarth.eu> ',OPT.ext],...
                    ['model: ',filename(OPT.nc),' & data:',OPT.ncbase]}); % ,' @ ',datestr(now,'yyyy-mmm-dd')
    
-%%  process only if observational data is present
+%%  process comparisons (difference and scatter) only if observational data is present
     
 D.title = {OPT.label,[char(D.station_name(:)'),' (',...
                       char(D.station_id(:)'),') [',...
@@ -322,9 +325,11 @@ D.title = {OPT.label,[char(D.station_name(:)'),' (',...
 
     if OPT.t_tide
     
-    nc_t_tide_data  = [fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist})                     ,'_t_tide.nc'];
-    nc_t_tide_model = [fileparts(OPT.nc),filesep,'t_tide'     ,filesep,filename(OPT.nc),'_',mkvar(M.name{ist}),'_t_tide.nc'];
-
+     nc_t_tide_data  = [fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist})                     ,'_t_tide.nc'];
+    asc_t_tide_data  = [fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist})                     ,'_t_tide.t_tide'];
+     nc_t_tide_model = [fileparts(OPT.nc),filesep,'t_tide'     ,filesep,filename(OPT.nc),'_',mkvar(M.name{ist}),'_t_tide.nc'];
+    asc_t_tide_model = [fileparts(OPT.nc),filesep,'t_tide'     ,filesep,filename(OPT.nc),'_',mkvar(M.name{ist}),'_t_tide.t_tide'];
+    
  if isempty(D.datenum)
      t_tide_msg = [];
  else
@@ -335,8 +340,8 @@ D.title = {OPT.label,[char(D.station_name(:)'),' (',...
              'lat',D.lat,...
              'lon',D.lon,...
            'units',Dmeta.(OPT.varname).units,...
-         'ascfile',[fileparts(OPT.nc),filesep,'t_tide_data',filesep,mkvar(M.name{ist}),'_t_tide.t_tide'],...
-          'ncfile',nc_t_tide_data);
+         'ascfile',asc_t_tide_data,...
+          'ncfile', nc_t_tide_data);
     clear D
  end %   if ~isempty(D.datenum)
  
@@ -347,8 +352,9 @@ D.title = {OPT.label,[char(D.station_name(:)'),' (',...
              'lat',M.lat,...
              'lon',M.lon,...
            'units',Dmeta.(OPT.varname).units,...
-         'ascfile',[fileparts(OPT.nc),filesep,'t_tide',filesep,filename(OPT.nc),'_',mkvar(M.name{ist}),'_t_tide.t_tide'],...
-          'ncfile',nc_t_tide_model);
+         'ascfile',asc_t_tide_model,...
+            'sort','-amp',...
+          'ncfile', nc_t_tide_model);
      
     if OPT.pause;pausedisp;end
 
@@ -377,6 +383,7 @@ end;end % station loop
                      nc_t_tide_datas ,'export',1,...
                                         'vc',OPT.vc,...
                                       'axis',OPT.axis,...
-                                 'directory',[fileparts(OPT.nc),filesep,'t_tide']);
+                                 'directory',[fileparts(OPT.nc),filesep,'t_tide'],...
+                                      'plot',OPT.plot);
    end
    end

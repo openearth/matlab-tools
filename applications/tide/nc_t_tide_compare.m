@@ -47,6 +47,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
    
    OPT.color.data          = [0 0 0];
    OPT.color.model         = [.4 .4 .4];
+   OPT.color.difference    = [1 0 0];
    OPT.fontsize            = 8;
 
    OPT.title.fontsize      = 15;
@@ -54,15 +55,16 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
    OPT.verticalalignment   = 'top' ; %[ top | cap | {middle} | baseline | bottom ]
    OPT.horizontalalignment = 'left'; %[ {left} | center | right ]
    
-   OPT.pause               = 0; % after each station/netCDF file
-   OPT.names2label         = {'q1','o1','k1','eps2','mu2','n2','m2','l2','s2','mo3','mk3','mn4','m4','ms4','2mk5','2mn6','m6','2ms6'};%'k2',
-   OPT.names2planview      = {'q1','o1','k1','eps2','mu2','n2','m2','l2','s2','mo3','mk3','mn4','m4','ms4','2mk5','2mn6','m6','2ms6'};%'k2',
+   OPT.pause               = 0; % after each station/netCDF fil
+   OPT.names2label         = {'M2','S2','N2','M4','K1','O1','MN4','MS4','2MS6','2MN6','M6','Q1','2MK5','2SM6','MO3'};
+   OPT.names2planview      = {'M2','S2','N2','M4','K1','O1','MN4','MS4','2MS6','2MN6','M6','Q1','2MK5','2SM6','MO3'};
+   OPT.names2planviewscale = [0.16 0.68 0.74 0.79 0.90 1.04 1.06  1.07  1.57   1.78   1.82 2.15 3.90    5.49  8.40 ]; % 1 over Petten harmonics
    OPT.amp_min             = 0.01; %[0.005];
    OPT.ddatenumeps         = 1e-8;
   %OPT.verticaloffset      = [1 1 1 2 1 1 1 1 1 1 1 1]; % plots the text for the specified station at the #th line (1 = normal 1st line)
    OPT.eps                 = 10*eps;
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
    if nargin==0
       varargout = {OPT};
@@ -90,8 +92,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
      [M,Ma] = nc2struct(ncmodel{ifile});% Load model    data
      [D,Da] = nc2struct(ncdata{ifile}); % Load observed data
      
-     D.station_name = make1d(char(D.station_name))';
-     D.station_id   = make1d(char(D.station_id  ))';
+     D.station_name = make1D(char(D.station_name))';
+     D.station_id   = make1D(char(D.station_id  ))';
      
      if abs(M.longitude - D.longitude) > OPT.eps;error('lon coordinates of model and data do not match');end
      if abs(M.latitude  - D.latitude ) > OPT.eps;error('lat coordinates of model and data do not match');end
@@ -263,9 +265,9 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                end                  
 
                name  = lower(deblank(D.component_name(dcomp,:)));
-               index = strmatch(name,OPT.names2planview);
+               icomp = strmatch(name,lower(OPT.names2planview));
                
-               if ~isempty(index)
+               if ~isempty(icomp)
                
                subplot(2,1,1)
 
@@ -318,7 +320,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                plot    ([ M.frequency(mcomp) M.frequency(mcomp)],[maximum 360    ],'k-')
                end
                
-               end % index
+               end % icomp
                
             end
             end
@@ -376,11 +378,20 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
             if D.amplitude(dcomp) > OPT.amp_min;
          
                name  = lower(deblank(D.component_name(dcomp,:)));
-               index = strmatch(name,OPT.names2planview);
+               icomp = strmatch(name,lower(OPT.names2planview));
                
-               if ~isempty(index)
+               if ~isempty(icomp)
                
-               figure(FIGS(index))
+               %disp([mfilename,' : ',char(name),' - ',num2str(icomp),' - ',num2str(OPT.names2planviewscale(icomp))])
+               
+               figure(FIGS(icomp))
+               if ~isempty(OPT.axis)
+                  axislat(mean(OPT.axis(3:4)))
+                  axis([OPT.axis])
+               else
+                  axislat
+                  axis tight
+               end               
                
                %               data | model
                % amplitude     x    |  x
@@ -411,7 +422,26 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                text(D.longitude(1),D.latitude(1),'.')
                text(D.longitude(1),D.latitude(1),txt.D.both,'verticalalignment',OPT.verticalalignment,'color',OPT.color.data ,'horizontalalignment',OPT.horizontalalignment,'fontsize',OPT.fontsize);
                text(D.longitude(1),D.latitude(1),txt.M.both,'verticalalignment',OPT.verticalalignment,'color',OPT.color.model,'horizontalalignment',OPT.horizontalalignment,'fontsize',OPT.fontsize);
-
+%                quiver(D.longitude(1),D.latitude(1),...
+%                       D.amplitude(dcomp).*cosd(D.phase(dcomp)).*scale,...
+%                       D.amplitude(dcomp).*sind(D.phase(dcomp)).*scale,0,'color',OPT.color.data )
+%                quiver(D.longitude(1),D.latitude(1),...
+%                       M.amplitude(mcomp).*cosd(M.phase(mcomp)).*scale,...
+%                       M.amplitude(mcomp).*sind(M.phase(mcomp)).*scale,0,'color',OPT.color.model)
+               S = arrow2;S.W4 = 0.1;S.W5 = 0.0;
+               S.scale = OPT.names2planviewscale(icomp);
+               
+               ud = D.amplitude(dcomp).*cosd(D.phase(dcomp));
+               vd = D.amplitude(dcomp).*sind(D.phase(dcomp));
+               um = M.amplitude(mcomp).*cosd(M.phase(mcomp));
+               vm = M.amplitude(mcomp).*sind(M.phase(mcomp));
+               
+               S.color = OPT.color.data;
+               arrow2(D.longitude(1),D.latitude(1),ud   ,vd   ,S)
+               S.color = OPT.color.model;  
+               arrow2(D.longitude(1),D.latitude(1),um   ,vm   ,S)
+               S.color = OPT.color.difference;  
+               arrow2(D.longitude(1),D.latitude(1),um-ud,vm-vd,S)
                end
                
             end
@@ -425,7 +455,6 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
       if OPT.pause
       disp('Press key to continue ...')
       pause
-      
       end
 
    end % Station loop
@@ -468,8 +497,9 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
          if OPT.export
          text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
+
          % extract unique basename
-         ind = find(prod(diff(filename(ncmodel),[],1),1)>0);
+         ind = find(~all(diff(filename(ncmodel),[],1)==0));
          if isempty(ind) | (ind==1)
             basename = mfilename;
          else
@@ -477,6 +507,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
             basename = basename(1:ind(1)-1);
          end
          basename = [OPT.directory,filesep,'planview',filesep,basename];
+         
          print2screensizeoverwrite([basename,'_plan_',OPT.names2planview{icomp},'.png'])
          end
          
