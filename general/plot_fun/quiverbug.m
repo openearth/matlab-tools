@@ -1,6 +1,6 @@
-%QUIVERBUG   Test script to show how to plot a correct quiver legend in latest matlab releases.
+%QUIVERBUG   Test script to show how to plot a correct quiver legend with v6 option.
 %
-%See also: arrow2
+%See also: quiver, arrow2
 
 scale       = 1;
 xleg        = 0;
@@ -26,7 +26,7 @@ for v6 = 0:1
       hold on
       H.q(2) = quiver(x,y,scale.*v,scale.*u,0);
       H.q(3) = quiver([xleg],[yleg],[uleg.*scale],[0.*scale],0);
-      title({[version,': quiver(...). '],'ERRONOUS head of the legend arrow','Not used ''v6'' option.'})
+      title({[version,': quiver(...). '],'{\color[rgb]{1 0 0}ERRONOUS} head of the legend arrow','Not used ''v6'' option.'})
    end
    
    text (xleg + uleg,...

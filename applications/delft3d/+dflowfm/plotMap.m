@@ -96,7 +96,7 @@ function varargout = plotMap(varargin)
         nextarg = 2;
       end
       
-      OPT = setProperty(OPT,varargin{nextarg:end});
+      OPT = setproperty(OPT,varargin{nextarg:end});
       
    end
    

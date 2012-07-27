@@ -73,7 +73,7 @@ OPT.w = 1;
 OPT.visc = 1;
 
 if nargin > 3
-    OPT = setProperty(OPT,varargin{4:end});
+    OPT = setproperty(OPT,varargin{4:end});
 end
 
 G     = vs_meshgrid2dcorcen(S);

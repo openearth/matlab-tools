@@ -62,7 +62,7 @@ function DAT = expressionsfromstring(string,var_names,varargin)
    
    OPT.empty = true;
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
    equalsigns     = findstr(string,'=');
    

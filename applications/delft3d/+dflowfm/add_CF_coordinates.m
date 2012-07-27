@@ -47,7 +47,7 @@ function varargout = add_CF_coordinates(ncfile,varargin)
                  {'FlowLink_xu'      , 'FlowLink_yu'      ,'FlowLink_lonu'      , 'FlowLink_latu'      ,'Flow link u-point lon'                  ,'Flow link u-point lat'} ...
                  };
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
    if nargin==0
      varargout ={OPT};

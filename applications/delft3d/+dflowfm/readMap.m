@@ -74,7 +74,7 @@ function varargout = readMap(ncfile,varargin)
       varargout = {OPT};
       return
    else
-      OPT = setProperty(OPT,varargin{nextarg:end});
+      OPT = setproperty(OPT,varargin{nextarg:end});
    end
 
 %% read time data

@@ -10,7 +10,7 @@ function varargout = quiver2(varargin)
 %    If 2 elements are  passed, the first element
 %       is applied to the first dimension,
 %       the second one to the second dimension of u and v.
-%    If either X and or Y is a scaler, it is replicated to a matrix of
+%    If either X and or Y is a scalar, it is replicated to a matrix of
 %       the the other full variable. Usefull for a FEATHER plot, e.g.:
 %       quiver2(time,0,u,v) for temporal evolution as wind
 %       quiver2(0   ,z,u,v) for vertical evolution as atmosphere profile

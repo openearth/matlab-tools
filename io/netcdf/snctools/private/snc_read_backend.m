@@ -23,11 +23,11 @@ else
     have_java = false;
 end
     
-retrieval_methods.java           = 'java';
-retrieval_methods.tmw_hdf4       = 'tmw_hdf4';
+retrieval_methods.java         = 'java';
+retrieval_methods.tmw_hdf4     = 'tmw_hdf4';
 retrieval_methods.tmw_hdf4_2011a = 'tmw_hdf4_2011a';
-retrieval_methods.mexnc          = 'mexnc';
-retrieval_methods.tmw            = 'tmw';
+retrieval_methods.mexnc        = 'mexnc';
+retrieval_methods.tmw          = 'tmw';
 
 fmts = snc_format();
 
@@ -185,12 +185,8 @@ switch ( mv )
         switch(fmt)
 
             case {fmts.NetCDF, fmts.NetCDF4}
-                fmt = fmts.NetCDF;
-                if ~strcmpi(ncfile(1:5),'https')
                 retrieval_method = retrieval_methods.tmw;
-                else
-                retrieval_method = retrieval_methods.java;
-                end
+                fmt = fmts.NetCDF;
 
             otherwise
                 % Last chance is if it is some format that netcdf-java can handle.

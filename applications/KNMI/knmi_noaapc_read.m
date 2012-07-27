@@ -329,11 +329,15 @@ function [varargout] = readnoaapc(varargin);
         
 %% compliance with adaguc.knmi.nl
 
-%TODO         IMAGE.proj4 = ['+proj=stere +lat_0=',num2str(IMAGE.lat0),...
-%TODO                                   ' +lon_0=',num2str(IMAGE.lon0),...
-%TODO                       ' +k=1 +x_0=0 +y_0=0 +a=6371.00 +b=6371.00 +units=m +no_defs']; % elipsoid ??
+%TODO         IMAGE.proj4 = ['+proj=stere +lat_ts=52 +lat_0=',num2str(IMAGE.lat0),...
+%TODO                                              ' +lon_0=',num2str(IMAGE.lon0),...
+%TODO                       ' +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +no_defs']; % elipsoid ??
 %TODO
 %TODO               +proj=stere +lon_0=0.0 +lat_0=90.0 +lat_ts=60.0 +a=6378.169 +b=6356.58383
+
+%+a=6371.00 +b=6371.00 +units=m
+%
+%+proj=stere +lat_ts=52 +lat_0=60 +lon_0=-3 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84 +no_defs
 
         %% Hans Roozekrans told me that the projection keyword
         %% was introduced only later when the started to provide UTM

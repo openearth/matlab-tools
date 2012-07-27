@@ -30,7 +30,7 @@ function varargout = harmanal_predict(t,varargin)
 %     * freq            frequency                (one of 3 is ,,)
 %
 % Example 1:  You can pass the output struct FIT of HARMANAL 
-%             as input to harmanal_predict (using additional setProperty 
+%             as input to harmanal_predict (using additional setproperty 
 %             keywords to neglect redundant fields in FIT):
 %
 %    h = harmanal_predict(t,FIT,'onExtraField','silentIgnore')
@@ -41,7 +41,7 @@ function varargout = harmanal_predict(t,varargin)
 %
 % These
 %
-% See also: HARMANAL
+% See also: HARMANAL, t_predic
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares for Building with Nature

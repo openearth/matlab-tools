@@ -59,7 +59,7 @@ function varargout = fillDep(varargin)
 
    OPT.debug       = 0;
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
 %% Load grid
 

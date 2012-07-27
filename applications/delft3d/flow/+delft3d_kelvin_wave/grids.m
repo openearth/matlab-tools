@@ -22,7 +22,7 @@ function G = grids(grdlayout,varargin)
    U.save      = '';
    U.D0        = 10;
    
-   U = setProperty(U,varargin{:});
+   U = setproperty(U,varargin{:});
    
    switch U.grdlayout
    

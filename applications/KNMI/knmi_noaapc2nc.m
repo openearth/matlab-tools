@@ -29,8 +29,8 @@
 
 %% File loop
 
-   OPT.directory.raw  = ['P:\mcdata\OpenEarthRawData\knmi\noaapc\mom\1990_mom\5\'];
-   OPT.directory.nc   = ['P:\mcdata\opendap\knmi\NOAA\mom\1990_mom\5\'];
+   OPT.directory.raw  = ['F:\checkouts\OpenEarthRawData\knmi\NOAA\noaapc\1990_mom\5\'];
+   OPT.directory.nc   = ['F:\checkouts\OpenEarthRawData\knmi\NOAA\noaapc\mom.nc\1990_mom\5\'];
    
    mkpath(OPT.directory.nc)
 
@@ -107,8 +107,8 @@
 %% 2 Create dimensions
    
       nc_add_dimension(outputfile, 'time' , 1)
-      nc_add_dimension(outputfile, 'x_cen', D.nx)
-      nc_add_dimension(outputfile, 'y_cen', D.ny)
+      nc_add_dimension(outputfile, 'x'    , D.nx)
+      nc_add_dimension(outputfile, 'y'    , D.ny)
       nc_add_dimension(outputfile, 'x_cor', D.nx+1)
       nc_add_dimension(outputfile, 'y_cor', D.ny+1)
 
@@ -117,43 +117,46 @@
       clear nc
       ifld = 0;
    
-      %% Coordinate system
-      %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
-      %------------------
+   %% Coordinate system
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
    
         ifld = ifld + 1;
-      nc(ifld).Name         = 'polar_stereographic';
-      nc(ifld).Nctype       = 'char';
-     %nc(ifld).Dimension    = {'x_cen'}; % no dimension, dummy variable
-      nc(ifld).Attribute(1) = struct('Name', 'grid_mapping_name','Value', 'polar_stereographic');
+      nc(ifld).Name             = 'polar_stereographic';
+      nc(ifld).Nctype           = 'char';
+      nc(ifld).Dimension        = {}; % no dimension, dummy variable
+      nc(ifld).Attribute(end+1) = struct('Name', 'projection_name'                      ,'Value', 'Polar Stereographic';
+      nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'                            ,'Value', 'UNKNOWN'); % or UNDEFINED
+      nc(ifld).Attribute(end+1) = struct('Name', 'proj4_params'                         ,'Value', D.proj4_params);
 
-      nc(ifld).Attribute(2) = struct('Name', 'straight_vertical_longitude_from_pole','Value', 0);
-      nc(ifld).Attribute(3) = struct('Name', 'latitude_of_projection_origin'        ,'Value', '+90'); % Either +90. or -90.
-      nc(ifld).Attribute(4) = struct('Name', 'scale_factor_at_projection_origin'    ,'Value', D.scale_in_m);
-    %%nc(ifld).Attribute(4) = struct('Name', 'standard_parallel'                    ,'Value', '');
-     %nc(ifld).Attribute(5) = struct('Name', 'false_easting'                        ,'Value', '');
-     %nc(ifld).Attribute(6) = struct('Name', 'false_northing'                       ,'Value', '');
+      % See ADADUC manual for polar_stereographic example
+      nc(ifld).Attribute(    1) = struct('Name', 'grid_mapping_name'                    ,'Value', 'polar_stereographic');
+      nc(ifld).Attribute(end+1) = struct('Name', 'latitude_of_projection_origin'        ,'Value', '+90'); % Either +90. or -90.
+      nc(ifld).Attribute(end+1) = struct('Name', 'straight_vertical_longitude_from_pole','Value', 0);
+      nc(ifld).Attribute(end+1) = struct('Name', 'scale_factor_at_projection_origin'    ,'Value', D.scale_in_m);
+      nc(ifld).Attribute(end+1) = struct('Name', 'false_easting'                        ,'Value', 0);
+      nc(ifld).Attribute(end+1) = struct('Name', 'false_northing'                       ,'Value', 0);
+
+      nc(ifld).Attribute(end+1) = struct('Name', 'inverse_flattening'                   ,'Value', 298.183263207106);
+      nc(ifld).Attribute(end+1) = struct('Name', 'semi_major_axis'                      ,'Value', 6378140000);
+      nc(ifld).Attribute(end+1) = struct('Name', 'semi_minor_axis'                      ,'Value', 6356750000);
+      nc(ifld).Attribute(end+1) = struct('Name', 'longitude_of_prima_meridian'          ,'Value', 0);
       
-     %D.lon0
-     %D.lat0
-     %D.resolution_km_p_pix
 
-      %% Local Cartesian coordinates
-      %------------------
+   %% Local Cartesian coordinates
 
         ifld = ifld + 1;
-      nc(ifld).Name         = 'x_cen';
+      nc(ifld).Name         = 'x';
       nc(ifld).Nctype       = 'int';
-      nc(ifld).Dimension    = {'x_cen'};
+      nc(ifld).Dimension    = {'x'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate in Cartesian system');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'km');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
       nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', '1 km2 pixel centers');
    
         ifld = ifld + 1;
-      nc(ifld).Name         = 'y_cen';
+      nc(ifld).Name         = 'y';
       nc(ifld).Nctype       = 'int';
-      nc(ifld).Dimension    = {'y_cen'};
+      nc(ifld).Dimension    = {'y'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate in Cartesian system');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'km');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
@@ -163,7 +166,7 @@
       nc(ifld).Name         = 'x_cor';
       nc(ifld).Nctype       = 'int';
       nc(ifld).Dimension    = {'x_cor'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate in Cartesian system');
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'x-coordinate of pixel corners in Cartesian system');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'km');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
       nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', '1 km2 pixel corners');
@@ -172,47 +175,44 @@
       nc(ifld).Name         = 'y_cor';
       nc(ifld).Nctype       = 'int';
       nc(ifld).Dimension    = {'y_cor'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate in Cartesian system');
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'y-coordinate of pixel corners in Cartesian system');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'km');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate'); % standard name
       nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', '1 km2 pixel corners');
    
       if OPT.ll
-      %% Longitude
-      % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
-      %------------------
+%% Longitude
+% http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
       
         ifld = ifld + 1;
-      nc(ifld).Name         = 'longitude_cen';
+      nc(ifld).Name         = 'longitude';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'x_cen','y_cen'};
+      nc(ifld).Dimension    = {'x','y'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'longitude');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
       nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.loncen(:)) max(D.loncen(:))]); % 
    
-      %% Latitude
-      % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
-      %------------------
+%% Latitude
+% http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
       
         ifld = ifld + 1;
-      nc(ifld).Name         = 'latitude_cen';
+      nc(ifld).Name         = 'latitude';
       nc(ifld).Nctype       = 'float';
-      nc(ifld).Dimension    = {'x_cen','y_cen'};
+      nc(ifld).Dimension    = {'x','y'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'latitude');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude'); % standard name
       nc(ifld).Attribute(4) = struct('Name', 'actual_range'   ,'Value', [min(D.latcen(:)) max(D.latcen(:))]); % 
       end % if OPT.ll
 
-      %% Time
-      % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
-      % time is a dimension, so there are two options:
-      % * the variable name needs the same as the dimension
-      %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551
-      % * there needs to be an indirect mapping through the coordinates attribute
-      %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
-      %------------------
+%% Time
+% http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
+% time is a dimension, so there are two options:
+% * the variable name needs the same as the dimension
+%   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551
+% * there needs to be an indirect mapping through the coordinates attribute
+%   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
       
       OPT.timezone = timezone_code2iso('GMT');
    
@@ -225,24 +225,23 @@
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
 
-      %% Parameters with standard names
-      % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
-      %------------------
+%% Parameters with standard names
+% * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
    
       %% Define dimensions in this order:
       %  time,z,y,x
 
         ifld = ifld + 1;
-      nc(ifld).Name          = 'SST';
-      nc(ifld).Nctype        = 'double';
-      nc(ifld).Dimension     = {'x_cen','y_cen','time'};
-      nc(ifld).Attribute(1)  = struct('Name', 'long_name'      ,'Value', 'sea surface temperature');
-      nc(ifld).Attribute(2)  = struct('Name', 'units'          ,'Value', 'degrees_Celcius');
-      nc(ifld).Attribute(3)  = struct('Name', 'standard_name'  ,'Value', 'sea_surface_skin_temperature'); % standard name
-      nc(ifld).Attribute(4)  = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5)  = struct('Name', 'coordinates'    ,'Value', 'latitude_cen longitude_cen');
-      nc(ifld).Attribute(6)  = struct('Name', 'grid_mapping'   ,'Value', 'polar_stereographic');
-      nc(ifld).Attribute(7)  = struct('Name', 'actual_range'   ,'Value', [D.data_min_value D.data_max_value]);
+      nc(ifld).Name             = 'SST';
+      nc(ifld).Nctype           = 'double';
+      nc(ifld).Dimension        = {'x','y','time'};
+      nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'sea surface temperature');
+      nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_Celcius');
+      nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'sea_surface_skin_temperature'); % standard name
+      nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
+      nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude');
+      nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'polar_stereographic');
+      nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [D.data_min_value D.data_max_value]);
       
       if OPT.pack
       nc(ifld).Nctype        = 'int'; %'byte'; %short
@@ -264,13 +263,13 @@
       
 %% 5 Fill variables
    
-      nc_varput(outputfile, 'x_cen'        , [1:D.nx]'-0.5);
-      nc_varput(outputfile, 'y_cen'        , [1:D.ny]'-0.5);
-      nc_varput(outputfile, 'x_cor'        , [1:(D.nx+1)]');
-      nc_varput(outputfile, 'y_cor'        , [1:(D.ny+1)]');
+      nc_varput(outputfile, 'x'        , [1:D.nx]'-0.5);
+      nc_varput(outputfile, 'y'        , [1:D.ny]'-0.5);
+      nc_varput(outputfile, 'x_cor'    , [1:(D.nx+1)]');
+      nc_varput(outputfile, 'y_cor'    , [1:(D.ny+1)]');
       if OPT.ll
-      nc_varput(outputfile, 'longitude_cen', D.loncen');
-      nc_varput(outputfile, 'latitude_cen' , D.latcen');
+      nc_varput(outputfile, 'longitude', D.loncen');
+      nc_varput(outputfile, 'latitude' , D.latcen');
       end % if OPT.ll
       nc_varput(outputfile, 'time'         , D.datenum' - OPT.refdatenum);
       if OPT.pack

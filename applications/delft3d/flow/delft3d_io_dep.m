@@ -255,7 +255,7 @@ else strcmpi(cmd,'write');
     OPT.positive    = 'down';
     OPT.mfilename   = 'unknown mfilename';
     
-    OPT = setProperty(OPT,varargin{4:end});
+    OPT = setproperty(OPT,varargin{4:end});
     
     tmp         = fileparts(fname);
     

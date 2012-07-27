@@ -175,9 +175,9 @@ OPT.units       = '';    % TO DO: get this from info directory
 OPT.epsg        = 32631; % TO DO: get this from *.prj file, if any
 OPT.clim        = [];
 OPT.data        = 1; % 0 means to get only meta-data and pointers
-OPT.nodatavalue = -realmax('single'); %-3.4028234663852885e+038; % value in arc gis file
 OPT.output_mode = 'normal'; % can be 'normal, 'nansparse' or 'struct'. if set to false, this greatly reduces the memory requirements of this routine.
 OPT.waitbar     = true; % adds a waitbar
+OPT.nodatavalue = -realmax('single'); %-3.4028234663852885e+038; % value in arc gis file
 
 %  realmax('single'); = 3.402823e+038
 %  realmin('single'); = 1.175494e-038
@@ -357,9 +357,15 @@ end
 %   D
 %end
 
+if (~OPT.data)
 
+   switch OPT.output_mode
+       case 'metadata'
+           Data = D;
+   end % switch OPT.output_mode
 
-if OPT.data
+else
+
     %% pre allocate  output data
     if OPT.waitbar
         multiWaitbar('arc_info_binary',0,'label',sprintf('Reading %s: Preallocating Output...',OPT.base))
@@ -717,7 +723,7 @@ if OPT.data
                     end
                 end
             end
-    end
+    end % switch OPT.output_mode
     
     if OPT.waitbar
         multiWaitbar('arc_info_binary',t/D.nTiles,'label',sprintf('Reading %s: completed, preparing output',OPT.base))
@@ -755,7 +761,8 @@ if OPT.data
             end
         end
     end
-end
+
+end % OPT.data
 
 %% metadata
 
@@ -785,7 +792,7 @@ if OPT.waitbar
 end
 
 function [i,j] = ind2sub_q(siz,ind)
-% simpliefied ind2sub with no overhead
+% simplified ind2sub with no overhead
 j = ceil(ind/siz(1));
 i = ind - (j-1).*siz(1);
 %% EOF

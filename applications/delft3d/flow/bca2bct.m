@@ -95,7 +95,7 @@ function varargout = bca2bct(varargin);
    
 %% Input
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
 
 %% Check input
 

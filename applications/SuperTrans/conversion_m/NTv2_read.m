@@ -50,7 +50,7 @@ function D = NTv2_read(fname,varargin)
 OPT.plot   = 0;
 OPT.title  = {};
 
-OPT = setProperty(OPT,varargin);
+OPT = setproperty(OPT,varargin);
 
 ext = fileext(fname);
 

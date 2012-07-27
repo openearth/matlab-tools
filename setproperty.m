@@ -88,7 +88,7 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %
 % Change log:
 %    2011-09-30: full code rewrite to include:
-%                 - setPropertyInDeeperStruct functionality
+%                 - setpropertyInDeeperStruct functionality
 %                 - user defined handling of extra fields 
 %                 - class change warning/error message
 %

@@ -87,7 +87,7 @@ else
    fi  = xi.*0; % set increment to nan
 end
 
-OPT = setProperty(OPT,varargin{nextarg:end});
+OPT = setproperty(OPT,varargin{nextarg:end});
 
 %% get spatial limits
 

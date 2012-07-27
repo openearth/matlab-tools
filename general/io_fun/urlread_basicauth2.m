@@ -6,25 +6,25 @@ function [output,status] = urlread_basicauth2(urlChar,username,password,method,p
 % Slight modification of matlabs native urlread according to tips from the mathworks site.
 % Implemented by Thijs Damsma
 % 
-%URLREAD Returns the contents of a URL as a string.
-%   S = URLREAD('URL') reads the content at a URL into a string, S.  If the
+%URLREAD_BASICAUTH2 Returns the contents of a URL as a string, with username, password
+%   S = urlread_basicauth2('URL',username,password) reads the content at a URL into a string, S.  If the
 %   server returns binary data, the string will contain garbage.
 %
-%   S = URLREAD('URL','method',PARAMS) passes information to the server as
+%   S = urlread_basicauth2('URL',username,password,'method',PARAMS) passes information to the server as
 %   part of the request.  The 'method' can be 'get', or 'post' and PARAMS is a 
 %   cell array of param/value pairs.
 %
-%   [S,STATUS] = URLREAD(...) catches any errors and returns 1 if the file
+%   [S,STATUS] = urlread_basicauth2(...) catches any errors and returns 1 if the file
 %   downloaded successfully and 0 otherwise.
 %
 %   Examples:
-%   s = urlread('http://www.mathworks.com')
-%   s = urlread('ftp://ftp.mathworks.com/README')
-%   s = urlread(['file:///' fullfile(prefdir,'history.m')])
+%   s = urlread_basicauth2('http://www.mathworks.com','john','%$#%$#$%#')
+%   s = urlread_basicauth2('ftp://ftp.mathworks.com/README','john','%$#%$#$%#')
+%   s = urlread_basicauth2(['file:///' fullfile(prefdir,'history.m')],'john','%$#%$#$%#')
 % 
 %   From behind a firewall, use the Preferences to set your proxy server.
 %
-%   See also URLWRITE.
+%   See also URLREAD, URLWRITE, URLREAD_BASICAUTH
 
 %   Matthew J. Simoneau, 13-Nov-2001
 %   Copyright 1984-2011 The MathWorks, Inc.

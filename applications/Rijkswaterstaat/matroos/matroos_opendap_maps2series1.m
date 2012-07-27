@@ -7,7 +7,7 @@ function varargout = matroos_opendap_maps2series1(varargin)
 % matroos.deltares.nl/direct/get_map2series.php? functionality. This client
 % side function is slower the 1st time because it needs to gather meta-data,
 % but it can be much faster any subsequent time because it can cache some 
-% part of the 'state' of the 'request', for instance the [m,n] mappin.
+% part of the 'state' of the 'request', for instance the [m,n] mapping.
 %
 %See also: MATROOS_OPENDAP_MAPS2SERIES2, MATROOS_OPENDAP_MAPS2SERIES2MN, nc_harvest, 
 %          matroos_get_series, matroos.deltares.nl/direct/get_map2series.php?

@@ -15,7 +15,7 @@ function x2 = convertUnits(x1,sourceUoM,targetUoM,STD)
 %   Output:
 %   x2          = converted value
 %
-%   See also CONVERTCOORDINATES, UNITCONV, convert_units
+%   See also  qp_unitconversion, UNITCONV, CONVERTCOORDINATES, convert_units
 
 %% Copyright notice
 %   --------------------------------------------------------------------

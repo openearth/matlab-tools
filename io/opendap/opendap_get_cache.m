@@ -31,7 +31,7 @@ function varargout = opendap_get_cache(varargin)
       return
    end
    
-   OPT = setProperty(OPT,varargin);
+   OPT = setproperty(OPT,varargin);
    
    base_url = path2os([OPT.server           ,'/fileServer/opendap/',OPT.dataset],'h');
    base_loc = path2os([OPT.local,                                   OPT.dataset]);

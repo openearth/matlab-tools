@@ -1,11 +1,11 @@
-function Tout = time_floor(T,type)
-% TIME_ROUND  Round towards minus infinity.
+function Tout = time_interp(T,type)
+% TIME_INTERP  Round towards minus infinity.
 %
-%   TIME_ROUND(T,'hour') rounds the elements of T to the nearest
+%   TIME_INTERP(T,'hour') rounds the elements of T to the nearest
 %   hour.
-%   TIME_ROUND(T,'minute') rounds the elements of T to the nearest
+%   TIME_INTERP(T,'minute') rounds the elements of T to the nearest
 %   minute.
-%   TIME_ROUND(T,'second') rounds the elements of T to the nearest
+%   TIME_INTERP(T,'second') rounds the elements of T to the nearest
 %   second.
 %   The default is 'hour'
 %

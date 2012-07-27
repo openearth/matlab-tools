@@ -96,7 +96,7 @@ if odd(nargin)
       end
 
       
-      OPT       = setProperty(OPT,varargin{2:end});
+      OPT       = setproperty(OPT,varargin{2:end});
       D         = t_tide_read(fname);
       OPT.synth = '{unknown, probably 2 (t_tide default)}'; % unknown, not in output
 
@@ -105,7 +105,7 @@ else
       t   = varargin{1};
       var = varargin{2};
    
-      OPT = setProperty(OPT,varargin{3:end});
+      OPT = setproperty(OPT,varargin{3:end});
    
       mask = ( t >= OPT.period(1)) & (t <= OPT.period(2));
       dt = diff(t(mask)).*24; % hour
@@ -174,11 +174,16 @@ end
    nc_adddim      (OPT.ncfile,'frequency',length(D.frequency));
    nc_adddim      (OPT.ncfile,'strlen0'  ,1);
    nc_adddim      (OPT.ncfile,'strlen1'  ,size(char(D.component_name),2));
+   if ~isempty(D.station_id)
    nc_adddim      (OPT.ncfile,'strlen2'  ,length(D.station_id));
+   end
+   if ~isempty(D.station_name)
    nc_adddim      (OPT.ncfile,'strlen3'  ,length(D.station_name));
+   end
    nc_adddim      (OPT.ncfile,'time'     ,1);
    nc_adddim      (OPT.ncfile,'bounds'   ,2);
-
+  
+  if ~isempty(D.station_name)   
    nc.Name = 'station_id';
    nc.Datatype     = 'char';
    nc.Dimension    = {'strlen0','strlen2'}; % 2D, otherwise matlab does not load it correctly
@@ -186,7 +191,8 @@ end
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
    nc_addvar         (OPT.ncfile,nc);
    nc_varput         (OPT.ncfile,nc.Name,D.station_id(:)');clear nc
-
+  end
+  if ~isempty(D.station_name)   
    nc.Name = 'station_name';
    nc.Datatype     = 'char';
    nc.Dimension    = {'strlen0','strlen3'}; % 2D, otherwise matlab does not load it correctly
@@ -194,7 +200,8 @@ end
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_name');
    nc_addvar         (OPT.ncfile,nc);
    nc_varput         (OPT.ncfile,nc.Name,D.station_name(:)');clear nc
-if ~(isempty(D.longitude) | isempty(D.latitude))
+  end
+  if ~(isempty(D.longitude) | isempty(D.latitude))
    nc.Name = 'longitude';
    nc.Datatype     = 'double';
    nc.Dimension    = {};
@@ -212,7 +219,7 @@ if ~(isempty(D.longitude) | isempty(D.latitude))
    nc.Attribute(3) = struct('Name', 'units'          ,'Value', 'degrees_north');
    nc_addvar         (OPT.ncfile,nc);
    nc_varput         (OPT.ncfile,nc.Name,D.latitude);clear nc
-end
+  end
    % TO DO: connect time to amp/phase
 
    nc.Name = 'time';

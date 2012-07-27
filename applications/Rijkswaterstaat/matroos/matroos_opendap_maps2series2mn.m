@@ -3,8 +3,8 @@ function varargout = matroos_opendap_maps2series2mn(varargin)
 %
 %   data = matroos_opendap_maps2series2('datenum',<...>,'source',<...>,'m',<...>,'n',<...>)
 %
-%
 % where data contains the data, time and coordinates requested from the OPeNDAP server.
+% Data is also saved to netCDF en mat file for later reuse.
 %
 % MATROOS_OPENDAP_MAPS2SERIES2MN requests data along grid line with constant m or n 
 % from opendap server and save as one continuous polygon with ascii time series at 
@@ -28,6 +28,9 @@ function varargout = matroos_opendap_maps2series2mn(varargin)
 % but it is be much faster any subsequent time because it caches the [m,n] mapping.
 %
 % For small segments keep on using MATROOS_OPENDAP_MAPS2SERIES2.
+% To split the data out into ascii files use matroos_opendap_maps2series2mn2ascii.
+%
+% Time indication: One month data (127 netCDF files) for 3 segments takes 710 secs (~12 min.).
 %
 %See also: MATROOS_OPENDAP_MAPS2SERIES1, MATROOS_OPENDAP_MAPS2SERIES2, nc_harvest, 
 %          matroos_get_series, matroos.deltares.nl/direct/get_map2series.php?
@@ -78,19 +81,18 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
 
 %% initialize
 
-   OPT.basePath = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml
-   OPT.source   = 'hmcn_kustfijn';
-   OPT.datenum  = datenum([2009 2009],[12 12],[1 2]);
-  %OPT.m        = {[4:109],[      4],[4:70]}; % to main land
-   OPT.m        = {[4: 66],      [4],[4:70]}; % to interface N'Sea & W'Sea
-   OPT.n        = {[  122],[122:545],[ 545]};
-   OPT.f        = [-1,1,1];
-   OPT.var      = 'SEP';
-   OPT.debug    = 0;
-   OPT.path     = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc_kinda_dd\';
+   OPT.basePath   = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml
+   OPT.source     = 'hmcn_kustfijn';
+   OPT.datenum    = datenum([2009 2009],[12 12],[1 2]);
+  %OPT.m          = {[4:109],[      4],[4:70]}; % to main land
+   OPT.m          = {[4: 66],      [4],[4:70]}; % to interface N'Sea & W'Sea
+   OPT.n          = {[  122],[122:545],[ 545]};
+   OPT.f          = [-1,1,1];
+   OPT.var        = 'SEP';
+   OPT.debug      = 0;
+   OPT.path       = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc_kinda_dd\';
    OPT.timrelpath = 'tim';
-   OPT.RefDate    = datenum(2009,12,1); % if not 'NOOS' or datenum(), else ISO8601 'yyyy-mm-dd HH:MM:SS'
-   OPT.nc         = 1;% store 2D array before splitting into ascii files
+   OPT.RefDate    = []; %datenum(2009,12,1); % if not 'NOOS' or datenum(), else ISO8601 'yyyy-mm-dd HH:MM:SS' or []
    
    if nargin==0
       varargout = {OPT};return
@@ -158,7 +160,7 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
    time = [];
    data = [];
    
-%% request 2D data slices alomg constant m or n indices
+%% request 2D data slices along constant m or n indices
 
   [user,passwd]  = matroos_user_password;
 
@@ -191,7 +193,7 @@ end
 R.datenum = time;clear time
 R.data    = data;clear data
 
-%% name for overall data and extract pivot corner indices
+%% construct name for overall data and extract pivot corner indices
 
    if OPT.f(1)==-1; 
    mnstr = [num2str(OPT.m{1}(1)) ',' num2str(OPT.n{1}(1))];
@@ -221,36 +223,37 @@ R.data    = data;clear data
       OPT.path = path2os([OPT.path,filesep]);
    end
    
-   if OPT.debug
-      save([OPT.path,OPT.source,'_',mnstr,'.mat'],'-struct','R')
-   end
-   
-   if OPT.nc
-      struct2nc([OPT.path,OPT.source,'_',mnstr,'.nc'],R)
-   end
+    matfile = [OPT.path,OPT.source,'_',mnstr,'_',datestr(R.datenum(1),'yyyymmdd'),'_',datestr(R.datenum(end),'yyyymmdd'),'.mat'];
+    ncfile  = [OPT.path,OPT.source,'_',mnstr,'_',datestr(R.datenum(1),'yyyymmdd'),'_',datestr(R.datenum(end),'yyyymmdd'),'.nc'];
 
-%% assess 2D polygon-time array
+    save(matfile,'-struct','R')
+    struct2nc(ncfile,R);
+
+%% Assess 2D polygon-time array
 
    if OPT.debug
-   R = nc2struct([OPT.path,OPT.source,'_',mnstr,'.nc'])
-   %%
-   close
-   it=':';
-   pcolorcorcen(R.datenum(it),R.pathdistance,R.data(1:597,it)); %,[.5 .5 .5])
-   datetick('x')
-   tickmap('y')
-   hline(R.pathdistance(find(diff(R.ind))),'k'); % corners
-   hline(R.pathdistance(43),'k--') % interface N'Sea and W'zee 
-   ylabel('distance along polygon')
-   xlabel([datestr(xlim1(1),'yyyy-mmm-dd HH:MM') '  \rightarrow  ', datestr(xlim1(1),'yyyy-mmm-dd HH:MM')])
-   print2screensize('matroos_opendap_maps2series3')
+     R = nc2struct(ncfile)
+     
+     %%
+     
+     close
+     it=':';
+     pcolorcorcen(R.datenum(it),R.pathdistance,R.data(1:597,it)); %,[.5 .5 .5])
+     datetick('x')
+     tickmap('y')
+     hline(R.pathdistance(find(diff(R.ind))),'k'); % corners
+     hline(R.pathdistance(43),'k--') % interface N'Sea and W'zee 
+     ylabel('distance along polygon')
+     xlabel([datestr(xlim1(1),'yyyy-mmm-dd HH:MM') '  \rightarrow  ', datestr(xlim1(1),'yyyy-mmm-dd HH:MM')])
+     print2screensize('matroos_opendap_maps2series3')
    end
 
-%%%%% split 2D array into polygon (*.pli) with ascii time series at corners (*.tim)
-
+%% Split 2D array into polygon (*.pli) with ascii time series at corners (*.tim)
+   if ~isempty(OPT.RefDate)
    matroos_opendap_maps2series2mn2ascii(R,'filename',[OPT.path,OPT.source,'_',mnstr,'.pli'],...
                                               'path',OPT.path,...
                                         'timrelpath',OPT.timrelpath,...
                                            'RefDate',OPT.RefDate);
+   end                                       
                                            
    varargout = {R};                                           

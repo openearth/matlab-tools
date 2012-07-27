@@ -49,6 +49,7 @@ function varargout = arrow2(varargin)
 %   are kept at the given default values. If STRUCT contains a field called
 %   'returninput' with value 1, and an output argument is specified, the
 %   input values are added to the output struct containing the patch handles.
+%   The defaults can be obtained by calling without input: S = arrow2();
 %
 %   Appearance:
 %      STRUCT.scale           = 1;
@@ -202,6 +203,11 @@ warnings = 0;
       I.L5        =  0.7;
       I.L6        = -0.0;
       I.elevation = 1e3;
+      
+      if nargin==0
+          varargout = {I};
+          return
+      end
 
 %% Input
    if nargin==2
@@ -286,6 +292,8 @@ warnings = 0;
    I.ANG    = atan2(I.v,I.u); % [-pi ,pi]
 
    I.DataAspectRatio  = get(gca,'DataAspectRatio');
+   disp([mfilename,' adapted arrows to DataAspectRatio = ',num2str(I.DataAspectRatio)])
+   disp([mfilename,' scaled arrows with = ',num2str(I.scale)])
    
    if isempty(I.ArrowAspectRatio)
       
@@ -332,7 +340,7 @@ warnings = 0;
 %% ARROW HEAD
 
    %% Calculate relative length of template patch sides 
-   %% ------------------------------
+
    [H.ang(1),H.abs(1)] = cart2pol(+I.L2 - I.L0,     0 - I.W0);
    
    [H.ang(2),H.abs(2)] = cart2pol(+I.L3 - I.L0,  I.W3 - I.W0);
@@ -344,7 +352,6 @@ warnings = 0;
    [H.ang(8),H.abs(8)] = cart2pol(+I.L3 - I.L0, -I.W3 - I.W0);
    
    %% Calculate absolute length of all arrow2 patch sides 
-   %% ------------------------------
 
    for i=1:length(H.abs)
       H.ABS(:,:,i) = (I.scale*H.abs(i)).*I.ABS;
@@ -358,7 +365,6 @@ warnings = 0;
    H.y  = H.y0 + repmat(I.y,[1,1,length(H.abs)]);
    
    %% Draw all patches
-   %% ------------------------------
 
    OUT.head = nan.*ones(size(I.x));
    for i=1:(size(I.x,1))
@@ -381,7 +387,6 @@ warnings = 0;
 %% ARROW SHAFT
 
    %% Calculate relative length of template patch sides 
-   %% ------------------------------
 
    [S.ang(1),S.abs(1)] = cart2pol(+I.L2      - I.L0,     0 - I.W0);
    
@@ -392,7 +397,6 @@ warnings = 0;
    [S.ang(6),S.abs(6)] = cart2pol(+I.L3      - I.L0, -I.W3 - I.W0);   
    
    %% Calculate absolute length of all arrow2 patch sides 
-   %% ------------------------------
    
    for i=1:length(S.abs)
       S.ABS(:,:,i) = (I.scale*S.abs(i)).*I.ABS;
@@ -406,7 +410,6 @@ warnings = 0;
    S.y  = S.y0 + repmat(I.y,[1,1,length(S.abs)]);
    
    %% Draw all patches
-   %% ------------------------------
    
    OUT.shaft = nan.*ones(size(I.x));
    for i=1:(size(I.x,1))
@@ -425,13 +428,11 @@ warnings = 0;
    if isfield(I      ,'clipping' );set(OUT.shaft,'clipping' ,I.clipping       );end
 
    %% Hold state
-   %% ------------------------------
 
    set (gca,'nextplot',holdstate);
 
 
    %% Output
-   %% ------------------------------
 
    if     nargout==1
       if isfield(I,'returninput')
@@ -445,7 +446,6 @@ warnings = 0;
       end
    end
 
-%% --------------------------------------------------------
 
 function result = mergestructs(varargin)
 % MERGESTRUCTS

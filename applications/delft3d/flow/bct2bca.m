@@ -202,7 +202,7 @@ function varargout = bct2bca(varargin)
 
 %% Input
 
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
 %% Put interference in Nx4 format required by t_tide
 

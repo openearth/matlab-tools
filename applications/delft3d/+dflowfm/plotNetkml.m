@@ -89,7 +89,7 @@ function varargout = plotNet(varargin)
       G        = varargin{1};
       ncfile   = G.file.name;
       end
-      OPT = setProperty(OPT,varargin{2:end});
+      OPT = setproperty(OPT,varargin{2:end});
    end
    
    if isempty(OPT.fileName)

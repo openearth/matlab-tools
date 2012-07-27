@@ -11,7 +11,7 @@ function names = knmi_potwind_directory(directory,varargin)
 
 %% Keyword,value
 
-  %OPT = setProperty(OPT,varargin{:});
+  %OPT = setproperty(OPT,varargin{:});
    
 %% File loop
 

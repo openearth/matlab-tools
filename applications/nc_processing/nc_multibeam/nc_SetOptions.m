@@ -145,7 +145,7 @@ OPT.kml.stride                  = 1;
 % add colorbar defualt options
 OPT.kml                         = mergestructs(OPT.kml,KMLcolorbar);
 
-OPT = setPropertyInDeeperStruct(OPT,varargin{:});
+OPT = setpropertyInDeeperStruct(OPT,varargin{:});
 
 varargout = {OPT};
 

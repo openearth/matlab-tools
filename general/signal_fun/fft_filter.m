@@ -54,8 +54,6 @@ function varargout = fft_filter(varargin)
 %   Signal Processing Toolbox:Discrete Fourier Transform
 %   @ http://www.mathworks.com/access/helpdesk/help/toolbox/signal/basics30.html
 %
-%   © G.J. de Boer, g.j.deboer@tudelft.nl, June 2005
-%
 %   See also: fft, fft_anal, harmanal, thompson1983
 
 %   --------------------------------------------------------------------

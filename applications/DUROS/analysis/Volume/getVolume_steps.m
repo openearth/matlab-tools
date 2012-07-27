@@ -94,7 +94,7 @@ OPT = struct(OPTstructArgs{:});
 
 % update property structure with input specified as propertyName
 % propertyValue pairs
-OPT = setProperty(OPT, varargin{id+1:end});
+OPT = setproperty(OPT, varargin{id+1:end});
 
 inputSize = structfun(@size, OPT,...
     'UniformOutput', false);

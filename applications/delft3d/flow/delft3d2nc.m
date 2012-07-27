@@ -33,7 +33,7 @@ function varargout = delft3d2nc(ncfile,varargin)
    OPT.dpsopt         = '';
    OPT.mdf            = '';
    
-   OPT = setProperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:});
    
    if nargin==0
       varargout = {OPT};

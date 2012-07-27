@@ -156,7 +156,7 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
    D.lon           = nc_varget(ncfile,lonname);
    else
    D.lon           = [];
-   warning('no longitude specified')
+   disp('warning: no longitude specified')
    end
 
    latname         = nc_varfind(fileinfo, 'attributename', 'standard_name', 'attributevalue', 'latitude');
@@ -165,7 +165,7 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
    D.lat           = nc_varget(ncfile,latname);
    else
    D.lat           = [];
-   warning('no latitude specified')
+   disp('warning: no latitude specified')
    end
    
 %% Get location info   
@@ -182,7 +182,7 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
     D.station_id   = nc_varget(ncfile,'station_id');    
    else
     D.station_id = '';
-    warning('no unique station id specified')
+    disp('warning: no unique station id specified')
    end
    
    D.station_name = D.station_id(:)'; % default

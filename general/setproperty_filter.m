@@ -26,7 +26,7 @@ function [OPT varargin_filtered Set Default] = setproperty_filter(OPT, varargin)
 %   Example
 %   setproperty_filter
 %
-%   See also setproperty setPropertyInDeeperStruct
+%   See also setproperty setpropertyInDeeperStruct
 
 %% Copyright notice
 %   --------------------------------------------------------------------

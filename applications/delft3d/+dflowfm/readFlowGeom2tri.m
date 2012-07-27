@@ -72,7 +72,7 @@ function varargout = readFlowGeom2tri(varargin)
       return
    else
       ncfile   = varargin{1};
-      OPT = setProperty(OPT,varargin{2:end});
+      OPT = setproperty(OPT,varargin{2:end});
    end
 
 %% read network: corners only: input file
