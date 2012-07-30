@@ -14,7 +14,7 @@ function rws_waterbase_all
    OPT.download       = 1; % get fresh downloads from rws and move exisitng to sub dir old
    OPT.make_nc        = 1; % makes also temporary mat files, moves exisiting nc to old subdir
    OPT.make_catalog   = 1; % otherwise load existing one
-   OPT.make_kml       = 1; % processing all kml only takas about 4 hours
+   OPT.make_kml       = 0; % processing all kml only takas about 4 hours
    OPT.baseurl        = 'http://live.waterbase.nl';
 
    %rawbase = '/Users/fedorbaart/Downloads/rws/raw/';% @ local, change this for your own computer
