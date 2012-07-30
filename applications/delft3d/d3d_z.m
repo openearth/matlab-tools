@@ -6,7 +6,11 @@ function varargout = d3d_z(thick,ztop,zbot,varargin);
 % [centres,interfaces,centres_bounded] = D3D_Z(thick,ztop,zbot);
 %
 % where thick are the relative layer thicknesses from top to bottom in percents
-% (reverse with respect to D3D_SIGMA)
+% (reverse with respect to D3D_SIGMA).
+%
+% This function is meant to obtain the Z-MODEL layer description 
+% required based from a SIGMA-MODEL estimate. To obtain z centres
+% from z interfaces ZK, simply do corner2center1(ZK).
 %
 % D3D_Z calculates the 
 % - z-layer positions of the cell interfaces  [1:kmax  ]

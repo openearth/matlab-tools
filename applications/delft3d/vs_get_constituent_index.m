@@ -125,7 +125,10 @@ end
      %no_turbulent_quantities = vs_get_elm_size(NFSstruct,turbulence_elementname ,4)
 
       no_constituents         = vs_let(NFSstruct,'map-const','LSTCI','quiet');
+      
+      if vs_get_elm_size(NFSstruct,'LSED')
       no_sediment_constituents= vs_let(NFSstruct,'map-const','LSED','quiet');
+      end
       no_turbulent_quantities = vs_let(NFSstruct,'map-const','LTUR' ,'quiet');
 
    elseif strcmp(NFSstruct.SubType,'Delft3D-trih')
@@ -243,12 +246,16 @@ end
 
       if k >1
       turbulent_quantities     = names(no_constituents+1:end,:);
+      if ~all(size(deblank(turbulent_quantities))==0)
       for in =1:size(turbulent_quantities,1)
          name                   = lower(mkvar(deblank(turbulent_quantities(in,:))));
          IND.(name).index       = in;
          IND.(name).dim         = dim;
          IND.(name).groupname   = groupname;
          IND.(name).elementname = turbulence_elementname;
+      end
+      else
+          IND = struct([]);
       end
       end
    end

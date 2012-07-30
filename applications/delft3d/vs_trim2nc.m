@@ -9,6 +9,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 % implemented paramters. x/y grids are converted to lat/lon based
 % on keyword 'epsg' to obtain a CF compliant netCDF file. Corner
 % coordinates are added via the CF-1.6 bounds convention [m n bounds].
+% Work for sigma (see OET tests) as well as z layers.
 %
 % Example:
 %
@@ -220,38 +221,64 @@ function varargout = vs_trim2nc(vsfile,varargin)
       G.coordinates = strtrim(permute(vs_let(F,'map-const','COORDINATES','quiet'),[1 3 2]));
       
       G.cen.mask =  vs_let_scalar(F,'map-const','KCS'   ,'quiet'); G.cen.mask(G.cen.mask~=1) = NaN; % -1/0/1/2 Non-active/Non-active/Active/Boundary water level point (fixed)
+      G.cor.mask = permute(vs_let(F,'TEMPOUT'  ,'CODB'  ,'quiet'),[2 3 1]); G.cor.mask(G.cor.mask~=1) = NaN;
+
+      if any(strfind(G.coordinates,'SPHE'))
+      G.cen.lon  =  vs_let_scalar(F,'map-const','XZ'    ,'quiet').*G.cen.mask;%G.cen.x = vs_let_scalar(F,'TEMPOUT','XWAT','quiet');
+      G.cen.lat  =  vs_let_scalar(F,'map-const','YZ'    ,'quiet').*G.cen.mask;%G.cen.y = vs_let_scalar(F,'TEMPOUT','YWAT','quiet');
+      G.cor.lon  = permute(vs_let(F,'map-const','XCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
+      G.cor.lat  = permute(vs_let(F,'map-const','YCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
+      G.cor.lon  = G.cor.lon(1:end-1,1:end-1);
+      G.cor.lat  = G.cor.lat(1:end-1,1:end-1);
+      dy = diff(G.cen.lon,[],1);
+      dx = diff(G.cen.lat,[],2);
+      else
       G.cen.x    =  vs_let_scalar(F,'map-const','XZ'    ,'quiet').*G.cen.mask;%G.cen.x = vs_let_scalar(F,'TEMPOUT','XWAT','quiet');
       G.cen.y    =  vs_let_scalar(F,'map-const','YZ'    ,'quiet').*G.cen.mask;%G.cen.y = vs_let_scalar(F,'TEMPOUT','YWAT','quiet');
+      G.cor.x    = permute(vs_let(F,'map-const','XCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
+      G.cor.y    = permute(vs_let(F,'map-const','YCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
+      G.cor.x    = G.cor.x(1:end-1,1:end-1);
+      G.cor.y    = G.cor.y(1:end-1,1:end-1);
+      dy = diff(G.cen.x,[],1);
+      dx = diff(G.cen.y,[],2);
+      end
       if vs_get_elm_size(F,'DPS0') > 0
       G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DPS0' ,'quiet').*G.cen.mask; % depth is positive down
       else % legacy
       G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DP0'  ,'quiet').*G.cen.mask; % depth is positive down
       end
-      G.cor.mask = permute(vs_let(F,'TEMPOUT'  ,'CODB'  ,'quiet'),[2 3 1]); G.cor.mask(G.cor.mask~=1) = NaN;
-      G.cor.x    = permute(vs_let(F,'map-const','XCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
-      G.cor.y    = permute(vs_let(F,'map-const','YCOR'  ,'quiet'),[2 3 1]).*G.cor.mask;
-      G.cor.x = G.cor.x(1:end-1,1:end-1);
-      G.cor.y = G.cor.y(1:end-1,1:end-1);
-      G.layer_model = strtrim(permute(vs_let(F,'map-const','LAYER_MODEL','quiet'),[1 3 2]));
-      if strmatch('Z-MODEL', G.layer_model)
-      warning('Z-MODEL has not yet been tested. It does not yet work.')
-      end
+
+   %% area/depth
+
       G.dryflp      = strtrim(vs_get(F,'map-const','DRYFLP'     ,'quiet'));
       if strcmpi(strtrim(G.dryflp),'DP')
-      G.cor.dep  = nan.*G.cor.x; % never specified, non-existent
+      G.cor.dep  = nan.*G.cor.mask; % never specified, non-existent
       else
       if vs_get_elm_size(F,'DP') > 0 % legacy
       G.cor.dep  = permute(vs_let(F,'map-const','DP'    ,'quiet'),[2 3 1]);
       end
       end
       
-      if vs_get_elm_size(F,'GSQS') > 0
-      G.cen.area =  vs_let_scalar(F,'map-const','GSQS'  ,'quiet').*G.cen.mask;
-      G.cen.areatext = 'The is the area GSQS used internally in Delft3D for mass-conservation. This is not identical to the exact area spanned geometrically by the 4 corner points!';
+      if any(strcmp('area',OPT.var))
+      %GSQS in NEFIS has bug in 4.00.01
+      %if vs_get_elm_size(F,'GSQS') > 0
+      %G.cen.area =  permute(vs_let(F,'map-const','GSQS'  ,'quiet'),[2 3 1]);
+      %G.cen
+      %G.cen.area
+      %G.cen.area =  G.cen.area(2:end-1,3:end).*G.cen.mask;
+      %G.cen.area 
+      %G.cen.areatext = 'The is the area GSQS used internally in Delft3D for mass-conservation. This is not identical to the exact area spanned geometrically by the 4 corner points!';
+      %else
+      if any(strfind(G.coordinates,'SPHE'))
+      G.cen.area =  grid_area(G.cor.lon,G.cor.lat).*G.cen.mask;
       else
       G.cen.area =  grid_area(G.cor.x,G.cor.y).*G.cen.mask;
-      G.cen.areatext = 'The is the exact area spanned geometrically by the 4 corner points. This is not identical to the area GSQS used internally in Delft3D for mass-conservation!';
       end
+      G.cen.areatext = 'This is the exact area spanned geometrically by the 4 corner points. This is not identical to the area GSQS used internally in Delft3D for mass-conservation!';
+      %end
+      end
+
+   %% world coordinates
 
       if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old bug)
          coordinates  = 'x y';
@@ -266,11 +293,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
       end
       
-      dy = diff(G.cen.x,[],1);
-      dx = diff(G.cen.y,[],2);
+   %% orthogonal ?
 
       % orthogonal with x = f(m) and y = f(n)
-      % not necesarriyl equidistant
+      % not necessarily equidistant
       if (all(dx(:)==0 | isnan(dx(:)))) & ...
          (all(dy(:)==0 | isnan(dy(:))))
          G.orthogonal = 1;
@@ -281,9 +307,23 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
          G.orthogonal = 0;
       end
+      
+   %% vertical: z/sigma
+
+      G.layer_model = strtrim(permute(vs_let(F,'map-const','LAYER_MODEL','quiet'),[1 3 2]));
+
+      if strmatch('SIGMA-MODEL', G.layer_model)
       G.sigma_dz      =  vs_let(F,'map-const','THICK','quiet');   
      [G.sigma_cent,...
       G.sigma_intf]   = d3d_sigma(G.sigma_dz);
+      coordinatesLayer        = [coordinates]; % implicit via formula_terms att
+      coordinatesLayerInterf  = [coordinates]; % implicit via formula_terms att
+      elseif strmatch('Z-MODEL', G.layer_model)
+      warning('Z-MODEL has not yet been tested.')
+      G.ZK          =  vs_let(F,'map-const'     ,'ZK'               ,'quiet');
+      coordinatesLayer        = [coordinates ' Layer'];
+      coordinatesLayerInterf  = [coordinates ' LayerInterf'];
+      end
 
 %% 2 Create dimensions
 
@@ -566,7 +606,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('grid_longitude',OPT.var))
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'longitude of cell corners');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, longitude-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
@@ -582,7 +622,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('grid_latitude',OPT.var))
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'latitude of cell corners');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, latitude-coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
@@ -604,7 +644,11 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'layer index');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
+      if strmatch('SIGMA-MODEL', G.layer_model)
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
+      else
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+      end
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KMAX map-const:LAYER_MODEL');
       nc.Variables(ifld) = struct('Name'       , 'k', ...
@@ -614,6 +658,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'FillValue'  , []); % this doesn't do anything
       end
 
+      if strmatch('SIGMA-MODEL', G.layer_model)
+      
       ifld     = ifld + 1;clear attr dims;
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer midpoints');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
@@ -641,6 +687,41 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , ki.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      
+      elseif strmatch('Z-MODEL', G.layer_model)
+      
+      ifld     = ifld + 1;clear attr dims;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'z at layer midpoints');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+     %attr(end+1)  = struct('Name', 'formula_terms', 'Value', '?'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bottom layer has index k=1 and is the bottom depth, the surface layer has index kmax and is z=free water surface.');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KMAX map-const:LAYER_MODEL map-const:ZK');
+      nc.Variables(ifld) = struct('Name'       , 'Layer', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , k.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+          
+      ifld     = ifld + 1;clear attr dims;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'z at layer interfaces');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+     %attr(end+1)  = struct('Name', 'formula_terms', 'Value', '?'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bottom layer has index k=1 and is the bottom depth, the surface layer has index kmax and is z=free water surface.');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KMAX map-const:LAYER_MODEL map-const:ZK');
+      nc.Variables(ifld) = struct('Name'       , 'LayerInterf', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , ki.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      
+      end % z/sigma
+
 %% bathymetry
 
       if any(strcmp('grid_depth',OPT.var))
@@ -701,7 +782,11 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'area of grid cells');
+      if any(strfind(G.coordinates,'SPHE'))
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees2');
+      else
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2');
+      end
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
@@ -724,7 +809,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.waterlevel = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:S1 map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'waterlevel', ...
                                   'Datatype'   , OPT.type, ...
@@ -742,9 +827,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end					     
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, x-component');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.velocity_x = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:U1 map-series:V1 map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'velocity_x', ...
                                   'Datatype'   , OPT.type, ...
@@ -760,9 +845,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end					     
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, y-component');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.velocity_y = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:U1 map-series:V1 map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'velocity_y', ...
                                   'Datatype'   , OPT.type, ...
@@ -774,12 +859,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('velocity_omega',OPT.var))
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'upward_sea_water_velocity');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'relative sigma-layer velocity, z-component');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'relative layer velocity, z-component'); % holds for z and sigma layers
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.velocity_omega = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:W map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'velocity_omega', ...
                                   'Datatype'   , OPT.type, ...
@@ -794,9 +879,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, z-component');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.velocity_z = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:WPHY map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'velocity_z', ...
                                   'Datatype'   , OPT.type, ...
@@ -806,6 +891,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
       if any(strcmp('tau',OPT.var))
+      if vs_get_elm_size(F,'TAUKSI')==0
+          warning('tau (map-series:TAUKSI map-const:TAUETA) not in file, skipped.')
+      else
       ifld     = ifld + 1;clear attr dims
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'surface_downward_northward_stress');
@@ -816,7 +904,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'N/m2');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tau_x = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:TAUKSI map-const:TAUETA map-const:ALFAS map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'tau_x', ...
                                   'Datatype'   , OPT.type, ...
@@ -834,7 +922,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'N/m2');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tau_y = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:TAUKSI map-const:TAUETA map-const:ALFAS map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'tau_y', ...
                                   'Datatype'   , OPT.type, ...
@@ -842,17 +930,21 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
       end
+      end
       
 %% 3 Create variables: scalars
 
       if any(strcmp('density',OPT.var))
+      if vs_get_elm_size(F,'RHO')==0
+          warning('density (map-series:RHO) not in file, skipped.')
+      else
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_density');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'density');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'kg/m3');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.density = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'density', ...
                                   'Datatype'   , OPT.type, ...
@@ -860,7 +952,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
       end
+      end
       
+      if strmatch('SIGMA-MODEL', G.layer_model)
       if any(strcmp('pea',OPT.var))
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
@@ -868,7 +962,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.pea = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-series:S1 map-const:KCS');
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'pea', ...
@@ -884,7 +978,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.dpeadt = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-series:S1 map-const:KCS');
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'dpeadt', ...
@@ -901,7 +995,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ax = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Ax', ...
                                   'Datatype'   , OPT.type, ...
@@ -914,7 +1008,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.y = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Ay', ...
                                   'Datatype'   , OPT.type, ...
@@ -927,7 +1021,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Sx = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Sx', ...
                                   'Datatype'   , OPT.type, ...
@@ -940,7 +1034,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Sy = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Sy', ...
                                   'Datatype'   , OPT.type, ...
@@ -953,7 +1047,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Cx = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Cx', ...
                                   'Datatype'   , OPT.type, ...
@@ -966,7 +1060,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Cy = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Cy', ...
                                   'Datatype'   , OPT.type, ...
@@ -979,7 +1073,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Nx = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Nx', ...
                                   'Datatype'   , OPT.type, ...
@@ -992,7 +1086,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ny = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Ny', ...
                                   'Datatype'   , OPT.type, ...
@@ -1005,7 +1099,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Wz = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Wz', ...
                                   'Datatype'   , OPT.type, ...
@@ -1018,13 +1112,16 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Mz = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Mz', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmt.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      end
+      else
+         warning('PEA not yet implemented for Z-MODEL')
       end
 
       if any(strcmp('salinity',OPT.var))
@@ -1033,9 +1130,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_salinity');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'salinity');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'ppt');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.salinity = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:LSTCI');
       nc.Variables(ifld) = struct('Name'       , 'salinity', ...
                                   'Datatype'   , OPT.type, ...
@@ -1051,9 +1148,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_temperature');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'temperature');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degree_Celsius');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.temperature = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:LSTCI');
       nc.Variables(ifld) = struct('Name'       , 'temperature', ...
                                   'Datatype'   , OPT.type, ...
@@ -1069,9 +1166,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent kinetic energy');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s2');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tke = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS map-const:NAMCON map-const:LSTCI map-const:LTUR');
       nc.Variables(ifld) = struct('Name'       , 'tke', ...
                                   'Datatype'   , OPT.type, ...
@@ -1087,9 +1184,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent energy dissipation');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s3');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.eps = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS map-const:NAMCON map-const:LSTCI map-const:LTUR');
       nc.Variables(ifld) = struct('Name'       , 'eps', ...
                                   'Datatype'   , OPT.type, ...
@@ -1100,13 +1197,16 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
       
       if any(strcmp('viscosity_z',OPT.var))
+      if vs_get_elm_size(F,'VICWW')==0
+          warning('viscosity_z (map-series:VICWW) not in file, skipped.')
+      else
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy viscosity-3D');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.viscosity_z = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:VICWW map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'viscosity_z', ...
                                   'Datatype'   , OPT.type, ...
@@ -1114,15 +1214,19 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
       end
+      end
       
       if any(strcmp('diffusivity_z',OPT.var))
+      if vs_get_elm_size(F,'VICWW')==0
+          warning('diffusivity_z (map-series:DICWW) not in file, skipped.')
+      else
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy diffusivity-3D');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.diffusivity_z = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:DICWW map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'diffusivity_z', ...
                                   'Datatype'   , OPT.type, ...
@@ -1130,21 +1234,26 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
       end
+      end
       
       if any(strcmp('Ri',OPT.var))
+      if vs_get_elm_size(F,'VICWW')==0
+          warning('Ri (map-series:RICH) not in file, skipped.')
+      else
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Richardson number');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ri = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RICH map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'Ri', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmkit.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      end
       end
 
 % TO DO
@@ -1178,9 +1287,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'concentration_of_suspended_matter_in_sea_water'); % mass_concentration_of_suspended_matter_in_sea_water
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'suspended sediment concentration');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'mg/l');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.suspsedconc = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:NAMSED map-const:LSTCI map-const:LSED');
       nc.Variables(ifld) = struct('Name'       , 'suspsedconc', ...
                                   'Datatype'   , OPT.type, ...
@@ -1231,18 +1340,28 @@ function varargout = vs_trim2nc(vsfile,varargin)
       warning('leading and trailing nan values make ncbrowse crash')
       end
 
+      if strmatch('SIGMA-MODEL', G.layer_model)
       data = vs_let(F,'map-const','THICK','quiet');
      [sigma,sigmaInterf] = d3d_sigma(data); % [0 .. 1]
-
       ncwrite   (ncfile,'Layer'         ,sigma-1);
       ncwriteatt(ncfile,'Layer'         ,'actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
       
       ncwrite   (ncfile,'LayerInterf'   ,sigmaInterf-1);
       ncwriteatt(ncfile,'LayerInterf'   ,'actual_range',[min(sigmaInterf(:)-1) max(sigmaInterf(:)-1)]); % [-1 0]
+      elseif strmatch('Z-MODEL', G.layer_model)
+
+      Layer = corner2center1(G.ZK);
+      ncwrite   (ncfile,'Layer'         ,Layer);
+      ncwriteatt(ncfile,'Layer'         ,'actual_range',[min(Layer(:)) max(Layer(:))]);
+      
+      ncwrite   (ncfile,'LayerInterf'   ,G.ZK);
+      ncwriteatt(ncfile,'LayerInterf'   ,'actual_range',[min(G.ZK(:)) max(G.ZK(:))]);
+      end
+
 
 %% 5 Fill variables (optional)
 
-      if     any(strcmp('x',OPT.var))
+      if     any(strcmp('x',OPT.var)) & isfield(G.cen,'x')
       ncwrite   (ncfile,'x'             ,    G.cen.x,[2 2]);
       ncwriteatt(ncfile,'x'             ,'actual_range',[min(G.cen.x(:)) max(G.cen.x(:))]);
       if ~isempty(OPT.epsg)
@@ -1250,17 +1369,17 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
       end
       
-      if     any(strcmp('y',OPT.var))
+      if     any(strcmp('y',OPT.var)) & isfield(G.cen,'y')
       ncwrite   (ncfile,'y'             ,    G.cen.y,[2 2]);
       ncwriteatt(ncfile,'y'             ,'actual_range',[min(G.cen.y(:)) max(G.cen.y(:))]);
       end
 
-      if     any(strcmp('grid_x',OPT.var))
+      if     any(strcmp('grid_x',OPT.var)) & isfield(G.cor,'x')
       ncwrite   (ncfile,'grid_x'        , permute(nc_cf_cor2bounds(addrowcol(G.cor.x,[-1 1],[-1 1],nan)'),[3 2 1])); % addrowcol makes sure nc_cf_bounds2cor is inverse of nc_cf_cor2bounds
       ncwriteatt(ncfile,'grid_x'        ,'actual_range',[min(G.cor.x(:)) max(G.cor.x(:))]);
       end
 
-      if     any(strcmp('grid_y',OPT.var))
+      if     any(strcmp('grid_y',OPT.var)) & isfield(G.cor,'y')
       ncwrite   (ncfile,'grid_y'        , permute(nc_cf_cor2bounds(addrowcol(G.cor.y,[-1 1],[-1 1],nan)'),[3 2 1])); % addrowcol makes sure nc_cf_bounds2cor is inverse of nc_cf_cor2bounds
       ncwriteatt(ncfile,'grid_y'        ,'actual_range',[min(G.cor.y(:)) max(G.cor.y(:))]);
       end
@@ -1276,12 +1395,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
       if     any(strcmp('grid_longitude',OPT.var))
-      ncwrite   (ncfile,'grid_longitude',nc_cf_cor2bounds(G.cor.lon),[2 2 1]);
+      ncwrite   (ncfile,'grid_longitude',permute(nc_cf_cor2bounds(addrowcol(G.cor.lon,[-1 1],[-1 1],nan)'),[3 2 1])); % addrowcol makes sure nc_cf_bounds2cor is inverse of nc_cf_cor2bounds
       ncwriteatt(ncfile,'grid_longitude','actual_range',[min(G.cor.lon(:)) max(G.cor.lon(:))]);
       end      
 
       if     any(strcmp('grid_latitude',OPT.var))
-      ncwrite   (ncfile,'grid_latitude' ,nc_cf_cor2bounds(G.cor.lat),[2 2 1]);
+      ncwrite   (ncfile,'grid_latitude' ,permute(nc_cf_cor2bounds(addrowcol(G.cor.lat,[-1 1],[-1 1],nan)'),[3 2 1])); % addrowcol makes sure nc_cf_bounds2cor is inverse of nc_cf_cor2bounds
       ncwriteatt(ncfile,'grid_latitude' ,'actual_range',[min(G.cor.lat(:)) max(G.cor.lat(:))]);
       end      
       end
@@ -1318,33 +1437,32 @@ function varargout = vs_trim2nc(vsfile,varargin)
       
 %% initialize [min,max] ranges
 
-      if any(strcmp('waterlevel'    ,OPT.var));R.waterlevel      = [Inf -Inf];end
-      if any(strcmp('velocity'      ,OPT.var));R.velocity_x      = [Inf -Inf];
-                                               R.velocity_y      = [Inf -Inf];end
-      if any(strcmp('velocity_omega',OPT.var));R.velocity_omega  = [Inf -Inf];end
-      if any(strcmp('velocity_z'    ,OPT.var));R.velocity_z      = [Inf -Inf];end
-      if any(strcmp('tau'           ,OPT.var));R.tau_x           = [Inf -Inf];
-                                               R.tau_y           = [Inf -Inf];end
-      if any(strcmp('density'       ,OPT.var));R.density         = [Inf -Inf];end
-      if any(strcmp('pea'           ,OPT.var));R.pea             = [Inf -Inf];end
-      if any(strcmp('salinity'      ,OPT.var));R.salinity        = [Inf -Inf];end
-      if any(strcmp('temperature'   ,OPT.var));R.temperature     = [Inf -Inf];end
-      if any(strcmp('tke'           ,OPT.var));R.tke             = [Inf -Inf];end
-      if any(strcmp('eps'           ,OPT.var));R.eps             = [Inf -Inf];end
-      if any(strcmp('sediment'      ,OPT.var));R.suspsedconc     = [Inf -Inf];end
-      if any(strcmp('viscosity_z'   ,OPT.var));R.viscosity_z     = [Inf -Inf];end
-      if any(strcmp('diffusivity_z' ,OPT.var));R.diffusivity_z   = [Inf -Inf];end
-      if any(strcmp('Ri'            ,OPT.var));R.Ri              = [Inf -Inf];end
-      if any(strcmp('dpeads'        ,OPT.var));R.Ax              = [Inf -Inf];
-                                               R.Ay              = [Inf -Inf];
-                                               R.Sx              = [Inf -Inf];
-                                               R.Sy              = [Inf -Inf];
-                                               R.Cx              = [Inf -Inf];
-                                               R.Cy              = [Inf -Inf];
-                                               R.Nx              = [Inf -Inf];
-                                               R.Ny              = [Inf -Inf];
-                                               R.Wz              = [Inf -Inf];
-                                               R.Mz              = [Inf -Inf];end
+    %  if any(strcmp('waterlevel'    ,OPT.var));R.waterlevel      = [Inf -Inf];end
+    %  if any(strcmp('velocity'      ,OPT.var));R.velocity_x      = [Inf -Inf];
+    %                                           R.velocity_y      = [Inf -Inf];end
+    %  if any(strcmp('velocity_omega',OPT.var));R.velocity_omega  = [Inf -Inf];end
+    %  if any(strcmp('velocity_z'    ,OPT.var));R.velocity_z      = [Inf -Inf];end
+    %  if any(strcmp('tau'           ,OPT.var));R.tau_x           = [Inf -Inf];
+    %                                           R.tau_y           = [Inf -Inf];end
+    %  if any(strcmp('pea'           ,OPT.var));R.pea             = [Inf -Inf];end
+    %  if any(strcmp('salinity'      ,OPT.var));R.salinity        = [Inf -Inf];end
+    %  if any(strcmp('temperature'   ,OPT.var));R.temperature     = [Inf -Inf];end
+    %  if any(strcmp('tke'           ,OPT.var));R.tke             = [Inf -Inf];end
+    %  if any(strcmp('eps'           ,OPT.var));R.eps             = [Inf -Inf];end
+    %  if any(strcmp('sediment'      ,OPT.var));R.suspsedconc     = [Inf -Inf];end
+    %  if any(strcmp('viscosity_z'   ,OPT.var));R.viscosity_z     = [Inf -Inf];end
+    %  if any(strcmp('diffusivity_z' ,OPT.var));R.diffusivity_z   = [Inf -Inf];end
+    %  if any(strcmp('Ri'            ,OPT.var));R.Ri              = [Inf -Inf];end
+    %  if any(strcmp('dpeads'        ,OPT.var));R.Ax              = [Inf -Inf];
+    %                                           R.Ay              = [Inf -Inf];
+    %                                           R.Sx              = [Inf -Inf];
+    %                                           R.Sy              = [Inf -Inf];
+    %                                           R.Cx              = [Inf -Inf];
+    %                                           R.Cy              = [Inf -Inf];
+    %                                           R.Nx              = [Inf -Inf];
+    %                                           R.Ny              = [Inf -Inf];
+    %                                           R.Wz              = [Inf -Inf];
+    %                                           R.Mz              = [Inf -Inf];end
 
       for it = OPT.time % it is index in NEFIS file
       i = i + 1;        % i  is index in netCDF file
@@ -1382,7 +1500,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
          R.velocity_z   = [min(R.velocity_z(1),min(matrix(:))) max(R.velocity_z(2),max(matrix(:)))];
          end
          
-         if any(strcmp('tau',OPT.var))
+         if any(strcmp('tau',OPT.var)) & vs_get_elm_size(F,'TAUKSI')~=0
         [D.tau_x,D.tau_y] = vs_let_vector_cen(F, 'map-series',{it},{'TAUKSI','TAUETA'}, {0,0,0},'quiet');
          D.tau_x = permute(D.tau_x,[2 3 1]).*G.cen.mask;
          D.tau_y = permute(D.tau_y,[2 3 1]).*G.cen.mask;
@@ -1392,24 +1510,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
          R.tau_y   = [min(R.tau_y  (1),min(D.tau_y(:))) max(R.tau_y(2),max(D.tau_y(:)))];  
          end
 
-         if any(strcmp('density',OPT.var)) | any(strcmp('pea',OPT.var))
-         matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RHO'      , {0 0 0},'quiet'),G.cen.mask);
-         if any(strcmp('density',OPT.var))
-         ncwrite   (ncfile,'density', matrix,[2,2,1,i]); % 1-based
-         R.density = [min(R.density(1),min(matrix(:))) max(R.density(2),max(matrix(:)))];
-         end
-
-         if any(strcmp('pea',OPT.var))
-         G.cen.intf.z  = zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);
-         for k = 1:G.kmax+1
-            G.cen.intf.z(:,:,k) = G.sigma_intf(k).*(G.cen.zwl + G.cen.dep) - G.cen.dep; % dep is positive down
-         end
-         matrix = pea_simpson_et_al_1990(G.cen.intf.z,matrix,3,'weights',G.sigma_dz);
-         ncwrite   (ncfile,'pea', matrix,[2,2,i]); % 1-based
-         R.pea = [min(R.pea(1),min(matrix(:))) max(R.pea(2),max(matrix(:)))];
-         end
-         end
-         
          if any(strcmp('salinity',OPT.var))
          if isfield(I,'salinity')
          matrix    = apply_mask(vs_let_scalar(F,'map-series' ,{it},'R1'       , {0 0 0 I.salinity.index   },'quiet'),G.cen.mask);
@@ -1455,39 +1555,65 @@ function varargout = vs_trim2nc(vsfile,varargin)
          end
          end
          
-         if any(strcmp('viscosity_z',OPT.var))
+         if any(strcmp('viscosity_z',OPT.var)) & vs_get_elm_size(F,'VICWW')>0
          matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'VICWW','quiet'),G.cen.mask);
          ncwrite   (ncfile,'viscosity_z', matrix,[2,2,1,i]);
          R.viscosity_z = [min(R.viscosity_z(1),min(matrix(:))) max(R.viscosity_z(2),max(matrix(:)))];
          end
          
-         if any(strcmp('diffusivity_z',OPT.var))
+         if any(strcmp('diffusivity_z',OPT.var)) & vs_get_elm_size(F,'DICWW')>0
          matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'DICWW','quiet'),G.cen.mask);
          ncwrite   (ncfile,'diffusivity_z', matrix,[2,2,1,i]);
          R.diffusivity_z = [min(R.diffusivity_z(1),min(matrix(:))) max(R.diffusivity_z(2),max(matrix(:)))];
          end
          
-         if any(strcmp('Ri',OPT.var))
+         if any(strcmp('Ri',OPT.var)) & vs_get_elm_size(F,'RICH')>0
          matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RICH','quiet'),G.cen.mask);
          ncwrite   (ncfile,'Ri', matrix,[2,2,1,i]);
          R.Ri = [min(R.Ri(1),min(matrix(:))) max(R.Ri(2),max(matrix(:)))];
          end
 
-         if any(strcmp('dpeads',OPT.var))
-         tmp = vs_dpeads(F,it);
-         ncwrite   (ncfile,'Ax', tmp.Ax,[2,2,i]);R.Ax = [min(R.Ax(1),min(tmp.Ax(:))) max(R.Ax(2),max(tmp.Ax(:)))];
-         ncwrite   (ncfile,'Ay', tmp.Ay,[2,2,i]);R.Ay = [min(R.Ay(1),min(tmp.Ay(:))) max(R.Ay(2),max(tmp.Ay(:)))];
-         ncwrite   (ncfile,'Sx', tmp.Sx,[2,2,i]);R.Sx = [min(R.Sx(1),min(tmp.Sx(:))) max(R.Sx(2),max(tmp.Sx(:)))];
-         ncwrite   (ncfile,'Sy', tmp.Sy,[2,2,i]);R.Sy = [min(R.Sy(1),min(tmp.Sy(:))) max(R.Sy(2),max(tmp.Sy(:)))];
-         ncwrite   (ncfile,'Cx', tmp.Cx,[2,2,i]);R.Cx = [min(R.Cx(1),min(tmp.Cx(:))) max(R.Cx(2),max(tmp.Cx(:)))];
-         ncwrite   (ncfile,'Cy', tmp.Cy,[2,2,i]);R.Cy = [min(R.Cy(1),min(tmp.Cy(:))) max(R.Cy(2),max(tmp.Cy(:)))];
-         ncwrite   (ncfile,'Nx', tmp.Nx,[2,2,i]);R.Nx = [min(R.Nx(1),min(tmp.Nx(:))) max(R.Nx(2),max(tmp.Nx(:)))];
-         ncwrite   (ncfile,'Ny', tmp.Ny,[2,2,i]);R.Ny = [min(R.Ny(1),min(tmp.Ny(:))) max(R.Ny(2),max(tmp.Ny(:)))];
-         ncwrite   (ncfile,'Wz', tmp.Wz,[2,2,i]);R.Wz = [min(R.Wz(1),min(tmp.Wz(:))) max(R.Wz(2),max(tmp.Wz(:)))];
-         ncwrite   (ncfile,'Mz', tmp.Mz,[2,2,i]);R.Mz = [min(R.Mz(1),min(tmp.Mz(:))) max(R.Mz(2),max(tmp.Mz(:)))];
+         if (any(strcmp('density',OPT.var)) | any(strcmp('pea',OPT.var))) & vs_get_elm_size(F,'RHO')~=0
+         matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RHO'      , {0 0 0},'quiet'),G.cen.mask);
+         if any(strcmp('density',OPT.var))
+         ncwrite   (ncfile,'density', matrix,[2,2,1,i]); % 1-based
+         R.density = [min(R.density(1),min(matrix(:))) max(R.density(2),max(matrix(:)))];
          end
+         % Note density should be treated right before PEA
+         if strmatch('SIGMA-MODEL', G.layer_model)
 
-      end
+            if any(strcmp('pea',OPT.var))
+            G.cen.intf.z  = zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);
+            for k = 1:G.kmax+1
+               G.cen.intf.z(:,:,k) = G.sigma_intf(k).*(G.cen.zwl + G.cen.dep) - G.cen.dep; % dep is positive down
+            end
+            matrix = pea_simpson_et_al_1990(G.cen.intf.z,matrix,3,'weights',G.sigma_dz);
+            ncwrite   (ncfile,'pea', matrix,[2,2,i]); % 1-based
+            R.pea = [min(R.pea(1),min(matrix(:))) max(R.pea(2),max(matrix(:)))];
+            end
+
+            if any(strcmp('dpeads',OPT.var))
+            tmp = vs_dpeads(F,it);
+            ncwrite   (ncfile,'Ax', tmp.Ax,[2,2,i]);R.Ax = [min(R.Ax(1),min(tmp.Ax(:))) max(R.Ax(2),max(tmp.Ax(:)))];
+            ncwrite   (ncfile,'Ay', tmp.Ay,[2,2,i]);R.Ay = [min(R.Ay(1),min(tmp.Ay(:))) max(R.Ay(2),max(tmp.Ay(:)))];
+            ncwrite   (ncfile,'Sx', tmp.Sx,[2,2,i]);R.Sx = [min(R.Sx(1),min(tmp.Sx(:))) max(R.Sx(2),max(tmp.Sx(:)))];
+            ncwrite   (ncfile,'Sy', tmp.Sy,[2,2,i]);R.Sy = [min(R.Sy(1),min(tmp.Sy(:))) max(R.Sy(2),max(tmp.Sy(:)))];
+            ncwrite   (ncfile,'Cx', tmp.Cx,[2,2,i]);R.Cx = [min(R.Cx(1),min(tmp.Cx(:))) max(R.Cx(2),max(tmp.Cx(:)))];
+            ncwrite   (ncfile,'Cy', tmp.Cy,[2,2,i]);R.Cy = [min(R.Cy(1),min(tmp.Cy(:))) max(R.Cy(2),max(tmp.Cy(:)))];
+            ncwrite   (ncfile,'Nx', tmp.Nx,[2,2,i]);R.Nx = [min(R.Nx(1),min(tmp.Nx(:))) max(R.Nx(2),max(tmp.Nx(:)))];
+            ncwrite   (ncfile,'Ny', tmp.Ny,[2,2,i]);R.Ny = [min(R.Ny(1),min(tmp.Ny(:))) max(R.Ny(2),max(tmp.Ny(:)))];
+            ncwrite   (ncfile,'Wz', tmp.Wz,[2,2,i]);R.Wz = [min(R.Wz(1),min(tmp.Wz(:))) max(R.Wz(2),max(tmp.Wz(:)))];
+            ncwrite   (ncfile,'Mz', tmp.Mz,[2,2,i]);R.Mz = [min(R.Mz(1),min(tmp.Mz(:))) max(R.Mz(2),max(tmp.Mz(:)))];
+            end
+
+         elseif strmatch('Z-MODEL', G.layer_model)
+         
+            % not yet implemented for z-layers.
+            
+         end % z/sigma
+         end % density
+         
+      end % time    
       
 %% update data
 %  dpeadt central difference in time
@@ -1513,16 +1639,17 @@ function varargout = vs_trim2nc(vsfile,varargin)
         varnames = fieldnames(R);
         
         for ivar=1:length(varnames)
-        varname = varnames{ivar};
-        ncwriteatt(ncfile,varname  ,'actual_range',R.(varname));
+           varname = varnames{ivar};
+           ncwriteatt(ncfile,varname  ,'actual_range',R.(varname));
         end
-        end
+      end
         
-        if OPT.debug
+      if OPT.debug
         nc_dump(ncfile)
       end
 
 %% EOF      
+
 
 function matrix = apply_mask(matrix,mask)
 
