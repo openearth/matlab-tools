@@ -346,7 +346,7 @@ else
 end
 
 %check consistency with t_predic's centraltime
-fprintf('   t_tide   centraltime =  %f\n',centraltime);
+fprintf('   t_tide   centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
 
 if nobs*dt> 18.6*365.25*24,  % Long time series
   longseries=1; ltype='full';

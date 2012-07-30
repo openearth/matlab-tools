@@ -11,16 +11,12 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2007-2010 Delft University of Technology/Deltares
-%       Gerben J. de Boer
+%   Copyright (C) 2007-2012 Gerben J. de Boer, Delft, The Netherlands
+%       (i)   Delft University of Technology, Fluid Mechanics Section & Deltares (Borsje et al, 2008)
+%       (ii)  Deltares for Rijkswaterstaat (VOP-slib 2010)
+%       (iii) Deltares for NWO (GeoRisk-PACE)
 %
 %       g.j.deboer@tudelft.nl / gerben.deboer@deltares.nl	
-%
-%       Fluid Mechanics Section
-%       Faculty of Civil Engineering and Geosciences
-%       PO Box 5048
-%       2600 GA Delft
-%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -58,10 +54,11 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
    OPT.pause               = 0; % after each station/netCDF fil
    OPT.names2label         = {'M2','S2','N2','M4','K1','O1','MN4','MS4','2MS6','2MN6','M6','Q1','2MK5','2SM6','MO3'};
    OPT.names2planview      = {'M2','S2','N2','M4','K1','O1','MN4','MS4','2MS6','2MN6','M6','Q1','2MK5','2SM6','MO3'};
+   % scale arrows to be of same size: scale with inverse of amplitude
    OPT.names2planviewscale = [0.16 0.68 0.74 0.79 0.90 1.04 1.06  1.07  1.57   1.78   1.82 2.15 3.90    5.49  8.40 ]; % 1 over Petten harmonics
    OPT.amp_min             = 0.01; %[0.005];
    OPT.ddatenumeps         = 1e-8;
-  %OPT.verticaloffset      = [1 1 1 2 1 1 1 1 1 1 1 1]; % plots the text for the specified station at the #th line (1 = normal 1st line)
+  %OPT.verticaloffset      = []; %[1 1 1 2 1 1 1 1 1 1 1 1]; % plots the text for the specified station at the #th line (1 = normal 1st line)
    OPT.eps                 = 10*eps;
    
    OPT = setproperty(OPT,varargin{:});
@@ -81,10 +78,18 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
       FIGS(icomp) = figure('name',['planview_',OPT.names2planview{icomp}]);
       end
    end
-
+   
 %% Station loop
 
    nfiles = length(ncmodel);
+   if ischar(OPT.verticalalignment);val = OPT.verticalalignment;OPT.verticalalignment = {};
+      for ifile=1:nfiles, OPT.verticalalignment{ifile}=val;end
+   end
+   
+   if ischar(OPT.horizontalalignment);val = OPT.horizontalalignment;OPT.horizontalalignment = {};
+      for ifile=1:nfiles, OPT.horizontalalignment{ifile}=val;end
+   end   
+
    for ifile=1:nfiles
    
    %% LOAD data
@@ -384,19 +389,11 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                
                %disp([mfilename,' : ',char(name),' - ',num2str(icomp),' - ',num2str(OPT.names2planviewscale(icomp))])
                
-               figure(FIGS(icomp))
-               if ~isempty(OPT.axis)
-                  axislat(mean(OPT.axis(3:4)))
-                  axis([OPT.axis])
-               else
-                  axislat
-                  axis tight
-               end               
-               
                %               data | model
                % amplitude     x    |  x
                % phase         x    |  x
                
+               figure(FIGS(icomp))
                plot(D.longitude(1),D.latitude(1),'k.')
                hold on
 
@@ -409,26 +406,36 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                try;txt.D = rmfield(txt.D,'both');end
                try;txt.M = rmfield(txt.M,'both');end
 
-               if isfield(OPT,'verticaloffset')
-                  txt.D.both{OPT.verticaloffset(ifile)  } = [txt.D.amp  ,' ',Da.amplitude.units,' | ',txt.D.phase,' ',Da.phase.units];
-                  txt.M.both{OPT.verticaloffset(ifile)+1} = [txt.M.amp  ,' ',Ma.amplitude.units,' | ',txt.M.phase,' ',Ma.phase.units];
-                  txt.M.both{OPT.verticaloffset(ifile)+2} = [char(D.station_id)];
-               else
+               %if ~isempty(OPT.verticaloffset)
+               %   txt.D.both{OPT.verticaloffset(ifile)  } = [txt.D.amp  ,' ',Da.amplitude.units,' | ',txt.D.phase,' ',Da.phase.units];
+               %   txt.M.both{OPT.verticaloffset(ifile)+1} = [txt.M.amp  ,' ',Ma.amplitude.units,' | ',txt.M.phase,' ',Ma.phase.units];
+               %   txt.M.both{OPT.verticaloffset(ifile)+2} = [char(D.station_id)];
+               %else
                   txt.D.both{1}                           = [txt.D.amp  ,' ',Da.amplitude.units,' | ',txt.D.phase,' ',Da.phase.units];
                   txt.M.both{2}                           = [txt.M.amp  ,' ',Ma.amplitude.units,' | ',txt.M.phase,' ',Ma.phase.units];
                   txt.M.both{3}                           = [char(D.station_id)];
-               end
+               %end
                
                text(D.longitude(1),D.latitude(1),'.')
-               text(D.longitude(1),D.latitude(1),txt.D.both,'verticalalignment',OPT.verticalalignment,'color',OPT.color.data ,'horizontalalignment',OPT.horizontalalignment,'fontsize',OPT.fontsize);
-               text(D.longitude(1),D.latitude(1),txt.M.both,'verticalalignment',OPT.verticalalignment,'color',OPT.color.model,'horizontalalignment',OPT.horizontalalignment,'fontsize',OPT.fontsize);
+               text(D.longitude(1),D.latitude(1),txt.D.both,'verticalalignment',OPT.verticalalignment{ifile},'color',OPT.color.data ,'horizontalalignment',OPT.horizontalalignment{ifile},'fontsize',OPT.fontsize);
+               text(D.longitude(1),D.latitude(1),txt.M.both,'verticalalignment',OPT.verticalalignment{ifile},'color',OPT.color.model,'horizontalalignment',OPT.horizontalalignment{ifile},'fontsize',OPT.fontsize);
 %                quiver(D.longitude(1),D.latitude(1),...
 %                       D.amplitude(dcomp).*cosd(D.phase(dcomp)).*scale,...
 %                       D.amplitude(dcomp).*sind(D.phase(dcomp)).*scale,0,'color',OPT.color.data )
 %                quiver(D.longitude(1),D.latitude(1),...
 %                       M.amplitude(mcomp).*cosd(M.phase(mcomp)).*scale,...
 %                       M.amplitude(mcomp).*sind(M.phase(mcomp)).*scale,0,'color',OPT.color.model)
+               
+               if ~isempty(OPT.axis)
+                  axislat(mean(OPT.axis(3:4)))
+                  axis([OPT.axis])
+               else
+                  axislat
+                  axis tight
+               end     
+               
                S = arrow2;S.W4 = 0.1;S.W5 = 0.0;
+               S.ArrowAspectRatio = daspect;
                S.scale = OPT.names2planviewscale(icomp);
                
                ud = D.amplitude(dcomp).*cosd(D.phase(dcomp));
@@ -499,7 +506,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
 
          % extract unique basename
-         ind = find(~all(diff(filename(ncmodel),[],1)==0));
+         ind = find(~all(diff(filename(ncmodel),[],1)==0,1));
          if isempty(ind) | (ind==1)
             basename = mfilename;
          else

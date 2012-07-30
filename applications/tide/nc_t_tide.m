@@ -107,7 +107,7 @@ else
    
       OPT = setproperty(OPT,varargin{3:end});
    
-      mask = ( t >= OPT.period(1)) & (t <= OPT.period(2));
+      mask = find(( t >= OPT.period(1)) & (t <= OPT.period(end)));
       dt = diff(t(mask)).*24; % hour
 
       if length(unique([dt])) > 1
@@ -183,7 +183,7 @@ end
    nc_adddim      (OPT.ncfile,'time'     ,1);
    nc_adddim      (OPT.ncfile,'bounds'   ,2);
   
-  if ~isempty(D.station_name)   
+  if ~isempty(D.station_id)   
    nc.Name = 'station_id';
    nc.Datatype     = 'char';
    nc.Dimension    = {'strlen0','strlen2'}; % 2D, otherwise matlab does not load it correctly

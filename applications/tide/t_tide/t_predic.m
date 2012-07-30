@@ -160,7 +160,7 @@ else
    centraltime=[];
 end
 %check consistency with t_tide's centraltime
-fprintf('   t_predic centraltime =  %f\n',centraltime);
+fprintf('   t_predic centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
 
 if longseries,
   const=t_get18consts;
