@@ -1,4 +1,4 @@
-function pg_replace_struct(conn, table, sqlValues, sqlWhere, varargin)
+function varargout = pg_replace_struct(conn, table, sqlValues, sqlWhere, varargin)
 %PG_REPLACE_STRUCT  Updates existsing records or inserts it otherwise
 %
 %   Checks whether a record exists in the given table in the current
@@ -22,7 +22,7 @@ function pg_replace_struct(conn, table, sqlValues, sqlWhere, varargin)
 %   varargin  = none
 %
 %   Output:
-%   none
+%   varargout = primary key of updated/inserted records
 %
 %   Example
 %   sqlValues = struct('Column_1', 3);
@@ -89,6 +89,8 @@ l2 = length(sqlWhere);
 
 n = max(l1, l2);
 
+varargout = cell(1,nargout);
+
 for i = 1:n
     
     id = pg_getid(conn, table, sqlWhere(min(l2,i)));
@@ -96,11 +98,17 @@ for i = 1:n
     if id == 0
 
         pg_insert_struct(conn, table, sqlValues(min(l1,i)));
+        
+        if nargout >= i
+            varargout{i} = pg_getid(conn, table, sqlWhere(min(l2,i)));
+        end
 
     else
 
         pk = pg_getpk(conn, table);
         pg_update_struct(conn, table, sqlValues(min(l1,i)), struct(pk, id));
+        
+        varargout{i} = id;
 
     end
     

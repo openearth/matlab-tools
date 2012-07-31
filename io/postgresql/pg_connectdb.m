@@ -98,7 +98,7 @@ else
     
     % set default schema, if given
     if ~isempty(OPT.schema)
-        pg_exec(conn, sprintf('SET search_path TO %s', OPT.schema));
+        exec(conn, sprintf('SET search_path TO %s', OPT.schema));
     end
     
 end
