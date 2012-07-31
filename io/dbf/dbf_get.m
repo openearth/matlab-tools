@@ -1,21 +1,45 @@
 function varargout = dbf_get(varargin)
-%DBF_GET  One line description goes here.
+%DBF_GET  Extracts data from a DBF result
 %
-%   More detailed description goes here.
+%   Extracts data based on column name from a DBF result obtained from the
+%   dbf_read or dbf_read_struct function. This can be a structure with
+%   fields headers and data or two cell arrays with data and corresponding
+%   headers seprately.
+%   The rest of the input are either column names to be returned or a index
+%   vector of records to be returned. Each column is returned as separate
+%   variable.
+%   Filtering of column names uses the strfilter superpowers. Be aware that
+%   the number of returned variables can be unexpected when using filters.
 %
 %   Syntax:
 %   varargout = dbf_get(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = 1:      DBF structure obtained from dbf_read_struct or DBF
+%                       cell array with data obtained from dbf_read
+%               2:      DBF cell array with headers obtained from dbf_read,
+%                       first column name (or filter) to be returned or
+%                       indexing vector
+%               3 - N:  Column name (or filter) to be returned or indexing
+%                       vector
 %
 %   Output:
-%   varargout =
+%   varargout = Data for requested columns (one variable per colomn)
 %
 %   Example
-%   dbf_get
+%   [data headers] = dbf_read('someDatabase.DBF');
+%   col1 = dbf_get(data, headers, 'Colomn_1');
+%   [col1 col2] = dbf_get(data, headers, 'Colomn_1', 'Column_2');
+%   [col1 col2 col3] = dbf_get(data, headers, 'Colomn_*');
+%   [col1 col2 col3] = dbf_get(data, headers, '/Colomn_\d+');
 %
-%   See also
+%   DBF = dbf_read_struct('someDatabase.DBF');
+%   col1 = dbf_get(DBF, 'Colomn_1');
+%   [col1 col2] = dbf_get(DBF, 'Colomn_1', 'Column_2');
+%   [col1 col2] = dbf_get(DBF, [1 2 3], 'Colomn_1', 'Column_2');
+%   [col1 col2 col3] = dbf_get(DBF, 'Colomn_*', 1:10:101);
+%
+%   See also dbf_read, dbf_read_struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -87,6 +111,16 @@ if ~isempty(varargin)
         error('Not enough input parameters');
     end
     
+    % look for indexing vectors
+    idx     = ~cellfun(@ischar, vars);
+    sel     = vars(idx);
+    vars    = vars(~idx);
+    
+    % select all fields in case none are given
+    if isempty(vars)
+        vars = headers;
+    end
+    
     for i = 1:length(vars)
         
         idx = find(strfilter(headers, vars{i}));
@@ -95,6 +129,12 @@ if ~isempty(varargin)
 
             varargout = [varargout {data(:,idx(j))}];
 
+        end
+    end
+    
+    if ~isempty(sel)
+        for i = 1:length(varargout)
+            varargout{i} = varargout{i}(sel{1});
         end
     end
     

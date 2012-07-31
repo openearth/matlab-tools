@@ -1,21 +1,24 @@
 function rs = pg_exec(conn, sql, varargin)
-%PG_EXEC  One line description goes here.
+%PG_EXEC  Executes a SQL query
 %
-%   More detailed description goes here.
+%   Executes a SQL query and checks the result for errors. Returns the
+%   result set.
 %
 %   Syntax:
-%   varargout = pg_exec(varargin)
+%   rs = pg_exec(conn, sql, varargin)
 %
 %   Input:
-%   varargin  =
+%   conn      = Database connection object
+%   sql       = SQL query string
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   rs        = Result set from SQL query
 %
 %   Example
-%   pg_exec
+%   pg_exec(conn, 'DELETE FROM someTable WHERE someColumn = 1');
 %
-%   See also
+%   See also pg_fetch, pg_select_struct, pg_insert_struct, pg_update_struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -1,21 +1,33 @@
 function conn = pg_connectdb(db, varargin)
-%PG_CONNECTDB  One line description goes here.
+%PG_CONNECTDB  Creates a JDBC connection to a PostgreSQL database
 %
-%   More detailed description goes here.
+%   Creates a JDBC connection to a PostgreSQL database. A JDBC driver
+%   should be available and listed in the following file:
+%       <matlabroot>/toolbox/local/classpath.txt
+%   If a schema is given, this schema is set to the default for the current
+%   session.
 %
 %   Syntax:
-%   varargout = pg_connectdb(varargin)
+%   conn = pg_connectdb(db, varargin)
 %
 %   Input:
-%   varargin  =
+%   db        = Name of database to connect to
+%   varargin  = host:   Hostname of database server
+%               port:   Port number of database server (default: 5432)
+%               user:   Username for database server
+%               pass:   Password for database server
+%               schema: Default schema for current session
 %
 %   Output:
-%   varargout =
+%   conn      = Database connection object
 %
 %   Example
-%   pg_connectdb
+%   conn = pg_connectdb('someDatabase')
+%   conn = pg_connectdb('anotherDatabase','host','posgresql.deltares.nl')
+%   conn = pg_connectdb('anotherDatabase','schema','someSchema')
 %
-%   See also
+%   See also pg_exec, pg_fetch, pg_select_struct, pg_insert_struct,
+%   pg_update_struct, pg_getpk, pg_getid
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -86,7 +98,7 @@ else
     
     % set default schema, if given
     if ~isempty(OPT.schema)
-        exec(conn, sprintf('SET search_path TO %s', OPT.schema));
+        pg_exec(conn, sprintf('SET search_path TO %s', OPT.schema));
     end
     
 end

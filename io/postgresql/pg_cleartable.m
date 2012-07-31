@@ -1,24 +1,24 @@
-function rs = pg_fetch(conn, sql, varargin)
-%PG_FETCH  Executes a SQL query and fetches the result
+function pg_cleartable(conn, table, varargin)
+%PG_CLEARTABLE  Deletes all contents from a table
 %
-%   Executes a SQL query, fetches the result and checks the result for
-%   errors. Returns the resulting data in a cell array or matrix.
+%   Deletes all contents from a table and resets the primary key counter.
 %
 %   Syntax:
-%   rs = pg_fetch(conn, sql, varargin)
+%   pg_cleartable(conn, table, varargin)
 %
 %   Input:
 %   conn      = Database connection object
-%   sql       = SQL query string
+%   table     = Table to be cleared
 %   varargin  = none
 %
 %   Output:
-%   rs        = Fetched data from result set from SQL query
+%   none
 %
 %   Example
-%   pg_fetch(conn, 'SELECT * FROM someTable');
+%   conn = pg_connectdb('someDatabase');
+%   pg_cleartable(conn, 'someTable');
 %
-%   See also pg_exec, pg_select_struct, pg_insert_struct, pg_update_struct
+%   See also pg_getpk, pg_gettables
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -52,7 +52,7 @@ function rs = pg_fetch(conn, sql, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Jul 2012
+% Created: 30 Jul 2012
 % Created with Matlab version: 7.14.0.739 (R2012a)
 
 % $Id$
@@ -62,8 +62,10 @@ function rs = pg_fetch(conn, sql, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% execute sql query
+%% delete contents
 
-rs = fetch(conn, sql);
+pg_exec(conn, sprintf('DELETE FROM %s', table));
 
-pg_error(rs);
+%% reset sequence
+
+pg_exec(conn, sprintf('SELECT setval(''%s_%s_seq'', 1, FALSE)', table, pg_getpk(conn, table)));

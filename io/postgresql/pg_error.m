@@ -1,21 +1,24 @@
 function pg_error(rs)
-%PG_ERROR  One line description goes here.
+%PG_ERROR  Checks a SQL query result for errors
 %
-%   More detailed description goes here.
+%   Checks a SQL query result from exec and/or fetch function for errors
+%   and displays the executed query and the corresponding error if one is
+%   found.
 %
 %   Syntax:
-%   varargout = pg_error(varargin)
+%   pg_error(rs)
 %
 %   Input:
-%   varargin  =
+%   rs        = SQL query result
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   pg_error
+%   rs = exec(conn, 'SELECT * FROM someTable');
+%   pg_error(rs);
 %
-%   See also
+%   See also pg_exec, pg_fetch
 
 %% Copyright notice
 %   --------------------------------------------------------------------

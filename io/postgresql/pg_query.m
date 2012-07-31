@@ -1,0 +1,182 @@
+function strSQL = pg_query(type, table, varargin)
+%PG_QUERY  Builts a SQL query string from structures
+%
+%   Builts a SQL query string from structures specifying the different
+%   clauses in the query. Each structure should have fields that match the
+%   column names of the given table. The values are automatically casted
+%   and escaped to the necessary string representations. The only
+%   non-structure input is for the field list of the SELECT query, which is
+%   a cell array.
+%
+%   Syntax:
+%   strSQL = pg_query(type, table, varargin)
+%
+%   Input:
+%   type      = Type of query (SELECT/INSERT/UPDATE/DELETE)
+%   table     = Table name
+%   varargin  = SELECT query:
+%                   1:  Cell array with field list (empty = *)
+%                   2:  Structure for WHERE clause
+%               INSERT query:
+%                   1:  Structure for VALUES clause
+%               UPDATE query:
+%                   1:  Structure for VALUES clause
+%                   2:  Structure for WHERE clause
+%               DELETE query:
+%                   1:  Structure for WHERE clause
+%
+%   Output:
+%   strSQL    = SQL query string
+%
+%   Example
+%   strSQL = pg_query('SELECT', 'someTable', struct('id', 2));
+%   strSQL = pg_query('SELECT', 'someTable', struct('id', 2), {'Column_1' 'Column_2'});
+%   strSQL = pg_query('INSERT', 'someTable', struct('Column_1', 1, 'Column_2', 'someValue'));
+%   strSQL = pg_query('UPDATE', 'someTable', struct('Column_1', 1, 'Column_2', 'someValue'), struct('id', 2));
+%   strSQL = pg_query('DELETE', 'someTable', struct('id', 2));
+%
+%   See also pg_select_struct, pg_insert_struct, pg_update_struct
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 Deltares
+%       Bas Hoonhout
+%
+%       bas.hoonhout@deltares.nl
+%
+%       Rotterdamseweg 185
+%       2629HD Delft
+%       Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 30 Jul 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% prepare input
+
+m = 3;
+n = length(varargin);
+varargin(n+1:m) = cell(1,m-n);
+
+%% built query
+
+switch upper(type)
+    case 'SELECT'
+        strSQLSelect    = builtSQLSelect(varargin{1});
+        strSQLWhere     = builtSQLWhere(varargin{2});
+        
+        strSQL = sprintf('SELECT %s FROM %s %s', strSQLSelect, table, strSQLWhere);
+        
+    case 'INSERT'
+        strSQLInsert    = builtSQLInsert(varargin{1});
+        
+        strSQL = sprintf('INSERT INTO %s %s', table, strSQLInsert);
+        
+    case 'UPDATE'
+        strSQLUpdate    = builtSQLUpdate(varargin{1});
+        strSQLWhere     = builtSQLWhere(varargin{2});
+        
+        strSQL = sprintf('UPDATE %s %s %s', table, strSQLUpdate, strSQLWhere);
+        
+    case 'DELETE'
+        strSQLWhere     = builtSQLWhere(varargin{1});
+        
+        strSQL = sprintf('DELETE FROM %s %s', table, strSQLWhere);
+end
+
+disp(strSQL);
+
+function strSQL = builtSQLSelect(fields)
+
+strSQL = '*';
+
+if ~isempty(fields)
+    if iscell(fields{1})
+        strSQL = concat(fields{1}, ',');
+    else
+        strSQL = concat(fields, ',');
+    end
+    
+    strSQL = sprintf(' %s ', strSQL);
+end
+
+function strSQL = builtSQLWhere(where)
+
+strSQL = '';
+
+if isstruct(where)
+    
+    f = fieldnames(where);
+
+    if ~isempty(where) && ~isempty(f)
+
+        v           = struct2cell(where);
+
+        [v{:}]      = pg_value2sql(v{:});
+
+        strSQL      = sprintf(' WHERE %s ', concat(concat([f v],' = '),' AND '));
+    end
+end
+
+function strSQL = builtSQLInsert(insert)
+
+strSQL = '';
+
+if isstruct(insert)
+    
+    f = fieldnames(insert);
+
+    if ~isempty(insert) && ~isempty(f)
+
+        v           = struct2cell(insert);
+
+        [v{:}]      = pg_value2sql(v{:});
+
+        strSQL      = sprintf(' (%s) VALUES (%s) ', concat(f,', '), concat(v, ', '));
+    end
+end
+
+function strSQL = builtSQLUpdate(update)
+
+strSQL = '';
+
+if isstruct(update)
+    
+    f = fieldnames(update);
+
+    if ~isempty(update) && ~isempty(f)
+
+        v           = struct2cell(update);
+
+        [v{:}]      = pg_value2sql(v{:});
+
+        strSQL      = sprintf(' SET %s ', concat(concat([f v],' = '),', '));
+    end
+end

@@ -1,32 +1,36 @@
-function varargout = pg_getid(conn, table, varargin)
-%PG_GETID  Retrieves primary key value for specific record in given table
+function ids = pg_getids(conn, table, varargin)
+%PG_GETIDS  Retrieves primary key value for many records in given table
 %
-%   Retrieves primary key value for specific record in given table in
-%   current database. The record is specified by a set of name/value pairs
-%   that describe a WHERE clause in the SQL query or a structure describing
-%   the same WHERE clause. If the WHERE clause is not too specific it may
-%   return multiple ID's, which are returned as multiple result variables.
+%   Retrieves primary key value for many records in given table. It
+%   basically calls the pg_getid function multiple times. However, it
+%   prevents to call the same command twice. Therefore it is useful to
+%   obtain a large list of id's corresponding to a list with identifiers
+%   containing duplicates.
+%   As for now, it only supports a WHERE clause with a single column,
+%   because it cannot decide whether a combination of multiple columns is
+%   unique or not. Also, absent WHERE clause is not supported. Simply use
+%   pg_getid in that case.
 %
 %   Syntax:
-%   varargout = pg_getid(conn, table, varargin)
+%   varargout = pg_getids(conn, table, varargin)
 %
 %   Input:
 %   conn      = Database connection object
-%   table     = Table from which a primary key value is needed
+%   table     = Table from which a primary key values are needed
 %   varargin  = structure or name/value pairs of table columns and
 %               corresponding values that describe the WHERE clause in the
 %               SQL query
 %
 %   Output:
-%   varargout = Unique primary key value for each returned record
+%   varargout = Unique primary key value for each requested record
 %
 %   Example
 %   conn = pg_connectdb('someDatabase');
-%   id = pg_getid(conn, 'someTable', 'description', 'The One');
-%   id = pg_getid(conn, 'someTable', 'x', x, 'y', y);
-%   id = pg_getid(conn, 'someTable', struct('x', x, 'y', y));
+%   ids = pg_getids(conn, 'someTable', 'description', 'The One');
+%   ids = pg_getids(conn, 'someTable', 'x', x, 'y', y);
+%   ids = pg_getids(conn, 'someTable', struct('x', x, 'y', y));
 %
-%   See also pg_getpk, pg_gettables, pg_getcolumns, pg_connect_db
+%   See also pg_getid, pg_gettables, pg_getcolumns, pg_connect_db
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -60,7 +64,7 @@ function varargout = pg_getid(conn, table, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Jul 2012
+% Created: 30 Jul 2012
 % Created with Matlab version: 7.14.0.739 (R2012a)
 
 % $Id$
@@ -86,12 +90,28 @@ if ~isempty(varargin)
     end
 end
 
-varargout = num2cell(zeros(1,nargout));
+%% uniquify filters
 
-%% get id
+ids = {};
 
-ids = pg_select_struct(conn, table, OPT, pg_getpk(conn, table));
+f = fieldnames(OPT);
 
-if ~isempty(ids)
-    varargout(1:length(ids)) = ids;
+if ~isempty(f)
+    if length(f) == 1
+        if iscell(varargin{2})
+            [vals idx1 idx2] = unique(varargin{2});
+        else
+            OPT.(f{1})       = {OPT.(f{1})};
+            vals             = OPT.(f{1});
+            idx2             = 1;
+        end
+    else
+        error('Multiple filters not yet supported');
+    end
+
+    ids     = cellfun(@(x) pg_getid(conn, table, f{1}, x), vals, 'UniformOutput', false);
+    ids     = ids(idx2);
+    
+else
+    error('No filters not yet supported');
 end

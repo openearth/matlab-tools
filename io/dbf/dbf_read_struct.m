@@ -1,21 +1,24 @@
 function DBF = dbf_read_struct(varargin)
-%DBF_READ_STRUCT  One line description goes here.
+%DBF_READ_STRUCT  Reads a DBF file into a struct
 %
-%   More detailed description goes here.
+%   Reads a DBF file into a struct. Same behavior as the dbf_read function,
+%   but returns a single struct instead of two seperate variables.
 %
 %   Syntax:
-%   varargout = dbf_read_struct(varargin)
+%   DBF = dbf_read_struct(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = see <dbf_read>
 %
 %   Output:
-%   varargout =
+%   DBF       = Structure with two fields:
+%                   headers:    Cell array with column headers
+%                   data:       Matrix with table data
 %
 %   Example
-%   dbf_read_struct
+%   DBF = dbf_read_struct('someDatabase.DBF');
 %
-%   See also
+%   See also dbf_read, dbf_get
 
 %% Copyright notice
 %   --------------------------------------------------------------------

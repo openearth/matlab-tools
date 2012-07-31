@@ -1,21 +1,31 @@
-function rs = pg_select_struct(conn, table, data, varargin)
-%PG_SELECT_STRUCT  One line description goes here.
+function rs = pg_select_struct(conn, table, sqlWhere, varargin)
+%PG_SELECT_STRUCT  Selects records from a table based on a structure
 %
-%   More detailed description goes here.
+%   Selects records from a table based on a structure containing fields
+%   that correspond to the table columns and values that should match the
+%   values in the selected structure. The columns to be returned can be
+%   specified. By default, all columns are returned.
 %
 %   Syntax:
-%   varargout = pg_select_struct(varargin)
+%   rs = pg_select_struct(conn, table, sqlWhere, varargin)
 %
 %   Input:
-%   varargin  =
+%   conn      = Database connection object
+%   table     = Name of table to be queried
+%   sqlWhere  = structure with fields corresponding to the table columns
+%               and values that should match the selected columns
+%   varargin  = Columns to be returned
 %
 %   Output:
-%   varargout =
+%   rs        = Cell array with resulting records
 %
 %   Example
-%   pg_select_struct
+%   conn = pg_connectdb('someDatabase');
+%   rs = pg_select_struct(conn, 'someTable', struct('id', 1));
+%   rs = pg_select_struct(conn, 'someTable', struct('id', 2), 'someColumn');
+%   rs = pg_select_struct(conn, 'someTable', struct('id', 3), 'Column_1', 'Column_2');
 %
-%   See also
+%   See also pg_insert_struct, pg_update_struct, pg_replace_struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,31 +71,14 @@ function rs = pg_select_struct(conn, table, data, varargin)
 
 %% read input
 
-strSQLSelect            = '*';
+sqlSelect = varargin;
 
 if ~isempty(varargin)
-    
     if iscell(varargin{1})
-        strSQLSelect    = concat(varargin{1}, ',');
-    else
-        strSQLSelect    = concat(varargin, ',');
+        sqlSelect = varargin{1};
     end
-    
 end
 
-%% built sql statement
-
-f           = fieldnames(data);
-v           = struct2cell(data);
-
-[v{:}]      = pg_value2sql(v{:});
-
-w           = cell(1,2*length(f));
-w(1:2:end)  = f;
-w(2:2:end)  = v;
-
-strSQLWhere = regexprep(concat(w,','),'([^,]*),([^,]*)(,?)','$1=$2$3');
-
-strSQL = sprintf('SELECT %s FROM %s WHERE %s', strSQLSelect, table, strSQLWhere);
+strSQL = pg_query('SELECT', table, sqlSelect, sqlWhere);
 
 rs = pg_fetch(conn, strSQL);

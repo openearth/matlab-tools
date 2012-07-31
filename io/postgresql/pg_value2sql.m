@@ -1,21 +1,27 @@
 function varargout = pg_value2sql(varargin)
-%PG_VALUE2SQL  One line description goes here.
+%PG_VALUE2SQL  Makes a cell array of arbitrary values suitable for the use in an SQL query
 %
-%   More detailed description goes here.
+%   Makes a cell array of arbitrary values suitable for the use in an SQL
+%   query by converting each variable to a string representation.
+%   Quotes are escaped. Function handles are called and the result is
+%   re-inserted in this function. Cell arrays are treated item-by-item and
+%   subsequently concatenated.
 %
 %   Syntax:
 %   varargout = pg_value2sql(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = Values to be used in a SQL query
 %
 %   Output:
-%   varargout =
+%   varargout = String representations of given variables suitable for the
+%               use within a SQL query
 %
 %   Example
-%   pg_value2sql
+%   vals = cell(1,8);
+%   [vals{:}] = pg_value2sql(123, 0.23, 'Let''s go!', {@num2str, 3}, true, {}, false, {123, 0.23, 'Let''s go!'});
 %
-%   See also
+%   See also pg_query, pg_select_struct, pg_insert_struct, pg_update_struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -67,7 +73,13 @@ for i = 1:length(varargin)
     
     switch class(varargin{i})
         case 'char'
-            varargout{i} = ['''' varargin{i} ''''];
+            varargout{i} = ['''' escape(varargin{i}) ''''];
+        case 'logical'
+            if varargin{i}
+                varargout{i} = 'TRUE';
+            else
+                varargout{i} = 'FALSE';
+            end
         case 'double'
             varargout{i} = num2str(varargin{i});
         case 'cell'
@@ -75,7 +87,9 @@ for i = 1:length(varargin)
                 if isa(varargin{i}{1}, 'function_handle')
                     varargout{i} = pg_value2sql(feval(varargin{i}{:}));
                 else
-                    error('Cannot convert cell array to SQL');
+                    warning('Concatenate cell array to string');
+                    
+                    varargout{i} = concat(cellfun(@(x) pg_value2sql(x),varargin{i},'UniformOutput',false),', ');
                 end
             else
                 warning('Treat empty cell array as empty string');
@@ -85,7 +99,11 @@ for i = 1:length(varargin)
         case 'function_handle'
             varargout{i} = pg_value2sql(feval(varargin{i}));
         otherwise
-            error('Unknown variable type [%s]', class(varargin{i}));
+            error('Unsupported variable type [%s]', class(varargin{i}));
     end
     
 end
+
+function str = escape(str)
+
+str = strrep(str, '''', '''''');

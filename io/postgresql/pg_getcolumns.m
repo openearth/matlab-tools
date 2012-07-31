@@ -1,21 +1,26 @@
 function columns = pg_getcolumns(conn, table, varargin)
-%PG_GETCOLUMNS  One line description goes here.
+%PG_GETCOLUMNS  List all columns in a given table
 %
-%   More detailed description goes here.
+%   List all columns in a given table in the current database. Returns a
+%   list with column names. Ignores system columns like cmin and cmax.
 %
 %   Syntax:
-%   varargout = pg_getcolumns(varargin)
+%   columns = pg_getcolumns(conn, table, varargin)
 %
 %   Input:
-%   varargin  =
+%   conn      = Database connection object
+%   table     = Table name
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   columns   = Cell array with column names
 %
 %   Example
-%   pg_getcolumns
+%   conn = pg_connectdb('someDatabase');
+%   tables = pg_gettables(conn);
+%   columns = pg_getcolumns(conn, tables{1});
 %
-%   See also
+%   See also pg_connectdb, pg_gettables
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -69,4 +74,4 @@ OPT = setproperty(OPT,varargin{:});
 
 strSQL = sprintf('SELECT attname FROM pg_attribute, pg_type WHERE typname = ''%s'' AND attrelid = typrelid AND attname NOT IN (''tableoid'',''cmax'',''xmax'',''cmin'',''xmin'',''ctid'')', table);
 
-columns = fetch(conn, strSQL);
+columns = pg_fetch(conn, strSQL);

@@ -1,21 +1,25 @@
 function varargout = pg_getpk(conn, table, varargin)
-%PG_GETPK  One line description goes here.
+%PG_GETPK  Retrieve name of primary key for given table
 %
-%   More detailed description goes here.
+%   Retrieve name of primary key for given table in current database and
+%   returns its name.
 %
 %   Syntax:
-%   varargout = pg_getpk(varargin)
+%   varargout = pg_getpk(conn, table, varargin)
 %
 %   Input:
-%   varargin  =
+%   conn      = Database connection object
+%   table     = Name of table for which primary key is requested
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   varargout = Name of primary key
 %
 %   Example
-%   pg_getpk
+%   conn = pg_connectdb('someDatabase');
+%   pk = pg_getpk(conn, 'someTable');
 %
-%   See also
+%   See also pg_getid, pg_gettables, pg_getcolumns, pg_connectdb
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -69,4 +73,4 @@ OPT = setproperty(OPT,varargin{:});
 
 strSQL = sprintf('SELECT pg_attribute.attname FROM pg_index, pg_class, pg_attribute WHERE pg_class.oid = ''%s''::regclass AND indrelid = pg_class.oid AND pg_attribute.attrelid = pg_class.oid AND pg_attribute.attnum = any(pg_index.indkey) AND indisprimary', table);
 
-varargout = fetch(conn, strSQL);
+varargout = pg_fetch(conn, strSQL);

@@ -1,21 +1,25 @@
 function tables = pg_gettables(conn, varargin)
-%PG_GETTABLES  One line description goes here.
+%PG_GETTABLES  List all tables in current database
 %
-%   More detailed description goes here.
+%   List all tables in current database. Return a list with table names in
+%   given database connection. Ignores system tables like pg_catalog and
+%   information_schema.
 %
 %   Syntax:
-%   varargout = pg_gettables(varargin)
+%   tables = pg_gettables(conn, varargin)
 %
 %   Input:
-%   varargin  =
+%   conn      = Database connection object
+%   varargin  = none
 %
 %   Output:
-%   varargout =
+%   tables    = Cell array with table names
 %
 %   Example
-%   pg_gettables
+%   conn = pg_connectdb('someDatabase');
+%   tables = pg_gettables(conn);
 %
-%   See also
+%   See also pg_connectdb, pg_getcolumns
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -67,4 +71,4 @@ OPT = setproperty(OPT,varargin{:});
 
 %% list tables
 
-tables = fetch(conn, 'SELECT tablename FROM pg_tables WHERE schemaname NOT IN (''pg_catalog'',''information_schema'')');
+tables = pg_fetch(conn, 'SELECT tablename FROM pg_tables WHERE schemaname NOT IN (''pg_catalog'',''information_schema'')');

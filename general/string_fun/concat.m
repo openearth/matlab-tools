@@ -2,7 +2,8 @@ function str = concat(strs, sep)
 %CONCAT  Concatenate a cell array of strings using a seperator
 %
 %   Concatenate a cell array of strings using a seperator. The default
-%   seperator is a space. A cell matrix will be concatenated over the
+%   seperator is a space. A cell array will be concatenated over the
+%   largest dimension, while a cell matrix will be concatenated over the
 %   second dimension.
 %
 %   Syntax:
@@ -19,6 +20,7 @@ function str = concat(strs, sep)
 %   concat({'The' 'bear' 'is' 'loose'});
 %   concat({'One' 'two' 'three'}, ',');
 %   concat({'First' 'line' ; 'Second' 'line'}, ' ');
+%   concat(concat({'key_1' 'value_1' ; 'key_2' 'value_2'}, ' = '), ' AND ');
 %
 %   See also strtok, regexp, sprintf
 
@@ -70,22 +72,34 @@ if nargin == 1
     sep = ' ';
 end
 
-if any(size(strs)==1)
+if iscell(strs)
+    
+    if any(size(strs)==1)
 
-    str = sprintf([sep '%s'], strs{:});
+        str = sprintf([sep '%s'], strs{:});
 
-    if length(str)>1
-        str = str(2:end);
+        if length(str) > length(sep)
+            str = str(length(sep)+1:end);
+        end
+
+    else
+
+        str = cell(size(strs,1),1);
+
+        for i = 1:size(strs,1)
+
+            str{i} = concat(strs(i,:), sep);
+
+        end
+
     end
+    
+elseif ischar(strs)
+    
+    str = strs;
     
 else
     
-    str = cell(size(strs,1),1);
-    
-    for i = 1:size(strs,1)
-        
-        str{i} = concat(strs(i,:), sep);
-        
-    end
+    error('Invalid input');
     
 end
