@@ -99,7 +99,7 @@ function varargout = ITHK_KMLline(lat,lon,varargin)
 
 %% process <keyword,value>
 
-   OPT               = KML_header();
+   OPT               = ITHK_KMLheader();
 
    OPT.fileName      = ''; % header/footer are skipped when is a fid = fopen(OPT.fileName,'w')
    OPT.lineWidth     = 1;
@@ -220,7 +220,7 @@ function varargout = ITHK_KMLline(lat,lon,varargin)
 if OPT.writefile==1;
 if ischar(OPT.fileName)
    OPT.fid = fopen(OPT.fileName,'w');
-   output = KML_header(OPT);
+   output = ITHK_KMLheader(OPT);
    fprintf(OPT.fid,output);
 else
    OPT.fid = OPT.fileName;
