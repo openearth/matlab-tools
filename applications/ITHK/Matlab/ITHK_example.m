@@ -2,7 +2,7 @@
   lat = [52.0295, 52.0716, 52.1167, 52.2049, 52.1078, 52.2444];
   lon = [4.1588, 4.2209, 4.2824, 4.3912, 4.2693, 4.4269];
   impl = [5, 15, 5, 1, 5, 15];
-  len = [2500, 500, 500, 2500, 1000, 2500];
+  len = [2500, 500, 500, 2500, 2000, 2500];
   vol = [10000000, 0, 0, 0, 1000000, 0];
   fill = [0, 0, 0, 0, 0, 0];
   tin = '20';
@@ -11,4 +11,4 @@
   eco = '1';
   dunes = '1';
   slr = '1';
-  outputKML = UnibestInteractiveTool(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,coast,eco,dunes,slr);
+  outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,coast,eco,dunes,slr);

@@ -74,6 +74,9 @@ global S
 
 S.PP(sens).output.kml_groyne=[];
 
+for ii=1:length(S.userinput.phase);groids{ii}=S.userinput.phase(ii).groids;end
+idfirst = find(~cellfun('isempty',groids),1,'first');
+
 for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
     for ii = 1:length(S.userinput.phase(jj).groids)
@@ -94,7 +97,7 @@ for jj = 1:length(S.userinput.phases)
             % sgridRough = S.PP(sens).settings.sgridRough; 
             % dxFine = S.PP(sens).settings.dxFine;
             % GRO data
-            GROdata = readGRO([S.settings.outputdir S.userinput.groyne(ss).filename]);
+            GROdata = ITHK_io_readGRO([S.settings.outputdir S.userinput.groyne(ss).filename]);
             Xw = GROdata(4+NGRO).Xw;  %because of existing groynes in GRO file
             Yw = GROdata(4+NGRO).Yw;  %because of existing groynes in GRO file
             Length = GROdata(4+NGRO).Length;
@@ -134,7 +137,7 @@ for jj = 1:length(S.userinput.phases)
             latpoly     = latpoly';
 
             % black rectangle
-            if jj==1 && ii==1
+            if jj==idfirst && ii==1
             S.PP(sens).output.kml_groyne = KML_stylePoly('name','groyne','fillColor',[0 0 0],'lineColor',[0 0 0],'lineWidth',8,'fillAlpha',1);
             end
             % polygon to KML

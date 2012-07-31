@@ -71,6 +71,9 @@ global S
 
 S.PP(sens).output.kml_revetment=[];
 
+for ii=1:length(S.userinput.phase);revids{ii}=S.userinput.phase(ii).revids;end
+idfirst = find(~cellfun('isempty',revids),1,'first');
+
 for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
     for ii = 1:length(S.userinput.phase(jj).revids)
@@ -92,7 +95,7 @@ for jj = 1:length(S.userinput.phases)
         latpoly2     = latpoly2';
         
         % orange line
-        if jj==1 && ii==1
+        if jj==idfirst && ii==1
         S.PP(sens).output.kml_revetment = KML_stylePoly('name','revetment','lineColor',[238/255 118/255 0],'lineWidth',10);
         end
         % polygon to KML

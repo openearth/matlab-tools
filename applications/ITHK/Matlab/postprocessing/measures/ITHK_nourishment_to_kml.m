@@ -76,6 +76,9 @@ global S
 
 S.PP(sens).output.kml_nourishment=[];
 
+for ii=1:length(S.userinput.phase);supids{ii}=S.userinput.phase(ii).supids;end
+idfirst = find(~cellfun('isempty',supids),1,'first');
+
 for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
     for ii = 1:length(S.userinput.phase(jj).supids)
@@ -109,14 +112,18 @@ for jj = 1:length(S.userinput.phases)
             if ~strcmp(S.userinput.nourishment(ss).category,'distr')
                 alpha = atan((y0(idRANGE(end))-y0(idRANGE(1)))/(x0(idRANGE(end))-x0(idRANGE(1))));%alpha = atan((y4-y2)/(x4-x2));
                 if alpha>0
-                    x3     = x0(idNEAREST)+0.5*sVectorLength*h*cos(alpha+pi()/2);%x1+0.5*sVectorLength*h*cos(alpha+pi()/2);
-                    y3     = y0(idNEAREST)+0.5*sVectorLength*h*sin(alpha+pi()/2);%y1+0.5*sVectorLength*h*sin(alpha+pi()/2);
+%                    x3     = x0(idNEAREST)+0.5*sVectorLength*h*cos(alpha+pi()/2);%x1+0.5*sVectorLength*h*cos(alpha+pi()/2);
+%                    y3     = y0(idNEAREST)+0.5*sVectorLength*h*sin(alpha+pi()/2);%y1+0.5*sVectorLength*h*sin(alpha+pi()/2);
+                    x3     = mean(x0(idRANGE))+0.5*sVectorLength*h*cos(alpha+pi()/2);%x1+0.5*sVectorLength*h*cos(alpha+pi()/2);
+                    y3     = mean(y0(idRANGE))+0.5*sVectorLength*h*sin(alpha+pi()/2);%y1+0.5*sVectorLength*h*sin(alpha+pi()/2);
                 elseif alpha<=0
-                    x3     = x0(idNEAREST)+0.5*sVectorLength*h*cos(alpha-pi()/2);%x1+0.5*sVectorLength*h*cos(alpha-pi()/2);
-                    y3     = y0(idNEAREST)+0.5*sVectorLength*h*sin(alpha-pi()/2);%y1+0.5*sVectorLength*h*sin(alpha-pi()/2);
+%                    x3     = x0(idNEAREST)+0.5*sVectorLength*h*cos(alpha-pi()/2);%x1+0.5*sVectorLength*h*cos(alpha-pi()/2);
+ %                   y3     = y0(idNEAREST)+0.5*sVectorLength*h*sin(alpha-pi()/2);%y1+0.5*sVectorLength*h*sin(alpha-pi()/2);                   
+                    x3     = mean(x0(idRANGE))+0.5*sVectorLength*h*cos(alpha-pi()/2);%x1+0.5*sVectorLength*h*cos(alpha-pi()/2);
+                    y3     = mean(y0(idRANGE))+0.5*sVectorLength*h*sin(alpha-pi()/2);%y1+0.5*sVectorLength*h*sin(alpha-pi()/2);
                 end
-                xpoly=[x0(idNEAREST) x0(idRANGE(1)) x3 x0(idRANGE(end)) x0(idNEAREST)];%[x1 x2 x3 x4 x1];
-                ypoly=[y0(idNEAREST) y0(idRANGE(1)) y3 y0(idRANGE(end)) y0(idNEAREST)];%[y1 y2 y3 y4 y1];
+                xpoly=[mean(x0(idRANGE)) x0(idRANGE(1)) x3 x0(idRANGE(end)) mean(x0(idRANGE))];%[x1 x2 x3 x4 x1];
+                ypoly=[mean(y0(idRANGE)) y0(idRANGE(1)) y3 y0(idRANGE(end)) mean(y0(idRANGE))];%[y1 y2 y3 y4 y1];
             % For distr, plot rectangle
             else
                 idsupp = idRANGE(1:end-1);%id1:id2;
@@ -140,7 +147,7 @@ for jj = 1:length(S.userinput.phases)
             latpoly     = latpoly';
         
             % yellow triangle/rectangle
-            if jj==1 && ii==1
+            if jj==idfirst && ii==1
             S.PP(sens).output.kml_nourishment = KML_stylePoly('name','nourishment','fillColor',[1 1 0],'lineColor',[0 0 0],'lineWidth',0,'fillAlpha',0.7);
             end
             % polygon to KML

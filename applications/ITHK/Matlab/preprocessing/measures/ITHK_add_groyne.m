@@ -96,7 +96,8 @@ end
 
 %% Find groyne location on initial coastline
 [idNEAREST,idRANGE]=findGRIDinrange(MDAdata_ORIG.Xcoast,MDAdata_ORIG.Ycoast,x,y,updatewidth*S.userinput.groyne(ii).length);
-S.userinput.groyne(ss).idNEAREST = idNEAREST;
+S.userinput.groyne(ii).idNEAREST = idNEAREST;
+S.userinput.groyne(ii).idRANGE = idNEAREST;
 
 % Groyne points
 S.UB.input(sens).groyne(ii).length = S.userinput.groyne(ii).length;
