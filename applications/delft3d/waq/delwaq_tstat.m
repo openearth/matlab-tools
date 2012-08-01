@@ -121,7 +121,7 @@ stat = getStatistics(nan,0,statId,Type);
 nameStat = fieldnames(stat);
 k = 1;
 for iname = 1:length(nameStat)
-    for isub = 1:length(SubsName)
+    for isub = 1:Nsub
         SubsName2{k} = [SubsName{isub} '_' nameStat{iname}];
         k = k+1;
     end
@@ -153,8 +153,10 @@ for it = 2:Ntimes
         %-999
         dataseg(dataseg==-999) = nan;
         if any(~isnan(dataseg(:)))
-           stat = getStatistics(dataseg,0,statId,Type);
-           data(:,1) = cell2mat(struct2cell(stat));
+           stat = getStatistics(dataseg,2,statId,Type);
+           D = cell2mat(struct2cell(stat));
+           D = D';
+           data(:,1) = D(:);
         end
         structOut = delwaq('write',structOut,Times(it),data);
     end
@@ -226,17 +228,15 @@ xStats = statistics(x,statId,Type);
 %--------------------------------------------------------------------------
 function xStats = statistics(x,statId,Type)
 
-bin = 40;
+
 
 switch Type
     case 'log'        
         x(x<=0) = nan;
         x = log(x);
-        bin = -3:0.3:3;
     case 'log10'        
         x(x<=0) = nan;
         x = log10(x);
-        bin = -3:0.3:3;
     case 'exp'        
         x = exp(x);
     case 'exp10'        
@@ -254,7 +254,6 @@ xStats.prc95 = P(3,:);
 xStats.mean  = nanmean(x);
 xStats.var   = nanvar(x);
 xStats.std   = nanstd(x);
-[xStats.nbin xStats.bin] = hist(x,bin);
 
 if strcmp(statId,'error');
    xStats.mse  = nanmean(x.^2);
