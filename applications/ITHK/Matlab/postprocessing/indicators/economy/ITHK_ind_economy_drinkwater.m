@@ -58,48 +58,51 @@ function ITHK_ind_economy_drinkwater(sens)
 % $Keywords: $
 
 %% code
-
-fprintf('ITHK postprocessing : Indicator for the drinking water supply, using dune area change as a proxy\n');
-
 global S
 
-%% Determine specific longshore IDs of zone with drinking water fucntion (on the basis of on settings file 'ITHK_ind_economy_drinkwater.txt').
-Ythr                     = str2double(S.settings.indicators.economy.drinkwater.Ythr);
-sRough                   = S.PP(sens).settings.sgridRough;
-dS                       = S.PP(sens).settings.dsRough;
-zonefile                 = 'ITHK_ind_economy_drinkwater.txt';  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
-[ID_inside,ID_outside]   = loadregions(sRough,dS,zonefile);
+if S.userinput.indicators.economy == 1
+    
+    fprintf('ITHK postprocessing : Indicator for the drinking water supply, using dune area change as a proxy\n');
 
-%% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)
-idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
-drinkwater               = S.PP(sens).dunes.position.yposREL(idUR,:); %drinkwater=S.PP(sens).dunes.position.beachwidth(idUR,:);  %drinkwater=S.PP(sens).coast.zcoast(idUR,:);
-drinkwaterclasses        = ones(size(drinkwater));
-drinkwaterclasses(drinkwater<-Ythr)                      = 2;
-drinkwaterclasses(drinkwater>=-Ythr & drinkwater<Ythr)   = 3;
-drinkwaterclasses(drinkwater>=Ythr)                      = 4;
-drinkwaterclasses(ID_outside,:)                          = 1;
-drinkwater(ID_outside,:)                                 = 0;
-S.PP(sens).GEmapping.economy.drinkwater  = drinkwater;
-S.PP(sens).GEmapping.economy.drinkwater2 = drinkwaterclasses;
+    %% Determine specific longshore IDs of zone with drinking water fucntion (on the basis of on settings file 'ITHK_ind_economy_drinkwater.txt').
+    Ythr                     = str2double(S.settings.indicators.economy.drinkwater.Ythr);
+    sRough                   = S.PP(sens).settings.sgridRough;
+    dS                       = S.PP(sens).settings.dsRough;
+    zonefile                 = 'ITHK_ind_economy_drinkwater.txt';  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
+    [ID_inside,ID_outside]   = loadregions(sRough,dS,zonefile);
+
+    %% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)
+    idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
+    drinkwater               = S.PP(sens).dunes.position.yposREL(idUR,:); %drinkwater=S.PP(sens).dunes.position.beachwidth(idUR,:);  %drinkwater=S.PP(sens).coast.zcoast(idUR,:);
+    drinkwaterclasses        = ones(size(drinkwater));
+    drinkwaterclasses(drinkwater<-Ythr)                      = 2;
+    drinkwaterclasses(drinkwater>=-Ythr & drinkwater<Ythr)   = 3;
+    drinkwaterclasses(drinkwater>=Ythr)                      = 4;
+    drinkwaterclasses(ID_outside,:)                          = 1;
+    drinkwater(ID_outside,:)                                 = 0;
+    S.PP(sens).GEmapping.economy.drinkwater  = drinkwater;
+    S.PP(sens).GEmapping.economy.drinkwater2 = drinkwaterclasses;
 
 
-%% Settings for writing to KMLtext
-PLOTscale1   = str2double(S.settings.indicators.economy.drinkwater.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
-PLOTscale2   = str2double(S.settings.indicators.economy.drinkwater.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
-PLOToffset   = str2double(S.settings.indicators.economy.drinkwater.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
-PLOTicons    = S.settings.indicators.economy.drinkwater.icons;
-colour       = {[0 0.7 0.0],[1 0.0 0.3]};
-fillalpha    = 0.7;
-popuptxt     = {'Drinking water','Dune area as a proxy for drinking water'};
+    %% Settings for writing to KMLtext
+    PLOTscale1   = str2double(S.settings.indicators.economy.drinkwater.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOTscale2   = str2double(S.settings.indicators.economy.drinkwater.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOToffset   = str2double(S.settings.indicators.economy.drinkwater.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOTicons    = S.settings.indicators.economy.drinkwater.icons;
+    colour       = {[0 0.7 0.0],[1 0.0 0.3]};
+    fillalpha    = 0.7;
+    popuptxt     = {'Drinking water','Dune area as a proxy for drinking water'};
 
-%% Write to kml BAR PLOTS / ICONS
-[KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                              (S.PP(sens).GEmapping.economy.drinkwater-PLOTscale2), ...
-                              PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
-[KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                             S.PP(sens).GEmapping.economy.drinkwater2,PLOTicons,PLOToffset,sens,popuptxt);
-S.PP(sens).output.kml_economy_drinkwater  = KMLdata1;
-S.PP(sens).output.kml_economy_drinkwater2 = KMLdata2;
+    %% Write to kml BAR PLOTS / ICONS
+    [KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                                  (S.PP(sens).GEmapping.economy.drinkwater-PLOTscale2), ...
+                                  PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
+    [KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                                 S.PP(sens).GEmapping.economy.drinkwater2,PLOTicons,PLOToffset,sens,popuptxt);
+    S.PP(sens).output.kml_economy_drinkwater  = KMLdata1;
+    S.PP(sens).output.kml_economy_drinkwater2 = KMLdata2;
+    S.PP(sens).output.kmlfiles = [S.PP(sens).output.kmlfiles,'S.PP(sens).output.kml_economy_drinkwater2'];
+end
 end
 
 

@@ -59,40 +59,43 @@ function ITHK_ind_recreation_beachwidth(sens)
 % $Keywords: $
 
 %% code
-
-fprintf('ITHK postprocessing : Indicator for recreation beachwidth\n');
-
 global S
 
-yposinitial    =  str2double(S.settings.indicators.dunes.yposinitial);
+if S.userinput.indicators.recreation == 1
 
-%% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)
-Ythr                     = str2double(S.settings.indicators.recreation.beachwidth.Ythr);
-idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
-beachwidth               = S.PP(sens).dunes.position.beachwidth(idUR,:)-yposinitial;
-beachwidthclasses        = ones(size(beachwidth));
-beachwidthclasses(beachwidth<Ythr)                       = 2;
-beachwidthclasses(beachwidth>=Ythr & beachwidth<2*Ythr)  = 3;
-beachwidthclasses(beachwidth>=2*Ythr)                    = 4;
-S.PP(sens).GEmapping.recreation.beachwidth  = beachwidth;
-S.PP(sens).GEmapping.recreation.beachwidth2 = beachwidthclasses;
+    fprintf('ITHK postprocessing : Indicator for recreation beachwidth\n');
+
+    yposinitial    =  str2double(S.settings.indicators.dunes.yposinitial);
+
+    %% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)
+    Ythr                     = str2double(S.settings.indicators.recreation.beachwidth.Ythr);
+    idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
+    beachwidth               = S.PP(sens).dunes.position.beachwidth(idUR,:)-yposinitial;
+    beachwidthclasses        = ones(size(beachwidth));
+    beachwidthclasses(beachwidth<Ythr)                       = 2;
+    beachwidthclasses(beachwidth>=Ythr & beachwidth<2*Ythr)  = 3;
+    beachwidthclasses(beachwidth>=2*Ythr)                    = 4;
+    S.PP(sens).GEmapping.recreation.beachwidth  = beachwidth;
+    S.PP(sens).GEmapping.recreation.beachwidth2 = beachwidthclasses;
 
 
-%% Settings for writing to KMLtext
-PLOTscale1   = str2double(S.settings.indicators.recreation.beachwidth.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
-PLOTscale2   = str2double(S.settings.indicators.recreation.beachwidth.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
-PLOToffset   = str2double(S.settings.indicators.recreation.beachwidth.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
-PLOTicons    = S.settings.indicators.recreation.beachwidth.icons;
-colour       = {[1 1 0],[0.95 0.6 0.0]};
-fillalpha    = 0.7;
-popuptxt     = {'Beach recreation','Beach width as a proxy for beach recreation'};
+    %% Settings for writing to KMLtext
+    PLOTscale1   = str2double(S.settings.indicators.recreation.beachwidth.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOTscale2   = str2double(S.settings.indicators.recreation.beachwidth.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOToffset   = str2double(S.settings.indicators.recreation.beachwidth.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOTicons    = S.settings.indicators.recreation.beachwidth.icons;
+    colour       = {[1 1 0],[0.95 0.6 0.0]};
+    fillalpha    = 0.7;
+    popuptxt     = {'Beach recreation','Beach width as a proxy for beach recreation'};
 
-%% Write to kml BAR PLOTS / ICONS
-[KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                              (S.PP(sens).GEmapping.recreation.beachwidth-PLOTscale2), ...
-                              PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
-[KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                             S.PP(sens).GEmapping.recreation.beachwidth2,PLOTicons,PLOToffset,sens,popuptxt);
-S.PP(sens).output.kml_recreation_beachwidth  = KMLdata1;
-S.PP(sens).output.kml_recreation_beachwidth2 = KMLdata2;
+    %% Write to kml BAR PLOTS / ICONS
+    [KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                                  (S.PP(sens).GEmapping.recreation.beachwidth-PLOTscale2), ...
+                                  PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
+    [KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                                 S.PP(sens).GEmapping.recreation.beachwidth2,PLOTicons,PLOToffset,sens,popuptxt);
+    S.PP(sens).output.kml_recreation_beachwidth  = KMLdata1;
+    S.PP(sens).output.kml_recreation_beachwidth2 = KMLdata2;
+    S.PP(sens).output.kmlfiles = [S.PP(sens).output.kmlfiles,'S.PP(sens).output.kml_recreation_beachwidth2'];
+end
 end

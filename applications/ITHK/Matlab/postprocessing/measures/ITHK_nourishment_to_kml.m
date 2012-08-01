@@ -76,8 +76,10 @@ global S
 
 S.PP(sens).output.kml_nourishment=[];
 
-for ii=1:length(S.userinput.phase);supids{ii}=S.userinput.phase(ii).supids;end
-idfirst = find(~cellfun('isempty',supids),1,'first');
+if isfield(S.userinput.phase(1),'supids')
+    for ii=1:length(S.userinput.phase);supids{ii}=S.userinput.phase(ii).supids;end
+    idfirst = find(~cellfun('isempty',supids),1,'first');
+end
 
 for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')

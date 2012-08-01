@@ -1,4 +1,4 @@
-function outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,coast,eco,dunes,slr)
+function outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web)
 
 % function outputKML =  UnibestInteractiveTool(lat,lon,mag,time,name,measure,implementation)
 %UNIBESTINTERACTIVETOOL  Backbone function of Unibest Interactive Tool for the Holland Coast
@@ -148,7 +148,7 @@ S.settings.outputdir           = [baseDir 'UB model\'];
 
 % Process web input
 %S.userinput = process_webinput(lat,lon,mag,time,name,measure,implementation);
-S.userinput = ITHK_process_webinput(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,coast,eco,dunes,slr);
+S.userinput = ITHK_process_webinput(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web);
 
 %% Preprocessing Unibest Interactive Tool
 for ii=1:1%length(sensitivities)

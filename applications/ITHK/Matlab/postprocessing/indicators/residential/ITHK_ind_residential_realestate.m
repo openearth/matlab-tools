@@ -63,48 +63,51 @@ function ITHK_ind_residential_realestate(sens)
 % $Keywords: $
 
 %% code
-
-fprintf('ITHK postprocessing : Indicator for the potential problems with realestate in residential areas, using dune position as a proxy\n');
-
 global S
 
-%% Determine specific longshore IDs of zone with considered fucntion (on the basis of on settings file 'ITHK_ind_residential_realestate.txt').
-Ythr                     = str2double(S.settings.indicators.residential.realestate.Ythr);
-sRough                   = S.PP(sens).settings.sgridRough;
-dS                       = S.PP(sens).settings.dsRough;
-zonefile                 = 'ITHK_ind_residential_realestate.txt';  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
-[ID_inside,ID_outside]   = loadregions(sRough,dS,zonefile);
+if S.userinput.indicators.residency == 1
 
-%% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)
-idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
-realestate               = S.PP(sens).dunes.position.yposREL(idUR,:);
-%realestate              = S.PP(sens).coast.zcoast(idUR,:);    %realestate==S.PP(sens).dunes.position.yposREL(idUR,:);   %realestate=S.PP(sens).coast.zgridRough;
-realestateclasses        = ones(size(realestate));
-realestateclasses(realestate<-Ythr)                          = 2;
-realestateclasses(realestate>=-Ythr & realestate<Ythr)       = 3;
-realestateclasses(realestate>=Ythr)                          = 4;
-realestateclasses(ID_outside,:)                              = 1;
-realestate(ID_outside,:)                                     = 0;
-S.PP(sens).GEmapping.residential.realestate  = realestate;
-S.PP(sens).GEmapping.residential.realestate2 = realestateclasses;
+    fprintf('ITHK postprocessing : Indicator for the potential problems with realestate in residential areas, using dune position as a proxy\n');
 
-%% Settings for writing to KMLtext
-PLOTscale1   = str2double(S.settings.indicators.residential.realestate.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
-PLOTscale2   = str2double(S.settings.indicators.residential.realestate.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
-PLOToffset   = str2double(S.settings.indicators.residential.realestate.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
-PLOTicons    = S.settings.indicators.residential.realestate.icons;
-colour       = {[1 0.7 0.0],[1 0.3 0.1]};
-fillalpha    = 0.7;
-popuptxt     = {'Realestate','Dune area as a proxy for realestate problems in residential areas'};
+    %% Determine specific longshore IDs of zone with considered fucntion (on the basis of on settings file 'ITHK_ind_residential_realestate.txt').
+    Ythr                     = str2double(S.settings.indicators.residential.realestate.Ythr);
+    sRough                   = S.PP(sens).settings.sgridRough;
+    dS                       = S.PP(sens).settings.dsRough;
+    zonefile                 = 'ITHK_ind_residential_realestate.txt';  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
+    [ID_inside,ID_outside]   = loadregions(sRough,dS,zonefile);
 
-%% Write to kml BAR PLOTS / ICONS
-[KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                              (S.PP(sens).GEmapping.residential.realestate-PLOTscale2), ...
-                              PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
-[KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
-                             S.PP(sens).GEmapping.residential.realestate2,PLOTicons,PLOToffset,sens,popuptxt);
-S.PP(sens).output.kml_residential_realestate  = KMLdata1;
-S.PP(sens).output.kml_residential_realestate2 = KMLdata2;
+    %% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)
+    idUR                     = S.PP(sens).settings.idUR;           % IDs at UNIBESTgrid of the 'Rough grid', with a second filter for the alongshore coastline IDs of the considered zone
+    realestate               = S.PP(sens).dunes.position.yposREL(idUR,:);
+    %realestate              = S.PP(sens).coast.zcoast(idUR,:);    %realestate==S.PP(sens).dunes.position.yposREL(idUR,:);   %realestate=S.PP(sens).coast.zgridRough;
+    realestateclasses        = ones(size(realestate));
+    realestateclasses(realestate<-Ythr)                          = 2;
+    realestateclasses(realestate>=-Ythr & realestate<Ythr)       = 3;
+    realestateclasses(realestate>=Ythr)                          = 4;
+    realestateclasses(ID_outside,:)                              = 1;
+    realestate(ID_outside,:)                                     = 0;
+    S.PP(sens).GEmapping.residential.realestate  = realestate;
+    S.PP(sens).GEmapping.residential.realestate2 = realestateclasses;
+
+    %% Settings for writing to KMLtext
+    PLOTscale1   = str2double(S.settings.indicators.residential.realestate.PLOTscale1);     % PLOT setting : scale magintude of plot results (default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOTscale2   = str2double(S.settings.indicators.residential.realestate.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOToffset   = str2double(S.settings.indicators.residential.realestate.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
+    PLOTicons    = S.settings.indicators.residential.realestate.icons;
+    colour       = {[1 0.7 0.0],[1 0.3 0.1]};
+    fillalpha    = 0.7;
+    popuptxt     = {'Realestate','Dune area as a proxy for realestate problems in residential areas'};
+
+    %% Write to kml BAR PLOTS / ICONS
+    [KMLdata1]   = ITHK_KMLbarplot(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                                  (S.PP(sens).GEmapping.residential.realestate-PLOTscale2), ...
+                                  PLOToffset,sens,colour,fillalpha,PLOTscale1,popuptxt,1-PLOTscale2);
+    [KMLdata2]   = ITHK_KMLicons(S.PP(sens).coast.x0_refgridRough,S.PP(sens).coast.y0_refgridRough, ...
+                                 S.PP(sens).GEmapping.residential.realestate2,PLOTicons,PLOToffset,sens,popuptxt);
+    S.PP(sens).output.kml_residential_realestate  = KMLdata1;
+    S.PP(sens).output.kml_residential_realestate2 = KMLdata2;
+    S.PP(sens).output.kmlfiles = [S.PP(sens).output.kmlfiles,'S.PP(sens).output.kml_residential_realestate2'];
+end
 end
 
 

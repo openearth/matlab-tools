@@ -166,6 +166,8 @@ for jj = 1:NRtimesteps
     S.PP(sens).coast.zcoast(:,jj)     = z(:,jj);
 end
 
+S.PP(sens).output.kml = '';
+
 %% Add to kml
 if S.userinput.indicators.coast == 1
     % bars to KML

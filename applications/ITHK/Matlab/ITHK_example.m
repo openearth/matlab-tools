@@ -11,4 +11,11 @@
   eco = '1';
   dunes = '1';
   slr = '1';
-  outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,coast,eco,dunes,slr);
+  costs = '0';
+  economy = '0';
+  safety = '0';
+  recreation = '0';
+  residency = '0';
+  web = 0;
+  outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web);
+  

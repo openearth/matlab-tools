@@ -74,8 +74,10 @@ global S
 
 S.PP(sens).output.kml_groyne=[];
 
-for ii=1:length(S.userinput.phase);groids{ii}=S.userinput.phase(ii).groids;end
-idfirst = find(~cellfun('isempty',groids),1,'first');
+if isfield(S.userinput.phase(1),'groids')
+    for ii=1:length(S.userinput.phase);groids{ii}=S.userinput.phase(ii).groids;end
+    idfirst = find(~cellfun('isempty',groids),1,'first');
+end
 
 for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')

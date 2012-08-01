@@ -1,4 +1,4 @@
-function S = ITHK_process_webinput(measure,lat,lon,implementation,len,vol,fill,time,name,coast,eco,dunes,slr)
+function S = ITHK_process_webinput(measure,lat,lon,implementation,len,vol,fill,time,name,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web)
 
 %% Process input from Viewer
 %% Scenario information
@@ -183,4 +183,10 @@ end
 S.indicators.coast = str2double(coast);
 S.indicators.dunes = str2double(dunes);
 S.indicators.eco = str2double(eco);
+S.indicators.costs = str2double(costs);
+S.indicators.economy = str2double(economy);
+S.indicators.safety = str2double(safety);
+S.indicators.recreation = str2double(recreation);
+S.indicators.residency = str2double(residency);
 S.indicators.slr = str2double(slr);
+S.web = web;
