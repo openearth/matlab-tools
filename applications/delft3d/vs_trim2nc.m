@@ -123,7 +123,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
    end
 
    tmp=dir(vsfile);
-   if (tmp.bytes > 1)  & strcmpi(OPT.Format,'classic')
+   if (tmp.bytes > 2^31)  & strcmpi(OPT.Format,'classic')
       fprintf(2,'Delft3D NEFIS files larger than 2 Gb cannot be mapped entirely to netCDF classic format, set keyword vs_trim2nc(...,''Format'',''64bit'').\n')
    end
 
