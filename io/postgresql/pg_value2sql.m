@@ -5,7 +5,7 @@ function varargout = pg_value2sql(varargin)
 %   query by converting each variable to a string representation.
 %   Quotes are escaped. Function handles are called and the result is
 %   re-inserted in this function. Cell arrays are treated item-by-item and
-%   subsequently concatenated.
+%   subsequently concatenated into a IN () structure.
 %
 %   Syntax:
 %   varargout = pg_value2sql(varargin)
@@ -87,9 +87,7 @@ for i = 1:length(varargin)
                 if isa(varargin{i}{1}, 'function_handle')
                     varargout{i} = pg_value2sql(feval(varargin{i}{:}));
                 else
-                    warning('Concatenate cell array to string');
-                    
-                    varargout{i} = concat(cellfun(@(x) pg_value2sql(x),varargin{i},'UniformOutput',false),', ');
+                    varargout{i} = sprintf(' IN (%s) ', concat(cellfun(@(x) pg_value2sql(x),varargin{i},'UniformOutput',false),', '));
                 end
             else
                 warning('Treat empty cell array as empty string');

@@ -1,4 +1,4 @@
-function pg_insert_struct(conn, table, sqlValues, varargin)
+function varargout = pg_insert_struct(conn, table, sqlValues, varargin)
 %PG_INSERT_STRUCT  Inserts a structure into a table
 %
 %   Inserts the values in a structure into a given table of the current
@@ -15,10 +15,13 @@ function pg_insert_struct(conn, table, sqlValues, varargin)
 %   table     = Table where the data should be inserted
 %   sqlValues = Structure with fieldnames matching the column names of the
 %               tables and values to be inserted
-%   varargin  = none
+%   varargin  = If sepcified, this structure with fieldnames matching the
+%               column names of the tables and values specifies the records
+%               to be inserted and cancels the insert in case it already
+%               exists
 %
 %   Output:
-%   none
+%   varargout = primary key of existing/inserted records
 %
 %   Example
 %   sqlValues = struct('Column_1', 3);
@@ -31,7 +34,10 @@ function pg_insert_struct(conn, table, sqlValues, varargin)
 %   [sqlValues.Column_3] = deal('someConstantValue');
 %   pg_insert_struct(conn, 'someTable', sqlValues);
 %
-%   See also pg_select_struct, pg_update_struct, pg_replace_struct
+%   sqlValues = struct('Column_1', 3, 'Column_2', 'someValue');
+%   pg_insert_struct(conn, 'someTable', sqlValues, sqlValues);
+%
+%   See also pg_select_struct, pg_update_struct, pg_upsert_struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -75,12 +81,42 @@ function pg_insert_struct(conn, table, sqlValues, varargin)
 % $HeadURL$
 % $Keywords: $
 
+%% read input
+
+sqlWhere = [];
+
+if ~isempty(varargin)
+    if isstruct(varargin{1})
+        sqlWhere = varargin{1};
+    end
+end
+
+l1 = length(sqlValues);
+l2 = length(sqlWhere);
+
+n = max(l1, l2);
+
+varargout = cell(1,nargout);
+
 %% built sql statement
 
-for i = 1:length(sqlValues)
+for i = 1:n
+
+    if l2>0
+        id = pg_getid(conn, table, sqlWhere(min(l2,i)));
+        
+        if id > 0
+            varargout{i} = id;
+            continue;
+        end
+    end
     
-    strSQL = pg_query('INSERT', table, sqlValues(i));
+    strSQL = pg_query('INSERT', table, sqlValues(min(l1,i)));
     
     pg_exec(conn, strSQL);
+    
+    if nargout >= i
+        varargout{i} = pg_getid(conn, table, sqlWhere(min(l2,i)));
+    end
     
 end

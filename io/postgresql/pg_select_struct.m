@@ -25,7 +25,7 @@ function rs = pg_select_struct(conn, table, sqlWhere, varargin)
 %   rs = pg_select_struct(conn, 'someTable', struct('id', 2), 'someColumn');
 %   rs = pg_select_struct(conn, 'someTable', struct('id', 3), 'Column_1', 'Column_2');
 %
-%   See also pg_insert_struct, pg_update_struct, pg_replace_struct
+%   See also pg_insert_struct, pg_update_struct, pg_upsert_struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -141,7 +141,19 @@ if isstruct(where)
 
         [v{:}]      = pg_value2sql(v{:});
 
-        strSQL      = sprintf(' WHERE %s ', concat(concat([f v],' = '),' AND '));
+        % determine comparison type
+        fv          = cell(size(f));
+        for i = 1:length(f)
+            if regexp(v{i}, '^''.*%.*''$')
+                fv{i} = concat([f(i) v(i)], ' LIKE ');
+            elseif regexp(v{i}, '^\s*IN\s+\(')
+                fv{i} = concat([f(i) v(i)], ' ');
+            else
+                fv{i} = concat([f(i) v(i)], ' = ');
+            end
+        end
+        
+        strSQL      = sprintf(' WHERE %s ', concat(fv,' AND '));
     end
 end
 

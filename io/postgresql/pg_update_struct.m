@@ -39,7 +39,7 @@ function pg_update_struct(conn, table, sqlValues, sqlWhere, varargin)
 %   sqlWhere = struct('id', 123);
 %   pg_update_struct(conn, 'someTable', sqlValues, sqlWhere);
 %
-%   See also pg_select_struct, pg_insert_struct, pg_replace_struct
+%   See also pg_select_struct, pg_insert_struct, pg_upsert_struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------

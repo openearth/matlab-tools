@@ -1,5 +1,5 @@
-function varargout = pg_replace_struct(conn, table, sqlValues, sqlWhere, varargin)
-%PG_REPLACE_STRUCT  Updates existsing records or inserts it otherwise
+function varargout = pg_upsert_struct(conn, table, sqlValues, sqlWhere, varargin)
+%PG_UPSERT_STRUCT  Updates existsing records or inserts it otherwise
 %
 %   Checks whether a record exists in the given table in the current
 %   database based on the WHERE clause. If it exists, it is updated with
@@ -9,7 +9,7 @@ function varargout = pg_replace_struct(conn, table, sqlValues, sqlWhere, varargi
 %   function has basic support for structure arrays like pg_update_struct.
 %
 %   Syntax:
-%   varargout = pg_replace_struct(conn, table, sqlValues, sqlWhere, varargin)
+%   varargout = pg_upsert_struct(conn, table, sqlValues, sqlWhere, varargin)
 %
 %   Input:
 %   conn      = Database connection object
@@ -27,16 +27,16 @@ function varargout = pg_replace_struct(conn, table, sqlValues, sqlWhere, varargi
 %   Example
 %   sqlValues = struct('Column_1', 3);
 %   sqlWhere = struct('id', 123);
-%   pg_replace_struct(conn, 'someTable', sqlValues, sqlWhere);
+%   pg_upsert_struct(conn, 'someTable', sqlValues, sqlWhere);
 %
 %   sqlValues = struct('Column_1', 3, 'Column_2', 'someValue');
 %   sqlWhere = struct('Column_2', '123');
-%   pg_replace_struct(conn, 'someTable', sqlValues, sqlWhere);
+%   pg_upsert_struct(conn, 'someTable', sqlValues, sqlWhere);
 %
 %   sqlValues = struct('Column_1', {3 4 5}, 'Column_2', {'someValue' '' ''});
 %   [sqlValues.Column_3] = deal('someConstantValue');
 %   sqlWhere = struct('id', 123);
-%   pg_replace_struct(conn, 'someTable', sqlValues, sqlWhere);
+%   pg_upsert_struct(conn, 'someTable', sqlValues, sqlWhere);
 %
 %   See also pg_select_struct, pg_insert_struct, pg_update_struct
 
