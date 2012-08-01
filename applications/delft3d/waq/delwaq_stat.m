@@ -145,6 +145,9 @@ for it = 2:Ntimes
            dataseg(dataseg==-999) = nan;
            if any(~isnan(dataseg))
               stat = getStatistics(dataseg,2,statId,Type);
+              D = cell2mat(struct2cell(stat));
+	      D = D';
+	      data(:,1) = D(:);
               data(:,iseg) = cell2mat(struct2cell(stat));
            end
         end %iseg
