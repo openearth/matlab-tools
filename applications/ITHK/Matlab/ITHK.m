@@ -130,7 +130,11 @@ S = struct;
 S.EPSG = load('EPSG.mat');
 
 %Read settings
-S.settings = xml_load('ITHK_settings.xml');%d:\2011\InteractiveTool_Kustatelier\Matlab\settings2.xml
+if web ==1
+    S.settings = xml_load('ITHK_settings_web.xml');
+else
+    S.settings = xml_load('ITHK_settings.xml');%d:\2011\InteractiveTool_Kustatelier\Matlab\settings2.xml
+end
 baseDir = S.settings.basedir;
 
 % directory

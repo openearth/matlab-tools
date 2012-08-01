@@ -6,7 +6,7 @@
   vol = [10000000, 0, 0, 0, 1000000, 0];
   fill = [0, 0, 0, 0, 0, 0];
   tin = '20';
-  varNameIn = 'example';
+  varNameIn = 'example_web';
   coast = '1';
   eco = '1';
   dunes = '1';
@@ -16,6 +16,6 @@
   safety = '0';
   recreation = '0';
   residency = '0';
-  web = 0;
+  web = 1;
   outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web);
   
