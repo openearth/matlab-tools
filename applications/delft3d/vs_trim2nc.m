@@ -32,6 +32,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 %       different standard names for velocities and stresses (and transports):
 %       '<east|north>ward_sea_water_velocity'      vs 'sea_water_<x|y>_velocity'
 %       'surface_downward_<east|north>ward_stress' vs 'surface_downward<x|y>_stress'
+% Note : for big Delft3D NEFIS 5.0 files set keyword ...,'Format','64bit',...
 %
 %See also: VS_USE, DELFT3D2NC, NCWRITESCHEMA, NCWRITE, SNCTOOLS, NETCDF
 
@@ -83,6 +84,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
 %% keywords
 
+   OPT.Format         = 'classic'; % '64bit','classic','netcdf4','netcdf4_classic'
    OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wrong dates in ncbrowse due to different calendars. Must use doubles here.
    OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
    OPT.institution    = '';
@@ -118,6 +120,11 @@ function varargout = vs_trim2nc(vsfile,varargin)
       varargin = {varargin{2:end}};
    else
       ncfile   = fullfile(fileparts(vsfile),[filename(vsfile) '.nc']);
+   end
+
+   tmp=dir(vsfile);
+   if (tmp.bytes > 1)  & strcmpi(OPT.Format,'classic')
+      fprintf(2,'Delft3D NEFIS files larger than 2 Gb cannot be mapped entirely to netCDF classic format, set keyword vs_trim2nc(...,''Format'',''64bit'').\n')
    end
 
    OPT      = setproperty(OPT,varargin{:});
@@ -179,25 +186,25 @@ function varargout = vs_trim2nc(vsfile,varargin)
       %% Add overall meta info
       %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    
-      nc = struct('Name','/','Format','classic');
+      nc = struct('Name','/','Format',OPT.Format);
       nc.Attributes(    1) = struct('Name','title'              ,'Value',  '');
       nc.Attributes(end+1) = struct('Name','institution'        ,'Value',  OPT.institution);
       nc.Attributes(end+1) = struct('Name','source'             ,'Value',  'Delft3D trim file');
       nc.Attributes(end+1) = struct('Name','history'            ,'Value', ['Original filename: ',filenameext(vsfile),...
-					                        	   ', ' ,M.version,...
-					                        	   ', file date:',M.datestr,...
-					                        	   ', transformation to netCDF: $HeadURL$ $Id$']);
+                                         ', ' ,M.version,...
+                                         ', file date:',M.datestr,...
+                                         ', transformation to netCDF: $HeadURL$ $Id$']);
       nc.Attributes(end+1) = struct('Name','references'         ,'Value',  'http://svn.oss.deltares.nl');
       nc.Attributes(end+1) = struct('Name','email'              ,'Value',  '');
-								
+
       nc.Attributes(end+1) = struct('Name','comment'            ,'Value',  '');
       nc.Attributes(end+1) = struct('Name','version'            ,'Value',  M.version);
-							        
+
       nc.Attributes(end+1) = struct('Name','Conventions'        ,'Value',  'CF-1.6');
-								
+
       nc.Attributes(end+1) = struct('Name','terms_for_use'      ,'Value', ['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution]);
       nc.Attributes(end+1) = struct('Name','disclaimer'         ,'Value',  'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
-								
+
       nc.Attributes(end+1) = struct('Name','delft3d_description','Value',  str2line(M.description));
 
 %% Coordinate system
