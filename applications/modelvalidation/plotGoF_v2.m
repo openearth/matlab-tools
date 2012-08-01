@@ -27,55 +27,77 @@ function varargout = plotGoF_v2(STATS, varargin)
 % $Keywords: $
 
 %% Default values
-load (['']) %load matfile from GoFStats_v2.m or when directly used after GoFStats_vs, no need and comment load.
+load Data.mat %load matfile from GoFStats_v2.m or when directly used after GoFStats_vs, no need and comment load.
 
-OPT.figure   = 1;
-OPT.R1       = 0.67;
-OPT.R2       = 0.1; %radius innermost crcle
-OPT.limfct   = 0.1;
-OPT.tickvec  = -10:1:10; %default             tickvec=[-3:0.5:3];
-OPT.colvec   = ['b', 'r', 'g', 'k'];
-%OPT.markvec = ['x'];
-OPT.markvec  = ['<'; '+'; 'o'; '*'; 'x'; 's'; 'd'; 'p'; 'h'; '^'; 'v'; '>'];
-OPT.mrksiz   = [6; 7; 7; 7; 7; 7; 7; 7; 7; 6; 6; 6];
-OPT.xmin     = -2; OPT.xmax = 2;
-OPT.ymin     = -2; OPT.ymax = 2;
+stations=fieldnames(Data);
 
+substances={'E','N','NH4','NO3','O2','P','PO4','SiO2','concentration_of_chlorophyll_in_water','concentration_of_suspended_matter_in_water',...
+    'sea_water_salinity'};
 
-%% Plot statistics
-figure(OPT.figure);
-hold on;
-axis([OPT.xmin OPT.xmax OPT.ymin OPT.ymax]);
-set(gca, 'FontSize', 12);
-plot(cos(0:0.1:2.1*pi), sin(0:0.1:2.1*pi), '-k', 'LineWidth', 0.5);
-plot(0,0,'.k');
-plot(sqrt(1-OPT.R1^2)*cos(0:0.1:2.1*pi), ...
-    sqrt(1-OPT.R1^2)*sin(0:0.1:2.1*pi), '--k');
-xlabel('RMSD''*');
-ylabel('Bias*');
-iCount = 1;
-for iStation = 1:length(STATS)
-
-if ((isreal(STATS(iStation).location.xTarget)) && ...
-        (STATS(iStation).location.xTarget >= OPT.xmin) && ...
-        (STATS(iStation).location.xTarget <= OPT.xmax) && ...
-        (STATS(iStation).location.yTarget >= OPT.ymin) && ...
-        (STATS(iStation).location.yTarget <= OPT.ymax))
-    iCol = 1 + mod(ceil(iCount/length(OPT.colvec)), ...
-        length(OPT.colvec));
-    iMark = 1 + mod(iCount, length(OPT.markvec));
-    plot(STATS(iStation).location.xTarget, STATS(iStation).location.yTarget, ...
-        [OPT.colvec(iCol) OPT.markvec(iMark)], ...
-        'MarkerFaceColor', OPT.colvec(iCol), ...
-        'MarkerSize', OPT.mrksiz(iMark));
-    text(STATS(iStation).location.xTarget, STATS(iStation).location.yTarget, ...
-        ['  ' STATS(iStation).location.obs_name], ...
-        'Color', OPT.colvec(iCol));
-    iCount = iCount + 1;
+for isubs=1:length(substances) %loop over substances
+    OPT.figure   = 1;
+    OPT.R1       = 0.67;
+    OPT.R2       = 0.1; %radius innermost crcle
+    OPT.limfct   = 0.1;
+    OPT.tickvec  = -10:1:10; %default             tickvec=[-3:0.5:3];
+    OPT.colvec   = ['b', 'r', 'g', 'k'];
+    OPT.markvec  = ['<'; '+'; 'o'; '*'; 'x'; 's'; 'd'; 'p'; 'h'; '^'; 'v'; '>'];
+    OPT.mrksiz   = [6; 7; 7; 7; 7; 7; 7; 7; 7; 6; 6; 6];
+    OPT.xmin     = -2; OPT.xmax = 2;
+    OPT.ymin     = -2; OPT.ymax = 2;
+    
+    
+    %% Plot statistics
+    figure(isubs);
+    hold on;
+    axis([OPT.xmin OPT.xmax OPT.ymin OPT.ymax]);
+    set(gca, 'FontSize', 12);
+    plot(cos(0:0.1:2.1*pi), sin(0:0.1:2.1*pi), '-k', 'LineWidth', 0.5);
+    plot(0,0,'.k');
+    plot(sqrt(1-OPT.R1^2)*cos(0:0.1:2.1*pi), ...
+        sqrt(1-OPT.R1^2)*sin(0:0.1:2.1*pi), '--k');
+    xlabel('RMSD''*');
+    ylabel('Bias*');
+    
+    if strcmpi(substances{isubs},'concentration_of_chlorophyll_in_water')
+        title('Chlfa');
+    elseif strcmpi(substances{isubs},'sea_water_salinity')
+        title('Salinity');
+        elseif strcmpi(substances{isubs},'concentration_of_suspended_matter_in_water')
+        title('TIM');
+    else
+        title(substances{isubs});
+    end
+    
+    iCount = 1;
+    for iStation = 1:length(stations)
+        
+        if isfield(Data.(stations{iStation}),substances{isubs})
+            
+            if ((isreal(Data.(stations{iStation}).(substances{isubs}).xTarget)) && ...
+                    (Data.(stations{iStation}).(substances{isubs}).xTarget >= OPT.xmin) && ...
+                    (Data.(stations{iStation}).(substances{isubs}).xTarget <= OPT.xmax) && ...
+                    (Data.(stations{iStation}).(substances{isubs}).yTarget >= OPT.ymin) && ...
+                    (Data.(stations{iStation}).(substances{isubs}).yTarget <= OPT.ymax))
+                iCol = 1 + mod(ceil(iCount/length(OPT.colvec)), ...
+                    length(OPT.colvec));
+                iMark = 1 + mod(iCount, length(OPT.markvec));
+                plot(Data.(stations{iStation}).(substances{isubs}).xTarget, Data.(stations{iStation}).(substances{isubs}).yTarget, ...
+                    [OPT.colvec(iCol) OPT.markvec(iMark)], ...
+                    'MarkerFaceColor', OPT.colvec(iCol), ...
+                    'MarkerSize', OPT.mrksiz(iMark));
+                text(Data.(stations{iStation}).(substances{isubs}).xTarget, Data.(stations{iStation}).(substances{isubs}).yTarget, ...
+                    ['  ' Data.(stations{iStation}).(substances{isubs}).obs_name], ...
+                    'Color', OPT.colvec(iCol));
+                iCount = iCount + 1;
+            end
+        end
+    end
+    
+    hold off;
+    print(['GOF_' substances{isubs} '.png'], '-dpng');
+    close
+    
 end
-end
-hold off;
 
-return;
-% end
 %% EOF
