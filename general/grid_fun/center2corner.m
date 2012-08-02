@@ -79,14 +79,12 @@ allow1D            = false;
 dimensions_of_xcen = fliplr(sort(size(xcen))); % 1st element is biggest
 
 %% Method
-%  ------------------------
    method = 'linear';
    if nargin==2
    method = varargin{1};
    end
 
 %% 1D
-%  ------------------------
 if dimensions_of_xcen(2)==1
    
    if ~allow1D
@@ -96,35 +94,31 @@ if dimensions_of_xcen(2)==1
    end
      
 %% 2D
-%  ------------------------
+
 
 elseif length(dimensions_of_xcen)==2
  
    %% Initialize with nan
-   %% ------------------------
+
       xcor = nan.*zeros([size(xcen,1)+1,size(xcen,2)+1]);
 
   %% Give value to those corner points that have 
   %  4 active center points around
   %  and do not change them with internal extrapolations
-  %  ------------------------
 
       xcor(2:end-1,2:end-1) = corner2centernan(xcen);
    
   %% Orthogonal mirroring (only of still empty values)
-  %  ------------------------
   
      xcor = mirror_in_1st_dimension(xcen ,xcor ,method) ;
      xcor = mirror_in_1st_dimension(xcen',xcor',method)';
 
   %% Diagonal mirroring  (only of still empty values)
-  %  ------------------------
   
      xcor =        mirror_in_diagonal(       xcen ,       xcor  ,method);
      xcor = fliplr(mirror_in_diagonal(fliplr(xcen),fliplr(xcor) ,method));
 
 %% 3D or more
-%  ------------------------
 
 else
 
@@ -218,13 +212,11 @@ function xcor = mirror_in_1st_dimension(xcen,xcor,method)
   if strcmpi(method,'linear')
 
   %% Linear perpendicular to boundary, AND linear along boundary
-  %  --------------------
 
      for m=1:size(xcen,1)-1
         for n=1:size(xcen,2)-1
 
            %% mirror back when not yet filled in
-           %  -------------------------------------
 
            if isnan(xcor(m  ,n+1))
            xcor(m  ,n+1) = (+ 3*xcen(m  ,n  ) ...
@@ -234,7 +226,6 @@ function xcor = mirror_in_1st_dimension(xcen,xcor,method)
            end
            
            %% mirror forward when not yet filled in
-           %  -------------------------------------
            
            if isnan(xcor(m+2,n+1))
            xcor(m+2,n+1) = (-   xcen(m  ,n  ) ...
@@ -249,13 +240,11 @@ function xcor = mirror_in_1st_dimension(xcen,xcor,method)
   elseif strcmpi(method,'nearest')
   
   %% Nearest perpendicular to boundary, linear along boundary
-  %  --------------------
   
      for m=1:size(xcen,1)-1
         for n=1:size(xcen,2)-1
 
            %% mirror back when not yet filled in
-           %  -------------------------------------
 
            if isnan(xcor(m  ,n+1))
            xcor(m  ,n+1) = (+ 1*xcen(m  ,n  ) ...
@@ -263,7 +252,6 @@ function xcor = mirror_in_1st_dimension(xcen,xcor,method)
            end
            
            %% mirror forward when not yet filled in
-           %  -------------------------------------
            
            if isnan(xcor(m+2,n+1))
            xcor(m+2,n+1) = (+ 1*xcen(m+1,n  ) ...

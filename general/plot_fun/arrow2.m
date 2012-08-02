@@ -254,6 +254,9 @@ warnings = 0;
       I.scale = varargin{5};
       if     isstruct(varargin{6})
           I = mergestructs(I,varargin{6});
+          % NOTE: this lead to overwriting of 'scale_a' by default scale again:
+          % I = arrow2();I.W1 = x;arrow2(x,y,u,v,scale_a,S)
+          disp([mfilename,' scaled arrows with = ',num2str(I.scale)])
       elseif ischar(varargin{6})
           I.color = varargin{6};
       else
@@ -292,8 +295,7 @@ warnings = 0;
    I.ANG    = atan2(I.v,I.u); % [-pi ,pi]
 
    I.DataAspectRatio  = get(gca,'DataAspectRatio');
-   disp([mfilename,' adapted arrows to DataAspectRatio = ',num2str(I.DataAspectRatio)])
-   disp([mfilename,' scaled arrows with = ',num2str(I.scale)])
+   %([mfilename,' adapted arrows to DataAspectRatio = ',num2str(I.DataAspectRatio)])
    
    if isempty(I.ArrowAspectRatio)
       

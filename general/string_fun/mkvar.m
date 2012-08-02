@@ -19,7 +19,7 @@ function stringout = mkvar(stringin,varargin);
 % See also: ISLETTER, MKTEX, MKHTML, GENVARNAME
 
 %   --------------------------------------------------------------------
-%   Idea: Howard E. Motteler form http://www.csee.umbc.edu/%7Emotteler/index.html
+%   Idea: Howard E. Motteler from http://www.csee.umbc.edu/%7Emotteler/index.html
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2006 Delft University of Technology
 %       Gerben J. de Boer
@@ -59,6 +59,11 @@ function stringout = mkvar(stringin,varargin);
    OPT.whattodo1st = 'add';
    OPT.excludes    = char([181 223 228]); % [µ ß ä], special problemetic chars that are a true letter nevertheless
    OPT.firstletter = 'x';
+   
+   if isempty(stringin)
+       stringout = 'x';
+       return
+   end
    
    if nargin==2
       OPT.firstletter = varargin{1}';

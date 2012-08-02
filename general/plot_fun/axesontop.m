@@ -15,26 +15,25 @@ function varargout = axesontop(xlims,ylims,varargin)
 % Use:
 % axesontop(xlims,ylims)
 %
-% axeshandle = axesontop(xlims,ylims)
+%    h = axesontop(xlims,ylims)
 %
 % The positions can be specified in data units, or in
 % normalized units, relative to either the current figure
 % or the current axes.
 %
 % parentaxes 
-% - units          'data'      ,'normalized' <defuault>
+% - units          'data'      ,'normalized' <default>
 % - reference      'figure'    ,'axes'       .          
 %                  'gcf'       ,'gca'        <default>
 % - ontop           1,         ,0            <default>
 %
-% As the axes is overlaid on other axes
-% it is INVISIBLE by default.
-% Make sure to make it visible by setting it 
-% to active the moment you want to see/plot it
-% using axes(A). Or set keyword 'ontop' to 1, to
-% make it directly visible, butthen do
-% realize that the next plotting event
-% will happen in the very colorbar axes.
+% As the axes is overlaid on other axes it is INVISIBLE 
+% on the background by default. Make sure to make it 
+% visible by setting it to active the moment you want 
+% to see/plot it using axes(h). Or set keyword 'ontop' to 
+% 1, to make it directly visible, but then do
+% realize that the next plotting event will happen 
+% in the very axesontop axes.
 %
 %See also: NOAXIS, SUBPLOT_MESHGRID, SUBPLOT
 
@@ -157,6 +156,8 @@ end
 
    % Restore previous figure and axes
    if    OPT.ontop
+   axes  (A);
+   else
    axes  (OPT.curaxes);
    end
 

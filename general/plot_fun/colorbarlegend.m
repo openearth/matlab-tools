@@ -133,10 +133,11 @@ OPT = setproperty(OPT,varargin{argstart:end});
    
 %% Make colorbar axes active
 
+   h0 = gca;
    if ~isempty(OPT.xlims)
    AX        = axesontop(OPT.xlims,OPT.ylims,'units',OPT.units,...
                                  'reference',OPT.reference,...
-                                     'ontop',OPT.ontop);
+                                     'ontop',1);
    end
    
 %% Calculate position
@@ -255,7 +256,9 @@ OPT = setproperty(OPT,varargin{argstart:end});
 %% Restore previous figure and axes
 
    if    OPT.ontop
-   axes  (AX);
+      axes  (AX);
+   else
+      axes(h0)
    end
 
 if nargout==1

@@ -65,35 +65,30 @@ function xcor = center2corner1(xcen,varargin)
 dimensions_of_xcen = fliplr(sort(size(xcen))); % 1st element is biggest
 
 %% Method
-%  ------------------------
    method = 'linear';
    if nargin==2
    method = varargin{1};
    end
 
 %% 1D
-%  ------------------------
+
 if dimensions_of_xcen(2)==1
    
    %% Initialize with nan
-   %  ------------------------
 
       xcor = nan.*zeros([1 length(xcen)+1]);
 
    %% Give value to those corner points that have 
    %  4 active center points around
    %  and do not change them with 'internal extrapolations
-   %  ------------------------
 
       xcor(2:end-1) = (xcen(1:end-1) + xcen(2:end))./2;
 
    %% Orthogonal mirroring (only of still empty values)
-   %  ------------------------
   
       xcor = mirror_in_1st_dimension1D(xcen ,xcor ,method);
      
 %% 2D or more
-%  ------------------------
 
 else
 
