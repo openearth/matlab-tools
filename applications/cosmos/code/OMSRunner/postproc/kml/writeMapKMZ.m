@@ -25,7 +25,7 @@ for i=1:length(varargin)
     end
 end
 
-fid=fopen([dr fname '.kml'],'wt');
+fid=fopen([dr filesep fname '.kml'],'wt');
 
 fprintf(fid,'%s\n','<kml xmlns="http://www.opengis.net/kml/2.2">');
 fprintf(fid,'%s\n','<Document>');
@@ -41,20 +41,20 @@ if ~isempty(colbar)
     fprintf(fid,'%s\n','  </ScreenOverlay>');
 end
 for it=1:length(flist)
-fprintf(fid,'%s\n','  <Folder>');
-fprintf(fid,'%s\n','    <GroundOverlay>');
-fprintf(fid,'%s\n',['      <name>' flist{it} '</name>']);
-fprintf(fid,'%s\n','      <Icon>');
-fprintf(fid,'%s\n',['        <href>' flist{it} '</href>']);
-fprintf(fid,'%s\n','      </Icon>');
-fprintf(fid,'%s\n','      <LatLonBox>');
-fprintf(fid,'%s\n',['        <north>' num2str(ylim(2),'%10.4f') '</north>']);
-fprintf(fid,'%s\n',['        <south>' num2str(ylim(1),'%10.4f') '</south>']);
-fprintf(fid,'%s\n',['        <east>' num2str(xlim(2),'%10.4f') '</east>']);
-fprintf(fid,'%s\n',['        <west>' num2str(xlim(1),'%10.4f') '</west>']);
-fprintf(fid,'%s\n','      </LatLonBox>');
-fprintf(fid,'%s\n','    </GroundOverlay>');
-fprintf(fid,'%s\n','  </Folder>');
+    fprintf(fid,'%s\n','  <Folder>');
+    fprintf(fid,'%s\n','    <GroundOverlay>');
+    fprintf(fid,'%s\n',['      <name>' flist{it} '</name>']);
+    fprintf(fid,'%s\n','      <Icon>');
+    fprintf(fid,'%s\n',['        <href>' flist{it} '</href>']);
+    fprintf(fid,'%s\n','      </Icon>');
+    fprintf(fid,'%s\n','      <LatLonBox>');
+    fprintf(fid,'%s\n',['        <north>' num2str(ylim(2),'%10.4f') '</north>']);
+    fprintf(fid,'%s\n',['        <south>' num2str(ylim(1),'%10.4f') '</south>']);
+    fprintf(fid,'%s\n',['        <east>' num2str(xlim(2),'%10.4f') '</east>']);
+    fprintf(fid,'%s\n',['        <west>' num2str(xlim(1),'%10.4f') '</west>']);
+    fprintf(fid,'%s\n','      </LatLonBox>');
+    fprintf(fid,'%s\n','    </GroundOverlay>');
+    fprintf(fid,'%s\n','  </Folder>');
 end
 
 fprintf(fid,'%s\n','</Document>');
@@ -62,20 +62,20 @@ fprintf(fid,'%s\n','</kml>');
 
 fclose(fid);
 
-fnames{1}=[dr fname '.kml'];
-fnames{2}=[dr colbar];
+fnames{1}=[dr filesep fname '.kml'];
+fnames{2}=[dr filesep colbar];
 for it=1:length(flist)
-    fnames{it+2}=[dr flist{it}];
+    fnames{it+2}=[dr filesep flist{it}];
 end
 
-zip([dr fname '.zip'],fnames);
-movefile([dr fname '.zip'],[dr fname '.kmz']);
+zip([dr filesep fname '.zip'],fnames);
+movefile([dr filesep fname '.zip'],[dr filesep fname '.kmz']);
 
 if delfiles
-    delete([dr fname '.kml']);
-    delete([dr colbar]);
+    delete([dr filesep fname '.kml']);
+    delete([dr filesep colbar]);
     for it=1:length(flist)
-        delete([dr flist{it}]);
+        delete([dr filesep flist{it}]);
     end
 end
 
