@@ -19,15 +19,15 @@ function OPT = ncgen_surface_adf(varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Van Oord
-%       Thijs Damsma
+%   Copyright (C) 2012 Deltares
+%       Kees den Heijer / Wiebe de Boer
 %
-%       tda@vanoord.com
+%       Kees.denHeijer@Deltares.nl / Wiebe.deBoer@Deltares.nl
 %
-%       Watermanweg 64
-%       3067 GG
-%       Rotterdam
-%       Netherlands
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
