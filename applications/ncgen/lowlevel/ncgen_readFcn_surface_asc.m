@@ -113,14 +113,15 @@ multiWaitbar('Processing file',WB.done/WB.todo,'label',sprintf('Processing %s; w
 WB.n     = 0;
 WB.steps = length(minx : mapsizex : maxx) * length(miny : mapsizey : maxy);
 
-for x0      = minx : mapsizex : maxx
-    for y0  = miny : mapsizey : maxy
+for x0      = minx : mapsizex : maxx % loop over tiles in x direction within data range
+    for y0  = miny : mapsizey : maxy % loop over tiles in y direction within data range
+        % isolate data within current tile
         ix = find(x     >=x0            ,1,'first'):find(x     <x0+mapsizex,1,'last');
         iy = find(y(:,1)<y0+mapsizey,1,'first'):find(y(:,1)>=y0            ,1,'last');
         
         z = nan(length(iy),length(ix));
         for iD = unique(y(iy,2))'
-            if ~(numel(D{iD}{1})==1&&isnan(D{iD}{1}(1)))
+            if ~(numel(D{iD}{1})==1&&isnan(D{iD}{1}(1))) % shouldn't this be something like any(~isnan(D{iD}{1}(:))) ??
                 z(y(iy,2)==iD,:) = D{iD}{1}(y(iy(y(iy,2)==iD),3),ix)*OPT.read.z_scalefactor;
             end
         end

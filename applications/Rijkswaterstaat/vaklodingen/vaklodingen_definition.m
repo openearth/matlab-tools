@@ -13,10 +13,10 @@ function S = vaklodingen_definition(varargin)
 %
 % At www.kadaster.nl the "Bladwijzer 25000.pdf" shows the boxes on land
 % from which the vaklodingen boxes are a seaward generalisaton.
-% Because the kadatser makes a mess out of all sea-adjacent areas,
+% Because the kadaster makes a mess out of all sea-adjacent areas,
 % the vaklodingen boxes use their own naming convention.
 %
-% Noe that the vaklodingen boxes have a mesh size of 20 m
+% Now that the vaklodingen boxes have a mesh size of 20 m
 % where the CORNERS are at integer multiples of 20m, in
 % contrast to the data of Rijkswatersaat Zeeland, where the CENTERS
 % are at multiples of 20 m, i.e. a 10 m shift.

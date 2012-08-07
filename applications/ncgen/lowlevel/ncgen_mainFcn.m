@@ -86,6 +86,7 @@ OPT.main.zip_file_incl  = '.*';
 OPT.main.case_sensitive = false;
 OPT.main.unzip_with_gui = 1;
 OPT.main.dateFcn        = @(s) datenum(s(1:6),'yymmdd'); % how to extract date from the filename
+OPT.main.datefield      = 'name'; % apply dateFcn on this field
 OPT.main.defaultdate    = []; 
 OPT.main.dir_depth      = inf;
 OPT.main.hash_source    = true;
@@ -222,7 +223,7 @@ function fns = get_date_from_filename(OPT,fns)
 
 if isempty(OPT.main.defaultdate);
     try
-        date_from_filename = cellfun(OPT.main.dateFcn,{fns.name});
+        date_from_filename = cellfun(OPT.main.dateFcn,{fns.(OPT.main.datefield)});
         for ii = 1:length(fns)
             fns(ii).date_from_filename = date_from_filename(ii);
         end
