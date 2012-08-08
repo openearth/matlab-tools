@@ -3,7 +3,7 @@ function meris2nc(outputfile,D,varargin);
 %
 %   meris2nc(outputfile,D)
 %
-% where D is a MERIS objec (struct) as returned by either
+% where D is a MERIS object (struct) as returned by either
 % MERIS_WATERINSIGHT_LOAD or MERIS_IVMMOS2_LOAD.
 %
 %See also: OCEANCOLOR, SEAWIFS_CREATE, NLW2SPM
@@ -137,6 +137,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Dimension    = {}; % no dimension, dummy variable
       nc(ifld).Attribute    = nc_cf_grid_mapping(D.epsg); % will also add KNMI ADAGUC proj4_params
 
+      if isfield(D,'lon') & isfield(D,'lat')
    %% Longitude
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
       
@@ -160,6 +161,33 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(2) = struct('Name', 'units'              ,'Value', 'degrees_north');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'      ,'Value', 'latitude'); % standard name
       nc(ifld).Attribute(4) = struct('Name', 'axis'               ,'Value', 'latitude');
+      end
+
+      if isfield(D,'x') & isfield(D,'y')
+   %% X
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
+      
+        ifld = ifld + 1;
+      nc(ifld).Name         = 'x';
+      nc(ifld).Nctype       = 'double';                       % !!!!
+      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'x');
+      nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm');
+      nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate'); % standard name
+      nc(ifld).Attribute(4) = struct('Name', 'axis'           ,'Value', 'X');
+
+   %% Y
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+      
+        ifld = ifld + 1;
+      nc(ifld).Name         = 'y';
+      nc(ifld).Nctype       = 'double';                       % !!!!
+      nc(ifld).Dimension    = {'dim1','dim2','time'};
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'          ,'Value', 'y');
+      nc(ifld).Attribute(2) = struct('Name', 'units'              ,'Value', 'm');
+      nc(ifld).Attribute(3) = struct('Name', 'standard_name'      ,'Value', 'projection_y_coordinate'); % standard name
+      nc(ifld).Attribute(4) = struct('Name', 'axis'               ,'Value', 'Y');
+      end
 
    %% Time
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
@@ -185,6 +213,7 @@ function meris2nc(outputfile,D,varargin);
    %% Define dimensions in this order:
    %  time,z,y,x
 
+      if isfield(D,'spectral_bands')
         ifld = ifld + 1;
       nc(ifld).Name         = 'spectral_bands';
       nc(ifld).Nctype       = 'double';
@@ -192,6 +221,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'wavelength');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'nm');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'radiation_wavelength'); % standard name
+      end
       
       if isfield(D,'Chla')
         ifld = ifld + 1;
@@ -202,7 +232,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'mg m-3'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_chlorophyll_in_sea_water'); % standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
       nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units asssumed');
   
         ifld = ifld + 1;
@@ -213,11 +243,12 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'mg m-3'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_chlorophyll_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
       nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units asssumed');
      %nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'area: standard_deviation'); % STD in space, time, or none? NOT IN MAT FILES
       end
       
+      if isfield(D,'TSM')
         ifld = ifld + 1;
       nc(ifld).Name         = 'TSM';
       nc(ifld).Nctype       = 'float';
@@ -226,7 +257,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); 
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'concentration_of_suspended_matter_in_sea_water'); % standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
       nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units empirically confirmed');
 
         ifld = ifld + 1;
@@ -237,9 +268,10 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'g m-3'); 
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_concentration_of_suspended_matter_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
       nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units empirically confirmed');
      %nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'area: standard_deviation'); % STD in space, time, or none? NOT IN MAT FILES
+      end
  
       if isfield(D,'CDOM')
               ifld = ifld + 1;
@@ -250,7 +282,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'attenuation_of_radiative_flux_due_to_dissolved_organic_matter_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
       nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units by Steef Peters');
 
         ifld = ifld + 1;
@@ -261,11 +293,12 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % ASSUMED, NOT IN MAT FILES
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'standard_error_of_attenuation_of_radiative_flux_due_to_dissolved_organic_matter_in_sea_water'); % quasi standard name
       nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
       nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'units by Steef Peters');
      %nc(ifld).Attribute(7) = struct('Name', 'cell_methods'   ,'Value', 'area: standard_deviation'); % STD in space, time, or none? NOT IN MAT FILES
       end
   
+      if isfield(D,'Kd')
         ifld = ifld + 1;
       nc(ifld).Name         = 'Kd';
       nc(ifld).Nctype       = 'float';
@@ -273,18 +306,21 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'spectral extinction coefficient');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm-1'); % units empirically confirmed
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'volume_attenuation_coefficient_of_downwelling_radiative_flux_in_sea_water_per_radiation_wavelength'); % standard name
-      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
+      end
       
+      if isfield(D,'L2_flags')
         ifld = ifld + 1;
       nc(ifld).Name         = 'L2_flags';
       nc(ifld).Nctype       = 'double';                       % !!!!
       nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'MERIS Level 2 flags');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '24 bit bytestring'); 
-      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
       nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', 'Refer to ESA flag codings'); 
       nc(ifld).Attribute(5) = struct('Name', 'comment'        ,'Value', 'example bit numbers (=string index-1)'); 
       nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'refer to: '); 
+      end
       
         ifld = ifld + 1;
       nc(ifld).Name         = 'L2_flags_name';
@@ -298,21 +334,26 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Dimension    = {'L2_flags_bits'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'MERIS Level 2 flags bits');      
       
+      if isfield(D,'chisq')
         ifld = ifld + 1;
       nc(ifld).Name         = 'chisq';
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Hydropt Chi^2, sum((observed - predicted differential reflectance spectrum)^2/instrument_error^2)');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'none'); 
-      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
+      end
       
+      if isfield(D,'P')
+        ifld = ifld + 1;
         ifld = ifld + 1;
       nc(ifld).Name         = 'P';
       nc(ifld).Nctype       = 'float';
       nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', '-10log(cumulative probability of Chi^2)');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'none'); 
-      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
+      end
 
       if isfield(D,'SD')
         ifld = ifld + 1;
@@ -321,7 +362,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Dimension    = {'time','dim1','dim2'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Secchi Depth from Kd');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'm'); 
-      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time');
+      nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
       end
 %% 4 Create variables with attributes
 %    When variable definitons are created before actually writing the
@@ -342,6 +383,8 @@ function meris2nc(outputfile,D,varargin);
    
       nc_varput(outputfile, 'longitude'      , double(D.lon));
       nc_varput(outputfile, 'latitude'       , double(D.lat));
+      nc_varput(outputfile, 'x'              , double(D.x));
+      nc_varput(outputfile, 'y'              , double(D.y));
       nc_varput(outputfile, 'L2_flags'       ,       (D.l2_flags));
       nc_varput(outputfile, 'L2_flags_name'  ,   char(D.flags.name));
       nc_varput(outputfile, 'L2_flags_bits'  ,        D.flags.bit);
