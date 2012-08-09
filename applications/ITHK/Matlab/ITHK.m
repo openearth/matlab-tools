@@ -99,60 +99,34 @@ function outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,co
 % $Keywords: $
 
 %% Unibest Interactive Tool
+[toolpath] = fileparts(which('ITHK'));
+cd(toolpath);
+ss = strfind(toolpath,'\');
+baseDir = toolpath(1:ss(end));
+
 global S
 disp('Matlab called by Interactive Tool')
 
-%% Add relevant paths
-basepath='.';
-
-if ispc
-    [a,b]=system(['dir /b /ad /s ' '"' basepath '"']); % "'s added to enable spaces in directory and filenames
-else
-    [a,b]=system(['find ' basepath ' -type d']);
-end
-b = [basepath char(10) b];
-
-%% Exclude the .svn directories from the path
-%  -------------------------------------------
-s = strread(b, '%s', 'delimiter', char(10)); % read path as cell
-% clear cells which contain [filesep '.svn']
-s = s(cellfun('isempty', regexp(s, [filesep '.svn'])))'; % keep only paths not containing [filesep '.svn']
-
-%% create string with remaining paths
-%  -------------------------------------------
-s = [s; repmat({pathsep}, size(s))];
-newpath = [s{:}];
-% add newpath to path
-path(newpath, path);
-
 %% Create structure
 S = struct;
-S.EPSG = load('EPSG.mat');
+S.EPSG = load(which('EPSG.mat'));
 
 %Read settings
 if web ==1
-    S.settings = xml_load('ITHK_settings_web.xml');
+    S.settings = xml_load(which('ITHK_settings_web.xml'));
 else
-    S.settings = xml_load('ITHK_settings.xml');%d:\2011\InteractiveTool_Kustatelier\Matlab\settings2.xml
+    S.settings = xml_load(which('ITHK_settings.xml'));%d:\2011\InteractiveTool_Kustatelier\Matlab\settings2.xml
 end
-baseDir = S.settings.basedir;
-
-% directory
-% workdir = pwd;
-% if strcmp(workdir(end),'\')
-%     baseDir = [fileparts(workdir(1:end-1)) '\'];
-% else
-%     baseDir = [fileparts(workdir) '\'];
-% end
+%baseDir = S.settings.basedir;
+S.settings.basedir = baseDir;
 
 % subdirectories
-%S.settings.basedir             = baseDir;
 S.settings.inputdir            = [baseDir 'Matlab\preprocessing\input\'];
 S.settings.outputdir           = [baseDir 'UB model\'];
 
 % Process web input
 %S.userinput = process_webinput(lat,lon,mag,time,name,measure,implementation);
-S.userinput = ITHK_process_webinput(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web);
+S.userinput = ITHK_process_webinput(measure,lat,lon,impl,len,vol*1e6,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web);
 
 %% Preprocessing Unibest Interactive Tool
 for ii=1:1%length(sensitivities)
@@ -164,8 +138,8 @@ for ii=1:1%length(sensitivities)
     disp('running Unibest completed');
     
     %% Create output dir
-    if ~isdir([S.settings.outputdir 'output\' S.userinput.name])
-       mkdir([S.settings.outputdir 'output\' S.userinput.name]);
+    if ~isdir([S.settings.outputdir 'output' filesep S.userinput.name])
+       mkdir([S.settings.outputdir 'output' filesep S.userinput.name]);
     end 
 
     %% Extract UB (PRN) results for current & reference scenario
@@ -177,7 +151,7 @@ for ii=1:1%length(sensitivities)
     ITHK_postprocessing(ii);
     ITHK_cleanup(ii)
 end
-save([S.settings.outputdir filesep 'output' filesep S.userinput.name filesep S.userinput.name,'.mat'],'-struct','S')
+save([S.settings.outputdir 'output' filesep S.userinput.name filesep S.userinput.name,'.mat'],'-struct','S')
 outputKML=fileread(S.PP.output.kmlFileName);
 disp('postprocessing Unibest Interactive Tool completed');
 %}

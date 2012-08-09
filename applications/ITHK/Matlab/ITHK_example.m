@@ -3,10 +3,10 @@
   lon = [4.1588, 4.2209, 4.2824, 4.3912, 4.2693, 4.4269];
   impl = [5, 15, 5, 1, 5, 15];
   len = [2500, 500, 500, 2500, 2000, 2500];
-  vol = [10000000, 0, 0, 0, 1000000, 0];
+  vol = [10, 0, 0, 0, 1, 0];
   fill = [0, 0, 0, 0, 0, 0];
   tin = '20';
-  varNameIn = 'example_web';
+  varNameIn = 'example';
   coast = '1';
   eco = '1';
   dunes = '1';
@@ -16,6 +16,6 @@
   safety = '0';
   recreation = '0';
   residency = '0';
-  web = 1;
+  web = 0;
   outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web);
   

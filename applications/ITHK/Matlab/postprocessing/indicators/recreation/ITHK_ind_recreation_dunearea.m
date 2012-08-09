@@ -67,7 +67,7 @@ if S.userinput.indicators.recreation == 1
     Ythr                     = str2double(S.settings.indicators.recreation.dunearea.Ythr);
     sRough                   = S.PP(sens).settings.sgridRough;
     dS                       = S.PP(sens).settings.dsRough;
-    zonefile                 = 'ITHK_ind_recreation_dunearea.txt';  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
+    zonefile                 = which('ITHK_ind_recreation_dunearea.txt');  % loads a list [Nx2] with center position of the drinkingwater zone (column 1) and the width of the zone (column 2)
     [ID_inside,ID_outside]   = loadregions(sRough,dS,zonefile);
 
     %% Set values for beach width in UBmapping (UNIBEST grid) and GEmapping (rough grid)

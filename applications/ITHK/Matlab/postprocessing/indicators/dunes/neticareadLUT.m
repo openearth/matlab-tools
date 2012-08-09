@@ -7,7 +7,7 @@ function [offshoreyear, beach2year, beach1year, dunesyear] = neticareadLUT(volum
 %    IMARES
 %    Building with Nature HK 4.1
 
-load neticaJarkusLUT
+load(which('neticaJarkusLUT.mat'))
 % a table that gives the percentages of change of the 4 zones as
 % function of the total change in the zones
 % this tabel is derived from Jarkus data in netica
