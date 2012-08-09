@@ -65,6 +65,7 @@ OPT.var = {'x','y','time','lat','lon'};
 % OPT.var = {'x','y','time',lat};
 OPT.var_att  = {'units','standard_name','long_name'};
 OPT.urlPath  = 'D:\products\nc\rijkswaterstaat\vaklodingen\combined';
+OPT.urlPathrep = OPT.urlPath; % option to replace the local path by the intended web url
 OPT.catalogname = '';
 OPT = setproperty(OPT,varargin{:});
 
@@ -97,7 +98,11 @@ end
 % multiWaitbar('catalogger',0.3,'label','deriving geospatial attributes, and gathering variables')
 for ii = length(urls):-1:1
     ncfile          = urls{ii};
-    D.urlPath{ii}   = ncfile; 
+    if isequal(OPT.urlPath, OPT.urlPathrep)
+        D.urlPath{ii}   = ncfile;
+    else
+        D.urlPath{ii} = strrep(ncfile, OPT.urlPath, OPT.urlPathrep);
+    end
     % loop each variable in each nc file.
     %  - if it has a 'geospatial standardname', determine the range of the variable
     %  - if the variable is in the list of variables to include, download the variable
