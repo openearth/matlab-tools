@@ -501,7 +501,7 @@ if ~isempty(lat) & ~isempty(stime),   % Time and latitude
   [v,u,f]=t_vuf(ltype,centraltime,[ju;jinf],lat);									   
 
   vu=(v+u)*360; % total phase correction (degrees)									   
-  nodcor=['Greenwich phase computed with nodal corrections applied to amplitude \n and phase relative to center time'];    
+  nodcor=['Greenwich phase computed with nodal corrections applied to amplitude and phase relative to center time ',datestr(centraltime)];
 elseif ~isempty(stime),    % Time only  										   
   % Get nodal corrections at midpoint time										   
   [v,u,f]=t_vuf(ltype,centraltime,[ju;jinf]);										   
@@ -510,7 +510,7 @@ elseif ~isempty(stime),    % Time only
 else   % No time, no latitude												   
   vu=zeros(length(ju)+length(jinf),1);  										   
   f=ones(length(ju)+length(jinf),1);											   
-   nodcor=['Phases at central time'];											   
+   nodcor=['Phases at central time ',datestr(centraltime)];											   
 end															   
 fprintf(['   ',nodcor,'\n']);												   
 

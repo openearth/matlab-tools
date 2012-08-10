@@ -95,19 +95,36 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
    %% LOAD data
 
      [M,Ma] = nc2struct(ncmodel{ifile});% Load model    data
-     [D,Da] = nc2struct(ncdata{ifile}); % Load observed data
+     [D,Da] = nc2struct(ncdata{ifile}) ;% Load observed data
+     D.title = '';
+     if isfield(D,'station_name')
+         D.station_name = make1D(char(D.station_name))';
+         D.title = [D.title,D.station_name];
+     elseif isfield(M,'station_name')
+         D.station_name = make1D(char(M.station_name))';
+         D.title = [D.title,D.station_name];
+     end
      
-     D.station_name = make1D(char(D.station_name))';
-     D.station_id   = make1D(char(D.station_id  ))';
+     if isfield(D,'station_id')
+        D.station_id   = make1D(char(D.station_id  ))';
+        D.title = [D.title,' (', D.station_name,') '];
+     elseif isfield(M,'station_id')
+        D.station_id   = make1D(char(M.station_id  ))';
+        D.title = [D.title,' (', D.station_name,') '];
+     end
      
+     if isfield(D,'longitude') & isfield(D,'latitude')
      if abs(M.longitude - D.longitude) > OPT.eps;error('lon coordinates of model and data do not match');end
      if abs(M.latitude  - D.latitude ) > OPT.eps;error('lat coordinates of model and data do not match');end
-
-     D.title = [D.station_name,' (',...
-                D.station_id  ,') [',...
+     D.title = [D.title,'[',...
                 num2str(D.longitude),'\circ E, ',...
                 num2str(D.latitude ),'\circ N]'];
-
+     elseif isfield(M,'longitude') & isfield(M,'latitude')
+     D.title = [D.title,'[',...
+                num2str(M.longitude),'\circ E, ',...
+                num2str(M.latitude ),'\circ N]'];
+     end
+     
    %% SCATTER plot
 
       if OPT.plot.scatter
@@ -202,14 +219,20 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          end
          axis equal
          grid on
-         xlabel( 'data phase [deg]')
-         ylabel('model phase [deg]')
          xlim(xlims)
          ylim(ylims)
          set(gca,'xtick',[0:90:360]);
          set(gca,'ytick',[0:90:360]);
-         title([{datestr(udunits2datenum(M.period(  1),Ma.period.units),0),...
-                 datestr(udunits2datenum(M.period(end),Ma.period.units),0)}])
+         title([datestr(udunits2datenum(M.period(  1),Ma.period.units),'yyyy-mmm-dd'),' \rightarrow ',...
+                datestr(udunits2datenum(M.period(end),Ma.period.units),'yyyy-mmm-dd')])
+         if ~isequal(D.period,M.period)
+         xlabel({'data phase [deg]',...
+                [datestr(udunits2datenum(D.period(  1),Da.period.units),'yyyy-mmm-dd'),' \rightarrow ',...
+                 datestr(udunits2datenum(D.period(end),Da.period.units),'yyyy-mmm-dd')]});
+         else
+         xlabel( 'data phase [deg]')
+         end
+         ylabel('model phase [deg]')
          
         if OPT.export
          text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
