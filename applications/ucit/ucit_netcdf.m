@@ -54,8 +54,9 @@ if isdeployed
 %     pth=[ctfroot filesep 'checkout' filesep 'OpenEarthTools' filesep 'trunk' filesep 'matlab' filesep 'io' filesep 'netcdf' filesep 'toolsUI-4.1.jar'];
 %     disp(['SNC jar file is : ' pth]);
 %     javaaddpath(pth);
-    setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
-    setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
+    setpref ('SNCTOOLS','USE_JAVA'       ,1); % This requires SNCTOOLS 2.4.8 or better
+    setpref ('SNCTOOLS','PRESERVE_FVD'   ,0); % 0: backwards compatibility and consistent with ncBrowse
+    setpref ('SNCTOOLS','USE_NETCDF_JAVA',1); % vaklod8igen 2012 oes not work with native R2012 netcdf opendap
 end
 
 %% Open the UCIT console
