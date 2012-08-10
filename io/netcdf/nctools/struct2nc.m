@@ -2,6 +2,7 @@ function varargout = struct2nc(outputfile,D,varargin)
 %STRUCT2NC   save struct with 1D arrays to netCDF file (beta)
 %
 %   struct2nc(ncfile,dat    ,<keyword,value>)
+%   struct2nc(dat   ,ncfile ,<keyword,value>)
 %   struct2nc(ncfile,dat,atr,<keyword,value>)
 %
 %   ncfile - netCDF file name
@@ -106,9 +107,15 @@ function varargout = struct2nc(outputfile,D,varargin)
        natt        = 0;
    end
    
-   OPT = setproperty(OPT,varargin{:})
+   OPT = setproperty(OPT,varargin{:});
 
 %% Parse struct to netCDF
+
+   if isstruct(outputfile)
+       tmp = D;
+       D = outputfile;
+       outputfile = tmp;
+   end
 
    fldnames = fieldnames(D);
    nfld     = length(fldnames);
