@@ -94,11 +94,23 @@ if ~OPT.quiet
 end
 tic
 
-if OPT.gui
-    path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7zG.exe');
+if isdeployed 
+    basepath = '';  %Thus the 7z.exe and 7zG.exe must reside on the location of the deployed product ! Add these exe's to the package.
 else
-    path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7z.exe');
+    basepath = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914');
 end
+
+if OPT.gui
+    path7zip = fullfile(basepath,'7zG.exe');
+else
+    path7zip = fullfile(basepath,'7z.exe');
+end
+
+% if OPT.gui
+%     path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7zG.exe');
+% else
+%     path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7z.exe');
+% end
 
 dosstring     = sprintf('"%s" %s e "%s" -o"%s"',path7zip,OPT.args,fullfile(fileName),OPT.outpath);
 
