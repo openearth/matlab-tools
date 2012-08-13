@@ -1,7 +1,3 @@
-% function splashdemo
-% splash('ngc6543a.jpg',20) 
-
-
 function varargout = splash(fname, time, pos, siz) 
 %SPLASH create a splash screen 
 % 
@@ -21,6 +17,8 @@ function varargout = splash(fname, time, pos, siz)
 % - f     : the created frame 
 % - t     : the timer object used to hide the splash screen after time 
 % 
+% REMARK: Don't forget to stop en delete the timer afterwards!
+
 
 
 % set default position 
@@ -30,7 +28,7 @@ end
 
 
 % read the image 
-if ~exist(fname) 
+if exist(fname,'file') ~= 2
    error('The image %s does not exist!',fname) 
 end 
 img = imread(fname); 
@@ -75,6 +73,7 @@ frame.setLocation(pos(1) * d.width - siz(1)/2, ...
 
 % ta-daaaa 
 frame.show; 
+frame.setAlwaysOnTop(1)
 
 
 % now create the timer to close the thing again 
