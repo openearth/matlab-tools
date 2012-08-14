@@ -142,9 +142,6 @@ miny    = floor(miny/mapsizey)*mapsizey + OPT.schema.grid_offset(end);
 
 x       =         xllcenter:cellsize:xllcenter + cellsize*(ncols-1);
 y       =         yllcenter:cellsize:yllcenter + cellsize*(nrows-1);
-% y       = flipud((yllcenter:cellsize:yllcenter + cellsize*(nrows-1))');
-% y(:,2)  = ceil((1:size(y,1))'./ floor(OPT.read.block_size/ncols));
-% y(:,3)  = mod ((0:size(y,1)-1)',floor(OPT.read.block_size/ncols))+1;
 
 multiWaitbar('Processing file',WB.done/WB.todo,'label',sprintf('Processing %s; writing data', fns.name));
 WB.n     = 0;
@@ -155,15 +152,17 @@ for x0      = minx : mapsizex : maxx % loop over tiles in x direction within dat
         % isolate data within current tile
         ix = find(x     >=x0            ,1,'first'):find(x     <x0+mapsizex,1,'last');
         iy = find(y     >=y0            ,1,'first'):find(y     <y0+mapsizey,1,'last');
-%         iy = find(y(:,1)<y0+mapsizey,1,'first'):find(y(:,1)>=y0            ,1,'last');
-        
-        z = D(iy,ix);
-        
+
+        z = D(iy,ix) * OPT.read.z_scalefactor;
+
         if any(~isnan(z(:)))
             data.x = x0 + (0:grid_tilesizex-1) * grid_spacingx;
             data.y = y0 + (0:grid_tilesizey-1) * grid_spacingy;
             
-            data.z = z';
+            data.z = nan(grid_tilesizex, grid_tilesizey);
+            data.z(...
+                find(data.x  >=x(ix(1)  ),1,'first'):+1:find(data.x  <=x(ix(end)  ),1,'last' ),...
+                find(data.y  <=y(iy(1)),1,'last' ):+1:find(data.y  >=y(iy(end)),1,'first')) = z';
             
             data.time             = fns.date_from_filename;
             data.source_file_hash = fns.hash;

@@ -8,6 +8,8 @@ if nargin == 0 || isempty(OPT)
     OPT.schema.grid_offset       = 0;
     OPT.schema.grid_tilesize     = 500;
     
+    OPT.schema.format            = 'netcdf4';
+    
     OPT.schema.meta              = {};
     
     OPT.schema.x_datatype        = 'double';
@@ -21,6 +23,7 @@ if nargin == 0 || isempty(OPT)
     OPT.schema.z_datatype        = 'double';
     OPT.schema.z_scale_factor    = [];
     OPT.schema.z_add_offset      = [];
+    OPT.schema.z_deflatelevel    = 1;
     
     OPT.schema.time_datatype     = 'double';
     OPT.schema.time_scale_factor = [];
@@ -79,7 +82,7 @@ end
 varstruct(end+1) = nccreateVarstruct_standardnames_cf('altitude',...
     'Name','z',...
     'Dimensions',{'x','y','time'},...
-    'DeflateLevel',1,...
+    'DeflateLevel', OPT.schema.z_deflatelevel,...
     'Datatype',OPT.schema.z_datatype,...
     'scale_factor',OPT.schema.z_scale_factor,...
     'add_offset',OPT.schema.z_add_offset,...
@@ -120,6 +123,6 @@ if OPT.schema.includeLatLon
 end
 
 schema = nccreateSchema(dimstruct,varstruct,...
-    'Filename','a','Attributes',ncattributes,'Format','netcdf4');
+    'Filename','a','Attributes',ncattributes,'Format',OPT.schema.format);
 
 varargout = {schema};
