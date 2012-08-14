@@ -41,7 +41,11 @@ dimstruct        = nccreateDimstruct('Name','x','Length',OPT.schema.grid_tilesiz
 dimstruct(end+1) = nccreateDimstruct('Name','y','Length',OPT.schema.grid_tilesize(end));
 dimstruct(end+1) = nccreateDimstruct('Name','time','Unlimited',true);
 dimstruct(end+1) = nccreateDimstruct('Name','dim16','Length',16);
-dimstruct(end+1) = nccreateDimstruct('Name','nSourcefiles','Unlimited',true,'Length',inf);
+if strcmpi(OPT.schema.format, 'netcdf4')
+    % the formats 'classic' (netcdf-3) and 'netcdf4_classic' cannot deal
+    % with more than one unlimited dimension
+    dimstruct(end+1) = nccreateDimstruct('Name','nSourcefiles','Unlimited',true,'Length',inf);
+end
 
 varstruct        = nccreateVarstruct_standardnames_cf('projection_x_coordinate',...
     'Name','x',...
