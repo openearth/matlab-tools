@@ -35,6 +35,17 @@ function LT_clickPoly
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 17 Aug 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 %% Code
 [but,fig]=gcbo;
 
@@ -60,7 +71,7 @@ while lfrt == 1
     data=get(fig,'userdata');
     data(1,5).ldb=[uo vo];
     set(fig,'userdata',data);
-    LT_plotLDB;
+    LT_plotLdb;
 end
 
 % Bail out at ESCAPE = ascii character 27
