@@ -50,7 +50,7 @@ hold on;
 data=get(fig,'userdata');
 data(1,5).ldb=[uo vo];
 set(fig,'userdata',data);
-LT_plotLDB;
+LT_plotLdb;
 
 while lfrt == 1
     [u,v,lfrt] = ginput(1);
