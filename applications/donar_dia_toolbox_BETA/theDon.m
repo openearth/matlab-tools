@@ -1,3 +1,9 @@
+
+
+addpath([pwd,filesep,'utilities',filesep])
+
+
+
 %% Make time plots and histograms.
 if false
     
@@ -385,15 +391,23 @@ if true
             
             %Get the segment numbers
             the_day = fix(thecompend.(thefields{j}).data(:,4)) - fix(min(thecompend.(thefields{j}).data(:,4)))+1;
-            the_segnr = delwaq_xy2segnr(thegrid,thecompend.(thefields{j}).data(:,1),thecompend.(thefields{j}).data(:,2),'ll');
+
+            [the_segnr,x,y] = delwaq_xy2segnr(thegrid,thecompend.(thefields{j}).data(:,1),thecompend.(thefields{j}).data(:,2),'ll');
             
-            [unique_days,~,days_index] = unique(theday);
+            
+            thecompend.(thefields{j}).data(   isnan(thecompend.(thefields{j}).data(:,end  )),:   )
+            plot_map('lonlat');
+            hold on;
+            plot(thecompend.(thefields{j}).data(   isnan(the_segnr),1   ),thecompend.(thefields{j}).data(   isnan(the_segnr),2   ),'.r')
+            
+
+            [unique_days,~,days_index] = unique(the_day);
             numdays = length(unique_days);
             cont = 1;
             for iday = 1:1:numdays
                 [unique_segnrs,~,segnrs_index] = unique(the_segnr( days_index == iday ));
                 for iseg = unique_segnrs
-                    daySegObs(cont,:) = [ thecompend.(thefields{j}).data( thesegnr == iseg,5 )]
+                    daySegObs{cont} = [ thecompend.(thefields{j}).data( the_segnr == iseg,5 )]
                     cont = cont + 1;
                 end
             end
@@ -431,7 +445,9 @@ if false
             % place.
                 
                 [unique_coords,~,coords_index] = unique(thecompend.(thefields{j}).data(:,1:2),'rows');
+                
                 [unique_xy(:,1),unique_xy(:,2)] =  convertCoordinates(unique_coords(:,1),unique_coords(:,2),'CS1.code',4326,'CS2.code',28992);
+                
                 [neighbors,distances] = knearestneighbors(cen_coords,unique_xy,1);
                 
                 unique_neighbors = unique(neighbors);
