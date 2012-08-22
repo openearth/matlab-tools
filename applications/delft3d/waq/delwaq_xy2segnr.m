@@ -1,8 +1,8 @@
-function segnr = delwaq_xy2segnr(lgaFile,x,y,type)
+function segnr = delwaq_xy2segnr(varargin)
 %DELWAQ_XY2SEGNR Read Delwaq LGA files and gives back corresponding segment
 %   number for x and y coordenates
 %
-%   SEGNR = DELWAQ_XY2SEGNR(LGAFILE,X,Y,TYPE)
+%   SEGNR = DELWAQ_XY2SEGNR(LGAFILE,X/LON,Y/LAT,TYPE)
 %
 %   SEGNR = DELWAQ_XY2SEGNR(...,TYPE)
 %   TYPE = 'LL' for lat lon coordenates
@@ -17,20 +17,40 @@ function segnr = delwaq_xy2segnr(lgaFile,x,y,type)
 %   email: sandra.gaytan@deltares.com
 %--------------------------------------------------------------------------
 
-x = x(:);
-y = y(:);
-if nargin<4
-    type = 'XY';
-end
+if ischar(varargin{1})
+    lgaFile = varargin{1};
+    x = varargin{2};
+    y = varargin{3};
+    if nargin<4, 
+        type = 'XY'; 
+    else
+        type = varargin{4};
+    end 
+    gridStruct = delwaq('open',lgaFile);
     
-if strcmp(type,'LL')
-  [x, y] =  convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
+elseif isstruct(varargin{1})
+    
+    gridStruct = varargin{1};
+    x = varargin{2};
+    y = varargin{3};
+    if nargin<4,
+        type = 'XY'; 
+    else
+        type = varargin{4};
+    end 
+else
+    error('ioerror', 'Unknown lgaFile format')
 end
 
-gridStruct = delwaq('open',lgaFile);
+x = x(:);
+y = y(:);
+
+if strcmpi(type,'LL')
+  [x, y] =  convertCoordinates(x,y,'CS1.code',4326,'CS2.code',28992);
+end
+    
 [Xcen Ycen] = corner2center(gridStruct.X,gridStruct.Y);
 segnr  = naninterp(Xcen,Ycen,gridStruct.Index(2:end,2:end,1),x,y,'nearest');
 
 inot = (segnr<=0);
 segnr(inot) = nan;
-
