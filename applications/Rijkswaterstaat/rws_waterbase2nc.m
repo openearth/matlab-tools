@@ -54,7 +54,7 @@ function rws_waterbase2nc(varargin)
    
    OPT.refdatenum         = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum         = datenum(1970,1,1); % lunix  datenumber convention
-   OPT.fillvalue          = nan; % NaNs do work in netcdf API
+   OPT.fillvalue          = nan;                 % NaNs do work in netcdf API
    OPT.wgs84              = 4326;
    
    OPT.att_name           = {''};
@@ -64,13 +64,19 @@ function rws_waterbase2nc(varargin)
 
 %% File loop
 
-   OPT.directory_raw      = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';        % [];%
-   OPT.directory_raw      = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
-   OPT.directory_nc       = 'P:\mcdata\opendap\rijkswaterstaat\waterbase\';                       % [];%
-   OPT.directory_nc       = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\processed\'; % [];%
+   %OPT.directory_raw      = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';        % [];%
+   %OPT.directory_raw      = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';
+   OPT.directory_raw      = 'd:\OpenEarth\waterbase\';
+   
+   %OPT.directory_nc       = 'P:\mcdata\opendap\rijkswaterstaat\waterbase\';                       % [];%
+   %OPT.directory_nc       = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\processed\'; % [];%
+   OPT.directory_nc       = 'd:\OpenEarth\waterbase_nc\'; % [];%
+   
    OPT.ext                = '';
+   
    OPT.mask               = 'id*.txt';
    OPT.mask               = 'id*.zip';
+   
    OPT.unzip              = 1; % process only zipped files: unzip them, and delete if afterwards
    OPT.load               = 1; % 0=auto read mat file, 1=load slow *.txt file
    OPT.method             = 'fgetl';
@@ -86,9 +92,8 @@ function rws_waterbase2nc(varargin)
    att_names = fieldnames(DONAR);
    
 %% Parameter choice
-
    if  OPT.donar_wnsnum==0
-       OPT.donar_wnsnum = 1:length(OPT.codes);
+       OPT.donar_wnsnum = OPT.codes;
    end
 
 %% Parameter loop
@@ -100,6 +105,7 @@ for ivar=[OPT.donar_wnsnum]
     index     = find(DONAR.donar_wnsnum==ivar);
     OPT.name  = DONAR.name{index}; %(1:min(63,length(OPT.standard_name))); % matlab names have a max length of 63 characters
     OPT.units = DONAR.units{index};
+    
     for iatt = 1:length(att_names)
        att_name   = att_names{iatt};
        att_val    = DONAR.(att_name);
@@ -111,13 +117,13 @@ for ivar=[OPT.donar_wnsnum]
     end
 
     %% File loop of all files in a directory
-    
     mkpath(OPT.directory_nc);
-
-    OPT.files          = dir([OPT.directory_raw,filesep,OPT.mask]);
+    [OPT.directory_raw,OPT.mask]
+    OPT.files          = dir([OPT.directory_raw,OPT.mask]);
     
     multiWaitbar(mfilename,0,'label','Creating netCDF from waterbase ASCII.','color',[0.2 0.6 0.])
 
+    
     for ifile=1:length(OPT.files)
 
         clear D
@@ -147,6 +153,7 @@ for ivar=[OPT.donar_wnsnum]
                 OPT.zipname  = [OPT.filename,'.zip'];
                 OPT.unzippedfilename = char(unzip(OPT.zipname,filepathstr(OPT.filename)));
             end
+            
             if OPT.fileext=='.txt'
                 fname = [OPT.filename,'.txt'];
             else
@@ -241,8 +248,7 @@ for ivar=[OPT.donar_wnsnum]
         nc_attput(ncfile, nc_global, 'title'           , '');
         nc_attput(ncfile, nc_global, 'institution'     , 'Rijkswaterstaat');
         nc_attput(ncfile, nc_global, 'source'          , 'surface observation');
-        nc_attput(ncfile, nc_global, 'history'         , ['Source: ',D.url,...
-            ', tranformation to netCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
+        nc_attput(ncfile, nc_global, 'history'         , ['Source: ',D.url,', tranformation to netCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
         nc_attput(ncfile, nc_global, 'references'      , '<http://www.waterbase.nl>,<http://openearth.deltares.nl>');
         nc_attput(ncfile, nc_global, 'email'           , '<servicedesk-data@rws.nl>');
 

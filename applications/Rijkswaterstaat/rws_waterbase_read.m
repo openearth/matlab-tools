@@ -738,10 +738,10 @@ for ifile=1:length(fnames)
    
       fidurl = fopen(strrep(fname,'.txt','.url'),'r');
       if fidurl > 0
-      rec    = fgetl(fidurl); % [InternetShortcut]
-      rec    = fgetl(fidurl); % URL=%s
-      fclose(fidurl);
-      D.url  = rec(5:end);
+          rec    = fgetl(fidurl); % [InternetShortcut]
+          rec    = fgetl(fidurl); % URL=%s
+          fclose(fidurl);
+          D.url  = rec(5:end);
       end
    
    end

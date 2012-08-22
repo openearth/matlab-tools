@@ -77,7 +77,7 @@ function varargout = nc2struct(ncfile,varargin)
 % And what about global atts, part of D (NOOOOOOOOO!), or part of M(perhaps), or part of M.nc_global.?
 
 OPT.global2att   = 2; % 0=not at all, 1=as fields, 2=as subfields of nc_global
-OPT.time2datenum = 1; % time > datenum in extra variabkle datenum
+OPT.time2datenum = 1; % time > datenum in extra variable datenum
 OPT.exclude      = {};
 OPT.rename       = {{},{}};
 OPT.include      = {};

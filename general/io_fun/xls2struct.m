@@ -250,7 +250,7 @@ function varargout = xls2struct(fname,varargin)
                 end % i2
              end % i1
          else
-             [tstdat,tsttxt,tstraw] = xlsread(fname); % ,'basic'
+             [tstdat,tsttxt,tstraw] = xlsread(fname); % 'basic'
              maxdim = size(tstraw);
              for i1=1:maxdim(1)
                 for i2=1:maxdim(2)

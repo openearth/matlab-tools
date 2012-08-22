@@ -2189,9 +2189,8 @@ function varargout = handle_attname(op,ncid,varid,attid) %#ok<DEFNU>
 varargout = cell(1,nargout);
 
 [attname,status] = handle_inq_attname(op,ncid,varid,attid);
-if status ~= 0
-    status = -1;
-end
+if status ~= 0, status = -1; end
+
 switch nargout
     case 1
         varargout{1} = attname;

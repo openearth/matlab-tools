@@ -59,6 +59,7 @@ end
 [~, isub] = match_names(StructIn.Subs, SubstanceNames);
 StructOut.Subs = {StructOut.Subs{isub}};
 StructOut.nSubs = length(isub);
+StructIn.iSubs
 for i = 1:length(StructIn.iSubs)
     StructOut.iSubs{i} = StructIn.iSubs{i}(isub);
 end
