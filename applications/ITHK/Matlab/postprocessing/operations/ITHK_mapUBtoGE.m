@@ -110,11 +110,11 @@ for jj = 1:length(S.userinput.phases)
             stopid       = S.userinput.nourishment(ss).stop;
             idrange      = S.userinput.nourishment(ss).idRANGE;
             volperm      = S.userinput.nourishment(ss).volume/S.userinput.nourishment(ss).width;
-            thrforeshore = 500;
-            thrmega      = 5000;
-            if volperm <= thrforeshore
+            THRforeshore = str2num(S.settings.measures.nourishment.THRforeshore);
+            THRmega      = str2num(S.settings.measures.nourishment.THRmega);
+            if volperm <= THRforeshore
                 S.PP(sens).UBmapping.supp_beach(startid+1:stopid,idrange) = 1;
-            elseif  volperm > thrmega
+            elseif  volperm >= THRmega
                 S.PP(sens).UBmapping.supp_mega(startid+1:stopid,idrange) = 1;
             else
                 S.PP(sens).UBmapping.supp_foreshore(startid+1:stopid,idrange) = 1;
@@ -152,11 +152,11 @@ for jj = 1:length(S.userinput.phases)
             startid      = S.userinput.nourishment(ss).start;
             stopid       = S.userinput.nourishment(ss).stop;
             volperm      = S.userinput.nourishment(ss).volume/S.userinput.nourishment(ss).width;
-            thrforeshore = 500;
-            thrmega      = 5000;
-            if volperm < thrforeshore
+            THRforeshore = str2num(S.settings.measures.nourishment.THRforeshore);
+            THRmega      = str2num(S.settings.measures.nourishment.THRmega);
+            if volperm < THRforeshore
                 S.PP(sens).GEmapping.supp_beach(startid+1:stopid,idRANGE) = 1;
-            elseif  volperm > thrmega
+            elseif  volperm > THRmega
                 S.PP(sens).GEmapping.supp_mega(startid+1:stopid,idRANGE) = 1;
             else
                 S.PP(sens).GEmapping.supp_foreshore(startid+1:stopid,idRANGE) = 1;
