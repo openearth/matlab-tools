@@ -2,7 +2,11 @@
 <settings>
   <basedir>d:\Projects\1200893_BwN\Report_Coastal functions\ITHK\</basedir>
   <measures>
-    <nourishment></nourishment>
+    <nourishment>
+      <THRbeach>0</THRbeach>
+      <THRforeshore>500</THRforeshore>
+      <THRmega>2500</THRmega>
+    </nourishment>
     <beachextension></beachextension>
     <groyne>
       <coastlineupdate>0</coastlineupdate>
