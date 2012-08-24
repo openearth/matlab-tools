@@ -2,7 +2,7 @@ function varargout = ncgen_schemaFcn_surface(OPT)
 
 if nargin == 0 || isempty(OPT)
     % return OPT structure with options specific to this function
-    OPT.schema.EPSGcode          = [];   
+    OPT.schema.EPSGcode          = [];
     OPT.schema.includeLatLon     = true;
     OPT.schema.grid_cellsize      = 1;
     OPT.schema.grid_offset       = 0;
@@ -28,14 +28,16 @@ if nargin == 0 || isempty(OPT)
     OPT.schema.time_datatype     = 'double';
     OPT.schema.time_scale_factor = [];
     OPT.schema.time_add_offset   = [];
-    OPT.schema.time_units        = sprintf('days since %s +00:00',datestr(0,31));
-   
+    
+    OPT.schema.time_units        = sprintf('days since 1970-01-01 00:00:00 +00:00');
+    
     varargout                    = {OPT.schema};
     return
 else
     narginchk(1,1)
 end
 
+%% dimensions
 
 dimstruct        = nccreateDimstruct('Name','x','Length',OPT.schema.grid_tilesize(1));
 dimstruct(end+1) = nccreateDimstruct('Name','y','Length',OPT.schema.grid_tilesize(end));
@@ -46,6 +48,8 @@ if strcmpi(OPT.schema.format, 'netcdf4')
     % with more than one unlimited dimension
     dimstruct(end+1) = nccreateDimstruct('Name','nSourcefiles','Unlimited',true,'Length',inf);
 end
+
+%% coordinates
 
 varstruct        = nccreateVarstruct_standardnames_cf('projection_x_coordinate',...
     'Name','x',...
@@ -66,7 +70,6 @@ varstruct(end+1) = nccreateVarstruct_standardnames_cf('projection_y_coordinate',
     'actual_range',[nan nan],'resolution',OPT.schema.grid_cellsize(end)});
 
 coordinates = '';
-
 if ~isempty(OPT.schema.EPSGcode)
     varstruct(end+1) = nccreateVarstruct_crs(OPT.schema.EPSGcode);
     if OPT.schema.includeLatLon
@@ -86,6 +89,8 @@ if ~isempty(OPT.schema.EPSGcode)
     end
 end
 
+%% z
+
 varstruct(end+1) = nccreateVarstruct_standardnames_cf('altitude',...
     'Name','z',...
     'Dimensions',{'x','y','time'},...
@@ -93,8 +98,18 @@ varstruct(end+1) = nccreateVarstruct_standardnames_cf('altitude',...
     'Datatype',OPT.schema.z_datatype,...
     'scale_factor',OPT.schema.z_scale_factor,...
     'add_offset',OPT.schema.z_add_offset,...
-    'coordinates',coordinates,... % CF and required for THREDDS WMS to work: http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#coordinate-system
-    'Attributes',{'grid_mapping','crs','actual_range',[nan nan]});
+    'Attributes',{'grid_mapping','crs','actual_range',[nan nan],'coordinates',coordinates});
+
+%% time
+time_reference = udunits2datenum(0,OPT.schema.time_units);
+if     time_reference < datenum(1581,10,15) % http://dx.doi.org/10.1016/j.jmarsys.2007.02.013
+    warning('Use of CF reference time before adoption of Gregorian calander on Oct 15, 1582 is not recommended.')
+elseif time_reference < datenum(1858,11,17)
+    warning('Use of CF reference time before adoption of Modified Julian calander on Nov 17, 1858 is not recommended.')
+elseif time_reference ~= datenum(1970, 1, 1)
+    warning('Use of CF reference time at UNIX epoch on Jan 01, 1970 is recommended.')
+end
+
 varstruct(end+1) = nccreateVarstruct_standardnames_cf('time',...
     'Name','time',...
     'Dimensions',{'time'},...
@@ -111,9 +126,11 @@ if OPT.main.hash_source
         'Attributes',{'definition', 'MD5 hash of source files from which netcdf is generated'});
 end
 
+%% meta-data
+
 % if meta data is entered as a structure, convert it to a cell array.
 if isstruct(OPT.schema.meta)
-   OPT.schema.meta =  [fieldnames(OPT.schema.meta)  struct2cell(OPT.schema.meta)]';
+    OPT.schema.meta =  [fieldnames(OPT.schema.meta)  struct2cell(OPT.schema.meta)]';
 end
 
 % merge user defined and standard meta data fields

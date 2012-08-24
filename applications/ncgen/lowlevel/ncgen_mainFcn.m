@@ -224,17 +224,21 @@ function fns = get_date_from_filename(OPT,fns)
 if isempty(OPT.main.defaultdate);
     try
         date_from_filename = cellfun(OPT.main.dateFcn,{fns.(OPT.main.datefield)});
-        for ii = 1:length(fns)
-            fns(ii).date_from_filename = date_from_filename(ii);
-        end
-        clear date_from_filename
     catch ME
         error('NCGEN_GRID:unreadableDateStr',...
             'Failed to get date from filename, reason:\n%s',ME.message);
     end
 else
-    [fns1.date_from_filename] = deal(OPT.main.defaultdate);
+    date_from_filename = repmat(OPT.main.defaultdate,size(fns));
 end
+
+% convert time to the units specified 
+date_from_filename = datenum2udunits(date_from_filename,OPT.schema.time_units);
+
+for ii = 1:length(fns)
+    fns(ii).date_from_filename = date_from_filename(ii);
+end
+
 
 function fns1 = check_existing_nc_files(OPT,fns1)
 

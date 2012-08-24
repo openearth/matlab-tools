@@ -73,7 +73,7 @@ end
     timestamps_in_nc = [];
     time_info = ncinfo(ncfile, 'time');
     if time_info.Size > 0
-        timestamps_in_nc  = ncread(ncfile,'time');
+        timestamps_in_nc  = ncread(ncfile,'time'); % not Matlab datenums, but in udunits
     end
 
 %% add time if it is not already in nc file and determine index
@@ -106,10 +106,12 @@ if existing_z % then existing nc file already has data
     if any(notnan) % some values are not nan in both existing and new data
         if isequal(z0(notnan),data.z(notnan))
             % this is ok
-            returnmessage(1,'in %s, NOTICE: %d values are overwritten by identical values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(data.time,'yyyymmdd'))
+            returnmessage(1,'in %s, NOTICE: %d values are overwritten by identical values from a different source at %s \n',...
+                ncfile,sum(notnan(:)),datestr(udunits2datenum(data.time,OPT.schema.time_units),'yyyy-mm-dd HH:MM:SS'))
         else 
             % this is (most likely) not ok   
-            returnmessage(2,'in %s, WARNING: %d values are overwritten by different values from a different source at %s \n',ncfile,sum(notnan(:)),datestr(data.time,'yyyymmdd'))
+            returnmessage(2,'in %s, WARNING: %d values are overwritten by different values from a different source at %s \n',...
+                ncfile,sum(notnan(:)),datestr(udunits2datenum(data.time,OPT.schema.time_units),'yyyy-mm-dd HH:MM:SS'))
         end
     end
     z0(zNotnan) = data.z(zNotnan);
