@@ -153,8 +153,8 @@ else
    D.W   = min(D.lon(:));
    D.E   = max(D.lon(:));
 
-   OPT.basecode           = '0'; %KML_figure_tiler_SmallestTileThatContainsAllData(D);
-   OPT.highestLevel          = 1; %length(OPT.basecode);
+   OPT.basecode           = KML_figure_tiler_SmallestTileThatContainsAllData(D); %'0'; 
+   OPT.highestLevel       = length(OPT.basecode);  %1
    OPT.lowestLevel        = OPT.highestLevel+4; % a guess
 end
 
