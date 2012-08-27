@@ -92,7 +92,7 @@ end
        [dates,zone] = nc_cf_time(ncfile,'time');
        ncwriteatt(ncfile,'/','timeCoverage',sprintf('%s%s - %s%s',...
            datestr(min(dates),'yyyy-mm-ddTHH:MM:SS'),zone{1},...
-           datestr(min(dates),'yyyy-mm-ddTHH:MM:SS'),zone{1}));
+           datestr(max(dates),'yyyy-mm-ddTHH:MM:SS'),zone{1}));
    end
 
 %% Merge Z data with existing data if it exists
