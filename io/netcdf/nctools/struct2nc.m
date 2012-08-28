@@ -149,6 +149,10 @@ function varargout = struct2nc(outputfile,D,varargin)
            D.(fldname) = char(D.(fldname));
        end
        
+       if iscell(D.(fldname)) && all(cellfun(@isnumeric, D.(fldname)))
+           D.(fldname) = cell2mat(D.(fldname));
+       end
+       
        dimension_lengths = [dimension_lengths size(D.(fldname))];
        
    end
