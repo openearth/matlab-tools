@@ -34,11 +34,11 @@ ncfile = fullfile(OPT.main.path_netcdf,OPT.write.filenameFcn(data.x,data.y));
 if ~exist(ncfile,'file')
     ncwriteschema(ncfile,OPT.write.schema);
     
-    % update actual range
+    % write x and y
     ncwrite(ncfile,'x',data.x)
     ncwrite(ncfile,'y',data.y)
     
-    % update actual range
+    % update actual range of x and y
     ncwriteatt(ncfile,'x','actual_range',[min(data.x) max(data.x)])
     ncwriteatt(ncfile,'y','actual_range',[min(data.y) max(data.y)])
     
@@ -53,7 +53,7 @@ if ~exist(ncfile,'file')
             % calculate lat and lon
             [lon,lat] = convertCoordinates(x,y,'persistent','CS1.code',OPT.schema.EPSGcode,'CS2.code',4326);
             
-            % write variables
+            % write lat and lon variables
             ncwrite(ncfile,'lat',lat);
             ncwrite(ncfile,'lon',lon);
             
@@ -61,6 +61,10 @@ if ~exist(ncfile,'file')
             %  first calculate coordinates of corner points of bounding box (half cell size larger than min/max coordinates)
             [x_bounds,y_bounds]     = meshgrid(ncreadatt(ncfile,'/','projectionCoverage_x'),ncreadatt(ncfile,'/','projectionCoverage_y'));
             [lon_bounds,lat_bounds] = convertCoordinates(x_bounds,y_bounds,'persistent','CS1.code',OPT.schema.EPSGcode,'CS2.code',4326);
+            
+            % update actual range of lat and lon
+            ncwriteatt(ncfile,'lat','actual_range',[min(lat_bounds(:)) max(lat_bounds(:))])
+            ncwriteatt(ncfile,'lon','actual_range',[min(lon_bounds(:)) max(lon_bounds(:))])
             
             % write attributes
             ncwriteatt(ncfile,'/','geospatialCoverage_northsouth',[min(lat_bounds(:)) max(lat_bounds(:))]);
@@ -85,11 +89,15 @@ end
        ncwrite(ncfile,'time',data.time,iTimestamp);
        existing_z = false;
        
+       % read dates and timezone from ncfile
+       [dates,zone] = nc_cf_time(ncfile,'time');
+
        % update actual range of time
-       ncwriteatt(ncfile,'time','actual_range',[min([data.time; timestamps_in_nc]) max([data.time; timestamps_in_nc])])
+       ncwriteatt(ncfile,'time','actual_range', sprintf('%s%s - %s%s',...
+           datestr(min(dates),'yyyy-mm-ddTHH:MM:SS'),zone{1},...
+           datestr(max(dates),'yyyy-mm-ddTHH:MM:SS'),zone{1}));
         
        % write timeCoverage in yyyy-mm-ddTHH:MM:SS Timezone 
-       [dates,zone] = nc_cf_time(ncfile,'time');
        ncwriteatt(ncfile,'/','timeCoverage',sprintf('%s%s - %s%s',...
            datestr(min(dates),'yyyy-mm-ddTHH:MM:SS'),zone{1},...
            datestr(max(dates),'yyyy-mm-ddTHH:MM:SS'),zone{1}));
@@ -119,7 +127,14 @@ if existing_z % then existing nc file already has data
 end
 
 %% Write z data
-   ncwrite(ncfile,'z',data.z,[1 1 iTimestamp]);
+ncwrite(ncfile,'z',data.z,[1 1 iTimestamp]);
+
+% read current actual range of z
+z_actual_range = ncreadatt(ncfile, 'z', 'actual_range');
+
+% update actual range of z
+ncwriteatt(ncfile, 'z', 'actual_range',...
+    [nanmin([data.z(:); z_actual_range']) nanmax([data.z(:); z_actual_range'])]);
 
 %% add source file path and hash
 if OPT.main.hash_source

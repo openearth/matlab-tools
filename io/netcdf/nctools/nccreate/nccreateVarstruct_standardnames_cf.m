@@ -44,7 +44,7 @@ OPT = rmfield(OPT,{'long_name','units','definition'});
 varstruct = nccreateVarstruct(OPT);
 
 function list = getList()
-% iput below is auto generated
+% input below is auto generated
 list.standard_names = {
     'time'
     'altitude'
@@ -145,8 +145,8 @@ list.definitions = {
     'Variables representing time must always explicitly include the units attribute; there is no default value. The units attribute takes a string value formatted as per the recommendations in the Udunits package.'
     'Altitude is the (geometric) height above the geoid, which is the reference geopotential surface. The geoid is similar to mean sea level.'
     'Depth is the vertical distance below the surface. Depth is positive downward.'
-    'Latitude is positive northward; its units of degree_north (or equivalent) indicate this explicitly. '
-    'Longitude is positive eastward; its units of degree_east (or equivalent) indicate this explicitly. '
+    'Latitude is positive northward; its units of degree_north (or equivalent) indicate this explicitly.'
+    'Longitude is positive eastward; its units of degree_east (or equivalent) indicate this explicitly.'
     ''
     ''
     'A period is an interval of time, or the time-period of an oscillation.'
