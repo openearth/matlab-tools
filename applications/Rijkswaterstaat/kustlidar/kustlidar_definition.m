@@ -173,7 +173,7 @@ D.name = cellfun(@(main_name,sub1,sub2,sub3) sprintf('%02i%s%s%i', main_name,sub
     'uniformoutput', false);
 
 if all(isfinite([OPT.x OPT.y]))
-    D = D.name;
+    D = D.name{:};
     return
 end
 
