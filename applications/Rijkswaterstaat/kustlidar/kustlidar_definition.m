@@ -99,8 +99,8 @@ D.ncols        = 1000*4*2 * 2^(sign(-OPT.level)-OPT.level); % nx
 D.nrows        = 1250*4 * 2^(-OPT.level); % ny
 D.cellsize     = 5;  % dx = dy by definition
 D.xllcorner    = -20000:D.cellsize*D.ncols:299000;
-D.yllcorner    = 356250:D.cellsize*D.nrows:630000;
-if all(isfinite([OPT.x OPT.y]))
+D.yllcorner    = fliplr(356250:D.cellsize*D.nrows:630000);
+if all(isfinite([OPT.x OPT.y])) && ~isempty([OPT.x OPT.y])
     D.xllcorner = OPT.x;
     D.yllcorner = OPT.y;
 end
@@ -139,6 +139,7 @@ man_factor(main_rowid==6 & main_colid >= -2) = 26;
 man_factor(main_rowid==7 & main_colid >= -3) = 32;
 man_factor(main_rowid==8 & main_colid >= -2) = 37;
 man_factor(main_rowid>=8 & main_rowid<=9 & main_colid == -3) = 59;
+man_factor(main_rowid==9 & main_colid == -4) = 65;
 man_factor(main_rowid==9 & main_colid >= -2) = 42;
 man_factor(main_rowid==10 & main_colid >= -4 & main_colid <= -3) = 60;
 man_factor(main_rowid==10 & main_colid >= -2) = 47;
@@ -151,9 +152,18 @@ if OPT.level > 0
     sub1_colid = floor((x_factor * (D.xllcorner - x_origin)) / (1000*2*D.cellsize));
     sub1_rowid = ceil((y_factor * (D.yllcorner - y_origin)) / (1250*2*D.cellsize));
     oddrows = odd(sub1_rowid);
-    D.name_sub1(oddrows) = cellfun(@char, num2cell(97+mod(sub1_colid(oddrows),4)),...
+    mod4cols = mod(sub1_colid,4);
+    abid = oddrows & mod4cols < 2;
+    cdid = ~oddrows & mod4cols < 2;
+    efid = oddrows & mod4cols > 1;
+    ghid = ~oddrows & mod4cols > 1;
+    D.name_sub1(abid) = cellfun(@char, num2cell(97+mod(sub1_colid(abid),4)),...
         'uniformoutput', false);
-    D.name_sub1(~oddrows) = cellfun(@char, num2cell(101+mod(sub1_colid(~oddrows),4)),...
+    D.name_sub1(cdid) = cellfun(@char, num2cell(99+mod(sub1_colid(cdid),4)),...
+        'uniformoutput', false);
+    D.name_sub1(efid) = cellfun(@char, num2cell(99+mod(sub1_colid(efid),4)),...
+        'uniformoutput', false);
+    D.name_sub1(ghid) = cellfun(@char, num2cell(101+mod(sub1_colid(ghid),4)),...
         'uniformoutput', false);
 end
 
@@ -172,7 +182,7 @@ D.name = cellfun(@(main_name,sub1,sub2,sub3) sprintf('%02i%s%s%i', main_name,sub
     D.name_sub1, D.name_sub2, num2cell(D.name_sub3),...
     'uniformoutput', false);
 
-if all(isfinite([OPT.x OPT.y]))
+if all(isfinite([OPT.x OPT.y])) && ~isempty([OPT.x OPT.y])
     D = D.name{:};
     return
 end
