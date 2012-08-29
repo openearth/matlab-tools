@@ -99,7 +99,7 @@ D.ncols        = 1000*4*2 * 2^(sign(-OPT.level)-OPT.level); % nx
 D.nrows        = 1250*4 * 2^(-OPT.level); % ny
 D.cellsize     = 5;  % dx = dy by definition
 D.xllcorner    = -20000:D.cellsize*D.ncols:299000;
-D.yllcorner    = fliplr(356250:D.cellsize*D.nrows:630000);
+D.yllcorner    = 356250:D.cellsize*D.nrows:630000;
 if all(isfinite([OPT.x OPT.y])) && ~isempty([OPT.x OPT.y])
     D.xllcorner = OPT.x;
     D.yllcorner = OPT.y;
