@@ -128,13 +128,15 @@ for i = 1:length(varargin)
                     evalstr = [evalstr double2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'precision', prec, 'delimiter', delimiter)]; %#ok<AGROW>
                 case 'single'
                     evalstr = [evalstr single2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'precision', prec, 'delimiter', delimiter)]; %#ok<AGROW>
+                case {'int64' 'int32' 'int16' 'int8' 'uint64' 'uint32' 'uint16' 'uint8'}
+                    evalstr = [evalstr int2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'precision', prec, 'delimiter', delimiter)]; %#ok<AGROW>
                 case 'char'
                     evalstr = [evalstr char2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'delimiter', delimiter)]; %#ok<AGROW>
                 case 'logical'
                     evalstr = [evalstr logical2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'delimiter', delimiter)]; %#ok<AGROW>
                 case 'function_handle'
                     tempvar = [char(eval(['variable' idstr]))]; % change function handle to string being '@' followed by the function name
-                    tempvarstr = char2evalstr(tempvar, 'basevarname', [basevarname idstr], 'delimiter', delimiter); %#ok<NASGU>
+                    tempvarstr = char2evalstr(tempvar, 'basevarname', [basevarname idstr], 'delimiter', delimiter); 
                     tempvarstr = strrep(tempvarstr, '''', '');
                     evalstr = [evalstr tempvarstr]; %#ok<AGROW>
                 case 'struct'
