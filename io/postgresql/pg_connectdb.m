@@ -1,18 +1,17 @@
 function conn = pg_connectdb(db, varargin)
 %PG_CONNECTDB  Creates a JDBC connection to a PostgreSQL database
 %
-%   Creates a JDBC connection to a PostgreSQL database. A JDBC driver
-%   should be available and listed in the following file:
-%       <matlabroot>/toolbox/local/classpath.txt
+%   Creates a JDBC connection to a PostgreSQL database. A JDBC
+%   driver should be loaded first, see PG_SETTINGS and README.txt.
 %   If a schema is given, this schema is set to the default for the current
 %   session.
 %
 %   Syntax:
-%   conn = pg_connectdb(db, varargin)
+%   conn = pg_connectdb(db, <keyword,value>)
 %
 %   Input:
 %   db        = Name of database to connect to
-%   varargin  = host:   Hostname of database server
+%   varargin  = host:   Hostname of database server (default: localhost)
 %               port:   Port number of database server (default: 5432)
 %               user:   Username for database server
 %               pass:   Password for database server
@@ -26,7 +25,11 @@ function conn = pg_connectdb(db, varargin)
 %   conn = pg_connectdb('anotherDatabase','host','posgresql.deltares.nl')
 %   conn = pg_connectdb('anotherDatabase','schema','someSchema')
 %
-%   See also pg_exec, pg_fetch, pg_select_struct, pg_insert_struct,
+%   Test: connecting to the empty database of a virgin local Win32 PostgreSQL 9.1
+%   conn = pg_connectdb('postgres','user','postgres','pass','MyPassword')
+%   conn = pg_connectdb('postgres','user','postgres','pass','MyPassword','schema','public')
+%
+%   See also database, pg_exec, pg_fetch, pg_select_struct, pg_insert_struct,
 %   pg_update_struct, pg_getpk, pg_getid
 
 %% Copyright notice

@@ -1,5 +1,5 @@
 function varargout = pg_upsert_struct(conn, table, sqlValues, sqlWhere, varargin)
-%PG_UPSERT_STRUCT  Updates existsing records or inserts it otherwise
+%PG_UPSERT_STRUCT  Updates existing records or inserts it otherwise
 %
 %   Checks whether a record exists in the given table in the current
 %   database based on the WHERE clause. If it exists, it is updated with

@@ -1,33 +1,18 @@
-function columns = pg_getcolumns(conn, table, varargin)
-%PG_GETCOLUMNS  List all columns in a given table
+function conn = pg_settings(db, varargin)
+%PG_SETTINGS  Load toolbox for JDBC connection to a PostgreSQL database
 %
-%   List all columns in a given table in the current database. Returns a
-%   list with column names. Ignores system columns like cmin and cmax.
+% PG_SETTINGS() adds correct JDBC to java path. You need to do this
+% every Matlab session. Alternatively make sure it is available and 
+% listed in the following file: <matlabroot>/toolbox/local/classpath.txt
 %
-%   Syntax:
-%   columns = pg_getcolumns(conn, table, varargin)
-%
-%   Input:
-%   conn      = Database connection object
-%   table     = Table name
-%   varargin  = none
-%
-%   Output:
-%   columns   = Cell array with column names
-%
-%   Example
-%   conn = pg_connectdb('someDatabase');
-%   tables = pg_gettables(conn);
-%   columns = pg_getcolumns(conn, tables{1});
-%
-%   See also pg_connectdb, pg_gettables
+%See also postgresql, http://jdbc.postgresql.org/download.html, netcdf_settings
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Deltares
-%       Bas Hoonhout
+%       Gerben J. de Boer
 %
-%       bas.hoonhout@deltares.nl
+%       gerben.deboer@deltares.nl
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
@@ -64,15 +49,21 @@ function columns = pg_getcolumns(conn, table, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% read options
+   if any(strfind(version('-java'),'Java 1.6')) | ...
+      any(strfind(version('-java'),'Java 1.7'))
+      java2add = path2os([fileparts(mfilename('fullpath')),filesep,'postgresql-9.1-902.jdbc4.jar']);
+   else
+      java2add = path2os([fileparts(mfilename('fullpath')),filesep,'postgresql-9.1-902.jdbc3.jar']);
+   end
+   
+   dynjavaclasspath = path2os(javaclasspath);
+   indices          = strfind(javaclasspath,java2add);
+    
+    if isempty(cell2mat(indices))
 
-OPT = struct();
-
-OPT = setproperty(OPT,varargin{:});
-
-%% list tables
-%  skip dropped tables like "........pg.dropped.1......." (http://forums.whirlpool.net.au/archive/497602)
-
-strSQL = sprintf('SELECT attname FROM pg_attribute, pg_type WHERE typname = ''%s'' AND attrelid = typrelid AND attname NOT IN (''tableoid'',''cmax'',''xmax'',''cmin'',''xmin'',''ctid'') AND attisdropped NOT IN (TRUE)', table);
-
-columns = pg_fetch(conn, strSQL);
+       javaaddpath (java2add)
+       disp('PostgreSQL: JDBC driver added.')
+   
+    elseif ~(OPT.quiet)
+        disp(['PostgreSQL: JDBC driver not added, already there: ',java2add]);
+   end
