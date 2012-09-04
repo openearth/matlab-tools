@@ -138,8 +138,8 @@ else
 
                     ygr = mean(yin)-OPT.area_size/2:OPT.dymin:mean(yin)+OPT.area_size/2;
                 case 'range'
-                    if all(OPT.area_size < 1)
-                        OPT.area_size = min(ymin)+OPT.area_size*dy;
+                    if all(OPT.area_size < 1 & OPT.area_size > 0)
+                        OPT.area_size = min(yin)+OPT.area_size*dy;
                     end
 
                     ygr = OPT.area_size(1):OPT.dymin:OPT.area_size(2);
