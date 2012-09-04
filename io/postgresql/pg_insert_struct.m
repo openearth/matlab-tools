@@ -15,10 +15,10 @@ function varargout = pg_insert_struct(conn, table, sqlValues, varargin)
 %   table     = Table where the data should be inserted
 %   sqlValues = Structure with fieldnames matching the column names of the
 %               tables and values to be inserted
-%   varargin  = If sepcified, this structure with fieldnames matching the
+%   varargin  = If specified, this structure with fieldnames matching the
 %               column names of the tables and values specifies the records
 %               to be inserted and cancels the insert in case it already
-%               exists
+%               exists.
 %
 %   Output:
 %   varargout = primary key of existing/inserted records

@@ -96,6 +96,9 @@ conn = database( ...
 
 % display message on error
 if ~isempty(conn.message)
+    if pg_settings('check',1)<0
+    disp('run PG_Settings first')
+    end
     error(conn.message)
 else
     

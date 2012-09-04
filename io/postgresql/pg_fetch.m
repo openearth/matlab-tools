@@ -1,5 +1,5 @@
 function rs = pg_fetch(conn, sql, varargin)
-%PG_FETCH  Executes a SQL query and fetches the result
+%PG_FETCH  Executes a SQL query and imports database data into matlab
 %
 %   Executes a SQL query, fetches the result and checks the result for
 %   errors. Returns the resulting data in a cell array or matrix.
@@ -18,7 +18,7 @@ function rs = pg_fetch(conn, sql, varargin)
 %   Example
 %   pg_fetch(conn, 'SELECT * FROM someTable');
 %
-%   See also pg_exec, pg_select_struct, pg_insert_struct, pg_update_struct
+%   See also pg_exec, pg_select_struct, pg_insert_struct, pg_update_struct, fetch
 
 %% Copyright notice
 %   --------------------------------------------------------------------

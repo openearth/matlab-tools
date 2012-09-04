@@ -1,4 +1,4 @@
-function conn = pg_settings(db, varargin)
+function OK = pg_settings(varargin)
 %PG_SETTINGS  Load toolbox for JDBC connection to a PostgreSQL database
 %
 % PG_SETTINGS() adds correct JDBC to java path. You need to do this
@@ -49,6 +49,11 @@ function conn = pg_settings(db, varargin)
 % $HeadURL$
 % $Keywords: $
 
+OPT.check = 0;
+OPT.quiet = 0;
+
+OPT = setproperty(OPT,varargin);
+
    if any(strfind(version('-java'),'Java 1.6')) | ...
       any(strfind(version('-java'),'Java 1.7'))
       java2add = path2os([fileparts(mfilename('fullpath')),filesep,'postgresql-9.1-902.jdbc4.jar']);
@@ -61,9 +66,24 @@ function conn = pg_settings(db, varargin)
     
     if isempty(cell2mat(indices))
 
-       javaaddpath (java2add)
-       disp('PostgreSQL: JDBC driver added.')
+       if OPT.check
+        disp('checked status PostgreSQL: JDBC NOT present.')
+        OK = -1;
+       else
+        javaaddpath (java2add)
+        disp('PostgreSQL: JDBC driver added.')
+        OK = 1;
+       end
+       
    
     elseif ~(OPT.quiet)
+
+       if OPT.check
+        disp('checked status PostgreSQL: JDBC present.')
+        OK = 1;
+       else
         disp(['PostgreSQL: JDBC driver not added, already there: ',java2add]);
+        OK = 1;
+       end
+        
    end
