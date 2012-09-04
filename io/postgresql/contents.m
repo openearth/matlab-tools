@@ -1,4 +1,4 @@
-%Toolbox for <a href="http://www.postgresql.org/l">PostgreSQL</a> relational database management system
+%Toolbox for <a href="http://www.postgresql.org/">PostgreSQL</a> relational database management system
 %
 % START:
 % pg_settings                    - Load toolbox for JDBC connection to a PostgreSQL database

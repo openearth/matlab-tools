@@ -14,6 +14,7 @@ function netcdf_settings(varargin)
 % * 2010b OK
 % * 2011a OK
 % * 2011b OK
+% * 2012a OK
 %
 % For reading large netCDF files with Java memory issues can arise, see:
 % http://www.mathworks.com/support/solutions/en/data/1-18I2C/
@@ -94,11 +95,11 @@ function netcdf_settings(varargin)
       end
       
       if     any(strcmpi(version('-release'),{'2006a','2006b','2007a'}))
-      java2add         = path2os([ncroot,'netcdfAll-4.1.jar']); % 'toolsUI-4.1.jar' has same functionality but is bigger. It returns an old CF number for GRIB files.
+      java2add         = path2os([ncroot,filesep,'netcdfAll-4.1.jar']); % 'toolsUI-4.1.jar' has same functionality but is bigger. It returns an old CF number for GRIB files.
       elseif strcmpi(version('-release'),'14')
-      java2add         = path2os([ncroot,'netcdf-2.2.20.jar']); %
+      java2add         = path2os([ncroot,filesep,'netcdf-2.2.20.jar']); %
       else % 'R2007b' and higher
-      java2add         = path2os([ncroot,'netcdfAll-4.2.jar']); % 'toolsUI-4.2.jar' has same functionality but is bigger
+      java2add         = path2os([ncroot,filesep,'netcdfAll-4.2.jar']); % 'toolsUI-4.2.jar' has same functionality but is bigger
       end
 
       dynjavaclasspath = path2os(javaclasspath);
