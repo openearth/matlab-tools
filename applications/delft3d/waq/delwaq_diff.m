@@ -31,11 +31,14 @@
 %--------------------------------------------------------------------------
 function structOut = delwaq_diff(File1,File2,File2Save,SubstanceNames,Segments,Type)
 
-if nargin<5
-    Type = 'none';
-end
 if nargin<4
    SubstanceNames = 0;
+end
+if nargin<5
+   Segments = 0;
+end
+if nargin<6
+    Type = 'none';
 end
 
 [~, name1, ext1] = fileparts(File1);
