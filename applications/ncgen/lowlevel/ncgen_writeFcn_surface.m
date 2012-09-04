@@ -69,6 +69,10 @@ if ~exist(ncfile,'file')
             % write attributes
             ncwriteatt(ncfile,'/','geospatialCoverage_northsouth',[min(lat_bounds(:)) max(lat_bounds(:))]);
             ncwriteatt(ncfile,'/','geospatialCoverage_eastwest'  ,[min(lon_bounds(:)) max(lon_bounds(:))]);
+            ncwriteatt(ncfile,'/','geospatial_lat_min', min(lat_bounds(:)));
+            ncwriteatt(ncfile,'/','geospatial_lat_max', max(lat_bounds(:)));
+            ncwriteatt(ncfile,'/','geospatial_lon_min', min(lon_bounds(:)));
+            ncwriteatt(ncfile,'/','geospatial_lon_max', max(lon_bounds(:)));
         end
     end
 end
@@ -133,8 +137,12 @@ ncwrite(ncfile,'z',data.z,[1 1 iTimestamp]);
 z_actual_range = ncreadatt(ncfile, 'z', 'actual_range');
 
 % update actual range of z
+z_actual_range = [nanmin([data.z(:); z_actual_range']) nanmax([data.z(:); z_actual_range'])];
 ncwriteatt(ncfile, 'z', 'actual_range',...
-    [nanmin([data.z(:); z_actual_range']) nanmax([data.z(:); z_actual_range'])]);
+    z_actual_range);
+
+ncwriteatt(ncfile,'/','geospatial_vertical_min', min(z_actual_range));
+ncwriteatt(ncfile,'/','geospatial_vertical_max', max(z_actual_range));
 
 %% add source file path and hash
 if OPT.main.hash_source
