@@ -25,6 +25,7 @@ function oetsettings(varargin)
 %See also:    oetsettings: path, restoredefaultpath, addpathfast,
 %          OpenEarthTools: general, applications, io, tutorials
 %              highlights: convertcoordinates, googleplot, opendap
+% OET matlab coding style: oetnewfun, setproperty
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -12,13 +12,13 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 % OPT       = structure in which fieldnames are the keywords and the values 
 %             are the defaults 
 % inputCell = must be a cell array containing single struct, or a set of
-%             property-value pairs. It is best practice to pass the varargin 
-%             of the calling function as the second argument.  
-%             property names must be strings. If they contain a . this is
+%             'PropertyName', PropertyValue,... pairs. It is best practice 
+%             to pass the varargin of the calling function as the 2nd argument.  
+%             Property names must be strings. If they contain a dot (.) this is
 %             interpreted a field separator. This can be used to assign 
 %             properties on a subfield level.
-% varargin  = series of PropertyName-PropertyValue pairs to set methods for
-%             setproperty itself
+% varargin  = series of 'PropertyName', PropertyValue,... pairs to set 
+%             methods for setproperty itself.
 %           
 % output:
 % OPT     = structure, similar to the input argument OPT, with possibly
@@ -33,8 +33,11 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 % [OPT Set Default] = setproperty(OPT, vararginOfCallingFunction)
 % [OPT Set Default] = setproperty(OPT, {'PropertyName', PropertyValue,...})
 % [OPT Set Default] = setproperty(OPT, {OPT2})
-% [OPT Set Default] = setproperty(OPT,  OPT2)
-% [OPT Set Default] = setproperty(OPT,  OPT2 ,<'PropertyName', PropertyValue)
+%
+% Any number of leading  structs with 
+% any number of trailing <keyword,value> pairs:
+% [OPT Set Default] = setproperty(OPT1, OPT2, ..., OPTn)
+% [OPT Set Default] = setproperty(OPT1, OPT2, ..., OPTn,'PropertyName', PropertyValue,...)
 %
 %     Different methods for dealing with class changes of variables, or 
 %     extra fields (properties that are not in the input structure) can 
@@ -157,13 +160,12 @@ end
 %% check and parse inputCell (usually the varargin struct in the calling function)
 % determine mode from class of the second argument
 switch(class(inputCell))
-    case 'struct'
-        % legacy syntax mode
-        % turn struct into <keyword,value> pairs and append rest of varargin
+    case 'struct'   
+        % recursively let setproperty peel all leading structs 
+        % with optional trailing keyword,value> pairs
+        inputCell = setproperty(inputCell,varargin{:});
         inputCell = struct2arg(inputCell);
-        if ~isempty(varargin)
-            inputCell = {inputCell{:},varargin{:}};
-        end
+        varargin  = {};
     case 'char'
         % legay syntax mode
         inputCell = [{inputCell} varargin];

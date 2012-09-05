@@ -1,5 +1,5 @@
 classdef NcFile < handle
-    %NETCDFFILE  wraps a netcdf file for easy read access.
+    %NCFILE  wraps a netcdf file for easy read access.
     %
     %   The NcFile wraps a netcdf file for easy read access. After
     %   initiating the class (call the constructor function) the resulting

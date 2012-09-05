@@ -6,7 +6,7 @@ function $output = $filename($input)
 %   Syntax:
 %   $output = $filename($input)
 %
-%   Input:
+%   Input: For <keyword,value> pairs call $filename() without arguments.
 %   $varargin  =
 %
 %   Output:
