@@ -17,7 +17,7 @@ fldnames=fieldnames(xml);
 for ii=1:length(fldnames)
     fldname=fldnames{ii};    
     switch fldname
-        case{'enable','multipledomains','includenumbers','includebuttons','showfilename'}
+        case{'enable','multipledomains','includenumbers','includebuttons','showfilename','includenone','horizontalalignment','verticalalignment'}
             switch lower(xml.(fldname)(1))
                 case{'y','1'}
                     xml.(fldname)=1;
@@ -25,11 +25,16 @@ for ii=1:length(fldnames)
                     xml.(fldname)=0;
             end
         case{'position'}
-            pos=str2num(xml.position);
+            pos=xml.position;
+            if ischar(pos)
+                pos=str2num(pos);
+            end
             pos=[pos repmat(20,1,4-length(pos))];
             xml.position=pos;
-        case{'nrlines','nrrows','max'}
-            xml.(fldname)=str2num(xml.(fldname));
+        case{'nrlines','nrrows','max','fontsize'}
+            if ischar(xml.(fldname))
+                xml.(fldname)=str2num(xml.(fldname));
+            end
         case{'callback'}
             if ~isempty(xml.callback)
                 xml.callback=str2func(xml.callback);
@@ -47,20 +52,20 @@ end
 for ii=1:length(fldnames)
     fldname=fldnames{ii};
     switch fldname
-        case{'elements'}
-            for ielm=1:length(xml.elements)
-                xml.elements(ielm).element=gui_fillXMLvalues(xml.elements(ielm).element,'variableprefix',variableprefix);
+        case{'element'}
+            for ielm=1:length(xml.element)
+                xml.element(ielm).element=gui_fillXMLvalues(xml.element(ielm).element,'variableprefix',variableprefix);
                 % Fill missing element values
-                xml.elements(ielm).element=fillMissingElementValues(xml.elements(ielm).element,variableprefix);
-                switch lower(xml.elements(ielm).element.style)
+                xml.element(ielm).element=fillMissingElementValues(xml.element(ielm).element,variableprefix);
+                switch lower(xml.element(ielm).element.style)
                     case{'table'}
-                        xml.elements(ielm).element.columns=fillMissingColumnValues(xml.elements(ielm).element.columns);
+                        xml.element(ielm).element.column=fillMissingColumnValues(xml.element(ielm).element.column);
                 end
             end
-        case{'tabs'}
-            for itab=1:length(xml.tabs)
-                xml.tabs(itab).tab=gui_fillXMLvalues(xml.tabs(itab).tab,'variableprefix',variableprefix);
-                xml.tabs(itab).tab=fillMissingTabValues(xml.tabs(itab).tab);
+        case{'tab'}
+            for itab=1:length(xml.tab)
+                xml.tab(itab).tab=gui_fillXMLvalues(xml.tab(itab).tab,'variableprefix',variableprefix);
+                xml.tab(itab).tab=fillMissingTabValues(xml.tab(itab).tab);
             end            
         case{'model'}
             if ~isfield(xml,'multipledomains')
@@ -93,7 +98,7 @@ default.callback=[];
 default.option1=[];
 default.option2=[];
 default.parent=[];
-default.dependencies=[];
+default.dependency=[];
 default.multivariable=[];
 default.includenumbers=0;
 default.includebuttons=0;
@@ -116,8 +121,9 @@ default.max=[];
 default.bordertype='etchedin';
 default.format='';
 default.text='';
-default.list=[];
 default.variableprefix=[];
+default.listtext=[];
+default.listvalue=[];
 
 el.variableprefix=variableprefix;
 
@@ -128,85 +134,50 @@ for ii=1:length(fields)
     end
 end
 
-% List
-if ~isfield(el.list,'texts')
-    el.list.texts=[];
-end
-for jj=1:length(el.list.texts)
-    if ~isfield(el.list.texts,'text')
-        el.list.texts(jj).text=[];
-    end
-end
-% if ~isfield(el.list,'values')
-%     el.list.values=[];
-% end
-if isfield(el.list,'values')
-    for jj=1:length(el.list.values)
-        if ~isfield(el.list.values,'value')
-            el.list.values(jj).value=[];
-        end
-    end
-end
-
 % Dependencies
-if ~isfield(el,'dependencies')
-    el.dependencies=[];
-end
-for jj=1:length(el.dependencies)
-    if ~isfield(el.dependencies(jj).dependency,'action')
-        el.dependencies(jj).dependency.action='enable';
-%         warning(['No action supplied for dependency in element ' el.tag '. Using enable instead.']);
+for jj=1:length(el.dependency)
+    if ~isfield(el.dependency(jj).dependency,'action')
+        el.dependency(jj).dependency.action='enable';
     end
-    if ~isfield(el.dependencies(jj).dependency,'checkfor')
-        el.dependencies(jj).dependency.checkfor='all';
+    if ~isfield(el.dependency(jj).dependency,'checkfor')
+        el.dependency(jj).dependency.checkfor='all';
     end
-    if ~isfield(el.dependencies(jj).dependency,'tags')
-        el.dependencies(jj).dependency.tags=[];
+    if ~isfield(el.dependency(jj).dependency,'check')
+        el.dependency(jj).dependency.check=[];
     end
-    if ~isfield(el.dependencies(jj).dependency,'checks')
-        el.dependencies(jj).dependency.checks=[];
-%         warning(['No checks supplied for dependency in element ' el.tag]);
-    end
-    for kk=1:length(el.dependencies(jj).dependency.checks)
-        if ~isfield(el.dependencies(jj).dependency.checks(kk).check,'variable')
-            el.dependencies(jj).dependency.checks(kk).check.variable=[];
-%            warning(['No variable supplied for dependency in element ' el.tag]);
+    for kk=1:length(el.dependency(jj).dependency.check)
+        if ~isfield(el.dependency(jj).dependency.check(kk).check,'variable')
+            el.dependencies(jj).dependency.check(kk).check.variable=[];
         end        
-        if ~isfield(el.dependencies(jj).dependency.checks(kk).check,'operator')
-            el.dependencies(jj).dependency.checks(kk).check.operator=[];
-%            warning(['No operator supplied for dependency in element ' el.tag '. Using .eq. instead.']);
+        if ~isfield(el.dependency(jj).dependency.check(kk).check,'operator')
+            el.dependency(jj).dependency.checks(kk).check.operator=[];
         end
-        if ~isfield(el.dependencies(jj).dependency.checks(kk).check,'value')
-            el.dependencies(jj).dependency.checks(kk).check.value=[];
-%            warning(['No value supplied for dependency in element ' el.tag '. Using .eq. instead.']);
+        if ~isfield(el.dependency(jj).dependency.check(kk).check,'value')
+            el.dependency(jj).dependency.check(kk).check.value=[];
         end
-%         if ~isnan(str2double(el.dependencies(jj).dependency.checks(kk).check.value))
-%             el.dependencies(jj).dependency.checks(kk).check.value=str2double(el.dependencies(jj).dependency.checks(kk).check.value);
-%         end
     end
 end
 
 %%
-function columns=fillMissingColumnValues(columns)
+function column=fillMissingColumnValues(column)
 
-for jj=1:length(columns)
-    fields=fieldnames(columns(jj).column);
+for jj=1:length(column)
+    fields=fieldnames(column(jj).column);
     for kk=1:length(fields)
         fldname=fields{kk};
         switch lower(fldname)
             case{'width'}
-                columns(jj).column.(fldname)=str2num(columns(jj).column.(fldname));
+                column(jj).column.(fldname)=str2num(column(jj).column.(fldname));
             case{'enable'}
-                switch lower(columns(jj).column.(fldname)(1))
+                switch lower(column(jj).column.(fldname)(1))
                     case{'y','1'}
-                        columns(jj).column.(fldname)=1;
+                        column(jj).column.(fldname)=1;
                     otherwise
-                        columns(jj).column.(fldname)=0;
+                        column(jj).column.(fldname)=0;
                 end
         end
     end
 end
-
 
 default.style=[];
 default.width=50;
@@ -221,9 +192,9 @@ default.variable=[];
 
 fields=fieldnames(default);
 for ii=1:length(fields)
-    for jj=1:length(columns)
-        if ~isfield(columns(jj).column,fields{ii})
-            columns(jj).column.(fields{ii})=default.(fields{ii});
+    for jj=1:length(column)
+        if ~isfield(column(jj).column,fields{ii})
+            column(jj).column.(fields{ii})=default.(fields{ii});
         end
             
     end
@@ -236,7 +207,7 @@ default.tab=[];
 default.tabstring=[];
 default.tabname=[];
 default.callback=[];
-default.elements=[];
+default.element=[];
 default.enable=1;
 default.formodel=[];
 
@@ -246,3 +217,4 @@ for ii=1:length(fields)
         tb.(fields{ii})=default.(fields{ii});
     end
 end
+

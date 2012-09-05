@@ -76,7 +76,8 @@ if ~isempty(varargin)
     end
 end
 
-fig=figure('Visible','off');
+fig=figure;
+set(fig,'Visible','off');
 
 fh = get(fig,'JavaFrame'); % Get Java Frame
 if exist('iconFile','var')

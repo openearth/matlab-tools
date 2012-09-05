@@ -1,12 +1,12 @@
-function gui_updateDependencies(elements,getFcn)
+function gui_updateDependencies(element,getFcn)
 
-for i=1:length(elements)
-    switch lower(elements(i).element.style)
+for i=1:length(element)
+    switch lower(element(i).element.style)
         case{'tabpanel'}
-            for j=1:length(elements(i).element.tabs)
-                gui_updateDependency(elements(i).element.tabs(j).tab,0,getFcn);
+            for j=1:length(element(i).element.tabs)
+                gui_updateDependency(element(i).element.tabs(j).tab,0,getFcn);
             end
         otherwise
-            gui_updateDependency(elements(i).element,0,getFcn);
+            gui_updateDependency(element(i).element,0,getFcn);
     end
 end

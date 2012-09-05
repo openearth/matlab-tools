@@ -408,26 +408,26 @@ setappdata(gcf,'activetabhandle',activetabhandle);
 if strcmpi(opt,'withcallback')
     
     % Elements is structure of elements inside selected tab
-    elements=el.tabs(iac).tab.elements;
+    element=el.tab(iac).tab.element;
     
-    callback=el.tabs(iac).tab.callback;
-    elementstoupdate=elements;
+    callback=el.tab(iac).tab.callback;
+    elementstoupdate=element;
     % Now look for tab panels within this tab, and execute callback associated
     % with active tabs
-    for k=1:length(elements)
-        if strcmpi(elements(k).element.style,'tabpanel')
+    for k=1:length(element)
+        if strcmpi(element(k).element.style,'tabpanel')
 %             % Update tabs (some may have to be disabled or enabled)
-            for itab=1:length(elements(k).element.tabs)
-                htab=elements(k).element.tabs(itab).tab.handle;
+            for itab=1:length(element(k).element.tab)
+                htab=element(k).element.tab(itab).tab.handle;
                 gui_updateDependency(htab);
             end
             % Find active tab
-            hh=elements(k).element.handle;
+            hh=element(k).element.handle;
             el=getappdata(hh,'element');
             iac=el.activetabnr;
-            callback=el.tabs(iac).tab.callback;
-            elementstoupdate=el.tabs(iac).tab.elements;
-            activetabhandle=el.tabs(iac).tab.handle;
+            callback=el.tab(iac).tab.callback;
+            elementstoupdate=el.tab(iac).tab.element;
+            activetabhandle=el.tab(iac).tab.handle;
             break
         end
     end

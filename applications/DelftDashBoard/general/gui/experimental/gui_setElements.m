@@ -1,27 +1,27 @@
-function gui_setElements(elements)
+function gui_setElements(element)
 
-if ischar(elements)
-    h=findobj(gcf,'Tag',elements);
+if ischar(element)
+    h=findobj(gcf,'Tag',element);
     if isempty(h)
         return
     end
-    elements=getappdata(h,'elements');
+    element=getappdata(h,'elements');
 end
 
-for i=1:length(elements)
+for i=1:length(element)
     
-    if isfield(elements(i).element,'handle')
-        if ~isempty(elements(i).element.handle)
+    if isfield(element(i).element,'handle')
+        if ~isempty(element(i).element.handle)
             try
-                gui_setElement(elements(i).element.handle);
+                gui_setElement(element(i).element.handle);
             catch
-                disp(['Something went wrong when setting UI element ' elements(i).element.tag]);
+                disp(['Something went wrong when setting UI element ' element(i).element.tag]);
             end
         else
-            disp(['Warning : no handle for ' elements(i).element.tag ' !']);
+            disp(['Warning : no handle for ' element(i).element.tag ' !']);
         end
     else
-        disp(['Warning : no handle for ' elements(i).element.tag ' !']);
+        disp(['Warning : no handle for ' element(i).element.tag ' !']);
     end
     
 end

@@ -10,227 +10,238 @@ if isempty(element)
     usd=get(p,'userdata');
     iac= usd.largeTabHandles==h;
     el=getappdata(p);
-    element=el.element.tabs(iac).tab;
+    element=el.element.tab(iac).tab;
     tabname=usd.tabNames{iac};
 end
 
-if isfield(element,'dependencies')
-for iac=1:length(element.dependencies);
-    
-    dependency=element.dependencies(iac).dependency;
-    
-    if ~isempty(dependency.checkfor)
-        switch lower(dependency.checkfor)
-            case{'any'}
-                ok=0;
-                for k=1:length(dependency.checks)                    
-                    val=gui_getValue(element,dependency.checks(k).check.variable);
-                    if ischar(val)
-                        % String
-                        switch dependency.checks(k).check.operator
-                            case{'eq'}
-                                if strcmpi(val,dependency.checks(k).check.value)
-                                    ok=1;
-                                end
-                            case{'ne'}
-                                if ~strcmpi(val,dependency.checks(k).check.value)
-                                    ok=1;
-                                end
-                        end
-                    else
-                        % Numeric
-                        v=str2double(dependency.checks(k).check.value);
-                        switch dependency.checks(k).check.operator
-                            case{'eq'}
-                                if isnan(v)
-                                    if isnan(val)
-                                        ok=1;
-                                    end
-                                else
-                                    if val==v
-                                        ok=1;
-                                    end
-                                end
-                            case{'ne'}
-                                if isnan(v)
-                                    if ~isnan(val)
-                                        ok=1;
-                                    end
-                                else
-                                    if val~=v
-                                        ok=1;
-                                    end
-                                end
-                            case{'lt'}
-                                if val<v
-                                    ok=1;
-                                end
-                            case{'gt'}
-                                if val>v
-                                    ok=1;
-                                end
-                            case{'le'}
-                                if val<=v
-                                    ok=1;
-                                end
-                            case{'ge'}
-                                if val>=v
-                                    ok=1;
-                                end
-                        end
-                    end
-                end
-                
-            case{'all'}
-                ok=1;
-                for k=1:length(dependency.checks)
-                    val=gui_getValue(element,dependency.checks(k).check.variable);
-                    if ischar(val)
-                        % String
-                        switch dependency.checks(k).check.operator
-                            case{'eq'}
-                                if ~strcmpi(val,dependency.checks(k).check.value)
-                                    ok=0;
-                                end
-                            case{'ne'}
-                                if strcmpi(val,dependency.checks(k).check.value)
-                                    ok=0;
-                                end
-                        end
-                    else
-                        % Numeric
-                        v=str2double(dependency.checks(k).check.value);
-                        switch dependency.checks(k).check.operator
-                            case{'eq'}
-                                if isnan(v)
-                                    if ~isnan(val)
-                                        ok=0;
-                                    end
-                                else
-                                    if val~=v
-                                        ok=0;
-                                    end
-                                end
-                            case{'ne'}
-                                if isnan(v)
-                                    if isnan(val)
-                                        ok=0;
-                                    end
-                                else
-                                    if val==v
-                                        ok=0;
-                                    end
-                                end
-                            case{'lt'}
-                                if val>=v
-                                    ok=0;
-                                end
-                            case{'gt'}
-                                if val<=v
-                                    ok=0;
-                                end
-                            case{'le'}
-                                if val>v
-                                    ok=0;
-                                end
-                            case{'ge'}
-                                if val<v
-                                    ok=0;
-                                end
-                        end
-                    end
-                end
-                
-            case{'none'}
-                ok=1;
-                for k=1:length(dependency.checks)
-                    
-                    val=gui_getValue(element,dependency.checks(k).check.variable);
-                    if ischar(val)
-                        % String
-                        switch dependency.checks(k).check.operator
-                            case{'eq'}
-                                if strcmpi(val,dependency.checks(k).check.value)
-                                    ok=0;
-                                end
-                            case{'ne'}
-                                if ~strcmpi(val,dependency.checks(k).check.value)
-                                    ok=0;
-                                end
-                        end
-                    else
-                        % Numeric
-                        v=str2double(dependency.checks(k).check.value);
-                        switch dependency.checks(k).check.operator
-                            case{'eq'}
-                                if val==v
-                                    ok=0;
-                                end
-                            case{'ne'}
-                                if val~=v
-                                    ok=0;
-                                end
-                            case{'lt'}
-                                if val<v
-                                    ok=0;
-                                end
-                            case{'gt'}
-                                if val>v
-                                    ok=0;
-                                end
-                            case{'le'}
-                                if val<=v
-                                    ok=0;
-                                end
-                            case{'ge'}
-                                if val>=v
-                                    ok=0;
-                                end
-                        end
-                    end
-                end
-        end
-    end
-        
-    switch lower(dependency.action)
-        case{'enable'}
-            if ok
-                switch element.style
-                    case{'table'}
-                        table(element.handle,'enable');
-                    case{'tab'}
-                        tabpanel('enabletab','handle',p,'tabname',tabname);
-                    otherwise
-                        enableElement(element);
-                end
-            else
-                switch element.style
-                    case{'table'}
-                        table(element.handle,'disable');
-                    case{'tab'}
-                        tabpanel('disabletab','handle',p,'tabname',tabname);
-                    otherwise
-                        disableElement(element);
-                end
-            end
-        case{'on'}
-            if ok
-                turnOn(element);
-            else
-                turnOff(element);
-            end
-        case{'update'}
-            setUIElement(element.handle,'dependencyupdate',0);
-        case{'visible'}
-            if ok
-                setVisible(element);
-            else
-                setInvisible(element);
-            end
+if isfield(element,'dependency')
 
-    end
+    for iac=1:length(element.dependency);
         
-end
+        dependency=element.dependency(iac).dependency;
+        
+        if ~isempty(dependency.checkfor)
+            switch lower(dependency.checkfor)
+                case{'any'}
+                    ok=0;
+                    for k=1:length(dependency.check)
+                        val=gui_getValue(element,dependency.check(k).check.variable);
+                        if ischar(val)
+                            % String
+                            switch dependency.check(k).check.operator
+                                case{'eq'}
+                                    if strcmpi(val,dependency.check(k).check.value)
+                                        ok=1;
+                                    end
+                                case{'ne'}
+                                    if ~strcmpi(val,dependency.check(k).check.value)
+                                        ok=1;
+                                    end
+                            end
+                        else
+                            % Numeric
+                            v=str2double(dependency.check(k).check.value);
+                            switch dependency.check(k).check.operator
+                                case{'eq'}
+                                    if isnan(v)
+                                        if isnan(val)
+                                            ok=1;
+                                        end
+                                    else
+                                        if val==v
+                                            ok=1;
+                                        end
+                                    end
+                                case{'ne'}
+                                    if isnan(v)
+                                        if ~isnan(val)
+                                            ok=1;
+                                        end
+                                    else
+                                        if val~=v
+                                            ok=1;
+                                        end
+                                    end
+                                case{'lt'}
+                                    if val<v
+                                        ok=1;
+                                    end
+                                case{'gt'}
+                                    if val>v
+                                        ok=1;
+                                    end
+                                case{'le'}
+                                    if val<=v
+                                        ok=1;
+                                    end
+                                case{'ge'}
+                                    if val>=v
+                                        ok=1;
+                                    end
+                            end
+                        end
+                    end
+                    
+                case{'all'}
+                    ok=1;
+                    for k=1:length(dependency.check)
+                        val=gui_getValue(element,dependency.check(k).check.variable);
+                        if isempty(val)
+                          if strcmpi(dependency.check(k).check.value,'isempty')
+                            ok=0;
+                          end
+                        elseif ischar(val)
+                            % String
+                            switch dependency.check(k).check.operator
+                                case{'eq'}
+                                    if ~strcmpi(val,dependency.check(k).check.value)
+                                        ok=0;
+                                    end
+                                case{'ne'}
+                                  if isempty(val)
+                                    if strcmpi(dependency.check(k).check.value,'isempty')
+                                      ok=0;
+                                    end
+                                  else
+                                    if strcmpi(val,dependency.check(k).check.value)
+                                      ok=0;
+                                    end
+                                  end
+                            end
+                        else
+                            % Numeric
+                            v=str2double(dependency.check(k).check.value);
+                            switch dependency.check(k).check.operator
+                                case{'eq'}
+                                    if isnan(v)
+                                        if ~isnan(val)
+                                            ok=0;
+                                        end
+                                    else
+                                        if val~=v
+                                            ok=0;
+                                        end
+                                    end
+                                case{'ne'}
+                                    if isnan(v)
+                                        if isnan(val)
+                                            ok=0;
+                                        end
+                                    else
+                                        if val==v
+                                            ok=0;
+                                        end
+                                    end
+                                case{'lt'}
+                                    if val>=v
+                                        ok=0;
+                                    end
+                                case{'gt'}
+                                    if val<=v
+                                        ok=0;
+                                    end
+                                case{'le'}
+                                    if val>v
+                                        ok=0;
+                                    end
+                                case{'ge'}
+                                    if val<v
+                                        ok=0;
+                                    end
+                            end
+                        end
+                    end
+                    
+                case{'none'}
+                    ok=1;
+                    for k=1:length(dependency.check)
+                        
+                        val=gui_getValue(element,dependency.check(k).check.variable);
+                        if ischar(val)
+                            % String
+                            switch dependency.check(k).check.operator
+                                case{'eq'}
+                                    if strcmpi(val,dependency.check(k).check.value)
+                                        ok=0;
+                                    end
+                                case{'ne'}
+                                    if ~strcmpi(val,dependency.check(k).check.value)
+                                        ok=0;
+                                    end
+                            end
+                        else
+                            % Numeric
+                            v=str2double(dependency.check(k).check.value);
+                            switch dependency.check(k).check.operator
+                                case{'eq'}
+                                    if val==v
+                                        ok=0;
+                                    end
+                                case{'ne'}
+                                    if val~=v
+                                        ok=0;
+                                    end
+                                case{'lt'}
+                                    if val<v
+                                        ok=0;
+                                    end
+                                case{'gt'}
+                                    if val>v
+                                        ok=0;
+                                    end
+                                case{'le'}
+                                    if val<=v
+                                        ok=0;
+                                    end
+                                case{'ge'}
+                                    if val>=v
+                                        ok=0;
+                                    end
+                            end
+                        end
+                    end
+            end
+        end
+        
+        switch lower(dependency.action)
+            case{'enable'}
+                if ok
+                    switch element.style
+                        case{'table'}
+                            table(element.handle,'enable');
+                        case{'tab'}
+                            tabpanel('enabletab','handle',p,'tabname',tabname);
+                        otherwise
+                            enableElement(element);
+                    end
+                else
+                    switch element.style
+                        case{'table'}
+                            table(element.handle,'disable');
+                        case{'tab'}
+                            tabpanel('disabletab','handle',p,'tabname',tabname);
+                        otherwise
+                            disableElement(element);
+                    end
+                end
+            case{'on'}
+                if ok
+                    turnOn(element);
+                else
+                    turnOff(element);
+                end
+            case{'update'}
+                setUIElement(element.handle,'dependencyupdate',0);
+            case{'visible'}
+                if ok
+                    setVisible(element);
+                else
+                    setInvisible(element);
+                end
+                
+        end
+        
+    end
 end
 
 %%

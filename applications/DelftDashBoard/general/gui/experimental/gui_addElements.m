@@ -1,4 +1,4 @@
-function elements=gui_addElements(figh,elements,varargin)
+function element=gui_addElements(figh,element,varargin)
 
 getFcn=[];
 setFcn=[];
@@ -19,28 +19,28 @@ end
 
 bgc=get(figh,'Color');
 
-for i=1:length(elements)
+for i=1:length(element)
         
     try
         
-        elements(i).element.handle=[];
-        elements(i).element.texthandle=[];
-        pos=elements(i).element.position;
+        element(i).element.handle=[];
+        element(i).element.texthandle=[];
+        pos=element(i).element.position;
                        
-        switch lower(elements(i).element.style)
+        switch lower(element(i).element.style)
             
-            %% Standard elements
+            %% Standard element
             
             case{'edit'}
                 
                 % Edit box
 
-                elements(i).element.handle=uicontrol(figh,'Style','edit','String','','Position',pos,'BackgroundColor',[1 1 1]);
+                element(i).element.handle=uicontrol(figh,'Style','edit','String','','Position',pos,'BackgroundColor',[1 1 1]);
 
-                if ~isempty(elements(i).element.type)
-                    tp=elements(i).element.type;
+                if ~isempty(element(i).element.type)
+                    tp=element(i).element.type;
                 else
-                    tp=elements(i).element.variable.type;
+                    tp=element(i).element.variable.type;
                 end
                 
                 switch tp
@@ -54,168 +54,320 @@ for i=1:length(elements)
                         horal='right';
                 end
                 
-                set(elements(i).element.handle,'HorizontalAlignment',horal);
-                if elements(i).element.nrlines>1
-                    set(elements(i).element.handle,'Max',elements(i).element.nrlines);
+                set(element(i).element.handle,'HorizontalAlignment',horal);
+                if element(i).element.nrlines>1
+                    set(element(i).element.handle,'Max',element(i).element.nrlines);
                 end
                 
                 % Set text
-                if ~isempty(elements(i).element.text)
-                    if ~isfield(elements(i).element.text,'variable')
-                        str=elements(i).element.text;
+                if ~isempty(element(i).element.text)
+                    if ~isstruct(element(i).element.text)
+                        str=element(i).element.text;
                     else
                         str=' ';
                     end
-                    switch elements(i).element.textposition
+                    switch element(i).element.textposition
                         case{'left'}
                             str=[str ' '];
                     end
                     % Text
-                    elements(i).element.texthandle=uicontrol(figh,'Parent',parenthandle,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
-                    setTextPosition(elements(i).element.texthandle,pos,elements(i).element.textposition);
+                    element(i).element.texthandle=uicontrol(figh,'Parent',parenthandle,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
+                    setTextPosition(element(i).element.texthandle,pos,element(i).element.textposition);
                 end
-                                
+                
             case{'panel'}
                 
                 % Panel
                 
-                elements(i).element.handle=uipanel('Title',elements(i).element.title,'Units','pixels','Position',pos,'BackgroundColor',bgc);
-                set(elements(i).element.handle,'Title',elements(i).element.text,'BorderType',elements(i).element.bordertype);
+                element(i).element.handle=uipanel('Title',element(i).element.title,'Units','pixels','Position',pos,'BackgroundColor',bgc);
+                set(element(i).element.handle,'Title',element(i).element.text,'BorderType',element(i).element.bordertype);
                 
             case{'radiobutton'}
                 
                 % Radio button
 
-                if ~isfield(elements(i).element.text,'variable')
-                    str=elements(i).element.text;
-                    elements(i).element.handle=uicontrol(figh,'Style','radio','String',str,'Position',[pos(1) pos(2) 20 20],'BackgroundColor',bgc);
+                if ~isstruct(element(i).element.text)
+                    str=element(i).element.text;
+                    element(i).element.handle=uicontrol(figh,'Style','radio','String',str,'Position',[pos(1) pos(2) 20 20],'BackgroundColor',bgc);
                     % Length of string is known
-                    ext=get(elements(i).element.handle,'Extent');
-                    set(elements(i).element.handle,'Position',[pos(1) pos(2) ext(3)+20 20]);
+                    ext=get(element(i).element.handle,'Extent');
+                    set(element(i).element.handle,'Position',[pos(1) pos(2) ext(3)+20 20]);
                 else
-                    elements(i).element.handle=uicontrol(figh,'Style','radio','String',' ','Position',[pos(1) pos(2) pos(3) 20],'BackgroundColor',bgc);
+                    element(i).element.handle=uicontrol(figh,'Style','radio','String',' ','Position',[pos(1) pos(2) pos(3) 20],'BackgroundColor',bgc);
                 end
                 
             case{'checkbox'}
                 
                 % Check box
                 
-                if ~isfield(elements(i).element.text,'variable')
-                    str=elements(i).element.text;
-                    elements(i).element.handle=uicontrol(figh,'Style','check','String',str,'Position',[pos(1) pos(2) 20 20],'BackgroundColor',bgc);
+                if ~isstruct(element(i).element.text)
+                    str=element(i).element.text;
+                    element(i).element.handle=uicontrol(figh,'Style','check','String',str,'Position',[pos(1) pos(2) 20 20],'BackgroundColor',bgc);
                     % Length of string is known
-                    ext=get(elements(i).element.handle,'Extent');
-                    set(elements(i).element.handle,'Position',[pos(1) pos(2) ext(3)+20 20]);
+                    ext=get(element(i).element.handle,'Extent');
+                    set(element(i).element.handle,'Position',[pos(1) pos(2) ext(3)+20 20]);
                 else
-                    elements(i).element.handle=uicontrol(figh,'Style','check','String',' ','Position',[pos(1) pos(2) pos(3) 20],'BackgroundColor',bgc);
+                    element(i).element.handle=uicontrol(figh,'Style','check','String',' ','Position',[pos(1) pos(2) pos(3) 20],'BackgroundColor',bgc);
                 end
                 
             case{'pushbutton'}
                 
                 % Push button
                 
-                elements(i).element.handle=uicontrol(figh,'Style','pushbutton','String',elements(i).element.text,'Position',pos);
+                element(i).element.handle=uicontrol(figh,'Style','pushbutton','String',element(i).element.text,'Position',pos);
+                
+                if isfield(element(i).element,'fontweight')
+                    set(element(i).element.handle,'fontweight',element(i).element.fontweight);
+                end
+
+                if isfield(element(i).element,'fontsize')
+                    set(element(i).element.handle,'fontsize',element(i).element.fontsize);
+                end
 
             case{'pushok'}
 
-                elements(i).element.handle=uicontrol(figh,'Style','pushbutton','String','OK','Position',pos);
+                element(i).element.handle=uicontrol(figh,'Style','pushbutton','String','OK','Position',pos);
 
             case{'pushcancel'}
 
-                elements(i).element.handle=uicontrol(figh,'Style','pushbutton','String','Cancel','Position',pos);
-                
+                element(i).element.handle=uicontrol(figh,'Style','pushbutton','String','Cancel','Position',pos);
+
+            case{'selectfont'}
+
+                element(i).element.handle=uicontrol(figh,'Style','pushbutton','String','Font','Position',pos);
+
+            case{'axis'}
+
+                h=axes;
+                set(h,'Units','pixels');
+                set(h,'Position',pos);
+                element(i).element.handle=h;
+
             case{'togglebutton'}
                 
                 % Toggle button
 
-                elements(i).element.handle=uicontrol(figh,'Style','togglebutton','String',elements(i).element.text,'Position',pos);
+                element(i).element.handle=uicontrol(figh,'Style','togglebutton','String',element(i).element.text,'Position',pos);
                 
             case{'listbox'}
 
                 % List box
                 
-                elements(i).element.handle=uicontrol(figh,'Style','listbox','String','','Position',pos,'BackgroundColor',[1 1 1]);
+                element(i).element.handle=uicontrol(figh,'Style','listbox','String','','Position',pos,'BackgroundColor',[1 1 1]);
                 
-                if ~isempty(elements(i).element.max)
-                    set(elements(i).element.handle,'Max',elements(i).element.max);
+                if ~isempty(element(i).element.max)
+                    set(element(i).element.handle,'Max',element(i).element.max);
                 end
                 
                 % Set text
-                if ~isempty(elements(i).element.text)
+                if ~isempty(element(i).element.text)
+                    if ~isstruct(element(i).element.text)
+                        str=element(i).element.text;
+                    else
+                        str=' ';
+                    end
+                    switch element(i).element.textposition
+                        case{'left'}
+                            str=[str ' '];
+                    end
                     % Text
-                    elements(i).element.texthandle=uicontrol(figh,'Style','text','String',elements(i).element.text,'Position',pos,'BackgroundColor',bgc);
-                    setTextPosition(elements(i).element.texthandle,pos,elements(i).element.textposition);
+                    element(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
+                    setTextPosition(element(i).element.texthandle,pos,element(i).element.textposition);
                 end
-                                
+
+            case{'selectcolor'}
+                
+                element(i).element.handle=uicontrol(figh,'Style','popupmenu','String','','Position',pos,'BackgroundColor',[1 1 1]);
+                str=colorlist('getlist');
+                if isfield(element(i).element,'includenone')
+                    if element(i).element.includenone
+                        str{end+1}='none';
+                    end
+                end
+                set(element(i).element.handle,'String',str);
+                
+                % Set text
+                if ~isempty(element(i).element.text)
+                    if ~isstruct(element(i).element.text)
+                        str=element(i).element.text;
+                    else
+                        str=' ';
+                    end
+                    switch element(i).element.textposition
+                        case{'left'}
+                            str=[str ' '];
+                    end
+                    % Text
+                    element(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
+                    setTextPosition(element(i).element.texthandle,pos,element(i).element.textposition);
+                end
+
+            case{'selectlinestyle'}
+                
+                element(i).element.handle=uicontrol(figh,'Style','popupmenu','String','','Position',pos,'BackgroundColor',[1 1 1]);
+                
+                texts={'-','--','-.',':','none'};
+
+                set(element(i).element.handle,'String',texts);
+                
+                % Set text
+                if ~isempty(element(i).element.text)
+                    if ~isstruct(element(i).element.text)
+                        str=element(i).element.text;
+                    else
+                        str=' ';
+                    end
+                    switch element(i).element.textposition
+                        case{'left'}
+                            str=[str ' '];
+                    end
+                    % Text
+                    element(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
+                    setTextPosition(element(i).element.texthandle,pos,element(i).element.textposition);
+                end
+                
+            case{'selectmarker'}
+                
+                element(i).element.handle=uicontrol(figh,'Style','popupmenu','String','','Position',pos,'BackgroundColor',[1 1 1]);
+                
+                texts={'point','circle','x-mark','plus','star','square','diamond','triangle (down)', ...
+                    'triangle (up)','triangle (left)','triangle (right)','pentagram','hexagram','none'};
+
+                set(element(i).element.handle,'String',texts);
+                
+                % Set text
+                if ~isempty(element(i).element.text)
+                    if ~isstruct(element(i).element.text)
+                        str=element(i).element.text;
+                    else
+                        str=' ';
+                    end
+                    switch element(i).element.textposition
+                        case{'left'}
+                            str=[str ' '];
+                    end
+                    % Text
+                    element(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
+                    setTextPosition(element(i).element.texthandle,pos,element(i).element.textposition);
+                end
+
+            case{'selectheadstyle'}
+                
+                element(i).element.handle=uicontrol(figh,'Style','popupmenu','String','','Position',pos,'BackgroundColor',[1 1 1]);
+                
+                texts={'none','plain','ellipse','vback1','vback2','vback3','cback1','cback2','cback3' ...
+                    'fourstar','rectangle','diamond','rose','hypocycloid','astroid','deltoid'};
+                
+                set(element(i).element.handle,'String',texts);
+                
+                % Set text
+                if ~isempty(element(i).element.text)
+                    str=[element(i).element.text ' '];
+                    % Text
+                    element(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
+                    setTextPosition(element(i).element.texthandle,pos,element(i).element.textposition);
+                end
+                
+                
+            case{'selectmarkersize'}
+                
+                element(i).element.handle=uicontrol(figh,'Style','popupmenu','String','','Position',pos,'BackgroundColor',[1 1 1]);
+                
+                for ii=1:30
+                    texts{ii}=num2str(ii);
+                end
+                set(element(i).element.handle,'String',texts);
+                
+                % Set text
+                if ~isempty(element(i).element.text)
+                    if ~isstruct(element(i).element.text)
+                        str=element(i).element.text;
+                    else
+                        str=' ';
+                    end
+                    switch element(i).element.textposition
+                        case{'left'}
+                            str=[str ' '];
+                    end
+                    % Text
+                    element(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
+                    setTextPosition(element(i).element.texthandle,pos,element(i).element.textposition);
+                end
+                
             case{'popupmenu'}
 
                 % Pop-up menu
                 
-                elements(i).element.handle=uicontrol(figh,'Style','popupmenu','String',{'a','b'},'Position',pos,'BackgroundColor',[1 1 1]);
+                element(i).element.handle=uicontrol(figh,'Style','popupmenu','String',{'a','b'},'Position',pos,'BackgroundColor',[1 1 1]);
                 
                 % Set text
-                if ~isempty(elements(i).element.text)
+                if ~isempty(element(i).element.text)
 
-                    if ~isfield(elements(i).element.text,'variable')
-                        str=elements(i).element.text;
+                    if ~isstruct(element(i).element.text)
+                        str=element(i).element.text;
                     else
                         str=' ';
                     end
-                    switch elements(i).element.textposition
+                    switch element(i).element.textposition
                         case{'left'}
                             str=[str ' '];
                     end
                     
                     % Text
-                    elements(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
-                    setTextPosition(elements(i).element.texthandle,pos,elements(i).element.textposition);
+                    element(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
+                    setTextPosition(element(i).element.texthandle,pos,element(i).element.textposition);
                 end
                 
             case{'text'}
                 
                 % Text
 
-                if ~isfield(elements(i).element.text,'variable')
-                    str=elements(i).element.text;
+                if ~isstruct(element(i).element.text)
+                    str=element(i).element.text;
                 else
                     str=' ';
                 end
-                        
-                elements(i).element.handle=uicontrol(figh,'Style','text','String',str,'Position',[pos(1) pos(2) 20 20],'BackgroundColor',bgc);
-
-                ext=get(elements(i).element.handle,'Extent');
-                ext(3)=ext(3)+2;
                 
-                ps1=pos(1);
-                if strcmpi(elements(i).element.horal,'right')
-                    ps1=pos(1)-ext(3);
+                if length(pos)==4
+                    % Plot at exact position
+                    element(i).element.handle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc,'HorizontalAlignment','left');
+                else
+                    element(i).element.handle=uicontrol(figh,'Style','text','String',str,'Position',[pos(1) pos(2) 20 20],'BackgroundColor',bgc);
+                    
+                    ext=get(element(i).element.handle,'Extent');
+                    ext(3)=ext(3)+2;
+                    
+                    ps1=pos(1);
+                    if strcmpi(element(i).element.horal,'right')
+                        ps1=pos(1)-ext(3);
+                    end
+                    
+                    set(element(i).element.handle,'Position',[ps1 pos(2) ext(3) 15]);
+                    
                 end
-                
-                set(elements(i).element.handle,'Position',[ps1 pos(2) ext(3) 15]);
-%                setTextPosition(elements(i).element.texthandle,pos,elements(i).element.textposition);
                 
             case{'pushselectfile','pushsavefile'}
                 
                 % Push select file
                 
-                elements(i).element.handle=uicontrol(figh,'Style','pushbutton','String',elements(i).element.text,'Position',pos);
+                element(i).element.handle=uicontrol(figh,'Style','pushbutton','String',element(i).element.text,'Position',pos);
                 
-                if elements(i).element.showfilename
+                if element(i).element.showfilename
                     % Text
                     str='File : ';
-                    elements(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
-                    setTextPosition(elements(i).element.texthandle,pos,'right');
+                    element(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
+                    setTextPosition(element(i).element.texthandle,pos,'right');
                 end
                 
             case{'tabpanel'}
                 
-                panelname=elements(i).element.tag;
-                for j=1:length(elements(i).element.tabs)
-                    strings{j}=elements(i).element.tabs(j).tab.tabstring;
-                    tabnames{j}=elements(i).element.tabs(j).tab.tabstring;
+                panelname=element(i).element.tag;
+                for j=1:length(element(i).element.tab)
+                    strings{j}=element(i).element.tab(j).tab.tabstring;
+                    tabnames{j}=element(i).element.tab(j).tab.tabstring;
                     callbacks{j}=[];
-                    if ~isempty(elements(i).element.tabs(j).tab.callback)
-                        callbacks{j}=elements(i).element.tabs(j).tab.callback;
+                    if ~isempty(element(i).element.tab(j).tab.callback)
+                        callbacks{j}=element(i).element.tab(j).tab.callback;
                         inputArguments{j}=[];
                     else
                         % No callback given, use defaultTabCallback which
@@ -226,38 +378,37 @@ for i=1:length(elements)
                     end
                 end
                 
-                if ~isfield(elements(i).element,'activetabnr')
+                if ~isfield(element(i).element,'activetabnr')
                     % Tab panel is drawn for the first time
-                    elements(i).element.activetabnr=1;
+                    element(i).element.activetabnr=1;
                 end
                 
                 % Create tab panel
-                [elements(i).element.handle tabhandles]=tabpanel('create','figure',figh,'tag',panelname,'position',pos,'strings',strings, ...
-                    'callbacks',callbacks,'tabnames',tabnames,'activetabnr',elements(i).element.activetabnr, ...
+                [element(i).element.handle tabhandles]=tabpanel('create','figure',figh,'tag',panelname,'position',pos,'strings',strings, ...
+                    'callbacks',callbacks,'tabnames',tabnames,'activetabnr',element(i).element.activetabnr, ...
                     'inputarguments',inputArguments,'parent',parenthandle);
 
-                % Add UI elements to different tabs
-                for j=1:length(elements(i).element.tabs)
-                    elements(i).element.tabs(j).tab.style='tab';
-                    elements(i).element.tabs(j).tab.elements=gui_addElements(figh,elements(i).element.tabs(j).tab.elements,'getFcn',getFcn,'setFcn',setFcn, ...
+                % Add UI element to different tabs
+                for j=1:length(element(i).element.tab)
+                    element(i).element.tab(j).tab.style='tab';
+                    element(i).element.tab(j).tab.element=gui_addElements(figh,element(i).element.tab(j).tab.element,'getFcn',getFcn,'setFcn',setFcn, ...
                     'Parent',tabhandles(j));
-                    set(tabhandles(j),'Tag',elements(i).element.tabs(j).tab.tag);
-                    elements(i).element.tabs(j).tab.handle=tabhandles(j);
+                    set(tabhandles(j),'Tag',element(i).element.tab(j).tab.tag);
+                    element(i).element.tab(j).tab.handle=tabhandles(j);
                 end
                 
-                for j=1:length(elements(i).element.tabs)
-                    if elements(i).element.tabs(j).tab.enable==0
-                        tabpanel('disabletab','handle',elements(i).element.handle,'tabname',elements(i).element.tabs(j).tab.tabstring);
-%                        disableTab(gcf,elements(i).element.tabs(j).tab.tag);
+                for j=1:length(element(i).element.tab)
+                    if element(i).element.tab(j).tab.enable==0
+                        tabpanel('disabletab','handle',element(i).element.handle,'tabname',element(i).element.tab(j).tab.tabstring);
                     end                    
                 end
 
             case{'table'}
                 
-                tag=elements(i).element.tag;
-                nrrows=elements(i).element.nrrows;
-                inclb=elements(i).element.includebuttons;
-                incln=elements(i).element.includenumbers;
+                tag=element(i).element.tag;
+                nrrows=element(i).element.nrrows;
+                inclb=element(i).element.includebuttons;
+                incln=element(i).element.includenumbers;
                 
                 cltp=[];
                 width=[];
@@ -267,22 +418,22 @@ for i=1:length(elements)
                 callbacks=[];
                 
                 % Properties
-                for j=1:length(elements(i).element.columns)
-                    cltp{j}=elements(i).element.columns(j).column.style;
-                    width(j)=elements(i).element.columns(j).column.width;
+                for j=1:length(element(i).element.column)
+                    cltp{j}=element(i).element.column(j).column.style;
+                    width(j)=element(i).element.column(j).column.width;
                     for k=1:nrrows
-                        enable(k,j)=elements(i).element.columns(j).column.enable;
+                        enable(k,j)=element(i).element.column(j).column.enable;
                     end
-                    format{j}=elements(i).element.columns(j).column.format;
-                    txt{j}=elements(i).element.columns(j).column.text;
+                    format{j}=element(i).element.column(j).column.format;
+                    txt{j}=element(i).element.column(j).column.text;
                     callbacks{j}=[];
                     popuptext{j}={' '};
                 end
                 
                 % Data?
                 data=[];
-                for j=1:length(elements(i).element.columns)
-                    for k=1:elements(i).element.nrrows
+                for j=1:length(element(i).element.column)
+                    for k=1:element(i).element.nrrows
                         switch lower(cltp{j})
                             case{'editreal'}
                                 data{k,j}=0;
@@ -300,11 +451,11 @@ for i=1:length(elements)
                         end
                     end
                 end
-                elements(i).element.handle=table(gcf,'create','tag',tag,'data',data,'position',pos,'nrrows',nrrows,'columntypes',cltp,'width',width,'callbacks',callbacks, ...
+                element(i).element.handle=table(gcf,'create','tag',tag,'data',data,'position',pos,'nrrows',nrrows,'columntypes',cltp,'width',width,'callbacks',callbacks, ...
                     'includebuttons',inclb,'includenumbers',incln,'format',format,'enable',enable,'columntext',txt,'popuptext',popuptext);
         end
     catch
-        disp(['Something went wrong with generating element ' elements(i).element.tag]);
+        disp(['Something went wrong with generating element ' element(i).element.tag]);
         a=lasterror;
         disp(a.message);
         for ia=1:length(a.stack)
@@ -315,109 +466,125 @@ for i=1:length(elements)
     %% Set some stuff needed for each type of element
 
     % Parent
-    if ~isempty(elements(i).element.parent)
-        % Use parent defined in xml file (needed for elements inside panels)
-        ph=findobj(gcf,'Tag',elements(i).element.parent);
+    if ~isempty(element(i).element.parent)
+        % Use parent defined in xml file (needed for element inside panels)
+        ph=findobj(gcf,'Tag',element(i).element.parent);
     else
         % Default parent
         ph=parenthandle;
     end
     if ~isempty(ph)
-        set(elements(i).element.handle,'Parent',ph);
-        elements(i).element.parenthandle=ph;
-        if isfield(elements(i).element,'texthandle')
-            set(elements(i).element.texthandle,'Parent',ph);
+        set(element(i).element.handle,'Parent',ph);
+        element(i).element.parenthandle=ph;
+        if isfield(element(i).element,'texthandle')
+            set(element(i).element.texthandle,'Parent',ph);
         end
     end
     
     % Tooltip string
-    if ~isempty(elements(i).element.tooltipstring)
-        set(elements(i).element.handle,'ToolTipString',elements(i).element.tooltipstring);
+    if ~isempty(element(i).element.tooltipstring)
+        set(element(i).element.handle,'ToolTipString',element(i).element.tooltipstring);
     end
 
     % Enable
-    if elements(i).element.enable==0
-        set(elements(i).element.handle,'Enable','off');
-        if isfield(elements(i).element,'texthandle')
-            set(elements(i).element.texthandle,'Enable','off');
+    if element(i).element.enable==0
+        set(element(i).element.handle,'Enable','off');
+        if isfield(element(i).element,'texthandle')
+            set(element(i).element.texthandle,'Enable','off');
         end
     end
     
     %drawnow;
-    set(elements(i).element.handle,'Tag',elements(i).element.tag);
+    set(element(i).element.handle,'Tag',element(i).element.tag);
 
-    setappdata(elements(i).element.handle,'getFcn',getFcn);
-    setappdata(elements(i).element.handle,'setFcn',setFcn);
-    setappdata(elements(i).element.handle,'element',elements(i).element);
+    setappdata(element(i).element.handle,'getFcn',getFcn);
+    setappdata(element(i).element.handle,'setFcn',setFcn);
+    setappdata(element(i).element.handle,'element',element(i).element);
 
 end
 
-setappdata(parenthandle,'elements',elements);
+setappdata(parenthandle,'elements',element);
 setappdata(parenthandle,'getFcn',getFcn);
 setappdata(parenthandle,'setFcn',setFcn);
 
-gui_setElements(elements);
-
-%gui_updateDependencies(elements,getFcn);
+gui_setElements(element);
 
 % Now set callbacks for each element
-for i=1:length(elements)
+for i=1:length(element)
 
     try
         
-        switch lower(elements(i).element.style)
+        switch lower(element(i).element.style)
             
-            %% Standard elements
+            %% Standard element
             
             case{'edit'}
-                set(elements(i).element.handle,'Callback',{@edit_Callback,getFcn,setFcn,elements,i});
+                set(element(i).element.handle,'Callback',{@edit_Callback,getFcn,setFcn,element,i});
                 
             case{'checkbox'}
-                set(elements(i).element.handle,'Callback',{@checkbox_Callback,getFcn,setFcn,elements,i});
+                set(element(i).element.handle,'Callback',{@checkbox_Callback,getFcn,setFcn,element,i});
                 
             case{'radiobutton'}
-                set(elements(i).element.handle,'Callback',{@radiobutton_Callback,getFcn,setFcn,elements,i});
+                set(element(i).element.handle,'Callback',{@radiobutton_Callback,getFcn,setFcn,element,i});
                 
             case{'pushbutton'}
-                set(elements(i).element.handle,'Callback',{@pushbutton_Callback,elements,i});
+                set(element(i).element.handle,'Callback',{@pushbutton_Callback,element,i});
 
              case{'pushok'}
-                set(elements(i).element.handle,'Callback',{@pushOK_Callback,elements,i});
+                set(element(i).element.handle,'Callback',{@pushOK_Callback,element,i});
 
             case{'pushcancel'}
-                set(elements(i).element.handle,'Callback',{@pushCancel_Callback,elements,i});
+                set(element(i).element.handle,'Callback',{@pushCancel_Callback,element,i});
 
+            case{'selectfont'}
+                set(element(i).element.handle,'Callback',{@pushSelectFont_Callback,element,i});
+
+            case{'selectcolor'}
+                set(element(i).element.handle,'Callback',{@selectColor_Callback,element,i});
+
+            case{'selectmarker'}
+                set(element(i).element.handle,'Callback',{@selectMarker_Callback,element,i});
+
+            case{'selectmarkersize'}
+                set(element(i).element.handle,'Callback',{@selectMarkerSize_Callback,element,i});
+
+            case{'selectlinestyle'}
+                set(element(i).element.handle,'Callback',{@selectLineStyle_Callback,element,i});
+
+            case{'selectheadstyle'}
+                set(element(i).element.handle,'Callback',{@selectHeadStyle_Callback,element,i});
+                
             case{'togglebutton'}
-                set(elements(i).element.handle,'Callback',{@togglebutton_Callback,getFcn,setFcn,elements,i});
+                set(element(i).element.handle,'Callback',{@togglebutton_Callback,getFcn,setFcn,element,i});
                 
             case{'table'}
                 % Get handles from table
-                usd=get(elements(i).element.handle,'UserData');
-                usd.callback={@table_Callback,getFcn,setFcn,elements,i};
-                set(elements(i).element.handle,'UserData',usd);
+                usd=get(element(i).element.handle,'UserData');
+                usd.callback={@table_Callback,getFcn,setFcn,element,i};
+                set(element(i).element.handle,'UserData',usd);
                 tbh=usd.handles;
-                for j=1:length(elements(i).element.columns)
-                    for k=1:elements(i).element.nrrows
-                        if ~isempty(elements(i).element.columns(j).column.callback)
-                            callback=elements(i).element.column(j).column.callback;
+                for j=1:length(element(i).element.column)
+                    for k=1:element(i).element.nrrows
+                        if ~isempty(element(i).element.column(j).column.callback)
+                            callback=element(i).element.column(j).column.callback;
                         else
-                            callback={@table_Callback,getFcn,setFcn,elements,i,elements(i).element.callback,elements(i).element.option1,elements(i).element.option2};
+                            callback={@table_Callback,getFcn,setFcn,element,i,element(i).element.callback,element(i).element.option1,element(i).element.option2};
                         end
                         setappdata(tbh(k,j),'callback',callback);
                     end
                 end
                 
             case{'listbox'}
-                set(elements(i).element.handle,'Callback',{@listbox_Callback,getFcn,setFcn,elements,i});
+                set(element(i).element.handle,'Callback',{@listbox_Callback,getFcn,setFcn,element,i});
 
             case{'popupmenu'}
-                set(elements(i).element.handle,'Callback',{@popupmenu_Callback,getFcn,setFcn,elements,i});
+                set(element(i).element.handle,'Callback',{@popupmenu_Callback,getFcn,setFcn,element,i});
 
             case{'pushselectfile'}
-                set(elements(i).element.handle,'Callback',{@pushSelectFile_Callback,getFcn,setFcn,elements,i});
+                set(element(i).element.handle,'Callback',{@pushSelectFile_Callback,getFcn,setFcn,element,i});
 
             case{'pushsavefile'}
-                set(elements(i).element.handle,'Callback',{@pushSaveFile_Callback,getFcn,setFcn,elements,i});
+                set(element(i).element.handle,'Callback',{@pushSaveFile_Callback,getFcn,setFcn,element,i});
 
         end
         
@@ -433,9 +600,9 @@ for i=1:length(elements)
 end
 
 %%
-function edit_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+function edit_Callback(hObject,eventdata,getFcn,setFcn,element,i)
 
-el=elements(i).element;
+el=element(i).element;
 
 v=get(hObject,'String');
 
@@ -463,23 +630,23 @@ end
 
 gui_setValue(el,el.variable,v);
 
-finishCallback(elements,i);
+finishCallback(element,i);
 
 %%
-function checkbox_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+function checkbox_Callback(hObject,eventdata,getFcn,setFcn,element,i)
 
-el=elements(i).element;
+el=element(i).element;
 
 v=get(hObject,'Value');
 
 gui_setValue(el,el.variable,v); 
 
-finishCallback(elements,i);
+finishCallback(element,i);
 
 %%
-function radiobutton_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+function radiobutton_Callback(hObject,eventdata,getFcn,setFcn,element,i)
 
-el=elements(i).element;
+el=element(i).element;
 
 ion=get(hObject,'Value');
 
@@ -501,29 +668,29 @@ else
                         
     gui_setValue(el,el.variable,v); 
     
-    finishCallback(elements,i);
+    finishCallback(element,i);
     
 end
 
 %%
-function togglebutton_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+function togglebutton_Callback(hObject,eventdata,getFcn,setFcn,element,i)
 
-el=elements(i).element;
+el=element(i).element;
 
 ion=get(hObject,'Value');
 
 gui_setValue(el,el.variable,ion); 
 
-finishCallback(elements,i);
+finishCallback(element,i);
 
 %%
-function listbox_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+function listbox_Callback(hObject,eventdata,getFcn,setFcn,element,i)
 
 str=get(hObject,'String');
 % Check if listbox is not empty
 if ~isempty(str{1})
     
-    el=elements(i).element;
+    el=element(i).element;
     
     if isfield(el,'variable')
         
@@ -536,15 +703,19 @@ if ~isempty(str{1})
         end
         
         switch tp
-            case{'string'}                
-                if isfield(el.list,'values')
+            case{'string'}
+                if ~isempty(el.listvalue)
                     % Values must be cell array of strings
-                    if isfield(el.list.values,'variable')
-                        values=gui_getValue(el,el.list.values.variable);
-                    else
-                        for jj=1:length(el.list.values)
-                            values{jj}=el.list.values(jj).value;
+                    if isstruct(el.listvalue)
+                        if isfield(el.listvalue(1).listvalue,'variable')
+                            values=gui_getValue(el,el.listvalue(1).listvalue.variable);
+                        else
+                            for jj=1:length(el.listvalue)
+                                values{jj}=el.listvalue(jj).listvalue;
+                            end
                         end
+                    else
+                        values{1}=el.listvalue;
                     end
                 else
                     values=str;
@@ -566,12 +737,18 @@ if ~isempty(str{1})
                 end
             otherwise
                 % Integer
-                if isfield(el.list,'values')
+                if ~isempty(el.listvalue)
                     % Values must be cell array of strings
-                    if isfield(el.list.values,'variable')
-                        values=gui_getValue(el,el.list.values.variable);
+                    if isstruct(el.listvalue)
+                        if isfield(el.listvalue(1).listvalue,'variable')
+                            values=gui_getValue(el,el.listvalue(1).listvalue.variable);
+                        else
+                            for jj=1:length(el.listvalue)
+                                values(jj)=str2double(el.listvalue(j).listvalue);
+                            end
+                        end
                     else
-                        values=1:length(el.list.values);
+                        values=str2double(el.listvalue);
                     end
                 else
                     values=1:length(str);
@@ -590,19 +767,87 @@ if ~isempty(str{1})
                 end
         end
         
-        finishCallback(elements,i);
+        finishCallback(element,i);
     end
     
 end
 
 %%
-function popupmenu_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+function selectColor_Callback(hObject,eventdata,element,i)
+
+str=get(hObject,'String');
+% Check if listbox is not empty
+if ~isempty(str{1})
+    
+    el=element(i).element;
+    
+    if isfield(el,'variable')        
+        ii=get(hObject,'Value');        
+        gui_setValue(el,el.variable,str{ii});        
+        finishCallback(element,i);
+    end
+    
+end
+
+%%
+function selectMarker_Callback(hObject,eventdata,element,i)
+
+values={'.','o','x','+','*','s','d','v','^','<','>','p','h','none'};
+
+el=element(i).element;
+    
+if isfield(el,'variable')
+    ii=get(hObject,'Value');
+    gui_setValue(el,el.variable,values{ii});
+    finishCallback(element,i);
+end
+
+%%
+function selectHeadStyle_Callback(hObject,eventdata,element,i)
+
+values={'none','plain','ellipse','vback1','vback2','vback3','cback1','cback2','cback3' ...
+    'fourstar','rectangle','diamond','rose','hypocycloid','astroid','deltoid'};
+
+el=element(i).element;
+
+if isfield(el,'variable')
+    ii=get(hObject,'Value');
+    gui_setValue(el,el.variable,values{ii});
+    finishCallback(element,i);
+end
+
+%%
+function selectLineStyle_Callback(hObject,eventdata,element,i)
+
+values={'-','--','-.',':',''};
+
+el=element(i).element;
+    
+if isfield(el,'variable')
+    ii=get(hObject,'Value');
+    gui_setValue(el,el.variable,values{ii});
+    finishCallback(element,i);
+end
+
+%%
+function selectMarkerSize_Callback(hObject,eventdata,element,i)
+
+el=element(i).element;
+    
+if isfield(el,'variable')
+    ii=get(hObject,'Value');
+    gui_setValue(el,el.variable,ii);
+    finishCallback(element,i);
+end
+
+%%
+function popupmenu_Callback(hObject,eventdata,getFcn,setFcn,element,i)
 
 str=get(hObject,'String');
 % Check if menu is not empty
 if ~isempty(str{1})
        
-    el=elements(i).element;
+    el=element(i).element;
     
     ii=get(hObject,'Value');
     
@@ -614,27 +859,35 @@ if ~isempty(str{1})
 
     switch tp
         case{'string'}
-            if isfield(el.list,'values')
+            if ~isempty(el.listvalue)
                 % Values must be cell array of strings
-                if isfield(el.list.values,'variable')
-                    values=gui_getValue(el,el.list.values.variable);
-                else
-                    for jj=1:length(el.list.values)
-                        values{jj}=el.list.values(jj).value;
+                if isstruct(el.listvalue)
+                    if isfield(el.listvalue(1).listvalue,'variable')
+                        values=gui_getValue(el,el.listvalue(1).listvalue.variable);
+                    else
+                        for jj=1:length(el.listvalue)
+                            values{jj}=el.listvalue(jj).listvalue;
+                        end
                     end
+                else
+                    values{1}=el.listvalue;
                 end
             else
                 values=str;
             end
             gui_setValue(el,el.variable,values{ii});
         otherwise
-            if isfield(el.list,'values')
-                if isfield(el.list.values,'variable')
-                    values=gui_getValue(el,el.list.values.variable);
-                else
-                    for jj=1:length(el.list.values)
-                        values(jj)=str2double(el.list.values(jj).value);
+            if ~isempty(el.listvalue)
+                if isstruct(el.listvalue)
+                    if isfield(el.listvalue(1).listvalue,'variable')
+                        values=gui_getValue(el,el.listvalue(1).listvalue.variable);
+                    else
+                        for jj=1:length(el.listvalue)
+                            values(jj)=str2double(el.listvalue(jj).listvalue);
+                        end
                     end
+                else
+                    values{1}=str2double(el.listvalue);
                 end
             else
                 values=1:length(str);
@@ -642,14 +895,14 @@ if ~isempty(str{1})
             gui_setValue(el,el.variable,values(ii));
     end
         
-    finishCallback(elements,i);
+    finishCallback(element,i);
 
 end
 
 %%
-function pushSelectFile_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+function pushSelectFile_Callback(hObject,eventdata,getFcn,setFcn,element,i)
 
-el=elements(i).element;
+el=element(i).element;
 
 if isfield(el.selectiontext,'variable')
     selectiontext=gui_getValue(el,el.selectiontext.variable);
@@ -683,16 +936,16 @@ if pathname~=0
         set(el.texthandle,'Position',pos);
     end
     
-    elements(i).element.option2=filterindex;
+    element(i).element.option2=filterindex;
     
-    finishCallback(elements,i);
+    finishCallback(element,i);
 
 end
 
 %%
-function pushSaveFile_Callback(hObject,eventdata,getFcn,setFcn,elements,i)
+function pushSaveFile_Callback(hObject,eventdata,getFcn,setFcn,element,i)
 
-el=elements(i).element;
+el=element(i).element;
 
 fnameori=gui_getValue(el,el.variable);
 
@@ -728,21 +981,21 @@ if pathname~=0
         set(el.texthandle,'Position',pos);
     end
         
-    elements(i).element.option2=filterindex;
+    element(i).element.option2=filterindex;
     
-    finishCallback(elements,i);
+    finishCallback(element,i);
 
 end
 
 %%
-function table_Callback(getFcn,setFcn,elements,i)
+function table_Callback(getFcn,setFcn,element,i)
 
-el=elements(i).element;
+el=element(i).element;
 
 data=table(el.handle,'getdata');
 
 % Now set the data
-for j=1:length(el.columns)
+for j=1:length(el.column)
 
     v=[];
     
@@ -765,21 +1018,21 @@ for j=1:length(el.columns)
         end
     end
     
-    gui_setValue(el,el.columns(j).column.variable,v);
+    gui_setValue(el,el.column(j).column.variable,v);
 
 end
 
-finishCallback(elements,i);
+finishCallback(element,i);
 
 %%
-function pushbutton_Callback(hObject,eventdata,elements,i)
+function pushbutton_Callback(hObject,eventdata,element,i)
 
-finishCallback(elements,i);
+finishCallback(element,i);
 
 %%
-function pushOK_Callback(hObject,eventdata,elements,i)
+function pushOK_Callback(hObject,eventdata,element,i)
 
-el=elements(i).element;
+el=element(i).element;
 getFcn=getappdata(el.handle,'getFcn');
 setFcn=getappdata(el.handle,'setFcn');
 s=feval(getFcn);
@@ -788,9 +1041,9 @@ feval(setFcn,s);
 uiresume;
 
 %%
-function pushCancel_Callback(hObject,eventdata,elements,i)
+function pushCancel_Callback(hObject,eventdata,element,i)
 
-el=elements(i).element;
+el=element(i).element;
 getFcn=getappdata(el.handle,'getFcn');
 setFcn=getappdata(el.handle,'setFcn');
 s=feval(getFcn);
@@ -799,12 +1052,35 @@ feval(setFcn,s);
 uiresume;
 
 %%
-function finishCallback(elements,i)
-% All elements are updated and the callback is executed
+function pushSelectFont_Callback(hObject,eventdata,element,i)
 
-if ~isempty(elements(i).element.callback)
+el=element(i).element;
+fontori=gui_getValue(el,el.variable);
+if isfield(el,'horizontalalignment')
+    horal=el.horizontalalignment;
+else
+    horal=0;
+end
+if isfield(el,'verticalalignment')
+    veral=el.verticalalignment;
+else
+    veral=0;
+end
+if ~isempty(fontori)
+    fontnew=gui_selectFont('font',fontori,'horizontalalignment',horal,'verticalalignment',veral);
+else
+    fontnew=gui_selectFont('horizontalalignment',horal,'verticalalignment',veral);
+end
+gui_setValue(el,el.variable,fontnew);
+finishCallback(element,i);
+
+%%
+function finishCallback(element,i)
+% All element are updated and the callback is executed
+
+if ~isempty(element(i).element.callback)
     % Execute callback
-    feval(elements(i).element.callback,elements(i).element.option1,elements(i).element.option2);
+    feval(element(i).element.callback,element(i).element.option1,element(i).element.option2);
 end
 
-gui_setElements(elements);
+gui_setElements(element);

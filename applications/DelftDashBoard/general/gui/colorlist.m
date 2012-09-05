@@ -127,7 +127,11 @@ switch lower(opt)
                     rgb=[NaN NaN NaN];
                 end
         end        
-        varargout{1}=rgb;        
+        if isnan(rgb(1))
+            varargout{1}='none';
+        else
+            varargout{1}=rgb/255;
+        end
 end
 
 %%

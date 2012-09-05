@@ -4,6 +4,14 @@ function val=gui_getValue(el,v)
 val=[];
 
 getFcn=getappdata(el.handle,'getFcn');
+
+
+if length(v)>=11
+    if strcmpi(v(1:11),'mainhandles')
+        getFcn=@getHandles;
+    end
+end
+
 s=feval(getFcn);
 
 % Variable name
@@ -27,9 +35,15 @@ if length(v)>=7
         varstring=strrep(varstring,'handles','s');
     end
 end
+if length(v)>=11
+    if strcmpi(v(1:11),'mainhandles')
+        varstring=v;
+        varstring=strrep(varstring,'mainhandles','s');
+    end
+end
 
 try
     val=eval(varstring);
 catch
-%    disp(varstring)
+    disp(varstring)
 end

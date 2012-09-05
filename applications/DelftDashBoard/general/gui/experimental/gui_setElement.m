@@ -106,12 +106,16 @@ switch lower(el.style)
     case{'listbox','popupmenu'}
 
         % Texts
-        if isfield(el.list.texts,'variable')
-            stringlist=gui_getValue(el,el.list.texts.variable);
-        else
-            for jj=1:length(el.list.texts)
-                stringlist{jj}=el.list.texts(jj).text;
+        if isstruct(el.listtext)
+            if isfield(el.listtext(1).listtext,'variable')
+                stringlist=gui_getValue(el,el.listtext(1).listtext.variable);
+            else
+                for jj=1:length(el.listtext)
+                    stringlist{jj}=el.listtext(jj).listtext;
+                end
             end
+        else
+            stringlist=gui_getValue(el,el.listtext);
         end
         
         ii=1;
@@ -126,17 +130,21 @@ switch lower(el.style)
                 tp=lower(el.variable.type);
             end
             switch tp
-                case{'string'}                    
+                case{'string'}
 
                     % Values
-                    if isfield(el.list,'values')
+                    if ~isempty(el.listvalue)
                         % Values prescribed in xml file
-                        if isfield(el.list.values,'variable')
-                            values=gui_getValue(el,el.list.values.variable);
-                        else
-                            for jj=1:length(el.list.values)
-                                values{jj}=el.list.values(jj).value;
+                        if isstruct(el.listvalue)
+                            if isfield(el.listvalue(1).listvalue,'variable')
+                                values=gui_getValue(el,el.listvalue.listvalue.variable);
+                            else
+                                for jj=1:length(el.listvalue)
+                                    values{jj}=el.listvalue(jj).listvalue;
+                                end
                             end
+                        else
+                            values{1}=gui_getValue(el,el.listvalue);
                         end
                     else
                         % Values are the same as the string list
@@ -146,7 +154,16 @@ switch lower(el.style)
                     if isfield(el,'variable')
                         if ~isempty(el.variable)
                             str=gui_getValue(el,el.variable);
-                            ii=strmatch(lower(str),lower(values),'exact');
+                            if isempty(str)
+                              if isfield(el,'defaultvalue')
+                                str=el.defaultvalue;
+                              end
+                            end                            
+                            if ~isempty(str)
+                                ii=strmatch(lower(str),lower(values),'exact');
+                            else
+                                ii=1;
+                            end
                         end
                     end
                     
@@ -158,22 +175,19 @@ switch lower(el.style)
                         ii=gui_getValue(el,el.multivariable);
                     else                        
                         % Values
-%                        if ~isempty(el.list.values)
-                        if isfield(el.list,'values')
+                        if ~isempty(el.listvalue)
                             % Values prescribed in xml file
-                            if isfield(el.list.values,'variable')
-                                values=gui_getValue(el,el.list.values.variable);
-                            else
-                                for jj=1:length(el.list.values)
-                                    values(jj)=str2double(el.list.values(jj).value);
+                            if isstruct(el.listvalue)
+                                if isfield(el.listvalue(1).listvalue,'variable')
+                                    values=gui_getValue(el,el.listvalue.listvalue.variable);
+                                else
+                                    for jj=1:length(el.listvalue)
+                                        values(jj)=str2double(el.listvalue(jj).listvalue);
+                                    end
                                 end
+                            else
+                                values=str2double(el,el.listvalue);
                             end
-                        else
-                            % Values 1 to length of stringlist
-                            values=1:length(stringlist);
-                        end
-                        
-                        if isfield(el.list,'values')
                             val=gui_getValue(el,el.variable);
                             ii=find(values==val,1,'first');
                         else
@@ -184,7 +198,39 @@ switch lower(el.style)
         end
         set(el.handle,'Value',ii);
         set(el.handle,'String',stringlist);
-                
+
+    case{'selectcolor'}
+        % For colorlists etc
+        values=get(el.handle,'String');
+        str=gui_getValue(el,el.variable);
+        ii=strmatch(lower(str),lower(values),'exact');
+        set(el.handle,'Value',ii);
+
+    case{'selectmarker'}
+        % For colorlists etc
+        values={'.','o','x','+','*','s','d','v','^','<','>','p','h','none'};
+        str=gui_getValue(el,el.variable);
+        ii=strmatch(lower(str),lower(values),'exact');
+        set(el.handle,'Value',ii);
+
+    case{'selectmarkersize'}
+        ii=gui_getValue(el,el.variable);
+        set(el.handle,'Value',ii);
+
+    case{'selectheadstyle'}
+        % For colorlists etc
+        values=get(el.handle,'String');
+        str=gui_getValue(el,el.variable);
+        ii=strmatch(lower(str),lower(values),'exact');
+        set(el.handle,'Value',ii);
+        
+    case{'selectlinestyle'}
+        % For colorlists etc
+        values={'-','--','-.',':',''};
+        str=gui_getValue(el,el.variable);
+        ii=strmatch(lower(str),lower(values),'exact');
+        set(el.handle,'Value',ii);
+        
     case{'text'}
         
         if isfield(el,'variable')
@@ -204,9 +250,11 @@ switch lower(el.style)
                 set(el.handle,'String',str);
                 
                 pos=el.position;
-                ext=get(el.handle,'Extent');
-                pos(3)=ext(3);
-                pos(4)=15;
+%                 if length(pos)<4
+                    ext=get(el.handle,'Extent');
+                    pos(3)=ext(3);
+                    pos(4)=15;
+%                 end
                 set(el.handle,'Position',pos);
             end
         end
@@ -237,9 +285,9 @@ switch lower(el.style)
 
     case{'table'}
         % Determine number of rows in table
-        for j=1:length(el.columns)
-            val=gui_getValue(el,el.columns(j).column.variable);
-            switch lower(el.columns(j).column.style)
+        for j=1:length(el.column)
+            val=gui_getValue(el,el.column(j).column.variable);
+            switch lower(el.column(j).column.style)
                 case{'editreal','checkbox','edittime'}
                     % Reals must be a vector
                     sz=size(val);
@@ -252,20 +300,20 @@ switch lower(el.style)
         
         % Determine string list in case of popup menu
         ipopup=0;
-        for j=1:length(el.columns)
+        for j=1:length(el.column)
             popupText{j}={' '};
-            switch lower(el.columns(j).column.style)
+            switch lower(el.column(j).column.style)
                 case{'popupmenu'}
                     ipopup=1;
-                    popupText{j}=gui_getValue(el,el.columns(j).column.list.texts.variable);
+                    popupText{j}=gui_getValue(el,el.column(j).column.listtext(1).listtext.variable);
             end
         end
         
         % Now set the data
-        for j=1:length(el.columns)
-            val=gui_getValue(el,el.columns(j).column.variable);
+        for j=1:length(el.column)
+            val=gui_getValue(el,el.column(j).column.variable);
             for k=1:nrrows
-                switch lower(el.columns(j).column.style)
+                switch lower(el.column(j).column.style)
                     case{'editreal'}
                         data{k,j}=val(k);
                     case{'edittime'}
@@ -274,7 +322,6 @@ switch lower(el.style)
                         data{k,j}=val{k};
                     case{'popupmenu'}
                         data{k,j}=val(k);
-%                        data{k,j}=val{k};
                     case{'checkbox'}
                         data{k,j}=val(k);
                     case{'pushbutton'}
@@ -292,4 +339,3 @@ end
 
 % And now update the dependency of this element
 gui_updateDependency(h);
-
