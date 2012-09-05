@@ -86,7 +86,7 @@ varstruct = setproperty(varstruct,varargin,'onClassChange','ignore');
 validdatatypenames = {
     'char'     
     'double' 
-    'float'  
+    'single'  
     'int8'   
     'int16'   
     'int32'    
