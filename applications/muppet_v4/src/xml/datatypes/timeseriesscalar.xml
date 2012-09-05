@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<root>
+  <name>timeseriesscalar</name>
+  <longname>Time Series Scalar</longname>
+  <plot>
+    <type>timeseries</type>
+    <plotroutine>
+      <name>plotline</name>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>linedata</name>
+      </plotoption>
+      <plotoption>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>markerdata</name>
+      </plotoption>
+      <plotoption>
+        <name>marker</name>
+      </plotoption>
+      <plotoption>
+        <name>markersize</name>
+      </plotoption>
+      <plotoption>
+        <name>markeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>markerfacecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
+    </plotroutine>
+  </plot>
+</root>

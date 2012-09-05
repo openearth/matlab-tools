@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Domain</text>
+    <variable>parameters(s.activeparameter).parameter.domainnumber</variable>
+    <tooltipstring>Select domain</tooltipstring>
+    <callback>muppet_datasetGUI</callback>
+    <option1>selectdomain</option1>
+    <position>60 0 270 20</position>
+    <list>
+      <texts>
+        <variable>parameters(s.activeparameter).parameter.domainnames</variable>
+      </texts>
+    </list> 
+    <dependencies>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <checks>
+          <check>
+            <variable>parameters(s.activeparameter).parameter.nrdomains</variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </checks>
+      </dependency>
+    </dependencies> 
+  </element>
+</root>

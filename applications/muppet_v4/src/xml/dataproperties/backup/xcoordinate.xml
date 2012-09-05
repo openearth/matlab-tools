@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>popupmenu</style>
+    <text>X Axis</text>
+    <variable>xcoordinate</variable>
+    <type>string</type>
+    <tooltipstring>Select x axis</tooltipstring>
+    <position>60 0 270 20</position>
+    <list>
+      <texts>
+        <text>path distance</text>
+        <text>reverse path distance</text>
+        <text>x coordinate</text>
+        <text>y coordinate</text>
+      </texts>
+      <values>
+        <value>pathdistance</value>
+        <value>reversepathdistance</value>
+        <value>xcoordinate</value>
+        <value>ycoordinate</value>
+      </values>
+    </list> 
+  </element>
+</root>

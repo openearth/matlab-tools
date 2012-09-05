@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <text>Parameter</text>
+    <variable>activeparameter</variable>
+    <tooltipstring>Select parameter</tooltipstring>
+    <callback>muppet_datasetGUI</callback>
+    <option1>selectparameter</option1>
+    <position>60 0 270 20</position>
+    <list>
+      <texts>
+        <variable>parameternames</variable>
+      </texts>
+    </list> 
+  </element>
+</root>

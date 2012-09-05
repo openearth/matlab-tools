@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<root>
+  <name>map2dscalar</name>
+  <longname>Scalar 2D</longname>
+  <plot>
+    <type>map2d</type>
+    <plotroutine>
+      <name>plotpatches</name>
+      <plotoption>
+        <name>linestyle</name>
+        <value>-</value>
+      </plotoption>
+    </plotroutine>
+  </plot>
+  <plot>
+    <type>xy</type>
+    <plotroutine>
+      <name>plotpatches</name>
+      <plotoption>
+        <name>linestyle</name>
+        <value>-</value>
+      </plotoption>
+    </plotroutine>
+  </plot>
+</root>

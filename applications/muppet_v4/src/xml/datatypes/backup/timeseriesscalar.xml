@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<root>
+  <name>timeseriesscalar</name>
+  <longname>Time Series Scalar</longname>
+    <plot>
+      <type>timeseries</type>
+        <plotroutine>
+          <name>plotline</name>
+            <plotoption>
+              <name>linecolor</name>
+                <default>
+                  <value>black</value>
+                </default>
+                <default>
+                  <value>red</value>
+                </default>
+                <default>
+                  <value>blue</value>
+                </default>
+                <default>
+                  <value>green</value>
+                </default>
+            </plotoption>
+            <plotoption>
+              <name>linestyle</name>
+              <value>-</value>
+            </plotoption>
+            <plotoption>
+              <name>linewidth</name>
+              <value>0.5</value>
+            </plotoption>
+            <plotoption>
+              <name>marker</name>
+              <value>none</value>
+            </plotoption>
+            <plotoption>
+              <name>markersize</name>
+              <value type='int'>10</value>
+            </plotoption>
+            <plotoption>
+              <name>markeredgecolor</name>
+              <value>black</value>
+            </plotoption>
+            <plotoption>
+              <name>markerfacecolor</name>
+              <value>black</value>
+            </plotoption>
+        </plotroutine>
+    </plot>
+</root>

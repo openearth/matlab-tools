@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<root>
+  <plotoption>
+    <name>name</name>
+    <keyword>Dataset</keyword>
+    <write>0</write>
+  </plotoption>
+  <plotoption>
+    <name>plotroutine</name>
+    <keyword>PlotRoutine</keyword>
+  </plotoption>
+  <plotoption>
+    <name>backgroundcolor</name>
+    <keyword>BackgroundColor</keyword>
+    <element>
+      <style>selectcolor</style>
+      <text>Color</text>
+      <includenone>1</includenone>
+      <position>50 0 100 20</position>
+    </element>
+  </plotoption>
+  <plotoption>
+    <name>string</name>
+    <keyword>Text</keyword>
+    <type>multilinetext</type>
+    <element>
+      <style>edit</style>
+      <nrlines>5</nrlines>
+      <text>Text</text>
+      <position>50 0 300 150</position>
+    </element>
+  </plotoption>
+  <plotoption>
+    <name>box</name>
+    <keyword>Box</keyword>
+    <type>boolean</type>
+    <element>
+      <style>checkbox</style>
+      <text>Box</text>
+      <position>50 0 50 20</position>
+    </element>
+  </plotoption>
+  <plotoption>
+    <name>legendtext</name>
+    <keyword>LegendText</keyword>
+    <element>
+      <style>edit</style>
+      <type>string</type>
+      <text>Legend Text</text>
+      <position>80 0 295 20</position>
+    </element>
+  </plotoption>
+  <plotoption>
+    <name>thinning</name>
+    <keyword>ThinningFactor</keyword>
+    <type>int</type>
+    <default>1</default>
+    <check>
+      <operator>ne</operator>
+    </check>
+    <element>
+      <style>popupmenu</style>
+      <type>int</type>
+      <text>Thinning</text>
+      <listtext>1</listtext>
+      <listtext>2</listtext>
+      <listtext>3</listtext>
+      <listtext>4</listtext>
+      <listtext>5</listtext>
+      <listtext>6</listtext>
+      <listtext>7</listtext>
+      <listtext>8</listtext>
+      <listtext>9</listtext>
+      <listtext>10</listtext>
+    </element>
+  </plotoption>
+</root>
