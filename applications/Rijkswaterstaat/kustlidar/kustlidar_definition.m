@@ -88,27 +88,33 @@ function D = kustlidar_definition(varargin)
 
 %%
 OPT = struct(...
-    'level', 2,...
+    'level', 1,...
     'x', [],...
     'y', []);
 
 OPT = setproperty(OPT, varargin);
 
 %% define all kaartbladen
+% lower-left corner of main tile 1
+x_origin     = 140000;
+x_factor     = 1;
+y_origin     = 6e5;%606250;
+y_factor     = -1;
+% x and y range of whole tiled area
+x_min = x_origin-4*40000;
+x_max = x_origin+3*40000;
+y_min = y_origin-12*25000;
+y_max = y_origin+25000;
+
 D.ncols        = 1000*4*2 * 2^(sign(-OPT.level)-OPT.level); % nx
 D.nrows        = 1250*4 * 2^(-OPT.level); % ny
 D.cellsize     = 5;  % dx = dy by definition
-D.xllcorner    = -20000:D.cellsize*D.ncols:299000;
-D.yllcorner    = 356250:D.cellsize*D.nrows:630000;
+D.xllcorner    = x_min:D.cellsize*D.ncols:x_max;
+D.yllcorner    = y_min:D.cellsize*D.nrows:y_max;
 if all(isfinite([OPT.x OPT.y])) && ~isempty([OPT.x OPT.y])
     D.xllcorner = OPT.x;
     D.yllcorner = OPT.y;
 end
-% lower-left corner of main tile 1
-y_origin     = 606250;
-y_factor     = -1;
-x_origin     = 140000;
-x_factor     = 1;
 
 [D.xllcorner,...
     D.yllcorner]=meshgrid(D.xllcorner,D.yllcorner);

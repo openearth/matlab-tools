@@ -143,7 +143,7 @@ miny    = floor(miny/mapsizey)*mapsizey + OPT.schema.grid_offset(end);
 x       =         xllcenter:cellsize:xllcenter + cellsize*(ncols-1);
 y       =         yllcenter:cellsize:yllcenter + cellsize*(nrows-1);
 
-multiWaitbar('Processing file',WB.done/WB.todo,'label',sprintf('Processing %s; writing data', fns.name));
+multiWaitbar('Processing file',WB.done/WB.todo,'label',sprintf('Processing %s; writing data', fullfile(fns.pathname, fns.name)));
 WB.n     = 0;
 WB.steps = length(minx : mapsizex : maxx) * length(miny : mapsizey : maxy);
 
