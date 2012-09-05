@@ -104,6 +104,9 @@ schema.Format       = 'netcdf4'; % netcdf4 or classic
 
 schema = setproperty(schema,varargin);
 
+%% check format
+assert(any(strcmpi(schema.Format,{'netcdf4','classic'})),'Format must be either ''netcdf4'' or ''classic''')
+
 %% process dimstruct
 % check input
 for ii = 1:length(dimstruct)
@@ -141,7 +144,8 @@ for ii = 1:length(varstruct)
     % parse fill value and check datatype
     varstruct(ii).FillValue  = parseFillValue(...
         varstruct(ii).FillValue,...
-        varstruct(ii).Datatype);
+        varstruct(ii).Datatype,...
+        schema.Format);
     
     % parse atributes
     varstruct(ii).Attributes = parseAttributes(...
@@ -158,37 +162,57 @@ schema.Variables  = varstruct;
 schema.Attributes = parseAttributes(schema.Attributes,[],[],[]);
 
 if strcmpi(schema.Format,'classic')
+    % netcdf classic format does not support these parameters, so empty them
     [schema.Variables.ChunkSize]    = deal([]);
-    [schema.Variables.FillValue]    = deal([]);
     [schema.Variables.DeflateLevel] = deal([]);
 end
 
-function FillValue = parseFillValue(FillValue,Datatype)
-
-datatypenames = {
-    'char'     'NC_FILL_CHAR'
-    'double'   'NC_FILL_DOUBLE'
-    'float'    'NC_FILL_FLOAT'
-    'int8'     'NC_FILL_BYTE'
-    'int16'    'NC_FILL_SHORT'
-    'int32'    'NC_FILL_INT'
-    'int64'    'NC_FILL_INT64'
-    'uint8'    'NC_FILL_UBYTE'
-    'uint16'   'NC_FILL_USHORT'
-    'uint32'   'NC_FILL_UINT'
-    'uint64'   'NC_FILL_UINT64'
-    };
-
-n = strcmpi(Datatype,datatypenames(:,1));
-
-if ~any(n)
-    error('Datatype %s is not a valid type. Valid types are:\n%s',Datatype,sprintf('    %s\n',datatypenames{:,1}));
+function FillValue = parseFillValue(FillValue,Datatype,Format)
+switch lower(Format)
+    case 'classic'
+        datatypenames = {
+            'char'     'NC_FILL_CHAR'
+            'double'   'NC_FILL_DOUBLE'
+            'single'   'NC_FILL_FLOAT'
+            'int8'     'NC_FILL_BYTE'
+            'int16'    'NC_FILL_SHORT'
+            'int32'    'NC_FILL_INT'
+            };
+        
+        n = strcmpi(Datatype,datatypenames(:,1));
+        
+        if ~any(n)
+            error('Datatype %s is not a valid type. Valid types are:\n%s',Datatype,sprintf('    %s\n',datatypenames{:,1}));
+        end
+        
+        % set _FillValue to empty as it is not supported by netcdf classic
+        FillValue = cast([],Datatype);
+        
+    case 'netcdf4'
+        datatypenames = {
+            'char'     'NC_FILL_CHAR'
+            'double'   'NC_FILL_DOUBLE'
+            'single'   'NC_FILL_FLOAT'
+            'int8'     'NC_FILL_BYTE'
+            'int16'    'NC_FILL_SHORT'
+            'int32'    'NC_FILL_INT'
+            'int64'    'NC_FILL_INT64'
+            'uint8'    'NC_FILL_UBYTE'
+            'uint16'   'NC_FILL_USHORT'
+            'uint32'   'NC_FILL_UINT'
+            'uint64'   'NC_FILL_UINT64'
+            };
+        
+        n = strcmpi(Datatype,datatypenames(:,1));
+        
+        if ~any(n)
+            error('Datatype %s is not a valid type. Valid types are:\n%s',Datatype,sprintf('    %s\n',datatypenames{:,1}));
+        end
+        
+        if isequal(FillValue,'auto')
+            FillValue = netcdf.getConstant(datatypenames{n,2});
+        end
 end
-
-if isequal(FillValue,'auto') 
-    FillValue = netcdf.getConstant(datatypenames{n,2});
-end
-
 function Attributes = parseAttributes(Attributes,FillValue,scale_factor,add_offset)
 
 if ~isempty(add_offset)
