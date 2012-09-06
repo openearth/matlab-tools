@@ -83,9 +83,9 @@ dp(dp==0)=NaN;
 dp(1:end-1,1:end-1)=-flow.depthZ;
 
 if strcmpi(flow.vertCoord,'z')
-    dplayer=GetLayerDepths(dp,flow.thick,flow.zBot,flow.zTop);
+    dplayer=getLayerDepths(dp,flow.thick,flow.zBot,flow.zTop);
 else
-    dplayer=GetLayerDepths(dp,flow.thick);
+    dplayer=getLayerDepths(dp,flow.thick);
 end
 
 %% Water Level
