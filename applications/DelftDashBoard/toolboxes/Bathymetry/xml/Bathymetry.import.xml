@@ -17,7 +17,8 @@
         <item idx="4" type="char" size="1 18">Grid Files (*.grd)</item>
         <item idx="5" type="char" size="1 17">XYZ files (*.xyz)</item>
         <item idx="6" type="char" size="1 19">NetCDF files (*.nc)</item>
-    </extension> <selectiontext>Select bathy file</selectiontext>
+    </extension>
+    <selectiontext>Select bathy file</selectiontext>
     <tooltipstring>Select bathymetry file</tooltipstring> 
   </element>
   <element>

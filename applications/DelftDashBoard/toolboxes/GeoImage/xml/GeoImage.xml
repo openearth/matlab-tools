@@ -59,7 +59,6 @@
       <type>real</type>
       <tooltipstring>Edit maximum y coordinate</tooltipstring>
     </element> 
-
     <element>
       <tag>selectzoomlevel</tag>
       <style>popupmenu</style>
@@ -74,42 +73,30 @@
           <variable>zoomLevelStrings</variable>
         </texts>
         <values>
-	  <value>0</value>
-	  <value>4</value>
-	  <value>5</value>
-	  <value>6</value>
-	  <value>7</value>
-	  <value>8</value>
-	  <value>9</value>
-	  <value>10</value>
-	  <value>11</value>
-	  <value>12</value>
-	  <value>13</value>
-	  <value>14</value>
-	  <value>15</value>
-	  <value>16</value>
-	  <value>17</value>
-	  <value>18</value>
-	  <value>19</value>
-	  <value>20</value>
-	  <value>21</value>
-	  <value>22</value>
-	  <value>23</value>
-	</values>
+          <value>0</value>
+          <value>4</value>
+          <value>5</value>
+          <value>6</value>
+          <value>7</value>
+          <value>8</value>
+          <value>9</value>
+          <value>10</value>
+          <value>11</value>
+          <value>12</value>
+          <value>13</value>
+          <value>14</value>
+          <value>15</value>
+          <value>16</value>
+          <value>17</value>
+          <value>18</value>
+          <value>19</value>
+          <value>20</value>
+          <value>21</value>
+          <value>22</value>
+          <value>23</value>
+        </values>
       </list>
-      <dependencies>
-        <dependency>
-          <action>update</action>
-          <tags>
-            <tag>editxmin</tag>
-            <tag>editxmax</tag>
-            <tag>editymin</tag>
-            <tag>editymax</tag>
-          </tags>
-        </dependency>
-      </dependencies>
     </element> 
-
     <element>
       <tag>editnpix</tag>
       <style>edit</style>
@@ -120,7 +107,6 @@
       <type>integer</type>
       <tooltipstring>Edit number of pixels in horizontal direction.</tooltipstring>
     </element> 
-
     <element>
       <tag>selecttype</tag>
       <style>popupmenu</style>
@@ -130,20 +116,19 @@
       <variable>whatKind</variable>
       <type>string</type>
       <list>
-      <texts>
-      <text>Aerial</text>
-      <text>Hybrid</text>
-      <text>Road</text>
-      </texts>
-      <values>
-      <value>aerial</value>
-      <value>hybrid</value>
-      <value>road</value>
-      </value>
+        <texts>
+          <text>Aerial</text>
+          <text>Hybrid</text>
+          <text>Road</text>
+        </texts>
+        <values>
+          <value>aerial</value>
+          <value>hybrid</value>
+          <value>road</value>
+        </values>
       </list>
       <tooltipstring>Select image type</tooltipstring>
-    </element> 
-
+    </element>         
     <element>
       <tag>drawrectangle</tag>
       <style>pushbutton</style>
