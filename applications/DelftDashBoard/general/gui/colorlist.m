@@ -123,7 +123,7 @@ switch lower(opt)
                 if ~isempty(ii)
                     rgb=squeeze(availableColors.val(ii,:));
                 else
-                    warning(['Color ' colorname 'not found']);
+                    warning(['Color ' colorname ' not found']);
                     rgb=[NaN NaN NaN];
                 end
         end        
