@@ -14,17 +14,9 @@ if isdeployed
     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
     handles.MuppetPath=[fileparts(exeDir) filesep];
 else
-    if exist('muppet.ini','file')
-        fid=fopen('muppet.ini','r');
-        pth = fgetl(fid);
-        fclose(fid);
-        if ~strcmpi(pth(end),filesep)
-            pth=[pth filesep];
-        end
-        handles.MuppetPath=pth;
-    else
-        error('File muppet.ini not found!');
-    end
+    pth = fileparts(mfilename('fullpath'));
+    pth = [pth filesep '..' filesep];
+    handles.MuppetPath=pth;
 end
 
 if nargin==0

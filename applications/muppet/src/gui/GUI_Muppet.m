@@ -3784,10 +3784,14 @@ function MenuCoordinateConversion_Callback(hObject, eventdata, handles)
 
 if ~isfield(handles,'EPSG')
     wb = waitbox('Reading coordinate conversion libraries ...');
-    curdir=[handles.MuppetPath 'settings' filesep 'SuperTrans'];
-    handles.EPSG=load([curdir filesep 'data' filesep 'EPSG.mat']);
-    if exist([curdir filesep 'data' filesep 'EPSG_ud.mat'],'file')
-        sud=load([curdir filesep 'data' filesep 'EPSG_ud.mat']);
+    curdir = fileparts(which('SuperTrans'));
+    fname = fullfile(curdir,'..','data','EPSG.mat');
+    if exist(fname,'file')==2
+        handles.EPSG = load(fname);
+    end
+    fname = fullfile(curdir,'..','data','EPSG_ud.mat');
+    if exist(fname,'file')==2
+        sud=load(fname);
         fnames1=fieldnames(handles.EPSG);
         for i=1:length(fnames1)
             fnames2=fieldnames(handles.EPSG.(fnames1{i}));
@@ -3809,7 +3813,11 @@ if ~isfield(handles,'EPSG')
     close(wb);
 end
 
-SuperTrans(handles.EPSG);
+if exist(curdir,'dir')==7
+    SuperTrans(handles.EPSG);
+else
+    errordlg('SuperTrans toolbox is not installed.','SuperTrans is not found','modal');
+end
 
 guidata(hObject, handles);
 
