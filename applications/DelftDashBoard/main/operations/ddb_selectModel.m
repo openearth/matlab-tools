@@ -55,13 +55,13 @@ function ddb_selectModel(mdl)
 handles=getHandles;
 
 % Making previous model invisible
-set(handles.Model(md).GUI.elements(1).element.handle,'Visible','off');
+set(handles.Model(md).GUI.element(1).element.handle,'Visible','off');
 
 % Deactivate current model
 feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',0,'wavedomain',0,'deactivate',1);
 
 % Remove all elements from toolbox tab
-parent=handles.Model(md).GUI.elements(1).element.tabs(1).tab.handle;
+parent=handles.Model(md).GUI.element(1).element.tab(1).tab.handle;
 ch=get(parent,'Children');
 if ~isempty(ch)
     delete(ch);
@@ -75,7 +75,7 @@ handles.activeModel.nr=ii;
 setHandles(handles);
 
 % Make new active model visible
-set(handles.Model(md).GUI.elements(1).element.handle,'Visible','on');
+set(handles.Model(md).GUI.element(1).element.handle,'Visible','on');
 
 % Change menu items (file, domain and view)
 ddb_changeFileMenuItems;
@@ -88,7 +88,7 @@ else
 end
 
 % Make the map panel a child of the present model tab panel
-set(handles.GUIHandles.mapPanel,'Parent',handles.Model(md).GUI.elements(1).element.handle);
+set(handles.GUIHandles.mapPanel,'Parent',handles.Model(md).GUI.element(1).element.handle);
 
 % Select toolbox
 ddb_selectToolbox;

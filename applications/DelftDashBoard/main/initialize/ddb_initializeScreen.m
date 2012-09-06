@@ -63,14 +63,14 @@ function handles = ddb_initializeScreen(handles)
 
 % Model tabs
 for i=1:length(handles.Model)
-    elements=handles.Model(i).GUI.elements;
+    element=handles.Model(i).GUI.element;
     subFields{1}='Model';
     subFields{2}='Input';
     subIndices={i,1};
-    if ~isempty(elements)
-        elements=addUIElements(gcf,elements,'subFields',subFields,'subIndices',subIndices,'getFcn',@getHandles,'setFcn',@setHandles);
-        set(elements(1).handle,'Visible','off');
-        handles.Model(i).GUI.elements=elements;
+    if ~isempty(element)
+        element=addUIElements(gcf,element,'subFields',subFields,'subIndices',subIndices,'getFcn',@getHandles,'setFcn',@setHandles);
+        set(element(1).handle,'Visible','off');
+        handles.Model(i).GUI.element=element;
     end
 end
 
@@ -79,7 +79,7 @@ end
 % First make large panel to contain map axis, colorbar etc.
 % The large panel will be a child of the active model gui
 
-handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[10 10 870 440],'Parent',handles.Model(i).GUI.elements(1).handle);
+handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[10 10 870 440],'Parent',handles.Model(i).GUI.element(1).handle);
 
 % Add map axis
 

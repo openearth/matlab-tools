@@ -81,5 +81,4 @@ if exist([xmldir fname],'file')>0
     
 end
 
-handles.Toolbox(j).GUI.elements=xml.elements;
-
+handles.Toolbox(j).GUI.element=xml.element;

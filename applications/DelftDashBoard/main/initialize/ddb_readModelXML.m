@@ -74,11 +74,11 @@ if exist([xmldir fname],'file')
     handles.Model(j).longName=xml.longname;    
     handles.Model(j).supportsMultipleDomains=xml.multipledomains;    
     handles.Model(j).enable=xml.enable;
-    handles.Model(j).elements=xml.elements;
+    handles.Model(j).element=xml.element;
     
 end
 
-handles.Model(j).GUI.elements=xml.elements;
+handles.Model(j).GUI.element=xml.element;
 
 %% Menu File
 if isfield(xml.menu,'menuopenfile')

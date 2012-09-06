@@ -76,6 +76,7 @@ csdefaulttype='geographic';
 cstype='both';
 
 for i=1:length(varargin)
+    if ischar(varargin{i})
     switch lower(varargin{i})
         case{'type'}
             cstype=varargin{i+1};
@@ -86,6 +87,7 @@ for i=1:length(varargin)
             cs0=varargin{i+1};
         case{'defaulttype'}
             csdefaulttype=varargin{i+1};
+    end
     end
 end
 

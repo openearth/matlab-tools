@@ -52,52 +52,47 @@ function ddb_selectToolbox
 handles=getHandles;
 
 %% Delete existing toolbox elements
-parent=handles.Model(md).GUI.elements(1).element.tabs(1).tab.handle;
+parent=handles.Model(md).GUI.element(1).element.tab(1).tab.handle;
 ch=get(parent,'Children');
 if ~isempty(ch)
     delete(ch);
 end
 
-% if handles.debugMode
-%     % Read toolbox xml file again
-%     handles=ddb_readToolboxXML(handles,tb);
-% end
-
 %% And now add the new elements
-toolboxElements=handles.Toolbox(tb).GUI.elements;
+toolboxelements=handles.Toolbox(tb).GUI.element;
 
 % Check if toolbox has tabs
 % If so, find tabs that are model specific
-if length(toolboxElements)==1
-    if strcmpi(toolboxElements(1).element.style,'tabpanel')
-        toolboxElements0=toolboxElements;
-        toolboxElements0.element.tabs=[];
+if length(toolboxelements)==1
+    if strcmpi(toolboxelements(1).element.style,'tabpanel')
+        toolboxelements0=toolboxelements;
+        toolboxelements0.element.tab=[];
         ntabs=0;
-        for itab=1:length(toolboxElements(1).element.tabs)
-            if isempty(toolboxElements(1).element.tabs(itab).tab.formodel) || ...
-                    strcmpi(toolboxElements(1).element.tabs(itab).tab.formodel,handles.Model(md).name)
+        for itab=1:length(toolboxelements(1).element.tab)
+            if isempty(toolboxelements(1).element.tab(itab).tab.formodel) || ...
+                    strcmpi(toolboxelements(1).element.tab(itab).tab.formodel,handles.Model(md).name)
                 % Tab specific to active model                
                 ntabs=ntabs+1;
-                toolboxElements0(1).element.tabs(ntabs).tab=toolboxElements(1).element.tabs(itab).tab;
+                toolboxelements0(1).element.tab(ntabs).tab=toolboxelements(1).element.tab(itab).tab;
             end
         end
-        toolboxElements=toolboxElements0;
+        toolboxelements=toolboxelements0;
     end
 end
 
 % Add elements to GUI
-handles.Model(md).GUI.elements(1).element.tabs(1).tab.elements=gui_addElements(gcf,toolboxElements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);
+handles.Model(md).GUI.element(1).element.tab(1).tab.element=gui_addElements(gcf,toolboxelements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);
 setHandles(handles);
 
 drawnow;
 
 % Find handle of tab panel and get tab info
-el=getappdata(handles.Model(md).GUI.elements(1).element.handle,'element');
-el.tabs(1).tab.elements=handles.Model(md).GUI.elements(1).element.tabs(1).tab.elements;
-% Set callback to tab
-el.tabs(1).tab.callback=handles.Toolbox(tb).callFcn;
-setappdata(handles.Model(md).GUI.elements(1).element.handle,'element',el);
+el=getappdata(handles.Model(md).GUI.element(1).element.handle,'element');
+el.tab(1).tab.element=handles.Model(md).GUI.element(1).element.tab(1).tab.element;
 
+% Set callback to tab
+el.tab(1).tab.callback=handles.Toolbox(tb).callFcn;
+setappdata(handles.Model(md).GUI.element(1).element.handle,'element',el);
 
 % And finally select the toolbox tab
 tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox');

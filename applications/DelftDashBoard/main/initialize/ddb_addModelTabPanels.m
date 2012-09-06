@@ -66,11 +66,11 @@ handles=getHandles;
 for i=1:length(handles.Model)
     handles.activeModel.nr = i;
     setHandles(handles);
-    elements=handles.Model(i).GUI.elements;
-    if ~isempty(elements)
-        elements=gui_addElements(gcf,elements,'getFcn',@getHandles,'setFcn',@setHandles);
-        set(elements(1).element.handle,'Visible','off');
-        handles.Model(i).GUI.elements=elements;
+    element=handles.Model(i).GUI.element;
+    if ~isempty(element)
+        element=gui_addElements(gcf,element,'getFcn',@getHandles,'setFcn',@setHandles);
+        set(element(1).element.handle,'Visible','off');
+        handles.Model(i).GUI.element=element;
     end
 end
 
@@ -78,6 +78,4 @@ handles.activeModel.nr = 1;
 setHandles(handles);
 
 setHandles(handles);
-
-% ddb_selectToolbox;
 
