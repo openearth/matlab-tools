@@ -64,6 +64,26 @@ function rs = pg_exec(conn, sql, varargin)
 
 %% execute sql query
 
-rs = exec(conn, sql);
+prefs = getpref('postgresql');
 
-pg_error(rs);
+if ~isstruct(prefs) || ~isfield(prefs, 'passive') || ~prefs.passive
+    
+    rs = exec(conn, sql);
+
+    pg_error(rs);
+    
+else
+    
+    if ~isfield(prefs, 'file') || isempty(prefs.file)
+    
+        disp(sql);
+        
+    else
+        
+        fid = fopen(prefs.file, 'a');
+        fprintf(fid, '%s\n', sql);
+        fclose(fid);
+        
+    end
+    
+end

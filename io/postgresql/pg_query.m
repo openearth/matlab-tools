@@ -111,8 +111,6 @@ switch upper(type)
         strSQL = sprintf('DELETE FROM %s %s', table, strSQLWhere);
 end
 
-disp(strSQL);
-
 function strSQL = builtSQLSelect(fields)
 
 strSQL = '*';
