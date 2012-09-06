@@ -83,7 +83,8 @@ function varargout = nc_cf_time(ncfile,varargin)
    else
       fileinfo.Filename = ncfile;
    end
-
+   
+   % if no variable is specified, look for a time variable
    if nargin==1
 
       if isstruct(ncfile)

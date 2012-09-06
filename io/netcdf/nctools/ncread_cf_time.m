@@ -1,4 +1,4 @@
-function vardata = ncread_cf_time(ncFile, varName, varargin)
+function [datenumbers,zone] = ncread_cf_time(ncFile, varName, varargin)
 %NCREAD_CF_TIME  Returns time data from a specified cf compliant time variable in matlab date numbers 
 %
 %   Syntax is exactly like ncread.
@@ -54,6 +54,7 @@ unitAttribute = strcmpi({info.Attributes.Name},'units');
 
 assert(any(unitAttribute),'Variable must have attribute units')
 
-vardata       = ncread(ncFile,varName,varargin{:});
-time_units    = info.Attributes(unitAttribute).Value;
-vardata       = udunits2datenum(vardata,time_units);
+%% get time data and vonvert from udunits to matlab datenum
+vardata            = ncread(ncFile,varName,varargin{:});
+time_units         = info.Attributes(unitAttribute).Value;
+[datenumbers,zone] = udunits2datenum(vardata,time_units);
