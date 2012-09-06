@@ -20,7 +20,7 @@
     <tag>checkbreaking</tag>
     <style>checkbox</style>
     <position>40 85</position>
-    <text>Depth-induced breaking (B&J model)</text>
+    <text>Depth-induced breaking (B and J model)</text>
     <variable>handles.Model(md).Input.breaking</variable>
   </element>
   <element>

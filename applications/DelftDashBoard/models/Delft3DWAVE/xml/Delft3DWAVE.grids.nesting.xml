@@ -28,7 +28,7 @@
     <tag>textcs</tag>
     <style>text</style>
     <position>10 10</position>
-    <prefix>Co-ordinate System : </text>
+    <prefix>Co-ordinate System : </prefix>
     <type>text</type>
     <variable>handles.Model(md).Input.domains(awg).coordsyst</variable>
   </element>
@@ -42,7 +42,7 @@
     <tag>textgridname</tag>
     <style>text</style>
     <position>450 75</position>
-    <prefix>Grid filename : </text>
+    <prefix>Grid filename : </prefix>
     <type>text</type>
     <variable>handles.Model(md).Input.domains(awg).grid</variable>
   </element>  
@@ -50,7 +50,7 @@
     <tag>textassosgrid</tag>
     <style>text</style>
     <position>450 50</position>
-    <prefix>Associated bathymetry grid : </text>
+    <prefix>Associated bathymetry grid : </prefix>
     <type>text</type>
     <variable>handles.Model(md).Input.domains(awg).bedlevelgrid</variable>
   </element>
@@ -58,7 +58,7 @@
     <tag>textassosdep</tag>
     <style>text</style>
     <position>450 25</position>
-    <prefix>Associated bathymetry data : </text>
+    <prefix>Associated bathymetry data : </prefix>
     <type>text</type>
     <variable>handles.Model(md).Input.domains(awg).bedlevel</variable>
   </element>

@@ -7,7 +7,7 @@
   <elements>
     <element>
       <style>tabpanel</style>
-      <tag>Delft3DWAVE</tab>
+      <tag>Delft3DWAVE</tag>
       <position>10 10 900 700</position> 
       <tabs>
         <tab>
@@ -71,31 +71,31 @@
     </element>
   </elements>
   <menu>
-      <menuopenfile>
-        <menuitem>
-          <string>Open MDW File</string>
-          <callback>ddb_openDelft3DWAVE</callback>
-          <option>open</option>
-        </menuitem>
-      </menuopenfile>
-      <menusavefile>
-        <menuitem>
-          <string>Save MDW File</string>
-          <callback>ddb_saveDelft3DWAVE</callback>
-          <option>save</option>
-        </menuitem>
-        <menuitem>
-          <string>Save MDW File As ...</string>
-          <callback>ddb_saveDelft3DWAVE</callback>
-          <option>saveas</option>
-        </menuitem>
-        <menuitem>
-          <string>Save All Delft3D-WAVE Files</string>
-          <callback>ddb_saveDelft3DWAVE</callback>
-          <option>saveall</option>
-        </menuitem>
-      </menusavefile>
-      <menuview>
-      </menuview>
+    <menuopenfile>
+      <menuitem>
+        <string>Open MDW File</string>
+        <callback>ddb_openDelft3DWAVE</callback>
+        <option>open</option>
+      </menuitem>
+    </menuopenfile>
+    <menusavefile>
+      <menuitem>
+        <string>Save MDW File</string>
+        <callback>ddb_saveDelft3DWAVE</callback>
+        <option>save</option>
+      </menuitem>
+      <menuitem>
+        <string>Save MDW File As ...</string>
+        <callback>ddb_saveDelft3DWAVE</callback>
+        <option>saveas</option>
+      </menuitem>
+      <menuitem>
+        <string>Save All Delft3D-WAVE Files</string>
+        <callback>ddb_saveDelft3DWAVE</callback>
+        <option>saveall</option>
+      </menuitem>
+    </menusavefile>
+    <menuview>
+    </menuview>
   </menu>
 </root>

@@ -52,7 +52,7 @@
     <tag>textddbflowfile</tag>
     <style>text</style>
     <position>260 100</position>
-    <prefix>File : </text>
+    <prefix>File : </prefix>
     <type>text</type>
     <variable>handles.Model(1).Input(1).mdfFile</variable>
     <dependencies>

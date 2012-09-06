@@ -57,7 +57,7 @@
     <tag>textwaqagg</tag>
     <style>text</style>
     <position>285 60</position>
-    <prefix>WaqAgg : </text>
+    <prefix>WaqAgg : </prefix>
     <type>text</type>
     <variable>handles.Model(md).Input(ad).WaqAgg</variable>
   </element>  

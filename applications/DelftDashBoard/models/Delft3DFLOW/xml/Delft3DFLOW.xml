@@ -8,7 +8,7 @@
   <elements>
     <element>
       <style>tabpanel</style>
-      <tag>Delft3DFLOW</tab>
+      <tag>Delft3DFLOW</tag>
       <position>10 10 900 400</position> 
       <tabs>
         <tab>

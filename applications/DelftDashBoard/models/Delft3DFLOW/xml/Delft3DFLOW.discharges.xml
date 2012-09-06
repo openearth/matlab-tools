@@ -36,11 +36,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushdeletedischarge</tag>
-          <tag>pushadddischarge</tag>
-          <tag>pushopendischargesfile</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -71,11 +66,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushdeletedischarge</tag>
-          <tag>pushadddischarge</tag>
-          <tag>pushopendischargesfile</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -84,12 +74,6 @@
             <operator>gt</operator>
           </check>
         </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdischarges</tag>
-        </tags>
       </dependency>
     </dependencies>
   </element>
@@ -105,11 +89,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushdeletedischarge</tag>
-          <tag>pushadddischarge</tag>
-          <tag>pushopendischargesfile</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -118,12 +97,6 @@
             <operator>gt</operator>
           </check>
         </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdischarges</tag>
-        </tags>
       </dependency>
     </dependencies>
     <tooltipstring>Edit discharge index N</tooltipstring>
@@ -140,11 +113,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushdeletedischarge</tag>
-          <tag>pushadddischarge</tag>
-          <tag>pushopendischargesfile</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -163,10 +131,6 @@
     </dependencies>
     <tooltipstring>Edit discharge layer (enter 0 for uniform distribution over water column)</tooltipstring>
   </element>
-
-
-
-
   <element>
     <tag>radiolinear</tag>
     <style>radiobutton</style>
@@ -178,11 +142,6 @@
     <dependencies>
       <dependency>
         <action>enable</action>
-        <tags>
-          <tag>pushdeletedischarge</tag>
-          <tag>pushadddischarge</tag>
-          <tag>pushopensrcfile</tag>
-        </tags>
         <checkfor>all</checkfor>
         <checks>
           <check>
@@ -202,7 +161,6 @@
     </dependencies>
     <tooltipstring>Edit discharge index N2</tooltipstring>
   </element>
-
   <element>
     <tag>radioblock</tag>
     <style>radiobutton</style>

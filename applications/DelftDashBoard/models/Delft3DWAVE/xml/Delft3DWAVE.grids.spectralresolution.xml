@@ -28,7 +28,7 @@
     <tag>textcs</tag>
     <style>text</style>
     <position>10 10</position>
-    <prefix>Co-ordinate System : </text>
+    <prefix>Co-ordinate System : </prefix>
     <type>text</type>
     <variable>handles.Model(md).Input.domains(awg).coordsyst</variable>
   </element>
