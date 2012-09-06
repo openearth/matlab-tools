@@ -226,7 +226,7 @@ switch lower(el.style)
         
     case{'selectlinestyle'}
         % For colorlists etc
-        values={'-','--','-.',':',''};
+        values={'-','--','-.',':','none'};
         str=gui_getValue(el,el.variable);
         ii=strmatch(lower(str),lower(values),'exact');
         set(el.handle,'Value',ii);
