@@ -71,22 +71,24 @@ function s=getxmldata(v)
 s=[];
 for i=1:length(v.Children)
     vv=v.Children(i);
-    if isempty(vv.Attributes) && ~isempty(vv.Children)
-        n=0;
-        for j=1:length(vv.Children)
-            ch=vv.Children(j);
-            s0=getxmldata(ch);
-            if ~isempty(s0)
-                n=n+1;
-                s.(vv.Name)(n).(ch.Name)=s0;
+    if ~isempty(vv.Children)
+        if length(vv.Children)==1
+            if isempty(vv.Data)
+                s0=getfinalnode(vv);
+                fld=fieldnames(s0);
+                fld=fld{1};
+                s.(fld)=s0.(fld);
             end
-        end
-    elseif ~isempty(vv.Children)
-        if isempty(vv.Data)
-            s0=getfinalnode(vv);
-            fld=fieldnames(s0);
-            fld=fld{1};
-            s.(fld)=s0.(fld);
+        else
+            n=0;
+            for j=1:length(vv.Children)
+                ch=vv.Children(j);
+                s0=getxmldata(ch);
+                if ~isempty(s0)
+                    n=n+1;
+                    s.(vv.Name)(n).(ch.Name)=s0;
+                end
+            end
         end
     end
 end
@@ -95,9 +97,18 @@ end
 function s=getfinalnode(v)
 fldname=v.Name;
 val=v.Children.Data;
-typ=v.Attributes.Value;
-s.(fldname).value=val;
-s.(fldname).type=typ;
+if ~isempty(v.Attributes)
+    typ=v.Attributes.Value;
+else
+    typ='char';
+end
+switch lower(typ)
+    case{'int','real'}
+        val=str2num(val);
+end
+s.(fldname)=val;
+% s.(fldname).value=val;
+% s.(fldname).type=typ;
 
 function theStruct = parseXML(filename)
 % PARSEXML Convert XML file to a MATLAB structure.
