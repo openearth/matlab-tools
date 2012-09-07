@@ -86,7 +86,7 @@ end
 warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 
 % Open Splash Screen
-frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],20);
+frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],30);
 
 setHandles(handles);
 
