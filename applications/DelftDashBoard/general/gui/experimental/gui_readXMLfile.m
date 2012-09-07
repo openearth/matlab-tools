@@ -3,6 +3,7 @@ function xml=gui_readXMLfile(xmlfile,dr,varargin)
 
 lowerlevel=0;
 fillguivalues=1;
+readlowerlevel=1;
 
 variableprefix=[];
 for ii=1:length(varargin)
@@ -14,6 +15,8 @@ for ii=1:length(varargin)
                 lowerlevel=varargin{ii+1};
             case{'fillguivalues'}
                 fillguivalues=varargin{ii+1};
+            case{'readlowerlevel'}
+                readlowerlevel=varargin{ii+1};
         end
     end
 end
@@ -42,9 +45,11 @@ if isfield(xml,'element')
           if isfield(element(k).element.tab(j).tab,'element')
             if ischar(element(k).element.tab(j).tab.element)
               % Elements in separate xml file
-              xmlfile2=element(k).element.tab(j).tab.element;
-              newelement=gui_readXMLfile(xmlfile2,dr,'lowerlevel',1);
-              element(k).element.tab(j).tab.element = newelement;
+              if readlowerlevel
+                  xmlfile2=element(k).element.tab(j).tab.element;
+                  newelement=gui_readXMLfile(xmlfile2,dr,'lowerlevel',1);
+                  element(k).element.tab(j).tab.element = newelement;
+              end
             else
               element(k).element.tab(j).tab=convertalltonewformat(element(k).element.tab(j).tab);
             end
@@ -118,6 +123,9 @@ if isfield(xml,'element')
         if isfield(xml.element(ielm).element,'dependency')
             for ii=1:length(xml.element(ielm).element.dependency)
                 xml.element(ielm).element.dependency(ii).dependency=converttonewformat(xml.element(ielm).element.dependency(ii).dependency,'checks','check');
+            end
+            if isfield(xml.element(ielm).element.dependency(ii).dependency,'tags')
+                xml.element(ielm).element.dependency(ii).dependency=rmfield(xml.element(ielm).element.dependency(ii).dependency,'tags');
             end
         end
         

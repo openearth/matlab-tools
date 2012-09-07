@@ -321,30 +321,24 @@ for i=1:length(element)
             case{'text'}
                 
                 % Text
-
+                
                 if ~isstruct(element(i).element.text)
                     str=element(i).element.text;
                 else
                     str=' ';
                 end
                 
-                if length(pos)==4
-                    % Plot at exact position
-                    element(i).element.handle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc,'HorizontalAlignment','left');
-                else
-                    element(i).element.handle=uicontrol(figh,'Style','text','String',str,'Position',[pos(1) pos(2) 20 20],'BackgroundColor',bgc);
+                element(i).element.handle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc,'HorizontalAlignment','left');
                     
-                    ext=get(element(i).element.handle,'Extent');
-                    ext(3)=ext(3)+2;
-                    
-                    ps1=pos(1);
-                    if strcmpi(element(i).element.horal,'right')
-                        ps1=pos(1)-ext(3);
-                    end
-                    
-                    set(element(i).element.handle,'Position',[ps1 pos(2) ext(3) 15]);
-                    
+                ext=get(element(i).element.handle,'Extent');
+                ext(3)=ext(3)+2;
+                
+                ps1=pos(1);
+                if strcmpi(element(i).element.horal,'right')
+                    ps1=pos(1)-ext(3);
                 end
+                
+                set(element(i).element.handle,'Position',[ps1 pos(2) ext(3) 15]);
                 
             case{'pushselectfile','pushsavefile'}
                 
