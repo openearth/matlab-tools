@@ -81,21 +81,21 @@ end
 handles.Model(j).GUI.element=xml.element;
 
 %% Menu File
-if isfield(xml.menu,'menuopenfile')
-    for i=1:length(xml.menu.menuopenfile)
-        handles.Model(j).GUI.menu.openFile(i).string=xml.menu.menuopenfile(i).menuitem.string;
-        handles.Model(j).GUI.menu.openFile(i).callback=str2func(xml.menu.menuopenfile(i).menuitem.callback);
-        handles.Model(j).GUI.menu.openFile(i).option=xml.menu.menuopenfile(i).menuitem.option;
+if isfield(xml.menu.menu,'menuopenfile')
+    for i=1:length(xml.menu.menu.menuopenfile.menuopenfile.menuitem)
+        handles.Model(j).GUI.menu.openFile(i).string=xml.menu.menu.menuopenfile.menuopenfile.menuitem(i).menuitem.string;
+        handles.Model(j).GUI.menu.openFile(i).callback=str2func(xml.menu.menu.menuopenfile.menuopenfile.menuitem(i).menuitem.callback);
+        handles.Model(j).GUI.menu.openFile(i).option=xml.menu.menu.menuopenfile.menuopenfile.menuitem(i).menuitem.option;
     end
 else
     handles.Model(j).GUI.menu.openFile=[];
 end
 
-if isfield(xml.menu,'menusavefile')
-    for i=1:length(xml.menu.menusavefile)
-        handles.Model(j).GUI.menu.saveFile(i).string=xml.menu.menusavefile(i).menuitem.string;
-        handles.Model(j).GUI.menu.saveFile(i).callback=str2func(xml.menu.menusavefile(i).menuitem.callback);
-        handles.Model(j).GUI.menu.saveFile(i).option=xml.menu.menusavefile(i).menuitem.option;
+if isfield(xml.menu.menu,'menusavefile')
+    for i=1:length(xml.menu.menu.menusavefile.menusavefile.menuitem)
+        handles.Model(j).GUI.menu.saveFile(i).string=xml.menu.menu.menusavefile.menusavefile.menuitem(i).menuitem.string;
+        handles.Model(j).GUI.menu.saveFile(i).callback=str2func(xml.menu.menu.menusavefile.menusavefile.menuitem(i).menuitem.callback);
+        handles.Model(j).GUI.menu.saveFile(i).option=xml.menu.menu.menusavefile.menusavefile.menuitem(i).menuitem.option;
     end
 else
     handles.Model(j).GUI.menu.saveFile=[];

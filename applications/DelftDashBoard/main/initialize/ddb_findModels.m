@@ -84,7 +84,7 @@ for i=1:length(flist)
                     xmlfile=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
                 end
                 if exist(xmlfile,'file')
-                    xml=xml_load(xmlfile);
+                    xml=xml2struct3(xmlfile);
                     switch lower(xml.enable)
                         case{'1','y','yes'}
                             k=k+1;
