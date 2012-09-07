@@ -218,8 +218,8 @@ else
                 freq=freqs(ii);
                 
                 % Compute argument based on argument at reference time and correction of the mean model time
-                [v,u,f]=t_vuf(0.5*(handles.Model(md).Input(ad).startTime+handles.Model(md).Input(ad).stopTime),ii,ym);
-                [vref,uref,fref]=t_vuf(handles.Model(md).Input(ad).itDate,ii,ym);
+                [v,u,f]=t_vuf('nodal',0.5*(handles.Model(md).Input(ad).startTime+handles.Model(md).Input(ad).stopTime),ii,ym);
+                [vref,uref,fref]=t_vuf('nodal',handles.Model(md).Input(ad).itDate,ii,ym);
                 u=(vref+u)*360;
                 u=mod(u,360);
                 
