@@ -137,7 +137,7 @@ it1=find(times>=t1, 1, 'first' );
 times=times(it0:it1);
 
 nt=0;
-try
+
     for it=it0:it1
         
         nt=nt+1;
@@ -180,9 +180,7 @@ try
             
         end
     end
-catch
-    shite=0;
-end
+
 clear s sv
 
 t=t0:dt/1440:t1;
