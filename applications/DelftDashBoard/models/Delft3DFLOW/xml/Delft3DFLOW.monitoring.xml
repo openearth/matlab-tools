@@ -1,31 +1,28 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>monitoringpanel</tag>
-    <tabs>
-      <tab>
-        <tag>observationpoints</tag>
-        <tabstring>Stations</tabstring>
-        <callback>ddb_Delft3DFLOW_observationPoints</callback>
-        <elements>Delft3DFLOW.monitoring.observationpoints.xml</elements>
-      </tab>
-      <tab>
-        <tag>crosssections</tag>
-        <tabstring>Cross Sections</tabstring>
-        <callback>ddb_Delft3DFLOW_crossSections</callback>
-        <elements>Delft3DFLOW.monitoring.crosssections.xml</elements>
-        <enable>1</enable>
-      </tab>
-      <tab>
-        <tag>drogues</tag>
-        <tabstring>Drogues</tabstring>
-        <callback>ddb_Delft3DFLOW_drogues</callback>
-        <elements>Delft3DFLOW.monitoring.drogues.xml</elements>
-        <enable>1</enable>
-      </tab>
-    </tabs>
+    <tab>
+      <tag>observationpoints</tag>
+      <tabstring>Stations</tabstring>
+      <callback>ddb_Delft3DFLOW_observationPoints</callback>
+      <element>Delft3DFLOW.monitoring.observationpoints.xml</element>
+    </tab>
+    <tab>
+      <tag>crosssections</tag>
+      <tabstring>Cross Sections</tabstring>
+      <callback>ddb_Delft3DFLOW_crossSections</callback>
+      <enable>1</enable>
+      <element>Delft3DFLOW.monitoring.crosssections.xml</element>
+    </tab>
+    <tab>
+      <tag>drogues</tag>
+      <tabstring>Drogues</tabstring>
+      <callback>ddb_Delft3DFLOW_drogues</callback>
+      <enable>1</enable>
+      <element>Delft3DFLOW.monitoring.drogues.xml</element>
+    </tab>
   </element>
 </root>

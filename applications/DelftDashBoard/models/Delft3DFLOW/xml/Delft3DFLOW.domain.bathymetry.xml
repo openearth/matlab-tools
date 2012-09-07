@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>radiodepfile</tag>
@@ -9,22 +8,15 @@
     <variable>handles.Model(md).Input(ad).depthSource</variable>
     <type>string</type>
     <value>file</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiodepuniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).depthSource</variable>
-            <value>file</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).depthSource</variable>
+        <value>file</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiodepuniform</tag>
@@ -34,22 +26,15 @@
     <variable>handles.Model(md).Input(ad).depthSource</variable>
     <type>string</type>
     <value>uniform</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiodepfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).depthSource</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).depthSource</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushselectdepfile</tag>
@@ -63,23 +48,15 @@
     <onchange>ddb_Delft3DFLOW_bathymetry</onchange>
     <option1>selectdepthfile</option1>
     <tooltipstring>Select Delft3D depth file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiodepuniform</tag>
-          <tag>radiodepfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).depthSource</variable>
-            <value>file</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).depthSource</variable>
+        <value>file</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edituniformdepth</tag>
@@ -90,22 +67,14 @@
     <variable>handles.Model(md).Input(ad).uniformDepth</variable>
     <type>real</type>
     <tooltipstring>Enter uniform depth value</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiodepuniform</tag>
-          <tag>radiodepfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).depthSource</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).depthSource</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
 </root>

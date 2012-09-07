@@ -1,17 +1,14 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>domainpanel</tag>
-    <tabs>
-      <tab>
-        <tag>grid</tag>
-        <tabstring>Net</tabstring>
-        <callback>ddb_DFlowFM_net</callback>
-        <elements>dflowfm.domain.net.xml</elements>
-      </tab>
-    </tabs>
+    <tab>
+      <tag>grid</tag>
+      <tabstring>Net</tabstring>
+      <callback>ddb_DFlowFM_net</callback>
+      <element>dflowfm.domain.net.xml</element>
+    </tab>
   </element>
 </root>

@@ -1,84 +1,79 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>wavecurrentpanel</tag>
-    <tabs>
-      <tab>
-        <tag>wave</tag>
-        <tabstring>Wave Information</tabstring>
-        <elements>
-          <element>
-            <tag>pushopenldb</tag>
-            <style>pushselectfile</style>
-            <position>10 110 130 20</position>
-            <tooltipstring>Select ldb file</tooltipstring>
-            <text>Open ldb file</text>
-            <variable>
-              <name>ldbfile</name>
-              <type>string</type>
-            </variable>
-            <extension>*.ldb</extension>
-            <selectiontext>Select ldb file</selectiontext>
-            <onchange>ddb_UnibestCL_selectldbFile</onchange>
-          </element>
-	  <element>
-            <tag>pusheditldb</tag>
-            <style>pushbutton</style>
-            <position>10 85 130 20</position>
-            <text>Edit ldb file</text>
-            <callback>ddb_UnibestCL_editldbfile</callback>
-          </element>           
-          <element>
-            <tag>pushloadwavm</tag>
-            <style>pushselectfile</style>
-            <position>10 60 130 20</position>
-            <tooltipstring>Select wavm file</tooltipstring>
-            <text>Open wavm file</text>
-            <variable>
-              <name>encfile</name>
-              <type>string</type>
-            </variable>
-            <extension>*.def</extension>
-            <selectiontext>Select wavm File</selectiontext>
-            <onchange>ddb_UnibestCL_selectwavmfile</onchange>
-          </element>
-	  <element>
-            <tag>pushloaddummysco</tag>
-            <style>pushselectfile</style>
-            <position>10 35 130 20</position>
-            <tooltipstring>Select sco file</tooltipstring>
-            <text>Open sco file</text>
-            <variable>
-              <name>SCOfile</name>
-              <type>string</type>
-            </variable>
-            <extension>*.sco</extension>
-            <selectiontext>Select sco File</selectiontext>
-            <onchange>ddb_UnibestCL_selectscofile</onchange>
-          </element>
-	  <element>
-            <tag>pushextractscodata</tag>
-            <style>pushbutton</style>
-            <position>300 110 130 20</position>
-            <text>Extract sco data</text>
-            <callback>ddb_UnibestCL_extractscodata</callback>
-          </element>
-	  <element>
-            <tag>pusheditscodata</tag>
-            <style>pushbutton</style>
-            <position>300 85 130 20</position>
-            <text>Edit sco data</text>
-            <callback>ddb_UnibestCL_editscodata</callback>
-          </element>       
-        </elements>
-      </tab>
-      <tab>
-        <tag>current</tag>
-        <tabstring>Current Information</tabstring>
-      </tab>
-    </tabs>
+    <tab>
+      <tag>wave</tag>
+      <tabstring>Wave Information</tabstring>
+      <element>
+        <tag>pushopenldb</tag>
+        <style>pushselectfile</style>
+        <position>10 110 130 20</position>
+        <tooltipstring>Select ldb file</tooltipstring>
+        <text>Open ldb file</text>
+        <variable>
+          <name>ldbfile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.ldb</extension>
+        <selectiontext>Select ldb file</selectiontext>
+        <onchange>ddb_UnibestCL_selectldbFile</onchange>
+      </element>
+      <element>
+        <tag>pusheditldb</tag>
+        <style>pushbutton</style>
+        <position>10 85 130 20</position>
+        <text>Edit ldb file</text>
+        <callback>ddb_UnibestCL_editldbfile</callback>
+      </element>
+      <element>
+        <tag>pushloadwavm</tag>
+        <style>pushselectfile</style>
+        <position>10 60 130 20</position>
+        <tooltipstring>Select wavm file</tooltipstring>
+        <text>Open wavm file</text>
+        <variable>
+          <name>encfile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.def</extension>
+        <selectiontext>Select wavm File</selectiontext>
+        <onchange>ddb_UnibestCL_selectwavmfile</onchange>
+      </element>
+      <element>
+        <tag>pushloaddummysco</tag>
+        <style>pushselectfile</style>
+        <position>10 35 130 20</position>
+        <tooltipstring>Select sco file</tooltipstring>
+        <text>Open sco file</text>
+        <variable>
+          <name>SCOfile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.sco</extension>
+        <selectiontext>Select sco File</selectiontext>
+        <onchange>ddb_UnibestCL_selectscofile</onchange>
+      </element>
+      <element>
+        <tag>pushextractscodata</tag>
+        <style>pushbutton</style>
+        <position>300 110 130 20</position>
+        <text>Extract sco data</text>
+        <callback>ddb_UnibestCL_extractscodata</callback>
+      </element>
+      <element>
+        <tag>pusheditscodata</tag>
+        <style>pushbutton</style>
+        <position>300 85 130 20</position>
+        <text>Edit sco data</text>
+        <callback>ddb_UnibestCL_editscodata</callback>
+      </element>
+    </tab>
+    <tab>
+      <tag>current</tag>
+      <tabstring>Current Information</tabstring>
+    </tab>
   </element>
 </root>

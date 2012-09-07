@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>listcrosssections</tag>
@@ -10,13 +9,11 @@
     <textposition>above-center</textposition>
     <variable>handles.Model(md).Input(ad).activeCrossSection</variable>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).crossSectionNames</variable>
-      </texts>
-    </list>
     <onchange>ddb_Delft3DFLOW_crossSections</onchange>
     <option1>selectfromlist</option1>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).crossSectionNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>panelcrosssections</tag>
@@ -33,30 +30,23 @@
     <tooltipstring>Edit cross section index M1</tooltipstring>
     <variable>handles.Model(md).Input(ad).crossSections(handles.Model(md).Input(ad).activeCrossSection).M1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletecrsdam</tag>
-          <tag>pushaddcrsdam</tag>
-          <tag>pushopencrosssectionsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listcrosssections</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletecrsdam</tag>
+        <tag>pushaddcrsdam</tag>
+        <tag>pushopencrosssectionsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editcrsn1</tag>
@@ -67,31 +57,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).crossSections(handles.Model(md).Input(ad).activeCrossSection).N1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletecrsdam</tag>
-          <tag>pushaddcrsdam</tag>
-          <tag>pushopencrosssectionsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listcrosssections</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit cross section index N1</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletecrsdam</tag>
+        <tag>pushaddcrsdam</tag>
+        <tag>pushopencrosssectionsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editcrsm2</tag>
@@ -102,31 +85,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).crossSections(handles.Model(md).Input(ad).activeCrossSection).M2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletecrsdam</tag>
-          <tag>pushaddcrsdam</tag>
-          <tag>pushopencrosssectionsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listcrosssections</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit cross section index M2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletecrsdam</tag>
+        <tag>pushaddcrsdam</tag>
+        <tag>pushopencrosssectionsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editcrsn2</tag>
@@ -137,31 +113,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).crossSections(handles.Model(md).Input(ad).activeCrossSection).N2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletecrsdam</tag>
-          <tag>pushaddcrsdam</tag>
-          <tag>pushopencrosssectionsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listcrosssections</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit cross section index N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletecrsdam</tag>
+        <tag>pushaddcrsdam</tag>
+        <tag>pushopencrosssectionsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editname</tag>
@@ -173,30 +142,23 @@
     <tooltipstring>Edit cross section name</tooltipstring>
     <variable>handles.Model(md).Input(ad).crossSections(handles.Model(md).Input(ad).activeCrossSection).name</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletecrosssection</tag>
-          <tag>pushaddcrosssection</tag>
-          <tag>pushopencrosssectionsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listcrosssections</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletecrosssection</tag>
+        <tag>pushaddcrosssection</tag>
+        <tag>pushopencrosssectionsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>toggleaddcrosssection</tag>
@@ -247,15 +209,10 @@
     <extension>*.crs</extension>
     <selectiontext>Select cross sections file</selectiontext>
     <onchange>ddb_Delft3DFLOW_crossSections</onchange>
-    <option1>openfile</option1>    
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>pushsavecrosssections</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <option1>openfile</option1>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>pushsavecrosssections</tag>

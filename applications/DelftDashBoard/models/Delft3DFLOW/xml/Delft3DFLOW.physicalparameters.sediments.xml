@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>listsediments</tag>
@@ -8,13 +7,11 @@
     <tooltipstring>Select sediment</tooltipstring>
     <variable>handles.Model(md).Input(ad).sediments.activeSediment</variable>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).sediments.sedimentNames</variable>
-      </texts>
-    </list>
     <onchange>ddb_Delft3DFLOW_sediments</onchange>
     <option1>selectfromlist</option1>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).sediments.sedimentNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>editcdryb</tag>
@@ -58,22 +55,15 @@
     <style>panel</style>
     <bordertype>none</bordertype>
     <position>170 25 770 110</position>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>listsediments</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).type</variable>
-            <value>non-cohesive</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).type</variable>
+        <value>non-cohesive</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editspecificdensity</tag>
@@ -130,7 +120,6 @@
     <tooltipstring>Edit sediment diameter D10 (mm)</tooltipstring>
     <parent>sandpanel</parent>
   </element>
-
   <element>
     <tag>textthick</tag>
     <style>text</style>
@@ -146,23 +135,15 @@
     <type>real</type>
     <tooltipstring>Edit initial sediment thickness (m)</tooltipstring>
     <parent>sandpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiouniform</tag>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiouniform</tag>
@@ -173,22 +154,15 @@
     <type>integer</type>
     <value>1</value>
     <parent>sandpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiofile</tag>
@@ -199,22 +173,15 @@
     <type>integer</type>
     <value>0</value>
     <parent>sandpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiouniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopeninisedfile</tag>
@@ -228,51 +195,30 @@
     <selectiontext>Select initial sediment thickness file</selectiontext>
     <tooltipstring>Select initial sediment thickness file</tooltipstring>
     <parent>sandpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiouniform</tag>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
-
-
-
-
-
   <element>
     <tag>mudpanel</tag>
     <style>panel</style>
     <bordertype>none</bordertype>
     <position>170 25 770 110</position>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>listsediments</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).type</variable>
-            <value>cohesive</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).type</variable>
+        <value>cohesive</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editspecificdensity</tag>
@@ -307,10 +253,6 @@
     <tooltipstring>Edit settling velocity (mm/s)</tooltipstring>
     <parent>mudpanel</parent>
   </element>
-
-
-
-
   <element>
     <tag>texttcrero</tag>
     <style>text</style>
@@ -328,22 +270,15 @@
     <type>integer</type>
     <value>1</value>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiotcrerofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrEro</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrEro</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiotcrerofile</tag>
@@ -354,22 +289,15 @@
     <type>integer</type>
     <value>0</value>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiotcrerouniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrEro</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrEro</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittcrero</tag>
@@ -379,23 +307,15 @@
     <type>real</type>
     <tooltipstring>Edit critical shear stress for erosion (Pa)</tooltipstring>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiotcrerouniform</tag>
-          <tag>radiotcrerofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrEro</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrEro</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopentcefile</tag>
@@ -409,33 +329,16 @@
     <selectiontext>Select tce file</selectiontext>
     <tooltipstring>Select critical shear stress for erosion file</tooltipstring>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiotcrerouniform</tag>
-          <tag>radiotcrerofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrEro</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrEro</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
-
-
-
-
-
-
-
-
   <element>
     <tag>texttcrsed</tag>
     <style>text</style>
@@ -453,22 +356,15 @@
     <type>integer</type>
     <value>1</value>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiotcrsedfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrSed</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrSed</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiotcrsedfile</tag>
@@ -479,22 +375,15 @@
     <type>integer</type>
     <value>0</value>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiotcrseduniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrSed</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrSed</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittcrsed</tag>
@@ -504,23 +393,15 @@
     <type>real</type>
     <tooltipstring>Edit critical shear stress for sedimentation (Pa)</tooltipstring>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiotcrseduniform</tag>
-          <tag>radiotcrsedfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrSed</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrSed</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopentcdfile</tag>
@@ -534,27 +415,16 @@
     <selectiontext>Select tce file</selectiontext>
     <tooltipstring>Select critical shear stress for sedimentation file</tooltipstring>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiotcrseduniform</tag>
-          <tag>radiotcrsedfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrSed</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformTCrSed</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
-
-
   <element>
     <tag>texteropar</tag>
     <style>text</style>
@@ -572,22 +442,15 @@
     <type>integer</type>
     <value>1</value>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioeroparfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformEroPar</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformEroPar</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radioeroparfile</tag>
@@ -598,22 +461,15 @@
     <type>integer</type>
     <value>0</value>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioeroparuniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformEroPar</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformEroPar</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editeropar</tag>
@@ -623,23 +479,15 @@
     <type>real</type>
     <tooltipstring>Edit erosion parameter (kg/m2/s)</tooltipstring>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radioeroparuniform</tag>
-          <tag>radioeroparfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformEroPar</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformEroPar</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopenerofile</tag>
@@ -653,28 +501,16 @@
     <selectiontext>Select erosion parameter file</selectiontext>
     <tooltipstring>Select erosion parameter file</tooltipstring>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radioeroparuniform</tag>
-          <tag>radioeroparfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformEroPar</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformEroPar</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
-
-
-
   <element>
     <tag>textthick</tag>
     <style>text</style>
@@ -692,22 +528,15 @@
     <type>integer</type>
     <value>1</value>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiofile</tag>
@@ -718,22 +547,15 @@
     <type>integer</type>
     <value>0</value>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiouniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editsedthick</tag>
@@ -743,23 +565,15 @@
     <type>real</type>
     <tooltipstring>Edit initial sediment thickness (m)</tooltipstring>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiouniform</tag>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopeninisedfile</tag>
@@ -773,23 +587,14 @@
     <selectiontext>Select initial sediment thickness file</selectiontext>
     <tooltipstring>Select initial sediment thickness file</tooltipstring>
     <parent>mudpanel</parent>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiouniform</tag>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediment(handles.Model(md).Input(ad).sediments.activeSediment).uniformThickness</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
 </root>

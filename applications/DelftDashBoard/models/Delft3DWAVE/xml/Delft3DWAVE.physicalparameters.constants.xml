@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>editgravity</tag>
@@ -15,7 +14,7 @@
     <tag>textgravityunit</tag>
     <style>text</style>
     <position>190 110</position>
-    <text>[m/s2]</text>    
+    <text>[m/s2]</text>
   </element>
   <element>
     <tag>editwaterdensity</tag>
@@ -31,7 +30,7 @@
     <tag>textwaterdensityunit</tag>
     <style>text</style>
     <position>190 85</position>
-    <text>[kg/m3]</text>    
+    <text>[kg/m3]</text>
   </element>
   <element>
     <tag>editnorthwaxis</tag>
@@ -47,7 +46,7 @@
     <tag>textnorthwaxisunit</tag>
     <style>text</style>
     <position>190 60</position>
-    <text>[deg]</text>    
+    <text>[deg]</text>
   </element>
   <element>
     <tag>editminimumdepth</tag>
@@ -63,13 +62,13 @@
     <tag>textmindepthunit</tag>
     <style>text</style>
     <position>190 35</position>
-    <text>[m]</text>    
-  </element> 
+    <text>[m]</text>
+  </element>
   <element>
     <tag>textconventions</tag>
     <style>text</style>
     <position>270 110</position>
-    <text>Conventions</text>    
+    <text>Conventions</text>
   </element>
   <element>
     <tag>radionautical</tag>
@@ -101,7 +100,7 @@
     <tag>textforces</tag>
     <style>text</style>
     <position>470 110</position>
-    <text>Forces</text>    
+    <text>Forces</text>
   </element>
   <element>
     <tag>radiowaveenergy</tag>
@@ -120,5 +119,5 @@
     <type>string</type>
     <variable>handles.Model(md).Input.waveforces</variable>
     <value>radiation stresses</value>
-  </element>  
+  </element>
 </root>

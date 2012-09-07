@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>listweirs2d</tag>
@@ -10,13 +9,11 @@
     <textposition>above-center</textposition>
     <variable>handles.Model(md).Input(ad).activeWeir2D</variable>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).weir2DNames</variable>
-      </texts>
-    </list>
     <onchange>ddb_Delft3DFLOW_weirs2D</onchange>
     <option1>selectfromlist</option1>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).weir2DNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>panelweirs2d</tag>
@@ -33,30 +30,23 @@
     <tooltipstring>Edit 2D weir index M1</tooltipstring>
     <variable>handles.Model(md).Input(ad).weirs2D(handles.Model(md).Input(ad).activeWeir2D).M1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteweir2d</tag>
-          <tag>pushaddweir2d</tag>
-          <tag>pushopenweirs2dfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listweirs2d</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteweir2d</tag>
+        <tag>pushaddweir2d</tag>
+        <tag>pushopenweirs2dfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editweirn1</tag>
@@ -67,31 +57,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).weirs2D(handles.Model(md).Input(ad).activeWeir2D).N1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteweir2d</tag>
-          <tag>pushaddweir2d</tag>
-          <tag>pushopenweirs2dfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listweirs2d</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit 2D weir index N1</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteweir2d</tag>
+        <tag>pushaddweir2d</tag>
+        <tag>pushopenweirs2dfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editweirm2</tag>
@@ -102,31 +85,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).weirs2D(handles.Model(md).Input(ad).activeWeir2D).M2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteweir2d</tag>
-          <tag>pushaddweir2d</tag>
-          <tag>pushopenweirs2dfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listweirs2d</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit 2D weir index M2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteweir2d</tag>
+        <tag>pushaddweir2d</tag>
+        <tag>pushopenweirs2dfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editweirn2</tag>
@@ -137,31 +113,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).weirs2D(handles.Model(md).Input(ad).activeWeir2D).N2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteweir2d</tag>
-          <tag>pushaddweir2d</tag>
-          <tag>pushopenweirs2dfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listweirs2d</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit 2D weir index N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteweir2d</tag>
+        <tag>pushaddweir2d</tag>
+        <tag>pushopenweirs2dfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>radiou</tag>
@@ -173,31 +142,24 @@
     <value>U</value>
     <variable>handles.Model(md).Input(ad).weirs2D(handles.Model(md).Input(ad).activeWeir2D).UV</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteweir2d</tag>
-          <tag>pushaddweir2d</tag>
-          <tag>pushopenweirs2dfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listweirs2d</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit 2D weir index N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteweir2d</tag>
+        <tag>pushaddweir2d</tag>
+        <tag>pushopenweirs2dfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>radiov</tag>
@@ -209,55 +171,39 @@
     <value>V</value>
     <variable>handles.Model(md).Input(ad).weirs2D(handles.Model(md).Input(ad).activeWeir2D).UV</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteweir2d</tag>
-          <tag>pushaddweir2d</tag>
-          <tag>pushopenweirs2dfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listweirs2d</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit 2D weir index N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteweir2d</tag>
+        <tag>pushaddweir2d</tag>
+        <tag>pushopenweirs2dfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>textdirection</tag>
     <style>text</style>
     <position>220 47</position>
     <text>Direction</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteweir2d</tag>
-          <tag>pushaddweir2d</tag>
-          <tag>pushopenweirs2dfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editweirheight</tag>
@@ -267,30 +213,23 @@
     <tooltipstring>Edit crest height 2D weir (positive down!)</tooltipstring>
     <variable>handles.Model(md).Input(ad).weirs2D(handles.Model(md).Input(ad).activeWeir2D).crestHeight</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteweir2d</tag>
-          <tag>pushaddweir2d</tag>
-          <tag>pushopenweirs2dfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listweirs2d</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteweir2d</tag>
+        <tag>pushaddweir2d</tag>
+        <tag>pushopenweirs2dfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editfriction</tag>
@@ -300,30 +239,23 @@
     <tooltipstring>Edit friction coefficient</tooltipstring>
     <variable>handles.Model(md).Input(ad).weirs2D(handles.Model(md).Input(ad).activeWeir2D).frictionCoefficient</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteweir2d</tag>
-          <tag>pushaddweir2d</tag>
-          <tag>pushopenweirs2dfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listweirs2d</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteweir2d</tag>
+        <tag>pushaddweir2d</tag>
+        <tag>pushopenweirs2dfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWeirs2D</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>toggleaddweir2d</tag>
@@ -374,15 +306,10 @@
     <extension>*.2dw</extension>
     <selectiontext>Select 2D weirs file</selectiontext>
     <onchange>ddb_Delft3DFLOW_weirs2D</onchange>
-    <option1>openfile</option1>    
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>pushsaveweirs2d</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <option1>openfile</option1>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>pushsaveweirs2d</tag>

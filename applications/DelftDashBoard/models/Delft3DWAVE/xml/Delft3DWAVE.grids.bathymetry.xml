@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>panelgrids</tag>
@@ -18,11 +17,9 @@
     <type>integer</type>
     <callback>ddb_Delft3DWAVE_grid</callback>
     <option1>selectgrid</option1>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input.gridnames</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>handles.Model(md).Input.gridnames</variable>
+    </listtext>
   </element>
   <element>
     <tag>textcs</tag>
@@ -36,7 +33,7 @@
     <tag>panelbathydata</tag>
     <style>panel</style>
     <text>Bathymetry data</text>
-    <position>300 10 590 120</position>  
+    <position>300 10 590 120</position>
   </element>
   <element>
     <tag>pushselectbathydata</tag>
@@ -49,18 +46,14 @@
     <selectiontext>Select dep File</selectiontext>
     <callback>ddb_Delft3DWAVE_bathymetry</callback>
     <option1>select</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>nrgrids</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>nrgrids</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
 </root>

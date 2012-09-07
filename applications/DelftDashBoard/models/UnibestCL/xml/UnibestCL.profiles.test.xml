@@ -1,423 +1,345 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 1000 140</position>
     <style>tabpanel</style>
     <tag>profilepanel</tag>
-    <tabs> 
-      <tab>
-        <tag>bathymetry</tag>
-        <tabstring>Bathymetry</tabstring>
-        <elements>
-          <element>
-            <tag>pushselectxyzfile</tag>
-            <style>pushselectfile</style>
-            <position>10 110 130 20</position>
-            <text>Open XYZ File</text>
-            <variable>
-              <name>XYZfile</name>
-              <type>string</type>
-            </variable>
-            <extension>*.xyz</extension>
-            <selectiontext>Select XYZ File</selectiontext>
-            <onchange>ddb_UnibestCL_selectXyzFile</onchange>
-            <tooltipstring>Select XYZ file</tooltipstring>
-          </element>
-        </elements>
-      </tab>
-      <tab>
-        <tag>rays</tag>
-        <tabstring>Rays</tabstring>
-        <elements>  
-	  <element>
-            <tag>radioraylocfile</tag>
-            <style>radiobutton</style>
-            <position>10 110</position>
-            <text>File</text>
+    <tab>
+      <tag>bathymetry</tag>
+      <tabstring>Bathymetry</tabstring>
+      <element>
+        <tag>pushselectxyzfile</tag>
+        <style>pushselectfile</style>
+        <position>10 110 130 20</position>
+        <text>Open XYZ File</text>
+        <variable>
+          <name>XYZfile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.xyz</extension>
+        <selectiontext>Select XYZ File</selectiontext>
+        <onchange>ddb_UnibestCL_selectXyzFile</onchange>
+        <tooltipstring>Select XYZ file</tooltipstring>
+      </element>
+    </tab>
+    <tab>
+      <tag>rays</tag>
+      <tabstring>Rays</tabstring>
+      <element>
+        <tag>radioraylocfile</tag>
+        <style>radiobutton</style>
+        <position>10 110</position>
+        <text>File</text>
+        <variable>
+          <name>RAYlocsource</name>
+          <type>string</type>
+        </variable>
+        <value>file</value>
+        <onchange>ddb_UnibestCL_pushRadioFileRayLocs</onchange>
+        <dependency>
+          <action>on</action>
+          <checkfor>all</checkfor>
+          <check>
             <variable>
               <name>RAYlocsource</name>
               <type>string</type>
             </variable>
             <value>file</value>
-            <onchange>ddb_UnibestCL_pushRadioFileRayLocs</onchange>
-            <dependencies>
-              <dependency>
-                <action>on</action>
-                <tags>
-                  <tag>radiorayloccreate</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>RAYlocsource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>file</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
-          </element>
-          <element>
-            <tag>radiorayloccreate</tag>
-            <style>radiobutton</style>
-            <position>10 60</position>
-            <text>Create</text>
+            <operator>eq</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>radiorayloccreate</tag>
+        <style>radiobutton</style>
+        <position>10 60</position>
+        <text>Create</text>
+        <variable>
+          <name>RAYlocsource</name>
+          <type>string</type>
+        </variable>
+        <value>create</value>
+        <onchange>ddb_UnibestCL_pushRadioCreateRayLocs</onchange>
+        <dependency>
+          <action>on</action>
+          <checkfor>all</checkfor>
+          <check>
             <variable>
               <name>RAYlocsource</name>
               <type>string</type>
             </variable>
             <value>create</value>
-            <onchange>ddb_UnibestCL_pushRadioCreateRayLocs</onchange>           
-            <dependencies>
-              <dependency>
-                <action>on</action>
-                <tags>
-                  <tag>radioraylocfile</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>RAYlocsource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>create</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
-          </element>	  
-	  <element>
-            <tag>pushselectraylocfile</tag>
-            <style>pushselectfile</style>
-            <position>90 110 130 20</position>
-            <text>Open pol File</text>
+            <operator>eq</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>pushselectraylocfile</tag>
+        <style>pushselectfile</style>
+        <position>90 110 130 20</position>
+        <text>Open pol File</text>
+        <variable>
+          <name>RAYlocfile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.pol</extension>
+        <selectiontext>Select pol File</selectiontext>
+        <onchange>ddb_UnibestCL_selectRayLocFile</onchange>
+        <tooltipstring>Select pol file</tooltipstring>
+        <dependency>
+          <action>enable</action>
+          <checkfor>all</checkfor>
+          <check>
             <variable>
-              <name>RAYlocfile</name>
+              <name>RAYlocsource</name>
               <type>string</type>
             </variable>
-            <extension>*.pol</extension>
-            <selectiontext>Select pol File</selectiontext>
-            <onchange>ddb_UnibestCL_selectRayLocFile</onchange>
-            <tooltipstring>Select pol file</tooltipstring>
-	    <dependencies>
-	       <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>radioraylocfile</tag>
-                  <tag>radiorayloccreate</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>RAYlocsource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>file</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>              
-            </dependencies>            
-          </element>          
-	  <element>
-            <tag>pusheditraylocs</tag>
-            <style>pushbutton</style>
-            <position>90 85 130 20</position>
-	    <text>Edit Ray Locations</text>	    
-            <callback>ddb_UnibestCL_pushEditRayLocations</callback>	    
-	    <dependencies>	    
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>radioraylocfile</tag>
-                  <tag>radiorayloccreate</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>RAYlocsource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>file</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>           
-            </dependencies>            
-	  </element>          
-          <element>
-            <tag>editnumberrays</tag>
-            <style>edit</style>
-            <position>180 60 40 20</position>
-            <text>Number of rays:</text>
-            <textposition>left</textposition>
+            <value>file</value>
+            <operator>eq</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>pusheditraylocs</tag>
+        <style>pushbutton</style>
+        <position>90 85 130 20</position>
+        <text>Edit Ray Locations</text>
+        <callback>ddb_UnibestCL_pushEditRayLocations</callback>
+        <dependency>
+          <action>enable</action>
+          <checkfor>all</checkfor>
+          <check>
             <variable>
-              <name>numberrays</name>
-              <type>real</type>
+              <name>RAYlocsource</name>
+              <type>string</type>
             </variable>
-            <tooltipstring>Enter number of rays</tooltipstring>
-	    <dependencies>
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>radioraylocfile</tag>
-                  <tag>radiorayloccreate</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>RAYlocsource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>create</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>            
-	  </element>        
-	  <element>
-            <tag>pushenterraylocs</tag>
-            <style>pushbutton</style>
-            <position>90 35 130 20</position>
-	    <text>Enter Ray Locations</text>	    
-            <callback>ddb_UnibestCL_pushEnterRayLocations</callback>    
-	    <dependencies>
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>radioraylocfile</tag>
-                  <tag>radiorayloccreate</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>RAYlocsource</name>
-                      <type>string</type>
-                    </variable>
-                    <value>create</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>            
-	  </element>
-	  <element>
-      	    <tag>pushsaveraylocsas</tag>
-      	    <style>pushbutton</style>
-      	    <position>90 10 130 20</position>
-      	    <text>Save Ray Locations As</text>
-      	    <callback>ddb_UnibestCL_pushSaveRayLocationsAs</callback>        
-          </element>
-        </elements>	
-      </tab>
-      <tab>
-        <tag>profiles</tag>
-        <tabstring>Cross Shore Profiles</tabstring>  
-	<elements>
-	  <element>
-            <tag>panelinputpro</tag>
-            <style>panel</style>
-            <title>Settings:</title>
-            <position>5 5 400 125</position>
-          </element>
-	  <element>
-	    <tag>textxyzfile</tag>
-  	    <style>text</style>
-  	    <position>10 90</position>
-  	    <prefix>Selected xyz file : </text>
- 	    <variable>
-              <name>XYZfile</name>
+            <value>file</value>
+            <operator>eq</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>editnumberrays</tag>
+        <style>edit</style>
+        <position>180 60 40 20</position>
+        <text>Number of rays:</text>
+        <textposition>left</textposition>
+        <variable>
+          <name>numberrays</name>
+          <type>real</type>
+        </variable>
+        <tooltipstring>Enter number of rays</tooltipstring>
+        <dependency>
+          <action>enable</action>
+          <checkfor>all</checkfor>
+          <check>
+            <variable>
+              <name>RAYlocsource</name>
               <type>string</type>
-            </variable>            
-            <extension>*.xyz</extension>                       
-          </element>  	  
-	  <element>
-	    <tag>textlocationfile</tag>
-  	    <style>text</style>
-  	    <position>10 65</position>
-  	    <prefix>Selected pol file : </text>
- 	    <variable>
-              <name>RAYlocfile</name>
+            </variable>
+            <value>create</value>
+            <operator>eq</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>pushenterraylocs</tag>
+        <style>pushbutton</style>
+        <position>90 35 130 20</position>
+        <text>Enter Ray Locations</text>
+        <callback>ddb_UnibestCL_pushEnterRayLocations</callback>
+        <dependency>
+          <action>enable</action>
+          <checkfor>all</checkfor>
+          <check>
+            <variable>
+              <name>RAYlocsource</name>
               <type>string</type>
-            </variable>            
-            <extension>*.pol</extension>                       
-          </element>            
-	  <element>
-            <tag>editdynbound</tag>
-            <style>edit</style>
-            <position>350 90 40 20</position>
-            <text>Depth dynamic boundary (m):</text>
-            <textposition>left</textposition>
-	    <variable>
-              <name>hdynbound</name>
-              <type>real</type>	    
-	      <subfield3>
-	        <variable>
-                  <name>PROdata</name>            
-            	</variable>
-              </subfield3>
-	    </variable>              
-            <tooltipstring>Enter depth dynamic boundary</tooltipstring>          
-	  </element>	  
-	  <element>
-            <tag>editwaterlevel</tag>
-            <style>edit</style>
-            <position>350 65 40 20</position>
-            <text>Water level w.r.t. reference (m):</text>
-            <textposition>left</textposition>
-	    <variable>
-              <name>waterlevel</name>
-              <type>real</type>	    
-	      <subfield3>
-	        <variable>
-                  <name>PROdata</name>            
-            	</variable>
-              </subfield3>
-	    </variable>           
-            <tooltipstring>Enter water level</tooltipstring>          
-	  </element>	  
-	  <element>
-            <tag>editzmin</tag>
-            <style>edit</style>
-            <position>350 40 40 20</position>
-            <text>Zmin (m):</text>
-            <textposition>left</textposition>
-	    <variable>
-              <name>zmin</name>
-              <type>real</type>	    
-	      <subfield3>
-	        <variable>
-                  <name>PROdata</name>            
-            	</variable>
-              </subfield3>
-	    </variable>            
-            <tooltipstring>Enter zmin</tooltipstring>          
-	  </element>
-	  <element>
-            <tag>editzmax</tag>
-            <style>edit</style>
-            <position>350 15 40 20</position>
-            <text>Zmax (m):</text>
-            <textposition>left</textposition>
-	    <variable>
-              <name>zmax</name>
-              <type>real</type>	    
-	      <subfield3>
-	        <variable>
-                  <name>PROdata</name>            
-            	</variable>
-              </subfield3>
-	    </variable>            
-            <tooltipstring>Enter zmax</tooltipstring>          
-	  </element>	          
-	  <element>
-  	    <tag>pushgenerateprofiles</tag>
-            <style>pushbutton</style>
-            <position>410 90 130 20</position>
-   	    <text>Generate profiles</text>
-            <callback>ddb_UnibestCL_pushgenerateprofiles</callback>
-	    <dependencies>
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>pushselectxyzfile</tag>
-                  <tag>pushselectprofile</tag>
-                  <tag>pushsaveraylocsas</tag>
-                </tags>
-                <checkfor>any</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>XYZfileselected</name>
-                      <type>integer</type>
-                    </variable>
-                    <value>0</value>
-                    <operator>gt</operator>
-                  </check>
-		  <check>
-                    <variable>
-                      <name>RAYlocfileselected</name>
-                      <type>integer</type>
-                    </variable>
-                    <value>0</value>
-                    <operator>gt</operator>
-                  </check>                  
-                </checks>
-              </dependency>
-            </dependencies>            
-          </element>
-	  <element>  
-	    <tag>pushselectprofile</tag>
-            <style>pushselectfile</style>
-            <position>410 65 130 20</position>
-            <text>Select PRO file</text>
-	    <variable>
-              <name>PROfile</name>
-              <type>string</type>	    
-	    </variable>             
-            <extension>*.pro</extension>
-            <selectiontext>Select PRO file</selectiontext>
-            <onchange>ddb_UnibestCL_pushselectprofile</onchange>
-            <tooltipstring>Select PRO file</tooltipstring>
-	    <dependencies>
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>pushgenerateprofiles</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>profilesgenerated</name>
-                      <type>integer</type>
-                    </variable>
-                    <value>0</value>
-                    <operator>gt</operator>
-                  </check>                 
-                </checks>
-              </dependency>
-            </dependencies>             
-      	  </element>
-	  <element>
-	    <tag>pusheditprofile</tag>
-	    <style>pushbutton</style>
-	    <position>410 40 130 20</position>
-	    <text>Edit profile</text>
-	    <callback>ddb_UnibestCL_pushEditProfile</callback>  
-	    <dependencies>
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>pushselectprofile</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>activePROfile</name>
-                      <type>integer</type>
-                    </variable>
-                    <value>0</value>
-                    <operator>gt</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>	    
-          </element>                     
-        </elements>
-      </tab>
-    </tabs>
+            </variable>
+            <value>create</value>
+            <operator>eq</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>pushsaveraylocsas</tag>
+        <style>pushbutton</style>
+        <position>90 10 130 20</position>
+        <text>Save Ray Locations As</text>
+        <callback>ddb_UnibestCL_pushSaveRayLocationsAs</callback>
+      </element>
+    </tab>
+    <tab>
+      <tag>profiles</tag>
+      <tabstring>Cross Shore Profiles</tabstring>
+      <element>
+        <tag>panelinputpro</tag>
+        <style>panel</style>
+        <title>Settings:</title>
+        <position>5 5 400 125</position>
+      </element>
+      <element>
+        <tag>textxyzfile</tag>
+        <style>text</style>
+        <position>10 90</position>
+        <prefix>Selected xyz file : </prefix>
+        <variable>
+          <name>XYZfile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.xyz</extension>
+      </element>
+      <element>
+        <tag>textlocationfile</tag>
+        <style>text</style>
+        <position>10 65</position>
+        <prefix>Selected pol file : </prefix>
+        <variable>
+          <name>RAYlocfile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.pol</extension>
+      </element>
+      <element>
+        <tag>editdynbound</tag>
+        <style>edit</style>
+        <position>350 90 40 20</position>
+        <text>Depth dynamic boundary (m):</text>
+        <textposition>left</textposition>
+        <variable>
+          <name>hdynbound</name>
+          <type>real</type>
+          <subfield3>
+            <variable>
+              <name>PROdata</name>
+            </variable>
+          </subfield3>
+        </variable>
+        <tooltipstring>Enter depth dynamic boundary</tooltipstring>
+      </element>
+      <element>
+        <tag>editwaterlevel</tag>
+        <style>edit</style>
+        <position>350 65 40 20</position>
+        <text>Water level w.r.t. reference (m):</text>
+        <textposition>left</textposition>
+        <variable>
+          <name>waterlevel</name>
+          <type>real</type>
+          <subfield3>
+            <variable>
+              <name>PROdata</name>
+            </variable>
+          </subfield3>
+        </variable>
+        <tooltipstring>Enter water level</tooltipstring>
+      </element>
+      <element>
+        <tag>editzmin</tag>
+        <style>edit</style>
+        <position>350 40 40 20</position>
+        <text>Zmin (m):</text>
+        <textposition>left</textposition>
+        <variable>
+          <name>zmin</name>
+          <type>real</type>
+          <subfield3>
+            <variable>
+              <name>PROdata</name>
+            </variable>
+          </subfield3>
+        </variable>
+        <tooltipstring>Enter zmin</tooltipstring>
+      </element>
+      <element>
+        <tag>editzmax</tag>
+        <style>edit</style>
+        <position>350 15 40 20</position>
+        <text>Zmax (m):</text>
+        <textposition>left</textposition>
+        <variable>
+          <name>zmax</name>
+          <type>real</type>
+          <subfield3>
+            <variable>
+              <name>PROdata</name>
+            </variable>
+          </subfield3>
+        </variable>
+        <tooltipstring>Enter zmax</tooltipstring>
+      </element>
+      <element>
+        <tag>pushgenerateprofiles</tag>
+        <style>pushbutton</style>
+        <position>410 90 130 20</position>
+        <text>Generate profiles</text>
+        <callback>ddb_UnibestCL_pushgenerateprofiles</callback>
+        <dependency>
+          <action>enable</action>
+          <checkfor>any</checkfor>
+          <check>
+            <variable>
+              <name>XYZfileselected</name>
+              <type>integer</type>
+            </variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+          <check>
+            <variable>
+              <name>RAYlocfileselected</name>
+              <type>integer</type>
+            </variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>pushselectprofile</tag>
+        <style>pushselectfile</style>
+        <position>410 65 130 20</position>
+        <text>Select PRO file</text>
+        <variable>
+          <name>PROfile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.pro</extension>
+        <selectiontext>Select PRO file</selectiontext>
+        <onchange>ddb_UnibestCL_pushselectprofile</onchange>
+        <tooltipstring>Select PRO file</tooltipstring>
+        <dependency>
+          <action>enable</action>
+          <checkfor>all</checkfor>
+          <check>
+            <variable>
+              <name>profilesgenerated</name>
+              <type>integer</type>
+            </variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>pusheditprofile</tag>
+        <style>pushbutton</style>
+        <position>410 40 130 20</position>
+        <text>Edit profile</text>
+        <callback>ddb_UnibestCL_pushEditProfile</callback>
+        <dependency>
+          <action>enable</action>
+          <checkfor>all</checkfor>
+          <check>
+            <variable>
+              <name>activePROfile</name>
+              <type>integer</type>
+            </variable>
+            <value>0</value>
+            <operator>gt</operator>
+          </check>
+        </dependency>
+      </element>
+    </tab>
   </element>
-</root>  
+</root>

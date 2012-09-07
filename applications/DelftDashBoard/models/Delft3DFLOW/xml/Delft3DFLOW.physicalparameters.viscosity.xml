@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>viscpanel</tag>
@@ -15,22 +14,15 @@
     <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
     <type>integer</type>
     <value>0</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiouniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiouniform</tag>
@@ -40,22 +32,15 @@
     <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
     <type>integer</type>
     <value>1</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushselectdepfile</tag>
@@ -67,23 +52,15 @@
     <extension>*.edy</extension>
     <selectiontext>Select Delft3D viscosity file</selectiontext>
     <tooltipstring>Select viscosity file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiouniform</tag>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editvicouv</tag>
@@ -94,23 +71,15 @@
     <variable>handles.Model(md).Input(ad).vicoUV</variable>
     <type>real</type>
     <tooltipstring>Enter horizontal eddy viscosity</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiouniform</tag>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editdicouv</tag>
@@ -121,23 +90,15 @@
     <variable>handles.Model(md).Input(ad).dicoUV</variable>
     <type>real</type>
     <tooltipstring>Enter horizontal eddy diffusivity</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiouniform</tag>
-          <tag>radiofile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).uniformViscosity</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>2dturbpanel</tag>
@@ -159,22 +120,15 @@
     <text>Edit</text>
     <callback>ddb_Delft3DFLOW_viscosity</callback>
     <option1>edithles</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>checkhles</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).HLES</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).HLES</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>3dviscpanel</tag>
@@ -191,22 +145,15 @@
     <variable>handles.Model(md).Input(ad).dicoWW</variable>
     <type>real</type>
     <tooltipstring>Enter vertical eddy diffusivity</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiouniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).KMax</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).KMax</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editxlo</tag>
@@ -217,19 +164,15 @@
     <variable>handles.Model(md).Input(ad).xlo</variable>
     <type>real</type>
     <tooltipstring>Edit Ozmidov length scale</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).KMax</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).KMax</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>3dturbpanel</tag>
@@ -245,35 +188,29 @@
     <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
     <type>string</type>
     <value>Constant</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioalgebraic</tag>
-          <tag>radiokl</tag>
-          <tag>radiokeps</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
-            <value>Constant</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).KMax</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <tags>
+        <tag>radioalgebraic</tag>
+        <tag>radiokl</tag>
+        <tag>radiokeps</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
+        <value>Constant</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).KMax</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radioalgebraic</tag>
@@ -283,35 +220,29 @@
     <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
     <type>string</type>
     <value>Algebraic</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioconstant</tag>
-          <tag>radiokl</tag>
-          <tag>radiokeps</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
-            <value>Algebraic</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).KMax</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <tags>
+        <tag>radioconstant</tag>
+        <tag>radiokl</tag>
+        <tag>radiokeps</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
+        <value>Algebraic</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).KMax</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiokl</tag>
@@ -321,35 +252,29 @@
     <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
     <type>string</type>
     <value>K-L</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioconst</tag>
-          <tag>radioalgebraic</tag>
-          <tag>radiokeps</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
-            <value>K-L</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).KMax</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <tags>
+        <tag>radioconst</tag>
+        <tag>radioalgebraic</tag>
+        <tag>radiokeps</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
+        <value>K-L</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).KMax</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiokeps</tag>
@@ -359,34 +284,28 @@
     <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
     <type>string</type>
     <value>K-epsilon</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioconst</tag>
-          <tag>radioalgebraic</tag>
-          <tag>radiokl</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
-            <value>K-epsilon</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).KMax</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <tags>
+        <tag>radioconst</tag>
+        <tag>radioalgebraic</tag>
+        <tag>radiokl</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).verticalTurbulenceModel</variable>
+        <value>K-epsilon</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).KMax</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
 </root>

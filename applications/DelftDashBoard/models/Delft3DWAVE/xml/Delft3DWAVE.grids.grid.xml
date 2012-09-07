@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>editcompgrids</tag>
@@ -12,11 +11,9 @@
     <type>integer</type>
     <callback>ddb_Delft3DWAVE_grid</callback>
     <option1>selectgrid</option1>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input.gridnames</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>handles.Model(md).Input.gridnames</variable>
+    </listtext>
   </element>
   <element>
     <tag>pushaddgrid</tag>
@@ -47,7 +44,7 @@
     <prefix>Co-ordinate System : </prefix>
     <type>text</type>
     <variable>handles.Model(md).Input.domains(awg).coordsyst</variable>
-  </element>  
+  </element>
   <element>
     <tag>textbathygrid</tag>
     <style>text</style>
@@ -71,7 +68,7 @@
     <prefix>Nested in : </prefix>
     <type>text</type>
     <variable>handles.Model(md).Input.domains(awg).nestgrid</variable>
-  </element> 
+  </element>
   <element>
     <tag>textmmax</tag>
     <style>text</style>

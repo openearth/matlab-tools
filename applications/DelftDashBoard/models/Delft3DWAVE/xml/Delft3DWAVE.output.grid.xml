@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>textmode</tag>
     <style>text</style>
     <position>260 130</position>
-    <text>Computational mode :</text>    
+    <text>Computational mode :</text>
   </element>
   <element>
     <tag>editmode</tag>
@@ -13,14 +12,12 @@
     <position>260 105 110 20</position>
     <variable>handles.Model(md).Input.simmode</variable>
     <type>string</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input.simmodes</variable>
-      </texts>
-      <values>
-        <variable>handles.Model(md).Input.simmodes</variable>
-      </values>
-    </list>
+    <listtext>
+      <variable>handles.Model(md).Input.simmodes</variable>
+    </listtext>
+    <listvalue>
+      <variable>handles.Model(md).Input.simmodes</variable>
+    </listvalue>
   </element>
   <element>
     <tag>editcoupling</tag>
@@ -36,7 +33,7 @@
     <tag>textcouplingunit</tag>
     <style>text</style>
     <position>380 80</position>
-    <text>[min]</text>    
+    <text>[min]</text>
   </element>
   <element>
     <tag>edittimestepoutput</tag>
@@ -47,28 +44,21 @@
     <variable>handles.Model(md).Input.mapwriteinterval</variable>
     <type>real</type>
     <tooltipstring>Enter output time step</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>editmode</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.simmode</variable>
-            <value>non-stationary</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.simmode</variable>
+        <value>non-stationary</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>texttimestepoutputunit</tag>
     <style>text</style>
     <position>380 55</position>
-    <text>[-]</text>    
+    <text>[-]</text>
   </element>
   <element>
     <tag>checkhotstart</tag>
@@ -100,26 +90,22 @@
     <variable>handles.Model(md).Input.outputflowgridfile</variable>
     <extension>*.grd</extension>
     <selectiontext>Select FLOW grid file</selectiontext>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.writecom</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.writecom</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textcomputationalgrids</tag>
     <style>text</style>
     <position>690 130</position>
-    <text>Output for computational grids : </text>    
-  </element>  
+    <text>Output for computational grids : </text>
+  </element>
   <element>
     <tag>editinterval</tag>
     <style>edit</style>
@@ -134,7 +120,7 @@
     <tag>textintervalunit</tag>
     <style>text</style>
     <position>800 105</position>
-    <text>[min]</text>    
+    <text>[min]</text>
   </element>
   <element>
     <tag>checkcompgrid1</tag>
@@ -144,19 +130,15 @@
       <variable>handles.Model(md).Input.domains(1).gridname</variable>
     </text>
     <variable>handles.Model(md).Input.domains(1).output</variable>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrgrids</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrgrids</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>checkcompgrid2</tag>
@@ -166,19 +148,15 @@
       <variable>handles.Model(md).Input.domains(2).gridname</variable>
     </text>
     <variable>handles.Model(md).Input.domains(2).output</variable>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrgrids</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrgrids</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>checkcompgrid3</tag>
@@ -186,19 +164,15 @@
     <position>930 80</position>
     <text>Comp grid 3</text>
     <variable>handles.Model(md).Input.domains(3).output</variable>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrgrids</variable>
-            <value>2</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>  
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrgrids</variable>
+        <value>2</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>checkcompgrid4</tag>
@@ -206,19 +180,15 @@
     <position>1050 80</position>
     <text>Comp grid 4</text>
     <variable>handles.Model(md).Input.domains(4).output</variable>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrgrids</variable>
-            <value>3</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrgrids</variable>
+        <value>3</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>checkcompgrid5</tag>
@@ -226,18 +196,14 @@
     <position>1170 80</position>
     <text>Comp grid 5</text>
     <variable>handles.Model(md).Input.domains(5).output</variable>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrgrids</variable>
-            <value>4</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>  
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrgrids</variable>
+        <value>4</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
 </root>

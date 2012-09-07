@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>obstaclespanel</tag>
@@ -15,14 +14,12 @@
     <variable>activeobstacle</variable>
     <multivariable>activeobstacles</multivariable>
     <max>1000</max>
-    <type>integer</type>    
-    <list>
-      <texts>
-        <variable>obstaclenames</variable>
-      </texts>
-    </list>
+    <type>integer</type>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
-    <option1>selectobstacle</option1>    
+    <option1>selectobstacle</option1>
+    <listtext>
+      <variable>obstaclenames</variable>
+    </listtext>
   </element>
   <element>
     <tag>pushaddobstacle</tag>
@@ -31,7 +28,7 @@
     <tooltipstring>Add obstacle</tooltipstring>
     <text>Add</text>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
-    <option1>addobstacle</option1>    
+    <option1>addobstacle</option1>
   </element>
   <element>
     <tag>pushdeleteobstacle</tag>
@@ -41,20 +38,16 @@
     <text>Delete</text>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>deleteobstacle</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>  
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>pushimportobstacle</tag>
     <style>pushbutton</style>
@@ -62,7 +55,7 @@
     <tooltipstring>Import obstacles</tooltipstring>
     <text>Copy from FLOW</text>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
-    <option1>copyfromflow</option1>    
+    <option1>copyfromflow</option1>
   </element>
   <element>
     <tag>pushopenobstaclepolylinesfile</tag>
@@ -101,38 +94,30 @@
     <selectiontext>Select obstacle file</selectiontext>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>saveobsfile</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textobstacletype</tag>
     <style>text</style>
     <position>530 140</position>
     <text>Obstacle type</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>      
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiosheet</tag>
@@ -144,19 +129,15 @@
     <value>sheet</value>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>selecttype</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiodam</tag>
@@ -168,19 +149,15 @@
     <value>dam</value>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>selecttype</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editreflections</tag>
@@ -191,28 +168,22 @@
     <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections</variable>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>selectreflections</option1>
-    <list>
-      <texts>
-        <variable>obstaclereflectiontypestext</variable>
-      </texts>
-      <values>
-        <variable>obstaclereflectiontypes</variable>
-      </values>      
-    </list>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>    
-    </dependencies>    
-  </element>  
+    <listtext>
+      <variable>obstaclereflectiontypestext</variable>
+    </listtext>
+    <listvalue>
+      <variable>obstaclereflectiontypes</variable>
+    </listvalue>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>editrefcoef</tag>
     <style>edit</style>
@@ -224,48 +195,40 @@
     <tooltipstring>Enter reflection coefficient</tooltipstring>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>selectreflectioncoefficient</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections</variable>
-            <value>no</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections</variable>
+        <value>no</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textrefcoefunit</tag>
     <style>text</style>
     <position>665 90</position>
     <text>[-]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections</variable>
-            <value>no</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections</variable>
+        <value>no</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittransmcoef</tag>
@@ -278,60 +241,48 @@
     <tooltipstring>Enter transmission coefficient</tooltipstring>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>selecttransmissioncoefficient</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
-            <value>sheet</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
+        <value>sheet</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>texttransmcoefunit</tag>
     <style>text</style>
     <position>665 65</position>
     <text>[-]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
-            <value>sheet</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
+        <value>sheet</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editheight</tag>
@@ -344,60 +295,48 @@
     <tooltipstring>Enter height</tooltipstring>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>selectheight</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
-            <value>dam</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
+        <value>dam</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textheightunit</tag>
     <style>text</style>
     <position>665 65</position>
     <text>[m]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
-            <value>dam</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
+        <value>dam</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editalpha</tag>
@@ -410,60 +349,48 @@
     <tooltipstring>Enter alpha</tooltipstring>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>selectalpha</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
-            <value>dam</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
+        <value>dam</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textalphaunit</tag>
     <style>text</style>
     <position>665 40</position>
     <text>[-]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
-            <value>dam</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
+        <value>dam</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbeta</tag>
@@ -476,60 +403,48 @@
     <tooltipstring>Enter beta</tooltipstring>
     <callback>ddb_Delft3DWAVE_obstacles</callback>
     <option1>selectbeta</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
-            <value>dam</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
+        <value>dam</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textbetaunit</tag>
     <style>text</style>
     <position>665 15</position>
     <text>[-]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
-            <value>dam</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type</variable>
+        <value>dam</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>obstaclessegmentspanel</tag>
@@ -546,32 +461,26 @@
     <includebuttons>yes</includebuttons>
     <onchange>ddb_Delft3DWAVE_obstacles</onchange>
     <option1>editobstacletable</option1>
-    <columns>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).x</variable>
-        <width>60</width>
-        <text>X</text>
-      </column>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).y</variable>
-        <width>60</width>
-        <text>Y</text>
-      </column>
-    </columns>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrobstacles</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>        
-        </checks>
-      </dependency>
-    </dependencies>    
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).x</variable>
+      <width>60</width>
+      <text>X</text>
+    </column>
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).y</variable>
+      <width>60</width>
+      <text>Y</text>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrobstacles</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
 </root>

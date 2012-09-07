@@ -1,145 +1,134 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <title>Spectral Space</title>
   <width>400</width>
   <height>250</height>
   <tag>delft3dwavespectralspace</tag>
-  <elements>
-    <element>
-      <tag>textshape</tag>
-      <style>text</style>
-      <position>10 220</position>
-      <text>Shape</text>
-    </element>   
-    <element>
-      <tag>radiojonswap</tag>
-      <style>radiobutton</style>
-      <position>120 220</position>
-      <text>JONSWAP</text> 
-      <type>string</type>
-      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
-      <value>jonswap</value>
-    </element>
-    <element>
-      <tag>editpeakenhancfac</tag>
-      <style>edit</style>
-      <position>300 220 50 20</position>
-      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).peakenhancfac</variable>
-      <type>real</type>
-      <text>Peak enh. fact.</text>
-      <textposition>left</textposition>
-      <dependencies>
-        <dependency>
-          <action>enable</action>
-          <checkfor>any</checkfor>
-          <checks>
-            <check>
-              <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
-              <value>jonswap</value>
-              <operator>eq</operator>
-            </check>
-          </checks>
-        </dependency>
-      </dependencies>      
-    </element>    
-    <element>
-      <tag>radiopiersonmoskowitz</tag>
-      <style>radiobutton</style>
-      <position>120 195</position>
-      <text>Pierson-Moskowitz</text>
-      <type>string</type>      
-      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
-      <value>pierson-moskowitz</value>
-    </element>
-    <element>
-      <tag>radiogauss</tag>
-      <style>radiobutton</style>
-      <position>120 170</position>
-      <text>Gauss</text>
-      <type>string</type>      
-      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
-      <value>gauss</value>
-    </element>
-    <element>
-      <tag>editgaussspread</tag>
-      <style>edit</style>
-      <position>300 170 50 20</position>
-      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).gaussspread</variable>
-      <type>real</type>
-      <text>Spreading</text>
-      <textposition>left</textposition>    
-      <dependencies>
-        <dependency>
-          <action>enable</action>
-          <checkfor>any</checkfor>
-          <checks>
-            <check>
-              <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
-              <value>gauss</value>
-              <operator>eq</operator>
-            </check>
-          </checks>
-        </dependency>
-      </dependencies>       
-    </element>
-    <element>
-      <tag>textperiodtype</tag>
-      <style>text</style>
-      <position>10 145</position>
-      <text>Period</text>
-    </element>
-    <element>
-      <tag>radiopeak</tag>
-      <style>radiobutton</style>
-      <position>120 145</position>
-      <text>Peak</text> 
-      <type>string</type>
-      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).periodtype</variable>
-      <value>peak</value>
-    </element>
-    <element>
-      <tag>radiomean</tag>
-      <style>radiobutton</style>
-      <position>120 120</position>
-      <text>Mean</text> 
-      <type>string</type>
-      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).periodtype</variable>
-      <value>mean</value>
-    </element>
-    <element>
-      <tag>textdirspreadtype</tag>
-      <style>text</style>
-      <position>10 95</position>
-      <text>Directional spreading</text>
-    </element>
-    <element>
-      <tag>radiopeak</tag>
-      <style>radiobutton</style>
-      <position>120 95</position>
-      <text>Cosine power</text> 
-      <type>string</type>
-      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).dirspreadtype</variable>
-      <value>power</value>
-    </element>
-    <element>
-      <tag>radiomean</tag>
-      <style>radiobutton</style>
-      <position>120 70</position>
-      <text>Degrees (standard deviation)</text> 
-      <type>string</type>
-      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).dirspreadtype</variable>
-      <value>degrees</value>
-    </element>
-    <element>
-      <tag>pushok</tag>
-      <style>pushok</style>
-      <position>170 10 50 20</position>
-    </element>  
-    <element>
-      <tag>pushcancel</tag>
-      <style>pushcancel</style>
-      <position>110 10 50 20</position>
-    </element>    
-  </elements>
+  <element>
+    <tag>textshape</tag>
+    <style>text</style>
+    <position>10 220</position>
+    <text>Shape</text>
+  </element>
+  <element>
+    <tag>radiojonswap</tag>
+    <style>radiobutton</style>
+    <position>120 220</position>
+    <text>JONSWAP</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
+    <value>jonswap</value>
+  </element>
+  <element>
+    <tag>editpeakenhancfac</tag>
+    <style>edit</style>
+    <position>300 220 50 20</position>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).peakenhancfac</variable>
+    <type>real</type>
+    <text>Peak enh. fact.</text>
+    <textposition>left</textposition>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
+        <value>jonswap</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>radiopiersonmoskowitz</tag>
+    <style>radiobutton</style>
+    <position>120 195</position>
+    <text>Pierson-Moskowitz</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
+    <value>pierson-moskowitz</value>
+  </element>
+  <element>
+    <tag>radiogauss</tag>
+    <style>radiobutton</style>
+    <position>120 170</position>
+    <text>Gauss</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
+    <value>gauss</value>
+  </element>
+  <element>
+    <tag>editgaussspread</tag>
+    <style>edit</style>
+    <position>300 170 50 20</position>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).gaussspread</variable>
+    <type>real</type>
+    <text>Spreading</text>
+    <textposition>left</textposition>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spshapetype</variable>
+        <value>gauss</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>textperiodtype</tag>
+    <style>text</style>
+    <position>10 145</position>
+    <text>Period</text>
+  </element>
+  <element>
+    <tag>radiopeak</tag>
+    <style>radiobutton</style>
+    <position>120 145</position>
+    <text>Peak</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).periodtype</variable>
+    <value>peak</value>
+  </element>
+  <element>
+    <tag>radiomean</tag>
+    <style>radiobutton</style>
+    <position>120 120</position>
+    <text>Mean</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).periodtype</variable>
+    <value>mean</value>
+  </element>
+  <element>
+    <tag>textdirspreadtype</tag>
+    <style>text</style>
+    <position>10 95</position>
+    <text>Directional spreading</text>
+  </element>
+  <element>
+    <tag>radiopeak</tag>
+    <style>radiobutton</style>
+    <position>120 95</position>
+    <text>Cosine power</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).dirspreadtype</variable>
+    <value>power</value>
+  </element>
+  <element>
+    <tag>radiomean</tag>
+    <style>radiobutton</style>
+    <position>120 70</position>
+    <text>Degrees (standard deviation)</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).dirspreadtype</variable>
+    <value>degrees</value>
+  </element>
+  <element>
+    <tag>pushok</tag>
+    <style>pushok</style>
+    <position>170 10 50 20</position>
+  </element>
+  <element>
+    <tag>pushcancel</tag>
+    <style>pushcancel</style>
+    <position>110 10 50 20</position>
+  </element>
 </root>

@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>listobservationpoints</tag>
@@ -10,13 +9,11 @@
     <textposition>above-center</textposition>
     <variable>handles.Model(md).Input(ad).activeObservationPoint</variable>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).observationPointNames</variable>
-      </texts>
-    </list>
     <onchange>ddb_Delft3DFLOW_observationPoints</onchange>
     <option1>selectfromlist</option1>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).observationPointNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>panelobservationpoints</tag>
@@ -33,30 +30,23 @@
     <tooltipstring>Edit observation point name</tooltipstring>
     <variable>handles.Model(md).Input(ad).observationPoints(handles.Model(md).Input(ad).activeObservationPoint).name</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteobservationpoint</tag>
-          <tag>pushaddobservationpoint</tag>
-          <tag>pushopenobservationpointsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrObservationPoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listobservationpoints</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteobservationpoint</tag>
+        <tag>pushaddobservationpoint</tag>
+        <tag>pushopenobservationpointsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrObservationPoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editobsm</tag>
@@ -68,30 +58,23 @@
     <tooltipstring>Edit observation point index M</tooltipstring>
     <variable>handles.Model(md).Input(ad).observationPoints(handles.Model(md).Input(ad).activeObservationPoint).M</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteobservationpoint</tag>
-          <tag>pushaddobservationpoint</tag>
-          <tag>pushopenobservationpointsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrObservationPoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listobservationpoints</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteobservationpoint</tag>
+        <tag>pushaddobservationpoint</tag>
+        <tag>pushopenobservationpointsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrObservationPoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editobsn</tag>
@@ -102,31 +85,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).observationPoints(handles.Model(md).Input(ad).activeObservationPoint).N</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeleteobservationpoint</tag>
-          <tag>pushaddobservationpoint</tag>
-          <tag>pushopenobservationpointsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrObservationPoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listobservationpoints</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit observation point index N</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeleteobservationpoint</tag>
+        <tag>pushaddobservationpoint</tag>
+        <tag>pushopenobservationpointsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrObservationPoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>toggleaddobservationpoint</tag>
@@ -177,15 +153,10 @@
     <extension>*.obs</extension>
     <selectiontext>Select observation points File</selectiontext>
     <onchange>ddb_Delft3DFLOW_observationPoints</onchange>
-    <option1>openfile</option1>    
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>pushsaveobservationpoints</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <option1>openfile</option1>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>pushsaveobservationpoints</tag>

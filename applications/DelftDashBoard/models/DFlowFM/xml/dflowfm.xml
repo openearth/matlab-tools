@@ -1,35 +1,9 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <model>DFlowFM</model>
   <longname>D-FLOW FM</longname>
   <multipledomains>no</multipledomains>
   <enable>0</enable>
-  <elements>
-    <element>
-      <style>tabpanel</style>
-      <tag>DFlowFM</tab>
-      <position>10 10 900 700</position> 
-      <tabs>
-        <tab>
-          <tag>toolbox</tag>
-          <tabstring>Toolbox</tabstring>
-        </tab>
-        <tab>
-          <tag>description</tag>
-          <tabstring>Description</tabstring>
-          <callback>ddb_DFlowFM_description</callback>
-          <elements>DFlowFM.description.xml</elements>
-        </tab>
-        <tab>
-          <tag>timeframe</tag>
-          <tabstring>Time Frame</tabstring>
-          <callback>ddb_DFlowFM_timeFrame</callback>
-          <elements>DFlowFM.timeframe.xml</elements>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
   <menu>
     <menuopenfile>
       <menuitem>
@@ -65,7 +39,27 @@
         <option>saveallas</option>
       </menuitem>
     </menusavefile>
-    <menuview>
-    </menuview>
+    <menuview></menuview>
   </menu>
+  <element>
+    <style>tabpanel</style>
+    <tag>DFlowFM</tag>
+    <position>10 10 900 700</position>
+    <tab>
+      <tag>toolbox</tag>
+      <tabstring>Toolbox</tabstring>
+    </tab>
+    <tab>
+      <tag>description</tag>
+      <tabstring>Description</tabstring>
+      <callback>ddb_DFlowFM_description</callback>
+      <element>DFlowFM.description.xml</element>
+    </tab>
+    <tab>
+      <tag>timeframe</tag>
+      <tabstring>Time Frame</tabstring>
+      <callback>ddb_DFlowFM_timeFrame</callback>
+      <element>DFlowFM.timeframe.xml</element>
+    </tab>
+  </element>
 </root>

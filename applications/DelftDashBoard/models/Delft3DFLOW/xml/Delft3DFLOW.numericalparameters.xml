@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>panelnumericalparameters</tag>
@@ -16,14 +15,10 @@
     <variable>handles.Model(md).Input(ad).dpsOpt</variable>
     <onchange>ddb_Delft3DFLOW_numericalParameters</onchange>
     <option1>selectdps</option1>
-    <list>
-      <texts>
-        <text>MAX</text>
-        <text>MEAN</text>
-        <text>MIN</text>
-        <text>DP</text>
-      </texts>
-    </list> 
+    <listtext>MAX</listtext>
+    <listtext>MEAN</listtext>
+    <listtext>MIN</listtext>
+    <listtext>DP</listtext>
   </element>
   <element>
     <tag>selectdpu</tag>
@@ -32,19 +27,12 @@
     <position>200 90 60 20</position>
     <type>string</type>
     <variable>handles.Model(md).Input(ad).dpuOpt</variable>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).dpuOptions</variable>
-      </texts>
-    </list> 
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>selectdps</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).dpuOptions</variable>
+    </listtext>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>textdryflp</tag>
@@ -60,22 +48,15 @@
     <variable>handles.Model(md).Input(ad).dryFlp</variable>
     <type>integer</type>
     <value>1</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiocentres</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).dryFlp</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).dryFlp</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiocentres</tag>
@@ -85,22 +66,15 @@
     <variable>handles.Model(md).Input(ad).dryFlp</variable>
     <type>integer</type>
     <value>0</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiocentresandfaces</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).dryFlp</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).dryFlp</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editthresholddepth</tag>
@@ -139,13 +113,9 @@
     <position>780 120 60 20</position>
     <type>string</type>
     <variable>handles.Model(md).Input(ad).momSol</variable>
-    <list>
-      <texts>
-        <text>Cyclic</text>
-        <text>Waqua</text>
-        <text>Flood</text>
-      </texts>
-    </list> 
+    <listtext>Cyclic</listtext>
+    <listtext>Waqua</listtext>
+    <listtext>Flood</listtext>
   </element>
   <element>
     <tag>editsmoothingtime</tag>
@@ -156,22 +126,14 @@
     <tooltipstring>Edit smoothing time</tooltipstring>
     <text>Threshold Depth Critical Flow Limiter (m)</text>
     <textposition>left</textposition>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>selectmomsol</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).momSol</variable>
-            <value>Flood</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).momSol</variable>
+        <value>Flood</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
 </root>

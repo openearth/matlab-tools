@@ -1,69 +1,63 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <model>UnibestCL</model>
   <longname>UnibestCL</longname>
   <enable>0</enable>
-  <elements>
-    <element>
-      <style>tabpanel</style>
-      <tag>UnibestCL</tab>
-      <position>10 10 900 700</position> 
-      <tabs>
-        <tab>
-          <tag>toolbox</tag>
-          <tabstring>Toolbox</tabstring>
-        </tab>
-        <tab>
-          <tag>coastline</tag>
-          <tabstring>Coastline</tabstring>
-          <elements>UnibestCL.coastline.test.xml</elements>
-        </tab>
-        <tab>
-          <tag>profiles</tag>
-          <tabstring>Cross-shore Profiles</tabstring>
-          <elements>UnibestCL.profiles.test.xml</elements>
-        </tab>
-        <tab>
-          <tag>wavecurrent</tag>
-          <tabstring>Wave Current</tabstring>
-        </tab>
-        <tab>
-          <tag>parameters</tag>
-          <tabstring>Parameters</tabstring>
-        </tab>
-	<tab>
-          <tag>ltrrun</tag>
-          <tabstring>LTR Run</tabstring>
-        </tab>        
-        <tab>
-          <tag>ltroutput</tag>
-          <tabstring>LTR Output</tabstring>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
   <menu>
-      <menuopenfile>
-        <menuitem>
-          <string>Open LTR File</string>
-          <callback>ddb_openUnibestCL</callback>
-          <option>open</option>
-        </menuitem>
-      </menuopenfile>
-      <menusavefile>
-        <menuitem>
-          <string>Save LTR File</string>
-          <callback>ddb_saveUnibestCL</callback>
-          <option>save</option>
-        </menuitem>
-        <menuitem>
-          <string>Save LTR File As ...</string>
-          <callback>ddb_saveUnibestCL</callback>
-          <option>saveas</option>
-        </menuitem>
-      </menusavefile>
-      <menuview>
-      </menuview>
+    <menuopenfile>
+      <menuitem>
+        <string>Open LTR File</string>
+        <callback>ddb_openUnibestCL</callback>
+        <option>open</option>
+      </menuitem>
+    </menuopenfile>
+    <menusavefile>
+      <menuitem>
+        <string>Save LTR File</string>
+        <callback>ddb_saveUnibestCL</callback>
+        <option>save</option>
+      </menuitem>
+      <menuitem>
+        <string>Save LTR File As ...</string>
+        <callback>ddb_saveUnibestCL</callback>
+        <option>saveas</option>
+      </menuitem>
+    </menusavefile>
+    <menuview></menuview>
   </menu>
+  <element>
+    <style>tabpanel</style>
+    <tag>UnibestCL</tag>
+    <position>10 10 900 700</position>
+    <tab>
+      <tag>toolbox</tag>
+      <tabstring>Toolbox</tabstring>
+    </tab>
+    <tab>
+      <tag>coastline</tag>
+      <tabstring>Coastline</tabstring>
+      <element>UnibestCL.coastline.test.xml</element>
+    </tab>
+    <tab>
+      <tag>profiles</tag>
+      <tabstring>Cross-shore Profiles</tabstring>
+      <element>UnibestCL.profiles.test.xml</element>
+    </tab>
+    <tab>
+      <tag>wavecurrent</tag>
+      <tabstring>Wave Current</tabstring>
+    </tab>
+    <tab>
+      <tag>parameters</tag>
+      <tabstring>Parameters</tabstring>
+    </tab>
+    <tab>
+      <tag>ltrrun</tag>
+      <tabstring>LTR Run</tabstring>
+    </tab>
+    <tab>
+      <tag>ltroutput</tag>
+      <tabstring>LTR Output</tabstring>
+    </tab>
+  </element>
 </root>

@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>panelinitialconditions</tag>
@@ -14,20 +13,14 @@
     <position>150 120 120 20</position>
     <type>string</type>
     <variable>handles.Model(md).Input(ad).initialConditions</variable>
-    <list>
-      <texts>
-        <text>Uniform Values</text>
-        <text>Initial Conditions File</text>
-        <text>Restart File</text>
-        <text>Map File</text>
-      </texts>
-      <values>
-        <value>unif</value>
-        <value>ini</value>
-        <value>rst</value>
-        <value>trim</value>
-      </values>
-    </list> 
+    <listtext>Uniform Values</listtext>
+    <listtext>Initial Conditions File</listtext>
+    <listtext>Restart File</listtext>
+    <listtext>Map File</listtext>
+    <listvalue>unif</listvalue>
+    <listvalue>ini</listvalue>
+    <listvalue>rst</listvalue>
+    <listvalue>trim</listvalue>
   </element>
   <element>
     <tag>pushselectinifile</tag>
@@ -39,19 +32,15 @@
     <callback>ddb_Delft3DFLOW_initialConditions</callback>
     <option1>selectfile</option1>
     <variable>handles.Model(md).Input(ad).iniFile</variable>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>ini</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>ini</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editrstid</tag>
@@ -61,19 +50,15 @@
     <tooltipstring>Edit restart ID</tooltipstring>
     <variable>handles.Model(md).Input(ad).rstId</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>rst</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>rst</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editmapid</tag>
@@ -83,19 +68,15 @@
     <tooltipstring>Edit trim ID</tooltipstring>
     <variable>handles.Model(md).Input(ad).trimId</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>trim</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>trim</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editz0</tag>
@@ -105,19 +86,15 @@
     <tooltipstring>Edit initial water level</tooltipstring>
     <variable>handles.Model(md).Input(ad).zeta0</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editsal0</tag>
@@ -127,30 +104,24 @@
     <tooltipstring>Edit initial salinity</tooltipstring>
     <variable>handles.Model(md).Input(ad).salinity.ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).salinity.include</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).salinity.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittem0</tag>
@@ -160,65 +131,53 @@
     <tooltipstring>Edit initial temperature</tooltipstring>
     <variable>handles.Model(md).Input(ad).temperature.ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).temperature.include</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).temperature.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>texttracerconc</tag>
     <style>text</style>
     <position>606 136</position>
     <text>kg/m^3</text>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrTracers</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).tracers</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrTracers</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).tracers</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittracer1</tag>
@@ -230,35 +189,29 @@
     </text>
     <variable>handles.Model(md).Input(ad).tracer(1).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrTracers</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).tracers</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrTracers</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).tracers</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittracer2</tag>
@@ -271,35 +224,29 @@
     <tooltipstring>Edit initial concentration tracer 2</tooltipstring>
     <variable>handles.Model(md).Input(ad).tracer(2).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrTracers</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).tracers</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrTracers</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).tracers</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittracer3</tag>
@@ -312,35 +259,29 @@
     <tooltipstring>Edit initial concentration tracer 3</tooltipstring>
     <variable>handles.Model(md).Input(ad).tracer(3).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrTracers</variable>
-            <value>2</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).tracers</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrTracers</variable>
+        <value>2</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).tracers</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittracer4</tag>
@@ -353,38 +294,29 @@
     <tooltipstring>Edit initial concentration tracer 4</tooltipstring>
     <variable>handles.Model(md).Input(ad).tracer(4).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrTracers</variable>
-            <value>3</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).tracers</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrTracers</variable>
+        <value>3</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).tracers</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittracer5</tag>
@@ -397,70 +329,58 @@
     <tooltipstring>Edit initial concentration tracer 5</tooltipstring>
     <variable>handles.Model(md).Input(ad).tracer(5).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrTracers</variable>
-            <value>4</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).tracers</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrTracers</variable>
+        <value>4</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).tracers</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textsedconc</tag>
     <style>text</style>
     <position>786 136</position>
     <text>kg/m^3</text>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrSediments</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediments.include</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrSediments</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediments.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editsediment1</tag>
@@ -473,35 +393,29 @@
     <tooltipstring>Edit initial concentration sediment 1</tooltipstring>
     <variable>handles.Model(md).Input(ad).sediment(1).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrSediments</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediments.include</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrSediments</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediments.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editsediment2</tag>
@@ -514,35 +428,29 @@
     <tooltipstring>Edit initial concentration sediment 2</tooltipstring>
     <variable>handles.Model(md).Input(ad).sediment(2).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrSediments</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediments.include</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrSediments</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediments.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editsediment3</tag>
@@ -555,35 +463,29 @@
     <tooltipstring>Edit initial concentration sediment 3</tooltipstring>
     <variable>handles.Model(md).Input(ad).sediment(3).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrSediments</variable>
-            <value>2</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediments.include</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrSediments</variable>
+        <value>2</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediments.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editsediment4</tag>
@@ -596,35 +498,29 @@
     <tooltipstring>Edit initial concentration sediment 4</tooltipstring>
     <variable>handles.Model(md).Input(ad).sediment(4).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrSediments</variable>
-            <value>3</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediments.include</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrSediments</variable>
+        <value>3</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediments.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editsediment5</tag>
@@ -637,34 +533,28 @@
     <tooltipstring>Edit initial concentration sediment 5</tooltipstring>
     <variable>handles.Model(md).Input(ad).sediment(4).ICConst</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrSediments</variable>
-            <value>4</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediments.include</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).initialConditions</variable>
-            <value>unif</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrSediments</variable>
+        <value>4</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediments.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).initialConditions</variable>
+        <value>unif</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
 </root>

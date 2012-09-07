@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>listlocationfiles</tag>
@@ -9,14 +8,12 @@
     <text>Location sets</text>
     <textposition>above-center</textposition>
     <variable>activelocationset</variable>
-    <type>integer</type>    
-    <list>
-      <texts>
-        <variable>locationfile</variable>
-      </texts>
-    </list>
+    <type>integer</type>
     <callback>ddb_Delft3DWAVE_output_locations</callback>
     <option1>selectlocationset</option1>
+    <listtext>
+      <variable>locationfile</variable>
+    </listtext>
   </element>
   <element>
     <tag>pushaddset</tag>
@@ -35,19 +32,15 @@
     <text>Delete</text>
     <callback>ddb_Delft3DWAVE_output_locations</callback>
     <option1>deletelocationset</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushload</tag>
@@ -74,19 +67,15 @@
     <showfilename>0</showfilename>
     <callback>ddb_Delft3DWAVE_output_locations</callback>
     <option1>savelocationfile</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>listpoints</tag>
@@ -96,27 +85,21 @@
     <text>Points</text>
     <textposition>above-center</textposition>
     <variable>handles.Model(md).Input.locationsets(handles.Model(md).Input.activelocationset).activepoint</variable>
-    <type>integer</type>    
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input.locationsets(handles.Model(md).Input.activelocationset).pointtext</variable>
-      </texts>
-    </list>
+    <type>integer</type>
     <callback>ddb_Delft3DWAVE_output_locations</callback>
     <option1>selectpointfromlist</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <listtext>
+      <variable>handles.Model(md).Input.locationsets(handles.Model(md).Input.activelocationset).pointtext</variable>
+    </listtext>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushaddpoint</tag>
@@ -126,19 +109,15 @@
     <text>Add</text>
     <callback>ddb_Delft3DWAVE_output_locations</callback>
     <option1>addpoint</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushdeletepoint</tag>
@@ -148,24 +127,20 @@
     <text>Delete</text>
     <callback>ddb_Delft3DWAVE_output_locations</callback>
     <option1>deletepoint</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input.locationsets(handles.Model(md).Input.activelocationset).nrpoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.locationsets(handles.Model(md).Input.activelocationset).nrpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editx</tag>
@@ -178,24 +153,20 @@
     <tooltipstring>Edit x coordinate</tooltipstring>
     <callback>ddb_Delft3DWAVE_output_locations</callback>
     <option1>editcoordinate</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input.locationsets(handles.Model(md).Input.activelocationset).nrpoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.locationsets(handles.Model(md).Input.activelocationset).nrpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edity</tag>
@@ -208,24 +179,20 @@
     <tooltipstring>Edit y coordinate</tooltipstring>
     <callback>ddb_Delft3DWAVE_output_locations</callback>
     <option1>editcoordinate</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input.locationsets(handles.Model(md).Input.activelocationset).nrpoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.locationsets(handles.Model(md).Input.activelocationset).nrpoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>checktable</tag>
@@ -233,19 +200,15 @@
     <position>800 55</position>
     <text>Table</text>
     <variable>handles.Model(md).Input.writetable</variable>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>check1dspectra</tag>
@@ -253,19 +216,15 @@
     <position>800 35</position>
     <text>1D Spectra</text>
     <variable>handles.Model(md).Input.writespec1d</variable>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>check2dspectra</tag>
@@ -273,18 +232,14 @@
     <position>800 15</position>
     <text>2D Spectra</text>
     <variable>handles.Model(md).Input.writespec2d</variable>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrlocationsets</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrlocationsets</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
 </root>

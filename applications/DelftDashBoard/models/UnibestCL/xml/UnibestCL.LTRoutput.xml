@@ -1,277 +1,238 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>outputpanel</tag>
-    <tabs>
-      <tab>
-        <tag>ltroutput</tag>
-        <tabstring>LTR Output</tabstring>
-        <elements>
-          <element>
-            <tag>pushselectgrid</tag>
-            <style>pushselectfile</style>
-            <position>10 110 130 20</position>
-            <tooltipstring>Select grid file</tooltipstring>
-            <text>Open grid</text>
-            <variable>
-              <name>GrdFile</name>
-              <type>string</type>
-            </variable>
-            <extension>*.grd</extension>
-            <selectiontext>Select grid File</selectiontext>
-            <onchange>ddb_Delft3DFLOW_selectGridFile</onchange>
-          </element>
-          <element>
-            <tag>pushselectenclosure</tag>
-            <style>pushselectfile</style>
-            <position>10 85 130 20</position>
-            <tooltipstring>Select enclosure file</tooltipstring>
-            <text>Open grid enclosure</text>
-            <variable>
-              <name>EncFile</name>
-              <type>string</type>
-            </variable>
-            <extension>*.enc</extension>
-            <selectiontext>Select enclosure File</selectiontext>
-            <onchange>ddb_Delft3DFLOW_selectEnclosureFile</onchange>
-          </element>
-          <element>
-            <tag>textgridm</tag>
-            <style>text</style>
-            <position>10 30</position>
-            <prefix>Grid points in M direction : </text>
-            <variable>
-              <name>MMax</name>
-              <type>integer</type>
-            </variable>
-          </element>
-          <element>
-            <tag>textgridn</tag>
-            <style>text</style>
-            <position>10 10</position>
-            <prefix>Grid points in N direction : </text>
-            <variable>
-              <name>NMax</name>
-              <type>integer</type>
-            </variable>
-          </element>
-          <element>
-            <tag>editlatitude</tag>
-            <style>edit</style>
-            <position>500 35 50 20</position>
-            <variable>
-              <name>Latitude</name>
-              <type>real</type>
-            </variable>
-            <text>Latitude (deg)</text>
-          </element>
-          <element>
-            <tag>editorientation</tag>
-            <style>edit</style>
-            <position>500 10 50 20</position>
-            <variable>
-              <name>Orientation</name>
-              <type>real</type>
-            </variable>
-            <text>Orientation (deg)</text>
-          </element>
-          <element>
-            <tag>editkmax</tag>
-            <style>edit</style>
-            <position>500 60 50 20</position>
-            <variable>
-              <name>KMax</name>
-              <type>integer</type>
-            </variable>
-            <text>Number of layers</text>
-            <onchange>ddb_Delft3DFLOW_editKMax</onchange>
-          </element>
-          <element>
-            <tag>pushgeneratelayers</tag>
-            <style>pushbutton</style>
-            <position>560 60 100 20</position>
-            <text>Generate Layers</text>
-            <callback>ddb_Delft3DFLOW_pushGenerateLayers</callback>
-          </element>
-          <element>
-            <tag>pushsavelayers</tag>
-            <style>pushbutton</style>
-            <position>560 35 100 20</position>
-            <text>Save Layers</text>
-            <callback>ddb_Delft3DFLOW_pushSaveLayers</callback>
-          </element>
-          <element>
-            <tag>layertable</tag>
-            <style>table</style>
-            <position>690 25</position>
-            <nrrows>5</nrrows>
-            <includenumbers>yes</includenumbers>
-            <onchange>ddb_Delft3DFLOW_computeSumLayers</onchange>
-            <columns>
-              <column>
-                <style>editreal</style>
-                <variable>
-                  <name>Thick</name>
-                  <type>real</type>
-                </variable>
-                <width>50</width>
-              </column>
-            </columns>
-          </element>
-          <element>
-            <tag>sumlayers</tag>
-            <style>text</style>
-            <position>690 5</position>
-            <prefix>Sum : </text>
-            <suffix>%</suffix>
-            <variable>
-              <name>SumLayers</name>
-              <type>real</type>
-            </variable>
-          </element>
-          <element>
-            <tag>radiosigma</tag>
-            <style>radiobutton</style>
-            <position>800 85</position>
-            <text>Sigma Layers</text>
+    <tab>
+      <tag>ltroutput</tag>
+      <tabstring>LTR Output</tabstring>
+      <element>
+        <tag>pushselectgrid</tag>
+        <style>pushselectfile</style>
+        <position>10 110 130 20</position>
+        <tooltipstring>Select grid file</tooltipstring>
+        <text>Open grid</text>
+        <variable>
+          <name>GrdFile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.grd</extension>
+        <selectiontext>Select grid File</selectiontext>
+        <onchange>ddb_Delft3DFLOW_selectGridFile</onchange>
+      </element>
+      <element>
+        <tag>pushselectenclosure</tag>
+        <style>pushselectfile</style>
+        <position>10 85 130 20</position>
+        <tooltipstring>Select enclosure file</tooltipstring>
+        <text>Open grid enclosure</text>
+        <variable>
+          <name>EncFile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.enc</extension>
+        <selectiontext>Select enclosure File</selectiontext>
+        <onchange>ddb_Delft3DFLOW_selectEnclosureFile</onchange>
+      </element>
+      <element>
+        <tag>textgridm</tag>
+        <style>text</style>
+        <position>10 30</position>
+        <prefix>Grid points in M direction : </prefix>
+        <variable>
+          <name>MMax</name>
+          <type>integer</type>
+        </variable>
+      </element>
+      <element>
+        <tag>textgridn</tag>
+        <style>text</style>
+        <position>10 10</position>
+        <prefix>Grid points in N direction : </prefix>
+        <variable>
+          <name>NMax</name>
+          <type>integer</type>
+        </variable>
+      </element>
+      <element>
+        <tag>editlatitude</tag>
+        <style>edit</style>
+        <position>500 35 50 20</position>
+        <variable>
+          <name>Latitude</name>
+          <type>real</type>
+        </variable>
+        <text>Latitude (deg)</text>
+      </element>
+      <element>
+        <tag>editorientation</tag>
+        <style>edit</style>
+        <position>500 10 50 20</position>
+        <variable>
+          <name>Orientation</name>
+          <type>real</type>
+        </variable>
+        <text>Orientation (deg)</text>
+      </element>
+      <element>
+        <tag>editkmax</tag>
+        <style>edit</style>
+        <position>500 60 50 20</position>
+        <variable>
+          <name>KMax</name>
+          <type>integer</type>
+        </variable>
+        <text>Number of layers</text>
+        <onchange>ddb_Delft3DFLOW_editKMax</onchange>
+      </element>
+      <element>
+        <tag>pushgeneratelayers</tag>
+        <style>pushbutton</style>
+        <position>560 60 100 20</position>
+        <text>Generate Layers</text>
+        <callback>ddb_Delft3DFLOW_pushGenerateLayers</callback>
+      </element>
+      <element>
+        <tag>pushsavelayers</tag>
+        <style>pushbutton</style>
+        <position>560 35 100 20</position>
+        <text>Save Layers</text>
+        <callback>ddb_Delft3DFLOW_pushSaveLayers</callback>
+      </element>
+      <element>
+        <tag>layertable</tag>
+        <style>table</style>
+        <position>690 25</position>
+        <nrrows>5</nrrows>
+        <includenumbers>yes</includenumbers>
+        <onchange>ddb_Delft3DFLOW_computeSumLayers</onchange>
+        <column>
+          <style>editreal</style>
+          <variable>
+            <name>Thick</name>
+            <type>real</type>
+          </variable>
+          <width>50</width>
+        </column>
+      </element>
+      <element>
+        <tag>sumlayers</tag>
+        <style>text</style>
+        <position>690 5</position>
+        <prefix>Sum : </prefix>
+        <suffix>%</suffix>
+        <variable>
+          <name>SumLayers</name>
+          <type>real</type>
+        </variable>
+      </element>
+      <element>
+        <tag>radiosigma</tag>
+        <style>radiobutton</style>
+        <position>800 85</position>
+        <text>Sigma Layers</text>
+        <variable>
+          <name>LayerType</name>
+          <type>string</type>
+        </variable>
+        <value>Sigma</value>
+        <dependency>
+          <action>on</action>
+          <checkfor>all</checkfor>
+          <check>
             <variable>
               <name>LayerType</name>
               <type>string</type>
             </variable>
             <value>Sigma</value>
-            <dependencies>
-              <dependency>
-                <action>on</action>
-                <tags>
-                  <tag>radioz</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>LayerType</name>
-                      <type>string</type>
-                    </variable>
-                    <value>Sigma</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
-          </element>
-          <element>
-            <tag>radioz</tag>
-            <style>radiobutton</style>
-            <position>800 65</position>
-            <text>Z Layers</text>
+            <operator>eq</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>radioz</tag>
+        <style>radiobutton</style>
+        <position>800 65</position>
+        <text>Z Layers</text>
+        <variable>
+          <name>LayerType</name>
+          <type>string</type>
+        </variable>
+        <value>Z</value>
+        <dependency>
+          <action>on</action>
+          <checkfor>all</checkfor>
+          <check>
             <variable>
               <name>LayerType</name>
               <type>string</type>
             </variable>
             <value>Z</value>
-            <dependencies>
-              <dependency>
-                <action>on</action>
-                <tags>
-                  <tag>radiosigma</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>LayerType</name>
-                      <type>string</type>
-                    </variable>
-                    <value>Z</value>
-                    <operator>eq</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
-          </element>
-          <element>
-            <tag>editztop</tag>
-            <style>edit</style>
-            <position>840 35 50 20</position>
+            <operator>eq</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>editztop</tag>
+        <style>edit</style>
+        <position>840 35 50 20</position>
+        <variable>
+          <name>ZTop</name>
+          <type>real</type>
+        </variable>
+        <text>Z top (m)</text>
+        <dependency>
+          <action>enable</action>
+          <checkfor>all</checkfor>
+          <check>
             <variable>
-              <name>ZTop</name>
-              <type>real</type>
+              <name>LayerType</name>
+              <type>string</type>
             </variable>
-            <text>Z top (m)</text>
-            <dependencies>
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>editkmax</tag>
-                  <tag>radiosigma</tag>
-                  <tag>radioz</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>LayerType</name>
-                      <type>string</type>
-                    </variable>
-                    <value>Z</value>
-                    <operator>eq</operator>
-                  </check>
-                  <check>
-                    <variable>
-                      <name>KMax</name>
-                      <type>integer</type>
-                    </variable>
-                    <value>1</value>
-                    <operator>gt</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
-          </element>
-          <element>
-            <tag>editzbot</tag>
-            <style>edit</style>
-            <position>840 10 50 20</position>
+            <value>Z</value>
+            <operator>eq</operator>
+          </check>
+          <check>
             <variable>
-              <name>ZBot</name>
-              <type>real</type>
+              <name>KMax</name>
+              <type>integer</type>
             </variable>
-            <text>Z bottom (m)</text>
-            <dependencies>
-              <dependency>
-                <action>enable</action>
-                <tags>
-                  <tag>editkmax</tag>
-                  <tag>radiosigma</tag>
-                  <tag>radioz</tag>
-                </tags>
-                <checkfor>all</checkfor>
-                <checks>
-                  <check>
-                    <variable>
-                      <name>LayerType</name>
-                      <type>string</type>
-                    </variable>
-                    <value>Z</value>
-                    <operator>eq</operator>
-                  </check>
-                  <check>
-                    <variable>
-                      <name>KMax</name>
-                      <type>integer</type>
-                    </variable>
-                    <value>1</value>
-                    <operator>gt</operator>
-                  </check>
-                </checks>
-              </dependency>
-            </dependencies>
-          </element>
-        </elements>
-      </tab>
-    </tabs>
+            <value>1</value>
+            <operator>gt</operator>
+          </check>
+        </dependency>
+      </element>
+      <element>
+        <tag>editzbot</tag>
+        <style>edit</style>
+        <position>840 10 50 20</position>
+        <variable>
+          <name>ZBot</name>
+          <type>real</type>
+        </variable>
+        <text>Z bottom (m)</text>
+        <dependency>
+          <action>enable</action>
+          <checkfor>all</checkfor>
+          <check>
+            <variable>
+              <name>LayerType</name>
+              <type>string</type>
+            </variable>
+            <value>Z</value>
+            <operator>eq</operator>
+          </check>
+          <check>
+            <variable>
+              <name>KMax</name>
+              <type>integer</type>
+            </variable>
+            <value>1</value>
+            <operator>gt</operator>
+          </check>
+        </dependency>
+      </element>
+    </tab>
   </element>
 </root>

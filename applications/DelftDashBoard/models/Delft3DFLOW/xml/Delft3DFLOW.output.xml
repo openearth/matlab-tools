@@ -1,42 +1,39 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>outputpanel</tag>
-    <tabs>
-      <tab>
-        <tag>storage</tag>
-        <tabstring>Storage</tabstring>
-        <callback>ddb_Delft3DFLOW_storage</callback>
-        <elements>Delft3DFLOW.output.storage.xml</elements>
-      </tab>
-      <tab>
-        <tag>waqinput</tag>
-        <tabstring>WAQ Input</tabstring>
-        <elements>Delft3DFLOW.output.waqinput.xml</elements>
-      </tab> 
-      <tab>
-        <tag>print</tag>
-        <tabstring>Print</tabstring>
-        <callback>ddb_Delft3DFLOW_print</callback>
-        <elements>Delft3DFLOW.output.print.xml</elements>
-        <enable>0</enable>
-      </tab>
-      <tab>
-        <tag>details</tag>
-        <tabstring>Details</tabstring>
-        <callback>ddb_Delft3DFLOW_details</callback>
-        <elements>Delft3DFLOW.output.details.xml</elements>
-        <enable>0</enable>
-      </tab>
-      <tab>
-        <tag>fourier</tag>
-        <tabstring>Fourier Analysis</tabstring>
-        <callback>ddb_Delft3DFLOW_fourier</callback>
-        <elements>Delft3DFLOW.output.fourier.xml</elements>
-      </tab>     
-    </tabs>
+    <tab>
+      <tag>storage</tag>
+      <tabstring>Storage</tabstring>
+      <callback>ddb_Delft3DFLOW_storage</callback>
+      <element>Delft3DFLOW.output.storage.xml</element>
+    </tab>
+    <tab>
+      <tag>waqinput</tag>
+      <tabstring>WAQ Input</tabstring>
+      <element>Delft3DFLOW.output.waqinput.xml</element>
+    </tab>
+    <tab>
+      <tag>print</tag>
+      <tabstring>Print</tabstring>
+      <callback>ddb_Delft3DFLOW_print</callback>
+      <enable>0</enable>
+      <element>Delft3DFLOW.output.print.xml</element>
+    </tab>
+    <tab>
+      <tag>details</tag>
+      <tabstring>Details</tabstring>
+      <callback>ddb_Delft3DFLOW_details</callback>
+      <enable>0</enable>
+      <element>Delft3DFLOW.output.details.xml</element>
+    </tab>
+    <tab>
+      <tag>fourier</tag>
+      <tabstring>Fourier Analysis</tabstring>
+      <callback>ddb_Delft3DFLOW_fourier</callback>
+      <element>Delft3DFLOW.output.fourier.xml</element>
+    </tab>
   </element>
 </root>

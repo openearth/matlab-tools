@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>listthindams</tag>
@@ -10,13 +9,11 @@
     <textposition>above-center</textposition>
     <variable>handles.Model(md).Input(ad).activeThinDam</variable>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).thinDamNames</variable>
-      </texts>
-    </list>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>selectfromlist</option1>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).thinDamNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>panelthindams</tag>
@@ -33,30 +30,23 @@
     <tooltipstring>Edit thin dam index M1</tooltipstring>
     <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).M1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletethindam</tag>
-          <tag>pushaddthindam</tag>
-          <tag>pushopenthindamsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listthindams</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletethindam</tag>
+        <tag>pushaddthindam</tag>
+        <tag>pushopenthindamsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrThinDams</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editthinn1</tag>
@@ -67,31 +57,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).N1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletethindam</tag>
-          <tag>pushaddthindam</tag>
-          <tag>pushopenthindamsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listthindams</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit thin dam index N1</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletethindam</tag>
+        <tag>pushaddthindam</tag>
+        <tag>pushopenthindamsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrThinDams</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editthinm2</tag>
@@ -102,31 +85,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).M2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletethindam</tag>
-          <tag>pushaddthindam</tag>
-          <tag>pushopenthindamsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listthindams</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit thin dam index M2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletethindam</tag>
+        <tag>pushaddthindam</tag>
+        <tag>pushopenthindamsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrThinDams</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editthinn2</tag>
@@ -137,31 +113,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).N2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletethindam</tag>
-          <tag>pushaddthindam</tag>
-          <tag>pushopenthindamsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listthindams</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit thin dam index N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletethindam</tag>
+        <tag>pushaddthindam</tag>
+        <tag>pushopenthindamsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrThinDams</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>radiou</tag>
@@ -173,31 +142,24 @@
     <value>U</value>
     <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).UV</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletethindam</tag>
-          <tag>pushaddthindam</tag>
-          <tag>pushopenthindamsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listthindams</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit thin dam index N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletethindam</tag>
+        <tag>pushaddthindam</tag>
+        <tag>pushopenthindamsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrThinDams</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>radiov</tag>
@@ -209,55 +171,39 @@
     <value>V</value>
     <variable>handles.Model(md).Input(ad).thinDams(handles.Model(md).Input(ad).activeThinDam).UV</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletethindam</tag>
-          <tag>pushaddthindam</tag>
-          <tag>pushopenthindamsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listthindams</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit thin dam index N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletethindam</tag>
+        <tag>pushaddthindam</tag>
+        <tag>pushopenthindamsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrThinDams</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>textdirection</tag>
     <style>text</style>
     <position>220 22</position>
     <text>Direction</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletethindam</tag>
-          <tag>pushaddthindam</tag>
-          <tag>pushopenthindamsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrThinDams</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrThinDams</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>toggleaddthindam</tag>
@@ -308,15 +254,10 @@
     <extension>*.thd</extension>
     <selectiontext>Select thin dams file</selectiontext>
     <onchange>ddb_Delft3DFLOW_thinDams</onchange>
-    <option1>openfile</option1>    
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>pushsavethindams</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <option1>openfile</option1>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>pushsavethindams</tag>

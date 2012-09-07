@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>listdrogues</tag>
@@ -10,13 +9,11 @@
     <textposition>above-center</textposition>
     <variable>handles.Model(md).Input(ad).activeDrogue</variable>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).drogueNames</variable>
-      </texts>
-    </list>
     <onchange>ddb_Delft3DFLOW_drogues</onchange>
     <option1>selectfromlist</option1>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).drogueNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>paneldrogues</tag>
@@ -33,30 +30,23 @@
     <tooltipstring>Edit drogue name</tooltipstring>
     <variable>handles.Model(md).Input(ad).drogues(handles.Model(md).Input(ad).activeDrogue).name</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletedrogue</tag>
-          <tag>pushadddrogue</tag>
-          <tag>pushopendroguesfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrDrogues</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdrogues</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletedrogue</tag>
+        <tag>pushadddrogue</tag>
+        <tag>pushopendroguesfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrDrogues</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editdrom</tag>
@@ -68,30 +58,23 @@
     <tooltipstring>Edit drogue index M</tooltipstring>
     <variable>handles.Model(md).Input(ad).drogues(handles.Model(md).Input(ad).activeDrogue).M</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletedrogue</tag>
-          <tag>pushadddrogue</tag>
-          <tag>pushopendroguesfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrDrogues</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdrogues</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletedrogue</tag>
+        <tag>pushadddrogue</tag>
+        <tag>pushopendroguesfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrDrogues</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editdron</tag>
@@ -102,31 +85,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).drogues(handles.Model(md).Input(ad).activeDrogue).N</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletedrogue</tag>
-          <tag>pushadddrogue</tag>
-          <tag>pushopendroguesfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrDrogues</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdrogues</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit drogue index N</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletedrogue</tag>
+        <tag>pushadddrogue</tag>
+        <tag>pushopendroguesfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrDrogues</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editdroreleasetime</tag>
@@ -137,31 +113,24 @@
     <option1>datetime</option1>
     <variable>handles.Model(md).Input(ad).drogues(handles.Model(md).Input(ad).activeDrogue).releaseTime</variable>
     <type>datetime</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletedrogue</tag>
-          <tag>pushadddrogue</tag>
-          <tag>pushopendroguesfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrDrogues</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdrogues</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit drogue index N</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletedrogue</tag>
+        <tag>pushadddrogue</tag>
+        <tag>pushopendroguesfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrDrogues</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editdrorecoverytime</tag>
@@ -172,31 +141,24 @@
     <option1>datetime</option1>
     <variable>handles.Model(md).Input(ad).drogues(handles.Model(md).Input(ad).activeDrogue).recoveryTime</variable>
     <type>datetime</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletedrogue</tag>
-          <tag>pushadddrogue</tag>
-          <tag>pushopendroguesfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrDrogues</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdrogues</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit drogue index N</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletedrogue</tag>
+        <tag>pushadddrogue</tag>
+        <tag>pushopendroguesfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrDrogues</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>toggleadddrogue</tag>
@@ -247,15 +209,10 @@
     <extension>*.dro</extension>
     <selectiontext>Select drogues File</selectiontext>
     <onchange>ddb_Delft3DFLOW_drogues</onchange>
-    <option1>openfile</option1>    
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>pushsavedrogues</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <option1>openfile</option1>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>pushsavedrogues</tag>

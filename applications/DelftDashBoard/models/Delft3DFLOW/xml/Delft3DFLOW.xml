@@ -1,93 +1,9 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <model>Delft3DFLOW</model>
   <longname>Delft3D-FLOW</longname>
   <multipledomains>yes</multipledomains>
   <enable>1</enable>
-  <elements>
-    <element>
-      <style>tabpanel</style>
-      <tag>Delft3DFLOW</tag>
-      <position>10 10 900 400</position> 
-      <tabs>
-        <tab>
-          <tag>toolbox</tag>
-          <tabstring>Toolbox</tabstring>
-        </tab>
-        <tab>
-          <tag>description</tag>
-          <tabstring>Description</tabstring>
-          <callback>ddb_Delft3DFLOW_description</callback>
-          <elements>Delft3DFLOW.description.xml</elements>
-        </tab>
-        <tab>
-          <tag>domain</tag>
-          <tabstring>Domain</tabstring>
-          <elements>Delft3DFLOW.domain.xml</elements>
-        </tab>
-        <tab>
-          <tag>timeframe</tag>
-          <tabstring>Time Frame</tabstring>
-          <callback>ddb_Delft3DFLOW_timeFrame</callback>
-          <elements>Delft3DFLOW.timeframe.xml</elements>
-        </tab>
-        <tab>
-          <tag>processes</tag>
-          <tabstring>Processes</tabstring>
-          <callback>ddb_Delft3DFLOW_processes</callback>
-          <elements>Delft3DFLOW.processes.xml</elements>
-        </tab>
-        <tab>
-          <tag>initialconditions</tag>
-          <tabstring>Initial conditions</tabstring>
-          <callback>ddb_Delft3DFLOW_initialConditions</callback>
-          <elements>Delft3DFLOW.initialconditions.xml</elements>
-        </tab>
-        <tab>
-          <tag>openboundaries</tag>
-          <tabstring>Boundaries</tabstring>
-          <callback>ddb_Delft3DFLOW_openBoundaries</callback>
-          <elements>Delft3DFLOW.openboundaries.xml</elements>
-        </tab>
-        <tab>
-          <tag>physicalparameters</tag>
-          <tabstring>Physical Parameters</tabstring>
-          <callback>ddb_Delft3DFLOW_physicalparameters</callback>
-          <elements>Delft3DFLOW.physicalparameters.xml</elements>
-        </tab>
-        <tab>
-          <tag>numericalparameters</tag>
-          <tabstring>Numerical Parameters</tabstring>
-          <callback>ddb_Delft3DFLOW_numericalParameters</callback>
-          <elements>Delft3DFLOW.numericalparameters.xml</elements>
-        </tab>
-        <tab>
-          <tag>discharges</tag>
-          <tabstring>Discharges</tabstring>
-          <callback>ddb_Delft3DFLOW_discharges</callback>
-          <elements>Delft3DFLOW.discharges.xml</elements>
-          <enable>1</enable>
-        </tab>
-        <tab>
-          <tag>monitoring</tag>
-          <tabstring>Monitoring</tabstring>
-          <elements>Delft3DFLOW.monitoring.xml</elements>
-        </tab>
-        <tab>
-          <tag>additional</tag>
-          <tabstring>Additional</tabstring>
-          <callback>ddb_editD3DFlowAdditional</callback>
-          <enable>0</enable>
-        </tab>
-        <tab>
-          <tag>output</tag>
-          <tabstring>Output</tabstring>
-          <elements>Delft3DFLOW.output.xml</elements>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
   <menu>
     <menuopenfile>
       <menuitem>
@@ -135,7 +51,85 @@
         <option>saveallas</option>
       </menuitem>
     </menusavefile>
-    <menuview>
-    </menuview>
+    <menuview></menuview>
   </menu>
+  <element>
+    <style>tabpanel</style>
+    <tag>Delft3DFLOW</tag>
+    <position>10 10 900 400</position>
+    <tab>
+      <tag>toolbox</tag>
+      <tabstring>Toolbox</tabstring>
+    </tab>
+    <tab>
+      <tag>description</tag>
+      <tabstring>Description</tabstring>
+      <callback>ddb_Delft3DFLOW_description</callback>
+      <element>Delft3DFLOW.description.xml</element>
+    </tab>
+    <tab>
+      <tag>domain</tag>
+      <tabstring>Domain</tabstring>
+      <element>Delft3DFLOW.domain.xml</element>
+    </tab>
+    <tab>
+      <tag>timeframe</tag>
+      <tabstring>Time Frame</tabstring>
+      <callback>ddb_Delft3DFLOW_timeFrame</callback>
+      <element>Delft3DFLOW.timeframe.xml</element>
+    </tab>
+    <tab>
+      <tag>processes</tag>
+      <tabstring>Processes</tabstring>
+      <callback>ddb_Delft3DFLOW_processes</callback>
+      <element>Delft3DFLOW.processes.xml</element>
+    </tab>
+    <tab>
+      <tag>initialconditions</tag>
+      <tabstring>Initial conditions</tabstring>
+      <callback>ddb_Delft3DFLOW_initialConditions</callback>
+      <element>Delft3DFLOW.initialconditions.xml</element>
+    </tab>
+    <tab>
+      <tag>openboundaries</tag>
+      <tabstring>Boundaries</tabstring>
+      <callback>ddb_Delft3DFLOW_openBoundaries</callback>
+      <element>Delft3DFLOW.openboundaries.xml</element>
+    </tab>
+    <tab>
+      <tag>physicalparameters</tag>
+      <tabstring>Physical Parameters</tabstring>
+      <callback>ddb_Delft3DFLOW_physicalparameters</callback>
+      <element>Delft3DFLOW.physicalparameters.xml</element>
+    </tab>
+    <tab>
+      <tag>numericalparameters</tag>
+      <tabstring>Numerical Parameters</tabstring>
+      <callback>ddb_Delft3DFLOW_numericalParameters</callback>
+      <element>Delft3DFLOW.numericalparameters.xml</element>
+    </tab>
+    <tab>
+      <tag>discharges</tag>
+      <tabstring>Discharges</tabstring>
+      <callback>ddb_Delft3DFLOW_discharges</callback>
+      <enable>1</enable>
+      <element>Delft3DFLOW.discharges.xml</element>
+    </tab>
+    <tab>
+      <tag>monitoring</tag>
+      <tabstring>Monitoring</tabstring>
+      <element>Delft3DFLOW.monitoring.xml</element>
+    </tab>
+    <tab>
+      <tag>additional</tag>
+      <tabstring>Additional</tabstring>
+      <callback>ddb_editD3DFlowAdditional</callback>
+      <enable>0</enable>
+    </tab>
+    <tab>
+      <tag>output</tag>
+      <tabstring>Output</tabstring>
+      <element>Delft3DFLOW.output.xml</element>
+    </tab>
+  </element>
 </root>

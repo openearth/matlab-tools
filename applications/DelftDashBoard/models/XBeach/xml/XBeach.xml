@@ -1,89 +1,83 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <model>XBeach</model>
   <longname>X-Beach</longname>
   <enable>0</enable>
-  <elements>
-    <element>
-      <style>tabpanel</style>
-      <tag>XBeach</tab>
-      <position>10 10 900 700</position> 
-      <tabs>
-        <tab>
-          <tag>toolbox</tag>
-          <tabstring>Toolbox</tabstring>
-          <callback>ddb_selectToolbox</callback>
-        </tab>
-        <tab>
-          <tag>description</tag>
-          <tabstring>Description</tabstring>
-          <callback>ddb_editXBeachDescription</callback>
-        </tab>
-        <tab>
-          <tag>domain</tag>
-          <tabstring>Domain</tabstring>
-          <callback>ddb_editXBeachDomain</callback>
-        </tab>
-        <tab>
-          <tag>Time Frame</tag>
-          <tabstring>Time Frame</tabstring>
-          <callback>ddb_editXBeachTimeFrame</callback>
-        </tab>
-        <tab>
-          <tag>physicalparameters</tag>
-          <tabstring>Physical Parameters</tabstring>
-          <callback>ddb_editXBeachPhysParams</callback>
-        </tab>
-        <tab>
-          <tag>waves</tag>
-          <tabstring>Waves</tabstring>
-          <callback>ddb_editXBeachWaves</callback>
-        </tab>
-        <tab>
-          <tag>flow</tag>
-          <tabstring>Flow</tabstring>
-          <callback>ddb_editXBeachFlow</callback>
-        </tab>
-        <tab>
-          <tag>sediment</tag>
-          <tabstring>Sediment</tabstring>
-          <callback>ddb_editXBeachSediment</callback>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
   <menu>
-      <menuopenfile>
-        <menuitem>
-          <string>Open Params File</string>
-          <callback>ddb_openXBeach</callback>
-          <option>open</option>
-        </menuitem>
-      </menuopenfile>
-      <menusavefile>
-        <menuitem>
-          <string>Save Params File</string>
-          <callback>ddb_saveXBeach</callback>
-          <option>save</option>
-        </menuitem>
-        <menuitem>
-          <string>Save Params File As ...</string>
-          <callback>ddb_saveXBeach</callback>
-          <option>saveas</option>
-        </menuitem>
-        <menuitem>
-          <string>Save All</string>
-          <callback>ddb_saveXBeach</callback>
-          <option>saveall</option>
-        </menuitem>
-        <menuitem>
-          <string>Save All As ...</string>
-          <callback>ddb_saveXBeach</callback>
-          <option>saveallas</option>
-        </menuitem>
-      </menusavefile>
-      <menuview>
-      </menuview>
+    <menuopenfile>
+      <menuitem>
+        <string>Open Params File</string>
+        <callback>ddb_openXBeach</callback>
+        <option>open</option>
+      </menuitem>
+    </menuopenfile>
+    <menusavefile>
+      <menuitem>
+        <string>Save Params File</string>
+        <callback>ddb_saveXBeach</callback>
+        <option>save</option>
+      </menuitem>
+      <menuitem>
+        <string>Save Params File As ...</string>
+        <callback>ddb_saveXBeach</callback>
+        <option>saveas</option>
+      </menuitem>
+      <menuitem>
+        <string>Save All</string>
+        <callback>ddb_saveXBeach</callback>
+        <option>saveall</option>
+      </menuitem>
+      <menuitem>
+        <string>Save All As ...</string>
+        <callback>ddb_saveXBeach</callback>
+        <option>saveallas</option>
+      </menuitem>
+    </menusavefile>
+    <menuview></menuview>
   </menu>
+  <element>
+    <style>tabpanel</style>
+    <tag>XBeach</tag>
+    <position>10 10 900 700</position>
+    <tab>
+      <tag>toolbox</tag>
+      <tabstring>Toolbox</tabstring>
+      <callback>ddb_selectToolbox</callback>
+    </tab>
+    <tab>
+      <tag>description</tag>
+      <tabstring>Description</tabstring>
+      <callback>ddb_editXBeachDescription</callback>
+    </tab>
+    <tab>
+      <tag>domain</tag>
+      <tabstring>Domain</tabstring>
+      <callback>ddb_editXBeachDomain</callback>
+    </tab>
+    <tab>
+      <tag>Time Frame</tag>
+      <tabstring>Time Frame</tabstring>
+      <callback>ddb_editXBeachTimeFrame</callback>
+    </tab>
+    <tab>
+      <tag>physicalparameters</tag>
+      <tabstring>Physical Parameters</tabstring>
+      <callback>ddb_editXBeachPhysParams</callback>
+    </tab>
+    <tab>
+      <tag>waves</tag>
+      <tabstring>Waves</tabstring>
+      <callback>ddb_editXBeachWaves</callback>
+    </tab>
+    <tab>
+      <tag>flow</tag>
+      <tabstring>Flow</tabstring>
+      <callback>ddb_editXBeachFlow</callback>
+    </tab>
+    <tab>
+      <tag>sediment</tag>
+      <tabstring>Sediment</tabstring>
+      <callback>ddb_editXBeachSediment</callback>
+    </tab>
+  </element>
 </root>

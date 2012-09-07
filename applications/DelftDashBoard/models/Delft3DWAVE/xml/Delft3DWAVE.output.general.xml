@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>checkhotstart</tag>
@@ -31,18 +30,14 @@
     <variable>handles.Model(md).Input.outputflowgridfile</variable>
     <extension>*.grd</extension>
     <selectiontext>Select FLOW grid file</selectiontext>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.writecom</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>  
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.writecom</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
 </root>

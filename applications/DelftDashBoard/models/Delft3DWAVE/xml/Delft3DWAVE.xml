@@ -1,75 +1,8 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <model>Delft3DWAVE</model>
   <longname>Delft3D-WAVE</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <style>tabpanel</style>
-      <tag>Delft3DWAVE</tag>
-      <position>10 10 900 700</position> 
-      <tabs>
-        <tab>
-          <tag>toolbox</tag>
-          <tabstring>Toolbox</tabstring>
-          <callback>ddb_selectToolbox</callback>
-        </tab>
-        <tab>
-          <tag>description</tag>
-          <tabstring>Description</tabstring>
-          <elements>Delft3DWAVE.description.xml</elements>
-          <callback>ddb_Delft3DWAVE_description</callback>
-        </tab>
-        <tab>
-          <tag>hydrodynamics</tag>
-          <tabstring>Hydrodynamics</tabstring>
-          <elements>Delft3DWAVE.hydrodynamics.xml</elements>
-          <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
-        </tab>
-        <tab>
-          <tag>grids</tag>
-          <tabstring>Grids</tabstring>
-          <elements>Delft3DWAVE.grids.xml</elements>
-        </tab>
-        <tab>
-          <tag>timeframe</tag>
-          <tabstring>Time Frame</tabstring>
-          <elements>Delft3DWAVE.timeframe.xml</elements>
-          <callback>ddb_Delft3DWAVE_timeFrame</callback>
-        </tab>
-        <tab>
-          <tag>boundaries</tag>
-          <tabstring>Boundaries</tabstring>
-          <elements>Delft3DWAVE.boundaries.xml</elements>
-          <callback>ddb_Delft3DWAVE_boundaries</callback>
-        </tab>
-        <tab>
-          <tag>obstacles</tag>
-          <tabstring>Obstacles</tabstring>
-          <elements>Delft3DWAVE.obstacles.xml</elements>
-          <callback>ddb_Delft3DWAVE_obstacles</callback>
-        </tab>
-        <tab>
-          <tag>physicalparameters</tag>
-          <tabstring>Physical Parameters</tabstring>
-          <elements>Delft3DWAVE.physicalparameters.xml</elements>
-        </tab>
-        <tab>
-          <tag>numericalparameters</tag>
-          <tabstring>Numerical Parameters</tabstring>
-          <elements>Delft3DWAVE.numericalparameters.xml</elements>          
-          <callback>ddb_Delft3DWAVE_numericalParameters</callback>
-        </tab>
-        <tab>
-          <tag>output</tag>
-          <tabstring>Output</tabstring>
-          <elements>Delft3DWAVE.output.xml</elements>
-          <callback>ddb_Delft3DWAVE_output</callback>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
   <menu>
     <menuopenfile>
       <menuitem>
@@ -95,7 +28,68 @@
         <option>saveall</option>
       </menuitem>
     </menusavefile>
-    <menuview>
-    </menuview>
+    <menuview></menuview>
   </menu>
+  <element>
+    <style>tabpanel</style>
+    <tag>Delft3DWAVE</tag>
+    <position>10 10 900 700</position>
+    <tab>
+      <tag>toolbox</tag>
+      <tabstring>Toolbox</tabstring>
+      <callback>ddb_selectToolbox</callback>
+    </tab>
+    <tab>
+      <tag>description</tag>
+      <tabstring>Description</tabstring>
+      <callback>ddb_Delft3DWAVE_description</callback>
+      <element>Delft3DWAVE.description.xml</element>
+    </tab>
+    <tab>
+      <tag>hydrodynamics</tag>
+      <tabstring>Hydrodynamics</tabstring>
+      <callback>ddb_Delft3DWAVE_hydrodynamics</callback>
+      <element>Delft3DWAVE.hydrodynamics.xml</element>
+    </tab>
+    <tab>
+      <tag>grids</tag>
+      <tabstring>Grids</tabstring>
+      <element>Delft3DWAVE.grids.xml</element>
+    </tab>
+    <tab>
+      <tag>timeframe</tag>
+      <tabstring>Time Frame</tabstring>
+      <callback>ddb_Delft3DWAVE_timeFrame</callback>
+      <element>Delft3DWAVE.timeframe.xml</element>
+    </tab>
+    <tab>
+      <tag>boundaries</tag>
+      <tabstring>Boundaries</tabstring>
+      <callback>ddb_Delft3DWAVE_boundaries</callback>
+      <element>Delft3DWAVE.boundaries.xml</element>
+    </tab>
+    <tab>
+      <tag>obstacles</tag>
+      <tabstring>Obstacles</tabstring>
+      <callback>ddb_Delft3DWAVE_obstacles</callback>
+      <element>Delft3DWAVE.obstacles.xml</element>
+    </tab>
+    <tab>
+      <tag>physicalparameters</tag>
+      <tabstring>Physical Parameters</tabstring>
+      <element>Delft3DWAVE.physicalparameters.xml</element>
+    </tab>
+    <tab>
+      <tag>numericalparameters</tag>
+      <tabstring>Numerical Parameters</tabstring>
+      <callback>ddb_Delft3DWAVE_numericalParameters</callback>
+      <element>Delft3DWAVE.numericalparameters.xml</element>
+    </tab>
+    <tab>
+      <tag>output</tag>
+      <tabstring>Output</tabstring>
+      <callback>ddb_Delft3DWAVE_output</callback>
+      <element>Delft3DWAVE.output.xml</element>
+    </tab>
+  </element>
 </root>

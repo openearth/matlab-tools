@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>pushselectgrid</tag>
@@ -29,7 +28,7 @@
     <tag>textgridm</tag>
     <style>text</style>
     <position>10 30</position>
-    <prefix>Grid points in M direction : </text>
+    <prefix>Grid points in M direction : </prefix>
     <type>integer</type>
     <variable>handles.Model(md).Input(ad).MMax</variable>
   </element>
@@ -37,7 +36,7 @@
     <tag>textgridn</tag>
     <style>text</style>
     <position>10 10</position>
-    <prefix>Grid points in N direction : </text>
+    <prefix>Grid points in N direction : </prefix>
     <type>integer</type>
     <variable>handles.Model(md).Input(ad).NMax</variable>
   </element>
@@ -48,20 +47,16 @@
     <variable>handles.Model(md).Input(ad).latitude</variable>
     <text>Latitude (deg)</text>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.screenParameters.coordinateSystem.type</variable>
-            <type>string</type>
-            <value>cartesian</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.screenParameters.coordinateSystem.type</variable>
+        <type>string</type>
+        <value>cartesian</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editorientation</tag>
@@ -88,23 +83,16 @@
     <text>Generate Layers</text>
     <callback>ddb_Delft3DFLOW_grid</callback>
     <option1>generatelayers</option1>
-    <dependencies>
-      <dependency>
-        <tags>
-          <tag>editkmax</tag>
-        </tags>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).KMax</variable>
-            <type>integer</type>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).KMax</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushsavelayers</tag>
@@ -130,19 +118,17 @@
     <includenumbers>yes</includenumbers>
     <onchange>ddb_Delft3DFLOW_grid</onchange>
     <option1>changelayers</option1>
-    <columns>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input(ad).thick</variable>
-        <width>50</width>
-      </column>
-    </columns>
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input(ad).thick</variable>
+      <width>50</width>
+    </column>
   </element>
   <element>
     <tag>sumlayers</tag>
     <style>text</style>
     <position>690 5</position>
-    <prefix>Sum : </text>
+    <prefix>Sum : </prefix>
     <suffix>%</suffix>
     <type>real</type>
     <variable>handles.Model(md).Input(ad).sumLayers</variable>
@@ -155,22 +141,15 @@
     <variable>handles.Model(md).Input(ad).layerType</variable>
     <type>string</type>
     <value>Sigma</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioz</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
-            <value>Sigma</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).layerType</variable>
+        <value>Sigma</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radioz</tag>
@@ -180,22 +159,15 @@
     <variable>handles.Model(md).Input(ad).layerType</variable>
     <type>string</type>
     <value>Z</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiosigma</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
-            <value>Z</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).layerType</variable>
+        <value>Z</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editztop</tag>
@@ -204,29 +176,20 @@
     <variable>handles.Model(md).Input(ad).zTop</variable>
     <type>real</type>
     <text>Z top (m)</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>editkmax</tag>
-          <tag>radiosigma</tag>
-          <tag>radioz</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
-            <value>Z</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).layerType</variable>
+        <value>Z</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).layerType</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editzbot</tag>
@@ -235,28 +198,19 @@
     <variable>handles.Model(md).Input(ad).zBot</variable>
     <type>real</type>
     <text>Z bottom (m)</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>editkmax</tag>
-          <tag>radiosigma</tag>
-          <tag>radioz</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
-            <value>Z</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).layerType</variable>
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).layerType</variable>
+        <value>Z</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).layerType</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
 </root>

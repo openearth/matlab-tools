@@ -1,29 +1,22 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>selecttype</tag>
     <style>popupmenu</style>
     <text>Wind Type</text>
-    <textposition>above-left</textposition> 
+    <textposition>above-left</textposition>
     <position>10 90 130 20</position>
     <variable>handles.Model(md).Input(ad).windType</variable>
     <type>string</type>
-    <list>
-      <texts>
-        <text>Uniform</text>
-        <text>Equidistant Grid</text>
-        <text>Curvilinear Grid</text>
-        <text>Spiderweb Grid</text>
-      </texts>
-      <values>
-        <value>uniform</value>
-        <value>equidistant</value>
-        <value>curvilinear</value>
-        <value>spiderweb</value>
-      </values>
-    </list> 
-  </element> 
+    <listtext>Uniform</listtext>
+    <listtext>Equidistant Grid</listtext>
+    <listtext>Curvilinear Grid</listtext>
+    <listtext>Spiderweb Grid</listtext>
+    <listvalue>uniform</listvalue>
+    <listvalue>equidistant</listvalue>
+    <listvalue>curvilinear</listvalue>
+    <listvalue>spiderweb</listvalue>
+  </element>
   <element>
     <tag>textinterpolation</tag>
     <style>text</style>
@@ -38,22 +31,15 @@
     <variable>handles.Model(md).Input(ad).wndInt</variable>
     <type>string</type>
     <value>Y</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioblock</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).wndInt</variable>
-            <value>Y</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).wndInt</variable>
+        <value>Y</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radioblock</tag>
@@ -63,22 +49,15 @@
     <variable>handles.Model(md).Input(ad).wndInt</variable>
     <type>string</type>
     <value>N</value>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiolinear</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).wndInt</variable>
-            <value>N</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).wndInt</variable>
+        <value>N</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopenwndfile</tag>
@@ -93,22 +72,15 @@
     <extension>*.wnd</extension>
     <selectiontext>Select wind file</selectiontext>
     <tooltipstring>Select Delft3D wind file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).windType</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).windType</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushsavewndfile</tag>
@@ -122,28 +94,21 @@
     <extension>*.wnd</extension>
     <selectiontext>Select wind file</selectiontext>
     <tooltipstring>Select Delft3D wind file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).windType</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>pushopenwndfile</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <tags>
+        <tag>selecttype</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).windType</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>pushopencurvfile</tag>
@@ -156,22 +121,15 @@
     <extension>*.wnd</extension>
     <selectiontext>Select wind file</selectiontext>
     <tooltipstring>Select wind file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).windType</variable>
-            <value>curvilinear</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).windType</variable>
+        <value>curvilinear</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopenspwfile</tag>
@@ -184,22 +142,15 @@
     <extension>*.spw</extension>
     <selectiontext>Select spiderweb file</selectiontext>
     <tooltipstring>Select spiderweb file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).windType</variable>
-            <value>spiderweb</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).windType</variable>
+        <value>spiderweb</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopenamufile</tag>
@@ -212,22 +163,15 @@
     <extension>*.amu</extension>
     <selectiontext>Select *.amu file</selectiontext>
     <tooltipstring>Select *.amu file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).windType</variable>
-            <value>equidistant</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).windType</variable>
+        <value>equidistant</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopenamvfile</tag>
@@ -240,22 +184,15 @@
     <extension>*.amv</extension>
     <selectiontext>Select *.amv file</selectiontext>
     <tooltipstring>Select *.amv file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).windType</variable>
-            <value>equidistant</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).windType</variable>
+        <value>equidistant</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushopenamufile</tag>
@@ -268,22 +205,15 @@
     <extension>*.amp</extension>
     <selectiontext>Select *.amp file</selectiontext>
     <tooltipstring>Select *.amp file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).windType</variable>
-            <value>equidistant</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).windType</variable>
+        <value>equidistant</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>timeseriestable</tag>
@@ -294,48 +224,39 @@
     <includebuttons>yes</includebuttons>
     <onchange>ddb_Delft3DFLOW_wind</onchange>
     <option1>changewinddrag</option1>
-    <columns>
-      <column>
-        <style>edittime</style>
-        <variable>handles.Model(md).Input(ad).windTimeSeriesT</variable>
-        <width>110</width>
-        <text>Time</text>
-      </column>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input(ad).windTimeSeriesSpeed</variable>
-        <width>60</width>
-        <text>Speed (m/s)</text>
-      </column>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input(ad).windTimeSeriesDirection</variable>
-        <width>60</width>
-        <text>Dir (deg)</text>
-      </column>
-    </columns>
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>selectnrbreak</tag>
-        </tags>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).windType</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <column>
+      <style>edittime</style>
+      <variable>handles.Model(md).Input(ad).windTimeSeriesT</variable>
+      <width>110</width>
+      <text>Time</text>
+    </column>
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input(ad).windTimeSeriesSpeed</variable>
+      <width>60</width>
+      <text>Speed (m/s)</text>
+    </column>
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input(ad).windTimeSeriesDirection</variable>
+      <width>60</width>
+      <text>Dir (deg)</text>
+    </column>
+    <dependency>
+      <action>update</action>
+      <tags>
+        <tag>selectnrbreak</tag>
+      </tags>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).windType</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>dragcoefpanel</tag>
@@ -360,22 +281,15 @@
     <style>text</style>
     <position>740 46</position>
     <text>Breakpoint 3</text>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>selectnrbreak</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrWindStressBreakpoints</variable>
-            <value>3</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrWindStressBreakpoints</variable>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>dragcoeftable</tag>
@@ -385,28 +299,21 @@
     <includenumbers>no</includenumbers>
     <onchange>ddb_Delft3DFLOW_wind</onchange>
     <option1>changewinddrag</option1>
-    <columns>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input(ad).windStressCoefficients</variable>
-        <width>60</width>
-        <text>Coef (-)</text>
-      </column>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input(ad).windStressSpeeds</variable>
-        <width>60</width>
-        <text>Speed (m/s)</text>
-      </column>
-    </columns>
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>selectnrbreak</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input(ad).windStressCoefficients</variable>
+      <width>60</width>
+      <text>Coef (-)</text>
+    </column>
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input(ad).windStressSpeeds</variable>
+      <width>60</width>
+      <text>Speed (m/s)</text>
+    </column>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>selectnrbreak</tag>
@@ -417,15 +324,9 @@
     <type>integer</type>
     <onchange>ddb_Delft3DFLOW_wind</onchange>
     <option1>changenrbreakpoints</option1>
-    <list>
-      <texts>
-        <text>2</text>
-        <text>3</text>
-      </texts>
-      <values>
-        <value>2</value>
-        <value>3</value>
-      </values>
-    </list> 
-  </element> 
+    <listtext>2</listtext>
+    <listtext>3</listtext>
+    <listvalue>2</listvalue>
+    <listvalue>3</listvalue>
+  </element>
 </root>

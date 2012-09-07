@@ -1,41 +1,38 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>outputpanel</tag>
-    <tabs>
-      <tab>
-        <tag>general</tag>
-        <tabstring>General</tabstring>
-        <elements>Delft3DWAVE.output.general.xml</elements>
-        <callback>ddb_dummyTabCallback</callback> 
-      </tab>    
-      <tab>
-        <tag>grids</tag>
-        <tabstring>Grids</tabstring>
-        <elements>Delft3DWAVE.output.grids.xml</elements>
-        <callback>ddb_dummyTabCallback</callback> 
-      </tab>
-      <tab>
-        <tag>locations</tag>
-        <tabstring>Locations</tabstring>
-        <elements>Delft3DWAVE.output.locations.xml</elements>
-        <callback>ddb_Delft3DWAVE_output_locations</callback> 
-      </tab>      
-      <tab>
-        <tag>curves</tag>
-        <tabstring>Curves</tabstring>
-        <elements>Delft3DWAVE.output.curves.xml</elements>
-        <callback>ddb_dummyTabCallback</callback> 
-      </tab>      
-      <tab>
-        <tag>debug</tag>
-        <tabstring>Debug</tabstring>
-        <elements>Delft3DWAVE.output.debug.xml</elements>
-        <callback>ddb_dummyTabCallback</callback> 
-      </tab>      
-    </tabs>
+    <tab>
+      <tag>general</tag>
+      <tabstring>General</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <element>Delft3DWAVE.output.general.xml</element>
+    </tab>
+    <tab>
+      <tag>grids</tag>
+      <tabstring>Grids</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <element>Delft3DWAVE.output.grids.xml</element>
+    </tab>
+    <tab>
+      <tag>locations</tag>
+      <tabstring>Locations</tabstring>
+      <callback>ddb_Delft3DWAVE_output_locations</callback>
+      <element>Delft3DWAVE.output.locations.xml</element>
+    </tab>
+    <tab>
+      <tag>curves</tag>
+      <tabstring>Curves</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <element>Delft3DWAVE.output.curves.xml</element>
+    </tab>
+    <tab>
+      <tag>debug</tag>
+      <tabstring>Debug</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <element>Delft3DWAVE.output.debug.xml</element>
+    </tab>
   </element>
 </root>

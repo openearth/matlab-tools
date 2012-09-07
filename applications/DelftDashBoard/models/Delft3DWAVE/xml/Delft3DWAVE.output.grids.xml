@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
-  <element> 
+  <element>
     <tag>listcompgrids</tag>
     <style>listbox</style>
     <position>10 30 200 80</position>
@@ -11,14 +10,12 @@
     <variable>handles.activeWaveGrid</variable>
     <multivariable>activegrids</multivariable>
     <max>1000</max>
-    <type>integer</type>    
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input.gridnames</variable>
-      </texts>
-    </list>
+    <type>integer</type>
     <callback>ddb_Delft3DWAVE_output</callback>
-    <option1>selectgrid</option1>  
+    <option1>selectgrid</option1>
+    <listtext>
+      <variable>handles.Model(md).Input.gridnames</variable>
+    </listtext>
   </element>
   <element>
     <tag>textcs</tag>
@@ -27,7 +24,7 @@
     <prefix>Co-ordinate System : </prefix>
     <type>text</type>
     <variable>handles.Model(md).Input.domains(awg).coordsyst</variable>
-  </element>  
+  </element>
   <element>
     <tag>checkoutputgrid</tag>
     <style>checkbox</style>
@@ -36,19 +33,15 @@
     <variable>handles.Model(md).Input.domains(awg).output</variable>
     <callback>ddb_Delft3DWAVE_output</callback>
     <option1>checkoutput</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrgrids</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrgrids</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editinterval</tag>
@@ -59,47 +52,39 @@
     <variable>handles.Model(md).Input.mapwriteinterval</variable>
     <type>real</type>
     <tooltipstring>Enter output interval</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrgrids</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input.domains(awg).output</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrgrids</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.domains(awg).output</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textintervalunit</tag>
     <style>text</style>
     <position>360 65</position>
     <text>[min]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrgrids</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input.domains(awg).output</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>  
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrgrids</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.domains(awg).output</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
 </root>

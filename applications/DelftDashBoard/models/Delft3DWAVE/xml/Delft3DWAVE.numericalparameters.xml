@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>geographicalspacepanel</tag>
@@ -7,7 +6,7 @@
     <position>45 10 250 160</position>
     <text>Geographical space</text>
   </element>
-  <element>  
+  <element>
     <tag>radiofirst</tag>
     <style>radiobutton</style>
     <position>55 110</position>
@@ -16,7 +15,7 @@
     <variable>handles.Model(md).Input.order</variable>
     <value>First</value>
   </element>
-  <element>  
+  <element>
     <tag>radiothird</tag>
     <style>radiobutton</style>
     <position>55 55</position>
@@ -46,7 +45,7 @@
     <tag>textcddunit</tag>
     <style>text</style>
     <position>420 110</position>
-    <text>[-] (0.0-1.0)</text>    
+    <text>[-] (0.0-1.0)</text>
   </element>
   <element>
     <tag>editcss</tag>
@@ -62,19 +61,19 @@
     <tag>textcssunit</tag>
     <style>text</style>
     <position>420 85</position>
-    <text>[-] (0.0-1.0)</text>    
+    <text>[-] (0.0-1.0)</text>
   </element>
   <element>
     <tag>textscheme1</tag>
     <style>text</style>
     <position>310 60</position>
-    <text>CDD and CSS determine the numerical scheme </text>    
+    <text>CDD and CSS determine the numerical scheme </text>
   </element>
   <element>
     <tag>textscheme2</tag>
     <style>text</style>
     <position>310 35</position>
-    <text>0 = central, 1 = upwind </text>    
+    <text>0 = central, 1 = upwind </text>
   </element>
   <element>
     <tag>accuracycriteriapanel</tag>
@@ -86,7 +85,7 @@
     <tag>textchange1</tag>
     <style>text</style>
     <position>570 130</position>
-    <text>Relative change : </text>    
+    <text>Relative change : </text>
   </element>
   <element>
     <tag>edithstm01</tag>
@@ -102,14 +101,14 @@
     <tag>texthstm01unit</tag>
     <style>text</style>
     <position>700 105</position>
-    <text>[-]</text>    
+    <text>[-]</text>
   </element>
   <element>
     <tag>textchange2</tag>
     <style>text</style>
     <position>570 80</position>
-    <text>Relative change w.r.t. mean value : </text>    
-  </element>  
+    <text>Relative change w.r.t. mean value : </text>
+  </element>
   <element>
     <tag>ediths</tag>
     <style>edit</style>
@@ -124,7 +123,7 @@
     <tag>texthsunit</tag>
     <style>text</style>
     <position>700 55</position>
-    <text>[-]</text>    
+    <text>[-]</text>
   </element>
   <element>
     <tag>edittm01</tag>
@@ -140,13 +139,13 @@
     <tag>texttm01unit</tag>
     <style>text</style>
     <position>700 30</position>
-    <text>[-]</text>    
+    <text>[-]</text>
   </element>
   <element>
     <tag>textpercwet</tag>
     <style>text</style>
     <position>800 130</position>
-    <text>Percentage of wet grid points : </text>    
+    <text>Percentage of wet grid points : </text>
   </element>
   <element>
     <tag>editpercwet</tag>
@@ -162,8 +161,8 @@
     <tag>textmaxiter</tag>
     <style>text</style>
     <position>800 80</position>
-    <text>Maximum number of iterations : </text>    
-  </element>  
+    <text>Maximum number of iterations : </text>
+  </element>
   <element>
     <tag>editmaxiter</tag>
     <style>edit</style>

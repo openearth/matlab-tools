@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>listdrypoints</tag>
@@ -10,13 +9,11 @@
     <textposition>above-center</textposition>
     <variable>handles.Model(md).Input(ad).activeDryPoint</variable>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).dryPointNames</variable>
-      </texts>
-    </list>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
     <option1>selectfromlist</option1>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).dryPointNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>paneldrypoints</tag>
@@ -33,30 +30,23 @@
     <tooltipstring>Edit dry point index M1</tooltipstring>
     <variable>handles.Model(md).Input(ad).dryPoints(handles.Model(md).Input(ad).activeDryPoint).M1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdrypoints</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletedrypoint</tag>
+        <tag>pushadddrypoint</tag>
+        <tag>pushopendrypointsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editdryn1</tag>
@@ -67,31 +57,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).dryPoints(handles.Model(md).Input(ad).activeDryPoint).N1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdrypoints</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit dry point index N1</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletedrypoint</tag>
+        <tag>pushadddrypoint</tag>
+        <tag>pushopendrypointsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editdrym2</tag>
@@ -102,31 +85,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).dryPoints(handles.Model(md).Input(ad).activeDryPoint).M2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdrypoints</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit dry point index M2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletedrypoint</tag>
+        <tag>pushadddrypoint</tag>
+        <tag>pushopendrypointsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editdryn2</tag>
@@ -137,31 +113,24 @@
     <option1>edit</option1>
     <variable>handles.Model(md).Input(ad).dryPoints(handles.Model(md).Input(ad).activeDryPoint).N2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>pushdeletedrypoint</tag>
-          <tag>pushadddrypoint</tag>
-          <tag>pushopendrypointsfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listdrypoints</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit dry point index N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>pushdeletedrypoint</tag>
+        <tag>pushadddrypoint</tag>
+        <tag>pushopendrypointsfile</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrDryPoints</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>toggleadddrypoint</tag>
@@ -212,15 +181,10 @@
     <extension>*.dry</extension>
     <selectiontext>Select dry points File</selectiontext>
     <onchange>ddb_Delft3DFLOW_dryPoints</onchange>
-    <option1>openfile</option1>    
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>pushsavedrypoints</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <option1>openfile</option1>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>pushsavedrypoints</tag>

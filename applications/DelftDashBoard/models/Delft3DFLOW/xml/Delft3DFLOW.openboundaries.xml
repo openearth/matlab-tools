@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>listopenboundaries</tag>
@@ -13,13 +12,11 @@
     <multivariable>handles.Model(md).Input(ad).activeOpenBoundaries</multivariable>
     <max>1000</max>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).openBoundaryNames</variable>
-      </texts>
-    </list>
     <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
     <option1>selectfromlist</option1>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).openBoundaryNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>panelopenboundaries</tag>
@@ -36,28 +33,21 @@
     <tooltipstring>Edit name boundary section index M1</tooltipstring>
     <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).name</variable>
     <type>string</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>listopenboundaries</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editbndm1</tag>
@@ -69,28 +59,21 @@
     <tooltipstring>Edit open boundary index M1</tooltipstring>
     <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).M1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>listopenboundaries</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editbndn1</tag>
@@ -101,29 +84,22 @@
     <option1>editindices</option1>
     <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).N1</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit open boundary index N1</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>listopenboundaries</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editbndm2</tag>
@@ -134,29 +110,22 @@
     <option1>editindices</option1>
     <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).M2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit open boundary index M2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>listopenboundaries</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editbndn2</tag>
@@ -167,29 +136,22 @@
     <option1>editindices</option1>
     <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).N2</variable>
     <type>integer</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-      </dependency>
-    </dependencies>
     <tooltipstring>Edit open boundary index N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>listopenboundaries</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>selecttype</tag>
@@ -200,46 +162,33 @@
     <option1>selecttype</option1>
     <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type</variable>
     <type>string</type>
-    <list>
-      <texts>
-        <text>Water Level</text>
-        <text>Current</text>
-        <text>Neumann</text>
-        <text>Total Discharge</text>
-        <text>Discharge per Cell</text>
-        <text>Riemann</text>
-      </texts>
-      <values>
-        <value>Z</value>
-        <value>C</value>
-        <value>N</value>
-        <value>T</value>
-        <value>Q</value>
-        <value>R</value>
-      </values>
-    </list> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <listtext>Water Level</listtext>
+    <listtext>Current</listtext>
+    <listtext>Neumann</listtext>
+    <listtext>Total Discharge</listtext>
+    <listtext>Discharge per Cell</listtext>
+    <listtext>Riemann</listtext>
+    <listvalue>Z</listvalue>
+    <listvalue>C</listvalue>
+    <listvalue>N</listvalue>
+    <listvalue>T</listvalue>
+    <listvalue>Q</listvalue>
+    <listvalue>R</listvalue>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>listopenboundaries</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>editalpha</tag>
@@ -251,38 +200,31 @@
     <tooltipstring>Edit reflection coefficient alpha</tooltipstring>
     <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).alpha</variable>
     <type>real</type>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type</variable>
-            <value>N</value>
-            <operator>ne</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type</variable>
-            <value>R</value>
-            <operator>ne</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>listopenboundaries</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type</variable>
+        <value>N</value>
+        <operator>ne</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type</variable>
+        <value>R</value>
+        <operator>ne</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>selectforcing</tag>
@@ -293,42 +235,29 @@
     <option1>selectforcing</option1>
     <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).forcing</variable>
     <type>string</type>
-    <list>
-      <texts>
-        <text>Astronomic</text>
-        <text>Harmonic</text>
-        <text>Time Series</text>
-        <text>QH Relation</text>
-      </texts>
-      <values>
-        <value>A</value>
-        <value>H</value>
-        <value>T</value>
-        <value>Q</value>
-      </values>
-    </list> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <listtext>Astronomic</listtext>
+    <listtext>Harmonic</listtext>
+    <listtext>Time Series</listtext>
+    <listtext>QH Relation</listtext>
+    <listvalue>A</listvalue>
+    <listvalue>H</listvalue>
+    <listvalue>T</listvalue>
+    <listvalue>Q</listvalue>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>listopenboundaries</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>selectprofile</tag>
@@ -339,36 +268,27 @@
     <option1>selectprofile</option1>
     <variable>handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).profile</variable>
     <type>string</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input(ad).profileTexts</variable>
-      </texts>
-      <values>
-        <variable>handles.Model(md).Input(ad).profileOptions</variable>
-      </values>
-    </list> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <listtext>
+      <variable>handles.Model(md).Input(ad).profileTexts</variable>
+    </listtext>
+    <listvalue>
+      <variable>handles.Model(md).Input(ad).profileOptions</variable>
+    </listvalue>
+    <dependency>
+      <action>enable</action>
+      <tags>
+        <tag>listopenboundaries</tag>
+      </tags>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
   <element>
     <tag>pushflowconditions</tag>
@@ -378,22 +298,15 @@
     <tooltipstring>Edit hydrodynamic boundary conditions</tooltipstring>
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>flowconditions</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushtransportconditions</tag>
@@ -403,27 +316,20 @@
     <tooltipstring>Edit transport boundary conditions</tooltipstring>
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>transportconditions</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).constituents</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).constituents</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>toggleaddopenboundary</tag>
@@ -531,22 +437,15 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>open</option1>
     <option2>bca</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrAstro</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrAstro</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>opencor</tag>
@@ -556,22 +455,15 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>open</option1>
     <option2>cor</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrCor</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrCor</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>openbch</tag>
@@ -581,22 +473,15 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>open</option1>
     <option2>bch</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrHarmo</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrHarmo</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>openbct</tag>
@@ -606,22 +491,15 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>open</option1>
     <option2>bct</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrTime</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrTime</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>openbcc</tag>
@@ -631,27 +509,20 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>open</option1>
     <option2>bcc</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).constituents</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).constituents</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>savebnd</tag>
@@ -661,22 +532,15 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>save</option1>
     <option2>bnd</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>savebca</tag>
@@ -686,22 +550,15 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>save</option1>
     <option2>bca</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrAstro</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrAstro</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>savecor</tag>
@@ -711,22 +568,15 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>save</option1>
     <option2>cor</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrCor</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrCor</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>savebch</tag>
@@ -736,22 +586,15 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>save</option1>
     <option2>bch</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrHarmo</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrHarmo</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>savebct</tag>
@@ -761,22 +604,15 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>save</option1>
     <option2>bct</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrTime</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrTime</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>savebcc</tag>
@@ -786,27 +622,20 @@
     <callback>ddb_Delft3DFLOW_openBoundaries</callback>
     <option1>save</option1>
     <option2>bcc</option2>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listopenboundaries</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).constituents</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).constituents</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input(ad).nrOpenBoundaries</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>txtbndfile</tag>

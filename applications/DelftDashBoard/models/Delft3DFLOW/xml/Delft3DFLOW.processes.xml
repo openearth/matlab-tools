@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>panelconstituents</tag>
@@ -61,22 +60,15 @@
     <tooltipstring>Edit pollutants and tracers</tooltipstring>
     <callback>ddb_Delft3DFLOW_processes</callback>
     <option1>edittracers</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>checktracers</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).tracers</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).tracers</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pusheditsediments</tag>
@@ -86,22 +78,15 @@
     <tooltipstring>Edit sediments</tooltipstring>
     <callback>ddb_Delft3DFLOW_processes</callback>
     <option1>editsediments</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>checksediments</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).sediments.include</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).sediments.include</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>checkwind</tag>
@@ -125,22 +110,15 @@
     <text>Online Wave</text>
     <position>270 80</position>
     <variable>handles.Model(md).Input(ad).onlineWave</variable>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>checkwaves</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).waves</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).waves</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>checkroller</tag>
@@ -150,22 +128,15 @@
     <variable>handles.Model(md).Input(ad).roller.include</variable>
     <onchange>ddb_Delft3DFLOW_processes</onchange>
     <option1>checkroller</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>checkwaves</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).waves</variable>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).waves</variable>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>checksecondaryflow</tag>
@@ -182,22 +153,15 @@
     <variable>handles.Model(md).Input(ad).tidalForces</variable>
     <onchange>ddb_Delft3DFLOW_processes</onchange>
     <option1>checktidalforces</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>checkwaves</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).coordinateSystemType</variable>
-            <value>geographic</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).coordinateSystemType</variable>
+        <value>geographic</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>checkdredging</tag>

@@ -1,23 +1,20 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>toolboxpanel</tag>
-    <tabs>
-      <tab>
-        <tag>viewbathymetry</tag>
-        <tabstring>View bathymetry</tabstring>
-      </tab>
-      <tab>
-        <tag>drawcoastline</tag>
-        <tabstring>Draw coastline</tabstring>
-      </tab>
-      <tab>
-        <tag>drawrays</tag>
-        <tabstring>Draw rays</tabstring>
-      </tab>      
-    </tabs>
-  </element>        
+    <tab>
+      <tag>viewbathymetry</tag>
+      <tabstring>View bathymetry</tabstring>
+    </tab>
+    <tab>
+      <tag>drawcoastline</tag>
+      <tabstring>Draw coastline</tabstring>
+    </tab>
+    <tab>
+      <tag>drawrays</tag>
+      <tabstring>Draw rays</tabstring>
+    </tab>
+  </element>
 </root>

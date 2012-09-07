@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>boundariespanel</tag>
@@ -14,14 +13,12 @@
     <tooltipstring>Edit boundaries</tooltipstring>
     <variable>activeboundary</variable>
     <type>int</type>
-    <list>
-      <texts>
-        <variable>boundarynames</variable>
-      </texts>
-    </list>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
-    <option1>selectboundary</option1>    
-  </element> 
+    <option1>selectboundary</option1>
+    <listtext>
+      <variable>boundarynames</variable>
+    </listtext>
+  </element>
   <element>
     <tag>pushaddboundary</tag>
     <style>pushbutton</style>
@@ -29,7 +26,7 @@
     <tooltipstring>Add boundary</tooltipstring>
     <text>Add</text>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
-    <option1>add</option1>    
+    <option1>add</option1>
   </element>
   <element>
     <tag>pushdeleteboundary</tag>
@@ -39,20 +36,16 @@
     <text>Delete</text>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>delete</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>  
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>selectedboundarypanel</tag>
     <style>panel</style>
@@ -68,19 +61,15 @@
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).name</variable>
     <type>string</type>
     <tooltipstring>Enter boundary name</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbnddefby</tag>
@@ -91,27 +80,21 @@
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>selectdefinition</option1>
-    <list>
-      <texts>
-        <variable>boundarydefinitionstext</variable>
-      </texts>
-      <values>
-        <variable>boundarydefinitions</variable>
-      </values>
-    </list>  
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <listtext>
+      <variable>boundarydefinitionstext</variable>
+    </listtext>
+    <listvalue>
+      <variable>boundarydefinitions</variable>
+    </listvalue>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>selectsp2file</tag>
@@ -125,30 +108,24 @@
     <showfilename>1</showfilename>
     <onchange>ddb_Delft3DWAVE_boundaries</onchange>
     <option1>selectsp2file</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>fromsp2file</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>fromsp2file</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbndorient</tag>
@@ -159,38 +136,30 @@
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).orientation</variable>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>bndorient</option1>
-    <list>
-      <texts>
-        <variable>boundaryorientationstext</variable>
-      </texts>
-      <values>
-        <variable>boundaryorientations</variable>
-      </values>
-    </list>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>orientation</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <listtext>
+      <variable>boundaryorientationstext</variable>
+    </listtext>
+    <listvalue>
+      <variable>boundaryorientations</variable>
+    </listvalue>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>orientation</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbndstartm</tag>
@@ -203,30 +172,24 @@
     <tooltipstring>Enter start M index</tooltipstring>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>editmncoordinates</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>grid-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>grid-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbndstartn</tag>
@@ -238,30 +201,24 @@
     <tooltipstring>Enter start N index</tooltipstring>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>editmncoordinates</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>grid-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>grid-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbndendm</tag>
@@ -274,30 +231,24 @@
     <tooltipstring>Enter end M index</tooltipstring>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>editmncoordinates</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>grid-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>grid-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbndendn</tag>
@@ -309,30 +260,24 @@
     <tooltipstring>Enter end N index</tooltipstring>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>editmncoordinates</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>grid-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>grid-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushdrawxyboundary</tag>
@@ -341,31 +286,25 @@
     <tooltipstring>Draw</tooltipstring>
     <text>Draw</text>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
-    <option1>drawxyboundary</option1>    
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>grid-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <option1>drawxyboundary</option1>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>grid-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbndstartx</tag>
@@ -378,30 +317,24 @@
     <tooltipstring>Enter start X coordinate</tooltipstring>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>editxycoordinates</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>xy-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>xy-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbndstarty</tag>
@@ -412,30 +345,24 @@
     <tooltipstring>Enter start Y coordinate</tooltipstring>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>editxycoordinates</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>xy-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>xy-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbndendx</tag>
@@ -448,30 +375,24 @@
     <tooltipstring>Enter end X coordinate</tooltipstring>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>editxycoordinates</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>xy-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>xy-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editbndendy</tag>
@@ -482,30 +403,24 @@
     <tooltipstring>Enter end Y coordinate</tooltipstring>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>editxycoordinates</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>xy-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>xy-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushdrawxyboundary</tag>
@@ -514,50 +429,40 @@
     <tooltipstring>Draw</tooltipstring>
     <text>Draw</text>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
-    <option1>drawxyboundary</option1>    
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
-            <value>xy-coordinates</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <option1>drawxyboundary</option1>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).definition</variable>
+        <value>xy-coordinates</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textcondbnd</tag>
     <style>text</style>
     <position>705 130</position>
     <text>Conditions along boundary</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiouniform</tag>
@@ -567,19 +472,15 @@
     <type>string</type>
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).alongboundary</variable>
     <value>uniform</value>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiospacevarying</tag>
@@ -589,38 +490,30 @@
     <type>string</type>
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).alongboundary</variable>
     <value>varying</value>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textspecifyspec</tag>
     <style>text</style>
     <position>705 90</position>
     <text>Specification of spectra</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radioparametric</tag>
@@ -630,19 +523,15 @@
     <type>string</type>
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spectrumspec</variable>
     <value>parametric</value>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radiofromfile</tag>
@@ -652,19 +541,15 @@
     <type>string</type>
     <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spectrumspec</variable>
     <value>fromfile</value>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pusheditconditions</tag>
@@ -673,20 +558,16 @@
     <tooltipstring>Edit conditions</tooltipstring>
     <text>Edit conditions</text>
     <callback>ddb_Delft3DWAVE_boundaries</callback>
-    <option1>editboundaryconditions</option1>    
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <option1>editboundaryconditions</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pusheditspectralspace</tag>
@@ -697,23 +578,19 @@
     <callback>ddb_Delft3DWAVE_boundaries</callback>
     <option1>editspectralspace</option1>
     <enable>0</enable>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.nrboundaries</variable>
-            <value>0</value>
-            <operator>ne</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spectrumspec</variable>
-            <value>parametric</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>  
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).spectrumspec</variable>
+        <value>parametric</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
 </root>

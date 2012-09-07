@@ -1,47 +1,44 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>domainpanel</tag>
-    <tabs>
-      <tab>
-        <tag>grid</tag>
-        <tabstring>Grid</tabstring>
-        <callback>ddb_Delft3DFLOW_grid</callback>
-        <elements>Delft3DFLOW.domain.grid.xml</elements>
-      </tab>
-      <tab>
-        <tag>bathymetry</tag>
-        <tabstring>Bathymetry</tabstring>
-        <callback>ddb_Delft3DFLOW_bathymetry</callback>
-        <elements>Delft3DFLOW.domain.bathymetry.xml</elements>
-      </tab>
-      <tab>
-        <tag>drypoints</tag>
-        <tabstring>Dry Points</tabstring>
-        <callback>ddb_Delft3DFLOW_dryPoints</callback>
-        <elements>Delft3DFLOW.domain.drypoints.xml</elements>
-      </tab>
-      <tab>
-        <tag>thindams</tag>
-        <tabstring>Thin Dams</tabstring>
-        <callback>ddb_Delft3DFLOW_thinDams</callback>
-        <elements>Delft3DFLOW.domain.thindams.xml</elements>
-      </tab>
-      <tab>
-        <tag>weirs2d</tag>
-        <tabstring>2D Weirs</tabstring>
-        <elements>Delft3DFLOW.domain.weirs2d.xml</elements>
-        <callback>ddb_Delft3DFLOW_weirs2D</callback>
-      </tab>
-      <tab>
-        <tag>structures</tag>
-        <tabstring>Structures</tabstring>
-        <elements>Delft3DFLOW.domain.structures.xml</elements>
-        <callback>ddb_Delft3DFLOW_structures</callback>
-      </tab>
-    </tabs>
+    <tab>
+      <tag>grid</tag>
+      <tabstring>Grid</tabstring>
+      <callback>ddb_Delft3DFLOW_grid</callback>
+      <element>Delft3DFLOW.domain.grid.xml</element>
+    </tab>
+    <tab>
+      <tag>bathymetry</tag>
+      <tabstring>Bathymetry</tabstring>
+      <callback>ddb_Delft3DFLOW_bathymetry</callback>
+      <element>Delft3DFLOW.domain.bathymetry.xml</element>
+    </tab>
+    <tab>
+      <tag>drypoints</tag>
+      <tabstring>Dry Points</tabstring>
+      <callback>ddb_Delft3DFLOW_dryPoints</callback>
+      <element>Delft3DFLOW.domain.drypoints.xml</element>
+    </tab>
+    <tab>
+      <tag>thindams</tag>
+      <tabstring>Thin Dams</tabstring>
+      <callback>ddb_Delft3DFLOW_thinDams</callback>
+      <element>Delft3DFLOW.domain.thindams.xml</element>
+    </tab>
+    <tab>
+      <tag>weirs2d</tag>
+      <tabstring>2D Weirs</tabstring>
+      <callback>ddb_Delft3DFLOW_weirs2D</callback>
+      <element>Delft3DFLOW.domain.weirs2d.xml</element>
+    </tab>
+    <tab>
+      <tag>structures</tag>
+      <tabstring>Structures</tabstring>
+      <callback>ddb_Delft3DFLOW_structures</callback>
+      <element>Delft3DFLOW.domain.structures.xml</element>
+    </tab>
   </element>
 </root>

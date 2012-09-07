@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
-
   <element>
     <tag>listoption</tag>
     <style>popupmenu</style>
@@ -9,18 +7,11 @@
     <variable>handles.Model(md).Input(ad).fourier.tableOption</variable>
     <type>string</type>
     <value>edit</value>
-    <list>
-      <texts>
-        <text>Generate</text>
-        <text>Edit</text>
-      </texts>
-      <values>
-        <value>generate</value>
-        <value>edit</value>
-      </values>
-    </list> 
+    <listtext>Generate</listtext>
+    <listtext>Edit</listtext>
+    <listvalue>generate</listvalue>
+    <listvalue>edit</listvalue>
   </element>
-
   <element>
     <tag>checkinclude</tag>
     <style>checkbox</style>
@@ -28,7 +19,6 @@
     <position>10 55</position>
     <variable>handles.Model(md).Input(ad).fourier.include</variable>
   </element>
-
   <element>
     <tag>pushopenfoufile</tag>
     <style>pushselectfile</style>
@@ -55,36 +45,23 @@
     <extension>*.fou</extension>
     <selectiontext>Select fourier file</selectiontext>
     <tooltipstring>Select Delft3D fourier file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>update</action>
-        <tags>
-          <tag>pushopenfoufile</tag>
-        </tags>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>update</action>
+    </dependency>
   </element>
-
   <element>
     <tag>editpanel</tag>
     <style>panel</style>
     <position>100 35 790 95</position>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>listoption</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).fourier.tableOption</variable>
-            <value>edit</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).fourier.tableOption</variable>
+        <value>edit</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>fouriertable1</tag>
@@ -96,100 +73,81 @@
     <onchange>ddb_Delft3DFLOW_fourier</onchange>
     <option1>changetable1</option1>
     <parent>editpanel</parent>
-    <columns>
-      <column>
-        <style>popupmenu</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.parameterNumber</variable>
-        <type>integer</type>
-        <width>110</width>
-        <text>Parameter</text>
-        <list>
-	  <texts>
-	    <variable>handles.Model(md).Input(ad).fourier.parameterList</variable>
-	  </texts>
-        </list>
-      </column>
-      <column>
-        <style>edittime</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.startTime</variable>
-        <width>110</width>
-        <text>Start Time</text>
-      </column>
-      <column>
-        <style>edittime</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.stopTime</variable>
-        <width>110</width>
-        <text>Stop Time</text>
-      </column>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.nrCycles</variable>
-        <width>40</width>
-        <text>Cycles</text>
-      </column>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.nodalAmplificationFactor</variable>
-        <width>80</width>
-        <text>Nodal Factor</text>
-      </column>
-      <column>
-        <style>editreal</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.astronomicalArgument</variable>
-        <width>80</width>
-        <text>Argument</text>
-      </column>
-      <column>
-        <style>popupmenu</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.layer</variable>
-        <type>integer</type>
-        <width>40</width>
-        <text>Layer</text>
-        <list>
-	  <texts>
-	    <variable>handles.Model(md).Input(ad).fourier.layerList</variable>
-	  </texts>
-        </list>
-      </column>
-      <column>
-        <style>popupmenu</style>
-        <variable>handles.Model(md).Input(ad).fourier.editTable.option</variable>
-        <type>integer</type>
-        <width>70</width>
-        <text>Option</text>
-        <list>
-	  <texts>
-	    <variable>handles.Model(md).Input(ad).fourier.optionList</variable>
-	  </texts>
-        </list>
-      </column>
-    </columns>
+    <column>
+      <style>popupmenu</style>
+      <variable>handles.Model(md).Input(ad).fourier.editTable.parameterNumber</variable>
+      <type>integer</type>
+      <width>110</width>
+      <text>Parameter</text>
+      <listtext>
+        <variable>handles.Model(md).Input(ad).fourier.parameterList</variable>
+      </listtext>
+    </column>
+    <column>
+      <style>edittime</style>
+      <variable>handles.Model(md).Input(ad).fourier.editTable.startTime</variable>
+      <width>110</width>
+      <text>Start Time</text>
+    </column>
+    <column>
+      <style>edittime</style>
+      <variable>handles.Model(md).Input(ad).fourier.editTable.stopTime</variable>
+      <width>110</width>
+      <text>Stop Time</text>
+    </column>
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input(ad).fourier.editTable.nrCycles</variable>
+      <width>40</width>
+      <text>Cycles</text>
+    </column>
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input(ad).fourier.editTable.nodalAmplificationFactor</variable>
+      <width>80</width>
+      <text>Nodal Factor</text>
+    </column>
+    <column>
+      <style>editreal</style>
+      <variable>handles.Model(md).Input(ad).fourier.editTable.astronomicalArgument</variable>
+      <width>80</width>
+      <text>Argument</text>
+    </column>
+    <column>
+      <style>popupmenu</style>
+      <variable>handles.Model(md).Input(ad).fourier.editTable.layer</variable>
+      <type>integer</type>
+      <width>40</width>
+      <text>Layer</text>
+      <listtext>
+        <variable>handles.Model(md).Input(ad).fourier.layerList</variable>
+      </listtext>
+    </column>
+    <column>
+      <style>popupmenu</style>
+      <variable>handles.Model(md).Input(ad).fourier.editTable.option</variable>
+      <type>integer</type>
+      <width>70</width>
+      <text>Option</text>
+      <listtext>
+        <variable>handles.Model(md).Input(ad).fourier.optionList</variable>
+      </listtext>
+    </column>
   </element>
-
-
-
   <element>
     <tag>generatepanel</tag>
     <style>panel</style>
     <position>150 35 690 95</position>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <tags>
-          <tag>listoption</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input(ad).fourier.tableOption</variable>
-            <value>generate</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input(ad).fourier.tableOption</variable>
+        <value>generate</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
   <element>
     <tag>fouriertable2</tag>
     <style>table</style>
@@ -200,70 +158,61 @@
     <onchange>ddb_Delft3DFLOW_fourier</onchange>
     <option1>changetable2</option1>
     <parent>generatepanel</parent>
-    <columns>
-      <column>
-        <style>popupmenu</style>
-        <variable>handles.Model(md).Input(ad).fourier.generateTable.parameterNumber</variable>
-        <type>integer</type>
-        <width>110</width>
-        <text>Parameter</text>
-        <list>
-	  <texts>
-	    <variable>handles.Model(md).Input(ad).fourier.parameterList</variable>
-	  </texts>
-        </list>
-      </column>
-      <column>
-        <style>popupmenu</style>
-        <variable>handles.Model(md).Input(ad).fourier.generateTable.componentNumber</variable>
-        <type>integer</type>
-        <width>60</width>
-        <text>Component</text>
-        <list>
-	  <texts>
-	    <variable>handles.Model(md).Input(ad).fourier.astronomicalComponents</variable>
-	  </texts>
-        </list>
-      </column>
-      <column>
-        <style>popupmenu</style>
-        <variable>handles.Model(md).Input(ad).fourier.generateTable.layer</variable>
-        <type>integer</type>
-        <width>40</width>
-        <text>Layer</text>
-        <list>
-	  <texts>
-	    <variable>handles.Model(md).Input(ad).fourier.layerList</variable>
-	  </texts>
-        </list>
-      </column>
-      <column>
-        <style>checkbox</style>
-        <variable>handles.Model(md).Input(ad).fourier.generateTable.fourier</variable>
-        <width>25</width>
-        <text>F</text>
-      </column>
-      <column>
-        <style>checkbox</style>
-        <variable>handles.Model(md).Input(ad).fourier.generateTable.max</variable>
-        <width>25</width>
-        <text>Max</text>
-      </column>
-      <column>
-        <style>checkbox</style>
-        <variable>handles.Model(md).Input(ad).fourier.generateTable.min</variable>
-        <width>25</width>
-        <text>Min</text>
-      </column>
-      <column>
-        <style>checkbox</style>
-        <variable>handles.Model(md).Input(ad).fourier.generateTable.ellipse</variable>
-        <width>25</width>
-        <text>Ell</text>
-      </column>
-    </columns>
+    <column>
+      <style>popupmenu</style>
+      <variable>handles.Model(md).Input(ad).fourier.generateTable.parameterNumber</variable>
+      <type>integer</type>
+      <width>110</width>
+      <text>Parameter</text>
+      <listtext>
+        <variable>handles.Model(md).Input(ad).fourier.parameterList</variable>
+      </listtext>
+    </column>
+    <column>
+      <style>popupmenu</style>
+      <variable>handles.Model(md).Input(ad).fourier.generateTable.componentNumber</variable>
+      <type>integer</type>
+      <width>60</width>
+      <text>Component</text>
+      <listtext>
+        <variable>handles.Model(md).Input(ad).fourier.astronomicalComponents</variable>
+      </listtext>
+    </column>
+    <column>
+      <style>popupmenu</style>
+      <variable>handles.Model(md).Input(ad).fourier.generateTable.layer</variable>
+      <type>integer</type>
+      <width>40</width>
+      <text>Layer</text>
+      <listtext>
+        <variable>handles.Model(md).Input(ad).fourier.layerList</variable>
+      </listtext>
+    </column>
+    <column>
+      <style>checkbox</style>
+      <variable>handles.Model(md).Input(ad).fourier.generateTable.fourier</variable>
+      <width>25</width>
+      <text>F</text>
+    </column>
+    <column>
+      <style>checkbox</style>
+      <variable>handles.Model(md).Input(ad).fourier.generateTable.max</variable>
+      <width>25</width>
+      <text>Max</text>
+    </column>
+    <column>
+      <style>checkbox</style>
+      <variable>handles.Model(md).Input(ad).fourier.generateTable.min</variable>
+      <width>25</width>
+      <text>Min</text>
+    </column>
+    <column>
+      <style>checkbox</style>
+      <variable>handles.Model(md).Input(ad).fourier.generateTable.ellipse</variable>
+      <width>25</width>
+      <text>Ell</text>
+    </column>
   </element>
-
   <element>
     <tag>pushgenerate</tag>
     <style>pushbutton</style>
@@ -273,7 +222,6 @@
     <option1>generateinput</option1>
     <parent>generatepanel</parent>
   </element>
-
   <element>
     <tag>pushmaketable</tag>
     <style>pushbutton</style>
@@ -283,7 +231,6 @@
     <option1>maketable</option1>
     <parent>generatepanel</parent>
   </element>
-
   <element>
     <tag>editspinuptime</tag>
     <style>edit</style>
@@ -293,5 +240,4 @@
     <variable>handles.Model(md).Input(ad).fourier.spinUpTime</variable>
     <type>real</type>
   </element>
-
 </root>

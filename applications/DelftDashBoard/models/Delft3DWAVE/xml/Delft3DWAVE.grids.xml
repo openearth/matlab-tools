@@ -1,34 +1,31 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>gridpanel</tag>
-    <tabs>
-      <tab>
-        <tag>grid</tag>
-        <tabstring>Grid</tabstring>
-        <callback>ddb_Delft3DWAVE_grid</callback>
-        <elements>Delft3DWAVE.grids.grid.xml</elements>
-      </tab>
-      <tab>
-        <tag>bathymetry</tag>
-        <tabstring>Bathymetry</tabstring>
-        <elements>Delft3DWAVE.grids.bathymetry.xml</elements>
-      </tab>      
-      <tab>
-        <tag>spectralresolution</tag>
-        <tabstring>Spectral resolution</tabstring>
-        <elements>Delft3DWAVE.grids.spectralresolution.xml</elements>
-        <callback>ddb_Delft3DWAVE_grid</callback>
-      </tab>      
-      <tab>
-        <tag>nesting</tag>
-        <tabstring>Nesting</tabstring>
-        <elements>Delft3DWAVE.grids.nesting.xml</elements>
-        <callback>ddb_Delft3DWAVE_grid</callback>
-      </tab>
-    </tabs>
+    <tab>
+      <tag>grid</tag>
+      <tabstring>Grid</tabstring>
+      <callback>ddb_Delft3DWAVE_grid</callback>
+      <element>Delft3DWAVE.grids.grid.xml</element>
+    </tab>
+    <tab>
+      <tag>bathymetry</tag>
+      <tabstring>Bathymetry</tabstring>
+      <element>Delft3DWAVE.grids.bathymetry.xml</element>
+    </tab>
+    <tab>
+      <tag>spectralresolution</tag>
+      <tabstring>Spectral resolution</tabstring>
+      <callback>ddb_Delft3DWAVE_grid</callback>
+      <element>Delft3DWAVE.grids.spectralresolution.xml</element>
+    </tab>
+    <tab>
+      <tag>nesting</tag>
+      <tabstring>Nesting</tabstring>
+      <callback>ddb_Delft3DWAVE_grid</callback>
+      <element>Delft3DWAVE.grids.nesting.xml</element>
+    </tab>
   </element>
 </root>

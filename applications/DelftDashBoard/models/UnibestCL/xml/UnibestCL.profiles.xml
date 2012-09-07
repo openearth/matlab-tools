@@ -1,172 +1,159 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <position>45 10 900 140</position>
     <style>tabpanel</style>
     <tag>profilespanel</tag>
-    <tabs>
-      <tab>
-        <tag>bathymetry</tag>
-        <tabstring>Bathymetry</tabstring>
-	<elements>
-          <element>
-            <tag>pushselectxyz</tag>
-            <style>pushselectfile</style>
-            <position>10 110 130 20</position>
-            <tooltipstring>Select xyz file</tooltipstring>
-            <text>Open xyz file</text>
-            <variable>
-              <name>xyzFile</name>
-              <type>string</type>
-            </variable>
-            <extension>*.xyz</extension>
-            <selectiontext>Select xyz File</selectiontext>
-            <onchange>ddb_UnibestCL_selectXyzFile</onchange>
-          </element>
-          <element>
-            <tag>pushviewxyz</tag>
-            <style>pushbutton</style>
-            <position>10 85 130 20</position>
-            <text>View xyz file</text>
-            <onchange>ddb_UnibestCL_viewxyzFile</onchange>
-          </element>
-        </elements>    
-      </tab>
-      <tab>
-        <tag>rays</tag>
-        <tabstring>Rays</tabstring>
-        <elements>
-	<element>
-          <tag>pushloadraylocations</tag>
-          <style>pushselectfile</style>
-          <position>10 110 130 20</position>
-          <tooltipstring>Select txt file</tooltipstring>
-          <text>Load Locations File</text>
+    <tab>
+      <tag>bathymetry</tag>
+      <tabstring>Bathymetry</tabstring>
+      <element>
+        <tag>pushselectxyz</tag>
+        <style>pushselectfile</style>
+        <position>10 110 130 20</position>
+        <tooltipstring>Select xyz file</tooltipstring>
+        <text>Open xyz file</text>
+        <variable>
+          <name>xyzFile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.xyz</extension>
+        <selectiontext>Select xyz File</selectiontext>
+        <onchange>ddb_UnibestCL_selectXyzFile</onchange>
+      </element>
+      <element>
+        <tag>pushviewxyz</tag>
+        <style>pushbutton</style>
+        <position>10 85 130 20</position>
+        <text>View xyz file</text>
+        <onchange>ddb_UnibestCL_viewxyzFile</onchange>
+      </element>
+    </tab>
+    <tab>
+      <tag>rays</tag>
+      <tabstring>Rays</tabstring>
+      <element>
+        <tag>pushloadraylocations</tag>
+        <style>pushselectfile</style>
+        <position>10 110 130 20</position>
+        <tooltipstring>Select txt file</tooltipstring>
+        <text>Load Locations File</text>
+        <variable>
+          <name>raylocationFile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.txt</extension>
+        <selectiontext>Select txt File</selectiontext>
+        <onchange>ddb_UnibestCL_loadraylocations</onchange>
+      </element>
+      <element>
+        <tag>pushsaverays</tag>
+        <style>pushbutton</style>
+        <position>10 85 130 20</position>
+        <text>Save Ray Locations As</text>
+        <callback>ddb_UnibestCL_pushSaveRays</callback>
+      </element>
+      <element>
+        <tag>tablehead</tag>
+        <style>table</style>
+        <position>180 90</position>
+        <nrrows>1</nrrows>
+        <includenumbers>no</includenumbers>
+        <includebuttons>no</includebuttons>
+        <column>
+          <style>editstring</style>
           <variable>
-            <name>raylocationFile</name>
+            <name>Thick</name>
             <type>string</type>
           </variable>
-          <extension>*.txt</extension>
-          <selectiontext>Select txt File</selectiontext>
-          <onchange>ddb_UnibestCL_loadraylocations</onchange>
-          </element>    	  
-      	  <element>
-      	    <tag>pushsaverays</tag>
-      	    <style>pushbutton</style>
-      	    <position>10 85 130 20</position>
-      	    <text>Save Ray Locations As</text>
-      	    <callback>ddb_UnibestCL_pushSaveRays</callback>
-           </element>
-	   <element>
-  	    <tag>tablehead</tag>
-    	    <style>table</style>
-  	    <position>180 90</position>
-  	    <nrrows>1</nrrows>
-  	    <includenumbers>no</includenumbers>
-  	    <includebuttons>no</includebuttons>
-  	      <columns>
-  	        <column>
-	 	  <style>editstring</style>
-                    <variable>
- 	              <name>Thick</name>
-	              <type>string</type>
-                    </variable>
-                    <width>100</width>  	         
-  	        </column>
-		<column>
-	 	  <style>editstring</style>
-                    <variable>
- 	              <name>Thick</name>
-	              <type>string</type>
-                    </variable>
-                    <width>100</width>  	         
-  	        </column>
-		<column>
-	 	  <style>editstring</style>
-                    <variable>
- 	              <name>Thick</name>
-	              <type>string</type>
-                    </variable>
-                    <width>100</width>  	         
-  	        </column> 	        
-  	      </columns>
-	  </element>                    
-          <element>
-	    <tag>edittable</tag>
-	        <style>table</style>
-	        <position>180 10</position>
-		<nrrows>4</nrrows>
-	        <includenumbers>yes</includenumbers>
-	        <includebuttons>yes</includebuttons>
-	        <onchange>ddb_UnibestCL_computeSumLayers</onchange>
-	          <columns>
-	            <column>
-	              <style>editreal</style>
-	              <variable>
-	              <name>Thick</name>
-	              <type>real</type>
-	              </variable>
-	              <width>100</width>
-	            </column>
-	            <column>
-	              <style>editreal</style>
-	              <variable>
-	              <name>Thick</name>
-	              <type>real</type>
-	       	      </variable>
-	              <width>100</width>
-	            </column>
-	            <column>
-	              <style>editreal</style>
-	              <variable>
-	              <name>Thick</name>
-		      <type>real</type>
-		      </variable>
-		      <width>100</width>
-		    </column>	            
-	          </columns>
-	  </element>           
-        </elements>	
-      </tab>
-      <tab>
-        <tag>profiles</tag>
-        <tabstring>Cross Shore Profiles</tabstring>  
-	<elements>
- 	  <element>
-	    <tag>textlocationfile</tag>
-  	    <style>text</style>
-  	    <position>10 110</position>
-  	    <prefix>Selected Locations File : </text>
-	    <variable>
-              <name>raylocationFile</name>
-              <type>string</type>
-            </variable>
-            <extension>*.txt</extension>  	    
-          </element>
-	  <element>
-  	    <tag>pushgenerateprofiles</tag>
-            <style>pushbutton</style>
-            <position>10 85 130 20</position>
-   	    <text>Generate profiles</text>
-            <callback>ddb_UnibestCL_pushgenerateprofiles</callback>
-          </element>
-	  <element>
-	    <tag>pushviewprofile</tag>
-	    <style>pushbutton</style>
-	    <position>10 60 130 20</position>
-	    <text>View profile</text>
-	    <callback>ddb_UnibestCL_pushviewprofile</callback>
-          </element>           
-          <element>
-	    <tag>pushsavePROfiles</tag>
-	    <style>pushbutton</style>
-	    <position>10 35 130 20</position>
-	    <text>Save PRO files</text>
-	    <callback>ddb_UnibestCL_pushSavePROfiles</callback>
-          </element>          
-        </elements>
-      </tab>      
-    </tabs>
+          <width>100</width>
+        </column>
+        <column>
+          <style>editstring</style>
+          <variable>
+            <name>Thick</name>
+            <type>string</type>
+          </variable>
+          <width>100</width>
+        </column>
+        <column>
+          <style>editstring</style>
+          <variable>
+            <name>Thick</name>
+            <type>string</type>
+          </variable>
+          <width>100</width>
+        </column>
+      </element>
+      <element>
+        <tag>edittable</tag>
+        <style>table</style>
+        <position>180 10</position>
+        <nrrows>4</nrrows>
+        <includenumbers>yes</includenumbers>
+        <includebuttons>yes</includebuttons>
+        <onchange>ddb_UnibestCL_computeSumLayers</onchange>
+        <column>
+          <style>editreal</style>
+          <variable>
+            <name>Thick</name>
+            <type>real</type>
+          </variable>
+          <width>100</width>
+        </column>
+        <column>
+          <style>editreal</style>
+          <variable>
+            <name>Thick</name>
+            <type>real</type>
+          </variable>
+          <width>100</width>
+        </column>
+        <column>
+          <style>editreal</style>
+          <variable>
+            <name>Thick</name>
+            <type>real</type>
+          </variable>
+          <width>100</width>
+        </column>
+      </element>
+    </tab>
+    <tab>
+      <tag>profiles</tag>
+      <tabstring>Cross Shore Profiles</tabstring>
+      <element>
+        <tag>textlocationfile</tag>
+        <style>text</style>
+        <position>10 110</position>
+        <prefix>Selected Locations File : </prefix>
+        <variable>
+          <name>raylocationFile</name>
+          <type>string</type>
+        </variable>
+        <extension>*.txt</extension>
+      </element>
+      <element>
+        <tag>pushgenerateprofiles</tag>
+        <style>pushbutton</style>
+        <position>10 85 130 20</position>
+        <text>Generate profiles</text>
+        <callback>ddb_UnibestCL_pushgenerateprofiles</callback>
+      </element>
+      <element>
+        <tag>pushviewprofile</tag>
+        <style>pushbutton</style>
+        <position>10 60 130 20</position>
+        <text>View profile</text>
+        <callback>ddb_UnibestCL_pushviewprofile</callback>
+      </element>
+      <element>
+        <tag>pushsavePROfiles</tag>
+        <style>pushbutton</style>
+        <position>10 35 130 20</position>
+        <text>Save PRO files</text>
+        <callback>ddb_UnibestCL_pushSavePROfiles</callback>
+      </element>
+    </tab>
   </element>
 </root>

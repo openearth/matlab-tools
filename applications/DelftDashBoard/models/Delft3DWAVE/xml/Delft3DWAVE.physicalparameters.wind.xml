@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
- <element>
+  <element>
     <tag>radiouniformw</tag>
     <style>radiobutton</style>
     <position>10 110</position>
@@ -28,38 +27,30 @@
     <variable>windspeed</variable>
     <type>real</type>
     <tooltipstring>Enter wind speed</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>wind</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>wind</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textspeedunit</tag>
     <style>text</style>
     <position>130 65</position>
     <text>[m/s]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>wind</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>wind</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editdirw</tag>
@@ -70,38 +61,30 @@
     <variable>winddir</variable>
     <type>real</type>
     <tooltipstring>Enter wind direction</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>wind</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>wind</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textdirwunit</tag>
     <style>text</style>
     <position>130 40</position>
     <text>[deg]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>wind</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>wind</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushselectwindfield</tag>
@@ -114,18 +97,14 @@
     <selectiontext>Select wind field file</selectiontext>
     <onchange>ddb_Delft3DWAVE_wind</onchange>
     <option1>file</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>wind</variable>
-            <value>spacevarying</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>wind</variable>
+        <value>spacevarying</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
 </root>

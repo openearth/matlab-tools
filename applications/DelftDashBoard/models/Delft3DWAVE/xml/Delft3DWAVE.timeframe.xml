@@ -1,17 +1,16 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>timepanel</tag>
     <style>panel</style>
     <position>45 10 975 160</position>
     <text>Time Frame</text>
-  </element> 
+  </element>
   <element>
     <tag>textmode</tag>
     <style>text</style>
     <position>65 135</position>
-    <text>Computational mode :</text>    
+    <text>Computational mode :</text>
   </element>
   <element>
     <tag>editmode</tag>
@@ -19,14 +18,12 @@
     <position>65 110 110 20</position>
     <variable>handles.Model(md).Input.simmode</variable>
     <type>string</type>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input.simmodes</variable>
-      </texts>
-      <values>
-        <variable>handles.Model(md).Input.simmodes</variable>
-      </values>
-    </list>
+    <listtext>
+      <variable>handles.Model(md).Input.simmodes</variable>
+    </listtext>
+    <listvalue>
+      <variable>handles.Model(md).Input.simmodes</variable>
+    </listvalue>
   </element>
   <element>
     <tag>editcoupling</tag>
@@ -37,44 +34,30 @@
     <variable>handles.Model(md).Input.comwriteinterval</variable>
     <type>real</type>
     <tooltipstring>Enter coupling interval</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>editmode</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.coupledwithflow</variable>
-            <value>2</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.coupledwithflow</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textcouplingunit</tag>
     <style>text</style>
     <position>200 80</position>
-    <text>[min]</text> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>editmode</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.coupledwithflow</variable>
-            <value>2</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <text>[min]</text>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.coupledwithflow</variable>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittimeinterval</tag>
@@ -85,54 +68,40 @@
     <variable>handles.Model(md).Input.comwriteinterval</variable>
     <type>real</type>
     <tooltipstring>Enter time interval for non-stationary mode</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>editmode</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.simmode</variable>
-            <value>non-stationary</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input.coupledwithflow</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.simmode</variable>
+        <value>non-stationary</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.coupledwithflow</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textintervalunit</tag>
     <style>text</style>
     <position>200 55</position>
     <text>[min]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>editmode</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.simmode</variable>
-            <value>non-stationary</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Model(md).Input.coupledwithflow</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>                    
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.simmode</variable>
+        <value>non-stationary</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.coupledwithflow</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittimestep</tag>
@@ -143,68 +112,50 @@
     <variable>handles.Model(md).Input.timestep</variable>
     <type>real</type>
     <tooltipstring>Enter output time step</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>editmode</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.simmode</variable>
-            <value>non-stationary</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.simmode</variable>
+        <value>non-stationary</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>texttimestepunit</tag>
     <style>text</style>
     <position>200 30</position>
     <text>[min]</text>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>editmode</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.simmode</variable>
-            <value>non-stationary</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>  
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.simmode</variable>
+        <value>non-stationary</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>timepointspanel</tag>
     <style>panel</style>
     <position>250 15 445 135</position>
     <text>Time points for WAVE computation</text>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nravailableflowtimes</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>   
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nravailableflowtimes</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittimepoints</tag>
@@ -213,50 +164,40 @@
     <tooltipstring>Edit timepoints for wave computation</tooltipstring>
     <variable>activetimepoint</variable>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>listtimes</variable>
-      </texts>
-    </list>
     <onchange>ddb_Delft3DWAVE_timeframe</onchange>
     <option1>edittimepoints</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nravailableflowtimes</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element> 
+    <listtext>
+      <variable>listtimes</variable>
+    </listtext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nravailableflowtimes</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>hydrospanel</tag>
     <style>panel</style>
     <position>700 15 310 135</position>
     <text>Default hydrodynamic data for selected time period</text>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edittime</tag>
@@ -269,38 +210,30 @@
     <tooltipstring>Enter time</tooltipstring>
     <onchange>ddb_Delft3DWAVE_timeFrame</onchange>
     <option1>settimelist</option1>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>texttimeunit</tag>
     <style>text</style>
     <position>890 110</position>
     <text>yyyy mm dd HH MM SS</text>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editwaterlevel</tag>
@@ -311,38 +244,30 @@
     <variable>waterlevelatselectedtime</variable>
     <type>real</type>
     <tooltipstring>Enter water level</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textwaterlevelunit</tag>
     <style>text</style>
     <position>890 85</position>
     <text>[m]</text>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editxvelocity</tag>
@@ -353,38 +278,30 @@
     <variable>xvelocityatselectedtime</variable>
     <type>real</type>
     <tooltipstring>Enter velocity in x direction</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textxvelocityunit</tag>
     <style>text</style>
     <position>890 60</position>
     <text>[m/s]</text>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edityvelocity</tag>
@@ -395,37 +312,29 @@
     <variable>yvelocityatselectedtime</variable>
     <type>real</type>
     <tooltipstring>Enter velocity in y direction</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textyvelocityunit</tag>
     <style>text</style>
     <position>890 35</position>
     <text>[m/s]</text>
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>coupling</variable>
-            <value>uncoupled</value>
-            <operator>eq</operator>
-          </check>          
-        </checks>
-      </dependency>
-    </dependencies>    
-  </element>  
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coupling</variable>
+        <value>uncoupled</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
 </root>

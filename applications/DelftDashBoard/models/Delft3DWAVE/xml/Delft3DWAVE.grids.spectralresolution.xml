@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>panelgrids</tag>
@@ -18,11 +17,9 @@
     <type>integer</type>
     <callback>ddb_Delft3DWAVE_grid</callback>
     <option1>selectgrid</option1>
-    <list>
-      <texts>
-        <variable>handles.Model(md).Input.gridnames</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>handles.Model(md).Input.gridnames</variable>
+    </listtext>
   </element>
   <element>
     <tag>textcs</tag>
@@ -36,14 +33,14 @@
     <tag>panelgriddata</tag>
     <style>panel</style>
     <text>Grid data</text>
-    <position>300 10 590 120</position>  
-  </element> 
+    <position>300 10 590 120</position>
+  </element>
   <element>
     <tag>paneldirspace</tag>
     <style>panel</style>
     <text>Directional space</text>
     <position>305 15 350 100</position>
-  </element>  
+  </element>
   <element>
     <tag>radiocircle</tag>
     <style>radiobutton</style>
@@ -71,19 +68,15 @@
     <variable>handles.Model(md).Input.domains(awg).startdir</variable>
     <type>integer</type>
     <tooltipstring>Enter start direction</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.domains(awg).dirspace</variable>
-            <value>sector</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.domains(awg).dirspace</variable>
+        <value>sector</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editenddir</tag>
@@ -94,26 +87,22 @@
     <variable>handles.Model(md).Input.domains(awg).enddir</variable>
     <type>integer</type>
     <tooltipstring>Enter end direction</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Model(md).Input.domains(awg).dirspace</variable>
-            <value>sector</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.domains(awg).dirspace</variable>
+        <value>sector</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>textstartcounter</tag>
     <style>text</style>
     <position>520 60</position>
     <text>[deg] [couter clockwise]</text>
-  </element>  
+  </element>
   <element>
     <tag>textendcounter</tag>
     <style>text</style>
@@ -161,7 +150,7 @@
     <style>text</style>
     <position>840 60</position>
     <text>[Hz]</text>
-  </element>  
+  </element>
   <element>
     <tag>texthz2</tag>
     <style>text</style>
@@ -177,5 +166,5 @@
     <variable>handles.Model(md).Input.domains(awg).nfreq</variable>
     <type>integer</type>
     <tooltipstring>Enter number of frequencies</tooltipstring>
-  </element>  
+  </element>
 </root>
