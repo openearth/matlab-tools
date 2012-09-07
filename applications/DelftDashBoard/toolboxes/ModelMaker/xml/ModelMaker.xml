@@ -1,69 +1,64 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <toolbox>ModelMaker</toolbox>
   <longname>Model Maker</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <position>10 10 1000 140</position>
-      <style>tabpanel</style>
-      <tag>modelmakerpanel</tag>
-      <tabs>
-        <tab>
-          <tag>quickmode</tag>
-          <formodel>delft3dflow</formodel>
-          <tabstring>Quick Mode</tabstring>
-          <callback>ddb_ModelMakerToolbox_quickMode</callback>
-          <elements>ModelMaker.quickmode.xml</elements>
-        </tab>
-        <tab>
-          <tag>quickmode.dflowfm</tag>
-          <formodel>dflowfm</formodel>
-          <tabstring>Quick Mode</tabstring>
-          <callback>ddb_ModelMakerToolbox_quickMode_DFlowFM</callback>
-          <elements>modelmaker.quickmode.dflowfm.xml</elements>
-        </tab>
-        <tab>
-          <tag>quickmode.delft3dwave</tag>
-          <formodel>delft3dwave</formodel>
-          <tabstring>Quick Mode</tabstring>
-          <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
-          <elements>modelmaker.quickmode.delft3dwave.xml</elements>
-        </tab>
-        <tab>
-          <tag>bathymetry.delft3dflow</tag>
-          <formodel>delft3dflow</formodel>
-          <tabstring>Bathymetry</tabstring>
-          <callback>ddb_ModelMakerToolbox_bathymetry</callback>
-          <elements>ModelMaker.bathymetry.xml</elements>
-          <enable>1</enable>
-        </tab>
-        <tab>
-          <tag>bathymetry.delft3dwave</tag>
-          <formodel>delft3dwave</formodel>
-          <tabstring>Bathymetry</tabstring>
-          <callback>ddb_ModelMakerToolbox_bathymetry</callback>
-          <elements>ModelMaker.bathymetry.xml</elements>
-          <enable>1</enable>
-        </tab>
-        <tab>
-          <tag>initialconditions</tag>
-          <formodel>delft3dflow</formodel>
-          <tabstring>Initial Conditions</tabstring>
-          <callback>ddb_ModelMakerToolbox_initialConditions</callback>
-          <elements>ModelMaker.initialconditions.xml</elements>
-          <enable>1</enable>
-        </tab>
-        <tab>
-          <tag>boundaryconditions</tag>
-          <formodel>delft3dflow</formodel>
-          <tabstring>Boundary Conditions</tabstring>
-          <callback>ddb_ModelMakerToolbox</callback>
-          <elements>ModelMaker.boundaryconditions.xml</elements>
-          <enable>0</enable>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
+  <element>
+    <position>10 10 1000 140</position>
+    <style>tabpanel</style>
+    <tag>modelmakerpanel</tag>
+    <tab>
+      <tag>quickmode</tag>
+      <formodel>delft3dflow</formodel>
+      <tabstring>Quick Mode</tabstring>
+      <callback>ddb_ModelMakerToolbox_quickMode</callback>
+      <element>ModelMaker.quickmode.xml</element>
+    </tab>
+    <tab>
+      <tag>quickmode.dflowfm</tag>
+      <formodel>dflowfm</formodel>
+      <tabstring>Quick Mode</tabstring>
+      <callback>ddb_ModelMakerToolbox_quickMode_DFlowFM</callback>
+      <element>modelmaker.quickmode.dflowfm.xml</element>
+    </tab>
+    <tab>
+      <tag>quickmode.delft3dwave</tag>
+      <formodel>delft3dwave</formodel>
+      <tabstring>Quick Mode</tabstring>
+      <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
+      <element>modelmaker.quickmode.delft3dwave.xml</element>
+    </tab>
+    <tab>
+      <tag>bathymetry.delft3dflow</tag>
+      <formodel>delft3dflow</formodel>
+      <tabstring>Bathymetry</tabstring>
+      <callback>ddb_ModelMakerToolbox_bathymetry</callback>
+      <enable>1</enable>
+      <element>ModelMaker.bathymetry.xml</element>
+    </tab>
+    <tab>
+      <tag>bathymetry.delft3dwave</tag>
+      <formodel>delft3dwave</formodel>
+      <tabstring>Bathymetry</tabstring>
+      <callback>ddb_ModelMakerToolbox_bathymetry</callback>
+      <enable>1</enable>
+      <element>ModelMaker.bathymetry.xml</element>
+    </tab>
+    <tab>
+      <tag>initialconditions</tag>
+      <formodel>delft3dflow</formodel>
+      <tabstring>Initial Conditions</tabstring>
+      <callback>ddb_ModelMakerToolbox_initialConditions</callback>
+      <enable>1</enable>
+      <element>ModelMaker.initialconditions.xml</element>
+    </tab>
+    <tab>
+      <tag>boundaryconditions</tag>
+      <formodel>delft3dflow</formodel>
+      <tabstring>Boundary Conditions</tabstring>
+      <callback>ddb_ModelMakerToolbox</callback>
+      <enable>0</enable>
+      <element>ModelMaker.boundaryconditions.xml</element>
+    </tab>
+  </element>
 </root>

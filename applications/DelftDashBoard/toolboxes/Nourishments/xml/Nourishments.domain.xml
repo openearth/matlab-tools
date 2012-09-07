@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
-
   <element>
     <tag>editxmin</tag>
     <style>edit</style>
@@ -13,8 +11,7 @@
     <variable>xLim(1)</variable>
     <type>real</type>
     <tooltipstring>Edit minimum x coordinate</tooltipstring>
-  </element> 
-
+  </element>
   <element>
     <tag>editxmax</tag>
     <style>edit</style>
@@ -26,8 +23,7 @@
     <variable>xLim(2)</variable>
     <type>real</type>
     <tooltipstring>Edit maximum x coordinate</tooltipstring>
-  </element> 
-
+  </element>
   <element>
     <tag>editymin</tag>
     <style>edit</style>
@@ -39,8 +35,7 @@
     <variable>yLim(1)</variable>
     <type>real</type>
     <tooltipstring>Edit minimum y coordinate</tooltipstring>
-  </element> 
-
+  </element>
   <element>
     <tag>editymax</tag>
     <style>edit</style>
@@ -52,8 +47,7 @@
     <variable>yLim(2)</variable>
     <type>real</type>
     <tooltipstring>Edit maximum y coordinate</tooltipstring>
-  </element> 
-
+  </element>
   <element>
     <tag>editdx</tag>
     <style>edit</style>
@@ -63,8 +57,7 @@
     <variable>dX</variable>
     <type>real</type>
     <tooltipstring>Edit grid spacing (in metres)</tooltipstring>
-  </element> 
-
+  </element>
   <element>
     <tag>drawrectangle</tag>
     <style>pushbutton</style>
@@ -73,8 +66,7 @@
     <callback>ddb_NourishmentsToolbox_domain</callback>
     <option1>drawrectangle</option1>
     <tooltipstring>Draw rectangle to indicate model size</tooltipstring>
-  </element> 
-
+  </element>
   <element>
     <tag>radiocuruniform</tag>
     <style>radiobutton</style>
@@ -84,24 +76,16 @@
     <type>string</type>
     <value>uniform</value>
     <tooltipstring>Uniform residual currents in U and V direction are defined by user</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiocurfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>currentSource</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>currentSource</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
   <element>
     <tag>radiocurfile</tag>
     <style>radiobutton</style>
@@ -111,24 +95,16 @@
     <type>string</type>
     <value>file</value>
     <tooltipstring>Residual currents are read from user-specified file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiocuruniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>currentSource</variable>
-            <value>file</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>currentSource</variable>
+        <value>file</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-  
   <element>
     <tag>editcuru</tag>
     <style>edit</style>
@@ -138,25 +114,16 @@
     <variable>currentU</variable>
     <type>real</type>
     <tooltipstring>Edit U velocity (m/s)</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiocurfile</tag>
-          <tag>radiocuruniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>currentSource</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
-
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>currentSource</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>editcurv</tag>
     <style>edit</style>
@@ -166,25 +133,16 @@
     <variable>currentV</variable>
     <type>real</type>
     <tooltipstring>Edit V velocity (m/s)</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiocurfile</tag>
-          <tag>radiocuruniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>currentSource</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
-
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>currentSource</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>pushselectcurrentsfile</tag>
     <style>pushselectfile</style>
@@ -197,26 +155,16 @@
     <onchange>ddb_NourishmentsToolbox_domain</onchange>
     <option1>loadcurrents</option1>
     <tooltipstring>Select residual currents file</tooltipstring>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radiocuruniform</tag>
-          <tag>radiocurfile</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>currentSource</variable>
-            <value>file</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>currentSource</variable>
+        <value>file</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
-
   <element>
     <tag>drawpolygon</tag>
     <style>pushbutton</style>
@@ -225,7 +173,7 @@
     <callback>ddb_NourishmentsToolbox_domain</callback>
     <option1>drawpolygon</option1>
     <tooltipstring>Draw polygon to indicate nourishment location</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>deletepolygon</tag>
     <style>pushbutton</style>
@@ -234,8 +182,7 @@
     <callback>ddb_NourishmentsToolbox_domain</callback>
     <option1>deletepolygon</option1>
     <tooltipstring>Delete selected nourishment polygon</tooltipstring>
-  </element> 
-
+  </element>
   <element>
     <tag>listpolygons</tag>
     <style>listbox</style>
@@ -243,16 +190,13 @@
     <tooltipstring>Select nourishment polygon</tooltipstring>
     <textposition>above-center</textposition>
     <variable>activeNourishment</variable>
-    <type>integer</type>              
+    <type>integer</type>
     <onchange>ddb_NourishmentsToolbox_domain</onchange>
     <option1>selectnourishment</option1>
-    <list>
-      <texts>
-        <variable>nourishmentNames</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>nourishmentNames</variable>
+    </listtext>
   </element>
-
   <element>
     <tag>selecttype</tag>
     <style>popupmenu</style>
@@ -264,19 +208,13 @@
     <tooltipstring>Select nourishment type (total volume, thickness or height w.r.t. reference level)</tooltipstring>
     <onchange>ddb_NourishmentsToolbox_domain</onchange>
     <option1>selecttype</option1>
-    <list>
-      <texts>
-        <text>Volume</text>
-        <text>Thickness</text>
-        <text>Height</text>
-      </texts>
-      <values>
-        <value>volume</value>
-        <value>thickness</value>
-        <value>height</value>
-      </values>
-    </list> 
-  </element> 
+    <listtext>Volume</listtext>
+    <listtext>Thickness</listtext>
+    <listtext>Height</listtext>
+    <listvalue>volume</listvalue>
+    <listvalue>thickness</listvalue>
+    <listvalue>height</listvalue>
+  </element>
   <element>
     <tag>editvolume</tag>
     <style>edit</style>
@@ -287,24 +225,17 @@
     <type>real</type>
     <tooltipstring>Edit total nourishment volume (volume will be equally distributed within polygon)</tooltipstring>
     <onchange>ddb_NourishmentsToolbox_domain</onchange>
-    <option1>editvolume</option1>    
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.nourishments(handles.Toolbox(tb).Input.activeNourishment).type</variable>
-            <value>volume</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
+    <option1>editvolume</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.nourishments(handles.Toolbox(tb).Input.activeNourishment).type</variable>
+        <value>volume</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>editthickness</tag>
     <style>edit</style>
@@ -315,24 +246,17 @@
     <type>real</type>
     <tooltipstring>Edit nourishment thickness (thickness will be applied uniformly within polygon)</tooltipstring>
     <onchange>ddb_NourishmentsToolbox_domain</onchange>
-    <option1>editthickness</option1>    
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.nourishments(handles.Toolbox(tb).Input.activeNourishment).type</variable>
-            <value>thickness</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
+    <option1>editthickness</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.nourishments(handles.Toolbox(tb).Input.activeNourishment).type</variable>
+        <value>thickness</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>editheight</tag>
     <style>edit</style>
@@ -343,24 +267,17 @@
     <type>real</type>
     <tooltipstring>Edit nourishment height w.r.t. reference level (bed level will be raised to this height within polygon)</tooltipstring>
     <onchange>ddb_NourishmentsToolbox_domain</onchange>
-    <option1>editheight</option1>    
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>selecttype</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.nourishments(handles.Toolbox(tb).Input.activeNourishment).type</variable>
-            <value>height</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
+    <option1>editheight</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.nourishments(handles.Toolbox(tb).Input.activeNourishment).type</variable>
+        <value>height</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>editarea</tag>
     <style>edit</style>
@@ -371,7 +288,7 @@
     <variable>handles.Toolbox(tb).Input.nourishments(handles.Toolbox(tb).Input.activeNourishment).area</variable>
     <type>real</type>
     <tooltipstring>Total nourishment area (m2)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editnryears</tag>
     <style>edit</style>
@@ -381,7 +298,7 @@
     <variable>nrYears</variable>
     <type>real</type>
     <tooltipstring>Edit run time (years)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>computenourishment</tag>
     <style>pushbutton</style>
@@ -390,5 +307,5 @@
     <callback>ddb_NourishmentsToolbox_domain</callback>
     <option1>computenourishment</option1>
     <tooltipstring>Start computation</tooltipstring>
-  </element> 
+  </element>
 </root>

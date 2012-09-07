@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>selectrawdataformmat</tag>
@@ -11,16 +10,14 @@
     <type>string</type>
     <tooltipstring>Select file format of raw data</tooltipstring>
     <callback>ddb_TilingToolbox_bathymetry</callback>
-    <option1>selectrawdatatype</option1>    
-    <list>
-      <texts>
-        <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypesText</variable>
-      </texts>
-      <values>
-        <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypes</variable>
-      </values>
-    </list>
-  </element>  
+    <option1>selectrawdatatype</option1>
+    <listtext>
+      <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypesText</variable>
+    </listtext>
+    <listvalue>
+      <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypes</variable>
+    </listvalue>
+  </element>
   <element>
     <tag>selectbathydatafile</tag>
     <style>pushselectfile</style>
@@ -29,15 +26,15 @@
     <variable>bathymetry.dataFile</variable>
     <onchange>ddb_TilingToolbox_bathymetry</onchange>
     <option1>selectdataset</option1>
-    <showfilename>yes</showfilename> 
+    <showfilename>yes</showfilename>
     <extension>
       <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypeExtension</variable>
-    </extension>    
+    </extension>
     <selectiontext>
       <variable>handles.Toolbox(tb).Input.bathymetry.rawDataTypeSelectionText</variable>
     </selectiontext>
-    <tooltipstring>Select data file</tooltipstring> 
-  </element> 
+    <tooltipstring>Select data file</tooltipstring>
+  </element>
   <element>
     <tag>editx0</tag>
     <style>edit</style>
@@ -48,7 +45,7 @@
     <variable>bathymetry.x0</variable>
     <type>real</type>
     <tooltipstring>Edit x origin of tiling system (lower left corner of lower left tile)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>edity0</tag>
     <style>edit</style>
@@ -59,7 +56,7 @@
     <variable>bathymetry.y0</variable>
     <type>real</type>
     <tooltipstring>Edit y origin of tiling system (lower left corner of lower left tile)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editnx</tag>
     <style>edit</style>
@@ -70,7 +67,7 @@
     <variable>bathymetry.nx</variable>
     <type>integer</type>
     <tooltipstring>Edit number of grid cells per tile in x direction</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editny</tag>
     <style>edit</style>
@@ -81,7 +78,7 @@
     <variable>bathymetry.ny</variable>
     <type>integer</type>
     <tooltipstring>Edit number of grid cells per tile in y direction</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editnrzoom</tag>
     <style>edit</style>
@@ -92,7 +89,7 @@
     <variable>bathymetry.nrZoom</variable>
     <type>integer</type>
     <tooltipstring>Edit number of zoom levels for tiling system</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>selectcs</tag>
     <style>pushbutton</style>
@@ -101,14 +98,14 @@
     <callback>ddb_TilingToolbox_bathymetry</callback>
     <option1>selectcs</option1>
     <tooltipstring>Select horizontal coordinate system of data source</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>cstext</tag>
     <style>text</style>
     <position>375 80</position>
     <variable>bathymetry.EPSGname</variable>
     <type>string</type>
-  </element> 
+  </element>
   <element>
     <tag>radiogeo</tag>
     <style>radiobutton</style>
@@ -118,7 +115,7 @@
     <type>integer</type>
     <value>1</value>
     <enable>0</enable>
-  </element> 
+  </element>
   <element>
     <tag>radioproj</tag>
     <style>radiobutton</style>
@@ -128,7 +125,7 @@
     <type>integer</type>
     <value>1</value>
     <enable>0</enable>
-  </element> 
+  </element>
   <element>
     <tag>editvertcs</tag>
     <style>edit</style>
@@ -139,7 +136,7 @@
     <variable>bathymetry.vertCoordName</variable>
     <type>string</type>
     <tooltipstring>Edit vertical coordinate system (e.g. MSL, NAP or NAVD88)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>selectverticalunits</tag>
     <style>popupmenu</style>
@@ -149,17 +146,11 @@
     <variable>handles.Toolbox(tb).Input.bathymetry.vertUnits</variable>
     <type>string</type>
     <tooltipstring>Select units of vertical data</tooltipstring>
-    <list>
-      <texts>
-        <text>metres</text>
-        <text>feet</text>
-      </texts>
-      <values>
-        <value>m</value>
-        <value>ft</value>
-      </values>
-    </list>
-  </element>  
+    <listtext>metres</listtext>
+    <listtext>feet</listtext>
+    <listvalue>m</listvalue>
+    <listvalue>ft</listvalue>
+  </element>
   <element>
     <tag>editvertcslevel</tag>
     <style>edit</style>
@@ -170,7 +161,7 @@
     <variable>bathymetry.vertCoordLevel</variable>
     <type>real</type>
     <tooltipstring>Edit vertical level w.r.t. Mean Sea Level</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>selectpositiveupdown</tag>
     <style>popupmenu</style>
@@ -180,17 +171,11 @@
     <variable>bathymetry.positiveUp</variable>
     <type>integer</type>
     <tooltipstring>Select positive direction in data file</tooltipstring>
-    <list>
-      <texts>
-        <text>up</text>
-        <text>down</text>
-      </texts>
-      <values>
-        <value>1</value>
-        <value>0</value>
-      </values>
-    </list>
-  </element>  
+    <listtext>up</listtext>
+    <listtext>down</listtext>
+    <listvalue>1</listvalue>
+    <listvalue>0</listvalue>
+  </element>
   <element>
     <tag>selectprecision</tag>
     <style>popupmenu</style>
@@ -200,19 +185,13 @@
     <variable>bathymetry.type</variable>
     <type>string</type>
     <tooltipstring>Select precision of data stored in netCDF tiles.</tooltipstring>
-    <list>
-      <texts>
-        <text>int</text>
-        <text>single</text>
-        <text>double</text>
-      </texts>
-      <values>
-        <value>int</value>
-        <value>float</value>
-        <value>double</value>
-      </values>
-    </list>
-  </element>  
+    <listtext>int</listtext>
+    <listtext>single</listtext>
+    <listtext>double</listtext>
+    <listvalue>int</listvalue>
+    <listvalue>float</listvalue>
+    <listvalue>double</listvalue>
+  </element>
   <element>
     <tag>editdataname</tag>
     <style>edit</style>
@@ -223,7 +202,7 @@
     <variable>bathymetry.dataName</variable>
     <type>string</type>
     <tooltipstring>Edit short name of data files (no spaces)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editattributes</tag>
     <style>pushbutton</style>
@@ -232,7 +211,7 @@
     <callback>ddb_TilingToolbox_bathymetry</callback>
     <option1>editattributes</option1>
     <tooltipstring>Edit attributes for netCDF files</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>generatetiles</tag>
     <style>pushbutton</style>
@@ -241,5 +220,5 @@
     <callback>ddb_TilingToolbox_bathymetry</callback>
     <option1>generatetiles</option1>
     <tooltipstring>Generate tile system from source data</tooltipstring>
-  </element> 
+  </element>
 </root>

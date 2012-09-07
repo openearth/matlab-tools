@@ -1,40 +1,35 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <toolbox>Nourishments</toolbox>
   <longname>Nourishments</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <position>10 10 1000 140</position>
-      <style>tabpanel</style>
-      <tag>nourishmentspanel</tag>
-      <tabs>
-        <tab>
-          <tag>domain</tag>
-          <tabstring>Domain</tabstring>
-          <callback>ddb_NourishmentsToolbox_domain</callback>
-          <elements>Nourishments.domain.xml</elements>
-        </tab>
-        <tab>
-          <tag>equilibriumconcentration</tag>
-          <tabstring>Equilibrium Concentration</tabstring>
-          <callback>ddb_NourishmentsToolbox_equilibriumConcentration</callback>
-          <elements>Nourishments.equilibriumconcentration.xml</elements>
-        </tab>
-        <tab>
-          <tag>output</tag>
-          <tabstring>Output</tabstring>
-          <callback>ddb_NourishmentsToolbox_output</callback>
-          <elements>Nourishments.output.xml</elements>
-        </tab>
-        <tab>
-          <tag>advanced</tag>
-          <tabstring>Advanced</tabstring>
-          <callback>ddb_NourishmentsToolbox_advanced</callback>
-          <elements>Nourishments.advanced.xml</elements>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
+  <element>
+    <position>10 10 1000 140</position>
+    <style>tabpanel</style>
+    <tag>nourishmentspanel</tag>
+    <tab>
+      <tag>domain</tag>
+      <tabstring>Domain</tabstring>
+      <callback>ddb_NourishmentsToolbox_domain</callback>
+      <element>Nourishments.domain.xml</element>
+    </tab>
+    <tab>
+      <tag>equilibriumconcentration</tag>
+      <tabstring>Equilibrium Concentration</tabstring>
+      <callback>ddb_NourishmentsToolbox_equilibriumConcentration</callback>
+      <element>Nourishments.equilibriumconcentration.xml</element>
+    </tab>
+    <tab>
+      <tag>output</tag>
+      <tabstring>Output</tabstring>
+      <callback>ddb_NourishmentsToolbox_output</callback>
+      <element>Nourishments.output.xml</element>
+    </tab>
+    <tab>
+      <tag>advanced</tag>
+      <tabstring>Advanced</tabstring>
+      <callback>ddb_NourishmentsToolbox_advanced</callback>
+      <element>Nourishments.advanced.xml</element>
+    </tab>
+  </element>
 </root>

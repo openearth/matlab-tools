@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>selectbathymetry</tag>
@@ -12,11 +11,9 @@
     <tooltipstring>Select bathymetry database</tooltipstring>
     <onchange>ddb_BathymetryToolbox_export</onchange>
     <option1>selectdataset</option1>
-    <list>
-      <texts>
-        <variable>handles.bathymetry.datasets</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>handles.bathymetry.datasets</variable>
+    </listtext>
   </element>
   <element>
     <tag>drawpolygon</tag>
@@ -25,7 +22,7 @@
     <text>Draw Polygon</text>
     <callback>ddb_BathymetryToolbox_export</callback>
     <option1>drawpolygon</option1>
-  </element> 
+  </element>
   <element>
     <tag>deletepolygon</tag>
     <style>pushbutton</style>
@@ -33,7 +30,7 @@
     <text>Delete Polygon</text>
     <callback>ddb_BathymetryToolbox_export</callback>
     <option1>deletepolygon</option1>
-  </element> 
+  </element>
   <element>
     <tag>loadpolygon</tag>
     <style>pushselectfile</style>
@@ -42,10 +39,10 @@
     <variable>polygonFile</variable>
     <onchange>ddb_BathymetryToolbox_export</onchange>
     <option1>loadpolygon</option1>
-    <showfilename>no</showfilename> 
+    <showfilename>no</showfilename>
     <extension>*.pol</extension>
     <selectiontext>Select polygon file</selectiontext>
-    <tooltipstring>Select polygon file</tooltipstring> 
+    <tooltipstring>Select polygon file</tooltipstring>
   </element>
   <element>
     <tag>savepolygon</tag>
@@ -55,28 +52,20 @@
     <variable>polygonFile</variable>
     <onchange>ddb_BathymetryToolbox_export</onchange>
     <option1>savepolygon</option1>
-    <showfilename>no</showfilename> 
+    <showfilename>no</showfilename>
     <extension>*.pol</extension>
     <selectiontext>Save polygon file</selectiontext>
-    <tooltipstring>Save polygon file</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>deletepolygon</tag>
-          <tag>drawpolygon</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>polyLength</variable>
-            <type>integer</type>	              
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Save polygon file</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>polyLength</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>selectzoomlevel</tag>
@@ -89,11 +78,9 @@
     <tooltipstring>Select zoom level</tooltipstring>
     <onchange>ddb_BathymetryToolbox_export</onchange>
     <option1>selectzoomlevel</option1>
-    <list>
-      <texts>
-        <variable>zoomLevelText</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>zoomLevelText</variable>
+    </listtext>
   </element>
   <element>
     <tag>textresolution</tag>
@@ -111,11 +98,9 @@
     <position>350 70 60 20</position>
     <tooltipstring>Select zoom level</tooltipstring>
     <type>string</type>
-    <list>
-      <texts>
-        <variable>exportTypes</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>exportTypes</variable>
+    </listtext>
   </element>
   <element>
     <tag>selectpositivedirection</tag>
@@ -126,16 +111,10 @@
     <position>350 45 60 20</position>
     <tooltipstring>Select positive up or down</tooltipstring>
     <type>string</type>
-    <list>
-      <texts>
-        <text>up</text>
-        <text>down</text>
-      </texts>
-      <values>
-        <value>up</value>
-        <value>down</value>
-      </values>
-    </list>
+    <listtext>up</listtext>
+    <listtext>down</listtext>
+    <listvalue>up</listvalue>
+    <listvalue>down</listvalue>
   </element>
   <element>
     <tag>exportbathy</tag>
@@ -145,26 +124,19 @@
     <variable>bathyFile</variable>
     <onchange>ddb_BathymetryToolbox_export</onchange>
     <option1>export</option1>
-    <showfilename>no</showfilename> 
+    <showfilename>no</showfilename>
     <extension>*.xyz</extension>
     <selectiontext>Save bathy file</selectiontext>
-    <tooltipstring>Export bathymetry</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>deletepolygon</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>polyLength</variable>
-            <type>integer</type>	              
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Export bathymetry</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>polyLength</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
 </root>

@@ -1,232 +1,205 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <toolbox>DD</toolbox>
   <longname>Domain Decomposition</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <tag>ddpanel</tag>
-      <style>panel</style>
-      <position>40 10 900 160</position>
-      <text>Domain Decomposition</text>
-    </element> 
-    <element>
-      <tag>newdomainpanel</tag>
-      <style>panel</style>
-      <position>50 20 330 135</position>
-      <text>New Domain</text>
-    </element>
-    <element>
-      <tag>boundarypanel</tag>
-      <style>panel</style>
-      <position>390 20 170 135</position>
-      <text>DD Boundaries</text>
-    </element>
-    <element>
-      <tag>editnewdomain</tag>
-      <style>edit</style>
-      <position>160 115 70 20</position>
-      <text>Runid New Domain</text>
-      <textposition>left</textposition>
-      <onchange>ddb_DDToolbox</onchange>
-      <option1>editnewdomain</option1>
-      <variable>newRunid</variable>
-      <type>string</type>
-      <tooltipstring>Edit runid for new domain</tooltipstring>
-    </element> 
-    <element>
-      <tag>editattributename</tag>
-      <style>edit</style>
-      <position>160 90 70 20</position>
-      <text>Attribute Names</text>
-      <textposition>left</textposition>
-      <onchange>ddb_DDToolbox</onchange>
-      <option1>editattributename</option1>
-      <variable>attributeName</variable>
-      <type>string</type>
-      <tooltipstring>Edit filename of attribute files of new domain</tooltipstring>
-    </element> 
-    <element>
-      <tag>selectcornerpoints</tag>
-      <style>pushbutton</style>
-      <position>250 115 120 20</position>
-      <text>Select Corner Points</text>
-      <callback>ddb_DDToolbox</callback>
-      <option1>selectcornerpoints</option1>
-      <tooltipstring>Select corner points for new domain</tooltipstring>
-    </element> 
-    <element>
-      <tag>generatenewdomain</tag>
-      <style>pushbutton</style>
-      <position>250 90 120 20</position>
-      <text>Generate New Domain</text>
-      <callback>ddb_DDToolbox</callback>
-      <option1>generatenewdomain</option1>
-      <tooltipstring>Generate new domain</tooltipstring>
-    </element> 
-    <element>
-      <tag>editmref</tag>
-      <style>edit</style>
-      <position>160 60 40 20</position>
-      <text>M Refinement</text>
-      <textposition>left</textposition>
-      <onchange>ddb_DDToolbox</onchange>
-      <option1>editrefinement</option1>
-      <variable>mRefinement</variable>
-      <type>integer</type>
-      <tooltipstring>Edit M refinement factor</tooltipstring>
-    </element> 
-    <element>
-      <tag>editm1</tag>
-      <style>edit</style>
-      <position>250 60 45 20</position>
-      <text>M1</text>
-      <textposition>left</textposition>
-      <onchange>ddb_DDToolbox</onchange>
-      <option1>editm1</option1>
-      <variable>firstCornerPointM</variable>
-      <type>integer</type>
-      <tooltipstring>Edit first corner point M1</tooltipstring>
-      <dependencies>
-        <dependency>
-          <action>enable</action>
-          <checkfor>all</checkfor>
-          <checks>
-            <check>
-              <variable>firstCornerPointM</variable>
-              <type>integer</type>	              
-              <value>NaN</value>
-              <operator>ne</operator>
-            </check>
-          </checks>
-        </dependency>
-      </dependencies>
-    </element> 
-    <element>
-      <tag>editm2</tag>
-      <style>edit</style>
-      <position>325 60 45 20</position>
-      <text>M2</text>
-      <textposition>left</textposition>
-      <onchange>ddb_DDToolbox</onchange>
-      <option1>editm2</option1>
-      <variable>secondCornerPointM</variable>
-      <type>integer</type>
-      <tooltipstring>Edit second corner point M2</tooltipstring>
-      <dependencies>
-        <dependency>
-          <action>enable</action>
-          <checkfor>all</checkfor>
-          <checks>
-            <check>
-              <variable>secondCornerPointM</variable>
-              <type>integer</type>	              
-              <value>NaN</value>
-              <operator>ne</operator>
-            </check>
-          </checks>
-        </dependency>
-      </dependencies>
-    </element> 
-    <element>
-      <tag>editnref</tag>
-      <style>edit</style>
-      <position>160 30 40 20</position>
-      <text>N Refinement</text>
-      <textposition>left</textposition>
-      <onchange>ddb_DDToolbox</onchange>
-      <option1>editrefinement</option1>
-      <variable>nRefinement</variable>
-      <type>integer</type>
-      <tooltipstring>Edit N refinement factor</tooltipstring>
-    </element> 
-    <element>
-      <tag>editn1</tag>
-      <style>edit</style>
-      <position>250 30 45 20</position>
-      <text>N1</text>
-      <textposition>left</textposition>
-      <onchange>ddb_DDToolbox</onchange>
-      <option1>editn1</option1>
-      <variable>firstCornerPointN</variable>
-      <type>integer</type>
-      <tooltipstring>Edit first corner point N1</tooltipstring>
-      <dependencies>
-        <dependency>
-          <action>enable</action>
-          <checkfor>all</checkfor>
-          <checks>
-            <check>
-              <variable>firstCornerPointN</variable>
-              <type>integer</type>	              
-              <value>NaN</value>
-              <operator>ne</operator>
-            </check>
-          </checks>
-        </dependency>
-      </dependencies>
-    </element> 
-    <element>
-      <tag>editn2</tag>
-      <style>edit</style>
-      <position>325 30 45 20</position>
-      <text>N2</text>
-      <textposition>left</textposition>
-      <onchange>ddb_DDToolbox</onchange>
-      <option1>editn2</option1>
-      <variable>secondCornerPointN</variable>
-      <type>integer</type>
-      <tooltipstring>Edit second corner point N2</tooltipstring>
-      <dependencies>
-        <dependency>
-          <action>enable</action>
-          <checkfor>all</checkfor>
-          <checks>
-            <check>
-              <variable>secondCornerPointN</variable>
-              <type>integer</type>	              
-              <value>NaN</value>
-              <operator>ne</operator>
-            </check>
-          </checks>
-        </dependency>
-      </dependencies>
-    </element> 
-
-
-
-
-    <element>
-      <tag>editddboundfile</tag>
-      <style>edit</style>
-      <position>440 110 100 20</position>
-      <text>DD File</text>
-      <textposition>left</textposition>
-      <variable>handles.Model(md).ddFile</variable>
-      <type>string</type>
-      <tooltipstring>Edit name of DD file</tooltipstring>
-    </element> 
-
-
-    <element>
-      <tag>checkadjustbathy</tag>
-      <style>checkbox</style>
-      <text>Adjust Bathymetry</text>
-      <position>440 80</position>
-      <variable>adjustBathymetry</variable>
-      <tooltipstring>Automatically adjust bathymetry along boundaries of high-res domains</tooltipstring>
-    </element>
-
-    <element>
-      <tag>makeddboundaries</tag>
-      <style>pushbutton</style>
-      <position>430 30 120 20</position>
-      <text>Make DD Boundaries</text>
-      <callback>ddb_DDToolbox</callback>
-      <option1>makeddboundaries</option1>
-      <tooltipstring>Finds DD boundaries for all available domains and saves ddbound file</tooltipstring>
-    </element> 
-
-  </elements> 
+  <element>
+    <tag>ddpanel</tag>
+    <style>panel</style>
+    <position>40 10 900 160</position>
+    <text>Domain Decomposition</text>
+  </element>
+  <element>
+    <tag>newdomainpanel</tag>
+    <style>panel</style>
+    <position>50 20 330 135</position>
+    <text>New Domain</text>
+  </element>
+  <element>
+    <tag>boundarypanel</tag>
+    <style>panel</style>
+    <position>390 20 170 135</position>
+    <text>DD Boundaries</text>
+  </element>
+  <element>
+    <tag>editnewdomain</tag>
+    <style>edit</style>
+    <position>160 115 70 20</position>
+    <text>Runid New Domain</text>
+    <textposition>left</textposition>
+    <onchange>ddb_DDToolbox</onchange>
+    <option1>editnewdomain</option1>
+    <variable>newRunid</variable>
+    <type>string</type>
+    <tooltipstring>Edit runid for new domain</tooltipstring>
+  </element>
+  <element>
+    <tag>editattributename</tag>
+    <style>edit</style>
+    <position>160 90 70 20</position>
+    <text>Attribute Names</text>
+    <textposition>left</textposition>
+    <onchange>ddb_DDToolbox</onchange>
+    <option1>editattributename</option1>
+    <variable>attributeName</variable>
+    <type>string</type>
+    <tooltipstring>Edit filename of attribute files of new domain</tooltipstring>
+  </element>
+  <element>
+    <tag>selectcornerpoints</tag>
+    <style>pushbutton</style>
+    <position>250 115 120 20</position>
+    <text>Select Corner Points</text>
+    <callback>ddb_DDToolbox</callback>
+    <option1>selectcornerpoints</option1>
+    <tooltipstring>Select corner points for new domain</tooltipstring>
+  </element>
+  <element>
+    <tag>generatenewdomain</tag>
+    <style>pushbutton</style>
+    <position>250 90 120 20</position>
+    <text>Generate New Domain</text>
+    <callback>ddb_DDToolbox</callback>
+    <option1>generatenewdomain</option1>
+    <tooltipstring>Generate new domain</tooltipstring>
+  </element>
+  <element>
+    <tag>editmref</tag>
+    <style>edit</style>
+    <position>160 60 40 20</position>
+    <text>M Refinement</text>
+    <textposition>left</textposition>
+    <onchange>ddb_DDToolbox</onchange>
+    <option1>editrefinement</option1>
+    <variable>mRefinement</variable>
+    <type>integer</type>
+    <tooltipstring>Edit M refinement factor</tooltipstring>
+  </element>
+  <element>
+    <tag>editm1</tag>
+    <style>edit</style>
+    <position>250 60 45 20</position>
+    <text>M1</text>
+    <textposition>left</textposition>
+    <onchange>ddb_DDToolbox</onchange>
+    <option1>editm1</option1>
+    <variable>firstCornerPointM</variable>
+    <type>integer</type>
+    <tooltipstring>Edit first corner point M1</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>firstCornerPointM</variable>
+        <type>integer</type>
+        <value>NaN</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>editm2</tag>
+    <style>edit</style>
+    <position>325 60 45 20</position>
+    <text>M2</text>
+    <textposition>left</textposition>
+    <onchange>ddb_DDToolbox</onchange>
+    <option1>editm2</option1>
+    <variable>secondCornerPointM</variable>
+    <type>integer</type>
+    <tooltipstring>Edit second corner point M2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>secondCornerPointM</variable>
+        <type>integer</type>
+        <value>NaN</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>editnref</tag>
+    <style>edit</style>
+    <position>160 30 40 20</position>
+    <text>N Refinement</text>
+    <textposition>left</textposition>
+    <onchange>ddb_DDToolbox</onchange>
+    <option1>editrefinement</option1>
+    <variable>nRefinement</variable>
+    <type>integer</type>
+    <tooltipstring>Edit N refinement factor</tooltipstring>
+  </element>
+  <element>
+    <tag>editn1</tag>
+    <style>edit</style>
+    <position>250 30 45 20</position>
+    <text>N1</text>
+    <textposition>left</textposition>
+    <onchange>ddb_DDToolbox</onchange>
+    <option1>editn1</option1>
+    <variable>firstCornerPointN</variable>
+    <type>integer</type>
+    <tooltipstring>Edit first corner point N1</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>firstCornerPointN</variable>
+        <type>integer</type>
+        <value>NaN</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>editn2</tag>
+    <style>edit</style>
+    <position>325 30 45 20</position>
+    <text>N2</text>
+    <textposition>left</textposition>
+    <onchange>ddb_DDToolbox</onchange>
+    <option1>editn2</option1>
+    <variable>secondCornerPointN</variable>
+    <type>integer</type>
+    <tooltipstring>Edit second corner point N2</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>secondCornerPointN</variable>
+        <type>integer</type>
+        <value>NaN</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>editddboundfile</tag>
+    <style>edit</style>
+    <position>440 110 100 20</position>
+    <text>DD File</text>
+    <textposition>left</textposition>
+    <variable>handles.Model(md).ddFile</variable>
+    <type>string</type>
+    <tooltipstring>Edit name of DD file</tooltipstring>
+  </element>
+  <element>
+    <tag>checkadjustbathy</tag>
+    <style>checkbox</style>
+    <text>Adjust Bathymetry</text>
+    <position>440 80</position>
+    <variable>adjustBathymetry</variable>
+    <tooltipstring>Automatically adjust bathymetry along boundaries of high-res domains</tooltipstring>
+  </element>
+  <element>
+    <tag>makeddboundaries</tag>
+    <style>pushbutton</style>
+    <position>430 30 120 20</position>
+    <text>Make DD Boundaries</text>
+    <callback>ddb_DDToolbox</callback>
+    <option1>makeddboundaries</option1>
+    <tooltipstring>Finds DD boundaries for all available domains and saves ddbound file</tooltipstring>
+  </element>
 </root>

@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>selectparameter</tag>
@@ -9,11 +8,9 @@
     <tooltipstring>Select parameter</tooltipstring>
     <type>integer</type>
     <text></text>
-    <list>
-      <texts>
-        <variable>initialConditions.parameterList</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>initialConditions.parameterList</variable>
+    </listtext>
   </element>
   <element>
     <tag>selectdatasource</tag>
@@ -23,10 +20,8 @@
     <tooltipstring>Select data source</tooltipstring>
     <type>integer</type>
     <text></text>
-    <list>
-      <texts>
-        <variable>initialConditions.dataSourceList</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>initialConditions.dataSourceList</variable>
+    </listtext>
   </element>
 </root>

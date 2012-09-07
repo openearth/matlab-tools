@@ -1,11 +1,9 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <title>Cyclone Parameters</title>
   <width>210</width>
   <height>330</height>
   <tag>cycloneparameters</tag>
-  <elements>
   <element>
     <tag>edittstart</tag>
     <style>edit</style>
@@ -26,28 +24,20 @@
     <variable>handles.Toolbox(tb).Input.activeQuadrant</variable>
     <type>integer</type>
     <tooltipstring>Select quadrant</tooltipstring>
-    <list>
-      <texts>
-        <text>North East</text>
-        <text>North West</text>
-        <text>South West</text>
-        <text>South East</text>
-      </texts>
-    </list> 
-    <dependencies>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.quadrantOption</variable>
-            <value>perquadrant</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
+    <listtext>North East</listtext>
+    <listtext>North West</listtext>
+    <listtext>South West</listtext>
+    <listtext>South East</listtext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.quadrantOption</variable>
+        <value>perquadrant</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>editvmax</tag>
     <style>edit</style>
@@ -56,39 +46,35 @@
     <type>real</type>
     <text>Vmax (kts)</text>
     <textposition>left</textposition>
-    <tooltipstring>Edit maximum wind speed</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>3</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>4</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>5</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>6</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Edit maximum wind speed</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>4</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>5</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>6</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editrmax</tag>
@@ -98,27 +84,23 @@
     <type>real</type>
     <text>Rmax (NM)</text>
     <textposition>left</textposition>
-    <tooltipstring>Edit radius of maximum wind speed</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>3</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>5</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Edit radius of maximum wind speed</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>5</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editpdrop</tag>
@@ -128,27 +110,23 @@
     <type>real</type>
     <text>Pdrop (Pa)</text>
     <textposition>left</textposition>
-    <tooltipstring>Edit pressure drop</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>3</value>
-            <operator>eq</operator>
-          </check>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>4</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>4</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editb</tag>
@@ -158,21 +136,17 @@
     <type>real</type>
     <text>Holland B</text>
     <textposition>left</textposition>
-    <tooltipstring>Edit Holland's B parameter</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Edit Holland's B parameter</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>edita</tag>
@@ -182,21 +156,17 @@
     <type>real</type>
     <text>Holland A</text>
     <textposition>left</textposition>
-    <tooltipstring>Edit Holland's A parameter</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Edit Holland's A parameter</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editr35</tag>
@@ -206,21 +176,17 @@
     <type>real</type>
     <text>R35 (NM)</text>
     <textposition>left</textposition>
-    <tooltipstring>Edit pressure drop</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>2</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editr50</tag>
@@ -230,21 +196,17 @@
     <type>real</type>
     <text>R50 (NM)</text>
     <textposition>left</textposition>
-    <tooltipstring>Edit pressure drop</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>2</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editr65</tag>
@@ -254,21 +216,17 @@
     <type>real</type>
     <text>R65 (NM)</text>
     <textposition>left</textposition>
-    <tooltipstring>Edit pressure drop</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>2</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editr100</tag>
@@ -278,33 +236,28 @@
     <type>real</type>
     <text>R100 (NM)</text>
     <textposition>left</textposition>
-    <tooltipstring>Edit pressure drop</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>any</checkfor>
-        <checks>
-          <check>
-            <variable>handles.Toolbox(tb).Input.method</variable>
-            <type>integer</type>	              
-            <value>2</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>pushok</tag>
     <style>pushok</style>
     <position>150 10 50 20</position>
     <text>OK</text>
-  </element>  
+  </element>
   <element>
     <tag>pushcancel</tag>
     <style>pushcancel</style>
     <position>90 10 50 20</position>
     <text>Cancel</text>
-  </element>  
-  </elements>
+  </element>
 </root>

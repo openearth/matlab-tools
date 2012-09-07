@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>selectbathymetrytoadd</tag>
@@ -12,11 +11,9 @@
     <tooltipstring>Select bathymetry databases to add</tooltipstring>
     <onchange>ddb_BathymetryToolbox_merge</onchange>
     <option1>selectdatasettoadd</option1>
-    <list>
-      <texts>
-        <variable>handles.bathymetry.datasets</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>handles.bathymetry.datasets</variable>
+    </listtext>
   </element>
   <element>
     <tag>addbathy</tag>
@@ -26,7 +23,7 @@
     <tooltipstring>Add highlighted bathy data to the merge list.</tooltipstring>
     <callback>ddb_BathymetryToolbox_merge</callback>
     <option1>addbathytolist</option1>
-  </element> 
+  </element>
   <element>
     <tag>deletefromlist</tag>
     <style>pushbutton</style>
@@ -35,30 +32,23 @@
     <tooltipstring>Remove highlighted bathy data from the merge list.</tooltipstring>
     <callback>ddb_BathymetryToolbox_merge</callback>
     <option1>deletefromlist</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listbathymetry</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>num_merge</variable>
-            <type>integer</type>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-          <check>
-              <variable>length(bathy_to_cut)</variable>
-              <type>integer</type>
-              <value>0</value>
-              <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>num_merge</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>length(bathy_to_cut)</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>moveselection</tag>
     <style>pushbutton</style>
@@ -66,10 +56,10 @@
     <text>Move Data up a Layer</text>
     <callback>ddb_BathymetryToolbox_merge</callback>
     <option1>moveselection</option1>
-    <tooltipstring>Move the selected data up one layer.</tooltipstring> 
+    <tooltipstring>Move the selected data up one layer.</tooltipstring>
   </element>
   <element>
-  <tag>listbathymetry</tag>
+    <tag>listbathymetry</tag>
     <style>listbox</style>
     <text>Data to Merge</text>
     <textposition>above-center</textposition>
@@ -80,11 +70,9 @@
     <tooltipstring>Highlight to remove or reorder data.</tooltipstring>
     <onchange>ddb_BathymetryToolbox_merge</onchange>
     <option1>listbathymetry</option1>
-    <list>
-      <texts>
-        <variable>add_list</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>add_list</variable>
+    </listtext>
   </element>
   <element>
     <tag>mergedata</tag>
@@ -94,26 +82,19 @@
     <variable>datasets</variable>
     <callback>ddb_BathymetryToolbox_merge</callback>
     <option1>mergedata</option1>
-    <showfilename>no</showfilename> 
+    <showfilename>no</showfilename>
     <extension>*.nc</extension>
     <selectiontext>Save bathy file</selectiontext>
-    <tooltipstring>Merge selected bathymetry data</tooltipstring> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>listbathymetry</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>num_merge</variable>
-            <type>integer</type>
-            <value>0</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <tooltipstring>Merge selected bathymetry data</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>num_merge</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
   </element>
 </root>

@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>selecthisfile</tag>
@@ -9,10 +8,10 @@
     <variable>trihFile</variable>
     <onchange>ddb_NestingToolbox_nestHD2</onchange>
     <option1>selecthisfile</option1>
-    <showfilename>yes</showfilename> 
+    <showfilename>yes</showfilename>
     <extension>trih*.dat</extension>
     <selectiontext>Select Delft3D trih file</selectiontext>
-    <tooltipstring>Select Delft3D history (trih) file</tooltipstring> 
+    <tooltipstring>Select Delft3D history (trih) file</tooltipstring>
   </element>
   <element>
     <tag>selectadmfile</tag>
@@ -22,30 +21,27 @@
     <variable>admFile</variable>
     <onchange>ddb_NestingToolbox_nestHD2</onchange>
     <option1>selectadmfile</option1>
-    <showfilename>yes</showfilename> 
+    <showfilename>yes</showfilename>
     <extension>*.adm</extension>
     <selectiontext>Select nesting administration file</selectiontext>
-    <tooltipstring>Select nesting administration file</tooltipstring> 
+    <tooltipstring>Select nesting administration file</tooltipstring>
   </element>
-  
-  
   <element>
     <tag>checkhydro</tag>
     <style>checkbox</style>
     <position>500 85</position>
     <text>Hydrodynamics</text>
     <variable>nestHydro</variable>
-    <tooltipstring>Run hydrodynamic nesting. Generates bct file.</tooltipstring> 
-  </element> 
+    <tooltipstring>Run hydrodynamic nesting. Generates bct file.</tooltipstring>
+  </element>
   <element>
     <tag>checktransport</tag>
     <style>checkbox</style>
     <position>500 65</position>
     <text>Transport</text>
     <variable>nestTransport</variable>
-    <tooltipstring>Run transport nesting. Generates bcc file.</tooltipstring> 
-  </element> 
-  
+    <tooltipstring>Run transport nesting. Generates bcc file.</tooltipstring>
+  </element>
   <element>
     <tag>editz0</tag>
     <style>edit</style>
@@ -53,10 +49,8 @@
     <text>Water Level Correction (m)</text>
     <variable>zCor</variable>
     <type>real</type>
-    <tooltipstring>Edit water level correction. This value will be added to the water levels that are read from the history file.</tooltipstring> 
+    <tooltipstring>Edit water level correction. This value will be added to the water levels that are read from the history file.</tooltipstring>
   </element>
-
-
   <element>
     <tag>runnesthd2</tag>
     <style>pushbutton</style>
@@ -64,9 +58,6 @@
     <text>Run Nesting</text>
     <callback>ddb_NestingToolbox_nestHD2</callback>
     <option1>nesthd2</option1>
-    <tooltipstring>Run Nesting</tooltipstring> 
+    <tooltipstring>Run Nesting</tooltipstring>
   </element>
-  
-
-
 </root>

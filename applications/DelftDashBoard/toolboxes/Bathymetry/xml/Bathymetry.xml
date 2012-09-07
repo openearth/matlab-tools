@@ -1,34 +1,29 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <toolbox>Bathymetry</toolbox>
   <longname>Bathymetry</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <position>10 10 1000 140</position>
-      <style>tabpanel</style>
-      <tag>bathymetrypanel</tag>
-      <tabs>
-        <tab>
-          <tag>export</tag>
-          <tabstring>Export</tabstring>
-          <callback>ddb_BathymetryToolbox_export</callback>
-          <elements>Bathymetry.export.xml</elements>
-        </tab>
-        <tab>
-          <tag>import</tag>
-          <tabstring>Import</tabstring>
-          <callback>ddb_BathymetryToolbox_import</callback>
-          <elements>Bathymetry.import.xml</elements>
-        </tab>
-        <tab>
-          <tag>merge</tag>
-          <tabstring>Merge</tabstring>
-          <callback>ddb_BathymetryToolbox_merge</callback>
-          <elements>Bathymetry.merge.xml</elements>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
+  <element>
+    <position>10 10 1000 140</position>
+    <style>tabpanel</style>
+    <tag>bathymetrypanel</tag>
+    <tab>
+      <tag>export</tag>
+      <tabstring>Export</tabstring>
+      <callback>ddb_BathymetryToolbox_export</callback>
+      <element>Bathymetry.export.xml</element>
+    </tab>
+    <tab>
+      <tag>import</tag>
+      <tabstring>Import</tabstring>
+      <callback>ddb_BathymetryToolbox_import</callback>
+      <element>Bathymetry.import.xml</element>
+    </tab>
+    <tab>
+      <tag>merge</tag>
+      <tabstring>Merge</tabstring>
+      <callback>ddb_BathymetryToolbox_merge</callback>
+      <element>Bathymetry.merge.xml</element>
+    </tab>
+  </element>
 </root>

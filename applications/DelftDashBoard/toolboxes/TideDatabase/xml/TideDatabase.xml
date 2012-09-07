@@ -1,30 +1,25 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <toolbox>TideDatabase</toolbox>
   <longname>Tide Database</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <position>10 10 1000 140</position>
-      <style>tabpanel</style>
-      <tag>tidedatabasepanel</tag>
-      <tabs>
-        <tab>
-          <tag>export</tag>
-          <tabstring>Export</tabstring>
-          <callback>ddb_TideDatabaseToolbox_export</callback>
-          <elements>TideDatabase.export.xml</elements>
-        </tab>
-        <tab>
-          <tag>calibrate</tag>
-          <tabstring>Calibrate</tabstring>
-          <callback>ddb_TideDatabaseToolbox_calibrate</callback>
-          <elements>TideDatabase.calibrate.xml</elements>
-          <enable>off</enable> 
-          <formodel>delft3dflow</formodel> 
-        </tab>
-      </tabs>
-    </element>
-  </elements>
+  <element>
+    <position>10 10 1000 140</position>
+    <style>tabpanel</style>
+    <tag>tidedatabasepanel</tag>
+    <tab>
+      <tag>export</tag>
+      <tabstring>Export</tabstring>
+      <callback>ddb_TideDatabaseToolbox_export</callback>
+      <element>TideDatabase.export.xml</element>
+    </tab>
+    <tab>
+      <tag>calibrate</tag>
+      <tabstring>Calibrate</tabstring>
+      <callback>ddb_TideDatabaseToolbox_calibrate</callback>
+      <enable>off</enable>
+      <formodel>delft3dflow</formodel>
+      <element>TideDatabase.calibrate.xml</element>
+    </tab>
+  </element>
 </root>

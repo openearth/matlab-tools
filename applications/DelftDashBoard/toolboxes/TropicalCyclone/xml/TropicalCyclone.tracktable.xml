@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>selectquadrant</tag>
@@ -12,44 +11,30 @@
     <tooltipstring>Select quadrant</tooltipstring>
     <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
     <option1>selectquadrant</option1>
-    <list>
-      <texts>
-        <text>North East</text>
-        <text>North West</text>
-        <text>South West</text>
-        <text>South East</text>
-      </texts>
-    </list> 
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrTrackPoints</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <tags>
-          <tag>radiouniform</tag>
-          <tag>radioperquadrant</tag>
-        </tags> 
-        <checks>
-          <check>
-            <variable>quadrantOption</variable>
-            <value>perquadrant</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
+    <listtext>North East</listtext>
+    <listtext>North West</listtext>
+    <listtext>South West</listtext>
+    <listtext>South East</listtext>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>quadrantOption</variable>
+        <value>perquadrant</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>cyclonetable1</tag>
     <style>table</style>
@@ -59,82 +44,69 @@
     <includebuttons>no</includebuttons>
     <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
     <option1>edittracktable</option1>
-    <columns>
-      <column>
-        <style>edittime</style>
-        <width>110</width>
-        <text>Date and time</text>
-        <enable>1</enable>
-        <variable>trackT</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>80</width>
-        <text>Lon (deg)</text>
-        <enable>1</enable>
-        <variable>trackX</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>80</width>
-        <text>Lat (deg)</text>
-        <enable>1</enable>
-        <variable>trackY</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Vmax (kts)</text>
-        <enable>1</enable>
-        <variable>tableVMax</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>50</width>
-        <text>B</text>
-        <enable>1</enable>
-        <variable>tableB</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>50</width>
-        <text>A</text>
-        <enable>1</enable>
-        <variable>tableA</variable>
-      </column>
-    </columns>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrTrackPoints</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <tags>
-          <tag>tropicalcyclonepanel.parameters.selectmethod</tag>
-        </tags> 
-        <checks>
-          <check>
-            <variable>method</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>80</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>80</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>50</width>
+      <text>B</text>
+      <enable>1</enable>
+      <variable>tableB</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>50</width>
+      <text>A</text>
+      <enable>1</enable>
+      <variable>tableA</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>method</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
-
   <element>
     <tag>cyclonetable2</tag>
     <style>table</style>
@@ -144,95 +116,83 @@
     <includebuttons>no</includebuttons>
     <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
     <option1>edittracktable</option1>
-    <columns>
-      <column>
-        <style>edittime</style>
-        <width>110</width>
-        <text>Date and time</text>
-        <enable>1</enable>
-        <variable>trackT</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lon (deg)</text>
-        <enable>1</enable>
-        <variable>trackX</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lat (deg)</text>
-        <enable>1</enable>
-        <variable>trackY</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Vmax (kts)</text>
-        <enable>1</enable>
-        <variable>tableVMax</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>55</width>
-        <text>R35 (NM)</text>
-        <enable>1</enable>
-        <variable>tableR35</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>55</width>
-        <text>R50 (NM)</text>
-        <enable>1</enable>
-        <variable>tableR50</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>55</width>
-        <text>R65 (NM)</text>
-        <enable>1</enable>
-        <variable>tableR65</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>55</width>
-        <text>R100 (NM)</text>
-        <enable>1</enable>
-        <variable>tableR100</variable>
-      </column>
-    </columns>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrTrackPoints</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <tags>
-          <tag>tropicalcyclonepanel.parameters.selectmethod</tag>
-        </tags> 
-        <checks>
-          <check>
-            <variable>method</variable>
-            <type>integer</type>	              
-            <value>2</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>55</width>
+      <text>R35 (NM)</text>
+      <enable>1</enable>
+      <variable>tableR35</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>55</width>
+      <text>R50 (NM)</text>
+      <enable>1</enable>
+      <variable>tableR50</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>55</width>
+      <text>R65 (NM)</text>
+      <enable>1</enable>
+      <variable>tableR65</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>55</width>
+      <text>R100 (NM)</text>
+      <enable>1</enable>
+      <variable>tableR100</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
   <element>
     <tag>cyclonetable3</tag>
     <style>table</style>
@@ -242,81 +202,69 @@
     <includebuttons>no</includebuttons>
     <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
     <option1>edittracktable</option1>
-    <columns>
-      <column>
-        <style>edittime</style>
-        <width>110</width>
-        <text>Date and time</text>
-        <enable>1</enable>
-        <variable>trackT</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lon (deg)</text>
-        <enable>1</enable>
-        <variable>trackX</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lat (deg)</text>
-        <enable>1</enable>
-        <variable>trackY</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Vmax (kts)</text>
-        <enable>1</enable>
-        <variable>tableVMax</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Rmax (NM)</text>
-        <enable>1</enable>
-        <variable>tableRMax</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Pd (Pa)</text>
-        <enable>1</enable>
-        <variable>tablePDrop</variable>
-      </column>
-    </columns>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrTrackPoints</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <tags>
-          <tag>tropicalcyclonepanel.parameters.selectmethod</tag>
-        </tags> 
-        <checks>
-          <check>
-            <variable>method</variable>
-            <type>integer</type>	              
-            <value>3</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Rmax (NM)</text>
+      <enable>1</enable>
+      <variable>tableRMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Pd (Pa)</text>
+      <enable>1</enable>
+      <variable>tablePDrop</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>method</variable>
+        <type>integer</type>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
   <element>
     <tag>cyclonetable4</tag>
     <style>table</style>
@@ -326,74 +274,62 @@
     <includebuttons>no</includebuttons>
     <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
     <option1>edittracktable</option1>
-    <columns>
-      <column>
-        <style>edittime</style>
-        <width>110</width>
-        <text>Date and time</text>
-        <enable>1</enable>
-        <variable>trackT</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lon (deg)</text>
-        <enable>1</enable>
-        <variable>trackX</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lat (deg)</text>
-        <enable>1</enable>
-        <variable>trackY</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Vmax (kts)</text>
-        <enable>1</enable>
-        <variable>tableVMax</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Pd (Pa)</text>
-        <enable>1</enable>
-        <variable>tablePDrop</variable>
-      </column>
-    </columns>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrTrackPoints</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <tags>
-          <tag>tropicalcyclonepanel.parameters.selectmethod</tag>
-        </tags> 
-        <checks>
-          <check>
-            <variable>method</variable>
-            <type>integer</type>	              
-            <value>4</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Pd (Pa)</text>
+      <enable>1</enable>
+      <variable>tablePDrop</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>method</variable>
+        <type>integer</type>
+        <value>4</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
   <element>
     <tag>cyclonetable5</tag>
     <style>table</style>
@@ -403,74 +339,62 @@
     <includebuttons>no</includebuttons>
     <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
     <option1>edittracktable</option1>
-    <columns>
-      <column>
-        <style>edittime</style>
-        <width>110</width>
-        <text>Date and time</text>
-        <enable>1</enable>
-        <variable>trackT</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lon (deg)</text>
-        <enable>1</enable>
-        <variable>trackX</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lat (deg)</text>
-        <enable>1</enable>
-        <variable>trackY</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Vmax (kts)</text>
-        <enable>1</enable>
-        <variable>tableVMax</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Rmax (NM)</text>
-        <enable>1</enable>
-        <variable>tableRMax</variable>
-      </column>
-    </columns>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrTrackPoints</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <tags>
-          <tag>tropicalcyclonepanel.parameters.selectmethod</tag>
-        </tags> 
-        <checks>
-          <check>
-            <variable>method</variable>
-            <type>integer</type>	              
-            <value>5</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Rmax (NM)</text>
+      <enable>1</enable>
+      <variable>tableRMax</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>method</variable>
+        <type>integer</type>
+        <value>5</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
-
   <element>
     <tag>cyclonetable6</tag>
     <style>table</style>
@@ -480,64 +404,53 @@
     <includebuttons>no</includebuttons>
     <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
     <option1>edittracktable</option1>
-    <columns>
-      <column>
-        <style>edittime</style>
-        <width>110</width>
-        <text>Date and time</text>
-        <enable>1</enable>
-        <variable>trackT</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lon (deg)</text>
-        <enable>1</enable>
-        <variable>trackX</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Lat (deg)</text>
-        <enable>1</enable>
-        <variable>trackY</variable>
-      </column>
-      <column>
-        <style>editreal</style>
-        <width>60</width>
-        <text>Vmax (kts)</text>
-        <enable>1</enable>
-        <variable>tableVMax</variable>
-      </column>
-    </columns>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>nrTrackPoints</variable>
-            <type>integer</type>	              
-            <value>1</value>
-            <operator>gt</operator>
-          </check>
-        </checks>
-      </dependency>
-      <dependency>
-        <action>visible</action>
-        <checkfor>all</checkfor>
-        <tags>
-          <tag>tropicalcyclonepanel.parameters.selectmethod</tag>
-        </tags> 
-        <checks>
-          <check>
-            <variable>method</variable>
-            <type>integer</type>	              
-            <value>6</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>tableVMax</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>method</variable>
+        <type>integer</type>
+        <value>6</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
 </root>

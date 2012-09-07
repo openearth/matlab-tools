@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written Feb-2012 by David Sitton -->
 <root>
   <element>
     <tag>getbathyfile</tag>
@@ -9,17 +8,17 @@
     <variable>bathyFile</variable>
     <onchange>ddb_BathymetryToolbox_import</onchange>
     <option1>getbathyfile</option1>
-    <showfilename>yes</showfilename> 
-    <extension idx="1" type="cell" size="3 2">
-        <item idx="1" type="char" size="1 5">*.grd</item>
-        <item idx="2" type="char" size="1 5">*.xyz</item>
-        <item idx="3" type="char" size="1 4">*.nc</item>
-        <item idx="4" type="char" size="1 18">Grid Files (*.grd)</item>
-        <item idx="5" type="char" size="1 17">XYZ files (*.xyz)</item>
-        <item idx="6" type="char" size="1 19">NetCDF files (*.nc)</item>
+    <showfilename>yes</showfilename>
+    <extension>
+      <item>*.grd</item>
+      <item>*.xyz</item>
+      <item>*.nc</item>
+      <item>Grid Files (*.grd)</item>
+      <item>XYZ files (*.xyz)</item>
+      <item>NetCDF files (*.nc)</item>
     </extension>
     <selectiontext>Select bathy file</selectiontext>
-    <tooltipstring>Select bathymetry file</tooltipstring> 
+    <tooltipstring>Select bathymetry file</tooltipstring>
   </element>
   <element>
     <tag>import</tag>
@@ -29,30 +28,30 @@
     <variable>bathyFile</variable>
     <callback>ddb_BathymetryToolbox_import</callback>
     <option1>import</option1>
-    <showfilename>no</showfilename> 
+    <showfilename>no</showfilename>
     <extension>*.nc</extension>
     <selectiontext>Import Data</selectiontext>
-    <tooltipstring>Integrate new bathy into GUI</tooltipstring>     
+    <tooltipstring>Integrate new bathy into GUI</tooltipstring>
   </element>
   <element>
-      <tag>editOutputName</tag>
-      <style>edit</style>
-      <onchange>ddb_BathymetryToolbox_import</onchange>
-      <option1>editOutputName</option1>
-      <variable>newbathyName</variable>
-      <type>string</type>
-      <position>195 80 150 20 </position>
+    <tag>editOutputName</tag>
+    <style>edit</style>
+    <onchange>ddb_BathymetryToolbox_import</onchange>
+    <option1>editOutputName</option1>
+    <variable>newbathyName</variable>
+    <type>string</type>
+    <position>195 80 150 20 </position>
   </element>
   <element>
     <tag>setresolution</tag>
     <style>edit</style>
     <text>Resolution (sec)</text>
-   <onchange>ddb_BathymetryToolbox_import</onchange>
-      <option1>editresolution</option1>
-      <variable>newbathyresolution</variable>
-      <type>double</type>
-      <position>195 45 75 20 </position>
-      <tooltipstring>Set the resolution (in seconds) of the grid.</tooltipstring> 
+    <onchange>ddb_BathymetryToolbox_import</onchange>
+    <option1>editresolution</option1>
+    <variable>newbathyresolution</variable>
+    <type>double</type>
+    <position>195 45 75 20 </position>
+    <tooltipstring>Set the resolution (in seconds) of the grid.</tooltipstring>
   </element>
   <element>
     <tag>selectpositivedirection</tag>
@@ -63,16 +62,10 @@
     <position>400 45 60 20</position>
     <tooltipstring>Select positive up or down</tooltipstring>
     <type>string</type>
-    <list>
-      <texts>
-        <text>up</text>
-        <text>down</text>
-      </texts>
-      <values>
-        <value>up</value>
-        <value>down</value>
-      </values>
-    </list>
+    <listtext>up</listtext>
+    <listtext>down</listtext>
+    <listvalue>up</listvalue>
+    <listvalue>down</listvalue>
   </element>
   <element>
     <tag>selectdatumtype</tag>
@@ -84,30 +77,23 @@
     <tooltipstring>Select offset of the Bathy Data</tooltipstring>
     <onchange>ddb_BathymetryToolbox_import</onchange>
     <type>string</type>
-    <list>
-      <texts>
-        <text>Mean Sea Level</text>
-        <text>Low Water Level</text>
-        <text>High Water Level</text>
-      </texts>
-      <values>
-        <value>Mean Sea Level</value>
-        <value>Low Water Level</value>
-        <value>High Water Level</value>
-      </values>
-    </list>
+    <listtext>Mean Sea Level</listtext>
+    <listtext>Low Water Level</listtext>
+    <listtext>High Water Level</listtext>
+    <listvalue>Mean Sea Level</listvalue>
+    <listvalue>Low Water Level</listvalue>
+    <listvalue>High Water Level</listvalue>
   </element>
   <element>
-      <tag>offsetvalue</tag>
-      <style>edit</style>
-      <text>Offset Value</text>
-      <value>0</value>
-      <onchange>ddb_BathymetryToolbox_import</onchange>
-      <tooltipstring>Set the offset from mean sea level</tooltipstring>
-      <option1>offsetvalue</option1>
-      <variable>offset_value</variable>
-      <type>string</type>
-      <position>550 45 50 20 </position>
-  </element>  
-  
+    <tag>offsetvalue</tag>
+    <style>edit</style>
+    <text>Offset Value</text>
+    <value>0</value>
+    <onchange>ddb_BathymetryToolbox_import</onchange>
+    <tooltipstring>Set the offset from mean sea level</tooltipstring>
+    <option1>offsetvalue</option1>
+    <variable>offset_value</variable>
+    <type>string</type>
+    <position>550 45 50 20 </position>
+  </element>
 </root>

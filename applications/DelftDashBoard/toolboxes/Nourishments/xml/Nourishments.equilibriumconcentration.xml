@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>editbackgroundconcentration</tag>
@@ -10,7 +9,7 @@
     <variable>equilibriumConcentration</variable>
     <type>real</type>
     <tooltipstring>Edit background equilibrium concentration (will be used outside polygons)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>drawpolygon</tag>
     <style>pushbutton</style>
@@ -19,7 +18,7 @@
     <callback>ddb_NourishmentsToolbox_equilibriumConcentration</callback>
     <option1>drawpolygon</option1>
     <tooltipstring>Draw polygon to indicate area with different equilibrium concentration (optional!)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>deletepolygon</tag>
     <style>pushbutton</style>
@@ -28,7 +27,7 @@
     <callback>ddb_NourishmentsToolbox_equilibriumConcentration</callback>
     <option1>deletepolygon</option1>
     <tooltipstring>Delete selected concentration polygon</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>listpolygons</tag>
     <style>listbox</style>
@@ -36,14 +35,12 @@
     <tooltipstring>Select concentration polygon</tooltipstring>
     <textposition>above-center</textposition>
     <variable>activeConcentrationPolygon</variable>
-    <type>integer</type>              
+    <type>integer</type>
     <onchange>ddb_NourishmentsToolbox_equilibriumConcentration</onchange>
     <option1>selectpolygon</option1>
-    <list>
-      <texts>
-        <variable>concentrationNames</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>concentrationNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>editconcentration</tag>
@@ -55,8 +52,8 @@
     <type>real</type>
     <tooltipstring>Edit equilibrium concentration with polygon</tooltipstring>
     <onchange>ddb_NourishmentsToolbox_equilibriumConcentration</onchange>
-    <option1>editconcentration</option1>    
-  </element> 
+    <option1>editconcentration</option1>
+  </element>
   <element>
     <tag>editnryears</tag>
     <style>edit</style>
@@ -66,7 +63,7 @@
     <variable>nrYears</variable>
     <type>real</type>
     <tooltipstring>Edit run time (years)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>computenourishment</tag>
     <style>pushbutton</style>
@@ -75,5 +72,5 @@
     <callback>ddb_NourishmentsToolbox_equilibriumConcentration</callback>
     <option1>computenourishment</option1>
     <tooltipstring>Start computation</tooltipstring>
-  </element> 
+  </element>
 </root>

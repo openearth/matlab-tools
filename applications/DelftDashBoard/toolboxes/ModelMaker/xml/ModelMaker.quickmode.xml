@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>editx0</tag>
@@ -167,11 +166,9 @@
     <tooltipstring>Select tide database for boundary conditions</tooltipstring>
     <variable>activeTideModelBC</variable>
     <type>integer</type>
-    <list>
-      <texts>
-        <variable>handles.tideModels.longNames</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>handles.tideModels.longNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>selectinidatabase</tag>
@@ -181,11 +178,9 @@
     <variable>activeTideModelIC</variable>
     <type>integer</type>
     <enable>0</enable>
-    <list>
-      <texts>
-        <variable>handles.tideModels.longNames</variable>
-      </texts>
-    </list>
+    <listtext>
+      <variable>handles.tideModels.longNames</variable>
+    </listtext>
   </element>
   <element>
     <tag>rightpanel</tag>

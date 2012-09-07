@@ -1,51 +1,46 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <toolbox>Nesting</toolbox>
   <longname>Nesting</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <position>40 10 1000 140</position>
-      <style>tabpanel</style>
-      <tag>nestpanel</tag>
-      <tabs>
-        <tab>
-          <tag>nesthd1</tag>
-          <tabstring>Nesting - 1</tabstring>
-          <callback>ddb_NestingToolbox_nestHD1</callback>
-          <elements>nesting.nesthd1.xml</elements>
-          <formodel>delft3dflow</formodel>
-        </tab>
-        <tab>
-          <tag>nesthd2</tag>
-          <tabstring>Nesting - 2</tabstring>
-          <callback>ddb_NestingToolbox_nestHD2</callback>
-          <elements>nesting.nesthd2.xml</elements>
-          <formodel>delft3dflow</formodel>
-        </tab>
-        <tab>
-          <tag>nestingwave1</tag>
-          <tabstring>Nesting - 1</tabstring>
-          <callback>ddb_NestingToolbox_Delft3DWAVE_nest1</callback>
-          <elements>nesting.delft3dwave.nest1.xml</elements>
-          <formodel>delft3dwave</formodel>
-        </tab>
-        <tab>
-          <tag>nestingwave2</tag>
-          <tabstring>Nesting - 2</tabstring>
-          <callback>ddb_NestingToolbox_Delft3DWAVE_nest2</callback>
-          <elements>nesting.delft3dwave.nest2.xml</elements>
-          <formodel>delft3dwave</formodel>
-        </tab>
-        <tab>
-          <tag>nestingdflowfm</tag>
-          <tabstring>Nesting</tabstring>
-          <callback>ddb_dummyTabCallback</callback>
-          <elements>nesting.dflowfm.xml</elements>
-          <formodel>dflowfm</formodel>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
+  <element>
+    <position>40 10 1000 140</position>
+    <style>tabpanel</style>
+    <tag>nestpanel</tag>
+    <tab>
+      <tag>nesthd1</tag>
+      <tabstring>Nesting - 1</tabstring>
+      <callback>ddb_NestingToolbox_nestHD1</callback>
+      <formodel>delft3dflow</formodel>
+      <element>nesting.nesthd1.xml</element>
+    </tab>
+    <tab>
+      <tag>nesthd2</tag>
+      <tabstring>Nesting - 2</tabstring>
+      <callback>ddb_NestingToolbox_nestHD2</callback>
+      <formodel>delft3dflow</formodel>
+      <element>nesting.nesthd2.xml</element>
+    </tab>
+    <tab>
+      <tag>nestingwave1</tag>
+      <tabstring>Nesting - 1</tabstring>
+      <callback>ddb_NestingToolbox_Delft3DWAVE_nest1</callback>
+      <formodel>delft3dwave</formodel>
+      <element>nesting.delft3dwave.nest1.xml</element>
+    </tab>
+    <tab>
+      <tag>nestingwave2</tag>
+      <tabstring>Nesting - 2</tabstring>
+      <callback>ddb_NestingToolbox_Delft3DWAVE_nest2</callback>
+      <formodel>delft3dwave</formodel>
+      <element>nesting.delft3dwave.nest2.xml</element>
+    </tab>
+    <tab>
+      <tag>nestingdflowfm</tag>
+      <tabstring>Nesting</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>dflowfm</formodel>
+      <element>nesting.dflowfm.xml</element>
+    </tab>
+  </element>
 </root>

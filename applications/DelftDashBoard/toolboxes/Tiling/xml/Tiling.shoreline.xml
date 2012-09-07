@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>seletbathydatafile</tag>
@@ -9,11 +8,11 @@
     <variable>shoreline.dataFile</variable>
     <onchange>ddb_TilingToolbox_bathymetry</onchange>
     <option1>loadpolygon</option1>
-    <showfilename>yes</showfilename> 
+    <showfilename>yes</showfilename>
     <extension>*.asc</extension>
     <selectiontext>Select data file (ArcInfo format)</selectiontext>
-    <tooltipstring>Select data file (ArcInfo format)</tooltipstring> 
-  </element> 
+    <tooltipstring>Select data file (ArcInfo format)</tooltipstring>
+  </element>
   <element>
     <tag>editx0</tag>
     <style>edit</style>
@@ -24,7 +23,7 @@
     <variable>shoreline.x0</variable>
     <type>real</type>
     <tooltipstring>Edit x origin of tiling system (lower left corner of lower left tile)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>edity0</tag>
     <style>edit</style>
@@ -35,7 +34,7 @@
     <variable>shoreline.y0</variable>
     <type>real</type>
     <tooltipstring>Edit y origin of tiling system (lower left corner of lower left tile)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editnrx</tag>
     <style>edit</style>
@@ -46,7 +45,7 @@
     <variable>shoreline.nrCellsX</variable>
     <type>integer</type>
     <tooltipstring>Edit number of cells in x direction</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editnry</tag>
     <style>edit</style>
@@ -57,5 +56,5 @@
     <variable>shoreline.nrCellsY</variable>
     <type>integer</type>
     <tooltipstring>Edit number of cells in y direction</tooltipstring>
-  </element> 
+  </element>
 </root>

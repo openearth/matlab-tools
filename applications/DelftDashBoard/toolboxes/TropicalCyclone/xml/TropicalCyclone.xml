@@ -1,44 +1,39 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <toolbox>TropicalCyclone</toolbox>
   <longname>Tropical Cyclone</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <position>40 10 1000 140</position>
-      <style>tabpanel</style>
-      <tag>tropicalcyclonepanel</tag>
-      <tabs>
-        <tab>
-          <tag>parameters</tag>
-          <tabstring>Parameters</tabstring>
-          <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
-          <elements>TropicalCyclone.parameters.xml</elements>
-          <formodel>delft3dflow</formodel>
-        </tab>
-        <tab>
-          <tag>tracktable</tag>
-          <tabstring>Track</tabstring>
-          <callback>ddb_TropicalCycloneToolbox_editTrackTable</callback>
-          <elements>TropicalCyclone.tracktable.xml</elements>
-          <formodel>delft3dflow</formodel>
-        </tab>
-        <tab>
-          <tag>tropicalcyclone_delft3dwave</tag>
-          <tabstring>Tropical Cyclone</tabstring>
-          <callback>ddb_dummyTabCallback</callback>
-          <elements>TropicalCyclone.delft3dwave.xml</elements>
-          <formodel>delft3dwave</formodel>
-        </tab>
-        <tab>
-          <tag>tropicalcyclone_delft3dwave</tag>
-          <tabstring>Tropical Cyclone</tabstring>
-          <callback>ddb_dummyTabCallback</callback>
-          <elements>TropicalCyclone.dflowfm.xml</elements>
-          <formodel>dflowfm</formodel>
-        </tab>
-      </tabs>
-    </element>
-  </elements>
+  <element>
+    <position>40 10 1000 140</position>
+    <style>tabpanel</style>
+    <tag>tropicalcyclonepanel</tag>
+    <tab>
+      <tag>parameters</tag>
+      <tabstring>Parameters</tabstring>
+      <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
+      <formodel>delft3dflow</formodel>
+      <element>TropicalCyclone.parameters.xml</element>
+    </tab>
+    <tab>
+      <tag>tracktable</tag>
+      <tabstring>Track</tabstring>
+      <callback>ddb_TropicalCycloneToolbox_editTrackTable</callback>
+      <formodel>delft3dflow</formodel>
+      <element>TropicalCyclone.tracktable.xml</element>
+    </tab>
+    <tab>
+      <tag>tropicalcyclone_delft3dwave</tag>
+      <tabstring>Tropical Cyclone</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>delft3dwave</formodel>
+      <element>TropicalCyclone.delft3dwave.xml</element>
+    </tab>
+    <tab>
+      <tag>tropicalcyclone_delft3dwave</tag>
+      <tabstring>Tropical Cyclone</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>dflowfm</formodel>
+      <element>TropicalCyclone.dflowfm.xml</element>
+    </tab>
+  </element>
 </root>

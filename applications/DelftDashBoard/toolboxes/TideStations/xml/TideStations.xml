@@ -1,161 +1,152 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <toolbox>TideStations</toolbox>
   <longname>Tide Stations</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <tag>tidestationspanel</tag>
-      <style>panel</style>
-      <position>40 10 900 160</position>
-      <text>Tide Stations</text>
-    </element>
-    <element>
-      <tag>selecttidestation</tag>
-      <position>50 20 250 130</position>
-      <style>listbox</style>
-      <type>integer</type>
-      <variable>activeTideStation</variable>
-      <onchange>ddb_TideStationsToolbox</onchange>
-      <option1>selecttidestation</option1>
-      <tooltipstring>Select tide station</tooltipstring> 
-      <list>
-        <texts>
-          <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList</variable>
-        </texts>
-      </list>
-    </element>
-    <element>
-      <tag>makeobservationpoints</tag>
-      <style>pushbutton</style>
-      <position>320 130 130 20</position>
-      <text>Make Observation Points</text>
-      <callback>ddb_TideStationsToolbox</callback>
-      <option1>makeobservationpoints</option1>
-      <tooltipstring>Make observation points in model</tooltipstring> 
-    </element> 
-    <element>
-      <tag>viewtidesignal</tag>
-      <style>pushbutton</style>
-      <position>320 105 130 20</position>
-      <text>View Tide Signal</text>
-      <callback>ddb_TideStationsToolbox</callback>
-      <option1>viewtidesignal</option1>
-      <tooltipstring>View tide signal for active tide station</tooltipstring> 
-    </element> 
-    <element>
-      <tag>exporttidesignal</tag>
-      <style>pushbutton</style>
-      <position>320 80 130 20</position>
-      <text>Export Tide Signal</text>
-      <callback>ddb_TideStationsToolbox</callback>
-      <option1>exporttidesignal</option1>
-      <tooltipstring>Export tide signal for active tide station</tooltipstring> 
-    </element> 
-    <element>
-      <tag>exportalltidesignals</tag>
-      <style>pushbutton</style>
-      <position>320 55 130 20</position>
-      <text>Export All Tide Signals</text>
-      <callback>ddb_TideStationsToolbox</callback>
-      <option1>exportalltidesignals</option1>
-      <tooltipstring>Export tide signal for all stations within model grid</tooltipstring> 
-    </element> 
-    <element>
-      <tag>selecttidedatabase</tag>
-      <position>320 30 130 20</position>
-      <style>popupmenu</style>
-      <type>integer</type>
-      <variable>activeDatabase</variable>
-      <onchange>ddb_TideStationsToolbox</onchange>
-      <option1>selecttidedatabase</option1>
-      <tooltipstring>Select a tide station database</tooltipstring> 
-      <list>
-        <texts>
-          <variable>databases</variable>
-        </texts>
-      </list>
-    </element>
-    <element>
-      <tag>editstarttime</tag>
-      <style>edit</style>
-      <position>550 130 110 20</position>
-      <variable>startTime</variable>
-      <type>datetime</type>
-      <text>Start Time</text>
-      <textposition>left</textposition>
-      <tooltipstring>Edit start time for tide signal to be viewed or exported</tooltipstring> 
-    </element>
-    <element>
-      <tag>editstoptime</tag>
-      <style>edit</style>
-      <position>550 105 110 20</position>
-      <variable>stopTime</variable>
-      <type>datetime</type>
-      <text>Stop Time</text>
-      <textposition>left</textposition>
-      <tooltipstring>Edit stop time for tide signal to be viewed or exported</tooltipstring> 
-    </element>
-    <element>
-      <tag>edittimestep</tag>
-      <style>edit</style>
-      <position>550 80 110 20</position>
-      <variable>timeStep</variable>
-      <type>real</type>
-      <text>Time Step (min)</text>
-      <textposition>left</textposition>
-      <tooltipstring>Edit time step for tide signal to be viewed or exported</tooltipstring> 
-    </element>
-    <element>
-      <tag>edittimezone</tag>
-      <style>edit</style>
-      <position>550 55 110 20</position>
-      <variable>timeZone</variable>
-      <type>real</type>
-      <text>Time Zone (h)</text>
-      <textposition>left</textposition>
-      <tooltipstring>Edit time zone (time series will be shifted to local time zone)</tooltipstring> 
-    </element>
-    <element>
-      <tag>editverticaloffset</tag>
-      <style>edit</style>
-      <position>550 30 110 20</position>
-      <variable>verticalOffset</variable>
-      <type>real</type>
-      <text>Vertical Offset (m)</text>
-      <textposition>left</textposition>
-      <tooltipstring>Edit vertical offset (value will be added to predicted time series)</tooltipstring> 
-    </element>
-    <element>
-      <tag>tidetable</tag>
-      <style>table</style>
-      <position>660 20</position>
-      <nrrows>6</nrrows>
-      <includenumbers>no</includenumbers>
-      <includebuttons>no</includebuttons>
-      <columns>
-        <column>
-          <style>text</style>
-          <width>60</width>
-          <variable>components</variable>
-          <text> </text>
-        </column>
-        <column>
-          <style>editreal</style>
-          <width>80</width>
-          <text>Amplitude (m)</text>
-          <enable>0</enable>
-          <variable>amplitudes</variable>
-        </column>
-        <column>
-          <style>editreal</style>
-          <width>80</width>
-          <text>Phase (deg)</text>
-          <enable>0</enable>
-          <variable>phases</variable>
-        </column>
-      </columns>
-    </element>
-  </elements>
+  <element>
+    <tag>tidestationspanel</tag>
+    <style>panel</style>
+    <position>40 10 900 160</position>
+    <text>Tide Stations</text>
+  </element>
+  <element>
+    <tag>selecttidestation</tag>
+    <position>50 20 250 130</position>
+    <style>listbox</style>
+    <type>integer</type>
+    <variable>activeTideStation</variable>
+    <onchange>ddb_TideStationsToolbox</onchange>
+    <option1>selecttidestation</option1>
+    <tooltipstring>Select tide station</tooltipstring>
+    <listtext>
+      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList</variable>
+    </listtext>
+  </element>
+  <element>
+    <tag>makeobservationpoints</tag>
+    <style>pushbutton</style>
+    <position>320 130 130 20</position>
+    <text>Make Observation Points</text>
+    <callback>ddb_TideStationsToolbox</callback>
+    <option1>makeobservationpoints</option1>
+    <tooltipstring>Make observation points in model</tooltipstring>
+  </element>
+  <element>
+    <tag>viewtidesignal</tag>
+    <style>pushbutton</style>
+    <position>320 105 130 20</position>
+    <text>View Tide Signal</text>
+    <callback>ddb_TideStationsToolbox</callback>
+    <option1>viewtidesignal</option1>
+    <tooltipstring>View tide signal for active tide station</tooltipstring>
+  </element>
+  <element>
+    <tag>exporttidesignal</tag>
+    <style>pushbutton</style>
+    <position>320 80 130 20</position>
+    <text>Export Tide Signal</text>
+    <callback>ddb_TideStationsToolbox</callback>
+    <option1>exporttidesignal</option1>
+    <tooltipstring>Export tide signal for active tide station</tooltipstring>
+  </element>
+  <element>
+    <tag>exportalltidesignals</tag>
+    <style>pushbutton</style>
+    <position>320 55 130 20</position>
+    <text>Export All Tide Signals</text>
+    <callback>ddb_TideStationsToolbox</callback>
+    <option1>exportalltidesignals</option1>
+    <tooltipstring>Export tide signal for all stations within model grid</tooltipstring>
+  </element>
+  <element>
+    <tag>selecttidedatabase</tag>
+    <position>320 30 130 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <variable>activeDatabase</variable>
+    <onchange>ddb_TideStationsToolbox</onchange>
+    <option1>selecttidedatabase</option1>
+    <tooltipstring>Select a tide station database</tooltipstring>
+    <listtext>
+      <variable>databases</variable>
+    </listtext>
+  </element>
+  <element>
+    <tag>editstarttime</tag>
+    <style>edit</style>
+    <position>550 130 110 20</position>
+    <variable>startTime</variable>
+    <type>datetime</type>
+    <text>Start Time</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit start time for tide signal to be viewed or exported</tooltipstring>
+  </element>
+  <element>
+    <tag>editstoptime</tag>
+    <style>edit</style>
+    <position>550 105 110 20</position>
+    <variable>stopTime</variable>
+    <type>datetime</type>
+    <text>Stop Time</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit stop time for tide signal to be viewed or exported</tooltipstring>
+  </element>
+  <element>
+    <tag>edittimestep</tag>
+    <style>edit</style>
+    <position>550 80 110 20</position>
+    <variable>timeStep</variable>
+    <type>real</type>
+    <text>Time Step (min)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit time step for tide signal to be viewed or exported</tooltipstring>
+  </element>
+  <element>
+    <tag>edittimezone</tag>
+    <style>edit</style>
+    <position>550 55 110 20</position>
+    <variable>timeZone</variable>
+    <type>real</type>
+    <text>Time Zone (h)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit time zone (time series will be shifted to local time zone)</tooltipstring>
+  </element>
+  <element>
+    <tag>editverticaloffset</tag>
+    <style>edit</style>
+    <position>550 30 110 20</position>
+    <variable>verticalOffset</variable>
+    <type>real</type>
+    <text>Vertical Offset (m)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit vertical offset (value will be added to predicted time series)</tooltipstring>
+  </element>
+  <element>
+    <tag>tidetable</tag>
+    <style>table</style>
+    <position>660 20</position>
+    <nrrows>6</nrrows>
+    <includenumbers>no</includenumbers>
+    <includebuttons>no</includebuttons>
+    <column>
+      <style>text</style>
+      <width>60</width>
+      <variable>components</variable>
+      <text> </text>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>80</width>
+      <text>Amplitude (m)</text>
+      <enable>0</enable>
+      <variable>amplitudes</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>80</width>
+      <text>Phase (deg)</text>
+      <enable>0</enable>
+      <variable>phases</variable>
+    </column>
+  </element>
 </root>

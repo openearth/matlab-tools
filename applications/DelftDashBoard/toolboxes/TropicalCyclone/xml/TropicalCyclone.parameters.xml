@@ -1,12 +1,11 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>parameterpanel</tag>
     <style>panel</style>
     <position>10 10 230 130</position>
     <text>Spiderweb Parameters</text>
-  </element> 
+  </element>
   <element>
     <tag>editname</tag>
     <style>edit</style>
@@ -16,7 +15,7 @@
     <variable>name</variable>
     <type>string</type>
     <tooltipstring>Edit name of tropical cyclone</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editradius</tag>
     <style>edit</style>
@@ -26,7 +25,7 @@
     <variable>radius</variable>
     <type>real</type>
     <tooltipstring>Edit radius of spider web</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editdirectionalbins</tag>
     <style>edit</style>
@@ -36,7 +35,7 @@
     <variable>nrDirectionalBins</variable>
     <type>integer</type>
     <tooltipstring>Edit number of directional bins in spiderweb file</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>editradialbins</tag>
     <style>edit</style>
@@ -46,13 +45,13 @@
     <variable>nrRadialBins</variable>
     <type>integer</type>
     <tooltipstring>Edit number of radial bins in spiderweb file</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>methodpanel</tag>
     <style>panel</style>
     <position>250 10 220 130</position>
     <text>Method</text>
-  </element> 
+  </element>
   <element>
     <tag>selectmethod</tag>
     <style>popupmenu</style>
@@ -62,17 +61,13 @@
     <variable>method</variable>
     <type>integer</type>
     <tooltipstring>Select method</tooltipstring>
-    <list>
-      <texts>
-        <text>Holland B and A</text>
-        <text>R35, R50, etc.</text>
-        <text>Vmax, Pd, Rmax</text>
-        <text>Vmax, Pd (Rmax default)</text>
-        <text>Vmax, Rmax</text>
-        <text>Vmax (Indian data)</text>
-      </texts>
-    </list> 
-  </element> 
+    <listtext>Holland B and A</listtext>
+    <listtext>R35, R50, etc.</listtext>
+    <listtext>Vmax, Pd, Rmax</listtext>
+    <listtext>Vmax, Pd (Rmax default)</listtext>
+    <listtext>Vmax, Rmax</listtext>
+    <listtext>Vmax (Indian data)</listtext>
+  </element>
   <element>
     <tag>radiouniform</tag>
     <style>radiobutton</style>
@@ -83,23 +78,16 @@
     <value>uniform</value>
     <onchange>ddb_TropicalCycloneToolbox_setParameters</onchange>
     <option1>selectquadrantoption</option1>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioperquadrant</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>quadrantOption</variable>
-            <value>uniform</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>quadrantOption</variable>
+        <value>uniform</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>radioperquadrant</tag>
     <style>radiobutton</style>
@@ -110,23 +98,16 @@
     <value>perquadrant</value>
     <onchange>ddb_TropicalCycloneToolbox_setParameters</onchange>
     <option1>selectquadrantoption</option1>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radiouniform</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>quadrantOption</variable>
-            <value>perquadrant</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>quadrantOption</variable>
+        <value>perquadrant</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>drawtrack</tag>
     <style>pushbutton</style>
@@ -134,8 +115,8 @@
     <text>Draw Track</text>
     <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
     <option1>drawtrack</option1>
-    <tooltipstring>Draw cyclone track</tooltipstring> 
-  </element> 
+    <tooltipstring>Draw cyclone track</tooltipstring>
+  </element>
   <element>
     <tag>loaddata</tag>
     <style>pushbutton</style>
@@ -143,8 +124,8 @@
     <text>Load Track</text>
     <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
     <option1>loaddata</option1>
-    <tooltipstring>Load cyclone data (Delft Dashboard format)</tooltipstring> 
-  </element> 
+    <tooltipstring>Load cyclone data (Delft Dashboard format)</tooltipstring>
+  </element>
   <element>
     <tag>savedata</tag>
     <style>pushbutton</style>
@@ -153,7 +134,7 @@
     <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
     <option1>savedata</option1>
     <tooltipstring>Save cyclone data (Delft Dashboard format)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>selectedtrackfile</tag>
     <style>edit</style>
@@ -163,7 +144,7 @@
     <tooltipstring>The selected track file name</tooltipstring>
     <text>Track File</text>
     <textposition>left</textposition>
-  </element> 
+  </element>
   <element>
     <tag>downloadtrack</tag>
     <style>pushbutton</style>
@@ -172,7 +153,7 @@
     <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
     <option1>downloadtrack</option1>
     <tooltipstring>Download track file from external source</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>selectdownloadlocation</tag>
     <style>popupmenu</style>
@@ -180,15 +161,13 @@
     <variable>downloadLocation</variable>
     <type>string</type>
     <tooltipstring>Select download location</tooltipstring>
-    <list>
-      <texts>
-        <variable>downloadLocationNames</variable>
-      </texts>
-      <values>
-        <variable>downloadLocations</variable>
-      </values>
-    </list> 
-  </element> 
+    <listtext>
+      <variable>downloadLocationNames</variable>
+    </listtext>
+    <listvalue>
+      <variable>downloadLocations</variable>
+    </listvalue>
+  </element>
   <element>
     <tag>importtrack</tag>
     <style>pushbutton</style>
@@ -197,7 +176,7 @@
     <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
     <option1>importtrack</option1>
     <tooltipstring>Import cyclone track file from external source</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>selectimportformat</tag>
     <style>popupmenu</style>
@@ -205,15 +184,13 @@
     <variable>importFormat</variable>
     <type>string</type>
     <tooltipstring>Select import format</tooltipstring>
-    <list>
-      <texts>
-        <variable>importFormatNames</variable>
-      </texts>
-      <values>
-        <variable>importFormats</variable>
-      </values>
-    </list> 
-  </element> 
+    <listtext>
+      <variable>importFormatNames</variable>
+    </listtext>
+    <listvalue>
+      <variable>importFormats</variable>
+    </listvalue>
+  </element>
   <element>
     <tag>computecyclone</tag>
     <style>pushbutton</style>
@@ -221,22 +198,22 @@
     <text>Compute Cyclone</text>
     <callback>ddb_TropicalCycloneToolbox_setParameters</callback>
     <option1>computecyclone</option1>
-    <tooltipstring>Compute cyclone winds to generate spider web file</tooltipstring> 
-  </element> 
+    <tooltipstring>Compute cyclone winds to generate spider web file</tooltipstring>
+  </element>
   <element>
     <tag>deletetemporaryfiles</tag>
     <style>checkbox</style>
     <position>860 10</position>
     <text>Delete temporary files</text>
     <variable>deleteTemporaryFiles</variable>
-    <tooltipstring>Delete temporary files that are made while generating spiderweb file</tooltipstring> 
-  </element> 
+    <tooltipstring>Delete temporary files that are made while generating spiderweb file</tooltipstring>
+  </element>
   <element>
     <tag>basinpanel</tag>
     <style>panel</style>
     <position>750 40 240 95</position>
     <text>TC Basin Display</text>
-  </element> 
+  </element>
   <element>
     <tag>radioallbasins</tag>
     <style>radiobutton</style>
@@ -247,24 +224,17 @@
     <value>1</value>
     <onchange>ddb_TropicalCycloneToolbox_setParameters</onchange>
     <option1>selectbasinoption</option1>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radionearbasin</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>whichTCBasinOption</variable>
-            <value>1</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
     <tooltipstring>Select to display all known TC basins</tooltipstring>
-  </element> 
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>whichTCBasinOption</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
   <element>
     <tag>radionearbasin</tag>
     <style>radiobutton</style>
@@ -275,23 +245,16 @@
     <value>0</value>
     <onchange>ddb_TropicalCycloneToolbox_setParameters</onchange>
     <option1>selectbasinoption</option1>
-    <dependencies>
-      <dependency>
-        <action>on</action>
-        <tags>
-          <tag>radioallbasins</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>whichTCBasinOption</variable>
-            <value>0</value>
-            <operator>eq</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
     <tooltipstring>Select to display the basin in which the grid lies</tooltipstring>
+    <dependency>
+      <action>on</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>whichTCBasinOption</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>basinname</tag>
@@ -302,32 +265,24 @@
     <variable>TCBasinName</variable>
     <type>string</type>
     <tooltipstring>Name(s) of selected tropical cyclone basin(s)</tooltipstring>
-  </element> 
+  </element>
   <element>
     <tag>showbasins</tag>
     <style>togglebutton</style>
     <position>760 100 100 20</position>
     <text>Show TC basins</text>
     <variable>showTCBasins</variable>
-    <tooltipstring>Show tropical cyclone basin boundaries (approximate)</tooltipstring> 
+    <tooltipstring>Show tropical cyclone basin boundaries (approximate)</tooltipstring>
     <onchange>ddb_TropicalCycloneToolbox_setParameters</onchange>
     <option1>selectbasinoption</option1>
-    <dependencies>
-      <dependency>
-        <action>enable</action>
-        <tags>
-          <tag>radioallbasins</tag>
-          <tag>radionearbasin</tag>
-        </tags>
-        <checkfor>all</checkfor>
-        <checks>
-          <check>
-            <variable>whichTCBasinOption</variable>
-            <value>0</value>
-            <operator>ge</operator>
-          </check>
-        </checks>
-      </dependency>
-    </dependencies>
-  </element> 
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>whichTCBasinOption</variable>
+        <value>0</value>
+        <operator>ge</operator>
+      </check>
+    </dependency>
+  </element>
 </root>

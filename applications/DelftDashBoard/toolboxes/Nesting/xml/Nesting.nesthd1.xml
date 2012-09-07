@@ -1,12 +1,11 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <element>
     <tag>detailedpanel</tag>
     <style>panel</style>
     <position>10 10 500 130</position>
     <text>Detailed Model</text>
-  </element>  
+  </element>
   <element>
     <tag>selectgrdfile</tag>
     <style>pushselectfile</style>
@@ -15,10 +14,10 @@
     <variable>grdFile</variable>
     <onchange>ddb_NestingToolbox_nestHD1</onchange>
     <option1>selectgridfile</option1>
-    <showfilename>yes</showfilename> 
+    <showfilename>yes</showfilename>
     <extension>*.grd</extension>
     <selectiontext>Select grid file of detailed model</selectiontext>
-    <tooltipstring>Select grid file (*.grd) of detailed model</tooltipstring> 
+    <tooltipstring>Select grid file (*.grd) of detailed model</tooltipstring>
   </element>
   <element>
     <tag>selectencfile</tag>
@@ -28,10 +27,10 @@
     <variable>encFile</variable>
     <onchange>ddb_NestingToolbox_nestHD1</onchange>
     <option1>selectencfile</option1>
-    <showfilename>yes</showfilename> 
+    <showfilename>yes</showfilename>
     <extension>*.enc</extension>
     <selectiontext>Select enclosure file of detailed model</selectiontext>
-    <tooltipstring>Select enclosure (*.enc) file of detailed model</tooltipstring> 
+    <tooltipstring>Select enclosure (*.enc) file of detailed model</tooltipstring>
   </element>
   <element>
     <tag>selectbndfile</tag>
@@ -41,10 +40,10 @@
     <variable>bndFile</variable>
     <onchange>ddb_NestingToolbox_nestHD1</onchange>
     <option1>selectbndfile</option1>
-    <showfilename>yes</showfilename> 
+    <showfilename>yes</showfilename>
     <extension>*.bnd</extension>
     <selectiontext>Select boundary file (*.bnd) of detailed model</selectiontext>
-    <tooltipstring>Select boundary file (*.bnd) of detailed model</tooltipstring> 
+    <tooltipstring>Select boundary file (*.bnd) of detailed model</tooltipstring>
   </element>
   <element>
     <tag>editadmfile</tag>
@@ -53,7 +52,7 @@
     <text>Admin File</text>
     <variable>admFile</variable>
     <type>string</type>
-    <tooltipstring>Edit nesting administration file (*.adm)</tooltipstring> 
+    <tooltipstring>Edit nesting administration file (*.adm)</tooltipstring>
   </element>
   <element>
     <tag>runnesthd1</tag>
@@ -62,6 +61,6 @@
     <text>Make Observation Points</text>
     <callback>ddb_NestingToolbox_nestHD1</callback>
     <option1>nesthd1</option1>
-    <tooltipstring>Make observation points for overall model</tooltipstring> 
+    <tooltipstring>Make observation points for overall model</tooltipstring>
   </element>
 </root>

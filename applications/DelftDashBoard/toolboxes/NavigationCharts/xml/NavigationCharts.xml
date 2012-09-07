@@ -1,99 +1,94 @@
 <?xml version="1.0"?>
-<!-- Written on 25-Mar-2010 19:17:24 using the XML Toolbox for Matlab -->
 <root>
   <toolbox>NavigationCharts</toolbox>
   <longname>Navigation Charts</longname>
   <enable>1</enable>
-  <elements>
-    <element>
-      <tag>selectchartdatabase</tag>
-      <style>listbox</style>
-      <text>Available Databases</text>
-      <textposition>above-center</textposition>
-      <variable>activeDatabase</variable>
-      <type>integer</type>
-      <position>40 10 150 140</position>
-      <tooltipstring>Select chart database</tooltipstring>
-      <onchange>ddb_NavigationChartsToolbox</onchange>
-      <option1>selectdatabase</option1>
-      <list>
-        <texts>
-          <variable>databases</variable>
-        </texts>
-      </list>
-    </element>
-    <element>
-      <tag>selectchart</tag>
-      <style>pushbutton</style>
-      <position>200 130 120 20</position>
-      <text>Select Chart</text>
-      <callback>ddb_NavigationChartsToolbox</callback>
-      <option1>selectchart</option1>
-      <tooltipstring>Select navigation chart</tooltipstring>
-    </element> 
-    <element>
-      <tag>textchartname</tag>
-      <style>text</style>
-      <type>string</type> 
-      <position>200 10</position>
-      <variable>activeChartName</variable> 
-    </element> 
-    <element>
-      <tag>exportshoreline</tag>
-      <style>pushbutton</style>
-      <position>350 130 120 20</position>
-      <text>Export Shoreline</text>
-      <callback>ddb_NavigationChartsToolbox</callback>
-      <option1>exportshoreline</option1>
-      <tooltipstring>Export shoreline to ldb file</tooltipstring>
-    </element> 
-    <element>
-      <tag>toggleshoreline</tag>
-      <style>checkbox</style>
-      <text>Show Shoreline</text>
-      <position>480 130</position>
-      <variable>showShoreline</variable>
-      <onchange>ddb_NavigationChartsToolbox</onchange>
-      <option1>toggleshoreline</option1>
-      <tooltipstring>Show shorelines</tooltipstring>
-    </element>
-    <element>
-      <tag>exportcontours</tag>
-      <style>pushbutton</style>
-      <position>350 105 120 20</position>
-      <text>Export Contours</text>
-      <callback>ddb_NavigationChartsToolbox</callback>
-      <option1>exportcontours</option1>
-      <tooltipstring>Export depth contours to xyz file</tooltipstring>
-    </element> 
-    <element>
-      <tag>togglecontours</tag>
-      <style>checkbox</style>
-      <text>Show Contours</text>
-      <position>480 105</position>
-      <variable>showContours</variable>
-      <onchange>ddb_NavigationChartsToolbox</onchange>
-      <option1>togglecontours</option1>
-      <tooltipstring>Show depth contours</tooltipstring>
-    </element>
-    <element>
-      <tag>exportsoundings</tag>
-      <style>pushbutton</style>
-      <position>350 80 120 20</position>
-      <text>Export Soundings</text>
-      <callback>ddb_NavigationChartsToolbox</callback>
-      <option1>exportsoundings</option1>
-      <tooltipstring>Export depth soundings to xyz file</tooltipstring>
-    </element> 
-    <element>
-      <tag>togglesoundings</tag>
-      <style>checkbox</style>
-      <text>Show Soundings</text>
-      <position>480 80</position>
-      <variable>showSoundings</variable>
-      <onchange>ddb_NavigationChartsToolbox</onchange>
-      <option1>togglesoundings</option1>
-      <tooltipstring>Show depth soundings</tooltipstring>
-    </element>
-  </elements>
+  <element>
+    <tag>selectchartdatabase</tag>
+    <style>listbox</style>
+    <text>Available Databases</text>
+    <textposition>above-center</textposition>
+    <variable>activeDatabase</variable>
+    <type>integer</type>
+    <position>40 10 150 140</position>
+    <tooltipstring>Select chart database</tooltipstring>
+    <onchange>ddb_NavigationChartsToolbox</onchange>
+    <option1>selectdatabase</option1>
+    <listtext>
+      <variable>databases</variable>
+    </listtext>
+  </element>
+  <element>
+    <tag>selectchart</tag>
+    <style>pushbutton</style>
+    <position>200 130 120 20</position>
+    <text>Select Chart</text>
+    <callback>ddb_NavigationChartsToolbox</callback>
+    <option1>selectchart</option1>
+    <tooltipstring>Select navigation chart</tooltipstring>
+  </element>
+  <element>
+    <tag>textchartname</tag>
+    <style>text</style>
+    <type>string</type>
+    <position>200 10</position>
+    <variable>activeChartName</variable>
+  </element>
+  <element>
+    <tag>exportshoreline</tag>
+    <style>pushbutton</style>
+    <position>350 130 120 20</position>
+    <text>Export Shoreline</text>
+    <callback>ddb_NavigationChartsToolbox</callback>
+    <option1>exportshoreline</option1>
+    <tooltipstring>Export shoreline to ldb file</tooltipstring>
+  </element>
+  <element>
+    <tag>toggleshoreline</tag>
+    <style>checkbox</style>
+    <text>Show Shoreline</text>
+    <position>480 130</position>
+    <variable>showShoreline</variable>
+    <onchange>ddb_NavigationChartsToolbox</onchange>
+    <option1>toggleshoreline</option1>
+    <tooltipstring>Show shorelines</tooltipstring>
+  </element>
+  <element>
+    <tag>exportcontours</tag>
+    <style>pushbutton</style>
+    <position>350 105 120 20</position>
+    <text>Export Contours</text>
+    <callback>ddb_NavigationChartsToolbox</callback>
+    <option1>exportcontours</option1>
+    <tooltipstring>Export depth contours to xyz file</tooltipstring>
+  </element>
+  <element>
+    <tag>togglecontours</tag>
+    <style>checkbox</style>
+    <text>Show Contours</text>
+    <position>480 105</position>
+    <variable>showContours</variable>
+    <onchange>ddb_NavigationChartsToolbox</onchange>
+    <option1>togglecontours</option1>
+    <tooltipstring>Show depth contours</tooltipstring>
+  </element>
+  <element>
+    <tag>exportsoundings</tag>
+    <style>pushbutton</style>
+    <position>350 80 120 20</position>
+    <text>Export Soundings</text>
+    <callback>ddb_NavigationChartsToolbox</callback>
+    <option1>exportsoundings</option1>
+    <tooltipstring>Export depth soundings to xyz file</tooltipstring>
+  </element>
+  <element>
+    <tag>togglesoundings</tag>
+    <style>checkbox</style>
+    <text>Show Soundings</text>
+    <position>480 80</position>
+    <variable>showSoundings</variable>
+    <onchange>ddb_NavigationChartsToolbox</onchange>
+    <option1>togglesoundings</option1>
+    <tooltipstring>Show depth soundings</tooltipstring>
+  </element>
 </root>
