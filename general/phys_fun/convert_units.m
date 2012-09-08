@@ -37,6 +37,18 @@ function Factor=convert_units(InUnits,OutUnits);
 % 2008 apr 14: added plural versions [Gerben J. de Boer]
 % 2010 apr 26: allow cases like m2 in addition to m^2 [Gerben J. de Boer]
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 08 Sep 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+
 %% deal with % character
 
     InUnits = strrep( InUnits,'%','0.01');
@@ -243,6 +255,7 @@ function Factor=convert_units(InUnits,OutUnits);
    degrees_east    = deg;
    degree_north    = deg;
    degree_east     = deg;
+   degree_true     = deg;
    
    %% Solid Angle units 
    % ---------------------
