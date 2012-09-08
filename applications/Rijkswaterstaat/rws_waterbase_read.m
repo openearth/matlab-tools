@@ -95,6 +95,17 @@ function varargout = rws_waterbase_read(fnames,varargin)
 
 % uses: time2datenum
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 08 Sep 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 %% Defaults
 
    OPT.xscale                 = 1;
@@ -775,7 +786,7 @@ switch waarnemingssoort
    case 'Waterhoogte in cm t.o.v. mean sea level in oppervlaktewater'         ,units='cm';
    case 'Waterhoogte in cm t.o.v. normaal amsterdams peil in oppervlaktewater',units='cm';
    case 'Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater',units='cm';
-   case 'Gemiddelde richting uit golfrichtingsspectrum van 30-500 mhz in graad t.o.v. kaart noorden in oppervlaktewater',units ='?';
+   case 'Gemiddelde richting uit golfrichtingsspectrum van 30-500 mhz in graad t.o.v. kaart noorden in oppervlaktewater',units ='degrees_north';
    case 'Gem. golfperiode uit spectrale momenten m0+m2 van 30-500 mhz in s in oppervlaktewater',units ='s';
    case 'Saliniteit in oppervlaktewater'                                     ,units='psu';
    case 'Temperatuur in oC in oppervlaktewater'                              ,units='degrees_C';
