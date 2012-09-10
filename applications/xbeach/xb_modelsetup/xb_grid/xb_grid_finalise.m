@@ -17,7 +17,7 @@ function [x y z] = xb_grid_finalise(x, y, z, varargin)
 %
 %                           currently available actions:
 %                               lateral_extend:     copy lateral boundaries
-%                               lateral_seawalls:   close dry lateral
+%                               lateral_sandwalls:   close dry lateral
 %                                                   boundaries with
 %                                                   sandwalls
 %                               seaward_flatten:    flatten offshore
