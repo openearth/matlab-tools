@@ -132,12 +132,12 @@ for ii = 1:Ngroynes
         %1= no rays, 2=between&right, 3=right, 4=left, 5=left&right, 6=between
         if strfind(lower(GROdata(ii).option),'between&right')
              GROdata(ii).SIDES={'BETWEEN','RIGHT'};
+        elseif strfind(lower(GROdata(ii).option),'left&right')
+             GROdata(ii).SIDES={'LEFT','RIGHT'};
         elseif strfind(lower(GROdata(ii).option),'right')
              GROdata(ii).SIDES={'RIGHT'};
         elseif strfind(lower(GROdata(ii).option),'left')
              GROdata(ii).SIDES={'LEFT'};
-        elseif strfind(lower(GROdata(ii).option),'left&right')
-             GROdata(ii).SIDES={'LEFT','RIGHT'};
         elseif strfind(lower(GROdata(ii).option),'between')
              GROdata(ii).SIDES={'BETWEEN'};
         end
@@ -167,8 +167,8 @@ for ii=1:Ngroynes
         fprintf(fid,'%s%s%s\n','''',SIDE,'''');
         fprintf(fid,'Aantal klimaatpunten\n');
         fprintf(fid,'%2.0f\n',Nrays);
+        fprintf(fid,'Xw      Yw      .RAY\n');
         if Nrays>0
-            fprintf(fid,'Xw      Yw      .RAY\n');
             for iii=1:Nrays
                 fprintf(fid,'%1.2f  %13.2f      ''%s''\n',GROdata(ii).(FIELD1)(iii,1),GROdata(ii).(FIELD1)(iii,2),GROdata(ii).(FIELD2){iii});
             end

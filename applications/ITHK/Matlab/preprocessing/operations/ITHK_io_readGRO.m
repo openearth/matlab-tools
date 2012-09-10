@@ -76,6 +76,10 @@ function GROdata = ITHK_io_readGRO(filename)
 
 %-----------Read data of groynes------------
 %-------------------------------------------
+if ~exist(filename,'file')
+    fprintf('Error : Filename for groyne not found!\n');
+    return
+end
 GROdata=struct;
 fid = fopen(filename,'rt');
 line1 = fgetl(fid);
