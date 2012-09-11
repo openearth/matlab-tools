@@ -55,7 +55,13 @@ function time = datenum2udunits(datenumber,isounits)
 % $Keywords: $
 
 %% input check
-narginchk(2,2)
+if datenum(version('-date'), 'mmmm dd, yyyy') < 734729
+    % version 2011a and older
+    error(nargchk(2,2,nargin)) %#ok<NCHKN>
+else
+    % version 2011b and newer
+    narginchk(2,2)
+end
 
 %% Interpret unit and reference date string
 
