@@ -3,6 +3,8 @@ function D2 = structsubs(D,ind)
 %
 % D2 = structsubs(D,ind) takes subset ind from
 % all field of struct D (array and cell field)
+% for cases when you use a struct as a flat database
+% where all fields have the exact same length.
 % 
 % Example 1: like an SQL WHERE query
 % T.a = [1     2    3       4    5    6       7    8    9]
@@ -11,7 +13,7 @@ function D2 = structsubs(D,ind)
 % ind = strmatchb('NY',T.c) & T.a <3
 % T2 = structsubs(T,ind) % where T2 = struct('a',{[1 2]},'b', {{'a','b'}},'c',{{'NY','NY'}})
 %
-%See also: struct_fun, strmatchb
+%See also: strmatchb, csv2struct, xls2struct, nc2struct, struct_fun, postgresql
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: 11 Sep 2012
@@ -23,6 +25,10 @@ function D2 = structsubs(D,ind)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+
+if ~all(diff(structfun(@(x) length(x),D))==0)
+   error([mfilename, ' requires all struct field to have the exact same length.'])
+end
 
 flds = fieldnames(D);
 for ifld=1:length(flds)

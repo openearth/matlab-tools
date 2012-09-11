@@ -3,12 +3,12 @@ function S2 = struct_of_arrays2array_of_structs(S1,varargin)
 %
 %      s2 = struct_of_arrays2array_of_structs(s1)
 %
-% transforms a structure of arrays into an array of structures into.
+% transforms a structure of arrays into an array of structures.
 % The length of the fiels of s2 corresponds to the size of s1.
 %
 %      s2 = struct_of_arrays2array_of_structs(s1,i)
 %
-% only returns the ith element(s).
+% only returns the ith element(s) (can be array).
 %
 % All fields need to be of the char or cell type, and have the same size. 
 %
@@ -26,7 +26,7 @@ function S2 = struct_of_arrays2array_of_structs(S1,varargin)
 %
 % and struct_of_arrays2array_of_structs(s1,1) returns only s2(1x1)
 %   
-%See also: CELL2STRUCT, STRUCT2CELL, PERMUTE, CELL2MAT, ARRAY_OF_STRUCTS2STRUCT_OF_ARRAYS
+%See also: STRUCTSUBS, CELL2STRUCT, STRUCT2CELL, PERMUTE, CELL2MAT, ARRAY_OF_STRUCTS2STRUCT_OF_ARRAYS
 
 %% Copyright notice
 %   --------------------------------------------------------------------

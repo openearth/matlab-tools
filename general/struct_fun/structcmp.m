@@ -1,11 +1,12 @@
 function sructcmp(s1, s2, seps)
 %STRUCTCMP compare structures,
 %
-%    sructcmp(s1, s2, seps)
+%    structcmp(s1, s2, seps)
 %
 % compare structures, allowing for different field
 % sets and values within a tolerance of seps
 %
+%See also: struct_fun, isequal, , isequalwithnans
 
 if nargin == 2
   seps = 1e-4;
