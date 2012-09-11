@@ -898,14 +898,14 @@ function pushSelectFile_Callback(hObject,eventdata,getFcn,setFcn,element,i)
 
 el=element(i).element;
 
-if isfield(el.selectiontext,'variable')
-    selectiontext=gui_getValue(el,el.selectiontext.variable);
+if isfield(el.selectiontext,'selectiontext')
+    selectiontext=gui_getValue(el,el.selectiontext.selectiontext.variable);
 else
     selectiontext=el.selectiontext;
 end
 
-if isfield(el.extension,'variable')
-    extension=gui_getValue(el,el.extension.variable);
+if isfield(el.extension,'extension')
+    extension=gui_getValue(el,el.extension.extension.variable);
 else
     extension=el.extension;
 end
