@@ -15,6 +15,9 @@ function varargout = struct2nc(outputfile,D,varargin)
 % because it does the naming of dimensions based on size only
 % and not on the actual meaning of the dimension.
 %
+% Default file type is netCDF3 classic, set other types with
+% keuword 'mode' ('classic','64bit_offset','netcdf4-classic','netcdf4')
+%
 % STRUCT2NC can be used to generate an experimental development:
 % creating a catalog.nc for a THREDDS OPeNDAP server as an alternative
 % to the difficult-to-parse catalog.xml.
@@ -90,6 +93,7 @@ function varargout = struct2nc(outputfile,D,varargin)
    OPT.pause             = 0;
    OPT.debug             = 0;
    OPT.header            = 0;
+   OPT.mode              = 'classic';% 'classic','64bit_offset','netcdf4-classic','netcdf4' 
    
    if nargin==0
       varargout = {OPT};
@@ -122,7 +126,7 @@ function varargout = struct2nc(outputfile,D,varargin)
 
 %% 0 Create file
 
-   nc_create_empty (outputfile);
+   nc_create_empty (outputfile,OPT.mode);
 
 %% 1 Add global meta-info to file
 %  Add overall meta info:
