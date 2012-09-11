@@ -994,7 +994,7 @@ for j=1:length(el.column)
     v=[];
     
     for k=1:size(data,1)
-        switch lower(el.columns(j).column.style)
+        switch lower(el.column(j).column.style)
             case{'editreal'}
                 v(k)=data{k,j};
             case{'edittime'}
