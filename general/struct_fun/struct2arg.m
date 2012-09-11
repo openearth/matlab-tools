@@ -9,7 +9,7 @@ function A = struct2arg(S)
 %      s2 = struct(args{:})
 %      isequalwithequalnans(s, s2)
 %
-%See also cell2struct, fieldnames, setproperty, varargin, struct, mergestructs
+%See also cell2struct, fieldnames, setproperty, varargin, struct, mergestructs, cell2arg
 
 % $Id$
 % $Date$

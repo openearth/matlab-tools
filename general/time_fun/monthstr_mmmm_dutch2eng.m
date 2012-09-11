@@ -1,10 +1,10 @@
 function S = monthstr_mmm_dutch2eng(s)
-%MONTHSTR_MMM_DUTCH2ENG  translates occurences of Mei to May, etc.
+%MONTHSTR_MMM_DUTCH2ENG  translates occurences of Oktober
 %
 %   For use of dutch dates with datenum. Capitalizes the entire string.
 %
 %   Syntax:
-%   varargout = monthstr_mmm_dutch2eng(varargin)
+%   varargout = monthstr_mmmm_dutch2eng(varargin)
 %
 %   Input:
 %   s = a string
@@ -13,13 +13,13 @@ function S = monthstr_mmm_dutch2eng(s)
 %   s = a string with translated month names
 %
 %   Example
-%   monthstr_mmm_dutch2eng('mei')
+%   monthstr_mmmm_dutch2eng('Augustus')
 %
-%   See also: month, monthstr_mmmm_dutch2eng
+%   See also: month, monthstr_mmm_dutch2eng
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 Deltares
+%   Copyright (C) 2012 Deltares
 %       Gerben de Boer
 %
 %       gerben.deboer@deltares.nl	
@@ -61,7 +61,16 @@ function S = monthstr_mmm_dutch2eng(s)
 % $Keywords: $
 
 %%
-S = upper(s);
-S = strrep(S,'MRT','MAR');
-S = strrep(S,'MEI','MAY');
-S = strrep(S,'OKT','OCT');
+S = lower(s);
+S = strrep(S,'januari'  ,'January');
+S = strrep(S,'februari' ,'February');
+S = strrep(S,'maart'    ,'March');
+S = strrep(S,'april'    ,'April');
+S = strrep(S,'mei'      ,'May');
+S = strrep(S,'juni'     ,'June');
+S = strrep(S,'juli'     ,'July');
+S = strrep(S,'augustus' ,'August');
+S = strrep(S,'september','September');
+S = strrep(S,'oktober'  ,'October');
+S = strrep(S,'november' ,'November');
+S = strrep(S,'december' ,'December');

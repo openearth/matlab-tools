@@ -3,7 +3,7 @@ function m = month(datenums);
 %
 % m = month(datenum) returns the month number.
 %
-%See also: YEARDAY, YEAR, DATENUM, MONTHSTR
+%See also: YEARDAY, YEAR, DATENUM, MONTHSTR, monthstr_mmm_dutch2eng, monthstr_mmmm_dutch2eng
 
 %% Copyright notice
 %   --------------------------------------------------------------------

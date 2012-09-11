@@ -13,6 +13,9 @@ function varargout = csv2struct(fname,varargin)
 %
 % e.g. D = csv2struct('somefile.csv','delimiter',';','CommentStyle','%')
 %
+% Note: cannot handle commas inside as "a","b","korea, republic of"
+% which will yield 4 columns!
+%
 % See also: XLS2STRUCT, NC2STRUCT, LOAD & SAVE('-struct',...)
 
 %% Copyright notice

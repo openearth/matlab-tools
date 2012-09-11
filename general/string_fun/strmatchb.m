@@ -61,9 +61,9 @@ function booleans = strmatcb(varargin)
 % $HeadURL$
 % $Keywords$
 
-indices = STRMATCH(varargin{:});
+indices = strmatch(varargin{:});
 
-booleans = repmat(false,size(varargin{2},1),1);
+booleans = repmat(false,1,length(varargin{2}));
 
 booleans(indices) = true;
 

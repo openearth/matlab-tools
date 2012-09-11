@@ -11,8 +11,8 @@ function [a, b, r2, r, k2] = linreg(x, y)
 %   y           = y-coordinates
 %
 %   Output:
-%   a           = linear regression parameter of coastline (y=a+b*x)
-%   b           = linear regression parameter of coastline (y=a+b*x)
+%   a           = linear regression parameter of coastline (y=a+b*x NOT y=a*x+b)
+%   b           = linear regression parameter of coastline (y=a+b*x NOT y=a*x+b)
 %
 %   Example
 %   [a b] = linreg(x, y)
@@ -59,6 +59,8 @@ function [a, b, r2, r, k2] = linreg(x, y)
 % $Keywords: $
 
 %% linear regression
+x = x(:)';
+y = y(:)';
 
 % Number of known points
 n = length(x);
