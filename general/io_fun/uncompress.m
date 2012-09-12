@@ -106,12 +106,6 @@ else
     path7zip = fullfile(basepath,'7z.exe');
 end
 
-% if OPT.gui
-%     path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7zG.exe');
-% else
-%     path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7z.exe');
-% end
-
 dosstring     = sprintf('"%s" %s e "%s" -o"%s"',path7zip,OPT.args,fullfile(fileName),OPT.outpath);
 
 [OPT.status, OPT.info] = system(dosstring);
