@@ -1,15 +1,15 @@
 function varargout = fillDep(varargin)
-%fillDep fill depth values from OPeNDAP data source (single grid or gridset of tiles)
+%fillDep fill depth values from netCDF/OPeNDAP data source (single grid or gridset of tiles)
 %
 %     <out> = dflowfm.fillDep(<keyword,value>) 
 %
 % where  the following keywords mean:
-% * bathy   provides data sources, cellstr of files, e.g. opendap_catalog()
-% * ncfile  input map nc file
-% * out     input map nc file (same as ncfile with depth + timestaps added)
+% * bathy   data sources: (i)cellstr of files, (ii) directory or (iii) opendap catalog url
+% * ncfile  input nc mapfile, of which any existing depth data will be ignored
+% * out     input nc mapfile (same as 'ncfile' with depth + timestamps added)
 % * ...
 %
-%   See also dflowfm, delft3d, nc_cf_gridset_getData
+%   See also dflowfm, delft3d, nc_cf_gridset_getData, opendap_catalog
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
@@ -43,10 +43,10 @@ function varargout = fillDep(varargin)
 % $HeadURL$
 % $Keywords: $
 
-   OPT.ncfile      = 'awad2d_net.nc';
-   OPT.out         = 'awad2d_vaklodingen_net.nc';
+   OPT.ncfile      = 'precise4k_net.nc';
+   OPT.out         = 'precise4k_vaklodingen2filled_net.nc';
 
-   OPT.bathy       = opendap_catalog('F:\opendap\thredds\rijkswaterstaat\vaklodingen_remapped\');
+   OPT.bathy       = opendap_catalog('H:\opendap.deltares\thredds\dodsC\opendap\rijkswaterstaat\vaklodingen\');
    OPT.xname       = 'x'; % search for projection_x_coordinate, or longitude, or ...
    OPT.yname       = 'y'; % search for projection_x_coordinate, or latitude , or ...
    OPT.varname     = 'z'; % search for altitude, or ...
@@ -58,8 +58,12 @@ function varargout = fillDep(varargin)
    OPT.order       = ''; % RWS: Specifieke Operator Laatste/Dichtsbij/Prioriteit
 
    OPT.debug       = 0;
+
+   OPT = setproperty(OPT,varargin);
    
-   OPT = setproperty(OPT,varargin{:});
+   if strcmpi(OPT.ncfile,OPT.out)
+      error(['specify different name for ncfile and out: ',OPT.ncfile])
+   end
    
 %% Load grid
 
@@ -74,7 +78,8 @@ function varargout = fillDep(varargin)
       polygon_selection = ones(size(G.cor.x));
    end
 
-%% data   
+%% data
+
    if ischar(OPT.bathy)
    list = opendap_catalog(OPT.bathy);
    end
@@ -90,10 +95,10 @@ function varargout = fillDep(varargin)
    G.cor.datenum = ti;
    G.cor.files   = fi;
    
-   % internal interpolation ? 
+   % internal interpolation to fill missing bands between input tiles
 
    OPT.method           = 'nearest';
-   [zi,ti,fi,fi_legend] =nc_cf_gridset_getData(G.cor.x,G.cor.y,zi,OPT2);
+   [zi,ti,fi,fi_legend] = nc_cf_gridset_getData(G.cor.x,G.cor.y,zi,OPT2);
    extra = isnan(G.cor.z) & ~isnan(zi);
    G.cor.z(extra)       = zi(extra);
    G.cor.datenum(extra) = nan;
