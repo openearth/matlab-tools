@@ -19,6 +19,7 @@ function P = norm_cdf(X, mu, sigma)
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
 %       Kees den Heijer
+%       adapted by Ferdinand Diermanse
 %
 %       C.denHeijer@TUDelft.nl	
 %
@@ -62,3 +63,4 @@ else
     error('sigma should be possitive')
 end
 P = (1 + (erf(X/sqrt(2))))./2;
+P(P==1) = 1-1e-16;
