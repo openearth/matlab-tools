@@ -31,7 +31,7 @@ function schema = nccreateSchema(dimstruct,varstruct,varargin)
 %     schema = nccreateSchema(dimstruct,varstruct,...
 %         'Attributes',{'Filetype','Testfile'},'Format','netcdf4');
 %     
-%     % craete a new dimstruct and varstruct to be used as a subgroup in the
+%     % create a new dimstruct and varstruct to be used as a subgroup in the
 %     % nc file
 %     dimstruct   = nccreateDimstruct('Name','x','Length',10);
 %     varstruct   = nccreateVarstruct('Name','x','Dimensions',{'x'},'scale_factor',10,'Attributes',{'asdasd',1,'asd',2});
@@ -105,7 +105,14 @@ schema.Format       = 'netcdf4'; % netcdf4 or classic
 schema = setproperty(schema,varargin);
 
 %% check format
-assert(any(strcmpi(schema.Format,{'netcdf4','classic'})),'Format must be either ''netcdf4'' or ''classic''')
+switch schema.Format
+    case {'classic','64bit'}
+        netcdf3 = true;
+    case {'netcdf4','netcdf4_classic'}
+        netcdf3 = false;
+    otherwise
+        error('Unknows format %s\nFormat must be one of the following:\n classic, netcdf4_classic, netcdf4 or 64bit',schema.Format)
+end
 
 %% process dimstruct
 % check input
@@ -141,18 +148,23 @@ for ii = 1:length(varstruct)
     varstruct(ii).Size       = [dimstruct([varstruct(ii).Dimensions{:}]).Length];
     varstruct(ii).Dimensions =  dimstruct([varstruct(ii).Dimensions{:}]);
     
-    % parse fill value and check datatype
-    varstruct(ii).FillValue  = parseFillValue(...
-        varstruct(ii).FillValue,...
+   % check datatype
+    datatypename = checkDataType(...
         varstruct(ii).Datatype,...
-        schema.Format);
+        netcdf3);
     
-    % parse atributes
+    % parse fill value
+    if isequal(varstruct(ii).FillValue,'auto')
+        varstruct(ii).FillValue = netcdf.getConstant(datatypename);
+    end
+    
+    % parse attributes
     varstruct(ii).Attributes = parseAttributes(...
         varstruct(ii).Attributes,...
         varstruct(ii).FillValue,...
         varstruct(ii).scale_factor,...
-        varstruct(ii).add_offset);
+        varstruct(ii).add_offset,...
+        datatypename);
 end
 varstruct = rmfield(varstruct,{'scale_factor','add_offset'});
 
@@ -161,15 +173,15 @@ schema.Variables  = varstruct;
 
 schema.Attributes = parseAttributes(schema.Attributes,[],[],[]);
 
-if strcmpi(schema.Format,'classic')
+if netcdf3
     % netcdf classic format does not support these parameters, so empty them
+    [schema.Variables.FillValue]    = deal([]);
     [schema.Variables.ChunkSize]    = deal([]);
     [schema.Variables.DeflateLevel] = deal([]);
 end
 
-function FillValue = parseFillValue(FillValue,Datatype,Format)
-switch lower(Format)
-    case 'classic'
+function datatypename = checkDataType(Datatype,netcdf3)
+if netcdf3
         datatypenames = {
             'char'     'NC_FILL_CHAR'
             'double'   'NC_FILL_DOUBLE'
@@ -178,17 +190,7 @@ switch lower(Format)
             'int16'    'NC_FILL_SHORT'
             'int32'    'NC_FILL_INT'
             };
-        
-        n = strcmpi(Datatype,datatypenames(:,1));
-        
-        if ~any(n)
-            error('Datatype %s is not a valid type. Valid types are:\n%s',Datatype,sprintf('    %s\n',datatypenames{:,1}));
-        end
-        
-        % set _FillValue to empty as it is not supported by netcdf classic
-        FillValue = cast([],Datatype);
-        
-    case 'netcdf4'
+else
         datatypenames = {
             'char'     'NC_FILL_CHAR'
             'double'   'NC_FILL_DOUBLE'
@@ -202,19 +204,21 @@ switch lower(Format)
             'uint32'   'NC_FILL_UINT'
             'uint64'   'NC_FILL_UINT64'
             };
-        
-        n = strcmpi(Datatype,datatypenames(:,1));
-        
-        if ~any(n)
-            error('Datatype %s is not a valid type. Valid types are:\n%s',Datatype,sprintf('    %s\n',datatypenames{:,1}));
-        end
-        
-        if isequal(FillValue,'auto')
-            FillValue = netcdf.getConstant(datatypenames{n,2});
-        end
 end
-function Attributes = parseAttributes(Attributes,FillValue,scale_factor,add_offset)
+n = strcmpi(Datatype,datatypenames(:,1));
 
+if ~any(n)
+    error('Datatype %s is not a valid type. Valid types are:\n%s',Datatype,sprintf('    %s\n',datatypenames{:,1}));
+else
+    datatypename = datatypenames{n,2};
+end
+
+
+function Attributes = parseAttributes(Attributes,FillValue,scale_factor,add_offset,datatypename)
+
+if isequal(FillValue,'auto')
+    FillValue = netcdf.getConstant(datatypename);
+end
 if ~isempty(add_offset)
     Attributes = [{'add_offset' add_offset} Attributes];
 end

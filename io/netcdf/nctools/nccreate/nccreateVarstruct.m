@@ -124,6 +124,5 @@ if ~isempty(varstruct.Attributes)
     end        
 end
 
-
 % set files in same order matlab uses (only cosmetic)
 varstruct = orderfields(varstruct,[1:6 11 7:10]);
