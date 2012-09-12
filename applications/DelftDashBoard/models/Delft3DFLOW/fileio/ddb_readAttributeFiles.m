@@ -100,10 +100,20 @@ if handles.Model(md).Input(id).sediments.include
 end
 
 if ~isempty(handles.Model(md).Input(id).bcaFile)
-    handles=ddb_readBcaFile(handles,id);
+    if exist(handles.Model(md).Input(id).bcaFile,'file')
+        handles=ddb_readBcaFile(handles,id);
+    else
+        handles.Model(md).Input(id).bcaFile='';        
+        ddb_giveWarning('text',['Bca file ' handles.Model(md).Input(id).bcaFile ' not found! Input was skipped!']);
+    end
 end
 if ~isempty(handles.Model(md).Input(id).corFile)
-    handles=ddb_readCorFile(handles,id);
+    if exist(handles.Model(md).Input(id).corFile,'file')
+        handles=ddb_readCorFile(handles,id);
+    else
+        handles.Model(md).Input(id).corFile='';        
+        ddb_giveWarning('text',['Cor file ' handles.Model(md).Input(id).corFile ' not found! Input was skipped!']);
+    end
 end
 if ~isempty(handles.Model(md).Input(id).bctFile)
 %     % Don't load bct file
