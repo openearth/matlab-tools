@@ -1,10 +1,10 @@
-function xout = smooth1(xin,varargin);
+function xout = smooth1_nan(xin,varargin)
 %SMOOTH1_NAN   As smooth1 but with different nan behaviour
 %
 % Exactly as smooth1, but nan values are handled differently:
 %  Nan valueas are ignored, so that a moving average is taken as if the
 %  nanmean was computed for each window. This is different from filtering
-%  the nan values out in advance, as that woul affect the window width.
+%  the nan values out in advance, as that would affect the window width.
 %
 % See also: SMOOTH1
 

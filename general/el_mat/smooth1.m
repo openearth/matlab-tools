@@ -1,4 +1,4 @@
-function xout = smooth1(xin,varargin);
+function xout = smooth1(xin,varargin)
 %SMOOTH1   Calculates moving average on 1D array.
 %
 % use: x_smoothed = smooth1(x_raw,<one_sided_span>)
