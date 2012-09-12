@@ -13,8 +13,18 @@ function varargout = csv2struct(fname,varargin)
 %
 % e.g. D = csv2struct('somefile.csv','delimiter',';','CommentStyle','%')
 %
-% Note: cannot handle commas inside as "a","b","korea, republic of"
-% which will yield 4 columns!
+% Note: removal of double quotes needs to be specified explicitly for
+% column names and column values seperately with  keyword 'quotes'
+% with a two-element vector. Noe that viz. "korea, republic of" or
+% "100,000" would otherwise yield two columns each due to their internal
+% comma's, e.g.
+%
+% Example: D = csv2struct('koreas.csv','delimiter',',','quotes',[0 1])
+% +---------------->
+% | column1,column2
+% | "Korea, Democratic People's Republic of","120,540"
+% | "Korea, Republic of","100,210"%          
+% +---------------->
 %
 % See also: XLS2STRUCT, NC2STRUCT, LOAD & SAVE('-struct',...)
 
@@ -57,7 +67,7 @@ function varargout = csv2struct(fname,varargin)
    OPT.delimiter    = ',';
    OPT.error        = 0;
    OPT.CommentStyle = '#';
-   OPT.quotes       = 0;
+   OPT.quotes       = [0 0];
    
    if nargin==0
       varargout = {OPT};
@@ -90,12 +100,19 @@ function varargout = csv2struct(fname,varargin)
       fid      = fopen(fname);
       rec      = fgetl_no_comment_line(fid,OPT.CommentStyle);
       col      = textscan(rec,'%s','Delimiter',OPT.delimiter);
-      if OPT.quotes
+      if OPT.quotes(1)
       colnames = cellfun(@(x) x([2:end-1]),col{1},'UniformOutput',0);
       else
       colnames = col{1};
       end
+
+      if length(OPT.quotes) > 1
+      if OPT.quotes(2)
+      fmt      = repmat('%q',[1 length(colnames)]);
+      else
       fmt      = repmat('%s',[1 length(colnames)]);
+      end
+      end
    
       if OPT.units
       rec      = fgetl_no_comment_line(fid,OPT.CommentStyle);
