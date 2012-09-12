@@ -13,7 +13,7 @@ function D2 = structsubs(D,ind)
 % ind = strmatchb('NY',T.c) & T.a <3
 % T2 = structsubs(T,ind) % where T2 = struct('a',{[1 2]},'b', {{'a','b'}},'c',{{'NY','NY'}})
 %
-%See also: strmatchb, csv2struct, xls2struct, nc2struct, struct_fun, postgresql
+%See also: strmatchb, strfindb, csv2struct, xls2struct, nc2struct, struct_fun, postgresql
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: 11 Sep 2012
@@ -35,7 +35,7 @@ for ifld=1:length(flds)
     fld = flds{ifld};
     if iscell(D.(fld))
         D2.(fld) = {D.(fld){ind}};
-    else isnumeric(D.(fld))
+    else % isnumeric(D.(fld))
         D2.(fld) = D.(fld)(ind);
     end
 end
