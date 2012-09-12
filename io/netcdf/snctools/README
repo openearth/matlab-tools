@@ -59,9 +59,13 @@ R2007b through R2011b:           4.2
 R2006a through R2007a:           4.1.1
 R14:                             2.2.20
 
-On R2012a, MATLAB has OPeNDAP support, meaning that netcdf-java is no
-longer needed as the backend there.  You still need it if you wish
-to read GRIB files, though.
+On R2012a, MATLAB has OPeNDAP support, meaning that netcdf-java is
+no longer needed as the backend there.  I would still recommend
+installing it, though. You still need it if you wish to read GRIB
+files.
+
+HDF4 SD files are tentatively supported in read-only mode on R2006a
+and more recent.
 
 Please add this directory to your matlab path.  You must also have 
 mexnc on your path in order for snctools to work.
@@ -168,9 +172,6 @@ BUG Reports You Should Know About
     netcdf package directly, not snctools users.  Please consult this URL.
 
     http://www.mathworks.com/support/bugreports/618322
-
-5)  HDF4 SD files are tentatively supported in read-only mode on R2006a
-    and more recent.
 
 +-----------------------------------------------------------------------
 Of all the routines in this m-file collection, the most useful (in my

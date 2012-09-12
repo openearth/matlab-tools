@@ -48,6 +48,11 @@ mv = version('-release');
 
 fmt = snc_format(ncfile);
 
+if getpref('SNCTOOLS','USE_NETCDF_JAVA')
+    retrieval_method = retrieval_methods.java;
+    return
+end
+
 % These cases have no alternatives.
 if strcmp(fmt,fmts.HDF4) 
     switch(mv)
@@ -79,7 +84,7 @@ elseif strcmp(fmt,fmts.URL)
                 % Still, use netcdf-java for SSL.
                 retrieval_method = retrieval_methods.java; 
                 fmt = fmts.netcdf_java;
-            elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false)
+            elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false) % redundant, as already handled at above
                 % Force the use of netcdf-java if the user
                 % really want it.
                 retrieval_method = retrieval_methods.java; 

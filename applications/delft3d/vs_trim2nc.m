@@ -123,6 +123,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
    end
 
    tmp=dir(vsfile);
+   if isempty(tmp)
+       error(['file does not exist: ',vsfile])
+   end
    if (tmp.bytes > 2^31)  & strcmpi(OPT.Format,'classic')
       fprintf(2,'Delft3D NEFIS files larger than 2 Gb cannot be mapped entirely to netCDF classic format, set keyword vs_trim2nc(...,''Format'',''64bit'').\n')
    end
@@ -700,9 +703,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ifld     = ifld + 1;clear attr dims;
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'z at layer midpoints');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+%attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_z_coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-     %attr(end+1)  = struct('Name', 'formula_terms', 'Value', '?'); % requires depth to be positive !!
+%attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'eta: var1 depth: var2 zlev: var3'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bottom layer has index k=1 and is the bottom depth, the surface layer has index kmax and is z=free water surface.');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KMAX map-const:LAYER_MODEL map-const:ZK');
@@ -714,10 +718,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
           
       ifld     = ifld + 1;clear attr dims;
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'z at layer interfaces');
-      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+%attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_z_coordinate');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-     %attr(end+1)  = struct('Name', 'formula_terms', 'Value', '?'); % requires depth to be positive !!
+%attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'eta: var1 depth: var2 zlev: var3'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bottom layer has index k=1 and is the bottom depth, the surface layer has index kmax and is z=free water surface.');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KMAX map-const:LAYER_MODEL map-const:ZK');
@@ -1444,32 +1448,32 @@ function varargout = vs_trim2nc(vsfile,varargin)
       
 %% initialize [min,max] ranges
 
-    %  if any(strcmp('waterlevel'    ,OPT.var));R.waterlevel      = [Inf -Inf];end
-    %  if any(strcmp('velocity'      ,OPT.var));R.velocity_x      = [Inf -Inf];
-    %                                           R.velocity_y      = [Inf -Inf];end
-    %  if any(strcmp('velocity_omega',OPT.var));R.velocity_omega  = [Inf -Inf];end
-    %  if any(strcmp('velocity_z'    ,OPT.var));R.velocity_z      = [Inf -Inf];end
-    %  if any(strcmp('tau'           ,OPT.var));R.tau_x           = [Inf -Inf];
-    %                                           R.tau_y           = [Inf -Inf];end
-    %  if any(strcmp('pea'           ,OPT.var));R.pea             = [Inf -Inf];end
-    %  if any(strcmp('salinity'      ,OPT.var));R.salinity        = [Inf -Inf];end
-    %  if any(strcmp('temperature'   ,OPT.var));R.temperature     = [Inf -Inf];end
-    %  if any(strcmp('tke'           ,OPT.var));R.tke             = [Inf -Inf];end
-    %  if any(strcmp('eps'           ,OPT.var));R.eps             = [Inf -Inf];end
-    %  if any(strcmp('sediment'      ,OPT.var));R.suspsedconc     = [Inf -Inf];end
-    %  if any(strcmp('viscosity_z'   ,OPT.var));R.viscosity_z     = [Inf -Inf];end
-    %  if any(strcmp('diffusivity_z' ,OPT.var));R.diffusivity_z   = [Inf -Inf];end
-    %  if any(strcmp('Ri'            ,OPT.var));R.Ri              = [Inf -Inf];end
-    %  if any(strcmp('dpeads'        ,OPT.var));R.Ax              = [Inf -Inf];
-    %                                           R.Ay              = [Inf -Inf];
-    %                                           R.Sx              = [Inf -Inf];
-    %                                           R.Sy              = [Inf -Inf];
-    %                                           R.Cx              = [Inf -Inf];
-    %                                           R.Cy              = [Inf -Inf];
-    %                                           R.Nx              = [Inf -Inf];
-    %                                           R.Ny              = [Inf -Inf];
-    %                                           R.Wz              = [Inf -Inf];
-    %                                           R.Mz              = [Inf -Inf];end
+      if any(strcmp('waterlevel'    ,OPT.var));R.waterlevel      = [Inf -Inf];end
+      if any(strcmp('velocity'      ,OPT.var));R.velocity_x      = [Inf -Inf];
+                                               R.velocity_y      = [Inf -Inf];end
+      if any(strcmp('velocity_omega',OPT.var));R.velocity_omega  = [Inf -Inf];end
+      if any(strcmp('velocity_z'    ,OPT.var));R.velocity_z      = [Inf -Inf];end
+      if any(strcmp('tau'           ,OPT.var));R.tau_x           = [Inf -Inf];
+                                               R.tau_y           = [Inf -Inf];end
+      if any(strcmp('pea'           ,OPT.var));R.pea             = [Inf -Inf];end
+      if any(strcmp('salinity'      ,OPT.var));R.salinity        = [Inf -Inf];end
+      if any(strcmp('temperature'   ,OPT.var));R.temperature     = [Inf -Inf];end
+      if any(strcmp('tke'           ,OPT.var));R.tke             = [Inf -Inf];end
+      if any(strcmp('eps'           ,OPT.var));R.eps             = [Inf -Inf];end
+      if any(strcmp('sediment'      ,OPT.var));R.suspsedconc     = [Inf -Inf];end
+      if any(strcmp('viscosity_z'   ,OPT.var));R.viscosity_z     = [Inf -Inf];end
+      if any(strcmp('diffusivity_z' ,OPT.var));R.diffusivity_z   = [Inf -Inf];end
+      if any(strcmp('Ri'            ,OPT.var));R.Ri              = [Inf -Inf];end
+      if any(strcmp('dpeads'        ,OPT.var));R.Ax              = [Inf -Inf];
+                                               R.Ay              = [Inf -Inf];
+                                               R.Sx              = [Inf -Inf];
+                                               R.Sy              = [Inf -Inf];
+                                               R.Cx              = [Inf -Inf];
+                                               R.Cy              = [Inf -Inf];
+                                               R.Nx              = [Inf -Inf];
+                                               R.Ny              = [Inf -Inf];
+                                               R.Wz              = [Inf -Inf];
+                                               R.Mz              = [Inf -Inf];end
 
       for it = OPT.time % it is index in NEFIS file
       i = i + 1;        % i  is index in netCDF file
@@ -1593,6 +1597,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
             G.cen.intf.z  = zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);
             for k = 1:G.kmax+1
                G.cen.intf.z(:,:,k) = G.sigma_intf(k).*(G.cen.zwl + G.cen.dep) - G.cen.dep; % dep is positive down
+            end
+            if OPT.debug
+            disp([min(G.cen.intf.z(:)) max(G.cen.intf.z(:))])
             end
             matrix = pea_simpson_et_al_1990(G.cen.intf.z,matrix,3,'weights',G.sigma_dz);
             ncwrite   (ncfile,'pea', matrix,[2,2,i]); % 1-based

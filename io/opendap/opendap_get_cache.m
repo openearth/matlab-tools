@@ -7,7 +7,7 @@ function varargout = opendap_get_cache(varargin)
 %
 % opendap_get_cache('server','http://opendap.deltares.nl/thredds/',...
 %                    'local','e:\opendap\',...
-%                  'dataset','/rijkswaterstaat/grainsize/',... % will be appended to both server and local directory
+%                  'dataset','/rijkswaterstaat/grainsize/',... % will be appended to both 'server' and 'local' directory
 %                    'pause',1); % first time try with pause on
 %
 % pause = 2 pasues after every file, pause = 1 pauses only after verifying local directory

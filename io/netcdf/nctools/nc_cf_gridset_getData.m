@@ -20,7 +20,8 @@ function varargout=nc_cf_gridset_getData(xi,yi,varargin)
 %
 %    nc_cf_gridset_getData(116e3,573e3,'bathy','http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html')
 %
-%See also: grid_orth_getDataFromNetCDFGrids, grid_orth_getDataOnLine, nc_cf_gridset_getData_example
+%See also: grid_orth_getDataFromNetCDFGrids, grid_orth_getDataOnLine, nc_cf_gridset_getData_example,
+%          classify2unique for plotting date fields
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
@@ -74,20 +75,18 @@ if nargin==0
     return
 end
 
-if ~odd(nargin)
-   nextarg = 1;
+if ~isnumeric(varargin{1})
    zi  = xi.*nan; % set increment to nan
    ti  = xi.*nan; % set increment to nan
    fi  = xi.*nan; % set increment to nan
 else
-   nextarg = 2;
    zi  = varargin{1};
+   varargin = {varargin{2:end}};
    % TO DO
    ti  = xi.*nan; % set increment to nan
-   fi  = xi.*0; % set increment to nan
+   fi  = xi.*0;   % set increment to nan
 end
-
-OPT = setproperty(OPT,varargin{nextarg:end});
+OPT = setproperty(OPT,varargin);
 
 %% get spatial limits
 
@@ -185,9 +184,12 @@ OPT = setproperty(OPT,varargin{nextarg:end});
 
              Z   = nc_varget(list{ifile},OPT.varname,start,count); % most time consuming code line
              T   = L.datenum(ind(idt));
-
-             disp([num2str(ifile,'%0.3d '),' ',num2str(idt,'%0.1d '),' ',...
-                 num2str(L.datenum(ind(idt)) - OPT.datenum,'%+0.5g'),' ',filename(list{ifile}),' days.']);
+             dt2fmt = L.datenum(ind(idt)) - OPT.datenum;
+             disp(['file: ',num2str(ifile,'%0.3d '),...
+                    ' it: ',num2str(idt,'%0.1d '),...
+                    ' dt: ',num2str(dt2fmt        ,'%+05.0f'),...
+                  ' day = ',num2str(dt2fmt./365.25,'%+03.1f'),...
+                  ' yr in ',filename(list{ifile})]);
                  % ' days (#',num2str(sum(~isnan(Z(:))),'%+0.5d'),' data points)'
 
           %% extract remaining destination data

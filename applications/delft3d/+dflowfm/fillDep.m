@@ -122,6 +122,7 @@ function varargout = fillDep(varargin)
    nc.Attribute(2).Value = 'time';
    nc.Attribute(3).Name  = 'long_name';
    nc.Attribute(3).Value = 'recording time of depth sounding';
+   % TO DO: perhaps turn this into flagged data too?
    nc_addvar(OPT.out,nc);  
   
    nc_varput(OPT.out,'NetNode_t',G.cor.datenum - datenum(1970,1,1));
@@ -134,12 +135,12 @@ function varargout = fillDep(varargin)
    nc.Dimension = { 'nNetNode' };
    nc.Attribute(1).Name  = 'files';
    nc.Attribute(1).Value = [num2str([1:length(fi_legend)]') addrowcol(addrowcol(char(fi_legend),0,-1,' = '),0,1,';')]';
-   %nc.Attribute(1).Name  = 'flag_values';    % TO DO
-   %nc.Attribute(1).Value = @unique(fi);      % TO DO
-   %nc.Attribute(2).Name  = 'flag_masks';     % TO DO
-   %nc.Attribute(2).Value = @fi_legend;       % TO DO
-   %nc.Attribute(3).Name  = 'flag_meanings';  % TO DO
-   %nc.Attribute(3).Value = @fi_legend;       % TO DO
+   % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#flags
+   % you can unwrap flag_meanings with strtokens2cell()
+   nc.Attribute(2).Name  = 'flag_values';
+   nc.Attribute(2).Value = unique(G.cor.files);
+   nc.Attribute(3).Name  = 'flag_meanings';
+   nc.Attribute(3).Value = str2line(fi_legend,'s',' ');
    nc_addvar(OPT.out,nc);  
   
    nc_varput(OPT.out,'NetNode_file',int8(G.cor.files));

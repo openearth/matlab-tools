@@ -18,3 +18,5 @@
 %   inspire             - mangle EU INSPIRE meta-data
 %
 % See also: OpenEarthTools: general, applications
+
+% http://earthdata.nasa.gov/our-community/esdswg/standards-process-spg/rfc
