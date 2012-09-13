@@ -15,10 +15,11 @@ id_singlesupp = find(measure==1);
 id_gro = find(measure==2);
 id_rev = find(measure==3);
 id_distrsupp = find(measure==4);
+id_distrsupp_single = find(measure==5);
 su=0;gr=0;rev=0;%be=0;distr=0;% counters per measure
 if ~isempty(measure)
     for ii = 1:length(measure)
-        if ismember(ii,id_contsupp)||ismember(ii,id_singlesupp)||ismember(ii,id_distrsupp)
+        if ismember(ii,id_contsupp)||ismember(ii,id_singlesupp)||ismember(ii,id_distrsupp)||ismember(ii,id_distrsupp_single)
             su = su+1;
             S.nourishment(su).start = implementation(ii);
             S.nourishment(su).volume = vol(ii);
@@ -30,9 +31,12 @@ if ~isempty(measure)
             elseif ismember(ii,id_singlesupp)
                 S.nourishment(su).category = 'single';
                 S.nourishment(su).stop = implementation(ii)+1;
-            else
+            elseif ismember(ii,id_distrsupp)
                 S.nourishment(su).category = 'distr';
                 S.nourishment(su).stop = S.duration;
+            else
+                S.nourishment(su).category = 'distrsupp_single';
+                S.nourishment(su).stop = implementation(ii)+1;
             end
             S.nourishment(su).lat = lat(ii);
             S.nourishment(su).lon = lon(ii);
@@ -85,7 +89,7 @@ end
 yrstop = [];
 if  isfield(S,'nourishment')
     for jj = 1:length(S.nourishment)
-        if  strcmp(S.nourishment(jj).category,'single')==1
+        if  strcmp(S.nourishment(jj).category,'single')==1 || strcmp(S.nourishment(jj).category,'distrsupp_single')==1
             yrstop = [yrstop S.nourishment(jj).stop];
         end
     end
@@ -131,6 +135,8 @@ for ii = 1:length(S.phases)
         for jj=1:length(idssup)
             if strcmp(S.nourishment(idssup(jj)).category,'single')                
                 S.phase(ii).supcat{jj} = 'single';
+            elseif strcmp(S.nourishment(idssup(jj)).category,'distrsupp_single')                
+                S.phase(ii).supcat{jj} = 'distrsupp_single';
             elseif strcmp(S.nourishment(idssup(jj)).category,'distr')
                 % If nourishment is continuous, nourishment should be taken
                 % into account in every phase after implementation

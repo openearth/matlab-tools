@@ -111,7 +111,7 @@ for jj = 1:length(S.userinput.phases)
         %Only plot nourishment if extent is bigger than resolution
         if S.userinput.nourishment(ss).idRANGE(1)~=S.userinput.nourishment(ss).idRANGE(end)%x2~=x4 
             % For single or cont, plot triangle
-            if ~strcmp(S.userinput.nourishment(ss).category,'distr')
+            if ~strcmp(S.userinput.nourishment(ss).category,'distr')&&~strcmp(S.userinput.nourishment(ss).category,'distrsupp_single')
                 alpha = atan((y0(idRANGE(end))-y0(idRANGE(1)))/(x0(idRANGE(end))-x0(idRANGE(1))));%alpha = atan((y4-y2)/(x4-x2));
                 if alpha>0
 %                    x3     = x0(idNEAREST)+0.5*sVectorLength*h*cos(alpha+pi()/2);%x1+0.5*sVectorLength*h*cos(alpha+pi()/2);

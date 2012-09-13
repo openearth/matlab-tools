@@ -106,7 +106,7 @@ SOSfilename = [S.settings.outputdir S.userinput.phase(phase).SOSfile];
 ITHK_io_writeSOS(SOSfilename,SOSdata0);
 %nourishment.volume = volumes;
 %nourishment.width  = 0.5*width;%must be radius
-if strcmp(S.userinput.nourishment(ss).category,'distr')
+if strcmp(S.userinput.nourishment(ss).category,'distr')||strcmp(S.userinput.nourishment(ss).category,'distrsupp_single')
     [SOSdata2,idNEAREST,idRANGE] = ITHK_addUNIFORMLYDISTRIBUTEDnourishment(MDAdata,nourishment,SOSfilename);
 else
     [SOSdata2,idNEAREST,idRANGE] = ITHK_addTRIANGULARnourishment(MDAdata,nourishment,SOSfilename);
